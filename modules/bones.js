@@ -2,7 +2,8 @@ function boneShrine() {
 
 	const baseSettings = getPageSetting('boneShrineSettings');
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
-	if (defaultSettings === null) return farmingDetails;
+	if (challengeActive('Pandemonium')) return;
+	if (defaultSettings === null) return;
 	if (!defaultSettings.active) return;
 
 	//Setting up variables

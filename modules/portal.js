@@ -319,10 +319,13 @@ function c2runnerportal(portalZone) {
 
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared();
-		if (getPageSetting('heliumHourChallenge') !== 'None')
-			doPortal(getPageSetting('heliumHourChallenge'));
-		else
-			doPortal();
+		//Only portal automatically if using C2 Runner Pct input.
+		if (getPageSetting('c2RunnerStart')) {
+			if (getPageSetting('heliumHourChallenge') !== 'None')
+				doPortal(getPageSetting('heliumHourChallenge'));
+			else
+				doPortal();
+		}
 	}
 	return;
 }

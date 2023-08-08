@@ -198,7 +198,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (currSettingUniverse === 2) {
 			//Adding in the U2 Unique Maps if they've been unlocked.
 			var mapUnlocks = [
-				'Dimension_of_Rage', 'Prismatic_Palace'
+				'Big_Wall', 'Dimension_of_Rage', 'Prismatic_Palace'
 			]
 
 			if (game.stats.highestRadLevel.valueTotal() >= 33) mapUnlocks.push("Atlantrimp");
@@ -2246,11 +2246,16 @@ function saveATUniqueMapsConfig(setting) {
 		setting[name].cell = cell;
 
 		//Error checking
+		if (name.includes('Big_Wall') && zone < 7) {
+			error += " The Block can\'t be run below zone 7.<br>";
+			errorMessage = true;
+		}
+
 		if (name.includes('The_Block') && zone < 11) {
 			error += " The Block can\'t be run below zone 11.<br>";
 			errorMessage = true;
 		}
-		//Error checking
+
 		if (name.includes('The_Wall') && zone < 15) {
 			error += " The Wall can\'t be run below zone 15.<br>";
 			errorMessage = true;

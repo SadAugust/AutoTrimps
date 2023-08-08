@@ -1449,6 +1449,7 @@ function initializeAllSettings() {
 			The_Prison: { enabled: false, zone: 100, cell: 0 },
 			Imploding_Star: { enabled: false, zone: 100, cell: 0 },
 
+			Big_Wall: { enabled: false, zone: 100, cell: 0 },
 			Dimension_of_Rage: { enabled: false, zone: 100, cell: 0 },
 			Prismatic_Palace: { enabled: false, zone: 100, cell: 0 },
 			Atlantrimp: { enabled: false, zone: 100, cell: 0 },
@@ -1720,6 +1721,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Abandons " + cinf() + "s when this zone is reached.</p>";
 				description += "<p>If <b>" + cinf() + " Runner</b> is enabled then this setting is disabled. </p>";
+				description += "<p>Will automatically abandon the challenge after " + cinf() + "s have been finished when using this setting but won't portal.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>Recommended: Zones ending with 0 for most " + cinf() + " runs.</p>";
 				return description;
@@ -1781,9 +1783,11 @@ function initializeAllSettings() {
 			function () { return ([cinf() + ' Runner %', cinf() + ' Runner Set Values']) },
 			function () {
 				var description = "<p>Toggles between the two modes that " + cinf() + " Runner can use for selecting which " + cinf() + " to start.</p>";
-				description += "<p><b>" + cinf() + " Runner %</b><br>Will run " + cinf() + "s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see " + cinf() + " Table.</p>";
+				description += "<p><b>" + cinf() + " Runner %</b><br>Will run " + cinf() + "s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see " + cinf() + " Table.<br>\
+				Will automatically abandon the challenge and portal after "+ cinf() + "s have been finished when using this setting.</p>";
 				description += "<p><b>" + cinf() + " Runner Set Values</b><br>\
-				Uses the <b>" + cinf() + " Runner Settings</b> popup and will run enabled " + cinf() + "s when they are below the designated end zone.</p>";
+				Uses the <b>" + cinf() + " Runner Settings</b> popup and will run enabled " + cinf() + "s when they are below the designated end zone.<br>\
+				Will automatically abandon the challenge and portal after "+ cinf() + "s have been finished when using this setting.</p>";
 				description += "<p>If using <b>" + cinf() + " Runner Set Values</b> then the " + cinf() + " will only be be finished if the challenge is enabled and a zone above 0 has been set.</p>";
 				description += "<p>I recommended only using <b>" + cinf() + " Runner Set Values</b> if you're actively going to update the inputs as you progress.</p>";
 				description += "<p><b>Recommended:</b> " + cinf() + " Runner %</p>";
@@ -3411,18 +3415,20 @@ function initializeAllSettings() {
 			function () { return ('Start Fuel Z') },
 			function () {
 				var description = "<p>Will automatically set the generator to gather <b>Fuel</b> when this zone is reached.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>Set to <b>0</b> to disable this setting.</p>";
+				description += "<p>If set <b>below 0</b> it will assume you always want this active.</p>";
 				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
 				return description;
-			}, 'value', -1, null, 'Magma', [1]);
+			}, 'value', 0, null, 'Magma', [1]);
 		createSetting('fuelend',
 			function () { return ('End Fuel Z') },
 			function () {
 				var description = "<p>Will automatically set the generator to gather <b>Fuel</b> until this zone is reached.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>Set to <b>0</b> to disable this setting.</p>";
+				description += "<p>If set <b>below 0</b> it will assume you always want this active.</p>";
 				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
 				return description;
-			}, 'value', -1, null, 'Magma', [1]);
+			}, 'value', 0, null, 'Magma', [1]);
 		createSetting('defaultgen',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
 			function () {
@@ -6321,7 +6327,18 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.30') {
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.36') {
+
+			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
+				autoTrimpSettings.uniqueMapSettingsArray.valueU2["Big_Wall"] = {
+					enabled: false,
+					zone: 100,
+					cell: 0,
+				};
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.36') {
 
 			var settings_List = ['autoGoldenSettings', 'autoGoldenDailySettings', 'autoGoldenC3Settings'];
 			var runType = ['Filler', 'Daily', 'C3'];
