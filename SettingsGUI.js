@@ -6327,18 +6327,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.36') {
-
-			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
-				autoTrimpSettings.uniqueMapSettingsArray.valueU2["Big_Wall"] = {
-					enabled: false,
-					zone: 100,
-					cell: 0,
-				};
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.36') {
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.30') {
 
 			var settings_List = ['autoGoldenSettings', 'autoGoldenDailySettings', 'autoGoldenC3Settings'];
 			var runType = ['Filler', 'Daily', 'C3'];
@@ -6359,6 +6348,17 @@ function updateATVersion() {
 				autoTrimpSettings.autoGoldenSettings[values[item]] = [...tempSettings[settings_List[0]][values[item]], ...tempSettings[settings_List[1]][values[item]], ...tempSettings[settings_List[2]][values[item]]];
 			}
 			saveSettings();
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.36') {
+
+			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
+				autoTrimpSettings.uniqueMapSettingsArray.valueU2["Big_Wall"] = {
+					enabled: false,
+					zone: 100,
+					cell: 0,
+				};
+			}
 		}
 	}
 
