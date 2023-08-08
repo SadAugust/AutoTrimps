@@ -84,7 +84,6 @@ function debugCalc() {
 	debug("Enemy Stats", "other");
 	debug("Enemy Attack: " + (enemyMin * equality).toExponential(2) + "-" + (enemyMax * equality).toExponential(2), "other");
 	debug("Enemy Health: " + (calcEnemyHealthCore(mapType, zone, cell, name) * difficulty).toExponential(2), "other");
-
 }
 
 function calcOurBlock(stance, realBlock) {

@@ -276,7 +276,7 @@ function recycleMap_AT(forceAbandon) {
 //Check to see if we are running Atlantrimp or if we should be.
 function runningAtlantrimp() {
 	var runAtlantrimp = false;
-	if (getPageSetting('autoMaps') > 0 && mapSettings.atlantrimp) runAtlantrimp = true;
+	if (getPageSetting('autoMaps') === 1 && mapSettings.atlantrimp) runAtlantrimp = true;
 	else if (game.global.mapsActive && (getCurrentMapObject().location === 'Atlantrimp' || getCurrentMapObject().location === 'Trimple Of Doom')) runAtlantrimp = true;
 
 	return runAtlantrimp;
@@ -284,6 +284,7 @@ function runningAtlantrimp() {
 
 function runUniqueMap(mapName) {
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
+	if (getPageSetting('autoMaps') !== 1) return;
 	if (challengeActive('Insanity')) return;
 	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom';
 	var zone = game.global.world;
