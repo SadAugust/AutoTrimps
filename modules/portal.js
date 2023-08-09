@@ -746,6 +746,7 @@ function resetVarsZone(loadingSave) {
 	MODULES.heirlooms.compressedCalc = false;
 	//General
 	MODULES.maps.mapTimer = 0;
+	MODULES.maps.fragmentCost = Infinity;
 	var mapFunction = MODULES['mapFunctions'];
 
 	//Fragment Farming	

@@ -8,6 +8,7 @@ MODULES.maps = {
 	mapRepeatsSmithy: [0, 0, 0],
 	mapTimer: 0,
 	lastMapWeWereIn: null,
+	fragmentCost: Infinity,
 };
 
 function runSelectedMap(mapId, madAdjective) {
@@ -31,7 +32,7 @@ function updateAutoMapsStatus(get) {
 	//Advancing
 	else status = 'Advancing';
 
-	if (getPageSetting('autoMaps') === 0) status = '[Off] ' + status;
+	if (getPageSetting('autoMaps') === 0) status = '[Auto Maps Off] ' + status;
 	var resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
 	var resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
 	var getPercent = (game.stats.heliumHour.value() /
@@ -211,6 +212,11 @@ function autoMap() {
 
 	if (getPageSetting('autoMaps') === 0 || !game.global.mapsUnlocked) return;
 
+	//Hacky way to fix an issue with having no maps available to run and no fragments to purchase them
+	if (MODULES.maps.fragmentCost !== Infinity) {
+		if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return;
+		else MODULES.maps.fragmentCost = Infinity;
+	}
 	if (game.global.mapsActive) {
 		var currMap = getCurrentMapObject();
 		if (currMap !== undefined && (currMap.name === 'Trimple Of Doom' || currMap.name === 'Atlantrimp' || currMap.name === 'Melting Point' || currMap.name === 'Frozen Castle')) {
@@ -370,8 +376,9 @@ function autoMap() {
 		//Game refuses to let you buy a map if you have 100 maps in your inventory.
 		if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-		if (mapSettings.shouldRun && mapSettings.mapName === 'Prestige Raiding' && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost_Actual(getCurrentMapObject().level - game.global.world, 'lmc', mapBiome)) {
-			var maplevel = getCurrentMapObject().level;
+		var mapObj = getCurrentMapObject()
+		if (mapSettings.shouldRun && mapSettings.mapName === 'Prestige Raiding' && game.global.mapsActive && String(mapObj.level).slice(-1) === '1' && equipsToGet(mapObj.level) === 1 && mapObj.bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost_Actual(mapObj.level - game.global.world, 'lmc', mapBiome)) {
+			var maplevel = mapObj.level;
 			recycleMap_AT();
 			if (game.global.preMapsActive) {
 				perfectMapCost(maplevel - game.global.world, "lmc", mapBiome);
@@ -380,7 +387,7 @@ function autoMap() {
 				debug("Running LMC map due to only having 1 equip remaining on this map.", "maps");
 			}
 		}
-		if ((selectedMap === game.global.currentMapId || (!getCurrentMapObject().noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding')) {
+		if ((selectedMap === game.global.currentMapId || (!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding')) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
@@ -398,19 +405,18 @@ function autoMap() {
 			if (!mapSettings.shouldRun)
 				repeatClicked();
 			//Disabling repeat if we'll beat Experience from the BW we're clearing.
-			if (game.global.repeatMap && challengeActive('Experience') && getCurrentMapObject().location === 'Bionic' && game.global.world > 600 && getCurrentMapObject().level >= 605) {
+			if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObject.level >= 605) {
 				repeatClicked();
 			}
 			if (mapSettings.prestigeFragMapBought && game.global.repeatMap) {
 				runPrestigeRaiding();
 			}
 			//Disabling repeat if repeat conditions have been met
-			if (game.global.repeatMap && mapSettings.mapName !== '' && !mapSettings.prestigeFragMapBought) {
+			if (game.global.repeatMap && mapSettings.mapName !== '' && !mapSettings.prestigeFragMapBought && mapObj !== null) {
 				//Figuring out if we have the right map level & special
-				var mapObj = game.global.mapsActive ? getCurrentMapObject() : null;
-				var mapLevel = mapObj !== null && typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
+				var mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
 
-				var mapSpecial = mapObj !== null && typeof mapSettings.special !== 'undefined' && mapSettings.special !== "0" ? mapObj.bonus : mapSettings.special;
+				var mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== "0" ? mapObj.bonus : mapSettings.special;
 				//Disabling repeat if the map isn't right or we've finished farming
 				if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();
 			}
@@ -477,11 +483,22 @@ function autoMap() {
 			const maplvlpicked = parseInt(document.getElementById("mapLevelInput").value);
 			const mappluslevel = maplvlpicked === game.global.world && document.getElementById("advExtraLevelSelect").value > 0 ? parseInt(document.getElementById("advExtraLevelSelect").value) : "";
 			const mapspecial = document.getElementById("advSpecialSelect").value === '0' ? 'No special' : document.getElementById("advSpecialSelect").value;
-			if (highestMap !== null && updateMapCost(true) > game.resources.fragments.owned) {
+			if (updateMapCost(true) > game.resources.fragments.owned) {
 				debug("Can't afford the map we designed, #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
-				if (!game.jobs.Explorer.locked) fragmentFarm();
+				//Runs fragment farming if 
+				//A) We have explorers unlocked
+				//B) We can afford a max loot+size sliders map
+				if (!game.jobs.Explorer.locked && perfectMapCost_Actual(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) >= game.resources.fragments.owned) fragmentFarm();
+				//Hacky way to disable mapping if we don't have a map and can't afford the one that we want to make.
+				else if (highestMap === null) {
+					MODULES.maps.fragmentCost = updateMapCost(true);
+					mapsClicked();
+					debug("Disabling mapping until we reach " + MODULES.maps.fragmentCost + (MODULES.maps.fragmentCost === 1 ? " fragment." : " fragments.") + " as we don't have any maps to run.");
+					return;
+				}
+				//Runs highest map we have available to farm fragments with
 				else runSelectedMap(highestMap.id, 'highest');
-				MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+				if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 			} else {
 				debug("Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
 				updateMapCost(true);

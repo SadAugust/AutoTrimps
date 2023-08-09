@@ -1509,25 +1509,37 @@ function prestigeClimb() {
 	};
 
 	if (challengeActive('Frugal')) return farmingDetails;
-	if (game.jobs.Explorer.locked) return farmingDetails;
 
 	var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
 
+	var mapLevel = 0;
 
-	const mapLevel = 0;
-
+	if (game.jobs.Explorer.locked) {
+		farmingDetails.biome = 'Random';
+		farmingDetails.mapSliders = [0, 9, 9];
+	}
 	//If we're past the zone we want to farm for all prestiges in then set targetPrestige to the highest prestige available.
 	//equipsToGet will automatically change GambesOP to Breastplate if the Slow challenge has not yet been completed.
 	if (getPageSetting('ForcePresZ') >= 0 && game.global.world >= getPageSetting('ForcePresZ')) {
 		targetPrestige = 'GambesOP';
 	}
-	shouldMap = equipsToGet(game.global.world, targetPrestige)[0] > 0;
 
 	//Figure out how many equips to farm for & maps to run to get to that value
 	const prestigeInfo = equipsToGet(game.global.world, targetPrestige);
 	const prestigeToFarmFor = prestigeInfo[0];
 	const mapsToRun = prestigeInfo[1];
+
+	/* // Allow lower mapLevel if we are missing many prestiges. Count how many times prestigeToFarmFor can be divided by two.
+	mapLevel = -(Math.floor(prestigeToFarmFor / 2) - 1); */
+
+	//Reduce map level to the value of the last prestige item we need to farm
+	//Shouldn't be necessary but could be useful if a user enables this setting later in their run
+	while (prestigeToFarmFor === equipsToGet(mapLevel - 1, targetPrestige)[0]) {
+		mapLevel--;
+	}
+
+	shouldMap = prestigeToFarmFor[0] > 0;
 
 	//Prestige Skip
 	//2 or more unbought prestiges
@@ -1545,6 +1557,10 @@ function prestigeClimb() {
 	}
 
 	const mapSpecial = getAvailableSpecials('p');
+
+	//Disable prestige farming if we can't afford the map we are trying to run and we aren't running mapping
+	if (perfectMapCost_Actual(mapLevel, mapSpecial, null, [0, 0, 0], false) > game.resources.fragments.owned)
+		shouldMap = false;
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, 0, mapSpecial);
@@ -3390,7 +3406,7 @@ function prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps
 	else return false;
 }
 
-function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
+function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
 	var maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
@@ -3407,6 +3423,7 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 	document.getElementById("mapLevelInput").value = maplevel;
 	updateMapCost();
 
+	//If we don't want to only check perfect maps then gradually reduce map sliders if we don't have enough fragments
 	if (!onlyPerfect) {
 		if (updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
 			document.getElementById("biomeAdvMapsSelect").value = "Random";
@@ -3424,9 +3441,15 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 		}
 		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 
-		if (updateMapCost(true) > game.resources.fragments.owned) {
+		if (updateMapCost(true) > game.resources.fragments.owned)
 			document.getElementById("advSpecialSelect").value = 0;
-			updateMapCost();
+
+		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
+
+		//Reduce map loot if vital
+		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+			lootAdvMapsRange.value -= 1;
+			if (updateMapCost(true) <= game.resources.fragments.owned) break;
 		}
 	}
 
@@ -3556,17 +3579,21 @@ function perfectMapCost_Actual(plusLevel, specialModifier, biome, sliders = [9, 
 	baseCost += sliders[1];
 	baseCost += sliders[2];
 	var mapLevel = game.global.world;
+	//Check for negative map levels
 	if (plusLevel < 0)
 		mapLevel = mapLevel + plusLevel;
+	//If map level we're checking is below level 6 (the minimum) then set it to 6
 	if (mapLevel < 6)
 		mapLevel = 6;
+	//Post broken planet check
 	baseCost *= (game.global.world >= 60) ? 0.74 : 1;
 	//Perfect checked
 	if (perfect && sliders.reduce(function (a, b) { return a + b; }, 0) === 27) baseCost += 6;
 	//Adding in plusLevels
 	if (plusLevel > 0)
 		baseCost += (plusLevel * 10)
-	if (specialModifier !== "0")
+	//Special modifier
+	if (specialModifier !== '0')
 		baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
 	baseCost += mapLevel;
 	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
