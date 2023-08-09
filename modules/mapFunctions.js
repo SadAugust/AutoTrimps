@@ -1535,7 +1535,7 @@ function prestigeClimb() {
 
 	//Reduce map level to the value of the last prestige item we need to farm
 	//Shouldn't be necessary but could be useful if a user enables this setting later in their run
-	while (prestigeToFarmFor === equipsToGet(mapLevel - 1, targetPrestige)[0]) {
+	while (prestigeToFarmFor > 0 && prestigeToFarmFor === equipsToGet(mapLevel - 1, targetPrestige)[0]) {
 		mapLevel--;
 	}
 
