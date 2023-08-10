@@ -355,16 +355,6 @@ function mainLoop() {
 	}
 	if (shouldRunInTimeWarp()) farmingDecision();
 
-	//Void, AutoLevel, Breed Timer, Tenacity information
-	if (!usingRealTimeOffline && document.getElementById('additionalInfo') !== null) {
-		var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
-		var autoLevelText = " | Auto Level: " + hdStats.autoLevel;
-		var breedTimerText = game.global.universe === 1 ? " | B: " + ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's' : "";
-		var tenacityText = game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + (Math.floor(game.portal.Tenacity.getTime()) + "m") : "";
-
-		document.getElementById('additionalInfo').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
-	}
-
 	if (MODULES.maps.slowScumming && game.global.mapRunCounter !== 0) {
 		if (game.global.mapBonus === 10) MODULES.maps.slowScumming = false;
 		else {
@@ -436,6 +426,9 @@ function mainLoop() {
 			if (MODULES.popups.remainingTime <= 0) MODULES.popups.remainingTime = 0;
 		}, 100);
 	}
+
+	//Void, AutoLevel, Breed Timer, Tenacity information
+	makeAdditionalInfo();
 }
 
 //U1 functions

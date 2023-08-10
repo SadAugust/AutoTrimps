@@ -644,7 +644,6 @@ function decayFinishChallenge() {
 }
 
 function challengeInfo() {
-	if (usingRealTimeOffline) return;
 	if (!game.global.runningChallengeSquared) return;
 	if (challengeCurrentZone === game.stats.zonesCleared.value) return;
 

@@ -373,11 +373,9 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 //Auto Equality
 function equalityManagement() {
-	if (usingRealTimeOffline) {
-		if (!getPageSetting('timeWarpSpeed')) {
-			equalityManagementBasic();
-			return;
-		}
+	if (usingRealTimeOffline && !getPageSetting('timeWarpSpeed')) {
+		equalityManagementBasic();
+		return;
 	}
 
 	if (game.global.preMapsActive || game.global.gridArray.length <= 0)
