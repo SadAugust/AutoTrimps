@@ -286,7 +286,6 @@ function freeVoidPortal() {
 	if (game.permaBoneBonuses.voidMaps.owned < 5) MODULES.portal.portalForVoid = false;
 	if (game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
 	if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned) && game.global.canRespecPerks) MODULES.portal.portalForVoid = false;
-	if (usingRealTimeOffline) MODULES.portal.portalForVoid = false;
 
 	if (MODULES.portal.portalForVoid === false) return;
 	if (checkLiqZoneCount() >= 20) {

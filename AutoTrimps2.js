@@ -240,6 +240,7 @@ function toggleCatchUpMode() {
 		if (atSettings.loops.guiLoopInterval) clearInterval(atSettings.loops.guiLoopInterval);
 		atSettings.loops.mainLoopInterval = null;
 		atSettings.loops.atTimeLapseFastLoop = false;
+		atSettings.loops.guiLoopInterval = null;
 		gameLoop = originalGameLoop;
 		atSettings.loops.mainLoopInterval = setInterval(mainLoop, atSettings.runInterval);
 		atSettings.loops.guiLoopInterval = setInterval(guiLoop, atSettings.runInterval * 10);
@@ -264,11 +265,12 @@ function toggleCatchUpMode() {
 			if (loops % getPageSetting('timeWarpFrequency') === 0 || newZone) {
 				mainLoop();
 				//If user want to see the games UI then run this code every n game loops.
-				if (getPageSetting('timeWarpDisplay')) {
+				if (getPageSetting('timeWarpDisplay') && usingRealTimeOffline) {
 					usingRealTimeOffline = false;
 					updateGoodBar();
 					updateBadBar(getCurrentEnemy_new());
 					updateLabels(true);
+					displayMostEfficientEquipment();
 					usingRealTimeOffline = true;
 				}
 			}
@@ -277,6 +279,7 @@ function toggleCatchUpMode() {
 			farmingDecision();
 			autoMap();
 			callBetterAutoFight();
+			autoPortalCheck();
 			if (loops % 10 === 0 || newZone) updateAutoMapsStatus();
 			if (game.global.universe === 1) checkStanceSetting();
 			if (game.global.universe === 2) equalityManagement();
@@ -295,6 +298,11 @@ function callFunction(id) {
 			if (typeof debug === "function") debug(id + " failed to run.<br>" + e)
 			else console.log(id + " failed to run.<br>" + e);
 		}
+}
+
+//Offline mode check
+function shouldRunInTimeWarp() {
+	return !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 }
 
 function mainLoop() {
@@ -342,13 +350,10 @@ function mainLoop() {
 	//This needs to be run here so that any variables that are reset at the start of a zone are reset before hdStats and mapSettings variables are updated.
 	mainCleanup();
 
-	//Offline mode check
-	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
-
 	if (atSettings.intervals.oneSecond) {
 		hdStats = new HDStats();
 	}
-	if (shouldRunTW) farmingDecision();
+	if (shouldRunInTimeWarp()) farmingDecision();
 
 	//Void, AutoLevel, Breed Timer, Tenacity information
 	if (!usingRealTimeOffline && document.getElementById('additionalInfo') !== null) {
@@ -374,7 +379,7 @@ function mainLoop() {
 	//Sets the resources needed for the upgrades you have to buy
 	setResourceNeeded();
 
-	if (shouldRunTW) {
+	if (shouldRunInTimeWarp()) {
 		//AutoMaps
 		autoMap();
 		updateAutoMapsStatus();
@@ -402,9 +407,11 @@ function mainLoop() {
 	autoEquip();
 
 	//Portal
-	autoPortalCheck();
+
+	if (shouldRunInTimeWarp()) autoPortalCheck();
 	//Equip highlighting
-	displayMostEfficientEquipment();
+
+	if (shouldRunInTimeWarp()) displayMostEfficientEquipment();
 
 	//Logic for Universe 1
 	mainLoopU1();
@@ -434,7 +441,6 @@ function mainLoop() {
 //U1 functions
 function mainLoopU1() {
 	if (game.global.universe !== 1) return;
-	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 	//Core
 	geneAssist();
 	autoRoboTrimp();
@@ -455,7 +461,7 @@ function mainLoopU1() {
 	if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidEmpower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidEmpower();
 
 	//Stance
-	if (shouldRunTW) checkStanceSetting();
+	if (shouldRunInTimeWarp()) checkStanceSetting();
 
 	//Spire. Exit cell & respec
 	if (game.global.spireActive) {
@@ -467,11 +473,10 @@ function mainLoopU1() {
 //U2 functions
 function mainLoopU2() {
 	if (game.global.universe !== 2) return;
-	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 	//Archeology
 	/* if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring(); */
 	//Auto Equality Management
-	if (shouldRunTW) {
+	if (shouldRunInTimeWarp()) {
 		if (getPageSetting('equalityManagement') === 1) equalityManagementBasic();
 		if (getPageSetting('equalityManagement') === 2) equalityManagement();
 	}
