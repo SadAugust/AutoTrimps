@@ -1539,7 +1539,7 @@ function prestigeClimb() {
 		mapLevel--;
 	}
 
-	shouldMap = prestigeToFarmFor[0] > 0;
+	shouldMap = prestigeToFarmFor > 0;
 
 	//Prestige Skip
 	//2 or more unbought prestiges
@@ -1584,7 +1584,6 @@ function prestigeClimb() {
 	farmingDetails.mapLevel = mapLevel;
 	farmingDetails.autoLevel = true;
 	farmingDetails.special = mapSpecial;
-	farmingDetails.prestigeToFarmFor = prestigeToFarmFor;
 	farmingDetails.mapsToRun = mapsToRun;
 
 	return farmingDetails;
