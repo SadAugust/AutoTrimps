@@ -34,13 +34,13 @@ function updateAutoMapsStatus(get) {
 	if (getPageSetting('autoMaps') === 0) status = '[Auto Maps Off] ' + status;
 
 
-	/* if (usingRealTimeOffline && getPageSetting('timeWarpDisplay')) {
+	if (usingRealTimeOffline && getPageSetting('timeWarpDisplay')) {
 		var ticks = offlineProgress.ticksProcessed;
 		var maxTicks = offlineProgress.progressMax;
 		var barWidth = ((ticks / maxTicks) * 100).toFixed(1) + "%";
 
-		status = "TW: " + prettify(ticks) + "/" + prettify(maxTicks) + " (" + barWidth + ") " + status;
-	} */
+		status = "Time Warp - " + barWidth + "<br>" + status;
+	}
 
 	var resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
 	var resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
