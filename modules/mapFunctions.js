@@ -977,14 +977,14 @@ function smithyFarm() {
 		var mapBonus;
 		if (game.global.mapsActive) mapBonus = getCurrentMapObject().bonus;
 
-		var rSFSettings = baseSettings[settingIndex];
-		var mapLevel = challengeActive('Quest') ? -1 : rSFSettings.level;
+		var setting = baseSettings[settingIndex];
+		var mapLevel = challengeActive('Quest') ? -1 : setting.level;
 		var mapSpecial = getAvailableSpecials('lmc', true);
 		var biome = getBiome();
 		var jobRatio = '0,0,0,0';
-		var smithyGoal = challengeActive('Quest') && currQuest() === 10 ? getPageSetting('questSmithyMaps') : rSFSettings.repeat;
+		var smithyGoal = challengeActive('Quest') && currQuest() === 10 ? getPageSetting('questSmithyMaps') : setting.repeat;
 
-		if (currQuest() === 10 || rSFSettings.autoLevel) {
+		if (currQuest() === 10 || setting.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeatsSmithy !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
 				if (mapBonus === 'lsc' || mapBonus === 'ssc') game.global.mapRunCounter = MODULES.maps.mapRepeatsSmithy[0];
 				else if (mapBonus === 'lwc' || mapBonus === 'swc') game.global.mapRunCounter = MODULES.maps.mapRepeatsSmithy[1];
@@ -1012,7 +1012,7 @@ function smithyFarm() {
 		var metalBase = scaleToCurrentMap_AT(simpleSeconds_AT("metal", 1, '0,0,1'), false, true, mapLevel);
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
-		if ((currQuest() === 10 || rSFSettings.mapType === 'Map Count') && smithyGoal !== 0) {
+		if ((currQuest() === 10 || setting.mapType === 'Map Count') && smithyGoal !== 0) {
 			var smithyCount = 0;
 			//Checking total map count user wants to run
 			var totalMaps = mapSettings.mapName === mapName ? smithyGoal - game.global.mapRunCounter : smithyGoal;
@@ -1095,8 +1095,8 @@ function smithyFarm() {
 			if (!shouldMap) {
 				mappingDetails(mapName, mapLevel, mapSpecial, smithyGoal);
 				MODULES.maps.mapRepeatsSmithy = [0, 0, 0];
-				if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point');
-				resetMapVars(rSFSettings);
+				if (!challengeActive('Quest') && setting.meltingPoint) runUniqueMap('Melting Point');
+				resetMapVars(setting);
 				return farmingDetails;
 			}
 		}
@@ -1106,7 +1106,7 @@ function smithyFarm() {
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = mapLevel;
-		farmingDetails.autoLevel = currQuest() === 10 ? true : rSFSettings.autoLevel;
+		farmingDetails.autoLevel = currQuest() === 10 ? true : setting.autoLevel;
 		farmingDetails.jobRatio = jobRatio;
 		farmingDetails.special = mapSpecial;
 		farmingDetails.biome = biome;
@@ -1115,8 +1115,6 @@ function smithyFarm() {
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
-
-		if (!shouldMap) resetMapVars(rSFSettings);
 	}
 	return farmingDetails;
 }

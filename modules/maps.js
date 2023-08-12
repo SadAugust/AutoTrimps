@@ -23,7 +23,6 @@ function runSelectedMap(mapId, madAdjective) {
 
 function updateAutoMapsStatus(get) {
 	var status = '';
-
 	//Setting up status
 	if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (mapSettings.mapName !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
@@ -33,6 +32,16 @@ function updateAutoMapsStatus(get) {
 	else status = 'Advancing';
 
 	if (getPageSetting('autoMaps') === 0) status = '[Auto Maps Off] ' + status;
+
+
+	/* if (usingRealTimeOffline && getPageSetting('timeWarpDisplay')) {
+		var ticks = offlineProgress.ticksProcessed;
+		var maxTicks = offlineProgress.progressMax;
+		var barWidth = ((ticks / maxTicks) * 100).toFixed(1) + "%";
+
+		status = "TW: " + prettify(ticks) + "/" + prettify(maxTicks) + " (" + barWidth + ") " + status;
+	} */
+
 	var resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
 	var resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
 	var getPercent = (game.stats.heliumHour.value() /
