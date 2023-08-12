@@ -411,14 +411,15 @@ function zoneGoCheck(setting, farmType) {
 	var hdRatio = mapSettings.mapName === 'Void Map' ? hdStats.hdRatioVoid : hdStats.hdRatio
 
 	//Equipment related section for zone overrides
-	if (farmType === 'attack' || farmType === 'health') {
+	//At or above z10 so that we have enough time to purchase buildings during the early game
+	if (game.global.world >= 10 && farmType === 'attack' || farmType === 'health') {
 		if (mapSettings.mapName === 'Wither') return zoneDetails;
 		if (farmType === 'attack') {
 			if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 			if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 		}
 		if (farmType === 'health') {
-			if (whichHitsSurvived() < getPageSetting('equipCutOffHS')) return zoneDetails;
+			if (whichHitsSurvived() > getPageSetting('equipCutOffHS')) return zoneDetails;
 			//Farming for health means we should prio health equips 
 			if (mapSettings.shouldHealthFarm) return zoneDetails;
 			//Since having to use equality will lower our damage then we want more health to reduce equality usage

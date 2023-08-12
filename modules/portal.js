@@ -39,8 +39,12 @@ function autoPortal(specificPortalZone, skipDaily) {
 	if (skipDaily) portalZone = game.global.world;
 	if (MODULES.portal.portalForVoid) {
 		portalZone = checkLiqZoneCount() >= 99 ? 99 : (checkLiqZoneCount() + 1);
-		if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) portalZone = game.global.world;
+		if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) {
+			specificPortalZone = game.global.world;
+			portalZone = game.global.world;
+		}
 	}
+
 
 	switch (getPageSetting('autoPortal', universe)) {
 		case "Helium Per Hour":
@@ -64,13 +68,13 @@ function autoPortal(specificPortalZone, skipDaily) {
 				OKtoPortal = false;
 			if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
 				if (getPageSetting('heliumHrPortal', universe) > 0 && game.global.totalVoidMaps > 0) {
-					if (!MODULES.mapFunctions.portalAfterVoids) {
+					if (!MODULES.portal.afterVoids) {
 						if (getPageSetting('heliumHrPortal', universe) === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
 						else debug("Z" + game.global.world + " - Portaling after void maps have been run.", "portal");
 					}
-					MODULES.mapFunctions.portalAfterVoids = true;
+					MODULES.portal.afterVoids = true;
 				}
-				if (MODULES.mapFunctions.portalAfterVoids) {
+				if (MODULES.portal.afterVoids) {
 					if (game.global.spireActive && getPageSetting('heliumHrExitSpire')) {
 						debug("Exiting Spire to run voids faster.", "portal");
 						endSpire();
@@ -207,13 +211,13 @@ function dailyAutoPortal(specificPortalZone) {
 			OKtoPortal = false;
 		if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
 			if (getPageSetting('dailyHeliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
-				if (!MODULES.mapFunctions.portalAfterVoids) {
+				if (!MODULES.portal.afterVoids) {
 					if (getPageSetting('dailyHeliumHrPortal') === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
 					else debug("Z" + game.global.world + " - Portaling after void maps have been run.", "portal");
 				}
-				MODULES.mapFunctions.portalAfterVoids = true;
+				MODULES.portal.afterVoids = true;
 			}
-			if (MODULES.mapFunctions.portalAfterVoids) {
+			if (MODULES.portal.afterVoids) {
 				if (game.global.spireActive && getPageSetting('dailyHeliumHrExitSpire')) {
 					debug("Exiting Spire to run voids faster.", "portal");
 					endSpire();
@@ -612,6 +616,7 @@ function doPortal(challenge, skipDaily) {
 	MODULES["portal"].dailyPercent = 0;
 	lastHeliumZone = 0;
 	MODULES.portal.zonePostpone = 0;
+
 	resetVarsZone();
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 		loadMutations(preset);
@@ -738,26 +743,27 @@ function resetVarsZone(loadingSave) {
 		atSettings.portal.lastHZE = 0;
 
 		MODULES.fightinfo.lastProcessedWorld = 0;
+		MODULES.portal.portalForVoid = false;
+
 	}
 	delete mapSettings.voidHDIndex;
 	MODULES.heirlooms.plagueSwap = false;
 	MODULES.heirlooms.compressedCalc = false;
+
 	//General
 	MODULES.maps.mapTimer = 0;
 	MODULES.maps.fragmentCost = Infinity;
-	var mapFunction = MODULES['mapFunctions'];
+	MODULES.portal.afterVoids = false;
 
 	//Fragment Farming	
 	initialFragmentMapID = undefined;
-	//Challenge Repeat
-	mapFunction.challengeContinueRunning = false;
 
 	//Auto Level variables
 	MODULES.maps.mapRepeats = 0;
 	mapSettings.levelCheck = Infinity;
 
-	//Resetting variables that would cause issues if they were left as is
-	mapFunction.portalAfterVoids = false;
+	//Challenge Repeat
+	MODULES.mapFunctions.challengeContinueRunning = false;
 
 	hdStats = new HDStats();
 	farmingDecision();
@@ -836,7 +842,7 @@ function surkyCombatRespec() {
 	//Fire all workers so that we don't run into issues when finishing the respec
 	fireAllWorkers();
 	activateClicked();
-	var calcName = currSettingUniverse === 2 ? "Surky" : "Perky";
+	var calcName = game.global.universe === 2 ? "Surky" : "Perky";
 	debug(calcName + " - Respeccing into the " + $$('#presetElem')[$$('#presetElem').selectedIndex].innerHTML + " preset.", "portal");
 
 	//Reverting back to original preset

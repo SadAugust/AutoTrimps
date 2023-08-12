@@ -196,10 +196,6 @@ function directDamage(block, pierce, currentHealth, minDamage, critPower = 2, st
 	return harm;
 }
 
-function newArmyRdy() {
-	return game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
-}
-
 function survive(formation = "S", critPower = 2, ignoreArmy) {
 	//Check if the formation is valid
 	if (formation === "D" && !game.upgrades.Dominance.done) return false;

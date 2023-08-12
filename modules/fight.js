@@ -4,16 +4,21 @@ function callBetterAutoFight() {
 	else if (getPageSetting('autoFight') === 2) betterAutoFight3();
 }
 
+function newArmyRdy() {
+	return game.resources.trimps.realMax() <= game.resources.trimps.owned;
+}
+
 function betterAutoFight() {
 	if (game.global.autoBattle && !game.global.pauseFight)
 		pauseFight();
-	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || MODULES.maps.livingActive) return;
+	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || MODULES.maps.livingActive)
+		return;
 	var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
 
 	var lowLevelFight = game.resources.trimps.maxSoldiers < breeding * 0.5 && breeding > game.resources.trimps.realMax() * 0.3 && game.global.world <= 5;
 
 	if (!game.global.fighting) {
-		if (newArmyRdy() || game.global.soldierHealth > 0 || lowLevelFight || challengeActive('Watch')) {
+		if (newArmyRdy() || game.global.soldierHealth > 0) {
 			fightManual();
 		}
 	}

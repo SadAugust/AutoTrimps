@@ -269,6 +269,26 @@ function toggleCatchUpMode() {
 					usingRealTimeOffline = false;
 					updateGoodBar();
 					updateBadBar(getCurrentEnemy_new());
+					document.getElementById("goodGuyHealthMax").innerHTML = prettify(game.global.soldierHealthMax);
+					document.getElementById("badGuyHealthMax").innerHTML = prettify(getCurrentEnemy_new().maxHealth);
+
+					var blockDisplay = "";
+					if (game.global.universe == 2) {
+						var esMax = game.global.soldierEnergyShieldMax;
+						var esMult = getEnergyShieldMult();
+						var layers = Fluffy.isRewardActive('shieldlayer');
+						if (layers > 0) {
+							esMax *= layers + 1;
+							esMult *= layers + 1;
+						}
+						blockDisplay = prettify(esMax) + " (" + Math.round(esMult * 100) + "%)";
+					}
+					else blockDisplay = prettify(game.global.soldierCurrentBlock);
+					document.getElementById("goodGuyBlock").innerHTML = blockDisplay;
+					document.getElementById("goodGuyAttack").innerHTML = calculateDamage(game.global.soldierCurrentAttack, true, true);
+					var badAttackElem = document.getElementById("badGuyAttack");
+					badAttackElem.innerHTML = calculateDamage(getCurrentEnemy_new().attack, true, false, false, getCurrentEnemy_new());
+
 					updateLabels(true);
 					displayMostEfficientEquipment();
 					usingRealTimeOffline = true;

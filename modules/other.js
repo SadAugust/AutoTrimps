@@ -907,6 +907,54 @@ function updateLabels(force) { //Tried just updating as something changes, but s
 	checkAndDisplayEquipment();
 }
 
+//Check and update each patch!
+function updateButtonColor(what, canAfford, isJob) {
+	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) return;
+	if (what == "Amalgamator") return;
+	var elem = document.getElementById(what);
+	if (elem === null) {
+		return;
+	}
+	if (game.options.menu.lockOnUnlock.enabled == 1 && (new Date().getTime() - 1000 <= game.global.lastUnlock)) canAfford = false;
+	if (game.global.challengeActive == "Archaeology" && game.upgrades[what] && game.upgrades[what].isRelic) {
+		var className = "thingColor" + ((canAfford) ? "CanAfford" : "CanNotAfford");
+		var nextAuto = game.challenges.Archaeology.checkAutomator();
+		if (nextAuto == "off") className += "RelicOff";
+		else if (nextAuto == "satisfied") className += "RelicSatisfied";
+		else if (nextAuto == what + "Cost") className += "RelicNextWaiting";
+		else if (nextAuto + "Relic" == what) className += "RelicBuying";
+		swapClass("thingColor", className, elem);
+		return;
+	}
+	if (isJob && game.global.firing === true) {
+		if (game.jobs[what].owned >= 1) {
+			//note for future self:
+			//if you need to add more states here, change these to use the swapClass func -grabz
+			//with "thingColor" as first param
+			swapClass("thingColor", "thingColorFiringJob", elem);
+		}
+		else {
+			swapClass("thingColor", "thingColorCanNotAfford", elem);
+		}
+		return;
+	}
+	if (what == "Warpstation") {
+		if (canAfford)
+			elem.style.backgroundColor = getWarpstationColor();
+		else
+			elem.style.backgroundColor = "";
+	}
+
+	if (canAfford) {
+		if
+			(what == "Gigastation" && (ctrlPressed || game.options.menu.ctrlGigas.enabled)) swapClass("thingColor", "thingColorCtrl", elem);
+		else
+			swapClass("thingColor", "thingColorCanAfford", elem);
+	}
+	else
+		swapClass("thingColor", "thingColorCanNotAfford", elem);
+}
+
 //Hacky way to allow the SA popup button to work within TW.
 autoBattle.originalpopup = autoBattle.popup;
 autoBattle.popup = function () {

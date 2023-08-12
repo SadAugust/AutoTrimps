@@ -336,7 +336,9 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 }
 
 function targetHitsSurvived() {
-	const hitsSurvived = mapSettings.mapName === 'Hits Survived' ? mapSettings.hdRatio : isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
+	const hitsSurvived = mapSettings.mapName === 'Hits Survived' ? mapSettings.hdRatio :
+		isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') :
+			getPageSetting('hitsSurvived');
 	return hitsSurvived;
 }
 

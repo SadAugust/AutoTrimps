@@ -1,6 +1,6 @@
 MODULES.mapFunctions = {};
 
-MODULES.mapFunctions.portalAfterVoids = false;
+MODULES.portal.afterVoids = false;
 MODULES.mapFunctions.hasHealthFarmed = '';
 MODULES.mapFunctions.hasSpireFarmed = '';
 MODULES.mapFunctions.hasVoidFarmed = '';
@@ -132,6 +132,19 @@ function exitSpireCell() {
 	isDoingSpire() && game.global.lastClearedCell > getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
 }
 
+function enoughHealth(map) {
+	var totalHealth = calcOurHealth(false, "world", false, true) + calcOurBlock(false, false); // Handle broken planet once get to it.
+	//All maps are slow except Imploding Star so we only need to be able to survive against Snimps in every other map
+	var enemyName = 'Snimp';
+	if (map.name === 'Imploding Star') enemyName = 'Neutrimp';
+	var equalityAmt = 0;
+	if (game.global.universe === 2) equalityAmt = equalityQuery(enemyName, map.level, map.size, 'map', map.difficulty, 'gamma');
+	//Calculate enemy damage for the map
+	var enemyDmg = calcEnemyAttackCore('map', map.level, map.size, enemyName, false, false, equalityAmt) * map.difficulty;
+
+	return totalHealth > enemyDmg;
+}
+
 //Unique Maps Pt.2
 function shouldRunUniqueMap(map) {
 	const mapData = MODULES.uniqueMaps[map.name];
@@ -146,6 +159,7 @@ function shouldRunUniqueMap(map) {
 	if (game.global.universe !== mapData.universe) {
 		return false;
 	}
+
 	if (!hdStats.isC3 && mapData.challenges.includes(hdStats.currChallenge) && !challengeActive('')) {
 		return true;
 	}
@@ -164,23 +178,23 @@ function shouldRunUniqueMap(map) {
 	if (game.global.universe === 1) {
 		if (map.name === 'The Block') {
 			//We need Shieldblock
-			if (!game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock')) {
+			if (!game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock') && game.global.highestLevelCleared < 40 && enoughHealth(map)) { // Don't bother before z12
 				return true;
 			}
 			if (game.mapUnlocks.TheBlock.canRunOnce && uniqueMapSetting.The_Block.enabled && game.global.world >= uniqueMapSetting.The_Block.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Block.cell || liquified)) {
 				return true;
 			}
-		} else if (map.name === 'The Wall') {
+		} else if (map.name === 'The Wall') {  //Don't bother before z16
 			//We need Bounty
-			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
+			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased && enoughHealth(map)) {
 				return true;
 			}
 			if (game.mapUnlocks.TheWall.canRunOnce && uniqueMapSetting.The_Wall.enabled && game.global.world >= uniqueMapSetting.The_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Wall.cell || liquified)) {
 				return true;
 			}
-		} else if (map.name === 'Dimension of Anger') {
+		} else if (map.name === 'Dimension of Anger') {//Don't bother before z22
 			//Unlock the portal
-			if (!game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none") {
+			if (!game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none" && enoughHealth(map)) {
 				return true;
 			}
 			if (game.mapUnlocks.Portal.canRunOnce && uniqueMapSetting.Dimension_of_Anger.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Anger.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Anger.cell || liquified)) {
@@ -188,19 +202,19 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'Trimple Of Doom') {
 			//Unlock the Relentlessness perk
-			if (game.portal.Relentlessness.locked) {
+			if (game.portal.Relentlessness.locked && enoughHealth(map)) {
 				return true;
 			}
 			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Trimple_of_Doom.enabled && game.global.world >= uniqueMapSetting.Trimple_of_Doom.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Trimple_of_Doom.cell || liquified)) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
-		} else if (map.name === 'The Prison') {
+		} else if (map.name === 'The Prison' && enoughHealth(map)) {
 			if (game.mapUnlocks.ThePrison.canRunOnce && uniqueMapSetting.The_Prison.enabled && game.global.world >= uniqueMapSetting.The_Prison.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Prison.cell || liquified)) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
-		} else if (map.name === 'Imploding Star') {
+		} else if (map.name === 'Imploding Star' && enoughHealth(map)) {
 			if (game.mapUnlocks.ImplodingStar.canRunOnce && uniqueMapSetting.Imploding_Star.enabled && game.global.world >= uniqueMapSetting.Imploding_Star.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Imploding_Star.cell || liquified)) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
@@ -212,7 +226,7 @@ function shouldRunUniqueMap(map) {
 		}
 		else if (map.name === 'Big Wall') {
 			// we need Bounty
-			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
+			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased && enoughHealth(map)) {
 				return true;
 			}
 		} else if (map.name === 'Dimension of Rage') {
@@ -345,11 +359,12 @@ function voidMaps() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('voidMapSettings');
+	const settingName = 'voidMapSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
-	if (!defaultSettings.active && !mapSettings.portalAfterVoids && !MODULES.mapFunctions.portalAfterVoids) return farmingDetails;
+	if (!defaultSettings.active && !mapSettings.portalAfterVoids && !MODULES.portal.afterVoids) return farmingDetails;
 
 	const voidReduction = hdStats.isDaily ? dailyModiferReduction() : 0;
 	const dailyAddition = dailyOddOrEven();
@@ -397,9 +412,9 @@ function voidMaps() {
 
 		if (dailyAddition.active) {
 			if (dailyAddition.skipZone) continue;
-			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
+			if (!settingShouldRun(currSetting, world, 0, settingName) && !settingShouldRun(currSetting, world, zoneAddition, settingName)) continue;
 		}
-		else if (!settingShouldRun(currSetting, world, 0)) continue;
+		else if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
 			var skipLine = 0;
@@ -445,7 +460,7 @@ function voidMaps() {
 		}
 	}
 
-	if (settingIndex !== null || (mapSettings.voidHDIndex && mapSettings.voidHDIndex !== Infinity && baseSettings[mapSettings.voidHDIndex].world <= game.global.world && baseSettings[mapSettings.voidHDIndex].maxvoidzone >= game.global.world) || mapSettings.portalAfterVoids || MODULES.mapFunctions.portalAfterVoids) {
+	if (settingIndex !== null || (mapSettings.voidHDIndex && mapSettings.voidHDIndex !== Infinity && baseSettings[mapSettings.voidHDIndex].world <= game.global.world && baseSettings[mapSettings.voidHDIndex].maxvoidzone >= game.global.world) || mapSettings.portalAfterVoids || MODULES.portal.afterVoids) {
 		var setting = {};
 		if (settingIndex === null && !mapSettings.voidHDIndex) {
 			var portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
@@ -538,7 +553,8 @@ function mapBonus() {
 
 	//Initialise variables
 	const mapBonusZone = getPageSetting('mapBonusZone');
-	const baseSettings = getPageSetting('mapBonusSettings');
+	const settingName = 'mapBonusSettings';
+	const baseSettings = getPageSetting(settingName);
 	var defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 	var mapBonusRatio = getPageSetting('mapBonusRatio');
@@ -557,7 +573,7 @@ function mapBonus() {
 			if (game.global.mapBonus === 10) continue;
 			const currSetting = baseSettings[y];
 			var world = currSetting.world;
-			if (!settingShouldRun(currSetting, world, 0)) continue;
+			if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 			if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
 
 			if (game.global.world - mapBonusZone[y] >= 0)
@@ -641,7 +657,8 @@ function mapFarm() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('mapFarmSettings');
+	const settingName = 'mapFarmSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -657,18 +674,11 @@ function mapFarm() {
 		var world = currSetting.world;
 		if (currSetting.atlantrimp && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
 
-		//Ensure we don't eternally farm if daily reset timer is low enough that it will start again next zone
-		//Checks against current portal counter to see if it has already been run this portal.
-		if (currSetting.mapType === 'Daily Reset') {
-			var totalPortals = getTotalPortals();
-			if (currSetting.done && currSetting.done.split('_')[0] === totalPortals.toString()) continue;
-		}
-
 		if (dailyAddition.active) {
 			if (dailyAddition.skipZone) continue;
-			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
+			if (!settingShouldRun(currSetting, world, 0, settingName) && !settingShouldRun(currSetting, world, zoneAddition, settingName)) continue;
 		}
-		else if (!settingShouldRun(currSetting, world, 0)) continue;
+		else if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 		if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
 
 		for (var x = 0; x < zoneAddition + 1; x++) {
@@ -727,7 +737,7 @@ function mapFarm() {
 		//Marking setting as complete if we've run enough maps.
 		if (mapSettings.mapName === mapName && (mapType === 'Daily Reset' ? repeatCheck <= repeatCounter : repeatCheck >= repeatCounter)) {
 			mappingDetails(mapName, mapLevel, mapSpecial);
-			resetMapVars(setting);
+			resetMapVars(setting, settingName);
 			shouldMap = false;
 			if (shouldAtlantrimp) runUniqueMap('Atlantrimp');
 			saveSettings();
@@ -766,7 +776,8 @@ function tributeFarm() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('tributeFarmSettings');
+	const settingName = 'tributeFarmSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -783,9 +794,9 @@ function tributeFarm() {
 		var world = currSetting.world;
 		if (dailyAddition.active) {
 			if (dailyAddition.skipZone) continue;
-			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
+			if (!settingShouldRun(currSetting, world, 0, settingName) && !settingShouldRun(currSetting, world, zoneAddition, settingName)) continue;
 		}
-		else if (!settingShouldRun(currSetting, world, 0)) continue;
+		else if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
@@ -881,7 +892,7 @@ function tributeFarm() {
 		//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 		if (mapSettings.mapName === mapName && !shouldMap) {
 			mappingDetails(mapName, mapLevel, mapSpecial, tributeGoal, meteorologistGoal);
-			resetMapVars(setting);
+			resetMapVars(setting, settingName);
 			if (game.global.mapsActive) recycleMap_AT();
 			shouldBuyBuildings = false;
 			return farmingDetails;
@@ -922,7 +933,8 @@ function smithyFarm() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('smithyFarmSettings');
+	const settingName = 'smithyFarmSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -946,9 +958,9 @@ function smithyFarm() {
 		var world = currSetting.world;
 		if (dailyAddition.active) {
 			if (dailyAddition.skipZone) continue;
-			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
+			if (!settingShouldRun(currSetting, world, 0, settingName) && !settingShouldRun(currSetting, world, zoneAddition, settingName)) continue;
 		}
-		else if (!settingShouldRun(currSetting, world, 0)) continue;
+		else if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
@@ -1119,7 +1131,8 @@ function worshipperFarm() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('worshipperFarmSettings');
+	const settingName = 'worshipperFarmSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -1137,9 +1150,9 @@ function worshipperFarm() {
 		var world = currSetting.world;
 		if (dailyAddition.active) {
 			if (dailyAddition.skipZone) continue;
-			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
+			if (!settingShouldRun(currSetting, world, 0, settingName) && !settingShouldRun(currSetting, world, zoneAddition, settingName)) continue;
 		}
-		else if (!settingShouldRun(currSetting, world, 0)) continue;
+		else if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
@@ -1187,12 +1200,12 @@ function worshipperFarm() {
 			if (getPageSetting('spamMessages').map_Skip && shouldSkip) {
 				debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + mapSpecial + " map doesn't provide " + defaultSettings.shipskip + " or more Worshippers. Evaluate your map settings to correct this", 'map_Skip');
 			}
-			resetMapVars(setting);
+			resetMapVars(setting, settingName);
 		}
 
 		if (mapSettings.mapName === mapName && !shouldMap) {
 			mappingDetails(mapName, mapLevel, mapSpecial);
-			resetMapVars(setting);
+			resetMapVars(setting, settingName);
 		}
 
 		var status = 'Worshipper Farm: ' + game.jobs.Worshipper.owned + "/" + worshipperGoal;
@@ -1311,7 +1324,8 @@ function prestigeRaiding() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('raidingSettings');
+	const settingName = 'raidingSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -1327,7 +1341,7 @@ function prestigeRaiding() {
 		var raidZones = currSetting.raidingzone;
 
 		var world = currSetting.world;
-		if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 		//Checks to see what our raid zone should be
 		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
 			var times = currSetting.repeatevery;
@@ -1617,7 +1631,8 @@ function bionicRaiding() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('bionicRaidingSettings');
+	const settingName = 'bionicRaidingSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -1634,7 +1649,7 @@ function bionicRaiding() {
 		var raidZones = currSetting.raidingzone
 
 		var world = currSetting.world;
-		if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
 			var times = currSetting.repeatevery;
@@ -1712,7 +1727,8 @@ function toxicity() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('toxicitySettings');
+	const settingName = 'toxicitySettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -1725,7 +1741,7 @@ function toxicity() {
 		var currSetting = baseSettings[y];
 		var world = currSetting.world;
 
-		if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
 			settingIndex = y;
@@ -1919,7 +1935,8 @@ function quagmire() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('quagmireSettings');
+	const settingName = 'quagmireSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -1931,7 +1948,7 @@ function quagmire() {
 		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
-		if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		if (game.global.world === currSetting.world) {
 			settingIndex = y;
@@ -1956,7 +1973,7 @@ function quagmire() {
 
 		if (mapSettings.mapName === mapName && !shouldMap) {
 			mappingDetails(mapName);
-			resetMapVars(setting);
+			resetMapVars(setting, settingName);
 		}
 
 		var repeat = game.global.mapsActive && (getCurrentMapObject().name !== 'The Black Bog' || (game.challenges.Quagmire.motivatedStacks - bogsToRun) === 1);
@@ -2121,7 +2138,8 @@ function insanity() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('insanitySettings');
+	const settingName = 'insanitySettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -2133,7 +2151,7 @@ function insanity() {
 		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
-		if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		if (game.global.world === currSetting.world) {
 			settingIndex = y;
@@ -2183,7 +2201,7 @@ function insanity() {
 
 		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 			mappingDetails(mapName, mapLevel, mapSpecial, insanityGoal);
-			resetMapVars(setting.done);
+			resetMapVars(setting, settingName);
 		}
 
 	}
@@ -2318,7 +2336,8 @@ function alchemy() {
 		mapName: mapName
 	};
 
-	const baseSettings = getPageSetting('alchemySettings');
+	const settingName = 'alchemySettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -2331,7 +2350,7 @@ function alchemy() {
 		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
-		if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 		if (game.global.world === currSetting.world) {
 			settingIndex = y;
 			break;
@@ -2448,7 +2467,7 @@ function alchemy() {
 
 			if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 				mappingDetails(mapName, mapLevel, mapSpecial, alchObj.potionsOwned[potion], potionGoal.toString().replace(/[^\d,:-]/g, ''), alchObj.potionNames[potion]);
-				resetMapVars(setting);
+				resetMapVars(setting, settingName);
 			}
 		}
 
@@ -2581,7 +2600,8 @@ function hypothermia() {
 		shouldRun: false,
 		mapName: mapName
 	};
-	const baseSettings = getPageSetting('hypothermiaSettings');
+	const settingName = 'hypothermiaSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -2608,7 +2628,7 @@ function hypothermia() {
 		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
-		if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		if (game.global.world === currSetting.world) {
 			settingIndex = y;
@@ -2670,7 +2690,7 @@ function hypothermia() {
 
 		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 			mappingDetails(mapName, mapLevel, mapSpecial, bonfireCostTotal);
-			resetMapVars(setting);
+			resetMapVars(setting, settingName);
 		}
 	}
 
@@ -2787,7 +2807,8 @@ function desolationGearScum() {
 
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
 
-	const baseSettings = getPageSetting('desolationSettings');
+	const settingName = 'desolationSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -2802,7 +2823,7 @@ function desolationGearScum() {
 		currSetting.cell = 100 - maxOneShotPower() + 1;
 		var targetPrestige = currSetting.prestigeGoal !== 'All' ? MODULES.equipment[currSetting.prestigeGoal].upgrade : 'GamesOP';
 		var world = currSetting.world - 1;
-		if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		//Checks to see what our actual zone should be
 		var raidZones = currSetting.world;
@@ -2996,6 +3017,8 @@ function smithless() {
 	return farmingDetails;
 }
 
+//Skip health check is used when pre-void map farm is being done
+
 function hdFarm(skipHealthCheck, voidFarm) {
 
 	var shouldMap = false;
@@ -3006,6 +3029,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		mapName: mapName
 	};
 
+	//Initial standalone Hits Survived check.
 	var shouldHealthFarm = false;
 	const hitsSurvivedSetting = targetHitsSurvived();
 	var hitsSurvived = hdStats.hitsSurvived;
@@ -3013,7 +3037,8 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
 	}
 
-	const baseSettings = getPageSetting('hdFarmSettings');
+	const settingName = 'hdFarmSettings';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
@@ -3027,7 +3052,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 			if (y === 0) continue;
 			const currSetting = baseSettings[y];
 			const world = currSetting.world;
-			if (!settingShouldRun(currSetting, world, 0)) continue;
+			if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 			if (currSetting.hdType.toLowerCase().includes('void') && game.global.totalVoidMaps === 0) continue;
 			if (skipHealthCheck && currSetting.hdType.includes('hitsSurvived')) continue;
 			settingIndex = y;
@@ -3131,7 +3156,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
-			resetMapVars(setting);
+			resetMapVars(setting, settingName);
 			if (game.global.mapsActive) recycleMap_AT();
 			//Might need to remove this??
 			//Report of a max call stack size. If it happens again then remove this and make it so that it waits 0.1s before checking if void maps are ready to run
@@ -3183,6 +3208,8 @@ function hdFarm(skipHealthCheck, voidFarm) {
 }
 
 function farmingDecision() {
+	//Setting up addon user settings.
+	setupAddonUser();
 	var farmingDetails = {
 		shouldRun: false,
 		mapName: '',
@@ -3282,7 +3309,7 @@ function farmingDecision() {
 }
 
 //Checks to see if the line from the settings should run
-function settingShouldRun(currSetting, world, zoneReduction) {
+function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 	if (!currSetting) return false;
 	if (!world) return false;
 	if (!zoneReduction) zoneReduction = 0;
@@ -3292,13 +3319,24 @@ function settingShouldRun(currSetting, world, zoneReduction) {
 	//If world input is greater than current zone then skips
 	if (game.global.world < world) return false;
 	//Skips if repeat every is set to 0 and the world is greater than the current world.
-
 	if (game.global.world > world && currSetting.repeatevery === 0) return false;
 	//Skips if repeat every is set to 0 and the world is greater than the current world.
 	if (typeof currSetting.repeatevery === 'undefined' && typeof currSetting.repeat === 'undefined' && typeof currSetting.hdType === 'undefined' && typeof currSetting.voidHDRatio === 'undefined' && game.global.world > world) return false;
 	//If the setting is marked as done then skips.
 	var totalPortals = getTotalPortals();
-	if (currSetting.done === totalPortals + "_" + game.global.world) return false;
+	var value = game.global.universe === 2 ? 'valueU2' : 'value';
+	if (settingName && currSetting.row) {
+		var settingDone = game.global.addonUser[settingName][value][currSetting.row].done;
+		if (settingDone === totalPortals + "_" + game.global.world) return false;
+
+		//Ensure we don't eternally farm if daily reset timer is low enough that it will start again next zone
+		//Checks against current portal counter to see if it has already been run this portal.
+		if (typeof currSetting.mapType !== 'undefined' && currSetting.mapType === 'Daily Reset') {
+			if (settingDone && settingDone.split('_')[0] === totalPortals.toString()) return false;
+		}
+	}
+
+
 	//Skips if past designated end zone
 	if (game.global.world > currSetting.endzone + zoneReduction) return false;
 	//Skips if past designated max void zone
@@ -3821,7 +3859,7 @@ function getBiome(mapGoal, resourceGoal) {
 	return biome;
 }
 
-function resetMapVars(setting) {
+function resetMapVars(setting, settingName) {
 	const totalPortals = getTotalPortals();
 	mapSettings.levelCheck = Infinity;
 	mapSettings.mapName = "";
@@ -3830,10 +3868,13 @@ function resetMapVars(setting) {
 	MODULES.maps.slowScumming = false;
 	game.global.mapRunCounter = 0;
 
-	if (setting) {
-		if (setting.hdType === 'hitsSurvived') MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
-		if (mapSettings.voidFarm) MODULES.mapFunctions.hasVoidFarmed = (totalPortals + "_" + game.global.world);
-		setting.done = (totalPortals + "_" + game.global.world);
+	if (mapSettings.voidFarm) MODULES.mapFunctions.hasVoidFarmed = (totalPortals + "_" + game.global.world);
+
+	if (setting && setting.hdType === 'hitsSurvived') MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
+
+	if (setting && settingName && setting.row) {
+		var value = game.global.universe === 2 ? 'valueU2' : 'value';
+		game.global.addonUser[settingName][value][setting.row].done = (totalPortals + "_" + game.global.world);
 	}
 	saveSettings();
 }

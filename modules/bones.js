@@ -1,6 +1,6 @@
 function boneShrine() {
-
-	const baseSettings = getPageSetting('boneShrineSettings');
+	const settingName = 'setting';
+	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (challengeActive('Pandemonium')) return;
 	if (defaultSettings === null) return;
@@ -38,19 +38,19 @@ function boneShrine() {
 	}
 	if (settingIndex !== null) {
 
-		var boneShrineSettings;
+		var setting;
 
 		if (settingIndex === true) {
-			boneShrineSettings = defaultSettings;
-			if (boneShrineSettings.bonebelow <= 0) boneShrineSettings.bonebelow = 999;
+			setting = defaultSettings;
+			if (setting.bonebelow <= 0) setting.bonebelow = 999;
 		} else {
-			boneShrineSettings = baseSettings[settingIndex];
+			setting = baseSettings[settingIndex];
 		}
-		var boneShrineCharges = boneShrineSettings.boneamount;
-		var boneShrineGather = boneShrineSettings.gather;
+		var boneShrineCharges = setting.boneamount;
+		var boneShrineGather = setting.gather;
 		if (challengeActive('Transmute') && boneShrineGather === 'metal') boneShrineGather = 'wood';
-		var boneShrineSpendBelow = boneShrineSettings.bonebelow === -1 ? 0 : boneShrineSettings.bonebelow;
-		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || settingIndex === true ? false : boneShrineSettings.atlantrimp;
+		var boneShrineSpendBelow = setting.bonebelow === -1 ? 0 : setting.bonebelow;
+		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || settingIndex === true ? false : setting.atlantrimp;
 		var boneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 
 		if (boneShrineCharges > boneCharges - boneShrineSpendBelow)
@@ -72,12 +72,16 @@ function boneShrine() {
 		if (!boneShrineAtlantrimp || (boneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === boneShrineDoubler && game.global.lastClearedMapCell >= getCurrentMapObject().size - 30)) {
 			for (var x = 0; x < boneShrineCharges; x++) {
 				if (getPageSetting('jobType') > 0) {
-					buyJobs(boneShrineSettings.jobratio);
+					buyJobs(setting.jobratio);
 				}
 				game.permaBoneBonuses.boosts.consume();
 			}
 			debug('Consumed ' + boneShrineCharges + " bone shrine " + (boneShrineCharges === 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(boneShrineCharges), "bones");
-			boneShrineSettings.done = totalPortals + "_" + game.global.world;
+
+			if (setting && settingName && setting.row) {
+				var value = game.global.universe === 2 ? 'valueU2' : 'value';
+				game.global.addonUser[settingName][value][setting.row].done = (totalPortals + "_" + game.global.world);
+			}
 			saveSettings();
 		}
 	}

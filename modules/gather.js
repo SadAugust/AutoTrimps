@@ -140,6 +140,28 @@ function autoGather() {
 		return;
 	}
 
+	//Get coord if army size is not the problem.
+	//Should only be a necessary thing when at z5 or below as that's where you'll be most resource starved
+	var coordUpgrade = game.upgrades["Coordination"];
+	if (game.global.world <= 5 && !coordUpgrade.locked && canAffordCoordinationTrimps()) {
+		if (resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned) { // Help with science.
+			safeSetGather("science");
+			return;
+		}
+		if (resolvePow(coordUpgrade.cost.resources.food, coordUpgrade) > game.resources.food.owned) { // Help with food.
+			safeSetGather("food");
+			return;
+		}
+		if (resolvePow(coordUpgrade.cost.resources.wood, coordUpgrade) > game.resources.wood.owned) { // Help with wood.
+			safeSetGather("wood");
+			return;
+		}
+		if (resolvePow(coordUpgrade.cost.resources.metal, coordUpgrade) > game.resources.metal.owned) { // Help with metal.
+			safeSetGather("metal");
+			return;
+		}
+	}
+
 	//High Priority Research - When manual research still has more impact than scientists
 	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist')) {
 		safeSetGather('science');

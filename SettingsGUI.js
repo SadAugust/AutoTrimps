@@ -788,7 +788,7 @@ function initializeAllSettings() {
 				var description = "<p>What percent of resources you'd like to spend on equipment.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 1, null, "Equipment", [1, 2],
+			}, 'value', 10, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equip2',
 			function () { return ('AE: 2') },
@@ -816,7 +816,7 @@ function initializeAllSettings() {
 
 				description += "<p><b>Recommended:</b> AE: Prestige</p>";
 				return description;
-			}, 'multitoggle', 0, null, "Equipment", [1, 2],
+			}, 'multitoggle', 3, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 
 		createSetting('equipPrestigePct',
@@ -860,10 +860,10 @@ function initializeAllSettings() {
 			function () { return ('Buy Shield Block') },
 			function () {
 				var description = "<p>Will allow the purchase of the shield block upgrade.</p>";
-				description += "<p><b>If you are progressing past zone 50, you probably don't want this.</b></p>";
-				description += "<p><b>Recommended:</b> On until you can reach z50</p>";
+				description += "<p><b>If your highest zone reached is 40 or above then this setting will be disabled.</b></p>";
+				description += "<p><b>Recommended:</b> On until you can reach zone 40</p>";
 				return description;
-			}, 'boolean', false, null, "Equipment", [1]);
+			}, 'boolean', true, null, "Equipment", [1]);
 
 		createSetting('Prestige',
 			function () { return ('Prestige Climb') },
@@ -1351,10 +1351,10 @@ function initializeAllSettings() {
 				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>0/1/3</b> and a map cap of <b>500</b>.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
-				description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress</p>";
+				description += "<p><b>Recommended:</b> 1.5 for earlygame, gradually increase the further you progress</p>";
 				if (currSettingUniverse === 2) description += "<p>Don't set this above 1 when using <b>Auto Equality: Advanced</b> as it can cause you to eternally farm.</p>";
 				return description;
-			}, 'value', -1, null, "Maps", [1, 2]);
+			}, 'value', 1.5, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusHealth',
 			function () { return ('Map Bonus Health') },
@@ -5607,6 +5607,30 @@ offlineProgress.start = function () {
 	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
 }
 
+//Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
+offlineProgress.originalFinish = offlineProgress.finish;
+offlineProgress.finish = function () {
+	//Time we have run TW in seconds
+	var timeRun = Math.floor((new Date().getTime() - offlineProgress.startTime) / 1000);
+	offlineProgress.originalFinish(...arguments)
+	try {
+		//Rerun TW if it took over 30 seconds to complete
+		if (timeRun > 30) {
+			debug(`Running Time Warp again for ${timeRun} seconds to catchup on the time we missed whilst running it.`);
+			//Convert time to milliseconds and subtract it from the variables that TW uses to calculate offline progress so we don't have tons of time related issues.
+			timeRun *= 1000;
+			game.global.lastOnline -= timeRun;
+			game.global.portalTime -= timeRun;
+			game.global.zoneStarted -= timeRun;
+			game.global.lastSoldierSentAt -= timeRun;
+			game.global.lastSkeletimp -= timeRun;
+			game.permaBoneBonuses.boosts.lastChargeAt -= timeRun;
+			offlineProgress.start();
+		}
+	}
+	catch (e) { console.log("Failed to restart Time Warp to finish it off. " + e, "other") }
+}
+
 //Make AT button visible on timewarp screen if already in TW when loading AT
 if (usingRealTimeOffline) {
 	setupTimeWarpAT();
@@ -5856,6 +5880,39 @@ function updateChangelogButton() {
 	}
 }
 
+function setupAddonUser() {
+	//Setting up addon user settings.
+
+	if (typeof game.global.addonUser !== 'object') {
+
+		var obj = [];
+		for (var x = 0; x < 30; x++) {
+			obj[x] = {};
+			obj[x].done = '';
+		}
+
+		game.global.addonUser = {};
+
+		const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+		const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+
+		for (var item in u1Settings) {
+			if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined')
+				game.global.addonUser[u1Settings[item] + 'Settings'] = {};
+			if (typeof game.global.addonUser[u1Settings[item] + 'Settings']['value'] === 'undefined')
+				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
+		}
+
+		for (var item in u2Settings) {
+			if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined')
+				game.global.addonUser[u2Settings[item] + 'Settings'] = {};
+			if (typeof game.global.addonUser[u2Settings[item] + 'Settings']['valueU2'] === 'undefined')
+				game.global.addonUser[u2Settings[item] + 'Settings'].valueU2 = obj;
+
+		}
+	}
+}
+
 function updateATVersion() {
 	//Setting Conversion!
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === atSettings.initialise.version) return;
@@ -5866,6 +5923,10 @@ function updateATVersion() {
 	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
 		autoTrimpSettings["ATversion"] = atSettings.initialise.version;
 		saveSettings();
+
+		//Setting up addon user settings.
+		setupAddonUser();
+
 		if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
 
 		introMessage();
@@ -6358,6 +6419,49 @@ function updateATVersion() {
 					zone: 100,
 					cell: 0,
 				};
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.37') {
+			//Converting addonUser saves variable to object and storing farming settings .done stuff in it
+
+			var obj = [];
+			for (var x = 0; x < 30; x++) {
+				obj[x] = {};
+				obj[x].done = '';
+			}
+
+			if (typeof game.global.addonUser !== 'object')
+				game.global.addonUser = {};
+
+
+			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+
+			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+
+			for (var item in u1Settings) {
+				if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined')
+					game.global.addonUser[u1Settings[item] + 'Settings'] = {};
+				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
+
+				if (typeof (autoTrimpSettings[u1Settings[item] + 'Settings'].value[0]) !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
+						autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
+					}
+				}
+
+			}
+
+			for (var item in u2Settings) {
+				if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined')
+					game.global.addonUser[u2Settings[item] + 'Settings'] = {};
+				game.global.addonUser[u2Settings[item] + 'Settings'].valueU2 = obj;
+
+				if (typeof (autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0]) !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
+						autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[y].row = y;
+					}
+				}
 			}
 		}
 	}

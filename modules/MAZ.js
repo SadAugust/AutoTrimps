@@ -1504,6 +1504,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 		thisSetting.active = readNiceCheckbox(document.getElementById('windowActive' + x));
 		thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
+		thisSetting.row = (x + 1);
 		if (!golden) {
 			thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
 			if (!desolation) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
@@ -1653,16 +1654,27 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (elem) elem.innerHTML = error;
 		return;
 	}
+	var value = currSettingUniverse === 2 ? 'valueU2' : 'value'
 
 	if (mapBonus) {
-		var value = currSettingUniverse === 2 ? 'valueU2' : 'value'
 		autoTrimpSettings['mapBonusZone'][value] = [];
 		for (var x = 0; x < setting.length; x++) {
 			autoTrimpSettings['mapBonusZone'][value][x] = setting[x].world
 		}
 	}
 
+	//Set settings inside AT
 	setPageSetting(varPrefix + 'Settings', setting, currSettingUniverse);
+	//Set the amount of rows into the save file so that we can mark settings as done properly
+	var obj = [];
+	for (var x = 0; x < 30; x++) {
+		obj[x] = {};
+		obj[x].done = '';
+	}
+
+	if (typeof game.global.addonUser !== 'object') game.global.addonUser = {};
+	if (typeof game.global.addonUser[varPrefix + 'Settings'] === 'undefined') game.global.addonUser[varPrefix + 'Settings'] = {};
+	game.global.addonUser[varPrefix + 'Settings'][value] = obj;
 
 	var elem = document.getElementById("tooltipDiv");
 	swapClass(document.getElementById('tooltipDiv').classList[0], "tooltipExtraNone", elem);
