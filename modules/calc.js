@@ -915,8 +915,8 @@ function calcEnemyAttack(type = 'world', zone = game.global.world, cell = 100, n
 	if (challengeActive('Balance')) attack *= (type === "world") ? 1.17 : 2.35;
 	else if (challengeActive('Life')) attack *= 6;
 	else if (challengeActive('Nom')) {
-		if (type === 'world' && typeof getCurrentWorldCell().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentWorldCell().nomStacks)
-		else if (game.global.mapsActive && typeof getCurrentEnemy().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentEnemy().nomStacks);
+		if (type === 'world' && typeof getCurrentWorldCell() !== 'undefined' && typeof getCurrentWorldCell().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentWorldCell().nomStacks)
+		else if (game.global.mapsActive && typeof getCurrentWorldCell() !== 'undefined' && typeof getCurrentEnemy().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentEnemy().nomStacks);
 	}
 	else if (challengeActive('Toxicity')) attack *= 5;
 	else if (challengeActive('Lead')) attack *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
