@@ -1097,7 +1097,6 @@ function smithyFarm() {
 				MODULES.maps.mapRepeatsSmithy = [0, 0, 0];
 				if (!challengeActive('Quest') && setting.meltingPoint) runUniqueMap('Melting Point');
 				resetMapVars(setting);
-				return farmingDetails;
 			}
 		}
 

@@ -1,4 +1,3 @@
-
 MODULES.gather = {
 	minScienceSeconds: 60,
 	trapBuffering: false,
@@ -25,13 +24,16 @@ function calcMaxTraps() {
 
 function safeSetGather(resource) {
 	if (!resource)
-		return false;
+		return;
+
+	//Can't gather metal on these challenges so need to override it
+	if (resource === 'metal' && (challengeActive('Metal') || challengeActive('Transmute'))) resource = 'wood';
 
 	if (game.global.playerGathering !== resource) {
 		setGather(resource);
 		debug("Setting gather to " + resource, "gather");
 	}
-	return true;
+	return;
 }
 
 //Gather selection
@@ -78,7 +80,7 @@ function autoGather() {
 	var needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
 	//Init - Others
-	var needMiner = firstFightOK && (!challengeActive('Metal') && !challengeActive('Transmute')) && minersAvailable;
+	var needMiner = firstFightOK && minersAvailable;
 	var breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	var hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 
@@ -198,12 +200,6 @@ function autoGather() {
 		return;
 	}
 
-	//High Priority Metal gathering for Metal Challenge
-	/* if (challengeActive('Metal') && !game.global.mapsUnlocked) {
-		safeSetGather('metal');
-		return;
-	} */
-
 	//Mid Priority Trapping
 	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !MODULES.gather.trapBuffering) {
 		safeSetGather('trimps');
@@ -218,28 +214,9 @@ function autoGather() {
 		return;
 	}
 
-	//High Priority Research - When manual research still has more impact than workers
-	if (researchAvailable) {
-		/* if (MODULES.resourceNeeded.food > game.resources.food.owned && getPlayerModifier() > getPerSecBeforeManual('Farmer')) {
-			safeSetGather('food');
-			return;
-		} */
-		/* if (MODULES.resourceNeeded.wood > game.resources.wood.owned && getPlayerModifier() > getPerSecBeforeManual('Lumberjack')) {
-			safeSetGather('wood');
-			return;
-		}
-		if (MODULES.resourceNeeded.metal > game.resources.metal.owned && getPlayerModifier() > getPerSecBeforeManual('Miner')) {
-			safeSetGather('metal');
-			return;
-		} */
-	}
-
 	//Metal if Turkimp is active
 	if (hasTurkimp) {
-		if (!challengeActive('Transmute'))
-			safeSetGather('metal');
-		else
-			safeSetGather('wood');
+		safeSetGather('metal');
 		return;
 	}
 
@@ -284,16 +261,9 @@ function autoGather() {
 			}
 		}
 	}
-	if (challengeActive('Transmute') && game.global.playerGathering !== lowestResource && !haveWorkers && !breedFire) {
-		if (hasTurkimp)
-			safeSetGather('wood');
-		else
-			safeSetGather(lowestResource);
-	} else if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
+	if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
 		if (manualGather !== 3 && game.resources.science.owned < getPsString_AT('science', true) * MODULES["gather"].minScienceSeconds && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers)
 			safeSetGather('science');
-		else if (challengeActive('Transmute') && hasTurkimp)
-			safeSetGather('wood');
 		else
 			safeSetGather(lowestResource);
 	}
@@ -304,10 +274,9 @@ function autoGather() {
 }
 
 //Mining/Building only setting
-//Set to Wood during Transmute challenge
 function autoGatherMetal() {
 	if (game.global.buildingsQueue.length <= 1) {
-		safeSetGather(!challengeActive('Transmute') ? 'metal' : 'wood');
+		safeSetGather('metal');
 	}
 	else {
 		safeSetGather('buildings')
