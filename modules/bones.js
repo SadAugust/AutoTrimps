@@ -58,7 +58,7 @@ function boneShrine() {
 
 		if (settingIndex === true) boneShrineCharges = 1;
 
-		setGather(boneShrineGather);
+		safeSetGather(boneShrineGather);
 		//Equip staff for the gather type the user is using
 		if (getPageSetting('heirloomStaff')) {
 			if (getPageSetting('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1)) !== 'undefined')
