@@ -1672,8 +1672,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		obj[x].done = '';
 	}
 
-	if (typeof game.global.addonUser !== 'object') game.global.addonUser = {};
-	if (typeof game.global.addonUser[varPrefix + 'Settings'] === 'undefined') game.global.addonUser[varPrefix + 'Settings'] = {};
+	if (typeof game.global.addonUser !== 'object') setupAddonUser(true);
+	if (typeof game.global.addonUser[varPrefix + 'Settings'] === 'undefined') setupAddonUser(true);
 	game.global.addonUser[varPrefix + 'Settings'][value] = obj;
 
 	var elem = document.getElementById("tooltipDiv");

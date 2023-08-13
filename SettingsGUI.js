@@ -5880,10 +5880,10 @@ function updateChangelogButton() {
 	}
 }
 
-function setupAddonUser() {
+function setupAddonUser(force) {
 	//Setting up addon user settings.
 
-	if (typeof game.global.addonUser !== 'object') {
+	if (typeof game.global.addonUser !== 'object' || force) {
 
 		var obj = [];
 		for (var x = 0; x < 30; x++) {
@@ -5908,7 +5908,6 @@ function setupAddonUser() {
 				game.global.addonUser[u2Settings[item] + 'Settings'] = {};
 			if (typeof game.global.addonUser[u2Settings[item] + 'Settings']['valueU2'] === 'undefined')
 				game.global.addonUser[u2Settings[item] + 'Settings'].valueU2 = obj;
-
 		}
 	}
 }
