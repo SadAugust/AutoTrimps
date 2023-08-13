@@ -1,5 +1,5 @@
 function boneShrine() {
-	const settingName = 'setting';
+	const settingName = 'boneShrineSettings';
 	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (challengeActive('Pandemonium')) return;
