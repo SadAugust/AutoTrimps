@@ -5885,11 +5885,6 @@ function setupAddonUser(force) {
 
 	if (typeof game.global.addonUser !== 'object' || force) {
 
-		var obj = [];
-		for (var x = 0; x < 30; x++) {
-			obj[x] = {};
-			obj[x].done = '';
-		}
 
 		game.global.addonUser = {};
 
@@ -5899,15 +5894,27 @@ function setupAddonUser(force) {
 		for (var item in u1Settings) {
 			if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined')
 				game.global.addonUser[u1Settings[item] + 'Settings'] = {};
-			if (typeof game.global.addonUser[u1Settings[item] + 'Settings']['value'] === 'undefined')
+			if (typeof game.global.addonUser[u1Settings[item] + 'Settings']['value'] === 'undefined') {
+				var obj = [];
+				for (var x = 0; x < 30; x++) {
+					obj[x] = {};
+					obj[x].done = '';
+				}
 				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
+			}
 		}
 
 		for (var item in u2Settings) {
 			if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined')
 				game.global.addonUser[u2Settings[item] + 'Settings'] = {};
-			if (typeof game.global.addonUser[u2Settings[item] + 'Settings']['valueU2'] === 'undefined')
+			if (typeof game.global.addonUser[u2Settings[item] + 'Settings']['valueU2'] === 'undefined') {
+				var obj = [];
+				for (var x = 0; x < 30; x++) {
+					obj[x] = {};
+					obj[x].done = '';
+				}
 				game.global.addonUser[u2Settings[item] + 'Settings'].valueU2 = obj;
+			}
 		}
 	}
 }
@@ -6441,6 +6448,12 @@ function updateATVersion() {
 			for (var item in u1Settings) {
 				if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined')
 					game.global.addonUser[u1Settings[item] + 'Settings'] = {};
+
+				var obj = [];
+				for (var x = 0; x < 30; x++) {
+					obj[x] = {};
+					obj[x].done = '';
+				}
 				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
 
 				if (typeof (autoTrimpSettings[u1Settings[item] + 'Settings'].value[0]) !== 'undefined') {
@@ -6454,7 +6467,12 @@ function updateATVersion() {
 			for (var item in u2Settings) {
 				if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined')
 					game.global.addonUser[u2Settings[item] + 'Settings'] = {};
-				game.global.addonUser[u2Settings[item] + 'Settings'].valueU2 = obj;
+				var obj = [];
+				for (var x = 0; x < 30; x++) {
+					obj[x] = {};
+					obj[x].done = '';
+				}
+				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
 
 				if (typeof (autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0]) !== 'undefined') {
 					for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
@@ -6462,6 +6480,9 @@ function updateATVersion() {
 					}
 				}
 			}
+		}
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.38') {
+			setupAddonUser();
 		}
 	}
 

@@ -36,37 +36,24 @@ function getZoneEmpowerment(zone) {
 	return activeEmpowerments[zone];
 }
 
-//Radon
-/* function archstring() {
-	if (!challengeActive('Archaeology')) return;
-	if (!getPageSetting('archaeology')) return;
-	if (getPageSetting('archaeologyString1') !== "undefined" && getPageSetting('archaeologyString2') !== "undefined" && getPageSetting('archaeologyString3') !== "undefined") {
-		var string1 = getPageSetting('archaeologyString1'), string2 = getPageSetting('archaeologyString2'), string3 = getPageSetting('archaeologyString3');
-		var string1z = string1.split(',')[0], string2z = string2.split(',')[0];
-		var string1split = string1.split(',').slice(1).toString(), string2split = string2.split(',').slice(1).toString();
-		if (game.global.world <= string1z && game.global.archString !== string1split)
-			game.global.archString = string1split;
-		else if (game.global.world > string1z && game.global.world <= string2z && game.global.archString !== string2split)
-			game.global.archString = string2split;
-		else if (game.global.world > string2z && game.global.archString !== string3)
-			game.global.archString = string3;
-	}
-} */
-
 function remainingHealth(forceAngelic, mapType) {
 	if (!forceAngelic) forceAngelic = false;
 	if (!mapType) mapType = 'world';
 
 	const correctHeirloom = heirloomShieldToEquip(mapType) !== undefined ? getPageSetting(heirloomShieldToEquip(mapType)) === game.global.ShieldEquipped.name : true;
+	const currentShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true) / 100;
+	const newShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100;
+
 	var soldierHealth = game.global.soldierHealth;
 	var soldierHealthMax = game.global.soldierHealthMax;
 	var shieldHealth = 0;
 
+	//Fix our health to the correct new value if we are changing heirlooms
 	if (!correctHeirloom) {
-		soldierHealth /= 1 + (calcHeirloomBonus('Shield', 'trimpHealth', 1, true) / 100);
-		soldierHealth *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
-		soldierHealthMax /= 1 + (calcHeirloomBonus('Shield', 'trimpHealth', 1, true) / 100);
-		soldierHealthMax *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
+		soldierHealth /= 1 + currentShield;
+		soldierHealth *= 1 + newShield;
+		soldierHealthMax /= 1 + currentShield;
+		soldierHealthMax *= 1 + newShield;
 	}
 
 	if (game.global.universe === 2) {
@@ -75,19 +62,25 @@ function remainingHealth(forceAngelic, mapType) {
 
 		var shieldMax = game.global.soldierEnergyShieldMax;
 		var shieldCurr = game.global.soldierEnergyShield;
+
+		//Fix our shield to the correct new value if we are changing heirlooms
 		if (!correctHeirloom) {
-			const shieldPrismatic = getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0 ? getEnergyShieldMult_AT(mapType, true) + (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100) : getEnergyShieldMult_AT(mapType, true);
-			const currShieldPrismatic = getEnergyShieldMult_AT(mapType, true) + (getHeirloomBonus("Shield", "prismatic") / 100);
+			energyShieldMult = getEnergyShieldMult_AT(mapType, true);
+			const newShieldMult = getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100;
+			const shieldPrismatic = newShieldMult > 0 ? energyShieldMult + newShieldMult : energyShieldMult;
+			currShieldPrismatic = energyShieldMult + getHeirloomBonus("Shield", "prismatic") / 100;
+
 			if (currShieldPrismatic > 0) shieldMax /= currShieldPrismatic;
 			shieldMax *= shieldPrismatic;
 			if (currShieldPrismatic > 0) shieldCurr /= currShieldPrismatic;
 			shieldCurr *= shieldPrismatic;
-			shieldCurr /= 1 + (calcHeirloomBonus('Shield', 'trimpHealth', 1, true) / 100);
-			shieldCurr *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
+			shieldCurr /= 1 + currentShield;
+			shieldCurr *= 1 + newShield;
 		}
 
 		if (maxLayers > 0) {
-			for (var i = 0; i <= maxLayers; i++) {
+			var i;
+			for (i = 0; i <= maxLayers; i++) {
 				if (layers !== maxLayers && i > layers) {
 					continue;
 				}

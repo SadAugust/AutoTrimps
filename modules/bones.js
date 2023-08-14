@@ -20,7 +20,7 @@ function boneShrine() {
 	for (var y = 0; y < baseSettings.length; y++) {
 		if (y === 0) continue;
 		const currSetting = baseSettings[y];
-		if (game.global.world !== currSetting.world || currSetting.done === totalPortals + "_" + game.global.world ||
+		if (game.global.world !== currSetting.world || game.global.addonUser[settingName][value][setting.row].done === totalPortals + "_" + game.global.world ||
 			!currSetting.active) {
 			continue;
 		}

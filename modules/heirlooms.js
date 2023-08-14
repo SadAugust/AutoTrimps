@@ -179,47 +179,60 @@ function autoHeirlooms(portal) {
 }
 
 //Heirloom Swapping
-function HeirloomSearch(heirloom) {
-	for (var loom of game.global.heirloomsCarried)
-		if (loom.name === getPageSetting(heirloom))
+//Checks to see if we own the heirloom we are trying to equip
+function heirloomSearch(heirloom) {
+	const heirloomName = getPageSetting(heirloom);
+	var loom;
+	for (loom of game.global.heirloomsCarried)
+		if (loom.name === heirloomName)
 			return loom;
 }
 
 //Loops through heirlooms and checks if they have a specified modifier on them, divides by 10 if in u2.
 function HeirloomModSearch(heirloom, modifier) {
-	if (heirloom === undefined || getPageSetting(heirloom) === undefined || getPageSetting(heirloom) === false || HeirloomSearch(heirloom) === undefined) {
-		var type = ['ShieldEquipped', 'StaffEquipped'];
-		for (var y = (type.length - 1); y > -1; y--) {
-			if (Object.keys(game.global[type[y]]).length === 0) continue;
-			var loom = game.global[type[y]];
-			for (var i = (loom.mods.length - 1); i > -1; i--) {
-				if (loom.mods[i][0] === modifier)
-					return loom.mods[i][1];
-			}
+
+	const heirloomName = getPageSetting(heirloom);
+	const heirloomDetails = heirloomSearch(heirloom);
+	var i;
+	var loom;
+	//If the heirloom exists and is in our inventory, check it for the modifier we're looking for
+	if (heirloomDetails) {
+		for (i = (heirloomDetails.mods.length - 1); i > -1; i--) {
+			if (heirloomDetails.mods[i][0] === modifier)
+				return heirloomDetails.mods[i][1];
 		}
 		return undefined;
 	}
-	if (game.global.ShieldEquipped.name === getPageSetting(heirloom)) {
-		var loom = game.global.ShieldEquipped;
-		for (var i = (loom.mods.length - 1); i > -1; i--) {
+	//Else if the heirloom is equipped and is a Shield, check it for the modifier we're looking for
+	else if (game.global.ShieldEquipped.name === heirloomName) {
+		loom = game.global.ShieldEquipped;
+		for (i = (loom.mods.length - 1); i > -1; i--) {
 			if (loom.mods[i][0] === modifier)
 				return loom.mods[i][1];
 		}
 		return undefined;
 	}
-	if (game.global.StaffEquipped.name === getPageSetting(heirloom)) {
-		var loom = game.global.StaffEquipped;
-		for (var i = (loom.mods.length - 1); i > -1; i--) {
+	//Else if the heirloom is equipped and is a Staff, check it for the modifier we're looking for
+	else if (game.global.StaffEquipped.name === heirloomName) {
+		loom = game.global.StaffEquipped;
+		for (i = (loom.mods.length - 1); i > -1; i--) {
 			if (loom.mods[i][0] === modifier)
 				return loom.mods[i][1];
 		}
 		return undefined;
 	}
-	for (var loom of game.global.heirloomsCarried) {
-		if (loom.name === getPageSetting(heirloom)) {
-			for (var i = (loom.mods.length - 1); i > -1; i--) {
-				if (loom.mods[i][0] === modifier)
-					return loom.mods[i][1];
+	//Checks through equipped heirlooms to try and find the mod we're searching for if the heirloom setting isn't properly set
+	else {
+		if (heirloom === undefined || heirloomName === 'undefined' || heirloomDetails === undefined) {
+			var type = ['ShieldEquipped', 'StaffEquipped'];
+			var y;
+			for (y = (type.length - 1); y > -1; y--) {
+				if (Object.keys(game.global[type[y]]).length === 0) continue;
+				loom = game.global[type[y]];
+				for (i = (loom.mods.length - 1); i > -1; i--) {
+					if (loom.mods[i][0] === modifier)
+						return loom.mods[i][1];
+				}
 			}
 		}
 	}
@@ -227,20 +240,28 @@ function HeirloomModSearch(heirloom, modifier) {
 }
 
 function HeirloomEquipShield(heirloom) {
-	if (HeirloomSearch(heirloom) !== undefined && game.global.ShieldEquipped.name !== getPageSetting(heirloom)) {
-		selectHeirloom(game.global.heirloomsCarried.indexOf(HeirloomSearch(heirloom)), "heirloomsCarried", true);
+
+	const heirloomName = getPageSetting(heirloom);
+	const heirloomDetails = heirloomSearch(heirloom);
+
+	if (heirloomDetails !== undefined && game.global.ShieldEquipped.name !== heirloomName) {
+		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), "heirloomsCarried", true);
 		equipHeirloom(true);
 		MODULES.heirlooms.gammaBurstPct = getPageSetting('gammaBurstCalc') && (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
-	} else if (HeirloomSearch(heirloom) === undefined && game.global.ShieldEquipped.name !== getPageSetting(heirloom))
-		if (atSettings.intervals.tenSecond) debug("The heirloom named \"" + getPageSetting(heirloom) + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " shield. This will be causing at least one of your HD Ratios to be incorrect.", "other");
+	} else if (heirloomDetails === undefined && game.global.ShieldEquipped.name !== heirloomName)
+		if (atSettings.intervals.tenSecond) debug("The heirloom named \"" + heirloomName + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " shield. This will be causing at least one of your HD Ratios to be incorrect.", "other");
 }
 
 function HeirloomEquipStaff(heirloom) {
-	if (HeirloomSearch(heirloom) !== undefined && game.global.StaffEquipped.name !== getPageSetting(heirloom)) {
-		selectHeirloom(game.global.heirloomsCarried.indexOf(HeirloomSearch(heirloom)), "heirloomsCarried", true);
+
+	const heirloomName = getPageSetting(heirloom);
+	const heirloomDetails = heirloomSearch(heirloom);
+
+	if (heirloomDetails !== undefined && game.global.StaffEquipped.name !== heirloomName) {
+		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), "heirloomsCarried", true);
 		equipHeirloom(true);
-	} else if (HeirloomSearch(heirloom) === undefined && game.global.StaffEquipped.name !== getPageSetting(heirloom))
-		if (atSettings.intervals.tenSecond) debug("The heirloom named \"" + getPageSetting(heirloom) + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " staff. This will be causing any loot related calcs to be incorrect.", "other");
+	} else if (heirloomDetails === undefined && game.global.StaffEquipped.name !== heirloomName)
+		if (atSettings.intervals.tenSecond) debug("The heirloom named \"" + heirloomName + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " staff. This will be causing any loot related calcs to be incorrect.", "other");
 }
 
 function HeirloomShieldSwapped() {
@@ -427,11 +448,11 @@ function getHeirloomBonus_AT(type, mod, customShield) {
 	//Override bonus if needed
 	if (customShield) bonus = HeirloomModSearch(customShield, mod);
 	if (bonus === undefined) bonus = 0;
-	if (mod === "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
+	if (mod === 'gammaBurst' && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
 		bonus = MODULES.heirlooms.gammaBurstPct;
 	}
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
-		if (type !== "FluffyExp" && type !== "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+		if (type !== 'FluffyExp' && type !== 'VoidMaps') bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
 	}
 	return scaleHeirloomModUniverse(type, mod, bonus);
 }
