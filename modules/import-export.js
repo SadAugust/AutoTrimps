@@ -158,9 +158,7 @@ function ImportExportTooltip(what, event, download) {
 		return;
 	var $elem = document.getElementById("tooltipDiv");
 	if (document.getElementById("tipTitle").innerHTML === "Spire Assault") {
-		game.global.lockTooltip = false;
-		cancelTooltip();
-		return;
+		autoBattle.help();
 	} swapClass("tooltipExtra", "tooltipExtraNone", $elem);
 	var ondisplay = null;
 	var tooltipText;
