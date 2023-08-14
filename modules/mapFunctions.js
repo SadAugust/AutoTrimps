@@ -495,7 +495,11 @@ function voidMaps() {
 			//Identifying if we need to do any form of HD Farming before actually running voids
 			//If we do then run HD Farm and stop this function until it has been completed.
 			//Override for if we have already farmed enough maps. Gets reset when Void Map MAZ window is saved.
-			if (defaultSettings.voidFarm && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + "_" + game.global.world) && (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid)) {
+			if (defaultSettings.voidFarm && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + "_" + game.global.world) &&
+				((defaultSettings.hitsSurvived > 0 && defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid) ||
+					(defaultSettings.hdRatio > 0 && defaultSettings.hdRatio < hdStats.vhdRatioVoid)
+				)
+			) {
 				//Print farming message if we haven't already started HD Farming for stats.
 				if (!mapSettings.voidFarm && getPageSetting('autoMaps'))
 					debug(mapName + ' (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') farming for stats before running void maps.', "map_Details");

@@ -1791,9 +1791,9 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 			mazHelp += "<li><b>Void Farm</b> - Will farm before running void maps if your void hits survived is below the input in <b>Void Farm Hits Survived</b> or your void hd ratio is below the input in <b>Void Farm Void HD Ratio</b>. Farms until you have reached the map cap set in the <b>HD Farm</b> settings.</li>";
 
-			mazHelp += "<li><b>Void Farm Hits Survived</b> - Will farm to this void hits survived value before running void maps.</li>";
+			mazHelp += "<li><b>Void Farm Hits Survived</b> - Will farm to this void hits survived value before running void maps. Must be set above 0 to be used otherwise will be ignored.</li>";
 
-			mazHelp += "<li><b>Void Farm HD Ratio</b> - Will farm to this void HD ratio survived value before running void maps.</li>";
+			mazHelp += "<li><b>Void Farm HD Ratio</b> - Will farm to this void HD ratio survived value before running void maps. Must be set above 0 to be used otherwise will be ignored.</li>";
 
 			mazHelp += "<li><b>Void Farm Job Ratio</b> - The job ratio to use when farming stats before running void maps.</li>";
 			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
