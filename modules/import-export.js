@@ -160,7 +160,6 @@ function ImportExportTooltip(what, event, download) {
 	if (document.getElementById("tipTitle").innerHTML === "Spire Assault") {
 		game.global.lockTooltip = false;
 		cancelTooltip();
-		setTimeout(ImportExportTooltip(what, event, download), 500);
 		return;
 	} swapClass("tooltipExtra", "tooltipExtraNone", $elem);
 	var ondisplay = null;
