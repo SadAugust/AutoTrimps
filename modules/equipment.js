@@ -224,6 +224,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		zoneGo = equipType === 'attack' ? zoneGoAttack : zoneGoHealth;
 		var prestige = false;
 		resourceSpendingPct = equipType === 'attack' ? resourceSpendingPctAttack : resourceSpendingPctHealth;
+		if (resourceSpendingPct > 1) resourceSpendingPct = 1;
 		var nextLevelValue = 1;
 		var safeRatio = 1;
 		//Figuring out if we should force prestige purchases or check non-prestige stats
@@ -408,24 +409,26 @@ function zoneGoCheck(setting, farmType) {
 		zone: game.global.world,
 	};
 
-	var hdRatio = mapSettings.mapName === 'Void Map' ? hdStats.hdRatioVoid : hdStats.hdRatio
+	var hdRatio = mapSettings.mapName === 'Void Map' ? hdStats.hdRatioVoid : hdStats.hdRatio;
 
 	//Equipment related section for zone overrides
 	//At or above z10 so that we have enough time to purchase buildings during the early game
-	if (game.global.world >= 10 && farmType === 'attack' || farmType === 'health') {
+	if (game.global.world >= 10 && (farmType === 'attack' || farmType === 'health')) {
 		if (mapSettings.mapName === 'Wither') return zoneDetails;
 		if (farmType === 'attack') {
+			//Farming for damage means we should prio attack equips 
 			if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+			//Since we're farming for more damage to kill the Ubersmith we want to spend 100% of our resources on attack equips
 			if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 		}
 		if (farmType === 'health') {
-			if (whichHitsSurvived() > getPageSetting('equipCutOffHS')) return zoneDetails;
+			if (whichHitsSurvived() < getPageSetting('equipCutOffHS')) return zoneDetails;
 			//Farming for health means we should prio health equips 
 			if (mapSettings.shouldHealthFarm) return zoneDetails;
 			//Since having to use equality will lower our damage then we want more health to reduce equality usage
 			if (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0) return zoneDetails;
 			//Since equality has a big impact on u2 HD Ratio then we want more health to reduce equality required.
-			if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+			if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && game.portal.Equality.radLevel > 0) return zoneDetails;
 		}
 	}
 
@@ -536,11 +539,12 @@ function autoEquip() {
 	var keepBuying = false;
 	do {
 		keepBuying = false;
-		var bestBuys = mostEfficientEquipment(null, null, ignoreShields, false);
+		var bestBuys = mostEfficientEquipment(false, false, ignoreShields, false);
 		// Set up for both Attack and Health depending on which is cheaper to purchase
 		var equipType = (bestBuys.attack.cost < bestBuys.health.cost) ? 'attack' : 'health';
 		var equipName = bestBuys[equipType].name;
 		var equipCost = bestBuys[equipType].cost;
+		if (equipCost === 0) continue;
 		var equipPrestige = bestBuys[equipType].prestige;
 		var equipCap = bestBuys[equipType].equipCap;
 		var resourceSpendingPct = bestBuys[equipType].resourceSpendingPct;

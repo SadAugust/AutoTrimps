@@ -15,8 +15,6 @@ function betterAutoFight() {
 		return;
 	var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
 
-	var lowLevelFight = game.resources.trimps.maxSoldiers < breeding * 0.5 && breeding > game.resources.trimps.realMax() * 0.3 && game.global.world <= 5;
-
 	if (!game.global.fighting) {
 		if (newArmyRdy() || game.global.soldierHealth > 0) {
 			fightManual();
@@ -33,8 +31,6 @@ function betterAutoFight3() {
 		fightManual();
 	}
 }
-
-
 
 //Suicides trimps if we don't have max anticipation stacks and sending a new army would give us max stacks.
 //Doesn't do this inside of void maps OR spires.

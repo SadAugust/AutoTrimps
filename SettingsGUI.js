@@ -150,7 +150,7 @@ function initializeAllSettings() {
 				description += "<p><b>Science Research Off</b><br>Works the same as 'Auto Gather' but stops Science from being gathered.</p>";
 				description += "<p><b>Recommended:</b> Auto Gather</p>";
 				return description;
-			}, 'multitoggle', 0, null, 'Core', [1, 2]);
+			}, 'multitoggle', 1, null, 'Core', [1, 2]);
 		createSetting('upgradeType',
 			function () { return (['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords']) },
 			function () {
@@ -160,7 +160,7 @@ function initializeAllSettings() {
 				description += "<p><b>Upgrades no Coords</b><br>Works the same as 'Buy All Upgrades' but stops Coordination upgrades from being purchased.</p>";
 				description += "<p><b>Recommended:</b> Buy All Upgrades</p>";
 				return description;
-			}, 'multitoggle', 0, null, 'Core', [1, 2]);
+			}, 'multitoggle', 1, null, 'Core', [1, 2]);
 		createSetting('TrapTrimps',
 			function () { return ('Trap Trimps') },
 			function () {
@@ -168,7 +168,7 @@ function initializeAllSettings() {
 				description += "<p>Upgrade setting must be set to <b>Buy All Upgrades</b> for this to work</p>";
 				description += "<p><b>Recommended:</b> On whilst highest zone is below 30</p>";
 				return description;
-			}, 'boolean', false, null, 'Core', [1, 2]);
+			}, 'boolean', true, null, 'Core', [1, 2]);
 		createSetting('downloadSaves',
 			function () { return ('Download Saves') },
 			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
@@ -456,7 +456,7 @@ function initializeAllSettings() {
 			Lumberjack: { enabled: true, ratio: 1 },
 			Miner: { enabled: true, ratio: 1 },
 			Explorer: { enabled: true, percent: 5 },
-			Trainer: { enabled: true, percent: 5 },
+			Trainer: { enabled: true, percent: 10 },
 			Magmamancer: { enabled: true, percent: 100 },
 			Meteorologist: { enabled: true, percent: 100 },
 			Worshipper: { enabled: true, percent: 5 },
@@ -734,7 +734,7 @@ function initializeAllSettings() {
 				description += "<p>There's settings in here to identify when to purchase gear and if it should purchase prestiges.<br></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, "Equipment", [1, 2]);
+			}, 'boolean', true, null, "Equipment", [1, 2]);
 		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
@@ -743,7 +743,7 @@ function initializeAllSettings() {
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', 1, null, "Equipment", [1, 2],
+			}, 'value', 4, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCutOffHS',
 			function () { return ('AE: HS Cut-off') },
@@ -753,7 +753,7 @@ function initializeAllSettings() {
 				description += "<p><b>Your Hits Survived Ratio can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', 1, null, "Equipment", [1, 2],
+			}, 'value', 1.5, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCapAttack',
 			function () { return ('AE: Weapon Cap') },
@@ -917,14 +917,14 @@ function initializeAllSettings() {
 				description += "<p><b>Vanilla</b><br>Will make sure the ingames AutoFight is enabled at all times and ensures you start fighting on portal.</p>";
 				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
 				return description;
-			}, 'multitoggle', 0, null, "Combat", [1, 2]);
+			}, 'multitoggle', 1, null, "Combat", [1, 2]);
 		createSetting('autoAbandon',
 			function () { return ('Auto Abandon') },
 			function () {
 				var description = "<p>Enabling this will force abandon trimps if necessary for mapping.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Combat', [1, 2]);
+			}, 'boolean', true, null, 'Combat', [1, 2]);
 		createSetting('floorCritCalc',
 			function () { return ('Never Crit Calc') },
 			function () {
@@ -944,7 +944,7 @@ function initializeAllSettings() {
 				description += "</p>";
 				description += "<p><b>Recommended:</b> Autostance</p>";
 				return description;
-			}, 'multitoggle', 0, null, "Combat", [1]);
+			}, 'multitoggle', 1, null, "Combat", [1]);
 		createSetting('IgnoreCrits',
 			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
 			function () {
@@ -962,7 +962,7 @@ function initializeAllSettings() {
 				description += "<p><b>Will not abandon in Spires.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Combat', [1]);
+			}, 'boolean', true, null, 'Combat', [1]);
 		createSetting('AutoRoboTrimp',
 			function () { return ('AutoRoboTrimp') },
 			function () {
@@ -970,7 +970,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 60</p>";
 				return description;
-			}, 'value', -1, null, 'Combat', [1]);
+			}, 'value', -1, 60, 'Combat', [1]);
 		createSetting('fightforever',
 			function () { return ('Fight Always') },
 			function () {
@@ -988,21 +988,21 @@ function initializeAllSettings() {
 				description += "<p>May improve your poison zone speed.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Combat', [1]);
+			}, 'boolean', true, null, 'Combat', [1]);
 		createSetting('fullice',
 			function () { return ('Ice Calc') },
 			function () {
 				var description = "<p>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use is to ensure your H:D (enemyHealth:trimpDamage) ratios aren't all over the place.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Combat', [1]);
+			}, 'boolean', true, null, 'Combat', [1]);
 		createSetting('45stacks',
 			function () { return ('Antistack Calc') },
 			function () {
 				var description = "<p>Will force any damage calculations to assume you have max anticipation stacks.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Combat', [1]);
+			}, 'boolean', true, null, 'Combat', [1]);
 
 		//Radon
 		createSetting('equalityManagement',
@@ -1318,14 +1318,14 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Auto Maps On</p>";
 				return description;
 			},
-			'multitoggle', 0, null, "Maps", [1, 2]);
+			'multitoggle', 1, null, "Maps", [1, 2]);
 		createSetting('autoMapsPortal',
 			function () { return ('Auto Maps Portal') },
 			function () {
 				var description = "<p>Will ensure Auto Maps is enabled after portalling.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Maps', [1, 2]);
+			}, 'boolean', true, null, 'Maps', [1, 2]);
 		createSetting('onlyPerfectMaps',
 			function () { return ('Perfect Maps') },
 			function () {
@@ -1363,7 +1363,7 @@ function initializeAllSettings() {
 				if (currSettingUniverse === 1) description += "<p>This is a very important setting to be used with <b>Advanced Nurseries</b> after Magma. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', -1, null, "Maps", [1, 2]);
+			}, 'value', 10, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
@@ -1382,7 +1382,7 @@ function initializeAllSettings() {
 				var description = "<p>Map Bonus stacks will be obtained to this amount when your current <b>World HD Ratio</b> is above the threshold set in the <b>Map Bonus Ratio</b> setting.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', -1, null, "Maps", [1, 2]);
+			}, 'value', 10, null, "Maps", [1, 2]);
 
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },
@@ -1390,7 +1390,7 @@ function initializeAllSettings() {
 				var description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Maps', [1]);
+			}, 'boolean', true, null, 'Maps', [1]);
 
 		//HD Farm
 		createSetting('hdFarmSettings',
@@ -1401,7 +1401,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '0,1,3', mapCap: 500 }], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '1,2,6', mapCap: 500 }], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
 
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
@@ -3695,7 +3695,7 @@ function initializeAllSettings() {
 				var description = "<p>Will force AutoTrimps to run the script more frequently during time warp.</p>";
 				description += "<p>This will be a significant slow down when running time warp but should allow you to use the script during it.</p>";
 				return description;
-			}, 'boolean', false, null, 'Time Warp', [0]);
+			}, 'boolean', true, null, 'Time Warp', [0]);
 
 		createSetting('timeWarpFrequency',
 			function () { return ('Time Warp Frequency') },
@@ -3732,7 +3732,7 @@ function initializeAllSettings() {
 		createSetting('displayHeHr',
 			function () { return (resourceHour() + '/hr status') },
 			function () { return ('Enables the display of your ' + resource().toLowerCase() + ' per hour. Turn this off to reduce memory.') },
-			'boolean', false, null, 'Display', [0]);
+			'boolean', true, null, 'Display', [0]);
 
 		createSetting('displayAllSettings',
 			function () { return ('Display all settings') },
@@ -3783,7 +3783,7 @@ function initializeAllSettings() {
 			other: false,
 			buildings: false,
 			jobs: false,
-			zone: false,
+			zone: true,
 			exotic: false,
 		}, null, 'Display', [0]);
 	}
