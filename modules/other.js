@@ -909,8 +909,11 @@ function updateLabels(force) { //Tried just updating as something changes, but s
 
 //Check and update each patch!
 function updateButtonColor(what, canAfford, isJob) {
-	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) return;
-	if (what == "Amalgamator") return;
+	if (atSettings.initialise.loaded) {
+		if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) return;
+	} else {
+		if (usingRealTimeOffline) return;
+	} if (what == "Amalgamator") return;
 	var elem = document.getElementById(what);
 	if (elem === null) {
 		return;

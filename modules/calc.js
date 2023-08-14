@@ -1226,7 +1226,6 @@ function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = "world"
 	if (!maxTenacity) maxTenacity = false;
-
 	//Init
 	if (type === 'world') {
 		var enemyName = 'Turtlimp';

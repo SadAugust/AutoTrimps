@@ -258,9 +258,10 @@ function toggleCatchUpMode() {
 		atSettings.loops.atTimeLapseFastLoop = true;
 		gameLoop = function (makeUp, now) {
 			if (game.options.menu.pauseGame.enabled === 1) return;
+			var newZone = atSettings.portal.lastrunworld !== game.global.world;
+			if (newZone) mainCleanup();
 			originalGameLoop(makeUp, now);
 
-			var newZone = atSettings.portal.lastrunworld !== game.global.world;
 			//Run mainLoop every n game loops and always on a new zone.
 			if (loops % getPageSetting('timeWarpFrequency') === 0 || newZone) {
 				mainLoop();

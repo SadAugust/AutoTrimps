@@ -3236,7 +3236,7 @@ function farmingDecision() {
 			mapBonus(),
 			experience(),
 			toxicity(),
-			mapDestacking()
+			mapDestacking(),
 		];
 
 		//Skipping map farming if in Decay and above stack count user input
@@ -3249,7 +3249,7 @@ function farmingDecision() {
 			prestigeClimb(),
 			prestigeRaiding(),
 			bionicRaiding(),
-			voidMaps()
+			voidMaps(),
 		];
 
 		if (isDoingSpire() && getPageSetting('skipSpires') && game.global.mapBonus === 10) return farmingDetails;
@@ -3285,7 +3285,7 @@ function farmingDecision() {
 			mapBonus(),
 			glass(),
 			smithless(),
-			wither()
+			wither(),
 		];
 	}
 
