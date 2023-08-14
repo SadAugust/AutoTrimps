@@ -6461,7 +6461,6 @@ function updateATVersion() {
 						autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
 					}
 				}
-
 			}
 
 			for (var item in u2Settings) {
