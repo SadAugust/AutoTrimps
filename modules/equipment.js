@@ -580,7 +580,7 @@ function autoEquip() {
 			equipCap = bestBuys[equipType].equipCap;
 			resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 		}
-	} while (keepBuying)
+	} while (keepBuying);
 }
 
 function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) {

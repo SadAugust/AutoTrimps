@@ -455,8 +455,8 @@ function initializeAllSettings() {
 			Farmer: { enabled: true, ratio: 1 },
 			Lumberjack: { enabled: true, ratio: 1 },
 			Miner: { enabled: true, ratio: 1 },
-			Explorer: { enabled: true, percent: 5 },
-			Trainer: { enabled: true, percent: 10 },
+			Explorer: { enabled: true, percent: 10 },
+			Trainer: { enabled: true, percent: 25 },
 			Magmamancer: { enabled: true, percent: 100 },
 			Meteorologist: { enabled: true, percent: 100 },
 			Worshipper: { enabled: true, percent: 5 },
@@ -753,7 +753,7 @@ function initializeAllSettings() {
 				description += "<p><b>Your Hits Survived Ratio can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', 1.5, null, "Equipment", [1, 2],
+			}, 'value', 1.25, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCapAttack',
 			function () { return ('AE: Weapon Cap') },
@@ -1357,7 +1357,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> 1.5 for earlygame, gradually increase the further you progress</p>";
 				if (currSettingUniverse === 2) description += "<p>Don't set this above 1 when using <b>Auto Equality: Advanced</b> as it can cause you to eternally farm.</p>";
 				return description;
-			}, 'value', 1.5, null, "Maps", [1, 2]);
+			}, 'value', 1.25, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusHealth',
 			function () { return ('Map Bonus Health') },
@@ -1404,7 +1404,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '1,2,6', mapCap: 500 }], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '1,1,2', mapCap: 500 }], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
 
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
@@ -1472,7 +1472,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '1,1,2', special: '0', }], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
 
 		createSetting('mapBonusZone',
 			function () { return ('Map Bonus: Zone') },
@@ -3780,7 +3780,7 @@ function initializeAllSettings() {
 			upgrades: false,
 			equipment: false,
 			maps: false,
-			map_Details: false,
+			map_Details: true,
 			map_Destacking: false,
 			map_Skip: false,
 			other: false,

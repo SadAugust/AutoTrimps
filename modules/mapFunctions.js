@@ -179,30 +179,37 @@ function shouldRunUniqueMap(map) {
 		if (map.name === 'The Block') { //Don't bother before z12 outside of manual unique map settings setup
 			//We need Shieldblock
 			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock') && game.global.highestLevelCleared < 40 && enoughHealth(map)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 			if (game.mapUnlocks.TheBlock.canRunOnce && uniqueMapSetting.The_Block.enabled && game.global.world >= uniqueMapSetting.The_Block.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Block.cell || liquified)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 		} else if (map.name === 'The Wall') { //Don't bother before z16
 			//We need Bounty
 			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased && enoughHealth(map)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 			if (game.mapUnlocks.TheWall.canRunOnce && uniqueMapSetting.The_Wall.enabled && game.global.world >= uniqueMapSetting.The_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Wall.cell || liquified)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 		} else if (map.name === 'Dimension of Anger') { //Don't bother before z22
 			//Unlock the portal
-			if (aboveMapLevel && !game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none" && enoughHealth(map)) {
+			if ((game.global.world - 1 > map.level) && !game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none" && enoughHealth(map)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 			if (game.mapUnlocks.Portal.canRunOnce && uniqueMapSetting.Dimension_of_Anger.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Anger.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Anger.cell || liquified)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 		} else if (map.name === 'Trimple Of Doom') {
 			//Unlock the Relentlessness perk
 			if (aboveMapLevel && game.portal.Relentlessness.locked && enoughHealth(map)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Trimple_of_Doom.enabled && game.global.world >= uniqueMapSetting.Trimple_of_Doom.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Trimple_of_Doom.cell || liquified)) {
@@ -212,6 +219,7 @@ function shouldRunUniqueMap(map) {
 		} else if (map.name === 'The Prison' && enoughHealth(map)) {
 			//Unlock the Electricity challenge
 			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 			if (game.mapUnlocks.ThePrison.canRunOnce && uniqueMapSetting.The_Prison.enabled && game.global.world >= uniqueMapSetting.The_Prison.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Prison.cell || liquified)) {
@@ -597,7 +605,7 @@ function mapBonus() {
 			//Set default settings. If empty then set some of them.
 			var defaultEmpty = Object.keys(defaultSettings).length === 1;
 			defaultSettings = {
-				jobratio: defaultEmpty ? "1,2,6" : defaultSettings.jobratio,
+				jobratio: defaultEmpty ? "1,1,2" : defaultSettings.jobratio,
 				autoLevel: true,
 				level: 0,
 				special: defaultEmpty ? "lmc" : defaultSettings.special,
@@ -1533,8 +1541,6 @@ function prestigeClimb() {
 	var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
 
-	var mapLevel = 0;
-
 	if (game.jobs.Explorer.locked) {
 		farmingDetails.biome = 'Random';
 		farmingDetails.mapSliders = [0, 9, 9];
@@ -1550,8 +1556,8 @@ function prestigeClimb() {
 	const prestigeToFarmFor = prestigeInfo[0];
 	const mapsToRun = prestigeInfo[1];
 
-	/* // Allow lower mapLevel if we are missing many prestiges. Count how many times prestigeToFarmFor can be divided by two.
-	mapLevel = -(Math.floor(prestigeToFarmFor / 2) - 1); */
+	//Allow lower mapLevel if we are missing many prestiges. Count how many times prestigeToFarmFor can be divided by two.
+	var mapLevel = -(Math.floor(prestigeToFarmFor / 2) - 1);
 
 	//Reduce map level to the value of the last prestige item we need to farm
 	//Shouldn't be necessary but could be useful if a user enables this setting later in their run
@@ -1578,10 +1584,12 @@ function prestigeClimb() {
 
 	const mapSpecial = getAvailableSpecials('p');
 
-	//Disable prestige farming if we can't afford the map we are trying to run and we aren't running mapping
-	if (perfectMapCost_Actual(mapLevel, mapSpecial, null, [0, 0, 0], false) > game.resources.fragments.owned)
-		shouldMap = false;
-
+	//Disable prestige farming if we can't afford the map we are trying to run and we aren't running mapping OR in a map and its a lower level than the map we want to run
+	if (perfectMapCost_Actual(mapLevel, mapSpecial, null, [0, 0, 0], false) > game.resources.fragments.owned) {
+		var mapObject = getCurrentMapObject();
+		if (!game.global.mapsActive || (mapObject && mapObject.level < game.global.world + mapLevel))
+			shouldMap = false;
+	}
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, 0, mapSpecial);
 		resetMapVars();
@@ -3100,7 +3108,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 				hdBase: hitsSurvivedSetting,
 				hdMult: 1,
 				hdType: "hitsSurvived",
-				jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : "1,2,6",
+				jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : "1,1,2",
 				level: -1,
 				world: game.global.world
 			}
