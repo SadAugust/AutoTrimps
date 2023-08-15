@@ -335,6 +335,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist')) return prestigeInfo;
+	if (getPageSetting('equipNoShields') && equipName === 'Shield') return prestigeInfo;
 	if (!maxLevel) maxLevel = Infinity;
 
 	//Check to see if the equipName is valid
@@ -476,23 +477,17 @@ function autoEquip() {
 	//Don't run before miners have been unlocked. This is to prevent a lengthy delay before miners are purchased when it buys several kinda unnecessary equips.
 	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 
-	//This ignores HD Farm & Hits Survived overrides!
-	var zoneGo = zoneGoCheck(getPageSetting('equipZone')).active;
-
 	//Loops through equips and buys prestiges if we can afford them and equipPrestige is set to 'AE: Always Prestige' (3).
 	//If we can then instantly purchase the prestige regardless of efficiency.
-	var equipPrestigeSetting = getPageSetting('equipPrestige');
-	if (equipPrestigeSetting === 3) {
+	if (getPageSetting('equipPrestige') === 3) {
 		var prestigeLeft = false;
-		prestigeInfo = '';
+		var prestigeInfo = '';
 		do {
 			prestigeLeft = false;
 			for (var equipName in game.equipment) {
 				prestigeInfo = buyPrestigeMaybe(equipName);
 				if (!game.equipment[equipName].locked && !prestigeInfo.skip) {
-					var equipType = MODULES.equipment[equipName].stat;
 					if (game.resources[prestigeInfo.resource].owned < prestigeInfo.prestigeCost) continue;
-					if (getPageSetting('equipNoShields') && equipName === 'Shield') continue;
 					buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
 					prestigeLeft = true;
 					debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
@@ -503,9 +498,9 @@ function autoEquip() {
 
 	//Initialise settings for later user
 	var alwaysLvl2 = getPageSetting('equip2');
-	var alwaysPandemonium = getPageSetting('pandemoniumAE') > 0;
+	var alwaysPandemonium = hdStats.currChallenge === 'Pandemonium' && getPageSetting('pandemoniumAE') > 0;
 	//always2 / alwaysPandemonium
-	if (alwaysLvl2 || (alwaysPandemonium && challengeActive('Pandemonium'))) {
+	if (alwaysLvl2 || alwaysPandemonium) {
 		var equipLeft = false;
 		do {
 			equipLeft = false;
@@ -514,13 +509,13 @@ function autoEquip() {
 					//Skips trying to buy extra levels if we can't afford them
 					if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
 					//Skips levels if we're running Pandemonium and the equip isn't available for purchaes
-					if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
+					if (hdStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 
 					if (alwaysLvl2 && game.equipment[equip].level < 2) {
 						buyEquipment(equip, true, true, 1);
 						debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
 					}
-					if (alwaysPandemonium && challengeActive('Pandemonium')) {
+					if (alwaysPandemonium) {
 						buyEquipment(equip, true, true, 1);
 						equipLeft = true;
 						debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
@@ -531,13 +526,8 @@ function autoEquip() {
 		while (equipLeft);
 	}
 
-	var maxCanAfford = 0;
-
-	//Buy as many shields as possible when running Melting Point if the 'AE: No Shields' setting is enabled
-	if (game.global.universe === 2 && !getPageSetting('equipNoShields') && getPageSetting('jobSettingsArray').NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name === 'Melting Point')
-		buyEquipment('Shield', true, true, 999);
-
 	//Loop through actually getting equips
+	var maxCanAfford = 0;
 	var keepBuying = false;
 	do {
 		keepBuying = false;
@@ -555,25 +545,28 @@ function autoEquip() {
 		for (var i = 0; i < 2; i++) {
 			if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1)) {
 				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
-					if (!equipPrestige) {
-						maxCanAfford = getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true);
-						if (maxCanAfford === 0)
-							maxCanAfford = 1;
-						if (maxCanAfford >= (equipCap - game.equipment[equipName].level))
-							maxCanAfford = equipCap - game.equipment[equipName].level;
-					}
 
 					// Check any of the overrides
 					if (equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
 						if (!game.equipment[equipName].locked) {
 							if (equipPrestige) {
-								buyUpgrade(MODULES.equipment[equipName].upgrade, true, true)
+								buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
 								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
-							}
-							else if (maxCanAfford > 0) {
-								buyEquipment(equipName, true, true, maxCanAfford)
-								debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
 								keepBuying = true;
+							}
+							else {
+								//Find out how many levels we can afford with 0.1% of resources
+								//If this value is below 1 we set it to 1 so that we always buy at least 1 level
+								maxCanAfford = Math.max(1, getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true));
+								//Checking to see if the max levels we can afford will take us over our equipcap threshold 
+								//If it will then set it to the difference between the equipcap and our current level
+								if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
+								//If the equip cap check didn't say we have 0 levels to buy then buy the max levels we can afford
+								if (maxCanAfford > 0) {
+									buyEquipment(equipName, true, true, maxCanAfford);
+									debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
+									keepBuying = true;
+								}
 							}
 							hdStats.hdRatio = calcHDRatio(game.global.world, 'world');
 						}
