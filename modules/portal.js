@@ -609,7 +609,6 @@ function doPortal(challenge, skipDaily) {
 	downloadSave();
 	pushData();
 	if (!MODULES["portal"].dontPushData) pushSpreadsheetData();
-	activatePortal();
 	MODULES["portal"].currentChallenge = 'None';
 	MODULES["portal"].dontPushData = false;
 	MODULES["portal"].dailyMods = '';
@@ -617,6 +616,7 @@ function doPortal(challenge, skipDaily) {
 	lastHeliumZone = 0;
 	MODULES.portal.zonePostpone = 0;
 
+	activatePortal();
 	resetVarsZone();
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 		loadMutations(preset);

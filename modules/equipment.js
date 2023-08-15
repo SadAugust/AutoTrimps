@@ -249,6 +249,8 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		}
 		//Load buyPrestigeMaybe into variable so it's not called 500 times
 		var maybeBuyPrestige = buyPrestigeMaybe(i, resourceSpendingPct, game.equipment[i].level);
+		//Stops the script from buying more than 9 levels in an equip if we have prestiges available
+		if (maybeBuyPrestige.prestigeAvailable) equipCap = 9;
 		//Skips if we have the equip capped and we aren't potentially farming for the prestige
 		if (!maybeBuyPrestige.purchase && game.equipment[i].level >= equipCap) continue;
 		//Skips if ignoreShield variable is true.
@@ -260,7 +262,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		//Skips through equips if they cost more than your equip purchasing percent setting value.
 		if (!equipHighlight && !canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) && !maybeBuyPrestige.purchase) continue;
 		//Skips equips if we have prestiges available & no prestiges to get for this
-		if (prestigesAvailable && forcePrestige && maybeBuyPrestige.prestigeDone) continue;
+		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
 		//If prestiges available & running certain setting skips (check above for loop) look at non-prestige item stats.
 		if (!prestigesAvailable || !forcePrestige) {
 			nextLevelValue = game.equipment[i][MODULES.equipment[i].stat + "Calculated"];
@@ -272,7 +274,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		var skipPrestiges = ignorePrestiges || maybeBuyPrestige.skip || false;
 		//Check for further overrides for if we want to skip looking at prestiges
 		if (!skipPrestiges) {
-			if (prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo && !ignorePrestiges && game.equipment[i].level < 6)) skipPrestiges = true;
+			if ((prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo && !ignorePrestiges)) && game.equipment[i].level < 6) skipPrestiges = true;
 			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[MODULES.equipment[i].resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) skipPrestiges = true;
 		}
 
@@ -300,6 +302,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 			mostEfficient[equipType].resourceSpendingPct = resourceSpendingPct;
 			mostEfficient[equipType].zoneGo = zoneGo;
 			mostEfficient[equipType].equipCap = equipCap;
+			mostEfficient[equipType].prestigeAvailable = maybeBuyPrestige.prestigeAvailable;
 		}
 	}
 
@@ -320,7 +323,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 
 	const prestigeInfo = {
 		purchase: false,
-		prestigeDone: false,
+		prestigeAvailable: false,
 		oneLevelStat: 0,
 		newStatValue: 0,
 		prestigeCost: 0,
@@ -334,42 +337,33 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	if (challengeActive('Scientist')) return prestigeInfo;
 	if (!maxLevel) maxLevel = Infinity;
 
-	var prestigeUpgrade = "";
-	var prestigeDone = false;
+	//Check to see if the equipName is valid
+	if (Object.getOwnPropertyNames(MODULES.equipment).indexOf(equipName) === -1) return prestigeInfo;
 
-	var allUpgradeNames = Object.getOwnPropertyNames(MODULES.equipment);
+	const prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
+	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];
 
-	for (var upgrade of allUpgradeNames) {
-		if (upgrade === equipName) {
-			prestigeUpgrade = game.upgrades[MODULES.equipment[upgrade].upgrade];
-			if (prestigeUpgrade.allowed === prestigeUpgrade.done) prestigeInfo.prestigeDone = true;
-			break;
-		}
-	}
+	if (prestigeUpgrade.locked || prestigeUpgrade.allowed === prestigeUpgrade.done) return prestigeInfo;
+	prestigeInfo.prestigeAvailable = true;
 
-	if (prestigeInfo.prestigeDone) return prestigeInfo;
+	const equipment = game.equipment[equipName];
 
-	if (!resourceSpendingPct) resourceSpendingPct = 1;
-
-	var equipment = game.equipment[equipName];
-	var prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
-
-	if (prestigeUpgrade.locked || (prestigeUpgradeName === 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned * resourceSpendingPct)) return prestigeInfo;
-
+	//Check to see if we have enough science to purchase the prestige
 	if (prestigeUpgrade.cost.resources.science[0] *
 		Math.pow(prestigeUpgrade.cost.resources.science[1], equipment.prestige - 1)
 		> game.resources.science.owned) {
 		return prestigeInfo;
 	}
-
+	//Check to see if we have enough gems to purchase the prestige
 	if (prestigeUpgrade.cost.resources.gems[0] *
 		Math.pow(prestigeUpgrade.cost.resources.gems[1], equipment.prestige - 1)
 		> game.resources.gems.owned) {
 		return prestigeInfo;
 	}
 
-	var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal'
+	var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 	var equipStat = (typeof equipment.attack !== 'undefined') ? 'attack' : 'health';
+	if (!resourceSpendingPct) resourceSpendingPct = 1;
 
 	//Cost of the base upgrade for the prestige
 	var prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
@@ -383,12 +377,11 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	//Identify the stat total we currently get from the equip
 	var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 	//Work out the total cost of the prestige + levels we can afford in it
-	prestigeCostTotal = prestigeCost + (prestigeCost * Math.pow(1.2, (newLevel - 1)));
+	//var prestigeCostTotal = prestigeCost + (prestigeCost * Math.pow(1.2, (newLevel - 1)));
 	//Figure out how many stats we get per resource
 	var statPerResource = prestigeCost / oneLevelStat;
 
 	prestigeInfo.purchase = newStatValue > currentStatValue;
-	prestigeInfo.prestigeDone = prestigeDone;
 	prestigeInfo.oneLevelStat = oneLevelStat;
 	prestigeInfo.newStatValue = newStatValue;
 	prestigeInfo.prestigeCost = prestigeCost;
@@ -397,6 +390,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	prestigeInfo.statPerResource = statPerResource;
 	prestigeInfo.currentStatValue = currentStatValue;
 	prestigeInfo.skip = false;
+	prestigeInfo.resource = resourceUsed;
 
 	return prestigeInfo;
 }
@@ -486,69 +480,76 @@ function autoEquip() {
 	var zoneGo = zoneGoCheck(getPageSetting('equipZone')).active;
 
 	//Loops through equips and buys prestiges if we can afford them and equipPrestige is set to 'AE: Always Prestige' (3).
+	//If we can then instantly purchase the prestige regardless of efficiency.
 	var equipPrestigeSetting = getPageSetting('equipPrestige');
-	if (equipPrestigeSetting === 3 && !zoneGo) {
+	if (equipPrestigeSetting === 3) {
 		var prestigeLeft = false;
+		prestigeInfo = '';
 		do {
 			prestigeLeft = false;
 			for (var equipName in game.equipment) {
-				if (buyPrestigeMaybe(equipName).purchase) {
-					if (!game.equipment[equipName].locked) {
-						var equipType = MODULES.equipment[equipName].stat;
-						if (getPageSetting('equipNoShields') && equipName === 'Shield') continue;
-						if ((equipPrestigeSetting === 3 || mostEfficientEquipment()[equipType].prestige) && buyUpgrade(MODULES.equipment[equipName].upgrade, true, true)) {
-							prestigeLeft = true;
-							debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
-						}
-					}
+				prestigeInfo = buyPrestigeMaybe(equipName);
+				if (!game.equipment[equipName].locked && !prestigeInfo.skip) {
+					var equipType = MODULES.equipment[equipName].stat;
+					if (game.resources[prestigeInfo.resource].owned < prestigeInfo.prestigeCost) continue;
+					if (getPageSetting('equipNoShields') && equipName === 'Shield') continue;
+					buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
+					prestigeLeft = true;
+					debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
 				}
 			}
-		} while (prestigeLeft)
+		} while (prestigeLeft);
 	}
 
 	//Initialise settings for later user
 	var alwaysLvl2 = getPageSetting('equip2');
 	var alwaysPandemonium = getPageSetting('pandemoniumAE') > 0;
-	// always2 / alwaysPrestige / alwaysPandemonium
+	//always2 / alwaysPandemonium
 	if (alwaysLvl2 || (alwaysPandemonium && challengeActive('Pandemonium'))) {
-		for (var equip in game.equipment) {
-			if (!game.equipment[equip].locked) {
-				//Skips trying to buy extra levels if we can't afford them
-				if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
-				if (alwaysLvl2 && game.equipment[equip].level < 2) {
-					buyEquipment(equip, true, true, 1);
-					debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
-				}
-				if (alwaysPandemonium && challengeActive('Pandemonium')) {
-					if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
-					buyEquipment(equip, true, true, 1);
-					debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
+		var equipLeft = false;
+		do {
+			equipLeft = false;
+			for (var equip in game.equipment) {
+				if (!game.equipment[equip].locked) {
+					//Skips trying to buy extra levels if we can't afford them
+					if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
+					//Skips levels if we're running Pandemonium and the equip isn't available for purchaes
+					if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
+
+					if (alwaysLvl2 && game.equipment[equip].level < 2) {
+						buyEquipment(equip, true, true, 1);
+						debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
+					}
+					if (alwaysPandemonium && challengeActive('Pandemonium')) {
+						buyEquipment(equip, true, true, 1);
+						equipLeft = true;
+						debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
+					}
 				}
 			}
 		}
+		while (equipLeft);
 	}
 
 	var maxCanAfford = 0;
 
-	//Buy as many shields as possible when running Melting Point
+	//Buy as many shields as possible when running Melting Point if the 'AE: No Shields' setting is enabled
 	if (game.global.universe === 2 && !getPageSetting('equipNoShields') && getPageSetting('jobSettingsArray').NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name === 'Melting Point')
-		buyEquipment('Shield', true, true, 999)
+		buyEquipment('Shield', true, true, 999);
 
-	var ignoreShields = getPageSetting('equipNoShields');
-	// Loop through actually getting equips
+	//Loop through actually getting equips
 	var keepBuying = false;
 	do {
 		keepBuying = false;
-		var bestBuys = mostEfficientEquipment(false, false, ignoreShields, false);
-		// Set up for both Attack and Health depending on which is cheaper to purchase
+		bestBuys = mostEfficientEquipment();
+		//Set up for both Attack and Health depending on which is cheaper to purchase
 		var equipType = (bestBuys.attack.cost < bestBuys.health.cost) ? 'attack' : 'health';
 		var equipName = bestBuys[equipType].name;
 		var equipCost = bestBuys[equipType].cost;
-		if (equipCost === 0) continue;
 		var equipPrestige = bestBuys[equipType].prestige;
 		var equipCap = bestBuys[equipType].equipCap;
 		var resourceSpendingPct = bestBuys[equipType].resourceSpendingPct;
-		zoneGo = bestBuys[equipType].zoneGo;
+		var zoneGo = bestBuys[equipType].zoneGo;
 		var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
 		for (var i = 0; i < 2; i++) {

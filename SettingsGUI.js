@@ -759,6 +759,7 @@ function initializeAllSettings() {
 			function () { return ('AE: Weapon Cap') },
 			function () {
 				var description = "<p>The value you want weapon equipment to stop being purchased at.</p>";
+				description += "<p><b>Equipment levels are capped at 9 when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
 				description += "<p><b>Recommended:</b> 250</p>";
 				return description;
 			}, 'value', 250, null, "Equipment", [1, 2],
@@ -767,6 +768,7 @@ function initializeAllSettings() {
 			function () { return ('AE: Armour Cap') },
 			function () {
 				var description = "<p>The value you want armor equipment to stop being purchased at.</p>";
+				description += "<p><b>Equipment levels are capped at 9 when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
 				description += "<p><b>Recommended:</b> 250</p>";
 				return description;
 			}, 'value', 50, null, "Equipment", [1, 2],
@@ -788,7 +790,7 @@ function initializeAllSettings() {
 				var description = "<p>What percent of resources you'd like to spend on equipment.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, "Equipment", [1, 2],
+			}, 'value', 25, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equip2',
 			function () { return ('AE: 2') },
@@ -803,6 +805,7 @@ function initializeAllSettings() {
 			function () {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
 				var description = "<p>Will control how equipment levels & prestiges are purchased.</p>";
+				description += "<p><b>Equipment levels are capped at 9 when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
 
 				description += "<p><b>AE: Prestige Off</b><br>Will only purchase prestiges when you have 6 or more levels in your that piece of equipment.</p>";
 
