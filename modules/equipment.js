@@ -538,17 +538,15 @@ function autoEquip() {
 		var equipCost = bestBuys[equipType].cost;
 		var equipPrestige = bestBuys[equipType].prestige;
 		var equipCap = bestBuys[equipType].equipCap;
-		var resourceSpendingPct = bestBuys[equipType].resourceSpendingPct;
-		var zoneGo = bestBuys[equipType].zoneGo;
 		var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
 		for (var i = 0; i < 2; i++) {
 			if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1)) {
-				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
-
-					// Check any of the overrides
-					if (equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
+				//Check any of the overrides
+				if (game.equipment[equipName].level < equipCap || equipPrestige || bestBuys[equipType].zoneGo) {
+					if (equipCost <= bestBuys[equipType].resourceSpendingPct * game.resources[resourceUsed].owned) {
 						if (!game.equipment[equipName].locked) {
+							//Purchases prestiges if they are the most efficient thing to go for
 							if (equipPrestige) {
 								buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
 								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
@@ -580,9 +578,7 @@ function autoEquip() {
 			equipCost = bestBuys[equipType].cost;
 			equipPrestige = bestBuys[equipType].prestige;
 			equipCap = bestBuys[equipType].equipCap;
-			resourceSpendingPct = bestBuys[equipType].resourceSpendingPct;
 			resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
-			zoneGo = bestBuys[equipType].zoneGo;
 		}
 	} while (keepBuying)
 }
