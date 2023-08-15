@@ -628,7 +628,7 @@ function initializeAllSettings() {
 			Resort: { enabled: true, percent: 100, buyMax: 200 },
 			Gateway: { enabled: true, percent: 10, buyMax: 200 },
 			Collector: { enabled: true, percent: 100, buyMax: 200 },
-			Gym: { enabled: true, percent: 100, buyMax: 0 },
+			Gym: { enabled: true, percent: 75, buyMax: 0 },
 			Tribute: { enabled: true, percent: 100, buyMax: 0 },
 			Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 0 },
 			Smithy: { enabled: true, percent: 100, buyMax: 0 },

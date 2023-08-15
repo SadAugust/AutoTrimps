@@ -160,14 +160,13 @@ function shouldRunUniqueMap(map) {
 		return false;
 	}
 
-	if (!hdStats.isC3 && mapData.challenges.includes(hdStats.currChallenge) && !challengeActive('')) {
+	if (!hdStats.isC3 && mapData.challenges.includes(hdStats.currChallenge) && !challengeActive('') && enoughHealth(map)) {
 		return true;
 	}
 	//Remove speed run check for now
 	/* if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
 		return true;
 	} */
-
 	if (MODULES.mapFunctions.runUniqueMap === map.name) {
 		if (game.global.mapsActive && getCurrentMapObject().location === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
 		return true;
@@ -176,25 +175,26 @@ function shouldRunUniqueMap(map) {
 	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === "Liquimp";
 
 	if (game.global.universe === 1) {
-		if (map.name === 'The Block') {
+		var aboveMapLevel = game.global.world > map.level;
+		if (map.name === 'The Block') { //Don't bother before z12 outside of manual unique map settings setup
 			//We need Shieldblock
-			if (!game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock') && game.global.highestLevelCleared < 40 && enoughHealth(map)) { // Don't bother before z12
+			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock') && game.global.highestLevelCleared < 40 && enoughHealth(map)) {
 				return true;
 			}
 			if (game.mapUnlocks.TheBlock.canRunOnce && uniqueMapSetting.The_Block.enabled && game.global.world >= uniqueMapSetting.The_Block.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Block.cell || liquified)) {
 				return true;
 			}
-		} else if (map.name === 'The Wall') {  //Don't bother before z16
+		} else if (map.name === 'The Wall') { //Don't bother before z16
 			//We need Bounty
-			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased && enoughHealth(map)) {
+			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased && enoughHealth(map)) {
 				return true;
 			}
 			if (game.mapUnlocks.TheWall.canRunOnce && uniqueMapSetting.The_Wall.enabled && game.global.world >= uniqueMapSetting.The_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Wall.cell || liquified)) {
 				return true;
 			}
-		} else if (map.name === 'Dimension of Anger') {//Don't bother before z22
+		} else if (map.name === 'Dimension of Anger') { //Don't bother before z22
 			//Unlock the portal
-			if (!game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none" && enoughHealth(map)) {
+			if (aboveMapLevel && !game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none" && enoughHealth(map)) {
 				return true;
 			}
 			if (game.mapUnlocks.Portal.canRunOnce && uniqueMapSetting.Dimension_of_Anger.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Anger.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Anger.cell || liquified)) {
@@ -202,7 +202,7 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'Trimple Of Doom') {
 			//Unlock the Relentlessness perk
-			if (game.portal.Relentlessness.locked && enoughHealth(map)) {
+			if (aboveMapLevel && game.portal.Relentlessness.locked && enoughHealth(map)) {
 				return true;
 			}
 			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Trimple_of_Doom.enabled && game.global.world >= uniqueMapSetting.Trimple_of_Doom.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Trimple_of_Doom.cell || liquified)) {
@@ -210,6 +210,10 @@ function shouldRunUniqueMap(map) {
 				return true;
 			}
 		} else if (map.name === 'The Prison' && enoughHealth(map)) {
+			//Unlock the Electricity challenge
+			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) {
+				return true;
+			}
 			if (game.mapUnlocks.ThePrison.canRunOnce && uniqueMapSetting.The_Prison.enabled && game.global.world >= uniqueMapSetting.The_Prison.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Prison.cell || liquified)) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
@@ -593,7 +597,7 @@ function mapBonus() {
 			//Set default settings. If empty then set some of them.
 			var defaultEmpty = Object.keys(defaultSettings).length === 1;
 			defaultSettings = {
-				jobratio: defaultEmpty ? "0,1,3" : defaultSettings.jobratio,
+				jobratio: defaultEmpty ? "1,2,6" : defaultSettings.jobratio,
 				autoLevel: true,
 				level: 0,
 				special: defaultEmpty ? "lmc" : defaultSettings.special,
@@ -3096,7 +3100,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 				hdBase: hitsSurvivedSetting,
 				hdMult: 1,
 				hdType: "hitsSurvived",
-				jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : "0,1,3",
+				jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : "1,2,6",
 				level: -1,
 				world: game.global.world
 			}
@@ -3333,17 +3337,16 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 
 		//Ensure we don't eternally farm if daily reset timer is low enough that it will start again next zone
 		//Checks against current portal counter to see if it has already been run this portal.
-		if (typeof currSetting.mapType !== 'undefined' && currSetting.mapType === 'Daily Reset') {
+		if (typeof currSetting.mapType !== 'undefined' && currSetting.mapType === 'Daily Reset')
 			if (settingDone && settingDone.split('_')[0] === totalPortals.toString()) return false;
-		}
 	}
 
 	//Skips if past designated end zone
 	if (game.global.world > currSetting.endzone + zoneReduction) return false;
 	//Skips if past designated max void zone
-	if (typeof currSetting.maxvoidzone !== 'undefined' && game.global.world > (currSetting.maxvoidzone + zoneReduction)) {
-		return false;
-	}//Check to see if the cell is liquified and if so we can replace the cell condition with it
+	if (typeof currSetting.maxvoidzone !== 'undefined' && game.global.world > (currSetting.maxvoidzone + zoneReduction)) return false;
+	if (typeof currSetting.bonebelow !== 'undefined' && game.permaBoneBonuses.boosts.charges <= currSetting.bonebelow) return false;
+	//Check to see if the cell is liquified and if so we can replace the cell condition with it
 	var liquified = game.global.lastClearedCell === -1 && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === "Liquimp";
 	//If cell input is greater than current zone then skips
 	if (!liquified && game.global.lastClearedCell + 2 < currSetting.cell) return false;
@@ -3355,6 +3358,7 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 		if (hdStats.isC3 && (currSetting.runType !== 'C3' ||
 			(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== hdStats.currChallenge)))) return false;
 	}
+
 	return true;
 }
 

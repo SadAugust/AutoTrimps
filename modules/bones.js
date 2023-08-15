@@ -20,21 +20,11 @@ function boneShrine() {
 	for (var y = 0; y < baseSettings.length; y++) {
 		if (y === 0) continue;
 		const currSetting = baseSettings[y];
-		if (game.global.world !== currSetting.world || game.global.addonUser[settingName][value][setting.row].done === totalPortals + "_" + game.global.world ||
-			!currSetting.active) {
-			continue;
-		}
-		if (currSetting.runType !== 'All') {
-			if (!hdStats.isC3 && !hdStats.isDaily && (currSetting.runType !== 'Filler' ||
-				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== hdStats.currChallenge)))) continue;
-			if (hdStats.isDaily && currSetting.runType !== 'Daily') continue;
-			if (hdStats.isC3 && (currSetting.runType !== 'C3' ||
-				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== hdStats.currChallenge)))) continue;
-		}
-		if (game.global.lastClearedCell + 2 >= currSetting.cell && boneCharges > currSetting.bonebelow) {
-			settingIndex = y;
-			break;
-		}
+		var world = currSetting.world;
+		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
+		settingIndex = y;
+		break;
+
 	}
 	if (settingIndex !== null) {
 
@@ -58,7 +48,6 @@ function boneShrine() {
 
 		if (settingIndex === true) boneShrineCharges = 1;
 
-		safeSetGather(boneShrineGather);
 		//Equip staff for the gather type the user is using
 		if (getPageSetting('heirloomStaff')) {
 			if (getPageSetting('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1)) !== 'undefined')
@@ -74,6 +63,7 @@ function boneShrine() {
 				if (getPageSetting('jobType') > 0) {
 					buyJobs(setting.jobratio);
 				}
+				safeSetGather(boneShrineGather);
 				game.permaBoneBonuses.boosts.consume();
 			}
 			debug('Consumed ' + boneShrineCharges + " bone shrine " + (boneShrineCharges === 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(boneShrineCharges), "bones");

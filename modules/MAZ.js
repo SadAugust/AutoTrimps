@@ -1834,10 +1834,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	//Zone
 	if (!voidMap && !golden) mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>";
 	//Cell
-	if (!golden && !boneShrine && !desolation) {
+	if (!golden && !desolation) {
 		mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell.</li>";
 		mazHelp += "<li class=\"indent\"><b>Runs on the cell you have input or after if you have already gone past that cell on your zone.</b></li>";
-		mazHelp += "<li class=\"indent\"><b>Doesn't take overkill into account so for example if you overkill past c100 with a c100 farm it will be skipped.</b></li>";
+		mazHelp += "<li class=\"indent\"><b>Doesn't take overkill into account so for example if you overkill past c100 with a c100 line it will be skipped.</b></li>";
 	}
 	//AutoLevel
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)

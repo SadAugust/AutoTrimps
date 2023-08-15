@@ -618,7 +618,7 @@ function autoMap() {
 			} else {
 				levelText = " Level: " + game.global.world;
 			}
-			var voidOrLevelText = themapobj.location === "Void" ? " Void: " : levelText;
+			var voidOrLevelText = themapobj && themapobj.location === "Void" ? " Void: " : levelText;
 			debug("Running selected " + selectedMap + voidOrLevelText + " Name: " + themapobj.name, "maps", 'th-large');
 			runMap();
 			MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
