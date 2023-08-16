@@ -296,7 +296,7 @@ function initializeAllSettings() {
 				var description = "<p>Will automatically portal into different challenges depending on the way you setup the Auto Portal related settings.</p>";
 				description += "<p><b>" + resource() + " Challenges will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b> or <b>Custom</b> are selected.</p>";
-				description += "<p><b>Off</b><br>Disables this setting.</p>";
+				description += "<p><b>None</b><br>Disables this setting.</p>";
 				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resource().toLowerCase() + " per hour goes below your current runs best " + resource().toLowerCase() + " per hour.</p>";
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
@@ -305,7 +305,7 @@ function initializeAllSettings() {
 				description += "<p>" + specialChall + "</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to use the Scruffy 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
 				return description;
-			}, 'dropdown', 'Off', function () { return autoPortalChallenges() }, 'Core', [1, 2]);
+			}, 'dropdown', 'None', function () { return autoPortalChallenges() }, 'Core', [1, 2]);
 
 		createSetting('heliumHourChallenge',
 			function () { return ('Challenge') },
@@ -811,9 +811,9 @@ function initializeAllSettings() {
 
 				description += "<p><b>AE: Maybe Prestige</b><br>Will only purchase prestiges you have either 6 or more levels in an equip <b>OR</b> when outside of your <b>AE: Zone</b> range <b>OR</b> when you can afford them .</p>";
 
-				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run " + trimple + ".</p>";
+				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run " + trimple + ".";
 
-				description += "<br><b>If " + trimple + " has been run it will buy any prestiges that cost less than 8% of your current resources then spend your remaining resources on equipment levels.</b></p>";
+				description += "<br>If <b>" + trimple + "</b> has been run it will buy any prestiges that cost less than 8% of your current resources then spend your remaining resources on equipment levels.</p>";
 
 				description += "<p><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.</p>";
 
@@ -3567,8 +3567,7 @@ function initializeAllSettings() {
 				description += "<p><b>Transfer</b><br>Will purchase levels in your Poison transfer rate.</p>";
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
-			},
-			'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice']; }, 'Nature', [1],
+			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoWind',
 			function () { return ('Wind') },

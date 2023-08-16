@@ -175,6 +175,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//This is the actual health of the army ATM, without considering items bought, but not yet in use
 	if (realHealth) return game.global.soldierHealthMax;
 	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
+	var heirloomToCheck = heirloomShieldToEquip(mapType);
 
 	//Health from equipments and coordination
 	var health = (50 + calcEquipment("health")) * game.resources.trimps.maxSoldiers;
@@ -212,7 +213,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//AutoBattle
 	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	//Shield (Heirloom)
-	health *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
+	health *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) / 100);
 	//Void Map Talents
 	health *= (game.talents.voidPower.purchased && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
 	//Championism
@@ -408,6 +409,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	if (!critMode) critMode = 'maybe';
 	if (!realDamage) realDamage = false;
 	var specificStance = game.global.universe === 1 ? equality : false;
+	var heirloomToCheck = heirloomShieldToEquip(mapType);
 
 	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
 
@@ -453,7 +455,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	//AutoBattle
 	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	// Heirloom (Shield)
-	attack *= 1 + calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomShieldToEquip(mapType)) / 100;
+	attack *= 1 + calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck) / 100;
 	// Frenzy perk
 	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (getPageSetting('frenzyCalc') || autoBattle.oneTimers.Mass_Hysteria.owned) ? 1 + (0.5 * game.portal.Frenzy[perkLevel]) : 1;
 	//Championism
@@ -592,17 +594,29 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 		if (!isNaN(parseInt((equality)))) {
 			if (equality > game.portal.Equality[perkLevel])
 				debug('You don\'t have this many levels in Equality. - Player Dmg. ' + equality + "/" + game.portal.Equality[perkLevel] + " equality used.", "other");
-			attack *= Math.pow(getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType)), equality);
+			attack *= Math.pow(getPlayerEqualityMult_AT(heirloomToCheck), equality);
 		} else if (isNaN(parseInt((equality)))) {
 			if (atSettings.intervals.tenSecond) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.", "other");
 		}
 	}
 
+	//Override for if the user wants to for some reason floor their crit chance
 	if (getPageSetting('floorCritCalc')) critMode = 'never';
+
 	//Init Damage Variation (Crit)
-	var min = attack * getCritMulti((critMode) ? critMode : "never", heirloomShieldToEquip(mapType));
-	var avg = attack * getCritMulti((critMode) ? critMode : "maybe", heirloomShieldToEquip(mapType));
-	var max = attack * getCritMulti((critMode) ? critMode : "force", heirloomShieldToEquip(mapType));
+	//If we have critMode defined there's no point in calculating it 3 different times
+	//If not defined then get an accurate value for all 3
+	var min, max, avg;
+	if (critMode) {
+		min = attack * getCritMulti(critMode, heirloomToCheck);
+		avg = min;
+		max = min;
+	}
+	else {
+		min = attack * getCritMulti('never', heirloomToCheck);
+		avg = attack * getCritMulti('maybe', heirloomToCheck);
+		max = attack * getCritMulti('force', heirloomToCheck);
+	}
 
 	//Damage Fluctuation
 	min *= minFluct;
@@ -610,10 +624,9 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	avg *= (maxFluct + minFluct) / 2;
 
 	//Well, finally, huh?
-	if (minMaxAvg === "min") return Math.floor(min);
-	if (minMaxAvg === "max") return Math.ceil(max);
-
-	return avg;
+	if (minMaxAvg === 'min') return Math.floor(min);
+	else if (minMaxAvg === 'max') return Math.ceil(max);
+	else return avg;
 }
 
 function calcSpire(what, cell, name) {
@@ -1336,6 +1349,9 @@ function calcMutationAttack(targetZone) {
 
 	var highest = 1;
 	var gridArray = game.global.gridArray;
+	var heirloomToCheck = heirloomShieldToEquip('world');
+	var compressedSwap = getPageSetting('heirloomCompressedSwap');
+	var compressedSwapValue = getPageSetting('heirloomSwapHDCompressed');
 
 	for (var i = 0; i < gridArray.length; i++) {
 		hasRage = gridArray[i].u2Mutation.includes('RGE');
@@ -1350,8 +1366,8 @@ function calcMutationAttack(targetZone) {
 		cell = i;
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
 			var ragingMult = hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1;
-			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap') && getPageSetting('heirloomSwapHDCompressed') > 0) {
-				if (heirloomShieldToEquip('world') !== 'heirloomInitial' || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') || MODULES.heirlooms.compressedCalc)
+			if (gridArray[cell].u2Mutation.includes('CMP') && compressedSwap && compressedSwapValue) {
+				if (heirloomToCheck !== 'heirloomInitial' || hdStats.hdRatio >= compressedSwapValue || MODULES.heirlooms.compressedCalc)
 					ragingMult = 2.8
 			}
 			highest = Math.max(mutationBaseAttack(cell, targetZone) * ragingMult, highest);
@@ -1359,7 +1375,7 @@ function calcMutationAttack(targetZone) {
 			attack = highest;
 		}
 	}
-	if (gridArray[worstCell].u2Mutation.includes("CMP")) {
+	if (gridArray[worstCell].u2Mutation.includes('CMP')) {
 		MODULES.heirlooms.compressedCalc = true;
 	}
 	return attack;
@@ -1392,14 +1408,18 @@ function calcMutationHealth(targetZone) {
 	var health = 0;
 
 	var highest = 0;
-	var gridArray = game.global.gridArray
+	var gridArray = game.global.gridArray;
+	var heirloomToCheck = heirloomShieldToEquip('world');
+	var compressedSwap = getPageSetting('heirloomCompressedSwap');
+	var compressedSwapValue = getPageSetting('heirloomSwapHDCompressed');
+
 	for (var i = 0; i < game.global.gridArray.length; i++) {
 		cell = i;
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
 
 			var enemyHealth = mutationBaseHealth(cell, targetZone);
-			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap') && getPageSetting('heirloomSwapHDCompressed') > 0) {
-				if (heirloomShieldToEquip('world') !== 'heirloomInitial' || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') || MODULES.heirlooms.compressedCalc)
+			if (gridArray[cell].u2Mutation.includes('CMP') && compressedSwap && compressedSwapValue > 0) {
+				if (heirloomToCheck !== 'heirloomInitial' || hdStats.hdRatio >= compressedSwapValue || MODULES.heirlooms.compressedCalc)
 					enemyHealth *= 0.7;
 			}
 
@@ -1408,7 +1428,7 @@ function calcMutationHealth(targetZone) {
 			health = highest;
 		}
 	}
-	if (gridArray[worstCell].u2Mutation.includes("CMP")) {
+	if (gridArray[worstCell].u2Mutation.includes('CMP')) {
 		MODULES.heirlooms.compressedCalc = true;
 	}
 	return health;

@@ -39,10 +39,11 @@ function getZoneEmpowerment(zone) {
 function remainingHealth(forceAngelic, mapType) {
 	if (!forceAngelic) forceAngelic = false;
 	if (!mapType) mapType = 'world';
+	var heirloomToCheck = heirloomShieldToEquip(mapType);
 
-	const correctHeirloom = heirloomShieldToEquip(mapType) !== undefined ? getPageSetting(heirloomShieldToEquip(mapType)) === game.global.ShieldEquipped.name : true;
+	const correctHeirloom = heirloomToCheck !== undefined ? getPageSetting(heirloomToCheck) === game.global.ShieldEquipped.name : true;
 	const currentShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true) / 100;
-	const newShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100;
+	const newShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) / 100;
 
 	var soldierHealth = game.global.soldierHealth;
 	var soldierHealthMax = game.global.soldierHealthMax;
@@ -66,7 +67,7 @@ function remainingHealth(forceAngelic, mapType) {
 		//Fix our shield to the correct new value if we are changing heirlooms
 		if (!correctHeirloom) {
 			energyShieldMult = getEnergyShieldMult_AT(mapType, true);
-			const newShieldMult = getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100;
+			const newShieldMult = getHeirloomBonus_AT('Shield', 'prismatic', heirloomToCheck) / 100;
 			const shieldPrismatic = newShieldMult > 0 ? energyShieldMult + newShieldMult : energyShieldMult;
 			currShieldPrismatic = energyShieldMult + getHeirloomBonus("Shield", "prismatic") / 100;
 
@@ -392,8 +393,6 @@ function equalityManagement() {
 	var difficulty = mapping ? mapObject.difficulty : 1;
 	var maxEquality = game.portal.Equality.radLevel;
 	var armyReady = newArmyRdy();
-
-	if (type === 'void' && getPageSetting('heirloomVoidSwap')) heirloomSwapping();
 
 	//Daily modifiers active
 	var isDaily = challengeActive('Daily')

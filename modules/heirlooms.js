@@ -2,7 +2,7 @@ MODULES.heirlooms = {
 	plagueSwap: false,
 	compressedCalc: false,
 	gammaBurstPct: 1,
-	shieldEquipped: game.global.ShieldEquipped.id,
+	shieldEquipped: null,
 }
 
 MODULES.heirloomMods = {
@@ -160,7 +160,7 @@ function autoHeirlooms(portal) {
 		}
 	}
 	//If typetokeep is set to all will loop through all heirloom types and stash them.
-	else if (getPageSetting('heirloomAutoTypeToKeep') === 3) {
+	else {
 		const heirloomTypes = ['Shield', 'Staff'];
 		if (game.global.universe === 1) heirloomTypes.push('Core');
 
@@ -189,7 +189,7 @@ function heirloomSearch(heirloom) {
 }
 
 //Loops through heirlooms and checks if they have a specified modifier on them, divides by 10 if in u2.
-function HeirloomModSearch(heirloom, modifier) {
+function heirloomModSearch(heirloom, modifier) {
 
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
@@ -239,33 +239,30 @@ function HeirloomModSearch(heirloom, modifier) {
 	return undefined;
 }
 
-function HeirloomEquipShield(heirloom) {
-
+function heirloomEquipShield(heirloom) {
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
 
 	if (heirloomDetails !== undefined && game.global.ShieldEquipped.name !== heirloomName) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), "heirloomsCarried", true);
 		equipHeirloom(true);
-		MODULES.heirlooms.gammaBurstPct = getPageSetting('gammaBurstCalc') && (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
-	} else if (heirloomDetails === undefined && game.global.ShieldEquipped.name !== heirloomName)
-		if (atSettings.intervals.tenSecond) debug("The heirloom named \"" + heirloomName + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " shield. This will be causing at least one of your HD Ratios to be incorrect.", "other");
+		heirloomShieldSwapped();
+	} else if (heirloomDetails === undefined && game.global.ShieldEquipped.name !== heirloomName && atSettings.intervals.tenSecond)
+		debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} shield. This will be causing at least one of your HD Ratios to be incorrect.`, `other`);
 }
 
-function HeirloomEquipStaff(heirloom) {
-
+function heirloomEquipStaff(heirloom) {
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
 
 	if (heirloomDetails !== undefined && game.global.StaffEquipped.name !== heirloomName) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), "heirloomsCarried", true);
 		equipHeirloom(true);
-	} else if (heirloomDetails === undefined && game.global.StaffEquipped.name !== heirloomName)
-		if (atSettings.intervals.tenSecond) debug("The heirloom named \"" + heirloomName + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " staff. This will be causing any loot related calcs to be incorrect.", "other");
+	} else if (heirloomDetails === undefined && game.global.StaffEquipped.name !== heirloomName && atSettings.intervals.tenSecond)
+		debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} staff. This will be causing at least one of your HD Ratios to be incorrect.`, `other`);
 }
 
-function HeirloomShieldSwapped() {
-	if (!game.global.ShieldEquipped.rarity >= 10) return;
+function heirloomShieldSwapped() {
 	MODULES.heirlooms.gammaBurstPct = getPageSetting('gammaBurstCalc') && (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	MODULES.heirlooms.shieldEquipped = game.global.ShieldEquipped.id;
 }
@@ -352,16 +349,14 @@ function heirloomShieldToEquip(mapType, swapLooms) {
 			game.global.voidBuff !== 'doubleAttack';
 	}
 	if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
-		if (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined") {
+		if (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined")
 			return ('heirloomVoidPlaguebringer');
-		}
 		else
 			return ('heirloomVoid');
 	}
 	//Return Duel shield if we are running that challenge with the settings active
-	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== "undefined") {
+	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== "undefined")
 		return ('duelShield');
-	}
 	//Return initial shield if we are in a void map and are going to plaguebringer scum the cell after next
 	//This is a backup for if the void shield setting have not been properly setup.
 	else if (voidActive && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomInitial') !== "undefined")
@@ -395,7 +390,7 @@ function heirloomStaffToEquip(mapType) {
 			return ('heirloomStaffVoid');
 		else if (getPageSetting('heirloomStaffMap') !== "undefined" && mapBonus === undefined)
 			return ('heirloomStaffMap');
-		else if (getCurrentMapObject().bonus !== undefined) {
+		else if (mapBonus !== undefined) {
 			if (getPageSetting('heirloomStaffFood') !== "undefined" && mapBonus.includes("sc"))
 				return ('heirloomStaffFood');
 			else if (getPageSetting('heirloomStaffWood') !== "undefined" && mapBonus.includes("wc"))
@@ -419,18 +414,41 @@ function heirloomSwapping() {
 	//Swapping Shields
 	if (getPageSetting('heirloomShield')) {
 		var shield = heirloomShieldToEquip(mapType, true);
-		if (shield !== undefined) HeirloomEquipShield(shield);
+		if (shield !== undefined) heirloomEquipShield(shield);
 	}
 
 	//Swapping Staffs
 	if (getPageSetting('heirloomStaff')) {
 		var staff = heirloomStaffToEquip(mapType, true);
-		if (staff !== undefined) HeirloomEquipStaff(staff);
+		if (staff !== undefined) heirloomEquipStaff(staff);
 	}
 }
 
 //AT versions for heirloom bonuses. 
 //Check and update each patch!
+
+function getHeirloomBonus_AT(type, modName, customShield) {
+	if (!customShield && (!game.heirlooms[type] || !game.heirlooms[type][modName])) {
+		console.log('oh noes', type, modName);
+		return 0;
+	}
+
+	var bonus;
+	//Override bonus if needed with gammaBurst otherwise check customShield and lastly use the game heirloom bonus.
+	if (modName === 'gammaBurst')
+		bonus = MODULES.heirlooms.gammaBurstPct;
+	else if (customShield)
+		bonus = heirloomModSearch(customShield, modName);
+	else
+		bonus = game.heirlooms[type][modName].currentBonus;
+
+	if (bonus === undefined) return 0;
+
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
+		if (modName !== 'FluffyExp' && modName !== 'VoidMaps') bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+	}
+	return scaleHeirloomModUniverse(type, modName, bonus);
+}
 
 function calcHeirloomBonus_AT(type, modName, number, getValueOnly, customShield) {
 	var mod = getHeirloomBonus_AT(type, modName, customShield);
@@ -440,40 +458,22 @@ function calcHeirloomBonus_AT(type, modName, number, getValueOnly, customShield)
 	return (number * ((mod / 100) + 1));
 }
 
-function getHeirloomBonus_AT(type, mod, customShield) {
-	if (!game.heirlooms[type] || !game.heirlooms[type][mod]) {
-		console.log('oh noes', type, mod)
-	}
-	var bonus = game.heirlooms[type][mod].currentBonus;
-	//Override bonus if needed
-	if (customShield) bonus = HeirloomModSearch(customShield, mod);
-	if (bonus === undefined) bonus = 0;
-	if (mod === 'gammaBurst' && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
-		bonus = MODULES.heirlooms.gammaBurstPct;
-	}
-	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
-		if (type !== 'FluffyExp' && type !== 'VoidMaps') bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
-	}
-	return scaleHeirloomModUniverse(type, mod, bonus);
-}
-
 function getPlayerCritChance_AT(customShield) { //returns decimal: 1 = 100%
 	if (challengeActive('Frigid') && game.challenges.Frigid.warmth <= 0) return 0;
 	if (challengeActive('Duel')) return (game.challenges.Duel.enemyStacks / 100);
+	var heirloomValue = getHeirloomBonus_AT('Shield', 'critChance', customShield);
 	var critChance = 0;
 	critChance += (game.portal.Relentlessness.modifier * getPerkLevel("Relentlessness"));
-	critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) / 100);
-	if (game.talents.crit.purchased && getHeirloomBonus_AT("Shield", "critChance", customShield)) critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * 0.005);
+	critChance += (heirloomValue / 100);
+	if (game.talents.crit.purchased && heirloomValue) critChance += (heirloomValue * 0.005);
 	if (Fluffy.isRewardActive("critChance")) critChance += (0.5 * Fluffy.isRewardActive("critChance"));
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critChance += 0.35;
 	if (game.global.universe === 2 && u2Mutations.tree.CritChance.purchased) critChance += 0.25;
 	if (challengeActive('Daily')) {
-		if (typeof game.global.dailyChallenge.trimpCritChanceUp !== 'undefined') {
+		if (typeof game.global.dailyChallenge.trimpCritChanceUp !== 'undefined')
 			critChance += dailyModifiers.trimpCritChanceUp.getMult(game.global.dailyChallenge.trimpCritChanceUp.strength);
-		}
-		if (typeof game.global.dailyChallenge.trimpCritChanceDown !== 'undefined') {
+		if (typeof game.global.dailyChallenge.trimpCritChanceDown !== 'undefined')
 			critChance -= dailyModifiers.trimpCritChanceDown.getMult(game.global.dailyChallenge.trimpCritChanceDown.strength);
-		}
 		if (Fluffy.isRewardActive('SADailies')) critChance += Fluffy.rewardConfig.SADailies.critChance();
 	}
 	if (critChance > 7) critChance = 7;
@@ -481,9 +481,10 @@ function getPlayerCritChance_AT(customShield) { //returns decimal: 1 = 100%
 }
 
 function getPlayerCritDamageMult_AT(customShield) {
-	var relentLevel = getPerkLevel("Relentlessness");
-	var critMult = (((game.portal.Relentlessness.otherModifier * relentLevel) + (getHeirloomBonus_AT("Shield", "critDamage", customShield) / 100)) + 1);
-	critMult += (getPerkLevel("Criticality") * game.portal.Criticality.modifier);
+	var relentLevel = getPerkLevel('Relentlessness');
+	var heirloomValue = getHeirloomBonus_AT('Shield', 'critDamage', customShield);
+	var critMult = (((game.portal.Relentlessness.otherModifier * relentLevel) + (heirloomValue / 100)) + 1);
+	critMult += (getPerkLevel('Criticality') * game.portal.Criticality.modifier);
 	if (relentLevel > 0) critMult += 1;
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
 	critMult += alchObj.getPotionEffect("Elixir of Accuracy");
@@ -493,7 +494,8 @@ function getPlayerCritDamageMult_AT(customShield) {
 function getPlayerEqualityMult_AT(customShield) {
 	var modifier = game.portal.Equality.modifier;
 	var tempModifier = 1 - modifier;
-	tempModifier *= (getHeirloomBonus_AT("Shield", "inequality", customShield) / 100);
+	var heirloomValue = getHeirloomBonus_AT('Shield', 'inequality', customShield);
+	tempModifier *= heirloomValue / 100;
 	modifier += tempModifier;
 	return modifier;
 }
@@ -506,11 +508,12 @@ function getEnergyShieldMult_AT(mapType, noHeirloom) {
 	if (getPerkLevel("Prismal") > 0) total += (getPerkLevel("Prismal") * game.portal.Prismal.modifier); //Prismal perk, total possible is 100%
 	total += (Fluffy.isRewardActive("prism") * 0.25); //Fluffy Prism reward, 25% each, total of 25% available
 	if (challengeActive('Bublé')) total += 2.5; //Bublé challenge - 100%
-	if (autoBattle.oneTimers.Suprism.owned) total += autoBattle.oneTimers.Suprism.getMult();
+	if (autoBattle.oneTimers.Suprism.owned) total += autoBattle.oneTimers.Suprism.getMult(); //SpireAssault - 3% per level
 
 	if (!noHeirloom) {
-		if (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0) total +=
-			(getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100);
+		var heirloomValue = getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType));
+		if (heirloomValue > 0) total +=
+			(heirloomValue / 100);
 	}
 	return total;
 }

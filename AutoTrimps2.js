@@ -15,7 +15,7 @@ var atSettings = {
 	runInterval: 100,
 	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false, },
 	loops: { atTimeLapseFastLoop: false, mainLoopInterval: null, guiLoopInterval: null, },
-	intervals: { counter: 0, oneSecond: false, twoSecond: false, sixSecond: false, tenSecond: false, oneHour: false, },
+	intervals: { counter: 0, oneSecond: false, twoSecond: false, sixSecond: false, tenSecond: false, tenMinute: false, },
 };
 
 //Searches html for where the AT script is being loaded from
@@ -121,12 +121,6 @@ function delayStart() {
 	// Append the script to the document
 	document.head.appendChild(script);
 
-	var script = document.createElement("script");
-	script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
-	script.type = 'text/javascript';
-	// Append the script to the document
-	document.head.appendChild(script);
-
 	//Loads the settings from the save file, settingsGUI & the various modules installed.
 	initializeAutoTrimps();
 	//Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
@@ -195,6 +189,13 @@ function delayStartAgain() {
 	universeSwapped();
 	//Loads my game settings
 	loadAugustSettings();
+
+	//Loading jQuery select2 to style dropdown boxes more than basic html/css can.
+	var script = document.createElement("script");
+	script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
+	script.type = 'text/javascript';
+	// Append the script to the document
+	document.head.appendChild(script);
 }
 
 //Displays Perky UI when changing universes.
@@ -365,9 +366,9 @@ function mainLoop() {
 	atSettings.intervals.sixSecond = atSettings.intervals.counter % (6000 / atSettings.runInterval) === 0;
 	atSettings.intervals.tenSecond = atSettings.intervals.counter % (10000 / atSettings.runInterval) === 0;
 	//Need a one hour interval for version checking.
-	atSettings.intervals.oneHour = atSettings.intervals.counter % (360000) === 0;
+	atSettings.intervals.tenMinute = atSettings.intervals.counter % (60000) === 0;
 
-	if (atSettings.intervals.oneHour)
+	if (atSettings.intervals.tenMinute)
 		atVersionChecker();
 
 	//This needs to be run here so that any variables that are reset at the start of a zone are reset before hdStats and mapSettings variables are updated.
@@ -387,7 +388,7 @@ function mainLoop() {
 	}
 
 	//Heirloom Shield Swap Check
-	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
+	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
 
 	//Sets the resources needed for the upgrades you have to buy
 	setResourceNeeded();

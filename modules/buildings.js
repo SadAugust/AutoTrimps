@@ -76,6 +76,7 @@ function getPsString_AT(what) {
 	var index = resOrder.indexOf(what);
 	var job = game.jobs[jobs[index]];
 	var book = game.upgrades["Speed" + books[index]];
+	var mBook = game.upgrades["Mega" + books[index]];
 	var base = (what === "fragments") ? 0.4 : 0.5;
 	//Add base
 	//Add job count
@@ -340,7 +341,7 @@ function mostEfficientHousing() {
 			var costScaling = game.buildings[housing].cost[resource][1];
 			var avgProduction = getPsString_AT(resource, true);
 			if (avgProduction <= 0) avgProduction = 1;
-			if (challengeActive('Transmute') && resource === 'metal') avgProduction = getPsString_AT('wood', true);
+			if ((challengeActive('Metal') || challengeActive('Transmute')) && resource === 'metal') avgProduction = getPsString_AT('wood', true);
 			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > (game.resources[resource].owned// - MODULES.resourceNeeded[resource]
 			) * buildingspending) dontbuy.push(housing);
 			if (game.global.universe === 2 && housing === 'Gateway' && resource === 'fragments' && buildingSettings.SafeGateway.enabled && (buildingSettings.SafeGateway.zone === 0 || buildingSettings.SafeGateway.zone > game.global.world)) {

@@ -51,9 +51,9 @@ function boneShrine() {
 		//Equip staff for the gather type the user is using
 		if (getPageSetting('heirloomStaff')) {
 			if (getPageSetting('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1)) !== 'undefined')
-				HeirloomEquipStaff('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1));
+				heirloomEquipStaff('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1));
 			else if (getPageSetting('heirloomStaffMap') !== 'undefined')
-				HeirloomEquipStaff('heirloomStaffMap');
+				heirloomEquipStaff('heirloomStaffMap');
 		}
 		if (boneShrineAtlantrimp) {
 			runUniqueMap(boneShrineDoubler);
