@@ -805,7 +805,7 @@ function initializeAllSettings() {
 			function () {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
 				var description = "<p>Will control how equipment levels & prestiges are purchased.</p>";
-				description += "<p><b>Equipment levels are capped at 9 when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
+				description += "<p><b>Equipment levels are capped at 9 when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</b></p>";
 
 				description += "<p><b>AE: Prestige Off</b><br>Will only purchase prestiges when you have 6 or more levels in your that piece of equipment.</p>";
 
