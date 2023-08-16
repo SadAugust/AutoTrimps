@@ -1557,7 +1557,8 @@ function prestigeClimb() {
 	const mapsToRun = prestigeInfo[1];
 
 	//Allow lower mapLevel if we are missing many prestiges. Count how many times prestigeToFarmFor can be divided by two.
-	var mapLevel = -(Math.floor(prestigeToFarmFor / 2) - 1);
+	//var mapLevel = -(Math.floor(prestigeToFarmFor / 2) - 1);
+	var mapLevel = 0;
 
 	//Reduce map level to the value of the last prestige item we need to farm
 	//Shouldn't be necessary but could be useful if a user enables this setting later in their run
