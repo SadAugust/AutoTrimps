@@ -296,7 +296,7 @@ function initializeAllSettings() {
 				var description = "<p>Will automatically portal into different challenges depending on the way you setup the Auto Portal related settings.</p>";
 				description += "<p><b>" + resource() + " Challenges will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b> or <b>Custom</b> are selected.</p>";
-				description += "<p><b>None</b><br>Disables this setting.</p>";
+				description += "<p><b>Off</b><br>Disables this setting.</p>";
 				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resource().toLowerCase() + " per hour goes below your current runs best " + resource().toLowerCase() + " per hour.</p>";
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
@@ -305,7 +305,7 @@ function initializeAllSettings() {
 				description += "<p>" + specialChall + "</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to use the Scruffy 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
 				return description;
-			}, 'dropdown', 'None', function () { return autoPortalChallenges() }, 'Core', [1, 2]);
+			}, 'dropdown', 'Off', function () { return autoPortalChallenges() }, 'Core', [1, 2]);
 
 		createSetting('heliumHourChallenge',
 			function () { return ('Challenge') },
@@ -3714,12 +3714,13 @@ function initializeAllSettings() {
 			function () { return ('Time Warp Display') },
 			function () {
 				var description = "<p>Will display the Trimps user interface during time warp.</p>";
-				description += "<p>Updates the display based off the value set in <b>Time Warp Frequency</b> so adjust that if you want it to update more often.</p>";
+				description += "<p>Updates the display every 600 ingame ticks so every minute of ingame time.</p>";
 				description += "<p>If enabled it will cause your time warp to take longer as it has to render additional frames.</p>";
-				description += "<p><b>Recommended:</b> Disabled</p>";
+				description += "<p>When first loading Time Warp will let you know how long your Time Warp is in a tooltip as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the Auto Maps status at the bottom of the battle container.</p>";
+				description += "<p><b>Recommended:</b> Enabled</p>";
 				return description;
 			}, 'boolean', false, null, 'Time Warp', [0],
-			function () { return (autoTrimpSettings.timeWarpSpeed.enabled && gameUserCheck()) });
+			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------

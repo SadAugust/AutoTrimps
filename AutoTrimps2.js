@@ -259,6 +259,7 @@ function toggleCatchUpMode() {
 		atSettings.loops.atTimeLapseFastLoop = true;
 		gameLoop = function (makeUp, now) {
 			if (game.options.menu.pauseGame.enabled === 1) return;
+			var loopFrequency = getPageSetting('timeWarpFrequency');
 			var newZone = atSettings.portal.lastrunworld !== game.global.world;
 			if (newZone) mainCleanup();
 			originalGameLoop(makeUp, now);
@@ -266,37 +267,41 @@ function toggleCatchUpMode() {
 				game.global.mapStarted -= 100;
 
 			//Run mainLoop every n game loops and always on a new zone.
-			if (loops % getPageSetting('timeWarpFrequency') === 0 || newZone) {
+			if (loops % loopFrequency === 0 || newZone) {
 				mainLoop();
-				//If user want to see the games UI then run this code every n game loops.
-				if (getPageSetting('timeWarpDisplay') && usingRealTimeOffline) {
-					usingRealTimeOffline = false;
-					updateGoodBar();
-					updateBadBar(getCurrentEnemy_new());
-					document.getElementById("goodGuyHealthMax").innerHTML = prettify(game.global.soldierHealthMax);
-					document.getElementById("badGuyHealthMax").innerHTML = prettify(getCurrentEnemy_new().maxHealth);
+			}
 
-					var blockDisplay = "";
-					if (game.global.universe == 2) {
-						var esMax = game.global.soldierEnergyShieldMax;
-						var esMult = getEnergyShieldMult();
-						var layers = Fluffy.isRewardActive('shieldlayer');
-						if (layers > 0) {
-							esMax *= layers + 1;
-							esMult *= layers + 1;
-						}
-						blockDisplay = prettify(esMax) + " (" + Math.round(esMult * 100) + "%)";
+			//If user want to see the games UI then run this code every 600 game loops.
+			if (getPageSetting('timeWarpDisplay') && usingRealTimeOffline && loops % 600 === 0) {
+				usingRealTimeOffline = false;
+				var enemy = getCurrentEnemy_new();
+				updateGoodBar();
+				updateBadBar(enemy);
+				document.getElementById("goodGuyHealthMax").innerHTML = prettify(game.global.soldierHealthMax);
+				document.getElementById("badGuyHealthMax").innerHTML = prettify(enemy.maxHealth);
+
+				var blockDisplay = "";
+				//Prismatic Shield for U2
+				if (game.global.universe == 2) {
+					var esMax = game.global.soldierEnergyShieldMax;
+					var esMult = getEnergyShieldMult();
+					var layers = Fluffy.isRewardActive('shieldlayer');
+					if (layers > 0) {
+						esMax *= layers + 1;
+						esMult *= layers + 1;
 					}
-					else blockDisplay = prettify(game.global.soldierCurrentBlock);
-					document.getElementById("goodGuyBlock").innerHTML = blockDisplay;
-					document.getElementById("goodGuyAttack").innerHTML = calculateDamage(game.global.soldierCurrentAttack, true, true);
-					var badAttackElem = document.getElementById("badGuyAttack");
-					badAttackElem.innerHTML = calculateDamage(getCurrentEnemy_new().attack, true, false, false, getCurrentEnemy_new());
-
-					updateLabels(true);
-					displayMostEfficientEquipment();
-					usingRealTimeOffline = true;
+					blockDisplay = prettify(esMax) + " (" + Math.round(esMult * 100) + "%)";
 				}
+				//Block for U1
+				else blockDisplay = prettify(game.global.soldierCurrentBlock);
+				document.getElementById("goodGuyBlock").innerHTML = blockDisplay;
+				document.getElementById("goodGuyAttack").innerHTML = calculateDamage(game.global.soldierCurrentAttack, true, true);
+				var badAttackElem = document.getElementById("badGuyAttack");
+				badAttackElem.innerHTML = calculateDamage(getCurrentEnemy_new().attack, true, false, false, getCurrentEnemy_new());
+
+				updateLabels(true);
+				displayMostEfficientEquipment();
+				usingRealTimeOffline = true;
 			}
 
 			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
@@ -310,6 +315,11 @@ function toggleCatchUpMode() {
 		}
 
 		debug("TimeLapse Mode Enabled", "offline");
+		if (usingRealTimeOffline) {
+			var timeWarpTime = offlineProgress.formatTime(Math.floor(offlineProgress.totalOfflineTime / 1000));
+			debug(`Your Time Warp duration is ${timeWarpTime}.`);
+			if (getPageSetting('timeWarpDisplay')) tooltip(`Time Warp`, `customText`, `lock`, `Your Time Warp duration is ${timeWarpTime}. As you have the ${autoTrimpSettings.timeWarpDisplay.name()} setting enabled you have no visible timer but you can see the progress percent in the AutoMaps status bar at the bottom of the battle container.`, false, `center`)
+		}
 	}
 }
 
