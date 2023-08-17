@@ -119,7 +119,7 @@ function isDoingSpire() {
 	if (!game.global.spireActive) return false;
 	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
 	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
-	if (spireNo >= 0) return true;
+	if (spireNo <= 0) return true;
 	var spireZone = (1 + spireNo) * 100;
 	return game.global.world >= spireZone;
 }
