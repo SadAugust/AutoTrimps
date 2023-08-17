@@ -4560,7 +4560,7 @@ function autoPortalChallenges() {
 		hze = game.stats.highestRadLevel.valueTotal();
 		challenge = ["Off", "Radon Per Hour"];
 		if (hze >= 40) challenge.push("Bublé");
-		if (hze >= 55) challenge.push("Melt");
+		if (hze >= 50) challenge.push("Melt");
 		if (hze >= 70) challenge.push("Quagmire");
 		if (hze >= 85) challenge.push("Quest");
 		if (hze >= 90) challenge.push("Archaeology");
@@ -4602,7 +4602,7 @@ function heliumHourChallenges(isDaily) {
 	if (currSettingUniverse === 2) {
 		hze = game.stats.highestRadLevel.valueTotal();
 		if (hze >= 40) challenge.push("Bublé");
-		if (hze >= 55) challenge.push("Melt");
+		if (hze >= 50) challenge.push("Melt");
 		if (hze >= 70) challenge.push("Quagmire");
 		if (hze >= 85) challenge.push("Quest");
 		if (hze >= 90) challenge.push("Archaeology");
@@ -4789,7 +4789,7 @@ function challengeUnlockCheckU2() {
 	if (hze >= 35) challenges.push("Unbalance");
 	if (hze >= 40) challenges.push("Bublé");
 	if (hze >= 45) challenges.push("Duel");
-	if (hze >= 55) challenges.push("Melt");
+	if (hze >= 50) challenges.push("Melt");
 	if (hze >= 60) challenges.push("Trappapalooza");
 	if (hze >= 70) challenges.push("Wither");
 	if (hze >= 70) challenges.push("Quagmire");
