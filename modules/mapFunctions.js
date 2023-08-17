@@ -1,6 +1,6 @@
 MODULES.mapFunctions = {};
 
-MODULES.portal.afterVoids = false;
+MODULES.mapFunctions.afterVoids = false;
 MODULES.mapFunctions.hasHealthFarmed = '';
 MODULES.mapFunctions.hasSpireFarmed = '';
 MODULES.mapFunctions.hasVoidFarmed = '';
@@ -376,7 +376,7 @@ function voidMaps() {
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
 
-	if (!defaultSettings.active && !mapSettings.portalAfterVoids && !MODULES.portal.afterVoids) return farmingDetails;
+	if (!defaultSettings.active && !mapSettings.portalAfterVoids && !MODULES.mapFunctions.afterVoids) return farmingDetails;
 
 	const voidReduction = hdStats.isDaily ? dailyModiferReduction() : 0;
 	const dailyAddition = dailyOddOrEven();
@@ -473,7 +473,7 @@ function voidMaps() {
 		}
 	}
 
-	if (settingIndex !== null || (mapSettings.voidHDIndex && mapSettings.voidHDIndex !== Infinity && baseSettings[mapSettings.voidHDIndex].world <= game.global.world && baseSettings[mapSettings.voidHDIndex].maxvoidzone >= game.global.world) || mapSettings.portalAfterVoids || MODULES.portal.afterVoids) {
+	if (settingIndex !== null || (mapSettings.voidHDIndex && mapSettings.voidHDIndex !== Infinity && baseSettings[mapSettings.voidHDIndex].world <= game.global.world && baseSettings[mapSettings.voidHDIndex].maxvoidzone >= game.global.world) || mapSettings.portalAfterVoids || MODULES.mapFunctions.afterVoids) {
 		var setting = {};
 		if (settingIndex === null && !mapSettings.voidHDIndex) {
 			var portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');

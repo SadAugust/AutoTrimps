@@ -68,13 +68,13 @@ function autoPortal(specificPortalZone, skipDaily) {
 				OKtoPortal = false;
 			if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
 				if (getPageSetting('heliumHrPortal', universe) > 0 && game.global.totalVoidMaps > 0) {
-					if (!MODULES.portal.afterVoids) {
+					if (!MODULES.mapFunctions.afterVoids) {
 						if (getPageSetting('heliumHrPortal', universe) === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
 						else debug("Z" + game.global.world + " - Portaling after void maps have been run.", "portal");
 					}
-					MODULES.portal.afterVoids = true;
+					MODULES.mapFunctions.afterVoids = true;
 				}
-				if (MODULES.portal.afterVoids) {
+				if (MODULES.mapFunctions.afterVoids) {
 					if (game.global.spireActive && getPageSetting('heliumHrExitSpire')) {
 						debug("Exiting Spire to run voids faster.", "portal");
 						endSpire();
@@ -211,13 +211,13 @@ function dailyAutoPortal(specificPortalZone) {
 			OKtoPortal = false;
 		if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
 			if (getPageSetting('dailyHeliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
-				if (!MODULES.portal.afterVoids) {
+				if (!MODULES.mapFunctions.afterVoids) {
 					if (getPageSetting('dailyHeliumHrPortal') === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
 					else debug("Z" + game.global.world + " - Portaling after void maps have been run.", "portal");
 				}
-				MODULES.portal.afterVoids = true;
+				MODULES.mapFunctions.afterVoids = true;
 			}
-			if (MODULES.portal.afterVoids) {
+			if (MODULES.mapFunctions.afterVoids) {
 				if (game.global.spireActive && getPageSetting('dailyHeliumHrExitSpire')) {
 					debug("Exiting Spire to run voids faster.", "portal");
 					endSpire();
@@ -753,7 +753,7 @@ function resetVarsZone(loadingSave) {
 	//General
 	MODULES.maps.mapTimer = 0;
 	MODULES.maps.fragmentCost = Infinity;
-	MODULES.portal.afterVoids = false;
+	MODULES.mapFunctions.afterVoids = false;
 
 	//Fragment Farming	
 	initialFragmentMapID = undefined;
