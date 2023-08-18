@@ -1340,8 +1340,9 @@ function mutationBaseAttack(cell, targetZone) {
 }
 
 function calcMutationAttack(targetZone) {
-	if (targetZone < 201) return;
+	if (game.global.universe === 1) return;
 	if (!targetZone) targetZone = game.global.world;
+	if (targetZone < 201) return;
 	var attack;
 	var hasRage = false;
 	var worstCell = 0;
@@ -1402,7 +1403,9 @@ function mutationBaseHealth(cell, targetZone) {
 }
 
 function calcMutationHealth(targetZone) {
+	if (game.global.universe === 1) return;
 	if (!targetZone) targetZone = game.global.world;
+	if (targetZone < 201) return;
 	var worstCell = 0;
 	var cell;
 	var health = 0;
@@ -1500,7 +1503,7 @@ function getTotalHealthMod() {
 	// Cinf
 	healthMulti *= game.global.totalSquaredReward > 0 ? 1 + (game.global.totalSquaredReward / 100) : 1;
 	//Mutator
-	healthMulti *= game.global.stringVersion >= '5.8.0' && u2Mutations.tree.Health.purchased ? 1.5 : 1;
+	healthMulti *= game.global.universe === 2 && u2Mutations.tree.Health.purchased ? 1.5 : 1;
 	// Challenge Multis
 	healthMulti *= challengeActive('Revenge') && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
 	healthMulti *= challengeActive('Wither') && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;

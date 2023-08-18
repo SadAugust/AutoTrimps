@@ -264,7 +264,7 @@ function autoGather() {
 		}
 	}
 	if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
-		if (manualGather !== 3 && game.resources.science.owned < getPsString_AT('science', true) * MODULES["gather"].minScienceSeconds && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers) {
+		if (manualGather !== 3 && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers && game.resources.science.owned < getPsString_AT('science', true) * MODULES["gather"].minScienceSeconds) {
 			safeSetGather('science');
 			return;
 		}
