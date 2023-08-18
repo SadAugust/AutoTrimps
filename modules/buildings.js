@@ -18,10 +18,7 @@ function safeBuyBuilding(building, amt) {
 	//Cap the amount we purchase to ensure we don't spend forever building
 	if (!bwRewardUnlocked("Foremany") && game.global.world <= 10) amt = 1;
 
-	if (!game.buildings[building].locked && canAffordBuilding(building)) {
-		buyBuilding(building, true, true, amt);
-	}
-
+	buyBuilding(building, true, true, amt);
 	if (building !== 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), "buildings", '*hammer2');
 	return;
 }
@@ -332,6 +329,8 @@ function mostEfficientHousing() {
 		if (!buildingSettings[housing].enabled) dontbuy.push(housing);
 		//Stops Collectors being purchased when on Quest gem quests.
 		if (questActive && housing === 'Collector') dontbuy.push(housing);
+		//Fix for Infinity collectors since it doesn't take resourceful into account.
+		if (housing === 'Collector' && game.buildings[housing].purchased <= 6000) dontbuy.push(housing);
 		//Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
 		if (hypoActive && (housing !== 'Collector' || housing !== 'Gateway') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		//Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
@@ -559,6 +558,7 @@ function buyBuildings() {
 		var buildingspending = buildingSettings[housing].percent / 100;
 		//Identify the amount of this type of housing we can afford and stay within our housing cap.
 		var maxCanAfford = calculateMaxAfford_AT(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
+		if (housing === 'Collector' && maxCanAfford + game.buildings[housing].purchased >= 6000) maxCanAfford = 6000 - game.buildings[housing].purchased;
 		//Finally purchases the correct amount of housing.
 		//calculateMaxAfford_AT will return 0 if we can't afford any housing as we have set a custom ratio so check if higher than that.
 		if (maxCanAfford > 0) {

@@ -141,7 +141,7 @@ function worthOfHeirlooms() {
 
 function autoHeirlooms(portal) {
 	if (!game.global.heirloomsExtra.length > 0) return;
-	if (!getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 'None') return;
+	if (!getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	if (portal && !portalWindowOpen) return;
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
