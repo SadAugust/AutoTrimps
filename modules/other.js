@@ -261,16 +261,16 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits) {
 
+	if (Object.keys(game.global.gridArray).length === 0) return 0;
+	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1)
+		return 0;
+
 	if (!enemyName) enemyName = 'Snimp';
 	if (!zone) zone = game.global.world;
 	if (!mapType) mapType = 'world'
 	if (!currentCell) currentCell = mapType === 'world' || mapType === 'void' ? 98 : 20;
 	if (!difficulty) difficulty = 1;
 	if (!farmType) farmType = 'gamma';
-
-	if (Object.keys(game.global.gridArray).length === 0) return;
-	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1)
-		return 0;
 
 	const bionicTalent = zone - game.global.world;
 	const checkMutations = mapType === 'world' && zone > 200;

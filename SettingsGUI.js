@@ -4550,9 +4550,6 @@ function challengeUnlock(challenge, setting, c2) {
 	return msg;
 }
 
-MODULES.u1unlocks = [];
-MODULES.u2unlocks = [];
-
 //autoPortal
 function autoPortalChallenges() {
 	var hze;
@@ -5160,13 +5157,13 @@ function autoToggle(what) {
 
 function autoPlusSettingsMenu() {
 	var $item = document.getElementById('autoSettings');
-	if ($item.style.display === 'block')
+	if ($item !== null && $item.style.display === 'block')
 		$item.style.display = 'none';
 	$item = document.getElementById('graphParent');
-	if ($item.style.display === 'block')
+	if ($item !== null && $item.style.display === 'block')
 		$item.style.display = 'none';
 	$item = document.getElementById('autoTrimpsTabBarMenu');
-	if ($item.style.display === 'block')
+	if ($item !== null && $item.style.display === 'block')
 		$item.style.display = 'none';
 	toggleSettingsMenu();
 }

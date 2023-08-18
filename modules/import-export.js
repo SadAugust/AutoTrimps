@@ -545,21 +545,22 @@ function resetAutoTrimps(a, b) {
 				localStorage.removeItem("atSettings"), (autoTrimpSettings = d ? d : {});
 				var e = document.getElementById("settingsRow");
 				e.removeChild(document.getElementById("autoSettings")),
-					e.removeChild(document.getElementById("autoTrimpsTabBarMenu")),
-					automationMenuSettingsInit(),
-					initializeAllTabs(),
-					initializeAllSettings(),
-					//initializeSettingsProfiles(),
-					resetSettingsPortal(),
-					updateATVersion(),
-					updateCustomButtons(true),
-					saveSettings(),
-					MODULES["graphs"].themeChanged(),
-					(atSettings.running = !0),
-					localStorage.perkyInputs = (autoTrimpSettings.autoAllocatePresets.value),
-					localStorage.surkyInputs = (autoTrimpSettings.autoAllocatePresets.valueU2),
-					localStorage.mutatorPresets = (autoTrimpSettings.mutatorPresets.valueU2),
-					loadAugustSettings();
+					e.removeChild(document.getElementById("autoTrimpsTabBarMenu"));
+				automationMenuSettingsInit();
+				initializeAllTabs();
+				initializeAllSettings();
+				//initializeSettingsProfiles();
+				resetSettingsPortal();
+				updateATVersion();
+				updateCustomButtons(true);
+				saveSettings();
+				(atSettings.running = !0);
+				localStorage.perkyInputs = (autoTrimpSettings.autoAllocatePresets.value);
+				localStorage.surkyInputs = (autoTrimpSettings.autoAllocatePresets.valueU2);
+				localStorage.mutatorPresets = (autoTrimpSettings.mutatorPresets.valueU2);
+				loadAugustSettings();
+				if (typeof MODULES["graphs"].themeChanged === 'function')
+					MODULES["graphs"].themeChanged();
 			})(a),
 			101
 		),

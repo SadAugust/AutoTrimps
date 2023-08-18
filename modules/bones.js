@@ -8,7 +8,6 @@ function boneShrine() {
 
 	//Setting up variables
 	var settingIndex = null;
-	var trimple = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 
 	var boneCharges = game.permaBoneBonuses.boosts.charges;
 
@@ -66,7 +65,7 @@ function boneShrine() {
 				safeSetGather(boneShrineGather);
 				game.permaBoneBonuses.boosts.consume();
 			}
-			debug('Consumed ' + boneShrineCharges + " bone shrine " + (boneShrineCharges === 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(boneShrineCharges), "bones");
+			debug('Consumed ' + boneShrineCharges + ' bone shrine ' + (boneShrineCharges === 1 ? 'charge on zone ' : 'charges on zone ') + game.global.world + ' and gained ' + boneShrineOutput(boneShrineCharges), 'bones');
 
 			if (setting && settingName && setting.row) {
 				var value = game.global.universe === 2 ? 'valueU2' : 'value';
@@ -78,13 +77,11 @@ function boneShrine() {
 }
 
 function boneShrineOutput(charges) {
-
-	charges = !charges ? 1 : charges;
-
-	var eligible = ["food", "wood", "metal"];
-	var storage = ["Barn", "Shed", "Forge"];
+	if (!charges) charges = 1;
+	var eligible = ['food', 'wood', 'metal'];
+	var storage = ['Barn', 'Shed', 'Forge'];
 	var rewarded = [0, 0, 0];
-	var hasNeg = false;
+	var packMod = getPerkLevel('Packrat') * game.portal.Packrat.modifier;
 	for (var x = 0; x < eligible.length; x++) {
 		var resName = eligible[x];
 		var resObj = game.resources[resName];
@@ -92,9 +89,8 @@ function boneShrineOutput(charges) {
 		amt = scaleLootBonuses(amt, true);
 		amt *= charges
 		var tempMax = resObj.max;
-		var packMod = getPerkLevel("Packrat") * game.portal.Packrat.modifier;
 		var newTotal = resObj.owned + amt;
-		while (newTotal > calcHeirloomBonus("Shield", "storageSize", tempMax + (tempMax * packMod))) {
+		while (newTotal > calcHeirloomBonus('Shield', 'storageSize', tempMax + (tempMax * packMod))) {
 			var nextCost = calculatePercentageBuildingCost(storage[x], resName, 0.25, tempMax);
 			if (newTotal < nextCost) break;
 			newTotal -= nextCost;
@@ -102,11 +98,9 @@ function boneShrineOutput(charges) {
 			tempMax *= 2;
 		}
 		rewarded[x] = amt;
-		if (amt < 0) hasNeg = true;
 	}
-	var text = prettify(rewarded[0]) + " Food, " + prettify(rewarded[1]) + " Wood, and " + prettify(rewarded[2]) + " Metal."
 
-	return text;
+	return prettify(rewarded[0]) + ' Food, ' + prettify(rewarded[1]) + ' Wood, and ' + prettify(rewarded[2]) + ' Metal.';
 }
 
 function buySingleRunBonuses() {
@@ -114,17 +108,17 @@ function buySingleRunBonuses() {
 	if (hdStats.isC3) {
 		if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && getPageSetting('c2GoldenMaps')) {
 			purchaseSingleRunBonus('goldMaps');
-			debug("Purchased Golden Maps for 20 bones.", "bones");
+			debug('Purchased Golden Maps for 20 bones.', 'bones');
 		}
 		if (!game.singleRunBonuses.sharpTrimps.owned && game.global.b >= 25 && getPageSetting('c2SharpTrimps')) {
 			purchaseSingleRunBonus('sharpTrimps');
-			debug("Purchased Sharp Trimps for 25 bones.", "bones");
+			debug('Purchased Sharp Trimps for 25 bones.', 'bones');
 		}
 	}
 
 	//Purchase Radonculous/Heliumy if we have enough bones and running Dailies
 	if (challengeActive('Daily') && !game.singleRunBonuses.heliumy.owned && getPageSetting('buyheliumy', portalUniverse) > 0 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100) {
 		purchaseSingleRunBonus('heliumy');
-		debug("Purchased " + (currSettingUniverse === 2 ? "Radonculous" : "Heliumy") + "  for 100 bones on this " + getPageSetting('buyheliumy', portalUniverse) + "% daily.", "bones");
+		debug('Purchased ' + (currSettingUniverse === 2 ? 'Radonculous' : 'Heliumy') + '  for 100 bones on this ' + getPageSetting('buyheliumy', portalUniverse) + '% daily.', 'bones');
 	}
 }

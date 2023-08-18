@@ -10,6 +10,18 @@ MODULES.portal = {
 	zonePostpone: 0,
 }
 
+function getHeliumPerHour() {
+	var timeThisPortal = new Date().getTime() - game.global.portalTime;
+	if (timeThisPortal < 1) return 0;
+	timeThisPortal /= 3600000;
+	var resToUse;
+	if (game.global.universe === 2)
+		resToUse = game.resources.radon.owned;
+	else
+		resToUse = game.resources.helium.owned;
+	return resToUse / timeThisPortal;
+}
+
 //Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
 function autoPortalCheck(specificPortalZone) {
 	if (!game.global.portalActive) return;
@@ -45,16 +57,15 @@ function autoPortal(specificPortalZone, skipDaily) {
 		}
 	}
 
-
 	switch (getPageSetting('autoPortal', universe)) {
 		case "Helium Per Hour":
 		case "Radon Per Hour":
 			var OKtoPortal = false;
 			var minZone = getPageSetting('heHrDontPortalBefore', universe);
 			game.stats.bestHeliumHourThisRun.evaluate();
-			var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
-			var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
-			var myHeliumHr = game.stats.heliumHour.value();
+			bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
+			bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
+			myHeliumHr = getHeliumPerHour();
 			var heliumHrBuffer = Math.abs(getPageSetting('heliumHrBuffer', universe));
 			if (!atSettings.portal.aWholeNewWorld)
 				heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
@@ -196,7 +207,7 @@ function dailyAutoPortal(specificPortalZone) {
 		game.stats.bestHeliumHourThisRun.evaluate();
 		var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
 		var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
-		var myHeliumHr = game.stats.heliumHour.value();
+		var myHeliumHr = getHeliumPerHour();
 		var heliumHrBuffer = Math.abs(getPageSetting('dailyHeliumHrBuffer'));
 		if (!atSettings.portal.aWholeNewWorld)
 			heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
@@ -303,7 +314,7 @@ function freeVoidPortal() {
 			universeSwapped();
 		}
 		downloadSave();
-		pushData();
+		if (typeof pushData === 'function') pushData();
 		if (!MODULES["portal"].dontPushData) pushSpreadsheetData();
 		activatePortal();
 		return;
@@ -607,7 +618,7 @@ function doPortal(challenge, skipDaily) {
 	}
 	//Download save, push graphs data, push to spreadsheet for select users, activate portal, reset vars, and load mutators if necessary.
 	downloadSave();
-	pushData();
+	if (typeof pushData === 'function') pushData();
 	if (!MODULES["portal"].dontPushData) pushSpreadsheetData();
 	MODULES["portal"].currentChallenge = 'None';
 	MODULES["portal"].dontPushData = false;
@@ -755,7 +766,7 @@ function resetVarsZone(loadingSave) {
 	MODULES.maps.fragmentCost = Infinity;
 	MODULES.mapFunctions.afterVoids = false;
 
-	//Fragment Farming	
+	//Fragment Farming
 	initialFragmentMapID = undefined;
 
 	//Auto Level variables
@@ -767,11 +778,6 @@ function resetVarsZone(loadingSave) {
 
 	hdStats = new HDStats();
 	farmingDecision();
-
-	drawAllBuildings(true);
-	drawAllEquipment(true);
-	drawAllJobs(true);
-	drawAllUpgrades(true);
 }
 
 function presetSwapping(preset) {
@@ -922,10 +928,11 @@ load = function () {
 		loadAugustSettings();
 		atlantrimpRespecOverride();
 		resetVarsZone(true);
-		MODULES["graphs"].themeChanged();
+		if (typeof MODULES["graphs"].themeChanged === 'function')
+			MODULES["graphs"].themeChanged();
 		updateCustomButtons(true);
 	}
-	catch (e) { graphsDebug("Gather info failed: " + e) }
+	catch (e) { debug("Load save failed: " + e) }
 }
 
 // On portal/game reset
@@ -935,5 +942,5 @@ resetGame = function () {
 	try {
 		atlantrimpRespecOverride();
 	}
-	catch (e) { graphsDebug("Gather info failed: " + e) }
+	catch (e) { debug("Load save failed: " + e) }
 }

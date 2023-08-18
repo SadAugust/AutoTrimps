@@ -149,6 +149,16 @@ function cheapestEquipmentCost() {
 	return [equipmentName, nextEquipmentCost, prestigeName, nextLevelPrestigeCost]
 }
 
+function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
+	if (!isCompounding) {
+		return Math.floor(
+			(costScaling - (2 * baseCost) + Math.sqrt(Math.pow(2 * baseCost - costScaling, 2) + (8 * costScaling * totalResource))) / 2
+		);
+	} else {
+		return Math.floor(Math.log(1 - (1 - costScaling) * totalResource / baseCost) / Math.log(costScaling));
+	}
+}
+
 function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipForLevels, equipHighlight, fakeLevels = {}, ignorePrestiges) {
 
 	for (var i in MODULES.equipment) {
@@ -165,7 +175,6 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 	var resourceSpendingPctHealth = !resourceSpendingPct ? (zoneGoHealth ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100) : resourceSpendingPct;
 	var resourceSpendingPctAttack = !resourceSpendingPct ? (zoneGoAttack ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100) : resourceSpendingPct;
 
-	var prestigePct = getPageSetting('equipPrestigePct') / 100;
 
 
 	if (challengeActive('Scientist')) {
@@ -198,6 +207,8 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 
 	var canAtlantrimp = game.mapUnlocks.AncientTreasure.canRunOnce;
 	var prestigeSetting = getPageSetting('equipPrestige');
+	var prestigePct = 1;
+	if (prestigeSetting === 2 && !canAtlantrimp) prestigePct = getPageSetting('equipPrestigePct') / 100;
 
 	//Checks what our highest prestige level is AND if there are any prestiges available to purchase
 	//If this fully runs and returns true it WILL override checking non-prestige equip stats!
@@ -260,6 +271,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		//Skips buying shields when you can afford bonfires on Hypothermia.
 		if (challengeActive('Hypothermia') && i === 'Shield' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
 		//Skips through equips if they cost more than your equip purchasing percent setting value.
+		//Potentially unnecessary with all the other checks for if we can afford a prestige
 		if (!equipHighlight && !canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) && !maybeBuyPrestige.purchase) continue;
 		//Skips equips if we have prestiges available & no prestiges to get for this
 		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
@@ -280,8 +292,8 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 
 		if (!skipPrestiges) {
 			if (maybeBuyPrestige.purchase && (maybeBuyPrestige.statPerResource < mostEfficient[equipType].statPerResource || mostEfficient[equipType].name === '')) {
-				//Skips shields in favour of other equips if we can't afford the upgrade as otherwise we'll get stuck on wood equips
-				if (i === 'Shield' && !canAffordBuilding(i, null, null, true, false, 1, 100)) continue;
+				//Skips shields in favour of other equips if we can't afford the prestige as otherwise we'll get stuck on wood equips
+				if (i === 'Shield' && game.resources[MODULES.equipment[i].resource].owned < maybeBuyPrestige.prestigeCost) continue;
 				safeRatio = maybeBuyPrestige.statPerResource;
 				nextLevelCost = maybeBuyPrestige.prestigeCost;
 				nextLevelValue = maybeBuyPrestige.newStatValue;
@@ -291,6 +303,8 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 			//This is so that we don't unnecessarily spend resources on equips levels that aren't at the highest prestige level we own
 			else if (game.equipment[i].prestige > highestPrestige && forcePrestige) continue;
 		}
+		//Skips shields in favour of other equips if we aren't prestiging the equip as we'll otherwise we'll get stuck on wood equips
+		if (i === 'Shield' && !prestige && !canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100)) continue;
 
 		if (safeRatio === 1) continue;
 		//Stat per resource SHOULD BE resource per stat (so the inverse of it is)
@@ -309,16 +323,6 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 	}
 
 	return mostEfficient;
-}
-
-function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
-	if (!isCompounding) {
-		return Math.floor(
-			(costScaling - (2 * baseCost) + Math.sqrt(Math.pow(2 * baseCost - costScaling, 2) + (8 * costScaling * totalResource))) / 2
-		);
-	} else {
-		return Math.floor(Math.log(1 - (1 - costScaling) * totalResource / baseCost) / Math.log(costScaling));
-	}
 }
 
 function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
