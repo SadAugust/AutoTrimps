@@ -4619,8 +4619,8 @@ function heliumHourChallenges(isDaily) {
 		if (hze >= 40) challenge.push("Balance");
 		if (hze >= 55) challenge.push("Decay");
 		if (game.global.prisonClear >= 1) challenge.push("Electricity");
-		if (hze > 110) challenge.push("Life");
-		if (hze > 125) challenge.push("Crushed");
+		if (hze >= 110) challenge.push("Life");
+		if (hze >= 125) challenge.push("Crushed");
 		if (hze >= 145) challenge.push("Nom");
 		if (hze >= 165) challenge.push("Toxicity");
 		if (hze >= 180) challenge.push("Watch");
@@ -4695,9 +4695,9 @@ function challengeUnlockCheck() {
 	if (hze >= 60) challenge.push("Trimp");
 	if (hze >= 70) challenge.push("Trapper");
 	if (game.global.prisonClear >= 1) challenge.push("Electricity");
-	if (hze > 110) challenge.push("Life");
+	if (hze >= 110) challenge.push("Life");
 	if (hze >= 120) challenge.push("Coordinate");
-	if (hze > 125) challenge.push("Crushed");
+	if (hze >= 125) challenge.push("Crushed");
 	if (hze >= 130) challenge.push("Slow");
 	if (hze >= 145) challenge.push("Nom");
 	if (hze >= 150) challenge.push("Mapology");
