@@ -105,48 +105,49 @@ function equipsToGet(targetZone, targetPrestige) {
 	return [prestigeToFarmFor, mapsToRun];
 }
 
-//Working out cheapestt Equips & Prestiges
+//Working out cheapest equips & prestiges
 function cheapestEquipmentCost() {
-	//Looping through each piece of equipment
 
+	//Initialising Variables
 	var equipmentName = null;
 	var prestigeName = null;
-	//Initialising Variables
-	nextLevelEquipmentCost = null;
-	nextEquipmentCost = null;
-	nextLevelPrestigeCost = null;
-	nextPrestigeCost = null;
-	jestMetalTotal = null;
-	var prestigeUpgradeName = "";
-	var allUpgradeNames = Object.getOwnPropertyNames(game.upgrades);
+	var nextLevelEquipmentCost = null;
+	var nextEquipmentCost = null;
+	var nextLevelPrestigeCost = null;
+	var nextPrestigeCost = null;
+	var prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
+	var prestigeUpgrade = game.upgrades[prestigeUpgradeName];
+	var runningPandemonium = challengeActive('Pandemonium');
 
+	//Looping through each piece of equipment to find the one that's cheapest
 	for (var equipName in game.equipment) {
-		if (!game.equipment[equipName].locked) {
-			//Checking cost of next equipment level. Blocks unavailable ones.
-			if (game.challenges.Pandemonium.isEquipBlocked(equipName) || MODULES.equipment[equipName].resource === 'wood') continue;
-			nextLevelEquipmentCost = game.equipment[equipName].cost[MODULES.equipment[equipName].resource][0] * Math.pow(game.equipment[equipName].cost[MODULES.equipment[equipName].resource][1], game.equipment[equipName].level) * getEquipPriceMult();
-			//Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
-			if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost === null) {
-				equipmentName = equipName;
-				nextEquipmentCost = nextLevelEquipmentCost;
-			}
-			//Checking cost of prestiges if any are available to purchase
-			for (var upgrade of allUpgradeNames) {
-				if (game.upgrades[upgrade].prestiges === equipName) {
-					prestigeUpgradeName = upgrade;
-					//Checking if prestiges are purchasable
-					if (game.challenges.Pandemonium.isEquipBlocked(game.upgrades[upgrade].prestiges) || game.upgrades[prestigeUpgradeName].locked) continue;
-					nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
-					//Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
-					if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost === null) {
-						prestigeName = prestigeUpgradeName
-						nextPrestigeCost = nextLevelPrestigeCost;
-					}
-				}
-			}
+		//Blocks unavailable ones if we're running Pandemonium.
+		if (runningPandemonium && (game.challenges.Pandemonium.isEquipBlocked(equipName) || MODULES.equipment[equipName].resource === 'wood')) continue;
+		if (game.equipment[equipName].locked) continue;
+
+		//Checking cost of next equipment level.
+		nextLevelEquipmentCost = game.equipment[equipName].cost[MODULES.equipment[equipName].resource][0] * Math.pow(game.equipment[equipName].cost[MODULES.equipment[equipName].resource][1], game.equipment[equipName].level) * getEquipPriceMult();
+		//Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
+		if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost === null) {
+			equipmentName = equipName;
+			nextEquipmentCost = nextLevelEquipmentCost;
+		}
+
+		//Checking cost of prestiges if any are available to purchase
+		prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
+		prestigeUpgrade = game.upgrades[prestigeUpgradeName];
+		//If the prestige is locked or we've already purchased all the prestiges for this equip then skip to the next equip
+		if (prestigeUpgrade.locked || prestigeUpgrade.allowed === prestigeUpgrade.done) continue;
+
+		//Checking cost of next prestige level.
+		nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
+		//Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
+		if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost === null) {
+			prestigeName = prestigeUpgradeName
+			nextPrestigeCost = nextLevelPrestigeCost;
 		}
 	}
-	return [equipmentName, nextEquipmentCost, prestigeName, nextLevelPrestigeCost]
+	return [equipmentName, nextEquipmentCost, prestigeName, nextPrestigeCost]
 }
 
 function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
@@ -304,7 +305,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 			else if (game.equipment[i].prestige > highestPrestige && forcePrestige) continue;
 		}
 		//Skips shields in favour of other equips if we aren't prestiging the equip as we'll otherwise we'll get stuck on wood equips
-		if (i === 'Shield' && !prestige && !canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100)) continue;
+		if (i === 'Shield' && !prestige && (!canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) || game.equipment[i].level >= equipCap)) continue;
 
 		if (safeRatio === 1) continue;
 		//Stat per resource SHOULD BE resource per stat (so the inverse of it is)
@@ -589,6 +590,14 @@ function autoEquip() {
 	} while (keepBuying);
 }
 
+function equipfarmdynamicHD(setting) {
+	var mult = setting.hdMult;
+	var hd = setting.hdBase;
+	var zone = game.global.world - setting.world;
+	var finalHD = (zone === 0) ? hd : Math.pow(mult, zone) * hd;
+	return finalHD;
+}
+
 function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) {
 
 	if (!isCompounding) {
@@ -596,17 +605,6 @@ function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) 
 	} else {
 		return baseCost * ((1 - Math.pow(costScaling, multiBuyCount)) / (1 - costScaling));
 	}
-}
-
-function equipfarmdynamicHD(HDFSettings) {
-	var equipfarmHD = 0;
-	var equipfarmHDmult = 1;
-	var HDFMult = HDFSettings.hdMult;
-	var HDFZone = HDFSettings.world
-	equipfarmHD = HDFSettings.hdBase;
-	HDFZone = (game.global.world - HDFZone);
-	equipfarmHDmult = (HDFZone === 0) ? equipfarmHD : Math.pow(HDFMult, HDFZone) * equipfarmHD;
-	return equipfarmHDmult;
 }
 
 function estimateEquipsForZone(rEFIndex) {
@@ -691,62 +689,43 @@ function displayMostEfficientEquipment() {
 
 	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
 	if (!highlightSetting) return;
-	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
+	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
 	if (!atSettings.intervals.oneSecond) return;
-	var $eqNamePrestige = null;
 
-	if (!highlightSetting) return;
-
-	if (!highlightSetting) {
-		for (var item in game.equipment) {
-			if (game.upgrades[MODULES.equipment[item].upgrade].locked === 0) {
-				$eqNamePrestige = document.getElementById(MODULES.equipment[item].upgrade);
-				if (document.getElementsByClassName(item).length === 0) {
-					document.getElementById(MODULES.equipment[item].upgrade).classList.add("efficient");
-					document.getElementById(MODULES.equipment[item].upgrade).classList.add(item);
-				}
-			}
-
-			var $eqName = document.getElementById(item);
-			if (!$eqName)
-				continue;
-
-			swapClass('efficient', 'efficientNo', $eqName)
-			if ($eqNamePrestige !== null)
-				swapClass('efficient', 'efficientNo', $eqNamePrestige)
-		}
-
-	}
+	var bestBuys = mostEfficientEquipment(1, false, true, false, true);
 
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;
-		if (item === "Shield") continue;
-		var bestBuys = mostEfficientEquipment(1, false, true, false, true);
+		if (item === 'Shield') continue;
+		var prestigeName = MODULES.equipment[item].upgrade;
 		var equipType = MODULES.equipment[item].stat;
-		var $eqNamePrestige = null;
-		if (game.upgrades[MODULES.equipment[item].upgrade].locked === 0) {
-			$eqNamePrestige = document.getElementById(MODULES.equipment[item].upgrade);
-			if (document.getElementsByClassName(item).length === 0) {
-				document.getElementById(MODULES.equipment[item].upgrade).classList.add("efficient");
-				document.getElementById(MODULES.equipment[item].upgrade).classList.add(item);
-			}
-			if (document.getElementById(MODULES.equipment[item].upgrade).classList.contains('efficientYes') && (item !== bestBuys[equipType].name || (item === bestBuys[equipType].name && bestBuys[equipType].prestige !== true)))
-				swapClass('efficient', 'efficientNo', $eqNamePrestige)
+		//Looking at the prestiges for each item to see if it's available and if so then add the efficient class to it
+		if (game.upgrades[prestigeName].locked === 0) {
+			//If the prestige doesn't have the efficient class then add it
+			if (!document.getElementById(prestigeName).classList.value.includes('efficient'))
+				document.getElementById(prestigeName).classList.add('efficient');
+
+			//Remove the swap the efficient class to efficientNo if the prestige isn't the most efficient thing to purchase
+			if (document.getElementById(prestigeName).classList.contains('efficientYes') && (item !== bestBuys[equipType].name || (item === bestBuys[equipType].name && !bestBuys[equipType].prestige)))
+				swapClass('efficient', 'efficientNo', document.getElementById(prestigeName));
 		}
-		if (item === bestBuys[equipType].name && bestBuys[equipType].prestige === true) {
-			bestBuys[equipType].name = MODULES.equipment[item].upgrade;
+
+		//If we are looking at the most efficient item and it's not a prestige then add the efficientYes class to it
+		//If the equip already has the efficientYes class swap it to efficientNo
+		if (item === bestBuys[equipType].name && bestBuys[equipType].prestige) {
 			if (document.getElementById(item).classList.contains('efficientYes'))
-				swapClass('efficient', 'efficientNo', document.getElementById(item))
-			item = MODULES.equipment[item].upgrade;
+				swapClass('efficient', 'efficientNo', document.getElementById(item));
+			bestBuys[equipType].name = prestigeName;
+			item = prestigeName;
 		}
 
 		var $eqName = document.getElementById(item);
 		if (!$eqName)
 			continue;
 		if (item === bestBuys[equipType].name)
-			swapClass('efficient', 'efficientYes', $eqName)
+			swapClass('efficient', 'efficientYes', $eqName);
 		else {
-			swapClass('efficient', 'efficientNo', $eqName)
+			swapClass('efficient', 'efficientNo', $eqName);
 		}
 	}
 }
