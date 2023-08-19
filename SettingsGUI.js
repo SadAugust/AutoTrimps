@@ -3817,10 +3817,6 @@ function initializeAllSettings() {
 			function () { return ('Download for Debug') },
 			function () { return ('Will download both your save and the scripts settings so that they can be debugged easier.') },
 			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [0]);
-		/* createSetting('CleanupAutoTrimps',
-			function () { return ('Cleanup Saved Settings') },
-			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps settings file.') },
-			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [0]); */
 
 		createSetting('updateReload',
 			function () { return ('Update Reload') },

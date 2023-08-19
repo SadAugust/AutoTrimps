@@ -13,7 +13,6 @@ function betterAutoFight() {
 		pauseFight();
 	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || MODULES.maps.livingActive)
 		return;
-	var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
 
 	if (!game.global.fighting) {
 		if (newArmyRdy() || game.global.soldierHealth > 0) {
@@ -70,6 +69,7 @@ function forceAbandonTrimps() {
 }
 
 //Check if we would die from the next enemy attack
+//Only used in U1
 function armydeath() {
 	if (game.global.mapsActive) return !1;
 	var cell = game.global.lastClearedCell + 1,

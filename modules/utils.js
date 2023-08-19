@@ -602,7 +602,6 @@ function testSpeedX(interval) {
 	if ((date.getSeconds() % 3) === 0) updateLabels();
 }
 
-//called by ImportExportTooltip('NameSettingsProfiles')
 function testChallenge() {
 	//read the name in from tooltip
 	try {
