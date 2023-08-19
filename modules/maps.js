@@ -11,6 +11,43 @@ MODULES.maps = {
 	fragmentCost: Infinity,
 };
 
+function prettifyMap(map) {
+	if (!map) {
+		return 'none'
+	}
+	var descriptor;
+	if (!map.noRecycle) {
+		// a crafted map
+		const bonus = (map.hasOwnProperty('bonus') ? mapSpecialModifierConfig[map.bonus].name : 'no bonus');
+		descriptor = `, Level ${map.level} (${bonus})`;
+	} else if (map.location === 'Void') {
+		descriptor = ' (Void)';
+	} else {
+		descriptor = ' (Unique)';
+	}
+	return `[${map.id}] ${map.name}${descriptor} `;
+}
+
+function debugPrettifyMap(map) {
+	if (!map) {
+		return 'none'
+	}
+	if (['world', 'create'].includes(map)) {
+		return map;
+	}
+	var descriptor;
+	if (!map.noRecycle) {
+		// a crafted map
+		const bonus = (map.hasOwnProperty('bonus') ? `+${map.bonus}` : '');
+		descriptor = `L${map.level}${bonus}`;
+	} else if (map.location === 'Void') {
+		descriptor = `V(${map.name})`;
+	} else {
+		descriptor = `U(${map.name})`;
+	}
+	return `[${map.id}]${descriptor}`;
+}
+
 function runSelectedMap(mapId, madAdjective) {
 	selectMap(mapId);
 	runMap();

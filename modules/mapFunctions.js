@@ -145,6 +145,13 @@ function enoughHealth(map) {
 	return totalHealth > enemyDmg;
 }
 
+//Returns false if we can't any new speed runs, unless it's the first tier
+function shouldSpeedRun(achievement) {
+	var minutesThisRun = Math.floor((new Date().getTime() - game.global.portalTime) / 1000 / 60);
+	if (achievement.finished === achievement.tiers.length) return false;
+	return minutesThisRun < achievement.breakpoints[achievement.finished];
+}
+
 //Unique Maps Pt.2
 function shouldRunUniqueMap(map) {
 	const mapData = MODULES.uniqueMaps[map.name];

@@ -12,8 +12,8 @@ function autoRoboTrimp() {
 			debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "zone", "*podcast");
 		}
 	}
-	else
-		if (game.global.useShriek) magnetoShriek();
+	else if (game.global.useShriek)
+		magnetoShriek();
 }
 
 function fightalways() {

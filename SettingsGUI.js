@@ -1800,7 +1800,7 @@ function initializeAllSettings() {
 		createSetting('c2RunnerSettings',
 			function () { return (cinf() + ' Runner Settings') },
 			function () {
-				var description = "<p>Here you can enable the challenges you would like " + cinf() + " runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.</p>";
+				var description = "<p>Here you can enable the challenges you would like " + cinf() + " runner to complete and the zone you'd like the respective challenge to finish at. It will start them on the next auto portal if necessary.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				return description;
 			},
@@ -1808,12 +1808,11 @@ function initializeAllSettings() {
 			function () {
 				return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1)
 			});
-
 		createSetting('c2RunnerPortal',
-			function () { return (cinf() + ' Runner Portal') },
+			function () { return (cinf() + ' Runner End Zone') },
 			function () {
-				var description = "<p>Automatically abandon challenge and portal when this zone is reached.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting and disable portaling inside your " + cinf() + "s.</p>";
+				var description = "<p>Automatically abandon challenge when this zone is reached.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and disable ending your " + cinf() + "s.</p>";
 				description += "<p><b>Recommended:</b> Desired challenge end goal</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
@@ -1828,6 +1827,15 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', 0, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
+
+		createSetting('c2RunnerEndMode',
+			function () { return ([cinf() + ' Runner End Challenge', cinf() + ' Runner Portal']) },
+			function () {
+				var description = "<p>If set to <b>Portal " + cinf() + "</b> this will automatically portal once you reach your " + cinf() + " end zone otherwise it will just end the challenge and continue on.</p>";
+				description += "<p><b>Recommended:</b> Portal " + cinf() + "</p>";
+				return description;
+			}, 'multitoggle', 1, null, 'C2', [1, 2],
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 		createSetting('c2Fused',
 			function () { return ('Fused ' + cinf() + 's') },
 			function () {
@@ -3969,7 +3977,7 @@ function initializeAllSettings() {
 				var description = "<p>Sets your current cell to the last world cell in maps.</p>";
 				description += "<p>Will also set the last enemy cells health to 0.</p>";
 				return description;
-			}, 'action', 'cheatMaxTenacity();', null, 'Test', [0]);
+			}, 'action', 'testMaxTenacity();', null, 'Test', [0]);
 
 		createSetting('testStatMult',
 			function () { return ('1e100x stats') },
@@ -4574,8 +4582,8 @@ function autoPortalChallenges() {
 		if (hze >= 40) challenge.push("Balance");
 		if (hze >= 55) challenge.push("Decay");
 		if (game.global.prisonClear >= 1) challenge.push("Electricity");
-		if (hze > 110) challenge.push("Life");
-		if (hze > 125) challenge.push("Crushed");
+		if (hze >= 110) challenge.push("Life");
+		if (hze >= 125) challenge.push("Crushed");
 		if (hze >= 145) challenge.push("Nom");
 		if (hze >= 165) challenge.push("Toxicity");
 		if (hze >= 180) challenge.push("Watch");

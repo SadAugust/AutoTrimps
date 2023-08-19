@@ -334,7 +334,7 @@ function c2runnerportal(portalZone) {
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared();
 		//Only portal automatically if using C2 Runner Pct input.
-		if (getPageSetting('c2RunnerStart')) {
+		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
 			if (getPageSetting('heliumHourChallenge') !== 'None')
 				doPortal(getPageSetting('heliumHourChallenge'));
 			else
@@ -719,12 +719,6 @@ function c2FinishZone() {
 }
 
 function finishChallengeSquared() {
-
-	if (!game.global.runningChallengeSquared) return;
-	if (game.global.world === 1 || !game.global.portalActive) return;
-	var finishChallenge = c2FinishZone();
-	if (game.global.world < finishChallenge) return;
-
 	downloadSave();
 	//Cancel out of challenge run
 	abandonChallenge();

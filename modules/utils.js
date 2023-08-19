@@ -12,6 +12,18 @@ if (!String.prototype.includes) {
 	};
 }
 
+window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
+	var message = [
+		'Message: ' + msg,
+		'URL: ' + url,
+		'Line: ' + lineNo,
+		'Column: ' + columnNo,
+		'Error object: ' + JSON.stringify(error)
+	].join(' - ');
+	if (lineNo != 0)
+		console.log("AT logged error: " + message);
+};
+
 //Loads setting data from localstorage into object
 function loadPageVariables() {
 	var tmp = JSON.parse(localStorage.getItem('atSettings'));
@@ -76,12 +88,11 @@ function serializeSettings() {
 	}, {}));
 }
 
-// Process data to google forms to update stats spreadsheet
+//Process data to google forms to update stats spreadsheet
 function pushSpreadsheetData() {
 	if (!portalWindowOpen) return;
 	if (!gameUserCheck(true)) return;
 	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"))[getportalID()];
-	//const graphData = JSON.parse(LZString.decompressFromBase64(localStorage.getItem("portalDataHistory")))[getportalID()];
 
 	const fluffy_EvoLevel = {
 		cap: game.portal.Capable.level,
@@ -331,13 +342,6 @@ function setPageSetting(setting, newValue, universe) {
 	saveSettings();
 }
 
-//Returns false if we can't any new speed runs, unless it's the first tier
-function shouldSpeedRun(achievement) {
-	var minutesThisRun = Math.floor((new Date().getTime() - game.global.portalTime) / 1000 / 60);
-	if (achievement.finished === achievement.tiers.length) return false;
-	return minutesThisRun < achievement.breakpoints[achievement.finished];
-}
-
 //Looks at the spamMessages setting and if the message is enabled, it will print it to the message log & console.
 function debug(message, b, icon) {
 	var settingArray = atSettings.initialise.loaded && getPageSetting('spamMessages'),
@@ -467,78 +471,13 @@ function filterMessage2(a) {
 	}
 }
 
-function formatMinutesForDescriptions(number) {
-	var text;
-	var seconds = Math.floor((number * 60) % 60);
-	var minutes = Math.floor(number % 60);
-	var hours = Math.floor(number / 60);
-	if (hours === 0)
-		text = minutes + " minutes " + seconds + " seconds";
-	else if (minutes > 0) {
-		if (minutes < 10) minutes = "0" + minutes;
-		if (seconds < 10) seconds = "0" + seconds;
-		text = hours + ":" + minutes + ":" + seconds;
-	}
-	else {
-		var hs = (hours > 1) ? "s" : "";
-		var ms = (minutes > 1) ? "s" : "";
-		var ss = (seconds > 1) ? "s" : "";
-		text = hours + " hour" + hs + " " + minutes + " minute" + ms + " " + seconds + " second" + ss;
-	}
-	return text;
-}
-
-window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
-	var message = [
-		'Message: ' + msg,
-		'URL: ' + url,
-		'Line: ' + lineNo,
-		'Column: ' + columnNo,
-		'Error object: ' + JSON.stringify(error)
-	].join(' - ');
-	if (lineNo != 0)
-		console.log("AT logged error: " + message);
-};
-
-function throwErrorfromModule() { throw new Error("We have successfully read the thrown error message out of a module") }
 
 
-function prettifyMap(map) {
-	if (!map) {
-		return 'none'
-	}
-	var descriptor;
-	if (!map.noRecycle) {
-		// a crafted map
-		const bonus = (map.hasOwnProperty('bonus') ? mapSpecialModifierConfig[map.bonus].name : 'no bonus');
-		descriptor = `, Level ${map.level} (${bonus})`;
-	} else if (map.location === 'Void') {
-		descriptor = ' (Void)';
-	} else {
-		descriptor = ' (Unique)';
-	}
-	return `[${map.id}] ${map.name}${descriptor} `;
-}
 
-function debugPrettifyMap(map) {
-	if (!map) {
-		return 'none'
-	}
-	if (['world', 'create'].includes(map)) {
-		return map;
-	}
-	var descriptor;
-	if (!map.noRecycle) {
-		// a crafted map
-		const bonus = (map.hasOwnProperty('bonus') ? `+${map.bonus}` : '');
-		descriptor = `L${map.level}${bonus}`;
-	} else if (map.location === 'Void') {
-		descriptor = `V(${map.name})`;
-	} else {
-		descriptor = `U(${map.name})`;
-	}
-	return `[${map.id}]${descriptor}`;
-}
+
+
+
+//DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 
 //Will activate a 24 hour timewarp.
 function testTimeWarp(hours) {
@@ -575,7 +514,6 @@ function testTimeWarp(hours) {
 	return;
 }
 
-//DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 function testSpeedX(interval) {
 	//Game uses 100ms for 1 second, so 5ms is 20x speed;
 	if (game.options.menu.pauseGame.enabled) {
@@ -678,7 +616,7 @@ function testMaxMapBonus() {
 	game.global.mapBonus = 10;
 }
 
-function cheatMaxTenacity() {
+function testMaxTenacity() {
 	game.global.zoneStarted -= 7.2e+6;
 }
 
