@@ -229,9 +229,11 @@ function buyJobs(forceRatios) {
 	//In the process store how much of each for later.
 	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
 		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
-		var metCoordGoal = challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords');
-		if (!metCoordGoal) nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
-		if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
+		if (challengeActive('Trappapalooza') && getPageSetting('trappapalooza'))
+			if (game.upgrades.Coordination.done <= getPageSetting('trappapaloozaCoords')) {
+				if (!metCoordGoal) nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
+				if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
+			}
 	}
 	var ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	var currentworkers = [];

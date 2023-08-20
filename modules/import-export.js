@@ -335,7 +335,6 @@ function resetAutoTrimps(autoTrimpsSettings, b) {
 			resetSettingsPortal();
 			updateCustomButtons(true);
 			saveSettings();
-			atSettings.running = true;
 			localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
 			localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
 			localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
@@ -355,6 +354,7 @@ function resetAutoTrimps(autoTrimpsSettings, b) {
 		debug("Successfully reset AT settings to Defaults...", "profile");
 		ImportExportTooltip("message", "Autotrimps has been successfully reset to its default settings!");
 	}
+	atSettings.running = true;
 }
 
 //Loads the base settings that I want to be the same when loading peoples saves as it will save me time.
