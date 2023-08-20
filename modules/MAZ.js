@@ -400,14 +400,18 @@ function MAZLookalike(titleText, varPrefix, event) {
 		const baseText = "Here you can enable the challenges you would like " + cinf() + " runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.";
 		const fusedText = autoTrimpSettings['c2Fused'].universe.indexOf(currSettingUniverse) !== -1 ? " If the 'Fused " + cinf() + "s' setting is enabled it will show Fused challenges and prioritise running them over their regular counterparts." : "";
 
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to " + cinf() + " Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to " + cinf() + " Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); document.getElementById(\"tooltipDiv\").style.top = \"25%\";'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
 		tooltipText += `<p>${baseText}${fusedText}</p>`;
 		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
+		//Skip Lines to seperate
+		tooltipText += "</td></tr><tr>";
+
+		//Setup challenges that will be displayed
 		var count = 0;
 		var setting, checkbox;
 		settingGroup = {};
-		fusedChallenges = {}
+		fusedChallenges = {};
 
 		if (currSettingUniverse === 1) {
 			var highestZone = game.stats.highestLevel.valueTotal();
@@ -454,11 +458,17 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (radonHZE >= 201) settingGroup.Smithless = {};
 		}
 
+		const headerNames = ['Challenge', 'Current Zone', 'End Zone'];
 
-		//Skip Lines to seperate
-		tooltipText += "</td></tr><tr>";
+		for (var y = 0; y < 2; y++) {
+			tooltipText += "<td><div class='row'>";
+			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px;  white-space: nowrap'>" + "<span>" + "<u>" + headerNames[0] + "</u>" + "</span></div>";
+			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px;text-align: center; white-space: nowrap'>" + "<span>" + "<u>" + headerNames[1] + "</u>" + "</span></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right; white-space: nowrap'>" + "<span>" + "<u>" + headerNames[2] + "</u>" + "&nbsp;&nbsp;</span></div>";
+			tooltipText += "</div></td>";
+		}
 
-		//Plus&Minus Portal&Void zone settings.
+		tooltipText += "</tr><tr>";
 		for (var item in settingGroup) {
 			if (count !== 0 && count % 2 === 0) tooltipText += "</tr><tr>";
 			setting = getPageSetting('c2RunnerSettings', currSettingUniverse)[item] !== 'undefined' ?
@@ -470,11 +480,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<td><div class='row'>";
 
 			//Checkbox & name
-			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>";
+			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px; white-space: nowrap'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>";
 			//Challenges current zone
-			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px'> Current Z:" + game.c2[itemName] + "</span></div>";
+			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px;text-align: center;  white-space: nowrap'>" + game.c2[itemName] + "</span></div>";
 			//Zone input
-			tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right'>End Z: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right; white-space: nowrap'><input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
 			//Finish
 			tooltipText += "</div></td>";
 			count++;
@@ -483,7 +493,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		if (Object.keys(fusedChallenges).length !== 0) {
 			count = 0;
-			tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 100%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "<u>Fused " + cinf() + "s</u>" + "</span></div></div>";
+			tooltipText += "<td><div class='row'><div class='col-xs-5' style='width: 100%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "<u>Fused " + cinf() + "s</u>" + "</span></div></div>";
 			tooltipText += "</td></tr><tr>";
 			//Plus&Minus Portal&Void zone settings.
 			for (var item in fusedChallenges) {
@@ -506,11 +516,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 				//Start
 				tooltipText += "<td><div class='row'>"
 				//Checkbox & name
-				tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>";
+				tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px; white-space: nowrap'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>";
 				//Challenges current zone
-				tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px'> Current Z:" + challengeLevel + "</span></div>";
+				tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px; text-align: center; white-space: nowrap'>" + challengeLevel + "</span></div>";
 				//Zone input
-				tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right'>End Z: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
+				tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right; white-space: nowrap'><input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
 				//Finish
 				tooltipText += "</div></td>";
 				count++;
@@ -518,15 +528,16 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "</tr>";
 		}
 
-
 		tooltipText += "</div></td></tr>";
 		tooltipText += "</tbody></table>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='saveC2RunnerSettings()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 		game.global.lockTooltip = true;
-		elem.style.left = "33.75%";
-		elem.style.top = "25%";
 		ondisplay = function () {
-			verticalCenterTooltip(false, true);
+			verticalCenterTooltip(false, false);
+			elem.style.width = '45%';
+			elem.style.left = "30.5%";
+			elem.style.top = "25%";
+			//swapClass('tooltipExtra', 'tooltipWindow45', tipElem);
 		};
 	}
 
@@ -562,25 +573,26 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
 		if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
 		var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
-		var windowSize = 'tooltipWindow50';
-		if (golden) windowSize = 'tooltipWindow40';
-		else if (quagmire) windowSize = 'tooltipWindow45';
-		else if (raiding) windowSize = 'tooltipWindow70';
-		else if (balance) windowSize = 'tooltipWindow50';
-		else if (toxicity) windowSize = 'tooltipWindow50';
-		else if (bionic) windowSize = 'tooltipWindow70';
-		else if (insanity) windowSize = 'tooltipWindow55';
-		else if (alchemy) windowSize = 'tooltipWindow70';
-		else if (hypothermia) windowSize = 'tooltipWindow45';
-		else if (desolation) windowSize = 'tooltipWindow50';
-		else if (voidMap) windowSize = 'tooltipWindow70';
-		else if (worshipperFarm) windowSize = 'tooltipWindow70';
-		else if (smithyFarm) windowSize = 'tooltipWindow70';
-		else if (boneShrine) windowSize = 'tooltipWindow65';
-		else if (hdFarm) windowSize = 'tooltipWindow70';
-		else if (mapBonus) windowSize = 'tooltipWindow75';
-		else if (mapFarm) windowSize = 'tooltipWindow80';
-		else if (tributeFarm) windowSize = 'tooltipWindow80';
+
+		var windowWidth = '50%';
+		if (golden) windowWidth = '40%';
+		else if (quagmire) windowWidth = '45%';
+		else if (raiding) windowWidth = '70%';
+		else if (balance) windowWidth = '50%';
+		else if (toxicity) windowWidth = '50%';
+		else if (bionic) windowWidth = '70%';
+		else if (insanity) windowWidth = '55%';
+		else if (alchemy) windowWidth = '70%';
+		else if (hypothermia) windowWidth = '45%';
+		else if (desolation) windowWidth = '50%';
+		else if (voidMap) windowWidth = '70%';
+		else if (worshipperFarm) windowWidth = '70%';
+		else if (smithyFarm) windowWidth = '70%';
+		else if (boneShrine) windowWidth = '65%';
+		else if (hdFarm) windowWidth = '70%';
+		else if (mapBonus) windowWidth = '75%';
+		else if (mapFarm) windowWidth = '80%';
+		else if (tributeFarm) windowWidth = '80%';
 
 		const originalSetting = getPageSetting(settingName + 'Settings', currSettingUniverse);
 		var maxSettings = 30;
@@ -1278,17 +1290,14 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		tooltipText += "<div id='windowAddRowBtn' style='display: " + ((currSetting.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>";
 		tooltipText += "</div></div><div style='display: none' id='mazHelpContainer'>" + mazHelp + "</div>";
-		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + settingName + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + settingName + "\", true)'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp(\"" + windowSize + "\")'>Help</span></div>";
+		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + settingName + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + settingName + "\", true)'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp(\"" + windowWidth + "\")'>Help</span></div>";
 
-		//Changing window size depending on setting being opened.
-		if (document.getElementById('tooltipDiv').classList[0] !== windowSize) {
-			swapClass(document.getElementById('tooltipDiv').classList[0], windowSize, elem);
-		}
 		game.global.lockTooltip = true;
 		elem.style.top = "10%";
 		elem.style.left = "1%";
 		elem.style.height = 'auto';
 		elem.style.maxHeight = window.innerHeight * .85 + 'px';
+		elem.style.width = windowWidth;
 		if (overflow) elem.style.overflowY = 'scroll';
 		if (!overflow) elem.style.overflowY = '';
 	}
@@ -2013,13 +2022,11 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	return mazHelp;
 }
 
-function windowToggleHelp(windowSize) {
+function windowToggleHelp(windowWidth) {
 	var mazContainer = document.getElementById('windowContainer');
 	var helpContainer = document.getElementById('mazHelpContainer');
 	var parentWindow = document.getElementById("tooltipDiv");
 	//Changing window size depending on setting being opened.
-	if (document.getElementById('tooltipDiv').classList[0] === 'tooltipExtraGigantic') swapClass(document.getElementById('tooltipDiv').classList[0], windowSize, parentWindow);
-	else swapClass(document.getElementById('tooltipDiv').classList[0], 'tooltipExtraGigantic', parentWindow);
 	if (!mazContainer || !helpContainer) return;
 	if (mazContainer.style.display === 'block') {
 		mazContainer.style.display = 'none';
@@ -2034,6 +2041,7 @@ function windowToggleHelp(windowSize) {
 	verticalCenterTooltip();
 	parentWindow.style.top = "10%";
 	parentWindow.style.left = "1%";
+	parentWindow.style.width = windowWidth;
 	parentWindow.style.height = 'auto';
 	parentWindow.style.maxHeight = window.innerHeight * .85 + 'px';
 
