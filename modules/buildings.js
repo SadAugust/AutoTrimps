@@ -330,7 +330,7 @@ function mostEfficientHousing() {
 		//Stops Collectors being purchased when on Quest gem quests.
 		if (questActive && housing === 'Collector') dontbuy.push(housing);
 		//Fix for Infinity collectors since it doesn't take resourceful into account.
-		if (housing === 'Collector' && game.buildings[housing].purchased <= 6000) dontbuy.push(housing);
+		if (housing === 'Collector' && game.buildings[housing].purchased >= 6000) dontbuy.push(housing);
 		//Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
 		if (hypoActive && (housing !== 'Collector' || housing !== 'Gateway') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		//Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
