@@ -467,19 +467,18 @@ function MAZLookalike(titleText, varPrefix, event) {
 			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
 			var itemName = item;
 			//Start
-			tooltipText += "<td><div class='row'>"
-			//Checkbox & name
-
+			tooltipText += "<td><div class='row'>";
 
 			//Checkbox & name
-			tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>";
+			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>";
 			//Challenges current zone
-			tooltipText += "<div class='col-xs-3' style='width: 25%; padding-right: 5px'> Current Z:" + game.c2[itemName] + "</span></div>";
+			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px'> Current Z:" + game.c2[itemName] + "</span></div>";
 			//Zone input
-			tooltipText += "<div class='col-xs-5' style='width: 41%; padding-left: 5px; text-align: right'>End Z: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right'>End Z: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
 			//Finish
 			tooltipText += "</div></td>";
 			count++;
+			if (count !== 0 && count % 2 === 0) tooltipText += "</tr><tr>";
 		}
 		tooltipText += "</tr>";
 
