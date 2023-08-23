@@ -6,8 +6,8 @@ function safeSetStance(stance) {
 
 	//This shouldnt be necessary?????????
 	if (game.global.formation !== stance) {
-		setFormation(stance.toString());
 		debug("Setting stance from " + formationLetter[currFormation] + " to " + formationLetter[stance] + ".", "stance");
+		setFormation(stance.toString());
 	}
 
 	return true;

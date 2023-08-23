@@ -1,3 +1,4 @@
+if (typeof MODULES !== 'object') MODULES = {};
 MODULES.autoPerks = {};
 MODULES.surky = {};
 MODULES.surky.perks = {};
@@ -215,7 +216,7 @@ function setupSurkyUI() {
 	MODULES.autoPerks.createInput = function (perkLine, id, inputObj, savedValue) {
 		if (!id) return;
 		if (document.getElementById(id + 'Div') !== null) {
-			debug("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
+			console.log("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
 			return;
 		}
 		//Creating container for both the label and the input.
@@ -385,7 +386,7 @@ function saveSurkySettings(initial) {
 	}
 
 	localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
-	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(surkyInputs);
 		saveSettings();
 	}
@@ -2271,6 +2272,8 @@ if (typeof (autoTrimpSettings) === 'undefined') {
 		}
 		catch (e) { console.log("Import Perks - Efficiency color failed: " + e, "other") }
 	}
+
+
 
 	// On swapping portla universes load either Perky or Surky.
 	var originalswapPortalUniverse = swapPortalUniverse;

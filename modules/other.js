@@ -413,7 +413,7 @@ function equalityManagement() {
 	var runningArchaeology = challengeActive('Archaeology');
 	var runningMayhem = challengeActive('Mayhem');
 	var enemyCanPoison = runningMayhem && (mapping || currentCell === 99);
-	var runningBerserk = challengeActive('Berserk');
+	var runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
 	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	var runningGlass = challengeActive('Glass');
 	var runningDesolation = challengeActive('Desolation');

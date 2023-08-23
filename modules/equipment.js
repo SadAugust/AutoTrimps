@@ -178,7 +178,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 
 
 
-	if (challengeActive('Scientist')) {
+	if (challengeActive('Scientist') || challengeActive('Frugal')) {
 		skipForLevels = Infinity;
 	}
 
@@ -341,7 +341,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	}
 
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
-	if (challengeActive('Scientist')) return prestigeInfo;
+	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
 	if (getPageSetting('equipNoShields') && equipName === 'Shield') return prestigeInfo;
 	if (!maxLevel) maxLevel = Infinity;
 

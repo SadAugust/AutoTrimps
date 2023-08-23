@@ -298,7 +298,7 @@ function shouldRunUniqueMap(map) {
 function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
 	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
-	if (!forceAbandon && (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
+	if (!forceAbandon && (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || (challengeActive('Berserk') && !game.challenges.Berserk.weakened !== 20) || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
 
 	//If we're done mapping AND in a map, then exit map to either world if autoMaps is enabled or to map chamber if not.
 	if (game.global.mapsActive) {
@@ -1543,7 +1543,7 @@ function prestigeClimb() {
 		mapName: mapName,
 	};
 
-	if (challengeActive('Frugal')) return farmingDetails;
+	if (challengeActive('Scientist') || challengeActive('Frugal')) return farmingDetails;
 
 	var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;

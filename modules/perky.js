@@ -1,3 +1,4 @@
+if (typeof MODULES !== 'object') MODULES = {};
 MODULES.autoPerks = {};
 MODULES.perky = {};
 MODULES.perky.props = {};
