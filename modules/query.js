@@ -96,6 +96,7 @@ function setResourceNeeded() {
 		gems: 0,
 		fragments: 0,
 	};
+	const upgradeList = populateUpgradeList();
 
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
@@ -104,7 +105,6 @@ function setResourceNeeded() {
 			MODULES.resourceNeeded.science += getCostToUpgrade(upgrade, 'science');
 			if (upgrade === 'Trapstorm') continue;
 			MODULES.resourceNeeded.food += getCostToUpgrade(upgrade, 'food');
-			if (gameUpgrade.prestiges) continue;
 			MODULES.resourceNeeded.wood += getCostToUpgrade(upgrade, 'wood');
 			MODULES.resourceNeeded.metal += getCostToUpgrade(upgrade, 'metal');
 		}

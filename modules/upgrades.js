@@ -1,12 +1,3 @@
-var upgradeList = ['Miners', 'Scientists', 'Coordination', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience', 'Speedexplorer', 'Efficiency', 'Explorers', 'Battle', 'Bloodlust', 'Bounty', 'Egg', 'UberHut', 'UberHouse', 'UberMansion', 'UberHotel', 'UberResort', 'Trapstorm', 'Potency',
-	//U1 only
-	'Megaminer', 'Megalumber', 'Megafarming', 'Megascience', 'TrainTacular', 'Trainers', 'Blockmaster', 'Anger', 'Formations', 'Dominance', 'Barrier', 'Gymystic', 'Gigastation', 'Shieldblock', 'Magmamancers',
-	//U2 only
-	'Rage', 'Prismatic', 'Prismalicious',
-	//Equipment
-	'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP', 'Supershield'
-];
-
 //Helium
 MODULES["upgrades"] = {};
 MODULES["upgrades"].targetFuelZone = true;
@@ -117,17 +108,90 @@ function needGymystic() {
 	return game.upgrades['Gymystic'].allowed - game.upgrades['Gymystic'].done > 0;
 }
 
+//Getting a list of the upgrades we need to purchase whilst running the Scientist challenge.
+function sciUpgrades() {
+	if (!challengeActive('Scientist')) return;
+	var upgradeList = [];
+	//Scientist I - 11500 Science
+	if (game.global.sLevel === 0) {
+		//Recommended list has Bloodlust but with AT that should be unnecessary so left with 129 Science, nothing else to spend it on so purchasing Bloodlust!
+		//upgradeList = ['Battle', 'Miners', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Megamace', 'Bestplate'];
+		if (game.upgrades.Battle.done === 0) upgradeList.push('Battle');
+		if (game.upgrades.Bloodlust.done === 0) upgradeList.push('Bloodlust');
+		if (game.upgrades.Miners.done === 0) upgradeList.push('Miners');
+		if (game.upgrades.Coordination.done <= 8) upgradeList.push('Coordination');
+		if (game.upgrades.Megamace.done === 0) upgradeList.push('Megamace');
+		if (game.upgrades.Bestplate.done === 0) upgradeList.push('Bestplate');
+	}
+	//Scientist II - 8000 Science
+	else if (game.global.sLevel === 1) {
+		//Recommended list has Bloodlust but with AT that should be unnecessary so left with 68 Science, nothing else to spend it on so purchasing Bloodlust!
+		//upgradeList = ['Battle', 'Miners', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Coordination', 'Bestplate',];
+		if (game.upgrades.Battle.done === 0) upgradeList.push('Battle');
+		if (game.upgrades.Bloodlust.done === 0) upgradeList.push('Bloodlust');
+		if (game.upgrades.Miners.done === 0) upgradeList.push('Miners');
+		if (game.upgrades.Coordination.done <= 7) upgradeList.push('Coordination');
+		if (game.upgrades.Bestplate.done === 0) upgradeList.push('Bestplate');
+	}
+	//Scientist III - 1500 Science
+	else if (game.global.sLevel === 2) {
+		//Recommended list has Bloodlust but with AT that should be unnecessary so left with 233 Science. Speedlumber probably the best option here?
+		//upgradeList = ['Battle', 'Miners', 'Coordination', 'Coordination', 'Coordination', 'Speedminer'];
+		if (game.upgrades.Battle.done === 0) upgradeList.push('Battle');
+		if (game.upgrades.Miners.done === 0) upgradeList.push('Miners');
+		if (game.upgrades.Coordination.done <= 2) upgradeList.push('Coordination');
+		if (game.upgrades.Speedminer.done === 0) upgradeList.push('Speedminer');
+		if (game.upgrades.Speedlumber.done === 0) upgradeList.push('Speedlumber');
+	}
+	//Scientist IV - 70 Science so left with 10 Science and nothing to spend it on
+	else if (game.global.sLevel === 3) {
+		//upgradeList = ['Battle', 'Miners'];
+		if (game.upgrades.Battle.done === 0) upgradeList.push('Battle');
+		if (game.upgrades.Miners.done === 0) upgradeList.push('Miners');
+	}
+	//Scientist V - 1500 Science
+	else if (game.global.sLevel >= 4) {
+		//Recommended list has Bloodlust but with AT that should be unnecessary so left with 233 Science. Speedlumber probably the best option here?
+		//Push Egg to the list even if it won't be used on the first run but will be for the AntiScience achievement run
+		//upgradeList = ['Battle', 'Miners', 'Coordination', 'Coordination', 'Coordination', 'Speedminer'];
+		if (game.upgrades.Battle.done === 0) upgradeList.push('Battle');
+		if (game.upgrades.Miners.done === 0) upgradeList.push('Miners');
+		if (game.upgrades.Coordination.done <= 2) upgradeList.push('Coordination');
+		if (game.upgrades.Speedminer.done === 0) upgradeList.push('Speedminer');
+		if (game.upgrades.Speedlumber.done === 0) upgradeList.push('Speedlumber');
+		if (game.upgrades.Egg.done === 0) upgradeList.push('Egg');
+	}
+	return upgradeList;
+}
+
+function populateUpgradeList() {
+	var upgradeList = [];
+
+	if (challengeActive('Scientist'))
+		upgradeList = sciUpgrades();
+	else {
+		upgradeList = ['Miners', 'Scientists', 'Coordination', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience', 'Speedexplorer', 'Efficiency', 'Explorers', 'Battle', 'Bloodlust', 'Bounty', 'Egg', 'UberHut', 'UberHouse', 'UberMansion', 'UberHotel', 'UberResort', 'Trapstorm', 'Potency',
+			//U1 only
+			'Megaminer', 'Megalumber', 'Megafarming', 'Megascience', 'TrainTacular', 'Trainers', 'Blockmaster', 'Anger', 'Formations', 'Dominance', 'Barrier', 'Gymystic', 'Gigastation', 'Shieldblock', 'Magmamancers',
+			//U2 only
+			'Rage', 'Prismatic', 'Prismalicious',
+			//Equipment Prestiges -- Excluded from the setResourceNeeded & buyUpgrade functions so don't need to be in the list
+			//'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP', 'Supershield'
+		];
+	}
+	return upgradeList;
+}
+
 function buyUpgrades() {
 	if (getPageSetting('upgradeType') === 0) return;
 
+	const upgradeList = populateUpgradeList();
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
-		if (gameUpgrade.prestiges) continue;
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
 		if (!available) continue;
 		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('buildingsType') === 0);
-
 		if (upgrade === 'Coordination') {
 			//Coord & Amals
 			if (getPageSetting('upgradeType') === 2 || !canAffordCoordinationTrimps()) continue;

@@ -159,6 +159,16 @@ function initializeAllSettings() {
 				description += "<p><b>Buy All Upgrades</b><br>Automatically purchases non-equipment upgrades. Equipment upgrades are controlled by settings in the Gear tab.</p>";
 				description += "<p><b>Upgrades no Coords</b><br>Works the same as 'Buy All Upgrades' but stops Coordination upgrades from being purchased.</p>";
 				description += "<p><b>Recommended:</b> Buy All Upgrades</p>";
+
+				if (currSettingUniverse === 1) {
+					description += "<p>Will purchase the following upgrades when on your next <b>Scientist</b> run - ";
+					if (game.global.sLevel === 0) description += "Battle, Miners, Coordination x9, Megamace, Bestplate</p>";
+					if (game.global.sLevel === 1) description += "Battle, Miners, Coordination x8, Bestplate</p>";
+					if (game.global.sLevel === 2) description += "Battle, Miners, Coordination x3, Speedminer</p>";
+					if (game.global.sLevel === 3) description += "Battle, Miners</p>";
+					if (game.global.sLevel >= 4) description += "Battle, Miners, Coordination x3, Speedminer, Egg</p>";
+					return description;
+				}
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
 		createSetting('TrapTrimps',
@@ -1888,7 +1898,7 @@ function initializeAllSettings() {
 			function () { return ('M: Prestige') },
 			function () {
 				var description = "<p>When running any prestige farming settings this will override the targetted prestige with the prestige selected here.</p>";
-				description += "<p><b>Recommended:</b> Bootboost</p>";
+				description += "<p><b>Recommended:</b> Axeidic for <b>push</b> runs or Bootboost for <b>speed</b> runs</p>";
 				return description;
 			}, 'dropdown', 'Bootboost', function () {
 				var equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
