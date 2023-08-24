@@ -4947,7 +4947,7 @@ function autoHeirloomOptions(heirloomType) {
 		if (item === "empty") continue;
 		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 		if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
-		heirloomModsArray.push(MODULES.heirloomMods[heirloomType][item]);
+		heirloomModsArray.push(MODULES.heirloomMods[heirloomType][item].name);
 	}
 
 	return heirloomModsArray;

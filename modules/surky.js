@@ -1,13 +1,14 @@
-$$ = function (a) {
-	return document.querySelector(a);
-}
-$$$ = function (a) {
-	return [].slice.apply(document.querySelectorAll(a));
-};
-
+//Setup for non-AT users
 if (typeof MODULES !== 'object') {
 	MODULES = {};
-} MODULES.autoPerks = {};
+	$$ = function (a) {
+		return document.querySelector(a);
+	}
+	$$$ = function (a) {
+		return [].slice.apply(document.querySelectorAll(a));
+	};
+}
+MODULES.autoPerks = {};
 MODULES.surky = {};
 MODULES.surky.perks = {};
 MODULES.surky.props = {};
