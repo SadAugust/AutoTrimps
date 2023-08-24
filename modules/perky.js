@@ -1,4 +1,13 @@
-if (typeof MODULES !== 'object') MODULES = {};
+//Setup for non-AT users
+if (typeof MODULES !== 'object') {
+	MODULES = {};
+	$$ = function (a) {
+		return document.querySelector(a);
+	}
+	$$$ = function (a) {
+		return [].slice.apply(document.querySelectorAll(a));
+	};
+}
 MODULES.autoPerks = {};
 MODULES.perky = {};
 MODULES.perky.props = {};
@@ -802,13 +811,6 @@ function optimize(params) {
 	}
 	return [he_left, perks];
 }
-
-$$ = function (a) {
-	return document.querySelector(a);
-}
-$$$ = function (a) {
-	return [].slice.apply(document.querySelectorAll(a));
-};
 
 
 MODULES.perky.notations = [

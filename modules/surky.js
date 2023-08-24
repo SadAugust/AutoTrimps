@@ -1,5 +1,13 @@
-if (typeof MODULES !== 'object') MODULES = {};
-MODULES.autoPerks = {};
+$$ = function (a) {
+	return document.querySelector(a);
+}
+$$$ = function (a) {
+	return [].slice.apply(document.querySelectorAll(a));
+};
+
+if (typeof MODULES !== 'object') {
+	MODULES = {};
+} MODULES.autoPerks = {};
 MODULES.surky = {};
 MODULES.surky.perks = {};
 MODULES.surky.props = {};
