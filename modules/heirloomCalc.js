@@ -351,6 +351,13 @@ function setupHeirloomUI() {
 				maxValue: null,
 				defaultValue: 0,
 			},
+			XPWeight: {
+				name: "Weight: XP",
+				description: "VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain..",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
 			HPWeight: {
 				name: "Weight: HP",
 				description: "VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain..",
@@ -360,13 +367,6 @@ function setupHeirloomUI() {
 			},
 		},
 		row2: {
-			XPWeight: {
-				name: "Weight: XP",
-				description: "VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain..",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
 			equalityTarget: {
 				name: "Equality Target",
 				description: "The amount of equality that you use for your hardest zones in your run.",
@@ -498,7 +498,7 @@ function setupHeirloomUI() {
 		apGUI.$allocatorBtn1.textContent = 'Allocate Nullifium';
 
 		if (document.getElementById(apGUI.$allocatorBtn1.id) === null)
-			heirloomGUI.$ratiosLine1.insertBefore(apGUI.$allocatorBtn1, document.getElementById('HPWeightDiv'));
+			heirloomGUI.$ratiosLine1.insertBefore(apGUI.$allocatorBtn1, document.getElementById('XPWeightDiv'));
 
 		if (setupNeeded) {
 			saveHeirloomSettings();
@@ -506,6 +506,7 @@ function setupHeirloomUI() {
 		}
 		MODULES.autoHeirlooms = heirloomInputs;
 		document.getElementById('VMWeightDiv').style.float = 'left';
+		document.getElementById('XPWeightDiv').style.float = 'right';
 	}
 
 	MODULES.heirloomUI.displayGUI();
@@ -1075,21 +1076,39 @@ function calculate(autoUpgrae) {
 	//Set the display of the heirloom ratios to be visible. Gets hidden when you don't have an heirloom selected
 	if (document.getElementById("heirloomRatios").style.display !== "inline-block")
 		document.getElementById("heirloomRatios").style.display = "inline-block";
-	if (document.getElementById("heirloomAllocatorBtn").style.marginRight !== "13.88vw" && !startingHeirloom.type.includes('Core'))
-		document.getElementById("heirloomAllocatorBtn").style.marginRight = "13.88vw";
 	if (document.getElementById("heirloomAllocatorBtn").innerHTML !== 'Allocate Nullifium' && !startingHeirloom.type.includes('Core'))
 		document.getElementById("heirloomAllocatorBtn").innerHTML = 'Allocate Nullifium';
-
 	//When looking at Shields show VM, HP, XP and Equality settings.
-	if (document.getElementById("VMWeight").parentNode.style.display !== "inline-block")
-		document.getElementById("VMWeight").parentNode.style.display = "inline-block";
-	if (document.getElementById("HPWeight").parentNode.style.display !== "inline-block")
-		document.getElementById("HPWeight").parentNode.style.display = "inline-block";
-	if (startingHeirloom.type.includes('Shield')) {
+
+	if (document.getElementById("heirloomAllocatorBtn").style.marginRight !== "0vw")
 		document.getElementById("heirloomAllocatorBtn").style.marginRight = "0vw";
-		//Set 2nd row to be visible.
-		if (document.getElementById("XPWeightDiv").parentNode.style.display !== "inline-block")
-			document.getElementById("XPWeightDiv").parentNode.style.display = "inline-block";
+	if (startingHeirloom.type.includes('Shield')) {
+		//Enable used settings!
+		if (document.getElementById("VMWeight").parentNode.style.display !== "inline-block")
+			document.getElementById("VMWeight").parentNode.style.display = "inline-block";
+
+		if (document.getElementById("HPWeight").parentNode.style.display !== "inline-block")
+			document.getElementById("HPWeight").parentNode.style.display = "inline-block";
+
+		//Show equality button if inside U2
+		if (game.global.universe === 2) {
+			if (document.getElementById("equalityTarget").parentNode.style.display !== "inline")
+				document.getElementById("equalityTarget").parentNode.style.display = "inline";
+		} else if (document.getElementById("equalityTarget").parentNode.style.display !== "none")
+			document.getElementById("equalityTarget").parentNode.style.display = "none";
+		//Hide equip levels & xp when not viewing staffs
+		if (document.getElementById("equipLevels").parentNode.style.display !== "none")
+			document.getElementById("equipLevels").parentNode.style.display = "none";
+
+		if (document.getElementById("XPWeight").parentNode.style.display !== "none")
+			document.getElementById("XPWeight").parentNode.style.display = "none";
+	}
+	//When looking at Staffs show weapon levels & xp settings.
+	else if (startingHeirloom.type.includes('Staff')) {
+		//Enable used settings!
+		if (document.getElementById("equipLevels").parentNode.style.display !== "inline")
+			document.getElementById("equipLevels").parentNode.style.display = "inline";
+
 		//Show XP weight if Fluffy/Scruffy are unlocked
 		if (game.global.spiresCompleted >= 2) {
 			if (document.getElementById("XPWeight").parentNode.style.display !== "inline")
@@ -1098,37 +1117,36 @@ function calculate(autoUpgrae) {
 			if (document.getElementById("XPWeight").parentNode.style.display !== "none")
 				document.getElementById("XPWeight").parentNode.style.display = "none";
 		}
-		//Show equality button if inside U2
-		if (document.getElementById("equalityTarget").parentNode.style.display !== "inline")
-			document.getElementById("equalityTarget").parentNode.style.display = "inline";
-		//Hide equip levels when not viewing staffs
-		if (document.getElementById("equipLevels").parentNode.style.display !== "none")
-			document.getElementById("equipLevels").parentNode.style.display = "none";
-	}
-	//When looking at Staffs show weapon levels setting.
-	else if (startingHeirloom.type.includes('Staff')) {
-		if (document.getElementById("equipLevels").parentNode.style.display !== "inline")
-			document.getElementById("equipLevels").parentNode.style.display = "inline";
+
+		//Hide unused settings!
 		//Set 2nd row to be hidden when not viewing Shields.
-		if (document.getElementById("XPWeightDiv").parentNode.style.display !== "none")
-			document.getElementById("XPWeightDiv").parentNode.style.display = "none";
+		if (document.getElementById("equalityTarget").parentNode.style.display !== "none")
+			document.getElementById("equalityTarget").parentNode.style.display = "none";
+
 		if (document.getElementById("VMWeight").parentNode.style.display !== "none")
 			document.getElementById("VMWeight").parentNode.style.display = "none";
+
 		if (document.getElementById("HPWeight").parentNode.style.display !== "none")
 			document.getElementById("HPWeight").parentNode.style.display = "none";
 	}
 	//When looking at Cores show no settings.
 	else if (startingHeirloom.type.includes('Core')) {
-		//Set 2nd row to be hidden when not viewing Shields.
-		if (document.getElementById("XPWeightDiv").parentNode.style.display !== "none")
-			document.getElementById("XPWeightDiv").parentNode.style.display = "none";
+		//Hide unused settings (all)!
+		if (document.getElementById("equalityTarget").parentNode.style.display !== "none")
+			document.getElementById("equalityTarget").parentNode.style.display = "none";
+
 		if (document.getElementById("VMWeight").parentNode.style.display !== "none")
 			document.getElementById("VMWeight").parentNode.style.display = "none";
+
 		if (document.getElementById("HPWeight").parentNode.style.display !== "none")
 			document.getElementById("HPWeight").parentNode.style.display = "none";
+
 		if (document.getElementById("equipLevels").parentNode.style.display !== "none")
 			document.getElementById("equipLevels").parentNode.style.display = "none";
-		document.getElementById("heirloomAllocatorBtn").style.marginRight = "0vw";
+
+		if (document.getElementById("XPWeight").parentNode.style.display !== "none")
+			document.getElementById("XPWeight").parentNode.style.display = "none";
+
 		document.getElementById("heirloomAllocatorBtn").innerHTML = 'Allocate Spirestones';
 
 		startTDCalc();
