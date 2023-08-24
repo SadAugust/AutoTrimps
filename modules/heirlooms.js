@@ -5,48 +5,6 @@ MODULES.heirlooms = {
 	shieldEquipped: null,
 }
 
-MODULES.heirloomMods = {
-	Shield: {
-		playerEfficiency: "Player Efficiency",
-		trainerEfficiency: "Trainer Efficiency",
-		storageSize: "Storage Size",
-		breedSpeed: "Breed Speed",
-		trimpHealth: "Trimp Health",
-		trimpAttack: "Trimp Attack",
-		trimpBlock: "Trimp Block",
-		critDamage: "Crit Damage",
-		critChance: "Crit Chance",
-		voidMaps: "Void Map Drop Chance",
-		plaguebringer: "Plaguebringer",
-		prismatic: "Prismatic Shield",
-		gammaBurst: "Gamma Burst",
-		inequality: "Inequality",
-	},
-	Staff: {
-		metalDrop: "Metal Drop Rate",
-		foodDrop: "Food Drop Rate",
-		woodDrop: "Wood Drop Rate",
-		gemsDrop: "Gem Drop Rate",
-		fragmentsDrop: "Fragment Drop Rate",
-		FarmerSpeed: "Farmer Efficiency",
-		LumberjackSpeed: "Lumberjack Efficiency",
-		MinerSpeed: "Miner Efficiency",
-		DragimpSpeed: "Dragimp Efficiency",
-		ExplorerSpeed: "Explorer Efficiency",
-		ScientistSpeed: "Scientist Efficiency",
-		FluffyExp: "Pet Exp",
-		ParityPower: "Parity Power",
-	},
-	Core: {
-		fireTrap: "Fire Trap Damage",
-		poisonTrap: "Poison Trap Damage",
-		lightningTrap: "Lightning Trap Power",
-		runestones: "Runestone Drop Rate",
-		strengthEffect: "Strength Tower Effect",
-		condenserEffect: "Condenser Effect",
-	}
-}
-
 function evaluateHeirloomMods(loom, location) {
 
 	var heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
@@ -90,7 +48,7 @@ function evaluateHeirloomMods(loom, location) {
 			emptyMods++;
 			continue;
 		}
-		modName = MODULES.heirloomMods[heirloomType][modName];
+		modName = MODULES.heirloomMods[heirloomType][modName].name;
 		if (blacklist.includes(modName)) return 0;
 		targetMods = targetMods.filter(e => e !== modName);
 	}
@@ -298,7 +256,7 @@ function heirloomShieldToEquip(mapType, swapLooms) {
 	//If we have the daily odd or even setting enabled and the negative daily mod is active then add one to our swap zone
 	if (hdStats.isDaily && dailyOddOrEven().active && swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
 	//Challenges where abandoning your current army has the potential to be REALLY bad.
-	var dontSwap = currChallenge === 'trapper' || currChallenge === 'berserk' || currChallenge === 'trappapalooza';
+	var dontSwap = currChallenge === 'trapper' || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20) || currChallenge === 'trappapalooza';
 	if (swapLooms) {
 		//Disable Shield swapping if on a dontSwap challenge and our army is still fighting or has health remaining.
 		if (dontSwap && (game.global.fighting || game.global.soldierHealthRemaining > 0))
@@ -338,7 +296,7 @@ function heirloomShieldToEquip(mapType, swapLooms) {
 			//Check we're in U2, we're in a void map and setting is enabled.
 			game.global.universe === 2 && game.global.voidBuff !== '' && getPageSetting('heirloomVoidSwap') &&
 			//Not running fast challenge
-			!challengeActive('Glass') && !challengeActive('Berserk') && !challengeActive('Archaeology') && (!challengeActive('Quest') && currQuest() !== 8) &&
+			!challengeActive('Glass') && (!challengeActive('Berserk') && !game.challenges.Berserk.weakened !== 20) && !challengeActive('Archaeology') && (!challengeActive('Quest') && currQuest() !== 8) &&
 			//Not at final map cell
 			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
 			//Current enemy is slow

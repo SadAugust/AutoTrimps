@@ -6,7 +6,7 @@ var atSettings = {
 	},
 	modules: {
 		path: 'modules/',
-		installedModules: ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames', 'utils'],
+		installedModules: ['import-export', 'query', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirloomCalc', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils', 'mutatorPreset'],
 		loadedModules: [],
 		loaded: [],
 	},
@@ -136,7 +136,6 @@ function initializeAutoTrimps() {
 	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
 	document.head.appendChild(script);
 	/* ATscriptLoad(null, 'Graphs'); */
-	ATscriptLoad(null, 'mutatorPreset');
 	for (var m in atSettings.modules.installedModules) {
 		ATscriptLoad(atSettings.modules.path, atSettings.modules.installedModules[m]);
 	}
@@ -209,6 +208,7 @@ function universeSwapped() {
 			setupPerkyUI();
 		if (portalUniverse === 2)
 			setupSurkyUI();
+
 		currPortalUniverse = portalUniverse;
 	}
 }

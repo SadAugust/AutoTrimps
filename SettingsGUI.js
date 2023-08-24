@@ -3842,6 +3842,13 @@ function initializeAllSettings() {
 				'': '',
 			}), null, 'Import Export', [1, 2]);
 
+		createSetting('autoHeirloomStorage',
+			function () { return ('Auto Heirlooms') },
+			function () { return ('Click to adjust settings.') },
+			'mazDefaultArray', JSON.stringify({
+				'': '',
+			}), null, 'Import Export', [1, 2]);
+
 		createSetting('mutatorPresets',
 			function () { return ('Mutator Presets') },
 			function () { return ('Click to adjust settings.') },
