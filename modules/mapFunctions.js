@@ -553,13 +553,6 @@ function voidMaps() {
 		mappingDetails(mapName, null, null, null, null, null);
 		resetMapVars();
 		if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
-		/* delete mapSettings.voidHitsSurvived;
-		delete mapSettings.boneChargeUsed;
-		delete mapSettings.voidHDIndex;
-		delete mapSettings.dropdown;
-		delete mapSettings.dropdown2;
-		delete mapSettings.voidTrigger;
-		delete mapSettings.portalAfterVoids; */
 	}
 
 	return farmingDetails;
@@ -3244,33 +3237,33 @@ function farmingDecision() {
 	}
 	if (!game.global.mapsUnlocked) return farmingDetails;
 
-	var mapTypes;
+	mapTypes = [];
 	//U1 map settings to check for.
 	if (game.global.universe === 1) {
 		mapTypes = [
-			prestigeClimb(),
-			mapFarm(),
-			prestigeRaiding(),
-			bionicRaiding(),
-			hdFarm(),
-			voidMaps(),
-			mapBonus(),
-			experience(),
-			toxicity(),
-			mapDestacking(),
+			prestigeClimb,
+			mapFarm,
+			prestigeRaiding,
+			bionicRaiding,
+			hdFarm,
+			voidMaps,
+			mapBonus,
+			experience,
+			toxicity,
+			mapDestacking,
 		];
 
 		//Skipping map farming if in Decay and above stack count user input
-		if (decaySkipMaps()) mapTypes = [
-			prestigeClimb(),
-			voidMaps(),
+		if (decaySkipMaps) mapTypes = [
+			prestigeClimb,
+			voidMaps,
 		];
 
 		if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [
-			prestigeClimb(),
-			prestigeRaiding(),
-			bionicRaiding(),
-			voidMaps(),
+			prestigeClimb,
+			prestigeRaiding,
+			bionicRaiding,
+			voidMaps,
 		];
 
 		if (isDoingSpire() && getPageSetting('skipSpires') && game.global.mapBonus === 10) return farmingDetails;
@@ -3284,35 +3277,35 @@ function farmingDecision() {
 
 		//U2 map settings to check for.
 		mapTypes = [
-			desolationGearScum(),
-			desolation(MODULES.mapFunctions.challengeContinueRunning),
-			quest(),
-			pandemoniumDestack(),
-			prestigeClimb(),
-			smithyFarm(),
-			mapFarm(),
-			tributeFarm(),
-			worshipperFarm(),
-			mapDestacking(),
-			prestigeRaiding(),
-			mayhem(),
-			insanity(),
-			pandemoniumFarm(),
-			alchemy(),
-			hypothermia(),
-			hdFarm(),
-			voidMaps(),
-			quagmire(),
-			mapBonus(),
-			glass(),
-			smithless(),
-			wither(),
+			desolationGearScum,
+			desolation,
+			quest,
+			pandemoniumDestack,
+			prestigeClimb,
+			smithyFarm,
+			mapFarm,
+			tributeFarm,
+			worshipperFarm,
+			mapDestacking,
+			prestigeRaiding,
+			mayhem,
+			insanity,
+			pandemoniumFarm,
+			alchemy,
+			hypothermia,
+			hdFarm,
+			voidMaps,
+			quagmire,
+			mapBonus,
+			glass,
+			smithless,
+			wither,
 		];
 	}
 
 	for (const map of mapTypes) {
-		if (map.shouldRun) {
-			farmingDetails = map;
+		if (map(MODULES.mapFunctions.challengeContinueRunning).shouldRun) {
+			farmingDetails = map();
 			break;
 		}
 	}
