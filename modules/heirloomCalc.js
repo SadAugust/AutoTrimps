@@ -1065,6 +1065,17 @@ function deepClone(obj) {
 	return JSON.parse(JSON.stringify(obj));
 }
 
+function setupHeirloomHelpBtn() {
+	//Setting up heirloom info tooltip button.
+	//Attaches to top right of the selected heirloom
+	var heirloomHelpBtn = document.createElement("DIV");
+	heirloomHelpBtn.setAttribute('id', 'heirloomHelpBtn');
+	heirloomHelpBtn.setAttribute('class', 'glyphicon glyphicon-question-sign');
+	heirloomHelpBtn.setAttribute('style', 'position:absolute; top:1vw; right:2vw;');
+	heirloomHelpBtn.setAttribute("onmouseout", 'tooltip("hide")');
+	document.getElementById('selectedHeirloom').children[0].children[0].appendChild(heirloomHelpBtn);
+}
+
 function calculate(autoUpgrae) {
 	var selectedLoom = game.global.selectedHeirloom;
 	var startingHeirloom;
@@ -1172,15 +1183,7 @@ function calculate(autoUpgrae) {
 		}
 	}
 
-	//Setting up heirloom info tooltip button.
-	//Attaches to top right of the selected heirloom
-	var heirloomHelpBtn = document.createElement("DIV");
-	heirloomHelpBtn.setAttribute('id', 'heirloomHelpBtn');
-	heirloomHelpBtn.setAttribute('class', 'glyphicon glyphicon-question-sign');
-	heirloomHelpBtn.setAttribute('style', 'position:absolute; top:1vw; right:2vw;');
-	heirloomHelpBtn.setAttribute("onmouseout", 'tooltip("hide")');
-	document.getElementById('selectedHeirloom').children[0].children[0].appendChild(heirloomHelpBtn);
-
+	setupHeirloomHelpBtn();
 	updateModContainer("heirloomHelpBtn", startingHeirloom);
 }
 
@@ -1233,6 +1236,9 @@ function runHeirlooms() {
 
 	startingHeirloom.mods = heirlooms.newLoom.mods;
 	displaySelectedHeirloom(true);
+
+	setupHeirloomHelpBtn();
+	updateModContainer("heirloomHelpBtn", heirlooms.newLoom);
 	return;
 }
 
