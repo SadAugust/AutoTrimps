@@ -3254,7 +3254,7 @@ function farmingDecision() {
 		];
 
 		//Skipping map farming if in Decay and above stack count user input
-		if (decaySkipMaps) mapTypes = [
+		if (decaySkipMaps()) mapTypes = [
 			prestigeClimb,
 			voidMaps,
 		];
@@ -3302,10 +3302,11 @@ function farmingDecision() {
 			wither,
 		];
 	}
-
+	var mapCheck;
 	for (const map of mapTypes) {
-		if (map(MODULES.mapFunctions.challengeContinueRunning).shouldRun) {
-			farmingDetails = map();
+		mapCheck = map(MODULES.mapFunctions.challengeContinueRunning);
+		if (mapCheck.shouldRun) {
+			farmingDetails = mapCheck;
 			break;
 		}
 	}
