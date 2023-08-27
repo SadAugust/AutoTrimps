@@ -331,6 +331,7 @@ function resetAutoTrimps(autoTrimpsSettings, b) {
 			automationMenuSettingsInit();
 			initializeAllTabs();
 			initializeAllSettings();
+			saveSettings();
 			updateATVersion();
 			resetSettingsPortal();
 			updateCustomButtons(true);

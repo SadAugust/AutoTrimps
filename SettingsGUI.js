@@ -5963,7 +5963,9 @@ function updateATVersion() {
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust')
 		&& autoTrimpSettings["ATversion"] !== atSettings.initialise.version
 	) {
-
+		//On the offchance anybody is using a super old version of AT then they need their localStorage setting converted
+		if (JSON.parse(localStorage.getItem('atSettings')) === null)
+			saveSettings();
 		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 
 		//Test function for either setting conversion. Stops me having to rewrite the undefined code every time I change something.
@@ -6018,14 +6020,12 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.7') {
-			if (tempSettings.heirloomResourceStaff !== undefined)
-				autoTrimpSettings['heirloomStaffResource'].valueU2 = tempSettings.heirloomResourceStaff.valueU2;
 			autoTrimpSettings['hitsSurvived'].value = 0;
 			autoTrimpSettings['hitsSurvived'].valueU2 = 0;
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.8') {
-			if (tempSettings.dailyPortalSettingsArray.valueU2 !== undefined)
+			if (tempSettings.dailyPortalSettingsArray && tempSettings.dailyPortalSettingsArray.valueU2 !== undefined)
 				delete autoTrimpSettings.dailyPortalSettingsArray.valueU2.value;
 		}
 
@@ -6492,7 +6492,7 @@ function updateATVersion() {
 					obj[x] = {};
 					obj[x].done = '';
 				}
-				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
+				game.global.addonUser[u2Settings[item] + 'Settings'].value = obj;
 
 				if (typeof (autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0]) !== 'undefined') {
 					for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
