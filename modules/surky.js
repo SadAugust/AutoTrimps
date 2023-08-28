@@ -1,6 +1,9 @@
 //Setup for non-AT users
 if (typeof MODULES !== 'object') {
 	MODULES = {};
+}
+
+if (typeof $$ !== 'function') {
 	$$ = function (a) {
 		return document.querySelector(a);
 	}
@@ -8,6 +11,7 @@ if (typeof MODULES !== 'object') {
 		return [].slice.apply(document.querySelectorAll(a));
 	};
 }
+
 MODULES.autoPerks = {};
 MODULES.surky = {};
 MODULES.surky.perks = {};
