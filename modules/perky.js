@@ -1,6 +1,9 @@
 //Setup for non-AT users
 if (typeof MODULES !== 'object') {
 	MODULES = {};
+}
+
+if (typeof $$ !== 'function') {
 	$$ = function (a) {
 		return document.querySelector(a);
 	}

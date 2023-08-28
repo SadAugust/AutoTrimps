@@ -211,7 +211,6 @@ function buyUpgrades() {
 		//Other
 		if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
 		if (upgrade === 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('firstGigastation'))) continue;
-		if (upgrade === 'Bloodlust' && challengeActive('Scientist') && getPageSetting('autoFight')) continue;
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners') {
 			if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade !== 'Scientists') continue;
 			if (upgrade !== 'Scientists' && game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;

@@ -1068,6 +1068,7 @@ function deepClone(obj) {
 function setupHeirloomHelpBtn() {
 	//Setting up heirloom info tooltip button.
 	//Attaches to top right of the selected heirloom
+	if (document.getElementById('heirloomHelpBtn') !== null) document.getElementById('heirloomHelpBtn').remove();;
 	var heirloomHelpBtn = document.createElement("DIV");
 	heirloomHelpBtn.setAttribute('id', 'heirloomHelpBtn');
 	heirloomHelpBtn.setAttribute('class', 'glyphicon glyphicon-question-sign');
@@ -1076,7 +1077,7 @@ function setupHeirloomHelpBtn() {
 	document.getElementById('selectedHeirloom').children[0].children[0].appendChild(heirloomHelpBtn);
 }
 
-function calculate(autoUpgrae) {
+function calculate(autoUpgrade) {
 	var selectedLoom = game.global.selectedHeirloom;
 	var startingHeirloom;
 
@@ -1164,7 +1165,7 @@ function calculate(autoUpgrae) {
 	}
 
 	var newHeirloom = new Heirloom(startingHeirloom).calculatePurchases();
-	if (autoUpgrae) return {
+	if (autoUpgrade) return {
 		oldLoom: selectedLoom,
 		newLoom: newHeirloom
 	}
@@ -1175,11 +1176,12 @@ function calculate(autoUpgrae) {
 		return mod[1];
 	}
 
-
+	var modDetails = '';
 	if (newHeirloom) {
 		for (var y = 0; y < newHeirloom.mods.length; y++) {
 			if (newHeirloom.purchases[y] === 0) continue;
-			document.getElementsByClassName('heirloomMod')[y].innerHTML += ` (${precisionRoundMod(getModValue(newHeirloom.mods[y], newHeirloom.type), 5)}% +${newHeirloom.purchases[y]})`;
+			modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split("(");
+			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails[0]} (${precisionRoundMod(getModValue(newHeirloom.mods[y], newHeirloom.type), 5)}% +${newHeirloom.purchases[y]})`;
 		}
 	}
 
