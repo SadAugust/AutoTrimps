@@ -525,7 +525,7 @@ function saveHeirloomSettings() {
 	}
 
 	localStorage.setItem("heirloomInputs", JSON.stringify(heirloomInputs));
-	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
+	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust') && autoTrimpSettings['autoHeirloomStorage']["value" + (game.global.universe === 2 ? 'U2' : '')] !== 'undefined') {
 		autoTrimpSettings['autoHeirloomStorage']["value" + (game.global.universe === 2 ? 'U2' : '')] = JSON.stringify(heirloomInputs);
 		saveSettings();
 	}

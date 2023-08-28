@@ -432,8 +432,6 @@ function autoMap() {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
 		MODULES.maps.mapTimer = 0;
-		if (document.getElementById('advExtraLevelSelect').value > 0)
-			document.getElementById('advExtraLevelSelect').value = "0";
 	}
 
 	//Uniques

@@ -501,7 +501,6 @@ function parse_perks(fixed, unlocks) {
 function savePerkySettings(initial) {
 
 	if (!MODULES.perky.showing) {
-		console.log("Perky is not showing")
 		return;
 	}
 	if (!initial) {
