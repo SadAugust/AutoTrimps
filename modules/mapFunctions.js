@@ -133,7 +133,7 @@ function exitSpireCell() {
 }
 
 function enoughHealth(map) {
-	var totalHealth = calcOurHealth(false, "world", false, true) + calcOurBlock(false, false); // Handle broken planet once get to it.
+	var totalHealth = calcOurHealth(false, "map", false, true) + calcOurBlock(false, false); // Handle broken planet once get to it.
 	//All maps are slow except Imploding Star so we only need to be able to survive against Snimps in every other map
 	var enemyName = 'Snimp';
 	if (map.name === 'Imploding Star') enemyName = 'Neutrimp';

@@ -17,10 +17,6 @@ MODULES.surky = {};
 MODULES.surky.perks = {};
 MODULES.surky.props = {};
 MODULES.surky.showing = false;
-MODULES.surky.equipScalingPrestige = {
-	attack: Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
-	health: Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
-};
 
 function runSurky() {
 	if (portalUniverse !== 2) return;
@@ -532,8 +528,8 @@ function initPerks() {
 		// carp levels needed to afford all coords at target zone (based on current save)
 		// scaling^log(resource boost) = atk or hp boost
 		equipScaling: {
-			attack: MODULES.surky.equipScalingPrestige.attack,
-			health: MODULES.surky.equipScalingPrestige.health,
+			attack: Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
+			health: Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
 		},
 		logEnemyScaling: (MODULES.surky.logEnemyAttackScaling + MODULES.surky.logEnemyHealthScaling),
 	};
@@ -1270,9 +1266,9 @@ function readInputs() {
 
 	// calculate equipment resource scaling for atk/hp based on weaponl/armor levels
 	var wLevScaling = Math.pow((MODULES.surky.props.weaponLevels + 1) / (MODULES.surky.props.weaponLevels), 1 / Math.log(1.2));
-	MODULES.surky.props.equipScaling.attack = Math.min(wLevScaling, MODULES.surky.equipScalingPrestige.attack);
+	MODULES.surky.props.equipScaling.attack = Math.min(wLevScaling, Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))));
 	var aLevScaling = Math.pow((MODULES.surky.props.armorLevels + 1) / (MODULES.surky.props.armorLevels), 1 / Math.log(1.2));
-	MODULES.surky.props.equipScaling.health = Math.min(aLevScaling, MODULES.surky.equipScalingPrestige.health);
+	MODULES.surky.props.equipScaling.health = Math.min(aLevScaling, Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))));
 
 	// calculate greed effect from tribute count
 	MODULES.surky.perks.Greed.effect = getGreedEffect(MODULES.surky.props.tributes);

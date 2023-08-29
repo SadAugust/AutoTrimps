@@ -567,6 +567,7 @@ function doPortal(challenge, skipDaily) {
 	if (getPageSetting('presetSwap', portalUniverse)) {
 		if (portalUniverse === 1) {
 			if (game.global.selectedChallenge === 'Frigid') preset = 'c2';
+			else if (game.global.selectedChallenge === 'Scientist') preset = 'scientist';
 			else if (game.global.selectedChallenge === 'Coord') preset = 'coord';
 			else if (game.global.selectedChallenge === 'Trimp') preset = 'trimp';
 			else if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
