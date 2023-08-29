@@ -1536,7 +1536,7 @@ function prestigeClimb() {
 		mapName: mapName,
 	};
 
-	if (challengeActive('Scientist') || challengeActive('Frugal')) return farmingDetails;
+	if (challengeActive('Frugal')) return farmingDetails;
 
 	var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;

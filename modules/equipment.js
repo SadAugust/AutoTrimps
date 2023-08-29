@@ -536,6 +536,7 @@ function autoEquip() {
 	//Loop through actually getting equips
 	var maxCanAfford = 0;
 	var keepBuying = false;
+	var bestBuys;
 	do {
 		keepBuying = false;
 		bestBuys = mostEfficientEquipment();
