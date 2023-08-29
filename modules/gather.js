@@ -51,9 +51,8 @@ function autoGather() {
 		autoGatherMetal();
 		return;
 	}
-	var trapsAvailable = document.getElementById('buyCol').style.visibility !== 'hidden';
-	var cantAffordTraps = game.resources.food.owned < 10 || game.resources.wood.owned < 10
-	//Need to check this works in u2!
+
+
 	var needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
 	var notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
 	var trapperTrapUntilFull = (challengeActive('Trapper') || challengeActive('Trappapalooza')) && notFullPop;
@@ -64,7 +63,6 @@ function autoGather() {
 	if (trapTrimpsOK && challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords') && getPageSetting('trappapaloozaTrap')) trapTrimpsOK = false;
 
 	//Vars
-
 	var lowOnTraps = game.buildings.Trap.owned < minTraps;
 	var trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
 	var fullOfTraps = game.buildings.Trap.owned >= maxTraps;
@@ -91,11 +89,8 @@ function autoGather() {
 	var trappingIsRelevant = trapperTrapUntilFull || breedingPS().div(10).lt(calcTPS() * (game.portal.Bait.level + 1));
 	var trapWontBeWasted = trapperTrapUntilFull || (breedTimeRemaining().gte(1 / calcTPS()) || game.global.playerGathering === "trimps" && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1)));
 
-	//Highest Priority Food/Wood for traps (Early Game, when trapping is mandatory)
-	if (!trapsAvailable || cantAffordTraps || (game.global.world <= 3 &&
-		(game.global.universe === 1 ? (game.global.totalHeliumEarned <= 500000) :
-			(game.global.totalRadonEarned <= 5000)))
-	) {
+	//Highest Priority Food/Wood for traps when we either cant afford Traps or don't have them unlocked as the requirement for the unlock is the cost of the building
+	if (game.buildings.Trap.locked || !canAffordBuilding('Trap')) {
 		//If not building and not trapping
 		if (!trapsReady && game.global.buildingsQueue.length === 0 && (game.global.playerGathering !== 'trimps' || game.buildings.Trap.owned === 0)) {
 			//Gather food or wood
