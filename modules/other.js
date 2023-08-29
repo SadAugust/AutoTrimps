@@ -422,7 +422,7 @@ function equalityManagement() {
 	//Perk/Talent conditions
 	var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 	var angelicOwned = game.talents.angelic.purchased;
-	var angelicDance = angelicOwned && (runningTrappa || runningQuest || runningArchaeology || runningBerserk || noFrenzy || dailyEmpower);
+	var angelicDance = angelicOwned && (runningTrappa || runningQuest || runningArchaeology || runningBerserk || noFrenzy);
 
 	if (runningDesolation && mapSettings.equality && game.global.world >= getPageSetting('destackOnlyZone') &&
 		getPageSetting('autoMaps')) {
@@ -446,6 +446,7 @@ function equalityManagement() {
 	//Our stats
 	var dmgType = runningUnlucky ? 'max' : 'avg';
 	var ourHealth = remainingHealth(angelicDance, type);
+	if (dailyEmpower) ourHealth *= 0.98;
 	var ourHealthMax = calcOurHealth(runningQuest, type);
 	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
 	var ourDmgMax = 0;
