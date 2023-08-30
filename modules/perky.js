@@ -1,7 +1,6 @@
 //Setup for non-AT users
-if (typeof MODULES !== 'object') {
+if (typeof MODULES === 'undefined')
 	MODULES = {};
-}
 
 if (typeof $$ !== 'function') {
 	$$ = function (a) {

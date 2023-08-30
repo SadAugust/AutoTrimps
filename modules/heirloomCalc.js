@@ -1,11 +1,12 @@
+if (typeof MODULES === 'undefined')
+	MODULES = {};
+
 $$ = function (a) {
 	return document.querySelector(a);
 }
 $$$ = function (a) {
 	return [].slice.apply(document.querySelectorAll(a));
 };
-
-if (typeof MODULES !== 'object') MODULES = {};
 
 MODULES.heirloomMods = {
 	Shield: {

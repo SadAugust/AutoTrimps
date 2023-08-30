@@ -1,7 +1,6 @@
 //Setup for non-AT users
-if (typeof MODULES !== 'object') {
+if (typeof MODULES === 'undefined')
 	MODULES = {};
-}
 
 if (typeof $$ !== 'function') {
 	$$ = function (a) {
@@ -408,6 +407,7 @@ function saveSurkySettings(initial) {
 // Note that sqrt(zone) is accounted for in the MODULES.surky.props after getting a target zone from the user.
 MODULES.surky.logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
 MODULES.surky.logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
+
 // Quick and dirty hack: estimate about 60% Rn from VMs for VS1.
 // This can and should be a user input if and when we make such things hide-able.
 MODULES.surky.vmRadFrac = 0.6;
@@ -430,6 +430,8 @@ for (var i = 0; i < MODULES.surky.rnTerms; i++) {
 // initialize perks object to default values
 function initPerks() {
 	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+	var logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
+	var logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
 
 	MODULES.surky.props = {
 		perksRadon: 0,
@@ -531,7 +533,7 @@ function initPerks() {
 			attack: Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
 			health: Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
 		},
-		logEnemyScaling: (MODULES.surky.logEnemyAttackScaling + MODULES.surky.logEnemyHealthScaling),
+		logEnemyScaling: (logEnemyAttackScaling + logEnemyHealthScaling),
 	};
 
 	if (isNaN(surkyInputs.radonWeight)) {
@@ -1258,9 +1260,11 @@ function readInputs() {
 	// Accuracy doesn't matter prior to Obs, but 0 will give no value to radon gains so >0 is needed.
 	MODULES.surky.props.radonPerRun = Math.max(1, MODULES.surky.props.radonPerRun);
 
+	var logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
+	var logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
 	// final enemy HP/ATK scaling including the sqrt(zone) component:
 	//   (note we don't divide by 2, because we're adding the two log sqrt components together)
-	MODULES.surky.props.logEnemyScaling = MODULES.surky.logEnemyHealthScaling + MODULES.surky.logEnemyAttackScaling + Math.log(1 + 1 / MODULES.surky.props.targetZone);
+	MODULES.surky.props.logEnemyScaling = logEnemyHealthScaling + logEnemyAttackScaling + Math.log(1 + 1 / MODULES.surky.props.targetZone);
 	if (MODULES.surky.props.targetZone >= 300)
 		MODULES.surky.props.logEnemyScaling += 2 * Math.log(1.15);
 

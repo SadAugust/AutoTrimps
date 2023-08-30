@@ -211,15 +211,15 @@ function autoGather() {
 		return;
 	}
 
-	//Metal if Turkimp is active
-	if (hasTurkimp) {
-		safeSetGather('metal');
-		return;
-	}
-
 	//Mid Priority Research
 	if (manualGather !== 3 && researchAvailable && needScience) {
 		safeSetGather('science');
+		return;
+	}
+
+	//Metal if Turkimp is active
+	if (hasTurkimp) {
+		safeSetGather('metal');
 		return;
 	}
 

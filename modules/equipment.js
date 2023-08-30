@@ -415,7 +415,7 @@ function zoneGoCheck(setting, farmType) {
 
 	//Equipment related section for zone overrides
 	//At or above z10 so that we have enough time to purchase buildings during the early game
-	if (game.global.world >= 10 && (farmType === 'attack' || farmType === 'health')) {
+	if (farmType === 'attack' || farmType === 'health') {
 		if (mapSettings.mapName === 'Wither') return zoneDetails;
 		if (farmType === 'attack') {
 			//Farming for damage means we should prio attack equips 
