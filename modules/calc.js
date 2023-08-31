@@ -1703,7 +1703,6 @@ function calculateParityBonus_AT(workerRatio, heirloom) {
 	var spreadFactor = resourcePop - largestWorker;
 	var preLoomBonus = (spreadFactor * spreadFactor);
 	var finalWithParity = (1 + preLoomBonus) * getHazardParityMult(heirloom);
-	game.global.parityBonus = finalWithParity;
 	return finalWithParity;
 }
 
