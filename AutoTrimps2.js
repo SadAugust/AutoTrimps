@@ -303,7 +303,11 @@ function toggleCatchUpMode() {
 				displayMostEfficientEquipment();
 				usingRealTimeOffline = true;
 			}
-
+			//Fix bug that is caused by this not running when the game is in offline mode
+			else for (var equipName in game.equipment) {
+				toUpdate = game.upgrades[MODULES.equipment[equipName].upgrade];
+				if (toUpdate.allowed - toUpdate.done >= 1) toUpdate.locked = 0;
+			}
 			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
 			farmingDecision();
 			autoMap();

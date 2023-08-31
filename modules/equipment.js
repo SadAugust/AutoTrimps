@@ -549,33 +549,32 @@ function autoEquip() {
 		var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
 		for (var i = 0; i < 2; i++) {
-			if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1)) {
+			if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1) && !game.equipment[equipName].locked) {
 				//Check any of the overrides
 				if (game.equipment[equipName].level < equipCap || equipPrestige || bestBuys[equipType].zoneGo) {
 					if (equipCost <= bestBuys[equipType].resourceSpendingPct * game.resources[resourceUsed].owned) {
-						if (!game.equipment[equipName].locked) {
-							//Purchases prestiges if they are the most efficient thing to go for
-							if (equipPrestige) {
-								buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
-								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
+						//Purchases prestiges if they are the most efficient thing to go for
+						if (equipPrestige) {
+							buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
+							debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
+							keepBuying = true;
+						}
+						//Otherwise purchase equip levels
+						else {
+							//Find out how many levels we can afford with 0.1% of resources
+							//If this value is below 1 we set it to 1 so that we always buy at least 1 level
+							maxCanAfford = Math.max(1, getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true));
+							//Checking to see if the max levels we can afford will take us over our equipcap threshold 
+							//If it will then set it to the difference between the equipcap and our current level
+							if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
+							//If the equip cap check didn't say we have 0 levels to buy then buy the max levels we can afford
+							if (maxCanAfford > 0) {
+								buyEquipment(equipName, true, true, maxCanAfford);
+								debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
 								keepBuying = true;
 							}
-							else {
-								//Find out how many levels we can afford with 0.1% of resources
-								//If this value is below 1 we set it to 1 so that we always buy at least 1 level
-								maxCanAfford = Math.max(1, getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true));
-								//Checking to see if the max levels we can afford will take us over our equipcap threshold 
-								//If it will then set it to the difference between the equipcap and our current level
-								if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
-								//If the equip cap check didn't say we have 0 levels to buy then buy the max levels we can afford
-								if (maxCanAfford > 0) {
-									buyEquipment(equipName, true, true, maxCanAfford);
-									debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
-									keepBuying = true;
-								}
-							}
-							hdStats.hdRatio = calcHDRatio(game.global.world, 'world');
 						}
+						hdStats.hdRatio = calcHDRatio(game.global.world, 'world');
 					}
 				}
 			}
