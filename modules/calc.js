@@ -1689,7 +1689,7 @@ function calculateParityBonus_AT(workerRatio, heirloom) {
 		var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 		var workerRatios = workerRatio;
 		var ratio = workerRatios.reduce((a, b) => a + b, 0)
-		var freeWorkerDivided = freeWorkers / ratio;
+		var freeWorkerDivided = Math.max(1, (freeWorkers / ratio));
 
 		for (var x = 0; x < allowed.length; x++) {
 			var thisWorkers = freeWorkerDivided * workerRatios[x];
