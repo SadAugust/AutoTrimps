@@ -307,10 +307,10 @@ function toggleCatchUpMode() {
 			else {
 				for (var equipName in game.equipment) {
 					var upgradeName = MODULES.equipment[equipName].upgrade;
-					var toUpdate = game.upgrades[upgradeName];
-					if (toUpdate.allowed - toUpdate.done >= 1) toUpdate.locked = 0;
-					if (toUpdate.locked == 1) continue;
-					if (document.getElementById(upgradeName) === null) unlockUpgrade(upgradeName, true);
+					if (game.upgrades[upgradeName].locked === 1) continue;
+					if (document.getElementById(upgradeName) === null) {
+						drawUpgrade(upgradeName, document.getElementById("upgradesHere"));
+					}
 				}
 			}
 			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.

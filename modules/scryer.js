@@ -48,6 +48,8 @@ function useScryerStance() {
 		else if (AutoStance === 1) autoStance();
 		else if (AutoStance === 2) autoStanceD();
 	}
+	//If Scryer stance hasn't been unlocked then don't use this code
+	if (getHighestLevelCleared() < 180) return autoStanceFunctionScryer();
 
 	var aboveMaxZone = getPageSetting('scryerMaxZone') > 0 && game.global.world >= getPageSetting('scryerMaxZone');
 	var useScryer = getPageSetting('AutoStanceScryer');
