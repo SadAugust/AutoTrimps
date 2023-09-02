@@ -1628,7 +1628,7 @@ function findLastBionicWithItems(bionicPool) {
 	if (bionicPool.length > 1) {
 		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
 		while (bionicPool.length > 1 && equipsToGet(bionicPool[0].level, targetPrestige)[0] === 0) {
-			if (challengeActive('Experience') && game.global.world > 600 && bionicPool[0].level >= getPageSetting('experienceEndBW')) break;
+			if (challengeActive('Experience') && getPageSetting('experience') && game.global.world > 600 && bionicPool[0].level >= getPageSetting('experienceEndBW')) break;
 			bionicPool.shift();
 			if (equipsToGet(bionicPool[0].level, targetPrestige)[0] !== 0) break;
 		}
