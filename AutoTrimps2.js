@@ -258,11 +258,14 @@ function toggleCatchUpMode() {
 		}
 		atSettings.loops.atTimeLapseFastLoop = true;
 		gameLoop = function (makeUp, now) {
-			if (game.options.menu.pauseGame.enabled === 1) return;
+			originalGameLoop(makeUp, now);
+
+			if (atSettings.running === false) return;
+			if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
+
 			var loopFrequency = getPageSetting('timeWarpFrequency');
 			var newZone = atSettings.portal.lastrunworld !== game.global.world;
 			if (newZone) mainCleanup();
-			originalGameLoop(makeUp, now);
 			if (game.global.mapsActive && getPageSetting('timeWarpDisplay') && usingRealTimeOffline)
 				game.global.mapStarted -= 100;
 
