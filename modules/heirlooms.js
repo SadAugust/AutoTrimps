@@ -229,10 +229,11 @@ function heirloomShieldToEquip(mapType, swapLooms) {
 	if (!getPageSetting('heirloom')) return;
 	if (!getPageSetting('heirloomShield')) return;
 
+	var afterpushShield = hdStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	//If we are slow scumming and we are on an ODD cell then equip afterpush shield otherwise equip initial shield
 	if (MODULES.maps.slowScumming && mapType === 'map') {
 		if ((game.global.lastClearedMapCell + 1) % 2 === 0 || game.global.lastClearedMapCell === getCurrentMapObject().size - 2)
-			return ('heirloomAfterpush');
+			return (afterpushShield);
 		else
 			return ('heirloomInitial');
 	}
@@ -262,7 +263,7 @@ function heirloomShieldToEquip(mapType, swapLooms) {
 		if (dontSwap && (game.global.fighting || game.global.soldierHealthRemaining > 0))
 			return;
 		//Disable plagueSwap variable if we are querying a map
-		if (mapType === 'map')
+		if (mapType === 'map' && swapLooms)
 			MODULES.heirlooms.plagueSwap = false;
 	}
 	if (mapType === 'world' && !dontSwap) {
@@ -289,7 +290,6 @@ function heirloomShieldToEquip(mapType, swapLooms) {
 	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
 	if (mapType === 'world' && !dontSwap && game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
 
-	var afterpushShield = hdStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	var voidActive = mapType === 'void';
 	if (voidActive && swapLooms) {
 		MODULES.heirlooms.plagueSwap =
