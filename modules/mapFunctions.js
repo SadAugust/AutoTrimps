@@ -1068,20 +1068,20 @@ function smithyFarm() {
 		var smithyMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, smithyGoal - game.buildings.Smithy.purchased);
 
 		if (smithyGoal > game.buildings.Smithy.purchased) {
-			if (smithyWoodCost > game.resources.wood.owned) {
+			if (smithyMetalCost > game.resources.metal.owned) {
+				shouldSmithyMetalFarm = true;
+				mapSpecial = getAvailableSpecials('lmc', true);
+				biome = getBiome(null, 'Mountain');
+				jobRatio = '0,0,1,0';
+				resourceGoal = prettify(smithyMetalCost) + ' metal.';
+			}else if (smithyWoodCost > game.resources.wood.owned) {
 				shouldSmithyWoodFarm = true;
 				mapSpecial = getAvailableSpecials('lwc', true);
 				biome = getBiome(null, 'Forest');
 				jobRatio = '0,1,0,0';
 				resourceGoal = prettify(smithyWoodCost) + ' wood.';
 			}
-			else if (smithyMetalCost > game.resources.metal.owned) {
-				shouldSmithyMetalFarm = true;
-				mapSpecial = getAvailableSpecials('lmc', true);
-				biome = getBiome(null, 'Mountain');
-				jobRatio = '0,0,1,0';
-				resourceGoal = prettify(smithyMetalCost) + ' metal.';
-			}
+			 
 			else if (smithyGemCost > game.resources.gems.owned) {
 				shouldSmithyGemFarm = true;
 				mapSpecial = getAvailableSpecials('lsc', true);
@@ -3920,7 +3920,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength === 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeMapping) + ".");
 	}
 	else if (mapName === 'Smithy Farm') {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + MODULES.maps.mapRepeatsSmithy[0] + " food, " + MODULES.maps.mapRepeatsSmithy[1] + " wood, " + MODULES.maps.mapRepeatsSmithy[2] + " metal maps (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " and " + formatTimeForDescriptions(timeMapping) + ".");
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + MODULES.maps.mapRepeatsSmithy[0] + " food, " + MODULES.maps.mapRepeatsSmithy[2] + " metal, " + MODULES.maps.mapRepeatsSmithy[1] + " wood (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " maps and " + formatTimeForDescriptions(timeMapping) + ".");
 	}
 	else if (mapName === 'Quagmire Farm') {
 		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + (mappingLength === 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeMapping) + ".");

@@ -1736,6 +1736,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var balance = titleText.includes('Balance Destack'.toLowerCase());
 	var toxicity = titleText.includes('Toxicity Farm');
 
+	var tributeFarm = titleText.includes('Tribute Farm');
+	var smithyFarm = titleText.includes('Smithy Farm');
+	var worshipperFarm = titleText.includes('Worshipper Farm');
+
 	var quagmire = titleText.includes('Quagmire');
 	var insanity = titleText.includes('Insanity Farm');
 	var alchemy = titleText.includes('Alchemy Farm');
@@ -1743,6 +1747,9 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var desolation = titleText.includes('Desolation');
 	var boneShrine = titleText.includes('Bone Shrine');
 	var golden = titleText.includes('Golden');
+
+	var radonSetting = currSettingUniverse === 2;
+
 
 	if (!golden) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
 	else if (golden) {
@@ -1758,19 +1765,15 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li class=\"indent\">It then clears 3 cells before going back into the world and finishing off the improbability and clearing the map on the next zone to take advantage of the bug.</li>";
 	}
 
-	var radonSetting = currSettingUniverse === 2;
-
-	var tributeFarm = titleText.includes('Tribute Farm');
-	var smithyFarm = titleText.includes('Smithy Farm');
-	var worshipperFarm = titleText.includes('Worshipper Farm');
-
 	//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
-	if (mapBonus) mazHelp += "<br><br><b>Map Bonus works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.</b>";
-	if (voidMap) mazHelp += "<br><br>Void Map works by using <b>Min Zone</b> as the lower bound zone to run voids on and <b>Max Zone</b> as the upper bound.";
+	if (mapBonus) mazHelp += "<br><br><b>Map Bonus<b> works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.</b>";
+	if (voidMap) {
+		mazHelp += "<br><br>Void Map works by using Min Zone</b> as the lower bound zone to run voids on and <b>Max Zone</b> as the upper bound.";
 
-	mazHelp += "<li class=\"indent\">Additionally it has dropdown inputs which can give you the ability to add more fine-tuning for when a line should be run.";
-	mazHelp += "<li class=\"indent\">If you reach the <b>Max Zone</b> zone input of a line it will run regardless of dropdown inputs.";
-
+		mazHelp += "<li class=\"indent\">Additionally it has dropdown inputs which can give you the ability to add more fine-tuning for when a line should be run.";
+		mazHelp += "<li class=\"indent\">If you reach the <b>Max Zone</b> zone input of a line it will run regardless of dropdown inputs.";
+	}
+	if (smithyFarm) mazHelp += "<br><br><b>Smithy Farm</b> will farm resources in the following order <b>Metal > Wood > Gems</b>. This cannot be changed.";
 
 	//Default Value settings
 	if (!golden) {
