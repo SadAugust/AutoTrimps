@@ -529,8 +529,10 @@ function equalityManagement() {
 
 		if (currStacks !== maxStacks && stacksToProc < timeToKill) {
 			game.portal.Equality.disabledStackCount = 0;
-			if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-			updateEqualityScaling();
+			if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) {
+				manageEqualityStacks();
+				updateEqualityScaling();
+			}
 			return;
 		}
 	}

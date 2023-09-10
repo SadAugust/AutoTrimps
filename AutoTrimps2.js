@@ -573,6 +573,16 @@ function mainCleanup() {
 		if (dailyOddOrEven().skipZone) {
 			debug("Zone #" + game.global.world + ":  Heirloom swapping and mapping will be affected by Daily Odd/Even.", "daily");
 		}
+		//Fix for prestige equipment not having updated costs when breaking planet (z59>z60).
+		if (usingRealTimeOffline && game.global.world === 60) {
+			for (var equipName in game.equipment) {
+				var upgradeName = MODULES.equipment[equipName].upgrade;
+				if (game.upgrades[upgradeName].locked === 1) continue;
+				if (document.getElementById(upgradeName) === null) {
+					drawUpgrade(upgradeName, document.getElementById("upgradesHere"));
+				}
+			}
+		}
 	}
 }
 
