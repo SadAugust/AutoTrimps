@@ -133,7 +133,7 @@ function exitSpireCell() {
 }
 
 function enoughHealth(map) {
-	var totalHealth = calcOurHealth(false, "map", false, true) + calcOurBlock(false, false); // Handle broken planet once get to it.
+	var totalHealth = calcOurHealth(false, "map", false, true) + calcOurBlock(false, false);
 	//All maps are slow except Imploding Star so we only need to be able to survive against Snimps in every other map
 	var enemyName = 'Snimp';
 	if (map.name === 'Imploding Star') enemyName = 'Neutrimp';
@@ -174,6 +174,9 @@ function shouldRunUniqueMap(map) {
 	/* if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
 		return true;
 	} */
+	//Disable mapping if we don't have enough health to survive the map and the corresponding setting is enabled.
+	if (getPageSetting('uniqueMapEnoughHealth') && !enoughHealth(map)) return false;
+
 	if (MODULES.mapFunctions.runUniqueMap === map.name) {
 		if (game.global.mapsActive && getCurrentMapObject().location === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
 		return true;
@@ -185,7 +188,7 @@ function shouldRunUniqueMap(map) {
 		var aboveMapLevel = game.global.world > map.level;
 		if (map.name === 'The Block') { //Don't bother before z12 outside of manual unique map settings setup
 			//We need Shieldblock
-			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock') && game.global.highestLevelCleared < 40 && enoughHealth(map)) {
+			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock') && game.global.highestLevelCleared < 40) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
@@ -195,7 +198,7 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'The Wall') { //Don't bother before z16
 			//We need Bounty
-			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased && enoughHealth(map)) {
+			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
@@ -205,7 +208,7 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'Dimension of Anger') { //Don't bother before z22
 			//Unlock the portal
-			if ((game.global.world - 1 > map.level) && !game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none" && enoughHealth(map)) {
+			if ((game.global.world - 1 > map.level) && !game.talents.portal.purchased && document.getElementById('portalBtn').style.display === 'none') {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
@@ -215,7 +218,7 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'Trimple Of Doom') {
 			//Unlock the Relentlessness perk
-			if (aboveMapLevel && game.portal.Relentlessness.locked && enoughHealth(map)) {
+			if (aboveMapLevel && game.portal.Relentlessness.locked) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
@@ -223,7 +226,7 @@ function shouldRunUniqueMap(map) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
-		} else if (map.name === 'The Prison' && enoughHealth(map)) {
+		} else if (map.name === 'The Prison') {
 			//Unlock the Electricity challenge
 			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
@@ -233,7 +236,7 @@ function shouldRunUniqueMap(map) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
-		} else if (map.name === 'Imploding Star' && enoughHealth(map)) {
+		} else if (map.name === 'Imploding Star') {
 			if (game.mapUnlocks.ImplodingStar.canRunOnce && uniqueMapSetting.Imploding_Star.enabled && game.global.world >= uniqueMapSetting.Imploding_Star.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Imploding_Star.cell || liquified)) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
@@ -245,7 +248,7 @@ function shouldRunUniqueMap(map) {
 		}
 		else if (map.name === 'Big Wall') {
 			// we need Bounty
-			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased && enoughHealth(map)) {
+			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
 				return true;
 			}
 		} else if (map.name === 'Dimension of Rage') {
@@ -1074,14 +1077,14 @@ function smithyFarm() {
 				biome = getBiome(null, 'Mountain');
 				jobRatio = '0,0,1,0';
 				resourceGoal = prettify(smithyMetalCost) + ' metal.';
-			}else if (smithyWoodCost > game.resources.wood.owned) {
+			} else if (smithyWoodCost > game.resources.wood.owned) {
 				shouldSmithyWoodFarm = true;
 				mapSpecial = getAvailableSpecials('lwc', true);
 				biome = getBiome(null, 'Forest');
 				jobRatio = '0,1,0,0';
 				resourceGoal = prettify(smithyWoodCost) + ' wood.';
 			}
-			 
+
 			else if (smithyGemCost > game.resources.gems.owned) {
 				shouldSmithyGemFarm = true;
 				mapSpecial = getAvailableSpecials('lsc', true);

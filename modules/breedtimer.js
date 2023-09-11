@@ -139,16 +139,19 @@ function geneAssist() {
 	if (getPageSetting('geneAssistZoneAfter') > 0 && getPageSetting('geneAssistTimerAfter') > 0 && game.global.world >= getPageSetting('geneAssistZoneAfter'))
 		target = new Decimal(getPageSetting('geneAssistTimerAfter'));
 
-	if (game.global.runningChallengeSquared && !runningHard && getPageSetting('geneAssistTimerC2') > 0)
+	if (hdStats.isC3 && !runningHard && getPageSetting('geneAssistTimerC2') > 0)
 		target = new Decimal(getPageSetting('geneAssistTimerC2'));
-	if (game.global.runningChallengeSquared && runningHard && getPageSetting('geneAssistTimerC2Hard') > 0)
+	if (hdStats.isC3 && runningHard && getPageSetting('geneAssistTimerC2Hard') > 0)
 		target = new Decimal(getPageSetting('geneAssistTimerC2Hard'));
 
-	if (getPageSetting('geneAssistTimerDaily') > 0 && challengeActive('Daily'))
+	if (getPageSetting('geneAssistTimerDaily') > 0 && hdStats.isDaily)
 		target = new Decimal(getPageSetting('geneAssistTimerDaily'));
-	if (getPageSetting('geneAssistTimerDailyHard') > 0 && challengeActive('Daily') && runningHard)
+	if (getPageSetting('geneAssistTimerDailyHard') > 0 && hdStats.isDaily && runningHard)
 		target = new Decimal(getPageSetting('geneAssistTimerDailyHard'));
-	var settingPrefix = challengeActive('Daily') && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' : '';
+
+	var settingPrefix = hdStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'Daily' :
+		hdStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' :
+			'';
 	if (getPageSetting('geneAssistTimerSpire' + settingPrefix) > 0 && isDoingSpire())
 		target = new Decimal(getPageSetting('geneAssistTimerSpire' + settingPrefix));
 

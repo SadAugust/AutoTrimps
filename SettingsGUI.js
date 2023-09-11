@@ -356,7 +356,7 @@ function initializeAllSettings() {
 					getPageSetting('autoPortal', currSettingUniverse) === 'Custom' || getPageSetting('autoPortal', currSettingUniverse).includes('Challenge'));
 			});
 
-		createSetting('heHrDontPortalBefore',
+		createSetting('heliumHrDontPortalBefore',
 			function () { return ("Don't Portal Before") },
 			function () {
 				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + resource() + " Per Hour</b> Auto Portal setting.</p>";
@@ -605,6 +605,16 @@ function initializeAllSettings() {
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
 				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+		createSetting('geneAssistTimerSpireC2',
+			function () { return ('GA: Daily Spire Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when inside of active Spires in " + cinf() + "s.</p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> Your <b>Anticipation</b> perk timer</p>";
 				return description;
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
@@ -1356,6 +1366,14 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
+
+		createSetting('uniqueMapEnoughHealth',
+			function () { return ('Unique Map Health Check') },
+			function () {
+				var description = "<p>Will disable Unique Maps from being run if you don't have enough health to survive the minimum attack of the highest attacking cell in that map.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Maps', [1]);
 
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
@@ -2387,6 +2405,14 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [1, 2]);
+		createSetting('bloodthirstMaxStacls',
+			function () { return ('Bloodthirst TTK Check') },
+			function () {
+				var description = "<p>When mapping on a daily with the bloodthirst modifier this will cause Auto Equality to check if you can kill your current enemy in less hits than it will heal from bloodthirst stack accumulation and if it doesn't it will suicide your trimps until it has max stacks.</p>";
+				description += "<p>Requires your auto equality setting to be set to <b>Auto Equality: Advanced</b> to work.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Daily', [2]);
 		createSetting('bloodthirstVoidMax',
 			function () { return ('Void: Max Bloodthirst') },
 			function () {
@@ -4479,7 +4505,7 @@ function modifyParentNodeUniverseSwap() {
 	else modifyParentNode("heliumC2Challenge", 'hide');
 
 	//Maps
-	modifyParentNode("recycleExplorer", 'show');
+	modifyParentNode("uniqueMapEnoughHealth", 'show');
 	modifyParentNode("scryvoidmaps", 'show');
 	modifyParentNode("uniqueMapSettingsArray", 'show');
 
@@ -6503,6 +6529,13 @@ function updateATVersion() {
 		}
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.38') {
 			setupAddonUser();
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.4.09') {
+			if (typeof (tempSettings["heHrDontPortalBefore"]) !== 'undefined') {
+				autoTrimpSettings.heliumHrDontPortalBefore.value = tempSettings.heHrDontPortalBefore.value;
+				autoTrimpSettings.heliumHrDontPortalBefore.valueU2 = tempSettings.heHrDontPortalBefore.valueU2;
+			}
 		}
 	}
 

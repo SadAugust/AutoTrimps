@@ -61,7 +61,7 @@ function autoPortal(specificPortalZone, skipDaily) {
 		case "Helium Per Hour":
 		case "Radon Per Hour":
 			var OKtoPortal = false;
-			var minZone = getPageSetting('heHrDontPortalBefore', universe);
+			var minZone = getPageSetting('heliumHrDontPortalBefore', universe);
 			game.stats.bestHeliumHourThisRun.evaluate();
 			bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
 			bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
