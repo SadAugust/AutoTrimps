@@ -2405,7 +2405,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [1, 2]);
-		createSetting('bloodthirstMaxStacls',
+		createSetting('bloodthirstMaxStacks',
 			function () { return ('Bloodthirst TTK Check') },
 			function () {
 				var description = "<p>When mapping on a daily with the bloodthirst modifier this will cause Auto Equality to check if you can kill your current enemy in less hits than it will heal from bloodthirst stack accumulation and if it doesn't it will suicide your trimps until it has max stacks.</p>";
