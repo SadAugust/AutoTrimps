@@ -1373,7 +1373,7 @@ function initializeAllSettings() {
 				var description = "<p>Will disable Unique Maps from being run if you don't have enough health to survive the minimum attack of the highest attacking cell in that map.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Maps', [1]);
+			}, 'boolean', true, null, 'Maps', [1, 2]);
 
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
