@@ -723,8 +723,9 @@ function mapFarm() {
 		var mapType = setting.mapType;
 		var repeatCheck =
 			mapType === 'Daily Reset' ? updateDailyClock(true).split(':').reduce((acc, time) => (60 * acc) + +time) :
-				mapType === 'Portal Time' ? (getGameTime() - game.global.portalTime) / 1000 :
-					game.global.mapRunCounter;
+				mapType === 'Zone Time' ? (getGameTime() - game.global.zoneStarted) / 1000 :
+					mapType === 'Portal Time' ? (getGameTime() - game.global.portalTime) / 1000 :
+						game.global.mapRunCounter;
 
 		if (setting.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
@@ -741,7 +742,7 @@ function mapFarm() {
 		}
 
 		var repeatNumber = repeatCounter === Infinity ? '∞' : repeatCounter;
-		if (mapType === 'Portal Time' || mapType === 'Daily Reset') {
+		if (mapType === 'Portal Time' || mapType === 'Daily Reset' || mapType === 'Zone Time') {
 			repeatCounter = repeatCounter.split(':').reduce((acc, time) => (60 * acc) + +time);
 		}
 
@@ -765,8 +766,9 @@ function mapFarm() {
 		var repeat = repeatCheck + 1 === repeatCounter;
 		var status = 'Map Farm: ' +
 			(mapType === 'Daily Reset' ? (setting.repeat + ' / ' + updateDailyClock(true)) :
-				mapType === 'Portal Time' ? (formatSecondsAsClock((getGameTime() - game.global.portalTime) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
-					(repeatCheck + "/" + repeatNumber));
+				mapType === 'Zone Time' ? (formatSecondsAsClock((getGameTime() - game.global.zoneStarted) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
+					mapType === 'Portal Time' ? (formatSecondsAsClock((getGameTime() - game.global.portalTime) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
+						(repeatCheck + "/" + repeatNumber));
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;

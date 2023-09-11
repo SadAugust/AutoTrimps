@@ -1891,6 +1891,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 		mazHelp += "<li><b>Farm Type</b> The different ways that the script can determine how many maps are run.</li>";
 		mazHelp += "<li class=\"indent\"><b>Map Count</b> - Will run maps until it has reached the specified repeat counter.</li>";
+		mazHelp += "<li class=\"indent\"><b>Zone Time</b> - Uses DD:HH:MM:SS format and will run maps until the zone time surpasses the time set in repeat counter.</li>";
 		mazHelp += "<li class=\"indent\"><b>Portal Time</b> - Uses DD:HH:MM:SS format and will run maps until the portal time surpasses the time set in repeat counter.</li>";
 		mazHelp += "<li class=\"indent\"><b>Daily Reset</b> - Uses DD:HH:MM:SS format and will run maps until the daily reset time is below the time set in repeat counter.</li>";
 
@@ -2711,6 +2712,7 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 		dropdown.mapType += "<option value='Absolute'" + ((vals.mapType === 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>"
 	dropdown.mapType += "<option value='Map Count'" + ((vals.mapType === 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>"
 	if (varPrefix === 'MapFarm') {
+		dropdown.mapType += "<option value='Zone Time'" + ((vals.mapType === 'Zone Time') ? " selected='selected'" : "") + ">Zone Time</option>"
 		dropdown.mapType += "<option value='Portal Time'" + ((vals.mapType === 'Portal Time') ? " selected='selected'" : "") + ">Portal Time</option>"
 		dropdown.mapType += "<option value='Daily Reset'" + ((vals.mapType === 'Daily Reset') ? " selected='selected'" : "") + ">Daily Reset</option>"
 	}
