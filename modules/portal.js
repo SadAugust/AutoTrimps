@@ -851,6 +851,10 @@ function surkyCombatRespec() {
 		fillPreset(currPreset);
 	else
 		fillPresetPerky(currPreset);
+
+	//Reset map settings so that we don't run into issues with a map count setting running when we now don't have enough resource generation for it
+	mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity, }
+	farmingDecision();
 }
 
 MODULES.portal.disableAutoRespec = 0;
