@@ -609,7 +609,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 		createSetting('geneAssistTimerSpireC2',
-			function () { return ('GA: Daily Spire Timer') },
+			function () { return ('GA: ' + cinf() + ' Spire Timer') },
 			function () {
 				var description = "<p>Gene Assist will use the value set here when inside of active Spires in " + cinf() + "s.</p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
