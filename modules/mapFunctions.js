@@ -1007,10 +1007,10 @@ function smithyFarm() {
 		var smithyGoal = challengeActive('Quest') && currQuest() === 10 ? getPageSetting('questSmithyMaps') : setting.repeat;
 
 		if (currQuest() === 10 || setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeatsSmithy !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
-				if (mapBonus === 'lsc' || mapBonus === 'ssc') game.global.mapRunCounter = MODULES.maps.mapRepeatsSmithy[0];
-				else if (mapBonus === 'lwc' || mapBonus === 'swc') game.global.mapRunCounter = MODULES.maps.mapRepeatsSmithy[1];
-				else if (mapBonus === 'lmc' || mapBonus === 'smc') game.global.mapRunCounter = MODULES.maps.mapRepeatsSmithy[2];
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined') {
+				if (MODULES.maps.mapRepeatsSmithy[0] !== 0 && (mapBonus === 'lsc' || mapBonus === 'ssc')) game.global.mapRunCounter = MODULES.maps.mapRepeatsSmithy[0];
+				else if (MODULES.maps.mapRepeatsSmithy[1] !== 0 && (mapBonus === 'lwc' || mapBonus === 'swc')) game.global.mapRunCounter = MODULES.maps.mapRepeatsSmithy[1];
+				else if (MODULES.maps.mapRepeatsSmithy[2] !== 0 && (mapBonus === 'lmc' || mapBonus === 'smc')) game.global.mapRunCounter = MODULES.maps.mapRepeatsSmithy[2];
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
@@ -3472,7 +3472,7 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
 	if (!special) special = '0';
 	if (!biome) biome = getBiome();
 	if (!mapSliders) mapSliders = [9, 9, 9];
-	if (mapSliders !== [9, 9, 9]) onlyPerfect = false;
+	if (mapSliders[0] !== 9 || mapSliders[1] !== 9 || mapSliders[2] !== 9) onlyPerfect = false;
 	document.getElementById("biomeAdvMapsSelect").value = biome;
 	document.getElementById("advExtraLevelSelect").value = pluslevel;
 	document.getElementById("advSpecialSelect").value = special;
