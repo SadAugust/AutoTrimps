@@ -301,7 +301,7 @@ function shouldRunUniqueMap(map) {
 function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
 	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
-	if (!forceAbandon && (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || (challengeActive('Berserk') && !game.challenges.Berserk.weakened !== 20) || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
+	if (!forceAbandon && (challengeActive('Mapology') || challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || (challengeActive('Berserk') && !game.challenges.Berserk.weakened !== 20) || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
 
 	//If we're done mapping AND in a map, then exit map to either world if autoMaps is enabled or to map chamber if not.
 	if (game.global.mapsActive) {
@@ -1189,6 +1189,7 @@ function worshipperFarm() {
 		var mapLevel = setting.level;
 		var jobRatio = setting.jobratio;
 		var mapSpecial = getAvailableSpecials('lsc', true);
+		var cacheTime = mapSpecial === 'lsc' ? 20 : 10;
 		var biome = getBiome(null, 'Sea');
 
 		if (setting.autoLevel) {
@@ -1205,7 +1206,7 @@ function worshipperFarm() {
 		}
 
 		if (challengeActive('Wither') && mapLevel >= 0) mapLevel = -1;
-		if (defaultSettings.shipSkipEnabled && game.jobs.Worshipper.owned !== 50 && (scaleToCurrentMap_AT(simpleSeconds_AT("food", 20, jobRatio), false, true, mapLevel) < (game.jobs.Worshipper.getCost() * defaultSettings.shipskip))) {
+		if (defaultSettings.shipSkipEnabled && game.jobs.Worshipper.owned !== 50 && (scaleToCurrentMap_AT(simpleSeconds_AT("food", cacheTime, jobRatio), false, true, mapLevel) < (game.jobs.Worshipper.getCost() * defaultSettings.shipskip))) {
 			shouldSkip = true;
 		}
 

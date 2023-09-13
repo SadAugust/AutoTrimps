@@ -1779,10 +1779,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (!golden) {
 		mazHelp += "<br><br>The top row section consists of toggles/inputs which add extra functions to the setting itself.<br></br><ul>";
 		mazHelp += "<li><b>Enabled</b> - A toggle to disable/enable the entire setting.</li>";
-		if (worshipperFarm) {
-			mazHelp += "<li><b>Enabled Skip</b> - A toggle to enable the skip value setting.</li>";
-			mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
-		}
 		if (raiding && !bionic) {
 			mazHelp += "<li><b>Recycle Maps</b> - A toggle to recycle maps after raiding has finished.</li>";
 			mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>";
@@ -1819,6 +1815,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		if (hdFarm) {
 			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from the <b>Hits Survived</b> setting.</li>"
 			mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
+		}
+		if (worshipperFarm) {
+			mazHelp += "<li><b>Enabled Skip</b> - A toggle to enable the skip value setting.</li>";
+			mazHelp += "<li><b>Skip Value</b> - How many worshippers a small/large (dependant on what you have unlocked) savoury cache must provide for you to run your Worshipper Farming.</li>";
 		}
 		if (alchemy) {
 			mazHelp += "<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>";
