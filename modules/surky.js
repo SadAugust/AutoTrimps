@@ -433,6 +433,11 @@ function initPerks() {
 	var logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
 	var logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
 
+
+	if (typeof MODULES === 'undefined')
+		MODULES = {};
+	if (typeof MODULES.surky === 'undefined')
+		MODULES.surky = {};
 	MODULES.surky.props = {
 		perksRadon: 0,
 		radonSpent: 0,
