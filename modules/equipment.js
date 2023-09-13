@@ -66,45 +66,6 @@ MODULES.equipment = {
 	}
 };
 
-function equipsToGet(targetZone, targetPrestige) {
-
-	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
-	if (!targetZone) targetZone = game.global.world;
-	if (!targetPrestige) targetPrestige = 'GambesOP';
-	//Skip locked equips
-	if (!game.global.slowDone && prestigeList.indexOf(targetPrestige) > 10) targetPrestige = 'Bestplate';
-
-	//Figure out how many equips to farm for
-	var mapsToRun = 0;
-	var prestigeToFarmFor = 0;
-
-	const hasSciFour = ((game.global.universe === 1 && game.global.sLevel >= 4) || (game.global.universe === 2 && game.buildings.Microchip.owned >= 4));
-	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;
-
-	//Loops through all prestiges
-	for (const p of prestigeList) {
-		//Skip locked equips (Panda)
-		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
-		const prestigeUnlock = game.mapUnlocks[p];
-
-		//Last prestige obtained (maplevel) for this equip
-		var pMapLevel = prestigeUnlock.last + 5;
-
-		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= targetZone) {
-			mapsToRun += Math.max(1, Math.ceil((targetZone - pMapLevel) / prestigeInterval));
-			var prestigeCount = Math.floor((targetZone - prestigeUnlock.last) / 5);
-			if (hasSciFour && prestigeCount % 2 === 1) {
-				prestigeCount++;
-			}
-			prestigeToFarmFor += prestigeCount;
-		}
-
-		if (p === targetPrestige) break;
-	}
-
-	return [prestigeToFarmFor, mapsToRun];
-}
-
 //Working out cheapest equips & prestiges
 function cheapestEquipmentCost() {
 
@@ -590,101 +551,6 @@ function autoEquip() {
 	} while (keepBuying);
 }
 
-function equipfarmdynamicHD(setting) {
-	var mult = setting.hdMult;
-	var hd = setting.hdBase;
-	var zone = game.global.world - setting.world;
-	var finalHD = (zone === 0) ? hd : Math.pow(mult, zone) * hd;
-	return finalHD;
-}
-
-function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) {
-
-	if (!isCompounding) {
-		return multiBuyCount * (multiBuyCount * costScaling - costScaling + 2 * baseCost) / 2;
-	} else {
-		return baseCost * ((1 - Math.pow(costScaling, multiBuyCount)) / (1 - costScaling));
-	}
-}
-
-function estimateEquipsForZone(rEFIndex) {
-	var MAX_EQUIP_DELTA = 1000;
-
-	// calculate stats needed pass zone
-	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
-	var ourHealth = calcOurHealth(false, 'world');
-	var ourDmg = calcOurDmg('avg', 0, false, 'world', 'maybe', 0, false) * gammaBurstDmg;
-	var enemyHealth = calcEnemyHealthCore('world', game.global.world, 99, 'Turtlimp');
-	var enemyDamageBeforeEquality = calcEnemyAttackCore('world', game.global.world, 99, 'Snimp', false, false, 0);
-
-	var healthNeededMulti = enemyDamageBeforeEquality / ourHealth; // The multiplier we need to apply to our health to survive
-
-	// Get a fake ratio pretending that we don't have any equality in.
-	var fakeHDRatio = enemyHealth / ourDmg;
-	var attackNeededMulti = fakeHDRatio / (equipfarmdynamicHD(rEFIndex));
-
-	// Something something figure out equality vs health farming
-	var tempEqualityUse = 0;
-	while (
-		(healthNeededMulti > 1 || attackNeededMulti > 1)  // If it's below 1 we don't actually need more
-		&&
-		(healthNeededMulti * game.portal.Equality.getModifier() > attackNeededMulti / game.portal.Equality.getModifier(true)) // Need more health proportionally
-		&&
-		tempEqualityUse < game.portal.Equality.radLevel
-	) {
-		tempEqualityUse++;
-		healthNeededMulti *= game.portal.Equality.getModifier();
-		attackNeededMulti /= game.portal.Equality.getModifier(true);
-		enemyDamageBeforeEquality *= game.portal.Equality.getModifier();
-	}
-
-	if (healthNeededMulti < 1 && attackNeededMulti < 1 || ((healthNeededMulti + attackNeededMulti) / 2 < 1)) { return [0, {}] };
-
-	var ourAttack = 6;
-	for (var i in MODULES.equipment) {
-		if (game.equipment[i].locked !== 0) continue;
-		var attackBonus = game.equipment[i].attackCalculated;
-		var level = game.equipment[i].level;
-		ourAttack += (attackBonus !== undefined ? attackBonus : 0) * level;
-	}
-
-	// Amount of stats needed directly from equipment
-	var attackNeeded = ourAttack * attackNeededMulti;
-	var healthNeeded = ourHealth * healthNeededMulti / (getTotalHealthMod() * game.resources.trimps.maxSoldiers);
-
-	var bonusLevels = {}; // How many levels you'll be getting in each shield-gambeson armor slots
-
-
-	while (healthNeeded > 0) {
-		var bestArmor = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[1];
-		healthNeeded -= game.equipment[bestArmor][MODULES.equipment[bestArmor].stat + "Calculated"];
-		if (typeof bonusLevels[bestArmor] === 'undefined') {
-			bonusLevels[bestArmor] = 0;
-		}
-		if (bonusLevels[bestArmor]++ > MAX_EQUIP_DELTA) {
-			return [Infinity, bonusLevels];
-		}
-	}
-	while (attackNeeded > 0) {
-		var bestWeapon = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[0];
-		attackNeeded -= game.equipment[bestWeapon][MODULES.equipment[bestWeapon].stat + "Calculated"];
-		if (typeof bonusLevels[bestWeapon] === 'undefined') {
-			bonusLevels[bestWeapon] = 0;
-		}
-		if (bonusLevels[bestWeapon]++ >= MAX_EQUIP_DELTA) {
-			return [Infinity, bonusLevels];
-		}
-	}
-
-	var totalCost = 0;
-	for (var equip in bonusLevels) {
-		var equipCost = game.equipment[equip].cost[MODULES.equipment[equip].resource];
-		totalCost += getTotalMultiCost((equipCost[0]), bonusLevels[equip], equipCost[1], true) * getEquipPriceMult();
-	}
-
-	return [totalCost, bonusLevels];
-}
-
 function displayMostEfficientEquipment() {
 
 	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
@@ -728,4 +594,92 @@ function displayMostEfficientEquipment() {
 			swapClass('efficient', 'efficientNo', $eqName);
 		}
 	}
+}
+
+//UNUSED CODE
+//Was a potential solution for hd ratio to X ratio on Y zone (since we can't calculate the hardest mutation combination for that zone it isn't possible to do it perfectly)
+function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) {
+
+	if (!isCompounding) {
+		return multiBuyCount * (multiBuyCount * costScaling - costScaling + 2 * baseCost) / 2;
+	} else {
+		return baseCost * ((1 - Math.pow(costScaling, multiBuyCount)) / (1 - costScaling));
+	}
+}
+
+function estimateEquipsForZone(rEFIndex) {
+	var MAX_EQUIP_DELTA = 1000;
+
+	// calculate stats needed pass zone
+	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
+	var ourHealth = calcOurHealth(false, 'world');
+	var ourDmg = calcOurDmg('avg', 0, false, 'world', 'maybe', 0, false) * gammaBurstDmg;
+	var enemyHealth = calcEnemyHealthCore('world', game.global.world, 99, 'Turtlimp');
+	var enemyDamageBeforeEquality = calcEnemyAttackCore('world', game.global.world, 99, 'Snimp', false, false, 0);
+
+	var healthNeededMulti = enemyDamageBeforeEquality / ourHealth; // The multiplier we need to apply to our health to survive
+
+	// Get a fake ratio pretending that we don't have any equality in.
+	var fakeHDRatio = enemyHealth / ourDmg;
+	var attackNeededMulti = fakeHDRatio / (hdFarmSettingRatio(rEFIndex));
+
+	// Something something figure out equality vs health farming
+	var tempEqualityUse = 0;
+	while (
+		(healthNeededMulti > 1 || attackNeededMulti > 1)  // If it's below 1 we don't actually need more
+		&&
+		(healthNeededMulti * game.portal.Equality.getModifier() > attackNeededMulti / game.portal.Equality.getModifier(true)) // Need more health proportionally
+		&&
+		tempEqualityUse < game.portal.Equality.radLevel
+	) {
+		tempEqualityUse++;
+		healthNeededMulti *= game.portal.Equality.getModifier();
+		attackNeededMulti /= game.portal.Equality.getModifier(true);
+		enemyDamageBeforeEquality *= game.portal.Equality.getModifier();
+	}
+
+	if (healthNeededMulti < 1 && attackNeededMulti < 1 || ((healthNeededMulti + attackNeededMulti) / 2 < 1)) { return [0, {}] };
+
+	var ourAttack = 6;
+	for (var i in MODULES.equipment) {
+		if (game.equipment[i].locked !== 0) continue;
+		var attackBonus = game.equipment[i].attackCalculated;
+		var level = game.equipment[i].level;
+		ourAttack += (attackBonus !== undefined ? attackBonus : 0) * level;
+	}
+
+	// Amount of stats needed directly from equipment
+	var attackNeeded = ourAttack * attackNeededMulti;
+	var healthNeeded = ourHealth * healthNeededMulti / (getTotalHealthMod() * game.resources.trimps.maxSoldiers);
+
+	var bonusLevels = {}; // How many levels you'll be getting in each shield-gambeson armor slots
+
+	while (healthNeeded > 0) {
+		var bestArmor = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[1];
+		healthNeeded -= game.equipment[bestArmor][MODULES.equipment[bestArmor].stat + "Calculated"];
+		if (typeof bonusLevels[bestArmor] === 'undefined') {
+			bonusLevels[bestArmor] = 0;
+		}
+		if (bonusLevels[bestArmor]++ > MAX_EQUIP_DELTA) {
+			return [Infinity, bonusLevels];
+		}
+	}
+	while (attackNeeded > 0) {
+		var bestWeapon = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[0];
+		attackNeeded -= game.equipment[bestWeapon][MODULES.equipment[bestWeapon].stat + "Calculated"];
+		if (typeof bonusLevels[bestWeapon] === 'undefined') {
+			bonusLevels[bestWeapon] = 0;
+		}
+		if (bonusLevels[bestWeapon]++ >= MAX_EQUIP_DELTA) {
+			return [Infinity, bonusLevels];
+		}
+	}
+
+	var totalCost = 0;
+	for (var equip in bonusLevels) {
+		var equipCost = game.equipment[equip].cost[MODULES.equipment[equip].resource];
+		totalCost += getTotalMultiCost((equipCost[0]), bonusLevels[equip], equipCost[1], true) * getEquipPriceMult();
+	}
+
+	return [totalCost, bonusLevels];
 }

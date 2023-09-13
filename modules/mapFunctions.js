@@ -9,8 +9,8 @@ MODULES.mapFunctions.challengeContinueRunning = false;
 MODULES.mapFunctions.hypothermia = { buyPackrat: false, }
 MODULES.mapFunctions.desolation = { gearScum: false, }
 
-//Unique Maps
-MODULES.uniqueMaps = {
+//Unique Maps Object. Used to store information about unique maps such as challenges that they need to be run to complete, zone they unlock, speedrun achievements linked to them.
+MODULES.uniqueMaps = Object.freeze({
 	//Universe 1 Unique Maps
 	'The Block': {
 		zone: 11,
@@ -98,21 +98,6 @@ MODULES.uniqueMaps = {
 		speedrun: 'starTimed',
 		universe: 2
 	}
-};
-
-//Void Maps
-MODULES.voidPrefixes = Object.freeze({
-	'Poisonous': 10,
-	'Destructive': 11,
-	'Heinous': 20,
-	'Deadly': 30
-});
-
-MODULES.voidSuffixes = Object.freeze({
-	'Descent': 7.077,
-	'Void': 8.822,
-	'Nightmare': 9.436,
-	'Pit': 10.6
 });
 
 function isDoingSpire() {
@@ -132,6 +117,7 @@ function exitSpireCell() {
 	isDoingSpire() && game.global.lastClearedCell > getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
 }
 
+//Checks to see if we have enough health to survive against the max attack of the worst enemy cell inside of a map.
 function enoughHealth(map) {
 	var totalHealth = calcOurHealth(false, "map", false, true) + calcOurBlock(false, false);
 	//All maps are slow except Imploding Star so we only need to be able to survive against Snimps in every other map
@@ -157,6 +143,7 @@ function shouldRunUniqueMap(map) {
 	const mapData = MODULES.uniqueMaps[map.name];
 	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
 
+	//Stops unique maps being run when we should be destacking instead as it is likely to be slower overall.
 	if (mapSettings.mapName === 'Desolation Destacking') return false;
 	if (mapSettings.mapName === 'Pandemonium Destacking') return false;
 	if (mapSettings.mapName === 'Mayhem Destacking') return false;
@@ -311,11 +298,10 @@ function recycleMap_AT(forceAbandon) {
 
 //Check to see if we are running Atlantrimp or if we should be.
 function runningAtlantrimp() {
-	var runAtlantrimp = false;
-	if (getPageSetting('autoMaps') === 1 && mapSettings.atlantrimp) runAtlantrimp = true;
-	else if (game.global.mapsActive && (getCurrentMapObject().location === 'Atlantrimp' || getCurrentMapObject().location === 'Trimple Of Doom')) runAtlantrimp = true;
+	if (getPageSetting('autoMaps') === 1 && mapSettings.atlantrimp) return true;
+	else if (game.global.mapsActive && (getCurrentMapObject().location === 'Atlantrimp' || getCurrentMapObject().location === 'Trimple Of Doom')) return true;
 
-	return runAtlantrimp;
+	return false;
 }
 
 function runUniqueMap(mapName) {
@@ -343,6 +329,21 @@ function runUniqueMap(mapName) {
 		}
 	}
 }
+
+//Void Maps
+MODULES.voidPrefixes = Object.freeze({
+	'Poisonous': 10,
+	'Destructive': 11,
+	'Heinous': 20,
+	'Deadly': 30
+});
+
+MODULES.voidSuffixes = Object.freeze({
+	'Descent': 7.077,
+	'Void': 8.822,
+	'Nightmare': 9.436,
+	'Pit': 10.6
+});
 
 function getVoidMapDifficulty(map) {
 	if (!map) {
@@ -1331,8 +1332,46 @@ function mapDestacking() {
 	farmingDetails.repeat = !repeat;
 	farmingDetails.status = status;
 
-
 	return farmingDetails;
+}
+
+function prestigesToGet(targetZone, targetPrestige) {
+
+	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+	if (!targetZone) targetZone = game.global.world;
+	if (!targetPrestige) targetPrestige = 'GambesOP';
+	//Skip locked equips
+	if (!game.global.slowDone && prestigeList.indexOf(targetPrestige) > 10) targetPrestige = 'Bestplate';
+
+	//Figure out how many equips to farm for
+	var mapsToRun = 0;
+	var prestigeToFarmFor = 0;
+
+	const hasSciFour = ((game.global.universe === 1 && game.global.sLevel >= 4) || (game.global.universe === 2 && game.buildings.Microchip.owned >= 4));
+	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;
+
+	//Loops through all prestiges
+	for (const p of prestigeList) {
+		//Skip locked equips (Panda)
+		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
+		const prestigeUnlock = game.mapUnlocks[p];
+
+		//Last prestige obtained (maplevel) for this equip
+		var pMapLevel = prestigeUnlock.last + 5;
+
+		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= targetZone) {
+			mapsToRun += Math.max(1, Math.ceil((targetZone - pMapLevel) / prestigeInterval));
+			var prestigeCount = Math.floor((targetZone - prestigeUnlock.last) / 5);
+			if (hasSciFour && prestigeCount % 2 === 1) {
+				prestigeCount++;
+			}
+			prestigeToFarmFor += prestigeCount;
+		}
+
+		if (p === targetPrestige) break;
+	}
+
+	return [prestigeToFarmFor, mapsToRun];
 }
 
 function prestigeRaiding() {
@@ -1369,7 +1408,7 @@ function prestigeRaiding() {
 			if (repeats > 0) raidZones += (times * repeats);
 		}
 		//Skips if we don't have the required prestige available.
-		var equipsToFarm = equipsToGet(raidZones, targetPrestige)[0];
+		var equipsToFarm = prestigesToGet(raidZones, targetPrestige)[0];
 		if (equipsToFarm === 0) continue;
 		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
 			settingIndex = y;
@@ -1385,26 +1424,26 @@ function prestigeRaiding() {
 		var incrementMaps = defaultSettings.incrementMaps;
 
 		//Reduce raid zone to the value of the last prestige item we need to farm
-		while (equipsToFarm === equipsToGet(raidZones - 1, targetPrestige)[0]) {
+		while (equipsToFarm === prestigesToGet(raidZones - 1, targetPrestige)[0]) {
 			raidZones--;
 		}
 
-		if (equipsToGet(raidZones, targetPrestige)[0] > 0) {
+		if (prestigesToGet(raidZones, targetPrestige)[0] > 0) {
 			shouldMap = true;
 		}
 
 		var mapSpecial = getAvailableSpecials('p');
-		var status = 'Prestige Raiding: ' + equipsToGet(raidZones, targetPrestige)[0] + ' items remaining';
+		var status = 'Prestige Raiding: ' + prestigesToGet(raidZones, targetPrestige)[0] + ' items remaining';
 
 		if (mapSettings.prestigeFragMapBought) status = 'Prestige frag farm to: ' + prettify(prestigeTotalFragCost(raidZones, targetPrestige, mapSpecial, incrementMaps, true));
 
-		var mapsToRun = game.global.mapsActive ? equipsToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
+		var mapsToRun = game.global.mapsActive ? prestigesToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
 		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
 
 		var repeat = mapsToRun === 1 || (specialInMap && mapsToRun === 2);
 
 		if (mapSettings.prestigeMapArray && mapSettings.prestigeMapArray[0] !== undefined && shouldMap) {
-			if (game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[0])] === undefined || (game.global.mapsActive && equipsToGet(getCurrentMapObject().level)[0] === 0)) {
+			if (game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[0])] === undefined || (game.global.mapsActive && prestigesToGet(getCurrentMapObject().level)[0] === 0)) {
 				debug("There was an error with your purchased map(s). Restarting the raiding procedure.");
 				delete mapSettings.prestigeMapArray;
 			}
@@ -1558,7 +1597,7 @@ function prestigeClimb() {
 	}
 
 	//Figure out how many equips to farm for & maps to run to get to that value
-	const prestigeInfo = equipsToGet(game.global.world, targetPrestige);
+	const prestigeInfo = prestigesToGet(game.global.world, targetPrestige);
 	const prestigeToFarmFor = prestigeInfo[0];
 	const mapsToRun = prestigeInfo[1];
 
@@ -1568,7 +1607,7 @@ function prestigeClimb() {
 
 	//Reduce map level to the value of the last prestige item we need to farm
 	//Shouldn't be necessary but could be useful if a user enables this setting later in their run
-	while (prestigeToFarmFor > 0 && prestigeToFarmFor === equipsToGet(mapLevel - 1, targetPrestige)[0]) {
+	while (prestigeToFarmFor > 0 && prestigeToFarmFor === prestigesToGet(mapLevel - 1, targetPrestige)[0]) {
 		mapLevel--;
 	}
 
@@ -1633,10 +1672,10 @@ function findLastBionicWithItems(bionicPool) {
 
 	if (bionicPool.length > 1) {
 		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
-		while (bionicPool.length > 1 && equipsToGet(bionicPool[0].level, targetPrestige)[0] === 0) {
+		while (bionicPool.length > 1 && prestigesToGet(bionicPool[0].level, targetPrestige)[0] === 0) {
 			if (challengeActive('Experience') && getPageSetting('experience') && game.global.world > 600 && bionicPool[0].level >= getPageSetting('experienceEndBW')) break;
 			bionicPool.shift();
-			if (equipsToGet(bionicPool[0].level, targetPrestige)[0] !== 0) break;
+			if (prestigesToGet(bionicPool[0].level, targetPrestige)[0] !== 0) break;
 		}
 	}
 
@@ -1677,7 +1716,7 @@ function bionicRaiding() {
 			var repeats = Math.round((game.global.world - currSetting.world) / times);
 			if (repeats > 0) raidZones += (times * repeats);
 		}
-		if (equipsToGet(raidZones, targetPrestige)[0] === 0) continue;
+		if (prestigesToGet(raidZones, targetPrestige)[0] === 0) continue;
 		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
 			settingIndex = y;
 			break;
@@ -1689,12 +1728,12 @@ function bionicRaiding() {
 		var rBionicRaidingSetting = baseSettings[settingIndex];
 		var raidzonesBW = raidZones;
 
-		if (equipsToGet(raidzonesBW, targetPrestige)[0] > 0) {
+		if (prestigesToGet(raidzonesBW, targetPrestige)[0] > 0) {
 			shouldMap = true;
 		}
-		var status = 'Raiding to BW' + raidzonesBW + ': ' + equipsToGet(raidzonesBW, targetPrestige)[0] + ' items remaining';
+		var status = 'Raiding to BW' + raidzonesBW + ': ' + prestigesToGet(raidzonesBW, targetPrestige)[0] + ' items remaining';
 
-		var mapsToRun = game.global.mapsActive ? equipsToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
+		var mapsToRun = game.global.mapsActive ? prestigesToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
 		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
 		var repeat = (game.global.mapsActive &&
 			(mapsToRun === 1 || (specialInMap && mapsToRun === 2) ||
@@ -2856,7 +2895,7 @@ function desolationGearScum() {
 		}
 
 		//Skips if we don't have the required prestige available.
-		if (equipsToGet(raidZones, targetPrestige)[0] <= 0) continue;
+		if (prestigesToGet(raidZones, targetPrestige)[0] <= 0) continue;
 		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
 			settingIndex = y;
 			break;
@@ -2994,7 +3033,7 @@ function smithless() {
 		}
 
 		ourDmgTenacity *= getZoneMinutes() > 100 ? 1 : 1.5;
-		if (equipsToGet(game.global.world + mapLevel)[0] > 0) ourDmgTenacity *= 1000;
+		if (prestigesToGet(game.global.world + mapLevel)[0] > 0) ourDmgTenacity *= 1000;
 
 		var totalDmgTenacity = ((ourDmgTenacity * regularHits) + (ourDmgTenacity * gammaDmg * gammas))
 
@@ -3037,6 +3076,14 @@ function smithless() {
 	}
 
 	return farmingDetails;
+}
+
+//Calculates the hd ratio that should be used for the current zone from each hd farm setting line.
+function hdFarmSettingRatio(setting) {
+	var mult = setting.hdMult;
+	var hd = setting.hdBase;
+	var zone = game.global.world - setting.world;
+	return (zone === 0) ? hd : Math.pow(mult, zone) * hd;
 }
 
 //Skip health check is used when pre-void map farm is being done
@@ -3155,7 +3202,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'voidFarm' ? hdStats.vhdRatioVoid : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : null;
 		//if (hdType !== 'maplevel' && !shouldHealthFarm && hdRatio === null) return farmingDetails;
 
-		if (hdType.includes('hitsSurvived') ? hdRatio < equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : !shouldHealthFarm ? hdRatio > equipfarmdynamicHD(setting) : hdRatio < equipfarmdynamicHD(setting))
+		if (hdType.includes('hitsSurvived') ? hdRatio < hdFarmSettingRatio(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : !shouldHealthFarm ? hdRatio > hdFarmSettingRatio(setting) : hdRatio < hdFarmSettingRatio(setting))
 			shouldMap = true;
 
 		//Set this here so that we can check against the correct map name in following checks
@@ -3168,14 +3215,14 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter >= hdFarmMaxMapsMaps) {
 			shouldMap = false;
 		}
-		if (mapSettings.mapName !== mapName && !shouldHealthFarm && (hdType.includes('hitsSurvived') ? hdRatio > equipfarmdynamicHD(setting) : hdType !== 'maplevel' ? equipfarmdynamicHD(setting) > hdRatio : hdStats.autoLevel > setting.hdBase))
+		if (mapSettings.mapName !== mapName && !shouldHealthFarm && (hdType.includes('hitsSurvived') ? hdRatio > hdFarmSettingRatio(setting) : hdType !== 'maplevel' ? hdFarmSettingRatio(setting) > hdRatio : hdStats.autoLevel > setting.hdBase))
 			shouldSkip = true;
 
 		if (((mapSettings.mapName === mapName && !shouldMap) || shouldSkip) && hdStats.hdRatio !== Infinity) {
-			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, equipfarmdynamicHD(setting), hdType);
+			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, hdFarmSettingRatio(setting), hdType);
 			if (getPageSetting('spamMessages').map_Skip && shouldSkip) {
-				if (hdType.includes('hitsSurvived')) debug("Hits Survived (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
-				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
+				if (hdType.includes('hitsSurvived')) debug("Hits Survived (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + hdFarmSettingRatio(setting).toFixed(2) + ").", 'map_Skip');
+				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + hdFarmSettingRatio(setting).toFixed(2) + ").", 'map_Skip');
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
 			resetMapVars(setting, settingName);
@@ -3190,11 +3237,11 @@ function hdFarm(skipHealthCheck, voidFarm) {
 
 		if (shouldHealthFarm || hdType.includes('hitsSurvived')) {
 			if (hdType === 'hitsSurvivedVoid') status += 'Void&nbsp;';
-			status += 'Hits&nbsp;Survived to:&nbsp;' + equipfarmdynamicHD(setting).toFixed(2) + '<br>';
+			status += 'Hits&nbsp;Survived to:&nbsp;' + hdFarmSettingRatio(setting).toFixed(2) + '<br>';
 			status += 'Current:&nbsp;' + prettify(hitsSurvived.toFixed(2));
 		} else {
 			status += 'HD&nbsp;Farm&nbsp;to:&nbsp;';
-			if (hdType !== 'maplevel') status += equipfarmdynamicHD(setting).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
+			if (hdType !== 'maplevel') status += hdFarmSettingRatio(setting).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
 			else status += '<br>' + (setting.hdBase >= 0 ? "+" : "") + setting.hdBase + ' Auto Level';
 		}
 		hdFarmMaxMapsMaps = hdFarmMaxMapsMaps === Infinity ? '∞' : hdFarmMaxMapsMaps;
@@ -3208,7 +3255,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		farmingDetails.jobRatio = jobRatio;
 
 		farmingDetails.hdType = hdType;
-		farmingDetails.hdRatio = equipfarmdynamicHD(setting);
+		farmingDetails.hdRatio = hdFarmSettingRatio(setting);
 		farmingDetails.hdRatio2 = hdRatio;
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
@@ -3383,7 +3430,7 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 
 //Checks if map we want to run has equips
 function prestigeMapHasEquips(number, raidzones, targetPrestige) {
-	if (equipsToGet((raidzones - number), targetPrestige)[0] > 0) return true;
+	if (prestigesToGet((raidzones - number), targetPrestige)[0] > 0) return true;
 	return false;
 }
 
@@ -3443,20 +3490,20 @@ function prestigeRaidingSliders(mapNumber, raidzones, special) {
 function prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps, getCost) {
 	var cost = 0;
 
-	if (equipsToGet(raidZones, targetPrestige)[0]) {
+	if (prestigesToGet(raidZones, targetPrestige)[0]) {
 		cost += prestigeRaidingSliders(0, raidZones, special);
 	}
 	if (incrementMaps) {
-		if (equipsToGet((raidZones - 1), targetPrestige)[0]) {
+		if (prestigesToGet((raidZones - 1), targetPrestige)[0]) {
 			cost += prestigeRaidingSliders(1, raidZones, special);
 		}
-		if (equipsToGet((raidZones - 2), targetPrestige)[0]) {
+		if (prestigesToGet((raidZones - 2), targetPrestige)[0]) {
 			cost += prestigeRaidingSliders(2, raidZones, special);
 		}
-		if (equipsToGet((raidZones - 3), targetPrestige)[0]) {
+		if (prestigesToGet((raidZones - 3), targetPrestige)[0]) {
 			cost += prestigeRaidingSliders(3, raidZones, special);
 		}
-		if (equipsToGet((raidZones - 4), targetPrestige)[0]) {
+		if (prestigesToGet((raidZones - 4), targetPrestige)[0]) {
 			cost += prestigeRaidingSliders(4, raidZones, special);
 		}
 	}
