@@ -5893,6 +5893,7 @@ function setupATButtons() {
 		tab.appendChild(atBtnSettings),
 		document.getElementById('logBtnGroup').appendChild(tab);
 
+	debug("Finished loading buttons.");
 }
 
 function introMessage() {

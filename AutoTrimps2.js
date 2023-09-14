@@ -129,6 +129,7 @@ function delayStart() {
 
 //Runs second
 function initializeAutoTrimps() {
+	debug(`You are running ${atSettings.initialise.version.split(' ')[0]} AutoTrimps  ${atSettings.initialise.version.split(' ')[1]}.`);
 	loadPageVariables();
 	ATscriptLoad(null, 'SettingsGUI');
 
@@ -139,9 +140,8 @@ function initializeAutoTrimps() {
 	for (var m in atSettings.modules.installedModules) {
 		ATscriptLoad(atSettings.modules.path, atSettings.modules.installedModules[m]);
 	}
-
+	debug("Finished loading modules.");
 	delayStartAgain();
-	debug(atSettings.initialise.version.split(' ')[0] + " AutoTrimps " + atSettings.initialise.version.split(' ')[1] + " loaded!");
 }
 
 //raspberry pi related setting changes
@@ -188,6 +188,8 @@ function delayStartAgain() {
 	universeSwapped();
 	//Loads my game settings
 	loadAugustSettings();
+
+	debug("Finished loading script.");
 
 	//Loading jQuery select2 to style dropdown boxes more than basic html/css can.
 	var script = document.createElement("script");
