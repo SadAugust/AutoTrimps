@@ -123,10 +123,12 @@ function enoughHealth(map) {
 	//All maps are slow except Imploding Star so we only need to be able to survive against Snimps in every other map
 	var enemyName = 'Snimp';
 	if (map.name === 'Imploding Star') enemyName = 'Neutrimp';
+	//Black Bogs don't update map level each zone until you first run them so we need to use the world number instead
+	var level = map.name === 'The Black Bog' ? game.global.world : map.level;
 	var equalityAmt = 0;
-	if (game.global.universe === 2) equalityAmt = equalityQuery(enemyName, map.level, map.size, 'map', map.difficulty, 'gamma');
+	if (game.global.universe === 2) equalityAmt = equalityQuery(enemyName, level, map.size, 'map', map.difficulty, 'gamma');
 	//Calculate enemy damage for the map
-	var enemyDmg = calcEnemyAttackCore('map', map.level, map.size, enemyName, false, false, equalityAmt) * map.difficulty;
+	var enemyDmg = calcEnemyAttackCore('map', level, map.size, enemyName, false, false, equalityAmt) * map.difficulty;
 
 	return totalHealth > enemyDmg;
 }
