@@ -214,6 +214,7 @@ function pushSpreadsheetData() {
 		heliumy: game.singleRunBonuses.heliumy.owned,
 		runningChallengeSquared: game.global.runningChallengeSquared,
 		patch: game.global.stringVersion,
+		bones: game.global.b,
 	}
 
 	for (var chall in game.c2) {
