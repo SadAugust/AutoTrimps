@@ -113,10 +113,10 @@ function setResourceNeeded() {
 		MODULES.resourceNeeded.science += getCostToUpgrade('Gymystic', 'science')
 	}
 
-	const equipmentList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
+	/*const equipmentList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
 	for (var prestigeName in equipmentList) {
 		MODULES.resourceNeeded.science += getCostToUpgrade(prestigeName, 'science')
-	}
+	}*/
 }
 
 function getPotencyMod(howManyMoreGenes) {
