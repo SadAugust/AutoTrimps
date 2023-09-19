@@ -26,8 +26,8 @@ function safeSetGather(resource) {
 	if (!resource)
 		return;
 
-	//Can't gather metal on these challenges so need to override it
-	if (resource === 'metal' && (challengeActive('Metal') || challengeActive('Transmute'))) resource = 'wood';
+	//Can't gather metal on this challenge so need to override it
+	if (resource === 'metal' && challengeActive('Transmute')) resource = 'wood';
 
 	if (game.global.playerGathering !== resource) {
 		debug("Setting gather to " + resource, "gather");
