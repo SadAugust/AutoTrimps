@@ -2748,6 +2748,7 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 
 		//Challenge dropdown with conditions for each unlock to only appear when the user can run them.
 		dropdown.challenge = "<option value='All'" + ((vals.challenge === 'All') ? " selected='selected'" : "") + ">All</option>";
+		dropdown.challenge += "<option value='No Challenge'" + ((vals.challenge === 'No Challenge') ? " selected='selected'" : "") + ">No Challenge</option>";
 		if (highestZone >= 40) dropdown.challenge += "<option value='Balance'" + ((vals.challenge === 'Balance') ? " selected='selected'" : "") + ">Balance</option>";
 		if (highestZone >= 55) dropdown.challenge += "<option value = 'Decay'" + ((vals.challenge === 'Decay') ? " selected = 'selected'" : "") + " >Decay</option>";
 		if (game.global.prisonClear >= 1) dropdown.challenge += "<option value='Electricity'" + ((vals.challenge === 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
@@ -2800,6 +2801,7 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 
 		//Filler challenge dropdowns with conditions for each unlock to only appear when the user can run them.
 		dropdown.challenge = "<option value='All'" + ((vals.challenge === 'All') ? " selected='selected'" : "") + ">All</option>";
+		dropdown.challenge += "<option value='No Challenge'" + ((vals.challenge === 'No Challenge') ? " selected='selected'" : "") + ">No Challenge</option>";
 		if (highestZone >= 40) dropdown.challenge += "<option value='Bublé'" + ((vals.challenge === 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
 		if (highestZone >= 55) dropdown.challenge += "<option value = 'Melt'" + ((vals.challenge === 'Melt') ? " selected = 'selected'" : "") + " > Melt</option>";
 		if (highestZone >= 70) dropdown.challenge += "<option value='Quagmire'" + ((vals.challenge === 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
