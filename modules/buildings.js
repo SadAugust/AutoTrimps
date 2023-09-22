@@ -381,8 +381,8 @@ function buyBuildings() {
 
 	//A quick way to identify if we are running Hypothermia and what our very first farm zone is for autostorage manipulation purposes.
 	//Need to have it setup to go through every setting to ensure we don't miss the first one after introducing the priority input.
+	var hypoZone = 0;
 	if (challengeActive('Hypothermia')) {
-		var hypoZone = 0;
 		const hypoSettings = getPageSetting('hypothermiaSettings');
 		if (hypoSettings[0].active && hypoSettings[0].autostorage && hypoSettings.length > 0) {
 			for (var y = 0; y < hypoSettings.length; y++) {
@@ -394,6 +394,7 @@ function buyBuildings() {
 			}
 		}
 	}
+
 	//Storage, shouldn't be needed anymore that autostorage is lossless.
 	//Hypothermia messed this up. Has a check for if on Hypo and checks for the first Hypo farm zone.
 	if (!game.global.autoStorage && game.global.world >= hypoZone)
