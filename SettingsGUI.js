@@ -241,7 +241,7 @@ function initializeAllSettings() {
 					description += "<p>Will only run during the highest Spire you have reached and will respec into the Perky <b>Spire</b> preset to maximise your combat stats during it.</p>";
 				}
 				if (currSettingUniverse === 2) {
-					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + " otherwise will assume it's a radon run and use the <b>Radon Combat Respec</b> preset.</p>";
+					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + " <b>OR</b> you have more golden battle upgrades than radon upgrades otherwise will assume it's a radon run and use the <b>Radon Combat Respec</b> preset.</p>";
 				}
 
 				description += "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";

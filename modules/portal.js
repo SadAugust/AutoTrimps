@@ -834,6 +834,7 @@ function surkyCombatRespec() {
 	if (game.global.universe === 1) fillPresetPerky('spire');
 	//Changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
 	else if (hdStats.isC3) fillPreset('combat');
+	else if (game.goldenUpgrades.Battle.purchasedAt.length > game.goldenUpgrades.Helium.purchasedAt.length) fillPreset('combat');
 	else fillPreset('combatRadon');
 	//Respecing perks
 	if (game.global.universe === 2)
