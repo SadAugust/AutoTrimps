@@ -3730,11 +3730,6 @@ function initializeAllSettings() {
 	//Time Warp
 	const displayTimewarp = true;
 	if (displayTimewarp) {
-		createSetting('timeWarpDisable',
-			function () { return ("Disable in Time Warp") },
-			function () { return ("Will disable all of the scripts features during time warp in an attempt to speed it up.") },
-			'boolean', false, null, 'Time Warp', [0]);
-
 		createSetting('timeWarpSpeed',
 			function () { return ('Time Warp Support') },
 			function () {
@@ -6277,13 +6272,6 @@ function updateATVersion() {
 				}
 			}
 			saveSettings();
-		}
-		//Changing setting name and converting current state of it. 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {
-
-			if (typeof (tempSettings["disableForTW"]) !== 'undefined') {
-				autoTrimpSettings.timeWarpDisable.enabled = tempSettings.disableForTW.enabled;
-			}
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {

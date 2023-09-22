@@ -708,7 +708,9 @@ function c2FinishZone() {
 		//Using C∞ Runner Settings
 		//If not enabled then set to Infinity!
 		else if (getPageSetting('c2RunnerMode') === 1) {
-			finishChallenge = getPageSetting("c2RunnerSettings")[game.global.challengeActive].enabled ? getPageSetting("c2RunnerSettings")[game.global.challengeActive].zone : Infinity;
+			var c2RunnerChallenge = getPageSetting("c2RunnerSettings")[game.global.challengeActive];
+			if (typeof c2RunnerChallenge === 'undefined') finishChallenge = Infinity;
+			else finishChallenge = c2RunnerChallenge.enabled ? c2RunnerChallenge.zone : Infinity;
 		}
 	}
 	else {

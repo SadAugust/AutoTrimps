@@ -226,7 +226,7 @@ function toggleCatchUpMode() {
 
 	//If we have a setting enable that disables TimeLapse mode, then disable running the script running a faster loop in offline mode.
 	if (usingRealTimeOffline) {
-		if (getPageSetting('timeWarpDisable') || !getPageSetting('timeWarpSpeed')) {
+		if (!getPageSetting('timeWarpSpeed')) {
 			if (usingRealTimeOffline && atSettings.loops.atTimeLapseFastLoop) {
 				atSettings.loops.atTimeLapseFastLoop = false;
 				gameLoop = originalGameLoop;
@@ -380,7 +380,6 @@ function mainLoop() {
 
 	if (atSettings.running === false) return;
 	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
-	if (getPageSetting('timeWarpDisable') && usingRealTimeOffline) return;
 	atSettings.running = true;
 
 	atSettings.intervals.counter++;
