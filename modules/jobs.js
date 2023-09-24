@@ -243,49 +243,66 @@ function buyJobs(forceRatios) {
 	freeWorkers += currentworkers.reduce((a, b) => { return a + b; });
 
 	var desiredRatios = [0, 0, 0, 0];
-	// Explicit firefox handling because Ff specifically reduces free workers to 0.
+	/* // Explicit firefox handling because Ff specifically reduces free workers to 0.
 	var reserveMod = 1 + (game.resources.trimps.owned / 1e14) + nextCoordCost;
+	freeWorkers -= (game.resources.trimps.owned > 1e6) ? 100 * reserveMod : 0; */
 
-	freeWorkers -= (game.resources.trimps.owned > 1e6) ? 100 * reserveMod : 0;
+	//Scientist ratio hack to ensure that we always have at least 1 scientist unless Scientist ratio is set to 0 inside of any override settings.     
+	var scientistMod;
+	if (game.global.world >= 150)
+		scientistMod = MODULES["jobs"].scientist.ratio7;
+	else if (game.global.world >= 120)
+		scientistMod = MODULES["jobs"].scientist.ratio6;
+	else if (game.global.world >= 90)
+		scientistMod = MODULES["jobs"].scientist.ratio5;
+	else if (game.global.world >= 65)
+		scientistMod = MODULES["jobs"].scientist.ratio4;
+	else if (game.global.world >= 50)
+		scientistMod = MODULES["jobs"].scientist.ratio3;
+	else if (game.jobs.Farmer.owned < 100)
+		scientistMod = MODULES["jobs"].scientist.ratio2;
+	else
+		scientistMod = MODULES["jobs"].scientist.ratio;
 
-	var workerRatio;
 	//Looks first if we want to manually set ratios for workers through map settings or through overrides (bone shrine).
-	if (forceRatios !== undefined || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio !== undefined)) {
+	var workerRatio;
+	var overrideRatio = forceRatios || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio !== undefined);
+	if (overrideRatio) {
 		//Check if bone shrine wants to force override our job ratio
-		if (forceRatios !== undefined) workerRatio = forceRatios;
+		if (forceRatios) {
+			if (typeof forceRatios !== 'string') {
+				debug("Error! forceRatios is not setup as a string! Not buying jobs until this has been fixed!");
+				return;
+			}
+			workerRatio = forceRatios;
+		}
 		//If not then check if we are running a map with a job ratio set
-		else workerRatio = mapSettings.jobRatio;
+		else {
+			workerRatio = mapSettings.jobRatio;
+		}
+
 		desiredRatios = Array.from(workerRatio.split(','))
-		desiredRatios = [desiredRatios[0] !== undefined ? Number(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? Number(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? Number(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]
 
-		if (MODULES.resourceNeeded.science > 0 && MODULES.resourceNeeded.science > game.resources.science.owned && desiredRatios[3] < 1) desiredRatios[3] = 1;
-	} else {
-		// Weird scientist ratio hack. Based on previous AJ, I don't know why it's like this.
-		var scientistMod = MODULES["jobs"].scientist.ratio;
-		if (game.jobs.Farmer.owned < 100)
-			scientistMod = MODULES["jobs"].scientist.ratio2;
-		if (game.global.world >= 50)
-			scientistMod = MODULES["jobs"].scientist.ratio3;
-		if (game.global.world >= 65)
-			scientistMod = MODULES["jobs"].scientist.ratio4;
-		if (game.global.world >= 90)
-			scientistMod = MODULES["jobs"].scientist.ratio5;
-		if (game.global.world >= 120)
-			scientistMod = MODULES["jobs"].scientist.ratio6;
-		if (game.global.world >= 150)
-			scientistMod = MODULES["jobs"].scientist.ratio7;
+		//Loop through and make sure we have a value for each worker type
+		for (var ratio in ratioWorkers) {
+			desiredRatios[ratio] = desiredRatios[ratio] !== undefined ? Number(desiredRatios[ratio]) : 0;
+		}
+	}
 
-		if (MODULES.resourceNeeded.science > 0 && MODULES.resourceNeeded.science > game.resources.science.owned) scientistMod = 1;
+	if (desiredRatios[3] !== 0) scientistMod = 1;
+	if (MODULES.resourceNeeded.science > 0 && MODULES.resourceNeeded.science > game.resources.science.owned) scientistMod = 1;
 
-		for (var worker of ratioWorkers) {
-			if (!game.jobs[worker].locked) {
-				if (worker === "Scientist") {
-					desiredRatios[ratioWorkers.indexOf(worker)] = 1;
-					continue;
-				}
-				else {
-					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(worker))
-				}
+	for (var worker of ratioWorkers) {
+		if (!game.jobs[worker].locked) {
+			if (worker === 'Scientist') {
+				if (desiredRatios[ratioWorkers.indexOf(worker)] === 0) desiredRatios[ratioWorkers.indexOf(worker)] = 1;
+				continue;
+			}
+			else if (overrideRatio) {
+				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * desiredRatios[ratioWorkers.indexOf(worker)];
+			}
+			else {
+				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(worker))
 			}
 		}
 	}
