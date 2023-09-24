@@ -177,7 +177,7 @@ function shouldRunUniqueMap(map) {
 		var aboveMapLevel = game.global.world > map.level;
 		if (map.name === 'The Block') { //Don't bother before z12 outside of manual unique map settings setup
 			//We need Shieldblock
-			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock') && game.global.highestLevelCleared < 40) {
+			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock')) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}

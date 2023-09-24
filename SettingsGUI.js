@@ -883,7 +883,6 @@ function initializeAllSettings() {
 			function () { return ('Buy Shield Block') },
 			function () {
 				var description = "<p>Will allow the purchase of the shield block upgrade.</p>";
-				description += "<p><b>If your highest zone reached is 40 or above then this setting will be disabled.</b></p>";
 				description += "<p><b>Recommended:</b> On until you can reach zone 40</p>";
 				return description;
 			}, 'boolean', true, null, "Equipment", [1]);
