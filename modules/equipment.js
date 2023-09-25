@@ -221,12 +221,12 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 			}
 		}
 		//Load buyPrestigeMaybe into variable so it's not called 500 times
-		var maybeBuyPrestige = buyPrestigeMaybe(i, resourceSpendingPct, game.equipment[i].level);
+		const maybeBuyPrestige = buyPrestigeMaybe(i, resourceSpendingPct, game.equipment[i].level);
 		//Stops the script from buying more than 9 levels in an equip if we have prestiges available
 		if (maybeBuyPrestige.prestigeAvailable) equipCap = 9;
 		//Skips if we have the equip capped and we aren't potentially farming for the prestige
 		if (!maybeBuyPrestige.purchase && game.equipment[i].level >= equipCap) continue;
-		//Skips if ignoreShield variable is true.
+		//Skips if ignoreShield variable is true. 
 		if (ignoreShield && i === 'Shield') continue;
 		//Skips looping through equips if they're blocked during Pandemonium.
 		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
@@ -249,7 +249,10 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		//Check for further overrides for if we want to skip looking at prestiges
 		if (!skipPrestiges) {
 			if ((prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGoCheck(getPageSetting('equipZone')) && !ignorePrestiges)) && game.equipment[i].level < 6) skipPrestiges = true;
-			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[MODULES.equipment[i].resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) skipPrestiges = true;
+			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[MODULES.equipment[i].resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) {
+				skipPrestiges = true;
+				if (game.equipment[i].level >= equipCap) continue;
+			}
 		}
 
 		if (!skipPrestiges) {
