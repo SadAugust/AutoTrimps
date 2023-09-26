@@ -1894,6 +1894,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li class=\"indent\"><b>Zone Time</b> - Uses DD:HH:MM:SS format and will run maps until the zone time surpasses the time set in repeat counter.</li>";
 		mazHelp += "<li class=\"indent\"><b>Portal Time</b> - Uses DD:HH:MM:SS format and will run maps until the portal time surpasses the time set in repeat counter.</li>";
 		mazHelp += "<li class=\"indent\"><b>Daily Reset</b> - Uses DD:HH:MM:SS format and will run maps until the daily reset time is below the time set in repeat counter.</li>";
+		mazHelp += "<li class=\"indent\"><b>Skele Spawn</b> - Uses DD:HH:MM:SS format and will run maps until the time since your last Skeletimp kill was this amount of time or greater.</li>";
 
 		mazHelp += "<li><b>Map Repeats</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
 		//Run when HD Ratio above X value
@@ -2709,12 +2710,13 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 	//Map Type dropdown
 	dropdown.mapType = '';
 	if (varPrefix !== 'MapFarm')
-		dropdown.mapType += "<option value='Absolute'" + ((vals.mapType === 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>"
-	dropdown.mapType += "<option value='Map Count'" + ((vals.mapType === 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>"
+		dropdown.mapType += "<option value='Absolute'" + ((vals.mapType === 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>";
+	dropdown.mapType += "<option value='Map Count'" + ((vals.mapType === 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>";
 	if (varPrefix === 'MapFarm') {
-		dropdown.mapType += "<option value='Zone Time'" + ((vals.mapType === 'Zone Time') ? " selected='selected'" : "") + ">Zone Time</option>"
-		dropdown.mapType += "<option value='Portal Time'" + ((vals.mapType === 'Portal Time') ? " selected='selected'" : "") + ">Portal Time</option>"
-		dropdown.mapType += "<option value='Daily Reset'" + ((vals.mapType === 'Daily Reset') ? " selected='selected'" : "") + ">Daily Reset</option>"
+		dropdown.mapType += "<option value='Zone Time'" + ((vals.mapType === 'Zone Time') ? " selected='selected'" : "") + ">Zone Time</option>";
+		dropdown.mapType += "<option value='Portal Time'" + ((vals.mapType === 'Portal Time') ? " selected='selected'" : "") + ">Portal Time</option>";
+		dropdown.mapType += "<option value='Daily Reset'" + ((vals.mapType === 'Daily Reset') ? " selected='selected'" : "") + ">Daily Reset</option>";
+		dropdown.mapType += "<option value='Skele Spawn'" + ((vals.mapType === 'Skele Spawn') ? " selected='selected'" : "") + ">Skele Spawn</option>";
 	}
 
 	//Prestige Goal dropdown
@@ -2729,22 +2731,22 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 		<option value='Battleaxe'" + ((vals.prestigeGoal === 'Battleaxe') ? " selected = 'selected'" : "") + " > Battleaxe</option>\
 		<option value='Shoulderguards'" + ((vals.prestigeGoal === 'Shoulderguards') ? " selected = 'selected'" : "") + " > Shoulderguards</option>\
 		<option value='Greatsword'" + ((vals.prestigeGoal === 'Greatsword') ? " selected = 'selected'" : "") + " > Greatsword</option>\
-		<option value='Breastplate'" + ((vals.prestigeGoal === 'Breastplate') ? " selected = 'selected'" : "") + " > Breastplate</option>"
-	if (game.global.slowDone) dropdown.prestigeGoal += "<option value='Arbalest'" + ((vals.prestigeGoal === 'Arbalest') ? " selected='selected'" : "") + ">Arbalest</option>"
-	if (game.global.slowDone) dropdown.prestigeGoal += "<option value='Gambeson'" + ((vals.prestigeGoal === 'Gambeson') ? " selected='selected'" : "") + ">Gambeson</option>"
+		<option value='Breastplate'" + ((vals.prestigeGoal === 'Breastplate') ? " selected = 'selected'" : "") + " > Breastplate</option>";
+	if (game.global.slowDone) dropdown.prestigeGoal += "<option value='Arbalest'" + ((vals.prestigeGoal === 'Arbalest') ? " selected='selected'" : "") + ">Arbalest</option>";
+	if (game.global.slowDone) dropdown.prestigeGoal += "<option value='Gambeson'" + ((vals.prestigeGoal === 'Gambeson') ? " selected='selected'" : "") + ">Gambeson</option>";
 
 	if (universe === 1) {
 		//Specials dropdown with conditions for each unlock to only appear when the user can run them.
-		dropdown.special = "<option value='0'" + ((vals.special === '0') ? " selected='selected'" : "") + ">No Modifier</option>"
-		if (highestZone >= 60) dropdown.special += "<option value='fa'" + ((vals.special === 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special === 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
+		dropdown.special = "<option value='0'" + ((vals.special === '0') ? " selected='selected'" : "") + ">No Modifier</option>";
+		if (highestZone >= 60) dropdown.special += "<option value='fa'" + ((vals.special === 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special === 'lc') ? " selected='selected'" : "") + ">Large Cache</option>";
 		if (highestZone >= 85) dropdown.special += "<option value = 'ssc'" + ((vals.special === 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option>\
 				<option value='swc'" + ((vals.special === 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option>\
-				<option value='smc'" + ((vals.special === 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option> "
-		if (highestZone >= 135) dropdown.special += "<option value='p'" + ((vals.special === 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
-		if (highestZone >= 160) dropdown.special += "<option value='hc'" + ((vals.special === 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
+				<option value='smc'" + ((vals.special === 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option> ";
+		if (highestZone >= 135) dropdown.special += "<option value='p'" + ((vals.special === 'p') ? " selected='selected'" : "") + ">Prestigious</option>";
+		if (highestZone >= 160) dropdown.special += "<option value='hc'" + ((vals.special === 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>";
 		if (highestZone >= 185) dropdown.special += "<option value='lsc'" + ((vals.special === 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
 				<option value='lwc'" + ((vals.special === 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
-				<option value='lmc'" + ((vals.special === 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
+				<option value='lmc'" + ((vals.special === 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>";
 
 		//Challenge dropdown with conditions for each unlock to only appear when the user can run them.
 		dropdown.challenge = "<option value='All'" + ((vals.challenge === 'All') ? " selected='selected'" : "") + ">All</option>";

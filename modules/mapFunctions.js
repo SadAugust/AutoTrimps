@@ -728,7 +728,8 @@ function mapFarm() {
 			mapType === 'Daily Reset' ? updateDailyClock(true).split(':').reduce((acc, time) => (60 * acc) + +time) :
 				mapType === 'Zone Time' ? (getGameTime() - game.global.zoneStarted) / 1000 :
 					mapType === 'Portal Time' ? (getGameTime() - game.global.portalTime) / 1000 :
-						game.global.mapRunCounter;
+						mapType === 'Skele Spawn' ? (getGameTime() - game.global.lastSkeletimp) / 1000 :
+							game.global.mapRunCounter;
 
 		if (setting.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
@@ -745,7 +746,7 @@ function mapFarm() {
 		}
 
 		var repeatNumber = repeatCounter === Infinity ? '∞' : repeatCounter;
-		if (mapType === 'Portal Time' || mapType === 'Daily Reset' || mapType === 'Zone Time') {
+		if (mapType === 'Portal Time' || mapType === 'Daily Reset' || mapType === 'Zone Time' || mapType === 'Skele Spawn') {
 			repeatCounter = repeatCounter.split(':').reduce((acc, time) => (60 * acc) + +time);
 		}
 
@@ -753,7 +754,7 @@ function mapFarm() {
 		if (challengeActive('Wither') && mapLevel >= 0)
 			mapLevel = -1;
 		//If you're running Transmute and the mapSpecial variable is either LMC or SMC it changes it to LSC/SSC.
-		mapSpecial = (getAvailableSpecials(mapSpecial))
+		mapSpecial = (getAvailableSpecials(mapSpecial));
 
 		if (mapType === 'Daily Reset' ? repeatCounter < repeatCheck : repeatCounter > repeatCheck)
 			shouldMap = true;
@@ -767,11 +768,12 @@ function mapFarm() {
 			saveSettings();
 		}
 		var repeat = repeatCheck + 1 === repeatCounter;
-		var status = 'Map Farm: ' +
+		var status = mapType + ': ' +
 			(mapType === 'Daily Reset' ? (setting.repeat + ' / ' + updateDailyClock(true)) :
 				mapType === 'Zone Time' ? (formatSecondsAsClock((getGameTime() - game.global.zoneStarted) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
-					mapType === 'Portal Time' ? (formatSecondsAsClock((getGameTime() - game.global.portalTime) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
-						(repeatCheck + "/" + repeatNumber));
+					mapType === 'Skele Spawn' ? (formatSecondsAsClock((getGameTime() - game.global.lastSkeletimp) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
+						mapType === 'Portal Time' ? (formatSecondsAsClock((getGameTime() - game.global.portalTime) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
+							(repeatCheck + "/" + repeatNumber));
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
