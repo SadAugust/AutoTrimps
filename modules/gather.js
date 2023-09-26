@@ -198,7 +198,7 @@ function autoGather() {
 	}
 
 	//Mid Priority Trapping
-	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !MODULES.gather.trapBuffering) {
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
 		safeSetGather('trimps');
 		return;
 	}
