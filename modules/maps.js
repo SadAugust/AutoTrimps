@@ -158,7 +158,7 @@ function makeAutomapStatusTooltip(mouseover) {
 		tooltipText += `Farming Setting: <b>${mapSettings.mapName}</b><br>`
 		tooltipText += `Map level: <b>${mapSettings.mapLevel}</b><br>`
 		tooltipText += `Auto level: <b>${mapSettings.autoLevel}</b><br>`
-		if (mapSettings.settingIndex) tooltipText += `Priority (line run): <b>${mapSettings.settingIndex}</b><br>`
+		if (mapSettings.settingIndex) tooltipText += `Line run: <b>${mapSettings.settingIndex}</b>${(mapSettings.priority) ? ` Priority: <b>${mapSettings.priority}</b>` : ``}<br>`;
 		tooltipText += `Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'}</b > <br>`
 		tooltipText += `Wants to run: ${mapSettings.shouldRun}<br>`
 		tooltipText += `Repeat: ${mapSettings.repeat}<br>`;

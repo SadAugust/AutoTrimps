@@ -544,6 +544,7 @@ function voidMaps() {
 		farmingDetails.repeat = false;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 		//This is a check for the whichHitsSurvived function to see which type of hitsSurvived we should be looking at.
 		farmingDetails.voidHitsSurvived = true;
 		//Saving settings here so that we don't need to store them in global variables. They'll just be wiped after Void Maps has finished running.
@@ -661,6 +662,7 @@ function mapBonus() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 	}
 	//Display setting run message. Reset map vars that were used.
 	if (mapSettings.mapName === mapName && (game.global.mapBonus >= repeatCounter || !farmingDetails.shouldRun)) {
@@ -789,6 +791,7 @@ function mapFarm() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 	}
 
 	return farmingDetails;
@@ -946,6 +949,7 @@ function tributeFarm() {
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 	}
 
 	return farmingDetails;
@@ -1142,6 +1146,7 @@ function smithyFarm() {
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 	}
 	return farmingDetails;
 }
@@ -1247,6 +1252,7 @@ function worshipperFarm() {
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 		farmingDetails.gather = 'food';
 
 	}
@@ -1466,6 +1472,7 @@ function prestigeRaiding() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 		farmingDetails.incrementMaps = incrementMaps;
 		if (mapSettings.prestigeMapArray) farmingDetails.prestigeMapArray = mapSettings.prestigeMapArray;
 		if (mapSettings.prestigeFragMapBought) farmingDetails.prestigeFragMapBought = mapSettings.prestigeFragMapBought;
@@ -1751,6 +1758,7 @@ function bionicRaiding() {
 		farmingDetails.raidingZone = raidzonesBW;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 	}
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
@@ -1866,6 +1874,7 @@ function toxicity() {
 		farmingDetails.currentStacks = currentStacks;
 		farmingDetails.cellsToClear = cellsToClear;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 
 	}
 	return farmingDetails;
@@ -2053,6 +2062,7 @@ function quagmire() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 	}
 
 	return farmingDetails;
@@ -2265,6 +2275,7 @@ function insanity() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 
 		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 			mappingDetails(mapName, mapLevel, mapSpecial, insanityGoal);
@@ -2531,6 +2542,7 @@ function alchemy() {
 			farmingDetails.repeat = !repeat;
 			farmingDetails.status = status;
 			farmingDetails.settingIndex = settingIndex;
+			farmingDetails.priority = setting.priority;
 
 			if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 				mappingDetails(mapName, mapLevel, mapSpecial, alchObj.potionsOwned[potion], potionGoal.toString().replace(/[^\d,:-]/g, ''), alchObj.potionNames[potion]);
@@ -2753,6 +2765,7 @@ function hypothermia() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 
 		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 			mappingDetails(mapName, mapLevel, mapSpecial, bonfireCostTotal);
@@ -2981,6 +2994,7 @@ function desolationGearScum() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 	}
 	return farmingDetails;
 }
@@ -3267,6 +3281,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		farmingDetails.shouldHealthFarm = shouldHealthFarm;
 		farmingDetails.voidHitsSurvived = hdType === 'hitsSurvivedVoid';
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.priority = setting.priority;
 		//Retain info that we have used a bone charge if we are farming stats before we run void maps.
 		if (voidFarm) {
 			if (mapSettings.boneChargeUsed) farmingDetails.boneChargeUsed = mapSettings.boneChargeUsed;
