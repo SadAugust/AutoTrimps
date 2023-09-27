@@ -326,6 +326,7 @@ function toggleCatchUpMode() {
 			if (loops % 10 === 0 || newZone) updateAutoMapsStatus();
 			if (game.global.universe === 1) checkStanceSetting();
 			if (game.global.universe === 2) equalityManagement();
+			guiLoop();
 		}
 
 		debug("TimeLapse Mode Enabled", "offline");
@@ -525,7 +526,7 @@ function mainLoopU2() {
 
 function guiLoop() {
 	getPageSetting('displayEnhancedGrid') &&
-		MODULES.fightinfo.Update(), 'undefined' !== typeof MODULES && 'undefined' !== typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay()
+		MODULES.fightinfo.Update(), 'undefined' !== typeof MODULES && 'undefined' !== typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay();
 }
 
 function mainCleanup() {
