@@ -1737,7 +1737,7 @@ function bionicRaiding() {
 
 	if (settingIndex >= 0) {
 		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
-		var rBionicRaidingSetting = baseSettings[settingIndex];
+		var setting = baseSettings[settingIndex];
 		var raidzonesBW = raidZones;
 
 		if (prestigesToGet(raidzonesBW, targetPrestige)[0] > 0) {
