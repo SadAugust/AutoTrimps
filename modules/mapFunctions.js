@@ -543,6 +543,7 @@ function voidMaps() {
 		farmingDetails.autoLevel = false;
 		farmingDetails.repeat = false;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 		//This is a check for the whichHitsSurvived function to see which type of hitsSurvived we should be looking at.
 		farmingDetails.voidHitsSurvived = true;
 		//Saving settings here so that we don't need to store them in global variables. They'll just be wiped after Void Maps has finished running.
@@ -1864,6 +1865,7 @@ function toxicity() {
 		farmingDetails.stackGoal = stackGoal;
 		farmingDetails.currentStacks = currentStacks;
 		farmingDetails.cellsToClear = cellsToClear;
+		farmingDetails.settingIndex = settingIndex;
 
 	}
 	return farmingDetails;
@@ -2655,7 +2657,6 @@ function glass() {
 	return farmingDetails;
 }
 
-
 function hypothermia() {
 
 	var shouldMap = false;
@@ -3265,6 +3266,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		farmingDetails.status = status;
 		farmingDetails.shouldHealthFarm = shouldHealthFarm;
 		farmingDetails.voidHitsSurvived = hdType === 'hitsSurvivedVoid';
+		farmingDetails.settingIndex = settingIndex;
 		//Retain info that we have used a bone charge if we are farming stats before we run void maps.
 		if (voidFarm) {
 			if (mapSettings.boneChargeUsed) farmingDetails.boneChargeUsed = mapSettings.boneChargeUsed;
@@ -4089,8 +4091,16 @@ function mapScumming(slowTarget) {
 	if (!atSettings.running) return;
 	console.time();
 	atSettings.running = false;
-	var slowCellTarget = !slowTarget ? 8 : slowTarget
-	if (slowCellTarget > 9) slowCellTarget = 10;
+
+	const map = getCurrentMapObject();
+	if (map.size > 36) return;
+
+	const maxSlowCells = Math.ceil(map.size / 2);
+
+	var slowCellTarget = !slowTarget ? maxSlowCells : slowTarget;
+	if (slowCellTarget >= maxSlowCells) slowCellTarget = maxSlowCells;
+	if (challengeActive('Desolation')) slowCellTarget = 9;
+	slowCellTarget = Math.ceil(slowCellTarget);
 	var firstCellSlow = false;
 	var slowCount = 0;
 	game.global.fighting = false;
@@ -4134,7 +4144,7 @@ function mapScumming(slowTarget) {
 	}
 	var msg = '';
 	if (slowCount < slowCellTarget || !firstCellSlow) msg = "Failed. ";
-	msg += i + " Rerolls. Current roll = " + slowCount + " odd slow enemies. First cell is " + (firstCellSlow ? "slow" : "fast") + ".";
+	msg += i + " Rerolls. Current roll = " + slowCount + " odd slow enemies.";
 	console.timeEnd();
 	atSettings.running = true;
 	debug(msg, "mapping_Details");

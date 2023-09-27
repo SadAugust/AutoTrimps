@@ -155,14 +155,13 @@ function makeAutomapStatusTooltip(mouseover) {
 	tooltipText += `<br>` +
 		`<b>Mapping info</b><br>`;
 	if (mapSettings.shouldRun) {
-		tooltipText +=
-			`Farming Setting: <b>${mapSettings.mapName}</b><br>` +
-			`Map level: <b>${mapSettings.mapLevel}</b><br>` +
-			`Auto level: <b>${mapSettings.autoLevel}</b><br>` +
-			`Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'
-			}</b > <br>` +
-			`Wants to run: ${mapSettings.shouldRun}<br>` +
-			`Repeat: ${mapSettings.repeat}<br>`;
+		tooltipText += `Farming Setting: <b>${mapSettings.mapName}</b><br>`
+		tooltipText += `Map level: <b>${mapSettings.mapLevel}</b><br>`
+		tooltipText += `Auto level: <b>${mapSettings.autoLevel}</b><br>`
+		if (mapSettings.settingIndex) tooltipText += `Priority (line run): <b>${mapSettings.settingIndex}</b><br>`
+		tooltipText += `Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'}</b > <br>`
+		tooltipText += `Wants to run: ${mapSettings.shouldRun}<br>`
+		tooltipText += `Repeat: ${mapSettings.repeat}<br>`;
 	}
 	else {
 		tooltipText += `Not running<br>`;
@@ -660,8 +659,8 @@ function autoMap() {
 		}
 	}
 
-	var canRunSlowScum = mapSettings.mapName === 'Map Bonus' || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Pandemonium Destacking' || mapSettings.mapName === 'Desolation Gear Scum';
+	var canRunSlowScum = mapSettings.mapName === 'Map Bonus' || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Mayhem Destacking' || mapSettings.mapName === 'Pandemonium Destacking' || mapSettings.mapName === 'Desolation Gear Scum';
 	if (game.global.mapsActive && game.global.universe === 2 && canRunSlowScum && !getCurrentMapObject().noRecycle && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
-		if (game.global.mapRunCounter !== 0 || !MODULES.maps.slowScumming) mapScumming(challengeActive('Desolation') ? 9 : 10);
+		if (game.global.mapRunCounter !== 0 || !MODULES.maps.slowScumming) mapScumming();
 	}
 }
