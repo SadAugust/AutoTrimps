@@ -215,6 +215,9 @@ function pushSpreadsheetData() {
 		goldenMaps: game.singleRunBonuses.goldMaps.owned,
 		heliumy: game.singleRunBonuses.heliumy.owned,
 		runningChallengeSquared: game.global.runningChallengeSquared,
+		mutatedSeeds: game.stats.mutatedSeeds.valueTotal,
+		mutatedSeedsLeftover: game.global.mutatedSeeds,
+		mutatedSeedsGained: game.stats.mutatedSeeds.value,
 		patch: game.global.stringVersion,
 		bones: game.global.b,
 	}
