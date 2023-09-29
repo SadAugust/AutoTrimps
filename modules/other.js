@@ -202,10 +202,16 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	if (minLevel < (-(game.global.world - 6))) minLevel = -(game.global.world - 6);
 	const runningQuest = challengeActive('Quest') && currQuest() === 8;
 	const runningUnlucky = challengeActive('Unlucky')
-	const ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
+	var ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
 	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
 	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' //Explosive
+
+	if (challengeActive('Insanity') && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
+		ourHealth /= game.challenges.Insanity.getHealthMult();
+		ourHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
+	}
+
 
 	var dmgType = runningUnlucky ? 'max' : 'avg';
 	var critType = 'maybe';

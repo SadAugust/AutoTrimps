@@ -893,6 +893,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				hdType: 'world',
 				hdType2: 'hitsSurvived',
 				goldenNumber: -2,
+				destack: false,
 			}
 			//Taking data from the current setting and overriding the default values
 			if (currSetting.length - 1 >= x) {
@@ -1000,7 +1001,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				//Insanity
 				if (insanity) {
 					vals.insanity = currSetting[x].insanity ? currSetting[x].insanity : 0;
-					vals.buildings = currSetting[x].buildings ? currSetting[x].buildings : false;
+					vals.destack = currSetting[x].destack ? currSetting[x].destack : false;
 				}
 				//Alchemy
 				if (alchemy) {
@@ -1254,8 +1255,12 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowMeltingPoint' style='text-align: center;'>" + buildNiceCheckbox("windowMeltingPoint" + x, null, vals.meltingPoint) + "</div>";
 
 			//Buy buildings checkbox
-			if (insanity || tributeFarm)
+			if (tributeFarm)
 				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
+
+			//Buy buildings checkbox
+			if (insanity)
+				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.destack) + "</div>";
 
 			//Prestige Goal dropdown
 			if (raiding || desolation)
@@ -1610,21 +1615,23 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			error += " Preset " + (x + 1) + " can\'t have a repeat value lower than 1 as you won\'t run any maps when this line runs.<br>";
 			errorMessage = true;
 		}
-		if (insanity && thisSetting.level === 0) {
-			error += " Preset " + (x + 1) + " can\'t have a map level of 0 as you won\'t gain any Insanity stacks running this map.<br>";
-			errorMessage = true;
-		}
-		if (insanity && thisSetting.level < 0 && thisSetting.destack === false) {
-			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
-			errorMessage = true;
-		}
-		if (insanity && thisSetting.level >= 0 && thisSetting.destack === true) {
-			error += " Preset " + (x + 1) + " can\'t have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
-			errorMessage = true;
-		}
-		if (insanity && thisSetting.insanity < 0) {
-			error += " Preset " + (x + 1) + " can\'t have a insanity value below 0.<br>";
-			errorMessage = true;
+		if (insanity) {
+			if (thisSetting.level === 0 && !thisSetting.autoLevel && thisSetting.destack === false) {
+				error += " Preset " + (x + 1) + " can\'t have a map level of 0 as you won\'t gain any Insanity stacks running this map.<br>";
+				errorMessage = true;
+			}
+			if (thisSetting.level < 0 && thisSetting.destack === false && !thisSetting.autoLevel) {
+				error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
+				errorMessage = true;
+			}
+			if (thisSetting.level >= 0 && thisSetting.destack === true && !thisSetting.autoLevel) {
+				error += " Preset " + (x + 1) + " can\'t have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
+				errorMessage = true;
+			}
+			if (thisSetting.insanity < 0) {
+				error += " Preset " + (x + 1) + " can\'t have a insanity value below 0.<br>";
+				errorMessage = true;
+			}
 		}
 		if (errorMessage === true)
 			continue;
@@ -1970,7 +1977,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 
 	if (toxicity) {
-		//Insanity Stacks
+		//Toxicity Stacks
 		mazHelp += "<li><b>Toxic Stacks</b> - How many Toxic Stacks you'd like to farm up to during this line.</li>";
 	}
 
@@ -2410,8 +2417,10 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowRaidingZone' + x).value = elem.value;
 				if (document.getElementById('windowBoneGather' + x) !== null)
 					document.getElementById('windowBoneGather' + x).value = 'food';
-				if (document.getElementById('windowBuildings' + x) !== null)
-					document.getElementById('windowBuildings' + x).value = true;
+				if (document.getElementById('windowBuildings' + x) !== null) {
+					if (titleText.includes('Insanity')) document.getElementById('windowBuildings' + x).value = false;
+					else document.getElementById('windowBuildings' + x).value = true;
+				}
 				if (document.getElementById('windowChallenge' + x) !== null)
 					document.getElementById('windowChallenge' + x).value = 'All';
 				if (document.getElementById('windowChallenge3' + x) !== null)
@@ -2551,10 +2560,15 @@ function removeRow(index, titleText) {
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}
+	if (insanity) {
+		checkBox = document.getElementById('windowBuildings' + index);
+		swapClass("icon-checkbox-checked", "icon-", checkBox);
+		checkBox.setAttribute('data-checked', false);
+	}
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) {
 		var checkBox = document.getElementById('windowAutoLevel' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
-		checkBox.setAttribute('data-checked', false);
+		checkBox.setAttribute('data-checked', true);
 	}
 	if (!raiding && !smithyFarm && !golden) document.getElementById('windowJobRatio' + index).value = '1,1,1,1';
 	if (raiding || desolation) document.getElementById('windowPrestigeGoal' + index).value = 'All';
