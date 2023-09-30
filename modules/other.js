@@ -195,13 +195,15 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	const cell = game.talents.mapLoot2.purchased ? 20 : 25;
 	if (!special) special = getAvailableSpecials('lmc');
 	const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : (hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2);
+	var enemyName = 'Snimp';
 
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
 	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - z + 6 : minLevel;
 	if (minLevel < (-(game.global.world - 6))) minLevel = -(game.global.world - 6);
 	const runningQuest = challengeActive('Quest') && currQuest() === 8;
-	const runningUnlucky = challengeActive('Unlucky')
+	const runningUnlucky = challengeActive('Unlucky');
+	const runningInsanity = challengeActive('Insanity');
 	var ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
 	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
 	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
@@ -212,7 +214,6 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		ourHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
 	}
 
-
 	var dmgType = runningUnlucky ? 'max' : 'avg';
 	var critType = 'maybe';
 	var critChance = getPlayerCritChance_AT('map');
@@ -222,6 +223,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	for (var y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
 		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
+		if (runningInsanity && mapLevel > 0) enemyName = 'Horrimp';
 		if (y === minLevel) {
 			return minLevel;
 		}
@@ -230,7 +232,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
 			continue;
 
-		if (game.global.universe === 2) universeSetting = equalityQuery('Snimp', z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
+		if (game.global.universe === 2) universeSetting = equalityQuery(enemyName, z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
 		var ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, y, 'force');
 		if (challengeActive('Duel')) ourDmg *= MODULES.heirlooms.gammaBurstPct;
 		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
@@ -241,7 +243,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 			if (game.global.universe === 1) ourDmg *= (0.005 * game.portal.Overkill.level);
 			if (game.global.universe === 2 && !u2Mutations.tree.MadMap.purchased) ourDmg *= (0.005 * game.portal.Overkill.level);
 		}
-		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, 'Snimp', false, false, universeSetting) * difficulty;
+		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, enemyName, false, false, universeSetting) * difficulty;
 
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 		if (dailyCrit && getPageSetting('IgnoreCrits') === 0) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
