@@ -499,7 +499,6 @@ function autoEquip() {
 
 	var keepBuying = false;
 
-
 	//Purchasing equipment upgrades/prestiges
 	//If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
 	if (usingRealTimeOffline) {

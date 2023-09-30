@@ -69,7 +69,7 @@ function autoPortal(specificPortalZone, skipDaily) {
 	const heHrSettings = ['Helium Per Hour', 'Radon Per Hour', '1'];
 	const challenge2Settings = ['Challenge 2', 'Challenge 3'];
 
-	const challengeSelected = heHrSettings.indexOf(portalType) !== -1 || portalType.includes('Custom') ? getPageSetting('heliumHourChallenge', universe) : portalType;
+	const challengeSelected = heHrSettings.indexOf(portalType) !== -1 || portalType.includes('Custom') ? getPageSetting('heliumHourChallenge', universe) : portalType.includes('One Off Challenges') ? getPageSetting('heliumOneOffChallenge', universe) : portalType;
 
 	if (runningDaily) portalType = getPageSetting('dailyPortal', universe).toString();
 	//Helium or Radon per hour portaling checks
@@ -167,7 +167,7 @@ function autoPortal(specificPortalZone, skipDaily) {
 			challenge = 0;
 	}
 	//Otherwise we portal into a challenge run
-	else if (portalType === 'Custom' || portalType === '2' || challenge2Settings.indexOf(portalType) !== -1) {
+	else if (portalType === 'Custom' || portalType === '2' || portalType === 'One Off Challenges' || challenge2Settings.indexOf(portalType) !== -1) {
 		if (game.global.world >= portalZone) {
 			if (challengeSelected !== 'None')
 				challenge = challengeSelected;

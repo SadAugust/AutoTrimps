@@ -305,12 +305,12 @@ function initializeAllSettings() {
 				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will use the <b>Portal Zone</b> input for when to portal.";
 				var description = "<p>Will automatically portal into different challenges depending on the way you setup the Auto Portal related settings.</p>";
 				description += "<p><b>" + resource() + " Challenges will appear here when they've been unlocked in the game.</b></p>";
-				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b> or <b>Custom</b> are selected.</p>";
+				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b>, <b>Custom</b> or <b>One Off Challenges</b> are selected.</p>";
 				description += "<p><b>Off</b><br>Disables this setting.</p>";
 				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resource().toLowerCase() + " per hour goes below your current runs best " + resource().toLowerCase() + " per hour.</p>";
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
-				description += "<p><b>Custom</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
+				description += "<p><b>Custom</b>/<b>One Off Challenges</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
 				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
 				description += "<p>" + specialChall + "</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to use the Scruffy 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
@@ -326,8 +326,23 @@ function initializeAllSettings() {
 				return description;
 			}, 'dropdown', 'None', function () { return heliumHourChallenges() }, 'Core', [1, 2],
 			function () {
+				var namesToCheck = ['Helium Per Hour', 'Radon Per Hour', 'Custom'];
 				return (
-					getPageSetting('autoPortal', currSettingUniverse).includes('Hour') || getPageSetting('autoPortal', currSettingUniverse) === 'Custom');
+					namesToCheck.indexOf(getPageSetting('autoPortal', currSettingUniverse)) !== -1);
+			});
+
+		createSetting('heliumOneOffChallenge',
+			function () { return ('Challenge') },
+			function () {
+				var description = "<p>Automatically portal into this challenge when using the <b>One Off Challenges</b> Auto Portal setting.</p>";
+				description += "<p><b>Challenges that are only worthwhile running once for perks/special unlocks will appear here when they've been unlocked in the game.</b></p>";
+				description += "<p><b>Recommended:</b> Last challenge available</p>";
+				return description;
+			}, 'dropdown', 'None', function () { return heliumOneOffChallenges() }, 'Core', [1, 2],
+			function () {
+				var namesToCheck = ['One Off Challenges'];
+				return (
+					namesToCheck.indexOf(getPageSetting('autoPortal', currSettingUniverse)) !== -1);
 			});
 		createSetting('heliumC2Challenge',
 			function () { return (cinf()) },
@@ -340,8 +355,9 @@ function initializeAllSettings() {
 				return description;
 			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, 'Core', [1, 2],
 			function () {
+				var namesToCheck = ['Helium Per Hour', 'Radon Per Hour', 'Custom'];
 				return (
-					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 2' || getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 3' || ((getPageSetting('autoPortal', currSettingUniverse).includes('Hour') || getPageSetting('autoPortal', currSettingUniverse) === 'Custom') && getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge')))
+					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 2' || getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 3' || (namesToCheck.indexOf(getPageSetting('autoPortal', currSettingUniverse)) !== -1 && getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge')))
 			});
 		createSetting('autoPortalZone',
 			function () { return ('Portal Zone') },
@@ -352,8 +368,9 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', 999, null, 'Core', [1, 2],
 			function () {
+				var namesToCheck = ['Challenge 2', 'Challenge 3', 'Custom', 'One Off Challenges'];
 				return (
-					getPageSetting('autoPortal', currSettingUniverse) === 'Custom' || getPageSetting('autoPortal', currSettingUniverse).includes('Challenge'));
+					namesToCheck.indexOf(getPageSetting('autoPortal', currSettingUniverse)) !== -1);
 			});
 
 		createSetting('heliumHrDontPortalBefore',
@@ -4582,6 +4599,7 @@ function autoPortalChallenges() {
 		if (hze >= 175) challenge.push("Hypothermia");
 		if (hze >= 200) challenge.push('Desolation');
 		challenge.push("Custom");
+		if (hze >= 15) challenge.push("One Off Challenges");
 		if (hze >= 50) challenge.push("Challenge 3");
 	}
 	else {
@@ -4601,6 +4619,7 @@ function autoPortalChallenges() {
 		if (hze >= 460) challenge.push('Frigid');
 		if (hze >= 600) challenge.push("Experience");
 		challenge.push("Custom");
+		if (getTotalPerkResource(true) >= 30) challenge.push("One Off Challenges");
 		if (hze >= 65) challenge.push("Challenge 2");
 	}
 	return challenge;
@@ -4683,6 +4702,47 @@ function heliumC2Challenges() {
 		if (game.global.totalSquaredReward >= 4500) challenge.push("Eradicated");
 		if (hze >= 460) challenge.push('Frigid');
 		if (hze >= 600) challenge.push("Experience");
+	}
+	return challenge;
+}
+//heliumC2Challenge && dailyC2Challenge
+function heliumOneOffChallenges() {
+	var hze;
+	var challenge = ["None"];
+	if (currSettingUniverse === 2) {
+		hze = game.stats.highestRadLevel.valueTotal();
+		if (hze >= 15) challenge.push("Unlucky");
+		if (hze >= 20) challenge.push("Downsize");
+		if (hze >= 25) challenge.push("Transmute");
+		if (hze >= 35) challenge.push("Unbalance");
+		if (hze >= 45) challenge.push("Duel");
+		if (hze >= 60) challenge.push("Trappapalooza");
+		if (hze >= 70) challenge.push("Wither");
+		if (hze >= 80) challenge.push("Revenge"); //???????????????????
+		if (hze >= 100) challenge.push("Mayhem");
+		if (hze >= 105) challenge.push("Storm");
+		if (hze >= 115) challenge.push("Berserk");
+		if (hze >= 120) challenge.push("Exterminate");
+		if (hze >= 150) challenge.push("Pandemonium");
+		if (hze >= 175) challenge.push("Glass");
+		if (hze >= 200) challenge.push('Desolation');
+		if (hze >= 201) challenge.push("Smithless");
+	}
+	else {
+		hze = game.stats.highestLevel.valueTotal();
+		if (getTotalPerkResource(true) >= 30) challenge.push("Discipline");
+		if (hze >= 25) challenge.push("Metal");
+		if (hze >= 35) challenge.push("Size");
+		if (hze >= 40) challenge.push("Scientist");
+		if (hze >= 45) challenge.push("Meditate");
+		if (hze >= 60) challenge.push("Trimp");
+		if (hze >= 70) challenge.push("Trapper");
+		if (hze >= 100) challenge.push("Frugal");
+		if (hze >= 115) challenge.push("Mapocalypse");
+		if (hze >= 120) challenge.push("Coordinate");
+		if (hze >= 130) challenge.push("Slow");
+		if (hze >= 165) challenge.push("Deastation");
+		if (hze >= 460) challenge.push('Frigid');
 	}
 	return challenge;
 }
