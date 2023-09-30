@@ -497,61 +497,74 @@ function autoEquip() {
 		while (equipLeft);
 	}
 
-	//Loop through actually getting equips
+	var keepBuying = false;
+
+
+	//Purchasing equipment upgrades/prestiges
+	//If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
+	if (usingRealTimeOffline) {
+		buyEquips();
+	} else {
+		do {
+			keepBuying = buyEquips();
+		} while (keepBuying);
+	}
+}
+
+function buyEquips() {
 	var maxCanAfford = 0;
 	var keepBuying = false;
-	var bestBuys;
-	do {
-		keepBuying = false;
-		bestBuys = mostEfficientEquipment();
-		//Set up for both Attack and Health depending on which is cheaper to purchase
-		var equipType = (bestBuys.attack.cost < bestBuys.health.cost) ? 'attack' : 'health';
-		var equipName = bestBuys[equipType].name;
-		var equipCost = bestBuys[equipType].cost;
-		var equipPrestige = bestBuys[equipType].prestige;
-		var equipCap = bestBuys[equipType].equipCap;
-		var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
-		for (var i = 0; i < 2; i++) {
-			if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1) && !game.equipment[equipName].locked) {
-				//Check any of the overrides
-				if (game.equipment[equipName].level < equipCap || equipPrestige || bestBuys[equipType].zoneGo) {
-					if (equipCost <= bestBuys[equipType].resourceSpendingPct * game.resources[resourceUsed].owned) {
-						//Purchases prestiges if they are the most efficient thing to go for
-						if (equipPrestige) {
-							buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
-							debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
+	var bestBuys = mostEfficientEquipment();
+	//Set up for both Attack and Health depending on which is cheaper to purchase
+	var equipType = (bestBuys.attack.cost < bestBuys.health.cost) ? 'attack' : 'health';
+	var equipName = bestBuys[equipType].name;
+	var equipCost = bestBuys[equipType].cost;
+	var equipPrestige = bestBuys[equipType].prestige;
+	var equipCap = bestBuys[equipType].equipCap;
+	var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
+
+	for (var i = 0; i < 2; i++) {
+		if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1) && !game.equipment[equipName].locked) {
+			//Check any of the overrides
+			if (game.equipment[equipName].level < equipCap || equipPrestige || bestBuys[equipType].zoneGo) {
+				if (equipCost <= bestBuys[equipType].resourceSpendingPct * game.resources[resourceUsed].owned) {
+					//Purchases prestiges if they are the most efficient thing to go for
+					if (equipPrestige) {
+						buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
+						debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
+						keepBuying = true;
+					}
+					//Otherwise purchase equip levels
+					else {
+						//Find out how many levels we can afford with 0.1% of resources
+						//If this value is below 1 we set it to 1 so that we always buy at least 1 level
+						maxCanAfford = Math.max(1, getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true));
+						//Checking to see if the max levels we can afford will take us over our equipcap threshold 
+						//If it will then set it to the difference between the equipcap and our current level
+						if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
+						//If the equip cap check didn't say we have 0 levels to buy then buy the max levels we can afford
+						if (maxCanAfford > 0) {
+							buyEquipment(equipName, true, true, maxCanAfford);
+							debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
 							keepBuying = true;
 						}
-						//Otherwise purchase equip levels
-						else {
-							//Find out how many levels we can afford with 0.1% of resources
-							//If this value is below 1 we set it to 1 so that we always buy at least 1 level
-							maxCanAfford = Math.max(1, getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true));
-							//Checking to see if the max levels we can afford will take us over our equipcap threshold 
-							//If it will then set it to the difference between the equipcap and our current level
-							if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
-							//If the equip cap check didn't say we have 0 levels to buy then buy the max levels we can afford
-							if (maxCanAfford > 0) {
-								buyEquipment(equipName, true, true, maxCanAfford);
-								debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
-								keepBuying = true;
-							}
-						}
-						hdStats.hdRatio = calcHDRatio(game.global.world, 'world');
 					}
+					hdStats.hdRatio = calcHDRatio(game.global.world, 'world');
 				}
 			}
-
-			//Iterating to second set of equips. Will go through the opposite equipType from the first loop.
-			equipType = (equipType !== 'attack') ? 'attack' : 'health';
-			equipName = bestBuys[equipType].name;
-			equipCost = bestBuys[equipType].cost;
-			equipPrestige = bestBuys[equipType].prestige;
-			equipCap = bestBuys[equipType].equipCap;
-			resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 		}
-	} while (keepBuying);
+
+		//Iterating to second set of equips. Will go through the opposite equipType from the first loop.
+		equipType = (equipType !== 'attack') ? 'attack' : 'health';
+		equipName = bestBuys[equipType].name;
+		equipCost = bestBuys[equipType].cost;
+		equipPrestige = bestBuys[equipType].prestige;
+		equipCap = bestBuys[equipType].equipCap;
+		resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
+	}
+	if (keepBuying) return true;
+
 }
 
 function displayMostEfficientEquipment() {

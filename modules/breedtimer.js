@@ -128,7 +128,7 @@ function geneAssist() {
 	if (challengeActive('Daily'))
 		runningHard = typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined';
 	else
-		runningHard = challengeActive('Electricity') || challengeActive('Toxicity') || challengeActive('Nom');
+		runningHard = challengeActive('Electricity') || challengeActive('Mapocalypse') || challengeActive('Toxicity') || challengeActive('Nom');
 
 
 	if (getPageSetting('geneAssistTimer') > 0)

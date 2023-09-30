@@ -77,13 +77,14 @@ function armydeath() {
 		ourHealth = game.global.soldierHealth;
 	"Ice" === getEmpowerment() && (enemyAttack *= game.empowerments.Ice.getCombatModifier());
 	var block = game.global.soldierCurrentBlock;
+	var electricityChallenge = challengeActive('Electricity') || challengeActive('Mapocalypse');
 	return (
 		3 === game.global.formation ? (block /= 4) : "0" !== game.global.formation && (block *= 2),
 		block > game.global.gridArray[cell].attack ? (enemyAttack *= getPierceAmt()) : (enemyAttack -= block * (1 - getPierceAmt())),
 		challengeActive('Daily') && void 0 !== game.global.dailyChallenge.crits && (enemyAttack *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
 		void 0 !== game.global.dailyChallenge.bogged && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
 		void 0 !== game.global.dailyChallenge.plague && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
-		challengeActive('Electricity') && (ourHealth -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
+		electricityChallenge && (ourHealth -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
 		"corruptCrit" === game.global.gridArray[cell].corrupted
 			? (enemyAttack *= 5)
 			: "healthyCrit" === game.global.gridArray[cell].corrupted

@@ -936,6 +936,7 @@ function calcEnemyAttack(type = 'world', zone = game.global.world, cell = 100, n
 			//u2 up to full difficulty, u1 at -1
 			voidPercent -= 1;
 		}
+		if (challengeActive('Mapocalypse')) voidPercent += 3;
 
 		attack *= voidPercent;
 	}
@@ -1168,6 +1169,7 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp", customHealth)
 			//u2 up to full difficulty, u1 at -1
 			voidPercent -= 1;
 		}
+		if (challengeActive('Mapocalypse')) voidPercent += 3;
 
 		health *= voidPercent;
 	}

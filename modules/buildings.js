@@ -533,40 +533,19 @@ function buyBuildings() {
 		}
 	}
 
+	//Purchasing Tributes
 	buyTributes();
 
-	//Housing 
-	var boughtHousing = false;
-	do {
-		boughtHousing = false;
-		var housing = mostEfficientHousing();
-		//If nothing is optimal the function will return null so we break out of the loop.
-		if (housing === null) break;
-		//Skips if the building is already in the purchase queue.
-		if (isBuildingInQueue(housing)) break;
-		//Skips if we can't afford the building.
-		if (!canAffordBuilding(housing)) break;
-
-		//Disable building purchases whilst Smithy Farming so that we aren't going back and forth between Smithy gem/wood/metal maps constantly while trying to farm resources for them.
-		if (mapSettings.mapName === 'Smithy Farm' && housing !== 'Gateway')
-			break;
-		//If Tribute Farming and the buyBuildings setting for that line is disabled then don't buy buildings.
-		//Will still purchase Gateways/Collectors as they don't cost food.
-		if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && (housing !== 'Gateway' || housing !== 'Collector'))
-			break;
-
-		var housingAmt = buildingSettings[housing].buyMax === 0 ? Infinity : buildingSettings[housing].buyMax;
-		var buildingspending = buildingSettings[housing].percent / 100;
-		//Identify the amount of this type of housing we can afford and stay within our housing cap.
-		var maxCanAfford = calculateMaxAfford_AT(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
-		if (housing === 'Collector' && maxCanAfford + game.buildings[housing].purchased >= 6000) maxCanAfford = 6000 - game.buildings[housing].purchased;
-		//Finally purchases the correct amount of housing.
-		//calculateMaxAfford_AT will return 0 if we can't afford any housing as we have set a custom ratio so check if higher than that.
-		if (maxCanAfford > 0) {
-			safeBuyBuilding(housing, maxCanAfford);
-			boughtHousing = true;
-		}
-	} while (boughtHousing)
+	//Purchasing housing buildings
+	//If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
+	if (usingRealTimeOffline) {
+		buyHousing(buildingSettings);
+	} else {
+		var boughtHousing = false;
+		do {
+			boughtHousing = buyHousing(buildingSettings);
+		} while (boughtHousing);
+	}
 }
 
 function buyTributes() {
@@ -599,5 +578,35 @@ function buyTributes() {
 	var tributeCanAfford = calculateMaxAfford_AT(game.buildings.Tribute, true, false, false, (tributeAmt - game.buildings.Tribute.purchased), tributePct);
 	if (tributeAmt > game.buildings.Tribute.purchased && tributeCanAfford > 0) {
 		safeBuyBuilding('Tribute', tributeCanAfford);
+	}
+}
+
+function buyHousing(buildingSettings) {
+	var housing = mostEfficientHousing();
+	//If nothing is optimal the function will return null so we break out of the loop.
+	if (housing === null) return;
+	//Skips if the building is already in the purchase queue.
+	if (isBuildingInQueue(housing)) return;
+	//Skips if we can't afford the building.
+	if (!canAffordBuilding(housing)) return;
+
+	//Disable building purchases whilst Smithy Farming so that we aren't going back and forth between Smithy gem/wood/metal maps constantly while trying to farm resources for them.
+	if (mapSettings.mapName === 'Smithy Farm' && housing !== 'Gateway')
+		return;
+	//If Tribute Farming and the buyBuildings setting for that line is disabled then don't buy buildings.
+	//Will still purchase Gateways/Collectors as they don't cost food.
+	if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && (housing !== 'Gateway' || housing !== 'Collector'))
+		return;
+
+	var housingAmt = buildingSettings[housing].buyMax === 0 ? Infinity : buildingSettings[housing].buyMax;
+	var buildingspending = buildingSettings[housing].percent / 100;
+	//Identify the amount of this type of housing we can afford and stay within our housing cap.
+	var maxCanAfford = calculateMaxAfford_AT(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
+	if (housing === 'Collector' && maxCanAfford + game.buildings[housing].purchased >= 6000) maxCanAfford = 6000 - game.buildings[housing].purchased;
+	//Finally purchases the correct amount of housing.
+	//calculateMaxAfford_AT will return 0 if we can't afford any housing as we have set a custom ratio so check if higher than that.
+	if (maxCanAfford > 0) {
+		safeBuyBuilding(housing, maxCanAfford);
+		return true;
 	}
 }

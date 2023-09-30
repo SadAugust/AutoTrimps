@@ -184,9 +184,9 @@ function initializeAllSettings() {
 			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
 			'boolean', false, null, 'Core', [1, 2]);
 		createSetting('portalVoidIncrement',
-			function () { return ('Liq for free Void') },
+			function () { return ('Void Map Liquification') },
 			function () {
-				var description = "<p>Delays auto portaling into your preferred run and repeatedly does U1 portals until your bone void counter is 1 drop away from a guaranteed extra void map.</p>";
+				var description = "<p>Delays auto portaling into your preferred run and repeatedly does portals in universe 1 until your bone void map counter is 1 drop away from a guaranteed extra void map.</p>";
 				if (currSettingUniverse !== 1) description += "<p><b>Recommended:</b> On</p>";
 				else description += "<p><b>Recommended:</b> Off</p>";
 				return description;
@@ -341,7 +341,7 @@ function initializeAllSettings() {
 			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, 'Core', [1, 2],
 			function () {
 				return (
-					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 2' || getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 3')
+					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 2' || getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 3' || ((getPageSetting('autoPortal', currSettingUniverse).includes('Hour') || getPageSetting('autoPortal', currSettingUniverse) === 'Custom') && getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge')))
 			});
 		createSetting('autoPortalZone',
 			function () { return ('Portal Zone') },
@@ -384,7 +384,7 @@ function initializeAllSettings() {
 		createSetting('heliumHrPortal',
 			function () {
 				var hze = game.stats.highestLevel.valueTotal();
-				var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
+				var portalOptions = ['Auto Portal Immediately', 'Portal After Voids'];
 				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal after voids (poison)');
 				return portalOptions;
 			},
@@ -2551,35 +2551,6 @@ function initializeAllSettings() {
 				return description;
 			}, 'multitoggle', 0, null, 'Daily', [1, 2]);
 
-		createSetting('dailyHeliumHourChallenge',
-			function () { return ('Challenge') },
-			function () {
-				var c2setting = currSettingUniverse === 2 ? "Challenge 3" : "Challenge 2";
-				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") are run with this.";
-
-				var description = "<p>Automatically portal into this challenge after dailies when using the <b>Daily Portal: " + resourceHour() + "/Hr</b> or <b>Daily Portal: Custom</b> Daily Auto Portal settings.</p>";
-				description += "<p><b>" + resource() + " challenges will appear here when they've been unlocked in the game.</b></p>";
-				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the Daily <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Daily Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
-				description += "<p>" + specialChall + "</p>";
-
-
-				description += "<p><b>Recommended:</b> Last challenge available</p>";
-				return description;
-			}, 'dropdown', 'None', function () { return heliumHourChallenges(true) }, 'Daily', [1, 2],
-			function () { return (getPageSetting('dailyPortal', currSettingUniverse) > 0) });
-
-		createSetting('dailyC2Challenge',
-			function () { return (cinf()) },
-			function () {
-				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will use the <b>Portal Zone</b> input for when to portal.";
-				var description = "<p>Automatically portal into this C" + cinf()[1] + " when using the <b>Challenge" + cinf()[1] + "</b> Daily Portal: Challenge setting.</p>";
-				description += "<p><b>C" + cinf()[1] + " challenges will appear here when they've been unlocked in the game.</b></p>";
-				description += "<p>When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
-				description += "<p>" + specialChall + "</p>";
-				return description;
-			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, "Daily", [1, 2],
-			function () { return (getPageSetting('dailyPortal', currSettingUniverse) > 0 && getPageSetting('dailyHeliumHourChallenge', currSettingUniverse).includes('Challenge ')) });
-
 		createSetting('dailyPortalZone',
 			function () { return ('Daily Portal Zone') },
 			function () {
@@ -2641,7 +2612,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1 && game.stats.highestLevel.valueTotal() >= 170) });
 
 		createSetting('dailyPortalFiller',
-			function () { return ('Filler run') },
+			function () { return ('Filler Run') },
 			function () {
 				var description = "<p>Will run a filler (non daily/" + cinf() + " run) challenge (selected in the Daily <b>Challenge</b> dropdown box) inbetween dailies.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
@@ -2651,7 +2622,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) > 0) });
 
 		createSetting('dailyPortalPreviousUniverse',
-			function () { return ('Daily prev universe') },
+			function () { return ('Daily Previous Universe') },
 			function () {
 				var description = "<p>Will start your daily in the previous universe. Takes you back to this universe after it has finished running.</p>";
 				description += "<p>Ensure you setup daily settings for the <b>previous universe</b>.<br>";
@@ -2662,7 +2633,7 @@ function initializeAllSettings() {
 			function () { return game.stats.highestRadLevel.valueTotal() >= 30 });
 
 		createSetting('dailyDontCap',
-			function () { return ('Use when capped') },
+			function () { return ('Use When Capped') },
 			function () {
 				var description = "<p>Will cause the script to only start dailies when you have 7 available to run.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
@@ -2671,7 +2642,7 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Daily', [1, 2]);
 
 		createSetting('dailySkip',
-			function () { return ('Skip this daily') },
+			function () { return ('Skip Daily') },
 			function () {
 				var description = "<p>Use this to make the script skip specific dailies when starting runs.</p>";
 				description += "<p>Must be input with same format as the game uses which is <b>'YEAR-MONTH-DAY'</b>.</p>"
@@ -3776,7 +3747,7 @@ function initializeAllSettings() {
 			'boolean', true, null, 'Display', [0]);
 
 		createSetting('displayAllSettings',
-			function () { return ('Display all settings') },
+			function () { return ('Display All settings') },
 			function () { return ('Will display all of the locked settings that have HZE or other requirements to be displayed.') },
 			'boolean', false, null, 'Display', [0]);
 
@@ -3791,7 +3762,7 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Display', [11]);
 
 		createSetting('sitInMaps',
-			function () { return ('Sit in maps') },
+			function () { return ('Sit In maps') },
 			function () {
 				var description = "<p>Will force your trimps to go sit in the map chamber when enabled. </p>";
 				description += "<p><b>The 'Sit In Zone' setting must be setup for this to work properly.</b></p>"
@@ -3848,11 +3819,11 @@ function initializeAllSettings() {
 			function () { return ('Export your AutoTrimps Settings as a output string text formatted in JSON.') },
 			'infoclick', 'ExportAutoTrimps', null, 'Import Export', [0]);
 		createSetting('DefaultAutoTrimps',
-			function () { return ('Reset to Default') },
+			function () { return ('Reset To Default') },
 			function () { return ('Reset everything to the way it was when you first installed the script.') },
 			'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [0]);
 		createSetting('DownloadDebug',
-			function () { return ('Download for Debug') },
+			function () { return ('Download For Debug') },
 			function () { return ('Will download both your save and the scripts settings so that they can be debugged easier.') },
 			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [0]);
 
@@ -3908,7 +3879,7 @@ function initializeAllSettings() {
 				return description;
 			}, 'action', "makeAutomapStatusTooltip(false);", null, 'Help', [0]);
 		createSetting('helpResourceHour',
-			function () { return (resource() + ' per hour') },
+			function () { return (resource() + ' Per Hour') },
 			function () {
 				var description = "<p>Will display the " + resource() + "/Hr tooltip message.</p>";
 				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + resourceHour() + "/hr status</b> setting in the <b>Display</b> tab is enabled.</p>";
@@ -3960,7 +3931,7 @@ function initializeAllSettings() {
 			}, 'action', 'game.permaBoneBonuses.boosts.charges=10; game.permaBoneBonuses.boosts.updateBtn();', null, 'Test', [0]);
 
 		createSetting('testMetalOneDay',
-			function () { return ('1 day of Metal') },
+			function () { return ('1 Day Of Metal') },
 			function () {
 				var description = "<p>Will tell you how much metal you'd gain from 1 day of metal farming.</p>";
 				description += "<p>If in a map if will use your map level otherwise it'll assume world level maps.</p>";
@@ -4009,7 +3980,7 @@ function initializeAllSettings() {
 				return description;
 			}, 'action', 'testMaxMapBonus();', null, 'Test', [0]);
 		createSetting('testMaxTenacity',
-			function () { return ('Tenacity Max Mult') },
+			function () { return ('Max Tenacity Mult') },
 			function () {
 				var description = "<p>Sets your current cell to the last world cell in maps.</p>";
 				description += "<p>Will also set the last enemy cells health to 0.</p>";
@@ -4017,7 +3988,7 @@ function initializeAllSettings() {
 			}, 'action', 'testMaxTenacity();', null, 'Test', [0]);
 
 		createSetting('testStatMult',
-			function () { return ('1e100x stats') },
+			function () { return ('1e100x Stats') },
 			function () {
 				var description = "<p>Multiplies soldier health & damage by 1e100.</p>";
 				description += "<p>Doesn't have any protecion to ensure you stay below infinity health.</p>";
@@ -4649,7 +4620,7 @@ function heliumHourChallenges(isDaily) {
 		if (hze >= 135) challenge.push("Nurture");
 		if (hze >= 155) challenge.push("Alchemy");
 		if (hze >= 175) challenge.push("Hypothermia");
-		if (isDaily && hze >= 50) challenge.push("Challenge 3");
+		if (hze >= 50) challenge.push("Challenge 3");
 	}
 	else {
 		hze = game.stats.highestLevel.valueTotal();
@@ -4665,7 +4636,7 @@ function heliumHourChallenges(isDaily) {
 		if (hze >= 190) challenge.push("Corrupted");
 		if (hze >= 215) challenge.push("Domination");
 		if (hze >= 600) challenge.push("Experience");
-		if (isDaily && hze >= 65) challenge.push("Challenge 2");
+		if (hze >= 65) challenge.push("Challenge 2");
 	}
 	return challenge;
 }

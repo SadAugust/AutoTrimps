@@ -2146,6 +2146,8 @@ function exportPerkString() {
 }
 
 function allocateSurky() {
+	//Can't respec perks when running Hypothermia so don't try as it causes errors
+	if (challengeActive('Hypothermia')) return;
 	tooltip('Import Perks', null, 'update');
 	document.getElementById('perkImportBox').value = exportPerkString();
 	importPerks();
