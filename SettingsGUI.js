@@ -2556,14 +2556,14 @@ function initializeAllSettings() {
 		createSetting('dailyPortal',
 			function () { return (['Daily Portal: Off', 'Daily Portal: ' + resourceHour() + '/Hr', 'Daily Portal: Custom']) },
 			function () {
-				var description = "<p>Will automatically portal into different challenges depending on the way you setup the Daily Auto Portal related settings.</p>";
+				var description = "<p>Will automatically portal into different challenges depending on the way you setup the Daily Auto Portal related settings. The challenge that it portals into can be setup through the <b>Auto Portal</b> settings in the <b>Core</b> tab.</p>";
 				description += "<p>Additional settings appear when <b>Daily Portal: " + resourceHour() + "/Hr</b> or <b>Daily Portal: Custom</b> are selected.</p>";
 				description += "<p><b>Daily Portal Off</b><br>Disables this setting. <b>Be warned it will never end your dailies!</b></p>";
 
 				description += "<p><b>Daily Portal: " + resourceHour() + "/Hr</b><br>Portals into new runs when your " + resourceHour().toLowerCase() + "/hr goes below your current runs best " + resourceHour().toLowerCase() + "/hr.</p>";
 
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resourceHour().toLowerCase() + "/hr to (best - buffer setting) " + resourceHour().toLowerCase() + "/hr.</p>";
-				description += "<p><b>Daily Portal: Custom</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Daily Portal Zone</b> setting.</p>";
+				description += "<p><b>Daily Portal: Custom</b><br>Will portal into your Auto Portal challenge at the zone specified in the <b>Daily Portal Zone</b> setting.</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Daily Portal: Custom with a specified endzone to make use of the Scruffy level 3 ability" : ("Daily Portal: " + resourceHour() + "/Hr")) + "</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Daily', [1, 2]);
@@ -2631,7 +2631,7 @@ function initializeAllSettings() {
 		createSetting('dailyPortalFiller',
 			function () { return ('Filler Run') },
 			function () {
-				var description = "<p>Will run a filler (non daily/" + cinf() + " run) challenge (selected in the Daily <b>Challenge</b> dropdown box) inbetween dailies.</p>";
+				var description = "<p>Will run a filler (non daily/" + cinf() + " run) challenge (selected through the <b>Auto Portal</b> settings in the <b>Core</b> tab) inbetween dailies.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			},
@@ -2652,11 +2652,21 @@ function initializeAllSettings() {
 		createSetting('dailyDontCap',
 			function () { return ('Use When Capped') },
 			function () {
-				var description = "<p>Will cause the script to only start dailies when you have 7 available to run.</p>";
+				var description = "<p>Will cause the script to only start dailies when you have the amount of dailies input in the <b>UWC: Amount</b> setting available to run.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			},
 			'boolean', false, null, 'Daily', [1, 2]);
+
+		createSetting('dailyDontCapAmt',
+			function () { return ('UWC: Amount') },
+			function () {
+				var description = "<p>Will cause the script to only start dailies when you have this amount available to run.</p>";
+				description += "<p><b>Recommended:</b> 7</p>";
+				return description;
+			},
+			'value', 7, null, 'Daily', [1, 2],
+			function () { return getPageSetting('dailyDontCap', currSettingUniverse) });
 
 		createSetting('dailySkip',
 			function () { return ('Skip Daily') },

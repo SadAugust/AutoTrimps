@@ -188,7 +188,7 @@ function delayStartAgain() {
 	universeSwapped();
 	//Loads my game settings
 	loadAugustSettings();
-
+	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 	debug("Finished loading script.");
 
 	//Loading jQuery select2 to style dropdown boxes more than basic html/css can.

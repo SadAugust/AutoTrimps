@@ -400,8 +400,17 @@ function doPortal(challenge, skipDaily) {
 				break;
 		}
 
-		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and don't have 7 dailies stored.
-		if (getPageSetting('dailyDontCap', portalUniverse) && game.global.recentDailies.indexOf(getDailyTimeString(-6)) !== -1 && game.global.recentDailies.length !== 0) lastUndone = 1;
+		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and have the last X dailies available.
+		if (getPageSetting('dailyDontCap', portalUniverse)) {
+			var dailiesCompleted = 0;
+
+			for (var x = -6; x <= 1 - getPageSetting('dailyDontCapAmt', portalUniverse); x++) {
+				if (game.global.recentDailies.indexOf(getDailyTimeString(x)) !== -1) {
+					dailiesCompleted++;
+				}
+			}
+			if (dailiesCompleted === (8 - getPageSetting('dailyDontCapAmt', portalUniverse))) lastUndone = 1;
+		}
 		if (!getPageSetting('dailyPortalStart', portalUniverse)) lastUndone = 1;
 
 		//Printing msg to state all dailies have been compelted
