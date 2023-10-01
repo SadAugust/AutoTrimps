@@ -7,6 +7,7 @@ function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || typeof amount === 'undefined' || Number.isNaN(amount)) {
 		return false;
 	}
+	if (game.jobs[jobTitle].locked) debug("Trying to buy locked job: " + jobTitle, "jobs", "*users");
 	var freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	var fireState = game.global.firing;
 	var result;
@@ -284,8 +285,9 @@ function buyJobs(forceRatios) {
 		desiredRatios = Array.from(workerRatio.split(','))
 
 		//Loop through and make sure we have a value for each worker type
-		for (var ratio in ratioWorkers) {
-			desiredRatios[ratio] = desiredRatios[ratio] !== undefined ? Number(desiredRatios[ratio]) : 0;
+		for (var worker of ratioWorkers) {
+			if (!game.jobs[ratio].locked) desiredRatios[ratio] = 0;
+			else desiredRatios[worker] = desiredRatios[worker] !== undefined ? Number(desiredRatios[worker]) : 0;
 		}
 	}
 
