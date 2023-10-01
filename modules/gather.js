@@ -122,7 +122,7 @@ function autoGather() {
 	}
 
 	//Highest Priority Research if we have less science than needed to buy Battle, Miner and Scientists
-	if (manualGather !== 3 && researchAvailable && (needBattle || needScientists || needMiner && game.resources.science.owned < 100)) {
+	if (manualGather !== 3 && researchAvailable && ((needBattle || needScientists || needMiner) && game.resources.science.owned < 100)) {
 		safeSetGather('science');
 		return;
 	}
@@ -162,7 +162,7 @@ function autoGather() {
 	}
 
 	//High Priority Research - When manual research still has more impact than scientists
-	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist')) {
+	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist') && game.resources.science.owned < 100) {
 		safeSetGather('science');
 		return;
 	}
