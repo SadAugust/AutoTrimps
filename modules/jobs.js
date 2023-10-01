@@ -286,7 +286,7 @@ function buyJobs(forceRatios) {
 
 		//Loop through and make sure we have a value for each worker type
 		for (var worker of ratioWorkers) {
-			if (!game.jobs[ratio].locked) desiredRatios[ratio] = 0;
+			if (!game.jobs[worker].locked) desiredRatios[worker] = 0;
 			else desiredRatios[worker] = desiredRatios[worker] !== undefined ? Number(desiredRatios[worker]) : 0;
 		}
 	}
