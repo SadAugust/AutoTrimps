@@ -7,7 +7,7 @@ function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || typeof amount === 'undefined' || Number.isNaN(amount)) {
 		return false;
 	}
-	if (game.jobs[jobTitle].locked) debug("Trying to buy locked job: " + jobTitle, "jobs", "*users");
+	if (game.jobs[jobTitle].locked) debug(`Trying to buy locked job: ${jobTitle}. Please report this.`);
 	var freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	var fireState = game.global.firing;
 	var result;
