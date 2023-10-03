@@ -322,7 +322,7 @@ function buyJobs(forceRatios) {
 	}
 
 	//Adding Miners to Lumberjacks ratio if in Transmute or Metal challenges
-	if (challengeActive('Metal') || challengeActive('Transmute')) {
+	if ((challengeActive('Metal') || challengeActive('Transmute')) && !game.jobs.Lumberjack.locked) {
 		desiredRatios[1] += desiredRatios[2];
 		desiredRatios[2] = 0;
 	}
