@@ -243,7 +243,6 @@ function buyJobs(forceRatios) {
 	}
 	freeWorkers += currentworkers.reduce((a, b) => { return a + b; });
 
-	var desiredRatios = [0, 0, 0, 0];
 	/* // Explicit firefox handling because Ff specifically reduces free workers to 0.
 	var reserveMod = 1 + (game.resources.trimps.owned / 1e14) + nextCoordCost;
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? 100 * reserveMod : 0; */
@@ -265,6 +264,7 @@ function buyJobs(forceRatios) {
 	else
 		scientistMod = MODULES["jobs"].scientist.ratio;
 
+	var desiredRatios = [0, 0, 0, 0];
 	//Looks first if we want to manually set ratios for workers through map settings or through overrides (bone shrine).
 	var workerRatio;
 	var overrideRatio = forceRatios || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio !== undefined);
@@ -283,11 +283,12 @@ function buyJobs(forceRatios) {
 		}
 
 		desiredRatios = Array.from(workerRatio.split(','))
-
-		//Loop through and make sure we have a value for each worker type
-		for (var worker of ratioWorkers) {
-			if (!game.jobs[worker].locked) desiredRatios[worker] = 0;
-			else desiredRatios[worker] = desiredRatios[worker] !== undefined ? Number(desiredRatios[worker]) : 0;
+		for (var [index, val] of ratioWorkers.entries()) {
+			// your code goes here    
+			if (game.jobs[val].locked)
+				desiredRatios[index] = 0;
+			else
+				desiredRatios[index] = desiredRatios[index] !== undefined ? Number(desiredRatios[index]) : 0;
 		}
 	}
 

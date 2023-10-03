@@ -1013,7 +1013,7 @@ function smithyFarm() {
 		var mapLevel = challengeActive('Quest') ? -1 : setting.level;
 		var mapSpecial = getAvailableSpecials('lmc', true);
 		var biome = getBiome();
-		var jobRatio = '0,0,0,0';
+		var jobRatio = '0,0,0';
 		var smithyGoal = challengeActive('Quest') && currQuest() === 10 ? getPageSetting('questSmithyMaps') : setting.repeat;
 
 		if (currQuest() === 10 || setting.autoLevel) {
@@ -1093,7 +1093,7 @@ function smithyFarm() {
 				shouldSmithyWoodFarm = true;
 				mapSpecial = getAvailableSpecials('lwc', true);
 				biome = getBiome(null, 'Forest');
-				jobRatio = '0,1,0,0';
+				jobRatio = '0,1,0';
 				resourceGoal = prettify(smithyWoodCost) + ' wood.';
 			}
 
@@ -1101,7 +1101,7 @@ function smithyFarm() {
 				shouldSmithyGemFarm = true;
 				mapSpecial = getAvailableSpecials('lsc', true);
 				biome = getBiome(null, 'Sea');
-				jobRatio = '1,0,0,0';
+				jobRatio = '1,0,0';
 				resourceGoal = prettify(smithyGemCost) + ' gems.';
 			}
 			shouldMap = true;
@@ -1935,7 +1935,7 @@ function wither() {
 	if (game.challenges.Wither.healImmunity > 0) return farmingDetails;
 
 	var mapAutoLevel = Infinity;
-	var jobRatio = '0,0,1,0';
+	var jobRatio = '0,0,1';
 	var mapSpecial = getAvailableSpecials('lmc', true);
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
@@ -2576,7 +2576,7 @@ function glass() {
 	if (!challengeActive('Glass') || !getPageSetting('glass')) return farmingDetails;
 
 	var mapLevel = 0;
-	var jobRatio = '0,0,1,0';
+	var jobRatio = '0,0,1';
 	var mapSpecial = getAvailableSpecials('lmc', true);
 	var glassStacks = getPageSetting('glassStacks');
 	if (glassStacks <= 0) glassStacks = Infinity;
@@ -3013,7 +3013,7 @@ function smithless() {
 
 	if (game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith) {
 
-		var jobRatio = '0,0,1,0';
+		var jobRatio = '0,0,1';
 		var mapSpecial = getAvailableSpecials('lmc', true);
 		var smithlessMax = game.global.mapBonus !== 10 ? 10 : null;
 		var smithlessMin = game.global.mapBonus !== 10 ? 0 : null;
