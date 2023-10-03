@@ -308,6 +308,8 @@ function buyJobs(forceRatios) {
 				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(worker))
 			}
 		}
+		else
+			desiredRatios[ratioWorkers.indexOf(worker)] = 0;
 	}
 
 	if (game.global.universe === 2 && workerRatio === undefined) {
