@@ -75,11 +75,12 @@ function potencyMod() {
 		potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
 	}
 	//Mutators
-	//Gene Attack
-	if (game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
-	//Gene Health
-	if (game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
-
+	if (game.global.universe === 2) {
+		//Gene Attack
+		if (u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
+		//Gene Health
+		if (u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
+	}
 	return potencyMod.div(10).add(1);
 }
 

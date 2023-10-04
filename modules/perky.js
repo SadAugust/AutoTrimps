@@ -30,7 +30,7 @@ function allocatePerky() {
 	}
 
 	tooltip('Import Perks', null, 'update');
-	document.getElementById('perkImportBox').value = display(optimize(parse_inputs(read_save())));
+	document.getElementById('perkImportBox').value = display(optimize(parse_inputs(populatePerkyData())));
 	importPerks();
 	cancelTooltip();
 }
@@ -39,15 +39,20 @@ function input(a) {
 	return parse_suffixes($$("#" + a).value);
 }
 
-function parse_suffixes(a) {
-	a = a.replace(/\*.*|[^--9+a-z]/gi, "");
-	for (var b = MODULES.perky.notations["3" === localStorage.notation ? 3 : 1], c = b.length; c > 0; --c) a = a.replace(new RegExp(b[c - 1] + "$", "i"), "E" + 3 * c);
-	return +a;
+function parse_suffixes(str) {
+	str = str.replace(/\*.*|[^--9+a-z]/gi, '');
+
+	let suffixes = MODULES.perky.notations[localStorage.notation === '3' ? 3 : 1];
+	for (let i = suffixes.length; i > 0; --i)
+		str = str.replace(new RegExp(suffixes[i - 1] + '$', 'i'), `E${3 * i}`);
+
+	return +str;
 }
 
-function mastery(a) {
-	if (!game.talents[a]) throw "unknown mastery: " + a;
-	return game.talents[a].purchased;
+function mastery(name) {
+	if (!game.talents[name])
+		throw "unknown mastery: " + name;
+	return game.talents[name].purchased;
 }
 
 var Perk = /** @class */ (function () {
@@ -308,7 +313,7 @@ function selectPerkyPreset() {
 	});
 }
 
-function read_save() {
+function populatePerkyData() {
 	var settings = JSON.parse(localStorage.getItem("perkyInputs"));
 	var zone = 0;
 

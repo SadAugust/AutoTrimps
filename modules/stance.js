@@ -64,7 +64,7 @@ function maxOneShotPower(planToMap, targetZone) {
 	if (game.global.universe === 1) {
 		//No overkill perk
 		if (game.portal.Overkill.level === 0) return 1;
-		//Mastery
+		//Mastery 
 		if (game.talents.overkill.purchased) power++;
 		//Fluffy
 		if (Fluffy.isRewardActive("overkiller")) power += Fluffy.isRewardActive("overkiller");

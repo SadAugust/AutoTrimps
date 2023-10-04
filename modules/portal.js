@@ -684,14 +684,6 @@ function presetSwapping(preset) {
 function downloadSave(portal) {
 	if (!getPageSetting('downloadSaves')) return
 	if (portal && !portalWindowOpen) return;
-	if (game.global.runningChallengeSquared) {
-		if (game.options.menu.disablePause.enabled && game.options.menu.pauseGame.enabled === 0) {
-			toggleSetting('pauseGame');
-			setTimeout(function pause() {
-				if (game.options.menu.pauseGame.enabled === 1) toggleSetting('pauseGame')
-			}, 100);
-		}
-	}
 	tooltip('Export', null, 'update');
 	document.getElementById("downloadLink").click();
 	cancelTooltip();
