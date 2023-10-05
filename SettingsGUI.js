@@ -6566,6 +6566,16 @@ function updateATVersion() {
 				autoTrimpSettings.heliumHrDontPortalBefore.valueU2 = tempSettings.heHrDontPortalBefore.valueU2;
 			}
 		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.4.20') {
+			if (typeof (tempSettings["buildingSettingsArray"]) !== 'undefined') {
+				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {}
+				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = false;
+				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.percent = 100;
+				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.buyMax = 0;
+
+			}
+		}
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

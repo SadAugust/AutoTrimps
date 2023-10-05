@@ -241,7 +241,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		if (maxOneShotPower(true) > 1) {
 			enemyHealth *= (maxOneShotPower(true));
 			if (game.global.universe === 1) ourDmg *= (0.005 * game.portal.Overkill.level);
-			if (game.global.universe === 2 && !u2Mutations.tree.MadMap.purchased) ourDmg *= (0.005 * game.portal.Overkill.level);
+			if (game.global.universe === 2 && !u2Mutations.tree.MadMap.purchased) ourDmg *= 0.005;
 		}
 		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, enemyName, false, false, universeSetting) * difficulty;
 
@@ -503,20 +503,20 @@ function equalityManagement() {
 	//Fast Enemy conditions
 	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !MODULES.fightinfo.exoticImps.includes(enemyName) : MODULES.fightinfo.fastImps.includes(enemyName));
 	if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
-	if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
-	if (type === 'map' && dailyExplosive && !MODULES.maps.slowScumming) fastEnemy = true;
-	if (type === 'world' && dailyExplosive) fastEnemy = true;
-	if (game.global.voidBuff === 'doubleAttack') fastEnemy = true;
-	if (runningArchaeology) fastEnemy = true;
-	if (noFrenzy && (game.portal.Frenzy.frenzyActive() || (enemyHealth / ourDmg) > 10)) fastEnemy = true;
-	if (runningTrappa) fastEnemy = true;
-	if (runningDuel && !mapping) fastEnemy = true;
-	if (runningQuest) fastEnemy = true;
-	if (runningExperienced) fastEnemy = false;
-	if (runningGlass) fastEnemy = true;
-	if (runningBerserk) fastEnemy = true;
-	if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
-	if (runningRevenge) fastEnemy = true;
+	else if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
+	else if (type === 'map' && dailyExplosive && !MODULES.maps.slowScumming) fastEnemy = true;
+	else if (type === 'world' && dailyExplosive) fastEnemy = true;
+	else if (game.global.voidBuff === 'doubleAttack') fastEnemy = true;
+	else if (runningArchaeology) fastEnemy = true;
+	else if (noFrenzy && (game.portal.Frenzy.frenzyActive() || (enemyHealth / ourDmg) > 10)) fastEnemy = true;
+	else if (runningTrappa) fastEnemy = true;
+	else if (runningDuel && !mapping) fastEnemy = true;
+	else if (runningQuest) fastEnemy = true;
+	else if (runningExperienced) fastEnemy = false;
+	else if (runningGlass) fastEnemy = true;
+	else if (runningBerserk) fastEnemy = true;
+	else if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
+	else if (runningRevenge) fastEnemy = true;
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
 	if (runningDuel && getPageSetting('duel') && getPageSetting('duelHealth') && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > ourHealth && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {

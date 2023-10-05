@@ -41,12 +41,12 @@ function autoPortal(specificPortalZone, skipDaily) {
 	//Setting up base portalZone for both regular runs & daily runs if in one
 	var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : Infinity;
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
-	if (!runningDaily && getPageSetting('autoPortal', currSettingUniverse).includes('Hour')) portalZone = Infinity;
+	if (!runningDaily && getPageSetting('autoPortal', universe).includes('Hour')) portalZone = Infinity;
 
 	//Same as above but overriding for dailies
 	if (runningDaily) {
 		portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
-		if (getPageSetting('dailyPortal', currSettingUniverse) === 1) portalZone = Infinity;
+		if (getPageSetting('dailyPortal', universe) === 1) portalZone = Infinity;
 	}
 
 	if (specificPortalZone) portalZone = specificPortalZone;

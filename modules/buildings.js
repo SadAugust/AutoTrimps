@@ -531,6 +531,17 @@ function buyBuildings() {
 		if (!game.buildings.Microchip.locked && canAffordBuilding('Microchip', null, null, false, false, 1)) {
 			safeBuyBuilding('Microchip', 1);
 		}
+
+		//Antenna
+		//Need to setup to pause portaling when one is building.
+		if (!game.buildings.Antenna.locked && buildingSettings.Antenna.enabled) {
+			var antennaAmt = buildingSettings.Antenna.buyMax === 0 ? Infinity : buildingSettings.Antenna.buyMax;
+			var antennaPct = buildingSettings.Antenna.percent / 100;
+			var antennaCanAfford = calculateMaxAfford_AT(game.buildings.Antenna, true, false, false, (antennaAmt - game.buildings.Antenna.purchased), antennaPct);
+			if (antennaAmt > game.buildings.Antenna.purchased && antennaCanAfford > 0) {
+				safeBuyBuilding('Antenna', antennaCanAfford);
+			}
+		}
 	}
 
 	//Purchasing Tributes

@@ -117,7 +117,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (building.blockU1 && game.global.universe === 1) continue;
 			if (item === 'Warpstation') continue;
 			if (item === 'Laboratory' && game.stats.highestRadLevel.valueTotal() < 130) continue;
-			if (!building.AP) continue;
+			if (item === 'Antenna' && game.buildings[item].locked) continue;
+			if (!building.AP && item !== 'Antenna') continue;
 			if (count !== 0 && count % 2 === 0) tooltipText += "</tr><tr>";
 			setting = settingGroup[item];
 			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
@@ -2230,6 +2231,12 @@ function saveATAutoStructureConfig() {
 		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory.enabled = true;
 		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory.percent = 100;
 		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory.buyMax = 0;
+	}
+	if (game.global.universe === 2 && game.buildings.Antenna.locked) {
+		autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {};
+		autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = true;
+		autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.percent = 100;
+		autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.buyMax = 0;
 	}
 
 	cancelTooltip();

@@ -82,12 +82,18 @@ function autoGather() {
 	var needMiner = firstFightOK && minersAvailable;
 	var breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	var hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
-
+	var building = game.global.buildingsQueue[0];
 	//Verifies if trapping is still relevant
 	//Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
 	//And there is enough breed time remaining to open an entire trap (prevents wasting time and traps during early zones)
 	var trappingIsRelevant = trapperTrapUntilFull || breedingPS().div(10).lt(calcTPS() * (game.portal.Bait.level + 1));
 	var trapWontBeWasted = trapperTrapUntilFull || (breedTimeRemaining().gte(1 / calcTPS()) || game.global.playerGathering === "trimps" && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1)));
+
+	//Build if we are building an Antenna. Priority over everything else.
+	if (game.global.buildingsQueue.length && building === 'Antenna.1') {
+		safeSetGather('buildings');
+		return;
+	}
 
 	//Highest Priority Food/Wood for traps when we either cant afford Traps or don't have them unlocked as the requirement for the unlock is the cost of the building
 	if (game.buildings.Trap.locked || !canAffordBuilding('Trap')) {
@@ -128,13 +134,13 @@ function autoGather() {
 	}
 
 	//Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
-	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier === 0 || (getPlayerModifier() > 100 && game.global.buildingsQueue[0] !== 'Trap.1'))) {
+	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier === 0 || (getPlayerModifier() > 100 && building !== 'Trap.1'))) {
 		safeSetGather('buildings');
 		return;
 	}
 
 	//Also Build if we have storage buildings on top of the queue
-	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && game.global.buildingsQueue[0] === 'Barn.1' || game.global.buildingsQueue[0] === 'Shed.1' || game.global.buildingsQueue[0] === 'Forge.1') {
+	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && building === 'Barn.1' || game.building === 'Shed.1' || building === 'Forge.1') {
 		safeSetGather('buildings');
 		return;
 	}

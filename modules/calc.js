@@ -1082,7 +1082,6 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 		//Corruption
 		var corruptionScale = calcCorruptionScale(game.global.world, 10);
 		if (mutations.Magma.active()) health *= corruptionScale / (type === 'void' ? 1 : 2);
-		else if (type === 'void' && mutations.Corruption.active()) health *= corruptionScale / 2;
 	}
 
 	//Use a custom value instead
