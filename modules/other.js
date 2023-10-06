@@ -270,8 +270,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits) {
 
 	if (Object.keys(game.global.gridArray).length === 0) return 0;
-	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1)
-		return 0;
+	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1) return 0;
 
 	if (!enemyName) enemyName = 'Snimp';
 	if (!zone) zone = game.global.world;
@@ -479,7 +478,7 @@ function equalityManagement() {
 	//Enemy stats
 	var enemyName = game.global[mapGrid][currentCell].name;
 	var enemyHealth = game.global[mapGrid][currentCell].health;
-	var enemyDmg = getCurrentEnemy().attack * totalDamageMod() * 1.5;
+	var enemyDmg = getCurrentEnemy().attack * enemyDamageModifiers() * 1.5;
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 	enemyDmg *= game.global.voidBuff === 'doubleAttack' ? 2 : (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 

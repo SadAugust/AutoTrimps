@@ -221,7 +221,8 @@ function getTrimpHealth(realHealth, mapType) {
 	//AutoBattle
 	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	//Shield (Heirloom)
-	health *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) / 100);
+	heirloomHealth = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck);
+	health *= heirloomHealth > 1 ? (1 + (heirloomHealth / 100)) : 1;
 	//Void Map Talents
 	health *= (game.talents.voidPower.purchased && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
 	//Championism
@@ -460,7 +461,8 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 	//AutoBattle
 	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	// Heirloom (Shield)
-	attack *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck) / 100);
+	heirloomAttack = calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck);
+	attack *= heirloomAttack > 1 ? (1 + (heirloomAttack / 100)) : 1;
 	// Frenzy perk
 	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (getPageSetting('frenzyCalc') || autoBattle.oneTimers.Mass_Hysteria.owned) ? 1 + (0.5 * game.portal.Frenzy[perkLevel]) : 1;
 	//Championism
@@ -712,7 +714,7 @@ function calcEnemyBaseAttack(type, zone, cell, name, query) {
 	if (!query) query = false;
 	var mapGrid = type === 'world' ? 'gridArray' : 'mapGridArray';
 
-	if (!query && game.global.universe === 2 && zone >= 200 && cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
+	if (!query && zone >= 200 && cell !== 100 && type === 'world' && game.global.universe === 2 && game.global[mapGrid][cell].u2Mutation) {
 		if (cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
 			attack = u2Mutations.getAttack(game.global[mapGrid][cell - 1]);
 			return attack;
@@ -904,6 +906,7 @@ function calcEnemyAttack(type = 'world', zone = game.global.world, cell = 100, n
 
 	//Challenges
 	if (challengeActive('Balance')) attack *= (type === 'world') ? 1.17 : 2.35;
+	else if (challengeActive('Meditate')) attack *= 1.5;
 	else if (challengeActive('Life')) attack *= 6;
 	else if (challengeActive('Nom')) {
 		if (type === 'world' && typeof getCurrentWorldCell() !== 'undefined' && typeof getCurrentWorldCell().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentWorldCell().nomStacks)
@@ -1111,7 +1114,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 		health *= game.challenges.Mayhem.getEnemyMult();
 	}
 	health *= challengeActive('Storm') && type === 'world' ? game.challenges.Storm.getHealthMult() : 1;
-	//health *= challengeActive('Berserk') ? 1.5 : 1;
+	//health *= challengeActive('Berserk') ? 1.5 : 1; ????? WHY IS THIS COMMENTED OUT! TEST THIS!¬
 	health *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
 	if (challengeActive('Nurture')) {
 		health *= type === 'world' ? 2 : 10;
@@ -1427,35 +1430,54 @@ function calcMutationHealth(targetZone) {
 	return health;
 }
 
-function totalDamageMod() {
-	var dmg = 1;
-	dmg *= challengeActive('Duel') && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
-	dmg *= challengeActive('Wither') && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
-	dmg *= challengeActive('Archaeology') ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
-	dmg *= challengeActive('Mayhem') && !game.global.mapsActive && !game.global.preMapsActive && game.global.lastClearedCell + 2 === 100 ? game.challenges.Mayhem.getBossMult() : 1;
-	dmg *= challengeActive('Mayhem') ? game.challenges.Mayhem.getEnemyMult() : 1;
-	dmg *= challengeActive('Storm') && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
-	dmg *= challengeActive('Nurture') ? 2 : 1;
-	dmg *= challengeActive('Nurture') && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	dmg *= challengeActive('Pandemonium') && !game.global.mapsActive && game.global.lastClearedCell + 2 === 100 ? game.challenges.Pandemonium.getBossMult() : 1;
-	dmg *= challengeActive('Pandemonium') && !(!game.global.mapsActive && game.global.lastClearedCell + 2 === 100) ? game.challenges.Pandemonium.getPandMult() : 1;
-	dmg *= challengeActive('Glass') ? game.challenges.Glass.attackMult() : 1;
-	if (challengeActive('Daily')) {
-		dmg *= typeof game.global.dailyChallenge.badStrength !== 'undefined' ? dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength) : 1;
-		dmg *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;
-		dmg *= typeof game.global.dailyChallenge.bloodthirst !== 'undefined' ? dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks) : 1;
-		dmg *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
+function enemyDamageModifiers() {
+	var attack = 1;
+
+	//All U1
+	attack *= challengeActive('Balance') ? 2.35 : 1;
+	attack *= challengeActive('Meditate') ? 1.5 : 1;
+	attack *= challengeActive('Life') ? 6 : 1;
+	attack *= challengeActive('Lead') ? 5 : 1;
+	attack *= challengeActive('Toxicity') ? 1 + 0.04 * game.challenges.Lead.stacks : 1;
+	attack *= challengeActive('Corrupted') ? 3 : 1;
+	//Obliterated and Eradicated
+	if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
+		var oblitMult = (challengeActive('Eradicated')) ? game.challenges.Eradicated.scaleModifier : 1e12;
+		var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
+		oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
+		attack *= oblitMult;
 	}
+
+	if (challengeActive('Daily')) {
+		attack *= typeof game.global.dailyChallenge.badStrength !== 'undefined' ? dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength) : 1;
+		attack *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;
+		attack *= typeof game.global.dailyChallenge.bloodthirst !== 'undefined' ? dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks) : 1;
+		attack *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
+	}
+
+	//All U2
+	attack *= challengeActive('Duel') && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
+	attack *= challengeActive('Wither') && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
+	attack *= challengeActive('Archaeology') ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
+	attack *= challengeActive('Mayhem') && !game.global.mapsActive && !game.global.preMapsActive && game.global.lastClearedCell + 2 === 100 ? game.challenges.Mayhem.getBossMult() : 1;
+	attack *= challengeActive('Mayhem') ? game.challenges.Mayhem.getEnemyMult() : 1;
+	attack *= challengeActive('Storm') && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
+	attack *= challengeActive('Nurture') ? 2 : 1;
+	attack *= challengeActive('Nurture') && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
+	attack *= challengeActive('Pandemonium') && !game.global.mapsActive && game.global.lastClearedCell + 2 === 100 ? game.challenges.Pandemonium.getBossMult() : 1;
+	attack *= challengeActive('Pandemonium') && !(!game.global.mapsActive && game.global.lastClearedCell + 2 === 100) ? game.challenges.Pandemonium.getPandMult() : 1;
+	attack *= challengeActive('Glass') ? game.challenges.Glass.attackMult() : 1;
+
 	if (game.global.world > 200 && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
 		if (!game.global.mapsActive) {
 			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
 				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
-				if (cell.u2Mutation.indexOf('RGE') !== -1 || (cell.cc && cell.cc[3] > 0)) dmg *= u2Mutations.types.Rage.enemyAttackMult();
+				if (cell.u2Mutation.indexOf('RGE') !== -1 || (cell.cc && cell.cc[3] > 0)) attack *= u2Mutations.types.Rage.enemyAttackMult();
 			}
-			dmg *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
+			attack *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 		}
 	}
-	return dmg;
+	return attack;
 }
 
 function getTotalHealthMod() {
