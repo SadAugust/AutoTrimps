@@ -265,6 +265,9 @@ function populateZFarmData() {
 			enemyAttack *= 1.5
 		}
 		//DUEL
+		else if (challengeActive('Duel')) {
+			death_stuff.enemy_cd = 10;
+		}
 		else if (challengeActive('Wither')) {
 			enemyHealth *= game.challenges.Wither.getTrimpHealthMult();
 			enemyAttack *= game.challenges.Wither.getEnemyAttackMult();
@@ -469,7 +472,7 @@ function simulate(g, zone) {
 	var mayhemPoison = 0;
 	var glassStacks = game.challenges.Glass.shards;
 	var trimpOverkill = 0;
-	var duelStacks = game.challenges.Duel.trimpStacks;
+	var duelPoints = game.challenges.Duel.trimpStacks;
 
 	var oneShot = true;
 
@@ -487,7 +490,9 @@ function simulate(g, zone) {
 	const runningDesolation = challengeActive('Desolation');
 
 	/* MUST SETUP LIST
-	DUEL (Points system. KMS)!¬
+	Duel - Check if health calcs automatically apply the x10 HP when below 20 stacks. If it does then divide health and shield by 10 if we go intho this with 20 or less stacks
+	All other challenges done
+	Now to set this up inside AT
 	*/
 
 	var equality = 1;
@@ -547,9 +552,16 @@ function simulate(g, zone) {
 		var damage = atk;
 		//Damage fluctations
 		damage *= (g.fluctuation * rng());
-		//Equality mult in u2
 		//Enemy crit chance
-		damage *= rng() < 0.25 ? g.enemy_cd : 1;
+		var enemyCC = 0.25;
+		if (runningDuel) {
+			enemyCC = duelPoints / 100;
+			if (duelPoints < 50) damage *= 3;
+		}
+		if (rng() < enemyCC) {
+			damage *= g.enemy_cd;
+			enemyCrit = true;
+		}
 		//Ice modifier
 		damage *= 0.366 ** (ice * g.ice);
 		damage *= Math.pow(0.9, equality);
@@ -565,6 +577,8 @@ function simulate(g, zone) {
 		var hp = imp_stats[1] * hp_array[cell];
 		var enemy_max_hp = hp;
 		var fast = g.fastEnemies || (imp_stats[2] && !g.nom) || runningDesolation;
+		var trimpCrit = false;
+		var enemyCrit = false;
 		trimpOverkill = 0;
 		//Add in the mult from glass stacks as they need to be adjusted every enemy
 		if (runningGlass)
@@ -578,8 +592,13 @@ function simulate(g, zone) {
 		plague_damage = 0;
 		energyShield = energyShieldMax;
 		var turns = 0;
+		if (runningDuel && duelPoints > 80) {
+			hp *= 10;
+		}
 		while (hp >= 1 && ticks < max_ticks) {
 			++turns;
+			trimpCrit = false
+			enemyCrit = false;
 			//Check for if we didn't kill the enemy last turn
 			if (hp !== enemy_max_hp) {
 				oneShot = false;
@@ -612,7 +631,13 @@ function simulate(g, zone) {
 			if (trimp_hp >= 1) {
 				ok_spread = g.ok_spread;
 				var damage = g.atk * (1 + g.range * rng());
-				damage *= rng() < g.critChance ? g.critDamage : 1;
+				if (runningDuel) {
+					g.critChance = 1 - (duelPoints / 100);
+					if (duelPoints > 50) damage *= 3;
+				} if (rng() < g.critChance) {
+					damage *= g.critDamage;
+					trimpCrit = true;
+				}
 				damage *= titimp > ticks ? 2 : 1;
 				damage *= 2 - 0.366 ** (ice * g.ice);
 				damage *= 1 - g.weakness * Math.min(debuff_stacks, 9);
@@ -651,6 +676,23 @@ function simulate(g, zone) {
 			trimp_hp -= g.bleed * g.max_hp;
 			trimp_hp -= debuff_stacks * g.plague * g.max_hp;
 
+			//+1 point for crits, +2 points for killing, +5 for oneshots
+			if (runningDuel) {
+				if (enemyCrit) duelPoints--;
+				if (trimpCrit) duelPoints++;
+				//Trimps
+				if (trimp_hp < 1) {
+					if (turns === 1) duelPoints -= 5;
+					else duelPoints -= 2;
+				} //Enemy
+				if (hp < 1) {
+					if (oneShot) duelPoints += 5;
+					else duelPoints += 2;
+				}
+				duelPoints = Math.min(duelPoints, 100);
+				duelPoints = Math.max(duelPoints, 0);
+			}
+
 			// Trimp death
 			if (trimp_hp < 1) {
 				ticks += Math.ceil(turns * g.speed);
@@ -659,10 +701,14 @@ function simulate(g, zone) {
 				trimpOverkill = Math.abs(trimp_hp);
 				trimp_hp = g.max_hp;
 				energyShield = energyShieldMax;
+				mayhemPoison = 0;
 
 				if (runningDevastation) reduceTrimpHealth(trimpOverkill * 7.5);
 				if (runningWither && hasWithered) trimp_hp *= 0.5;
-
+				if (runningDuel && 100 - duelPoints < 20) {
+					trimp_hp *= 10;
+					energyShield *= 10;
+				}
 				ticks += 1;
 				turns = 1;
 				debuff_stacks = 0;
