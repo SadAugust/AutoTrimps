@@ -816,8 +816,8 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	else if (challengeActive('Watch')) attack *= 1.25;
 	else if (challengeActive('Corrupted')) attack *= 3;
 	else if (challengeActive('Scientist') && getScientistLevel() === 5) attack *= 10;
-	else if (challengeActive('Experience')) attack *= game.challenges.Experience.getEnemyMult();
 	else if (challengeActive('Frigid')) attack *= game.challenges.Frigid.getEnemyMult();
+	else if (challengeActive('Experience')) attack *= game.challenges.Experience.getEnemyMult();
 
 	//u2 challenges
 	else if (challengeActive('Unbalance')) attack *= 1.5;

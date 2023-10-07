@@ -225,6 +225,12 @@ function populateZFarmData() {
 			enemyHealth *= 2;
 			enemyAttack *= 5;
 			death_stuff.bleed = 0.05;
+		} else if (challengeActive('Watch')) {
+			enemyAttack *= 1.25;
+		} else if (challengeActive('Lead')) {
+			enemyHealth *= 1 + 0.04 * game.challenges.Lead.stacks;
+			enemyAttack *= 1 + 0.04 * game.challenges.Lead.stacks;
+			death_stuff.bleed = Math.min(game.challenges.Lead.stacks, 200) * 0.0003;
 		} else if (challengeActive('Corrupted')) {
 			// Corruption scaling doesn’t apply to normal maps below Corrupted’s endpoint
 			enemyAttack *= 3;
@@ -239,6 +245,12 @@ function populateZFarmData() {
 		}
 		//TO ADD - No crit + %hp means death
 		else if (challengeActive('Frigid')) {
+			enemyHealth *= game.challenges.Frigid.getEnemyMult();
+			enemyAttack *= game.challenges.Frigid.getEnemyMult();
+		}
+		else if (challengeActive('Experience')) {
+			enemyHealth *= game.challenges.Experience.getEnemyMult();
+			enemyAttack *= game.challenges.Experience.getEnemyMult();
 		}
 	}
 
@@ -293,7 +305,7 @@ function populateZFarmData() {
 			enemyHealth *= game.challenges.Hypothermia.getEnemyMult();
 		} else if (challengeActive('Glass')) {
 			enemyHealth *= game.challenges.Glass.healthMult();
-			enemyAttack *= game.challenges.Glass.attackMult();
+			//Attack mult factored in later in the simulation function
 		}
 	}
 
@@ -454,24 +466,25 @@ function simulate(g, zone) {
 	var energyShieldMax = g.trimpShield;
 	var energyShield = energyShieldMax;
 	var poisonDamage = 0;
+	var glassStacks = game.challenges.Glass.shards;
 
 	const angelic = mastery('angelic');
+	const runningDevastation = challengeActive('Devastation');
+	const runningDomination = challengeActive('Domination');
 	const runningFrigid = challengeActive('Frigid');
 	const runningWither = challengeActive('Wither');
 	var hasWithered = false;
 	const runningMayhem = challengeActive('Mayhem');
 	const runningBerserk = challengeActive('Berserk');
+	const runningGlass = challengeActive('Glass');
+	const runningDesolation = challengeActive('Desolation');
 
-	//MUST SETUP LIST
-	//UNLUCKY (damage ranges)!¬
-	//DUEL (Points system. KMS)!¬
-	//REVENGE (Overkill on trimp death)!¬
-	//MAYHEM (Poison)!¬
-	//INSANITY (Not sure if required)!¬
-	//BERSERK (1% heal per kill, failure if you die)!¬
-	//PANDEMONIUM (Shred in maps impacting loot gain)!¬
-	//GLASS (Glass stacks every hit, removal on kills)!¬
-	//DESOLATION (Is anything required for maps?)!¬
+	/* MUST SETUP LIST
+	UNLUCKY (damage ranges)!¬
+	DUEL (Points system. KMS)!¬
+	DEVASTATION + REVENGE (Overkill on trimp death)!¬
+	MAYHEM (Poison)!¬
+	*/
 
 	var equality = 1;
 	if (game.global.universe === 2) {
@@ -488,14 +501,23 @@ function simulate(g, zone) {
 		var hp = calcEnemyBaseHealth('map', zone, (cell + 1), 'Chimp');
 		if (g.magma)
 			hp *= calcCorruptionScale(g.zone, 10) / 2;
-		hp_array.push(g.difficulty * g.challenge_health * hp);
 
 		var atk = calcEnemyBaseAttack('map', zone, (cell + 1), 'Chimp');
 		if (g.magma)
 			atk *= calcCorruptionScale(zone, 3) / 2;
 
-		atk_array.push(g.difficulty * g.challenge_attack * atk);
 		cell++;
+		if (runningDomination) {
+			if (cell === g.size) {
+				atk *= 2.5;
+				hp *= 7.5;
+			} else {
+				atk *= 0.1;
+				hp *= 0.1;
+			}
+		}
+		atk_array.push(g.difficulty * g.challenge_attack * atk);
+		hp_array.push(g.difficulty * g.challenge_health * hp);
 	}
 
 	function reduceTrimpHealth(amt, directHit) {
@@ -539,15 +561,14 @@ function simulate(g, zone) {
 		var atk = imp_stats[0] * atk_array[cell];
 		var hp = imp_stats[1] * hp_array[cell];
 		var enemy_max_hp = hp;
-		var fast = g.fastEnemies || (imp_stats[2] && !g.nom);
+		var fast = g.fastEnemies || (imp_stats[2] && !g.nom) || runningDesolation;
+		//Add in the mult from glass stacks as they need to be adjusted every enemy
+		if (runningGlass)
+			atk *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 
 		if (ok_spread !== 0) {
 			hp -= ok_damage;
 			--ok_spread;
-		}
-		if (angelic && !runningBerserk) {
-			trimp_hp += (g.trimpHealth / 2);
-			if (trimp_hp > g.trimpHealth) trimp_hp = g.trimpHealth;
 		}
 		hp = Math.min(hp, Math.max(enemy_max_hp * 0.05, hp - plague_damage));
 		plague_damage = 0;
@@ -555,15 +576,21 @@ function simulate(g, zone) {
 		var turns = 0;
 		while (hp >= 1 && ticks < max_ticks) {
 			++turns;
-
-			if (runningWither && hp !== enemy_max_hp) {
-				hp = Math.max(enemy_max_hp, hp + (enemy_max_hp * .25));
-				if (hp === enemy_max_hp) {
-					hasWithered = true;
-					trimp_hp = 0;
+			//Check for if we didn't kill the enemy last turn
+			if (hp !== enemy_max_hp) {
+				if (runningWither) {
+					hp = Math.max(enemy_max_hp, hp + (enemy_max_hp * .25));
+					if (hp === enemy_max_hp) {
+						hasWithered = true;
+						trimp_hp = 0;
+					}
+				}
+				if (runningGlass) {
+					atk /= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
+					glassStacks++;
+					atk *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 				}
 			}
-
 			if (angelic && !runningBerserk) {
 				trimp_hp += (g.trimpHealth / 2);
 				if (trimp_hp > g.trimpHealth) trimp_hp = g.trimpHealth;
@@ -622,8 +649,10 @@ function simulate(g, zone) {
 				energyShield = energyShieldMax;
 
 
-				if (g.nom)
+				if (g.nom) {
+					atk *= 1.25;
 					hp = Math.min(hp + 0.05 * enemy_max_hp, enemy_max_hp);
+				}
 			}
 		}
 		if (g.explosion && (g.explosion <= 15 || g.block >= g.max_hp))
@@ -640,6 +669,14 @@ function simulate(g, zone) {
 		wind = Math.ceil(g.transfer * wind) + 1 + Math.ceil((turns - 1) * g.plaguebringer);
 		ice = Math.ceil(g.transfer * ice) + 1 + Math.ceil((turns - 1) * g.plaguebringer);
 
+		if (angelic && !runningBerserk) { //Angelic talent heal
+			trimp_hp += (g.trimpHealth / 2);
+			if (trimp_hp > g.trimpHealth) trimp_hp = g.trimpHealth;
+		}
+		if (runningBerserk) { //1% heal onkill
+			trimp_hp += (g.trimpHealth / 100);
+			if (trimp_hp > g.trimpHealth) trimp_hp = g.trimpHealth;
+		}
 		++cell;
 		if (cell == g.size) {
 			cell = 0;
