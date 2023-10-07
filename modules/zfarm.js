@@ -303,6 +303,7 @@ function populateZFarmData() {
 			enemyHealth *= alchObj.getEnemyStats(false, false) + 1;
 		} else if (challengeActive('Hypothermia')) {
 			enemyHealth *= game.challenges.Hypothermia.getEnemyMult();
+			enemyAttack *= game.challenges.Hypothermia.getEnemyMult();
 		} else if (challengeActive('Glass')) {
 			enemyHealth *= game.challenges.Glass.healthMult();
 			//Attack mult factored in later in the simulation function
@@ -465,13 +466,19 @@ function simulate(g, zone) {
 	var gammaStacks = 0;
 	var energyShieldMax = g.trimpShield;
 	var energyShield = energyShieldMax;
-	var poisonDamage = 0;
+	var mayhemPoison = 0;
 	var glassStacks = game.challenges.Glass.shards;
+	var trimpOverkill = 0;
+	var duelStacks = game.challenges.Duel.trimpStacks;
+
+	var oneShot = true;
 
 	const angelic = mastery('angelic');
-	const runningDevastation = challengeActive('Devastation');
+	const runningDevastation = challengeActive('Devastation') || challengeActive('Revenge');
 	const runningDomination = challengeActive('Domination');
 	const runningFrigid = challengeActive('Frigid');
+
+	const runningDuel = challengeActive('Duel');
 	const runningWither = challengeActive('Wither');
 	var hasWithered = false;
 	const runningMayhem = challengeActive('Mayhem');
@@ -480,10 +487,7 @@ function simulate(g, zone) {
 	const runningDesolation = challengeActive('Desolation');
 
 	/* MUST SETUP LIST
-	UNLUCKY (damage ranges)!¬
 	DUEL (Points system. KMS)!¬
-	DEVASTATION + REVENGE (Overkill on trimp death)!¬
-	MAYHEM (Poison)!¬
 	*/
 
 	var equality = 1;
@@ -521,7 +525,7 @@ function simulate(g, zone) {
 	}
 
 	function reduceTrimpHealth(amt, directHit) {
-		if (runningMayhem) poisonDamage += (amt * .2);
+		if (runningMayhem) mayhemPoison += (amt * .2);
 		if (!directHit && game.global.universe === 2) {
 			var initialShield = energyShield;
 			energyShield -= amt;
@@ -550,7 +554,6 @@ function simulate(g, zone) {
 		damage *= 0.366 ** (ice * g.ice);
 		damage *= Math.pow(0.9, equality);
 		reduceTrimpHealth(damage);
-		//trimp_hp -= Math.max(0, damage - g.block);
 		++debuff_stacks;
 	}
 
@@ -562,6 +565,7 @@ function simulate(g, zone) {
 		var hp = imp_stats[1] * hp_array[cell];
 		var enemy_max_hp = hp;
 		var fast = g.fastEnemies || (imp_stats[2] && !g.nom) || runningDesolation;
+		trimpOverkill = 0;
 		//Add in the mult from glass stacks as they need to be adjusted every enemy
 		if (runningGlass)
 			atk *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
@@ -578,6 +582,7 @@ function simulate(g, zone) {
 			++turns;
 			//Check for if we didn't kill the enemy last turn
 			if (hp !== enemy_max_hp) {
+				oneShot = false;
 				if (runningWither) {
 					hp = Math.max(enemy_max_hp, hp + (enemy_max_hp * .25));
 					if (hp === enemy_max_hp) {
@@ -591,6 +596,10 @@ function simulate(g, zone) {
 					atk *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 				}
 			}
+			else {
+				oneShot = true;
+			}
+
 			if (angelic && !runningBerserk) {
 				trimp_hp += (g.trimpHealth / 2);
 				if (trimp_hp > g.trimpHealth) trimp_hp = g.trimpHealth;
@@ -619,15 +628,22 @@ function simulate(g, zone) {
 			if (!fast && hp >= 1 && trimp_hp >= 1)
 				enemy_hit(atk);
 
-			// Gamma Burst
-			if (trimp_hp >= 1 && hp >= 1 && g.gammaMult > 1) {
-				gammaStacks++;
-				if (gammaStacks >= g.gammaCharges) {
-					gammaStacks = 0;
-					burstDamage = damage * g.gammaMult;
-					hp -= burstDamage;
-					if (g.plaguebringer && hp >= 1)
-						plaguebringer += (burstDamage * g.plaguebringer);
+			// Mayhem poison
+			if (runningMayhem && mayhemPoison >= 1)
+				trimp_hp -= mayhemPoison;
+
+			if (hp >= 1) {
+				if (runningGlass) glassStacks++;
+				// Gamma Burst
+				if (trimp_hp >= 1 && g.gammaMult > 1) {
+					gammaStacks++;
+					if (gammaStacks >= g.gammaCharges) {
+						gammaStacks = 0;
+						burstDamage = damage * g.gammaMult;
+						hp -= burstDamage;
+						if (g.plaguebringer && hp >= 1)
+							plague_damage += (burstDamage * g.plaguebringer);
+					}
 				}
 			}
 
@@ -640,14 +656,17 @@ function simulate(g, zone) {
 				ticks += Math.ceil(turns * g.speed);
 				ticks = Math.max(ticks, last_group_sent + g.breed_timer);
 				last_group_sent = ticks;
+				trimpOverkill = Math.abs(trimp_hp);
 				trimp_hp = g.max_hp;
+				energyShield = energyShieldMax;
+
+				if (runningDevastation) reduceTrimpHealth(trimpOverkill * 7.5);
 				if (runningWither && hasWithered) trimp_hp *= 0.5;
+
 				ticks += 1;
 				turns = 1;
 				debuff_stacks = 0;
 				gammaStacks = 0;
-				energyShield = energyShieldMax;
-
 
 				if (g.nom) {
 					atk *= 1.25;
@@ -669,6 +688,7 @@ function simulate(g, zone) {
 		wind = Math.ceil(g.transfer * wind) + 1 + Math.ceil((turns - 1) * g.plaguebringer);
 		ice = Math.ceil(g.transfer * ice) + 1 + Math.ceil((turns - 1) * g.plaguebringer);
 
+		if (runningGlass && zone >= g.zone) glassStacks -= 2;
 		if (angelic && !runningBerserk) { //Angelic talent heal
 			trimp_hp += (g.trimpHealth / 2);
 			if (trimp_hp > g.trimpHealth) trimp_hp = g.trimpHealth;
