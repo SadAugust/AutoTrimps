@@ -760,6 +760,7 @@ function simulate(g, zone) {
 
 // Return info about the best zone for each stance
 function get_best(results) {
+	if (!game.global.mapsUnlocked) return { overall: { mapLevel: 0 } };
 
 	let [stats, stances] = results;
 	stats.slice();
