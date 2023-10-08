@@ -3515,12 +3515,16 @@ function prestigeRaidingSliders(mapNumber, raidzones, special) {
 		document.getElementById("advPerfectCheckbox").dataset.checked = false;
 		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 
+		//Reduce map loo
 		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			lootAdvMapsRange.value -= 1;
 		}
-		while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+		//Reduce map difficulty
+		while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			difficultyAdvMapsRange.value -= 1;
-			if (updateMapCost(true) <= game.resources.fragments.owned) break;
+		}
+		//Reduce map size
+		while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			sizeAdvMapsRange.value -= 1;
 		}
 		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
