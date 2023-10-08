@@ -312,7 +312,7 @@ function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size
 	for (var mapping in game.global.mapsOwnedArray) {
 		if (!game.global.mapsOwnedArray[mapping].noRecycle && (
 			(game.global.world + pluslevel) === game.global.mapsOwnedArray[mapping].level) &&
-			(game.global.mapsOwnedArray[mapping].bonus === special || game.global.mapsOwnedArray[mapping].bonus === undefined && special === '0') &&
+			(game.global.mapsOwnedArray[mapping].bonus === special || special === '0') &&
 			game.global.mapsOwnedArray[mapping].location === biome) {
 
 			return (game.global.mapsOwnedArray[mapping].id);

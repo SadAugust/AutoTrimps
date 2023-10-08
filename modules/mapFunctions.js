@@ -3587,24 +3587,22 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
 			document.getElementById("advPerfectCheckbox").dataset.checked = false;
 			updateMapCost();
 		}
-
-		while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+		//Reduce map difficulty
+		while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			difficultyAdvMapsRange.value -= 1;
-			if (updateMapCost(true) <= game.resources.fragments.owned) break;
+		}
+		//Reduce map loot 
+		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+			lootAdvMapsRange.value -= 1;
+		}
+		//Reduce map size
+		while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			sizeAdvMapsRange.value -= 1;
 		}
 		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 
 		if (updateMapCost(true) > game.resources.fragments.owned)
 			document.getElementById("advSpecialSelect").value = 0;
-
-		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-		//Reduce map loot if vital
-		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-			lootAdvMapsRange.value -= 1;
-			if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		}
 	}
 
 	return updateMapCost(true);
