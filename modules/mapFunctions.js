@@ -3396,6 +3396,19 @@ function farmingDecision() {
 
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
 
+	if (farmingDetails.mapLevel) {
+		if (getPageSetting('autoLevelTest')) farmingDetails.mapLevel = hdStats.autoLevelNew;
+		if (map.name === 'Map Bonus' && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = 0;
+		else if (map.name === 'HD Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = 0;
+		else if (challengeActive('Wither') && map.name !== 'Map Bonus' && farmingDetails.mapLevel >= 0) farmingDetails.mapLevel = -1;
+		else if (map.name === 'Quest' && farmingDetails.mapLevel < 0 && ((currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10)) farmingDetails.mapLevel = 0;
+		else if (map.name === 'Mayhem Destacking' && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = (getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0);
+		else if (map.name === 'Pandemonium Destacking' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
+		else if (map.name === 'Alchemy Farm' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
+		else if (map.name === 'Glass' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
+		else if (map.name === 'Desolation Destacking' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
+		else if (map.name === 'Smithless Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = 0;
+	}
 	mapSettings = farmingDetails;
 }
 

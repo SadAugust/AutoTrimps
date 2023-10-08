@@ -1383,6 +1383,14 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
+		createSetting('autoLevelTest',
+			function () { return ('Test New Auto Level') },
+			function () {
+				var description = "<p>Will switch the auto level system that is being used to the new one based off of and adapted from the zfarm code.</p>";
+				description += "<p><b>Recommended:</b> On when active and can test</p>";
+				return description;
+			}, 'boolean', false, null, 'Maps', [1, 2]);
+
 		createSetting('uniqueMapEnoughHealth',
 			function () { return ('Unique Map Health Check') },
 			function () {

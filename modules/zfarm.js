@@ -107,9 +107,22 @@ function populateZFarmData() {
 	const biome = getBiome();
 	const perfectMaps = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
 
+	//Stance & Equality (might need to put this later)
+	var stances = 'X';
+	if (game.global.universe === 1) {
+		if (game.upgrades.Dominance.done) stances = 'D';
+		if (hze >= 181 && game.upgrades.Formations.done) stances += 'S';
+		//Both D and S stance (the only ones we'd use in maps for farming) have a 50% health penalty. 
+		if (stances !== 'X') {
+			trimpHealth /= 2;
+			trimpBlock /= 2;
+		}
+	}
+	var universeSetting = game.global.universe === 1 ? stances : 0;
+
 	//Trimps Stats
 	var dmgType = runningUnlucky ? 'max' : 'min';
-	var trimpAttack = calcOurDmg(dmgType, 'X', false, 'map', 'never', 0, 'never');
+	var trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, 'never');
 	var trimpHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : 'X'), 'map');
 	var trimpBlock = game.global.universe === 1 ? calcOurBlock('X', 'map') : 0;
 	var trimpShield = game.global.universe === 2 ? calcOurHealth(true, 'map') : 0;
@@ -136,18 +149,6 @@ function populateZFarmData() {
 	//Enemy Stats
 	var enemyHealth = 1;
 	var enemyAttack = 1;
-
-	//Stance & Equality (might need to put this later)
-	var stances = 'X';
-	if (game.global.universe === 1) {
-		if (game.upgrades.Dominance.done) stances = 'D';
-		if (hze >= 181 && game.upgrades.Formations.done) stances += 'S';
-		//Both D and S stance (the only ones we'd use in maps for farming) have a 50% health penalty. 
-		if (stances !== 'X') {
-			trimpHealth /= 2;
-			trimpBlock /= 2;
-		}
-	}
 
 	//Overkill stuff - Accounts for Mad Mapper in U2.
 	var overkillRange = Math.max(0, maxOneShotPower(true) - 1);
@@ -390,7 +391,6 @@ function stats() {
 	var saveData = populateZFarmData();
 
 	var stats = [];
-	console.time();
 	extra = 0;
 	if (game.global.universe === 2 ? saveData.hze >= 50 : saveData.hze >= 210)
 		while (extra < 10 && saveData.fragments > perfectMapCost_Actual(extra, getAvailableSpecials('lmc'), saveData.biome)) {
@@ -414,14 +414,13 @@ function stats() {
 		stats.unshift(tmp);
 	}
 
-	console.timeEnd();
-
 	return [stats, saveData.stances];
 }
 
 // Return efficiency stats for the given zone
 function zone_stats(zone, stances, g) {
 	var result = {
+		mapLevel: zone - g.zone,
 		zone: 'z' + zone,
 		value: 0,
 		stance: '',
@@ -432,6 +431,8 @@ function zone_stats(zone, stances, g) {
 	if (mastery('bionic2') && zone > g.zone)
 		g.atk *= 1.5;
 
+	stanceCheck = stances;
+	if (!stances) stances = 'X';
 	for (var stance of stances) {
 		g.atk = g.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
 		var simulationResults = simulate(g, zone, stance);
@@ -753,29 +754,36 @@ function simulate(g, zone) {
 	}
 	return {
 		speed: loot * 10 / max_ticks,
-		equality: equality
+		equality: equality,
 	}
 }
 
 // Return info about the best zone for each stance
 function get_best(results) {
 
-	let [stats, stances, equality] = results;
+	let [stats, stances] = results;
 	stats.slice();
-	var best = { overall: "", stance: "", second: "", second_stance: "", ratio: 0 };
-
+	var best = { overall: "", second: "", ratio: 0 };
+	best.stances = {};
+	if (!stances) stances = 'X';
 	/* jshint loopfunc:true */
 	for (var stance of stances) {
 		stats.sort((a, b) => b[stance].value - a[stance].value);
-		best[stance] = stats[0].zone;
+		best.stances[stance] = stats[0].zone;
 	}
 
 	stats.sort((a, b) => b.value - a.value);
-	best.overall = stats[0].zone;
-	best.stance = stats[0].stance;
+	best.overall = {};
+	best.overall.mapLevel = stats[0].mapLevel;
+	best.overall.zone = stats[0].zone;
+	if (game.global.universe === 1) best.overall.stance = stats[0].stance;
+	if (game.global.universe === 2) best.overall.equality = stats[0].equality;
 	if (stats[1]) {
-		best.second = stats[1].zone;
-		best.second_stance = stats[1].stance;
+		best.second = {};
+		best.second.mapLevel = stats[1].mapLevel;
+		best.second.zone = stats[1].zone;
+		if (game.global.universe === 1) best.second.stance = stats[1].stance;
+		if (game.global.universe === 2) best.second.equality = stats[1].equality;
 		best.ratio = stats[0].value / stats[1].value;
 	}
 

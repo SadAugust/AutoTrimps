@@ -20,6 +20,7 @@ class HDStats {
 		this.hitsSurvived = undefined;
 		this.hitsSurvivedVoid = undefined;
 		this.autoLevel = undefined;
+		this.autoLevelNew = undefined;
 
 		this.hze = undefined;
 		this.hypPct = undefined;
@@ -48,6 +49,7 @@ class HDStats {
 		this.hitsSurvived = calcHitsSurvived(z, 'world');
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void');
 		this.autoLevel = autoMapLevel();
+		this.autoLevelNew = get_best(stats()).overall.mapLevel;
 
 		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
