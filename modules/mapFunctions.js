@@ -2994,7 +2994,7 @@ function desolationGearScum() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
-		if (setting.priority) farmingDetails.priority = setting.priority;
+		if (setting && setting.priority) farmingDetails.priority = setting.priority;
 	}
 	return farmingDetails;
 }
