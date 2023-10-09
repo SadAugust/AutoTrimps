@@ -2676,10 +2676,6 @@ function updateWindowPreset(index, varPrefix) {
 		}
 	}
 
-	if (currSettingUniverse === 1 && golden) {
-		var runType = document.getElementById('windowRunType' + index).value;
-	}
-
 	if (currSettingUniverse === 1 && index !== '') {
 		//Changing rows to use the colour of the Nature type that the world input will be run on.
 		var world = document.getElementById('windowWorld' + index);
