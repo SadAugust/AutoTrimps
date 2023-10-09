@@ -309,7 +309,7 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 	}
 
 	//Crit Daily and Crushed
-	if ((getPageSetting('IgnoreCrits') === 1 && type !== 'void') || getPageSetting('IgnoreCrits') === 0) {
+	if (game.global.universe === 1 && ((getPageSetting('IgnoreCrits') === 1 && type !== 'void') || getPageSetting('IgnoreCrits') === 0)) {
 		const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== "undefined";
 		const crushed = challengeActive('Crushed');
 		if (dailyCrit) {
@@ -320,7 +320,7 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 	}
 
 	//Enemy Damage
-	const worldDamage = calcEnemyAttack(type, targetZone, undefined, undefined, undefined, customAttack, equality);
+	const worldDamage = calcEnemyAttackCore(type, targetZone, undefined, undefined, undefined, customAttack, equality);
 
 	//Pierce & Voids
 	var pierce = (game.global.universe === 1 && game.global.brokenPlanet && type === 'world') ? getPierceAmt() : 0;
@@ -336,6 +336,7 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 		debug(`Target Zone: ${targetZone}`);
 		debug(`Damage Mult: ${damageMult}`);
 		debug(`World Damage: ${worldDamage}`);
+		debug(`Equality: ${equality}`);
 		debug(`Block: ${block}`);
 		debug(`Pierce: ${pierce}`);
 		debug(`Health: ${health}`);
@@ -1231,7 +1232,6 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 }
 
 function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
-	//if (type === 'world') checkOutputs = true;
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = 'world'
 	if (!maxTenacity) maxTenacity = false;

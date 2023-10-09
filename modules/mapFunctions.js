@@ -247,11 +247,13 @@ function shouldRunUniqueMap(map) {
 		} else if (map.name === 'Dimension of Rage') {
 			// unlock the portal
 			if (document.getElementById("portalBtn").style.display === "none" && game.upgrades.Rage.done === 1 && uniqueMapSetting.Dimension_of_Rage.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Rage.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Rage.cell) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 		} else if (map.name === 'Prismatic Palace') {
 			//100% prismatic shield bonus
 			if (game.mapUnlocks.Prismalicious.canRunOnce && uniqueMapSetting.Prismatic_Palace.enabled && game.global.world >= uniqueMapSetting.Prismatic_Palace.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Prismatic_Palace.cell) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
 		} else if (map.name === 'Atlantrimp') {
