@@ -240,7 +240,7 @@ function shouldRunUniqueMap(map) {
 			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
 				return true;
 			}
-			if (game.upgrades.Bounty.locked && uniqueMapSetting.Big_Wall.enabled && game.global.world >= uniqueMapSetting.Big_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Big_Wall.cell || liquified)) {
+			if (!game.upgrades.Bounty.allowed && uniqueMapSetting.Big_Wall.enabled && game.global.world >= uniqueMapSetting.Big_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Big_Wall.cell || liquified)) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
 			}
