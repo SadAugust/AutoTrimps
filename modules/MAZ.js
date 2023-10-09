@@ -2287,7 +2287,7 @@ function saveATUniqueMapsConfig(setting) {
 
 		//Error checking
 		if (name.includes('Big_Wall') && zone < 7) {
-			error += " The Block can\'t be run below zone 7.<br>";
+			error += " Big Wall can\'t be run below zone 7.<br>";
 			errorMessage = true;
 		}
 

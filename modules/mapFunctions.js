@@ -240,6 +240,10 @@ function shouldRunUniqueMap(map) {
 			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
 				return true;
 			}
+			if (game.upgrades.Bounty.locked && uniqueMapSetting.Big_Wall.enabled && game.global.world >= uniqueMapSetting.Big_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Big_Wall.cell || liquified)) {
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
+				return true;
+			}
 		} else if (map.name === 'Dimension of Rage') {
 			// unlock the portal
 			if (document.getElementById("portalBtn").style.display === "none" && game.upgrades.Rage.done === 1 && uniqueMapSetting.Dimension_of_Rage.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Rage.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Rage.cell) {
