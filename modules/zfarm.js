@@ -503,8 +503,7 @@ function simulate(g, zone) {
 		equality = equalityQuery(enemyName, zone, g.size, 'map', g.difficulty);
 	}
 	var biomeImps = g.biome;
-	const max_ticks = 86400; // One day
-	//const max_ticks = 3600; // One hour
+	const max_ticks = atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400; // Six hours simulation inside of TW and a day
 	var hp_array = []
 	var atk_array = [];
 	for (var i = 0; i < g.size; ++i) {

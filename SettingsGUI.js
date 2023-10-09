@@ -4736,7 +4736,7 @@ function heliumOneOffChallenges() {
 		if (hze >= 45) challenge.push("Duel");
 		if (hze >= 60) challenge.push("Trappapalooza");
 		if (hze >= 70) challenge.push("Wither");
-		if (hze >= 80) challenge.push("Revenge"); //???????????????????
+		if (hze >= 80) challenge.push("Revenge");
 		if (hze >= 100) challenge.push("Mayhem");
 		if (hze >= 105) challenge.push("Storm");
 		if (hze >= 115) challenge.push("Berserk");

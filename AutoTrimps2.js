@@ -15,7 +15,7 @@ var atSettings = {
 	runInterval: 100,
 	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false, },
 	loops: { atTimeLapseFastLoop: false, mainLoopInterval: null, guiLoopInterval: null, },
-	intervals: { counter: 0, oneSecond: false, twoSecond: false, sixSecond: false, tenSecond: false, tenMinute: false, },
+	intervals: { counter: 0, oneSecond: false, twoSecond: false, threeSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false, },
 };
 
 //Searches html for where the AT script is being loaded from
@@ -264,7 +264,7 @@ function toggleCatchUpMode() {
 
 			if (atSettings.running === false) return;
 			if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
-
+			updateInterval();
 			var loopFrequency = getPageSetting('timeWarpFrequency');
 			var newZone = atSettings.portal.lastrunworld !== game.global.world;
 			if (newZone) mainCleanup();
@@ -351,7 +351,21 @@ function callFunction(id) {
 
 //Offline mode check
 function shouldRunInTimeWarp() {
-	return !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
+	return !atSettings.loops.atTimeLapseFastLoop || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
+}
+
+function updateInterval() {
+	atSettings.intervals.counter++;
+	//Interval code
+	atSettings.intervals.oneSecond = atSettings.intervals.counter % (1000 / atSettings.runInterval) === 0;
+	atSettings.intervals.twoSecond = atSettings.intervals.counter % (2000 / atSettings.runInterval) === 0;
+	atSettings.intervals.threeSecond = atSettings.intervals.counter % (3000 / atSettings.runInterval) === 0;
+	atSettings.intervals.sixSecond = atSettings.intervals.counter % (6000 / atSettings.runInterval) === 0;
+	atSettings.intervals.tenSecond = atSettings.intervals.counter % (10000 / atSettings.runInterval) === 0;
+	atSettings.intervals.thirtySecond = atSettings.intervals.counter % (30000 / atSettings.runInterval) === 0;
+	//Need a ten minute interval for version checking.
+	atSettings.intervals.oneMinute = atSettings.intervals.counter % (60000 / atSettings.runInterval) === 0;
+	atSettings.intervals.tenMinute = atSettings.intervals.counter % (60000) === 0;
 }
 
 function mainLoop() {
@@ -382,16 +396,7 @@ function mainLoop() {
 	if (atSettings.running === false) return;
 	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 	atSettings.running = true;
-
-	atSettings.intervals.counter++;
-	//Interval code
-	atSettings.intervals.oneSecond = atSettings.intervals.counter % (1000 / atSettings.runInterval) === 0;
-	atSettings.intervals.twoSecond = atSettings.intervals.counter % (2000 / atSettings.runInterval) === 0;
-	atSettings.intervals.sixSecond = atSettings.intervals.counter % (6000 / atSettings.runInterval) === 0;
-	atSettings.intervals.tenSecond = atSettings.intervals.counter % (10000 / atSettings.runInterval) === 0;
-	//Need a one hour interval for version checking.
-	atSettings.intervals.tenMinute = atSettings.intervals.counter % (60000) === 0;
-
+	if (shouldRunInTimeWarp()) updateInterval();
 	if (atSettings.intervals.tenMinute)
 		atVersionChecker();
 

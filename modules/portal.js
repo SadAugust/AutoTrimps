@@ -661,7 +661,7 @@ function resetVarsZone(loadingSave) {
 	//Challenge Repeat
 	MODULES.mapFunctions.challengeContinueRunning = false;
 
-	hdStats = new HDStats();
+	hdStats = new HDStats(true);
 	farmingDecision();
 }
 
