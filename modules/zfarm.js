@@ -764,6 +764,8 @@ function get_best(results) {
 
 	let [stats, stances] = results;
 	stats.slice();
+
+	if (stats.length === 0) return { overall: { mapLevel: 0 } };
 	var best = { overall: "", second: "", ratio: 0 };
 	best.stances = {};
 	if (!stances) stances = 'X';

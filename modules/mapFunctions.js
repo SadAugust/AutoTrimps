@@ -3515,7 +3515,7 @@ function prestigeRaidingSliders(mapNumber, raidzones, special) {
 		document.getElementById("advPerfectCheckbox").dataset.checked = false;
 		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 
-		//Reduce map loo
+		//Reduce map loot
 		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			lootAdvMapsRange.value -= 1;
 		}
