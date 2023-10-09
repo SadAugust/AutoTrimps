@@ -4759,7 +4759,8 @@ function heliumOneOffChallenges() {
 		if (hze >= 115) challenge.push("Mapocalypse");
 		if (hze >= 120) challenge.push("Coordinate");
 		if (hze >= 130) challenge.push("Slow");
-		if (hze >= 165) challenge.push("Deastation");
+		if (hze >= 150) challenge.push("Mapology");
+		if (hze >= 165) challenge.push("Devastation");
 		if (hze >= 460) challenge.push('Frigid');
 	}
 	return challenge;
