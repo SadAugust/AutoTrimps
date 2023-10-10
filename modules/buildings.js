@@ -448,7 +448,7 @@ function buyBuildings() {
 		}
 
 		//Gyms
-		if (!game.buildings.Gym.locked && buildingSettings.Gym.enabled) {
+		if (!game.buildings.Gym.locked && buildingSettings.Gym && buildingSettings.Gym.enabled) {
 			var gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
 			var gymPct = buildingSettings.Gym.percent / 100;
 			var gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, (gymAmt - game.buildings.Gym.purchased), gymPct);
@@ -459,7 +459,7 @@ function buyBuildings() {
 		}
 
 		//Wormhole (costs Helium)
-		if (!game.buildings.Wormhole.locked && buildingSettings.Wormhole.enabled) {
+		if (!game.buildings.Wormhole.locked && buildingSettings.Wormhole && buildingSettings.Wormhole.enabled) {
 			var wormholeAmt = buildingSettings.Wormhole.buyMax === 0 ? Infinity : buildingSettings.Wormhole.buyMax;
 			var wormholePct = buildingSettings.Wormhole.percent / 100;
 			var wormholeCanAfford = calculateMaxAfford_AT(game.buildings.Wormhole, true, false, false, (wormholeAmt - game.buildings.Wormhole.purchased), wormholePct);
@@ -517,7 +517,7 @@ function buyBuildings() {
 		}
 
 		//Laboratory Purchasing (Nurture)
-		if (challengeActive('Nurture') && !game.buildings.Laboratory.locked && buildingSettings.Laboratory.enabled) {
+		if (challengeActive('Nurture') && !game.buildings.Laboratory.locked && buildingSettings.Laboratory && buildingSettings.Laboratory.enabled) {
 			var labAmt = buildingSettings.Laboratory.buyMax === 0 ? Infinity : buildingSettings.Laboratory.buyMax;
 			var labPct = buildingSettings.Laboratory.percent / 100;
 			var labCanAfford = calculateMaxAfford_AT(game.buildings.Laboratory, true, false, false, (labAmt - game.buildings.Laboratory.purchased), labPct);
@@ -534,7 +534,7 @@ function buyBuildings() {
 
 		//Antenna
 		//Need to setup to pause portaling when one is building.
-		if (!game.buildings.Antenna.locked && buildingSettings.Antenna.enabled) {
+		if (!game.buildings.Antenna.locked && buildingSettings.Antenna && buildingSettings.Antenna.enabled) {
 			var antennaAmt = buildingSettings.Antenna.buyMax === 0 ? Infinity : buildingSettings.Antenna.buyMax;
 			var antennaPct = buildingSettings.Antenna.percent / 100;
 			var antennaCanAfford = calculateMaxAfford_AT(game.buildings.Antenna, true, false, false, (antennaAmt - game.buildings.Antenna.purchased), antennaPct);
