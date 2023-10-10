@@ -16,6 +16,7 @@ var atSettings = {
 	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false, },
 	loops: { atTimeLapseFastLoop: false, mainLoopInterval: null, guiLoopInterval: null, },
 	intervals: { counter: 0, oneSecond: false, twoSecond: false, threeSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false, },
+	autoSave: game.options.menu.autoSave.enabled,
 };
 
 //Searches html for where the AT script is being loaded from
@@ -71,6 +72,7 @@ var challengeCurrentZone = -1;
 
 var mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity, }
 var hdStats = { isC3: false, isDaily: false, isFiller: false }
+var trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false, }
 
 //Loading modules from basepath that are required for the script to run.
 function ATscriptLoad(prefix, fileName) {
@@ -258,7 +260,9 @@ function toggleCatchUpMode() {
 			clearInterval(atSettings.loops.guiLoopInterval);
 			atSettings.loops.guiLoopInterval = null;
 		}
+		atSettings.autoSave = game.options.menu.autoSave.enabled;
 		atSettings.loops.atTimeLapseFastLoop = true;
+		if (game.options.menu.autoSave.enabled) game.options.menu.autoSave.enabled = 0;
 		gameLoop = function (makeUp, now) {
 			originalGameLoop(makeUp, now);
 

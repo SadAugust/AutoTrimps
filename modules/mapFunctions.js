@@ -3589,10 +3589,6 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
 
 	//If we don't want to only check perfect maps then gradually reduce map sliders if we don't have enough fragments
 	if (!onlyPerfect) {
-		if (updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
-			document.getElementById("biomeAdvMapsSelect").value = "Random";
-			updateMapCost();
-		}
 		if (updateMapCost(true) > game.resources.fragments.owned) {
 			document.getElementById("advPerfectCheckbox").dataset.checked = false;
 			updateMapCost();
@@ -3604,6 +3600,10 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
 		//Reduce map loot 
 		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			lootAdvMapsRange.value -= 1;
+		}
+		if (updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
+			document.getElementById("biomeAdvMapsSelect").value = "Random";
+			updateMapCost();
 		}
 		//Reduce map size
 		while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {

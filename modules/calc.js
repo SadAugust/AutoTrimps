@@ -1,3 +1,31 @@
+class TrimpStats {
+	constructor(newZone) {
+		this.isDaily = undefined;
+		this.isC3 = undefined;
+		this.isFiller = undefined;
+		this.currChallenge = undefined;
+
+		this.hze = undefined;
+		this.hypPct = undefined;
+		this.hyperspeed = undefined;
+
+		this.mountainPriority = undefined;
+
+		const z = game.global.world;
+
+		this.isDaily = challengeActive('Daily');
+		this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Experience') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+		this.isFiller = !this.isDaily && !this.isC3;
+		this.currChallenge = game.global.challengeActive;
+
+		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
+		this.hyperspeed = game.global.world <= Math.floor(this.hze * (this.hypPct / 100));
+
+		this.mountainPriority = !(game.unlocks.imps.Chronoimp || game.unlocks.imps.Jestimp || getAvailableSpecials('lmc', true) === 'lmc' || getAvailableSpecials('lmc', true) === 'smc');
+	}
+}
+
 class HDStats {
 	constructor(newZone) {
 		this.isDaily = undefined;
