@@ -974,7 +974,7 @@ function initializeAllSettings() {
 		createSetting('AutoStance',
 			function () { return (['Auto Stance Off', 'Auto Stance', 'D Stance', 'Windstacking']) },
 			function () {
-				var description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
+				var description = "<p>Enabling this setting will allow the script to swap stances to stop you having to do it manually.</p>";
 				description += "<p><b>Autostance Off</b><br>Disables this setting.</p>";
 				description += "<p><b>Autostance</b><br>Automatically swap stances to avoid death.</p>";
 				description += "<p><b>D stance</b><br>Keeps you in D stance regardless of Health.</p>";

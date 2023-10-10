@@ -1844,11 +1844,11 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	mazHelp += "</ul></br> The settings for each row that is added:<ul>";
 
 	//All Settings
-	mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this MaZ line completely</li>";
+	mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this line completely</li>";
 	//Active
 	mazHelp += "<li><b>Active</b> - A toggle to disable/enable this line.</li>";
 	//Priority
-	mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
+	mazHelp += "<li><b>Priority</b> - If there are two or more lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
 	//Zone
 	if (!voidMap && !golden) mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>";
 	//Cell
@@ -1923,9 +1923,9 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Raiding Zone
 		mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. If \"Repeat Every X\" is set, it will also raise the Raiding zone by X every time. " + (!bionic ? "If your 'Zone' input is 231 then the highest zone you can input is 241." : "") + "</li>";
 		if (!bionic) mazHelp += "<li><b>Frag Type</b> - The choices how for aggresively the script will spend fragments on maps.</li>";
-		mazHelp += "<li class=\"indent\"><b>Frag</b>: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you're trying to purchase.</li>";
-		mazHelp += "<li class=\"indent\"><b>Frag Min</b>: Used for absolute minimum frag costs. Will set everything but the map size to minimum and gradually reduce that if necessary to purchase maps.</li>";
-		mazHelp += "<li class=\"indent\"><b>Frag Max</b>: This option will make sure that the map has perfect sliders and uses the prestegious special if available.</li>";
+		if (!bionic) mazHelp += "<li class=\"indent\"><b>Frag</b>: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you're trying to purchase.</li>";
+		if (!bionic) mazHelp += "<li class=\"indent\"><b>Frag Min</b>: Used for absolute minimum frag costs. Will set everything but the map size to minimum and gradually reduce that if necessary to purchase maps.</li>";
+		if (!bionic) mazHelp += "<li class=\"indent\"><b>Frag Max</b>: This option will make sure that the map has perfect sliders and uses the prestegious special if available.</li>";
 
 		mazHelp += "<li><b>Prestige Goal</b> - The script will identify if the prestige selected here is available in the raiding zone you have input and if so will run maps to get the highest available level of that prestige.</li>";
 	}
@@ -2015,7 +2015,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Repeat Every</b> - Line can be repeated every Zone, or set to a custom number depending on need.</li>";
 	//End Zone
 	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || toxicity || desolation)
-		mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this MaZ line repeat. If so, the line will stop repeating at this Zone. Must be between 6 and 1000.</li>";
+		mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this line repeat. If so, the line will stop repeating at this Zone. Must be between 6 and 1000.</li>";
 	//Run Type
 	if (boneShrine || voidMap || mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || golden)
 		mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
