@@ -17,7 +17,7 @@ function autoRoboTrimp() {
 }
 
 function fightalways() {
-	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
+	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
 	var spireZone = (1 + spireNo) * 100;
 	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || (game.global.spireActive && (game.global.world >= spireZone || 0 >= spireNo)))

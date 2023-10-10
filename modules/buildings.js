@@ -428,7 +428,7 @@ function buyBuildings() {
 		//Nurseries
 		if (!game.buildings.Nursery.locked) {
 			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
-			const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
+			const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 
 			var nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
 

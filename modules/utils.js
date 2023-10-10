@@ -567,7 +567,7 @@ function testRunningCinf() {
 }
 
 function testMetalIncome() {
-	var secondsPerMap = (hdStats.hyperspeed ? 6 : 8) / maxOneShotPower(true);
+	var secondsPerMap = (trimpStats.hyperspeed ? 6 : 8) / maxOneShotPower(true);
 	var mapsPerHour = 3600 / secondsPerMap;
 	var mapsPerDay = mapsPerHour * 24;
 	//Factors in large cache + chronoimp

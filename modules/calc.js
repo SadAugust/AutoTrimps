@@ -28,10 +28,6 @@ class TrimpStats {
 
 class HDStats {
 	constructor(newZone) {
-		this.isDaily = undefined;
-		this.isC3 = undefined;
-		this.isFiller = undefined;
-		this.currChallenge = undefined;
 
 		this.hdRatio = undefined;
 		this.hdRatioMap = undefined;
@@ -49,10 +45,6 @@ class HDStats {
 		this.hitsSurvivedVoid = undefined;
 		this.autoLevel = undefined;
 		this.autoLevelNew = hdStats.autoLevelNew;
-
-		this.hze = undefined;
-		this.hypPct = undefined;
-		this.hyperspeed = undefined;
 
 		const z = game.global.world;
 
@@ -671,7 +663,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 function calcSpire(what, cell, name) {
 	//Target Cell
 	if (!cell) {
-		const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
+		const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 		const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell')
 		if (isDoingSpire() && exitCell > 0 && exitCell <= 100)
 			cell = exitCell;

@@ -140,18 +140,18 @@ function geneAssist() {
 	if (getPageSetting('geneAssistZoneAfter') > 0 && getPageSetting('geneAssistTimerAfter') > 0 && game.global.world >= getPageSetting('geneAssistZoneAfter'))
 		target = new Decimal(getPageSetting('geneAssistTimerAfter'));
 
-	if (hdStats.isC3 && !runningHard && getPageSetting('geneAssistTimerC2') > 0)
+	if (trimpStats.isC3 && !runningHard && getPageSetting('geneAssistTimerC2') > 0)
 		target = new Decimal(getPageSetting('geneAssistTimerC2'));
-	if (hdStats.isC3 && runningHard && getPageSetting('geneAssistTimerC2Hard') > 0)
+	if (trimpStats.isC3 && runningHard && getPageSetting('geneAssistTimerC2Hard') > 0)
 		target = new Decimal(getPageSetting('geneAssistTimerC2Hard'));
 
-	if (getPageSetting('geneAssistTimerDaily') > 0 && hdStats.isDaily)
+	if (getPageSetting('geneAssistTimerDaily') > 0 && trimpStats.isDaily)
 		target = new Decimal(getPageSetting('geneAssistTimerDaily'));
-	if (getPageSetting('geneAssistTimerDailyHard') > 0 && hdStats.isDaily && runningHard)
+	if (getPageSetting('geneAssistTimerDailyHard') > 0 && trimpStats.isDaily && runningHard)
 		target = new Decimal(getPageSetting('geneAssistTimerDailyHard'));
 
-	var settingPrefix = hdStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'Daily' :
-		hdStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' :
+	var settingPrefix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'Daily' :
+		trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' :
 			'';
 	if (getPageSetting('geneAssistTimerSpire' + settingPrefix) > 0 && isDoingSpire())
 		target = new Decimal(getPageSetting('geneAssistTimerSpire' + settingPrefix));

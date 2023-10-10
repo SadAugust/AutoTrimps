@@ -233,7 +233,7 @@ function initializeAllSettings() {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
 				var trimpleShortened = currSettingUniverse === 1 ? "Trimple" : "Atlantrimp";
 
-				var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
+				var respecName = !trimpStats.isC3 ? "Radon " : "" + "Combat Respec";
 				if (currSettingUniverse === 1) respecName = 'Spire';
 
 				var description = '';
@@ -4993,7 +4993,7 @@ function remakeTooltip() {
 
 	if (!game.global.lockTooltip) {
 		if (MODULES.popups.respecAtlantrimp) {
-			var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
+			var respecName = !trimpStats.isC3 ? "Radon " : "" + "Combat Respec";
 			if (game.global.universe === 1) respecName = 'Spire'
 			var description = "<p><b>Respeccing into the " + respecName + " preset.</b></p>";
 			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Disable Respec');

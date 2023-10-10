@@ -14,19 +14,19 @@ function gigaTargetZone() {
 
 	//Also consider the zone we configured our portal to be used
 	var portalZone = 0;
-	if (autoTrimpSettings.autoPortal.selected === "Helium Per Hour") portalZone = (hdStats.isDaily) ? getPageSetting('dailyDontPortalBefore', 1) : getPageSetting('heHrDontPortalBefore', 1);
-	else if (autoTrimpSettings.autoPortal.selected === "Custom") portalZone = (hdStats.isDaily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
+	if (autoTrimpSettings.autoPortal.selected === "Helium Per Hour") portalZone = (trimpStats.isDaily) ? getPageSetting('dailyDontPortalBefore', 1) : getPageSetting('heHrDontPortalBefore', 1);
+	else if (autoTrimpSettings.autoPortal.selected === "Custom") portalZone = (trimpStats.isDaily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
 
 	//Finds a target zone for when doing c2
 	var c2zone = c2FinishZone();
 
 	//Set targetZone
-	if (!hdStats.isC3) targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
+	if (!trimpStats.isC3) targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
 	else targetZone = Math.max(targetZone, c2zone - 1);
 
 	//Target Fuel Zone
-	if (hdStats.isDaily && getPageSetting("AutoGenDC") !== 0) targetZone = Math.min(targetZone, 230);
-	if (hdStats.isC3 && getPageSetting("AutoGenC2") !== 0) targetZone = Math.min(targetZone, 230);
+	if (trimpStats.isDaily && getPageSetting("AutoGenDC") !== 0) targetZone = Math.min(targetZone, 230);
+	if (trimpStats.isC3 && getPageSetting("AutoGenC2") !== 0) targetZone = Math.min(targetZone, 230);
 	if (MODULES.upgrades.targetFuelZone && (getPageSetting("fuellater") >= 1 || getPageSetting("beforegen") !== 0)) targetZone = Math.min(targetZone, Math.max(230, getPageSetting("fuellater")));
 
 	//Failsafe
@@ -241,11 +241,11 @@ function getNextGoldenUpgrade() {
 
 		//Skips if challenge type isn't set to the type we're currently running or if it's not the challenge that's being run.
 		if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
-			if (!hdStats.isC3 && !hdStats.isDaily && (currSetting.runType !== 'Filler' ||
-				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== hdStats.currChallenge)))) continue;
-			if (hdStats.isDaily && currSetting.runType !== 'Daily') continue;
-			if (hdStats.isC3 && (currSetting.runType !== 'C3' ||
-				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== hdStats.currChallenge)))) continue;
+			if (!trimpStats.isC3 && !trimpStats.isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== trimpStats.currChallenge)))) continue;
+			if (trimpStats.isDaily && currSetting.runType !== 'Daily') continue;
+			if (trimpStats.isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== trimpStats.currChallenge)))) continue;
 		}
 
 		rule = currSetting.golden;

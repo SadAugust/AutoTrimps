@@ -469,7 +469,7 @@ function autoEquip() {
 
 	//Initialise settings for later user
 	var alwaysLvl2 = getPageSetting('equip2');
-	var alwaysPandemonium = hdStats.currChallenge === 'Pandemonium' && getPageSetting('pandemoniumAE') > 0;
+	var alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && getPageSetting('pandemoniumAE') > 0;
 	//always2 / alwaysPandemonium
 	if (alwaysLvl2 || alwaysPandemonium) {
 		var equipLeft = false;
@@ -480,7 +480,7 @@ function autoEquip() {
 					//Skips trying to buy extra levels if we can't afford them
 					if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
 					//Skips levels if we're running Pandemonium and the equip isn't available for purchaes
-					if (hdStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
+					if (trimpStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 
 					if (alwaysLvl2 && game.equipment[equip].level < 2) {
 						buyEquipment(equip, true, true, 1);

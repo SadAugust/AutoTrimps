@@ -105,7 +105,7 @@ function boneShrineOutput(charges) {
 
 function buySingleRunBonuses() {
 	//Purchases Golden Maps and Sharp Trimps if we have enough bones and running C2/C3s
-	if (hdStats.isC3) {
+	if (trimpStats.isC3) {
 		if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && getPageSetting('c2GoldenMaps')) {
 			purchaseSingleRunBonus('goldMaps');
 			debug('Purchased Golden Maps for 20 bones.', 'bones');

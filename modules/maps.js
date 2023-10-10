@@ -213,7 +213,7 @@ function makeResourceTooltip(mouseover) {
 		`<b>${resource}</b>: ${lifeTimeMsg}<br>` +
 		`Current run total ${resource} / earned / lifetime ${(resourceHr)} (not including current)<br>`
 
-	if (hdStats.isDaily) {
+	if (trimpStats.isDaily) {
 		var helium = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
 		helium *= 100 + getDailyHeliumValue(countDailyWeight());
 		tooltipText += `<b>After Daily ${resource} per hour</b>: ${helium.toFixed(3)}%`;

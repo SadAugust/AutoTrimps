@@ -661,6 +661,7 @@ function resetVarsZone(loadingSave) {
 	//Challenge Repeat
 	MODULES.mapFunctions.challengeContinueRunning = false;
 
+	trimpStats = new HDStats();
 	hdStats = new HDStats(true);
 	farmingDecision();
 }
@@ -715,7 +716,7 @@ function surkyCombatRespec() {
 	//Swapping to Spire respec in u1
 	if (game.global.universe === 1) fillPresetPerky('spire');
 	//Changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
-	else if (hdStats.isC3) fillPreset('combat');
+	else if (trimpStats.isC3) fillPreset('combat');
 	else fillPreset('combatRadon');
 	//Respecing perks
 	if (game.global.universe === 2)
@@ -763,7 +764,7 @@ function atlantrimpRespecMessage(cellOverride) {
 
 	var respecSetting = getPageSetting('presetCombatRespec');
 	//If setting is enabled, respec into Surky combat respec
-	var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
+	var respecName = !trimpStats.isC3 ? "Radon " : "" + "Combat Respec";
 	if (game.global.universe === 1) respecName = 'Spire'
 	if (respecSetting === 2) {
 		MODULES.popups.respecAtlantrimp = true;

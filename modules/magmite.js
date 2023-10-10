@@ -175,14 +175,14 @@ function autoGenerator() {
 	var afterFuelState = getPageSetting("defaultgen");
 
 	//Daily
-	if (hdStats.isDaily && getPageSetting("AutoGenDC") !== 0) {
+	if (trimpStats.isDaily && getPageSetting("AutoGenDC") !== 0) {
 		if (game.global.generatorMode !== getPageSetting("AutoGenDC"))
 			changeGeneratorState(getPageSetting("AutoGenDC"));
 		return;
 	}
 
 	//C2
-	if (hdStats.isC3 && getPageSetting("AutoGenC2") !== 0) {
+	if (trimpStats.isC3 && getPageSetting("AutoGenC2") !== 0) {
 		if (game.global.generatorMode !== getPageSetting("AutoGenC2"))
 			changeGeneratorState(getPageSetting("AutoGenC2"));
 		return;

@@ -178,6 +178,7 @@ function delayStartAgain() {
 
 	atSettings.initialise.loaded = true;
 	MODULES.heirlooms.gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
+	trimpStats = new HDStats();
 	hdStats = new HDStats();
 
 	//Copy gameLoop for when we enter toggleCatchUpMode.
@@ -408,6 +409,7 @@ function mainLoop() {
 	mainCleanup();
 
 	if (atSettings.intervals.oneSecond) {
+		trimpStats = new HDStats();
 		hdStats = new HDStats();
 	}
 	if (shouldRunInTimeWarp()) farmingDecision();
@@ -504,7 +506,7 @@ function mainLoopU1() {
 	if (!game.global.fighting) {
 		if (getPageSetting('fightforever') === 0) fightalways();
 		else if (getPageSetting('fightforever') > 0 && hdStats.hdRatio <= getPageSetting('fightforever')) fightalways();
-		else if (getPageSetting('cfightforever') && hdStats.isC3 && (challengeActive('Electricty') || challengeActive('Toxicity') || challengeActive('Nom'))) fightalways();
+		else if (getPageSetting('cfightforever') && trimpStats.isC3 && (challengeActive('Electricty') || challengeActive('Toxicity') || challengeActive('Nom'))) fightalways();
 		else if (getPageSetting('dfightforever') === 1 && challengeActive('Daily') && typeof game.global.dailyChallenge.empower === 'undefined' && typeof game.global.dailyChallenge.bloodthirst === 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 		else if (getPageSetting('dfightforever') === 2 && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 	}

@@ -61,7 +61,7 @@ function autoEnlight() {
 	if (game.global.uberNature) return;
 	var natureToActivate = "None";
 
-	const affix = hdStats.isC3 ? 'C2' : hdStats.isDaily ? 'Daily' : '';
+	const affix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	for (var nature in game.empowerments) {
 		let natureSetting = getPageSetting(nature.toLowerCase() + "Enlight" + affix);
 		if (natureSetting <= 0) continue;

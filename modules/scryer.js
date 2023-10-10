@@ -43,7 +43,7 @@ function useScryerStance() {
 	var AutoStance = getPageSetting('AutoStance');
 
 	function autoStanceFunctionScryer() {
-		var settingPrefix = hdStats.isDaily ? 'd' : '';
+		var settingPrefix = trimpStats.isDaily ? 'd' : '';
 		if (getPageSetting(settingPrefix + 'AutoStanceWind')) autoStanceWind();
 		else if (AutoStance === 1) autoStance();
 		else if (AutoStance === 2) autoStanceD();
@@ -56,7 +56,7 @@ function useScryerStance() {
 	var mapsActive = game.global.mapsActive;
 	var mapObject = mapsActive ? getCurrentMapObject() : null;
 	var skipCorrupted = getPageSetting('scryerCorrupted') === 0;
-	var settingPrefix = hdStats.isDaily ? 'd' : '';
+	var settingPrefix = trimpStats.isDaily ? 'd' : '';
 
 	var never_scry = game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.world <= 60 || game.stats.highestLevel.valueTotal() < 180;
 

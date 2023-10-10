@@ -102,7 +102,7 @@ MODULES.uniqueMaps = Object.freeze({
 
 function isDoingSpire() {
 	if (!game.global.spireActive) return false;
-	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
+	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
 	if (spireNo <= 0) return true;
 	var spireZone = (1 + spireNo) * 100;
@@ -111,7 +111,7 @@ function isDoingSpire() {
 
 function exitSpireCell() {
 	if (!game.global.spireActive) return;
-	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
+	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 	if (getPageSetting(settingPrefix + 'ExitSpireCell') <= 0) return;
 
 	isDoingSpire() && game.global.lastClearedCell > getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
@@ -156,7 +156,7 @@ function shouldRunUniqueMap(map) {
 		return false;
 	}
 
-	if (!hdStats.isC3 && mapData.challenges.includes(hdStats.currChallenge) && !challengeActive('') && enoughHealth(map)) {
+	if (!trimpStats.isC3 && mapData.challenges.includes(trimpStats.currChallenge) && !challengeActive('') && enoughHealth(map)) {
 		return true;
 	}
 	//Remove speed run check for now
@@ -264,15 +264,15 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'Melting Point') {
 			// maybe get extra smithies
-			var currChallenge = hdStats.currChallenge.toLowerCase()
+			var currChallenge = trimpStats.currChallenge.toLowerCase()
 			meltsmithy =
 				(currChallenge === 'Mayhem' || currChallenge === 'Pandemonium' || currChallenge === 'Desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0 ? getPageSetting(currChallenge + 'MP') :
-					hdStats.isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
-						hdStats.isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
-							!hdStats.isC3 && !hdStats.isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
+					trimpStats.isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
+						trimpStats.isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
+							!trimpStats.isC3 && !trimpStats.isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
 								Infinity;
 			if (game.mapUnlocks.SmithFree.canRunOnce &&
-				((!hdStats.isC3 && !hdStats.isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
+				((!trimpStats.isC3 && !trimpStats.isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
 					(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.', "map_Details");
 				return true;
@@ -397,7 +397,7 @@ function voidMaps() {
 
 	if (!defaultSettings.active && !mapSettings.portalAfterVoids && !MODULES.mapFunctions.afterVoids) return farmingDetails;
 
-	const voidReduction = hdStats.isDaily ? dailyModiferReduction() : 0;
+	const voidReduction = trimpStats.isDaily ? dailyModiferReduction() : 0;
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 
@@ -1898,7 +1898,7 @@ function experience() {
 	if (!challengeActive('Experience') || !getPageSetting('experience')) return farmingDetails;
 
 	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
-	const mapSpecial = hdStats.hyperspeed ? "0" : "fa";
+	const mapSpecial = trimpStats.hyperspeed ? "0" : "fa";
 	const mapLevel = 0;
 	var status = '';
 	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) {
@@ -2178,7 +2178,7 @@ function mayhem() {
 	var destackZone = getPageSetting('mayhemZone') > 0 ? getPageSetting('mayhemZone') : Infinity;
 	var mapLevel = 0;
 	var mayhemMapIncrease = getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0;
-	var mapSpecial = hdStats.hyperspeed ? "lmc" : "fa";
+	var mapSpecial = trimpStats.hyperspeed ? "lmc" : "fa";
 	if (game.challenges.Mayhem.stacks > 0 && (hdStats.hdRatio > destackHits || game.global.world >= destackZone))
 		shouldMap = true;
 
@@ -2311,7 +2311,7 @@ function pandemoniumDestack() {
 	if (destackHits === Infinity && destackZone === Infinity) return farmingDetails;
 
 	var mapLevel = 1;
-	var mapSpecial = hdStats.hyperspeed ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc";
+	var mapSpecial = trimpStats.hyperspeed ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc";
 	var jobRatio = '0.001,0.001,1,0';
 
 
@@ -2801,7 +2801,7 @@ function desolation(forceDestack) {
 	var destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	var destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : Infinity;
 	var mapLevel = 0;
-	var mapSpecial = hdStats.hyperspeed ? "lmc" : "fa";
+	var mapSpecial = trimpStats.hyperspeed ? "lmc" : "fa";
 	var sliders = [9, 9, 9];
 	var biome = getBiome();
 	var equality = false;
@@ -3458,21 +3458,21 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 	if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
 
 		//Dailies
-		if (hdStats.isDaily) {
+		if (trimpStats.isDaily) {
 			if (currSetting.runType !== 'Daily') return false;
 		}
 
 		//C2/C3 runs + special challenges
-		else if (hdStats.isC3) {
+		else if (trimpStats.isC3) {
 			if (currSetting.runType !== 'C3') return false;
-			else if (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== hdStats.currChallenge) return false;
+			else if (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== trimpStats.currChallenge) return false;
 		}
 
 		//Fillers (non-daily/c2/c3)
 		else {
 			if (currSetting.runType !== 'Filler') return false;
 			var currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
-			if (currSetting.challenge !== 'All' && currChallenge !== hdStats.currChallenge) return false;
+			if (currSetting.challenge !== 'All' && currChallenge !== trimpStats.currChallenge) return false;
 		}
 	}
 
@@ -3601,10 +3601,13 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
 		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			lootAdvMapsRange.value -= 1;
 		}
-		if (updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
+
+		//Set biome to random if we have jestimps/caches we can run since size will be by far the most important that way
+		if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
 			document.getElementById("biomeAdvMapsSelect").value = "Random";
 			updateMapCost();
 		}
+
 		//Reduce map size
 		while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 			sizeAdvMapsRange.value -= 1;
@@ -3613,6 +3616,11 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
 
 		if (updateMapCost(true) > game.resources.fragments.owned)
 			document.getElementById("advSpecialSelect").value = 0;
+
+		if (trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
+			document.getElementById("biomeAdvMapsSelect").value = "Random";
+			updateMapCost();
+		}
 	}
 
 	return updateMapCost(true);
@@ -3951,7 +3959,7 @@ function getAvailableSpecials(special, skipCaches) {
 			break;
 		}
 	}
-	if (bestMod === undefined || bestMod === 'fa' && hdStats.hyperspeed) bestMod = '0';
+	if (bestMod === undefined || bestMod === 'fa' && trimpStats.hyperspeed) bestMod = '0';
 	return bestMod;
 }
 
@@ -4155,7 +4163,7 @@ function mapScumming(slowTarget) {
 		//Looping to figure out if we have enough slow enemies on odd cells
 		for (var item in mapGrid) {
 			if (mapGrid[item].level % 2 === 0) continue;
-			if (hdStats.currChallenge === 'Desolation') {
+			if (trimpStats.currChallenge === 'Desolation') {
 				if (MODULES.fightinfo.exoticImps.includes(mapGrid[item].name)) slowCount++;
 			}
 			else if (!MODULES.fightinfo.fastImps.includes(mapGrid[item].name)) {
@@ -4165,7 +4173,7 @@ function mapScumming(slowTarget) {
 
 		//Checking if the first enemy is slow
 		var enemyName = mapGrid[0].name;
-		if (hdStats.currChallenge === 'Desolation') {
+		if (trimpStats.currChallenge === 'Desolation') {
 			if (MODULES.fightinfo.exoticImps.includes(enemyName)) firstCellSlow = true;
 		}
 		else if (!MODULES.fightinfo.fastImps.includes(enemyName)) firstCellSlow = true;
