@@ -538,7 +538,7 @@ function initializeAllSettings() {
 		createSetting('geneAssistZoneBefore',
 			function () { return ('GA: Before Z') },
 			function () {
-				var description = "<p>Gene Assist will use the value set in <bGA: Before Z Timer</b> when below this zone.</p>";
+				var description = "<p>Gene Assist will use the value set in <b>GA: Before Z Timer</b> when below this zone.</p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> The zone where you stop 1 shotting in a new portal</p>";
 				return description;
@@ -547,7 +547,7 @@ function initializeAllSettings() {
 		createSetting('geneAssistTimerBefore',
 			function () { return ('GA: Before Z Timer') },
 			function () {
-				var description = "<p>Gene Assist will use the value set here when below the zone in <bGA: Before Z Timer</b>.</p>";
+				var description = "<p>Gene Assist will use the value set here when below the zone in <b>GA: Before Z Timer</b>.</p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
@@ -556,7 +556,7 @@ function initializeAllSettings() {
 		createSetting('geneAssistZoneAfter',
 			function () { return ('GA: After Z') },
 			function () {
-				var description = "<p>Gene Assist will use the value set in <bGA: After Z Timer</b> when below this zone.</p>";
+				var description = "<p>Gene Assist will use the value set in <b>GA: After Z Timer</b> when after this zone.</p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> The zone where you stop 1 shotting after using your <b>GA: Timer</b> setting in a new portal</p>";
 				return description;
@@ -565,7 +565,7 @@ function initializeAllSettings() {
 		createSetting('geneAssistTimerAfter',
 			function () { return ('GA: After Z Timer') },
 			function () {
-				var description = "<p>Gene Assist will use the value set here when below the zone in <bGA: After Z Timer</b>.</p>";
+				var description = "<p>Gene Assist will use the value set here when below the zone in <b>GA: After Z Timer</b>.</p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> Your <b>Anticipation</b> perk timer</p>";
 				return description;

@@ -3204,7 +3204,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		}
 
 		var mapLevel = setting.level;
-		var mapSpecial = getAvailableSpecials('lmc', true);
+		var mapSpecial = getAvailableSpecials('lmc');
 		var jobRatio = setting.jobratio;
 		var hdType = setting.hdType;
 
