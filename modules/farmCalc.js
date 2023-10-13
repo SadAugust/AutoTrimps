@@ -18,6 +18,117 @@ if (typeof $$ !== 'function') {
 	};
 }
 
+function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLevel) {
+	if (currentMap === '' || currentAutoLevel === Infinity) {
+		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
+		if (currentAutoLevel !== Infinity && atSettings.intervals.twoSecond) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
+	}
+
+	//Increasing Map Level
+	if (atSettings.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
+		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
+	}
+
+	//Decreasing Map Level
+	if (atSettings.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
+		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, true);
+	}
+	return currentAutoLevel
+}
+
+function autoMapLevel(special, maxLevel, minLevel, statCheck) {
+	if (!game.global.mapsUnlocked) return 0;
+	if (maxLevel > 10) maxLevel = 10;
+	if (!statCheck) statCheck = false;
+	const z = game.global.world;
+	if (z + maxLevel < 6) maxLevel = 0 - (z + 6);
+
+	if (challengeActive('Wither') && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
+	if (challengeActive('Insanity') && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
+
+	const isDaily = challengeActive('Daily');
+	const hze = getHighestLevelCleared();
+	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 49 : hze >= 209;
+	const haveMapReducer = game.talents.mapLoot.purchased;
+
+	const biome = getBiome();
+	const query = !special ? true : false;
+	var universeSetting = (z >= 60 && hze >= 180) ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
+	const cell = game.talents.mapLoot2.purchased ? 20 : 25;
+	if (!special) special = getAvailableSpecials('lmc');
+	const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : (hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2);
+	var enemyName = 'Snimp';
+
+	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
+	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
+	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - z + 6 : minLevel;
+	if (minLevel < (-(game.global.world - 6))) minLevel = -(game.global.world - 6);
+	const runningQuest = challengeActive('Quest') && currQuest() === 8;
+	const runningUnlucky = challengeActive('Unlucky');
+	const runningInsanity = challengeActive('Insanity');
+	var ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
+	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
+	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
+	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' //Explosive
+
+	if (challengeActive('Insanity') && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
+		ourHealth /= game.challenges.Insanity.getHealthMult();
+		ourHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
+	}
+
+	var dmgType = runningUnlucky ? 'max' : 'avg';
+	var critType = 'maybe';
+	var critChance = getPlayerCritChance_AT('map');
+	critChance = critChance - Math.floor(critChance);
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.1) critType = 'never';
+
+	for (var y = maxLevel; y >= minLevel; y--) {
+		var mapLevel = y;
+		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
+		if (runningInsanity && mapLevel > 0) enemyName = 'Horrimp';
+		if (y === minLevel) {
+			return minLevel;
+		}
+		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < perfectMapCost_Actual(mapLevel, special, biome))
+			continue;
+		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
+			continue;
+
+		if (game.global.universe === 2) universeSetting = equalityQuery(enemyName, z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
+		var ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, y, 'force');
+		if (challengeActive('Duel')) ourDmg *= MODULES.heirlooms.gammaBurstPct;
+		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
+		var enemyHealth = calcEnemyHealthCore('map', z + mapLevel, cell, 'Turtlimp') * difficulty;
+
+		if (maxOneShotPower(true) > 1) {
+			enemyHealth *= (maxOneShotPower(true));
+			if (game.global.universe === 1) ourDmg *= (0.005 * game.portal.Overkill.level);
+			if (game.global.universe === 2 && !u2Mutations.tree.MadMap.purchased) ourDmg *= 0.005;
+		}
+		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, enemyName, false, false, universeSetting) * difficulty;
+
+		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyCrit && getPageSetting('IgnoreCrits') === 0) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+
+		if (challengeActive('Duel')) {
+			enemyDmg *= 10;
+			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
+		}
+
+		/* if (y === -6) {
+			console.log("universeSetting = " + universeSetting + " y = " + y + " difficulty = " + difficulty + " cell = " + cell + " dmgType = " + dmgType + " critType = " + critType);
+			console.log("trimpHP = " + ourHealth + " trimpDmg = " + ourDmg + " trimpBlock = " + ourBlock);
+			console.log("enemyHP = " + enemyHealth + " enemyDmg = " + enemyDmg);
+		} */
+		if (enemyHealth <= ourDmg && enemyDmg <= (ourHealth + ourBlock)) {
+			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
+				mapLevel = -1;
+			return mapLevel;
+		}
+	}
+	return 0;
+}
+
 MODULES.zFarm = {};
 
 // Return a timer for your current breedtime. 

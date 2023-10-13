@@ -1803,3 +1803,186 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	if (isJob && itemObj.max && itemObj.owned + mostAfford > itemObj.max) return (itemObj.max - itemObj.owned);
 	return mostAfford;
 }
+
+function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits) {
+
+	if (Object.keys(game.global.gridArray).length === 0) return 0;
+	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1) return 0;
+
+	if (!enemyName) enemyName = 'Snimp';
+	if (!zone) zone = game.global.world;
+	if (!mapType) mapType = 'world'
+	if (!currentCell) currentCell = mapType === 'world' || mapType === 'void' ? 98 : 20;
+	if (!difficulty) difficulty = 1;
+	if (!farmType) farmType = 'gamma';
+
+	const bionicTalent = zone - game.global.world;
+	const checkMutations = mapType === 'world' && zone > 200;
+	const titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
+	const dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
+	const isDaily = challengeActive('Daily');
+	const dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined'; //Empower
+	const dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
+	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' //Explosive
+	const dailyBloodthirst = isDaily && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
+	const maxEquality = game.portal.Equality.radLevel;
+	const overkillCount = maxOneShotPower(true);
+
+	var critType = 'maybe';
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never';
+
+	//Challenge conditions
+	var runningUnlucky = challengeActive('Unlucky');
+	var runningQuest = ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé')); //Shield break quest
+
+	//Initialising name/health/dmg variables
+	//Enemy stats
+	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
+	var enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName) * difficulty;
+	var enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, false, 0) * difficulty;
+
+	if (mapType === 'map' && dailyCrit || dailyExplosive) {
+		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+	}
+	else if (mapType === 'world' && (dailyEmpower && (dailyCrit || dailyExplosive) || hits)) {
+		//if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+	}
+	else if (hits) {
+		if (dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+	}
+
+	if (challengeActive('Duel')) {
+		enemyDmg *= 10;
+		if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
+	}
+	//Our stats
+	var dmgType = runningUnlucky ? 'max' : 'avg';
+	var ourHealth = calcOurHealth(runningQuest, mapType);
+	var ourDmg = calcOurDmg(dmgType, 0, false, mapType, critType, bionicTalent, titimp);
+
+	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, mapType, 'never', bionicTalent, titimp)) : 2;
+
+	//Figuring out gamma to proc value
+	var gammaToTrigger = gammaMaxStacks();
+
+	if (checkMutations) {
+		enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
+		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
+	}
+	if (!hits) hits = 1;
+	enemyDmg *= hits;
+
+	if (forceOK) {
+		if (!runningUnlucky && (zone - game.global.world) > 0) dmgType = 'min';
+		enemyHealth *= (1 * overkillCount);
+	}
+	if (challengeActive('Duel')) ourDmg *= MODULES.heirlooms.gammaBurstPct;
+
+	if (isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100);
+
+	var ourDmgEquality = 0;
+	var enemyDmgEquality = 0;
+	var unluckyDmgEquality = 0;
+	const ourEqualityModifier = getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType));
+	const enemyEqualityModifier = game.portal.Equality.getModifier();
+
+	if (enemyHealth !== 0) {
+		for (var i = 0; i <= maxEquality; i++) {
+			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i)
+			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
+			if (runningUnlucky) {
+				unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
+				if (unluckyDmgEquality.toString()[0] % 2 === 1 && i !== maxEquality) continue;
+			}
+			if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
+				return i;
+			}
+			else if (farmType === 'oneShot' && ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
+				return i;
+			}
+			else if (i === maxEquality) {
+				return i;
+			}
+		}
+	}
+}
+
+function remainingHealth(forceAngelic, mapType) {
+	if (!forceAngelic) forceAngelic = false;
+	if (!mapType) mapType = 'world';
+	var heirloomToCheck = heirloomShieldToEquip(mapType);
+
+	const correctHeirloom = heirloomToCheck !== undefined ? getPageSetting(heirloomToCheck) === game.global.ShieldEquipped.name : true;
+	const currentShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true) / 100;
+	const newShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) / 100;
+
+	var soldierHealth = game.global.soldierHealth;
+	var soldierHealthMax = game.global.soldierHealthMax;
+	var shieldHealth = 0;
+
+	//Fix our health to the correct new value if we are changing heirlooms
+	if (!correctHeirloom) {
+		soldierHealth /= 1 + currentShield;
+		soldierHealth *= 1 + newShield;
+		soldierHealthMax /= 1 + currentShield;
+		soldierHealthMax *= 1 + newShield;
+	}
+
+	if (game.global.universe === 2) {
+		var maxLayers = Fluffy.isRewardActive('shieldlayer');
+		var layers = maxLayers - game.global.shieldLayersUsed;
+
+		var shieldMax = game.global.soldierEnergyShieldMax;
+		var shieldCurr = game.global.soldierEnergyShield;
+
+		//Fix our shield to the correct new value if we are changing heirlooms
+		if (!correctHeirloom) {
+			energyShieldMult = getEnergyShieldMult_AT(mapType, true);
+			const newShieldMult = getHeirloomBonus_AT('Shield', 'prismatic', heirloomToCheck) / 100;
+			const shieldPrismatic = newShieldMult > 0 ? energyShieldMult + newShieldMult : energyShieldMult;
+			currShieldPrismatic = energyShieldMult + getHeirloomBonus("Shield", "prismatic") / 100;
+
+			if (currShieldPrismatic > 0) shieldMax /= currShieldPrismatic;
+			shieldMax *= shieldPrismatic;
+			if (currShieldPrismatic > 0) shieldCurr /= currShieldPrismatic;
+			shieldCurr *= shieldPrismatic;
+			shieldCurr /= 1 + currentShield;
+			shieldCurr *= 1 + newShield;
+		}
+
+		if (maxLayers > 0) {
+			var i;
+			for (i = 0; i <= maxLayers; i++) {
+				if (layers !== maxLayers && i > layers) {
+					continue;
+				}
+				if (i === maxLayers - layers) {
+					shieldHealth += shieldMax;
+				}
+				else
+					shieldHealth += shieldCurr;
+			}
+		}
+		else {
+			shieldHealth = shieldCurr;
+		}
+		shieldHealth = shieldHealth < 0 ? 0 : shieldHealth;
+	}
+	//Subtracting Plauge daily mod from health
+	if (typeof game.global.dailyChallenge.plague !== 'undefined')
+		soldierHealth -= soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks);
+
+	var remainingHealth = shieldHealth + (forceAngelic ? soldierHealth * .33 : soldierHealth);
+	if ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'))
+		remainingHealth = shieldHealth;
+	if (shieldHealth + soldierHealth === 0) {
+		remainingHealth = soldierHealthMax + (shieldMax * (maxLayers + 1))
+		if ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'))
+			remainingHealth = shieldMax * (maxLayers + 1);
+	}
+
+	if (soldierHealth <= 0) return 0;
+	return (remainingHealth)
+}

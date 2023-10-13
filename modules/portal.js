@@ -822,3 +822,56 @@ resetGame = function () {
 	}
 	catch (e) { debug("Load save failed: " + e) }
 }
+
+function resetSettingsPortal() {
+
+	var value = 'value';
+	if (game.global.universe === 2) value += 'U2';
+
+	var enabled = 'enabled';
+	if (game.global.universe === 2) enabled += 'U2';
+
+
+	//Enabling Auto Portal
+	if (getPageSetting('autoMapsPortal')) {
+		autoTrimpSettings["autoMaps"][value] = 1;
+		document.getElementById('autoMaps').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings['autoMaps'][value]);
+		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings['autoMaps'][value]);
+	}
+	//Enabling Auto Equip
+	if (getPageSetting('equipPortal')) {
+		autoTrimpSettings["equipOn"][enabled] = true;
+		const autoEquip = getPageSetting('equipOn');
+		document.getElementById('equipOn').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoEquip);
+		document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + autoEquip);
+	}
+
+	//Setting buildings button up
+	if (typeof (autoTrimpSettings['buildingSettingsArray'][value].portalOption) !== 'undefined') {
+		if (autoTrimpSettings['buildingSettingsArray'][value].portalOption === 'on')
+			autoTrimpSettings["buildingsType"][enabled] = true;
+		if (autoTrimpSettings['buildingSettingsArray'][value].portalOption === 'off')
+			autoTrimpSettings["buildingsType"][enabled] = false;
+
+		document.getElementById('buildingsType').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings['buildingsType'][enabled]);
+		document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + autoTrimpSettings['buildingsType'][enabled]);
+	}
+
+	//Setting jobs button up
+	if (typeof (autoTrimpSettings['jobSettingsArray'][value].portalOption) !== 'undefined') {
+		if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'autojobs off')
+			autoTrimpSettings['jobType'][value] = 0;
+		if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'auto ratios')
+			autoTrimpSettings['jobType'][value] = 1;
+		if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'manual ratios')
+			autoTrimpSettings['jobType'][value] = 2;
+
+		const autoJobs = getPageSetting('jobType');
+
+		document.getElementById('jobType').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
+		document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
+	}
+
+	updateButtonText();
+	saveSettings();
+}
