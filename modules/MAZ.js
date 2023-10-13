@@ -2172,7 +2172,7 @@ function saveATAutoStructureConfig() {
 			continue;
 		}
 
-		var perc = parseInt(percentboxes[x].value, 10);
+		var perc = parseFloat(percentboxes[x].value, 10);
 		if (perc > 100) perc = 100;
 		setting[name].percent = perc;
 

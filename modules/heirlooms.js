@@ -112,7 +112,10 @@ function autoHeirlooms(portal) {
 			if (heirloomWorth[heirloomType].length > 0) {
 				var carriedHeirlooms = heirloomWorth[heirloomType].shift();
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-				carryHeirloom();
+				if (getPageSetting('heirloomAuto' + heirloomType))
+					carryHeirloom();
+				else
+					recycleHeirloom(true);
 			}
 			else break;
 		}
@@ -124,11 +127,15 @@ function autoHeirlooms(portal) {
 
 		while ((game.global.heirloomsCarried.length < getMaxCarriedHeirlooms()) && game.global.heirloomsExtra.length > 0) {
 			for (var x = 0; x < heirloomTypes.length; x++) {
+
 				heirloomWorth = worthOfHeirlooms();
 				if (heirloomWorth[heirloomTypes[x]].length > 0) {
 					var carriedHeirlooms = heirloomWorth[heirloomTypes[x]].shift();
 					selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-					carryHeirloom();
+					if (getPageSetting('heirloomAuto' + heirloomTypes[x]))
+						carryHeirloom();
+					else
+						recycleHeirloom(true);
 				}
 			}
 		}
