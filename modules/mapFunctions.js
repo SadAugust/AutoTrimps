@@ -3403,7 +3403,10 @@ function farmingDecision() {
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
 
 	if (farmingDetails.mapLevel) {
-		if (getPageSetting('autoLevelTest')) farmingDetails.mapLevel = hdStats.autoLevelNew;
+		if (getPageSetting('autoLevelTest') && farmingDetails.autoLevel) {
+			const speedSettings = ['Map Bonus', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
+			farmingDetails.mapLevel = speedSettings.indexOf(farmingDetails.mapName) >= 0 ? hdStats.autoLevelSpeed : hdStats.autoLevelNew;
+		}
 		if (farmingDetails.mapName === 'Map Bonus' && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = 0;
 		else if (farmingDetails.mapName === 'HD Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = 0;
 		else if (challengeActive('Wither') && farmingDetails.mapName !== 'Map Bonus' && farmingDetails.mapLevel >= 0) farmingDetails.mapLevel = -1;

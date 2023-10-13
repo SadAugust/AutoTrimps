@@ -248,7 +248,7 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 function checkStanceSetting() {
 	var settingPrefix = trimpStats.isDaily ? 'd' : '';
 	if (getPageSetting('AutoStanceScryer')) useScryerStance();
-	else if (game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) useScryerStance();
+	else if (game.global.mapsActive && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps') && getCurrentMapObject().location === 'Void') useScryerStance();
 	else {
 		var AutoStance = getPageSetting('AutoStance');
 		if (getPageSetting(settingPrefix + 'AutoStanceWind')) autoStanceWind();

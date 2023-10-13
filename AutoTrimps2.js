@@ -178,8 +178,8 @@ function delayStartAgain() {
 
 	atSettings.initialise.loaded = true;
 	MODULES.heirlooms.gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
-	trimpStats = new HDStats();
-	hdStats = new HDStats();
+	trimpStats = new TrimpStats(true);
+	hdStats = new HDStats(true);
 
 	//Copy gameLoop for when we enter toggleCatchUpMode.
 	originalGameLoop = gameLoop;
@@ -263,7 +263,7 @@ function toggleCatchUpMode() {
 		}
 		atSettings.autoSave = game.options.menu.autoSave.enabled;
 		atSettings.loops.atTimeLapseFastLoop = true;
-		if (game.options.menu.autoSave.enabled) game.options.menu.autoSave.enabled = 0;
+		if (game.options.menu.autoSave.enabled) toggleSetting('autoSave');
 		gameLoop = function (makeUp, now) {
 			originalGameLoop(makeUp, now);
 
@@ -374,7 +374,6 @@ function updateInterval() {
 }
 
 function mainLoop() {
-
 	//Toggle between timelapse/catchup/offline speed and normal speed.
 	toggleCatchUpMode();
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
@@ -409,7 +408,7 @@ function mainLoop() {
 	mainCleanup();
 
 	if (atSettings.intervals.oneSecond) {
-		trimpStats = new HDStats();
+		trimpStats = new TrimpStats();
 		hdStats = new HDStats();
 	}
 	if (shouldRunInTimeWarp()) farmingDecision();

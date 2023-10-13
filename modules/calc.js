@@ -44,16 +44,13 @@ class HDStats {
 		this.hitsSurvived = undefined;
 		this.hitsSurvivedVoid = undefined;
 		this.autoLevel = undefined;
-		this.autoLevelNew = hdStats.autoLevelNew;
+		this.autoLevelData = hdStats.autoLevelData;
+		this.autoLevelNew = undefined;
+		this.autoLevelSpeed = undefined;
 
 		const z = game.global.world;
 
 		const checkAutoLevel = newZone ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
-
-		this.isDaily = challengeActive('Daily');
-		this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Experience') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-		this.isFiller = !this.isDaily && !this.isC3;
-		this.currChallenge = game.global.challengeActive;
 
 		this.hdRatio = calcHDRatio(z, 'world');
 		this.hdRatioMap = calcHDRatio(z, 'map');
@@ -71,11 +68,9 @@ class HDStats {
 		this.hitsSurvived = calcHitsSurvived(z, 'world');
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void');
 		this.autoLevel = autoMapLevel();
-		this.autoLevelNew = checkAutoLevel ? get_best(stats()).overall.mapLevel : this.autoLevelNew;
-
-		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-		this.hyperspeed = game.global.world <= Math.floor(this.hze * (this.hypPct / 100));
+		this.autoLevelData = checkAutoLevel ? get_best(stats()) : this.autoLevelData;
+		this.autoLevelNew = this.autoLevelData.overall.mapLevel;
+		this.autoLevelSpeed = this.autoLevelData.speed.mapLevel;
 	}
 }
 

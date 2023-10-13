@@ -358,7 +358,9 @@ function populateZFarmData() {
 		critDamage: critDamage,
 		gammaCharges: gammaCharges,
 		gammaMult: gammaMult,
-		range: (maxFluct / minFluct) - 1,
+		range: maxFluct / minFluct,
+		rangeMin: minFluct,
+		rangeMax: maxFluct,
 		plaguebringer: getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01,
 		equalityMult: getPlayerEqualityMult_AT(customShield),
 
@@ -407,10 +409,12 @@ function stats() {
 			saveData.challenge_attack = coords;
 		}
 		var tmp = zone_stats(mapLevel, saveData.stances, saveData);
-		if (tmp.value < 1 && mapLevel >= saveData.zone)
+		if (tmp.value < 1 && mapLevel >= saveData.zone) {
 			continue;
-		if (stats.length && tmp.value < 0.804 * stats[0].value)
+		}
+		if (stats.length && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) {
 			break;
+		}
 		stats.unshift(tmp);
 	}
 
@@ -476,12 +480,12 @@ function simulate(g, zone) {
 	var duelPoints = game.challenges.Duel.trimpStacks;
 
 	var oneShot = true;
-
 	const angelic = mastery('angelic');
 	const runningDevastation = challengeActive('Devastation') || challengeActive('Revenge');
 	const runningDomination = challengeActive('Domination');
 	const runningFrigid = challengeActive('Frigid');
 
+	const runningUnlucky = challengeActive('Unlucky');
 	const runningDuel = challengeActive('Duel');
 	const runningWither = challengeActive('Wither');
 	var hasWithered = false;
@@ -630,11 +634,13 @@ function simulate(g, zone) {
 			// Trimp attack
 			if (trimp_hp >= 1) {
 				ok_spread = g.ok_spread;
-				var damage = g.atk * (1 + g.range * rng());
+				var damage = g.atk;
+				if (!runningUnlucky) damage *= (1 + g.range * rng())
 				if (runningDuel) {
 					g.critChance = 1 - (duelPoints / 100);
 					if (duelPoints > 50) damage *= 3;
-				} if (rng() < g.critChance) {
+				}
+				if (rng() < g.critChance) {
 					damage *= g.critDamage;
 					trimpCrit = true;
 				}
@@ -759,31 +765,54 @@ function simulate(g, zone) {
 
 // Return info about the best zone for each stance
 function get_best(results) {
-	if (!game.global.mapsUnlocked) return { overall: { mapLevel: 0 } };
+	var best = { overall: { mapLevel: 0, }, ratio: 0, speed: { mapLevel: 0, value: 0, speed: 0, } }
+	if (!game.global.mapsUnlocked) return best;
 
-	let [stats, stances] = results;
+	var [stats, stances] = results;
 	stats.slice();
-
-	if (stats.length === 0) return { overall: { mapLevel: 0 } };
-	var best = { overall: "", second: "", ratio: 0 };
+	var statsSpeed = stats;
+	if (stats.length === 0) return best;
 	best.stances = {};
+	best.stancesSpeed = {};
 	if (!stances) stances = 'X';
-	/* jshint loopfunc:true */
 	for (var stance of stances) {
+		//Find the best zone for each stance
 		stats.sort((a, b) => b[stance].value - a[stance].value);
 		best.stances[stance] = stats[0].zone;
+
+		//Find the fastest zone for each stance - Useful for map bonus etc
+		statsSpeed.sort((a, b) => b[stance].speed - a[stance].speed);
+		best.stancesSpeed[stance] = statsSpeed[0].zone;
+		if (statsSpeed[0][stance].speed >= best.speed.speed && statsSpeed[0][stance].value >= best.speed.value) {
+			best.speed = {
+				mapLevel: statsSpeed[0].mapLevel,
+				zone: statsSpeed[0].zone,
+				value: statsSpeed[0][statsSpeed[0].stance].value,
+				speed: statsSpeed[0][statsSpeed[0].stance].speed,
+			}
+			if (game.global.universe === 1) best.speed.stance = statsSpeed[0].stance;
+			if (game.global.universe === 2) best.speed.equality = statsSpeed[0].equality;
+		}
 	}
 
 	stats.sort((a, b) => b.value - a.value);
-	best.overall = {};
-	best.overall.mapLevel = stats[0].mapLevel;
-	best.overall.zone = stats[0].zone;
+	//Best zone to farm on for loot
+	best.overall = {
+		mapLevel: stats[0].mapLevel,
+		zone: stats[0].zone,
+		value: stats[0][stats[0].stance].value,
+		speed: stats[0][stats[0].stance].speed,
+	};
 	if (game.global.universe === 1) best.overall.stance = stats[0].stance;
 	if (game.global.universe === 2) best.overall.equality = stats[0].equality;
+	//Second best zone to farm on for loot
 	if (stats[1]) {
-		best.second = {};
-		best.second.mapLevel = stats[1].mapLevel;
-		best.second.zone = stats[1].zone;
+		best.second = {
+			mapLevel: stats[1].mapLevel,
+			zone: stats[1].zone,
+			value: stats[1][stats[1].stance].value,
+			speed: stats[1][stats[1].stance].speed,
+		};
 		if (game.global.universe === 1) best.second.stance = stats[1].stance;
 		if (game.global.universe === 2) best.second.equality = stats[1].equality;
 		best.ratio = stats[0].value / stats[1].value;
@@ -863,4 +892,42 @@ function rng() {
 	MODULES.zFarm.seed ^= MODULES.zFarm.seed << 8;
 	MODULES.zFarm.seed ^= MODULES.zFarm.seed >> 19;
 	return MODULES.zFarm.seed * MODULES.zFarm.rand_mult;
+}/* 
+
+
+
+
+var runningUnlucky = game.global.challengeActive == "Unlucky";
+var actuallyLucky = false;
+if (buildString || runningUnlucky) {
+	var critMin = min;
+	if (isTrimp) {
+		if (noCheckAchieve) return max;
+		var critChance = getPlayerCritChance();
+		if (critChance >= 1) {
+			var critDamage = getPlayerCritDamageMult();
+			number *= critDamage;
+			if (Math.floor(critChance) >= 2) number *= getMegaCritDamageMult(Math.floor(critChance));
+			critMin = Math.floor(number * (1 - minFluct));
+		}
+		if (!buildString && isTrimp) {//Aka running unlucky but not building a string
+			if (Number(critMin.toString()[0]) % 2 == 0) actuallyLucky = true;
+			game.challenges.Unlucky.lastHitLucky = actuallyLucky;
+		}
+	}
 }
+function rollMax() {
+	return Math.floor(Math.random() * ((max + 1) - min)) + min;
+}
+if (runningUnlucky && isTrimp) {
+	var worst = rollMax();
+	var best = worst;
+	for (var x = 0; x < 4; x++) {
+		var roll = rollMax();
+		if (roll < worst) worst = roll;
+		if (roll > best) best = roll;
+	}
+	if (actuallyLucky) return best;
+	return worst;
+}
+return rollMax(); */

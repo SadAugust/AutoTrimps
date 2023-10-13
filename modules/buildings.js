@@ -549,7 +549,7 @@ function buyBuildings() {
 
 	//Purchasing housing buildings
 	//If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
-	if (usingRealTimeOffline) {
+	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop) {
 		buyHousing(buildingSettings);
 	} else {
 		var boughtHousing = false;

@@ -23,7 +23,7 @@ function fightalways() {
 	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || (game.global.spireActive && (game.global.world >= spireZone || 0 >= spireNo)))
 		return;
 	if (!game.global.fighting)
-		fightManual();
+		battle(true);
 }
 
 function getZoneEmpowerment(zone) {
@@ -399,6 +399,7 @@ function equalityManagement() {
 	var bionicTalent = mapping && game.talents.bionic2.purchased && (zone > game.global.world) ? zone : 0;
 	var difficulty = mapping ? mapObject.difficulty : 1;
 	var maxEquality = game.portal.Equality.radLevel;
+	var equality = 0;
 	var armyReady = newArmyRdy();
 
 	//Daily modifiers active
@@ -590,11 +591,7 @@ function equalityManagement() {
 					}
 				}
 			}
-
-			if (!fastEnemy) {
-				game.portal.Equality.disabledStackCount = i;
-				break;
-			}
+			//Suiciding our army to reset health as it isn't efficient to keep it alive.
 			else if (ourHealth === 0 || (armyReady || (dailyEmpower && !mapping)) && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					suicideTrimps(true);
@@ -604,35 +601,52 @@ function equalityManagement() {
 					suicideTrimps(true);
 					runMap_AT();
 				}
-				else
-					game.portal.Equality.disabledStackCount = 0;
+				else {
+					equality = 0;
+				}
 				break;
 			} else if (fastEnemy && enemyDmgEquality > ourHealth) {
-				game.portal.Equality.disabledStackCount = maxEquality;
+				continue;
 			} else if (runningMayhem && fastEnemy && enemyDmgEquality > ((game.global.soldierHealth * 6) + game.challenges.Mayhem.poison)) {
 				continue;
-			} else if ((ourDmgEquality * gammaDmg) < enemyHealth && (gammaToTrigger > 1 || (gammaToTrigger > 1 && fuckGamma))) {
-				game.portal.Equality.disabledStackCount = maxEquality;
+			} else if ((ourDmgEquality * gammaDmg) < enemyHealth && gammaToTrigger > 1) {
+				equality = maxEquality;
 				break;
 			} else if (ourHealth > enemyDmgEquality && gammaToTrigger <= 1) {
-				game.portal.Equality.disabledStackCount = i;
+				equality = i;
 				break;
 			} else if (ourHealth > enemyDmgEquality && ourDmgEquality > enemyHealth) {
-				game.portal.Equality.disabledStackCount = i;
+				equality = i;
 				break;
 			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaDmg > enemyHealth && !fuckGamma && !enemyCanPoison) {
-				game.portal.Equality.disabledStackCount = i;
+				equality = i;
 				break;
 			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaToTrigger > enemyHealth && !fuckGamma && !enemyCanPoison) {
-				game.portal.Equality.disabledStackCount = i;
+				equality = i;
 				break;
 			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && !fuckGamma && !enemyCanPoison) {
-				game.portal.Equality.disabledStackCount = i;
+				equality = i;
 				break;
 			} else {
-				game.portal.Equality.disabledStackCount = maxEquality;
+				equality = maxEquality;
 			}
 		}
+
+		//Check to see if we will kill a slow enemy faster with 0 equality or by gamma bursting it
+		if (!fastEnemy) {
+			if (gammaToTrigger <= 1 && ourDmgEquality * gammaDmg < ourDmg) {
+				equality = 0;
+			}
+			else if (enemyHealth / ourDmg <= gammaToTrigger) {
+				equality = 0;
+			}
+
+			if (runningUnlucky) {
+				while ((unluckyDmg * Math.pow(ourEqualityModifier, equality)).toString()[0] % 2 === 1 && equality !== maxEquality)
+					equality++;
+			}
+		}
+		game.portal.Equality.disabledStackCount = equality;
 		if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 		updateEqualityScaling();
 		if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, i);

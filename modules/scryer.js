@@ -107,7 +107,7 @@ function useScryerStance() {
 
 	//Override never scry if in voids with scryvoid setting enabled.
 	if (mapsActive && mapObject.location === "Void") {
-		if (!game.global.runningChallengeSquared && getPageSetting(settingPrefix + 'scryvoidmaps')) never_scry = 0;
+		if (!game.global.runningChallengeSquared && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) never_scry = 0;
 	}
 
 	if (never_scry || (useScryer && !game.global.mapsActive && (isHealthy && getPageSetting('scryerHealthy') === 0))) {
@@ -124,7 +124,7 @@ function useScryerStance() {
 	force_scry |= mapsActive && useScryer && mapObject.level > game.global.world && getPageSetting('scryerPlusMaps') === 1 && mapObject.location !== "Bionic";
 	//Void Force
 	force_scry |= mapsActive && mapObject.location === "Void" &&
-		((getPageSetting('scryerVoidMaps') === 1) || getPageSetting(settingPrefix + 'scryvoidmaps'));
+		(!game.global.runningChallengeSquared && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps'));
 	//Bionic Force
 	force_scry |= mapsActive && useScryer && mapObject.location === "Bionic" && getPageSetting('scryerBW') === 1;
 	//Spire Force

@@ -16,7 +16,7 @@ function betterAutoFight() {
 
 	if (!game.global.fighting) {
 		if (newArmyRdy() || game.global.soldierHealth > 0) {
-			fightManual();
+			battle(true);
 		}
 	}
 }
@@ -27,7 +27,7 @@ function betterAutoFight3() {
 	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || game.global.spireActive || MODULES.maps.livingActive)
 		return;
 	if (game.global.world === 1 && !game.global.fighting) {
-		fightManual();
+		battle(true);
 	}
 }
 

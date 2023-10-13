@@ -5703,9 +5703,9 @@ offlineProgress.originalFinish = offlineProgress.finish;
 offlineProgress.finish = function () {
 	//Time we have run TW in seconds
 	var timeRun = Math.floor((new Date().getTime() - offlineProgress.startTime) / 1000);
+	if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
 	offlineProgress.originalFinish(...arguments)
 	try {
-		game.options.menu.autoSave.enabled = atSettings.autoSave;
 		//Rerun TW if it took over 30 seconds to complete
 		if (timeRun > 30) {
 			debug(`Running Time Warp again for ${timeRun} seconds to catchup on the time we missed whilst running it.`);
