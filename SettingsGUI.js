@@ -698,6 +698,14 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Buildings', [1]);
+		createSetting('warpstationPct',
+			function () { return ('Warpstation Percent') },
+			function () {
+				var description = "<p>What percentage of resources to spend on Warpstations.</p>";
+				description += "<p><b>The script will still purchase Gigastations at 100% resources.</b></p>";
+				description += "<p><b>Recommended:</b> 50</p>";
+				return description;
+			}, 'value', 50, null, 'Buildings', [1]);
 		createSetting('firstGigastation',
 			function () { return ('First Gigastation') },
 			function () {
@@ -3394,7 +3402,6 @@ function initializeAllSettings() {
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Auto Golden", "AutoGolden", "MAZ")', 'Golden', [1, 2]);
 	}
-
 
 	//Spire
 	const displaySpire = true;
