@@ -241,18 +241,18 @@ function initializeAllSettings() {
 					description += "<p>Will only run during the highest Spire you have reached and will respec into the Perky <b>Spire</b> preset to maximise your combat stats during it.</p>";
 				}
 				if (currSettingUniverse === 2) {
-					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + " <b>OR</b> you have more golden battle upgrades than radon upgrades otherwise will assume it's a radon run and use the <b>Radon Combat Respec</b> preset.</p>";
+					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + " <b>OR</b> you have more golden battle upgrades than golden radon upgrades. Otherwise it will assume it's a radon run and respec into the <b>Radon Combat Respec</b> preset.</p>";
 				}
 
 				description += "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
 
-				description += "<p><b>" + trimpleShortened + " Respec Popup</b><br>Will display a popup after complete " + trimple + " asking whether you would like to respec the preset listed above.</p>";
+				description += "<p><b>" + trimpleShortened + " Respec Popup</b><br>Will display a popup after completing " + trimple + " asking whether you would like to respec into the preset listed above.</p>";
 
-				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>5 seconds after completing " + trimple + " will respec into the <b>" + calcName + "</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec if clicked within the 5 second window.</p>";
+				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>5 seconds after completing " + trimple + " it will respec into the <b>" + calcName + "</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec if clicked within the 5 second window.</p>";
 
 				description += "<p>This likely won't be worthwhile using without having <b>Auto Allocate Perks</b> enabled as your next run would be started with the combat respec.</p>";
 
-				description += "<p>I'd recommend only using it when <b>Liq for free Void</b> is enabled as it will go and get a fresh respec when a respec isn't available at the end of a run.<br>Without this you'll need to manually respec at the start of your next run or you will start in a suboptimal preset.</p>";
+				description += "<p>I'd recommend only using this when <b>Liq for free Void</b> is enabled as it will run an extra portal to obtain a respec when one isn't available at the end of a run.<br>Without this unless you have used a Bone Portal you'll need to manually respec at the start of your next portal or you will start it in a suboptimal preset.</p>";
 
 				if (currSettingUniverse === 1) description += "<p>Has an additional setting (<b>Spire Respec Cell</b>) which has a <b>5</b> second delay after toggling this setting before it will function.</p>";
 
@@ -267,7 +267,7 @@ function initializeAllSettings() {
 			function () {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
 				var trimpleShortened = currSettingUniverse === 1 ? "Trimple" : "Atlantrimp";
-				var description = "<p>An override for the " + trimple + " requirement for the <b>" + trimpleShortened + " Respec</b> setting. Will either give you a popup or automatically respec depending on your setting when you reach this cell and don't have any mapping to do on it.</p>";
+				var description = "<p>An override for the " + trimple + " requirement for the <b>" + trimpleShortened + " Respec</b> setting. Will either give you a popup or automatically respec depending on your <b>" + trimpleShortened + " Respec</b> setting when you reach this cell and don't have any mapping to do on it.</p>";
 				description += "<p>Will only function on your <b>highest Spire reached.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this way to Spire respec.</p>";
 				description += "<p><b>Recommended:</b> cell after your farming has finished.</p>";
@@ -362,7 +362,7 @@ function initializeAllSettings() {
 		createSetting('autoPortalZone',
 			function () { return ('Portal Zone') },
 			function () {
-				var description = "<p>Will automatically portal once this zone is reached when using the <b>Custom</b> Auto Portal setting.</p>";
+				var description = "<p>Will automatically portal once this zone is reached when using the <b>Custom OR One Off Challenges</b> Auto Portal settings.</p>";
 				description += "<p>Setting this to <b>200</b> would portal when you reach <b>zone 200</b>.</p>";
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
@@ -377,7 +377,7 @@ function initializeAllSettings() {
 			function () { return ("Don't Portal Before") },
 			function () {
 				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + resource() + " Per Hour</b> Auto Portal setting.</p>";
-				description += "<p>It is an additional check that prevents drops in " + resourceHour().toLowerCase() + "/hr from triggering Auto Portal.</p>";
+				description += "<p>This is an additional check that prevents drops in " + resource().toLowerCase() + " per hour from triggering Auto Portal.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and assume any zone is okay to portal on.</p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
@@ -1844,7 +1844,7 @@ function initializeAllSettings() {
 				Uses the <b>" + cinf() + " Runner Settings</b> popup and will run enabled " + cinf() + "s when they are below the designated end zone.<br>\
 				Will automatically abandon the challenge and portal after "+ cinf() + "s have been finished when using this setting.</p>";
 				description += "<p>If using <b>" + cinf() + " Runner Set Values</b> then the " + cinf() + " will only be be finished if the challenge is enabled and a zone above 0 has been set.</p>";
-				description += "<p>I recommended only using <b>" + cinf() + " Runner Set Values</b> if you're actively going to update the inputs as you progress.</p>";
+				description += "<p>I recommend only using <b>" + cinf() + " Runner Set Values</b> if you're actively going to update the inputs as you progress.</p>";
 				description += "<p><b>Recommended:</b> " + cinf() + " Runner %</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [1, 2],
