@@ -347,11 +347,11 @@ function populateZFarmData() {
 			// Corruption scaling doesn’t apply to normal maps below Corrupted’s endpoint
 			enemyAttack *= 3;
 		} else if (challengeActive('Obliterated')) {
-			enemyHealth *= 1e12 * 10 ** floor(zone / 10);
-			enemyAttack *= 1e12 * 10 ** floor(zone / 10);
+			enemyHealth *= 1e12 * 10 ** Math.floor(zone / 10);
+			enemyAttack *= 1e12 * 10 ** Math.floor(zone / 10);
 		} else if (challengeActive('Eradicated')) {
-			enemyHealth *= 1e20 * 3 ** floor(zone / 2);
-			enemyAttack *= 1e20 * 3 ** floor(zone / 2);
+			enemyHealth *= 1e20 * 3 ** Math.floor(zone / 2);
+			enemyAttack *= 1e20 * 3 ** Math.floor(zone / 2);
 			natureStart = 1;
 			death_stuff.magma = true;
 		}
