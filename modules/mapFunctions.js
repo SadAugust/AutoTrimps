@@ -3573,7 +3573,7 @@ function prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps
 	else return false;
 }
 
-function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
+function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 	var maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
@@ -3597,25 +3597,23 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect, priority) {
 			updateMapCost();
 		}
 		//Reduce map difficulty
-		while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+		while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
 			difficultyAdvMapsRange.value -= 1;
-		}
+
 		//Reduce map loot 
-		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
 			lootAdvMapsRange.value -= 1;
-		}
 
 		//Set biome to random if we have jestimps/caches we can run since size will be by far the most important that way
-		if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
+		if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal'))
 			document.getElementById("biomeAdvMapsSelect").value = "Random";
-			updateMapCost();
-		}
+
+		if (updateMapCost(true) > game.resources.fragments.owned && (special === "0" || !mapSpecialModifierConfig[special].name.includes('Cache')))
+			document.getElementById("advSpecialSelect").value = 0;
 
 		//Reduce map size
-		while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+		while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
 			sizeAdvMapsRange.value -= 1;
-		}
-		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 
 		if (updateMapCost(true) > game.resources.fragments.owned)
 			document.getElementById("advSpecialSelect").value = 0;

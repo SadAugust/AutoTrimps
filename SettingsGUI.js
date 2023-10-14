@@ -925,7 +925,7 @@ function initializeAllSettings() {
 				var description = "<p>Acquire prestiges through the selected item (inclusive) as soon as they are available in maps.</p>";
 				description += "<p><b>Automatically swaps the default setting from <b>Tier First</b> to <b>Equip First</b>.</b></p>";
 				description += "<p><b>Auto Maps must be enabled for this to run.</b></p>";
-				description += "<p><b>Disabled before <b>Explorers</b> have been unlocked.</b></p>";
+				description += "<p><b>Before Explorers have been unlocked when this setting runs it will automatically set all map sliders except size to the minimum they can be and set the biome used to Random.</b></p>";
 				description += "<p>This is important for speed climbing while climbing through the world. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.</p>";
 				description += "<p><b>Recommended:</b> Dagadder</p>";
 				return description;
@@ -1418,7 +1418,7 @@ function initializeAllSettings() {
 			function () { return ('Hits Survived') },
 			function () {
 				var description = "<p>Will farm until you can survive this amount of attacks.</p>";
-				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>0/1/3</b> and a map cap of <b>500</b>.</p>";
+				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>500</b>.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1.5 for earlygame, gradually increase the further you progress</p>";
@@ -3439,12 +3439,12 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
 				description += "<p><b>Your Hits Survived can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
-				description += "<p>Will use the job ratio settings that have been set in the <b>Map Bonus</b> setting. If that hasn't been setup then it will use a ratio of <b>0/1/3</b></p>";
+				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>500</b>.</p>";
 				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
-				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 1.5</p>";
+				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 2</p>";
 				return description;
-			}, 'value', 0, null, 'Spire', [1]);
+			}, 'value', 2, null, 'Spire', [1]);
 		createSetting('skipSpires',
 			function () { return ('Skip Spires') },
 			function () {
