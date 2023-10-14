@@ -125,12 +125,13 @@ function geneAssist() {
 
 	var target;
 
+	const angelic = mastery('angelic');
+	const runningElectricity = challengeActive('Electricity') || challengeActive('Mapocalypse');
 	var runningHard;
 	if (challengeActive('Daily'))
-		runningHard = typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined';
+		runningHard = (!angelic && typeof game.global.dailyChallenge.bogged !== 'undefined') || typeof game.global.dailyChallenge.plague !== 'undefined';
 	else
-		runningHard = challengeActive('Electricity') || challengeActive('Mapocalypse') || challengeActive('Toxicity') || challengeActive('Nom');
-
+		runningHard = !angelic && (challengeActive('Nom') || challengeActive('Toxicity') || challengeActive('Lead'));
 
 	if (getPageSetting('geneAssistTimer') > 0)
 		target = new Decimal(getPageSetting('geneAssistTimer'));
@@ -140,10 +141,14 @@ function geneAssist() {
 	if (getPageSetting('geneAssistZoneAfter') > 0 && getPageSetting('geneAssistTimerAfter') > 0 && game.global.world >= getPageSetting('geneAssistZoneAfter'))
 		target = new Decimal(getPageSetting('geneAssistTimerAfter'));
 
+	if (runningElectricity && getPageSetting('geneAssistTimerElectricity') > 0)
+		target = new Decimal(getPageSetting('geneAssistTimerElectricity'));
+
+	if (runningHard && getPageSetting('geneAssistTimerHard') > 0)
+		target = new Decimal(getPageSetting('geneAssistTimerHard'));
+
 	if (trimpStats.isC3 && !runningHard && getPageSetting('geneAssistTimerC2') > 0)
 		target = new Decimal(getPageSetting('geneAssistTimerC2'));
-	if (trimpStats.isC3 && runningHard && getPageSetting('geneAssistTimerC2Hard') > 0)
-		target = new Decimal(getPageSetting('geneAssistTimerC2Hard'));
 
 	if (getPageSetting('geneAssistTimerDaily') > 0 && trimpStats.isDaily)
 		target = new Decimal(getPageSetting('geneAssistTimerDaily'));

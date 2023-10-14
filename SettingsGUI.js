@@ -523,6 +523,30 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
+		createSetting('geneAssistTimerHard',
+			function () { return ('GA: Hard Chall Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when running challenges that are considered hard (Nom, Toxicity, Lead). </p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>This setting is disabled if you have the <b>Angelic</b> mastery.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'value', 2, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+
+		createSetting('geneAssistTimerElectricity',
+			function () { return ('GA: Electricity Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when running the Electricity challenge. </p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>This also overwrites your breed timer in the <b>Mapocalypse</b> challenge.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'value', 2, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+
 		//Spire Timers
 		createSetting('geneAssistTimerSpire',
 			function () { return ('GA: Spire Timer') },
@@ -586,8 +610,9 @@ function initializeAllSettings() {
 		createSetting('geneAssistTimerDailyHard',
 			function () { return ('GA: Daily Timer Hard') },
 			function () {
-				var description = "<p>Gene Assist will use the value set here when running dailies that are considered hard (Plagued, Bloodthirst). </p>";
+				var description = "<p>Gene Assist will use the value set here when running dailies that are considered hard (Plagued, Bogged). </p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>This setting won't do anything on Bogged dailies if you have the <b>Angelic</b> mastery.</p>";
 				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
 				description += "<p><b>Recommended:</b> 2</p>";
 				return description;
@@ -612,16 +637,6 @@ function initializeAllSettings() {
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
 				description += "<p><b>Recommended:</b> Use regular Gene Assist settings instead of this</p>";
-				return description;
-			}, 'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.geneAssist.enabled) });
-		createSetting('geneAssistTimerC2Hard',
-			function () { return ('GA: ' + cinf() + ' Timer Hard') },
-			function () {
-				var description = "<p>Gene Assist will use the value set here when running " + cinf() + "s that are considered hard (Electricity, Nom, Toxicity). </p>";
-				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
-				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
-				description += "<p><b>Recommended:</b> 2</p>";
 				return description;
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
@@ -6244,7 +6259,6 @@ function updateATVersion() {
 			if (tempSettings.dsATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerSpireDaily'].value = tempSettings.dsATGA2timer.value;
 
 			if (tempSettings.cATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerC2'].value = tempSettings.cATGA2timer.value;
-			if (tempSettings.chATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerC2Hard'].value = tempSettings.chATGA2timer.value;
 
 			var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 			if (perkyInputs !== null) autoTrimpSettings['autoAllocatePresets'].value = perkyInputs;
