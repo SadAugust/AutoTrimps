@@ -3442,9 +3442,9 @@ function initializeAllSettings() {
 				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>500</b>.</p>";
 				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
-				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 2</p>";
+				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 2, null, 'Spire', [1]);
+			}, 'value', 10, null, 'Spire', [1]);
 		createSetting('skipSpires',
 			function () { return ('Skip Spires') },
 			function () {
