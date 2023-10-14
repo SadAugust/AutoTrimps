@@ -530,9 +530,9 @@ function initializeAllSettings() {
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p>This setting is disabled if you have the <b>Angelic</b> mastery.</p>";
 				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
-				description += "<p><b>Recommended:</b> 2</p>";
+				description += "<p><b>Recommended:</b> 8</p>";
 				return description;
-			}, 'value', 2, null, 'Jobs', [1],
+			}, 'value', 8, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
 		createSetting('geneAssistTimerElectricity',
@@ -542,9 +542,9 @@ function initializeAllSettings() {
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p>This also overwrites your breed timer in the <b>Mapocalypse</b> challenge.</p>";
 				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
-				description += "<p><b>Recommended:</b> 2</p>";
+				description += "<p><b>Recommended:</b> 2.5</p>";
 				return description;
-			}, 'value', 2, null, 'Jobs', [1],
+			}, 'value', 2.5, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
 		//Spire Timers
