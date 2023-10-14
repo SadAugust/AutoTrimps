@@ -310,8 +310,12 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 	var damageMult = 1;
 	const formationMod = (game.upgrades.Dominance.done) ? 2 : 1;
 
-	//Our Health and Block
-	var customAttack = type === 'world' && targetZone > 200 && game.global.universe === 2 ? calcMutationAttack(targetZone) : undefined;
+	var customAttack = undefined;
+	if (type === 'world') {
+		if (game.global.universe === 1 && isCorruptionActive(targetZone)) customAttack = calcCorruptedAttack(targetZone);
+		else if (game.global.universe === 2 && targetZone > 200) customAttack = calcMutationAttack(targetZone);
+	}
+
 	var hitsToSurvive = targetHitsSurvived();
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 	var health = calcOurHealth(false, type, false, true) / formationMod;
@@ -809,10 +813,16 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	var fluctuation = game.global.universe === 2 ? 0.5 : 0.2;
 	if (game.global.universe === 1) {
 		//Spire - Overrides the base attack number
-		if (type === 'world' && game.global.spireActive) attack = calcSpire('attack');
-
+		if (type === 'world') {
+			if (game.global.spireActive) attack = calcSpire('attack');
+			else if (mutations.Corruption.active()) {
+				if (game.global.gridArray[cell - 1].mutation) {
+					attack = corruptionBaseAttack(cell - 1, zone)
+				}
+			}
+		}
 		//Map and Void Corruption
-		if (type !== 'world') {
+		else {
 			//Corruption
 			var corruptionScale = calcCorruptionScale(game.global.world, 3);
 			if (mutations.Magma.active()) attack *= corruptionScale / (type === 'void' ? 1 : 2);
@@ -821,9 +831,11 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	}
 
 	//Curr zone Mutation Attack
-	if (game.global.universe === 2 && type === 'world' && game.global.world > 200) {
-		if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
-			attack = mutationBaseAttack(cell - 1, zone)
+	else if (game.global.universe === 2) {
+		if (type === 'world' && game.global.world > 200) {
+			if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
+				attack = mutationBaseAttack(cell - 1, zone)
+			}
 		}
 	}
 
@@ -1011,7 +1023,7 @@ function calcEnemyBaseHealth(mapType, zone, cell, name, ignoreCompressed) {
 	var base = (game.global.universe === 2) ? 10e7 : 130;
 	var health = (base * Math.sqrt(zone) * Math.pow(3.265, zone / 2)) - 110;
 
-	if (!ignoreCompressed && game.global.universe === 2 && game.global.world > 200 && mapType === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
+	if (!ignoreCompressed && mapType === 'world' && game.global.universe === 2 && game.global.world > 200 && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
 		if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') !== -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') !== -1)) {
 			cell = cell - 1
 			var grid = game.global.gridArray
@@ -1040,7 +1052,7 @@ function calcEnemyBaseHealth(mapType, zone, cell, name, ignoreCompressed) {
 		}
 	}
 	//First Two Zones
-	if (zone === 1 || zone === 2 && cell < 10) {
+	if (zone === 1 || (zone === 2 && cell < 10)) {
 		health *= 0.6;
 		health = (health * 0.25) + ((health * 0.72) * (cell / 100));
 	}
@@ -1253,15 +1265,21 @@ function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 	//Init
 	var enemyHealth;
 	var universeSetting;
+
 	if (type === 'world') {
+		var customHealth = undefined;
+		if (type === 'world') {
+			if (game.global.universe === 1 && isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
+			else if (game.global.universe === 2 && targetZone > 200) customHealth = calcMutationHealth(targetZone);
+		}
+
 		var enemyName = 'Turtlimp';
 		var cell = 99;
 		if (challengeActive('Mayhem') || challengeActive('Pandemonium')) {
 			enemyName = 'Improbability';
 			cell = 100;
 		}
-		var mutationsActive = game.global.universe === 2 && game.global.world > 200;
-		enemyHealth = calcEnemyHealth(type, targetZone, cell, enemyName, (mutationsActive ? calcMutationHealth(game.global.world) : null));
+		enemyHealth = calcEnemyHealth(type, targetZone, cell, enemyName, customHealth);
 		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, cell, type, 1, 'gamma') : 'X';
 	}
 	if (type === 'map') {
@@ -1332,6 +1350,84 @@ function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 	return enemyHealth / (ourBaseDamage + addPoison());
 }
 
+//Avg damage of corrupted enemy
+function corruptionBaseAttack(cell, targetZone) {
+	if (!targetZone) targetZone = game.global.world;
+
+	var baseAttack;
+	var cell = game.global.gridArray[cell];
+
+	baseAttack = calcEnemyBaseAttack('world', targetZone, cell.level, 'Chimp', true);
+
+	if (cell.corrupted === 'corruptStrong') baseAttack *= 2;
+	else if (cell.corrupted === 'healthyStrong') baseAttack *= 2.5;
+	baseAttack *= cell.mutation === 'Healthy' ? calcCorruptionScale(targetZone, 5) : calcCorruptionScale(targetZone, 3);
+	return baseAttack;
+}
+
+//Need to add a isCorrupted check for zone checking
+function calcCorruptedAttack(targetZone) {
+	if (game.global.universe !== 1) return;
+	if (!targetZone) targetZone = game.global.world;
+	if (!isCorruptionActive(targetZone)) return;
+	var attack;
+	var worstCell = 0;
+	var cell;
+
+	var highest = 1;
+	var gridArray = game.global.gridArray;
+
+	for (var i = 0; i < gridArray.length; i++) {
+		cell = i;
+		if (gridArray[cell].mutation) {
+			highest = Math.max(corruptionBaseAttack(cell, targetZone), highest);
+			if (highest > attack) worstCell = i
+			attack = highest;
+		}
+	}
+	return attack;
+}
+
+function corruptionBaseHealth(cell, targetZone) {
+	if (!targetZone) targetZone = game.global.world;
+	var baseHealth;
+	cell = game.global.gridArray[cell];
+
+	baseHealth = calcEnemyBaseHealth('world', targetZone, cell.level, 'Chimp', true);
+	if (cell.corrupted === 'corruptTough') baseHealth *= 5;
+	else if (cell.corrupted === 'healthyTough') baseHealth *= 7.5;
+
+	baseHealth *= cell.mutation === 'Healthy' ? calcCorruptionScale(targetZone, 14) : calcCorruptionScale(targetZone, 10);
+
+	return baseHealth;
+}
+
+function calcCorruptedHealth(targetZone) {
+	if (game.global.universe !== 1) return;
+	if (!targetZone) targetZone = game.global.world;
+	if (!isCorruptionActive(targetZone)) return;
+
+	var worstCell = 0;
+	var cell;
+	var health = 0;
+
+	var highest = 0;
+	var gridArray = game.global.gridArray;
+
+	for (var i = 0; i < game.global.gridArray.length; i++) {
+		cell = i;
+		if (gridArray[cell].mutation) {
+			var enemyHealth = corruptionBaseHealth(cell, targetZone);
+
+			if (enemyHealth > highest) worstCell = i;
+			highest = Math.max(enemyHealth, highest);
+			health = highest;
+		}
+	}
+	return health;
+}
+
+//Avg damage of mutated enemy
 function mutationBaseAttack(cell, targetZone) {
 	if (!targetZone) targetZone = game.global.world;
 
@@ -1352,7 +1448,7 @@ function mutationBaseAttack(cell, targetZone) {
 }
 
 function calcMutationAttack(targetZone) {
-	if (game.global.universe === 1) return;
+	if (game.global.universe !== 2) return;
 	if (!targetZone) targetZone = game.global.world;
 	if (targetZone < 201) return;
 	var attack;
@@ -1395,6 +1491,7 @@ function calcMutationAttack(targetZone) {
 }
 
 function mutationBaseHealth(cell, targetZone) {
+	if (!targetZone) targetZone = game.global.world;
 	var baseHealth;
 	var addHealth = 0;
 	var cell = game.global.gridArray[cell];
@@ -1415,7 +1512,7 @@ function mutationBaseHealth(cell, targetZone) {
 }
 
 function calcMutationHealth(targetZone) {
-	if (game.global.universe === 1) return;
+	if (game.global.universe !== 2) return;
 	if (!targetZone) targetZone = game.global.world;
 	if (targetZone < 201) return;
 	var worstCell = 0;

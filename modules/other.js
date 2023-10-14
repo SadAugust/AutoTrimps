@@ -1,5 +1,12 @@
 MODULES["other"] = {};
 
+function isCorruptionActive(targetZone) {
+	if (game.global.universe == 2) return 9999;
+	if (challengeActive('Eradicated')) return 1;
+	if (challengeActive('Corrupted')) return 60;
+	return targetZone >= ((game.talents.headstart.purchased && !game.global.runningChallengeSquared) ? ((game.talents.headstart2.purchased) ? ((game.talents.headstart3.purchased) ? 151 : 166) : 176) : 181);
+}
+
 function autoRoboTrimp() {
 	if (game.global.roboTrimpLevel === 0) return;
 	if (game.global.roboTrimpCooldown !== 0) return;
