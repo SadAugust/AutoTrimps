@@ -2748,7 +2748,7 @@ function initializeAllSettings() {
 		createSetting('heirloomShield',
 			function () { return ('Shields') },
 			function () {
-				var description = "<p>Master switch for whether the script will Shield related heirloom swapping.</p>";
+				var description = "<p>Switch for enabling Shield heirloom swapping.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -2758,7 +2758,7 @@ function initializeAllSettings() {
 		createSetting('heirloomInitial',
 			function () { return ('Initial') },
 			function () {
-				var description = "<p>Heirloom to use before your designated swap zone.</p>";
+				var description = "<p>Shield to use before your designated swap zone.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield with void map drop chance</p>";
 				return description;
@@ -2768,7 +2768,7 @@ function initializeAllSettings() {
 		createSetting('heirloomAfterpush',
 			function () { return ('Afterpush') },
 			function () {
-				var description = "<p>Heirloom to use after your designated swap zone.</p>";
+				var description = "<p>Shield to use after your designated swap zone.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
@@ -2778,7 +2778,7 @@ function initializeAllSettings() {
 		createSetting('heirloomC3',
 			function () { return (cinf()) },
 			function () {
-				var description = "<p>Heirloom to use after your designated swap zone during " + c2Description() + " runs.</p>";
+				var description = "<p>Shield to use after your designated swap zone during " + c2Description() + " runs.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
@@ -2789,7 +2789,7 @@ function initializeAllSettings() {
 		createSetting('heirloomVoid',
 			function () { return ('Void') },
 			function () {
-				var description = "<p>Heirloom to use inside of Void Maps.</p>";
+				var description = "<p>Shield to use inside of Void Maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> damage heirloom</p>";
 				return description;
@@ -2799,7 +2799,7 @@ function initializeAllSettings() {
 		createSetting('heirloomVoidPlaguebringer',
 			function () { return ('Void PB') },
 			function () {
-				var description = "<p>Heirloom to use inside of Void Maps when fighting a slow enemy and the next enemy is fast.</p>";
+				var description = "<p>Shield to use inside of Void Maps when fighting a slow enemy and the next enemy is fast.</p>";
 				description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
 				description += "<p>A shield with <b>Plaguebringer MUST</b> be used.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
@@ -2812,7 +2812,7 @@ function initializeAllSettings() {
 		createSetting('heirloomSpire',
 			function () { return ('Spire') },
 			function () {
-				var description = "<p>The name of the heirloom you would like to use during active Spires.</p>";
+				var description = "<p>Shield to use during active Spires.</p>";
 				description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
 				description += "<p>The Map Swap setting will override this whilst in maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
@@ -2846,6 +2846,7 @@ function initializeAllSettings() {
 			function () { return (cinf() + ' Swap Zone') },
 			function () {
 				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during daily runs.</p>";
+				description += "<p>If the " + cinf() + " shield setting has been setup then it will use that instead of the <b>Afterpush</b> shield.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
@@ -2874,7 +2875,7 @@ function initializeAllSettings() {
 		createSetting('heirloomStaff',
 			function () { return ('Staffs') },
 			function () {
-				var description = "<p>Master switch for whether the script will Staff related heirloom swapping.</p>";
+				var description = "<p>Switch for enabling Staff heirloom swapping.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -2884,7 +2885,7 @@ function initializeAllSettings() {
 		createSetting('heirloomStaffWorld',
 			function () { return ('World') },
 			function () {
-				var description = "<p>The staff that you would like to use when in world zones.</p>";
+				var description = "<p>The staff to use when in world zones.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> High pet XP staff</p>";
 				return description;
@@ -2894,9 +2895,9 @@ function initializeAllSettings() {
 		createSetting('heirloomStaffMap',
 			function () { return ('Map') },
 			function () {
-				var description = "<p>The staff that you would like to use when running maps.</p>";
+				var description = "<p>The staff to use when running maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
-				description += "<p>Will be overridden by the proceeding heirloom settings if they've been assigned otherwise will use this in every map available.</p>";
+				description += "<p>Will be overridden by the cache heirloom settings if they've been setup.</p>";
 				description += "<p><b>Recommended:</b> Resource efficiency heavy staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
@@ -2905,7 +2906,7 @@ function initializeAllSettings() {
 		createSetting('heirloomStaffVoid',
 			function () { return ('Void') },
 			function () {
-				var description = "<p>The staff that you would like to use when running <b>Void</b> maps.</p>";
+				var description = "<p>The staff to use when running <b>Void</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
@@ -2915,7 +2916,7 @@ function initializeAllSettings() {
 		createSetting('heirloomStaffFood',
 			function () { return ('Savory Cache') },
 			function () {
-				var description = "<p>The staff that you would like to use when running <b>Savory Cache</b> maps.</p>";
+				var description = "<p>The staff to use when running <b>Savory Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated food efficiency staff</p>";
 				return description;
@@ -2925,7 +2926,7 @@ function initializeAllSettings() {
 		createSetting('heirloomStaffWood',
 			function () { return ('Wooden Cache') },
 			function () {
-				var description = "<p>The staff that you would like to use when running <b>Wooden Cache</b> maps.</p>";
+				var description = "<p>The staff to use when running <b>Wooden Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated wood efficiency staff</p>";
 				return description;
@@ -2935,7 +2936,7 @@ function initializeAllSettings() {
 		createSetting('heirloomStaffMetal',
 			function () { return ('Metal Cache') },
 			function () {
-				var description = "<p>The staff that you would like to use when running <b>Metal Cache</b> maps.</p>";
+				var description = "<p>The staff to use when running <b>Metal Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
@@ -2945,7 +2946,7 @@ function initializeAllSettings() {
 		createSetting('heirloomStaffResource',
 			function () { return ('Resource Cache') },
 			function () {
-				var description = "<p>The staff that you would like to use when running <b>Resource Cache</b> maps.</p>";
+				var description = "<p>The staff to use when running <b>Resource Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
 				return description;
@@ -2957,7 +2958,7 @@ function initializeAllSettings() {
 			function () { return ('Auto Heirlooms') },
 			function () {
 				var description = "<p>Master switch for whether the script will try to keep any of the heirlooms in your temporary section when portaling.</p>";
-				description += "<p>When portaling will create a list of mods you want heirlooms to have and checks if the heirlooms in your temporary section for the type(s) you have selected to keep have the possibility to have all of the selected mods and if any do they will be stashed otherwise will be recycled.</p>";
+				description += "<p>When run it will check the mods you want the heirloom to have and checks if the heirlooms in your temporary section for the type(s) you have selected to keep have all of the selected mods and if any do they will be stashed otherwise will be recycled.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -3005,6 +3006,7 @@ function initializeAllSettings() {
 			function () { return ('Shields') },
 			function () {
 				var description = "<p>Enable to allow you to select the shield modifiers you would like to target.</p>";
+				description += "<p>Auto Heirlooms won't keep any shields if this setting is disabled.</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
@@ -3012,9 +3014,9 @@ function initializeAllSettings() {
 		createSetting('heirloomAutoRareToKeepShield',
 			function () { return ('Rarity to Keep') },
 			function () {
-				var description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom, recycles all others.</p>";
+				var description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and recycle others.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
-				description += "<p>When changed the heirloom mods sections will only display the mods available for that heirloom tier.</p>";
+				description += "<p>Only display the mods available for your selected heirloom tier.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
 			}, 'dropdown', 'None', function () {
@@ -3043,9 +3045,9 @@ function initializeAllSettings() {
 		createSetting('heirloomAutoShieldBlacklist',
 			function () { return ('Blacklist') },
 			function () {
-				var description = "<p>Will automatically recycle any Shield heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
-				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
+				var description = "<p>Will automatically recycle Shield heirlooms with the mods you input into this setting.</p>";
+				description += "<p>Mod names must be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
 			}, 'multiTextValue', 'None', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse)) });
@@ -3139,6 +3141,7 @@ function initializeAllSettings() {
 			function () { return ('Staffs') },
 			function () {
 				var description = "<p>Enable to allow you to select the staff modifiers you would like to target.</p>";
+				description += "<p>Auto Heirlooms won't keep any staffs if this setting is disabled.</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
@@ -3146,9 +3149,9 @@ function initializeAllSettings() {
 		createSetting('heirloomAutoRareToKeepStaff',
 			function () { return ('Rarity to Keep') },
 			function () {
-				var description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom, recycles all others.</p>";
+				var description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and recycle others.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
-				description += "<p>When changed the heirloom mods sections will only display the mods available for that heirloom tier.</p>";
+				description += "<p>Only display the mods available for your selected heirloom tier.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
 			}, 'dropdown', 'None', function () {
@@ -3177,9 +3180,9 @@ function initializeAllSettings() {
 		createSetting('heirloomAutoStaffBlacklist',
 			function () { return ('Blacklist') },
 			function () {
-				var description = "<p>Will automatically recycle any Staff heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
-				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
+				var description = "<p>Will automatically recycle Staff heirlooms with the mods you input into this setting.</p>";
+				description += "<p>Mod names must be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
 			}, 'textValue', 'None', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse)) });
@@ -3271,8 +3274,11 @@ function initializeAllSettings() {
 		//Core Line
 		createSetting('heirloomAutoCore',
 			function () { return ('Cores') },
-			function () { return ('Enables in-depth core settings.') },
-			'boolean', false, null, 'Heirloom', [1],
+			function () {
+				var description = "<p>Enable to allow you to select the core modifiers you would like to target.</p>";
+				description += "<p>Auto Heirlooms won't keep any cores if this setting is disabled.</p>";
+				return description
+			}, 'boolean', false, null, 'Heirloom', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoRareToKeepCore',
@@ -3300,9 +3306,9 @@ function initializeAllSettings() {
 		createSetting('heirloomAutoCoreBlacklist',
 			function () { return ('Blacklist') },
 			function () {
-				var description = "<p>Will automatically recycle any Core heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
-				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
+				var description = "<p>Will automatically recycle Core heirlooms with the mods you input into this setting.</p>";
+				description += "<p>Mod names must be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
 			}, 'textValue', 'None', null, 'Heirloom', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
@@ -3311,6 +3317,7 @@ function initializeAllSettings() {
 			function () { return ('Mod 1') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirloom', [1],
 			function () {
@@ -3320,6 +3327,7 @@ function initializeAllSettings() {
 			function () { return ('Mod 2') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirloom', [1],
 			function () {
@@ -3330,6 +3338,7 @@ function initializeAllSettings() {
 			function () { return ('Mod 3') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirloom', [1],
 			function () {
@@ -3340,6 +3349,7 @@ function initializeAllSettings() {
 			function () { return ('Mod 4') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirloom', [1],
 			function () {
@@ -3356,7 +3366,7 @@ function initializeAllSettings() {
 		createSetting('autoGoldenSettings',
 			function () { return ('Auto Gold Settings') },
 			function () {
-				var description = "<p>Here you can select the golden upgrades you would like to have purchased during filler (non daily/" + cinf() + " runs) runs.</p>";
+				var description = "<p>Here you can select the golden upgrades you would like to have purchased during your runs.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
