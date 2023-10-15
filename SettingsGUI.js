@@ -3936,12 +3936,12 @@ function initializeAllSettings() {
 				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + resourceHour() + "/hr status</b> setting in the <b>Display</b> tab is enabled.</p>";
 				return description;
 			}, 'action', 'makeResourceTooltip();', null, 'Help', [0]);
-		/* createSetting('helpAutoPortal',
+		createSetting('helpAutoPortal',
 			function () { return ('Auto Portal Info') },
 			function () {
 				var description = "<p>Will display a description of what order Auto Portal will try to perform its actions.</p>";
 				return description;
-			}, 'action', "makeAutomapStatusTooltip(false);", null, 'Help', [0]); */
+			}, 'action', "makeAutomapStatusTooltip(false);", null, 'Help', [0]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------

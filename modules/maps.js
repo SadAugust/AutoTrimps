@@ -120,9 +120,8 @@ function updateAutoMapsStatus(get) {
 
 function makeAutomapStatusTooltip(mouseover) {
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
-	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
-	var enemyName = game.global.world < 60 ? 'Blimp' : 'Improbability';
-	var hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against a cell 100 ${enemyName}'s max attack${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''
+	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy. The enemy health check is based on the highest health enemy in the map/zone.';
+	var hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against the highest damaging enemy in the map/zone${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''
 		}.`;
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
 	const hitsSurvivedVoid = prettify(hdStats.hitsSurvivedVoid);
@@ -142,7 +141,6 @@ function makeAutomapStatusTooltip(mouseover) {
 	if (game.global.universe === 2) {
 		if (!game.portal.Equality.radLocked) tooltipText += `<br>\
 		If you have the Auto Equality setting set to <b>Auto Equality: Advanced</b> then all calculations will factor expected equality value into them.<br>`;
-		if (game.stats.highestRadLevel.valueTotal() > 200) tooltipText += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.<br>`;
 	}
 	//Hits Survived
 	tooltipText += `<br>` +
@@ -267,6 +265,41 @@ function makeAdditionalInfoTooltip(mouseover) {
 		if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Additional Info Tooltip', 'customText', 'lock', tooltipText, false, 'center');
 		verticalCenterTooltip(true);
 	}
+}
+
+function makeAutoPortalHelpTooltip() {
+	var tooltipText = '';
+
+	tooltipText += `<p>Auto Portal has a priority as to what it will portal into and if that isn't possible it'll try to portal into the next and so forth.</p>`;
+	//C2/C3s
+	tooltipText += `<p>To start with if the <b>${cinf()} Runner</b> setting is enabled it will check and see if all of your ${cinf()}'s are up to date according to your settings.</p>`;
+	//Dailies
+	tooltipText += `<p>Afterwards if the <b>Auto Start Daily</b> setting is enabled then it will portal into a Daily if there are any available to run.</p>`;
+	//Fillers
+	tooltipText += `<p>If neither of the options above are run then it will portal into the challenge that you have selected in the <b>Auto Portal</b> setting. If that is disabled then it will portal into a challengeless run.</p>`;
+
+
+	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Portal Info', 'customText', 'lock', tooltipText, false, 'center');
+	verticalCenterTooltip(true);
+}
+
+function makeFarmingDecisionHelpTooltip() {
+	var tooltipText = '';
+
+	tooltipText += `<p>Mapping has a priority as to what it will try to run and in what order.</p>`;
+
+
+
+	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Maps Priority', 'customText', 'lock', tooltipText, false, 'center');
+	verticalCenterTooltip(true);
+}
+
+function makeSettingConflictsHelpTooltip() {
+	var tooltipText = '';
+
+
+	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Trimps Conflict Info', 'customText', 'lock', tooltipText, false, 'center');
+	verticalCenterTooltip(true);
 }
 
 function makeAdditionalInfo() {
@@ -612,7 +645,7 @@ function autoMap() {
 				else if (highestMap === null) {
 					MODULES.maps.fragmentCost = updateMapCost(true);
 					mapsClicked();
-					debug("Disabling mapping until we reach " + MODULES.maps.fragmentCost + (MODULES.maps.fragmentCost === 1 ? " fragment." : " fragments.") + " as we don't have any maps to run.");
+					debug("Disabling mapping until we reach " + prettify(MODULES.maps.fragmentCost) + (MODULES.maps.fragmentCost === 1 ? " fragment." : " fragments.") + " as we don't have any maps to run.");
 					return;
 				}
 				//Runs highest map we have available to farm fragments with
