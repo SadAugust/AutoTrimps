@@ -181,12 +181,12 @@ function initializeAllSettings() {
 			}, 'boolean', true, null, 'Core', [1, 2]);
 		createSetting('downloadSaves',
 			function () { return ('Download Saves') },
-			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
+			function () { return ('Will automatically download saves when the script portals.') },
 			'boolean', false, null, 'Core', [1, 2]);
 		createSetting('portalVoidIncrement',
 			function () { return ('Void Map Liquification') },
 			function () {
-				var description = "<p>Delays auto portaling into your preferred run and repeatedly does portals in universe 1 until your bone void map counter is 1 drop away from a guaranteed extra void map.</p>";
+				var description = "<p>Delays portaling into your preferred run and repeatedly does portals in universe 1 until your bone void map counter is 1 drop away from a guaranteed extra void map.</p>";
 				if (currSettingUniverse !== 1) description += "<p><b>Recommended:</b> On</p>";
 				else description += "<p><b>Recommended:</b> Off</p>";
 				return description;
@@ -3417,7 +3417,7 @@ function initializeAllSettings() {
 				var description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
 				description += "<p><b>Your Hits Survived can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>500</b>.</p>";
-				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all.</b></p>";
+				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during active Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				return description;
@@ -3425,7 +3425,7 @@ function initializeAllSettings() {
 		createSetting('skipSpires',
 			function () { return ('Skip Spires') },
 			function () {
-				var description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks.</p>";
+				var description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
 				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
@@ -3730,7 +3730,8 @@ function initializeAllSettings() {
 		createSetting('timeWarpSpeed',
 			function () { return ('Time Warp Support') },
 			function () {
-				var description = "<p>Will force AutoTrimps to run the script more frequently during time warp.</p>";
+				var description = "<p>Will allow the script to run more frequently during time warp so instead of running once every 100ms it will run based off of when the game runs its code.</p>";
+				description += "<p>When enabled auto maps, auto fight, auto portal, auto stance, and auto equality will be run every time the game runs its code.</p>";
 				description += "<p>This will be a significant slow down when running time warp but should allow you to use the script during it.</p>";
 				return description;
 			}, 'boolean', true, null, 'Time Warp', [0]);
@@ -3739,7 +3740,7 @@ function initializeAllSettings() {
 			function () { return ('Time Warp Frequency') },
 			function () {
 				var description = "<p>How often the scripts code will run during time warp.</p>";
-				description += "<p>If set to 20 it will run on the 20th time the games code runs.</p>";
+				description += "<p>If set to 20 it will run once every 20 times the games code runs.</p>";
 				description += "<p>The lower you set this value the longer time warp will take.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
@@ -3752,7 +3753,7 @@ function initializeAllSettings() {
 				var description = "<p>Will display the Trimps user interface during time warp.</p>";
 				description += "<p>Updates the display every 600 ingame ticks so every minute of ingame time.</p>";
 				description += "<p>If enabled it will cause your time warp to take longer as it has to render additional frames.</p>";
-				description += "<p>When first loading Time Warp will let you know how long your Time Warp is in a tooltip as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the Auto Maps status at the bottom of the battle container.</p>";
+				description += "<p>When first loading Time Warp you will have a tooltip to inform you of your Time Warp duration as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the start of the Auto Maps status at the bottom of the battle container.</p>";
 				description += "<p><b>Recommended:</b> Enabled</p>";
 				return description;
 			}, 'boolean', false, null, 'Time Warp', [0],
@@ -3766,21 +3767,32 @@ function initializeAllSettings() {
 	if (displayDisplay) {
 		createSetting('displayEnhancedGrid',
 			function () { return ('Enhance Grids') },
-			function () { return ('Apply slight visual enhancements to world and map grids that highlights with drop shadow all the exotic, powerful, skeletimps and other special imps.') },
-			'boolean', false, null, 'Display', [0]);
+			function () {
+				var description = "<p>Apply slight visual enhancements to world and map grids that highlights with drop shadow all the exotic, powerful, skeletimps and other special imps.</p>";
+				return description;
+			}, 'boolean', false, null, 'Display', [0]);
 		createSetting('displayHeHr',
 			function () { return (resourceHour() + '/hr status') },
-			function () { return ('Enables the display of your ' + resource().toLowerCase() + ' per hour. Turn this off to reduce memory.') },
-			'boolean', true, null, 'Display', [0]);
+			function () {
+				var description = "<p>Enables the display of your " + resource().toLowerCase() + " per hour.</p>";
+				return description;
+			}, 'boolean', true, null, 'Display', [0]);
 
 		createSetting('displayAllSettings',
 			function () { return ('Display All settings') },
-			function () { return ('Will display all of the locked settings that have HZE or other requirements to be displayed.') },
-			'boolean', false, null, 'Display', [0]);
+			function () {
+				var description = "<p>Will display all of the locked settings that have highest zone or other requirements to be displayed.</p>";
+				return description;
+			}, 'boolean', false, null, 'Display', [0]);
 
 		createSetting('EnableAFK',
 			function () { return ('Go AFK Mode') },
-			function () { return ('(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.') },
+			function () {
+				var description = "<p>FK Mode uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU saving mode.</p>";
+				description += "<p>The blue color means this is not a settable setting, just a button.</p>";
+				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
+				return description;
+			},
 			'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display', [1, 2]);
 
 		createSetting('automateSpireAssault',
@@ -3791,20 +3803,24 @@ function initializeAllSettings() {
 		createSetting('sitInMaps',
 			function () { return ('Sit In maps') },
 			function () {
-				var description = "<p>Will force your trimps to go sit in the map chamber when enabled. </p>";
-				description += "<p><b>The 'Sit In Zone' setting must be setup for this to work properly.</b></p>"
+				var description = "<p>Will force your trimps to go sit in the map chamber when enabled.</p>";
+				description += "<p><b>The <b>Sit In Zone</b> setting must be setup for this to work.</b></p>"
 				description += "<p><b>Recommended:</b> Disabled</p>";
 				return description;
 			}, 'boolean', false, null, 'Display', [1, 2]);
 		createSetting('sitInMaps_Zone',
 			function () { return ('SIM: Zone') },
-			function () { return ('The script will go to the map chamber and stop running any maps at this zone.') },
-			'value', -1, null, 'Display', [1, 2],
+			function () {
+				var description = "<p>The script will go to the map chamber and stop running any maps at this zone.</p>";
+				return description;
+			}, 'value', -1, null, 'Display', [1, 2],
 			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
 		createSetting('sitInMaps_Cell',
 			function () { return ('SIM: Cell') },
-			function () { return ('The script will go to the map chamber and stop running any maps after this cell has been reached.') },
-			'value', -1, null, 'Display', [1, 2],
+			function () {
+				var description = "<p>The script will go to the map chamber and stop running any maps after this cell has been reached.</p>";
+				return description;
+			}, 'value', -1, null, 'Display', [1, 2],
 			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
 
 		createSetting('spamMessages',
@@ -3839,20 +3855,28 @@ function initializeAllSettings() {
 	if (displayImport) {
 		createSetting('ImportAutoTrimps',
 			function () { return ('Import AutoTrimps') },
-			function () { return ('Import your AutoTrimps Settings. Asks you to name it as a profile afterwards.') },
-			'infoclick', 'ImportAutoTrimps', null, 'Import Export', [0]);
+			function () {
+				var description = "<p>Import a AutoTrimps settings file.</p>";
+				return description;
+			}, 'infoclick', 'ImportAutoTrimps', null, 'Import Export', [0]);
 		createSetting('ExportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
-			function () { return ('Export your AutoTrimps Settings as a output string text formatted in JSON.') },
-			'infoclick', 'ExportAutoTrimps', null, 'Import Export', [0]);
+			function () {
+				var description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
+				return description;
+			}, 'infoclick', 'ExportAutoTrimps', null, 'Import Export', [0]);
 		createSetting('DefaultAutoTrimps',
 			function () { return ('Reset To Default') },
-			function () { return ('Reset everything to the way it was when you first installed the script.') },
-			'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [0]);
+			function () {
+				var description = "<p>Reset everything to the way it was when you first installed the script.</p>";
+				return description;
+			}, 'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [0]);
 		createSetting('DownloadDebug',
 			function () { return ('Download For Debug') },
-			function () { return ('Will download both your save and the scripts settings so that they can be debugged easier.') },
-			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [0]);
+			function () {
+				var description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
+				return description;
+			}, 'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [0]);
 
 		createSetting('updateReload',
 			function () { return ('Update Reload') },
@@ -4061,7 +4085,6 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Beta', [2],
 			function () { return (false) });
 	}
-
 }
 
 function resource() {
