@@ -308,7 +308,7 @@ function initializeAllSettings() {
 				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b>, <b>Custom</b> or <b>One Off Challenges</b> are selected.</p>";
 				description += "<p><b>Off</b><br>Disables this setting.</p>";
 				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resource().toLowerCase() + " per hour goes below your current runs best " + resource().toLowerCase() + " per hour.</p>";
-				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
+				description += "<p>There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
 				description += "<p><b>Custom</b>/<b>One Off Challenges</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
 				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
@@ -389,7 +389,7 @@ function initializeAllSettings() {
 		createSetting('heliumHrBuffer',
 			function () { return (resourceHour() + '/Hr Buffer %') },
 			function () {
-				var description = "<p>When using the " + resource() + " Per Hour Auto Portal setting, it will portal if your " + resourceHour().toLowerCase() + "/hr drops by this settings % input lower than your best for current run.</p>";
+				var description = "<p>When using the <b>" + resource() + " Per Hour</b> Auto Portal setting, it will portal if your " + resource().toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
 				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer).</p>";
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
@@ -2412,7 +2412,7 @@ function initializeAllSettings() {
 				description += "<p><b>Won't function without Auto Maps enabled.</b></p>"
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Daily', [1, 2]);
+			}, 'boolean', true, null, 'Daily', [1, 2]);
 		createSetting('bloodthirstMaxStacks',
 			function () { return ('Bloodthirst TTK Check') },
 			function () {
@@ -2550,11 +2550,10 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will automatically portal into different challenges depending on the way you setup the Daily Auto Portal related settings. The challenge that it portals into can be setup through the <b>Auto Portal</b> settings in the <b>Core</b> tab.</p>";
 				description += "<p>Additional settings appear when <b>Daily Portal: " + resourceHour() + "/Hr</b> or <b>Daily Portal: Custom</b> are selected.</p>";
-				description += "<p><b>Daily Portal Off</b><br>Disables this setting. <b>Be warned it will never end your dailies!</b></p>";
+				description += "<p><b>Daily Portal Off</b><br>Disables this setting. Be warned it will never end your dailies unless you use the Portal After option in Void Map settings!</p>";
 
-				description += "<p><b>Daily Portal: " + resourceHour() + "/Hr</b><br>Portals into new runs when your " + resourceHour().toLowerCase() + "/hr goes below your current runs best " + resourceHour().toLowerCase() + "/hr.</p>";
-
-				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resourceHour().toLowerCase() + "/hr to (best - buffer setting) " + resourceHour().toLowerCase() + "/hr.</p>";
+				description += "<p><b>Daily Portal: " + resourceHour() + "/Hr</b><br>Portals into new runs when your " + resource().toLowerCase() + " per hour goes below your current runs best " + resourceHour().toLowerCase() + "/hr.</p>";
+				description += "<p>There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
 				description += "<p><b>Daily Portal: Custom</b><br>Will portal into your Auto Portal challenge at the zone specified in the <b>Daily Portal Zone</b> setting.</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Daily Portal: Custom with a specified endzone to make use of the Scruffy level 3 ability" : ("Daily Portal: " + resourceHour() + "/Hr")) + "</p>";
 				return description;
@@ -2573,8 +2572,8 @@ function initializeAllSettings() {
 		createSetting('dailyDontPortalBefore',
 			function () { return ("D: Don't Portal Before") },
 			function () {
-				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>DP: " + resourceHour() + "/Hr</b> Daily Auto Portal setting.</p>";
-				description += "<p>It is an additional check that prevents drops in " + resourceHour().toLowerCase() + "/hr from triggering Auto Portal.</p>";
+				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>Daily Portal: " + resourceHour() + "/Hr</b> Auto Portal setting.</p>";
+				description += "<p>It is an additional check that prevents drops in " + resource().toLowerCase() + " per hour from triggering Auto Portal.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and assume any zone is okay to portal on.</p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
@@ -2584,7 +2583,7 @@ function initializeAllSettings() {
 		createSetting('dailyHeliumHrBuffer',
 			function () { return ('D: ' + resourceHour() + '/Hr Buffer %') },
 			function () {
-				var description = "<p>When using the Daily " + resource() + "/Hr Auto Portal setting, it will portal if your " + resourceHour().toLowerCase() + "/hr drops by this settings % input lower than your best for current run.</p>";
+				var description = "<p>When using the <b>Daily Portal: " + resourceHour() + "/Hr</b> Auto Portal setting, it will portal if your " + resource().toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
 				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer).</p>";
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 1.25</p>";
@@ -2595,16 +2594,16 @@ function initializeAllSettings() {
 		createSetting('dailyHeliumHrPortal',
 			function () {
 				var hze = game.stats.highestLevel.valueTotal();
-				var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
-				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal after voids (poison)');
+				var portalOptions = ['Auto Portal Immediately', 'Portal After Voids'];
+				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal After Poison Voids');
 				return portalOptions;
 			},
 			function () {
 				var description = "<p>How you would like to portal when below your " + resource().toLowerCase() + " per hour threshold.</p>";
 				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
-				description += "<p><b>Portal after voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
-				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal after poison voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
-				description += "<p><b>Recommended:</b> Portal after voids</p>";
+				description += "<p><b>Portal After Voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal After Poison Voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
+				description += "<p><b>Recommended:</b> Portal After Voids</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Daily', [1, 2],
 			function () {
@@ -2633,7 +2632,7 @@ function initializeAllSettings() {
 		createSetting('dailyPortalPreviousUniverse',
 			function () { return ('Daily Previous Universe') },
 			function () {
-				var description = "<p>Will start your daily in the previous universe. Takes you back to this universe after it has finished running.</p>";
+				var description = "<p>Will start your dailies in the previous universe. Takes you back to this universe after it has finished running.</p>";
 				description += "<p>Ensure you setup daily settings for the <b>previous universe</b>.<br>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
