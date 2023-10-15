@@ -320,7 +320,7 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 	var health = calcOurHealth(false, type, false, true) / formationMod;
 	var block = calcOurBlock(false) / formationMod;
-	var equality = equalityQuery('Snimp', targetZone, null, type, null, 'gamma', null, hitsToSurvive);
+	var equality = equalityQuery('Improbability', targetZone, 100, type, null, 'gamma', null, hitsToSurvive);
 
 	//Lead farms one zone ahead
 	if (type === 'world' && challengeActive('Lead') && game.global.world % 2 === 1) {
@@ -339,7 +339,7 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 	}
 
 	//Enemy Damage
-	const worldDamage = calcEnemyAttackCore(type, targetZone, undefined, undefined, undefined, customAttack, equality);
+	const worldDamage = calcEnemyAttackCore(type, targetZone, 100, 'Improbability', undefined, customAttack, equality);
 
 	//Pierce & Voids
 	var pierce = (game.global.universe === 1 && game.global.brokenPlanet && type === 'world') ? getPierceAmt() : 0;
