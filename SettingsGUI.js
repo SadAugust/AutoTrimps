@@ -1867,8 +1867,8 @@ function initializeAllSettings() {
 		createSetting('c2RunnerEndMode',
 			function () { return ([cinf() + ' Runner End Challenge', cinf() + ' Runner Portal']) },
 			function () {
-				var description = "<p>If set to <b>" + cinf() + " Runnter Portal</b> this will automatically portal once you reach your " + cinf() + " end zone otherwise it will  end the challenge and continue your run on as normal.</p>";
-				description += "<p><b>Recommended:</b> " + cinf() + " Runnter Portal</p>";
+				var description = "<p>If set to <b>" + cinf() + " Runner Portal</b> this will automatically portal once you reach your " + cinf() + " end zone otherwise it will  end the challenge and continue your run on as normal.</p>";
+				description += "<p><b>Recommended:</b> " + cinf() + " Runner Portal</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
