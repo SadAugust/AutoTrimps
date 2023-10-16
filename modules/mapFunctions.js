@@ -3459,23 +3459,20 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 	if (!liquified && game.global.lastClearedCell + 2 < currSetting.cell) return false;
 	//Skips if challenge type isn't set to the type we're currently running or if it's not the challenge that's being run.
 	if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
-
 		//Dailies
 		if (trimpStats.isDaily) {
 			if (currSetting.runType !== 'Daily') return false;
 		}
-
 		//C2/C3 runs + special challenges
 		else if (trimpStats.isC3) {
 			if (currSetting.runType !== 'C3') return false;
-			else if (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== trimpStats.currChallenge) return false;
+			else if (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3)) return false;
 		}
-
 		//Fillers (non-daily/c2/c3)
 		else {
 			if (currSetting.runType !== 'Filler') return false;
 			var currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
-			if (currSetting.challenge !== 'All' && currChallenge !== trimpStats.currChallenge) return false;
+			if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) return false;
 		}
 	}
 
