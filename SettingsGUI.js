@@ -156,7 +156,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Controls what you upgrade.</p>";
 				description += "<p><b>Manual Upgrades</b><br>Disables this setting.</p>";
-				description += "<p><b>Buy All Upgrades</b><br>Automatically purchases non-equipment upgrades. Equipment upgrades are controlled by settings in the Gear tab.</p>";
+				description += "<p><b>Buy All Upgrades</b><br>Automatically purchases non-equipment upgrades. Equipment upgrades are controlled by settings in the Equipment tab.</p>";
 				description += "<p><b>Upgrades no Coords</b><br>Works the same as 'Buy All Upgrades' but stops Coordination upgrades from being purchased.</p>";
 				description += "<p><b>Recommended:</b> Buy All Upgrades</p>";
 
