@@ -52,21 +52,34 @@ class HDStats {
 
 		const checkAutoLevel = newZone ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
 
-		this.hdRatio = calcHDRatio(z, 'world');
-		this.hdRatioMap = calcHDRatio(z, 'map');
-		this.hdRatioVoid = calcHDRatio(z, 'void');
+		var voidPercent = 4.5;
+		if (game.global.world <= 59) {
+			//-3 difficulty in U1, -2 difficulty in u2
+			voidPercent -= 2;
+			if (game.global.universe === 1) voidPercent /= 2;
+		}
+		else if (game.global.universe === 1 && game.global.world <= 199) {
+			//u2 up to full difficulty, u1 at -1
+			voidPercent -= 1;
+		}
+		if (challengeActive('Mapocalypse')) voidPercent += 3;
+
+		this.hdRatio = calcHDRatio(z, 'world', false, 1);
+		this.hdRatioMap = calcHDRatio(z, 'map', false, 0.75);
+		this.hdRatioVoid = calcHDRatio(z, 'void', false, voidPercent);
 		//Calculating HD values for the next zone.
-		this.hdRatioPlus = calcHDRatio(z + 1, 'world');
-		this.hdRatioMapPlus = calcHDRatio(z + 1, 'map');
-		this.hdRatioVoidPlus = calcHDRatio(z + 1, 'void');
+		this.hdRatioPlus = calcHDRatio(z + 1, 'world', false, 1);
+		this.hdRatioMapPlus = calcHDRatio(z + 1, 'map', false, 0.75);
+		this.hdRatioVoidPlus = calcHDRatio(z + 1, 'void', false, voidPercent);
 
 		//Calculating void HD values so that we don't need to generate them everytime when looking at VoidMaps function.
-		this.vhdRatio = getPageSetting('voidMapSettings')[0].maxTenacity ? calcHDRatio(z, 'world', getPageSetting('voidMapSettings')[0].maxTenacity) : this.hdRatio;
-		this.vhdRatioVoid = getPageSetting('voidMapSettings')[0].maxTenacity ? calcHDRatio(z, 'void', getPageSetting('voidMapSettings')[0].maxTenacity) : this.hdRatioVoid;
-		this.vhdRatioVoidPlus = calcHDRatio(z + 1, 'void', getPageSetting('voidMapSettings')[0].maxTenacity);
+		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
+		this.vhdRatio = voidMaxTenacity ? calcHDRatio(z, 'world', voidMaxTenacity, 1) : this.hdRatio;
+		this.vhdRatioVoid = voidMaxTenacity ? calcHDRatio(z, 'void', voidMaxTenacity, voidPercent) : this.hdRatioVoid;
+		this.vhdRatioVoidPlus = voidMaxTenacity ? calcHDRatio(z + 1, 'void', voidMaxTenacity, voidPercent) : this.hdRatioVoidPlus;
 
-		this.hitsSurvived = calcHitsSurvived(z, 'world');
-		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void');
+		this.hitsSurvived = calcHitsSurvived(z, 'world', 1);
+		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void', voidPercent);
 		this.autoLevel = autoMapLevel();
 		this.autoLevelData = checkAutoLevel ? get_best(stats()) : this.autoLevelData;
 		this.autoLevelNew = this.autoLevelData.overall.mapLevel;
@@ -303,7 +316,7 @@ function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
 	return health;
 }
 
-function calcHitsSurvived(targetZone, type, checkResults) {
+function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 	//Init
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = 'world';
@@ -316,11 +329,14 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 		else if (game.global.universe === 2 && targetZone > 200) customAttack = calcMutationAttack(targetZone);
 	}
 
+	var enemyName = 'Improbability';
+	if (type === 'void') enemyName = 'Cthulimp';
+
 	var hitsToSurvive = targetHitsSurvived();
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 	var health = calcOurHealth(false, type, false, true) / formationMod;
 	var block = calcOurBlock(false) / formationMod;
-	var equality = equalityQuery('Improbability', targetZone, 100, type, null, 'gamma', null, hitsToSurvive);
+	var equality = equalityQuery(enemyName, targetZone, 100, type, difficulty, 'gamma', null, hitsToSurvive);
 
 	//Lead farms one zone ahead
 	if (type === 'world' && challengeActive('Lead') && game.global.world % 2 === 1) {
@@ -339,8 +355,7 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 	}
 
 	//Enemy Damage
-	const worldDamage = calcEnemyAttackCore(type, targetZone, 100, 'Improbability', undefined, customAttack, equality);
-
+	var worldDamage = calcEnemyAttack(type, targetZone, 100, enemyName, undefined, customAttack, equality) * difficulty;
 	//Pierce & Voids
 	var pierce = (game.global.universe === 1 && game.global.brokenPlanet && type === 'world') ? getPierceAmt() : 0;
 
@@ -843,44 +858,69 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	if (customAttack) attack = customAttack;
 
 	//WARNING! Check every challenge!
-	//A few challenges
-	if (challengeActive('Meditate')) attack *= 1.5;
-	else if (challengeActive('Watch')) attack *= 1.25;
-	else if (challengeActive('Corrupted')) attack *= 3;
-	else if (challengeActive('Scientist') && getScientistLevel() === 5) attack *= 10;
-	else if (challengeActive('Frigid')) attack *= game.challenges.Frigid.getEnemyMult();
-	else if (challengeActive('Experience')) attack *= game.challenges.Experience.getEnemyMult();
+	if (game.global.universe === 1) {
+		if (challengeActive('Balance')) attack *= (type === 'world') ? 1.17 : 2.35;
+		if (challengeActive('Meditate')) attack *= 1.5;
+		if (challengeActive('Life')) attack *= 6;
+		if (challengeActive('Toxicity')) attack *= 5;
+		if (challengeActive('Lead')) attack *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
+		if (challengeActive('Watch')) attack *= 1.25;
+		if (challengeActive('Corrupted')) attack *= 3;
+		if (challengeActive('Domination')) attack *= 2.5;
+		if (challengeActive('Scientist') && getScientistLevel() === 5) attack *= 10;
+		if (challengeActive('Frigid')) attack *= game.challenges.Frigid.getEnemyMult();
+		if (challengeActive('Experience')) attack *= game.challenges.Experience.getEnemyMult();
 
+		//Coordinate
+		if (challengeActive('Coordinate')) {
+			var amt = 1;
+			for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
+			attack *= amt;
+		}
+
+		//Obliterated and Eradicated
+		if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
+			var oblitMult = (challengeActive('Eradicated')) ? game.challenges.Eradicated.scaleModifier : 1e12;
+			var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
+			oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
+			attack *= oblitMult;
+		}
+	}
 	//u2 challenges
-	else if (challengeActive('Unbalance')) attack *= 1.5;
-	else if (challengeActive('Duel') && game.challenges.Duel.trimpStacks < 50) attack *= 3;
-	else if (challengeActive('Wither') && game.challenges.Wither.enemyStacks > 0) attack *= game.challenges.Wither.getEnemyAttackMult();
-	else if (challengeActive('Archaeology')) attack *= game.challenges.Archaeology.getStatMult('enemyAttack');
-	else if (challengeActive('Mayhem')) {
-		if (type === 'world') attack *= game.challenges.Mayhem.getBossMult();
-		attack *= game.challenges.Mayhem.getEnemyMult();
-	}
-	//Purposefully don't put Storm in here.
-	else if (challengeActive('Storm') && !game.global.mapsActive) attack *= game.challenges.Storm.getAttackMult();
-	else if (challengeActive('Exterminate')) attack *= game.challenges.Exterminate.getSwarmMult();
-	else if (challengeActive('Nurture')) {
-		attack *= 2;
-		attack *= game.buildings.Laboratory.getEnemyMult();
-	}
-	else if (challengeActive('Pandemonium') && type === 'world') attack *= game.challenges.Pandemonium.getBossMult();
-	else if (challengeActive('Pandemonium') && type !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
-	else if (challengeActive('Desolation')) attack *= game.challenges.Desolation.getEnemyMult();
-	else if (challengeActive('Alchemy')) attack *= (alchObj.getEnemyStats(type !== 'world', type === 'void')) + 1;
-	else if (challengeActive('Hypothermia')) attack *= game.challenges.Hypothermia.getEnemyMult();
-	else if (challengeActive('Glass')) attack *= game.challenges.Glass.attackMult();
+	if (game.global.universe === 2) {
+		if (challengeActive('Unbalance')) attack *= 1.5;
+		if (challengeActive('Duel') && game.challenges.Duel.trimpStacks < 50) attack *= 3;
+		if (challengeActive('Wither') && game.challenges.Wither.enemyStacks > 0) attack *= game.challenges.Wither.getEnemyAttackMult();
+		if (challengeActive('Archaeology')) attack *= game.challenges.Archaeology.getStatMult('enemyAttack');
+		if (challengeActive('Mayhem')) {
+			if (type === 'world') attack *= game.challenges.Mayhem.getBossMult();
+			attack *= game.challenges.Mayhem.getEnemyMult();
+		}
+		//Purposefully don't put Storm in here.
+		if (challengeActive('Storm') && !game.global.mapsActive) attack *= game.challenges.Storm.getAttackMult();
+		if (challengeActive('Exterminate')) attack *= game.challenges.Exterminate.getSwarmMult();
+		if (challengeActive('Nurture')) {
+			attack *= 2;
+			attack *= game.buildings.Laboratory.getEnemyMult();
+		}
+		if (challengeActive('Pandemonium') && type === 'world') attack *= game.challenges.Pandemonium.getBossMult();
+		if (challengeActive('Pandemonium') && type !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
+		if (challengeActive('Desolation')) attack *= game.challenges.Desolation.getEnemyMult();
+		if (challengeActive('Alchemy')) attack *= (alchObj.getEnemyStats(type !== 'world', type === 'void')) + 1;
+		if (challengeActive('Hypothermia')) attack *= game.challenges.Hypothermia.getEnemyMult();
+		if (challengeActive('Glass')) attack *= game.challenges.Glass.attackMult();
 
-	if (type === 'world' && game.global.novaMutStacks > 0) attack *= u2Mutations.types.Nova.enemyAttackMult();
+		if (type === 'world' && game.global.novaMutStacks > 0) attack *= u2Mutations.types.Nova.enemyAttackMult();
 
-	//Coordinate
-	if (challengeActive('Coordinate')) {
-		var amt = 1;
-		for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
-		attack *= amt;
+		if (equality) {
+			if (!isNaN(parseInt((equality)))) {
+				attack *= Math.pow(game.portal.Equality.getModifier(), equality);
+				if (equality > game.portal.Equality.radLevel)
+					debug(`You don't have this many levels in Equality. - Enemy Dmg. ${equality} / ${game.portal.Equality.radLevel} equality used.`);
+			} else if (atSettings.intervals.tenSecond) {
+				debug(`Equality is not a number. - Enemy Dmg. ${equality} equality used.`);
+			}
+		}
 	}
 
 	//Dailies
@@ -910,23 +950,6 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 			attack *= dailyModifiers.empoweredVoid.getMult(game.global.dailyChallenge.empoweredVoid.strength);
 	}
 
-	//Obliterated and Eradicated
-	else if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
-		var oblitMult = (challengeActive('Eradicated')) ? game.challenges.Eradicated.scaleModifier : 1e12;
-		var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
-		oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
-		attack *= oblitMult;
-	}
-
-	if (game.global.universe === 2 && equality) {
-		if (!isNaN(parseInt((equality)))) {
-			attack *= Math.pow(game.portal.Equality.getModifier(), equality);
-			if (equality > game.portal.Equality.radLevel)
-				debug(`You don't have this many levels in Equality. - Enemy Dmg. ${equality} / ${game.portal.Equality.radLevel} equality used.`);
-		} else if (atSettings.intervals.tenSecond)
-			debug(`Equality is not a number. - Enemy Dmg. ${equality} equality used.`);
-	}
-
 	return minOrMax ? (1 - fluctuation) * attack : (1 + fluctuation) * attack;
 }
 
@@ -937,49 +960,26 @@ function calcEnemyAttack(type = 'world', zone = game.global.world, cell = 100, n
 	var healthy = mutations.Healthy.active();
 
 	//Challenges
-	if (challengeActive('Balance')) attack *= (type === 'world') ? 1.17 : 2.35;
-	else if (challengeActive('Meditate')) attack *= 1.5;
-	else if (challengeActive('Life')) attack *= 6;
-	else if (challengeActive('Nom')) {
-		if (type === 'world' && typeof getCurrentWorldCell() !== 'undefined' && typeof getCurrentWorldCell().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentWorldCell().nomStacks)
-		else if (game.global.mapsActive && typeof getCurrentEnemy() !== 'undefined' && typeof getCurrentEnemy().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentEnemy().nomStacks);
-	}
-	else if (challengeActive('Toxicity')) attack *= 5;
-	else if (challengeActive('Lead')) attack *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
-	else if (challengeActive('Domination')) attack *= 2.5;
-
-	//Dailies
-	else if (challengeActive('Daily')) {
-		//Crits
-		if (typeof game.global.dailyChallenge.crits !== "undefined")
-			attack *= 0.75 + 0.25 * dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-	}
-
-	//Magneto Shriek during Domination
-	if (challengeActive('Domination') && game.global.usingShriek)
-		attack *= game.mapUnlocks.roboTrimp.getShriekValue();
-
-	//Void Map Difficulty (implicit 100% difficulty on regular maps)
-	if (type === 'void') {
-		var voidPercent = 4.5;
-		if (game.global.world <= 59) {
-			//-3 difficulty in U1, -2 difficulty in u2
-			voidPercent -= 2;
-			if (game.global.universe === 1) voidPercent /= 2;
+	if (challengeActive('Nom')) {
+		if (type === 'world') {
+			if (typeof getCurrentWorldCell() !== 'undefined' && typeof getCurrentWorldCell().nomStacks !== 'undefined')
+				attack *= Math.pow(1.25, getCurrentWorldCell().nomStacks)
 		}
-		else if (game.global.universe === 1 && game.global.world <= 199) {
-			//u2 up to full difficulty, u1 at -1
-			voidPercent -= 1;
-		}
-		if (challengeActive('Mapocalypse')) voidPercent += 3;
-
-		attack *= voidPercent;
+		else if (game.global.mapsActive && typeof getCurrentEnemy() !== 'undefined' && typeof getCurrentEnemy().nomStacks !== 'undefined')
+			attack *= Math.pow(1.25, getCurrentEnemy().nomStacks);
 	}
 
-	if (type === 'world' && corrupt && !game.global.spireActive) {
+	//Dmg + Magneto Shriek during Domination
+	if (challengeActive('Domination')) {
+		attack *= 2.5;
+		if (type === 'world' && game.global.usingShriek)
+			attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+	}
+
+	/* if (type === 'world' && corrupt && !game.global.spireActive) {
 		if (healthy) attack *= calcCorruptionScale(zone, 5);
 		else if (corrupt) attack *= calcCorruptionScale(zone, 3);
-	}
+	} */
 
 	//Ice - Experimental
 	if (getEmpowerment() === 'Ice' && getPageSetting('fullice')) {
@@ -1114,9 +1114,9 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 
 	//Map and Void Corruption
 	if (type !== 'world') {
-		//Corruption
-		var corruptionScale = calcCorruptionScale(game.global.world, 10);
-		if (mutations.Magma.active()) health *= corruptionScale / (type === 'void' ? 1 : 2);
+		//Corruption in maps
+		if (mutations.Magma.active())
+			health *= calcCorruptionScale(game.global.world, 10) / (type === 'void' ? 1 : 2);
 	}
 
 	//Use a custom value instead
@@ -1191,23 +1191,6 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp", customHealth)
 	if (challengeActive('Domination')) health *= 7.5;
 	if (challengeActive('Lead')) health *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
 
-	//Void Map Difficulty (implicit 100% difficulty on regular maps)
-	if (type === 'void') {
-		var voidPercent = 4.5;
-		if (game.global.world <= 59) {
-			//-3 difficulty in U1, -2 difficulty in u2
-			voidPercent -= 2;
-			if (game.global.universe === 1) voidPercent /= 2;
-		}
-		else if (game.global.universe === 1 && game.global.world <= 199) {
-			//u2 up to full difficulty, u1 at -1
-			voidPercent -= 1;
-		}
-		if (challengeActive('Mapocalypse')) voidPercent += 3;
-
-		health *= voidPercent;
-	}
-
 	if (type === 'world' && corrupt && !game.global.spireActive) {
 		if (healthy) health *= calcCorruptionScale(zone, 14);
 		else if (corrupt) health *= calcCorruptionScale(zone, 10);
@@ -1258,10 +1241,11 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	return health;
 }
 
-function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
+function calcHDRatio(targetZone, type, maxTenacity, difficulty, checkOutputs) {
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = 'world'
 	if (!maxTenacity) maxTenacity = false;
+	if (!difficulty) difficulty = 1;
 	//Init
 	var enemyHealth;
 	var universeSetting;
@@ -1269,26 +1253,21 @@ function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 	if (type === 'world') {
 		var customHealth = undefined;
 		if (type === 'world') {
-			if (game.global.universe === 1 && isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
-			else if (game.global.universe === 2 && targetZone > 200) customHealth = calcMutationHealth(targetZone);
+			if (game.global.universe === 1)
+				if (isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
+			if (game.global.universe === 2)
+				if (targetZone > 200) customHealth = calcMutationHealth(targetZone);
 		}
-
-		var enemyName = 'Turtlimp';
-		var cell = 99;
-		if (challengeActive('Mayhem') || challengeActive('Pandemonium')) {
-			enemyName = 'Improbability';
-			cell = 100;
-		}
-		enemyHealth = calcEnemyHealth(type, targetZone, cell, enemyName, customHealth);
-		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, cell, type, 1, 'gamma') : 'X';
+		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Improbability', customHealth) * difficulty;
+		universeSetting = game.global.universe === 2 ? equalityQuery('Improbability', targetZone, 100, type, difficulty, 'gamma') : 'X';
 	}
 	if (type === 'map') {
-		enemyHealth = calcEnemyHealth(type, targetZone);
-		universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, type, 0.75, 'gamma', true) : 'X';
+		enemyHealth = calcEnemyHealth(type, targetZone, 20, 'Turtlimp') * difficulty;
+		universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, type, difficulty, 'gamma', true) : 'X';
 	}
 	if (type === 'void') {
-		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Cthulimp');
-		universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, type, 4, 'gamma') : 'X';
+		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Cthulimp') * difficulty;
+		universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, type, difficulty, 'gamma') : 'X';
 	}
 
 	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
@@ -1309,7 +1288,7 @@ function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 	if (challengeActive('Lead') && targetZone % 2 === 1 && type !== 'map') {
 		//Stats for void maps
 		var voidDamage = ourBaseDamage;
-		var voidHealth = type === 'void' ? calcEnemyHealth(type, targetZone) : 0;
+		var voidHealth = type === 'void' ? calcEnemyHealth(type, targetZone) * difficulty : 0;
 
 		//Farms on odd zones, and ignores the odd zone attack buff
 		targetZone++;
@@ -1935,8 +1914,8 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Initialising name/health/dmg variables
 	//Enemy stats
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
-	var enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName) * difficulty;
-	var enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, false, 0) * difficulty;
+	var enemyHealth = calcEnemyHealth(mapType, zone, currentCell, enemyName) * difficulty;
+	var enemyDmg = calcEnemyAttack(mapType, zone, currentCell, enemyName, false, false, 0) * difficulty;
 
 	if (mapType === 'map' && dailyCrit || dailyExplosive) {
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
@@ -1965,8 +1944,8 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var gammaToTrigger = gammaMaxStacks();
 
 	if (checkMutations) {
-		enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
-		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
+		enemyDmg = calcEnemyAttack(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
+		enemyHealth = calcEnemyHealth(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
 	}
 	if (!hits) hits = 1;
 	enemyDmg *= hits;
