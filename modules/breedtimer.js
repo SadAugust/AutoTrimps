@@ -155,7 +155,7 @@ function geneAssist() {
 	if (getPageSetting('geneAssistTimerDailyHard') > 0 && trimpStats.isDaily && runningHard)
 		target = new Decimal(getPageSetting('geneAssistTimerDailyHard'));
 
-	var settingPrefix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'Daily' :
+	var settingPrefix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' :
 		trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' :
 			'';
 	if (getPageSetting('geneAssistTimerSpire' + settingPrefix) > 0 && isDoingSpire())
