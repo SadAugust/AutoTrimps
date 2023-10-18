@@ -5176,6 +5176,10 @@ function autoSetValue(id, multiValue, negative) {
 	updateCustomButtons();
 	saveSettings();
 	if (id === 'presetCombatRespecCell') MODULES.portal.disableAutoRespec = 0;
+	if (num > game.global.world && (id === 'dailyDontPortalBefore' || id === 'heliumHrDontPortalBefore')) {
+		MODULES.mapFunctions.afterVoids = false;
+		mapSettings.portalAfterVoids = false;
+	}
 }
 
 function autoSetText(id, multiValue) {
