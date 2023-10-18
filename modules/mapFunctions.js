@@ -1152,7 +1152,7 @@ function smithyFarm() {
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
-		if (setting.priority) farmingDetails.priority = setting.priority;
+		if (setting && setting.priority) farmingDetails.priority = setting.priority;
 	}
 	return farmingDetails;
 }
@@ -3111,37 +3111,46 @@ function hdFarmSettingRatio(setting) {
 	return (zone === 0) ? hd : Math.pow(mult, zone) * hd;
 }
 
-//Skip health check is used when pre-void map farm is being done
-
 function hdFarm(skipHealthCheck, voidFarm) {
 
 	var shouldMap = false;
+	var shouldSkip = false;
 	var mapAutoLevel = Infinity;
 	var mapName = 'HD Farm';
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
 	};
-
-	//Initial standalone Hits Survived check.
-	var shouldHealthFarm = false;
-	const hitsSurvivedSetting = targetHitsSurvived();
-	var hitsSurvived = hdStats.hitsSurvived;
-	if (hitsSurvivedSetting > 0 && !skipHealthCheck && !voidFarm && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
-		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
-	}
-
 	const settingName = 'hdFarmSettings';
 	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
-	if (defaultSettings === null) return farmingDetails;
+	var setting;
 
-	if (!defaultSettings.active && !shouldHealthFarm && !voidFarm) return farmingDetails;
+	//Void Farming setting setup
+	if (voidFarm) {
+		const voidSetting = getPageSetting('voidMapSettings')[0];
+		setting = {
+			autoLevel: true, hdMult: 1, jobratio: voidSetting.jobratio, level: -1, hdBase: Number(voidSetting.hdRatio), hdType: 'voidFarm',
+		}
+		//Checking to see which of hits survived and hd farm should be run. Prioritises hits survived.
+		if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {
+			setting.hdBase = Number(voidSetting.hitsSurvived);
+			setting.hdType = 'hitsSurvivedVoid';
+		}
+	} //Standalone Hits Survived setting setup.
+	else if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
+		const hitsSurvivedSetting = targetHitsSurvived();
+		if (hitsSurvivedSetting > 0 && hdStats.hitsSurvived < hitsSurvivedSetting)
+			setting = {
+				autoLevel: true, hdBase: hitsSurvivedSetting, hdMult: 1, hdType: 'hitsSurvived', jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : '1,1,2', level: -1,
+			}
+	}
 
-	var shouldSkip = false;
+	if (!defaultSettings.active && setting === undefined) return farmingDetails;
 
 	var settingIndex = null;
-	if (defaultSettings.active && !shouldHealthFarm && !voidFarm) {
+	//Checking to see if any lines are to be run.
+	if (defaultSettings.active && setting === undefined) {
 		for (var y = 0; y < baseSettings.length; y++) {
 			if (y === 0) continue;
 			const currSetting = baseSettings[y];
@@ -3154,123 +3163,93 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		}
 	}
 
-	if (settingIndex !== null || shouldHealthFarm || voidFarm) {
-		var setting;
-		var hdFarmMapCap;
-		var hdFarmMaxMaps;
-		var hdFarmMinMaps;
-
-		//Void Farming
-		if (voidFarm && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + "_" + game.global.world)) {
-			var voidSetting = getPageSetting('voidMapSettings')[0];
-			setting = {
-				autoLevel: true,
-				hdMult: 1,
-				jobratio: voidSetting.jobratio,
-				level: -1,
-				world: game.global.world
-			}
-
-			if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {
-				setting.hdBase = Number(voidSetting.hitsSurvived);
-				setting.hdType = 'hitsSurvivedVoid';
-			} else {
-				setting.hdBase = Number(voidSetting.hdRatio);
-				setting.hdType = 'voidFarm';
-			}
-
-			hdFarmMapCap = typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 500;
-		}
-		//Hits Survived (Non-HDFarm setting)
-		else if (settingIndex === null) {
-			setting = {
-				autoLevel: true,
-				hdBase: hitsSurvivedSetting,
-				hdMult: 1,
-				hdType: "hitsSurvived",
-				jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : "1,1,2",
-				level: -1,
-				world: game.global.world
-			}
-			hdFarmMapCap = typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 500;
-			hdFarmMaxMaps = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 10 : null;
-			hdFarmMinMaps = game.global.mapBonus < getPageSetting('mapBonusHealth') ? (game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0) : null;
-		} else {
-			shouldHealthFarm = false;
+	if (settingIndex !== null || setting !== undefined) {
+		//Setting up setting variable when we aren't void or hits survived farming
+		if (setting === undefined)
 			setting = baseSettings[settingIndex];
-			hdFarmMapCap = defaultSettings.mapCap;
-			hdFarmMaxMaps = setting.hdType === 'world' && game.global.mapBonus !== 10 ? 10 : null;
-			hdFarmMinMaps = setting.hhdType === 'world' && game.global.mapBonus !== 10 ? 0 : null;
-		}
 
 		var mapLevel = setting.level;
 		var mapSpecial = getAvailableSpecials('lmc');
 		var jobRatio = setting.jobratio;
 		var hdType = setting.hdType;
+		var hitsSurvived = hdStats.hitsSurvived;
+		var settingTarget = hdFarmSettingRatio(setting);
 
-		var hdFarmMaxMapsMaps = hdFarmMapCap;
-		if (hdFarmMaxMapsMaps === -1) hdFarmMaxMapsMaps = Infinity;
+		var mapsRunCap = typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 500;
+		if (mapsRunCap === -1) mapsRunCap = Infinity;
 
+		//Rename mapName if running a hits survived setting for some checks
+		//Needs to be done before auto level code is run
+		if (hdType.includes('hitsSurvived')) {
+			mapName = 'Hits Survived';
+			if (hdType === 'hitsSurvivedVoid') hitsSurvived = hdStats.hitsSurvivedVoid;
+		}
+
+		var mapLevelMin = null;
+		//Setup min map level for world and hits survived farming as those settings care about map bonus
+		if ((setting.hdType === 'world' && game.global.mapBonus !== 10) || (setting.hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')))
+			mapLevelMin = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
+
+		//Auto Level setup
 		if (setting.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
 				game.global.mapRunCounter = MODULES.maps.mapRepeats;
 				MODULES.maps.mapRepeats = 0;
 			}
-
-			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, hdFarmMaxMaps, hdFarmMinMaps);
+			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, mapLevelMin);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
+				if (mapSettings.levelCheck !== Infinity && mapAutoLevel !== mapSettings.levelCheck) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
-		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'voidFarm' ? hdStats.vhdRatioVoid : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : null;
-		//if (hdType !== 'maplevel' && !shouldHealthFarm && hdRatio === null) return farmingDetails;
 
-		if (hdType.includes('hitsSurvived') ? hdRatio < hdFarmSettingRatio(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : !shouldHealthFarm ? hdRatio > hdFarmSettingRatio(setting) : hdRatio < hdFarmSettingRatio(setting))
-			shouldMap = true;
-
-		//Set this here so that we can check against the correct map name in following checks
-		if (shouldHealthFarm || hdType.includes('hitsSurvived')) {
-			mapName = 'Hits Survived';
-			if (hdType === 'hitsSurvivedVoid') hitsSurvived = hdStats.hitsSurvivedVoid;
-		}
+		//Identify which type of hdRatio/hits survived we're checking against and store it into a variable for future use.
+		var hdRatio = hdType === 'world' ? hdStats.hdRatio :
+			hdType === 'voidFarm' ? hdStats.vhdRatioVoid :
+				hdType === 'void' ? hdStats.hdRatioVoid :
+					hdType === 'map' ? hdStats.hdRatioMap :
+						hdType === 'hitsSurvived' ? hdStats.hitsSurvived :
+							hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid :
+								null;
 
 		//Skipping farm if map repeat value is greater than our max maps value
-		if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter >= hdFarmMaxMapsMaps) {
-			shouldMap = false;
-		}
-		if (mapSettings.mapName !== mapName && !shouldHealthFarm && (hdType.includes('hitsSurvived') ? hdRatio > hdFarmSettingRatio(setting) : hdType !== 'maplevel' ? hdFarmSettingRatio(setting) > hdRatio : hdStats.autoLevel > setting.hdBase))
+		if (mapsRunCap > game.global.mapRunCounter && (hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > settingTarget))
+			shouldMap = true;
+
+		if (mapSettings.mapName !== mapName && (hdType.includes('hitsSurvived') ? hdRatio > settingTarget : hdType !== 'maplevel' ? settingTarget > hdRatio : hdStats.autoLevel > setting.hdBase))
 			shouldSkip = true;
 
-		if (((mapSettings.mapName === mapName && !shouldMap) || shouldSkip) && hdStats.hdRatio !== Infinity) {
-			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, hdFarmSettingRatio(setting), hdType);
+
+		if (((mapSettings.mapName === mapName && !shouldMap || game.global.mapRunCounter === mapsRunCap) || shouldSkip) && hdRatio !== Infinity) {
+			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, settingTarget, hdType);
+			//Messages detailing why we are skipping mapping.
 			if (getPageSetting('spamMessages').map_Skip && shouldSkip) {
-				if (hdType.includes('hitsSurvived')) debug("Hits Survived (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + hdFarmSettingRatio(setting).toFixed(2) + ").", 'map_Skip');
-				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + hdFarmSettingRatio(setting).toFixed(2) + ").", 'map_Skip');
-				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
+				if (hdType.includes('hitsSurvived'))
+					debug("Hits Survived (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + settingTarget.toFixed(2) + ").", 'map_Skip');
+				else if (hdType !== 'maplevel')
+					debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + settingTarget.toFixed(2) + ").", 'map_Skip');
+				else
+					debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Map Level goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
 			resetMapVars(setting, settingName);
 			if (game.global.mapsActive) recycleMap_AT();
-			//Might need to remove this??
-			//Report of a max call stack size. If it happens again then remove this and make it so that it waits 0.1s before checking if void maps are ready to run
 			if (voidFarm) return voidMaps();
-
 		}
 
 		var status = '';
 
-		if (shouldHealthFarm || hdType.includes('hitsSurvived')) {
+		if (hdType.includes('hitsSurvived')) {
 			if (hdType === 'hitsSurvivedVoid') status += 'Void&nbsp;';
-			status += 'Hits&nbsp;Survived to:&nbsp;' + hdFarmSettingRatio(setting).toFixed(2) + '<br>';
-			status += 'Current:&nbsp;' + prettify(hitsSurvived.toFixed(2));
+			status += 'Hits&nbsp;Survived to:&nbsp;' + settingTarget.toFixed(2) + '<br>';
+			status += 'Current:&nbsp;' + prettify(hdRatio.toFixed(2));
 		} else {
 			status += 'HD&nbsp;Farm&nbsp;to:&nbsp;';
-			if (hdType !== 'maplevel') status += hdFarmSettingRatio(setting).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
+			if (hdType !== 'maplevel') status += settingTarget.toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
 			else status += '<br>' + (setting.hdBase >= 0 ? "+" : "") + setting.hdBase + ' Auto Level';
 		}
-		hdFarmMaxMapsMaps = hdFarmMaxMapsMaps === Infinity ? '∞' : hdFarmMaxMapsMaps;
-		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + hdFarmMaxMapsMaps;
+		mapsRunCap = mapsRunCap === Infinity ? '∞' : mapsRunCap;
+		var repeat = game.global.mapRunCounter + 1 === mapsRunCap;
+		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + mapsRunCap;
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
@@ -3280,11 +3259,12 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		farmingDetails.jobRatio = jobRatio;
 
 		farmingDetails.hdType = hdType;
-		farmingDetails.hdRatio = hdFarmSettingRatio(setting);
+		farmingDetails.hdRatio = settingTarget;
 		farmingDetails.hdRatio2 = hdRatio;
-		farmingDetails.repeat = true;
+		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
-		farmingDetails.shouldHealthFarm = shouldHealthFarm;
+		farmingDetails.runCap = mapsRunCap;
+		farmingDetails.shouldHealthFarm = hdType.includes('hitsSurvived');
 		farmingDetails.voidHitsSurvived = hdType === 'hitsSurvivedVoid';
 		farmingDetails.settingIndex = settingIndex;
 		if (setting.priority) farmingDetails.priority = setting.priority;
@@ -3407,16 +3387,18 @@ function farmingDecision() {
 			const speedSettings = ['Map Bonus', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
 			farmingDetails.mapLevel = speedSettings.indexOf(farmingDetails.mapName) >= 0 ? hdStats.autoLevelSpeed : hdStats.autoLevelNew;
 		}
-		if (farmingDetails.mapName === 'Map Bonus' && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = 0;
-		else if (farmingDetails.mapName === 'HD Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = 0;
+		mapBonusLevel = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
+		if (farmingDetails.mapName === 'Map Bonus' && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
+		else if (farmingDetails.mapName === 'HD Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
+		else if (farmingDetails.mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
 		else if (challengeActive('Wither') && farmingDetails.mapName !== 'Map Bonus' && farmingDetails.mapLevel >= 0) farmingDetails.mapLevel = -1;
-		else if (farmingDetails.mapName === 'Quest' && farmingDetails.mapLevel < 0 && ((currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10)) farmingDetails.mapLevel = 0;
+		else if (farmingDetails.mapName === 'Quest' && farmingDetails.mapLevel < mapBonusLevel && ((currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10)) farmingDetails.mapLevel = mapBonusLevel;
 		else if (farmingDetails.mapName === 'Mayhem Destacking' && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = (getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0);
 		else if (farmingDetails.mapName === 'Pandemonium Destacking' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
 		else if (farmingDetails.mapName === 'Alchemy Farm' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
 		else if (farmingDetails.mapName === 'Glass' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
 		else if (farmingDetails.mapName === 'Desolation Destacking' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
-		else if (farmingDetails.mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = 0;
+		else if (farmingDetails.mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
 	}
 	mapSettings = farmingDetails;
 }
