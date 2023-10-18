@@ -45,13 +45,8 @@ function workerRatios(workerRatio) {
 
 	if (jobSetting === 2) {
 		var jobSettings = getPageSetting('jobSettingsArray');
-		if (workerRatio === 'Lumberjack' && (challengeActive('Metal') || challengeActive('Transmute')) && jobSettings.Miner.enabled) {
-			if (jobSettings.Lumberjack.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
-			else return jobSettings.Miner.ratio;
-		}
-		else if (jobSettings[workerRatio].enabled) {
+		if (jobSettings[workerRatio].enabled)
 			return jobSettings[workerRatio].ratio;
-		}
 		else
 			return 0;
 	}
@@ -321,9 +316,12 @@ function buyJobs(forceRatios) {
 			desiredRatios[1] = 0;
 	}
 
-	//Adding Miners to Lumberjacks ratio if in Transmute or Metal challenges
-	if ((challengeActive('Metal') || challengeActive('Transmute')) && !game.jobs.Lumberjack.locked) {
-		desiredRatios[1] += desiredRatios[2];
+	//Adding Miners to Lumberjacks ratio if unlocked otherwise add to Farmers while running Transmute or Metal challenges 
+	if ((challengeActive('Metal') || challengeActive('Transmute'))) {
+		if (!game.jobs.Lumberjack.locked)
+			desiredRatios[1] += desiredRatios[2];
+		else
+			desiredRatios[0] += desiredRatios[2];
 		desiredRatios[2] = 0;
 	}
 

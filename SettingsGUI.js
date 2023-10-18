@@ -137,7 +137,7 @@ initializeAllTabs();
 
 function initializeAllSettings() {
 
-	//Core
+	//Core 
 	const displayCore = true;
 	if (displayCore) {
 		createSetting('gatherType',
