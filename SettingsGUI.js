@@ -137,7 +137,7 @@ initializeAllTabs();
 
 function initializeAllSettings() {
 
-	//Core 
+	//Core
 	const displayCore = true;
 	if (displayCore) {
 		createSetting('gatherType',
@@ -3461,6 +3461,7 @@ function initializeAllSettings() {
 				var description = "<p>Will automatically set the generator to gather <b>Fuel</b> when this zone is reached.</p>";
 				description += "<p>Set to <b>0</b> to disable this setting.</p>";
 				description += "<p>If set <b>below 0</b> it will assume you always want this active.</p>";
+				description += "<p>If the <b>Overclocker</b> upgrade has not yet been purchased then when in this zone range it will use Hybrid mode if unlocked otherwise it will use the scripts pseudo-hybrid solution.</p>";
 				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
 				return description;
 			}, 'value', 0, null, 'Magma', [1]);
@@ -3470,6 +3471,7 @@ function initializeAllSettings() {
 				var description = "<p>Will automatically set the generator to gather <b>Fuel</b> until this zone is reached.</p>";
 				description += "<p>Set to <b>0</b> to disable this setting.</p>";
 				description += "<p>If set <b>below 0</b> it will assume you always want this active.</p>";
+				description += "<p>If the <b>Overclocker</b> upgrade has not yet been purchased then when in this zone range it will use Hybrid mode if unlocked otherwise it will use the scripts pseudo-hybrid solution.</p>";
 				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
 				return description;
 			}, 'value', 0, null, 'Magma', [1]);

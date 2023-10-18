@@ -194,7 +194,7 @@ function autoGenerator() {
 		if (getPageSetting("beforegen") === 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
 			beforeFuelState = game.global.generatorMode;
 			if (game.global.world === 230 && game.global.lastClearedCell < 14) beforeFuelState = 1;
-			if (game.global.magmaFuel === getGeneratorFuelCap(false, true)) beforeFuelState = 0;
+			if (game.global.magmaFuel >= getGeneratorFuelCap(false, true)) beforeFuelState = 0;
 		}
 		if (game.global.generatorMode !== beforeFuelState)
 			changeGeneratorState(beforeFuelState);
@@ -202,8 +202,17 @@ function autoGenerator() {
 
 	//Fuel
 	else if (getPageSetting("fuelend") < 0 || game.global.world < getPageSetting("fuelend")) {
-		if (game.global.generatorMode !== 1)
-			changeGeneratorState(1);
+		var fuelState = 1;
+		//If we have no Overclocker levels then use Hybrid (if owned) otherwise use pseudo-hybrid
+		if (game.generatorUpgrades.Overclocker.upgrades === 0) {
+			if (game.permanentGeneratorUpgrades.Hybridization.owned)
+				fuelState = 2;
+			else {
+				if (game.global.magmaFuel === getGeneratorFuelCap(false, true)) fuelState = 0;
+			}
+		}
+		if (game.global.generatorMode !== fuelState)
+			changeGeneratorState(fuelState);
 	}
 
 	//After Fuel
