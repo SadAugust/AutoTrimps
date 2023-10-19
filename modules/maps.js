@@ -475,7 +475,7 @@ function autoMap() {
 	const runUniques = getPageSetting('autoMaps') === 1;
 	const bionicPool = [];
 	var voidMap = null;
-	var selectedMap = "world";
+	var selectedMap = 'world';
 
 	var perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
 	var perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
@@ -501,7 +501,7 @@ function autoMap() {
 				runUnique = true;
 				if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
 			}
-			if (map.location === "Bionic") {
+			if (map.location === 'Bionic') {
 				bionicPool.push(map);
 			}
 			if (map.location === 'Void' && mapSettings.shouldRun && mapSettings.mapName === 'Void Map') {
@@ -514,8 +514,8 @@ function autoMap() {
 	if (selectedMap === 'world' && mapSettings.shouldRun) {
 		if (mapSettings.mapName !== '') {
 			if (voidMap) selectedMap = voidMap.id;
-			else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = "prestigeRaid";
-			else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = "bionicRaid";
+			else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = 'prestigeRaid';
+			else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = 'bionicRaid';
 			else if (optimalMap) selectedMap = optimalMap.id;
 			else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
 			if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
@@ -533,10 +533,10 @@ function autoMap() {
 			var maplevel = mapObj.level;
 			recycleMap_AT();
 			if (game.global.preMapsActive) {
-				perfectMapCost(maplevel - game.global.world, "lmc", mapBiome);
+				mapCost(maplevel - game.global.world, 'lmc', mapBiome);
 				buyMap();
 				runMap_AT();
-				debug("Running LMC map due to only having 1 equip remaining on this map.", "maps");
+				debug('Running LMC map due to only having 1 equip remaining on this map.', 'maps');
 			}
 		}
 		if ((selectedMap === game.global.currentMapId || (!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding')) {
@@ -547,11 +547,11 @@ function autoMap() {
 			if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
 				if (game.options.menu.repeatUntil.enabled !== 2) {
 					game.options.menu.repeatUntil.enabled = 2;
-					toggleSetting("repeatUntil", null, false, true);
+					toggleSetting('repeatUntil', null, false, true);
 				}
 			} else if (game.options.menu.repeatUntil.enabled !== 0) {
 				game.options.menu.repeatUntil.enabled = 0;
-				toggleSetting("repeatUntil", null, false, true);
+				toggleSetting('repeatUntil', null, false, true);
 			}
 			//Disabling repeat if we shouldn't map
 			if (!mapSettings.shouldRun)
@@ -568,7 +568,7 @@ function autoMap() {
 				//Figuring out if we have the right map level & special
 				var mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
 
-				var mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== "0" ? mapObj.bonus : mapSettings.special;
+				var mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
 				//Disabling repeat if the map isn't right or we've finished farming
 				if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();
 			}
@@ -580,7 +580,7 @@ function autoMap() {
 		}
 	} else if (!game.global.preMapsActive && !game.global.mapsActive) {
 		//Going to map chamber. Will override default 'Auto Abandon' setting if AT wants to map!
-		if (selectedMap !== "world") {
+		if (selectedMap !== 'world') {
 			if (!game.global.switchToMaps) {
 				mapsClicked();
 			}
@@ -615,15 +615,15 @@ function autoMap() {
 			}
 		}
 
-		document.getElementById("mapLevelInput").value = game.global.world;
+		document.getElementById('mapLevelInput').value = game.global.world;
 
-		if (selectedMap === "world") {
+		if (selectedMap === 'world') {
 			mapsClicked();
-		} else if (selectedMap === "prestigeRaid") {
+		} else if (selectedMap === 'prestigeRaid') {
 			runPrestigeRaiding();
-		} else if (selectedMap === "bionicRaid") {
+		} else if (selectedMap === 'bionicRaid') {
 			runBionicRaiding(bionicPool);
-		} else if (selectedMap === "create") {
+		} else if (selectedMap === 'create') {
 			abandonMapCheck();
 			//Setting sliders appropriately.
 			if (mapSettings.shouldRun) {
@@ -632,11 +632,11 @@ function autoMap() {
 				}
 			}
 
-			const maplvlpicked = parseInt(document.getElementById("mapLevelInput").value);
-			const mappluslevel = maplvlpicked === game.global.world && document.getElementById("advExtraLevelSelect").value > 0 ? parseInt(document.getElementById("advExtraLevelSelect").value) : "";
-			const mapspecial = document.getElementById("advSpecialSelect").value === '0' ? 'No special' : document.getElementById("advSpecialSelect").value;
+			const maplvlpicked = parseInt(document.getElementById('mapLevelInput').value);
+			const mappluslevel = maplvlpicked === game.global.world && document.getElementById('advExtraLevelSelect').value > 0 ? parseInt(document.getElementById('advExtraLevelSelect').value) : "";
+			const mapspecial = document.getElementById('advSpecialSelect').value === '0' ? 'No special' : document.getElementById('advSpecialSelect').value;
 			if (updateMapCost(true) > game.resources.fragments.owned) {
-				debug("Can't afford the map we designed, #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
+				debug('Can\'t afford the map we designed, #' + maplvlpicked + (mappluslevel > 0 ? ' +' + mappluslevel : '') + ' ' + mapspecial, 'maps', 'th-large');
 				//Runs fragment farming if 
 				//A) We have explorers unlocked
 				//B) We can afford a max loot+size sliders map
@@ -645,31 +645,31 @@ function autoMap() {
 				else if (highestMap === null) {
 					MODULES.maps.fragmentCost = updateMapCost(true);
 					mapsClicked();
-					debug("Disabling mapping until we reach " + prettify(MODULES.maps.fragmentCost) + (MODULES.maps.fragmentCost === 1 ? " fragment." : " fragments.") + " as we don't have any maps to run.");
+					debug('Disabling mapping until we reach ' + prettify(MODULES.maps.fragmentCost) + (MODULES.maps.fragmentCost === 1 ? ' fragment.' : ' fragments.') + ' as we don\'t have any maps to run.');
 					return;
 				}
 				//Runs highest map we have available to farm fragments with
 				else runSelectedMap(highestMap.id, 'highest');
 				if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 			} else {
-				debug("Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
+				debug('Buying a Map, level: #' + maplvlpicked + (mappluslevel > 0 ? ' +' + mappluslevel : '') + ' ' + mapspecial, 'maps', 'th-large');
 				updateMapCost(true);
-				debug(("Spent " + prettify(updateMapCost(true)) + "/" + prettify(game.resources.fragments.owned) + " (" + ((updateMapCost(true) / game.resources.fragments.owned * 100).toFixed(2)) + "%) fragments on a " + (advExtraLevelSelect.value >= 0 ? "+" : "") + advExtraLevelSelect.value + " " + (advPerfectCheckbox.dataset.checked === 'true' ? "Perfect " : ("(" + lootAdvMapsRange.value + "," + sizeAdvMapsRange.value + "," + difficultyAdvMapsRange.value + ") ")) + advSpecialSelect.value + " map."), 'fragment');
+				debug(('Spent ' + prettify(updateMapCost(true)) + '/' + prettify(game.resources.fragments.owned) + ' (' + ((updateMapCost(true) / game.resources.fragments.owned * 100).toFixed(2)) + '%) fragments on a ' + (advExtraLevelSelect.value >= 0 ? '+' : '') + advExtraLevelSelect.value + ' ' + (advPerfectCheckbox.dataset.checked === 'true' ? 'Perfect ' : ('(' + lootAdvMapsRange.value + ',' + sizeAdvMapsRange.value + ',' + difficultyAdvMapsRange.value + ') ')) + advSpecialSelect.value + ' map.'), 'fragment');
 
 				var result = buyMap();
 				if (result === -2) {
-					debug("Too many maps, recycling now. ", "maps", 'th-large');
+					debug('Too many maps, recycling now.', 'maps', 'th-large');
 					recycleBelow(true);
-					debug("Retrying, Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
+					debug('Retrying, Buying a Map, level: #' + maplvlpicked + (mappluslevel > 0 ? ' +' + mappluslevel : '') + ' ' + mapspecial, 'maps', 'th-large');
 					result = buyMap();
 					if (result === -2) {
 						const mapToRecycleIfBuyingFails = lowestMap;
 						recycleMap(game.global.mapsOwnedArray.indexOf(mapToRecycleIfBuyingFails));
 						result = buyMap();
 						if (result === -2)
-							debug("AutoMaps unable to recycle to buy map!", "maps");
+							debug('AutoMaps unable to recycle to buy map!', 'maps');
 						else
-							debug("Retrying map buy after recycling lowest level map", "maps");
+							debug('Retrying map buy after recycling lowest level map', 'maps');
 					}
 				}
 				if (result === 1) {
@@ -683,12 +683,12 @@ function autoMap() {
 			var themapobj = game.global.mapsOwnedArray[getMapIndex(selectedMap)];
 			var levelText;
 			if (themapobj && themapobj.level > 0) {
-				levelText = " Level: " + themapobj.level;
+				levelText = ' Level: ' + themapobj.level;
 			} else {
-				levelText = " Level: " + game.global.world;
+				levelText = ' Level: ' + game.global.world;
 			}
-			var voidOrLevelText = themapobj && themapobj.location === "Void" ? " Void: " : levelText;
-			debug("Running selected " + selectedMap + voidOrLevelText + " Name: " + themapobj.name, "maps", 'th-large');
+			var voidOrLevelText = themapobj && themapobj.location === 'Void' ? ' Void: ' : levelText;
+			debug('Running selected ' + selectedMap + voidOrLevelText + ' Name: ' + themapobj.name, 'maps', 'th-large');
 			runMap();
 			MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 		}
