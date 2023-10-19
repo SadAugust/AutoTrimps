@@ -640,7 +640,7 @@ function autoMap() {
 				//Runs fragment farming if 
 				//A) We have explorers unlocked
 				//B) We can afford a max loot+size sliders map
-				if (!game.jobs.Explorer.locked && perfectMapCost_Actual(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) >= game.resources.fragments.owned) fragmentFarm();
+				if (!game.jobs.Explorer.locked && perfectMapCost_Actual(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
 				//Hacky way to disable mapping if we don't have a map and can't afford the one that we want to make.
 				else if (highestMap === null) {
 					MODULES.maps.fragmentCost = updateMapCost(true);

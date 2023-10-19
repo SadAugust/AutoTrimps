@@ -3598,9 +3598,8 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 }
 
 function fragmentFarm() {
-	const mapCost = perfectMapCost_Actual(mapSettings.mapLevel, mapSettings.special, mapSettings.biome);
 	//Check to see if we can afford a perfect map with the maplevel & special selected. If we can then ignore this function otherwise farm fragments until we reach that goal.
-	if (game.resources.fragments.owned > mapCost) {
+	if (game.resources.fragments.owned > perfectMapCost_Actual(mapSettings.mapLevel, mapSettings.special, mapSettings.biome)) {
 		if (MODULES.maps.fragmentFarming) debug('Fragment farming successful', 'maps');
 		MODULES.maps.fragmentFarming = false;
 	} //Farms for fragments
@@ -3614,6 +3613,8 @@ function fragmentFarm() {
 				debug('Fragment farming for a ' + (mapSettings.mapLevel >= 0 ? '+' : '') + mapSettings.mapLevel + ' ' + mapSettings.special + ' map.', 'maps');
 				selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
 				runMap();
+				if (!game.global.repeatMap)
+					repeatClicked();
 			}
 		}
 	}
