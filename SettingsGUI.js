@@ -1424,7 +1424,7 @@ function initializeAllSettings() {
 			function () { return ('Hits Survived') },
 			function () {
 				var description = "<p>Will farm until you can survive this amount of attacks.</p>";
-				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>500</b>.</p>";
+				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1.5 for earlygame, gradually increase the further you progress</p>";
@@ -1477,7 +1477,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '1,1,2', mapCap: 500 }], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '1,1,2', mapCap: 100 }], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
 
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
@@ -3416,7 +3416,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
 				description += "<p><b>Your Hits Survived can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
-				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>500</b>.</p>";
+				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
 				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during active Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
@@ -4115,14 +4115,14 @@ function gameUserCheck(skipTest) {
 }
 
 //Will output how many zones you can liquify to.
-function checkLiqZoneCount() {
+function checkLiqZoneCount(universe) {
 	if (game.options.menu.liquification.enabled === 0) return 0;
-	/* if (game.global.universe === 2) {
+	if (universe === 2) {
 		if (!u2Mutations.tree.Liq1.purchased) return 0;
 		var amt = 0.1;
 		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
 		return ((getHighestLevelCleared(false, true) + 1) * amt);
-	} */
+	}
 	var spireCount = game.global.spiresCompleted;
 	if (game.talents.liquification.purchased) spireCount++;
 	if (game.talents.liquification2.purchased) spireCount++;

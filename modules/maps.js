@@ -399,6 +399,7 @@ function autoMap() {
 		return;
 	}
 
+
 	//If we're inside of the Life challenge.
 	//Will go to map chamber and sit back in the world without fighting until the cell we're on is Living.
 	if (challengeActive('Life') && !game.global.mapsActive) {
@@ -569,8 +570,11 @@ function autoMap() {
 				var mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
 
 				var mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
+				if (mapSettings.mapName === 'Prestige Raiding') {
+					if (!mapSettings.repeat) repeatClicked();
+				}
 				//Disabling repeat if the map isn't right or we've finished farming
-				if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();
+				else if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();
 			}
 		} else {
 			//Disable repeat if active and not mapping

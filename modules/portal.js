@@ -549,8 +549,7 @@ function decayFinishChallenge() {
 	}
 }
 
-function challengeInfo() {
-	if (!game.global.runningChallengeSquared) return;
+function challengeInfo(force) {
 	if (challengeCurrentZone === game.stats.zonesCleared.value) return;
 
 	const challengeType = game.global.universe === 2 ? 'C3' : 'C2';
@@ -563,23 +562,33 @@ function challengeInfo() {
 		debug("The zone input in the '" + challengeType + " Finish' setting (" + finishChallenge + ") is below or equal to your HZE for this challenge (" + game.c2[game.global.challengeActive] + "). Increase it or it'll end earlier than you\'d probably like it to.", "challenge");
 	}
 
-	if (challengeActive('Mapology') && !getPageSetting('mapology') && game.global.world % 5 === 0 && game.global.world < (checkLiqZoneCount() + 10)) {
-		debug("You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.", "challenge");
-	}
-	//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
-	if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
-		if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
-			debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.", "challenge");
+	if (force || game.global.world === 1 || (game.global.world % 3 === 0 && game.global.world < (checkLiqZoneCount(game.global.universe) + 10))) {
+		if (challengeActive('Metal') || challengeActive('Transmute')) {
+			//Warning about job ratio + cache adjustments
+			debug("Whilst running this challenge any metal map caches will be set to wooden caches and any miner job ratios will be set to lumberjack ratios. Additionally Pre Void Farm" + (game.global.universe === 2 ? " and Smithy Farm" : "") + " will be disabled.");
 		}
-		//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
-		if (game.global.runningChallengeSquared && (getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone')) <= game.c2.Quest) {
-			debug("The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.", "challenge");
+		if (challengeActive('Mapology') && !getPageSetting('mapology')) {
+			//Warning about disabled Mapology setting
+			debug("You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.");
 		}
-	}
-	//Downsize -- Warning message when about map settings causing issues later.
-	if (challengeActive('Downsize')) {
-		if (game.global.world < 10) {
-			debug("Be aware that your usual C3 farming settings will not work properly for this Downsize run and likely cause it to stall out so high chance you will want to amend or disable them.", "challenge");
+
+		if (challengeActive('Downsize')) {
+			//Warning message when about map settings causing issues later.
+			debug("Be aware that your usual farming settings will not work properly when running " + game.global.challengeActive + " due to reduced population and will likely cause it to stall out so you might want to amend or disable them.");
+		}
+		if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
+			//Warning message when AutoStructure Smithy purchasing is enabled.
+			if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
+				debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.");
+			}
+			//Warning message when C3 Finish Run setting isn't greater than your quest HZE.
+			if (game.global.runningChallengeSquared && (getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone')) <= game.c2.Quest) {
+				debug("The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies might be purchased earlier than they should be.");
+			}
+		}
+		if (challengeActive('Pandemonium')) {
+			//Warning message when about map settings causing issues later.
+			debug("Be aware that your usual farming settings will not work properly due to the map resource shred mechanic so you might want to amend or disable them. Additionally Smithy Farm is disabled when running this challenge.");
 		}
 	}
 	challengeCurrentZone = game.stats.zonesCleared.value;
@@ -639,6 +648,7 @@ function resetVarsZone(loadingSave) {
 
 		MODULES.fightinfo.lastProcessedWorld = 0;
 		MODULES.portal.portalForVoid = false;
+		//MODULES.mapFunctions.hasVoidFarmed = '';
 
 	}
 	delete mapSettings.voidHDIndex;

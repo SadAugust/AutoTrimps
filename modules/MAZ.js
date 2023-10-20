@@ -639,6 +639,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Hits Survived</div>";
 				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>HD Ratio</div>";
 				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Job Ratio</div>";
+				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Map Cap</div>";
 			}
 			if (hypothermia) {
 				tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>";
@@ -695,6 +696,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 				defaultVals.hitsSurvived = defaultSetting.hitsSurvived ? defaultSetting.hitsSurvived : 0;
 				defaultVals.hdRatio = defaultSetting.hdRatio ? defaultSetting.hdRatio : 0;
+				defaultVals.mapCap = defaultSetting.mapCap ? defaultSetting.mapCap : 100;
 			}
 
 			if (hypothermia) {
@@ -715,7 +717,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 
 			if (hdFarm)
-				defaultVals.mapCap = typeof (defaultSetting.mapCap) === 'undefined' ? 900 : defaultSetting.mapCap ? defaultSetting.mapCap : 900;
+				defaultVals.mapCap = typeof (defaultSetting.mapCap) === 'undefined' ? 100 : defaultSetting.mapCap ? defaultSetting.mapCap : 100;
 
 			var defaultDropdowns = displayDropdowns(universe, defaultVals, varPrefix);
 			var defaultGatherDropdown = defaultDropdowns.gather;
@@ -775,6 +777,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 					tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hdRatio + "' type='number' id='windowHDRatio'/></div>";
 					tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
+					tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.mapCap + "' type='text' id='windowMapCap'/></div>";
 				}
 				if (hdFarm)
 					tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.mapCap + "' type='number' id='mapCap'/></div>";
@@ -1487,6 +1490,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			defaultSetting.voidFarm = readNiceCheckbox(document.getElementById('windowVoidFarm'));
 			defaultSetting.hitsSurvived = document.getElementById('windowHitsSurvived').value;
 			defaultSetting.hdRatio = document.getElementById('windowHDRatio').value;
+			defaultSetting.mapCap = parseFloat(document.getElementById('windowMapCap').value, 10);
 		}
 		if (hypothermia) {
 			defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
@@ -1811,6 +1815,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 			mazHelp += "<li><b>Void Farm Job Ratio</b> - The job ratio to use when farming stats before running void maps.</li>";
 			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
+			mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
 		}
 		if (boneShrine) {
 			mazHelp += "<li><b>Auto Spend Charges</b> - Enables the ability to automatically spend bone charges when above a certain value.</li>";

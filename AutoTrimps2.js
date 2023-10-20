@@ -193,6 +193,7 @@ function delayStartAgain() {
 	loadAugustSettings();
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 	debug("Finished loading script.");
+	challengeInfo(true);
 
 	//Loading jQuery select2 to style dropdown boxes more than basic html/css can.
 	var script = document.createElement("script");

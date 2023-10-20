@@ -381,8 +381,8 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 	return health / finalDmg;
 }
 
-function targetHitsSurvived() {
-	const hitsSurvived = mapSettings.mapName === 'Hits Survived' ? mapSettings.hdRatio :
+function targetHitsSurvived(skipHDCheck) {
+	const hitsSurvived = !skipHDCheck && mapSettings.mapName === 'Hits Survived' ? mapSettings.hdRatio :
 		isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') :
 			getPageSetting('hitsSurvived');
 	return hitsSurvived;

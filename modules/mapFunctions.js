@@ -527,7 +527,7 @@ function voidMaps() {
 			//Identifying if we need to do any form of HD Farming before actually running voids
 			//If we do then run HD Farm and stop this function until it has been completed.
 			//Override for if we have already farmed enough maps. Gets reset when Void Map MAZ window is saved.
-			if (defaultSettings.voidFarm && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + "_" + game.global.world) &&
+			if (defaultSettings.voidFarm && !(challengeActive('Metal') || challengeActive('Transmute')) && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + "_" + game.global.world) &&
 				((defaultSettings.hitsSurvived > 0 && defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid) ||
 					(defaultSettings.hdRatio > 0 && defaultSettings.hdRatio < hdStats.vhdRatioVoid)
 				)
@@ -1447,10 +1447,10 @@ function prestigeRaiding() {
 		var mapSpecial = getAvailableSpecials('p');
 		var status = 'Prestige Raiding: ' + prestigesToGet(raidZones, targetPrestige)[0] + ' items remaining';
 
-		if (mapSettings.prestigeFragMapBought) status = 'Prestige frag farm to: ' + mapSettings.totalMapCost ? prettify(mapSettings.totalMapCost) : '∞';
+		if (mapSettings.prestigeFragMapBought) status = 'Prestige frag farm to: ' + (mapSettings.totalMapCost ? prettify(mapSettings.totalMapCost) : '∞');
 
-		var mapsToRun = game.global.mapsActive ? prestigesToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
-		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
+		mapsToRun = game.global.mapsActive ? prestigesToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
+		specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
 
 		var repeat = mapsToRun === 1 || (specialInMap && mapsToRun === 2);
 
@@ -1512,21 +1512,17 @@ function runPrestigeRaiding() {
 			if (mapSettings.prestigeFragMapBought) {
 				if (game.global.repeatMap)
 					repeatClicked();
-				if (game.global.preMapsActive)
+				if (game.global.preMapsActive) {
 					mapSettings.prestigeFragMapBought = false;
+					MODULES.maps.fragmentFarming = false;
+				}
 			}
 		}
 		//If we can't afford the maps we need to farm fragments
 		//Check if we can afford the fragment farming map and if so buy it and run it
 		//Otherwise this will be stuck here ....forever?????
 		else if (game.global.preMapsActive) {
-			//Set sliders to appropriate levels for what we can currently afford.
-			mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), getBiome('fragments'), [9, 9, 9], false);
-			//Buy and run the frag farming mao
-			buyMap();
-			selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
-			runMap();
-			debug("Prestige Raiding running fragment farming map", "maps");
+			fragmentFarm()
 			mapSettings.prestigeFragMapBought = true;
 		}
 	}
@@ -2087,7 +2083,7 @@ function currQuest() {
 function quest() {
 
 	var mapAutoLevel = Infinity;
-	var shouldQuest = 0;
+	var shouldMap = 0;
 	const mapName = 'Quest';
 	const farmingDetails = {
 		shouldRun: false,
@@ -2096,7 +2092,7 @@ function quest() {
 
 	if (!challengeActive('Quest') || !getPageSetting('quest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
 
-	shouldQuest = currQuest() === 1 ? 1 :
+	shouldMap = currQuest() === 1 ? 1 :
 		currQuest() === 2 ? 2 :
 			currQuest() === 3 ? 3 :
 				currQuest() === 4 ? 4 :
@@ -2108,12 +2104,12 @@ function quest() {
 										0;
 
 
-	if (shouldQuest && shouldQuest !== 8) {
-		var questArray = shouldQuest === 1 || shouldQuest === 4 ? ['lsc', '1'] : shouldQuest === 2 ? ['lwc', '0,1'] : shouldQuest === 3 || shouldQuest === 7 ? ['lmc', '0,0,1'] : shouldQuest === 5 ? ['fa', '0,0,0,1'] : ['fa', '1,1,1,0']
+	if (shouldMap && shouldMap !== 8) {
+		var questArray = shouldMap === 1 || shouldMap === 4 ? ['lsc', '1'] : shouldMap === 2 ? ['lwc', '0,1'] : shouldMap === 3 || shouldMap === 7 ? ['lmc', '0,0,1'] : shouldMap === 5 ? ['fa', '0,0,0,1'] : ['fa', '1,1,1,0']
 		var mapSpecial = questArray[0]
 		var jobRatio = questArray[1];
-		var questMax = shouldQuest === 6 ? 10 : null;
-		var questMin = shouldQuest === 6 || (shouldQuest === 7 && game.global.mapBonus !== 10) ? 0 : null;
+		var questMax = shouldMap === 6 ? 10 : null;
+		var questMin = shouldMap === 6 || (shouldMap === 7 && game.global.mapBonus !== 10) ? 0 : null;
 		var mapLevel = 0;
 
 		if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
@@ -2127,11 +2123,11 @@ function quest() {
 			mapLevel = mapAutoLevel;
 		}
 
-		var repeat = shouldQuest === 6 && (game.global.mapBonus >= 4 || (game.global.mapsActive && getCurrentMapObject().level - game.global.world < 0));
+		var repeat = shouldMap === 6 && (game.global.mapBonus >= 4 || (game.global.mapsActive && getCurrentMapObject().level - game.global.world < 0));
 
 		var status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
 
-		farmingDetails.shouldRun = shouldQuest;
+		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = mapLevel;
 		farmingDetails.autoLevel = true;
@@ -2562,7 +2558,7 @@ function alchemy() {
 
 function glass() {
 
-	var shouldFarm = false;
+	var shouldMap = false;
 	var mapAutoLevel = Infinity;
 	var mapName = 'Glass ';
 	const farmingDetails = {
@@ -2607,14 +2603,14 @@ function glass() {
 	//Destacking
 	if (!canGamma && MODULES.mapFunctions.challengeContinueRunning || ((ourDmg * damageGoal) > enemyHealth && game.challenges.Glass.shards >= glassStacks)) {
 		mapSpecial = getAvailableSpecials('fa');
-		shouldFarm = true;
+		shouldMap = true;
 		mapLevel = 0;
 		mapName += 'Destacking'
 	}
 	//Farming if we don't have enough damage to clear stacks!
 	else if (!canGamma && (ourDmg * damageGoal) < enemyHealth) {
 		mapName += 'Farming'
-		shouldFarm = true;
+		shouldMap = true;
 		MODULES.mapFunctions.challengeContinueRunning = false;
 	}
 	//Checking if we can clear +0 maps on the next zone.
@@ -2625,20 +2621,20 @@ function glass() {
 		mapName += 'Farming'
 		//Checking if we can clear current zone.
 		if ((ourDmg * damageGoal) < enemyHealth) {
-			shouldFarm = true;
+			shouldMap = true;
 			MODULES.mapFunctions.challengeContinueRunning = false;
 		}
 	}
 
 	if (MODULES.mapFunctions.challengeContinueRunning || (game.global.mapsActive && mapSettings.mapName === 'Glass Destacking')) {
 		if (game.challenges.Glass.shards > 0) {
-			shouldFarm = true;
+			shouldMap = true;
 			MODULES.mapFunctions.challengeContinueRunning = true;
 		}
 		else {
 			if (game.challenges.Glass.shards === 0) recycleMap_AT();
 			MODULES.mapFunctions.challengeContinueRunning = false;
-			shouldFarm = false;
+			shouldMap = false;
 		}
 	}
 
@@ -2648,7 +2644,7 @@ function glass() {
 	if (mapName.includes('Destack')) status = mapName + " " + game.challenges.Glass.shards + " stacks remaining";
 	else status = game.global.challengeActive + ' Farm: Curr&nbsp;Dmg:&nbsp;' + prettify(ourDmg) + " Goal&nbsp;Dmg:&nbsp;" + prettify(damageTarget);
 
-	farmingDetails.shouldRun = shouldFarm;
+	farmingDetails.shouldRun = shouldMap;
 	farmingDetails.mapName = mapName;
 	farmingDetails.mapLevel = mapLevel;
 	farmingDetails.autoLevel = true;
@@ -3115,7 +3111,8 @@ function hdFarm(skipHealthCheck, voidFarm) {
 	const settingName = 'hdFarmSettings';
 	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
-	var setting;
+	setting = undefined;;
+	var mapsRunCap = Infinity;
 
 	//Void Farming setting setup
 	if (voidFarm) {
@@ -3123,6 +3120,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		setting = {
 			autoLevel: true, hdMult: 1, jobratio: voidSetting.jobratio, world: game.global.world, level: -1, hdBase: Number(voidSetting.hdRatio), hdType: 'voidFarm',
 		}
+		mapsRunCap = typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100;
 		//Checking to see which of hits survived and hd farm should be run. Prioritises hits survived.
 		if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {
 			setting.hdBase = Number(voidSetting.hitsSurvived);
@@ -3130,13 +3128,12 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		}
 	} //Standalone Hits Survived setting setup.
 	else if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
-		const hitsSurvivedSetting = targetHitsSurvived();
+		const hitsSurvivedSetting = targetHitsSurvived(true);
 		if (hitsSurvivedSetting > 0 && hdStats.hitsSurvived < hitsSurvivedSetting)
 			setting = {
-				autoLevel: true, hdBase: hitsSurvivedSetting, hdMult: 1, world: game.global.world, hdType: 'hitsSurvived', jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : '1,1,2', level: -1,
+				autoLevel: true, hdBase: hitsSurvivedSetting, hdMult: 1, world: game.global.world, hdType: 'hitsSurvived', jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : '1,1,2', level: -1, hitsSurvivedFarm: true
 			}
 	}
-
 	if (!defaultSettings.active && setting === undefined) return farmingDetails;
 
 	var settingIndex = null;
@@ -3166,7 +3163,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		var hitsSurvived = hdStats.hitsSurvived;
 		var settingTarget = hdFarmSettingRatio(setting);
 
-		var mapsRunCap = typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 500;
+		if (mapsRunCap === Infinity) mapsRunCap = typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 100;
 		if (mapsRunCap === -1) mapsRunCap = Infinity;
 
 		//Rename mapName if running a hits survived setting for some checks
@@ -3210,7 +3207,6 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		if (mapSettings.mapName !== mapName && (hdType.includes('hitsSurvived') ? hdRatio > settingTarget : hdType !== 'maplevel' ? settingTarget > hdRatio : hdStats.autoLevel > setting.hdBase))
 			shouldSkip = true;
 
-
 		if (((mapSettings.mapName === mapName && !shouldMap || game.global.mapRunCounter === mapsRunCap) || shouldSkip) && hdRatio !== Infinity) {
 			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, settingTarget, hdType);
 			//Messages detailing why we are skipping mapping.
@@ -3223,6 +3219,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 					debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Map Level goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
 			resetMapVars(setting, settingName);
+			shouldMap = false;
 			if (game.global.mapsActive) recycleMap_AT();
 			if (voidFarm) return voidMaps();
 		}
@@ -3354,16 +3351,22 @@ function farmingDecision() {
 			wither,
 		];
 	}
-	var mapCheck;
-	for (const map of mapTypes) {
-		mapCheck = map(MODULES.mapFunctions.challengeContinueRunning);
-		if (mapCheck.shouldRun) {
-			farmingDetails = mapCheck;
-			break;
-		}
-	}
 
-	if (mapSettings.voidFarm) farmingDetails = hdFarm(false, true);
+	//If we are currently running a map and it should be continued then continue running it.
+	//Running the entire function again is done to ensure that we update the status message and check if it still wants to run.
+	if (mapSettings.mapName !== '' && mapSettings.shouldRun) {
+		farmingDetails = mapSettings.settingName(MODULES.mapFunctions.challengeContinueRunning);
+		farmingDetails.settingName = mapSettings.settingName;
+	}
+	else
+		for (const map of mapTypes) {
+			var mapCheck = map(MODULES.mapFunctions.challengeContinueRunning);
+			if (mapCheck.shouldRun) {
+				farmingDetails = mapCheck;
+				farmingDetails.settingName = map;
+				break;
+			}
+		}
 
 	//If in desolation then check if we should destack before farming.
 	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && !MODULES.mapFunctions.desolation.gearScum && (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation Destacking')))) {
@@ -3602,8 +3605,8 @@ function fragmentFarm() {
 	var fragmentsNeeded = perfectMapCost_Actual(mapSettings.mapLevel, mapSettings.special, mapSettings.biome);
 	if (mapSettings.mapName === 'Prestige Raiding' && mapSettings.totalMapCost) fragmentsNeeded = mapSettings.totalMapCost;
 	//Check to see if we can afford a perfect map with the maplevel & special selected. If we can then ignore this function otherwise farm fragments until we reach that goal.
-	if (game.resources.fragments.owned > perfectMapCost_Actual(mapSettings.mapLevel, mapSettings.special, mapSettings.biome)) {
-		if (MODULES.maps.fragmentFarming) debug('Fragment farming successful', 'maps');
+	if (game.resources.fragments.owned > fragmentsNeeded || !mapSettings.shouldRun) {
+		if (!mapSettings.shouldRun && !MODULES.maps.fragmentFarming) debug('Fragment farming successful');
 		MODULES.maps.fragmentFarming = false;
 	} //Farms for fragments
 	else {
@@ -3613,11 +3616,20 @@ function fragmentFarm() {
 			mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), getBiome('fragments'), [9, 9, 9], false);
 			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 				buyMap();
-				debug('Fragment farming for a ' + (mapSettings.mapLevel >= 0 ? '+' : '') + mapSettings.mapLevel + ' ' + mapSettings.special + ' map.', 'maps');
+				debug('Fragment farming for ' + prettify(fragmentsNeeded) + ' fragments.');
 				selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
 				runMap();
+				//Enable repeat and set it to repeat forever if frag farming
 				if (!game.global.repeatMap)
 					repeatClicked();
+				if (game.options.menu.repeatUntil.enabled !== 0) {
+					debug("22")
+					game.options.menu.repeatUntil.enabled = 0;
+					toggleSetting('repeatUntil', null, false, true);
+				}
+			}
+			else {
+				debug('Not enough fragments to purchase fragment farming map. Waiting for fragments. If you don\'t have explorers then you will have to manually disable auto maps and continue.', 'maps');
 			}
 		}
 	}
@@ -3922,9 +3934,11 @@ function resetMapVars(setting, settingName) {
 	MODULES.maps.slowScumming = false;
 	game.global.mapRunCounter = 0;
 
-	if (mapSettings.voidFarm) MODULES.mapFunctions.hasVoidFarmed = (totalPortals + "_" + game.global.world);
+	if (mapSettings.voidFarm)
+		MODULES.mapFunctions.hasVoidFarmed = (totalPortals + "_" + game.global.world);
 
-	if (setting && setting.hdType === 'hitsSurvived') MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
+	if (setting && setting.hitsSurvivedFarm)
+		MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
 
 	if (setting && settingName && setting.row) {
 		var value = game.global.universe === 2 ? 'valueU2' : 'value';
