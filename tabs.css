@@ -835,6 +835,7 @@ ul.tab li a:hover {
 .windowHDMult,
 .windowHDBase,
 .windowHDType,
+.windowMapCap,
 .windowRunTypeHDFarm,
 .windowChallengeOn .windowChallengeHDFarm,
 .windowChallenge3On .windowChallenge3HDFarm,
@@ -857,23 +858,27 @@ ul.tab li a:hover {
 }
 
 .windowWorldHDFarm {
-	width: 7%;
-}
-
-.windowCellHDFarm {
-	width: 7%;
-}
-
-.windowAutoLevelHDFarm {
 	width: 6%;
 }
 
+.windowCellHDFarm {
+	width: 6%;
+}
+
+.windowAutoLevelHDFarm {
+	width: 5%;
+}
+
 .windowLevelHDFarm {
-	width: 7%;
+	width: 6%;
+}
+
+.windowMapCap {
+	width: 6%;
 }
 
 .windowEndZoneHDFarm {
-	width: 7%;
+	width: 6%;
 }
 
 .windowJobRatioHDFarm {

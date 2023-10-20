@@ -3118,9 +3118,8 @@ function hdFarm(skipHealthCheck, voidFarm) {
 	if (voidFarm) {
 		const voidSetting = getPageSetting('voidMapSettings')[0];
 		setting = {
-			autoLevel: true, hdMult: 1, jobratio: voidSetting.jobratio, world: game.global.world, level: -1, hdBase: Number(voidSetting.hdRatio), hdType: 'voidFarm',
+			autoLevel: true, hdMult: 1, jobratio: voidSetting.jobratio, world: game.global.world, level: -1, hdBase: Number(voidSetting.hdRatio), hdType: 'voidFarm', mapsRunCap: (typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100),
 		}
-		mapsRunCap = typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100;
 		//Checking to see which of hits survived and hd farm should be run. Prioritises hits survived.
 		if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {
 			setting.hdBase = Number(voidSetting.hitsSurvived);
@@ -3163,7 +3162,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		var hitsSurvived = hdStats.hitsSurvived;
 		var settingTarget = hdFarmSettingRatio(setting);
 
-		if (mapsRunCap === Infinity) mapsRunCap = typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 100;
+		if (mapsRunCap === Infinity) mapsRunCap = typeof setting.mapCap !== 'undefined' ? setting.mapCap : typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 100;
 		if (mapsRunCap === -1) mapsRunCap = Infinity;
 
 		//Rename mapName if running a hits survived setting for some checks
@@ -3601,7 +3600,6 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 }
 
 function fragmentFarm() {
-
 	var fragmentsNeeded = perfectMapCost_Actual(mapSettings.mapLevel, mapSettings.special, mapSettings.biome);
 	if (mapSettings.mapName === 'Prestige Raiding' && mapSettings.totalMapCost) fragmentsNeeded = mapSettings.totalMapCost;
 	//Check to see if we can afford a perfect map with the maplevel & special selected. If we can then ignore this function otherwise farm fragments until we reach that goal.

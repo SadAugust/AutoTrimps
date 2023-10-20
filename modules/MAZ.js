@@ -824,14 +824,19 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Worshippers</div>";
 		if (smithyFarm) tooltipText += "<div class='windowSmithies'>Smithies</div>";
 
-		if (hdFarm) tooltipText += "<div class='windowHDBase'>HD Base</div>";
-		if (hdFarm) tooltipText += "<div class='windowHDMult'>HD Mult</div>";
-		if (hdFarm) tooltipText += "<div class='windowHDType'>HD<br/>Type</div>";
+		if (hdFarm) {
+			tooltipText += "<div class='windowHDBase'>HD Base</div>";
+			tooltipText += "<div class='windowHDMult'>HD Mult</div>";
+			tooltipText += "<div class='windowHDType'>HD<br/>Type</div>";
+			tooltipText += "<div class='windowMapCap'>Map<br/>Cap</div>";
+		}
 
-		if (voidMap) tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#1</div>";
-		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#1</div>";
-		if (voidMap) tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>";
-		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
+		if (voidMap) {
+			tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#1</div>";
+			tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#1</div>";
+			tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>";
+			tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
+		}
 		if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br/>Ratio</div>";
 		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>";
 		if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
@@ -898,6 +903,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				hdType2: 'hitsSurvived',
 				goldenNumber: -2,
 				destack: false,
+				mapCap: 100,
 			}
 			//Taking data from the current setting and overriding the default values
 			if (currSetting.length - 1 >= x) {
@@ -955,6 +961,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.hdType = currSetting[x].hdType ? currSetting[x].hdType : 'world';
 					vals.hdBase = (currSetting[x].hdBase || currSetting[x].hdBase === 0) ? currSetting[x].hdBase : 1;
 					vals.hdMult = currSetting[x].hdMult ? currSetting[x].hdMult : 1;
+					vals.mapCap = currSetting[x].mapCap ? currSetting[x].mapCap : 100;
 				}
 				//Void Maps
 				if (voidMap) {
@@ -1163,18 +1170,16 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (smithyFarm)
 				tooltipText += "<div class='windowSmithies'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
 
-			//HD Base value
-			if (hdFarm)
+			if (hdFarm) {
+				//HD Base value
 				tooltipText += "<div class='windowHDBase'>\<div style='text-align: center; font-size: 0.6vw;'>" + (vals.hdType === 'maplevel' ? "Map Level" : "") + "</div>\<input value='" + vals.hdBase + "' type='number' id='windowRepeat" + x + "'/></div>";
-
-			//HD Mult value
-			if (hdFarm)
+				//HD Mult value
 				tooltipText += "<div class='windowHDMult'><input value='" + vals.hdMult + "' type='number' id='windowHDMult" + x + "'/></div>";
-
-			//HD Type dropdown
-			if (hdFarm)
+				//HD Type dropdown
 				tooltipText += "<div class='windowHDType' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDType" + x + "'>" + hdTypeDropdown + "</select></div>";
-
+				//Map Cap 
+				tooltipText += "<div class='windowMapCap'><input value='" + vals.mapCap + "' type='number' id='windowMapCap" + x + "'/></div>";
+			}
 			//Tributes to farm for
 			if (tributeFarm)
 				tooltipText += "<div class='windowTributes'><input value='" + vals.tributes + "' type='number' id='windowTributes" + x + "'/></div>";
@@ -1532,6 +1537,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 			thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 			thisSetting.hdType = document.getElementById('windowHDType' + x).value;
+			thisSetting.mapCap = parseInt(document.getElementById('windowMapCap' + x).value, 10);
 		}
 		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
 		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
@@ -1942,6 +1948,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target.</li>";
 		mazHelp += "<li class=\"indent\">If <b>Map Level</b> has been selected it will farm until auto level reaches that level.</li>";
 		mazHelp += "<li class=\"indent\">Will only run Void Map lines if you have void maps in your map chamber.</li>";
+		mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
 	}
 
 	if (boneShrine) {
@@ -2445,6 +2452,9 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowPortalAfter' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null)
 					document.getElementById('windowAutoLevel' + x).value = true;
+				if (document.getElementById('windowMapCap' + x) !== null && typeof (getPageSetting(settingName + 'Settings', currSettingUniverse)[0].mapCap) !== 'undefined')
+					document.getElementById('windowMapCap' + x).value = getPageSetting(settingName + 'Settings', currSettingUniverse)[0].mapCap;
+
 				if (titleText.includes('Map Bonus') && document.getElementById('windowLevel' + x) !== null)
 					document.getElementById('windowLevel' + x).value = 0;
 				updateWindowPreset(x, varPrefix);
