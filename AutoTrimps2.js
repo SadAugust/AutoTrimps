@@ -280,6 +280,10 @@ function toggleCatchUpMode() {
 			if (loops % loopFrequency === 0 || newZone) {
 				mainLoop();
 			}
+			else if (atSettings.intervals.thirtySecond) {
+				trimpStats = new TrimpStats();
+				hdStats = new HDStats();
+			}
 
 			//If user want to see the games UI then run this code every 600 game loops.
 			if (getPageSetting('timeWarpDisplay') && usingRealTimeOffline && loops % 600 === 0) {
@@ -411,8 +415,8 @@ function mainLoop() {
 		trimpStats = new TrimpStats();
 		hdStats = new HDStats();
 	}
-	if (shouldRunInTimeWarp()) farmingDecision();
-
+	if (shouldRunInTimeWarp())
+		farmingDecision();
 	if (MODULES.maps.slowScumming && game.global.mapRunCounter !== 0) {
 		if (game.global.mapBonus === 10) MODULES.maps.slowScumming = false;
 		else {

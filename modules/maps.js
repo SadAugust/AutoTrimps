@@ -641,7 +641,8 @@ function autoMap() {
 				//A) We have explorers unlocked
 				//B) We can afford a max loot+size sliders map
 				if (!game.jobs.Explorer.locked && perfectMapCost_Actual(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
-				//Hacky way to disable mapping if we don't have a map and can't afford the one that we want to make.
+				//Hacky way to disable mapping if we don't have a map and can't afford the one that we want to make. 
+				//Should definitely just have it decrement the level until we can afford it or it's at the minimum level it can go but that's a step for another day.
 				else if (highestMap === null) {
 					MODULES.maps.fragmentCost = updateMapCost(true);
 					mapsClicked();

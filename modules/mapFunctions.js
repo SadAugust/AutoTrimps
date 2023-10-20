@@ -3598,6 +3598,9 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 }
 
 function fragmentFarm() {
+
+	var fragmentsNeeded = perfectMapCost_Actual(mapSettings.mapLevel, mapSettings.special, mapSettings.biome);
+	if (mapSettings.mapName === 'Prestige Raiding' && mapSettings.totalMapCost) fragmentsNeeded = mapSettings.totalMapCost;
 	//Check to see if we can afford a perfect map with the maplevel & special selected. If we can then ignore this function otherwise farm fragments until we reach that goal.
 	if (game.resources.fragments.owned > perfectMapCost_Actual(mapSettings.mapLevel, mapSettings.special, mapSettings.biome)) {
 		if (MODULES.maps.fragmentFarming) debug('Fragment farming successful', 'maps');
