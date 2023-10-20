@@ -654,7 +654,7 @@ class Heirloom {
 		}
 		if (type === "prismatic") {
 			// 50 base, 50 from prismatic palace
-			let shieldPercent = 100;
+			var shieldPercent = 100;
 			shieldPercent += game.portal.Prismal.radLevel;
 			if (Fluffy.isRewardActive("prism")) shieldPercent += 25;
 
@@ -663,8 +663,8 @@ class Heirloom {
 		if (type === "critDamage") {
 			const relentlessness = (game.global.universe === 2) ? 0 : game.portal.Relentlessness.level;
 			const criticality = (game.global.universe === 2) ? game.portal.Criticality.radLevel : 0;
-			let critChance = relentlessness * 5;
-			let megaCritMult = 5;
+			var critChance = relentlessness * 5;
+			var megaCritMult = 5;
 			if (game.talents.crit.purchased) critChance += this.getModValue("critChance") * 1.5;
 			else critChance += this.getModValue("critChance");
 			if ((Fluffy.isRewardActive("critChance"))) critChance += (50 * Fluffy.isRewardActive("critChance"));
@@ -682,10 +682,10 @@ class Heirloom {
 		if (type === "critChance") {
 			const relentlessness = (game.global.universe === 2) ? 0 : game.portal.Relentlessness.level;
 			const criticality = (game.global.universe === 2) ? game.portal.Criticality.radLevel : 0;
-			let critChanceBefore = relentlessness * 5;
-			let critChanceAfter = relentlessness * 5;
-			let critDamage = 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
-			let megaCritMult = 5;
+			var critChanceBefore = relentlessness * 5;
+			var critChanceAfter = relentlessness * 5;
+			var critDamage = 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
+			var megaCritMult = 5;
 			if (game.talents.crit.purchased) critChanceBefore += value * 1.5;
 			else critChanceBefore += value;
 			if (game.talents.crit.purchased) critChanceAfter += value * 1.5;
@@ -781,7 +781,7 @@ class Heirloom {
 	}
 
 	getModSpent(type) {
-		let cost = 0;
+		var cost = 0;
 		if (type === "empty") return cost;
 		const dummyHeirloom = new Heirloom(deepClone(this));
 		for (const mod of dummyHeirloom.mods) {
@@ -802,7 +802,7 @@ class Heirloom {
 
 	getTotalSpent() {
 		if (this.isEmpty()) return 0;
-		let cost = 0;
+		var cost = 0;
 		if (this.replaceSpent) cost += this.replaceSpent;
 		for (const mod of this.mods) {
 			if (mod[0] !== "empty") cost += this.getModSpent(mod[0]);
@@ -812,12 +812,12 @@ class Heirloom {
 	}
 
 	getDamageMult() {
-		let trimpAttackMult = 1 + this.getModValue("trimpAttack") / 100;
+		var trimpAttackMult = 1 + this.getModValue("trimpAttack") / 100;
 		trimpAttackMult *= Math.pow(((1 - (0.1 * (1 - this.getModValue("inequality") / 100))) / 0.9), MODULES.autoHeirlooms.equalityTarget);
 		const relentlessness = (game.global.universe === 2) ? 0 : game.portal.Relentlessness.level;
 		const criticality = (game.global.universe === 2) ? game.portal.Criticality.radLevel : 0;
-		let critChance = relentlessness * 5;
-		let megaCritMult = 5;
+		var critChance = relentlessness * 5;
+		var megaCritMult = 5;
 		if (game.talents.crit.purchased) critChance += this.getModValue("critChance") * 1.5;
 		else critChance += this.getModValue("critChance");
 		if (Fluffy.isRewardActive("critChance")) critChance += (50 * Fluffy.isRewardActive("critChance"));
@@ -834,15 +834,15 @@ class Heirloom {
 	forceCritBreakpoint() {
 		if (this.isEmpty()) return new Heirloom();
 		const heirloom = new Heirloom(deepClone(this));
-		let currency = getEffectiveNullifium() - this.getTotalSpent();
-		let efficiency = 1;
-		let paid = 0;
-		let cost = 0;
-		let name = "";
-		let index = -1;
+		var currency = getEffectiveNullifium() - this.getTotalSpent();
+		var efficiency = 1;
+		var paid = 0;
+		var cost = 0;
+		var name = "";
+		var index = -1;
 		const purchases = [0, 0, 0, 0, 0, 0, 0];
 		const relentlessness = (game.global.universe === 2) ? 0 : game.portal.Relentlessness.level;
-		let critChance = relentlessness * 5;
+		var critChance = relentlessness * 5;
 		if (Fluffy.isRewardActive("critChance")) critChance += (50 * Fluffy.isRewardActive("critChance"));
 		const megaCrits = Math.floor((critChance + (game.talents.crit.purchased) ? heirloom.getModValue("critChance") * 1.5 : heirloom.getModValue("critChance")) / 100);
 
@@ -894,12 +894,12 @@ class Heirloom {
 	calculatePurchases() {
 		if (this.isEmpty()) return new Heirloom();
 		const heirloom = new Heirloom(deepClone(this));
-		let currency = (this.isCore) ? playerSpire.spirestones - this.getTotalSpent() : getEffectiveNullifium() - this.getTotalSpent();
-		let efficiency = 1;
-		let paid = 0;
-		let cost = 0;
-		let name = "";
-		let index = -1;
+		var currency = (this.isCore) ? playerSpire.spirestones - this.getTotalSpent() : getEffectiveNullifium() - this.getTotalSpent();
+		var efficiency = 1;
+		var paid = 0;
+		var cost = 0;
+		var name = "";
+		var index = -1;
 		const purchases = [0, 0, 0, 0, 0, 0, 0];
 
 		// eslint-disable-next-line no-constant-condition
@@ -945,14 +945,14 @@ class Heirloom {
 	getInnate(spent) {
 		if (this.type === "Staff") {
 			const parityPower = game.global.StaffEquipped.mods.filter(mod => mod[0] === "ParityPower")
-			let mult = Math.log10(spent + 1e6) / 5;
+			var mult = Math.log10(spent + 1e6) / 5;
 			if (parityPower.length > 0) {
 				mult *= 1 + parityPower[0][1] / 1000;
 			}
 			return (mult - 1) * 100;
 		}
 		// shield
-		const mult = Math.log10(spent + 1e6) * (this.rarity === 11 ? 10000 : 4000);
+		var mult = Math.log10(spent + 1e6) * (this.rarity === 11 ? 10000 : 4000);
 		return game.global.universe === 2 ? mult / 10 : mult;
 	}
 
@@ -961,7 +961,7 @@ class Heirloom {
 		const value = this.getInnate(this.getTotalSpent());
 		const stepAmount = this.getInnate(this.getTotalSpent() + this.getModCost(type)) - value;
 
-		let gain;
+		var gain;
 		if (this.type === "Staff") {
 			gain = (Math.log((value + 100 + stepAmount) / (value + 100) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2)) / MODULES.autoHeirlooms.equipLevels;
 
@@ -1309,11 +1309,11 @@ function insertSelection(loc) {
 
 	const insertType = MODULES.autoHeirlooms.selectedTrap;
 	MODULES.autoHeirlooms.selectedTrap = "Empty";
-	let first = 0;
-	let last = -1;
+	var first = 0;
+	var last = -1;
 	const newTraps = [];
 
-	for (let i = 0; i < MODULES.autoHeirlooms.trapLayout.length; i++) {
+	for (var i = 0; i < MODULES.autoHeirlooms.trapLayout.length; i++) {
 		if (MODULES.autoHeirlooms.detailed[i].selected === undefined || MODULES.autoHeirlooms.detailed[i].selected === false) {
 			if (first > last) {
 				first++;
@@ -1331,7 +1331,7 @@ function insertSelection(loc) {
 	}
 
 	if (last !== -1) {
-		for (let e = 0; e < newTraps.length && e + loc < MODULES.autoHeirlooms.trapLayout.length && e <= last - first; e++) {
+		for (var e = 0; e < newTraps.length && e + loc < MODULES.autoHeirlooms.trapLayout.length && e <= last - first; e++) {
 			if (newTraps[e] !== null) {
 				// empty all cells first to clear any Strength towers
 				setTrap(e + loc);
@@ -1341,7 +1341,7 @@ function insertSelection(loc) {
 		// refresh MODULES.autoHeirlooms.detailed
 		imAnEnemy();
 
-		for (let n = 0; n < newTraps.length && n + loc < MODULES.autoHeirlooms.trapLayout.length && n <= last - first; n++) {
+		for (var n = 0; n < newTraps.length && n + loc < MODULES.autoHeirlooms.trapLayout.length && n <= last - first; n++) {
 			MODULES.autoHeirlooms.selectedTrap = newTraps[n];
 			setTrap(n + loc);
 		}
@@ -1391,7 +1391,7 @@ function setTrap(number) {
 function makepath() {
 	const length = MODULES.autoHeirlooms.trapLayout.length;
 	MODULES.autoHeirlooms.path = [];
-	for (let x = 0; x < length; x++) {
+	for (var x = 0; x < length; x++) {
 		MODULES.autoHeirlooms.path.push({ type: playerSpire.layout[x].trap.name });
 	}
 }
@@ -1468,7 +1468,7 @@ const traps = {
 
 // create MODULES.autoHeirlooms.detailed
 function makedetailed() {
-	for (let x = 0; x < 5 * playerSpire.rowsAllowed; x++) {
+	for (var x = 0; x < 5 * playerSpire.rowsAllowed; x++) {
 		if (MODULES.autoHeirlooms.detailed[x] === undefined) {
 			MODULES.autoHeirlooms.detailed[x] = {};
 		}
@@ -1482,22 +1482,22 @@ function imAnEnemy(health = 0) {
 	MODULES.autoHeirlooms.pathLength = MODULES.autoHeirlooms.trapLayout.length;
 
 	// damage you've taken
-	let damageTaken = 0;
+	var damageTaken = 0;
 	// chilled by Frost Trap
-	let chilledFor = 0;
+	var chilledFor = 0;
 	// frozen by knowledge
-	let frozenFor = 0;
+	var frozenFor = 0;
 	// current Poison Stack you have, will take damage at end of turn
-	let poisonStack = 0;
-	let shockedFor = 0;
-	let addDamage = 0;
-	let addStack = 0;
-	let instaKill = false;
+	var poisonStack = 0;
+	var shockedFor = 0;
+	var addDamage = 0;
+	var addStack = 0;
+	var instaKill = false;
 
-	let toxy;
-	let condensed;
+	var toxy;
+	var condensed;
 
-	for (let p = 0; p < MODULES.autoHeirlooms.pathLength; p++) {
+	for (var p = 0; p < MODULES.autoHeirlooms.pathLength; p++) {
 		MODULES.autoHeirlooms.detailed[p].row = Math.floor(p / 5);
 		MODULES.autoHeirlooms.detailed[p].killCount = 0;
 		if (MODULES.autoHeirlooms.detailed[p].type === undefined) {
@@ -1604,15 +1604,15 @@ function imAnEnemy(health = 0) {
 }
 
 function getMaxEnemyHP() {
-	let lowerBound = 0;
-	let testHP = imAnEnemy();
+	var lowerBound = 0;
+	var testHP = imAnEnemy();
 	while (testHP < damageByHealth(testHP)) {
 		lowerBound = testHP;
 		testHP *= 10;
 	}
 
-	let upperBound = testHP;
-	let midPoint = 0;
+	var upperBound = testHP;
+	var midPoint = 0;
 	while (((upperBound - lowerBound) / lowerBound) > 0.0001 && upperBound > lowerBound + 1) {
 		midPoint = lowerBound + ((upperBound - lowerBound) / 2);
 		const newDamage = damageByHealth(midPoint);
@@ -1627,25 +1627,25 @@ function getMaxEnemyHP() {
 }
 
 function damageByHealth(hp, tally = false) {
-	let damageDealt = 0;
+	var damageDealt = 0;
 	// chilled by Frost Trap
-	let chilledFor = 0;
+	var chilledFor = 0;
 	// frozen by knowledge
-	let frozenFor = 0;
+	var frozenFor = 0;
 	// current Poison Stack you have, will take damage at end of turn
-	let poisonStack = 0;
-	let shockedFor = 0;
-	let addDamage = 0;
-	let addStack = 0;
+	var poisonStack = 0;
+	var shockedFor = 0;
+	var addDamage = 0;
+	var addStack = 0;
 
 	var slowsOnKill = 0;
 	var fireKill = false;
-	let deadEnemy = false;
+	var deadEnemy = false;
 
-	let toxy;
-	let condensed;
+	var toxy;
+	var condensed;
 
-	for (let p = 0; p < MODULES.autoHeirlooms.trapLayout.length; p++) {
+	for (var p = 0; p < MODULES.autoHeirlooms.trapLayout.length; p++) {
 		if (!tally) {
 			MODULES.autoHeirlooms.detailed[p].killCount = 0;
 		}
@@ -1735,7 +1735,7 @@ function damageByHealth(hp, tally = false) {
 
 function calcFire(c, shocked) {
 	const thisFireDamage = traps.fire.damage * traps.fire.coreMult * lightColMult(c);
-	let thisAddDamage = thisFireDamage;
+	var thisAddDamage = thisFireDamage;
 	if (MODULES.autoHeirlooms.detailed[c].shocked) thisAddDamage = thisFireDamage * traps.lightning.damageBuff * traps.lightning.coreMult;
 	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += thisFireDamage * getLightningMultiplier(shocked, 1);
 	if (MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += thisFireDamage * getLightningMultiplier(shocked, 2);
@@ -1751,7 +1751,7 @@ function calcFrost(c) {
 function calcPoison(c, shocked, hp, dmg) {
 	const output = {};
 	const lastCell = (c === MODULES.autoHeirlooms.trapLayout.length - 1);
-	let baseStack = traps.poison.defaultStack * lightColMult(c) * traps.poison.coreMult;
+	var baseStack = traps.poison.defaultStack * lightColMult(c) * traps.poison.coreMult;
 
 	if (traps.poison.level >= 3) {
 		if (c > 0) {
@@ -1794,7 +1794,7 @@ function calcPoison(c, shocked, hp, dmg) {
 function calcLightning(c) {
 	const baseDamage = traps.lightning.damage * traps.lightning.coreMult;
 	const shockMult = traps.lightning.damageBuff * traps.lightning.coreMult;
-	let thisAddDamage = baseDamage;
+	var thisAddDamage = baseDamage;
 	if (MODULES.autoHeirlooms.detailed[c].shocked) thisAddDamage *= shockMult;
 	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += baseDamage * shockMult;
 	if (MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += baseDamage * shockMult;
@@ -1803,7 +1803,7 @@ function calcLightning(c) {
 
 function calcStrength(c, shocked) {
 	const strengthDamage = getStrengthDamage(MODULES.autoHeirlooms.detailed[c]);
-	let thisAddDamage = strengthDamage;
+	var thisAddDamage = strengthDamage;
 	if (MODULES.autoHeirlooms.detailed[c].shocked) thisAddDamage = strengthDamage * traps.lightning.damageBuff * traps.lightning.coreMult;
 	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += strengthDamage * getLightningMultiplier(shocked, 1);
 	if (MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += strengthDamage * getLightningMultiplier(shocked, 2);
@@ -1832,7 +1832,7 @@ function calcCondenser(c, shocked) {
 }
 
 function subtractShocks(c, shocked) {
-	let adjust = (shocked < 0 ? shocked : 0);
+	var adjust = (shocked < 0 ? shocked : 0);
 	if (shocked > 0 && MODULES.autoHeirlooms.detailed[c].type !== "Lightning") {
 		if (MODULES.autoHeirlooms.detailed[c].type !== "Frost" && MODULES.autoHeirlooms.detailed[c].type !== "Knowledge") {
 			if (MODULES.autoHeirlooms.detailed[c].chilled) {
@@ -1850,7 +1850,7 @@ function subtractShocks(c, shocked) {
 }
 
 function multipleDamage(index, type) {
-	let returnN = 0;
+	var returnN = 0;
 	if (index.type !== "Frost" && index.type !== "Knowledge") {
 		if (index.frozen) {
 			returnN += traps.knowledge.effect;
@@ -1868,9 +1868,9 @@ function multipleDamage(index, type) {
 
 function getStrengthDamage(data) {
 	const rowStart = data.row * 5;
-	let returnDamage = traps.fire.damage * traps.fire.coreMult * traps.strength.effect * traps.strength.coreMult;
-	let amountOfFire = 0;
-	for (let x = rowStart; x < rowStart + 5; x++) {
+	var returnDamage = traps.fire.damage * traps.fire.coreMult * traps.strength.effect * traps.strength.coreMult;
+	var amountOfFire = 0;
+	for (var x = rowStart; x < rowStart + 5; x++) {
 		if (MODULES.autoHeirlooms.path[x].type === "Fire") {
 			amountOfFire += lightColMult(x);
 		}
@@ -1882,7 +1882,7 @@ function getStrengthDamage(data) {
 // developed with trial and error and curve fitting
 // Maximum known error of ~15% (e.g. 29.6% vs 25.8% around 2,300 damage)
 function escapePercent(damage) {
-	let est = 0;
+	var est = 0;
 	if (damage < 1460) {
 		est = (1 / 3);
 	} else if (damage < 6880) {
@@ -1897,8 +1897,8 @@ function escapePercent(damage) {
 
 function getHealthWith(difficulty, killPct) {
 	const scaledMod = Math.pow(1.012, difficulty);
-	let health = 10 + (difficulty * 4) + scaledMod;
-	let difPct = 0.00053 * difficulty;
+	var health = 10 + (difficulty * 4) + scaledMod;
+	var difPct = 0.00053 * difficulty;
 	if (difPct > 0.85) difPct = 0.85;
 	if (difPct < 0.15) difPct = 0.15;
 	// the (2/3) here an estimate for Math.random()
@@ -1909,7 +1909,7 @@ function getHealthWith(difficulty, killPct) {
 function estimatedMaxDifficulty(maxHealth) {
 	const damage = maxHealth;
 	const killPct = 1 - escapePercent(maxHealth);
-	let difficulty = 1;
+	var difficulty = 1;
 	min = 1;
 	max = 5000;
 	while (true) {
@@ -1929,9 +1929,9 @@ function estimatedMaxDifficulty(maxHealth) {
 		}
 	}
 
-	let avgReward = 0;
+	var avgReward = 0;
 	const steps = 1000;
-	for (let h = 0; h < steps; h++) {
+	for (var h = 0; h < steps; h++) {
 		if (h / steps < killPct) {
 			avgReward += getRsReward(getHealthWith(difficulty, h / steps), difficulty);
 		} else if (traps.poison.level >= 6) {
@@ -2009,12 +2009,12 @@ function lightColMult(cell) {
 function loadLoadout() {
 	if (playerSpire.layout === null) return;
 	const index = playerSpire.layout.length;
-	for (let x = 0; index > x; x++) {
+	for (var x = 0; index > x; x++) {
 		MODULES.autoHeirlooms.selectedTrap = playerSpire.layout[x].trap.name;
 		setTrap(x);
 	}
-	for (const trap in playerSpire.traps) {
-		updateTrapDamage(trap.toLowerCase(), playerSpire.traps[trap].level, true);
+	for (const trap in playerSpireTraps) {
+		updateTrapDamage(trap.toLowerCase(), playerSpireTraps[trap].level, true);
 	}
 	runInformation();
 }
