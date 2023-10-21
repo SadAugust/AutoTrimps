@@ -1233,7 +1233,7 @@ function initializeAllSettings() {
 				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
 				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
 				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
-				description += "<p>Magma maps and Corrupted Voidmaps are currently classified as corrupted</b> and selecting <b>Never</b> here will override maps and Void Maps use of scryer stance.</p>";
+				description += "<p>Magma maps and Corrupted Void Maps are currently classified as corrupted</b> and selecting <b>Never</b> here will override maps and Void Maps use of scryer stance.</p>";
 				description += "<p><b>Recommended:</b> Maps: Maybe</p>";
 				return description;
 			},

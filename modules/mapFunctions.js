@@ -232,7 +232,7 @@ function shouldRunUniqueMap(map) {
 			}
 		}
 	} else if (game.global.universe === 2) {
-		if (mapSettings.mapName === 'Quagmire Farm' && map.name === 'The Black Bog') {
+		if (mapSettings.mapName === 'Quagmire Farm' && map.name === 'The Black Bog' && quagmire().shouldRun) {
 			return true;
 		}
 		else if (map.name === 'Big Wall') {
