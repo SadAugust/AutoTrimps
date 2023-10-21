@@ -3302,17 +3302,19 @@ function farmingDecision() {
 		];
 
 		//Skipping map farming if in Decay and above stack count user input
-		if (decaySkipMaps()) mapTypes = [
-			prestigeClimb,
-			voidMaps,
-		];
+		if (decaySkipMaps())
+			mapTypes = [
+				prestigeClimb,
+				voidMaps,
+			];
 
-		if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [
-			prestigeClimb,
-			prestigeRaiding,
-			bionicRaiding,
-			voidMaps,
-		];
+		if (challengeActive('Mapology') && getPageSetting('mapology'))
+			mapTypes = [
+				prestigeClimb,
+				prestigeRaiding,
+				bionicRaiding,
+				voidMaps,
+			];
 
 		if (isDoingSpire() && getPageSetting('skipSpires') && game.global.mapBonus === 10) mapSettings = farmingDetails;
 	}
@@ -3353,7 +3355,7 @@ function farmingDecision() {
 
 	//If we are currently running a map and it should be continued then continue running it.
 	//Running the entire function again is done to ensure that we update the status message and check if it still wants to run.
-	if (mapSettings.mapName !== '' && mapSettings.shouldRun) {
+	if (mapSettings.mapName !== '' && mapSettings.shouldRun && mapTypes.indexOf(mapSettings.settingName) > 0) {
 		farmingDetails = mapSettings.settingName(MODULES.mapFunctions.challengeContinueRunning);
 		farmingDetails.settingName = mapSettings.settingName;
 	}
