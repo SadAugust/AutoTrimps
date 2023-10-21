@@ -1411,7 +1411,7 @@ const traps = {
 		slow: 3,
 		effect: 2,
 		level: 1,
-		maxLevel: 6,
+		maxLevel: 8,
 		fireIncrease: 1.25,
 		dmgs: [0, 10, 50, 500, 2500, 5000, 25000, 50000, 10000],
 		slows: [0, 3, 4, 4, 4, 4, 5, 5, 5],
@@ -1421,7 +1421,7 @@ const traps = {
 		locked: true,
 		defaultStack: 5,
 		level: 1,
-		maxLevel: 7,
+		maxLevel: 9,
 		stacks: [0, 5, 10, 10, 20, 40, 80, 160, 480, 1920],
 		coreMult: 1
 	},
@@ -1525,6 +1525,7 @@ function imAnEnemy(health = 0) {
 		} else {
 			MODULES.autoHeirlooms.detailed[p].shocked = false;
 		}
+
 		switch (MODULES.autoHeirlooms.detailed[p].type) {
 			case "Empty":
 				break;
@@ -1583,7 +1584,6 @@ function imAnEnemy(health = 0) {
 		poisonStack += addStack;
 		addStack = 0;
 		MODULES.autoHeirlooms.ticks += 1;
-
 		// damage
 		damageTaken += addDamage;
 		addDamage = 0;
@@ -1615,7 +1615,7 @@ function getMaxEnemyHP() {
 	var midPoint = 0;
 	while (((upperBound - lowerBound) / lowerBound) > 0.0001 && upperBound > lowerBound + 1) {
 		midPoint = lowerBound + ((upperBound - lowerBound) / 2);
-		const newDamage = damageByHealth(midPoint);
+		var newDamage = damageByHealth(midPoint);
 		if (newDamage > midPoint) {
 			lowerBound = midPoint;
 		} else {
@@ -1713,8 +1713,8 @@ function damageByHealth(hp, tally = false) {
 
 		if (tally) {
 			if (hp > damageDealt) {
-				if (MODULES.autoHeirlooms.detailed[p].type !== "Knowledge" && MODULES.autoHeirlooms.detailed[p].type !== "Frost") {
-					if (MODULES.autoHeirlooms.detailed[p].chilled) {
+				if (MODULES.autoHeirlooms.detailed[p].type !== "Frost") {
+					if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type !== "Knowledge") {
 						slowsOnKill++;
 					} else if (MODULES.autoHeirlooms.detailed[p].frozen) {
 						slowsOnKill += 2;
@@ -1834,8 +1834,8 @@ function calcCondenser(c, shocked) {
 function subtractShocks(c, shocked) {
 	var adjust = (shocked < 0 ? shocked : 0);
 	if (shocked > 0 && MODULES.autoHeirlooms.detailed[c].type !== "Lightning") {
-		if (MODULES.autoHeirlooms.detailed[c].type !== "Frost" && MODULES.autoHeirlooms.detailed[c].type !== "Knowledge") {
-			if (MODULES.autoHeirlooms.detailed[c].chilled) {
+		if (MODULES.autoHeirlooms.detailed[c].type !== "Frost") {
+			if (MODULES.autoHeirlooms.detailed[c].chilled && MODULES.autoHeirlooms.detailed[c].type !== "Knowledge") {
 				adjust = 2;
 			} else if (MODULES.autoHeirlooms.detailed[c].frozen) {
 				adjust = 3;
@@ -1851,10 +1851,10 @@ function subtractShocks(c, shocked) {
 
 function multipleDamage(index, type) {
 	var returnN = 0;
-	if (index.type !== "Frost" && index.type !== "Knowledge") {
+	if (index.type !== "Frost") {
 		if (index.frozen) {
 			returnN += traps.knowledge.effect;
-		} else if (index.chilled) {
+		} else if (index.chilled && index.type !== "Knowledge") {
 			returnN += traps.frost.effect;
 		}
 	}
@@ -1867,7 +1867,7 @@ function multipleDamage(index, type) {
 }
 
 function getStrengthDamage(data) {
-	const rowStart = data.row * 5;
+	var rowStart = data.row * 5;
 	var returnDamage = traps.fire.damage * traps.fire.coreMult * traps.strength.effect * traps.strength.coreMult;
 	var amountOfFire = 0;
 	for (var x = rowStart; x < rowStart + 5; x++) {
@@ -1906,6 +1906,7 @@ function getHealthWith(difficulty, killPct) {
 	return Math.floor(health);
 }
 
+//CHECK THIS
 function estimatedMaxDifficulty(maxHealth) {
 	const damage = maxHealth;
 	const killPct = 1 - escapePercent(maxHealth);
@@ -1946,7 +1947,7 @@ function estimatedMaxDifficulty(maxHealth) {
 }
 
 function getRsReward(health, threat) {
-	reward = Math.ceil(health / 600);
+	var reward = Math.ceil(health / 600);
 	reward += threat / 20;
 	reward *= Math.pow(1.00116, threat);
 	if (MODULES.autoHeirlooms.detailed[MODULES.autoHeirlooms.trapLayout.length - 1].type === "Fire" && traps.fire.level >= 7) {
@@ -2002,8 +2003,7 @@ function getLightningMultiplier(length, times, type) {
 }
 
 function lightColMult(cell) {
-	if (traps.lightning.level >= 7) return (1 + 0.2 * MODULES.autoHeirlooms.lightColStacks[cell % 5] * traps.lightning.coreMult);
-	return traps.lightning.level >= 4 ? (1 + 0.1 * MODULES.autoHeirlooms.lightColStacks[cell % 5] * traps.lightning.coreMult) : 1;
+	return traps.lightning.level >= 4 ? (1 + (traps.lightning.level >= 7 ? 0.2 : 0.1) * MODULES.autoHeirlooms.lightColStacks[cell % 5] * traps.lightning.coreMult) : 1;
 }
 
 function loadLoadout() {
