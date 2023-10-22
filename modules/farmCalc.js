@@ -580,7 +580,7 @@ function simulate(saveData, zone) {
 	var hasWithered = false;
 	const runningMayhem = challengeActive('Mayhem');
 	const runningBerserk = challengeActive('Berserk');
-	const runningGlass = challengeActive('Glass');
+	const runningGlass = false;// challengeActive('Glass');
 	const runningDesolation = challengeActive('Desolation');
 
 	/* MUST SETUP LIST

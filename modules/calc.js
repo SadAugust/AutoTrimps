@@ -84,12 +84,11 @@ class HDStats {
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void', voidPercent);
 		//Calculating Auto Level values.
 		this.autoLevel = autoMapLevel();
-		//this.autoLevelInitial = checkAutoLevel ? stats() : this.autoLevelInitial;
-		this.autoLevelData = checkAutoLevel ? get_best() : this.autoLevelData;
-		this.autoLevelDataFrag = checkAutoLevel ? get_best() : this.autoLevelDataFrag;
-		this.autoLevelNew = this.autoLevelData.overall.mapLevel;
-		this.autoLevelSpeed = this.autoLevelData.speed.mapLevel;
-
+		this.autoLevelInitial = checkAutoLevel ? stats() : this.autoLevelInitial;
+		this.autoLevelData = checkAutoLevel ? get_best(this.autoLevelInitial) : this.autoLevelData;
+		this.autoLevelDataFrag = checkAutoLevel ? get_best(this.autoLevelInitial, true) : this.autoLevelDataFrag;
+		this.autoLevelNew = this.autoLevelDataFrag.overall.mapLevel;
+		this.autoLevelSpeed = this.autoLevelDataFrag.speed.mapLevel;
 		//this.autoLevelSpeedMapBonus = this.autoLevelDataFrag.speedBonus.mapLevel;
 	}
 }
