@@ -353,7 +353,7 @@ function mostEfficientHousing() {
 			if (avgProduction <= 0) avgProduction = 1;
 			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > (game.resources[resource].owned) * buildingspending) dontbuy.push(housing);
 			if (game.global.universe === 2 && housing === 'Gateway' && resource === 'fragments' && buildingSettings.SafeGateway.enabled && (buildingSettings.SafeGateway.zone === 0 || buildingSettings.SafeGateway.zone > game.global.world)) {
-				if (game.resources[resource].owned < ((perfectMapCost_Actual(10, getAvailableSpecials('lmc', true)) * buildingSettings.SafeGateway.mapCount) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);
+				if (game.resources[resource].owned < ((mapCost(10, getAvailableSpecials('lmc', true)) * buildingSettings.SafeGateway.mapCount) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);
 			}
 			// Only keep the slowest producer, aka the one that would take the longest to generate resources for
 			worstTime = Math.max((baseCost * Math.pow(costScaling, currentOwned - 1) * resourcefulMod) / (avgProduction * housingBonus), worstTime);

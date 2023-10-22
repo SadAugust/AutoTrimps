@@ -133,35 +133,38 @@ function geneAssist() {
 	else
 		runningHard = !angelic && (challengeActive('Nom') || challengeActive('Toxicity') || challengeActive('Lead'));
 
-	if (getPageSetting('geneAssistTimer') > 0)
-		target = new Decimal(getPageSetting('geneAssistTimer'));
-
-	if (getPageSetting('geneAssistZoneBefore') > 0 && getPageSetting('geneAssistTimerBefore') > 0 && game.global.world < getPageSetting('geneAssistZoneBefore'))
-		target = new Decimal(getPageSetting('geneAssistTimerBefore'));
-	if (getPageSetting('geneAssistZoneAfter') > 0 && getPageSetting('geneAssistTimerAfter') > 0 && game.global.world >= getPageSetting('geneAssistZoneAfter'))
-		target = new Decimal(getPageSetting('geneAssistTimerAfter'));
-
-	if (trimpStats.isC3 && !runningHard && getPageSetting('geneAssistTimerC2') > 0)
-		target = new Decimal(getPageSetting('geneAssistTimerC2'));
-
-	if (getPageSetting('geneAssistTimerDaily') > 0 && trimpStats.isDaily)
-		target = new Decimal(getPageSetting('geneAssistTimerDaily'));
-
 	var settingPrefix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' :
 		trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' :
 			'';
 
-	if (getPageSetting('geneAssistTimerSpire' + settingPrefix) > 0 && isDoingSpire())
-		target = new Decimal(getPageSetting('geneAssistTimerSpire' + settingPrefix));
-
-	if (runningElectricity && getPageSetting('geneAssistTimerElectricity') > 0)
-		target = new Decimal(getPageSetting('geneAssistTimerElectricity'));
-
-	if (runningHard && getPageSetting('geneAssistTimerHard') > 0)
-		target = new Decimal(getPageSetting('geneAssistTimerHard'));
-
+	//Priority system for which timer to use.
+	//1. Hard Dailies
 	if (getPageSetting('geneAssistTimerDailyHard') > 0 && trimpStats.isDaily && runningHard)
 		target = new Decimal(getPageSetting('geneAssistTimerDailyHard'));
+	//2. Hard Challenges
+	else if (runningHard && getPageSetting('geneAssistTimerHard') > 0)
+		target = new Decimal(getPageSetting('geneAssistTimerHard'));
+	//3. Electricity
+	else if (runningElectricity && getPageSetting('geneAssistTimerElectricity') > 0)
+		target = new Decimal(getPageSetting('geneAssistTimerElectricity'));
+	//4. Spire Timers
+	else if (getPageSetting('geneAssistTimerSpire' + settingPrefix) > 0 && isDoingSpire())
+		target = new Decimal(getPageSetting('geneAssistTimerSpire' + settingPrefix));
+	//5. Daily Timers
+	else if (getPageSetting('geneAssistTimerDaily') > 0 && trimpStats.isDaily)
+		target = new Decimal(getPageSetting('geneAssistTimerDaily'));
+	//6. C2 Timers
+	else if (trimpStats.isC3 && !runningHard && getPageSetting('geneAssistTimerC2') > 0)
+		target = new Decimal(getPageSetting('geneAssistTimerC2'));
+	//7. After Zone Timer
+	else if (getPageSetting('geneAssistZoneAfter') > 0 && getPageSetting('geneAssistTimerAfter') > 0 && game.global.world >= getPageSetting('geneAssistZoneAfter'))
+		target = new Decimal(getPageSetting('geneAssistTimerAfter'));
+	//8. Before Zone Timer
+	else if (getPageSetting('geneAssistZoneBefore') > 0 && getPageSetting('geneAssistTimerBefore') > 0 && game.global.world < getPageSetting('geneAssistZoneBefore'))
+		target = new Decimal(getPageSetting('geneAssistTimerBefore'));
+	//9. Regular Timer
+	else if (getPageSetting('geneAssistTimer') > 0)
+		target = new Decimal(getPageSetting('geneAssistTimer'));
 
 	var now = new Date().getTime();
 	var thresh = new MODULES.breedtimer.DecimalBreed(totalTime.mul(0.02));

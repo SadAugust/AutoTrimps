@@ -1496,7 +1496,6 @@ function prestigeRaiding() {
 	return farmingDetails;
 }
 
-//Running Prestige Raid Code
 function runPrestigeRaiding() {
 	if (mapSettings.mapName !== 'Prestige Raiding') return;
 	if (!getPageSetting('autoMaps')) return;
@@ -1536,7 +1535,7 @@ function runPrestigeRaiding() {
 			for (var x = 0; x < 5; x++) {
 				if (!mapSettings.incrementMaps && x > 0 || mapSettings.mapSliders[x] === undefined) break;
 				if (prestigeMapHasEquips(x, mapSettings.raidzones, mapSettings.prestigeGoal)) {
-					mapCost(mapSettings.mapSliders[x][0], mapSettings.mapSliders[x][1], mapSettings.mapSliders[x][2], mapSettings.mapSliders[x][3], mapSettings.mapSliders[x][4])
+					setMapSliders(mapSettings.mapSliders[x][0], mapSettings.mapSliders[x][1], mapSettings.mapSliders[x][2], mapSettings.mapSliders[x][3], mapSettings.mapSliders[x][4])
 					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 						buyMap();
 						var purchasedMap = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1];
@@ -1635,7 +1634,7 @@ function prestigeClimb() {
 	const mapSpecial = getAvailableSpecials('p');
 
 	//Disable prestige farming if we can't afford the map we are trying to run and we aren't running mapping OR in a map and its a lower level than the map we want to run
-	if (perfectMapCost_Actual(mapLevel, mapSpecial, null, [0, 0, 0], false) > game.resources.fragments.owned) {
+	if (mapCost(mapLevel, mapSpecial, null, [0, 0, 0], false) > game.resources.fragments.owned) {
 		var mapObject = getCurrentMapObject();
 		if (!game.global.mapsActive || (mapObject && mapObject.level < game.global.world + mapLevel))
 			shouldMap = false;
@@ -2336,8 +2335,7 @@ function pandemoniumDestack() {
 	return farmingDetails;
 }
 
-//Pandemonium Equip Farming
-function pandemoniumFarm() {
+function pandemoniumEquipFarm() {
 
 	var mapAutoLevel = Infinity;
 	var shouldMap = false;
@@ -2467,7 +2465,7 @@ function alchemy() {
 								game.global.farmlandsUnlocked && getFarmlandsResType() === "Any" ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
 
 			//If we can't afford a large cache then we'll run a small cache map instead.
-			if (mapSpecial.includes('l') && mapSpecial.length === 3 && perfectMapCost_Actual(mapLevel, mapSpecial, biome) >= game.resources.fragments.owned) mapSpecial = mapSpecial.charAt(0) + "sc";
+			if (mapSpecial.includes('l') && mapSpecial.length === 3 && mapCost(mapLevel, mapSpecial, biome) >= game.resources.fragments.owned) mapSpecial = mapSpecial.charAt(0) + "sc";
 
 			//Doing calcs to identify the total cost of all the Brews/Potions that are being farmed
 			//Initialising vars
@@ -3340,7 +3338,7 @@ function farmingDecision() {
 			prestigeRaiding,
 			mayhem,
 			insanity,
-			pandemoniumFarm,
+			pandemoniumEquipFarm,
 			alchemy,
 			hypothermia,
 			hdFarm,
@@ -3401,6 +3399,170 @@ function farmingDecision() {
 	mapSettings = farmingDetails;
 }
 
+//I have no idea where loot > drops, hopefully somebody can tell me one day :)
+function getBiome(mapGoal, resourceGoal) {
+	var biome;
+	var dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220);
+	if (!dropBased && challengeActive('Metal')) {
+		dropBased = true;
+		if (!resourceGoal) resourceGoal = 'Mountain';
+	}
+
+	if (resourceGoal && dropBased) {
+		if (game.global.farmlandsUnlocked && getFarmlandsResType() === game.mapConfig.locations[resourceGoal].resourceType)
+			biome = 'Farmlands';
+		else
+			biome = resourceGoal;
+	}
+	else if (mapGoal === 'fragments')
+		biome = 'Depths';
+	else if (mapGoal === 'fragConservation')
+		biome = 'Random';
+	else if ((game.global.universe === 2 && game.global.farmlandsUnlocked))
+		biome = 'Farmlands';
+	else if (game.global.decayDone)
+		biome = 'Plentiful';
+	else
+		biome = 'Mountain';
+
+	return biome;
+}
+
+function getAvailableSpecials(special, skipCaches) {
+
+	var cacheMods = [];
+	var bestMod;
+	if (special === undefined || special === 'undefined') return '0';
+
+	if (special === 'lsc') cacheMods = ['lsc', 'hc', 'ssc', 'lc'];
+	else if (special === 'lwc') cacheMods = ['lwc', 'hc', 'swc', 'lc'];
+	else if (special === 'lmc') cacheMods = ['lmc', 'hc', 'smc', 'lc'];
+	else if (special === 'lrc') cacheMods = ['lrc', 'hc', 'src', 'lc'];
+	else if (special === 'p') cacheMods = ['p', 'fa'];
+	else cacheMods = [special];
+
+	var hze = getHighestLevelCleared() + 1;
+	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
+
+	for (var mod of cacheMods) {
+		if (typeof mapSpecialModifierConfig[mod] === 'undefined') continue;
+		if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + "wc";
+		if (skipCaches && mod === 'hc') continue;
+		var unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
+		if (unlock <= hze) {
+			bestMod = mod;
+			break;
+		}
+	}
+	if (bestMod === undefined || bestMod === 'fa' && trimpStats.hyperspeed) bestMod = '0';
+	return bestMod;
+}
+
+function setMapSliders(pluslevel, special, biome, mapSliders, onlyPerfect) {
+	var maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
+	if (!pluslevel || pluslevel < 0) pluslevel = 0;
+	if (!special) special = '0';
+	if (!biome) biome = getBiome();
+	if (!mapSliders) mapSliders = [9, 9, 9];
+	if (mapSliders[0] !== 9 || mapSliders[1] !== 9 || mapSliders[2] !== 9) onlyPerfect = false;
+	document.getElementById('biomeAdvMapsSelect').value = biome;
+	document.getElementById('advExtraLevelSelect').value = pluslevel;
+	document.getElementById('advSpecialSelect').value = special;
+	document.getElementById("lootAdvMapsRange").value = mapSliders[0];
+	document.getElementById('sizeAdvMapsRange').value = mapSliders[1];
+	document.getElementById('difficultyAdvMapsRange').value = mapSliders[2];
+	document.getElementById('advPerfectCheckbox').dataset.checked = true;
+	document.getElementById('mapLevelInput').value = maplevel;
+	updateMapCost();
+
+	//If we don't want to only check perfect maps then gradually reduce map sliders if we don't have enough fragments
+	if (!onlyPerfect) {
+		if (updateMapCost(true) > game.resources.fragments.owned) {
+			document.getElementById('advPerfectCheckbox').dataset.checked = false;
+			updateMapCost();
+		}
+		//Reduce map difficulty
+		while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
+			difficultyAdvMapsRange.value -= 1;
+
+		//Reduce map loot 
+		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
+			lootAdvMapsRange.value -= 1;
+
+		//Set biome to random if we have jestimps/caches we can run since size will be by far the most important that way
+		if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal'))
+			document.getElementById('biomeAdvMapsSelect').value = "Random";
+
+		if (updateMapCost(true) > game.resources.fragments.owned && (special === "0" || !mapSpecialModifierConfig[special].name.includes('Cache')))
+			document.getElementById('advSpecialSelect').value = 0;
+
+		//Reduce map size
+		while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
+			sizeAdvMapsRange.value -= 1;
+
+		if (updateMapCost(true) > game.resources.fragments.owned)
+			document.getElementById('advSpecialSelect').value = 0;
+
+		if (trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
+			document.getElementById('biomeAdvMapsSelect').value = "Random";
+			updateMapCost();
+		}
+	}
+
+	return updateMapCost(true);
+}
+
+function minMapFrag(level, specialModifier, biome, sliders) {
+
+	if (!sliders) sliders = [9, 9, 9];
+	var perfect = true;
+	if (game.resources.fragments.owned < mapCost(level, specialModifier, biome)) {
+		perfect = false;
+
+		while (sliders[0] > 0 && sliders[2] > 0 && mapCost(level, specialModifier, biome, sliders, perfect) > game.resources.fragments.owned) {
+			sliders[0] -= 1;
+			if (mapCost(level, specialModifier, biome, sliders, perfect) <= game.resources.fragments.owned) break;
+			sliders[2] -= 1;
+		}
+	}
+
+	return mapCost(level, specialModifier, biome, sliders, perfect);
+}
+
+function mapCost(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect = true) {
+	if (!specialModifier) specialModifier = getAvailableSpecials('lmc');
+	if (!plusLevel && plusLevel !== 0) plusLevel = 0;
+	if (!biome) biome = getBiome();
+	var specialModifier = specialModifier;
+	var plusLevel = plusLevel;
+	var baseCost = 0;
+	//All sliders at 9
+	baseCost += sliders[0];
+	baseCost += sliders[1];
+	baseCost += sliders[2];
+	var mapLevel = game.global.world;
+	//Check for negative map levels
+	if (plusLevel < 0)
+		mapLevel = mapLevel + plusLevel;
+	//If map level we're checking is below level 6 (the minimum) then set it to 6
+	if (mapLevel < 6)
+		mapLevel = 6;
+	//Post broken planet check
+	baseCost *= (game.global.world >= 60) ? 0.74 : 1;
+	//Perfect checked
+	if (perfect && sliders.reduce(function (a, b) { return a + b; }, 0) === 27) baseCost += 6;
+	//Adding in plusLevels
+	if (plusLevel > 0)
+		baseCost += (plusLevel * 10)
+	//Special modifier
+	if (specialModifier !== '0')
+		baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
+	baseCost += mapLevel;
+	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
+	baseCost *= biome !== 'Random' ? 2 : 1;
+	return baseCost;
+}
+
 //Checks to see if the line from the settings should run
 function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 	if (!currSetting) return false;
@@ -3457,475 +3619,6 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 	}
 
 	return true;
-}
-
-//Prestige Raiding
-
-//Checks if map we want to run has equips
-function prestigeMapHasEquips(number, raidzones, targetPrestige) {
-	if (prestigesToGet((raidzones - number), targetPrestige)[0] > 0) return true;
-	return false;
-}
-
-//Calculate cost of maps for prestige raiding
-function prestigeRaidingSliderCost(raidZone, special, totalCost) {
-	if (!special) special = getAvailableSpecials('p');
-	//Skips map levels above x5 if we have scientist4 or microchip4. Will subtract 5 from the map level to account for this.
-	if (getSLevel() >= 4 && !challengeActive("Mapology")) {
-		var levelsToSkip = [0, 9, 8, 7, 6];
-		if (levelsToSkip.includes((raidZone).toString().slice(-1))) raidZone = raidZone - 5;
-	}
-	if (!totalCost) totalCost = 0;
-	raidZone = raidZone - game.global.world;
-
-	var fragmentsOwned = game.resources.fragments.owned - totalCost;
-	var sliders = [9, 9, 9];
-	var biome = getBiome();
-	var perfect = true;
-
-	//Set loot, difficulty sliders to 0, biome to Random & perfect maps to off if using frag min setting!
-	if (mapSettings.fragSetting === 1) {
-		biome = 'Random';
-		sliders[0] = 0;
-		sliders[2] = 0;
-		perfect = false;
-	}
-
-	//Gradually reduce map sliders if not using frag max setting!
-	if (mapSettings.fragSetting !== 2) {
-		//Remove perfect maps
-		if (perfectMapCost_Actual(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			perfect = false;
-		//Remove biome
-		if (perfectMapCost_Actual(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			biome = 'Random';
-
-		//Reduce map loot
-		while (sliders[0] > 0 && perfectMapCost_Actual(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			sliders[1] -= 1;
-		//Reduce map difficulty
-		while (sliders[1] > 0 && perfectMapCost_Actual(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			sliders[1] -= 1;
-		//Remove map special if one is set. Removing FA/P here is better than dropping Size as that can more than double increase the length of the maps we run.
-		if (perfectMapCost_Actual(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			special = '0';
-		//Reduce map size
-		while (sliders[2] > 0 && perfectMapCost_Actual(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			sliders[2] -= 1;
-	}
-
-	return [raidZone, special, biome, sliders, perfect];
-}
-
-//Identify total cost of prestige raiding maps
-function prestigeTotalFragCost(getCost) {
-	var cost = 0;
-	var sliders = new Array(5);
-
-	if (prestigesToGet(mapSettings.raidzones, mapSettings.prestigeGoal)[0]) {
-		sliders[0] = (prestigeRaidingSliderCost(mapSettings.raidzones, mapSettings.special, cost));
-		cost += perfectMapCost_Actual(sliders[0][0], sliders[0][1], sliders[0][2], sliders[0][3], sliders[0][4]);
-	}
-	if (mapSettings.incrementMaps) {
-		if (prestigesToGet(mapSettings.raidzones - 1, mapSettings.prestigeGoal)[0]) {
-			sliders[1] = (prestigeRaidingSliderCost(mapSettings.raidzones - 1, mapSettings.special, cost));
-			cost += perfectMapCost_Actual(sliders[1][0], sliders[1][1], sliders[1][2], sliders[1][3], sliders[1][4]);
-		}
-		if (prestigesToGet(mapSettings.raidzones - 2, mapSettings.prestigeGoal)[0]) {
-			sliders[2] = (prestigeRaidingSliderCost(mapSettings.raidzones - 2, mapSettings.special, cost));
-			cost += perfectMapCost_Actual(sliders[2][0], sliders[2][1], sliders[2][2], sliders[2][3], sliders[2][4]);
-		}
-		if (prestigesToGet(mapSettings.raidzones - 3, mapSettings.prestigeGoal)[0]) {
-			sliders[3] = (prestigeRaidingSliderCost(mapSettings.raidzones - 3, mapSettings.special, cost));
-			cost += perfectMapCost_Actual(sliders[3][0], sliders[3][1], sliders[3][2], sliders[3][3], sliders[3][4]);
-		}
-		if (prestigesToGet(mapSettings.raidzones - 4, mapSettings.prestigeGoal)[0]) {
-			sliders[4] = (prestigeRaidingSliderCost(mapSettings.raidzones - 4, mapSettings.special, cost));
-			cost += perfectMapCost_Actual(sliders[4][0], sliders[4][1], sliders[4][2], sliders[4][3], sliders[4][4]);
-		}
-	}
-
-	if (getCost)
-		return cost;
-	return sliders;
-}
-
-function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
-	var maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
-	if (!pluslevel || pluslevel < 0) pluslevel = 0;
-	if (!special) special = '0';
-	if (!biome) biome = getBiome();
-	if (!mapSliders) mapSliders = [9, 9, 9];
-	if (mapSliders[0] !== 9 || mapSliders[1] !== 9 || mapSliders[2] !== 9) onlyPerfect = false;
-	document.getElementById('biomeAdvMapsSelect').value = biome;
-	document.getElementById('advExtraLevelSelect').value = pluslevel;
-	document.getElementById('advSpecialSelect').value = special;
-	document.getElementById("lootAdvMapsRange").value = mapSliders[0];
-	document.getElementById('sizeAdvMapsRange').value = mapSliders[1];
-	document.getElementById('difficultyAdvMapsRange').value = mapSliders[2];
-	document.getElementById('advPerfectCheckbox').dataset.checked = true;
-	document.getElementById('mapLevelInput').value = maplevel;
-	updateMapCost();
-
-	//If we don't want to only check perfect maps then gradually reduce map sliders if we don't have enough fragments
-	if (!onlyPerfect) {
-		if (updateMapCost(true) > game.resources.fragments.owned) {
-			document.getElementById('advPerfectCheckbox').dataset.checked = false;
-			updateMapCost();
-		}
-		//Reduce map difficulty
-		while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
-			difficultyAdvMapsRange.value -= 1;
-
-		//Reduce map loot 
-		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
-			lootAdvMapsRange.value -= 1;
-
-		//Set biome to random if we have jestimps/caches we can run since size will be by far the most important that way
-		if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal'))
-			document.getElementById('biomeAdvMapsSelect').value = "Random";
-
-		if (updateMapCost(true) > game.resources.fragments.owned && (special === "0" || !mapSpecialModifierConfig[special].name.includes('Cache')))
-			document.getElementById('advSpecialSelect').value = 0;
-
-		//Reduce map size
-		while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned)
-			sizeAdvMapsRange.value -= 1;
-
-		if (updateMapCost(true) > game.resources.fragments.owned)
-			document.getElementById('advSpecialSelect').value = 0;
-
-		if (trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
-			document.getElementById('biomeAdvMapsSelect').value = "Random";
-			updateMapCost();
-		}
-	}
-
-	return updateMapCost(true);
-}
-
-function fragmentFarm() {
-	var fragmentsNeeded = perfectMapCost_Actual(mapSettings.mapLevel, mapSettings.special, mapSettings.biome);
-	if (mapSettings.mapName === 'Prestige Raiding' && mapSettings.totalMapCost) fragmentsNeeded = mapSettings.totalMapCost;
-	//Check to see if we can afford a perfect map with the maplevel & special selected. If we can then ignore this function otherwise farm fragments until we reach that goal.
-	if (game.resources.fragments.owned > fragmentsNeeded || !mapSettings.shouldRun) {
-		if (!mapSettings.shouldRun && !MODULES.maps.fragmentFarming) debug('Fragment farming successful');
-		MODULES.maps.fragmentFarming = false;
-	} //Farms for fragments
-	else {
-		MODULES.maps.fragmentFarming = true;
-		//Purchase fragment farming map if we're in map chamber. If you don't have enough fragments for this map then RIP
-		if (game.global.preMapsActive) {
-			mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), getBiome('fragments'), [9, 9, 9], false);
-			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-				buyMap();
-				debug('Fragment farming for ' + prettify(fragmentsNeeded) + ' fragments.');
-				selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
-				runMap();
-				//Enable repeat and set it to repeat forever if frag farming
-				if (!game.global.repeatMap)
-					repeatClicked();
-				if (game.options.menu.repeatUntil.enabled !== 0) {
-					debug("22")
-					game.options.menu.repeatUntil.enabled = 0;
-					toggleSetting('repeatUntil', null, false, true);
-				}
-			}
-			else {
-				debug('Not enough fragments to purchase fragment farming map. Waiting for fragments. If you don\'t have explorers then you will have to manually disable auto maps and continue.', 'maps');
-			}
-		}
-	}
-}
-
-function minMapFrag(level, specialModifier, biome, sliders) {
-
-	if (!sliders) sliders = [9, 9, 9];
-	var perfect = true;
-	if (game.resources.fragments.owned < perfectMapCost_Actual(level, specialModifier, biome)) {
-		perfect = false;
-
-		while (sliders[0] > 0 && sliders[2] > 0 && perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) > game.resources.fragments.owned) {
-			sliders[0] -= 1;
-			if (perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) <= game.resources.fragments.owned) break;
-			sliders[2] -= 1;
-		}
-	}
-
-	return perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect);
-}
-
-function perfectMapCost(pluslevel, special, biome) {
-	var maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
-	if (!pluslevel || pluslevel < 0) pluslevel = 0;
-	if (!special) special = '0';
-	if (!biome) biome = getBiome();
-	document.getElementById('biomeAdvMapsSelect').value = biome;
-	document.getElementById('advExtraLevelSelect').value = pluslevel;
-	document.getElementById('advSpecialSelect').value = special;
-	document.getElementById("lootAdvMapsRange").value = 9;
-	document.getElementById('sizeAdvMapsRange').value = 9;
-	document.getElementById('difficultyAdvMapsRange').value = 9;
-	document.getElementById('advPerfectCheckbox').dataset.checked = true;
-	document.getElementById('mapLevelInput').value = maplevel;
-	updateMapCost();
-
-	return updateMapCost(true);
-}
-
-function perfectMapCost_Actual(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect = true) {
-	if (!specialModifier) specialModifier = getAvailableSpecials('lmc');
-	if (!plusLevel && plusLevel !== 0) plusLevel = 0;
-	if (!biome) biome = getBiome();
-	var specialModifier = specialModifier;
-	var plusLevel = plusLevel;
-	var baseCost = 0;
-	//All sliders at 9
-	baseCost += sliders[0];
-	baseCost += sliders[1];
-	baseCost += sliders[2];
-	var mapLevel = game.global.world;
-	//Check for negative map levels
-	if (plusLevel < 0)
-		mapLevel = mapLevel + plusLevel;
-	//If map level we're checking is below level 6 (the minimum) then set it to 6
-	if (mapLevel < 6)
-		mapLevel = 6;
-	//Post broken planet check
-	baseCost *= (game.global.world >= 60) ? 0.74 : 1;
-	//Perfect checked
-	if (perfect && sliders.reduce(function (a, b) { return a + b; }, 0) === 27) baseCost += 6;
-	//Adding in plusLevels
-	if (plusLevel > 0)
-		baseCost += (plusLevel * 10)
-	//Special modifier
-	if (specialModifier !== '0')
-		baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
-	baseCost += mapLevel;
-	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
-	baseCost *= biome !== 'Random' ? 2 : 1;
-	return baseCost;
-}
-
-//Runs a map WITHOUT resetting the mapRunCounter variable so that we can have an accurate count of how many maps we've run
-//Check and update each patch!
-function runMap_AT() {
-	if (game.options.menu.pauseGame.enabled) return;
-	if (game.global.lookingAtMap === "") return;
-	if (challengeActive("Mapology") && !game.global.currentMapId) {
-		if (game.challenges.Mapology.credits < 1) {
-			message('You are all out of Map Credits! Clear some more Zones to earn some more.', 'Notices');
-			return;
-		}
-		game.challenges.Mapology.credits--;
-		if (game.challenges.Mapology.credits <= 0) game.challenges.Mapology.credits = 0;
-		updateMapCredits();
-		messageMapCredits()
-	}
-	if (game.achievements.mapless.earnable) {
-		game.achievements.mapless.earnable = false;
-		game.achievements.mapless.lastZone = game.global.world;
-	}
-	if (challengeActive('Quest') && game.challenges.Quest.questId === 5 && !game.challenges.Quest.questComplete) {
-		game.challenges.Quest.questProgress++;
-		if (game.challenges.Quest.questProgress === 1) game.challenges.Quest.failQuest();
-	}
-	var mapId = game.global.lookingAtMap;
-	game.global.preMapsActive = false;
-	game.global.mapsActive = true;
-	game.global.currentMapId = mapId;
-	mapsSwitch(true);
-	var mapObj = getCurrentMapObject();
-	if (mapObj.bonus) {
-		game.global.mapExtraBonus = mapObj.bonus;
-	}
-	if (game.global.lastClearedMapCell === -1) {
-		buildMapGrid(mapId);
-		drawGrid(true);
-
-		if (mapObj.location === 'Void') {
-			game.global.voidDeaths = 0;
-			game.global.voidBuff = mapObj.voidBuff;
-			setVoidBuffTooltip();
-		}
-	}
-	if (challengeActive('Insanity')) game.challenges.Insanity.drawStacks();
-	if (challengeActive('Pandemonium')) game.challenges.Pandemonium.drawStacks();
-}
-
-function dailyModiferReduction() {
-	if (!challengeActive('Daily')) return 0;
-
-	var dailyMods = dailyModifiersOutput().split('<br>');
-	dailyMods.length = dailyMods.length - 1;
-	var dailyReduction = 0;
-	var settingsArray = getPageSetting('dailyPortalSettingsArray');
-
-	for (var item in settingsArray) {
-		if (!settingsArray[item].enabled) continue;
-		var dailyReductionTemp = 0;
-		var modifier = item;
-		if (modifier.includes('Weakness')) modifier = 'Enemies stack a debuff with each attack, reducing Trimp attack by';
-		else if (modifier.includes('Famine')) modifier = 'less Metal, Food, Wood, and Gems from all sources';
-		else if (modifier.includes('Large')) modifier = 'All housing can store';
-		else if (modifier.includes('Void')) modifier = 'Enemies in Void Maps have';
-		else if (modifier.includes('Heirlost')) modifier = 'Heirloom combat and resource bonuses are reduced by';
-
-		for (var x = 0; x < dailyMods.length; x++) {
-			if (dailyMods[x].includes(modifier)) {
-				dailyReductionTemp = settingsArray[item].zone
-			}
-			if (dailyReduction > dailyReductionTemp) dailyReduction = dailyReductionTemp;
-		}
-	}
-	return dailyReduction
-}
-
-function dailyOddOrEven() {
-	const skipDetails = {
-		active: false,
-		oddMult: 1,
-		evenMult: 1,
-		skipZone: false,
-		slipPct: 0,
-		slipMult: 0,
-		slipType: '',
-		remainder: 0,
-	}
-	if (!challengeActive('Daily')) return skipDetails;
-	if (!getPageSetting('mapOddEvenIncrement')) return skipDetails;
-	//Skip if we're on the last zone of a nature band to ensure we don't accidentally farm in the wrong band type
-	if (game.global.world >= getNatureStartZone() && getEmpowerment() !== getZoneEmpowerment(game.global.world + 1)) return skipDetails;
-
-	//Odd trimp nerf - 30-80%
-	if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined') {
-		skipDetails.oddMult -= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
-	}
-	//Even trimp buff - 120-300%
-	if (typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined') {
-		skipDetails.evenMult = dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
-	}
-	//Dodge Dailies -- 2-30%!
-	if (typeof game.global.dailyChallenge.slippery !== "undefined") {
-		skipDetails.slipStr = game.global.dailyChallenge.slippery.strength / 100;
-		skipDetails.slipPct = skipDetails.slipStr > 15 ? skipDetails.slipStr - 15 : skipDetails.slipStr;
-		skipDetails.slipMult = 0.02 * skipDetails.slipPct * 100;
-		if (skipDetails.slipStr > 0.15) skipDetails.slipType = 'even';
-		else skipDetails.slipType = 'odd';
-	}
-
-	//Return if no even/odd or dodge daily mods
-	if (skipDetails.oddMult === 1 && skipDetails.evenMult === 1 && skipDetails.slipType === '') return skipDetails;
-
-	//If we have even AND odd mods, set odd to 0
-	if (skipDetails.oddMult !== 1 && skipDetails.evenMult !== 1) {
-		if (skipDetails.slipType !== '') {
-			//Sets evenMult to 0 if we have an even dodge daily and it's over 20%
-			if (skipDetails.slipType === 'even' && skipDetails.slipMult > 15) {
-				skipDetails.evenMult = 0;
-			}
-			//Sets evenMult to 0 if we have an even dodge daily and it's over 10% and oddMult is less than 50%
-			else if (skipDetails.slipType === 'even' && skipDetails.slipMult > 10 && skipDetails.oddMult > 0.5) {
-				skipDetails.evenMult = 0;
-			}
-			//Sets oddMult to 0 if we have an odd dodge daily
-			else if (skipDetails.slipType === 'odd') {
-				skipDetails.oddMult = 0;
-			}
-		} //Set oddMult to 0 if we don't have a dodge daily
-		else {
-			skipDetails.oddMult = 0;
-		}
-	} //If we have even OR odd mods & dodge chance, set the other mod to 0
-	else if (skipDetails.slipType !== '' && (skipDetails.oddMult !== 1 || skipDetails.evenMult !== 1)) {
-		if (skipDetails.slipType === 'even' && skipDetails.oddMult === 1) {
-			skipDetails.evenMult = 0;
-		}
-		if (skipDetails.slipType === 'odd' && skipDetails.evenMult === 1) {
-			skipDetails.oddMult = 0;
-		}
-	} //If dodge daily & no negative trimp mods then disable farming on the dodge zone
-	else if (skipDetails.slipType !== '') {
-		if (skipDetails.slipType === 'even') {
-			skipDetails.evenMult = 0;
-		}
-		else if (skipDetails.slipType === 'odd') {
-			skipDetails.oddMult = 0;
-		}
-	} //If we don't have a dodge daily then skip on odd zones. Farm on even zones.
-	else if (skipDetails.evenMult !== 1) {
-		skipDetails.oddMult = 0;
-	}
-
-	if (skipDetails.evenMult < 1) {
-		if (game.global.world % 2 === 0)
-			skipDetails.skipZone = true;
-	} else if (skipDetails.oddMult < 1) {
-		if (game.global.world % 2 === 1)
-			skipDetails.skipZone = true;
-		skipDetails.remainder = 1;
-	}
-	skipDetails.active = true;
-	return skipDetails;
-}
-
-function getAvailableSpecials(special, skipCaches) {
-
-	var cacheMods = [];
-	var bestMod;
-	if (special === undefined || special === 'undefined') return '0';
-
-	if (special === 'lsc') cacheMods = ['lsc', 'hc', 'ssc', 'lc'];
-	else if (special === 'lwc') cacheMods = ['lwc', 'hc', 'swc', 'lc'];
-	else if (special === 'lmc') cacheMods = ['lmc', 'hc', 'smc', 'lc'];
-	else if (special === 'lrc') cacheMods = ['lrc', 'hc', 'src', 'lc'];
-	else if (special === 'p') cacheMods = ['p', 'fa'];
-	else cacheMods = [special];
-
-	var hze = getHighestLevelCleared() + 1;
-	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
-
-	for (var mod of cacheMods) {
-		if (typeof mapSpecialModifierConfig[mod] === 'undefined') continue;
-		if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + "wc";
-		if (skipCaches && mod === 'hc') continue;
-		var unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
-		if (unlock <= hze) {
-			bestMod = mod;
-			break;
-		}
-	}
-	if (bestMod === undefined || bestMod === 'fa' && trimpStats.hyperspeed) bestMod = '0';
-	return bestMod;
-}
-
-//I have no idea where loot > drops, hopefully somebody can tell me one day :)
-function getBiome(mapGoal, resourceGoal) {
-	var biome;
-	var dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220);
-	if (!dropBased && challengeActive('Metal')) {
-		dropBased = true;
-		if (!resourceGoal) resourceGoal = 'Mountain';
-	}
-
-	if (resourceGoal && dropBased) {
-		if (game.global.farmlandsUnlocked && getFarmlandsResType() === game.mapConfig.locations[resourceGoal].resourceType)
-			biome = 'Farmlands';
-		else
-			biome = resourceGoal;
-	}
-	else if (mapGoal === 'fragments')
-		biome = 'Depths';
-	else if (mapGoal === 'fragConservation')
-		biome = 'Random';
-	else if ((game.global.universe === 2 && game.global.farmlandsUnlocked))
-		biome = 'Farmlands';
-	else if (game.global.decayDone)
-		biome = 'Plentiful';
-	else
-		biome = 'Mountain';
-
-	return biome;
 }
 
 function resetMapVars(setting, settingName) {
@@ -4042,27 +3735,244 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	debug(message, mapType);
 }
 
-function mapMaxFastEnemies() {
+function fragmentFarm() {
+	var fragmentsNeeded = mapCost(mapSettings.mapLevel, mapSettings.special, mapSettings.biome);
+	if (mapSettings.mapName === 'Prestige Raiding' && mapSettings.totalMapCost) fragmentsNeeded = mapSettings.totalMapCost;
+	//Check to see if we can afford a perfect map with the maplevel & special selected. If we can then ignore this function otherwise farm fragments until we reach that goal.
+	if (game.resources.fragments.owned > fragmentsNeeded || !mapSettings.shouldRun) {
+		if (!mapSettings.shouldRun && !MODULES.maps.fragmentFarming) debug('Fragment farming successful');
+		MODULES.maps.fragmentFarming = false;
+	} //Farms for fragments
+	else {
+		MODULES.maps.fragmentFarming = true;
+		//Purchase fragment farming map if we're in map chamber. If you don't have enough fragments for this map then RIP
+		if (game.global.preMapsActive) {
+			setMapSliders(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), getBiome('fragments'), [9, 9, 9], false);
+			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
+				buyMap();
+				debug('Fragment farming for ' + prettify(fragmentsNeeded) + ' fragments.');
+				selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
+				runMap();
+				//Enable repeat and set it to repeat forever if frag farming
+				if (!game.global.repeatMap)
+					repeatClicked();
+				if (game.options.menu.repeatUntil.enabled !== 0) {
+					debug("22")
+					game.options.menu.repeatUntil.enabled = 0;
+					toggleSetting('repeatUntil', null, false, true);
+				}
+			}
+			else {
+				debug('Not enough fragments to purchase fragment farming map. Waiting for fragments. If you don\'t have explorers then you will have to manually disable auto maps and continue.', 'maps');
+			}
+		}
+	}
+}
 
-	var map = game.global.mapsOwnedArray[getMapIndex(game.global.lookingAtMap)];
+//Prestige Raiding
+//Checks if map we want to run has equips
+function prestigeMapHasEquips(number, raidzones, targetPrestige) {
+	if (prestigesToGet((raidzones - number), targetPrestige)[0] > 0) return true;
+	return false;
+}
 
+//Calculate cost of maps for prestige raiding
+function prestigeRaidingSliderCost(raidZone, special, totalCost) {
+	if (!special) special = getAvailableSpecials('p');
+	//Skips map levels above x5 if we have scientist4 or microchip4. Will subtract 5 from the map level to account for this.
+	if (getSLevel() >= 4 && !challengeActive("Mapology")) {
+		var levelsToSkip = [0, 9, 8, 7, 6];
+		if (levelsToSkip.includes((raidZone).toString().slice(-1))) raidZone = raidZone - 5;
+	}
+	if (!totalCost) totalCost = 0;
+	raidZone = raidZone - game.global.world;
 
-	var fastTarget = 0;
-	var forceNextFast = false;
-	var fastEvery = -1;
-	var forced = 0;
-	if (game.global.universe == 2) {
-		fastTarget = map.size / 6;
-		var roll = Math.floor(Math.random() * 3);
-		if (roll == 0) fastTarget--;
-		else if (roll == 2) fastTarget++;
-		var highAdd = (map.level - game.global.world);
-		if (highAdd > 0) fastTarget += (highAdd * 0.5);
-		if (fastTarget < 1) fastTarget = 1;
-		fastEvery = Math.floor(map.size / fastTarget);
+	var fragmentsOwned = game.resources.fragments.owned - totalCost;
+	var sliders = [9, 9, 9];
+	var biome = getBiome();
+	var perfect = true;
+
+	//Set loot, difficulty sliders to 0, biome to Random & perfect maps to off if using frag min setting!
+	if (mapSettings.fragSetting === 1) {
+		biome = 'Random';
+		sliders[0] = 0;
+		sliders[2] = 0;
+		perfect = false;
 	}
 
-	return fastEvery
+	//Gradually reduce map sliders if not using frag max setting!
+	if (mapSettings.fragSetting !== 2) {
+		//Remove perfect maps
+		if (mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
+			perfect = false;
+		//Remove biome
+		if (mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
+			biome = 'Random';
+
+		//Reduce map loot
+		while (sliders[0] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
+			sliders[1] -= 1;
+		//Reduce map difficulty
+		while (sliders[1] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
+			sliders[1] -= 1;
+		//Remove map special if one is set. Removing FA/P here is better than dropping Size as that can more than double increase the length of the maps we run.
+		if (mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
+			special = '0';
+		//Reduce map size
+		while (sliders[2] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
+			sliders[2] -= 1;
+	}
+
+	return [raidZone, special, biome, sliders, perfect];
+}
+
+//Identify total cost of prestige raiding maps
+function prestigeTotalFragCost(getCost) {
+	var cost = 0;
+	var sliders = new Array(5);
+
+	if (prestigesToGet(mapSettings.raidzones, mapSettings.prestigeGoal)[0]) {
+		sliders[0] = (prestigeRaidingSliderCost(mapSettings.raidzones, mapSettings.special, cost));
+		cost += mapCost(sliders[0][0], sliders[0][1], sliders[0][2], sliders[0][3], sliders[0][4]);
+	}
+	if (mapSettings.incrementMaps) {
+		if (prestigesToGet(mapSettings.raidzones - 1, mapSettings.prestigeGoal)[0]) {
+			sliders[1] = (prestigeRaidingSliderCost(mapSettings.raidzones - 1, mapSettings.special, cost));
+			cost += mapCost(sliders[1][0], sliders[1][1], sliders[1][2], sliders[1][3], sliders[1][4]);
+		}
+		if (prestigesToGet(mapSettings.raidzones - 2, mapSettings.prestigeGoal)[0]) {
+			sliders[2] = (prestigeRaidingSliderCost(mapSettings.raidzones - 2, mapSettings.special, cost));
+			cost += mapCost(sliders[2][0], sliders[2][1], sliders[2][2], sliders[2][3], sliders[2][4]);
+		}
+		if (prestigesToGet(mapSettings.raidzones - 3, mapSettings.prestigeGoal)[0]) {
+			sliders[3] = (prestigeRaidingSliderCost(mapSettings.raidzones - 3, mapSettings.special, cost));
+			cost += mapCost(sliders[3][0], sliders[3][1], sliders[3][2], sliders[3][3], sliders[3][4]);
+		}
+		if (prestigesToGet(mapSettings.raidzones - 4, mapSettings.prestigeGoal)[0]) {
+			sliders[4] = (prestigeRaidingSliderCost(mapSettings.raidzones - 4, mapSettings.special, cost));
+			cost += mapCost(sliders[4][0], sliders[4][1], sliders[4][2], sliders[4][3], sliders[4][4]);
+		}
+	}
+
+	if (getCost)
+		return cost;
+	return sliders;
+}
+
+function dailyModiferReduction() {
+	if (!challengeActive('Daily')) return 0;
+
+	var dailyMods = dailyModifiersOutput().split('<br>');
+	dailyMods.length = dailyMods.length - 1;
+	var dailyReduction = 0;
+	var settingsArray = getPageSetting('dailyPortalSettingsArray');
+
+	for (var item in settingsArray) {
+		if (!settingsArray[item].enabled) continue;
+		var dailyReductionTemp = 0;
+		var modifier = item;
+		if (modifier.includes('Weakness')) modifier = 'Enemies stack a debuff with each attack, reducing Trimp attack by';
+		else if (modifier.includes('Famine')) modifier = 'less Metal, Food, Wood, and Gems from all sources';
+		else if (modifier.includes('Large')) modifier = 'All housing can store';
+		else if (modifier.includes('Void')) modifier = 'Enemies in Void Maps have';
+		else if (modifier.includes('Heirlost')) modifier = 'Heirloom combat and resource bonuses are reduced by';
+
+		for (var x = 0; x < dailyMods.length; x++) {
+			if (dailyMods[x].includes(modifier)) {
+				dailyReductionTemp = settingsArray[item].zone
+			}
+			if (dailyReduction > dailyReductionTemp) dailyReduction = dailyReductionTemp;
+		}
+	}
+	return dailyReduction
+}
+
+function dailyOddOrEven() {
+	const skipDetails = {
+		active: false,
+		oddMult: 1,
+		evenMult: 1,
+		skipZone: false,
+		slipPct: 0,
+		slipMult: 0,
+		slipType: '',
+		remainder: 0,
+	}
+	if (!challengeActive('Daily')) return skipDetails;
+	if (!getPageSetting('mapOddEvenIncrement')) return skipDetails;
+	//Skip if we're on the last zone of a nature band to ensure we don't accidentally farm in the wrong band type
+	if (game.global.world >= getNatureStartZone() && getEmpowerment() !== getZoneEmpowerment(game.global.world + 1)) return skipDetails;
+
+	//Odd trimp nerf - 30-80%
+	if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined') {
+		skipDetails.oddMult -= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+	}
+	//Even trimp buff - 120-300%
+	if (typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined') {
+		skipDetails.evenMult = dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
+	}
+	//Dodge Dailies -- 2-30%!
+	if (typeof game.global.dailyChallenge.slippery !== "undefined") {
+		skipDetails.slipStr = game.global.dailyChallenge.slippery.strength / 100;
+		skipDetails.slipPct = skipDetails.slipStr > 15 ? skipDetails.slipStr - 15 : skipDetails.slipStr;
+		skipDetails.slipMult = 0.02 * skipDetails.slipPct * 100;
+		if (skipDetails.slipStr > 0.15) skipDetails.slipType = 'even';
+		else skipDetails.slipType = 'odd';
+	}
+
+	//Return if no even/odd or dodge daily mods
+	if (skipDetails.oddMult === 1 && skipDetails.evenMult === 1 && skipDetails.slipType === '') return skipDetails;
+
+	//If we have even AND odd mods, set odd to 0
+	if (skipDetails.oddMult !== 1 && skipDetails.evenMult !== 1) {
+		if (skipDetails.slipType !== '') {
+			//Sets evenMult to 0 if we have an even dodge daily and it's over 20%
+			if (skipDetails.slipType === 'even' && skipDetails.slipMult > 15) {
+				skipDetails.evenMult = 0;
+			}
+			//Sets evenMult to 0 if we have an even dodge daily and it's over 10% and oddMult is less than 50%
+			else if (skipDetails.slipType === 'even' && skipDetails.slipMult > 10 && skipDetails.oddMult > 0.5) {
+				skipDetails.evenMult = 0;
+			}
+			//Sets oddMult to 0 if we have an odd dodge daily
+			else if (skipDetails.slipType === 'odd') {
+				skipDetails.oddMult = 0;
+			}
+		} //Set oddMult to 0 if we don't have a dodge daily
+		else {
+			skipDetails.oddMult = 0;
+		}
+	} //If we have even OR odd mods & dodge chance, set the other mod to 0
+	else if (skipDetails.slipType !== '' && (skipDetails.oddMult !== 1 || skipDetails.evenMult !== 1)) {
+		if (skipDetails.slipType === 'even' && skipDetails.oddMult === 1) {
+			skipDetails.evenMult = 0;
+		}
+		if (skipDetails.slipType === 'odd' && skipDetails.evenMult === 1) {
+			skipDetails.oddMult = 0;
+		}
+	} //If dodge daily & no negative trimp mods then disable farming on the dodge zone
+	else if (skipDetails.slipType !== '') {
+		if (skipDetails.slipType === 'even') {
+			skipDetails.evenMult = 0;
+		}
+		else if (skipDetails.slipType === 'odd') {
+			skipDetails.oddMult = 0;
+		}
+	} //If we don't have a dodge daily then skip on odd zones. Farm on even zones.
+	else if (skipDetails.evenMult !== 1) {
+		skipDetails.oddMult = 0;
+	}
+
+	if (skipDetails.evenMult < 1) {
+		if (game.global.world % 2 === 0)
+			skipDetails.skipZone = true;
+	} else if (skipDetails.oddMult < 1) {
+		if (game.global.world % 2 === 1)
+			skipDetails.skipZone = true;
+		skipDetails.remainder = 1;
+	}
+	skipDetails.active = true;
+	return skipDetails;
 }
 
 //I hope I never use this again. Scumming for slow map enemies!

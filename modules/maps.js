@@ -530,11 +530,11 @@ function autoMap() {
 		if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
 		var mapObj = getCurrentMapObject();
-		if (mapSettings.shouldRun && mapSettings.mapName === 'Prestige Raiding' && game.global.mapsActive && String(mapObj.level).slice(-1) === '1' && prestigesToGet(mapObj.level) === 1 && mapObj.bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost_Actual(mapObj.level - game.global.world, 'lmc', mapBiome)) {
+		if (mapSettings.shouldRun && mapSettings.mapName === 'Prestige Raiding' && game.global.mapsActive && String(mapObj.level).slice(-1) === '1' && prestigesToGet(mapObj.level) === 1 && mapObj.bonus !== 'lmc' && game.resources.fragments.owned > mapCost(mapObj.level - game.global.world, 'lmc', mapBiome)) {
 			var maplevel = mapObj.level;
 			recycleMap_AT();
 			if (game.global.preMapsActive) {
-				mapCost(maplevel - game.global.world, 'lmc', mapBiome);
+				setMapSliders(maplevel - game.global.world, 'lmc', mapBiome);
 				buyMap();
 				runMap_AT();
 				debug('Running LMC map due to only having 1 equip remaining on this map.', 'maps');
@@ -632,7 +632,7 @@ function autoMap() {
 			//Setting sliders appropriately.
 			if (mapSettings.shouldRun) {
 				if (mapSettings.mapName !== '') {
-					mapCost(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
+					setMapSliders(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 				}
 			}
 
@@ -644,7 +644,7 @@ function autoMap() {
 				//Runs fragment farming if 
 				//A) We have explorers unlocked
 				//B) We can afford a max loot+size sliders map
-				if (!game.jobs.Explorer.locked && perfectMapCost_Actual(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
+				if (!game.jobs.Explorer.locked && mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
 				//Hacky way to disable mapping if we don't have a map and can't afford the one that we want to make. 
 				//Should definitely just have it decrement the level until we can afford it or it's at the minimum level it can go but that's a step for another day.
 				else if (highestMap === null) {

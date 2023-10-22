@@ -500,7 +500,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Master switch for whether the script will do any form of Geneticist purchasing.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
-				description += "<p><b>If enabled will disable the ingame version.</b></p>";
+				description += "<p><b>If enabled will disable the ingame Geneticistassist setting.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Jobs', [1]);

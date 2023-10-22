@@ -46,6 +46,52 @@ function loadFromSteam() {
 function cloudSaveCallback(data) {
 }
 
+//Runs a map WITHOUT resetting the mapRunCounter variable so that we can have an accurate count of how many maps we've run
+//Check and update each patch!
+function runMap_AT() {
+	if (game.options.menu.pauseGame.enabled) return;
+	if (game.global.lookingAtMap === "") return;
+	if (challengeActive("Mapology") && !game.global.currentMapId) {
+		if (game.challenges.Mapology.credits < 1) {
+			message('You are all out of Map Credits! Clear some more Zones to earn some more.', 'Notices');
+			return;
+		}
+		game.challenges.Mapology.credits--;
+		if (game.challenges.Mapology.credits <= 0) game.challenges.Mapology.credits = 0;
+		updateMapCredits();
+		messageMapCredits()
+	}
+	if (game.achievements.mapless.earnable) {
+		game.achievements.mapless.earnable = false;
+		game.achievements.mapless.lastZone = game.global.world;
+	}
+	if (challengeActive('Quest') && game.challenges.Quest.questId === 5 && !game.challenges.Quest.questComplete) {
+		game.challenges.Quest.questProgress++;
+		if (game.challenges.Quest.questProgress === 1) game.challenges.Quest.failQuest();
+	}
+	var mapId = game.global.lookingAtMap;
+	game.global.preMapsActive = false;
+	game.global.mapsActive = true;
+	game.global.currentMapId = mapId;
+	mapsSwitch(true);
+	var mapObj = getCurrentMapObject();
+	if (mapObj.bonus) {
+		game.global.mapExtraBonus = mapObj.bonus;
+	}
+	if (game.global.lastClearedMapCell === -1) {
+		buildMapGrid(mapId);
+		drawGrid(true);
+
+		if (mapObj.location === 'Void') {
+			game.global.voidDeaths = 0;
+			game.global.voidBuff = mapObj.voidBuff;
+			setVoidBuffTooltip();
+		}
+	}
+	if (challengeActive('Insanity')) game.challenges.Insanity.drawStacks();
+	if (challengeActive('Pandemonium')) game.challenges.Pandemonium.drawStacks();
+}
+
 //Check and update each patch!
 function suicideTrimps() {
 	//Throw this in so that if GS updates anything in there it won't cause AT to fuck with it till I can check it out
