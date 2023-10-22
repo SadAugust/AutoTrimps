@@ -44,7 +44,9 @@ class HDStats {
 		this.hitsSurvived = undefined;
 		this.hitsSurvivedVoid = undefined;
 		this.autoLevel = undefined;
+		this.autoLevelInitial = hdStats.autoLevelInitial;
 		this.autoLevelData = hdStats.autoLevelData;
+		this.autoLevelDataFrag = hdStats.autoLevelDataFrag;
 		this.autoLevelNew = undefined;
 		this.autoLevelSpeed = undefined;
 
@@ -64,6 +66,7 @@ class HDStats {
 		}
 		if (challengeActive('Mapocalypse')) voidPercent += 3;
 
+		//Calculating HD values for current zone.
 		this.hdRatio = calcHDRatio(z, 'world', false, 1);
 		this.hdRatioMap = calcHDRatio(z, 'map', false, 0.75);
 		this.hdRatioVoid = calcHDRatio(z, 'void', false, voidPercent);
@@ -71,19 +74,22 @@ class HDStats {
 		this.hdRatioPlus = calcHDRatio(z + 1, 'world', false, 1);
 		this.hdRatioMapPlus = calcHDRatio(z + 1, 'map', false, 0.75);
 		this.hdRatioVoidPlus = calcHDRatio(z + 1, 'void', false, voidPercent);
-
 		//Calculating void HD values so that we don't need to generate them everytime when looking at VoidMaps function.
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
 		this.vhdRatio = voidMaxTenacity ? calcHDRatio(z, 'world', voidMaxTenacity, 1) : this.hdRatio;
 		this.vhdRatioVoid = voidMaxTenacity ? calcHDRatio(z, 'void', voidMaxTenacity, voidPercent) : this.hdRatioVoid;
 		this.vhdRatioVoidPlus = voidMaxTenacity ? calcHDRatio(z + 1, 'void', voidMaxTenacity, voidPercent) : this.hdRatioVoidPlus;
-
+		//Calculating Hits Survived values for current zone.
 		this.hitsSurvived = calcHitsSurvived(z, 'world', 1);
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void', voidPercent);
+		//Calculating Auto Level values.
 		this.autoLevel = autoMapLevel();
-		this.autoLevelData = checkAutoLevel ? get_best(stats()) : this.autoLevelData;
-		this.autoLevelNew = this.autoLevelData.overall.mapLevel;
-		this.autoLevelSpeed = this.autoLevelData.speed.mapLevel;
+		this.autoLevelInitial = checkAutoLevel ? stats() : this.autoLevelInitial;
+		this.autoLevelData = checkAutoLevel ? get_best(this.autoLevelInitial) : this.autoLevelData;
+		this.autoLevelDataFrag = checkAutoLevel ? get_best(this.autoLevelInitial, true) : this.autoLevelDataFrag;
+		this.autoLevelNew = this.autoLevelDataFrag.overall.mapLevel;
+		this.autoLevelSpeed = this.autoLevelDataFrag.speed.mapLevel;
+		//this.autoLevelSpeedMapBonus = this.autoLevelDataFrag.speedBonus.mapLevel;
 	}
 }
 

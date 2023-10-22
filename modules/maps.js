@@ -317,7 +317,7 @@ function makeAdditionalInfo() {
 	//Mapping auto level
 	description += `AL: ${hdStats.autoLevel}`;
 	description += lineBreak;
-	description += `AL2: ${hdStats.autoLevelNew}`;
+	description += `AL2: ${hdStats.autoLevelData.overall.mapLevel}`;
 	//Breed timer when you have an amalgamator
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		description += lineBreak;
@@ -332,26 +332,28 @@ function makeAdditionalInfo() {
 	return description;
 }
 
-//Looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one
-function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size) {
+function findMap(level, special, biome) {
 	//Pre-Init
-	if (!pluslevel) pluslevel = 0;
+	if (!level) level = 0;
 	if (!special) special = getAvailableSpecials('lmc');
 	if (!biome) biome = getBiome();
-	if (!difficulty) difficulty = 0.75;
-	if (!loot) loot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.farmlandsUnlocked ? 2.6 : game.singleRunBonuses.goldMaps.owned ? 2.85 : 1.85;
-	if (!size) size = 20;
 
 	for (var mapping in game.global.mapsOwnedArray) {
-		if (!game.global.mapsOwnedArray[mapping].noRecycle && (
-			(game.global.world + pluslevel) === game.global.mapsOwnedArray[mapping].level) &&
+		if (!game.global.mapsOwnedArray[mapping].noRecycle &&
+			(game.global.world + level === game.global.mapsOwnedArray[mapping].level) &&
 			(game.global.mapsOwnedArray[mapping].bonus === special || special === '0') &&
 			game.global.mapsOwnedArray[mapping].location === biome) {
-
-			return (game.global.mapsOwnedArray[mapping].id);
+			return game.global.mapsOwnedArray[mapping].id;
 		}
 	}
-	return ("create");
+	return false;
+}
+
+//Looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one
+function shouldFarmMapCreation(level, special, biome) {
+	const mapCheck = findMap(level, special, biome);
+	if (mapCheck) return mapCheck;
+	else return 'create';
 }
 
 function autoMap() {
