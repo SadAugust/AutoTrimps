@@ -3355,9 +3355,12 @@ function farmingDecision() {
 
 	//If we are currently running a map and it should be continued then continue running it.
 	//Running the entire function again is done to ensure that we update the status message and check if it still wants to run.
-	if (mapSettings.mapName !== '' && mapSettings.shouldRun && mapTypes.indexOf(mapSettings.settingName) > 0) {
-		farmingDetails = mapSettings.settingName(MODULES.mapFunctions.challengeContinueRunning);
-		farmingDetails.settingName = mapSettings.settingName;
+	if (mapSettings.mapName !== '' && mapTypes.indexOf(mapSettings.settingName) > 0) {
+		var mapCheck = mapSettings.settingName(MODULES.mapFunctions.challengeContinueRunning);
+		if (mapCheck.shouldRun) {
+			farmingDetails = mapCheck;
+			farmingDetails.settingName = mapSettings.settingName;
+		}
 	}
 	else
 		for (const map of mapTypes) {
