@@ -9,15 +9,6 @@ if (typeof MODULES === 'undefined') {
 	}
 }
 
-if (typeof $$ !== 'function') {
-	$$ = function (a) {
-		return document.querySelector(a);
-	}
-	$$$ = function (a) {
-		return [].slice.apply(document.querySelectorAll(a));
-	};
-}
-
 function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLevel) {
 	if (currentMap === '' || currentAutoLevel === Infinity) {
 		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
@@ -129,7 +120,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	return 0;
 }
 
-MODULES.zFarm = {};
+MODULES.farmCalc = {};
 
 function populateZFarmData() {
 	var imps = 0;
@@ -332,6 +323,7 @@ function populateZFarmData() {
 		}
 		if (challengeActive('Duel')) {
 			death_stuff.enemy_cd = 10;
+			if (challengeActive('Duel') && game.challenges.Duel.trimpStacks > 50) trimpAttack /= 3;
 		}
 		if (challengeActive('Wither')) {
 			enemyHealth *= game.challenges.Wither.getTrimpHealthMult();
@@ -413,7 +405,7 @@ function populateZFarmData() {
 		extraMapLevelsAvailable: extraMapLevelsAvailable,
 		reducer: haveMapReducer,
 		perfectMaps: trimpStats.perfectMaps,
-		biome: MODULES.zFarm.biomes.All.concat(MODULES.zFarm.biomes[biome]()),
+		biome: MODULES.farmCalc.biomes.All.concat(MODULES.farmCalc.biomes[biome]()),
 		fragments: game.resources.fragments.owned,
 
 		difficulty: prettify((trimpStats.perfectMaps ? 75 : 80) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
@@ -549,7 +541,7 @@ function zone_stats(zone, stances, saveData) {
 
 // Simulate farming at the given zone for a fixed time, and return the number cells cleared.
 function simulate(saveData, zone) {
-	var trimp_hp = saveData.trimpHealth;
+	var trimpHealth = saveData.trimpHealth;
 	var debuff_stacks = 0;
 	var titimp = 0;
 	var cell = 0;
@@ -563,9 +555,9 @@ function simulate(saveData, zone) {
 	var energyShieldMax = saveData.trimpShield;
 	var energyShield = energyShieldMax;
 	var mayhemPoison = 0;
-	var glassStacks = game.challenges.Glass.shards;
 	var trimpOverkill = 0;
 	var duelPoints = game.challenges.Duel.trimpStacks;
+	var glassStacks = game.challenges.Glass.shards;
 
 	var oneShot = true;
 	const angelic = mastery('angelic');
@@ -581,14 +573,6 @@ function simulate(saveData, zone) {
 	const runningBerserk = challengeActive('Berserk');
 	const runningGlass = challengeActive('Glass');
 	const runningDesolation = challengeActive('Desolation');
-
-	var abortSimulation = false;
-
-	/* MUST SETUP LIST
-	Duel - Check if health calcs automatically apply the x10 HP when below 20 stacks. If it does then divide health and shield by 10 if we go intho this with 20 or less stacks
-	All other challenges done
-	Now to set this up inside AT
-	*/
 
 	var equality = 1;
 	if (game.global.universe === 2) {
@@ -639,28 +623,28 @@ function simulate(saveData, zone) {
 			amt = saveData.trimpHealth;
 		}
 
-		trimp_hp -= Math.max(0, amt);
+		trimpHealth -= Math.max(0, amt);
 	}
 
 	function enemy_hit(enemyAttack) {
-		var damage = enemyAttack;
+		var enemyAttack = enemyAttack;
 		//Damage fluctations
-		damage *= (saveData.fluctuation * rng());
+		enemyAttack *= (saveData.fluctuation * rng());
 		//Enemy crit chance
 		var enemyCC = 0.25;
 		if (runningDuel) {
 			enemyCC = duelPoints / 100;
-			if (duelPoints < 50) damage *= 3;
+			if (duelPoints < 50) enemyAttack *= 3;
 		}
 		if (rng() < enemyCC) {
-			damage *= saveData.enemy_cd;
+			enemyAttack *= saveData.enemy_cd;
 			enemyCrit = true;
 		}
 		//Ice modifier
-		damage *= 0.366 ** (ice * saveData.ice);
+		enemyAttack *= 0.366 ** (ice * saveData.ice);
 		//Equality mult
-		damage *= Math.pow(0.9, equality);
-		reduceTrimpHealth(damage);
+		enemyAttack *= Math.pow(0.9, equality);
+		reduceTrimpHealth(enemyAttack);
 		++debuff_stacks;
 	}
 
@@ -671,7 +655,7 @@ function simulate(saveData, zone) {
 		var enemyAttack = imp_stats[0] * atk_array[cell];
 		var enemyHealth = imp_stats[1] * hp_array[cell];
 		var enemy_max_hp = enemyHealth;
-		var fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || runningDesolation;
+		var fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || runningDesolation || (runningDuel && duelPoints > 90);
 		var trimpCrit = false;
 		var enemyCrit = false;
 		trimpOverkill = 0;
@@ -701,7 +685,7 @@ function simulate(saveData, zone) {
 					enemyHealth = Math.max(enemy_max_hp, enemyHealth + (enemy_max_hp * .25));
 					if (enemyHealth === enemy_max_hp) {
 						hasWithered = true;
-						trimp_hp = 0;
+						trimpHealth = 0;
 					}
 				}
 				if (runningGlass) {
@@ -715,53 +699,53 @@ function simulate(saveData, zone) {
 			}
 
 			if (angelic && !runningBerserk) {
-				trimp_hp += (saveData.trimpHealth / 2);
-				if (trimp_hp > saveData.trimpHealth) trimp_hp = saveData.trimpHealth;
+				trimpHealth += (saveData.trimpHealth / 2);
+				if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 			}
 			// Fast enemy attack
 			if (fast)
 				enemy_hit(enemyAttack);
 
 			// Trimp attack
-			if (trimp_hp >= 1) {
+			if (trimpHealth >= 1) {
 				ok_spread = saveData.ok_spread;
-				var damage = saveData.atk;
-				if (!runningUnlucky) damage *= (1 + saveData.range * rng())
+				var trimpAttack = saveData.atk;
+				if (!runningUnlucky) trimpAttack *= (1 + saveData.range * rng())
 				if (runningDuel) {
 					saveData.critChance = 1 - (duelPoints / 100);
-					if (duelPoints > 50) damage *= 3;
+					if (duelPoints > 50) trimpAttack *= 3;
 				}
 				if (rng() < saveData.critChance) {
-					damage *= saveData.critDamage;
+					trimpAttack *= saveData.critDamage;
 					trimpCrit = true;
 				}
-				damage *= titimp > ticks ? 2 : 1;
-				damage *= 2 - 0.366 ** (ice * saveData.ice);
-				damage *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
-				damage *= Math.pow(saveData.equalityMult, equality);
-				enemyHealth -= damage + poison * saveData.poison;
-				poison += damage;
+				trimpAttack *= titimp > ticks ? 2 : 1;
+				trimpAttack *= 2 - 0.366 ** (ice * saveData.ice);
+				trimpAttack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
+				trimpAttack *= Math.pow(saveData.equalityMult, equality);
+				enemyHealth -= trimpAttack + poison * saveData.poison;
+				poison += trimpAttack;
 				++ice;
 				if (saveData.plaguebringer && enemyHealth >= 1)
-					plague_damage += damage * saveData.plaguebringer;
+					plague_damage += trimpAttack * saveData.plaguebringer;
 			}
 
 			// Slow enemy attack
-			if (!fast && enemyHealth >= 1 && trimp_hp >= 1)
+			if (!fast && enemyHealth >= 1 && trimpHealth >= 1)
 				enemy_hit(enemyAttack);
 
 			// Mayhem poison
 			if (runningMayhem && mayhemPoison >= 1)
-				trimp_hp -= mayhemPoison;
+				trimpHealth -= mayhemPoison;
 
 			if (enemyHealth >= 1) {
 				if (runningGlass) glassStacks++;
 				// Gamma Burst
-				if (trimp_hp >= 1 && saveData.gammaMult > 1) {
+				if (trimpHealth >= 1 && saveData.gammaMult > 1) {
 					gammaStacks++;
 					if (gammaStacks >= saveData.gammaCharges) {
 						gammaStacks = 0;
-						burstDamage = damage * saveData.gammaMult;
+						burstDamage = trimpAttack * saveData.gammaMult;
 						enemyHealth -= burstDamage;
 						if (saveData.plaguebringer && enemyHealth >= 1)
 							plague_damage += (burstDamage * saveData.plaguebringer);
@@ -770,15 +754,15 @@ function simulate(saveData, zone) {
 			}
 
 			// Bleeds
-			trimp_hp -= saveData.bleed * saveData.max_hp;
-			trimp_hp -= debuff_stacks * saveData.plague * saveData.max_hp;
+			trimpHealth -= saveData.bleed * saveData.max_hp;
+			trimpHealth -= debuff_stacks * saveData.plague * saveData.max_hp;
 
 			//+1 point for crits, +2 points for killing, +5 for oneshots
 			if (runningDuel) {
 				if (enemyCrit) duelPoints--;
 				if (trimpCrit) duelPoints++;
 				//Trimps
-				if (trimp_hp < 1) {
+				if (trimpHealth < 1) {
 					if (turns === 1) duelPoints -= 5;
 					else duelPoints -= 2;
 				} //Enemy
@@ -791,20 +775,19 @@ function simulate(saveData, zone) {
 			}
 
 			// Trimp death
-			if (trimp_hp < 1) {
-				//console.log('Trimp died at ' + ticks + ' ticks. Turn ' + turns + '. Zone = ' + zone + '. Glass stacks = ' + glassStacks + '. Trimp HP = ' + trimp_hp + '. Enemy attack = ' + damage);
+			if (trimpHealth < 1) {
 				ticks += Math.ceil(turns * saveData.speed);
 				ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
 				last_group_sent = ticks;
-				trimpOverkill = Math.abs(trimp_hp);
-				trimp_hp = saveData.max_hp;
+				trimpOverkill = Math.abs(trimpHealth);
+				trimpHealth = saveData.max_hp;
 				energyShield = energyShieldMax;
 				mayhemPoison = 0;
 
 				if (runningDevastation) reduceTrimpHealth(trimpOverkill * 7.5);
-				if (runningWither && hasWithered) trimp_hp *= 0.5;
+				if (runningWither && hasWithered) trimpHealth *= 0.5;
 				if (runningDuel && 100 - duelPoints < 20) {
-					trimp_hp *= 10;
+					trimpHealth *= 10;
 					energyShield *= 10;
 				}
 				ticks += 1;
@@ -821,7 +804,7 @@ function simulate(saveData, zone) {
 			}
 		}
 		if (saveData.explosion && (saveData.explosion <= 15 || saveData.block >= saveData.max_hp))
-			trimp_hp -= Math.max(0, saveData.explosion * enemyAttack - saveData.block);
+			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - saveData.block);
 
 		wind = Math.min(wind + turns, 200);
 		loot += 1 + wind * saveData.wind;
@@ -837,12 +820,12 @@ function simulate(saveData, zone) {
 		if (runningGlass && zone >= saveData.zone) glassStacks -= 2;
 		glassStacks = Math.max(0, glassStacks);
 		if (angelic && !runningBerserk) { //Angelic talent heal
-			trimp_hp += (saveData.trimpHealth / 2);
-			if (trimp_hp > saveData.trimpHealth) trimp_hp = saveData.trimpHealth;
+			trimpHealth += (saveData.trimpHealth / 2);
+			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 		}
 		if (runningBerserk) { //1% heal onkill
-			trimp_hp += (saveData.trimpHealth / 100);
-			if (trimp_hp > saveData.trimpHealth) trimp_hp = saveData.trimpHealth;
+			trimpHealth += (saveData.trimpHealth / 100);
+			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 		}
 		++cell;
 		if (cell == saveData.size) {
@@ -923,7 +906,7 @@ function get_best(results, fragmentCheck) {
 	return best;
 }
 
-MODULES.zFarm.biomes = {
+MODULES.farmCalc.biomes = {
 	All: [
 		[0.8, 0.7, true],
 		[0.9, 1.3, false],
@@ -982,16 +965,16 @@ MODULES.zFarm.biomes = {
 					getFarmlandsResType() === "Gems" ? "Depths" :
 						getFarmlandsResType() === "Any" ? "Plentiful" :
 							"All";
-		return MODULES.zFarm.biomes[biome]();
+		return MODULES.farmCalc.biomes[biome]();
 	}
 };
 
-MODULES.zFarm.seed = 42;
-MODULES.zFarm.rand_mult = 2 ** -31;
+MODULES.farmCalc.seed = 42;
+MODULES.farmCalc.rand_mult = 2 ** -31;
 
 function rng() {
-	MODULES.zFarm.seed ^= MODULES.zFarm.seed >> 11;
-	MODULES.zFarm.seed ^= MODULES.zFarm.seed << 8;
-	MODULES.zFarm.seed ^= MODULES.zFarm.seed >> 19;
-	return MODULES.zFarm.seed * MODULES.zFarm.rand_mult;
+	MODULES.farmCalc.seed ^= MODULES.farmCalc.seed >> 11;
+	MODULES.farmCalc.seed ^= MODULES.farmCalc.seed << 8;
+	MODULES.farmCalc.seed ^= MODULES.farmCalc.seed >> 19;
+	return MODULES.farmCalc.seed * MODULES.farmCalc.rand_mult;
 }

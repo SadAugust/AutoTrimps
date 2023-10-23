@@ -15,7 +15,7 @@ var atSettings = {
 	runInterval: 100,
 	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false, },
 	loops: { atTimeLapseFastLoop: false, mainLoopInterval: null, guiLoopInterval: null, },
-	intervals: { counter: 0, oneSecond: false, twoSecond: false, threeSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false, },
+	intervals: { counter: 0, oneSecond: false, twoSecond: false, fiveSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false, },
 	autoSave: game.options.menu.autoSave.enabled,
 };
 
@@ -369,7 +369,7 @@ function updateInterval() {
 	//Interval code
 	atSettings.intervals.oneSecond = atSettings.intervals.counter % (1000 / atSettings.runInterval) === 0;
 	atSettings.intervals.twoSecond = atSettings.intervals.counter % (2000 / atSettings.runInterval) === 0;
-	atSettings.intervals.threeSecond = atSettings.intervals.counter % (3000 / atSettings.runInterval) === 0;
+	atSettings.intervals.fiveSecond = atSettings.intervals.counter % (5000 / atSettings.runInterval) === 0;
 	atSettings.intervals.sixSecond = atSettings.intervals.counter % (6000 / atSettings.runInterval) === 0;
 	atSettings.intervals.tenSecond = atSettings.intervals.counter % (10000 / atSettings.runInterval) === 0;
 	atSettings.intervals.thirtySecond = atSettings.intervals.counter % (30000 / atSettings.runInterval) === 0;
