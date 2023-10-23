@@ -1738,13 +1738,6 @@ function bionicRaiding() {
 	if (!defaultSettings.active) return farmingDetails;
 	if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
 
-
-	if (game.global.world < 115) return farmingDetails;
-	const map = game.global.mapsOwnedArray.find(map => map.name.includes('Bionic Wonderland'));
-	if (map === undefined) return obtainUniqueMap('Bionic Wonderland');
-	if (map === undefined) return farmingDetails;
-
-
 	var settingIndex;
 
 	for (var y = 0; y < baseSettings.length; y++) {
@@ -1769,6 +1762,17 @@ function bionicRaiding() {
 	}
 
 	if (settingIndex >= 0) {
+
+		//If we can't get the map then don't run this setting
+		//If we can then go grab it if it's available
+		const unlockLevel = MODULES.uniqueMaps['Bionic Wonderland'].zone;
+		if (!trimpStats.perfectMaps && unlockLevel > game.global.world)
+			return farmingDetails;
+		else if (trimpStats.perfectMaps && unlockLevel > (game.global.world + 10))
+			return farmingDetails;
+		const map = game.global.mapsOwnedArray.find(map => map.name.includes('Bionic Wonderland'));
+		if (map === undefined) return obtainUniqueMap('Bionic Wonderland');
+
 		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
 		var setting = baseSettings[settingIndex];
 		var raidzonesBW = raidZones;
@@ -3624,6 +3628,7 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 	if (game.global.world > world && currSetting.repeatevery === 0) return false;
 	//Skips if repeat every is set to 0 and the world is greater than the current world.
 	if (typeof currSetting.repeatevery === 'undefined' && typeof currSetting.repeat === 'undefined' && typeof currSetting.hdType === 'undefined' && typeof currSetting.voidHDRatio === 'undefined' && game.global.world > world) return false;
+
 	//If the setting is marked as done then skips.
 	var totalPortals = getTotalPortals();
 	var value = game.global.universe === 2 ? 'valueU2' : 'value';
