@@ -694,14 +694,14 @@ function calcSpire(what, cell, name) {
 
 	//Enemy on the Target Cell
 	var enemy = (name) ? name : game.global.gridArray[cell - 1].name;
-	var base = (what === 'attack') ? calcEnemyBaseAttack('world', game.global.world, cell, enemy) : 2 * calcEnemyBaseHealth('world', game.global.world, cell, enemy);
+	var base = (what === 'attack') ? calcEnemyBaseAttack('world', game.global.world, 100, enemy) : 2 * calcEnemyBaseHealth('world', game.global.world, 100, enemy);
 	var mod = (what === 'attack') ? 1.17 : 1.14;
 
 	//Spire Num
 	var spireNum = Math.floor((game.global.world - 100) / 100);
 	if (spireNum > 1) {
 		var modRaiser = 0;
-		modRaiser += ((spireNum - 1) / 100);
+		modRaiser += (spireNum - 1) / 100;
 		if (what === 'attack') modRaiser *= 8;
 		if (what === 'health') modRaiser *= 2;
 		mod += modRaiser;
@@ -837,8 +837,9 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	if (game.global.universe === 1) {
 		//Spire - Overrides the base attack number
 		if (type === 'world') {
-			if (game.global.spireActive) attack = calcSpire('attack');
-			else if (mutations.Corruption.active()) {
+			if (game.global.spireActive) {
+				attack = calcSpire('attack', cell, name);
+			} else if (mutations.Corruption.active()) {
 				if (game.global.gridArray[cell - 1].mutation) {
 					attack = corruptionBaseAttack(cell - 1, zone)
 				}
