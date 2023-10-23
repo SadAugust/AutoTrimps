@@ -189,6 +189,7 @@ function equalityManagement() {
 	var maxEquality = game.portal.Equality.radLevel;
 	var equality = 0;
 	var armyReady = newArmyRdy();
+	var doubleAttackOverride = false;
 
 	//Daily modifiers active
 	var isDaily = challengeActive('Daily')
@@ -340,6 +341,13 @@ function equalityManagement() {
 		for (var i = 0; i <= maxEquality; i++) {
 			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i);
 			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
+
+			//Since double attack enemies hit once before and once after need to check if we can survive both hits before halving enemy damage.
+			if (i === maxEquality && enemyDmgEquality > ourHealth && game.global.voidBuff === 'doubleAttack' && !doubleAttackOverride) {
+				enemyDmg /= 2;
+				i = 0;
+				doubleAttackOverride = true;
+			}
 
 			if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
 

@@ -162,6 +162,42 @@
 
 
 
+		<!-- 6.4.36 -->
+		<ul class="betterList">
+			<li>6.4.36 - 23/10/23</li>
+			<ul>
+				<li>Features</li>
+				<li class="second-child">General</li>
+				<li>Have made the following changes to the new auto level system:</li>
+				<li class="square">Added a speed option that will be used when running faster maps is more important
+					e.g. map bonus. This doesn't currently function properly if you can't afford at least a world level
+					map but will be getting fixed.</li>
+				<li class="square">Have now made it so that the breedtimer factors in decimal points so will more
+					accurately know how long your trimps breed for instead of rounding up to the nearest second.
+				</li>
+				<li class="square">Added fragment checks for if you can afford maps. It will look through your map array
+					to check if you already have a map of that zone + special + biome and if you do it will
+					use that instead of creating a new map.</li>
+				<li class="square">Fixed multiple instances where it crashed the game.</li>
+				<li>There are still many changes to make to the auto level system such as fragment checks currently over
+					estimating fragments needed for map as it assumes maps with max sliders but this will be getting
+					changed soon to account for reduced sliders. These changes should hopefully
+					fix a fair few issues that people experienced with it.</li>
+				</li>
+			</ul>
+			<ul>
+				<li>Bugfixes</li>
+				<li class="second-child">Universe 2</li>
+				<li>Fixed an issue where the challenge specific Melting Point settings weren't working.</li>
+				<li>Fixed an issue on the Pandemonium challenge where the script would break when you had no equipment
+					unlocked.</li>
+				<li>If fighting a double attack void map enemy auto equality will now check if you can survive 1 hit
+					instead of setting equality to 0 if you can't survive 2 hits.</li>
+			</ul>
+		</ul>
+
+
+
 		<!-- 6.4.35 -->
 		<ul class="betterList">
 			<li>6.4.35 - 20/10/23</li>

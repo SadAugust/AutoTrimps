@@ -264,9 +264,9 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'Melting Point') {
 			// maybe get extra smithies
-			var currChallenge = trimpStats.currChallenge.toLowerCase()
+			var currChallenge = trimpStats.currChallenge.toLowerCase();
 			meltsmithy =
-				(currChallenge === 'Mayhem' || currChallenge === 'Pandemonium' || currChallenge === 'Desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0 ? getPageSetting(currChallenge + 'MP') :
+				(currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0 ? getPageSetting(currChallenge + 'MP') :
 					trimpStats.isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
 						trimpStats.isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
 							!trimpStats.isC3 && !trimpStats.isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
@@ -1685,13 +1685,49 @@ function findLastBionicWithItems(bionicPool) {
 	return bionicPool[0];
 }
 
+function obtainUniqueMap(uniqueMap) {
+	var shouldMap = false;
+	const mapName = 'Unique Map Farm'
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName,
+	};
+
+	if (!uniqueMap) return farmingDetails;
+
+	var unlockLevel = MODULES.uniqueMaps[uniqueMap].zone;
+
+	//Only go for this map if we are able to obtain it
+	if (!trimpStats.perfectMaps && unlockLevel > game.global.world)
+		return farmingDetails;
+	else if (trimpStats.perfectMaps && unlockLevel > (game.global.world + 10))
+		return farmingDetails;
+
+	const map = game.global.mapsOwnedArray.find(map => map.name.includes(uniqueMap));
+	if (map === undefined) shouldMap = true;
+
+	if (mapSettings.mapName === mapName && !shouldMap) {
+		mappingDetails(mapName, mapLevel);
+		resetMapVars();
+	}
+	var status = 'Obtaining Unique Map: ' + uniqueMap + ' (z' + unlockLevel + ')';
+
+	if (shouldMap) farmingDetails.shouldRun = shouldMap;
+	farmingDetails.mapName = mapName;
+	farmingDetails.mapLevel = unlockLevel - game.global.world;
+	farmingDetails.special = '0';
+	farmingDetails.repeat = false;
+	farmingDetails.status = status;
+	return farmingDetails;
+}
+
 function bionicRaiding() {
 
 	var shouldMap = false;
 	const mapName = 'Bionic Raiding'
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'bionicRaidingSettings';
@@ -1701,6 +1737,12 @@ function bionicRaiding() {
 
 	if (!defaultSettings.active) return farmingDetails;
 	if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
+
+
+	if (game.global.world < 115) return farmingDetails;
+	const map = game.global.mapsOwnedArray.find(map => map.name.includes('Bionic Wonderland'));
+	if (map === undefined) return obtainUniqueMap('Bionic Wonderland');
+	if (map === undefined) return farmingDetails;
 
 
 	var settingIndex;
@@ -2297,7 +2339,7 @@ function pandemoniumDestack() {
 
 	var mapLevel = 1;
 	var mapSpecial = trimpStats.hyperspeed ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc";
-	var jobRatio = '0.001,0.001,1,0';
+	var jobRatio = '0.001,1,1,0';
 
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
@@ -2349,6 +2391,7 @@ function pandemoniumEquipFarm() {
 
 	var jobRatio = '1,1,100,0';
 	var equipCost = cheapestEquipmentCost();
+	if (equipCost[0] === null) return farmingDetails;
 	var nextEquipmentCost = equipCost[1];
 
 	var destackHits = getPageSetting('pandemoniumDestack') > 0 ? getPageSetting('pandemoniumDestack') : Infinity;
@@ -3297,6 +3340,7 @@ function farmingDecision() {
 			experience,
 			toxicity,
 			mapDestacking,
+			obtainUniqueMap,
 		];
 
 		//Skipping map farming if in Decay and above stack count user input
@@ -3304,6 +3348,7 @@ function farmingDecision() {
 			mapTypes = [
 				prestigeClimb,
 				voidMaps,
+				obtainUniqueMap,
 			];
 
 		if (challengeActive('Mapology') && getPageSetting('mapology'))
@@ -3312,6 +3357,7 @@ function farmingDecision() {
 				prestigeRaiding,
 				bionicRaiding,
 				voidMaps,
+				obtainUniqueMap,
 			];
 
 		if (isDoingSpire() && getPageSetting('skipSpires') && game.global.mapBonus === 10) mapSettings = farmingDetails;
@@ -3348,6 +3394,7 @@ function farmingDecision() {
 			glass,
 			smithless,
 			wither,
+			obtainUniqueMap,
 		];
 	}
 

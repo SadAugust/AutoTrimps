@@ -76,8 +76,8 @@ function cheapestEquipmentCost() {
 	var nextEquipmentCost = null;
 	var nextLevelPrestigeCost = null;
 	var nextPrestigeCost = null;
-	var prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
-	var prestigeUpgrade = game.upgrades[prestigeUpgradeName];
+	var prestigeUpgradeName;
+	var prestigeUpgrade;
 	var runningPandemonium = challengeActive('Pandemonium');
 
 	//Looping through each piece of equipment to find the one that's cheapest
@@ -108,6 +108,7 @@ function cheapestEquipmentCost() {
 			nextPrestigeCost = nextLevelPrestigeCost;
 		}
 	}
+	if (equipName === null) return null;
 	return [equipmentName, nextEquipmentCost, prestigeName, nextPrestigeCost]
 }
 

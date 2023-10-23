@@ -8,6 +8,7 @@ class TrimpStats {
 		this.hze = undefined;
 		this.hypPct = undefined;
 		this.hyperspeed = undefined;
+		this.perfectMaps = undefined;
 
 		this.mountainPriority = undefined;
 
@@ -21,6 +22,7 @@ class TrimpStats {
 		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 		this.hyperspeed = game.global.world <= Math.floor(this.hze * (this.hypPct / 100));
+		this.perfectMaps = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
 
 		this.mountainPriority = !(game.unlocks.imps.Chronoimp || game.unlocks.imps.Jestimp || getAvailableSpecials('lmc', true) === 'lmc' || getAvailableSpecials('lmc', true) === 'smc');
 	}
