@@ -1859,7 +1859,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	//Active
 	mazHelp += "<li><b>Active</b> - A toggle to disable/enable this line.</li>";
 	//Priority
-	mazHelp += "<li><b>Priority</b> - If there are two or more lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
+	mazHelp += "<li><b>Priority</b> - If this setting has two or more lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
 	//Zone
 	if (!voidMap && !golden) mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>";
 	//Cell
