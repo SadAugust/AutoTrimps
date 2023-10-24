@@ -3943,7 +3943,13 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will display a description of what order Auto Portal will try to perform its actions.</p>";
 				return description;
-			}, 'action', "makeAutomapStatusTooltip(false);", null, 'Help', [0]);
+			}, 'action', "makeAutoPortalHelpTooltip(false);", null, 'Help', [0]);
+		createSetting('helpAutoPortal',
+			function () { return ('Auto Maps Priority') },
+			function () {
+				var description = "<p>Will display the order that Auto Maps will run each setting in.</p>";
+				return description;
+			}, 'action', "makeFarmingDecisionHelpTooltip(false);", null, 'Help', [0]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------

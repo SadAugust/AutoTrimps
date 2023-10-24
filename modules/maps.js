@@ -278,7 +278,6 @@ function makeAutoPortalHelpTooltip() {
 	//Fillers
 	tooltipText += `<p>If neither of the options above are run then it will portal into the challenge that you have selected in the <b>Auto Portal</b> setting. If that is disabled then it will portal into a challengeless run.</p>`;
 
-
 	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Portal Info', 'customText', 'lock', tooltipText, false, 'center');
 	verticalCenterTooltip(true);
 }
@@ -286,9 +285,49 @@ function makeAutoPortalHelpTooltip() {
 function makeFarmingDecisionHelpTooltip() {
 	var tooltipText = '';
 
-	tooltipText += `<p>Mapping has a priority as to what it will try to run and in what order.</p>`;
+	tooltipText += `<p>Mapping has a priority as to what it will try to run and in what order. This is a static list and can't be modified with the exception of challenge settings only allowing certain settings to be run.</p>`;
+	tooltipText += `<p>First it will check to see if you're running a setting and if you are then it will continue until that settings farming has been completed. Afterwards it will go through all of the settings (<b>challenge specific settings will only be shown when running that challenge</b>) in this order:</p>`;
+	if (game.global.universe === 1) {
+		tooltipText += `<p>Prestige Climb</p>`;
+		tooltipText += `<p>Map Farm</p>`;
+		tooltipText += `<p>Prestige Raiding</p>`;
+		if (game.stats.highestLevel.valueTotal() >= 125) tooltipText += `<p>Bionic Raiding</p>`;
+		tooltipText += `<p>HD Farm</p>`;
+		tooltipText += `<p>Void Maps</p>`;
+		tooltipText += `<p>Map Bonus</p>`;
+		if (challengeActive('Experience')) tooltipText += `<p>Experience</p>`;
+		if (challengeActive('Toxicity')) tooltipText += `<p>Toxicity</p>`;
+		if (challengeActive('Balance')) tooltipText += `<p>Balance Destacking</p>`;
+		if (challengeActive('Daily')) tooltipText += `<p>Daily Bloodthirst Destacking</p>`;
+	}
 
-
+	if (game.global.universe === 2) {
+		if (challengeActive('Desolation')) tooltipText += `<p>Desolation Gear Scumming</p>`;
+		if (challengeActive('Desolation')) tooltipText += `<p>Desolation</p>`;
+		if (challengeActive('Quest')) tooltipText += `<p>Quest</p>`;
+		if (challengeActive('Pandemonium')) tooltipText += `<p>Pandemonium Destacking</p>`;
+		tooltipText += `<p>Prestige Climb</p>`;
+		tooltipText += `<p>Smithy Farm</p>`;
+		tooltipText += `<p>Map Farm</p>`;
+		tooltipText += `<p>Tribute Farm</p>`;
+		tooltipText += `<p>Worshipper Farm</p>`;
+		if (challengeActive('Unbalance')) tooltipText += `<p>Unbalance Destacking</p>`;
+		if (challengeActive('Storm')) tooltipText += `<p>Storm Destacking</p>`;
+		if (challengeActive('Daily')) tooltipText += `<p>Daily Bloodthirst Destacking</p>`;
+		tooltipText += `<p>Prestige Raiding</p>`;
+		if (challengeActive('Mayhem')) tooltipText += `<p>Mayhem</p>`;
+		if (challengeActive('Insanity')) tooltipText += `<p>Insanity</p>`;
+		if (challengeActive('Pandemonium')) tooltipText += `<p>Pandemonium Equipment Farming</p>`;
+		if (challengeActive('Alchemy')) tooltipText += `<p>Alchemy</p>`;
+		if (challengeActive('Hypothermia')) tooltipText += `<p>Hypothermia</p>`;
+		tooltipText += `<p>HD Farm</p>`;
+		tooltipText += `<p>Void Maps</p>`;
+		if (challengeActive('Quagmire')) tooltipText += `<p>Quagmire</p>`;
+		tooltipText += `<p>Map Bonus</p>`;
+		if (challengeActive('Glass')) tooltipText += `<p>Glass</p>`;
+		if (challengeActive('Smithless')) tooltipText += `<p>Smithless</p>`;
+		if (challengeActive('Wither')) tooltipText += `<p>Wither</p>`;
+	}
 
 	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Maps Priority', 'customText', 'lock', tooltipText, false, 'center');
 	verticalCenterTooltip(true);
