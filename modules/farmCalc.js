@@ -219,6 +219,7 @@ function populateZFarmData() {
 	else if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) fastEnemy = true;
 	else if (challengeActive('Duel') && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
 	else if (challengeActive('Revenge')) fastEnemy = true;
+	else if (game.global.universe === 2 && game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned) fastEnemy = true;
 
 	death_stuff = {
 		max_hp: trimpHealth,

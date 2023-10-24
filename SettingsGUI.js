@@ -3950,6 +3950,12 @@ function initializeAllSettings() {
 				var description = "<p>Will display the order that Auto Maps will run each setting in.</p>";
 				return description;
 			}, 'action', 'cancelTooltip(); makeFarmingDecisionHelpTooltip(false);', null, 'Help', [0]);
+		/* createSetting('helpFragments',
+			function () { return ('Fragment Decisions') },
+			function () {
+				var description = "<p>Will display the decision for map creation slider/setting adjustments.</p>";
+				return description;
+			}, 'action', 'cancelTooltip(); makeFragmentDecisionHelpTooltip(false);', null, 'Help', [0]); */
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------

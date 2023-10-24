@@ -179,7 +179,7 @@ function makeAutomapStatusTooltip(mouseover) {
 		return tooltipText;
 	}
 	else {
-		if (document.getElementById('tipTitle').innerHTML !== 'Automaps Status') tooltip('Auto Maps Status', 'customText', 'lock', tooltipText, false, 'center');
+		tooltip('Auto Maps Status', 'customText', 'lock', tooltipText, false, 'center');
 		verticalCenterTooltip(true);
 	}
 }
@@ -222,7 +222,7 @@ function makeResourceTooltip(mouseover) {
 		return tooltipText;
 	}
 	else {
-		if (document.getElementById('tipTitle').innerHTML !== 'Automaps Status') tooltip(`${resource} per hour info`, 'customText', 'lock', tooltipText, false, 'center');
+		tooltip(`${resource} per hour info`, 'customText', 'lock', tooltipText, false, 'center');
 		verticalCenterTooltip(true);
 	}
 }
@@ -262,7 +262,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 		return tooltipText;
 	}
 	else {
-		if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Additional Info Tooltip', 'customText', 'lock', tooltipText, false, 'center');
+		tooltip('Additional Info Tooltip', 'customText', 'lock', tooltipText, false, 'center');
 		verticalCenterTooltip(true);
 	}
 }
@@ -278,7 +278,7 @@ function makeAutoPortalHelpTooltip() {
 	//Fillers
 	tooltipText += `<p>If neither of the options above are run then it will portal into the challenge that you have selected in the <b>Auto Portal</b> setting. If that is disabled then it will portal into a challengeless run.</p>`;
 
-	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Portal Info', 'customText', 'lock', tooltipText, false, 'center');
+	tooltip('Auto Portal Info', 'customText', 'lock', tooltipText, false, 'center');
 	verticalCenterTooltip(true);
 }
 
@@ -329,15 +329,15 @@ function makeFarmingDecisionHelpTooltip() {
 		if (challengeActive('Smithless')) tooltipText += `<p>Smithless Farm</p>`;
 	}
 
-	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Maps Priority', 'customText', 'lock', tooltipText, false, 'center');
+	tooltip('Auto Maps Priority', 'customText', 'lock', tooltipText, false, 'center');
 	verticalCenterTooltip(true);
 }
 
-function makeSettingConflictsHelpTooltip() {
+function makeFragmentDecisionHelpTooltip() {
 	var tooltipText = '';
 
 
-	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Trimps Conflict Info', 'customText', 'lock', tooltipText, false, 'center');
+	tooltip('Fragment Decision Info', 'customText', 'lock', tooltipText, false, 'center');
 	verticalCenterTooltip(true);
 }
 
