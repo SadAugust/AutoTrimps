@@ -3163,7 +3163,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 	if (voidFarm) {
 		const voidSetting = getPageSetting('voidMapSettings')[0];
 		setting = {
-			autoLevel: true, hdMult: 1, jobratio: voidSetting.jobratio, world: game.global.world, level: -1, hdBase: Number(voidSetting.hdRatio), hdType: 'voidFarm', mapsRunCap: (typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100),
+			autoLevel: true, hdMult: 1, jobratio: voidSetting.jobratio, world: game.global.world, level: -1, hdBase: Number(voidSetting.hdRatio), hdType: 'voidFarm', mapCap: (typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100),
 		}
 		//Checking to see which of hits survived and hd farm should be run. Prioritises hits survived.
 		if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {

@@ -371,7 +371,8 @@ function populateZFarmData() {
 			enemyAttack *= game.challenges.Desolation.getEnemyMult();
 		}
 		if (challengeActive('Alchemy')) {
-			enemyHealth *= alchObj.getEnemyStats(false, false) + 1;
+			enemyHealth *= alchObj.getEnemyStats(true) + 1;
+			enemyAttack *= alchObj.getEnemyStats(true) + 1;
 		}
 		if (challengeActive('Hypothermia')) {
 			enemyHealth *= game.challenges.Hypothermia.getEnemyMult();
@@ -627,24 +628,26 @@ function simulate(saveData, zone) {
 	}
 
 	function enemy_hit(enemyAttack) {
-		var enemyAttack = enemyAttack;
 		//Damage fluctations
-		enemyAttack *= (saveData.fluctuation * rng());
+		var enemyAtk = enemyAttack
+		enemyAtk *= (saveData.fluctuation * rng());
 		//Enemy crit chance
 		var enemyCC = 0.25;
 		if (runningDuel) {
 			enemyCC = duelPoints / 100;
-			if (duelPoints < 50) enemyAttack *= 3;
+			if (duelPoints < 50) enemyAtk *= 3;
 		}
 		if (rng() < enemyCC) {
-			enemyAttack *= saveData.enemy_cd;
+			enemyAtk *= saveData.enemy_cd;
 			enemyCrit = true;
 		}
 		//Ice modifier
-		enemyAttack *= 0.366 ** (ice * saveData.ice);
+		enemyAtk *= 0.366 ** (ice * saveData.ice);
 		//Equality mult
-		enemyAttack *= Math.pow(0.9, equality);
-		reduceTrimpHealth(enemyAttack);
+		enemyAtk *= Math.pow(0.9, equality);
+		//Safety precaution for infinite Ice stacks
+		enemyAtk = Math.max(0, enemyAtk);
+		reduceTrimpHealth(enemyAtk);
 		++debuff_stacks;
 	}
 
@@ -802,6 +805,10 @@ function simulate(saveData, zone) {
 					enemyHealth = Math.min(enemyHealth + 0.05 * enemy_max_hp, enemy_max_hp);
 				}
 			}
+
+			//Safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage
+			if (turns >= 1000)
+				ticks = max_ticks;
 		}
 		if (saveData.explosion && (saveData.explosion <= 15 || saveData.block >= saveData.max_hp))
 			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - saveData.block);

@@ -751,7 +751,7 @@ MODULES.portal.disableAutoRespec = 0;
 function atlantrimpRespecMessage(cellOverride) {
 	if (!game.global.canRespecPerks) return;
 	//Stop this from running if we're in U1 and not at the highest Spire reached.
-	if (game.global.universe === 1 && (!game.global.spireActive || game.global.world < (game.global.spiresCompleted + 1) * 100)) return;
+	if (game.global.universe === 1 && (!game.global.spireActive || game.global.world < Math.floor((getHighestLevelCleared() + 1) / 100) * 100)) return;
 	if (typeof MODULES.autoPerks === 'undefined') return;
 
 	//Stop it running if we aren't above the necessary cell for u1.
