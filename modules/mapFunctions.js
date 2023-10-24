@@ -3334,6 +3334,7 @@ function farmingDecision() {
 	//U1 map settings to check for.
 	if (game.global.universe === 1) {
 		mapTypes = [
+			mapDestacking,
 			prestigeClimb,
 			mapFarm,
 			prestigeRaiding,
@@ -3343,7 +3344,6 @@ function farmingDecision() {
 			mapBonus,
 			experience,
 			toxicity,
-			mapDestacking,
 			obtainUniqueMap,
 		];
 
@@ -3375,6 +3375,7 @@ function farmingDecision() {
 
 		//U2 map settings to check for.
 		mapTypes = [
+			mapDestacking,
 			desolationGearScum,
 			desolation,
 			quest,
@@ -3384,7 +3385,6 @@ function farmingDecision() {
 			mapFarm,
 			tributeFarm,
 			worshipperFarm,
-			mapDestacking,
 			prestigeRaiding,
 			mayhem,
 			insanity,

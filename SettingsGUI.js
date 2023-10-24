@@ -3923,33 +3923,33 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will display the introduction message that is shown when you first load the script.</p>";
 				return description;
-			}, 'action', 'introMessage();', null, 'Help', [0]);
+			}, 'action', 'cancelTooltip(); introMessage();', null, 'Help', [0]);
 		createSetting('helpStatus',
 			function () { return ('Auto Maps Status') },
 			function () {
 				var description = "<p>Will display the Auto Maps status window.</p>";
 				description += "<p>This can also be accessed by mousing over the text that tells you what Auto Maps is currently trying to do just beneath the Auto Maps button.</p>";
 				return description;
-			}, 'action', "makeAutomapStatusTooltip(false);", null, 'Help', [0]);
+			}, 'action', 'cancelTooltip(); makeAutomapStatusTooltip(false);', null, 'Help', [0]);
 		createSetting('helpResourceHour',
 			function () { return (resource() + ' Per Hour') },
 			function () {
 				var description = "<p>Will display the " + resource() + "/Hr tooltip message.</p>";
 				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + resourceHour() + "/hr status</b> setting in the <b>Display</b> tab is enabled.</p>";
 				return description;
-			}, 'action', 'makeResourceTooltip();', null, 'Help', [0]);
+			}, 'action', 'cancelTooltip(); makeResourceTooltip();', null, 'Help', [0]);
 		createSetting('helpAutoPortal',
 			function () { return ('Auto Portal Info') },
 			function () {
 				var description = "<p>Will display a description of what order Auto Portal will try to perform its actions.</p>";
 				return description;
-			}, 'action', "makeAutoPortalHelpTooltip(false);", null, 'Help', [0]);
+			}, 'action', 'cancelTooltip(); makeAutoPortalHelpTooltip(false);', null, 'Help', [0]);
 		createSetting('helpAutoPortal',
 			function () { return ('Auto Maps Priority') },
 			function () {
 				var description = "<p>Will display the order that Auto Maps will run each setting in.</p>";
 				return description;
-			}, 'action', "makeFarmingDecisionHelpTooltip(false);", null, 'Help', [0]);
+			}, 'action', 'cancelTooltip(); makeFarmingDecisionHelpTooltip(false);', null, 'Help', [0]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------

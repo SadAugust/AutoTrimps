@@ -288,6 +288,8 @@ function makeFarmingDecisionHelpTooltip() {
 	tooltipText += `<p>Mapping has a priority as to what it will try to run and in what order. This is a static list and can't be modified with the exception of challenge settings only allowing certain settings to be run.</p>`;
 	tooltipText += `<p>First it will check to see if you're running a setting and if you are then it will continue until that settings farming has been completed. Afterwards it will go through all of the settings (<b>challenge specific settings will only be shown when running that challenge</b>) in this order:</p>`;
 	if (game.global.universe === 1) {
+		if (challengeActive('Balance')) tooltipText += `<p>Balance Destacking</p>`;
+		if (challengeActive('Daily')) tooltipText += `<p>Daily Bloodthirst Destacking</p>`;
 		tooltipText += `<p>Prestige Climb</p>`;
 		tooltipText += `<p>Map Farm</p>`;
 		tooltipText += `<p>Prestige Raiding</p>`;
@@ -297,11 +299,12 @@ function makeFarmingDecisionHelpTooltip() {
 		tooltipText += `<p>Map Bonus</p>`;
 		if (challengeActive('Experience')) tooltipText += `<p>Experience</p>`;
 		if (challengeActive('Toxicity')) tooltipText += `<p>Toxicity</p>`;
-		if (challengeActive('Balance')) tooltipText += `<p>Balance Destacking</p>`;
-		if (challengeActive('Daily')) tooltipText += `<p>Daily Bloodthirst Destacking</p>`;
 	}
 
 	if (game.global.universe === 2) {
+		if (challengeActive('Unbalance')) tooltipText += `<p>Unbalance Destacking</p>`;
+		if (challengeActive('Storm')) tooltipText += `<p>Storm Destacking</p>`;
+		if (challengeActive('Daily')) tooltipText += `<p>Daily Bloodthirst Destacking</p>`;
 		if (challengeActive('Desolation')) tooltipText += `<p>Desolation Gear Scumming</p>`;
 		if (challengeActive('Desolation')) tooltipText += `<p>Desolation</p>`;
 		if (challengeActive('Quest')) tooltipText += `<p>Quest</p>`;
@@ -311,9 +314,6 @@ function makeFarmingDecisionHelpTooltip() {
 		tooltipText += `<p>Map Farm</p>`;
 		tooltipText += `<p>Tribute Farm</p>`;
 		tooltipText += `<p>Worshipper Farm</p>`;
-		if (challengeActive('Unbalance')) tooltipText += `<p>Unbalance Destacking</p>`;
-		if (challengeActive('Storm')) tooltipText += `<p>Storm Destacking</p>`;
-		if (challengeActive('Daily')) tooltipText += `<p>Daily Bloodthirst Destacking</p>`;
 		tooltipText += `<p>Prestige Raiding</p>`;
 		if (challengeActive('Mayhem')) tooltipText += `<p>Mayhem</p>`;
 		if (challengeActive('Insanity')) tooltipText += `<p>Insanity</p>`;
