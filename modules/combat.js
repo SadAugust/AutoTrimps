@@ -189,7 +189,8 @@ function equalityManagement() {
 	var maxEquality = game.portal.Equality.radLevel;
 	var equality = 0;
 	var armyReady = newArmyRdy();
-	var doubleAttackOverride = false;
+	var disableDamageAmps = false;
+	var enemyDamageMult = 0;
 
 	//Daily modifiers active
 	var isDaily = challengeActive('Daily')
@@ -270,25 +271,26 @@ function equalityManagement() {
 	var enemyHealth = game.global[mapGrid][currentCell].health;
 	var enemyDmg = getCurrentEnemy().attack * enemyDamageModifiers() * 1.5;
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
-	enemyDmg *= game.global.voidBuff === 'doubleAttack' ? 2 : (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
+	enemyDamageMult += game.global.voidBuff === 'doubleAttack' ? 2 : (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 
 	//Empower related modifiers in world
 	if ((dailyEmpowerToggle && !mapping && dailyEmpower) || MODULES.maps.slowScumming) {
-		if (dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		if (dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 		if (dailyExplosive || MODULES.maps.slowScumming) ourDmgMax = calcOurDmg('max', 0, false, type, 'force', bionicTalent, true) * gammaDmg;
 	}
 	//Empower modifiers in maps.
 	if (type === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming) {
-		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyEmpowerToggle && dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		if (dailyExplosive) enemyDamageMult += 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 	}
-	enemyDmg *= !dailyEmpower && (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+	enemyDamageMult += !dailyEmpower && (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
-	enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
+	enemyDamageMult += runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
 	var enemyDmgEquality = 0;
 	//Misc dmg mult
 	if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100);
 
+	if (enemyDamageMult !== 0) enemyDmg *= enemyDamageMult;
 	//Fast Enemy conditions
 	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !MODULES.fightinfo.exoticImps.includes(enemyName) : MODULES.fightinfo.fastImps.includes(enemyName));
 	if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
@@ -343,10 +345,10 @@ function equalityManagement() {
 			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
 
 			//Since double attack enemies hit once before and once after need to check if we can survive both hits before halving enemy damage.
-			if (i === maxEquality && enemyDmgEquality > ourHealth && game.global.voidBuff === 'doubleAttack' && !doubleAttackOverride) {
-				enemyDmg /= 2;
+			if (i === maxEquality && enemyDmgEquality > ourHealth && enemyDamageMult !== 0 && !disableDamageAmps) {
+				enemyDmg /= enemyDamageMult;
 				i = 0;
-				doubleAttackOverride = true;
+				disableDamageAmps = true;
 			}
 
 			if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
