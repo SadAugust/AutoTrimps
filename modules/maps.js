@@ -611,7 +611,7 @@ function autoMap() {
 				var mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
 
 				var mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
-				if (mapSettings.mapName === 'Prestige Raiding') {
+				if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
 					if (!mapSettings.repeat) repeatClicked();
 				}
 				//Disabling repeat if the map isn't right or we've finished farming
