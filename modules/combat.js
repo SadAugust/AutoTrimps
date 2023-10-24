@@ -404,8 +404,10 @@ function equalityManagement() {
 				}
 				break;
 			} else if (fastEnemy && enemyDmgEquality > ourHealth) {
+				equality = i;
 				continue;
 			} else if (runningMayhem && fastEnemy && enemyDmgEquality > ((game.global.soldierHealth * 6) + game.challenges.Mayhem.poison)) {
+				equality = i;
 				continue;
 			} else if ((ourDmgEquality * gammaDmg) < enemyHealth && gammaToTrigger > 1) {
 				equality = maxEquality;

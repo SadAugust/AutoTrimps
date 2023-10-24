@@ -1252,7 +1252,7 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 
 function calcHDRatio(targetZone, type, maxTenacity, difficulty, checkOutputs) {
 	if (!targetZone) targetZone = game.global.world;
-	if (!type) type = 'world'
+	if (!type) type = 'world';
 	if (!maxTenacity) maxTenacity = false;
 	if (!difficulty) difficulty = 1;
 	//Init
@@ -1268,7 +1268,7 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, checkOutputs) {
 				if (targetZone > 200) customHealth = calcMutationHealth(targetZone);
 		}
 		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Improbability', customHealth) * difficulty;
-		universeSetting = game.global.universe === 2 ? equalityQuery('Improbability', targetZone, 100, type, difficulty, 'gamma') : 'X';
+		universeSetting = game.global.universe === 2 ? equalityQuery('Improbability', targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
 	}
 	if (type === 'map') {
 		enemyHealth = calcEnemyHealth(type, targetZone, 20, 'Turtlimp') * difficulty;
@@ -1276,7 +1276,7 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, checkOutputs) {
 	}
 	if (type === 'void') {
 		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Cthulimp') * difficulty;
-		universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, type, difficulty, 'gamma') : 'X';
+		universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
 	}
 
 	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
@@ -1328,7 +1328,7 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, checkOutputs) {
 
 	if (checkOutputs) {
 		debug(`ourBaseDamage: ${ourBaseDamage}`);
-		debug(`enemyHealth: $[enemyHealth}`);
+		debug(`enemyHealth: ${enemyHealth}`);
 		debug(`universeSetting: ${universeSetting}`);
 		debug(`HD type: ${type}`);
 		debug(`HD value (H:D): ${enemyHealth / (ourBaseDamage + addPoison())}`);
@@ -1889,7 +1889,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	return mostAfford;
 }
 
-function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits) {
+function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits, hdCheck) {
 
 	if (Object.keys(game.global.gridArray).length === 0) return 0;
 	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1) return 0;
@@ -1973,9 +1973,15 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	const ourEqualityModifier = getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType));
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
+	//Accounting for enemies hitting multiple times per gamma burst
+	if (hdCheck && mapType !== 'map') {
+		enemyDmgMaxEq = enemyDmg * Math.pow(enemyEqualityModifier, maxEquality);
+		ourHealth -= (enemyDmgMaxEq * (gammaMaxStacks() - 1));
+	}
+
 	if (enemyHealth !== 0) {
 		for (var i = 0; i <= maxEquality; i++) {
-			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i)
+			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i);
 			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
 			if (runningUnlucky) {
 				unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
