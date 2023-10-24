@@ -291,42 +291,42 @@ function makeFarmingDecisionHelpTooltip() {
 		if (challengeActive('Balance')) tooltipText += `<p>Balance Destacking</p>`;
 		if (challengeActive('Daily')) tooltipText += `<p>Daily Bloodthirst Destacking</p>`;
 		tooltipText += `<p>Prestige Climb</p>`;
-		tooltipText += `<p>Map Farm</p>`;
 		tooltipText += `<p>Prestige Raiding</p>`;
 		if (game.stats.highestLevel.valueTotal() >= 125) tooltipText += `<p>Bionic Raiding</p>`;
+		tooltipText += `<p>Map Farm</p>`;
 		tooltipText += `<p>HD Farm</p>`;
 		tooltipText += `<p>Void Maps</p>`;
 		tooltipText += `<p>Map Bonus</p>`;
-		if (challengeActive('Experience')) tooltipText += `<p>Experience</p>`;
-		if (challengeActive('Toxicity')) tooltipText += `<p>Toxicity</p>`;
+		if (challengeActive('Experience')) tooltipText += `<p>Experience Farm</p>`;
+		if (challengeActive('Toxicity')) tooltipText += `<p>Toxicity Farm</p>`;
 	}
 
 	if (game.global.universe === 2) {
 		if (challengeActive('Unbalance')) tooltipText += `<p>Unbalance Destacking</p>`;
-		if (challengeActive('Storm')) tooltipText += `<p>Storm Destacking</p>`;
 		if (challengeActive('Daily')) tooltipText += `<p>Daily Bloodthirst Destacking</p>`;
-		if (challengeActive('Desolation')) tooltipText += `<p>Desolation Gear Scumming</p>`;
-		if (challengeActive('Desolation')) tooltipText += `<p>Desolation</p>`;
-		if (challengeActive('Quest')) tooltipText += `<p>Quest</p>`;
+		if (challengeActive('Quagmire')) tooltipText += `<p>Quagmire Farm</p>`;
+		if (challengeActive('Quest')) tooltipText += `<p>Quest Farm</p>`;
+		if (challengeActive('Storm')) tooltipText += `<p>Storm Destacking</p>`;
 		if (challengeActive('Pandemonium')) tooltipText += `<p>Pandemonium Destacking</p>`;
+		if (challengeActive('Desolation')) tooltipText += `<p>Desolation Gear Scumming</p>`;
+		if (challengeActive('Desolation')) tooltipText += `<p>Desolation Destacking</p>`;
 		tooltipText += `<p>Prestige Climb</p>`;
+		tooltipText += `<p>Prestige Raiding</p>`;
 		tooltipText += `<p>Smithy Farm</p>`;
 		tooltipText += `<p>Map Farm</p>`;
 		tooltipText += `<p>Tribute Farm</p>`;
 		tooltipText += `<p>Worshipper Farm</p>`;
-		tooltipText += `<p>Prestige Raiding</p>`;
-		if (challengeActive('Mayhem')) tooltipText += `<p>Mayhem</p>`;
-		if (challengeActive('Insanity')) tooltipText += `<p>Insanity</p>`;
+		if (challengeActive('Mayhem')) tooltipText += `<p>Mayhem Destacking</p>`;
+		if (challengeActive('Insanity')) tooltipText += `<p>Insanity Farm</p>`;
 		if (challengeActive('Pandemonium')) tooltipText += `<p>Pandemonium Equipment Farming</p>`;
-		if (challengeActive('Alchemy')) tooltipText += `<p>Alchemy</p>`;
-		if (challengeActive('Hypothermia')) tooltipText += `<p>Hypothermia</p>`;
+		if (challengeActive('Alchemy')) tooltipText += `<p>Alchemy Farm</p>`;
+		if (challengeActive('Hypothermia')) tooltipText += `<p>Hypothermia Farm</p>`;
 		tooltipText += `<p>HD Farm</p>`;
 		tooltipText += `<p>Void Maps</p>`;
-		if (challengeActive('Quagmire')) tooltipText += `<p>Quagmire</p>`;
 		tooltipText += `<p>Map Bonus</p>`;
-		if (challengeActive('Glass')) tooltipText += `<p>Glass</p>`;
-		if (challengeActive('Smithless')) tooltipText += `<p>Smithless</p>`;
-		if (challengeActive('Wither')) tooltipText += `<p>Wither</p>`;
+		if (challengeActive('Wither')) tooltipText += `<p>Wither Farm</p>`;
+		if (challengeActive('Glass')) tooltipText += `<p>Glass Destacking</p>`;
+		if (challengeActive('Smithless')) tooltipText += `<p>Smithless Farm</p>`;
 	}
 
 	if (document.getElementById('tipTitle').innerHTML !== 'Additional Info') tooltip('Auto Maps Priority', 'customText', 'lock', tooltipText, false, 'center');
