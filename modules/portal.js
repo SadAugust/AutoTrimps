@@ -518,7 +518,7 @@ function doPortal(challenge, skipDaily) {
 	MODULES.portal.zonePostpone = 0;
 
 	activatePortal();
-	resetVarsZone();
+	resetVarsZone(true);
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 		loadMutations(preset);
 		u2Mutations.closeTree();
@@ -648,6 +648,7 @@ function resetVarsZone(loadingSave) {
 
 		MODULES.fightinfo.lastProcessedWorld = 0;
 		MODULES.portal.portalForVoid = false;
+		MODULES.mapFunctions.afterVoids = false;
 		//MODULES.mapFunctions.hasVoidFarmed = '';
 
 	}
@@ -658,7 +659,6 @@ function resetVarsZone(loadingSave) {
 	//General
 	MODULES.maps.mapTimer = 0;
 	MODULES.maps.fragmentCost = Infinity;
-	MODULES.mapFunctions.afterVoids = false;
 
 	//Fragment Farming
 	initialFragmentMapID = undefined;

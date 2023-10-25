@@ -2,14 +2,13 @@ MODULES.mapFunctions = {};
 
 MODULES.mapFunctions.afterVoids = false;
 MODULES.mapFunctions.hasHealthFarmed = '';
-MODULES.mapFunctions.hasSpireFarmed = '';
 MODULES.mapFunctions.hasVoidFarmed = '';
 MODULES.mapFunctions.runUniqueMap = '';
 MODULES.mapFunctions.hypothermia = { buyPackrat: false, }
 MODULES.mapFunctions.desolation = { gearScum: false, }
 
 //Unique Maps Object. Used to store information about unique maps such as challenges that they need to be run to complete, zone they unlock, speedrun achievements linked to them.
-MODULES.uniqueMaps = Object.freeze({
+MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	//Universe 1 Unique Maps
 	'The Block': {
 		zone: 11,
@@ -92,9 +91,9 @@ MODULES.uniqueMaps = Object.freeze({
 		universe: 2
 	},
 	'Frozen Castle': {
-		zone: 174,
+		zone: 175,
 		challenges: [""],
-		speedrun: 'starTimed',
+		speedrun: '',
 		universe: 2
 	}
 });
@@ -141,7 +140,7 @@ function shouldSpeedRun(achievement) {
 
 //Unique Maps Pt.2
 function shouldRunUniqueMap(map) {
-	const mapData = MODULES.uniqueMaps[map.name];
+	const mapData = MODULES.mapFunctions.uniqueMaps[map.name];
 	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
 
 	//Stops unique maps being run when we should be destacking instead as it is likely to be slower overall.
@@ -338,14 +337,14 @@ function runUniqueMap(mapName) {
 }
 
 //Void Maps
-MODULES.voidPrefixes = Object.freeze({
+MODULES.mapFunctions.voidPrefixes = Object.freeze({
 	'Poisonous': 10,
 	'Destructive': 11,
 	'Heinous': 20,
 	'Deadly': 30
 });
 
-MODULES.voidSuffixes = Object.freeze({
+MODULES.mapFunctions.voidSuffixes = Object.freeze({
 	'Descent': 7.077,
 	'Void': 8.822,
 	'Nightmare': 9.436,
@@ -357,13 +356,13 @@ function getVoidMapDifficulty(map) {
 		return 99999;
 	}
 	var score = 0;
-	for (const [prefix, weight] of Object.entries(MODULES.voidPrefixes)) {
+	for (const [prefix, weight] of Object.entries(MODULES.mapFunctions.voidPrefixes)) {
 		if (map.name.includes(prefix)) {
 			score += weight;
 			break;
 		}
 	}
-	for (const [suffix, weight] of Object.entries(MODULES.voidSuffixes)) {
+	for (const [suffix, weight] of Object.entries(MODULES.mapFunctions.voidSuffixes)) {
 		if (map.name.includes(suffix)) {
 			score += weight;
 			break;
@@ -492,31 +491,35 @@ function voidMaps(lineCheck) {
 			}
 		}
 
+	var setting;
+	//Helium per hour void setting setup
+	if (MODULES.mapFunctions.afterVoids) {
+		portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
+		if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return farmingDetails;
+		if (dailyAddition.skipZone) return farmingDetails;
+
+		const voidSetting = getPageSetting('voidMapSettings')[0];
+		setting = {
+			cell: 1, jobratio: defaultSettings.jobratio ? defaultSettings.jobratio : "0,0,1", world: game.global.world, portalAfter: true, priority: 0,
+		}
+		//Checking to see which of hits survived and hd farm should be run. Prioritises hits survived.
+		if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {
+			setting.hdBase = Number(voidSetting.hitsSurvived);
+			setting.hdType = 'hitsSurvivedVoid';
+		}
+		mapSettings.voidTrigger = (resource() + " Per Hour (") + autoTrimpSettings.heliumHrPortal.name()[portalSetting] + ")";
+	}
+
 	if (lineCheck)
 		return !setting ? baseSettings[settingIndex] : setting;
 
 	if (settingIndex !== null || (mapSettings.voidHDIndex && mapSettings.voidHDIndex !== Infinity && baseSettings[mapSettings.voidHDIndex].world <= game.global.world && baseSettings[mapSettings.voidHDIndex].maxvoidzone >= game.global.world) || mapSettings.portalAfterVoids || MODULES.mapFunctions.afterVoids) {
-		var setting = {};
-		if (settingIndex === null && !mapSettings.voidHDIndex) {
-			var portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
-			if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return farmingDetails;
-			if (dailyAddition.skipZone) return farmingDetails;
-
-			setting = {
-				cell: 1,
-				jobratio: defaultSettings.jobratio ? defaultSettings.jobratio : "0,0,1",
-				world: game.global.world,
-				portalAfter: true,
-				priority: 1,
-			}
-			mapSettings.portalAfterVoids = true;
-			mapSettings.voidTrigger = (resource() + " Per Hour (") + autoTrimpSettings.heliumHrPortal.name()[portalSetting] + ")";
-		} else {
+		if (settingIndex !== null) {
 			setting = baseSettings[settingIndex !== null ? settingIndex : mapSettings.voidHDIndex];
 		}
 
 		var jobRatio = mapSettings.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.jobratio : defaultSettings.jobratio;
-		mapSettings.portalAfterVoids = mapSettings.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.portalAfter : false;
+		mapSettings.portalAfterVoids = mapSettings.portalAfterVoids || setting.portalAfter;
 
 		if (game.global.totalVoidMaps > 0) {
 			shouldMap = true;
@@ -1725,7 +1728,7 @@ function obtainUniqueMap(uniqueMap) {
 
 	if (!uniqueMap || typeof uniqueMap !== 'string') return farmingDetails;
 
-	var unlockLevel = MODULES.uniqueMaps[uniqueMap].zone;
+	var unlockLevel = MODULES.mapFunctions.uniqueMaps[uniqueMap].zone;
 
 	//Only go for this map if we are able to obtain it
 	if (!trimpStats.perfectMaps && unlockLevel > game.global.world)
@@ -1799,7 +1802,7 @@ function bionicRaiding(lineCheck) {
 
 		//If we can't get the map then don't run this setting
 		//If we can then go grab it if it's available
-		const unlockLevel = MODULES.uniqueMaps['Bionic Wonderland'].zone;
+		const unlockLevel = MODULES.mapFunctions.uniqueMaps['Bionic Wonderland'].zone;
 		if (!trimpStats.perfectMaps && unlockLevel > game.global.world)
 			return farmingDetails;
 		else if (trimpStats.perfectMaps && unlockLevel > (game.global.world + 10))
@@ -3243,7 +3246,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	const settingName = 'hdFarmSettings';
 	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
-	setting = undefined;;
+	var setting = undefined;
 	var mapsRunCap = Infinity;
 
 	//Void Farming setting setup

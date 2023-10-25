@@ -2314,6 +2314,8 @@ function initializeAllSettings() {
 			function () { return ('Desolation') },
 			function () {
 				var description = "<p>Enable this if you want to automate destacking and other features when running the <b>Desolation</b> challenge.</p>";
+				description += "<p>Once this starts destacking it will destack until you have no chilled stacks remaining.</p>";
+				description += "<p>If enabled then this will <b>always</b> reduce your chilled stacks to 0 before doing any other form of mapping.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
@@ -2599,7 +2601,7 @@ function initializeAllSettings() {
 				var description = "<p>When using the <b>Daily Portal: " + resourceHour() + "/Hr</b> Auto Portal setting, it will portal if your " + resource().toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
 				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer).</p>";
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
-				description += "<p><b>Recommended:</b> 1.25</p>";
+				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
 			}, 'value', 0, null, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
@@ -4176,8 +4178,8 @@ function updateButtonText() {
 	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btnValue);
 }
 
-MODULES.u1unlocks = [];
-MODULES.u2unlocks = [];
+MODULES.u1unlocks = {};
+MODULES.u2unlocks = {};
 
 initializeAllSettings();
 //automationMenuInit();

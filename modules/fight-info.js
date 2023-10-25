@@ -98,7 +98,6 @@
 
 	//Last processed
 	M["fightinfo"].lastProcessedWorld = null;
-	M["fightinfo"].lastProcessedMap = null;
 
 	function updateCell($cell, cell, pallet, customIcon, overrideSpecial, overrideCoords) {
 		//Cell Color

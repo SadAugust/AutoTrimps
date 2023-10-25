@@ -1,7 +1,5 @@
 //Helium
 MODULES["upgrades"] = {};
-MODULES["upgrades"].targetFuelZone = true;
-MODULES["upgrades"].customMetalRatio = 0.5; //Change the Custom Delta factor instead
 
 function gigaTargetZone() {
 	//Init
@@ -27,7 +25,7 @@ function gigaTargetZone() {
 	//Target Fuel Zone
 	if (trimpStats.isDaily && getPageSetting("AutoGenDC") !== 0) targetZone = Math.min(targetZone, 230);
 	if (trimpStats.isC3 && getPageSetting("AutoGenC2") !== 0) targetZone = Math.min(targetZone, 230);
-	if (MODULES.upgrades.targetFuelZone && (getPageSetting("fuellater") >= 1 || getPageSetting("beforegen") !== 0)) targetZone = Math.min(targetZone, Math.max(230, getPageSetting("fuellater")));
+	if ((getPageSetting("fuellater") >= 1 || getPageSetting("beforegen") !== 0)) targetZone = Math.min(targetZone, Math.max(230, getPageSetting("fuellater")));
 
 	//Failsafe
 	if (targetZone < 60) {
@@ -87,7 +85,7 @@ function firstGiga() {
 	//Define Base and Delta for this run
 	const base = game.buildings.Warpstation.owned;
 	const deltaZ = (getPageSetting('autoGigaTargetZone') >= 60) ? getPageSetting('autoGigaTargetZone') : undefined;
-	const deltaM = (MODULES["upgrades"].customMetalRatio > 0) ? MODULES["upgrades"].customMetalRatio : undefined;
+	const deltaM = 0.5;
 	const deltaS = (getPageSetting('autGigaDeltaFactor') >= 1) ? getPageSetting('autGigaDeltaFactor') : undefined;
 	const delta = autoGiga(deltaZ, deltaM, deltaS);
 

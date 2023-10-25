@@ -1,5 +1,4 @@
 MODULES.gather = {
-	minScienceSeconds: 60,
 	trapBuffering: false,
 	maxTrapBuffering: false,
 	maxZoneDuration: 0,
@@ -265,7 +264,7 @@ function autoGather() {
 		}
 	}
 	if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
-		if (manualGather !== 3 && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers && game.resources.science.owned < getPsString_AT('science', true) * MODULES["gather"].minScienceSeconds) {
+		if (manualGather !== 3 && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers && game.resources.science.owned < getPsString_AT('science', true) * 60) {
 			safeSetGather('science');
 			return;
 		}
