@@ -3524,15 +3524,15 @@ function farmingDecision() {
 			}
 		}
 	}
-	if (priorityList.length > 0) {
-		prioList = priorityList;
-	}
 
 	//If in desolation then check if we should destack before farming. 
 	//This will ALWAYS run when above 0 stacks and another type of farming is meant to be done as it will destack and then run the farming type.
-	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && !MODULES.mapFunctions.desolation.gearScum && game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation Destacking')) {
+	if (farmingDetails.mapName !== '' && game.challenges.Desolation.chilled > 0 && getPageSetting('desolation') && !MODULES.mapFunctions.desolation.gearScum && challengeActive('Desolation') && !farmingDetails.mapName.includes('Desolation Destacking')) {
 		var desolationCheck = desolation(false, false, true);
-		if (desolationCheck.shouldRun) farmingDetails = desolationCheck;
+		if (desolationCheck.shouldRun) {
+			farmingDetails = desolationCheck;
+			farmingDetails.settingName = desolation;
+		}
 	}
 
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
