@@ -479,8 +479,6 @@ function mainLoop() {
 	automateSpireAssault();
 
 	challengeInfo();
-	atSettings.initialise.loaded = true;
-
 	if (MODULES.popups.remainingTime === 5000) {
 		MODULES.popups.remainingTime -= 0.0001;
 		MODULES.popups.intervalID = setInterval(function () {

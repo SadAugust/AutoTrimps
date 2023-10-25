@@ -5523,6 +5523,10 @@ function updateDropdownLabels() {
 		document.head.appendChild(script);
 		return;
 	}
+	if (!atSettings.initialise.loaded) {
+		setTimeout(updateDropdownLabels, 10);
+		return;
+	}
 
 	$(document).ready(function () {
 		$('.select2').select2({
