@@ -3800,11 +3800,15 @@ function fragmentFarm() {
 		MODULES.maps.fragmentFarming = true;
 		//Purchase fragment farming map if we're in map chamber. If you don't have enough fragments for this map then RIP
 		if (game.global.preMapsActive) {
-			setMapSliders(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), getBiome('fragments'), [9, 9, 9], false);
-			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-				buyMap();
+			const mapLevel = game.talents.mapLoot.purchased ? -1 : 0;
+			const special = getAvailableSpecials('fa');
+			const biome = getBiome('fragments');
+			const mapCheck = findMap(mapLevel, special, biome);
+			if (!mapCheck) setMapSliders(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), getBiome('fragments'), [9, 9, 9], false);
+			if (mapCheck || updateMapCost(true) <= game.resources.fragments.owned) {
+				if (!mapCheck) buyMap();
+				selectMap(mapCheck ? mapCheck : game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
 				debug('Fragment farming for ' + prettify(fragmentsNeeded) + ' fragments.');
-				selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
 				runMap();
 				//Enable repeat and set it to repeat forever if frag farming
 				if (!game.global.repeatMap)
