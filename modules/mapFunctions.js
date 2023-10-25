@@ -1586,8 +1586,9 @@ function prestigeClimb() {
 
 	if (challengeActive('Frugal')) return farmingDetails;
 
-	var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
+	var targetPrestige = getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
+	if (challengeActive('Mapology') && getPageSetting('mapology')) targetPrestige = getPageSetting('mapologyPrestige');
 
 	if (game.jobs.Explorer.locked) {
 		farmingDetails.biome = 'Random';
