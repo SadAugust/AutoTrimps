@@ -1386,6 +1386,17 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
+		createSetting('autoMapsPriority',
+			function () { return ('Auto Maps Priority') },
+			function () {
+				var description = "<p>Will allow you to have map settings run in any combination you want through the settings priority system.</p>";
+				var description = "<p>When enabled will sort the mapping order by priority inputs and run the lowest priority first. If multiple settings have the same priority then it will run them in the order that can be seen in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
+				var description = "<p>There are certain settings that will always run <b>first</b> regardless of your priority setup, these are the ones in bold in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
+				var description = "<p>There are certain settings that will always run <b>last</b> regardless of your priority setup, these are the ones in bold and italics in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
+
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Maps', [1, 2]);
 		createSetting('onlyPerfectMaps',
 			function () { return ('Perfect Maps') },
 			function () {
@@ -1615,6 +1626,7 @@ function initializeAllSettings() {
 			function () { return ('Balance') },
 			function () {
 				var description = "<p>Enable this if you want to automate destacking when running the <b>Balance</b> challenge.</p>";
+				if (game.global.highestRadonLevelCleared > 1) description += "<p>If you have a gamma burst charged this will delay destacking until it has been used.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Challenges', [1],
@@ -1981,6 +1993,7 @@ function initializeAllSettings() {
 			function () { return ('Unbalance') },
 			function () {
 				var description = "<p>Enable this if you want to automate destacking when running the <b>Unbalance</b> challenge.</p>";
+				description += "<p>If you have a gamma burst charged this will delay destacking until it has been used.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
