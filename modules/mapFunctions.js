@@ -380,7 +380,7 @@ function selectEasierVoidMap(map1, map2) {
 	}
 }
 
-function voidMaps(lineCheck, forceLine) {
+function voidMaps(lineCheck) {
 
 	var shouldMap = false;
 	const mapName = 'Void Map';
@@ -400,7 +400,7 @@ function voidMaps(lineCheck, forceLine) {
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	var dropdowns = ['hdRatio', 'voidHDRatio'];
 	var hdTypes = ['hdType', 'hdType2'];
@@ -467,7 +467,7 @@ function voidMaps(lineCheck, forceLine) {
 			}
 
 			if (settingIndex !== null) {
-				if (!mapSettings.hdType && getPageSetting('autoMaps')) {
+				if (!mapSettings.hdType && !lineCheck && getPageSetting('autoMaps')) {
 
 					//Need to improve the void hd ratio inputs so that they match the dropdowns the user has selected.
 					var dropdownTitles = ['dropdown', 'dropdown2'];
@@ -576,7 +576,7 @@ function voidMaps(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function mapBonus(lineCheck, forceLine) {
+function mapBonus(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -600,7 +600,7 @@ function mapBonus(lineCheck, forceLine) {
 	var spireCheck = getPageSetting('MaxStacksForSpire') && isDoingSpire();
 	var spireStacks = spireCheck ? 10 : 0;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 	if (defaultSettings.active && !hdCheck && !spireCheck) {
 		if (settingIndex === null)
 			for (var y = 0; y < baseSettings.length; y++) {
@@ -688,7 +688,7 @@ function mapBonus(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function mapFarm(lineCheck, forceLine) {
+function mapFarm(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -707,7 +707,7 @@ function mapFarm(lineCheck, forceLine) {
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -816,7 +816,7 @@ function mapFarm(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function tributeFarm(lineCheck, forceLine) {
+function tributeFarm(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -836,7 +836,7 @@ function tributeFarm(lineCheck, forceLine) {
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -978,7 +978,7 @@ function tributeFarm(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function smithyFarm(lineCheck, forceLine) {
+function smithyFarm(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -1005,7 +1005,7 @@ function smithyFarm(lineCheck, forceLine) {
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -1178,7 +1178,7 @@ function smithyFarm(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function worshipperFarm(lineCheck, forceLine) {
+function worshipperFarm(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -1199,7 +1199,7 @@ function worshipperFarm(lineCheck, forceLine) {
 
 	var shouldSkip = false;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -1291,7 +1291,7 @@ function worshipperFarm(lineCheck, forceLine) {
 }
 
 //Daily (bloodthirst), Balance, Unbalance & Storm Destacking
-function mapDestacking(lineCheck, forceLine) {
+function mapDestacking(lineCheck) {
 
 	const mapName = 'Destacking';
 	const farmingDetails = {
@@ -1416,7 +1416,7 @@ function prestigesToGet(targetZone, targetPrestige) {
 	return [prestigeToFarmFor, mapsToRun];
 }
 
-function prestigeRaiding(lineCheck, forceLine) {
+function prestigeRaiding(lineCheck) {
 
 	var shouldMap = false;
 	const mapName = 'Prestige Raiding'
@@ -1432,8 +1432,7 @@ function prestigeRaiding(lineCheck, forceLine) {
 
 	if (!defaultSettings.active) return farmingDetails;
 
-
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -1604,7 +1603,7 @@ function runPrestigeRaiding() {
 		runMap_AT();
 }
 
-function prestigeClimb(lineCheck, forceLine) {
+function prestigeClimb(lineCheck) {
 
 	var shouldMap = false;
 	const mapName = 'Prestige Climb';
@@ -1752,7 +1751,7 @@ function obtainUniqueMap(uniqueMap) {
 	return farmingDetails;
 }
 
-function bionicRaiding(lineCheck, forceLine) {
+function bionicRaiding(lineCheck) {
 
 	var shouldMap = false;
 	const mapName = 'Bionic Raiding'
@@ -1769,7 +1768,7 @@ function bionicRaiding(lineCheck, forceLine) {
 	if (!defaultSettings.active) return farmingDetails;
 	if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -1863,7 +1862,7 @@ function runBionicRaiding(bionicPool) {
 	}
 }
 
-function toxicity(lineCheck, forceLine) {
+function toxicity(lineCheck) {
 
 	var shouldMap = false;
 	const mapName = 'Toxicity';
@@ -1879,7 +1878,7 @@ function toxicity(lineCheck, forceLine) {
 
 	if (!defaultSettings.active) return farmingDetails;
 	if (!challengeActive('Toxicity')) return farmingDetails;
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -1956,7 +1955,7 @@ function toxicity(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function experience(lineCheck, forceLine) {
+function experience(lineCheck) {
 
 	var shouldMap = false;
 	var mapName = 'Experience';
@@ -2003,7 +2002,7 @@ function experience(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function wither(lineCheck, forceLine) {
+function wither(lineCheck) {
 
 	var shouldMap = false;
 	const mapName = 'Wither Farm';
@@ -2086,7 +2085,7 @@ function wither(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function quagmire(lineCheck, forceLine) {
+function quagmire(lineCheck) {
 
 	var shouldMap = false;
 	const mapName = 'Quagmire Farm';
@@ -2102,7 +2101,7 @@ function quagmire(lineCheck, forceLine) {
 
 	if (!challengeActive('Quagmire') || !defaultSettings.active) return farmingDetails;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 	//Checking to see if any lines are to be run.
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -2177,7 +2176,7 @@ function currQuest() {
 	else return 0;
 }
 
-function quest(lineCheck, forceLine) {
+function quest(lineCheck) {
 
 	var mapAutoLevel = Infinity;
 	var shouldMap = 0;
@@ -2249,7 +2248,7 @@ function quest(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function mayhem(lineCheck, forceLine) {
+function mayhem(lineCheck) {
 
 	var mapAutoLevel = Infinity;
 	var shouldMap = false;
@@ -2303,7 +2302,7 @@ function mayhem(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function insanity(lineCheck, forceLine) {
+function insanity(lineCheck) {
 
 	var mapAutoLevel = Infinity;
 	var shouldMap = false;
@@ -2320,7 +2319,7 @@ function insanity(lineCheck, forceLine) {
 
 	if (!challengeActive('Insanity') || !defaultSettings.active) return farmingDetails;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 	//Checking to see if any lines are to be run.
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -2389,7 +2388,7 @@ function insanity(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function pandemoniumDestack(lineCheck, forceLine) {
+function pandemoniumDestack(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -2450,7 +2449,7 @@ function pandemoniumDestack(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function pandemoniumEquipFarm(lineCheck, forceLine) {
+function pandemoniumEquipFarm(lineCheck) {
 
 	var mapAutoLevel = Infinity;
 	var shouldMap = false;
@@ -2514,7 +2513,7 @@ function pandemoniumEquipFarm(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function alchemy(lineCheck, forceLine) {
+function alchemy(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -2531,7 +2530,7 @@ function alchemy(lineCheck, forceLine) {
 
 	if (!challengeActive('Alchemy') || !defaultSettings.active) return farmingDetails;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	//Checking to see if any lines are to be run.
 	if (settingIndex === null)
@@ -2676,7 +2675,7 @@ function alchemy(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function glass(lineCheck, forceLine) {
+function glass(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -2782,7 +2781,7 @@ function glass(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function hypothermia(lineCheck, forceLine) {
+function hypothermia(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -2812,7 +2811,7 @@ function hypothermia(lineCheck, forceLine) {
 	}
 
 	if (!challengeActive('Hypothermia')) return farmingDetails;
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	//Checking to see if any lines are to be run.
 	if (settingIndex === null)
@@ -2893,7 +2892,7 @@ function hypothermia(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function desolation(lineCheck, forceLine, forceDestack) {
+function desolation(lineCheck, forceDestack) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -2993,7 +2992,7 @@ function desolation(lineCheck, forceLine, forceDestack) {
 	return farmingDetails;
 }
 
-function desolationGearScum(lineCheck, forceLine) {
+function desolationGearScum(lineCheck) {
 
 	var shouldMap = false;
 	const mapName = 'Desolation Gear Scum';
@@ -3011,7 +3010,7 @@ function desolationGearScum(lineCheck, forceLine) {
 	var setting;
 
 	if (!defaultSettings.active) return farmingDetails;
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 
 	if (settingIndex === null)
 		for (var y = 0; y < baseSettings.length; y++) {
@@ -3121,7 +3120,7 @@ function desolationGearScum(lineCheck, forceLine) {
 	return farmingDetails;
 }
 
-function smithless(lineCheck, forceLine) {
+function smithless(lineCheck) {
 
 	var shouldMap = false;
 	var mapAutoLevel = Infinity;
@@ -3231,7 +3230,7 @@ function hdFarmSettingRatio(setting) {
 	return (zone === 0) ? hd : Math.pow(mult, zone) * hd;
 }
 
-function hdFarm(lineCheck, forceLine, skipHealthCheck, voidFarm) {
+function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 
 	var shouldMap = false;
 	var shouldSkip = false;
@@ -3268,7 +3267,7 @@ function hdFarm(lineCheck, forceLine, skipHealthCheck, voidFarm) {
 	}
 	if (!defaultSettings.active && setting === undefined) return farmingDetails;
 
-	var settingIndex = !forceLine ? null : forceLine;
+	var settingIndex = null;
 	//Checking to see if any lines are to be run.
 	if (defaultSettings.active && setting === undefined || setting.hdType !== 'voidFarm') {
 		if (settingIndex === null)
@@ -3494,7 +3493,7 @@ function farmingDecision() {
 	//If we are currently running a map and it should be continued then continue running it.
 	//Running the entire function again is done to ensure that we update the status message and check if it still wants to run.
 	if (mapSettings.mapName !== '' && mapTypes.indexOf(mapSettings.settingName) > 0) {
-		var mapCheck = mapSettings.settingName(false, false);
+		var mapCheck = mapSettings.settingName();
 		if (mapCheck.shouldRun) {
 			farmingDetails = mapCheck;
 			farmingDetails.settingName = mapSettings.settingName;
@@ -3503,7 +3502,7 @@ function farmingDecision() {
 	else {
 		//Checking which settings should be run and adding them to a priority list.
 		for (const map of mapTypes) {
-			var mapCheck = map(true, false);
+			var mapCheck = map(true);
 			if (mapCheck && mapCheck.mapName === undefined) {
 				mapCheck.settingName = map;
 				priorityList.push(mapCheck);
