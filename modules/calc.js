@@ -1200,10 +1200,11 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp", customHealth)
 	if (challengeActive('Domination')) health *= 7.5;
 	if (challengeActive('Lead')) health *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
 
-	if (type === 'world' && corrupt && !game.global.spireActive) {
+	//Shouldn't be needed as there's enemy health calcs in calcEnemyHealthCore for corrupted/healthy enemies
+	/* if (type === 'world' && corrupt && !game.global.spireActive) {
 		if (healthy) health *= calcCorruptionScale(zone, 14);
 		else if (corrupt) health *= calcCorruptionScale(zone, 10);
-	}
+	} */
 
 	return health;
 }
