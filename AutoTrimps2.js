@@ -560,6 +560,7 @@ function mainCleanup() {
 	}
 	//If in a new zone then run this code
 	if (atSettings.portal.aWholeNewWorld) {
+		autoPortalCheck();
 		//If in Z1 then we can assume we have just portaled.
 		if (atSettings.portal.currentworld === 1) {
 			MODULES.portal.zonePostpone = 0;
