@@ -1679,14 +1679,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (elem) elem.innerHTML = error;
 		return;
 	}
-	var value = currSettingUniverse === 2 ? 'valueU2' : 'value'
-
-	if (mapBonus) {
-		autoTrimpSettings['mapBonusZone'][value] = [];
-		for (var x = 0; x < setting.length; x++) {
-			autoTrimpSettings['mapBonusZone'][value][x] = setting[x].world
-		}
-	}
+	var value = currSettingUniverse === 2 ? 'valueU2' : 'value';
 
 	//Set settings inside AT
 	setPageSetting(varPrefix + 'Settings', setting, currSettingUniverse);
