@@ -590,11 +590,11 @@ function mapBonus(lineCheck) {
 	};
 
 	//Initialise variables
-	const mapBonusZone = getPageSetting('mapBonusZone');
 	const settingName = 'mapBonusSettings';
 	const baseSettings = getPageSetting(settingName);
 	var defaultSettings = baseSettings ? baseSettings[0] : null;
 	if (defaultSettings === null) return farmingDetails;
+	if (game.global.mapBonus === 10) return farmingDetails;
 	var mapBonusRatio = getPageSetting('mapBonusRatio');
 	//Will get map stacks if below our set hd threshold.
 	var hdCheck = mapBonusRatio > 0 && hdStats.hdRatio > mapBonusRatio && getPageSetting('mapBonusStacks') > game.global.mapBonus;
@@ -604,42 +604,34 @@ function mapBonus(lineCheck) {
 	var spireStacks = spireCheck ? 10 : 0;
 
 	var settingIndex = null;
-	if (defaultSettings.active && !hdCheck && !spireCheck) {
+	if (defaultSettings.active) {
 		if (settingIndex === null)
 			for (var y = 0; y < baseSettings.length; y++) {
 				if (y === 0) continue;
-				//Skip iterating lines if map bonus is capped.
-				if (game.global.mapBonus === 10) continue;
 				const currSetting = baseSettings[y];
 				var world = currSetting.world;
 				if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 				if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
-
-				if (game.global.world - mapBonusZone[y] >= 0)
-					settingIndex = mapBonusZone.indexOf(mapBonusZone[y]);
-				else
-					continue;
+				settingIndex = y;
 			}
 	}
+	var setting;
+	if (hdCheck || spireCheck) {
+		//Set default settings. If empty then set some of them.
+		var defaultEmpty = Object.keys(defaultSettings).length === 1;
+		setting = {
+			jobratio: defaultEmpty ? "1,1,2" : defaultSettings.jobratio, autoLevel: true, level: 0, special: defaultEmpty ? "lmc" : defaultSettings.special, repeat: Math.max(spireStacks, healthStacks), priority: Infinity,
+		}
+	}
+
+	if (settingIndex !== null)
+		setting = baseSettings[settingIndex];
 
 	if (lineCheck)
-		return !setting ? baseSettings[settingIndex] : setting;
+		return setting;
 
-	if ((settingIndex !== null) || hdCheck || spireCheck) {
-		if (hdCheck || spireCheck) {
-			//Set default settings. If empty then set some of them.
-			var defaultEmpty = Object.keys(defaultSettings).length === 1;
-			defaultSettings = {
-				jobratio: defaultEmpty ? "1,1,2" : defaultSettings.jobratio,
-				autoLevel: true,
-				level: 0,
-				special: defaultEmpty ? "lmc" : defaultSettings.special,
-				repeat: Math.max(spireStacks, healthStacks),
-				priority: Infinity,
-			}
-		}
+	if (setting !== undefined) {
 		//Initialise variables for map settings.
-		var setting = settingIndex !== null ? baseSettings[settingIndex] : defaultSettings;
 		var repeatCounter = setting.repeat;
 		var mapLevel = setting.level;
 		var autoLevel = setting.autoLevel;
@@ -3514,7 +3506,7 @@ function farmingDecision() {
 		//Sort priority list by priority > mapTypes index(settingName) if the priority sorting toggle is on
 		if (getPageSetting('autoMapsPriority')) {
 			priorityList.sort(function (a, b) {
-				if (a.priority === b.priority) return (mapTypes.indexOf(a.settingName) > mapTypes.indexOf(b.settingName)) ? 1 : -1; return (a.priority > b.priority) ? 1 : -1
+				if (a.priority === b.priority) return (mapTypes.indexOf(a.settingName) > mapTypes.indexOf(b.settingName)) ? 1 : -1; return (a.priority > b.priority) ? 1 : -1;
 			});
 		}
 		//Loops through each item in the priority list and checks if it should be run.

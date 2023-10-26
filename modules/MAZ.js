@@ -1784,7 +1784,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 
 	//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
-	if (mapBonus) mazHelp += "<br><br><b>Map Bonus<b> works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.</b>";
+	if (mapBonus) mazHelp += "<br><br><b>Map Bonus</b> works by using the last active line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.";
 	if (voidMap) {
 		mazHelp += "<br><br>Void Map works by using Min Zone</b> as the lower bound zone to run voids on and <b>Max Zone</b> as the upper bound.";
 

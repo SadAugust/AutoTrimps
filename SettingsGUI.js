@@ -1558,12 +1558,6 @@ function initializeAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false, jobratio: '1,1,2', special: '0', }], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
 
-		createSetting('mapBonusZone',
-			function () { return ('Map Bonus: Zone') },
-			function () { return ('If you are seeing this setting due to the <b>Display All Settings</b> setting being enabled then <b>DO NOT</b> alter this setting as it will cause issues with <b>Map Bonus</b> settings being run.') },
-			'multiValue', [6], null, 'Maps', [1, 2],
-			function () { return (false) });
-
 		//Map Farm
 		createSetting('mapFarmSettings',
 			function () { return ('Map Farm Settings') },
