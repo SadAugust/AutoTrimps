@@ -516,7 +516,7 @@ function voidMaps(lineCheck) {
 
 	if (setting !== undefined || mapSettings.portalAfterVoids || MODULES.mapFunctions.afterVoids) {
 
-		var jobRatio = mapSettings.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.jobratio : defaultSettings.jobratio;
+		var jobRatio = setting !== undefined ? setting.jobratio : '1,1,1,1';
 		mapSettings.portalAfterVoids = mapSettings.portalAfterVoids || setting.portalAfter;
 
 		if (game.global.totalVoidMaps > 0) {
