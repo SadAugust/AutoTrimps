@@ -41,7 +41,7 @@ Download <a href="https://github.com/SadAugust/AutoTrimps/blob/main/mods.js">mod
 
 Step 2: 
 
-Navigate to Steam\steamapps\common\Trimps and place mods.js into the folder. If you have other mods installed then just copy the text in AT's mods.js and place it somewhere in the mods.js file.
+Navigate to Steam\steamapps\common\Trimps\mods and place mods.js into the folder. If you have other mods installed then just copy the text in AT's mods.js and place it somewhere in the mods.js file.
 
 Step 3: 
 
