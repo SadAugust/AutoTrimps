@@ -1449,7 +1449,26 @@ function prestigeRaiding(lineCheck) {
 	if (settingIndex !== null) setting = baseSettings[settingIndex];
 	if (lineCheck) return setting;
 
+	function resetSetting() {
+		mappingDetails(mapName, mapSettings.mapLevel, mapSettings.special);
+		if (defaultSettings.recycle && game.global.preMapsActive && mapSettings.prestigeMapArray) {
+			if (!game.global.preMapsActive) mapsClicked(true);
+			for (var x = 0; x < mapSettings.prestigeMapArray.length; x++) {
+				recycleMap(getMapIndex(mapSettings.prestigeMapArray[x]));
+			}
+		}
+		delete mapSettings.prestigeMapArray;
+		delete mapSettings.totalMapCost;
+		delete mapSettings.mapSliders;
+		delete mapSettings.prestigeFragMapBought;
+		resetMapVars();
+	}
+
 	if (setting !== undefined) {
+		if (mapSettings.raidzones !== raidZones) {
+			resetSetting();
+		}
+
 		//Reduce raid zone to the value of the last prestige item we need to farm
 		while (equipsToFarm === prestigesToGet(raidZones - 1, targetPrestige)[0])
 			raidZones--;
@@ -1471,6 +1490,9 @@ function prestigeRaiding(lineCheck) {
 			if (game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[0])] === undefined || (game.global.mapsActive && prestigesToGet(getCurrentMapObject().level)[0] === 0)) {
 				debug("There was an error with your purchased map(s). Restarting the raiding procedure.");
 				delete mapSettings.prestigeMapArray;
+				delete mapSettings.totalMapCost;
+				delete mapSettings.mapSliders;
+				delete mapSettings.prestigeFragMapBought;
 			}
 		}
 
@@ -1495,15 +1517,8 @@ function prestigeRaiding(lineCheck) {
 	}
 
 	//Resetting variables and recycling the maps used
-	if (!shouldMap && mapSettings.mapName === mapName) {
-		mappingDetails(mapName, mapSettings.mapLevel, mapSettings.special);
-		if (defaultSettings.recycle && game.global.preMapsActive && mapSettings.prestigeMapArray) {
-			for (var x = 0; x < mapSettings.prestigeMapArray.length; x++) {
-				recycleMap(getMapIndex(mapSettings.prestigeMapArray[x]));
-			}
-			delete mapSettings.prestigeMapArray;
-		}
-		resetMapVars();
+	if (mapSettings.mapName === mapName && !shouldMap) {
+		resetSetting();
 	}
 
 	return farmingDetails;
@@ -1519,25 +1534,27 @@ function runPrestigeRaiding() {
 	if (!mapSettings.prestigeMapArray) mapSettings.prestigeMapArray = new Array(5);
 	if (!mapSettings.prestigeFragMapBought) mapSettings.prestigeFragMapBought = false;
 
-	if (mapSettings.prestigeMapArray[0] === undefined) {
-		if (mapSettings.totalMapCost < game.resources.fragments.owned) {
-			if (mapSettings.prestigeFragMapBought) {
-				if (game.global.repeatMap)
-					repeatClicked();
-				if (game.global.preMapsActive) {
-					mapSettings.prestigeFragMapBought = false;
-					MODULES.maps.fragmentFarming = false;
+	if (mapSettings.mapSliders && mapSettings.mapSliders)
+
+		if (mapSettings.prestigeMapArray[0] === undefined) {
+			if (mapSettings.totalMapCost < game.resources.fragments.owned) {
+				if (mapSettings.prestigeFragMapBought) {
+					if (game.global.repeatMap)
+						repeatClicked();
+					if (game.global.preMapsActive) {
+						mapSettings.prestigeFragMapBought = false;
+						MODULES.maps.fragmentFarming = false;
+					}
 				}
 			}
+			//If we can't afford the maps we need to farm fragments
+			//Check if we can afford the fragment farming map and if so buy it and run it
+			//Otherwise this will be stuck here ....forever?????
+			else if (game.global.preMapsActive) {
+				fragmentFarm()
+				mapSettings.prestigeFragMapBought = true;
+			}
 		}
-		//If we can't afford the maps we need to farm fragments
-		//Check if we can afford the fragment farming map and if so buy it and run it
-		//Otherwise this will be stuck here ....forever?????
-		else if (game.global.preMapsActive) {
-			fragmentFarm()
-			mapSettings.prestigeFragMapBought = true;
-		}
-	}
 
 	if (!mapSettings.prestigeFragMapBought && game.global.preMapsActive) {
 		//Recycle maps if 5 below the map limit to ensure we can purchase maximum amount of maps we could need
@@ -1577,6 +1594,9 @@ function runPrestigeRaiding() {
 				//HOPEFULLY this fixes any potential issues that transpire due to my terrible coding.
 				else {
 					delete mapSettings.prestigeMapArray;
+					delete mapSettings.totalMapCost;
+					delete mapSettings.mapSliders;
+					delete mapSettings.prestigeFragMapBought;
 					debug("Prestige Raiding - Error with finding the purchased map. Restarting the raiding procedure.");
 					return;
 				}

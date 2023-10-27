@@ -289,7 +289,7 @@ function toggleCatchUpMode() {
 			//If user want to see the games UI then run this code every 600 game loops.
 			if (getPageSetting('timeWarpDisplay') && usingRealTimeOffline && loops % 600 === 0) {
 				usingRealTimeOffline = false;
-				var enemy = getCurrentEnemy_new();
+				var enemy = getCurrentEnemy();
 				updateGoodBar();
 				updateBadBar(enemy);
 				document.getElementById("goodGuyHealthMax").innerHTML = prettify(game.global.soldierHealthMax);
@@ -312,7 +312,7 @@ function toggleCatchUpMode() {
 				document.getElementById("goodGuyBlock").innerHTML = blockDisplay;
 				document.getElementById("goodGuyAttack").innerHTML = calculateDamage(game.global.soldierCurrentAttack, true, true);
 				var badAttackElem = document.getElementById("badGuyAttack");
-				badAttackElem.innerHTML = calculateDamage(getCurrentEnemy_new().attack, true, false, false, getCurrentEnemy_new());
+				badAttackElem.innerHTML = calculateDamage(getCurrentEnemy().attack, true, false, false, getCurrentEnemy());
 
 				updateLabels(true);
 				displayMostEfficientEquipment();

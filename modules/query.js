@@ -27,22 +27,7 @@ function getPerSecBeforeManual(a) {
 	return b;
 }
 
-function getCurrentEnemy(a) {
-	a || (a = 1);
-	var b;
-	return (
-		game.global.mapsActive || game.global.preMapsActive
-			? game.global.mapsActive &&
-			!game.global.preMapsActive &&
-			("undefined" === typeof game.global.mapGridArray[game.global.lastClearedMapCell + a] ? (b = game.global.mapGridArray[game.global.gridArray.length - 1]) : (b = game.global.mapGridArray[game.global.lastClearedMapCell + a]))
-			: "undefined" === typeof game.global.gridArray[game.global.lastClearedCell + a]
-				? (b = game.global.gridArray[game.global.gridArray.length - 1])
-				: (b = game.global.gridArray[game.global.lastClearedCell + a]),
-		b
-	);
-}
-
-function getCurrentEnemy_new(cell) {
+function getCurrentEnemy(cell) {
 	//Base Info for enemy that will later be overwritten.
 	var enemy = {}
 	if (game.global.gridArray.length <= 0) return enemy;
