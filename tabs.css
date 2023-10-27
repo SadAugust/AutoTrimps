@@ -284,7 +284,8 @@ ul.tab li a:hover {
 
 .windowDeleteMapFarm {
 	width: 0%;
-	padding-left: 0px;
+	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveMapFarm {
@@ -391,6 +392,7 @@ ul.tab li a:hover {
 .windowDeleteTributeFarm {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveTributeFarm {
@@ -495,6 +497,7 @@ ul.tab li a:hover {
 .windowDeleteSmithyFarm {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveSmithyFarm {
@@ -682,6 +685,7 @@ ul.tab li a:hover {
 .windowDeleteRaiding {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveRaiding {
@@ -767,6 +771,7 @@ ul.tab li a:hover {
 .windowDeleteBionicRaiding {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveBionicRaiding {
@@ -847,6 +852,7 @@ ul.tab li a:hover {
 .windowDeleteHDFarm {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveHDFarm {
@@ -944,7 +950,8 @@ ul.tab li a:hover {
 
 .windowDeleteToxicity {
 	width: 0%;
-	padding-left: 0px;
+	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveToxicity {
@@ -1019,6 +1026,7 @@ ul.tab li a:hover {
 .windowDeleteWorshipperFarm {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveWorshipperFarm {
@@ -1107,6 +1115,7 @@ ul.tab li a:hover {
 .windowDeleteBoneShrine {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveBoneShrine {
@@ -1186,6 +1195,7 @@ ul.tab li a:hover {
 .windowDeleteQuagmire {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveQuagmire {
@@ -1229,6 +1239,8 @@ ul.tab li a:hover {
 
 .windowDeleteInsanity {
 	width: 0%;
+	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveInsanity {
@@ -1286,6 +1298,7 @@ ul.tab li a:hover {
 .windowDeleteAlchemy {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveAlchemy {
@@ -1352,6 +1365,7 @@ ul.tab li a:hover {
 .windowDeleteHypothermia {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveHypothermia {
@@ -1417,7 +1431,8 @@ ul.tab li a:hover {
 
 .windowDeleteDesolation {
 	width: 0%;
-	padding-left: 0px;
+	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveDesolation {
@@ -1482,6 +1497,7 @@ ul.tab li a:hover {
 .windowDeleteVoidMap {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowActiveVoidMap {
@@ -1560,6 +1576,7 @@ ul.tab li a:hover {
 .windowDeleteAutoGolden {
 	width: 0%;
 	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowPriorityAutoGolden {
