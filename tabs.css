@@ -217,13 +217,40 @@ ul.tab li a:hover {
 .windowDeleteRaiding .icomoon,
 .windowDeleteBionicRaiding .icomoon,
 .windowDeleteAutoGolden .icomoon {
+	display: inline-block;
 	position: relative;
 	top: 0.6vw;
 	left: -1.5vw;
 	color: red;
 	font-weight: bold;
 	font-size: 2vw;
-	padding-left: 1%;
+	width: 0%;
+	cursor: pointer;
+	padding-left: 0%;
+}
+
+.windowDeleteMapFarm,
+.windowDeleteToxicity,
+.windowDeleteTributeFarm,
+.windowDeleteSmithyFarm,
+.windowDeleteWorshipperFarm,
+.windowDeleteMapBonus,
+.windowDeleteBoneShrine,
+.windowDeleteQuagmire,
+.windowDeleteInsanity,
+.windowDeleteAlchemy,
+.windowDeleteHypothermia,
+.windowDeleteDesolation,
+.windowDeleteHDFarm,
+.windowDeleteVoidMap,
+.windowDeleteRaiding,
+.windowDeleteBionicRaiding,
+.windowDeleteAutoGolden {
+	display: inline-block;
+	position: relative;
+	width: 0%;
+	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowLevelOff .windowLevelMapFarm,
@@ -261,7 +288,6 @@ ul.tab li a:hover {
 }
 
 /* Map Farm */
-.windowDeleteMapFarm,
 .windowActiveMapFarm,
 .windowPriorityMapFarm,
 .windowWorldMapFarm,
@@ -282,15 +308,9 @@ ul.tab li a:hover {
 	padding-left: 1%;
 }
 
-.windowDeleteMapFarm {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
-}
-
 .windowActiveMapFarm {
 	width: 4%;
-	left: -0.5vw;
+	left: 0vw;
 }
 
 .windowPriorityMapFarm {
@@ -369,7 +389,6 @@ ul.tab li a:hover {
 }
 
 /* Tribute Farm */
-.windowDeleteTributeFarm,
 .windowActiveTributeFarm,
 .windowPriorityTributeFarm,
 .windowWorldTributeFarm,
@@ -387,12 +406,6 @@ ul.tab li a:hover {
 .windowBuildings {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteTributeFarm {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveTributeFarm {
@@ -476,7 +489,6 @@ ul.tab li a:hover {
 }
 
 /* Smithy Farm */
-.windowDeleteSmithyFarm,
 .windowActiveSmithyFarm,
 .windowPrioritySmithyFarm,
 .windowWorldSmithyFarm,
@@ -492,12 +504,6 @@ ul.tab li a:hover {
 .windowMeltingPoint {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteSmithyFarm {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveSmithyFarm {
@@ -567,7 +573,6 @@ ul.tab li a:hover {
 }
 
 /* Map Bonus */
-.windowDeleteMapBonus,
 .windowActiveMapBonus,
 .windowPriorityMapBonus,
 .windowWorldMapBonus,
@@ -582,12 +587,6 @@ ul.tab li a:hover {
 .windowMapStacks {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteMapBonus {
-	width: 0%;
-	padding-left: 0px;
-	cursor: pointer;
 }
 
 .windowActiveMapBonus {
@@ -665,7 +664,6 @@ ul.tab li a:hover {
 }
 
 /* Raiding */
-.windowDeleteRaiding,
 .windowActiveRaiding,
 .windowPriorityRaiding,
 .windowWorldRaiding,
@@ -680,12 +678,6 @@ ul.tab li a:hover {
 .windowRecycle {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteRaiding {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveRaiding {
@@ -754,7 +746,6 @@ ul.tab li a:hover {
 }
 
 /* Bionic Raiding */
-.windowDeleteBionicRaiding,
 .windowActiveBionicRaiding,
 .windowPriorityBionicRaiding,
 .windowWorldBionicRaiding,
@@ -766,12 +757,6 @@ ul.tab li a:hover {
 .windowRaidingZoneBionicRaiding {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteBionicRaiding {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveBionicRaiding {
@@ -828,7 +813,6 @@ ul.tab li a:hover {
 }
 
 /* HD Farm */
-.windowDeleteHDFarm,
 .windowActiveHDFarm,
 .windowPriorityHDFarm,
 .windowWorldHDFarm,
@@ -847,12 +831,6 @@ ul.tab li a:hover {
 .windowMapLevelOn .windowHDMult {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteHDFarm {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveHDFarm {
@@ -931,7 +909,6 @@ ul.tab li a:hover {
 
 
 /* Toxicity */
-.windowDeleteToxicity,
 .windowActiveToxicity,
 .windowPriorityToxicity,
 .windowWorldToxicity,
@@ -946,12 +923,6 @@ ul.tab li a:hover {
 	position: relative;
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteToxicity {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveToxicity {
@@ -1005,7 +976,6 @@ ul.tab li a:hover {
 }
 
 /* Worshipper Farm */
-.windowDeleteWorshipperFarm,
 .windowActiveWorshipperFarm,
 .windowPriorityWorshipperFarm,
 .windowWorldWorshipperFarm,
@@ -1020,13 +990,6 @@ ul.tab li a:hover {
 .windowCellWorshipperFarm {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-
-.windowDeleteWorshipperFarm {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveWorshipperFarm {
@@ -1095,7 +1058,6 @@ ul.tab li a:hover {
 }
 
 /* Bone Shrine */
-.windowDeleteBoneShrine,
 .windowActiveBoneShrine,
 .windowPriorityBoneShrine,
 .windowWorldBoneShrine,
@@ -1110,12 +1072,6 @@ ul.tab li a:hover {
 .windowBoneDefault {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteBoneShrine {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveBoneShrine {
@@ -1181,7 +1137,6 @@ ul.tab li a:hover {
 }
 
 /* Quagmire */
-.windowDeleteQuagmire,
 .windowActiveQuagmire,
 .windowPriorityQuagmire,
 .windowWorldQuagmire,
@@ -1190,12 +1145,6 @@ ul.tab li a:hover {
 .windowBogs {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteQuagmire {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveQuagmire {
@@ -1223,7 +1172,6 @@ ul.tab li a:hover {
 }
 
 /* Insanity */
-.windowDeleteInsanity,
 .windowActiveInsanity,
 .windowPriorityInsanity,
 .windowWorldInsanity,
@@ -1235,12 +1183,6 @@ ul.tab li a:hover {
 .windowInsanity {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteInsanity {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveInsanity {
@@ -1280,7 +1222,6 @@ ul.tab li a:hover {
 }
 
 /* Alchemy */
-.windowDeleteAlchemy,
 .windowActiveAlchemy,
 .windowPriorityAlchemy,
 .windowWorldAlchemy,
@@ -1293,12 +1234,6 @@ ul.tab li a:hover {
 .windowPotionType {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteAlchemy {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveAlchemy {
@@ -1346,7 +1281,6 @@ ul.tab li a:hover {
 }
 
 /* Hypothermia */
-.windowDeleteHypothermia,
 .windowActiveHypothermia,
 .windowPriorityHypothermia,
 .windowWorldHypothermia,
@@ -1360,12 +1294,6 @@ ul.tab li a:hover {
 .windowPackrat {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteHypothermia {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveHypothermia {
@@ -1413,7 +1341,6 @@ ul.tab li a:hover {
 }
 
 /* Desolation */
-.windowDeleteDesolation,
 .windowActiveDesolation,
 .windowPriorityDesolation,
 .windowWorldDesolation,
@@ -1427,12 +1354,6 @@ ul.tab li a:hover {
 	position: relative;
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteDesolation {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveDesolation {
@@ -1478,7 +1399,6 @@ ul.tab li a:hover {
 }
 
 /* Void Map */
-.windowDeleteVoidMap,
 .windowActiveVoidMap,
 .windowPriorityVoidMap,
 .windowWorldVoidMap,
@@ -1492,12 +1412,6 @@ ul.tab li a:hover {
 .windowVoidHDRatio {
 	display: inline-block;
 	padding-left: 1%;
-}
-
-.windowDeleteVoidMap {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowActiveVoidMap {
@@ -1559,7 +1473,6 @@ ul.tab li a:hover {
 }
 
 /* Golden */
-.windowDeleteAutoGolden,
 .windowActiveAutoGolden,
 .windowAmtAutoGolden,
 .windowTypeAutoGolden,
@@ -1571,12 +1484,6 @@ ul.tab li a:hover {
 
 .windowActiveAutoGolden {
 	width: 11%;
-}
-
-.windowDeleteAutoGolden {
-	width: 0%;
-	cursor: pointer;
-	padding-left: 0%;
 }
 
 .windowPriorityAutoGolden {
