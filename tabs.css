@@ -310,7 +310,6 @@ ul.tab li a:hover {
 
 .windowActiveMapFarm {
 	width: 4%;
-	left: 0vw;
 }
 
 .windowPriorityMapFarm {
@@ -927,7 +926,6 @@ ul.tab li a:hover {
 
 .windowActiveToxicity {
 	width: 6%;
-	left: -0.5vw;
 }
 
 .windowPriorityToxicity {
@@ -1358,7 +1356,6 @@ ul.tab li a:hover {
 
 .windowActiveDesolation {
 	width: 8%;
-	left: -0.5vw;
 }
 
 .windowPriorityDesolation {
