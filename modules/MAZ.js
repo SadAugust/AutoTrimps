@@ -705,7 +705,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.packrat = defaultSetting.packrat ? defaultSetting.packrat : false;
 			}
 
-			if (tributeFarm || smithyFarm)
+			if (tributeFarm || smithyFarm || alchemy)
 				defaultVals.mapType = defaultSetting.mapType ? defaultSetting.mapType : 'Absolute';
 
 			if (mapFarm)
@@ -803,7 +803,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "\'>Auto<br/>Level</div>";
 		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) tooltipText += "<div class='windowLevel" + varPrefix + "\'>Map<br/>Level</div>";
-		if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
+		if (tributeFarm || smithyFarm || mapFarm || alchemy) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
 		if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>";
 		if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>";
 
@@ -993,7 +993,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (smithyFarm)
 					vals.meltingPoint = currSetting[x].meltingPoint ? currSetting[x].meltingPoint : false;
 
-				if (tributeFarm || smithyFarm)
+				if (tributeFarm || smithyFarm || alchemy)
 					vals.mapType = currSetting[x].mapType ? currSetting[x].mapType : 'Absolute';
 				//Tribute Farm
 				if (tributeFarm) {
@@ -1147,7 +1147,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowLevel" + varPrefix + "\'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
 
 			//Map Type dropdown
-			if (tributeFarm || smithyFarm || mapFarm)
+			if (tributeFarm || smithyFarm || mapFarm || alchemy)
 				tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.mapType + "' id='windowMapTypeDropdown" + x + "'>" + mapTypeDropdown + "</select></div>";
 
 			//World input
@@ -1551,7 +1551,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 				thisSetting.gather = null;
 		}
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
-		if (tributeFarm || smithyFarm || mapFarm) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
+		if (tributeFarm || smithyFarm || mapFarm || alchemy) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
 		if (mapFarm && thisSetting.mapType === 'Map Count') thisSetting.repeat = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (mapFarm && thisSetting.mapType !== 'Map Count') thisSetting.repeat = document.getElementById('windowRepeat' + x).value;
 		if (toxicity) thisSetting.repeat = document.getElementById('windowRepeat' + x).value;
@@ -1715,12 +1715,22 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	//Disable Void Map global variables when saving Void Map settings to ensure we aren't running voids at the wrong zone after updating.
 	if (voidMap) {
 		MODULES.mapFunctions.hasVoidFarmed = '';
-		if (mapSettings.boneChargeUsed) delete mapSettings.boneChargeUsed;
-		if (mapSettings.voidHDIndex) delete mapSettings.voidHDIndex;
-		if (mapSettings.dropdown) delete mapSettings.dropdown;
-		if (mapSettings.dropdown2) delete mapSettings.dropdown2;
-		if (mapSettings.voidTrigger) delete mapSettings.voidTrigger;
-		if (mapSettings.portalAfterVoids) delete mapSettings.portalAfterVoids;
+		delete mapSettings.boneChargeUsed;
+		delete mapSettings.voidHDIndex;
+		delete mapSettings.dropdown;
+		delete mapSettings.dropdown2;
+		delete mapSettings.voidTrigger;
+		delete mapSettings.portalAfterVoids;
+	}
+	else if (smithyFarm) {
+		delete mapSettings.smithyTarget;
+	}
+	else if (tributeFarm) {
+		delete mapSettings.tribute;
+		delete mapSettings.meteorologist;
+	}
+	else if (alchemy) {
+		delete mapSettings.potionTarget;
 	}
 
 	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.
@@ -1957,7 +1967,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	if (tributeFarm) {
 		//Farm Type
-		mazHelp += "<li><b>Farm Type</b> - The way in which Tribute Farming will operate. Either by using absolute values for what you'd like to farm e.g. 2700 Tributes and 37 Meteorologists or by having AT identify how many of each you can farm in X maps and then using that count to identify the amount based off expected mapping gains.</li>";
+		mazHelp += "<li><b>Farm Type</b> - The way in which Tribute Farming will operate. Either by using absolute values for what you'd like to farm e.g. 2700 Tributes and 37 Meteorologists or by having the script identify how many of each you can farm in X maps and then farming until you reach those values.</li>";
 		//Tributes
 		mazHelp += "<li><b>Tributes</b> - The amount of Tributes that should be farmed up to on this zone. If the value is greater than your Tribute Cap setting then it'll adjust it to the Tribute input whilst doing this farm.</li>";
 		//Meteorologists
@@ -1972,7 +1982,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Smithy Count
 		mazHelp += "<li><b>Smithies</b> - Smithy count you'd like to reach during this line. If you currently own 18 and want to reach 21 you'd enter 21 into this field.</li>";
 		//Farm Type
-		mazHelp += "<li><b>Farm Type</b> - The way in which Smithy Farming will operate. Either by using absolute values for what you'd like to farm e.g. 27 Smithies or by having AT identify how many you can farm in X maps and then using that count to identify the amount based off expected mapping gains.</li>";
+		mazHelp += "<li><b>Farm Type</b> - The way in which Smithy Farming will operate. Either by using absolute values for what you'd like to farm e.g. 27 Smithies or by having the script identify how many you can farm in X maps and then farming until you reach that value.</li>";
 		//Runs MP after the line
 		mazHelp += "<li><b>Run MP</b> - Will run Melting Point after this line has been run.</b></li>";
 	}
@@ -2001,6 +2011,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 
 	if (alchemy) {
+		//Farm Type
+		mazHelp += "<li><b>Farm Type</b> - The way in which Alchemy Farm will operate. Either by using absolute values for what you'd like to farm e.g. 5 Potions of Strength or by having the script identify how many you can farm in X maps and then farming until you reach that value.</li>";
 		//Potion Type
 		mazHelp += "<li><b>Potion Type</b> - The type of potion you want to farm during this line.</li>";
 		//Potion Number
@@ -2589,7 +2601,7 @@ function removeRow(index, titleText) {
 	if (raiding || desolation) document.getElementById('windowPrestigeGoal' + index).value = 'All';
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) document.getElementById('windowRunType' + index).value = 'All';
 	if (raiding && !bionic) document.getElementById('windowRaidingDropdown' + index).value = 0;
-	if (tributeFarm || smithyFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
+	if (tributeFarm || smithyFarm || alchemy) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
 	if (mapFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Map Count';
 	if (boneShrine) document.getElementById('windowBoneGather' + index).value = 'metal';
 

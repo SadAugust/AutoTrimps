@@ -138,11 +138,8 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 	var resourceSpendingPctHealth = !resourceSpendingPct ? (zoneGoHealth ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100) : resourceSpendingPct;
 	var resourceSpendingPctAttack = !resourceSpendingPct ? (zoneGoAttack ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100) : resourceSpendingPct;
 
-
-
-	if (challengeActive('Scientist') || challengeActive('Frugal')) {
+	if (challengeActive('Scientist') || challengeActive('Frugal'))
 		skipForLevels = Infinity;
-	}
 
 	var mostEfficient = {
 		attack: {
@@ -186,7 +183,6 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		if (prestigeSetting === 2 && !canAtlantrimp) continue;
 		if (i === 'Shield') continue;
 		if (buyPrestigeMaybe(i).skip) continue;
-
 		prestigesAvailable = true;
 	}
 
@@ -206,7 +202,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		//Identifying the equip cap for this equip type
 		var equipCap = !skipForLevels && equipType === 'attack' ? getPageSetting('equipCapAttack') :
 			!skipForLevels && equipType === 'health' ? getPageSetting('equipCapHealth') :
-				skipForLevels
+				skipForLevels;
 
 		var nextLevelCost = game.equipment[i].cost[MODULES.equipment[i].resource][0] * Math.pow(game.equipment[i].cost[MODULES.equipment[i].resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
 
@@ -215,11 +211,9 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		//Setting armor equips to 100% when we need to farm health
 		if (mapSettings.shouldHealthFarm && equipType === 'health') resourceSpendingPct = 1;
 		//Setting equips to 100% spending during Smithless farm. Weapons always and armor if we are using more than 0 equality levels
-		if (mapSettings.mapName === 'Smithless Farm') {
-			if (equipType === 'attack' || mapSettings.equality > 0) {
-				equipCap = Infinity;
-				resourceSpendingPct = 1;
-			}
+		if (mapSettings.mapName === 'Smithless Farm' && (equipType === 'attack' || mapSettings.equality > 0)) {
+			equipCap = Infinity;
+			resourceSpendingPct = 1;
 		}
 		//Load buyPrestigeMaybe into variable so it's not called 500 times
 		const maybeBuyPrestige = buyPrestigeMaybe(i, resourceSpendingPct, game.equipment[i].level);
