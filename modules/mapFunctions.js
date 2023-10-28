@@ -571,6 +571,7 @@ function voidMaps(lineCheck) {
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, null, null, null, null, null);
 		resetMapVars();
+		MODULES.mapFunctions.afterVoids = false;
 		if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
 	}
 
