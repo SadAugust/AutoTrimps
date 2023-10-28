@@ -1031,16 +1031,6 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> 60</p>";
 				return description;
 			}, 'value', 60, null, 'Combat', [1]);
-		createSetting('fightforever',
-			function () { return ('Fight Always') },
-			function () {
-				var description = "<p>Sends trimps to fight if they're not fighting, regardless of <b>Better Auto Fight</b>.</p>";
-				description += "<p>Set to 0 to always send out trimps.</p>";
-				description += "<p>Set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out.</p>";
-				description += "<p>Set to <b>-1 or below</b> to disable this setting.</p>";
-				description += "<p><b>Recommended:</b> -1</p>";
-				return description;
-			}, 'value', -1, null, 'Combat', [1]);
 		createSetting('addpoison',
 			function () { return ('Poison Calc') },
 			function () {
@@ -2454,22 +2444,11 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [1, 2]);
-
-		createSetting('dfightforever',
-			function () { return (['DFA: Off', 'DFA: Non-Empowered', 'DFA: All Dailies']) },
-			function () {
-				var description = "<p>Will control how combat is handled in dailies. If enabled will override settings in the <b>Combat</b> tab.</p>";
-				description += "<p><b>DFA: Off</b><br>Disables this setting.</p>";
-				description += "<p><b>DFA: Non-Empowered</b><br>Will only send trimps to fight if the daily doesn't have the empowered mod.</p>";
-				description += "<p><b>DFA: All Dailies</b><br>Sends trimps to fight if they're not fighting in daily challenges, Won't do anything on Bloodthirst/Plagued/Bogged dailies.</p>";
-
-				description += "<p><b>Recommended:</b> DFA: Off</p>";
-				return description;
-			}, 'multitoggle', 0, null, 'Daily', [1]);
 		createSetting('avoidEmpower',
 			function () { return ('Avoid Empower') },
 			function () {
 				var description = "<p>Tries to avoid Empower stacks during empower dailies by suiciding your trimps when the enemies next hit will kill them.</p>";
+				description += "<p>Doesn't factor in damage taken from the Explosive daily modifier.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Daily', [1]);

@@ -384,11 +384,10 @@ function mainLoop() {
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
 	//Need to identify a better solution to this. Not really sure what I can do though.
 	if (MODULES.popups.mazWindowOpen) {
-		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Balance Destack", "Toxicity Farm", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Daily Auto Golden", "C3 Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm", "Desolation Gear Scumming", "C2 Runner", "C3 Runner"];
+		const mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Balance Destack", "Toxicity Farm", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Daily Auto Golden", "C3 Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm", "Desolation Gear Scumming", "C2 Runner", "C3 Runner"];
 		var tipElem = document.getElementById('tooltipDiv');
-		var mazCheck = mazSettings.indexOf(tipElem.children.tipTitle.innerText);
 
-		if (mazCheck === -1) {
+		if (mazSettings.indexOf(tipElem.children.tipTitle.innerText) === -1) {
 			if (tipElem.style.overflowY !== '')
 				tipElem.style.overflowY = '';
 			if (tipElem.style.maxHeight !== '')
@@ -416,8 +415,7 @@ function mainLoop() {
 		trimpStats = new TrimpStats();
 		hdStats = new HDStats();
 	}
-	if (shouldRunInTimeWarp())
-		farmingDecision();
+	if (shouldRunInTimeWarp()) farmingDecision();
 	if (MODULES.maps.slowScumming && game.global.mapRunCounter !== 0) {
 		if (game.global.mapBonus === 10) MODULES.maps.slowScumming = false;
 		else {
@@ -460,10 +458,8 @@ function mainLoop() {
 	autoEquip();
 
 	//Portal
-
 	if (shouldRunInTimeWarp()) autoPortalCheck();
 	//Equip highlighting
-
 	if (shouldRunInTimeWarp()) displayMostEfficientEquipment();
 
 	//Logic for Universe 1
@@ -479,6 +475,7 @@ function mainLoop() {
 	automateSpireAssault();
 
 	challengeInfo();
+
 	if (MODULES.popups.remainingTime === 5000) {
 		MODULES.popups.remainingTime -= 0.0001;
 		MODULES.popups.intervalID = setInterval(function () {
@@ -498,24 +495,12 @@ function mainLoopU1() {
 	//Core
 	geneAssist();
 	autoRoboTrimp();
-	if (getPageSetting('spendmagmite') === 2 && !settingChangedTimeout) autoMagmiteSpender();
-	autoNatureTokens();
 	autoEnlight();
+	autoNatureTokens();
+	if (getPageSetting('spendmagmite') === 2 && !settingChangedTimeout) autoMagmiteSpender();
 	autoGenerator();
-
-	//Combat
-	trimpcide();
-	if (!game.global.fighting) {
-		if (getPageSetting('fightforever') === 0) fightalways();
-		else if (getPageSetting('fightforever') > 0 && hdStats.hdRatio <= getPageSetting('fightforever')) fightalways();
-		else if (getPageSetting('dfightforever') === 1 && challengeActive('Daily') && typeof game.global.dailyChallenge.empower === 'undefined' && typeof game.global.dailyChallenge.bloodthirst === 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
-		else if (getPageSetting('dfightforever') === 2 && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
-	}
-	if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidEmpower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidEmpower();
-
 	//Stance
 	if (shouldRunInTimeWarp()) checkStanceSetting();
-
 	//Spire. Exit cell & respec
 	if (game.global.spireActive) {
 		exitSpireCell();
@@ -526,14 +511,8 @@ function mainLoopU1() {
 //U2 functions
 function mainLoopU2() {
 	if (game.global.universe !== 2) return;
-	//Archeology
-	/* if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring(); */
 	//Auto Equality Management
-	if (shouldRunInTimeWarp()) {
-		if (getPageSetting('equalityManagement') === 1) equalityManagementBasic();
-		if (getPageSetting('equalityManagement') === 2) equalityManagement();
-	}
-
+	if (shouldRunInTimeWarp()) equalityManagement();
 }
 
 function guiLoop() {

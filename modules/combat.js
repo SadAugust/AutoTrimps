@@ -1,7 +1,9 @@
 function callBetterAutoFight() {
+	avoidEmpower();
+	trimpcide();
 	if (getPageSetting('autoFight') === 0) return;
 	else if (getPageSetting('autoFight') === 1) betterAutoFight();
-	else if (getPageSetting('autoFight') === 2) betterAutoFight3();
+	else if (getPageSetting('autoFight') === 2) betterAutoFightVanilla();
 }
 
 function newArmyRdy() {
@@ -13,20 +15,16 @@ function betterAutoFight() {
 		pauseFight();
 	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || MODULES.maps.livingActive)
 		return;
-
-	if (!game.global.fighting) {
-		if (newArmyRdy() || game.global.soldierHealth > 0) {
-			battle(true);
-		}
-	}
+	if (!game.global.fighting && (game.global.soldierHealth > 0 || newArmyRdy()))
+		battle(true);
 }
 
-function betterAutoFight3() {
+function betterAutoFightVanilla() {
 	if (game.global.autoBattle && game.global.pauseFight && !game.global.spireActive)
 		pauseFight();
-	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || game.global.spireActive || MODULES.maps.livingActive)
+	if (game.global.gridArray.length === 0 || !game.upgrades.Battle.done || game.global.fighting)
 		return;
-	if (game.global.world === 1 && !game.global.fighting) {
+	if (game.global.world === 1 && !game.global.fighting && game.global.lastClearedCell === -1) {
 		battle(true);
 	}
 }
@@ -34,6 +32,7 @@ function betterAutoFight3() {
 //Suicides trimps if we don't have max anticipation stacks and sending a new army would give us max stacks.
 //Doesn't do this inside of void maps OR spires.
 function trimpcide() {
+	if (game.global.universe !== 1) return;
 	if (game.portal.Anticipation.level === 0) return;
 	if (!game.global.fighting) return;
 	if (!getPageSetting('ForceAbandon')) return;
@@ -70,52 +69,95 @@ function forceAbandonTrimps() {
 
 //Check if we would die from the next enemy attack
 //Only used in U1
-function armydeath() {
-	if (game.global.mapsActive) return !1;
-	var cell = game.global.lastClearedCell + 1,
-		enemyAttack = game.global.gridArray[cell].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks),
-		ourHealth = game.global.soldierHealth;
-	"Ice" === getEmpowerment() && (enemyAttack *= game.empowerments.Ice.getCombatModifier());
+function armyDeath() {
+	if (game.global.universe !== 1) return false;
+	//Misc Stats
+	const enemy = getCurrentEnemy();
+	const fluctuation = game.global.universe === 2 ? 1.5 : 1.2;
+	const runningDaily = challengeActive('Daily');
+	//const runningElectricity = challengeActive('Electricity') || challengeActive('Mapocalypse');
+	if (!runningDaily) return false;
+	if (game.global.mapsActive) return false;
+	if (!getPageSetting('avoidEmpower')) return false;
+
+	//Trimps Stats
+	var ourHealth = game.global.soldierHealth;
 	var block = game.global.soldierCurrentBlock;
-	var electricityChallenge = challengeActive('Electricity') || challengeActive('Mapocalypse');
-	return (
-		3 === game.global.formation ? (block /= 4) : "0" !== game.global.formation && (block *= 2),
-		block > game.global.gridArray[cell].attack ? (enemyAttack *= getPierceAmt()) : (enemyAttack -= block * (1 - getPierceAmt())),
-		challengeActive('Daily') && void 0 !== game.global.dailyChallenge.crits && (enemyAttack *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
-		void 0 !== game.global.dailyChallenge.bogged && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
-		void 0 !== game.global.dailyChallenge.plague && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
-		electricityChallenge && (ourHealth -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
-		"corruptCrit" === game.global.gridArray[cell].corrupted
-			? (enemyAttack *= 5)
-			: "healthyCrit" === game.global.gridArray[cell].corrupted
-				? (enemyAttack *= 7)
-				: "corruptBleed" === game.global.gridArray[cell].corrupted
-					? (ourHealth *= 0.8)
-					: "healthyBleed" === game.global.gridArray[cell].corrupted && (ourHealth *= 0.7),
-		(ourHealth -= enemyAttack) <= 1e3
-	);
+	if (game.global.formation !== 0) block = game.global.formation === 3 ? block /= 4 : block *= 2;
+	//Enemy Stats
+	enemyAttack = enemy.attack * fluctuation;
+	//Ice Empowerment
+	if (getEmpowerment() === 'Ice') enemyAttack *= game.empowerments.Ice.getCombatModifier();
+	//Empower mod
+	if (runningDaily && !game.global.mapsActive && typeof game.global.dailyChallenge.empower !== 'undefined') {
+		if (typeof game.global.dailyChallenge.empower !== 'undefined')
+			enemyAttack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks)
+	}
+	var originalEnemyAttack = enemyAttack;
+	//Block Pierce calc
+	var pierce = !game.global.mapsActive ? getPierceAmt() : 0;
+	var attackMinusBlock = (enemyAttack - game.global.soldierCurrentBlock);
+	if (pierce > 0) {
+		var atkPierce = pierce * enemyAttack;
+		if (attackMinusBlock < atkPierce) attackMinusBlock = atkPierce;
+	}
+	if (attackMinusBlock <= 0) attackMinusBlock = 0;
+	enemyAttack = attackMinusBlock;
+
+	if (runningDaily) {
+		//Enemy crits
+		if (typeof game.global.dailyChallenge.crits !== 'undefined')
+			enemyAttack *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		//Bogged
+		if (typeof game.global.dailyChallenge.bogged !== 'undefined')
+			ourHealth -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)
+		//Plagued
+		if (typeof game.global.dailyChallenge.plague !== 'undefined')
+			ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks);
+	}
+	//Doesn't currently do anything in the Electricity challenge but should be implemented.
+	/* if (runningElectricity) {
+		ourHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)
+	} */
+
+	if (cell.corrupted) {
+		if (cell.corrupted === 'corruptCrit') enemyAttack *= 5;
+		else if (cell.corrupted === 'healthyCrit') enemyAttack *= 7;
+		else if (cell.corrupted === 'corruptBleed') ourHealth *= 0.8;
+		else if (cell.corrupted === 'healthyBleed') ourHealth *= 0.7;
+	}
+
+	ourHealth -= enemyAttack;
+
+	//Explosive code would go here. Not sure it's worth implementing as the original version doesn't include this.
+	/* if (runningDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' && game.global.soldierHealthMax > block && pierce > 0) {
+		var explodeDamage = originalEnemyAttack * dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		var explodeAndBlock = explodeDamage - game.global.soldierCurrentBlock;
+		if (explodeAndBlock < 0) explodeAndBlock = 0;
+		if (pierce > 0) {
+			var explodePierce = pierce * explodeDamage;
+			if (explodeAndBlock < explodePierce) explodeAndBlock = explodePierce;
+		}
+		ourHealth -= explodeAndBlock;
+	} */
+
+	return ourHealth <= 0;
 }
 
 //Suicides army to avoid empower stacks if the next enemy attack would kill us.
 function avoidEmpower() {
-	if (!(typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined')) return;
-	if (!armydeath()) return;
-	if (game.global.universe !== 1) return;
+	if (!armyDeath()) return;
 
-	mapsClicked(true);
-	mapsClicked(true);
-	debug("Abandoning Trimps to avoid Empower stacks.", "other");
+	if (game.global.mapsActive && game.global.voidBuff === '') {
+		mapsClicked(true);
+		runMap_AT();
+	}
+	else if (!game.global.mapsActive) {
+		mapsClicked(true);
+		mapsClicked(true);
+	}
+	debug('Abandoning Trimps to avoid Empower stacks.', 'other');
 	return;
-}
-
-function fightalways() {
-	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
-	var spireZone = (1 + spireNo) * 100;
-	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || (game.global.spireActive && (game.global.world >= spireZone || 0 >= spireNo)))
-		return;
-	if (!game.global.fighting)
-		battle(true);
 }
 
 function equalityManagementBasic() {
@@ -160,18 +202,12 @@ function equalityManagementBasic() {
 	}
 }
 
-//Auto Equality
 function equalityManagement() {
-	if (usingRealTimeOffline && !getPageSetting('timeWarpSpeed')) {
-		equalityManagementBasic();
-		return;
-	}
-
-	if (game.global.preMapsActive || game.global.gridArray.length <= 0)
-		return;
-
-	if (game.portal.Equality.radLevel === 0)
-		return;
+	if (game.portal.Equality.radLevel === 0) return;
+	if (game.global.preMapsActive || game.global.gridArray.length <= 0) return;
+	const equalitySetting = getPageSetting('equalityManagement');
+	if (equalitySetting === 0) return;
+	if (equalitySetting === 1) return equalityManagementBasic();
 
 	//Turning off equality scaling
 	game.portal.Equality.scalingActive = false;
