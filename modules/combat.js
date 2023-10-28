@@ -120,11 +120,11 @@ function armyDeath() {
 		ourHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)
 	} */
 
-	if (cell.corrupted) {
-		if (cell.corrupted === 'corruptCrit') enemyAttack *= 5;
-		else if (cell.corrupted === 'healthyCrit') enemyAttack *= 7;
-		else if (cell.corrupted === 'corruptBleed') ourHealth *= 0.8;
-		else if (cell.corrupted === 'healthyBleed') ourHealth *= 0.7;
+	if (enemy.corrupted) {
+		if (enemy.corrupted === 'corruptCrit') enemyAttack *= 5;
+		else if (enemy.corrupted === 'healthyCrit') enemyAttack *= 7;
+		else if (enemy.corrupted === 'corruptBleed') ourHealth *= 0.8;
+		else if (enemy.corrupted === 'healthyBleed') ourHealth *= 0.7;
 	}
 
 	ourHealth -= enemyAttack;
