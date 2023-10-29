@@ -555,7 +555,7 @@ function voidMaps(lineCheck) {
 		farmingDetails.repeat = false;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
-		if (setting.priority) farmingDetails.priority = setting.priority;
+		if (setting && setting.priority) farmingDetails.priority = setting.priority;
 		//This is a check for the whichHitsSurvived function to see which type of hitsSurvived we should be looking at.
 		farmingDetails.voidHitsSurvived = true;
 		//Saving settings here so that we don't need to store them in global variables. They'll just be wiped after Void Maps has finished running.
