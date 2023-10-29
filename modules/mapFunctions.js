@@ -405,32 +405,12 @@ function voidMaps(lineCheck) {
 	var hdTypes = ['hdType', 'hdType2'];
 
 	var hdObject = {
-		world: {
-			hdStat: hdStats.hdRatio,
-			hdStatVoid: hdStats.vhdRatio,
-			name: 'World HD Ratio',
-		},
-		map: {
-			hdStat: hdStats.hdRatioMap,
-			name: 'Map HD Ratio',
-		},
-		void: {
-			hdStat: hdStats.hdRatioVoid,
-			hdStatVoid: hdStats.vhdRatioVoid,
-			name: 'Void HD Ratio',
-		},
-		hitsSurvived: {
-			hdStat: hdStats.hitsSurvived,
-			name: 'Hits Survived',
-		},
-		hitsSurvivedVoid: {
-			hdStat: hdStats.hitsSurvivedVoid,
-			name: 'Hits Survived Void',
-		},
-		maplevel: {
-			hdStat: hdStats.autoLevel,
-			name: 'Map Level',
-		},
+		world: { hdStat: hdStats.hdRatio, hdStatVoid: hdStats.vhdRatio, name: 'World HD Ratio', },
+		map: { hdStat: hdStats.hdRatioMap, name: 'Map HD Ratio', },
+		void: { hdStat: hdStats.hdRatioVoid, hdStatVoid: hdStats.vhdRatioVoid, name: 'Void HD Ratio', },
+		hitsSurvived: { hdStat: hdStats.hitsSurvived, name: 'Hits Survived', },
+		hitsSurvivedVoid: { hdStat: hdStats.hitsSurvivedVoid, name: 'Hits Survived Void', },
+		maplevel: { hdStat: hdStats.autoLevel, name: 'Map Level', },
 	};
 
 	for (var y = 0; y < baseSettings.length; y++) {
@@ -617,9 +597,9 @@ function mapBonus(lineCheck) {
 
 	if (hdCheck || spireCheck) {
 		//Set settings variable if we need to get hd or spire map bonus. Uses inputs from default settings (top) row of map bonus settings.
-		var defaultEmpty = Object.keys(defaultSettings).length === 1;
+		const defaultEmpty = Object.keys(defaultSettings).length === 1;
 		setting = {
-			jobratio: defaultEmpty ? "1,1,2" : defaultSettings.jobratio, autoLevel: true, level: 0, special: defaultEmpty ? "lmc" : defaultSettings.special, repeat: Math.max(spireStacks, healthStacks), priority: Infinity,
+			jobratio: defaultEmpty ? '1,1,2' : defaultSettings.jobratio, autoLevel: true, level: 0, special: defaultEmpty ? 'lmc' : defaultSettings.special, repeat: Math.max(spireStacks, healthStacks), priority: Infinity,
 		}
 	}
 

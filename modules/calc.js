@@ -333,8 +333,11 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 
 	var customAttack = undefined;
 	if (type === 'world') {
-		if (game.global.universe === 1 && isCorruptionActive(targetZone)) customAttack = calcCorruptedAttack(targetZone);
-		else if (game.global.universe === 2 && targetZone > 200) customAttack = calcMutationAttack(targetZone);
+		if (game.global.universe === 1) {
+			if (game.global.spireActive) customAttack = calcSpire('attack');
+			else if (isCorruptionActive(targetZone)) customAttack = calcCorruptedAttack(targetZone);
+		} else if (game.global.universe === 2 && targetZone > 200) customAttack = calcMutationAttack(targetZone);
+
 	}
 
 	var enemyName = 'Improbability';
@@ -1263,8 +1266,10 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, checkOutputs) {
 	if (type === 'world') {
 		var customHealth = undefined;
 		if (type === 'world') {
-			if (game.global.universe === 1)
-				if (isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
+			if (game.global.universe === 1) {
+				if (game.global.spireActive) customHealth = calcSpire('health');
+				else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
+			}
 			if (game.global.universe === 2)
 				if (targetZone > 200) customHealth = calcMutationHealth(targetZone);
 		}
