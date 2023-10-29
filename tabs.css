@@ -1230,49 +1230,59 @@ ul.tab li a:hover {
 .windowSpecialAlchemy,
 .windowPotionNumber,
 .windowPotionType,
-.windowMapTypeDropdownAlchemy {
+.windowMapTypeDropdownAlchemy,
+.windowEndZoneAlchemy,
+.windowRepeatEveryAlchemy {
 	display: inline-block;
 	padding-left: 1%;
 }
 
 .windowActiveAlchemy {
-	width: 6%;
+	width: 5%;
 }
 
 .windowPriorityAlchemy {
-	width: 6%;
+	width: 5%;
 }
 
 .windowWorldAlchemy {
-	width: 6%;
+	width: 5%;
 }
 
 .windowCellAlchemy {
-	width: 6%;
+	width: 5%;
 }
 
 .windowAutoLevelAlchemy {
-	width: 6%;
+	width: 5%;
+}
+
+.windowEndZoneAlchemy {
+	width: 5%;
+}
+
+.windowRepeatEveryAlchemy {
+	width: 5%;
 }
 
 .windowLevelAlchemy {
-	width: 6%;
+	width: 5%;
 }
 
 .windowJobRatioAlchemy {
-	width: 9%;
+	width: 8%;
 }
 
 .windowSpecialAlchemy {
-	width: 20%;
+	width: 19%;
 }
 
 .windowPotionNumber {
-	width: 7%;
+	width: 6%;
 }
 
 .windowPotionType {
-	width: 17%;
+	width: 16%;
 }
 
 .windowMapTypeDropdownAlchemy {
@@ -1280,7 +1290,7 @@ ul.tab li a:hover {
 }
 
 .windowGatherOn .windowSpecialAlchemy {
-	width: 12%;
+	width: 11%;
 }
 
 /* Hypothermia */

@@ -1521,26 +1521,23 @@ function runPrestigeRaiding() {
 	if (!mapSettings.prestigeMapArray) mapSettings.prestigeMapArray = new Array(5);
 	if (!mapSettings.prestigeFragMapBought) mapSettings.prestigeFragMapBought = false;
 
-	if (mapSettings.mapSliders && mapSettings.mapSliders)
-
-		if (mapSettings.prestigeMapArray[0] === undefined) {
-			if (mapSettings.totalMapCost < game.resources.fragments.owned) {
-				if (mapSettings.prestigeFragMapBought) {
-					if (game.global.repeatMap)
-						repeatClicked();
-					if (game.global.preMapsActive) {
-						mapSettings.prestigeFragMapBought = false;
-						MODULES.maps.fragmentFarming = false;
-					}
+	if (mapSettings.mapSliders && mapSettings.mapSliders && mapSettings.prestigeMapArray[0] === undefined)
+		if (mapSettings.totalMapCost < game.resources.fragments.owned) {
+			if (mapSettings.prestigeFragMapBought) {
+				if (game.global.repeatMap)
+					repeatClicked();
+				if (game.global.preMapsActive) {
+					mapSettings.prestigeFragMapBought = false;
+					MODULES.maps.fragmentFarming = false;
 				}
 			}
-			//If we can't afford the maps we need to farm fragments
-			//Check if we can afford the fragment farming map and if so buy it and run it
-			//Otherwise this will be stuck here ....forever?????
-			else if (game.global.preMapsActive) {
-				fragmentFarm()
-				mapSettings.prestigeFragMapBought = true;
-			}
+		}
+		//If we can't afford the maps we need to farm fragments
+		//Check if we can afford the fragment farming map and if so buy it and run it
+		//Otherwise this will be stuck here ....forever?????
+		else if (game.global.preMapsActive) {
+			fragmentFarm()
+			mapSettings.prestigeFragMapBought = true;
 		}
 
 	if (!mapSettings.prestigeFragMapBought && game.global.preMapsActive) {
@@ -2500,7 +2497,7 @@ function alchemy(lineCheck) {
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
-		if (game.global.world === currSetting.world) {
+		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
 			settingIndex = y;
 			break;
 		}

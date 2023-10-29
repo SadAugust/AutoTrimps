@@ -6615,6 +6615,18 @@ function updateATVersion() {
 
 			}
 		}
+
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.06') {
+			if (typeof (autoTrimpSettings.alchemySettings['valueU2'][1]) !== 'undefined') {
+				for (var y = 1; y < autoTrimpSettings.alchemySettings['valueU2'].length; y++) {
+					autoTrimpSettings.alchemySettings['valueU2'][y].repeatevery = 0;
+					autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
+				}
+				saveSettings();
+			}
+		}
+
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
