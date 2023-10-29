@@ -2555,10 +2555,12 @@ function alchemy(lineCheck) {
 			if (mapSettings.potionTarget)
 				potionTarget = mapSettings.potionTarget;
 			else {
-				const herbsGained = game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned + (alchObj.getDropRate(game.global.world + mapLevel) * herbMult * potionTarget);
+				var herbsGained = game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned + (alchObj.getDropRate(game.global.world + mapLevel) * herbMult * potionTarget);
 				potionTarget = potionCurrent;
-				while (herbsGained > Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult)
+				while (herbsGained > Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult) {
+					herbsGained -= (Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult);
 					potionTarget++;
+				}
 			}
 		}
 
