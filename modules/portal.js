@@ -218,6 +218,18 @@ function freeVoidPortal() {
 function c2runnerportal(portalZone) {
 	if (!game.global.runningChallengeSquared) return;
 
+	function c2Portal() {
+		if (getPageSetting('heliumHourChallenge') !== 'None')
+			doPortal(getPageSetting('heliumHourChallenge'));
+		else
+			doPortal();
+	}
+
+	if (portalZone) {
+		c2Portal();
+		return;
+	}
+
 	if (!portalZone)
 		portalZone = c2FinishZone();
 
@@ -227,10 +239,7 @@ function c2runnerportal(portalZone) {
 		finishChallengeSquared();
 		//Only portal automatically if using C2 Runner Pct input.
 		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
-			if (getPageSetting('heliumHourChallenge') !== 'None')
-				doPortal(getPageSetting('heliumHourChallenge'));
-			else
-				doPortal();
+			c2Portal();
 		}
 	}
 	return;

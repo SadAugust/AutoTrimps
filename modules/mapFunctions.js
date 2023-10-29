@@ -498,14 +498,14 @@ function voidMaps(lineCheck) {
 
 		const voidSetting = getPageSetting('voidMapSettings')[0];
 		setting = {
-			cell: 1, jobratio: defaultSettings.jobratio ? defaultSettings.jobratio : "0,0,1", world: game.global.world, portalAfter: true, priority: 0,
+			cell: 1, jobratio: defaultSettings.jobratio ? defaultSettings.jobratio : '0,0,1', world: game.global.world, portalAfter: true, priority: 0,
 		}
 		//Checking to see which of hits survived and hd farm should be run. Prioritises hits survived.
 		if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {
 			setting.hdBase = Number(voidSetting.hitsSurvived);
 			setting.hdType = 'hitsSurvivedVoid';
 		}
-		mapSettings.voidTrigger = (resource() + " Per Hour (") + autoTrimpSettings.heliumHrPortal.name()[portalSetting] + ")";
+		mapSettings.voidTrigger = (resource() + ' Per Hour (') + autoTrimpSettings.heliumHrPortal.name()[portalSetting] + ')';
 	}
 
 	if (setting === undefined) {
@@ -514,8 +514,7 @@ function voidMaps(lineCheck) {
 	}
 	if (lineCheck) return setting;
 
-	if (setting !== undefined || mapSettings.portalAfterVoids || MODULES.mapFunctions.afterVoids) {
-
+	if (setting !== undefined) {
 		var jobRatio = setting !== undefined ? setting.jobratio : '1,1,1,1';
 		mapSettings.portalAfterVoids = mapSettings.portalAfterVoids || setting.portalAfter;
 
@@ -523,7 +522,7 @@ function voidMaps(lineCheck) {
 			shouldMap = true;
 			//Uses a bone charge if the user has toggled the setting on.
 			if (defaultSettings.boneCharge && !mapSettings.boneChargeUsed && game.permaBoneBonuses.boosts.charges > 0 && !game.options.menu.pauseGame.enabled) {
-				debug("Consumed 1 bone shrine charge on zone " + game.global.world + " and gained " + boneShrineOutput(1), "bones");
+				debug('Consumed 1 bone shrine charge on zone ' + game.global.world + ' and gained ' + boneShrineOutput(1), 'bones');
 				buyJobs(jobRatio);
 				game.permaBoneBonuses.boosts.consume();
 				mapSettings.boneChargeUsed = true;
@@ -539,13 +538,13 @@ function voidMaps(lineCheck) {
 			) {
 				//Print farming message if we haven't already started HD Farming for stats.
 				if (!mapSettings.voidFarm && getPageSetting('autoMaps'))
-					debug(mapName + ' (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') farming for stats before running void maps.', "map_Details");
+					debug(mapName + ' (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') farming for stats before running void maps.', 'map_Details');
 				return hdFarm(false, false, true, true);
 			}
 		}
 
 		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
-		var status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining'
+		var status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? ' (' + stackedMaps + ' stacked)' : '') + ' remaining';
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
@@ -3355,7 +3354,7 @@ function farmingDecision() {
 	}
 	if (!game.global.mapsUnlocked) mapSettings = farmingDetails;
 
-	mapTypes = [];
+	var mapTypes = [];
 	//U1 map settings to check for.
 	if (game.global.universe === 1) {
 		mapTypes = [
