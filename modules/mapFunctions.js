@@ -107,12 +107,17 @@ function isDoingSpire() {
 	return game.global.world >= spireZone;
 }
 
-function exitSpireCell() {
+function exitSpireCell(checkCell) {
 	if (!game.global.spireActive) return;
 	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-	if (getPageSetting(settingPrefix + 'ExitSpireCell') <= 0) return;
+	const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
+	if (isDoingSpire() && exitCell > 0 && exitCell <= 100)
+		cell = exitCell;
+	else cell = 100;
+	if (checkCell) return cell;
+	if (exitCell <= 0) return;
 
-	isDoingSpire() && game.global.lastClearedCell > getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
+	isDoingSpire() && game.global.lastClearedCell > exitCell - 1 && endSpire()
 }
 
 //Checks to see if we have enough health to survive against the max attack of the worst enemy cell inside of a map.

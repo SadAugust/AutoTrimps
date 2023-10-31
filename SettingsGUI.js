@@ -3629,7 +3629,7 @@ function initializeAllSettings() {
 			function () { return ('Enlight: Auto') },
 			function () {
 				var description = "<p>Controls when the script will purchase nature enlightenments.</p>";
-				description += "<p>Priority system for the purchases is <b>Nature > Wind > Ice</b>.</p>";
+				description += "<p>Priority system for the purchases is <b>Poison > Wind > Ice</b>.</p>";
 				description += "<p>Will only purchase an enlightenment when <b>Magma</b> is active.</p>";
 				description += "<p>Englightenment purchases ignore the <b>Token Threshold</b> setting value.</p>";
 				return description;

@@ -385,7 +385,7 @@ function buyBuildings() {
 	if (challengeActive('Hypothermia')) {
 		const hypoSettings = getPageSetting('hypothermiaSettings');
 		if (hypoSettings[0].active && hypoSettings[0].autostorage && hypoSettings.length > 0) {
-			for (var y = 0; y < hypoSettings.length; y++) {
+			for (var y = 1; y < hypoSettings.length; y++) {
 				if (!hypoSettings[y].active) {
 					continue;
 				}

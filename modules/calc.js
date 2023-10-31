@@ -334,8 +334,10 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 	var customAttack = undefined;
 	if (type === 'world') {
 		if (game.global.universe === 1) {
-			if (game.global.spireActive) customAttack = calcSpire('attack');
-			else if (isCorruptionActive(targetZone)) customAttack = calcCorruptedAttack(targetZone);
+			if (game.global.spireActive) {
+				customAttack = calcSpire('attack');
+				if (exitSpireCell(true) === 100 && game.global.usingShriek) customAttack *= game.mapUnlocks.roboTrimp.getShriekValue();
+			} else if (isCorruptionActive(targetZone)) customAttack = calcCorruptedAttack(targetZone);
 		} else if (game.global.universe === 2 && targetZone > 200) customAttack = calcMutationAttack(targetZone);
 
 	}
@@ -394,7 +396,7 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 
 function targetHitsSurvived(skipHDCheck) {
 	const hitsSurvived = !skipHDCheck && mapSettings.mapName === 'Hits Survived' ? mapSettings.hdRatio :
-		isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') :
+		isDoingSpire() ? getPageSetting('hitsSurvivedSpire') :
 			getPageSetting('hitsSurvived');
 	return hitsSurvived;
 }
@@ -685,15 +687,17 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 	else return avg;
 }
 
-function calcSpire(what, cell, name) {
+function calcSpire(what, cell, name, checkCell) {
 	//Target Cell
 	if (!cell) {
 		const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-		const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell')
+		const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
 		if (isDoingSpire() && exitCell > 0 && exitCell <= 100)
 			cell = exitCell;
 		else cell = 100;
 	}
+
+	if (checkCell) return cell;
 
 	//Enemy on the Target Cell
 	var enemy = (name) ? name : game.global.gridArray[cell - 1].name;
@@ -987,11 +991,6 @@ function calcEnemyAttack(type = 'world', zone = game.global.world, cell = 100, n
 		if (type === 'world' && game.global.usingShriek)
 			attack *= game.mapUnlocks.roboTrimp.getShriekValue();
 	}
-
-	/* if (type === 'world' && corrupt && !game.global.spireActive) {
-		if (healthy) attack *= calcCorruptionScale(zone, 5);
-		else if (corrupt) attack *= calcCorruptionScale(zone, 3);
-	} */
 
 	//Ice - Experimental
 	if (getEmpowerment() === 'Ice' && getPageSetting('fullice')) {
