@@ -734,7 +734,7 @@ function autoMap() {
 				levelText = ' Level: ' + game.global.world;
 			}
 			var voidOrLevelText = themapobj && themapobj.location === 'Void' ? ' Void: ' : levelText;
-			debug('Running selected ' + selectedMap + voidOrLevelText + ' Name: ' + themapobj && themapobj.name, 'maps', 'th-large');
+			debug('Running selected ' + selectedMap + voidOrLevelText + ' Name: ' + (themapobj && themapobj.name ? themapobj.name : ''), 'maps', 'th-large');
 			runMap();
 			MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 		}
