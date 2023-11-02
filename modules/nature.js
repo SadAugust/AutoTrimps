@@ -63,9 +63,9 @@ function autoEnlight() {
 
 	const affix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	for (var nature in game.empowerments) {
-		let natureSetting = getPageSetting(nature.toLowerCase() + "Enlight" + affix);
+		var natureSetting = getPageSetting(nature.toLowerCase() + "Enlight" + affix);
 		if (natureSetting <= 0) continue;
-		let empowerment = game.empowerments[nature];
+		var empowerment = game.empowerments[nature];
 		if (natureSetting < empowerment.nextUberCost) continue;
 		if (empowerment.nextUberCost <= empowerment.tokens) {
 			natureToActivate = nature;

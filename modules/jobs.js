@@ -53,7 +53,7 @@ function workerRatios(workerRatio) {
 
 	var ratioSet;
 
-	if (game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10) {
+	if (game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1) {
 		ratioSet = MODULES["jobs"].autoRatio.ratioHaz;
 	} else if (game.global.world >= 300) {
 		ratioSet = MODULES["jobs"].autoRatio.ratio7;

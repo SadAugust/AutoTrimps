@@ -587,12 +587,12 @@ function testEquipmentMetalSpent() {
 	function getTotalPrestigeCost(what, prestigeCount) {
 		var actualCost = 0;
 		for (var i = 1; i <= prestigeCount; i++) {
-			let equipment = game.equipment[what];
-			let prestigeMod;
-			let nextPrestigeCount = i + 1;
+			var equipment = game.equipment[what];
+			var prestigeMod;
+			var nextPrestigeCount = i + 1;
 			if (nextPrestigeCount >= 4) prestigeMod = (((nextPrestigeCount - 3) * 0.85) + 2);
 			else prestigeMod = (nextPrestigeCount - 1);
-			let prestigeCost = Math.round(equipment.oc * Math.pow(1.069, ((prestigeMod) * game.global.prestige.cost) + 1)) * equipMult;
+			var prestigeCost = Math.round(equipment.oc * Math.pow(1.069, ((prestigeMod) * game.global.prestige.cost) + 1)) * equipMult;
 			actualCost += prestigeCost;
 
 			//Calculate cost of current equip levels

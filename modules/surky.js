@@ -1837,7 +1837,6 @@ function efficiencyFlag(eList = [], pList = []) {
 	// don't flag a perk if we don't find an affordable one!
 	for (var [perkName, perkObj] of Object.entries(MODULES.surky.perks)) {
 		if (typeof (perkObj) !== "object" || !perkObj.hasOwnProperty("optimize") || !perkObj.optimize) {
-			document.getElementById(perkName).setAttribute("style", "");
 			continue;
 		}
 		// iterating over the perks, ignoring aux values

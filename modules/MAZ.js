@@ -28,7 +28,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		const farmersUntil = "<p><b>Farmers Until:</b> Stops buying Farmers from this zone. The Tribute & Worshipper farm settings override this setting and hire farmers during them.</p>";
 		const lumberjackMP = "<p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p>";
 
-		const autoRatios = "<p><b>AutoRatios\</b>\
+		var autoRatios = "<p><b>AutoRatios\</b>\
 		<br><b>Running " + (portalUniverse === 2 ? "Transmute" : "Metal") + " will override these values and use 4/5/0.</b>\
 		<br><b>1/1/1</b> Up until 300k trimps.\
 		<br><b>3/3/5</b> Up until 3mil trimps. \
@@ -36,8 +36,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 		<br><b>1/1/10</b> When above 1000 tributes. \
 		<br><b>1/2/22</b> When above 1500 tributes. \
 		<br><b>1/7/12</b> When above 3000 tributes and at or above z230.\
-		<br><b>1/1/98</b> When at or above z300.</p>";
-
+		<br><b>1/1/98</b> When at or above z300.";
+		if (game.global.universe === 2) autoRatios += "<br><b>1/1/1</b> When using a Hazardous or better heirloom.\</p>";
+		autoRatios += "</p>";
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\ ";
 
 		tooltipText += `${ratio}`;
