@@ -53,7 +53,7 @@ function autoPortal(specificPortalZone, skipDaily) {
 	if (skipDaily) portalZone = game.global.world;
 
 	if (MODULES.portal.portalForVoid) {
-		portalZone = checkLiqZoneCount() >= 99 ? 99 : (checkLiqZoneCount() + 1);
+		portalZone = checkLiqZoneCount() >= 99 ? 99 : (Math.floor(checkLiqZoneCount()) + 1);
 		if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) {
 			specificPortalZone = game.global.world;
 			portalZone = game.global.world;
@@ -499,7 +499,7 @@ function doPortal(challenge, skipDaily) {
 		if (portalUniverse === 1 && ($('#preset').value !== null || $('#preset').value !== undefined ||
 			($('#weight-he').value !== undefined && $('#weight-atk').value !== undefined && $('#weight-hp').value !== undefined && $('#weight-xp').value !== undefined))
 		) {
-			runPerky();
+			allocatePerky();
 		}
 		if (portalUniverse === 2 && ($('#presetElem').value !== null || $('#presetElem').value !== undefined ||
 			($('#radonWeight').value !== undefined && $('#clearWeight').value !== undefined && $('#survivalWeight').value !== undefined))) {
@@ -740,7 +740,7 @@ function surkyCombatRespec() {
 	if (game.global.universe === 2)
 		runSurky();
 	else
-		runPerky();
+		allocatePerky();
 	//Fire all workers so that we don't run into issues when finishing the respec
 	fireAllWorkers();
 	activateClicked();

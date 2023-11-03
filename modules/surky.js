@@ -12,6 +12,27 @@ if (typeof $$ !== 'function') {
 	};
 }
 
+function legalizeInput(settingID) {
+
+	if (!settingID) return;
+	settingID = document.getElementById(settingID);
+	var defaultValue = settingID.placeholder;
+	var minValue = settingID.min;
+	var maxValue = settingID.max;
+	var val = 0;
+
+	val = parseFloat(settingID.value);
+	var badNum = isNaN(val);
+	if (badNum)
+		val = defaultValue;
+	if (minValue !== null && val < minValue)
+		settingID.value = minValue;
+	else if (maxValue !== null && val > maxValue)
+		settingID.value = maxValue;
+	else
+		settingID.value = val;
+}
+
 MODULES.surky = {};
 MODULES.surky.perks = {};
 MODULES.surky.props = {};
@@ -26,46 +47,21 @@ function runSurky() {
 		clearAndAutobuyPerks();
 }
 
-function saveSurkySettings() {
-	const saveData = initPresetSurky();
-	//Initial setup and saving preset value
-	const settingInputs = { preset: $$('#preset').value, }
-	//Saving the values of the inputs for the weights
-	for (var item in MODULES.autoPerks.GUI.inputs) {
-		item = MODULES.autoPerks.GUI.inputs[item];
-		settingInputs[item] = +$$('#' + item).value;
+function allocateSurky() {
+	if (portalUniverse !== 2) return;
+	//Can't respec perks when running Hypothermia so don't try as it causes errors
+	if (challengeActive('Hypothermia')) return;
+	const perks = {};
+	for (var [key, value] of Object.entries(MODULES.surky.perks)) {
+		if (typeof (value) !== "object" || !value.hasOwnProperty("optimize")) continue;
+		perks[key] = value.level;
 	}
-	//Save inputs for all the presets that users can select.
-	//Overrides data for current preset otherwises saves any already saved data for the others.
-	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
-	for (var item in presetNames) {
-		item = presetNames[item].value;
-		if (item.includes('— ')) continue;
-		if (settingInputs.preset === item)
-			settingInputs[item] = [settingInputs['clearWeight'], settingInputs['survivalWeight'], settingInputs['radonWeight']];
-		else
-			settingInputs[item] = saveData[item];
-	}
+	const perkString = LZString.compressToBase64(JSON.stringify(perks));
 
-	localStorage.setItem('surkyInputs', JSON.stringify(settingInputs));
-	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
-		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(settingInputs);
-		saveSettings();
-	}
-}
-
-// Quick and dirty hack: estimate about 60% Rn from VMs for VS1.
-// exponentially weighted moving average parameters for Rn/run
-MODULES.surky.rnMAWeights = new Array(10);
-MODULES.surky.rnMAWeights[0] = 0.3;
-MODULES.surky.rnMAWeightsum = 0.3;
-for (var i = 1; i < 10; i++) {
-	MODULES.surky.rnMAWeights[i] = MODULES.surky.rnMAWeights[i - 1] * 0.7;
-	MODULES.surky.rnMAWeightsum += MODULES.surky.rnMAWeights[i];
-}
-// correct weights to sum to 1 with limited # of terms
-for (var i = 0; i < 10; i++) {
-	MODULES.surky.rnMAWeights[i] /= MODULES.surky.rnMAWeightsum;
+	tooltip('Import Perks', null, 'update');
+	document.getElementById('perkImportBox').value = perkString;
+	importPerks();
+	cancelTooltip();
 }
 
 function initPresetSurky() {
@@ -97,6 +93,83 @@ function initPresetSurky() {
 		radonWeight: +$$('#radonWeight').value,
 		...presets,
 	}
+}
+
+function saveSurkySettings() {
+	const saveData = initPresetSurky();
+	//Initial setup and saving preset value
+	const settingInputs = { preset: $$('#preset').value, }
+	//Saving the values of the inputs for the weights
+	for (var item in MODULES.autoPerks.GUI.inputs) {
+		item = MODULES.autoPerks.GUI.inputs[item];
+		settingInputs[item] = +$$('#' + item).value;
+	}
+	//Save inputs for all the presets that users can select.
+	//Overrides data for current preset otherwises saves any already saved data for the others.
+	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
+	for (var item in presetNames) {
+		item = presetNames[item].value;
+		if (item.includes('— ')) continue;
+		if (settingInputs.preset === item)
+			settingInputs[item] = [settingInputs['clearWeight'], settingInputs['survivalWeight'], settingInputs['radonWeight']];
+		else
+			settingInputs[item] = saveData[item];
+	}
+
+	localStorage.setItem('surkyInputs', JSON.stringify(settingInputs));
+	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(settingInputs);
+		saveSettings();
+	}
+}
+
+// fill preset weights from the dropdown menu and set special challenge
+function fillPresetSurky(specificPreset) {
+	if (specificPreset) $$('#preset').value = specificPreset;
+
+	const defaultWeights = {
+		ezfarm: [0, 0, 1],
+		tufarm: [1, 0.5, 15],
+		push: [1, 1, 0],
+		alchemy: [1, 0.01, 10],
+		trappa: [1, 1.5, 0],
+		downsize: [1, 1, 0],
+		duel: [1, 0.2, 0],
+		berserk: [1, 0.5, 0],
+		smithless: [1, 0.5, 0],
+		combat: [1, 0.1, 0],
+		combatRadon: [1, 0.5, 15],
+		equip: [1, 0, 0],
+		resminus: [1, 0, 0],
+		resplus: [1, 0, 0],
+		trappacarp: [1, 0, 0],
+
+	}
+	const localData = initPresetSurky();
+	const preset = $$('#preset').value;
+	const weights = (localData[preset] === null || localData[preset] === undefined) ? defaultWeights[preset] : localData[preset];
+	$$('#clearWeight').value = weights[0];
+	$$('#survivalWeight').value = weights[1];
+	$$('#radonWeight').value = weights[2];
+	saveSurkySettings();
+
+	$$('#radonPerRunDiv').style.display = 'none';
+	$$('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
+	$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
+}
+
+// Quick and dirty hack: estimate about 60% Rn from VMs for VS1.
+// exponentially weighted moving average parameters for Rn/run
+MODULES.surky.rnMAWeights = new Array(10);
+MODULES.surky.rnMAWeights[0] = 0.3;
+MODULES.surky.rnMAWeightsum = 0.3;
+for (var i = 1; i < 10; i++) {
+	MODULES.surky.rnMAWeights[i] = MODULES.surky.rnMAWeights[i - 1] * 0.7;
+	MODULES.surky.rnMAWeightsum += MODULES.surky.rnMAWeights[i];
+}
+// correct weights to sum to 1 with limited # of terms
+for (var i = 0; i < 10; i++) {
+	MODULES.surky.rnMAWeights[i] /= MODULES.surky.rnMAWeightsum;
 }
 
 // initialize perks object to default values
@@ -398,41 +471,6 @@ function initPerks() {
 	}
 }
 
-// fill preset weights from the dropdown menu and set special challenge
-function fillPresetSurky(specificPreset) {
-	if (specificPreset) $$('#preset').value = specificPreset;
-
-	const defaultWeights = {
-		ezfarm: [0, 0, 1],
-		tufarm: [1, 0.5, 15],
-		push: [1, 1, 0],
-		alchemy: [1, 0.01, 10],
-		trappa: [1, 1.5, 0],
-		downsize: [1, 1, 0],
-		duel: [1, 0.2, 0],
-		berserk: [1, 0.5, 0],
-		smithless: [1, 0.5, 0],
-		combat: [1, 0.1, 0],
-		combatRadon: [1, 0.5, 15],
-		equip: [1, 0, 0],
-		resminus: [1, 0, 0],
-		resplus: [1, 0, 0],
-		trappacarp: [1, 0, 0],
-
-	}
-	const localData = initPresetSurky();
-	const preset = $$('#preset').value;
-	const weights = (localData[preset] === null || localData[preset] === undefined) ? defaultWeights[preset] : localData[preset];
-	$$('#clearWeight').value = weights[0];
-	$$('#survivalWeight').value = weights[1];
-	$$('#radonWeight').value = weights[2];
-	saveSurkySettings();
-
-	$$('#radonPerRunDiv').style.display = 'none';
-	$$('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
-	$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
-}
-
 function initialLoad(skipLevel) {
 
 	initPerks();
@@ -668,27 +706,6 @@ function getTenacityEffect(time) {
 		time += 100;
 	}
 	return (1.1 + (Math.floor(time / 4) * 0.01));
-}
-
-function legalizeInput(settingID) {
-
-	if (!settingID) return;
-	settingID = document.getElementById(settingID);
-	var defaultValue = settingID.placeholder;
-	var minValue = settingID.min;
-	var maxValue = settingID.max;
-	var val = 0;
-
-	val = parseFloat(settingID.value);
-	var badNum = isNaN(val);
-	if (badNum)
-		val = defaultValue;
-	if (minValue !== null && val < minValue)
-		settingID.value = minValue;
-	else if (maxValue !== null && val > maxValue)
-		settingID.value = maxValue;
-	else
-		settingID.value = val;
 }
 
 function readInputs() {
@@ -1492,29 +1509,6 @@ function getPerkEfficiencies() {
 	MODULES.surky.perks.Range.efficiency = getLogWeightedValue(1.01, 1, 1, 1, 1, 1) / getPerkCost("Range", 1);
 	// Hunger: 3% atk per level. Not accurate, don't care.
 	MODULES.surky.perks.Hunger.efficiency = getLogWeightedValue(1.03, 1, 1, 1, 1, 1) / getPerkCost("Hunger", 1);
-}
-
-function exportPerkString() {
-	var exportedPerks = {};
-
-	for (var [key, value] of Object.entries(MODULES.surky.perks)) {
-		if (typeof (value) !== "object" || !value.hasOwnProperty("optimize"))
-			continue;
-		exportedPerks[key] = value.level;
-	}
-
-	exportedPerks = JSON.stringify(exportedPerks);
-	exportedPerks = LZString.compressToBase64(exportedPerks);
-	return exportedPerks;
-}
-
-function allocateSurky() {
-	//Can't respec perks when running Hypothermia so don't try as it causes errors
-	if (challengeActive('Hypothermia')) return;
-	tooltip('Import Perks', null, 'update');
-	document.getElementById('perkImportBox').value = exportPerkString();
-	importPerks();
-	cancelTooltip();
 }
 
 // zero out perk inputs and autobuy

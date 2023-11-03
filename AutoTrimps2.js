@@ -540,7 +540,6 @@ function mainCleanup() {
 		autoPortalCheck();
 		//If in Z1 then we can assume we have just portaled.
 		if (atSettings.portal.currentworld === 1) {
-			MODULES.portal.portalForVoid = false;
 			MODULES.mapFunctions.afterVoids = false;
 			MODULES.portal.zonePostpone = 0;
 			if (!game.upgrades.Battle.done) {
