@@ -1,8 +1,3 @@
-MODULES.jobs = {
-	scientist: { ratio: 8, ratio2: 4, ratio3: 16, ratio4: 64, ratio5: 256, ratio6: 1024, ratio7: 4098, },
-	autoRatio: { ratioHaz: [1, 1, 1], ratio7: [1, 1, 98], ratio6: [1, 7, 12], ratio5: [1, 2, 22], ratio4: [1, 1, 10], ratio3: [3, 1, 4], ratio2: [3, 3, 5], ratio1: [1.1, 1.15, 1.2], },
-}
-
 function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || typeof amount === 'undefined' || Number.isNaN(amount)) {
 		return false;
@@ -37,7 +32,7 @@ function safeBuyJob(jobTitle, amount) {
 	return true;
 }
 
-function workerRatios(workerRatio) {
+function workerRatios(workerRatio, jobRatios) {
 	var workerRatio = !workerRatio ? null : workerRatio
 	if (workerRatio === null) return;
 
@@ -52,28 +47,27 @@ function workerRatios(workerRatio) {
 	}
 
 	var ratioSet;
-
 	if (game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1) {
-		ratioSet = MODULES["jobs"].autoRatio.ratioHaz;
+		ratioSet = jobRatios.ratioHaz;
 	} else if (game.global.world >= 300) {
-		ratioSet = MODULES["jobs"].autoRatio.ratio7;
+		ratioSet = jobRatios.ratio7;
 	} else if (game.buildings.Tribute.owned > 3000 && mutations.Magma.active()) {
-		ratioSet = MODULES["jobs"].autoRatio.ratio6;
+		ratioSet = jobRatios.ratio6;
 	} else if (game.buildings.Tribute.owned > 1500) {
-		ratioSet = MODULES["jobs"].autoRatio.ratio5;
+		ratioSet = jobRatios.ratio5;
 	} else if (game.buildings.Tribute.owned > 1000) {
-		ratioSet = MODULES["jobs"].autoRatio.ratio4;
+		ratioSet = jobRatios.ratio4;
 	} else if (game.resources.trimps.realMax() > 3000000) {
-		ratioSet = MODULES["jobs"].autoRatio.ratio3;
+		ratioSet = jobRatios.ratio3;
 	} else if (game.resources.trimps.realMax() > 300000) {
-		ratioSet = MODULES["jobs"].autoRatio.ratio2;
+		ratioSet = jobRatios.ratio2;
 	} else if (challengeActive('Metal') || challengeActive('Transmute')) {
 		ratioSet = [4, 5, 0];
 	} else if (game.global.world < 5) {
 		ratioSet = [1.5, 0.7, 1];
 	}
 	else {
-		ratioSet = MODULES["jobs"].autoRatio.ratio1;
+		ratioSet = jobRatios.ratio1;
 	}
 
 	if (workerRatio.includes('Farmer')) return ratioSet[0]
@@ -244,20 +238,21 @@ function buyJobs(forceRatios) {
 
 	//Scientist ratio hack to ensure that we always have at least 1 scientist unless Scientist ratio is set to 0 inside of any override settings.     
 	var scientistMod;
+	const scientistRatios = { ratio: 8, ratio2: 4, ratio3: 16, ratio4: 64, ratio5: 256, ratio6: 1024, ratio7: 4098, };
 	if (game.global.world >= 150)
-		scientistMod = MODULES["jobs"].scientist.ratio7;
+		scientistMod = scientistRatios.ratio7;
 	else if (game.global.world >= 120)
-		scientistMod = MODULES["jobs"].scientist.ratio6;
+		scientistMod = scientistRatios.ratio6;
 	else if (game.global.world >= 90)
-		scientistMod = MODULES["jobs"].scientist.ratio5;
+		scientistMod = scientistRatios.ratio5;
 	else if (game.global.world >= 65)
-		scientistMod = MODULES["jobs"].scientist.ratio4;
+		scientistMod = scientistRatios.ratio4;
 	else if (game.global.world >= 50)
-		scientistMod = MODULES["jobs"].scientist.ratio3;
+		scientistMod = scientistRatios.ratio3;
 	else if (game.jobs.Farmer.owned < 100)
-		scientistMod = MODULES["jobs"].scientist.ratio2;
+		scientistMod = scientistRatios.ratio2;
 	else
-		scientistMod = MODULES["jobs"].scientist.ratio;
+		scientistMod = scientistRatios.ratio;
 
 	var desiredRatios = [0, 0, 0, 0];
 	//Looks first if we want to manually set ratios for workers through map settings or through overrides (bone shrine).
@@ -290,6 +285,7 @@ function buyJobs(forceRatios) {
 	const resourcesNeeded = setResourceNeeded();
 	if (desiredRatios[3] !== 0) scientistMod = 1;
 	if (resourcesNeeded.science > 0 && resourcesNeeded.science > game.resources.science.owned) scientistMod = 1;
+	const jobRatios = { ratioHaz: [1, 1, 1], ratio7: [1, 1, 98], ratio6: [1, 7, 12], ratio5: [1, 2, 22], ratio4: [1, 1, 10], ratio3: [3, 1, 4], ratio2: [3, 3, 5], ratio1: [1.1, 1.15, 1.2], };
 
 	for (var worker of ratioWorkers) {
 		if (!game.jobs[worker].locked) {
@@ -301,7 +297,7 @@ function buyJobs(forceRatios) {
 				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * desiredRatios[ratioWorkers.indexOf(worker)];
 			}
 			else {
-				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(worker))
+				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(worker, jobRatios))
 			}
 		}
 		else

@@ -120,8 +120,6 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	return 0;
 }
 
-MODULES.farmCalc = {};
-
 function populateZFarmData() {
 	var imps = 0;
 	for (var imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp'])
@@ -407,7 +405,7 @@ function populateZFarmData() {
 		extraMapLevelsAvailable: extraMapLevelsAvailable,
 		reducer: haveMapReducer,
 		perfectMaps: trimpStats.perfectMaps,
-		biome: MODULES.farmCalc.biomes.All.concat(MODULES.farmCalc.biomes[biome]()),
+		biome: biomeEnemyStats(biome),
 		fragments: game.resources.fragments.owned,
 
 		difficulty: prettify((trimpStats.perfectMaps ? 75 : 80) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
@@ -560,6 +558,16 @@ function simulate(saveData, zone) {
 	var trimpOverkill = 0;
 	var duelPoints = game.challenges.Duel.trimpStacks;
 	var glassStacks = game.challenges.Glass.shards;
+
+	var seed = Math.floor(Math.random(40, 50) * 100);
+	const rand_mult = 2 ** -31;
+
+	function rng() {
+		seed ^= seed >> 11;
+		seed ^= seed << 8;
+		seed ^= seed >> 19;
+		return seed * rand_mult;
+	}
 
 	var oneShot = true;
 	const angelic = mastery('angelic');
@@ -914,17 +922,8 @@ function get_best(results, fragmentCheck) {
 	return best;
 }
 
-MODULES.farmCalc.biomes = {
-	All: [
-		[0.8, 0.7, true],
-		[0.9, 1.3, false],
-		[0.9, 1.3, false],
-		[1, 1, false],
-		[1.1, 0.7, false],
-		[1.05, 0.8, true],
-		[0.9, 1.1, true],
-	],
-	Plentiful: function () {
+function biomeEnemyStats(biome) {
+	function Plentiful() {
 		return [
 			[1.3, 0.95, false],
 			[0.95, 0.95, true],
@@ -934,55 +933,64 @@ MODULES.farmCalc.biomes = {
 			[1, 1.1, false],
 			[0.8, 1.4, false],
 		]
-	}
-	,
-	Sea: function () {
+	};
+
+	function Sea() {
 		return [
 			[0.8, 0.9, true],
 			[0.8, 1.1, true],
 			[1.4, 1.1, false],
 		]
-	},
-	Mountain: function () {
+	}
+
+	function Mountain() {
 		return [
 			[0.5, 2, false],
 			[0.8, 1.4, false],
 			[1.15, 1.4, false],
 			[1, 0.85, true],
 		]
-	},
-	Forest: function () {
+	}
+
+	function Forest() {
 		return [
 			[0.75, 1.2, true],
 			[1, 0.85, true],
 			[1.1, 1.5, false],
 		]
-	},
-	Depths: function () {
+	}
+
+	function Depths() {
 		return [
 			[1.2, 1.4, false],
 			[0.9, 1, true],
 			[1.2, 0.7, false],
 			[1, 0.8, true],
 		]
-	},
-	Farmlands: function () {
-		const biome = getFarmlandsResType() === "Metal" ? "Mountain" :
-			getFarmlandsResType() === "Wood" ? "Forest" :
-				getFarmlandsResType() === "Food" ? "Sea" :
-					getFarmlandsResType() === "Gems" ? "Depths" :
-						getFarmlandsResType() === "Any" ? "Plentiful" :
-							"All";
-		return MODULES.farmCalc.biomes[biome]();
 	}
-};
 
-MODULES.farmCalc.seed = 42;
-MODULES.farmCalc.rand_mult = 2 ** -31;
+	function Farmlands() {
+		const biomeToReturn = getFarmlandsResType() === "Metal" ? Mountain :
+			getFarmlandsResType() === "Wood" ? Forest :
+				getFarmlandsResType() === "Food" ? Sea :
+					getFarmlandsResType() === "Gems" ? Depths :
+						getFarmlandsResType() === "Any" ? Plentiful :
+							"All";
+		return biomeToReturn();
+	}
 
-function rng() {
-	MODULES.farmCalc.seed ^= MODULES.farmCalc.seed >> 11;
-	MODULES.farmCalc.seed ^= MODULES.farmCalc.seed << 8;
-	MODULES.farmCalc.seed ^= MODULES.farmCalc.seed >> 19;
-	return MODULES.farmCalc.seed * MODULES.farmCalc.rand_mult;
+	const biomesFunctions = [Plentiful, Sea, Mountain, Forest, Depths, Farmlands];
+	const biomeToMatch = ['Plentiful', 'Sea', 'Mountain', 'Forest', 'Depths', 'Farmlands'];
+	biome = biomeToMatch.indexOf(biome);
+	const enemyBiome = [
+		[0.8, 0.7, true],
+		[0.9, 1.3, false],
+		[0.9, 1.3, false],
+		[1, 1, false],
+		[1.1, 0.7, false],
+		[1.05, 0.8, true],
+		[0.9, 1.1, true],
+		...biomesFunctions[biome](),
+	];
+	return enemyBiome;
 }

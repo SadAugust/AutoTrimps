@@ -1,15 +1,8 @@
-
-
-MODULES.magmite = {
-	priceIncreases: { Efficiency: 8, Capacity: 32, Supply: 64, Overclocker: 32 },
-}
-
 function calcMiSpent(upgrade) {
-	var total = 0;
 	if (game.generatorUpgrades[upgrade].cost() <= game.generatorUpgrades[upgrade].baseCost || game.generatorUpgrades[upgrade].upgrades <= 0) return 0;
 	else {
-		total = game.generatorUpgrades[upgrade].upgrades * (game.generatorUpgrades[upgrade].baseCost + (MODULES.magmite.priceIncreases[upgrade] / 2) * (game.generatorUpgrades[upgrade].upgrades - 1));
-		return total;
+		const priceIncreases = { Efficiency: 8, Capacity: 32, Supply: 64, Overclocker: 32 };
+		return game.generatorUpgrades[upgrade].upgrades * (game.generatorUpgrades[upgrade].baseCost + (priceIncreases[upgrade] / 2) * (game.generatorUpgrades[upgrade].upgrades - 1));
 	}
 }
 

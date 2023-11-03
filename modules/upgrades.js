@@ -1,6 +1,3 @@
-//Helium
-MODULES["upgrades"] = {};
-
 function gigaTargetZone() {
 	//Init
 	var targetZone = 59;

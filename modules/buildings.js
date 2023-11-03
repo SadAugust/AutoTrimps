@@ -1,7 +1,3 @@
-MODULES.buildings = {
-	smithiesBoughtThisZone: 0
-};
-
 function safeBuyBuilding(building, amt) {
 	if (!building || !amt)
 		return;
@@ -466,7 +462,7 @@ function buyBuildings() {
 
 		//Warpstations
 		if (!game.buildings.Warpstation.locked && getPageSetting('warpstation')) {
-			var firstGigaOK = MODULES["upgrades"].autoGigas === false || game.upgrades.Gigastation.done > 0;
+			var firstGigaOK = game.upgrades.Gigastation.done > 0;
 			var warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation');
 			var warpstationPct = getPageSetting('warpstationPct') / 100;
 			if (game.upgrades.Gigastation.done === 0 && getPageSetting('autoGigas')) warpstationAmt = Infinity;

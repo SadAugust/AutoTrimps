@@ -158,20 +158,6 @@ function fillPresetSurky(specificPreset) {
 	$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
 }
 
-// Quick and dirty hack: estimate about 60% Rn from VMs for VS1.
-// exponentially weighted moving average parameters for Rn/run
-MODULES.surky.rnMAWeights = new Array(10);
-MODULES.surky.rnMAWeights[0] = 0.3;
-MODULES.surky.rnMAWeightsum = 0.3;
-for (var i = 1; i < 10; i++) {
-	MODULES.surky.rnMAWeights[i] = MODULES.surky.rnMAWeights[i - 1] * 0.7;
-	MODULES.surky.rnMAWeightsum += MODULES.surky.rnMAWeights[i];
-}
-// correct weights to sum to 1 with limited # of terms
-for (var i = 0; i < 10; i++) {
-	MODULES.surky.rnMAWeights[i] /= MODULES.surky.rnMAWeightsum;
-}
-
 // initialize perks object to default values
 function initPerks() {
 	MODULES.surky.props = {
@@ -546,6 +532,21 @@ function initialLoad(skipLevel) {
 	// if Rn/run is locked, believe it, and force the old history (lets the user manually correct an error)
 	// also for easier testing (and to prevent long term problems with bad user input), assume an input greater than lifetime radon is not something the user wants semi-permanently locked 
 	if (rawRnRun > parseFloat(MODULES.surky.props.radonPerRun) / 20 || MODULES.surky.props.radonPerRun >= game.global.totalRadonEarned && rawRnRun > game.global.totalRadonEarned / 1e6) {
+
+		// Quick and dirty hack: estimate about 60% Rn from VMs for VS1.
+		// exponentially weighted moving average parameters for Rn/run
+		MODULES.surky.rnMAWeights = new Array(10);
+		MODULES.surky.rnMAWeights[0] = 0.3;
+		MODULES.surky.rnMAWeightsum = 0.3;
+		for (var i = 1; i < 10; i++) {
+			MODULES.surky.rnMAWeights[i] = MODULES.surky.rnMAWeights[i - 1] * 0.7;
+			MODULES.surky.rnMAWeightsum += MODULES.surky.rnMAWeights[i];
+		}
+		// correct weights to sum to 1 with limited # of terms
+		for (var i = 0; i < 10; i++) {
+			MODULES.surky.rnMAWeights[i] /= MODULES.surky.rnMAWeightsum;
+		}
+
 		var history = new Array(MODULES.surky.rnTerms);
 		// maintain a history of the last 10 farming runs' Rn gain, and evaluate an exponentially weighted moving average over this history
 		if (window.localStorage.getItem('rPrHistory')) {
@@ -1548,9 +1549,7 @@ function clearAndAutobuyPerks() {
 
 // autobuy from current input perk levels
 function autobuyPerks() {
-	var eList = [];
-	var pList = [];
-	efficiencyFlag(eList, pList);
+	efficiencyFlag();
 	evaluatePerks();
 	// this function is not used for max pop starting spec for trappa
 	if (MODULES.surky.props.specialChallenge === 'trappacarp' && game.global.canRespecPerks) {
@@ -1566,7 +1565,7 @@ function autobuyPerks() {
 	}
 	// optimize Trumps for Downsize
 	MODULES.surky.perks.Trumps.optimize = (MODULES.surky.props.specialChallenge === 'downsize');
-	var bestPerk = efficiencyFlag(eList, pList);
+	var bestPerk = efficiencyFlag();
 	while (bestPerk !== "") {
 		var bestName = bestPerk;
 		var bestObj = MODULES.surky.perks[bestName];
@@ -1581,7 +1580,7 @@ function autobuyPerks() {
 		}
 		MODULES.surky.perks[bestName].level = bestObj.level;
 		getPerkEfficiencies();
-		bestPerk = efficiencyFlag(eList, pList);
+		bestPerk = efficiencyFlag();
 	}
 	// use trumps as dump perk
 	if (!(MODULES.surky.props.specialChallenge === 'combat') && !(MODULES.surky.props.specialChallenge === 'combatRadon')) {
