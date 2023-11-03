@@ -1167,8 +1167,15 @@ populateHeirloomWindow = function () {
 
 function runHeirlooms() {
 	var heirlooms = calculate(true);
+
+	var selectedLoom = game.global.selectedHeirloom;
+	var startingHeirloom;
 	//Disable if we don't have an heirloom selected.
-	if (game.global.selectedHeirloom.length === 0) return;
+	if (selectedLoom.length === 0) return;
+
+	if (selectedLoom[1].includes('Equipped')) startingHeirloom = game.global[selectedLoom[1]];
+	else startingHeirloom = game.global[selectedLoom[1]][selectedLoom[0]];
+	startingHeirloom.mods = heirlooms.newLoom.mods;
 	displaySelectedHeirloom(true);
 
 	setupHeirloomHelpBtn();
