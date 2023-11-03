@@ -27,10 +27,11 @@ ul.tab li a {
 	display: inline-block;
 	color: black;
 	text-align: center;
-	padding: 0.5vh 0.9vw;
+	padding: 0.5vh 0.85vw;
 	text-decoration: none;
 	transition: 0.3s;
-	font-size: 0.9vw;
+	font-size: 0.86vw;
+	border-right: solid 1px;
 }
 
 ul.tab li .active {

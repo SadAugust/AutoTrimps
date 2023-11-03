@@ -505,6 +505,7 @@ function mainLoopU1() {
 		exitSpireCell();
 		atlantrimpRespecMessage();
 	}
+	fluffyEvolution();
 }
 
 //U2 functions

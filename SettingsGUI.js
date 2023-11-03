@@ -12,8 +12,6 @@ function automationMenuSettingsInit() {
 
 automationMenuSettingsInit();
 
-
-
 function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
 	var c = document.createElement("li"),
 		d = document.createElement("a");
@@ -84,6 +82,7 @@ function initializeAllTabs() {
 	createTabs("Spire", "Spire - Settings for Spires", addTabsDiv, addtabsUL);
 	createTabs("Magma", "Dimensional Generator & Magmite Settings", addTabsDiv, addtabsUL);
 	createTabs("Nature", "Nature Settings", addTabsDiv, addtabsUL);
+	createTabs("Fluffy", "Fluffy Evolution Settings", addTabsDiv, addtabsUL);
 	createTabs("Time Warp", "Time Warp Settings", addTabsDiv, addtabsUL);
 	createTabs("Display", "Display & Spam Settings", addTabsDiv, addtabsUL);
 	createTabs("Import Export", "Import & Export Settings", addTabsDiv, addtabsUL);
@@ -91,6 +90,7 @@ function initializeAllTabs() {
 	createTabs("Test", "Basic testing functions - Should never be seen by users", addTabsDiv, addtabsUL);
 	createTabs("Beta", "Beta features - Should never be seen by users as they aren't user ready", addTabsDiv, addtabsUL);
 
+	//Minimize tabs incon
 	var li_0 = document.createElement('li');
 	var a_0 = document.createElement('a');
 	a_0.className = "tablinks minimize";
@@ -101,6 +101,7 @@ function initializeAllTabs() {
 	li_0.setAttribute("style", "float:right!important;");
 	li_0.setAttribute("onmouseover", 'tooltip("Minimize all tabs", "customText", event, "Minimize all of the settings tabs.")');
 	li_0.setAttribute("onmouseout", 'tooltip("hide")');
+	//Maximize tabs icon
 	var li_1 = document.createElement('li');
 	var a_1 = document.createElement('a');
 	a_1.className = "tablinks maximize";
@@ -111,6 +112,7 @@ function initializeAllTabs() {
 	li_1.setAttribute("style", "float:right!important;");
 	li_1.setAttribute("onmouseover", 'tooltip("Maximize all tabs", "customText", event, "Maximize all of the settings tabs.")');
 	li_1.setAttribute("onmouseout", 'tooltip("hide")');
+	//Exit tab icon
 	var li_2 = document.createElement('li');
 	var a_2 = document.createElement('a');
 	a_2.className = "tablinks tabclose";
@@ -132,7 +134,6 @@ function initializeAllTabs() {
 initializeAllTabs();
 
 function initializeAllSettings() {
-
 	//Core
 	const displayCore = true;
 	if (displayCore) {
@@ -3561,6 +3562,7 @@ function initializeAllSettings() {
 			}, 'infoclick', 'MagmiteExplain', null, 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 	}
+
 	//----------------------------------------------------------------------------------------------------------------------
 
 	//Nature
@@ -3705,6 +3707,51 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
+	}
+
+	//----------------------------------------------------------------------------------------------------------------------
+
+	//Nature
+	const displayFluffy = true;
+	if (displayFluffy) {
+		createSetting('fluffyEvolve',
+			function () { return ('Evolve Fluffy') },
+			function () {
+				var description = "<p>Controls whether or not the script will automatically evolve Fluffy if you are at level 10.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Fluffy', [1]);
+
+		createSetting('fluffyMinZone',
+			function () { return ('Fluffy: Min Zone') },
+			function () {
+				var description = "<p>From which zone evolving should be considered.</p>";
+				description += "<p>Must be used in conjunction with <b>Fluffy: Max Zone</b>.</p>";
+				description += "<p><b>Recommended:</b> 0</p>";
+				return description;
+			}, 'value', -1, null, 'Fluffy', [1],
+			function () { return (getPageSetting('fluffyEvolve', currSettingUniverse)) });
+
+		createSetting('fluffyMaxZone',
+			function () { return ('Fluffy: Max Zone') },
+			function () {
+				var description = "<p>From which zone evolving should stop being considered.</p>";
+				description += "<p>Must be used in conjunction with <b>Fluffy: Min Zone</b>.</p>";
+				description += "<p><b>Recommended:</b> 999</p>";
+				return description;
+			}, 'value', -1, null, 'Fluffy', [1],
+			function () { return (getPageSetting('fluffyEvolve', currSettingUniverse)) });
+
+		createSetting('fluffyBP',
+			function () { return ('Fluffy: Bone Portals') },
+			function () {
+				var description = "<p>How many Bone Portals to use when the script evolves Fluffy.</p>";
+				description += "<p>If set above 0 and you don't have enough bones to afford the necessary bone portals then the script won't evolve until you have enough bones.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 1</p>";
+				return description;
+			}, 'value', -1, null, 'Fluffy', [1],
+			function () { return (getPageSetting('fluffyEvolve', currSettingUniverse)) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -5465,6 +5512,9 @@ function updateCustomButtons(initialLoad) {
 		}
 		if (document.getElementById("tabNature") !== null) {
 			document.getElementById("tabNature").style.display = radonon || (!displayAllSettings && hze < 236) ? "none" : "";
+		}
+		if (document.getElementById("tabFluffy") !== null) {
+			document.getElementById("tabFluffy").style.display = radonon || (!displayAllSettings && game.global.spiresCompleted < 2) ? "none" : "";
 		}
 		if (document.getElementById("tabChallenges") !== null) {
 			document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 40)) ? "none" : "";

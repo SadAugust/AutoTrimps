@@ -331,3 +331,23 @@ autoBattle.popup = function () {
 	autoBattle.originalpopup(...arguments);
 	if (offlineMode) usingRealTimeOffline = true;
 }
+
+function fluffyEvolution() {
+	if (game.global.universe !== 1) return;
+	if (Fluffy.currentLevel !== 10) return;
+	if (game.global.fluffyPrestige === 10) return;
+	if (!getPageSetting('fluffyEvolve')) return;
+	if (game.global.world < getPageSetting('fluffyMinZone')) return;
+	if (game.global.world > getPageSetting('fluffyMaxZone')) return;
+	//Only evolve if you can afford all the bone portals that you want to purchase at the start of your next evolution
+	var bpsToUse = getPageSetting('fluffyBP');
+	if (bpsToUse > 0 && game.global.b % 100 < bpsToUse) return;
+
+	Fluffy.prestige();
+
+	while (bpsToUse > 0) {
+		purchaseMisc('helium');
+		bpsToUse--;
+	}
+	hideBones();
+}

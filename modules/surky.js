@@ -1621,11 +1621,11 @@ if (typeof (autoTrimpSettings) === 'undefined') {
 //After initial load everything should work perfectly.
 if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	//Load CSS so that the UI is visible
-	var link1 = document.createElement("link");
-	link1.rel = "stylesheet";
-	link1.type = "text/css";
-	link1.href = "https://sadaugust.github.io/AutoTrimps/tabsStandalone.css";
-	document.head.appendChild(link1);
+	var linkStylesheet = document.createElement("link");
+	linkStylesheet.rel = "stylesheet";
+	linkStylesheet.type = "text/css";
+	linkStylesheet.href = "https://sadaugust.github.io/AutoTrimps/tabsStandalone.css";
+	document.head.appendChild(linkStylesheet);
 
 	//Load Perky
 	var script = document.createElement('script');
