@@ -1,27 +1,54 @@
 if (typeof MODULES === 'undefined')
 	MODULES = {};
 
-$$ = function (a) {
-	return document.querySelector(a);
-}
-$$$ = function (a) {
-	return [].slice.apply(document.querySelectorAll(a));
-};
+if (typeof $$ !== 'function') {
+	$$ = function (a) {
+		return document.querySelector(a);
+	}
+	$$$ = function (a) {
+		return [].slice.apply(document.querySelectorAll(a));
+	};
 
-MODULES.heirloomMods = {
-	Shield: {
+	function legalizeInput(settingID) {
+
+		if (!settingID) return;
+		settingID = document.getElementById(settingID);
+		var defaultValue = settingID.placeholder;
+		var minValue = settingID.min;
+		var maxValue = settingID.max;
+		var val = 0;
+
+		val = parseFloat(settingID.value);
+		var badNum = isNaN(val);
+		if (badNum) {
+			val = defaultValue;
+		}
+		if (minValue !== null && val < minValue) {
+			settingID.value = minValue;
+		}
+		else if (maxValue !== null && val > maxValue) {
+			settingID.value = maxValue;
+		}
+		else {
+			settingID.value = val;
+		}
+	}
+}
+
+//Lists name of all mods and their step amounts, soft caps, and hard caps.
+function heirloomInfo(type) {
+	var heirloomMods = {};
+	if (type === 'Shield') heirloomMods = {
 		breedSpeed: {
 			name: "Breed Speed",
-			fullName: "Breed Speed",
-			type: "Shield",
+			type: 'Shield',
 			get weighable() { return game.global.universe !== 2; },
 			stepAmounts: [1, 1, 1, 1, 3, 3, 3, 3, 3, 5, 10, 10],
 			softCaps: [10, 10, 10, 20, 100, 130, 160, 190, 220, 280, 360, 400],
 		},
 		critChance: {
 			name: "Crit Chance",
-			fullName: "Crit Chance, additive",
-			type: "Shield",
+			type: 'Shield',
 			weighable: true,
 			stepAmounts: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.3, 0.5, 0.5, 0.25, 0.3],
 			softCaps: [2.6, 2.6, 2.6, 5, 7.4, 9.8, 12.2, 15.9, 30, 50, 80, 95],
@@ -30,16 +57,14 @@ MODULES.heirloomMods = {
 		},
 		critDamage: {
 			name: "Crit Damage",
-			fullName: "Crit Damage, additive",
-			type: "Shield",
+			type: 'Shield',
 			weighable: true,
 			stepAmounts: [5, 5, 5, 5, 10, 10, 10, 10, 15, 20, 25, 50],
 			softCaps: [60, 60, 60, 100, 200, 300, 400, 500, 650, 850, 1100, 1700],
 		},
 		plaguebringer: {
 			name: "Plaguebringer",
-			fullName: "Plaguebringer",
-			type: "Shield",
+			type: 'Shield',
 			weighable: true,
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0.5, 0.5],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 15, 30, 45, 50],
@@ -48,56 +73,49 @@ MODULES.heirloomMods = {
 		},
 		playerEfficiency: {
 			name: "Player Efficiency",
-			fullName: "Player Efficiency",
-			type: "Shield",
+			type: 'Shield',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
 			softCaps: [16, 16, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192],
 		},
 		storageSize: {
 			name: "Storage Size",
-			fullName: "Storage Size",
-			type: "Shield",
+			type: 'Shield',
 			weighable: false,
 			stepAmounts: [4, 4, 4, 4, 8, 16, 16, 16, 16, 0, 0, 0],
 			softCaps: [64, 64, 64, 128, 256, 512, 768, 1024, 1280, 0, 0, 0],
 		},
 		trainerEfficiency: {
 			name: "Trainer Efficiency",
-			fullName: "Trainer Efficiency",
-			type: "Shield",
+			type: 'Shield',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0, 0],
 			softCaps: [20, 20, 20, 40, 60, 80, 100, 120, 140, 0, 0, 0],
 		},
 		trimpAttack: {
 			name: "Trimp Attack",
-			fullName: "Trimp Attack",
-			type: "Shield",
+			type: 'Shield',
 			weighable: true,
 			stepAmounts: [2, 2, 2, 2, 5, 5, 5, 6, 8, 10, 10, 20],
 			softCaps: [20, 20, 20, 40, 100, 150, 200, 260, 356, 460, 750, 1100],
 		},
 		trimpBlock: {
 			name: "Trimp Block",
-			fullName: "Trimp Block",
-			type: "Shield",
+			type: 'Shield',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
 			softCaps: [7, 7, 7, 10, 40, 60, 80, 100, 120, 0, 0, 0],
 		},
 		trimpHealth: {
 			name: "Trimp Health",
-			fullName: "Trimp Health",
-			type: "Shield",
+			type: 'Shield',
 			weighable: true,
 			stepAmounts: [2, 2, 2, 2, 5, 5, 5, 6, 8, 10, 10, 20],
 			softCaps: [20, 20, 20, 40, 100, 150, 200, 260, 356, 460, 750, 1100],
 		},
 		voidMaps: {
 			name: "Void Map Drop Chance",
-			fullName: "Void Map Drop Chance",
-			type: "Shield",
+			type: 'Shield',
 			weighable: true,
 			stepAmounts: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.1, 0.1],
 			softCaps: [7, 7, 7, 11, 16, 22, 30, 38, 50, 60, 7, 12],
@@ -106,8 +124,7 @@ MODULES.heirloomMods = {
 		},
 		prismatic: {
 			name: "Prismatic Shield",
-			fullName: "Prismatic Shield",
-			type: "Shield",
+			type: 'Shield',
 			get weighable() { return game.global.universe === 2; },
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 40, 60],
@@ -116,51 +133,45 @@ MODULES.heirloomMods = {
 		},
 		gammaBurst: {
 			name: "Gamma Burst",
-			fullName: "Gamma Burst",
-			type: "Shield",
+			type: 'Shield',
 			weighable: true,
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 2000, 0, 0],
 		},
 		inequality: {
 			name: "Inequality",
-			fullName: "Inequality",
-			type: "Shield",
+			type: 'Shield',
 			get weighable() { return game.global.universe === 2; },
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.25],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200],
 			hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 400],
 		},
-	},
-	Staff: {
+	}
+	else if (type === 'Staff') heirloomMods = {
 		DragimpSpeed: {
 			name: "Dragimp Efficiency",
-			fullName: "Dragimp Efficiency",
-			type: "Staff",
+			type: 'Staff',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		ExplorerSpeed: {
 			name: "Explorer Efficiency",
-			fullName: "Explorer Efficiency",
-			type: "Staff",
+			type: 'Staff',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		FarmerSpeed: {
 			name: "Farmer Efficiency",
-			fullName: "Farmer Efficiency",
-			type: "Staff",
+			type: 'Staff',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		FluffyExp: {
 			name: "Pet Exp",
-			fullName: "Pet Exp",
-			type: "Staff",
+			type: 'Staff',
 			weighable: true,
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1.2],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 50, 100, 200, 400],
@@ -168,82 +179,72 @@ MODULES.heirloomMods = {
 		},
 		LumberjackSpeed: {
 			name: "Lumberjack Efficiency",
-			fullName: "Lumberjack Efficiency",
-			type: "Staff",
+			type: 'Staff',
 			weighable: true,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		MinerSpeed: {
 			name: "Miner Efficiency",
-			fullName: "Miner Efficiency",
-			type: "Staff",
+			type: 'Staff',
 			weighable: true,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		ScientistSpeed: {
 			name: "Scientist Efficiency",
-			fullName: "Scientist Efficiency",
-			type: "Staff",
+			type: 'Staff',
 			weighable: true,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		foodDrop: {
 			name: "Food Drop Rate",
-			fullName: "Food Drop Rate",
-			type: "Staff",
+			type: 'Staff',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		fragmentsDrop: {
 			name: "Fragment Drop Rate",
-			fullName: "Fragment Drop Rate",
-			type: "Staff",
+			type: 'Staff',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		gemsDrop: {
 			name: "Gem Drop Rate",
-			fullName: "Gem Drop Rate",
-			type: "Staff",
+			type: 'Staff',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		metalDrop: {
 			name: "Metal Drop Rate",
-			fullName: "Metal Drop Rate",
-			type: "Staff",
+			type: 'Staff',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		woodDrop: {
 			name: "Wood Drop Rate",
-			fullName: "Wood Drop Rate",
-			type: "Staff",
+			type: 'Staff',
 			weighable: false,
 			stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
 			softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120],
 		},
 		ParityPower: {
 			name: "Parity Power",
-			fullName: "Parity Power",
-			type: "Staff",
+			type: 'Staff',
 			weighable: true,
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500],
 		},
-	},
-	Core: {
+	};
+	else if (type === 'Core') heirloomMods = {
 		fireTrap: {
 			name: "Fire",
-			fullName: "Fire Trap Damage",
-			type: "Core",
+			type: 'Core',
 			weighable: true,
 			stepAmounts: [1, 1, 1, 1, 2, 3, 4],
 			softCaps: [25, 25, 25, 50, 100, 199, 400],
@@ -251,8 +252,7 @@ MODULES.heirloomMods = {
 		},
 		poisonTrap: {
 			name: "Poison",
-			fullName: "Poison Trap Damage",
-			type: "Core",
+			type: 'Core',
 			weighable: true,
 			stepAmounts: [1, 1, 1, 1, 2, 3, 4],
 			softCaps: [25, 25, 25, 50, 100, 199, 400],
@@ -260,26 +260,23 @@ MODULES.heirloomMods = {
 		},
 		lightningTrap: {
 			name: "Lightning",
-			fullName: "Lightning Trap Damage",
-			type: "Core",
+			type: 'Core',
 			weighable: true,
 			stepAmounts: [0, 0, 1, 1, 2, 2, 3],
 			softCaps: [0, 0, 10, 20, 50, 100, 199],
 			immutable: true,
 		},
 		strengthEffect: {
-			name: "Strength",
-			fullName: "Strength Tower Effect",
-			type: "Core",
+			name: 'Strength',
+			type: 'Core',
 			weighable: true,
 			stepAmounts: [1, 1, 1, 1, 2, 2, 3],
 			softCaps: [10, 10, 10, 20, 50, 100, 199],
 			immutable: true,
 		},
 		condenserEffect: {
-			name: "Condenser",
-			fullName: "Condenser Effect",
-			type: "Core",
+			name: 'Condenser',
+			type: 'Core',
 			weighable: true,
 			stepAmounts: [0, 0.25, 0.25, 0.25, 0.5, 0.5, 0.5],
 			softCaps: [0, 5, 5, 10, 15, 20, 30],
@@ -288,48 +285,23 @@ MODULES.heirloomMods = {
 		},
 		runestones: {
 			name: "Runestones",
-			fullName: "Runestone Drop Rate",
-			type: "Core",
+			type: 'Core',
 			weighable: true,
 			stepAmounts: [1, 1, 1, 1, 2, 3, 4],
 			softCaps: [25, 25, 25, 50, 100, 199, 400],
 			immutable: true,
 		},
-
 		empty: {
 			name: "Empty",
-			fullName: "Empty",
 			weighable: false,
 		}
 	}
+
+	return heirloomMods;
 }
+
 MODULES.autoHeirlooms = {};
 MODULES.heirloomUI = {};
-
-function legalizeInput(settingID) {
-
-	if (!settingID) return;
-	settingID = document.getElementById(settingID);
-	var defaultValue = settingID.placeholder;
-	var minValue = settingID.min;
-	var maxValue = settingID.max;
-	var val = 0;
-
-	val = parseFloat(settingID.value);
-	var badNum = isNaN(val);
-	if (badNum) {
-		val = defaultValue;
-	}
-	if (minValue !== null && val < minValue) {
-		settingID.value = minValue;
-	}
-	else if (maxValue !== null && val > maxValue) {
-		settingID.value = maxValue;
-	}
-	else {
-		settingID.value = val;
-	}
-}
 
 function setupHeirloomUI() {
 
@@ -422,7 +394,7 @@ function setupHeirloomUI() {
 
 	MODULES.heirloomUI.GUI = {};
 
-	//Code to remove the heirloom UI. Should never get called anywhere!
+	//Code to remove the heirloom UI. Should never get called anywhere! But it never hurts for it to be setup.
 	MODULES.heirloomUI.removeGUI = function () {
 		Object.keys(MODULES.heirloomUI.GUI).forEach(function (key) {
 			var $elem = MODULES.heirloomUI.GUI[key];
@@ -435,7 +407,6 @@ function setupHeirloomUI() {
 				delete $elem;
 			}
 		});
-		MODULES.surky.showing = false;
 	}
 
 	MODULES.heirloomUI.displayGUI = function () {
@@ -455,7 +426,7 @@ function setupHeirloomUI() {
 			heirloomInputs = {};
 		}
 
-		heirloomGUI = MODULES.heirloomUI.GUI;
+		const heirloomGUI = MODULES.heirloomUI.GUI;
 
 		//Setting up a DIV to contain the entire heirloom UI.
 		var $buttonbar = document.getElementById("extraHeirlooms");
@@ -541,63 +512,60 @@ function roundFloatingPointErrors(n) {
 	return parseFloat(n.toFixed(2));
 }
 
-function getStepAmount(type, rarity, slot) {
-	if ((MODULES.heirloomMods[slot][type].heirloopy && Fluffy.isRewardActive("heirloopy")) || MODULES.heirloomMods[slot][type].immutable) return MODULES.heirloomMods[slot][type].stepAmounts[rarity];
-	if (game.global.universe === 2) return MODULES.heirloomMods[slot][type].stepAmounts[rarity] / 10;
-	return MODULES.heirloomMods[slot][type].stepAmounts[rarity];
-}
-
-function getSoftCap(type, rarity, slot) {
-	if ((MODULES.heirloomMods[slot][type].heirloopy && Fluffy.isRewardActive("heirloopy")) || MODULES.heirloomMods[slot][type].immutable) return MODULES.heirloomMods[slot][type].softCaps[rarity];
-	if (game.global.universe === 2) return MODULES.heirloomMods[slot][type].softCaps[rarity] / 10;
-	return MODULES.heirloomMods[slot][type].softCaps[rarity];
-}
-
-function getHardCap(type, rarity, slot) {
-	if ((MODULES.heirloomMods[slot][type].heirloopy && Fluffy.isRewardActive("heirloopy")) || MODULES.heirloomMods[slot][type].immutable) return MODULES.heirloomMods[slot][type].hardCaps[rarity];
-	if (game.global.universe === 2) return MODULES.heirloomMods[slot][type].hardCaps[rarity] / 10;
-	return MODULES.heirloomMods[slot][type].hardCaps[rarity];
-}
-
-function normalizedCrit(critChance, critDamage, megaCrits, megaCritMult) {
-	if (megaCrits === 0) {
-		return critDamage * critChance + ((1 - critChance) * 100);
-	}
-	const lowCrit = 1 - critChance;
-	return critDamage * Math.pow(megaCritMult, megaCrits - 1) * (lowCrit + critChance * megaCritMult);
-}
-
-const rarityNames = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"];
-const basePrices = [5, 10, 15, 25, 75, 150, 400, 1000, 2500, 7500, 50000, 375000];
-const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000];
-const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
-
 class Heirloom {
 	constructor(heirloom) {
 		// preserve the info of the heirloom
 		Object.assign(this, heirloom);
-
 		// then add custom info we need
 		if (!this.isEmpty()) {
-			this.isCore = this.type === "Core";
+			const basePrices = [5, 10, 15, 25, 75, 150, 400, 1000, 2500, 7500, 50000, 375000];
+			const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000];
+			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
+			this.isCore = this.type === 'Core';
 			this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
 			this.priceIncrease = priceIncreases[this.rarity];
 			this.stepAmounts = {};
 			for (const mod of this.mods) {
 				if (mod[0] === "empty") continue;
-				this.stepAmounts[mod[0]] = getStepAmount(mod[0], this.rarity, this.type);
+				this.stepAmounts[mod[0]] = this.getStepAmount(mod[0], this.rarity);
 			}
 			this.softCaps = {};
 			for (const mod of this.mods) {
 				if (mod[0] === "empty") continue;
-				this.softCaps[mod[0]] = getSoftCap(mod[0], this.rarity, this.type);
+				this.softCaps[mod[0]] = this.getSoftCap(mod[0], this.rarity);
 			}
 			this.hardCaps = {};
 			for (const mod of this.mods) {
 				if (mod[0] === "empty") continue;
-				if (MODULES.heirloomMods[this.type][mod[0]].hardCaps !== undefined) this.hardCaps[mod[0]] = getHardCap(mod[0], this.rarity, this.type);
+				if (this.heirloomInfo[mod[0]].hardCaps !== undefined) this.hardCaps[mod[0]] = this.getHardCap(mod[0], this.rarity);
 			}
 		}
+	}
+
+	getStepAmount(type, rarity) {
+		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive("heirloopy")) || this.heirloomInfo[type].immutable) return this.heirloomInfo[type].stepAmounts[rarity];
+		if (game.global.universe === 2) return this.heirloomInfo[type].stepAmounts[rarity] / 10;
+		return this.heirloomInfo[type].stepAmounts[rarity];
+	}
+
+	getSoftCap(type, rarity) {
+		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive("heirloopy")) || this.heirloomInfo[type].immutable) return this.heirloomInfo[type].softCaps[rarity];
+		if (game.global.universe === 2) return this.heirloomInfo[type].softCaps[rarity] / 10;
+		return this.heirloomInfo[type].softCaps[rarity];
+	}
+
+	getHardCap(type, rarity) {
+		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive("heirloopy")) || this.heirloomInfo[type].immutable) return this.heirloomInfo[type].hardCaps[rarity];
+		if (game.global.universe === 2) return this.heirloomInfo[type].hardCaps[rarity] / 10;
+		return this.heirloomInfo[type].hardCaps[rarity];
+	}
+
+	normalizedCrit(critChance, critDamage, megaCrits, megaCritMult) {
+		if (megaCrits === 0) {
+			return critDamage * critChance + ((1 - critChance) * 100);
+		}
+		const lowCrit = 1 - critChance;
+		return critDamage * Math.pow(megaCritMult, megaCrits - 1) * (lowCrit + critChance * megaCritMult);
 	}
 
 	get innate() {
@@ -621,7 +589,7 @@ class Heirloom {
 	getModValue(type) {
 		for (const mod of this.mods) {
 			if (mod[0] === type) {
-				if ((MODULES.heirloomMods[this.type][type].heirloopy && Fluffy.isRewardActive("heirloopy")) || MODULES.heirloomMods[this.type][type].immutable) return mod[1];
+				if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive("heirloopy")) || this.heirloomInfo[type].immutable) return mod[1];
 				if (game.global.universe === 2) return mod[1] / 10;
 				return mod[1];
 			}
@@ -642,17 +610,17 @@ class Heirloom {
 		const value = this.getModValue(type);
 		const stepAmount = this.stepAmounts[type];
 		if (this.hardCaps[type] && value === this.hardCaps[type]) return 1;
-		if (type === "trimpAttack") {
+		if (type === 'trimpAttack') {
 			return (value + 100 + stepAmount) / (value + 100);
 		}
-		if (type === "trimpHealth") {
+		if (type === 'trimpHealth') {
 			return (value + 100 + stepAmount * MODULES.autoHeirlooms.HPWeight) / (value + 100);
 		}
-		if (type === "breedSpeed") {
+		if (type === 'breedSpeed') {
 			// magic number is log(1.01) / log(1 / 0.98)
 			return 100 * Math.pow(value + stepAmount * MODULES.autoHeirlooms.HPWeight, 0.492524625) / (100 * Math.pow(value, 0.492524625));
 		}
-		if (type === "prismatic") {
+		if (type === 'prismatic') {
 			// 50 base, 50 from prismatic palace
 			var shieldPercent = 100;
 			shieldPercent += game.portal.Prismal.radLevel;
@@ -660,26 +628,26 @@ class Heirloom {
 
 			return (value + shieldPercent + 100 + stepAmount * MODULES.autoHeirlooms.HPWeight) / (value + shieldPercent + 100);
 		}
-		if (type === "critDamage") {
+		if (type === 'critDamage') {
 			const relentlessness = (game.global.universe === 2) ? 0 : game.portal.Relentlessness.level;
 			const criticality = (game.global.universe === 2) ? game.portal.Criticality.radLevel : 0;
 			var critChance = relentlessness * 5;
 			var megaCritMult = 5;
-			if (game.talents.crit.purchased) critChance += this.getModValue("critChance") * 1.5;
-			else critChance += this.getModValue("critChance");
-			if ((Fluffy.isRewardActive("critChance"))) critChance += (50 * Fluffy.isRewardActive("critChance"));
+			if (game.talents.crit.purchased) critChance += this.getModValue('critChance') * 1.5;
+			else critChance += this.getModValue('critChance');
+			if ((Fluffy.isRewardActive('critChance'))) critChance += (50 * Fluffy.isRewardActive('critChance'));
 			if (critChance === 0) return 1;
-			if (Fluffy.isRewardActive("megaCrit")) megaCritMult += 2;
+			if (Fluffy.isRewardActive('megaCrit')) megaCritMult += 2;
 			if (game.talents.crit.purchased) megaCritMult += 1;
 			const megaCrits = Math.floor(critChance / 100);
 			critChance = Math.min(critChance - megaCrits * 100, 100) / 100;
 			const critDamage = value + 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
-			const critDmgNormalizedBefore = normalizedCrit(critChance, critDamage, megaCrits, megaCritMult);
-			const critDmgNormalizedAfter = normalizedCrit(critChance, critDamage + stepAmount, megaCrits, megaCritMult);
+			const critDmgNormalizedBefore = this.normalizedCrit(critChance, critDamage, megaCrits, megaCritMult);
+			const critDmgNormalizedAfter = this.normalizedCrit(critChance, critDamage + stepAmount, megaCrits, megaCritMult);
 
 			return critDmgNormalizedAfter / critDmgNormalizedBefore;
 		}
-		if (type === "critChance") {
+		if (type === 'critChance') {
 			const relentlessness = (game.global.universe === 2) ? 0 : game.portal.Relentlessness.level;
 			const criticality = (game.global.universe === 2) ? game.portal.Criticality.radLevel : 0;
 			var critChanceBefore = relentlessness * 5;
@@ -690,14 +658,14 @@ class Heirloom {
 			else critChanceBefore += value;
 			if (game.talents.crit.purchased) critChanceAfter += value * 1.5;
 			else critChanceAfter += value;
-			if (isNumeric(this.getModValue("critDamage"))) {
-				critDamage += this.getModValue("critDamage");
+			if (isNumeric(this.getModValue('critDamage'))) {
+				critDamage += this.getModValue('critDamage');
 			}
 			if (critDamage === 0) return 1;
-			if (Fluffy.isRewardActive("critChance")) {
-				critChanceBefore += (50 * Fluffy.isRewardActive("critChance"));
+			if (Fluffy.isRewardActive('critChance')) {
+				critChanceBefore += (50 * Fluffy.isRewardActive('critChance'));
 			}
-			if (Fluffy.isRewardActive("megaCrit")) {
+			if (Fluffy.isRewardActive('megaCrit')) {
 				megaCritMult += 2;
 			}
 			if (game.talents.crit.purchased) {
@@ -707,22 +675,22 @@ class Heirloom {
 			const megaCritsAfter = Math.floor((critChanceBefore + ((game.talents.crit.purchased) ? stepAmount * 1.5 : stepAmount)) / 100);
 			critChanceAfter = Math.min((critChanceBefore + ((game.talents.crit.purchased) ? stepAmount * 1.5 : stepAmount)) - megaCritsAfter * 100, 100) / 100;
 			critChanceBefore = Math.min(critChanceBefore - megaCritsBefore * 100, 100) / 100;
-			const critDmgNormalizedBefore = normalizedCrit(critChanceBefore, critDamage, megaCritsBefore, megaCritMult);
-			const critDmgNormalizedAfter = normalizedCrit(critChanceAfter, critDamage, megaCritsAfter, megaCritMult);
+			const critDmgNormalizedBefore = this.normalizedCrit(critChanceBefore, critDamage, megaCritsBefore, megaCritMult);
+			const critDmgNormalizedAfter = this.normalizedCrit(critChanceAfter, critDamage, megaCritsAfter, megaCritMult);
 
 			return critDmgNormalizedAfter / critDmgNormalizedBefore;
 		}
-		if (type === "voidMaps") {
+		if (type === 'voidMaps') {
 			if (game.global.universe === 2) return (value + stepAmount * (MODULES.autoHeirlooms.VMWeight / 10)) / (value);
 			return (value + stepAmount * MODULES.autoHeirlooms.VMWeight) / (value);
 		}
-		if (type === "gammaBurst") {
+		if (type === 'gammaBurst') {
 			return (((value + stepAmount) / 100 + 1) / 5) / ((value / 100 + 1) / 5);
 		}
-		if (type === "FluffyExp") {
+		if (type === 'FluffyExp') {
 			return (value + 100 + stepAmount * MODULES.autoHeirlooms.XPWeight) / (value + 100);
 		}
-		if (type === "plaguebringer") {
+		if (type === 'plaguebringer') {
 			return (value + 100 + stepAmount) / (value + 100);
 		}
 		//Not sure if adding these is a good idea but they're disabled for now.
@@ -732,25 +700,25 @@ class Heirloom {
 		if (type === "LumberjackSpeed") {
 			return (Math.log((value + 100 + stepAmount) / (value + 100) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2)) / MODULES.autoHeirlooms.equipLevels;
 		} */
-		if (type === "MinerSpeed") {
+		if (type === 'MinerSpeed') {
 			return (Math.log((value + 100 + stepAmount) / (value + 100) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2)) / MODULES.autoHeirlooms.equipLevels;
 		}
-		if (type === "ParityPower") {
+		if (type === 'ParityPower') {
 			return (Math.log((value + 1 + stepAmount) / (value + 1) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2)) / MODULES.autoHeirlooms.equipLevels;
 		}
-		if (type === "inequality") {
+		if (type === 'inequality') {
 			return Math.pow(((1 - (0.1 * (1 - (value + stepAmount) / 100))) / 0.9), MODULES.autoHeirlooms.equalityTarget) / Math.pow(((1 - (0.1 * (1 - value / 100))) / 0.9), MODULES.autoHeirlooms.equalityTarget);
 		}
 		if (this.isCore) {
 			loadCore(this);
 			const before = getMaxEnemyHP();
 			const beforeRS = estimatedMaxDifficulty(getMaxEnemyHP()).runestones;
-			loadCore(this, modNamesToTraps[type], value + stepAmount);
+			loadCore(this, type, value + stepAmount);
 			const after = getMaxEnemyHP();
 			const afterRS = estimatedMaxDifficulty(getMaxEnemyHP()).runestones;
 			// 0.971 is the andrew constant, thanks andrew
 			// also ghostfrog, pls pm me to tell me how I did this wrong again
-			if (type === "runestones") return (afterRS / beforeRS - 1) * 0.971 + 1;
+			if (type === 'runestones') return (afterRS / beforeRS - 1) * 0.971 + 1;
 			return after / before;
 		}
 		return 0;
@@ -758,7 +726,7 @@ class Heirloom {
 
 	getModEfficiency(type) {
 		if (type === "empty") return 1;
-		if (MODULES.heirloomMods[this.type][type].weighable) {
+		if (this.heirloomInfo[type].weighable) {
 			return ((this.getModGain(type) - 1) / (this.getModCost(type) / this.basePrice)) + 1;
 		}
 		return 1;
@@ -786,7 +754,7 @@ class Heirloom {
 		const dummyHeirloom = new Heirloom(deepClone(this));
 		for (const mod of dummyHeirloom.mods) {
 			if (mod[0] === type) {
-				const stepAmount = MODULES.heirloomMods[this.type][type].stepAmounts[this.rarity];
+				const stepAmount = this.heirloomInfo[type].stepAmounts[this.rarity];
 				const name = type;
 				const targetValue = mod[1];
 				mod[1] -= (mod[3] * stepAmount);
@@ -812,21 +780,21 @@ class Heirloom {
 	}
 
 	getDamageMult() {
-		var trimpAttackMult = 1 + this.getModValue("trimpAttack") / 100;
-		trimpAttackMult *= Math.pow(((1 - (0.1 * (1 - this.getModValue("inequality") / 100))) / 0.9), MODULES.autoHeirlooms.equalityTarget);
+		var trimpAttackMult = 1 + this.getModValue('trimpAttack') / 100;
+		trimpAttackMult *= Math.pow(((1 - (0.1 * (1 - this.getModValue('inequality') / 100))) / 0.9), MODULES.autoHeirlooms.equalityTarget);
 		const relentlessness = (game.global.universe === 2) ? 0 : game.portal.Relentlessness.level;
 		const criticality = (game.global.universe === 2) ? game.portal.Criticality.radLevel : 0;
 		var critChance = relentlessness * 5;
 		var megaCritMult = 5;
-		if (game.talents.crit.purchased) critChance += this.getModValue("critChance") * 1.5;
-		else critChance += this.getModValue("critChance");
-		if (Fluffy.isRewardActive("critChance")) critChance += (50 * Fluffy.isRewardActive("critChance"));
-		if (Fluffy.isRewardActive("megaCrit")) megaCritMult += 2;
+		if (game.talents.crit.purchased) critChance += this.getModValue('critChance') * 1.5;
+		else critChance += this.getModValue('critChance');
+		if (Fluffy.isRewardActive('critChance')) critChance += (50 * Fluffy.isRewardActive('critChance'));
+		if (Fluffy.isRewardActive('megaCrit')) megaCritMult += 2;
 		if (game.talents.crit.purchased) megaCritMult += 1;
 		const megaCrits = Math.floor(critChance / 100);
 		critChance = Math.min(critChance - megaCrits * 100, 100) / 100;
-		const critDamage = this.getModValue("critDamage") + 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
-		const critDmgNormalized = normalizedCrit(critChance, critDamage, megaCrits, megaCritMult);
+		const critDamage = this.getModValue('critDamage') + 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
+		const critDmgNormalized = this.normalizedCrit(critChance, critDamage, megaCrits, megaCritMult);
 
 		return trimpAttackMult * critDmgNormalized / 100;
 	}
@@ -834,7 +802,7 @@ class Heirloom {
 	forceCritBreakpoint() {
 		if (this.isEmpty()) return new Heirloom();
 		const heirloom = new Heirloom(deepClone(this));
-		var currency = getEffectiveNullifium() - this.getTotalSpent();
+		var currency = Math.floor(game.global.nullifium * getNuSpendMult()) - this.getTotalSpent();
 		var efficiency = 1;
 		var paid = 0;
 		var cost = 0;
@@ -843,15 +811,15 @@ class Heirloom {
 		const purchases = [0, 0, 0, 0, 0, 0, 0];
 		const relentlessness = (game.global.universe === 2) ? 0 : game.portal.Relentlessness.level;
 		var critChance = relentlessness * 5;
-		if (Fluffy.isRewardActive("critChance")) critChance += (50 * Fluffy.isRewardActive("critChance"));
-		const megaCrits = Math.floor((critChance + (game.talents.crit.purchased) ? heirloom.getModValue("critChance") * 1.5 : heirloom.getModValue("critChance")) / 100);
+		if (Fluffy.isRewardActive('critChance')) critChance += (50 * Fluffy.isRewardActive('critChance'));
+		const megaCrits = Math.floor((critChance + (game.talents.crit.purchased) ? heirloom.getModValue('critChance') * 1.5 : heirloom.getModValue('critChance')) / 100);
 
 		while (true) {
-			while (Math.floor((critChance + (game.talents.crit.purchased) ? heirloom.getModValue("critChance") * 1.5 : heirloom.getModValue("critChance")) / 100) === megaCrits) {
-				cost = heirloom.getModCost("critChance");
-				index = heirloom.mods.indexOf(heirloom.mods.filter(mod => mod[0] === "critChance")[0]);
+			while (Math.floor((critChance + (game.talents.crit.purchased) ? heirloom.getModValue('critChance') * 1.5 : heirloom.getModValue('critChance')) / 100) === megaCrits) {
+				cost = heirloom.getModCost('critChance');
+				index = heirloom.mods.indexOf(heirloom.mods.filter(mod => mod[0] === 'critChance')[0]);
 				if (currency >= cost) {
-					heirloom.mods[index][1] += MODULES.heirloomMods[this.type].critChance.stepAmounts[heirloom.rarity];
+					heirloom.mods[index][1] += this.heirloomInfo.critChance.stepAmounts[heirloom.rarity];
 					heirloom.mods[index][3] += 1;
 					purchases[index] += 1;
 					currency -= cost;
@@ -873,7 +841,7 @@ class Heirloom {
 
 			if (name === "") break;
 			if (currency >= cost) {
-				heirloom.mods[index][1] += MODULES.heirloomMods[this.type][name].stepAmounts[heirloom.rarity];
+				heirloom.mods[index][1] += this.heirloomInfo[name].stepAmounts[heirloom.rarity];
 				heirloom.mods[index][3] += 1;
 				purchases[index] += 1;
 				currency -= cost;
@@ -883,18 +851,18 @@ class Heirloom {
 			}
 		}
 
-		const nextCost = Math.floor((cost - (getEffectiveNullifium() - heirloom.getTotalSpent())) / getHeirloomNullifiumRatio());
+		const nextCost = Math.floor((cost - (Math.floor(game.global.nullifium * getNuSpendMult()) - heirloom.getTotalSpent())) / getNuSpendMult());
 		heirloom.paid = paid;
 		heirloom.next = { name, cost: nextCost };
 		heirloom.purchases = purchases;
-		heirloom.successful = Math.floor((critChance + (game.talents.crit.purchased) ? heirloom.getModValue("critChance") * 1.5 : heirloom.getModValue("critChance")) / 100) > megaCrits;
+		heirloom.successful = Math.floor((critChance + (game.talents.crit.purchased) ? heirloom.getModValue('critChance') * 1.5 : heirloom.getModValue('critChance')) / 100) > megaCrits;
 		return heirloom;
 	}
 
 	calculatePurchases() {
 		if (this.isEmpty()) return new Heirloom();
 		const heirloom = new Heirloom(deepClone(this));
-		var currency = (this.isCore) ? playerSpire.spirestones - this.getTotalSpent() : getEffectiveNullifium() - this.getTotalSpent();
+		var currency = (this.isCore) ? playerSpire.spirestones - this.getTotalSpent() : Math.floor(game.global.nullifium * getNuSpendMult()) - this.getTotalSpent();
 		var efficiency = 1;
 		var paid = 0;
 		var cost = 0;
@@ -916,7 +884,7 @@ class Heirloom {
 
 			if (name === "") break;
 			if (currency >= cost) {
-				heirloom.mods[index][1] += MODULES.heirloomMods[this.type][name].stepAmounts[heirloom.rarity];
+				heirloom.mods[index][1] += this.heirloomInfo[name].stepAmounts[heirloom.rarity];
 				// fp errors can lead to fractional purchases
 				heirloom.mods[index][1] = roundFloatingPointErrors(heirloom.mods[index][1]);
 				heirloom.mods[index][3] += 1;
@@ -928,14 +896,14 @@ class Heirloom {
 			}
 		}
 
-		if (heirloom.type === "Shield") {
+		if (heirloom.type === 'Shield') {
 			const forcedCritHeirloom = this.forceCritBreakpoint();
 			if (forcedCritHeirloom.getDamageMult() > heirloom.getDamageMult() && forcedCritHeirloom.successful) return forcedCritHeirloom;
 		}
 
 		const nextCost = (heirloom.isCore)
 			? Math.floor((cost - (playerSpire.spirestones - heirloom.getTotalSpent())))
-			: Math.floor((cost - (getEffectiveNullifium() - heirloom.getTotalSpent())) / getHeirloomNullifiumRatio());
+			: Math.floor((cost - (Math.floor(game.global.nullifium * getNuSpendMult()) - heirloom.getTotalSpent())) / getNuSpendMult());
 		heirloom.paid = paid;
 		heirloom.next = { name, cost: nextCost };
 		heirloom.purchases = purchases;
@@ -943,8 +911,8 @@ class Heirloom {
 	}
 
 	getInnate(spent) {
-		if (this.type === "Staff") {
-			const parityPower = game.global.StaffEquipped.mods.filter(mod => mod[0] === "ParityPower")
+		if (this.type === 'Staff') {
+			const parityPower = game.global.StaffEquipped.mods.filter(mod => mod[0] === 'ParityPower')
 			var mult = Math.log10(spent + 1e6) / 5;
 			if (parityPower.length > 0) {
 				mult *= 1 + parityPower[0][1] / 1000;
@@ -962,10 +930,10 @@ class Heirloom {
 		const stepAmount = this.getInnate(this.getTotalSpent() + this.getModCost(type)) - value;
 
 		var gain;
-		if (this.type === "Staff") {
+		if (this.type === 'Staff') {
 			gain = (Math.log((value + 100 + stepAmount) / (value + 100) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2)) / MODULES.autoHeirlooms.equipLevels;
 
-		} else if (this.type === "Shield") {
+		} else if (this.type === 'Shield') {
 			gain = (((value + stepAmount) / 100 + 1) / 5) / ((value / 100 + 1) / 5);
 		}
 		return gain;
@@ -977,89 +945,55 @@ class Heirloom {
 	}
 }
 
-function valueDisplay(modName, value, slot) {
-	if (modName === "empty") return "Empty";
-	if ((MODULES.heirloomMods[slot][modName].heirloopy && Fluffy.isRewardActive("heirloopy")) || MODULES.heirloomMods[slot][modName].immutable) return `${parseFloat(value.toPrecision(4))}% ${MODULES.heirloomMods[slot][modName].name}`;
-	return `${parseFloat(game.global.universe === 2 ? (value / 10).toPrecision(4) : value.toPrecision(4))}% ${MODULES.heirloomMods[slot][modName].name}`;
-}
+function updateModContainer(divName, heirloom) {
 
-function prettifyCommas(x) {
-	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/gu, ",");
-}
-
-function humanify(num, places) {
-	return (Number(num)).toFixed(places).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/u, "$1");
-}
-
-function updateModContainer(divName, heirloom, spirestones) {
-	ele = heirloom
+	function humanify(num, places) {
+		return (Number(num)).toFixed(places).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/u, "$1");
+	}
 
 	var infoText = `Below is a list of the calulated costs, gains, and efficiency of each weighted<br>upgrade, taken from the stats displayed on this heirloom.<br><br>`;
-	if (heirloom.isEmpty()) {
-		// if that heirloom is not equipped
-		document.getElementById(`${divName}Info`).innerHTML = `This is where you would normally see additional information about this heirloom's mods, but you don't have one equipped.`;
-		document.getElementById(`${divName}?`).style.display = `block`;
-		document.getElementById(`${divName}Name`).textContent = `Nothing.`;
-		document.getElementById(`${divName}Equipped`).style.display = `none`;
-		document.getElementById(`${divName}Spent`).textContent = ``
-		for (var i = 0; i < 7; i++) {
-			document.getElementById(`${divName}ModContainer${i}`).style.opacity = 0;
-		}
-	} else {
-		var bestEfficiency = 1;
-		for (mod of heirloom.mods) {
-			if (heirloom.getModEfficiency(mod[0]) > bestEfficiency) bestEfficiency = heirloom.getModEfficiency(mod[0]);
-		}
+	var bestEfficiency = 1;
+	for (mod of heirloom.mods) {
+		if (heirloom.getModEfficiency(mod[0]) > bestEfficiency) bestEfficiency = heirloom.getModEfficiency(mod[0]);
+	}
 
-		for (var i = 0; i < 7; i++) {
-			const mod = heirloom.mods[i];
-			if (mod) {
-				if (heirloom.getModEfficiency(mod[0]) > 1) {
-					infoText += `<b>${MODULES.heirloomMods[heirloom.type][mod[0]].name}</b>:<br>`
-					infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspCost</b>: ${heirloom.getModCost(mod[0]) === 1e20 ? "∞" : prettify(heirloom.getModCost(mod[0]))}`
-					infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspGain</b>: ${humanify((heirloom.getModGain(mod[0]) + heirloom.getInnateGain(mod[0]) - 2) * 100, 3)}%`
-					infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspEfficiency</b>: ${humanify((heirloom.getModEfficiency(mod[0]) - 1) / (bestEfficiency - 1) * 100, 2)}%</span>`
-					infoText += `<br>`;
-				}
+	const heirloomData = heirloomInfo(heirloom.type);
+
+	for (var i = 0; i < 7; i++) {
+		const mod = heirloom.mods[i];
+		if (mod) {
+			if (heirloom.getModEfficiency(mod[0]) > 1) {
+				infoText += `<b>${heirloomData[mod[0]].name}</b>:<br>`
+				infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspCost</b>: ${heirloom.getModCost(mod[0]) === 1e20 ? "∞" : prettify(heirloom.getModCost(mod[0]))}`
+				infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspGain</b>: ${humanify((heirloom.getModGain(mod[0]) + heirloom.getInnateGain(mod[0]) - 2) * 100, 3)}%`
+				infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspEfficiency</b>: ${humanify((heirloom.getModEfficiency(mod[0]) - 1) / (bestEfficiency - 1) * 100, 2)}%</span>`
+				infoText += `<br>`;
 			}
 		}
-
-		const heirloomValue = heirloom.getTotalSpent();
-		var infoValueText = "";
-		for (const mod of heirloom.mods) {
-			const cost = heirloom.getModSpent(mod[0]);
-			if (mod[0] !== "empty" && cost > 0) infoValueText += `<br>&nbsp&nbsp&nbsp•&nbsp&nbsp<b>${MODULES.heirloomMods[heirloom.type][mod[0]].name}</b>: +${prettify(cost)} (${humanify(cost / heirloomValue * 100, 2)}%)`;
-		}
-		infoText +=
-			`<b>${heirloom.isCore ? "Spirestone" : "Nullifium"} Value</b>:`
-		infoText += `${heirloom.replaceSpent ? `<br>&nbsp&nbsp&nbsp•&nbsp&nbsp<b>Mod changes</b>: ${prettify(heirloom.replaceSpent)} (${humanify(heirloom.replaceSpent / heirloomValue * 100, 2)}%)` : ""}`
-		infoText += ` ${infoValueText}`
-		infoText += `<br>&nbsp&nbsp&nbsp•&nbsp&nbsp<b>Total</b>: ${prettify(heirloomValue)}<br>`;
-		if (heirloom.type.includes("Core")) {
-			infoText += `<br>Your spire deals <span style='color: #fff59d'>${prettify(Math.round(getMaxEnemyHP()))}</span> damage with this core, and averages`;
-			infoText += ` <b><span style='color: #9fa8da'>${prettify(Math.round(estimatedMaxDifficulty(getMaxEnemyHP()).runestones))}</span></b> runestones per enemy,`;
-			infoText += ` while managing a threat of <b><span style='color: #ef9a9a;'>${Math.round(estimatedMaxDifficulty(getMaxEnemyHP()).difficulty)}</span></b>.`;
-		}
-		tooltipText = 'tooltip(' +
-			'\"Heirloom Modifier Information\", ' +
-			'\"customText\", ' +
-			'event, ' + '\"' +
-			infoText + '\")';
-		document.getElementById(`${divName}`).setAttribute("onmouseover", tooltipText);
-
 	}
-}
 
-function getHeirloomNullifiumRatio() {
-	var mult = 1;
-	if (game.talents.heirloom2.purchased) mult = 1.2;
-	else if (game.talents.heirloom.purchased) mult = 1.1;
-	if ((game.global.universe == 2 && Fluffy.isRewardActive('biggerbetterheirlooms')) || (game.global.universe == 1 && game.global.fluffyExp2 >= 357913941000)) mult += 0.3;
-	return mult;
-}
-
-function getEffectiveNullifium() {
-	return Math.floor(game.global.nullifium * getHeirloomNullifiumRatio());
+	const heirloomValue = heirloom.getTotalSpent();
+	var infoValueText = "";
+	for (const mod of heirloom.mods) {
+		const cost = heirloom.getModSpent(mod[0]);
+		if (mod[0] !== "empty" && cost > 0) infoValueText += `<br>&nbsp&nbsp&nbsp•&nbsp&nbsp<b>${heirloomData[mod[0]].name}</b>: +${prettify(cost)} (${humanify(cost / heirloomValue * 100, 2)}%)`;
+	}
+	infoText +=
+		`<b>${heirloom.isCore ? 'Spirestone' : 'Nullifium'} Value</b>:`
+	infoText += `${heirloom.replaceSpent ? `<br>&nbsp&nbsp&nbsp•&nbsp&nbsp<b>Mod changes</b>: ${prettify(heirloom.replaceSpent)} (${humanify(heirloom.replaceSpent / heirloomValue * 100, 2)}%)` : ""}`
+	infoText += ` ${infoValueText}`
+	infoText += `<br>&nbsp&nbsp&nbsp•&nbsp&nbsp<b>Total</b>: ${prettify(heirloomValue)}<br>`;
+	if (heirloom.type.includes('Core')) {
+		infoText += `<br>Your spire deals <span style='color: #fff59d'>${prettify(Math.round(getMaxEnemyHP()))}</span> damage with this core, and averages`;
+		infoText += ` <b><span style='color: #9fa8da'>${prettify(Math.round(estimatedMaxDifficulty(getMaxEnemyHP()).runestones))}</span></b> runestones per enemy,`;
+		infoText += ` while managing a threat of <b><span style='color: #ef9a9a;'>${Math.round(estimatedMaxDifficulty(getMaxEnemyHP()).difficulty)}</span></b>.`;
+	}
+	tooltipText = 'tooltip(' +
+		'\"Heirloom Modifier Information\", ' +
+		'\"customText\", ' +
+		'event, ' + '\"' +
+		infoText + '\")';
+	document.getElementById(`${divName}`).setAttribute("onmouseover", tooltipText);
 }
 
 function deepClone(obj) {
@@ -1085,6 +1019,7 @@ function calculate(autoUpgrade) {
 	if (selectedLoom.length === 0) return;
 	if (selectedLoom[1].includes('Equipped')) startingHeirloom = game.global[selectedLoom[1]];
 	else startingHeirloom = game.global[selectedLoom[1]][selectedLoom[0]];
+	startingHeirloom.heirloomInfo = heirloomInfo(startingHeirloom.type);
 	startingHeirloom = new Heirloom(startingHeirloom);
 	//Set the display of the heirloom ratios to be visible. Gets hidden when you don't have an heirloom selected
 	if (document.getElementById("heirloomRatios").style.display !== "inline-block")
@@ -1165,14 +1100,23 @@ function calculate(autoUpgrade) {
 		startTDCalc();
 	}
 
+	startingHeirloom.heirloomInfo = heirloomInfo(startingHeirloom.type);
 	var newHeirloom = new Heirloom(startingHeirloom).calculatePurchases();
 	if (autoUpgrade) return {
 		oldLoom: selectedLoom,
-		newLoom: newHeirloom
+		newLoom: newHeirloom,
 	}
 
-	function getModValue(mod, type) {
-		if ((MODULES.heirloomMods[type][mod[0]].heirloopy && Fluffy.isRewardActive("heirloopy")) || MODULES.heirloomMods[type][mod[0]].immutable) return mod[1];
+	function precisionRoundMod(number, precision) {
+		var factor = Math.pow(10, precision);
+		var n = precision < 0 ? number : 0.01 / factor + number;
+		return Math.round(n * factor) / factor;
+	}
+
+
+	const heirloomData = heirloomInfo(newHeirloom.type);
+	function getModValue(mod) {
+		if ((heirloomData[mod[0]].heirloopy && Fluffy.isRewardActive("heirloopy")) || heirloomData[mod[0]].immutable) return mod[1];
 		if (game.global.universe === 2) return mod[1] / 10;
 		return mod[1];
 	}
@@ -1182,7 +1126,7 @@ function calculate(autoUpgrade) {
 		for (var y = 0; y < newHeirloom.mods.length; y++) {
 			if (newHeirloom.purchases[y] === 0) continue;
 			modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split("(");
-			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails[0]} (${precisionRoundMod(getModValue(newHeirloom.mods[y], newHeirloom.type), 5)}% +${newHeirloom.purchases[y]})`;
+			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails[0]} (${precisionRoundMod(getModValue(newHeirloom.mods[y]), 5)}% +${newHeirloom.purchases[y]})`;
 		}
 	}
 
@@ -1190,13 +1134,7 @@ function calculate(autoUpgrade) {
 	updateModContainer("heirloomHelpBtn", startingHeirloom);
 }
 
-function precisionRoundMod(number, precision) {
-	var factor = Math.pow(10, precision);
-	var n = precision < 0 ? number : 0.01 / factor + number;
-	return Math.round(n * factor) / factor;
-}
-
-// On swapping portla universes load either Perky or Surky.
+// On selecting an heirloom load.
 var originalselectHeirloom = selectHeirloom;
 selectHeirloom = function () {
 	originalselectHeirloom(...arguments)
@@ -1206,7 +1144,7 @@ selectHeirloom = function () {
 	catch (e) { console.log("Heirloom issue: " + e, "other") }
 }
 
-// On swapping portla universes load either Perky or Surky.
+// On selecting an heirloom mod load.
 var originalselectMod = selectMod;
 selectMod = function () {
 	originalselectMod(...arguments)
@@ -1216,7 +1154,7 @@ selectMod = function () {
 	catch (e) { console.log("Heirloom issue: " + e, "other") }
 }
 
-// On swapping portla universes load either Perky or Surky.
+//When unselecting any heirlooms hide ratios.
 var originalpopulateHeirloomWindow = populateHeirloomWindow;
 populateHeirloomWindow = function () {
 	originalpopulateHeirloomWindow(...arguments)
@@ -1229,15 +1167,8 @@ populateHeirloomWindow = function () {
 
 function runHeirlooms() {
 	var heirlooms = calculate(true);
-
-	var selectedLoom = game.global.selectedHeirloom;
-	var startingHeirloom;
-
-	if (selectedLoom.length === 0) return;
-	if (selectedLoom[1].includes('Equipped')) startingHeirloom = game.global[selectedLoom[1]];
-	else startingHeirloom = game.global[selectedLoom[1]][selectedLoom[0]];
-
-	startingHeirloom.mods = heirlooms.newLoom.mods;
+	//Disable if we don't have an heirloom selected.
+	if (game.global.selectedHeirloom.length === 0) return;
 	displaySelectedHeirloom(true);
 
 	setupHeirloomHelpBtn();
@@ -1245,155 +1176,36 @@ function runHeirlooms() {
 	return;
 }
 
-
 //CORE CALCULATIONS
-/* jshint esversion: 6 */
-
-// from swaq/bhad (http://swaqvalley.com/td_calc/) with permission
-// modified to suit the lack of visual needs
 function startTDCalc() {
-	buildSpire();
-	loadLoadout();
-}
+	if (playerSpire.layout === null) return;
 
-
-function buildSpire() {
-	MODULES.autoHeirlooms.trapLayout = playerSpire.layout;
 	MODULES.autoHeirlooms.strengthLocations = [];
 	MODULES.autoHeirlooms.lightColStacks = [0, 0, 0, 0, 0];
-	MODULES.autoHeirlooms.detailed = [{}];
-	MODULES.autoHeirlooms.path = [];
 	MODULES.autoHeirlooms.selectedTrap = null;
 	MODULES.autoHeirlooms.finalToxicity = 0;
-	makedetailed();
+
+	MODULES.autoHeirlooms.detailed = [{}];
+	for (var x = 0; x < 5 * playerSpire.rowsAllowed; x++) {
+		if (MODULES.autoHeirlooms.detailed[x] === undefined) {
+			MODULES.autoHeirlooms.detailed[x] = {};
+		}
+	}
+
+	const index = playerSpire.layout.length;
+	for (var x = 0; index > x; x++) {
+		MODULES.autoHeirlooms.selectedTrap = playerSpire.layout[x].trap.name;
+		setTrap(x);
+	}
+	for (const trap in playerSpireTraps) {
+		updateTrapDamage(trap.toLowerCase(), playerSpireTraps[trap].level, true);
+	}
+	runInformation();
 }
 
 function runInformation() {
 	imAnEnemy();
 	imAnEnemy(getMaxEnemyHP());
-}
-
-const modNamesToTraps = {
-	fireTrap: "fire",
-	poisonTrap: "poison",
-	lightningTrap: "lightning",
-	strengthEffect: "strength",
-	condenserEffect: "condenser",
-	runestones: "runestones",
-};
-
-function loadCore(core, overwrite, overwriteValue) {
-	if (!core.isEmpty()) {
-		// reset data
-		traps.fire.coreMult = 1;
-		traps.poison.coreMult = 1;
-		traps.lightning.coreMult = 1;
-		traps.strength.coreMult = 1;
-		traps.condenser.coreMult = 1;
-		traps.runestones.coreMult = 1;
-
-		for (const mod of core.mods) {
-			const bonus = mod[1];
-			traps[modNamesToTraps[mod[0]]].coreMult = 1 + bonus / 100;
-		}
-
-		// overwrite lets you overwrite one of the core values, to make it easier to calc upg gain
-		if (overwrite !== undefined) {
-			traps[overwrite].coreMult = 1 + overwriteValue / 100;
-		}
-	}
-}
-
-function insertSelection(loc) {
-	if (loc >= MODULES.autoHeirlooms.trapLayout.length || loc < 0) return;
-
-	const insertType = MODULES.autoHeirlooms.selectedTrap;
-	MODULES.autoHeirlooms.selectedTrap = "Empty";
-	var first = 0;
-	var last = -1;
-	const newTraps = [];
-
-	for (var i = 0; i < MODULES.autoHeirlooms.trapLayout.length; i++) {
-		if (MODULES.autoHeirlooms.detailed[i].selected === undefined || MODULES.autoHeirlooms.detailed[i].selected === false) {
-			if (first > last) {
-				first++;
-			} else {
-				newTraps[newTraps.length] = null;
-			}
-		} else {
-			last = i;
-			newTraps[newTraps.length] = MODULES.autoHeirlooms.detailed[i].type;
-
-			if (insertType === "Move") {
-				setTrap(i);
-			}
-		}
-	}
-
-	if (last !== -1) {
-		for (var e = 0; e < newTraps.length && e + loc < MODULES.autoHeirlooms.trapLayout.length && e <= last - first; e++) {
-			if (newTraps[e] !== null) {
-				// empty all cells first to clear any Strength towers
-				setTrap(e + loc);
-			}
-		}
-
-		// refresh MODULES.autoHeirlooms.detailed
-		imAnEnemy();
-
-		for (var n = 0; n < newTraps.length && n + loc < MODULES.autoHeirlooms.trapLayout.length && n <= last - first; n++) {
-			MODULES.autoHeirlooms.selectedTrap = newTraps[n];
-			setTrap(n + loc);
-		}
-	}
-
-	runInformation();
-}
-
-function setTrap(number) {
-	if (MODULES.autoHeirlooms.selectedTrap === null || MODULES.autoHeirlooms.selectedTrap === MODULES.autoHeirlooms.detailed[number].type) return false;
-
-	const row = Math.floor(number / 5);
-	if (MODULES.autoHeirlooms.strengthLocations[row] === true && MODULES.autoHeirlooms.selectedTrap === "Strength") {
-		for (s = row * 5; s < (row + 1) * 5; s++) {
-			if (MODULES.autoHeirlooms.detailed[s].type === "Strength") {
-				MODULES.autoHeirlooms.selectedTrap = "Empty";
-				setTrap(s);
-				MODULES.autoHeirlooms.selectedTrap = "Strength";
-				break;
-			}
-		}
-	}
-
-	switch (MODULES.autoHeirlooms.selectedTrap) {
-		case "Strength":
-			MODULES.autoHeirlooms.strengthLocations[row] = true;
-			break;
-		case "Lightning":
-			MODULES.autoHeirlooms.lightColStacks[number % 5]++;
-		// fall through to default
-		default:
-			if (MODULES.autoHeirlooms.detailed[number].type === "Strength") {
-				MODULES.autoHeirlooms.strengthLocations[row] = false;
-			}
-			break;
-	}
-
-	if (MODULES.autoHeirlooms.detailed[number].type === "Lightning" && MODULES.autoHeirlooms.lightColStacks[number % 5] > 0) {
-		MODULES.autoHeirlooms.lightColStacks[number % 5]--;
-	}
-
-	MODULES.autoHeirlooms.detailed[number].selected = false;
-	MODULES.autoHeirlooms.detailed[number].type = MODULES.autoHeirlooms.selectedTrap;
-	return true;
-}
-
-function makepath() {
-	const length = MODULES.autoHeirlooms.trapLayout.length;
-	MODULES.autoHeirlooms.path = [];
-	for (var x = 0; x < length; x++) {
-		MODULES.autoHeirlooms.path.push({ type: playerSpire.layout[x].trap.name });
-	}
 }
 
 const traps = {
@@ -1466,20 +1278,123 @@ const traps = {
 	}
 };
 
-// create MODULES.autoHeirlooms.detailed
-function makedetailed() {
-	for (var x = 0; x < 5 * playerSpire.rowsAllowed; x++) {
-		if (MODULES.autoHeirlooms.detailed[x] === undefined) {
-			MODULES.autoHeirlooms.detailed[x] = {};
+function loadCore(core, overwrite, overwriteValue) {
+	if (!core.isEmpty()) {
+		// reset data
+		traps.fire.coreMult = 1;
+		traps.poison.coreMult = 1;
+		traps.lightning.coreMult = 1;
+		traps.strength.coreMult = 1;
+		traps.condenser.coreMult = 1;
+		traps.runestones.coreMult = 1;
+
+		const modNamesToTraps = {
+			fireTrap: 'fire',
+			poisonTrap: 'poison',
+			lightningTrap: 'lightning',
+			strengthEffect: "strength",
+			condenserEffect: 'condenser',
+			runestones: 'runestones',
+		};
+
+		for (const mod of core.mods) {
+			const bonus = mod[1];
+			traps[modNamesToTraps[mod[0]]].coreMult = 1 + bonus / 100;
+		}
+
+		// overwrite lets you overwrite one of the core values, to make it easier to calc upg gain
+		if (overwrite !== undefined) {
+			traps[modNamesToTraps[overwrite]].coreMult = 1 + overwriteValue / 100;
 		}
 	}
 }
 
+function insertSelection(loc) {
+	if (loc >= playerSpire.layout.length || loc < 0) return;
+
+	const insertType = MODULES.autoHeirlooms.selectedTrap;
+	MODULES.autoHeirlooms.selectedTrap = "Empty";
+	var first = 0;
+	var last = -1;
+	const newTraps = [];
+
+	for (var i = 0; i < playerSpire.layout.length; i++) {
+		if (MODULES.autoHeirlooms.detailed[i].selected === undefined || MODULES.autoHeirlooms.detailed[i].selected === false) {
+			if (first > last) {
+				first++;
+			} else {
+				newTraps[newTraps.length] = null;
+			}
+		} else {
+			last = i;
+			newTraps[newTraps.length] = MODULES.autoHeirlooms.detailed[i].type;
+
+			if (insertType === "Move") {
+				setTrap(i);
+			}
+		}
+	}
+
+	if (last !== -1) {
+		for (var e = 0; e < newTraps.length && e + loc < playerSpire.layout.length && e <= last - first; e++) {
+			if (newTraps[e] !== null) {
+				// empty all cells first to clear any Strength towers
+				setTrap(e + loc);
+			}
+		}
+
+		imAnEnemy();
+
+		for (var n = 0; n < newTraps.length && n + loc < playerSpire.layout.length && n <= last - first; n++) {
+			MODULES.autoHeirlooms.selectedTrap = newTraps[n];
+			setTrap(n + loc);
+		}
+	}
+
+	runInformation();
+}
+
+function setTrap(number) {
+	if (MODULES.autoHeirlooms.selectedTrap === null || MODULES.autoHeirlooms.selectedTrap === MODULES.autoHeirlooms.detailed[number].type) return false;
+
+	const row = Math.floor(number / 5);
+	if (MODULES.autoHeirlooms.strengthLocations[row] === true && MODULES.autoHeirlooms.selectedTrap === 'Strength') {
+		for (s = row * 5; s < (row + 1) * 5; s++) {
+			if (MODULES.autoHeirlooms.detailed[s].type === 'Strength') {
+				MODULES.autoHeirlooms.selectedTrap = "Empty";
+				setTrap(s);
+				MODULES.autoHeirlooms.selectedTrap = 'Strength';
+				break;
+			}
+		}
+	}
+
+	switch (MODULES.autoHeirlooms.selectedTrap) {
+		case 'Strength':
+			MODULES.autoHeirlooms.strengthLocations[row] = true;
+			break;
+		case "Lightning":
+			MODULES.autoHeirlooms.lightColStacks[number % 5]++;
+		// fall through to default
+		default:
+			if (MODULES.autoHeirlooms.detailed[number].type === 'Strength') {
+				MODULES.autoHeirlooms.strengthLocations[row] = false;
+			}
+			break;
+	}
+
+	if (MODULES.autoHeirlooms.detailed[number].type === "Lightning" && MODULES.autoHeirlooms.lightColStacks[number % 5] > 0) {
+		MODULES.autoHeirlooms.lightColStacks[number % 5]--;
+	}
+
+	MODULES.autoHeirlooms.detailed[number].selected = false;
+	MODULES.autoHeirlooms.detailed[number].type = MODULES.autoHeirlooms.selectedTrap;
+	return true;
+}
+
 function imAnEnemy(health = 0) {
 	// hey you're an enemy cool
-	makepath();
 	MODULES.autoHeirlooms.ticks = 0;
-	MODULES.autoHeirlooms.pathLength = MODULES.autoHeirlooms.trapLayout.length;
 
 	// damage you've taken
 	var damageTaken = 0;
@@ -1497,11 +1412,11 @@ function imAnEnemy(health = 0) {
 	var toxy;
 	var condensed;
 
-	for (var p = 0; p < MODULES.autoHeirlooms.pathLength; p++) {
+	for (var p = 0; p < playerSpire.layout.length; p++) {
 		MODULES.autoHeirlooms.detailed[p].row = Math.floor(p / 5);
 		MODULES.autoHeirlooms.detailed[p].killCount = 0;
 		if (MODULES.autoHeirlooms.detailed[p].type === undefined) {
-			MODULES.autoHeirlooms.detailed[p].type = MODULES.autoHeirlooms.path[p].type;
+			MODULES.autoHeirlooms.detailed[p].type = playerSpire.layout[p].trap.name;
 		}
 		if (chilledFor > 0 && frozenFor === 0) {
 			MODULES.autoHeirlooms.detailed[p].chilled = true;
@@ -1550,16 +1465,16 @@ function imAnEnemy(health = 0) {
 				shockedFor = traps.lightning.length;
 				addDamage = calcLightning(p);
 				break;
-			case "Strength":
+			case 'Strength':
 				MODULES.autoHeirlooms.strengthLocations[MODULES.autoHeirlooms.detailed[p].row] = true;
 				addDamage = calcStrength(p, shockedFor);
 				break;
-			case "Condenser":
+			case 'Condenser':
 				condensed = calcCondenser(p, shockedFor);
 				addDamage += poisonStack * condensed.damageFactor;
 				poisonStack *= condensed.poisonMult;
 				break;
-			case "Knowledge":
+			case 'Knowledge':
 				if (MODULES.autoHeirlooms.detailed[p].chilled) {
 					chilledFor = 0;
 					frozenFor = traps.knowledge.slow;
@@ -1571,9 +1486,9 @@ function imAnEnemy(health = 0) {
 		if (health !== 0 && MODULES.autoHeirlooms.detailed[p].type === "Fire" && traps.fire.level >= 4 && damageTaken + addDamage > health * 0.8 && !instaKill) {
 			addDamage += health * 0.2;
 			instaKill = true;
-		} else if (MODULES.autoHeirlooms.detailed[p].type !== "Condenser") {
+		} else if (MODULES.autoHeirlooms.detailed[p].type !== 'Condenser') {
 			// condenser poison stack damage is complicated and is handled in the case statement above
-			addDamage += poisonStack * multipleDamage(MODULES.autoHeirlooms.detailed[p], "poisonDamage");
+			addDamage += poisonStack * multipleDamage(MODULES.autoHeirlooms.detailed[p], 'poisonDamage');
 		}
 
 		MODULES.autoHeirlooms.detailed[p].addedPoison = addStack;
@@ -1639,13 +1554,12 @@ function damageByHealth(hp, tally = false) {
 	var addStack = 0;
 
 	var slowsOnKill = 0;
-	var fireKill = false;
 	var deadEnemy = false;
 
 	var toxy;
 	var condensed;
 
-	for (var p = 0; p < MODULES.autoHeirlooms.trapLayout.length; p++) {
+	for (var p = 0; p < playerSpire.layout.length; p++) {
 		if (!tally) {
 			MODULES.autoHeirlooms.detailed[p].killCount = 0;
 		}
@@ -1677,15 +1591,15 @@ function damageByHealth(hp, tally = false) {
 				shockedFor = traps.lightning.length;
 				addDamage = calcLightning(p);
 				break;
-			case "Strength":
+			case 'Strength':
 				addDamage = calcStrength(p, shockedFor);
 				break;
-			case "Condenser":
+			case 'Condenser':
 				condensed = calcCondenser(p, shockedFor);
 				addDamage += poisonStack * condensed.damageFactor;
 				poisonStack *= condensed.poisonMult;
 				break;
-			case "Knowledge":
+			case 'Knowledge':
 				if (MODULES.autoHeirlooms.detailed[p].chilled) {
 					chilledFor = 0;
 					frozenFor = traps.knowledge.slow;
@@ -1696,9 +1610,9 @@ function damageByHealth(hp, tally = false) {
 
 		if (hp !== 0 && MODULES.autoHeirlooms.detailed[p].type === "Fire" && traps.fire.level >= 4 && damageDealt + addDamage > hp * 0.8) {
 			addDamage += hp * 0.2;
-		} else if (MODULES.autoHeirlooms.detailed[p].type !== "Condenser") {
+		} else if (MODULES.autoHeirlooms.detailed[p].type !== 'Condenser') {
 			// condenser poison stack damage is complicated and is handled in the case statement above
-			addDamage += poisonStack * multipleDamage(MODULES.autoHeirlooms.detailed[p], "poisonDamage");
+			addDamage += poisonStack * multipleDamage(MODULES.autoHeirlooms.detailed[p], 'poisonDamage');
 		}
 
 		shockedFor -= subtractShocks(p, shockedFor);
@@ -1714,7 +1628,7 @@ function damageByHealth(hp, tally = false) {
 		if (tally) {
 			if (hp > damageDealt) {
 				if (MODULES.autoHeirlooms.detailed[p].type !== "Frost") {
-					if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type !== "Knowledge") {
+					if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type !== 'Knowledge') {
 						slowsOnKill++;
 					} else if (MODULES.autoHeirlooms.detailed[p].frozen) {
 						slowsOnKill += 2;
@@ -1750,7 +1664,7 @@ function calcFrost(c) {
 
 function calcPoison(c, shocked, hp, dmg) {
 	const output = {};
-	const lastCell = (c === MODULES.autoHeirlooms.trapLayout.length - 1);
+	const lastCell = (c === playerSpire.layout.length - 1);
 	var baseStack = traps.poison.defaultStack * lightColMult(c) * traps.poison.coreMult;
 
 	if (traps.poison.level >= 3) {
@@ -1821,11 +1735,11 @@ function calcCondenser(c, shocked) {
 	}
 	output.damageFactor = output.poisonMult;
 	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) {
-		output.poisonMult *= thisBaseEffect * getLightningMultiplier(shocked, 1, "condenser") + 1;
+		output.poisonMult *= thisBaseEffect * getLightningMultiplier(shocked, 1, 'condenser') + 1;
 		output.damageFactor += output.poisonMult;
 	}
 	if (MODULES.autoHeirlooms.detailed[c].frozen) {
-		output.poisonMult *= thisBaseEffect * getLightningMultiplier(shocked, 2, "condenser") + 1;
+		output.poisonMult *= thisBaseEffect * getLightningMultiplier(shocked, 2, 'condenser') + 1;
 		output.damageFactor += output.poisonMult;
 	}
 	return output;
@@ -1835,7 +1749,7 @@ function subtractShocks(c, shocked) {
 	var adjust = (shocked < 0 ? shocked : 0);
 	if (shocked > 0 && MODULES.autoHeirlooms.detailed[c].type !== "Lightning") {
 		if (MODULES.autoHeirlooms.detailed[c].type !== "Frost") {
-			if (MODULES.autoHeirlooms.detailed[c].chilled && MODULES.autoHeirlooms.detailed[c].type !== "Knowledge") {
+			if (MODULES.autoHeirlooms.detailed[c].chilled && MODULES.autoHeirlooms.detailed[c].type !== 'Knowledge') {
 				adjust = 2;
 			} else if (MODULES.autoHeirlooms.detailed[c].frozen) {
 				adjust = 3;
@@ -1854,11 +1768,11 @@ function multipleDamage(index, type) {
 	if (index.type !== "Frost") {
 		if (index.frozen) {
 			returnN += traps.knowledge.effect;
-		} else if (index.chilled && index.type !== "Knowledge") {
+		} else if (index.chilled && index.type !== 'Knowledge') {
 			returnN += traps.frost.effect;
 		}
 	}
-	if (index.shocked && (type !== "poisonDamage")) {
+	if (index.shocked && (type !== 'poisonDamage')) {
 		returnN += traps.lightning.effect;
 	}
 
@@ -1871,7 +1785,7 @@ function getStrengthDamage(data) {
 	var returnDamage = traps.fire.damage * traps.fire.coreMult * traps.strength.effect * traps.strength.coreMult;
 	var amountOfFire = 0;
 	for (var x = rowStart; x < rowStart + 5; x++) {
-		if (MODULES.autoHeirlooms.path[x].type === "Fire") {
+		if (playerSpire.layout[x].trap.name === "Fire") {
 			amountOfFire += lightColMult(x);
 		}
 	}
@@ -1950,12 +1864,12 @@ function getRsReward(health, threat) {
 	var reward = Math.ceil(health / 600);
 	reward += threat / 20;
 	reward *= Math.pow(1.00116, threat);
-	if (MODULES.autoHeirlooms.detailed[MODULES.autoHeirlooms.trapLayout.length - 1].type === "Fire" && traps.fire.level >= 7) {
+	if (MODULES.autoHeirlooms.detailed[playerSpire.layout.length - 1].type === "Fire" && traps.fire.level >= 7) {
 		if (traps.fire.level >= 9) reward *= 1.5;
 		else reward *= 1.2;
 	}
 	if (traps.frost.level >= 5) {
-		reward *= 1 + (MODULES.autoHeirlooms.ticks - MODULES.autoHeirlooms.trapLayout.length) * traps.frost.runestones[traps.frost.level];
+		reward *= 1 + (MODULES.autoHeirlooms.ticks - playerSpire.layout.length) * traps.frost.runestones[traps.frost.level];
 	}
 	return reward;
 }
@@ -1966,20 +1880,20 @@ function getRows(difficulty) {
 }
 
 function updateTrapDamage(type, level, noEnemy) {
-	const upgradeableTraps = ["fire", "frost", "poison", "lightning"];
+	const upgradeableTraps = ['fire', "frost", 'poison', 'lightning'];
 	if (!upgradeableTraps.includes(type)) return;
 	traps[type].level = level;
-	if (type === "fire") {
+	if (type === 'fire') {
 		traps.fire.damage = traps.fire.dmgs[level];
 	}
 	if (type === "frost") {
 		traps.frost.damage = traps.frost.dmgs[level];
 		traps.frost.slow = traps.frost.slows[level];
 	}
-	if (type === "poison") {
+	if (type === 'poison') {
 		traps.poison.defaultStack = traps.poison.stacks[level];
 	}
-	if (type === "lightning") {
+	if (type === 'lightning') {
 		traps.lightning.damage = traps.lightning.dmgs[level];
 		traps.lightning.damageBuff = traps.lightning.dmgbuffs[level];
 		traps.lightning.length = traps.lightning.lengths[level];
@@ -1994,7 +1908,7 @@ function getLightningMultiplier(length, times, type) {
 		return 1;
 	}
 	if (length - times >= 1) {
-		if (type === "condenser") {
+		if (type === 'condenser') {
 			return traps.lightning.effect;
 		}
 		return traps.lightning.damageBuff * traps.lightning.coreMult;
@@ -2004,17 +1918,4 @@ function getLightningMultiplier(length, times, type) {
 
 function lightColMult(cell) {
 	return traps.lightning.level >= 4 ? (1 + (traps.lightning.level >= 7 ? 0.2 : 0.1) * MODULES.autoHeirlooms.lightColStacks[cell % 5] * traps.lightning.coreMult) : 1;
-}
-
-function loadLoadout() {
-	if (playerSpire.layout === null) return;
-	const index = playerSpire.layout.length;
-	for (var x = 0; index > x; x++) {
-		MODULES.autoHeirlooms.selectedTrap = playerSpire.layout[x].trap.name;
-		setTrap(x);
-	}
-	for (const trap in playerSpireTraps) {
-		updateTrapDamage(trap.toLowerCase(), playerSpireTraps[trap].level, true);
-	}
-	runInformation();
 }

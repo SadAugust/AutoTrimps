@@ -71,10 +71,11 @@ function autoGather() {
 	if (maxTrapsReady) MODULES.gather.maxTrapBuffering = false;
 
 	// Init - Science
+	const resourcesNeeded = setResourceNeeded();
 	var firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
 	var researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden';
 	var scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
-	var needScience = game.resources.science.owned < MODULES.resourceNeeded.science;
+	var needScience = game.resources.science.owned < resourcesNeeded.science;
 	var needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
 	//Init - Others

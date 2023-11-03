@@ -343,7 +343,13 @@ function resetAutoTrimps(autoTrimpsSettings, b) {
 			modifyParentNodeUniverseSwap();
 			if (typeof MODULES["graphs"].themeChanged === 'function')
 				MODULES["graphs"].themeChanged();
-		})(autoTrimpsSettings),
+
+			//Remove the localStorage entries if they are empty and rebuild the GUI to initialise base settings
+			if (Object.keys(JSON.parse(localStorage.getItem('perkyInputs'))).length === 1) delete localStorage.perkyInputs;
+			if (Object.keys(JSON.parse(localStorage.getItem('surkyInputs'))).length === 1) delete localStorage.surkyInputs;
+			MODULES.autoPerks.displayGUI(game.global.universe);
+		})
+			(autoTrimpsSettings),
 		101
 	);
 

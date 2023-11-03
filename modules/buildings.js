@@ -1,7 +1,4 @@
 MODULES.buildings = {
-	storageMainCutoff: 0.85,
-	storageLowlvlCutoff1: 0.7,
-	storageLowlvlCutoff2: 0.5,
 	smithiesBoughtThisZone: 0
 };
 
@@ -24,7 +21,6 @@ function safeBuyBuilding(building, amt) {
 }
 
 function buyStorage(hypoZone) {
-	var customVars = MODULES["buildings"];
 	var buildings = {
 		'Barn': 'food',
 		'Shed': 'wood',
@@ -49,9 +45,9 @@ function buyStorage(hypoZone) {
 		}
 		//Skips buying sheds if you're not on one of your specified bonfire zones
 		if (challengeActive('Hypothermia') && hypoZone > game.global.world && resource === 'Shed') continue;
-		if ((game.global.world === 1 && curRes > maxRes * customVars.storageLowlvlCutoff1) ||
-			(game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * customVars.storageLowlvlCutoff2) ||
-			(curRes + exoticValue > maxRes * customVars.storageMainCutoff)) {
+		if ((game.global.world === 1 && curRes > maxRes * 0.7) ||
+			(game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * 0.5) ||
+			(curRes + exoticValue > maxRes * 0.85)) {
 			if (canAffordBuilding(resource, null, null, null, null, null) && game.triggers[resource].done) {
 				safeBuyBuilding(resource, 1);
 			}
@@ -489,16 +485,17 @@ function buyBuildings() {
 			var smithyPct = buildingSettings.Smithy.percent / 100;
 			var smithyCanAfford = calculateMaxAfford_AT(game.buildings.Smithy, true, false, false, (smithyAmt - game.buildings.Smithy.purchased), smithyPct);
 			//Overrides for Smithy farming.
-			//If we have our purchase pct less than 100% or our cap is lower than the amount we are targetting then temporarily adjust inputs.
+			//If you have your purchase pct less than 100% or your cap is lower than the amount you are targetting then temporarily adjust inputs.
 			if (mapSettings.mapName === 'Smithy Farm') {
 				if (smithyPct < 1 || smithyAmt > mapSettings.smithies) smithyAmt = mapSettings.smithies;
 				smithyPct = 1;
 			}
 			//Purchasing a smithy whilst on Quest
+			//Only buys Smithies when you are on a Smithy quest or start a new zone and can buy more Smithies than you need to finish the challenge with.
 			if (challengeActive('Quest') && getPageSetting('quest')) {
 				//Resetting smithyCanAfford to avoid any accidental purchases during Quest.
 				smithyCanAfford = 0;
-				if ((MODULES["buildings"].smithiesBoughtThisZone < game.global.world || currQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
+				if ((atSettings.portal.aWholeNewWorld || currQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
 					var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
 					var questEndZone = !game.global.runningChallengeSquared ? 85 : getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone')
 					var questZones = Math.floor(((questEndZone - game.global.world) / 2) - 1);
@@ -508,12 +505,11 @@ function buyBuildings() {
 				}
 			}
 			//Don't buy Smithies when you can afford a bonfire on Hypo.
-			//The Smithy Farm setting has an override to purchase them 1 at a time during Smithy Farm to ensure we can still farm and don't overpurchase.
+			//The Smithy Farm setting has an override to purchase them 1 at a time during Smithy Farm to ensure you can still farm and don't overpurchase.
 			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
 
 			if (((buildingSettings.Smithy.enabled && smithyAmt > game.buildings.Smithy.purchased) || challengeActive('Quest')) && smithyCanAfford > 0) {
 				safeBuyBuilding("Smithy", smithyCanAfford);
-				MODULES["buildings"].smithiesBoughtThisZone = game.global.world;
 			}
 		}
 

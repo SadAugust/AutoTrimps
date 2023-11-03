@@ -221,7 +221,7 @@ function populateZFarmData() {
 	else if (challengeActive('Revenge')) fastEnemy = true;
 	else if (game.global.universe === 2 && game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned) fastEnemy = true;
 
-	death_stuff = {
+	const death_stuff = {
 		max_hp: trimpHealth,
 		block: trimpBlock,
 		challenge_attack: 1,
@@ -393,7 +393,7 @@ function populateZFarmData() {
 	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
 	exoticChance /= 100;
 
-	natureTransfer = (zone >= natureStart ? nature.retainLevel + diplomacy : 0) / 100;
+	const natureTransfer = (zone >= natureStart ? nature.retainLevel + diplomacy : 0) / 100;
 	nature = zone >= natureStart ? nature.level + diplomacy : 0;
 	death_stuff.challenge_attack = enemyAttack;
 
@@ -467,11 +467,11 @@ function stats() {
 	var saveData = populateZFarmData();
 
 	var stats = [];
-	extra = 0;
+	var extra = 0;
 	if (saveData.extraMapLevelsAvailable)
 		extra = 10;
 	extra = extra || -saveData.reducer;
-	mapsCanAfford = 0;
+	var mapsCanAfford = 0;
 	for (var mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
 		if (saveData.coordinate) {
 			var coords = 1;
@@ -515,7 +515,6 @@ function zone_stats(zone, stances, saveData) {
 		else
 			result.canAfford = saveData.fragments >= minMapFrag(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]);
 	}
-	stanceCheck = stances;
 	if (!stances) stances = 'X';
 	for (var stance of stances) {
 		saveData.atk = saveData.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
@@ -554,6 +553,7 @@ function simulate(saveData, zone) {
 	var ok_damage = 0, ok_spread = 0;
 	var poison = 0, wind = 0, ice = 0;
 	var gammaStacks = 0;
+	var burstDamage = 0;
 	var energyShieldMax = saveData.trimpShield;
 	var energyShield = energyShieldMax;
 	var mayhemPoison = 0;

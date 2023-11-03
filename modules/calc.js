@@ -261,7 +261,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//AutoBattle
 	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	//Shield (Heirloom)
-	heirloomHealth = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck);
+	const heirloomHealth = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck);
 	health *= heirloomHealth > 1 ? (1 + (heirloomHealth / 100)) : 1;
 	//Void Map Talents
 	health *= (game.talents.voidPower.purchased && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
@@ -513,7 +513,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 	//AutoBattle
 	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	// Heirloom (Shield)
-	heirloomAttack = calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck);
+	const heirloomAttack = calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck);
 	attack *= heirloomAttack > 1 ? (1 + (heirloomAttack / 100)) : 1;
 	// Frenzy perk
 	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (getPageSetting('frenzyCalc') || autoBattle.oneTimers.Mass_Hysteria.owned) ? 1 + (0.5 * game.portal.Frenzy[perkLevel]) : 1;
@@ -1842,7 +1842,7 @@ function calculateParityBonus_AT(workerRatio, heirloom) {
 function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {
 	if (!itemObj.cost) return 1;
 	var mostAfford = -1;
-	if (Number.isInteger(forceMax)) forcedMax = forceMax;
+	if (Number.isInteger(forceMax)) forceMax = forceMax;
 	//if (!forceMax) var forceMax = false;
 	var forceMax = Number.isInteger(forceMax) ? forceMax : false;
 	var currentOwned = (itemObj.purchased) ? itemObj.purchased : ((itemObj.level) ? itemObj.level : itemObj.owned);
@@ -1980,7 +1980,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 	//Accounting for enemies hitting multiple times per gamma burst
 	if (hdCheck && mapType !== 'map') {
-		enemyDmgMaxEq = enemyDmg * Math.pow(enemyEqualityModifier, maxEquality);
+		const enemyDmgMaxEq = enemyDmg * Math.pow(enemyEqualityModifier, maxEquality);
 		ourHealth -= (enemyDmgMaxEq * (gammaMaxStacks() - 1));
 	}
 

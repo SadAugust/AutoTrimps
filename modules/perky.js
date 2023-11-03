@@ -10,43 +10,26 @@ if (typeof $$ !== 'function') {
 		return [].slice.apply(document.querySelectorAll(a));
 	};
 }
-MODULES.autoPerks = {};
-MODULES.perky = {};
-MODULES.perky.props = {};
-MODULES.perky.showing = false;
 
 function runPerky() {
 	if (portalUniverse !== 1) return;
-	//If Perky hasn't been run before, finds the closest zone to your target zone that you have already completed and sets your weight to be the same as that zone range.
-	if (JSON.parse(localStorage.getItem("perkyInputs")) === null) selectPerkyPreset();
 	allocatePerky();
 }
 
 function allocatePerky() {
-
 	//Enable Fluffy xp input when it's not active.
-	if (game.global.spiresCompleted >= 2) {
+	if (game.global.spiresCompleted >= 2 && $$('#weight-xpDiv').style.display !== 'inline')
 		$$('#weight-xpDiv').style.display = 'inline';
-	}
-
+	//Generate perk string
+	const perks = optimize();
+	for (var name in perks)
+		perks[name] = perks[name].level;
+	const perkString = LZString.compressToBase64(JSON.stringify(perks));
+	//Bring up import window if it's not already up and import perk string.
 	tooltip('Import Perks', null, 'update');
-	document.getElementById('perkImportBox').value = display(optimize(parse_inputs(populatePerkyData())));
+	document.getElementById('perkImportBox').value = perkString;
 	importPerks();
 	cancelTooltip();
-}
-
-function input(a) {
-	return parse_suffixes($$("#" + a).value);
-}
-
-function parse_suffixes(str) {
-	str = str.replace(/\*.*|[^--9+a-z]/gi, '');
-
-	let suffixes = MODULES.perky.notations[localStorage.notation === '3' ? 3 : 1];
-	for (let i = suffixes.length; i > 0; --i)
-		str = str.replace(new RegExp(suffixes[i - 1] + '$', 'i'), `E${3 * i}`);
-
-	return +str;
 }
 
 function mastery(name) {
@@ -56,15 +39,13 @@ function mastery(name) {
 }
 
 var Perk = /** @class */ (function () {
-	function Perk(base_cost, cost_increment, scaling, max_level, cost_exponent) {
-		if (max_level === void 0) { max_level = Infinity; }
-		if (cost_exponent === void 0) { cost_exponent = 1.3; }
-		this.base_cost = base_cost;
-		this.cost_increment = cost_increment;
+	function Perk(perkName, scaling) {
+		this.base_cost = game.portal[perkName].priceBase;
+		this.cost_increment = game.portal[perkName].additive ? game.portal[perkName].additiveInc : 0;
 		this.scaling = scaling;
-		this.max_level = max_level;
-		this.cost_exponent = cost_exponent;
-		this.locked = true;
+		this.max_level = game.portal[perkName].max ? game.portal[perkName].max : Infinity;
+		this.cost_exponent = game.portal[perkName].specialGrowth ? game.portal[perkName].specialGrowth : 1.3;
+		this.locked = game.portal[perkName].locked;
 		this.level = 0;
 		this.min_level = 0;
 		this.cost = 0;
@@ -109,159 +90,108 @@ var Perk = /** @class */ (function () {
 
 // initialize perks object to default values
 function initPresetPerky() {
-	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
+	var settingInputs = JSON.parse(localStorage.getItem('perkyInputs'));
 
-	function presetData(preset, perkyInputs) {
-		if (perkyInputs === null) return null;
-		if (perkyInputs[preset] === null || perkyInputs[preset] === undefined) return null;
-		return perkyInputs[preset];
-	}
-
-	MODULES.perky.props = {
-		// memoization table for trinket drops
-		heliumWeight: Number($$('#weight-he').value),
-		attackWeight: Number($$('#weight-atk').value),
-		healthWeight: Number($$('#weight-hp').value),
-		xpWeight: Number($$('#weight-xp').value),
-
-		early: presetData('early', perkyInputs),
-		broken: presetData('broken', perkyInputs),
-		mid: presetData('mid', perkyInputs),
-		corruption: presetData('corruption', perkyInputs),
-
-		magma: presetData('magma', perkyInputs),
-		z280: presetData('z280', perkyInputs),
-		z400: presetData('z400', perkyInputs),
-		z450: presetData('z450', perkyInputs),
-
-		spire: presetData('spire', perkyInputs),
-		trapper: presetData('trapper', perkyInputs),
-		coord: presetData('coord', perkyInputs),
-		trimp: presetData('trimp', perkyInputs),
-		metal: presetData('metal', perkyInputs),
-		c2: presetData('c2', perkyInputs),
+	//Initial setup if we don't already have a save file setup
+	if (settingInputs === null || Object.keys(settingInputs).length === 0) {
+		settingInputs = {};
+		return settingInputs;
 	};
-	var newSave = false;
-	if (perkyInputs === null) {
-		perkyInputs = {};
+
+	function presetData(preset) {
+		if (settingInputs === null) return null;
+		if (settingInputs[preset] === null || settingInputs[preset] === undefined) return null;
+		return settingInputs[preset];
 	}
 
-	if (perkyInputs['weight-he'] === null || isNaN(perkyInputs['weight-he'])) {
-		perkyInputs['weight-he'] = 1;
-	} if (perkyInputs['weight-atk'] === null || isNaN(perkyInputs['weight-atk'])) {
-		perkyInputs['weight-atk'] = 1;
-	} if (perkyInputs['weight-hp'] === null || isNaN(perkyInputs['weight-hp'])) {
-		perkyInputs['weight-hp'] = 1;
-	} if (perkyInputs['weight-xp'] === null || isNaN(perkyInputs['weight-xp'])) {
-		perkyInputs['weight-xp'] = 1;
+	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
+	const presets = {};
+	for (var item in presetNames) {
+		item = presetNames[item].value;
+		if (item.includes('— ')) continue;
+		presets[item] = presetData(item);
 	}
 
-	if (newSave) {
-		localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
+	return {
+		heliumWeight: +$$('#weight-he').value,
+		attackWeight: +$$('#weight-atk').value,
+		healthWeight: +$$('#weight-hp').value,
+		xpWeight: +$$('#weight-xp').value,
+		...presets,
 	}
 }
 
-// fill preset weights from the dropdown menu
+//Fill preset weights from the dropdown menu
 function fillPresetPerky(specificPreset) {
-	if (specificPreset) $$('#presetElem').value = specificPreset
+	if (specificPreset) $$('#preset').value = specificPreset;
 
-	initPresetPerky();
+	const defaultWeights = {
+		early: [5, 4, 3, 2.4],
+		broken: [7, 3, 1, 2.2],
+		mid: [16, 5, 1, 4.4],
+		corruption: [25, 7, 1, 6.6],
+		magma: [35, 4, 3, 8],
+		z280: [42, 6, 1, 10],
+		z400: [88, 10, 1, 20],
+		z450: [500, 50, 1, 110],
+		spire: [0, 1, 1, 0],
+		nerfed: [0, 4, 3, 0],
+		tent: [5, 4, 3, 0],
+		scientist: [0, 1, 3, 0],
+		carp: [0, 0, 0, 0],
+		trapper: [0, 7, 1, 0],
+		coord: [0, 40, 1, 0],
+		trimp: [0, 99, 1, 0],
+		metal: [0, 7, 1, 0],
+		c2: [0, 7, 1, 0],
+		income: [0, 0, 0, 0],
+		unesscented: [0, 1, 0, 0],
+		nerfeder: [0, 1, 0, 0],
+	};
 
-	var preset = $$('#presetElem').value;
-	var weights = [0, 0, 0];
-	if (preset === 'early') {
-		weights = (MODULES.perky.props.early === null) ? [5, 4, 3, 2.4] : MODULES.perky.props.early;
-	} else if (preset === 'broken') {
-		weights = (MODULES.perky.props.broken === null) ? [7, 3, 1, 2.2] : MODULES.perky.props.broken;
-		// with GU recommendations, we want a big Rn weight
-	} else if (preset === 'mid') {
-		weights = (MODULES.perky.props.mid === null) ? [16, 5, 1, 4.4] : MODULES.perky.props.mid;
-	} else if (preset === 'corruption') {
-		weights = (MODULES.perky.props.corruption === null) ? [25, 7, 1, 6.6] : MODULES.perky.props.corruption;
-	} else if (preset === 'magma') {
-		weights = (MODULES.perky.props.magma === null) ? [35, 4, 3, 8] : MODULES.perky.props.magma;
-	} else if (preset === 'z280') {
-		weights = (MODULES.perky.props.z280 === null) ? [42, 6, 1, 10] : MODULES.perky.props.z280;
-	} else if (preset === 'z400') {
-		weights = (MODULES.perky.props.z400 === null) ? [88, 10, 1, 20] : MODULES.perky.props.z400;
-	} else if (preset === 'z450') {
-		weights = (MODULES.perky.props.z450 === null) ? [500, 50, 1, 110] : MODULES.perky.props.z450;
-	} else if (preset === 'spire') {
-		weights = (MODULES.perky.props.spire === null) ? [0, 1, 1, 0] : MODULES.perky.props.spire;
-	} else if (preset === 'nerfed') {
-		weights = [0, 4, 3, 0];
-	} else if (preset === 'tent') {
-		weights = [5, 4, 3, 0];
-	} else if (preset === 'scientist') {
-		weights = [0, 1, 3, 0];
-	} else if (preset === 'carp') {
-		weights = [0, 0, 0, 0];
-	} else if (preset === 'trapper') {
-		weights = (MODULES.perky.props.trapper === null) ? [0, 7, 1, 0] : MODULES.perky.props.trapper;
-	} else if (preset === 'coord') {
-		weights = (MODULES.perky.props.coord === null) ? [0, 40, 1, 0] : MODULES.perky.props.coord;
-	} else if (preset === 'trimp') {
-		weights = (MODULES.perky.props.trimp === null) ? [0, 99, 1, 0] : MODULES.perky.props.trimp;
-	} else if (preset === 'metal') {
-		weights = (MODULES.perky.props.metal === null) ? [0, 7, 1, 0] : MODULES.perky.props.metal;
-	} else if (preset === 'c2') {
-		weights = (MODULES.perky.props.c2 === null) ? [0, 7, 1, 0] : MODULES.perky.props.c2;
-	} else if (preset === 'income') {
-		weights = [0, 0, 0, 0];
-	} else if (preset === 'unesscented') {
-		weights = [0, 1, 0, 0];
-	} else if (preset === 'nerfeder') {
-		weights = [0, 1, 0, 0];
-	}
+	const localData = initPresetPerky();
+	const preset = $$('#preset').value;
+	const weights = (localData[preset] === null || localData[preset] === undefined) ? defaultWeights[preset] : localData[preset];
 
-	// set special optimizations
-	$$('#weight-he').value = weights[0];
-	$$('#weight-atk').value = weights[1];
-	$$('#weight-hp').value = weights[2];
-	$$('#weight-xp').value = weights[3];
+	//If we're changing the preset that's being used then we need to update the inputs that the user sees
+	$$('#weight-he').value = +weights[0];
+	$$('#weight-atk').value = +weights[1];
+	$$('#weight-hp').value = +weights[2];
+	$$('#weight-xp').value = +weights[3];
 	savePerkySettings();
-	initialPresetLoad();
 }
 
-function initialPresetLoad() {
-	var preset = $$('#presetElem').value;
-
-	if (preset === 'early') {
-		MODULES.perky.props.early = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'broken') {
-		MODULES.perky.props.broken = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'mid') {
-		MODULES.perky.props.mid = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'corruption') {
-		MODULES.perky.props.corruption = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
+function savePerkySettings() {
+	const saveData = initPresetPerky();
+	//Initial setup and saving preset value
+	const settingInputs = { preset: $$('#preset').value, }
+	//Saving the values of the inputs for the weights
+	for (var item in MODULES.autoPerks.GUI.inputs) {
+		item = MODULES.autoPerks.GUI.inputs[item];
+		settingInputs[item] = +$$('#' + item).value;
+	}
+	//Save inputs for all the presets that users can select.
+	//Overrides data for current preset otherwises saves any already saved data for the others.
+	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
+	if (Object.keys(saveData).length !== 0) {
+		for (var item in presetNames) {
+			item = presetNames[item].value;
+			if (item.includes('— ')) continue;
+			if (settingInputs.preset === item)
+				settingInputs[item] = [settingInputs['weight-he'], settingInputs['weight-atk'], settingInputs['weight-hp'], settingInputs['weight-xp']];
+			else
+				settingInputs[item] = saveData[item];
+		}
 	}
 
-	else if (preset === 'magma') {
-		MODULES.perky.props.magma = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'z280') {
-		MODULES.perky.props.z280 = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'z400') {
-		MODULES.perky.props.z400 = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'z450') {
-		MODULES.perky.props.z450 = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	}
-
-	else if (preset === 'spire') {
-		MODULES.perky.props.spire = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'trapper') {
-		MODULES.perky.props.trapper = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'coord') {
-		MODULES.perky.props.coord = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'trimp') {
-		MODULES.perky.props.trimp = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'metal') {
-		MODULES.perky.props.metal = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
-	} else if (preset === 'c2') {
-		MODULES.perky.props.c2 = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
+	localStorage.setItem('perkyInputs', JSON.stringify(settingInputs));
+	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(settingInputs);
+		saveSettings();
 	}
 }
 
-function update_dg() {
+function dgPopGain() {
 	var max_zone = (game.stats.highestLevel.valueTotal()) / 2 + 115;
 	var eff = 500e6 + 50e6 * game.generatorUpgrades.Efficiency.upgrades;
 	var capa = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades;
@@ -306,26 +236,8 @@ function update_dg() {
 	return housing;
 }
 
-function selectPerkyPreset() {
-	$$$('#presetElem > *').forEach(function (option) {
-		if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared)
-			fillPresetPerky(option.value);
-	});
-}
-
 function populatePerkyData() {
-	var settings = JSON.parse(localStorage.getItem("perkyInputs"));
-	var zone = 0;
-
-	if (!settings.preset) {
-		$$('#targetZone').value = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared;
-		selectPerkyPreset();
-	}
 	var zone = $$('#targetZone').value;
-
-	var unlocks = Object.keys(game.portal).filter(perk => !game.portal[perk].locked && game.portal[perk].level !== undefined);
-	if (!game.global.canRespecPerks)
-		unlocks = unlocks.map(perk => perk + '>' + (game.portal[perk].level || 0));
 
 	// Income
 	var tt = mastery('turkimp2') ? 1 : mastery('turkimp') ? 0.4 : 0.25;
@@ -347,34 +259,18 @@ function populatePerkyData() {
 
 	chronojest += (mastery('mapLoot2') ? 5 : 4) * cache;
 
-	// Fill the fields
-	update_dg();
-
-	const data = {
-		unlocks: unlocks.join(','),
-		chronojest: chronojest,
-		prod: prod,
-		loot: loot,
-	}
-
-	return data;
-}
-
-function parse_inputs(data) {
-
-	var preset = $$('#presetElem').value;
-	savePerkySettings();
+	var preset = $$('#preset').value;
 	if (preset === 'trapper' && (!game || game.global.challengeActive !== 'Trapper'))
 		throw 'This preset requires a save currently running Trapper². Start a new run using “Trapper² (initial)”, export, and try again.';
 	result = {
 		total_he: (countHeliumSpent(false, true) + game.global.heliumLeftover) + (portalWindowOpen ? game.resources.helium.owned : 0),
-		zone: game.stats.highestLevel.valueTotal(),
-		perks: parse_perks('', data.unlocks),
+		zone: zone,
+		perks: parse_perks(),
 		weight: {
-			helium: Number(input("weight-he")),
-			attack: Number(input("weight-atk")),
-			health: Number(input("weight-hp")),
-			xp: Number(input("weight-xp")),
+			helium: +$$("#weight-he").value,
+			attack: +$$("#weight-atk").value,
+			health: +$$("#weight-hp").value,
+			xp: +$$("#weight-xp").value,
 			trimps: 0,
 			income: 0
 		},
@@ -385,15 +281,15 @@ function parse_inputs(data) {
 		mod: {
 			storage: 0.125,
 			soldiers: 0,
-			dg: preset === 'nerfed' ? 0 : Number(update_dg()),
+			dg: +(dgPopGain()),
 			tent_city: preset === 'tent',
 			whip: game.unlocks.imps.Whipimp,
 			magn: game.unlocks.imps.Magnimp,
 			taunt: game.unlocks.imps.Tauntimp,
 			ven: game.unlocks.imps.Venimp,
-			chronojest: data.chronojest,
-			prod: data.prod,
-			loot: data.loot,
+			chronojest: chronojest,
+			prod: prod,
+			loot: loot,
 			breed_timer: (mastery('patience') ? 45 : 30),
 		}
 	};
@@ -411,8 +307,7 @@ function parse_inputs(data) {
 	if (preset === 'spire') {
 		result.mod.prod = result.mod.loot = 0;
 		result.perks.Overkill.max_level = 0;
-		if (game)
-			result.zone = game.global.world;
+		result.zone = game.global.world;
 	}
 	if (preset === 'carp') {
 		result.mod.prod = result.mod.loot = 0;
@@ -439,123 +334,48 @@ function parse_inputs(data) {
 	return result;
 }
 
-function parse_perks(fixed, unlocks) {
+function parse_perks() {
 	var add = function (x) { return function (level) { return 1 + x * 0.01 * level; }; };
 	var mult = function (x) { return function (level) { return Math.pow(1 + x * 0.01, level); }; };
-	var perks = {
-		Looting_II: new Perk(100e3, 10e3, add(0.25)),
-		Carpentry_II: new Perk(100e3, 10e3, add(0.25)),
-		Motivation_II: new Perk(50e3, 1e3, add(1)),
-		Power_II: new Perk(20e3, 500, add(1)),
-		Toughness_II: new Perk(20e3, 500, add(1)),
-		Capable: new Perk(1e8, 0, function (l) { return 1; }, 10, 10),
-		Cunning: new Perk(1e11, 0, add(25)),
-		Curious: new Perk(1e14, 0, add(160)),
-		Classy: new Perk(1e17, 0, mult(4.5678375), 75),
-		Overkill: new Perk(1e6, 0, add(500), 30),
-		Resourceful: new Perk(50e3, 0, mult(-5)),
-		Coordinated: new Perk(150e3, 0, mult(-2)),
-		Siphonology: new Perk(100e3, 0, function (l) { return Math.pow(1 + l, 0.1); }, 3),
-		Anticipation: new Perk(1000, 0, add(6), 10),
-		Resilience: new Perk(100, 0, mult(10)),
-		Meditation: new Perk(75, 0, add(1), 7),
-		Relentlessness: new Perk(75, 0, function (l) { return 1 + 0.05 * l * (1 + 0.3 * l); }, 10),
-		Carpentry: new Perk(25, 0, mult(10)),
-		Artisanistry: new Perk(15, 0, mult(-5)),
-		Range: new Perk(1, 0, add(1), 10),
-		Agility: new Perk(4, 0, mult(-5), 20),
-		Bait: new Perk(4, 0, add(100)),
-		Trumps: new Perk(3, 0, add(20)),
-		Pheromones: new Perk(3, 0, add(10)),
-		Packrat: new Perk(3, 0, add(20)),
-		Motivation: new Perk(2, 0, add(5)),
-		Power: new Perk(1, 0, add(5)),
-		Toughness: new Perk(1, 0, add(5)),
-		Looting: new Perk(1, 0, add(5)),
+
+	const perks = {
+		//Perk(base_cost, scaling)
+		Looting_II: new Perk('Looting_II', add(0.25)),
+		Carpentry_II: new Perk('Carpentry_II', add(0.25)),
+		Motivation_II: new Perk('Motivation_II', add(1)),
+		Power_II: new Perk('Power_II', add(1)),
+		Toughness_II: new Perk('Toughness_II', add(1)),
+		Capable: new Perk('Capable', function (l) { return 1; }),
+		Cunning: new Perk('Cunning', add(25)),
+		Curious: new Perk('Curious', add(160)),
+		Classy: new Perk('Classy', mult(4.5678375)),
+		Overkill: new Perk('Overkill', add(500)),
+		Resourceful: new Perk('Resourceful', mult(-5)),
+		Coordinated: new Perk('Coordinated', mult(-2)),
+		Siphonology: new Perk('Siphonology', function (l) { return Math.pow(1 + l, 0.1); }),
+		Anticipation: new Perk('Anticipation', add(6)),
+		Resilience: new Perk('Resilience', mult(10)),
+		Meditation: new Perk('Meditation', add(1)),
+		Relentlessness: new Perk('Relentlessness', function (l) { return 1 + 0.05 * l * (1 + 0.3 * l); }),
+		Carpentry: new Perk('Carpentry', mult(10)),
+		Artisanistry: new Perk('Artisanistry', mult(-5)),
+		Range: new Perk('Range', add(1)),
+		Agility: new Perk('Agility', mult(-5)),
+		Bait: new Perk('Bait', add(100)),
+		Trumps: new Perk('Trumps', add(20)),
+		Pheromones: new Perk('Pheromones', add(10)),
+		Packrat: new Perk('Packrat', add(20)),
+		Motivation: new Perk('Motivation', add(5)),
+		Power: new Perk('Power', add(5)),
+		Toughness: new Perk('Toughness', add(5)),
+		Looting: new Perk('Looting', add(5)),
 	};
-	if (unlocks === '*')
-		unlocks = Object.keys(perks).join(',');
-	if (!unlocks.match(/>/))
-		unlocks = unlocks.replace(/(?=,|$)/g, '>0');
-	var _loop_1 = function (item) {
-		var m = item.match(/(\S+) *([<=>])=?(.*)/);
-		if (!m)
-			throw 'Enter a list of perk levels, such as “power=42, toughness=51”.';
-		var tier2 = m[1].match(/2$|II$/i);
-		var name = m[1].replace(/[ _]?(2|II)/i, '').replace(/^OK/i, 'O').replace(/^Looty/i, 'L');
-		var regex = new RegExp("^".concat(name, "[a-z]*").concat(tier2 ? '_II' : '', "$"), 'i');
-		var matches = Object.keys(perks).filter(function (p) { return p.match(regex); });
-		if (matches.length > 1)
-			throw "Ambiguous perk abbreviation: ".concat(m[1], ".");
-		if (matches.length < 1)
-			throw "Unknown perk: ".concat(m[1], ".");
-		var level = parse_suffixes(m[3]);
-		if (!isFinite(level))
-			throw "Invalid number: ".concat(m[3], ".");
-		perks[matches[0]].locked = false;
-		if (m[2] !== '>')
-			perks[matches[0]].max_level = level;
-		if (m[2] !== '<')
-			perks[matches[0]].min_level = level;
-	};
-	for (var _i = 0, _a = (unlocks + ',' + fixed).split(/,/).filter(function (x) { return x; }); _i < _a.length; _i++) {
-		var item = _a[_i];
-		_loop_1(item);
-	}
+
 	return perks;
 }
 
-function savePerkySettings(initial) {
-
-	if (!MODULES.perky.showing) {
-		return;
-	}
-	if (!initial) {
-		initPresetPerky();
-		initialPresetLoad();
-	}
-	const perkyInputs = {
-		preset: $$('#presetElem').value,
-		targetZone: $$('#targetZone').value,
-		'weight-he': $$('#weight-he').value,
-		'weight-atk': $$('#weight-atk').value,
-		'weight-hp': $$('#weight-hp').value,
-		'weight-xp': $$('#weight-xp').value,
-	}
-
-	//Save all of the presets that we might want to adjust
-	perkyInputs.early = MODULES.perky.props.early;
-	perkyInputs.broken = MODULES.perky.props.broken;
-	perkyInputs.mid = MODULES.perky.props.mid;
-	perkyInputs.corruption = MODULES.perky.props.corruption;
-
-	perkyInputs.magma = MODULES.perky.props.magma;
-	perkyInputs.z280 = MODULES.perky.props.z280;
-	perkyInputs.z400 = MODULES.perky.props.z400;
-	perkyInputs.z450 = MODULES.perky.props.z450;
-	perkyInputs.spire = MODULES.perky.props.spire;
-
-	perkyInputs.trapper = MODULES.perky.props.trapper;
-	perkyInputs.coord = MODULES.perky.props.coord;
-	perkyInputs.trimp = MODULES.perky.props.trimp;
-	perkyInputs.metal = MODULES.perky.props.metal;
-	perkyInputs.c2 = MODULES.perky.props.c2;
-
-	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
-	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
-		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(perkyInputs);
-		saveSettings();
-	}
-}
-
-function display(results) {
-	var perks = results[1];
-	for (var name in perks)
-		perks[name] = perks[name].level;
-	return LZString.compressToBase64(JSON.stringify(perks));
-}
-
-function optimize(params) {
+function optimize() {
+	const params = populatePerkyData();
 	var total_he = params.total_he, zone = params.zone, fluffy = params.fluffy, perks = params.perks, weight = params.weight, mod = params.mod;
 	var he_left = total_he;
 	var Looting_II = perks.Looting_II, Carpentry_II = perks.Carpentry_II, Motivation_II = perks.Motivation_II, Power_II = perks.Power_II, Toughness_II = perks.Toughness_II, Capable = perks.Capable, Cunning = perks.Cunning, Curious = perks.Curious, Classy = perks.Classy, Overkill = perks.Overkill, Resourceful = perks.Resourceful, Coordinated = perks.Coordinated, Siphonology = perks.Siphonology, Anticipation = perks.Anticipation, Resilience = perks.Resilience, Meditation = perks.Meditation, Relentlessness = perks.Relentlessness, Carpentry = perks.Carpentry, Artisanistry = perks.Artisanistry, Range = perks.Range, Agility = perks.Agility, Bait = perks.Bait, Trumps = perks.Trumps, Pheromones = perks.Pheromones, Packrat = perks.Packrat, Motivation = perks.Motivation, Power = perks.Power, Toughness = perks.Toughness, Looting = perks.Looting;
@@ -673,7 +493,7 @@ function optimize(params) {
 		attack *= Power.bonus * Power_II.bonus * Relentlessness.bonus;
 		attack *= Siphonology.bonus * Range.bonus * Anticipation.bonus;
 		attack *= fluffy.attack[Capable.level];
-		attack *= (game && mastery('amalg')) ? Math.pow(1.5, gators()) : 1 + 0.5 * gators();
+		attack *= mastery('amalg') ? Math.pow(1.5, gators()) : 1 + 0.5 * gators();
 		return soldiers() * attack;
 	}
 	// Total survivability (accounts for health and block)
@@ -759,7 +579,7 @@ function optimize(params) {
 		}
 		perk.gain *= perk.log_ratio();
 	}
-	mod.loot *= 20.8; // TODO: check that this is correct
+	mod.loot *= 20.8;
 	weight.agility = (weight.helium + weight.attack) / 2;
 	weight.overkill = 0.25 * weight.attack * (2 - Math.pow(0.9, weight.helium / weight.attack));
 	if (zone > 90 && mod.soldiers <= 1 && Bait.min_level === 0)
@@ -788,10 +608,6 @@ function optimize(params) {
 	}
 	if (zone <= 300 || potential >= Capable.level)
 		weight.xp = 0;
-	if (he_left < 0)
-		throw (game && game.global.canRespecPerks) ?
-			"You don’t have enough Helium to afford your Fixed Perks." :
-			"You don’t have a respec available.";
 	// Main loop
 	var sorted_perks = Object.keys(perks).map(function (name) { return perks[name]; }).filter(function (perk) { return perk.levellable(he_left); });
 	var reference_he = he_left;
@@ -804,7 +620,6 @@ function optimize(params) {
 			if (!best.levellable(he_left))
 				continue;
 			spend_he(best, he_left - he_target);
-			// sorted_perks.splice(sorted_perks.findIndex(p => p.gain / p.cost > best.gain / best.cost), 0, best);
 			var i = 0;
 			while (sorted_perks[i] && sorted_perks[i].gain / sorted_perks[i].cost > best.gain / best.cost)
 				i++;
@@ -815,30 +630,175 @@ function optimize(params) {
 		--Toughness_II.level;
 		he_left += Toughness_II.cost;
 	}
-	return [he_left, perks];
+	return perks;
 }
 
+MODULES.autoPerks = {
+	createInput: function (perkLine, id, inputObj, savedValue, onchange) {
+		if (!id) return;
+		if (document.getElementById(id + 'Div') !== null) {
+			console.log('You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn\'t exist.')
+			return;
+		}
+		if (onchange === 'Surky') onchange = 'legalizeInput(this.id); saveSurkySettings();';
+		if (onchange === 'Perky') onchange = 'legalizeInput(this.id); savePerkySettings();';
+		//Creating container for both the label and the input.
+		var perkDiv = document.createElement('DIV');
+		perkDiv.id = id + 'Div';
+		perkDiv.setAttribute('style', 'display: inline;');
 
-MODULES.perky.notations = [
-	[],
-	"KMBTQaQiSxSpOcNoDcUdDdTdQadQidSxdSpdOdNdVUvDvTvQavQivSxvSpvOvNvTgUtgDtgTtgQatgQitgSxtgSptgOtgNtgQaaUqaDqaTqaQaqaQiqaSxqaSpqaOqaNqaQiaUqiDqiTqiQaqiQiqiSxqiSpqiOqiNqiSxaUsxDsxTsxQasxQisxSxsxSpsxOsxNsxSpaUspDspTspQaspQispSxspSpspOspNspOgUogDogTogQaogQiogSxogSpogOogNogNaUnDnTnQanQinSxnSpnOnNnCtUc".split(
-		/(?=[A-Z])/
-	),
-	[],
-	"a b c d e f g h i j k l m n o p q r s t u v w x y z aa ab ac ad ae af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az ba bb bc bd be bf bg bh bi bj bk bl bm bn bo bp bq br bs bt bu bv bw bx by bz ca cb cc cd ce cf cg ch ci cj ck cl cm cn co cp cq cr cs ct cu cv cw cx".split(
-		" "
-	),
-	"KMBTQaQiSxSpOcNoDcUdDdTdQadQidSxdSpdOdNdVUvDvTvQavQivSxvSpvOvNvTg".split(/(?=[A-Z])/),
-	[],
-];
+		//Creating input box for users to enter their own ratios/stats.
+		var perkInput = document.createElement('Input');
+		perkInput.setAttribute('type', 'number');
+		perkInput.id = id;
+		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
+		if (game.options.menu.darkTheme.enabled !== 2) perkInputStyle += (' color: black;');
+		perkInput.setAttribute('style', perkInputStyle);
+		perkInput.setAttribute('value', (savedValue || inputObj.defaultValue));
+		perkInput.setAttribute('min', inputObj.minValue);
+		perkInput.setAttribute('max', inputObj.maxValue);
+		perkInput.setAttribute('placeholder', inputObj.defaultValue);
+		perkInput.setAttribute('onchange', onchange);
+		perkInput.setAttribute('onmouseover', 'tooltip(\"' + inputObj.name + '\", \"customText\", event, \"' + inputObj.description + '\")');
+		perkInput.setAttribute('onmouseout', 'tooltip("hide")');
 
-function setupPerkyUI() {
+		var perkText = document.createElement('Label');
+		perkText.id = id + 'Text';
+		perkText.innerHTML = inputObj.name;
+		perkText.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
+		//Combining the input and the label into the container. Then attaching the container to the main div.
+		perkDiv.appendChild(perkText);
+		perkDiv.appendChild(perkInput);
+		perkLine.appendChild(perkDiv);
+	},
 
-	if (portalUniverse !== 1) return;
-	MODULES.autoPerks = {};
+	removeGUI: function () {
+		Object.keys(MODULES.autoPerks.GUI).forEach(function (key) {
+			var $$elem = MODULES.autoPerks.GUI[key];
+			if (!$$elem) {
+				console.log('error in: ' + key);
+				return;
+			}
+			if ($$elem.parentNode) {
+				$$elem.parentNode.removeChild($$elem);
+				delete $elem;
+			}
+		});
+	},
+	displayGUI: function (universe) {
+		if (universe === 1) universe = 'Perky';
+		else if (universe === 2) universe = 'Surky';
+		const presets = MODULES.autoPerks['presets' + universe];
+		const inputBoxes = MODULES.autoPerks['inputBoxes' + universe];
+		var settingInputs = JSON.parse(localStorage.getItem(universe.toLowerCase() + 'Inputs'));
 
-	//Setting up data of id, names, and descriptions for each preset.
-	const presets = {
+		//As a safety measure we should remove the GUI if it already exists.
+		if (MODULES.autoPerks.GUI && Object.keys(MODULES.autoPerks.GUI).length !== 0)
+			MODULES.autoPerks.removeGUI();
+
+		MODULES.autoPerks.GUI = {};
+		MODULES.autoPerks.GUI.inputs = [];
+		const apGUI = MODULES.autoPerks.GUI;
+
+		//Setup Auto Allocate button
+		apGUI.$allocatorBtn1 = document.createElement('DIV');
+		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
+		apGUI.$allocatorBtn1.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
+		apGUI.$allocatorBtn1.setAttribute('onclick', 'run' + universe + '()');
+		apGUI.$allocatorBtn1.setAttribute('onmouseover', 'tooltip(\"Auto Allocate\", \"customText\", event, \"Clears all perks and buy optimal levels in each perk.\")');
+		apGUI.$allocatorBtn1.setAttribute('onmouseout', 'tooltip("hide")');
+		apGUI.$allocatorBtn1.textContent = 'Allocate Perks';
+		//Distance from Portal/Cancel/Respec buttons
+		var $buttonbar = document.getElementById('portalBtnContainer');
+		if (document.getElementById(apGUI.$allocatorBtn1.id) === null)
+			$buttonbar.appendChild(apGUI.$allocatorBtn1);
+		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
+		apGUI.$customRatios = document.createElement("DIV");
+		apGUI.$customRatios.id = 'customRatios';
+
+		apGUI.$ratiosLine = {};
+		//Setup inputs boxes for the UI.
+		for (var x = 0; x < Object.keys(inputBoxes).length; x++) {
+			var row = Object.keys(inputBoxes)[x];
+			apGUI.$ratiosLine[row] = document.createElement('DIV');
+			apGUI.$ratiosLine[row].setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+			for (var item in inputBoxes[row]) {
+				MODULES.autoPerks.createInput(apGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, universe);
+				MODULES.autoPerks.GUI.inputs.push(item);
+			}
+			apGUI.$customRatios.appendChild(apGUI.$ratiosLine[row]);
+		}
+
+		//Creating container for both the label and the input.
+		apGUI.$presetDiv = document.createElement('DIV');
+		apGUI.$presetDiv.id = 'Preset Div';
+		apGUI.$presetDiv.setAttribute('style', 'display: inline; width: calc(100vw/34;');
+
+		//Setting up preset label
+		apGUI.$presetLabel = document.createElement('Label');
+		apGUI.$presetLabel.id = 'PresetText';
+		apGUI.$presetLabel.innerHTML = '&nbsp;&nbsp;&nbsp;Preset:';
+		apGUI.$presetLabel.setAttribute('style', 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;');
+
+		//Setup preset list
+		var presetListHtml = "<select id=\"preset\" onchange=\"fillPreset" + universe + "()\" data-saved>";
+		presetListHtml += "<option disabled>— Zone Progression —</option>";
+		for (var item in presets.regular)
+			presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.regular[item].description + "\">" + presets.regular[item].name + "</option>";
+		presetListHtml += "<option disabled>— Special Purpose Presets —</option>";
+		for (var item in presets.special)
+			presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.special[item].description + "\">" + presets.special[item].name + "</option>";
+		presetListHtml += "</select >";
+
+		//Setting up preset dropdown
+		apGUI.$preset = document.createElement('select');
+		apGUI.$preset.id = 'preset';
+		apGUI.$preset.setAttribute('onchange', 'fillPreset' + universe + '();');
+		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
+		if (game.options.menu.darkTheme.enabled !== 2) oldstyle += " color: black;";
+		apGUI.$preset.setAttribute('style', oldstyle);
+		apGUI.$preset.innerHTML = presetListHtml;
+
+		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
+		apGUI.$presetDiv.appendChild(apGUI.$preset);
+		if (document.getElementById(apGUI.$presetDiv.id) === null)
+			apGUI.$ratiosLine.row1.appendChild(apGUI.$presetDiv);
+		var $portalWrapper = document.getElementById('portalWrapper');
+		$portalWrapper.appendChild(apGUI.$customRatios);
+
+		if (universe === 'Perky') {
+			//If Perky hasn't been run before, finds the closest zone to your target zone that you have already completed and sets your weight to be the same as that zone range.
+			if (settingInputs === null) {
+				$$('#targetZone').value = Math.max(20, (game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared));
+				var presetToUse;
+				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
+					if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared)
+						presetToUse = option.value;
+				});
+				fillPresetPerky(presetToUse);
+				settingInputs = JSON.parse(localStorage.getItem(universe.toLowerCase() + 'Inputs'));
+			}
+			$$('#preset').value = settingInputs.preset;
+			//Disable Fluffy xp input when it's not active.
+			if (game.global.spiresCompleted < 2)
+				$$('#weight-xpDiv').style.display = 'none';
+		}
+
+		else if (universe === 'Surky') {
+			if (settingInputs === null) {
+				saveSurkySettings(true);
+				settingInputs = JSON.parse(localStorage.getItem(universe.toLowerCase() + 'Inputs'));
+			}
+			const preset = (settingInputs.preset === null || settingInputs.preset === undefined ? 'ezfarm' : settingInputs.preset);
+			$$('#preset').value = preset;
+			$$('#radonPerRunDiv').style.display = 'none';
+			$$('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
+			$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
+			initialLoad();
+		}
+	},
+
+	presetsPerky: {
 		regular: {
 			early: {
 				name: "Z1-59",
@@ -927,10 +887,8 @@ function setupPerkyUI() {
 				description: "Use this setting to respec for the Nerfeder feat.",
 			},
 		}
-	}
-
-	//Setting up data of id, names, and descriptions for each input.
-	const inputBoxes = {
+	},
+	inputBoxesPerky: {
 		//Top Row
 		row1: {
 			'weight-he': {
@@ -972,157 +930,179 @@ function setupPerkyUI() {
 				defaultValue: 1,
 			},
 		},
-	}
+	},
+	presetsSurky: {
+		regular: {
+			ezfarm: {
+				name: "Easy Radon Challenge",
+				description: "Use if you can easily complete your radon challenge quickly at the minimum requirements with no golden battle. Pushing perks will still be valued for gains to scruffy level 3 and other growth mechanisms.",
+			},
+			tufarm: {
+				name: "Difficult Radon Challenge",
+				description: "Use if you need some extra pushing power to complete your radon challenge, especially if you still want golden battle. This will almost always be the right setting when you first start a new radon challenge.",
+			},
+			push: {
+				name: "Push/C^3/Mayhem",
+				description: "Use when doing any pushing runs. Aim is to maximise pushing power so should almost always be used with golden battle upgrades.",
+			},
+		},
+		special: {
+			alchemy: {
+				name: "Alchemy",
+				description: "Use this setting to optimize for trinket drop rate with finding potions. If you won't buy finding potions or don't care about trinket drops you can use a basic preset instead.\nIf it has been set then this will use your Easy Radon Challenge preset weights when selected.",
+			},
+			trappa: {
+				name: "Trappa/^3",
+				description: "Be sure to enter an 'Hours of trapping' value below to help value Bait! Use this setting either when portalling into Trappa, or after portalling with the Max Carpentry setting. coordLimited=1 is assumed.",
+			},
+			downsize: {
+				name: "Downsize/^3",
+				description: "This setting optimizes for each housing building giving only 1 Trimp. coordLimited=1 is assumed as the minimum (but a larger value to overweight population will be respected).\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+			},
+			berserk: {
+				name: "Berserk/^3",
+				description: "This setting will stop Frenzy being purchased.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+			},
+			smithless: {
+				name: "Smithless/^3",
+				description: "This setting will stop Smithology being purchased and make Smithies hold no value.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+			},
+			duel: {
+				name: "Duel/^3",
+				description: "This setting optimizes for less than 100% CC in Duel. It's a very minor effect that only matters for Criticality so feel free to skip this setting if you like.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+			},
+			equip: {
+				name: "Equipment farming",
+				description: "Optimize purely for equipment purchasing power, including zone progression to get more speedbooks. Useful as an initial spec to maximize prestiges that can be afforded before respeccing to Combat spec. All entered weights are ignored, but the Coord-limited setting is respected.",
+			},
+			combat: {
+				name: "Combat Respec",
+				description: "As a respec ONLY, optimize for maximum combat stats given current equipment and population. Radon weight is ignored, but atk / hp vs.equality weights are respected. Coord Limited value is ignored and instead uses your save to determine how much housing perk levels are needed to buy your current coord amount. If you are in Trappa, the optimization assumes you have sent your last army so that health perks won't be applied - DO NOT USE in Trappa until after you send your last army.",
+			},
+			combatRadon: {
+				name: "Radon Combat Respec",
+				description: "As a respec ONLY, optimize for maximum combat stats given current equipment and population. Coord Limited value is ignored and instead uses your save to determine how much housing perk levels are needed to buy your current coord amount. If you are in Trappa, the optimization assumes you have sent your last army so that health perks won't be applied - DO NOT USE in Trappa until after you send your last army.",
+			},
+			resminus: {
+				name: "Resources (-maps)",
+				description: "Optimize for max resource gains from below world level maps. Only use this if you are farming maps below your current zone and care ONLY about total resource gains. All user entered weights are ignored in favor of resource gains. Pushing perks are still valued for increasing the level of map you can farm.",
+			},
+			resplus: {
+				name: "Resources (+maps)",
+				description: "Optimize for max resource gains from +maps. Only use this if you are farming maps above your current zone and care ONLY about total resource gains. All user entered weights are ignored in favor of resource gains. Pushing perks are still valued for increasing the level of map you can farm.",
+			},
+			trappacarp: {
+				name: "Trappa Carp",
+				description: "Use this setting to max Carpentry when portalling into Trappa, if you can get enough starting population this way to be significant compared to how much you can trap.",
+			},
 
-	var presetListHtml = "<select id=\"presetElem\" onchange=\"fillPresetPerky()\" data-saved>"
-	presetListHtml += "<option disabled>— Zone Progression —</option>"
-	for (var item in presets.regular) {
-		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.regular[item].description + "\">" + presets.regular[item].name + "</option>"
-	}
-	presetListHtml += "<option disabled>— Special-purpose presets —</option>"
-	for (var item in presets.special) {
-		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.special[item].description + "\">" + presets.special[item].name + "</option>"
-	}
-	presetListHtml += "</select >";
-
-	MODULES.autoPerks.createInput = function (perkLine, id, inputObj, savedValue) {
-		if (!id) return;
-		if (document.getElementById(id + 'Div') !== null) {
-			console.log("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
-			return;
 		}
-		//Creating container for both the label and the input.
-		var perkDiv = document.createElement("DIV");
-		perkDiv.id = id + 'Div';
-		perkDiv.setAttribute("style", "display: inline;");
-
-		//Creating input box for users to enter their own ratios/stats.
-		var perkInput = document.createElement("Input");
-		perkInput.setAttribute("type", "number");
-		perkInput.id = id;
-		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
-		if (game.options.menu.darkTheme.enabled !== 2) perkInputStyle += (" color: black;");
-		perkInput.setAttribute('style', perkInputStyle);
-		perkInput.setAttribute('value', (savedValue || inputObj.defaultValue));
-		perkInput.setAttribute('min', inputObj.minValue);
-		perkInput.setAttribute('max', inputObj.maxValue);
-		perkInput.setAttribute('placeholder', inputObj.defaultValue);
-		perkInput.setAttribute('onchange', 'legalizeInput(this.id); savePerkySettings();');
-		perkInput.setAttribute('onmouseover', 'tooltip(\"' + inputObj.name + '\", \"customText\", event, \"' + inputObj.description + '\")');
-		perkInput.setAttribute('onmouseout', 'tooltip("hide")');
-
-		var perkText = document.createElement("Label");
-		perkText.id = id + "Text";
-		perkText.innerHTML = inputObj.name;
-		perkText.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
-		//Combining the input and the label into the container. Then attaching the container to the main div.
-		perkDiv.appendChild(perkText);
-		perkDiv.appendChild(perkInput);
-		perkLine.appendChild(perkDiv);
-	}
-
-	MODULES.autoPerks.GUI = {};
-
-	MODULES.autoPerks.removeGUI = function () {
-		Object.keys(MODULES.autoPerks.GUI).forEach(function (key) {
-			var $$elem = MODULES.autoPerks.GUI[key];
-			if (!$$elem) {
-				console.log("error in: " + key);
-				return;
+	},
+	inputBoxesSurky: {
+		//Top Row
+		row1: {
+			clearWeight: {
+				name: "Weight: Attack",
+				description: "If you are farming and it's trivial to complete your radon challenge, set this to 0! It will still be valued for the effect of pushing power on radon gains (from Scruffy level 3, for example). Set >0 if you need more pushing power to complete your current challenge in a reasonable amount of time. This is the weight for how much you value attack * health, which determines clear speed at less than max equality. If you are used to Attack Weight and Health Weight, this is equivalent to Attack weight. This weight is not used for Equality at all.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
+			survivalWeight: {
+				name: "Weight: Health",
+				description: "Weight placed on equality (and additional weight placed on health), for maximum survivability against high enemy attack at max equality. This helps determine how far you can push (perhaps very slowly) before you get stuck on fast enemies that can one-shot you every hit. This can be set to 0 and equality will still be used as a dump perk. If you need a little more equality than that small weights like 0.001 will still give a meaningful boost to Equality levels. If you're used to separate attack & health weights, set this to your old Health Weight minus Attack Weight.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
+			radonWeight: {
+				name: "Weight: Radon",
+				description: "Weight for how much you value growth from radon (and trinkets). If you are purely farming and can easily complete your radon challenge, this is the only weight you need, other than a tiny bit of additional health/equality weight (like 0.0001) to get some equality.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 1,
+			},
+		},
+		row2: {
+			targetZone: {
+				name: "Target Zone",
+				description: "Target last zone to clear. Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, 100 for Mayhem, etc).",
+				minValue: 1,
+				maxValue: null,
+				defaultValue: (game.global.highestRadonLevelCleared || 20),
+			},
+			coordLimited: {
+				name: "Coord Limited",
+				description: "Enter '0' if you can easily buy all coords with your population. Enter '1' if you definitely can't buy all coords. Enter something in between if you only need a bit more population to buy all coords. You can also increase this value (even above 1) if you just want to weight population gain more highly for some reason.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
+			weaponLevels: {
+				name: "Weapon Levels",
+				description: "Dagger levels purchased at target zone.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 1,
+			},
+			armorLevels: {
+				name: "Armor Levels",
+				description: "Boots levels purchased at target zone.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 1,
+			},
+		},
+		row3: {
+			tributes: {
+				name: "Tributes",
+				description: "Number of purchased tributes to consider for Greed.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
+			meteorologists: {
+				name: "Meteorologists",
+				description: "Number of meteorologists to optimize for. Affects the value of food gains.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
+			housingCount: {
+				name: "Collector count",
+				description: "How many collectors do you get in your runs? Affects the value of more resources for increasing population. If you don't have collectors unlocked you can enter 0.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
+			smithyCount: {
+				name: "Smithies",
+				description: "How many Smithies do you get in your runs? Affects the value of Smithology.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
+			radonPerRun: {
+				name: "Radon per run",
+				description: "Typical Radon gains in a farming run. Needed for Observation (until your trinkets are capped). Can be extracted from your save if you paste a save from the end of a U2 farming run. Doesn't need to be exact but a pretty good estimate is recommended. Only used when Rn weight > 0.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
+			},
+			trapHrs: {
+				name: "Hours of trapping",
+				description: "Roughly how many hours of trapping do you plan to do in this run? Affects the value of Bait. Decimal values like '0.5' and '3.7' are allowed. Entering '0' will place no value on Bait.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 5,
+			},
+			findPots: {
+				name: "Finding potions",
+				description: "How many finding potions will you buy? For simplicity we assume these are all purchased by z100.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 0,
 			}
-			if ($$elem.parentNode) {
-				$$elem.parentNode.removeChild($$elem);
-				delete $elem;
-			}
-		});
-		MODULES.perky.showing = false;
+		},
 	}
-
-	MODULES.autoPerks.displayGUI = function () {
-
-		var setupNeeded = false;
-		var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
-		if (perkyInputs === null && typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
-			var atSetting = autoTrimpSettings['autoAllocatePresets'].value;
-			if (atSetting !== '{"":""}') {
-				perkyInputs = JSON.parse(atSetting);
-				localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
-			}
-		}
-		if (perkyInputs === null) {
-			setupNeeded = true;
-			perkyInputs = {};
-		}
-
-		var apGUI = MODULES.autoPerks.GUI;
-		//Setup Auto Allocate button
-		apGUI.$allocatorBtn1 = document.createElement("DIV");
-		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
-		apGUI.$allocatorBtn1.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
-		apGUI.$allocatorBtn1.setAttribute('onclick', 'runPerky()');
-		apGUI.$allocatorBtn1.setAttribute('onmouseover', 'tooltip(\"Auto Allocate\", \"customText\", event, \"Clears all perks and buy optimal levels in each perk.\")');
-		apGUI.$allocatorBtn1.setAttribute('onmouseout', 'tooltip("hide")');
-		apGUI.$allocatorBtn1.textContent = 'Allocate Perks';
-		//Distance from Portal/Cancel/Respec buttons
-		var $buttonbar = document.getElementById("portalBtnContainer");
-		if (document.getElementById(apGUI.$allocatorBtn1.id) === null)
-			$buttonbar.appendChild(apGUI.$allocatorBtn1);
-		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
-		apGUI.$customRatios = document.createElement("DIV");
-		apGUI.$customRatios.id = 'customRatios';
-
-		//Line 1 of the UI
-		apGUI.$ratiosLine1 = document.createElement("DIV");
-		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
-		for (var item in inputBoxes.row1) {
-			MODULES.autoPerks.createInput(apGUI.$ratiosLine1, item, inputBoxes.row1[item], perkyInputs[item]);
-		}
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine1);
-
-		//Line 2
-		apGUI.$ratiosLine2 = document.createElement("DIV");
-		apGUI.$ratiosLine2.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
-		for (var item in inputBoxes.row2) {
-			MODULES.autoPerks.createInput(apGUI.$ratiosLine2, item, inputBoxes.row2[item], perkyInputs[item]);
-		}
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
-
-		//Creating container for both the label and the input.
-		apGUI.$presetDiv = document.createElement("DIV");
-		apGUI.$presetDiv.id = "Preset Div";
-		apGUI.$presetDiv.setAttribute("style", "display: inline; width: calc(100vw/34;");
-
-		//Setting up preset label
-		apGUI.$presetLabel = document.createElement("Label");
-		apGUI.$presetLabel.id = 'PresetText';
-		apGUI.$presetLabel.innerHTML = "&nbsp;&nbsp;&nbsp;Preset:";
-		apGUI.$presetLabel.setAttribute('style', 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;');
-
-		//Setting up preset dropdown
-		apGUI.$preset = document.createElement("select");
-		apGUI.$preset.id = 'presetElem';
-		apGUI.$preset.setAttribute('onchange', 'fillPresetPerky();');
-		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
-		if (game.options.menu.darkTheme.enabled !== 2) oldstyle += " color: black;";
-		apGUI.$preset.setAttribute('style', oldstyle);
-		apGUI.$preset.innerHTML = presetListHtml;
-
-		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
-		apGUI.$presetDiv.appendChild(apGUI.$preset);
-		if (document.getElementById(apGUI.$presetDiv.id) === null)
-			apGUI.$ratiosLine2.appendChild(apGUI.$presetDiv);
-		var $portalWrapper = document.getElementById("portalWrapper");
-		$portalWrapper.appendChild(apGUI.$customRatios);
-
-		$$('#presetElem').value = (perkyInputs.preset === undefined ? 'early' : perkyInputs.preset);
-		if (setupNeeded) savePerkySettings();
-		MODULES.perky.showing = true;
-
-		//Disable Fluffy xp input when it's not active.
-		if (game.global.spiresCompleted < 2) {
-			$$('#weight-xpDiv').style.display = 'none';
-		}
-	}
-
-	MODULES.autoPerks.displayGUI();
 }

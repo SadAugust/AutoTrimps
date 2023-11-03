@@ -133,6 +133,7 @@ function suicideTrimps() {
 function drawAllBuildings(force) {
 	if (usingRealTimeOffline && !force) return;
 	var elem = document.getElementById("buildingsHere");
+	var building;
 	elem.innerHTML = "";
 	for (var item in game.buildings) {
 		building = game.buildings[item];

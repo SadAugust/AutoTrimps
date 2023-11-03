@@ -1,4 +1,4 @@
-trapIndexs = ["", "Fire", "Frost", "Poison", "Lightning", "Strength", "Condenser", "Knowledge"];
+
 
 function tdStringCode2() {
 	var thestring = document.getElementById('importBox').value.replace(/\s/g, '');
@@ -6,6 +6,8 @@ function tdStringCode2() {
 	var index = s.indexOf("+", 0);
 	s = s.slice(0, index);
 	var length = s.length;
+
+	const trapIndexs = ["", "Fire", "Frost", "Poison", "Lightning", "Strength", "Condenser", "Knowledge"];
 
 	var saveLayout = [];
 	for (var i = 0; i < length; i++) {

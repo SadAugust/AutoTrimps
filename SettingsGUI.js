@@ -12,11 +12,7 @@ function automationMenuSettingsInit() {
 
 automationMenuSettingsInit();
 
-var link1 = document.createElement("link");
-(link1.rel = "stylesheet"),
-	(link1.type = "text/css"),
-	(link1.href = atSettings.initialise.basepath + "tabs.css"),
-	document.head.appendChild(link1);
+
 
 function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
 	var c = document.createElement("li"),
@@ -4665,7 +4661,7 @@ function autoPortalChallenges() {
 	return challenge;
 }
 //heliumHourChallenge && dailyHeliumHourChallenge
-function heliumHourChallenges(isDaily) {
+function heliumHourChallenges() {
 	var hze;
 	var challenge = ["None"];
 	if (currSettingUniverse === 2) {
@@ -5043,13 +5039,13 @@ function autoHeirloomOptions(heirloomType) {
 	var heirloomModsArray = [];
 
 	heirloomModsArray = ["Any"];
-
+	const heirloomData = heirloomInfo(heirloomType);
 	for (var item in game.heirlooms[heirloomType]) {
 		var heirloom = game.heirlooms[heirloomType][item];
 		if (item === "empty") continue;
 		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 		if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
-		heirloomModsArray.push(MODULES.heirloomMods[heirloomType][item].name);
+		heirloomModsArray.push(heirloomData[item].name);
 	}
 
 	return heirloomModsArray;

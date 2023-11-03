@@ -79,9 +79,9 @@ function autoPortal(specificPortalZone, skipDaily) {
 		var OKtoPortal = false;
 		var minZone = getPageSetting((runningDaily ? 'dailyDontPortalBefore' : 'heliumHrDontPortalBefore'), universe);
 		game.stats.bestHeliumHourThisRun.evaluate();
-		bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
-		bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
-		myHeliumHr = getHeliumPerHour();
+		var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
+		var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
+		var myHeliumHr = getHeliumPerHour();
 		var heliumHrBuffer = Math.abs(getPageSetting(prefix + 'HrBuffer', universe));
 		if (!atSettings.portal.aWholeNewWorld)
 			heliumHrBuffer *= MODULES['portal'].bufferExceedFactor;
@@ -471,8 +471,10 @@ function doPortal(challenge, skipDaily) {
 			else if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
 			else if (challengeSquaredMode) preset = 'c2';
 			else {
-				selectPerkyPreset();
-				preset = $$('#presetElem').value;
+				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
+					if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared)
+						preset = option.value;
+				});
 			}
 			fillPresetPerky(preset);
 		}
@@ -488,7 +490,7 @@ function doPortal(challenge, skipDaily) {
 			else if (challengeSquaredMode) preset = 'push';
 			else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
 			else preset = 'ezfarm';
-			fillPreset(preset);
+			fillPresetSurky(preset);
 		}
 	}
 
@@ -639,7 +641,6 @@ function resetVarsZone(loadingSave) {
 
 	//Reloading save variables
 	if (loadingSave) {
-		MODULES.resourceNeeded = { food: 0, wood: 0, metal: 0, science: 0, gems: 0, fragments: 0, };
 
 		MODULES.stats.baseMinDamage = 0;
 		MODULES.stats.baseMaxDamage = 0;
@@ -658,7 +659,6 @@ function resetVarsZone(loadingSave) {
 		MODULES.fightinfo.lastProcessedWorld = 0;
 		MODULES.portal.portalForVoid = false;
 		MODULES.mapFunctions.afterVoids = false;
-		//MODULES.mapFunctions.hasVoidFarmed = '';
 
 	}
 	delete mapSettings.voidHDIndex;

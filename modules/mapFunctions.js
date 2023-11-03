@@ -111,6 +111,7 @@ function exitSpireCell(checkCell) {
 	if (!game.global.spireActive) return;
 	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 	const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
+	var cell;
 	if (isDoingSpire() && exitCell > 0 && exitCell <= 100)
 		cell = exitCell;
 	else cell = 100;
@@ -268,7 +269,7 @@ function shouldRunUniqueMap(map) {
 		} else if (map.name === 'Melting Point') {
 			// maybe get extra smithies
 			var currChallenge = trimpStats.currChallenge.toLowerCase();
-			meltsmithy =
+			const meltsmithy =
 				(currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0 ? getPageSetting(currChallenge + 'MP') :
 					trimpStats.isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
 						trimpStats.isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
@@ -1386,10 +1387,10 @@ function prestigesToGet(targetZone, targetPrestige) {
 function prestigeRaiding(lineCheck) {
 
 	var shouldMap = false;
-	const mapName = 'Prestige Raiding'
+	const mapName = 'Prestige Raiding';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'raidingSettings';
@@ -1398,7 +1399,6 @@ function prestigeRaiding(lineCheck) {
 	var settingIndex = null;
 	var setting;
 	if (defaultSettings === null) return farmingDetails;
-
 	if (!defaultSettings.active) return farmingDetails;
 
 	for (var y = 0; y < baseSettings.length; y++) {
@@ -1439,7 +1439,7 @@ function prestigeRaiding(lineCheck) {
 	}
 
 	if (setting !== undefined) {
-		if (mapSettings.raidzones !== raidZones) {
+		if (mapSettings.raidzones && mapSettings.raidzones !== raidZones) {
 			resetSetting();
 		}
 
@@ -3417,8 +3417,10 @@ function farmingDecision() {
 			farmingDetails.settingName = mapSettings.settingName;
 		}
 	}
-	else {
-		//Checking which settings should be run and adding them to a priority list.
+
+	//Checking which settings should be run and adding them to a priority list.
+	//This should only run if we aren't already running a setting.
+	if (farmingDetails.mapName === '') {
 		for (const map of mapTypes) {
 			var mapCheck = map(true);
 			if (mapCheck && mapCheck.mapName === undefined) {
@@ -3903,7 +3905,7 @@ function prestigeRaidingSliderCost(raidZone, special, totalCost) {
 
 		//Reduce map loot
 		while (sliders[0] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			sliders[1] -= 1;
+			sliders[0] -= 1;
 		//Reduce map difficulty
 		while (sliders[1] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
 			sliders[1] -= 1;

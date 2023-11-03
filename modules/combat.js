@@ -38,7 +38,7 @@ function trimpcide() {
 	if (!getPageSetting('ForceAbandon')) return;
 	const mapsActive = game.global.mapsActive;
 	if (!mapsActive && game.global.spireActive) return;
-
+	if (mapsActive && !newArmyRdy()) return;
 	var antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
 	if (game.global.antiStacks >= antistacklimit) return;
 	//Calculates Anticipation stacks based on time since last breed.

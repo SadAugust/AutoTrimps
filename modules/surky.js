@@ -1,6 +1,7 @@
 //Setup for non-AT users
-if (typeof MODULES === 'undefined')
+if (typeof MODULES === 'undefined') {
 	MODULES = {};
+}
 
 if (typeof $$ !== 'function') {
 	$$ = function (a) {
@@ -11,11 +12,9 @@ if (typeof $$ !== 'function') {
 	};
 }
 
-MODULES.autoPerks = {};
 MODULES.surky = {};
 MODULES.surky.perks = {};
 MODULES.surky.props = {};
-MODULES.surky.showing = false;
 
 function runSurky() {
 	if (portalUniverse !== 2) return;
@@ -25,421 +24,84 @@ function runSurky() {
 		autobuyPerks();
 	else
 		clearAndAutobuyPerks();
-	initialLoad();
 }
 
-function setupSurkyUI() {
-	if (portalUniverse !== 2) return;
-	MODULES.autoPerks = {};
-
-	//Setting up data of id, names, and descriptions for each preset.
-	const presets = {
-		regular: {
-			ezfarm: {
-				name: "Easy Radon Challenge",
-				description: "Use if you can easily complete your radon challenge quickly at the minimum requirements with no golden battle. Pushing perks will still be valued for gains to scruffy level 3 and other growth mechanisms.",
-			},
-			tufarm: {
-				name: "Difficult Radon Challenge",
-				description: "Use if you need some extra pushing power to complete your radon challenge, especially if you still want golden battle. This will almost always be the right setting when you first start a new radon challenge.",
-			},
-			push: {
-				name: "Push/C^3/Mayhem",
-				description: "Use when doing any pushing runs. Aim is to maximise pushing power so should almost always be used with golden battle upgrades.",
-			},
-		},
-		special: {
-			alchemy: {
-				name: "Alchemy",
-				description: "Use this setting to optimize for trinket drop rate with finding potions. If you won't buy finding potions or don't care about trinket drops you can use a basic preset instead.\nIf it has been set then this will use your Easy Radon Challenge preset weights when selected.",
-			},
-			trappa: {
-				name: "Trappa/^3",
-				description: "Be sure to enter an 'Hours of trapping' value below to help value Bait! Use this setting either when portalling into Trappa, or after portalling with the Max Carpentry setting. coordLimited=1 is assumed.",
-			},
-			downsize: {
-				name: "Downsize/^3",
-				description: "This setting optimizes for each housing building giving only 1 Trimp. coordLimited=1 is assumed as the minimum (but a larger value to overweight population will be respected).\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
-			},
-			berserk: {
-				name: "Berserk/^3",
-				description: "This setting will stop Frenzy being purchased.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
-			},
-			smithless: {
-				name: "Smithless/^3",
-				description: "This setting will stop Smithology being purchased and make Smithies hold no value.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
-			},
-			duel: {
-				name: "Duel/^3",
-				description: "This setting optimizes for less than 100% CC in Duel. It's a very minor effect that only matters for Criticality so feel free to skip this setting if you like.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
-			},
-			equip: {
-				name: "Equipment farming",
-				description: "Optimize purely for equipment purchasing power, including zone progression to get more speedbooks. Useful as an initial spec to maximize prestiges that can be afforded before respeccing to Combat spec. All entered weights are ignored, but the Coord-limited setting is respected.",
-			},
-			combat: {
-				name: "Combat Respec",
-				description: "As a respec ONLY, optimize for maximum combat stats given current equipment and population. Radon weight is ignored, but atk / hp vs.equality weights are respected. Coord Limited value is ignored and instead uses your save to determine how much housing perk levels are needed to buy your current coord amount. If you are in Trappa, the optimization assumes you have sent your last army so that health perks won't be applied - DO NOT USE in Trappa until after you send your last army.",
-			},
-			combatRadon: {
-				name: "Radon Combat Respec",
-				description: "As a respec ONLY, optimize for maximum combat stats given current equipment and population. Coord Limited value is ignored and instead uses your save to determine how much housing perk levels are needed to buy your current coord amount. If you are in Trappa, the optimization assumes you have sent your last army so that health perks won't be applied - DO NOT USE in Trappa until after you send your last army.",
-			},
-			resminus: {
-				name: "Resources (-maps)",
-				description: "Optimize for max resource gains from below world level maps. Only use this if you are farming maps below your current zone and care ONLY about total resource gains. All user entered weights are ignored in favor of resource gains. Pushing perks are still valued for increasing the level of map you can farm.",
-			},
-			resplus: {
-				name: "Resources (+maps)",
-				description: "Optimize for max resource gains from +maps. Only use this if you are farming maps above your current zone and care ONLY about total resource gains. All user entered weights are ignored in favor of resource gains. Pushing perks are still valued for increasing the level of map you can farm.",
-			},
-			trappacarp: {
-				name: "Trappa Carp",
-				description: "Use this setting to max Carpentry when portalling into Trappa, if you can get enough starting population this way to be significant compared to how much you can trap.",
-			},
-
-		}
+function saveSurkySettings() {
+	const saveData = initPresetSurky();
+	//Initial setup and saving preset value
+	const settingInputs = { preset: $$('#preset').value, }
+	//Saving the values of the inputs for the weights
+	for (var item in MODULES.autoPerks.GUI.inputs) {
+		item = MODULES.autoPerks.GUI.inputs[item];
+		settingInputs[item] = +$$('#' + item).value;
+	}
+	//Save inputs for all the presets that users can select.
+	//Overrides data for current preset otherwises saves any already saved data for the others.
+	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
+	for (var item in presetNames) {
+		item = presetNames[item].value;
+		if (item.includes('— ')) continue;
+		if (settingInputs.preset === item)
+			settingInputs[item] = [settingInputs['clearWeight'], settingInputs['survivalWeight'], settingInputs['radonWeight']];
+		else
+			settingInputs[item] = saveData[item];
 	}
 
-	//Setting up data of id, names, and descriptions for each input.
-	const inputBoxes = {
-		//Top Row
-		row1: {
-			clearWeight: {
-				name: "Weight: Attack",
-				description: "If you are farming and it's trivial to complete your radon challenge, set this to 0! It will still be valued for the effect of pushing power on radon gains (from Scruffy level 3, for example). Set >0 if you need more pushing power to complete your current challenge in a reasonable amount of time. This is the weight for how much you value attack * health, which determines clear speed at less than max equality. If you are used to Attack Weight and Health Weight, this is equivalent to Attack weight. This weight is not used for Equality at all.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
-			survivalWeight: {
-				name: "Weight: Health",
-				description: "Weight placed on equality (and additional weight placed on health), for maximum survivability against high enemy attack at max equality. This helps determine how far you can push (perhaps very slowly) before you get stuck on fast enemies that can one-shot you every hit. This can be set to 0 and equality will still be used as a dump perk. If you need a little more equality than that small weights like 0.001 will still give a meaningful boost to Equality levels. If you're used to separate attack & health weights, set this to your old Health Weight minus Attack Weight.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
-			radonWeight: {
-				name: "Weight: Radon",
-				description: "Weight for how much you value growth from radon (and trinkets). If you are purely farming and can easily complete your radon challenge, this is the only weight you need, other than a tiny bit of additional health/equality weight (like 0.0001) to get some equality.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 1,
-			},
-		},
-		row2: {
-			targetZone: {
-				name: "Target Zone",
-				description: "Target last zone to clear. Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, 100 for Mayhem, etc).",
-				minValue: 1,
-				maxValue: null,
-				defaultValue: (game.global.highestRadonLevelCleared || 20),
-			},
-			coordLimited: {
-				name: "Coord Limited",
-				description: "Enter '0' if you can easily buy all coords with your population. Enter '1' if you definitely can't buy all coords. Enter something in between if you only need a bit more population to buy all coords. You can also increase this value (even above 1) if you just want to weight population gain more highly for some reason.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
-			weaponLevels: {
-				name: "Weapon Levels",
-				description: "Dagger levels purchased at target zone.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 1,
-			},
-			armorLevels: {
-				name: "Armor Levels",
-				description: "Boots levels purchased at target zone.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 1,
-			},
-		},
-		row3: {
-			tributes: {
-				name: "Tributes",
-				description: "Number of purchased tributes to consider for Greed.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
-			meteorologists: {
-				name: "Meteorologists",
-				description: "Number of meteorologists to optimize for. Affects the value of food gains.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
-			housingCount: {
-				name: "Collector count",
-				description: "How many collectors do you get in your runs? Affects the value of more resources for increasing population. If you don't have collectors unlocked you can enter 0.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
-			smithyCount: {
-				name: "Smithies",
-				description: "How many Smithies do you get in your runs? Affects the value of Smithology.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
-			radonPerRun: {
-				name: "Radon per run",
-				description: "Typical Radon gains in a farming run. Needed for Observation (until your trinkets are capped). Can be extracted from your save if you paste a save from the end of a U2 farming run. Doesn't need to be exact but a pretty good estimate is recommended. Only used when Rn weight > 0.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			},
-			trapHrs: {
-				name: "Hours of trapping",
-				description: "Roughly how many hours of trapping do you plan to do in this run? Affects the value of Bait. Decimal values like '0.5' and '3.7' are allowed. Entering '0' will place no value on Bait.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 5,
-			},
-			findPots: {
-				name: "Finding potions",
-				description: "How many finding potions will you buy? For simplicity we assume these are all purchased by z100.",
-				minValue: 0,
-				maxValue: null,
-				defaultValue: 0,
-			}
-		},
-	}
-
-	var presetListHtml = "<select id=\"presetElem\" onchange=\"fillPreset()\" data-saved>"
-	presetListHtml += "<option disabled>— Select a Preset —</option>"
-	for (var item in presets.regular) {
-		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.regular[item].description + "\">" + presets.regular[item].name + "</option>"
-	}
-	presetListHtml += "<option disabled>— Special-purpose presets —</option>"
-	for (var item in presets.special) {
-		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.special[item].description + "\">" + presets.special[item].name + "</option>"
-	}
-	presetListHtml += "</select >";
-
-	MODULES.autoPerks.createInput = function (perkLine, id, inputObj, savedValue) {
-		if (!id) return;
-		if (document.getElementById(id + 'Div') !== null) {
-			console.log("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
-			return;
-		}
-		//Creating container for both the label and the input.
-		var perkDiv = document.createElement("DIV");
-		perkDiv.id = id + 'Div';
-		perkDiv.setAttribute("style", "display: inline;");
-
-		//Creating input box for users to enter their own ratios/stats.
-		var perkInput = document.createElement("Input");
-		perkInput.setAttribute("type", "number");
-		perkInput.id = id;
-		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
-		if (game.options.menu.darkTheme.enabled !== 2) perkInputStyle += (" color: black;");
-		perkInput.setAttribute('style', perkInputStyle);
-		perkInput.setAttribute('value', (savedValue || inputObj.defaultValue));
-		perkInput.setAttribute('min', inputObj.minValue);
-		perkInput.setAttribute('max', inputObj.maxValue);
-		perkInput.setAttribute('placeholder', inputObj.defaultValue);
-		perkInput.setAttribute('onchange', 'legalizeInput(this.id); saveSurkySettings();');
-		perkInput.setAttribute('onmouseover', 'tooltip(\"' + inputObj.name + '\", \"customText\", event, \"' + inputObj.description + '\")');
-		perkInput.setAttribute('onmouseout', 'tooltip("hide")');
-
-		var perkText = document.createElement("Label");
-		perkText.id = id + "Text";
-		perkText.innerHTML = inputObj.name;
-		perkText.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
-		//Combining the input and the label into the container. Then attaching the container to the main div.
-		perkDiv.appendChild(perkText);
-		perkDiv.appendChild(perkInput);
-		perkLine.appendChild(perkDiv);
-	}
-
-	MODULES.autoPerks.GUI = {};
-
-	MODULES.autoPerks.removeGUI = function () {
-		Object.keys(MODULES.autoPerks.GUI).forEach(function (key) {
-			var $elem = MODULES.autoPerks.GUI[key];
-			if (!$elem) {
-				console.log("error in: " + key);
-				return;
-			}
-			if ($elem.parentNode) {
-				$elem.parentNode.removeChild($elem);
-				delete $elem;
-			}
-		});
-		MODULES.surky.showing = false;
-	}
-
-	MODULES.autoPerks.displayGUI = function () {
-
-		var setupNeeded = false;
-		var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
-		if (surkyInputs === null && typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
-			var atSetting = autoTrimpSettings['autoAllocatePresets'].valueU2;
-			if (atSetting !== '{"":""}') {
-				surkyInputs = JSON.parse(atSetting);
-				localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
-			}
-		}
-		if (surkyInputs === null) {
-			setupNeeded = true;
-			surkyInputs = {};
-		}
-
-		var apGUI = MODULES.autoPerks.GUI;
-		//Setup Auto Allocate button
-		apGUI.$allocatorBtn1 = document.createElement("DIV");
-		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
-		apGUI.$allocatorBtn1.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
-		apGUI.$allocatorBtn1.setAttribute('onclick', 'runSurky()');
-		apGUI.$allocatorBtn1.setAttribute('onmouseover', 'tooltip(\"Auto Allocate\", \"customText\", event, \"Clears all perks and buy optimal levels in each perk.<br>Will override inputs with stats from your current run when pressed to ensure stats are always up to date.\")');
-		apGUI.$allocatorBtn1.setAttribute('onmouseout', 'tooltip("hide")');
-		apGUI.$allocatorBtn1.textContent = 'Allocate Perks';
-		//Distance from Portal/Cancel/Respec buttons
-		var $buttonbar = document.getElementById("portalBtnContainer");
-		if (document.getElementById(apGUI.$allocatorBtn1.id) === null)
-			$buttonbar.appendChild(apGUI.$allocatorBtn1);
-		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
-		apGUI.$customRatios = document.createElement("DIV");
-		apGUI.$customRatios.id = 'customRatios';
-
-		//Line 1 of the UI
-		apGUI.$ratiosLine1 = document.createElement("DIV");
-		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
-		for (var item in inputBoxes.row1) {
-			MODULES.autoPerks.createInput(apGUI.$ratiosLine1, item, inputBoxes.row1[item], surkyInputs[item]);
-		}
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine1);
-
-		//Line 2
-		apGUI.$ratiosLine2 = document.createElement("DIV");
-		apGUI.$ratiosLine2.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
-		for (var item in inputBoxes.row2) {
-			MODULES.autoPerks.createInput(apGUI.$ratiosLine2, item, inputBoxes.row2[item], surkyInputs[item]);
-		}
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
-
-		//Line 3
-		apGUI.$ratiosLine3 = document.createElement("DIV");
-		apGUI.$ratiosLine3.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
-		for (var item in inputBoxes.row3) {
-			MODULES.autoPerks.createInput(apGUI.$ratiosLine3, item, inputBoxes.row3[item], surkyInputs[item]);
-		}
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine3);
-
-		//Creating container for both the label and the input.
-		apGUI.$presetDiv = document.createElement("DIV");
-		apGUI.$presetDiv.id = "Preset Div";
-		apGUI.$presetDiv.setAttribute("style", "display: inline; width: calc(100vw/34;");
-
-		//Setting up preset label
-		apGUI.$presetLabel = document.createElement("Label");
-		apGUI.$presetLabel.id = 'PresetText';
-		apGUI.$presetLabel.innerHTML = "&nbsp;&nbsp;&nbsp;Preset:";
-		apGUI.$presetLabel.setAttribute('style', 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;');
-		//Setting up preset dropdown
-		apGUI.$preset = document.createElement("select");
-		apGUI.$preset.id = 'presetElem';
-		apGUI.$preset.setAttribute('onchange', 'fillPreset();');
-		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
-		if (game.options.menu.darkTheme.enabled !== 2) oldstyle += " color: black;";
-		apGUI.$preset.setAttribute('style', oldstyle);
-		apGUI.$preset.innerHTML = presetListHtml;
-
-		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
-		apGUI.$presetDiv.appendChild(apGUI.$preset);
-		if (document.getElementById(apGUI.$presetDiv.id) === null)
-			apGUI.$ratiosLine1.appendChild(apGUI.$presetDiv);
-		var $portalWrapper = document.getElementById("portalWrapper")
-		$portalWrapper.appendChild(apGUI.$customRatios);
-
-		$$('#presetElem').value = (surkyInputs.preset === undefined ? 'ezfarm' : surkyInputs.preset);
-		if (setupNeeded) saveSurkySettings(true);
-		initialLoad();
-		MODULES.surky.showing = true;
-	}
-
-	MODULES.autoPerks.displayGUI();
-}
-
-function saveSurkySettings(initial) {
-	if (!initial) {
-		initPerks();
-		readInputs();
-	}
-	const surkyInputs = {
-		preset: $$('#presetElem').value,
-		radonWeight: $$('#radonWeight').value,
-		clearWeight: $$('#clearWeight').value,
-		survivalWeight: $$('#survivalWeight').value,
-		targetZone: $$('#targetZone').value,
-		radonPerRun: $$('#radonPerRun').value,
-		coordLimited: $$('#coordLimited').value,
-		weaponLevels: $$('#weaponLevels').value,
-		armorLevels: $$('#armorLevels').value,
-		tributes: $$('#tributes').value,
-		meteorologists: $$('#meteorologists').value,
-		housingCount: $$('#housingCount').value,
-		smithyCount: $$('#smithyCount').value,
-		findPots: $$('#findPots').value,
-		trapHrs: $$('#trapHrs').value,
-		ezWeights: MODULES.surky.props.ezWeights,
-		tuWeights: MODULES.surky.props.tuWeights,
-		pushWeights: MODULES.surky.props.pushWeights,
-		alchWeights: MODULES.surky.props.alchWeights,
-	}
-
-	localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
-	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
-		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(surkyInputs);
+	localStorage.setItem('surkyInputs', JSON.stringify(settingInputs));
+	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(settingInputs);
 		saveSettings();
 	}
-	initialLoad();
 }
 
-// Zone scaling after 60 (always used, just means we're a bit conservative at lower zones)
-//  HP: sqrt(zone) * (3.265^(1/2) * 1.1 * 1.32)^zone
-// ATK: sqrt(zone) * (3.27^(1/2) * 1.15 * 1.32)^zone 
-// Note that sqrt(zone) is accounted for in the MODULES.surky.props after getting a target zone from the user.
-MODULES.surky.logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
-MODULES.surky.logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
-
 // Quick and dirty hack: estimate about 60% Rn from VMs for VS1.
-// This can and should be a user input if and when we make such things hide-able.
-MODULES.surky.vmRadFrac = 0.6;
-
 // exponentially weighted moving average parameters for Rn/run
-MODULES.surky.rnAlpha = 0.3;
-MODULES.surky.rnTerms = 10;
-MODULES.surky.rnMAWeights = new Array(MODULES.surky.rnTerms);
-MODULES.surky.rnMAWeights[0] = MODULES.surky.rnAlpha;
-MODULES.surky.rnMAWeightsum = MODULES.surky.rnAlpha;
-for (var i = 1; i < MODULES.surky.rnTerms; i++) {
-	MODULES.surky.rnMAWeights[i] = MODULES.surky.rnMAWeights[i - 1] * (1 - MODULES.surky.rnAlpha);
+MODULES.surky.rnMAWeights = new Array(10);
+MODULES.surky.rnMAWeights[0] = 0.3;
+MODULES.surky.rnMAWeightsum = 0.3;
+for (var i = 1; i < 10; i++) {
+	MODULES.surky.rnMAWeights[i] = MODULES.surky.rnMAWeights[i - 1] * 0.7;
 	MODULES.surky.rnMAWeightsum += MODULES.surky.rnMAWeights[i];
 }
 // correct weights to sum to 1 with limited # of terms
-for (var i = 0; i < MODULES.surky.rnTerms; i++) {
+for (var i = 0; i < 10; i++) {
 	MODULES.surky.rnMAWeights[i] /= MODULES.surky.rnMAWeightsum;
+}
+
+function initPresetSurky() {
+	var settingInputs = JSON.parse(localStorage.getItem('surkyInputs'));
+
+	//Initial setup if we don't already have a save file setup
+	if (settingInputs === null) {
+		settingInputs = {};
+		return settingInputs;
+	};
+
+	function presetData(preset) {
+		if (settingInputs === null) return null;
+		if (settingInputs[preset] === null || settingInputs[preset] === undefined) return null;
+		return settingInputs[preset];
+	}
+
+	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
+	const presets = {};
+	for (var item in presetNames) {
+		item = presetNames[item].value;
+		if (item.includes('— ')) continue;
+		presets[item] = presetData(item);
+	}
+
+	return {
+		clearWeight: +$$('#clearWeight').value,
+		survivalWeight: +$$('#survivalWeight').value,
+		radonWeight: +$$('#radonWeight').value,
+		...presets,
+	}
 }
 
 // initialize perks object to default values
 function initPerks() {
-	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
-	var logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
-	var logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
-
-
-	if (typeof MODULES === 'undefined')
-		MODULES = {};
-	if (typeof MODULES.surky === 'undefined')
-		MODULES.surky = {};
 	MODULES.surky.props = {
-		perksRadon: 0,
 		radonSpent: 0,
 		// radon spent on perks so far
 		radonPerRun: 0,
@@ -455,15 +117,10 @@ function initPerks() {
 		shieldPrismal: 0,
 		healthDerate: 1,
 		// inequality makes raw health boosts less useful, so we derate health weight by this factor (based on inequality from equipped shield)
-		smithyScaling: 50,
 		tributes: 0,
-		trinkets: game.portal.Observation.trinkets,
 		imperzone: 0,
-		expanding: false,
-		actualTaunts: 0,
 		housingCount: 0,
-		hubEnabled: 0,
-		collectHubs: 1,
+		hubEnabled: game.global.exterminateDone,
 		meteorologists: 0,
 		tenacityTime: 10,
 		// minutes of tenacity to optimize for (hardcoded to 10mins - this is not relevant for long and the input box added clutter and resulted in a lot of questions)
@@ -471,8 +128,6 @@ function initPerks() {
 		// 0-1 value of "how coord limited" we are
 		trapHrs: 5,
 		// hours of trapping
-		findPots: 0,
-		// finding potions purchased in alchemy
 		shinyTable: [0],
 		// memoization table for trinket drops
 		clearWeight: Number($$('#clearWeight').value),
@@ -486,74 +141,26 @@ function initPerks() {
 		// tauntimp correction parameter
 		termR: 0,
 		// tauntimp correction parameter
-		hazzie: false,
-		// hazardous shield? (if so take golden void if Rn weight > 0)
-		bestPerk: "",
-		// 
-		hideUnused: false,
-		hideLocked: true,
-		showLevelLocks: false,
-		ezWeights: (surkyInputs !== null && surkyInputs.ezWeights !== undefined && surkyInputs.ezWeights !== null) ? (surkyInputs.ezWeights) : null,
-		tuWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.tuWeights !== null) ? (surkyInputs.tuWeights) : null,
-		alchWeights: (surkyInputs !== null && surkyInputs.ezWeights !== undefined && surkyInputs.ezWeights !== null) ? (surkyInputs.ezWeights) : null,
-		pushWeights: (surkyInputs !== null && surkyInputs.pushWeights !== undefined && surkyInputs.pushWeights !== null) ? (surkyInputs.pushWeights) : null,
 		gbAfterpush: false,
 		// is GB used in the afterpush?
-		s3Rn: true,
-		// should S3 (and VS1) be counted as boosting Rn? (selectable by user, could un-select if the next run will be non-farming)
-		glassDone: false,
-		// do we have the glass reward?
 		glassRadon: false,
 		// ...and does it get us more radon for more pushing power? (i.e. can we increase our VM zone within the current challenge)
-		scaffoldingBonus: 0,
-		// scaffolding, SA reward that increases population
-		permaFrenzy: false,
-		// Mass Hysteria, SA reward that makes frenzy permanent
-		baitDump: false,
-		// secret setting to dump remaining Rn into bait after all other perks
-		autoFill: false,
-		// fill the perk string on autobuy (but don't copy it)
 		specialChallenge: null,
 		// does the dropdown specify a special challenge?
 		trappaStartPop: 1,
 		// avoid NaNs before calculating perks
 		potency: 0.0085,
 		// breed speed base
-		maxTrimps: 0,
-		// max trimps BEFORE carp bonus in current save
-		coordsBought: 0,
-		// coords bought in current save
-		isTrappa: false,
-		// is the imported save in trappa right now?
-		isDownsize: false,
-		// is the imported save in downsize right now?
-		armySize: 0,
-		// army size in current save
-		currentWorld: 0,
-		// world zone of current save
 		carpNeeded: 0,
 		// carp levels needed to afford all coords at target zone (based on current save)
-		// scaling^log(resource boost) = atk or hp boost
-		equipScaling: {
-			attack: Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
-			health: Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
-		},
-		logEnemyScaling: (logEnemyAttackScaling + logEnemyHealthScaling),
 	};
 
-	if (isNaN(surkyInputs.radonWeight)) {
-		surkyInputs.radonWeight = 1;
-	} if (isNaN(surkyInputs.clearWeight)) {
-		surkyInputs.clearWeight = 1;
-	} if (isNaN(surkyInputs.survivalWeight)) {
-		surkyInputs.survivalWeight = 1;
-	}
+	const preset = $$('#preset').value;
 
 	MODULES.surky.perks = {
 		Agility: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 4,
 			priceFact: 1.3,
@@ -562,7 +169,6 @@ function initPerks() {
 		Artisanistry: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 15,
 			priceFact: 1.3,
@@ -570,9 +176,8 @@ function initPerks() {
 			efficiency: 0,
 		},
 		Bait: {
-			optimize: false,
+			optimize: preset === 'trappa',
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 4,
 			priceFact: 1.3,
@@ -580,7 +185,6 @@ function initPerks() {
 		Carpentry: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 25,
 			priceFact: 1.3,
@@ -590,7 +194,6 @@ function initPerks() {
 		Criticality: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 100,
 			priceFact: 1.3,
@@ -600,7 +203,6 @@ function initPerks() {
 		Equality: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1,
 			priceFact: 1.5,
@@ -610,7 +212,6 @@ function initPerks() {
 		Championism: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1e9,
 			priceFact: 5,
@@ -619,9 +220,8 @@ function initPerks() {
 			efficiency: 0,
 		},
 		Frenzy: {
-			optimize: true,
+			optimize: preset !== 'berserk',
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1000000000000000,
 			priceFact: 1.3,
@@ -633,7 +233,6 @@ function initPerks() {
 		Greed: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 10000000000,
 			priceFact: 1.3,
@@ -645,7 +244,6 @@ function initPerks() {
 		Hunger: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1000000,
 			priceFact: 1.3,
@@ -654,7 +252,6 @@ function initPerks() {
 		Looting: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1,
 			priceFact: 1.3,
@@ -664,7 +261,6 @@ function initPerks() {
 		Motivation: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 2,
 			priceFact: 1.3,
@@ -674,10 +270,9 @@ function initPerks() {
 		Observation: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			canDisable: true,
 			level: 0,
-			priceBase: 5000000000000000000,
+			priceBase: 5e18,
 			priceFact: 2,
 			max: 50,
 			efficiency: 0,
@@ -687,7 +282,6 @@ function initPerks() {
 		Packrat: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 3,
 			priceFact: 1.3,
@@ -695,9 +289,8 @@ function initPerks() {
 			efficiency: 0,
 		},
 		Pheromones: {
-			optimize: false,
+			optimize: preset !== 'trappa' && game.stats.highestRadLevel.valueTotal() >= 60,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 3,
 			priceFact: 1.3,
@@ -707,7 +300,6 @@ function initPerks() {
 		Power: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1,
 			priceFact: 1.3,
@@ -717,7 +309,6 @@ function initPerks() {
 		Prismal: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1,
 			priceFact: 1.3,
@@ -728,7 +319,6 @@ function initPerks() {
 		Range: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1,
 			priceFact: 1.3,
@@ -737,7 +327,6 @@ function initPerks() {
 		Resilience: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 100,
 			priceFact: 1.3,
@@ -747,7 +336,6 @@ function initPerks() {
 		Masterfulness: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 100e21,
 			priceFact: 50,
@@ -758,7 +346,6 @@ function initPerks() {
 		Tenacity: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 50000000,
 			priceFact: 1.3,
@@ -770,7 +357,6 @@ function initPerks() {
 		Toughness: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 1,
 			priceFact: 1.3,
@@ -778,17 +364,15 @@ function initPerks() {
 			efficiency: 0,
 		},
 		Trumps: {
-			optimize: false,
+			optimize: preset === 'downsize',
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 3,
 			priceFact: 1.3,
 		},
 		Smithology: {
-			optimize: true,
+			optimize: preset !== 'smithless',
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 100e21,
 			priceFact: 4,
@@ -798,7 +382,6 @@ function initPerks() {
 		Expansion: {
 			optimize: true,
 			locked: true,
-			levLocked: false,
 			level: 0,
 			priceBase: 100e21,
 			priceFact: 3,
@@ -806,124 +389,54 @@ function initPerks() {
 			efficiency: 0,
 		},
 	};
+
+	if (preset === 'combat' || preset === 'combatRadon') {
+		if (challengeActive('Trappapalooza')) {
+			MODULES.surky.perks.Bait.optimize = false;
+			MODULES.surky.perks.Pheromones.optimize = false;
+		}
+	}
 }
 
 // fill preset weights from the dropdown menu and set special challenge
-function fillPreset(specificPreset) {
-	if (specificPreset) $$('#presetElem').value = specificPreset
-	initPerks();
-	var preset = $$('#presetElem').value;
-	var weights = [0, 0, 0];
-	if (preset === 'ezfarm') {
-		weights = (MODULES.surky.props.ezWeights === null) ? [0, 0, 1] : MODULES.surky.props.ezWeights;
-	} else if (preset === 'tufarm') {
-		weights = (MODULES.surky.props.tuWeights === null) ? [1, 0.5, 15] : MODULES.surky.props.tuWeights;
-		// with GU recommendations, we want a big Rn weight
-	} else if (preset === 'push') {
-		weights = (MODULES.surky.props.pushWeights === null) ? [1, 1, 0] : MODULES.surky.props.pushWeights;
-	} else if (preset === 'alchemy') {
-		weights = (MODULES.surky.props.alchWeights === null) ? [1, 0.01, 10] : MODULES.surky.props.alchWeights;
-	} else if (preset === 'trappa') {
-		weights = (MODULES.surky.props.pushWeights === null) ? [1, 1.5, 0] : MODULES.surky.props.pushWeights;
-	} else if (preset === 'downsize') {
-		weights = (MODULES.surky.props.pushWeights === null) ? [1, 1, 0] : MODULES.surky.props.pushWeights;
-	} else if (preset === 'duel') {
-		weights = (MODULES.surky.props.pushWeights === null) ? [1, 0.2, 0] : MODULES.surky.props.pushWeights;
-	} else if (preset === 'berserk') {
-		weights = (MODULES.surky.props.pushWeights === null) ? [1, 0.5, 0] : MODULES.surky.props.pushWeights;
-	} else if (preset === 'smithless') {
-		weights = (MODULES.surky.props.pushWeights === null) ? [1, 0.5, 0] : MODULES.surky.props.pushWeights;
-	} else if (preset === 'combat') {
-		weights = [1, 0.1, 0];
-	} else if (preset === 'combatRadon') {
-		weights = (MODULES.surky.props.tuWeights === null) ? [1, 0.5, 15] : MODULES.surky.props.tuWeights;
+function fillPresetSurky(specificPreset) {
+	if (specificPreset) $$('#preset').value = specificPreset;
+
+	const defaultWeights = {
+		ezfarm: [0, 0, 1],
+		tufarm: [1, 0.5, 15],
+		push: [1, 1, 0],
+		alchemy: [1, 0.01, 10],
+		trappa: [1, 1.5, 0],
+		downsize: [1, 1, 0],
+		duel: [1, 0.2, 0],
+		berserk: [1, 0.5, 0],
+		smithless: [1, 0.5, 0],
+		combat: [1, 0.1, 0],
+		combatRadon: [1, 0.5, 15],
+		equip: [1, 0, 0],
+		resminus: [1, 0, 0],
+		resplus: [1, 0, 0],
+		trappacarp: [1, 0, 0],
+
 	}
-	presetSpecialOpt();
-	// set special optimizations
+	const localData = initPresetSurky();
+	const preset = $$('#preset').value;
+	const weights = (localData[preset] === null || localData[preset] === undefined) ? defaultWeights[preset] : localData[preset];
 	$$('#clearWeight').value = weights[0];
 	$$('#survivalWeight').value = weights[1];
 	$$('#radonWeight').value = weights[2];
 	saveSurkySettings();
 
-	initialLoad();
-}
-
-function presetSpecialOpt() {
-	var preset = $$('#presetElem').value;
-	$$('#trapHrsDiv').style.display = 'none';
-	$$('#findPotsDiv').style.display = 'none';
 	$$('#radonPerRunDiv').style.display = 'none';
-	if (preset === 'alchemy') {
-		MODULES.surky.props.specialChallenge = preset;
-		$$('#findPotsDiv').style.display = 'inline';
-	}
-	if (preset === 'trappacarp') {
-		MODULES.surky.props.specialChallenge = preset;
-	}
-	if (preset === 'trappa') {
-		MODULES.surky.props.specialChallenge = preset;
-		$$('#trapHrsDiv').style.display = 'inline';
-		MODULES.surky.perks.Bait.optimize = true;
-		MODULES.surky.perks.Pheromones.optimize = false;
-	} else {
-		MODULES.surky.perks.Bait.optimize = false;
-		if (game !== null && game.stats.highestRadLevel.valueTotal() >= 60)
-			MODULES.surky.perks.Pheromones.optimize = true;
-	}
-	if (preset === 'downsize') {
-		MODULES.surky.props.specialChallenge = preset;
-		MODULES.surky.perks.Trumps.optimize = true;
-	} else {
-		MODULES.surky.perks.Trumps.optimize = false;
-	}
-	if (preset === 'berserk') {
-		MODULES.surky.props.specialChallenge = preset;
-		MODULES.surky.perks.Frenzy.optimize = false;
-	} else {
-		MODULES.surky.perks.Frenzy.optimize = true;
-	}
-	if (preset === 'smithless') {
-		MODULES.surky.props.specialChallenge = preset;
-		MODULES.surky.perks.Smithology.optimize = false;
-	} else {
-		MODULES.surky.perks.Smithology.optimize = true;
-	}
-	if (preset === 'equip') {
-		MODULES.surky.props.specialChallenge = preset;
-	}
-	if (preset === 'combat' || preset === 'combatRadon') {
-		MODULES.surky.props.specialChallenge = preset;
-		if (MODULES.surky.props.isTrappa) {
-			MODULES.surky.perks.Bait.optimize = false;
-			MODULES.surky.perks.Pheromones.optimize = false;
-		}
-	}
-	if (preset === 'resplus') {
-		MODULES.surky.props.specialChallenge = preset;
-	}
-	if (preset === 'resminus') {
-		MODULES.surky.props.specialChallenge = preset;
-	}
+	$$('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
+	$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
 }
 
 function initialLoad(skipLevel) {
 
 	initPerks();
 	var portal = game.portal;
-
-	// set perk object to default values
-	var bdTmp = MODULES.surky.props.baitDump;
-	var afTmp = MODULES.surky.props.autoFill;
-	var ezTmp = MODULES.surky.props.ezWeights;
-	var tuTmp = MODULES.surky.props.tuWeights;
-	var alTmp = MODULES.surky.props.alchWeights;
-	var puTmp = MODULES.surky.props.pushWeights;
-	MODULES.surky.props.baitDump = bdTmp;
-	MODULES.surky.props.autoFill = afTmp;
-	MODULES.surky.props.ezWeights = ezTmp;
-	MODULES.surky.props.tuWeights = tuTmp;
-	MODULES.surky.props.alchWeights = alTmp;
-	MODULES.surky.props.pushWeights = puTmp;
 
 	// read save into input perk fields
 	// enable perks (in input fields and perks object) based on locked status from save
@@ -942,8 +455,8 @@ function initialLoad(skipLevel) {
 		}
 	}
 
-	// needs to be after perks since it looks at perk values
-	presetSpecialOpt();
+	var preset = $$('#preset').value;
+	MODULES.surky.props.specialChallenge = preset;
 
 	// "red" fields should only be overwritten if loading a U2 save (values will be garbage in U1) -- Surky is gonna break if portal Universe isn't set to 2 here!
 	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
@@ -986,10 +499,7 @@ function initialLoad(skipLevel) {
 	$$('#trapHrs').value = surkyInputs.trapHrs;
 	MODULES.surky.props.trapHrs = Number($$('#trapHrs').value);
 
-	//Figure out finding potions for Alchemy. Default is 0!
-	var findPots = (alchObj.potionsOwned[2] || 0);
-	$$('#findPots').value = Math.max(findPots, surkyInputs.findPots);
-	MODULES.surky.props.findPots = Number($$('#findPots').value);
+	$$('#findPots').value = Math.max(alchObj.potionsOwned[2], surkyInputs.findPots);
 
 	MODULES.surky.props.vmZone = Math.max(15, (MODULES.surky.props.targetZone - 1));
 	var rawRnRun = game.resources.radon.owned;
@@ -1000,8 +510,8 @@ function initialLoad(skipLevel) {
 	if (rawRnRun > parseFloat(MODULES.surky.props.radonPerRun) / 20 || MODULES.surky.props.radonPerRun >= game.global.totalRadonEarned && rawRnRun > game.global.totalRadonEarned / 1e6) {
 		var history = new Array(MODULES.surky.rnTerms);
 		// maintain a history of the last 10 farming runs' Rn gain, and evaluate an exponentially weighted moving average over this history
-		if (window.localStorage.getItem("rPrHistory")) {
-			history = JSON.parse(window.localStorage.getItem("rPrHistory"));
+		if (window.localStorage.getItem('rPrHistory')) {
+			history = JSON.parse(window.localStorage.getItem('rPrHistory'));
 		}
 		for (var i = MODULES.surky.rnTerms - 1; i >= 0; i--) {
 			// any uninitialized value just gets the current Rn/run (should only happen once per user's localStorage)
@@ -1017,7 +527,7 @@ function initialLoad(skipLevel) {
 		for (var i = 0; i < MODULES.surky.rnTerms; i++) {
 			ewma += history[i] * MODULES.surky.rnMAWeights[i];
 		}
-		window.localStorage.setItem("rPrHistory", JSON.stringify(history));
+		window.localStorage.setItem('rPrHistory', JSON.stringify(history));
 		$$('#radonPerRun').value = ewma;
 		MODULES.surky.props.radonPerRun = $$('#radonPerRun').value;
 	}
@@ -1030,51 +540,6 @@ function initialLoad(skipLevel) {
 		$$('#radonPerRun').value = rawRnRun;
 		MODULES.surky.props.radonPerRun = $$('#radonPerRun').value;
 	}
-
-	// scaffolding increases population (relevant for Combat Respec and Trappa)
-	var scaffolds = autoBattle.bonuses.Scaffolding.level;
-	MODULES.surky.props.scaffoldingBonus = 1 + (scaffolds * Math.pow(1.1, scaffolds - 1));
-
-	// Expanding Tauntimps are a flat multiplier to pop instead of adding one by one to trimps.max
-	MODULES.surky.props.expanding = game.global.expandingTauntimp;
-	MODULES.surky.props.actualTaunts = game.unlocks.impCount.Tauntimp;
-
-	// initially used only for combat respec preset which REQUIRES an import at the point of respec, and not displayed anywhere
-	MODULES.surky.props.maxTrimps = (game.resources.trimps.max * game.resources.trimps.maxMod) * MODULES.surky.props.scaffoldingBonus;
-	MODULES.surky.props.coordsBought = game.upgrades.Coordination.done;
-	MODULES.surky.props.armySize = game.resources.trimps.maxSoldiers;
-	MODULES.surky.props.currentWorld = game.global.world;
-
-	// remaining fields are "safe" to load from a U1 save because they are persistent regardless of universe
-
-	MODULES.surky.props.hubEnabled = game.global.exterminateDone;
-	MODULES.surky.props.antennae = game.buildings.Antenna.owned;
-	MODULES.surky.props.canGUString = game.global.canGuString;
-
-	// More Imports bone bonus
-	MODULES.surky.props.moreImps = game.permaBoneBonuses.exotic.owned;
-
-	// Glass reward determines whether additional VM zones increase radon above 175
-	MODULES.surky.props.glassDone = game.global.glassDone || false;
-
-	// Mass Hysteria grants permanent Frenzy
-	MODULES.surky.props.permaFrenzy = autoBattle.oneTimers.Mass_Hysteria.owned;
-
-	// used for combat respec to apply special optimizations for trappa (no gain from health, full gain from equality)
-	MODULES.surky.props.isTrappa = challengeActive('Trappapalooza');
-
-	// used for combat reset to avoid reducing Carp, as the game uses a special calculation for Downsize population not accessible in the save object
-	MODULES.surky.props.isDownsize = challengeActive('Downsize');
-
-	// SA cleared level
-	var SAlevel = (autoBattle.maxEnemyLevel - 1) || 0;
-
-	// Championism effect is 1% plus 0.5% per SA level cleared
-	MODULES.surky.perks.Championism.effect = 1.01 + 0.005 * SAlevel;
-
-	// property will not be defined in the save if not owned, convert undefined to false
-	var haveCollectology = autoBattle.oneTimers.Collectology.owned || false;
-	MODULES.surky.props.collectHubs = !haveCollectology ? 1 : (2 + Math.floor(SAlevel / 30));
 
 	// calculate Scruffy level (adapted from Fluffy.getLevel() in the game source code)
 	MODULES.surky.props.scruffyLevel = Math.floor(Math.log(((game.global.fluffyExp2 / 1000) * 3) + 1) / Math.log(4));
@@ -1117,27 +582,22 @@ function initialLoad(skipLevel) {
 		} else {
 			MODULES.surky.props.healthDerate = 1;
 		}
-		MODULES.surky.props.hazzie = shield.rarity >= 10;
 	}
 
 	// Suprism gives 3% prismal shield per SA level
 	var haveSuprism = autoBattle.oneTimers.Suprism.owned;
 	if (haveSuprism)
-		MODULES.surky.props.shieldPrismal += 3 * SAlevel;
-
+		MODULES.surky.props.shieldPrismal += 3 * (autoBattle.maxEnemyLevel - 1);
 
 	// read and process all input fields
 	readInputs();
 	MODULES.surky.props.perksRadon = (countHeliumSpent(false, true) + game.global.radonLeftover) + (portalWindowOpen ? game.resources.radon.owned : 0);
-	evaluatePerks();
 }
 
 function getPerkCost(whichPerk, numLevels, fromZero = false) {
 	if (numLevels === 0)
 		return 0;
 	var perk = MODULES.surky.perks[whichPerk];
-	if (!perk.hasOwnProperty("optimize"))
-		console.log("ERROR getting perk cost: " + whichPerk + " is not a known perk.");
 	var level = fromZero ? 0 : perk.level;
 	// if the perk can't be leveled, return infinite cost to naturally avoid buying the perk
 	if (perk.locked || perk.hasOwnProperty("max") && (level + numLevels > perk.max))
@@ -1152,12 +612,8 @@ function getPerkCost(whichPerk, numLevels, fromZero = false) {
 
 function couldBuyPerk(whichPerk, actuallyBuy = false, numLevels = 1) {
 	var perk = MODULES.surky.perks[whichPerk];
-	if (perk.hasOwnProperty("max")) {
-		if (perk.level > perk.max)
-			console.log("ERROR: perk " + whichPerk + " exceeded max level!");
-		if (perk.level + numLevels > perk.max)
-			return false;
-	}
+	if (perk.hasOwnProperty('max') && perk.level + numLevels > perk.max)
+		return false;
 	var cost = getPerkCost(whichPerk, numLevels);
 	if (cost + MODULES.surky.props.radonSpent > MODULES.surky.props.perksRadon)
 		return false;
@@ -1225,18 +681,14 @@ function legalizeInput(settingID) {
 
 	val = parseFloat(settingID.value);
 	var badNum = isNaN(val);
-	if (badNum) {
+	if (badNum)
 		val = defaultValue;
-	}
-	if (minValue !== null && val < minValue) {
+	if (minValue !== null && val < minValue)
 		settingID.value = minValue;
-	}
-	else if (maxValue !== null && val > maxValue) {
+	else if (maxValue !== null && val > maxValue)
 		settingID.value = maxValue;
-	}
-	else {
+	else
 		settingID.value = val;
-	}
 }
 
 function readInputs() {
@@ -1275,12 +727,10 @@ function readInputs() {
 
 	// calculate equipment resource scaling for atk/hp based on weaponl/armor levels
 	var wLevScaling = Math.pow((MODULES.surky.props.weaponLevels + 1) / (MODULES.surky.props.weaponLevels), 1 / Math.log(1.2));
+	MODULES.surky.props.equipScaling = {};
 	MODULES.surky.props.equipScaling.attack = Math.min(wLevScaling, Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))));
 	var aLevScaling = Math.pow((MODULES.surky.props.armorLevels + 1) / (MODULES.surky.props.armorLevels), 1 / Math.log(1.2));
 	MODULES.surky.props.equipScaling.health = Math.min(aLevScaling, Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))));
-
-	// calculate greed effect from tribute count
-	MODULES.surky.perks.Greed.effect = getGreedEffect(MODULES.surky.props.tributes);
 
 	// use tenacity time to calculate tenacity effect
 	//   -> for any radon weight we presume we don't have high tenacity time (and radon will dominate for MF regardless)
@@ -1304,67 +754,24 @@ function readInputs() {
 	// let the user set coordLimited > 1 if they like to give extra population weight, despite saying they can't ;p
 	//if (MODULES.surky.props.coordLimited > 1) MODULES.surky.props.coordLimited = 1;
 
-	// S15 is a reduction in smithy cost scaling
-	if (MODULES.surky.props.scruffyLevel >= 14)
-		MODULES.surky.props.smithyScaling = 40;
-	else
-		MODULES.surky.props.smithyScaling = 50;
-
 	// approximate number of imp-orts of a given type per zone
 	// FIXME someday: this isn't actually how randimps work.
-	MODULES.surky.props.imperzone = (MODULES.surky.props.scruffyLevel >= 9 ? 3.5 : 3) + MODULES.surky.props.moreImps * 0.05 + 3.0 / 5;
+	MODULES.surky.props.imperzone = (MODULES.surky.props.scruffyLevel >= 9 ? 3.5 : 3) + game.permaBoneBonuses.exotic.owned * 0.05 + 3.0 / 5;
 
 	// get potency mod from target zone (div by 10 to get per-tick potency which is what's actually used in-game)
 	MODULES.surky.props.potency = 0.00085 * Math.pow(1.1, Math.floor(MODULES.surky.props.targetZone / 5)) * Math.pow(1.003, MODULES.surky.props.targetZone * MODULES.surky.props.imperzone);
 
 	// is our VM zone in the range for Hypo? then Glass can help us get more radon
 	// TODO: expand this to any future radon challenges
-	MODULES.surky.props.glassRadon = MODULES.surky.props.glassDone && (MODULES.surky.props.vmZone > 174 && MODULES.surky.props.vmZone < 200 || MODULES.surky.props.vmZone > 200);
+	MODULES.surky.props.glassRadon = game.global.glassDone && (MODULES.surky.props.vmZone > 174 && MODULES.surky.props.vmZone < 200 || MODULES.surky.props.vmZone > 200);
 
-	var preset = $$('#presetElem').value;
-	if (preset === 'alchemy') {
-		MODULES.surky.props.specialChallenge = 'alchemy';
-	} else if (preset === 'trappacarp') {
-		MODULES.surky.props.specialChallenge = 'trappacarp';
-	} else if (preset === 'trappa') {
-		MODULES.surky.props.specialChallenge = 'trappa';
-	} else if (preset === 'downsize') {
-		MODULES.surky.props.specialChallenge = 'downsize';
-	} else if (preset === 'duel') {
-		MODULES.surky.props.specialChallenge = 'duel';
-	} else if (preset === 'berserk') {
-		MODULES.surky.props.specialChallenge = 'berserk';
-	} else if (preset === 'smithless') {
-		MODULES.surky.props.specialChallenge = 'smithless';
-	} else if (preset === 'equip') {
-		MODULES.surky.props.specialChallenge = 'equip';
-	} else if (preset === 'combat') {
-		MODULES.surky.props.specialChallenge = 'combat';
-	} else if (preset === 'combatRadon') {
-		MODULES.surky.props.specialChallenge = 'combatRadon';
-	} else if (preset === 'resplus') {
-		MODULES.surky.props.specialChallenge = 'resplus';
-	} else if (preset === 'resminus') {
-		MODULES.surky.props.specialChallenge = 'resminus';
-	} else
-		MODULES.surky.props.specialChallenge = null;
-
-	// store weights under the current preset for Rn/Push weights
-	if (preset === 'ezfarm') {
-		MODULES.surky.props.ezWeights = [MODULES.surky.props.clearWeight, MODULES.surky.props.survivalWeight, MODULES.surky.props.radonWeight];
-	} else if (preset === 'tufarm') {
-		MODULES.surky.props.tuWeights = [MODULES.surky.props.clearWeight, MODULES.surky.props.survivalWeight, MODULES.surky.props.radonWeight];
-	} else if (preset === 'push') {
-		MODULES.surky.props.pushWeights = [MODULES.surky.props.clearWeight, MODULES.surky.props.survivalWeight, MODULES.surky.props.radonWeight];
-	} else if (preset === 'alchemy') {
-		MODULES.surky.props.alchWeights = [MODULES.surky.props.clearWeight, MODULES.surky.props.survivalWeight, MODULES.surky.props.radonWeight];
-	}
+	MODULES.surky.props.specialChallenge = $$('#preset').value;
 
 	// calculate coefficients for tauntimp housing correction
 	var housingTypes = {
 		collector: [50, 1.12],
 	}
-	if (MODULES.surky.props.hubEnabled || MODULES.surky.props.specialChallenge === 'downsize') {
+	if (game.global.exterminateDone || MODULES.surky.props.specialChallenge === 'downsize') {
 		housingTypes.hut = [1, 1.24];
 		housingTypes.house = [1, 1.22];
 		housingTypes.mansion = [9, 1.20];
@@ -1381,7 +788,7 @@ function readInputs() {
 		var houseRate = Math.log(1.25) / Math.log(scaling);
 		var taunTemp = Math.pow(tauntRate, scaleZones);
 		var tauntRm1 = tauntRate - 1;
-		var factor = (key === "collector") ? MODULES.surky.props.collectHubs : 1;
+		var factor = (key === "collector") ? !autoBattle.oneTimers.Collectology.owned ? 1 : autoBattle.oneTimers.Collectology.getHubs() : 1;
 		coefC += factor * (taunTemp - 1) / tauntRm1;
 		termR += factor * tauntRate * houseRate * (taunTemp * (scaleZones * tauntRm1 - 1) + 1) / (tauntRm1 * tauntRm1);
 		typeCount++;
@@ -1425,14 +832,14 @@ function getTrinketValues(motivCost, powCost, toughCost) {
 
 	// Get the expected Rt at the end of the next run with the current Obs level.
 	var shinies = 0;
-	var shinies = MODULES.surky.props.trinkets + shinyCollect(MODULES.surky.perks.Observation.level + 1);
-	if (MODULES.surky.props.trinkets === 0) {
+	var shinies = game.portal.Observation.trinkets + shinyCollect(MODULES.surky.perks.Observation.level + 1);
+	if (game.portal.Observation.trinkets === 0) {
 		shinies += 10;
 		// first Obs level gives 10 trinkets
 	}
 	shinies = Math.min(shinies, obsLevel * 1000);
 
-	var cappedBaseTrinkets = Math.min(MODULES.surky.props.trinkets, obsLevel * 1000);
+	var cappedBaseTrinkets = Math.min(game.portal.Observation.trinkets, obsLevel * 1000);
 
 	// marginal shine gain per run (for baseline perks)
 	var marginalShinePerRun = (100 + shinies * obsLevel) / (100 + cappedBaseTrinkets * obsLevel);
@@ -1463,15 +870,7 @@ function getTrinketValues(motivCost, powCost, toughCost) {
 		res.push(totShineCost);
 	}
 	res.push(shinies);
-	// also return the expected trinket count next run at baseline Obs
-
-	// no longer relevant with a baseline effective perk level of 1
-	// zero out per-run stats if at 0 Obs (these were used to help calculate the per-trinket gain for valuing the 1st level of Obs)
-	//if (MODULES.surky.perks.Observation.level === 0) {
-	//    res[0] = 0;
-	//    res[2] = 0;
-	//}
-
+	// also return the expected trinket count next run at baseline Obs level
 	return res;
 }
 
@@ -1487,14 +886,14 @@ function getObservationGains(levels) {
 
 	// Get expected trinket count at end of next run with the old Obs level
 	var currentCollect = shinyCollect(obsLevel);
-	var shinies = MODULES.surky.props.trinkets + currentCollect;
+	var shinies = game.portal.Observation.trinkets + currentCollect;
 	shinies = Math.min(shinies, obsLevel * 1000);
 	// still need to re-bound in case we dropped an Obs level and have super-capped trinkets.
 
 	// Get expected trinket count at end of next run with the new Obs level
 	var nextCollect = shinyCollect(obsLevel + levels);
-	var shiniesNext = MODULES.surky.props.trinkets + nextCollect;
-	if (MODULES.surky.props.trinkets === 0)
+	var shiniesNext = game.portal.Observation.trinkets + nextCollect;
+	if (game.portal.Observation.trinkets === 0)
 		shiniesNext += 10;
 	// 10 free trinkets for first Obs level
 	shiniesNext = Math.min(shiniesNext, (obsLevel + levels) * 1000);
@@ -1518,12 +917,12 @@ function getObservationGains(levels) {
 	//   not the 500 trinkets that you already have on your save that only become unlocked this run (which is already
 	//   accounted in the direct gain and does NOT represent an increase in drops).
 	var moreTrinkets;
-	if (MODULES.surky.props.trinkets >= (obsLevel + levels) * 1000) {
+	if (game.portal.Observation.trinkets >= (obsLevel + levels) * 1000) {
 		// Case 1: we're already capped even at the new obs level. No drop value.
 		moreTrinkets = 0;
-	} else if (MODULES.surky.props.trinkets >= obsLevel * 1000) {
+	} else if (game.portal.Observation.trinkets >= obsLevel * 1000) {
 		// Case 2: we're already capped at the old obs level. Drop value is the actual drops gained this run.
-		moreTrinkets = Math.max(0, shiniesNext - MODULES.surky.props.trinkets);
+		moreTrinkets = Math.max(0, shiniesNext - game.portal.Observation.trinkets);
 	} else {
 		// Case 3: we're not already capped. Drop value is the actual difference in gains between the two considered Obs levels.
 		moreTrinkets = shiniesNext - shinies;
@@ -1567,10 +966,10 @@ function iterateValueFeedback(valueArray) {
 	var moreHousing = Math.log(Vf * Vres / (VfDone * VresDone)) / Math.log(1.12); // Collectors scale with food (no other basic resources needed)
 	var baseHousing = collectors;
 	// for downsize we make the same adjustments as for hubs, just saying "all housing buildings have the same value"
-	if (hubEnabled || MODULES.surky.props.specialChallenge === 'downsize') {
-		moreHousing *= MODULES.surky.props.collectHubs;
+	if (game.global.exterminateDone || MODULES.surky.props.specialChallenge === 'downsize') {
+		moreHousing *= !autoBattle.oneTimers.Collectology.owned ? 1 : autoBattle.oneTimers.Collectology.getHubs();
 		moreHousing += 5 * Math.log(Vres / VresDone) / Math.log(1.2); // 5 housing types below Gateway need wood, roughly 1.2 avg scaling (Gateway doesn't scale)
-		baseHousing *= 6 + MODULES.surky.props.collectHubs; // estimate all housing types have the same number as Collectors (close enough for gain factor w.r.t. the small feedback effects here)
+		baseHousing *= 6 + !autoBattle.oneTimers.Collectology.owned ? 1 : autoBattle.oneTimers.Collectology.getHubs(); // estimate all housing types have the same number as Collectors (close enough for gain factor w.r.t. the small feedback effects here)
 	}
 	// if the user doesn't have collectors yet, don't bother with housing corrections (yes this will exclude O.G. downsize, tough)
 	//   (tauntimp correction uses coefC & termR calculated in readInput(), based on target zone)
@@ -1598,7 +997,7 @@ function iterateValueFeedback(valueArray) {
 	}
 
 	// account for smithies: 1.25x atk/hp per 50x resources (40x with S14)
-	var smithyGain = Math.pow(1.25, Math.log(Vres / VresDone) / Math.log(MODULES.surky.props.smithyScaling));
+	var smithyGain = Math.pow(1.25, Math.log(Vres / VresDone) / Math.log(MODULES.surky.props.scruffyLevel >= 14 ? 40 : 50));
 	// combat spec assumes no more smithy buying
 	if (!(MODULES.surky.props.specialChallenge === 'combat') && !(MODULES.surky.props.specialChallenge === 'combatRadon') && !(MODULES.surky.props.specialChallenge === 'smithless')) {
 		Va *= smithyGain;
@@ -1610,7 +1009,7 @@ function iterateValueFeedback(valueArray) {
 	if (MODULES.surky.props.specialChallenge === 'downsize') {
 		// assume coord limited in downsize (allowing the user to weight further toward pop if desired)
 		coordAdjust = Math.max(coordAdjust, 1);
-	} else if (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa) {
+	} else if (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza')) {
 		// Trappa is always coord limited, and the input field is hidden (replaced by the trapping hours field)
 		coordAdjust = 1;
 	} else if (MODULES.surky.props.specialChallenge === 'combat' || MODULES.surky.props.specialChallenge === 'combatRadon') {
@@ -1623,14 +1022,14 @@ function iterateValueFeedback(valueArray) {
 
 	// more food buys more Mets, which have various effects depending on antennas
 	var moreMets = Math.log(Vf * Vres / (VfDone * VresDone)) / Math.log(5);
-	var metEff = 0.01 + 0.0005 * MODULES.surky.props.antennae;
-	var metRes = 0.5 + 0.25 * (MODULES.surky.props.antennae >= 20 ? (Math.floor(MODULES.surky.props.antennae / 5) - 3) : 0);
+	var metEff = 0.01 + 0.0005 * game.buildings.Antenna.owned;
+	var metRes = 0.5 + 0.25 * (game.buildings.Antenna.owned >= 20 ? (Math.floor(game.buildings.Antenna.owned / 5) - 3) : 0);
 	var metProd = mets * metEff;
 	var metProdNext = (mets + moreMets) * metEff;
 	var metRadGain = (1 + metProdNext) / (1 + metProd);
-	var metFoodGain = MODULES.surky.props.antennae >= 5 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
-	var metHPGain = MODULES.surky.props.antennae >= 10 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
-	var metMineGain = MODULES.surky.props.antennae >= 15 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
+	var metFoodGain = game.buildings.Antenna.owned >= 5 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
+	var metHPGain = game.buildings.Antenna.owned >= 10 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
+	var metMineGain = game.buildings.Antenna.owned >= 15 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
 	Vrad *= metRadGain;
 	Vf *= metFoodGain;
 	if (!(MODULES.surky.props.specialChallenge === 'combat') && !(MODULES.surky.props.specialChallenge === 'combatRadon')) Vh *= metHPGain;
@@ -1638,7 +1037,7 @@ function iterateValueFeedback(valueArray) {
 	mets += moreMets;
 
 	// Feedback from pushing power (final trappa respec: health won't be applied after last army send, so don't count health)
-	var pushPower = Va * ((MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa) ? 1 : Vh) / Vpushed;
+	var pushPower = Va * ((MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza')) ? 1 : Vh) / Vpushed;
 	var pushZones = Math.log(pushPower) / MODULES.surky.props.logEnemyScaling;
 	// speedbooks give 25% resources per zone
 	if (MODULES.surky.props.specialChallenge === 'resplus') {
@@ -1658,15 +1057,13 @@ function iterateValueFeedback(valueArray) {
 
 	// count S3 for Rn weighting if selected by the user, or if at Obs 0 with no clear weight (which would give no value to pushing perks at all without S3/VS1)
 	//   -> or no clear weight and trinkets capped
-	var s3RnFinal = MODULES.surky.props.s3Rn || (MODULES.surky.props.clearWeight === 0 && (MODULES.surky.perks.Observation.level === 0 || MODULES.surky.props.trinkets >= ((1 + MODULES.surky.perks.Observation.level) * 1000)));
+	var s3RnFinal = MODULES.surky.props.scruffyLevel >= 3;
 	// Scruffy level 3 gives compounding 3% Rn per additional zone
-	if (MODULES.surky.props.scruffyLevel >= 3 && s3RnFinal) {
-		Vrad *= Math.pow(1.03, pushZones);
-	}
-	// VS1 gives additive 0.25% VM Rn per additional zone
-	// TODO: MODULES.surky.vmRadFrac is a hacky constant for now, should probably be a user input after we clean up the volume of user inputs
 	if (s3RnFinal) {
-		Vrad *= 1 + MODULES.surky.vmRadFrac * pushZones / (400 + MODULES.surky.props.targetZone);
+		Vrad *= Math.pow(1.03, pushZones);
+		// VS1 gives additive 0.25% VM Rn per additional zone
+		// TODO: MODULES.surky.vmRadFrac is a hacky constant for now, should probably be a user input after we clean up the volume of user inputs
+		Vrad *= 1 + 0.6 * pushZones / (400 + MODULES.surky.props.targetZone);
 	}
 	// trinket gain: use a fixed drop rate based on target zone, which should be fine assuming the user has entered
 	//   a sensible value and we're only optimizing at the margins of a fractional zone (or maybe 1-2 zones)
@@ -1697,7 +1094,7 @@ function iterateValueFeedback(valueArray) {
 	//valueArray[12] = trinketRate;
 	valueArray[13] = trinkets;
 	//valueArray[14] = obsLevel;
-	valueArray[15] = Va * ((MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa) ? 1 : Vh);
+	valueArray[15] = Va * ((MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza')) ? 1 : Vh);
 	valueArray[16] = Vm;
 	valueArray[17] = Vf;
 	valueArray[18] = Vres;
@@ -1711,7 +1108,7 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 	var iterateValueLoops = 3;
 	var Wa = MODULES.surky.props.clearWeight; // attack weight
 	// health is useless in final trappa respec after sending last army, since new perks won't be applied to current army's health
-	var Wh = (MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa) ? 0 : MODULES.surky.props.clearWeight * MODULES.surky.props.healthDerate + MODULES.surky.props.survivalWeight; // health weight
+	var Wh = (MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza')) ? 0 : MODULES.surky.props.clearWeight * MODULES.surky.props.healthDerate + MODULES.surky.props.survivalWeight; // health weight
 	var We = Math.max(1e-100, MODULES.surky.props.survivalWeight); // equality weight: force >0 to use equality as a dump perk if the user sets 0 weight
 	var Wr = MODULES.surky.props.radonWeight; // radon weight
 
@@ -1725,12 +1122,13 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 	var obsLevel = 1 + MODULES.surky.perks.Observation.level + extraObs;
 
 	var valueArray = [Va, Vh, Vgear, 1, Vres, Vrad, Vp, Ve,
-		MODULES.surky.props.tributes, MODULES.surky.props.housingCount, MODULES.surky.props.hubEnabled, MODULES.surky.props.meteorologists,
+		MODULES.surky.props.tributes, MODULES.surky.props.housingCount, game.global.exterminateDone, MODULES.surky.props.meteorologists,
 		obsDropRate(obsLevel, MODULES.surky.props.targetZone) / 100, MODULES.surky.props.baselineTrinketsNext, obsLevel,
 		1, 1, 1, 1, 1,
 	];
 
-	for (var i = 0; i < iterateValueLoops; i++) iterateValueFeedback(valueArray);
+	for (var i = 0; i < iterateValueLoops; i++)
+		iterateValueFeedback(valueArray);
 
 	Va = valueArray[0];
 	Vh = valueArray[1];
@@ -1741,7 +1139,7 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 	Vtrink = valueArray[13];
 
 	// only count actual new trinket drops, not extra "apparent" trinkets from cap increase!
-	moreTrinkets += Math.max(0, Vtrink - Math.max(MODULES.surky.props.baselineTrinketsNext, MODULES.surky.props.trinkets));
+	moreTrinkets += Math.max(0, Vtrink - Math.max(MODULES.surky.props.baselineTrinketsNext, game.portal.Observation.trinkets));
 
 	// calculate unified Rn-like growth gain:
 	var Vgrowth = (Vrad * MODULES.surky.props.radonPerRun + MODULES.surky.props.trinketRadonPerRun
@@ -1776,7 +1174,7 @@ function obsDropRate(level, zone) {
 	var base = ((1 + ((level - 1) / 2)) * Math.pow(1.03, (zone - 100)));
 	var res;
 	if (MODULES.surky.props.specialChallenge === 'alchemy' && zone <= 156) {
-		res = 100 - (100 - base) * Math.pow(0.99, MODULES.surky.props.findPots);
+		res = 100 - (100 - base) * Math.pow(0.99, +$$('#findPots').value);
 	} else
 		res = base;
 	return res;
@@ -1821,7 +1219,7 @@ function getFrenzyAvgAtk(level, frenzyHits) {
 	// uptime fraction for weighting the attack bonus
 	var frenzyUptimeFrac = frenzyUptimePerProc / (frenzyProcWaitTime + frenzyUptimePerProc);
 	// Mass Hysteria means frenzy is always up
-	if (MODULES.surky.props.permaFrenzy) {
+	if (autoBattle.oneTimers.Mass_Hysteria.owned) {
 		frenzyUptimeFrac = 1;
 	}
 	// average attack per hit accounting for uptime fraction
@@ -1833,7 +1231,7 @@ function getFrenzyAvgAtk(level, frenzyHits) {
 function efficiencyFlag(eList = [], pList = []) {
 	var bestEff = 0;
 	var bestAffordableEff = 0;
-	MODULES.surky.props.bestPerk = "";
+	var bestPerk = "";
 	// don't flag a perk if we don't find an affordable one!
 	for (var [perkName, perkObj] of Object.entries(MODULES.surky.perks)) {
 		if (typeof (perkObj) !== "object" || !perkObj.hasOwnProperty("optimize") || !perkObj.optimize) {
@@ -1845,12 +1243,10 @@ function efficiencyFlag(eList = [], pList = []) {
 		if (perkObj.efficiency > bestEff) {
 			bestEff = perkObj.efficiency;
 		}
-		if (perkObj.levLocked)
-			continue;
 		// don't buy level-locked perks
 		if (couldBuyPerk(perkName, false) && perkObj.efficiency > bestAffordableEff) {
 			bestAffordableEff = perkObj.efficiency;
-			MODULES.surky.props.bestPerk = perkName;
+			bestPerk = perkName;
 		}
 		if (perkObj.hasOwnProperty("efficiency2")) {
 			if (perkObj.efficiency2 > bestEff) {
@@ -1858,50 +1254,18 @@ function efficiencyFlag(eList = [], pList = []) {
 			}
 			if (couldBuyPerk(perkName, false, 2) && perkObj.efficiency2 > bestAffordableEff) {
 				bestAffordableEff = perkObj.efficiency2;
-				MODULES.surky.props.bestPerk = perkName;
+				bestPerk = perkName;
 			}
 		}
 	}
-	return bestEff;
-}
-
-// color perk rows by efficiency, and flag the most efficient perk
-function efficiencyColorAndFlag() {
-	return;
-	if (!game.global.viewingUpgrades && !portalWindowOpen) return;
-	eList = [];
-	pList = [];
-	var bestEff = efficiencyFlag(eList, pList);
-	for (var i = 0; i < eList.length; i++) {
-		perkObj = MODULES.surky.perks[pList[i]];
-
-		var opacity = Math.max(eList[i] / bestEff, 0.25);
-		if (MODULES.surky.props.specialChallenge === 'trappacarp') {
-			if (pList[i] === 'Carpentry') {
-				opacity = 1;
-				eList[i] = 1;
-			} else
-				opacity = 0;
-		}
-		var id = pList[i];
-		var element = document.getElementById(id);
-
-		if (eList[i] === 0 || opacity === 0 || (perkObj.hasOwnProperty("max") && perkObj.level > perkObj.max)) {
-			element.setAttribute("style", "");
-		} else {
-			element.setAttribute("style", "background: rgba(11, 200, 35, " + opacity + ");");
-		}
-	}
+	return bestPerk;
 }
 
 // get perk efficiencies at current levels and color code them accordingly
-var evaluatePerks = function (debug = false) {
-
+var evaluatePerks = function () {
 	readInputs();
-
 	// calculate the efficiency of each perk
 	getPerkEfficiencies();
-	efficiencyColorAndFlag();
 }
 
 function getPerkEfficiencies() {
@@ -1914,12 +1278,12 @@ function getPerkEfficiencies() {
 
 	// used for combat respec to determine exactly how much carp is needed to afford all coords (given we require an appropriate save for this preset)
 	//   -> max army size before buying final coord is 1/3 of population
-	var moreCoordsNeeded = Math.max(0, MODULES.surky.props.targetZone - MODULES.surky.props.coordsBought);
-	var popNeededForCoords = 3 * Math.pow(1.25, moreCoordsNeeded) * MODULES.surky.props.armySize;
+	var moreCoordsNeeded = Math.max(0, MODULES.surky.props.targetZone - game.upgrades.Coordination.done);
+	var popNeededForCoords = 3 * Math.pow(1.25, moreCoordsNeeded) * game.resources.trimps.maxSoldiers;
 	var tauntBase = 1.003 + 0.0001 * MODULES.surky.perks.Expansion.level;
-	var tauntMult = MODULES.surky.props.expanding ? Math.pow(tauntBase, MODULES.surky.props.actualTaunts) : 1;
+	var tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
 	// expanding tauntimps mean taunt pop is not in maxTrimps, it's a flat multiplier
-	var tauntCorrectedMaxTrimps = tauntMult * MODULES.surky.props.maxTrimps * Math.pow(tauntBase, MODULES.surky.props.imperzone * (MODULES.surky.props.targetZone - MODULES.surky.props.currentWorld));
+	var tauntCorrectedMaxTrimps = tauntMult * ((game.resources.trimps.max * game.resources.trimps.maxMod) * autoBattle.bonuses.Scaffolding.getMult()) * Math.pow(tauntBase, MODULES.surky.props.imperzone * (MODULES.surky.props.targetZone - game.global.world));
 	MODULES.surky.props.carpNeeded = Math.log(popNeededForCoords / tauntCorrectedMaxTrimps) / Math.log(1.1);
 
 	// Get various gain factors needed to calculate the value of trinkets (and also used to value their respective perks).
@@ -1955,7 +1319,7 @@ function getPerkEfficiencies() {
 
 	// Bait:
 	//   population in Trappa, but derate resource gains like for Motivation
-	if ((MODULES.surky.props.specialChallenge === 'trappa' && MODULES.surky.props.isTrappa) && !MODULES.surky.perks.Bait.levLocked) {
+	if (MODULES.surky.props.specialChallenge === 'trappa' && challengeActive('Trappapalooza')) {
 		// 3600 seconds per hr, 10 ticks per second, 10x base trimps per tick (S0 ability)
 		var baitTime = 3600 * 10 * 10 * MODULES.surky.props.trapHrs;
 		var totalBaitPopBase = baitTime * (1 + MODULES.surky.perks.Bait.level);
@@ -1973,7 +1337,7 @@ function getPerkEfficiencies() {
 	// Carpentry:
 	//   population gain, also gives resources
 	var carpPop = MODULES.surky.perks.Carpentry.effect;
-	if (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa) {
+	if (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza')) {
 		// In Trappa, carp gives more housing which gives more drops, but does not increase available Trimps
 		MODULES.surky.perks.Carpentry.efficiency = getLogWeightedValue(1, 1, 1, carpPop, 1, 1, 1) / getPerkCost("Carpentry", 1);
 		MODULES.surky.perks.Expansion.efficiency = getLogWeightedValue(1, 1, 1, expandogain, 1, 1, 1) / getPerkCost("Expansion", 1);
@@ -1984,9 +1348,9 @@ function getPerkEfficiencies() {
 
 	// Trumps:
 	//   population in downsize
-	if (MODULES.surky.props.specialChallenge === 'downsize' && !MODULES.surky.perks.Trumps.levLocked) {
+	if (MODULES.surky.props.specialChallenge === 'downsize') {
 		// estimate same number of each housing building, should be "good enough"
-		var buildPop = (MODULES.surky.props.hubEnabled ? (13 + MODULES.surky.props.collectHubs) : 7) * MODULES.surky.props.housingCount;
+		var buildPop = (game.global.exterminateDone ? (13 + !autoBattle.oneTimers.Collectology.owned ? 1 : autoBattle.oneTimers.Collectology.getHubs()) : 7) * MODULES.surky.props.housingCount;
 		// 2 territory bonuses per zone, each bonus is 5 + trumps level
 		var baseTrumPop = 2 * MODULES.surky.props.targetZone * (5 + MODULES.surky.perks.Trumps.level);
 		var trumPop = (buildPop + baseTrumPop + 2 * MODULES.surky.props.targetZone) / (buildPop + baseTrumPop);
@@ -2005,7 +1369,7 @@ function getPerkEfficiencies() {
 	MODULES.surky.perks.Equality.efficiency = getLogWeightedValue(1, 1, 1, 1, 1, MODULES.surky.perks.Equality.effect) / getPerkCost("Equality", 1);
 
 	// Championism:
-	MODULES.surky.perks.Championism.efficiency = getLogWeightedValue(MODULES.surky.perks.Championism.effect, MODULES.surky.perks.Championism.effect, 1, 1, 1, 1) / getPerkCost("Championism", 1);
+	MODULES.surky.perks.Championism.efficiency = getLogWeightedValue(1.01 + 0.005 * (autoBattle.maxEnemyLevel - 1), 1.01 + 0.005 * (autoBattle.maxEnemyLevel - 1), 1, 1, 1, 1) / getPerkCost("Championism", 1);
 
 	// Frenzy
 	//   attack boost when frenzy is active
@@ -2014,7 +1378,7 @@ function getPerkEfficiencies() {
 	//    With no pushing weight, we presume it's FALSE (optimizing for 300 hits instead) unless a 3-minute zone would yield enough radon/trinket gains to be good, which roughly corresponds to when GB is useful.
 	if (MODULES.surky.props.specialChallenge !== 'berserk') {
 		var frenzyHits = 300;
-		var isDeathless = MODULES.surky.props.specialChallenge === 'resplus' || MODULES.surky.props.specialChallenge === 'resminus' || MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa;
+		var isDeathless = MODULES.surky.props.specialChallenge === 'resplus' || MODULES.surky.props.specialChallenge === 'resminus' || MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza');
 		if (!isDeathless && MODULES.surky.props.clearWeight > 0 || MODULES.surky.props.gbAfterpush) {
 			frenzyHits = 5;
 		}
@@ -2026,7 +1390,7 @@ function getPerkEfficiencies() {
 
 	// Greed:
 	//   all-resource and radon gain
-	var greedGain = MODULES.surky.perks.Greed.effect;
+	var greedGain = getGreedEffect(MODULES.surky.props.tributes);
 	MODULES.surky.perks.Greed.efficiency = getLogWeightedValue(1, 1, 1, greedGain, greedGain, 1) / getPerkCost("Greed", 1);
 
 	// Looting:
@@ -2052,7 +1416,7 @@ function getPerkEfficiencies() {
 
 	// Pheromones
 	//   Count 3-tick breeding as 100% uptime, and weight for comparative uptime at target zone
-	if (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa) {
+	if (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza')) {
 		// no breeding is the challenge.
 		MODULES.surky.perks.Pheromones.efficiency = 0;
 	} else {
@@ -2081,7 +1445,7 @@ function getPerkEfficiencies() {
 	var prismHP = 1 + (basePrismal / 100 + MODULES.surky.perks.Prismal.level * MODULES.surky.perks.Prismal.effect) * prismLayers;
 	var prismGain = (prismHP + MODULES.surky.perks.Prismal.effect * prismLayers) / prismHP;
 	// hack for trappa final respec: prismal DOES matter even though raw health doesn't, so pretend it's attack
-	MODULES.surky.perks.Prismal.efficiency = getLogWeightedValue(((MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa) ? prismGain : 1), prismGain, 1, 1, 1, 1) / getPerkCost("Prismal", 1);
+	MODULES.surky.perks.Prismal.efficiency = getLogWeightedValue(((MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza')) ? prismGain : 1), prismGain, 1, 1, 1, 1) / getPerkCost("Prismal", 1);
 
 	// Resilience:
 	//   health gain (compounding)
@@ -2155,25 +1519,22 @@ function allocateSurky() {
 
 // zero out perk inputs and autobuy
 function clearAndAutobuyPerks() {
-	var eList = [];
-	var pList = [];
-	efficiencyFlag(eList, pList);
 	if (MODULES.surky.props.perksRadon > 0) {
 		MODULES.surky.perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (MODULES.surky.props.specialChallenge !== 'trappa');
 		var origCarp = game.portal.Carpentry.radLevel;
 		var origExpand = game.portal.Expansion.radLevel;
 
-		if (MODULES.surky.props.isDownsize && MODULES.surky.props.specialChallenge === 'combat') {
+		if (challengeActive('Downsize') && MODULES.surky.props.specialChallenge === 'combat') {
 			// impractical to know actual housing in downsize, just don't reduce Carp or Expansion level
 			MODULES.surky.perks.Carpentry.level = origCarp;
 			MODULES.surky.perks.Expansion.level = origExpand;
 		} else if (MODULES.surky.props.specialChallenge === 'combat' || MODULES.surky.props.specialChallenge === 'combatRadon') {
-			MODULES.surky.props.actualTaunts = game.unlocks.impCount.Tauntimp;
+			game.unlocks.impCount.Tauntimp = game.unlocks.impCount.Tauntimp;
 			// must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible Rn spent on carp)
-			wantedArmySize = (MODULES.surky.props.isTrappa ? Math.pow(1.25, 10) : 1) * MODULES.surky.props.armySize;
+			var wantedArmySize = (challengeActive('Trappapalooza') ? Math.pow(1.25, 10) : 1) * game.resources.trimps.maxSoldiers;
 			var tauntBase = 1.003 + 0.0001 * origExpand;
-			var tauntMult = MODULES.surky.props.expanding ? Math.pow(tauntBase, MODULES.surky.props.actualTaunts) : 1;
-			var carpWanted = Math.max(0, Math.ceil(Math.log(2.4 * wantedArmySize / (tauntMult * MODULES.surky.props.maxTrimps)) / Math.log(1.1)));
+			var tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
+			var carpWanted = Math.max(0, Math.ceil(Math.log(2.4 * wantedArmySize / (tauntMult * ((game.resources.trimps.max * game.resources.trimps.maxMod) * autoBattle.bonuses.Scaffolding.getMult()))) / Math.log(1.1)));
 		}
 		initialLoad(true);
 		//Setting this here since initialLoad clears perk levels and we need to know the minimum carp level we can have
@@ -2192,7 +1553,6 @@ function clearAndAutobuyPerks() {
 }
 
 // autobuy from current input perk levels
-
 function autobuyPerks() {
 	var eList = [];
 	var pList = [];
@@ -2204,17 +1564,17 @@ function autobuyPerks() {
 		return;
 	}
 	// optimize Bait for Trappa
-	MODULES.surky.perks.Bait.optimize = (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa);
-	MODULES.surky.perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (MODULES.surky.props.specialChallenge !== 'trappa') && !(MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa);
-	if (!MODULES.surky.perks.Carpentry.levLocked && (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa)) {
+	MODULES.surky.perks.Bait.optimize = (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza'));
+	MODULES.surky.perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (MODULES.surky.props.specialChallenge !== 'trappa') && !(MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza'));
+	if (MODULES.surky.props.specialChallenge === 'trappa' || MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza')) {
 		var maxCarpLevels = Math.log(MODULES.surky.props.perksRadon / MODULES.surky.perks.Carpentry.priceBase * (MODULES.surky.perks.Carpentry.priceFact - 1) + 1) / Math.log(MODULES.surky.perks.Carpentry.priceFact);
-		MODULES.surky.props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * MODULES.surky.props.scaffoldingBonus;
+		MODULES.surky.props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * autoBattle.bonuses.Scaffolding.getMult();
 	}
 	// optimize Trumps for Downsize
 	MODULES.surky.perks.Trumps.optimize = (MODULES.surky.props.specialChallenge === 'downsize');
-
-	while (MODULES.surky.props.bestPerk !== "") {
-		var bestName = MODULES.surky.props.bestPerk;
+	var bestPerk = efficiencyFlag(eList, pList);
+	while (bestPerk !== "") {
+		var bestName = bestPerk;
 		var bestObj = MODULES.surky.perks[bestName];
 		var buy2 = bestObj.hasOwnProperty("efficiency2") && bestObj.efficiency2 > bestObj.efficiency;
 		if (buy2) {
@@ -2227,14 +1587,14 @@ function autobuyPerks() {
 		}
 		MODULES.surky.perks[bestName].level = bestObj.level;
 		getPerkEfficiencies();
-		efficiencyFlag();
+		bestPerk = efficiencyFlag(eList, pList);
 	}
 	// use trumps as dump perk
-	if (!MODULES.surky.perks.Trumps.levLocked && !(MODULES.surky.props.specialChallenge === 'combat') && !(MODULES.surky.props.specialChallenge === 'combatRadon')) {
+	if (!(MODULES.surky.props.specialChallenge === 'combat') && !(MODULES.surky.props.specialChallenge === 'combatRadon')) {
 		while (buyPerk("Trumps", 1));
 	}
 	// and Pheromones! (but not in Trappa, for minimum confusion, and not before Trappa unlock)
-	if (!MODULES.surky.perks.Pheromones.levLocked && MODULES.surky.props.specialChallenge !== 'trappa' && !(MODULES.surky.props.specialChallenge === 'combat' && MODULES.surky.props.isTrappa)) {
+	if (MODULES.surky.props.specialChallenge !== 'trappa' && !(MODULES.surky.props.specialChallenge === 'combat' && challengeActive('Trappapalooza'))) {
 		while (buyPerk("Pheromones", 1));
 	}
 	// secret setting to dump remaining Rn into bait for feeeeeee
@@ -2246,68 +1606,14 @@ function autobuyPerks() {
 }
 
 if (typeof (autoTrimpSettings) === 'undefined') {
-	// On manually adjusting perk levels, update perk efficiencies
-	var originalbuyPortalUpgrade = buyPortalUpgrade;
-	buyPortalUpgrade = function () {
-		originalbuyPortalUpgrade(...arguments)
-		try {
-			if (portalUniverse === 2 && MODULES.surky.showing) initialLoad();
-		}
-		catch (e) { console.log("Buy Upgrade - Efficiency color failed: " + e, "other") }
-	}
-	// On opening portal window, update perk efficiencies
-	var originalportalClicked = portalClicked;
-	portalClicked = function () {
-		originalportalClicked(...arguments)
-		try {
-			if (portalUniverse === 2 && MODULES.surky.showing) initialLoad();
-		}
-		catch (e) { console.log("Portal Clicked - Efficiency color failed: " + e, "other") }
-	}
-	// On switching perk presets, update perk efficiencies
-	var originalloadPerkPreset = loadPerkPreset;
-	loadPerkPreset = function () {
-		originalloadPerkPreset(...arguments)
-		try {
-			if (portalUniverse === 2 && MODULES.surky.showing) initialLoad();
-		}
-		catch (e) { console.log("Load Preset - Efficiency color failed: " + e, "other") }
-	}
-	// On clearing all perks, update perk efficiencies
-	var originalclearPerks = clearPerks;
-	clearPerks = function () {
-		originalclearPerks(...arguments)
-		try {
-			if (portalUniverse === 2 && MODULES.surky.showing) initialLoad();
-		}
-		catch (e) { console.log("Clear Perks - Efficiency color failed: " + e, "other") }
-	}
-	// On importing perks, update perk efficiencies
-	var originalimportPerks = importPerks;
-	importPerks = function () {
-		originalimportPerks(...arguments)
-		try {
-			if (portalUniverse === 2 && MODULES.surky.showing) initialLoad();
-		}
-		catch (e) { console.log("Import Perks - Efficiency color failed: " + e, "other") }
-	}
-
-
-
-	// On swapping portla universes load either Perky or Surky.
+	//On swapping portla universes load either Perky or Surky.
 	var originalswapPortalUniverse = swapPortalUniverse;
 	swapPortalUniverse = function () {
 		originalswapPortalUniverse(...arguments)
 		try {
-			MODULES.autoPerks.removeGUI();
-			loadPortalUI();
+			MODULES.autoPerks.displayGUI(portalUniverse);
 		}
-		catch (e) { console.log("Universe Swap - Efficiency color failed: " + e, "other") }
-	}
-
-	function loadPortalUI() {
-		if (portalUniverse === 2) setupSurkyUI();
-		if (portalUniverse === 1) setupPerkyUI();
+		catch (e) { console.log("Universe Swap - Failed to swap UI: " + e, "other") }
 	}
 }
 
@@ -2329,7 +1635,7 @@ if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !=
 	document.head.appendChild(script);
 
 	//Load the portal UI
-	setTimeout(loadPortalUI, 1000);
+	MODULES.autoPerks.displayGUI(portalUniverse);
 	//Send chat msg to notify user that this has loaded.
 	console.log("Surky & Perky loaded.")
 

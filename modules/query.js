@@ -73,7 +73,7 @@ function getCostToUpgrade(upgradeName, resource) {
 }
 
 function setResourceNeeded() {
-	MODULES.resourceNeeded = {
+	const resourcesNeeded = {
 		food: 0,
 		wood: 0,
 		metal: 0,
@@ -87,23 +87,24 @@ function setResourceNeeded() {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
 		if (gameUpgrade.allowed > gameUpgrade.done) {
-			MODULES.resourceNeeded.science += getCostToUpgrade(upgrade, 'science');
+			resourcesNeeded.science += getCostToUpgrade(upgrade, 'science');
 			if (upgrade === 'Trapstorm') continue;
-			MODULES.resourceNeeded.food += getCostToUpgrade(upgrade, 'food');
-			MODULES.resourceNeeded.wood += getCostToUpgrade(upgrade, 'wood');
-			MODULES.resourceNeeded.metal += getCostToUpgrade(upgrade, 'metal');
+			resourcesNeeded.food += getCostToUpgrade(upgrade, 'food');
+			resourcesNeeded.wood += getCostToUpgrade(upgrade, 'wood');
+			resourcesNeeded.metal += getCostToUpgrade(upgrade, 'metal');
 		}
 	}
 	if (game.global.universe === 1 && needGymystic()) {
-		MODULES.resourceNeeded.science += getCostToUpgrade('Gymystic', 'science')
+		resourcesNeeded.science += getCostToUpgrade('Gymystic', 'science')
 	}
 
 	//Looping through all equipment to get the cost of upgrading them as they aren't in the upgrade list
 	const equipmentList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
 	for (var prestigeName in equipmentList) {
 		prestigeName = equipmentList[prestigeName];
-		MODULES.resourceNeeded.science += getCostToUpgrade(prestigeName, 'science')
+		resourcesNeeded.science += getCostToUpgrade(prestigeName, 'science')
 	}
+	return resourcesNeeded;
 }
 
 function getPotencyMod(howManyMoreGenes) {

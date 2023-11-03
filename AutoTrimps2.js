@@ -58,7 +58,6 @@ var ATmessageLogTabVisible = true;
 var autoTrimpSettings = {};
 var MODULES = {
 	popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false, },
-	resourceNeeded: { food: 0, wood: 0, metal: 0, science: 0, gems: 0, fragments: 0, },
 	stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0, },
 	graphs: {},
 };
@@ -71,7 +70,7 @@ var settingChangedTimeout = false;
 var challengeCurrentZone = -1;
 
 var mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity, }
-var hdStats = { isC3: false, isDaily: false, isFiller: false }
+var hdStats = {}
 var trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false, }
 
 //Loading modules from basepath that are required for the script to run.
@@ -132,6 +131,14 @@ function delayStart() {
 //Runs second
 function initializeAutoTrimps() {
 	debug(`You are running ${atSettings.initialise.version.split(' ')[0]} AutoTrimps  ${atSettings.initialise.version.split(' ')[1]}.`);
+
+	//Load CSS
+	var linkStylesheet = document.createElement("link");
+	(linkStylesheet.rel = "stylesheet"),
+		(linkStylesheet.type = "text/css"),
+		(linkStylesheet.href = atSettings.initialise.basepath + "tabs.css"),
+		document.head.appendChild(linkStylesheet);
+
 	loadPageVariables();
 	ATscriptLoad(null, 'SettingsGUI');
 
@@ -206,15 +213,10 @@ function delayStartAgain() {
 //Displays Perky UI when changing universes.
 function universeSwapped() {
 	//Hard to do an alternative to this. Would have linked it to the swapPortalUniverse() function but the force going back to U1 button in U2 causes issues with that.
+	//Sets up the proper calc UI when switching between portal universes.
 	if (currPortalUniverse !== portalUniverse) {
-		//Removes UI display if currently active
-		if (typeof MODULES.autoPerks.removeGUI === 'function') MODULES.autoPerks.removeGUI();
-		//Sets up the proper calc UI when switching between portal universes.
-		if (portalUniverse === 1)
-			setupPerkyUI();
-		if (portalUniverse === 2)
-			setupSurkyUI();
-
+		if (portalUniverse === -1) portalUniverse = game.global.universe;
+		MODULES.autoPerks.displayGUI(portalUniverse);
 		currPortalUniverse = portalUniverse;
 	}
 }
@@ -427,9 +429,6 @@ function mainLoop() {
 	//Heirloom Shield Swap Check
 	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
 
-	//Sets the resources needed for the upgrades you have to buy
-	setResourceNeeded();
-
 	if (shouldRunInTimeWarp()) {
 		//AutoMaps
 		autoMap();
@@ -540,6 +539,8 @@ function mainCleanup() {
 		autoPortalCheck();
 		//If in Z1 then we can assume we have just portaled.
 		if (atSettings.portal.currentworld === 1) {
+			MODULES.portal.portalForVoid = false;
+			MODULES.mapFunctions.afterVoids = false;
 			MODULES.portal.zonePostpone = 0;
 			if (!game.upgrades.Battle.done) {
 				updateButtonText();

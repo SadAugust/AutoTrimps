@@ -287,8 +287,9 @@ function buyJobs(forceRatios) {
 		}
 	}
 
+	const resourcesNeeded = setResourceNeeded();
 	if (desiredRatios[3] !== 0) scientistMod = 1;
-	if (MODULES.resourceNeeded.science > 0 && MODULES.resourceNeeded.science > game.resources.science.owned) scientistMod = 1;
+	if (resourcesNeeded.science > 0 && resourcesNeeded.science > game.resources.science.owned) scientistMod = 1;
 
 	for (var worker of ratioWorkers) {
 		if (!game.jobs[worker].locked) {

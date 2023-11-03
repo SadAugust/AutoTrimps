@@ -42,13 +42,14 @@ function evaluateHeirloomMods(loom, location) {
 	}
 
 	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
+	const heirloomData = heirloomInfo(heirloomType);
 	for (var m in heirloomLocation.mods) {
 		modName = heirloomLocation.mods[m][0];
 		if (modName === 'empty') {
 			emptyMods++;
 			continue;
 		}
-		modName = MODULES.heirloomMods[heirloomType][modName].name;
+		modName = heirloomData[modName].name;
 		if (blacklist.includes(modName)) return 0;
 		targetMods = targetMods.filter(e => e !== modName);
 	}
