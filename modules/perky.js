@@ -1150,10 +1150,10 @@ if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !=
 	linkStylesheet.href = "https://sadaugust.github.io/AutoTrimps/tabsStandalone.css";
 	document.head.appendChild(linkStylesheet);
 
-	//Load Perky
+	//Load Surky
 	var script = document.createElement('script');
-	script.id = "AutoTrimps-SadAugust_Perky";
-	script.src = "https://localhost:8887/AutoTrimps_Local/modules/surky.js";
+	script.id = "AutoTrimps-SadAugust_Surky";
+	script.src = "https://sadaugust.github.io/AutoTrimps/modules/surky.js";
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
 
