@@ -189,7 +189,7 @@ function savePerkySettings() {
 	//Saving the values of the inputs for the weights
 	for (var item in MODULES.autoPerks.GUI.inputs) {
 		item = MODULES.autoPerks.GUI.inputs[item];
-		settingInputs[item] = +$$('#' + item).value;
+		settingInputs[item] = $$('#' + item).value;
 	}
 	//Save inputs for all the presets that users can select.
 	//Overrides data for current preset otherwises saves any already saved data for the others.
