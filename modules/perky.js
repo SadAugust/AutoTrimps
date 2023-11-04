@@ -11,6 +11,27 @@ if (typeof $$ !== 'function') {
 	};
 }
 
+function legalizeInput(settingID) {
+
+	if (!settingID) return;
+	settingID = document.getElementById(settingID);
+	var defaultValue = settingID.placeholder;
+	var minValue = settingID.min;
+	var maxValue = settingID.max;
+	var val = 0;
+
+	val = parseFloat(settingID.value);
+	var badNum = isNaN(val);
+	if (badNum)
+		val = defaultValue;
+	if (minValue !== null && val < minValue)
+		settingID.value = minValue;
+	else if (maxValue !== null && val > maxValue)
+		settingID.value = maxValue;
+	else
+		settingID.value = val;
+}
+
 function runPerky() {
 	if (portalUniverse !== 1) return;
 	allocatePerky();
@@ -1105,4 +1126,40 @@ MODULES.autoPerks = {
 			}
 		},
 	}
+}
+
+if (typeof (autoTrimpSettings) === 'undefined') {
+	//On swapping portal universes load either Perky or Surky.
+	var originalswapPortalUniverse = swapPortalUniverse;
+	swapPortalUniverse = function () {
+		originalswapPortalUniverse(...arguments)
+		try {
+			MODULES.autoPerks.displayGUI(portalUniverse);
+		}
+		catch (e) { console.log("Universe Swap - Failed to swap UI: " + e, "other") }
+	}
+}
+
+//If using standalone version then when loading Surky file also load CSS & Perky then load portal UI.
+//After initial load everything should work perfectly.
+if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	//Load CSS so that the UI is visible
+	var linkStylesheet = document.createElement("link");
+	linkStylesheet.rel = "stylesheet";
+	linkStylesheet.type = "text/css";
+	linkStylesheet.href = "https://sadaugust.github.io/AutoTrimps/tabsStandalone.css";
+	document.head.appendChild(linkStylesheet);
+
+	//Load Perky
+	var script = document.createElement('script');
+	script.id = "AutoTrimps-SadAugust_Perky";
+	script.src = "https://localhost:8887/AutoTrimps_Local/modules/surky.js";
+	script.setAttribute('crossorigin', 'anonymous');
+	document.head.appendChild(script);
+
+	//Load the portal UI
+	setTimeout(function () {
+		MODULES.autoPerks.displayGUI(portalUniverse);
+		console.log("Surky & Perky loaded.")
+	}, 3000);
 }
