@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name		AutoTrimps-SadAugust_Perky&Surky
+// @name		AutoTrimps-SadAugust_HeirloomCalc
 // @version		1.0-SadAugust
 // @namespace	https://SadAugust.github.io/AutoTrimps
 // @description	Automate all the trimps!
@@ -14,8 +14,8 @@
 // ==/UserScript==
 
 var script = document.createElement('script');
-script.id = "AutoTrimps-SadAugust-PerkCalcs";
+script.id = "AutoTrimps-SadAugust-HeirloomCalc";
 //This can be edited to point to your own Github Repository URL.
-script.src = "https://sadaugust.github.io/AutoTrimps/modules/perky.js";
+script.src = "https://sadaugust.github.io/AutoTrimps/modules/heirloomCalc.js";
 script.setAttribute('crossorigin', 'anonymous');
 document.head.appendChild(script);
