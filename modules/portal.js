@@ -729,7 +729,7 @@ function surkyCombatRespec() {
 	MODULES.popups.respecAtlantrimp = false;
 	MODULES.popups.remainingTime = Infinity;
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
-	var currPreset = $$('#presetElem').value;
+	var currPreset = $$('#preset').value;
 
 	//Swapping to Spire respec in u1
 	if (game.global.universe === 1) fillPresetPerky('spire');
@@ -745,7 +745,7 @@ function surkyCombatRespec() {
 	fireAllWorkers();
 	activateClicked();
 	var calcName = game.global.universe === 2 ? "Surky" : "Perky";
-	debug(calcName + " - Respeccing into the " + $$('#presetElem')[$$('#presetElem').selectedIndex].innerHTML + " preset.", "portal");
+	debug(calcName + " - Respeccing into the " + $$('#preset')[$$('#preset').selectedIndex].innerHTML + " preset.", "portal");
 
 	//Reverting back to original preset
 	if (game.global.universe === 2)
