@@ -796,7 +796,7 @@ function initializeAllSettings() {
 		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
-				var description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at " + (currSettingUniverse !== 2 ? "weapon purchases " : "") + "and set your spending percentage to 100% of resources available.</p>";
+				var description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (currSettingUniverse !== 2 ? "weapon purchases " : "") + "and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase gear whenever you slow down in world.<br></p>";
 				description += "<p>Your HD ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
@@ -2897,6 +2897,15 @@ function initializeAllSettings() {
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
+		createSetting('heirloomStaffFragment',
+			function () { return ('Fragment') },
+			function () {
+				var description = "<p>The staff to use when the script is farming for fragments to be able to afford maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
 		createSetting('heirloomStaffFood',
 			function () { return ('Savory Cache') },
 			function () {
@@ -4559,15 +4568,16 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("portalVoidIncrement", 'show');
 	modifyParentNode("universeSetting", 'show');
 
+	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && (getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge') || holidayObj.holiday === 'Eggy')))
+		modifyParentNode("heliumHrDontPortalBefore", 'show');
+	else
+		modifyParentNode("heliumHrDontPortalBefore", 'hide');
+
 	//Dailies
 	modifyParentNode("dscryvoidmaps", radonoff);
 	modifyParentNode("dPreSpireNurseries", radonoff);
 	modifyParentNode("dWindStackingLiq", 'show');
 	modifyParentNode("dailyHeliumHrPortal", 'show');
-
-	if (getPageSetting('displayAllSettings')// || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')
-	) modifyParentNode("heliumC2Challenge", 'show');
-	else modifyParentNode("heliumC2Challenge", 'hide');
 
 	//Maps
 	modifyParentNode("uniqueMapEnoughHealth", 'show');
@@ -4626,7 +4636,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomCompressedSwap", 'show');
 	modifyParentNode("heirloomSpire", 'show');
 	modifyParentNode("heirloomSwapHDCompressed", 'show');
-	modifyParentNode("heirloomStaffVoid", 'show');
+	modifyParentNode("heirloomStaffFragment", 'show');
 	modifyParentNode("heirloomStaffResource", 'show');
 
 	modifyParentNode("heirloomAutoModTarget", heirloom);

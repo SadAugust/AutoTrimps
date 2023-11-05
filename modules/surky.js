@@ -730,7 +730,7 @@ function getPerkCost(whichPerk, numLevels, fromZero = false, perks) {
 	const perk = perks[whichPerk];
 	var level = fromZero ? 0 : perk.level;
 	// if the perk can't be leveled, return infinite cost to naturally avoid buying the perk
-	if (perk.locked || perk.hasOwnProperty("max") && (level + numLevels > perk.max))
+	if (perk.locked || perk.hasOwnProperty('max') && (level + numLevels > perk.max))
 		return Infinity;
 	var cost = 0;
 	for (var i = 0; i < numLevels; i++) {
