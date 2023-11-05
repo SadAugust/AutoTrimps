@@ -734,8 +734,8 @@ function surkyCombatRespec() {
 	//Swapping to Spire respec in u1
 	if (game.global.universe === 1) fillPresetPerky('spire');
 	//Changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
-	else if (trimpStats.isC3) fillPreset('combat');
-	else fillPreset('combatRadon');
+	else if (trimpStats.isC3) fillPresetSurky('combat');
+	else fillPresetSurky('combatRadon');
 	//Respecing perks
 	if (game.global.universe === 2)
 		runSurky();
@@ -749,7 +749,7 @@ function surkyCombatRespec() {
 
 	//Reverting back to original preset
 	if (game.global.universe === 2)
-		fillPreset(currPreset);
+		fillPresetSurky(currPreset);
 	else
 		fillPresetPerky(currPreset);
 }
