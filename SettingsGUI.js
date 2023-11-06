@@ -1001,7 +1001,7 @@ function initializeAllSettings() {
 				description += "<p><b>D stance</b><br>Keeps you in D stance regardless of your armies health.</p>";
 				description += "<p><b>Recommended:</b> Auto Stance</p>";
 				return description;
-			}, 'multitoggle', 1, null, "Combat", [1]);
+			}, 'multitoggle', 1, null, 'Combat', [1]);
 		createSetting('IgnoreCrits',
 			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
 			function () {
@@ -1056,7 +1056,7 @@ function initializeAllSettings() {
 				var description = "<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, "Combat", [1],
+			}, 'boolean', false, null, 'Combat', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
 		//Radon
@@ -2505,7 +2505,7 @@ function initializeAllSettings() {
 				var description = "<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, "Combat", [1],
+			}, 'boolean', false, null, 'Daily', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
 		createSetting('dAutoStanceWind',
