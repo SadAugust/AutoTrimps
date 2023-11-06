@@ -3199,7 +3199,7 @@ function initializeAllSettings() {
 				description += "<p>Mod names must be entered exactly the same as they appear in the modifier settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
-			}, 'textValue', 'None', null, 'Heirloom', [1, 2],
+			}, 'multiTextValue', 'None', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse)) });
 
 		createSetting('heirloomAutoStaffMod1',
@@ -3325,7 +3325,7 @@ function initializeAllSettings() {
 				description += "<p>Mod names must be entered exactly the same as they appear in the modifier settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
-			}, 'textValue', 'None', null, 'Heirloom', [1],
+			}, 'multiTextValue', 'None', null, 'Heirloom', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 
 		createSetting('heirloomAutoCoreMod1',

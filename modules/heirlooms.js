@@ -50,7 +50,7 @@ function evaluateHeirloomMods(loom, location) {
 			continue;
 		}
 		modName = heirloomData[modName].name;
-		if (blacklist.includes(modName)) return 0;
+		if (blacklist.indexOf(modName) !== -1) return 0;
 		targetMods = targetMods.filter(e => e !== modName);
 	}
 
