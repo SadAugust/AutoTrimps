@@ -6691,6 +6691,10 @@ function updateATVersion() {
 				autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 1 : 0;
 				autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 1 : 0;
 			}
+			else {
+				autoTrimpSettings.autoAbandon.value = 2;
+				autoTrimpSettings.autoAbandon.valueU2 = 2;
+			}
 		}
 
 	}
