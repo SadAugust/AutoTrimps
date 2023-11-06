@@ -42,6 +42,7 @@ class HDStats {
 		this.vhdRatio = undefined;
 		this.vhdRatioVoid = undefined;
 		this.vhdRatioVoidPlus = undefined;
+		this.hdRatioHeirloom = undefined;
 
 		this.hitsSurvived = undefined;
 		this.hitsSurvivedVoid = undefined;
@@ -81,6 +82,8 @@ class HDStats {
 		this.vhdRatio = voidMaxTenacity ? calcHDRatio(z, 'world', voidMaxTenacity, 1) : this.hdRatio;
 		this.vhdRatioVoid = voidMaxTenacity ? calcHDRatio(z, 'void', voidMaxTenacity, voidPercent) : this.hdRatioVoid;
 		this.vhdRatioVoidPlus = voidMaxTenacity ? calcHDRatio(z + 1, 'void', voidMaxTenacity, voidPercent) : this.hdRatioVoidPlus;
+		//Check to see what our HD Ratio is with the original heirloom
+		this.hdRatioHeirloom = calcHDRatio(z, 'world', false, 1, false);
 		//Calculating Hits Survived values for current zone.
 		this.hitsSurvived = calcHitsSurvived(z, 'world', 1);
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void', voidPercent);
@@ -460,14 +463,14 @@ function getAnticipationBonus(stacks) {
 	return 1 + (maxStacks * perkMult);
 }
 
-function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, mapLevel, useTitimp) {
+function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, mapLevel, useTitimp, specificHeirloom = false) {
 	if (!mapType) mapType = !game.global.mapsActive ? 'world' : (getCurrentMapObject().location === 'Void' ? 'void' : 'map');
 	if (!mapLevel) mapLevel = mapType === 'world' || !game.global.mapsActive ? 0 : getCurrentMapObject().level - game.global.world;
 	if (!useTitimp) useTitimp = false;
 	if (!critMode) critMode = 'maybe';
 	if (!realDamage) realDamage = false;
 	var specificStance = game.global.universe === 1 ? equality : false;
-	var heirloomToCheck = heirloomShieldToEquip(mapType);
+	var heirloomToCheck = !specificHeirloom ? heirloomShieldToEquip(mapType) : specificHeirloom;
 
 	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
 
@@ -1253,7 +1256,7 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	return health;
 }
 
-function calcHDRatio(targetZone, type, maxTenacity, difficulty, checkOutputs) {
+function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, checkOutputs) {
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = 'world';
 	if (!maxTenacity) maxTenacity = false;
@@ -1284,8 +1287,9 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, checkOutputs) {
 		universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
 	}
 
+	var heirloomToUse = heirloomShieldToEquip(type, false, hdCheck);
 	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
-	var ourBaseDamage = calcOurDmg(challengeActive('Unlucky') ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world);
+	var ourBaseDamage = calcOurDmg(challengeActive('Unlucky') ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world, null, heirloomToUse);
 
 	//Checking ratio at max mapbonus/tenacity for Void Maps.
 	if (maxTenacity) {

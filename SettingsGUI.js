@@ -2763,6 +2763,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Switch for enabling Shield heirloom swapping.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p>Respects the <b>Auto Abandon</b> setting for if Shields should be swapped but ignores the cell check.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2],

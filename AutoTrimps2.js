@@ -445,14 +445,14 @@ function mainLoop() {
 	buyJobs();
 	//Upgrades
 	buyUpgrades();
+	//Heirloom Management
+	heirloomSwapping();
 	//Combat
 	callBetterAutoFight();
 	//Bone Shrine
 	boneShrine();
 	//Auto Golden Upgrade
 	autoGoldUpgrades();
-	//Heirloom Management
-	heirloomSwapping();
 	//AutoEquip
 	autoEquip();
 

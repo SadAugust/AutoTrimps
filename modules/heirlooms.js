@@ -233,7 +233,7 @@ function heirloomShieldSwapped() {
 	MODULES.heirlooms.shieldEquipped = game.global.ShieldEquipped.id;
 }
 
-function heirloomShieldToEquip(mapType, swapLooms) {
+function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 	if (!getPageSetting('heirloom')) return;
 	if (!getPageSetting('heirloomShield')) return;
 
@@ -270,13 +270,16 @@ function heirloomShieldToEquip(mapType, swapLooms) {
 		//Disable Shield swapping if on a dontSwap challenge and our army is still fighting or has health remaining.
 		if (dontSwap && (game.global.fighting || game.global.soldierHealthRemaining > 0))
 			return;
+		//Disable shield swapping depending on auto abandon setting
+		if (!shouldAbandon(false))
+			return;
 		//Disable plagueSwap variable if we are querying a map
 		if (mapType === 'map' && swapLooms)
 			MODULES.heirlooms.plagueSwap = false;
 	}
 	if (mapType === 'world' && !dontSwap) {
 		//Change swap zone to current zone if we're above X HD ratio.
-		if (getPageSetting('heirloomSwapHD') > 0 && hdStats.hdRatio >= getPageSetting('heirloomSwapHD')) swapZone = game.global.world;
+		if (hdCheck && getPageSetting('heirloomSwapHD') > 0 && hdStats.hdRatioHeirloom >= getPageSetting('heirloomSwapHD') && shouldAbandon(false)) swapZone = game.global.world;
 		//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
 		//Only relevant if in U2 and we're above zone 200.
 		if (game.global.universe === 2 && game.global.world >= 201 &&
@@ -314,30 +317,30 @@ function heirloomShieldToEquip(mapType, swapLooms) {
 			//Not in double attack voids
 			game.global.voidBuff !== 'doubleAttack';
 	}
-	if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
-		if (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined")
+	if (voidActive && (getPageSetting('heirloomVoid') !== 'undefined' || (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== 'undefined'))) {
+		if (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== 'undefined')
 			return ('heirloomVoidPlaguebringer');
 		else
 			return ('heirloomVoid');
 	}
 	//Return Duel shield if we are running that challenge with the settings active
-	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== "undefined")
+	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== 'undefined')
 		return ('duelShield');
 	//Return initial shield if we are in a void map and are going to plaguebringer scum the cell after next
 	//This is a backup for if the void shield setting have not been properly setup.
-	else if (voidActive && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomInitial') !== "undefined")
+	else if (voidActive && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomInitial') !== 'undefined')
 		return ('heirloomInitial');
 	//Run afterpush (c3 if running one) shield if we are in a map or a void.
-	else if (getPageSetting(afterpushShield) !== "undefined" && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap'))
+	else if (getPageSetting(afterpushShield) !== 'undefined' && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap'))
 		return (afterpushShield);
 	//Run Spire shield if inside an active spire
-	else if (getPageSetting('heirloomSpire') !== "undefined" && isDoingSpire())
+	else if (getPageSetting('heirloomSpire') !== 'undefined' && isDoingSpire())
 		return ('heirloomSpire');
 	//Run afterpush (c3 if running one) shield if above our swap zone
-	else if (getPageSetting(afterpushShield) !== "undefined" && game.global.world >= swapZone)
+	else if (getPageSetting(afterpushShield) !== 'undefined' && game.global.world >= swapZone)
 		return (afterpushShield);
 	//Otherwise run initial shield
-	else if (getPageSetting('heirloomInitial') !== "undefined")
+	else if (getPageSetting('heirloomInitial') !== 'undefined')
 		return ('heirloomInitial');
 }
 
@@ -345,29 +348,29 @@ function heirloomStaffToEquip(mapType) {
 	if (!getPageSetting('heirloom')) return;
 	if (!getPageSetting('heirloomStaff')) return;
 
-	if (getPageSetting('heirloomStaffWorld') !== "undefined" && !game.global.mapsActive) {
+	if (getPageSetting('heirloomStaffWorld') !== 'undefined' && !game.global.mapsActive) {
 		return ('heirloomStaffWorld');
 	} else if (game.global.mapsActive) {
 		const mapObject = getCurrentMapObject();
 		const mapBonus = mapObject.bonus;
-		if ((MODULES.maps.fragmentFarming || MODULES.maps.fragmentCost !== Infinity) && getPageSetting('heirloomStaffFragment') !== "undefined")
+		if ((MODULES.maps.fragmentFarming || MODULES.maps.fragmentCost !== Infinity) && getPageSetting('heirloomStaffFragment') !== 'undefined')
 			return ('heirloomStaffFragment');
-		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumStaff') !== "undefined" && mapSettings.mapName === 'Pandemonium Farming')
+		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumStaff') !== 'undefined' && mapSettings.mapName === 'Pandemonium Farming')
 			return ('pandemoniumStaff');
-		else if (getPageSetting('heirloomStaffVoid') !== "undefined" && mapObject.location === 'Void')
+		else if (getPageSetting('heirloomStaffVoid') !== 'undefined' && mapObject.location === 'Void')
 			return ('heirloomStaffVoid');
-		else if (getPageSetting('heirloomStaffMap') !== "undefined" && mapBonus === undefined)
+		else if (getPageSetting('heirloomStaffMap') !== 'undefined' && mapBonus === undefined)
 			return ('heirloomStaffMap');
 		else if (mapBonus !== undefined) {
-			if (getPageSetting('heirloomStaffFood') !== "undefined" && mapBonus.includes("sc"))
+			if (getPageSetting('heirloomStaffFood') !== 'undefined' && mapBonus.includes("sc"))
 				return ('heirloomStaffFood');
-			else if (getPageSetting('heirloomStaffWood') !== "undefined" && mapBonus.includes("wc"))
+			else if (getPageSetting('heirloomStaffWood') !== 'undefined' && mapBonus.includes("wc"))
 				return ('heirloomStaffWood');
-			else if (getPageSetting('heirloomStaffMetal') !== "undefined" && mapBonus.includes("mc"))
+			else if (getPageSetting('heirloomStaffMetal') !== 'undefined' && mapBonus.includes("mc"))
 				return ('heirloomStaffMetal');
-			else if (game.global.universe === 2 && getPageSetting('heirloomStaffResource') !== "undefined" && mapBonus.includes("rc"))
+			else if (game.global.universe === 2 && getPageSetting('heirloomStaffResource') !== 'undefined' && mapBonus.includes("rc"))
 				return ('heirloomStaffResource');
-			else if (getPageSetting('heirloomStaffMap') !== "undefined")
+			else if (getPageSetting('heirloomStaffMap') !== 'undefined')
 				return ('heirloomStaffMap');
 		}
 	}
