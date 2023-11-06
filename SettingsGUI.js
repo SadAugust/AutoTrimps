@@ -981,7 +981,7 @@ function initializeAllSettings() {
 		createSetting('autoAbandon',
 			function () { return (['Never Abandon', 'Always Abandon', 'Smart Abandon']) },
 			function () {
-				var description = "<p>Controls whether to force abandon trimps for mapping. Must have <b>Wait to Travel</b><br> in the game settings to work.</p>";
+				var description = "<p>Controls whether to force abandon trimps for mapping. Must have <b>Wait to Travel</b> in the game settings to work.</p>";
 				description += "<p><b>Never Abandon</b><br>Never abandon trimps for mapping.</p>";
 				description += "<p><b>Always Abandon</b><br>Always abandon trimps for mapping.</p>";
 				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of the trimps is ready, or to rush voids near the end of the zone.</p>";
@@ -6683,6 +6683,13 @@ function updateATVersion() {
 					autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
 				}
 				saveSettings();
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.10') {
+			if (typeof (tempSettings["autoAbandon"]) !== 'undefined') {
+				autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 1 : 0;
+				autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 1 : 0;
 			}
 		}
 
