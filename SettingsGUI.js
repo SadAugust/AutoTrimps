@@ -1050,6 +1050,14 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Combat', [1]);
+		createSetting('AutoDStanceSpire',
+			function () { return ('D Stance in Spires') },
+			function () {
+				var description = "<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, "Combat", [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
 		//Radon
 		createSetting('equalityManagement',
@@ -1882,7 +1890,8 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs</p>";
 				return description;
-			}, 'value', -1, null, 'C2', [1]);
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('c2ExitSpireCell',
 			function () { return (cinf() + ' Exit Spire Cell') },
 			function () {
@@ -1892,7 +1901,8 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', -1, null, 'C2', [1]);
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('c2PreSpireNurseries',
 			function () { return (cinf() + ' Nurseries pre-Spire') },
 			function () {
@@ -1901,7 +1911,8 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', -1, null, 'C2', [1]);
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
 		//Mapology
 		createSetting('mapology',
@@ -2465,7 +2476,8 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs</p>";
 				return description;
-			}, 'value', -1, null, 'Daily', [1]);
+			}, 'value', -1, null, 'Daily', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('dExitSpireCell',
 			function () { return ('Daily Exit Spire Cell') },
 			function () {
@@ -2475,7 +2487,8 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', -1, null, 'Daily', [1]);
+			}, 'value', -1, null, 'Daily', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('dPreSpireNurseries',
 			function () { return ('Daily Nurseries pre-Spire') },
 			function () {
@@ -2484,7 +2497,16 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', -1, null, 'Daily', [1]);
+			}, 'value', -1, null, 'Daily', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+		createSetting('dAutoDStanceSpire',
+			function () { return ('D Stance in Spires') },
+			function () {
+				var description = "<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, "Combat", [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
 		createSetting('dAutoStanceWind',
 			function () { return ('Daily Wind Stacking') },
@@ -2803,7 +2825,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1],
-			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 200) });
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 170) });
 
 		createSetting('heirloomSwapZone',
 			function () { return ('Swap Zone') },
@@ -3589,8 +3611,8 @@ function initializeAllSettings() {
 		createSetting('tokenthresh',
 			function () { return ('Token Threshold') },
 			function () {
-				var description = "<p>If tokens would go below this value it will disable token conversion.</p>";
-				description += "<p>Set to <b>0 or below</b> to completely disable token conversion..</p>";
+				var description = "<p>If tokens would go below this value it will disable token expenditure.</p>";
+				description += "<p>Set to <b>0 or below</b> to completely disable token expenditure.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });

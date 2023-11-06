@@ -3455,8 +3455,6 @@ function farmingDecision() {
 		}
 	}
 
-	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
-
 	if (farmingDetails.mapLevel) {
 		if (getPageSetting('autoLevelTest') && farmingDetails.autoLevel) {
 			const speedSettings = ['Map Bonus', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
@@ -3475,6 +3473,8 @@ function farmingDecision() {
 		else if (farmingDetails.mapName === 'Desolation Destacking' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
 		else if (farmingDetails.mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
 	}
+
+	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
 	mapSettings = farmingDetails;
 }
 
