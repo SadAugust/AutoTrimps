@@ -3474,6 +3474,7 @@ function farmingDecision() {
 		else if (farmingDetails.mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
 	}
 
+	//Setup level check so that we can compare if we need to do some work with map run counters
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
 	mapSettings = farmingDetails;
 }

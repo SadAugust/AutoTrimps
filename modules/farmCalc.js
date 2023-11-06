@@ -9,22 +9,44 @@ if (typeof MODULES === 'undefined') {
 	}
 }
 
-function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLevel) {
-	if (currentMap === '' || currentAutoLevel === Infinity) {
+function callAutoMapLevel(settingName, currentAutoLevel, special, maxLevel, minLevel) {
+	if (getPageSetting('autoLevelTest'))
+		return callAutoMapLevel_new(currentAutoLevel, settingName);
+
+	if (settingName === '' || currentAutoLevel === Infinity) {
 		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 		if (currentAutoLevel !== Infinity && atSettings.intervals.twoSecond) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Increasing Map Level
-	if (atSettings.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
+	if (atSettings.intervals.sixSecond && settingName !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Decreasing Map Level
-	if (atSettings.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
+	if (atSettings.intervals.sixSecond && settingName !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, true);
 	}
 	return currentAutoLevel
+}
+
+function callAutoMapLevel_new(mapName) {
+	const speedSettings = ['Map Bonus', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
+	var mapLevel = speedSettings.indexOf(mapName) >= 0 ? hdStats.autoLevelSpeed : hdStats.autoLevelNew;
+	const mapBonusLevel = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
+	if (mapName === 'Map Bonus' && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
+	else if (mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
+	else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
+	else if (challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0) mapLevel = -1;
+	else if (mapName === 'Quest' && mapLevel < mapBonusLevel && ((currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10)) mapLevel = mapBonusLevel;
+	else if (mapName === 'Mayhem Destacking' && mapLevel < 0) mapLevel = (getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0);
+	else if (mapName === 'Pandemonium Destacking' && mapLevel <= 0) mapLevel = 1;
+	else if (mapName === 'Alchemy Farm' && mapLevel <= 0) mapLevel = 1;
+	else if (mapName === 'Glass' && mapLevel <= 0) mapLevel = 1;
+	else if (mapName === 'Desolation Destacking' && mapLevel <= 0) mapLevel = 1;
+	else if (mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
+
+	return mapLevel;
 }
 
 function autoMapLevel(special, maxLevel, minLevel, statCheck) {
@@ -176,8 +198,8 @@ function populateZFarmData() {
 
 	//Heirloom + Crit Chance
 	const customShield = heirloomShieldToEquip('map');
-	var critChance = getPlayerCritChance_AT(customShield);
-	var critDamage = getPlayerCritDamageMult_AT(customShield) - 1;
+	var critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
+	var critDamage = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult() - 1;
 
 	//Base crit multiplier
 	var megaCD = 5;
@@ -430,8 +452,8 @@ function populateZFarmData() {
 		range: maxFluct / minFluct,
 		rangeMin: minFluct,
 		rangeMax: maxFluct,
-		plaguebringer: getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01,
-		equalityMult: getPlayerEqualityMult_AT(customShield),
+		plaguebringer: typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01,
+		equalityMult: typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : getPlayerEqualityMult(),
 
 		//Enemy Stats
 		challenge: enemyHealth,
@@ -450,7 +472,7 @@ function populateZFarmData() {
 		coordinate: challengeActive('Coordinate'),
 		challenge_health: enemyHealth,
 		challenge_attack: enemyAttack,
-		mapPerfect: getPageSetting('onlyPerfectMaps'),
+		mapPerfect: typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : false,
 		mapSpecial: getAvailableSpecials('lmc'),
 		mapBiome: biome,
 
@@ -993,4 +1015,33 @@ function biomeEnemyStats(biome) {
 		...biomesFunctions[biome](),
 	];
 	return enemyBiome;
+}
+
+//If using standalone version then when loading Surky file also load CSS & Perky then load portal UI.
+//After initial load everything should work perfectly.
+if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	//Load CSS so that the UI is visible
+	var linkStylesheet = document.createElement("link");
+	linkStylesheet.rel = "stylesheet";
+	linkStylesheet.type = "text/css";
+	linkStylesheet.href = "https://sadaugust.github.io/AutoTrimps/tabsStandalone.css";
+	document.head.appendChild(linkStylesheet);
+
+	//Load Surky
+	var script = document.createElement('script');
+	script.id = "AutoTrimps-SadAugust_breedtimer";
+	script.src = "https://sadaugust.github.io/AutoTrimps/modules/breedtimer.js";
+	script.setAttribute('crossorigin', 'anonymous');
+	document.head.appendChild(script);
+
+	script.id = "AutoTrimps-SadAugust_calc";
+	script.src = "https://sadaugust.github.io/AutoTrimps/modules/calc.js";
+	script.setAttribute('crossorigin', 'anonymous');
+	document.head.appendChild(script);
+
+	//Load the portal UI
+	setTimeout(function () {
+		MODULES.autoPerks.displayGUI(portalUniverse);
+		console.log("Surky & Perky loaded.")
+	}, 3000);
 }
