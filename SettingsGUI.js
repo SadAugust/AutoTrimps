@@ -967,7 +967,6 @@ function initializeAllSettings() {
 	//Combat
 	const displayCombat = true;
 	if (displayCombat) {
-		//Helium
 		createSetting('autoFight',
 			function () { return (['Better Auto Fight Off', 'Better Auto Fight', 'Vanilla Auto Fight']) },
 			function () {
@@ -984,7 +983,7 @@ function initializeAllSettings() {
 				var description = "<p>Controls whether to force abandon trimps for mapping.</p>";
 				description += "<p><b>Never Abandon</b><br>Never abandon trimps for mapping.</p>";
 				description += "<p><b>Always Abandon</b><br>Always abandon trimps for mapping.</p>";
-				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of the trimps is ready, or when (0 + overkill) cells away from c100.</p>";
+				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of trimps is ready, or when (0 + overkill) cells away from c100.</p>";
 				description += "<p><b>Recommended:</b> Smart Abandon</p>";
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1, 2]);
@@ -1062,7 +1061,6 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Combat', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		//Radon
 		createSetting('equalityManagement',
 			function () { return (['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced']) },
 			function () {
@@ -1363,7 +1361,6 @@ function initializeAllSettings() {
 	//Maps
 	const displayMaps = true;
 	if (displayMaps) {
-		//Helium
 		createSetting('autoMaps',
 			function () { return (["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"]) },
 			function (noUnique) {
@@ -1612,7 +1609,6 @@ function initializeAllSettings() {
 	//Challenges
 	const displayChallenges = true;
 	if (displayChallenges) {
-		//Helium
 		//Balance
 		createSetting('balance',
 			function () { return ('Balance') },
@@ -3637,7 +3633,7 @@ function initializeAllSettings() {
 				description += "<p><b>Transfer</b><br>Will purchase levels in your Poison transfer rate.</p>";
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
-			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice']; }, 'Nature', [1],
+			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice', 'Convert to Both']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoWind',
 			function () { return ('Wind') },
@@ -3649,7 +3645,7 @@ function initializeAllSettings() {
 				description += "<p><b>Transfer</b><br>Will purchase levels in your Wind transfer rate.</p>";
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
-			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Ice']; }, 'Nature', [1],
+			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Ice', 'Convert to Both']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoIce',
 			function () { return ('Ice') },
@@ -3661,7 +3657,7 @@ function initializeAllSettings() {
 				description += "<p><b>Transfer</b><br>Will purchase levels in your Ice transfer rate.</p>";
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
-			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind']; }, 'Nature', [1],
+			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind', 'Convert to Both']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 
 		//Enlightenments
@@ -5416,7 +5412,6 @@ function updateCustomButtons(initialLoad) {
 		lastTheme = game.options.menu.darkTheme.enabled;
 	}
 	//Hide settings
-	//Radon
 	var radonon = autoTrimpSettings.universeSetting.value === 1;
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 

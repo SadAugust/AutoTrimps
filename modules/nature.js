@@ -34,14 +34,19 @@ function autoNatureTokens() {
 		}
 		else {
 			//Skips if not enough tokens to transfer & maintain threshold
+			if (setting.slice(0, 7) !== 'Convert') continue;
 			if (empowerment.tokens < (10 + tokenThreshold)) continue;
-			var targetNature = setting.slice(11);
-			if (!targetNature || targetNature === nature || !game.empowerments[targetNature]) continue;
-			empowerment.tokens -= 10;
-			var convertRate = game.talents.nature.purchased ? 8 : 5;
-			game.empowerments[targetNature].tokens += convertRate;
-			spentTokens = true;
-			debug('Converted ' + nature + ' tokens to ' + targetNature, 'nature');
+			var targetNature = ['Poison', 'Wind', 'Ice'];
+			targetNature = targetNature.filter(element => element !== nature);
+			if (setting.slice(11) !== 'Both') targetNature = targetNature.filter(element => element === nature);
+			for (var item in targetNature) {
+				if (!game.empowerments[targetNature[item]]) continue;
+				empowerment.tokens -= 10;
+				var convertRate = game.talents.nature.purchased ? 8 : 5;
+				game.empowerments[targetNature[item]].tokens += convertRate;
+				spentTokens = true;
+				debug('Converted ' + nature + ' tokens to ' + targetNature[item], 'nature');
+			}
 		}
 	}
 	if (spentTokens) updateNatureInfoSpans();
