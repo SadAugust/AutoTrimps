@@ -398,11 +398,13 @@ function shouldFarmMapCreation(level, special, biome) {
 //Decide whether or not to abandon trimps for mapping
 function shouldAbandon() {
 	const setting = getPageSetting('autoAbandon');
-	if (setting === 0)
-		return false;
+	if (setting === 0) {
+		if (game.global.soldierHealth <= 0) return true;
+		else return false;
+	}
 	else if (setting === 1)
 		return true;
-	else if (setting === 2 && (game.global.soldierHealth === 0 || newArmyRdy() || getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100))
+	else if (setting === 2 && (game.global.soldierHealth <= 0 || newArmyRdy() || getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100))
 		return true;
 	else
 		return false;
