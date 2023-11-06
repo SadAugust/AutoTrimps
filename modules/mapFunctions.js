@@ -3455,25 +3455,6 @@ function farmingDecision() {
 		}
 	}
 
-	if (farmingDetails.mapLevel) {
-		if (getPageSetting('autoLevelTest') && farmingDetails.autoLevel) {
-			const speedSettings = ['Map Bonus', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
-			farmingDetails.mapLevel = speedSettings.indexOf(farmingDetails.mapName) >= 0 ? hdStats.autoLevelSpeed : hdStats.autoLevelNew;
-		}
-		mapBonusLevel = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
-		if (farmingDetails.mapName === 'Map Bonus' && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
-		else if (farmingDetails.mapName === 'HD Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
-		else if (farmingDetails.mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
-		else if (challengeActive('Wither') && farmingDetails.mapName !== 'Map Bonus' && farmingDetails.mapLevel >= 0) farmingDetails.mapLevel = -1;
-		else if (farmingDetails.mapName === 'Quest' && farmingDetails.mapLevel < mapBonusLevel && ((currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10)) farmingDetails.mapLevel = mapBonusLevel;
-		else if (farmingDetails.mapName === 'Mayhem Destacking' && farmingDetails.mapLevel < 0) farmingDetails.mapLevel = (getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0);
-		else if (farmingDetails.mapName === 'Pandemonium Destacking' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
-		else if (farmingDetails.mapName === 'Alchemy Farm' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
-		else if (farmingDetails.mapName === 'Glass' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
-		else if (farmingDetails.mapName === 'Desolation Destacking' && farmingDetails.mapLevel <= 0) farmingDetails.mapLevel = 1;
-		else if (farmingDetails.mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && farmingDetails.mapLevel < mapBonusLevel) farmingDetails.mapLevel = mapBonusLevel;
-	}
-
 	//Setup level check so that we can compare if we need to do some work with map run counters
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
 	mapSettings = farmingDetails;

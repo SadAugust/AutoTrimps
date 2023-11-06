@@ -11,7 +11,7 @@ if (typeof MODULES === 'undefined') {
 
 function callAutoMapLevel(settingName, currentAutoLevel, special, maxLevel, minLevel) {
 	if (getPageSetting('autoLevelTest'))
-		return callAutoMapLevel_new(currentAutoLevel, settingName);
+		return callAutoMapLevel_new(settingName);
 
 	if (settingName === '' || currentAutoLevel === Infinity) {
 		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
