@@ -395,6 +395,23 @@ function shouldFarmMapCreation(level, special, biome) {
 	else return 'create';
 }
 
+
+//Decide whether or not to abandon trimps for mapping
+function shouldAbandon() {
+	if (getPageSetting('autoAbandon') === 0) return false;
+	if (getPageSetting('autoAbandon') === 1) return true;
+	if (getPageSetting('autoAbandon') === 2) {
+		if (game.resources.trimps.realMax() > game.resources.trimps.owned + 1) {
+			if (mapSettings.mapName === 'Void Map' && game.global.lastClearedCell >= 90) return true;
+			return false;
+		}
+		if (mapSettings.mapName === 'Map Bonus' && game.global.lastClearedCell >= 50) return false;
+		return true;
+	}
+	//Fail safe
+	return false;
+}
+
 function autoMap() {
 
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
@@ -629,7 +646,7 @@ function autoMap() {
 			if (!game.global.switchToMaps) {
 				mapsClicked();
 			}
-			if (game.global.switchToMaps && getPageSetting('autoAbandon')) {
+			if (game.global.switchToMaps && shouldAbandon()) {
 				mapsClicked();
 			}
 		}

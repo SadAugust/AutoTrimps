@@ -979,12 +979,15 @@ function initializeAllSettings() {
 				return description;
 			}, 'multitoggle', 1, null, "Combat", [1, 2]);
 		createSetting('autoAbandon',
-			function () { return ('Auto Abandon') },
+			function () { return (['Never Abandon', 'Always Abandon', 'Smart Abandon']) },
 			function () {
-				var description = "<p>Enabling this will force abandon trimps if necessary for mapping.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
+				var description = "<p>Controls whether to force abandon trimps for mapping. Must have <b>Wait to Travel</b><br> in the game settings to work.</p>";
+				description += "<p><b>Never Abandon</b><br>Never abandon trimps for mapping.</p>";
+				description += "<p><b>Always Abandon</b><br>Always abandon trimps for mapping.</p>";
+				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of the trimps is ready, or to rush voids near the end of the zone.</p>";
+				description += "<p><b>Recommended:</b> Smart Abandon</p>";
 				return description;
-			}, 'boolean', true, null, 'Combat', [1, 2]);
+			}, 'multitoggle', 2, null, 'Combat', [1, 2]);
 		createSetting('floorCritCalc',
 			function () { return ('Never Crit Calc') },
 			function () {
