@@ -405,6 +405,7 @@ function shouldAbandon() {
 			if (mapSettings.mapName === 'Void Map' && game.global.lastClearedCell >= 90) return true;
 			return false;
 		}
+		if (game.global.spireActive) return false;
 		if (mapSettings.mapName === 'Map Bonus' && game.global.lastClearedCell >= 50) return false;
 		return true;
 	}
