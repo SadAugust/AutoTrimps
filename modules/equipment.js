@@ -519,7 +519,7 @@ function buyEquips() {
 	var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
 	for (var i = 0; i < 2; i++) {
-		if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1) && !game.equipment[equipName].locked) {
+		if (equipName !== '' && (equipPrestige || canAffordBuilding(equipName, false, false, true, false, 1)) && !game.equipment[equipName].locked) {
 			//Check any of the overrides
 			if (game.equipment[equipName].level < equipCap || equipPrestige || bestBuys[equipType].zoneGo) {
 				if (equipCost <= bestBuys[equipType].resourceSpendingPct * game.resources[resourceUsed].owned) {

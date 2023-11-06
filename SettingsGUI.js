@@ -984,7 +984,7 @@ function initializeAllSettings() {
 				var description = "<p>Controls whether to force abandon trimps for mapping.</p>";
 				description += "<p><b>Never Abandon</b><br>Never abandon trimps for mapping.</p>";
 				description += "<p><b>Always Abandon</b><br>Always abandon trimps for mapping.</p>";
-				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of the trimps is ready, or when you can X (0 + overkill) cells away from c100.</p>";
+				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of the trimps is ready, or when (0 + overkill) cells away from c100.</p>";
 				description += "<p><b>Recommended:</b> Smart Abandon</p>";
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1, 2]);
