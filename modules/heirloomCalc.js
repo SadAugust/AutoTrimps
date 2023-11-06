@@ -326,14 +326,14 @@ function setupHeirloomUI() {
 			},
 			XPWeight: {
 				name: "Weight: XP",
-				description: "VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain..",
+				description: "VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain.",
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0,
 			},
 			HPWeight: {
 				name: "Weight: HP",
-				description: "VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain..",
+				description: "VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain.",
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1,

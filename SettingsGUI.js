@@ -979,12 +979,15 @@ function initializeAllSettings() {
 				return description;
 			}, 'multitoggle', 1, null, "Combat", [1, 2]);
 		createSetting('autoAbandon',
-			function () { return ('Auto Abandon') },
+			function () { return (['Never Abandon', 'Always Abandon', 'Smart Abandon']) },
 			function () {
-				var description = "<p>Enabling this will force abandon trimps if necessary for mapping.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
+				var description = "<p>Controls whether to force abandon trimps for mapping.</p>";
+				description += "<p><b>Never Abandon</b><br>Never abandon trimps for mapping.</p>";
+				description += "<p><b>Always Abandon</b><br>Always abandon trimps for mapping.</p>";
+				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of the trimps is ready, or when you can X (0 + overkill) cells away from c100.</p>";
+				description += "<p><b>Recommended:</b> Smart Abandon</p>";
 				return description;
-			}, 'boolean', true, null, 'Combat', [1, 2]);
+			}, 'multitoggle', 2, null, 'Combat', [1, 2]);
 		createSetting('floorCritCalc',
 			function () { return ('Never Crit Calc') },
 			function () {
@@ -1893,7 +1896,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('c2ExitSpireCell',
-			function () { return (cinf() + ' Exit Spire Cell') },
+			function () { return (cinf() + ' Exit Spire After Cell') },
 			function () {
 				var description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
@@ -1912,6 +1915,14 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+		createSetting('c2AutoDStanceSpire',
+			function () { return (cinf() + ' Stance in Spires') },
+			function () {
+				var description = "<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
 		//Mapology
@@ -2461,7 +2472,7 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', true, null, 'Daily', [1]);
 		createSetting('dscryvoidmaps',
-			function () { return ('Daily VM Scryer') },
+			function () { return ('D: VM Scryer') },
 			function () {
 				var description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -2469,7 +2480,7 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Daily', [1]);
 
 		createSetting('dIgnoreSpiresUntil',
-			function () { return ('Daily Ignore Spires Until') },
+			function () { return ('D: Ignore Spires Until') },
 			function () {
 				var description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
 				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
@@ -2479,7 +2490,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'Daily', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('dExitSpireCell',
-			function () { return ('Daily Exit Spire Cell') },
+			function () { return ('D: Exit Spire After Cell') },
 			function () {
 				var description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
@@ -2490,7 +2501,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'Daily', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('dPreSpireNurseries',
-			function () { return ('Daily Nurseries pre-Spire') },
+			function () { return ('D: Nurseries pre-Spire') },
 			function () {
 				var description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
 				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>";
@@ -2509,7 +2520,7 @@ function initializeAllSettings() {
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
 		createSetting('dAutoStanceWind',
-			function () { return ('Daily Wind Stacking') },
+			function () { return ('D: Wind Stacking') },
 			function () {
 				var description = "<p>Enabling this will give you settings to allow you to wind stack in your runs.</p>";
 				description += "<p>Will use your regular <b>Auto Stance</b> setting when outside of zones you're wind stacking in.</p>";
@@ -2518,7 +2529,7 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Daily', [1],
 			function () { return (game.empowerments.Wind.retainLevel >= 50) });
 		createSetting('dWindStackingZone',
-			function () { return ('Daily Wind Stack Zone') },
+			function () { return ('D: Wind Stack Zone') },
 			function () {
 				var description = "<p>Enables wind stacking in zones above and inclusive of the zone set.</p>";
 				description += "<p><b>Recommended:</b> 100 zones below portal zone</p>";
@@ -2526,7 +2537,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'Daily', [1],
 			function () { return (autoTrimpSettings.dAutoStanceWind.enabled) });
 		createSetting('dWindStackingRatio',
-			function () { return ('Daily Wind Stack H:D') },
+			function () { return ('D: Wind Stack H:D') },
 			function () {
 				var description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
 				description += "<p>If set to <b>0 or below</b> it will always use wind stance when at or above your wind stack zone input.</p>";
@@ -3851,7 +3862,7 @@ function initializeAllSettings() {
 		createSetting('EnableAFK',
 			function () { return ('Go AFK Mode') },
 			function () {
-				var description = "<p>FK Mode uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU saving mode.</p>";
+				var description = "<p>AFK Mode uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU saving mode.</p>";
 				description += "<p>The blue color means this is not a settable setting, just a button.</p>";
 				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
 				return description;
@@ -6148,102 +6159,6 @@ function updateATVersion() {
 			saveSettings();
 		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 
-		//Test function for either setting conversion. Stops me having to rewrite the undefined code every time I change something.
-		function basicSettingConversion(originalSetting, newSetting, universe = 0) {
-			if (!originalSetting) return;
-			if (!newSetting) return;
-			if (tempSettings[originalSetting] === undefined) {
-				debug("Original setting (" + originalSetting + ") not found");
-				return;
-			}
-			if (autoTrimpSettings[newSetting] === undefined) {
-				debug("New setting (" + newSetting + ") not found");
-				return;
-			}
-
-			debug("Converted setting: " + originalSetting + " to " + newSetting);
-			var originalSetting = tempSettings[originalSetting];
-			var originalType = Object.keys(tempSettings.gammaBurstCalc)[0];
-			if (universe === 2 && originalType.includes("U2")) originalType += "U2";
-			var newSetting = autoTrimpSettings[newSetting];
-		}
-
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.001') {
-			var settings_List = ['raidingSettings', 'bionicRaidingSettings']
-			var values = ['value', 'valueU2'];
-			for (var x = 0; x < settings_List.length; x++) {
-				for (var z = 0; z < values.length; z++) {
-					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
-						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-							autoTrimpSettings[settings_List[x]][values[z]][y].endzone = 999;
-						}
-					}
-					saveSettings();
-				}
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.1') {
-			if (tempSettings.mapBonusDefaultSettings.value.healthHDRatio !== undefined)
-				autoTrimpSettings['mapBonusRatio'].value = tempSettings.mapBonusDefaultSettings.value.healthHDRatio;
-			if (tempSettings.mapBonusDefaultSettings.valueU2.healthHDRatio !== undefined)
-				autoTrimpSettings['mapBonusRatio'].valueU2 = tempSettings.mapBonusDefaultSettings.valueU2.healthHDRatio
-			if (tempSettings.mapBonusDefaultSettings.value.mapBonusStacks !== undefined)
-				autoTrimpSettings['mapBonusStacks'].value = tempSettings.tempSettings.mapBonusDefaultSettings.value.healthBonus
-			if (tempSettings.mapBonusDefaultSettings.valueU2.mapBonusStacks !== undefined)
-				autoTrimpSettings['mapBonusStacks'].valueU2 = tempSettings.tempSettings.mapBonusDefaultSettings.valueU2.healthBonus
-			if (tempSettings.autoPerks.value > 0) autoTrimpSettings['autoPerks'].enabled = true;
-			else autoTrimpSettings['autoPerks'].enabled = false;
-			if (tempSettings.autoPerks.valueU2 > 0) autoTrimpSettings['autoPerks'].enabledU2 = true;
-			else autoTrimpSettings['autoPerks'].enabledU2 = false;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.7') {
-			autoTrimpSettings['hitsSurvived'].value = 0;
-			autoTrimpSettings['hitsSurvived'].valueU2 = 0;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.8') {
-			if (tempSettings.dailyPortalSettingsArray && tempSettings.dailyPortalSettingsArray.valueU2 !== undefined)
-				delete autoTrimpSettings.dailyPortalSettingsArray.valueU2.value;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.0') {
-			if (tempSettings !== null) {
-				safeSetItems('atSettings', serializeSettings());
-				if (localStorage.atSettings !== null) {
-					delete localStorage.autoTrimpSettings;
-					console.log("Deleted old localStorage file so different forks can be used alongside this one!");
-				}
-				else return "Error with localStorage conversion. Please inform me asap!";
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.1') {
-			if (tempSettings.spamMessages !== undefined)
-				autoTrimpSettings['spamMessages'].value.map_Destacking = tempSettings.spamMessages.value.map_Details;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.3') {
-			if (tempSettings.c2RunnerSettings !== undefined) {
-				autoTrimpSettings['c2RunnerSettings'].value = {};
-				autoTrimpSettings['c2RunnerSettings'].valueU2 = {};
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.4') {
-			for (var x = 1; x < 8; x++) {
-				autoTrimpSettings['heirloomAutoStaffMod' + x].selected = 'Empty';
-				autoTrimpSettings['heirloomAutoStaffMod' + x].selectedU2 = 'Empty';
-				autoTrimpSettings['heirloomAutoShieldMod' + x].selected = 'Empty';
-				autoTrimpSettings['heirloomAutoShieldMod' + x].selectedU2 = 'Empty';
-			}
-			for (var x = 1; x < 5; x++) {
-				autoTrimpSettings['heirloomAutoCoreMod' + x].selected = 'Empty';
-			}
-		}
-
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.5') {
 			if (tempSettings.presetMutations !== undefined) {
 				var mutatorObj = {
@@ -6260,99 +6175,6 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.6') {
-			if (tempSettings.c2RunnerSettings !== undefined) {
-				autoTrimpSettings['scryerMinMaxWorld'].value = 2;
-			}
-			autoTrimpSettings['spamMessages'].value.map_Skip = false;
-			autoTrimpSettings['spamMessages'].value.stance = false;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.7') {
-			if (tempSettings.avoidempower !== undefined)
-				autoTrimpSettings['avoidEmpower'].value = tempSettings.avoidempower.value;
-			if (tempSettings.buyradony !== undefined)
-				autoTrimpSettings['buyheliumy'].valueU2 = tempSettings.buyradony.valueU2;
-
-
-			if (tempSettings.HeHrDontPortalBefore !== undefined) {
-				autoTrimpSettings['heHrDontPortalBefore'].value = tempSettings.HeHrDontPortalBefore.value;
-				autoTrimpSettings['heHrDontPortalBefore'].valueU2 = tempSettings.HeHrDontPortalBefore.valueU2;
-			}
-			if (tempSettings.HeliumHrBuffer !== undefined) {
-				autoTrimpSettings['heliumHrBuffer'].value = tempSettings.HeliumHrBuffer.value;
-				autoTrimpSettings['heliumHrBuffer'].valueU2 = tempSettings.HeliumHrBuffer.valueU2;
-			}
-			if (tempSettings.HeliumHrPortal !== undefined) {
-				autoTrimpSettings['heliumHrPortal'].value = tempSettings.HeliumHrPortal.value;
-				autoTrimpSettings['heliumHrPortal'].valueU2 = tempSettings.HeliumHrPortal.valueU2;
-			}
-			if (tempSettings.PauseScript !== undefined)
-				autoTrimpSettings['pauseScript'].enabled = tempSettings.PauseScript.enabled;
-			if (tempSettings.AutoEggs !== undefined)
-				autoTrimpSettings['autoEggs'].enabled = tempSettings.AutoEggs.enabled;
-
-			if (tempSettings.FirstGigastation !== undefined)
-				autoTrimpSettings['firstGigastation'].value = tempSettings.FirstGigastation.value;
-			if (tempSettings.DeltaGigastation !== undefined)
-				autoTrimpSettings['deltaGigastation'].value = tempSettings.DeltaGigastation.value;
-			if (tempSettings.AutoGigas !== undefined)
-				autoTrimpSettings['autoGigas'].enabled = tempSettings.AutoGigas.enabled;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.8') {
-			if (tempSettings.spamMessages !== undefined)
-				autoTrimpSettings['spamMessages'].value.run_Stats = false;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.9') {
-			if (tempSettings.autoAbandon !== undefined) {
-				autoTrimpSettings['autoAbandon'].enabled = tempSettings.autoAbandon.value !== 1;
-				autoTrimpSettings['autoAbandon'].enabledU2 = tempSettings.autoAbandon.valueU2 !== 1;
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.91') {
-			if (tempSettings.spamMessages !== undefined)
-				autoTrimpSettings['spamMessages'].value.nature = false;
-
-			if (tempSettings.pfillerenlightthresh !== undefined) autoTrimpSettings['poisonEnlight'].value = tempSettings.pfillerenlightthresh.value;
-			if (tempSettings.pdailyenlightthresh !== undefined) autoTrimpSettings['poisonEnlightDaily'].value = tempSettings.pdailyenlightthresh.value;
-			if (tempSettings.pc2enlightthresh !== undefined) autoTrimpSettings['poisonEnlightC2'].value = tempSettings.pc2enlightthresh.value;
-
-			if (tempSettings.wfillerenlightthresh !== undefined) autoTrimpSettings['windEnlight'].value = tempSettings.wfillerenlightthresh.value;
-			if (tempSettings.wdailyenlightthresh !== undefined) autoTrimpSettings['windEnlightDaily'].value = tempSettings.wdailyenlightthresh.value;
-			if (tempSettings.wc2enlightthresh !== undefined) autoTrimpSettings['windEnlightC2'].value = tempSettings.wc2enlightthresh.value;
-
-			if (tempSettings.ifillerenlightthresh !== undefined) autoTrimpSettings['iceEnlight'].value = tempSettings.ifillerenlightthresh.value;
-			if (tempSettings.idailyenlightthresh !== undefined) autoTrimpSettings['iceEnlightDaily'].value = tempSettings.idailyenlightthresh.value;
-			if (tempSettings.ic2enlightthresh !== undefined) autoTrimpSettings['iceEnlightC2'].value = tempSettings.ic2enlightthresh.value;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.92') {
-
-			if (tempSettings.ATGA2 !== undefined) autoTrimpSettings['geneAssist'].enabled = tempSettings.ATGA2.enabled;
-			if (tempSettings.ATGA2gen !== undefined) autoTrimpSettings['geneAssistPercent'].value = tempSettings.ATGA2gen.value;
-			if (tempSettings.ATGA2timer !== undefined) autoTrimpSettings['geneAssistTimer'].value = tempSettings.ATGA2timer.value;
-
-			if (tempSettings.zATGA2timer !== undefined) autoTrimpSettings['geneAssistZoneBefore'].value = tempSettings.zATGA2timer.value;
-			if (tempSettings.ztATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerBefore'].value = tempSettings.ztATGA2timer.value;
-			if (tempSettings.ATGA2timerz !== undefined) autoTrimpSettings['geneAssistZoneAfter'].value = tempSettings.ATGA2timerz.value;
-			if (tempSettings.ATGA2timerzt !== undefined) autoTrimpSettings['geneAssistTimerAfter'].value = tempSettings.ATGA2timerzt.value;
-			if (tempSettings.sATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerSpire'].value = tempSettings.sATGA2timer.value;
-
-			if (tempSettings.dATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerDaily'].value = tempSettings.dATGA2timer.value;
-			if (tempSettings.dhATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerDailyHard'].value = tempSettings.dhATGA2timer.value;
-			if (tempSettings.dsATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerSpireDaily'].value = tempSettings.dsATGA2timer.value;
-
-			if (tempSettings.cATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerC2'].value = tempSettings.cATGA2timer.value;
-
-			var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
-			if (perkyInputs !== null) autoTrimpSettings['autoAllocatePresets'].value = perkyInputs;
-			var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
-			if (surkyInputs !== null) autoTrimpSettings['autoAllocatePresets'].valueU2 = surkyInputs;
-		}
-
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.95') {
 			var settings_List = ['mapFarmSettings']
 			var values = ['value', 'valueU2'];
@@ -6367,69 +6189,6 @@ function updateATVersion() {
 				}
 			}
 		}
-		//Fixing Surky & Perky input issues. 
-		//Changing daily skip to be an array instead of a string so more items can be added.
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.96') {
-
-			if (typeof (tempSettings["dailySkip"]) !== 'undefined') {
-				if (typeof (tempSettings.dailySkip.value) !== 'string') tempSettings.dailySkip.value = '';
-				if (typeof (tempSettings.dailySkip.valueU2) !== 'string') tempSettings.dailySkip.valueU2 = '';
-				autoTrimpSettings.dailySkip.value = tempSettings.dailySkip.value.split();
-				autoTrimpSettings.dailySkip.valueU2 = tempSettings.dailySkip.valueU2.split();
-			}
-
-			if (typeof (autoTrimpSettings.autoAllocatePresets.value) === 'object') {
-				if (typeof (tempSettings.autoAllocatePresets.value) !== 'string') tempSettings.dailySkip.value = '';
-				autoTrimpSettings.autoAllocatePresets.value = JSON.stringify(autoTrimpSettings.autoAllocatePresets.value);
-				localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
-			}
-
-			if (typeof (autoTrimpSettings.autoAllocatePresets.valueU2) === 'object') {
-				autoTrimpSettings.autoAllocatePresets.valueU2 = JSON.stringify(autoTrimpSettings.autoAllocatePresets.valueU2);
-				localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
-			}
-		}
-
-		//Adding auto bone charge usage
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.97') {
-
-			if (typeof (tempSettings["boneShrineDefaultSettings"]) !== 'undefined') {
-				var setting = autoTrimpSettings["boneShrineDefaultSettings"];
-				//Delete cell variable so that it isn't retained for adding new lines
-				if (typeof (setting.value.cell !== 'undefined')) delete setting.value.cell;
-				if (typeof (setting.valueU2.cell !== 'undefined')) delete setting.valueU2.cell;
-
-				//Add new settings
-				setting.value.bonebelow = 11;
-				setting.valueU2.bonebelow = 11;
-
-				setting.value.world = 999;
-				setting.valueU2.world = 999;
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.99') {
-			if (typeof (tempSettings['testRadonCombatRespec']) !== 'undefined') {
-				if (typeof (tempSettings['testRadonCombatRespec'].enabledU2) !== 'undefined') autoTrimpSettings['presetCombatRespec'].valueU2 = (tempSettings['testRadonCombatRespec'].enabledU2 ? 2 : 0);
-			}
-			saveSettings();
-		}
-
-		//Changing Empty mode name to Any
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {
-			if (typeof (tempSettings['heirloomAutoStaffMod1']) !== 'undefined') {
-				for (var x = 1; x < 8; x++) {
-					if (tempSettings['heirloomAutoStaffMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selected = 'Any';
-					if (tempSettings['heirloomAutoStaffMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selectedU2 = 'Any';
-					if (tempSettings['heirloomAutoShieldMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoShieldMod' + x].selected = 'Any';
-					if (tempSettings['heirloomAutoShieldMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoShieldMod' + x].selectedU2 = 'Any';
-				}
-				for (var x = 1; x < 5; x++) {
-					if (tempSettings['heirloomAutoCoreMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoCoreMod' + x].selected = 'Any';
-				}
-			}
-			saveSettings();
-		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {
 			var settings_List = ['mapBonusSettings']
@@ -6443,37 +6202,6 @@ function updateATVersion() {
 					}
 					saveSettings();
 				}
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.11') {
-
-			if (typeof (tempSettings['heirloomAutoRareToKeep']) !== 'undefined') {
-
-				autoTrimpSettings['heirloomAutoRareToKeepShield'].selected = tempSettings['heirloomAutoRareToKeep'].selected;
-				autoTrimpSettings['heirloomAutoRareToKeepShield'].selectedU2 = tempSettings['heirloomAutoRareToKeep'].selectedU2;
-
-				autoTrimpSettings['heirloomAutoRareToKeepStaff'].selected = tempSettings['heirloomAutoRareToKeep'].selected;
-				autoTrimpSettings['heirloomAutoRareToKeepStaff'].selectedU2 = tempSettings['heirloomAutoRareToKeep'].selectedU2;
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.12') {
-
-			if (typeof (tempSettings.equipCutOff) !== 'undefined') {
-				autoTrimpSettings['equipCutOffHD'].value = tempSettings.equipCutOff.value;
-				autoTrimpSettings['equipCutOffHD'].valueU2 = tempSettings.equipCutOff.valueU2;
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.13') {
-
-			if (typeof (tempSettings.equipNoShields) !== 'undefined') {
-				autoTrimpSettings['equipNoShields'].enabled = false;
-			}
-			if (typeof (tempSettings.equipPrestige) !== 'undefined') {
-				if (tempSettings.equipPrestige.value !== 0) autoTrimpSettings['equipPrestige'].value++;
-				if (tempSettings.equipPrestige.valueU2 !== 0) autoTrimpSettings['equipPrestige'].valueU2++;
 			}
 		}
 
@@ -6621,8 +6349,8 @@ function updateATVersion() {
 			}
 		}
 
+		//Converting addonUser saves variable to object and storing farming settings .done stuff in it
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.37') {
-			//Converting addonUser saves variable to object and storing farming settings .done stuff in it
 
 			var obj = [];
 			for (var x = 0; x < 30; x++) {
@@ -6702,6 +6430,13 @@ function updateATVersion() {
 					autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
 				}
 				saveSettings();
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.09') {
+			if (typeof (tempSettings["autoAbandon"]) !== 'undefined') {
+				autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 2 : 0;
+				autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 2 : 0;
 			}
 		}
 

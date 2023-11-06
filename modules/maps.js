@@ -395,6 +395,19 @@ function shouldFarmMapCreation(level, special, biome) {
 	else return 'create';
 }
 
+//Decide whether or not to abandon trimps for mapping
+function shouldAbandon() {
+	const setting = getPageSetting('autoAbandon');
+	if (setting === 0)
+		return false;
+	else if (setting === 1)
+		return true;
+	else if (setting === 2 && (game.global.soldierHealth === 0 || newArmyRdy() || getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100))
+		return true;
+	else
+		return false;
+}
+
 function autoMap() {
 
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
@@ -626,12 +639,10 @@ function autoMap() {
 	} else if (!game.global.preMapsActive && !game.global.mapsActive) {
 		//Going to map chamber. Will override default 'Auto Abandon' setting if AT wants to map!
 		if (selectedMap !== 'world') {
-			if (!game.global.switchToMaps) {
+			if (!game.global.switchToMaps && shouldAbandon())
 				mapsClicked();
-			}
-			if (game.global.switchToMaps && getPageSetting('autoAbandon')) {
+			if (game.global.switchToMaps)
 				mapsClicked();
-			}
 		}
 		//Creating Maps
 	} else if (game.global.preMapsActive) {
