@@ -78,6 +78,7 @@ function armyDeath() {
 	//const runningElectricity = challengeActive('Electricity') || challengeActive('Mapocalypse');
 	if (!runningDaily) return false;
 	if (game.global.mapsActive) return false;
+	if (runningDaily && typeof game.global.dailyChallenge.empower === 'undefined') return false;
 	if (!getPageSetting('avoidEmpower')) return false;
 
 	//Trimps Stats

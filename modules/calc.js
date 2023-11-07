@@ -1473,7 +1473,7 @@ function calcMutationAttack(targetZone) {
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
 			var ragingMult = hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1;
 			if (gridArray[cell].u2Mutation.includes('CMP') && compressedSwap && compressedSwapValue) {
-				if (heirloomToCheck !== 'heirloomInitial' || hdStats.hdRatio >= compressedSwapValue || MODULES.heirlooms.compressedCalc)
+				if (heirloomToCheck !== 'heirloomInitial' || hdStats.hdRatioHeirloom >= compressedSwapValue || MODULES.heirlooms.compressedCalc)
 					ragingMult = 2.8
 			}
 			highest = Math.max(mutationBaseAttack(cell, targetZone) * ragingMult, highest);
@@ -1528,7 +1528,7 @@ function calcMutationHealth(targetZone) {
 
 			var enemyHealth = mutationBaseHealth(cell, targetZone);
 			if (gridArray[cell].u2Mutation.includes('CMP') && compressedSwap && compressedSwapValue > 0) {
-				if (heirloomToCheck !== 'heirloomInitial' || hdStats.hdRatio >= compressedSwapValue || MODULES.heirlooms.compressedCalc)
+				if (heirloomToCheck !== 'heirloomInitial' || hdStats.hdRatioHeirloom >= compressedSwapValue || MODULES.heirlooms.compressedCalc)
 					enemyHealth *= 0.7;
 			}
 
