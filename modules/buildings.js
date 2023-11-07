@@ -269,12 +269,11 @@ function advancedNurseries() {
 	if (game.stats.highestLevel.valueTotal() < 230) return false;
 	if (game.global.universe !== 1) return false;
 	//Builds nurseries if lacking health & shouldn't HD farm.
-	//Only build nurseries if: A) Lacking Health & B) Doesn't need to HD farm & C) Has max health map stacks
+	//Only build nurseries if: A) Lacking Health & B) Has max health map stacks
 	//Also, it requires less health during spire
 	const a = whichHitsSurvived() < targetHitsSurvived();
-	const b = !hdFarm(false, true).shouldRun;
-	const c = game.global.mapBonus >= getPageSetting('mapBonusHealth');
-	return (a && b && c);
+	const b = game.global.mapBonus >= getPageSetting('mapBonusHealth');
+	return (a && b);
 }
 
 function mostEfficientHousing() {

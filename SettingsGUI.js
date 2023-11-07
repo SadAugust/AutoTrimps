@@ -762,7 +762,7 @@ function initializeAllSettings() {
 		createSetting('advancedNurseries',
 			function () { return ('Advanced Nurseries') },
 			function () {
-				var description = "<p>Will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map Bonus Health</b> setting, which becomes a very important setting.</p>"
+				var description = "<p>Will only buy nurseries if you need more health and you have more map stacks than the <b>Map Bonus Health</b> setting, which becomes a very important setting.</p>"
 				description += "<p>Requires Nurseries to be setup in the AT AutoStructure setting and will only buy Nurseries if past the 'From' input. Overrides the 'Up To' input and allows you to set 0 without it buying as many as possible.</p>"
 				description += "<p><b>Recommended:</b> On. Nurseries set to 'Up To: 0' & 'From: 230'</p>";
 				return description;
