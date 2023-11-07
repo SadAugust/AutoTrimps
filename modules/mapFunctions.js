@@ -3259,7 +3259,6 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 
 		if (mapSettings.mapName !== mapName && (hdType.includes('hitsSurvived') ? hdRatio > settingTarget : hdType !== 'maplevel' ? settingTarget > hdRatio : hdStats.autoLevel > setting.hdBase))
 			shouldSkip = true;
-
 		if (((mapSettings.mapName === mapName && !shouldMap || game.global.mapRunCounter === mapsRunCap) || shouldSkip) && hdRatio !== Infinity) {
 			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, settingTarget, hdType);
 			//Messages detailing why we are skipping mapping.
@@ -3290,7 +3289,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 		}
 		mapsRunCap = mapsRunCap === Infinity ? '∞' : mapsRunCap;
 		var repeat = game.global.mapRunCounter + 1 === mapsRunCap;
-		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + mapsRunCap;
+		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter) + '/' + mapsRunCap;
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;

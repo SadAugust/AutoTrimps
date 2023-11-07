@@ -8,8 +8,11 @@ class TrimpStats {
 		this.hze = undefined;
 		this.hypPct = undefined;
 		this.hyperspeed = undefined;
-		this.perfectMaps = undefined;
 
+		//Mapping Data
+		this.perfectMaps = undefined;
+		this.mapSize = undefined;
+		this.mapDifficulty = undefined;
 		this.mountainPriority = undefined;
 
 		const z = game.global.world;
@@ -22,6 +25,9 @@ class TrimpStats {
 		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 		this.hyperspeed = game.global.world <= Math.floor(this.hze * (this.hypPct / 100));
+
+		this.mapSize = game.talents.mapLoot2.purchased ? 20 : 25;
+		this.mapDifficulty = 0.75;
 		this.perfectMaps = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
 
 		this.mountainPriority = !(game.unlocks.imps.Chronoimp || game.unlocks.imps.Jestimp || getAvailableSpecials('lmc', true) === 'lmc' || getAvailableSpecials('lmc', true) === 'smc');
@@ -1267,14 +1273,12 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 
 	if (type === 'world') {
 		var customHealth = undefined;
-		if (type === 'world') {
-			if (game.global.universe === 1) {
-				if (game.global.spireActive) customHealth = calcSpire('health');
-				else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
-			}
-			if (game.global.universe === 2)
-				if (targetZone > 200) customHealth = calcMutationHealth(targetZone);
+		if (game.global.universe === 1) {
+			if (game.global.spireActive) customHealth = calcSpire('health');
+			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
 		}
+		if (game.global.universe === 2)
+			if (targetZone > 200) customHealth = calcMutationHealth(targetZone);
 		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Improbability', customHealth) * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Improbability', targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
 	}

@@ -371,20 +371,25 @@ function makeAdditionalInfo() {
 	return description;
 }
 
-function findMap(level, special, biome) {
+function findMap(level, special, biome, perfect = false) {
 	//Pre-Init
 	if (!level) level = 0;
 	if (!special) special = getAvailableSpecials('lmc');
 	if (!biome) biome = getBiome();
 
+	var mapLoot = biome === 'Farmlands' ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
+	if (game.singleRunBonuses.goldMaps.owned) mapLoot += 1;
+
 	for (var mapping in game.global.mapsOwnedArray) {
-		if (!game.global.mapsOwnedArray[mapping].noRecycle &&
-			(game.global.world + level === game.global.mapsOwnedArray[mapping].level) &&
-			(game.global.mapsOwnedArray[mapping].bonus === special || special === '0') &&
-			game.global.mapsOwnedArray[mapping].location === biome) {
-			return game.global.mapsOwnedArray[mapping].id;
-		}
+		var map = game.global.mapsOwnedArray[mapping];
+		if (perfect && (trimpStats.mapSize !== 20 || map.difficulty !== trimpStats.mapDifficulty || map.loot !== mapLoot)) continue;
+		if (game.global.world + level !== map.level) continue;
+		if (map.bonus !== special && special !== '0') continue;
+		if (map.location !== biome) continue;
+		if (map.noRecycle) continue;
+		return map.id;
 	}
+
 	return false;
 }
 
