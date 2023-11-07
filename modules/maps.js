@@ -405,7 +405,7 @@ function shouldAbandon(zoneCheck = true) {
 	const setting = getPageSetting('autoAbandon');
 	//If set to smart abandon then only abandon when
 	//A) Not fighting OR B) army is dead OR C) you have a new army ready to send out OR D) you can potentially overkill to/past cell 100 (assuming infinity attack)
-	if (setting === 2 && (!game.global.fighting || game.global.soldierHealth <= 0 || newArmyRdy() || (zoneCheck && getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100)))
+	if (setting === 2 && (!game.global.fighting || game.global.soldierHealth <= 0 || newArmyRdy() || (zoneCheck && mapSettings.mapName !== 'Map Bonus' && getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100)))
 		return true;
 	//If set to always abandon or never abandon and either not fighting or army is dead then abandon and send to maps
 	if (setting === 1 || !game.global.fighting || game.global.soldierHealth <= 0)
