@@ -167,28 +167,27 @@ function geneAssist() {
 		target = new Decimal(getPageSetting('geneAssistTimer'));
 
 	var now = new Date().getTime();
+	var breedTime = (game.jobs.Amalgamator.owned > 0) ? (now - game.global.lastSoldierSentAt) / 1000 : game.global.lastBreedTime / 1000;
 	var thresh = new MODULES.breedtimer.DecimalBreed(totalTime.mul(0.02));
 	var compareTime;
-	if (timeRemaining.cmp(1) > 0 && timeRemaining.cmp(target.add(1)) > 0) {
-		compareTime = new MODULES.breedtimer.DecimalBreed(timeRemaining.add(-1));
+	if (timeRemaining.cmp(0.5) > 0) {
+			compareTime = new DecimalBreed(timeRemaining.add(breedTime));
 	}
 	else {
-		compareTime = new MODULES.breedtimer.DecimalBreed(totalTime);
-	}
+		compareTime = new DecimalBreed(totalTime);
+    }
 	if (!thresh.isFinite()) thresh = new Decimal(0);
 	if (!compareTime.isFinite()) compareTime = new Decimal(999);
 	var genDif = new MODULES.breedtimer.DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
 
 	if (compareTime.cmp(target) < 0) {
 		if (game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < getNextGeneticistCost()) return;
-		else if (timeRemaining.cmp(1) < 0 || target.minus((now - game.global.lastSoldierSentAt) / 1000).cmp(timeRemaining) > 0) {
-			if (genDif.cmp(0) > 0) {
-				if (genDif.cmp(10) > 0) genDif = new Decimal(10);
-				addGeneticist(genDif.toNumber());
-			}
+		if (genDif.cmp(0) > 0) {
+			if (genDif.cmp(10) > 0) genDif = new Decimal(10);
+			addGeneticist(genDif.toNumber());
 		}
 	}
-	else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || (potencyMod().cmp(1) === 0)) {
+	else if ((compareTime.add(thresh.mul(-1)).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || (potencyMod().cmp(1) === 0)) {
 		if (!genDif.isFinite()) genDif = new Decimal(-1);
 		if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled !== 2) {
 			if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
