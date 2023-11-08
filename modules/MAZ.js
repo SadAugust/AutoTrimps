@@ -2773,7 +2773,7 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 
 	dropdown.mapLevel = "<option value='0'" + ((vals.raidingzone === '0') ? " selected='selected'" : "") + ">0</option>";
 	if (trimpStats.plusLevels) {
-		"<option value='1'" + ((vals.raidingzone === '1') ? " selected='selected'" : "") + ">+1</option>\
+		dropdown.mapLevel += "<option value='1'" + ((vals.raidingzone === '1') ? " selected='selected'" : "") + ">+1</option>\
 		<option value='2'" + ((vals.raidingzone === '2') ? " selected='selected'" : "") + ">+2</option>\
 		<option value='3'" + ((vals.raidingzone === '3') ? " selected='selected'" : "") + ">+3</option>\
 		<option value='4'" + ((vals.raidingzone === '4') ? " selected='selected'" : "") + ">+4</option>\
@@ -2784,6 +2784,7 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 		<option value='9'" + ((vals.raidingzone === '9') ? " selected='selected'" : "") + ">+9</option>\
 		<option value='10'" + ((vals.raidingzone === '10') ? " selected='selected'" : "") + ">+10</option>";
 	}
+
 
 	//Prestige Goal dropdown
 	dropdown.prestigeGoal = "<option value='All'" + ((vals.prestigeGoal === 'All') ? " selected='selected'" : "") + ">All</option>\
