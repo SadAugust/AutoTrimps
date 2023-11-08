@@ -3541,40 +3541,15 @@ function initializeAllSettings() {
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('ratiospend',
-			function () { return ('Ratio Spending') },
+			function () { return ('Efficient Spending') },
 			function () {
-				var description = "<p>If enabled will spend all your magmite in a ratio that you define.</p>";
-				description += "<p><b>Additional settings will appear if enabled.</b></p>";
-				description += "<p>For more accurate ratio values to use for these settings check out the Gatorcalc website!</p>";
+				var description = "<p>If enabled the script will spend your magmite on the most efficient upgrade available.</p>";
+				description += "<p>Uses the same system as the Gatorcalc website so look there if you want more advanced settings!</p>";
+				description += "<p>Won't purchase any one and done upgrades!</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			},
 			'boolean', false, null, 'Magma', [1]);
-
-		createSetting('effratio',
-			function () { return ('Efficiency') },
-			function () {
-				return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.')
-			}, 'value', -1, null, 'Magma', [1],
-			function () { return (autoTrimpSettings.ratiospend.enabled) });
-		createSetting('capratio',
-			function () { return ('Capacity') },
-			function () {
-				return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.')
-			}, 'value', -1, null, 'Magma', [1],
-			function () { return (autoTrimpSettings.ratiospend.enabled) });
-		createSetting('supratio',
-			function () { return ('Supply') },
-			function () {
-				return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.')
-			}, 'value', -1, null, 'Magma', [1],
-			function () { return (autoTrimpSettings.ratiospend.enabled) });
-		createSetting('ocratio',
-			function () { return ('Overclocker') },
-			function () {
-				return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.')
-			}, 'value', -1, null, 'Magma', [1],
-			function () { return (autoTrimpSettings.ratiospend.enabled) });
 
 		createSetting('SupplyWall',
 			function () { return ('Throttle Supply (or Capacity)') },
