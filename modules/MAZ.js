@@ -579,7 +579,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var windowWidth = '50%';
 		if (golden) windowWidth = '40%';
 		else if (quagmire) windowWidth = '45%';
-		else if (raiding) windowWidth = '70%';
+		else if (raiding) windowWidth = '75%';
 		else if (balance) windowWidth = '50%';
 		else if (toxicity) windowWidth = '50%';
 		else if (bionic) windowWidth = '70%';
@@ -629,7 +629,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 			if (raiding && !bionic) {
 				tooltipText += "<div class='windowRecycle'>Recycle<br>Maps</div>";
-				tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>";
 			}
 			if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>";
 			if (voidMap) {
@@ -712,10 +711,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (mapFarm)
 				defaultVals.mapType = defaultSetting.mapType ? defaultSetting.mapType : 'Map Count';
 
-			if (raiding && !bionic) {
+			if (raiding && !bionic)
 				defaultVals.recycle = defaultSetting.recycle ? defaultSetting.recycle : false;
-				defaultVals.incrementMaps = defaultSetting.incrementMaps ? defaultSetting.incrementMaps : false;
-			}
 
 			if (hdFarm)
 				defaultVals.mapCap = typeof (defaultSetting.mapCap) === 'undefined' ? 100 : defaultSetting.mapCap ? defaultSetting.mapCap : 100;
@@ -764,8 +761,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 				if (raiding && !bionic)
 					tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox("windowRecycleDefault", null, defaultVals.recycle) + "</div>";
-				if (raiding && !bionic)
-					tooltipText += "<div class='windowIncrementMaps' style='text-align: center;'>" + buildNiceCheckbox("windowIncrementMapsDefault", null, defaultVals.incrementMaps) + "</div>";
 				if (alchemy)
 					tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
 				if (voidMap) {
@@ -800,7 +795,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>";
 		if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Min Zone</div>";
 		if (voidMap) tooltipText += "<div class='windowMaxVoidZone'>Max Zone</div>";
-		if (raiding) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Raiding<br/>Zone</div>";
+		if (raiding && bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Raiding<br/>Zone</div>";
+		if (raiding && !bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Map<br/>Level</div>";
 		if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "\'>Auto<br/>Level</div>";
 		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) tooltipText += "<div class='windowLevel" + varPrefix + "\'>Map<br/>Level</div>";
@@ -848,6 +844,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (insanity) tooltipText += "<div class='windowBuildings'>Destack</div>";
 		if (tributeFarm) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>";
 		if (raiding || desolation) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\'>Prestige<br/>Goal</div>";
+		if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>";
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) tooltipText += "<div class='windowRunType" + varPrefix + "\'>Run&nbsp;Type</div>";
 		if (voidMap) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>";
 		tooltipText += "</div>";
@@ -905,6 +902,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				goldenNumber: -2,
 				destack: false,
 				mapCap: 100,
+				incrementMaps: false,
 			}
 			//Taking data from the current setting and overriding the default values
 			if (currSetting.length - 1 >= x) {
@@ -977,8 +975,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (raiding) {
 					vals.raidingzone = currSetting[x].raidingzone ? currSetting[x].raidingzone : 1;
 					vals.prestigeGoal = currSetting[x].prestigeGoal ? currSetting[x].prestigeGoal : 'All';
-					if (!bionic)
+					if (!bionic) {
 						vals.raidingDropdown = currSetting[x].raidingDropdown ? currSetting[x].raidingDropdown : 1;
+						vals.incrementMaps = currSetting[x].incrementMaps ? currSetting[x].incrementMaps : false;
+					}
 				}
 				//Bone Shrine
 				if (boneShrine) {
@@ -1048,6 +1048,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			//Sort out the dropdowns sections for settings
 			var mazDropdowns = displayDropdowns(universe, vals, varPrefix);
+			//Map Level options
+			var mapLevelDropdown = mazDropdowns.mapLevel;
 			//Gather Selection options
 			var gatherDropdown = mazDropdowns.gather;
 			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
@@ -1132,8 +1134,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowMaxVoidZone'><input value='" + vals.maxvoidzone + "' type='number' id='windowMaxVoidZone" + x + "'/></div>";
 
 			//Raiding Zone input
-			if (raiding)
+			if (raiding && bionic)
 				tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'><input value='" + vals.raidingzone + "' type='number' id='windowRaidingZone" + x + "'/></div>";
+			//Map Level Dropdown for Raiding
+			if (raiding && !bionic)
+				tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'><select value='" + vals.raidingzone + "' id='windowRaidingZone" + x + "'>" + mapLevelDropdown + "</select></div>";
 
 			//Cell input
 			if (!golden && !desolation)
@@ -1275,6 +1280,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 			//Prestige Goal dropdown
 			if (raiding || desolation)
 				tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.prestigeGoal + "' id='windowPrestigeGoal" + x + "'>" + prestigeGoalDropdown + "</select></div>";
+
+			//Increment Maps checkbox
+			if (raiding && !bionic)
+				tooltipText += "<div class='windowIncrementMaps' style='text-align: center;'>" + buildNiceCheckbox("windowIncrementMapsDefault" + x, null, vals.incrementMaps) + "</div>";
 
 			//Auto Golden input
 			if (golden)
@@ -1505,7 +1514,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		}
 		if (raiding && !bionic) {
 			defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
-			defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
 		}
 		if (hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
 
@@ -1542,7 +1550,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		}
 		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
 		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
-		if (raiding) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
+		if (raiding && bionic) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
+		if (raiding && !bionic) thisSetting.raidingzone = document.getElementById('windowRaidingZone' + x).value;
 
 		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) {
 			thisSetting.special = document.getElementById('windowSpecial' + x).value;
@@ -1592,6 +1601,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
 			if (!bionic && !desolation) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
 		}
+		if (raiding && !bionic) thisSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault' + x));
+
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) thisSetting.runType = document.getElementById('windowRunType' + x).value;
 
 		if (insanity) {
@@ -1936,7 +1947,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	if (raiding) {
 		//Raiding Zone
-		mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. If \"Repeat Every X\" is set, it will also raise the Raiding zone by X every time. " + (!bionic ? "If your 'Zone' input is 231 then the highest zone you can input is 241." : "") + "</li>";
+		var raidingZone = bionic ? 'Raiding Zone' : 'Map Level';
+		mazHelp += "<li><b>" + raidingZone + "</b> - The " + raidingZone.split(' ')[1].toLowerCase() + " you'd like to raid when this line is run. If <b>Repeat Every X</b> is set to a value above 0 then it will also raise the " + raidingZone.toLowerCase() + " by that value everytime this line runs.</li>";
 		if (!bionic) mazHelp += "<li><b>Frag Type</b> - The choices how for aggresively the script will spend fragments on maps.</li>";
 		if (!bionic) mazHelp += "<li class=\"indent\"><b>Frag</b>: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you're trying to purchase.</li>";
 		if (!bionic) mazHelp += "<li class=\"indent\"><b>Frag Min</b>: Used for absolute minimum frag costs. Will set everything but the map size to minimum and gradually reduce that if necessary to purchase maps.</li>";
@@ -2755,6 +2767,22 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 		dropdown.mapType += "<option value='Portal Time'" + ((vals.mapType === 'Portal Time') ? " selected='selected'" : "") + ">Portal Time</option>";
 		dropdown.mapType += "<option value='Daily Reset'" + ((vals.mapType === 'Daily Reset') ? " selected='selected'" : "") + ">Daily Reset</option>";
 		dropdown.mapType += "<option value='Skele Spawn'" + ((vals.mapType === 'Skele Spawn') ? " selected='selected'" : "") + ">Skele Spawn</option>";
+	}
+
+	//Map Numbers 0-10;
+
+	dropdown.mapLevel = "<option value='0'" + ((vals.raidingzone === '0') ? " selected='selected'" : "") + ">0</option>";
+	if (trimpStats.plusLevels) {
+		"<option value='1'" + ((vals.raidingzone === '1') ? " selected='selected'" : "") + ">+1</option>\
+		<option value='2'" + ((vals.raidingzone === '2') ? " selected='selected'" : "") + ">+2</option>\
+		<option value='3'" + ((vals.raidingzone === '3') ? " selected='selected'" : "") + ">+3</option>\
+		<option value='4'" + ((vals.raidingzone === '4') ? " selected='selected'" : "") + ">+4</option>\
+		<option value='5'" + ((vals.raidingzone === '5') ? " selected='selected'" : "") + ">+5</option>\
+		<option value='6'" + ((vals.raidingzone === '6') ? " selected='selected'" : "") + ">+6</option>\
+		<option value='7'" + ((vals.raidingzone === '7') ? " selected='selected'" : "") + ">+7</option>\
+		<option value='8'" + ((vals.raidingzone === '8') ? " selected='selected'" : "") + ">+8</option>\
+		<option value='9'" + ((vals.raidingzone === '9') ? " selected='selected'" : "") + ">+9</option>\
+		<option value='10'" + ((vals.raidingzone === '10') ? " selected='selected'" : "") + ">+10</option>";
 	}
 
 	//Prestige Goal dropdown

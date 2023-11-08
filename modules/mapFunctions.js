@@ -123,7 +123,9 @@ function exitSpireCell(checkCell) {
 
 //Checks to see if we have enough health to survive against the max attack of the worst enemy cell inside of a map.
 function enoughHealth(map) {
-	var totalHealth = calcOurHealth(false, "map", false, true) + calcOurBlock(false, false);
+	var health = calcOurHealth(false, 'map', false, true);
+	var block = calcOurBlock(false, false);
+	var totalHealth = health + block;
 	//All maps are slow except Imploding Star so we only need to be able to survive against Snimps in every other map
 	var enemyName = 'Snimp';
 	if (map.name === 'Imploding Star') enemyName = 'Neutrimp';
@@ -1405,7 +1407,7 @@ function prestigeRaiding(lineCheck) {
 		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? MODULES.equipment[currSetting.prestigeGoal].upgrade : 'GamesOP';
-		var raidZones = currSetting.raidingzone;
+		var raidZones = currSetting.world + Number(currSetting.raidingzone);
 
 		var world = currSetting.world;
 		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
@@ -1439,13 +1441,15 @@ function prestigeRaiding(lineCheck) {
 	}
 
 	if (setting !== undefined) {
-		if (mapSettings.raidzones && mapSettings.raidzones !== raidZones) {
-			resetSetting();
-		}
 
 		//Reduce raid zone to the value of the last prestige item we need to farm
 		while (equipsToFarm === prestigesToGet(raidZones - 1, targetPrestige)[0])
 			raidZones--;
+
+		if (mapSettings.raidzones && mapSettings.raidzones !== raidZones) {
+			debug(raidZones);
+			resetSetting();
+		}
 
 		if (prestigesToGet(raidZones, targetPrestige)[0] > 0)
 			shouldMap = true;
@@ -1479,7 +1483,7 @@ function prestigeRaiding(lineCheck) {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
-		farmingDetails.incrementMaps = defaultSettings.incrementMaps;
+		farmingDetails.incrementMaps = setting.incrementMaps;
 		if (setting.priority) farmingDetails.priority = setting.priority;
 		if (mapSettings.totalMapCost) farmingDetails.totalMapCost = mapSettings.totalMapCost;
 		if (mapSettings.mapSliders) farmingDetails.mapSliders = mapSettings.mapSliders;
@@ -1771,9 +1775,9 @@ function bionicRaiding(lineCheck) {
 		//If we can't get the map then don't run this setting
 		//If we can then go grab it if it's available
 		const unlockLevel = MODULES.mapFunctions.uniqueMaps['Bionic Wonderland'].zone;
-		if (!trimpStats.perfectMaps && unlockLevel > game.global.world)
+		if (!trimpStats.plusLevels && unlockLevel > game.global.world)
 			return farmingDetails;
-		else if (trimpStats.perfectMaps && unlockLevel > (game.global.world + 10))
+		else if (trimpStats.plusLevels && unlockLevel > (game.global.world + 10))
 			return farmingDetails;
 		const map = game.global.mapsOwnedArray.find(map => map.name.includes('Bionic Wonderland'));
 		if (map === undefined) return obtainUniqueMap('Bionic Wonderland');

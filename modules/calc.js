@@ -29,6 +29,7 @@ class TrimpStats {
 		this.mapSize = game.talents.mapLoot2.purchased ? 20 : 25;
 		this.mapDifficulty = 0.75;
 		this.perfectMaps = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
+		this.plusLevels = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 50 : game.stats.highestLevel.valueTotal() >= 210;
 
 		this.mountainPriority = !(game.unlocks.imps.Chronoimp || game.unlocks.imps.Jestimp || getAvailableSpecials('lmc', true) === 'lmc' || getAvailableSpecials('lmc', true) === 'smc');
 	}
