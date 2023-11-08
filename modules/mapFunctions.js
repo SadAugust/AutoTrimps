@@ -1500,8 +1500,11 @@ function runPrestigeRaiding() {
 	if (!getPageSetting('autoMaps')) return;
 
 	//Initialising prestigeMapArray if it doesn't exist. This is used to store the maps we buy so we can run them later.
-	if (!mapSettings.totalMapCost) mapSettings.totalMapCost = prestigeTotalFragCost(true);
-	if (!mapSettings.mapSliders) mapSettings.mapSliders = prestigeTotalFragCost();
+	if (!mapSettings.totalMapCost || !mapSettings.mapSliders) {
+		var totalMapCost, mapSliders = prestigeTotalFragCost();
+		if (!mapSettings.totalMapCost) mapSettings.totalMapCost = totalMapCost;
+		if (!mapSettings.mapSliders) mapSettings.mapSliders = mapSliders;
+	}
 	if (!mapSettings.prestigeMapArray) mapSettings.prestigeMapArray = new Array(5);
 	if (!mapSettings.prestigeFragMapBought) mapSettings.prestigeFragMapBought = false;
 
@@ -3912,7 +3915,7 @@ function prestigeRaidingSliderCost(raidZone, special, totalCost, fragmentPercent
 }
 
 //Identify total cost of prestige raiding maps
-function prestigeTotalFragCost(getCost) {
+function prestigeTotalFragCost() {
 	var cost = 0;
 	var sliders = new Array(5);
 	var fragmentPercentage = mapSettings.incrementMaps ? calcFragmentPercentage(mapSettings.raidzones) : 1;
@@ -3931,9 +3934,7 @@ function prestigeTotalFragCost(getCost) {
 		}
 	}
 
-	if (getCost)
-		return cost;
-	return sliders;
+    return cost, sliders;
 }
 
 function dailyModiferReduction() {
