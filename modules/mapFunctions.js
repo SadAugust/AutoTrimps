@@ -1501,9 +1501,9 @@ function runPrestigeRaiding() {
 
 	//Initialising prestigeMapArray if it doesn't exist. This is used to store the maps we buy so we can run them later.
 	if (!mapSettings.totalMapCost || !mapSettings.mapSliders) {
-		var totalMapCost, mapSliders = prestigeTotalFragCost();
-		if (!mapSettings.totalMapCost) mapSettings.totalMapCost = totalMapCost;
-		if (!mapSettings.mapSliders) mapSettings.mapSliders = mapSliders;
+		var costAndSliders = prestigeTotalFragCost();
+		if (!mapSettings.totalMapCost) mapSettings.totalMapCost = costAndSliders.cost;
+		if (!mapSettings.mapSliders) mapSettings.mapSliders = costAndSliders.sliders;
 	}
 	if (!mapSettings.prestigeMapArray) mapSettings.prestigeMapArray = new Array(5);
 	if (!mapSettings.prestigeFragMapBought) mapSettings.prestigeFragMapBought = false;
@@ -3934,7 +3934,10 @@ function prestigeTotalFragCost() {
 		}
 	}
 
-    return cost, sliders;
+    return {
+		"cost": cost,
+		"sliders": sliders
+	};
 }
 
 function dailyModiferReduction() {
