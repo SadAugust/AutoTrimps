@@ -3851,18 +3851,28 @@ function prestigeMapHasEquips(number, raidzones, targetPrestige) {
 	return false;
 }
 
-//Calculate cost of maps for prestige raiding
-function prestigeRaidingSliderCost(raidZone, special, totalCost) {
-	if (!special) special = getAvailableSpecials('p');
-	//Skips map levels above x5 if we have scientist4 or microchip4. Will subtract 5 from the map level to account for this.
+//Get raid zone based on skipping map levels above x5 if we have scientist4 or microchip4. Will subtract 5 from the map level to account for this.
+function getRaidZone(raidZone) {
 	if (getSLevel() >= 4 && !challengeActive("Mapology")) {
 		var levelsToSkip = [0, 9, 8, 7, 6];
 		if (levelsToSkip.includes((raidZone).toString().slice(-1))) raidZone = raidZone - 5;
 	}
+	return raidZone;
+}
+
+//Calculate the percentage of fragment we should spend on a particular map
+function calcFragmentPercentage(raidZone) {
+	return !prestigesToGet(raidZone - 1, mapSettings.prestigeGoal)[0] ? 1 : getRaidZone(raidZone) - getRaidZone(raidZone - 1) === 1 ? 0.8 : 0.99;
+}
+
+//Calculate cost of maps for prestige raiding
+function prestigeRaidingSliderCost(raidZone, special, totalCost, fragmentPercentage) {
+	if (!special) special = getAvailableSpecials('p');
+	raidZone = getRaidZone(raidZone);
 	if (!totalCost) totalCost = 0;
 	raidZone = raidZone - game.global.world;
 
-	var fragmentsOwned = game.resources.fragments.owned - totalCost;
+	var fragmentsOwned = (game.resources.fragments.owned - totalCost) * fragmentPercentage;
 	var sliders = [9, 9, 9];
 	var biome = getBiome();
 	var perfect = true;
@@ -3905,27 +3915,19 @@ function prestigeRaidingSliderCost(raidZone, special, totalCost) {
 function prestigeTotalFragCost(getCost) {
 	var cost = 0;
 	var sliders = new Array(5);
+	var fragmentPercentage = mapSettings.incrementMaps ? calcFragmentPercentage(mapSettings.raidzones) : 1;
 
 	if (prestigesToGet(mapSettings.raidzones, mapSettings.prestigeGoal)[0]) {
-		sliders[0] = (prestigeRaidingSliderCost(mapSettings.raidzones, mapSettings.special, cost));
+		sliders[0] = (prestigeRaidingSliderCost(mapSettings.raidzones, mapSettings.special, cost, fragmentPercentage));
 		cost += mapCost(sliders[0][0], sliders[0][1], sliders[0][2], sliders[0][3], sliders[0][4]);
 	}
 	if (mapSettings.incrementMaps) {
-		if (prestigesToGet(mapSettings.raidzones - 1, mapSettings.prestigeGoal)[0]) {
-			sliders[1] = (prestigeRaidingSliderCost(mapSettings.raidzones - 1, mapSettings.special, cost));
-			cost += mapCost(sliders[1][0], sliders[1][1], sliders[1][2], sliders[1][3], sliders[1][4]);
-		}
-		if (prestigesToGet(mapSettings.raidzones - 2, mapSettings.prestigeGoal)[0]) {
-			sliders[2] = (prestigeRaidingSliderCost(mapSettings.raidzones - 2, mapSettings.special, cost));
-			cost += mapCost(sliders[2][0], sliders[2][1], sliders[2][2], sliders[2][3], sliders[2][4]);
-		}
-		if (prestigesToGet(mapSettings.raidzones - 3, mapSettings.prestigeGoal)[0]) {
-			sliders[3] = (prestigeRaidingSliderCost(mapSettings.raidzones - 3, mapSettings.special, cost));
-			cost += mapCost(sliders[3][0], sliders[3][1], sliders[3][2], sliders[3][3], sliders[3][4]);
-		}
-		if (prestigesToGet(mapSettings.raidzones - 4, mapSettings.prestigeGoal)[0]) {
-			sliders[4] = (prestigeRaidingSliderCost(mapSettings.raidzones - 4, mapSettings.special, cost));
-			cost += mapCost(sliders[4][0], sliders[4][1], sliders[4][2], sliders[4][3], sliders[4][4]);
+		for (var i = 1; i < 5; i += 1) {
+			if (prestigesToGet(mapSettings.raidzones - i, mapSettings.prestigeGoal)[0]) {
+				sliders[1] = (prestigeRaidingSliderCost(mapSettings.raidzones - i, mapSettings.special, cost, calcFragmentPercentage(mapSettings.raidzones - i)));
+				cost += mapCost(sliders[i][0], sliders[i][1], sliders[i][2], sliders[i][3], sliders[i][4]);
+			}
+			else break;
 		}
 	}
 
