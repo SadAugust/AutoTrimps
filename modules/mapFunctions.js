@@ -3888,14 +3888,14 @@ function prestigeRaidingSliderCost(raidZone, special, totalCost) {
 		while (sliders[0] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
 			sliders[0] -= 1;
 		//Reduce map difficulty
-		while (sliders[1] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			sliders[1] -= 1;
+		while (sliders[2] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
+			sliders[2] -= 1;
 		//Remove map special if one is set. Removing FA/P here is better than dropping Size as that can more than double increase the length of the maps we run.
 		if (mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
 			special = '0';
 		//Reduce map size
-		while (sliders[2] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
-			sliders[2] -= 1;
+		while (sliders[1] > 0 && mapCost(raidZone, special, biome, sliders, perfect) > fragmentsOwned)
+			sliders[1] -= 1;
 	}
 
 	return [raidZone, special, biome, sliders, perfect];
