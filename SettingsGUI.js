@@ -6414,10 +6414,8 @@ function updateATVersion() {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.13') {
 			var values = ['value', 'valueU2'];
 			for (var z = 0; z < values.length; z++) {
-				debug("runs")
 				var incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
 				if (typeof (tempSettings['raidingSettings'][values[z]][0]) !== 'undefined') {
-					debug("runs")
 					for (var y = 0; y < tempSettings['raidingSettings'][values[z]].length; y++) {
 						if (y === 0) continue;
 						var currSetting = tempSettings['raidingSettings'][values[z]][y];

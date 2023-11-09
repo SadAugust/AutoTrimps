@@ -242,9 +242,12 @@ function makeAdditionalInfoTooltip(mouseover) {
 		tooltipText += `The progress you have towards a free void map from the 'Void Maps' permanent bone upgrade</p>`;
 
 	}
-	tooltipText += `<p><b>Auto Level</b><br>`;
+	tooltipText += `<p><b>AL</b> (Auto Level)<br>`;
 	tooltipText += `The level that the script recommends using whilst farming.</p>`;
 
+	tooltipText += `<p><b>AL2</b> (Auto Level 2, based off of zFarm)<br>`;
+	tooltipText += `L: The ideal map level for loot gains.<br>`;
+	tooltipText += `S: The ideal map level for a mixture of speed and loot gains.</p>`;
 
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
@@ -350,13 +353,13 @@ function makeAdditionalInfo() {
 	//Free void tracker
 	if (game.permaBoneBonuses.voidMaps.owned > 0) {
 		var voidValue = game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10;
-		description += `Void: ${voidValue}/10`;
+		description += `V ${voidValue}/10`;
 		description += lineBreak;
 	}
 	//Mapping auto level
 	description += `AL: ${hdStats.autoLevel}`;
 	description += lineBreak;
-	description += `AL2: ${hdStats.autoLevelData.overall.mapLevel}`;
+	description += `AL2 (L:${hdStats.autoLevelData.overall.mapLevel} S:${hdStats.autoLevelDataFrag.speed.mapLevel})`;
 	//Breed timer when you have an amalgamator
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		description += lineBreak;
