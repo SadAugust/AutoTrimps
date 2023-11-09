@@ -338,6 +338,7 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 	//Init
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = 'world';
+	if (!difficulty) difficulty = 1;
 	var damageMult = 1;
 	const formationMod = (game.upgrades.Dominance.done) ? 2 : 1;
 
@@ -349,7 +350,6 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 				if (exitSpireCell(true) === 100 && game.global.usingShriek) customAttack *= game.mapUnlocks.roboTrimp.getShriekValue();
 			} else if (isCorruptionActive(targetZone)) customAttack = calcCorruptedAttack(targetZone);
 		} else if (game.global.universe === 2 && targetZone > 200) customAttack = calcMutationAttack(targetZone);
-
 	}
 
 	var enemyName = 'Improbability';

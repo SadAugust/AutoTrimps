@@ -133,302 +133,323 @@ function miRatio() {
 		},
 	}
 
-	function calculateCoordIncrease() {
-		var coordIncrease = 25 * Math.pow(0.98, MODULES.magmiteSettings.coord.value);
-		var coordinations = [];
-		coordinations[0] = 3;
-		var c = 0;
-		for (i = 1; i <= 328; i++) {
-			c = Math.ceil((coordinations[i - 1] / 3) * (1 + (coordIncrease / 100)));
-			c *= 3;
-			coordinations[i] = c;
-		}
-		return [coordIncrease, coordinations];
-	}
-
-	function calculateMagma() {
-		const zonesOfMI = (MODULES.magmiteSettings.runEnd.value - 230) - MODULES.magmiteSettings.fuelZones.value;
-		if (MODULES.magmiteSettings.magmaFlow.value === 18) MODULES.magmite.totalMI = zonesOfMI * 18;
-		else MODULES.magmite.totalMI = zonesOfMI * 16;
-		MODULES.magmite.totalMI += 10 * MODULES.magmiteSettings.voids.value * MODULES.magmiteSettings.expertGen.value;
-	}
-
-	function calculateCarpMod() {
-		MODULES.magmite.carpMod = MODULES.magmite.minTick * Math.pow(1.1, MODULES.magmiteSettings.carp.value) * (1 + (MODULES.magmiteSettings.carp2.value * 0.0025)) * ((MODULES.magmiteSettings.scaffolding.value * Math.pow(1.1, MODULES.magmiteSettings.scaffolding.value - 1)));
-	}
-
-	function calculateMinTick() {
-		MODULES.magmite.minTick = Math.sqrt(MODULES.magmiteSettings.slowburn.value) * 5e8 * (1 + (0.1 * MODULES.magmiteSettings.efficiency.value));
-		MODULES.magmite.tickRatio = MODULES.magmite.maxTick / MODULES.magmite.minTick;
-		calculateCarpMod();
-	}
-
-	function calculateMaxTick() {
-		MODULES.magmite.maxTick = Math.sqrt(MODULES.magmiteSettings.capacity.maxCapacity) * 5e8 * (1 + (0.1 * MODULES.magmiteSettings.efficiency.value));
-		if (MODULES.magmite.minTick > 0) MODULES.magmite.tickRatio = MODULES.magmite.maxTick / MODULES.magmite.minTick;
-	}
-
-	function calculateCurrentPop() {
-		var sum = [];
-		var ar1 = 1e10;
-		var ar2 = game.global.spiresCompleted >= 2 ? 1e9 : ar1;
-		var ar3 = game.global.spiresCompleted >= 3 ? 1e8 : ar2;
-		var ar4 = game.global.spiresCompleted >= 4 ? 1e7 : ar3;
-		var ar5 = game.global.spiresCompleted >= 5 ? 1e6 : ar4;
-
-		var uncoords = 0;
-		var uncoordsZone = -1;
-		var uncoordsGoal = 1;
-		var fuelThisZone = [];
-		var totalFuel = [];
-		var overclockTicks = [];
-		var overclockPop = [];
-		var overclockPopThisZone = [];
-		var popWithTauntimp = [];
-		var popFromTauntimp = [];
-		var percentFromTauntimp = [];
-		var tauntimpThisZone = [];
-		var coordPop = [];
-		var amalRatio = [];
-		var adjustedRatio = [];
-		var currentAmals = [];
-		var [coordIncrease, coordinations] = calculateCoordIncrease();
-
-		var myHze = MODULES.magmiteSettings.runEnd.value;
-		if (MODULES.magmiteSettings.hze.value > myHze) myHze = MODULES.magmiteSettings.hze.value;
-		var tauntimpFrequency = 2.97;
-		if (MODULES.magmiteSettings.randimp.value) tauntimpFrequency += 0.396;
-		if (MODULES.magmiteSettings.moreImports.value) tauntimpFrequency += MODULES.magmiteSettings.moreImports.value * .05 * 99 / 100; // inc chance * possible import cells / world cells
-
-		// base CI on end zone
-		var confInterval = (1 - (1.91 / Math.sqrt((MODULES.magmiteSettings.runEnd.value - MODULES.magmiteSettings.fuelStart.value) * tauntimpFrequency)))
-		var useConf = true;
-		var skippedCoords = 0;
-		var goalReached = false;
-		for (i = 0; i <= (myHze - 200); i++) { //calc an extra 30 zones because why not
-			// i = zone offset from z230
-
-			//calc fuel gain
-			if (i == 0) fuelThisZone[0] = 0.2;
-			else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, MODULES.magmiteSettings.supply.maxSupply);
-			if ((i + 230) >= MODULES.magmiteSettings.fuelStart.value && (i + 230) <= MODULES.magmiteSettings.fuelEnd.value) {
-				if (i == 0) totalFuel[0] = 0.2;
-				else totalFuel[i] = (MODULES.magmiteSettings.magmaFlow.value * fuelThisZone[i]) + totalFuel[i - 1];
-			} else totalFuel[i] = 0;
-
-			//calc generated pop
-			overclockTicks[i] = Math.max((totalFuel[i] - (MODULES.magmiteSettings.storage.value * MODULES.magmiteSettings.capacity.maxCapacity)) / MODULES.magmiteSettings.slowburn.value, 0);
-			overclockPop[i] = Math.floor(overclockTicks[i]) * (MODULES.magmite.carpMod * MODULES.magmite.tickRatio) * MODULES.magmiteSettings.overclocker.bonus;
-			if (i == 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
-			else overclockPopThisZone[i] = Math.max(overclockPop[i] - overclockPop[i - 1], 0);
-
-			//calc tauntimp pop
-			if (i == 0) popWithTauntimp[0] = Math.floor(overclockPopThisZone[0] * Math.pow(1.003, tauntimpFrequency));
-			else if (useConf) popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency * confInterval));
-			else popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency));
-
-			//calc pop stats
-			if (i == 0) sum[0] = overclockPopThisZone[0];
-			else sum[i] = overclockPopThisZone[i] + sum[i - 1];
-			popFromTauntimp[i] = popWithTauntimp[i] - sum[i];
-			if (popWithTauntimp[i] > 0) percentFromTauntimp[i] = popFromTauntimp[i] / popWithTauntimp[i];
-			else percentFromTauntimp[i] = 0;
-			if (i == 0) tauntimpThisZone[0] = 0;
-			else tauntimpThisZone[i] = popFromTauntimp[i] - popFromTauntimp[i - 1];
-
-			//calc army size
-			if (i == 0) coordPop[0] = Math.ceil((coordinations[coordinations.length - (1 + uncoords)] / 3) * (1 + (coordIncrease / 100))) * 3;
-			else if (uncoordsZone == -1) {
-				coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
-			}
-			else {
-				if (i + 230 > uncoordsZone && currentAmals[i - 1] < uncoordsGoal && !goalReached) {
-					coordPop[i] = coordPop[i - 1];
-					skippedCoords++;
-				} else if (i + 230 > uncoordsZone && currentAmals[i - 1] >= uncoordsGoal && !goalReached) {
-					var tempCoordPop = coordPop[i - 1];
-					for (skipped = 0; skipped <= skippedCoords; skipped++) {
-						tempCoordPop = Math.ceil((tempCoordPop / 3) * (1 + (coordIncrease / 100))) * 3;
-					}
-					goalReached = true;
-					coordPop[i] = tempCoordPop;
-				} else coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
-			}
-
-			//calc gators
-			amalRatio[i] = (popWithTauntimp[i]) / (coordPop[i] / 3);
-			if (i == 0) currentAmals[0] = 0;
-			else if (((i - 1) % 5) != 0 || ((i - 71) % 100) == 0) {
-				currentAmals[i] = currentAmals[i - 1];
-
-				//TODO There has to be a less repetive way to write this
-			} else if (i <= 70) {
-				if (adjustedRatio[i - 1] > Math.max(ar1, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
-				else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
-				else currentAmals[i] = currentAmals[i - 1];
-			} else if (i <= 170) {
-				if (adjustedRatio[i - 1] > Math.max(ar2, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
-				else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
-				else currentAmals[i] = currentAmals[i - 1];
-			} else if (i <= 270) {
-				if (adjustedRatio[i - 1] > Math.max(ar3, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
-				else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
-				else currentAmals[i] = currentAmals[i - 1];
-			} else if (i <= 370) {
-				if (adjustedRatio[i - 1] > Math.max(ar4, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
-				else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
-				else currentAmals[i] = currentAmals[i - 1];
-			} else {
-				if (adjustedRatio[i - 1] > Math.max(ar5, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
-				else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
-				else currentAmals[i] = currentAmals[i - 1];
-			}
-			if (currentAmals[i] < 0) currentAmals[i] = 0;
-			adjustedRatio[i] = amalRatio[i] / Math.pow(1000, currentAmals[i]);
-		}
-
-		MODULES.magmite.totalPop = popWithTauntimp[MODULES.magmiteSettings.runEnd.value - 230];
-		MODULES.magmite.finalAmals = currentAmals[MODULES.magmiteSettings.runEnd.value - 230];
-		MODULES.magmite.maxAmals = 0;
-		for (i = 0; i <= (MODULES.magmiteSettings.runEnd.value - 230); i++) {
-			if (currentAmals[i] > MODULES.magmite.maxAmals) {
-				MODULES.magmite.maxAmals = currentAmals[i];
-				MODULES.magmite.finalAmalZone = i + 230;
-			}
-		}
-		MODULES.magmite.neededPop = coordPop[MODULES.magmiteSettings.runEnd.value - 230] / 3;
-		MODULES.magmite.finalArmySize = MODULES.magmite.neededPop * Math.pow(1000, MODULES.magmite.finalAmals);
-		MODULES.magmite.yourFinalRatio = MODULES.magmite.totalPop / MODULES.magmite.finalArmySize;
-	}
-
 	calculateMagma();
 	calculateMaxTick();
 	calculateMinTick();
 	calculateCurrentPop();
+	MODULES.magmite.upgradeToPurchase = checkDGUpgrades();
+}
 
-	function checkDGUpgrades() {
-		var myStart = MODULES.magmiteSettings.fuelStart.value;
-		var myEnd = MODULES.magmiteSettings.fuelEnd.value;
-		var myRunEnd = MODULES.magmiteSettings.runEnd.value;
-		var myPop = MODULES.magmite.totalPop;
-		var myMI = MODULES.magmite.totalMI;
-		MODULES.magmiteSettings.fuelStart.update(230);
-		if (MODULES.magmiteSettings.hze.value > 0) {
-			MODULES.magmiteSettings.runEnd.update(MODULES.magmiteSettings.hze.value);
-			MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.hze.value);
+function calculateMagmaZones() {
+	var myFuelZones = MODULES.magmiteSettings.fuelZones.value;
+	var bestAmals = MODULES.magmite.maxAmals;
+	MODULES.magmiteSettings.fuelStart.update(230, false);
+	var bestPop = 0;
+	var myFuelStart = 230;
+	for (f = 230; f <= (MODULES.magmiteSettings.runEnd.value - myFuelZones); f++) {
+		MODULES.magmiteSettings.fuelStart.update(f, false);
+		MODULES.magmiteSettings.fuelZones.update(myFuelZones, false);
+		if (MODULES.magmite.totalPop > bestPop && MODULES.magmite.maxAmals >= bestAmals) {
+			bestPop = MODULES.magmite.totalPop;
+			myFuelStart = f;
+			bestAmals = Math.max(MODULES.magmite.maxAmals, bestAmals); // max pop is not always max gators
+		}
+	}
+	MODULES.magmiteSettings.fuelStart.update(myFuelStart);
+	MODULES.magmiteSettings.fuelZones.update(myFuelZones);
+	MODULES.magmiteSettings.fuelEnd.update();
+
+	setPageSetting("fuellater", MODULES.magmiteSettings.fuelStart.value);
+	setPageSetting("fuelend", MODULES.magmiteSettings.fuelEnd.value);
+}
+
+function calculateCoordIncrease() {
+	var coordIncrease = 25 * Math.pow(0.98, MODULES.magmiteSettings.coord.value);
+	var coordinations = [];
+	coordinations[0] = 3;
+	var c = 0;
+	for (i = 1; i <= 328; i++) {
+		c = Math.ceil((coordinations[i - 1] / 3) * (1 + (coordIncrease / 100)));
+		c *= 3;
+		coordinations[i] = c;
+	}
+	return [coordIncrease, coordinations];
+}
+
+function calculateMagma() {
+	const zonesOfMI = (MODULES.magmiteSettings.runEnd.value - 230) - MODULES.magmiteSettings.fuelZones.value;
+	if (MODULES.magmiteSettings.magmaFlow.value === 18) MODULES.magmite.totalMI = zonesOfMI * 18;
+	else MODULES.magmite.totalMI = zonesOfMI * 16;
+	MODULES.magmite.totalMI += 10 * MODULES.magmiteSettings.voids.value * MODULES.magmiteSettings.expertGen.value;
+}
+
+function calculateCarpMod() {
+	MODULES.magmite.carpMod = MODULES.magmite.minTick * Math.pow(1.1, MODULES.magmiteSettings.carp.value) * (1 + (MODULES.magmiteSettings.carp2.value * 0.0025)) * ((MODULES.magmiteSettings.scaffolding.value * Math.pow(1.1, MODULES.magmiteSettings.scaffolding.value - 1)));
+}
+
+function calculateMinTick() {
+	MODULES.magmite.minTick = Math.sqrt(MODULES.magmiteSettings.slowburn.value) * 5e8 * (1 + (0.1 * MODULES.magmiteSettings.efficiency.value));
+	MODULES.magmite.tickRatio = MODULES.magmite.maxTick / MODULES.magmite.minTick;
+	calculateCarpMod();
+}
+
+function calculateMaxTick() {
+	MODULES.magmite.maxTick = Math.sqrt(MODULES.magmiteSettings.capacity.maxCapacity) * 5e8 * (1 + (0.1 * MODULES.magmiteSettings.efficiency.value));
+	if (MODULES.magmite.minTick > 0) MODULES.magmite.tickRatio = MODULES.magmite.maxTick / MODULES.magmite.minTick;
+}
+
+function calculateCurrentPop() {
+	var sum = [];
+	var ar1 = 1e10;
+	var ar2 = game.global.spiresCompleted >= 2 ? 1e9 : ar1;
+	var ar3 = game.global.spiresCompleted >= 3 ? 1e8 : ar2;
+	var ar4 = game.global.spiresCompleted >= 4 ? 1e7 : ar3;
+	var ar5 = game.global.spiresCompleted >= 5 ? 1e6 : ar4;
+
+	var uncoords = 0;
+	var uncoordsZone = -1;
+	var uncoordsGoal = 1;
+	var fuelThisZone = [];
+	var totalFuel = [];
+	var overclockTicks = [];
+	var overclockPop = [];
+	var overclockPopThisZone = [];
+	var popWithTauntimp = [];
+	var popFromTauntimp = [];
+	var percentFromTauntimp = [];
+	var tauntimpThisZone = [];
+	var coordPop = [];
+	var amalRatio = [];
+	var adjustedRatio = [];
+	var currentAmals = [];
+	var [coordIncrease, coordinations] = calculateCoordIncrease();
+
+	var myHze = MODULES.magmiteSettings.runEnd.value;
+	if (MODULES.magmiteSettings.hze.value > myHze) myHze = MODULES.magmiteSettings.hze.value;
+	var tauntimpFrequency = 2.97;
+	if (MODULES.magmiteSettings.randimp.value) tauntimpFrequency += 0.396;
+	if (MODULES.magmiteSettings.moreImports.value) tauntimpFrequency += MODULES.magmiteSettings.moreImports.value * .05 * 99 / 100; // inc chance * possible import cells / world cells
+
+	// base CI on end zone
+	var confInterval = (1 - (1.91 / Math.sqrt((MODULES.magmiteSettings.runEnd.value - MODULES.magmiteSettings.fuelStart.value) * tauntimpFrequency)))
+	var useConf = true;
+	var skippedCoords = 0;
+	var goalReached = false;
+	for (i = 0; i <= (myHze - 200); i++) { //calc an extra 30 zones because why not
+		// i = zone offset from z230
+
+		//calc fuel gain
+		if (i == 0) fuelThisZone[0] = 0.2;
+		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, MODULES.magmiteSettings.supply.maxSupply);
+		if ((i + 230) >= MODULES.magmiteSettings.fuelStart.value && (i + 230) <= MODULES.magmiteSettings.fuelEnd.value) {
+			if (i == 0) totalFuel[0] = 0.2;
+			else totalFuel[i] = (MODULES.magmiteSettings.magmaFlow.value * fuelThisZone[i]) + totalFuel[i - 1];
+		} else totalFuel[i] = 0;
+
+		//calc generated pop
+		overclockTicks[i] = Math.max((totalFuel[i] - (MODULES.magmiteSettings.storage.value * MODULES.magmiteSettings.capacity.maxCapacity)) / MODULES.magmiteSettings.slowburn.value, 0);
+		overclockPop[i] = Math.floor(overclockTicks[i]) * (MODULES.magmite.carpMod * MODULES.magmite.tickRatio) * MODULES.magmiteSettings.overclocker.bonus;
+		if (i == 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
+		else overclockPopThisZone[i] = Math.max(overclockPop[i] - overclockPop[i - 1], 0);
+
+		//calc tauntimp pop
+		if (i == 0) popWithTauntimp[0] = Math.floor(overclockPopThisZone[0] * Math.pow(1.003, tauntimpFrequency));
+		else if (useConf) popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency * confInterval));
+		else popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency));
+
+		//calc pop stats
+		if (i == 0) sum[0] = overclockPopThisZone[0];
+		else sum[i] = overclockPopThisZone[i] + sum[i - 1];
+		popFromTauntimp[i] = popWithTauntimp[i] - sum[i];
+		if (popWithTauntimp[i] > 0) percentFromTauntimp[i] = popFromTauntimp[i] / popWithTauntimp[i];
+		else percentFromTauntimp[i] = 0;
+		if (i == 0) tauntimpThisZone[0] = 0;
+		else tauntimpThisZone[i] = popFromTauntimp[i] - popFromTauntimp[i - 1];
+
+		//calc army size
+		if (i == 0) coordPop[0] = Math.ceil((coordinations[coordinations.length - (1 + uncoords)] / 3) * (1 + (coordIncrease / 100))) * 3;
+		else if (uncoordsZone == -1) {
+			coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
 		}
 		else {
-			MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.runEnd.value);
-		}
-
-		MODULES.magmiteSettings.efficiency.update(MODULES.magmiteSettings.efficiency.value + 1);
-		var efficiencyEfficiency = MODULES.magmite.totalPop - myPop;
-		MODULES.magmiteSettings.efficiency.update(MODULES.magmiteSettings.efficiency.value - 1);
-		MODULES.magmiteSettings.capacity.update(MODULES.magmiteSettings.capacity.value + 1);
-		var capacityEfficiency = MODULES.magmite.totalPop - myPop;
-		MODULES.magmiteSettings.capacity.update(MODULES.magmiteSettings.capacity.value - 1);
-		MODULES.magmiteSettings.supply.update(MODULES.magmiteSettings.supply.value + 1);
-		var supplyEfficiency = MODULES.magmite.totalPop - myPop;
-		MODULES.magmiteSettings.supply.update(MODULES.magmiteSettings.supply.value - 1);
-		MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value + 1);
-		var overclockerEfficiency = MODULES.magmite.totalPop - myPop;
-		MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value - 1);
-
-		var eCost = MODULES.magmiteSettings.efficiency.cost;
-		var cCost = MODULES.magmiteSettings.capacity.cost;
-		var sCost = MODULES.magmiteSettings.supply.cost;
-		var oCost = MODULES.magmiteSettings.overclocker.cost;
-
-		// MI decay calcs
-		if (eCost > myMI * 4.9) MODULES.magmiteSettings.efficiency.cost = -1;
-		else if ((eCost * 2) + 8 <= myMI);
-		else if (eCost <= myMI) {
-			MODULES.magmiteSettings.efficiency.cost += (myMI - eCost) * 0.2;
-		} else {
-			var runsNeeded = 1;
-			while (eCost > myMI) {
-				MODULES.magmiteSettings.efficiency.cost += myMI;
-				eCost -= myMI * Math.pow(0.8, runsNeeded);
-				runsNeeded++;
-				if (runsNeeded > 20) {
-					break;
+			if (i + 230 > uncoordsZone && currentAmals[i - 1] < uncoordsGoal && !goalReached) {
+				coordPop[i] = coordPop[i - 1];
+				skippedCoords++;
+			} else if (i + 230 > uncoordsZone && currentAmals[i - 1] >= uncoordsGoal && !goalReached) {
+				var tempCoordPop = coordPop[i - 1];
+				for (skipped = 0; skipped <= skippedCoords; skipped++) {
+					tempCoordPop = Math.ceil((tempCoordPop / 3) * (1 + (coordIncrease / 100))) * 3;
 				}
-			}
-			MODULES.magmiteSettings.efficiency.cost += (myMI - eCost) * 0.2;
-		}
-		if (cCost > myMI * 4.9) MODULES.magmiteSettings.capacity.cost = -1;
-		else if ((cCost * 2) + 32 <= myMI);
-		else if (cCost <= myMI) {
-			MODULES.magmiteSettings.capacity.cost += (myMI - cCost) * 0.2;
-		} else {
-			var runsNeeded = 1;
-			while (cCost > myMI) {
-				MODULES.magmiteSettings.capacity.cost += myMI;
-				cCost -= myMI * Math.pow(0.8, runsNeeded);
-				runsNeeded++;
-				if (runsNeeded > 20) {
-					break;
-				}
-			}
-			MODULES.magmiteSettings.capacity.cost += (myMI - cCost) * 0.2;
-		}
-		if (sCost > myMI * 4.9) MODULES.magmiteSettings.supply.cost = -1;
-		else if ((sCost * 2) + 64 <= myMI);
-		else if (sCost <= myMI) {
-			MODULES.magmiteSettings.supply.cost += (myMI - sCost) * 0.2;
-		} else {
-			var runsNeeded = 1;
-			while (sCost > myMI) {
-				MODULES.magmiteSettings.supply.cost += myMI;
-				sCost -= myMI * Math.pow(0.8, runsNeeded);
-				runsNeeded++;
-				if (runsNeeded > 20) {
-					break;
-				}
-			}
-			MODULES.magmiteSettings.supply.cost += (myMI - sCost) * 0.2;
-		}
-		if (oCost > myMI * 4.9) MODULES.magmiteSettings.overclocker.cost = -1;
-		else if ((oCost * 2) + 32 <= myMI);
-		else if (oCost <= myMI) {
-			MODULES.magmiteSettings.overclocker.cost += (myMI - oCost) * 0.2;
-		} else {
-			var runsNeeded = 1;
-			while (oCost > myMI) {
-				MODULES.magmiteSettings.overclocker.cost += myMI;
-				oCost -= myMI * Math.pow(0.8, runsNeeded);
-				runsNeeded++;
-				if (runsNeeded > 20) {
-					break;
-				}
-			}
-			MODULES.magmiteSettings.overclocker.cost += (myMI - oCost) * 0.2;
+				goalReached = true;
+				coordPop[i] = tempCoordPop;
+			} else coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
 		}
 
-		efficiencyEfficiency /= MODULES.magmiteSettings.efficiency.cost;
-		capacityEfficiency /= MODULES.magmiteSettings.capacity.cost;
-		supplyEfficiency /= MODULES.magmiteSettings.supply.cost;
-		overclockerEfficiency /= MODULES.magmiteSettings.overclocker.cost;
+		//calc gators
+		amalRatio[i] = (popWithTauntimp[i]) / (coordPop[i] / 3);
+		if (i == 0) currentAmals[0] = 0;
+		else if (((i - 1) % 5) != 0 || ((i - 71) % 100) == 0) {
+			currentAmals[i] = currentAmals[i - 1];
 
-		MODULES.magmiteSettings.efficiency.efficiency = 1;
-		MODULES.magmiteSettings.capacity.efficiency = (capacityEfficiency / efficiencyEfficiency);
-		MODULES.magmiteSettings.supply.efficiency = (supplyEfficiency / efficiencyEfficiency);
-		MODULES.magmiteSettings.overclocker.efficiency = (overclockerEfficiency / efficiencyEfficiency);
-
-		MODULES.magmite.finalResult = [];
-		const upgradeNames = ['Efficiency', 'Capacity', 'Supply', 'Overclocker'];
-		for (var i = 0; i < upgradeNames.length; i++) {
-			MODULES.magmite.finalResult.push(+MODULES.magmiteSettings[upgradeNames[i].toLowerCase()].efficiency);
+			//TODO There has to be a less repetive way to write this
+		} else if (i <= 70) {
+			if (adjustedRatio[i - 1] > Math.max(ar1, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
+			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
+			else currentAmals[i] = currentAmals[i - 1];
+		} else if (i <= 170) {
+			if (adjustedRatio[i - 1] > Math.max(ar2, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
+			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
+			else currentAmals[i] = currentAmals[i - 1];
+		} else if (i <= 270) {
+			if (adjustedRatio[i - 1] > Math.max(ar3, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
+			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
+			else currentAmals[i] = currentAmals[i - 1];
+		} else if (i <= 370) {
+			if (adjustedRatio[i - 1] > Math.max(ar4, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
+			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
+			else currentAmals[i] = currentAmals[i - 1];
+		} else {
+			if (adjustedRatio[i - 1] > Math.max(ar5, MODULES.magmite.finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
+			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
+			else currentAmals[i] = currentAmals[i - 1];
 		}
-		const upgradeIndex = MODULES.magmite.finalResult.indexOf(Math.max(...MODULES.magmite.finalResult));
-		MODULES.magmiteSettings.runEnd.update(myRunEnd, false);
-		MODULES.magmiteSettings.fuelStart.update(myStart, false);
-		MODULES.magmiteSettings.fuelEnd.update(myEnd, false);
-		return upgradeNames[upgradeIndex];
+		if (currentAmals[i] < 0) currentAmals[i] = 0;
+		adjustedRatio[i] = amalRatio[i] / Math.pow(1000, currentAmals[i]);
 	}
 
-	calculateCurrentPop();
-	MODULES.magmite.upgradeToPurchase = checkDGUpgrades();
+	MODULES.magmite.totalPop = popWithTauntimp[MODULES.magmiteSettings.runEnd.value - 230];
+	MODULES.magmite.finalAmals = currentAmals[MODULES.magmiteSettings.runEnd.value - 230];
+	MODULES.magmite.maxAmals = 0;
+	for (i = 0; i <= (MODULES.magmiteSettings.runEnd.value - 230); i++) {
+		if (currentAmals[i] > MODULES.magmite.maxAmals) {
+			MODULES.magmite.maxAmals = currentAmals[i];
+			MODULES.magmite.finalAmalZone = i + 230;
+		}
+	}
+	MODULES.magmite.neededPop = coordPop[MODULES.magmiteSettings.runEnd.value - 230] / 3;
+	MODULES.magmite.finalArmySize = MODULES.magmite.neededPop * Math.pow(1000, MODULES.magmite.finalAmals);
+	MODULES.magmite.yourFinalRatio = MODULES.magmite.totalPop / MODULES.magmite.finalArmySize;
+}
+
+function checkDGUpgrades() {
+	var myStart = MODULES.magmiteSettings.fuelStart.value;
+	var myEnd = MODULES.magmiteSettings.fuelEnd.value;
+	var myRunEnd = MODULES.magmiteSettings.runEnd.value;
+	var myPop = MODULES.magmite.totalPop;
+	var myMI = MODULES.magmite.totalMI;
+	MODULES.magmiteSettings.fuelStart.update(230);
+	if (MODULES.magmiteSettings.hze.value > 0) {
+		MODULES.magmiteSettings.runEnd.update(MODULES.magmiteSettings.hze.value);
+		MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.hze.value);
+	}
+	else {
+		MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.runEnd.value);
+	}
+
+	MODULES.magmiteSettings.efficiency.update(MODULES.magmiteSettings.efficiency.value + 1);
+	var efficiencyEfficiency = MODULES.magmite.totalPop - myPop;
+	MODULES.magmiteSettings.efficiency.update(MODULES.magmiteSettings.efficiency.value - 1);
+	MODULES.magmiteSettings.capacity.update(MODULES.magmiteSettings.capacity.value + 1);
+	var capacityEfficiency = MODULES.magmite.totalPop - myPop;
+	MODULES.magmiteSettings.capacity.update(MODULES.magmiteSettings.capacity.value - 1);
+	MODULES.magmiteSettings.supply.update(MODULES.magmiteSettings.supply.value + 1);
+	var supplyEfficiency = MODULES.magmite.totalPop - myPop;
+	MODULES.magmiteSettings.supply.update(MODULES.magmiteSettings.supply.value - 1);
+	MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value + 1);
+	var overclockerEfficiency = MODULES.magmite.totalPop - myPop;
+	MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value - 1);
+
+	var eCost = MODULES.magmiteSettings.efficiency.cost;
+	var cCost = MODULES.magmiteSettings.capacity.cost;
+	var sCost = MODULES.magmiteSettings.supply.cost;
+	var oCost = MODULES.magmiteSettings.overclocker.cost;
+
+	// MI decay calcs
+	if (eCost > myMI * 4.9) MODULES.magmiteSettings.efficiency.cost = -1;
+	else if ((eCost * 2) + 8 <= myMI);
+	else if (eCost <= myMI) {
+		MODULES.magmiteSettings.efficiency.cost += (myMI - eCost) * 0.2;
+	} else {
+		var runsNeeded = 1;
+		while (eCost > myMI) {
+			MODULES.magmiteSettings.efficiency.cost += myMI;
+			eCost -= myMI * Math.pow(0.8, runsNeeded);
+			runsNeeded++;
+			if (runsNeeded > 20) {
+				break;
+			}
+		}
+		MODULES.magmiteSettings.efficiency.cost += (myMI - eCost) * 0.2;
+	}
+	if (cCost > myMI * 4.9) MODULES.magmiteSettings.capacity.cost = -1;
+	else if ((cCost * 2) + 32 <= myMI);
+	else if (cCost <= myMI) {
+		MODULES.magmiteSettings.capacity.cost += (myMI - cCost) * 0.2;
+	} else {
+		var runsNeeded = 1;
+		while (cCost > myMI) {
+			MODULES.magmiteSettings.capacity.cost += myMI;
+			cCost -= myMI * Math.pow(0.8, runsNeeded);
+			runsNeeded++;
+			if (runsNeeded > 20) {
+				break;
+			}
+		}
+		MODULES.magmiteSettings.capacity.cost += (myMI - cCost) * 0.2;
+	}
+	if (sCost > myMI * 4.9) MODULES.magmiteSettings.supply.cost = -1;
+	else if ((sCost * 2) + 64 <= myMI);
+	else if (sCost <= myMI) {
+		MODULES.magmiteSettings.supply.cost += (myMI - sCost) * 0.2;
+	} else {
+		var runsNeeded = 1;
+		while (sCost > myMI) {
+			MODULES.magmiteSettings.supply.cost += myMI;
+			sCost -= myMI * Math.pow(0.8, runsNeeded);
+			runsNeeded++;
+			if (runsNeeded > 20) {
+				break;
+			}
+		}
+		MODULES.magmiteSettings.supply.cost += (myMI - sCost) * 0.2;
+	}
+	if (oCost > myMI * 4.9) MODULES.magmiteSettings.overclocker.cost = -1;
+	else if ((oCost * 2) + 32 <= myMI);
+	else if (oCost <= myMI) {
+		MODULES.magmiteSettings.overclocker.cost += (myMI - oCost) * 0.2;
+	} else {
+		var runsNeeded = 1;
+		while (oCost > myMI) {
+			MODULES.magmiteSettings.overclocker.cost += myMI;
+			oCost -= myMI * Math.pow(0.8, runsNeeded);
+			runsNeeded++;
+			if (runsNeeded > 20) {
+				break;
+			}
+		}
+		MODULES.magmiteSettings.overclocker.cost += (myMI - oCost) * 0.2;
+	}
+
+	efficiencyEfficiency /= MODULES.magmiteSettings.efficiency.cost;
+	capacityEfficiency /= MODULES.magmiteSettings.capacity.cost;
+	supplyEfficiency /= MODULES.magmiteSettings.supply.cost;
+	overclockerEfficiency /= MODULES.magmiteSettings.overclocker.cost;
+
+	MODULES.magmiteSettings.efficiency.efficiency = 1;
+	MODULES.magmiteSettings.capacity.efficiency = (capacityEfficiency / efficiencyEfficiency);
+	MODULES.magmiteSettings.supply.efficiency = (supplyEfficiency / efficiencyEfficiency);
+	MODULES.magmiteSettings.overclocker.efficiency = (overclockerEfficiency / efficiencyEfficiency);
+
+	MODULES.magmite.finalResult = [];
+	const upgradeNames = ['Efficiency', 'Capacity', 'Supply', 'Overclocker'];
+	for (var i = 0; i < upgradeNames.length; i++) {
+		MODULES.magmite.finalResult.push(+MODULES.magmiteSettings[upgradeNames[i].toLowerCase()].efficiency);
+	}
+	const upgradeIndex = MODULES.magmite.finalResult.indexOf(Math.max(...MODULES.magmite.finalResult));
+	MODULES.magmiteSettings.runEnd.update(myRunEnd, false);
+	MODULES.magmiteSettings.fuelStart.update(myStart, false);
+	MODULES.magmiteSettings.fuelEnd.update(myEnd, false);
+	return upgradeNames[upgradeIndex];
 }
 
 function autoMagmiteSpender(portal) {

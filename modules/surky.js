@@ -1,17 +1,3 @@
-//Setup for non-AT users
-if (typeof MODULES === 'undefined') {
-	MODULES = {};
-}
-
-if (typeof $$ !== 'function') {
-	$$ = function (a) {
-		return document.querySelector(a);
-	}
-	$$$ = function (a) {
-		return [].slice.apply(document.querySelectorAll(a));
-	};
-}
-
 function runSurky() {
 	if (portalUniverse !== 2) return;
 	clearAndAutobuyPerks();

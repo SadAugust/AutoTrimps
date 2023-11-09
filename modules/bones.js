@@ -8,7 +8,6 @@ function boneShrine() {
 
 	//Setting up variables
 	var settingIndex = null;
-
 	var boneCharges = game.permaBoneBonuses.boosts.charges;
 
 	//If we have enough bone charges then spend them automatically to stop from capping

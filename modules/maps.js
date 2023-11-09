@@ -512,15 +512,12 @@ function autoMap() {
 	}
 
 	//Reset to defaults
-	while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) {
+	while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive)
 		toggleSetting('repeatUntil');
-	}
-	if (game.options.menu.exitTo.enabled) {
+	if (game.options.menu.exitTo.enabled)
 		toggleSetting('exitTo');
-	}
-	if (game.options.menu.repeatVoids.enabled) {
+	if (game.options.menu.repeatVoids.enabled)
 		toggleSetting('repeatVoids');
-	}
 
 	//Reset to defaults when on world grid
 	if (!game.global.mapsActive && !game.global.preMapsActive) {

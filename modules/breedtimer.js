@@ -133,7 +133,7 @@ function geneAssist() {
 	else
 		runningHard = !angelic && (challengeActive('Nom') || challengeActive('Toxicity') || challengeActive('Lead'));
 
-	var settingPrefix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' :
+	const settingPrefix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' :
 		trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' :
 			'';
 
@@ -165,6 +165,9 @@ function geneAssist() {
 	//9. Regular Timer
 	else if (getPageSetting('geneAssistTimer') > 0)
 		target = new Decimal(getPageSetting('geneAssistTimer'));
+	//If no timer is set, return.
+	else
+		return;
 
 	var now = new Date().getTime();
 	var breedTime = (game.jobs.Amalgamator.owned > 0) ? (now - game.global.lastSoldierSentAt) / 1000 : game.global.lastBreedTime / 1000;

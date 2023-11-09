@@ -620,16 +620,14 @@ function c2FinishZone() {
 			finishChallenge = getPageSetting("c2RunnerSettings")[game.global.challengeActive] && getPageSetting("c2RunnerSettings")[game.global.challengeActive].enabled ? getPageSetting("c2RunnerSettings")[game.global.challengeActive].zone : Infinity;
 		}
 	}
-	else {
-		finishChallenge = getPageSetting('c2Finish');
-	}
+	else finishChallenge = getPageSetting('c2Finish');
+
 	if (finishChallenge <= 0) finishChallenge = Infinity;
 
 	return finishChallenge;
 }
 
 function finishChallengeSquared() {
-	downloadSave();
 	//Cancel out of challenge run
 	abandonChallenge();
 	cancelTooltip();
@@ -709,17 +707,17 @@ function downloadSave(portal) {
 }
 
 function hypoPackratReset(challenge) {
+	if (challenge !== 'Hypothermia') return;
+	if (!getPageSetting('hypothermiaSettings', portalUniverse)[0].packrat) return;
 
-	if (challenge === 'Hypothermia' && getPageSetting('hypothermiaSettings', portalUniverse)[0].packrat) {
-		toggleRemovePerks();
-		numTab(6, true);
-		buyPortalUpgrade('Packrat');
-		toggleRemovePerks();
-		tooltip('Custom', null, 'update', true);
-		document.getElementById('customNumberBox').value = 3;
-		numTab(5, true)
-		buyPortalUpgrade('Packrat');
-	}
+	toggleRemovePerks();
+	numTab(6, true);
+	buyPortalUpgrade('Packrat');
+	toggleRemovePerks();
+	tooltip('Custom', null, 'update', true);
+	document.getElementById('customNumberBox').value = 3;
+	numTab(5, true)
+	buyPortalUpgrade('Packrat');
 }
 
 //Auto-Respec into combat spec after running Trimple/Atlantrimp
@@ -729,7 +727,7 @@ function surkyCombatRespec() {
 	MODULES.popups.respecAtlantrimp = false;
 	MODULES.popups.remainingTime = Infinity;
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
-	var currPreset = $$('#preset').value;
+	const currPreset = $$('#preset').value;
 
 	//Swapping to Spire respec in u1
 	if (game.global.universe === 1) fillPresetPerky('spire');

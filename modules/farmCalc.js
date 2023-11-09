@@ -31,6 +31,9 @@ function callAutoMapLevel(settingName, currentAutoLevel, special, maxLevel, minL
 }
 
 function callAutoMapLevel_new(mapName) {
+
+	//Need to add in a stat check to this!
+
 	const speedSettings = ['Map Bonus', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
 	var mapLevel = speedSettings.indexOf(mapName) >= 0 ? hdStats.autoLevelSpeed : hdStats.autoLevelNew;
 	const mapBonusLevel = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
@@ -156,7 +159,7 @@ function populateZFarmData() {
 	var diplomacy = mastery('nature2') ? 5 : 0;
 	const hze = getHighestLevelCleared() + 1;
 
-	var speed = 10 * 0.95 ** getPerkLevel("Agility");
+	var speed = 10 * 0.95 ** getPerkLevel('Agility');
 	if (mastery('hyperspeed')) --speed;
 	if (mastery('hyperspeed2') && zone <= Math.ceil(hze / 2)) --speed;
 	if (challengeActive('Quagmire')) speed += (game.challenges.Quagmire.getSpeedPenalty() / 100);
@@ -406,7 +409,7 @@ function populateZFarmData() {
 	}
 
 	// Handle megacrits
-	critDamage = critChance >= 1 ? (megaCD - 1) * 100 : critDamage;
+	critDamage = critChance >= 1 ? (megaCD - 1) : critDamage;
 
 	var exoticChance = 3;
 	if (Fluffy.isRewardActive("exotic")) exoticChance += 0.5;
@@ -453,7 +456,7 @@ function populateZFarmData() {
 		rangeMin: minFluct,
 		rangeMax: maxFluct,
 		plaguebringer: typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01,
-		equalityMult: typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : getPlayerEqualityMult(),
+		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : getPlayerEqualityMult()) : 1,
 
 		//Enemy Stats
 		challenge: enemyHealth,
@@ -492,6 +495,7 @@ function stats() {
 		extra = 10;
 	extra = extra || -saveData.reducer;
 	var mapsCanAfford = 0;
+	const fragSetting = getPageSetting('onlyPerfectMaps');
 	for (var mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
 		if (saveData.coordinate) {
 			var coords = 1;
@@ -504,7 +508,9 @@ function stats() {
 		if (tmp.value < 1 && mapLevel >= saveData.zone) {
 			continue;
 		}
-		if (tmp.canAfford)
+
+		//Check fragment cost of each map and remove them from the check if they can't be afforded.
+		if (fragSetting ? tmp.canAffordPerfect : tmp.canAfford)
 			mapsCanAfford++;
 
 		//Want to guarantee at least 6 results here so that we don't accidentally miss a good map to farm on
@@ -528,13 +534,10 @@ function zone_stats(zone, stances, saveData) {
 		loot: 100 * (zone < saveData.zone ? 0.8 ** (saveData.zone - saveData.reducer - zone) : 1.1 ** (zone - saveData.zone)),
 		canAfford: true,
 	};
-
-	if (!findMap(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome)) {
-		if (saveData.mapPerfect)
-			result.canAfford = saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]);
-		else
-			result.canAfford = saveData.fragments >= minMapFrag(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]);
-	}
+	if (!findMap(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, true))
+		result.canAffordPerfect = saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]);
+	if (!findMap(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome))
+		result.canAfford = saveData.fragments >= minMapFrag(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]);
 	if (!stances) stances = 'X';
 	for (var stance of stances) {
 		saveData.atk = saveData.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
@@ -887,9 +890,12 @@ function get_best(results, fragmentCheck) {
 	var [stats, stances] = results;
 	stats.slice();
 
+	//Check fragment cost of each map and remove them from the check if they can't be afforded.
+	const fragSetting = getPageSetting('onlyPerfectMaps');
 	if (fragmentCheck) {
 		for (var i = stats.length - 1; i >= 0; i--) {
-			if (stats[i].canAfford) continue;
+			if (!fragSetting && stats[i].canAfford) continue;
+			if (fragSetting && stats[i].canAffordPerfect) continue;
 			stats.pop();
 		}
 	}

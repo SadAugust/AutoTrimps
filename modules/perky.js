@@ -12,7 +12,6 @@ if (typeof $$ !== 'function') {
 }
 
 function legalizeInput(settingID) {
-
 	if (!settingID) return;
 	settingID = document.getElementById(settingID);
 	var defaultValue = settingID.placeholder;

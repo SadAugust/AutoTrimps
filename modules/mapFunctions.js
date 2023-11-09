@@ -254,7 +254,6 @@ function shouldRunUniqueMap(map) {
 
 	if (MODULES.mapFunctions.runUniqueMap === map.name) {
 		if (game.global.mapsActive && getCurrentMapObject().location === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
-		return true;
 	}
 	//Check to see if the cell is liquified and if so we can replace the cell condition with it
 	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
@@ -263,7 +262,7 @@ function shouldRunUniqueMap(map) {
 	const aboveMapLevel = game.global.world > map.level;
 
 	//Check to see if the map should be run based on the user's settings.
-	if (mapData.runConditions(map, mapSetting, liquified, aboveMapLevel)) {
+	if (MODULES.mapFunctions.runUniqueMap === map.name || mapData.runConditions(map, mapSetting, liquified, aboveMapLevel)) {
 		if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + (map.name === 'Melting Point' ? ' at ' + game.buildings.Smithy.owned + ' smithies' : '') + ' on zone ' + game.global.world + '.', 'map_Details');
 		return true;
 	}
@@ -294,23 +293,16 @@ function runUniqueMap(mapName) {
 	if (getPageSetting('autoMaps') !== 1) return;
 	if (challengeActive('Insanity')) return;
 	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom';
-	var zone = game.global.world;
-	var cell = game.global.lastClearedCell + 2;
-	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return;
-	if ((mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 32))) return;
 
 	MODULES.mapFunctions.runUniqueMap = mapName;
-	if (game.global.mapsActive && getCurrentMapObject().name !== mapName) {
-		recycleMap_AT();
-	}
-
-	if (game.global.preMapsActive && game.global.currentMapId === '') {
-		for (var map in game.global.mapsOwnedArray) {
-			if (game.global.mapsOwnedArray[map].name === mapName) {
-				selectMap(game.global.mapsOwnedArray[map].id);
-				runMap_AT();
-				debug('Running ' + mapName + ' on zone ' + game.global.world + '.', 'map_Details');
-			}
+	const map = game.global.mapsOwnedArray.find(map => map.name.includes(mapName));
+	if (map !== undefined) {
+		if (game.global.mapsActive && getCurrentMapObject().name !== mapName)
+			recycleMap_AT();
+		if (game.global.preMapsActive && game.global.currentMapId === '') {
+			selectMap(map.id);
+			runMap_AT();
+			debug('Running ' + mapName + ' on zone ' + game.global.world + '.', 'map_Details');
 		}
 	}
 }
@@ -351,11 +343,10 @@ function getVoidMapDifficulty(map) {
 }
 
 function selectEasierVoidMap(map1, map2) {
-	if (getVoidMapDifficulty(map2) > getVoidMapDifficulty(map1)) {
+	if (getVoidMapDifficulty(map2) > getVoidMapDifficulty(map1))
 		return map1;
-	} else {
+	else
 		return map2;
-	}
 }
 
 function voidMaps(lineCheck) {
@@ -364,7 +355,7 @@ function voidMaps(lineCheck) {
 	const mapName = 'Void Map';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'voidMapSettings';
@@ -543,7 +534,7 @@ function mapBonus(lineCheck) {
 	const mapName = 'Map Bonus';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	//Initialise variables
@@ -645,7 +636,7 @@ function mapFarm(lineCheck) {
 	const mapName = 'Map Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'mapFarmSettings';
@@ -769,7 +760,7 @@ function tributeFarm(lineCheck) {
 	const mapName = 'Tribute Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'tributeFarmSettings';
@@ -929,7 +920,7 @@ function smithyFarm(lineCheck) {
 	const mapName = 'Smithy Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'smithyFarmSettings';
@@ -1137,7 +1128,7 @@ function worshipperFarm(lineCheck) {
 	const mapName = 'Worshipper Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'worshipperFarmSettings';
@@ -1237,7 +1228,7 @@ function mapDestacking(lineCheck) {
 	const mapName = 'Destacking';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (
@@ -1649,7 +1640,6 @@ function prestigeClimb(lineCheck) {
 }
 
 function findLastBionicWithItems(bionicPool) {
-
 	if (game.global.world < 115 || !bionicPool)
 		return;
 	if (challengeActive('Mapology') && !getPageSetting('mapology')) return;
@@ -1815,7 +1805,7 @@ function toxicity(lineCheck) {
 	const mapName = 'Toxicity';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'toxicitySettings';
@@ -1905,7 +1895,7 @@ function experience(lineCheck) {
 	var mapName = 'Experience';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Experience') || !getPageSetting('experience')) return farmingDetails;
@@ -1952,7 +1942,7 @@ function wither(lineCheck) {
 	const mapName = 'Wither Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Wither') || !getPageSetting('wither')) return farmingDetails;
@@ -2035,7 +2025,7 @@ function quagmire(lineCheck) {
 	const mapName = 'Quagmire Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'quagmireSettings';
@@ -2122,7 +2112,7 @@ function quest(lineCheck) {
 	const mapName = 'Quest';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Quest') || !getPageSetting('quest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
@@ -2191,7 +2181,7 @@ function mayhem(lineCheck) {
 	const mapName = 'Mayhem Destacking';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Mayhem') || !getPageSetting('mayhem')) return farmingDetails;
@@ -2244,7 +2234,7 @@ function insanity(lineCheck) {
 	const mapName = 'Insanity Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'insanitySettings';
@@ -2325,7 +2315,7 @@ function pandemoniumDestack(lineCheck) {
 	const mapName = 'Pandemonium Destacking';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || game.global.world < getPageSetting('pandemoniumZone')) return farmingDetails;
@@ -2385,7 +2375,7 @@ function pandemoniumEquipFarm(lineCheck) {
 	const mapName = 'Pandemonium Farming';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || getPageSetting('pandemoniumAE') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
@@ -2444,7 +2434,7 @@ function alchemy(lineCheck) {
 	const mapName = 'Alchemy Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	const settingName = 'alchemySettings';
@@ -2589,7 +2579,7 @@ function glass(lineCheck) {
 	var mapName = 'Glass ';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Glass') || !getPageSetting('glass')) return farmingDetails;
@@ -2695,7 +2685,7 @@ function hypothermia(lineCheck) {
 	const mapName = 'Hypothermia Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 	const settingName = 'hypothermiaSettings';
 	const baseSettings = getPageSetting(settingName);
@@ -2804,7 +2794,7 @@ function desolation(lineCheck, forceDestack) {
 	const mapName = 'Desolation Destacking';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
@@ -2902,7 +2892,7 @@ function desolationGearScum(lineCheck) {
 	const mapName = 'Desolation Gear Scum';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
@@ -3028,7 +3018,7 @@ function smithless(lineCheck) {
 	const mapName = 'Smithless Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (!challengeActive('Smithless') || !getPageSetting('smithless')) return farmingDetails;
@@ -3139,7 +3129,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	var mapName = 'HD Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 	const settingName = 'hdFarmSettings';
 	const baseSettings = getPageSetting(settingName);
