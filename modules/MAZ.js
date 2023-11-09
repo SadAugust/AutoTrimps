@@ -192,7 +192,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var mapUnlocks = [
 				'The_Block', 'The_Wall', 'Dimension_of_Anger'
 			]
-			if (game.stats.highestLevel.valueTotal() >= 33) mapUnlocks.push("Trimple_of_Doom");
+			if (game.stats.highestLevel.valueTotal() >= 33) mapUnlocks.push("Trimple_Of_Doom");
 			if (game.stats.highestLevel.valueTotal() >= 80) mapUnlocks.push("The_Prison");
 			if (game.stats.highestLevel.valueTotal() >= 170) mapUnlocks.push("Imploding_Star");
 		}
@@ -219,7 +219,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var item = mapUnlocks[x];
 			var setting = settingGroup[item];
 			//U1
-			if (item === 'Trimple_of_Doom' && game.stats.highestLevel.valueTotal() < 33) continue;
+			if (item === 'Trimple_Of_Doom' && game.stats.highestLevel.valueTotal() < 33) continue;
 			if (item === 'The_Prison' && game.stats.highestLevel.valueTotal() < 80) continue;
 			if (item === 'Imploding_Star' && game.stats.highestLevel.valueTotal() < 170) continue;
 			//U2
@@ -2338,7 +2338,7 @@ function saveATUniqueMapsConfig(setting) {
 			error += " Prismatic Palace can\'t be run below zone 21.<br>";
 			errorMessage = true;
 		}
-		if ((name.includes('Atlantrimp') || name.includes('Trimple_of_Doom')) && (zone < 33 || (zone === 33 && cell < 50))) {
+		if ((name.includes('Atlantrimp') || name.includes('Trimple_Of_Doom')) && (zone < 33 || (zone === 33 && cell < 50))) {
 			error += " " + name + " can\'t be run below zone 33 cell 50.<br>";
 			errorMessage = true;
 		}

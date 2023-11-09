@@ -653,7 +653,6 @@ function autoMap() {
 	} else if (game.global.preMapsActive) {
 
 		//Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
-		//Not FULLY bugtested but works with my initial tests and is hopefully bug free.
 		function abandonMapCheck() {
 			if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
 			if (game.global.currentMapId !== '') {

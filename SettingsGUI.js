@@ -1527,7 +1527,7 @@ function initializeAllSettings() {
 			The_Wall: { enabled: false, zone: 100, cell: 0 },
 			The_Block: { enabled: false, zone: 100, cell: 0 },
 			Dimension_of_Anger: { enabled: false, zone: 100, cell: 0 },
-			Trimple_of_Doom: { enabled: false, zone: 100, cell: 0 },
+			Trimple_Of_Doom: { enabled: false, zone: 100, cell: 0 },
 			The_Prison: { enabled: false, zone: 100, cell: 0 },
 			Imploding_Star: { enabled: false, zone: 100, cell: 0 },
 
@@ -6427,6 +6427,21 @@ function updateATVersion() {
 				}
 			}
 			saveSettings();
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.15') {
+			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
+				const currTrimple = tempSettings['uniqueMapSettingsArray'].value["Trimple_of_Doom"];
+				delete tempSettings['uniqueMapSettingsArray'].value["Trimple_of_Doom"];
+				autoTrimpSettings.uniqueMapSettingsArray.value["Trimple_Of_Doom"] = currTrimple;
+				delete autoTrimpSettings.uniqueMapSettingsArray.value["Trimple_of_Doom"];
+				if (autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] === undefined)
+					autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] = {
+						enabled: false,
+						zone: 999,
+						cell: 1,
+					}
+			}
 		}
 
 	}
