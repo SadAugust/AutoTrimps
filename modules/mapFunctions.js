@@ -1567,14 +1567,15 @@ function prestigeClimb(lineCheck) {
 
 	var targetPrestige = getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
-	if (challengeActive('Mapology') && getPageSetting('mapology')) targetPrestige = getPageSetting('mapologyPrestige');
+	const runningMapology = challengeActive('Mapology') && getPageSetting('mapology');
+	if (runningMapology) targetPrestige = getPageSetting('mapologyPrestige');
 	if (game.jobs.Explorer.locked) {
 		farmingDetails.biome = 'Random';
 		farmingDetails.mapSliders = [0, 9, 9];
 	}
 	//If we're past the zone we want to farm for all prestiges in then set targetPrestige to the highest prestige available.
 	//equipsToGet will automatically change GambesOP to Breastplate if the Slow challenge has not yet been completed.
-	if (getPageSetting('ForcePresZ') >= 0 && game.global.world >= getPageSetting('ForcePresZ')) {
+	if (!runningMapology && getPageSetting('ForcePresZ') >= 0 && game.global.world >= getPageSetting('ForcePresZ')) {
 		targetPrestige = 'GambesOP';
 	}
 
