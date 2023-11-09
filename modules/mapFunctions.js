@@ -12,89 +12,175 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	//Universe 1 Unique Maps
 	'The Block': {
 		zone: 11,
-		challenges: ["Scientist", "Trimp"],
+		challenges: ['Scientist', 'Trimp'],
 		speedrun: 'blockTimed',
-		universe: 1
+		universe: 1,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
+			else if (game.mapUnlocks.BigWall.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'The Wall': {
 		zone: 15,
 		challenges: [],
 		speedrun: 'wallTimed',
-		universe: 1
+		universe: 1,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) return true; //Don't bother before z16
+			else if (game.mapUnlocks.TheWall.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'Dimension of Anger': {
 		zone: 20,
-		challenges: ["Discipline", "Metal", "Size", "Frugal", "Coordinate"],
+		challenges: ['Discipline', 'Metal', 'Size', 'Frugal', 'Coordinate'],
 		speedrun: 'angerTimed',
-		universe: 1
+		universe: 1,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if ((game.global.world - 1 > map.level) && document.getElementById('portalBtn').style.display === 'none') return true; //Don't bother before z22
+			else if (game.mapUnlocks.Portal.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'Trimple Of Doom': {
 		zone: 33,
-		challenges: ["Meditate", "Anger"],
+		challenges: ['Meditate', 'Anger'],
 		speedrun: 'doomTimed',
-		universe: 1
+		universe: 1,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (aboveMapLevel && game.portal.Relentlessness.locked) return true; //Unlock the Relentlessness perk
+			else if (game.mapUnlocks.AncientTreasure.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'The Prison': {
 		zone: 80,
-		challenges: ["Electricity", "Mapocalypse"],
+		challenges: ['Electricity', 'Mapocalypse'],
 		speedrun: 'prisonTimed',
-		universe: 1
+		universe: 1,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) return true; //Unlock the Electricity challenge
+			else if (game.mapUnlocks.ThePrison.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'Imploding Star': {
 		zone: 170,
-		challenges: ["Devastation"],
+		challenges: ['Devastation'],
 		speedrun: 'starTimed',
-		universe: 1
+		universe: 1,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (game.mapUnlocks.ImplodingStar.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'Bionic Wonderland': {
 		zone: 125,
-		challenges: ["Crushed"],
+		challenges: ['Crushed'],
 		speedrun: 'bionicTimed',
-		universe: 1
+		universe: 1,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			return false;
+		},
 	},
 
 	//Universe 2 Unique Maps
 	'Big Wall': {
 		zone: 8,
-		challenges: [""],
+		challenges: [''],
 		speedrun: 'bigWallTimed',
-		universe: 2
+		universe: 2,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) return true; // we need Bounty
+			else if (!game.upgrades.Bounty.allowed && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'Dimension of Rage': {
 		zone: 15,
-		challenges: ["Unlucky"],
+		challenges: ['Unlucky'],
 		speedrun: '',
-		universe: 2
+		universe: 2,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (document.getElementById('portalBtn').style.display !== 'none') return false;
+			if ((game.global.world - 1 > map.level)) return true; //Don't bother before z22
+			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'Prismatic Palace': {
 		zone: 20,
-		challenges: [""],
+		challenges: [''],
 		speedrun: 'palaceTimed',
-		universe: 2
+		universe: 2,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (game.mapUnlocks.Prismalicious.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'Atlantrimp': {
 		zone: 33,
-		challenges: [""],
+		challenges: [''],
 		speedrun: 'atlantrimpTimed',
-		universe: 2
+		universe: 2,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (!game.mapUnlocks.AncientTreasure.canRunOnce) return false;
+			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
 	},
 	'Melting Point': {
 		zone: 50,
-		challenges: [""],
+		challenges: [''],
 		speedrun: 'meltingTimed',
-		universe: 2
+		universe: 2,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (!game.mapUnlocks.SmithFree.canRunOnce) return false;
+			if (!trimpStats.isC3 && !trimpStats.isDaily && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+
+			const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
+			const currChallenge = trimpStats.currChallenge.toLowerCase();
+			var smithyGoal = Infinity;
+			if ((currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge + 'MP') > 0)
+				smithyGoal = getPageSetting(currChallenge + 'MP');
+			else if (trimpStats.isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0)
+				smithyGoal = uniqueMapSetting.MP_Smithy_C3.value;
+			else if (trimpStats.isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0)
+				smithyGoal = uniqueMapSetting.MP_Smithy_Daily.value;
+			else if (trimpStats.isFiller && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0)
+				smithyGoal = uniqueMapSetting.MP_Smithy.value;
+
+			if (smithyGoal <= game.buildings.Smithy.owned) return true;
+			return false;
+		},
 	},
 	'The Black Bog': {
 		zone: 6,
-		challenges: [""],
+		challenges: [''],
 		speedrun: '',
-		universe: 2
+		universe: 2,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (mapSettings.mapName === 'Quagmire Farm' && quagmire().shouldRun) return true;
+			return false;
+		},
 	},
 	'Frozen Castle': {
 		zone: 175,
-		challenges: [""],
+		challenges: [''],
 		speedrun: '',
-		universe: 2
+		universe: 2,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			const runningHypo = challengeActive('Hypothermia');
+			const regularRun = !runningHypo && mapSetting.enabled && game.global.world >= mapSetting.zone && game.global.lastClearedCell + 2 >= mapSetting.cell;
+			if (regularRun) return true;
+			const hypoDefaultSettings = getPageSetting('hypothermiaSettings')[0];
+			const hypothermiaRun = runningHypo && mapSettings.mapName !== 'Void Maps' &&
+				hypoDefaultSettings.active && game.global.world >= (hypoDefaultSettings.frozencastle[0] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[0]) : 200) &&
+				(game.global.lastClearedCell + 2 >= (hypoDefaultSettings.frozencastle[1] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[1]) : 99) || liquified);
+			if (hypothermiaRun) return true;
+			return false;
+		},
 	}
 });
 
@@ -148,25 +234,19 @@ function shouldSpeedRun(achievement) {
 
 //Unique Maps Pt.2
 function shouldRunUniqueMap(map) {
-	const mapData = MODULES.mapFunctions.uniqueMaps[map.name];
-	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
-
 	//Stops unique maps being run when we should be destacking instead as it is likely to be slower overall.
 	if (mapSettings.mapName === 'Desolation Destacking') return false;
 	if (mapSettings.mapName === 'Pandemonium Destacking') return false;
 	if (mapSettings.mapName === 'Mayhem Destacking') return false;
-	if (mapData === undefined || game.global.world < mapData.zone) {
+	const mapData = MODULES.mapFunctions.uniqueMaps[map.name];
+	if (mapData === undefined || game.global.world < mapData.zone)
 		return false;
-	}
-	if (game.global.universe !== mapData.universe) {
+	if (game.global.universe !== mapData.universe)
 		return false;
-	}
-
-	if (!trimpStats.isC3 && mapData.challenges.includes(trimpStats.currChallenge) && !challengeActive('') && enoughHealth(map)) {
+	if (!trimpStats.isC3 && mapData.challenges.includes(trimpStats.currChallenge) && !challengeActive('') && enoughHealth(map))
 		return true;
-	}
 	//Remove speed run check for now
-	/* if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
+	/* if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun]) && enoughHealth(map)) {
 		return true;
 	} */
 	//Disable mapping if we don't have enough health to survive the map and the corresponding setting is enabled.
@@ -177,124 +257,15 @@ function shouldRunUniqueMap(map) {
 		return true;
 	}
 	//Check to see if the cell is liquified and if so we can replace the cell condition with it
-	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === "Liquimp";
+	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
+	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
+	const mapSetting = uniqueMapSetting[map.name.replace(/ /g, "_")];
+	const aboveMapLevel = game.global.world > map.level;
 
-	if (game.global.universe === 1) {
-		var aboveMapLevel = game.global.world > map.level;
-		if (map.name === 'The Block') { //Don't bother before z12 outside of manual unique map settings setup
-			//We need Shieldblock
-			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock')) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-			if (game.mapUnlocks.TheBlock.canRunOnce && uniqueMapSetting.The_Block.enabled && game.global.world >= uniqueMapSetting.The_Block.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Block.cell || liquified)) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'The Wall') { //Don't bother before z16
-			//We need Bounty
-			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-			if (game.mapUnlocks.TheWall.canRunOnce && uniqueMapSetting.The_Wall.enabled && game.global.world >= uniqueMapSetting.The_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Wall.cell || liquified)) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'Dimension of Anger') { //Don't bother before z22
-			//Unlock the portal
-			if ((game.global.world - 1 > map.level) && !game.talents.portal.purchased && document.getElementById('portalBtn').style.display === 'none') {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-			if (game.mapUnlocks.Portal.canRunOnce && uniqueMapSetting.Dimension_of_Anger.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Anger.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Anger.cell || liquified)) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'Trimple Of Doom') {
-			//Unlock the Relentlessness perk
-			if (aboveMapLevel && game.portal.Relentlessness.locked) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Trimple_of_Doom.enabled && game.global.world >= uniqueMapSetting.Trimple_of_Doom.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Trimple_of_Doom.cell || liquified)) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'The Prison') {
-			//Unlock the Electricity challenge
-			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-			if (game.mapUnlocks.ThePrison.canRunOnce && uniqueMapSetting.The_Prison.enabled && game.global.world >= uniqueMapSetting.The_Prison.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Prison.cell || liquified)) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'Imploding Star') {
-			if (game.mapUnlocks.ImplodingStar.canRunOnce && uniqueMapSetting.Imploding_Star.enabled && game.global.world >= uniqueMapSetting.Imploding_Star.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Imploding_Star.cell || liquified)) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		}
-	} else if (game.global.universe === 2) {
-		if (mapSettings.mapName === 'Quagmire Farm' && map.name === 'The Black Bog' && quagmire().shouldRun) {
-			return true;
-		}
-		else if (map.name === 'Big Wall') {
-			// we need Bounty
-			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
-				return true;
-			}
-			if (!game.upgrades.Bounty.allowed && uniqueMapSetting.Big_Wall.enabled && game.global.world >= uniqueMapSetting.Big_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Big_Wall.cell || liquified)) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'Dimension of Rage') {
-			// unlock the portal
-			if (document.getElementById("portalBtn").style.display === "none" && game.upgrades.Rage.done === 1 && uniqueMapSetting.Dimension_of_Rage.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Rage.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Rage.cell) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'Prismatic Palace') {
-			//100% prismatic shield bonus
-			if (game.mapUnlocks.Prismalicious.canRunOnce && uniqueMapSetting.Prismatic_Palace.enabled && game.global.world >= uniqueMapSetting.Prismatic_Palace.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Prismatic_Palace.cell) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'Atlantrimp') {
-			// maybe get the treasure
-			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Atlantrimp.enabled && game.global.world >= uniqueMapSetting.Atlantrimp.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Atlantrimp.cell) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'Melting Point') {
-			// maybe get extra smithies
-			var currChallenge = trimpStats.currChallenge.toLowerCase();
-			const meltsmithy =
-				(currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0 ? getPageSetting(currChallenge + 'MP') :
-					trimpStats.isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
-						trimpStats.isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
-							!trimpStats.isC3 && !trimpStats.isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
-								Infinity;
-			if (game.mapUnlocks.SmithFree.canRunOnce &&
-				((!trimpStats.isC3 && !trimpStats.isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
-					(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		} else if (map.name === 'Frozen Castle') {
-			// maybe get the treasure
-			var frozencastle = !challengeActive('Hypothermia') && uniqueMapSetting.Frozen_Castle.enabled && game.global.world >= uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
-			var hypoDefaultSettings = getPageSetting('hypothermiaSettings')[0];
-			var hypothermia = challengeActive('Hypothermia') && mapSettings.mapName !== 'Void Maps' &&
-				hypoDefaultSettings.active && game.global.world >= (hypoDefaultSettings.frozencastle[0] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[0]) : 200) &&
-				game.global.lastClearedCell + 2 >= (hypoDefaultSettings.frozencastle[1] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[1]) : 99);
-			if (frozencastle || hypothermia) {
-				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
-				return true;
-			}
-		}
+	//Check to see if the map should be run based on the user's settings.
+	if (mapData.runConditions(map, mapSetting, liquified, aboveMapLevel)) {
+		if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + (map.name === 'Melting Point' ? ' at ' + game.buildings.Smithy.owned + ' smithies' : '') + ' on zone ' + game.global.world + '.', 'map_Details');
+		return true;
 	}
 	return false;
 }
@@ -338,7 +309,7 @@ function runUniqueMap(mapName) {
 			if (game.global.mapsOwnedArray[map].name === mapName) {
 				selectMap(game.global.mapsOwnedArray[map].id);
 				runMap_AT();
-				debug('Running ' + mapName + ' on zone ' + game.global.world + '.', "map_Details");
+				debug('Running ' + mapName + ' on zone ' + game.global.world + '.', 'map_Details');
 			}
 		}
 	}
@@ -519,7 +490,7 @@ function voidMaps(lineCheck) {
 			//Identifying if we need to do any form of HD Farming before actually running voids
 			//If we do then run HD Farm and stop this function until it has been completed.
 			//Override for if we have already farmed enough maps. Gets reset when Void Map MAZ window is saved.
-			if (defaultSettings.voidFarm && !(challengeActive('Metal') || challengeActive('Transmute')) && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + "_" + game.global.world) &&
+			if (defaultSettings.voidFarm && !(challengeActive('Metal') || challengeActive('Transmute')) && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + '_' + game.global.world) &&
 				((defaultSettings.hitsSurvived > 0 && defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid) ||
 					(defaultSettings.hdRatio > 0 && defaultSettings.hdRatio < hdStats.vhdRatioVoid)
 				)
@@ -644,7 +615,7 @@ function mapBonus(lineCheck) {
 		}
 		var repeat = game.global.mapBonus >= (repeatCounter - 1);
 
-		var status = (spireCheck ? 'Spire ' : '') + 'Map Bonus: ' + game.global.mapBonus + "/" + repeatCounter;
+		var status = (spireCheck ? 'Spire ' : '') + 'Map Bonus: ' + game.global.mapBonus + '/' + repeatCounter;
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
@@ -770,7 +741,7 @@ function mapFarm(lineCheck) {
 				mapType === 'Zone Time' ? (formatSecondsAsClock((getGameTime() - game.global.zoneStarted) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
 					mapType === 'Skele Spawn' ? (formatSecondsAsClock((getGameTime() - game.global.lastSkeletimp) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
 						mapType === 'Portal Time' ? (formatSecondsAsClock((getGameTime() - game.global.portalTime) / 1000, 4 - setting.repeat.split(':').length) + ' / ' + setting.repeat) :
-							(repeatCheck + "/" + repeatNumber));
+							(repeatCheck + '/' + repeatNumber));
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
@@ -872,13 +843,13 @@ function tributeFarm(lineCheck) {
 					var tributeMaps = mapSettings.mapName === mapName ? tributeGoal - game.global.mapRunCounter : tributeGoal;
 					var tributeTime = tributeMaps * 25;
 					if (tributeMaps > 4) tributeTime += (Math.floor(tributeMaps / 5) * 45);
-					var foodEarnedTributes = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT("food", tributeTime, jobRatio), false, true, mapLevel);
+					var foodEarnedTributes = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT('food', tributeTime, jobRatio), false, true, mapLevel);
 					tributeGoal = game.buildings.Tribute.purchased + calculateMaxAfford_AT(game.buildings.Tribute, true, false, false, false, 1, foodEarnedTributes);
 				}
 				if (meteorologistGoal !== 0) {
 					var meteorologistTime = (mapSettings.mapName === mapName ? meteorologistGoal - game.global.mapRunCounter : meteorologistGoal) * 25;
 					if (meteorologistGoal > 4) meteorologistTime += (Math.floor(meteorologistGoal / 5) * 45);
-					var foodEarnedMets = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT("food", meteorologistTime, jobRatio), false, true, mapLevel);
+					var foodEarnedMets = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT('food', meteorologistTime, jobRatio), false, true, mapLevel);
 					meteorologistGoal = game.jobs.Meteorologist.owned + calculateMaxAfford_AT(game.jobs.Meteorologist, false, false, true, false, 1, foodEarnedMets);
 				}
 			}
@@ -913,7 +884,7 @@ function tributeFarm(lineCheck) {
 			totalTrFCost += barnCost;
 
 			//Figuring out how much Food we'd farm in the time it takes to run Atlantrimp. Seconds is 165 due to avg of 5x caches (20s per), 4x chronoimps (5s per), 1x jestimp (45s)
-			var resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT("food", 165, jobRatio), false, true, mapLevel);
+			var resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT('food', 165, jobRatio), false, true, mapLevel);
 
 			if ((totalTrFCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalTrFCost / 2) {
 				runUniqueMap('Atlantrimp');
@@ -927,8 +898,8 @@ function tributeFarm(lineCheck) {
 		}
 
 		var status = tributeGoal > game.buildings.Tribute.owned ?
-			'Tribute Farm: ' + game.buildings.Tribute.owned + "/" + tributeGoal :
-			'Meteorologist Farm: ' + game.jobs.Meteorologist.owned + "/" + meteorologistGoal;
+			'Tribute Farm: ' + game.buildings.Tribute.owned + '/' + tributeGoal :
+			'Meteorologist Farm: ' + game.jobs.Meteorologist.owned + '/' + meteorologistGoal;
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
@@ -1043,8 +1014,8 @@ function smithyFarm(lineCheck) {
 			mapLevel = -1;
 
 		//Initialising base food & metal vars for calcs later on
-		var woodBase = scaleToCurrentMap_AT(simpleSeconds_AT("wood", 1, '0,1,0'), false, true, mapLevel);
-		var metalBase = scaleToCurrentMap_AT(simpleSeconds_AT("metal", 1, '0,0,1'), false, true, mapLevel);
+		var woodBase = scaleToCurrentMap_AT(simpleSeconds_AT('wood', 1, '0,1,0'), false, true, mapLevel);
+		var metalBase = scaleToCurrentMap_AT(simpleSeconds_AT('metal', 1, '0,0,1'), false, true, mapLevel);
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
 		//If we already have a goal set then use that otherwise calculate what we should be getting.
@@ -1120,7 +1091,7 @@ function smithyFarm(lineCheck) {
 		//1. If the user has either the AT AutoStructure setting OR the AT AutoStructure Smithy setting disabled.
 		//2. If the user is running Hypothermia and is specifically Smithy Farming.
 		if ((!getPageSetting('buildingsType') || !getPageSetting('buildingSettingsArray').Smithy.enabled || challengeActive('Hypothermia')) && shouldMap && smithyGoal > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
-			buyBuilding("Smithy", true, true, 1);
+			buyBuilding('Smithy', true, true, 1);
 		}
 
 		//Recycles map if we don't need to finish it for meeting the farm requirements
@@ -1226,7 +1197,7 @@ function worshipperFarm(lineCheck) {
 
 		if (challengeActive('Wither') && mapLevel >= 0) mapLevel = -1;
 		var shouldSkip = false;
-		if (defaultSettings.shipSkipEnabled && game.jobs.Worshipper.owned !== 50 && (scaleToCurrentMap_AT(simpleSeconds_AT("food", cacheTime, jobRatio), false, true, mapLevel) < (game.jobs.Worshipper.getCost() * defaultSettings.shipskip)))
+		if (defaultSettings.shipSkipEnabled && game.jobs.Worshipper.owned !== 50 && (scaleToCurrentMap_AT(simpleSeconds_AT('food', cacheTime, jobRatio), false, true, mapLevel) < (game.jobs.Worshipper.getCost() * defaultSettings.shipskip)))
 			shouldSkip = true;
 
 		if (game.jobs.Worshipper.owned !== 50 && worshipperGoal > game.jobs.Worshipper.owned)
@@ -1234,13 +1205,13 @@ function worshipperFarm(lineCheck) {
 
 		if ((mapSettings.mapName === mapName && !shouldMap) || shouldSkip) {
 			if (shouldSkip && getPageSetting('spamMessages').map_Skip)
-				debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + mapSpecial + " map doesn't provide " + defaultSettings.shipskip + " or more Worshippers. Evaluate your map settings to correct this", 'map_Skip');
+				debug('Skipping Worshipper farming on zone ' + game.global.world + ' as 1 ' + mapSpecial + ' map doesn\'t provide ' + defaultSettings.shipskip + ' or more Worshippers. Evaluate your map settings to correct this', 'map_Skip');
 			else if (!shouldSkip)
 				mappingDetails(mapName, mapLevel, mapSpecial);
 			resetMapVars(setting, settingName);
 		}
 
-		var status = 'Worshipper Farm: ' + game.jobs.Worshipper.owned + "/" + worshipperGoal;
+		var status = 'Worshipper Farm: ' + game.jobs.Worshipper.owned + '/' + worshipperGoal;
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
@@ -1466,7 +1437,7 @@ function prestigeRaiding(lineCheck) {
 
 		if (mapSettings.prestigeMapArray && mapSettings.prestigeMapArray[0] !== undefined && shouldMap) {
 			if (game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[0])] === undefined || (game.global.mapsActive && prestigesToGet(getCurrentMapObject().level)[0] === 0)) {
-				debug("There was an error with your purchased map(s). Restarting the raiding procedure.");
+				debug('There was an error with your purchased map(s). Restarting the raiding procedure.');
 				resetMapVars();
 			}
 		}
@@ -1545,11 +1516,11 @@ function runPrestigeRaiding() {
 						buyMap();
 						var purchasedMap = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1];
 						mapSettings.prestigeMapArray[x] = purchasedMap.id;
-						debug("Prestige Raiding" + " (z" + game.global.world + ") bought a level " + purchasedMap.level + " map. Purchase #" + [(x + 1)], "map_Details");
+						debug('Prestige Raiding' + ' (z' + game.global.world + ') bought a level ' + purchasedMap.level + ' map. Purchase #' + [(x + 1)], 'map_Details');
 					}
 				}
 			}
-			mapSettings.prestigeMapArray = mapSettings.prestigeMapArray.filter(function (e) { return e.replace(/(\r\n|\n|\r)/gm, "") });
+			mapSettings.prestigeMapArray = mapSettings.prestigeMapArray.filter(function (e) { return e.replace(/(\r\n|\n|\r)/gm, '') });
 		}
 
 		for (var x = mapSettings.prestigeMapArray.length - 1; x > -1; x--) {
@@ -1557,11 +1528,11 @@ function runPrestigeRaiding() {
 				if (mapSettings.prestigeMapArray[x] !== undefined) {
 					var purchasedMap = game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[x])];
 					if (purchasedMap === undefined) {
-						debug("Prestige Raiding - Error with finding the purchased map. Skipping this map and moving on to the next one.");
+						debug('Prestige Raiding - Error with finding the purchased map. Skipping this map and moving on to the next one.');
 						mapSettings.prestigeMapArray[x] = undefined;
 						continue;
 					}
-					debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
+					debug('Prestige Raiding' + ' (z' + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
 					selectMap(mapSettings.prestigeMapArray[x]);
 					runMap_AT();
 				}
@@ -3560,7 +3531,7 @@ function setMapSliders(pluslevel, special, biome, mapSliders, onlyPerfect) {
 		if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal'))
 			document.getElementById('biomeAdvMapsSelect').value = "Random";
 
-		if (updateMapCost(true) > game.resources.fragments.owned && (special === "0" || !mapSpecialModifierConfig[special].name.includes('Cache')))
+		if (updateMapCost(true) > game.resources.fragments.owned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache')))
 			document.getElementById('advSpecialSelect').value = 0;
 
 		//Reduce map size
@@ -3735,28 +3706,27 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		var mappingLength = mapProg > 0 ? (game.global.mapRunCounter + mapProg).toFixed(2) : game.global.mapRunCounter;
 	}
 	//Setting special to current maps special if we're in a map.
-	if (game.global.mapsActive) mapSpecial = getCurrentMapObject().bonus === undefined ? "no special" : getCurrentMapObject().bonus;
-	if (mapSpecial === "0") mapSpecial = "no special";
+	if (game.global.mapsActive) mapSpecial = getCurrentMapObject().bonus === undefined ? 'no special' : getCurrentMapObject().bonus;
+	if (mapSpecial === '0') mapSpecial = 'no special';
 	if (mapName === 'Bionic Raiding') mapSpecial = game.talents.bionic2.purchased ? 'fa' : 'no special';
 
 	var timeMapping = MODULES.maps.mapTimer > 0 ? getZoneSeconds() - MODULES.maps.mapTimer : 0;
 	var currCell = game.global.lastClearedCell + 2;
 	var message = '';
 	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm' && mapName !== 'Bionic Raiding' && mapName !== 'Quest') {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength === 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeMapping) + ".");
+		message += (mapName + ' (z' + game.global.world + 'c' + currCell + ') took ' + (mappingLength) + ' (' + (mapLevel >= 0 ? '+' : '') + mapLevel + ' ' + mapSpecial + ')' + (mappingLength === 1 ? ' map' : ' maps') + ' and ' + formatTimeForDescriptions(timeMapping) + '.');
 	}
 	else if (mapName === 'Smithy Farm') {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + MODULES.maps.mapRepeatsSmithy[0] + " food, " + MODULES.maps.mapRepeatsSmithy[2] + " metal, " + MODULES.maps.mapRepeatsSmithy[1] + " wood (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " maps and " + formatTimeForDescriptions(timeMapping) + ".");
+		message += (mapName + ' (z' + game.global.world + 'c' + currCell + ') took ' + MODULES.maps.mapRepeatsSmithy[0] + ' food, ' + MODULES.maps.mapRepeatsSmithy[2] + ' metal, ' + MODULES.maps.mapRepeatsSmithy[1] + ' wood (' + (mapLevel >= 0 ? '+' : '') + mapLevel + ')' + ' maps and ' + formatTimeForDescriptions(timeMapping) + '.');
 	}
 	else if (mapName === 'Quagmire Farm') {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + (mappingLength === 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeMapping) + ".");
+		message += (mapName + ' (z' + game.global.world + 'c' + currCell + ') took ' + (mappingLength) + (mappingLength === 1 ? ' map' : ' maps') + ' and ' + formatTimeForDescriptions(timeMapping) + '.');
 	}
 	else {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + formatTimeForDescriptions(timeMapping) + ".");
+		message += (mapName + ' (z' + game.global.world + 'c' + currCell + ') took ' + formatTimeForDescriptions(timeMapping) + '.');
 	}
 
 	if (mapName === 'Void Map') {
-
 		var hdObject = {
 			'World HD Ratio': hdStats.hdRatio,
 			'Map HD Ratio': hdStats.hdRatioMap,
@@ -3764,52 +3734,33 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 			'Hits Survived': hdStats.hitsSurvived,
 			'Hits Survived Void': hdStats.hitsSurvivedVoid,
 			'Map Level': hdStats.autoLevel,
-		}
-
-		message += " Void maps were triggered by " + mapSettings.voidTrigger + ".<br>\n\
-		" + (mapSettings.dropdown ? (mapSettings.dropdown.name + " \
-		(Start: " + prettify(mapSettings.dropdown.hdRatio) + " | \
-		End: " + prettify(hdObject[mapSettings.dropdown.name]) + ")<br>\n\
-		"+ mapSettings.dropdown2.name + " \
-		(Start: " + prettify(mapSettings.dropdown2.hdRatio) + " | \
-		End: " + prettify(hdObject[mapSettings.dropdown2.name])) : "") + ").";
+		};
+		message += ' Void maps were triggered by ' + mapSettings.voidTrigger + '.<br>\n\
+		' + (mapSettings.dropdown ? (mapSettings.dropdown.name + ' \
+		(Start: ' + prettify(mapSettings.dropdown.hdRatio) + ' | \
+		End: ' + prettify(hdObject[mapSettings.dropdown.name]) + ')<br>\n\
+		'+ mapSettings.dropdown2.name + ' \
+		(Start: ' + prettify(mapSettings.dropdown2.hdRatio) + ' | \
+		End: ' + prettify(hdObject[mapSettings.dropdown2.name])) : '') + ').';
 	}
-
-	else if (mapName === 'Hits Survived') {
-		message += " Finished with hits survived at  " + prettify(whichHitsSurvived()) + "/" + targetHitsSurvived() + "."
-	}
-
-	else if (mapName === 'HD Farm' && extra !== null) {
-		message += " Finished with a HD Ratio of " + extra.toFixed(2) + "/" + extra2.toFixed(2) + ".";
-	}
-
-	else if (mapName === 'HD Farm') {
-		message += " Finished with an auto level of " + (hdStats.autoLevel > 0 ? "+" : "") + hdStats.autoLevel + ".";
-	}
-
-	else if (mapName === 'Tribute Farm') {
-		message += " Finished with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.";
-	}
-
-	else if (mapName === 'Smithy Farm') {
-		message += " Finished with " + game.buildings.Smithy.purchased + " smithies.";
-	}
-
-	else if (mapName === 'Insanity Farm') {
-		message += " Finished with " + game.challenges.Insanity.insanity + " stacks.";
-	}
-
-	else if (mapName === 'Alchemy Farm') {
-		message += " Finished with " + extra + " " + extra2 + ".";
-	}
-
-	else if (mapName === 'Hypothermia Farm') {
-		message += " Finished with (" + prettify(game.resources.wood.owned) + "/" + prettify(extra.toFixed(2)) + ") wood.";
-	}
-
-	else if (mapName === 'Smithless Farm') {
-		message += " Finished with enough damage to get " + extra + "/3 stacks.";
-	}
+	else if (mapName === 'Hits Survived')
+		message += ' Finished with hits survived at  ' + prettify(whichHitsSurvived()) + '/' + targetHitsSurvived() + '.';
+	else if (mapName === 'HD Farm' && extra !== null)
+		message += ' Finished with a HD Ratio of ' + extra.toFixed(2) + '/' + extra2.toFixed(2) + '.';
+	else if (mapName === 'HD Farm')
+		message += ' Finished with an auto level of ' + (hdStats.autoLevel > 0 ? '+' : '') + hdStats.autoLevel + '.';
+	else if (mapName === 'Tribute Farm')
+		message += ' Finished with ' + game.buildings.Tribute.purchased + ' tributes and ' + game.jobs.Meteorologist.owned + ' meteorologists.';
+	else if (mapName === 'Smithy Farm')
+		message += ' Finished with ' + game.buildings.Smithy.purchased + ' smithies.';
+	else if (mapName === 'Insanity Farm')
+		message += ' Finished with ' + game.challenges.Insanity.insanity + ' stacks.';
+	else if (mapName === 'Alchemy Farm')
+		message += ' Finished with ' + extra + ' ' + extra2 + '.';
+	else if (mapName === 'Hypothermia Farm')
+		message += ' Finished with (' + prettify(game.resources.wood.owned) + '/' + prettify(extra.toFixed(2)) + ') wood.';
+	else if (mapName === 'Smithless Farm')
+		message += ' Finished with enough damage to get ' + extra + '/3 stacks.';
 	MODULES.maps.mapRepeats = 0;
 	debug(message, mapType);
 }
@@ -3860,7 +3811,7 @@ function prestigeMapHasEquips(number, raidzones, targetPrestige) {
 
 //Get raid zone based on skipping map levels above x5 if we have scientist4 or microchip4. Will subtract 5 from the map level to account for this.
 function getRaidZone(raidZone) {
-	if (getSLevel() >= 4 && !challengeActive("Mapology")) {
+	if (getSLevel() >= 4 && !challengeActive('Mapology')) {
 		var levelsToSkip = [0, 9, 8, 7, 6];
 		if (levelsToSkip.includes((raidZone).toString().slice(-1))) raidZone = raidZone - 5;
 	}
@@ -3938,9 +3889,9 @@ function prestigeTotalFragCost() {
 		}
 	}
 
-    return {
-		"cost": cost,
-		"sliders": sliders
+	return {
+		'cost': cost,
+		'sliders': sliders
 	};
 }
 
@@ -3997,7 +3948,7 @@ function dailyOddOrEven() {
 		skipDetails.evenMult = dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
 	}
 	//Dodge Dailies -- 2-30%!
-	if (typeof game.global.dailyChallenge.slippery !== "undefined") {
+	if (typeof game.global.dailyChallenge.slippery !== 'undefined') {
 		skipDetails.slipStr = game.global.dailyChallenge.slippery.strength / 100;
 		skipDetails.slipPct = skipDetails.slipStr > 15 ? skipDetails.slipStr - 15 : skipDetails.slipStr;
 		skipDetails.slipMult = 0.02 * skipDetails.slipPct * 100;
@@ -4120,9 +4071,9 @@ function mapScumming(slowTarget) {
 		i++;
 	}
 	var msg = '';
-	if (slowCount < slowCellTarget || !firstCellSlow) msg = "Failed. ";
-	msg += i + " Rerolls. Current roll = " + slowCount + " odd slow enemies.";
+	if (slowCount < slowCellTarget || !firstCellSlow) msg = 'Failed. ';
+	msg += i + ' Rerolls. Current roll = ' + slowCount + ' odd slow enemies.';
 	console.timeEnd();
 	atSettings.running = true;
-	debug(msg, "mapping_Details");
+	debug(msg, 'mapping_Details');
 }
