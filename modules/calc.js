@@ -101,11 +101,10 @@ class HDStats {
 		//Calculating Auto Level values.
 		this.autoLevel = autoMapLevel();
 		this.autoLevelInitial = checkAutoLevel ? stats() : this.autoLevelInitial;
-		this.autoLevelData = checkAutoLevel ? get_best(this.autoLevelInitial) : this.autoLevelData;
+		this.autoLevelData = get_best(this.autoLevelInitial, true);
 		this.autoLevelDataFrag = get_best(this.autoLevelInitial, true);
 		this.autoLevelNew = this.autoLevelDataFrag.overall.mapLevel;
 		this.autoLevelSpeed = this.autoLevelDataFrag.speed.mapLevel;
-		//this.autoLevelSpeedMapBonus = this.autoLevelDataFrag.speedBonus.mapLevel;
 	}
 }
 

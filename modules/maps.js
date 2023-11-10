@@ -245,10 +245,9 @@ function makeAdditionalInfoTooltip(mouseover) {
 	tooltipText += `<p><b>AL</b> (Auto Level)<br>`;
 	tooltipText += `The level that the script recommends using whilst farming.</p>`;
 
-	tooltipText += `<p><b>AL2</b> (Auto Level 2, based off of zFarm)<br>`;
+	tooltipText += `<p><b>AL2</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome} and ${mapSpecialModifierConfig[trimpStats.mapSpecial].name} maps.<br>`;
 	tooltipText += `L: The ideal map level for loot gains.<br>`;
-	tooltipText += `S: The ideal map level for a mixture of speed and loot gains.</p>`;
-
+	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks.</p>`;
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		tooltipText += `<p><b>Breed Timer (B)</b><br>`;
@@ -323,7 +322,7 @@ function makeFarmingDecisionHelpTooltip() {
 		if (challengeActive('Insanity')) tooltipText += `<p>Insanity Farm</p>`;
 		if (challengeActive('Alchemy')) tooltipText += `<p>Alchemy Farm</p>`;
 		if (challengeActive('Hypothermia')) tooltipText += `<p>Hypothermia Farm</p>`;
-		tooltipText += `<p>HD Farm</p>`;
+		tooltipText += `<p>HD Farm (and Hit Survived)</p>`;
 		tooltipText += `<p>Void Maps</p>`;
 		tooltipText += `<p>Map Bonus</p>`;
 		if (challengeActive('Wither')) tooltipText += `<p><b><i>Wither Farm</b></i></p>`;
