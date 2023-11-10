@@ -359,7 +359,7 @@ function makeAdditionalInfo() {
 	//Mapping auto level
 	description += `AL: ${hdStats.autoLevel}`;
 	description += lineBreak;
-	description += `AL2 (L:${hdStats.autoLevelData.overall.mapLevel} S:${hdStats.autoLevelDataFrag.speed.mapLevel})`;
+	description += `AL2 (L:${hdStats.autoLevelData.overall.mapLevel} S:${hdStats.autoLevelData.speed.mapLevel})`;
 	//Breed timer when you have an amalgamator
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		description += lineBreak;

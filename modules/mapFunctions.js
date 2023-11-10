@@ -38,7 +38,8 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'angerTimed',
 		universe: 1,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if ((game.global.world - 1 > map.level) && document.getElementById('portalBtn').style.display === 'none') return true; //Don't bother before z22
+			if (document.getElementById('portalBtn').style.display !== 'none') return false;
+			if ((game.global.world - 1 > map.level)) return true; //Don't bother before z22
 			else if (game.mapUnlocks.Portal.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		},
@@ -104,7 +105,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		universe: 2,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
-			if ((game.global.world - 1 > map.level)) return true; //Don't bother before z22
+			if ((game.global.world - 1 > map.level) && game.global.totalRadPortals < 5) return true; //Don't bother before z22
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		},
@@ -3416,7 +3417,7 @@ function farmingDecision() {
 	//If in desolation then check if we should destack before farming. 
 	//This will ALWAYS run when above 0 stacks and another type of farming is meant to be done as it will destack and then run the farming type.
 	if (farmingDetails.mapName !== '' && game.challenges.Desolation.chilled > 0 && getPageSetting('desolation') && !MODULES.mapFunctions.desolation.gearScum && challengeActive('Desolation') && !farmingDetails.mapName.includes('Desolation Destacking')) {
-		var desolationCheck = desolation(false, false, true);
+		var desolationCheck = desolation(false, true);
 		if (desolationCheck.shouldRun) {
 			farmingDetails = desolationCheck;
 			farmingDetails.settingName = desolation;

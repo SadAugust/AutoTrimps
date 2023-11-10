@@ -14,6 +14,8 @@ class TrimpStats {
 		this.mapSize = undefined;
 		this.mapDifficulty = undefined;
 		this.mountainPriority = undefined;
+		this.mapSpecial = undefined;
+		this.mapBiome = undefined;
 
 		const z = game.global.world;
 
@@ -30,6 +32,8 @@ class TrimpStats {
 		this.mapDifficulty = 0.75;
 		this.perfectMaps = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
 		this.plusLevels = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 50 : game.stats.highestLevel.valueTotal() >= 210;
+		this.mapSpecial = getAvailableSpecials('lmc');
+		this.mapBiome = getBiome();
 
 		this.mountainPriority = !(game.unlocks.imps.Chronoimp || game.unlocks.imps.Jestimp || getAvailableSpecials('lmc', true) === 'lmc' || getAvailableSpecials('lmc', true) === 'smc');
 	}
@@ -98,7 +102,7 @@ class HDStats {
 		this.autoLevel = autoMapLevel();
 		this.autoLevelInitial = checkAutoLevel ? stats() : this.autoLevelInitial;
 		this.autoLevelData = checkAutoLevel ? get_best(this.autoLevelInitial) : this.autoLevelData;
-		this.autoLevelDataFrag = checkAutoLevel ? get_best(this.autoLevelInitial, true) : this.autoLevelDataFrag;
+		this.autoLevelDataFrag = get_best(this.autoLevelInitial, true);
 		this.autoLevelNew = this.autoLevelDataFrag.overall.mapLevel;
 		this.autoLevelSpeed = this.autoLevelDataFrag.speed.mapLevel;
 		//this.autoLevelSpeedMapBonus = this.autoLevelDataFrag.speedBonus.mapLevel;

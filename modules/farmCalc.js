@@ -9,33 +9,53 @@ if (typeof MODULES === 'undefined') {
 	}
 }
 
-function callAutoMapLevel(settingName, currentAutoLevel, special, maxLevel, minLevel) {
+//Old setup!
+function callAutoMapLevel(settingName, mapLevel, special, maxLevel, minLevel) {
 	if (getPageSetting('autoLevelTest'))
-		return callAutoMapLevel_new(settingName);
+		return callAutoMapLevel_new(settingName, mapLevel, special);
 
-	if (settingName === '' || currentAutoLevel === Infinity) {
-		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
-		if (currentAutoLevel !== Infinity && atSettings.intervals.twoSecond) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
+	if (settingName === '' || mapLevel === Infinity) {
+		if (mapLevel === Infinity) mapLevel = autoMapLevel(special, maxLevel, minLevel);
+		if (mapLevel !== Infinity && atSettings.intervals.twoSecond) mapLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
-
-	//Increasing Map Level
-	if (atSettings.intervals.sixSecond && settingName !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
-		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
+	if (atSettings.intervals.sixSecond && settingName !== '') {
+		//Increasing Map Level
+		var autoLevel = autoMapLevel(special, maxLevel, minLevel)
+		if (autoLevel > mapLevel)
+			mapLevel = autoLevel;
+		autoLevel = autoMapLevel(special, maxLevel, minLevel, true);
+		//Decreasing Map Level
+		if (autoLevel < mapLevel)
+			mapLevel = autoLevel;
 	}
-
-	//Decreasing Map Level
-	if (atSettings.intervals.sixSecond && settingName !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
-		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, true);
-	}
-	return currentAutoLevel
+	return mapLevel
 }
 
-function callAutoMapLevel_new(mapName) {
-
-	//Need to add in a stat check to this!
-
+//New setup!
+function callAutoMapLevel_new(mapName, mapLevel, special) {
+	//Figure out if we're looking for speed or loot
 	const speedSettings = ['Map Bonus', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
-	var mapLevel = speedSettings.indexOf(mapName) >= 0 ? hdStats.autoLevelSpeed : hdStats.autoLevelNew;
+	const mapType = speedSettings.indexOf(mapName) >= 0 ? 'speed' : 'overall';
+	const mapModifiers = {
+		special: special ? special : trimpStats.mapSpecial,
+		biome: mapSettings.biome ? mapSettings.biome : trimpStats.mapBiome,
+	}
+	var autoLevel = 0;
+	//Get initial map level if not already set
+	if (mapLevel === Infinity)
+		mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+	//Check every 6 seconds if we should be increasing or decreasing map level so that the values don't fluctuate too often
+	else if (mapName !== '' && atSettings.intervals.sixSecond) {
+		autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+		//Increasing Map Level
+		if (autoLevel > mapLevel)
+			mapLevel = autoLevel;
+		//Decreasing Map Level. Ignores fragment costs so that we can identify if we have lost the ability to farm a map.
+		autoLevel = get_best(hdStats.autoLevelInitial)[mapType].mapLevel;
+		if (autoLevel < mapLevel)
+			mapLevel = autoLevel;
+	}
+
 	const mapBonusLevel = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
 	if (mapName === 'Map Bonus' && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
 	else if (mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
@@ -484,18 +504,14 @@ function populateZFarmData() {
 	}
 }
 
-// Return a list of efficiency stats for all sensible zones
+//Return a list of efficiency stats for all sensible zones
 function stats() {
-
 	var saveData = populateZFarmData();
-
 	var stats = [];
 	var extra = 0;
-	if (saveData.extraMapLevelsAvailable)
-		extra = 10;
-	extra = extra || -saveData.reducer;
-	var mapsCanAfford = 0;
-	const fragSetting = getPageSetting('onlyPerfectMaps');
+	if (saveData.reducer) extra = -1;
+	if (saveData.extraMapLevelsAvailable) extra = 10;
+	var mapsCanAffordPerfect = 0;
 	for (var mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
 		if (saveData.coordinate) {
 			var coords = 1;
@@ -505,39 +521,28 @@ function stats() {
 			saveData.challenge_attack = coords;
 		}
 		var tmp = zone_stats(mapLevel, saveData.stances, saveData);
-		if (tmp.value < 1 && mapLevel >= saveData.zone) {
-			continue;
-		}
+		if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 
 		//Check fragment cost of each map and remove them from the check if they can't be afforded.
-		if (fragSetting ? tmp.canAffordPerfect : tmp.canAfford)
-			mapsCanAfford++;
-
-		//Want to guarantee at least 6 results here so that we don't accidentally miss a good map to farm on
-		if (stats.length && mapsCanAfford >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) {
-			break;
-		}
+		if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
 		stats.unshift(tmp);
+		//Want to guarantee at least 6 results here so that we don't accidentally miss a good map to farm on
+		if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 40)) break;
 		if (tmp.zone === 'z6') break;
 	}
-
 	return [stats, saveData.stances];
 }
 
-// Return efficiency stats for the given zone
+//Return efficiency stats for the given zone
 function zone_stats(zone, stances, saveData) {
-	var result = {
+	const result = {
 		mapLevel: zone - saveData.zone,
 		zone: 'z' + zone,
 		value: 0,
 		stance: '',
 		loot: 100 * (zone < saveData.zone ? 0.8 ** (saveData.zone - saveData.reducer - zone) : 1.1 ** (zone - saveData.zone)),
-		canAfford: true,
+		canAffordPerfect: saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]),
 	};
-	if (!findMap(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, true))
-		result.canAffordPerfect = saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]);
-	if (!findMap(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome))
-		result.canAfford = saveData.fragments >= minMapFrag(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]);
 	if (!stances) stances = 'X';
 	for (var stance of stances) {
 		saveData.atk = saveData.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
@@ -563,7 +568,7 @@ function zone_stats(zone, stances, saveData) {
 	return result;
 }
 
-// Simulate farming at the given zone for a fixed time, and return the number cells cleared.
+//Simulate farming at the given zone for a fixed time, and return the number cells cleared.
 function simulate(saveData, zone) {
 	var trimpHealth = saveData.trimpHealth;
 	var debuff_stacks = 0;
@@ -882,24 +887,36 @@ function simulate(saveData, zone) {
 	}
 }
 
-// Return info about the best zone for each stance
-function get_best(results, fragmentCheck) {
+//Return info about the best zone for each stance
+function get_best(results, fragmentCheck, mapModifiers) {
 	var best = { overall: { mapLevel: 0, }, ratio: 0, speed: { mapLevel: 0, value: 0, speed: 0, } }
 	if (!game.global.mapsUnlocked) return best;
 
 	var [stats, stances] = results;
-	stats.slice();
-
+	stats = [...stats.slice()];
+	//The array can sometimes have maps out of order so got to sort them into the right order at the start
+	stats.sort((a, b) => b.mapLevel - a.mapLevel);
 	//Check fragment cost of each map and remove them from the check if they can't be afforded.
-	const fragSetting = getPageSetting('onlyPerfectMaps');
 	if (fragmentCheck) {
-		for (var i = stats.length - 1; i >= 0; i--) {
-			if (!fragSetting && stats[i].canAfford) continue;
-			if (fragSetting && stats[i].canAffordPerfect) continue;
-			stats.pop();
+		if (!mapModifiers) mapModifiers = {
+			special: getAvailableSpecials('lmc'),
+			biome: getBiome(),
+		}
+		const fragSetting = getPageSetting('onlyPerfectMaps');
+		for (var i = 0; i <= stats.length - 1; i++) {
+			if (fragSetting) {
+				if ((findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true))) continue;
+				if (game.resources.fragments.owned >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+			}
+			if (!fragSetting) {
+				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
+				if (game.resources.fragments.owned >= minMapFrag(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+			}
+			stats.splice(i, 1);
+			i--;
 		}
 	}
-	var statsSpeed = stats;
+	var statsSpeed = [...stats];
 	if (stats.length === 0) return best;
 	best.stances = {};
 	best.stancesSpeed = {};
@@ -1023,7 +1040,7 @@ function biomeEnemyStats(biome) {
 	return enemyBiome;
 }
 
-//If using standalone version then when loading Surky file also load CSS & Perky then load portal UI.
+//If using standalone version then when loading farmCalc file also load CSS & breedtimer+X.
 //After initial load everything should work perfectly.
 if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	//Load CSS so that the UI is visible
