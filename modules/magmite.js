@@ -20,8 +20,8 @@ function miRatio() {
 	MODULES.magmite.upgradeToPurchase = '';
 	MODULES.magmiteSettings = {};
 
-	const fuelStart = Math.max(230, getPageSetting("fuellater"));
-	const fuelEnd = Math.min(810, getPageSetting("fuelend"));
+	const fuelStart = Math.max(230, getPageSetting('fuellater', 1));
+	const fuelEnd = Math.min(810, getPageSetting('fuelend', 1));
 	MODULES.magmiteSettings = {
 		//runstats
 		fuelStart: {
@@ -141,7 +141,10 @@ function miRatio() {
 }
 
 function calculateMagmaZones() {
-	var myFuelZones = MODULES.magmiteSettings.fuelZones.value;
+	if (game.global.universe !== 1) return;
+	if (!getPageSetting('magmiteAutoFuel')) return;
+	miRatio();
+	var myFuelZones = getPageSetting('magmiteFuelZones', 1);
 	var bestAmals = MODULES.magmite.maxAmals;
 	MODULES.magmiteSettings.fuelStart.update(230, false);
 	var bestPop = 0;
@@ -159,8 +162,8 @@ function calculateMagmaZones() {
 	MODULES.magmiteSettings.fuelZones.update(myFuelZones);
 	MODULES.magmiteSettings.fuelEnd.update();
 
-	setPageSetting("fuellater", MODULES.magmiteSettings.fuelStart.value);
-	setPageSetting("fuelend", MODULES.magmiteSettings.fuelEnd.value);
+	setPageSetting('fuellater', MODULES.magmiteSettings.fuelStart.value, 1);
+	setPageSetting('fuelend', MODULES.magmiteSettings.fuelEnd.value, 1);
 }
 
 function calculateCoordIncrease() {
@@ -454,8 +457,10 @@ function checkDGUpgrades() {
 
 function autoMagmiteSpender(portal) {
 	if (game.global.universe !== 1) return;
+	//Set Fuel zones when portaling
+	if (portalWindowOpen) calculateMagmaZones();
 	if (!mutations.Magma.active()) return;
-	if (portal && (getPageSetting('spendmagmite') !== 1 || !portalWindowOpen)) return;
+	if (portal && (getPageSetting('spendmagmite', 1) !== 1 || !portalWindowOpen)) return;
 	if (getPageSetting('ratiospend', 1)) {
 		miRatio();
 		var toSpend = MODULES.magmite.upgradeToPurchase;
@@ -518,7 +523,7 @@ function autoMagmiteSpender(portal) {
 					item = EffObj.name;
 				else {
 					const supCost = sup.cost();
-					var wall = getPageSetting('SupplyWall');
+					var wall = getPageSetting('SupplyWall', 1);
 					if (!wall)
 						item = (CapObj.cost <= supCost) ?
 							CapObj.name : "Supply";
@@ -548,7 +553,7 @@ function autoMagmiteSpender(portal) {
 }
 
 function autoGenerator() {
-	if (!getPageSetting('UseAutoGen')) return;
+	if (!getPageSetting('UseAutoGen', 1)) return;
 	//Dimensional Generator locked
 	if (game.global.world < 230) return;
 

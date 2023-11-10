@@ -1955,8 +1955,7 @@ function initializeAllSettings() {
 				description += "<p>This setting is dependant on using <b>Bionic Raiding</b> in conjunction with it if you the Bionic Wonderland level you finish with to be higher than 605.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			},
-			'boolean', false, null, 'C2', [1],
+			}, 'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 600) });
 		createSetting('experienceStartZone',
 			function () { return ('E: Start Zone') },
@@ -3575,6 +3574,24 @@ function initializeAllSettings() {
 				return description;
 			}, 'infoclick', 'MagmiteExplain', null, 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
+
+		//Automate Fuel Zones
+		createSetting('magmiteAutoFuel',
+			function () { return ('Automate Fuel Zones') },
+			function () {
+				var description = "<p>Will change your zones immediately before auto portaling to ensure that they are accurate going into your next run.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Magma', [1]);
+		createSetting('magmiteFuelZones',
+			function () { return ('Zones To Fuel') },
+			function () {
+				var description = "<p>When Automate Fuel Zones runs it will use this value for how many zones you should fuel for.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and assume 20 zones.</p>";
+				description += "<p><b>Recommended:</b> 20</p>";
+				return description;
+			}, 'value', 20, null, 'Magma', [1],
+			function () { return (autoTrimpSettings.magmiteAutoFuel.enabled) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -4609,7 +4626,7 @@ function modifyParentNodeUniverseSwap() {
 	//C2
 	modifyParentNode("c2disableFinished", 'show');
 	modifyParentNode("c2Fused", 'show');
-	modifyParentNode("c2PreSpireNurseries", 'show');
+	modifyParentNode("c2AutoDStanceSpire", 'show');
 
 	modifyParentNode("experienceEndBW", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
