@@ -927,7 +927,14 @@ function get_best(results, fragmentCheck, mapModifiers) {
 		best.stances[stance] = stats[0].zone;
 
 		//Find the fastest zone for each stance - Useful for map bonus etc
-		statsSpeed.sort((a, b) => b[stance].speed - a[stance].speed);
+		statsSpeed.sort(function (a, b) {
+			if (a[stance].speed === b[stance].speed)
+				return (a.mapLevel < b.mapLevel) ?
+					((a[stance].value < b[stance].value) ? 1 : -1) :
+					((a.mapLevel < b.mapLevel) ? 1 : -1);
+			return (a[stance].speed < b[stance].speed) ? 1 : -1
+		});
+
 		best.stancesSpeed[stance] = statsSpeed[0].zone;
 		if (statsSpeed[0][stance].speed >= best.speed.speed && statsSpeed[0][stance].value >= best.speed.value) {
 			best.speed = {

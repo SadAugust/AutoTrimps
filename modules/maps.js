@@ -245,7 +245,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 	tooltipText += `<p><b>AL</b> (Auto Level)<br>`;
 	tooltipText += `The level that the script recommends using whilst farming.</p>`;
 
-	tooltipText += `<p><b>AL2</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome} and ${mapSpecialModifierConfig[trimpStats.mapSpecial].name} maps.<br>`;
+	tooltipText += `<p><b>AL2</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome} and ${trimpStats.mapSpecial !== '0' ? mapSpecialModifierConfig[trimpStats.mapSpecial].name : 'no special'} maps.<br>`;
 	tooltipText += `L: The ideal map level for loot gains.<br>`;
 	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks.</p>`;
 

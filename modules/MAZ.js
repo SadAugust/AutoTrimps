@@ -1675,12 +1675,12 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	}
 	if (golden) {
 		setting.sort(function (a, b) {
-			if (a.priority === b.priority) return 1; return (a.priority > b.priority) ? 1 : -1
+			if (a.priority === b.priority) return 1; return (a.priority > b.priority) ? 1 : -1;
 		});
 	}
 	else {
 		setting.sort(function (a, b) {
-			if (a.priority === b.priority) return (a.world === b.world) ? ((a.cell > b.cell) ? 1 : -1) : ((a.world > b.world) ? 1 : -1); return (a.priority > b.priority) ? 1 : -1
+			if (a.priority === b.priority) return (a.world === b.world) ? ((a.cell > b.cell) ? 1 : -1) : ((a.world > b.world) ? 1 : -1); return (a.priority > b.priority) ? 1 : -1;
 		});
 		//To ensure we always have base settings in position 0 of the array we want to unshift it after sorting.
 		setting.unshift(defaultSetting);
