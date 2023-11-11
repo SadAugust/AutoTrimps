@@ -3812,14 +3812,14 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'Fluffy', [1],
 			function () { return (getPageSetting('fluffyEvolve', currSettingUniverse)) });
 
-		/* createSetting('fluffyEvolve',
-			function () { return ('Respec on Evo') },
+		createSetting('fluffyRespec',
+			function () { return ('Fluffy: Respec on Evo') },
 			function () {
-				var description = "<p>Will respec your perks .</p>";
-				description += "<p>Will only evolve Fluffy when a <b>perk respec</b> is available.</p>";
-				description += "<p><b>Recommended:</b> Off</p>";
+				var description = "<p>Will respec your perks after evolving.</p>";
+				description += "<p>If enabled will only evolve Fluffy when a perk respec is available OR you have points in the Fluffy xp gain perks.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Fluffy', [1]); */
+			}, 'boolean', false, null, 'Fluffy', [1]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------

@@ -221,7 +221,7 @@ function buyJobs(forceRatios) {
 		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
 		if (getPageSetting(trimpStats.currChallenge.toLowerCase()))
 			if (game.upgrades.Coordination.done <= getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords')) {
-				if (!metCoordGoal) nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
+				nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
 				if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
 			}
 	}
