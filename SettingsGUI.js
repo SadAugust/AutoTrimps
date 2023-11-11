@@ -1945,8 +1945,19 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>If enabled then trapping (both ingame and through the script) will be disabled when you have the coordination amount input in <b>T: Coords</b>.</p>";
 				description += "<p>To work <b>T: Coords</b> must have an input above 0!</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
+
+		createSetting('trapperArmyPct',
+			function () { return ('T: Army Pct') },
+			function () {
+				var description = "<p>The percentage of owned trimps that you would like to send out when you need a new army.</p>";
+				description += "<p>If set to <b>0 or below</b> it will assume this is set to 100% and always send armies if possible.</p>";
+				description += "<p><b>Recommended:</b> 1</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		//Mapology
@@ -2103,9 +2114,20 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>If enabled then trapping (both ingame and through the script) will be disabled when you have the coordination amount input in <b>T: Coords</b>.</p>";
 				description += "<p>To work <b>T: Coords</b> must have an input above 0!</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (getPageSetting('trappapalooza', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
+
+		createSetting('trappapaloozaArmyPct',
+			function () { return ('T: Army Pct') },
+			function () {
+				var description = "<p>The percentage of owned trimps that you would like to send out when you need a new army.</p>";
+				description += "<p>If set to <b>0 or below</b> it will assume this is set to 100% and always send armies if possible.</p>";
+				description += "<p><b>Recommended:</b> 1</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
 
 		//Wither
 		createSetting('wither',
@@ -4668,7 +4690,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("experienceEndBW", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
 	modifyParentNode("duelShield", radonon);
-	modifyParentNode("trappapaloozaTrap", radonon);
+	modifyParentNode("trappapaloozaArmyPct", radonon);
 	modifyParentNode("wither", radonon);
 	modifyParentNode("questSmithyMaps", radonon);
 	modifyParentNode("mayhemSwapZone", radonon);
@@ -4684,7 +4706,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("balanceImprobDestack", radonoff);
 	modifyParentNode("decayStacksToAbandon", radonoff);
 	modifyParentNode("lifeStacks", radonoff);
-	modifyParentNode("trapperTrap", radonoff);
+	modifyParentNode("trapperArmyPct", radonoff);
 	modifyParentNode("mapologyPrestige", radonoff);
 	//modifyParentNode("toxicitySettings", radonon);
 	//modifyParentNode("archaeologyString3", radonon);

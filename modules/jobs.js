@@ -219,6 +219,7 @@ function buyJobs(forceRatios) {
 	//In the process store how much of each for later.
 	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
 		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
+		if (!game.global.fighting || game.global.soldierHealth <= 0) freeWorkers -= game.resources.trimps.maxSoldiers;
 		if (getPageSetting(trimpStats.currChallenge.toLowerCase()))
 			if (game.upgrades.Coordination.done <= getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords')) {
 				nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
