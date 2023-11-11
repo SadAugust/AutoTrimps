@@ -1938,7 +1938,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
-			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		createSetting('trapperTrap',
 			function () { return ('T: Disable Trapping') },
@@ -1947,7 +1947,7 @@ function initializeAllSettings() {
 				description += "<p>To work <b>T: Coords</b> must have an input above 0!</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
-			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		//Mapology
 		createSetting('mapology',
@@ -3811,6 +3811,15 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', -1, null, 'Fluffy', [1],
 			function () { return (getPageSetting('fluffyEvolve', currSettingUniverse)) });
+
+		/* createSetting('fluffyEvolve',
+			function () { return ('Respec on Evo') },
+			function () {
+				var description = "<p>Will respec your perks .</p>";
+				description += "<p>Will only evolve Fluffy when a <b>perk respec</b> is available.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Fluffy', [1]); */
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
