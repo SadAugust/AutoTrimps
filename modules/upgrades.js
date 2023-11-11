@@ -192,8 +192,8 @@ function buyUpgrades() {
 			//Coord & Amals
 			if (upgradeSetting === 2 || !canAffordCoordinationTrimps()) continue;
 			//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
-			if (challengeActive('Trappapalooza') && getPageSetting('trappapalooza')) {
-				if (getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')) continue;
+			if (challengeActive('Trappapalooza') || challengeActive('Trapper') && getPageSetting(trimpStats.currChallenge.toLowerCase())) {
+				if (getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords') > 0 && game.upgrades.Coordination.done >= getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords')) continue;
 				buyJobs();
 			}
 		}

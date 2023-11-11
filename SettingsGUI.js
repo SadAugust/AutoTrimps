@@ -1921,6 +1921,34 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
+		//Trapper
+		createSetting('trapper',
+			function () { return ('Trapper') },
+			function () {
+				var description = "<p>Enable this if you want to use coordination witholding features when running the <b>Trapper</b> challenge.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 70) });
+		createSetting('trapperCoords',
+			function () { return ('T: Coords') },
+			function () {
+				var description = "<p>The zone you would like to stop buying additional <b>Coordination</b> from.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting and not have any caps.</b></p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
+
+		createSetting('trapperTrap',
+			function () { return ('T: Disable Trapping') },
+			function () {
+				var description = "<p>If enabled then trapping (both ingame and through the script) will be disabled when you have the coordination amount input in <b>T: Coords</b>.</p>";
+				description += "<p>To work <b>T: Coords</b> must have an input above 0!</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [1],
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
+
 		//Mapology
 		createSetting('mapology',
 			function () { return ('Mapology') },
@@ -4647,6 +4675,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("balanceImprobDestack", radonoff);
 	modifyParentNode("decayStacksToAbandon", radonoff);
 	modifyParentNode("lifeStacks", radonoff);
+	modifyParentNode("trapperTrap", radonoff);
 	modifyParentNode("mapologyPrestige", radonoff);
 	//modifyParentNode("toxicitySettings", radonon);
 	//modifyParentNode("archaeologyString3", radonon);
