@@ -1,6 +1,6 @@
 function miRatio() {
 
-	if (MODULES.magmite && MODULES.magmite.upgradeToPurchase !== '') return;
+	if (MODULES.magmite && MODULES.magmite.upgradeToPurchase !== '' && MODULES.magmite.upgradeToPurchase !== undefined) return;
 	MODULES.magmite = {};
 	MODULES.magmite.carpMod = 0;
 	MODULES.magmite.minTick = 0;
@@ -466,6 +466,7 @@ function autoMagmiteSpender(portal) {
 		var toSpend = MODULES.magmite.upgradeToPurchase;
 		if (toSpend === '') return;
 		var upgrader = game.generatorUpgrades[toSpend];
+		if (upgrader === undefined) return;
 		if (game.global.magmite >= upgrader.cost()) {
 			debug("Auto Spending " + upgrader.cost() + " Magmite on: " + toSpend + " #" + (game.generatorUpgrades[toSpend].upgrades + 1), "magmite");
 			buyGeneratorUpgrade(toSpend);
