@@ -860,7 +860,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 			if (game.global.spireActive) {
 				attack = calcSpire('attack', cell, name);
 			} else if (mutations.Corruption.active()) {
-				if (game.global.gridArray[cell - 1].mutation) {
+				if (game.global.gridArray && game.global.gridArray[cell - 1].mutation) {
 					attack = corruptionBaseAttack(cell - 1, zone)
 				}
 			}
@@ -877,7 +877,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	//Curr zone Mutation Attack
 	else if (game.global.universe === 2) {
 		if (type === 'world' && game.global.world > 200) {
-			if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
+			if (game.global.gridArray && game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
 				attack = mutationBaseAttack(cell - 1, zone)
 			}
 		}

@@ -397,7 +397,7 @@ function voidMaps(lineCheck) {
 		else if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
 		for (var x = 0; x < zoneAddition + 1; x++) {
-			//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
+			//Running voids regardless of HD if we reach our max void zone OR run them if we have less HD Ratio than our target OR we can survive fewer hits than our target.
 			var skipLine = 0;
 			for (var item in dropdowns) {
 				var obj = hdObject[currSetting[hdTypes[item]]];
@@ -516,13 +516,13 @@ function voidMaps(lineCheck) {
 		if (mapSettings.dropdown2) farmingDetails.dropdown2 = mapSettings.dropdown2;
 		if (mapSettings.voidTrigger) farmingDetails.voidTrigger = mapSettings.voidTrigger;
 		if (mapSettings.portalAfterVoids) farmingDetails.portalAfterVoids = mapSettings.portalAfterVoids;
-	}
 
-	if (mapSettings.mapName === mapName && !shouldMap) {
-		mappingDetails(mapName, null, null, null, null, null);
-		resetMapVars();
-		MODULES.mapFunctions.afterVoids = false;
-		if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
+		if (mapSettings.mapName === mapName && !shouldMap) {
+			mappingDetails(mapName, null, null, null, null, null);
+			resetMapVars();
+			MODULES.mapFunctions.afterVoids = false;
+			if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
+		}
 	}
 
 	return farmingDetails;

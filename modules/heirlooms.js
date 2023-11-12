@@ -49,6 +49,7 @@ function evaluateHeirloomMods(loom, location) {
 			emptyMods++;
 			continue;
 		}
+		if (blacklist.indexOf(game.heirlooms[heirloomType][modName].name) !== -1) return 0;
 		modName = heirloomData[modName].name;
 		if (blacklist.indexOf(modName) !== -1) return 0;
 		targetMods = targetMods.filter(e => e !== modName);

@@ -1934,7 +1934,6 @@ function initializeAllSettings() {
 			function () { return ('T: Coords') },
 			function () {
 				var description = "<p>The zone you would like to stop buying additional <b>Coordination</b> from.</p>";
-				description += "<p><b>Set to 0 or -1 to disable this setting and not have any caps.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
@@ -2103,7 +2102,6 @@ function initializeAllSettings() {
 			function () { return ('T: Coords') },
 			function () {
 				var description = "<p>The zone you would like to stop buying additional <b>Coordination</b> from.</p>";
-				description += "<p><b>Set to 0 or -1 to disable this setting and not have any caps.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
@@ -3118,7 +3116,7 @@ function initializeAllSettings() {
 			function () { return ('Blacklist') },
 			function () {
 				var description = "<p>Will automatically recycle Shield heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names must be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
 			}, 'multiTextValue', 'None', null, 'Heirloom', [1, 2],
@@ -3253,7 +3251,7 @@ function initializeAllSettings() {
 			function () { return ('Blacklist') },
 			function () {
 				var description = "<p>Will automatically recycle Staff heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names must be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
 			}, 'multiTextValue', 'None', null, 'Heirloom', [1, 2],
@@ -3379,7 +3377,7 @@ function initializeAllSettings() {
 			function () { return ('Blacklist') },
 			function () {
 				var description = "<p>Will automatically recycle Core heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names must be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
 			}, 'multiTextValue', 'None', null, 'Heirloom', [1],

@@ -481,7 +481,7 @@ function populateZFarmData() {
 		//Enemy Stats
 		challenge: enemyHealth,
 		enemyAttack: enemyAttack,
-		fluctuation: game.global.universe === 2 ? 1.5 : 1.2,
+		fluctuation: game.global.universe === 2 ? 0.5 : 0.2,
 
 		//Misc
 		imports: imps,
@@ -669,7 +669,7 @@ function simulate(saveData, zone) {
 	function enemy_hit(enemyAttack) {
 		//Damage fluctations
 		var enemyAtk = enemyAttack
-		enemyAtk *= (saveData.fluctuation * rng());
+		enemyAtk *= (1 + saveData.fluctuation * (2 * rng() - 1));
 		//Enemy crit chance
 		var enemyCC = 0.25;
 		if (runningDuel) {
@@ -683,7 +683,7 @@ function simulate(saveData, zone) {
 		//Ice modifier
 		enemyAtk *= 0.366 ** (ice * saveData.ice);
 		//Equality mult
-		enemyAtk *= Math.pow(0.9, equality);
+		if (game.global.universe === 2) enemyAtk *= Math.pow(0.9, equality);
 		//Safety precaution for infinite Ice stacks
 		enemyAtk = Math.max(0, enemyAtk);
 		reduceTrimpHealth(enemyAtk);
@@ -739,11 +739,12 @@ function simulate(saveData, zone) {
 			else {
 				oneShot = true;
 			}
-
+			//Angelic talent heal
 			if (angelic && !runningBerserk) {
 				trimpHealth += (saveData.trimpHealth / 2);
 				if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 			}
+
 			// Fast enemy attack
 			if (fast)
 				enemy_hit(enemyAttack);
@@ -865,10 +866,6 @@ function simulate(saveData, zone) {
 
 		if (runningGlass && zone >= saveData.zone) glassStacks -= 2;
 		glassStacks = Math.max(0, glassStacks);
-		if (angelic && !runningBerserk) { //Angelic talent heal
-			trimpHealth += (saveData.trimpHealth / 2);
-			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
-		}
 		if (runningBerserk) { //1% heal onkill
 			trimpHealth += (saveData.trimpHealth / 100);
 			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
