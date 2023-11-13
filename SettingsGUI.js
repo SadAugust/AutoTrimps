@@ -1985,6 +1985,15 @@ function initializeAllSettings() {
 			}, 'C2', [1],
 			function () { return (getPageSetting('mapology', currSettingUniverse) && autoTrimpSettings.mapology.require()) });
 
+		createSetting('frigid',
+			function () { return ('Frigid') },
+			function () {
+				var description = "<p>When you have warmth stacks this will disable all forms of mapping except for Void Maps from being run.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 460) });
+
 		//Experience
 		createSetting('experience',
 			function () { return ('Experience') },
@@ -2124,8 +2133,8 @@ function initializeAllSettings() {
 				description += "<p>If set to <b>0 or below</b> it will assume this is set to 100% and always send armies if possible.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', -1, null, 'C2', [1],
-			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
+			}, 'value', -1, null, 'C2', [2],
+			function () { return (getPageSetting('trappapalooza', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
 
 		//Wither
 		createSetting('wither',
@@ -4706,6 +4715,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("lifeStacks", radonoff);
 	modifyParentNode("trapperArmyPct", radonoff);
 	modifyParentNode("mapologyPrestige", radonoff);
+	modifyParentNode("frigid", radonoff);
 	//modifyParentNode("toxicitySettings", radonon);
 	//modifyParentNode("archaeologyString3", radonon);
 

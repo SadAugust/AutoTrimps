@@ -3342,6 +3342,11 @@ function farmingDecision() {
 				obtainUniqueMap,
 			];
 
+		if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0)
+			mapTypes = [
+				voidMaps,
+			];
+
 		if (isDoingSpire() && getPageSetting('skipSpires') && game.global.mapBonus === 10) mapSettings = farmingDetails;
 	}
 
