@@ -188,7 +188,7 @@ function useScryerStance() {
 	var max_zone = getPageSetting('scryerMaxZone');
 	var valid_min = game.global.world >= min_zone && game.global.world > 60;
 	var valid_max = max_zone < 1 || (max_zone > 0 && game.global.world < max_zone);
-	if (useScryer && valid_min && valid_max && (!mapsActive || getPageSetting('scryerMinMaxWorld') === 0) && readyToSwitch()) {
+	if (useScryer && valid_min && valid_max && (!mapsActive || getPageSetting('scryerMinMaxWorld') === 0) && readyToSwitch(scryF)) {
 		//Smooth transition to S before killing the target
 		if (transitionRequired) {
 			for (critPower = 2; critPower >= -2; critPower--) {
