@@ -657,8 +657,8 @@ function resetVarsZone(loadingSave) {
 		MODULES.fightinfo.lastProcessedWorld = 0;
 		MODULES.portal.portalForVoid = false;
 		MODULES.mapFunctions.afterVoids = false;
-
 	}
+
 	delete mapSettings.voidHDIndex;
 	MODULES.heirlooms.plagueSwap = false;
 	MODULES.heirlooms.compressedCalc = false;
