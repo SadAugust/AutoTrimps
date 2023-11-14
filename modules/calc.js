@@ -59,6 +59,7 @@ class HDStats {
 		this.hitsSurvivedVoid = undefined;
 		this.autoLevel = undefined;
 		this.autoLevelInitial = hdStats.autoLevelInitial;
+		this.autoLevelZone = hdStats.autoLevelZone;
 		this.autoLevelData = hdStats.autoLevelData;
 		this.autoLevelDataFrag = hdStats.autoLevelDataFrag;
 		this.autoLevelNew = undefined;
@@ -66,7 +67,7 @@ class HDStats {
 
 		const z = game.global.world;
 
-		const checkAutoLevel = newZone ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
+		const checkAutoLevel = this.autoLevelInitial === undefined || (newZone && !checkIfLiquidZone()) ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
 
 		var voidPercent = 4.5;
 		if (game.global.world <= 59) {
@@ -79,7 +80,6 @@ class HDStats {
 			voidPercent -= 1;
 		}
 		if (challengeActive('Mapocalypse')) voidPercent += 3;
-
 		//Calculating HD values for current zone.
 		this.hdRatio = calcHDRatio(z, 'world', false, 1);
 		this.hdRatioMap = calcHDRatio(z, 'map', false, 0.75);
@@ -101,6 +101,7 @@ class HDStats {
 		//Calculating Auto Level values.
 		this.autoLevel = autoMapLevel();
 		this.autoLevelInitial = checkAutoLevel ? stats() : this.autoLevelInitial;
+		this.autoLevelZone = checkAutoLevel ? z : this.autoLevelZone;
 		this.autoLevelData = get_best(this.autoLevelInitial, true);
 		this.autoLevelDataFrag = get_best(this.autoLevelInitial, true);
 		this.autoLevelNew = this.autoLevelDataFrag.overall.mapLevel;

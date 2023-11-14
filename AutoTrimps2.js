@@ -187,6 +187,7 @@ function delayStartAgain() {
 	MODULES.heirlooms.gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
+	updateAutoMapsStatus();
 
 	//Copy gameLoop for when we enter toggleCatchUpMode.
 	originalGameLoop = gameLoop;

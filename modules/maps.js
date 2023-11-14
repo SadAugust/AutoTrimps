@@ -361,8 +361,15 @@ function makeAdditionalInfo() {
 	description += `AL2 (L:${hdStats.autoLevelData.overall.mapLevel} S:${hdStats.autoLevelData.speed.mapLevel})`;
 	//Breed timer when you have an amalgamator
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
+		var breedTimer = Math.floor(new Date().getTime());
+		if (game.options.menu.pauseGame.enabled) {
+			var dif = breedTimer - game.options.menu.pauseGame.timeAtPause;
+			breedTimer -= dif;
+		} breedTimer -= game.global.lastSoldierSentAt;
+		breedTimer /= 1000;
+
 		description += lineBreak;
-		description += `B: ${Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000)}s`;
+		description += `B: ${breedTimer.toFixed(0)}s`;
 	}
 	//Tenacity timer when you have tenacity
 	else if (game.global.universe === 2 && game.portal.Tenacity.radLevel > 0) {

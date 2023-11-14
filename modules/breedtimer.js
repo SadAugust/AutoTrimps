@@ -120,6 +120,9 @@ function geneAssist() {
 		toggleGeneticistassist(true);
 	}
 
+	while (game.options.menu.gaFire.enabled !== 1)
+		toggleSetting('gaFire');
+
 	var timeRemaining = breedTimeRemaining();
 	var totalTime = breedTotalTime();
 
@@ -192,7 +195,7 @@ function geneAssist() {
 	}
 	else if ((compareTime.add(thresh.mul(-1)).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || (potencyMod().cmp(1) === 0)) {
 		if (!genDif.isFinite()) genDif = new Decimal(-1);
-		if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled !== 2) {
+		if (genDif.cmp(0) < 0) {
 			if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
 			removeGeneticist(genDif.abs().toNumber());
 		}
