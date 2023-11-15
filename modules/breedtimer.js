@@ -56,11 +56,11 @@ function potencyMod() {
 		potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
 
 	//Void Maps (Slow Breed)
-	if (game.global.voidBuff === "slowBreed")
+	if (game.global.voidBuff === 'slowBreed')
 		potencyMod = potencyMod.mul(0.2);
 
 	//Heirlooms
-	potencyMod = calcHeirloomBonusDecimal("Shield", "breedSpeed", potencyMod);
+	potencyMod = calcHeirloomBonusDecimal('Shield', 'breedSpeed', potencyMod);
 
 	//Geneticists
 	if (game.jobs.Geneticist.owned > 0)
@@ -71,9 +71,9 @@ function potencyMod() {
 		potencyMod = potencyMod.mul(game.challenges.Archaeology.getStatMult('breed'));
 
 	//Quagmire
-	if (challengeActive('Quagmire')) {
+	if (challengeActive('Quagmire'))
 		potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
-	}
+
 	//Mutators
 	if (game.global.universe === 2) {
 		//Gene Attack
@@ -176,12 +176,10 @@ function geneAssist() {
 	var breedTime = (game.jobs.Amalgamator.owned > 0) ? (now - game.global.lastSoldierSentAt) / 1000 : game.global.lastBreedTime / 1000;
 	var thresh = new MODULES.breedtimer.DecimalBreed(totalTime.mul(0.02));
 	var compareTime;
-	if (timeRemaining.cmp(0.5) > 0) {
+	if (timeRemaining.cmp(0.5) > 0)
 		compareTime = new MODULES.breedtimer.DecimalBreed(timeRemaining.add(breedTime));
-	}
-	else {
+	else
 		compareTime = new MODULES.breedtimer.DecimalBreed(totalTime);
-	}
 	if (!thresh.isFinite()) thresh = new Decimal(0);
 	if (!compareTime.isFinite()) compareTime = new Decimal(999);
 	var genDif = new MODULES.breedtimer.DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();

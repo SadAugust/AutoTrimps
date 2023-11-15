@@ -1641,10 +1641,9 @@ function prestigeClimb(lineCheck) {
 }
 
 function findLastBionicWithItems(bionicPool) {
-	if (game.global.world < 115 || !bionicPool)
-		return;
+	if (game.global.world < 115 || !bionicPool) return;
 	if (challengeActive('Mapology') && !getPageSetting('mapology')) return;
-	const targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
+	const targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : 'GambesOP';
 
 	if (bionicPool.length > 1) {
 		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
@@ -4014,7 +4013,6 @@ function mapScumming(slowTarget) {
 	if (!game.global.mapsActive) return;
 	if (game.global.lastClearedMapCell > -1) return;
 	if (!atSettings.running) return;
-	console.time();
 	atSettings.running = false;
 
 	const map = getCurrentMapObject();
@@ -4034,6 +4032,7 @@ function mapScumming(slowTarget) {
 	//Setting up variables for heirloom swapping!
 	game.global.mapRunCounter = 0;
 	MODULES.maps.slowScumming = true;
+	console.time();
 
 	//Repeats the process of exiting and re-entering maps until the first cell is slow and you have desired slow cell count on odd cells!
 	while (slowCount < slowCellTarget || !firstCellSlow) {

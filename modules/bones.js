@@ -8,13 +8,16 @@ function boneShrine() {
 
 	//Setting up variables
 	var settingIndex = null;
+	var setting;
 	var boneCharges = game.permaBoneBonuses.boosts.charges;
 
 	//If we have enough bone charges then spend them automatically to stop from capping
-	if (defaultSettings.autoBone && boneCharges >= defaultSettings.bonebelow && game.global.world >= defaultSettings.world)
-		settingIndex = true;
-
-	const totalPortals = getTotalPortals();
+	if (defaultSettings.autoBone && boneCharges >= defaultSettings.bonebelow && game.global.world >= defaultSettings.world) {
+		setting = defaultSettings;
+		if (setting.bonebelow <= 0) setting.bonebelow = 999;
+		setting.atlantrimp = false;
+		setting.boneShrineCharges = 1;
+	}
 	for (var y = 0; y < baseSettings.length; y++) {
 		if (y === 0) continue;
 		const currSetting = baseSettings[y];
@@ -22,55 +25,46 @@ function boneShrine() {
 		if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 		settingIndex = y;
 		break;
-
 	}
-	if (settingIndex !== null) {
+	if (settingIndex !== null) setting = baseSettings[settingIndex];
 
-		var setting;
-
-		if (settingIndex === true) {
-			setting = defaultSettings;
-			if (setting.bonebelow <= 0) setting.bonebelow = 999;
-		} else {
-			setting = baseSettings[settingIndex];
-		}
+	if (setting !== undefined) {
 		var boneShrineCharges = setting.boneamount;
 		var boneShrineGather = setting.gather;
-		if (challengeActive('Transmute') && boneShrineGather === 'metal') boneShrineGather = 'wood';
+		if (boneShrineGather === 'metal' && challengeActive('Transmute')) boneShrineGather = 'wood';
 		var boneShrineSpendBelow = setting.bonebelow === -1 ? 0 : setting.bonebelow;
-		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || settingIndex === true ? false : setting.atlantrimp;
+		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : setting.atlantrimp;
 		var boneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 
 		if (boneShrineCharges > boneCharges - boneShrineSpendBelow)
 			boneShrineCharges = boneCharges - boneShrineSpendBelow;
-
-		if (settingIndex === true) boneShrineCharges = 1;
-
-		//Equip staff for the gather type the user is using
-		if (getPageSetting('heirloomStaff')) {
-			if (getPageSetting('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1)) !== 'undefined')
-				heirloomEquipStaff('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1));
-			else if (getPageSetting('heirloomStaffMap') !== 'undefined')
-				heirloomEquipStaff('heirloomStaffMap');
-		}
 		if (boneShrineAtlantrimp) {
 			runUniqueMap(boneShrineDoubler);
 		}
-		if (!boneShrineAtlantrimp || (boneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === boneShrineDoubler && game.global.lastClearedMapCell >= getCurrentMapObject().size - 30)) {
+		const map = getCurrentMapObject();
+		if (!boneShrineAtlantrimp || (boneShrineAtlantrimp && game.global.mapsActive && map === boneShrineDoubler && game.global.lastClearedMapCell >= map - 30)) {
+			//Use bone charges
 			for (var x = 0; x < boneShrineCharges; x++) {
-				if (getPageSetting('jobType') > 0) {
-					buyJobs(setting.jobratio);
+				//Equip staff for the gather type the user is using
+				if (getPageSetting('heirloomStaff')) {
+					if (getPageSetting('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1)) !== 'undefined')
+						heirloomEquipStaff('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1));
+					else if (getPageSetting('heirloomStaffMap') !== 'undefined')
+						heirloomEquipStaff('heirloomStaffMap');
 				}
+				//Set job ratio
+				if (getPageSetting('jobType') > 0)
+					buyJobs(setting.jobratio);
+				//Set gather
 				safeSetGather(boneShrineGather);
 				game.permaBoneBonuses.boosts.consume();
 			}
-			debug('Consumed ' + boneShrineCharges + ' bone shrine ' + (boneShrineCharges === 1 ? 'charge on zone ' : 'charges on zone ') + game.global.world + ' and gained ' + boneShrineOutput(boneShrineCharges), 'bones');
+			debug('Consumed ' + boneShrineCharges + ' bone shrine charge' + (boneShrineCharges === 1 ? '' : 's') + ' on zone ' + game.global.world + ' and gained ' + boneShrineOutput(boneShrineCharges), 'bones');
 
 			if (setting && settingName && setting.row) {
 				var value = game.global.universe === 2 ? 'valueU2' : 'value';
-				game.global.addonUser[settingName][value][setting.row].done = (totalPortals + "_" + game.global.world);
+				game.global.addonUser[settingName][value][setting.row].done = (getTotalPortals() + '_' + game.global.world);
 			}
-			saveSettings();
 		}
 	}
 }
@@ -116,7 +110,7 @@ function buySingleRunBonuses() {
 	}
 
 	//Purchase Radonculous/Heliumy if we have enough bones and running Dailies
-	if (challengeActive('Daily') && !game.singleRunBonuses.heliumy.owned && getPageSetting('buyheliumy', portalUniverse) > 0 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100) {
+	if (trimpStats.isDaily && !game.singleRunBonuses.heliumy.owned && getPageSetting('buyheliumy', portalUniverse) > 0 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100) {
 		purchaseSingleRunBonus('heliumy');
 		debug('Purchased ' + (currSettingUniverse === 2 ? 'Radonculous' : 'Heliumy') + '  for 100 bones on this ' + getPageSetting('buyheliumy', portalUniverse) + '% daily.', 'bones');
 	}

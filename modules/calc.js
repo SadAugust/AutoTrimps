@@ -122,7 +122,7 @@ function debugCalc() {
 	var zone = (mapType === 'world') ? game.global.world : getCurrentMapObject().level;
 	var cell = (mapType === 'world') ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
 	var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
-	var name = getCurrentEnemy() ? getCurrentEnemy().name : "Chimp";
+	var name = getCurrentEnemy() ? getCurrentEnemy().name : 'Chimp';
 	var equality = game.global.universe === 2 ? Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount) : 1;
 	var enemyMin = calcEnemyAttackCore(mapType, zone, cell, name, true, false, 0) * difficulty;
 	var enemyMax = calcEnemyAttackCore(mapType, zone, cell, name, false, false, 0) * difficulty;
@@ -131,13 +131,13 @@ function debugCalc() {
 	var universeSetting2 = game.global.universe === 2 ? false : true;
 
 	//Init
-	var displayedMin = calcOurDmg("min", universeSetting, true, mapType, 'never', mapLevel, true);
-	var displayedMax = calcOurDmg("max", universeSetting, true, mapType, 'never', mapLevel, true);
+	var displayedMin = calcOurDmg('min', universeSetting, true, mapType, 'never', mapLevel, true);
+	var displayedMax = calcOurDmg('max', universeSetting, true, mapType, 'never', mapLevel, true);
 
 	//Trimp Stats
-	debug(`Our Stats`, "other");
+	debug(`Our Stats`, 'other');
 	debug(`Our attack: ${displayedMin.toExponential(2)} - ${displayedMax.toExponential(2)}`);
-	debug(`Our crit: ${100 * getPlayerCritChance().toExponential(2)} % for ${getPlayerCritDamageMult().toFixed(1)}x damage. Average of ${getCritMulti("maybe").toFixed(2)}x`);
+	debug(`Our crit: ${100 * getPlayerCritChance().toExponential(2)} % for ${getPlayerCritDamageMult().toFixed(1)}x damage. Average of ${getCritMulti('maybe').toFixed(2)}x`);
 	if (game.global.universe === 1) debug(`Our block: ${calcOurBlock(true, true).toExponential(2)}`);
 	if (game.global.universe === 2) debug(`Our equality: ${game.portal.Equality.disabledStackCount}`);
 	debug(`Our Health: ${calcOurHealth(universeSetting2, mapType).toExponential(2)}`);
@@ -172,7 +172,7 @@ function calcOurBlock(stance, realBlock) {
 	var trainer = game.jobs.Trainer;
 	if (trainer.owned > 0) {
 		var trainerStrength = trainer.owned * (trainer.modifier / 100);
-		block *= 1 + calcHeirloomBonus("Shield", "trainerEfficiency", trainerStrength);
+		block *= 1 + calcHeirloomBonus('Shield', 'trainerEfficiency', trainerStrength);
 	}
 
 	//Coordination
@@ -182,7 +182,7 @@ function calcOurBlock(stance, realBlock) {
 	if (stance && game.global.formation !== 0) block *= game.global.formation === 3 ? 4 : 0.5;
 
 	//Heirloom
-	var heirloomBonus = calcHeirloomBonus("Shield", "trimpBlock", 0, true);
+	var heirloomBonus = calcHeirloomBonus('Shield', 'trimpBlock', 0, true);
 	if (heirloomBonus > 0) block *= (heirloomBonus / 100) + 1;
 
 	return block;
@@ -194,8 +194,8 @@ function calcEquipment(type = 'attack') {
 	var equipmentList;
 
 	//Equipment names
-	if (type === 'attack') equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
-	else equipmentList = ["Shield", "Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate", "Gambeson"];
+	if (type === 'attack') equipmentList = ['Dagger', 'Mace', 'Polearm', 'Battleaxe', 'Greatsword', 'Arbalest'];
+	else equipmentList = ['Shield', 'Boots', 'Helmet', 'Pants', 'Shoulderguards', 'Breastplate', 'Gambeson'];
 
 	//For each equipment
 	for (var i = 0; i < equipmentList.length; i++) {
@@ -372,7 +372,7 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 
 	//Crit Daily and Crushed
 	if (game.global.universe === 1 && ((getPageSetting('IgnoreCrits') === 1 && type !== 'void') || getPageSetting('IgnoreCrits') === 0)) {
-		const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== "undefined";
+		const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 		const crushed = challengeActive('Crushed');
 		if (dailyCrit) {
 			damageMult = dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
@@ -500,7 +500,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 	attack *= game.global.antiStacks > 0 ? getAnticipationBonus() : 1;
 	//Formation
 	if (specificStance && game.global.formation !== 0 && game.global.formation !== 5) attack /= (game.global.formation === 2) ? 4 : 0.5;
-	if (specificStance && specificStance !== "X" && specificStance !== "W") attack *= (specificStance === "D") ? 4 : 0.5;
+	if (specificStance && specificStance !== 'X' && specificStance !== 'W') attack *= (specificStance === 'D') ? 4 : 0.5;
 	// Map Bonus
 	attack *= mapType !== 'world' ? 1 : game.talents.mapBattery.purchased && game.global.mapBonus === 10 ? 5 : 1 + (game.global.mapBonus * .2);
 	// Tenacity
@@ -585,7 +585,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 	// Pspire Strength Towers
 	attack *= 1 + (playerSpireTraps.Strength.getWorldBonus() / 100);
 	//Poison Empowerment
-	attack *= game.global.uberNature === "Poison" ? 3 : 1;
+	attack *= game.global.uberNature === 'Poison' ? 3 : 1;
 	// Sharp Trimps
 	attack *= game.singleRunBonuses.sharpTrimps.owned ? 1.5 : 1;
 	//Mutator
@@ -642,8 +642,8 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 		if (typeof game.global.dailyChallenge.rampage !== 'undefined' && mapType === 'map') attack *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, dailyModifiers.rampage.getMaxStacks(game.global.dailyChallenge.rampage.strength));
 
 		//Range Dailies
-		if (typeof game.global.dailyChallenge.minDamage !== "undefined") minFluct = (1 - dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength));
-		if (typeof game.global.dailyChallenge.maxDamage !== "undefined") maxFluct = dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength);
+		if (typeof game.global.dailyChallenge.minDamage !== 'undefined') minFluct = (1 - dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength));
+		if (typeof game.global.dailyChallenge.maxDamage !== 'undefined') maxFluct = dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength);
 
 		// Min damage reduced (additive)
 		minDailyMod -= typeof game.global.dailyChallenge.minDamage !== 'undefined' ? dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength) : 0;
@@ -1042,7 +1042,7 @@ function calcEnemyBaseHealth(mapType, zone, cell, name, ignoreCompressed) {
 	if (!mapType) mapType = (!game.global.mapsActive) ? 'world' : (getCurrentMapObject().location === 'Void' ? 'void' : 'map');
 	if (!zone) zone = (mapType === 'world' || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
 	if (!cell) cell = (mapType === 'world' || !game.global.mapsActive) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
-	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : "Turtlimp";
+	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : 'Turtlimp';
 
 	//Init
 	var base = (game.global.universe === 2) ? 10e7 : 130;
@@ -1122,7 +1122,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	if (!type) type = (!game.global.mapsActive) ? 'world' : (getCurrentMapObject().location === 'Void' ? 'void' : 'map');
 	if (!zone) zone = (type === 'world' || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
 	if (!cell) cell = (type === 'world' || !game.global.mapsActive) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
-	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : "Turtlimp";
+	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : 'Turtlimp';
 
 	//Init
 	var health = calcEnemyBaseHealth(type, zone, cell, name);
@@ -1206,7 +1206,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	return health;
 }
 
-function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp", customHealth) {
+function calcEnemyHealth(type, zone, cell = 99, name = 'Turtlimp', customHealth) {
 	//Init
 	var health = calcEnemyHealthCore(type, zone, cell, name, customHealth);
 	var corrupt = zone >= mutations.Corruption.start();
@@ -1236,9 +1236,9 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	if (!enemy) return -1;
 
 	//Init
-	var corrupt = enemy.corrupted && enemy.corrupted !== "none";
-	var healthy = corrupt && enemy.corrupted.startsWith("healthy");
-	var name = corrupt ? "Chimp" : (forcedName) ? forcedName : enemy.name;
+	var corrupt = enemy.corrupted && enemy.corrupted !== 'none';
+	var healthy = corrupt && enemy.corrupted.startsWith('healthy');
+	var name = corrupt ? 'Chimp' : (forcedName) ? forcedName : enemy.name;
 	var health = calcEnemyHealthCore(type, zone, cell, name);
 
 	//Challenges - considers the actual scenario for this enemy
@@ -1255,13 +1255,13 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	//Corruption
 	else if (type === 'world' && !healthy && (corrupt || mutations.Corruption.active() && cell === 100) && !game.global.spireActive) {
 		health *= calcCorruptionScale(zone, 10);
-		if (enemy.corrupted === "corruptTough") health *= 5;
+		if (enemy.corrupted === 'corruptTough') health *= 5;
 	}
 
 	//Healthy
 	else if (type === 'world' && healthy) {
 		health *= calcCorruptionScale(zone, 14);
-		if (enemy.corrupted === "healthyTough") health *= 7.5;
+		if (enemy.corrupted === 'healthyTough') health *= 7.5;
 	}
 
 	return health;
@@ -1306,9 +1306,9 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 			ourBaseDamage /= 1 + 0.2 * game.global.mapBonus;
 			ourBaseDamage *= game.talents.mapBattery.purchased ? 5 : 3;
 		}
-		if (game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
+		if (game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness')))) {
 			ourBaseDamage /= game.portal.Tenacity.getMult();
-			ourBaseDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
+			ourBaseDamage *= Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness'));
 		}
 	}
 	//Lead Challenge
@@ -1645,7 +1645,7 @@ function getTotalHealthMod() {
 	healthMulti *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
 	healthMulti *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
 	healthMulti *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
-	healthMulti *= challengeActive('Alchemy') ? alchObj.getPotionEffect("Potion of Strength") : 1;
+	healthMulti *= challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Strength') : 1;
 	healthMulti *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	// Daily mod
 	healthMulti *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
@@ -1659,7 +1659,7 @@ function getTotalHealthMod() {
 function gammaMaxStacks(specialChall, actualCheck) {
 	var gammaMaxStacks = 5
 	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
-	if (Fluffy.isRewardActive("scruffBurst")) gammaMaxStacks--;
+	if (Fluffy.isRewardActive('scruffBurst')) gammaMaxStacks--;
 	if (actualCheck && MODULES.heirlooms.gammaBurstPct === 1) return 1;
 	if (MODULES.heirlooms.gammaBurstPct === 1 || (specialChall && game.global.mapsActive)) gammaMaxStacks = Infinity;
 	return gammaMaxStacks;
@@ -1772,9 +1772,9 @@ function simpleSeconds_AT(what, seconds, workerRatio) {
 		amt *= game.challenges.Desolation.trimpResourceMult();
 	//Calculating heirloom bonus
 	if (heirloom === null)
-		amt = calcHeirloomBonus("Staff", jobName + "Speed", amt);
+		amt = calcHeirloomBonus('Staff', jobName + 'Speed', amt);
 	else
-		amt = calcHeirloomBonus_AT('Staff', jobName + "Speed", amt, false, heirloom);
+		amt = calcHeirloomBonus_AT('Staff', jobName + 'Speed', amt, false, heirloom);
 
 	var turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
 
@@ -1793,7 +1793,7 @@ function scaleToCurrentMap_AT(amt, ignoreBonuses, ignoreScry, map) {
 			game.global.world;
 	game.global.world + map;
 	var compare = game.global.world;
-	if (map > compare && map.location !== "Bionic") {
+	if (map > compare && map.location !== 'Bionic') {
 		amt *= Math.pow(1.1, (map - compare));
 	} else {
 		if (game.talents.mapLoot.purchased)
@@ -1858,7 +1858,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	if (Number.isInteger(forceMax)) forceMax = forceMax;
 	//if (!forceMax) var forceMax = false;
 	var forceMax = Number.isInteger(forceMax) ? forceMax : false;
-	var currentOwned = (itemObj.purchased) ? itemObj.purchased : ((itemObj.level) ? itemObj.level : itemObj.owned);
+	var currentOwned = itemObj.purchased ? itemObj.purchased : (itemObj.level ? itemObj.level : itemObj.owned);
 	if (!currentOwned) currentOwned = 0;
 	if (isJob && game.global.firing && !forceRatio) return Math.floor(currentOwned * game.global.maxSplit);
 	for (var item in itemObj.cost) {
@@ -1877,7 +1877,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 					resourcesAvailable;
 		}
 		if (!resource || typeof resourcesAvailable === 'undefined') {
-			console.log("resource " + item + " not found");
+			console.log('resource ' + item + ' not found');
 			return 1;
 		}
 		if (typeof price[1] !== 'undefined') {
@@ -1886,7 +1886,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 				var artMult = getEquipPriceMult();
 				start = Math.ceil(start * artMult);
 			}
-			if (isBuilding && getPerkLevel("Resourceful")) start = start * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful")));
+			if (isBuilding && getPerkLevel('Resourceful')) start = start * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful')));
 			toBuy = Math.floor(log10(((resourcesAvailable / (start * Math.pow(price[1], currentOwned))) * (price[1] - 1)) + 1) / log10(price[1]));
 
 		}
@@ -1894,7 +1894,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 			return 1;
 		}
 		else {
-			if (isBuilding && getPerkLevel("Resourceful")) price = Math.ceil(price * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful"))));
+			if (isBuilding && getPerkLevel('Resourceful')) price = Math.ceil(price * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful'))));
 			toBuy = Math.floor(resourcesAvailable / price);
 		}
 		if (mostAfford === -1 || mostAfford > toBuy) mostAfford = toBuy;
@@ -2051,7 +2051,7 @@ function remainingHealth(forceAngelic, mapType) {
 			energyShieldMult = getEnergyShieldMult_AT(mapType, true);
 			const newShieldMult = getHeirloomBonus_AT('Shield', 'prismatic', heirloomToCheck) / 100;
 			const shieldPrismatic = newShieldMult > 0 ? energyShieldMult + newShieldMult : energyShieldMult;
-			currShieldPrismatic = energyShieldMult + getHeirloomBonus("Shield", "prismatic") / 100;
+			currShieldPrismatic = energyShieldMult + getHeirloomBonus('Shield', 'prismatic') / 100;
 
 			if (currShieldPrismatic > 0) shieldMax /= currShieldPrismatic;
 			shieldMax *= shieldPrismatic;

@@ -247,9 +247,10 @@ function c2runnerportal(portalZone) {
 
 function c2runner() {
 	if (!game.global.portalActive) return;
+	if (!portalWindowOpen) return;
 	if ((portalUniverse === 1 && game.stats.highestLevel.valueTotal() < 65) || (portalUniverse === 2 && game.stats.highestRadLevel.valueTotal() < 50)) return;
 	if (!getPageSetting('c2RunnerStart', portalUniverse)) return;
-	if (getPageSetting('c2RunnerMode', portalUniverse) === 0 && getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0) return;
+	if (getPageSetting('c2RunnerMode', portalUniverse) === 0 && (getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0)) return;
 
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
