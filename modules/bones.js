@@ -16,7 +16,7 @@ function boneShrine() {
 		setting = defaultSettings;
 		if (setting.bonebelow <= 0) setting.bonebelow = 999;
 		setting.atlantrimp = false;
-		setting.boneShrineCharges = 1;
+		setting.boneamount = 1;
 	}
 	for (var y = 0; y < baseSettings.length; y++) {
 		if (y === 0) continue;
@@ -36,7 +36,7 @@ function boneShrine() {
 		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : setting.atlantrimp;
 		var boneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 
-		if (boneShrineCharges > boneCharges - boneShrineSpendBelow)
+		if (!setting.autoBone && boneShrineCharges > boneCharges - boneShrineSpendBelow)
 			boneShrineCharges = boneCharges - boneShrineSpendBelow;
 		if (boneShrineAtlantrimp) {
 			runUniqueMap(boneShrineDoubler);
