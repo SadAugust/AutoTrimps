@@ -3846,6 +3846,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will respec your perks after evolving.</p>";
 				description += "<p>If enabled will only evolve Fluffy when a perk respec is available OR you have points in the Fluffy xp gain perks.</p>";
+				description += "<p>This setting won't do anything if the <b>Auto Allocate Perks</b> setting is disabled. Uses your current preset and weights to respec to.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Fluffy', [1]);

@@ -343,6 +343,15 @@ function fluffyEvolution() {
 	var bpsToUse = getPageSetting('fluffyBP');
 	if (bpsToUse > 0 && game.global.b % 100 < bpsToUse) return;
 
+	var perkRespec = false;
+	if (getPageSetting('fluffyRespec') && getPageSetting('autoPerks') && !game.portal.Cunning.locked) {
+		const perkLevels = getPerkLevel('Cunning') + getPerkLevel('Curious') + getPerkLevel('Classy');
+		if (perkLevels <= 0) {
+			if (!game.global.canRespecPerks) return;
+			perkRespec = true;
+		}
+	}
+
 	Fluffy.prestige();
 
 	while (bpsToUse > 0) {
@@ -350,4 +359,11 @@ function fluffyEvolution() {
 		bpsToUse--;
 	}
 	hideBones();
+
+	if (perkRespec) {
+		viewPortalUpgrades();
+		runPerky();
+		activateClicked();
+	}
+	return;
 }
