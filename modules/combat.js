@@ -86,6 +86,7 @@ function armyDeath() {
 	if (game.global.mapsActive) return false;
 	if (runningDaily && typeof game.global.dailyChallenge.empower === 'undefined') return false;
 	if (!getPageSetting('avoidEmpower')) return false;
+	if (game.global.soldierHealth <= 0) return false;
 
 	//Trimps Stats
 	var ourHealth = game.global.soldierHealth;

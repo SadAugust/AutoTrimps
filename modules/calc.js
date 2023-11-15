@@ -67,7 +67,7 @@ class HDStats {
 
 		const z = game.global.world;
 
-		const checkAutoLevel = this.autoLevelInitial === undefined || (newZone && !checkIfLiquidZone()) ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
+		const checkAutoLevel = this.autoLevelInitial === undefined ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
 
 		var voidPercent = 4.5;
 		if (game.global.world <= 59) {
