@@ -258,9 +258,8 @@ function pushSpreadsheetData() {
 function getPageSetting(setting, universe = game.global.universe) {
 	if (!autoTrimpSettings.hasOwnProperty(setting))
 		return false;
-
 	const settingType = autoTrimpSettings[setting].type;
-	const u2Setting = setting !== 'universeSetting' && universe === 2;
+	const u2Setting = autoTrimpSettings[setting].universe.indexOf(0) === -1 && setting !== 'universeSetting' && universe === 2;
 	const enabled = 'enabled' + (u2Setting ? 'U2' : '');
 	const selected = 'selected' + (u2Setting ? 'U2' : '');
 	const value = 'value' + (u2Setting ? 'U2' : '');
