@@ -37,7 +37,7 @@ Configure settings. Will NOT work as intended with default settings.
 
 Step 1: 
 
-Go to this link to open the mods.js file on Github: <a href="https://github.com/SadAugust/AutoTrimps/blob/main/mods.js">mods.js</a>  
+Go to this link to open the mods.js file: <a href="https://github.com/SadAugust/AutoTrimps/blob/main/mods.js">mods.js</a>  
 Then, right click the Raw button, hit Save link as, and save the mods.js file somewhere to your computer where you can find it, like desktop.  
 ![Download mods.js](https://i.imgur.com/opuO6yd.png)   
 

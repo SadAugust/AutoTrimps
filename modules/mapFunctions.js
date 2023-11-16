@@ -1903,15 +1903,15 @@ function experience(lineCheck) {
 	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
 	const mapSpecial = trimpStats.hyperspeed ? '0' : 'fa';
 	const mapLevel = 0;
-	var status = '';
+	var status = mapName;
 	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) {
 		shouldMap = true;
-		status = 'Experience: Farming Wonders';
+		status += ': Farming Wonders';
 	}
 	else {
-		shouldMap = game.global.world > 600 && game.global.world >= (Math.max(605, getPageSetting('experienceEndZone')));
+		shouldMap = game.global.world > 600 && game.global.world >= (Math.max(601, getPageSetting('experienceEndZone')));
 		if (shouldMap) mapName = 'Bionic Raiding';
-		status = 'Experience: Ending Challenge';
+		status += ': Ending Challenge';
 	}
 
 	//As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
