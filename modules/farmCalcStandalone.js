@@ -160,7 +160,9 @@ function makeAdditionalInfo() {
     const extraType = u2 ? 'equality' : 'stance';
     const loot = `Loot ${initialInfo.overall.mapLevel}  ${extraType.charAt(0)}${initialInfo.overall[extraType]}`;
     const speed = `Speed ${initialInfo.speed.mapLevel}  ${extraType.charAt(0)}${initialInfo.speed[extraType]}`;
-    return description = `Auto Level: ${loot} ${speed}`;
+    var description = `Auto Level:`;
+    if (!game.global.mapsUnlocked) return description += ` Maps not unlocked!`;
+    return description += `${loot} ${speed}`;
 }
 
 function makeAdditionalInfoTooltip(mouseover) {
@@ -174,11 +176,11 @@ function makeAdditionalInfoTooltip(mouseover) {
     }
 
     tooltipText += `<p><b>Auto Level</b><br>\
-    The level that the script recommends using whilst farming. This map level output assumes you are running ${getBiome()} and ${getAvailableSpecials('lmc') !== '0' ? mapSpecialModifierConfig[getAvailableSpecials('lmc')].name : 'no special'} maps with the best map sliders available.</p>`;
+    The level that the script recommends using whilst farming. The map level outputs assume you are running ${getBiome() === 'Plentiful' ? 'Garden' : getBiome()} biome and ${getAvailableSpecials('lmc') !== '0' ? mapSpecialModifierConfig[getAvailableSpecials('lmc')].name : 'no'} special maps with the best map sliders available and are updated every 5 seconds.</p>`;
     if (game.global.universe === 1) tooltipText += `<p>Each map type is affixed with the stance that will give you the best results in the map.</p>`;
     if (game.global.universe === 2) tooltipText += `<p>Each map type is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the worst enemy in the map.</p>`;
     tooltipText += `<p>Loot: The ideal map level for resource farming.</p>`;
-    tooltipText += `<p>Speed: The ideal map level for a mixture of speed and loot gains. This should be the value you use for actions like map bonus stack farming.</p>`;
+    tooltipText += `<p>Speed: The ideal map level for a mixture of speed and loot gains. This should be the value you use for actions like map bonus stack farming if the level is high enough.</p>`;
 
     if (mouseover) {
         tooltipText += '\')';
