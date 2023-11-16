@@ -1069,6 +1069,7 @@ function biomeEnemyStats(biome) {
 //After initial load everything should work perfectly.
 if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	var basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
+	basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/';
 	//Load CSS so that the UI is visible
 	var linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';
