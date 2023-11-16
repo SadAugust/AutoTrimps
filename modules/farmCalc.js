@@ -1068,30 +1068,29 @@ function biomeEnemyStats(biome) {
 //If using standalone version then when loading farmCalc file also load CSS & breedtimer+calc+farmCalcStandalone files.
 //After initial load everything should work perfectly.
 if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
-	var basepath = 'https://sadaugust.github.io/AutoTrimps/';
-	basepath = 'https://localhost:8887/AutoTrimps_Local/';
+	var basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
 	//Load CSS so that the UI is visible
 	var linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';
 	linkStylesheet.type = 'text/css';
-	linkStylesheet.href = basepath + 'tabsStandalone.css';
+	linkStylesheet.href = basepathFarmCalc + 'tabsStandalone.css';
 	document.head.appendChild(linkStylesheet);
 	//Load Breedtimer
 	var script = document.createElement('script');
 	script.id = 'AutoTrimps-SadAugust_breedtimer';
-	script.src = basepath + 'modules/breedtimer.js';
+	script.src = basepathFarmCalc + 'modules/breedtimer.js';
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
 	//Load Calc
 	var script = document.createElement('script');
 	script.id = 'AutoTrimps-SadAugust_calc';
-	script.src = basepath + 'modules/calc.js';
+	script.src = basepathFarmCalc + 'modules/calc.js';
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
 	//Load farmCalcStandalone
 	var script = document.createElement('script');
 	script.id = 'AutoTrimps-SadAugust_farmCalcStandalone';
-	script.src = basepath + 'modules/farmCalcStandalone.js';
+	script.src = basepathFarmCalc + 'modules/farmCalcStandalone.js';
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
 

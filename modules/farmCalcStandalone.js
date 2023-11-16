@@ -158,8 +158,9 @@ function makeAdditionalInfo() {
     const initialInfo = get_best(stats(), true);
     const u2 = game.global.universe === 2;
     const extraType = u2 ? 'equality' : 'stance';
-    const loot = `Loot ${initialInfo.overall.mapLevel}  ${extraType.charAt(0)}${initialInfo.overall[extraType]}`;
-    const speed = `Speed ${initialInfo.speed.mapLevel}  ${extraType.charAt(0)}${initialInfo.speed[extraType]}`;
+    const showExtraType = (u2 && getPerkLevel('Equality') > 0) || (!u2 && game.upgrades.Formations.done);
+    const loot = `Loot ${initialInfo.overall.mapLevel}  ${showExtraType ? (extraType.charAt(0) + initialInfo.overall[extraType]) : ''}`;
+    const speed = `Speed ${initialInfo.speed.mapLevel}  ${showExtraType ? (extraType.charAt(0) + initialInfo.speed[extraType]) : ''}`;
     var description = `Auto Level: `;
     if (!game.global.mapsUnlocked) return description += `Maps not unlocked!`;
     return description += `${loot} ${speed}`;
