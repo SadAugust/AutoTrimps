@@ -47,7 +47,7 @@ Step 3:
 
 Configure your settings. AT will not work properly if they are not configured!
 
-## Surky/Perky only Script Installation
+## Heirloom Calculator, Farm Calculator & Surky/Perky only Script Installation
 
 - Browser
 
@@ -57,31 +57,26 @@ https://www.tampermonkey.net/
 
 Step 2: 
 
-Click this link: https://github.com/SadAugust/AutoTrimps/raw/main/autoPerks.user.js
+Click the relevant link below
+Heirloom Calculator: https://github.com/SadAugust/AutoTrimps/raw/main/farmCalc.user.js
+Farm Calculator (zfarm): https://github.com/SadAugust/AutoTrimps/raw/main/heirloomCalc.user.js
+Auto Perks (Perky+Surky): https://github.com/SadAugust/AutoTrimps/raw/main/autoPerks.user.js
 
-If clicking the link does not work, copy the contents of autoPerks.user.js into a new script inside tampermonkey. 
-
-If you are unsure how to do that, copy this:
-
-```
-var script = document.createElement('script');
-script.id = 'AutoTrimps-Graphs';
-script.src = 'https://SadAugust.github.io/AutoTrimps/surky.js';
-script.setAttribute('crossorigin',"anonymous");
-document.head.appendChild(script);
-```
-
-Press F12 inside the game, this opens the console, and paste the text into it and hit enter, this will load the script. You will have to do this everytime you refresh the game though so I recommend getting tampermonkey to do it for you!
+If clicking the link does not work, copy the contents of the file into a new script inside tampermonkey.
 
 Step 3: 
 
-Enjoy your ingame version of Surky/Perky!
+Enjoy your ingame version of the option you selected!
 
 - Steam
 
 Step 1: 
 
-Download the file <a href="https://github.com/SadAugust/AutoTrimps/blob/main/autoPerks.user.js">here</a> (right click raw and save link as...), and save is as mods.js.
+Download the file below (click the link and when on that page right click the button that says "Raw" and Save Link As...), and save it as mods.js.
+
+<a href="https://github.com/SadAugust/AutoTrimps/raw/main/farmCalc.user.js">Heirloom Calculator</a>
+<a href="https://github.com/SadAugust/AutoTrimps/raw/main/heirloomCalc.user.js">Farm Calculator (zfarm)</a>
+<a href="https://github.com/SadAugust/AutoTrimps/raw/main/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
 
 Step 2: 
 

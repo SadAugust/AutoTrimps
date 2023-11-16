@@ -470,6 +470,7 @@ function doPortal(challenge, skipDaily) {
 			else if (game.global.selectedChallenge === 'Coord') preset = 'coord';
 			else if (game.global.selectedChallenge === 'Trimp') preset = 'trimp';
 			else if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
+			else if (game.global.selectedChallenge === 'Experience') preset = 'experience';
 			else if (challengeSquaredMode) preset = 'c2';
 			else {
 				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
