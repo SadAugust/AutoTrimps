@@ -37,11 +37,20 @@ Configure settings. Will NOT work as intended with default settings.
 
 Step 1: 
 
-Download <a href="https://github.com/SadAugust/AutoTrimps/blob/main/mods.js">mods.js</a> from this directory (right click raw and save link as...), or copy it and make your own mods.js in a text file.
+Go to this link to open the mods.js file on Github: <a href="https://github.com/SadAugust/AutoTrimps/blob/main/mods.js">mods.js</a>  
+Then, right click the Raw button, hit Save link as, and save the mods.js file somewhere to your computer where you can find it, like desktop.  
+![Download mods.js](https://i.imgur.com/opuO6yd.png)   
 
-Step 2: 
+Step 2:
 
-Navigate to Steam\steamapps\common\Trimps\mods and place mods.js into the folder. If you have other mods installed then just copy the text in AT's mods.js and place it somewhere in the mods.js file.
+In your Steam Library (where you see all your games in the Steam app), right click on Trimps, go to Manage, then Browse local files.  
+A folder where Trimps is installed inside Steam should open.  
+![Go to Trimps directory](https://imgur.com/cr35LK2.png)
+
+Inside this folder, navigate to the mods folder (you should be in Steam\steamapps\common\Trimps\mods), and place the mods.js file there, like so:  
+![Insert mods.js](https://imgur.com/muW6cUh.png)
+
+Advanced users: If you have other mods installed then just copy the text in AT's mods.js and place it somewhere in your existing mods.js file.
 
 Step 3: 
 
@@ -49,7 +58,9 @@ Configure your settings. AT will not work properly if they are not configured!
 
 ## Heirloom Calculator, Farm Calculator & Surky/Perky only Script Installation
 
-Note: The Farm Calculator (zfarm) works in both universes and shows you the optimal stance/equality level to use for the map shown. The information for it can be found at the bottom of the Trimps breeding/trapping section.
+Note: The Farm Calculator (zfarm) works in both universes and shows you the optimal stance/equality level to use for the map shown. The information for it can be found at the bottom of the Trimps breeding/trapping section as can be seen in the image below.
+
+![Download mods.js](https://i.imgur.com/siZH8Dh.png)
 
 - Browser
 
@@ -85,10 +96,24 @@ Download the file below (click the link and when on that page right click the bu
 
 <a href="https://github.com/SadAugust/AutoTrimps/blob/main/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
 
-Step 2: 
+Click on one of the mods selected below, then right click the Raw button, hit Save Link As, and save the file somewhere to your computer where you can find it, like desktop.  
+![Download mods.js](https://i.imgur.com/opuO6yd.png)  
 
-Navigate to Steam\steamapps\common\Trimps and place mods.js into the folder. If you have other mods installed then just copy the text in AT's mods.js and place it somewhere in the mods.js file.
+Step 2:  
+Rename the file to mods.js (right click the file, rename).
 
 Step 3: 
 
-Enjoy your ingame version of Surky/Perky!
+In your Steam Library (where you see all your games in the Steam app), right click on Trimps, go to Manage, then Browse local files.  
+A folder where Trimps is installed inside Steam should open.  
+![Go to Trimps directory](https://imgur.com/cr35LK2.png)
+
+Inside this folder, navigate to the mods folder (you should be in Steam\steamapps\common\Trimps\mods), and place the mods.js file that we renamed earlier there, like so:  
+![Insert mods.js](https://imgur.com/muW6cUh.png)
+
+
+Advanced users: If you have other mods installed then just copy the text in AT's mods.js and place it somewhere in your existing mods.js file.
+
+Step 4:  
+
+Restart the game, or if the game is already running, hit F5 to refresh.
