@@ -49,6 +49,8 @@ Configure your settings. AT will not work properly if they are not configured!
 
 ## Heirloom Calculator, Farm Calculator & Surky/Perky only Script Installation
 
+Note: The Farm Calculator (zfarm) works in both universes and shows you the optimal stance/equality level to use for the map shown. The information for it can be found at the bottom of the Trimps breeding/trapping section.
+
 - Browser
 
 Step 1: Install TamperMonkey
@@ -58,8 +60,11 @@ https://www.tampermonkey.net/
 Step 2: 
 
 Click the relevant link below
+
 Heirloom Calculator: https://github.com/SadAugust/AutoTrimps/raw/main/farmCalc.user.js
+
 Farm Calculator (zfarm): https://github.com/SadAugust/AutoTrimps/raw/main/heirloomCalc.user.js
+
 Auto Perks (Perky+Surky): https://github.com/SadAugust/AutoTrimps/raw/main/autoPerks.user.js
 
 If clicking the link does not work, copy the contents of the file into a new script inside tampermonkey.
@@ -74,9 +79,11 @@ Step 1:
 
 Download the file below (click the link and when on that page right click the button that says "Raw" and Save Link As...), and save it as mods.js.
 
-<a href="https://github.com/SadAugust/AutoTrimps/raw/main/farmCalc.user.js">Heirloom Calculator</a>
-<a href="https://github.com/SadAugust/AutoTrimps/raw/main/heirloomCalc.user.js">Farm Calculator (zfarm)</a>
-<a href="https://github.com/SadAugust/AutoTrimps/raw/main/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
+<a href="https://github.com/SadAugust/AutoTrimps/blob/main/farmCalc.user.js">Heirloom Calculator</a>
+
+<a href="https://github.com/SadAugust/AutoTrimps/blob/main/heirloomCalc.user.js">Farm Calculator (zfarm)</a>
+
+<a href="https://github.com/SadAugust/AutoTrimps/blob/main/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
 
 Step 2: 
 
