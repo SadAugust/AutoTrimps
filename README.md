@@ -1,11 +1,11 @@
 # AutoTrimps - SadAugust Fork
 
-## Current Version - Ongoing Development!
-- SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date as of 05/2023.
+# Current Version - Ongoing Development!
+- SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date with patch 5.9.2.
 
-## AT Script Installation
+# AT Script Installation
 
-- Browser
+## Browser
 
 Step 1: Install TamperMonkey
 
@@ -33,7 +33,7 @@ Step 3:
 
 Configure settings. Will NOT work as intended with default settings. 
 
-- Steam
+## Steam
 
 Step 1: 
 
@@ -56,13 +56,9 @@ Step 3:
 
 Configure your settings. AT will not work properly if they are not configured!
 
-## Heirloom Calculator, Farm Calculator & Surky/Perky only Script Installation
+# Heirloom Calculator, Farm Calculator & Surky/Perky only Script Installation
 
-Note: The Farm Calculator (zfarm) works in both universes and shows you the optimal stance/equality level to use for the map shown. The information for it can be found at the bottom of the Trimps breeding/trapping section as can be seen in the image below.
-
-![Download mods.js](https://i.imgur.com/siZH8Dh.png)
-
-- Browser
+## Browser
 
 Step 1: Install TamperMonkey
 
@@ -72,11 +68,11 @@ Step 2:
 
 Click the relevant link below
 
-Heirloom Calculator: https://github.com/SadAugust/AutoTrimps/raw/main/farmCalc.user.js
+<a href="https://github.com/SadAugust/AutoTrimps/blob/main/farmCalc.user.js">Heirloom Calculator</a>
 
-Farm Calculator (zfarm): https://github.com/SadAugust/AutoTrimps/raw/main/heirloomCalc.user.js
+<a href="https://github.com/SadAugust/AutoTrimps/blob/main/heirloomCalc.user.js">Farm Calculator (zfarm)</a>
 
-Auto Perks (Perky+Surky): https://github.com/SadAugust/AutoTrimps/raw/main/autoPerks.user.js
+<a href="https://github.com/SadAugust/AutoTrimps/blob/main/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
 
 If clicking the link does not work, copy the contents of the file into a new script inside tampermonkey.
 
@@ -84,7 +80,7 @@ Step 3:
 
 Enjoy your ingame version of the option you selected!
 
-- Steam
+## Steam
 
 Step 1: 
 
@@ -100,12 +96,12 @@ Click on one of the mods selected below, then right click the Raw button, hit Sa
 ![Download mods.js](https://i.imgur.com/opuO6yd.png)  
 
 Step 2:  
+
 Rename the file to mods.js (right click the file, rename).
 
 Step 3: 
 
-In your Steam Library (where you see all your games in the Steam app), right click on Trimps, go to Manage, then Browse local files.  
-A folder where Trimps is installed inside Steam should open.  
+In your Steam Library (where you see all your games in the Steam app), right click on Trimps, go to Manage, then Browse local files. A folder where Trimps is installed inside Steam should open.  
 ![Go to Trimps directory](https://imgur.com/cr35LK2.png)
 
 Inside this folder, navigate to the mods folder (you should be in Steam\steamapps\common\Trimps\mods), and place the mods.js file that we renamed earlier there, like so:  
@@ -117,3 +113,6 @@ Advanced users: If you have other mods installed then just copy the text in AT's
 Step 4:  
 
 Restart the game, or if the game is already running, hit F5 to refresh.
+
+Note: The Farm Calculator (zfarm) works in both universes and shows you the optimal stance/equality level to use for the map shown. The information for it can be found at the bottom of the Trimps breeding/trapping section as can be seen in the image below.
+![Download mods.js](https://i.imgur.com/siZH8Dh.png)
