@@ -160,8 +160,8 @@ function makeAdditionalInfo() {
     const extraType = u2 ? 'equality' : 'stance';
     const loot = `Loot ${initialInfo.overall.mapLevel}  ${extraType.charAt(0)}${initialInfo.overall[extraType]}`;
     const speed = `Speed ${initialInfo.speed.mapLevel}  ${extraType.charAt(0)}${initialInfo.speed[extraType]}`;
-    var description = `Auto Level:`;
-    if (!game.global.mapsUnlocked) return description += ` Maps not unlocked!`;
+    var description = `Auto Level: `;
+    if (!game.global.mapsUnlocked) return description += `Maps not unlocked!`;
     return description += `${loot} ${speed}`;
 }
 
