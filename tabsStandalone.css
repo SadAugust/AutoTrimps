@@ -1,5 +1,15 @@
 /* Portal Screen CSS overrides */
 
+#empHide,
+#unempHide {
+	font-size: 1.1em;
+}
+
+.sizeSecReduced {
+	font-size: 1.0em !important;
+	margin-top: 0.2em;
+}
+
 #titleRow {
 	height: 4.7vw;
 	margin-bottom: 0.5vw;

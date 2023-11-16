@@ -391,7 +391,7 @@ function findMap(level, special, biome, perfect = false) {
 
 	for (var mapping in game.global.mapsOwnedArray) {
 		var map = game.global.mapsOwnedArray[mapping];
-		if (perfect && (trimpStats.mapSize !== 20 || map.difficulty !== trimpStats.mapDifficulty || map.loot !== mapLoot)) continue;
+		if (perfect && (trimpStats.mapSize !== map.size || map.difficulty !== trimpStats.mapDifficulty || map.loot !== mapLoot)) continue;
 		if (game.global.world + level !== map.level) continue;
 		if (map.bonus !== special && special !== '0') continue;
 		if (map.location !== biome) continue;

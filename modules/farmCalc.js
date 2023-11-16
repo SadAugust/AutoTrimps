@@ -4,7 +4,7 @@ if (typeof MODULES === 'undefined') {
 
 	function mastery(name) {
 		if (!game.talents[name])
-			throw "unknown mastery: " + name;
+			throw 'unknown mastery: ' + name;
 		return game.talents[name].purchased;
 	}
 }
@@ -124,6 +124,8 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	critChance = critChance - Math.floor(critChance);
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.1) critType = 'never';
 
+	const perfectMaps = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
+
 	for (var y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
 		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
@@ -131,9 +133,9 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		if (y === minLevel) {
 			return minLevel;
 		}
-		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < mapCost(mapLevel, special, biome))
+		if (!statCheck && perfectMaps && game.resources.fragments.owned < mapCost(mapLevel, special, biome))
 			continue;
-		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
+		if (!statCheck && !perfectMaps && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
 			continue;
 
 		if (game.global.universe === 2) universeSetting = equalityQuery(enemyName, z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
@@ -158,9 +160,9 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		}
 
 		/* if (y === -6) {
-			console.log("universeSetting = " + universeSetting + " y = " + y + " difficulty = " + difficulty + " cell = " + cell + " dmgType = " + dmgType + " critType = " + critType);
-			console.log("trimpHP = " + ourHealth + " trimpDmg = " + ourDmg + " trimpBlock = " + ourBlock);
-			console.log("enemyHP = " + enemyHealth + " enemyDmg = " + enemyDmg);
+			console.log('universeSetting = ' + universeSetting + ' y = ' + y + ' difficulty = ' + difficulty + ' cell = ' + cell + ' dmgType = ' + dmgType + ' critType = ' + critType);
+			console.log('trimpHP = ' + ourHealth + ' trimpDmg = ' + ourDmg + ' trimpBlock = ' + ourBlock);
+			console.log('enemyHP = ' + enemyHealth + ' enemyDmg = ' + enemyDmg);
 		} */
 		if (enemyHealth <= ourDmg && enemyDmg <= (ourHealth + ourBlock)) {
 			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
@@ -222,11 +224,11 @@ function populateZFarmData() {
 	trimpHealth -= trimpShield;
 
 	//Gamma Burst
-	var gammaMult = MODULES.heirlooms.gammaBurstPct;
+	var gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
 	var gammaCharges = gammaMaxStacks();
 
 	//Heirloom + Crit Chance
-	const customShield = heirloomShieldToEquip('map');
+	const customShield = typeof atSettings !== 'undefined' ? heirloomShieldToEquip('map') : null;
 	var critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
 	var critDamage = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult() - 1;
 
@@ -438,30 +440,32 @@ function populateZFarmData() {
 	critDamage = critChance >= 1 ? (megaCD - 1) : critDamage;
 
 	var exoticChance = 3;
-	if (Fluffy.isRewardActive("exotic")) exoticChance += 0.5;
+	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
 	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
 	exoticChance /= 100;
 
 	const natureTransfer = (zone >= natureStart ? nature.retainLevel + diplomacy : 0) / 100;
 	nature = zone >= natureStart ? nature.level + diplomacy : 0;
 	death_stuff.challenge_attack = enemyAttack;
+	const perfectMapsUnlocked = typeof atSettings !== 'undefined' ? trimpStats.perfectMaps : (game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110);
 
+	const maxTicks = typeof atSettings !== 'undefined' ? (atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400) : 86400; // Six hours simulation inside of TW and a day
 	return {
 		//Base Info
 		hze: hze,
 		speed: speed,
 		zone: zone,
 		universe: game.global.universe,
-
+		maxTicks: maxTicks,
 		//Extra Map Info
 		extraMapLevelsAvailable: extraMapLevelsAvailable,
 		reducer: haveMapReducer,
-		perfectMaps: trimpStats.perfectMaps,
+		perfectMaps: perfectMapsUnlocked,
 		biome: biomeEnemyStats(biome),
 		fragments: game.resources.fragments.owned,
 
-		difficulty: prettify((trimpStats.perfectMaps ? 75 : 80) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
-		size: mastery('mapLoot2') ? 20 : trimpStats.perfectMaps ? 25 : 27,
+		difficulty: ((perfectMapsUnlocked ? 75 : 80) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
+		size: mastery('mapLoot2') ? 20 : perfectMapsUnlocked ? 25 : 27,
 
 		//Nature
 		poison: 0, wind: 0, ice: 0,
@@ -483,7 +487,7 @@ function populateZFarmData() {
 		rangeMin: minFluct,
 		rangeMax: maxFluct,
 		plaguebringer: typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01,
-		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : getPlayerEqualityMult()) : 1,
+		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
 
 		//Enemy Stats
 		challenge: enemyHealth,
@@ -502,7 +506,7 @@ function populateZFarmData() {
 		coordinate: challengeActive('Coordinate'),
 		challenge_health: enemyHealth,
 		challenge_attack: enemyAttack,
-		mapPerfect: typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : false,
+		mapPerfect: typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true,
 		mapSpecial: getAvailableSpecials('lmc'),
 		mapBiome: biome,
 
@@ -630,7 +634,7 @@ function simulate(saveData, zone) {
 		equality = equalityQuery(enemyName, zone, saveData.size, 'map', saveData.difficulty);
 	}
 	var biomeImps = saveData.biome;
-	const max_ticks = atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400; // Six hours simulation inside of TW and a day
+	const max_ticks = saveData.maxTicks; // Six hours simulation inside of TW and a day
 	var hp_array = []
 	var atk_array = [];
 	for (var i = 0; i < saveData.size; ++i) {
@@ -914,14 +918,14 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			special: getAvailableSpecials('lmc'),
 			biome: getBiome(),
 		}
-		const fragSetting = getPageSetting('onlyPerfectMaps');
+		const fragSetting = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
 		for (var i = 0; i <= stats.length - 1; i++) {
 			if (fragSetting) {
-				if ((findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true))) continue;
+				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
 				if (game.resources.fragments.owned >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
 			if (!fragSetting) {
-				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
+				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
 				if (game.resources.fragments.owned >= minMapFrag(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
 			stats.splice(i, 1);
@@ -954,8 +958,8 @@ function get_best(results, fragmentCheck, mapModifiers) {
 				zone: statsSpeed[0].zone,
 				value: statsSpeed[0][statsSpeed[0].stance].value,
 				speed: statsSpeed[0][statsSpeed[0].stance].speed,
+				stance: statsSpeed[0].stance,
 			}
-			if (game.global.universe === 1) best.speed.stance = statsSpeed[0].stance;
 			if (game.global.universe === 2) best.speed.equality = statsSpeed[0].equality;
 		}
 	}
@@ -967,6 +971,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 		zone: stats[0].zone,
 		value: stats[0][stats[0].stance].value,
 		speed: stats[0][stats[0].stance].speed,
+		stance: stats[0].stance,
 	};
 	if (game.global.universe === 1) best.overall.stance = stats[0].stance;
 	if (game.global.universe === 2) best.overall.equality = stats[0].equality;
@@ -977,6 +982,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			zone: stats[1].zone,
 			value: stats[1][stats[1].stance].value,
 			speed: stats[1][stats[1].stance].speed,
+			stance: stats[1].stance,
 		};
 		if (game.global.universe === 1) best.second.stance = stats[1].stance;
 		if (game.global.universe === 2) best.second.equality = stats[1].equality;
@@ -1034,12 +1040,12 @@ function biomeEnemyStats(biome) {
 	}
 
 	function Farmlands() {
-		const biomeToReturn = getFarmlandsResType() === "Metal" ? Mountain :
-			getFarmlandsResType() === "Wood" ? Forest :
-				getFarmlandsResType() === "Food" ? Sea :
-					getFarmlandsResType() === "Gems" ? Depths :
-						getFarmlandsResType() === "Any" ? Plentiful :
-							"All";
+		const biomeToReturn = getFarmlandsResType() === 'Metal' ? Mountain :
+			getFarmlandsResType() === 'Wood' ? Forest :
+				getFarmlandsResType() === 'Food' ? Sea :
+					getFarmlandsResType() === 'Gems' ? Depths :
+						getFarmlandsResType() === 'Any' ? Plentiful :
+							'All';
 		return biomeToReturn();
 	}
 
@@ -1059,31 +1065,45 @@ function biomeEnemyStats(biome) {
 	return enemyBiome;
 }
 
-//If using standalone version then when loading farmCalc file also load CSS & breedtimer+X.
+//If using standalone version then when loading farmCalc file also load CSS & breedtimer+calc+farmCalcStandalone files.
 //After initial load everything should work perfectly.
 if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	var basepath = 'https://sadaugust.github.io/AutoTrimps/';
+	basepath = 'https://localhost:8887/AutoTrimps_Local/';
 	//Load CSS so that the UI is visible
-	var linkStylesheet = document.createElement("link");
-	linkStylesheet.rel = "stylesheet";
-	linkStylesheet.type = "text/css";
-	linkStylesheet.href = "https://sadaugust.github.io/AutoTrimps/tabsStandalone.css";
+	var linkStylesheet = document.createElement('link');
+	linkStylesheet.rel = 'stylesheet';
+	linkStylesheet.type = 'text/css';
+	linkStylesheet.href = basepath + 'tabsStandalone.css';
 	document.head.appendChild(linkStylesheet);
-
-	//Load Surky
+	//Load Breedtimer
 	var script = document.createElement('script');
-	script.id = "AutoTrimps-SadAugust_breedtimer";
-	script.src = "https://sadaugust.github.io/AutoTrimps/modules/breedtimer.js";
+	script.id = 'AutoTrimps-SadAugust_breedtimer';
+	script.src = basepath + 'modules/breedtimer.js';
+	script.setAttribute('crossorigin', 'anonymous');
+	document.head.appendChild(script);
+	//Load Calc
+	var script = document.createElement('script');
+	script.id = 'AutoTrimps-SadAugust_calc';
+	script.src = basepath + 'modules/calc.js';
+	script.setAttribute('crossorigin', 'anonymous');
+	document.head.appendChild(script);
+	//Load farmCalcStandalone
+	var script = document.createElement('script');
+	script.id = 'AutoTrimps-SadAugust_farmCalcStandalone';
+	script.src = basepath + 'modules/farmCalcStandalone.js';
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
 
-	script.id = "AutoTrimps-SadAugust_calc";
-	script.src = "https://sadaugust.github.io/AutoTrimps/modules/calc.js";
-	script.setAttribute('crossorigin', 'anonymous');
-	document.head.appendChild(script);
+	function updateAdditionalInfo() {
+		if (!usingRealTimeOffline) {
+			var infoStatus = makeAdditionalInfo();
+			if (document.getElementById('additionalInfo').innerHTML !== infoStatus) document.getElementById('additionalInfo').innerHTML = infoStatus;
+			document.getElementById('additionalInfo').parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
+		}
+	}
 
-	//Load the portal UI
-	setTimeout(function () {
-		MODULES.autoPerks.displayGUI(portalUniverse);
-		console.log("Surky & Perky loaded.")
-	}, 3000);
+	setInterval(function () {
+		updateAdditionalInfo();
+	}, 5000);
 }

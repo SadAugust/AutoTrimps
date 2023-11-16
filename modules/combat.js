@@ -70,7 +70,7 @@ function forceAbandonTrimps() {
 		mapsClicked(true);
 		mapsClicked(true);
 	}
-	debug("Abandoning Trimps to resend army with max Anticipation stacks.", "other");
+	debug('Abandoning Trimps to resend army with max Anticipation stacks.', 'other');
 }
 
 //Check if we would die from the next enemy attack
@@ -183,9 +183,9 @@ function equalityManagementBasic() {
 	//Looking to see if the enemy that's currently being fought is fast.
 	var fastEnemy = MODULES.fightinfo.fastImps.includes(getCurrentEnemy().name);
 	//Checking if the map that's active is a Deadly voice map which always has first attack.
-	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === "Void" && getCurrentMapObject().voidBuff === 'doubleAttack';
+	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === 'Void' && getCurrentMapObject().voidBuff === 'doubleAttack';
 	//Checking if the Frenzy buff is active.
-	var noFrenzy = game.portal.Frenzy.frenzyStarted === "-1" && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
+	var noFrenzy = game.portal.Frenzy.frenzyStarted === '-1' && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
 	//Checking if the experience buff is active during Exterminate.
 	var experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	//Checking to see if the Glass challenge is being run where all enemies are fast.
@@ -217,55 +217,52 @@ function equalityManagement() {
 	if (equalitySetting === 0) return;
 	if (equalitySetting === 1) return equalityManagementBasic();
 
-	//Turning off equality scaling
+	//Turning off equality scaling and setting always abandon to on so that it can suicide armies
 	game.portal.Equality.scalingActive = false;
 	game.options.menu.alwaysAbandon.enabled = 1;
+
 	//Misc vars
-	var debugStats = getPageSetting('debugEqualityStats');
-	var mapping = game.global.mapsActive ? true : false;
-	var mapObject = mapping ? getCurrentMapObject() : null;
-	var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
-	var mapGrid = mapping ? 'mapGridArray' : 'gridArray';
-	var type = (!mapping) ? "world" : (mapObject.location === "Void" ? "void" : "map");
-	var zone = (type === "world" || !mapping) ? game.global.world : mapObject.level;
-	var bionicTalent = mapping && game.talents.bionic2.purchased && (zone > game.global.world) ? zone : 0;
-	var difficulty = mapping ? mapObject.difficulty : 1;
-	var maxEquality = game.portal.Equality.radLevel;
+	const debugStats = getPageSetting('debugEqualityStats');
+	const mapping = game.global.mapsActive ? true : false;
+	const mapObject = mapping ? getCurrentMapObject() : null;
+	const currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
+	const mapGrid = mapping ? 'mapGridArray' : 'gridArray';
+	const type = (!mapping) ? 'world' : (mapObject.location === 'Void' ? 'void' : 'map');
+	const zone = (type === 'world' || !mapping) ? game.global.world : mapObject.level;
+	const bionicTalent = mapping && game.talents.bionic2.purchased && (zone > game.global.world) ? zone : 0;
+	const difficulty = mapping ? mapObject.difficulty : 1;
+	const armyReady = newArmyRdy();
+	const maxEquality = game.portal.Equality.radLevel;
 	var equality = 0;
-	var armyReady = newArmyRdy();
 	var disableDamageAmps = false;
-	var enemyDamageMult = 0;
+	var enemyDamageMult = 1;
 
 	//Daily modifiers active
-	var isDaily = challengeActive('Daily')
-	var dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined'; //Empower
-	var dailyEmpowerToggle = (dailyEmpower && getPageSetting('empowerAutoEquality'));
-	var dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
-	var dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
-	var dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
-	var dailyBloodthirst = isDaily && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
-	var dailyRampage = isDaily && typeof game.global.dailyChallenge.rampage !== 'undefined'; //Rampage (trimp attack buff)
+	const isDaily = challengeActive('Daily');
+	const dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined'; //Empower
+	const dailyEmpowerToggle = dailyEmpower && getPageSetting('empowerAutoEquality');
+	const dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
+	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
+	const dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
+	const dailyBloodthirst = isDaily && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
+	const dailyRampage = isDaily && typeof game.global.dailyChallenge.rampage !== 'undefined'; //Rampage (trimp attack buff)
 
 	//Challenge conditions
-	var runningUnlucky = challengeActive('Unlucky');
-	var runningDuel = challengeActive('Duel');
-	var runningTrappa = challengeActive('Trappapalooza');
-	var runningQuest = (challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'); //Shield break quest
-	var runningRevenge = challengeActive('Revenge');
-	var runningArchaeology = challengeActive('Archaeology');
-	var runningMayhem = challengeActive('Mayhem');
-	var enemyCanPoison = runningMayhem && (mapping || currentCell === 99);
-	var runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
-	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
-	var runningGlass = challengeActive('Glass');
-	var runningDesolation = challengeActive('Desolation');
-	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
+	const runningUnlucky = challengeActive('Unlucky');
+	const runningDuel = challengeActive('Duel');
+	const runningTrappa = challengeActive('Trappapalooza');
+	const runningQuest = (challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'); //Shield break quest
+	const runningRevenge = challengeActive('Revenge');
+	const runningArchaeology = challengeActive('Archaeology');
+	const runningMayhem = challengeActive('Mayhem');
+	const enemyCanPoison = runningMayhem && (mapping || currentCell === 99);
+	const runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
+	const runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
+	const runningGlass = challengeActive('Glass');
+	const runningDesolation = challengeActive('Desolation');
+	const runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
-	//Perk/Talent conditions
-	var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
-	var angelicOwned = game.talents.angelic.purchased;
-	var angelicDance = angelicOwned && (runningTrappa || runningQuest || runningArchaeology || runningBerserk || noFrenzy);
-
+	//Override for max equality when we ONLY want to destack during Aesolation.
 	if (runningDesolation && mapSettings.equality && game.global.world >= getPageSetting('destackOnlyZone') &&
 		getPageSetting('autoMaps')) {
 		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
@@ -274,51 +271,64 @@ function equalityManagement() {
 		return;
 	}
 
+	//Perk/Talent conditions
+	const noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
+	const angelicOwned = game.talents.angelic.purchased;
+	//Challenges/conditions where it's important to keep armies alive through angelic.
+	const angelicDance = angelicOwned && (runningTrappa || runningQuest || runningArchaeology || runningBerserk || noFrenzy);
+	const plagueShield = (MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming) ? getHeirloomBonus('Shield', 'plaguebringer') > 0 : false;
+
 	//Gamma burst info
 	var gammaMaxStacksCheck = gammaMaxStacks();
-	var gammaDmg = MODULES.heirlooms.gammaBurstPct;
+	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	if (gammaDmg === 1) gammaMaxStacksCheck = 0;
-	var gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
-	var fuckGamma = (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger);
-
-	var critType = 'maybe';
-	if (challengeActive('Wither') || challengeActive('Glass')) critType = 'never';
+	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
+	const smithlessGamma = runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger;
 
 	//Initialising Stat variables
 	//Our stats
-	var dmgType = runningUnlucky ? 'max' : 'avg';
+	const dmgType = runningUnlucky ? 'max' : 'avg';
+	const critType = challengeActive('Wither') || challengeActive('Glass') ? 'never' : 'maybe';
+
+	const ourHealthMax = calcOurHealth(runningQuest, type);
 	var ourHealth = remainingHealth(angelicDance, type);
 	if (dailyEmpower) ourHealth *= 0.98;
-	var ourHealthMax = calcOurHealth(runningQuest, type);
+
 	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
 	var ourDmgMax = 0;
-	var plagueShield = getHeirloomBonus('Shield', 'plaguebringer') > 0;
-
-	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
-
-	if (noFrenzy) {
-		if (getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted === -1) {
-			ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel);
-			unluckyDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel);
-		}
-		if (!getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted !== -1) {
-			ourDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel);
-			unluckyDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel);
-		}
-	}
-	ourDmg *= dailyRampage ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 1;
 	var ourDmgEquality = 0;
+	const ourEqualityModifier = game.portal.Equality.getModifier(1);
+	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
 	var unluckyDmgEquality = 0;
 
-	//Enemy stats
-	var enemyName = game.global[mapGrid][currentCell].name;
-	var enemyHealth = game.global[mapGrid][currentCell].health;
-	var enemyDmg = getCurrentEnemy().attack * enemyDamageModifiers() * 1.5;
-	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
-	enemyDamageMult += game.global.voidBuff === 'doubleAttack' ? 2 : (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
+	if (noFrenzy) {
+		const frenzyMult = 1 + (0.5 * game.portal.Frenzy.radLevel);
+		if (getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted === -1) {
+			ourDmg /= frenzyMult;
+			unluckyDmg /= frenzyMult;
+		}
+		if (!getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted !== -1) {
+			ourDmg *= frenzyMult;
+			unluckyDmg *= frenzyMult;
+		}
+	}
+	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
+	if (dailyWeakness) ourDmg *= 1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100;
 
+	//Enemy stats
+	const enemyName = game.global[mapGrid][currentCell].name;
+	const enemyHealth = game.global[mapGrid][currentCell].health;
+	var enemyDmg = getCurrentEnemy().attack * enemyDamageModifiers() * 1.5;
+	var enemyDmgEquality = 0;
+	const enemyEqualityModifier = game.portal.Equality.getModifier();
+	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
+
+	//Void Map Modifiers
+	if (game.global.voidBuff === 'doubleAttack') enemyDamageMult += 2;
+	if (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) enemyDamageMult += 5;
+	//Daily Modifiers
 	//Empower related modifiers in world
-	if ((dailyEmpowerToggle && !mapping && dailyEmpower) || MODULES.maps.slowScumming) {
+	if ((dailyEmpowerToggle && !mapping) || MODULES.maps.slowScumming) {
 		if (dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 		if (dailyExplosive || MODULES.maps.slowScumming) ourDmgMax = calcOurDmg('max', 0, false, type, 'force', bionicTalent, true) * gammaDmg;
 	}
@@ -327,33 +337,34 @@ function equalityManagement() {
 		if (dailyEmpowerToggle && dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 		if (dailyExplosive) enemyDamageMult += 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 	}
-	enemyDamageMult += !dailyEmpower && (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+	if (dailyCrit && !dailyEmpower && (type === 'world' || type === 'void') && gammaToTrigger > 1) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+	//Mayhem poison
+	if (enemyCanPoison) enemyDamageMult += 1.2;
 
-	enemyDamageMult += runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
-	var enemyDmgEquality = 0;
-	//Misc dmg mult
-	if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100);
+	enemyDmg *= enemyDamageMult;
 
-	if (enemyDamageMult !== 0) enemyDmg *= enemyDamageMult;
 	//Fast Enemy conditions
 	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !MODULES.fightinfo.exoticImps.includes(enemyName) : MODULES.fightinfo.fastImps.includes(enemyName));
-	if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
-	else if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
-	else if (type === 'map' && dailyExplosive && !MODULES.maps.slowScumming) fastEnemy = true;
-	else if (type === 'world' && dailyExplosive) fastEnemy = true;
-	else if (game.global.voidBuff === 'doubleAttack') fastEnemy = true;
-	else if (runningArchaeology) fastEnemy = true;
-	else if (noFrenzy && (game.portal.Frenzy.frenzyActive() || (enemyHealth / ourDmg) > 10)) fastEnemy = true;
-	else if (runningTrappa) fastEnemy = true;
-	else if (runningDuel && !mapping) fastEnemy = true;
-	else if (runningQuest) fastEnemy = true;
-	else if (runningExperienced) fastEnemy = false;
-	else if (runningGlass) fastEnemy = true;
-	else if (runningBerserk) fastEnemy = true;
-	else if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
-	else if (runningRevenge) fastEnemy = true;
+	if (!fastEnemy) {
+		if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
+		else if (type === 'map' && dailyExplosive && !MODULES.maps.slowScumming) fastEnemy = true;
+		else if (type === 'world' && dailyExplosive) fastEnemy = true;
+		else if (game.global.voidBuff === 'doubleAttack') fastEnemy = true;
+		else if (runningArchaeology) fastEnemy = true;
+		else if (runningTrappa) fastEnemy = true;
+		else if (runningDuel && !mapping) fastEnemy = true;
+		else if (runningQuest) fastEnemy = true;
+		else if (runningExperienced) fastEnemy = false;
+		else if (runningGlass) fastEnemy = true;
+		else if (runningBerserk) fastEnemy = true;
+		else if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
+		else if (runningRevenge) fastEnemy = true;
+		else if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
+		else if (noFrenzy && (game.portal.Frenzy.frenzyActive() || (enemyHealth / ourDmg) > 10)) fastEnemy = true;
+	}
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
+	//Definitely need to add a check here for if we can die enough to get the bonus.
 	if (runningDuel && getPageSetting('duel') && getPageSetting('duelHealth') && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > ourHealth && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
 		game.portal.Equality.disabledStackCount = 0;
 		if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
@@ -380,10 +391,8 @@ function equalityManagement() {
 		}
 	}
 
-	const ourEqualityModifier = game.portal.Equality.getModifier(1);
-	const enemyEqualityModifier = game.portal.Equality.getModifier();
-
 	if (enemyHealth > 0) {
+		//Loop through equality levels to find the ideal point to kill the enemy
 		for (var i = 0; i <= maxEquality; i++) {
 			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i);
 			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
@@ -462,13 +471,13 @@ function equalityManagement() {
 			} else if (ourHealth > enemyDmgEquality && ourDmgEquality > enemyHealth) {
 				equality = i;
 				break;
-			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaDmg > enemyHealth && !fuckGamma && !enemyCanPoison) {
+			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaDmg > enemyHealth && !smithlessGamma && !enemyCanPoison) {
 				equality = i;
 				break;
-			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaToTrigger > enemyHealth && !fuckGamma && !enemyCanPoison) {
+			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaToTrigger > enemyHealth && !smithlessGamma && !enemyCanPoison) {
 				equality = i;
 				break;
-			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && !fuckGamma && !enemyCanPoison) {
+			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && !smithlessGamma && !enemyCanPoison) {
 				equality = i;
 				break;
 			} else {
@@ -493,6 +502,6 @@ function equalityManagement() {
 		game.portal.Equality.disabledStackCount = equality;
 		if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 		updateEqualityScaling();
-		if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, i);
+		if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, equality);
 	}
 }

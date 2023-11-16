@@ -237,7 +237,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//This is the actual health of the army ATM, without considering items bought, but not yet in use
 	if (realHealth) return game.global.soldierHealthMax;
 	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
-	var heirloomToCheck = heirloomShieldToEquip(mapType);
+	var heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(mapType) : null;
 
 	//Health from equipments and coordination
 	var health = (50 + calcEquipment('health')) * game.resources.trimps.maxSoldiers;
@@ -275,7 +275,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//AutoBattle
 	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	//Shield (Heirloom)
-	const heirloomHealth = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck);
+	const heirloomHealth = typeof atSettings !== 'undefined' ? calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpHealth', 1, true);
 	health *= heirloomHealth > 1 ? (1 + (heirloomHealth / 100)) : 1;
 	//Void Map Talents
 	health *= (game.talents.voidPower.purchased && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
@@ -325,7 +325,7 @@ function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
 	}
 	if (game.global.universe === 2) {
 		var shield = 0;
-		var shield = getEnergyShieldMult_AT(mapType);
+		var shield = typeof atSettings !== 'undefined' ? getEnergyShieldMult_AT(mapType) : getEnergyShieldMult();
 		//Prismatic Shield + Shield Layer. Scales with multiple Scruffy shield layers
 		//Subtract health from shield total to give accurate result
 		shield = (health * (1 + (shield * (1 + Fluffy.isRewardActive('shieldlayer'))))) - health;
@@ -437,8 +437,8 @@ function addPoison(realDamage, zone) {
 }
 
 function getCritMulti(crit, customShield) {
-	var critChance = getPlayerCritChance_AT(customShield);
-	var critD = getPlayerCritDamageMult_AT(customShield);
+	var critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
+	var critD = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) : getPlayerCritDamageMult();
 	var critDHModifier;
 
 	if (crit === 'never') critChance = Math.floor(critChance);
@@ -458,19 +458,42 @@ function getCritMulti(crit, customShield) {
 	return critDHModifier;
 }
 
+function getCurrentEnemy(cell) {
+	//Base Info for enemy that will later be overwritten.
+	var enemy = {}
+	if (game.global.gridArray.length <= 0) return enemy;
+	if (!cell) cell = 1;
+
+	if (game.global.mapsActive || game.global.preMapsActive) {
+		if (game.global.mapsActive && !game.global.preMapsActive) {
+			if (typeof game.global.mapGridArray[game.global.lastClearedMapCell + cell] === 'undefined') {
+				enemy = game.global.mapGridArray[game.global.mapGridArray.length - 1];
+			} else {
+				enemy = game.global.mapGridArray[game.global.lastClearedMapCell + cell];
+			}
+		}
+	}
+	else if (typeof game.global.gridArray[game.global.lastClearedCell + cell] === 'undefined') {
+		enemy = game.global.gridArray[game.global.gridArray.length - 1];
+	}
+	else enemy = game.global.gridArray[game.global.lastClearedCell + cell];
+
+	return enemy;
+}
+
 function getAnticipationBonus(stacks) {
 	//Pre-Init
 	if (stacks === undefined) stacks = game.global.antiStacks;
 
+	//Look at max stacks you can use and calculate the bonus from that
+	var maxStacks = game.talents.patience.purchased ? 45 : 30;
+
 	//Init
 	var perkMult = game.portal.Anticipation.level * game.portal.Anticipation.modifier;
-	var stacks45 = getPageSetting('45stacks');
+	var stacks45 = typeof (autoTrimpSettings) === 'undefined' ? maxStacks : getPageSetting('45stacks');
 
 	//Regular anticipation
 	if (!stacks45) return 1 + (stacks * perkMult);
-
-	//Look at max stacks you can use and calculate the bonus from that
-	var maxStacks = game.talents.patience.purchased ? 45 : 30;
 	return 1 + (maxStacks * perkMult);
 }
 
@@ -481,7 +504,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 	if (!critMode) critMode = 'maybe';
 	if (!realDamage) realDamage = false;
 	var specificStance = game.global.universe === 1 ? equality : false;
-	var heirloomToCheck = !specificHeirloom ? heirloomShieldToEquip(mapType) : specificHeirloom;
+	var heirloomToCheck = typeof (autoTrimpSettings) === 'undefined' ? null : !specificHeirloom ? heirloomShieldToEquip(mapType) : specificHeirloom;
 
 	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
 
@@ -523,14 +546,13 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 	attack *= challengeActive('Desolation') ? game.challenges.Desolation.trimpAttackMult() : 1;
 	attack *= game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
 	attack *= game.global.universe === 2 && u2Mutations.tree.Brains.purchased ? u2Mutations.tree.Brains.getBonus() : 1;
-
 	//AutoBattle
 	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	// Heirloom (Shield)
-	const heirloomAttack = calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck);
+	const heirloomAttack = typeof atSettings !== 'undefined' ? calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpAttack', 1, true);
 	attack *= heirloomAttack > 1 ? (1 + (heirloomAttack / 100)) : 1;
 	// Frenzy perk
-	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (getPageSetting('frenzyCalc') || autoBattle.oneTimers.Mass_Hysteria.owned) ? 1 + (0.5 * game.portal.Frenzy[perkLevel]) : 1;
+	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (autoBattle.oneTimers.Mass_Hysteria.owned || (typeof atSettings !== 'undefined' && getPageSetting('frenzyCalc'))) ? 1 + (0.5 * game.portal.Frenzy[perkLevel]) : 1;
 	//Championism
 	attack *= game.global.universe === 2 ? game.portal.Championism.getMult() : 1;
 	// Golden Upgrade
@@ -664,16 +686,17 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 
 	// Equality
 	if (game.global.universe === 2 && game.portal.Equality[perkLevel] > 0) {
+		const equalityMult = typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(heirloomToCheck) : game.portal.Equality.getMult(true);
 		if (!isNaN(parseInt((equality)))) {
-			attack *= Math.pow(getPlayerEqualityMult_AT(heirloomToCheck), equality);
+			attack *= Math.pow(equalityMult, equality);
 			if (equality > game.portal.Equality[perkLevel])
-				debug(`You don't have this many levels in Equality. - Player Dmg. ${equality} / ${game.portal.Equality.radLevel} equality used.`);
+				console.log(`You don't have this many levels in Equality. - Player Dmg. ${equality} / ${game.portal.Equality.radLevel} equality used.`);
 		} else if (atSettings.intervals.tenSecond)
-			debug(`Equality is not a number. - Player Dmg. ${equality} equality used.`);
+			console.log(`Equality is not a number. - Player Dmg. ${equality} equality used.`);
 	}
 
 	//Override for if the user wants to for some reason floor their crit chance
-	if (getPageSetting('floorCritCalc')) critMode = 'never';
+	if (typeof atSettings !== 'undefined' && getPageSetting('floorCritCalc')) critMode = 'never';
 
 	//Init Damage Variation (Crit)
 	//If we have critMode defined there's no point in calculating it 3 different times
@@ -1661,7 +1684,7 @@ function gammaMaxStacks(specialChall, actualCheck) {
 	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
 	if (Fluffy.isRewardActive('scruffBurst')) gammaMaxStacks--;
 	if (actualCheck && MODULES.heirlooms.gammaBurstPct === 1) return 1;
-	if (MODULES.heirlooms.gammaBurstPct === 1 || (specialChall && game.global.mapsActive)) gammaMaxStacks = Infinity;
+	if (typeof atSettings !== 'undefined' && (MODULES.heirlooms.gammaBurstPct === 1 || (specialChall && game.global.mapsActive))) gammaMaxStacks = Infinity;
 	return gammaMaxStacks;
 }
 
@@ -1922,7 +1945,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	const bionicTalent = zone - game.global.world;
 	const checkMutations = mapType === 'world' && zone > 200;
 	const titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
-	const dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
+	const dailyEmpowerToggle = typeof atSettings !== 'undefined' && getPageSetting('empowerAutoEquality');
 	const isDaily = challengeActive('Daily');
 	const dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined'; //Empower
 	const dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
@@ -1988,7 +2011,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
 	var unluckyDmgEquality = 0;
-	const ourEqualityModifier = getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType));
+	const ourEqualityModifier = typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType)) : game.portal.Equality.getMult(true);
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
 	//Accounting for enemies hitting multiple times per gamma burst
@@ -2094,4 +2117,11 @@ function remainingHealth(forceAngelic, mapType) {
 
 	if (soldierHealth <= 0) return 0;
 	return (remainingHealth)
+}
+
+//Make the gametime checks factor in how long you've been paused for
+function getGameTime() {
+	const startTime = game.global.start;
+	if (game.options.menu.pauseGame.enabled) return startTime + (game.options.menu.pauseGame.timeAtPause - startTime) + game.global.time;
+	return startTime + game.global.time;
 }
