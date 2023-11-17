@@ -2712,7 +2712,7 @@ function initializeAllSettings() {
 		createSetting('dailyDontCap',
 			function () { return ('Use When Capped') },
 			function () {
-				var description = "<p>Will cause the script to only start dailies when you have the amount of dailies input in the <b>UWC: Amount</b> setting available to run.</p>";
+				var description = "<p>Will cause the script to only start dailies when you have at least the amount of dailies input in the <b>UWC: Amount</b> setting available to run.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			},
@@ -2721,7 +2721,7 @@ function initializeAllSettings() {
 		createSetting('dailyDontCapAmt',
 			function () { return ('UWC: Amount') },
 			function () {
-				var description = "<p>Will cause the script to only start dailies when you have this amount available to run.</p>";
+				var description = "<p>Will cause the script to only start dailies when you have at least this amount available to run.</p>";
 				description += "<p><b>Recommended:</b> 7</p>";
 				return description;
 			},
