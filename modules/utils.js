@@ -410,10 +410,6 @@ function testTimeWarp(hours) {
 	game.global.lastSkeletimp -= timeToRun;
 	game.permaBoneBonuses.boosts.lastChargeAt -= timeToRun;
 
-	//Increase maxTicks if we're going to be offline for more than 24 hours.
-	if (timeToRun > 8.64e+7)
-		offlineProgress.maxTicks = timeToRun;
-
 	offlineProgress.start();
 	return;
 }

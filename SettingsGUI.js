@@ -5878,13 +5878,18 @@ offlineProgress.start = function () {
 offlineProgress.originalFinish = offlineProgress.finish;
 offlineProgress.finish = function () {
 	//Time we have run TW in seconds
-	var timeRun = Math.floor((new Date().getTime() - offlineProgress.startTime) / 1000);
+	var timeRun = (new Date().getTime() - offlineProgress.startTime) / 1000;
+	//Add on any extra time if your Time Warp was over 24 hours long.
+	var offlineTime = (offlineProgress.totalOfflineTime / 1000) - 86400;
+	timeRun += Math.max(0, offlineTime);
+	//if (timeRun > 86400) offlineProgress.maxTicks = timeRun * 1000;
+
 	if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
 	offlineProgress.originalFinish(...arguments)
 	try {
 		//Rerun TW if it took over 30 seconds to complete
 		if (timeRun > 30) {
-			debug(`Running Time Warp again for ${timeRun} seconds to catchup on the time we missed whilst running it.`);
+			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.min(timeRun, (offlineProgress.maxTicks / 10)))} to catchup on the time we missed whilst running it.`);
 			//Convert time to milliseconds and subtract it from the variables that TW uses to calculate offline progress so we don't have tons of time related issues.
 			timeRun *= 1000;
 			game.global.lastOnline -= timeRun;
