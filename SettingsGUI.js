@@ -12,31 +12,104 @@ function automationMenuSettingsInit() {
 
 automationMenuSettingsInit();
 
+function initializeAllTabs() {
+	var addTabsDiv = document.createElement('div');
+	var addtabsUL = document.createElement('ul');
+	addtabsUL.id = 'autoTrimpsTabBarMenu';
+	addtabsUL.className = 'tab';
+	addtabsUL.style.display = 'none';
+	var sh = document.getElementById('settingsRow');
+	sh.insertBefore(addtabsUL, sh.childNodes[2]);
+
+	createTabs('Core', 'Core - Main Controls for the script', addTabsDiv, addtabsUL);
+	createTabs('Jobs', 'Geneticassist Settings', addTabsDiv, addtabsUL);
+	createTabs('Buildings', 'Building Settings', addTabsDiv, addtabsUL);
+	createTabs('Equipment', 'Equipment Settings', addTabsDiv, addtabsUL);
+	createTabs('Combat', 'Combat & Stance Settings', addTabsDiv, addtabsUL);
+	createTabs('Maps', 'Maps - AutoMaps & VoidMaps Settings', addTabsDiv, addtabsUL);
+	createTabs('Challenges', 'Challenges - Settings for Specific Challenges', addTabsDiv, addtabsUL);
+	createTabs('C2', 'C2 - Settings for C2s', addTabsDiv, addtabsUL);
+	createTabs('Daily', 'Dailies - Settings for Dailies', addTabsDiv, addtabsUL);
+	createTabs('Heirloom', 'Heirloom Settings', addTabsDiv, addtabsUL);
+	createTabs('Golden', 'Golden Upgrade Settings', addTabsDiv, addtabsUL);
+	createTabs('Spire', 'Spire - Settings for Spires', addTabsDiv, addtabsUL);
+	createTabs('Magma', 'Dimensional Generator & Magmite Settings', addTabsDiv, addtabsUL);
+	createTabs('Nature', 'Nature Settings', addTabsDiv, addtabsUL);
+	createTabs('Fluffy', 'Fluffy Evolution Settings', addTabsDiv, addtabsUL);
+	createTabs('Time Warp', 'Time Warp Settings', addTabsDiv, addtabsUL);
+	createTabs('Display', 'Display & Spam Settings', addTabsDiv, addtabsUL);
+	createTabs('Import Export', 'Import & Export Settings', addTabsDiv, addtabsUL);
+	createTabs('Help', 'Helpful information (hopefully)', addTabsDiv, addtabsUL);
+	createTabs('Test', 'Basic testing functions - Should never be seen by users', addTabsDiv, addtabsUL);
+	createTabs('Beta', 'Beta features - Should never be seen by users as they aren\'t user ready', addTabsDiv, addtabsUL);
+
+	//Exit tab icon
+	var li_2 = document.createElement('li');
+	var a_2 = document.createElement('a');
+	a_2.className = 'tablinks tabclose';
+	a_2.setAttribute('onclick', 'autoToggle();');
+	a_2.appendChild(document.createTextNode('x'));
+	li_2.appendChild(a_2);
+	li_2.setAttribute('style', 'float:right!important;');
+	li_2.setAttribute('onmouseover', 'tooltip("Exit", "customText", event, "Closes the AutoTrimps settings menu.")');
+	li_2.setAttribute("onmouseout", 'tooltip("hide")');
+	addtabsUL.appendChild(li_2);
+
+	//Maximize tabs icon
+	var li_1 = document.createElement('li');
+	var a_1 = document.createElement('a');
+	a_1.className = 'tablinks maximize';
+	a_1.setAttribute('onclick', 'maximizeAllTabs();');
+	a_1.appendChild(document.createTextNode('+'));
+	li_1.appendChild(a_1);
+	li_1.setAttribute('style', 'float:right!important;');
+	li_1.setAttribute("onmouseover", 'tooltip("Maximize all tabs", "customText", event, "Maximize all of the settings tabs.")');
+	li_1.setAttribute("onmouseout", 'tooltip("hide")');
+	addtabsUL.appendChild(li_1);
+
+	//Minimize tabs incon
+	var li_0 = document.createElement('li');
+	var a_0 = document.createElement('a');
+	a_0.className = 'tablinks minimize';
+	a_0.setAttribute('onclick', 'minimizeAllTabs();');
+	a_0.appendChild(document.createTextNode('-'));
+	li_0.appendChild(a_0);
+	li_0.setAttribute('style', 'float:right!important;');
+	li_0.setAttribute("onmouseover", 'tooltip("Minimize all tabs", "customText", event, "Minimize all of the settings tabs.")');
+	li_0.setAttribute("onmouseout", 'tooltip("hide")');
+	addtabsUL.appendChild(li_0);
+
+	//Add the tabs to the page
+	document.getElementById('autoSettings').appendChild(addTabsDiv);
+	document.getElementById('Core').style.display = 'block';
+	document.getElementsByClassName('tablinks')[0].className += ' active';
+}
+
 function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
-	var c = document.createElement("li"),
-		d = document.createElement("a");
-	(d.className = "tablinks"),
+	var c = document.createElement('li'),
+		d = document.createElement('a');
+	(d.className = 'tablinks'),
 		d.setAttribute("onclick", "toggleTab(event, '" + tabName + "')"),
-		(d.href = "#"), d.appendChild(document.createTextNode(tabName)),
-		(c.id = "tab" + tabName),
+		(d.href = '#'), d.appendChild(document.createTextNode(tabName)),
+		(c.id = 'tab' + tabName),
 		c.appendChild(d),
 		addtabsUL.appendChild(c),
 		createTabContents(tabName, tabDescription, addTabsDiv);
 }
 
 function createTabContents(tabName, tabDescription, addTabsDiv) {
-	var elem = document.createElement("div");
-	(elem.className = "tabcontent"), (elem.id = tabName);
-	var d = document.createElement("div");
-	d.setAttribute("style", "margin-left: 1vw; margin-right: 1vw; margin-top: 0.25vw; margin-bottom: 0.25vw;");
-	var e = document.createElement("h4");
-	e.setAttribute("style", "font-size: 1.2vw;"), e.appendChild(document.createTextNode(tabDescription)), d.appendChild(e), elem.appendChild(d), addTabsDiv.appendChild(elem);
+	var elem = document.createElement('div');
+	(elem.className = 'tabcontent'), (elem.id = tabName);
+	var d = document.createElement('div');
+	d.setAttribute('style', 'margin-left: 1vw; margin-right: 1vw; margin-top: 0.25vw; margin-bottom: 0.25vw;');
+	var e = document.createElement('h4');
+	e.setAttribute('style', 'font-size: 1.2vw;'), e.appendChild(document.createTextNode(tabDescription)), d.appendChild(e), elem.appendChild(d), addTabsDiv.appendChild(elem);
 }
 
 function toggleTab(a, tabName) {
-	-1 < a.currentTarget.className.indexOf(" active")
-		? ((document.getElementById(tabName).style.display = "none"), (a.currentTarget.className = a.currentTarget.className.replace(" active", "")))
-		: ((document.getElementById(tabName).style.display = "block"), (a.currentTarget.className += " active"));
+	-1 < a.currentTarget.className.indexOf(' active')
+		? ((document.getElementById(tabName).style.display = 'none'), (a.currentTarget.className = a.currentTarget.className.replace(' active', '')))
+		: ((document.getElementById(tabName).style.display = 'block'), (a.currentTarget.className += ' active'));
 }
 
 function minimizeAllTabs() {
@@ -45,90 +118,14 @@ function minimizeAllTabs() {
 }
 
 function maximizeAllTabs() {
-	for (var a = document.getElementsByClassName("tabcontent"), b = 0, c = a.length; b < c; b++) {
+	for (var a = document.getElementsByClassName('tabcontent'), b = 0, c = a.length; b < c; b++) {
 		if (a[b].id.toLowerCase() === 'test' || a[b].id.toLowerCase() === 'beta') continue;
-		a[b].style.display = "block";
+		a[b].style.display = 'block';
 	}
-	for (var d = document.getElementsByClassName("tablinks"), b = 0, c = d.length; b < c; b++) {
+	for (var d = document.getElementsByClassName('tablinks'), b = 0, c = d.length; b < c; b++) {
 		if (d[b].id.toLowerCase() === 'test' || d[b].id.toLowerCase() === 'beta') continue;
-		(d[b].style.display = "block"), d[b].className.includes(" active") || (d[b].className += " active");
+		(d[b].style.display = 'block'), d[b].className.includes(' active') || (d[b].className += ' active');
 	}
-}
-
-function initializeAllTabs() {
-
-	var addTabsDiv;
-	var addtabsUL;
-
-	addTabsDiv = document.createElement('div');
-	addtabsUL = document.createElement('ul');
-	addtabsUL.id = 'autoTrimpsTabBarMenu';
-	addtabsUL.className = "tab";
-	addtabsUL.style.display = "none";
-	var sh = document.getElementById("settingsRow");
-	sh.insertBefore(addtabsUL, sh.childNodes[2]);
-
-	createTabs("Core", "Core - Main Controls for the script", addTabsDiv, addtabsUL);
-	createTabs("Jobs", "Geneticassist Settings", addTabsDiv, addtabsUL);
-	createTabs("Buildings", "Building Settings", addTabsDiv, addtabsUL);
-	createTabs("Equipment", "Equipment Settings", addTabsDiv, addtabsUL);
-	createTabs("Combat", "Combat & Stance Settings", addTabsDiv, addtabsUL);
-	createTabs("Maps", "Maps - AutoMaps & VoidMaps Settings", addTabsDiv, addtabsUL);
-	createTabs("Challenges", "Challenges - Settings for Specific Challenges", addTabsDiv, addtabsUL);
-	createTabs("C2", "C2 - Settings for C2s", addTabsDiv, addtabsUL);
-	createTabs("Daily", "Dailies - Settings for Dailies", addTabsDiv, addtabsUL);
-	createTabs("Heirloom", "Heirloom Settings", addTabsDiv, addtabsUL);
-	createTabs("Golden", "Golden Upgrade Settings", addTabsDiv, addtabsUL);
-	createTabs("Spire", "Spire - Settings for Spires", addTabsDiv, addtabsUL);
-	createTabs("Magma", "Dimensional Generator & Magmite Settings", addTabsDiv, addtabsUL);
-	createTabs("Nature", "Nature Settings", addTabsDiv, addtabsUL);
-	createTabs("Fluffy", "Fluffy Evolution Settings", addTabsDiv, addtabsUL);
-	createTabs("Time Warp", "Time Warp Settings", addTabsDiv, addtabsUL);
-	createTabs("Display", "Display & Spam Settings", addTabsDiv, addtabsUL);
-	createTabs("Import Export", "Import & Export Settings", addTabsDiv, addtabsUL);
-	createTabs("Help", "Helpful information (hopefully)", addTabsDiv, addtabsUL);
-	createTabs("Test", "Basic testing functions - Should never be seen by users", addTabsDiv, addtabsUL);
-	createTabs("Beta", "Beta features - Should never be seen by users as they aren't user ready", addTabsDiv, addtabsUL);
-
-	//Minimize tabs incon
-	var li_0 = document.createElement('li');
-	var a_0 = document.createElement('a');
-	a_0.className = "tablinks minimize";
-	a_0.setAttribute('onclick', 'minimizeAllTabs();');
-	a_0.href = "#";
-	a_0.appendChild(document.createTextNode("-"));
-	li_0.appendChild(a_0);
-	li_0.setAttribute("style", "float:right!important;");
-	li_0.setAttribute("onmouseover", 'tooltip("Minimize all tabs", "customText", event, "Minimize all of the settings tabs.")');
-	li_0.setAttribute("onmouseout", 'tooltip("hide")');
-	//Maximize tabs icon
-	var li_1 = document.createElement('li');
-	var a_1 = document.createElement('a');
-	a_1.className = "tablinks maximize";
-	a_1.setAttribute('onclick', 'maximizeAllTabs();');
-	a_1.href = "#";
-	a_1.appendChild(document.createTextNode("+"));
-	li_1.appendChild(a_1);
-	li_1.setAttribute("style", "float:right!important;");
-	li_1.setAttribute("onmouseover", 'tooltip("Maximize all tabs", "customText", event, "Maximize all of the settings tabs.")');
-	li_1.setAttribute("onmouseout", 'tooltip("hide")');
-	//Exit tab icon
-	var li_2 = document.createElement('li');
-	var a_2 = document.createElement('a');
-	a_2.className = "tablinks tabclose";
-	a_2.setAttribute('onclick', 'autoToggle();');
-	a_2.href = "#";
-	a_2.appendChild(document.createTextNode("x"));
-	li_2.appendChild(a_2);
-	li_2.setAttribute("style", "float:right!important;");
-	li_2.setAttribute("onmouseover", 'tooltip("Exit", "customText", event, "Closes/toggles/hides AutoTrimps (just a UI shortcut)")');
-	li_2.setAttribute("onmouseout", 'tooltip("hide")');
-	addtabsUL.appendChild(li_2);
-	addtabsUL.appendChild(li_1);
-	addtabsUL.appendChild(li_0);
-	document.getElementById("autoSettings").appendChild(addTabsDiv);
-	document.getElementById("Core").style.display = "block";
-	document.getElementsByClassName("tablinks")[0].className += " active";
 }
 
 initializeAllTabs();
@@ -312,7 +309,7 @@ function initializeAllSettings() {
 				description += "<p>" + specialChall + "</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to use the Scruffy 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
 				return description;
-			}, 'dropdown', 'Off', function () { return autoPortalChallenges() }, 'Core', [1, 2]);
+			}, 'dropdown', 'Off', function () { return autoPortalChallenges('autoPortal') }, 'Core', [1, 2]);
 
 		createSetting('heliumHourChallenge',
 			function () { return ('Challenge') },
@@ -321,7 +318,7 @@ function initializeAllSettings() {
 				description += "<p><b>" + resource() + " challenges will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p><b>Recommended:</b> Last challenge available</p>";
 				return description;
-			}, 'dropdown', 'None', function () { return heliumHourChallenges() }, 'Core', [1, 2],
+			}, 'dropdown', 'None', function () { return autoPortalChallenges('heHr') }, 'Core', [1, 2],
 			function () {
 				var namesToCheck = ['Helium Per Hour', 'Radon Per Hour', 'Custom'];
 				return (
@@ -335,7 +332,7 @@ function initializeAllSettings() {
 				description += "<p><b>Challenges that are only worthwhile running once for perks/special unlocks will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p><b>Recommended:</b> Last challenge available</p>";
 				return description;
-			}, 'dropdown', 'None', function () { return heliumOneOffChallenges() }, 'Core', [1, 2],
+			}, 'dropdown', 'None', function () { return autoPortalChallenges('oneOff') }, 'Core', [1, 2],
 			function () {
 				var namesToCheck = ['One Off Challenges'];
 				return (
@@ -350,7 +347,7 @@ function initializeAllSettings() {
 				description += "<p>When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
 				description += "<p>" + specialChall + "</p>";
 				return description;
-			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, 'Core', [1, 2],
+			}, 'dropdown', 'None', function () { return autoPortalChallenges('c2') }, 'Core', [1, 2],
 			function () {
 				var namesToCheck = ['Helium Per Hour', 'Radon Per Hour', 'Custom'];
 				return (
@@ -4254,26 +4251,7 @@ function gameUserCheck(skipTest) {
 	return allowedUsers.includes(user.toLowerCase());
 }
 
-//Will output how many zones you can liquify to.
-function checkLiqZoneCount(universe) {
-	if (game.options.menu.liquification.enabled === 0) return 0;
-	if (universe === 2) {
-		if (!u2Mutations.tree.Liq1.purchased) return 0;
-		var amt = 0.1;
-		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
-		return ((getHighestLevelCleared(false, true) + 1) * amt);
-	}
-	var spireCount = game.global.spiresCompleted;
-	if (game.talents.liquification.purchased) spireCount++;
-	if (game.talents.liquification2.purchased) spireCount++;
-	if (game.talents.liquification3.purchased) spireCount += 2;
-	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
-	var liquidAmount = ((spireCount) / 20);
-	return (((game.stats.highestLevel.valueTotal()) * liquidAmount));
-}
-
 function updateButtonText() {
-
 	var id = 'jobType';
 	var btn = autoTrimpSettings[id];
 	var btnValue = getPageSetting(id);
@@ -4285,9 +4263,7 @@ function updateButtonText() {
 		document.getElementById('autoJobLabelTW').innerHTML = btn.name()[btnValue];
 	}
 
-	var id = 'equipOn';
-	var btnValue = getPageSetting(id);
-
+	var btnValue = getPageSetting('equipOn');
 	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btnValue);
 }
 
@@ -4567,14 +4543,12 @@ function settingChanged(id, currUniverse) {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 			if (document.getElementById('autoStructureLabelTW') !== null) document.getElementById('autoStructureLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		}
-		if (id === "c2disableFinished") modifyParentNodeUniverseSwap();
-
-		if (id === "displayHeHr") {
+		if (id === "c2disableFinished")
+			modifyParentNodeUniverseSwap();
+		if (id === "displayHeHr")
 			document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
-		}
-		if (id === "timeWarpDisplay") {
+		if (id === "timeWarpDisplay")
 			timeWarpDisplay();
-		}
 	}
 
 	if (btn.type === 'multitoggle') {
@@ -4603,9 +4577,8 @@ function settingChanged(id, currUniverse) {
 				document.getElementById('autoJobLabelTW').innerHTML = btn.name()[btn[value]];
 			}
 		}
-		if (id === 'dailyPortal') {
+		if (id === 'dailyPortal')
 			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
-		}
 		if (id === 'autoMaps' && btn[value] !== 2) {
 			//Use regular class for AutoMaps button UNLESS we are in TW then use special case to make it look prettier!
 			document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value])
@@ -4647,54 +4620,43 @@ function modifyParentNode(id, style) {
 
 //Tells the script which settings you want a new line after.
 function modifyParentNodeUniverseSwap() {
-
-	var radonon = getPageSetting('universeSetting') === 1 ? 'show' : 'hide';
-	var radonoff = getPageSetting('universeSetting') === 0 ? 'show' : 'hide';
-	var heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
+	const radonon = getPageSetting('universeSetting') === 1 ? 'show' : 'hide';
+	const radonoff = getPageSetting('universeSetting') === 0 ? 'show' : 'hide';
+	const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
 	//Core
-
 	modifyParentNode("portalVoidIncrement", 'show');
 	modifyParentNode("universeSetting", 'show');
-
+	//Checking if we have too many items on row 3 and if so we need to add a break.
 	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && (getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge') || holidayObj.holiday === 'Eggy')))
 		modifyParentNode("heliumHrDontPortalBefore", 'show');
 	else
 		modifyParentNode("heliumHrDontPortalBefore", 'hide');
-
 	//Dailies
 	modifyParentNode("dscryvoidmaps", radonoff);
 	modifyParentNode("dPreSpireNurseries", radonoff);
 	modifyParentNode("dWindStackingLiq", 'show');
 	modifyParentNode("dailyHeliumHrPortal", 'show');
-
 	//Maps
 	modifyParentNode("uniqueMapEnoughHealth", 'show');
 	modifyParentNode("scryvoidmaps", 'show');
 	modifyParentNode("uniqueMapSettingsArray", 'show');
-
 	//Gear
 	modifyParentNode("equipPercent", 'show');
 	modifyParentNode("equipNoShields", 'show');
 	modifyParentNode("equipShieldBlock", 'show');
-
-	//Spire
-	//None!
-
 	//Combat
 	modifyParentNode("frenzyCalc", radonoff);
 	modifyParentNode("scryerEssenceOnly", radonoff);
-
 	//ATGA
 	modifyParentNode("geneAssistTimerSpire", radonoff);
 	modifyParentNode("geneAssistTimerAfter", radonoff);
 	modifyParentNode("geneAssistTimerSpireDaily", radonoff);
-
 	//C2
 	modifyParentNode("c2disableFinished", 'show');
 	modifyParentNode("c2Fused", 'show');
 	modifyParentNode("c2AutoDStanceSpire", 'show');
-
+	//C2 Challenges
 	modifyParentNode("experienceEndBW", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
 	modifyParentNode("duelShield", radonon);
@@ -4706,10 +4668,8 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("pandemoniumSwapZone", radonon);
 	modifyParentNode("glassStacks", radonon);
 	modifyParentNode("desolationSettings", radonon);
-
 	//Buildings
 	modifyParentNode("autGigaDeltaFactor", radonoff);
-
 	//Challenges
 	modifyParentNode("balanceImprobDestack", radonoff);
 	modifyParentNode("decayStacksToAbandon", radonoff);
@@ -4717,12 +4677,8 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("trapperArmyPct", radonoff);
 	modifyParentNode("mapologyPrestige", radonoff);
 	modifyParentNode("frigid", radonoff);
-	//modifyParentNode("toxicitySettings", radonon);
-	//modifyParentNode("archaeologyString3", radonon);
-
 	//Magma
 	modifyParentNode("AutoGenC2", radonoff);
-
 	//Heirlooms
 	modifyParentNode("heirloomCompressedSwap", 'show');
 	modifyParentNode("heirloomSpire", 'show');
@@ -4733,21 +4689,114 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomAutoModTarget", heirloom);
 	modifyParentNode("heirloomAutoShieldMod7", heirloom);
 	modifyParentNode("heirloomAutoStaffMod7", heirloom);
-	//Golden
-	//None!
-
 	//Nature
 	modifyParentNode("AutoIce", radonoff);
 	modifyParentNode("autoenlight", radonoff);
 	modifyParentNode("iceEnlight", radonoff);
 	modifyParentNode("iceEnlightDaily", radonoff);
-
 	//Display
 	modifyParentNode("automateSpireAssault", radonon);
 	modifyParentNode("EnableAFK", radonoff);
-
 	//Test
 	modifyParentNode("testTotalEquipmentCost", 'show');
+}
+
+//Portal Challenge Dropdown Population
+function autoPortalChallenges(runType = 'autoPortal') {
+	var challenge = ['None'];
+	var obj;
+
+	if (currSettingUniverse == 0) currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
+	const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+
+	if (currSettingUniverse === 1) {
+		if (runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
+		obj = {
+			'Discipline': { unlockZone: 20, unlockCondition: function () { return getTotalPerkResource(true) >= 30 }, unlockedIn: ['c2', 'oneOff',] },
+			'Metal': { unlockZone: 25, unlockedIn: ['c2', 'oneOff',] },
+			'Size': { unlockZone: 35, unlockedIn: ['c2', 'oneOff',] },
+			'Scientist': { unlockZone: 40, unlockedIn: ['oneOff',] },
+			'Balance': { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			'Decay': { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr', 'oneOff',] },
+			'Meditate': { unlockZone: 45, unlockedIn: ['c2', 'oneOff',] },
+			'Trimp': { unlockZone: 60, unlockedIn: ['c2', 'oneOff',] },
+			'Trapper': { unlockZone: 70, unlockedIn: ['c2', 'oneOff',] },
+			'Electricity': { unlockZone: 80, unlockCondition: function () { return game.global.prisonClear >= 1 }, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			'Life': { unlockZone: 110, unlockedIn: ['autoPortal', 'heHr'] },
+			'Crushed': { unlockZone: 125, unlockedIn: ['autoPortal', 'heHr'] },
+			'Frugal': { unlockZone: 100, unlockedIn: ['oneOff',] },
+			'Coordinate': { unlockZone: 120, unlockedIn: ['c2', 'oneOff',] },
+			'Slow': { unlockZone: 130, unlockedIn: ['c2', 'oneOff',] },
+			'Mapocalypse': { unlockZone: 115, unlockedIn: ['oneOff',] },
+			'Nom': { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			'Mapology': { unlockZone: 150, unlockedIn: ['c2', 'oneOff',] },
+			'Toxicity': { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			'Watch': { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			'Lead': { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			'Corrupted': { unlockZone: 190, unlockedIn: ['heHr', 'autoPortal',] },
+			'Domination': { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal',] },
+			'Obliterated': { unlockZone: 425, unlockedIn: ['c2', 'oneOff',] },
+			'Eradicated': { unlockZone: 450, unlockCondition: function () { return game.global.totalSquaredReward >= 4500 }, unlockedIn: ['c2',] },
+			'Frigid': { unlockZone: 460, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			'Experience': { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+		};
+	}
+
+	if (currSettingUniverse === 2) {
+		if (runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
+		obj = {
+			'Unlucky': { unlockZone: 15, unlockedIn: ['c2', 'oneOff'] },
+			'Downsize': { unlockZone: 20, unlockedIn: ['c2', 'oneOff'] },
+			'Transmute': { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
+			'Unbalance': { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
+			'Bublé': { unlockZone: 40, unlockedIn: ['heHr', 'autoPortal'] },
+			'Duel': { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
+			'Melt': { unlockZone: 50, unlockedIn: ['heHr', 'autoPortal'] },
+			'Trappapalooza': { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
+			'Quagmire': { unlockZone: 70, unlockedIn: ['heHr', 'autoPortal'] },
+			'Wither': { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
+			'Revenge': { unlockZone: 80, unlockedIn: ['oneOff'] },
+			'Quest': { unlockZone: 85, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			'Archaeology': { unlockZone: 90, unlockedIn: ['heHr', 'autoPortal'] },
+			'Mayhem': { unlockZone: 100, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			'Storm': { unlockZone: 105, unlockedIn: ['c2', 'oneOff'] },
+			'Insanity': { unlockZone: 110, unlockedIn: ['heHr', 'autoPortal'] },
+			'Berserk': { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
+			'Exterminate': { unlockZone: 120, unlockedIn: ['oneOff'] },
+			'Nurture': { unlockZone: 135, unlockedIn: ['heHr', 'autoPortal'] },
+			'Pandemonium': { unlockZone: 150, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			'Alchemy': { unlockZone: 155, unlockedIn: ['heHr', 'autoPortal'] },
+			'Hypothermia': { unlockZone: 175, unlockedIn: ['heHr', 'autoPortal'] },
+			'Glass': { unlockZone: 175, unlockedIn: ['c2', 'oneOff'] },
+			'Desolation': { unlockZone: 200, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			'Smithless': { unlockZone: 201, unlockedIn: ['c2', 'oneOff'] },
+		};
+	}
+	//Filter out the challenges that aren't unlocked/not of the right run type.
+	obj = Object.entries(obj).reduce((newObj, [key, val]) => {
+		if (val.unlockedIn.indexOf(runType) !== -1 && hze >= val.unlockZone && (typeof val.unlockCondition !== 'function' || val.unlockCondition())) {
+			newObj[key] = val;
+		}
+		return newObj;
+	}, {});
+	//Sort challenges by unlock zone and convert it to an array.
+	obj = Object.keys(obj).sort((a, b) => b.unlockZone - a.unlockZone);
+	//Add all the challenges to the array.
+	challenge = [
+		...challenge,
+		...obj
+	];
+	//Add the custom, oneoffs and c2 challenges to the array if using autoPortal/heHr.
+	if (runType === 'autoPortal') {
+		challenge.push('Custom');
+		challenge.push('One Off Challenges');
+	}
+	if (runType === 'autoPortal' || runType === 'heHr') {
+		if (currSettingUniverse === 2 && hze >= 50) challenge.push('Challenge 3');
+		if (currSettingUniverse === 1 && hze >= 65) challenge.push('Challenge 2');
+	}
+
+	return challenge;
 }
 
 function challengeUnlock(challenge, setting, c2) {
@@ -4761,175 +4810,6 @@ function challengeUnlock(challenge, setting, c2) {
 	msg += (setting ? " & there's settings for it in the scripts " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
 	if (challenge === "Frigid" || challenge === "Experience" || challenge === "Mayhem" || challenge === "Pandemonium" || challenge === "Desolation") msg += "<br><br><b>This is a special challenge and will use " + cinf() + " settings when run.</b>";
 	return msg;
-}
-
-//autoPortal
-function autoPortalChallenges() {
-	var hze;
-	var challenge = [];
-	if (currSettingUniverse === 2) {
-		hze = game.stats.highestRadLevel.valueTotal();
-		challenge = ["Off", "Radon Per Hour"];
-		if (hze >= 40) challenge.push("Bublé");
-		if (hze >= 50) challenge.push("Melt");
-		if (hze >= 70) challenge.push("Quagmire");
-		if (hze >= 85) challenge.push("Quest");
-		if (hze >= 90) challenge.push("Archaeology");
-		if (hze >= 100) challenge.push("Mayhem");
-		if (hze >= 110) challenge.push("Insanity");
-		if (hze >= 135) challenge.push("Nurture");
-		if (hze >= 150) challenge.push("Pandemonium");
-		if (hze >= 155) challenge.push("Alchemy");
-		if (hze >= 175) challenge.push("Hypothermia");
-		if (hze >= 200) challenge.push('Desolation');
-		challenge.push("Custom");
-		if (hze >= 15) challenge.push("One Off Challenges");
-		if (hze >= 50) challenge.push("Challenge 3");
-	}
-	else {
-		hze = game.stats.highestLevel.valueTotal();
-		challenge = ["Off", "Helium Per Hour"];
-		if (hze >= 40) challenge.push("Balance");
-		if (hze >= 55) challenge.push("Decay");
-		if (game.global.prisonClear >= 1) challenge.push("Electricity");
-		if (hze >= 110) challenge.push("Life");
-		if (hze >= 125) challenge.push("Crushed");
-		if (hze >= 145) challenge.push("Nom");
-		if (hze >= 165) challenge.push("Toxicity");
-		if (hze >= 180) challenge.push("Watch");
-		if (hze >= 180) challenge.push("Lead");
-		if (hze >= 190) challenge.push("Corrupted");
-		if (hze >= 215) challenge.push("Domination");
-		if (hze >= 460) challenge.push('Frigid');
-		if (hze >= 600) challenge.push("Experience");
-		challenge.push("Custom");
-		if (getTotalPerkResource(true) >= 30) challenge.push("One Off Challenges");
-		if (hze >= 65) challenge.push("Challenge 2");
-	}
-	return challenge;
-}
-//heliumHourChallenge && dailyHeliumHourChallenge
-function heliumHourChallenges() {
-	var hze;
-	var challenge = ["None"];
-	if (currSettingUniverse === 2) {
-		hze = game.stats.highestRadLevel.valueTotal();
-		if (hze >= 40) challenge.push("Bublé");
-		if (hze >= 50) challenge.push("Melt");
-		if (hze >= 70) challenge.push("Quagmire");
-		if (hze >= 85) challenge.push("Quest");
-		if (hze >= 90) challenge.push("Archaeology");
-		if (hze >= 110) challenge.push("Insanity");
-		if (hze >= 135) challenge.push("Nurture");
-		if (hze >= 155) challenge.push("Alchemy");
-		if (hze >= 175) challenge.push("Hypothermia");
-		if (hze >= 50) challenge.push("Challenge 3");
-	}
-	else {
-		hze = game.stats.highestLevel.valueTotal();
-		if (hze >= 40) challenge.push("Balance");
-		if (hze >= 55) challenge.push("Decay");
-		if (game.global.prisonClear >= 1) challenge.push("Electricity");
-		if (hze >= 110) challenge.push("Life");
-		if (hze >= 125) challenge.push("Crushed");
-		if (hze >= 145) challenge.push("Nom");
-		if (hze >= 165) challenge.push("Toxicity");
-		if (hze >= 180) challenge.push("Watch");
-		if (hze >= 180) challenge.push("Lead");
-		if (hze >= 190) challenge.push("Corrupted");
-		if (hze >= 215) challenge.push("Domination");
-		if (hze >= 600) challenge.push("Experience");
-		if (hze >= 65) challenge.push("Challenge 2");
-	}
-	return challenge;
-}
-//heliumC2Challenge && dailyC2Challenge
-function heliumC2Challenges() {
-	var hze;
-	var challenge = ["None"];
-	if (currSettingUniverse === 2) {
-		hze = game.stats.highestRadLevel.valueTotal();
-		if (hze >= 15) challenge.push("Unlucky");
-		if (hze >= 20) challenge.push("Downsize");
-		if (hze >= 25) challenge.push("Transmute");
-		if (hze >= 35) challenge.push("Unbalance");
-		if (hze >= 45) challenge.push("Duel");
-		if (hze >= 60) challenge.push("Trappapalooza");
-		if (hze >= 70) challenge.push("Wither");
-		if (hze >= 85) challenge.push("Quest");
-		if (hze >= 100) challenge.push("Mayhem");
-		if (hze >= 105) challenge.push("Storm");
-		if (hze >= 115) challenge.push("Berserk");
-		if (hze >= 150) challenge.push("Pandemonium");
-		if (hze >= 175) challenge.push("Glass");
-		if (hze >= 200) challenge.push('Desolation');
-		if (hze >= 201) challenge.push("Smithless");
-	}
-	else {
-		hze = game.stats.highestLevel.valueTotal();
-		if (getTotalPerkResource(true) >= 30) challenge.push("Discipline");
-		if (hze >= 25) challenge.push("Metal");
-		if (hze >= 35) challenge.push("Size");
-		if (hze >= 40) challenge.push("Balance");
-		if (hze >= 45) challenge.push("Meditate");
-		if (hze >= 60) challenge.push("Trimp");
-		if (hze >= 70) challenge.push("Trapper");
-		if (game.global.prisonClear >= 1) challenge.push("Electricity");
-		if (hze >= 120) challenge.push("Coordinate");
-		if (hze >= 130) challenge.push("Slow");
-		if (hze >= 145) challenge.push("Nom");
-		if (hze >= 150) challenge.push("Mapology");
-		if (hze >= 165) challenge.push("Toxicity");
-		if (hze >= 180) challenge.push("Watch");
-		if (hze >= 180) challenge.push("Lead");
-		if (hze >= 425) challenge.push("Obliterated");
-		if (game.global.totalSquaredReward >= 4500) challenge.push("Eradicated");
-		if (hze >= 460) challenge.push('Frigid');
-		if (hze >= 600) challenge.push("Experience");
-	}
-	return challenge;
-}
-//heliumC2Challenge && dailyC2Challenge
-function heliumOneOffChallenges() {
-	var hze;
-	var challenge = ["None"];
-	if (currSettingUniverse === 2) {
-		hze = game.stats.highestRadLevel.valueTotal();
-		if (hze >= 15) challenge.push("Unlucky");
-		if (hze >= 20) challenge.push("Downsize");
-		if (hze >= 25) challenge.push("Transmute");
-		if (hze >= 35) challenge.push("Unbalance");
-		if (hze >= 45) challenge.push("Duel");
-		if (hze >= 60) challenge.push("Trappapalooza");
-		if (hze >= 70) challenge.push("Wither");
-		if (hze >= 80) challenge.push("Revenge");
-		if (hze >= 100) challenge.push("Mayhem");
-		if (hze >= 105) challenge.push("Storm");
-		if (hze >= 115) challenge.push("Berserk");
-		if (hze >= 120) challenge.push("Exterminate");
-		if (hze >= 150) challenge.push("Pandemonium");
-		if (hze >= 175) challenge.push("Glass");
-		if (hze >= 200) challenge.push('Desolation');
-		if (hze >= 201) challenge.push("Smithless");
-	}
-	else {
-		hze = game.stats.highestLevel.valueTotal();
-		if (getTotalPerkResource(true) >= 30) challenge.push("Discipline");
-		if (hze >= 25) challenge.push("Metal");
-		if (hze >= 35) challenge.push("Size");
-		if (hze >= 40) challenge.push("Scientist");
-		if (hze >= 45) challenge.push("Meditate");
-		if (hze >= 60) challenge.push("Trimp");
-		if (hze >= 70) challenge.push("Trapper");
-		if (hze >= 100) challenge.push("Frugal");
-		if (hze >= 115) challenge.push("Mapocalypse");
-		if (hze >= 120) challenge.push("Coordinate");
-		if (hze >= 130) challenge.push("Slow");
-		if (hze >= 150) challenge.push("Mapology");
-		if (hze >= 165) challenge.push("Devastation");
-		if (hze >= 460) challenge.push('Frigid');
-	}
-	return challenge;
 }
 
 //Checks to see if we should inform the user of any new challenge unlocks.
@@ -5087,11 +4967,11 @@ function challengeUnlockCheckU2() {
 	else if (hze === 50) {
 		//C3
 		message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under Auto Portal to be able to auto portal into them. Also you can now access the " + cinf() + " tab within the the scripts settings.";
+		message += "<br><br>"
 		//Melt
-		message += "<br><br>"
 		message += challengeUnlock('Melt');
-		//Worshippers
 		message += "<br><br>"
+		//Worshippers
 		message += "You can now use the Worshipper Farm setting. This can be found in the the scripts 'Maps' tab.";
 	} //Trappapalooza
 	else if (hze === 60) {
@@ -5131,8 +5011,8 @@ function challengeUnlockCheckU2() {
 	} //Hypothermia
 	else if (hze === 175) {
 		message = challengeUnlock('Hypothermia', true, false);
-		//Glass
 		message += "<br><br>"
+		//Glass
 		message += challengeUnlock('Glass', true, true);
 	} //Desolation
 	else if (hze === 200) {
@@ -5358,7 +5238,6 @@ function autoSetText(id, multiValue) {
 }
 
 function autoToggle(what) {
-
 	//Changing where buttons are placed depending on TW status.
 	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) {
 		if (document.getElementById("autoTrimpsTabBarMenu").parentNode.id === 'settingsRow') {
@@ -5723,15 +5602,14 @@ function setupTimeWarpAT() {
 	autoMapsStatusTW();
 
 	//Remove the automaps button if it already exists.
-	if (document.getElementById('autoMapBtnTW') !== null) {
+	if (document.getElementById('autoMapBtnTW') !== null)
 		document.getElementById('autoMapBtnTW').parentNode.removeChild(document.getElementById('autoMapBtnTW'));
-	}
 
 	//Add the AutoMaps button to the right hand side section.
 	if (document.getElementById('autoMapBtnTW') === null) {
 		document.getElementById('offlineExtraBtnsContainer').children[2].insertAdjacentHTML('afterend', '<br>');
 		var offlineExtraBtnsContainer = document.getElementById("offlineFightBtn").parentNode;
-		offlineExtraBtnsContainer.replaceChild(autoMapsButton(true), document.getElementById("offlineFightBtn").parentNode.children[3]);
+		offlineExtraBtnsContainer.replaceChild(autoMapsButton(), document.getElementById("offlineFightBtn").parentNode.children[3]);
 	}
 
 	//Integrate the 3 AT TimeWarp related settings beneath the main UI.
@@ -5748,7 +5626,7 @@ function setupTimeWarpAT() {
 		offlineProgressParent.replaceChild(settingsRow, document.getElementById("offlineProgressWrapper").parentNode.children[4]);
 
 		//AutoJobs button.
-		var autoJobs = true;
+		const autoJobs = true;
 		if (autoJobs) {
 			//Creating parent button
 			var jobSetting = getPageSetting('jobType')
@@ -5780,7 +5658,7 @@ function setupTimeWarpAT() {
 		}
 
 		//AutoTrimp Settings button.
-		var autoTrimpsSettings = true;
+		const autoTrimpsSettings = true;
 		if (autoTrimpsSettings) {
 
 			//Creating parent button
@@ -5803,7 +5681,7 @@ function setupTimeWarpAT() {
 		}
 
 		//AutoStructure Button.
-		var autoStructure = true;
+		const autoStructure = true;
 		if (autoStructure) {
 
 			//Creating parent button
@@ -5845,7 +5723,6 @@ function setupTimeWarpAT() {
 //Display TW UI or regular UI depending on timeWarpDisplay setting.
 function timeWarpDisplay() {
 	if (!usingRealTimeOffline) return;
-
 	document.getElementById('offlineWrapper').style.display = getPageSetting('timeWarpDisplay') ? 'none' : 'block';
 	document.getElementById('innerWrapper').style.display = getPageSetting('timeWarpDisplay') ? 'block' : 'none';
 }
@@ -5861,52 +5738,6 @@ function autoMapsButton() {
 	autoMapsContainer.innerHTML = 'Auto Maps';
 
 	return autoMapsContainer;
-}
-
-//Attach AT related buttons to the main TW UI.
-//Will attach AutoMaps, AutoMaps Status, AutoTrimps Settings, AutoJobs, AutoStructure
-offlineProgress.originalStart = offlineProgress.start;
-offlineProgress.start = function () {
-	offlineProgress.originalStart(...arguments)
-	try {
-		setupTimeWarpAT();
-	}
-	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
-}
-
-//Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
-offlineProgress.originalFinish = offlineProgress.finish;
-offlineProgress.finish = function () {
-	//Time we have run TW in seconds
-	var timeRun = (new Date().getTime() - offlineProgress.startTime) / 1000;
-	//Add on any extra time if your Time Warp was over 24 hours long.
-	var offlineTime = (offlineProgress.totalOfflineTime / 1000) - 86400;
-	timeRun += Math.max(0, offlineTime);
-	//if (timeRun > 86400) offlineProgress.maxTicks = timeRun * 1000;
-
-	if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
-	offlineProgress.originalFinish(...arguments)
-	try {
-		//Rerun TW if it took over 30 seconds to complete
-		if (timeRun > 30) {
-			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.min(timeRun, (offlineProgress.maxTicks / 10)))} to catchup on the time we missed whilst running it.`);
-			//Convert time to milliseconds and subtract it from the variables that TW uses to calculate offline progress so we don't have tons of time related issues.
-			timeRun *= 1000;
-			game.global.lastOnline -= timeRun;
-			game.global.portalTime -= timeRun;
-			game.global.zoneStarted -= timeRun;
-			game.global.lastSoldierSentAt -= timeRun;
-			game.global.lastSkeletimp -= timeRun;
-			game.permaBoneBonuses.boosts.lastChargeAt -= timeRun;
-			offlineProgress.start();
-		}
-	}
-	catch (e) { console.log("Failed to restart Time Warp to finish it off. " + e, "other") }
-}
-
-//Make AT button visible on timewarp screen if already in TW when loading AT
-if (usingRealTimeOffline) {
-	setupTimeWarpAT();
 }
 
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
@@ -6139,60 +5970,6 @@ function introMessage() {
 	verticalCenterTooltip(true);
 }
 
-//When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
-function updateChangelogButton() {
-	if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
-	var changeLogBtn = document.getElementById("atChangelog");
-	if (changeLogBtn !== null) {
-		//Swap the button class remove colour of new changelog.
-		var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
-		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
-		//Remove the new changelog text if it exists.
-		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", "");
-		autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
-		saveSettings();
-	}
-}
-
-function setupAddonUser(force) {
-	//Setting up addon user settings.
-
-	if (typeof game.global.addonUser !== 'object' || force) {
-
-
-		game.global.addonUser = {};
-
-		const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
-		const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
-
-		for (var item in u1Settings) {
-			if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined')
-				game.global.addonUser[u1Settings[item] + 'Settings'] = {};
-			if (typeof game.global.addonUser[u1Settings[item] + 'Settings']['value'] === 'undefined') {
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
-				}
-				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
-			}
-		}
-
-		for (var item in u2Settings) {
-			if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined')
-				game.global.addonUser[u2Settings[item] + 'Settings'] = {};
-			if (typeof game.global.addonUser[u2Settings[item] + 'Settings']['valueU2'] === 'undefined') {
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
-				}
-				game.global.addonUser[u2Settings[item] + 'Settings'].valueU2 = obj;
-			}
-		}
-	}
-}
-
 function updateATVersion() {
 	//Setting Conversion!
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === atSettings.initialise.version) return;
@@ -6203,12 +5980,7 @@ function updateATVersion() {
 	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
 		autoTrimpSettings["ATversion"] = atSettings.initialise.version;
 		saveSettings();
-
-		//Setting up addon user settings.
-		setupAddonUser();
-
 		if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
-
 		introMessage();
 		return;
 	}
@@ -6573,4 +6345,19 @@ function printChangelog(changes) {
 
 function assembleChangelog(c) {
 	return `${c}<br>`
+}
+
+//When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
+function updateChangelogButton() {
+	if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
+	var changeLogBtn = document.getElementById("atChangelog");
+	if (changeLogBtn !== null) {
+		//Swap the button class remove colour of new changelog.
+		var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
+		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
+		//Remove the new changelog text if it exists.
+		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", "");
+		autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
+		saveSettings();
+	}
 }

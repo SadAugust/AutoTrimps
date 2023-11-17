@@ -544,7 +544,6 @@ function mainCleanup() {
 			MODULES.mapFunctions.afterVoids = false;
 			MODULES.portal.zonePostpone = 0;
 			if (!game.upgrades.Battle.done) {
-				updateButtonText();
 				resetSettingsPortal();
 			}
 		}

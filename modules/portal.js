@@ -637,6 +637,24 @@ function finishChallengeSquared() {
 	return;
 }
 
+//Will output how many zones you can liquify to.
+function checkLiqZoneCount(universe) {
+	if (game.options.menu.liquification.enabled === 0) return 0;
+	if (universe === 2) {
+		if (!u2Mutations.tree.Liq1.purchased) return 0;
+		var amt = 0.1;
+		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
+		return ((getHighestLevelCleared(false, true) + 1) * amt);
+	}
+	var spireCount = game.global.spiresCompleted;
+	if (game.talents.liquification.purchased) spireCount++;
+	if (game.talents.liquification2.purchased) spireCount++;
+	if (game.talents.liquification3.purchased) spireCount += 2;
+	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
+	var liquidAmount = ((spireCount) / 20);
+	return (((game.stats.highestLevel.valueTotal()) * liquidAmount));
+}
+
 function resetVarsZone(loadingSave) {
 
 	//Reloading save variables
