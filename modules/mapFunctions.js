@@ -4073,3 +4073,40 @@ function mapScumming(slowTarget) {
 	atSettings.running = true;
 	debug(msg, 'mapping_Details');
 }
+
+function setupAddonUser(force) {
+	//Setting up addon user settings.
+
+	if (typeof game.global.addonUser !== 'object' || force) {
+		game.global.addonUser = {};
+
+		const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+		const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+
+		for (var item in u1Settings) {
+			if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined')
+				game.global.addonUser[u1Settings[item] + 'Settings'] = {};
+			if (typeof game.global.addonUser[u1Settings[item] + 'Settings']['value'] === 'undefined') {
+				var obj = [];
+				for (var x = 0; x < 30; x++) {
+					obj[x] = {};
+					obj[x].done = '';
+				}
+				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
+			}
+		}
+
+		for (var item in u2Settings) {
+			if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined')
+				game.global.addonUser[u2Settings[item] + 'Settings'] = {};
+			if (typeof game.global.addonUser[u2Settings[item] + 'Settings']['valueU2'] === 'undefined') {
+				var obj = [];
+				for (var x = 0; x < 30; x++) {
+					obj[x] = {};
+					obj[x].done = '';
+				}
+				game.global.addonUser[u2Settings[item] + 'Settings'].valueU2 = obj;
+			}
+		}
+	}
+}
