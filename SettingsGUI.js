@@ -21,6 +21,27 @@ function initializeAllTabs() {
 	var sh = document.getElementById('settingsRow');
 	sh.insertBefore(addtabsUL, sh.childNodes[2]);
 
+	function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
+		var c = document.createElement('li'),
+			d = document.createElement('a');
+		(d.className = 'tablinks'),
+			d.setAttribute("onclick", "toggleTab(event, '" + tabName + "')"),
+			(d.href = '#'), d.appendChild(document.createTextNode(tabName)),
+			(c.id = 'tab' + tabName),
+			c.appendChild(d),
+			addtabsUL.appendChild(c),
+			createTabContents(tabName, tabDescription, addTabsDiv);
+	}
+
+	function createTabContents(tabName, tabDescription, addTabsDiv) {
+		var elem = document.createElement('div');
+		(elem.className = 'tabcontent'), (elem.id = tabName);
+		var d = document.createElement('div');
+		d.setAttribute('style', 'margin-left: 1vw; margin-right: 1vw; margin-top: 0.25vw; margin-bottom: 0.25vw;');
+		var e = document.createElement('h4');
+		e.setAttribute('style', 'font-size: 1.2vw;'), e.appendChild(document.createTextNode(tabDescription)), d.appendChild(e), elem.appendChild(d), addTabsDiv.appendChild(elem);
+	}
+
 	createTabs('Core', 'Core - Main Controls for the script', addTabsDiv, addtabsUL);
 	createTabs('Jobs', 'Geneticassist Settings', addTabsDiv, addtabsUL);
 	createTabs('Buildings', 'Building Settings', addTabsDiv, addtabsUL);
@@ -83,27 +104,6 @@ function initializeAllTabs() {
 	document.getElementById('autoSettings').appendChild(addTabsDiv);
 	document.getElementById('Core').style.display = 'block';
 	document.getElementsByClassName('tablinks')[0].className += ' active';
-}
-
-function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
-	var c = document.createElement('li'),
-		d = document.createElement('a');
-	(d.className = 'tablinks'),
-		d.setAttribute("onclick", "toggleTab(event, '" + tabName + "')"),
-		(d.href = '#'), d.appendChild(document.createTextNode(tabName)),
-		(c.id = 'tab' + tabName),
-		c.appendChild(d),
-		addtabsUL.appendChild(c),
-		createTabContents(tabName, tabDescription, addTabsDiv);
-}
-
-function createTabContents(tabName, tabDescription, addTabsDiv) {
-	var elem = document.createElement('div');
-	(elem.className = 'tabcontent'), (elem.id = tabName);
-	var d = document.createElement('div');
-	d.setAttribute('style', 'margin-left: 1vw; margin-right: 1vw; margin-top: 0.25vw; margin-bottom: 0.25vw;');
-	var e = document.createElement('h4');
-	e.setAttribute('style', 'font-size: 1.2vw;'), e.appendChild(document.createTextNode(tabDescription)), d.appendChild(e), elem.appendChild(d), addTabsDiv.appendChild(elem);
 }
 
 function toggleTab(a, tabName) {
@@ -484,7 +484,8 @@ function initializeAllSettings() {
 			Worshipper: { enabled: true, percent: 5 },
 			FarmersUntil: { enabled: false, zone: 999 },
 			NoLumberjacks: { enabled: false }
-		}, null, 'Jobs', [1, 2]);
+		}, null, 'Jobs', [1, 2],
+			function () { return false });
 
 		//----------------------------------------------------------------------------------------------------------------------
 
@@ -682,7 +683,8 @@ function initializeAllSettings() {
 			Tribute: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
 			SafeGateway: { enabled: true, mapCount: 1, zone: 0 }
-		}, null, 'Buildings', [1, 2]);
+		}, null, 'Buildings', [1, 2],
+			function () { return false });
 
 		//Helium
 		createSetting('warpstation',
@@ -1781,7 +1783,7 @@ function initializeAllSettings() {
 				description += "<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>";
 				description += "<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>";
 				return description;
-			}, 'infoclick', 'c2table', null, 'C2', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip(\'c2table\', \'update\')', 'C2', [0]);
 
 		createSetting('c2SharpTrimps',
 			function () { return (cinf() + ' Sharp Trimps') },
@@ -3626,7 +3628,7 @@ function initializeAllSettings() {
 				description += "<p><b>3.</b><br>Buy Efficiency if it is better than capacity.</p>";
 				description += "<p><b>4.</b><br>Buy Capacity or Supply depending on which is cheaper, or based on SupplyWall.</p>";
 				return description;
-			}, 'infoclick', 'MagmiteExplain', null, 'Magma', [1],
+			}, 'infoclick', null, 'ImportExportTooltip(\'MagmiteExplain\', \'update\')', 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 
 		//Automate Fuel Zones
@@ -3920,7 +3922,7 @@ function initializeAllSettings() {
 				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
 				return description;
 			},
-			'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display', [1, 2]);
+			'action', null, 'MODULES["performance"].EnableAFKMode()', 'Display', [1, 2]);
 
 		createSetting('automateSpireAssault',
 			function () { return ('Automate Spire Assault') },
@@ -3967,7 +3969,8 @@ function initializeAllSettings() {
 			jobs: false,
 			zone: true,
 			exotic: false,
-		}, null, 'Display', [0]);
+		}, null, 'Display', [0],
+			function () { return false });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -3985,25 +3988,25 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Import a AutoTrimps settings file.</p>";
 				return description;
-			}, 'infoclick', 'ImportAutoTrimps', null, 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip(\'ImportAutoTrimps\', \'update\')', 'Import Export', [0]);
 		createSetting('ExportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
 				var description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
 				return description;
-			}, 'infoclick', 'ExportAutoTrimps', null, 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip(\'ExportAutoTrimps\', \'update\')', 'Import Export', [0]);
 		createSetting('DefaultAutoTrimps',
 			function () { return ('Reset To Default') },
 			function () {
 				var description = "<p>Reset everything to the way it was when you first installed the script.</p>";
 				return description;
-			}, 'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip(\'ResetDefaultSettingsProfiles\', \'update\')', 'Import Export', [0]);
 		createSetting('DownloadDebug',
 			function () { return ('Download For Debug') },
 			function () {
 				var description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
 				return description;
-			}, 'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [0]);
+			}, 'action', null, 'ImportExportTooltip("ExportAutoTrimps","update",true)', 'Import Export', [0]);
 
 		createSetting('updateReload',
 			function () { return ('Update Reload') },
@@ -4019,14 +4022,16 @@ function initializeAllSettings() {
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', JSON.stringify({
 				'': '',
-			}), null, 'Import Export', [1, 2]);
+			}), null, 'Import Export', [1, 2],
+			function () { return false });
 
 		createSetting('autoHeirloomStorage',
 			function () { return ('Auto Heirlooms') },
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', JSON.stringify({
 				'': '',
-			}), null, 'Import Export', [1, 2]);
+			}), null, 'Import Export', [1, 2],
+			function () { return false });
 
 		createSetting('mutatorPresets',
 			function () { return ('Mutator Presets') },
@@ -4035,7 +4040,8 @@ function initializeAllSettings() {
 				preset1: {},
 				preset2: {},
 				preset3: {},
-			}), null, 'Import Export', [2]);
+			}), null, 'Import Export', [2],
+			function () { return false });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -4048,39 +4054,39 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will display the introduction message that is shown when you first load the script.</p>";
 				return description;
-			}, 'action', 'cancelTooltip(); introMessage();', null, 'Help', [0]);
+			}, 'action', null, 'cancelTooltip(); introMessage();', 'Help', [0]);
 		createSetting('helpStatus',
 			function () { return ('Auto Maps Status') },
 			function () {
 				var description = "<p>Will display the Auto Maps status window.</p>";
 				description += "<p>This can also be accessed by mousing over the text that tells you what Auto Maps is currently trying to do just beneath the Auto Maps button.</p>";
 				return description;
-			}, 'action', 'cancelTooltip(); makeAutomapStatusTooltip(false);', null, 'Help', [0]);
+			}, 'action', null, 'cancelTooltip(); makeAutomapStatusTooltip(false);', 'Help', [0]);
 		createSetting('helpResourceHour',
 			function () { return (resource() + ' Per Hour') },
 			function () {
 				var description = "<p>Will display the " + resource() + "/Hr tooltip message.</p>";
 				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + resourceHour() + "/hr status</b> setting in the <b>Display</b> tab is enabled.</p>";
 				return description;
-			}, 'action', 'cancelTooltip(); makeResourceTooltip();', null, 'Help', [0]);
+			}, 'action', null, 'cancelTooltip(); makeResourceTooltip();', 'Help', [0]);
 		createSetting('helpAutoPortal',
 			function () { return ('Auto Portal Info') },
 			function () {
 				var description = "<p>Will display a description of what order Auto Portal will try to perform its actions.</p>";
 				return description;
-			}, 'action', 'cancelTooltip(); makeAutoPortalHelpTooltip(false);', null, 'Help', [0]);
+			}, 'action', null, 'cancelTooltip(); makeAutoPortalHelpTooltip(false);', 'Help', [0]);
 		createSetting('helpAutoPortal',
 			function () { return ('Auto Maps Priority') },
 			function () {
 				var description = "<p>Will display the order that Auto Maps will run each setting in.</p>";
 				return description;
-			}, 'action', 'cancelTooltip(); makeFarmingDecisionHelpTooltip(false);', null, 'Help', [0]);
+			}, 'action', null, 'cancelTooltip(); makeFarmingDecisionHelpTooltip(false);', 'Help', [0]);
 		/* createSetting('helpFragments',
 			function () { return ('Fragment Decisions') },
 			function () {
 				var description = "<p>Will display the decision for map creation slider/setting adjustments.</p>";
 				return description;
-			}, 'action', 'cancelTooltip(); makeFragmentDecisionHelpTooltip(false);', null, 'Help', [0]); */
+			}, 'action',null, 'cancelTooltip(); makeFragmentDecisionHelpTooltip(false);', 'Help', [0]); */
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -4103,28 +4109,28 @@ function initializeAllSettings() {
 				description += "<p><b>There's no way to clear this without refreshing your page.</b></p>";
 				description += "<p><b>Speed increase is variable depending on your machine.</b></p>";
 				return description;
-			}, 'action', 'testSpeedX(0.00001);', null, 'Test', [0]);
+			}, 'action', null, 'testSpeedX(0.00001);', 'Test', [0]);
 
 		createSetting('testSetChallenge',
 			function () { return ('Custom Challenge') },
 			function () {
 				var description = "<p>Will set the challenge that Trimps is running to your input.</p>";
 				return description;
-			}, 'action', 'ImportExportTooltip("SetCustomChallenge");', null, 'Test', [0]);
+			}, 'action', null, 'ImportExportTooltip("SetCustomChallenge");', 'Test', [0]);
 
 		createSetting('testSetC2',
 			function () { return ('Toggle ' + cinf()) },
 			function () {
 				var description = "<p>Will toggle on the setting for if you\'re running a " + cinf() + ".</p>";
 				return description;
-			}, 'action', 'testRunningCinf();', null, 'Test', [0]);
+			}, 'action', null, 'testRunningCinf();', 'Test', [0]);
 
 		createSetting('testBoneCharges',
 			function () { return ('Max Bone Charges') },
 			function () {
 				var description = "<p>Sets your bone charge counter to 10.</p>";
 				return description;
-			}, 'action', 'game.permaBoneBonuses.boosts.charges=10; game.permaBoneBonuses.boosts.updateBtn();', null, 'Test', [0]);
+			}, 'action', null, 'game.permaBoneBonuses.boosts.charges=10; game.permaBoneBonuses.boosts.updateBtn();', 'Test', [0]);
 
 		createSetting('testMetalOneDay',
 			function () { return ('1 Day Of Metal') },
@@ -4133,7 +4139,7 @@ function initializeAllSettings() {
 				description += "<p>If in a map if will use your map level otherwise it'll assume world level maps.</p>";
 				description += "<p>Assumes killing at max speed and factors overkill into the calculations.</p>";
 				return description;
-			}, 'action', 'testMetalIncome();', null, 'Test', [0]);
+			}, 'action', null, 'testMetalIncome();', 'Test', [0]);
 
 		createSetting('testTimeWarp',
 			function () { return ('Time Warp') },
@@ -4141,7 +4147,7 @@ function initializeAllSettings() {
 				var description = "<p>Allows you to input how many hours of Time Warp you would like to do.</p>";
 				description += "<p>If you input a value higher than 24 it will increase the max time you can time warp for to the value you have input.</p>";
 				return description;
-			}, 'action', 'ImportExportTooltip("timeWarp");', null, 'Test', [0]);
+			}, 'action', null, 'ImportExportTooltip("timeWarp");', 'Test', [0]);
 
 		createSetting('testTotalEquipmentCost',
 			function () { return ('Total Equipment Cost') },
@@ -4151,7 +4157,7 @@ function initializeAllSettings() {
 				description += "<p>Assumes killing at max speed and factors overkill into the calculations.</p>";
 				return description;
 			},
-			'action', 'testEquipmentMetalSpent();', null, 'Test', [0]);
+			'action', null, 'testEquipmentMetalSpent();', 'Test', [0]);
 
 		createSetting('testLastWorldCell',
 			function () { return ('Last World Cell') },
@@ -4159,7 +4165,7 @@ function initializeAllSettings() {
 				var description = "<p>Sets your current cell to the last world cell in the world.</p>";
 				description += "<p>Will also set the last enemy cells health to 0.</p>";
 				return description;
-			}, 'action', 'testWorldCell();', null, 'Test', [0]);
+			}, 'action', null, 'testWorldCell();', 'Test', [0]);
 
 		createSetting('testLastMapCell',
 			function () { return ('Last Map Cell') },
@@ -4167,21 +4173,21 @@ function initializeAllSettings() {
 				var description = "<p>Sets your current cell to the last world cell in maps.</p>";
 				description += "<p>Will also set the last enemy cells health to 0.</p>";
 				return description;
-			}, 'action', 'testMapCell();', null, 'Test', [0]);
+			}, 'action', null, 'testMapCell();', 'Test', [0]);
 
 		createSetting('testMaxMapBonus',
 			function () { return ('Max Map Bonus') },
 			function () {
 				var description = "<p>Sets your map bonus stacks to 10.</p>";
 				return description;
-			}, 'action', 'testMaxMapBonus();', null, 'Test', [0]);
+			}, 'action', null, 'testMaxMapBonus();', 'Test', [0]);
 		createSetting('testMaxTenacity',
 			function () { return ('Max Tenacity Mult') },
 			function () {
 				var description = "<p>Sets your current cell to the last world cell in maps.</p>";
 				description += "<p>Will also set the last enemy cells health to 0.</p>";
 				return description;
-			}, 'action', 'testMaxTenacity();', null, 'Test', [0]);
+			}, 'action', null, 'testMaxTenacity();', 'Test', [0]);
 
 		createSetting('testStatMult',
 			function () { return ('1e100x Stats') },
@@ -4189,7 +4195,7 @@ function initializeAllSettings() {
 				var description = "<p>Multiplies soldier health & damage by 1e100.</p>";
 				description += "<p>Doesn't have any protecion to ensure you stay below infinity health.</p>";
 				return description;
-			}, 'action', 'testTrimpStats();', null, 'Test', [0]);
+			}, 'action', null, 'testTrimpStats();', 'Test', [0]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -4205,7 +4211,7 @@ function initializeAllSettings() {
 				description += "<p>Will only work if you\'re in maps and on cell 1.</p>";
 				description += "<p><b>Due to the map remaking process your game will hang for roughly 60s while this finds an ideal map.</b></p>";
 				return description;
-			}, 'action', 'mapScumming(9);', null, 'Beta', [0]);
+			}, 'action', null, 'mapScumming(9);', 'Beta', [0]);
 		createSetting('testMapScummingValue',
 			function () { return ('Slow Map Value') },
 			function () {
@@ -4275,248 +4281,94 @@ initializeAllSettings();
 updateATVersion();
 
 function createSetting(id, name, description, type, defaultValue, list, container, universe, require) {
-	var btnParent = document.createElement("DIV");
+	var btnParent = document.createElement('DIV');
 	btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.6vw; margin-bottom: 1vw; width: 13.50vw;');
-	btnParent.setAttribute("id", id + 'Parent');
-	var btn = document.createElement("DIV");
+	btnParent.setAttribute('id', id + 'Parent');
+	var btn = document.createElement('DIV');
 	btn.id = id;
 	var loaded = autoTrimpSettings[id];
 
 	var u1Setting = (universe.indexOf(0) !== -1 || universe.indexOf(1) !== -1);
 	var u2Setting = (universe.indexOf(2) !== -1);
+
+	autoTrimpSettings[id] = {
+		id: id,
+		name: name,
+		description: description,
+		type: type,
+		universe: universe,
+	};
+	if (require) autoTrimpSettings[id].require = require;
+
+	const enabled = ['boolean'];
+	const valueTypes = ['value', 'valueNegative', 'multiValue', 'textValue', 'multiTextValue', 'multitoggle', 'mazArray', 'mazDefaultArray'];
+	const selected = ['dropdown'];
+
+	if (valueTypes.indexOf(type) !== -1) {
+		if (u1Setting) autoTrimpSettings[id].value = loaded === undefined || loaded === null ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
+		if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined || loaded === null ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
+	}
+	else if (enabled.indexOf(type) !== -1) {
+		if (u1Setting) autoTrimpSettings[id].enabled = loaded === undefined ? (defaultValue || false) : typeof loaded.enabled === 'undefined' ? loaded : loaded.enabled;
+		if (u2Setting) autoTrimpSettings[id].enabledU2 = loaded === undefined ? (defaultValue || false) : typeof loaded.enabledU2 === 'undefined' ? loaded : loaded.enabledU2;
+	}
+	else if (selected.indexOf(type) !== -1) {
+		if (u1Setting) autoTrimpSettings[id].selected = loaded === undefined ? defaultValue : typeof loaded.selected === 'undefined' ? loaded : loaded.selected;
+		if (u2Setting) autoTrimpSettings[id].selectedU2 = loaded === undefined ? defaultValue : typeof loaded.selectedU2 === 'undefined' ? loaded : loaded.selectedU2;
+	}
+
+	btn.innerHTML = name();
+	btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;");
+	btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
+
 	if (type === 'boolean') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe
-			};
-			if (u1Setting) autoTrimpSettings[id].enabled = loaded === undefined ? (defaultValue || false) : typeof loaded.enabled === 'undefined' ? loaded : loaded.enabled;
-			if (u2Setting) autoTrimpSettings[id].enabledU2 = loaded === undefined ? (defaultValue || false) : typeof loaded.enabledU2 === 'undefined' ? loaded : loaded.enabledU2;
-			if (require) autoTrimpSettings[id].require = require;
-		}
-		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;");
 		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].enabled);
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.innerHTML = name();
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
-
 	} else if (type === 'value' || type === 'valueNegative' || type === 'multiValue') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe
-			};
-			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined || loaded === null ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
-			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined || loaded === null ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
-			if (require) autoTrimpSettings[id].require = require;
-		}
-		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", "${type === 'multiValue'}", "${type === 'valueNegative'}")`);
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.innerHTML = name();
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
 	} else if (type === 'textValue' || type === 'multiTextValue') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe
-			};
-			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
-			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
-			if (require) autoTrimpSettings[id].require = require;
-		}
-		btn.setAttribute("style", "font-size: 1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type === 'multiTextValue'})`);
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.innerHTML = name();
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
 	} else if (type === 'dropdown') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe,
-				list: list
-			};
-			if (u1Setting) autoTrimpSettings[id].selected = loaded === undefined ? defaultValue : typeof loaded.selected === 'undefined' ? loaded : loaded.selected;
-			if (u2Setting) autoTrimpSettings[id].selectedU2 = loaded === undefined ? defaultValue : typeof loaded.selectedU2 === 'undefined' ? loaded : loaded.selectedU2;
-			if (require) autoTrimpSettings[id].require = require;
-		}
 		var btn = document.createElement("select");
 		btn.id = id;
-		/* if (game.options.menu.darkTheme.enabled === 2)
-			btn.setAttribute("style", "color: #C8C8C8; font-size: 0.9vw; min-width: 13.50vw; min-height: 1.7vw; text-align:right;");
-		else
-			btn.setAttribute("style", "color:black; font-size: 0.9vw; min-width: 13.50vw; min-height: 1.7vw; text-align:right;"); */
+		btn.setAttribute("class", "select2");
+		autoTrimpSettings[id].list = list;
+		//Need to adjust this information on parent frame for dropdowns	
 		btnParent.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btnParent.setAttribute("onmouseout", 'tooltip("hide")');
-
 		btnParent.setAttribute("onchange", 'settingChanged("' + id + '")');
-		var listItems = list();
-		for (var item in listItems) {
-			var option = document.createElement("option");
-			option.value = listItems[item];
-			option.text = listItems[item];
-			btn.appendChild(option);
-		}
-		btn.value = autoTrimpSettings[id].selected;
-		/* btn.setAttribute("data-prefix", name());
-		btnParent.setAttribute("data-prefix", name());
-		btnParent.setAttribute('class', 'select-wrapper'); */
-		btn.setAttribute("class", "select2");
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
-		return;
-	} else if (type === 'infoclick') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe
-			};
-		}
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1vw;");
-		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
-		btn.setAttribute("onclick", 'ImportExportTooltip(\'' + defaultValue + '\', \'update\')');
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.innerHTML = name();
-		if (require) autoTrimpSettings[id].require = require;
-		//btnParent.style.width = '';
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
-		return;
-
 	} else if (type === 'multitoggle') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe
-			};
-			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
-			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
-		}
-		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;");
 		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].value);
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name().join(' / ') + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]["value"]];
-		btnParent.appendChild(btn);
-		if (require) autoTrimpSettings[id].require = require;
-		if (id === 'dailyPortal') {
-			btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
-			btnParent.setAttribute('style', 'max-height: 3vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
-			btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;")
-		}
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
-
-		if (id === 'dailyPortal') {
-
-			var autoPortalContainer = document.getElementById("dailyPortalParent");
-			var autoPortalSettings = document.createElement("DIV");
-			autoPortalSettings.setAttribute('onclick', 'MAZLookalike("AT Daily Auto Portal", "a", "DailyAutoPortal")');
-			autoPortalSettings.setAttribute('class', 'settingsBtnLocalCogwheel');
-			autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
-			var autoPortalSettingsButton = document.createElement("SPAN");
-			autoPortalSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-			autoPortalContainer.appendChild(autoPortalSettings);
-			autoPortalSettings.appendChild(autoPortalSettingsButton);
-		}
-	} else if (type === 'mazArray') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe
-			};
-			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
-			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
-			if (require) autoTrimpSettings[id].require = require;
-		}
+	} else if (type === 'action' || type === 'mazArray' || type === 'infoclick') {
 		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', list);
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.innerHTML = name();
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
-		return;
-	} else if (type === 'action') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe
-			};
-			if (require) autoTrimpSettings[id].require = require;
-		}
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1vw;");
-		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
-		btn.setAttribute('onclick', defaultValue);
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.innerHTML = name();
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
-		return;
-	} else if (type === 'mazDefaultArray') {
-		if (!(loaded && id === loaded.id && loaded.type === type)) {
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				universe: universe
-			};
-			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
-			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
-			if (require) autoTrimpSettings[id].require = require;
-		}
-		return;
 	}
-	if (autoTrimpSettings[id].name !== name)
-		autoTrimpSettings[id].name = name;
-	if (autoTrimpSettings[id].description !== description)
-		autoTrimpSettings[id].description = description;
+	btn.setAttribute("onmouseout", 'tooltip("hide")');
+	btnParent.appendChild(btn);
+	if (container) document.getElementById(container).appendChild(btnParent);
+	else document.getElementById("autoSettings").appendChild(btnParent);
+
+	if (id === 'dailyPortal') {
+		btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
+		btnParent.setAttribute('style', 'max-height: 3vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
+		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;")
+
+		var autoPortalContainer = document.getElementById("dailyPortalParent");
+		var autoPortalSettings = document.createElement("DIV");
+		autoPortalSettings.setAttribute('onclick', 'MAZLookalike("AT Daily Auto Portal", "a", "DailyAutoPortal")');
+		autoPortalSettings.setAttribute('class', 'settingsBtnLocalCogwheel');
+		autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
+		var autoPortalSettingsButton = document.createElement("SPAN");
+		autoPortalSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+		autoPortalContainer.appendChild(autoPortalSettings);
+		autoPortalSettings.appendChild(autoPortalSettingsButton);
+	}
 }
 
 function settingChanged(id, currUniverse) {
@@ -4536,18 +4388,17 @@ function settingChanged(id, currUniverse) {
 		if (id === 'equipEfficientEquipDisplay') {
 			displayMostEfficientEquipment();
 		}
-		if (id === 'equipOn') {
+		if (id === 'equipOn')
 			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
-		}
 		if (id === 'buildingsType') {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 			if (document.getElementById('autoStructureLabelTW') !== null) document.getElementById('autoStructureLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		}
-		if (id === "c2disableFinished")
+		if (id === 'c2disableFinished')
 			modifyParentNodeUniverseSwap();
-		if (id === "displayHeHr")
+		if (id === 'displayHeHr')
 			document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
-		if (id === "timeWarpDisplay")
+		if (id === 'timeWarpDisplay')
 			timeWarpDisplay();
 	}
 
@@ -5372,8 +5223,6 @@ function updateCustomButtons(initialLoad) {
 			if (atSettings.initialise.loaded) delete autoTrimpSettings[setting];
 			continue;
 		}
-		//Skips ever looking at settings with the mazDefaultArray type.
-		if (item.type === 'mazDefaultArray') continue;
 		//Skip if it's not a setting from the current universe.
 		else if (settingUniverse.indexOf(currSettingUniverse) !== -1 || settingUniverse.indexOf(0) !== -1) {
 			turnOn(setting, radonon);
