@@ -388,7 +388,6 @@ function updateButtonColor(what, canAfford, isJob) {
 function trustworthyTrimps_AT(noTip, forceTime, negative) {
 	if (!game.global.lastOnline) return;
 	var rightNow = new Date().getTime();
-	var textArray = [];
 	var dif = 0;
 	if (forceTime) {
 		dif = forceTime;
@@ -403,7 +402,6 @@ function trustworthyTrimps_AT(noTip, forceTime, negative) {
 		dif = Math.floor(dif / 1000);
 	}
 	//if (dif < 60) return;
-	var textString = "";
 	var storageBought = [];
 	var compatible = ["Farmer", "Lumberjack", "Miner", "Dragimp", "Explorer"];
 	var storages = ['Barn', 'Shed', 'Forge'];
@@ -524,27 +522,10 @@ function trustworthyTrimps_AT(noTip, forceTime, negative) {
 		if (amt > 0) {
 			if (negative) amt = -amt;
 			resource.owned += amt;
-			textString = prettify(amt) + " " + resName + ", ";
-			textArray.push(textString);
 			if (resName == "gems") game.stats.gemsCollected.value += amt;
 		}
 	}
-	if (textArray.length === 0) return;
-	textString = "While you were away, your Trimps were able to produce ";
-	for (var y = 0; y < textArray.length; y++) {
-		textString += textArray[y];
-		if (y == textArray.length - 2) textString += "and ";
-	}
-	textString = textString.slice(0, -2);
-	if (storageBought.length) {
-		textString += " <b>after buying</b> ";
-		for (var z = 0; z < storageBought.length; z++) {
-			textString += storageBought[z];
-			if (z == storageBought.length - 2) textString += "and ";
-		}
-		textString = textString.slice(0, -2);
-	}
-	textString += ".";
+
 	if (playerSpire.initialized && playerSpire.lootAvg.average) {
 		var avg = playerSpire.getRsPs();
 		if (!isNumberBad(avg)) {
@@ -553,11 +534,8 @@ function trustworthyTrimps_AT(noTip, forceTime, negative) {
 			var rsReward = (rsCap * 0.75 * avg);
 			if (negative) rsReward = -rsReward;
 			playerSpire.runestones += rsReward;
-			textString += "<br/>Your Spire Traps and Towers have also produced <b>" + prettify(rsReward) + "</b> Runestones while you were away!";
 		}
 	}
-	if (!noTip) tooltip("Untrustworthy Trimps", null, "update", textString);
-	else savedOfflineText = textString;
 }
 
 function removeTrustworthyTrimps() {

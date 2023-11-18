@@ -15,10 +15,6 @@ function evaluateHeirloomMods(loom, location) {
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomEquipType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'All' : 'Core';
 
-	var modName;
-
-	var heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
-	var heirloomType = heirloomLocation.type;
 	if (heirloomType !== heirloomEquipType && heirloomEquipType !== 'All') return 0;
 
 	const rarity = heirloomLocation.rarity;
@@ -42,6 +38,7 @@ function evaluateHeirloomMods(loom, location) {
 	}
 
 	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
+	var modName;
 	const heirloomData = heirloomInfo(heirloomType);
 	for (var m in heirloomLocation.mods) {
 		modName = heirloomLocation.mods[m][0];
@@ -49,8 +46,10 @@ function evaluateHeirloomMods(loom, location) {
 			emptyMods++;
 			continue;
 		}
+		//Check if item on the blacklist is equal to the ingames mod name. If it is, return 0.
 		if (blacklist.indexOf(game.heirlooms[heirloomType][modName].name) !== -1) return 0;
 		modName = heirloomData[modName].name;
+		//Check if item on the blacklist is equal to the AT mod name. If it is, return 0.
 		if (blacklist.indexOf(modName) !== -1) return 0;
 		targetMods = targetMods.filter(e => e !== modName);
 	}
