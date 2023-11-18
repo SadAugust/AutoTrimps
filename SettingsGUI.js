@@ -972,7 +972,7 @@ function initializeAllSettings() {
 				var description = "<p>Controls how combat is handled by the script.</p>";
 				description += "<p><b>Better Auto Fight Off</b><br>Disables this setting.</p>";
 				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if your current army is dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds.</p>";
-				description += "<p><b>Vanilla Auto Fight</b><br>Will make sure the games AutoFight setting is enabled at all times and ensures you start fighting on portal.</p>";
+				description += "<p><b>Vanilla Auto Fight</b><br>Will make sure the games AutoFight setting is enabled at all times and ensures you start fighting on portal until you get the Bloodlust upgrade.</p>";
 				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
 				return description;
 			}, 'multitoggle', 1, null, "Combat", [1, 2]);
@@ -2020,7 +2020,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated pet xp staff</p>";
 				return description;
-			}, 'value', -1, null, 'C2', [1],
+			}, 'textValue', undefined, null, 'C2', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 		createSetting('experienceEndZone',
 			function () { return ('E: End Zone') },

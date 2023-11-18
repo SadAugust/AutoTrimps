@@ -30,7 +30,7 @@ function betterAutoFightVanilla() {
 		pauseFight();
 	if (game.global.gridArray.length === 0 || !game.upgrades.Battle.done || game.global.fighting)
 		return;
-	if (game.global.world === 1 && !game.global.fighting && game.global.lastClearedCell === -1) {
+	if (game.global.world === 1 && !game.global.fighting && !game.upgrades.Bloodlust.allowed) {
 		battle(true);
 	}
 }
