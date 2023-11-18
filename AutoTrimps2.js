@@ -85,6 +85,7 @@ function ATscriptLoad(prefix, fileName) {
 	if (null === prefix) prefix = '';
 	script.src = atSettings.initialise.basepath + prefix + fileName + '.js';
 	script.id = fileName + '_MODULE';
+	script.async = false
 	script.defer = true;
 	document.head.appendChild(script);
 	//Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.

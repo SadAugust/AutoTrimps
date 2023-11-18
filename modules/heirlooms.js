@@ -356,7 +356,9 @@ function heirloomStaffToEquip(mapType) {
 		const mapBonus = mapObject.bonus;
 		if ((MODULES.maps.fragmentFarming || MODULES.maps.fragmentCost !== Infinity) && getPageSetting('heirloomStaffFragment') !== 'undefined')
 			return ('heirloomStaffFragment');
-		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumStaff') !== 'undefined' && mapSettings.mapName === 'Pandemonium Farming')
+		else if (mapSettings.mapName === 'Experience' && getPageSetting('experienceStaff') !== 'undefined')
+			return ('experienceStaff');
+		else if (mapSettings.mapName === 'Pandemonium Farming' && getPageSetting('pandemoniumStaff') !== 'undefined')
 			return ('pandemoniumStaff');
 		else if (getPageSetting('heirloomStaffVoid') !== 'undefined' && mapObject.location === 'Void')
 			return ('heirloomStaffVoid');

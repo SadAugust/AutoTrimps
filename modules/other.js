@@ -69,6 +69,35 @@ function fluffyEvolution() {
 	return;
 }
 
+//Remakes challenge/setting popup if the user doesn't click confirm and it's not showing.
+function remakeTooltip() {
+	if (!MODULES.popups.challenge && !MODULES.popups.respecAtlantrimp && !MODULES.popups.portal) {
+		if (!MODULES.popups.challenge) delete hzeMessage
+		return;
+	}
+
+	if (!game.global.lockTooltip) {
+		if (MODULES.popups.respecAtlantrimp) {
+			var respecName = !trimpStats.isC3 ? "Radon " : "" + "Combat Respec";
+			if (game.global.universe === 1) respecName = 'Spire'
+			var description = "<p><b>Respeccing into the " + respecName + " preset.</b></p>";
+			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Disable Respec');
+		}
+		else if (MODULES.popups.challenge) {
+			tooltip('confirm', null, 'update', hzeMessage, ('MODULES.popups.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		}
+		else {
+			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone+=1; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
+		}
+	}
+	else if (MODULES.popups.respecAtlantrimp) {
+		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Respeccing in " + (MODULES.popups.remainingTime / 1000).toFixed(1) + " seconds....</b>"
+	}
+	else if (MODULES.popups.portal) {
+		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Portaling in " + (MODULES.popups.remainingTime / 1000).toFixed(1) + " seconds....</b>"
+	}
+}
+
 function saveToSteam(saveData) {
 	if (typeof greenworks === 'undefined') return;
 	greenworks.saveTextToFile('TrimpsSave.sav', saveData, cloudSaveCallback, cloudSaveErrorCallback);
