@@ -1022,9 +1022,9 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', true, null, 'Combat', [1]);
 		createSetting('AutoRoboTrimp',
-			function () { return ('AutoRoboTrimp') },
+			function () { return ('Auto Robotrimp') },
 			function () {
-				var description = "<p>Use the RoboTrimp ability starting at this level, and every 5 levels thereafter.</p>";
+				var description = "<p>Use the Robotrimp ability starting at this level, and every 5 levels thereafter.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 60</p>";
 				return description;
@@ -2171,6 +2171,7 @@ function initializeAllSettings() {
 				var description = "<p>Will calculate the smithies required for quests based on this settings input and purchase spare ones if possible.</p>";
 				description += "<p><b>Will assume zone 85 when running the regular version of Quest.</b></p>";
 				description += "<p><b>Will disable the Smithy Farm setting whilst your world zone is below this value.</b></p>";
+				description += "<p>This setting requires <b>AT AutoStructure</b> to be enabled to work.</p>";
 				description += "<p><b>Recommended:</b> Your desired end zone for Quest</p>";
 				return description;
 			}, 'value', 999, null, 'C2', [2],
@@ -2180,6 +2181,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The maximum amount of maps you'd like to run to do a Smithy quest.</p>";
 				description += "<p><b>Will potentially skip Smithy quests if this value is too low!</b></p>";
+				description += "<p>This setting requires <b>AT AutoStructure</b> to be enabled to work.</p>";
 				description += "<p><b>Recommended:</b> 100</p>";
 				return description;
 			}, 'value', 100, null, 'C2', [2],
@@ -4085,10 +4087,10 @@ function initializeAllSettings() {
 				var description = "<p>Will display a description of what order Auto Portal will try to perform its actions.</p>";
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeAutoPortalHelpTooltip(false);', 'Help', [0]);
-		createSetting('helpAutoPortal',
+		createSetting('helpAutoMapsPriority',
 			function () { return ('Auto Maps Priority') },
 			function () {
-				var description = "<p>Will display the order that Auto Maps will run each setting in.</p>";
+				var description = "<p>Will display the order that Auto Maps will run each setting.</p>";
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeFarmingDecisionHelpTooltip(false);', 'Help', [0]);
 		/* createSetting('helpFragments',
@@ -5218,8 +5220,7 @@ function updateCustomButtons(initialLoad) {
 						elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemValue);
 					}
 					else if (item.type === 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
-						if (itemValue.length > 18)
-							elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + (itemValue.length > 18 ? '...' : '');
+						elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + (itemValue.length > 18 ? '...' : '');
 					}
 					else if (item.type === 'multiValue' || item.type === 'multiTextValue') {
 						if (Array.isArray(itemValue) && itemValue.length === 1 && itemValue[0] === -1)

@@ -1,6 +1,6 @@
 function callBetterAutoFight() {
 	avoidEmpower();
-	trimpcide();
+	trimpicide();
 	if (getPageSetting('autoFight') === 0) return;
 	else if (getPageSetting('autoFight') === 1) betterAutoFight();
 	else if (getPageSetting('autoFight') === 2) betterAutoFightVanilla();
@@ -37,7 +37,7 @@ function betterAutoFightVanilla() {
 
 //Suicides trimps if we don't have max anticipation stacks and sending a new army would give us max stacks.
 //Doesn't do this inside of void maps OR spires.
-function trimpcide() {
+function trimpicide() {
 	if (game.global.universe !== 1) return;
 	if (game.portal.Anticipation.level === 0) return;
 	if (!game.global.fighting) return;
@@ -45,14 +45,13 @@ function trimpcide() {
 	const mapsActive = game.global.mapsActive;
 	if (!mapsActive && game.global.spireActive) return;
 	if (mapsActive && !newArmyRdy()) return;
-	var antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
+	const antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
 	if (game.global.antiStacks >= antistacklimit) return;
 	//Calculates Anticipation stacks based on time since last breed.
-	var baseCheck = ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) >= antistacklimit;
+	const baseCheck = ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) >= antistacklimit;
 
-	if (baseCheck) {
+	if (baseCheck)
 		forceAbandonTrimps();
-	}
 }
 
 //Abandons trimps to get max anticipation stacks.

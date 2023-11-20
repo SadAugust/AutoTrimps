@@ -298,9 +298,9 @@ function makeFarmingDecisionHelpTooltip() {
 		tooltipText += `<p>Map Farm</p>`;
 		tooltipText += `<p>HD Farm</p>`;
 		tooltipText += `<p>Void Maps</p>`;
+		if (challengeActive('Experience')) tooltipText += `<p><b><i>Experience Farm</b></i></p>`;
 		tooltipText += `<p>Map Bonus</p>`;
 		if (challengeActive('Toxicity')) tooltipText += `<p><b><i>Toxicity Farm</b></i></p>`;
-		if (challengeActive('Experience')) tooltipText += `<p><b><i>Experience Farm</b></i></p>`;
 	}
 
 	if (game.global.universe === 2) {
@@ -391,10 +391,14 @@ function findMap(level, special, biome, perfect = false) {
 
 	for (var mapping in game.global.mapsOwnedArray) {
 		var map = game.global.mapsOwnedArray[mapping];
-		if (perfect && (trimpStats.mapSize !== map.size || map.difficulty !== trimpStats.mapDifficulty || map.loot !== mapLoot)) continue;
+		if (perfect) {
+			if (map.size > trimpStats.mapSize) continue;
+			if (map.difficulty > trimpStats.mapDifficulty) continue;
+			if (map.loot > mapLoot) continue;
+			if (map.location !== biome && biome !== 'Random') continue;
+		}
 		if (game.global.world + level !== map.level) continue;
 		if (map.bonus !== special && special !== '0') continue;
-		if (map.location !== biome) continue;
 		if (map.noRecycle) continue;
 		return map.id;
 	}

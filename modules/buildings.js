@@ -363,9 +363,8 @@ function buyBuildings() {
 		const hypoSettings = getPageSetting('hypothermiaSettings');
 		if (hypoSettings[0].active && hypoSettings[0].autostorage && hypoSettings.length > 0) {
 			for (var y = 1; y < hypoSettings.length; y++) {
-				if (!hypoSettings[y].active) {
+				if (!hypoSettings[y].active)
 					continue;
-				}
 				if (hypoZone === 0 || hypoZone > hypoSettings[y].world)
 					hypoZone = hypoSettings[y].world;
 			}
@@ -407,10 +406,8 @@ function buyBuildings() {
 		if (!game.buildings.Nursery.locked) {
 			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
 			const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-
-			var nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
-
-			var nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
+			const nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
+			const nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
 			if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
 
 			var nurseryPct = buildingSettings.Nursery.percent / 100;

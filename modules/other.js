@@ -595,7 +595,7 @@ offlineProgress.finish = function () {
 	try {
 		//Rerun TW if it took over 30 seconds to complete
 		if (timeRun > 30) {
-			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.min(timeRun, (offlineProgress.maxTicks / 10)))} to catchup on the time we missed whilst running it.`);
+			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.min(timeRun, (offlineProgress.maxTicks / 10)))} to catchup on the time you missed whilst running it.`);
 			//Convert time to milliseconds and subtract it from the variables that TW uses to calculate offline progress so we don't have tons of time related issues.
 			timeRun *= 1000;
 			game.global.lastOnline -= timeRun;

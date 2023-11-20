@@ -31,7 +31,7 @@ function evaluateHeirloomMods(loom, location) {
 	var targetMods = [];
 	var emptyMods = 0;
 
-	//Increment through the setting inputs and push them to the targetMods array if not set to empty.
+	//Increment through the setting inputs and push them to the targetMods array if not set to Any.
 	for (var x = 1; x < (heirloomLocation.mods.length + 1); x++) {
 		if (getPageSetting(varAffix + x) === 'Any') continue;
 		targetMods.push(getPageSetting(varAffix + x));

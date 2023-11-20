@@ -3318,9 +3318,9 @@ function farmingDecision() {
 			mapFarm,
 			hdFarm,
 			voidMaps,
+			experience,
 			mapBonus,
 			toxicity,
-			experience,
 			obtainUniqueMap,
 		];
 
