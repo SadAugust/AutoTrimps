@@ -606,6 +606,8 @@ offlineProgress.finish = function () {
 			game.permaBoneBonuses.boosts.lastChargeAt -= timeRun;
 			offlineProgress.start();
 		}
+		else if (game.options.menu.autoSave.enabled !== atSettings.autoSave)
+			toggleSetting('autoSave');
 	}
 	catch (e) { console.log('Failed to restart Time Warp to finish it off. ' + e, 'other') }
 }
