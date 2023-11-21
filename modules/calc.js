@@ -108,7 +108,7 @@ class HDStats {
 			const worldMap = Object.entries(this.autoLevelInitial[0]).filter((data) => data[1].mapLevel === 0).map((data) => { return this.autoLevelInitial[0][data[0]] })[0];
 			var lootLevel = this.autoLevelData.overall.mapLevel;
 			var speedLevel = this.autoLevelData.speed.mapLevel;
-			if (worldMap !== undefined) {
+			if (worldMap !== undefined && worldMap[this.autoLevelData.overall.stance] && worldMap[this.autoLevelData.speed.stance]) {
 				if (lootLevel === -1 && this.autoLevelData.overall.value === worldMap[this.autoLevelData.overall.stance].value) lootLevel = 0;
 				if (speedLevel === -1 && this.autoLevelData.speed.speed === worldMap[this.autoLevelData.speed.stance].speed) speedLevel = 0;
 			}
