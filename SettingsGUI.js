@@ -2020,7 +2020,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated pet xp staff</p>";
 				return description;
-			}, 'textValue', undefined, null, 'C2', [1],
+			}, 'textValue', 'undefined', null, 'C2', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 		createSetting('experienceEndZone',
 			function () { return ('E: End Zone') },
@@ -6113,6 +6113,13 @@ function updateATVersion() {
 						zone: 999,
 						cell: 1,
 					}
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.20') {
+			if (typeof (tempSettings["experienceStaff"]) !== 'undefined') {
+				if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value === 'object')
+					autoTrimpSettings.experienceStaff.value === 'undefined';
 			}
 		}
 

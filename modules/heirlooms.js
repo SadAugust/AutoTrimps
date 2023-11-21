@@ -225,7 +225,7 @@ function heirloomEquipStaff(heirloom) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), "heirloomsCarried", true);
 		equipHeirloom(true);
 	} else if (heirloomDetails === undefined && game.global.StaffEquipped.name !== heirloomName && atSettings.intervals.tenSecond)
-		debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} staff. This will be causing at least one of your HD Ratios to be incorrect.`, `other`);
+		debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} staff.`, `other`);
 }
 
 function heirloomShieldSwapped() {

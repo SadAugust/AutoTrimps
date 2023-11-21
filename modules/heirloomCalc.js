@@ -609,7 +609,7 @@ class Heirloom {
 	getModGain(type) {
 		const value = this.getModValue(type);
 		const stepAmount = this.stepAmounts[type];
-		if (this.hardCaps[type] && value === this.hardCaps[type]) return 1;
+		if (this.hardCaps[type] && value >= this.hardCaps[type]) return 1;
 		if (type === 'trimpAttack') {
 			return (value + 100 + stepAmount) / (value + 100);
 		}
@@ -735,7 +735,7 @@ class Heirloom {
 	// add arrays for max normal values, if below or equal to, return normal price, else divide the amount over the normal value by the step to get amount and calculate the price with the amount
 	getModCost(type) {
 		if (type === "empty") {
-			return 1e20;
+			return 1e100;
 		}
 		const value = this.getModValue(type);
 		if (value <= this.softCaps[type] || !isNumeric(value)) {
@@ -743,7 +743,7 @@ class Heirloom {
 		}
 		const amount = (value - this.softCaps[type]) / this.stepAmounts[type];
 		if (this.hardCaps) {
-			return (value >= this.hardCaps[type]) ? 1e20 : Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
+			return (value >= this.hardCaps[type]) ? 0 : Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
 		}
 		return Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
 	}
@@ -907,6 +907,15 @@ class Heirloom {
 		heirloom.paid = paid;
 		heirloom.next = { name, cost: nextCost };
 		heirloom.purchases = purchases;
+
+		//Fix any floating point errors that may have occured.
+		for (const mod of heirloom.mods) {
+			name = mod[0];
+			if (name === "empty") continue;
+			index = heirloom.mods.indexOf(mod);
+			heirloom.mods[index][1] = roundFloatingPointErrors(heirloom.getModValue(name));
+		}
+
 		return heirloom;
 	}
 
@@ -1508,12 +1517,10 @@ function imAnEnemy(health = 0) {
 		MODULES.autoHeirlooms.ticks += 1;
 
 		//Add additional ticks if needed to account for runestone buffs
-		if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type != "Knowledge" && MODULES.autoHeirlooms.detailed[p].type != "Frost") {
+		if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type != "Knowledge" && MODULES.autoHeirlooms.detailed[p].type != "Frost")
 			MODULES.autoHeirlooms.ticks += 1;
-		}
-		if (MODULES.autoHeirlooms.detailed[p].frozen && MODULES.autoHeirlooms.detailed[p].type != "Frost") {
+		if (MODULES.autoHeirlooms.detailed[p].frozen && MODULES.autoHeirlooms.detailed[p].type != "Frost")
 			MODULES.autoHeirlooms.ticks += 2;
-		}
 
 		// damage
 		damageTaken += addDamage;
