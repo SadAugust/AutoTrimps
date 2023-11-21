@@ -1,4 +1,4 @@
-MODULES["other"] = {};
+MODULES['other'] = {};
 
 function isCorruptionActive(targetZone) {
 	if (game.global.universe == 2) return 9999;
@@ -10,13 +10,13 @@ function isCorruptionActive(targetZone) {
 function autoRoboTrimp() {
 	if (game.global.roboTrimpLevel === 0) return;
 	if (game.global.roboTrimpCooldown !== 0) return;
-	if (getPageSetting("AutoRoboTrimp") > game.global.world || getPageSetting("AutoRoboTrimp") <= 0) return;
+	if (getPageSetting('AutoRoboTrimp') > game.global.world || getPageSetting('AutoRoboTrimp') <= 0) return;
 
-	var shouldShriek = (game.global.world - parseInt(getPageSetting("AutoRoboTrimp"))) % 5 === 0;
+	var shouldShriek = (game.global.world - parseInt(getPageSetting('AutoRoboTrimp'))) % 5 === 0;
 	if (shouldShriek) {
 		if (!game.global.useShriek) {
 			magnetoShriek();
-			debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "zone", "*podcast");
+			debug('Activated Robotrimp MagnetoShriek Ability @ z' + game.global.world, 'zone', '*podcast');
 		}
 	}
 	else if (game.global.useShriek)
@@ -27,7 +27,7 @@ function getZoneEmpowerment(zone) {
 	if (!zone) return 'None';
 	var natureStartingZone = game.global.universe === 1 ? getNatureStartZone() : 236;
 	if (zone < natureStartingZone) return 'None';
-	var activeEmpowerments = ["Poison", "Wind", "Ice"];
+	var activeEmpowerments = ['Poison', 'Wind', 'Ice'];
 	zone = Math.floor((zone - natureStartingZone) / 5);
 	zone = zone % activeEmpowerments.length;
 	return activeEmpowerments[zone];
@@ -78,9 +78,9 @@ function remakeTooltip() {
 
 	if (!game.global.lockTooltip) {
 		if (MODULES.popups.respecAtlantrimp) {
-			var respecName = !trimpStats.isC3 ? "Radon " : "" + "Combat Respec";
+			var respecName = !trimpStats.isC3 ? 'Radon ' : '' + 'Combat Respec';
 			if (game.global.universe === 1) respecName = 'Spire'
-			var description = "<p><b>Respeccing into the " + respecName + " preset.</b></p>";
+			var description = '<p><b>Respeccing into the ' + respecName + ' preset.</b></p>';
 			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Disable Respec');
 		}
 		else if (MODULES.popups.challenge) {
@@ -91,10 +91,10 @@ function remakeTooltip() {
 		}
 	}
 	else if (MODULES.popups.respecAtlantrimp) {
-		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Respeccing in " + (MODULES.popups.remainingTime / 1000).toFixed(1) + " seconds....</b>"
+		document.getElementById('tipTitle').innerHTML = '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>'
 	}
 	else if (MODULES.popups.portal) {
-		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Portaling in " + (MODULES.popups.remainingTime / 1000).toFixed(1) + " seconds....</b>"
+		document.getElementById('tipTitle').innerHTML = '<b>NOTICE: Auto-Portaling in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>'
 	}
 }
 
@@ -115,8 +115,8 @@ function cloudSaveCallback(data) {
 //Check and update each patch!
 function runMap_AT() {
 	if (game.options.menu.pauseGame.enabled) return;
-	if (game.global.lookingAtMap === "") return;
-	if (challengeActive("Mapology") && !game.global.currentMapId) {
+	if (game.global.lookingAtMap === '') return;
+	if (challengeActive('Mapology') && !game.global.currentMapId) {
 		if (game.challenges.Mapology.credits < 1) {
 			message('You are all out of Map Credits! Clear some more Zones to earn some more.', 'Notices');
 			return;
@@ -176,7 +176,7 @@ function suicideTrimps() {
 
 	if (challengeActive('Berserk')) game.challenges.Berserk.trimpDied();
 	if (challengeActive('Exterminate')) game.challenges.Exterminate.trimpDied();
-	if (getPerkLevel("Frenzy")) game.portal.Frenzy.trimpDied();
+	if (getPerkLevel('Frenzy')) game.portal.Frenzy.trimpDied();
 	if (challengeActive('Storm')) {
 		game.challenges.Storm.alpha = 0;
 		game.challenges.Storm.drawStacks();
@@ -197,16 +197,16 @@ function suicideTrimps() {
 //Check and update each patch!
 function drawAllBuildings(force) {
 	if (usingRealTimeOffline && !force) return;
-	var elem = document.getElementById("buildingsHere");
+	var elem = document.getElementById('buildingsHere');
 	var building;
-	elem.innerHTML = "";
+	elem.innerHTML = '';
 	for (var item in game.buildings) {
 		building = game.buildings[item];
 		if (building.locked === 1) continue;
 		drawBuilding(item, elem);
 		if (building.alert && game.options.menu.showAlerts.enabled) {
-			document.getElementById("buildingsAlert").innerHTML = "!";
-			if (document.getElementById(item + "Alert")) document.getElementById(item + "Alert").innerHTML = "!";
+			document.getElementById('buildingsAlert').innerHTML = '!';
+			if (document.getElementById(item + 'Alert')) document.getElementById(item + 'Alert').innerHTML = '!';
 		}
 	}
 	updateGeneratorInfo();
@@ -215,14 +215,14 @@ function drawAllBuildings(force) {
 //Check and update each patch!
 function drawAllUpgrades(force) {
 	if (usingRealTimeOffline && !force) return;
-	var elem = document.getElementById("upgradesHere");
-	elem.innerHTML = "";
+	var elem = document.getElementById('upgradesHere');
+	elem.innerHTML = '';
 	for (var item in game.upgrades) {
 		if (game.upgrades[item].locked == 1) continue;
 		drawUpgrade(item, elem);
 		if (game.upgrades[item].alert && game.options.menu.showAlerts.enabled) {
-			document.getElementById("upgradesAlert").innerHTML = "!";
-			if (document.getElementById(item + "Alert")) document.getElementById(item + "Alert").innerHTML = "!";
+			document.getElementById('upgradesAlert').innerHTML = '!';
+			if (document.getElementById(item + 'Alert')) document.getElementById(item + 'Alert').innerHTML = '!';
 		}
 	}
 	goldenUpgradesShown = false;
@@ -232,8 +232,8 @@ function drawAllUpgrades(force) {
 //Check and update each patch!
 function drawAllEquipment(force) {
 	if (usingRealTimeOffline && !force) return;
-	var elem = document.getElementById("equipmentHere");
-	elem.innerHTML = "";
+	var elem = document.getElementById('equipmentHere');
+	elem.innerHTML = '';
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked == 1) continue;
 		drawEquipment(item, elem);
@@ -244,18 +244,18 @@ function drawAllEquipment(force) {
 //Check and update each patch!
 function drawAllJobs(force) {
 	if (usingRealTimeOffline && !force) return;
-	var elem = document.getElementById("jobsHere");
-	elem.innerHTML = "";
+	var elem = document.getElementById('jobsHere');
+	elem.innerHTML = '';
 	for (var item in game.jobs) {
 		if (game.jobs[item].locked == 1) continue;
-		if (item == "Geneticist" && game.global.Geneticistassist) {
+		if (item == 'Geneticist' && game.global.Geneticistassist) {
 			drawGeneticistassist(elem);
 		}
 		else
 			drawJob(item, elem);
 		if (game.jobs[item].alert && game.options.menu.showAlerts.enabled) {
-			document.getElementById("jobsAlert").innerHTML = "!";
-			if (document.getElementById(item + "Alert")) document.getElementById(item + "Alert").innerHTML = "!";
+			document.getElementById('jobsAlert').innerHTML = '!';
+			if (document.getElementById(item + 'Alert')) document.getElementById(item + 'Alert').innerHTML = '!';
 		}
 	}
 }
@@ -271,20 +271,20 @@ function updateLabels(force) { //Tried just updating as something changes, but s
 			toUpdate.owned = parseFloat(toUpdate.owned);
 			if (!(toUpdate.owned > 0)) toUpdate.owned = 0;
 		}
-		if (item == "radon") continue;
-		if (item == "helium" && game.global.universe == 2) toUpdate = game.resources.radon;
-		document.getElementById(item + "Owned").innerHTML = prettify(Math.floor(toUpdate.owned));
-		if (toUpdate.max == -1 || document.getElementById(item + "Max") === null) continue;
+		if (item == 'radon') continue;
+		if (item == 'helium' && game.global.universe == 2) toUpdate = game.resources.radon;
+		document.getElementById(item + 'Owned').innerHTML = prettify(Math.floor(toUpdate.owned));
+		if (toUpdate.max == -1 || document.getElementById(item + 'Max') === null) continue;
 		var newMax = toUpdate.max;
-		if (item != "trimps")
-			newMax = calcHeirloomBonus("Shield", "storageSize", (newMax * (game.portal.Packrat.modifier * getPerkLevel("Packrat") + 1)));
-		else if (item == "trimps") newMax = toUpdate.realMax();
-		document.getElementById(item + "Max").innerHTML = prettify(newMax);
-		var bar = document.getElementById(item + "Bar");
+		if (item != 'trimps')
+			newMax = calcHeirloomBonus('Shield', 'storageSize', (newMax * (game.portal.Packrat.modifier * getPerkLevel('Packrat') + 1)));
+		else if (item == 'trimps') newMax = toUpdate.realMax();
+		document.getElementById(item + 'Max').innerHTML = prettify(newMax);
+		var bar = document.getElementById(item + 'Bar');
 		if (game.options.menu.progressBars.enabled) {
 			var percentToMax = ((toUpdate.owned / newMax) * 100);
-			swapClass("percentColor", getBarColorClass(100 - percentToMax), bar);
-			bar.style.width = percentToMax + "%";
+			swapClass('percentColor', getBarColorClass(100 - percentToMax), bar);
+			bar.style.width = percentToMax + '%';
 		}
 	}
 	updateSideTrimps();
@@ -292,24 +292,24 @@ function updateLabels(force) { //Tried just updating as something changes, but s
 	for (var itemA in game.buildings) {
 		toUpdate = game.buildings[itemA];
 		if (toUpdate.locked == 1) continue;
-		var elem = document.getElementById(itemA + "Owned");
+		var elem = document.getElementById(itemA + 'Owned');
 		if (elem === null) {
 			unlockBuilding(itemA);
-			elem = document.getElementById(itemA + "Owned");
+			elem = document.getElementById(itemA + 'Owned');
 		}
 		if (elem === null) continue;
 		elem.innerHTML = (game.options.menu.menuFormatting.enabled) ? prettify(toUpdate.owned) : toUpdate.owned;
-		if (itemA == "Trap") {
-			var trap1 = document.getElementById("trimpTrapText")
+		if (itemA == 'Trap') {
+			var trap1 = document.getElementById('trimpTrapText')
 			if (trap1) trap1.innerHTML = prettify(toUpdate.owned);
-			var trap2 = document.getElementById("trimpTrapText2")
+			var trap2 = document.getElementById('trimpTrapText2')
 			if (trap2) trap2.innerHTML = prettify(toUpdate.owned);
 		}
 	}
 	//Jobs, check PS here and stuff. Trimps per second is handled by breed() function
 	for (var itemB in game.jobs) {
 		toUpdate = game.jobs[itemB];
-		if (toUpdate.locked == 1 && toUpdate.increase == "custom") continue;
+		if (toUpdate.locked == 1 && toUpdate.increase == 'custom') continue;
 		if (toUpdate.locked == 1) {
 			if (game.resources[toUpdate.increase].owned > 0)
 				updatePs(toUpdate, false, itemB);
@@ -319,7 +319,7 @@ function updateLabels(force) { //Tried just updating as something changes, but s
 			unlockJob(itemB);
 			drawAllJobs(true);
 		}
-		document.getElementById(itemB + "Owned").innerHTML = (game.options.menu.menuFormatting.enabled) ? prettify(toUpdate.owned) : toUpdate.owned;
+		document.getElementById(itemB + 'Owned').innerHTML = (game.options.menu.menuFormatting.enabled) ? prettify(toUpdate.owned) : toUpdate.owned;
 		var perSec = (toUpdate.owned * toUpdate.modifier);
 		updatePs(toUpdate, false, itemB);
 	}
@@ -340,49 +340,49 @@ function updateButtonColor(what, canAfford, isJob) {
 		if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) return;
 	} else {
 		if (usingRealTimeOffline) return;
-	} if (what == "Amalgamator") return;
+	} if (what == 'Amalgamator') return;
 	var elem = document.getElementById(what);
 	if (elem === null) {
 		return;
 	}
 	if (game.options.menu.lockOnUnlock.enabled == 1 && (new Date().getTime() - 1000 <= game.global.lastUnlock)) canAfford = false;
-	if (game.global.challengeActive == "Archaeology" && game.upgrades[what] && game.upgrades[what].isRelic) {
-		var className = "thingColor" + ((canAfford) ? "CanAfford" : "CanNotAfford");
+	if (game.global.challengeActive == 'Archaeology' && game.upgrades[what] && game.upgrades[what].isRelic) {
+		var className = 'thingColor' + ((canAfford) ? 'CanAfford' : 'CanNotAfford');
 		var nextAuto = game.challenges.Archaeology.checkAutomator();
-		if (nextAuto == "off") className += "RelicOff";
-		else if (nextAuto == "satisfied") className += "RelicSatisfied";
-		else if (nextAuto == what + "Cost") className += "RelicNextWaiting";
-		else if (nextAuto + "Relic" == what) className += "RelicBuying";
-		swapClass("thingColor", className, elem);
+		if (nextAuto == 'off') className += 'RelicOff';
+		else if (nextAuto == 'satisfied') className += 'RelicSatisfied';
+		else if (nextAuto == what + 'Cost') className += 'RelicNextWaiting';
+		else if (nextAuto + 'Relic' == what) className += 'RelicBuying';
+		swapClass('thingColor', className, elem);
 		return;
 	}
 	if (isJob && game.global.firing === true) {
 		if (game.jobs[what].owned >= 1) {
 			//note for future self:
 			//if you need to add more states here, change these to use the swapClass func -grabz
-			//with "thingColor" as first param
-			swapClass("thingColor", "thingColorFiringJob", elem);
+			//with 'thingColor' as first param
+			swapClass('thingColor', 'thingColorFiringJob', elem);
 		}
 		else {
-			swapClass("thingColor", "thingColorCanNotAfford", elem);
+			swapClass('thingColor', 'thingColorCanNotAfford', elem);
 		}
 		return;
 	}
-	if (what == "Warpstation") {
+	if (what == 'Warpstation') {
 		if (canAfford)
 			elem.style.backgroundColor = getWarpstationColor();
 		else
-			elem.style.backgroundColor = "";
+			elem.style.backgroundColor = '';
 	}
 
 	if (canAfford) {
 		if
-			(what == "Gigastation" && (ctrlPressed || game.options.menu.ctrlGigas.enabled)) swapClass("thingColor", "thingColorCtrl", elem);
+			(what == 'Gigastation' && (ctrlPressed || game.options.menu.ctrlGigas.enabled)) swapClass('thingColor', 'thingColorCtrl', elem);
 		else
-			swapClass("thingColor", "thingColorCanAfford", elem);
+			swapClass('thingColor', 'thingColorCanAfford', elem);
 	}
 	else
-		swapClass("thingColor", "thingColorCanNotAfford", elem);
+		swapClass('thingColor', 'thingColorCanNotAfford', elem);
 }
 
 function trustworthyTrimps_AT(noTip, forceTime, negative) {
@@ -403,31 +403,31 @@ function trustworthyTrimps_AT(noTip, forceTime, negative) {
 	}
 	//if (dif < 60) return;
 	var storageBought = [];
-	var compatible = ["Farmer", "Lumberjack", "Miner", "Dragimp", "Explorer"];
+	var compatible = ['Farmer', 'Lumberjack', 'Miner', 'Dragimp', 'Explorer'];
 	var storages = ['Barn', 'Shed', 'Forge'];
 	for (var x = 0; x < compatible.length; x++) {
 		var job = game.jobs[compatible[x]];
 		var resName = job.increase;
 		var resource = game.resources[resName];
 		var amt = job.owned * job.modifier;
-		amt += (amt * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
-		if (getPerkLevel("Motivation_II") > 0) amt *= (1 + (getPerkLevel("Motivation_II") * game.portal.Motivation_II.modifier));
-		if (resName != "gems" && game.permaBoneBonuses.multitasking.owned > 0 && (game.resources.trimps.owned >= game.resources.trimps.realMax())) amt *= (1 + game.permaBoneBonuses.multitasking.mult());
-		if (job != "Explorer") {
-			if (game.global.challengeActive == "Alchemy") amt *= alchObj.getPotionEffect("Potion of Finding");
-			amt *= alchObj.getPotionEffect("Elixir of Finding");
+		amt += (amt * getPerkLevel('Motivation') * game.portal.Motivation.modifier);
+		if (getPerkLevel('Motivation_II') > 0) amt *= (1 + (getPerkLevel('Motivation_II') * game.portal.Motivation_II.modifier));
+		if (resName != 'gems' && game.permaBoneBonuses.multitasking.owned > 0 && (game.resources.trimps.owned >= game.resources.trimps.realMax())) amt *= (1 + game.permaBoneBonuses.multitasking.mult());
+		if (job != 'Explorer') {
+			if (game.global.challengeActive == 'Alchemy') amt *= alchObj.getPotionEffect('Potion of Finding');
+			amt *= alchObj.getPotionEffect('Elixir of Finding');
 		}
-		if (game.global.challengeActive == "Frigid") amt *= game.challenges.Frigid.getShatteredMult();
-		if (game.global.pandCompletions && job != "Explorer") amt *= game.challenges.Pandemonium.getTrimpMult();
-		if (game.global.desoCompletions && job != "Explorer") amt *= game.challenges.Desolation.getTrimpMult();
+		if (game.global.challengeActive == 'Frigid') amt *= game.challenges.Frigid.getShatteredMult();
+		if (game.global.pandCompletions && job != 'Explorer') amt *= game.challenges.Pandemonium.getTrimpMult();
+		if (game.global.desoCompletions && job != 'Explorer') amt *= game.challenges.Desolation.getTrimpMult();
 		if (!game.portal.Observation.radLocked && game.global.universe == 2 && game.portal.Observation.trinkets > 0) amt *= game.portal.Observation.getMult();
-		if (resName == "food" || resName == "wood" || resName == "metal") {
+		if (resName == 'food' || resName == 'wood' || resName == 'metal') {
 			amt *= getParityBonus();
 			if (autoBattle.oneTimers.Gathermate.owned && game.global.universe == 2) amt *= autoBattle.oneTimers.Gathermate.getMult();
 		}
 		if (Fluffy.isRewardActive('gatherer')) amt *= 2;
-		if (getPerkLevel("Meditation") > 0 || (game.jobs.Magmamancer.owned > 0 && resName == "metal")) {
-			var medLevel = getPerkLevel("Meditation");
+		if (getPerkLevel('Meditation') > 0 || (game.jobs.Magmamancer.owned > 0 && resName == 'metal')) {
+			var medLevel = getPerkLevel('Meditation');
 			var toAlter;
 			var originalAmt = amt;
 			//Find how many stacks of 10 minutes were already stacked before logging out
@@ -438,7 +438,7 @@ function trustworthyTrimps_AT(noTip, forceTime, negative) {
 			var remaining = 100;
 			//if a 10 minute chunk is larger than the time offline, no need to scale in chunks, skip to the end.
 			var loops = 6;
-			if (game.jobs.Magmamancer.owned && resName == "metal") loops = 12;
+			if (game.jobs.Magmamancer.owned && resName == 'metal') loops = 12;
 			if (timeAtLastOnline < loops && chunkPercent < 100) {
 				//Start from however many stacks were held before logging out. End at 5 stacks, the 6th will be all time remaining rather than chunks and handled at the end
 				for (var z = timeAtLastOnline; z < loops; z++) {
@@ -472,19 +472,19 @@ function trustworthyTrimps_AT(noTip, forceTime, negative) {
 					amt += (toAlter * game.jobs.Magmamancer.getBonusPercent());
 			}
 		}
-		if (game.global.challengeActive == "Decay" || game.global.challengeActive == "Melt") {
+		if (game.global.challengeActive == 'Decay' || game.global.challengeActive == 'Melt') {
 			var challenge = game.challenges[game.global.challengeActive];
 			amt *= 10;
 			amt *= Math.pow(challenge.decayValue, challenge.stacks);
 		}
-		if (challengeActive("Meditate")) amt *= 1.25;
-		if (challengeActive("Balance")) amt *= game.challenges.Balance.getGatherMult();
-		if (game.global.challengeActive == "Unbalance") amt *= game.challenges.Unbalance.getGatherMult();
-		if (game.global.challengeActive == "Archaeology" && resource != "fragments") amt *= game.challenges.Archaeology.getStatMult("science");
-		if (game.global.challengeActive == "Insanity" && resource != "fragments") amt *= game.challenges.Insanity.getLootMult();
-		if (game.challenges.Nurture.boostsActive() && resource != "fragments") amt *= game.challenges.Nurture.getResourceBoost();
-		if (game.global.challengeActive == "Desolation" && resource != "fragments") amt *= game.challenges.Desolation.trimpResourceMult();
-		if (game.global.challengeActive == "Daily") {
+		if (challengeActive('Meditate')) amt *= 1.25;
+		if (challengeActive('Balance')) amt *= game.challenges.Balance.getGatherMult();
+		if (game.global.challengeActive == 'Unbalance') amt *= game.challenges.Unbalance.getGatherMult();
+		if (game.global.challengeActive == 'Archaeology' && resource != 'fragments') amt *= game.challenges.Archaeology.getStatMult('science');
+		if (game.global.challengeActive == 'Insanity' && resource != 'fragments') amt *= game.challenges.Insanity.getLootMult();
+		if (game.challenges.Nurture.boostsActive() && resource != 'fragments') amt *= game.challenges.Nurture.getResourceBoost();
+		if (game.global.challengeActive == 'Desolation' && resource != 'fragments') amt *= game.challenges.Desolation.trimpResourceMult();
+		if (game.global.challengeActive == 'Daily') {
 			if (typeof game.global.dailyChallenge.famine !== 'undefined' && x < 4) {
 				amt *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 			}
@@ -492,11 +492,11 @@ function trustworthyTrimps_AT(noTip, forceTime, negative) {
 				amt *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
 			}
 		}
-		amt = calcHeirloomBonus("Staff", compatible[x] + "Speed", amt);
+		amt = calcHeirloomBonus('Staff', compatible[x] + 'Speed', amt);
 		amt *= dif;
 		if (x < 3) {
-			var newMax = resource.max + (resource.max * game.portal.Packrat.modifier * getPerkLevel("Packrat"));
-			newMax = calcHeirloomBonus("Shield", "storageSize", newMax);
+			var newMax = resource.max + (resource.max * game.portal.Packrat.modifier * getPerkLevel('Packrat'));
+			newMax = calcHeirloomBonus('Shield', 'storageSize', newMax);
 			var allowed = (newMax - resource.owned);
 			if (amt > allowed) {
 				if (!game.global.autoStorage) {
@@ -510,19 +510,19 @@ function trustworthyTrimps_AT(noTip, forceTime, negative) {
 						storageBuilding.owned++;
 						storageBuilding.purchased++;
 						resource.max *= 2;
-						newMax = resource.max + (resource.max * game.portal.Packrat.modifier * getPerkLevel("Packrat"));
-						newMax = calcHeirloomBonus("Shield", "storageSize", newMax);
+						newMax = resource.max + (resource.max * game.portal.Packrat.modifier * getPerkLevel('Packrat'));
+						newMax = calcHeirloomBonus('Shield', 'storageSize', newMax);
 						if (newMax > (resource.owned + amt)) break;
 					}
-					var s = (count > 1) ? "s" : "";
-					storageBought.push(count + " " + storages[x] + s + ", ");
+					var s = (count > 1) ? 's' : '';
+					storageBought.push(count + ' ' + storages[x] + s + ', ');
 				}
 			}
 		}
 		if (amt > 0) {
 			if (negative) amt = -amt;
 			resource.owned += amt;
-			if (resName == "gems") game.stats.gemsCollected.value += amt;
+			if (resName == 'gems') game.stats.gemsCollected.value += amt;
 		}
 	}
 
@@ -578,7 +578,7 @@ offlineProgress.start = function () {
 	try {
 		setupTimeWarpAT();
 	}
-	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
+	catch (e) { console.log('Loading Time Warp failed ' + e, 'other') }
 }
 
 //Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
@@ -607,6 +607,6 @@ offlineProgress.finish = function () {
 			offlineProgress.start();
 		}
 	}
-	catch (e) { console.log("Failed to restart Time Warp to finish it off. " + e, "other") }
+	catch (e) { console.log('Failed to restart Time Warp to finish it off. ' + e, 'other') }
 }
 

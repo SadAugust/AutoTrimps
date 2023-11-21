@@ -1126,7 +1126,7 @@ function calculate(autoUpgrade) {
 		for (var y = 0; y < newHeirloom.mods.length; y++) {
 			if (newHeirloom.purchases[y] === 0) continue;
 			modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split("(");
-			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails[0]} (${precisionRoundMod(getModValue(newHeirloom.mods[y]), 5)}% +${newHeirloom.purchases[y]})`;
+			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails[0]} (${precisionRoundMod(getModValue(newHeirloom.mods[y]), 2)}% +${newHeirloom.purchases[y]})`;
 		}
 	}
 
