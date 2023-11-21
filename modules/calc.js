@@ -40,7 +40,7 @@ class TrimpStats {
 }
 
 class HDStats {
-	constructor(newZone) {
+	constructor() {
 
 		this.hdRatio = undefined;
 		this.hdRatioMap = undefined;
@@ -61,9 +61,8 @@ class HDStats {
 		this.autoLevelInitial = hdStats.autoLevelInitial;
 		this.autoLevelZone = hdStats.autoLevelZone;
 		this.autoLevelData = hdStats.autoLevelData;
-		this.autoLevelDataFrag = hdStats.autoLevelDataFrag;
-		this.autoLevelNew = undefined;
-		this.autoLevelSpeed = undefined;
+		this.autoLevelLoot = hdStats.autoLevelLoot;
+		this.autoLevelSpeed = hdStats.autoLevelSpeed;
 
 		const z = game.global.world;
 
@@ -100,12 +99,21 @@ class HDStats {
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void', voidPercent);
 		//Calculating Auto Level values.
 		this.autoLevel = autoMapLevel();
-		this.autoLevelInitial = checkAutoLevel ? stats() : this.autoLevelInitial;
-		this.autoLevelZone = checkAutoLevel ? z : this.autoLevelZone;
-		this.autoLevelData = get_best(this.autoLevelInitial, true);
-		this.autoLevelDataFrag = get_best(this.autoLevelInitial, true);
-		this.autoLevelNew = this.autoLevelDataFrag.overall.mapLevel;
-		this.autoLevelSpeed = this.autoLevelDataFrag.speed.mapLevel;
+		//Only run this code if we are updating the initial autoLevel data.
+		if (checkAutoLevel) {
+			this.autoLevelInitial = stats();
+			this.autoLevelZone = z;
+			this.autoLevelData = get_best(this.autoLevelInitial, true);
+
+			const worldMap = Object.entries(this.autoLevelInitial[0]).filter((data) => data[1].mapLevel === 0).map((data) => { return this.autoLevelInitial[0][data[0]] })[0];
+			var lootLevel = this.autoLevelData.overall.mapLevel;
+			if (lootLevel === -1 && this.autoLevelData.overall.value === worldMap[this.autoLevelData.overall.stance].value) lootLevel = 0;
+			var speedLevel = this.autoLevelData.speed.mapLevel;
+			if (speedLevel === -1 && this.autoLevelData.speed.speed === worldMap[this.autoLevelData.speed.stance].speed) speedLevel = 0;
+
+			this.autoLevelLoot = lootLevel;
+			this.autoLevelSpeed = speedLevel;
+		}
 	}
 }
 
