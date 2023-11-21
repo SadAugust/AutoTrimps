@@ -4883,8 +4883,8 @@ function challengeUnlockCheck() {
 function autoHeirloomOptions(heirloomType) {
 	const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 	const heirloomRarity = rarities.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse));
-
 	var heirloomModsArray = ["Any"];
+	if (typeof heirloomInfo !== 'function') return heirloomModsArray;
 	const heirloomData = heirloomInfo(heirloomType);
 	for (var item in game.heirlooms[heirloomType]) {
 		var heirloom = game.heirlooms[heirloomType][item];
