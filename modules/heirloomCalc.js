@@ -1506,6 +1506,15 @@ function imAnEnemy(health = 0) {
 		poisonStack += addStack;
 		addStack = 0;
 		MODULES.autoHeirlooms.ticks += 1;
+
+		//Add additional ticks if needed to account for runestone buffs
+		if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type != "Knowledge" && MODULES.autoHeirlooms.detailed[p].type != "Frost") {
+			MODULES.autoHeirlooms.ticks += 1;
+		}
+		if (MODULES.autoHeirlooms.detailed[p].frozen && MODULES.autoHeirlooms.detailed[p].type != "Frost") {
+			MODULES.autoHeirlooms.ticks += 2;
+		}
+
 		// damage
 		damageTaken += addDamage;
 		addDamage = 0;
@@ -1875,9 +1884,8 @@ function getRsReward(health, threat) {
 		if (traps.fire.level >= 9) reward *= 1.5;
 		else reward *= 1.2;
 	}
-	if (traps.frost.level >= 5) {
+	if (traps.frost.level >= 5)
 		reward *= 1 + (MODULES.autoHeirlooms.ticks - playerSpire.layout.length) * traps.frost.runestones[traps.frost.level];
-	}
 	return reward;
 }
 
