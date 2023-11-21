@@ -145,6 +145,7 @@ function heirloomInfo(type) {
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.25],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200],
 			hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 400],
+			heirloopy: true
 		},
 	}
 	else if (type === 'Staff') heirloomMods = {
@@ -509,7 +510,7 @@ function isNumeric(n) {
 }
 
 function roundFloatingPointErrors(n) {
-	return parseFloat(n.toFixed(2));
+	return Number(parseFloat(n.toFixed(2)));
 }
 
 class Heirloom {
@@ -743,7 +744,7 @@ class Heirloom {
 		}
 		const amount = (value - this.softCaps[type]) / this.stepAmounts[type];
 		if (this.hardCaps) {
-			return (value >= this.hardCaps[type]) ? 0 : Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
+			return (value >= this.hardCaps[type]) ? 1e100 : Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
 		}
 		return Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
 	}
@@ -913,7 +914,9 @@ class Heirloom {
 			name = mod[0];
 			if (name === "empty") continue;
 			index = heirloom.mods.indexOf(mod);
-			heirloom.mods[index][1] = roundFloatingPointErrors(heirloom.getModValue(name));
+			if (this.hardCaps[name] && heirloom.mods[index][1] > this.hardCaps[name]) {
+				heirloom.mods[index][1] = this.hardCaps[name];
+			}
 		}
 
 		return heirloom;
@@ -1134,8 +1137,10 @@ function calculate(autoUpgrade) {
 	if (newHeirloom) {
 		for (var y = 0; y < newHeirloom.mods.length; y++) {
 			if (newHeirloom.purchases[y] === 0) continue;
-			modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split("(");
-			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails[0]} (${precisionRoundMod(getModValue(newHeirloom.mods[y]), 2)}% +${newHeirloom.purchases[y]})`;
+			modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split("(")[0];
+			var modValue = precisionRoundMod(getModValue(newHeirloom.mods[y]), 2);
+			if (modDetails.includes('Inequality') && game.global.universe === 2) modValue /= 10;
+			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails} (${modValue}% +${newHeirloom.purchases[y]})`;
 		}
 	}
 

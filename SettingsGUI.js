@@ -6118,7 +6118,7 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.20') {
 			if (typeof (tempSettings["experienceStaff"]) !== 'undefined') {
-				if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value === 'object')
+				if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value !== 'string')
 					autoTrimpSettings.experienceStaff.value === 'undefined';
 			}
 		}
