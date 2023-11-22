@@ -27,29 +27,6 @@ function getPerSecBeforeManual(a) {
 	return b;
 }
 
-function getCurrentEnemy(cell) {
-	//Base Info for enemy that will later be overwritten.
-	var enemy = {}
-	if (game.global.gridArray.length <= 0) return enemy;
-	if (!cell) cell = 1;
-
-	if (game.global.mapsActive || game.global.preMapsActive) {
-		if (game.global.mapsActive && !game.global.preMapsActive) {
-			if (typeof game.global.mapGridArray[game.global.lastClearedMapCell + cell] === 'undefined') {
-				enemy = game.global.mapGridArray[game.global.mapGridArray.length - 1];
-			} else {
-				enemy = game.global.mapGridArray[game.global.lastClearedMapCell + cell];
-			}
-		}
-	}
-	else if (typeof game.global.gridArray[game.global.lastClearedCell + cell] === 'undefined') {
-		enemy = game.global.gridArray[game.global.gridArray.length - 1];
-	}
-	else enemy = game.global.gridArray[game.global.lastClearedCell + cell];
-
-	return enemy;
-}
-
 function getCorruptedCellsNum() {
 	for (var a, b = 0, c = 0; c < game.global.gridArray.length - 1; c++) (a = game.global.gridArray[c]), "Corruption" === a.mutation && b++;
 	return b;

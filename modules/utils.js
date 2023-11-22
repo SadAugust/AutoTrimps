@@ -1,17 +1,3 @@
-if (!String.prototype.includes) {
-	String.prototype.includes = function (search, start) {
-		'use strict';
-		if (typeof start !== 'number') {
-			start = 0;
-		}
-		if (start + search.length > this.length) {
-			return false;
-		} else {
-			return this.indexOf(search, start) !== -1;
-		}
-	};
-}
-
 window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
 	var message = [
 		'Message: ' + msg,
@@ -21,16 +7,14 @@ window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
 		'Error object: ' + JSON.stringify(error)
 	].join(' - ');
 	if (lineNo != 0)
-		console.log("AT logged error: " + message);
+		console.log('AT logged error: ' + message);
 };
 
 //Loads setting data from localstorage into object
 function loadPageVariables() {
-	var tmp = JSON.parse(localStorage.getItem('atSettings'));
-
-	if (tmp !== null && tmp['ATversion'] !== undefined) {
+	const tmp = JSON.parse(localStorage.getItem('atSettings'));
+	if (tmp !== null && tmp['ATversion'] !== undefined)
 		autoTrimpSettings = tmp;
-	}
 }
 
 //Saves AT settings to localstorage
@@ -40,7 +24,7 @@ function safeSetItems(storageName, storageSetting) {
 	}
 	catch (c) {
 		22 === c.code &&
-			debug("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.", "other")
+			debug('Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.', 'other')
 	}
 }
 
@@ -50,16 +34,15 @@ function saveSettings() {
 }
 
 function serializeSettings() {
-	return JSON.stringify(Object.keys(autoTrimpSettings).reduce((v, item) => {
+	const settingString = JSON.stringify(Object.keys(autoTrimpSettings).reduce((v, item) => {
 		const setting = autoTrimpSettings[item];
+		var newSetting = {};
 		switch (setting.type) {
 			case 'action':
 			case 'infoclick':
-				var newSetting = {};
 				newSetting.id = v[item];
 				return v[item] = newSetting, v;
 			case 'boolean':
-				var newSetting = {};
 				newSetting.id = v[item];
 				newSetting.enabled = setting.enabled
 				newSetting.enabledU2 = setting.enabledU2
@@ -72,13 +55,11 @@ function serializeSettings() {
 			case 'multitoggle':
 			case 'mazArray':
 			case 'mazDefaultArray':
-				var newSetting = {};
 				newSetting.id = v[item];
 				newSetting.value = setting.value
 				newSetting.valueU2 = setting.valueU2
 				return v[item] = newSetting, v;
 			case 'dropdown':
-				var newSetting = {};
 				newSetting.id = v[item];
 				newSetting.selected = setting.selected
 				newSetting.selectedU2 = setting.selectedU2
@@ -86,13 +67,15 @@ function serializeSettings() {
 		}
 		return v[item] = setting, v;
 	}, {}));
+
+	return settingString;
 }
 
 //Process data to google forms to update stats spreadsheet
 function pushSpreadsheetData() {
 	if (!portalWindowOpen) return;
 	if (!gameUserCheck(true)) return;
-	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"))[getportalID()];
+	const graphData = JSON.parse(localStorage.getItem('portalDataCurrent'))[getportalID()];
 
 	const fluffy_EvoLevel = {
 		cap: game.portal.Capable.level,
@@ -107,7 +90,7 @@ function pushSpreadsheetData() {
 			return this.level() === this.cap ? 0 : Number((4 ** (this.potential() - this.level()) - 1) / 3).toFixed(2)
 		},
 		fluffy: function () {
-			return "E" + this.prestige + "L" + (this.level() + this.progress())
+			return 'E' + this.prestige + 'L' + (this.level() + this.progress())
 		}
 	}
 
@@ -139,13 +122,12 @@ function pushSpreadsheetData() {
 		}
 	}
 
-
 	var heliumGained = game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned;
 	var heliumHr = game.stats.heliumHour.value();
 
-	var dailyMods = " ";
+	var dailyMods = ' ';
 	var dailyPercent = 0;
-	if (MODULES["portal"].currentChallenge === 'Daily' && !challengeActive('Daily')) {
+	if (MODULES['portal'].currentChallenge === 'Daily' && !challengeActive('Daily')) {
 		dailyMods = MODULES.portal.dailyMods;
 		dailyPercent = MODULES.portal.dailyPercent;
 	}
@@ -162,7 +144,6 @@ function pushSpreadsheetData() {
 		.reduce((a, k) => ({ ...a, [k]: graphData.perZoneData.mapCount[k] }), {}) : 0;
 	const mapTotal = graphData !== undefined ? Object.keys(mapCount).reduce(function (m, k) { return mapCount[k] > m ? mapCount[k] : m }, -Infinity) : 0;
 	const mapZone = graphData !== undefined ? Number(Object.keys(mapCount).find(key => mapCount[key] === mapTotal)) : 0;
-
 
 	var obj = {
 		user: autoTrimpSettings.gameUser.value,
@@ -198,11 +179,11 @@ function pushSpreadsheetData() {
 		mapZone: mapZone,
 		mapCount: mapTotal,
 		voidsCompleted: game.stats.totalVoidMaps.value,
-		smithy: (game.global.universe === 1 ? "N/A" :
+		smithy: (game.global.universe === 1 ? 'N/A' :
 			!game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned ?
-				(game.buildings.Smithy.owned - 2 + " + 2") : !game.mapUnlocks.SmithFree.canRunOnce ?
-					(game.buildings.Smithy.owned - 1 + " + 1") : (game.buildings.Smithy.owned)),
-		meteorologist: (game.global.universe === 1 ? "N/A" : game.jobs.Meteorologist.owned),
+				(game.buildings.Smithy.owned - 2 + ' + 2') : !game.mapUnlocks.SmithFree.canRunOnce ?
+					(game.buildings.Smithy.owned - 1 + ' + 1') : (game.buildings.Smithy.owned)),
+		meteorologist: (game.global.universe === 1 ? 'N/A' : game.jobs.Meteorologist.owned),
 		heliumGained: heliumGained,
 		heliumHr: heliumHr,
 		fluffyXP: game.stats.bestFluffyExp2.value,
@@ -224,12 +205,12 @@ function pushSpreadsheetData() {
 
 	for (var chall in game.c2) {
 		if (!game.challenges[chall].allowU2) {
-			obj[chall + "_zone"] = game.c2[chall];
-			obj[chall + "_bonus"] = (getIndividualSquaredReward(chall));
+			obj[chall + '_zone'] = game.c2[chall];
+			obj[chall + '_bonus'] = (getIndividualSquaredReward(chall));
 		}
 		else {
-			obj[chall + "_zone"] = game.c2[chall];
-			obj[chall + "_bonus"] = (getIndividualSquaredReward(chall));
+			obj[chall + '_zone'] = game.c2[chall];
+			obj[chall + '_bonus'] = (getIndividualSquaredReward(chall));
 		}
 	}
 
@@ -249,7 +230,6 @@ function pushSpreadsheetData() {
 		};
 
 		var formSuccess = true;
-
 		var formId = '1FAIpQLScTqY2ti8WUwIKK_WOh_X_Oky704HOs_Lt07sCTG2sHCc3quA'
 		var queryString = '/formResponse'
 		var url = 'https://docs.google.com/forms/d/e/' + formId + queryString
@@ -276,149 +256,72 @@ function pushSpreadsheetData() {
 //If universe is set it will return the value from that universe.
 //If the setting is not found it will return false.
 function getPageSetting(setting, universe = game.global.universe) {
-	if (!autoTrimpSettings.hasOwnProperty(setting)) {
+	if (!autoTrimpSettings.hasOwnProperty(setting))
 		return false;
-	}
-
 	const settingType = autoTrimpSettings[setting].type;
-	var enabled = 'enabled';
-	var selected = 'selected';
-	var value = 'value';
+	const u2Setting = autoTrimpSettings[setting].universe.indexOf(0) === -1 && setting !== 'universeSetting' && universe === 2;
+	const enabled = 'enabled' + (u2Setting ? 'U2' : '');
+	const selected = 'selected' + (u2Setting ? 'U2' : '');
+	const value = 'value' + (u2Setting ? 'U2' : '');
 
-	if (autoTrimpSettings[setting].universe.indexOf(0) === -1 && universe === 2) {
-		if (universe === 2) enabled += 'U2';
-		if (universe === 2) selected += 'U2';
-		if (universe === 2) value += 'U2';
-	}
-
-	if (settingType === 'boolean') {
+	if (settingType === 'boolean')
 		return autoTrimpSettings[setting][enabled];
-	} else if (settingType === 'multiValue') {
+	else if (settingType === 'multiValue')
 		return Array.from(autoTrimpSettings[setting][value])
 			.map(x => parseFloat(x));
-	} else if (settingType === 'multiTextValue') {
+	else if (settingType === 'multiTextValue')
 		return Array.from(autoTrimpSettings[setting][value])
 			.map(x => String(x));
-	} else if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray') {
+	else if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray')
 		return autoTrimpSettings[setting][value];
-	} else if (settingType === 'value' || autoTrimpSettings[setting].type === 'valueNegative') {
+	else if (settingType === 'value' || autoTrimpSettings[setting].type === 'valueNegative')
 		return parseFloat(autoTrimpSettings[setting][value]);
-	} else if (settingType === 'multitoggle') {
+	else if (settingType === 'multitoggle')
 		return parseInt(autoTrimpSettings[setting][value]);
-	} else if (settingType === 'dropdown') {
+	else if (settingType === 'dropdown')
 		return autoTrimpSettings[setting][selected];
-	}
 }
 
 //It sets the value of a setting, and then saves the settings.
-function setPageSetting(setting, newValue, universe) {
-	if (autoTrimpSettings.hasOwnProperty(setting) === false) {
+function setPageSetting(setting, newValue, universe = portalUniverse) {
+	if (autoTrimpSettings.hasOwnProperty(setting) === false)
 		return false;
-	}
 
 	const settingType = autoTrimpSettings[setting].type;
+	const u2Setting = setting !== 'universeSetting' && universe === 2;
+	const enabled = 'enabled' + (u2Setting ? 'U2' : '');
+	const selected = 'selected' + (u2Setting ? 'U2' : '');
+	const value = 'value' + (u2Setting ? 'U2' : '');
 
-	var enabled = 'enabled';
-	var selected = 'selected';
-	var value = 'value';
-
-	if (!universe) universe = portalUniverse;
-
-	if (setting !== 'universeSetting' && (universe === 2)) {
-		if (universe === 2) enabled += 'U2';
-		if (universe === 2) selected += 'U2';
-		if (universe === 2) value += 'U2';
-	}
-
-	var buttonIndex = ['boolean'];
+	var enabledIndex = ['boolean'];
 	var valueIndex = ['value', 'valueNegative', 'textValue', 'multiTextValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
 	var selectedIndex = ['dropdown'];
 
-	if (buttonIndex.indexOf(settingType) !== -1) {
+	if (enabledIndex.indexOf(settingType) !== -1)
 		autoTrimpSettings[setting][enabled] = newValue;
-		document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting][enabled]);
-	} else if (valueIndex.indexOf(settingType) !== -1) {
+	else if (valueIndex.indexOf(settingType) !== -1)
 		autoTrimpSettings[setting][value] = newValue;
-		if (settingType === 'multitoggle') document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting][value]);
-	} else if (selectedIndex.indexOf(settingType) !== -1) {
+	else if (selectedIndex.indexOf(settingType) !== -1)
 		autoTrimpSettings[setting][selected] = newValue;
-	}
+
 	//Update button values if necessary
 	if (settingType !== 'mazArray' && settingType !== 'mazDefaultArray') updateCustomButtons(true);
 	saveSettings();
 }
 
 //Looks at the spamMessages setting and if the message is enabled, it will print it to the message log & console.
-function debug(message, b, icon) {
-	var settingArray = atSettings.initialise.loaded && getPageSetting('spamMessages'),
-		p = true;
+function debug(message, messageType, icon) {
+	if (!atSettings.initialise.loaded) return;
+	const settingArray = getPageSetting('spamMessages');
+	var sendMessage = true;
 
-	switch (b) {
-		case null:
-		case "bones":
-		case "mapsMsg":
-		case "mazSettings":
-		case "debugStats":
-		case "portal":
-		case "challenge":
-		case "test":
-		case "graphs":
-		case "heirlooms":
-		case "perks":
-			break;
-		case 'general':
-			p = settingArray[b];
-			break;
-		case 'upgrades':
-			p = settingArray[b];
-			break;
-		case 'equipment':
-			p = settingArray[b];
-			break;
-		case 'buildings':
-			p = settingArray[b];
-			break;
-		case 'jobs':
-			p = settingArray[b];
-			break;
-		case 'maps':
-			p = settingArray[b];
-			break;
-		case 'fragment':
-			p = settingArray[b];
-			break;
-		case 'map_Details':
-			p = settingArray[b];
-			break;
-		case 'map_Destacking':
-			p = settingArray[b];
-			break;
-		case 'map_Skip':
-			p = settingArray[b];
-			break;
-		case 'other':
-			p = settingArray[b];
-			break;
-		case 'zone':
-			p = settingArray[b];
-			break;
-		case 'exotic':
-			p = settingArray[b];
-			break;
-		case 'gather':
-			p = settingArray[b];
-			break;
-		case 'stance':
-			p = settingArray[b];
-			break;
-		case 'nature':
-			p = settingArray[b];
-			break;
-		case 'run_Stats':
-			p = settingArray[b];
-			break;
+	if (messageType in settingArray)
+		sendMessage = settingArray[messageType];
+
+	if (sendMessage) {
+		console.log(timeStamp() + ' ' + message);
+		message2(message, 'AutoTrimps', icon, messageType);
 	}
-	p && (console.log(timeStamp() + ' ' + message), message2(message, 'AutoTrimps', icon, b))
 }
 
 function timeStamp() {
@@ -431,54 +334,50 @@ function timeStamp() {
 		c = 1;
 		3 > c;
 		c++)10 > b[c] &&
-			(b[c] = "0" + b[c]);
-	return b.join(":")
+			(b[c] = '0' + b[c]);
+	return b.join(':')
 }
 
 function setTitle() {
-	atSettings.portal.aWholeNewWorld &&
-		(document.title = '(' + game.global.world + ') Trimps ' + document.getElementById('versionNumber').innerHTML);
+	document.title = '(' + game.global.world + ') Trimps ' + document.getElementById('versionNumber').innerHTML;
 }
 
 var lastmessagecount = 1;
 
 function message2(message, b, icon, d) {
-	var e = document.getElementById("log"),
+	var e = document.getElementById('log'),
 		f = e.scrollTop + 10 > e.scrollHeight - e.clientHeight,
-		g = ATmessageLogTabVisible ? "block" : "none",
-		h = "";
-	icon && "*" === icon.charAt(0) ? ((icon = icon.replace("*", "")), (h = "icomoon icon-")) : (h = "glyphicon glyphicon-"),
-		game.options.menu.timestamps.enabled && (message = (1 === game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + " " + message),
+		g = ATmessageLogTabVisible ? 'block' : 'none',
+		h = '';
+	icon && '*' === icon.charAt(0) ? ((icon = icon.replace('*', '')), (h = 'icomoon icon-')) : (h = 'glyphicon glyphicon-'),
+		game.options.menu.timestamps.enabled && (message = (1 === game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + ' ' + message),
 		icon && (message = '<span class="' + h + icon + '"></span> ' + message),
 		(message = '<span class="glyphicon glyphicon-superscript"></span> ' + message),
 		(message = '<span class="icomoon icon-text-color"></span>' + message);
 	var i = "<span class='" + b + "Message message " + d + "' style='display: " + g + "'>" + message + "</span>",
-		j = document.getElementsByClassName(b + "Message");
+		j = document.getElementsByClassName(b + 'Message');
 	if (1 < j.length && -1 < j[j.length - 1].innerHTML.indexOf(message)) {
 		var k = j[j.length - 1].innerHTML;
 		lastmessagecount++;
-		var l = k.lastIndexOf(" x");
-		-1 !== l && (j[j.length - 1].innerHTML = k.slice(0, l)), (j[j.length - 1].innerHTML += " x" + lastmessagecount);
+		var l = k.lastIndexOf(' x');
+		-1 !== l && (j[j.length - 1].innerHTML = k.slice(0, l)), (j[j.length - 1].innerHTML += ' x' + lastmessagecount);
 	} else (lastmessagecount = 1), (e.innerHTML += i);
 	f && (e.scrollTop = e.scrollHeight), trimMessages(b);
 }
 
 function filterMessage2(a) {
-	var b = document.getElementById("log");
+	var b = document.getElementById('log');
 	var displayed = !ATmessageLogTabVisible;
 	ATmessageLogTabVisible = displayed;
-	var c = document.getElementsByClassName(a + "Message")
-	var e = document.getElementById(a + "Filter");
+	var c = document.getElementsByClassName(a + 'Message');
+	var e = document.getElementById(a + 'Filter');
 
-	e.className = "", e.className = getTabClass(displayed),
-		displayed = displayed ? "block" : "none";
+	e.className = '', e.className = getTabClass(displayed),
+		displayed = displayed ? 'block' : 'none';
 	for (var f = 0; f < c.length; f++) {
-		c[f].style.display = displayed; b.scrollTop = b.scrollHeight
+		c[f].style.display = displayed; b.scrollTop = b.scrollHeight;
 	}
 }
-
-
-
 
 
 
@@ -487,17 +386,16 @@ function filterMessage2(a) {
 
 //Will activate a 24 hour timewarp.
 function testTimeWarp(hours) {
-
 	var timeWarpHours = 0;
 	try {
-		timeWarpHours = parseNum(document.getElementById("setSettingsNameTooltip").value.replace(/[\n\r]/gm, ""));
+		timeWarpHours = parseNum(document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, ''));
 		if (timeWarpHours === null || timeWarpHours === undefined || timeWarpHours === 0) {
-			debug("Time Warp input is invalid. Defaulting to 24 hours.", "test");
+			debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
 			timeWarpHours = 24;
 		}
 	} catch (err) {
 		if (!hours) {
-			debug("Time Warp input is invalid. Defaulting to 24 hours.", "test");
+			debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
 			timeWarpHours = 24;
 		}
 	}
@@ -511,10 +409,6 @@ function testTimeWarp(hours) {
 	game.global.lastSoldierSentAt -= timeToRun;
 	game.global.lastSkeletimp -= timeToRun;
 	game.permaBoneBonuses.boosts.lastChargeAt -= timeToRun;
-
-	//Increase maxTicks if we're going to be offline for more than 24 hours.
-	if (timeToRun > 8.64e+7)
-		offlineProgress.maxTicks = timeToRun;
 
 	offlineProgress.start();
 	return;
@@ -549,16 +443,16 @@ function testSpeedX(interval) {
 function testChallenge() {
 	//read the name in from tooltip
 	try {
-		var challengeName = document.getElementById("setSettingsNameTooltip").value.replace(/[\n\r]/gm, "");
+		var challengeName = document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, '');
 		if (challengeName === null || game.challenges[challengeName] === undefined) {
-			debug("Challenge name didn't match one ingame..", "test");
+			debug('Challenge name didn\'t match one ingame..', 'test');
 			return;
 		}
 	} catch (err) {
-		debug("Challenge name didn't match one ingame..", "test");
+		debug('Challenge name didn\'t match one ingame..', 'test');
 		return;
 	}
-	debug("Setting challenge to " + challengeName, "test");
+	debug('Setting challenge to ' + challengeName, 'test');
 	game.global.challengeActive = challengeName;
 }
 
@@ -575,8 +469,8 @@ function testMetalIncome() {
 	//Adding avg jestimps into mapTimer calculation
 	if (mapsPerDay > 4) mapTimer += (Math.floor(mapsPerDay / 5) * 45);
 	var mapLevel = game.global.mapsActive ? getCurrentMapObject().level - game.global.world : 0;
-	var resourcesGained = scaleToCurrentMap_AT(simpleSeconds_AT("metal", mapTimer, '0,0,1'), false, true, mapLevel);
-	debug("Metal gained from 1 day " + prettify(resourcesGained), "test");
+	var resourcesGained = scaleToCurrentMap_AT(simpleSeconds_AT('metal', mapTimer, '0,0,1'), false, true, mapLevel);
+	debug('Metal gained from 1 day ' + prettify(resourcesGained), 'test');
 }
 
 function testEquipmentMetalSpent() {
@@ -613,9 +507,9 @@ function testEquipmentMetalSpent() {
 		prestigeCost += getTotalPrestigeCost(i, game.equipment[i].prestige - 1);
 	}
 
-	debug("Cost of all prestiges: " + prettify(prestigeCost), "test");
-	debug("Cost of all equip levels: " + prettify(levelCost), "test");
-	debug("Cost of all equipment: " + prettify(prestigeCost + levelCost), "test");
+	debug('Cost of all prestiges: ' + prettify(prestigeCost), 'test');
+	debug('Cost of all equip levels: ' + prettify(levelCost), 'test');
+	debug('Cost of all equipment: ' + prettify(prestigeCost + levelCost), 'test');
 }
 
 function testMaxMapBonus() {

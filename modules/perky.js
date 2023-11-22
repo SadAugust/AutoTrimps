@@ -167,6 +167,7 @@ function fillPresetPerky(specificPreset) {
 		income: [0, 0, 0, 0],
 		unesscented: [0, 1, 0, 0],
 		nerfeder: [0, 1, 0, 0],
+		experience: [1, 50, 1, 500],
 	};
 
 	const localData = initPresetPerky();
@@ -872,27 +873,27 @@ MODULES.autoPerks = {
 			},
 			carp: {
 				name: "Trapper² (initial)",
-				description: "Use this setting to respec for the Trapper² feat.",
+				description: "Use this setting to respec for the Trapper² challenge.",
 			},
 			trapper: {
 				name: "Trapper² (respec)",
-				description: "Use this setting to respec for the Trapper² feat.",
+				description: "Use this setting to respec for the Trapper² challenge.",
 			},
 			coord: {
 				name: "Coordinate²",
-				description: "Use this setting to respec for the Coordinate² feat.",
+				description: "Use this setting to respec for the Coordinate² challenge.",
 			},
 			trimp: {
 				name: "Trimp²",
-				description: "Use this setting to respec for the Trimp² feat.",
+				description: "Use this setting to respec for the Trimp² challenge.",
 			},
 			metal: {
 				name: "Metal²",
-				description: "Use this setting to respec for the Metal² feat.",
+				description: "Use this setting to respec for the Metal² challenge.",
 			},
 			c2: {
 				name: "Other c²",
-				description: "Use this setting to respec for the other c² feats.",
+				description: "Use this setting to respec for the other c² challenges.",
 			},
 			income: {
 				name: "Income",
@@ -905,6 +906,10 @@ MODULES.autoPerks = {
 			nerfeder: {
 				name: "Nerfeder",
 				description: "Use this setting to respec for the Nerfeder feat.",
+			},
+			experience: {
+				name: "Experience",
+				description: "Use this setting to respec for the Experience challenge.",
 			},
 		}
 	},

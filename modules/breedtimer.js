@@ -56,11 +56,11 @@ function potencyMod() {
 		potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
 
 	//Void Maps (Slow Breed)
-	if (game.global.voidBuff === "slowBreed")
+	if (game.global.voidBuff === 'slowBreed')
 		potencyMod = potencyMod.mul(0.2);
 
 	//Heirlooms
-	potencyMod = calcHeirloomBonusDecimal("Shield", "breedSpeed", potencyMod);
+	potencyMod = calcHeirloomBonusDecimal('Shield', 'breedSpeed', potencyMod);
 
 	//Geneticists
 	if (game.jobs.Geneticist.owned > 0)
@@ -71,9 +71,9 @@ function potencyMod() {
 		potencyMod = potencyMod.mul(game.challenges.Archaeology.getStatMult('breed'));
 
 	//Quagmire
-	if (challengeActive('Quagmire')) {
+	if (challengeActive('Quagmire'))
 		potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
-	}
+
 	//Mutators
 	if (game.global.universe === 2) {
 		//Gene Attack
@@ -119,6 +119,9 @@ function geneAssist() {
 		game.global.GeneticistassistSetting = -1;
 		toggleGeneticistassist(true);
 	}
+
+	while (game.options.menu.gaFire.enabled !== 1)
+		toggleSetting('gaFire');
 
 	var timeRemaining = breedTimeRemaining();
 	var totalTime = breedTotalTime();
@@ -172,12 +175,10 @@ function geneAssist() {
 	var now = new Date().getTime();
 	var breedTime = (game.jobs.Amalgamator.owned > 0) ? (now - game.global.lastSoldierSentAt) / 1000 : game.global.lastBreedTime / 1000;
 	var compareTime;
-	if (timeRemaining.cmp(0.5) > 0) {
+	if (timeRemaining.cmp(0.5) > 0)
 		compareTime = new MODULES.breedtimer.DecimalBreed(timeRemaining.add(breedTime));
-	}
-	else {
+	else
 		compareTime = new MODULES.breedtimer.DecimalBreed(totalTime);
-	}
 	if (!compareTime.isFinite()) compareTime = new Decimal(999);
 	var genDif = new MODULES.breedtimer.DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
 
@@ -190,7 +191,7 @@ function geneAssist() {
 	}
 	else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || (potencyMod().cmp(1) === 0)) {
 		if (!genDif.isFinite()) genDif = new Decimal(-1);
-		if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled !== 2) {
+		if (genDif.cmp(0) < 0) {
 			if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
 			removeGeneticist(genDif.abs().toNumber());
 		}

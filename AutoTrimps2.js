@@ -85,6 +85,7 @@ function ATscriptLoad(prefix, fileName) {
 	if (null === prefix) prefix = '';
 	script.src = atSettings.initialise.basepath + prefix + fileName + '.js';
 	script.id = fileName + '_MODULE';
+	script.async = false
 	script.defer = true;
 	document.head.appendChild(script);
 	//Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
@@ -187,6 +188,7 @@ function delayStartAgain() {
 	MODULES.heirlooms.gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
+	updateAutoMapsStatus();
 
 	//Copy gameLoop for when we enter toggleCatchUpMode.
 	originalGameLoop = gameLoop;
@@ -543,7 +545,6 @@ function mainCleanup() {
 			MODULES.mapFunctions.afterVoids = false;
 			MODULES.portal.zonePostpone = 0;
 			if (!game.upgrades.Battle.done) {
-				updateButtonText();
 				resetSettingsPortal();
 			}
 		}

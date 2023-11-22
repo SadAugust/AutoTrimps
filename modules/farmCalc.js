@@ -4,7 +4,7 @@ if (typeof MODULES === 'undefined') {
 
 	function mastery(name) {
 		if (!game.talents[name])
-			throw "unknown mastery: " + name;
+			throw 'unknown mastery: ' + name;
 		return game.talents[name].purchased;
 	}
 }
@@ -39,6 +39,12 @@ function callAutoMapLevel_new(mapName, mapLevel, special) {
 	const mapModifiers = {
 		special: special ? special : trimpStats.mapSpecial,
 		biome: mapSettings.biome ? mapSettings.biome : trimpStats.mapBiome,
+	}
+
+	//Update initial stats if we've changed zones and it hasnt updated yet
+	if (hdStats.autoLevelZone !== game.global.world) {
+		hdStats.autoLevelZone = game.global.world;
+		hdStats.autoLevelInitial = stats();
 	}
 	var autoLevel = 0;
 	//Get initial map level if not already set
@@ -118,6 +124,8 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	critChance = critChance - Math.floor(critChance);
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.1) critType = 'never';
 
+	const perfectMaps = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
+
 	for (var y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
 		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
@@ -125,9 +133,9 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		if (y === minLevel) {
 			return minLevel;
 		}
-		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < mapCost(mapLevel, special, biome))
+		if (!statCheck && perfectMaps && game.resources.fragments.owned < mapCost(mapLevel, special, biome))
 			continue;
-		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
+		if (!statCheck && !perfectMaps && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
 			continue;
 
 		if (game.global.universe === 2) universeSetting = equalityQuery(enemyName, z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
@@ -152,9 +160,9 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		}
 
 		/* if (y === -6) {
-			console.log("universeSetting = " + universeSetting + " y = " + y + " difficulty = " + difficulty + " cell = " + cell + " dmgType = " + dmgType + " critType = " + critType);
-			console.log("trimpHP = " + ourHealth + " trimpDmg = " + ourDmg + " trimpBlock = " + ourBlock);
-			console.log("enemyHP = " + enemyHealth + " enemyDmg = " + enemyDmg);
+			console.log('universeSetting = ' + universeSetting + ' y = ' + y + ' difficulty = ' + difficulty + ' cell = ' + cell + ' dmgType = ' + dmgType + ' critType = ' + critType);
+			console.log('trimpHP = ' + ourHealth + ' trimpDmg = ' + ourDmg + ' trimpBlock = ' + ourBlock);
+			console.log('enemyHP = ' + enemyHealth + ' enemyDmg = ' + enemyDmg);
 		} */
 		if (enemyHealth <= ourDmg && enemyDmg <= (ourHealth + ourBlock)) {
 			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
@@ -216,11 +224,11 @@ function populateZFarmData() {
 	trimpHealth -= trimpShield;
 
 	//Gamma Burst
-	var gammaMult = MODULES.heirlooms.gammaBurstPct;
+	var gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
 	var gammaCharges = gammaMaxStacks();
 
 	//Heirloom + Crit Chance
-	const customShield = heirloomShieldToEquip('map');
+	const customShield = typeof atSettings !== 'undefined' ? heirloomShieldToEquip('map') : null;
 	var critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
 	var critDamage = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult() - 1;
 
@@ -432,29 +440,32 @@ function populateZFarmData() {
 	critDamage = critChance >= 1 ? (megaCD - 1) : critDamage;
 
 	var exoticChance = 3;
-	if (Fluffy.isRewardActive("exotic")) exoticChance += 0.5;
+	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
 	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
 	exoticChance /= 100;
 
 	const natureTransfer = (zone >= natureStart ? nature.retainLevel + diplomacy : 0) / 100;
 	nature = zone >= natureStart ? nature.level + diplomacy : 0;
 	death_stuff.challenge_attack = enemyAttack;
+	const perfectMapsUnlocked = typeof atSettings !== 'undefined' ? trimpStats.perfectMaps : (game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110);
 
+	const maxTicks = typeof atSettings !== 'undefined' ? (atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400) : 86400; // Six hours simulation inside of TW and a day
 	return {
 		//Base Info
 		hze: hze,
 		speed: speed,
 		zone: zone,
-
+		universe: game.global.universe,
+		maxTicks: maxTicks,
 		//Extra Map Info
 		extraMapLevelsAvailable: extraMapLevelsAvailable,
 		reducer: haveMapReducer,
-		perfectMaps: trimpStats.perfectMaps,
+		perfectMaps: perfectMapsUnlocked,
 		biome: biomeEnemyStats(biome),
 		fragments: game.resources.fragments.owned,
 
-		difficulty: prettify((trimpStats.perfectMaps ? 75 : 80) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
-		size: mastery('mapLoot2') ? 20 : trimpStats.perfectMaps ? 25 : 27,
+		difficulty: ((perfectMapsUnlocked ? 75 : 80) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
+		size: mastery('mapLoot2') ? 20 : perfectMapsUnlocked ? 25 : 27,
 
 		//Nature
 		poison: 0, wind: 0, ice: 0,
@@ -476,7 +487,7 @@ function populateZFarmData() {
 		rangeMin: minFluct,
 		rangeMax: maxFluct,
 		plaguebringer: typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01,
-		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : getPlayerEqualityMult()) : 1,
+		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
 
 		//Enemy Stats
 		challenge: enemyHealth,
@@ -495,7 +506,7 @@ function populateZFarmData() {
 		coordinate: challengeActive('Coordinate'),
 		challenge_health: enemyHealth,
 		challenge_attack: enemyAttack,
-		mapPerfect: typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : false,
+		mapPerfect: typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true,
 		mapSpecial: getAvailableSpecials('lmc'),
 		mapBiome: biome,
 
@@ -525,9 +536,9 @@ function stats() {
 
 		//Check fragment cost of each map and remove them from the check if they can't be afforded.
 		if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-		stats.unshift(tmp);
 		//Want to guarantee at least 6 results here so that we don't accidentally miss a good map to farm on
 		if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 40)) break;
+		stats.unshift(tmp);
 		if (tmp.zone === 'z6') break;
 	}
 	return [stats, saveData.stances];
@@ -588,9 +599,11 @@ function simulate(saveData, zone) {
 	var trimpOverkill = 0;
 	var duelPoints = game.challenges.Duel.trimpStacks;
 	var glassStacks = game.challenges.Glass.shards;
+	var universe = saveData.universe;
+	var magma = saveData.magma;
 
 	var seed = Math.floor(Math.random(40, 50) * 100);
-	const rand_mult = 2 ** -31;
+	const rand_mult = 4.656612873077393e-10;
 
 	function rng() {
 		seed ^= seed >> 11;
@@ -615,13 +628,13 @@ function simulate(saveData, zone) {
 	const runningDesolation = challengeActive('Desolation');
 
 	var equality = 1;
-	if (game.global.universe === 2) {
+	if (universe === 2) {
 		var enemyName = 'Snimp';
 		if (challengeActive('Insanity')) enemyName = 'Horrimp';
 		equality = equalityQuery(enemyName, zone, saveData.size, 'map', saveData.difficulty);
 	}
 	var biomeImps = saveData.biome;
-	const max_ticks = atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400; // Six hours simulation inside of TW and a day
+	const max_ticks = saveData.maxTicks; // Six hours simulation inside of TW and a day
 	var hp_array = []
 	var atk_array = [];
 	for (var i = 0; i < saveData.size; ++i) {
@@ -649,13 +662,13 @@ function simulate(saveData, zone) {
 
 	function reduceTrimpHealth(amt, directHit) {
 		if (runningMayhem) mayhemPoison += (amt * .2);
-		if (!directHit && game.global.universe === 2) {
+		if (!directHit && universe === 2) {
 			var initialShield = energyShield;
 			energyShield -= amt;
 			if (energyShield > 0) return;
 			else amt -= initialShield;
 		}
-		if (!directHit && game.global.universe === 1) {
+		if (!directHit && universe === 1) {
 			amt -= saveData.block;
 		}
 
@@ -681,9 +694,9 @@ function simulate(saveData, zone) {
 			enemyCrit = true;
 		}
 		//Ice modifier
-		enemyAtk *= 0.366 ** (ice * saveData.ice);
+		if (saveData.ice > 0) enemyAtk *= 0.366 ** (ice * saveData.ice);
 		//Equality mult
-		if (game.global.universe === 2) enemyAtk *= Math.pow(0.9, equality);
+		if (universe === 2) enemyAtk *= Math.pow(0.9, equality);
 		//Safety precaution for infinite Ice stacks
 		enemyAtk = Math.max(0, enemyAtk);
 		reduceTrimpHealth(enemyAtk);
@@ -763,9 +776,9 @@ function simulate(saveData, zone) {
 					trimpCrit = true;
 				}
 				trimpAttack *= titimp > ticks ? 2 : 1;
-				trimpAttack *= 2 - 0.366 ** (ice * saveData.ice);
-				trimpAttack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
-				trimpAttack *= Math.pow(saveData.equalityMult, equality);
+				if (saveData.ice > 0) trimpAttack *= 2 - 0.366 ** (ice * saveData.ice);
+				if (saveData.weakness) trimpAttack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
+				if (universe === 2) trimpAttack *= Math.pow(saveData.equalityMult, equality);
 				enemyHealth -= trimpAttack + poison * saveData.poison;
 				poison += trimpAttack;
 				++ice;
@@ -797,8 +810,8 @@ function simulate(saveData, zone) {
 			}
 
 			// Bleeds
-			trimpHealth -= saveData.bleed * saveData.max_hp;
-			trimpHealth -= debuff_stacks * saveData.plague * saveData.max_hp;
+			if (saveData.bleed) trimpHealth -= saveData.bleed * saveData.max_hp;
+			if (saveData.plague) trimpHealth -= debuff_stacks * saveData.plague * saveData.max_hp;
 
 			//+1 point for crits, +2 points for killing, +5 for oneshots
 			if (runningDuel) {
@@ -852,20 +865,26 @@ function simulate(saveData, zone) {
 		}
 		if (saveData.explosion && (saveData.explosion <= 15 || saveData.block >= saveData.max_hp))
 			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - saveData.block);
-
-		wind = Math.min(wind + turns, 200);
-		loot += 1 + wind * saveData.wind;
+		loot++;
 		if (saveData.ok_spread > 0) ok_damage = -enemyHealth * saveData.overkill;
 		ticks += +(turns > 0) + +(saveData.speed > 9) + Math.ceil(turns * saveData.speed);
 		if (saveData.titimp && imp < 0.03)
 			titimp = Math.min(Math.max(ticks, titimp) + 300, ticks + 450);
 
-		poison = Math.ceil(saveData.transfer * poison + plague_damage) + 1;
-		wind = Math.ceil(saveData.transfer * wind) + 1 + Math.ceil((turns - 1) * saveData.plaguebringer);
-		ice = Math.ceil(saveData.transfer * ice) + 1 + Math.ceil((turns - 1) * saveData.plaguebringer);
+		if (magma) {
+			if (saveData.wind > 0) {
+				wind = Math.min(wind + turns, 200);
+				loot += wind * saveData.wind;
+				wind = Math.ceil(saveData.transfer * wind) + 1 + Math.ceil((turns - 1) * saveData.plaguebringer);
+			}
+			if (saveData.poison > 0) poison = Math.ceil(saveData.transfer * poison + plague_damage) + 1;
+			if (saveData.transfer > 0) ice = Math.ceil(saveData.transfer * ice) + 1 + Math.ceil((turns - 1) * saveData.plaguebringer);
+		}
 
-		if (runningGlass && zone >= saveData.zone) glassStacks -= 2;
-		glassStacks = Math.max(0, glassStacks);
+		if (runningGlass) {
+			if (zone >= saveData.zone) glassStacks -= 2;
+			glassStacks = Math.max(0, glassStacks);
+		}
 		if (runningBerserk) { //1% heal onkill
 			trimpHealth += (saveData.trimpHealth / 100);
 			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
@@ -899,14 +918,14 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			special: getAvailableSpecials('lmc'),
 			biome: getBiome(),
 		}
-		const fragSetting = getPageSetting('onlyPerfectMaps');
+		const fragSetting = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
 		for (var i = 0; i <= stats.length - 1; i++) {
 			if (fragSetting) {
-				if ((findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true))) continue;
+				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
 				if (game.resources.fragments.owned >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
 			if (!fragSetting) {
-				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
+				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
 				if (game.resources.fragments.owned >= minMapFrag(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
 			stats.splice(i, 1);
@@ -939,8 +958,8 @@ function get_best(results, fragmentCheck, mapModifiers) {
 				zone: statsSpeed[0].zone,
 				value: statsSpeed[0][statsSpeed[0].stance].value,
 				speed: statsSpeed[0][statsSpeed[0].stance].speed,
+				stance: statsSpeed[0].stance,
 			}
-			if (game.global.universe === 1) best.speed.stance = statsSpeed[0].stance;
 			if (game.global.universe === 2) best.speed.equality = statsSpeed[0].equality;
 		}
 	}
@@ -952,6 +971,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 		zone: stats[0].zone,
 		value: stats[0][stats[0].stance].value,
 		speed: stats[0][stats[0].stance].speed,
+		stance: stats[0].stance,
 	};
 	if (game.global.universe === 1) best.overall.stance = stats[0].stance;
 	if (game.global.universe === 2) best.overall.equality = stats[0].equality;
@@ -962,6 +982,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			zone: stats[1].zone,
 			value: stats[1][stats[1].stance].value,
 			speed: stats[1][stats[1].stance].speed,
+			stance: stats[1].stance,
 		};
 		if (game.global.universe === 1) best.second.stance = stats[1].stance;
 		if (game.global.universe === 2) best.second.equality = stats[1].equality;
@@ -1019,12 +1040,12 @@ function biomeEnemyStats(biome) {
 	}
 
 	function Farmlands() {
-		const biomeToReturn = getFarmlandsResType() === "Metal" ? Mountain :
-			getFarmlandsResType() === "Wood" ? Forest :
-				getFarmlandsResType() === "Food" ? Sea :
-					getFarmlandsResType() === "Gems" ? Depths :
-						getFarmlandsResType() === "Any" ? Plentiful :
-							"All";
+		const biomeToReturn = getFarmlandsResType() === 'Metal' ? Mountain :
+			getFarmlandsResType() === 'Wood' ? Forest :
+				getFarmlandsResType() === 'Food' ? Sea :
+					getFarmlandsResType() === 'Gems' ? Depths :
+						getFarmlandsResType() === 'Any' ? Plentiful :
+							'All';
 		return biomeToReturn();
 	}
 
@@ -1044,31 +1065,44 @@ function biomeEnemyStats(biome) {
 	return enemyBiome;
 }
 
-//If using standalone version then when loading farmCalc file also load CSS & breedtimer+X.
+//If using standalone version then when loading farmCalc file also load CSS & breedtimer+calc+farmCalcStandalone files.
 //After initial load everything should work perfectly.
 if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	var basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
 	//Load CSS so that the UI is visible
-	var linkStylesheet = document.createElement("link");
-	linkStylesheet.rel = "stylesheet";
-	linkStylesheet.type = "text/css";
-	linkStylesheet.href = "https://sadaugust.github.io/AutoTrimps/tabsStandalone.css";
+	var linkStylesheet = document.createElement('link');
+	linkStylesheet.rel = 'stylesheet';
+	linkStylesheet.type = 'text/css';
+	linkStylesheet.href = basepathFarmCalc + 'tabsStandalone.css';
 	document.head.appendChild(linkStylesheet);
-
-	//Load Surky
+	//Load Breedtimer
 	var script = document.createElement('script');
-	script.id = "AutoTrimps-SadAugust_breedtimer";
-	script.src = "https://sadaugust.github.io/AutoTrimps/modules/breedtimer.js";
+	script.id = 'AutoTrimps-SadAugust_breedtimer';
+	script.src = basepathFarmCalc + 'modules/breedtimer.js';
+	script.setAttribute('crossorigin', 'anonymous');
+	document.head.appendChild(script);
+	//Load Calc
+	var script = document.createElement('script');
+	script.id = 'AutoTrimps-SadAugust_calc';
+	script.src = basepathFarmCalc + 'modules/calc.js';
+	script.setAttribute('crossorigin', 'anonymous');
+	document.head.appendChild(script);
+	//Load farmCalcStandalone
+	var script = document.createElement('script');
+	script.id = 'AutoTrimps-SadAugust_farmCalcStandalone';
+	script.src = basepathFarmCalc + 'modules/farmCalcStandalone.js';
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
 
-	script.id = "AutoTrimps-SadAugust_calc";
-	script.src = "https://sadaugust.github.io/AutoTrimps/modules/calc.js";
-	script.setAttribute('crossorigin', 'anonymous');
-	document.head.appendChild(script);
+	function updateAdditionalInfo() {
+		if (!usingRealTimeOffline) {
+			var infoStatus = makeAdditionalInfo();
+			if (document.getElementById('additionalInfo').innerHTML !== infoStatus) document.getElementById('additionalInfo').innerHTML = infoStatus;
+			document.getElementById('additionalInfo').parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
+		}
+	}
 
-	//Load the portal UI
-	setTimeout(function () {
-		MODULES.autoPerks.displayGUI(portalUniverse);
-		console.log("Surky & Perky loaded.")
-	}, 3000);
+	setInterval(function () {
+		updateAdditionalInfo();
+	}, 5000);
 }

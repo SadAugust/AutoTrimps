@@ -9,14 +9,14 @@ function safeBuyBuilding(building, amt) {
 		return;
 
 	//Cap the amount we purchase to ensure we don't spend forever building
-	if (!bwRewardUnlocked("Foremany") && game.global.world <= 10) amt = 1;
+	if (!bwRewardUnlocked('Foremany') && game.global.world <= 10) amt = 1;
 
 	buyBuilding(building, true, true, amt);
-	if (building !== 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), "buildings", '*hammer2');
+	if (building !== 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), 'buildings', '*hammer2');
 	return;
 }
 
-function buyStorage(hypoZone) {
+function buyStorage(hypoZone = 0) {
 	var buildings = {
 		'Barn': 'food',
 		'Shed': 'wood',
@@ -27,14 +27,14 @@ function buyStorage(hypoZone) {
 		var curRes = game.resources[buildings[resource]].owned;
 		var maxRes = game.resources[buildings[resource]].max;
 		//Identifying our max for the resource that's being checked
-		maxRes = game.global.universe === 1 ? maxRes *= 1 + game.portal.Packrat.level * game.portal.Packrat.modifier :
-			maxRes *= 1 + game.portal.Packrat.radLevel * game.portal.Packrat.modifier;
-		maxRes = calcHeirloomBonus("Shield", "storageSize", maxRes);
+		maxRes = maxRes *= 1 + getPerkLevel('Packrat') * game.portal.Packrat.modifier;
+		maxRes = calcHeirloomBonus('Shield', 'storageSize', maxRes);
 
 		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
 		var exoticValue = 0;
 		if (game.global.mapsActive) {
-			exoticValue = (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom') ? curRes :
+			const map = getCurrentMapObject();
+			exoticValue = (map.name === 'Atlantrimp' || map.name === 'Trimple Of Doom') ? curRes :
 				game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 45)) :
 					game.unlocks.imps.Chronoimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 5)) :
 						exoticValue
@@ -54,15 +54,15 @@ function buyStorage(hypoZone) {
 //Overall more performance efficient to remove the textStrings from getPsString so copied it from the game and removed the textStrings.
 //Check and update each patch!
 function getPsString_AT(what) {
-	if (what === "helium") return;
-	var resOrder = ["food", "wood", "metal", "science", "gems", "fragments"];
-	var books = ["farming", "lumber", "miner", "science"];
-	var jobs = ["Farmer", "Lumberjack", "Miner", "Scientist", "Dragimp", "Explorer"];
+	if (what === 'helium') return;
+	var resOrder = ['food', 'wood', 'metal', 'science', 'gems', 'fragments'];
+	var books = ['farming', 'lumber', 'miner', 'science'];
+	var jobs = ['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Dragimp', 'Explorer'];
 	var index = resOrder.indexOf(what);
 	var job = game.jobs[jobs[index]];
-	var book = game.upgrades["Speed" + books[index]];
-	var mBook = game.upgrades["Mega" + books[index]];
-	var base = (what === "fragments") ? 0.4 : 0.5;
+	var book = game.upgrades['Speed' + books[index]];
+	var mBook = game.upgrades['Mega' + books[index]];
+	var base = (what === 'fragments') ? 0.4 : 0.5;
 	//Add base
 	//Add job count
 	var currentCalc = job.owned * base;
@@ -101,6 +101,7 @@ function getPsString_AT(what) {
 		var motivationStrength = (getPerkLevel('Motivation') * game.portal.Motivation.modifier);
 		currentCalc *= (motivationStrength + 1);
 	}
+	//Add motivation 2
 	if (getPerkLevel('Motivation_II') > 0) {
 		var motivationStrength = (getPerkLevel('Motivation_II') * game.portal.Motivation_II.modifier);
 		currentCalc *= (motivationStrength + 1);
@@ -133,11 +134,10 @@ function getPsString_AT(what) {
 		currentCalc *= potionFinding;
 	}
 	//Add Magmamancer
-	if (game.jobs.Magmamancer.owned > 0 && what == "metal") {
+	if (game.jobs.Magmamancer.owned > 0 && what == 'metal') {
 		var manceStrength = game.jobs.Magmamancer.getBonusPercent();
-		if (manceStrength > 1) {
+		if (manceStrength > 1)
 			currentCalc *= manceStrength;
-		}
 	}
 	//Add Speedbooks
 	if (game.upgrades.Speedexplorer.done > 0 && what === 'fragments') {
@@ -150,8 +150,7 @@ function getPsString_AT(what) {
 	}
 	//Add frigid
 	if (challengeActive('Frigid')) {
-		var mult = game.challenges.Frigid.getShatteredMult();
-		currentCalc *= mult;
+		currentCalc *= game.challenges.Frigid.getShatteredMult();
 	}
 	//Add downsize
 	if (challengeActive('Downsize')) {
@@ -167,7 +166,7 @@ function getPsString_AT(what) {
 		currentCalc *= (1 + toxMult);
 	}
 	if (challengeActive('Balance') || challengeActive('Unbalance')) {
-		var chal = (challengeActive("Balance")) ? game.challenges.Balance : game.challenges.Unbalance;
+		var chal = (challengeActive('Balance')) ? game.challenges.Balance : game.challenges.Unbalance;
 		currentCalc *= chal.getGatherMult();
 	}
 	if (challengeActive('Decay') || challengeActive('Melt')) {
@@ -184,24 +183,19 @@ function getPsString_AT(what) {
 	}
 
 	if (challengeActive('Archaeology') && what !== 'fragments') {
-		var mult = game.challenges.Archaeology.getStatMult("science");
-		currentCalc *= mult;
+		currentCalc *= game.challenges.Archaeology.getStatMult('science');
 	}
 	if (challengeActive('Insanity')) {
-		var mult = game.challenges.Insanity.getLootMult();
-		currentCalc *= mult;
+		currentCalc *= game.challenges.Insanity.getLootMult();
 	}
 	if (game.challenges.Nurture.boostsActive() && what !== 'fragments') {
-		var mult = game.challenges.Nurture.getResourceBoost();
-		currentCalc *= mult;
+		currentCalc *= game.challenges.Nurture.getResourceBoost();
 	}
 	if (game.global.pandCompletions && what !== 'fragments') {
-		var mult = game.challenges.Pandemonium.getTrimpMult();
-		currentCalc *= mult;
+		currentCalc *= game.challenges.Pandemonium.getTrimpMult();
 	}
 	if (game.global.desoCompletions && what !== 'fragments') {
-		var mult = game.challenges.Desolation.getTrimpMult();
-		currentCalc *= mult;
+		currentCalc *= game.challenges.Desolation.getTrimpMult();
 	}
 	if (challengeActive('Daily')) {
 		var mult = 0;
@@ -216,35 +210,30 @@ function getPsString_AT(what) {
 	}
 	if (challengeActive('Hypothermia') && what === 'wood') {
 		var mult = game.challenges.Hypothermia.getWoodMult(true);
-		currentCalc *= mult;
 	}
 	if (challengeActive('Desolation') && what !== 'fragments') {
-		mult = game.challenges.Desolation.trimpResourceMult();
-		currentCalc *= mult;
+		currentCalc *= game.challenges.Desolation.trimpResourceMult();
 	}
-	if (((what === "food" || (what === "wood")) && game.buildings.Antenna.owned >= 5) || (what === "metal" && game.buildings.Antenna.owned >= 15)) {
+	if (((what === 'food' || (what === 'wood')) && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) {
 		var mult = game.jobs.Meteorologist.getExtraMult();
 		currentCalc *= mult;
 	}
-	if ((what === "food" || what === "metal" || what === "wood") && getParityBonus() > 1) {
-		var mult = getParityBonus();
-		currentCalc *= mult;
+	if ((what === 'food' || what === 'metal' || what === 'wood') && getParityBonus() > 1) {
+		currentCalc *= getParityBonus();
 	}
-	if ((what === "food" || what === "metal" || what === "wood") && autoBattle.oneTimers.Gathermate.owned && game.global.universe === 2) {
-		var mult = autoBattle.oneTimers.Gathermate.getMult();
-		currentCalc *= mult;
+	if ((what === 'food' || what === 'metal' || what === 'wood') && autoBattle.oneTimers.Gathermate.owned && game.global.universe === 2) {
+		currentCalc *= autoBattle.oneTimers.Gathermate.getMult();
 	}
 	if (what !== 'fragments' && getEmpowerment() === 'Wind') {
-		var windMod = game.empowerments.Wind.getCombatModifier();
-		currentCalc *= (1 + windMod);
+		currentCalc *= (1 + game.empowerments.Wind.getCombatModifier());
 	}
-	var heirloomBonus = calcHeirloomBonus("Staff", jobs[index] + "Speed", 0, true);
+	var heirloomBonus = calcHeirloomBonus('Staff', jobs[index] + 'Speed', 0, true);
 	if (heirloomBonus > 0) {
 		currentCalc *= ((heirloomBonus / 100) + 1);
 	}
 	//Add player
 	if (game.global.playerGathering === what) {
-		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === "food" || what === "wood" || what === "metal")) {
+		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === 'food' || what === 'wood' || what === 'metal')) {
 			var tBonus = 50;
 			if (game.talents.turkimp2.purchased) tBonus = 100;
 			else if (game.talents.turkimp2.purchased) tBonus = 75;
@@ -292,23 +281,22 @@ function mostEfficientHousing() {
 	}
 
 	const mostEfficient = {
-		name: "",
+		name: '',
 		time: Infinity
 	}
 
 	//Track resource types and their production per second.
 	const resourceTypes = ['food', 'wood', 'metal', 'gems', 'fragments'];
 	const resourcePerSecond = {};
-	for (var resource in resourceTypes) {
+	for (var resource in resourceTypes)
 		resourcePerSecond[resourceTypes[resource]] = getPsString_AT(resourceTypes[resource]);
-	}
 
 	var dontbuy = [];
 	var avgProduction;
 
-	const questActive = challengeActive('Quest') && currQuest() === 4;
+	const gemQuest = currQuest() === 4;
 	const hypoActive = challengeActive('Hypothermia');
-	const woodChallengeActive = challengeActive('Metal') || challengeActive('Transmute');
+	const woodChallengeActive = challengeActive('Transmute');
 
 	for (var housing of housingTargets) {
 		var worstTime = -Infinity;
@@ -317,7 +305,7 @@ function mostEfficientHousing() {
 		//If setting is disabled then don't buy building.
 		if (!buildingSettings[housing].enabled) dontbuy.push(housing);
 		//Stops Collectors being purchased when on Quest gem quests.
-		if (questActive && housing === 'Collector') dontbuy.push(housing);
+		if (gemQuest && housing === 'Collector') dontbuy.push(housing);
 		//Fix for Infinity collectors since it doesn't take resourceful into account.
 		if (housing === 'Collector' && game.buildings[housing].purchased >= 6000) dontbuy.push(housing);
 		//Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
@@ -328,7 +316,7 @@ function mostEfficientHousing() {
 		var housingBonus = game.buildings[housing].increase.by;
 		if (!game.buildings.Hub.locked) {
 			var hubAmt = 1;
-			if (housing === 'Collector') hubAmt = autoBattle.oneTimers.Collectology.owned ? (2 + Math.floor((autoBattle.maxEnemyLevel - 1) / 30)) : 1;
+			if (housing === 'Collector' && autoBattle.oneTimers.Collectology.owned) hubAmt = autoBattle.oneTimers.Collectology.getHubs();
 			housingBonus += (hubAmt * 25000);
 		}
 
@@ -375,9 +363,8 @@ function buyBuildings() {
 		const hypoSettings = getPageSetting('hypothermiaSettings');
 		if (hypoSettings[0].active && hypoSettings[0].autostorage && hypoSettings.length > 0) {
 			for (var y = 1; y < hypoSettings.length; y++) {
-				if (!hypoSettings[y].active) {
+				if (!hypoSettings[y].active)
 					continue;
-				}
 				if (hypoZone === 0 || hypoZone > hypoSettings[y].world)
 					hypoZone = hypoSettings[y].world;
 			}
@@ -405,11 +392,12 @@ function buyBuildings() {
 
 	//Checks to see if we are running Quest and above our first Quest zone and the current zones Quest hasn't been completed.
 	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
+		const questNumber = currQuest();
 		//Still allows you to buy tributes during gem quests
-		if ([4].indexOf(currQuest()) >= 0)
+		if ([4].indexOf(questNumber) >= 0)
 			buyTributes();
 		//Disables the rest of this function when you are on a resource (food,wood,metal,gems) quest.
-		if ([1, 2, 3, 4].indexOf(currQuest()) >= 0)
+		if ([1, 2, 3, 4].indexOf(questNumber) >= 0)
 			return;
 	}
 
@@ -418,9 +406,7 @@ function buyBuildings() {
 		if (!game.buildings.Nursery.locked) {
 			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
 			const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-
-			var nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
-
+			const nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
 			var nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
 			if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
 
@@ -502,7 +488,7 @@ function buyBuildings() {
 			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
 
 			if (((buildingSettings.Smithy.enabled && smithyAmt > game.buildings.Smithy.purchased) || challengeActive('Quest')) && smithyCanAfford > 0) {
-				safeBuyBuilding("Smithy", smithyCanAfford);
+				safeBuyBuilding('Smithy', smithyCanAfford);
 			}
 		}
 
@@ -585,19 +571,19 @@ function buyTributes() {
 function buyHousing(buildingSettings) {
 	var housing = mostEfficientHousing();
 	//If nothing is optimal the function will return null so we break out of the loop.
-	if (housing === null) return;
+	if (housing === null) return false;
 	//Skips if the building is already in the purchase queue.
-	if (isBuildingInQueue(housing)) return;
+	if (isBuildingInQueue(housing)) return false;
 	//Skips if we can't afford the building.
-	if (!canAffordBuilding(housing)) return;
+	if (!canAffordBuilding(housing)) return false;
 
 	//Disable building purchases whilst Smithy Farming so that we aren't going back and forth between Smithy gem/wood/metal maps constantly while trying to farm resources for them.
 	if (mapSettings.mapName === 'Smithy Farm' && housing !== 'Gateway')
-		return;
+		return false;
 	//If Tribute Farming and the buyBuildings setting for that line is disabled then don't buy buildings.
 	//Will still purchase Gateways/Collectors as they don't cost food.
 	if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && (housing !== 'Gateway' || housing !== 'Collector'))
-		return;
+		return false;
 
 	var housingAmt = buildingSettings[housing].buyMax === 0 ? Infinity : buildingSettings[housing].buyMax;
 	var buildingspending = buildingSettings[housing].percent / 100;

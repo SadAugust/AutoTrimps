@@ -145,6 +145,7 @@ function heirloomInfo(type) {
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.25],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200],
 			hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 400],
+			heirloopy: true
 		},
 	}
 	else if (type === 'Staff') heirloomMods = {
@@ -509,7 +510,7 @@ function isNumeric(n) {
 }
 
 function roundFloatingPointErrors(n) {
-	return parseFloat(n.toFixed(2));
+	return Number(parseFloat(n.toFixed(2)));
 }
 
 class Heirloom {
@@ -609,7 +610,7 @@ class Heirloom {
 	getModGain(type) {
 		const value = this.getModValue(type);
 		const stepAmount = this.stepAmounts[type];
-		if (this.hardCaps[type] && value === this.hardCaps[type]) return 1;
+		if (this.hardCaps[type] && value >= this.hardCaps[type]) return 1;
 		if (type === 'trimpAttack') {
 			return (value + 100 + stepAmount) / (value + 100);
 		}
@@ -735,7 +736,7 @@ class Heirloom {
 	// add arrays for max normal values, if below or equal to, return normal price, else divide the amount over the normal value by the step to get amount and calculate the price with the amount
 	getModCost(type) {
 		if (type === "empty") {
-			return 1e20;
+			return 1e100;
 		}
 		const value = this.getModValue(type);
 		if (value <= this.softCaps[type] || !isNumeric(value)) {
@@ -743,7 +744,7 @@ class Heirloom {
 		}
 		const amount = (value - this.softCaps[type]) / this.stepAmounts[type];
 		if (this.hardCaps) {
-			return (value >= this.hardCaps[type]) ? 1e20 : Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
+			return (value >= this.hardCaps[type]) ? 1e100 : Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
 		}
 		return Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
 	}
@@ -907,6 +908,17 @@ class Heirloom {
 		heirloom.paid = paid;
 		heirloom.next = { name, cost: nextCost };
 		heirloom.purchases = purchases;
+
+		//Fix any floating point errors that may have occured.
+		for (const mod of heirloom.mods) {
+			name = mod[0];
+			if (name === "empty") continue;
+			index = heirloom.mods.indexOf(mod);
+			if (this.hardCaps[name] && heirloom.mods[index][1] > this.hardCaps[name]) {
+				heirloom.mods[index][1] = this.hardCaps[name];
+			}
+		}
+
 		return heirloom;
 	}
 
@@ -1125,8 +1137,10 @@ function calculate(autoUpgrade) {
 	if (newHeirloom) {
 		for (var y = 0; y < newHeirloom.mods.length; y++) {
 			if (newHeirloom.purchases[y] === 0) continue;
-			modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split("(");
-			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails[0]} (${precisionRoundMod(getModValue(newHeirloom.mods[y]), 5)}% +${newHeirloom.purchases[y]})`;
+			modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split("(")[0];
+			var modValue = precisionRoundMod(getModValue(newHeirloom.mods[y]), 2);
+			if (modDetails.includes('Inequality') && game.global.universe === 2) modValue /= 10;
+			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails} (${modValue}% +${newHeirloom.purchases[y]})`;
 		}
 	}
 
@@ -1506,6 +1520,13 @@ function imAnEnemy(health = 0) {
 		poisonStack += addStack;
 		addStack = 0;
 		MODULES.autoHeirlooms.ticks += 1;
+
+		//Add additional ticks if needed to account for runestone buffs
+		if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type != "Knowledge" && MODULES.autoHeirlooms.detailed[p].type != "Frost")
+			MODULES.autoHeirlooms.ticks += 1;
+		if (MODULES.autoHeirlooms.detailed[p].frozen && MODULES.autoHeirlooms.detailed[p].type != "Frost")
+			MODULES.autoHeirlooms.ticks += 2;
+
 		// damage
 		damageTaken += addDamage;
 		addDamage = 0;
@@ -1875,9 +1896,8 @@ function getRsReward(health, threat) {
 		if (traps.fire.level >= 9) reward *= 1.5;
 		else reward *= 1.2;
 	}
-	if (traps.frost.level >= 5) {
+	if (traps.frost.level >= 5)
 		reward *= 1 + (MODULES.autoHeirlooms.ticks - playerSpire.layout.length) * traps.frost.runestones[traps.frost.level];
-	}
 	return reward;
 }
 

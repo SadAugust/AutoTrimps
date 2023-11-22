@@ -18,6 +18,9 @@
 
 # Feature Requests
 
+   1. Magma 
+      - Add Minimise option to new fueling zone setting
+      - 
 # Bugs
 
    - Gene Assist

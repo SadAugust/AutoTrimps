@@ -247,9 +247,10 @@ function c2runnerportal(portalZone) {
 
 function c2runner() {
 	if (!game.global.portalActive) return;
+	if (!portalWindowOpen) return;
 	if ((portalUniverse === 1 && game.stats.highestLevel.valueTotal() < 65) || (portalUniverse === 2 && game.stats.highestRadLevel.valueTotal() < 50)) return;
 	if (!getPageSetting('c2RunnerStart', portalUniverse)) return;
-	if (getPageSetting('c2RunnerMode', portalUniverse) === 0 && getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0) return;
+	if (getPageSetting('c2RunnerMode', portalUniverse) === 0 && (getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0)) return;
 
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
@@ -469,6 +470,7 @@ function doPortal(challenge, skipDaily) {
 			else if (game.global.selectedChallenge === 'Coord') preset = 'coord';
 			else if (game.global.selectedChallenge === 'Trimp') preset = 'trimp';
 			else if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
+			else if (game.global.selectedChallenge === 'Experience') preset = 'experience';
 			else if (challengeSquaredMode) preset = 'c2';
 			else {
 				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
@@ -657,8 +659,8 @@ function resetVarsZone(loadingSave) {
 		MODULES.fightinfo.lastProcessedWorld = 0;
 		MODULES.portal.portalForVoid = false;
 		MODULES.mapFunctions.afterVoids = false;
-
 	}
+
 	delete mapSettings.voidHDIndex;
 	MODULES.heirlooms.plagueSwap = false;
 	MODULES.heirlooms.compressedCalc = false;
@@ -842,12 +844,8 @@ resetGame = function () {
 
 function resetSettingsPortal() {
 
-	var value = 'value';
-	if (game.global.universe === 2) value += 'U2';
-
-	var enabled = 'enabled';
-	if (game.global.universe === 2) enabled += 'U2';
-
+	const value = 'value' + (game.global.universe ? 'U2' : '');
+	const enabled = 'enabled' + (game.global.universe ? 'U2' : '');
 
 	//Enabling Auto Portal
 	if (getPageSetting('autoMapsPortal')) {
