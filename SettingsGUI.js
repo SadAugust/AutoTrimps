@@ -2716,8 +2716,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			},
-			'boolean', false, null, 'Daily', [2],
-			function () { return game.stats.highestRadLevel.valueTotal() >= 30 });
+			'boolean', false, null, 'Daily', [2]);
 
 		createSetting('dailyDontCap',
 			function () { return ('Use When Capped') },
@@ -5163,10 +5162,8 @@ function turnOn(elem) {
 }
 
 function updateCustomButtons(initialLoad) {
-	if (typeof lastTheme !== 'undefined' && lastTheme && game.options.menu.darkTheme.enabled !== lastTheme) {
-		if (typeof MODULES['graphs'] !== 'undefined')
-			MODULES['graphs'].themeChanged();
-		debug('Theme change - AutoTrimps styles updated.', 'other');
+	if (typeof MODULES.graphs !== 'undefined' && typeof lastTheme !== 'undefined' && lastTheme && game.options.menu.darkTheme.enabled !== lastTheme) {
+		MODULES['graphs'].themeChanged();
 		lastTheme = game.options.menu.darkTheme.enabled;
 	}
 	//Hide settings
@@ -5192,8 +5189,8 @@ function updateCustomButtons(initialLoad) {
 		else if (settingUniverse.indexOf(currSettingUniverse) !== -1 || settingUniverse.indexOf(0) !== -1) {
 			turnOn(setting, radonon);
 		} else {
-			turnOff(setting)
-		};
+			turnOff(setting);
+		}
 
 		//Skips items not from the universe settings we're looking at. Has to be here so that they're disabled when swapping universe settings.
 		if (settingUniverse.indexOf(currSettingUniverse) === -1 && settingUniverse.indexOf(0) === -1)
@@ -5203,41 +5200,36 @@ function updateCustomButtons(initialLoad) {
 		//Only happens when initialLoad is called which should only happen the 1st time AT loads or universeSetting is toggled.
 		if (initialLoad) {
 			var elem = document.getElementById(item.id);
+			if (elem === null) continue;
 			if (item.type === 'boolean') {
 				var itemEnabled = item.enabled;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemEnabled = item['enabled' + 'U2'];
 				elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemEnabled);
-				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 
 				elem.innerHTML = item.name();
 			}
-			else if (item.type === 'value' || item.type === 'valueNegative' || item.type === 'multitoggle' || item.type === 'multiValue' || item.type === 'textValue' || item.type === 'multiTextValue') {
+			else if (['value', 'valueNegative', 'multitoggle', 'multiValue', 'textValue', 'multiTextValue'].indexOf(item.type) >= 0) {
 				var itemValue = item.value;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemValue = item['value' + 'U2'];
-				if (elem !== null) {
-					if (item.type === 'multitoggle') {
-						elem.innerHTML = item.name()[itemValue];
-						elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemValue);
-					}
-					else if (item.type === 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
-						elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + (itemValue.length > 18 ? '...' : '');
-					}
-					else if (item.type === 'multiValue' || item.type === 'multiTextValue') {
-						if (Array.isArray(itemValue) && itemValue.length === 1 && itemValue[0] === -1)
-							elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
-						else if (Array.isArray(itemValue))
-							elem.innerHTML = item.name() + ': ' + itemValue[0] + '+';
-						else
-							elem.innerHTML = item.name() + ': ' + itemValue;
-					}
-					else if (itemValue > -1 || item.type === 'valueNegative')
-						elem.innerHTML = item.name() + ': ' + prettify(itemValue);
-					else
-						elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
+				if (item.type === 'multitoggle') {
+					elem.innerHTML = item.name()[itemValue];
+					elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemValue);
 				}
-			}
-			else if (item.type !== 'dropdown') {
-				elem.innerHTML = item.name();
+				else if (item.type === 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
+					elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + (itemValue.length > 18 ? '...' : '');
+				}
+				else if (item.type === 'multiValue' || item.type === 'multiTextValue') {
+					if (Array.isArray(itemValue) && itemValue.length === 1 && itemValue[0] === -1)
+						elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
+					else if (Array.isArray(itemValue))
+						elem.innerHTML = item.name() + ': ' + itemValue[0] + '+';
+					else
+						elem.innerHTML = item.name() + ': ' + itemValue;
+				}
+				else if (itemValue > -1 || item.type === 'valueNegative')
+					elem.innerHTML = item.name() + ': ' + prettify(itemValue);
+				else
+					elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
 			}
 			else if (item.type === 'dropdown') {
 				var itemSelected = item.selected;
@@ -5253,6 +5245,11 @@ function updateCustomButtons(initialLoad) {
 				elem.value = itemSelected;
 				elem = elem.parentNode;
 			}
+			else {
+				elem.innerHTML = item.name();
+			}
+
+
 			if (item.type === 'multitoggle') {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name().join(' / ') + '\", \"customText\", event, \"' + item.description() + '\")');
 			}
@@ -5271,49 +5268,44 @@ function updateCustomButtons(initialLoad) {
 		var hze = game.stats.highestLevel.valueTotal();
 		var highestRadonZone = game.stats.highestRadLevel.valueTotal();
 		var displayAllSettings = getPageSetting('displayAllSettings');
-		//Swapping name and description of C2 tab when Radon is toggled on.
-		if (document.getElementById('C2').children[0].children[0].innerHTML !==
-			(cinf() + ' - Settings for ' + c2Description())
-		) document.getElementById('C2').children[0].children[0].innerHTML =
-			(cinf() + ' - Settings for ' + c2Description());
 
-		if (document.getElementById('tabC2').children[0].innerHTML !== cinf()) document.getElementById('tabC2').children[0].innerHTML = cinf();
-
-		//Tabs
-		if (document.getElementById('tabBuildings') !== null) {
+		//Buildings Tab
+		if (document.getElementById('tabBuildings') !== null)
 			document.getElementById('tabBuildings').style.display = !displayAllSettings && (radonon || (!radonon && hze < 60)) ? 'none' : '';
-		}
-		if (document.getElementById('tabDaily') !== null) {
-			document.getElementById('tabDaily').style.display = !displayAllSettings && ((radonon && highestRadonZone < 30) || (!radonon && hze < 99)) ? 'none' : '';
-		}
+		//Daily Tab
+		if (document.getElementById('tabDaily') !== null)
+			document.getElementById('tabDaily').style.display = !displayAllSettings && (!radonon && hze < 99) ? 'none' : '';
+		//C2+C3 Tab - Swapping name and description of C2 tab when swapping betwene universe settings.
 		if (document.getElementById('tabC2') !== null) {
 			document.getElementById('tabC2').style.display = !displayAllSettings && (!radonon && hze < 65) ? 'none' : '';
+			document.getElementById('C2').children[0].children[0].innerHTML = (cinf() + ' - Settings for ' + c2Description());
+			document.getElementById('tabC2').children[0].innerHTML = cinf();
 		}
-		if (document.getElementById('tabSpire') !== null) {
+		//Spire Tab
+		if (document.getElementById('tabSpire') !== null)
 			document.getElementById('tabSpire').style.display = radonon || (!displayAllSettings && hze < 190) ? 'none' : '';
-		}
-		if (document.getElementById('tabJobs') !== null) {
+		//Jobs Tab
+		if (document.getElementById('tabJobs') !== null)
 			document.getElementById('tabJobs').style.display = radonon || (!displayAllSettings && hze < 70) ? 'none' : '';
-		}
-		if (document.getElementById('tabMagma') !== null) {
+		//Magma Tab
+		if (document.getElementById('tabMagma') !== null)
 			document.getElementById('tabMagma').style.display = radonon || (!displayAllSettings && hze < 230) ? 'none' : '';
-		}
-		if (document.getElementById('tabNature') !== null) {
+		//Nature Tab
+		if (document.getElementById('tabNature') !== null)
 			document.getElementById('tabNature').style.display = radonon || (!displayAllSettings && hze < 236) ? 'none' : '';
-		}
-		if (document.getElementById('tabFluffy') !== null) {
+		//Fluffy Tab
+		if (document.getElementById('tabFluffy') !== null)
 			document.getElementById('tabFluffy').style.display = radonon || (!displayAllSettings && game.global.spiresCompleted < 2) ? 'none' : '';
-		}
-		if (document.getElementById('tabChallenges') !== null) {
+		//Challenges Tab
+		if (document.getElementById('tabChallenges') !== null)
 			document.getElementById('tabChallenges').style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 40)) ? 'none' : '';
-		}
-		if (document.getElementById('tabTest') !== null) {
+		//Test Tab
+		if (document.getElementById('tabTest') !== null)
 			document.getElementById('tabTest').style.display = !gameUserCheck() ? 'none' : '';
-		}
-		if (document.getElementById('tabBeta') !== null) {
+		//Beta Tab
+		if (document.getElementById('tabBeta') !== null)
 			document.getElementById('tabBeta').style.display = !gameUserCheck() ? 'none' : '';
-		}
-
+		//Update dropdown settings to select2 display.
 		updateDropdownLabels();
 	}
 	modifyParentNodeUniverseSwap();

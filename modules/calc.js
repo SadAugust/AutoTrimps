@@ -158,6 +158,153 @@ function debugCalc() {
 	debug(`Enemy Health: ${(calcEnemyHealthCore(mapType, zone, cell, name) * difficulty).toExponential(2)}`);
 }
 
+function calcEquipment(type = 'attack') {
+	//Init
+	var bonus = 0;
+	var equipmentList;
+
+	//Equipment names
+	if (type === 'attack') equipmentList = ['Dagger', 'Mace', 'Polearm', 'Battleaxe', 'Greatsword', 'Arbalest'];
+	else equipmentList = ['Shield', 'Boots', 'Helmet', 'Pants', 'Shoulderguards', 'Breastplate', 'Gambeson'];
+
+	//For each equipment
+	for (var i = 0; i < equipmentList.length; i++) {
+		//Check if it's unlocked
+		var equip = game.equipment[equipmentList[i]];
+		if (equip.locked !== 0) continue;
+		//Get the bonus
+		bonus += equip.level * (type === 'attack' ? equip.attackCalculated : equip.healthCalculated);
+	}
+
+	return bonus;
+}
+
+function getTrimpAttack(realDamage) {
+	//This is actual damage of the army in combat ATM, without considering items bought, but not yet in use
+	if (realDamage) return game.global.soldierCurrentAttack;
+
+	//Damage from equipments and Coordinations
+	var dmg = (6 + calcEquipment('attack')) * game.resources.trimps.maxSoldiers;
+	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
+	//Magma
+	if (mutations.Magma.active()) dmg *= mutations.Magma.getTrimpDecay();
+	//Power I
+	if (game.portal.Power[perkLevel] > 0) dmg += (dmg * game.portal.Power[perkLevel] * game.portal.Power.modifier);
+	//Power II
+	if (game.portal.Power_II[perkLevel] > 0) dmg *= (1 + (game.portal.Power_II.modifier * game.portal.Power_II[perkLevel]));
+	//Formation
+	if (game.global.universe === 1 && (game.global.formation !== 0 && game.global.formation !== 5)) dmg *= (game.global.formation === 2) ? 4 : 0.5;
+
+	return dmg;
+}
+
+function getTrimpHealth(realHealth, mapType) {
+	//This is the actual health of the army ATM, without considering items bought, but not yet in use
+	if (realHealth) return game.global.soldierHealthMax;
+	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
+	var heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(mapType) : null;
+
+	//Health from equipments and coordination
+	var health = (50 + calcEquipment('health')) * game.resources.trimps.maxSoldiers;
+	//Amalgamator
+	if (game.jobs.Amalgamator.owned > 0) health *= game.jobs.Amalgamator.getHealthMult();
+	//Magma
+	if (mutations.Magma.active()) health *= mutations.Magma.getTrimpDecay();
+	//Smithies
+	health *= game.buildings.Smithy.owned > 0 ? game.buildings.Smithy.getMult() : 1;
+	//Antenna Array
+	health *= game.global.universe === 2 && game.buildings.Antenna.owned >= 10 ? game.jobs.Meteorologist.getExtraMult() : 1;
+	//Toughness
+	health *= game.portal.Toughness[perkLevel] > 0 ? 1 + (game.portal.Toughness[perkLevel] * game.portal.Toughness.modifier) : 1;
+	//Toughness II
+	health *= game.portal.Toughness_II[perkLevel] > 0 ? 1 + (game.portal.Toughness_II[perkLevel] * game.portal.Toughness_II.modifier) : 1;
+	//Resilience
+	health *= game.portal.Resilience[perkLevel] > 0 ? Math.pow(game.portal.Resilience.modifier + 1, game.portal.Resilience[perkLevel]) : 1;
+	//Scruffy is Life
+	health *= Fluffy.isRewardActive('healthy') ? 1.5 : 1;
+	//Geneticists
+	health *= game.jobs.Geneticist.owned > 0 ? Math.pow(1.01, game.global.lastLowGen) : 1;
+	//Observation
+	health *= game.global.universe === 2 && game.portal.Observation[perkLevel] > 0 ? game.portal.Observation.getMult() : 1;
+	//Formation -- X and W stance both have full HP.
+	health *= game.global.universe === 1 && game.global.formation !== 0 && game.global.formation !== 5 ? ((game.global.formation === 1) ? 4 : 0.5) : 1;
+	//Frigid Completions
+	health *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
+	//Mayhem Completions
+	health *= game.global.mayhemCompletions > 0 ? game.challenges.Mayhem.getTrimpMult() : 1;
+	//Pandemonium Completions
+	health *= game.global.pandCompletions > 0 ? game.challenges.Pandemonium.getTrimpMult() : 1;
+	//Desolation Completions
+	health *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
+	//AutoBattle
+	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
+	//Shield (Heirloom)
+	const heirloomHealth = typeof atSettings !== 'undefined' ? calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpHealth', 1, true);
+	health *= heirloomHealth > 1 ? (1 + (heirloomHealth / 100)) : 1;
+	//Void Map Talents
+	health *= (mapType === 'void' && game.talents.voidPower.purchased) ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
+	//Championism
+	health *= game.global.universe === 2 ? game.portal.Championism.getMult() : 1;
+	//Golden Battle
+	health *= game.goldenUpgrades.Battle.currentBonus > 0 ? 1 + game.goldenUpgrades.Battle.currentBonus : 1;
+	//Safe Mapping
+	health *= mapType !== 'world' && game.talents.mapHealth.purchased ? 2 : 1;
+	//Cinf
+	health *= game.global.totalSquaredReward > 0 ? 1 + (game.global.totalSquaredReward / 100) : 1;
+	//Health (mutator)
+	health *= game.global.universe === 2 && u2Mutations.tree.Health.purchased ? 1.5 : 1;
+	//Gene Health (mutator)
+	health *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
+	//Pressure (Dailies)
+	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
+	//Challenges
+	if (game.global.universe === 1) {
+		health *= challengeActive('Life') ? game.challenges.Life.getHealthMult() : 1;
+		health *= challengeActive('Balance') ? game.challenges.Balance.getHealthMult() : 1;
+	}
+	if (game.global.universe === 2) {
+		health *= challengeActive('Revenge') && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
+		health *= challengeActive('Wither') && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;
+		health *= challengeActive('Insanity') ? game.challenges.Insanity.getHealthMult() : 1;
+		health *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
+		health *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
+		health *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
+		health *= challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Strength') : 1;
+		health *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
+		health *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
+	}
+
+	return health;
+}
+
+function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
+	if (!mapType) mapType = (!game.global.mapsActive) ? 'world' : (getCurrentMapObject().location === 'Void' ? 'void' : 'map');
+	if (!realHealth) realHealth = false;
+	if (!stance) stance = false;
+
+	var health = getTrimpHealth(realHealth, mapType);
+	if (game.global.universe === 1) {
+		//Formation
+		if (!stance && game.global.formation !== 0 && game.global.formation !== 5) health /= (game.global.formation === 1) ? 4 : 0.5;
+
+		//Geneticists
+		var geneticist = game.jobs.Geneticist;
+		if (fullGeneticist && geneticist.owned > 0) health *= Math.pow(1.01, geneticist.owned - game.global.lastLowGen);
+	}
+	if (game.global.universe === 2) {
+		var shield = typeof atSettings !== 'undefined' ? getEnergyShieldMult_AT(mapType) : getEnergyShieldMult();
+		//Prismatic Shield + Shield Layer. Scales with multiple Scruffy shield layers
+		//Subtract health from shield total to give accurate result
+		shield = (health * (1 + (shield * (1 + Fluffy.isRewardActive('shieldlayer'))))) - health;
+		if (stance)
+			return shield;
+		else
+			health += shield;
+	}
+
+	return health;
+}
+
 function calcOurBlock(stance, realBlock) {
 	var block = 0;
 
@@ -196,156 +343,6 @@ function calcOurBlock(stance, realBlock) {
 	if (heirloomBonus > 0) block *= (heirloomBonus / 100) + 1;
 
 	return block;
-}
-
-function calcEquipment(type = 'attack') {
-	//Init
-	var bonus = 0;
-	var equipmentList;
-
-	//Equipment names
-	if (type === 'attack') equipmentList = ['Dagger', 'Mace', 'Polearm', 'Battleaxe', 'Greatsword', 'Arbalest'];
-	else equipmentList = ['Shield', 'Boots', 'Helmet', 'Pants', 'Shoulderguards', 'Breastplate', 'Gambeson'];
-
-	//For each equipment
-	for (var i = 0; i < equipmentList.length; i++) {
-		//Check if it's unlocked
-		var equip = game.equipment[equipmentList[i]];
-		if (equip.locked !== 0) continue;
-
-		//Get the bonus
-		bonus += equip.level * (type === 'attack' ? equip.attackCalculated : equip.healthCalculated);
-	}
-
-	return bonus;
-}
-
-function getTrimpAttack(realDamage) {
-	//This is actual damage of the army in combat ATM, without considering items bought, but not yet in use
-	if (realDamage) return game.global.soldierCurrentAttack;
-
-	//Damage from equipments and Coordinations
-	var dmg = (6 + calcEquipment('attack')) * game.resources.trimps.maxSoldiers;
-	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
-
-	//Magma
-	if (mutations.Magma.active()) dmg *= mutations.Magma.getTrimpDecay();
-
-	//Power I
-	if (game.portal.Power[perkLevel] > 0) dmg += (dmg * game.portal.Power[perkLevel] * game.portal.Power.modifier);
-
-	//Power II
-	if (game.portal.Power_II[perkLevel] > 0) dmg *= (1 + (game.portal.Power_II.modifier * game.portal.Power_II[perkLevel]));
-
-	//Formation
-	if (game.global.universe === 1 && (game.global.formation !== 0 && game.global.formation !== 5)) dmg *= (game.global.formation === 2) ? 4 : 0.5;
-
-	return dmg;
-}
-
-function getTrimpHealth(realHealth, mapType) {
-	//This is the actual health of the army ATM, without considering items bought, but not yet in use
-	if (realHealth) return game.global.soldierHealthMax;
-	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
-	var heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(mapType) : null;
-
-	//Health from equipments and coordination
-	var health = (50 + calcEquipment('health')) * game.resources.trimps.maxSoldiers;
-	//Amalgamator
-	if (game.jobs.Amalgamator.owned > 0) health *= game.jobs.Amalgamator.getHealthMult();
-	//Magma
-	if (mutations.Magma.active()) health *= mutations.Magma.getTrimpDecay();
-	//Smithies
-	health *= game.buildings.Smithy.owned > 0 ? game.buildings.Smithy.getMult() : 1;
-	//Antenna Array
-	health *= game.global.universe === 2 && game.buildings.Antenna.owned >= 10 ? game.jobs.Meteorologist.getExtraMult() : 1;
-	//Toughness
-	health *= game.portal.Toughness[perkLevel] > 0 ? 1 + (game.portal.Toughness[perkLevel] * game.portal.Toughness.modifier) : 1;
-	//Toughness II
-	health *= game.portal.Toughness_II[perkLevel] > 0 ? 1 + game.portal.Toughness_II[perkLevel] * game.portal.Toughness_II.modifier : 1;
-	//Resilience
-	health *= game.portal.Resilience[perkLevel] > 0 ? Math.pow(game.portal.Resilience.modifier + 1, game.portal.Resilience[perkLevel]) : 1;
-	//Scruffy is Life
-	health *= Fluffy.isRewardActive('healthy') ? 1.5 : 1;
-	//Geneticists
-	health *= game.jobs.Geneticist.owned > 0 ? Math.pow(1.01, game.global.lastLowGen) : 1;
-	//Observation
-	health *= game.portal.Observation[perkLevel] > 0 ? game.portal.Observation.getMult() : 1;
-	//Formation -- X and W stance both have full HP.
-	health *= game.global.universe === 1 && game.global.formation !== 0 && game.global.formation !== 5 ? ((game.global.formation === 1) ? 4 : 0.5) : 1;
-	//Mayhem Completions
-	health *= game.global.mayhemCompletions > 0 ? game.challenges.Mayhem.getTrimpMult() : 1;
-	//Pandemonium Completions
-	health *= game.global.pandCompletions > 0 ? game.challenges.Pandemonium.getTrimpMult() : 1;
-	//Desolation Completions
-	health *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-	health *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
-	health *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
-	health *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
-	//AutoBattle
-	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
-	//Shield (Heirloom)
-	const heirloomHealth = typeof atSettings !== 'undefined' ? calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpHealth', 1, true);
-	health *= heirloomHealth > 1 ? (1 + (heirloomHealth / 100)) : 1;
-	//Void Map Talents
-	health *= (game.talents.voidPower.purchased && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
-	//Championism
-	health *= game.global.universe === 2 ? game.portal.Championism.getMult() : 1;
-	//Golden Battle
-	health *= game.goldenUpgrades.Battle.currentBonus > 0 ? 1 + game.goldenUpgrades.Battle.currentBonus : 1;
-	//Safe Mapping
-	health *= game.talents.mapHealth.purchased && mapType !== 'world' ? 2 : 1;
-	//Cinf
-	health *= game.global.totalSquaredReward > 0 ? 1 + (game.global.totalSquaredReward / 100) : 1;
-	//Mutator
-	health *= game.global.universe === 2 && u2Mutations.tree.Health.purchased ? 1.5 : 1;
-
-	//Pressure (Dailies)
-	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
-
-	//Challenges
-	health *= challengeActive('Life') ? game.challenges.Life.getHealthMult() : 1;
-	health *= challengeActive('Balance') ? game.challenges.Balance.getHealthMult() : 1;
-
-	health *= challengeActive('Revenge') && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
-	health *= challengeActive('Wither') && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;
-	health *= challengeActive('Insanity') ? game.challenges.Insanity.getHealthMult() : 1;
-	health *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
-	health *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
-	health *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
-	health *= challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Strength') : 1;
-	health *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
-
-	return health;
-}
-
-function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
-	if (!mapType) mapType = (!game.global.mapsActive) ? 'world' : (getCurrentMapObject().location === 'Void' ? 'void' : 'map');
-	if (!realHealth) realHealth = false;
-	if (!stance) stance = false;
-
-	var health = getTrimpHealth(realHealth, mapType);
-	if (game.global.universe === 1) {
-		//Formation
-		if (!stance && game.global.formation !== 0 && game.global.formation !== 5) health /= (game.global.formation === 1) ? 4 : 0.5;
-
-		//Geneticists
-		var geneticist = game.jobs.Geneticist;
-		if (fullGeneticist && geneticist.owned > 0) health *= Math.pow(1.01, geneticist.owned - game.global.lastLowGen);
-	}
-	if (game.global.universe === 2) {
-		var shield = 0;
-		var shield = typeof atSettings !== 'undefined' ? getEnergyShieldMult_AT(mapType) : getEnergyShieldMult();
-		//Prismatic Shield + Shield Layer. Scales with multiple Scruffy shield layers
-		//Subtract health from shield total to give accurate result
-		shield = (health * (1 + (shield * (1 + Fluffy.isRewardActive('shieldlayer'))))) - health;
-		if (stance)
-			return shield;
-		else
-			health += shield;
-	}
-
-	return health;
 }
 
 function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
@@ -473,22 +470,16 @@ function getCurrentEnemy(cell) {
 	var enemy = {}
 	if (game.global.gridArray.length <= 0) return enemy;
 	if (!cell) cell = 1;
+	//Identify if we're meant to be looking at map grid or world grid
+	const mapping = game.global.mapsActive ? true : false;
+	const currentCell = mapping ? game.global.lastClearedMapCell + cell : game.global.lastClearedCell + cell;
+	const mapGrid = mapping ? 'mapGridArray' : 'gridArray';
 
-	if (game.global.mapsActive || game.global.preMapsActive) {
-		if (game.global.mapsActive && !game.global.preMapsActive) {
-			if (typeof game.global.mapGridArray[game.global.lastClearedMapCell + cell] === 'undefined') {
-				enemy = game.global.mapGridArray[game.global.mapGridArray.length - 1];
-			} else {
-				enemy = game.global.mapGridArray[game.global.lastClearedMapCell + cell];
-			}
-		}
-	}
-	else if (typeof game.global.gridArray[game.global.lastClearedCell + cell] === 'undefined') {
-		enemy = game.global.gridArray[game.global.gridArray.length - 1];
-	}
-	else enemy = game.global.gridArray[game.global.lastClearedCell + cell];
+	//If the cell can't be found then return the last cell of the grid array
+	if (typeof game.global[mapGrid][currentCell] === 'undefined')
+		return game.global[mapGrid][game.global[mapGrid].length - 1];
 
-	return enemy;
+	return game.global[mapGrid][currentCell];
 }
 
 function getAnticipationBonus(stacks) {
@@ -803,7 +794,7 @@ function calcCorruptionScale(zone, base) {
 	var startPoint = (challengeActive('Corrupted') || challengeActive('Eradicated')) ? 1 : 150;
 	var scales = Math.floor((zone - startPoint) / 6);
 	var realValue = base * Math.pow(1.05, scales);
-	return parseFloat(realValue);
+	return realValue;
 }
 
 function calcEnemyBaseAttack(type, zone, cell, name, query) {
@@ -1147,7 +1138,7 @@ function calcEnemyBaseHealth(mapType, zone, cell, name, ignoreCompressed) {
 	//Specific Imp
 	if (name) health *= game.badGuys[name].health;
 
-	return Math.floor(health);
+	return health;
 }
 
 function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
@@ -1182,39 +1173,50 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 
 	//Challenges
 	//U1
-	health *= challengeActive('Balance') ? 2 : 1;
-	health *= challengeActive('Meditate') ? 2 : 1;
-	health *= challengeActive('Toxicity') ? 2 : 1;
-	health *= challengeActive('Life') ? 10 : 1;
-	health *= challengeActive('Experience') ? game.challenges.Experience.getEnemyMult() : 1;
-	health *= challengeActive('Frigid') ? game.challenges.Frigid.getEnemyMult() : 1;
-	if (challengeActive('Coordinate')) {
-		var amt = 1;
-		for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
-		health *= amt;
+	if (game.global.universe === 1) {
+		health *= challengeActive('Balance') ? 2 : 1;
+		health *= challengeActive('Meditate') ? 2 : 1;
+		health *= challengeActive('Toxicity') ? 2 : 1;
+		health *= challengeActive('Life') ? 10 : 1;
+		health *= challengeActive('Experience') ? game.challenges.Experience.getEnemyMult() : 1;
+		health *= challengeActive('Frigid') ? game.challenges.Frigid.getEnemyMult() : 1;
+		if (challengeActive('Coordinate')) {
+			var amt = 1;
+			for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
+			health *= amt;
+		}
+		//Obliterated + Eradicated
+		if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
+			var oblitMult = (challengeActive('Eradicated')) ? game.challenges.Eradicated.scaleModifier : 1e12;
+			var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
+			oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
+			health *= oblitMult;
+		}
 	}
 
 	//U2
-	health *= challengeActive('Unbalance') && type !== 'world' ? 2 : challengeActive('Unbalance') ? 3 : 1;
-	health *= challengeActive('Quest') ? game.challenges.Quest.getHealthMult() : 1;
-	health *= challengeActive('Revenge') && game.global.world % 2 === 0 ? 10 : 1;
+	if (game.global.universe === 2) {
+		health *= challengeActive('Unbalance') && type !== 'world' ? 2 : challengeActive('Unbalance') ? 3 : 1;
+		health *= challengeActive('Quest') ? game.challenges.Quest.getHealthMult() : 1;
+		health *= challengeActive('Revenge') && game.global.world % 2 === 0 ? 10 : 1;
 
-	if (challengeActive('Mayhem')) {
-		if (type === 'world') health *= game.challenges.Mayhem.getBossMult();
-		health *= game.challenges.Mayhem.getEnemyMult();
+		if (challengeActive('Mayhem')) {
+			if (type === 'world') health *= game.challenges.Mayhem.getBossMult();
+			health *= game.challenges.Mayhem.getEnemyMult();
+		}
+		health *= challengeActive('Storm') && type === 'world' ? game.challenges.Storm.getHealthMult() : 1;
+		//health *= challengeActive('Berserk') ? 1.5 : 1; ????? WHY IS THIS COMMENTED OUT! TEST THIS!¬
+		health *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
+		if (challengeActive('Nurture')) {
+			health *= type === 'world' ? 2 : 10;
+			health *= game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
+		}
+		if (challengeActive('Pandemonium')) health *= type === 'world' ? game.challenges.Pandemonium.getBossMult() : type !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
+		if (challengeActive('Desolation')) health *= game.challenges.Desolation.getEnemyMult();
+		health *= challengeActive('Alchemy') ? alchObj.getEnemyStats(false, false) + 1 : 1;
+		health *= challengeActive('Hypothermia') ? game.challenges.Hypothermia.getEnemyMult() : 1;
+		health *= challengeActive('Glass') ? game.challenges.Glass.healthMult() : 1;
 	}
-	health *= challengeActive('Storm') && type === 'world' ? game.challenges.Storm.getHealthMult() : 1;
-	//health *= challengeActive('Berserk') ? 1.5 : 1; ????? WHY IS THIS COMMENTED OUT! TEST THIS!¬
-	health *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
-	if (challengeActive('Nurture')) {
-		health *= type === 'world' ? 2 : 10;
-		health *= game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	}
-	if (challengeActive('Pandemonium')) health *= type === 'world' ? game.challenges.Pandemonium.getBossMult() : type !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
-	if (challengeActive('Desolation')) health *= game.challenges.Desolation.getEnemyMult();
-	health *= challengeActive('Alchemy') ? alchObj.getEnemyStats(false, false) + 1 : 1;
-	health *= challengeActive('Hypothermia') ? game.challenges.Hypothermia.getEnemyMult() : 1;
-	health *= challengeActive('Glass') ? game.challenges.Glass.healthMult() : 1;
 
 	//Dailies
 	if (challengeActive('Daily')) {
@@ -1226,14 +1228,6 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && type !== 'world' ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
 		//Empower voids
 		health *= typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && type === 'void' ? dailyModifiers.empoweredVoid.getMult(game.global.dailyChallenge.empoweredVoid.strength) : 1;
-	}
-
-	//Obliterated + Eradicated
-	if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
-		var oblitMult = (challengeActive('Eradicated')) ? game.challenges.Eradicated.scaleModifier : 1e12;
-		var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
-		oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
-		health *= oblitMult;
 	}
 
 	return health;

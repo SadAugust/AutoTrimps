@@ -35,8 +35,8 @@ function autoPortal(specificPortalZone, skipDaily) {
 	if (game.global.runningChallengeSquared) return;
 	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 	const runningDaily = challengeActive('Daily');
-	if (!specificPortalZone && !MODULES.portal.portalForVoid && !runningDaily && getPageSetting('autoPortal', universe) === 'Off') return;
-	if (!specificPortalZone && !MODULES.portal.portalForVoid && runningDaily && getPageSetting('dailyPortal', universe) === '0') return;
+	if (!MODULES.portal.portalForVoid && !runningDaily && getPageSetting('autoPortal', universe) === 'Off') return;
+	if (!MODULES.portal.portalForVoid && runningDaily && getPageSetting('dailyPortal', universe) === '0') return;
 
 	//Setting up base portalZone for both regular runs & daily runs if in one
 	var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : Infinity;
@@ -393,11 +393,13 @@ function doPortal(challenge, skipDaily) {
 	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 	//Running C∞ runner
 	c2runner();
-	if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!", "portal");
+	if (!challengeSquaredMode)
+		debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!", "portal");
 
 	//Running Dailies
 	if (!skipDaily && (currChall === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
-		selectChallenge('Daily');
+		const dailyAvailable = document.getElementById('challengeDaily') !== null;
+		if (dailyAvailable) selectChallenge('Daily');
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
 		var lastUndone = -7;
@@ -426,33 +428,25 @@ function doPortal(challenge, skipDaily) {
 		if (lastUndone === 1) debug("All dailies have been completed.", "portal");
 
 		//Portaling into a filler/c2/c3 if dailyPortalFiller is enabled OR all dailies completed or dailyPortalStart is disabled.
-		if (currChall === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse) || lastUndone === 1)) {
-			MODULES.portal.currentChallenge = 'None';
-			MODULES.portal.portalUniverse = portalUniverse;
-			autoPortal(game.global.world, true);
-			return;
-		}
-		else if (lastUndone === 1) {
+		if (currChall === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse)) || lastUndone === 1) {
 			MODULES.portal.currentChallenge = 'None';
 			MODULES.portal.portalUniverse = portalUniverse;
 			autoPortal(game.global.world, true);
 			return;
 		}
 		//Portaling into a daily
-		else {
-			if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse)) {
-				swapPortalUniverse();
-				universeSwapped();
-				selectChallenge('Daily');
-				checkCompleteDailies();
-			}
-			getDailyChallenge(lastUndone);
-			challenge = 'Daily';
-			debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
+		if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse)) {
+			swapPortalUniverse();
+			universeSwapped();
+			selectChallenge('Daily');
+			checkCompleteDailies();
 		}
+		if (dailyAvailable) getDailyChallenge(lastUndone);
+		challenge = 'Daily';
+		debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
 	}
 	//Selecting challenge that AT has chosen to run.
-	else if (challenge && !challengeSquaredMode) {
+	if (game.global.selectedChallenge === '' && challenge && !challengeSquaredMode) {
 		if (challenge.includes('Challenge ')) {
 			challenge = getPageSetting('heliumC2Challenge', portalUniverse) === 'None' ? 0 : getPageSetting('heliumC2Challenge', portalUniverse);
 			if ((challenge !== 0 && game.challenges[challenge].allowSquared)) toggleChallengeSquared();
@@ -465,14 +459,13 @@ function doPortal(challenge, skipDaily) {
 	//Identifying which challenge type we're running to setup for the preset swapping function
 	if (getPageSetting('presetSwap', portalUniverse)) {
 		if (portalUniverse === 1) {
-			if (game.global.selectedChallenge === 'Frigid') preset = 'c2';
+			if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
 			else if (game.global.selectedChallenge === 'Scientist') preset = 'scientist';
-			else if (game.global.selectedChallenge === 'Coord') preset = 'coord';
 			else if (game.global.selectedChallenge === 'Trimp') preset = 'trimp';
-			else if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
+			else if (game.global.selectedChallenge === 'Coord') preset = 'coord';
 			else if (game.global.selectedChallenge === 'Experience') preset = 'experience';
-			else if (challengeSquaredMode) preset = 'c2';
-			else {
+			else if (game.global.selectedChallenge === 'Frigid' || challengeSquaredMode) preset = 'c2';
+			else { //If a specific challenge isn't selected then we'll use the highest zone cleared to determine which preset to use.
 				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
 					if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared)
 						preset = option.value;
@@ -482,14 +475,13 @@ function doPortal(challenge, skipDaily) {
 		}
 
 		if (portalUniverse === 2) {
-			if (game.global.selectedChallenge === 'Mayhem' || game.global.selectedChallenge === 'Pandemonium' || game.global.selectedChallenge === 'Desolation') preset = 'push';
-			else if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
+			if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
 			//else if (game.global.selectedChallenge === 'Trappapalooza') preset = 'trappacarp';
 			else if (game.global.selectedChallenge === 'Duel') preset = 'duel';
 			else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
 			else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
 			else if (game.global.selectedChallenge === 'Smithless') preset = 'smithless';
-			else if (challengeSquaredMode) preset = 'push';
+			else if (['Mayhem', 'Pandemonium', 'Desolation'].indexOf(game.global.selectedChallenge) >= 0 || challengeSquaredMode) preset = 'push';
 			else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
 			else preset = 'ezfarm';
 			fillPresetSurky(preset);
