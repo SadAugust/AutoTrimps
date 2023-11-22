@@ -179,7 +179,6 @@ function geneAssist() {
 		compareTime = new MODULES.breedtimer.DecimalBreed(timeRemaining.add(breedTime));
 	else
 		compareTime = new MODULES.breedtimer.DecimalBreed(totalTime);
-	if (!thresh.isFinite()) thresh = new Decimal(0);
 	if (!compareTime.isFinite()) compareTime = new Decimal(999);
 	var genDif = new MODULES.breedtimer.DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
 
