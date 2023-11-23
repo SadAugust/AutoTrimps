@@ -179,16 +179,23 @@ function geneAssist() {
 		compareTime = new MODULES.breedtimer.DecimalBreed(timeRemaining.add(breedTime));
 	else
 		compareTime = new MODULES.breedtimer.DecimalBreed(totalTime);
+
 	if (!compareTime.isFinite()) compareTime = new Decimal(999);
 	var genDif = new MODULES.breedtimer.DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
 
+	const spendingPct = getPageSetting('geneAssistPercent') / 100;
+	function geneticistCost(amount = 1) {
+		var geneticist = game.jobs.Geneticist;
+		return (game.resources.food.owned * spendingPct) > resolvePow(geneticist.cost.food, geneticist, amount);
+	}
+
 	if (compareTime.cmp(target) < 0) {
-		if (game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < getNextGeneticistCost()) return;
+		if (!geneticistCost()) return;
 		if (genDif.cmp(0) > 0) {
-			if (genDif.cmp(100) > 0) genDif = new Decimal(100);
-			else if (genDif.cmp(50) > 0) genDif = new Decimal(50);
-			else if (genDif.cmp(10) > 0) genDif = new Decimal(10);
-			addGeneticist(genDif.toNumber());
+			const genesToBuy = [Math.max(genDif.abs().toNumber()), 500, 100, 50, 10, 5, 1];
+			while (genesToBuy.length > 0 && !geneticistCost(genesToBuy[0]))
+				genesToBuy.shift();
+			addGeneticist(genesToBuy[0]);
 		}
 	}
 	else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || (potencyMod().cmp(1) === 0)) {
