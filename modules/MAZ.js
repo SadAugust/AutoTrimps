@@ -273,7 +273,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var value = 'value';
 		if (game.global.universe === 2) value += 'U2';
 
-		settingGroup = {
+		var settingGroup = {
 			general: false,
 			fragment: false,
 			upgrades: false,
@@ -349,7 +349,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var setting, checkbox;
 		var setting_AT = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
 
-		settingGroup = {
+		var settingGroup = {
 			Reflect: {},
 			Empower: {},
 			Mutimp: {},
@@ -408,12 +408,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		//Skip Lines to seperate
 		tooltipText += "</td></tr><tr>";
-
 		//Setup challenges that will be displayed
 		var count = 0;
 		var setting, checkbox;
-		settingGroup = {};
-		fusedChallenges = {};
+		var settingGroup = {};
+		var fusedChallenges = {};
 
 		if (currSettingUniverse === 1) {
 			var highestZone = game.stats.highestLevel.valueTotal();
@@ -434,7 +433,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (highestZone >= 180) settingGroup.Lead = {};
 			if (highestZone >= 425) settingGroup.Obliterated = {};
 			if (game.global.totalSquaredReward >= 4500) settingGroup.Eradicated = {};
-
+			//Fused C2s
 			if (getPageSetting('c2Fused', currSettingUniverse)) {
 				if (highestZone >= 45) fusedChallenges.Enlightened = {};
 				if (highestZone >= 180) fusedChallenges.Waze = {};
@@ -445,19 +444,19 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 		}
 		else if (currSettingUniverse === 2) {
-			var radonHZE = game.stats.highestRadLevel.valueTotal();
-			if (radonHZE >= 15) settingGroup.Unlucky = {};
-			if (radonHZE >= 20) settingGroup.Downsize = {};
-			if (radonHZE >= 25) settingGroup.Transmute = {};
-			if (radonHZE >= 35) settingGroup.Unbalance = {};
-			if (radonHZE >= 45) settingGroup.Duel = {};
-			if (radonHZE >= 60) settingGroup.Trappapalooza = {};
-			if (radonHZE >= 70) settingGroup.Wither = {};
-			if (radonHZE >= 85) settingGroup.Quest = {};
-			if (radonHZE >= 105) settingGroup.Storm = {};
-			if (radonHZE >= 115) settingGroup.Berserk = {};
-			if (radonHZE >= 175) settingGroup.Glass = {};
-			if (radonHZE >= 201) settingGroup.Smithless = {};
+			var highestZone = game.stats.highestRadLevel.valueTotal();
+			if (highestZone >= 15) settingGroup.Unlucky = {};
+			if (highestZone >= 20) settingGroup.Downsize = {};
+			if (highestZone >= 25) settingGroup.Transmute = {};
+			if (highestZone >= 35) settingGroup.Unbalance = {};
+			if (highestZone >= 45) settingGroup.Duel = {};
+			if (highestZone >= 60) settingGroup.Trappapalooza = {};
+			if (highestZone >= 70) settingGroup.Wither = {};
+			if (highestZone >= 85) settingGroup.Quest = {};
+			if (highestZone >= 105) settingGroup.Storm = {};
+			if (highestZone >= 115) settingGroup.Berserk = {};
+			if (highestZone >= 175) settingGroup.Glass = {};
+			if (highestZone >= 201) settingGroup.Smithless = {};
 		}
 
 		const headerNames = ['Challenge', 'Current Zone', 'End Zone'];

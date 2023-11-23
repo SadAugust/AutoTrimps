@@ -345,13 +345,29 @@ function calcOurBlock(stance, realBlock) {
 	return block;
 }
 
-function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
+function calcHitsSurvived(targetZone, type, difficulty, checkOutputs) {
 	//Init
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = 'world';
 	if (!difficulty) difficulty = 1;
 	var damageMult = 1;
 	const formationMod = (game.upgrades.Dominance.done) ? 2 : 1;
+
+	function checkResults() {
+		debug(`Target Zone: ${targetZone}`, `debug`);
+		debug(`Damage Mult: ${damageMult}`, `debug`);
+		debug(`World Damage: ${worldDamage}`, `debug`);
+		debug(`Equality: ${equality}`, `debug`);
+		debug(`Block: ${block}`, `debug`);
+		debug(`Pierce: ${pierce}`, `debug`);
+		debug(`Health: ${health}`, `debug`);
+		debug(`Hits to Survive: ${hitsToSurvive}`, `debug`);
+		debug(`finalDmg: ${finalDmg}`, `debug`);
+	}
+
+	//Lead farms one zone ahead if on an Odd zone.
+	if (type !== 'map' && targetZone % 2 === 1 && challengeActive('Lead'))
+		targetZone++;
 
 	var customAttack = undefined;
 	if (type === 'world') {
@@ -372,20 +388,14 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 	var block = calcOurBlock(false) / formationMod;
 	var equality = equalityQuery(enemyName, targetZone, 100, type, difficulty, 'gamma', null, hitsToSurvive);
 
-	//Lead farms one zone ahead
-	if (type === 'world' && challengeActive('Lead') && game.global.world % 2 === 1) {
-		targetZone++;
-	}
-
 	//Crit Daily and Crushed
 	if (game.global.universe === 1 && ((getPageSetting('IgnoreCrits') === 1 && type !== 'void') || getPageSetting('IgnoreCrits') === 0)) {
 		const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 		const crushed = challengeActive('Crushed');
-		if (dailyCrit) {
+		if (dailyCrit)
 			damageMult = dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		} else if (crushed && health > block) {
+		else if (crushed && health > block)
 			damageMult = 3;
-		}
 	}
 
 	//Enemy Damage
@@ -400,18 +410,7 @@ function calcHitsSurvived(targetZone, type, difficulty, checkResults) {
 	//The Resulting Ratio
 	var finalDmg = Math.max(damageMult * worldDamage - block, worldDamage * pierce, 0);
 
-	if (checkResults) {
-		debug(`Target Zone: ${targetZone}`);
-		debug(`Damage Mult: ${damageMult}`);
-		debug(`World Damage: ${worldDamage}`);
-		debug(`Equality: ${equality}`);
-		debug(`Block: ${block}`);
-		debug(`Pierce: ${pierce}`);
-		debug(`Health: ${health}`);
-		debug(`Hits to Survive: ${hitsToSurvive}`);
-		debug(`finalDmg: ${finalDmg}`);
-	}
-
+	if (checkOutputs) checkResults();
 	return health / finalDmg;
 }
 
@@ -427,19 +426,13 @@ function whichHitsSurvived() {
 	return hitsSurvived;
 }
 
-function addPoison(realDamage, zone) {
-	//Init
-	if (!zone) zone = game.global.world;
-
+function addPoison(realDamage, zone = game.global.world) {
 	//Poison is inactive
 	if (getEmpowerment(zone) !== 'Poison') return 0;
-
 	//Real amount to be added in the next attack
 	if (realDamage) return game.empowerments.Poison.getDamage();
-
 	//Dynamically determines how much we are benefiting from poison based on Current Amount * Transfer Rate
 	if (getPageSetting('addpoison')) return game.empowerments.Poison.getDamage() * getRetainModifier('Poison');
-
 	return 0;
 }
 
@@ -619,10 +612,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 	if (challengeActive('Lead') && (game.global.world % 2) === 1) attack *= 1.5;
 
 	//Decay
-	if (challengeActive('Decay')) {
-		attack *= 5;
-		attack *= Math.pow(0.995, game.challenges.Decay.stacks);
-	}
+	if (challengeActive('Decay')) attack *= 5 * Math.pow(0.995, game.challenges.Decay.stacks);
 
 	// Challenges
 	attack *= challengeActive('Unbalance') ? game.challenges.Unbalance.getAttackMult() : 1;
@@ -691,9 +681,9 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage, mapType, critMode, 
 		if (!isNaN(parseInt((equality)))) {
 			attack *= Math.pow(equalityMult, equality);
 			if (equality > game.portal.Equality[perkLevel])
-				console.log(`You don't have this many levels in Equality. - Player Dmg. ${equality} / ${game.portal.Equality.radLevel} equality used.`);
+				console.log(`You don't have this many levels in Equality. ${equality}/${game.portal.Equality.radLevel} equality used. Player Dmg. `);
 		} else if (atSettings.intervals.tenSecond)
-			console.log(`Equality is not a number. - Player Dmg. ${equality} equality used.`);
+			console.log(`Equality is not a number. ${equality} equality used. Player Dmg. `);
 	}
 
 	//Override for if the user wants to for some reason floor their crit chance
@@ -1236,18 +1226,11 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 function calcEnemyHealth(type, zone, cell = 99, name = 'Turtlimp', customHealth) {
 	//Init
 	var health = calcEnemyHealthCore(type, zone, cell, name, customHealth);
-	var corrupt = zone >= mutations.Corruption.start();
-	var healthy = mutations.Healthy.active();
 
 	//Challenges - worst case for Lead and Domination
 	if (challengeActive('Domination')) health *= 7.5;
+	//If on even zone assume 100 stacks. If it's an odd zone check current stacks.
 	if (challengeActive('Lead')) health *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
-
-	//Shouldn't be needed as there's enemy health calcs in calcEnemyHealthCore for corrupted/healthy enemies
-	/* if (type === 'world' && corrupt && !game.global.spireActive) {
-		if (healthy) health *= calcCorruptionScale(zone, 14);
-		else if (corrupt) health *= calcCorruptionScale(zone, 10);
-	} */
 
 	return health;
 }
@@ -1300,8 +1283,21 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 	if (!maxTenacity) maxTenacity = false;
 	if (!difficulty) difficulty = 1;
 	//Init
-	var enemyHealth;
+	var enemyHealth = 0;
 	var universeSetting;
+	var voidHealth = 0;
+
+	function checkResults() {
+		debug(`ourBaseDamage: ${ourBaseDamage}`, `debug`);
+		debug(`enemyHealth: ${enemyHealth}`, `debug`);
+		debug(`universeSetting: ${universeSetting}`, `debug`);
+		debug(`HD type: ${type}`, `debug`);
+		debug(`HD value (H:D): ${enemyHealth / (ourBaseDamage + addPoison())}`, `debug`);
+	}
+
+	const leadCheck = type !== 'map' && targetZone % 2 === 1 && challengeActive('Lead');
+	//Lead farms one zone ahead if on an Odd zone.
+	if (leadCheck) targetZone++;
 
 	if (type === 'world') {
 		var customHealth = undefined;
@@ -1309,78 +1305,49 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
 		}
-		if (game.global.universe === 2)
+		else if (game.global.universe === 2)
 			if (targetZone > 200) customHealth = calcMutationHealth(targetZone);
 		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Improbability', customHealth) * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Improbability', targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
 	}
-	if (type === 'map') {
+	else if (type === 'map') {
 		enemyHealth = calcEnemyHealth(type, targetZone, 20, 'Turtlimp') * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, type, difficulty, 'gamma', true) : 'X';
 	}
-	if (type === 'void') {
+	else if (type === 'void') {
 		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Cthulimp') * difficulty;
+		voidHealth = enemyHealth;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
 	}
 
 	var heirloomToUse = heirloomShieldToEquip(type, false, hdCheck);
 	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
 	var ourBaseDamage = calcOurDmg(challengeActive('Unlucky') ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world, null, heirloomToUse);
-
+	//Lead Challenge Pt. 2
+	if (leadCheck) ourBaseDamage /= 1.5;
+	ourBaseDamage += addPoison(false, targetZone);
 	//Checking ratio at max mapbonus/tenacity for Void Maps.
 	if (maxTenacity) {
 		if (type === 'world' && game.global.mapBonus !== 10) {
 			ourBaseDamage /= 1 + 0.2 * game.global.mapBonus;
 			ourBaseDamage *= game.talents.mapBattery.purchased ? 5 : 3;
 		}
-		if (game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness')))) {
+		if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0 && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness')))) {
 			ourBaseDamage /= game.portal.Tenacity.getMult();
 			ourBaseDamage *= Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness'));
 		}
 	}
-	//Lead Challenge
-	if (challengeActive('Lead') && targetZone % 2 === 1 && type !== 'map') {
-		//Stats for void maps
-		var voidDamage = ourBaseDamage;
-		var voidHealth = type === 'void' ? calcEnemyHealth(type, targetZone) * difficulty : 0;
 
-		//Farms on odd zones, and ignores the odd zone attack buff
-		targetZone++;
-		ourBaseDamage /= 1.5;
-
-		//Custom Anticipation Stacks
-		var anti = (mutations.Corruption.active()) ? (scryingCorruption() ? 45 : 45) : 45;
-		if (game.global.antiStacks > anti) {
-			ourBaseDamage /= getAnticipationBonus(game.global.antiStacks);
-			ourBaseDamage *= getAnticipationBonus(anti);
-		}
-
-		//Empowerments - Poison
-		ourBaseDamage += addPoison(false, targetZone);
-		voidDamage += addPoison();
-		ourBaseDamage *= gammaBurstDmg
-
-		//Return whatever gives the worst H:D ratio, an odd zone void map or farming for the next even zone
-		return Math.max(voidHealth / voidDamage, calcEnemyHealth('world', targetZone) / ourBaseDamage);
-	}
-	if (challengeActive('Daily')) {
-		if (typeof game.global.dailyChallenge.weakness !== 'undefined') ourBaseDamage *= (1 - ((Math.max(1, gammaMaxStacks(false, true) - 1)) * game.global.dailyChallenge.weakness.strength) / 100)
-	}
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined')
+		ourBaseDamage *= (1 - ((Math.max(1, gammaMaxStacks(false, true) - 1)) * game.global.dailyChallenge.weakness.strength) / 100)
 
 	//Adding gammaBurstDmg to calc
 	if (type !== 'map' && (game.global.universe === 2 && universeSetting < (game.portal.Equality.radLevel - 14)) || game.global.universe === 1)
 		ourBaseDamage *= gammaBurstDmg
 
-	if (checkOutputs) {
-		debug(`ourBaseDamage: ${ourBaseDamage}`);
-		debug(`enemyHealth: ${enemyHealth}`);
-		debug(`universeSetting: ${universeSetting}`);
-		debug(`HD type: ${type}`);
-		debug(`HD value (H:D): ${enemyHealth / (ourBaseDamage + addPoison())}`);
-	}
-
-	//Return H:D for a regular, sane, not f-ing Lead zone (sorry, Lead just took a lot of me)
-	return enemyHealth / (ourBaseDamage + addPoison());
+	if (checkOutputs) checkResults();
+	//Return H:D for a regular scenario
+	return enemyHealth / ourBaseDamage;
 }
 
 //Avg damage of corrupted enemy
@@ -1586,8 +1553,8 @@ function enemyDamageModifiers() {
 	attack *= challengeActive('Balance') ? 2.35 : 1;
 	attack *= challengeActive('Meditate') ? 1.5 : 1;
 	attack *= challengeActive('Life') ? 6 : 1;
-	attack *= challengeActive('Lead') ? 5 : 1;
-	attack *= challengeActive('Toxicity') ? 1 + 0.04 * game.challenges.Lead.stacks : 1;
+	attack *= challengeActive('Toxicity') ? 5 : 1;
+	attack *= challengeActive('Lead') ? 1 + 0.04 * game.challenges.Lead.stacks : 1;
 	attack *= challengeActive('Corrupted') ? 3 : 1;
 	//Obliterated and Eradicated
 	if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
