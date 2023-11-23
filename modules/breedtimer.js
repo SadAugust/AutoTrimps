@@ -185,7 +185,9 @@ function geneAssist() {
 	if (compareTime.cmp(target) < 0) {
 		if (game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < getNextGeneticistCost()) return;
 		if (genDif.cmp(0) > 0) {
-			if (genDif.cmp(10) > 0) genDif = new Decimal(10);
+			if (genDif.cmp(100) > 0) genDif = new Decimal(100);
+			else if (genDif.cmp(50) > 0) genDif = new Decimal(50);
+			else if (genDif.cmp(10) > 0) genDif = new Decimal(10);
 			addGeneticist(genDif.toNumber());
 		}
 	}
