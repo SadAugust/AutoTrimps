@@ -239,13 +239,12 @@ function makeAdditionalInfoTooltip(mouseover) {
 
 	if (game.permaBoneBonuses.voidMaps.owned > 0) {
 		tooltipText += `<p><b>Void</b><br>`;
-		tooltipText += `The progress you have towards a free void map from the 'Void Maps' permanent bone upgrade</p>`;
-
+		tooltipText += `The progress you have towards the <b>Void Maps</b> permanent bone upgrade counter.</p>`;
 	}
-	tooltipText += `<p><b>AL</b> (Auto Level)<br>`;
+	tooltipText += `<p><b>AL (Auto Level)</b><br>`;
 	tooltipText += `The level that the script recommends using whilst farming.</p>`;
 
-	tooltipText += `<p><b>AL2</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome} and ${trimpStats.mapSpecial !== '0' ? mapSpecialModifierConfig[trimpStats.mapSpecial].name : 'no special'} maps.<br>`;
+	tooltipText += `<p><b>AL2 (Auto Level New)</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome === 'Plentiful' ? 'Gardens' : trimpStats.mapBiome} and ${trimpStats.mapSpecial !== '0' ? mapSpecialModifierConfig[trimpStats.mapSpecial].name : 'no special'} maps.<br>`;
 	tooltipText += `L: The ideal map level for loot gains.<br>`;
 	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks.</p>`;
 
@@ -254,7 +253,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 		tooltipText += `The breeding time of your trimps, used to identify how long your <b>Anticipation</b> timer will be if you were to send an army to fight.</p>`;
 	}
 	//Tenacity timer when you have tenacity
-	else if (game.global.universe === 2 && game.portal.Tenacity.radLevel > 0) {
+	else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
 		tooltipText += `<p><b>Tenacity Timer (T)</b><br>`;
 		tooltipText += `Your current tenacity timer in minutes.</p>`;
 	}
@@ -372,7 +371,7 @@ function makeAdditionalInfo() {
 		description += `B: ${breedTimer.toFixed(0)}s`;
 	}
 	//Tenacity timer when you have tenacity
-	else if (game.global.universe === 2 && game.portal.Tenacity.radLevel > 0) {
+	else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
 		description += lineBreak;
 		description += `T: ${Math.floor(game.portal.Tenacity.getTime())}m`;
 	}

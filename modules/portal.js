@@ -245,7 +245,7 @@ function c2runnerportal(portalZone) {
 	return;
 }
 
-function c2runner() {
+function c2Runner() {
 	if (!game.global.portalActive) return;
 	if (!portalWindowOpen) return;
 	if ((portalUniverse === 1 && game.stats.highestLevel.valueTotal() < 65) || (portalUniverse === 2 && game.stats.highestRadLevel.valueTotal() < 50)) return;
@@ -346,12 +346,7 @@ function doPortal(challenge, skipDaily) {
 	//Identifying if we need to keep any heirlooms before portaling.
 	autoHeirlooms();
 	//Open portal window
-	portalClicked();
-	if (!portalWindowOpen) {
-		portalClicked();
-	}
-	//If for some reason portal window isn't open stop running
-	if (!portalWindowOpen) return;
+	if (!portalWindowOpen) portalClicked();
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 	var currChall = MODULES.portal.currentChallenge;
@@ -375,11 +370,11 @@ function doPortal(challenge, skipDaily) {
 	}
 
 	while (MODULES.portal.portalUniverse !== Infinity) {
-		if (portalUniverse === MODULES.portal.portalUniverse) {
-			MODULES.portal.portalUniverse = Infinity;
-			break
-		}
 		swapPortalUniverse();
+		if (portalUniverse === MODULES.portal.portalUniverse) {
+			universeSwapped();
+			MODULES.portal.portalUniverse = Infinity;
+		}
 	}
 
 	if (currChall === 'Daily') {
@@ -390,14 +385,14 @@ function doPortal(challenge, skipDaily) {
 		}
 	}
 
-	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 	//Running C∞ runner
-	c2runner();
+	c2Runner();
 	if (!challengeSquaredMode)
-		debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!", "portal");
+		debug("C" + (portalUniverse + 1) + " Runner: All C" + (portalUniverse + 1) + "s above Threshold!", "portal");
 
 	//Running Dailies
 	if (!skipDaily && (currChall === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
+		//Check to see if dailies are available to run. This check is only useful for the Daily Previous Universe setting as it can break if you haven't unlocked dailies yet in the new universe
 		const dailyAvailable = document.getElementById('challengeDaily') !== null;
 		if (dailyAvailable) selectChallenge('Daily');
 		//Checking to see which dailies can be run
@@ -416,9 +411,8 @@ function doPortal(challenge, skipDaily) {
 			var dailiesCompleted = 0;
 
 			for (var x = -6; x <= 1 - getPageSetting('dailyDontCapAmt', portalUniverse); x++) {
-				if (game.global.recentDailies.indexOf(getDailyTimeString(x)) !== -1) {
+				if (game.global.recentDailies.indexOf(getDailyTimeString(x)) !== -1)
 					dailiesCompleted++;
-				}
 			}
 			if (dailiesCompleted === (8 - getPageSetting('dailyDontCapAmt', portalUniverse))) lastUndone = 1;
 		}
@@ -490,15 +484,10 @@ function doPortal(challenge, skipDaily) {
 
 	//Run Perky/Surky.
 	if (typeof MODULES.autoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
-		if (portalUniverse === 1 && ($('#preset').value !== null || $('#preset').value !== undefined ||
-			($('#weight-he').value !== undefined && $('#weight-atk').value !== undefined && $('#weight-hp').value !== undefined && $('#weight-xp').value !== undefined))
-		) {
+		if (portalUniverse === 1)
 			allocatePerky();
-		}
-		if (portalUniverse === 2 && ($('#presetElem').value !== null || $('#presetElem').value !== undefined ||
-			($('#radonWeight').value !== undefined && $('#clearWeight').value !== undefined && $('#survivalWeight').value !== undefined))) {
+		if (portalUniverse === 2)
 			runSurky();
-		}
 	}
 
 	preset = 0;
@@ -559,10 +548,9 @@ function challengeInfo(force) {
 
 	const challengeType = game.global.universe === 2 ? 'C3' : 'C2';
 	const finishChallenge = c2FinishZone();
-	const downloadSave = getPageSetting('downloadSaves');
 
 	if ((finishChallenge - 1) === game.global.world)
-		debug("Warning: AT will " + (downloadSave ? 'download your save and ' : '') + "abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish " + challengeType + "' or set it to -1", "challenge");
+		debug("Warning: AT will abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish " + challengeType + "' or set it to -1", "challenge");
 	if (finishChallenge <= 0 && finishChallenge <= game.c2[game.global.challengeActive] && game.global.world < 3) {
 		debug("The zone input in the '" + challengeType + " Finish' setting (" + finishChallenge + ") is below or equal to your HZE for this challenge (" + game.c2[game.global.challengeActive] + "). Increase it or it'll end earlier than you\'d probably like it to.", "challenge");
 	}
@@ -656,18 +644,14 @@ function resetVarsZone(loadingSave) {
 	delete mapSettings.voidHDIndex;
 	MODULES.heirlooms.plagueSwap = false;
 	MODULES.heirlooms.compressedCalc = false;
-
 	//General
 	MODULES.maps.mapTimer = 0;
 	MODULES.maps.fragmentCost = Infinity;
-
 	//Fragment Farming
 	initialFragmentMapID = undefined;
-
 	//Auto Level variables
 	MODULES.maps.mapRepeats = 0;
 	mapSettings.levelCheck = Infinity;
-
 	//Challenge Repeat
 	MODULES.mapFunctions.challengeContinueRunning = false;
 
@@ -676,27 +660,11 @@ function resetVarsZone(loadingSave) {
 	farmingDecision();
 }
 
-function presetSwapping(preset) {
-	if (!getPageSetting('presetSwap')) return;
-
-	var preset = !preset ? null :
-		(preset !== 1 && preset !== 2 && preset !== 3) ? null :
-			preset;
-
-	if (preset === null) {
-		debug("Invalid input. Needs to be a value between 1 and 3.", "challenge");
-		return;
-	}
-
-	presetTab(preset);
-	loadPerkPreset();
-}
-
 function downloadSave(portal) {
 	if (!getPageSetting('downloadSaves')) return
 	if (portal && !portalWindowOpen) return;
 	tooltip('Export', null, 'update');
-	document.getElementById("downloadLink").click();
+	document.getElementById('downloadLink').click();
 	cancelTooltip();
 }
 
@@ -715,8 +683,7 @@ function hypoPackratReset(challenge) {
 }
 
 //Auto-Respec into combat spec after running Trimple/Atlantrimp
-function surkyCombatRespec() {
-
+function combatRespec() {
 	if (!MODULES.popups.respecAtlantrimp) return;
 	MODULES.popups.respecAtlantrimp = false;
 	MODULES.popups.remainingTime = Infinity;
@@ -736,7 +703,7 @@ function surkyCombatRespec() {
 	//Fire all workers so that we don't run into issues when finishing the respec
 	fireAllWorkers();
 	activateClicked();
-	var calcName = game.global.universe === 2 ? "Surky" : "Perky";
+	const calcName = game.global.universe === 2 ? "Surky" : "Perky";
 	debug(calcName + " - Respeccing into the " + $$('#preset')[$$('#preset').selectedIndex].innerHTML + " preset.", "portal");
 
 	//Reverting back to original preset
@@ -781,13 +748,13 @@ function atlantrimpRespecMessage(cellOverride) {
 		MODULES.popups.remainingTime = 5000;
 		var description = "<p>Respeccing into the <b>" + respecName + "</b> preset</p>";
 		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false, MODULES.popups.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
-		setTimeout(surkyCombatRespec, 5000);
+		setTimeout(combatRespec, 5000);
 	}
 	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
 	else if (respecSetting === 1) {
 		var mapName = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple of Doom';
 		var description = "<p>Click <b>Force Respec</b> to respec into the <b>" + respecName + "</b> preset.</p>";
-		tooltip('confirm', null, 'update', description, 'MODULES.popups.respecAtlantrimp = true; surkyCombatRespec()', '<b>Post ' + mapName + ' Respec</b>', 'Force Respec');
+		tooltip('confirm', null, 'update', description, 'MODULES.popups.respecAtlantrimp = true; combatRespec()', '<b>Post ' + mapName + ' Respec</b>', 'Force Respec');
 	}
 }
 

@@ -1970,7 +1970,7 @@ function wither(lineCheck) {
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 
 	var cell = game.global.lastClearedCell + 2;
-	var name = game.global.gridArray[(cell - 1)].name;
+	var name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[(cell - 1)].name : undefined;
 	var damageGoal = 4;
 
 	var equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma');
@@ -2951,7 +2951,8 @@ function desolationGearScum(lineCheck) {
 		//Check if a max attack+gamma burst can clear the improb.
 		//If it can't continue as normal, if it can then we start the +1 map for prestige scumming.
 		var currCell = game.global.lastClearedCell + 2;
-		var enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, game.global.gridArray[currCell - 1].name);
+		var name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[(cell - 1)].name : undefined;
+		var enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, name);
 		var equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
 		var ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
 		var gammaDmg = MODULES.heirlooms.gammaBurstPct;
@@ -2961,7 +2962,8 @@ function desolationGearScum(lineCheck) {
 		//Add together the health of the cells between our current cell and the improb that we are able to overkill.
 		if (currCell !== 100) {
 			for (var x = currCell + 1; x <= 100; x++) {
-				enemyHealth += calcEnemyHealthCore('world', game.global.world, x, game.global.gridArray[x - 1].name);
+				name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[(x - 1)].name : undefined;
+				enemyHealth += calcEnemyHealthCore('world', name);
 			}
 		}
 

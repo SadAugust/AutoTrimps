@@ -63,7 +63,7 @@ function fluffyEvolution() {
 
 	if (perkRespec) {
 		viewPortalUpgrades();
-		buyJobs('0,0,0');
+		fireAllWorkers();
 		runPerky();
 		activateClicked();
 	}

@@ -456,7 +456,7 @@ function autoEquip() {
 					if (game.resources[prestigeInfo.resource].owned < prestigeInfo.prestigeCost) continue;
 					buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
 					prestigeLeft = true;
-					debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
+					debug(`Upgrading ${equipName} - Prestige ${game.equipment[equipName].prestige}`, `equipment`, '*upload');
 				}
 			}
 		} while (prestigeLeft);
@@ -479,12 +479,12 @@ function autoEquip() {
 
 					if (alwaysLvl2 && game.equipment[equip].level < 2) {
 						buyEquipment(equip, true, true, 1);
-						debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
+						debug(`Upgrading 1 ${equip}`, `equipment`, `*upload3`);
 					}
 					if (alwaysPandemonium) {
 						buyEquipment(equip, true, true, 1);
 						equipLeft = true;
-						debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
+						debug('Upgrading ' + '1' + ' ' + equip, `equipment`, `*upload3`);
 					}
 				}
 			}
@@ -496,12 +496,13 @@ function autoEquip() {
 
 	//Purchasing equipment upgrades/prestiges
 	//If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
-	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop) {
+	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop)
 		buyEquips();
-	} else {
-		do {
+	else {
+		do
 			keepBuying = buyEquips();
-		} while (keepBuying);
+		while
+			(keepBuying);
 	}
 }
 
@@ -526,7 +527,7 @@ function buyEquips() {
 					//Purchases prestiges if they are the most efficient thing to go for
 					if (equipPrestige) {
 						buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
-						debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
+						debug(`Upgrading ${equipName} - Prestige ${game.equipment[equipName].prestige}`, `equipment`, '*upload');
 						keepBuying = true;
 					}
 					//Otherwise purchase equip levels
@@ -540,7 +541,7 @@ function buyEquips() {
 						//If the equip cap check didn't say we have 0 levels to buy then buy the max levels we can afford
 						if (maxCanAfford > 0) {
 							buyEquipment(equipName, true, true, maxCanAfford);
-							debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
+							debug(`Upgrading ${maxCanAfford} ${equipName}${maxCanAfford > 1 && equipName.endsWith('s') ? 's' : ''}`, `equipment`, `*upload3`);
 							keepBuying = true;
 						}
 					}
@@ -558,13 +559,10 @@ function buyEquips() {
 		resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 	}
 	if (keepBuying) return true;
-
 }
 
 function displayMostEfficientEquipment() {
-
-	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
-	if (!highlightSetting) return;
+	if (!getPageSetting('equipEfficientEquipDisplay')) return;
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
 	if (!atSettings.intervals.oneSecond) return;
 
@@ -580,7 +578,6 @@ function displayMostEfficientEquipment() {
 			//If the prestige doesn't have the efficient class then add it
 			if (!document.getElementById(prestigeName).classList.value.includes('efficient'))
 				document.getElementById(prestigeName).classList.add('efficient');
-
 			//Remove the swap the efficient class to efficientNo if the prestige isn't the most efficient thing to purchase
 			if (document.getElementById(prestigeName).classList.contains('efficientYes') && (item !== bestBuys[equipType].name || (item === bestBuys[equipType].name && !bestBuys[equipType].prestige)))
 				swapClass('efficient', 'efficientNo', document.getElementById(prestigeName));
@@ -604,92 +601,4 @@ function displayMostEfficientEquipment() {
 			swapClass('efficient', 'efficientNo', $eqName);
 		}
 	}
-}
-
-//UNUSED CODE
-//Was a potential solution for hd ratio to X ratio on Y zone (since we can't calculate the hardest mutation combination for that zone it isn't possible to do it perfectly)
-function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) {
-
-	if (!isCompounding) {
-		return multiBuyCount * (multiBuyCount * costScaling - costScaling + 2 * baseCost) / 2;
-	} else {
-		return baseCost * ((1 - Math.pow(costScaling, multiBuyCount)) / (1 - costScaling));
-	}
-}
-
-function estimateEquipsForZone(rEFIndex) {
-	var MAX_EQUIP_DELTA = 1000;
-
-	// calculate stats needed pass zone
-	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
-	var ourHealth = calcOurHealth(false, 'world');
-	var ourDmg = calcOurDmg('avg', 0, false, 'world', 'maybe', 0, false) * gammaBurstDmg;
-	var enemyHealth = calcEnemyHealthCore('world', game.global.world, 99, 'Turtlimp');
-	var enemyDamageBeforeEquality = calcEnemyAttackCore('world', game.global.world, 99, 'Snimp', false, false, 0);
-
-	var healthNeededMulti = enemyDamageBeforeEquality / ourHealth; // The multiplier we need to apply to our health to survive
-
-	// Get a fake ratio pretending that we don't have any equality in.
-	var fakeHDRatio = enemyHealth / ourDmg;
-	var attackNeededMulti = fakeHDRatio / (hdFarmSettingRatio(rEFIndex));
-
-	// Something something figure out equality vs health farming
-	var tempEqualityUse = 0;
-	while (
-		(healthNeededMulti > 1 || attackNeededMulti > 1)  // If it's below 1 we don't actually need more
-		&&
-		(healthNeededMulti * game.portal.Equality.getModifier() > attackNeededMulti / game.portal.Equality.getModifier(true)) // Need more health proportionally
-		&&
-		tempEqualityUse < game.portal.Equality.radLevel
-	) {
-		tempEqualityUse++;
-		healthNeededMulti *= game.portal.Equality.getModifier();
-		attackNeededMulti /= game.portal.Equality.getModifier(true);
-		enemyDamageBeforeEquality *= game.portal.Equality.getModifier();
-	}
-
-	if (healthNeededMulti < 1 && attackNeededMulti < 1 || ((healthNeededMulti + attackNeededMulti) / 2 < 1)) { return [0, {}] };
-
-	var ourAttack = 6;
-	for (var i in MODULES.equipment) {
-		if (game.equipment[i].locked !== 0) continue;
-		var attackBonus = game.equipment[i].attackCalculated;
-		var level = game.equipment[i].level;
-		ourAttack += (attackBonus !== undefined ? attackBonus : 0) * level;
-	}
-
-	// Amount of stats needed directly from equipment
-	var attackNeeded = ourAttack * attackNeededMulti;
-	var healthNeeded = ourHealth * healthNeededMulti / (getTotalHealthMod() * game.resources.trimps.maxSoldiers);
-
-	var bonusLevels = {}; // How many levels you'll be getting in each shield-gambeson armor slots
-
-	while (healthNeeded > 0) {
-		var bestArmor = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[1];
-		healthNeeded -= game.equipment[bestArmor][MODULES.equipment[bestArmor].stat + "Calculated"];
-		if (typeof bonusLevels[bestArmor] === 'undefined') {
-			bonusLevels[bestArmor] = 0;
-		}
-		if (bonusLevels[bestArmor]++ > MAX_EQUIP_DELTA) {
-			return [Infinity, bonusLevels];
-		}
-	}
-	while (attackNeeded > 0) {
-		var bestWeapon = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[0];
-		attackNeeded -= game.equipment[bestWeapon][MODULES.equipment[bestWeapon].stat + "Calculated"];
-		if (typeof bonusLevels[bestWeapon] === 'undefined') {
-			bonusLevels[bestWeapon] = 0;
-		}
-		if (bonusLevels[bestWeapon]++ >= MAX_EQUIP_DELTA) {
-			return [Infinity, bonusLevels];
-		}
-	}
-
-	var totalCost = 0;
-	for (var equip in bonusLevels) {
-		var equipCost = game.equipment[equip].cost[MODULES.equipment[equip].resource];
-		totalCost += getTotalMultiCost((equipCost[0]), bonusLevels[equip], equipCost[1], true) * getEquipPriceMult();
-	}
-
-	return [totalCost, bonusLevels];
 }
