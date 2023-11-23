@@ -185,16 +185,20 @@ function geneAssist() {
 	if (compareTime.cmp(target) < 0) {
 		if (game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < getNextGeneticistCost()) return;
 		if (genDif.cmp(0) > 0) {
-			if (genDif.cmp(100) > 0) genDif = new Decimal(100);
-			else if (genDif.cmp(50) > 0) genDif = new Decimal(50);
-			else if (genDif.cmp(10) > 0) genDif = new Decimal(10);
+			if (game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < resolvePow(geneticist.cost.food, game.jobs.Geneticist, genDif.toNumber())) {
+				if (genDif.cmp(1000) > 0 && game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < resolvePow(geneticist.cost.food, game.jobs.Geneticist, 1000))
+					genDif = new Decimal(1000);
+				else if(genDif.cmp(100) > 0 && game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < resolvePow(geneticist.cost.food, game.jobs.Geneticist, 100))
+					genDif = new Decimal(100);
+				else
+					genDif = new Decimal(10);
+			}
 			addGeneticist(genDif.toNumber());
 		}
 	}
 	else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || (potencyMod().cmp(1) === 0)) {
 		if (!genDif.isFinite()) genDif = new Decimal(-1);
 		if (genDif.cmp(0) < 0) {
-			if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
 			removeGeneticist(genDif.abs().toNumber());
 		}
 	}
