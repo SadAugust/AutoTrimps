@@ -125,7 +125,6 @@ function geneAssist() {
 
 	var timeRemaining = breedTimeRemaining();
 	var totalTime = breedTotalTime();
-
 	var target;
 
 	const angelic = mastery('angelic');
@@ -195,14 +194,16 @@ function geneAssist() {
 			const genesToBuy = [Math.max(genDif.abs().toNumber()), 500, 100, 50, 10, 5, 1];
 			while (genesToBuy.length > 0 && !geneticistCost(genesToBuy[0]))
 				genesToBuy.shift();
+			debug('Hiring ' + prettify(genesToBuy[0]) + ' Geneticist' + (genesToBuy[0] > 1 ? 's' : ''), "jobs", "*users");
 			addGeneticist(genesToBuy[0]);
 		}
 	}
 	else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || (potencyMod().cmp(1) === 0)) {
 		if (!genDif.isFinite()) genDif = new Decimal(-1);
 		if (genDif.cmp(0) < 0) {
-			if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
-			removeGeneticist(genDif.abs().toNumber());
+			const genesToFire = Math.max(Math.floor(genDif.abs().toNumber() * .8), 1);
+			debug('Firing ' + prettify(genesToFire) + ' Geneticist' + (genesToFire > 1 ? 's' : ''), "jobs", "*users");
+			removeGeneticist(genesToFire);
 		}
 	}
 }

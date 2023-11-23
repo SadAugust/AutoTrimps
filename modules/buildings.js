@@ -403,7 +403,7 @@ function buyBuildings() {
 
 	if (game.global.universe === 1) {
 		//Nurseries
-		if (!game.buildings.Nursery.locked) {
+		if (!game.buildings.Nursery.locked && !challengeActive('Trapper')) {
 			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
 			const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 			const nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
