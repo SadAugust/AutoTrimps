@@ -1387,7 +1387,6 @@ function initializeAllSettings() {
 				var description = "<p>When enabled will sort the mapping order by priority inputs and run the lowest priority first. If multiple settings have the same priority then it will run them in the order that can be seen in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
 				var description = "<p>There are certain settings that will always run <b>first</b> regardless of your priority setup, these are the ones in bold in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
 				var description = "<p>There are certain settings that will always run <b>last</b> regardless of your priority setup, these are the ones in bold and italics in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
-
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
@@ -1771,6 +1770,7 @@ function initializeAllSettings() {
 				var description = "<p>Abandons " + cinf() + "s when this zone is reached but won't portal.</p>";
 				description += "<p>If <b>" + cinf() + " Runner</b> is enabled then this setting is disabled. </p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>Will not abandon special challenges like Frigid or Experience.</p>";
 				description += "<p>Recommended: Zones ending with 0 for most " + cinf() + " runs.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2]);
@@ -4596,6 +4596,13 @@ function autoPortalChallenges(runType = 'autoPortal') {
 			'Eradicated': { unlockZone: 450, unlockCondition: function () { return game.global.totalSquaredReward >= 4500 }, unlockedIn: ['c2',] },
 			'Frigid': { unlockZone: 460, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
 			'Experience': { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			//Fused C2s
+			'Enlightened': { unlockZone: 45, unlockedIn: ['c2'] },
+			'Paralysis': { unlockZone: 130, unlockedIn: ['c2'] },
+			'Nometal': { unlockZone: 145, unlockedIn: ['c2'] },
+			'Topology': { unlockZone: 150, unlockedIn: ['c2'] },
+			'Waze': { unlockZone: 180, unlockedIn: ['c2'] },
+			'Toxad': { unlockZone: 180, unlockedIn: ['c2'] },
 		};
 	}
 
