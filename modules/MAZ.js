@@ -670,7 +670,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 
 			if (mapBonus || voidMap || boneShrine || hdFarm)
-				defaultVals.jobratio = defaultSetting.jobratio ? defaultSetting.jobratio : '1,1,1,1';
+				defaultVals.jobratio = defaultSetting ? defaultSetting.jobratio : '1,1,1,1';
 
 			if (mapBonus) {
 				defaultVals.special = defaultSetting.special ? defaultSetting.special : '0';
@@ -932,7 +932,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.special = currSetting[x].special ? currSetting[x].special : '0';
 				//Job Ratio
 				if (!raiding && !smithyFarm)
-					vals.jobratio = currSetting[x].jobratio ? currSetting[x].jobratio : '1,1,1,1';
+					vals.jobratio = currSetting[x] ? currSetting[x].jobratio : '1,1,1,1';
 				//Gather
 				if (mapFarm || alchemy || boneShrine || mapBonus || desolation || toxicity)
 					vals.gather = currSetting[x].gather ? currSetting[x].gather : 'food';
@@ -1495,7 +1495,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			defaultSetting.world = parseInt(document.getElementById('windowBoneWorld').value, 10);
 		}
 
-		if (mapBonus || voidMap || boneShrine || hdFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
+		if (mapBonus || voidMap || boneShrine || hdFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value === 'undefined' ? undefined : document.getElementById('windowJobRatioDefault').value;
 		if (alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
 		if (voidMap) {
 			defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
@@ -1594,7 +1594,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (tributeFarm) thisSetting.buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 		if (mapFarm || tributeFarm || boneShrine) thisSetting.atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		if (smithyFarm) thisSetting.meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
-		if (!raiding && !smithyFarm && !golden) thisSetting.jobratio = document.getElementById('windowJobRatio' + x).value;
+		if (!raiding && !smithyFarm && !golden) thisSetting.jobratio = document.getElementById('windowJobRatio' + x).value === 'undefined' ? undefined : document.getElementById('windowJobRatio' + x).value;
 		if (raiding || desolation) {
 			thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
 			if (!bionic && !desolation) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
@@ -1815,7 +1815,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>";
 		}
 		if (mapBonus) {
-			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings.</li>"
+			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings. If set to <b>undefined</b> it will use your world job ratios.</li>"
 			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 			mazHelp += "<li><b>Special</b> - The type of cache you'd like to run when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings.</li>";
 		}
@@ -1845,7 +1845,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 		}
 		if (hdFarm) {
-			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from the <b>Hits Survived</b> setting.</li>"
+			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from the <b>Hits Survived</b> setting. If set to <b>undefined</b> it will use your world job ratios.</li>"
 			mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
 		}
 		if (worshipperFarm) {
@@ -1892,7 +1892,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
 	if (!raiding && !smithyFarm && !hdFarm && !golden) {
-		mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line.</li>";
+		mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. If set to <b>undefined</b> it will use your world job ratios.</li>";
 		mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 	}
 	if (mapFarm || mapBonus || insanity || alchemy || desolation || toxicity)
