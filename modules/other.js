@@ -53,6 +53,10 @@ function fluffyEvolution() {
 		}
 	}
 
+	//Only evolve when you're either in a liquification zone or you're x-overkill cells away from the end of the zone
+	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
+	if (!liquified && getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) < 100) return;
+
 	Fluffy.prestige();
 
 	while (bpsToUse > 0) {

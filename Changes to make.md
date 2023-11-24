@@ -3,10 +3,8 @@
 # Mapping
 
 # Challenges
-1. ## Frigid
-   - Add a setting to disable mapping when buff is active.
 
-2. ## Berserk
+1. ## Berserk
    - Disable mapping when alive.
    - Farm in lvl6 map for max stacks
    - Farm X amt of maps OR till you have 10x the stats of the improbability
@@ -20,7 +18,13 @@
 
    1. Magma 
       - Add Minimise option to new fueling zone setting
-      - 
+
+# Help Window
+
+   1. Fragment decision making 
+   2. Auto Gather decision making
+      -  Change Auto Gather description to mention this
+
 # Bugs
 
    - Gene Assist

@@ -140,8 +140,8 @@ function initializeAllSettings() {
 				var description = "<p>Controls what you gather/build.</p>";
 				description += "<p><b>Manual Gather</b><br>Disables this setting.</p>";
 				description += "<p><b>Auto Gather</b><br>Automatically switch your gathering between different resources and the building queue depending on what it deems necessary.</p>";
-				description += "<p><b>Mining Only</b><br>Sets gather to Mining. If buildings are in the queue then they will override this. Only use this if you are past the early stages of the game and have Foremany unlocked.</p>";
-				description += "<p><b>Science Research Off</b><br>Works the same as 'Auto Gather' but stops Science from being gathered.</p>";
+				description += "<p><b>Mining Only</b><br>Sets gather to Mining.<br>If buildings are in the queue then they will override this.<br>Only use this if you are past the early stages of the game and have Foremany unlocked.</p>";
+				description += "<p><b>Science Research Off</b><br>Works the same as <b>Auto Gather</b> but stops Science from being gathered.</p>";
 				description += "<p><b>Recommended:</b> Auto Gather</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
@@ -150,18 +150,17 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Controls what you upgrade.</p>";
 				description += "<p><b>Manual Upgrades</b><br>Disables this setting.</p>";
-				description += "<p><b>Buy All Upgrades</b><br>Automatically purchases non-equipment upgrades. Equipment upgrades are controlled by settings in the Equipment tab.</p>";
-				description += "<p><b>Upgrades no Coords</b><br>Works the same as 'Buy All Upgrades' but stops Coordination upgrades from being purchased.</p>";
+				description += "<p><b>Buy All Upgrades</b><br>Automatically purchases non-equipment upgrades. Equipment upgrades are controlled by settings in the <b>Equipment</b> tab.</p>";
+				description += "<p><b>Upgrades no Coords</b><br>Works the same as <b>Buy All Upgrades</b> but stops Coordination upgrades from being purchased.</p>";
 				description += "<p><b>Recommended:</b> Buy All Upgrades</p>";
 
 				if (currSettingUniverse === 1) {
-					description += "<p>Will purchase the following upgrades when on your next <b>Scientist</b> run - ";
-					if (game.global.sLevel === 0) description += "Battle, Miners, Coordination x9, Megamace, Bestplate</p>";
-					if (game.global.sLevel === 1) description += "Battle, Miners, Coordination x8, Bestplate</p>";
-					if (game.global.sLevel === 2) description += "Battle, Miners, Coordination x3, Speedminer</p>";
-					if (game.global.sLevel === 3) description += "Battle, Miners</p>";
-					if (game.global.sLevel >= 4) description += "Battle, Miners, Coordination x3, Speedminer, Egg</p>";
-					return description;
+					description += "<p>Will purchase the following upgrades when on your next <b>Scientist</b> run: ";
+					if (game.global.sLevel === 0) description += "Battle, Miners, Coordination x9, Megamace, Bestplate.</p>";
+					if (game.global.sLevel === 1) description += "Battle, Miners, Coordination x8, Bestplate.</p>";
+					if (game.global.sLevel === 2) description += "Battle, Miners, Coordination x3, Speedminer.</p>";
+					if (game.global.sLevel === 3) description += "Battle, Miners.</p>";
+					if (game.global.sLevel >= 4) description += "Battle, Miners, Coordination x3, Speedminer, Egg.</p>";
 				}
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
@@ -169,7 +168,7 @@ function initializeAllSettings() {
 			function () { return ('Trap Trimps') },
 			function () {
 				var description = "<p>Automatically builds traps and traps trimps when needed.</p>";
-				description += "<p>Upgrade setting must be set to <b>Buy All Upgrades</b> for this to work</p>";
+				description += "<p>The upgrades setting must be set to <b>Buy All Upgrades</b> for this to work.</p>";
 				description += "<p><b>Recommended:</b> On whilst highest zone is below 30</p>";
 				return description;
 			}, 'boolean', true, null, 'Core', [1, 2]);
@@ -180,9 +179,10 @@ function initializeAllSettings() {
 		createSetting('portalVoidIncrement',
 			function () { return ('Void Map Liquification') },
 			function () {
-				var description = "<p>Delays portaling into your preferred run and repeatedly does portals in universe 1 until your bone void map counter is 1 drop away from a guaranteed extra void map.</p>";
-				if (currSettingUniverse !== 1) description += "<p><b>Recommended:</b> On</p>";
-				else description += "<p><b>Recommended:</b> Off</p>";
+				var description = "<p>Delays portaling into your Auto Portal challenge and instead " + (currSettingUniverse === 2 ? "switches to universe 1 and" : "") + " portals until your bone void map counter is 1 drop away from a guaranteed extra void map.</p>";
+				description += "<p>If you have not reached the void map counter target by either zone 99 or the end of your liquification zone count then it will portal and repeat this process until you have.</p>";
+				description += "<p>Additionally if you finish your run without a perk respec available this setting will portal to obtain a respec.</p>";
+				description += "<p><b>Recommended:</b> " + (currSettingUniverse !== 1 ? "On" : "Off") + "</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [0],
 			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount() >= 20) });
@@ -204,7 +204,7 @@ function initializeAllSettings() {
 				var fillerPreset = currSettingUniverse === 2 ? "Easy Radon Challenge" : "the most appropriate zone progression preset";
 				var dailyPreset = currSettingUniverse === 2 ? "Difficult Radon Challenge" : "the most appropriate zone progression preset";
 				var c2Preset = currSettingUniverse === 2 ? "Push/C3/Mayhem" : "Other c²";
-				var universeChallenges = currSettingUniverse === 2 ? "Downsize, Duel, Berserk, Alchemy, Smithless" : "Coord, Trimp, Metal";
+				var universeChallenges = currSettingUniverse === 2 ? "Downsize, Duel, Berserk, Alchemy, Smithless" : "Metal, Trimp, Coord, Experience";
 
 				var description = "<p>Will automatically swap <b>" + calcName + "</b> presets when portaling into runs.</p>";
 				description += "<p>Fillers (non daily/" + cinf() + " runs) will load <b>" + fillerPreset + ".</b></p>";
@@ -235,18 +235,13 @@ function initializeAllSettings() {
 					description += "<p>Will only run during the highest Spire you have reached and will respec into the Perky <b>Spire</b> preset to maximise your combat stats during it.</p>";
 				}
 				if (currSettingUniverse === 2) {
-					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + " <b>OR</b> you have more golden battle upgrades than golden radon upgrades. Otherwise it will assume it's a radon run and respec into the <b>Radon Combat Respec</b> preset.</p>";
+					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + " <b>OR</b> you have more golden battle than golden radon upgrades. Otherwise it will assume it's a radon run and respec into the <b>Radon Combat Respec</b> preset.</p>";
 				}
 
 				description += "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
-
 				description += "<p><b>" + trimpleShortened + " Respec Popup</b><br>Will display a popup after completing " + trimple + " asking whether you would like to respec into the preset listed above.</p>";
-
-				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>5 seconds after completing " + trimple + " it will respec into the <b>" + calcName + "</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec if clicked within the 5 second window.</p>";
-
-				description += "<p>This likely won't be worthwhile using without having <b>Auto Allocate Perks</b> enabled as your next run would be started with the combat respec.</p>";
-
-				description += "<p>I'd recommend only using this when <b>Liq for free Void</b> is enabled as it will run an extra portal to obtain a respec when one isn't available at the end of a run.<br>Without this unless you have used a Bone Portal you'll need to manually respec at the start of your next portal or you will start it in a suboptimal preset.</p>";
+				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>5 seconds after completing " + trimple + " the script will respec you into the <b>" + calcName + "</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec.</p>";
+				description += "<p>I'd recommend only using this with both the <b>Auto Allocate Perks</b> and <b>Void Map Liquification</b> settings enabled. Without these you will go into your next run in a suboptimal perk setup.</p>";
 
 				if (currSettingUniverse === 1) description += "<p>Has an additional setting (<b>Spire Respec Cell</b>) which has a <b>5</b> second delay after toggling this setting before it will function.</p>";
 
@@ -307,7 +302,7 @@ function initializeAllSettings() {
 				description += "<p><b>Custom</b>/<b>One Off Challenges</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
 				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
 				description += "<p>" + specialChall + "</p>";
-				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to use the Scruffy 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
+				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to make use of Scruffy's level 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
 				return description;
 			}, 'dropdown', 'Off', function () { return autoPortalChallenges('autoPortal') }, 'Core', [1, 2]);
 
@@ -344,7 +339,7 @@ function initializeAllSettings() {
 				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will ignore the " + cinf() + " settings and use the <b>Portal Zone</b> input for when to finish the run and portal.";
 				var description = "<p>Automatically portal into this C" + cinf()[1] + " when using the <b>Challenge " + cinf()[1] + "</b> Auto Portal setting.</p>";
 				description += "<p>C" + cinf()[1] + " challenges will appear here when they've been unlocked in the game.</p>";
-				description += "<p>When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
+				description += "<p>When running a " + cinf() + ", <b>" + cinf() + " Runner Portal</b> will be used for your portal zone if <b>" + cinf() + " Runner</b> is enabled otherwise it will use the <b>Finish " + cinf() + "</b> setting. These can be found in the <b>" + cinf() + "</b> settings tab.</p>"
 				description += "<p>" + specialChall + "</p>";
 				return description;
 			}, 'dropdown', 'None', function () { return autoPortalChallenges('c2') }, 'Core', [1, 2],
@@ -384,7 +379,7 @@ function initializeAllSettings() {
 			function () { return (resourceHour() + '/Hr Buffer %') },
 			function () {
 				var description = "<p>When using the <b>" + resource() + " Per Hour</b> Auto Portal setting, it will portal if your " + resource().toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
-				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer).</p>";
+				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. For example a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer.</p>";
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
@@ -396,15 +391,15 @@ function initializeAllSettings() {
 			function () {
 				var hze = game.stats.highestLevel.valueTotal();
 				var portalOptions = ['Auto Portal Immediately', 'Portal After Voids'];
-				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal after voids (poison)');
+				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal After Poison Voids');
 				return portalOptions;
 			},
 			function () {
 				var description = "<p>How you would like to portal when below your " + resource().toLowerCase() + " per hour threshold.</p>";
 				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
-				description += "<p><b>Portal after voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
-				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal after poison voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
-				description += "<p><b>Recommended:</b> Portal after voids</p>";
+				description += "<p><b>Portal After Voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal After Poison Voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
+				description += "<p><b>Recommended:</b> Portal After Voids</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Core', [1, 2],
 			function () {
@@ -414,7 +409,7 @@ function initializeAllSettings() {
 		createSetting('heliumHrExitSpire',
 			function () { return ('Exit Spires for Voids') },
 			function () {
-				var description = "<p>If enabled will automatically exit Spires to run your voids earlier when the <b>" + resource() + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
+				var description = "<p>Will automatically exit Spires to run your voids earlier when the <b>" + resource() + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1],
@@ -457,11 +452,11 @@ function initializeAllSettings() {
 			function () { return (["Don't Buy Jobs", 'Auto Ratios', 'Manual Ratios']) },
 			function () {
 				//Initial button description
-				var description = "<p>Click the left side of the button to toggle between the AutoJobs settings. Each of them will adjust the 3 primary resource jobs but you'll have to manually set the rest by clicking the cog icon on the right side of this button.</p>";
+				var description = "<p>Click the left side of the button to toggle between the AutoJobs settings. Each of them will adjust the 3 primary resource jobs but you'll have to manually set the rest by clicking the cogwheel on the right side of this button.</p>";
 				//Don't Buy Jobs
 				description += "<p><b>Don't Buy Jobs</b><br>Will disable the script from purchasing any jobs.</p>";
 				//Auto Ratios
-				description += "<p><b>Auto Ratios</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out its Help section for this setting.</p>";
+				description += "<p><b>Auto Ratios</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out the Help section for this setting by clicking on the cogwheel.</p>";
 				//Manual Ratios
 				description += "<p><b>Manual Ratios</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>";
 				//Override info
@@ -495,7 +490,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Master switch for whether the script will do any form of Geneticist purchasing.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
-				description += "<p><b>If enabled will disable the ingame Geneticistassist setting.</b></p>";
+				description += "<p><b>Will disable the ingame Geneticistassist setting.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Jobs', [1]);
@@ -763,7 +758,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will only buy nurseries if you need more health and you have more map stacks than the <b>Map Bonus Health</b> setting, which becomes a very important setting.</p>"
 				description += "<p>Requires Nurseries to be setup in the AT AutoStructure setting and will only buy Nurseries if past the 'From' input. Overrides the 'Up To' input and allows you to set 0 without it buying as many as possible.</p>"
-				description += "<p><b>Recommended:</b> On. Nurseries set to 'Up To: 0' & 'From: 230'</p>";
+				description += "<p><b>Recommended:</b> On. Nurseries set to <b>Up To: 0</b> and <b>From: 230</b></p>";
 				return description;
 			},
 			'boolean', false, null, 'Buildings', [1],
@@ -982,7 +977,7 @@ function initializeAllSettings() {
 				var description = "<p>Controls whether to force abandon trimps for mapping.</p>";
 				description += "<p><b>Never Abandon</b><br>Never abandon trimps for mapping.</p>";
 				description += "<p><b>Always Abandon</b><br>Always abandon trimps for mapping.</p>";
-				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of trimps is ready, or when (0 + overkill) cells away from c100.</p>";
+				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of trimps is ready, or when (0 + overkill) cells away from cell 100.</p>";
 				description += "<p><b>Recommended:</b> Smart Abandon</p>";
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1, 2]);
@@ -1383,10 +1378,10 @@ function initializeAllSettings() {
 		createSetting('autoMapsPriority',
 			function () { return ('Auto Maps Priority') },
 			function () {
-				var description = "<p>Will allow you to have map settings run in any combination you want through the settings priority system.</p>";
-				var description = "<p>When enabled will sort the mapping order by priority inputs and run the lowest priority first. If multiple settings have the same priority then it will run them in the order that can be seen in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
-				var description = "<p>There are certain settings that will always run <b>first</b> regardless of your priority setup, these are the ones in bold in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
-				var description = "<p>There are certain settings that will always run <b>last</b> regardless of your priority setup, these are the ones in bold and italics in the <b>Auto Maps Priority</b> popup that's found in the Help tab.</p>";
+				var description = "<p>Allow mapping settings to use priority numbers to determine run order rather than going by the default Auto Maps mapping order.</p>";
+				description += "<p>If multiple settings have the same priority then it will run them in the order that can be seen in the <b>Auto Maps Priority</b> popup that's found in the <b>Help</b> tab.</p>";
+				description += "<p>Setting names in the <b>Auto Maps Priority</b> popup that are marked in bold will always be run <b>first</b> and settings that are marked in both bold and italics will always be run <b>last</b> regardless of your priority inputs.</p>";
+				description += "<p><b>Not recommended for inexperienced players.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
@@ -1522,23 +1517,23 @@ function initializeAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', {
-			The_Wall: { enabled: false, zone: 100, cell: 0 },
-			The_Block: { enabled: false, zone: 100, cell: 0 },
-			Dimension_of_Anger: { enabled: false, zone: 100, cell: 0 },
-			Trimple_Of_Doom: { enabled: false, zone: 100, cell: 0 },
-			The_Prison: { enabled: false, zone: 100, cell: 0 },
-			Imploding_Star: { enabled: false, zone: 100, cell: 0 },
+			"The Wall": { enabled: false, zone: 100, cell: 0 },
+			"The Block": { enabled: false, zone: 100, cell: 0 },
+			"Dimension of Anger": { enabled: false, zone: 100, cell: 0 },
+			"Trimple Of Doom": { enabled: false, zone: 100, cell: 0 },
+			"The Prison": { enabled: false, zone: 100, cell: 0 },
+			"Imploding Star": { enabled: false, zone: 100, cell: 0 },
 
-			Big_Wall: { enabled: false, zone: 100, cell: 0 },
-			Dimension_of_Rage: { enabled: false, zone: 100, cell: 0 },
-			Prismatic_Palace: { enabled: false, zone: 100, cell: 0 },
-			Atlantrimp: { enabled: false, zone: 100, cell: 0 },
-			Melting_Point: { enabled: false, zone: 100, cell: 0 },
-			Frozen_Castle: { enabled: false, zone: 100, cell: 0 },
+			"Big Wall": { enabled: false, zone: 100, cell: 0 },
+			"Dimension of Rage": { enabled: false, zone: 100, cell: 0 },
+			"Prismatic Palace": { enabled: false, zone: 100, cell: 0 },
+			"Atlantrimp": { enabled: false, zone: 100, cell: 0 },
+			"Melting Point": { enabled: false, zone: 100, cell: 0 },
+			"Frozen Castle": { enabled: false, zone: 100, cell: 0 },
 
-			MP_Smithy: { enabled: false, value: 100 },
-			MP_Smithy_Daily: { enabled: false, value: 100 },
-			MP_Smithy_C3: { enabled: false, value: 100 },
+			"MP Smithy": { enabled: false, value: 100 },
+			"MP Smithy Daily": { enabled: false, value: 100 },
+			"MP Smithy C3": { enabled: false, value: 100 },
 		}, 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', 'Maps', [1, 2]);
 
 		//Map Bonus
@@ -1638,7 +1633,7 @@ function initializeAllSettings() {
 		createSetting('balanceImprobDestack',
 			function () { return ('B: Improbability Destack') },
 			function () {
-				var description = "<p>If enabled this will cause you to fully destack when at cell 100 once you reach your destacking zone.</p>";
+				var description = "<p>Will always fully destack when at cell 100 once you reach your destacking zone.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Challenges', [1],
@@ -2072,7 +2067,7 @@ function initializeAllSettings() {
 		createSetting('unbalanceImprobDestack',
 			function () { return ('U: Improbability Destack') },
 			function () {
-				var description = "<p>If enabled this will cause you to fully destack when at cell 100 once you reach your destacking zone.</p>";
+				var description = "<p>Will always fully destack when at cell 100 once you reach your destacking zone.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
@@ -2692,7 +2687,7 @@ function initializeAllSettings() {
 		createSetting('dailyHeliumHrExitSpire',
 			function () { return ('Exit Spires for Voids') },
 			function () {
-				var description = "<p>If enabled will automatically exit Spires to run your voids earlier when the <b>" + resource() + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
+				var description = "<p>Will automatically exit Spires to run your voids earlier when the <b>" + resource() + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [1],
@@ -3816,6 +3811,7 @@ function initializeAllSettings() {
 			function () { return ('Evolve Fluffy') },
 			function () {
 				var description = "<p>Controls whether or not the script will automatically evolve Fluffy if you are at level 10.</p>";
+				description += "<p>Will only evolve when inside a liquification zone or when (0 + overkill) cells away from cell 100.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Fluffy', [1]);
@@ -3855,7 +3851,7 @@ function initializeAllSettings() {
 			function () { return ('Fluffy: Respec on Evo') },
 			function () {
 				var description = "<p>Will respec your perks after evolving.</p>";
-				description += "<p>If enabled will only evolve Fluffy when a perk respec is available OR you have points in the Fluffy xp gain perks.</p>";
+				description += "<p>Will only evolve Fluffy when a perk respec is available OR you have points in the Fluffy xp gain perks.</p>";
 				description += "<p>This setting won't do anything if the <b>Auto Allocate Perks</b> setting is disabled. Uses your current preset and weights to respec to.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -3892,7 +3888,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will display the Trimps user interface during time warp.</p>";
 				description += "<p>Updates the display every 600 ingame ticks so every minute of ingame time.</p>";
-				description += "<p>If enabled it will cause your time warp to take longer as it has to render additional frames.</p>";
+				description += "<p>This will cause your time warp to take longer as it has to render additional frames.</p>";
 				description += "<p>When first loading Time Warp you will have a tooltip to inform you of your Time Warp duration as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the start of the Auto Maps status at the bottom of the battle container.</p>";
 				description += "<p><b>Recommended:</b> Enabled</p>";
 				return description;
@@ -6119,6 +6115,21 @@ function updateATVersion() {
 			if (typeof (tempSettings["experienceStaff"]) !== 'undefined') {
 				if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value !== 'string')
 					autoTrimpSettings.experienceStaff.value === 'undefined';
+			}
+		}
+		//Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.23') {
+			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
+				var obj = {};
+				for (var item in tempSettings.uniqueMapSettingsArray.value) {
+					obj[item.replace(/_/g, " ")] = tempSettings.uniqueMapSettingsArray.value[item];
+				}
+				autoTrimpSettings.uniqueMapSettingsArray.value = obj;
+				var obj = {};
+				for (var item in tempSettings.uniqueMapSettingsArray.valueU2) {
+					obj[item.replace(/_/g, " ")] = tempSettings.uniqueMapSettingsArray.valueU2[item];
+				}
+				autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
 			}
 		}
 

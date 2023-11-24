@@ -15,8 +15,10 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: ['Scientist', 'Trimp'],
 		speedrun: 'blockTimed',
 		universe: 1,
+		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (aboveMapLevel && !game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
+			if (game.upgrades.Shieldblock.allowed) return false;
+			if (aboveMapLevel && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
 			else if (game.mapUnlocks.BigWall.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		},
@@ -26,9 +28,11 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: [],
 		speedrun: 'wallTimed',
 		universe: 1,
+		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) return true; //Don't bother before z16
-			else if (game.mapUnlocks.TheWall.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			if (game.upgrades.Bounty.allowed) return false;
+			if (aboveMapLevel && !game.talents.bounty.purchased) return true; //Don't bother before z16
+			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		},
 	},
@@ -37,6 +41,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: ['Discipline', 'Metal', 'Size', 'Frugal', 'Coordinate'],
 		speedrun: 'angerTimed',
 		universe: 1,
+		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
 			if ((game.global.world - 1 > map.level)) return true; //Don't bother before z22
@@ -49,6 +54,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: ['Meditate', 'Anger'],
 		speedrun: 'doomTimed',
 		universe: 1,
+		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (aboveMapLevel && game.portal.Relentlessness.locked) return true; //Unlock the Relentlessness perk
 			else if (game.mapUnlocks.AncientTreasure.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
@@ -60,19 +66,10 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: ['Electricity', 'Mapocalypse'],
 		speedrun: 'prisonTimed',
 		universe: 1,
+		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) return true; //Unlock the Electricity challenge
 			else if (game.mapUnlocks.ThePrison.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
-			return false;
-		},
-	},
-	'Imploding Star': {
-		zone: 170,
-		challenges: ['Devastation'],
-		speedrun: 'starTimed',
-		universe: 1,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (game.mapUnlocks.ImplodingStar.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		},
 	},
@@ -81,20 +78,33 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: ['Crushed'],
 		speedrun: 'bionicTimed',
 		universe: 1,
+		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			return false;
 		},
 	},
-
+	'Imploding Star': {
+		zone: 170,
+		challenges: ['Devastation'],
+		speedrun: 'starTimed',
+		universe: 1,
+		mapUnlock: true,
+		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+			if (game.mapUnlocks.ImplodingStar.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			return false;
+		},
+	},
 	//Universe 2 Unique Maps
 	'Big Wall': {
 		zone: 8,
 		challenges: [''],
 		speedrun: 'bigWallTimed',
 		universe: 2,
+		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (aboveMapLevel && !game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) return true; // we need Bounty
-			else if (!game.upgrades.Bounty.allowed && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			if (game.upgrades.Bounty.allowed) return false;
+			if (aboveMapLevel && !game.talents.bounty.purchased) return true; // we need Bounty
+			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		},
 	},
@@ -103,6 +113,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: ['Unlucky'],
 		speedrun: '',
 		universe: 2,
+		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
 			if ((game.global.world - 1 > map.level) && game.global.totalRadPortals < 5) return true; //Don't bother before z22
@@ -115,6 +126,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: [''],
 		speedrun: 'palaceTimed',
 		universe: 2,
+		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.mapUnlocks.Prismalicious.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
@@ -125,6 +137,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: [''],
 		speedrun: 'atlantrimpTimed',
 		universe: 2,
+		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (!game.mapUnlocks.AncientTreasure.canRunOnce) return false;
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
@@ -136,6 +149,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: [''],
 		speedrun: 'meltingTimed',
 		universe: 2,
+		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (!game.mapUnlocks.SmithFree.canRunOnce) return false;
 			if (!trimpStats.isC3 && !trimpStats.isDaily && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
@@ -145,12 +159,12 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			var smithyGoal = Infinity;
 			if ((currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge + 'MP') > 0)
 				smithyGoal = getPageSetting(currChallenge + 'MP');
-			else if (trimpStats.isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0)
-				smithyGoal = uniqueMapSetting.MP_Smithy_C3.value;
-			else if (trimpStats.isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0)
-				smithyGoal = uniqueMapSetting.MP_Smithy_Daily.value;
-			else if (trimpStats.isFiller && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0)
-				smithyGoal = uniqueMapSetting.MP_Smithy.value;
+			else if (trimpStats.isC3 && uniqueMapSetting["MP Smithy C3"].enabled && uniqueMapSetting["MP Smithy C3"].value > 0)
+				smithyGoal = uniqueMapSetting["MP Smithy C3"].value;
+			else if (trimpStats.isDaily && uniqueMapSetting["MP Smithy Daily"].enabled && uniqueMapSetting["MP Smithy Daily"].value > 0)
+				smithyGoal = uniqueMapSetting["MP Smithy Daily"].value;
+			else if (trimpStats.isFiller && uniqueMapSetting["MP Smithy"].enabled && uniqueMapSetting["MP Smithy"].value > 0)
+				smithyGoal = uniqueMapSetting["MP Smithy"].value;
 
 			if (smithyGoal <= game.buildings.Smithy.owned) return true;
 			return false;
@@ -161,6 +175,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: [''],
 		speedrun: '',
 		universe: 2,
+		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (mapSettings.mapName === 'Quagmire Farm' && quagmire().shouldRun) return true;
 			return false;
@@ -171,6 +186,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		challenges: [''],
 		speedrun: '',
 		universe: 2,
+		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			const runningHypo = challengeActive('Hypothermia');
 			const regularRun = !runningHypo && mapSetting.enabled && game.global.world >= mapSetting.zone && game.global.lastClearedCell + 2 >= mapSetting.cell;
@@ -240,7 +256,7 @@ function shouldRunUniqueMap(map) {
 	if (mapSettings.mapName === 'Pandemonium Destacking') return false;
 	if (mapSettings.mapName === 'Mayhem Destacking') return false;
 	const mapData = MODULES.mapFunctions.uniqueMaps[map.name];
-	if (mapData === undefined || game.global.world < mapData.zone)
+	if (mapData === undefined || game.global.world < mapData.zone - (trimpStats.plusLevels ? 10 : 0))
 		return false;
 	if (game.global.universe !== mapData.universe)
 		return false;
@@ -259,9 +275,8 @@ function shouldRunUniqueMap(map) {
 	//Check to see if the cell is liquified and if so we can replace the cell condition with it
 	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
 	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
-	const mapSetting = uniqueMapSetting[map.name.replace(/ /g, '_')];
+	const mapSetting = uniqueMapSetting[map.name];
 	const aboveMapLevel = game.global.world > map.level;
-
 	//Check to see if the map should be run based on the user's settings.
 	if (MODULES.mapFunctions.runUniqueMap === map.name || mapData.runConditions(map, mapSetting, liquified, aboveMapLevel)) {
 		if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + (map.name === 'Melting Point' ? ' at ' + game.buildings.Smithy.owned + ' smithies' : '') + ' on zone ' + game.global.world + '.', 'map_Details');
@@ -3304,9 +3319,9 @@ function farmingDecision() {
 	}
 
 	//Won't map till after cell 90 on Lead on Even zones
-	if (challengeActive('Lead') && !game.global.runningChallengeSquared && game.global.world !== 180 && (game.global.world % 2 === 0 || game.global.lastClearedCell + 2 <= 90)) {
-		mapSettings = farmingDetails;
-	}
+	/* if (challengeActive('Lead') && !game.global.runningChallengeSquared && game.global.world !== 180 && (game.global.world % 2 === 0 || game.global.lastClearedCell + 2 <= 90))
+		mapSettings = farmingDetails; */
+
 	if (!game.global.mapsUnlocked) mapSettings = farmingDetails;
 
 	var mapTypes = [];

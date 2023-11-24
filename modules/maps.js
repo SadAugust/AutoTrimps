@@ -549,8 +549,13 @@ function autoMap() {
 	var perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
 	var perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
-	var runUnique = false;
 
+	const uniqueMapsOwned = [];
+	//Check to see if the cell is liquified and if so we can replace the cell condition with it
+	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
+	var uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
+
+	//Looping through all of our maps to find the highest, lowest and optimal map.
 	for (const map of game.global.mapsOwnedArray) {
 		if (!map.noRecycle) {
 			if (!highestMap || map.level > highestMap.level) {
@@ -565,10 +570,10 @@ function autoMap() {
 				lowestMap = map;
 			}
 		} else if (map.noRecycle) {
+			if (map.location !== 'Void') uniqueMapsOwned.push(map.name);
 			if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
 				selectedMap = map.id;
-				runUnique = true;
-				if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
+				break;
 			}
 			if (map.location === 'Bionic') {
 				bionicPool.push(map);
@@ -578,6 +583,20 @@ function autoMap() {
 			}
 		}
 	}
+
+	//Filter unique maps that we want to run and aren't available to be run.
+	var uniqueMapsToGet = Object.keys(uniqueMapSetting)
+		.filter(mapName => !mapName.includes("MP Smithy"))
+		.filter(mapName => uniqueMapSetting[mapName].enabled)
+		.filter(mapName => uniqueMapSetting[mapName].zone <= game.global.world)
+		.filter(mapName => liquified || uniqueMapSetting[mapName].cell <= game.global.lastClearedCell + 2)
+		.filter(mapName => !uniqueMapsOwned.includes(mapName))
+		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
+		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].zone < game.global.world + (trimpStats.plusLevels ? 10 : 0));
+
+	//Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
+	if (uniqueMapsToGet.length > 0)
+		mapSettings = obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
 
 	//Telling AT to create a map or setting void map as map to be run.
 	if (selectedMap === 'world' && mapSettings.shouldRun) {

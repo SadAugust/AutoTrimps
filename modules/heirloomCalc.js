@@ -728,24 +728,23 @@ class Heirloom {
 	getModEfficiency(type) {
 		if (type === "empty") return 1;
 		if (this.heirloomInfo[type].weighable) {
-			return ((this.getModGain(type) - 1) / (this.getModCost(type) / this.basePrice)) + 1;
+			const modCost = this.getModCost(type);
+			if (modCost >= 1e100) return 0;
+			return ((this.getModGain(type) - 1) / (modCost / this.basePrice)) + 1;
 		}
 		return 1;
 	}
 
 	// add arrays for max normal values, if below or equal to, return normal price, else divide the amount over the normal value by the step to get amount and calculate the price with the amount
 	getModCost(type) {
-		if (type === "empty") {
+		if (type === "empty")
 			return 1e100;
-		}
 		const value = this.getModValue(type);
-		if (value <= this.softCaps[type] || !isNumeric(value)) {
+		if (value <= this.softCaps[type] || !isNumeric(value))
 			return this.basePrice;
-		}
 		const amount = (value - this.softCaps[type]) / this.stepAmounts[type];
-		if (this.hardCaps) {
+		if (this.hardCaps[type])
 			return (value >= this.hardCaps[type]) ? 1e100 : Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
-		}
 		return Math.floor(this.basePrice * Math.pow(this.priceIncrease, amount));
 	}
 
@@ -875,8 +874,9 @@ class Heirloom {
 		while (true) {
 			efficiency = 1;
 			for (const mod of heirloom.mods) {
-				if (heirloom.getModEfficiency(mod[0]) > efficiency) {
-					efficiency = heirloom.getModEfficiency(mod[0]);
+				var modEff = heirloom.getModEfficiency(mod[0]);
+				if (modEff > efficiency) {
+					efficiency = modEff;
 					cost = heirloom.getModCost(mod[0]);
 					name = mod[0];
 					index = heirloom.mods.indexOf(mod);
@@ -976,7 +976,7 @@ function updateModContainer(divName, heirloom) {
 		if (mod) {
 			if (heirloom.getModEfficiency(mod[0]) > 1) {
 				infoText += `<b>${heirloomData[mod[0]].name}</b>:<br>`
-				infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspCost</b>: ${heirloom.getModCost(mod[0]) === 1e20 ? "∞" : prettify(heirloom.getModCost(mod[0]))}`
+				infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspCost</b>: ${heirloom.getModCost(mod[0]) === 1e100 ? "∞" : prettify(heirloom.getModCost(mod[0]))}`
 				infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspGain</b>: ${humanify((heirloom.getModGain(mod[0]) + heirloom.getInnateGain(mod[0]) - 2) * 100, 3)}%`
 				infoText += `&nbsp&nbsp&nbsp<b>•&nbsp&nbspEfficiency</b>: ${humanify((heirloom.getModEfficiency(mod[0]) - 1) / (bestEfficiency - 1) * 100, 2)}%</span>`
 				infoText += `<br>`;

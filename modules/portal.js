@@ -657,6 +657,12 @@ function resetVarsZone(loadingSave) {
 
 	trimpStats = new TrimpStats();
 	hdStats = new HDStats(true);
+	//Reset map settings to default
+	mapSettings = {
+		shouldRun: false,
+		mapName: '',
+		levelCheck: Infinity,
+	};
 	farmingDecision();
 }
 
