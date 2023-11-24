@@ -554,6 +554,7 @@ function autoMap() {
 	//Check to see if the cell is liquified and if so we can replace the cell condition with it
 	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
 	var uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
+	var runUnique = false;
 
 	//Looping through all of our maps to find the highest, lowest and optimal map.
 	for (const map of game.global.mapsOwnedArray) {
@@ -572,6 +573,7 @@ function autoMap() {
 		} else if (map.noRecycle) {
 			if (map.location !== 'Void') uniqueMapsOwned.push(map.name);
 			if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
+				runUnique = true;
 				selectedMap = map.id;
 				break;
 			}
@@ -591,6 +593,7 @@ function autoMap() {
 		.filter(mapName => uniqueMapSetting[mapName].zone <= game.global.world)
 		.filter(mapName => liquified || uniqueMapSetting[mapName].cell <= game.global.lastClearedCell + 2)
 		.filter(mapName => !uniqueMapsOwned.includes(mapName))
+		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].universe === game.global.universe)
 		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
 		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].zone < game.global.world + (trimpStats.plusLevels ? 10 : 0));
 
