@@ -6118,7 +6118,7 @@ function updateATVersion() {
 			}
 		}
 		//Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.23') {
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.22') {
 			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
 				var obj = {};
 				for (var item in tempSettings.uniqueMapSettingsArray.value) {
