@@ -258,7 +258,7 @@ function buyJobs(forceRatios) {
 	var desiredRatios = [0, 0, 0, 0];
 	//Looks first if we want to manually set ratios for workers through map settings or through overrides (bone shrine).
 	var workerRatio;
-	var overrideRatio = forceRatios || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio !== undefined);
+	var overrideRatio = forceRatios || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio !== undefined && mapSettings.jobRatio !== '-1');
 	if (overrideRatio) {
 		//Check if bone shrine wants to force override our job ratio
 		if (forceRatios) {
