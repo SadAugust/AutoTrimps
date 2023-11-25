@@ -116,7 +116,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
-			if ((game.global.world - 1 > map.level) && game.global.totalRadPortals < 5) return true; //Don't bother before z22
+			if ((game.global.world - 1 > map.level) && game.global.totalRadPortals === 0) return true; //Don't bother before z17
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		},

@@ -809,8 +809,8 @@ resetGame = function () {
 
 function resetSettingsPortal() {
 
-	const value = 'value' + (game.global.universe ? 'U2' : '');
-	const enabled = 'enabled' + (game.global.universe ? 'U2' : '');
+	const value = 'value' + (game.global.universe === 2 ? 'U2' : '');
+	const enabled = 'enabled' + (game.global.universe === 2 ? 'U2' : '');
 
 	//Enabling Auto Portal
 	if (getPageSetting('autoMapsPortal')) {
