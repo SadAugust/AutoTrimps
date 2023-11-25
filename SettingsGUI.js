@@ -5033,8 +5033,7 @@ function autoSetText(id, multiValue) {
 	var textBox = document.getElementById('customTextBox');
 	if (textBox) {
 		if (multiValue) {
-			textVal = textBox.value.replace(/, /g, ",");
-			textVal = textVal.split(',').map(String);
+			textVal = textBox.value.split(',').map(String);
 		} else {
 			textVal = textBox.value
 		}

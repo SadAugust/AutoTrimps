@@ -399,7 +399,6 @@ function heirloomSwapping() {
 
 //AT versions for heirloom bonuses. 
 //Check and update each patch!
-
 function getHeirloomBonus_AT(type, modName, customShield) {
 	if (!customShield && (!game.heirlooms[type] || !game.heirlooms[type][modName])) {
 		console.log('oh noes', type, modName);

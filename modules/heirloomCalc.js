@@ -1125,7 +1125,6 @@ function calculate(autoUpgrade) {
 		return Math.round(n * factor) / factor;
 	}
 
-
 	const heirloomData = heirloomInfo(newHeirloom.type);
 	function getModValue(mod) {
 		if ((heirloomData[mod[0]].heirloopy && Fluffy.isRewardActive("heirloopy")) || heirloomData[mod[0]].immutable) return mod[1];
