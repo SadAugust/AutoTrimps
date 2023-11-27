@@ -84,7 +84,7 @@ function getBiome(mapGoal, resourceGoal) {
         else
             biome = resourceGoal;
     }
-    else if (mapGoal === 'fragments')
+    else if (mapGoal === 'fragments' || mapGoal === 'gems')
         biome = 'Depths';
     else if (mapGoal === 'fragConservation')
         biome = 'Random';

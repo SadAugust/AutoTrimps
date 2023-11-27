@@ -19,6 +19,22 @@
    1. Magma 
       - Add Minimise option to new fueling zone setting
 
+   2. Auto Portal 
+      - Add portal into U1/U2 setting
+
+   3. Auto Jobs (early U2)
+      - Safeguard firing for jobs when food is low.
+        - https://discord.com/channels/371177798305447938/371348913036197899/1177402492422725663
+
+   4. Upgrades
+      - Bounty being prioritised if purchasble in X amount of time.
+        - Should probably be 5mins or less?
+        - https://discord.com/channels/371177798305447938/371348913036197899/1177401054564982854
+
+   5. Challenges
+      1. Bublé
+         - Safeguard for dying
+
 # Help Window
 
    1. Fragment decision making 

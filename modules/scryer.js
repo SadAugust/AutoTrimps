@@ -106,7 +106,7 @@ function useScryerStance() {
 	var isHealthy = curEnemyHealth && curEnemyHealth.mutation === "Healthy";
 
 	//Override never scry if in voids with scryvoid setting enabled.
-	if (mapsActive && mapObject.location === "Void") {
+	if (mapsActive && mapObject.location === "Void" && getPageSetting('scryerVoidMaps') === 0) {
 		if (!game.global.runningChallengeSquared && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) never_scry = 0;
 	}
 
@@ -115,7 +115,6 @@ function useScryerStance() {
 		wantToScry = false;
 		return;
 	}
-
 	//Force scryer on if any of these return true.
 
 	//Maps Force
@@ -123,8 +122,8 @@ function useScryerStance() {
 	//Plus Level Force
 	force_scry |= mapsActive && useScryer && mapObject.level > game.global.world && getPageSetting('scryerPlusMaps') === 1 && mapObject.location !== "Bionic";
 	//Void Force
-	force_scry |= mapsActive && mapObject.location === "Void" &&
-		(!game.global.runningChallengeSquared && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps'));
+	force_scry |= mapsActive && mapObject.location === "Void" && (getPageSetting('scryerVoidMaps') === 1 ||
+		(!game.global.runningChallengeSquared && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')));
 	//Bionic Force
 	force_scry |= mapsActive && useScryer && mapObject.location === "Bionic" && getPageSetting('scryerBW') === 1;
 	//Spire Force

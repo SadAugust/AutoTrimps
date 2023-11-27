@@ -51,7 +51,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Trimple Of Doom': {
 		zone: 33,
-		challenges: ['Meditate', 'Anger'],
+		challenges: ['Meditate', 'Trapper'],
 		speedrun: 'doomTimed',
 		universe: 1,
 		mapUnlock: false,
@@ -96,7 +96,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	//Universe 2 Unique Maps
 	'Big Wall': {
-		zone: 8,
+		zone: 7,
 		challenges: [''],
 		speedrun: 'bigWallTimed',
 		universe: 2,
@@ -109,7 +109,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		},
 	},
 	'Dimension of Rage': {
-		zone: 15,
+		zone: 16,
 		challenges: ['Unlucky'],
 		speedrun: '',
 		universe: 2,
@@ -822,6 +822,7 @@ function tributeFarm(lineCheck) {
 		var biome = getBiome(null, 'Sea');
 		var jobRatio = setting.jobratio;
 		var shouldAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : setting.atlantrimp;
+		var totalCost = 0;
 
 		//AutoLevel code.
 		if (setting.autoLevel) {
@@ -883,17 +884,20 @@ function tributeFarm(lineCheck) {
 					metCost += Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned + x) * game.jobs.Meteorologist.cost.food[0];
 				}
 			}
-			var totalTrFCost = tributeCost + metCost;
+			totalCost = tributeCost + metCost;
 
 			var barnCost = 0;
-			if (totalTrFCost > (game.resources.food.max * (1 + (game.portal.Packrat.modifier * game.portal.Packrat.radLevel))))
+			if (totalCost > (game.resources.food.max * (1 + (game.portal.Packrat.modifier * game.portal.Packrat.radLevel))))
 				barnCost += game.buildings.Barn.cost.food();
-			totalTrFCost += barnCost;
+			totalCost += barnCost;
 
-			//Figuring out how much Food we'd farm in the time it takes to run Atlantrimp. Seconds is 165 due to avg of 5x caches (20s per), 4x chronoimps (5s per), 1x jestimp (45s)
-			var resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT('food', 165, jobRatio), false, true, mapLevel);
+			var resourceSeconds = (mapSpecial === 'lsc' ? 20 : mapSpecial === 'ssc' ? 10 : 0) * 5;
+			if (game.unlocks.imps.Tauntimp) resourceSeconds += 45;
+			if (game.unlocks.imps.Chronoimp) resourceSeconds += 20;
+			//Figuring out how much Food we'd farm in the time it takes to run Atlantrimp. Seconds is avg of 5x caches (20s per), 4x chronoimps (5s per), 1x jestimp (45s)
+			var resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT('food', resourceSeconds, jobRatio), false, true, mapLevel);
 
-			if ((totalTrFCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalTrFCost / 2) {
+			if ((totalCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalCost / 2) {
 				runUniqueMap('Atlantrimp');
 			}
 		}
@@ -921,6 +925,7 @@ function tributeFarm(lineCheck) {
 		farmingDetails.meteorologist = meteorologistGoal;
 		farmingDetails.runAtlantrimp = shouldAtlantrimp;
 		farmingDetails.buyBuildings = setting.buildings;
+		farmingDetails.totalCost = totalCost;
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
@@ -994,7 +999,7 @@ function smithyFarm(lineCheck) {
 		var mapLevel = setting.level;
 		var mapSpecial = getAvailableSpecials('lmc', true);
 		var biome = getBiome();
-		var jobRatio = '0,0,0';
+		var jobRatio = [0, 0, 0, 0];
 		var smithyGoal = setting.repeat;
 
 		if (setting.autoLevel) {
@@ -1070,28 +1075,40 @@ function smithyFarm(lineCheck) {
 		const smithyWoodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, smithyGoal - game.buildings.Smithy.purchased);
 		const smithyMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, smithyGoal - game.buildings.Smithy.purchased);
 
+		if (smithyMetalCost > game.resources.metal.owned) shouldSmithyMetalFarm = true;
+		if (smithyWoodCost > game.resources.wood.owned) shouldSmithyWoodFarm = true;
+		if (smithyGemCost > game.resources.gems.owned) shouldSmithyGemFarm = true;
+
 		if (smithyGoal > game.buildings.Smithy.purchased) {
 			shouldMap = true;
-			if (smithyMetalCost > game.resources.metal.owned) {
-				shouldSmithyMetalFarm = true;
-				mapSpecial = getAvailableSpecials('lmc', true);
-				biome = getBiome(null, 'Mountain');
-				jobRatio = '0,0,1,0';
-				resourceGoal = prettify(smithyMetalCost) + ' metal.';
-			} else if (smithyWoodCost > game.resources.wood.owned) {
-				shouldSmithyWoodFarm = true;
-				mapSpecial = getAvailableSpecials('lwc', true);
-				biome = getBiome(null, 'Forest');
-				jobRatio = '0,1,0';
-				resourceGoal = prettify(smithyWoodCost) + ' wood.';
-			}
-			else if (smithyGemCost > game.resources.gems.owned) {
-				shouldSmithyGemFarm = true;
+			//Check these in reverse order as if running a LC map we want to check from the bottom up.
+			if (shouldSmithyGemFarm) {
 				mapSpecial = getAvailableSpecials('lsc', true);
 				biome = getBiome(null, 'Sea');
-				jobRatio = '1,0,0';
+				if (mapSpecial === 'lc') jobRatio[0] = 1;
+				else jobRatio = [1, 0, 0, 0];
 				resourceGoal = prettify(smithyGemCost) + ' gems.';
 			}
+			if (shouldSmithyWoodFarm) {
+				mapSpecial = getAvailableSpecials('lwc', true);
+				biome = getBiome(null, 'Forest');
+				if (mapSpecial === 'lc') jobRatio[1] = 1;
+				else jobRatio = [0, 1, 0, 0];
+				resourceGoal = prettify(smithyWoodCost) + ' wood.';
+			}
+			if (shouldSmithyMetalFarm) {
+				mapSpecial = getAvailableSpecials('lmc', true);
+				biome = getBiome(null, 'Mountain');
+				if (mapSpecial === 'lc') jobRatio[2] = 1;
+				else jobRatio = [0, 0, 1, 0];
+				resourceGoal = prettify(smithyMetalCost) + ' metal.';
+			}
+			//Switch to Depths biome and don't gather food if Tributes haven't been unlocked, farming for multiple resource types AND need to farm gems.
+			if (shouldSmithyGemFarm && !game.buildings.Tribute.purchased) {
+				biome = getBiome('gems', 'Depths');
+				if (jobRatio[1] !== 0 || jobRatio[2] !== 0) jobRatio[0] = 0;
+			}
+			jobRatio = jobRatio.toString();
 		}
 
 		//Overrides to purchase smithies under the following circumstances
@@ -1679,10 +1696,12 @@ function obtainUniqueMap(uniqueMap) {
 		shouldRun: false,
 		mapName: mapName,
 	};
-
-	if (!uniqueMap || typeof uniqueMap !== 'string') return farmingDetails;
-
+	if (!uniqueMap || typeof uniqueMap !== 'string') {
+		if (mapSettings.uniqueMap) uniqueMap = mapSettings.uniqueMap;
+		else return farmingDetails;
+	}
 	var unlockLevel = MODULES.mapFunctions.uniqueMaps[uniqueMap].zone;
+	var mapLevel = unlockLevel - game.global.world;
 
 	//Only go for this map if we are able to obtain it
 	if (!trimpStats.perfectMaps && unlockLevel > game.global.world)
@@ -1695,16 +1714,18 @@ function obtainUniqueMap(uniqueMap) {
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, mapLevel);
+		recycleMap_AT();
 		resetMapVars();
 	}
 	var status = 'Obtaining Unique Map: ' + uniqueMap + ' (z' + unlockLevel + ')';
 
 	if (shouldMap) farmingDetails.shouldRun = shouldMap;
 	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = unlockLevel - game.global.world;
+	farmingDetails.mapLevel = mapLevel;
 	farmingDetails.special = '0';
 	farmingDetails.repeat = false;
 	farmingDetails.status = status;
+	farmingDetails.uniqueMap = uniqueMap;
 	return farmingDetails;
 }
 
@@ -3465,7 +3486,7 @@ function getBiome(mapGoal, resourceGoal) {
 		else
 			biome = resourceGoal;
 	}
-	else if (mapGoal === 'fragments')
+	else if (mapGoal === 'fragments' || mapGoal === 'gems')
 		biome = 'Depths';
 	else if (mapGoal === 'fragConservation')
 		biome = 'Random';

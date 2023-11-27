@@ -79,8 +79,10 @@ function setResourceNeeded() {
 	const equipmentList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
 	for (var prestigeName in equipmentList) {
 		prestigeName = equipmentList[prestigeName];
-		resourcesNeeded.science += getCostToUpgrade(prestigeName, 'science')
+		if (game.upgrades[prestigeName].allowed > game.upgrades[prestigeName].done)
+			resourcesNeeded.science += getCostToUpgrade(prestigeName, 'science')
 	}
+
 	return resourcesNeeded;
 }
 

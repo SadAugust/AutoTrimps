@@ -595,7 +595,7 @@ function autoMap() {
 		.filter(mapName => !uniqueMapsOwned.includes(mapName))
 		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].universe === game.global.universe)
 		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
-		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].zone < game.global.world + (trimpStats.plusLevels ? 10 : 0));
+		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
 
 	//Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
 	if (uniqueMapsToGet.length > 0)

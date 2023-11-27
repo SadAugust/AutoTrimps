@@ -195,7 +195,7 @@ function buyJobs(forceRatios) {
 				game.jobs.Meteorologist.cost.food[1],
 				true
 			);
-			affordableMets = mapSettings.shouldMeteorologist && mapSettings.runAtlantrimp && game.mapUnlocks.AncientTreasure.canRunOnce && !(game.resources.food.owned > (typeof (totalTrFCost) === 'undefined' ? 0 : totalTrFCost)) ? 0 : affordableMets;
+			if (mapSettings.shouldMeteorologist && mapSettings.runAtlantrimp && mapSettings.totalCost > game.resources.food.owned) affordableMets = 0;
 			if (affordableMets > 0 && !mapSettings.shouldTribute) {
 				safeBuyJob('Meteorologist', affordableMets);
 				freeWorkers -= affordableMets;

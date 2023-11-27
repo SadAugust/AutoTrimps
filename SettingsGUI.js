@@ -1362,7 +1362,7 @@ function initializeAllSettings() {
 				description += "<p><b>The mapping that is done is decided by how you setup any mapping related settings.</b><br></p>";
 				description += "<p><b>Auto Maps Off</b><br>Disables this setting.</p>";
 				description += "<p><b>Auto Maps On</b><br>Enables mapping and will run all types of maps.</p>";
-				if (!noUnique) description += "<p><b>Auto Maps No Unique</b><br>The same as <b>Auto Maps On</b> but won't run unique maps such as <b>The Block</b> or <b>Dimension of Rage</b>.</p>";
+				if (!noUnique) description += "<p><b>Auto Maps No Unique</b><br>The same as <b>Auto Maps On</b> but won't run unique maps such as <b>" + (currSettingUniverse === 1 ? "The Block" : "Big Wall") + "</b> or <b>Dimension of " + (currSettingUniverse === 1 ? "Anger" : "Rage") + "</b>.</p>";
 				description += "<p>Automatically adjusts the games repeat and exit to settings to ensure that you don't waste time in maps or time having to breed another army.</p>";
 				description += "<p><b>Recommended:</b> Auto Maps On</p>";
 				return description;
@@ -1404,7 +1404,7 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
 		createSetting('autoLevelTest',
-			function () { return ('Test New Auto Level') },
+			function () { return ('New Auto Level') },
 			function () {
 				var description = "<p>Will switch the auto level system that is being used to the new one based off of and adapted from the zfarm code.</p>";
 				description += "<p><b>Recommended:</b> On when active and can test</p>";
@@ -3028,9 +3028,9 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffResource',
-			function () { return ('Resource Cache') },
+			function () { return ('Research Cache') },
 			function () {
-				var description = "<p>The staff to use when running <b>Resource Cache</b> maps.</p>";
+				var description = "<p>The staff to use when running <b>Research Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
 				return description;
@@ -4918,7 +4918,7 @@ function parseNum(num) {
 		if (letters.length) {
 			var suffices = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td', 'Qad', 'Qid', 'Sxd', 'Spd', 'Od', 'Nd', 'V', 'Uv', 'Dv', 'Tv', 'Qav', 'Qiv', 'Sxv', 'Spv', 'Ov', 'Nv', 'Tt'];
 			for (var x = 0; x < suffices.length; x++) {
-				if (suffices[x].toLowerCase() === letters) {
+				if (suffices[x].toLowerCase() === letters.toLowerCase()) {
 					base = x + 1;
 					break;
 				}
@@ -4934,12 +4934,10 @@ function autoSetValueToolTip(id, text, multi, negative) {
 	ranstring = text;
 	var value = 'value'
 	if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
-	var elem = document.getElementById("tooltipDiv");
-	var tooltipText = 'Type a number below. You can also use shorthand such as 2e5 or 200k.';
-	if (negative)
-		tooltipText += ' Accepts negative numbers as validated inputs.';
-	else
-		tooltipText += ' Put -1 for Infinite.';
+	var elem = document.getElementById('tooltipDiv');
+	var tooltipText = 'Type a number below. You can use shorthand such as 2e5, 1sx, or 200k.';
+	if (negative) tooltipText += ' Accepts negative numbers as validated inputs.';
+	else tooltipText += ' Put -1 for Infinite.';
 	tooltipText += `<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multi}, ${negative})" value="${autoTrimpSettings[id][value]}"></input>`;
 	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue(\'' + id + '\',' + multi + ',' + negative + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
 	game.global.lockTooltip = true;
@@ -5002,7 +5000,7 @@ function autoSetValue(id, multiValue, negative) {
 
 function autoSetTextToolTip(id, text, multiValue) {
 	ranstring = text;
-	var elem = document.getElementById("tooltipDiv");
+	var elem = document.getElementById('tooltipDiv');
 	var value = 'value'
 	if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	var tooltipText = 'Type your input below';
@@ -6132,7 +6130,6 @@ function updateATVersion() {
 				autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
 			}
 		}
-
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
