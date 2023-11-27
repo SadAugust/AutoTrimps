@@ -382,7 +382,7 @@ function calcHitsSurvived(targetZone, type, difficulty, checkOutputs) {
 	var enemyName = 'Improbability';
 	if (type === 'void') enemyName = 'Cthulimp';
 
-	var hitsToSurvive = targetHitsSurvived();
+	var hitsToSurvive = targetHitsSurvived(false, type);
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 	var health = calcOurHealth(false, type, false, true) / formationMod;
 	var block = calcOurBlock(false) / formationMod;
@@ -414,10 +414,11 @@ function calcHitsSurvived(targetZone, type, difficulty, checkOutputs) {
 	return health / finalDmg;
 }
 
-function targetHitsSurvived(skipHDCheck) {
+function targetHitsSurvived(skipHDCheck, mapType) {
 	const hitsSurvived = !skipHDCheck && mapSettings.mapName === 'Hits Survived' ? mapSettings.hdRatio :
-		isDoingSpire() ? getPageSetting('hitsSurvivedSpire') :
-			getPageSetting('hitsSurvived');
+		mapType === 'void' ? Number(getPageSetting('voidMapSettings')[0].hitsSurvived) :
+			isDoingSpire() ? getPageSetting('hitsSurvivedSpire') :
+				getPageSetting('hitsSurvived');
 	return hitsSurvived;
 }
 

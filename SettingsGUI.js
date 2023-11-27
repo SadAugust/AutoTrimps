@@ -1485,7 +1485,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, hitsSurvived: 1 }], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
 
 		//Bone Shrine (bone) 
 		createSetting('boneShrineSettings',
@@ -6128,6 +6128,15 @@ function updateATVersion() {
 					obj[item.replace(/_/g, " ")] = tempSettings.uniqueMapSettingsArray.valueU2[item];
 				}
 				autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.24') {
+			if (typeof (tempSettings["voidMapSettings"]) !== 'undefined') {
+				if (autoTrimpSettings.voidMapSettings.value[0].hitsSurvived === undefined)
+					autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = 1;
+				if (autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived === undefined)
+					autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = 1;
 			}
 		}
 	}
