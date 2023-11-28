@@ -435,9 +435,11 @@ function doPortal(challenge, skipDaily) {
 			selectChallenge('Daily');
 			checkCompleteDailies();
 		}
-		if (dailyAvailable) getDailyChallenge(lastUndone);
-		challenge = 'Daily';
-		debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
+		if (dailyAvailable) {
+			getDailyChallenge(lastUndone);
+			challenge = 'Daily';
+			debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
+		}
 	}
 	//Selecting challenge that AT has chosen to run.
 	if (game.global.selectedChallenge === '' && challenge && !challengeSquaredMode) {

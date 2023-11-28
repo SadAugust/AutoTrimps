@@ -196,7 +196,7 @@ function populateZFarmData() {
 	const haveMapReducer = game.talents.mapLoot.purchased;
 
 	//Challenge Checks
-	const runningQuest = challengeActive('Quest') && currQuest() === 8;
+	const runningQuest = (challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé');
 	const runningUnlucky = challengeActive('Unlucky');
 
 	//Map Modifiers (for the map we're on)
@@ -509,6 +509,9 @@ function populateZFarmData() {
 		mapPerfect: typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true,
 		mapSpecial: getAvailableSpecials('lmc'),
 		mapBiome: biome,
+
+		//Challenge Conditions
+		runningQuest: runningQuest,
 
 		//Death Info
 		...death_stuff
@@ -851,8 +854,10 @@ function simulate(saveData, zone) {
 				debuff_stacks = 0;
 				gammaStacks = 0;
 
+				//Stop it from getting Infinity glass stacks
 				if (runningGlass && glassStacks >= 10000)
 					ticks = max_ticks;
+				//Amp enemy dmg and health by 25% per stack
 				if (saveData.nom) {
 					enemyAttack *= 1.25;
 					enemyHealth = Math.min(enemyHealth + 0.05 * enemy_max_hp, enemy_max_hp);

@@ -213,7 +213,7 @@ function ImportExportTooltip(what, event, download) {
 		tooltipText += `<tr>
 					<td>Total</td>
 					<td> </td>
-					<td>` + game.global.totalSquaredReward + `%</td>
+					<td>` + game.global.totalSquaredReward.toFixed(2) + `%</td>
 					<td> </td>
 					<td></td>
             	</tr>

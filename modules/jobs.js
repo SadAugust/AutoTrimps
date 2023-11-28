@@ -15,11 +15,11 @@ function safeBuyJob(jobTitle, amount) {
 	} else {
 		game.global.firing = false;
 		game.global.buyAmt = amount;
-		result = canAffordJob(jobTitle, false);
+		result = canAffordJob(jobTitle, false, null, true);
 		if (!result) {
 			game.global.buyAmt = 'Max';
 			game.global.maxSplit = 1;
-			result = canAffordJob(jobTitle, false) && freeWorkers > 0;
+			result = canAffordJob(jobTitle, false, game.workspaces, true) && freeWorkers > 0;
 		}
 	}
 	if (result) {
@@ -131,6 +131,20 @@ function buyJobs(forceRatios) {
 		return;
 	}
 
+	var nextCoordCost = 0;
+
+	//Gather up the total number of workers available to be distributed across ratio workers
+	//In the process store how much of each for later.
+	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
+		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
+		if (!game.global.fighting || game.global.soldierHealth <= 0) freeWorkers -= game.resources.trimps.maxSoldiers;
+		if (getPageSetting(trimpStats.currChallenge.toLowerCase()))
+			if (game.upgrades.Coordination.done <= getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords')) {
+				nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
+				if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
+			}
+	}
+
 	//Do non-ratio/limited jobs first
 	//Explorers
 	if (jobSettings.Explorer.enabled && mapSettings.mapName !== 'Tribute Farm') {
@@ -202,30 +216,18 @@ function buyJobs(forceRatios) {
 			}
 		}
 
-		//Ships
+		//Worshippers
 		if ((!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || mapSettings.mapName === 'Worshipper Farm') && !runningAtlantrimp())) {
 			var affordableShips = mapSettings.mapName === 'Worshipper Farm' ? Math.floor(game.resources.food.owned / game.jobs.Worshipper.getCost()) : Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (jobSettings.Worshipper.percent / 100));
 			if (affordableShips > (50 - game.jobs.Worshipper.owned))
-				affordableShips = 50 - game.jobs.Worshipper.owned;
+				affordableShips = (50 - game.jobs.Worshipper.owned);
 			if (affordableShips > 0) {
 				safeBuyJob('Worshipper', affordableShips);
 				freeWorkers -= affordableShips;
 			}
 		}
 	}
-	var nextCoordCost = 0;
 
-	//Gather up the total number of workers available to be distributed across ratio workers
-	//In the process store how much of each for later.
-	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
-		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
-		if (!game.global.fighting || game.global.soldierHealth <= 0) freeWorkers -= game.resources.trimps.maxSoldiers;
-		if (getPageSetting(trimpStats.currChallenge.toLowerCase()))
-			if (game.upgrades.Coordination.done <= getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords')) {
-				nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
-				if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
-			}
-	}
 	var ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	var currentworkers = [];
 	for (var worker of ratioWorkers) {
