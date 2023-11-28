@@ -34,7 +34,7 @@ function callAutoMapLevel(settingName, mapLevel, special, maxLevel, minLevel) {
 //New setup!
 function callAutoMapLevel_new(mapName, mapLevel, special) {
 	//Figure out if we're looking for speed or loot
-	const speedSettings = ['Map Bonus', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
+	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
 	const mapType = speedSettings.indexOf(mapName) >= 0 ? 'speed' : 'overall';
 	const mapModifiers = {
 		special: special ? special : trimpStats.mapSpecial,

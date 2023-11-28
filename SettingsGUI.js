@@ -4685,7 +4685,9 @@ function challengeUnlockCheck() {
 		if (hze >= 40) challenge.push('Balance');
 		if (hze >= 45) challenge.push('Meditate');
 		if (hze >= 55) challenge.push('Decay');
+		if (hze >= 60) challenge.push('Warpstation');
 		if (hze >= 60) challenge.push('Trimp');
+		if (hze >= 60) challenge.push('Challenge 2');
 		if (hze >= 70) challenge.push('Trapper');
 		if (game.global.prisonClear >= 1) challenge.push('Electricity');
 		if (hze >= 100) challenge.push('Daily');
@@ -4720,9 +4722,9 @@ function challengeUnlockCheck() {
 			}
 		} else if (hze === 55) {
 			message = challengeUnlock('Decay', true, false);
-		} else if (hze === 60) {
+		} else if (hze === 60 && !MODULES.u1unlocks.challenge.includes('Warpstation')) {
 			message = "Upon unlocking Warpstations's the script has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.";
-		} else if (hze === 65) {
+		} else if (hze === 65 && !MODULES.u1unlocks.challenge.includes('Challenge 2')) {
 			message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under Auto Portal to be able to auto portal into them. Also you can now access the C2 tab within the the scripts settings.";
 		} else if (hze === 70) {
 			message = challengeUnlock('Trapper', false, true);
