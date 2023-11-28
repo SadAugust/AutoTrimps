@@ -189,30 +189,28 @@ function autoPortal(specificPortalZone, skipDaily) {
 
 function freeVoidPortal() {
 	MODULES.portal.portalForVoid = true;
-	if (!getPageSetting('portalVoidIncrement', 1)) MODULES.portal.portalForVoid = false;
+	const universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
+	if (!getPageSetting('portalVoidIncrement', universe)) MODULES.portal.portalForVoid = false;
 	if (game.permaBoneBonuses.voidMaps.owned < 5) MODULES.portal.portalForVoid = false;
 	if (game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
 	if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned) && game.global.canRespecPerks) MODULES.portal.portalForVoid = false;
-
+	if (checkLiqZoneCount(1) < 20) return;
 	if (MODULES.portal.portalForVoid === false) return;
-	if (checkLiqZoneCount() >= 20) {
-		debug('Portaling to increment void tracker (' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10) with liquification.'), "portal");
-		if (!game.global.canRespecPerks) debug('Portaling to refresh respec.', "portal");
-		if (MODULES.portal.portalUniverse === Infinity || (game.global.universe !== 1 && game.global.universe === MODULES.portal.portalUniverse)) {
-			if (portalUniverse !== 1) {
-				MODULES.portal.portalUniverse = game.global.universe;
-				swapPortalUniverse();
-			}
-			universeSwapped();
+
+	if (!game.global.canRespecPerks) debug('Portaling to refresh respec.', "portal");
+	if (MODULES.portal.portalUniverse === Infinity || (game.global.universe !== 1 && game.global.universe === MODULES.portal.portalUniverse)) {
+		if (portalUniverse !== 1) {
+			MODULES.portal.portalUniverse = game.global.universe;
+			while (portalUniverse !== 1) swapPortalUniverse();
 		}
-		downloadSave();
-		if (typeof pushData === 'function') pushData();
-		if (!MODULES["portal"].dontPushData) pushSpreadsheetData();
-		activatePortal();
-		return;
+		universeSwapped();
 	}
-	else
-		return;
+	downloadSave();
+	if (typeof pushData === 'function') pushData();
+	if (!MODULES["portal"].dontPushData) pushSpreadsheetData();
+	debug('Portaling to increment void tracker (' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10) with liquification.'), "portal");
+	activatePortal();
+	return;
 }
 
 function c2runnerportal(portalZone) {

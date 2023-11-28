@@ -184,8 +184,8 @@ function initializeAllSettings() {
 				description += "<p>Additionally if you finish your run without a perk respec available this setting will portal to obtain a respec.</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse !== 1 ? "On" : "Off") + "</p>";
 				return description;
-			}, 'boolean', false, null, 'Core', [0],
-			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount() >= 20) });
+			}, 'boolean', false, null, 'Core', [1, 2],
+			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount(1) >= 20) });
 		createSetting('autoPerks',
 			function () { return ('Auto Allocate Perks') },
 			function () {
@@ -6127,6 +6127,12 @@ function updateATVersion() {
 					autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = 1;
 				if (autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived === undefined)
 					autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = 1;
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.26') {
+			if (typeof (tempSettings["portalVoidIncrement"]) !== 'undefined') {
+				autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
 			}
 		}
 	}
