@@ -145,7 +145,6 @@ function heirloomInfo(type) {
 			stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.25],
 			softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200],
 			hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 400],
-			heirloopy: true
 		},
 	}
 	else if (type === 'Staff') heirloomMods = {
@@ -544,19 +543,19 @@ class Heirloom {
 	}
 
 	getStepAmount(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive("heirloopy")) || this.heirloomInfo[type].immutable) return this.heirloomInfo[type].stepAmounts[rarity];
+		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive('heirloopy')) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].stepAmounts[rarity];
 		if (game.global.universe === 2) return this.heirloomInfo[type].stepAmounts[rarity] / 10;
 		return this.heirloomInfo[type].stepAmounts[rarity];
 	}
 
 	getSoftCap(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive("heirloopy")) || this.heirloomInfo[type].immutable) return this.heirloomInfo[type].softCaps[rarity];
+		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive('heirloopy')) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].softCaps[rarity];
 		if (game.global.universe === 2) return this.heirloomInfo[type].softCaps[rarity] / 10;
 		return this.heirloomInfo[type].softCaps[rarity];
 	}
 
 	getHardCap(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive("heirloopy")) || this.heirloomInfo[type].immutable) return this.heirloomInfo[type].hardCaps[rarity];
+		if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive('heirloopy')) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].hardCaps[rarity];
 		if (game.global.universe === 2) return this.heirloomInfo[type].hardCaps[rarity] / 10;
 		return this.heirloomInfo[type].hardCaps[rarity];
 	}
@@ -590,7 +589,7 @@ class Heirloom {
 	getModValue(type) {
 		for (const mod of this.mods) {
 			if (mod[0] === type) {
-				if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive("heirloopy")) || this.heirloomInfo[type].immutable) return mod[1];
+				if ((this.heirloomInfo[type].heirloopy && Fluffy.isRewardActive('heirloopy')) || this.heirloomInfo[type].immutable || type === 'inequality') return mod[1];
 				if (game.global.universe === 2) return mod[1] / 10;
 				return mod[1];
 			}
@@ -917,6 +916,8 @@ class Heirloom {
 			if (this.hardCaps[name] && heirloom.mods[index][1] > this.hardCaps[name]) {
 				heirloom.mods[index][1] = this.hardCaps[name];
 			}
+			if (heirloom.heirloomInfo[name].heirloopy && game.global.universe === 2 && !Fluffy.isRewardActive('heirloopy'))
+				mod[1] *= 10;
 		}
 
 		return heirloom;
@@ -1127,7 +1128,8 @@ function calculate(autoUpgrade) {
 
 	const heirloomData = heirloomInfo(newHeirloom.type);
 	function getModValue(mod) {
-		if ((heirloomData[mod[0]].heirloopy && Fluffy.isRewardActive("heirloopy")) || heirloomData[mod[0]].immutable) return mod[1];
+		if ((heirloomData[mod[0]].heirloopy && Fluffy.isRewardActive('heirloopy')) || heirloomData[mod[0]].immutable || heirloomData[mod[0]].name === 'inequality')
+			return mod[1];
 		if (game.global.universe === 2) return mod[1] / 10;
 		return mod[1];
 	}
@@ -1137,8 +1139,7 @@ function calculate(autoUpgrade) {
 		for (var y = 0; y < newHeirloom.mods.length; y++) {
 			if (newHeirloom.purchases[y] === 0) continue;
 			modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split("(")[0];
-			var modValue = precisionRoundMod(getModValue(newHeirloom.mods[y]), 2);
-			if (modDetails.includes('Inequality') && game.global.universe === 2) modValue /= 10;
+			var modValue = precisionRoundMod(getModValue(newHeirloom.mods[y]), 3);
 			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails} (${modValue}% +${newHeirloom.purchases[y]})`;
 		}
 	}
