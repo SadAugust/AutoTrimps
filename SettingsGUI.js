@@ -4661,7 +4661,7 @@ function autoPortalChallenges(runType = 'autoPortal') {
 
 //Checks to see if we should inform the user of any new challenge unlocks.
 function challengeUnlockCheck() {
-	if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+	//if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
 	var challenge = ['None'];
 
 	function challengeUnlock(challenge, setting, c2) {
@@ -4688,6 +4688,7 @@ function challengeUnlockCheck() {
 		if (hze >= 60) challenge.push('Trimp');
 		if (hze >= 70) challenge.push('Trapper');
 		if (game.global.prisonClear >= 1) challenge.push('Electricity');
+		if (hze >= 100) challenge.push('Daily');
 		if (hze >= 110) challenge.push('Life');
 		if (hze >= 120) challenge.push('Coordinate');
 		if (hze >= 125) challenge.push('Crushed');
@@ -4697,6 +4698,8 @@ function challengeUnlockCheck() {
 		if (hze >= 165) challenge.push('Toxicity');
 		if (hze >= 180) challenge.push('Watch');
 		if (hze >= 180) challenge.push('Lead');
+		if (hze >= 230) challenge.push('Dimensional Generator');
+		if (hze >= 236) challenge.push('Nature');
 		if (hze >= 215) challenge.push('Domination');
 		if (hze >= 425) challenge.push('Obliterated');
 		if (game.global.totalSquaredReward >= 4500) challenge.push('Eradicated');
@@ -4711,8 +4714,10 @@ function challengeUnlockCheck() {
 		var message = '';
 		if (hze === 40) {
 			message = challengeUnlock('Balance', false, false);
-			message += '<br><br>'
-			message = "Upon unlocking Balance the script has a new settings tab available called 'Challenge'. Here you will find a variety of settings that might be beneficial when running this challenge.";
+			if (message !== '') {
+				message += '<br><br>'
+				message = "Upon unlocking Balance the script has a new settings tab available called 'Challenge'. Here you will find a variety of settings that might be beneficial when running this challenge.";
+			}
 		} else if (hze === 55) {
 			message = challengeUnlock('Decay', true, false);
 		} else if (hze === 60) {
@@ -4721,11 +4726,13 @@ function challengeUnlockCheck() {
 			message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under Auto Portal to be able to auto portal into them. Also you can now access the C2 tab within the the scripts settings.";
 		} else if (hze === 70) {
 			message = challengeUnlock('Trapper', false, true);
-			message += "<br><br>"
-			message = "Upon unlocking Geneticist's the script has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
+			if (message !== '') {
+				message += "<br><br>"
+				message = "Upon unlocking Geneticist's the script has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
+			}
 		} else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge.includes('Electricity')) {
 			message = challengeUnlock('Electricity', false, true);
-		} else if (hze === 100) {
+		} else if (hze === 100 && !MODULES.u1unlocks.challenge.includes('Daily')) {
 			message = "You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.";
 		} else if (hze === 110) {
 			message = challengeUnlock('Life', true, false);
@@ -4749,9 +4756,9 @@ function challengeUnlockCheck() {
 			message = challengeUnlock('Corrupted', false, true);
 		} else if (hze === 215) {
 			message = challengeUnlock('Domination', false, true);
-		} else if (hze === 230) {
+		} else if (hze === 230 && !MODULES.u1unlocks.challenge.includes('Dimensional Generator')) {
 			message = "Upon unlocking the Dimensional Generator building the script has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
-		} else if (hze === 236) {
+		} else if (hze === 236 && !MODULES.u1unlocks.challenge.includes('Nature')) {
 			message = "Upon unlocking Nature, AutoTrimps has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
 		} else if (hze === 425) {
 			message = challengeUnlock('Obliterated', false, true);
@@ -4770,6 +4777,7 @@ function challengeUnlockCheck() {
 		if (hze >= 15) challenge.push('Unlucky');
 		if (hze >= 20) challenge.push('Downsize');
 		if (hze >= 25) challenge.push('Transmute');
+		if (hze >= 35) challenge.push('Daily');
 		if (hze >= 35) challenge.push('Unbalance');
 		if (hze >= 40) challenge.push('Bublé');
 		if (hze >= 45) challenge.push('Duel');
@@ -4798,10 +4806,10 @@ function challengeUnlockCheck() {
 
 		var message = '';
 		//Transmute
-		if (hze === 25) {
+		if (hze === 25 && !MODULES.u2unlocks.challenge.includes('Transmute')) {
 			message = "You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.";
 		} //Dailies
-		else if (hze === 30) {
+		else if (hze === 30 && !MODULES.u2unlocks.challenge.includes('Daily')) {
 			message = "You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.";
 		} //Unblance
 		else if (hze === 35) {
@@ -4814,14 +4822,16 @@ function challengeUnlockCheck() {
 			message = challengeUnlock('Bublé');
 		} //C3, Melt, Worshippers
 		else if (hze === 50) {
-			//C3
-			message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under Auto Portal to be able to auto portal into them. Also you can now access the " + cinf() + " tab within the the scripts settings.";
-			message += "<br><br>"
 			//Melt
-			message += challengeUnlock('Melt');
-			message += "<br><br>"
-			//Worshippers
-			message += "You can now use the Worshipper Farm setting. This can be found in the the scripts 'Maps' tab.";
+			message = challengeUnlock('Melt');
+			if (message !== '') {
+				message += "<br><br>"
+				//C3
+				message += "Due to unlocking Challenge 3's there is now a Challenge 3 option under Auto Portal to be able to auto portal into them. Also you can now access the " + cinf() + " tab within the the scripts settings.";
+				if (message !== '') message += "<br><br>"
+				//Worshippers
+				message += "You can now use the Worshipper Farm setting. This can be found in the the scripts 'Maps' tab.";
+			}
 		} //Trappapalooza
 		else if (hze === 60) {
 			message = challengeUnlock('Trappapalooza', true, true);
@@ -4850,7 +4860,8 @@ function challengeUnlockCheck() {
 			message = challengeUnlock('Berserk');
 		} //Nurture
 		else if (hze === 135) {
-			message = challengeUnlock('Nurture', false, false) + " There is also setting for Laboratory's that has been added to the AutoStructure setting.";
+			message = challengeUnlock('Nurture', false, false);
+			if (message !== '') message += " There is also setting for Laboratory's that has been added to the AutoStructure setting.";
 		} //Pandemonium
 		else if (hze === 150) {
 			message = challengeUnlock('Pandemonium', true, true);
@@ -4860,7 +4871,7 @@ function challengeUnlockCheck() {
 		} //Hypothermia
 		else if (hze === 175) {
 			message = challengeUnlock('Hypothermia', true, false);
-			message += "<br><br>"
+			if (message !== '') message += "<br><br>"
 			//Glass
 			message += challengeUnlock('Glass', true, true);
 		} //Desolation
