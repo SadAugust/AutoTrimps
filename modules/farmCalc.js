@@ -615,6 +615,13 @@ function simulate(saveData, zone) {
 		return seed * rand_mult;
 	}
 
+	function armyDead() {
+		if (saveData.runningQuest)
+			return energyShield <= 0;
+		else
+			return trimpHealth <= 0;
+	}
+
 	var oneShot = true;
 	const angelic = mastery('angelic');
 	const runningDevastation = challengeActive('Devastation') || challengeActive('Revenge');
@@ -766,7 +773,7 @@ function simulate(saveData, zone) {
 				enemy_hit(enemyAttack);
 
 			// Trimp attack
-			if (trimpHealth >= 1) {
+			if (!armyDead()) {
 				ok_spread = saveData.ok_spread;
 				var trimpAttack = saveData.atk;
 				if (!runningUnlucky) trimpAttack *= (1 + saveData.range * rng())
@@ -790,7 +797,7 @@ function simulate(saveData, zone) {
 			}
 
 			// Slow enemy attack
-			if (!fast && enemyHealth >= 1 && trimpHealth >= 1)
+			if (!fast && enemyHealth >= 1 && !armyDead())
 				enemy_hit(enemyAttack);
 
 			// Mayhem poison
@@ -800,7 +807,7 @@ function simulate(saveData, zone) {
 			if (enemyHealth >= 1) {
 				if (runningGlass) glassStacks++;
 				// Gamma Burst
-				if (trimpHealth >= 1 && saveData.gammaMult > 1) {
+				if (!armyDead() && saveData.gammaMult > 1) {
 					gammaStacks++;
 					if (gammaStacks >= saveData.gammaCharges) {
 						gammaStacks = 0;
@@ -834,7 +841,7 @@ function simulate(saveData, zone) {
 			}
 
 			// Trimp death
-			if (trimpHealth < 1) {
+			if (armyDead()) {
 				ticks += Math.ceil(turns * saveData.speed);
 				ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
 				last_group_sent = ticks;
@@ -854,8 +861,8 @@ function simulate(saveData, zone) {
 				debuff_stacks = 0;
 				gammaStacks = 0;
 
-				//Stop it from getting Infinity glass stacks
-				if (runningGlass && glassStacks >= 10000)
+				//Stop it from getting Infinity glass stacks OR if you die on a shieldbreak challenge/quest
+				if (saveData.runningQuest || (runningGlass && glassStacks >= 10000))
 					ticks = max_ticks;
 				//Amp enemy dmg and health by 25% per stack
 				if (saveData.nom) {
@@ -895,7 +902,7 @@ function simulate(saveData, zone) {
 			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 		}
 		++cell;
-		if (cell == saveData.size) {
+		if (cell === saveData.size) {
 			cell = 0;
 			plague_damage = 0;
 			ok_damage = 0;
