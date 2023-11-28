@@ -598,7 +598,7 @@ function autoMap() {
 		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
 
 	//Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
-	if (uniqueMapsToGet.length > 0)
+	if (!runUnique && uniqueMapsToGet.length > 0)
 		mapSettings = obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
 
 	//Telling AT to create a map or setting void map as map to be run.
