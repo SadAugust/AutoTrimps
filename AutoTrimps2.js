@@ -282,7 +282,6 @@ function toggleCatchUpMode() {
 
 			//Run mainLoop every n game loops and always on a new zone.
 			if (loops % loopFrequency === 0 || atSettings.portal.aWholeNewWorld) {
-				//console.log(loops + " " + loopFrequency + " " + atSettings.portal.aWholeNewWorld + " " + game.global.world)
 				mainLoop();
 			}
 			else if (atSettings.intervals.thirtySecond) {

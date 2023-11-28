@@ -206,6 +206,7 @@ function buyUpgrades() {
 		}
 		//Other
 		else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
+		//Prioritise Science/scientist upgrades
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld) {
 			if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed) continue;
 			if (game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
