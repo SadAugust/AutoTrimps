@@ -511,7 +511,19 @@ function populateZFarmData() {
 		mapBiome: biome,
 
 		//Challenge Conditions
-		runningQuest: runningQuest,
+		angelic: mastery('angelic'),
+		devastation: challengeActive('Devastation') || challengeActive('Revenge'),
+		domination: challengeActive('Domination'),
+		frigid: challengeActive('Frigid'),
+
+		unlucky: challengeActive('Unlucky'),
+		duel: challengeActive('Duel'),
+		wither: challengeActive('Wither'),
+		quest: runningQuest,
+		mayhem: challengeActive('Mayhem'),
+		berserk: challengeActive('Berserk'),
+		glass: challengeActive('Glass'),
+		desolation: challengeActive('Desolation'),
 
 		//Death Info
 		...death_stuff
@@ -604,6 +616,9 @@ function simulate(saveData, zone) {
 	var glassStacks = game.challenges.Glass.shards;
 	var universe = saveData.universe;
 	var magma = saveData.magma;
+	var oneShot = true;
+	var hasWithered = false;
+	var equality = 1;
 
 	var seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
@@ -616,28 +631,11 @@ function simulate(saveData, zone) {
 	}
 
 	function armyDead() {
-		if (saveData.runningQuest)
+		if (saveData.quest)
 			return energyShield <= 0;
 		else
 			return trimpHealth <= 0;
 	}
-
-	var oneShot = true;
-	const angelic = mastery('angelic');
-	const runningDevastation = challengeActive('Devastation') || challengeActive('Revenge');
-	const runningDomination = challengeActive('Domination');
-	const runningFrigid = challengeActive('Frigid');
-
-	const runningUnlucky = challengeActive('Unlucky');
-	const runningDuel = challengeActive('Duel');
-	const runningWither = challengeActive('Wither');
-	var hasWithered = false;
-	const runningMayhem = challengeActive('Mayhem');
-	const runningBerserk = challengeActive('Berserk');
-	const runningGlass = challengeActive('Glass');
-	const runningDesolation = challengeActive('Desolation');
-
-	var equality = 1;
 	if (universe === 2) {
 		var enemyName = 'Snimp';
 		if (challengeActive('Insanity')) enemyName = 'Horrimp';
@@ -657,7 +655,7 @@ function simulate(saveData, zone) {
 			enemyAttack *= calcCorruptionScale(zone, 3) / 2;
 
 		cell++;
-		if (runningDomination) {
+		if (saveData.domination) {
 			if (cell === saveData.size) {
 				enemyAttack *= 2.5;
 				enemyHealth *= 7.5;
@@ -671,7 +669,7 @@ function simulate(saveData, zone) {
 	}
 
 	function reduceTrimpHealth(amt, directHit) {
-		if (runningMayhem) mayhemPoison += (amt * .2);
+		if (saveData.mayhem) mayhemPoison += (amt * .2);
 		if (!directHit && universe === 2) {
 			var initialShield = energyShield;
 			energyShield -= amt;
@@ -682,7 +680,7 @@ function simulate(saveData, zone) {
 			amt -= saveData.block;
 		}
 
-		if (runningFrigid && amt >= (saveData.trimpHealth / 5)) {
+		if (saveData.frigid && amt >= (saveData.trimpHealth / 5)) {
 			amt = saveData.trimpHealth;
 		}
 
@@ -695,7 +693,7 @@ function simulate(saveData, zone) {
 		enemyAtk *= (1 + saveData.fluctuation * (2 * rng() - 1));
 		//Enemy crit chance
 		var enemyCC = 0.25;
-		if (runningDuel) {
+		if (saveData.duel) {
 			enemyCC = duelPoints / 100;
 			if (duelPoints < 50) enemyAtk *= 3;
 		}
@@ -720,12 +718,12 @@ function simulate(saveData, zone) {
 		var enemyAttack = imp_stats[0] * atk_array[cell];
 		var enemyHealth = imp_stats[1] * hp_array[cell];
 		var enemy_max_hp = enemyHealth;
-		var fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || runningDesolation || (runningDuel && duelPoints > 90);
+		var fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
 		var trimpCrit = false;
 		var enemyCrit = false;
 		trimpOverkill = 0;
 		//Add in the mult from glass stacks as they need to be adjusted every enemy
-		if (runningGlass)
+		if (saveData.glass)
 			enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 
 		if (ok_spread !== 0) {
@@ -736,7 +734,7 @@ function simulate(saveData, zone) {
 		plague_damage = 0;
 		energyShield = energyShieldMax;
 		var turns = 0;
-		if (runningDuel && duelPoints > 80) {
+		if (saveData.duel && duelPoints > 80) {
 			enemyHealth *= 10;
 		}
 		while (enemyHealth >= 1 && ticks < max_ticks) {
@@ -746,14 +744,14 @@ function simulate(saveData, zone) {
 			//Check for if we didn't kill the enemy last turn
 			if (enemyHealth !== enemy_max_hp) {
 				oneShot = false;
-				if (runningWither) {
+				if (saveData.wither) {
 					enemyHealth = Math.max(enemy_max_hp, enemyHealth + (enemy_max_hp * .25));
 					if (enemyHealth === enemy_max_hp) {
 						hasWithered = true;
 						trimpHealth = 0;
 					}
 				}
-				if (runningGlass) {
+				if (saveData.glass) {
 					enemyAttack /= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 					glassStacks++;
 					enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
@@ -763,7 +761,7 @@ function simulate(saveData, zone) {
 				oneShot = true;
 			}
 			//Angelic talent heal
-			if (angelic && !runningBerserk) {
+			if (saveData.angelic && !saveData.berserk) {
 				trimpHealth += (saveData.trimpHealth / 2);
 				if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 			}
@@ -776,8 +774,8 @@ function simulate(saveData, zone) {
 			if (!armyDead()) {
 				ok_spread = saveData.ok_spread;
 				var trimpAttack = saveData.atk;
-				if (!runningUnlucky) trimpAttack *= (1 + saveData.range * rng())
-				if (runningDuel) {
+				if (!saveData.unlucky) trimpAttack *= (1 + saveData.range * rng())
+				if (saveData.duel) {
 					saveData.critChance = 1 - (duelPoints / 100);
 					if (duelPoints > 50) trimpAttack *= 3;
 				}
@@ -801,11 +799,11 @@ function simulate(saveData, zone) {
 				enemy_hit(enemyAttack);
 
 			// Mayhem poison
-			if (runningMayhem && mayhemPoison >= 1)
+			if (saveData.mayhem && mayhemPoison >= 1)
 				trimpHealth -= mayhemPoison;
 
 			if (enemyHealth >= 1) {
-				if (runningGlass) glassStacks++;
+				if (saveData.glass) glassStacks++;
 				// Gamma Burst
 				if (!armyDead() && saveData.gammaMult > 1) {
 					gammaStacks++;
@@ -824,7 +822,7 @@ function simulate(saveData, zone) {
 			if (saveData.plague) trimpHealth -= debuff_stacks * saveData.plague * saveData.max_hp;
 
 			//+1 point for crits, +2 points for killing, +5 for oneshots
-			if (runningDuel) {
+			if (saveData.duel) {
 				if (enemyCrit) duelPoints--;
 				if (trimpCrit) duelPoints++;
 				//Trimps
@@ -850,9 +848,9 @@ function simulate(saveData, zone) {
 				energyShield = energyShieldMax;
 				mayhemPoison = 0;
 
-				if (runningDevastation) reduceTrimpHealth(trimpOverkill * 7.5);
-				if (runningWither && hasWithered) trimpHealth *= 0.5;
-				if (runningDuel && 100 - duelPoints < 20) {
+				if (saveData.devastation) reduceTrimpHealth(trimpOverkill * 7.5);
+				if (saveData.wither && hasWithered) trimpHealth *= 0.5;
+				if (saveData.duel && 100 - duelPoints < 20) {
 					trimpHealth *= 10;
 					energyShield *= 10;
 				}
@@ -862,7 +860,7 @@ function simulate(saveData, zone) {
 				gammaStacks = 0;
 
 				//Stop it from getting Infinity glass stacks OR if you die on a shieldbreak challenge/quest
-				if (saveData.runningQuest || (runningGlass && glassStacks >= 10000))
+				if (saveData.quest || (saveData.glass && glassStacks >= 10000))
 					ticks = max_ticks;
 				//Amp enemy dmg and health by 25% per stack
 				if (saveData.nom) {
@@ -893,11 +891,11 @@ function simulate(saveData, zone) {
 			if (saveData.transfer > 0) ice = Math.ceil(saveData.transfer * ice) + 1 + Math.ceil((turns - 1) * saveData.plaguebringer);
 		}
 
-		if (runningGlass) {
+		if (saveData.glass) {
 			if (zone >= saveData.zone) glassStacks -= 2;
 			glassStacks = Math.max(0, glassStacks);
 		}
-		if (runningBerserk) { //1% heal onkill
+		if (saveData.berserk) { //1% heal onkill
 			trimpHealth += (saveData.trimpHealth / 100);
 			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 		}

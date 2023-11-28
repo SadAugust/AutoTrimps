@@ -276,13 +276,13 @@ function toggleCatchUpMode() {
 			if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 			updateInterval();
 			var loopFrequency = getPageSetting('timeWarpFrequency');
-			var newZone = atSettings.portal.lastrunworld !== game.global.world;
-			if (newZone) mainCleanup();
+			mainCleanup();
 			if (game.global.mapsActive && getPageSetting('timeWarpDisplay') && usingRealTimeOffline)
 				game.global.mapStarted -= 100;
 
 			//Run mainLoop every n game loops and always on a new zone.
-			if (loops % loopFrequency === 0 || newZone) {
+			if (loops % loopFrequency === 0 || atSettings.portal.aWholeNewWorld) {
+				//console.log(loops + " " + loopFrequency + " " + atSettings.portal.aWholeNewWorld + " " + game.global.world)
 				mainLoop();
 			}
 			else if (atSettings.intervals.thirtySecond) {
@@ -337,7 +337,7 @@ function toggleCatchUpMode() {
 			autoMap();
 			callBetterAutoFight();
 			autoPortalCheck();
-			if (loops % 10 === 0 || newZone) updateAutoMapsStatus();
+			if (loops % 10 === 0 || atSettings.portal.aWholeNewWorld) updateAutoMapsStatus();
 			if (game.global.universe === 1) checkStanceSetting();
 			if (game.global.universe === 2) equalityManagement();
 			guiLoop();
@@ -413,7 +413,7 @@ function mainLoop() {
 		atVersionChecker();
 
 	//This needs to be run here so that any variables that are reset at the start of a zone are reset before hdStats and mapSettings variables are updated.
-	mainCleanup();
+	if (shouldRunInTimeWarp()) mainCleanup();
 
 	if (atSettings.intervals.oneSecond) {
 		trimpStats = new TrimpStats();

@@ -187,7 +187,6 @@ function buyUpgrades() {
 		var gameUpgrade = game.upgrades[upgrade];
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
 		if (!available) continue;
-		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('buildingsType') === 0);
 		if (upgrade === 'Coordination') {
 			//Coord & Amals
 			if (upgradeSetting === 2 || !canAffordCoordinationTrimps()) continue;
@@ -198,19 +197,19 @@ function buyUpgrades() {
 			}
 		}
 		//Gigastations
-		if (upgrade === 'Gigastation' && !fuckbuildinggiga) {
-			if (getPageSetting("autoGigas") && game.upgrades.Gigastation.done === 0 && !firstGiga()) continue;
-			else if (game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation'))) continue;
+		else if (upgrade === 'Gigastation') {
+			if (!getPageSetting('buildingsType')) continue;
+			if (!bwRewardUnlocked('DecaBuild')) {
+				if (getPageSetting('autoGigas') && game.upgrades.Gigastation.done === 0 && !firstGiga()) continue;
+				else if ((game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('firstGigastation'))) continue;
+			}
 		}
-
-		if (upgrade === 'Gigastation' && !getPageSetting('buildingsType')) continue;
 		//Other
-		if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
-		if (upgrade === 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('firstGigastation'))) continue;
-		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners') {
-			if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade !== 'Scientists') continue;
-			if (upgrade !== 'Scientists' && game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
-			if (upgrade !== 'Scientists' && game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
+		else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
+		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld) {
+			if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed) continue;
+			if (game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
+			if (game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
 		}
 		buyUpgrade(upgrade, true, true);
 		debug('Upgraded ' + upgrade, "upgrades", "*upload2");
