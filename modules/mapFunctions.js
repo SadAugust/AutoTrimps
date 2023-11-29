@@ -157,7 +157,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
 			const currChallenge = trimpStats.currChallenge.toLowerCase();
 			var smithyGoal = Infinity;
-			if ((currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge + 'MP') > 0)
+			if (['mayhem', 'pandemonium', 'desolation'].indexOf(currChallenge) >= 0 && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0)
 				smithyGoal = getPageSetting(currChallenge + 'MP');
 			else if (trimpStats.isC3 && uniqueMapSetting["MP Smithy C3"].enabled && uniqueMapSetting["MP Smithy C3"].value > 0)
 				smithyGoal = uniqueMapSetting["MP Smithy C3"].value;
@@ -165,7 +165,6 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 				smithyGoal = uniqueMapSetting["MP Smithy Daily"].value;
 			else if (trimpStats.isFiller && uniqueMapSetting["MP Smithy"].enabled && uniqueMapSetting["MP Smithy"].value > 0)
 				smithyGoal = uniqueMapSetting["MP Smithy"].value;
-
 			if (smithyGoal <= game.buildings.Smithy.owned) return true;
 			return false;
 		},

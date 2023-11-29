@@ -209,8 +209,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			//Adding in Smithy Settings if in u2
 			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy");
-			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy_Daily");
-			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy_C3");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy Daily");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy C3");
 		}
 
 		for (var x = 0; x < mapUnlocks.length; x++) {
