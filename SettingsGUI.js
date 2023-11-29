@@ -415,6 +415,17 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Core', [1],
 			function () { return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && game.stats.highestLevel.valueTotal() >= 170) });
 
+		createSetting('autoPortalUniverseSwap',
+			function () { return ('Swap To Next Universe') },
+			function () {
+				var description = "<p>Will automatically swap to the next available universe when auto portaling.</p>";
+				description += "<p><b>You <b>must</b> have Auto Portal setup in both the current <b>and</b> following universe or Auto Portal will contiunue to portal into your current universe.</p>";
+				description += "<p><b>If enabled in all available universes it will portal into universe 1.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Core', [1, 2],
+			function () { return (Fluffy.checkU2Allowed()) });
+
 		//Pause + Switch
 		createSetting('pauseScript',
 			function () { return ('Pause AutoTrimps') },

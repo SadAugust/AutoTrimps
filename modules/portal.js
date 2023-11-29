@@ -25,7 +25,7 @@ function getHeliumPerHour() {
 //Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
 function autoPortalCheck(specificPortalZone) {
 	if (!game.global.portalActive) return;
-	if (game.global.runningChallengeSquared) c2runnerportal(specificPortalZone);
+	if (game.global.runningChallengeSquared) c2RunnerPortal(specificPortalZone);
 	else autoPortal(specificPortalZone);
 }
 
@@ -35,10 +35,12 @@ function autoPortal(specificPortalZone, skipDaily) {
 	if (game.global.runningChallengeSquared) return;
 	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 	const runningDaily = challengeActive('Daily');
+	dontPortal = false;
 	if (!MODULES.portal.portalForVoid && !runningDaily && getPageSetting('autoPortal', universe) === 'Off') return;
 	if (!MODULES.portal.portalForVoid && runningDaily && getPageSetting('dailyPortal', universe) === '0') return;
 
 	//Setting up base portalZone for both regular runs & daily runs if in one
+	//Doesn't factor in universe as we only care about the universe that we're currently in, not the one we want to be in
 	var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : Infinity;
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
 	if (!runningDaily && getPageSetting('autoPortal', universe).includes('Hour')) portalZone = Infinity;
@@ -47,6 +49,19 @@ function autoPortal(specificPortalZone, skipDaily) {
 	if (runningDaily) {
 		portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
 		if (getPageSetting('dailyPortal', universe) === 1) portalZone = Infinity;
+	}
+
+	//Swap to next universe setting. Setup to allow for more universes in the future.
+	if (Fluffy.checkU2Allowed()) {
+		var newUniverse = universe;
+		while (getPageSetting('autoPortalUniverseSwap', newUniverse)) {
+			newUniverse++;
+			if (newUniverse > 2) {
+				newUniverse = 1;
+				break
+			};
+		}
+		if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
 	}
 
 	if (specificPortalZone) portalZone = specificPortalZone;
@@ -180,7 +195,6 @@ function autoPortal(specificPortalZone, skipDaily) {
 			doPortal(challengeSelected, skipDaily);
 		}
 	}
-
 	if (challenge === 'Off') challenge = 0;
 
 	if (challenge !== 'None')
@@ -194,12 +208,12 @@ function freeVoidPortal() {
 	if (game.permaBoneBonuses.voidMaps.owned < 5) MODULES.portal.portalForVoid = false;
 	if (game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
 	if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned) && game.global.canRespecPerks) MODULES.portal.portalForVoid = false;
-	if (checkLiqZoneCount(1) < 20) return;
+	if (checkLiqZoneCount(1) < 20) MODULES.portal.portalForVoid = false;
 	if (MODULES.portal.portalForVoid === false) return;
 
 	if (!game.global.canRespecPerks) debug('Portaling to refresh respec.', "portal");
 	if (MODULES.portal.portalUniverse === Infinity || (game.global.universe !== 1 && game.global.universe === MODULES.portal.portalUniverse)) {
-		if (portalUniverse !== 1) {
+		if (portalUniverse !== 1) { //If we're not in U1 then we need to swap to U1 to portal.
 			MODULES.portal.portalUniverse = game.global.universe;
 			while (portalUniverse !== 1) swapPortalUniverse();
 		}
@@ -213,31 +227,23 @@ function freeVoidPortal() {
 	return;
 }
 
-function c2runnerportal(portalZone) {
+function c2RunnerPortal(portalZone) {
 	if (!game.global.runningChallengeSquared) return;
 
-	function c2Portal() {
-		if (getPageSetting('heliumHourChallenge') !== 'None')
-			doPortal(getPageSetting('heliumHourChallenge'));
-		else
-			doPortal();
-	}
-
-	if (portalZone) {
-		c2Portal();
+	if (game.global.world >= portalZone) {
+		finishChallengeSquared();
+		autoPortal(portalZone);
 		return;
 	}
 
-	if (!portalZone)
-		portalZone = c2FinishZone();
-
+	if (!portalZone) portalZone = c2FinishZone();
 	if (portalZone <= 0) portalZone = Infinity;
 
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared();
 		//Only portal automatically if using C2 Runner Pct input.
 		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
-			c2Portal();
+			autoPortal(portalZone);
 		}
 	}
 	return;

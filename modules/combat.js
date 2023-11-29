@@ -250,7 +250,7 @@ function equalityManagement() {
 	const runningUnlucky = challengeActive('Unlucky');
 	const runningDuel = challengeActive('Duel');
 	const runningTrappa = challengeActive('Trappapalooza');
-	const runningQuest = (challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'); //Shield break quest
+	const shieldBreak = (challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'); //Shield break quest
 	const runningRevenge = challengeActive('Revenge');
 	const runningArchaeology = challengeActive('Archaeology');
 	const runningMayhem = challengeActive('Mayhem');
@@ -274,7 +274,7 @@ function equalityManagement() {
 	const noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 	const angelicOwned = game.talents.angelic.purchased;
 	//Challenges/conditions where it's important to keep armies alive through angelic.
-	const angelicDance = angelicOwned && (runningTrappa || runningQuest || runningArchaeology || runningBerserk || noFrenzy);
+	const angelicDance = angelicOwned && (runningTrappa || runningArchaeology || runningBerserk || noFrenzy || (dailyEmpower && !mapping));
 	const plagueShield = (MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming) ? getHeirloomBonus('Shield', 'plaguebringer') > 0 : false;
 
 	//Gamma burst info
@@ -289,9 +289,10 @@ function equalityManagement() {
 	const dmgType = runningUnlucky ? 'max' : 'avg';
 	const critType = challengeActive('Wither') || challengeActive('Glass') ? 'never' : 'maybe';
 
-	const ourHealthMax = calcOurHealth(runningQuest, type);
-	var ourHealth = remainingHealth(angelicDance, type);
-	if (dailyEmpower) ourHealth *= 0.98;
+	//Returns only shield if running a shieldBraek challenge/quest
+	const ourShieldMax = calcOurHealth(true, type);
+	var ourHealth = remainingHealth(shieldBreak, angelicDance, type);
+	const ourShield = remainingHealth(true, false, type);
 
 	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
 	var ourDmgMax = 0;
@@ -320,11 +321,12 @@ function equalityManagement() {
 	var enemyDmg = getCurrentEnemy().attack * enemyDamageModifiers() * 1.5;
 	var enemyDmgEquality = 0;
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
+	var enemyDmgMax = enemyDmg * Math.pow(enemyEqualityModifier, maxEquality);
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 
 	//Void Map Modifiers
 	if (game.global.voidBuff === 'doubleAttack') enemyDamageMult += 2;
-	if (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) enemyDamageMult += 5;
+	if (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || shieldBreak)) enemyDamageMult += 5;
 	//Daily Modifiers
 	//Empower related modifiers in world
 	if ((dailyEmpowerToggle && !mapping) || MODULES.maps.slowScumming) {
@@ -352,7 +354,7 @@ function equalityManagement() {
 		else if (runningArchaeology) fastEnemy = true;
 		else if (runningTrappa) fastEnemy = true;
 		else if (runningDuel && !mapping) fastEnemy = true;
-		else if (runningQuest) fastEnemy = true;
+		else if (shieldBreak) fastEnemy = true;
 		else if (runningExperienced) fastEnemy = false;
 		else if (runningGlass) fastEnemy = true;
 		else if (runningBerserk) fastEnemy = true;
@@ -389,6 +391,18 @@ function equalityManagement() {
 			return;
 		}
 	}
+
+	//Suicide army to reset health if it isn't efficient to keep it alive any longer.
+	//Checks to see if health 0 OR new army is ready OR shieldbreak condition OR daily empower is active and not mapping
+	//Our shield is at 75% or less of its max
+	//Have the same gamma stacks as it takes to proc it (so have already gamma bursted OR cant gamma burst)
+	//Won't suicide on trappa, arch, berserk challenges
+	var shouldSuicide = (ourHealth === 0 || armyReady || (dailyEmpower && !mapping) || shieldBreak);
+	if (gammaToTrigger !== gammaMaxStacksCheck) shouldSuicide = false;
+	if ((ourShield > ourShieldMax * 0.75)) shouldSuicide = false;
+	if (runningTrappa || runningArchaeology || runningBerserk) shouldSuicide = false;
+	//Override shouldSuicide if we can't survive an attack against enemies max dmg with our current health
+	if ((shieldBreak || (dailyEmpower && !mapping)) && enemyDmgMax >= ourHealth) shouldSuicide = true;
 
 	if (enemyHealth > 0) {
 		//Loop through equality levels to find the ideal point to kill the enemy
@@ -441,13 +455,12 @@ function equalityManagement() {
 					}
 				}
 			}
-			//Suiciding our army to reset health as it isn't efficient to keep it alive.
-			if (ourHealth === 0 || (armyReady || (dailyEmpower && !mapping)) && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.90 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			if (shouldSuicide) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					suicideTrimps(true);
 					suicideTrimps(true);
 				}
-				else if (mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && (!runningQuest && game.global.titimpLeft === 0)) {
+				else if (mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && game.global.titimpLeft === 0) {
 					suicideTrimps(true);
 					runMap_AT();
 				}

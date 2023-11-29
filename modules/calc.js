@@ -2013,17 +2013,14 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	}
 }
 
-function remainingHealth(forceAngelic, mapType) {
-	if (!forceAngelic) forceAngelic = false;
-	if (!mapType) mapType = 'world';
-	var heirloomToCheck = heirloomShieldToEquip(mapType);
-
+function remainingHealth(shieldBreak = false, angelic = false, mapType = 'world') {
+	const heirloomToCheck = heirloomShieldToEquip(mapType);
 	const correctHeirloom = heirloomToCheck !== undefined ? getPageSetting(heirloomToCheck) === game.global.ShieldEquipped.name : true;
 	const currentShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true) / 100;
 	const newShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) / 100;
 
-	var soldierHealth = game.global.soldierHealth;
 	var soldierHealthMax = game.global.soldierHealthMax;
+	var soldierHealth = game.global.soldierHealth;
 	var shieldHealth = 0;
 
 	//Fix our health to the correct new value if we are changing heirlooms
@@ -2033,20 +2030,19 @@ function remainingHealth(forceAngelic, mapType) {
 		soldierHealthMax /= 1 + currentShield;
 		soldierHealthMax *= 1 + newShield;
 	}
-
+	//Work out what our shield percentage is.
 	if (game.global.universe === 2) {
 		var maxLayers = Fluffy.isRewardActive('shieldlayer');
 		var layers = maxLayers - game.global.shieldLayersUsed;
-
 		var shieldMax = game.global.soldierEnergyShieldMax;
 		var shieldCurr = game.global.soldierEnergyShield;
 
 		//Fix our shield to the correct new value if we are changing heirlooms
 		if (!correctHeirloom) {
-			energyShieldMult = getEnergyShieldMult_AT(mapType, true);
+			const energyShieldMult = getEnergyShieldMult_AT(mapType, true);
 			const newShieldMult = getHeirloomBonus_AT('Shield', 'prismatic', heirloomToCheck) / 100;
 			const shieldPrismatic = newShieldMult > 0 ? energyShieldMult + newShieldMult : energyShieldMult;
-			currShieldPrismatic = energyShieldMult + getHeirloomBonus('Shield', 'prismatic') / 100;
+			const currShieldPrismatic = energyShieldMult + getHeirloomBonus('Shield', 'prismatic') / 100;
 
 			if (currShieldPrismatic > 0) shieldMax /= currShieldPrismatic;
 			shieldMax *= shieldPrismatic;
@@ -2059,12 +2055,10 @@ function remainingHealth(forceAngelic, mapType) {
 		if (maxLayers > 0) {
 			var i;
 			for (i = 0; i <= maxLayers; i++) {
-				if (layers !== maxLayers && i > layers) {
+				if (layers !== maxLayers && i > layers)
 					continue;
-				}
-				if (i === maxLayers - layers) {
+				if (i === maxLayers - layers)
 					shieldHealth += shieldMax;
-				}
 				else
 					shieldHealth += shieldCurr;
 			}
@@ -2077,18 +2071,12 @@ function remainingHealth(forceAngelic, mapType) {
 	//Subtracting Plauge daily mod from health
 	if (typeof game.global.dailyChallenge.plague !== 'undefined')
 		soldierHealth -= soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks);
-
-	var remainingHealth = shieldHealth + (forceAngelic ? soldierHealth * .33 : soldierHealth);
-	if ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'))
-		remainingHealth = shieldHealth;
-	if (shieldHealth + soldierHealth === 0) {
-		remainingHealth = soldierHealthMax + (shieldMax * (maxLayers + 1))
-		if ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'))
-			remainingHealth = shieldMax * (maxLayers + 1);
-	}
-
+	//If already dead or need to die due to plague debuff then return 0
 	if (soldierHealth <= 0) return 0;
-	return (remainingHealth)
+
+	if (angelic) soldierHealth *= 0.33;
+	if (shieldBreak) return shieldHealth;
+	return shieldHealth + soldierHealth;
 }
 
 //Make the gametime checks factor in how long you've been paused for
