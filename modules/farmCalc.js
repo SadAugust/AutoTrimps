@@ -48,10 +48,10 @@ function callAutoMapLevel_new(mapName, mapLevel, special) {
 	}
 	var autoLevel = 0;
 	//Get initial map level if not already set
-	if (mapName === '' || mapLevel === Infinity)
+	if (mapLevel === Infinity)
 		mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
 	//Check every 6 seconds if we should be increasing or decreasing map level so that the values don't fluctuate too often
-	else if (atSettings.intervals.sixSecond) {
+	else if (mapName !== '' && atSettings.intervals.sixSecond) {
 		autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
 		//Increasing Map Level
 		if (autoLevel > mapLevel)
@@ -185,7 +185,7 @@ function populateZFarmData() {
 	//Nature
 	const hze = getHighestLevelCleared() + 1;
 	var nature = game.empowerments[['Poison', 'Wind', 'Ice'][Math.ceil(zone / 5) % 3]];
-	const natureStart = challengeActive('Eradicated') ? 1 : 236;
+	var natureStart = challengeActive('Eradicated') ? 1 : 236;
 	const diplomacy = mastery('nature2') ? 5 : 0;
 	const plaguebrought = Fluffy.isRewardActive('plaguebrought') ? 2 : 1;
 	const natureTransfer = (zone >= natureStart ? nature.retainLevel + nature.getRetainBonus() : 0) / 100;
