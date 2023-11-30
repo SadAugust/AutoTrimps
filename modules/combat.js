@@ -250,7 +250,7 @@ function equalityManagement() {
 	const runningUnlucky = challengeActive('Unlucky');
 	const runningDuel = challengeActive('Duel');
 	const runningTrappa = challengeActive('Trappapalooza');
-	const shieldBreak = currQuest() === 8 || challengeActive('Bublé'); //Shield break quest
+	const shieldBreak = challengeActive('Bublé') || currQuest() === 8; //Shield break quest
 	const runningRevenge = challengeActive('Revenge');
 	const runningArchaeology = challengeActive('Archaeology');
 	const runningMayhem = challengeActive('Mayhem');

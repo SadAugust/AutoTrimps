@@ -1724,7 +1724,7 @@ function obtainUniqueMap(uniqueMap) {
 	}
 	var status = 'Obtaining Unique Map: ' + uniqueMap + ' (z' + unlockLevel + ')';
 
-	if (shouldMap) farmingDetails.shouldRun = shouldMap;
+	farmingDetails.shouldRun = shouldMap;
 	farmingDetails.mapName = mapName;
 	farmingDetails.mapLevel = mapLevel;
 	farmingDetails.special = '0';
@@ -1966,7 +1966,7 @@ function experience(lineCheck) {
 		resetMapVars();
 	}
 
-	if (shouldMap) farmingDetails.shouldRun = shouldMap;
+	farmingDetails.shouldRun = shouldMap;
 	farmingDetails.mapName = mapName;
 	farmingDetails.mapLevel = mapLevel;
 	farmingDetails.autoLevel = true;

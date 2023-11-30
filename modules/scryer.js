@@ -181,7 +181,6 @@ function useScryerStance() {
 		wantToScry = false;
 		return;
 	}
-
 	//Default
 	var min_zone = getPageSetting('scryerMinZone');
 	var max_zone = getPageSetting('scryerMaxZone');
@@ -216,6 +215,5 @@ function useScryerStance() {
 	}
 
 	//No reason to Scry
-	autoStanceFunctionScryer();
 	wantToScry = false;
 }
