@@ -1931,7 +1931,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 	//Challenge conditions
 	var runningUnlucky = challengeActive('Unlucky');
-	var runningQuest = ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé')); //Shield break quest
+	var runningQuest = (currQuest() === 8 || challengeActive('Bublé')); //Shield break quest
 
 	//Initialising name/health/dmg variables
 	//Enemy stats

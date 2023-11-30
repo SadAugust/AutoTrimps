@@ -48,10 +48,10 @@ function callAutoMapLevel_new(mapName, mapLevel, special) {
 	}
 	var autoLevel = 0;
 	//Get initial map level if not already set
-	if (mapLevel === Infinity)
+	if (mapName === '' || mapLevel === Infinity)
 		mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
 	//Check every 6 seconds if we should be increasing or decreasing map level so that the values don't fluctuate too often
-	else if (mapName !== '' && atSettings.intervals.sixSecond) {
+	else if (atSettings.intervals.sixSecond) {
 		autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
 		//Increasing Map Level
 		if (autoLevel > mapLevel)
@@ -63,9 +63,9 @@ function callAutoMapLevel_new(mapName, mapLevel, special) {
 	}
 
 	const mapBonusLevel = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
-	if (mapName === 'Map Bonus' && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
-	else if (mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
-	else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
+	if (mapName === 'Map Bonus' && mapLevel < mapBonusLevel && !(currQuest() === 8 || challengeActive('Bublé'))) mapLevel = mapBonusLevel;
+	else if (mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel && !(currQuest() === 8 || challengeActive('Bublé'))) mapLevel = mapBonusLevel;
+	else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapLevel < mapBonusLevel && !(currQuest() === 8 || challengeActive('Bublé'))) mapLevel = mapBonusLevel;
 	else if (challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0) mapLevel = -1;
 	else if (mapName === 'Quest' && mapLevel < mapBonusLevel && ((currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10)) mapLevel = mapBonusLevel;
 	else if (mapName === 'Mayhem Destacking' && mapLevel < 0) mapLevel = (getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0);
@@ -196,7 +196,7 @@ function populateZFarmData() {
 	const haveMapReducer = game.talents.mapLoot.purchased;
 
 	//Challenge Checks
-	const runningQuest = (challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé');
+	const runningQuest = currQuest() === 8 || challengeActive('Bublé');
 	const runningUnlucky = challengeActive('Unlucky');
 
 	//Map Modifiers (for the map we're on)

@@ -602,7 +602,7 @@ function mapBonus(lineCheck) {
 		var mapSpecial = setting.special !== '0' ? getAvailableSpecials(setting.special) : '0';
 
 		//Factor in siphonology for U1.
-		var minZone = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0
+		var minZone = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
 		//If auto level enabled will get the level of the map we should run.
 		if (autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
@@ -611,11 +611,15 @@ function mapBonus(lineCheck) {
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, minZone);
+			if ((currQuest() === 8 || challengeActive('Bublé')))
+				mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial);
+			else
+				mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, minZone);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
+			if (mapLevel < minZone) return farmingDetails;
 		}
 
 		if (repeatCounter > game.global.mapBonus) {
@@ -3234,18 +3238,22 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 			if (hdType === 'hitsSurvivedVoid') hitsSurvived = hdStats.hitsSurvivedVoid;
 		}
 
-		var mapLevelMin = null;
-		//Setup min map level for world and hits survived farming as those settings care about map bonus
-		if ((setting.hdType === 'world' && game.global.mapBonus !== 10) || (setting.hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')))
-			mapLevelMin = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
-
 		//Auto Level setup
 		if (setting.autoLevel) {
+			var mapLevelMin = null;
+			//Setup min map level for world and hits survived farming as those settings care about map bonus
+			if ((setting.hdType === 'world' && game.global.mapBonus !== 10) || (setting.hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')))
+				mapLevelMin = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
+
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
 				game.global.mapRunCounter = MODULES.maps.mapRepeats;
 				MODULES.maps.mapRepeats = 0;
 			}
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, mapLevelMin);
+			if ((currQuest() === 8 || challengeActive('Bublé')))
+				mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial);
+			else mapAutoLevel =
+				callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, mapLevelMin);
+
 			if (mapAutoLevel !== Infinity) {
 				if (mapSettings.levelCheck !== Infinity && mapAutoLevel !== mapSettings.levelCheck) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
