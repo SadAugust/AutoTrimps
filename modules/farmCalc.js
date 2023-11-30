@@ -159,11 +159,6 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 		}
 
-		/* if (y === -6) {
-			console.log('universeSetting = ' + universeSetting + ' y = ' + y + ' difficulty = ' + difficulty + ' cell = ' + cell + ' dmgType = ' + dmgType + ' critType = ' + critType);
-			console.log('trimpHP = ' + ourHealth + ' trimpDmg = ' + ourDmg + ' trimpBlock = ' + ourBlock);
-			console.log('enemyHP = ' + enemyHealth + ' enemyDmg = ' + enemyDmg);
-		} */
 		if (enemyHealth <= ourDmg && enemyDmg <= (ourHealth + ourBlock)) {
 			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
 				mapLevel = -1;
@@ -179,32 +174,52 @@ function populateZFarmData() {
 		imps += game.unlocks.imps[imp];
 	//Randimp
 	if (game.talents.magimp.purchased) imps++;
+	var exoticChance = 3;
+	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
+	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
+	exoticChance /= 100;
 
 	//Misc Run Info
-	var zone = game.global.world;
-	var nature = game.empowerments[['Poison', 'Wind', 'Ice'][Math.ceil(zone / 5) % 3]];
-	var natureStart = 236;
-	var diplomacy = mastery('nature2') ? 5 : 0;
+	const universe = game.global.universe;
+	const zone = game.global.world;
+	//Nature
 	const hze = getHighestLevelCleared() + 1;
+	var nature = game.empowerments[['Poison', 'Wind', 'Ice'][Math.ceil(zone / 5) % 3]];
+	const natureStart = challengeActive('Eradicated') ? 1 : 236;
+	const diplomacy = mastery('nature2') ? 5 : 0;
+	const plaguebrought = Fluffy.isRewardActive('plaguebrought') ? 2 : 1;
+	const natureTransfer = (zone >= natureStart ? nature.retainLevel + nature.getRetainBonus() : 0) / 100;
+	nature = zone >= natureStart ? nature.level + diplomacy : 0;
 
 	var speed = 10 * 0.95 ** getPerkLevel('Agility');
 	if (mastery('hyperspeed')) --speed;
 	if (mastery('hyperspeed2') && zone <= Math.ceil(hze / 2)) --speed;
 	if (challengeActive('Quagmire')) speed += (game.challenges.Quagmire.getSpeedPenalty() / 100);
 
-	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 50 : hze >= 210;
-	const haveMapReducer = game.talents.mapLoot.purchased;
-
 	//Challenge Checks
-	const runningQuest = currQuest() === 8 || challengeActive('Bublé');
 	const runningUnlucky = challengeActive('Unlucky');
+	const runningQuest = challengeActive('Bublé') || currQuest() === 8;
+	const runningDuel = challengeActive('Duel');
 
 	//Map Modifiers (for the map we're on)
 	const biome = getBiome();
+	const perfectMapsUnlocked = typeof atSettings !== 'undefined' ? trimpStats.perfectMaps : (universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110);
+	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 50 : hze >= 210;
+	const haveMapReducer = game.talents.mapLoot.purchased;
+	// Six hours simulation inside of TW and a day outside of it.
+	const maxTicks = typeof atSettings !== 'undefined' ? (atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400) : 86400;
 
-	//Stance & Equality (might need to put this later)
+	//Trimps Stats
+	var dmgType = runningUnlucky ? 'max' : 'min';
+	var trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, 'never');
+	var trimpHealth = calcOurHealth((universe === 2 ? runningQuest : 'X'), 'map');
+	var trimpBlock = universe === 1 ? calcOurBlock('X', 'map') : 0;
+	var trimpShield = universe === 2 ? calcOurHealth(true, 'map') : 0;
+	trimpHealth -= trimpShield;
+
+	//Stance & Equality
 	var stances = 'X';
-	if (game.global.universe === 1) {
+	if (universe === 1) {
 		if (game.upgrades.Dominance.done) stances = 'D';
 		if (hze >= 181 && game.upgrades.Formations.done) stances += 'S';
 		//Both D and S stance (the only ones we'd use in maps for farming) have a 50% health penalty. 
@@ -213,15 +228,7 @@ function populateZFarmData() {
 			trimpBlock /= 2;
 		}
 	}
-	var universeSetting = game.global.universe === 1 ? stances : 0;
-
-	//Trimps Stats
-	var dmgType = runningUnlucky ? 'max' : 'min';
-	var trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, 'never');
-	var trimpHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : 'X'), 'map');
-	var trimpBlock = game.global.universe === 1 ? calcOurBlock('X', 'map') : 0;
-	var trimpShield = game.global.universe === 2 ? calcOurHealth(true, 'map') : 0;
-	trimpHealth -= trimpShield;
+	var universeSetting = universe === 1 ? stances : 0;
 
 	//Gamma Burst
 	var gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
@@ -236,19 +243,17 @@ function populateZFarmData() {
 	var megaCD = 5;
 	if (Fluffy.isRewardActive('megaCrit')) megaCD += 2;
 	if (mastery('crit')) megaCD += 1;
+	// Handle megacrits
+	critDamage = critChance >= 1 ? (megaCD - 1) : critDamage;
 
 	//Trimp max & min damage ranges
 	var minFluct = 0.8 + (0.02 * game.portal.Range.level);
 	var maxFluct = 1.2;
 
-	//Enemy Stats
-	var enemyHealth = 1;
-	var enemyAttack = 1;
-
-	//Overkill stuff - Accounts for Mad Mapper in U2.
+	//Overkill - Accounts for Mad Mapper in U2.
 	var overkillRange = Math.max(0, maxOneShotPower(true) - 1);
 	var overkillDamage = game.portal.Overkill.level * 0.005;
-	if (game.global.universe === 2) {
+	if (universe === 2) {
 		if (u2Mutations.tree.MadMap.purchased) overkillDamage = 1;
 		else if (canU2OverkillAT(zone)) overkillDamage = 0.005;
 		else overkillDamage = 0;
@@ -263,19 +268,15 @@ function populateZFarmData() {
 	//Fast Enemy conditions
 	var fastEnemy = challengeActive('Desolation');
 	if (runningQuest) fastEnemy = true;
-	else if (challengeActive('Archaeology')) fastEnemy = true;
+	else if (challengeActive('Revenge')) fastEnemy = true;
 	else if (challengeActive('Trappapalooza')) fastEnemy = true;
+	else if (challengeActive('Archaeology')) fastEnemy = true;
+	else if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) fastEnemy = true;
 	else if (challengeActive('Exterminate')) fastEnemy = false;
 	else if (challengeActive('Glass')) fastEnemy = true;
-	else if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) fastEnemy = true;
-	else if (challengeActive('Duel') && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
-	else if (challengeActive('Revenge')) fastEnemy = true;
-	else if (game.global.universe === 2 && game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned) fastEnemy = true;
+	else if (universe === 2 && game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned) fastEnemy = true;
 
 	const death_stuff = {
-		max_hp: trimpHealth,
-		block: trimpBlock,
-		challenge_attack: 1,
 		enemy_cd: 1,
 		breed_timer: breedTotalTime().toNumber(),
 		weakness: 0,
@@ -284,9 +285,16 @@ function populateZFarmData() {
 		explosion: 0,
 		nom: challengeActive('Nom'),
 		fastEnemies: fastEnemy,
-		magma: game.global.universe === 1 && zone >= 230,
+		magma: challengeActive('Eradicated') || (game.global.universe === 1 && zone >= 230),
 	}
-	if (game.global.universe === 1) {
+
+	//Enemy Stats
+	var enemyHealth = 1;
+	var enemyAttack = 1;
+	//Challenge modifiers
+
+	//U1
+	if (universe === 1) {
 		if (challengeActive('Discipline')) {
 			minFluct = 0.005;
 			maxFluct = 1.995;
@@ -303,24 +311,13 @@ function populateZFarmData() {
 			death_stuff.weakness = 0.1;
 			death_stuff.plague = 0.1;
 		}
-		if (challengeActive('Daily')) {
-			var daily = (mod) => game.global.dailyChallenge[mod] ? game.global.dailyChallenge[mod].strength : 0;
-			minFluct -= daily('minDamage') ? 0.09 + 0.01 * daily('minDamage') : 0;
-			maxFluct += daily('maxDamage');
-
-			death_stuff.plague = 0.01 * daily('plague');
-			death_stuff.bleed = 0.01 * daily('bogged');
-			death_stuff.weakness = 0.01 * daily('weakness');
-			death_stuff.enemy_cd = 1 + 0.5 * daily('crits');
-			death_stuff.explosion = daily('explosive');
-		}
 		if (challengeActive('Life')) {
 			enemyHealth *= 11;
 			enemyAttack *= 6;
 			trimpAttack *= 1 + (0.1 * game.challenges.Life.stacks);
-			death_stuff.max_hp *= 1 + (0.1 * game.challenges.Life.stacks);
+			trimpHealth *= 1 + (0.1 * game.challenges.Life.stacks);
 		}
-		if (challengeActive('Crushed') && death_stuff.max_hp < death_stuff.block) {
+		if (challengeActive('Crushed') && trimpHealth < trimpBlock) {
 			death_stuff.enemy_cd = 5;
 		}
 		if (challengeActive('Nom')) {
@@ -350,8 +347,6 @@ function populateZFarmData() {
 		if (challengeActive('Eradicated')) {
 			enemyHealth *= 1e20 * 3 ** Math.floor(zone / 2);
 			enemyAttack *= 1e20 * 3 ** Math.floor(zone / 2);
-			natureStart = 1;
-			death_stuff.magma = true;
 		}
 		if (challengeActive('Frigid')) {
 			enemyHealth *= game.challenges.Frigid.getEnemyMult();
@@ -362,8 +357,8 @@ function populateZFarmData() {
 			enemyAttack *= game.challenges.Experience.getEnemyMult();
 		}
 	}
-
-	if (game.global.universe === 2) {
+	//U2
+	if (universe === 2) {
 		natureStart = 9990;
 		if (challengeActive('Unlucky')) {
 			minFluct = 0.005;
@@ -435,27 +430,29 @@ function populateZFarmData() {
 			//Attack mult factored in later in the simulation function
 		}
 	}
+	//Dailies
+	if (challengeActive('Daily')) {
+		var daily = (mod) => game.global.dailyChallenge[mod] ? game.global.dailyChallenge[mod].strength : 0;
+		minFluct -= daily('minDamage') ? 0.09 + 0.01 * daily('minDamage') : 0;
+		maxFluct += daily('maxDamage');
 
-	// Handle megacrits
-	critDamage = critChance >= 1 ? (megaCD - 1) : critDamage;
+		death_stuff.plague = 0.01 * daily('plague');
+		death_stuff.bleed = 0.01 * daily('bogged');
+		death_stuff.weakness = 0.01 * daily('weakness');
+		death_stuff.enemy_cd = 1 + 0.5 * daily('crits');
+		death_stuff.explosion = daily('explosive');
 
-	var exoticChance = 3;
-	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
-	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
-	exoticChance /= 100;
+		enemyHealth *= 1 + 0.2 * daily('badHealth');
+		enemyHealth *= 1 + 0.3 * daily('badMapHealth');
+		enemyAttack *= 1 + 0.2 * daily('badStrength');
+		enemyAttack *= 1 + 0.3 * daily('badMapStrength');
+	}
 
-	const natureTransfer = (zone >= natureStart ? nature.retainLevel + diplomacy : 0) / 100;
-	nature = zone >= natureStart ? nature.level + diplomacy : 0;
-	death_stuff.challenge_attack = enemyAttack;
-	const perfectMapsUnlocked = typeof atSettings !== 'undefined' ? trimpStats.perfectMaps : (game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110);
-
-	const maxTicks = typeof atSettings !== 'undefined' ? (atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400) : 86400; // Six hours simulation inside of TW and a day
 	return {
 		//Base Info
-		hze: hze,
+		universe: universe,
 		speed: speed,
 		zone: zone,
-		universe: game.global.universe,
 		maxTicks: maxTicks,
 		//Extra Map Info
 		extraMapLevelsAvailable: extraMapLevelsAvailable,
@@ -463,16 +460,21 @@ function populateZFarmData() {
 		perfectMaps: perfectMapsUnlocked,
 		biome: biomeEnemyStats(biome),
 		fragments: game.resources.fragments.owned,
+		mapSpecial: getAvailableSpecials('lmc'),
+		mapBiome: biome,
 
 		difficulty: ((perfectMapsUnlocked ? 75 : 80) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
 		size: mastery('mapLoot2') ? 20 : perfectMapsUnlocked ? 25 : 27,
 
 		//Nature
 		poison: 0, wind: 0, ice: 0,
+		windCap: getUberEmpowerment() === 'Wind' ? 300 : 200,
+		natureIncrease: 1 * (getUberEmpowerment() === getEmpowerment() && game.global.uberNature !== 'Poison' ? 2 : 1) * plaguebrought,
 		[['poison', 'wind', 'ice'][Math.ceil(zone / 5) % 3]]: nature / 100,
+		uberNature: getUberEmpowerment(),
+		transfer: natureTransfer,
 
 		//Trimp Stats
-		dmgType: dmgType,
 		attack: trimpAttack,
 		trimpHealth: trimpHealth,
 		trimpBlock: trimpBlock,
@@ -480,47 +482,39 @@ function populateZFarmData() {
 
 		//Misc Trimp Stats
 		critChance: critChance % 1,
-		critDamage: critDamage,
+		critDamage: 1 + critDamage,
 		gammaCharges: gammaCharges,
 		gammaMult: gammaMult,
 		range: maxFluct / minFluct,
-		rangeMin: minFluct,
-		rangeMax: maxFluct,
-		plaguebringer: typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01,
+		plaguebringer: (plaguebrought ? 0.5 : 0) + (typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
 		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
 
 		//Enemy Stats
-		challenge: enemyHealth,
-		enemyAttack: enemyAttack,
+		challenge_health: enemyHealth,
+		challenge_attack: enemyAttack,
 		fluctuation: game.global.universe === 2 ? 0.5 : 0.2,
 
 		//Misc
-		imports: imps,
-		import_percent: exoticChance,
 		import_chance: imps * exoticChance,
-		transfer: natureTransfer,
 		ok_spread: overkillRange,
 		overkill: overkillDamage,
 		stances: stances,
 		titimp: game.unlocks.imps.Titimp,
-		coordinate: challengeActive('Coordinate'),
-		challenge_health: enemyHealth,
-		challenge_attack: enemyAttack,
-		mapPerfect: typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true,
-		mapSpecial: getAvailableSpecials('lmc'),
-		mapBiome: biome,
+		titimpReduction: 1 - (speed / 10),
 
 		//Challenge Conditions
 		angelic: mastery('angelic'),
+		trapper: challengeActive('Trapper') || challengeActive('Trappapalooza'),
+		coordinate: challengeActive('Coordinate'),
 		devastation: challengeActive('Devastation') || challengeActive('Revenge'),
 		domination: challengeActive('Domination'),
 		frigid: challengeActive('Frigid'),
-
-		unlucky: challengeActive('Unlucky'),
-		duel: challengeActive('Duel'),
+		unlucky: runningUnlucky,
+		duel: runningDuel,
 		wither: challengeActive('Wither'),
 		quest: runningQuest,
 		mayhem: challengeActive('Mayhem'),
+		insanity: challengeActive('Insanity'),
 		berserk: challengeActive('Berserk'),
 		glass: challengeActive('Glass'),
 		desolation: challengeActive('Desolation'),
@@ -572,8 +566,7 @@ function zone_stats(zone, stances, saveData) {
 	if (!stances) stances = 'X';
 	for (var stance of stances) {
 		saveData.atk = saveData.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
-		if (mastery('bionic2') && zone > saveData.zone)
-			saveData.atk *= 1.5;
+		if (mastery('bionic2') && zone > saveData.zone) saveData.atk *= 1.5;
 		var simulationResults = simulate(saveData, zone, stance);
 		var speed = simulationResults.speed;
 		var value = speed * result.loot * (stance == 'S' ? 2 : 1);
@@ -606,19 +599,18 @@ function simulate(saveData, zone) {
 	var plague_damage = 0;
 	var ok_damage = 0, ok_spread = 0;
 	var poison = 0, wind = 0, ice = 0;
-	var gammaStacks = 0;
-	var burstDamage = 0;
-	var energyShieldMax = saveData.trimpShield;
-	var energyShield = energyShieldMax;
+	var gammaStacks = 0, burstDamage = 0;
+	var energyShieldMax = saveData.trimpShield, energyShield = energyShieldMax;
 	var mayhemPoison = 0;
 	var trimpOverkill = 0;
 	var duelPoints = game.challenges.Duel.trimpStacks;
 	var glassStacks = game.challenges.Glass.shards;
 	var universe = saveData.universe;
 	var magma = saveData.magma;
-	var oneShot = true;
 	var hasWithered = false;
 	var equality = 1;
+	var trimpCrit = false;
+	var enemyCrit = false;
 
 	var seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
@@ -636,13 +628,20 @@ function simulate(saveData, zone) {
 		else
 			return trimpHealth <= 0;
 	}
+
+	var biomeImps = saveData.biome;
+	//Identify how much equality is needed to clear the worst enemy on the map
 	if (universe === 2) {
 		var enemyName = 'Snimp';
-		if (challengeActive('Insanity')) enemyName = 'Horrimp';
+		if (saveData.insanity) {
+			enemyName = 'Horrimp';
+			biomeImps.push([15, 60, true]);
+		}
 		equality = equalityQuery(enemyName, zone, saveData.size, 'map', saveData.difficulty);
 	}
-	var biomeImps = saveData.biome;
-	const max_ticks = saveData.maxTicks; // Six hours simulation inside of TW and a day
+	//Six hours of simulation inside of TW and a day outside of it.
+	const max_ticks = saveData.maxTicks;
+	//Create map array of enemy stats
 	var hp_array = []
 	var atk_array = [];
 	for (var i = 0; i < saveData.size; ++i) {
@@ -655,6 +654,7 @@ function simulate(saveData, zone) {
 			enemyAttack *= calcCorruptionScale(zone, 3) / 2;
 
 		cell++;
+		//Domination has a stat bonus for final enemy and stat penalty for all others
 		if (saveData.domination) {
 			if (cell === saveData.size) {
 				enemyAttack *= 2.5;
@@ -676,21 +676,27 @@ function simulate(saveData, zone) {
 			if (energyShield > 0) return;
 			else amt -= initialShield;
 		}
-		if (!directHit && universe === 1) {
-			amt -= saveData.block;
-		}
-
-		if (saveData.frigid && amt >= (saveData.trimpHealth / 5)) {
+		//Reduce by block
+		if (!directHit && universe === 1)
+			amt -= saveData.trimpBlock;
+		//Frigid shatter
+		if (saveData.frigid && amt >= (saveData.trimpHealth / 5))
 			amt = saveData.trimpHealth;
-		}
-
 		trimpHealth -= Math.max(0, amt);
 	}
 
 	function enemy_hit(enemyAttack) {
 		//Damage fluctations
-		var enemyAtk = enemyAttack
+		var enemyAtk = enemyAttack;
+
+
 		enemyAtk *= (1 + saveData.fluctuation * (2 * rng() - 1));
+		if (enemyAtk > enemyAttack * 1.2) console.log("issue with enemy max fluctuation")
+		if (enemyAtk < enemyAttack * 0.8) console.log("issue with enemy min fluctuation")
+		/* if (zone - game.global.world === -1 && cell === 0) {
+			eAtk = enemyAttack;
+			eAtk2 = enemyAtk;
+		} */
 		//Enemy crit chance
 		var enemyCC = 0.25;
 		if (saveData.duel) {
@@ -710,21 +716,21 @@ function simulate(saveData, zone) {
 		reduceTrimpHealth(enemyAtk);
 		++debuff_stacks;
 	}
+	var titimpTicks = 0;
 
 	cell = 0;
 	while (ticks < max_ticks) {
+		var turns = 0;
+		var pbTurns = 0;
 		var imp = rng();
 		var imp_stats = imp < saveData.import_chance ? [1, 1, false] : biomeImps[Math.floor(rng() * biomeImps.length)];
 		var enemyAttack = imp_stats[0] * atk_array[cell];
 		var enemyHealth = imp_stats[1] * hp_array[cell];
+
 		var enemy_max_hp = enemyHealth;
 		var fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
-		var trimpCrit = false;
-		var enemyCrit = false;
+		var oneShot = true;
 		trimpOverkill = 0;
-		//Add in the mult from glass stacks as they need to be adjusted every enemy
-		if (saveData.glass)
-			enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 
 		if (ok_spread !== 0) {
 			enemyHealth -= ok_damage;
@@ -733,15 +739,18 @@ function simulate(saveData, zone) {
 		enemyHealth = Math.min(enemyHealth, Math.max(enemy_max_hp * 0.05, enemyHealth - plague_damage));
 		plague_damage = 0;
 		energyShield = energyShieldMax;
-		var turns = 0;
-		if (saveData.duel && duelPoints > 80) {
+		//Add in the mult from glass stacks as they need to be adjusted every enemy
+		if (saveData.glass)
+			enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
+		//Add in 10x hp mult from Duel if necessary
+		if (saveData.duel && duelPoints > 80)
 			enemyHealth *= 10;
-		}
+
 		while (enemyHealth >= 1 && ticks < max_ticks) {
 			++turns;
 			trimpCrit = false;
 			enemyCrit = false;
-			//Check for if we didn't kill the enemy last turn
+			//Check if we didn't kill the enemy last turn for Wither & Glass checks
 			if (enemyHealth !== enemy_max_hp) {
 				oneShot = false;
 				if (saveData.wither) {
@@ -757,9 +766,8 @@ function simulate(saveData, zone) {
 					enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 				}
 			}
-			else {
+			else
 				oneShot = true;
-			}
 			//Angelic talent heal
 			if (saveData.angelic && !saveData.berserk) {
 				trimpHealth += (saveData.trimpHealth / 2);
@@ -788,10 +796,11 @@ function simulate(saveData, zone) {
 				if (saveData.weakness) trimpAttack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
 				if (universe === 2) trimpAttack *= Math.pow(saveData.equalityMult, equality);
 				enemyHealth -= trimpAttack + poison * saveData.poison;
-				poison += trimpAttack;
-				++ice;
+				if (saveData.poison) poison += trimpAttack * (saveData.uberNature === 'Poison' ? 2 : 1) * saveData.natureIncrease;
+				ice += saveData.natureIncrease;
 				if (saveData.plaguebringer && enemyHealth >= 1)
 					plague_damage += trimpAttack * saveData.plaguebringer;
+				pbTurns++;
 			}
 
 			// Slow enemy attack
@@ -818,8 +827,8 @@ function simulate(saveData, zone) {
 			}
 
 			// Bleeds
-			if (saveData.bleed) trimpHealth -= saveData.bleed * saveData.max_hp;
-			if (saveData.plague) trimpHealth -= debuff_stacks * saveData.plague * saveData.max_hp;
+			if (saveData.bleed) trimpHealth -= saveData.bleed * saveData.trimpHealth;
+			if (saveData.plague) trimpHealth -= debuff_stacks * saveData.plague * saveData.trimpHealth;
 
 			//+1 point for crits, +2 points for killing, +5 for oneshots
 			if (saveData.duel) {
@@ -844,7 +853,7 @@ function simulate(saveData, zone) {
 				ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
 				last_group_sent = ticks;
 				trimpOverkill = Math.abs(trimpHealth);
-				trimpHealth = saveData.max_hp;
+				trimpHealth = saveData.trimpHealth;
 				energyShield = energyShieldMax;
 				mayhemPoison = 0;
 
@@ -860,7 +869,7 @@ function simulate(saveData, zone) {
 				gammaStacks = 0;
 
 				//Stop it from getting Infinity glass stacks OR if you die on a shieldbreak challenge/quest
-				if (saveData.quest || (saveData.glass && glassStacks >= 10000))
+				if (saveData.quest || (saveData.glass && glassStacks >= 10000) || saveData.trapper)
 					ticks = max_ticks;
 				//Amp enemy dmg and health by 25% per stack
 				if (saveData.nom) {
@@ -872,23 +881,32 @@ function simulate(saveData, zone) {
 			//Safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage
 			if (turns >= 1000)
 				ticks = max_ticks;
+			if (titimp > 0) titimp -= saveData.titimpReduction;
 		}
-		if (saveData.explosion && (saveData.explosion <= 15 || saveData.block >= saveData.max_hp))
+
+		if (saveData.explosion && (saveData.explosion <= 15 || (saveData.block >= saveData.trimpHealth && universe !== 2)))
 			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - saveData.block);
 		loot++;
 		if (saveData.ok_spread > 0) ok_damage = -enemyHealth * saveData.overkill;
 		ticks += +(turns > 0) + +(saveData.speed > 9) + Math.ceil(turns * saveData.speed);
-		if (saveData.titimp && imp < 0.03)
-			titimp = Math.min(Math.max(ticks, titimp) + 300, ticks + 450);
-
+		if (saveData.titimp && imp < 0.03) {
+			if (titimp < 0) titimp = 0;
+			titimp = Math.max(titimp + 30, 45);
+		}
+		//Handles post death Nature effects.
 		if (magma) {
+			var increasedBy = pbTurns * saveData.natureIncrease;
+			//Wind stacks
 			if (saveData.wind > 0) {
-				wind = Math.min(wind + turns, 200);
+				wind = Math.min(wind + increasedBy, saveData.windCap);
 				loot += wind * saveData.wind;
-				wind = Math.ceil(saveData.transfer * wind) + 1 + Math.ceil((turns - 1) * saveData.plaguebringer);
+				wind = Math.ceil(saveData.transfer * wind) + saveData.natureIncrease + Math.ceil(((pbTurns - 1) * increasedBy) * saveData.plaguebringer);
+				wind = Math.min(wind, saveData.windCap);
 			}
+			//Poison damage
 			if (saveData.poison > 0) poison = Math.ceil(saveData.transfer * poison + plague_damage) + 1;
-			if (saveData.transfer > 0) ice = Math.ceil(saveData.transfer * ice) + 1 + Math.ceil((turns - 1) * saveData.plaguebringer);
+			//Ice stacks
+			if (saveData.ice > 0) ice = Math.ceil(saveData.transfer * ice) + increasedBy + Math.ceil((pbTurns - 1) * saveData.plaguebringer);
 		}
 
 		if (saveData.glass) {
@@ -900,7 +918,7 @@ function simulate(saveData, zone) {
 			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 		}
 		++cell;
-		if (cell === saveData.size) {
+		if (cell >= saveData.size) {
 			cell = 0;
 			plague_damage = 0;
 			ok_damage = 0;

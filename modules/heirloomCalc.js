@@ -1194,6 +1194,7 @@ function runHeirlooms() {
 
 	setupHeirloomHelpBtn();
 	updateModContainer("heirloomHelpBtn", heirlooms.newLoom);
+	recalculateHeirloomBonuses();
 	return;
 }
 
