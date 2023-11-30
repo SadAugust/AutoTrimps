@@ -61,11 +61,11 @@ function callAutoMapLevel_new(mapName, mapLevel, special) {
 		if (autoLevel < mapLevel)
 			mapLevel = autoLevel;
 	}
-
+	if ((currQuest() === 8 || challengeActive('Bublé'))) return mapLevel;
 	const mapBonusLevel = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
-	if (mapName === 'Map Bonus' && mapLevel < mapBonusLevel && !(currQuest() === 8 || challengeActive('Bublé'))) mapLevel = mapBonusLevel;
-	else if (mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel && !(currQuest() === 8 || challengeActive('Bublé'))) mapLevel = mapBonusLevel;
-	else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapLevel < mapBonusLevel && !(currQuest() === 8 || challengeActive('Bublé'))) mapLevel = mapBonusLevel;
+	if (mapName === 'Map Bonus' && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
+	else if (mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
+	else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
 	else if (challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0) mapLevel = -1;
 	else if (mapName === 'Quest' && mapLevel < mapBonusLevel && ((currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10)) mapLevel = mapBonusLevel;
 	else if (mapName === 'Mayhem Destacking' && mapLevel < 0) mapLevel = (getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0);
@@ -209,6 +209,9 @@ function populateZFarmData() {
 	// Six hours simulation inside of TW and a day outside of it.
 	const maxTicks = typeof atSettings !== 'undefined' ? (atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400) : 86400;
 
+	//Stance & Equality
+	var stances = 'X';
+	var universeSetting = universe === 1 ? stances : 0;
 	//Trimps Stats
 	var dmgType = runningUnlucky ? 'max' : 'min';
 	var trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, 'never');
@@ -217,8 +220,6 @@ function populateZFarmData() {
 	var trimpShield = universe === 2 ? calcOurHealth(true, 'map') : 0;
 	trimpHealth -= trimpShield;
 
-	//Stance & Equality
-	var stances = 'X';
 	if (universe === 1) {
 		if (game.upgrades.Dominance.done) stances = 'D';
 		if (hze >= 181 && game.upgrades.Formations.done) stances += 'S';
@@ -228,7 +229,6 @@ function populateZFarmData() {
 			trimpBlock /= 2;
 		}
 	}
-	var universeSetting = universe === 1 ? stances : 0;
 
 	//Gamma Burst
 	var gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;

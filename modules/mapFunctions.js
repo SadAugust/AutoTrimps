@@ -612,9 +612,9 @@ function mapBonus(lineCheck) {
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			if ((currQuest() === 8 || challengeActive('Bublé')))
-				mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial);
+				mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial);
 			else
-				mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, minZone);
+				mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, 10, minZone);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -720,7 +720,7 @@ function mapFarm(lineCheck) {
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+			mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -836,7 +836,7 @@ function tributeFarm(lineCheck) {
 				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+			mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -1015,7 +1015,7 @@ function smithyFarm(lineCheck) {
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+			mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) {
 					if (game.global.mapsActive && typeof mapBonus !== 'undefined') {
@@ -1217,7 +1217,7 @@ function worshipperFarm(lineCheck) {
 				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+			mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -1888,7 +1888,7 @@ function toxicity(lineCheck) {
 				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+			mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -1999,7 +1999,7 @@ function wither(lineCheck) {
 	}
 
 	var autoLevel_Repeat = mapSettings.levelCheck;
-	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, -1, null);
+	mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, -1, null);
 	if (mapAutoLevel !== Infinity) {
 		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		var mapLevel = mapAutoLevel;
@@ -2186,7 +2186,7 @@ function quest(lineCheck) {
 			MODULES.maps.mapRepeats = 0;
 		}
 		var autoLevel_Repeat = mapSettings.levelCheck;
-		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, questMin);
+		mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, questMin);
 		if (mapAutoLevel !== Infinity) {
 			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 			mapLevel = mapAutoLevel;
@@ -2244,7 +2244,7 @@ function mayhem(lineCheck) {
 		MODULES.maps.mapRepeats = 0;
 	}
 	var autoLevel_Repeat = mapSettings.levelCheck;
-	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, (0 + mayhemMapIncrease));
+	mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, 10, (0 + mayhemMapIncrease));
 	if (mapAutoLevel !== Infinity) {
 		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		mapLevel = mapAutoLevel;
@@ -2313,7 +2313,7 @@ function insanity(lineCheck) {
 				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+			mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -2375,7 +2375,7 @@ function pandemoniumDestack(lineCheck) {
 		MODULES.maps.mapRepeats = 0;
 	}
 	var autoLevel_Repeat = mapSettings.levelCheck;
-	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, 1);
+	mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, 10, 1);
 	if (mapAutoLevel !== Infinity) {
 		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		mapLevel = mapAutoLevel;
@@ -2429,7 +2429,7 @@ function pandemoniumEquipFarm(lineCheck) {
 	var mapLevel = 0;
 
 	var autoLevel_Repeat = mapSettings.levelCheck;
-	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+	mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, null);
 	if (mapAutoLevel !== Infinity) {
 		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		mapLevel = mapAutoLevel;
@@ -2512,7 +2512,7 @@ function alchemy(lineCheck) {
 				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, 1);
+			mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, 10, 1);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -2638,7 +2638,7 @@ function glass(lineCheck) {
 	}
 
 	var autoLevel_Repeat = mapSettings.levelCheck;
-	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, null);
+	mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, 10, null);
 	if (mapAutoLevel !== Infinity) {
 		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		mapLevel = mapAutoLevel;
@@ -2783,7 +2783,7 @@ function hypothermia(lineCheck) {
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+			mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -2865,7 +2865,7 @@ function desolation(lineCheck, forceDestack) {
 	}
 	if (game.global.world < destackOnlyZone && !game.jobs.Explorer.locked) {
 		var autoLevel_Repeat = mapSettings.levelCheck;
-		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, 0);
+		mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, 10, 0);
 		if (mapAutoLevel !== Infinity) {
 			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 			mapLevel = mapAutoLevel;
@@ -3078,7 +3078,7 @@ function smithless(lineCheck) {
 			MODULES.maps.mapRepeats = 0;
 		}
 		var autoLevel_Repeat = mapSettings.levelCheck;
-		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, smithlessMax, smithlessMin);
+		mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, smithlessMax, smithlessMin);
 		if (mapAutoLevel !== Infinity) {
 			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 			mapLevel = mapAutoLevel;
@@ -3250,9 +3250,9 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 				MODULES.maps.mapRepeats = 0;
 			}
 			if ((currQuest() === 8 || challengeActive('Bublé')))
-				mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial);
+				mapAutoLevel = callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial);
 			else mapAutoLevel =
-				callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, mapLevelMin);
+				callAutoMapLevel(mapName, mapSettings.levelCheck, mapSpecial, null, mapLevelMin);
 
 			if (mapAutoLevel !== Infinity) {
 				if (mapSettings.levelCheck !== Infinity && mapAutoLevel !== mapSettings.levelCheck) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
