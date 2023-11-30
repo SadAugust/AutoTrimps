@@ -1719,6 +1719,18 @@ function initializeAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("Toxicity Farm", "Toxicity", "MAZ")', 'Challenges', [1]);
 
+		//Bublé - Dummy setting
+		createSetting('buble',
+			function () { return ('Bublé') },
+			function () {
+				var description = "<p>This is a dummy setting to explain how the script works during Bublé.</p>";
+				description += "<p>Will disable map bonus farming when using auto level unless your optimal map level is 0 or higher as it can't guarantee survival before then.</p>";
+				description += "<p>Will automatically adjust equality and suicide armies that are one hit away from death to try and ensure you don't fail the challenge It cannot do this during void maps so you will need to overfarm health/damage to accomodate for this.</p>";
+				description += "<p>Requires the <b>Auto Equality</b> setting in the Combat tab to be set to <b>Auto Equality: Advanced</b> or the script won't try to keep your armies alive.</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 40) });
+
 		//Quagmire
 		createSetting('quagmireSettings',
 			function () { return ('Quagmire Settings') },
@@ -4538,9 +4550,11 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("balanceImprobDestack", radonoff);
 	modifyParentNode("decayStacksToAbandon", radonoff);
 	modifyParentNode("lifeStacks", radonoff);
+
 	modifyParentNode("trapperArmyPct", radonoff);
 	modifyParentNode("mapologyPrestige", radonoff);
 	modifyParentNode("frigid", radonoff);
+	modifyParentNode("buble", radonon);
 	//Magma
 	modifyParentNode("AutoGenC2", radonoff);
 	//Heirlooms
@@ -5323,7 +5337,7 @@ function updateCustomButtons(initialLoad) {
 			document.getElementById('tabFluffy').style.display = radonon || (!displayAllSettings && game.global.spiresCompleted < 2) ? 'none' : '';
 		//Challenges Tab
 		if (document.getElementById('tabChallenges') !== null)
-			document.getElementById('tabChallenges').style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 40)) ? 'none' : '';
+			document.getElementById('tabChallenges').style.display = !displayAllSettings && ((radonon && highestRadonZone < 40) || (!radonon && hze < 40)) ? 'none' : '';
 		//Test Tab
 		if (document.getElementById('tabTest') !== null)
 			document.getElementById('tabTest').style.display = !gameUserCheck() ? 'none' : '';

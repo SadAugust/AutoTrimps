@@ -691,12 +691,6 @@ function simulate(saveData, zone) {
 
 
 		enemyAtk *= (1 + saveData.fluctuation * (2 * rng() - 1));
-		if (enemyAtk > enemyAttack * 1.2) console.log("issue with enemy max fluctuation")
-		if (enemyAtk < enemyAttack * 0.8) console.log("issue with enemy min fluctuation")
-		/* if (zone - game.global.world === -1 && cell === 0) {
-			eAtk = enemyAttack;
-			eAtk2 = enemyAtk;
-		} */
 		//Enemy crit chance
 		var enemyCC = 0.25;
 		if (saveData.duel) {

@@ -355,8 +355,8 @@ function doPortal(challenge, skipDaily) {
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 	var currChall = MODULES.portal.currentChallenge;
 
-	//Cancel out of dailies if we're running them
-	if (challengeActive('Daily') || game.global.runningChallengeSquared) {
+	//Cancel out of dailies/c2s/buble if we're running any of them
+	if (challengeActive('Daily') || game.global.runningChallengeSquared || challengeActive('Bublé')) {
 		if (challengeActive('Daily') && (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0'))) {
 			MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
 			MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
