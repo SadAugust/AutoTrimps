@@ -281,7 +281,7 @@ function toggleCatchUpMode() {
 				game.global.mapStarted -= 100;
 
 			//Run mainLoop every n game loops and always on a new zone.
-			if (loops % loopFrequency === 0 || atSettings.portal.aWholeNewWorld) {
+			if (loops % loopFrequency === 0 || atSettings.portal.aWholeNewWorld || checkIfLiquidZone()) {
 				mainLoop();
 			}
 			else if (atSettings.intervals.thirtySecond) {
@@ -426,6 +426,7 @@ function mainLoop() {
 			return;
 		}
 	}
+
 
 	//Heirloom Shield Swap Check
 	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
