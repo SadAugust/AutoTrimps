@@ -10,10 +10,10 @@ if (typeof MODULES === 'undefined') {
 }
 
 //Old setup!
-function callAutoMapLevel(settingName, mapLevel, special, maxLevel, minLevel) {
+function callAutoMapLevel(settingName, special, maxLevel, minLevel) {
 	if (getPageSetting('autoLevelTest'))
-		return callAutoMapLevel_new(settingName, mapLevel, special);
-
+		return callAutoMapLevel_new(settingName, special);
+	var mapLevel = mapSettings.levelCheck;
 	if (settingName === '' || mapLevel === Infinity) {
 		if (mapLevel === Infinity) mapLevel = autoMapLevel(special, maxLevel, minLevel);
 		if (mapLevel !== Infinity && atSettings.intervals.twoSecond) mapLevel = autoMapLevel(special, maxLevel, minLevel);
@@ -32,7 +32,7 @@ function callAutoMapLevel(settingName, mapLevel, special, maxLevel, minLevel) {
 }
 
 //New setup!
-function callAutoMapLevel_new(mapName, mapLevel, special) {
+function callAutoMapLevel_new(mapName, special) {
 	//Figure out if we're looking for speed or loot
 	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
 	const mapType = speedSettings.indexOf(mapName) >= 0 ? 'speed' : 'overall';
@@ -46,6 +46,7 @@ function callAutoMapLevel_new(mapName, mapLevel, special) {
 		hdStats.autoLevelZone = game.global.world;
 		hdStats.autoLevelInitial = stats();
 	}
+	var mapLevel = mapSettings.levelCheck;
 	var autoLevel = 0;
 	//Get initial map level if not already set
 	if (mapLevel === Infinity)
@@ -185,7 +186,7 @@ function populateZFarmData() {
 	//Nature
 	const hze = getHighestLevelCleared() + 1;
 	var nature = game.empowerments[['Poison', 'Wind', 'Ice'][Math.ceil(zone / 5) % 3]];
-	var natureStart = challengeActive('Eradicated') ? 1 : 236;
+	var natureStart = universe !== 1 ? 9999 : challengeActive('Eradicated') ? 1 : 236;
 	const diplomacy = mastery('nature2') ? 5 : 0;
 	const plaguebrought = Fluffy.isRewardActive('plaguebrought') ? 2 : 1;
 	const natureTransfer = (zone >= natureStart ? nature.retainLevel + nature.getRetainBonus() : 0) / 100;
@@ -878,8 +879,8 @@ function simulate(saveData, zone) {
 			if (titimp > 0) titimp -= saveData.titimpReduction;
 		}
 
-		if (saveData.explosion && (saveData.explosion <= 15 || (saveData.block >= saveData.trimpHealth && universe !== 2)))
-			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - saveData.block);
+		if (saveData.explosion && (saveData.explosion <= 15 || (saveData.trimpBlock >= saveData.trimpHealth && universe !== 2)))
+			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - saveData.trimpBlock);
 		loot++;
 		if (saveData.ok_spread > 0) ok_damage = -enemyHealth * saveData.overkill;
 		ticks += +(turns > 0) + +(saveData.speed > 9) + Math.ceil(turns * saveData.speed);

@@ -65,7 +65,7 @@ function getAvailableSpecials(special, skipCaches) {
             break;
         }
     }
-    if (bestMod === undefined || bestMod === 'fa' && trimpStats.hyperspeed) bestMod = '0';
+    if (bestMod === undefined || bestMod === 'fa' && trimpStats.hyperspeed2) bestMod = '0';
     return bestMod;
 }
 

@@ -751,13 +751,12 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', -1, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.autoGigas.enabled) });
-		createSetting('autGigaDeltaFactor',
+		createSetting('autoGigaDeltaFactor',
 			function () { return ('Custom Delta Factor') },
 			function () {
 				var description = "<p>This setting is used to calculate a better Delta. Think of this setting as how long your target zone takes to complete divided by the zone you bought your first giga in.</p>";
-				description += "<pBasically, a higher number means a higher delta.</p>";
-				description += "<pValues below 1 will default to 10.</p>";
-				description += "<pValues below 1 will default to 10.</p>";
+				description += "<p>Basically, a higher number means a higher delta.</p>";
+				description += "<p>Values below 1 will default to 10.</p>";
 				description += "<p>Once your first gigastation of a run has been purchased this setting won't be evaluated again until your next run.</p>";
 				description += "<p><b>Recommended:</b> 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs</p>";
 				return description;
@@ -3901,6 +3900,7 @@ function initializeAllSettings() {
 				var description = "<p>How often the scripts code will run during time warp.</p>";
 				description += "<p>If set to 20 it will run once every 20 times the games code runs.</p>";
 				description += "<p>The lower you set this value the longer time warp will take.</p>";
+				description += "<p>Liquification zones override this and temporarily set it to 1 during them.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
 			}, 'value', 20, null, 'Time Warp', [0],
@@ -4504,7 +4504,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("portalVoidIncrement", 'show');
 	modifyParentNode("universeSetting", 'show');
 	//Checking if we have too many items on row 3 and if so we need to add a break.
-	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && (getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge') || holidayObj.holiday === 'Eggy')))
+	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && (getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge') || holidayObj.holiday === 'Eggy') || Fluffy.checkU2Allowed()))
 		modifyParentNode("heliumHrDontPortalBefore", 'show');
 	else
 		modifyParentNode("heliumHrDontPortalBefore", 'hide');
@@ -4545,7 +4545,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("glassStacks", radonon);
 	modifyParentNode("desolationSettings", radonon);
 	//Buildings
-	modifyParentNode("autGigaDeltaFactor", radonoff);
+	modifyParentNode("autoGigaDeltaFactor", radonoff);
 	//Challenges
 	modifyParentNode("balanceImprobDestack", radonoff);
 	modifyParentNode("decayStacksToAbandon", radonoff);
@@ -6158,6 +6158,12 @@ function updateATVersion() {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.26') {
 			if (typeof (tempSettings["portalVoidIncrement"]) !== 'undefined') {
 				autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.27') {
+			if (typeof (tempSettings["autGigaDeltaFactor"]) !== 'undefined') {
+				autoTrimpSettings.autoGigaDeltaFactor.value = tempSettings.autGigaDeltaFactor.value;
 			}
 		}
 	}

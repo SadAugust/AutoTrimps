@@ -26,7 +26,7 @@ class TrimpStats {
 
 		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-		this.hyperspeed = game.global.world <= Math.floor(this.hze * (this.hypPct / 100));
+		this.hyperspeed2 = game.global.world <= Math.floor(this.hze * (this.hypPct / 100));
 
 		this.mapSize = game.talents.mapLoot2.purchased ? 20 : 25;
 		this.mapDifficulty = 0.75;
