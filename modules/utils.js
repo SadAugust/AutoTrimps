@@ -71,6 +71,18 @@ function serializeSettings() {
 	return settingString;
 }
 
+function dailyModifiersOutput() {
+	var daily = game.global.dailyChallenge;
+	var dailyMods = dailyModifiers;
+	if (!daily) return "";
+	var returnText = "";
+	for (var item in daily) {
+		if (item === 'seed') continue;
+		returnText += dailyMods[item].description(daily[item].strength) + "<br>";
+	}
+	return returnText
+}
+
 //Process data to google forms to update stats spreadsheet
 function pushSpreadsheetData() {
 	if (!portalWindowOpen) return;

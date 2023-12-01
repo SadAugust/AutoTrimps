@@ -61,6 +61,7 @@ function ImportExportTooltip(what, event, download) {
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
 	}
 	else if (what === 'c2table') {
+		titleText = cinf() + " Table";
 		//Adding U1 challenges
 		var highestZone = game.stats.highestLevel.valueTotal();
 		const c2array = [];

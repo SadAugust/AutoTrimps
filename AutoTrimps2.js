@@ -351,17 +351,6 @@ function toggleCatchUpMode() {
 	}
 }
 
-function callFunction(id) {
-	if (typeof this[id] === "function")
-		try {
-			this[id]();
-		}
-		catch (e) {
-			if (typeof debug === "function") debug(id + " failed to run.<br>" + e)
-			else console.log(id + " failed to run.<br>" + e);
-		}
-}
-
 //Offline mode check
 function shouldRunInTimeWarp() {
 	return !atSettings.loops.atTimeLapseFastLoop || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
@@ -387,16 +376,13 @@ function mainLoop() {
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
 	//Need to identify a better solution to this. Not really sure what I can do though.
 	if (MODULES.popups.mazWindowOpen) {
-		const mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Balance Destack", "Toxicity Farm", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Daily Auto Golden", "C3 Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm", "Desolation Gear Scumming", "C2 Runner", "C3 Runner"];
+		const mazSettings = ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Balance Destack', 'Toxicity', 'Quagmire', 'Insanity', 'Alchemy', 'Hypothermia', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner'];
 		var tipElem = document.getElementById('tooltipDiv');
 
 		if (mazSettings.indexOf(tipElem.children.tipTitle.innerText) === -1) {
-			if (tipElem.style.overflowY !== '')
-				tipElem.style.overflowY = '';
-			if (tipElem.style.maxHeight !== '')
-				tipElem.style.maxHeight = '';
-			if (tipElem.style.width !== '')
-				tipElem.style.width = '';
+			tipElem.style.overflowY = '';
+			tipElem.style.maxHeight = '';
+			tipElem.style.width = '';
 			MODULES.popups.mazWindowOpen = false;
 		}
 	}

@@ -21,18 +21,15 @@ function presetMutTab(tabNum) {
 	MODULES.mutatorPreset.selected = tabNum;
 }
 
-function tooltipAT(what, isItIn, event, textString, headingName) {
-	checkAlert(what, isItIn);
-	if (game.global.lockTooltip && event !== 'update') return;
-	if (game.global.lockTooltip && isItIn && event === 'update') return;
-	var elem = document.getElementById("tooltipDiv");
-	swapClass("tooltipExtra", "tooltipExtraNone", elem);
-	document.getElementById('tipText').className = "";
+function tooltipAT(what, event, textString, headingName) {
+	var elem = document.getElementById('tooltipDiv');
+	swapClass('tooltipExtra', 'tooltipExtraNone', elem);
+	document.getElementById('tipText').className = '';
 	var ondisplay = null;
 	openTooltip = null;
 
 	var tooltipText;
-	var costText = "";
+	var costText = '';
 	var titleText;
 
 	if (what === "Mutator Preset") {
@@ -184,7 +181,7 @@ function renameMutations(needTooltip) {
 	var presetGroup = mutatorObj['preset' + MODULES.mutatorPreset.selected];
 
 	if (needTooltip) {
-		tooltipAT("Rename Preset", null, "update");
+		tooltipAT("Rename Preset", "update");
 		return;
 	}
 
@@ -269,7 +266,7 @@ function presetMutations() {
 		else
 			u2MutContainer.setAttribute('class', 'btn btn-lg btn-info');
 		var presetText = (x <= 3) ? "Preset: " : "";
-		u2MutContainer.setAttribute("onmouseover", 'tooltipAT("Mutator Preset", null, event, ' + x + ', "' + presetText + containerText[x - 1] + '\")');
+		u2MutContainer.setAttribute("onmouseover", 'tooltipAT("Mutator Preset", event, ' + x + ', "' + presetText + containerText[x - 1] + '\")');
 		u2MutContainer.setAttribute("onmouseout", 'tooltip("hide")');
 		u2MutContainer.innerHTML = presetText + containerText[x - 1];
 		u2MutContainer.setAttribute("onClick", onClick[x - 1]);

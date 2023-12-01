@@ -1486,7 +1486,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '1,1,2', mapCap: 100 }], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '1,1,2', mapCap: 100 }], 'MAZLookalike("mapSettings", "HD Farm")', 'Maps', [1, 2]);
 
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
@@ -1495,7 +1495,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, hitsSurvived: 1 }], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, hitsSurvived: 1 }], 'MAZLookalike("mapSettings", "Void Map")', 'Maps', [1, 2]);
 
 		//Bone Shrine (bone) 
 		createSetting('boneShrineSettings',
@@ -1505,7 +1505,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Bone Shrine", "BoneShrine", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bone Shrine")', 'Maps', [1, 2]);
 
 		//Worshipper Farm 
 		createSetting('worshipperFarmSettings',
@@ -1515,7 +1515,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', 'Maps', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Worshipper Farm")', 'Maps', [2],
 			function () { return game.stats.highestRadLevel.valueTotal() >= 50 });
 
 		//Unique Maps
@@ -1544,7 +1544,7 @@ function initializeAllSettings() {
 			"MP Smithy": { enabled: false, value: 100 },
 			"MP Smithy Daily": { enabled: false, value: 100 },
 			"MP Smithy C3": { enabled: false, value: 100 },
-		}, 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', 'Maps', [1, 2]);
+		}, 'MAZLookalike("UniqueMaps")', 'Maps', [1, 2]);
 
 		//Map Bonus
 		createSetting('mapBonusSettings',
@@ -1554,7 +1554,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '1,1,2', special: '0', }], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '1,1,2', special: '0', }], 'MAZLookalike("mapSettings", "Map Bonus")', 'Maps', [1, 2]);
 
 		//Map Farm
 		createSetting('mapFarmSettings',
@@ -1564,7 +1564,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Map Farm", "MapFarm", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Map Farm")', 'Maps', [1, 2]);
 
 		//Prestige Raiding
 		createSetting('raidingSettings',
@@ -1574,7 +1574,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Raiding", "Raiding", "MAZ")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Raiding")', 'Maps', [1, 2]);
 
 		//Bionic Raiding
 		createSetting('bionicRaidingSettings',
@@ -1584,7 +1584,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Bionic Raiding", "BionicRaiding", "MAZ")', 'Maps', [1]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bionic Raiding")', 'Maps', [1]);
 
 		//Tribute Farming
 		createSetting('tributeFarmSettings',
@@ -1594,7 +1594,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Tribute Farm", "TributeFarm", "MAZ")', 'Maps', [2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Tribute Farm")', 'Maps', [2]);
 
 		//Smithy Farming
 		createSetting('smithyFarmSettings',
@@ -1604,7 +1604,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Smithy Farm", "SmithyFarm", "MAZ")', 'Maps', [2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Smithy Farm")', 'Maps', [2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -1716,7 +1716,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Toxicity Farm", "Toxicity", "MAZ")', 'Challenges', [1]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Toxicity")', 'Challenges', [1]);
 
 		//Bublé - Dummy setting
 		createSetting('buble',
@@ -1738,7 +1738,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Quagmire")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
 
 		//Insanity
@@ -1749,7 +1749,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Insanity")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 110) });
 
 		//Alchemy
@@ -1760,7 +1760,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Alchemy")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 155) });
 
 		//Hypothermia
@@ -1772,7 +1772,7 @@ function initializeAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
 			},
-			'mazArray', [{ active: false }], 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', 'Challenges', [2],
+			'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Hypothermia")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
 	}
 
@@ -1856,7 +1856,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				return description;
 			},
-			'mazArray', {}, 'MAZLookalike("C2 Runner", "c2Runner", "c2Runner")', 'C2', [1, 2],
+			'mazArray', {}, 'MAZLookalike("c2Runner")', 'C2', [1, 2],
 			function () {
 				return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1)
 			});
@@ -2484,7 +2484,7 @@ function initializeAllSettings() {
 				description += "<p><b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("Desolation Gear Scumming", "Desolation", "MAZ")', 'C2', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Desolation Gear Scumming")', 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		//Smithless
@@ -3489,7 +3489,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Auto Golden", "AutoGolden", "MAZ")', 'Golden', [1, 2]);
+			}, 'mazArray', [], 'MAZLookalike("mapSettings", "Auto Golden")', 'Golden', [1, 2]);
 	}
 
 	//Spire
@@ -4402,7 +4402,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 		var autoPortalContainer = document.getElementById("dailyPortalParent");
 		var autoPortalSettings = document.createElement("DIV");
-		autoPortalSettings.setAttribute('onclick', 'MAZLookalike("AT Daily Auto Portal", "a", "DailyAutoPortal")');
+		autoPortalSettings.setAttribute('onclick', 'MAZLookalike("DailyAutoPortal")');
 		autoPortalSettings.setAttribute('class', 'settingsBtnLocalCogwheel');
 		autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
 		var autoPortalSettingsButton = document.createElement("SPAN");
@@ -5519,7 +5519,7 @@ function setupTimeWarpAT() {
 			atJobText.setAttribute("onClick", "settingChanged('jobType', true)");
 			//Creating cogwheel & linking onclick
 			var atJobSettings = document.createElement("DIV");
-			atJobSettings.setAttribute('onclick', 'MAZLookalike("Configure AT AutoJobs", "a", "AutoJobs")');
+			atJobSettings.setAttribute('onclick', 'MAZLookalike("AutoJobs")');
 			var atJobSettingsButton = document.createElement("SPAN");
 			atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 			//Linking all the elements together and attaching them to the settings TW row.
@@ -5577,7 +5577,7 @@ function setupTimeWarpAT() {
 
 			//Creating cogwheel & linking onclick
 			var atStructureSettings = document.createElement("DIV");
-			atStructureSettings.setAttribute('onclick', 'MAZLookalike("Configure AT AutoStructure", "a", "AutoStructure")');
+			atStructureSettings.setAttribute('onclick', 'MAZLookalike("AutoStructure")');
 			var atStructureSettingsButton = document.createElement("SPAN");
 			atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
@@ -5724,7 +5724,7 @@ function setupATButtons() {
 
 	//Creating cogwheel & linking onclick
 	var atJobSettings = document.createElement("DIV");
-	atJobSettings.setAttribute('onclick', 'MAZLookalike("Configure AT AutoJobs", "a", "AutoJobs")');
+	atJobSettings.setAttribute('onclick', 'MAZLookalike("AutoJobs")');
 	var atJobSettingsButton = document.createElement("SPAN");
 	atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
@@ -5754,7 +5754,7 @@ function setupATButtons() {
 
 	//Creating cogwheel & linking onclick
 	var atStructureSettings = document.createElement("DIV");
-	atStructureSettings.setAttribute('onclick', 'MAZLookalike("Configure AT AutoStructure", "a", "AutoStructure")');
+	atStructureSettings.setAttribute('onclick', 'MAZLookalike("AutoStructure")');
 	var atStructureSettingsButton = document.createElement("SPAN");
 	atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
@@ -5811,7 +5811,7 @@ function setupATButtons() {
 	var atBtnSettings = document.createElement("button");
 	atBtnSettings.setAttribute("id", "logConfigBtn");
 	atBtnSettings.setAttribute('type', 'button');
-	atBtnSettings.setAttribute('onclick', 'MAZLookalike("Message Config", "a", "MessageConfig")');
+	atBtnSettings.setAttribute('onclick', 'MAZLookalike("MessageConfig")');
 	atBtnSettings.setAttribute('class', 'btn btn-default logFlt');
 	var atBtnSettingsButton = document.createElement("SPAN");
 	atBtnSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
