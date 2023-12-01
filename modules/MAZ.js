@@ -2690,26 +2690,27 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 	if (!universe) universe = game.global.universe;
 	if (!vals) return "Issue with establishing values for dropdowns";
 
-	var dropdown = {
-
-	};
+	var dropdown = {};
 	var highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
 
 	if (!hdType) hdType = "hdType";
 	else hdType = hdType;
 	//Gather dropdown
-	dropdown.gather = "<option value='food'" + ((vals.gather === 'food') ? " selected='selected'" : "") + ">Food</option>\
-		<option value='wood'" + ((vals.gather === 'wood') ? " selected = 'selected'" : "") + " > Wood</option>\
-		<option value='metal'" + ((vals.gather === 'metal') ? " selected = 'selected'" : "") + " > Metal</option>\
-		<option value='science'" + ((vals.gather === 'science') ? " selected = 'selected'" : "") + " > Science</option> "
+	const gatherDropdowns = ['food', 'wood', 'metal', 'science'];
+	dropdown.gather = '';
+	for (var item in gatherDropdowns) {
+		var key = gatherDropdowns[item];
+		dropdown.gather += "<option value='" + key + "'" + ((vals.gather === key) ? " selected='selected'" : "") + ">" + (key.charAt(0).toUpperCase() + key.slice(1)) + "</option>";
+	}
 
 	//HD Type dropdown
-	dropdown.hdType = "<option value='world'" + ((vals[hdType] === 'world') ? " selected='selected'" : "") + ">World HD Ratio</option>\
-		<option value='map'" + ((vals[hdType] === 'map') ? " selected = 'selected'" : "") + " >Map HD Ratio</option>\
-		<option value='void'" + ((vals[hdType] === 'void') ? " selected = 'selected'" : "") + " >Void HD Ratio</option>\
-		<option value='maplevel'" + ((vals[hdType] === 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option>\
-		<option value='hitsSurvived'" + ((vals[hdType] === 'hitsSurvived') ? " selected = 'selected'" : "") + " >Hits Survived</option>\
-		<option value='hitsSurvivedVoid'" + ((vals[hdType] === 'hitsSurvivedVoid') ? " selected = 'selected'" : "") + " >Void Hits Survived</option>"
+	const hdTypeDropdowns = ['world', 'map', 'void', 'maplevel', 'hitsSurvived', 'hitsSurvivedVoid'];
+	const hdTypeNames = ['World HD Ratio', 'Map HD Ratio', 'Void HD Ratio', 'Map Level', 'Hits Survived', 'Void Hits Survived'];
+	dropdown.hdType = '';
+	for (var item in hdTypeDropdowns) {
+		var key = hdTypeDropdowns[item];
+		dropdown.hdType += "<option value='" + key + "'" + ((vals[hdType] === key) ? " selected='selected'" : "") + ">" + hdTypeNames[item] + "</option>";
+	}
 
 	//Map Type dropdown
 	dropdown.mapType = '';
@@ -2717,141 +2718,76 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 		dropdown.mapType += "<option value='Absolute'" + ((vals.mapType === 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>";
 	dropdown.mapType += "<option value='Map Count'" + ((vals.mapType === 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>";
 	if (varPrefix === 'MapFarm') {
-		dropdown.mapType += "<option value='Zone Time'" + ((vals.mapType === 'Zone Time') ? " selected='selected'" : "") + ">Zone Time</option>";
-		dropdown.mapType += "<option value='Portal Time'" + ((vals.mapType === 'Portal Time') ? " selected='selected'" : "") + ">Portal Time</option>";
-		dropdown.mapType += "<option value='Daily Reset'" + ((vals.mapType === 'Daily Reset') ? " selected='selected'" : "") + ">Daily Reset</option>";
-		dropdown.mapType += "<option value='Skele Spawn'" + ((vals.mapType === 'Skele Spawn') ? " selected='selected'" : "") + ">Skele Spawn</option>";
+		const mapFarmDropdowns = ['Zone Time', 'Portal Time', 'Daily Reset', 'Skele Spawn'];
+		for (var item in mapFarmDropdowns) {
+			var key = mapFarmDropdowns[item];
+			dropdown.mapType += "<option value='" + key + "'" + ((vals.mapType === key) ? " selected='selected'" : "") + ">" + key + "</option>";
+		}
 	}
 
-	//Map Numbers 0-10;
-
+	//Map Numbers dropdown (0-10)
 	dropdown.mapLevel = "<option value='0'" + ((vals.raidingzone === '0') ? " selected='selected'" : "") + ">0</option>";
 	if (trimpStats.plusLevels) {
-		dropdown.mapLevel += "<option value='1'" + ((vals.raidingzone === '1') ? " selected='selected'" : "") + ">+1</option>\
-		<option value='2'" + ((vals.raidingzone === '2') ? " selected='selected'" : "") + ">+2</option>\
-		<option value='3'" + ((vals.raidingzone === '3') ? " selected='selected'" : "") + ">+3</option>\
-		<option value='4'" + ((vals.raidingzone === '4') ? " selected='selected'" : "") + ">+4</option>\
-		<option value='5'" + ((vals.raidingzone === '5') ? " selected='selected'" : "") + ">+5</option>\
-		<option value='6'" + ((vals.raidingzone === '6') ? " selected='selected'" : "") + ">+6</option>\
-		<option value='7'" + ((vals.raidingzone === '7') ? " selected='selected'" : "") + ">+7</option>\
-		<option value='8'" + ((vals.raidingzone === '8') ? " selected='selected'" : "") + ">+8</option>\
-		<option value='9'" + ((vals.raidingzone === '9') ? " selected='selected'" : "") + ">+9</option>\
-		<option value='10'" + ((vals.raidingzone === '10') ? " selected='selected'" : "") + ">+10</option>";
+		for (var i = 1; i <= 10; i++) {
+			dropdown.mapLevel += "<option value='" + i + "'" + ((vals.raidingzone === i.toString()) ? " selected='selected'" : "") + ">" + i + "</option>";
+		}
 	}
 
+	//Map Special dropdown
+	dropdown.special = "<option value='0'" + ((vals.special === '0') ? " selected='selected'" : "") + ">No Modifier</option>";
+	for (var item in mapSpecialModifierConfig) {
+		var bonusItem = mapSpecialModifierConfig[item];
+		var unlocksAt = (universe === 2) ? bonusItem.unlocksAt2 : bonusItem.unlocksAt;
+		if ((typeof unlocksAt === 'function' && !unlocksAt()) || unlocksAt == -1) continue;
+		if (unlocksAt > highestZone) break;
+		dropdown.special += "<option value='" + item + "'" + ((vals.special === item) ? " selected='selected'" : "") + ">" + bonusItem.name + "</option>";
+	}
 
 	//Prestige Goal dropdown
-	dropdown.prestigeGoal = "<option value='All'" + ((vals.prestigeGoal === 'All') ? " selected='selected'" : "") + ">All</option>\
-		<option value='Shield'" + ((vals.prestigeGoal === 'Shield') ? " selected='selected'" : "") + ">Shield</option>\
-		<option value='Dagger'" + ((vals.prestigeGoal === 'Dagger') ? " selected='selected'" : "") + ">Dagger</option>\
-		<option value='Boots'" + ((vals.prestigeGoal === 'Boots') ? " selected = 'selected'" : "") + " > Boots</option>\
-		<option value='Mace'" + ((vals.prestigeGoal === 'Mace') ? " selected = 'selected'" : "") + " > Mace</option>\
-		<option value='Helmet'" + ((vals.prestigeGoal === 'Helmet') ? " selected = 'selected'" : "") + " > Helmet</option>\
-		<option value='Polearm'" + ((vals.prestigeGoal === 'Polearm') ? " selected = 'selected'" : "") + " > Polearm</option>\
-		<option value='Pants'" + ((vals.prestigeGoal === 'Pants') ? " selected = 'selected'" : "") + " > Pants</option>\
-		<option value='Battleaxe'" + ((vals.prestigeGoal === 'Battleaxe') ? " selected = 'selected'" : "") + " > Battleaxe</option>\
-		<option value='Shoulderguards'" + ((vals.prestigeGoal === 'Shoulderguards') ? " selected = 'selected'" : "") + " > Shoulderguards</option>\
-		<option value='Greatsword'" + ((vals.prestigeGoal === 'Greatsword') ? " selected = 'selected'" : "") + " > Greatsword</option>\
-		<option value='Breastplate'" + ((vals.prestigeGoal === 'Breastplate') ? " selected = 'selected'" : "") + " > Breastplate</option>";
-	if (game.global.slowDone) dropdown.prestigeGoal += "<option value='Arbalest'" + ((vals.prestigeGoal === 'Arbalest') ? " selected='selected'" : "") + ">Arbalest</option>";
-	if (game.global.slowDone) dropdown.prestigeGoal += "<option value='Gambeson'" + ((vals.prestigeGoal === 'Gambeson') ? " selected='selected'" : "") + ">Gambeson</option>";
-
-	if (universe === 1) {
-		//Specials dropdown with conditions for each unlock to only appear when the user can run them.
-		dropdown.special = "<option value='0'" + ((vals.special === '0') ? " selected='selected'" : "") + ">No Modifier</option>";
-		if (highestZone >= 60) dropdown.special += "<option value='fa'" + ((vals.special === 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special === 'lc') ? " selected='selected'" : "") + ">Large Cache</option>";
-		if (highestZone >= 85) dropdown.special += "<option value = 'ssc'" + ((vals.special === 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option>\
-				<option value='swc'" + ((vals.special === 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option>\
-				<option value='smc'" + ((vals.special === 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option> ";
-		if (highestZone >= 135) dropdown.special += "<option value='p'" + ((vals.special === 'p') ? " selected='selected'" : "") + ">Prestigious</option>";
-		if (highestZone >= 160) dropdown.special += "<option value='hc'" + ((vals.special === 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>";
-		if (highestZone >= 185) dropdown.special += "<option value='lsc'" + ((vals.special === 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
-				<option value='lwc'" + ((vals.special === 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
-				<option value='lmc'" + ((vals.special === 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>";
-
-		//Challenge dropdown with conditions for each unlock to only appear when the user can run them.
-		dropdown.challenge = "<option value='All'" + ((vals.challenge === 'All') ? " selected='selected'" : "") + ">All</option>";
-		dropdown.challenge += "<option value='No Challenge'" + ((vals.challenge === 'No Challenge') ? " selected='selected'" : "") + ">No Challenge</option>";
-		if (highestZone >= 40) dropdown.challenge += "<option value='Balance'" + ((vals.challenge === 'Balance') ? " selected='selected'" : "") + ">Balance</option>";
-		if (highestZone >= 55) dropdown.challenge += "<option value = 'Decay'" + ((vals.challenge === 'Decay') ? " selected = 'selected'" : "") + " >Decay</option>";
-		if (game.global.prisonClear >= 1) dropdown.challenge += "<option value='Electricity'" + ((vals.challenge === 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
-		if (highestZone >= 110) dropdown.challenge += "<option value='Life'" + ((vals.challenge === 'Life') ? " selected='selected'" : "") + ">Life</option>";
-		if (highestZone >= 125) dropdown.challenge += "<option value='Crushed'" + ((vals.challenge === 'Crushed') ? " selected='selected'" : "") + ">Crushed</option>";
-		if (highestZone >= 145) dropdown.challenge += "<option value='Nom'" + ((vals.challenge === 'Nom') ? " selected='selected'" : "") + ">Nom</option>";
-		if (highestZone >= 165) dropdown.challenge += "<option value='Toxicity'" + ((vals.challenge === 'Toxicity') ? " selected='selected'" : "") + ">Toxicity</option>";
-		if (highestZone >= 180) dropdown.challenge += "<option value='Watch'" + ((vals.challenge === 'Watch') ? " selected='selected'" : "") + ">Watch</option>";
-		if (highestZone >= 180) dropdown.challenge += "<option value='Lead'" + ((vals.challenge === 'Lead') ? " selected='selected'" : "") + ">Lead</option>";
-		if (highestZone >= 190) dropdown.challenge += "<option value='Corrupted'" + ((vals.challenge === 'Corrupted') ? " selected='selected'" : "") + ">Corrupted</option>";
-		if (highestZone >= 215) dropdown.challenge += "<option value='Domination'" + ((vals.challenge === 'Domination') ? " selected='selected'" : "") + ">Domination</option>";
-
-		//C2 dropdown with conditions for each unlock to only appear when the user can run them.
-		dropdown.c2 = "<option value='All'" + ((vals.challenge3 === 'All') ? " selected='selected'" : "") + ">All</option>";
-		if (getTotalPerkResource(true) >= 30) dropdown.c2 += "<option value='Discipline'" + ((vals.challenge3 === 'Discipline') ? " selected='selected'" : "") + ">Discipline</option>";
-		if (highestZone >= 25) dropdown.c2 += "<option value='Metal'" + ((vals.challenge3 === 'Metal') ? " selected='selected'" : "") + ">Metal</option>";
-		if (highestZone >= 35) dropdown.c2 += "<option value='Size'" + ((vals.challenge3 === 'Size') ? " selected='selected'" : "") + ">Size</option>";
-		if (highestZone >= 40) dropdown.c2 += "<option value = 'Balance'" + ((vals.challenge3 === 'Balance') ? " selected = 'selected'" : "") + " > Balance</option>";
-		if (highestZone >= 45) dropdown.c2 += "<option value='Meditate'" + ((vals.challenge3 === 'Meditate') ? " selected='selected'" : "") + ">Meditate</option>";
-		if (highestZone >= 60) dropdown.c2 += "<option value='Trimp'" + ((vals.challenge3 === 'Trimp') ? " selected='selected'" : "") + ">Trimp</option>";
-		if (highestZone >= 70) dropdown.c2 += "<option value='Trapper'" + ((vals.challenge3 === 'Trapper') ? " selected='selected'" : "") + ">Trapper</option>";
-		if (game.global.prisonClear >= 1) dropdown.c2 += "<option value='Electricity'" + ((vals.challenge3 === 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
-		if (highestZone >= 120) dropdown.c2 += "<option value='Coordinate'" + ((vals.challenge3 === 'Coordinate') ? " selected='selected'" : "") + ">Coordinate</option>";
-		if (highestZone >= 130) dropdown.c2 += "<option value='Slow'" + ((vals.challenge3 === 'Slow') ? " selected='selected'" : "") + ">Slow</option>";
-		if (highestZone >= 145) dropdown.c2 += "<option value='Nom'" + ((vals.challenge3 === 'Nom') ? " selected='selected'" : "") + ">Nom</option>";
-		if (highestZone >= 150) dropdown.c2 += "<option value='Mapology'" + ((vals.challenge3 === 'Mapology') ? " selected='selected'" : "") + ">Mapology</option>";
-		if (highestZone >= 165) dropdown.c2 += "<option value='Toxicity'" + ((vals.challenge3 === 'Toxicity') ? " selected='selected'" : "") + ">Toxicity</option>";
-		if (highestZone >= 180) dropdown.c2 += "<option value='Watch'" + ((vals.challenge3 === 'Watch') ? " selected='selected'" : "") + ">Watch</option>";
-		if (highestZone >= 180) dropdown.c2 += "<option value='Lead'" + ((vals.challenge3 === 'Lead') ? " selected='selected'" : "") + ">Lead</option>";
-		if (highestZone >= 425) dropdown.c2 += "<option value='Obliterated'" + ((vals.challenge3 === 'Obliterated') ? " selected='selected'" : "") + ">Obliterated</option>";
-		if (highestZone >= 460) dropdown.c2 += "<option value='Frigid'" + ((vals.challenge3 === 'Frigid') ? " selected='selected'" : "") + ">Frigid</option>";
-		if (game.global.totalSquaredReward >= 4500) dropdown.c2 += "<option value='Eradicated'" + ((vals.challenge3 === 'Eradicated') ? " selected='selected'" : "") + ">Eradicated</option>";
-		if (highestZone >= 600) dropdown.c2 += "<option value='Experience'" + ((vals.challenge3 === 'Experience') ? " selected='selected'" : "") + ">Experience</option>";
+	dropdown.prestigeGoal = "<option value='All'" + ((vals.prestigeGoal === 'All') ? " selected='selected'" : "") + ">All</option>";
+	for (var item in Object.keys(MODULES.equipment)) {
+		var key = Object.keys(MODULES.equipment)[item];
+		if (!game.global.slowDone && (key === 'Arbalest' || key === 'Gambeson')) continue;
+		dropdown.prestigeGoal += "<option value='" + key + "'" + ((vals.prestigeGoal === key) ? " selected='selected'" : "") + ">" + key + "</option>";
 	}
 
-	if (universe === 2) {
-		//Specials dropdown with conditions for each unlock to only appear when the user can run them.
-		dropdown.special = "<option value='0'" + ((vals.special === '0') ? " selected='selected'" : "") + ">No Modifier</option>"
-		if (highestZone >= 15) dropdown.special += "<option value='fa'" + ((vals.special === 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special === 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
-		if (highestZone >= 25) dropdown.special += "<option value = 'ssc'" + ((vals.special === 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option>\
-				<option value='swc'" + ((vals.special === 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option>\
-				<option value='smc'" + ((vals.special === 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option> "
-		if (game.global.ArchaeologyDone) dropdown.special += "<option value='src'" + ((vals.special === 'src') ? " selected='selected'" : "") + ">Small Research Cache</option>"
-		if (highestZone >= 55) dropdown.special += "<option value='p'" + ((vals.special === 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
-		if (highestZone >= 65) dropdown.special += "<option value='hc'" + ((vals.special === 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
-		if (highestZone >= 85) dropdown.special += "<option value='lsc'" + ((vals.special === 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
-				<option value='lwc'" + ((vals.special === 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
-				<option value='lmc'" + ((vals.special === 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
-		if (game.global.ArchaeologyDone) dropdown.special += "<option value='lrc'" + ((vals.special === 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
+	const challengeObj = challengesUnlockedObj();
 
-		//Filler challenge dropdowns with conditions for each unlock to only appear when the user can run them.
-		dropdown.challenge = "<option value='All'" + ((vals.challenge === 'All') ? " selected='selected'" : "") + ">All</option>";
-		dropdown.challenge += "<option value='No Challenge'" + ((vals.challenge === 'No Challenge') ? " selected='selected'" : "") + ">No Challenge</option>";
-		if (highestZone >= 40) dropdown.challenge += "<option value='Bublé'" + ((vals.challenge === 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
-		if (highestZone >= 55) dropdown.challenge += "<option value = 'Melt'" + ((vals.challenge === 'Melt') ? " selected = 'selected'" : "") + " > Melt</option>";
-		if (highestZone >= 70) dropdown.challenge += "<option value='Quagmire'" + ((vals.challenge === 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
-		if (highestZone >= 85) dropdown.challenge += "<option value='Quest'" + ((vals.challenge === 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
-		if (highestZone >= 90) dropdown.challenge += "<option value='Archaeology'" + ((vals.challenge === 'Archaeology') ? " selected='selected'" : "") + ">Archaeology</option>";
-		if (highestZone >= 110) dropdown.challenge += "<option value='Insanity'" + ((vals.challenge === 'Insanity') ? " selected='selected'" : "") + ">Insanity</option>";
-		if (highestZone >= 135) dropdown.challenge += "<option value='Nurture'" + ((vals.challenge === 'Nurture') ? " selected='selected'" : "") + ">Nurture</option>";
-		if (highestZone >= 155) dropdown.challenge += "<option value='Alchemy'" + ((vals.challenge === 'Alchemy') ? " selected='selected'" : "") + ">Alchemy</option>";
-		if (highestZone >= 175) dropdown.challenge += "<option value='Hypothermia'" + ((vals.challenge === 'Hypothermia') ? " selected='selected'" : "") + ">Hypothermia</option>";
+	//Challenge Dropdowns
+	const fillerObj = Object.entries(challengeObj).reduce((newObj, [key, val]) => {
+		if (val.unlockedIn.indexOf('heHr') !== -1)
+			newObj[key] = val;
+		return newObj;
+	}, {});
+	dropdown.challenge = "<option value='All'" + ((vals.challenge === 'All') ? " selected='selected'" : "") + ">All</option>";
+	dropdown.challenge += "<option value='No Challenge'" + ((vals.challenge === 'No Challenge') ? " selected='selected'" : "") + ">No Challenge</option>";
+	for (var item in Object.keys(fillerObj)) {
+		var key = Object.keys(fillerObj)[item];
+		dropdown.challenge += "<option value='" + key + "'" + ((vals.challenge === key) ? " selected='selected'" : "") + ">" + key + "</option>";
+	}
 
-		//C3 options dropdown with conditions for each unlock to only appear when the user can run them.
-		dropdown.c2 = "<option value='All'" + ((vals.challenge3 === 'All') ? " selected='selected'" : "") + ">All</option>";
-		if (highestZone >= 15) dropdown.c2 += "<option value='Unlucky'" + ((vals.challenge3 === 'Unlucky') ? " selected='selected'" : "") + ">Unlucky</option>";
-		if (highestZone >= 20) dropdown.c2 += "<option value='Downsize'" + ((vals.challenge3 === 'Downsize') ? " selected='selected'" : "") + ">Downsize</option>";
-		if (highestZone >= 25) dropdown.c2 += "<option value='Transmute'" + ((vals.challenge3 === 'Transmute') ? " selected='selected'" : "") + ">Transmute</option>";
-		if (highestZone >= 35) dropdown.c2 += "<option value = 'Unbalance'" + ((vals.challenge3 === 'Unbalance') ? " selected = 'selected'" : "") + " > Unbalance</option>";
-		if (highestZone >= 45) dropdown.c2 += "<option value='Duel'" + ((vals.challenge3 === 'Duel') ? " selected='selected'" : "") + ">Duel</option>";
-		if (highestZone >= 60) dropdown.c2 += "<option value='Trappapalooza'" + ((vals.challenge3 === 'Trappapalooza') ? " selected='selected'" : "") + ">Trappa</option>";
-		if (highestZone >= 70) dropdown.c2 += "<option value='Wither'" + ((vals.challenge3 === 'Wither') ? " selected='selected'" : "") + ">Wither</option>";
-		if (highestZone >= 85) dropdown.c2 += "<option value='Quest'" + ((vals.challenge3 === 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
-		if (highestZone >= 100) dropdown.c2 += "<option value='Mayhem'" + ((vals.challenge3 === 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
-		if (highestZone >= 105) dropdown.c2 += "<option value='Storm'" + ((vals.challenge3 === 'Storm') ? " selected='selected'" : "") + ">Storm</option>";
-		if (highestZone >= 115) dropdown.c2 += "<option value='Berserk'" + ((vals.challenge3 === 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
-		if (highestZone >= 150) dropdown.c2 += "<option value='Pandemonium'" + ((vals.challenge3 === 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
-		if (highestZone >= 175) dropdown.c2 += "<option value='Glass'" + ((vals.challenge3 === 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
-		if (highestZone >= 200) dropdown.c2 += "<option value='Desolation'" + ((vals.challenge3 === 'Desolation') ? " selected='selected'" : "") + ">Desolation</option>";
-		if (highestZone >= 201) dropdown.c2 += "<option value='Smithless'" + ((vals.challenge3 === 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
+	//C2+C3 Dropdowns
+	const c2Obj = Object.entries(challengeObj).reduce((newObj, [key, val]) => {
+		if (val.unlockedIn.indexOf('c2') !== -1)
+			newObj[key] = val;
+		return newObj;
+	}, {});
+	dropdown.c2 = "<option value='All'" + ((vals.challenge3 === 'All') ? " selected='selected'" : "") + ">All</option>";
+	for (var item in Object.keys(c2Obj)) {
+		var key = Object.keys(c2Obj)[item];
+		dropdown.c2 += "<option value='" + key + "'" + ((vals.challenge3 === key) ? " selected='selected'" : "") + ">" + key + "</option>";
+	}
+
+	//One off challenge Dropdowns
+	const oneOffObj = Object.entries(challengeObj).reduce((newObj, [key, val]) => {
+		if (val.unlockedIn.indexOf('oneOff') !== -1)
+			newObj[key] = val;
+		return newObj;
+	}, {});
+	dropdown.oneOff = "<option value='All'" + ((vals.challengeOneOff === 'All') ? " selected='selected'" : "") + ">All</option>";
+	for (var item in Object.keys(oneOffObj)) {
+		var key = Object.keys(oneOffObj)[item];
+		dropdown.oneOff += "<option value='" + key + "'" + ((vals.challengeOneOff === key) ? " selected='selected'" : "") + ">" + key + "</option>";
 	}
 
 	//Run Type options

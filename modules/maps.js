@@ -438,14 +438,18 @@ function autoMap() {
 
 	if (getPageSetting('autoMaps') === 0 || !game.global.mapsUnlocked) return;
 
+	//Override to disable mapping when we are the world and currently fighting
+	//if (game.challenges.Berserk.frenzyStacks > 0 && !game.global.mapsActive && !game.global.preMapsActive && challengeActive('Berserk') && getPageSetting('berserk')) return;
+
 	//Hacky way to fix an issue with having no maps available to run and no fragments to purchase them
 	if (MODULES.maps.fragmentCost !== Infinity) {
 		if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return;
 		else MODULES.maps.fragmentCost = Infinity;
 	}
+	//Always disable repeat when running one of thesee unique maps - Should probably just be done for every unique map apart from BW?
 	if (game.global.mapsActive) {
 		var currMap = getCurrentMapObject();
-		if (currMap !== undefined && (currMap.name === 'Trimple Of Doom' || currMap.name === 'Atlantrimp' || currMap.name === 'Melting Point' || currMap.name === 'Frozen Castle')) {
+		if (currMap !== undefined && ['Trimple of Doom', 'Atlantrimp', 'Melting Point', 'Frozen Castle'].indexOf(currMap.name) >= 0) {
 			if (currMap.name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
 			if (game.global.repeatMap) repeatClicked();
 			return;
@@ -453,14 +457,8 @@ function autoMap() {
 	}
 
 	//Failsafes
-	//If maps aren't active, or soldier attack is negative or we're running Quest and doing a shield break OR no maps quest
-	if (!game.global.mapsUnlocked || game.global.soldierCurrentAttack < 0 || currQuest() === 8 || currQuest() === 9) {
-		if (game.global.preMapsActive) mapsClicked();
-		return;
-	}
-
-	//No Mapology Credits
-	if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) {
+	//If maps aren't active, or soldier attack is negative or we're running Quest and doing a shield break OR no maps quest OR running Mapo and no credits available
+	if (!game.global.mapsUnlocked || game.global.soldierCurrentAttack < 0 || currQuest() === 8 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
 		if (game.global.preMapsActive) mapsClicked();
 		return;
 	}
@@ -472,25 +470,25 @@ function autoMap() {
 	}
 
 	//If we're inside of the Life challenge.
-	//Will go to map chamber and sit back in the world without fighting until the cell we're on is Living.
+	//Will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
 	if (challengeActive('Life') && !game.global.mapsActive) {
-		if (getPageSetting('life') && getPageSetting('lifeZone') > 0 && game.global.world >= getPageSetting('lifeZone') && getPageSetting('lifeStacks') > 0 && game.challenges.Life.stacks <= getPageSetting('lifeStacks')) {
-			var currCell = game.global.world + "_" + (game.global.lastClearedCell + 1);
+		const lifeZone = getPageSetting('lifeZone');
+		const lifeStacks = getPageSetting('lifeStacks');
+		const currCell = game.global.world + "_" + (game.global.lastClearedCell + 1);
+		if (getPageSetting('life') && lifeZone > 0 && game.global.world >= lifeZone && lifeStacks > 0 && game.challenges.Life.stacks <= lifeStacks) {
 			if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
 			if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
 				MODULES.maps.livingActive = true;
-				if (game.global.fighting || game.global.preMapsActive)
-					mapsClicked();
+				if (game.global.fighting || game.global.preMapsActive) mapsClicked();
 				return;
 			}
 		}
 		MODULES.maps.livingActive = false;
 	}
 
-	//Go to map chamber if we should farm on Wither!
-	if (mapSettings.mapName === 'Wither Farm' && mapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive) {
+	//Go to map chamber if we should farm on Wither! Just a way to get around the issue of this potentially running too slowly and armies dying due to it.
+	if (mapSettings.mapName === 'Wither Farm' && mapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive)
 		mapsClicked(true);
-	}
 
 	//Vanilla Map at Zone
 	var vanillaMAZ = false;
@@ -498,8 +496,8 @@ function autoMap() {
 		var nextCell = game.global.lastClearedCell;
 		if (nextCell === -1) nextCell = 1;
 		else nextCell += 2;
-		var totalPortals = getTotalPortals();
-		var setZone = game.options.menu.mapAtZone.getSetZone();
+		const totalPortals = getTotalPortals();
+		const setZone = game.options.menu.mapAtZone.getSetZone();
 		for (var x = 0; x < setZone.length; x++) {
 			if (!setZone[x].on) continue;
 			if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;

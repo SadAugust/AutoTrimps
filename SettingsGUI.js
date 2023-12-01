@@ -2290,6 +2290,19 @@ function initializeAllSettings() {
 			'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('storm', currSettingUniverse) && autoTrimpSettings.storm.require()) });
 
+		//Berserk
+		createSetting('berserk',
+			function () { return ('Berserk') },
+			function () {
+				var description = "<p><b>NOT IMPLEMENTED YET!</b><br> Enable this if you want the script to perform additional actions during the <b>Berserk</b> challenge.</p>";
+				description += "<p>If enabled it will disable mapping if your army is alive in the world and you have more than 0 stacks of Frenzy buff.</p>";
+				description += "<p>If your army dies then it will go into a level 6 map and farm until you have 20 stacks of Frenzy to ensure you're always the strongest you can be. It <b>will</b> also abandon maps that are in the middle of being run to go obtain these stacks!</p>";
+				description += "Definitely needs some farm X metric but the best way to do that is still to be decided."
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 999) });
+
 		//Pandemonium
 		createSetting('pandemonium',
 			function () { return ('Pandemonium') },
@@ -4541,6 +4554,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("questSmithyMaps", radonon);
 	modifyParentNode("mayhemSwapZone", radonon);
 	modifyParentNode("stormStacks", radonon);
+	modifyParentNode("berserk", radonon);
 	modifyParentNode("pandemoniumSwapZone", radonon);
 	modifyParentNode("glassStacks", radonon);
 	modifyParentNode("desolationSettings", radonon);
@@ -4579,16 +4593,11 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("testTotalEquipmentCost", 'show');
 }
 
-//Portal Challenge Dropdown Population
-function autoPortalChallenges(runType = 'autoPortal') {
-	var challenge = ['None'];
-	var obj;
-
-	if (currSettingUniverse == 0) currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
+function challengesUnlockedObj() {
+	var obj = {};
 	const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 
 	if (currSettingUniverse === 1) {
-		if (runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
 		obj = {
 			'Discipline': { unlockZone: 20, unlockCondition: function () { return getTotalPerkResource(true) >= 30 }, unlockedIn: ['c2', 'oneOff',] },
 			'Metal': { unlockZone: 25, unlockedIn: ['c2', 'oneOff',] },
@@ -4628,7 +4637,6 @@ function autoPortalChallenges(runType = 'autoPortal') {
 	}
 
 	if (currSettingUniverse === 2) {
-		if (runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
 		obj = {
 			'Unlucky': { unlockZone: 15, unlockedIn: ['c2', 'oneOff'] },
 			'Downsize': { unlockZone: 20, unlockedIn: ['c2', 'oneOff'] },
@@ -4657,13 +4665,35 @@ function autoPortalChallenges(runType = 'autoPortal') {
 			'Smithless': { unlockZone: 201, unlockedIn: ['c2', 'oneOff'] },
 		};
 	}
-	//Filter out the challenges that aren't unlocked/not of the right run type.
+
+	//Filter out the challenges that aren't unlocked yet.
 	obj = Object.entries(obj).reduce((newObj, [key, val]) => {
-		if (val.unlockedIn.indexOf(runType) !== -1 && hze >= val.unlockZone && (typeof val.unlockCondition !== 'function' || val.unlockCondition())) {
+		if (hze >= val.unlockZone && (typeof val.unlockCondition !== 'function' || val.unlockCondition())) {
 			newObj[key] = val;
 		}
 		return newObj;
 	}, {});
+
+	return obj;
+}
+
+//Portal Challenge Dropdown Population
+function autoPortalChallenges(runType = 'autoPortal') {
+	var challenge = ['None'];
+
+	if (currSettingUniverse == 0) currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
+	if (currSettingUniverse === 1 && runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
+	if (currSettingUniverse === 2 && runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
+
+	var obj = challengesUnlockedObj();
+	//Filter out the challenges that aren't of the right run type.
+	obj = Object.entries(obj).reduce((newObj, [key, val]) => {
+		if (val.unlockedIn.indexOf(runType) !== -1) {
+			newObj[key] = val;
+		}
+		return newObj;
+	}, {});
+
 	//Sort challenges by unlock zone and convert it to an array.
 	obj = Object.keys(obj).sort((a, b) => b.unlockZone - a.unlockZone);
 	//Add all the challenges to the array.
@@ -4677,6 +4707,7 @@ function autoPortalChallenges(runType = 'autoPortal') {
 		challenge.push('One Off Challenges');
 	}
 	if (runType === 'autoPortal' || runType === 'heHr') {
+		const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		if (currSettingUniverse === 2 && hze >= 50) challenge.push('Challenge 3');
 		if (currSettingUniverse === 1 && hze >= 65) challenge.push('Challenge 2');
 	}
