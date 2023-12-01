@@ -2036,6 +2036,7 @@ function quagmire(lineCheck) {
 		for (var i = 0; i < (settingIndex + 1); i++) {
 			if (i === 0) continue;
 			if (!baseSettings[i].active) continue;
+			if (baseSettings[i].world > game.global.world) continue;
 			bogsToRun -= parseInt(baseSettings[i].bogs);
 		}
 

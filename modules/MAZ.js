@@ -2313,31 +2313,6 @@ function saveATUniqueMapsConfig(setting) {
 		cell = (isNumberBad(cell)) ? 0 : cell;
 		setting[name].cell = cell;
 
-		//Error checking
-		/* if (name.includes('Big Wall') && zone < 7)
-			error += " Big Wall can't be run below zone 7.<br>";
-		if (name.includes('The Block') && zone < 11)
-			error += " The Block can't be run below zone 11.<br>";
-		if (name.includes('The Wall') && zone < 15)
-			error += " The Wall can't be run below zone 15.<br>";
-		if (name.includes('Dimension of Anger') && zone < 21)
-			error += " Dimension of Anger can't be run below zone 21.<br>";
-		if (name.includes('Dimension of Rage') && zone < 16)
-			error += " Dimension of Rage can't be run below zone 16.<br>";
-		if (name.includes('Prismatic Palace') && zone < 21)
-			error += " Prismatic Palace can't be run below zone 21.<br>";
-		if ((name.includes('Atlantrimp') || name.includes('Trimple Of Doom')) && (zone < 33 || (zone === 33 && cell < 50)))
-			error += " " + name + " can't be run below zone 33 cell 50.<br>";
-		if (name.includes('Melting Point') && (zone < 50 || (zone === 50 && cell < 56)))
-			error += " Melting Point can't be run below zone 50 cell 56.<br>";
-		if (name.includes('The Prison') && zone < 80)
-			error += " The Prison can't be run below zone 80.<br>";
-		if (name.includes('Imploding Star') && zone < 170)
-			error += " Imploding Star can't be run below zone 170.<br>";
-		if (name.includes('Frozen Castle') && zone < 175)
-			error += " Frozen Castle can't be run below zone 175.<br>";
-		if (error !== '') errorMessage = true; */
-
 		y++;
 	}
 
