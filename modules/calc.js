@@ -16,6 +16,7 @@ class TrimpStats {
 		this.mountainPriority = undefined;
 		this.mapSpecial = undefined;
 		this.mapBiome = undefined;
+		this.shieldBreak = undefined;
 
 		const z = game.global.world;
 
@@ -23,6 +24,7 @@ class TrimpStats {
 		this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Experience') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 		this.isFiller = !this.isDaily && !this.isC3;
 		this.currChallenge = game.global.challengeActive;
+		this.shieldBreak = challengeActive('Bublé') || currQuest() === 8;
 
 		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;

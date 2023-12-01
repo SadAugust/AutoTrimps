@@ -186,7 +186,7 @@ function populateZFarmData() {
 	//Nature
 	const hze = getHighestLevelCleared() + 1;
 	var nature = game.empowerments[['Poison', 'Wind', 'Ice'][Math.ceil(zone / 5) % 3]];
-	var natureStart = universe !== 1 ? 9999 : challengeActive('Eradicated') ? 1 : 236;
+	const natureStart = universe !== 1 ? 9999 : challengeActive('Eradicated') ? 1 : 236;
 	const diplomacy = mastery('nature2') ? 5 : 0;
 	const plaguebrought = Fluffy.isRewardActive('plaguebrought') ? 2 : 1;
 	const natureTransfer = (zone >= natureStart ? nature.retainLevel + nature.getRetainBonus() : 0) / 100;
@@ -360,7 +360,6 @@ function populateZFarmData() {
 	}
 	//U2
 	if (universe === 2) {
-		natureStart = 9990;
 		if (challengeActive('Unlucky')) {
 			minFluct = 0.005;
 			maxFluct = 1.995;

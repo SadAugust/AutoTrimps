@@ -354,6 +354,7 @@ function getVoidMapDifficulty(map) {
 	for (const [prefix, weight] of Object.entries(MODULES.mapFunctions.voidPrefixes)) {
 		if (map.name.includes(prefix)) {
 			score += weight;
+			if (trimpStats.shieldBreak) score = 100;
 			break;
 		}
 	}
@@ -703,7 +704,7 @@ function mapFarm(lineCheck) {
 
 	if (setting !== undefined) {
 		var mapLevel = setting.level;
-		var mapSpecial = setting.special;
+		var mapSpecial = getAvailableSpecials(setting.special);
 		var repeatCounter = setting.repeat;
 		if (repeatCounter === -1) repeatCounter = Infinity;
 		var jobRatio = setting.jobratio;
@@ -730,8 +731,6 @@ function mapFarm(lineCheck) {
 		//When running Wither make sure map level is lower than 0 so that we don't accumulate extra stacks.
 		if (challengeActive('Wither') && mapLevel >= 0)
 			mapLevel = -1;
-		//If you're running Transmute and the mapSpecial variable is either LMC or SMC it changes it to LSC/SSC.
-		mapSpecial = (getAvailableSpecials(mapSpecial));
 
 		if (mapType === 'Daily Reset' ? repeatCounter < repeatCheck : repeatCounter > repeatCheck)
 			shouldMap = true;
