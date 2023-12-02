@@ -78,7 +78,6 @@ function mapSettingsDisplay(elem, titleText) {
 	var hypothermia = titleText.includes('Hypothermia');
 	var desolation = titleText.includes('Desolation');
 
-	var universe = currSettingUniverse;
 	var settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
 	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
 	var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
@@ -236,10 +235,10 @@ function mapSettingsDisplay(elem, titleText) {
 		//Reading info from each setting and setting up the default values object with necessary data
 		for (var item in settingInputsDefault) {
 			var name = settingInputsDefault[item];
-			defaultVals[name] = defaultSetting[name] ? defaultSetting[name] : defaultVals[name];
+			defaultVals[name] = typeof (defaultSetting[name]) !== 'undefined' ? defaultSetting[name] : defaultVals[name];
 		}
 
-		const defaultDropdowns = mapSettingsDropdowns(universe, defaultVals, varPrefix);
+		const defaultDropdowns = mapSettingsDropdowns(currSettingUniverse, defaultVals, varPrefix);
 		//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
 		//Adding a class to check if we should display the gather setting if special is set to huge cache or large cache
 		var className = (defaultVals.special === 'hc' || defaultVals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
@@ -443,7 +442,7 @@ function mapSettingsDisplay(elem, titleText) {
 					vals.potionsnumber = typeof (currSetting[x].potion) !== 'undefined' ? currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') : 0;
 					continue;
 				}
-				vals[name] = typeof currSetting[x][name] !== 'undefined' ? currSetting[x][name] : vals[name];
+				vals[name] = typeof (currSetting[x][name]) !== 'undefined' ? currSetting[x][name] : vals[name];
 			}
 			if (x >= 10) overflow = true;
 		}
@@ -463,7 +462,7 @@ function mapSettingsDisplay(elem, titleText) {
 		}
 
 		//Populate information needed for dropdowns
-		const dropdowns = mapSettingsDropdowns(universe, vals, varPrefix);
+		const dropdowns = mapSettingsDropdowns(currSettingUniverse, vals, varPrefix);
 
 		//Adding a class to check if we should display the gather setting if special is set to huge cache or large cache
 		var className = (vals.special === 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
@@ -688,7 +687,7 @@ function mapSettingsDisplay(elem, titleText) {
 
 			//C2/C3 challenges dropdown
 			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
-				tooltipText += "<div class='windowChallenge3" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge" + (universe + 1) + "</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + dropdowns.c2 + "</select></div>";
+				tooltipText += "<div class='windowChallenge3" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge" + (currSettingUniverse + 1) + "</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + dropdowns.c2 + "</select></div>";
 
 			//Portal After Void Maps checkbox
 			if (voidMap)
