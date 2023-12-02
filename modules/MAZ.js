@@ -428,7 +428,7 @@ function mapSettingsDisplay(elem, titleText) {
 			potion: 'h',
 		}
 
-		//Taking data from the current setting and overriding the default values
+		//Taking data from the current setting and overriding the info in vals with it.
 		if (currSetting.length - 1 >= x) {
 			for (var item in settingInputs) {
 				var name = settingInputs[item];
@@ -707,8 +707,7 @@ function mapSettingsDisplay(elem, titleText) {
 	elem.style.height = 'auto';
 	elem.style.maxHeight = window.innerHeight * .85 + 'px';
 	elem.style.width = windowWidth;
-	if (overflow) elem.style.overflowY = 'scroll';
-	if (!overflow) elem.style.overflowY = '';
+	elem.style.overflowY = (overflow ? 'scroll' : '');
 
 	return [elem, tooltipText, costText, ondisplay];
 }
@@ -1496,8 +1495,8 @@ function removeRow(index, titleText) {
 	var worshipperFarm = titleText.includes('Worshipper Farm');
 
 	var elem = document.getElementById('windowRow' + index);
-	var checkBox;
 	if (!elem) return;
+	var checkBox;
 	document.getElementById('windowWorld' + index).value = -2;
 	if (!golden && !desolation) document.getElementById('windowCell' + index).value = -1;
 	if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) document.getElementById('windowLevel' + index).value = 0;
@@ -1582,10 +1581,8 @@ function updateWindowPreset(index, varPrefix) {
 	var voidMap = varPrefix.includes('VoidMap');
 	var hdFarm = varPrefix.includes('HDFarm');
 	var raiding = varPrefix.includes('Raiding');
-	var bionic = varPrefix.includes('Bionic');
 	var toxicity = varPrefix.includes('Toxicity');
 
-	var quagmire = varPrefix.includes('Quagmire');
 	var insanity = varPrefix.includes('Insanity');
 	var alchemy = varPrefix.includes('Alchemy');
 	var hypothermia = varPrefix.includes('Hypothermia');
@@ -1777,12 +1774,14 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	dropdown.goldenType += "<option value='b'" + ((vals.goldenType === 'b') ? " selected = 'selected'" : "") + " >Battle</option>";
 	dropdown.goldenType += "<option value='v'" + ((vals.goldenType === 'v') ? " selected = 'selected'" : "") + " >Void</option>";
 
+	//Alchemy potion types
 	dropdown.potionTypes = "<option value='h'" + ((vals.potionstype === 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\
 	<option value='g'" + ((vals.potionstype === 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\
 	<option value='f'" + ((vals.potionstype === 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\
 	<option value='v'" + ((vals.potionstype === 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\
 	<option value='s'" + ((vals.potionstype === 's') ? " selected='selected'" : "") + ">Potion of Strength</option>";
 
+	//Raiding fragment types
 	dropdown.raidingTypes = "<option value='0'" + ((vals.raidingDropdown === '0') ? " selected='selected'" : "") + ">Frag</option>\
 	<option value='1'" + ((vals.raidingDropdown === '1') ? " selected='selected'" : "") + ">Frag Min</option>\
 	<option value='2'" + ((vals.raidingDropdown === '2') ? " selected='selected'" : "") + ">Frag Max</option>";
@@ -1939,9 +1938,7 @@ function autoStructureSave() {
 	}
 
 	var portalElem = document.getElementById('autoJobSelfGather');
-	if (portalElem) {
-		if (portalElem.value) setting.portalOption = portalElem.value;
-	}
+	if (portalElem && portalElem.value) setting.portalOption = portalElem.value;
 
 	if (errorMessage) {
 		var elem = document.getElementById('autoJobsError');
@@ -1950,24 +1947,22 @@ function autoStructureSave() {
 		return;
 	}
 
-	setPageSetting('buildingSettingsArray', setting);
-
 	//Adding in buildings that are locked so that there won't be any issues later on
 	if (game.global.universe === 2 && game.stats.highestRadLevel.valueTotal() < 130) {
-		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory = {};
-		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory.enabled = true;
-		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory.percent = 100;
-		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory.buyMax = 0;
+		setting.Laboratory = {};
+		setting.Laboratory.enabled = false;
+		setting.Laboratory.percent = 100;
+		setting.Laboratory.buyMax = 0;
 	}
 	if (game.global.universe === 2 && game.buildings.Antenna.locked) {
-		autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {};
-		autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = true;
-		autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.percent = 100;
-		autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.buyMax = 0;
+		setting.Antenna = {};
+		setting.Antenna.enabled = false;
+		setting.Antenna.percent = 100;
+		setting.Antenna.buyMax = 0;
 	}
 
+	setPageSetting('buildingSettingsArray', setting);
 	cancelTooltip();
-	saveSettings();
 }
 
 //Auto Jobs
@@ -2053,12 +2048,7 @@ function autoJobsDisplay(elem) {
 }
 //AJ Save
 function autoJobsSave() {
-	var tooltipText;
-	var costText = "";
-	var ondisplay = null;
 	var error = "";
-	var errorMessage = false;
-
 	var setting = {};
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var quantboxes = document.getElementsByClassName('jobConfigQuantity');
@@ -2073,7 +2063,7 @@ function autoJobsSave() {
 			if (name === 'NoLumberjacks')
 				continue;
 			if (name === 'FarmersUntil') {
-				setting[name].zone = (quantboxes[x].value);
+				setting[name].zone = quantboxes[x].value;
 				continue;
 			}
 		}
@@ -2083,59 +2073,52 @@ function autoJobsSave() {
 			//Error checking
 			if (setting[name].ratio < 0 || isNaN(setting[name].ratio)) {
 				error += "Your ratio for " + name + "s needs to be above a valid number of 0 or above.<br>";
-				errorMessage = true;
+				continue;
 			}
-			continue;
 		}
 		var jobquant = document.getElementById('autoJobQuant' + name).value;
 		setting[name].percent = parseFloat(jobquant);
 
 		//Error checking
-		if (setting[name].percent < 0 || isNaN(setting[name].percent)) {
+		if (setting[name].percent < 0 || isNaN(setting[name].percent))
 			error += "Your spending percentage for " + name + "s needs to be above a valid number of 0 or above.<br>";
-			errorMessage = true;
-		}
 	}
 	var portalElem = document.getElementById('autoJobSelfGather');
-	if (portalElem) {
-		if (portalElem.value) setting.portalOption = portalElem.value;
-	}
+	if (portalElem && portalElem.value) setting.portalOption = portalElem.value;
 
-	if (errorMessage) {
+	if (error !== "") {
 		var elem = document.getElementById('autoJobsError');
 		if (elem) elem.innerHTML = error;
 		verticalCenterTooltip(true);
 		return;
 	}
 
-	setPageSetting('jobSettingsArray', setting);
-
 	//Adding in jobs that are locked so that there won't be any issues later on
 	if (game.global.universe === 1) {
 		//Magmamancer
 		if (game.stats.highestLevel.valueTotal() < 230) {
-			autoTrimpSettings.jobSettingsArray.value.Magmamancer = {};
-			autoTrimpSettings.jobSettingsArray.value.Magmamancer.enabled = true;
-			autoTrimpSettings.jobSettingsArray.value.Magmamancer.percent = 100;
+			setting.magmamancer = {};
+			setting.magmamancer.enabled = true;
+			setting.magmamancer.percent = 100;
 		}
 	}
 	if (game.global.universe === 2) {
 		//Meteorologist
 		if (game.stats.highestRadLevel.valueTotal() < 30) {
-			autoTrimpSettings.jobSettingsArray.valueU2.Meteorologist = {};
-			autoTrimpSettings.jobSettingsArray.valueU2.Meteorologist.enabled = true;
-			autoTrimpSettings.jobSettingsArray.valueU2.Meteorologist.percent = 100;
+			setting.meteorologist = {};
+			setting.meteorologist.enabled = true;
+			setting.meteorologist.percent = 100;
 		}
 		//Worshipper
 		if (game.stats.highestRadLevel.valueTotal() < 50) {
-			autoTrimpSettings.jobSettingsArray.valueU2.Worshipper = {};
-			autoTrimpSettings.jobSettingsArray.valueU2.Worshipper.enabled = true;
-			autoTrimpSettings.jobSettingsArray.valueU2.Worshipper.percent = 20;
+			setting.worshipper = {};
+			setting.worshipper.enabled = true;
+			setting.worshipper.percent = 20;
 		}
 	}
 
+	setPageSetting('jobSettingsArray', setting);
 	cancelTooltip();
-	saveSettings();
 }
 
 //Unique Maps
@@ -2145,7 +2128,6 @@ function uniqueMapsDisplay(elem) {
 	var costText = "";
 	var ondisplay = null;
 
-
 	const baseText = "<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input. If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it.</p>";
 	const smithy = "<p>The right side of this window is dedicated to running Melting Point when you've reached a certain Smithy value. As each runtype of vastly different there's different inputs for each type of run that you can do! Certain challenges have overrides for this, once unlocked they can be found in the C3 tab.</p>";
 
@@ -2154,50 +2136,29 @@ function uniqueMapsDisplay(elem) {
 	if (currSettingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 50) tooltipText += `${smithy}`;
 	tooltipText += "</div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
 
-	var count = 0;
 	var setting, checkbox;
 	var settingGroup = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
 
 	var smithySettings = [];
 
-	if (currSettingUniverse === 1) {
-		var mapUnlocks = [
-			'The Block', 'The Wall', 'Dimension of Anger'
-		]
-		if (game.stats.highestLevel.valueTotal() >= 33) mapUnlocks.push("Trimple Of Doom");
-		if (game.stats.highestLevel.valueTotal() >= 80) mapUnlocks.push("The Prison");
-		if (game.stats.highestLevel.valueTotal() >= 170) mapUnlocks.push("Imploding Star");
-	}
+	var hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	//Populating array of maps that are unlocked
+	var mapUnlocks = Object.keys(MODULES.mapFunctions.uniqueMaps)
+		.filter(mapName => ['Bionic Wonderland', 'The Black Bog'].indexOf(mapName) === -1)
+		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].universe === currSettingUniverse)
+		.filter(mapName => MODULES.mapFunctions.uniqueMaps[mapName].zone <= hze);
 
-	if (currSettingUniverse === 2) {
-		//Adding in the U2 Unique Maps if they've been unlocked.
-		var mapUnlocks = [
-			'Big Wall', 'Dimension of Rage', 'Prismatic Palace'
-		]
-
-		if (game.stats.highestRadLevel.valueTotal() >= 33) mapUnlocks.push("Atlantrimp");
-		if (game.stats.highestRadLevel.valueTotal() >= 50) mapUnlocks.push("Melting Point");
-		if (game.stats.highestRadLevel.valueTotal() >= 175) mapUnlocks.push("Frozen Castle");
-
-
-		//Adding in Smithy Settings if in u2
-		if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy");
-		if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy Daily");
-		if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy C3");
+	//Adding in Smithy Melting Point settings
+	if (currSettingUniverse === 2 && hze >= 50) {
+		smithySettings.push("MP Smithy");
+		smithySettings.push("MP Smithy Daily");
+		smithySettings.push("MP Smithy C3");
 	}
 
 	for (var x = 0; x < mapUnlocks.length; x++) {
 		tooltipText += "<tr>";
 		var item = mapUnlocks[x];
 		var setting = settingGroup[item];
-		//U1
-		if (item === 'Trimple Of Doom' && game.stats.highestLevel.valueTotal() < 33) continue;
-		if (item === 'The Prison' && game.stats.highestLevel.valueTotal() < 80) continue;
-		if (item === 'Imploding Star' && game.stats.highestLevel.valueTotal() < 170) continue;
-		//U2
-		if (item === 'Atlantrimp' && game.stats.highestRadLevel.valueTotal() < 33) continue;
-		if (item === 'Melting Point' && game.stats.highestRadLevel.valueTotal() < 50) continue;
-		if (item.includes('Smithy') && game.stats.highestRadLevel.valueTotal() < 50) continue;
 		var max;
 		var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
 
@@ -2242,7 +2203,6 @@ function uniqueMapsDisplay(elem) {
 }
 //Unique Maps Save
 function uniqueMapsSave(setting) {
-
 	var error = "";
 	var errorMessage = false;
 	var ATsetting = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
@@ -2261,7 +2221,6 @@ function uniqueMapsSave(setting) {
 
 		if (name.includes('MP Smithy')) {
 			var valueBoxes = document.getElementsByClassName('jobConfigQuantity');
-
 			var value = parseInt(valueBoxes[z].value, 10);
 			if (value > 10000) value = 10000;
 			value = (isNumberBad(value)) ? 999 : value;
@@ -2294,7 +2253,6 @@ function uniqueMapsSave(setting) {
 
 	setPageSetting('uniqueMapSettingsArray', setting, currSettingUniverse);
 	cancelTooltip();
-	saveSettings();
 }
 
 //AT Messages
@@ -2442,7 +2400,6 @@ function messageSave() {
 
 	setPageSetting('spamMessages', setting);
 	cancelTooltip();
-	saveSettings();
 }
 
 //Daily Portal Mods
@@ -2552,7 +2509,6 @@ function dailyPortalModsSave() {
 
 	setPageSetting('dailyPortalSettingsArray', setting, currSettingUniverse);
 	cancelTooltip();
-	saveSettings();
 }
 
 //C2 Runner
@@ -2707,7 +2663,6 @@ function c2RunnerDisplay(elem) {
 }
 //C2 Runner Save
 function c2RunnerSave() {
-
 	var setting = getPageSetting('c2RunnerSettings', currSettingUniverse);
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var percentboxes = document.getElementsByClassName('structConfigPercent');
@@ -2727,5 +2682,4 @@ function c2RunnerSave() {
 
 	setPageSetting('c2RunnerSettings', setting, currSettingUniverse);
 	cancelTooltip();
-	saveSettings();
 }
