@@ -83,25 +83,68 @@ function mapSettingsDisplay(elem, titleText) {
 	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
 	var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 
+	var settingInputsDefault = ['active'];
+	var settingInputs = [];
 	var windowWidth;
-	if (golden) windowWidth = '40%';
-	else if (hypothermia) windowWidth = '45%';
-	else if (quagmire) windowWidth = '45%';
-	else if (toxicity) windowWidth = '50%';
-	else if (insanity) windowWidth = '55%';
-	else if (desolation) windowWidth = '50%';
-	else if (boneShrine) windowWidth = '65%';
-	else if (bionic) windowWidth = '70%';
-	else if (voidMap) windowWidth = '70%';
-	else if (worshipperFarm) windowWidth = '70%';
-	else if (smithyFarm) windowWidth = '70%';
-	else if (hdFarm) windowWidth = '70%';
-	else if (raiding) windowWidth = '75%';
-	else if (alchemy) windowWidth = '75%';
-	else if (mapBonus) windowWidth = '75%';
-	else if (mapFarm) windowWidth = '80%';
-	else if (tributeFarm) windowWidth = '80%';
-	else {
+	if (golden) {
+		settingInputs = ['active', 'priority', 'row', 'golden', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '40%';
+	} else if (hypothermia) {
+		settingInputsDefault.push('frozencastle', 'autostorage', 'packrat');
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'autoLevel', 'bonfire', 'jobratio'];
+		windowWidth = '45%';
+	} else if (quagmire) {
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'bogs', 'jobratio'];
+		windowWidth = '45%';
+	} else if (toxicity) {
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'repeat', 'jobratio'];
+		windowWidth = '50%';
+	} else if (insanity) {
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'special', 'gather', 'autoLevel', 'jobratio', 'destack', 'insanity'];
+		windowWidth = '55%';
+	} else if (desolation) {
+		settingInputs = ['active', 'priority', 'row', 'world', 'repeatevery', 'endzone', 'special', 'gather', 'jobratio', 'prestigeGoal'];
+		windowWidth = '50%';
+	} else if (boneShrine) {
+		settingInputsDefault.push('autoBone', 'bonebelow', 'gather', 'world', 'jobratio');
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'boneamount', 'bonebelow', 'gather', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '65%';
+	} else if (bionic) {
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '70%';
+	} else if (voidMap) {
+		settingInputsDefault.push('jobratio', 'maxTenacity', 'boneCharge', 'voidFarm', 'hitsSurvived', 'hdRatio', 'mapCap');
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'maxvoidzone', 'hdRatio', 'voidHDRatio', 'portalAfter', 'hdType', 'hdType2', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '70%';
+	} else if (worshipperFarm) {
+		settingInputsDefault.push('shipSkipEnabled', 'shipskip');
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'worshipper', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '70%';
+	} else if (smithyFarm) {
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeat', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'meltingPoint', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '70%';
+	} else if (hdFarm) {
+		settingInputsDefault.push('jobratio', 'mapCap');
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'hdBase', 'hdMult', 'hdType', 'mapCap', 'endzone', 'autoLevel', 'jobratio', 'runType', 'challenge', 'challenge3']
+		windowWidth = '70%';
+	} else if (raiding) {
+		settingInputsDefault.push('recycle');
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'raidingDropdown', 'incrementMaps', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '75%';
+	} else if (alchemy) {
+		settingInputsDefault.push('voidPurchase');
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'potion', 'jobratio'];
+		windowWidth = '75%';
+	} else if (mapBonus) {
+		settingInputsDefault.push('special', 'gather', 'jobratio');
+		windowWidth = '75%';
+	} else if (mapFarm) {
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'repeat', 'hdRatio', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '80%';
+	} else if (tributeFarm) {
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'tributes', 'mets', 'buildings', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		windowWidth = '80%';
+	} else {
 		windowWidth = '50%';
 		debug('Please setup a width for this setting!' + titleText)
 	}
@@ -111,10 +154,10 @@ function mapSettingsDisplay(elem, titleText) {
 	var overflow = false;
 
 	//Setting up the Help onclick setting.
-	var mazHelp = mazPopulateHelpWindow(titleText, trimple);
+	var mazHelp = mapSettingsHelpWindow(titleText, trimple);
 
 	tooltipText = "";
-	//Setting up default values section
+	//Setting up initial row 
 	if (!golden) {
 		//Header
 		tooltipText += "\
@@ -161,77 +204,42 @@ function mapSettingsDisplay(elem, titleText) {
 		tooltipText += "</div>";
 
 		var defaultVals = {
+			active: false,
 			special: '0',
 			gather: 'food',
 			mapType: 'Absolute',
+			cell: 81,
+			autoBone: false,
+			bonebelow: 0,
+			world: 0,
+			jobratio: '1,1,1',
+			worshipper: 50,
+			shipSkipEnabled: false,
+			shipskip: 10,
+			voidPurchase: false,
+			maxTenacity: false,
+			boneCharge: false,
+			voidFarm: false,
+			hitsSurvived: 0,
+			hdRatio: 0,
+			mapCap: 100,
+			frozencastle: [200, 99],
+			autostorage: false,
+			packrat: false,
+			recycle: false,
 		}
 
 		var style = "";
 
-		const defaultSetting = originalSetting[0];
+		defaultSetting = originalSetting[0];
 
 		//Reading info from each setting and setting up the default values object with necessary data
-		defaultVals.active = defaultSetting.active ? defaultSetting.active : false;
-		if (!boneShrine && !desolation) defaultVals.cell = defaultSetting.cell ? defaultSetting.cell : 81;
-
-		if (boneShrine) {
-			defaultVals.autoBone = defaultSetting.autoBone ? defaultSetting.autoBone : false;
-			defaultVals.bonebelow = defaultSetting.bonebelow ? defaultSetting.bonebelow : 0;
-			defaultVals.world = defaultSetting.world ? defaultSetting.world : 0;
-			defaultVals.gather = defaultSetting.gather ? defaultSetting.gather : 'food';
+		for (var item in settingInputsDefault) {
+			var name = settingInputsDefault[item];
+			defaultVals[name] = defaultSetting[name] ? defaultSetting[name] : defaultVals[name];
 		}
 
-		if (mapBonus || voidMap || boneShrine || hdFarm)
-			defaultVals.jobratio = defaultSetting.jobratio ? defaultSetting.jobratio : '1,1,1,1';
-
-		if (mapBonus) {
-			defaultVals.special = defaultSetting.special ? defaultSetting.special : '0';
-			defaultVals.gather = defaultSetting.gather ? defaultSetting.gather : 'food';
-		}
-
-		if (worshipperFarm) {
-			defaultVals.worshipper = defaultSetting.worshipper ? defaultSetting.worshipper : 50;
-			defaultVals.shipSkipEnabled = defaultSetting.shipSkipEnabled ? defaultSetting.shipSkipEnabled : false;
-			defaultVals.shipskip = defaultSetting.shipskip ? defaultSetting.shipskip : 10;
-		}
-
-		if (alchemy)
-			defaultVals.voidPurchase = defaultSetting.voidPurchase ? defaultSetting.voidPurchase : false;
-
-		if (voidMap) {
-			defaultVals.maxTenacity = defaultSetting.maxTenacity ? defaultSetting.maxTenacity : false;
-			if (game.permaBoneBonuses.boosts.owned > 0)
-				defaultVals.boneCharge = defaultSetting.boneCharge ? defaultSetting.boneCharge : false;
-			defaultVals.voidFarm = defaultSetting.voidFarm ? defaultSetting.voidFarm : false;
-
-			defaultVals.hitsSurvived = defaultSetting.hitsSurvived ? defaultSetting.hitsSurvived : 0;
-			defaultVals.hdRatio = defaultSetting.hdRatio ? defaultSetting.hdRatio : 0;
-			defaultVals.mapCap = defaultSetting.mapCap ? defaultSetting.mapCap : 100;
-		}
-
-		if (hypothermia) {
-			defaultVals.frozencastle = defaultSetting.frozencastle ? defaultSetting.frozencastle : [200, 99];
-			defaultVals.autostorage = defaultSetting.autostorage ? defaultSetting.autostorage : false;
-			defaultVals.packrat = defaultSetting.packrat ? defaultSetting.packrat : false;
-		}
-
-		if (tributeFarm || smithyFarm || alchemy)
-			defaultVals.mapType = defaultSetting.mapType ? defaultSetting.mapType : 'Absolute';
-
-		if (mapFarm)
-			defaultVals.mapType = defaultSetting.mapType ? defaultSetting.mapType : 'Map Count';
-
-		if (raiding && !bionic)
-			defaultVals.recycle = defaultSetting.recycle ? defaultSetting.recycle : false;
-
-		if (hdFarm)
-			defaultVals.mapCap = typeof (defaultSetting.mapCap) === 'undefined' ? 100 : defaultSetting.mapCap ? defaultSetting.mapCap : 100;
-
-		var defaultDropdowns = mapSettingsDropdowns(universe, defaultVals, varPrefix);
-		var defaultGatherDropdown = defaultDropdowns.gather;
-		var defaultSpecialsDropdown = defaultDropdowns.special;
-
-
+		const defaultDropdowns = mapSettingsDropdowns(universe, defaultVals, varPrefix);
 		//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
 		//Adding a class to check if we should display the gather setting if special is set to huge cache or large cache
 		var className = (defaultVals.special === 'hc' || defaultVals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
@@ -251,14 +259,14 @@ function mapSettingsDisplay(elem, titleText) {
 				tooltipText += "<div class='windowAuto" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowAutoBone", null, defaultVals.autoBone) + "</div>";
 				tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.bonebelow + "' type='number' id='windowBoneBelowDefault'/></div>";
 				tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.world + "' type='number' id='windowBoneWorld'/></div>";
-				tooltipText += "<div class='windowBoneDefault'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultGatherDropdown + "</select></div>";
+				tooltipText += "<div class='windowBoneDefault'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultDropdowns.gather + "</select></div>";
 				tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
 			}
 			if (mapBonus || hdFarm)
 				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
 			if (mapBonus) {
-				tooltipText += "<div class='windowSpecial" + varPrefix + "\'  onchange='updateWindowPreset()'><select value='" + defaultVals.special + "' id='windowSpecial'>" + defaultSpecialsDropdown + "</select></div>";
-				tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset()'>\<select value='" + defaultVals.gather + "' id='windowGather'>" + defaultGatherDropdown + "</select></div>";
+				tooltipText += "<div class='windowSpecial" + varPrefix + "\'  onchange='updateWindowPreset()'><select value='" + defaultVals.special + "' id='windowSpecial'>" + defaultDropdowns.special + "</select></div>";
+				tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset()'>\<select value='" + defaultVals.gather + "' id='windowGather'>" + defaultDropdowns.gather + "</select></div>";
 			}
 
 			if (hypothermia) {
@@ -293,76 +301,79 @@ function mapSettingsDisplay(elem, titleText) {
 	}
 
 	//Setting up rows for each setting
-	tooltipText += "\
+	const rowSetup = true;
+	if (rowSetup) {
+		tooltipText += "\
 	<div id='windowContainer' style='display: block'><div id='windowError'></div>\
 	<div class='row windowRow titles'>";
-	if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\'>Active?</div>";
-	if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>";
-	tooltipText += "<div class='windowPriority" + varPrefix + "\'>Priority</div>";
-	if (!voidMap && !golden && !boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Start<br/>Zone</div>";
-	if (boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Zone</div>";
-	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>";
-	if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>";
-	if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Min Zone</div>";
-	if (voidMap) tooltipText += "<div class='windowMaxVoidZone'>Max Zone</div>";
-	if (raiding && bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Raiding<br/>Zone</div>";
-	if (raiding && !bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Map<br/>Level</div>";
-	if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
-	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "\'>Auto<br/>Level</div>";
-	if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) tooltipText += "<div class='windowLevel" + varPrefix + "\'>Map<br/>Level</div>";
-	if (tributeFarm || smithyFarm || mapFarm || alchemy) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
-	if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>";
-	if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>";
+		if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\'>Active?</div>";
+		if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>";
+		tooltipText += "<div class='windowPriority" + varPrefix + "\'>Priority</div>";
+		if (!voidMap && !golden && !boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Start<br/>Zone</div>";
+		if (boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Zone</div>";
+		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>";
+		if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>";
+		if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Min Zone</div>";
+		if (voidMap) tooltipText += "<div class='windowMaxVoidZone'>Max Zone</div>";
+		if (raiding && bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Raiding<br/>Zone</div>";
+		if (raiding && !bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Map<br/>Level</div>";
+		if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "\'>Auto<br/>Level</div>";
+		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) tooltipText += "<div class='windowLevel" + varPrefix + "\'>Map<br/>Level</div>";
+		if (tributeFarm || smithyFarm || mapFarm || alchemy) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
+		if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>";
+		if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>";
 
-	if (mapFarm) tooltipText += "<div class='windowRepeat" + varPrefix + "\'>Map<br/>Repeats</div>";
-	if (toxicity) tooltipText += "<div class='windowRepeat" + varPrefix + "\'>Toxic<br/>Stacks</div>";
-	if (mapFarm || mapBonus) tooltipText += "<div class='windowHDRatio" + varPrefix + "\'>Above X<br/>HD Ratio</div>";
+		if (mapFarm) tooltipText += "<div class='windowRepeat" + varPrefix + "\'>Map<br/>Repeats</div>";
+		if (toxicity) tooltipText += "<div class='windowRepeat" + varPrefix + "\'>Toxic<br/>Stacks</div>";
+		if (mapFarm || mapBonus) tooltipText += "<div class='windowHDRatio" + varPrefix + "\'>Above X<br/>HD Ratio</div>";
 
-	if (mapBonus) tooltipText += "<div class='windowMapStacks'>Map<br/>Stacks</div>";
-	if (quagmire) tooltipText += "<div class='windowBogs'>Bogs</div>";
-	if (insanity) tooltipText += "<div class='windowInsanity'>Insanity</div>";
-	if (alchemy) tooltipText += "<div class='windowPotionType'>Potion Type</div>";
-	if (golden) tooltipText += "<div class='windowTypeAutoGolden'>Golden Type</div>";
-	if (alchemy) tooltipText += "<div class='windowPotionNumber'>Potion Number</div>";
-	if (hypothermia) tooltipText += "<div class='windowBonfire'>Bonfires</div>";
+		if (mapBonus) tooltipText += "<div class='windowMapStacks'>Map<br/>Stacks</div>";
+		if (quagmire) tooltipText += "<div class='windowBogs'>Bogs</div>";
+		if (insanity) tooltipText += "<div class='windowInsanity'>Insanity</div>";
+		if (alchemy) tooltipText += "<div class='windowPotionType'>Potion Type</div>";
+		if (golden) tooltipText += "<div class='windowTypeAutoGolden'>Golden Type</div>";
+		if (alchemy) tooltipText += "<div class='windowPotionNumber'>Potion Number</div>";
+		if (hypothermia) tooltipText += "<div class='windowBonfire'>Bonfires</div>";
 
-	if (boneShrine) tooltipText += "<div class='windowBoneAmount'>To use</div>";
-	if (boneShrine) tooltipText += "<div class='windowBoneBelow'>Use below</div>";
-	if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Worshippers</div>";
-	if (smithyFarm) tooltipText += "<div class='windowSmithies'>Smithies</div>";
+		if (boneShrine) tooltipText += "<div class='windowBoneAmount'>To use</div>";
+		if (boneShrine) tooltipText += "<div class='windowBoneBelow'>Use below</div>";
+		if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Worshippers</div>";
+		if (smithyFarm) tooltipText += "<div class='windowSmithies'>Smithies</div>";
 
-	if (hdFarm) {
-		tooltipText += "<div class='windowHDBase'>HD Base</div>";
-		tooltipText += "<div class='windowHDMult'>HD Mult</div>";
-		tooltipText += "<div class='windowHDType'>HD<br/>Type</div>";
-		tooltipText += "<div class='windowMapCap'>Map<br/>Cap</div>";
+		if (hdFarm) {
+			tooltipText += "<div class='windowHDBase'>HD Base</div>";
+			tooltipText += "<div class='windowHDMult'>HD Mult</div>";
+			tooltipText += "<div class='windowHDType'>HD<br/>Type</div>";
+			tooltipText += "<div class='windowMapCap'>Map<br/>Cap</div>";
+		}
+
+		if (voidMap) {
+			tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#1</div>";
+			tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#1</div>";
+			tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>";
+			tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
+		}
+		if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br/>Ratio</div>";
+		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>";
+		if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
+		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
+		if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>";
+		if (mapFarm || tributeFarm || boneShrine) tooltipText += "<div class='windowAtlantrimp'>Run<br/>" + trimple + "</div>";
+		if (smithyFarm) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>";
+		if (insanity) tooltipText += "<div class='windowBuildings'>Destack</div>";
+		if (tributeFarm) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>";
+		if (raiding || desolation) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\'>Prestige<br/>Goal</div>";
+		if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>";
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) tooltipText += "<div class='windowRunType" + varPrefix + "\'>Run&nbsp;Type</div>";
+		if (voidMap) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>";
+		tooltipText += "</div>";
 	}
-
-	if (voidMap) {
-		tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#1</div>";
-		tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#1</div>";
-		tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>";
-		tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
-	}
-	if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br/>Ratio</div>";
-	if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>";
-	if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
-	if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
-	if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>";
-	if (mapFarm || tributeFarm || boneShrine) tooltipText += "<div class='windowAtlantrimp'>Run<br/>" + trimple + "</div>";
-	if (smithyFarm) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>";
-	if (insanity) tooltipText += "<div class='windowBuildings'>Destack</div>";
-	if (tributeFarm) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>";
-	if (raiding || desolation) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\'>Prestige<br/>Goal</div>";
-	if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>";
-	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) tooltipText += "<div class='windowRunType" + varPrefix + "\'>Run&nbsp;Type</div>";
-	if (voidMap) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>";
-	tooltipText += "</div>";
-
 	//As position 0 in the array stores base setting we need to take that out of the array before we start looping through rows
-	var currSetting = originalSetting.slice(1, originalSetting.length);
+	currSetting = originalSetting.slice(1, originalSetting.length);
 	if (golden) currSetting = originalSetting;
 
+	//Looping through each setting and setting up the rows and inputting the data from the setting into the inputs
 	for (var x = 0; x < maxSettings; x++) {
 		var style = "";
 
@@ -370,9 +381,9 @@ function mapSettingsDisplay(elem, titleText) {
 			active: true,
 			priority: (x + 1),
 			check: true,
-			world: -2,
-			cell: -1,
-			level: -1,
+			world: -2, //
+			cell: -1, //
+			level: -1, //
 			special: '0',
 			repeat: 1,
 			hdRatio: 0,
@@ -382,23 +393,23 @@ function mapSettingsDisplay(elem, titleText) {
 			bogs: 0,
 			insanity: 0,
 			potions: 0,
-			bonfires: 5,
-			boneamount: 1,
+			bonfires: 0,
+			boneamount: 0,
 			bonebelow: 0,
 			runType: 'All',
 			prestigeGoal: 'All',
-			raidingDropdown: 0,
-			jobratio: '1,1,1,1',
+			raidingDropdown: 1,
+			jobratio: '1,1,1',
 			worshipper: 50,
-			hdRatio: 0,
+			hdRatio: 0, //
 			voidHDRatio: 0,
 			buildings: true,
 			atlantrimp: false,
 			meltingPoint: false,
 			portalAfter: false,
 			raidingzone: 6,
-			maxvoidzone: -1,
-			mapType: 'Absolute',
+			maxvoidzone: -1, //
+			mapType: mapFarm ? 'Map Count' : 'Absolute',
 			autoLevel: true,
 			endzone: 999,
 			repeatevery: 0,
@@ -413,130 +424,26 @@ function mapSettingsDisplay(elem, titleText) {
 			destack: false,
 			mapCap: 100,
 			incrementMaps: false,
+			golden: 'v',
+			potion: 'h',
 		}
+
 		//Taking data from the current setting and overriding the default values
 		if (currSetting.length - 1 >= x) {
-			vals.active = currSetting[x].active;
-			vals.priority = currSetting[x].priority ? currSetting[x].priority : (x + 1);
-			vals.world = currSetting[x].world;
-
-			vals.cell = currSetting[x].cell ? currSetting[x].cell : 81;
-			//Map Level
-			if (!quagmire && !boneShrine && !raiding && !voidMap)
-				vals.level = currSetting[x].level ? currSetting[x].level : 0;
-			//Auto Level
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
-				vals.autoLevel = typeof (currSetting[x].autoLevel) !== 'undefined' ? currSetting[x].autoLevel : true;
-			//Repeat
-			if (mapFarm || smithyFarm || mapBonus || toxicity)
-				vals.repeat = currSetting[x].repeat ? currSetting[x].repeat : 1;
-			//Repeat Every
-			if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy)
-				vals.repeatevery = currSetting[x].repeatevery ? currSetting[x].repeatevery : 0;
-			//End Zone
-			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy)
-				vals.endzone = currSetting[x].endzone ? currSetting[x].endzone : 999;
-			//Trimple/Atlantrimp
-			if (mapFarm || tributeFarm || boneShrine)
-				vals.atlantrimp = currSetting[x].atlantrimp ? currSetting[x].atlantrimp : false;
-			//Special
-			if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
-				vals.special = currSetting[x].special ? currSetting[x].special : '0';
-			//Job Ratio
-			if (!raiding && !smithyFarm)
-				vals.jobratio = currSetting[x].jobratio ? currSetting[x].jobratio : '1,1,1,1';
-			//Gather
-			if (mapFarm || alchemy || boneShrine || mapBonus || desolation || toxicity)
-				vals.gather = currSetting[x].gather ? currSetting[x].gather : 'food';
-			//Run Type
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
-				vals.runType = currSetting[x].runType ? currSetting[x].runType : 'All';
-			//Challenge 
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
-				vals.challenge = currSetting[x].challenge ? currSetting[x].challenge : 'All';
-			//C2/C3
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
-				vals.challenge3 = currSetting[x].challenge3 ? currSetting[x].challenge3 : 'All';
-			//HD Ratio
-			if (mapFarm || mapBonus) {
-				vals.hdRatio = currSetting[x].hdRatio ? currSetting[x].hdRatio : 0;
-			}
-			//Map Farm
-			if (mapFarm) {
-				vals.mapType = currSetting[x].mapType ? currSetting[x].mapType : 'Map Count';
-			}
-			//HD Farm
-			if (hdFarm) {
-				vals.hdType = currSetting[x].hdType ? currSetting[x].hdType : 'world';
-				vals.hdBase = (currSetting[x].hdBase || currSetting[x].hdBase === 0) ? currSetting[x].hdBase : 1;
-				vals.hdMult = currSetting[x].hdMult ? currSetting[x].hdMult : 1;
-				vals.mapCap = currSetting[x].mapCap ? currSetting[x].mapCap : 100;
-			}
-			//Void Maps
-			if (voidMap) {
-				vals.hdType = currSetting[x].hdType ? currSetting[x].hdType : 'world';
-				vals.hdType2 = currSetting[x].hdType2 ? currSetting[x].hdType2 : 'hitsSurvived';
-				vals.maxvoidzone = currSetting[x].maxvoidzone ? currSetting[x].maxvoidzone : 1;
-				vals.hdRatio = currSetting[x].hdRatio ? currSetting[x].hdRatio : 0;
-				vals.voidHDRatio = currSetting[x].voidHDRatio ? currSetting[x].voidHDRatio : 0;
-				vals.portalAfter = currSetting[x].portalAfter ? currSetting[x].portalAfter : false;
-			}
-			//Raiding
-			if (raiding) {
-				vals.raidingzone = currSetting[x].raidingzone ? currSetting[x].raidingzone : 1;
-				vals.prestigeGoal = currSetting[x].prestigeGoal ? currSetting[x].prestigeGoal : 'All';
-				if (!bionic) {
-					vals.raidingDropdown = currSetting[x].raidingDropdown ? currSetting[x].raidingDropdown : 1;
-					vals.incrementMaps = currSetting[x].incrementMaps ? currSetting[x].incrementMaps : false;
+			for (var item in settingInputs) {
+				var name = settingInputs[item];
+				//Since Golden upgrade & Alchemy farm have 2 inputs that get merged into a single string we need to handle them separately
+				if (golden && name.includes('golden')) {
+					vals.goldenType = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden[0] : vals[name];
+					vals.goldenNumber = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden.toString().replace(/[^\d,:-]/g, '') : -2;
+					continue;
 				}
-			}
-			//Bone Shrine
-			if (boneShrine) {
-				vals.boneamount = currSetting[x].boneamount ? currSetting[x].boneamount : 0;
-				vals.bonebelow = currSetting[x].bonebelow ? currSetting[x].bonebelow : 0;
-			}
-			//Golden Upgrades
-			if (golden) {
-				vals.goldenType = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden[0] : 'v';
-				vals.goldenNumber = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden.toString().replace(/[^\d,:-]/g, '') : -2;
-			}
-			//Smithy Farm
-			if (smithyFarm)
-				vals.meltingPoint = currSetting[x].meltingPoint ? currSetting[x].meltingPoint : false;
-
-			if (tributeFarm || smithyFarm || alchemy)
-				vals.mapType = currSetting[x].mapType ? currSetting[x].mapType : 'Absolute';
-			//Tribute Farm
-			if (tributeFarm) {
-				vals.tributes = currSetting[x].tributes ? currSetting[x].tributes : 0;
-				vals.mets = currSetting[x].mets ? currSetting[x].mets : 0;
-				vals.buildings = currSetting[x].buildings ? currSetting[x].buildings : true;
-			}
-			//Worshipper Farm
-			if (worshipperFarm) {
-				vals.worshipper = currSetting[x].worshipper ? currSetting[x].worshipper : 50;
-			}
-			//Quagmire
-			if (quagmire) {
-				vals.bogs = currSetting[x].bogs ? currSetting[x].bogs : 0;
-			}
-			//Insanity
-			if (insanity) {
-				vals.insanity = currSetting[x].insanity ? currSetting[x].insanity : 0;
-				vals.destack = currSetting[x].destack ? currSetting[x].destack : false;
-			}
-			//Alchemy
-			if (alchemy) {
-				vals.potionstype = currSetting[x].potion[0] ? currSetting[x].potion[0] : 0;
-				vals.potionsnumber = currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') ? currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') : 0;
-			}
-			//Hypothermia
-			if (hypothermia) {
-				vals.bonfires = currSetting[x].bonfire ? currSetting[x].bonfire : 0;
-			}
-			//Desolation
-			if (desolation) {
-				vals.prestigeGoal = currSetting[x].prestigeGoal ? currSetting[x].prestigeGoal : 'All';
+				if (alchemy && name.includes('potion')) {
+					vals.potionstype = currSetting[x].potion[0] ? currSetting[x].potion[0] : vals[name];
+					vals.potionsnumber = currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') ? currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') : vals[name];
+					continue;
+				}
+				vals[name] = currSetting[x][name] ? currSetting[x][name] : vals[name];
 			}
 
 			if (x >= 10) overflow = true;
@@ -547,8 +454,8 @@ function mapSettingsDisplay(elem, titleText) {
 			if (x < 10) overflow = false;
 		}
 
-		var backgroundStyle = "";
 		//Set Nature colours if zone input is above Nature start zone.
+		var backgroundStyle = "";
 		if (currSettingUniverse === 1 && !golden) {
 			var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
 			var natureList = ['None', 'Poison', 'Wind', 'Ice'];
@@ -556,40 +463,8 @@ function mapSettingsDisplay(elem, titleText) {
 			backgroundStyle = " 'background:" + natureStyle[index] + "\'";
 		}
 
-		//Sort out the dropdowns sections for settings
-		var mazDropdowns = mapSettingsDropdowns(universe, vals, varPrefix);
-		//Map Level options
-		var mapLevelDropdown = mazDropdowns.mapLevel;
-		//Gather Selection options
-		var gatherDropdown = mazDropdowns.gather;
-		//Specials dropdown with conditions for each unlock to only appear when the user can run them.
-		var specialsDropdown = mazDropdowns.special;
-		//Filler Challenges
-		var challengeDropdown = mazDropdowns.challenge;
-		//C3 Challenges
-		var challenge3Dropdown = mazDropdowns.c2;
-		//Prestige Goal
-		var prestigeGoalDropdown = mazDropdowns.prestigeGoal;
-		//Run Type
-		var runTypeDropdown = mazDropdowns.runType;
-		//Golden
-		var goldenDropdown = mazDropdowns.goldenType;
-		//HD Type
-		var hdTypeDropdown = mazDropdowns.hdType;
-		//HD Type
-		var hdTypeDropdown2 = mapSettingsDropdowns(universe, vals, varPrefix, 'hdType2').hdType;
-		//Map Type
-		var mapTypeDropdown = mazDropdowns.mapType;
-
-		var potionDropdown = "<option value='h'" + ((vals.potionstype === 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\
-		<option value='g'" + ((vals.potionstype === 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\
-		<option value='f'" + ((vals.potionstype === 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\
-		<option value='v'" + ((vals.potionstype === 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\
-		<option value='s'" + ((vals.potionstype === 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
-
-		var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown === '0') ? " selected='selected'" : "") + ">Frag</option>\
-		<option value='1'" + ((vals.raidingDropdown === '1') ? " selected='selected'" : "") + ">Frag Min</option>\
-		<option value='2'" + ((vals.raidingDropdown === '2') ? " selected='selected'" : "") + ">Frag Max</option>"
+		//Populate information needed for dropdowns
+		const dropdowns = mapSettingsDropdowns(universe, vals, varPrefix);
 
 		//Adding a class to check if we should display the gather setting if special is set to huge cache or large cache
 		var className = (vals.special === 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
@@ -616,209 +491,210 @@ function mapSettingsDisplay(elem, titleText) {
 		//Opening the row div. Will parse all the settings we want shown in the row.
 		tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 
-		//Delete the row button
-		if (!golden) tooltipText += "<div class='windowDelete" + varPrefix + "\' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
+		if (1 === 1) {
+			//Delete the row button
+			if (!golden) tooltipText += "<div class='windowDelete" + varPrefix + "\' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
 
-		//Button to delete the row for golden settings
-		if (golden) tooltipText += "<div class='windowDeleteAutoGolden' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
+			//Button to delete the row for golden settings
+			if (golden) tooltipText += "<div class='windowDeleteAutoGolden' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
 
-		//Active checkbox
-		if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
+			//Active checkbox
+			if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
 
-		//Active checkbox for golden settings
-		if (golden) tooltipText += "<div class='windowActiveAutoGolden' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
+			//Active checkbox for golden settings
+			if (golden) tooltipText += "<div class='windowActiveAutoGolden' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
 
-		//Priority input
-		tooltipText += "<div class='windowPriority" + varPrefix + "\'><input value='" + vals.priority + "' type='number' id='windowPriority" + x + "'/></div>";
+			//Priority input
+			tooltipText += "<div class='windowPriority" + varPrefix + "\'><input value='" + vals.priority + "' type='number' id='windowPriority" + x + "'/></div>";
 
-		//World input
-		if (!golden)
-			tooltipText += "<div class='windowWorld" + varPrefix + "\' style = " + backgroundStyle + "\' oninput='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
+			//World input
+			if (!golden)
+				tooltipText += "<div class='windowWorld" + varPrefix + "\' style = " + backgroundStyle + "\' oninput='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
 
-		//End Zone input
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy)
-			tooltipText += "<div class='windowEndZone" + varPrefix + "\'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
+			//End Zone input
+			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy)
+				tooltipText += "<div class='windowEndZone" + varPrefix + "\'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
 
-		//Highest Void Zone input - SHOULD BE CONVERTED TO USE END ZONE INSTEAD!
-		if (voidMap)
-			tooltipText += "<div class='windowMaxVoidZone'><input value='" + vals.maxvoidzone + "' type='number' id='windowMaxVoidZone" + x + "'/></div>";
+			//Highest Void Zone input - SHOULD BE CONVERTED TO USE END ZONE INSTEAD!
+			if (voidMap)
+				tooltipText += "<div class='windowMaxVoidZone'><input value='" + vals.maxvoidzone + "' type='number' id='windowMaxVoidZone" + x + "'/></div>";
 
-		//Raiding Zone input
-		if (raiding && bionic)
-			tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'><input value='" + vals.raidingzone + "' type='number' id='windowRaidingZone" + x + "'/></div>";
-		//Map Level Dropdown for Raiding
-		if (raiding && !bionic)
-			tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'><select value='" + vals.raidingzone + "' id='windowRaidingZone" + x + "'>" + mapLevelDropdown + "</select></div>";
+			//Raiding Zone input
+			if (raiding && bionic)
+				tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'><input value='" + vals.raidingzone + "' type='number' id='windowRaidingZone" + x + "'/></div>";
+			//Map Level Dropdown for Raiding
+			if (raiding && !bionic)
+				tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'><select value='" + vals.raidingzone + "' id='windowRaidingZone" + x + "'>" + dropdowns.mapLevel + "</select></div>";
 
-		//Cell input
-		if (!golden && !desolation)
-			tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
+			//Cell input
+			if (!golden && !desolation)
+				tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
 
-		//Auto level checkbox
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
-			tooltipText += "<div class='windowAutoLevel" + varPrefix + "\' style='text-align: center; padding-left: 5px;'>" + buildNiceCheckboxAutoLevel("windowAutoLevel" + x, null, vals.autoLevel, x, varPrefix) + "</div>";
+			//Auto level checkbox
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
+				tooltipText += "<div class='windowAutoLevel" + varPrefix + "\' style='text-align: center; padding-left: 5px;'>" + buildNiceCheckboxAutoLevel("windowAutoLevel" + x, null, vals.autoLevel, x, varPrefix) + "</div>";
 
-		//Level input
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
-			tooltipText += "<div class='windowLevel" + varPrefix + "\'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
+			//Level input
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
+				tooltipText += "<div class='windowLevel" + varPrefix + "\'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
 
-		//Map Type dropdown
-		if (tributeFarm || smithyFarm || mapFarm || alchemy)
-			tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.mapType + "' id='windowMapTypeDropdown" + x + "'>" + mapTypeDropdown + "</select></div>";
+			//Map Type dropdown
+			if (tributeFarm || smithyFarm || mapFarm || alchemy)
+				tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.mapType + "' id='windowMapTypeDropdown" + x + "'>" + dropdowns.mapType + "</select></div>";
 
-		//World input
-		if (worshipperFarm)
-			tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
+			//World input
+			if (worshipperFarm)
+				tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
 
-		//Repeat input (Map Farm);
-		if (mapFarm || toxicity)
-			tooltipText += "<div class='windowRepeat" + varPrefix + "\'><input value='" + vals.repeat + "' type='value' id='windowRepeat" + x + "'/></div>";
+			//Repeat input (Map Farm);
+			if (mapFarm || toxicity)
+				tooltipText += "<div class='windowRepeat" + varPrefix + "\'><input value='" + vals.repeat + "' type='value' id='windowRepeat" + x + "'/></div>";
 
-		//HD Ratio to farm when above
-		if (mapFarm || mapBonus)
-			tooltipText += "<div class='windowHDRatio" + varPrefix + "\'><input value='" + vals.hdRatio + "' type='value' id='windowHDRatio" + x + "'/></div>";
+			//HD Ratio to farm when above
+			if (mapFarm || mapBonus)
+				tooltipText += "<div class='windowHDRatio" + varPrefix + "\'><input value='" + vals.hdRatio + "' type='value' id='windowHDRatio" + x + "'/></div>";
 
-		//Map Bonus to farm when below
-		if (mapBonus)
-			tooltipText += "<div class='windowMapStacks'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
+			//Map Bonus to farm when below
+			if (mapBonus)
+				tooltipText += "<div class='windowMapStacks'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
 
-		//Smithies to farm for
-		if (smithyFarm)
-			tooltipText += "<div class='windowSmithies'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
+			//Smithies to farm for
+			if (smithyFarm)
+				tooltipText += "<div class='windowSmithies'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
 
-		if (hdFarm) {
-			//HD Base value
-			tooltipText += "<div class='windowHDBase'>\<div style='text-align: center; font-size: 0.6vw;'>" + (vals.hdType === 'maplevel' ? "Map Level" : "") + "</div>\<input value='" + vals.hdBase + "' type='number' id='windowRepeat" + x + "'/></div>";
-			//HD Mult value
-			tooltipText += "<div class='windowHDMult'><input value='" + vals.hdMult + "' type='number' id='windowHDMult" + x + "'/></div>";
-			//HD Type dropdown
-			tooltipText += "<div class='windowHDType' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDType" + x + "'>" + hdTypeDropdown + "</select></div>";
-			//Map Cap 
-			tooltipText += "<div class='windowMapCap'><input value='" + vals.mapCap + "' type='number' id='windowMapCap" + x + "'/></div>";
+			if (hdFarm) {
+				//HD Base value
+				tooltipText += "<div class='windowHDBase'>\<div style='text-align: center; font-size: 0.6vw;'>" + (vals.hdType === 'maplevel' ? "Map Level" : "") + "</div>\<input value='" + vals.hdBase + "' type='number' id='windowRepeat" + x + "'/></div>";
+				//HD Mult value
+				tooltipText += "<div class='windowHDMult'><input value='" + vals.hdMult + "' type='number' id='windowHDMult" + x + "'/></div>";
+				//HD Type dropdown
+				tooltipText += "<div class='windowHDType' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDType" + x + "'>" + dropdowns.hdType + "</select></div>";
+				//Map Cap 
+				tooltipText += "<div class='windowMapCap'><input value='" + vals.mapCap + "' type='number' id='windowMapCap" + x + "'/></div>";
+			}
+			//Tributes to farm for
+			if (tributeFarm)
+				tooltipText += "<div class='windowTributes'><input value='" + vals.tributes + "' type='number' id='windowTributes" + x + "'/></div>";
+
+			//Meteorologists to farm for
+			if (tributeFarm)
+				tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
+
+			//Black bogs to run
+			if (quagmire)
+				tooltipText += "<div class='windowBogs'><input value='" + vals.bogs + "' type='number' id='windowBogs" + x + "'/></div>";
+
+			//Insanity stacks to farm for
+			if (insanity)
+				tooltipText += "<div class='windowInsanity'><input value='" + vals.insanity + "' type='number' id='windowInsanity" + x + "'/></div>";
+
+			//Alchemy potion type dropdown
+			if (alchemy)
+				tooltipText += "<div class='windowPotionType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.potionstype + "' id='windowPotionType" + x + "'>" + dropdowns.potionTypes + "</select></div>";
+
+			//Alchemy potion input
+			if (alchemy)
+				tooltipText += "<div class='windowPotionNumber'><input value='" + vals.potionsnumber + "' type='number' id='windowPotionNumber" + x + "'/></div>";
+
+			//Hypothermia bonfire goal
+			if (hypothermia)
+				tooltipText += "<div class='windowBonfire'><input value='" + vals.bonfires + "' type='number' id='windowBonfire" + x + "'/></div>";
+
+			//Bone Shrine - Charges to use
+			if (boneShrine)
+				tooltipText += "<div class='windowBoneAmount'><input value='" + vals.boneamount + "' type='number' id='windowBoneAmount" + x + "'/></div>";
+
+			//Bone Shrine - Use charges when below this amount
+			if (boneShrine)
+				tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
+
+			//Void HD Dropdown #1
+			if (voidMap)
+				tooltipText += "<div class='windowHDTypeVoidMap onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDTypeVoidMap" + x + "'>" + dropdowns.hdType + "</select></div>";
+
+			//Run void maps when HD Ratio is above this value
+			if (voidMap)
+				tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.hdRatio + "' type='number' id='windowHDRatio" + x + "'/></div>";
+
+			//Void HD Dropdown #2
+			if (voidMap)
+				tooltipText += "<div class='windowHDTypeVoidMap onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType2 + "' id='windowHDTypeVoidMap2" + x + "'>" + dropdowns.hdType2 + "</select></div>";
+
+			//Run void maps when Void HD Ratio is above this value
+			if (voidMap)
+				tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.voidHDRatio + "' type='number' id='windowVoidHDRatio" + x + "'/></div>";
+
+			//Job ratio input
+			if (!raiding && !smithyFarm && !golden)
+				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
+
+			//Repeat every X zones
+			if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy)
+				tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
+
+			//Gather type dropdown for bone shrines
+			if (boneShrine)
+				tooltipText += "<div class='windowBoneGather'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + dropdowns.gather + "</select></div>";
+
+			//Raiding type dropdown
+			if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.raidingDropdown + "' id='windowRaidingDropdown" + x + "'>" + dropdowns.raidingTypes + "</select></div>";
+
+			//Special cache to use dropdown
+			if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
+				tooltipText += "<div class='windowSpecial" + varPrefix + "\'  onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + dropdowns.special + "</select></div>";
+
+			//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
+			if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
+				tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + dropdowns.gather + "</select></div>";
+
+			//Trimple/Atlantrimp checkbox
+			if (mapFarm || tributeFarm || boneShrine)
+				tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
+
+			//Melting point checkbox
+			if (smithyFarm)
+				tooltipText += "<div class='windowMeltingPoint' style='text-align: center;'>" + buildNiceCheckbox("windowMeltingPoint" + x, null, vals.meltingPoint) + "</div>";
+
+			//Buy buildings checkbox
+			if (tributeFarm)
+				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
+
+			//Buy buildings checkbox
+			if (insanity)
+				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.destack) + "</div>";
+
+			//Prestige Goal dropdown
+			if (raiding || desolation)
+				tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.prestigeGoal + "' id='windowPrestigeGoal" + x + "'>" + dropdowns.prestigeGoal + "</select></div>";
+
+			//Increment Maps checkbox
+			if (raiding && !bionic)
+				tooltipText += "<div class='windowIncrementMaps' style='text-align: center;'>" + buildNiceCheckbox("windowIncrementMapsDefault" + x, null, vals.incrementMaps) + "</div>";
+
+			//Auto Golden input
+			if (golden)
+				tooltipText += "<div class='windowAmtAutoGolden'><input value='" + vals.goldenNumber + "' type='number' id='windowWorld" + x + "'/></div>";
+
+			//Type of golden dropdown
+			if (golden)
+				tooltipText += "<div class='windowTypeAutoGolden' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.goldentype + "' id='windowGoldenType" + x + "'>" + dropdowns.goldenType + "</select></div>";
+
+			//Run Type dropdown
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
+				tooltipText += "<div class='windowRunType" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + dropdowns.runType + "</select></div>";
+
+			//Filler challenges dropdown
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
+				tooltipText += "<div class='windowChallenge" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge</div>\<select value='" + vals.challenge + "' id='windowChallenge" + x + "'>" + dropdowns.challenge + "</select></div>";
+
+			//C2/C3 challenges dropdown
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
+				tooltipText += "<div class='windowChallenge3" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge" + (universe + 1) + "</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + dropdowns.c2 + "</select></div>";
+
+			//Portal After Void Maps checkbox
+			if (voidMap)
+				tooltipText += "<div class='windowPortalAfter' style='text-align: center;'>" + buildNiceCheckbox("windowPortalAfter" + x, null, vals.portalAfter) + "</div>";
 		}
-		//Tributes to farm for
-		if (tributeFarm)
-			tooltipText += "<div class='windowTributes'><input value='" + vals.tributes + "' type='number' id='windowTributes" + x + "'/></div>";
-
-		//Meteorologists to farm for
-		if (tributeFarm)
-			tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
-
-		//Black bogs to run
-		if (quagmire)
-			tooltipText += "<div class='windowBogs'><input value='" + vals.bogs + "' type='number' id='windowBogs" + x + "'/></div>";
-
-		//Insanity stacks to farm for
-		if (insanity)
-			tooltipText += "<div class='windowInsanity'><input value='" + vals.insanity + "' type='number' id='windowInsanity" + x + "'/></div>";
-
-		//Alchemy potion type dropdown
-		if (alchemy)
-			tooltipText += "<div class='windowPotionType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.potionstype + "' id='windowPotionType" + x + "'>" + potionDropdown + "</select></div>";
-
-		//Alchemy potion input
-		if (alchemy)
-			tooltipText += "<div class='windowPotionNumber'><input value='" + vals.potionsnumber + "' type='number' id='windowPotionNumber" + x + "'/></div>";
-
-		//Hypothermia bonfire goal
-		if (hypothermia)
-			tooltipText += "<div class='windowBonfire'><input value='" + vals.bonfires + "' type='number' id='windowBonfire" + x + "'/></div>";
-
-		//Bone Shrine - Charges to use
-		if (boneShrine)
-			tooltipText += "<div class='windowBoneAmount'><input value='" + vals.boneamount + "' type='number' id='windowBoneAmount" + x + "'/></div>";
-
-		//Bone Shrine - Use charges when below this amount
-		if (boneShrine)
-			tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
-
-		//Void HD Dropdown #1
-		if (voidMap)
-			tooltipText += "<div class='windowHDTypeVoidMap onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDTypeVoidMap" + x + "'>" + hdTypeDropdown + "</select></div>";
-
-		//Run void maps when HD Ratio is above this value
-		if (voidMap)
-			tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.hdRatio + "' type='number' id='windowHDRatio" + x + "'/></div>";
-
-		//Void HD Dropdown #2
-		if (voidMap)
-			tooltipText += "<div class='windowHDTypeVoidMap onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType2 + "' id='windowHDTypeVoidMap2" + x + "'>" + hdTypeDropdown2 + "</select></div>";
-
-		//Run void maps when Void HD Ratio is above this value
-		if (voidMap)
-			tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.voidHDRatio + "' type='number' id='windowVoidHDRatio" + x + "'/></div>";
-
-		//Job ratio input
-		if (!raiding && !smithyFarm && !golden)
-			tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
-
-		//Repeat every X zones
-		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy)
-			tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
-
-		//Gather type dropdown for bone shrines
-		if (boneShrine)
-			tooltipText += "<div class='windowBoneGather'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + gatherDropdown + "</select></div>";
-
-		//Raiding type dropdown
-		if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.raidingDropdown + "' id='windowRaidingDropdown" + x + "'>" + raidingDropdown + "</select></div>";
-
-		//Special cache to use dropdown
-		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
-			tooltipText += "<div class='windowSpecial" + varPrefix + "\'  onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>";
-
-		//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
-		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
-			tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select></div>";
-
-		//Trimple/Atlantrimp checkbox
-		if (mapFarm || tributeFarm || boneShrine)
-			tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
-
-		//Melting point checkbox
-		if (smithyFarm)
-			tooltipText += "<div class='windowMeltingPoint' style='text-align: center;'>" + buildNiceCheckbox("windowMeltingPoint" + x, null, vals.meltingPoint) + "</div>";
-
-		//Buy buildings checkbox
-		if (tributeFarm)
-			tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
-
-		//Buy buildings checkbox
-		if (insanity)
-			tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.destack) + "</div>";
-
-		//Prestige Goal dropdown
-		if (raiding || desolation)
-			tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.prestigeGoal + "' id='windowPrestigeGoal" + x + "'>" + prestigeGoalDropdown + "</select></div>";
-
-		//Increment Maps checkbox
-		if (raiding && !bionic)
-			tooltipText += "<div class='windowIncrementMaps' style='text-align: center;'>" + buildNiceCheckbox("windowIncrementMapsDefault" + x, null, vals.incrementMaps) + "</div>";
-
-		//Auto Golden input
-		if (golden)
-			tooltipText += "<div class='windowAmtAutoGolden'><input value='" + vals.goldenNumber + "' type='number' id='windowWorld" + x + "'/></div>";
-
-		//Type of golden dropdown
-		if (golden)
-			tooltipText += "<div class='windowTypeAutoGolden' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.goldentype + "' id='windowGoldenType" + x + "'>" + goldenDropdown + "</select></div>";
-
-		//Run Type dropdown
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
-			tooltipText += "<div class='windowRunType" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + runTypeDropdown + "</select></div>";
-
-		//Filler challenges dropdown
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
-			tooltipText += "<div class='windowChallenge" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge</div>\<select value='" + vals.challenge + "' id='windowChallenge" + x + "'>" + challengeDropdown + "</select></div>";
-
-		//C2/C3 challenges dropdown
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
-			tooltipText += "<div class='windowChallenge3" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge" + (universe + 1) + "</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + challenge3Dropdown + "</select></div>";
-
-		//Portal After Void Maps checkbox
-		if (voidMap)
-			tooltipText += "<div class='windowPortalAfter' style='text-align: center;'>" + buildNiceCheckbox("windowPortalAfter" + x, null, vals.portalAfter) + "</div>";
-
 		tooltipText += "</div>";
 	}
 
@@ -1154,10 +1030,9 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		100)
 }
 
-function mazPopulateHelpWindow(titleText, trimple) {
+function mapSettingsHelpWindow(titleText, trimple) {
 	//Setting up the Help onclick setting.
 	var mazHelp = "Welcome to <b>" + titleText + "</b> settings!";
-
 	var mapFarm = titleText.includes('Map Farm');
 	var mapBonus = titleText.includes('Map Bonus');
 	var voidMap = titleText.includes('Void Map');
@@ -1165,11 +1040,9 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var raiding = titleText.includes('Raiding');
 	var bionic = titleText.includes('Bionic');
 	var toxicity = titleText.includes('Toxicity');
-
 	var tributeFarm = titleText.includes('Tribute Farm');
 	var smithyFarm = titleText.includes('Smithy Farm');
 	var worshipperFarm = titleText.includes('Worshipper Farm');
-
 	var quagmire = titleText.includes('Quagmire');
 	var insanity = titleText.includes('Insanity');
 	var alchemy = titleText.includes('Alchemy');
@@ -1179,7 +1052,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var golden = titleText.includes('Golden');
 
 	var radonSetting = currSettingUniverse === 2;
-
 
 	if (!golden) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
 	else if (golden) {
@@ -1205,7 +1077,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 	if (smithyFarm) mazHelp += "<br><br><b>Smithy Farm</b> will farm resources in the following order <b>Metal > Wood > Gems</b>. This cannot be changed.";
 
-	//Default Value settings
+	//Top Row Information
 	if (!golden) {
 		mazHelp += "<br><br>The top row section consists of toggles/inputs which add extra functions to the setting itself.<br></br><ul>";
 		mazHelp += "<li><b>Enabled</b> - A toggle to disable/enable the entire setting.</li>";
@@ -1786,21 +1658,26 @@ function updateWindowPreset(index, varPrefix) {
 	}
 }
 
-function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix, hdType = "hdType") {
+function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) {
 	if (!vals) return "Issue with establishing values for dropdowns";
 
 	var dropdown = {};
 	var highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
 
 	//HD Type dropdown
+	const hdDropdowns = ['hdType', 'hdType2'];
 	const hdTypeDropdowns = ['world', 'map', 'void', 'maplevel', 'hitsSurvived', 'hitsSurvivedVoid'];
 	const hdTypeNames = ['World HD Ratio', 'Map HD Ratio', 'Void HD Ratio', 'Map Level', 'Hits Survived', 'Void Hits Survived'];
 	dropdown.hdType = '';
-	for (var item in hdTypeDropdowns) {
-		var key = hdTypeDropdowns[item];
-		dropdown.hdType += "<option value='" + key + "'" + ((vals[hdType] === key) ? " selected='selected'" : "") + ">" + hdTypeNames[item] + "</option>";
+	for (var type in hdDropdowns) {
+		var hdKey = hdDropdowns[type];
+		dropdown[hdKey] = '';
+
+		for (var item in hdTypeDropdowns) {
+			var key = hdTypeDropdowns[item];
+			dropdown[hdKey] += "<option value='" + key + "'" + ((vals[hdKey] === key) ? " selected='selected'" : "") + ">" + hdTypeNames[item] + "</option>";
+		}
 	}
-	if (hdType === 'hdType2') return dropdown;
 
 	//Gather dropdown
 	const gatherDropdowns = ['food', 'wood', 'metal', 'science'];
@@ -1889,17 +1766,27 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix, 
 	}
 
 	//Run Type options
-	dropdown.runType = "<option value='All'" + ((vals.runType === 'All') ? " selected='selected'" : "") + ">All</option>"
-	dropdown.runType += "<option value='Filler'" + ((vals.runType === 'Filler') ? " selected = 'selected'" : "") + " > Filler</option>"
-	dropdown.runType += " <option value='Daily'" + ((vals.runType === 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
-	if (universe === 1) dropdown.runType += "<option value='C3'" + ((vals.runType === 'C3') ? " selected='selected'" : "") + ">C2</option>"
-	if (universe === 2) dropdown.runType += "<option value='C3'" + ((vals.runType === 'C3') ? " selected='selected'" : "") + ">C3</option>"
+	dropdown.runType = "<option value='All'" + ((vals.runType === 'All') ? " selected='selected'" : "") + ">All</option>";
+	dropdown.runType += "<option value='Filler'" + ((vals.runType === 'Filler') ? " selected = 'selected'" : "") + " > Filler</option>";
+	dropdown.runType += " <option value='Daily'" + ((vals.runType === 'Daily') ? " selected='selected'" : "") + ">Daily</option>";
+	if (universe === 1) dropdown.runType += "<option value='C3'" + ((vals.runType === 'C3') ? " selected='selected'" : "") + ">C2</option>";
+	if (universe === 2) dropdown.runType += "<option value='C3'" + ((vals.runType === 'C3') ? " selected='selected'" : "") + ">C3</option>";
 
 	//Golden dropdown options
-	if (universe === 1 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='h'" + ((vals.goldenType === 'h') ? " selected='selected'" : "") + ">Helium</option>"
-	if (universe === 2 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='r'" + ((vals.goldenType === 'r') ? " selected='selected'" : "") + ">Radon</option>"
-	dropdown.goldenType += "<option value='b'" + ((vals.goldenType === 'b') ? " selected = 'selected'" : "") + " >Battle</option>"
-	dropdown.goldenType += "<option value='v'" + ((vals.goldenType === 'v') ? " selected = 'selected'" : "") + " >Void</option>"
+	if (universe === 1 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='h'" + ((vals.goldenType === 'h') ? " selected='selected'" : "") + ">Helium</option>";
+	if (universe === 2 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='r'" + ((vals.goldenType === 'r') ? " selected='selected'" : "") + ">Radon</option>";
+	dropdown.goldenType += "<option value='b'" + ((vals.goldenType === 'b') ? " selected = 'selected'" : "") + " >Battle</option>";
+	dropdown.goldenType += "<option value='v'" + ((vals.goldenType === 'v') ? " selected = 'selected'" : "") + " >Void</option>";
+
+	dropdown.potionTypes = "<option value='h'" + ((vals.potionstype === 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\
+	<option value='g'" + ((vals.potionstype === 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\
+	<option value='f'" + ((vals.potionstype === 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\
+	<option value='v'" + ((vals.potionstype === 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\
+	<option value='s'" + ((vals.potionstype === 's') ? " selected='selected'" : "") + ">Potion of Strength</option>";
+
+	dropdown.raidingTypes = "<option value='0'" + ((vals.raidingDropdown === '0') ? " selected='selected'" : "") + ">Frag</option>\
+	<option value='1'" + ((vals.raidingDropdown === '1') ? " selected='selected'" : "") + ">Frag Min</option>\
+	<option value='2'" + ((vals.raidingDropdown === '2') ? " selected='selected'" : "") + ">Frag Max</option>";
 
 	return dropdown;
 }
