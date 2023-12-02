@@ -3,7 +3,7 @@ function MAZLookalike(event, titleText) {
 	var elem = document.getElementById('tooltipDiv');
 	var tooltipText;
 	var costText = '';
-	var ondisplay = null; //Called after the tooltip is displayed if non-null
+	var ondisplay = null; //Called after the tooltip is displayed if not null
 	if (event !== 'mapSettings')
 		swapClass('tooltipExtra', 'tooltipExtraNone', elem);
 
@@ -443,7 +443,7 @@ function mapSettingsDisplay(elem, titleText) {
 					vals.potionsnumber = typeof (currSetting[x].potion) !== 'undefined' ? currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') : 0;
 					continue;
 				}
-				vals[name] = currSetting[x][name] ? currSetting[x][name] : vals[name];
+				vals[name] = typeof currSetting[x][name] !== 'undefined' ? currSetting[x][name] : vals[name];
 			}
 			if (x >= 10) overflow = true;
 		}
