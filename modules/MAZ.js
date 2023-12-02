@@ -434,18 +434,17 @@ function mapSettingsDisplay(elem, titleText) {
 				var name = settingInputs[item];
 				//Since Golden upgrade & Alchemy farm have 2 inputs that get merged into a single string we need to handle them separately
 				if (golden && name.includes('golden')) {
-					vals.goldenType = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden[0] : vals[name];
+					vals.goldenType = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden[0] : vals.golden;
 					vals.goldenNumber = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden.toString().replace(/[^\d,:-]/g, '') : -2;
 					continue;
 				}
 				if (alchemy && name.includes('potion')) {
-					vals.potionstype = currSetting[x].potion[0] ? currSetting[x].potion[0] : vals[name];
-					vals.potionsnumber = currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') ? currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') : vals[name];
+					vals.potionstype = typeof (currSetting[x].potion) !== 'undefined' ? currSetting[x].potion[0] : vals.potion;
+					vals.potionsnumber = typeof (currSetting[x].potion) !== 'undefined' ? currSetting[x].potion.toString().replace(/[^\d,:-]/g, '') : 0;
 					continue;
 				}
 				vals[name] = currSetting[x][name] ? currSetting[x][name] : vals[name];
 			}
-
 			if (x >= 10) overflow = true;
 		}
 		//Hide row if the line isn't in use.
