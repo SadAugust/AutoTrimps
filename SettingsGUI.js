@@ -2091,12 +2091,29 @@ function initializeAllSettings() {
 		createSetting('wither',
 			function () { return ('Wither') },
 			function () {
+				var description = "<p>Enable this if you want to automate farming on the <b>Wither</b> challenge.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
+		createSetting('witherFarm',
+			function () { return ('W: Farm') },
+			function () {
 				var description = "<p>Enable this to force farming until you can 4 shot your current world cell on Wither.</p>";
 				description += "<p>When at cell 100 it will identify the damage required for clearing the next zone and if you don't have enough damage it will farm until you do.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
+			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) });
+		createSetting('witherShield',
+			function () { return ('W: Shield') },
+			function () {
+				var description = "<p>The name of the shield you would like to equip while running <b>Wither</b>.</p>";
+				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>Wither</b>!</p>"
+				description += "<p>Should ideally be a shield without the <b>Plaguebringer</b> modifier.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'C2', [2],
+			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) });
 
 		//Quest
 		createSetting('quest',

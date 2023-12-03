@@ -999,6 +999,7 @@ function smithyFarm(lineCheck) {
 		var biome = getBiome();
 		var jobRatio = [0, 0, 0, 0];
 		var smithyGoal = setting.repeat;
+		var gather = 'metal';
 
 		if (setting.autoLevel) {
 			mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
@@ -1078,23 +1079,26 @@ function smithyFarm(lineCheck) {
 			if (shouldSmithyGemFarm) {
 				mapSpecial = getAvailableSpecials('lsc', true);
 				biome = getBiome(null, 'Sea');
-				if (mapSpecial === 'lc') jobRatio[0] = 1;
+				if (['lc', 'hc'].indexOf(mapSpecial) !== -1) jobRatio[0] = 1;
 				else jobRatio = [1, 0, 0, 0];
 				resourceGoal = prettify(smithyGemCost) + ' gems.';
+				gather = 'food';
 			}
 			if (shouldSmithyWoodFarm) {
 				mapSpecial = getAvailableSpecials('lwc', true);
 				biome = getBiome(null, 'Forest');
-				if (mapSpecial === 'lc') jobRatio[1] = 1;
+				if (['lc', 'hc'].indexOf(mapSpecial) !== -1) jobRatio[1] = 1;
 				else jobRatio = [0, 1, 0, 0];
 				resourceGoal = prettify(smithyWoodCost) + ' wood.';
+				gather = 'wood';
 			}
 			if (shouldSmithyMetalFarm) {
 				mapSpecial = getAvailableSpecials('lmc', true);
 				biome = getBiome(null, 'Mountain');
-				if (mapSpecial === 'lc') jobRatio[2] = 1;
+				if (['lc', 'hc'].indexOf(mapSpecial) !== -1) jobRatio[2] = 1;
 				else jobRatio = [0, 0, 1, 0];
 				resourceGoal = prettify(smithyMetalCost) + ' metal.';
+				gather = 'metal';
 			}
 			//Switch to Depths biome and don't gather food if Tributes haven't been unlocked, farming for multiple resource types AND need to farm gems.
 			if (shouldSmithyGemFarm && !game.buildings.Tribute.purchased) {
@@ -1141,6 +1145,7 @@ function smithyFarm(lineCheck) {
 		farmingDetails.jobRatio = jobRatio;
 		farmingDetails.special = mapSpecial;
 		farmingDetails.biome = biome;
+		farmingDetails.gather = gather;
 		farmingDetails.smithies = smithyGoal;
 		farmingDetails.gemFarm = shouldSmithyGemFarm;
 		farmingDetails.repeat = true;
@@ -1953,7 +1958,7 @@ function wither(lineCheck) {
 		mapName: mapName,
 	};
 
-	if (!challengeActive('Wither') || !getPageSetting('wither')) return farmingDetails;
+	if (!challengeActive('Wither') || !getPageSetting('wither') || !getPageSetting('witherFarm')) return farmingDetails;
 	if (game.challenges.Wither.healImmunity > 0) return farmingDetails;
 
 	var jobRatio = '0,0,1';
@@ -3159,6 +3164,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 		farmingDetails.mapLevel = mapLevel;
 		farmingDetails.autoLevel = setting.autoLevel;
 		farmingDetails.special = mapSpecial;
+		farmingDetails.gather = 'metal';
 		farmingDetails.jobRatio = jobRatio;
 
 		farmingDetails.hdType = hdType;
