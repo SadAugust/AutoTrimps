@@ -5291,7 +5291,7 @@ function updateCustomButtons(initialLoad) {
 			document.getElementById('tabFluffy').style.display = radonon || (!displayAllSettings && game.global.spiresCompleted < 2) ? 'none' : '';
 		//Challenges Tab
 		if (document.getElementById('tabChallenges') !== null)
-			document.getElementById('tabChallenges').style.display = !displayAllSettings && ((radonon && highestRadonZone < 40) || (!radonon && hze < 40)) ? 'none' : '';
+			document.getElementById('tabChallenges').style.display = !displayAllSettings && ((radonon && highestRadonZone < 35) || (!radonon && hze < 40)) ? 'none' : '';
 		//Test Tab
 		if (document.getElementById('tabTest') !== null)
 			document.getElementById('tabTest').style.display = !gameUserCheck() ? 'none' : '';

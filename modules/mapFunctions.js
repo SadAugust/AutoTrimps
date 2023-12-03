@@ -836,17 +836,30 @@ function tributeFarm(lineCheck) {
 				tributeGoal = mapSettings.tribute;
 				meteorologistGoal = mapSettings.meteorologist;
 			} else {
+
+				//Factoring in the resource reduction from spending time farming during Melt
+				var lootMult = 1;
+				if (challengeActive('Melt')) {
+					const mapClearTime = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
+					var meltStacks = game.challenges.Melt.stacks;
+					for (var x = 0; x < totalMaps; x++) {
+						lootMult /= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
+						meltStacks += mapClearTime
+						lootMult *= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
+					}
+				}
+
 				if (tributeGoal !== 0) {
 					var tributeMaps = mapSettings.mapName === mapName ? tributeGoal - game.global.mapRunCounter : tributeGoal;
 					var tributeTime = tributeMaps * 25;
 					if (tributeMaps > 4) tributeTime += (Math.floor(tributeMaps / 5) * 45);
-					var foodEarnedTributes = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT('food', tributeTime, jobRatio), false, true, mapLevel);
+					var foodEarnedTributes = game.resources.food.owned + (scaleToCurrentMap_AT(simpleSeconds_AT('food', tributeTime, jobRatio), false, true, mapLevel) * lootMult);
 					tributeGoal = game.buildings.Tribute.purchased + calculateMaxAfford_AT(game.buildings.Tribute, true, false, false, false, 1, foodEarnedTributes);
 				}
 				if (meteorologistGoal !== 0) {
 					var meteorologistTime = (mapSettings.mapName === mapName ? meteorologistGoal - game.global.mapRunCounter : meteorologistGoal) * 25;
 					if (meteorologistGoal > 4) meteorologistTime += (Math.floor(meteorologistGoal / 5) * 45);
-					var foodEarnedMets = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT('food', meteorologistTime, jobRatio), false, true, mapLevel);
+					var foodEarnedMets = game.resources.food.owned + (scaleToCurrentMap_AT(simpleSeconds_AT('food', meteorologistTime, jobRatio), false, true, mapLevel) * lootMult);
 					meteorologistGoal = game.jobs.Meteorologist.owned + calculateMaxAfford_AT(game.jobs.Meteorologist, false, false, true, false, 1, foodEarnedMets);
 				}
 			}
@@ -1003,6 +1016,7 @@ function smithyFarm(lineCheck) {
 				//Initialising base food & metal vars for calcs later on
 				var woodBase = scaleToCurrentMap_AT(simpleSeconds_AT('wood', 1, '0,1,0'), false, true, mapLevel);
 				var metalBase = scaleToCurrentMap_AT(simpleSeconds_AT('metal', 1, '0,0,1'), false, true, mapLevel);
+				var lootMult = 1;
 				var smithyCount = 0;
 				//Checking total map count user wants to run
 				var totalMaps = mapSettings.mapName === mapName ? smithyGoal - game.global.mapRunCounter : smithyGoal;
@@ -1011,9 +1025,20 @@ function smithyFarm(lineCheck) {
 				if (totalMaps > 4) mapTime += (Math.floor(totalMaps / 5) * 45);
 				var costMult = game.buildings.Smithy.cost.gems[1];
 
+				//Factoring in the resource reduction from spending time farming during Melt
+				if (challengeActive('Melt')) {
+					const mapClearTime = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
+					var meltStacks = game.challenges.Melt.stacks;
+					for (var x = 0; x < totalMaps; x++) {
+						lootMult /= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
+						meltStacks += mapClearTime
+						lootMult *= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
+					}
+				}
+
 				//Calculating wood & metal earned then using that info to identify how many Smithies you can afford from those values.
-				const woodEarned = woodBase * mapTime;
-				const metalEarned = metalBase * mapTime;
+				const woodEarned = woodBase * mapTime * lootMult;
+				const metalEarned = metalBase * mapTime * lootMult;
 				const woodSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow(costMult, game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.wood.owned + woodEarned), costMult, true);
 				const metalSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow(costMult, game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (game.resources.metal.owned + metalEarned), costMult, true);
 
