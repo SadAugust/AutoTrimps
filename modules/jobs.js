@@ -15,11 +15,11 @@ function safeBuyJob(jobTitle, amount) {
 	} else {
 		game.global.firing = false;
 		game.global.buyAmt = amount;
-		result = canAffordJob(jobTitle, false, null, true);
+		result = canAffordJobCheck(jobTitle, amount);
 		if (!result) {
 			game.global.buyAmt = 'Max';
 			game.global.maxSplit = 1;
-			result = canAffordJob(jobTitle, false, game.workspaces, true) && freeWorkers > 0;
+			result = canAffordJobCheck(jobTitle, amount) && freeWorkers > 0;
 		}
 	}
 	if (result) {
@@ -29,6 +29,17 @@ function safeBuyJob(jobTitle, amount) {
 		if (!game.global.firing && fireState) fireMode_AT();
 	}
 	game.global.buyAmt = currBuyAmt;
+	return true;
+}
+
+function canAffordJobCheck(what, amt) {
+	const job = game.jobs[what];
+	if (game.jobs[what].max <= game.jobs[what].owned) return false;
+
+	if (game.global.buyAmt == 'Max')
+		amt = calculateMaxAfford(job, false, false, true);
+	for (var costItem in job.cost)
+		if (checkJobItem(what, false, costItem, null, amt) !== true) return false;
 	return true;
 }
 
