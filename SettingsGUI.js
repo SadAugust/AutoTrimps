@@ -4490,7 +4490,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("duelShield", 'show');
 	modifyParentNode("trapperArmyPct", 'show');
 	modifyParentNode("experienceEndBW", 'show');
-	modifyParentNode("wither", 'show');
+	modifyParentNode("witherShield", 'show');
 	modifyParentNode("questSmithyMaps", 'show');
 	modifyParentNode("mayhemSwapZone", 'show');
 	modifyParentNode("stormStacks", 'show');
