@@ -228,8 +228,8 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		//Skips buying shields when you can afford bonfires on Hypothermia.
 		if (challengeActive('Hypothermia') && i === 'Shield' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
 		//Skips through equips if they cost more than your equip purchasing percent setting value.
-		//Potentially unnecessary with all the other checks for if we can afford a prestige
-		if (!equipHighlight && !canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) && !maybeBuyPrestige.purchase) continue;
+		//Potentially unnecessary with all the other checks for if we can afford a prestige -- Removed for now. Might need to come up with a different implementation if AE breaks due to this.
+		//if (!equipHighlight && !canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) && !maybeBuyPrestige.purchase) continue;
 		//Skips equips if we have prestiges available & no prestiges to get for this
 		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
 		//If prestiges available & running certain setting skips (check above for loop) look at non-prestige item stats.
