@@ -1614,69 +1614,81 @@ function initializeAllSettings() {
 	if (displayChallenges) {
 		//Balance
 		createSetting('balance',
-			function () { return ('Balance') },
+			function () { return (currSettingUniverse === 2 ? 'Unbalance' : 'Balance') },
 			function () {
-				var description = "<p>Enable this if you want to automate destacking when running the <b>Balance</b> challenge.</p>";
+				var description = "<p>Enable this if you want to automate destacking when running the <b>" + (currSettingUniverse === 2 ? 'Unbalance' : 'Balance') + "</b> challenge.</p>";
 				if (game.global.highestRadonLevelCleared > 1) description += "<p>If you have a gamma burst charged this will delay destacking until it has been used.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Challenges', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 40) });
+			}, 'boolean', false, null, 'Challenges', [1, 2],
+			function () { return (currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 35 : game.stats.highestLevel.valueTotal() >= 40) });
 		createSetting('balanceZone',
-			function () { return ('B: Zone') },
+			function () { return ((currSettingUniverse === 2 ? 'U' : 'B') + ': Zone') },
 			function () {
 				var description = "<p>The zone you would like to start destacking your Unbalance stacks from.</p>";
 				description += "<p>If set to <b>0 or below</b> it will never destack.</p>";
 				return description;
-			}, 'value', 6, null, 'Challenges', [1],
+			}, 'value', 6, null, 'Challenges', [1, 2],
 			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
 		createSetting('balanceStacks',
-			function () { return ('B: Stacks') },
+			function () { return ((currSettingUniverse === 2 ? 'U' : 'B') + ': Stacks') },
 			function () {
 				var description = "<p>The amount of Unbalance stacks you have to reach before clearing them.</p>";
 				description += "<p>Once it starts destacking it will destack until you have no Unbalance stacks remaining.</p>";
 				description += "<p>If set to <b>0 or below</b> it will never destack.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
-			}, 'value', 20, null, 'Challenges', [1],
+			}, 'value', 20, null, 'Challenges', [1, 2],
 			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
 		createSetting('balanceImprobDestack',
-			function () { return ('B: Improbability Destack') },
+			function () { return ((currSettingUniverse === 2 ? 'U' : 'B') + ': Improbability Destack') },
 			function () {
 				var description = "<p>Will always fully destack when at cell 100 once you reach your destacking zone.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Challenges', [1],
+			}, 'boolean', false, null, 'Challenges', [1, 2],
 			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
+
+		//Bublé - Dummy setting
+		createSetting('buble',
+			function () { return ('Bublé') },
+			function () {
+				var description = "<p>This is a dummy setting to explain how the script works during Bublé.</p>";
+				description += "<p>Will disable map bonus farming when using auto level unless your optimal map level is 0 or higher as it can't guarantee survival before then.</p>";
+				description += "<p>Will automatically adjust equality and suicide armies that are one hit away from death to try and ensure you don't fail the challenge It cannot do this during void maps so you will need to overfarm health/damage to accomodate for this.</p>";
+				description += "<p>Requires the <b>Auto Equality</b> setting in the Combat tab to be set to <b>Auto Equality: Advanced</b> or the script won't try to keep your armies alive.</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 40) });
 
 		//Decay
 		createSetting('decay',
-			function () { return ('Decay') },
+			function () { return (currSettingUniverse === 2 ? 'Melt' : 'Decay') },
 			function () {
-				var description = "<p>Enable this if you want to use automation features when running the <b>Decay</b> challenge.</p>";
+				var description = "<p>Enable this if you want to use automation features when running the <b>" + (currSettingUniverse === 2 ? 'Melt' : 'Decay') + "</b> challenge.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Challenges', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 55) });
+			}, 'boolean', false, null, 'Challenges', [1, 2],
+			function () { return (currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 50 : game.stats.highestLevel.valueTotal() >= 55) });
 		createSetting('decayStacksToPush',
-			function () { return ('D: Stacks to Push') },
+			function () { return ((currSettingUniverse === 2 ? 'M' : 'D') + ': Stacks to Push') },
 			function () {
 				var description = "<p>Will ignore maps and push to end the zone if we go above this amount of stacks.</p>";
 				description += "<p>Both Prestige Climb and Void Maps will override this and still run when above this stack count.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 150</p>";
 				return description;
-			}, 'value', -1, null, 'Challenges', [1],
-			function () { return (autoTrimpSettings.decay.enabled) });
+			}, 'value', -1, null, 'Challenges', [1, 2],
+			function () { return (getPageSetting('decay', currSettingUniverse) && autoTrimpSettings.decay.require()) });
 		createSetting('decayStacksToAbandon',
-			function () { return ('D: Stacks to Abandon') },
+			function () { return ((currSettingUniverse === 2 ? 'M' : 'D') + ': Stacks to Abandon') },
 			function () {
 				var description = "<p>Will abandon the challenge if you go above this amount of stacks.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 400</p>";
 				return description;
-			}, 'value', -1, null, 'Challenges', [1],
-			function () { return (autoTrimpSettings.decay.enabled) });
+			}, 'value', -1, null, 'Challenges', [1, 2],
+			function () { return (getPageSetting('decay', currSettingUniverse) && autoTrimpSettings.decay.require()) });
 
 		//Life
 		createSetting('life',
@@ -1717,18 +1729,6 @@ function initializeAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Toxicity")', 'Challenges', [1]);
-
-		//Bublé - Dummy setting
-		createSetting('buble',
-			function () { return ('Bublé') },
-			function () {
-				var description = "<p>This is a dummy setting to explain how the script works during Bublé.</p>";
-				description += "<p>Will disable map bonus farming when using auto level unless your optimal map level is 0 or higher as it can't guarantee survival before then.</p>";
-				description += "<p>Will automatically adjust equality and suicide armies that are one hit away from death to try and ensure you don't fail the challenge It cannot do this during void maps so you will need to overfarm health/damage to accomodate for this.</p>";
-				description += "<p>Requires the <b>Auto Equality</b> setting in the Combat tab to be set to <b>Auto Equality: Advanced</b> or the script won't try to keep your armies alive.</p>";
-				return description;
-			}, 'boolean', false, null, 'Challenges', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 40) });
 
 		//Quagmire
 		createSetting('quagmireSettings',
@@ -1937,32 +1937,61 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
+		//Duel
+		createSetting('duel',
+			function () { return ('Duel') },
+			function () {
+				var description = "<p>Enable this if you want to use automation features when running the <b>Duel</b> challenge.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 45) });
+		createSetting('duelHealth',
+			function () { return ('D: Force x10 Health') },
+			function () {
+				var description = "<p>Enable this to have the script suicide when running <b>Duel</b> by setting equality to 0 when you don't have the 10x health buff.</p>";
+				description += "<p>Will only work if the <b>Auto Equality</b> setting is set to <b>Auto Equality: Advanced</b>."
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
+			function () { return (getPageSetting('duel', currSettingUniverse) && autoTrimpSettings.duel.require()) });
+		createSetting('duelShield',
+			function () { return ('D: Shield') },
+			function () {
+				var description = "<p>The name of the shield you would like to equip while running <b>Duel</b>.</p>";
+				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>Duel</b>!</p>"
+				description += "<p>Should ideally be a shield without the <b>Crit Chance</b> modifier.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'C2', [2],
+			function () { return (getPageSetting('duel', currSettingUniverse) && autoTrimpSettings.duel.require()) });
+
 		//Trapper
 		createSetting('trapper',
-			function () { return ('Trapper') },
+			function () { return (currSettingUniverse === 2 ? 'Trappapalooza' : 'Trapper') },
 			function () {
-				var description = "<p>Enable this if you want to use coordination witholding features when running the <b>Trapper</b> challenge.</p>";
+				var description = "<p>Enable this if you want to use coordination witholding features when running the <b>" + (currSettingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b> challenge.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, 'C2', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 70) });
+			}, 'boolean', false, null, 'C2', [1, 2],
+			function () { return (currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 60 : game.stats.highestLevel.valueTotal() >= 70) });
 		createSetting('trapperCoords',
 			function () { return ('T: Coords') },
 			function () {
 				var description = "<p>The zone you would like to stop buying additional <b>Coordination</b> from.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
+				description += "<p>If set to <b>0 or below</b> and not running the " + cinf() + " version of the challenge it will override this and set it to " + (currSettingUniverse === 2 ? '50' : '33') + ".</p>";
 				return description;
-			}, 'value', -1, null, 'C2', [1],
+			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		createSetting('trapperTrap',
 			function () { return ('T: Disable Trapping') },
 			function () {
-				var description = "<p>If enabled then trapping (both ingame and through the script) will be disabled when you have the coordination amount input in <b>T: Coords</b>.</p>";
+				var description = "<p>If enabled then trapping (both ingame and through the script) will be disabled when you have the coordination amount input in <b>T: Coords</b> and " + (currSettingUniverse === 2 ? "are currently fighting with that army OR" : "") + " your population is greater than the required amount for that coordination value.</p>";
 				description += "<p>To work <b>T: Coords</b> must have an input above 0!</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'C2', [1],
+			}, 'boolean', false, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		createSetting('trapperArmyPct',
@@ -1972,7 +2001,7 @@ function initializeAllSettings() {
 				description += "<p>If set to <b>0 or below</b> it will assume this is set to 100% and always send armies if possible.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', -1, null, 'C2', [1],
+			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		//Mapology
@@ -2057,109 +2086,6 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
-
-		//Unbalance
-		createSetting('unbalance',
-			function () { return ('Unbalance') },
-			function () {
-				var description = "<p>Enable this if you want to automate destacking when running the <b>Unbalance</b> challenge.</p>";
-				description += "<p>If you have a gamma burst charged this will delay destacking until it has been used.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 35) });
-		createSetting('unbalanceZone',
-			function () { return ('U: Zone') },
-			function () {
-				var description = "<p>The zone you would like to start destacking your Unbalance stacks from.</p>";
-				description += "<p>If set to <b>0 or below</b> it will never destack.</p>";
-				return description;
-			}, 'value', 6, null, 'C2', [2],
-			function () { return (getPageSetting('unbalance', currSettingUniverse) && autoTrimpSettings.unbalance.require()) });
-		createSetting('unbalanceStacks',
-			function () { return ('U: Stacks') },
-			function () {
-				var description = "<p>The amount of Unbalance stacks you have to reach before clearing them.</p>";
-				description += "<p>Once it starts destacking it will destack until you have no Unbalance stacks remaining.</p>";
-				description += "<p>If set to <b>0 or below</b> it will never destack.</p>";
-				description += "<p><b>Recommended:</b> 20</p>";
-				return description;
-			}, 'value', -1, null, 'C2', [2],
-			function () { return (getPageSetting('unbalance', currSettingUniverse) && autoTrimpSettings.unbalance.require()) });
-		createSetting('unbalanceImprobDestack',
-			function () { return ('U: Improbability Destack') },
-			function () {
-				var description = "<p>Will always fully destack when at cell 100 once you reach your destacking zone.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [2],
-			function () { return (getPageSetting('unbalance', currSettingUniverse) && autoTrimpSettings.unbalance.require()) });
-
-		//Duel
-		createSetting('duel',
-			function () { return ('Duel') },
-			function () {
-				var description = "<p>Enable this if you want to use automation features when running the <b>Duel</b> challenge.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 45) });
-		createSetting('duelHealth',
-			function () { return ('D: Force x10 Health') },
-			function () {
-				var description = "<p>Enable this to have the script suicide when running <b>Duel</b> by setting equality to 0 when you don't have the 10x health buff.</p>";
-				description += "<p>Will only work if the <b>Auto Equality</b> setting is set to <b>Auto Equality: Advanced</b>."
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [2],
-			function () { return (getPageSetting('duel', currSettingUniverse) && autoTrimpSettings.duel.require()) });
-		createSetting('duelShield',
-			function () { return ('D: Shield') },
-			function () {
-				var description = "<p>The name of the shield you would like to equip while running <b>Duel</b>.</p>";
-				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>Duel</b>!</p>"
-				description += "<p>Should ideally be a shield without the <b>Crit Chance</b> modifier.</p>";
-				return description;
-			}, 'textValue', 'undefined', null, 'C2', [2],
-			function () { return (getPageSetting('duel', currSettingUniverse) && autoTrimpSettings.duel.require()) });
-
-		//Trappapalooza
-		createSetting('trappapalooza',
-			function () { return ('Trappapalooza') },
-			function () {
-				var description = "<p>Enable this if you want to use coordination witholding features when running the <b>Trappapalooza</b> challenge.</p>";
-				description += "<p><b>Recommended:</b> Off</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 60) });
-		createSetting('trappapaloozaCoords',
-			function () { return ('T: Coords') },
-			function () {
-				var description = "<p>The zone you would like to stop buying additional <b>Coordination</b> from.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
-				return description;
-			}, 'value', -1, null, 'C2', [2],
-			function () { return (getPageSetting('trappapalooza', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
-
-		createSetting('trappapaloozaTrap',
-			function () { return ('T: Disable Trapping') },
-			function () {
-				var description = "<p>If enabled then trapping (both ingame and through the script) will be disabled when you have the coordination amount input in <b>T: Coords</b>.</p>";
-				description += "<p>To work <b>T: Coords</b> must have an input above 0!</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [2],
-			function () { return (getPageSetting('trappapalooza', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
-
-		createSetting('trappapaloozaArmyPct',
-			function () { return ('T: Army Pct') },
-			function () {
-				var description = "<p>The percentage of owned trimps that you would like to send out when you need a new army.</p>";
-				description += "<p>If set to <b>0 or below</b> it will assume this is set to 100% and always send armies if possible.</p>";
-				description += "<p><b>Recommended:</b> 1</p>";
-				return description;
-			}, 'value', -1, null, 'C2', [2],
-			function () { return (getPageSetting('trappapalooza', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
 
 		//Wither
 		createSetting('wither',
@@ -4509,8 +4435,6 @@ function modifyParentNode(id, style) {
 
 //Tells the script which settings you want a new line after.
 function modifyParentNodeUniverseSwap() {
-	const radonon = getPageSetting('universeSetting') === 1 ? 'show' : 'hide';
-	const radonoff = getPageSetting('universeSetting') === 0 ? 'show' : 'hide';
 	const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
 	//Core
@@ -4522,8 +4446,8 @@ function modifyParentNodeUniverseSwap() {
 	else
 		modifyParentNode("heliumHrDontPortalBefore", 'hide');
 	//Dailies
-	modifyParentNode("dscryvoidmaps", radonoff);
-	modifyParentNode("dPreSpireNurseries", radonoff);
+	modifyParentNode("dscryvoidmaps", 'show');
+	modifyParentNode("dPreSpireNurseries", 'show');
 	modifyParentNode("dWindStackingLiq", 'show');
 	modifyParentNode("dailyHeliumHrPortal", 'show');
 	//Maps
@@ -4535,42 +4459,41 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("equipNoShields", 'show');
 	modifyParentNode("equipShieldBlock", 'show');
 	//Combat
-	modifyParentNode("frenzyCalc", radonoff);
-	modifyParentNode("scryerEssenceOnly", radonoff);
+	modifyParentNode("frenzyCalc", 'show');
+	modifyParentNode("scryerEssenceOnly", 'show');
 	//ATGA
-	modifyParentNode("geneAssistTimerSpire", radonoff);
-	modifyParentNode("geneAssistTimerAfter", radonoff);
-	modifyParentNode("geneAssistTimerSpireDaily", radonoff);
+	modifyParentNode("geneAssistTimerSpire", 'show');
+	modifyParentNode("geneAssistTimerAfter", 'show');
+	modifyParentNode("geneAssistTimerSpireDaily", 'show');
 	//C2
 	modifyParentNode("c2disableFinished", 'show');
 	modifyParentNode("c2Fused", 'show');
 	modifyParentNode("c2AutoDStanceSpire", 'show');
 	//C2 Challenges
-	modifyParentNode("experienceEndBW", radonon);
-	modifyParentNode("unbalanceImprobDestack", radonon);
-	modifyParentNode("duelShield", radonon);
-	modifyParentNode("trappapaloozaArmyPct", radonon);
-	modifyParentNode("wither", radonon);
-	modifyParentNode("questSmithyMaps", radonon);
-	modifyParentNode("mayhemSwapZone", radonon);
-	modifyParentNode("stormStacks", radonon);
-	modifyParentNode("berserk", radonon);
-	modifyParentNode("pandemoniumSwapZone", radonon);
-	modifyParentNode("glassStacks", radonon);
-	modifyParentNode("desolationSettings", radonon);
+	modifyParentNode("duelShield", 'show');
+	modifyParentNode("trapperArmyPct", 'show');
+	modifyParentNode("experienceEndBW", 'show');
+	modifyParentNode("wither", 'show');
+	modifyParentNode("questSmithyMaps", 'show');
+	modifyParentNode("mayhemSwapZone", 'show');
+	modifyParentNode("stormStacks", 'show');
+	modifyParentNode("berserk", 'show');
+	modifyParentNode("pandemoniumSwapZone", 'show');
+	modifyParentNode("glassStacks", 'show');
+	modifyParentNode("desolationSettings", 'show');
 	//Buildings
-	modifyParentNode("autoGigaDeltaFactor", radonoff);
+	modifyParentNode("autoGigaDeltaFactor", 'show');
 	//Challenges
-	modifyParentNode("balanceImprobDestack", radonoff);
-	modifyParentNode("decayStacksToAbandon", radonoff);
-	modifyParentNode("lifeStacks", radonoff);
+	modifyParentNode("balanceImprobDestack", 'show');
+	modifyParentNode("buble", 'show');
+	modifyParentNode("decayStacksToAbandon", 'show');
+	modifyParentNode("lifeStacks", 'show');
+	modifyParentNode("toxicitySettings", 'show');
 
-	modifyParentNode("trapperArmyPct", radonoff);
-	modifyParentNode("mapologyPrestige", radonoff);
-	modifyParentNode("frigid", radonoff);
-	modifyParentNode("buble", radonon);
+	modifyParentNode("mapologyPrestige", 'show');
+	modifyParentNode("frigid", 'show');
 	//Magma
-	modifyParentNode("AutoGenC2", radonoff);
+	modifyParentNode("AutoGenC2", 'show');
 	//Heirlooms
 	modifyParentNode("heirloomCompressedSwap", 'show');
 	modifyParentNode("heirloomSpire", 'show');
@@ -4582,13 +4505,13 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomAutoShieldMod7", heirloom);
 	modifyParentNode("heirloomAutoStaffMod7", heirloom);
 	//Nature
-	modifyParentNode("AutoIce", radonoff);
-	modifyParentNode("autoenlight", radonoff);
-	modifyParentNode("iceEnlight", radonoff);
-	modifyParentNode("iceEnlightDaily", radonoff);
+	modifyParentNode("AutoIce", 'show');
+	modifyParentNode("autoenlight", 'show');
+	modifyParentNode("iceEnlight", 'show');
+	modifyParentNode("iceEnlightDaily", 'show');
 	//Display
-	modifyParentNode("automateSpireAssault", radonon);
-	modifyParentNode("EnableAFK", radonoff);
+	modifyParentNode("automateSpireAssault", 'show');
+	modifyParentNode("EnableAFK", 'show');
 	//Test
 	modifyParentNode("testTotalEquipmentCost", 'show');
 }
@@ -6196,6 +6119,31 @@ function updateATVersion() {
 			if (typeof (tempSettings["autGigaDeltaFactor"]) !== 'undefined') {
 				autoTrimpSettings.autoGigaDeltaFactor.value = tempSettings.autGigaDeltaFactor.value;
 			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.28') {
+			if (typeof (tempSettings["unbalance"]) !== 'undefined')
+				autoTrimpSettings.balance.enabledU2 = tempSettings.unbalance.enabledU2;
+			if (typeof (tempSettings["unbalanceZone"]) !== 'undefined')
+				autoTrimpSettings.balanceZone.valueU2 = tempSettings.unbalanceZone.valueU2;
+			if (typeof (tempSettings["unbalanceStacks"]) !== 'undefined')
+				autoTrimpSettings.balanceStacks.valueU2 = tempSettings.unbalanceStacks.valueU2;
+			if (typeof (tempSettings["unbalanceImprobDestack"]) !== 'undefined')
+				autoTrimpSettings.balanceImprobDestack.enabledU2 = tempSettings.unbalanceImprobDestack.enabledU2;
+
+			if (typeof (tempSettings["trappapalooza"]) !== 'undefined')
+				autoTrimpSettings.trapper.enabledU2 = tempSettings.trappapalooza.enabledU2;
+			if (typeof (tempSettings["trappapaloozaCoords"]) !== 'undefined')
+				autoTrimpSettings.trapperCoords.valueU2 = tempSettings.trappapaloozaCoords.valueU2;
+			if (typeof (tempSettings["trappapaloozaTrap"]) !== 'undefined')
+				autoTrimpSettings.trapperTrap.enabledU2 = tempSettings.trappapaloozaTrap.enabledU2;
+			if (typeof (tempSettings["trappapaloozaArmyPct"]) !== 'undefined')
+				autoTrimpSettings.trapperArmyPct.valueU2 = tempSettings.trappapaloozaArmyPct.valueU2;
+
+			autoTrimpSettings.decay.enabledU2 = false;
+			autoTrimpSettings.decayStacksToPush.valueU2 = -1;
+			autoTrimpSettings.decayStacksToAbandon.valueU2 = -1;
+
 		}
 	}
 

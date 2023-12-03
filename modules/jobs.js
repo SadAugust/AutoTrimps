@@ -149,11 +149,16 @@ function buyJobs(forceRatios) {
 	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
 		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
 		if (!game.global.fighting || game.global.soldierHealth <= 0) freeWorkers -= game.resources.trimps.maxSoldiers;
-		if (getPageSetting(trimpStats.currChallenge.toLowerCase()))
-			if (game.upgrades.Coordination.done <= getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords')) {
+		if (getPageSetting('trapper')) {
+			var coordTarget = getPageSetting('trapperCoords');
+			if (coordTarget > 0) coordTarget--;
+			if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
+
+			if (game.upgrades.Coordination.done <= getPageSetting('trapperCoords')) {
 				nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
 				if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
 			}
+		}
 	}
 
 	//Do non-ratio/limited jobs first

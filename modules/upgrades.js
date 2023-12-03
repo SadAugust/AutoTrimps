@@ -191,8 +191,11 @@ function buyUpgrades() {
 			//Coord & Amals
 			if (upgradeSetting === 2 || !canAffordCoordinationTrimps()) continue;
 			//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
-			if (challengeActive('Trappapalooza') || challengeActive('Trapper') && getPageSetting(trimpStats.currChallenge.toLowerCase())) {
-				if (getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords') > 0 && game.upgrades.Coordination.done >= getPageSetting(trimpStats.currChallenge.toLowerCase() + 'Coords')) continue;
+			if (challengeActive('Trappapalooza') || challengeActive('Trapper') && getPageSetting('trapper')) {
+				var coordTarget = getPageSetting('trapperCoords');
+				if (coordTarget > 0) coordTarget--;
+				if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
+				if (coordTarget > 0 && game.upgrades.Coordination.done >= coordTarget) continue;
 				buyJobs();
 			}
 		}

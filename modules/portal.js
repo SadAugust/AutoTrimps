@@ -30,7 +30,7 @@ function autoPortalCheck(specificPortalZone) {
 }
 
 function autoPortal(specificPortalZone, skipDaily) {
-	if (challengeActive('Decay')) decayFinishChallenge();
+	if (challengeActive('Decay') || challengeActive('Melt')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
 	if (game.global.runningChallengeSquared) return;
 	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
@@ -526,26 +526,30 @@ function doPortal(challenge, skipDaily) {
 }
 
 function decaySkipMaps() {
-	if (!challengeActive('Decay') && !getPageSetting('decay')) {
+	const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
+	if (!challengeActive(challengeName) && !getPageSetting('decay')) {
 		return false;
 	}
-	const stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
+	const challenge = game.challenges[challengeName];
+	const stacks = challenge ? challenge.stacks : 0;
 	const stacksToPush = getPageSetting('decayStacksToPush');
 	return stacksToPush > 0 && stacks > stacksToPush;
 }
 
 function decayFinishChallenge() {
 	//Pre-Init
-	if (!challengeActive('Decay') && !getPageSetting('decay')) return;
+	const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
+	if (!challengeActive(challengeName) && !getPageSetting('decay')) return;
 
 	//Init
-	var stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
+	const challenge = game.challenges[challengeName];
+	var stacks = challenge ? challenge.stacks : 0;
 	var stacksToAbandon = getPageSetting('decayStacksToAbandon');
 
 	//Finishes the challenge if above max stacks
 	if (stacksToAbandon > 0 && stacks > stacksToAbandon) {
 		abandonChallenge();
-		debug(`Finished Decay challenge because we had more than ${stacksToAbandon} stacks.`, "general", "oil");
+		debug(`Finished ${challengeName} challenge because we had more than ${stacksToAbandon} stacks.`, "general", "oil");
 	}
 }
 

@@ -7,8 +7,8 @@ function callBetterAutoFight() {
 }
 
 function newArmyRdy() {
-	if (['Trapper', 'Trappapalooza'].indexOf(trimpStats.currChallenge) > -1 && getPageSetting(trimpStats.currChallenge.toLowerCase())) {
-		var popSetting = getPageSetting(trimpStats.currChallenge.toLowerCase() + 'ArmyPct');
+	if (['Trapper', 'Trappapalooza'].indexOf(trimpStats.currChallenge) > -1 && getPageSetting('trapper')) {
+		var popSetting = getPageSetting('trapperArmyPct');
 		if (popSetting > 100) popSetting = 100;
 		if (popSetting <= 0) return true;
 		return (game.resources.trimps.owned > (game.resources.trimps.maxSoldiers * popSetting));

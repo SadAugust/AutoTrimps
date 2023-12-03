@@ -1228,8 +1228,7 @@ function mapDestacking(lineCheck) {
 	};
 
 	if (
-		!(getPageSetting('balance') && challengeActive('Balance')) &&
-		!(getPageSetting('unbalance') && challengeActive('Unbalance')) &&
+		!(getPageSetting('balance') && (challengeActive('Balance') || challengeActive('Unbalance'))) &&
 		!(getPageSetting('storm') && challengeActive('Storm')) &&
 		!(challengeActive('Daily') && getPageSetting('bloodthirstDestack') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
 	)
@@ -1240,20 +1239,13 @@ function mapDestacking(lineCheck) {
 	var mapSpecial = getAvailableSpecials('fa');
 	var destackValue = 0;
 
-	//Balance Destacking
-	if (challengeActive('Balance')) {
+	//Balance+Unbalance Destacking
+	if (challengeActive('Balance') || challengeActive('Unbalance')) {
+		const challenge = challengeActive('Balance') ? 'Balance' : 'Unbalance';
 		var balanceZone = getPageSetting('balanceZone') > 0 ? getPageSetting('balanceZone') : Infinity;
 		var balanceStacks = getPageSetting('balanceStacks') > 0 ? getPageSetting('balanceStacks') : Infinity;
-		shouldMap = ((gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= balanceZone && (game.challenges.Balance.balanceStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 === 100 && game.challenges.Balance.balanceStacks !== 0)));
-		destackValue = game.challenges.Balance.balanceStacks;
-	}
-
-	//Unbalance Destacking
-	if (challengeActive('Unbalance')) {
-		var unbalanceZone = getPageSetting('unbalanceZone') > 0 ? getPageSetting('unbalanceZone') : Infinity;
-		var unbalanceStacks = getPageSetting('unbalanceStacks') > 0 ? getPageSetting('unbalanceStacks') : Infinity;
-		shouldMap = ((gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= unbalanceZone && (game.challenges.Unbalance.balanceStacks >= unbalanceStacks || (getPageSetting('unbalanceImprobDestack') && game.global.lastClearedCell + 2 === 100 && game.challenges.Unbalance.balanceStacks !== 0)));
-		destackValue = game.challenges.Unbalance.balanceStacks;
+		shouldMap = ((gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= balanceZone && (game.challenges[challenge].balanceStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 === 100 && game.challenges[challenge].balanceStacks !== 0)));
+		destackValue = game.challenges[challenge].balanceStacks;
 	}
 
 	//Bloodthirst Destacking
@@ -3201,14 +3193,6 @@ function farmingDecision() {
 			obtainUniqueMap,
 		];
 
-		//Skipping map farming if in Decay and above stack count user input
-		if (decaySkipMaps())
-			mapTypes = [
-				prestigeClimb,
-				voidMaps,
-				obtainUniqueMap,
-			];
-
 		if (challengeActive('Mapology') && getPageSetting('mapology'))
 			mapTypes = [
 				prestigeClimb,
@@ -3256,6 +3240,14 @@ function farmingDecision() {
 			obtainUniqueMap,
 		];
 	}
+
+	//Skipping map farming if in Decay or Melt and above stack count user input
+	if (decaySkipMaps())
+		mapTypes = [
+			prestigeClimb,
+			voidMaps,
+			obtainUniqueMap,
+		];
 
 	const priorityList = [];
 	//If we are currently running a map and it should be continued then continue running it.

@@ -50,17 +50,34 @@ function autoGather() {
 		autoGatherMetal();
 		return;
 	}
-
+	var trapChallenge = challengeActive('Trapper') || challengeActive('Trappapalooza');
 
 	var needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
 	var notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
-	var trapperTrapUntilFull = (challengeActive('Trapper') || challengeActive('Trappapalooza')) && notFullPop;
+	var trapperTrapUntilFull = trapChallenge && notFullPop;
 	var trapsBufferSize = Math.ceil(5 * calcTPS());
 	var minTraps = needBattle ? 0 : Math.ceil(calcTPS());
 	var maxTraps = calcMaxTraps();
 	var trapTrimpsOK = (!game.upgrades.Battle.done || (getPageSetting('TrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
-	if (trapTrimpsOK && challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords') && getPageSetting('trappapaloozaTrap')) trapTrimpsOK = false;
-	if (trapTrimpsOK && challengeActive('Trapper') && getPageSetting('trapper') && getPageSetting('trapperCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trapperCoords') && getPageSetting('trapperTrap')) trapTrimpsOK = false;
+
+	//Identify if we should disable trapping when running Trappa/Trapper
+	if (trapTrimpsOK && trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap')) {
+		var coordTarget = getPageSetting('trapperCoords') > 0 ? getPageSetting('trapperCoords') - 1 : 999;
+		if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
+		var remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
+		var targetArmySize = 1;
+		var coordinatedMult = getPerkLevel('Coordinated') > 0 ? ((0.25 * Math.pow(game.portal.Coordinated.modifier, getPerkLevel('Coordinated'))) + 1) : 1;
+		//Work out the army size that we need to calculate traps based off of.
+		targetArmySize = game.resources.trimps.maxSoldiers
+		if (game.upgrades.Coordination.done >= coordTarget)
+			for (var z = game.upgrades.Coordination.done; z < coordTarget; ++z) {
+				targetArmySize = Math.ceil(1.25 * targetArmySize);
+				targetArmySize = Math.ceil(targetArmySize * coordinatedMult);
+			}
+		//Disable trapping if we are fighting with our max coord army (or better) OR if we have enough trimps to fill our max coord army
+		if ((challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize) || remainingTrimps > targetArmySize)
+			trapTrimpsOK = false;
+	}
 
 	//Vars
 	var lowOnTraps = game.buildings.Trap.owned < minTraps;
