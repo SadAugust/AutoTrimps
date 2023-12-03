@@ -24,13 +24,13 @@ function getHeliumPerHour() {
 
 //Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
 function autoPortalCheck(specificPortalZone) {
+	if (challengeActive('Decay') || challengeActive('Melt')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
 	if (game.global.runningChallengeSquared) c2RunnerPortal(specificPortalZone);
 	else autoPortal(specificPortalZone);
 }
 
 function autoPortal(specificPortalZone, skipDaily) {
-	if (challengeActive('Decay') || challengeActive('Melt')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
 	if (game.global.runningChallengeSquared) return;
 	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
