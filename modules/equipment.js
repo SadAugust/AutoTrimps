@@ -374,11 +374,11 @@ function zoneGoCheck(setting, farmType) {
 
 	//Equipment related section for zone overrides
 	if (farmType === 'attack' || farmType === 'health') {
-		if (mapSettings.mapName === 'Wither Farm') return zoneDetails;
 		if (farmType === 'attack') {
 			//Farming for damage means we should prio attack equips 
 			if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
-			//Since we're farming for more damage to kill the Ubersmith we want to spend 100% of our resources on attack equips
+			//Since we're farming for more damage to kill we want to spend 100% of our resources on attack equips
+			if (mapSettings.mapName === 'Wither Farm') return zoneDetails;
 			if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 		}
 		if (farmType === 'health') {
@@ -386,6 +386,7 @@ function zoneGoCheck(setting, farmType) {
 			//Farming for health means we should prio health equips 
 			if (mapSettings.shouldHealthFarm) return zoneDetails;
 			//Since having to use equality will lower our damage then we want more health to reduce equality usage
+			if (mapSettings.mapName === 'Wither Farm' && mapSettings.equality > 0) return zoneDetails;
 			if (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0) return zoneDetails;
 			//Since equality has a big impact on u2 HD Ratio then we want more health to reduce equality required.
 			if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && game.portal.Equality.radLevel > 0) return zoneDetails;

@@ -121,7 +121,16 @@ function buyJobs(forceRatios) {
 	if (getPageSetting('jobType') === 0) return;
 
 	var jobSettings = getPageSetting('jobSettingsArray');
-	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed);
+	freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed);
+
+	var ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
+	var ratioWorkerCount = 0;
+	var currentWorkers = [];
+	for (var worker of ratioWorkers) {
+		currentWorkers.push(game.jobs[worker].owned);
+	}
+	ratioWorkerCount += currentWorkers.reduce((a, b) => { return a + b; });
+	freeWorkers += ratioWorkerCount;
 
 	var canBreed = !challengeActive('Trapper') && !challengeActive('Trappapalooza');
 	var breedingTrimps = !canBreed ? Infinity : game.resources.trimps.owned - trimpsEffectivelyEmployed();
@@ -142,20 +151,16 @@ function buyJobs(forceRatios) {
 		return;
 	}
 
-	var nextCoordCost = 0;
-
-	//Gather up the total number of workers available to be distributed across ratio workers
-	//In the process store how much of each for later.
 	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
-		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
+		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed + ratioWorkerCount;
 		if ((!game.global.fighting || game.global.soldierHealth <= 0) && freeWorkers > game.resources.trimps.maxSoldiers) freeWorkers -= game.resources.trimps.maxSoldiers;
 		if (getPageSetting('trapper')) {
 			var coordTarget = getPageSetting('trapperCoords');
 			if (coordTarget > 0) coordTarget--;
 			if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
-			nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers) - game.resources.trimps.maxSoldiers;
-
-			if (freeWorkers > nextCoordCost && game.upgrades.Coordination.done < coordTarget && game.upgrades.Coordination.done !== game.upgrades.Coordination.allowed)
+			var nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers) - game.resources.trimps.maxSoldiers;
+			//Finish off Trapper/Trappa firing for coords code
+			if (freeWorkers > nextCoordCost && game.upgrades.Coordination.done < coordTarget && game.upgrades.Coordination.done !== game.upgrades.Coordination.allowed && canAffordCoordination)
 				freeWorkers -= nextCoordCost;
 		}
 	}
@@ -242,13 +247,6 @@ function buyJobs(forceRatios) {
 			}
 		}
 	}
-
-	var ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
-	var currentworkers = [];
-	for (var worker of ratioWorkers) {
-		currentworkers.push(game.jobs[worker].owned);
-	}
-	freeWorkers += currentworkers.reduce((a, b) => { return a + b; });
 
 	//Scientist ratio hack to ensure that we always have at least 1 scientist unless Scientist ratio is set to 0 inside of any override settings.     
 	var scientistMod;
@@ -345,7 +343,7 @@ function buyJobs(forceRatios) {
 	var desiredWorkers = [0, 0, 0, 0];
 	var totalWorkerCost = 0;
 	for (var i = 0; i < ratioWorkers.length; i++) {
-		desiredWorkers[i] = Math.floor(freeWorkers * desiredRatios[i] / totalFraction - currentworkers[i]);
+		desiredWorkers[i] = Math.floor(freeWorkers * desiredRatios[i] / totalFraction - currentWorkers[i]);
 		if (desiredWorkers[i] > 0) totalWorkerCost += game.jobs[ratioWorkers[i]].cost.food * desiredWorkers[i];
 	}
 
