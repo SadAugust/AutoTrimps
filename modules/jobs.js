@@ -148,16 +148,15 @@ function buyJobs(forceRatios) {
 	//In the process store how much of each for later.
 	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
 		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
-		if (!game.global.fighting || game.global.soldierHealth <= 0) freeWorkers -= game.resources.trimps.maxSoldiers;
+		if ((!game.global.fighting || game.global.soldierHealth <= 0) && freeWorkers > game.resources.trimps.maxSoldiers) freeWorkers -= game.resources.trimps.maxSoldiers;
 		if (getPageSetting('trapper')) {
 			var coordTarget = getPageSetting('trapperCoords');
 			if (coordTarget > 0) coordTarget--;
 			if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
+			nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers) - game.resources.trimps.maxSoldiers;
 
-			if (game.upgrades.Coordination.done <= getPageSetting('trapperCoords')) {
-				nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
-				if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
-			}
+			if (freeWorkers > nextCoordCost && game.upgrades.Coordination.done < coordTarget && game.upgrades.Coordination.done !== game.upgrades.Coordination.allowed)
+				freeWorkers -= nextCoordCost;
 		}
 	}
 
@@ -250,10 +249,6 @@ function buyJobs(forceRatios) {
 		currentworkers.push(game.jobs[worker].owned);
 	}
 	freeWorkers += currentworkers.reduce((a, b) => { return a + b; });
-
-	/* // Explicit firefox handling because Ff specifically reduces free workers to 0.
-	var reserveMod = 1 + (game.resources.trimps.owned / 1e14) + nextCoordCost;
-	freeWorkers -= (game.resources.trimps.owned > 1e6) ? 100 * reserveMod : 0; */
 
 	//Scientist ratio hack to ensure that we always have at least 1 scientist unless Scientist ratio is set to 0 inside of any override settings.     
 	var scientistMod;

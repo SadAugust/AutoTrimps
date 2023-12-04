@@ -1697,7 +1697,7 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 
 	//Map Numbers dropdown (0-10)
 	dropdown.mapLevel = "<option value='0'" + ((vals.raidingzone === '0') ? " selected='selected'" : "") + ">0</option>";
-	if (trimpStats.plusLevels) {
+	if (universe === 2 ? highestZone >= 50 : highestZone >= 210) {
 		for (var i = 1; i <= 10; i++) {
 			dropdown.mapLevel += "<option value='" + i + "'" + ((vals.raidingzone === i.toString()) ? " selected='selected'" : "") + ">" + i + "</option>";
 		}

@@ -1974,7 +1974,7 @@ function wither(lineCheck) {
 	var name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[(cell - 1)].name : undefined;
 	var damageGoal = 4;
 
-	var equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma');
+	var equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma', false, 4);
 	var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 	var enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationHealth(game.global.world));
 
@@ -1985,7 +1985,7 @@ function wither(lineCheck) {
 
 	//Checking if we can clear next zone.
 	if (cell === 100) {
-		equalityAmt = equalityQuery(name, game.global.world + 1, 100, 'world', 1, 'gamma');
+		equalityAmt = equalityQuery(name, game.global.world + 1, 100, 'world', 1, 'gamma', false, 4);
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 100, 'Improbability', calcMutationHealth(game.global.world + 1));
 		//Checking if we can clear current zone.
@@ -2011,6 +2011,7 @@ function wither(lineCheck) {
 	farmingDetails.damageTarget = damageTarget;
 	farmingDetails.repeat = true;
 	farmingDetails.status = status;
+	farmingDetails.equalityAmt = equalityAmt;
 
 	if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 		mappingDetails(mapName, mapLevel, mapSpecial);

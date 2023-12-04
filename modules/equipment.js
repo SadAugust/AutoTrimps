@@ -373,9 +373,8 @@ function zoneGoCheck(setting, farmType) {
 	var hdRatio = mapSettings.mapName === 'Void Map' ? hdStats.hdRatioVoid : hdStats.hdRatio;
 
 	//Equipment related section for zone overrides
-	//At or above z10 so that we have enough time to purchase buildings during the early game
 	if (farmType === 'attack' || farmType === 'health') {
-		if (mapSettings.mapName === 'Wither') return zoneDetails;
+		if (mapSettings.mapName === 'Wither Farm') return zoneDetails;
 		if (farmType === 'attack') {
 			//Farming for damage means we should prio attack equips 
 			if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
