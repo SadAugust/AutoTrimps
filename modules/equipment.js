@@ -131,9 +131,10 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 	}
 	if (!ignoreShield) ignoreShield = getPageSetting('equipNoShields');
 	if (!skipForLevels) skipForLevels = false;
-
-	var zoneGoHealth = !zoneGo ? zoneGoCheck(getPageSetting('equipZone'), 'health').active : zoneGo;
-	var zoneGoAttack = !zoneGo ? zoneGoCheck(getPageSetting('equipZone'), 'attack').active : zoneGo;
+	var currentMap = getCurrentMapObject();
+	if (currentMap === undefined) currentMap = { location: 'world' };
+	var zoneGoHealth = !zoneGo ? zoneGoCheck(getPageSetting('equipZone'), 'health', currentMap).active : zoneGo;
+	var zoneGoAttack = !zoneGo ? zoneGoCheck(getPageSetting('equipZone'), 'attack', currentMap).active : zoneGo;
 
 	var resourceSpendingPctHealth = !resourceSpendingPct ? (zoneGoHealth ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100) : resourceSpendingPct;
 	var resourceSpendingPctAttack = !resourceSpendingPct ? (zoneGoAttack ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100) : resourceSpendingPct;
@@ -363,14 +364,17 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 }
 
 //Check to see if we are in the zone range that the user set
-function zoneGoCheck(setting, farmType) {
+function zoneGoCheck(setting, farmType, mapType) {
 
 	const zoneDetails = {
 		active: true,
 		zone: game.global.world,
 	};
 
-	var hdRatio = mapSettings.mapName === 'Void Map' ? hdStats.hdRatioVoid : hdStats.hdRatio;
+	if (!mapType) mapType = { location: 'world' };
+	var hdRatio = hdStats.hdRatio;
+	if (mapType.location === 'Void' || (mapSettings.voidHitsSurvived && trimpStats.autoMaps)) hdRatio = hdStats.hdRatioVoid;
+	else if (mapType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) hdRatio = hdStats.hdRatioMap;
 
 	//Equipment related section for zone overrides
 	if (farmType === 'attack' || farmType === 'health') {

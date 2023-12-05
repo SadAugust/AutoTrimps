@@ -8,6 +8,7 @@ class TrimpStats {
 		this.hze = undefined;
 		this.hypPct = undefined;
 		this.hyperspeed = undefined;
+		this.autoMaps = undefined;
 
 		//Mapping Data
 		this.perfectMaps = undefined;
@@ -29,6 +30,7 @@ class TrimpStats {
 		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 		this.hyperspeed2 = game.global.world <= Math.floor(this.hze * (this.hypPct / 100));
+		this.autoMaps = getPageSetting('autoMaps') > 0;
 
 		this.mapSize = game.talents.mapLoot2.purchased ? 20 : 25;
 		this.mapDifficulty = 0.75;
@@ -80,14 +82,16 @@ class HDStats {
 			//u2 up to full difficulty, u1 at -1
 			voidPercent -= 1;
 		}
+
+		var mapDifficulty = game.global.mapsActive && getCurrentMapObject().location === 'Bionic' ? getCurrentMapObject().difficulty : 0.75;
 		if (challengeActive('Mapocalypse')) voidPercent += 3;
 		//Calculating HD values for current zone.
 		this.hdRatio = calcHDRatio(z, 'world', false, 1);
-		this.hdRatioMap = calcHDRatio(z, 'map', false, 0.75);
+		this.hdRatioMap = calcHDRatio(z, 'map', false, mapDifficulty);
 		this.hdRatioVoid = calcHDRatio(z, 'void', false, voidPercent);
 		//Calculating HD values for the next zone.
 		this.hdRatioPlus = calcHDRatio(z + 1, 'world', false, 1);
-		this.hdRatioMapPlus = calcHDRatio(z + 1, 'map', false, 0.75);
+		this.hdRatioMapPlus = calcHDRatio(z + 1, 'map', false, mapDifficulty);
 		this.hdRatioVoidPlus = calcHDRatio(z + 1, 'void', false, voidPercent);
 		//Calculating void HD values so that we don't need to generate them everytime when looking at VoidMaps function.
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
@@ -98,6 +102,7 @@ class HDStats {
 		this.hdRatioHeirloom = calcHDRatio(z, 'world', false, 1, false);
 		//Calculating Hits Survived values for current zone.
 		this.hitsSurvived = calcHitsSurvived(z, 'world', 1);
+		this.hitsSurvivedMap = calcHitsSurvived(z, 'map', mapDifficulty);
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void', voidPercent);
 		//Calculating Auto Level values.
 		this.autoLevel = autoMapLevel();
@@ -425,6 +430,11 @@ function targetHitsSurvived(skipHDCheck, mapType) {
 }
 
 function whichHitsSurvived() {
+	var hitsSurvived = hdStats.hitsSurvived;
+	var mapType = !game.global.mapsActive ? getCurrentMapObject().location : { location: 'world' };
+	if (!mapType) mapType = { location: 'world' };
+	if (mapType.location === 'Void' || (mapSettings.voidHitsSurvived && trimpStats.autoMaps)) hitsSurvived = hdStats.hitsSurvivedVoid;
+	else if (mapType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) hitsSurvived = hdStats.hitsSurvivedMap;
 	const hitsSurvived = mapSettings.voidHitsSurvived ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived;
 	return hitsSurvived;
 }

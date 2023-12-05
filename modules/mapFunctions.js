@@ -3172,7 +3172,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 		farmingDetails.status = status;
 		farmingDetails.runCap = mapsRunCap;
 		farmingDetails.shouldHealthFarm = hdType.includes('hitsSurvived');
-		farmingDetails.voidHitsSurvived = hdType === 'hitsSurvivedVoid';
+		farmingDetails.voidHitsSurvived = hdType === 'hitsSurvivedVoid' || hdType === 'void';
 		farmingDetails.settingIndex = settingIndex;
 		if (setting.priority) farmingDetails.priority = setting.priority;
 		//Retain info that we have used a bone charge if we are farming stats before we run void maps.
