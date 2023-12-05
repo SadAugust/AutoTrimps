@@ -367,19 +367,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnMapFarm .windowChallengeMapFarm,
-.windowChallenge3OnMapFarm .windowChallenge3MapFarm {
+.windowChallenge3OnMapFarm .windowChallenge3MapFarm,
+.windowChallengeOneOffOnMapFarm .windowChallengeOneOffMapFarm {
 	display: inline-block;
 	width: 10%;
 }
 
 .windowChallenge3OnMapFarm .windowRunTypeMapFarm,
+.windowChallengeOneOffOnMapFarm .windowRunTypeMapFarm,
 .windowChallengeOnMapFarm .windowRunTypeMapFarm {
 	display: inline-block;
 	width: 10%;
 }
 
 .windowChallengeOffMapFarm .windowChallengeMapFarm,
-.windowChallenge3OffMapFarm .windowChallenge3MapFarm {
+.windowChallenge3OffMapFarm .windowChallenge3MapFarm,
+.windowChallengeOneOffOffMapFarm .windowChallengeOneOffMapFarm {
 	display: none;
 }
 
@@ -469,21 +472,24 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnTributeFarm .windowChallengeTributeFarm,
-.windowChallenge3OnTributeFarm .windowChallenge3TributeFarm {
+.windowChallenge3OnTributeFarm .windowChallenge3TributeFarm,
+.windowChallengeOneOffOnTributeFarm .windowChallengeOneOffTributeFarm {
 	display: inline-block;
 	width: 6%;
 	padding-left: 0%;
 }
 
 .windowChallenge3OnTributeFarm .windowRunTypeTributeFarm,
-.windowChallengeOnTributeFarm .windowRunTypeTributeFarm {
+.windowChallengeOnTributeFarm .windowRunTypeTributeFarm,
+.windowChallengeOneOffOnTributeFarm .windowRunTypeTributeFarm {
 	display: inline-block;
 	width: 10%;
 	padding-left: 0%;
 }
 
 .windowChallengeOffTributeFarm .windowChallengeTributeFarm,
-.windowChallenge3OffTributeFarm .windowChallenge3TributeFarm {
+.windowChallenge3OffTributeFarm .windowChallenge3TributeFarm,
+.windowChallengeOneOffOffTributeFarm .windowChallengeOneOffTributeFarm {
 	display: none;
 	padding-left: 0%;
 }
@@ -556,19 +562,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnSmithyFarm .windowChallengeSmithyFarm,
-.windowChallenge3OnSmithyFarm .windowChallenge3SmithyFarm {
+.windowChallenge3OnSmithyFarm .windowChallenge3SmithyFarm,
+.windowChallengeOneOffOnSmithyFarm .windowChallengeOneOffSmithyFarm {
 	display: inline-block;
 	width: 10%;
 }
 
 .windowChallenge3OnSmithyFarm .windowRunTypeSmithyFarm,
-.windowChallengeOnSmithyFarm .windowRunTypeSmithyFarm {
+.windowChallengeOnSmithyFarm .windowRunTypeSmithyFarm,
+.windowChallengeOneOffOnSmithyFarm .windowRunTypeSmithyFarm {
 	display: inline-block;
 	width: 12%;
 }
 
 .windowChallengeOffSmithyFarm .windowChallengeSmithyFarm,
-.windowChallenge3OffSmithyFarm .windowChallenge3SmithyFarm {
+.windowChallenge3OffSmithyFarm .windowChallenge3SmithyFarm,
+.windowChallengeOneOffOffSmithyFarm .windowChallengeOneOffSmithyFarm {
 	display: none;
 }
 
@@ -638,24 +647,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnMapBonus .windowChallengeMapBonus,
-.windowChallenge3OnMapBonus .windowChallenge3MapBonus {
+.windowChallenge3OnMapBonus .windowChallenge3MapBonus,
+.windowChallengeOneOffOnMapBonus .windowChallengeOneOffMapBonus {
 	display: inline-block;
 	width: 11%;
 }
 
 .windowChallenge3OnMapBonus .windowRunTypeMapBonus,
+.windowChallengeOneOffOnMapBonus .windowRunTypeMapBonus,
 .windowChallengeOnMapBonus .windowRunTypeMapBonus {
 	display: inline-block;
 	width: 9%;
 }
 
 .windowChallengeOffMapBonus .windowChallengeMapBonus,
-.windowChallenge3OffMapBonus .windowChallenge3MapBonus {
-	display: none;
-}
-
-.windowChallengeOffMapBonus .windowChallengeMapBonus,
-.windowChallenge3OffMapBonus .windowChallenge3MapBonus {
+.windowChallenge3OffMapBonus .windowChallenge3MapBonus,
+.windowChallengeOneOffOffMapBonus .windowChallengeOneOffMapBonus {
 	display: none;
 }
 
@@ -729,19 +736,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnRaiding .windowChallengeRaiding,
-.windowChallenge3OnRaiding .windowChallenge3Raiding {
+.windowChallenge3OnRaiding .windowChallenge3Raiding,
+.windowChallengeOneOffOnRaiding .windowChallengeOneOffRaiding {
 	display: inline-block;
 	width: 14%;
 }
 
 .windowChallenge3OnRaiding .windowRunTypeRaiding,
-.windowChallengeOnRaiding .windowRunTypeRaiding {
+.windowChallengeOnRaiding .windowRunTypeRaiding,
+.windowChallengeOneOffOnRaiding .windowRunTypeRaiding {
 	display: inline-block;
 	width: 16%;
 }
 
 .windowChallengeOffRaiding .windowChallengeRaiding,
-.windowChallenge3OffRaiding .windowChallenge3Raiding {
+.windowChallenge3OffRaiding .windowChallenge3Raiding,
+.windowChallengeOneOffOffRaiding .windowChallengeOneOffRaiding {
 	display: none;
 }
 
@@ -796,19 +806,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnBionicRaiding .windowChallengeBionicRaiding,
-.windowChallenge3OnBionicRaiding .windowChallenge3BionicRaiding {
+.windowChallenge3OnBionicRaiding .windowChallenge3BionicRaiding,
+.windowChallengeOneOffOnBionicRaiding .windowChallengeOneOffBionicRaiding {
 	display: inline-block;
 	width: 18%;
 }
 
 .windowChallenge3OnBionicRaiding .windowRunTypeBionicRaiding,
+.windowChallengeOneOffOnBionicRaiding .windowRunTypeBionicRaiding,
 .windowChallengeOnBionicRaiding .windowRunTypeBionicRaiding {
 	display: inline-block;
 	width: 13%;
 }
 
 .windowChallengeOffBionicRaiding .windowChallengeBionicRaiding,
-.windowChallenge3OffBionicRaiding .windowChallenge3BionicRaiding {
+.windowChallenge3OffBionicRaiding .windowChallenge3BionicRaiding,
+.windowChallengeOneOffOffBionicRaiding .windowChallengeOneOffBionicRaiding {
 	display: none;
 }
 
@@ -826,8 +839,6 @@ ul.tab li a:hover {
 .windowHDType,
 .windowMapCap,
 .windowRunTypeHDFarm,
-.windowChallengeOn .windowChallengeHDFarm,
-.windowChallenge3On .windowChallenge3HDFarm,
 .windowMapLevelOn .windowHDMult {
 	display: inline-block;
 	padding-left: 1%;
@@ -891,19 +902,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnHDFarm .windowChallengeHDFarm,
-.windowChallenge3OnHDFarm .windowChallenge3HDFarm {
+.windowChallenge3OnHDFarm .windowChallenge3HDFarm,
+.windowChallengeOneOffOnHDFarm .windowChallengeOneOffHDFarm {
 	display: inline-block;
 	width: 10%;
 }
 
 .windowChallenge3OnHDFarm .windowRunTypeHDFarm,
+.windowChallengeOneOffOnHDFarm .windowRunTypeHDFarm,
 .windowChallengeOnHDFarm .windowRunTypeHDFarm {
 	display: inline-block;
 	width: 10%;
 }
 
 .windowChallengeOffHDFarm .windowChallengeHDFarm,
-.windowChallenge3OffHDFarm .windowChallenge3HDFarm {
+.windowChallenge3OffHDFarm .windowChallenge3HDFarm,
+.windowChallengeOneOffOffHDFarm .windowChallengeOneOffHDFarm {
 	display: none;
 }
 
@@ -1040,19 +1054,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnWorshipperFarm .windowChallengeWorshipperFarm,
+.windowChallengeOneOffOnWorshipperFarm .windowChallengeOneOffWorshipperFarm,
 .windowChallenge3OnWorshipperFarm .windowChallenge3WorshipperFarm {
 	display: inline-block;
 	width: 12%;
 }
 
 .windowChallenge3OnWorshipperFarm .windowRunTypeWorshipperFarm,
+.windowChallengeOneOffOnWorshipperFarm .windowRunTypeWorshipperFarm,
 .windowChallengeOnWorshipperFarm .windowRunTypeWorshipperFarm {
 	display: inline-block;
 	width: 13%;
 }
 
 .windowChallengeOffWorshipperFarm .windowChallengeWorshipperFarm,
-.windowChallenge3OffWorshipperFarm .windowChallenge3WorshipperFarm {
+.windowChallenge3OffWorshipperFarm .windowChallenge3WorshipperFarm,
+.windowChallengeOneOffOffWorshipperFarm .windowChallengeOneOffWorshipperFarm {
 	display: none;
 }
 
@@ -1119,19 +1136,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnBoneShrine .windowChallengeBoneShrine,
-.windowChallenge3OnBoneShrine .windowChallenge3BoneShrine {
+.windowChallenge3OnBoneShrine .windowChallenge3BoneShrine,
+.windowChallengeOneOffOnBoneShrine .windowChallengeOneOffBoneShrine {
 	display: inline-block;
 	width: 12%;
 }
 
 .windowChallenge3OnBoneShrine .windowRunTypeBoneShrine,
+.windowChallengeOneOffOnBoneShrine .windowRunTypeBoneShrine,
 .windowChallengeOnBoneShrine .windowRunTypeBoneShrine {
 	display: inline-block;
 	width: 13%;
 }
 
 .windowChallengeOffBoneShrine .windowChallengeBoneShrine,
-.windowChallenge3OffBoneShrine .windowChallenge3BoneShrine {
+.windowChallenge3OffBoneShrine .windowChallenge3BoneShrine,
+.windowChallengeOneOffOffBoneShrine .windowChallengeOneOffBoneShrine {
 	display: none;
 }
 
@@ -1469,19 +1489,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnVoidMap .windowChallengeVoidMap,
-.windowChallenge3OnVoidMap .windowChallenge3VoidMap {
+.windowChallenge3OnVoidMap .windowChallenge3VoidMap,
+.windowChallengeOneOffOnVoidMap .windowChallengeOneOffVoidMap {
 	display: inline-block;
 	width: 12%;
 }
 
 .windowChallenge3OnVoidMap .windowRunTypeVoidMap,
+.windowChallengeOneOffOnVoidMap .windowRunTypeVoidMap,
 .windowChallengeOnVoidMap .windowRunTypeVoidMap {
 	display: inline-block;
 	width: 8%;
 }
 
 .windowChallengeOffVoidMap .windowChallengeVoidMap,
-.windowChallenge3OffVoidMap .windowChallenge3VoidMap {
+.windowChallenge3OffVoidMap .windowChallenge3VoidMap,
+.windowChallengeOneOffOffVoidMap .windowChallengeOneOffVoidMap {
 	display: none;
 }
 
@@ -1516,19 +1539,22 @@ ul.tab li a:hover {
 }
 
 .windowChallengeOnAutoGolden .windowChallengeAutoGolden,
-.windowChallenge3OnAutoGolden .windowChallenge3AutoGolden {
+.windowChallenge3OnAutoGolden .windowChallenge3AutoGolden,
+.windowChallengeOneOffOnAutoGolden .windowChallengeOneOffAutoGolden {
 	display: inline-block;
 	width: 24%;
 }
 
 .windowChallenge3OnAutoGolden .windowRunTypeAutoGolden,
+.windowChallengeOneOffOnAutoGolden .windowRunTypeAutoGolden,
 .windowChallengeOnAutoGolden .windowRunTypeAutoGolden {
 	display: inline-block;
 	width: 24%;
 }
 
 .windowChallengeOffAutoGolden .windowChallengeAutoGolden,
-.windowChallenge3OffAutoGolden .windowChallenge3AutoGolden {
+.windowChallenge3OffAutoGolden .windowChallenge3AutoGolden,
+.windowChallengeOneOffOffAutoGolden .windowChallengeOneOffAutoGolden {
 	display: none;
 }
 

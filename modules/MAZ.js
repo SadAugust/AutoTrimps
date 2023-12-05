@@ -86,7 +86,7 @@ function mapSettingsDisplay(elem, titleText) {
 	var settingInputs = [];
 	var windowWidth;
 	if (golden) {
-		settingInputs = ['active', 'priority', 'row', 'golden', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'golden', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '40%';
 	} else if (hypothermia) {
 		settingInputsDefault.push('frozencastle', 'autostorage', 'packrat');
@@ -106,29 +106,29 @@ function mapSettingsDisplay(elem, titleText) {
 		windowWidth = '50%';
 	} else if (boneShrine) {
 		settingInputsDefault.push('autoBone', 'bonebelow', 'gather', 'world', 'jobratio');
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'boneamount', 'bonebelow', 'gather', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'boneamount', 'bonebelow', 'gather', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '65%';
 	} else if (bionic) {
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '70%';
 	} else if (voidMap) {
 		settingInputsDefault.push('jobratio', 'maxTenacity', 'boneCharge', 'voidFarm', 'hitsSurvived', 'hdRatio', 'mapCap');
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'maxvoidzone', 'hdRatio', 'voidHDRatio', 'portalAfter', 'hdType', 'hdType2', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'maxvoidzone', 'hdRatio', 'voidHDRatio', 'portalAfter', 'hdType', 'hdType2', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '70%';
 	} else if (worshipperFarm) {
 		settingInputsDefault.push('shipSkipEnabled', 'shipskip');
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'worshipper', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'worshipper', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '70%';
 	} else if (smithyFarm) {
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeat', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'meltingPoint', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeat', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'meltingPoint', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '70%';
 	} else if (hdFarm) {
 		settingInputsDefault.push('jobratio', 'mapCap');
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'hdBase', 'hdMult', 'hdType', 'mapCap', 'endzone', 'autoLevel', 'jobratio', 'runType', 'challenge', 'challenge3']
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'hdBase', 'hdMult', 'hdType', 'mapCap', 'endzone', 'autoLevel', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff']
 		windowWidth = '70%';
 	} else if (raiding) {
 		settingInputsDefault.push('recycle');
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'raidingDropdown', 'incrementMaps', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'raidingDropdown', 'incrementMaps', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '75%';
 	} else if (alchemy) {
 		settingInputsDefault.push('voidPurchase');
@@ -138,10 +138,10 @@ function mapSettingsDisplay(elem, titleText) {
 		settingInputsDefault.push('special', 'gather', 'jobratio');
 		windowWidth = '75%';
 	} else if (mapFarm) {
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'repeat', 'hdRatio', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'repeat', 'hdRatio', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '80%';
 	} else if (tributeFarm) {
-		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'tributes', 'mets', 'buildings', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3'];
+		settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'tributes', 'mets', 'buildings', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
 		windowWidth = '80%';
 	} else {
 		windowWidth = '50%';
@@ -414,6 +414,7 @@ function mapSettingsDisplay(elem, titleText) {
 			repeatevery: 0,
 			challenge: 'All',
 			challenge3: 'All',
+			challengeOneOff: 'All',
 			hdBase: 1,
 			hdMult: 1,
 			goldenType: 'v',
@@ -471,13 +472,18 @@ function mapSettingsDisplay(elem, titleText) {
 
 		//Adding the class for if we have C2/C3 challenge selected or not.
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
+			className += (vals.runType === 'One Off') ?
+				" windowChallengeOneOffOn" + varPrefix : " windowChallengeOneOffOff" + varPrefix;
+
+		//Adding the class for if we have C2/C3 challenge selected or not.
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
 			className += (vals.runType === 'C3') ?
-				" windowChallenge3On" + varPrefix + "" : " windowChallenge3Off" + varPrefix + "";
+				" windowChallenge3On" + varPrefix : " windowChallenge3Off" + varPrefix;
 
 		//Adding the class for if we have filler challenge selected or not.
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
 			className += (vals.runType === 'Filler') ?
-				" windowChallengeOn" + varPrefix + "" : " windowChallengeOff" + varPrefix + "";
+				" windowChallengeOn" + varPrefix : " windowChallengeOff" + varPrefix;
 		//Adding the class for if we want to run to map level or not.
 		if (hdFarm)
 			className += (vals.hdType === 'maplevel') ?
@@ -689,6 +695,10 @@ function mapSettingsDisplay(elem, titleText) {
 			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
 				tooltipText += "<div class='windowChallenge3" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge" + (currSettingUniverse + 1) + "</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + dropdowns.c2 + "</select></div>";
 
+			//C2/C3 challenges dropdown
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
+				tooltipText += "<div class='windowChallengeOneOff" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>One Offs</div>\<select value='" + vals.windowChallengeOneOff + "' id='windowChallengeOneOff" + x + "'>" + dropdowns.oneOff + "</select></div>";
+
 			//Portal After Void Maps checkbox
 			if (voidMap)
 				tooltipText += "<div class='windowPortalAfter' style='text-align: center;'>" + buildNiceCheckbox("windowPortalAfter" + x, null, vals.portalAfter) + "</div>";
@@ -889,6 +899,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
 			thisSetting.challenge = thisSetting.runType === 'Filler' ? document.getElementById('windowChallenge' + x).value : null;
 			thisSetting.challenge3 = thisSetting.runType === 'C3' ? document.getElementById('windowChallenge3' + x).value : null;
+			thisSetting.challengeOneOff = thisSetting.runType === 'One Off' ? document.getElementById('windowChallengeOneOff' + x).value : null;
 		}
 
 		if (!golden && (isNaN(thisSetting.world) || thisSetting.world < 6)) {
@@ -1401,6 +1412,8 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowChallenge' + x).value = 'All';
 				if (document.getElementById('windowChallenge3' + x) !== null)
 					document.getElementById('windowChallenge3' + x).value = 'All';
+				if (document.getElementById('windowChallengeOneOff' + x) !== null)
+					document.getElementById('windowChallengeOneOff' + x).value = 'All';
 				if (document.getElementById('windowAtlantrimp' + x) !== null)
 					document.getElementById('windowAtlantrimp' + x).value = false;
 				if (document.getElementById('windowMeltingPoint' + x) !== null)
@@ -1610,6 +1623,13 @@ function updateWindowPreset(index, varPrefix) {
 				newClass2 = runType !== 'C3' ? "windowChallenge3On" + varPrefix : "windowChallenge3Off" + varPrefix;
 				swapClass(newClass2, newClass, row);
 			}
+
+			if ((runType !== 'One Off' && row.classList.contains('windowChallengeOneOffOn' + varPrefix)) ||
+				(runType === 'One Off' && row.classList.contains('windowChallengeOneOffOff' + varPrefix))) {
+				newClass = runType === 'One Off' ? "windowChallengeOneOffOn" + varPrefix : "windowChallengeOneOffOff" + varPrefix;
+				newClass2 = runType !== 'One Off' ? "windowChallengeOneOffOn" + varPrefix : "windowChallengeOneOffOff" + varPrefix;
+				swapClass(newClass2, newClass, row);
+			}
 		}
 	}
 
@@ -1763,6 +1783,7 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	//Run Type options
 	dropdown.runType = "<option value='All'" + ((vals.runType === 'All') ? " selected='selected'" : "") + ">All</option>";
 	dropdown.runType += "<option value='Filler'" + ((vals.runType === 'Filler') ? " selected = 'selected'" : "") + " > Filler</option>";
+	dropdown.runType += " <option value='One Off'" + ((vals.runType === 'One Off') ? " selected='selected'" : "") + ">One Offs</option>";
 	dropdown.runType += " <option value='Daily'" + ((vals.runType === 'Daily') ? " selected='selected'" : "") + ">Daily</option>";
 	if (universe === 1) dropdown.runType += "<option value='C3'" + ((vals.runType === 'C3') ? " selected='selected'" : "") + ">C2</option>";
 	if (universe === 2) dropdown.runType += "<option value='C3'" + ((vals.runType === 'C3') ? " selected='selected'" : "") + ">C3</option>";

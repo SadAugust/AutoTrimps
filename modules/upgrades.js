@@ -239,11 +239,14 @@ function getNextGoldenUpgrade() {
 
 		//Skips if challenge type isn't set to the type we're currently running or if it's not the challenge that's being run.
 		if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
-			if (!trimpStats.isC3 && !trimpStats.isDaily && (currSetting.runType !== 'Filler' ||
-				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== trimpStats.currChallenge)))) continue;
+			if (!trimpStats.isC3 && !trimpStats.isDaily) {
+				if (currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== trimpStats.currChallenge)) continue;
+				else if (currSetting.runType === 'One Off' && (currSetting.challengeOneOff !== 'All' && currSetting.challengeOneOff !== trimpStats.currChallenge)) continue;
+				else continue;
+			}
 			if (trimpStats.isDaily && currSetting.runType !== 'Daily') continue;
 			if (trimpStats.isC3 && (currSetting.runType !== 'C3' ||
-				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== trimpStats.currChallenge)))) continue;
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3))))) continue;
 		}
 
 		rule = currSetting.golden;

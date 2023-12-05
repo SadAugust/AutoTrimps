@@ -3548,9 +3548,15 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 		}
 		//Fillers (non-daily/c2/c3)
 		else {
-			if (currSetting.runType !== 'Filler') return false;
-			var currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
-			if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) return false;
+			if (currSetting.runType === 'Filler') {
+				var currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
+				if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) return false;
+			}
+			else if (currSetting.runType === 'One Off') {
+				if (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff)) return false;
+
+			}
+			else return false;
 		}
 	}
 
