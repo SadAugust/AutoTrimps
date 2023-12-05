@@ -428,6 +428,8 @@ function shouldAbandon(zoneCheck = true) {
 
 function autoMap() {
 
+	const autoMapsEnabled = getPageSetting('autoMaps') > 0;
+
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
 		if (!game.global.preMapsActive) {
 			mapsClicked(true);
@@ -436,7 +438,17 @@ function autoMap() {
 		return;
 	}
 
-	if (getPageSetting('autoMaps') === 0 || !game.global.mapsUnlocked) return;
+	//Always disable repeat when running one of thesee unique maps - Should probably just be done for every unique map apart from BW?
+	if (autoMapsEnabled && MODULES.mapFunctions.runUniqueMap !== '' && game.global.mapsActive) {
+		var currMap = getCurrentMapObject();
+		if (currMap !== undefined && ['Trimple Of Doom', 'Atlantrimp', 'Melting Point', 'Frozen Castle'].indexOf(currMap.name) >= 0) {
+			if (currMap.name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
+			if (game.global.repeatMap) repeatClicked();
+			return;
+		}
+	}
+
+	if (!autoMapsEnabled || !game.global.mapsUnlocked) return;
 
 	//Override to disable mapping when we are the world and currently fighting
 	//if (game.challenges.Berserk.frenzyStacks > 0 && !game.global.mapsActive && !game.global.preMapsActive && challengeActive('Berserk') && getPageSetting('berserk')) return;
@@ -445,15 +457,6 @@ function autoMap() {
 	if (MODULES.maps.fragmentCost !== Infinity) {
 		if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return;
 		else MODULES.maps.fragmentCost = Infinity;
-	}
-	//Always disable repeat when running one of thesee unique maps - Should probably just be done for every unique map apart from BW?
-	if (game.global.mapsActive) {
-		var currMap = getCurrentMapObject();
-		if (currMap !== undefined && ['Trimple of Doom', 'Atlantrimp', 'Melting Point', 'Frozen Castle'].indexOf(currMap.name) >= 0) {
-			if (currMap.name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
-			if (game.global.repeatMap) repeatClicked();
-			return;
-		}
 	}
 
 	//Failsafes

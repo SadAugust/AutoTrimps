@@ -277,9 +277,6 @@ function shouldRunUniqueMap(map) {
 	//Disable mapping if we don't have enough health to survive the map and the corresponding setting is enabled.
 	if (getPageSetting('uniqueMapEnoughHealth') && !enoughHealth(map)) return false;
 
-	if (MODULES.mapFunctions.runUniqueMap === map.name)
-		if (game.global.mapsActive && getCurrentMapObject().location === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
-
 	//Check to see if the cell is liquified and if so we can replace the cell condition with it
 	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
 	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
@@ -3243,6 +3240,9 @@ function farmingDecision() {
 	}
 
 	if (game.global.universe === 2) {
+		//Disable mapping if we have Withered as it's more beneficial to just push through the zone(s).
+		if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm'))
+			return mapSettings = farmingDetails;
 
 		//U2 map settings to check for.
 		mapTypes = [

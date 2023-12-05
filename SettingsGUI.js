@@ -224,7 +224,7 @@ function initializeAllSettings() {
 			},
 			function () {
 				var calcName = currSettingUniverse === 2 ? "Surky" : "Perky";
-				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
 				var trimpleShortened = currSettingUniverse === 1 ? "Trimple" : "Atlantrimp";
 
 				var respecName = !trimpStats.isC3 ? "Radon " : "" + "Combat Respec";
@@ -254,7 +254,7 @@ function initializeAllSettings() {
 		createSetting('presetCombatRespecCell',
 			function () { return ('Spire Respec Cell') },
 			function () {
-				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
 				var trimpleShortened = currSettingUniverse === 1 ? "Trimple" : "Atlantrimp";
 				var description = "<p>An override for the " + trimple + " requirement for the <b>" + trimpleShortened + " Respec</b> setting. Will either give you a popup or automatically respec depending on your <b>" + trimpleShortened + " Respec</b> setting when you reach this cell and don't have any mapping to do on it.</p>";
 				description += "<p>Will only function on your <b>highest Spire reached.</b></p>";
@@ -865,7 +865,7 @@ function initializeAllSettings() {
 		createSetting('equipPrestige',
 			function () { return (['AE: Prestige Off', 'AE: Maybe Prestige', 'AE: Prestige', 'AE: Always Prestige']) },
 			function () {
-				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
 				var description = "<p>Will control how equipment levels & prestiges are purchased.</p>";
 				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
 
@@ -887,7 +887,7 @@ function initializeAllSettings() {
 		createSetting('equipPrestigePct',
 			function () { return ('AE: Prestige Pct') },
 			function () {
-				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
 				var description = "<p>What percent of resources you'd like to spend on equipment before prestiges will be priorities over them.</p>";
 				description += "Only impacts prestige purchasing when <b>AE: Prestige</b> is selected and " + trimple + " has been run.</p>";
 
@@ -1468,6 +1468,14 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 10, null, "Maps", [1, 2]);
+
+		/* createSetting('ignoreMapBonus',
+			function () { return ('Ignore Map Bonus wqoieqjowieijqweij') },
+			function () {
+				var description = "<p>Map Bonus stacks will be obtained to this amount when your current <b>World HD Ratio</b> is above the threshold set in the <b>Map Bonus Ratio</b> setting.</p>";
+				description += "<p><b>Recommended:</b> 10</p>";
+				return description;
+			}, 'value', 10, null, "Maps", [1, 2]); */
 
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },

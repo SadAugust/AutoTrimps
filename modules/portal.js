@@ -664,7 +664,7 @@ function resetVarsZone(loadingSave) {
 	mapSettings.levelCheck = Infinity;
 	//Challenge Repeat
 	MODULES.mapFunctions.challengeContinueRunning = false;
-
+	MODULES.mapFunctions.runUniqueMap = '';
 	trimpStats = new TrimpStats();
 	hdStats = new HDStats(true);
 	//Reset map settings to default
@@ -768,7 +768,7 @@ function atlantrimpRespecMessage(cellOverride) {
 	}
 	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
 	else if (respecSetting === 1) {
-		var mapName = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple of Doom';
+		var mapName = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 		var description = "<p>Click <b>Force Respec</b> to respec into the <b>" + respecName + "</b> preset.</p>";
 		tooltip('confirm', null, 'update', description, 'MODULES.popups.respecAtlantrimp = true; combatRespec()', '<b>Post ' + mapName + ' Respec</b>', 'Force Respec');
 	}

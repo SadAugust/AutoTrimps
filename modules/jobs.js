@@ -237,10 +237,9 @@ function buyJobs(forceRatios) {
 		}
 
 		//Worshippers
-		if ((!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || mapSettings.mapName === 'Worshipper Farm') && !runningAtlantrimp())) {
-			var affordableShips = mapSettings.mapName === 'Worshipper Farm' ? Math.floor(game.resources.food.owned / game.jobs.Worshipper.getCost()) : Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (jobSettings.Worshipper.percent / 100));
-			if (affordableShips > (50 - game.jobs.Worshipper.owned))
-				affordableShips = (50 - game.jobs.Worshipper.owned);
+		if (!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || mapSettings.mapName === 'Worshipper Farm') && !runningAtlantrimp()) {
+			var affordableShips = game.resources.food.owned / game.jobs.Worshipper.getCost() * (mapSettings.mapName !== 'Worshipper Farm' ? jobSettings.Worshipper.percent / 100 : 1);
+			affordableShips = Math.min(Math.floor(affordableShips), 50 - game.jobs.Worshipper.owned)
 			if (affordableShips > 0) {
 				safeBuyJob('Worshipper', affordableShips);
 				freeWorkers -= affordableShips;
