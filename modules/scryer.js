@@ -58,6 +58,10 @@ function useScryerStance() {
 	var skipCorrupted = getPageSetting('scryerCorrupted') === 0;
 	var settingPrefix = trimpStats.isDaily ? 'd' : '';
 
+	//If scryerMinMaxWorld === 1 then we are only allowed to scry in the min/max zone range in world so we need to check if we are in that range.
+	if (aboveMaxZone && getPageSetting('scryerMinMaxWorld') === 1)
+		return autoStanceFunctionScryer();
+
 	var never_scry = game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.world <= 60 || game.stats.highestLevel.valueTotal() < 180;
 
 	//Never scryer if any of these return true.
