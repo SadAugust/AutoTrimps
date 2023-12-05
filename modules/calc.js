@@ -431,11 +431,10 @@ function targetHitsSurvived(skipHDCheck, mapType) {
 
 function whichHitsSurvived() {
 	var hitsSurvived = hdStats.hitsSurvived;
-	var mapType = !game.global.mapsActive ? getCurrentMapObject().location : { location: 'world' };
+	var mapType = game.global.mapsActive ? getCurrentMapObject().location : { location: 'world' };
 	if (!mapType) mapType = { location: 'world' };
 	if (mapType.location === 'Void' || (mapSettings.voidHitsSurvived && trimpStats.autoMaps)) hitsSurvived = hdStats.hitsSurvivedVoid;
 	else if (mapType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) hitsSurvived = hdStats.hitsSurvivedMap;
-	const hitsSurvived = mapSettings.voidHitsSurvived ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived;
 	return hitsSurvived;
 }
 
