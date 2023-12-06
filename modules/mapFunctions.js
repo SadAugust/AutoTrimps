@@ -3546,15 +3546,15 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
 			if (currSetting.runType !== 'C3') return false;
 			else if (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3)) return false;
 		}
-		//Fillers (non-daily/c2/c3)
+		else if (trimpStats.isOneOff) {
+			if (currSetting.runType !== 'One Off') return false;
+			if (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff)) return false;
+		}
+		//Fillers (non-daily/c2/c3) and One off challenges
 		else {
 			if (currSetting.runType === 'Filler') {
 				var currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
 				if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) return false;
-			}
-			else if (currSetting.runType === 'One Off') {
-				if (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff)) return false;
-
 			}
 			else return false;
 		}

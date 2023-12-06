@@ -2,6 +2,7 @@ class TrimpStats {
 	constructor(newZone) {
 		this.isDaily = undefined;
 		this.isC3 = undefined;
+		this.isOneOff = undefined;
 		this.isFiller = undefined;
 		this.currChallenge = undefined;
 
@@ -23,7 +24,8 @@ class TrimpStats {
 
 		this.isDaily = challengeActive('Daily');
 		this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Experience') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-		this.isFiller = !this.isDaily && !this.isC3;
+		this.isOneOff = autoPortalChallenges('oneOff').slice(1).indexOf(game.global.challengeActive) > 0;
+		this.isFiller = !this.isDaily && !this.isC3 && !this.isOneOff;
 		this.currChallenge = game.global.challengeActive;
 		this.shieldBreak = challengeActive('Bublé') || currQuest() === 8;
 

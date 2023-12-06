@@ -248,15 +248,15 @@ function getNextGoldenUpgrade() {
 				if (currSetting.runType !== 'C3') continue;
 				else if (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3)) continue;
 			}
+			else if (trimpStats.isOneOff) {
+				if (currSetting.runType !== 'One Off') continue;
+				else if (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff)) continue;
+			}
 			//Fillers (non-daily/c2/c3) and One off challenges
 			else {
 				if (currSetting.runType === 'Filler') {
 					var currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
 					if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) continue;
-				}
-				else if (currSetting.runType === 'One Off') {
-					if (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff)) continue;
-
 				}
 				else continue;
 			}
