@@ -409,9 +409,7 @@ function getHeirloomBonus_AT(type, modName, customShield) {
 
 	var bonus;
 	//Override bonus if needed with gammaBurst otherwise check customShield and lastly use the game heirloom bonus.
-	if (modName === 'gammaBurst')
-		bonus = MODULES.heirlooms.gammaBurstPct;
-	else if (customShield)
+	if (customShield)
 		bonus = heirloomModSearch(customShield, modName);
 	else
 		bonus = game.heirlooms[type][modName].currentBonus;

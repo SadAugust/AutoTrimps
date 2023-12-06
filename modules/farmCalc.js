@@ -233,7 +233,7 @@ function populateZFarmData() {
 
 	//Gamma Burst
 	var gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
-	var gammaCharges = gammaMaxStacks();
+	var gammaCharges = gammaMaxStacks(false, false, 'map');
 
 	//Heirloom + Crit Chance
 	const customShield = typeof atSettings !== 'undefined' ? heirloomShieldToEquip('map') : null;

@@ -20,8 +20,6 @@ class TrimpStats {
 		this.mapBiome = undefined;
 		this.shieldBreak = undefined;
 
-		const z = game.global.world;
-
 		this.isDaily = challengeActive('Daily');
 		this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Experience') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 		this.isOneOff = autoPortalChallenges('oneOff').slice(1).indexOf(game.global.challengeActive) > 0;
@@ -1353,7 +1351,7 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 	}
 
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined')
-		ourBaseDamage *= (1 - ((Math.max(1, gammaMaxStacks(false, true) - 1)) * game.global.dailyChallenge.weakness.strength) / 100)
+		ourBaseDamage *= (1 - ((Math.max(1, gammaMaxStacks(false, true, type) - 1)) * game.global.dailyChallenge.weakness.strength) / 100)
 
 	//Adding gammaBurstDmg to calc
 	if (type !== 'map' && (game.global.universe === 2 && universeSetting < (game.portal.Equality.radLevel - 14)) || game.global.universe === 1)
@@ -1664,7 +1662,9 @@ function getTotalHealthMod() {
 	return healthMulti;
 }
 
-function gammaMaxStacks(specialChall, actualCheck) {
+function gammaMaxStacks(specialChall, actualCheck = true, mapType = 'world') {
+	const gammaOwned = getHeirloomBonus_AT('Shield', 'gammaBurst', heirloomShieldToEquip(mapType)) > 0;
+	if (!gammaOwned) return Infinity;
 	var gammaMaxStacks = 5
 	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
 	if (Fluffy.isRewardActive('scruffBurst')) gammaMaxStacks--;
@@ -1976,7 +1976,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, mapType, 'never', bionicTalent, titimp)) : 2;
 
 	//Figuring out gamma to proc value
-	var gammaToTrigger = gammaMaxStacks();
+	var gammaToTrigger = gammaMaxStacks(false, false, mapType);
 
 	if (checkMutations) {
 		enemyDmg = calcEnemyAttack(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
@@ -2000,9 +2000,9 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
 	//Accounting for enemies hitting multiple times per gamma burst
-	if (hdCheck && mapType !== 'map') {
+	if (hdCheck && mapType !== 'map' && gammaToTrigger !== Infinity) {
 		const enemyDmgMaxEq = enemyDmg * Math.pow(enemyEqualityModifier, maxEquality);
-		ourHealth -= (enemyDmgMaxEq * (gammaMaxStacks() - 1));
+		ourHealth -= (enemyDmgMaxEq * (gammaToTrigger - 1));
 	}
 
 	if (enemyHealth !== 0) {

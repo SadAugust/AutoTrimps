@@ -278,7 +278,7 @@ function equalityManagement() {
 	const plagueShield = (MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming) ? getHeirloomBonus('Shield', 'plaguebringer') > 0 : false;
 
 	//Gamma burst info
-	var gammaMaxStacksCheck = gammaMaxStacks();
+	var gammaMaxStacksCheck = gammaMaxStacks(false, false, type);
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	if (gammaDmg === 1) gammaMaxStacksCheck = 0;
 	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
