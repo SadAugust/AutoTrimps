@@ -326,6 +326,8 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 	//Return Duel shield if we are running that challenge with the settings active
 	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== 'undefined')
 		return ('duelShield');
+	if ((challengeActive('Trapper') || challengeActive('Trappapalooza')) && getPageSetting('trapper') && getPageSetting('trapperShield') !== 'undefined')
+		return ('trapperShield');
 	if (challengeActive('Wither') && getPageSetting('wither') && getPageSetting('witherShield') !== 'undefined')
 		return ('witherShield');
 	//Return initial shield if we are in a void map and are going to plaguebringer scum the cell after next

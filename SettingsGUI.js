@@ -2012,6 +2012,15 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
+		createSetting('trapperShield',
+			function () { return ('T: Shield') },
+			function () {
+				var description = "<p>The name of the shield you would like to equip while running <b>" + (currSettingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b>.</p>";
+				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>" + (currSettingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b>!</p>"
+				return description;
+			}, 'textValue', 'undefined', null, 'C2', [1, 2],
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
+
 		//Mapology
 		createSetting('mapology',
 			function () { return ('Mapology') },
