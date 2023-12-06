@@ -62,6 +62,7 @@ function autoPortal(specificPortalZone, skipDaily) {
 			};
 		}
 		if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
+		universe = newUniverse;
 	}
 
 	if (specificPortalZone) portalZone = specificPortalZone;
@@ -196,7 +197,6 @@ function autoPortal(specificPortalZone, skipDaily) {
 		}
 	}
 	if (challenge === 'Off') challenge = 0;
-
 	if (challenge !== 'None')
 		doPortal(challenge, skipDaily);
 }

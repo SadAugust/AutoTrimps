@@ -160,7 +160,7 @@ function buyJobs(forceRatios) {
 			if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
 			var nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers) - game.resources.trimps.maxSoldiers;
 			//Finish off Trapper/Trappa firing for coords code
-			if (freeWorkers > nextCoordCost && game.upgrades.Coordination.done < coordTarget && game.upgrades.Coordination.done !== game.upgrades.Coordination.allowed && canAffordCoordination)
+			if (freeWorkers > nextCoordCost && game.upgrades.Coordination.done < coordTarget && game.upgrades.Coordination.done !== game.upgrades.Coordination.allowed)
 				freeWorkers -= nextCoordCost;
 		}
 	}
