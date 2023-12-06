@@ -836,6 +836,7 @@ function tributeFarm(lineCheck) {
 
 				//Factoring in the resource reduction from spending time farming during Melt
 				var lootMult = 1;
+				var totalMaps = tributeGoal + meteorologistGoal;
 				if (challengeActive('Melt')) {
 					const mapClearTime = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
 					var meltStacks = game.challenges.Melt.stacks;
@@ -1017,7 +1018,7 @@ function smithyFarm(lineCheck) {
 				var lootMult = 1;
 				var smithyCount = 0;
 				//Checking total map count user wants to run
-				var totalMaps = mapSettings.mapName === mapName ? smithyGoal - game.global.mapRunCounter : smithyGoal;
+				var totalMaps = smithyGoal;
 				//Calculating cache + jestimp + chronoimp
 				var mapTime = totalMaps * 25;
 				if (totalMaps > 4) mapTime += (Math.floor(totalMaps / 5) * 45);
