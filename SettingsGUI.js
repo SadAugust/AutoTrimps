@@ -844,7 +844,7 @@ function initializeAllSettings() {
 				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>"
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
-			}, 'multiTextValue', [-1], null, "Equipment", [1, 2],
+			}, 'multiValue', [-1], null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPercent',
 			function () { return ('AE: Percent') },
@@ -2112,6 +2112,16 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
+			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) });
+		createSetting('witherZones',
+			function () { return ('W: Wither Zone(s)') },
+			function () {
+				var description = "<p>Input the zones you would like to Wither on and the script won't farm damage on this and at the end of the previous zone.</p>";
+				description += "<p>You can input multiple zones but they need to be seperated by commas.</p>";
+				description += "<p>There is a chance you might not Wither on the zones input if you are too powerful.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'multiValue', [-1], null, 'C2', [2],
 			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) });
 		createSetting('witherShield',
 			function () { return ('W: Shield') },

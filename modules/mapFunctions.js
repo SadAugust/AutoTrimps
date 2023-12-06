@@ -1967,6 +1967,9 @@ function wither(lineCheck) {
 	var gammaToTrigger = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks;
 	var gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
+	const witherZones = getPageSetting('witherZones');
+
+	if (witherZones.indexOf(game.global.world) > 0) return farmingDetails;
 
 	var cell = game.global.lastClearedCell + 2;
 	var name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[(cell - 1)].name : undefined;
@@ -1983,6 +1986,7 @@ function wither(lineCheck) {
 
 	//Checking if we can clear next zone.
 	if (cell === 100) {
+		if (witherZones.indexOf(game.global.world + 1) > 0) return farmingDetails;
 		equalityAmt = equalityQuery(name, game.global.world + 1, 100, 'world', 1, 'gamma', false, 4);
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 100, 'Improbability', calcMutationHealth(game.global.world + 1));
