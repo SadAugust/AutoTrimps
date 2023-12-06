@@ -239,14 +239,27 @@ function getNextGoldenUpgrade() {
 
 		//Skips if challenge type isn't set to the type we're currently running or if it's not the challenge that's being run.
 		if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
-			if (!trimpStats.isC3 && !trimpStats.isDaily) {
-				if (currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== trimpStats.currChallenge)) continue;
-				else if (currSetting.runType === 'One Off' && (currSetting.challengeOneOff !== 'All' && currSetting.challengeOneOff !== trimpStats.currChallenge)) continue;
+			//Dailies
+			if (trimpStats.isDaily) {
+				if (currSetting.runType !== 'Daily') continue;
+			}
+			//C2/C3 runs + special challenges
+			else if (trimpStats.isC3) {
+				if (currSetting.runType !== 'C3') continue;
+				else if (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3)) continue;
+			}
+			//Fillers (non-daily/c2/c3) and One off challenges
+			else {
+				if (currSetting.runType === 'Filler') {
+					var currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
+					if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) continue;
+				}
+				else if (currSetting.runType === 'One Off') {
+					if (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff)) continue;
+
+				}
 				else continue;
 			}
-			if (trimpStats.isDaily && currSetting.runType !== 'Daily') continue;
-			if (trimpStats.isC3 && (currSetting.runType !== 'C3' ||
-				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3))))) continue;
 		}
 
 		rule = currSetting.golden;
