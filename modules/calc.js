@@ -1333,7 +1333,8 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 	}
 
 	var heirloomToUse = heirloomShieldToEquip(type, false, hdCheck);
-	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
+	const gammaCheck = getHeirloomBonus_AT('Shield', 'gammaBurst', heirloomShieldToEquip(type));
+	var gammaBurstDmg = getPageSetting('gammaBurstCalc') && gammaCheck > 1 ? gammaCheck : 1;
 	var ourBaseDamage = calcOurDmg(challengeActive('Unlucky') ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world, null, heirloomToUse);
 	//Lead Challenge Pt. 2
 	if (leadCheck) ourBaseDamage /= 1.5;
@@ -1669,7 +1670,7 @@ function gammaMaxStacks(specialChall, actualCheck = true, mapType = 'world') {
 	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
 	if (Fluffy.isRewardActive('scruffBurst')) gammaMaxStacks--;
 	if (actualCheck && MODULES.heirlooms.gammaBurstPct === 1) return 1;
-	if (typeof atSettings !== 'undefined' && (MODULES.heirlooms.gammaBurstPct === 1 || (specialChall && game.global.mapsActive))) gammaMaxStacks = Infinity;
+	if (typeof atSettings !== 'undefined' && (specialChall && game.global.mapsActive)) gammaMaxStacks = Infinity;
 	return gammaMaxStacks;
 }
 
