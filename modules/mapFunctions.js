@@ -1985,8 +1985,7 @@ function wither(lineCheck) {
 	}
 
 	//Checking if we can clear next zone.
-	if (cell === 100) {
-		if (witherZones.indexOf(game.global.world + 1) > 0) return farmingDetails;
+	if (cell === 100 && witherZones.indexOf(game.global.world + 1) === -1) {
 		equalityAmt = equalityQuery(name, game.global.world + 1, 100, 'world', 1, 'gamma', false, 4);
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 100, 'Improbability', calcMutationHealth(game.global.world + 1));
