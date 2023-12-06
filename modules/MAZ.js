@@ -230,7 +230,7 @@ function mapSettingsDisplay(elem, titleText) {
 
 		var style = "";
 
-		defaultSetting = originalSetting[0];
+		var defaultSetting = originalSetting[0];
 
 		//Reading info from each setting and setting up the default values object with necessary data
 		for (var item in settingInputsDefault) {

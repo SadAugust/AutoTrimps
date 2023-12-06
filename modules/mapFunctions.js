@@ -1958,48 +1958,53 @@ function wither(lineCheck) {
 
 	if (!challengeActive('Wither') || !getPageSetting('wither') || !getPageSetting('witherFarm')) return farmingDetails;
 	if (game.challenges.Wither.healImmunity > 0) return farmingDetails;
+	const witherZones = getPageSetting('witherZones');
+	//Disable wither farming if we are in a zone we don't want to farm in
+	if (witherZones.indexOf(game.global.world) >= 0) return farmingDetails;
 
 	var jobRatio = '0,0,1';
 	var mapSpecial = getAvailableSpecials('lmc', true);
 	var mapLevel = autoLevelCheck(mapName, mapSpecial, -1, null);
-
-	//Gamma burst info
-	var gammaToTrigger = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks;
-	var gammaDmg = MODULES.heirlooms.gammaBurstPct;
-	var canGamma = gammaToTrigger <= 1 ? true : false;
-	const witherZones = getPageSetting('witherZones');
-
-	if (witherZones.indexOf(game.global.world) > 0) return farmingDetails;
-
 	var cell = game.global.lastClearedCell + 2;
-	var name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[(cell - 1)].name : undefined;
-	var damageGoal = 4;
+	var equalityAmt = 0;
+	var ourDmg = 0;
+	var enemyHealth = 0;
 
-	var equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma', false, 4);
-	var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
-	var enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationHealth(game.global.world));
-
-	//Checking if we can clear current zone.
-	if (((ourDmg * (canGamma ? gammaDmg : 1)) * damageGoal) < enemyHealth) {
-		shouldMap = true;
-	}
-
-	//Checking if we can clear next zone.
+	//Checking if we can clear to the speedbook on the next zone.
 	if (cell === 100 && witherZones.indexOf(game.global.world + 1) === -1) {
-		equalityAmt = equalityQuery(name, game.global.world + 1, 100, 'world', 1, 'gamma', false, 4);
-		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
-		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 100, 'Improbability', calcMutationHealth(game.global.world + 1));
-		//Checking if we can clear current zone.
-		if ((ourDmg * damageGoal) < enemyHealth) {
-			shouldMap = true;
+		var dmgBuff = 1;
+		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 60, 'world', 1, 'gamma', false, 4);
+		//If we can afford a coordination on the next zone then factor it into our calcs. 
+		//Equality is just a flat minus 2 (because of 25% more health, it's off by 4% so might mean 1 higher equality in some cases)
+		if (canAffordCoordinationTrimps()) {
+			dmgBuff = 1.25;
+			equalityAmt = Math.max(0, equalityAmt - 2);
 		}
+
+		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false) * dmgBuff;
+		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 60, 'Snimp', calcMutationHealth(game.global.world + 1));
+
+		if ((ourDmg * 4) < enemyHealth)
+			shouldMap = true;
+	}
+	//Checking if we can clear current cell.
+	else {
+		var gammaToTrigger = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks;
+		var name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[(cell - 1)].name : undefined;
+		equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma', false, 4);
+		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
+		enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationHealth(game.global.world));
+
+		//If we can gamma burst then factor that into damage calcs so that mapping doesn't cause us to not kill an enemy
+		if (((ourDmg * (gammaToTrigger <= 1 ? MODULES.heirlooms.gammaBurstPct : 1)) * 4) < enemyHealth)
+			shouldMap = true;
 	}
 
 	//As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
 	if (lineCheck && shouldMap)
 		return setting = { priority: Infinity, };
 
-	var damageTarget = enemyHealth / damageGoal;
+	var damageTarget = enemyHealth / 4;
 
 	var status = 'Wither Farm: Curr&nbsp;Dmg:&nbsp;' + prettify(ourDmg) + ' Goal&nbsp;Dmg:&nbsp;' + prettify(damageTarget);
 
@@ -2064,7 +2069,7 @@ function quagmire(lineCheck) {
 			bogsToRun -= parseInt(baseSettings[i].bogs);
 		}
 
-		if ((game.challenges.Quagmire.motivatedStacks > bogsToRun))
+		if (game.challenges.Quagmire.motivatedStacks > bogsToRun)
 			shouldMap = true;
 
 		if (mapSettings.mapName === mapName && !shouldMap) {

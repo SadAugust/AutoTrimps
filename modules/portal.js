@@ -483,6 +483,7 @@ function doPortal(challenge, skipDaily) {
 			else if (game.global.selectedChallenge === 'Smithless') preset = 'smithless';
 			else if (['Mayhem', 'Pandemonium', 'Desolation'].indexOf(game.global.selectedChallenge) >= 0 || challengeSquaredMode) preset = 'push';
 			else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
+			else if (autoPortalChallenges('oneOff').slice(1).indexOf(game.global.selectedChallenge) > 0) preset = 'push';
 			else preset = 'ezfarm';
 			fillPresetSurky(preset);
 		}
@@ -709,7 +710,7 @@ function combatRespec() {
 	//Swapping to Spire respec in u1
 	if (game.global.universe === 1) fillPresetPerky('spire');
 	//Changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
-	else if (trimpStats.isC3) fillPresetSurky('combat');
+	else if (trimpStats.isC3 || trimpStats.isOneOff) fillPresetSurky('combat');
 	else fillPresetSurky('combatRadon');
 	//Respecing perks
 	if (game.global.universe === 2)
@@ -757,7 +758,7 @@ function atlantrimpRespecMessage(cellOverride) {
 
 	var respecSetting = getPageSetting('presetCombatRespec');
 	//If setting is enabled, respec into Surky combat respec
-	var respecName = !trimpStats.isC3 ? "Radon " : "" + "Combat Respec";
+	var respecName = !trimpStats.isC3 && !trimpStats.isOneOff ? "Radon " : "" + "Combat Respec";
 	if (game.global.universe === 1) respecName = 'Spire'
 	if (respecSetting === 2) {
 		MODULES.popups.respecAtlantrimp = true;
