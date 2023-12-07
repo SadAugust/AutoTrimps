@@ -14,8 +14,8 @@
 // ==/UserScript==
 
 var script = document.createElement('script');
-script.id = "AutoTrimps-SadAugust-HeirloomCalc";
+script.id = 'AutoTrimps-SadAugust-HeirloomCalc';
 //This can be edited to point to your own Github Repository URL.
-script.src = "https://sadaugust.github.io/AutoTrimps/modules/heirloomCalc.js";
+script.src = 'https://sadaugust.github.io/AutoTrimps/modules/heirloomCalc.js';
 script.setAttribute('crossorigin', 'anonymous');
 document.head.appendChild(script);

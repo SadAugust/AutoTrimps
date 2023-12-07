@@ -2,14 +2,14 @@ function canU2OverkillAT(targetZone) {
     if (!u2Mutations.tree.Overkill1.purchased) return false;
 
     if (!targetZone) targetZone = game.global.world;
-    var allowed = .3;
+    var allowed = 0.3;
     if (u2Mutations.tree.Overkill2.purchased) allowed += 0.1;
     if (u2Mutations.tree.Overkill3.purchased) allowed += 0.1;
     if (u2Mutations.tree.Liq3.purchased) {
         allowed += 0.1;
         if (u2Mutations.tree.Liq2.purchased) allowed += 0.1;
     }
-    if (targetZone <= ((game.stats.highestRadLevel.valueTotal()) * allowed)) return true;
+    if (targetZone <= game.stats.highestRadLevel.valueTotal() * allowed) return true;
     return false;
 }
 
@@ -20,7 +20,7 @@ function maxOneShotPower(planToMap, targetZone) {
     if (game.global.universe === 1) {
         //No overkill perk
         if (game.portal.Overkill.level === 0) return 1;
-        //Mastery 
+        //Mastery
         if (game.talents.overkill.purchased) power++;
         //Fluffy
         if (Fluffy.isRewardActive('overkiller')) power += Fluffy.isRewardActive('overkiller');
@@ -28,8 +28,7 @@ function maxOneShotPower(planToMap, targetZone) {
         if (getUberEmpowerment() == 'Ice') power += 2;
         if (getEmpowerment() === 'Ice' && game.empowerments.Ice.getLevel() >= 50) power++;
         if (getEmpowerment() === 'Ice' && game.empowerments.Ice.getLevel() >= 100) power++;
-    }
-    else if (game.global.universe === 2) {
+    } else if (game.global.universe === 2) {
         if (!canU2OverkillAT(targetZone) && planToMap && u2Mutations.tree.MadMap.purchased) return power;
         if (!canU2OverkillAT(targetZone)) return 1;
 
@@ -40,7 +39,6 @@ function maxOneShotPower(planToMap, targetZone) {
 }
 
 function getAvailableSpecials(special, skipCaches) {
-
     var cacheMods = [];
     var bestMod;
     if (special === undefined || special === 'undefined') return '0';
@@ -57,7 +55,7 @@ function getAvailableSpecials(special, skipCaches) {
 
     for (var mod of cacheMods) {
         if (typeof mapSpecialModifierConfig[mod] === 'undefined') continue;
-        if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + "wc";
+        if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + 'wc';
         if (skipCaches && mod === 'hc') continue;
         var unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
         if (unlock <= hze) {
@@ -65,7 +63,7 @@ function getAvailableSpecials(special, skipCaches) {
             break;
         }
     }
-    if (bestMod === undefined || bestMod === 'fa' && trimpStats.hyperspeed2) bestMod = '0';
+    if (bestMod === undefined || (bestMod === 'fa' && trimpStats.hyperspeed2)) bestMod = '0';
     return bestMod;
 }
 
@@ -79,21 +77,13 @@ function getBiome(mapGoal, resourceGoal) {
     }
 
     if (resourceGoal && dropBased) {
-        if (game.global.farmlandsUnlocked && getFarmlandsResType() === game.mapConfig.locations[resourceGoal].resourceType)
-            biome = 'Farmlands';
-        else
-            biome = resourceGoal;
-    }
-    else if (mapGoal === 'fragments' || mapGoal === 'gems')
-        biome = 'Depths';
-    else if (mapGoal === 'fragConservation')
-        biome = 'Random';
-    else if ((game.global.universe === 2 && game.global.farmlandsUnlocked))
-        biome = 'Farmlands';
-    else if (game.global.decayDone)
-        biome = 'Plentiful';
-    else
-        biome = 'Mountain';
+        if (game.global.farmlandsUnlocked && getFarmlandsResType() === game.mapConfig.locations[resourceGoal].resourceType) biome = 'Farmlands';
+        else biome = resourceGoal;
+    } else if (mapGoal === 'fragments' || mapGoal === 'gems') biome = 'Depths';
+    else if (mapGoal === 'fragConservation') biome = 'Random';
+    else if (game.global.universe === 2 && game.global.farmlandsUnlocked) biome = 'Farmlands';
+    else if (game.global.decayDone) biome = 'Plentiful';
+    else biome = 'Mountain';
 
     return biome;
 }
@@ -111,23 +101,25 @@ function mapCost(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect
     baseCost += sliders[2];
     var mapLevel = game.global.world;
     //Check for negative map levels
-    if (plusLevel < 0)
-        mapLevel = mapLevel + plusLevel;
+    if (plusLevel < 0) mapLevel = mapLevel + plusLevel;
     //If map level we're checking is below level 6 (the minimum) then set it to 6
-    if (mapLevel < 6)
-        mapLevel = 6;
+    if (mapLevel < 6) mapLevel = 6;
     //Post broken planet check
-    baseCost *= (game.global.world >= 60) ? 0.74 : 1;
+    baseCost *= game.global.world >= 60 ? 0.74 : 1;
     //Perfect checked
-    if (perfect && sliders.reduce(function (a, b) { return a + b; }, 0) === 27) baseCost += 6;
+    if (
+        perfect &&
+        sliders.reduce(function (a, b) {
+            return a + b;
+        }, 0) === 27
+    )
+        baseCost += 6;
     //Adding in plusLevels
-    if (plusLevel > 0)
-        baseCost += (plusLevel * 10)
+    if (plusLevel > 0) baseCost += plusLevel * 10;
     //Special modifier
-    if (specialModifier !== '0')
-        baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
+    if (specialModifier !== '0') baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
     baseCost += mapLevel;
-    baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
+    baseCost = Math.floor((baseCost / 150) * Math.pow(1.14, baseCost - 1) * mapLevel * 2 * Math.pow(1.03 + mapLevel / 50000, mapLevel));
     baseCost *= biome !== 'Random' ? 2 : 1;
     return baseCost;
 }
@@ -147,8 +139,8 @@ function currQuest() {
     //Everything else
     else if (questDescription === 'Complete 5 Maps at Zone level') return 6;
     else if (questDescription === 'One-shot 5 world enemies') return 7;
-    else if (questDescription === 'Don\'t let your shield break before Cell 100') return 8;
-    else if (questDescription === 'Don\'t run a map before Cell 100') return 9;
+    else if (questDescription === "Don't let your shield break before Cell 100") return 8;
+    else if (questDescription === "Don't run a map before Cell 100") return 9;
     else if (questDescription === 'Buy a Smithy') return 10;
     else return 0;
 }
@@ -159,21 +151,18 @@ function makeAdditionalInfo() {
     const u2 = game.global.universe === 2;
     const extraType = u2 ? 'equality' : 'stance';
     const showExtraType = (u2 && getPerkLevel('Equality') > 0) || (!u2 && game.upgrades.Formations.done);
-    const loot = `Loot ${initialInfo.loot.mapLevel}${showExtraType ? (' (' + initialInfo.loot[extraType] + ')') : ''}`;
-    const speed = `Speed ${initialInfo.speed.mapLevel}${showExtraType ? (' (' + initialInfo.speed[extraType] + ')') : ''}`;
+    const loot = `Loot ${initialInfo.loot.mapLevel}${showExtraType ? ' (' + initialInfo.loot[extraType] + ')' : ''}`;
+    const speed = `Speed ${initialInfo.speed.mapLevel}${showExtraType ? ' (' + initialInfo.speed[extraType] + ')' : ''}`;
     var description = `Auto Level: `;
-    if (!game.global.mapsUnlocked) return description += `Maps not unlocked!`;
-    return description += `${loot} ${speed}`;
+    if (!game.global.mapsUnlocked) return (description += `Maps not unlocked!`);
+    return (description += `${loot} ${speed}`);
 }
 
 function makeAdditionalInfoTooltip(mouseover) {
     var tooltipText = '';
 
     if (mouseover) {
-        tooltipText = 'tooltip(' +
-            '\'Additional Info\', ' +
-            '\'customText\', ' +
-            'event, ' + '\'';
+        tooltipText = 'tooltip(' + "'Additional Info', " + "'customText', " + 'event, ' + "'";
     }
 
     tooltipText += `<p><b>Auto Level</b><br>\
@@ -184,10 +173,9 @@ function makeAdditionalInfoTooltip(mouseover) {
     tooltipText += `<p>Speed: The ideal map level for a mixture of speed and loot gains. This should be the value you use for actions like map bonus stack farming if the level is high enough.</p>`;
 
     if (mouseover) {
-        tooltipText += '\')';
+        tooltipText += "')";
         return tooltipText;
-    }
-    else {
+    } else {
         tooltip('Additional Info Tooltip', 'customText', 'lock', tooltipText, false, 'center');
         verticalCenterTooltip(true);
     }
@@ -196,7 +184,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 var autoLevelContainer = document.createElement('DIV');
 autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);');
 var autoLevelText = document.createElement('SPAN');
-autoLevelContainer.setAttribute("onmouseover", makeAdditionalInfoTooltip(true));
+autoLevelContainer.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
 autoLevelContainer.setAttribute('onmouseout', 'tooltip("hide")');
 autoLevelText.id = 'additionalInfo';
 autoLevelContainer.appendChild(autoLevelText);

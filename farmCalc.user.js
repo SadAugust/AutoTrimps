@@ -14,8 +14,8 @@
 // ==/UserScript==
 
 var script = document.createElement('script');
-script.id = "AutoTrimps-SadAugust-FarmCalc";
+script.id = 'AutoTrimps-SadAugust-FarmCalc';
 //This can be edited to point to your own Github Repository URL.
-script.src = "https://sadaugust.github.io/AutoTrimps/modules/farmCalc.js";
+script.src = 'https://sadaugust.github.io/AutoTrimps/modules/farmCalc.js';
 script.setAttribute('crossorigin', 'anonymous');
 document.head.appendChild(script);

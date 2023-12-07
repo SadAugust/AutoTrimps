@@ -17,5 +17,5 @@ var script = document.createElement('script');
 script.id = 'AutoTrimps-SadAugust_MutatorPreset';
 //This can be edited to point to your own Github Repository URL.
 script.src = 'https://SadAugust.github.io/AutoTrimps/modules/mutatorPreset.js';
-script.setAttribute('crossorigin', "anonymous");
+script.setAttribute('crossorigin', 'anonymous');
 document.head.appendChild(script);

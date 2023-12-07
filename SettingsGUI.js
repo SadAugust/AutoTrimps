@@ -1,135 +1,127 @@
 //Creates a new div element, gives it an id, sets the style to display:none, and then appends it to the settingsRow div.
 //Div for the settings menu
 function automationMenuSettingsInit() {
-	var a = document.getElementById("settingsRow");
-	var b;
-	b = document.createElement("DIV");
-	b.id = "autoSettings";
-	b.setAttribute("style", "display: none; max-height: 92.5vh;overflow: auto;");
-	b.setAttribute("class", "niceScroll");
-	a.appendChild(b);
+    var a = document.getElementById('settingsRow');
+    var b;
+    b = document.createElement('DIV');
+    b.id = 'autoSettings';
+    b.setAttribute('style', 'display: none; max-height: 92.5vh;overflow: auto;');
+    b.setAttribute('class', 'niceScroll');
+    a.appendChild(b);
 }
 
 automationMenuSettingsInit();
 
 function initializeAllTabs() {
-	var addTabsDiv = document.createElement('div');
-	var addtabsUL = document.createElement('ul');
-	addtabsUL.id = 'autoTrimpsTabBarMenu';
-	addtabsUL.className = 'tab';
-	addtabsUL.style.display = 'none';
-	var sh = document.getElementById('settingsRow');
-	sh.insertBefore(addtabsUL, sh.childNodes[2]);
+    var addTabsDiv = document.createElement('div');
+    var addtabsUL = document.createElement('ul');
+    addtabsUL.id = 'autoTrimpsTabBarMenu';
+    addtabsUL.className = 'tab';
+    addtabsUL.style.display = 'none';
+    var sh = document.getElementById('settingsRow');
+    sh.insertBefore(addtabsUL, sh.childNodes[2]);
 
-	function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
-		var c = document.createElement('li'),
-			d = document.createElement('a');
-		(d.className = 'tablinks'),
-			d.setAttribute("onclick", "toggleTab(event, '" + tabName + "')"),
-			(d.href = '#'), d.appendChild(document.createTextNode(tabName)),
-			(c.id = 'tab' + tabName),
-			c.appendChild(d),
-			addtabsUL.appendChild(c),
-			createTabContents(tabName, tabDescription, addTabsDiv);
-	}
+    function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
+        var c = document.createElement('li'),
+            d = document.createElement('a');
+        (d.className = 'tablinks'), d.setAttribute('onclick', "toggleTab(event, '" + tabName + "')"), (d.href = '#'), d.appendChild(document.createTextNode(tabName)), (c.id = 'tab' + tabName), c.appendChild(d), addtabsUL.appendChild(c), createTabContents(tabName, tabDescription, addTabsDiv);
+    }
 
-	function createTabContents(tabName, tabDescription, addTabsDiv) {
-		var elem = document.createElement('div');
-		(elem.className = 'tabcontent'), (elem.id = tabName);
-		var d = document.createElement('div');
-		d.setAttribute('style', 'margin-left: 1vw; margin-right: 1vw; margin-top: 0.25vw; margin-bottom: 0.25vw;');
-		var e = document.createElement('h4');
-		e.setAttribute('style', 'font-size: 1.2vw;'), e.appendChild(document.createTextNode(tabDescription)), d.appendChild(e), elem.appendChild(d), addTabsDiv.appendChild(elem);
-	}
+    function createTabContents(tabName, tabDescription, addTabsDiv) {
+        var elem = document.createElement('div');
+        (elem.className = 'tabcontent'), (elem.id = tabName);
+        var d = document.createElement('div');
+        d.setAttribute('style', 'margin-left: 1vw; margin-right: 1vw; margin-top: 0.25vw; margin-bottom: 0.25vw;');
+        var e = document.createElement('h4');
+        e.setAttribute('style', 'font-size: 1.2vw;'), e.appendChild(document.createTextNode(tabDescription)), d.appendChild(e), elem.appendChild(d), addTabsDiv.appendChild(elem);
+    }
 
-	createTabs('Core', 'Core - Main Controls for the script', addTabsDiv, addtabsUL);
-	createTabs('Jobs', 'Geneticassist Settings', addTabsDiv, addtabsUL);
-	createTabs('Buildings', 'Building Settings', addTabsDiv, addtabsUL);
-	createTabs('Equipment', 'Equipment Settings', addTabsDiv, addtabsUL);
-	createTabs('Combat', 'Combat & Stance Settings', addTabsDiv, addtabsUL);
-	createTabs('Maps', 'Maps - AutoMaps & VoidMaps Settings', addTabsDiv, addtabsUL);
-	createTabs('Challenges', 'Challenges - Settings for Specific Challenges', addTabsDiv, addtabsUL);
-	createTabs('C2', 'C2 - Settings for C2s', addTabsDiv, addtabsUL);
-	createTabs('Daily', 'Dailies - Settings for Dailies', addTabsDiv, addtabsUL);
-	createTabs('Heirloom', 'Heirloom Settings', addTabsDiv, addtabsUL);
-	createTabs('Golden', 'Golden Upgrade Settings', addTabsDiv, addtabsUL);
-	createTabs('Spire', 'Spire - Settings for Spires', addTabsDiv, addtabsUL);
-	createTabs('Magma', 'Dimensional Generator & Magmite Settings', addTabsDiv, addtabsUL);
-	createTabs('Nature', 'Nature Settings', addTabsDiv, addtabsUL);
-	createTabs('Fluffy', 'Fluffy Evolution Settings', addTabsDiv, addtabsUL);
-	createTabs('Time Warp', 'Time Warp Settings', addTabsDiv, addtabsUL);
-	createTabs('Display', 'Display & Spam Settings', addTabsDiv, addtabsUL);
-	createTabs('Import Export', 'Import & Export Settings', addTabsDiv, addtabsUL);
-	createTabs('Help', 'Helpful information (hopefully)', addTabsDiv, addtabsUL);
-	createTabs('Test', 'Basic testing functions - Should never be seen by users', addTabsDiv, addtabsUL);
-	createTabs('Beta', 'Beta features - Should never be seen by users as they aren\'t user ready', addTabsDiv, addtabsUL);
+    createTabs('Core', 'Core - Main Controls for the script', addTabsDiv, addtabsUL);
+    createTabs('Jobs', 'Geneticassist Settings', addTabsDiv, addtabsUL);
+    createTabs('Buildings', 'Building Settings', addTabsDiv, addtabsUL);
+    createTabs('Equipment', 'Equipment Settings', addTabsDiv, addtabsUL);
+    createTabs('Combat', 'Combat & Stance Settings', addTabsDiv, addtabsUL);
+    createTabs('Maps', 'Maps - AutoMaps & VoidMaps Settings', addTabsDiv, addtabsUL);
+    createTabs('Challenges', 'Challenges - Settings for Specific Challenges', addTabsDiv, addtabsUL);
+    createTabs('C2', 'C2 - Settings for C2s', addTabsDiv, addtabsUL);
+    createTabs('Daily', 'Dailies - Settings for Dailies', addTabsDiv, addtabsUL);
+    createTabs('Heirloom', 'Heirloom Settings', addTabsDiv, addtabsUL);
+    createTabs('Golden', 'Golden Upgrade Settings', addTabsDiv, addtabsUL);
+    createTabs('Spire', 'Spire - Settings for Spires', addTabsDiv, addtabsUL);
+    createTabs('Magma', 'Dimensional Generator & Magmite Settings', addTabsDiv, addtabsUL);
+    createTabs('Nature', 'Nature Settings', addTabsDiv, addtabsUL);
+    createTabs('Fluffy', 'Fluffy Evolution Settings', addTabsDiv, addtabsUL);
+    createTabs('Time Warp', 'Time Warp Settings', addTabsDiv, addtabsUL);
+    createTabs('Display', 'Display & Spam Settings', addTabsDiv, addtabsUL);
+    createTabs('Import Export', 'Import & Export Settings', addTabsDiv, addtabsUL);
+    createTabs('Help', 'Helpful information (hopefully)', addTabsDiv, addtabsUL);
+    createTabs('Test', 'Basic testing functions - Should never be seen by users', addTabsDiv, addtabsUL);
+    createTabs('Beta', "Beta features - Should never be seen by users as they aren't user ready", addTabsDiv, addtabsUL);
 
-	//Exit tab icon
-	var li_2 = document.createElement('li');
-	var a_2 = document.createElement('a');
-	a_2.className = 'tablinks tabclose';
-	a_2.setAttribute('onclick', 'autoToggle();');
-	a_2.appendChild(document.createTextNode('x'));
-	li_2.appendChild(a_2);
-	li_2.setAttribute('style', 'float:right!important;');
-	li_2.setAttribute('onmouseover', 'tooltip("Exit", "customText", event, "Closes the AutoTrimps settings menu.")');
-	li_2.setAttribute("onmouseout", 'tooltip("hide")');
-	addtabsUL.appendChild(li_2);
+    //Exit tab icon
+    var li_2 = document.createElement('li');
+    var a_2 = document.createElement('a');
+    a_2.className = 'tablinks tabclose';
+    a_2.setAttribute('onclick', 'autoToggle();');
+    a_2.appendChild(document.createTextNode('x'));
+    li_2.appendChild(a_2);
+    li_2.setAttribute('style', 'float:right!important;');
+    li_2.setAttribute('onmouseover', 'tooltip("Exit", "customText", event, "Closes the AutoTrimps settings menu.")');
+    li_2.setAttribute('onmouseout', 'tooltip("hide")');
+    addtabsUL.appendChild(li_2);
 
-	//Maximize tabs icon
-	var li_1 = document.createElement('li');
-	var a_1 = document.createElement('a');
-	a_1.className = 'tablinks maximize';
-	a_1.setAttribute('onclick', 'maximizeAllTabs();');
-	a_1.appendChild(document.createTextNode('+'));
-	li_1.appendChild(a_1);
-	li_1.setAttribute('style', 'float:right!important;');
-	li_1.setAttribute("onmouseover", 'tooltip("Maximize all tabs", "customText", event, "Maximize all of the settings tabs.")');
-	li_1.setAttribute("onmouseout", 'tooltip("hide")');
-	addtabsUL.appendChild(li_1);
+    //Maximize tabs icon
+    var li_1 = document.createElement('li');
+    var a_1 = document.createElement('a');
+    a_1.className = 'tablinks maximize';
+    a_1.setAttribute('onclick', 'maximizeAllTabs();');
+    a_1.appendChild(document.createTextNode('+'));
+    li_1.appendChild(a_1);
+    li_1.setAttribute('style', 'float:right!important;');
+    li_1.setAttribute('onmouseover', 'tooltip("Maximize all tabs", "customText", event, "Maximize all of the settings tabs.")');
+    li_1.setAttribute('onmouseout', 'tooltip("hide")');
+    addtabsUL.appendChild(li_1);
 
-	//Minimize tabs incon
-	var li_0 = document.createElement('li');
-	var a_0 = document.createElement('a');
-	a_0.className = 'tablinks minimize';
-	a_0.setAttribute('onclick', 'minimizeAllTabs();');
-	a_0.appendChild(document.createTextNode('-'));
-	li_0.appendChild(a_0);
-	li_0.setAttribute('style', 'float:right!important;');
-	li_0.setAttribute("onmouseover", 'tooltip("Minimize all tabs", "customText", event, "Minimize all of the settings tabs.")');
-	li_0.setAttribute("onmouseout", 'tooltip("hide")');
-	addtabsUL.appendChild(li_0);
+    //Minimize tabs incon
+    var li_0 = document.createElement('li');
+    var a_0 = document.createElement('a');
+    a_0.className = 'tablinks minimize';
+    a_0.setAttribute('onclick', 'minimizeAllTabs();');
+    a_0.appendChild(document.createTextNode('-'));
+    li_0.appendChild(a_0);
+    li_0.setAttribute('style', 'float:right!important;');
+    li_0.setAttribute('onmouseover', 'tooltip("Minimize all tabs", "customText", event, "Minimize all of the settings tabs.")');
+    li_0.setAttribute('onmouseout', 'tooltip("hide")');
+    addtabsUL.appendChild(li_0);
 
-	//Add the tabs to the page
-	document.getElementById('autoSettings').appendChild(addTabsDiv);
-	document.getElementById('Core').style.display = 'block';
-	document.getElementsByClassName('tablinks')[0].className += ' active';
+    //Add the tabs to the page
+    document.getElementById('autoSettings').appendChild(addTabsDiv);
+    document.getElementById('Core').style.display = 'block';
+    document.getElementsByClassName('tablinks')[0].className += ' active';
 }
 
 function toggleTab(a, tabName) {
-	-1 < a.currentTarget.className.indexOf(' active')
-		? ((document.getElementById(tabName).style.display = 'none'), (a.currentTarget.className = a.currentTarget.className.replace(' active', '')))
-		: ((document.getElementById(tabName).style.display = 'block'), (a.currentTarget.className += ' active'));
+    -1 < a.currentTarget.className.indexOf(' active') ? ((document.getElementById(tabName).style.display = 'none'), (a.currentTarget.className = a.currentTarget.className.replace(' active', ''))) : ((document.getElementById(tabName).style.display = 'block'), (a.currentTarget.className += ' active'));
 }
 
 function minimizeAllTabs() {
-	for (var a = document.getElementsByClassName("tabcontent"), b = 0, c = a.length; b < c; b++) a[b].style.display = "none";
-	for (var d = document.getElementsByClassName("tablinks"), b = 0, c = d.length; b < c; b++) d[b].className = d[b].className.replace(" active", "");
+    for (var a = document.getElementsByClassName('tabcontent'), b = 0, c = a.length; b < c; b++) a[b].style.display = 'none';
+    for (var d = document.getElementsByClassName('tablinks'), b = 0, c = d.length; b < c; b++) d[b].className = d[b].className.replace(' active', '');
 }
 
 function maximizeAllTabs() {
-	for (var a = document.getElementsByClassName('tabcontent'), b = 0, c = a.length; b < c; b++) {
-		if (a[b].id.toLowerCase() === 'test' || a[b].id.toLowerCase() === 'beta') continue;
-		a[b].style.display = 'block';
-	}
-	for (var d = document.getElementsByClassName('tablinks'), b = 0, c = d.length; b < c; b++) {
-		if (d[b].id.toLowerCase() === 'test' || d[b].id.toLowerCase() === 'beta') continue;
-		(d[b].style.display = 'block'), d[b].className.includes(' active') || (d[b].className += ' active');
-	}
+    for (var a = document.getElementsByClassName('tabcontent'), b = 0, c = a.length; b < c; b++) {
+        if (a[b].id.toLowerCase() === 'test' || a[b].id.toLowerCase() === 'beta') continue;
+        a[b].style.display = 'block';
+    }
+    for (var d = document.getElementsByClassName('tablinks'), b = 0, c = d.length; b < c; b++) {
+        if (d[b].id.toLowerCase() === 'test' || d[b].id.toLowerCase() === 'beta') continue;
+        (d[b].style.display = 'block'), d[b].className.includes(' active') || (d[b].className += ' active');
+    }
 }
 
 initializeAllTabs();
-
+// prettier-ignore
 function initializeAllSettings() {
 	//Core
 	const displayCore = true;
@@ -1316,7 +1308,7 @@ function initializeAllSettings() {
 		//---------------------------------------------------------------------------------------------------------------------
 
 		//Windstacking
-
+ 
 		createSetting('AutoStanceWind',
 			function () { return ('Wind Stacking') },
 			function () {
@@ -4246,44 +4238,44 @@ function initializeAllSettings() {
 }
 
 function resource() {
-	return currSettingUniverse === 2 ? 'Radon' : 'Helium';
+    return currSettingUniverse === 2 ? 'Radon' : 'Helium';
 }
 
 function resourceHour() {
-	return currSettingUniverse === 2 ? 'Rn' : 'He';
+    return currSettingUniverse === 2 ? 'Rn' : 'He';
 }
 
 function cinf() {
-	return currSettingUniverse === 2 ? 'C3' : 'C2';
+    return currSettingUniverse === 2 ? 'C3' : 'C2';
 }
 
 function c2Description() {
-	return cinf() + "'s or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ")";
+    return cinf() + "'s or special challenge (" + (currSettingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience') + ')';
 }
 
 //Check if the gameUser setting has been set to a valid user.
 function gameUserCheck(skipTest) {
-	const user = autoTrimpSettings.gameUser.value;
-	if (user === '') return false;
-	const allowedUsers = ['sadaugust', 'kyotie', 'charles', 'test'];
-	if (skipTest) allowedUsers.pop();
-	return allowedUsers.includes(user.toLowerCase());
+    const user = autoTrimpSettings.gameUser.value;
+    if (user === '') return false;
+    const allowedUsers = ['sadaugust', 'kyotie', 'charles', 'test'];
+    if (skipTest) allowedUsers.pop();
+    return allowedUsers.includes(user.toLowerCase());
 }
 
 function updateButtonText() {
-	var id = 'jobType';
-	var btn = autoTrimpSettings[id];
-	var btnValue = getPageSetting(id);
+    var id = 'jobType';
+    var btn = autoTrimpSettings[id];
+    var btnValue = getPageSetting(id);
 
-	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue === 2 ? 3 : btnValue));
-	document.getElementById('autoJobLabel').innerHTML = btn.name()[btnValue];
-	if (document.getElementById('autoJobLabelTW') !== null) {
-		document.getElementById('autoJobLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btnValue === 2 ? 3 : btnValue));
-		document.getElementById('autoJobLabelTW').innerHTML = btn.name()[btnValue];
-	}
+    document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue === 2 ? 3 : btnValue));
+    document.getElementById('autoJobLabel').innerHTML = btn.name()[btnValue];
+    if (document.getElementById('autoJobLabelTW') !== null) {
+        document.getElementById('autoJobLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btnValue === 2 ? 3 : btnValue));
+        document.getElementById('autoJobLabelTW').innerHTML = btn.name()[btnValue];
+    }
 
-	var btnValue = getPageSetting('equipOn');
-	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btnValue);
+    var btnValue = getPageSetting('equipOn');
+    document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btnValue);
 }
 
 MODULES.u1unlocks = {};
@@ -4294,1972 +4286,1908 @@ initializeAllSettings();
 updateATVersion();
 
 function createSetting(id, name, description, type, defaultValue, list, container, universe, require) {
-	var btnParent = document.createElement('DIV');
-	btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.6vw; margin-bottom: 1vw; width: 13.50vw;');
-	btnParent.setAttribute('id', id + 'Parent');
-	var btn = document.createElement('DIV');
-	var loaded = autoTrimpSettings[id];
-	var u1Setting = (universe.indexOf(0) !== -1 || universe.indexOf(1) !== -1);
-	var u2Setting = (universe.indexOf(2) !== -1);
+    var btnParent = document.createElement('DIV');
+    btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.6vw; margin-bottom: 1vw; width: 13.50vw;');
+    btnParent.setAttribute('id', id + 'Parent');
+    var btn = document.createElement('DIV');
+    var loaded = autoTrimpSettings[id];
+    var u1Setting = universe.indexOf(0) !== -1 || universe.indexOf(1) !== -1;
+    var u2Setting = universe.indexOf(2) !== -1;
 
-	autoTrimpSettings[id] = {
-		id: id,
-		name: name,
-		description: description,
-		type: type,
-		universe: universe,
-	};
-	if (require) autoTrimpSettings[id].require = require;
+    autoTrimpSettings[id] = {
+        id: id,
+        name: name,
+        description: description,
+        type: type,
+        universe: universe
+    };
+    if (require) autoTrimpSettings[id].require = require;
 
-	const enabled = ['boolean'];
-	const valueTypes = ['value', 'valueNegative', 'multiValue', 'textValue', 'multiTextValue', 'multitoggle', 'mazArray', 'mazDefaultArray'];
-	const selected = ['dropdown'];
+    const enabled = ['boolean'];
+    const valueTypes = ['value', 'valueNegative', 'multiValue', 'textValue', 'multiTextValue', 'multitoggle', 'mazArray', 'mazDefaultArray'];
+    const selected = ['dropdown'];
 
-	if (valueTypes.indexOf(type) !== -1) {
-		if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
-		if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
-	}
-	else if (enabled.indexOf(type) !== -1) {
-		if (u1Setting) autoTrimpSettings[id].enabled = loaded === undefined ? (defaultValue || false) : typeof loaded.enabled === 'undefined' ? loaded : loaded.enabled;
-		if (u2Setting) autoTrimpSettings[id].enabledU2 = loaded === undefined ? (defaultValue || false) : typeof loaded.enabledU2 === 'undefined' ? loaded : loaded.enabledU2;
-	}
-	else if (selected.indexOf(type) !== -1) {
-		if (u1Setting) autoTrimpSettings[id].selected = loaded === undefined ? defaultValue : typeof loaded.selected === 'undefined' ? loaded : loaded.selected;
-		if (u2Setting) autoTrimpSettings[id].selectedU2 = loaded === undefined ? defaultValue : typeof loaded.selectedU2 === 'undefined' ? loaded : loaded.selectedU2;
-	}
+    if (valueTypes.indexOf(type) !== -1) {
+        if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
+        if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
+    } else if (enabled.indexOf(type) !== -1) {
+        if (u1Setting) autoTrimpSettings[id].enabled = loaded === undefined ? defaultValue || false : typeof loaded.enabled === 'undefined' ? loaded : loaded.enabled;
+        if (u2Setting) autoTrimpSettings[id].enabledU2 = loaded === undefined ? defaultValue || false : typeof loaded.enabledU2 === 'undefined' ? loaded : loaded.enabledU2;
+    } else if (selected.indexOf(type) !== -1) {
+        if (u1Setting) autoTrimpSettings[id].selected = loaded === undefined ? defaultValue : typeof loaded.selected === 'undefined' ? loaded : loaded.selected;
+        if (u2Setting) autoTrimpSettings[id].selectedU2 = loaded === undefined ? defaultValue : typeof loaded.selectedU2 === 'undefined' ? loaded : loaded.selectedU2;
+    }
 
-	btn.innerHTML = name();
-	btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;");
-	btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
+    btn.innerHTML = name();
+    btn.setAttribute('style', 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;');
+    btn.setAttribute('onmouseover', 'tooltip("' + name() + '", "customText", event, "' + description() + '")');
 
-	if (type === 'boolean') {
-		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].enabled);
-		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
-	} else if (type === 'value' || type === 'valueNegative' || type === 'multiValue') {
-		btn.setAttribute('class', 'noselect settingsBtn btn-info');
-		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", "${type === 'multiValue'}", "${type === 'valueNegative'}")`);
-	} else if (type === 'textValue' || type === 'multiTextValue') {
-		btn.setAttribute('class', 'noselect settingsBtn btn-info');
-		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type === 'multiTextValue'})`);
-	} else if (type === 'dropdown') {
-		var btn = document.createElement("select");
-		btn.setAttribute("class", "select2");
-		autoTrimpSettings[id].list = list;
-		//Need to adjust this information on parent frame for dropdowns	
-		btnParent.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btnParent.setAttribute("onmouseout", 'tooltip("hide")');
-		btnParent.setAttribute("onchange", 'settingChanged("' + id + '")');
-	} else if (type === 'multitoggle') {
-		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].value);
-		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name().join(' / ') + '\", \"customText\", event, \"' + description() + '\")');
-		btn.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]["value"]];
-	} else if (type === 'action' || type === 'mazArray' || type === 'infoclick') {
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1vw;");
-		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
-		btn.setAttribute('onclick', list);
-	}
-	btn.setAttribute("onmouseout", 'tooltip("hide")');
-	btn.id = id;
-	btnParent.appendChild(btn);
-	if (container) document.getElementById(container).appendChild(btnParent);
-	else document.getElementById("autoSettings").appendChild(btnParent);
+    if (type === 'boolean') {
+        btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].enabled);
+        btn.setAttribute('onclick', 'settingChanged("' + id + '")');
+    } else if (type === 'value' || type === 'valueNegative' || type === 'multiValue') {
+        btn.setAttribute('class', 'noselect settingsBtn btn-info');
+        btn.setAttribute('onclick', `autoSetValueToolTip("${id}", "${name()}", "${type === 'multiValue'}", "${type === 'valueNegative'}")`);
+    } else if (type === 'textValue' || type === 'multiTextValue') {
+        btn.setAttribute('class', 'noselect settingsBtn btn-info');
+        btn.setAttribute('onclick', `autoSetTextToolTip("${id}", "${name()}", ${type === 'multiTextValue'})`);
+    } else if (type === 'dropdown') {
+        var btn = document.createElement('select');
+        btn.setAttribute('class', 'select2');
+        autoTrimpSettings[id].list = list;
+        //Need to adjust this information on parent frame for dropdowns
+        btnParent.setAttribute('onmouseover', 'tooltip("' + name() + '", "customText", event, "' + description() + '")');
+        btnParent.setAttribute('onmouseout', 'tooltip("hide")');
+        btnParent.setAttribute('onchange', 'settingChanged("' + id + '")');
+    } else if (type === 'multitoggle') {
+        btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].value);
+        btn.setAttribute('onclick', 'settingChanged("' + id + '")');
+        btn.setAttribute('onmouseover', 'tooltip("' + name().join(' / ') + '", "customText", event, "' + description() + '")');
+        btn.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]['value']];
+    } else if (type === 'action' || type === 'mazArray' || type === 'infoclick') {
+        btn.setAttribute('style', 'color: black; background-color: #6495ed; font-size: 1vw;');
+        btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
+        btn.setAttribute('onclick', list);
+    }
+    btn.setAttribute('onmouseout', 'tooltip("hide")');
+    btn.id = id;
+    btnParent.appendChild(btn);
+    if (container) document.getElementById(container).appendChild(btnParent);
+    else document.getElementById('autoSettings').appendChild(btnParent);
 
-	if (id === 'dailyPortal') {
-		btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
-		btnParent.setAttribute('style', 'max-height: 3vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
-		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;")
+    if (id === 'dailyPortal') {
+        btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse');
+        btnParent.setAttribute('style', 'max-height: 3vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;');
+        btn.setAttribute('style', 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;');
 
-		var autoPortalContainer = document.getElementById("dailyPortalParent");
-		var autoPortalSettings = document.createElement("DIV");
-		autoPortalSettings.setAttribute('onclick', 'MAZLookalike("DailyAutoPortal")');
-		autoPortalSettings.setAttribute('class', 'settingsBtnLocalCogwheel');
-		autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
-		var autoPortalSettingsButton = document.createElement("SPAN");
-		autoPortalSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-		autoPortalContainer.appendChild(autoPortalSettings);
-		autoPortalSettings.appendChild(autoPortalSettingsButton);
-	}
+        var autoPortalContainer = document.getElementById('dailyPortalParent');
+        var autoPortalSettings = document.createElement('DIV');
+        autoPortalSettings.setAttribute('onclick', 'MAZLookalike("DailyAutoPortal")');
+        autoPortalSettings.setAttribute('class', 'settingsBtnLocalCogwheel');
+        autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
+        var autoPortalSettingsButton = document.createElement('SPAN');
+        autoPortalSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+        autoPortalContainer.appendChild(autoPortalSettings);
+        autoPortalSettings.appendChild(autoPortalSettingsButton);
+    }
 }
 
 function settingChanged(id, currUniverse) {
-	var autoMapsBtn = id === 'autoMapsToggle';
-	if (autoMapsBtn) {
-		id = 'autoMaps';
-		currUniverse = true;
-	}
+    var autoMapsBtn = id === 'autoMapsToggle';
+    if (autoMapsBtn) {
+        id = 'autoMaps';
+        currUniverse = true;
+    }
 
-	var btn = autoTrimpSettings[id];
-	var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.universeSetting.value === 1;
-	if (btn.type === 'boolean') {
-		var enabled = 'enabled'
-		if (radonon && btn.universe.indexOf(0) === -1) enabled += 'U2';
-		btn[enabled] = !btn[enabled];
-		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
-		if (id === 'equipEfficientEquipDisplay') {
-			displayMostEfficientEquipment();
-		}
-		if (id === 'equipOn')
-			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
-		if (id === 'buildingsType') {
-			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
-			if (document.getElementById('autoStructureLabelTW') !== null) document.getElementById('autoStructureLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
-		}
-		if (id === 'c2disableFinished')
-			modifyParentNodeUniverseSwap();
-		if (id === 'displayHeHr')
-			document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
-		if (id === 'timeWarpDisplay')
-			timeWarpDisplay();
-	}
+    var btn = autoTrimpSettings[id];
+    var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.universeSetting.value === 1;
+    if (btn.type === 'boolean') {
+        var enabled = 'enabled';
+        if (radonon && btn.universe.indexOf(0) === -1) enabled += 'U2';
+        btn[enabled] = !btn[enabled];
+        document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
+        if (id === 'equipEfficientEquipDisplay') {
+            displayMostEfficientEquipment();
+        }
+        if (id === 'equipOn') document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
+        if (id === 'buildingsType') {
+            document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
+            if (document.getElementById('autoStructureLabelTW') !== null) document.getElementById('autoStructureLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
+        }
+        if (id === 'c2disableFinished') modifyParentNodeUniverseSwap();
+        if (id === 'displayHeHr') document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
+        if (id === 'timeWarpDisplay') timeWarpDisplay();
+    }
 
-	if (btn.type === 'multitoggle') {
-		var value = 'value'
-		if (radonon && btn.universe.indexOf(0) === -1) value += 'U2';
-		if ((id === 'AutoMagmiteSpender2' && btn[value] === 1) || (game.global.universe === 1 && id === 'presetCombatRespec')) {
-			settingChangedTimeout = true;
-			setTimeout(function () {
-				settingChangedTimeout = false;
-			}, 5000);
-		}
-		//Skip no unique setting for automaps button in battle container
-		if (autoMapsBtn && btn[value] === 1)
-			btn[value]++;
-		btn[value]++;
-		if (btn[value] > btn.name().length - 1)
-			btn[value] = 0;
-		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
-		document.getElementById(id).innerHTML = btn.name()[btn[value]]
-		if (id === 'jobType') {
-			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
-			document.getElementById('autoJobLabel').innerHTML = btn.name()[btn[value]];
-			if (document.getElementById('autoJobLabelTW') !== null) {
-				document.getElementById('autoJobLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn  settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
-				document.getElementById('autoJobLabelTW').innerHTML = btn.name()[btn[value]];
-			}
-		}
-		if (id === 'dailyPortal')
-			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
-		if (id === 'autoMaps' && btn[value] !== 2) {
-			//Use regular class for AutoMaps button UNLESS we are in TW then use special case to make it look prettier!
-			document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value])
-			if (document.getElementById('autoMapBtnTW') !== null) document.getElementById('autoMapBtnTW').setAttribute('class', 'btn btn-lg offlineExtraBtn settingsBtn settingBtn' + btn[value]);
-		}
-	}
+    if (btn.type === 'multitoggle') {
+        var value = 'value';
+        if (radonon && btn.universe.indexOf(0) === -1) value += 'U2';
+        if ((id === 'AutoMagmiteSpender2' && btn[value] === 1) || (game.global.universe === 1 && id === 'presetCombatRespec')) {
+            settingChangedTimeout = true;
+            setTimeout(function () {
+                settingChangedTimeout = false;
+            }, 5000);
+        }
+        //Skip no unique setting for automaps button in battle container
+        if (autoMapsBtn && btn[value] === 1) btn[value]++;
+        btn[value]++;
+        if (btn[value] > btn.name().length - 1) btn[value] = 0;
+        document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
+        document.getElementById(id).innerHTML = btn.name()[btn[value]];
+        if (id === 'jobType') {
+            document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
+            document.getElementById('autoJobLabel').innerHTML = btn.name()[btn[value]];
+            if (document.getElementById('autoJobLabelTW') !== null) {
+                document.getElementById('autoJobLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn  settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
+                document.getElementById('autoJobLabelTW').innerHTML = btn.name()[btn[value]];
+            }
+        }
+        if (id === 'dailyPortal') document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
+        if (id === 'autoMaps' && btn[value] !== 2) {
+            //Use regular class for AutoMaps button UNLESS we are in TW then use special case to make it look prettier!
+            document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
+            if (document.getElementById('autoMapBtnTW') !== null) document.getElementById('autoMapBtnTW').setAttribute('class', 'btn btn-lg offlineExtraBtn settingsBtn settingBtn' + btn[value]);
+        }
+    }
 
-	if (btn.type === 'dropdown') {
-		var selected = 'selected';
-		if (radonon && btn.universe.indexOf(0) === -1) selected += 'U2';
-		btn[selected] = document.getElementById(id).value;
-	}
+    if (btn.type === 'dropdown') {
+        var selected = 'selected';
+        if (radonon && btn.universe.indexOf(0) === -1) selected += 'U2';
+        btn[selected] = document.getElementById(id).value;
+    }
 
-	updateCustomButtons(id === 'universeSetting' || id === 'heirloomAutoRareToKeep');
-	saveSettings();
+    updateCustomButtons(id === 'universeSetting' || id === 'heirloomAutoRareToKeep');
+    saveSettings();
 }
 
 //Tells the script when to insert a break or remove a break to put settings on new lines.
 function modifyParentNode(id, style) {
-	//Set style to 'show' to insert a break OR 'hide' to remove.
-	var style = !style ? 'show' : style;
-	var elem = document.getElementById(id).parentNode;
+    //Set style to 'show' to insert a break OR 'hide' to remove.
+    var style = !style ? 'show' : style;
+    var elem = document.getElementById(id).parentNode;
 
-	//Looks at the next element in the DOM and either adds or removes a break depending on what style is set to.
-	var elemSibling = elem.nextElementSibling;
-	var nextElemSibling = elemSibling.nextElementSibling;
-	//Insert break if it doesn't exist.
-	if (style === 'show' && elemSibling.style.length !== 0 && elemSibling.style.display !== 'none')
-		elem.insertAdjacentHTML('afterend', '<br>');
-	//Remove the break if it exists.
-	if (style === 'hide' && elemSibling.style.length === 0)
-		elemSibling.remove();
-	//Remove break if we are hiding the element and the next element is a break.
-	if (elemSibling.style.length === 0 && nextElemSibling.style.display === 'none')
-		elemSibling.remove();
+    //Looks at the next element in the DOM and either adds or removes a break depending on what style is set to.
+    var elemSibling = elem.nextElementSibling;
+    var nextElemSibling = elemSibling.nextElementSibling;
+    //Insert break if it doesn't exist.
+    if (style === 'show' && elemSibling.style.length !== 0 && elemSibling.style.display !== 'none') elem.insertAdjacentHTML('afterend', '<br>');
+    //Remove the break if it exists.
+    if (style === 'hide' && elemSibling.style.length === 0) elemSibling.remove();
+    //Remove break if we are hiding the element and the next element is a break.
+    if (elemSibling.style.length === 0 && nextElemSibling.style.display === 'none') elemSibling.remove();
 }
 
 //Tells the script which settings you want a new line after.
 function modifyParentNodeUniverseSwap() {
-	const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
+    const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
-	//Core
-	modifyParentNode("portalVoidIncrement", 'show');
-	modifyParentNode("universeSetting", 'show');
-	//Checking if we have too many items on row 3 and if so we need to add a break.
-	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && (getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge') || holidayObj.holiday === 'Eggy') || Fluffy.checkU2Allowed()))
-		modifyParentNode("heliumHrDontPortalBefore", 'show');
-	else
-		modifyParentNode("heliumHrDontPortalBefore", 'hide');
-	//Dailies
-	modifyParentNode("dscryvoidmaps", 'show');
-	modifyParentNode("dPreSpireNurseries", 'show');
-	modifyParentNode("dWindStackingLiq", 'show');
-	modifyParentNode("dailyHeliumHrPortal", 'show');
-	//Maps
-	modifyParentNode("uniqueMapEnoughHealth", 'show');
-	modifyParentNode("scryvoidmaps", 'show');
-	modifyParentNode("uniqueMapSettingsArray", 'show');
-	//Gear
-	modifyParentNode("equipPercent", 'show');
-	modifyParentNode("equipNoShields", 'show');
-	modifyParentNode("equipShieldBlock", 'show');
-	//Combat
-	modifyParentNode("frenzyCalc", 'show');
-	modifyParentNode("scryerEssenceOnly", 'show');
-	//ATGA
-	modifyParentNode("geneAssistTimerSpire", 'show');
-	modifyParentNode("geneAssistTimerAfter", 'show');
-	modifyParentNode("geneAssistTimerSpireDaily", 'show');
-	//C2
-	modifyParentNode("c2disableFinished", 'show');
-	modifyParentNode("c2Fused", 'show');
-	modifyParentNode("c2AutoDStanceSpire", 'show');
-	//C2 Challenges
-	modifyParentNode("duelShield", 'show');
-	modifyParentNode("trapperShield", 'show');
-	modifyParentNode("experienceEndBW", 'show');
-	modifyParentNode("witherShield", 'show');
-	modifyParentNode("questSmithyMaps", 'show');
-	modifyParentNode("mayhemSwapZone", 'show');
-	modifyParentNode("stormStacks", 'show');
-	modifyParentNode("berserk", 'show');
-	modifyParentNode("pandemoniumSwapZone", 'show');
-	modifyParentNode("glassStacks", 'show');
-	modifyParentNode("desolationSettings", 'show');
-	//Buildings
-	modifyParentNode("autoGigaDeltaFactor", 'show');
-	//Challenges
-	modifyParentNode("balanceImprobDestack", 'show');
-	modifyParentNode("buble", 'show');
-	modifyParentNode("decayStacksToAbandon", 'show');
-	modifyParentNode("lifeStacks", 'show');
-	modifyParentNode("toxicitySettings", 'show');
+    //Core
+    modifyParentNode('portalVoidIncrement', 'show');
+    modifyParentNode('universeSetting', 'show');
+    //Checking if we have too many items on row 3 and if so we need to add a break.
+    if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && (getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge') || holidayObj.holiday === 'Eggy')) || Fluffy.checkU2Allowed()) modifyParentNode('heliumHrDontPortalBefore', 'show');
+    else modifyParentNode('heliumHrDontPortalBefore', 'hide');
+    //Dailies
+    modifyParentNode('dscryvoidmaps', 'show');
+    modifyParentNode('dPreSpireNurseries', 'show');
+    modifyParentNode('dWindStackingLiq', 'show');
+    modifyParentNode('dailyHeliumHrPortal', 'show');
+    //Maps
+    modifyParentNode('uniqueMapEnoughHealth', 'show');
+    modifyParentNode('scryvoidmaps', 'show');
+    modifyParentNode('uniqueMapSettingsArray', 'show');
+    //Gear
+    modifyParentNode('equipPercent', 'show');
+    modifyParentNode('equipNoShields', 'show');
+    modifyParentNode('equipShieldBlock', 'show');
+    //Combat
+    modifyParentNode('frenzyCalc', 'show');
+    modifyParentNode('scryerEssenceOnly', 'show');
+    //ATGA
+    modifyParentNode('geneAssistTimerSpire', 'show');
+    modifyParentNode('geneAssistTimerAfter', 'show');
+    modifyParentNode('geneAssistTimerSpireDaily', 'show');
+    //C2
+    modifyParentNode('c2disableFinished', 'show');
+    modifyParentNode('c2Fused', 'show');
+    modifyParentNode('c2AutoDStanceSpire', 'show');
+    //C2 Challenges
+    modifyParentNode('duelShield', 'show');
+    modifyParentNode('trapperShield', 'show');
+    modifyParentNode('experienceEndBW', 'show');
+    modifyParentNode('witherShield', 'show');
+    modifyParentNode('questSmithyMaps', 'show');
+    modifyParentNode('mayhemSwapZone', 'show');
+    modifyParentNode('stormStacks', 'show');
+    modifyParentNode('berserk', 'show');
+    modifyParentNode('pandemoniumSwapZone', 'show');
+    modifyParentNode('glassStacks', 'show');
+    modifyParentNode('desolationSettings', 'show');
+    //Buildings
+    modifyParentNode('autoGigaDeltaFactor', 'show');
+    //Challenges
+    modifyParentNode('balanceImprobDestack', 'show');
+    modifyParentNode('buble', 'show');
+    modifyParentNode('decayStacksToAbandon', 'show');
+    modifyParentNode('lifeStacks', 'show');
+    modifyParentNode('toxicitySettings', 'show');
 
-	modifyParentNode("mapologyPrestige", 'show');
-	modifyParentNode("frigid", 'show');
-	//Magma
-	modifyParentNode("AutoGenC2", 'show');
-	//Heirlooms
-	modifyParentNode("heirloomCompressedSwap", 'show');
-	modifyParentNode("heirloomSpire", 'show');
-	modifyParentNode("heirloomSwapHDCompressed", 'show');
-	modifyParentNode("heirloomStaffFragment", 'show');
-	modifyParentNode("heirloomStaffResource", 'show');
+    modifyParentNode('mapologyPrestige', 'show');
+    modifyParentNode('frigid', 'show');
+    //Magma
+    modifyParentNode('AutoGenC2', 'show');
+    //Heirlooms
+    modifyParentNode('heirloomCompressedSwap', 'show');
+    modifyParentNode('heirloomSpire', 'show');
+    modifyParentNode('heirloomSwapHDCompressed', 'show');
+    modifyParentNode('heirloomStaffFragment', 'show');
+    modifyParentNode('heirloomStaffResource', 'show');
 
-	modifyParentNode("heirloomAutoModTarget", heirloom);
-	modifyParentNode("heirloomAutoShieldMod7", heirloom);
-	modifyParentNode("heirloomAutoStaffMod7", heirloom);
-	//Nature
-	modifyParentNode("AutoIce", 'show');
-	modifyParentNode("autoenlight", 'show');
-	modifyParentNode("iceEnlight", 'show');
-	modifyParentNode("iceEnlightDaily", 'show');
-	//Display
-	modifyParentNode("automateSpireAssault", 'show');
-	modifyParentNode("EnableAFK", 'show');
-	//Test
-	modifyParentNode("testTotalEquipmentCost", 'show');
+    modifyParentNode('heirloomAutoModTarget', heirloom);
+    modifyParentNode('heirloomAutoShieldMod7', heirloom);
+    modifyParentNode('heirloomAutoStaffMod7', heirloom);
+    //Nature
+    modifyParentNode('AutoIce', 'show');
+    modifyParentNode('autoenlight', 'show');
+    modifyParentNode('iceEnlight', 'show');
+    modifyParentNode('iceEnlightDaily', 'show');
+    //Display
+    modifyParentNode('automateSpireAssault', 'show');
+    modifyParentNode('EnableAFK', 'show');
+    //Test
+    modifyParentNode('testTotalEquipmentCost', 'show');
 }
 
 function challengesUnlockedObj() {
-	var obj = {};
-	const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+    var obj = {};
+    const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 
-	if (currSettingUniverse === 1) {
-		obj = {
-			'Discipline': { unlockZone: 20, unlockCondition: function () { return getTotalPerkResource(true) >= 30 }, unlockedIn: ['c2', 'oneOff',] },
-			'Metal': { unlockZone: 25, unlockedIn: ['c2', 'oneOff',] },
-			'Size': { unlockZone: 35, unlockedIn: ['c2', 'oneOff',] },
-			'Scientist': { unlockZone: 40, unlockedIn: ['oneOff',] },
-			'Balance': { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			'Decay': { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr', 'oneOff',] },
-			'Meditate': { unlockZone: 45, unlockedIn: ['c2', 'oneOff',] },
-			'Trimp': { unlockZone: 60, unlockedIn: ['c2', 'oneOff',] },
-			'Trapper': { unlockZone: 70, unlockedIn: ['c2', 'oneOff',] },
-			'Electricity': { unlockZone: 80, unlockCondition: function () { return game.global.prisonClear >= 1 }, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			'Life': { unlockZone: 110, unlockedIn: ['autoPortal', 'heHr'] },
-			'Crushed': { unlockZone: 125, unlockedIn: ['autoPortal', 'heHr'] },
-			'Frugal': { unlockZone: 100, unlockedIn: ['oneOff',] },
-			'Coordinate': { unlockZone: 120, unlockedIn: ['c2', 'oneOff',] },
-			'Slow': { unlockZone: 130, unlockedIn: ['c2', 'oneOff',] },
-			'Mapocalypse': { unlockZone: 115, unlockedIn: ['oneOff',] },
-			'Nom': { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			'Mapology': { unlockZone: 150, unlockedIn: ['c2', 'oneOff',] },
-			'Toxicity': { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			'Watch': { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			'Lead': { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			'Corrupted': { unlockZone: 190, unlockedIn: ['heHr', 'autoPortal',] },
-			'Domination': { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal',] },
-			'Obliterated': { unlockZone: 425, unlockedIn: ['c2', 'oneOff',] },
-			'Eradicated': { unlockZone: 450, unlockCondition: function () { return game.global.totalSquaredReward >= 4500 }, unlockedIn: ['c2',] },
-			'Frigid': { unlockZone: 460, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-			'Experience': { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			//Fused C2s
-			'Enlightened': { unlockZone: 45, unlockedIn: ['c2'] },
-			'Paralysis': { unlockZone: 130, unlockedIn: ['c2'] },
-			'Nometal': { unlockZone: 145, unlockedIn: ['c2'] },
-			'Topology': { unlockZone: 150, unlockedIn: ['c2'] },
-			'Waze': { unlockZone: 180, unlockedIn: ['c2'] },
-			'Toxad': { unlockZone: 180, unlockedIn: ['c2'] },
-		};
-	}
+    if (currSettingUniverse === 1) {
+        obj = {
+            Discipline: {
+                unlockZone: 20,
+                unlockCondition: function () {
+                    return getTotalPerkResource(true) >= 30;
+                },
+                unlockedIn: ['c2', 'oneOff']
+            },
+            Metal: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
+            Size: { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
+            Scientist: { unlockZone: 40, unlockedIn: ['oneOff'] },
+            Balance: { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+            Decay: { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr', 'oneOff'] },
+            Meditate: { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
+            Trimp: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
+            Trapper: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
+            Electricity: {
+                unlockZone: 80,
+                unlockCondition: function () {
+                    return game.global.prisonClear >= 1;
+                },
+                unlockedIn: ['c2', 'heHr', 'autoPortal']
+            },
+            Life: { unlockZone: 110, unlockedIn: ['autoPortal', 'heHr'] },
+            Crushed: { unlockZone: 125, unlockedIn: ['autoPortal', 'heHr'] },
+            Frugal: { unlockZone: 100, unlockedIn: ['oneOff'] },
+            Coordinate: { unlockZone: 120, unlockedIn: ['c2', 'oneOff'] },
+            Slow: { unlockZone: 130, unlockedIn: ['c2', 'oneOff'] },
+            Mapocalypse: { unlockZone: 115, unlockedIn: ['oneOff'] },
+            Nom: { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+            Mapology: { unlockZone: 150, unlockedIn: ['c2', 'oneOff'] },
+            Toxicity: { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+            Watch: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+            Lead: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+            Corrupted: { unlockZone: 190, unlockedIn: ['heHr', 'autoPortal'] },
+            Domination: { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal'] },
+            Obliterated: { unlockZone: 425, unlockedIn: ['c2', 'oneOff'] },
+            Eradicated: {
+                unlockZone: 450,
+                unlockCondition: function () {
+                    return game.global.totalSquaredReward >= 4500;
+                },
+                unlockedIn: ['c2']
+            },
+            Frigid: { unlockZone: 460, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+            Experience: { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+            //Fused C2s
+            Enlightened: { unlockZone: 45, unlockedIn: ['c2'] },
+            Paralysis: { unlockZone: 130, unlockedIn: ['c2'] },
+            Nometal: { unlockZone: 145, unlockedIn: ['c2'] },
+            Topology: { unlockZone: 150, unlockedIn: ['c2'] },
+            Waze: { unlockZone: 180, unlockedIn: ['c2'] },
+            Toxad: { unlockZone: 180, unlockedIn: ['c2'] }
+        };
+    }
 
-	if (currSettingUniverse === 2) {
-		obj = {
-			'Unlucky': { unlockZone: 15, unlockedIn: ['c2', 'oneOff'] },
-			'Downsize': { unlockZone: 20, unlockedIn: ['c2', 'oneOff'] },
-			'Transmute': { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
-			'Unbalance': { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
-			'Bublé': { unlockZone: 40, unlockedIn: ['heHr', 'autoPortal'] },
-			'Duel': { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
-			'Melt': { unlockZone: 50, unlockedIn: ['heHr', 'autoPortal'] },
-			'Trappapalooza': { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
-			'Quagmire': { unlockZone: 70, unlockedIn: ['heHr', 'autoPortal'] },
-			'Wither': { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
-			'Revenge': { unlockZone: 80, unlockedIn: ['oneOff'] },
-			'Quest': { unlockZone: 85, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			'Archaeology': { unlockZone: 90, unlockedIn: ['heHr', 'autoPortal'] },
-			'Mayhem': { unlockZone: 100, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-			'Storm': { unlockZone: 105, unlockedIn: ['c2', 'oneOff'] },
-			'Insanity': { unlockZone: 110, unlockedIn: ['heHr', 'autoPortal'] },
-			'Berserk': { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
-			'Exterminate': { unlockZone: 120, unlockedIn: ['oneOff'] },
-			'Nurture': { unlockZone: 135, unlockedIn: ['heHr', 'autoPortal'] },
-			'Pandemonium': { unlockZone: 150, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-			'Alchemy': { unlockZone: 155, unlockedIn: ['heHr', 'autoPortal'] },
-			'Hypothermia': { unlockZone: 175, unlockedIn: ['heHr', 'autoPortal'] },
-			'Glass': { unlockZone: 175, unlockedIn: ['c2', 'oneOff'] },
-			'Desolation': { unlockZone: 200, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-			'Smithless': { unlockZone: 201, unlockedIn: ['c2', 'oneOff'] },
-		};
-	}
+    if (currSettingUniverse === 2) {
+        obj = {
+            Unlucky: { unlockZone: 15, unlockedIn: ['c2', 'oneOff'] },
+            Downsize: { unlockZone: 20, unlockedIn: ['c2', 'oneOff'] },
+            Transmute: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
+            Unbalance: { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
+            Bublé: { unlockZone: 40, unlockedIn: ['heHr', 'autoPortal'] },
+            Duel: { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
+            Melt: { unlockZone: 50, unlockedIn: ['heHr', 'autoPortal'] },
+            Trappapalooza: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
+            Quagmire: { unlockZone: 70, unlockedIn: ['heHr', 'autoPortal'] },
+            Wither: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
+            Revenge: { unlockZone: 80, unlockedIn: ['oneOff'] },
+            Quest: { unlockZone: 85, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+            Archaeology: { unlockZone: 90, unlockedIn: ['heHr', 'autoPortal'] },
+            Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+            Storm: { unlockZone: 105, unlockedIn: ['c2', 'oneOff'] },
+            Insanity: { unlockZone: 110, unlockedIn: ['heHr', 'autoPortal'] },
+            Berserk: { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
+            Exterminate: { unlockZone: 120, unlockedIn: ['oneOff'] },
+            Nurture: { unlockZone: 135, unlockedIn: ['heHr', 'autoPortal'] },
+            Pandemonium: { unlockZone: 150, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+            Alchemy: { unlockZone: 155, unlockedIn: ['heHr', 'autoPortal'] },
+            Hypothermia: { unlockZone: 175, unlockedIn: ['heHr', 'autoPortal'] },
+            Glass: { unlockZone: 175, unlockedIn: ['c2', 'oneOff'] },
+            Desolation: { unlockZone: 200, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+            Smithless: { unlockZone: 201, unlockedIn: ['c2', 'oneOff'] }
+        };
+    }
 
-	//Filter out the challenges that aren't unlocked yet.
-	obj = Object.entries(obj).reduce((newObj, [key, val]) => {
-		if (hze >= val.unlockZone && (typeof val.unlockCondition !== 'function' || val.unlockCondition())) {
-			newObj[key] = val;
-		}
-		return newObj;
-	}, {});
+    //Filter out the challenges that aren't unlocked yet.
+    obj = Object.entries(obj).reduce((newObj, [key, val]) => {
+        if (hze >= val.unlockZone && (typeof val.unlockCondition !== 'function' || val.unlockCondition())) {
+            newObj[key] = val;
+        }
+        return newObj;
+    }, {});
 
-	return obj;
+    return obj;
 }
 
 //Portal Challenge Dropdown Population
 function autoPortalChallenges(runType = 'autoPortal') {
-	var challenge = ['None'];
+    var challenge = ['None'];
 
-	if (currSettingUniverse == 0) currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
-	if (currSettingUniverse === 1 && runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
-	if (currSettingUniverse === 2 && runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
+    if (currSettingUniverse == 0) currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
+    if (currSettingUniverse === 1 && runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
+    if (currSettingUniverse === 2 && runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
 
-	var obj = challengesUnlockedObj();
-	//Filter out the challenges that aren't of the right run type.
-	obj = Object.entries(obj).reduce((newObj, [key, val]) => {
-		if (val.unlockedIn.indexOf(runType) !== -1) {
-			newObj[key] = val;
-		}
-		return newObj;
-	}, {});
+    var obj = challengesUnlockedObj();
+    //Filter out the challenges that aren't of the right run type.
+    obj = Object.entries(obj).reduce((newObj, [key, val]) => {
+        if (val.unlockedIn.indexOf(runType) !== -1) {
+            newObj[key] = val;
+        }
+        return newObj;
+    }, {});
 
-	//Sort challenges by unlock zone and convert it to an array.
-	obj = Object.keys(obj).sort((a, b) => b.unlockZone - a.unlockZone);
-	//Add all the challenges to the array.
-	challenge = [
-		...challenge,
-		...obj
-	];
-	//Add the custom, oneoffs and c2 challenges to the array if using autoPortal/heHr.
-	if (runType === 'autoPortal') {
-		challenge.push('Custom');
-		challenge.push('One Off Challenges');
-	}
-	if (runType === 'autoPortal' || runType === 'heHr') {
-		const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-		if (currSettingUniverse === 2 && hze >= 50) challenge.push('Challenge 3');
-		if (currSettingUniverse === 1 && hze >= 65) challenge.push('Challenge 2');
-	}
+    //Sort challenges by unlock zone and convert it to an array.
+    obj = Object.keys(obj).sort((a, b) => b.unlockZone - a.unlockZone);
+    //Add all the challenges to the array.
+    challenge = [...challenge, ...obj];
+    //Add the custom, oneoffs and c2 challenges to the array if using autoPortal/heHr.
+    if (runType === 'autoPortal') {
+        challenge.push('Custom');
+        challenge.push('One Off Challenges');
+    }
+    if (runType === 'autoPortal' || runType === 'heHr') {
+        const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+        if (currSettingUniverse === 2 && hze >= 50) challenge.push('Challenge 3');
+        if (currSettingUniverse === 1 && hze >= 65) challenge.push('Challenge 2');
+    }
 
-	return challenge;
+    return challenge;
 }
 
 //Checks to see if we should inform the user of any new challenge unlocks.
 function challengeUnlockCheck() {
-	//if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
-	var challenge = ['None'];
+    //if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+    var challenge = ['None'];
 
-	function challengeUnlock(challenge, setting, c2) {
-		//Skips running if the challenge is already unlocked.
-		if ((Object.keys(MODULES.u1unlocks).length !== 0 && MODULES.u1unlocks.challenge.includes(challenge)) || (Object.keys(MODULES.u2unlocks).length !== 0 && MODULES.u2unlocks.challenge.includes(challenge))) {
-			return '';
-		}
-		var c2Msg = game.global.universe === 2 ? '3' : '2';
-		var msg = "You have unlocked the " + challenge + " challenge.";
-		msg += " It has now been added to " + (c2 ? "Challenge " + c2Msg + " Auto Portal setting" : "Auto Portal");
-		msg += (setting ? " & there's settings for it in the scripts " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
-		if (challenge === "Frigid" || challenge === "Experience" || challenge === "Mayhem" || challenge === "Pandemonium" || challenge === "Desolation") msg += "<br><br><b>This is a special challenge and will use " + cinf() + " settings when run.</b>";
-		return msg;
-	}
+    function challengeUnlock(challenge, setting, c2) {
+        //Skips running if the challenge is already unlocked.
+        if ((Object.keys(MODULES.u1unlocks).length !== 0 && MODULES.u1unlocks.challenge.includes(challenge)) || (Object.keys(MODULES.u2unlocks).length !== 0 && MODULES.u2unlocks.challenge.includes(challenge))) {
+            return '';
+        }
+        var c2Msg = game.global.universe === 2 ? '3' : '2';
+        var msg = 'You have unlocked the ' + challenge + ' challenge.';
+        msg += ' It has now been added to ' + (c2 ? 'Challenge ' + c2Msg + ' Auto Portal setting' : 'Auto Portal');
+        msg += setting ? " & there's settings for it in the scripts " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + ' tab.' : '.';
+        if (challenge === 'Frigid' || challenge === 'Experience' || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation') msg += '<br><br><b>This is a special challenge and will use ' + cinf() + ' settings when run.</b>';
+        return msg;
+    }
 
-	if (game.global.universe === 1) {
-		var hze = game.stats.highestLevel.valueTotal();
-		if (getTotalPerkResource(true) >= 30) challenge.push('Discipline');
-		if (hze >= 25) challenge.push('Metal');
-		if (hze >= 35) challenge.push('Size');
-		if (hze >= 40) challenge.push('Balance');
-		if (hze >= 45) challenge.push('Meditate');
-		if (hze >= 55) challenge.push('Decay');
-		if (hze >= 60) challenge.push('Warpstation');
-		if (hze >= 60) challenge.push('Trimp');
-		if (hze >= 60) challenge.push('Challenge 2');
-		if (hze >= 70) challenge.push('Trapper');
-		if (game.global.prisonClear >= 1) challenge.push('Electricity');
-		if (hze >= 100) challenge.push('Daily');
-		if (hze >= 110) challenge.push('Life');
-		if (hze >= 120) challenge.push('Coordinate');
-		if (hze >= 125) challenge.push('Crushed');
-		if (hze >= 130) challenge.push('Slow');
-		if (hze >= 145) challenge.push('Nom');
-		if (hze >= 150) challenge.push('Mapology');
-		if (hze >= 165) challenge.push('Toxicity');
-		if (hze >= 180) challenge.push('Watch');
-		if (hze >= 180) challenge.push('Lead');
-		if (hze >= 230) challenge.push('Dimensional Generator');
-		if (hze >= 236) challenge.push('Nature');
-		if (hze >= 215) challenge.push('Domination');
-		if (hze >= 425) challenge.push('Obliterated');
-		if (game.global.totalSquaredReward >= 4500) challenge.push('Eradicated');
-		if (hze >= 460) challenge.push('Frigid');
-		if (hze >= 600) challenge.push('Experience');
-		if (Object.keys(MODULES.u1unlocks).length === 0) {
-			MODULES.u1unlocks.challenge = challenge;
-			return;
-		}
-		//Sets up messages when the challenges are unlocked.
-		//Tooltip is sent to users and can't be deleted until they click confirm.
-		var message = '';
-		if (hze === 40) {
-			message = challengeUnlock('Balance', false, false);
-			if (message !== '') {
-				message += '<br><br>'
-				message = "Upon unlocking Balance the script has a new settings tab available called 'Challenge'. Here you will find a variety of settings that might be beneficial when running this challenge.";
-			}
-		} else if (hze === 55) {
-			message = challengeUnlock('Decay', true, false);
-		} else if (hze === 60 && !MODULES.u1unlocks.challenge.includes('Warpstation')) {
-			message = "Upon unlocking Warpstations's the script has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.";
-		} else if (hze === 65 && !MODULES.u1unlocks.challenge.includes('Challenge 2')) {
-			message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under Auto Portal to be able to auto portal into them. Also you can now access the C2 tab within the the scripts settings.";
-		} else if (hze === 70) {
-			message = challengeUnlock('Trapper', false, true);
-			if (message !== '') {
-				message += "<br><br>"
-				message = "Upon unlocking Geneticist's the script has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
-			}
-		} else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge.includes('Electricity')) {
-			message = challengeUnlock('Electricity', false, true);
-		} else if (hze === 100 && !MODULES.u1unlocks.challenge.includes('Daily')) {
-			message = "You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.";
-		} else if (hze === 110) {
-			message = challengeUnlock('Life', true, false);
-		} else if (hze === 120) {
-			message = challengeUnlock('Coordinate', false, true);
-		} else if (hze === 125) {
-			message = challengeUnlock('Crushed');
-		} else if (hze === 130) {
-			message = challengeUnlock('Slow', false, true);
-		} else if (hze === 145) {
-			message = challengeUnlock('Nom', false, true);
-		} else if (hze === 150) {
-			message = challengeUnlock('Mapology', true, true);
-		} else if (hze === 165) {
-			message = challengeUnlock('Toxicity', false, true);
-		} else if (hze === 180) {
-			message = challengeUnlock('Watch', false, true);
-		} else if (hze === 180) {
-			message = challengeUnlock('Lead', false, true);
-		} else if (hze === 190) {
-			message = challengeUnlock('Corrupted', false, true);
-		} else if (hze === 215) {
-			message = challengeUnlock('Domination', false, true);
-		} else if (hze === 230 && !MODULES.u1unlocks.challenge.includes('Dimensional Generator')) {
-			message = "Upon unlocking the Dimensional Generator building the script has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
-		} else if (hze === 236 && !MODULES.u1unlocks.challenge.includes('Nature')) {
-			message = "Upon unlocking Nature, AutoTrimps has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
-		} else if (hze === 425) {
-			message = challengeUnlock('Obliterated', false, true);
-		} else if (game.global.totalSquaredReward >= 4500 && !MODULES.u1unlocks.challenge.includes('Eradicated')) {
-			message = challengeUnlock('Eradicated', false, true);
-		} else if (hze === 460) {
-			message = challengeUnlock('Frigid', false, true);
-		} else if (hze === 600) {
-			message = challengeUnlock('Experience', true, true);
-		}
-		MODULES.u1unlocks.challenge = challenge;
-	}
-	else if (game.global.universe === 2) {
-		var hze = game.stats.highestRadLevel.valueTotal();
+    if (game.global.universe === 1) {
+        var hze = game.stats.highestLevel.valueTotal();
+        if (getTotalPerkResource(true) >= 30) challenge.push('Discipline');
+        if (hze >= 25) challenge.push('Metal');
+        if (hze >= 35) challenge.push('Size');
+        if (hze >= 40) challenge.push('Balance');
+        if (hze >= 45) challenge.push('Meditate');
+        if (hze >= 55) challenge.push('Decay');
+        if (hze >= 60) challenge.push('Warpstation');
+        if (hze >= 60) challenge.push('Trimp');
+        if (hze >= 60) challenge.push('Challenge 2');
+        if (hze >= 70) challenge.push('Trapper');
+        if (game.global.prisonClear >= 1) challenge.push('Electricity');
+        if (hze >= 100) challenge.push('Daily');
+        if (hze >= 110) challenge.push('Life');
+        if (hze >= 120) challenge.push('Coordinate');
+        if (hze >= 125) challenge.push('Crushed');
+        if (hze >= 130) challenge.push('Slow');
+        if (hze >= 145) challenge.push('Nom');
+        if (hze >= 150) challenge.push('Mapology');
+        if (hze >= 165) challenge.push('Toxicity');
+        if (hze >= 180) challenge.push('Watch');
+        if (hze >= 180) challenge.push('Lead');
+        if (hze >= 230) challenge.push('Dimensional Generator');
+        if (hze >= 236) challenge.push('Nature');
+        if (hze >= 215) challenge.push('Domination');
+        if (hze >= 425) challenge.push('Obliterated');
+        if (game.global.totalSquaredReward >= 4500) challenge.push('Eradicated');
+        if (hze >= 460) challenge.push('Frigid');
+        if (hze >= 600) challenge.push('Experience');
+        if (Object.keys(MODULES.u1unlocks).length === 0) {
+            MODULES.u1unlocks.challenge = challenge;
+            return;
+        }
+        //Sets up messages when the challenges are unlocked.
+        //Tooltip is sent to users and can't be deleted until they click confirm.
+        var message = '';
+        if (hze === 40) {
+            message = challengeUnlock('Balance', false, false);
+            if (message !== '') {
+                message += '<br><br>';
+                message = "Upon unlocking Balance the script has a new settings tab available called 'Challenge'. Here you will find a variety of settings that might be beneficial when running this challenge.";
+            }
+        } else if (hze === 55) {
+            message = challengeUnlock('Decay', true, false);
+        } else if (hze === 60 && !MODULES.u1unlocks.challenge.includes('Warpstation')) {
+            message = "Upon unlocking Warpstations's the script has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.";
+        } else if (hze === 65 && !MODULES.u1unlocks.challenge.includes('Challenge 2')) {
+            message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under Auto Portal to be able to auto portal into them. Also you can now access the C2 tab within the the scripts settings.";
+        } else if (hze === 70) {
+            message = challengeUnlock('Trapper', false, true);
+            if (message !== '') {
+                message += '<br><br>';
+                message = "Upon unlocking Geneticist's the script has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
+            }
+        } else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge.includes('Electricity')) {
+            message = challengeUnlock('Electricity', false, true);
+        } else if (hze === 100 && !MODULES.u1unlocks.challenge.includes('Daily')) {
+            message = 'You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.';
+        } else if (hze === 110) {
+            message = challengeUnlock('Life', true, false);
+        } else if (hze === 120) {
+            message = challengeUnlock('Coordinate', false, true);
+        } else if (hze === 125) {
+            message = challengeUnlock('Crushed');
+        } else if (hze === 130) {
+            message = challengeUnlock('Slow', false, true);
+        } else if (hze === 145) {
+            message = challengeUnlock('Nom', false, true);
+        } else if (hze === 150) {
+            message = challengeUnlock('Mapology', true, true);
+        } else if (hze === 165) {
+            message = challengeUnlock('Toxicity', false, true);
+        } else if (hze === 180) {
+            message = challengeUnlock('Watch', false, true);
+        } else if (hze === 180) {
+            message = challengeUnlock('Lead', false, true);
+        } else if (hze === 190) {
+            message = challengeUnlock('Corrupted', false, true);
+        } else if (hze === 215) {
+            message = challengeUnlock('Domination', false, true);
+        } else if (hze === 230 && !MODULES.u1unlocks.challenge.includes('Dimensional Generator')) {
+            message = "Upon unlocking the Dimensional Generator building the script has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
+        } else if (hze === 236 && !MODULES.u1unlocks.challenge.includes('Nature')) {
+            message = "Upon unlocking Nature, AutoTrimps has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
+        } else if (hze === 425) {
+            message = challengeUnlock('Obliterated', false, true);
+        } else if (game.global.totalSquaredReward >= 4500 && !MODULES.u1unlocks.challenge.includes('Eradicated')) {
+            message = challengeUnlock('Eradicated', false, true);
+        } else if (hze === 460) {
+            message = challengeUnlock('Frigid', false, true);
+        } else if (hze === 600) {
+            message = challengeUnlock('Experience', true, true);
+        }
+        MODULES.u1unlocks.challenge = challenge;
+    } else if (game.global.universe === 2) {
+        var hze = game.stats.highestRadLevel.valueTotal();
 
-		if (hze >= 15) challenge.push('Unlucky');
-		if (hze >= 20) challenge.push('Downsize');
-		if (hze >= 25) challenge.push('Transmute');
-		if (hze >= 35) challenge.push('Daily');
-		if (hze >= 35) challenge.push('Unbalance');
-		if (hze >= 40) challenge.push('Bublé');
-		if (hze >= 45) challenge.push('Duel');
-		if (hze >= 50) challenge.push('Melt');
-		if (hze >= 60) challenge.push('Trappapalooza');
-		if (hze >= 70) challenge.push('Wither');
-		if (hze >= 70) challenge.push('Quagmire');
-		if (hze >= 85) challenge.push('Quest');
-		if (hze >= 90) challenge.push('Archaeology');
-		if (hze >= 100) challenge.push('Mayhem');
-		if (hze >= 105) challenge.push('Storm');
-		if (hze >= 110) challenge.push('Insanity');
-		if (hze >= 115) challenge.push('Berserk');
-		if (hze >= 135) challenge.push('Nurture');
-		if (hze >= 150) challenge.push('Pandemonium');
-		if (hze >= 155) challenge.push('Alchemy');
-		if (hze >= 175) challenge.push('Hypothermia');
-		if (hze >= 175) challenge.push('Glass');
-		if (hze >= 200) challenge.push('Desolation');
-		if (hze >= 201) challenge.push('Smithless');
+        if (hze >= 15) challenge.push('Unlucky');
+        if (hze >= 20) challenge.push('Downsize');
+        if (hze >= 25) challenge.push('Transmute');
+        if (hze >= 35) challenge.push('Daily');
+        if (hze >= 35) challenge.push('Unbalance');
+        if (hze >= 40) challenge.push('Bublé');
+        if (hze >= 45) challenge.push('Duel');
+        if (hze >= 50) challenge.push('Melt');
+        if (hze >= 60) challenge.push('Trappapalooza');
+        if (hze >= 70) challenge.push('Wither');
+        if (hze >= 70) challenge.push('Quagmire');
+        if (hze >= 85) challenge.push('Quest');
+        if (hze >= 90) challenge.push('Archaeology');
+        if (hze >= 100) challenge.push('Mayhem');
+        if (hze >= 105) challenge.push('Storm');
+        if (hze >= 110) challenge.push('Insanity');
+        if (hze >= 115) challenge.push('Berserk');
+        if (hze >= 135) challenge.push('Nurture');
+        if (hze >= 150) challenge.push('Pandemonium');
+        if (hze >= 155) challenge.push('Alchemy');
+        if (hze >= 175) challenge.push('Hypothermia');
+        if (hze >= 175) challenge.push('Glass');
+        if (hze >= 200) challenge.push('Desolation');
+        if (hze >= 201) challenge.push('Smithless');
 
-		if (Object.keys(MODULES.u2unlocks).length === 0) {
-			MODULES.u2unlocks.challenge = challenge;
-			return;
-		}
+        if (Object.keys(MODULES.u2unlocks).length === 0) {
+            MODULES.u2unlocks.challenge = challenge;
+            return;
+        }
 
-		var message = '';
-		//Transmute
-		if (hze === 25 && !MODULES.u2unlocks.challenge.includes('Transmute')) {
-			message = "You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.";
-		} //Dailies
-		else if (hze === 30 && !MODULES.u2unlocks.challenge.includes('Daily')) {
-			message = "You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.";
-		} //Unblance
-		else if (hze === 35) {
-			message = challengeUnlock('Unbalance', true, true);
-		} //Duel
-		else if (hze === 45) {
-			message = challengeUnlock('Duel', true, true);
-		} //Bublé
-		else if (hze === 40) {
-			message = challengeUnlock('Bublé');
-		} //C3, Melt, Worshippers
-		else if (hze === 50) {
-			//Melt
-			message = challengeUnlock('Melt');
-			if (message !== '') {
-				message += "<br><br>"
-				//C3
-				message += "Due to unlocking Challenge 3's there is now a Challenge 3 option under Auto Portal to be able to auto portal into them. Also you can now access the " + cinf() + " tab within the the scripts settings.";
-				if (message !== '') message += "<br><br>"
-				//Worshippers
-				message += "You can now use the Worshipper Farm setting. This can be found in the the scripts 'Maps' tab.";
-			}
-		} //Trappapalooza
-		else if (hze === 60) {
-			message = challengeUnlock('Trappapalooza', true, true);
-		} //Quagmire
-		else if (hze === 70) {
-			message = challengeUnlock('Quagmire', true, false);
-			//Wither
-			message += challengeUnlock('Wither', true, true);
-		} //Quest
-		else if (hze === 85) {
-			message = challengeUnlock('Quest', true, true);
-		} //Archaeology
-		else if (hze === 90) {
-			message = challengeUnlock('Archaeology', true, false);
-		} //Mayhem
-		else if (hze === 100) {
-			message = challengeUnlock('Mayhem', true, true);
-		} //Storm
-		else if (hze === 105) {
-			message = challengeUnlock('Storm', true, true);
-		} //Insanity
-		else if (hze === 110) {
-			message = challengeUnlock('Insanity', true, false);
-		} //Berserk
-		else if (hze === 115) {
-			message = challengeUnlock('Berserk');
-		} //Nurture
-		else if (hze === 135) {
-			message = challengeUnlock('Nurture', false, false);
-			if (message !== '') message += " There is also setting for Laboratory's that has been added to the AutoStructure setting.";
-		} //Pandemonium
-		else if (hze === 150) {
-			message = challengeUnlock('Pandemonium', true, true);
-		} //Alchemy
-		else if (hze === 155) {
-			message = challengeUnlock('Alchemy', true, false);
-		} //Hypothermia
-		else if (hze === 175) {
-			message = challengeUnlock('Hypothermia', true, false);
-			if (message !== '') message += "<br><br>"
-			//Glass
-			message += challengeUnlock('Glass', true, true);
-		} //Desolation
-		else if (hze === 200) {
-			message = challengeUnlock('Desolation', true, true);
-		} //Smithless
-		else if (hze === 201) {
-			message = challengeUnlock('Smithless', true, true);
-		}
-		MODULES.u2unlocks.challenge = challenge;
-	}
+        var message = '';
+        //Transmute
+        if (hze === 25 && !MODULES.u2unlocks.challenge.includes('Transmute')) {
+            message = 'You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.';
+        } //Dailies
+        else if (hze === 30 && !MODULES.u2unlocks.challenge.includes('Daily')) {
+            message = 'You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.';
+        } //Unblance
+        else if (hze === 35) {
+            message = challengeUnlock('Unbalance', true, true);
+        } //Duel
+        else if (hze === 45) {
+            message = challengeUnlock('Duel', true, true);
+        } //Bublé
+        else if (hze === 40) {
+            message = challengeUnlock('Bublé');
+        } //C3, Melt, Worshippers
+        else if (hze === 50) {
+            //Melt
+            message = challengeUnlock('Melt');
+            if (message !== '') {
+                message += '<br><br>';
+                //C3
+                message += "Due to unlocking Challenge 3's there is now a Challenge 3 option under Auto Portal to be able to auto portal into them. Also you can now access the " + cinf() + ' tab within the the scripts settings.';
+                if (message !== '') message += '<br><br>';
+                //Worshippers
+                message += "You can now use the Worshipper Farm setting. This can be found in the the scripts 'Maps' tab.";
+            }
+        } //Trappapalooza
+        else if (hze === 60) {
+            message = challengeUnlock('Trappapalooza', true, true);
+        } //Quagmire
+        else if (hze === 70) {
+            message = challengeUnlock('Quagmire', true, false);
+            //Wither
+            message += challengeUnlock('Wither', true, true);
+        } //Quest
+        else if (hze === 85) {
+            message = challengeUnlock('Quest', true, true);
+        } //Archaeology
+        else if (hze === 90) {
+            message = challengeUnlock('Archaeology', true, false);
+        } //Mayhem
+        else if (hze === 100) {
+            message = challengeUnlock('Mayhem', true, true);
+        } //Storm
+        else if (hze === 105) {
+            message = challengeUnlock('Storm', true, true);
+        } //Insanity
+        else if (hze === 110) {
+            message = challengeUnlock('Insanity', true, false);
+        } //Berserk
+        else if (hze === 115) {
+            message = challengeUnlock('Berserk');
+        } //Nurture
+        else if (hze === 135) {
+            message = challengeUnlock('Nurture', false, false);
+            if (message !== '') message += " There is also setting for Laboratory's that has been added to the AutoStructure setting.";
+        } //Pandemonium
+        else if (hze === 150) {
+            message = challengeUnlock('Pandemonium', true, true);
+        } //Alchemy
+        else if (hze === 155) {
+            message = challengeUnlock('Alchemy', true, false);
+        } //Hypothermia
+        else if (hze === 175) {
+            message = challengeUnlock('Hypothermia', true, false);
+            if (message !== '') message += '<br><br>';
+            //Glass
+            message += challengeUnlock('Glass', true, true);
+        } //Desolation
+        else if (hze === 200) {
+            message = challengeUnlock('Desolation', true, true);
+        } //Smithless
+        else if (hze === 201) {
+            message = challengeUnlock('Smithless', true, true);
+        }
+        MODULES.u2unlocks.challenge = challenge;
+    }
 
-	if (message !== '') {
-		message += "<br><br><b>To disable this popup, click confirm!<b>";
-		hzeMessage = message;
-		MODULES.popups.challenge = true;
-		tooltip('confirm', null, 'update', hzeMessage, ('MODULES.popups.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
-	}
+    if (message !== '') {
+        message += '<br><br><b>To disable this popup, click confirm!<b>';
+        hzeMessage = message;
+        MODULES.popups.challenge = true;
+        tooltip('confirm', null, 'update', hzeMessage, 'MODULES.popups.challenge = false, delete hzeMessage', 'AutoTrimps New Unlock!');
+    }
 }
 
 //Setup the mods for the heirloom based on the rarity selected by the user.
 function autoHeirloomOptions(heirloomType) {
-	const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	const heirloomRarity = rarities.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse));
-	var heirloomModsArray = ["Any"];
-	if (typeof heirloomInfo !== 'function') return heirloomModsArray;
-	const heirloomData = heirloomInfo(heirloomType);
-	for (var item in game.heirlooms[heirloomType]) {
-		var heirloom = game.heirlooms[heirloomType][item];
-		if (item === "empty") continue;
-		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
-		if (heirloom.steps && heirloom.steps[heirloomRarity] === -1) continue;
-		heirloomModsArray.push(heirloomData[item].name);
-	}
+    const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+    const heirloomRarity = rarities.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse));
+    var heirloomModsArray = ['Any'];
+    if (typeof heirloomInfo !== 'function') return heirloomModsArray;
+    const heirloomData = heirloomInfo(heirloomType);
+    for (var item in game.heirlooms[heirloomType]) {
+        var heirloom = game.heirlooms[heirloomType][item];
+        if (item === 'empty') continue;
+        if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
+        if (heirloom.steps && heirloom.steps[heirloomRarity] === -1) continue;
+        heirloomModsArray.push(heirloomData[item].name);
+    }
 
-	return heirloomModsArray;
+    return heirloomModsArray;
 }
 
 function onKeyPressSetting(event, id, multi, negative) {
-	if (event.which === 13 || event.keyCode === 13) {
-		if (negative !== undefined && multi !== undefined)
-			autoSetValue(id, multi, negative);
-		else
-			autoSetText(id, multi);
-	}
+    if (event.which === 13 || event.keyCode === 13) {
+        if (negative !== undefined && multi !== undefined) autoSetValue(id, multi, negative);
+        else autoSetText(id, multi);
+    }
 }
 
 function parseNum(num) {
-	if (num.split('e')[1]) {
-		num = num.split('e');
-		num = Math.floor(parseFloat(num[0]) * (Math.pow(10, parseInt(num[1]))));
-	} else {
-		var letters = num.replace(/[^a-z]/gi, '');
-		var base = 0;
-		if (letters.length) {
-			var suffices = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td', 'Qad', 'Qid', 'Sxd', 'Spd', 'Od', 'Nd', 'V', 'Uv', 'Dv', 'Tv', 'Qav', 'Qiv', 'Sxv', 'Spv', 'Ov', 'Nv', 'Tt'];
-			for (var x = 0; x < suffices.length; x++) {
-				if (suffices[x].toLowerCase() === letters.toLowerCase()) {
-					base = x + 1;
-					break;
-				}
-			}
-			if (base) num = Math.round(parseFloat(num.split(letters)[0]) * Math.pow(1000, base));
-		}
-		if (!base) num = parseFloat(num);
-	}
-	return num;
+    if (num.split('e')[1]) {
+        num = num.split('e');
+        num = Math.floor(parseFloat(num[0]) * Math.pow(10, parseInt(num[1])));
+    } else {
+        var letters = num.replace(/[^a-z]/gi, '');
+        var base = 0;
+        if (letters.length) {
+            var suffices = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td', 'Qad', 'Qid', 'Sxd', 'Spd', 'Od', 'Nd', 'V', 'Uv', 'Dv', 'Tv', 'Qav', 'Qiv', 'Sxv', 'Spv', 'Ov', 'Nv', 'Tt'];
+            for (var x = 0; x < suffices.length; x++) {
+                if (suffices[x].toLowerCase() === letters.toLowerCase()) {
+                    base = x + 1;
+                    break;
+                }
+            }
+            if (base) num = Math.round(parseFloat(num.split(letters)[0]) * Math.pow(1000, base));
+        }
+        if (!base) num = parseFloat(num);
+    }
+    return num;
 }
 
 function autoSetValueToolTip(id, text, multi, negative) {
-	ranstring = text;
-	var value = 'value'
-	if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
-	var elem = document.getElementById('tooltipDiv');
-	var tooltipText = 'Type a number below. You can use shorthand such as 2e5, 1sx, or 200k.';
-	if (negative) tooltipText += ' Accepts negative numbers as validated inputs.';
-	else tooltipText += ' Put -1 for Infinite.';
-	tooltipText += `<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multi}, ${negative})" value="${autoTrimpSettings[id][value]}"></input>`;
-	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue(\'' + id + '\',' + multi + ',' + negative + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
-	game.global.lockTooltip = true;
-	elem.style.left = '32.5%';
-	elem.style.top = '25%';
-	document.getElementById('tipTitle').innerHTML = ranstring + ':  Value Input';
-	document.getElementById('tipText').innerHTML = tooltipText;
-	document.getElementById('tipCost').innerHTML = costText;
-	elem.style.display = 'block';
-	var box = document.getElementById('customNumberBox');
-	try {
-		box.setSelectionRange(0, box.value.length);
-	} catch (e) {
-		box.select();
-	}
-	box.focus();
+    ranstring = text;
+    var value = 'value';
+    if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
+    var elem = document.getElementById('tooltipDiv');
+    var tooltipText = 'Type a number below. You can use shorthand such as 2e5, 1sx, or 200k.';
+    if (negative) tooltipText += ' Accepts negative numbers as validated inputs.';
+    else tooltipText += ' Put -1 for Infinite.';
+    tooltipText += `<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multi}, ${negative})" value="${autoTrimpSettings[id][value]}"></input>`;
+    var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue(\'' + id + "'," + multi + ',' + negative + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
+    game.global.lockTooltip = true;
+    elem.style.left = '32.5%';
+    elem.style.top = '25%';
+    document.getElementById('tipTitle').innerHTML = ranstring + ':  Value Input';
+    document.getElementById('tipText').innerHTML = tooltipText;
+    document.getElementById('tipCost').innerHTML = costText;
+    elem.style.display = 'block';
+    var box = document.getElementById('customNumberBox');
+    try {
+        box.setSelectionRange(0, box.value.length);
+    } catch (e) {
+        box.select();
+    }
+    box.focus();
 }
 
 function autoSetValue(id, multiValue, negative) {
-	var value = 'value';
-	if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
-	var num = 0;
-	unlockTooltip();
-	tooltip('hide');
-	var numBox = document.getElementById('customNumberBox');
-	if (numBox) {
-		num = numBox.value;
-		if (multiValue) {
-			num = num.split(',').map(parseNum);
-			for (var item in num) {
-				if (isNaN(item) || item === null || item === '') {
-					return tooltip('confirm', null, 'update', 'Error with input ("' + numBox.value + '"), please try again', null, '<b>' + autoTrimpSettings[id].name() + ' Setting Input Error!');
-				}
-			}
-		} else {
-			num = parseNum(num);
-			if (isNaN(num) || num === null || num === '') {
-				return tooltip('confirm', null, 'update', 'Error with input ("' + numBox.value + '"), please try again', null, '<b>' + autoTrimpSettings[id].name() + ' Setting Input Error!');
-			}
-		}
-	} else return;
+    var value = 'value';
+    if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
+    var num = 0;
+    unlockTooltip();
+    tooltip('hide');
+    var numBox = document.getElementById('customNumberBox');
+    if (numBox) {
+        num = numBox.value;
+        if (multiValue) {
+            num = num.split(',').map(parseNum);
+            for (var item in num) {
+                if (isNaN(item) || item === null || item === '') {
+                    return tooltip('confirm', null, 'update', 'Error with input ("' + numBox.value + '"), please try again', null, '<b>' + autoTrimpSettings[id].name() + ' Setting Input Error!');
+                }
+            }
+        } else {
+            num = parseNum(num);
+            if (isNaN(num) || num === null || num === '') {
+                return tooltip('confirm', null, 'update', 'Error with input ("' + numBox.value + '"), please try again', null, '<b>' + autoTrimpSettings[id].name() + ' Setting Input Error!');
+            }
+        }
+    } else return;
 
-	autoTrimpSettings[id][value] = num;
-	if (Array.isArray(num)) {
-		// In here
-		document.getElementById(id).innerHTML = ranstring + ': ' + num[0] + '+';
-	}
-	else if (num > -1 || negative)
-		document.getElementById(id).innerHTML = ranstring + ': ' + prettify(num);
-	else
-		document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
-	updateCustomButtons();
-	saveSettings();
-	if (id === 'presetCombatRespecCell') MODULES.portal.disableAutoRespec = 0;
-	if (num > game.global.world && (id === 'dailyDontPortalBefore' || id === 'heliumHrDontPortalBefore')) {
-		MODULES.mapFunctions.afterVoids = false;
-		mapSettings.portalAfterVoids = false;
-	}
+    autoTrimpSettings[id][value] = num;
+    if (Array.isArray(num)) {
+        // In here
+        document.getElementById(id).innerHTML = ranstring + ': ' + num[0] + '+';
+    } else if (num > -1 || negative) document.getElementById(id).innerHTML = ranstring + ': ' + prettify(num);
+    else document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
+    updateCustomButtons();
+    saveSettings();
+    if (id === 'presetCombatRespecCell') MODULES.portal.disableAutoRespec = 0;
+    if (num > game.global.world && (id === 'dailyDontPortalBefore' || id === 'heliumHrDontPortalBefore')) {
+        MODULES.mapFunctions.afterVoids = false;
+        mapSettings.portalAfterVoids = false;
+    }
 }
 
 function autoSetTextToolTip(id, text, multiValue) {
-	ranstring = text;
-	var elem = document.getElementById('tooltipDiv');
-	var value = 'value'
-	if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
-	var tooltipText = 'Type your input below';
-	tooltipText += `<br/><br/><input id="customTextBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multiValue})" value="${autoTrimpSettings[id][value]}"></input>`;
-	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetText(\'' + id + '\',' + multiValue + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
-	game.global.lockTooltip = true;
-	elem.style.left = '32.5%';
-	elem.style.top = '25%';
-	document.getElementById('tipTitle').innerHTML = ranstring + ':  Value Input';
-	document.getElementById('tipText').innerHTML = tooltipText;
-	document.getElementById('tipCost').innerHTML = costText;
-	elem.style.display = 'block';
-	var box = document.getElementById('customTextBox');
-	try {
-		box.setSelectionRange(0, box.value.length);
-	} catch (e) {
-		box.select();
-	}
-	box.focus();
+    ranstring = text;
+    var elem = document.getElementById('tooltipDiv');
+    var value = 'value';
+    if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
+    var tooltipText = 'Type your input below';
+    tooltipText += `<br/><br/><input id="customTextBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multiValue})" value="${autoTrimpSettings[id][value]}"></input>`;
+    var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetText(\'' + id + "'," + multiValue + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
+    game.global.lockTooltip = true;
+    elem.style.left = '32.5%';
+    elem.style.top = '25%';
+    document.getElementById('tipTitle').innerHTML = ranstring + ':  Value Input';
+    document.getElementById('tipText').innerHTML = tooltipText;
+    document.getElementById('tipCost').innerHTML = costText;
+    elem.style.display = 'block';
+    var box = document.getElementById('customTextBox');
+    try {
+        box.setSelectionRange(0, box.value.length);
+    } catch (e) {
+        box.select();
+    }
+    box.focus();
 }
 
 function autoSetText(id, multiValue) {
-	var textVal = 'empty';
-	var value = 'value'
-	if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
-	unlockTooltip();
-	tooltip('hide');
-	var textBox = document.getElementById('customTextBox');
-	if (textBox) {
-		if (multiValue) {
-			textVal = textBox.value.replace(/, /g, ",");
-			textVal = textVal.split(',').map(String);
-		} else {
-			textVal = textBox.value
-		}
-	} else return
+    var textVal = 'empty';
+    var value = 'value';
+    if (autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
+    unlockTooltip();
+    tooltip('hide');
+    var textBox = document.getElementById('customTextBox');
+    if (textBox) {
+        if (multiValue) {
+            textVal = textBox.value.replace(/, /g, ',');
+            textVal = textVal.split(',').map(String);
+        } else {
+            textVal = textBox.value;
+        }
+    } else return;
 
-	autoTrimpSettings[id][value] = textVal;
-	if (textVal !== undefined) {
-
-		if (Array.isArray(textVal) && textVal.length === 1 && textVal[0] === -1)
-			document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
-		else if (Array.isArray(textVal))
-			document.getElementById(id).innerHTML = ranstring + ': ' + textVal[0] + '+';
-		else if (textVal.length > 18)
-			document.getElementById(id).innerHTML = ranstring + ': ' + textVal.substring(0, 21) + '...';
-		else
-			document.getElementById(id).innerHTML = ranstring + ': ' + textVal.substring(0, 21);
-	}
-	updateCustomButtons();
-	saveSettings();
+    autoTrimpSettings[id][value] = textVal;
+    if (textVal !== undefined) {
+        if (Array.isArray(textVal) && textVal.length === 1 && textVal[0] === -1) document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
+        else if (Array.isArray(textVal)) document.getElementById(id).innerHTML = ranstring + ': ' + textVal[0] + '+';
+        else if (textVal.length > 18) document.getElementById(id).innerHTML = ranstring + ': ' + textVal.substring(0, 21) + '...';
+        else document.getElementById(id).innerHTML = ranstring + ': ' + textVal.substring(0, 21);
+    }
+    updateCustomButtons();
+    saveSettings();
 }
 
 function autoToggle(what) {
-	//Changing where buttons are placed depending on TW status.
-	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) {
-		if (document.getElementById("autoTrimpsTabBarMenu").parentNode.id === 'settingsRow') {
-			document.getElementById("settingsRowTW").appendChild(document.getElementById("autoTrimpsTabBarMenu"));
-			document.getElementById("settingsRowTW").appendChild(document.getElementById("autoSettings"));
+    //Changing where buttons are placed depending on TW status.
+    if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) {
+        if (document.getElementById('autoTrimpsTabBarMenu').parentNode.id === 'settingsRow') {
+            document.getElementById('settingsRowTW').appendChild(document.getElementById('autoTrimpsTabBarMenu'));
+            document.getElementById('settingsRowTW').appendChild(document.getElementById('autoSettings'));
 
-			document.getElementById('autoTrimpsTabBarMenu').style.display = 'none';
-			document.getElementById('autoSettings').style.display = 'none';
-		}
-	}
-	else {
-		if (document.getElementById("autoTrimpsTabBarMenu").parentNode.id === 'settingsRowTW') {
-			document.getElementById("settingsRow").appendChild(document.getElementById("autoTrimpsTabBarMenu"));
-			document.getElementById("settingsRow").appendChild(document.getElementById("autoSettings"));
+            document.getElementById('autoTrimpsTabBarMenu').style.display = 'none';
+            document.getElementById('autoSettings').style.display = 'none';
+        }
+    } else {
+        if (document.getElementById('autoTrimpsTabBarMenu').parentNode.id === 'settingsRowTW') {
+            document.getElementById('settingsRow').appendChild(document.getElementById('autoTrimpsTabBarMenu'));
+            document.getElementById('settingsRow').appendChild(document.getElementById('autoSettings'));
 
-			document.getElementById('autoTrimpsTabBarMenu').style.display = 'none';
-			document.getElementById('autoSettings').style.display = 'none';
-		}
-	}
+            document.getElementById('autoTrimpsTabBarMenu').style.display = 'none';
+            document.getElementById('autoSettings').style.display = 'none';
+        }
+    }
 
-	if (what) {
-		var $what = document.getElementById(what);
-		if ($what.style.display === 'block') {
-			$what.style.display = 'none';
-			document.getElementById(what + 'BTN').style.border = '';
-		} else {
-			$what.style.display = 'block';
-			document.getElementById(what + 'BTN').style.border = '4px solid green';
-		}
-	} else {
-		if (game.options.displayed)
-			toggleSettingsMenu();
-		var $item = document.getElementById('graphParent');
-		if ($item !== null) {
-			if ($item.style.display === 'block')
-				$item.style.display = 'none';
-		}
-		var $item = document.getElementById('autoTrimpsTabBarMenu');
-		if ($item !== null) {
-			if ($item.style.display === 'block')
-				$item.style.display = 'none';
-			else
-				$item.style.display = 'block';
-		}
-		var $item = document.getElementById('autoSettings');
-		if ($item !== null) {
-			if ($item.style.display === 'block')
-				$item.style.display = 'none';
-			else {
-				$item.style.display = 'block';
-				updateCustomButtons(true);
-			}
-		}
-	}
-	updateCustomButtons();
+    if (what) {
+        var $what = document.getElementById(what);
+        if ($what.style.display === 'block') {
+            $what.style.display = 'none';
+            document.getElementById(what + 'BTN').style.border = '';
+        } else {
+            $what.style.display = 'block';
+            document.getElementById(what + 'BTN').style.border = '4px solid green';
+        }
+    } else {
+        if (game.options.displayed) toggleSettingsMenu();
+        var $item = document.getElementById('graphParent');
+        if ($item !== null) {
+            if ($item.style.display === 'block') $item.style.display = 'none';
+        }
+        var $item = document.getElementById('autoTrimpsTabBarMenu');
+        if ($item !== null) {
+            if ($item.style.display === 'block') $item.style.display = 'none';
+            else $item.style.display = 'block';
+        }
+        var $item = document.getElementById('autoSettings');
+        if ($item !== null) {
+            if ($item.style.display === 'block') $item.style.display = 'none';
+            else {
+                $item.style.display = 'block';
+                updateCustomButtons(true);
+            }
+        }
+    }
+    updateCustomButtons();
 }
 
 function autoPlusSettingsMenu() {
-	var $item = document.getElementById('autoSettings');
-	if ($item !== null && $item.style.display === 'block')
-		$item.style.display = 'none';
-	$item = document.getElementById('graphParent');
-	if ($item !== null && $item.style.display === 'block')
-		$item.style.display = 'none';
-	$item = document.getElementById('autoTrimpsTabBarMenu');
-	if ($item !== null && $item.style.display === 'block')
-		$item.style.display = 'none';
-	toggleSettingsMenu();
+    var $item = document.getElementById('autoSettings');
+    if ($item !== null && $item.style.display === 'block') $item.style.display = 'none';
+    $item = document.getElementById('graphParent');
+    if ($item !== null && $item.style.display === 'block') $item.style.display = 'none';
+    $item = document.getElementById('autoTrimpsTabBarMenu');
+    if ($item !== null && $item.style.display === 'block') $item.style.display = 'none';
+    toggleSettingsMenu();
 }
 
 function toggleElem(elem, showHide) {
-	var $item = document.getElementById(elem);
-	if ($item === null) return;
-	var state = showHide ? '' : 'none';
-	var stateParent = showHide ? 'inline-block' : 'none';
-	if ($item.style.display !== state)
-		$item.style.display = state;
-	if ($item.parentNode.style.display !== stateParent)
-		$item.parentNode.style.display = stateParent;
+    var $item = document.getElementById(elem);
+    if ($item === null) return;
+    var state = showHide ? '' : 'none';
+    var stateParent = showHide ? 'inline-block' : 'none';
+    if ($item.style.display !== state) $item.style.display = state;
+    if ($item.parentNode.style.display !== stateParent) $item.parentNode.style.display = stateParent;
 
-	var settingToCheck = autoTrimpSettings[elem];
+    var settingToCheck = autoTrimpSettings[elem];
 
-	if (settingToCheck !== undefined && settingToCheck.type === 'dropdown') {
-		var selected = 'selected';
-		if (currSettingUniverse === 2 && settingToCheck.universe.indexOf(0) === -1) selected += 'U2';
-		if (document.getElementById(elem).value !== settingToCheck[selected]) {
-			document.getElementById(elem).value = settingToCheck[selected];
-		}
-	}
+    if (settingToCheck !== undefined && settingToCheck.type === 'dropdown') {
+        var selected = 'selected';
+        if (currSettingUniverse === 2 && settingToCheck.universe.indexOf(0) === -1) selected += 'U2';
+        if (document.getElementById(elem).value !== settingToCheck[selected]) {
+            document.getElementById(elem).value = settingToCheck[selected];
+        }
+    }
 }
 
 function turnOff(elem) {
-	toggleElem(elem, false);
+    toggleElem(elem, false);
 }
 
 function turnOn(elem) {
-	if (typeof autoTrimpSettings[elem] !== 'undefined' && typeof (autoTrimpSettings[elem].require) !== 'undefined') {
-		if (getPageSetting('displayAllSettings') || autoTrimpSettings[elem].require()) {
-			toggleElem(elem, true);
-		}
-		else
-			toggleElem(elem, false);
-	}
-
-	else toggleElem(elem, true);
+    if (typeof autoTrimpSettings[elem] !== 'undefined' && typeof autoTrimpSettings[elem].require !== 'undefined') {
+        if (getPageSetting('displayAllSettings') || autoTrimpSettings[elem].require()) {
+            toggleElem(elem, true);
+        } else toggleElem(elem, false);
+    } else toggleElem(elem, true);
 }
 
 function updateCustomButtons(initialLoad) {
-	if (typeof MODULES.graphs !== 'undefined' && typeof lastTheme !== 'undefined' && lastTheme && game.options.menu.darkTheme.enabled !== lastTheme) {
-		MODULES['graphs'].themeChanged();
-		lastTheme = game.options.menu.darkTheme.enabled;
-	}
-	//Hide settings
-	var radonon = autoTrimpSettings.universeSetting.value === 1;
-	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
+    if (typeof MODULES.graphs !== 'undefined' && typeof lastTheme !== 'undefined' && lastTheme && game.options.menu.darkTheme.enabled !== lastTheme) {
+        MODULES['graphs'].themeChanged();
+        lastTheme = game.options.menu.darkTheme.enabled;
+    }
+    //Hide settings
+    var radonon = autoTrimpSettings.universeSetting.value === 1;
+    currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 
-	//Loops through all the AT settings so we can properly setup the UI.
-	for (var setting in autoTrimpSettings) {
-		if (setting === 'ATversion' || setting === 'ATversionChangelog') continue;
-		var item = autoTrimpSettings[setting];
-		//Looks for the settings that don't exist anymore and deletes them.
-		if (item === null || typeof item.id === 'undefined') {
-			if (atSettings.initialise.loaded) delete autoTrimpSettings[setting];
-			continue;
-		}
-		var settingUniverse = item.universe;
-		//Looping the deletion process again for old settings that got loaded but don't have the universe property.
-		if (!Array.isArray(settingUniverse)) {
-			if (atSettings.initialise.loaded) delete autoTrimpSettings[setting];
-			continue;
-		}
-		//Skip if it's not a setting from the current universe.
-		else if (settingUniverse.indexOf(currSettingUniverse) !== -1 || settingUniverse.indexOf(0) !== -1) {
-			turnOn(setting, radonon);
-		} else {
-			turnOff(setting);
-		}
+    //Loops through all the AT settings so we can properly setup the UI.
+    for (var setting in autoTrimpSettings) {
+        if (setting === 'ATversion' || setting === 'ATversionChangelog') continue;
+        var item = autoTrimpSettings[setting];
+        //Looks for the settings that don't exist anymore and deletes them.
+        if (item === null || typeof item.id === 'undefined') {
+            if (atSettings.initialise.loaded) delete autoTrimpSettings[setting];
+            continue;
+        }
+        var settingUniverse = item.universe;
+        //Looping the deletion process again for old settings that got loaded but don't have the universe property.
+        if (!Array.isArray(settingUniverse)) {
+            if (atSettings.initialise.loaded) delete autoTrimpSettings[setting];
+            continue;
+        }
+        //Skip if it's not a setting from the current universe.
+        else if (settingUniverse.indexOf(currSettingUniverse) !== -1 || settingUniverse.indexOf(0) !== -1) {
+            turnOn(setting, radonon);
+        } else {
+            turnOff(setting);
+        }
 
-		//Skips items not from the universe settings we're looking at. Has to be here so that they're disabled when swapping universe settings.
-		if (settingUniverse.indexOf(currSettingUniverse) === -1 && settingUniverse.indexOf(0) === -1)
-			continue;
+        //Skips items not from the universe settings we're looking at. Has to be here so that they're disabled when swapping universe settings.
+        if (settingUniverse.indexOf(currSettingUniverse) === -1 && settingUniverse.indexOf(0) === -1) continue;
 
-		//Looks at all the settings that are from the current universe and sets them up. Will set text, tooltips.	
-		//Only happens when initialLoad is called which should only happen the 1st time AT loads or universeSetting is toggled.
-		if (initialLoad) {
-			var elem = document.getElementById(item.id);
-			if (elem === null) continue;
-			if (item.type === 'boolean') {
-				var itemEnabled = item.enabled;
-				if (radonon && settingUniverse.indexOf(0) === -1) itemEnabled = item['enabled' + 'U2'];
-				elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemEnabled);
+        //Looks at all the settings that are from the current universe and sets them up. Will set text, tooltips.
+        //Only happens when initialLoad is called which should only happen the 1st time AT loads or universeSetting is toggled.
+        if (initialLoad) {
+            var elem = document.getElementById(item.id);
+            if (elem === null) continue;
+            if (item.type === 'boolean') {
+                var itemEnabled = item.enabled;
+                if (radonon && settingUniverse.indexOf(0) === -1) itemEnabled = item['enabled' + 'U2'];
+                elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemEnabled);
 
-				elem.innerHTML = item.name();
-			}
-			else if (['value', 'valueNegative', 'multitoggle', 'multiValue', 'textValue', 'multiTextValue'].indexOf(item.type) >= 0) {
-				var itemValue = item.value;
-				if (radonon && settingUniverse.indexOf(0) === -1) itemValue = item['value' + 'U2'];
-				if (item.type === 'multitoggle') {
-					elem.innerHTML = item.name()[itemValue];
-					elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemValue);
-				}
-				else if (item.type === 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
-					elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + (itemValue.length > 18 ? '...' : '');
-				}
-				else if (item.type === 'multiValue' || item.type === 'multiTextValue') {
-					if (Array.isArray(itemValue) && itemValue.length === 1 && itemValue[0] === -1)
-						elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
-					else if (Array.isArray(itemValue))
-						elem.innerHTML = item.name() + ': ' + itemValue[0] + '+';
-					else
-						elem.innerHTML = item.name() + ': ' + itemValue;
-				}
-				else if (itemValue > -1 || item.type === 'valueNegative')
-					elem.innerHTML = item.name() + ': ' + prettify(itemValue);
-				else
-					elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
-			}
-			else if (item.type === 'dropdown') {
-				var itemSelected = item.selected;
-				if (radonon && settingUniverse.indexOf(0) === -1) itemSelected = item['selected' + 'U2'];
-				elem.innerHTML = '';
-				var listItems = item.list();
-				for (var dropdown in listItems) {
-					var option = document.createElement("option");
-					option.value = listItems[dropdown];
-					option.text = listItems[dropdown];
-					elem.appendChild(option);
-				}
-				elem.value = itemSelected;
-				elem = elem.parentNode;
-			}
-			else {
-				elem.innerHTML = item.name();
-			}
+                elem.innerHTML = item.name();
+            } else if (['value', 'valueNegative', 'multitoggle', 'multiValue', 'textValue', 'multiTextValue'].indexOf(item.type) >= 0) {
+                var itemValue = item.value;
+                if (radonon && settingUniverse.indexOf(0) === -1) itemValue = item['value' + 'U2'];
+                if (item.type === 'multitoggle') {
+                    elem.innerHTML = item.name()[itemValue];
+                    elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemValue);
+                } else if (item.type === 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
+                    elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + (itemValue.length > 18 ? '...' : '');
+                } else if (item.type === 'multiValue' || item.type === 'multiTextValue') {
+                    if (Array.isArray(itemValue) && itemValue.length === 1 && itemValue[0] === -1) elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
+                    else if (Array.isArray(itemValue)) elem.innerHTML = item.name() + ': ' + itemValue[0] + '+';
+                    else elem.innerHTML = item.name() + ': ' + itemValue;
+                } else if (itemValue > -1 || item.type === 'valueNegative') elem.innerHTML = item.name() + ': ' + prettify(itemValue);
+                else elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
+            } else if (item.type === 'dropdown') {
+                var itemSelected = item.selected;
+                if (radonon && settingUniverse.indexOf(0) === -1) itemSelected = item['selected' + 'U2'];
+                elem.innerHTML = '';
+                var listItems = item.list();
+                for (var dropdown in listItems) {
+                    var option = document.createElement('option');
+                    option.value = listItems[dropdown];
+                    option.text = listItems[dropdown];
+                    elem.appendChild(option);
+                }
+                elem.value = itemSelected;
+                elem = elem.parentNode;
+            } else {
+                elem.innerHTML = item.name();
+            }
 
+            if (item.type === 'multitoggle') {
+                elem.setAttribute('onmouseover', 'tooltip("' + item.name().join(' / ') + '", "customText", event, "' + item.description() + '")');
+            } else {
+                elem.setAttribute('onmouseover', 'tooltip("' + item.name() + '", "customText", event, "' + item.description() + '")');
+                //Updating input box & text that will be displayed upon saving!
+                if (item.type === 'value' || item.type === 'multiValue' || item.type === 'valueNegative') elem.setAttribute('onclick', `autoSetValueToolTip("${item.id}", "${item.name()}", "${item.type === 'multiValue'}", "${item.type === 'valueNegative'}")`);
+                if (item.type === 'textValue') elem.setAttribute('onclick', `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type === 'multiTextValue'})`);
+            }
+        }
+    }
 
-			if (item.type === 'multitoggle') {
-				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name().join(' / ') + '\", \"customText\", event, \"' + item.description() + '\")');
-			}
-			else {
-				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
-				//Updating input box & text that will be displayed upon saving!
-				if (item.type === 'value' || item.type === 'multiValue' || item.type === 'valueNegative') elem.setAttribute("onclick", `autoSetValueToolTip("${item.id}", "${item.name()}", "${item.type === 'multiValue'}", "${item.type === 'valueNegative'}")`);
-				if (item.type === 'textValue') elem.setAttribute("onclick", `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type === 'multiTextValue'})`);
-			}
-		}
-	}
+    //Sets up if the tabs will be visible or not.
+    //Only happens when initialLoad is called which should only happen the 1st time AT loads or universeSetting is toggled.
+    if (initialLoad) {
+        var hze = game.stats.highestLevel.valueTotal();
+        var highestRadonZone = game.stats.highestRadLevel.valueTotal();
+        var displayAllSettings = getPageSetting('displayAllSettings');
 
-	//Sets up if the tabs will be visible or not.
-	//Only happens when initialLoad is called which should only happen the 1st time AT loads or universeSetting is toggled.
-	if (initialLoad) {
-		var hze = game.stats.highestLevel.valueTotal();
-		var highestRadonZone = game.stats.highestRadLevel.valueTotal();
-		var displayAllSettings = getPageSetting('displayAllSettings');
-
-		//Buildings Tab
-		if (document.getElementById('tabBuildings') !== null)
-			document.getElementById('tabBuildings').style.display = !displayAllSettings && (radonon || (!radonon && hze < 60)) ? 'none' : '';
-		//Daily Tab
-		if (document.getElementById('tabDaily') !== null)
-			document.getElementById('tabDaily').style.display = !displayAllSettings && (!radonon && hze < 99) ? 'none' : '';
-		//C2+C3 Tab - Swapping name and description of C2 tab when swapping betwene universe settings.
-		if (document.getElementById('tabC2') !== null) {
-			document.getElementById('tabC2').style.display = !displayAllSettings && (!radonon && hze < 65) ? 'none' : '';
-			document.getElementById('C2').children[0].children[0].innerHTML = (cinf() + ' - Settings for ' + c2Description());
-			document.getElementById('tabC2').children[0].innerHTML = cinf();
-		}
-		//Spire Tab
-		if (document.getElementById('tabSpire') !== null)
-			document.getElementById('tabSpire').style.display = radonon || (!displayAllSettings && hze < 190) ? 'none' : '';
-		//Jobs Tab
-		if (document.getElementById('tabJobs') !== null)
-			document.getElementById('tabJobs').style.display = radonon || (!displayAllSettings && hze < 70) ? 'none' : '';
-		//Magma Tab
-		if (document.getElementById('tabMagma') !== null)
-			document.getElementById('tabMagma').style.display = radonon || (!displayAllSettings && hze < 230) ? 'none' : '';
-		//Nature Tab
-		if (document.getElementById('tabNature') !== null)
-			document.getElementById('tabNature').style.display = radonon || (!displayAllSettings && hze < 236) ? 'none' : '';
-		//Fluffy Tab
-		if (document.getElementById('tabFluffy') !== null)
-			document.getElementById('tabFluffy').style.display = radonon || (!displayAllSettings && game.global.spiresCompleted < 2) ? 'none' : '';
-		//Challenges Tab
-		if (document.getElementById('tabChallenges') !== null)
-			document.getElementById('tabChallenges').style.display = !displayAllSettings && ((radonon && highestRadonZone < 35) || (!radonon && hze < 40)) ? 'none' : '';
-		//Test Tab
-		if (document.getElementById('tabTest') !== null)
-			document.getElementById('tabTest').style.display = !gameUserCheck() ? 'none' : '';
-		//Beta Tab
-		if (document.getElementById('tabBeta') !== null)
-			document.getElementById('tabBeta').style.display = !gameUserCheck() ? 'none' : '';
-		//Update dropdown settings to select2 display.
-		updateDropdownLabels();
-	}
-	modifyParentNodeUniverseSwap();
+        //Buildings Tab
+        if (document.getElementById('tabBuildings') !== null) document.getElementById('tabBuildings').style.display = !displayAllSettings && (radonon || (!radonon && hze < 60)) ? 'none' : '';
+        //Daily Tab
+        if (document.getElementById('tabDaily') !== null) document.getElementById('tabDaily').style.display = !displayAllSettings && !radonon && hze < 99 ? 'none' : '';
+        //C2+C3 Tab - Swapping name and description of C2 tab when swapping betwene universe settings.
+        if (document.getElementById('tabC2') !== null) {
+            document.getElementById('tabC2').style.display = !displayAllSettings && !radonon && hze < 65 ? 'none' : '';
+            document.getElementById('C2').children[0].children[0].innerHTML = cinf() + ' - Settings for ' + c2Description();
+            document.getElementById('tabC2').children[0].innerHTML = cinf();
+        }
+        //Spire Tab
+        if (document.getElementById('tabSpire') !== null) document.getElementById('tabSpire').style.display = radonon || (!displayAllSettings && hze < 190) ? 'none' : '';
+        //Jobs Tab
+        if (document.getElementById('tabJobs') !== null) document.getElementById('tabJobs').style.display = radonon || (!displayAllSettings && hze < 70) ? 'none' : '';
+        //Magma Tab
+        if (document.getElementById('tabMagma') !== null) document.getElementById('tabMagma').style.display = radonon || (!displayAllSettings && hze < 230) ? 'none' : '';
+        //Nature Tab
+        if (document.getElementById('tabNature') !== null) document.getElementById('tabNature').style.display = radonon || (!displayAllSettings && hze < 236) ? 'none' : '';
+        //Fluffy Tab
+        if (document.getElementById('tabFluffy') !== null) document.getElementById('tabFluffy').style.display = radonon || (!displayAllSettings && game.global.spiresCompleted < 2) ? 'none' : '';
+        //Challenges Tab
+        if (document.getElementById('tabChallenges') !== null) document.getElementById('tabChallenges').style.display = !displayAllSettings && ((radonon && highestRadonZone < 35) || (!radonon && hze < 40)) ? 'none' : '';
+        //Test Tab
+        if (document.getElementById('tabTest') !== null) document.getElementById('tabTest').style.display = !gameUserCheck() ? 'none' : '';
+        //Beta Tab
+        if (document.getElementById('tabBeta') !== null) document.getElementById('tabBeta').style.display = !gameUserCheck() ? 'none' : '';
+        //Update dropdown settings to select2 display.
+        updateDropdownLabels();
+    }
+    modifyParentNodeUniverseSwap();
 }
 
 //Loading select2 and setting up new dropdown style
 function updateDropdownLabels() {
-	//Reload script every 10 milliseconds until the utils module has been loaded.
-	if (typeof jQuery.fn.select2 !== 'function') {
-		setTimeout(updateDropdownLabels, 10);
+    //Reload script every 10 milliseconds until the utils module has been loaded.
+    if (typeof jQuery.fn.select2 !== 'function') {
+        setTimeout(updateDropdownLabels, 10);
 
-		var script = document.createElement('script');
-		script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
-		script.type = 'text/javascript';
-		// Append the script to the document
-		document.head.appendChild(script);
-		return;
-	}
-	if (!atSettings.initialise.loaded) {
-		setTimeout(updateDropdownLabels, 10);
-		return;
-	}
+        var script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
+        script.type = 'text/javascript';
+        // Append the script to the document
+        document.head.appendChild(script);
+        return;
+    }
+    if (!atSettings.initialise.loaded) {
+        setTimeout(updateDropdownLabels, 10);
+        return;
+    }
 
-	$(document).ready(function () {
-		$('.select2').select2({
-			templateSelection: formatDropdownPrefix,
-			escapeMarkup: function (m) {
-				return m;
-			},
-		});
-	});
+    $(document).ready(function () {
+        $('.select2').select2({
+            templateSelection: formatDropdownPrefix,
+            escapeMarkup: function (m) {
+                return m;
+            }
+        });
+    });
 }
 
 //Used for the select2 dropdowns
 function formatDropdownPrefix(dropdownSetting) {
-	var prefix = dropdownSetting._resultId.split('-');
-	var prefixName;
-	var text = dropdownSetting.text;
+    var prefix = dropdownSetting._resultId.split('-');
+    var prefixName;
+    var text = dropdownSetting.text;
 
-	if (prefix)
-		prefixName = autoTrimpSettings[prefix[1]].name() + ': ';
-	else
-		prefixName = '';
-	return "<font color='#00A7E1'>" + prefixName + "</font> <float='right'>" + text + "</float>";
+    if (prefix) prefixName = autoTrimpSettings[prefix[1]].name() + ': ';
+    else prefixName = '';
+    return "<font color='#00A7E1'>" + prefixName + "</font> <float='right'>" + text + '</float>';
 }
 
 function settingUniverse(setting) {
-	if (setting === 'buyBuildings') {
-		return getPageSetting('buildingsType', portalUniverse);
-	}
-	if (setting === 'equipOn') {
-		return getPageSetting('equipOn', portalUniverse);
-	}
-	if (setting === 'autoJobs') {
-		return getPageSetting('jobType', portalUniverse);
-	}
-	if (setting === 'autoMaps') {
-		return getPageSetting('autoMaps', portalUniverse);
-	}
+    if (setting === 'buyBuildings') {
+        return getPageSetting('buildingsType', portalUniverse);
+    }
+    if (setting === 'equipOn') {
+        return getPageSetting('equipOn', portalUniverse);
+    }
+    if (setting === 'autoJobs') {
+        return getPageSetting('jobType', portalUniverse);
+    }
+    if (setting === 'autoMaps') {
+        return getPageSetting('autoMaps', portalUniverse);
+    }
 }
 
 //Setting up the Auto Maps status inside of Time Warp.
 function autoMapsStatusTW() {
+    if (typeof updateAutoMapsStatus !== 'function' || typeof isDoingSpire !== 'function') {
+        setTimeout(autoMapsStatusTW, 100);
+        console.log('Retrying to setup AutoMaps status in Time Warp.');
+        return;
+    }
 
-	if (typeof updateAutoMapsStatus !== 'function' || typeof isDoingSpire !== 'function') {
-		setTimeout(autoMapsStatusTW, 100);
-		console.log("Retrying to setup AutoMaps status in Time Warp.")
-		return;
-	};
+    //The position of the status textbox is based on if we're mapping or not mapping as each one has a different CSS position.
+    var whereToPlace = ['offlineZoneBtns', 'offlineMapBtns'];
+    var id = ['autoMapStatusMapsTW', 'autoMapStatusTW'];
+    var autoMapsStatusSection;
 
-	//The position of the status textbox is based on if we're mapping or not mapping as each one has a different CSS position.
-	var whereToPlace = ["offlineZoneBtns", "offlineMapBtns"];
-	var id = ["autoMapStatusMapsTW", "autoMapStatusTW"];
-	var autoMapsStatusSection;
+    //Status textbox
+    var autoMapsStatusContainer;
 
-	//Status textbox
-	var autoMapsStatusContainer;
+    for (var item in whereToPlace) {
+        if (document.getElementById(id[item]) !== null) continue;
+        autoMapsStatusContainer = document.createElement('DIV');
+        autoMapsStatusContainer.id = id[item];
+        autoMapsStatusContainer.setAttribute('class', 'noselect');
+        autoMapsStatusContainer.setAttribute('style', 'display: block; font-size: 1.25vw; text-align: center; background-color: rgba(0,0,0,0.3); position: absolute; bottom: 1vw; left: 10%; right: 10%');
+        autoMapsStatusContainer.setAttribute('onmouseout', 'tooltip("hide")');
+        //Place it at the bottom of the appropriate (left hand side )
+        document.getElementById(whereToPlace[item]).children[1].insertAdjacentHTML('afterend', '<br>');
+        autoMapsStatusSection = document.getElementById(whereToPlace[item]);
+        autoMapsStatusSection.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace[item]).children[2]);
+    }
 
-	for (var item in whereToPlace) {
-		if (document.getElementById(id[item]) !== null) continue;
-		autoMapsStatusContainer = document.createElement("DIV");
-		autoMapsStatusContainer.id = id[item];
-		autoMapsStatusContainer.setAttribute("class", "noselect");
-		autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1.25vw; text-align: center; background-color: rgba(0,0,0,0.3); position: absolute; bottom: 1vw; left: 10%; right: 10%");
-		autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
-		//Place it at the bottom of the appropriate (left hand side )
-		document.getElementById(whereToPlace[item]).children[1].insertAdjacentHTML('afterend', '<br>');
-		autoMapsStatusSection = document.getElementById(whereToPlace[item]);
-		autoMapsStatusSection.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace[item]).children[2]);
-	}
-
-	updateAutoMapsStatus(false);
+    updateAutoMapsStatus(false);
 }
 
 //Add the Time Warp settings to the right hand side section.
 function setupTimeWarpAT() {
-	autoMapsStatusTW();
+    autoMapsStatusTW();
 
-	//Remove the automaps button if it already exists.
-	if (document.getElementById('autoMapBtnTW') !== null)
-		document.getElementById('autoMapBtnTW').parentNode.removeChild(document.getElementById('autoMapBtnTW'));
+    //Remove the automaps button if it already exists.
+    if (document.getElementById('autoMapBtnTW') !== null) document.getElementById('autoMapBtnTW').parentNode.removeChild(document.getElementById('autoMapBtnTW'));
 
-	//Add the AutoMaps button to the right hand side section.
-	if (document.getElementById('autoMapBtnTW') === null) {
-		document.getElementById('offlineExtraBtnsContainer').children[2].insertAdjacentHTML('afterend', '<br>');
-		var offlineExtraBtnsContainer = document.getElementById("offlineFightBtn").parentNode;
-		offlineExtraBtnsContainer.replaceChild(autoMapsButton(), document.getElementById("offlineFightBtn").parentNode.children[3]);
-	}
+    //Add the AutoMaps button to the right hand side section.
+    if (document.getElementById('autoMapBtnTW') === null) {
+        document.getElementById('offlineExtraBtnsContainer').children[2].insertAdjacentHTML('afterend', '<br>');
+        var offlineExtraBtnsContainer = document.getElementById('offlineFightBtn').parentNode;
+        offlineExtraBtnsContainer.replaceChild(autoMapsButton(), document.getElementById('offlineFightBtn').parentNode.children[3]);
+    }
 
-	//Integrate the 3 AT TimeWarp related settings beneath the main UI.
-	//AT Settings, AT Auto Jobs, AT AutoStructure
-	if (document.getElementById('offlineInnerWrapper').children[4] === undefined) {
-		//Creating the row for the AT buttons that will be shown.
-		var settingsRow = document.createElement("DIV");
-		settingsRow.setAttribute("class", "row");
-		settingsRow.setAttribute("id", "settingBtnTW");
-		settingsRow.setAttribute("style", "display: block");
+    //Integrate the 3 AT TimeWarp related settings beneath the main UI.
+    //AT Settings, AT Auto Jobs, AT AutoStructure
+    if (document.getElementById('offlineInnerWrapper').children[4] === undefined) {
+        //Creating the row for the AT buttons that will be shown.
+        var settingsRow = document.createElement('DIV');
+        settingsRow.setAttribute('class', 'row');
+        settingsRow.setAttribute('id', 'settingBtnTW');
+        settingsRow.setAttribute('style', 'display: block');
 
-		document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
-		var offlineProgressParent = document.getElementById("offlineProgressWrapper").parentNode;
-		offlineProgressParent.replaceChild(settingsRow, document.getElementById("offlineProgressWrapper").parentNode.children[4]);
+        document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
+        var offlineProgressParent = document.getElementById('offlineProgressWrapper').parentNode;
+        offlineProgressParent.replaceChild(settingsRow, document.getElementById('offlineProgressWrapper').parentNode.children[4]);
 
-		//AutoJobs button.
-		const autoJobs = true;
-		if (autoJobs) {
-			//Creating parent button
-			var jobSetting = getPageSetting('jobType')
-			var atJobInitial = document.createElement("DIV");
-			atJobInitial.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
-			atJobInitial.setAttribute("id", "autoJobTWParent");
-			//Setting up mouseover & class, style
-			var atJobContainer = document.createElement("DIV");
-			atJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;");
-			atJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
-			atJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, autoTrimpSettings.jobType.description())');
-			atJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
-			//Text
-			var atJobText = document.createElement("DIV");
-			atJobText.innerHTML = autoTrimpSettings.jobType.name()[jobSetting];
-			atJobText.setAttribute("id", "autoJobLabelTW");
-			atJobText.setAttribute("onClick", "settingChanged('jobType', true)");
-			//Creating cogwheel & linking onclick
-			var atJobSettings = document.createElement("DIV");
-			atJobSettings.setAttribute('onclick', 'MAZLookalike("AutoJobs")');
-			var atJobSettingsButton = document.createElement("SPAN");
-			atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-			//Linking all the elements together and attaching them to the settings TW row.
-			atJobContainer.appendChild(atJobText);
-			atJobContainer.appendChild(atJobSettings);
-			atJobSettings.appendChild(atJobSettingsButton);
-			atJobInitial.appendChild(atJobContainer);
-			$('#settingBtnTW').append(atJobInitial);
-		}
+        //AutoJobs button.
+        const autoJobs = true;
+        if (autoJobs) {
+            //Creating parent button
+            var jobSetting = getPageSetting('jobType');
+            var atJobInitial = document.createElement('DIV');
+            atJobInitial.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
+            atJobInitial.setAttribute('id', 'autoJobTWParent');
+            //Setting up mouseover & class, style
+            var atJobContainer = document.createElement('DIV');
+            atJobContainer.setAttribute('style', 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;');
+            atJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
+            atJobContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoJobs", "customText", event, autoTrimpSettings.jobType.description())');
+            atJobContainer.setAttribute('onmouseout', 'tooltip("hide")');
+            //Text
+            var atJobText = document.createElement('DIV');
+            atJobText.innerHTML = autoTrimpSettings.jobType.name()[jobSetting];
+            atJobText.setAttribute('id', 'autoJobLabelTW');
+            atJobText.setAttribute('onClick', "settingChanged('jobType', true)");
+            //Creating cogwheel & linking onclick
+            var atJobSettings = document.createElement('DIV');
+            atJobSettings.setAttribute('onclick', 'MAZLookalike("AutoJobs")');
+            var atJobSettingsButton = document.createElement('SPAN');
+            atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+            //Linking all the elements together and attaching them to the settings TW row.
+            atJobContainer.appendChild(atJobText);
+            atJobContainer.appendChild(atJobSettings);
+            atJobSettings.appendChild(atJobSettingsButton);
+            atJobInitial.appendChild(atJobContainer);
+            $('#settingBtnTW').append(atJobInitial);
+        }
 
-		//AutoTrimp Settings button.
-		const autoTrimpsSettings = true;
-		if (autoTrimpsSettings) {
+        //AutoTrimp Settings button.
+        const autoTrimpsSettings = true;
+        if (autoTrimpsSettings) {
+            //Creating parent button
+            var atSettingsInitial = document.createElement('DIV');
+            atSettingsInitial.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
+            atSettingsInitial.setAttribute('id', 'atSettingsTW');
 
-			//Creating parent button
-			var atSettingsInitial = document.createElement("DIV");
-			atSettingsInitial.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
-			atSettingsInitial.setAttribute("id", "atSettingsTW");
+            //Setting up mouseover & class, style
+            var atSettingsContainer = document.createElement('DIV');
+            atSettingsContainer.setAttribute('style', 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;');
+            atSettingsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn4');
+            atSettingsContainer.innerHTML = 'AutoTrimp Settings';
+            atSettingsContainer.setAttribute('onClick', 'autoToggle();');
+            atSettingsContainer.setAttribute('onmouseover', 'tooltip("AutoTrimp Settings", "customText", event, "Click to open the AutoTrimps Settings menu.")');
+            atSettingsContainer.setAttribute('onmouseout', 'tooltip("hide")');
 
-			//Setting up mouseover & class, style
-			var atSettingsContainer = document.createElement("DIV");
-			atSettingsContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;");
-			atSettingsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn4');
-			atSettingsContainer.innerHTML = 'AutoTrimp Settings';
-			atSettingsContainer.setAttribute("onClick", "autoToggle();");
-			atSettingsContainer.setAttribute("onmouseover", 'tooltip(\"AutoTrimp Settings\", \"customText\", event, \"Click to open the AutoTrimps Settings menu.\")');
-			atSettingsContainer.setAttribute("onmouseout", 'tooltip("hide")');
+            //Linking all the elements together and attaching them to the settings TW row.
+            atSettingsInitial.appendChild(atSettingsContainer);
+            $('#settingBtnTW').append(atSettingsInitial);
+        }
 
-			//Linking all the elements together and attaching them to the settings TW row.
-			atSettingsInitial.appendChild(atSettingsContainer);
-			$('#settingBtnTW').append(atSettingsInitial);
-		}
+        //AutoStructure Button.
+        const autoStructure = true;
+        if (autoStructure) {
+            //Creating parent button
+            var autoStructureBtnParent = document.createElement('DIV');
+            autoStructureBtnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
+            autoStructureBtnParent.setAttribute('id', 'autoStructureLabelTWParent');
 
-		//AutoStructure Button.
-		const autoStructure = true;
-		if (autoStructure) {
+            //Setting up mouseover & class, style
+            var atStructureContainer = document.createElement('DIV');
+            atStructureContainer.setAttribute('style', 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;');
+            atStructureContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + settingUniverse('buyBuildings'));
+            atStructureContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoStructure", "customText", event, autoTrimpSettings.buildingsType.description())');
+            atStructureContainer.setAttribute('onmouseout', 'tooltip("hide")');
 
-			//Creating parent button
-			var autoStructureBtnParent = document.createElement("DIV");
-			autoStructureBtnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
-			autoStructureBtnParent.setAttribute("id", "autoStructureLabelTWParent");
+            //Text
+            var atStructureText = document.createElement('DIV');
+            atStructureText.innerHTML = 'AT AutoStructure';
+            atStructureText.setAttribute('id', 'autoStructureLabelTW');
+            atStructureText.setAttribute('onClick', "settingChanged('buildingsType', true)");
 
-			//Setting up mouseover & class, style
-			var atStructureContainer = document.createElement("DIV");
-			atStructureContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;");
-			atStructureContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + settingUniverse('buyBuildings'));
-			atStructureContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoStructure\", \"customText\", event, autoTrimpSettings.buildingsType.description())');
-			atStructureContainer.setAttribute("onmouseout", 'tooltip("hide")');
+            //Creating cogwheel & linking onclick
+            var atStructureSettings = document.createElement('DIV');
+            atStructureSettings.setAttribute('onclick', 'MAZLookalike("AutoStructure")');
+            var atStructureSettingsButton = document.createElement('SPAN');
+            atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
-			//Text
-			var atStructureText = document.createElement("DIV");
-			atStructureText.innerHTML = 'AT AutoStructure';
-			atStructureText.setAttribute("id", "autoStructureLabelTW");
-			atStructureText.setAttribute("onClick", "settingChanged('buildingsType', true)");
+            //Linking all the elements together and attaching them to the settings TW row.
+            atStructureContainer.appendChild(atStructureText);
+            atStructureContainer.appendChild(atStructureSettings);
+            atStructureSettings.appendChild(atStructureSettingsButton);
+            autoStructureBtnParent.appendChild(atStructureContainer);
+            $('#settingBtnTW').append(autoStructureBtnParent);
+        }
+    }
 
-			//Creating cogwheel & linking onclick
-			var atStructureSettings = document.createElement("DIV");
-			atStructureSettings.setAttribute('onclick', 'MAZLookalike("AutoStructure")');
-			var atStructureSettingsButton = document.createElement("SPAN");
-			atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-
-			//Linking all the elements together and attaching them to the settings TW row.
-			atStructureContainer.appendChild(atStructureText);
-			atStructureContainer.appendChild(atStructureSettings);
-			atStructureSettings.appendChild(atStructureSettingsButton);
-			autoStructureBtnParent.appendChild(atStructureContainer);
-			$('#settingBtnTW').append(autoStructureBtnParent);
-		}
-	}
-
-	timeWarpDisplay();
+    timeWarpDisplay();
 }
 
 //Display TW UI or regular UI depending on timeWarpDisplay setting.
 function timeWarpDisplay() {
-	if (!usingRealTimeOffline) return;
-	document.getElementById('offlineWrapper').style.display = getPageSetting('timeWarpDisplay') ? 'none' : 'block';
-	document.getElementById('innerWrapper').style.display = getPageSetting('timeWarpDisplay') ? 'block' : 'none';
+    if (!usingRealTimeOffline) return;
+    document.getElementById('offlineWrapper').style.display = getPageSetting('timeWarpDisplay') ? 'none' : 'block';
+    document.getElementById('innerWrapper').style.display = getPageSetting('timeWarpDisplay') ? 'block' : 'none';
 }
 
 function autoMapsButton() {
-	//Auto Maps button
-	var autoMapsContainer = document.createElement("DIV");
-	autoMapsContainer.setAttribute("id", "autoMapBtnTW");
-	autoMapsContainer.setAttribute("class", "btn btn-lg offlineExtraBtn settingsBtn settingBtn" + settingUniverse('autoMaps'));
-	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle', true);");
-	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
-	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	autoMapsContainer.innerHTML = 'Auto Maps';
+    //Auto Maps button
+    var autoMapsContainer = document.createElement('DIV');
+    autoMapsContainer.setAttribute('id', 'autoMapBtnTW');
+    autoMapsContainer.setAttribute('class', 'btn btn-lg offlineExtraBtn settingsBtn settingBtn' + settingUniverse('autoMaps'));
+    autoMapsContainer.setAttribute('onClick', "settingChanged('autoMapsToggle', true);");
+    autoMapsContainer.setAttribute('onmouseover', 'tooltip("Toggle Auto Maps", "customText", event, autoTrimpSettings.autoMaps.description(true))');
+    autoMapsContainer.setAttribute('onmouseout', 'tooltip("hide")');
+    autoMapsContainer.innerHTML = 'Auto Maps';
 
-	return autoMapsContainer;
+    return autoMapsContainer;
 }
 
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function setupATButtons() {
-	//Setup AutoTrimps settings button
-	var settingBtnSrch = document.getElementsByClassName("btn btn-default");
-	for (var i = 0; i < settingBtnSrch.length; i++) {
-		if (settingBtnSrch[i].getAttribute("onclick") === "toggleSettingsMenu()")
-			settingBtnSrch[i].setAttribute("onclick", "autoPlusSettingsMenu()");
-	}
+    //Setup AutoTrimps settings button
+    var settingBtnSrch = document.getElementsByClassName('btn btn-default');
+    for (var i = 0; i < settingBtnSrch.length; i++) {
+        if (settingBtnSrch[i].getAttribute('onclick') === 'toggleSettingsMenu()') settingBtnSrch[i].setAttribute('onclick', 'autoPlusSettingsMenu()');
+    }
 
-	//AutoTrimps Changelog button
-	var newItem = document.createElement("TD");
-	var newChanges = autoTrimpSettings.ATversionChangelog !== atSettings.initialise.version;
-	newItem.appendChild(document.createTextNode("AT " + atSettings.initialise.version.split('SadAugust ')[1] + (newChanges ? " | What's New" : "")));
-	newItem.setAttribute("id", "atChangelog");
-	newItem.setAttribute("class", "btn" + (newChanges ? " btn-changelogNew" : " btn-primary"));
-	newItem.setAttribute("onclick", "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();");
-	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
-	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[settingbarRow.childNodes.length - 4]);
+    //AutoTrimps Changelog button
+    var newItem = document.createElement('TD');
+    var newChanges = autoTrimpSettings.ATversionChangelog !== atSettings.initialise.version;
+    newItem.appendChild(document.createTextNode('AT ' + atSettings.initialise.version.split('SadAugust ')[1] + (newChanges ? " | What's New" : '')));
+    newItem.setAttribute('id', 'atChangelog');
+    newItem.setAttribute('class', 'btn' + (newChanges ? ' btn-changelogNew' : ' btn-primary'));
+    newItem.setAttribute('onclick', "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();");
+    var settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
+    settingbarRow.insertBefore(newItem, settingbarRow.childNodes[settingbarRow.childNodes.length - 4]);
 
-	//AutoTrimps setting button
-	var newItem = document.createElement("TD");
-	newItem.appendChild(document.createTextNode("AutoTrimps"));
-	newItem.setAttribute("id", "atSettingsBtn");
-	newItem.setAttribute("class", "btn btn-default");
-	newItem.setAttribute("onclick", "autoToggle();");
-	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
-	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
+    //AutoTrimps setting button
+    var newItem = document.createElement('TD');
+    newItem.appendChild(document.createTextNode('AutoTrimps'));
+    newItem.setAttribute('id', 'atSettingsBtn');
+    newItem.setAttribute('class', 'btn btn-default');
+    newItem.setAttribute('onclick', 'autoToggle();');
+    var settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
+    settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
 
-	//Identifying fight button column now so we can add to it later.
-	var fightButtonCol = document.getElementById("battleBtnsColumn");
+    //Identifying fight button column now so we can add to it later.
+    var fightButtonCol = document.getElementById('battleBtnsColumn');
 
-	//Auto Maps button
-	var autoMapsContainer = document.createElement("DIV");
-	autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px");
-	autoMapsContainer.setAttribute("id", "autoMapBtn");
-	autoMapsContainer.setAttribute("class", "noselect settingsBtn settingBtn" + settingUniverse('autoMaps'));
-	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle', true);");
-	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
-	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	autoMapsContainer.innerHTML = 'Auto Maps';
-	fightButtonCol.appendChild(autoMapsContainer);
+    //Auto Maps button
+    var autoMapsContainer = document.createElement('DIV');
+    autoMapsContainer.setAttribute('style', 'margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px');
+    autoMapsContainer.setAttribute('id', 'autoMapBtn');
+    autoMapsContainer.setAttribute('class', 'noselect settingsBtn settingBtn' + settingUniverse('autoMaps'));
+    autoMapsContainer.setAttribute('onClick', "settingChanged('autoMapsToggle', true);");
+    autoMapsContainer.setAttribute('onmouseover', 'tooltip("Toggle Auto Maps", "customText", event, autoTrimpSettings.autoMaps.description(true))');
+    autoMapsContainer.setAttribute('onmouseout', 'tooltip("hide")');
+    autoMapsContainer.innerHTML = 'Auto Maps';
+    fightButtonCol.appendChild(autoMapsContainer);
 
-	//Status textbox
-	var autoMapsStatusContainer = document.createElement("DIV");
-	autoMapsStatusContainer.setAttribute("class", "noselect");
-	autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
-	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	autoMapsStatusContainer.id = 'autoMapStatus';
-	fightButtonCol.appendChild(autoMapsStatusContainer);
+    //Status textbox
+    var autoMapsStatusContainer = document.createElement('DIV');
+    autoMapsStatusContainer.setAttribute('class', 'noselect');
+    autoMapsStatusContainer.setAttribute('style', 'display: block; font-size: 1vw; text-align: center; background-color: rgba(0,0,0,0.3);');
+    autoMapsStatusContainer.setAttribute('onmouseout', 'tooltip("hide")');
+    autoMapsStatusContainer.id = 'autoMapStatus';
+    fightButtonCol.appendChild(autoMapsStatusContainer);
 
+    //Helium/Hr Info textbox
+    var resourcePerHourContainer = document.createElement('DIV');
+    resourcePerHourContainer.setAttribute('style', 'display: ' + (getPageSetting('displayHeHr') ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);');
+    resourcePerHourContainer.setAttribute('onmouseout', 'tooltip("hide")');
+    resourcePerHourContainer.id = 'hiderStatus';
+    fightButtonCol.appendChild(resourcePerHourContainer);
 
-	//Helium/Hr Info textbox
-	var resourcePerHourContainer = document.createElement("DIV");
-	resourcePerHourContainer.setAttribute("style", "display: " + (getPageSetting('displayHeHr') ? 'block' : 'none') + "; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
-	resourcePerHourContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	resourcePerHourContainer.id = 'hiderStatus';
-	fightButtonCol.appendChild(resourcePerHourContainer);
-
-	//Additional AT Info textbox
-	var voidMapContainer = document.createElement("DIV");
-	voidMapContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
-	var voidMapText = document.createElement("SPAN");
-	voidMapContainer.setAttribute("onmouseover", 'tooltip(\"Additional AT Info\", \"customText\", event, \"<b>Void</b>: The progress you have towards a free void map from the \'Void Maps\' permanent bone upgrade.<br>\
+    //Additional AT Info textbox
+    var voidMapContainer = document.createElement('DIV');
+    voidMapContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);');
+    var voidMapText = document.createElement('SPAN');
+    voidMapContainer.setAttribute(
+        'onmouseover',
+        'tooltip("Additional AT Info", "customText", event, "<b>Void</b>: The progress you have towards a free void map from the \'Void Maps\' permanent bone upgrade.<br>\
 	<b>Auto Level</b>: The level that the script recommends using whilst farming.<br>\
 	<b>B</b>: The amount of time your trimps have been breeding.<br>\
-	<b>T</b>: Your current tenacity time.\")');
-	voidMapContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	voidMapText.id = 'additionalInfo';
-	voidMapContainer.appendChild(voidMapText);
-	var trimpsButtonCol = document.getElementById("trimps");
-	trimpsButtonCol.appendChild(voidMapContainer);
+	<b>T</b>: Your current tenacity time.")'
+    );
+    voidMapContainer.setAttribute('onmouseout', 'tooltip("hide")');
+    voidMapText.id = 'additionalInfo';
+    voidMapContainer.appendChild(voidMapText);
+    var trimpsButtonCol = document.getElementById('trimps');
+    trimpsButtonCol.appendChild(voidMapContainer);
 
-	//Portal Timer
-	var $portalTimer = document.getElementById('portalTimer');
-	$portalTimer.setAttribute('onclick', 'toggleSetting(\'pauseGame\')');
-	$portalTimer.setAttribute('style', 'cursor: default; min-width: 8.5vw');
-	$portalTimer.classList.add("btn");
+    //Portal Timer
+    var $portalTimer = document.getElementById('portalTimer');
+    $portalTimer.setAttribute('onclick', "toggleSetting('pauseGame')");
+    $portalTimer.setAttribute('style', 'cursor: default; min-width: 8.5vw');
+    $portalTimer.classList.add('btn');
 
-	var btns = document.getElementsByClassName("fightBtn");
-	for (var x = 0; x < btns.length; x++) {
-		btns[x].style.padding = "0.01vw 0.01vw";
-	}
+    var btns = document.getElementsByClassName('fightBtn');
+    for (var x = 0; x < btns.length; x++) {
+        btns[x].style.padding = '0.01vw 0.01vw';
+    }
 
-	//AutoJobs
-	//Changing Default Widths for Job buttons
-	document.getElementById('fireBtn').parentElement.style.width = '14.2%'
-	document.getElementById('fireBtn').parentElement.style.paddingRight = '2px'
-	document.getElementById('jobsTitleSpan').parentElement.style.width = '10%'
+    //AutoJobs
+    //Changing Default Widths for Job buttons
+    document.getElementById('fireBtn').parentElement.style.width = '14.2%';
+    document.getElementById('fireBtn').parentElement.style.paddingRight = '2px';
+    document.getElementById('jobsTitleSpan').parentElement.style.width = '10%';
 
-	//AutoJobs button.
-	//Creating button
-	var jobSetting = getPageSetting('jobType')
-	var atJobInitial = document.createElement("DIV");
-	atJobInitial.setAttribute("class", "col-xs-3 lowPad");
-	var atJobContainer = document.createElement("DIV");
+    //AutoJobs button.
+    //Creating button
+    var jobSetting = getPageSetting('jobType');
+    var atJobInitial = document.createElement('DIV');
+    atJobInitial.setAttribute('class', 'col-xs-3 lowPad');
+    var atJobContainer = document.createElement('DIV');
 
+    //Cogwheel info
+    atJobContainer.setAttribute('style', 'display: block; font-size: 0.9vw; border-color: #5D5D5D;');
+    atJobContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
+    atJobContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoJobs", "customText", event, autoTrimpSettings.jobType.description())');
+    atJobContainer.setAttribute('onmouseout', 'tooltip("hide")');
 
-	//Cogwheel info
-	atJobContainer.setAttribute("style", "display: block; font-size: 0.9vw; border-color: #5D5D5D;");
-	atJobContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
-	atJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, autoTrimpSettings.jobType.description())');
-	atJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
+    //Text
+    var atJobText = document.createElement('DIV');
+    atJobText.innerHTML = autoTrimpSettings.jobType.name()[jobSetting];
+    atJobText.setAttribute('id', 'autoJobLabel');
+    atJobText.setAttribute('onClick', "settingChanged('jobType', true)");
 
-	//Text
-	var atJobText = document.createElement("DIV");
-	atJobText.innerHTML = autoTrimpSettings.jobType.name()[jobSetting];
-	atJobText.setAttribute("id", "autoJobLabel");
-	atJobText.setAttribute("onClick", "settingChanged('jobType', true)");
+    //Creating cogwheel & linking onclick
+    var atJobSettings = document.createElement('DIV');
+    atJobSettings.setAttribute('onclick', 'MAZLookalike("AutoJobs")');
+    var atJobSettingsButton = document.createElement('SPAN');
+    atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
-	//Creating cogwheel & linking onclick
-	var atJobSettings = document.createElement("DIV");
-	atJobSettings.setAttribute('onclick', 'MAZLookalike("AutoJobs")');
-	var atJobSettingsButton = document.createElement("SPAN");
-	atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+    var atJobColumn = document.getElementById('jobsTitleDiv').children[0];
+    atJobContainer.appendChild(atJobText);
+    atJobContainer.appendChild(atJobSettings);
+    atJobSettings.appendChild(atJobSettingsButton);
+    atJobInitial.appendChild(atJobContainer);
+    atJobColumn.insertBefore(atJobInitial, document.getElementById('jobsTitleDiv').children[0].children[2]);
 
-	var atJobColumn = document.getElementById("jobsTitleDiv").children[0];
-	atJobContainer.appendChild(atJobText);
-	atJobContainer.appendChild(atJobSettings);
-	atJobSettings.appendChild(atJobSettingsButton);
-	atJobInitial.appendChild(atJobContainer);
-	atJobColumn.insertBefore(atJobInitial, document.getElementById('jobsTitleDiv').children[0].children[2]);
+    //AutoStructure Button.
+    //Creating button
+    var atStructureInitial = document.createElement('DIV');
+    atStructureInitial.setAttribute('class', 'col-xs-3 lowPad');
+    var atStructureContainer = document.createElement('DIV');
 
-	//AutoStructure Button.
-	//Creating button
-	var atStructureInitial = document.createElement("DIV");
-	atStructureInitial.setAttribute("class", "col-xs-3 lowPad");
-	var atStructureContainer = document.createElement("DIV");
+    atStructureContainer.setAttribute('style', 'display: block; font-size: 0.9vw; border-color: #5D5D5D;');
+    atStructureContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('buyBuildings'));
+    atStructureContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoStructure", "customText", event, autoTrimpSettings.buildingsType.description())');
+    atStructureContainer.setAttribute('onmouseout', 'tooltip("hide")');
 
-	atStructureContainer.setAttribute("style", "display: block; font-size: 0.9vw; border-color: #5D5D5D;");
-	atStructureContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('buyBuildings'));
-	atStructureContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoStructure\", \"customText\", event, autoTrimpSettings.buildingsType.description())');
-	atStructureContainer.setAttribute("onmouseout", 'tooltip("hide")');
+    //Text
+    var atStructureText = document.createElement('DIV');
+    atStructureText.innerHTML = 'AT AutoStructure';
+    atStructureText.setAttribute('id', 'autoStructureLabel');
+    atStructureText.setAttribute('onClick', "settingChanged('buildingsType', true)");
 
-	//Text
-	var atStructureText = document.createElement("DIV");
-	atStructureText.innerHTML = 'AT AutoStructure';
-	atStructureText.setAttribute("id", "autoStructureLabel");
-	atStructureText.setAttribute("onClick", "settingChanged('buildingsType', true)");
+    //Creating cogwheel & linking onclick
+    var atStructureSettings = document.createElement('DIV');
+    atStructureSettings.setAttribute('onclick', 'MAZLookalike("AutoStructure")');
+    var atStructureSettingsButton = document.createElement('SPAN');
+    atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
-	//Creating cogwheel & linking onclick
-	var atStructureSettings = document.createElement("DIV");
-	atStructureSettings.setAttribute('onclick', 'MAZLookalike("AutoStructure")');
-	var atStructureSettingsButton = document.createElement("SPAN");
-	atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+    //Setting up positioning
+    var atStructureColumn = document.getElementById('buildingsTitleDiv').children[0];
+    atStructureContainer.appendChild(atStructureText);
+    atStructureContainer.appendChild(atStructureSettings);
+    atStructureSettings.appendChild(atStructureSettingsButton);
+    atStructureInitial.appendChild(atStructureContainer);
+    atStructureColumn.replaceChild(atStructureInitial, document.getElementById('buildingsTitleDiv').children[0].children[1]);
 
-	//Setting up positioning
-	var atStructureColumn = document.getElementById("buildingsTitleDiv").children[0];
-	atStructureContainer.appendChild(atStructureText);
-	atStructureContainer.appendChild(atStructureSettings);
-	atStructureSettings.appendChild(atStructureSettingsButton);
-	atStructureInitial.appendChild(atStructureContainer);
-	atStructureColumn.replaceChild(atStructureInitial, document.getElementById('buildingsTitleDiv').children[0].children[1]);
+    //AutoEquip Button
+    //Creating button
+    var atEquipInitial = document.createElement('DIV');
+    atEquipInitial.setAttribute('class', 'col-xs-3 lowPad');
+    var atEquipContainer = document.createElement('DIV');
+    atEquipContainer.setAttribute('style', 'display: block; font-size: 0.9vw;');
+    atEquipContainer.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('equipOn'));
+    atEquipContainer.setAttribute('onmouseover', 'tooltip("Toggle atEquip", "customText", event, "Toggle between the atEquip settings.")');
+    atEquipContainer.setAttribute('onmouseout', 'tooltip("hide")');
 
-	//AutoEquip Button
-	//Creating button
-	var atEquipInitial = document.createElement("DIV");
-	atEquipInitial.setAttribute("class", "col-xs-3 lowPad");
-	var atEquipContainer = document.createElement("DIV");
-	atEquipContainer.setAttribute("style", "display: block; font-size: 0.9vw;");
-	atEquipContainer.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('equipOn'));
-	atEquipContainer.setAttribute("onmouseover", 'tooltip(\"Toggle atEquip\", \"customText\", event, \"Toggle between the atEquip settings.\")');
-	atEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
+    //Text
+    var atEquipText = document.createElement('DIV');
+    atEquipText.innerHTML = 'AT Auto Equip';
+    atEquipText.setAttribute('id', 'autoEquipLabel');
+    atEquipText.setAttribute('onClick', "settingChanged('equipOn', true)");
 
-	//Text
-	var atEquipText = document.createElement("DIV");
-	atEquipText.innerHTML = 'AT Auto Equip';
-	atEquipText.setAttribute("id", "autoEquipLabel");
-	atEquipText.setAttribute("onClick", "settingChanged('equipOn', true)");
+    //Setting up positioning
+    var atEquipColumn = document.getElementById('equipmentTitleDiv').children[0];
+    atEquipContainer.appendChild(atEquipText);
+    atEquipInitial.appendChild(atEquipContainer);
+    atEquipColumn.replaceChild(atEquipInitial, document.getElementById('equipmentTitleDiv').children[0].children[2]);
 
-	//Setting up positioning
-	var atEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
-	atEquipContainer.appendChild(atEquipText);
-	atEquipInitial.appendChild(atEquipContainer);
-	atEquipColumn.replaceChild(atEquipInitial, document.getElementById('equipmentTitleDiv').children[0].children[2]);
+    //autoTrimps Button.
+    //Creating button
+    var atBtnContainer = document.createElement('DIV');
+    atBtnContainer.setAttribute('class', 'btn-group');
+    atBtnContainer.setAttribute('role', 'group');
+    atBtnContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoTrimps Messages", "customText", event, "Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.")');
+    atBtnContainer.setAttribute('onmouseout', 'tooltip("hide")');
 
-	//autoTrimps Button.
-	//Creating button
-	var atBtnContainer = document.createElement("DIV");
-	atBtnContainer.setAttribute('class', 'btn-group');
-	atBtnContainer.setAttribute('role', 'group');
-	atBtnContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoTrimps Messages\", \"customText\", event, \"Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.\")');
-	atBtnContainer.setAttribute("onmouseout", 'tooltip("hide")');
+    //Text
+    var atBtnText = document.createElement('button');
+    atBtnText.innerHTML = 'AT Messages';
+    atBtnText.setAttribute('id', 'AutoTrimpsFilter');
+    atBtnText.setAttribute('type', 'button');
+    atBtnText.setAttribute('onClick', "filterMessage2('AutoTrimps')");
+    atBtnText.setAttribute('class', 'btn btn-success logFlt');
+    //Setting up positioning
+    atBtnContainer.appendChild(atBtnText);
+    document.getElementById('logBtnGroup').appendChild(atBtnContainer);
 
-	//Text
-	var atBtnText = document.createElement("button");
-	atBtnText.innerHTML = 'AT Messages';
-	atBtnText.setAttribute("id", "AutoTrimpsFilter");
-	atBtnText.setAttribute('type', 'button');
-	atBtnText.setAttribute("onClick", "filterMessage2(\'AutoTrimps\')");
-	atBtnText.setAttribute('class', 'btn btn-success logFlt');
-	//Setting up positioning
-	atBtnContainer.appendChild(atBtnText);
-	document.getElementById('logBtnGroup').appendChild(atBtnContainer);
+    //Creating cogwheel & linking onclick
+    var atBtnSettings = document.createElement('button');
+    atBtnSettings.setAttribute('id', 'logConfigBtn');
+    atBtnSettings.setAttribute('type', 'button');
+    atBtnSettings.setAttribute('onclick', 'MAZLookalike("MessageConfig")');
+    atBtnSettings.setAttribute('class', 'btn btn-default logFlt');
+    var atBtnSettingsButton = document.createElement('SPAN');
+    atBtnSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+    atBtnSettings.appendChild(atBtnSettingsButton);
+    var tab = document.createElement('DIV');
+    tab.setAttribute('id', 'logConfigHolder'), tab.setAttribute('class', 'btn-group'), tab.setAttribute('role', 'group'), tab.appendChild(atBtnSettings), document.getElementById('logBtnGroup').appendChild(tab);
 
-	//Creating cogwheel & linking onclick
-	var atBtnSettings = document.createElement("button");
-	atBtnSettings.setAttribute("id", "logConfigBtn");
-	atBtnSettings.setAttribute('type', 'button');
-	atBtnSettings.setAttribute('onclick', 'MAZLookalike("MessageConfig")');
-	atBtnSettings.setAttribute('class', 'btn btn-default logFlt');
-	var atBtnSettingsButton = document.createElement("SPAN");
-	atBtnSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-	atBtnSettings.appendChild(atBtnSettingsButton);
-	var tab = document.createElement('DIV');
-	tab.setAttribute("id", "logConfigHolder"),
-		tab.setAttribute('class', 'btn-group'),
-		tab.setAttribute('role', 'group'),
-		tab.appendChild(atBtnSettings),
-		document.getElementById('logBtnGroup').appendChild(tab);
-
-	debug("Finished loading buttons.");
+    debug('Finished loading buttons.');
 }
 
 function introMessage() {
-	var description = "<p>Welcome to the SadAugust fork of AutoTrimps!</p>";
+    var description = '<p>Welcome to the SadAugust fork of AutoTrimps!</p>';
 
-	description += "<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>";
+    description += "<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>";
 
-	description += "<p>One of the most important things is where the settings are stored. The vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p><br>";
-	description += "<p>There are some setting that aren't located in the <b>AutoTrimps settings menu</b>, 2 of which are in the Trimps buy container (<b>AT AutoStructure & AutoJobs</b>), I recommend mousing over their tooltips and looking at what they do.</p>";
-	description += "<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. This will enabling this will allow the script to output messages into the message log window. You can control what gets printed to it by pressing the cogwheel to the right of it.</p>";
+    description += '<p>One of the most important things is where the settings are stored. The vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p><br>';
+    description += "<p>There are some setting that aren't located in the <b>AutoTrimps settings menu</b>, 2 of which are in the Trimps buy container (<b>AT AutoStructure & AutoJobs</b>), I recommend mousing over their tooltips and looking at what they do.</p>";
+    description += '<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. This will enabling this will allow the script to output messages into the message log window. You can control what gets printed to it by pressing the cogwheel to the right of it.</p>';
 
-	description += "<br><p>By default everything should be disabled but every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>";
+    description += "<br><p>By default everything should be disabled but every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>";
 
-	description += "<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>";
+    description += "<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>";
 
-	tooltip('Introduction Message', 'customText', 'lock', description, false, 'center');
-	verticalCenterTooltip(true);
+    tooltip('Introduction Message', 'customText', 'lock', description, false, 'center');
+    verticalCenterTooltip(true);
 }
 
 function updateATVersion() {
-	//Setting Conversion!
-	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === atSettings.initialise.version) return;
-	if (typeof (autoTrimpSettings) === 'undefined') return;
-	var changelog = [];
+    //Setting Conversion!
+    if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] === atSettings.initialise.version) return;
+    if (typeof autoTrimpSettings === 'undefined') return;
+    var changelog = [];
 
-	//Prints the new user message if it's the first time loading the script.
-	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
-		autoTrimpSettings["ATversion"] = atSettings.initialise.version;
-		saveSettings();
-		if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
-		introMessage();
-		return;
-	}
+    //Prints the new user message if it's the first time loading the script.
+    if (autoTrimpSettings['ATversion'] === undefined || !autoTrimpSettings['ATversion'].includes('SadAugust')) {
+        autoTrimpSettings['ATversion'] = atSettings.initialise.version;
+        saveSettings();
+        if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+        introMessage();
+        return;
+    }
 
-	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust')
-		&& autoTrimpSettings["ATversion"] !== atSettings.initialise.version
-	) {
-		//On the offchance anybody is using a super old version of AT then they need their localStorage setting converted
-		if (JSON.parse(localStorage.getItem('atSettings')) === null)
-			saveSettings();
-		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+    if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] !== atSettings.initialise.version) {
+        //On the offchance anybody is using a super old version of AT then they need their localStorage setting converted
+        if (JSON.parse(localStorage.getItem('atSettings')) === null) saveSettings();
+        const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.5') {
-			if (tempSettings.presetMutations !== undefined) {
-				var mutatorObj = {
-					preset1: {},
-					preset2: {},
-					preset3: {},
-				};
-				if (tempSettings.presetMutations.value.preset1 !== '') mutatorObj.preset1 = JSON.parse(tempSettings.presetMutations.value.preset1);
-				if (tempSettings.presetMutations.value.preset2 !== '') mutatorObj.preset2 = JSON.parse(tempSettings.presetMutations.value.preset2);
-				if (tempSettings.presetMutations.value.preset3 !== '') mutatorObj.preset3 = JSON.parse(tempSettings.presetMutations.value.preset3);
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.2.5') {
+            if (tempSettings.presetMutations !== undefined) {
+                var mutatorObj = {
+                    preset1: {},
+                    preset2: {},
+                    preset3: {}
+                };
+                if (tempSettings.presetMutations.value.preset1 !== '') mutatorObj.preset1 = JSON.parse(tempSettings.presetMutations.value.preset1);
+                if (tempSettings.presetMutations.value.preset2 !== '') mutatorObj.preset2 = JSON.parse(tempSettings.presetMutations.value.preset2);
+                if (tempSettings.presetMutations.value.preset3 !== '') mutatorObj.preset3 = JSON.parse(tempSettings.presetMutations.value.preset3);
 
-				autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
-				localStorage['mutatorPresets'] = JSON.stringify(mutatorObj);
-			}
-		}
+                autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
+                localStorage['mutatorPresets'] = JSON.stringify(mutatorObj);
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.95') {
-			var settings_List = ['mapFarmSettings']
-			var values = ['value', 'valueU2'];
-			for (var x = 0; x < settings_List.length; x++) {
-				for (var z = 0; z < values.length; z++) {
-					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
-						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-							autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
-						}
-					}
-					saveSettings();
-				}
-			}
-		}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.2.95') {
+            var settings_List = ['mapFarmSettings'];
+            var values = ['value', 'valueU2'];
+            for (var x = 0; x < settings_List.length; x++) {
+                for (var z = 0; z < values.length; z++) {
+                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
+                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+                            autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
+                        }
+                    }
+                    saveSettings();
+                }
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {
-			var settings_List = ['mapBonusSettings']
-			var values = ['value', 'valueU2'];
-			for (var x = 0; x < settings_List.length; x++) {
-				for (var z = 0; z < values.length; z++) {
-					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
-						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-							autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
-						}
-					}
-					saveSettings();
-				}
-			}
-		}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.001') {
+            var settings_List = ['mapBonusSettings'];
+            var values = ['value', 'valueU2'];
+            for (var x = 0; x < settings_List.length; x++) {
+                for (var z = 0; z < values.length; z++) {
+                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
+                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+                            autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
+                        }
+                    }
+                    saveSettings();
+                }
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.14') {
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.14') {
+            var settings_List = ['voidMapSettings'];
+            var values = ['value', 'valueU2'];
+            for (var x = 0; x < settings_List.length; x++) {
+                for (var z = 0; z < values.length; z++) {
+                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
+                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+                            autoTrimpSettings[settings_List[x]][values[z]][y].hdType = 'world';
+                            autoTrimpSettings[settings_List[x]][values[z]][y].hdType2 = 'void';
+                        }
+                    }
+                    saveSettings();
+                }
+            }
+        }
 
-			var settings_List = ['voidMapSettings']
-			var values = ['value', 'valueU2'];
-			for (var x = 0; x < settings_List.length; x++) {
-				for (var z = 0; z < values.length; z++) {
-					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
-						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-							autoTrimpSettings[settings_List[x]][values[z]][y].hdType = 'world';
-							autoTrimpSettings[settings_List[x]][values[z]][y].hdType2 = 'void';
-						}
-					}
-					saveSettings();
-				}
-			}
-		}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.17') {
+            if (typeof tempSettings['presetSwap'] !== 'undefined') {
+                autoTrimpSettings.presetSwap.enabled = false;
+            }
+            if (typeof tempSettings['autoCombatRespec'] !== 'undefined') {
+                autoTrimpSettings.presetCombatRespec.value = 0;
+                autoTrimpSettings.presetCombatRespec.valueU2 = autoTrimpSettings['autoCombatRespec'].valueU2;
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.17') {
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.18') {
+            if (typeof tempSettings['bloodthirstDestack'] !== 'undefined') {
+                autoTrimpSettings.bloodthirstDestack.enabled = false;
+            }
+            if (typeof tempSettings['bloodthirstVoidMax'] !== 'undefined') {
+                autoTrimpSettings.bloodthirstVoidMax.enabled = false;
+            }
+            changelog.push(
+                "AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
+			You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise."
+            );
+        }
 
-			if (typeof (tempSettings["presetSwap"]) !== 'undefined') {
-				autoTrimpSettings.presetSwap.enabled = false;
-			}
-			if (typeof (tempSettings["autoCombatRespec"]) !== 'undefined') {
-				autoTrimpSettings.presetCombatRespec.value = 0;
-				autoTrimpSettings.presetCombatRespec.valueU2 = autoTrimpSettings['autoCombatRespec'].valueU2;
-			}
-		}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.21') {
+            if (typeof tempSettings['IgnoreCrits'] !== 'undefined') {
+                autoTrimpSettings.IgnoreCrits.valueU2 = 0;
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.18') {
+        //Scryer stance changes
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.24') {
+            if (typeof tempSettings['UseScryerStance'] !== 'undefined') {
+                autoTrimpSettings.AutoStanceScryer.enabled = tempSettings.UseScryerStance.enabled;
+            }
+            if (typeof tempSettings['screwessence'] !== 'undefined') {
+                autoTrimpSettings.scryerEssenceOnly.enabled = tempSettings.screwessence.enabled;
+            }
+            if (typeof tempSettings['ScryerUseWhenOverkill'] !== 'undefined') {
+                autoTrimpSettings.scryerOverkill.enabled = tempSettings.ScryerUseWhenOverkill.enabled;
+            }
+            if (typeof tempSettings['use3daily'] !== 'undefined') {
+                autoTrimpSettings.dAutoStanceWind.enabled = tempSettings.use3daily.enabled;
+            }
+            if (typeof tempSettings['liqstack'] !== 'undefined') {
+                autoTrimpSettings.dWindStackingLiq.enabled = tempSettings.liqstack.enabled;
+            }
+            if (typeof tempSettings['AutoStance'] !== 'undefined') {
+                if (tempSettings.AutoStance.value > 2) {
+                    autoTrimpSettings.AutoStance.value = 2;
+                    autoTrimpSettings.AutoStanceWind.enabled = true;
+                }
+            }
 
-			if (typeof (tempSettings["bloodthirstDestack"]) !== 'undefined') {
-				autoTrimpSettings.bloodthirstDestack.enabled = false;
-			}
-			if (typeof (tempSettings["bloodthirstVoidMax"]) !== 'undefined') {
-				autoTrimpSettings.bloodthirstVoidMax.enabled = false;
-			}
-			changelog.push("AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
-			You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise.");
-		}
+            const originalSettings = [
+                'ScryerUseinMaps2',
+                'ScryerUseinVoidMaps2',
+                'ScryerUseinPMaps',
+                'ScryerUseinBW',
+                'ScryerUseinSpire2',
+                'ScryerSkipBoss2',
+                'ScryUseinPoison',
+                'ScryUseinWind',
+                'ScryUseinIce',
+                'ScryerSkipCorrupteds2',
+                'ScryerSkipHealthy',
+                'ScryerDieZ',
+                'ScryerMaxZone',
+                'ScryerMinZone',
+                'onlyminmaxworld',
+                'dWindStackingMinHD',
+                'WindStackingMinHD',
+                'WindStackingMin',
+                'dWindStackingMin'
+            ];
+            const newSettings = ['scryerMaps', 'scryerVoidMaps', 'scryerPlusMaps', 'scryerBW', 'scryerSpire', 'scryerSkipBoss', 'scryerPoison', 'scryerWind', 'scryerIce', 'scryerCorrupted', 'scryerHealthy', 'scryerDieZone', 'scryerMaxZone', 'scryerMinZone', 'scryerMinMaxWorld', 'dWindStackingRatio', 'WindStackingRatio', 'WindStackingZone', 'dWindStackingZone'];
+            for (var item in originalSettings) {
+                if (typeof tempSettings[originalSettings[item]] !== 'undefined') {
+                    autoTrimpSettings[newSettings[item]].value = tempSettings[originalSettings[item]].value;
+                }
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.21') {
-			if (typeof (tempSettings["IgnoreCrits"]) !== 'undefined') {
-				autoTrimpSettings.IgnoreCrits.valueU2 = 0;
-			}
-		}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.25') {
+            if (typeof tempSettings['radonsettings'] !== 'undefined') {
+                autoTrimpSettings.universeSetting.value = tempSettings.radonsettings.value;
+            }
+        }
 
-		//Scryer stance changes
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.24') {
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.26') {
+            if (typeof tempSettings['PrestigeSkip1_2'] !== 'undefined') {
+                autoTrimpSettings.PrestigeSkip.enabled = tempSettings.PrestigeSkip1_2.value > 0;
+            }
+        }
 
-			if (typeof (tempSettings["UseScryerStance"]) !== 'undefined') {
-				autoTrimpSettings.AutoStanceScryer.enabled = tempSettings.UseScryerStance.enabled;
-			}
-			if (typeof (tempSettings["screwessence"]) !== 'undefined') {
-				autoTrimpSettings.scryerEssenceOnly.enabled = tempSettings.screwessence.enabled;
-			}
-			if (typeof (tempSettings["ScryerUseWhenOverkill"]) !== 'undefined') {
-				autoTrimpSettings.scryerOverkill.enabled = tempSettings.ScryerUseWhenOverkill.enabled;
-			}
-			if (typeof (tempSettings["use3daily"]) !== 'undefined') {
-				autoTrimpSettings.dAutoStanceWind.enabled = tempSettings.use3daily.enabled;
-			}
-			if (typeof (tempSettings["liqstack"]) !== 'undefined') {
-				autoTrimpSettings.dWindStackingLiq.enabled = tempSettings.liqstack.enabled;
-			}
-			if (typeof (tempSettings["AutoStance"]) !== 'undefined') {
-				if (tempSettings.AutoStance.value > 2) {
-					autoTrimpSettings.AutoStance.value = 2;
-					autoTrimpSettings.AutoStanceWind.enabled = true;
-				}
-			}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.29') {
+            const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
 
-			const originalSettings = ["ScryerUseinMaps2", "ScryerUseinVoidMaps2", "ScryerUseinPMaps", "ScryerUseinBW", "ScryerUseinSpire2", "ScryerSkipBoss2", "ScryUseinPoison", "ScryUseinWind", "ScryUseinIce", "ScryerSkipCorrupteds2", "ScryerSkipHealthy", "ScryerDieZ", "ScryerMaxZone", "ScryerMinZone", "onlyminmaxworld", "dWindStackingMinHD", "WindStackingMinHD", "WindStackingMin", "dWindStackingMin"];
-			const newSettings = ["scryerMaps", "scryerVoidMaps", "scryerPlusMaps", "scryerBW", "scryerSpire", "scryerSkipBoss", "scryerPoison", "scryerWind", "scryerIce", "scryerCorrupted", "scryerHealthy", "scryerDieZone", "scryerMaxZone", "scryerMinZone", "scryerMinMaxWorld", "dWindStackingRatio", "WindStackingRatio", "WindStackingZone", "dWindStackingZone"];
-			for (var item in originalSettings) {
-				if (typeof (tempSettings[originalSettings[item]]) !== 'undefined') {
-					autoTrimpSettings[newSettings[item]].value = tempSettings[originalSettings[item]].value;
-				}
-			}
-		}
+            const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.25') {
-			if (typeof (tempSettings["radonsettings"]) !== 'undefined') {
-				autoTrimpSettings.universeSetting.value = tempSettings.radonsettings.value;
-			}
-		}
+            for (var item in u1Settings) {
+                if (typeof tempSettings[u1Settings[item] + 'DefaultSettings'] !== 'undefined') {
+                    autoTrimpSettings[u1Settings[item] + 'Settings'].value.unshift(tempSettings[u1Settings[item] + 'DefaultSettings'].value);
+                }
+            }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.26') {
-			if (typeof (tempSettings["PrestigeSkip1_2"]) !== 'undefined') {
-				autoTrimpSettings.PrestigeSkip.enabled = tempSettings.PrestigeSkip1_2.value > 0;
-			}
-		}
+            for (var item in u2Settings) {
+                if (typeof tempSettings[u2Settings[item] + 'DefaultSettings'] !== 'undefined') {
+                    autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.unshift(tempSettings[u2Settings[item] + 'DefaultSettings'].valueU2);
+                }
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.29') {
-			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.36') {
+            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+                autoTrimpSettings.uniqueMapSettingsArray.valueU2['Big_Wall'] = {
+                    enabled: false,
+                    zone: 100,
+                    cell: 0
+                };
+            }
+        }
 
-			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+        //Converting addonUser saves variable to object and storing farming settings .done stuff in it
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.37') {
+            var obj = [];
+            for (var x = 0; x < 30; x++) {
+                obj[x] = {};
+                obj[x].done = '';
+            }
 
-			for (var item in u1Settings) {
-				if (typeof (tempSettings[u1Settings[item] + "DefaultSettings"]) !== 'undefined') {
-					autoTrimpSettings[u1Settings[item] + "Settings"].value.unshift(tempSettings[u1Settings[item] + "DefaultSettings"].value);
-				}
-			}
+            if (typeof game.global.addonUser !== 'object') game.global.addonUser = {};
 
-			for (var item in u2Settings) {
-				if (typeof (tempSettings[u2Settings[item] + "DefaultSettings"]) !== 'undefined') {
-					autoTrimpSettings[u2Settings[item] + "Settings"].valueU2.unshift(tempSettings[u2Settings[item] + "DefaultSettings"].valueU2);
-				}
-			}
-		}
+            const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.36') {
+            const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
 
-			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
-				autoTrimpSettings.uniqueMapSettingsArray.valueU2["Big_Wall"] = {
-					enabled: false,
-					zone: 100,
-					cell: 0,
-				};
-			}
-		}
+            for (var item in u1Settings) {
+                if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u1Settings[item] + 'Settings'] = {};
 
-		//Converting addonUser saves variable to object and storing farming settings .done stuff in it
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.37') {
+                var obj = [];
+                for (var x = 0; x < 30; x++) {
+                    obj[x] = {};
+                    obj[x].done = '';
+                }
+                game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
 
-			var obj = [];
-			for (var x = 0; x < 30; x++) {
-				obj[x] = {};
-				obj[x].done = '';
-			}
+                if (typeof autoTrimpSettings[u1Settings[item] + 'Settings'].value[0] !== 'undefined') {
+                    for (var y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
+                        autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
+                    }
+                }
+            }
 
-			if (typeof game.global.addonUser !== 'object')
-				game.global.addonUser = {};
+            for (var item in u2Settings) {
+                if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u2Settings[item] + 'Settings'] = {};
+                var obj = [];
+                for (var x = 0; x < 30; x++) {
+                    obj[x] = {};
+                    obj[x].done = '';
+                }
+                game.global.addonUser[u2Settings[item] + 'Settings'].value = obj;
 
+                if (typeof autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0] !== 'undefined') {
+                    for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
+                        autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[y].row = y;
+                    }
+                }
+            }
+        }
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.38') {
+            setupAddonUser();
+        }
 
-			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.4.09') {
+            if (typeof tempSettings['heHrDontPortalBefore'] !== 'undefined') {
+                autoTrimpSettings.heliumHrDontPortalBefore.value = tempSettings.heHrDontPortalBefore.value;
+                autoTrimpSettings.heliumHrDontPortalBefore.valueU2 = tempSettings.heHrDontPortalBefore.valueU2;
+            }
+        }
 
-			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.4.20') {
+            if (typeof tempSettings['buildingSettingsArray'] !== 'undefined') {
+                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {};
+                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = false;
+                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.percent = 100;
+                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.buyMax = 0;
+            }
+        }
 
-			for (var item in u1Settings) {
-				if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined')
-					game.global.addonUser[u1Settings[item] + 'Settings'] = {};
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.06') {
+            if (typeof autoTrimpSettings.alchemySettings['valueU2'][1] !== 'undefined') {
+                for (var y = 1; y < autoTrimpSettings.alchemySettings['valueU2'].length; y++) {
+                    autoTrimpSettings.alchemySettings['valueU2'][y].repeatevery = 0;
+                    autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
+                }
+                saveSettings();
+            }
+        }
 
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
-				}
-				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.09') {
+            if (typeof tempSettings['autoAbandon'] !== 'undefined') {
+                autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 2 : 0;
+                autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 2 : 0;
+            }
+        }
 
-				if (typeof (autoTrimpSettings[u1Settings[item] + 'Settings'].value[0]) !== 'undefined') {
-					for (var y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
-						autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
-					}
-				}
-			}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.13') {
+            var values = ['value', 'valueU2'];
+            for (var z = 0; z < values.length; z++) {
+                var incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
+                if (typeof tempSettings['raidingSettings'][values[z]][0] !== 'undefined') {
+                    for (var y = 0; y < tempSettings['raidingSettings'][values[z]].length; y++) {
+                        if (y === 0) continue;
+                        var currSetting = tempSettings['raidingSettings'][values[z]][y];
+                        autoTrimpSettings['raidingSettings'][values[z]][y].incrementMaps = incrementMaps;
+                        autoTrimpSettings['raidingSettings'][values[z]][y].raidingzone = (currSetting.raidingzone - currSetting.world).toString();
+                    }
+                }
+            }
+            saveSettings();
+        }
 
-			for (var item in u2Settings) {
-				if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined')
-					game.global.addonUser[u2Settings[item] + 'Settings'] = {};
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
-				}
-				game.global.addonUser[u2Settings[item] + 'Settings'].value = obj;
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.15') {
+            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+                const currTrimple = tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
+                delete tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
+                autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] = currTrimple;
+                delete autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_of_Doom'];
+                if (autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] === undefined)
+                    autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] = {
+                        enabled: false,
+                        zone: 999,
+                        cell: 1
+                    };
+            }
+        }
 
-				if (typeof (autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0]) !== 'undefined') {
-					for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
-						autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[y].row = y;
-					}
-				}
-			}
-		}
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.38') {
-			setupAddonUser();
-		}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.20') {
+            if (typeof tempSettings['experienceStaff'] !== 'undefined') {
+                if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value !== 'string') autoTrimpSettings.experienceStaff.value === 'undefined';
+            }
+        }
+        //Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.22') {
+            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+                var obj = {};
+                for (var item in tempSettings.uniqueMapSettingsArray.value) {
+                    obj[item.replace(/_/g, ' ')] = tempSettings.uniqueMapSettingsArray.value[item];
+                }
+                autoTrimpSettings.uniqueMapSettingsArray.value = obj;
+                var obj = {};
+                for (var item in tempSettings.uniqueMapSettingsArray.valueU2) {
+                    obj[item.replace(/_/g, ' ')] = tempSettings.uniqueMapSettingsArray.valueU2[item];
+                }
+                autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.4.09') {
-			if (typeof (tempSettings["heHrDontPortalBefore"]) !== 'undefined') {
-				autoTrimpSettings.heliumHrDontPortalBefore.value = tempSettings.heHrDontPortalBefore.value;
-				autoTrimpSettings.heliumHrDontPortalBefore.valueU2 = tempSettings.heHrDontPortalBefore.valueU2;
-			}
-		}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.24') {
+            if (typeof tempSettings['voidMapSettings'] !== 'undefined') {
+                if (autoTrimpSettings.voidMapSettings.value[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = 1;
+                if (autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = 1;
+            }
+        }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.4.20') {
-			if (typeof (tempSettings["buildingSettingsArray"]) !== 'undefined') {
-				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {}
-				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = false;
-				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.percent = 100;
-				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.buyMax = 0;
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.26') {
+            if (typeof tempSettings['portalVoidIncrement'] !== 'undefined') {
+                autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
+            }
+        }
 
-			}
-		}
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.27') {
+            if (typeof tempSettings['autGigaDeltaFactor'] !== 'undefined') {
+                autoTrimpSettings.autoGigaDeltaFactor.value = tempSettings.autGigaDeltaFactor.value;
+            }
+        }
 
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.28') {
+            if (typeof tempSettings['unbalance'] !== 'undefined') autoTrimpSettings.balance.enabledU2 = tempSettings.unbalance.enabledU2;
+            if (typeof tempSettings['unbalanceZone'] !== 'undefined') autoTrimpSettings.balanceZone.valueU2 = tempSettings.unbalanceZone.valueU2;
+            if (typeof tempSettings['unbalanceStacks'] !== 'undefined') autoTrimpSettings.balanceStacks.valueU2 = tempSettings.unbalanceStacks.valueU2;
+            if (typeof tempSettings['unbalanceImprobDestack'] !== 'undefined') autoTrimpSettings.balanceImprobDestack.enabledU2 = tempSettings.unbalanceImprobDestack.enabledU2;
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.06') {
-			if (typeof (autoTrimpSettings.alchemySettings['valueU2'][1]) !== 'undefined') {
-				for (var y = 1; y < autoTrimpSettings.alchemySettings['valueU2'].length; y++) {
-					autoTrimpSettings.alchemySettings['valueU2'][y].repeatevery = 0;
-					autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
-				}
-				saveSettings();
-			}
-		}
+            if (typeof tempSettings['trappapalooza'] !== 'undefined') autoTrimpSettings.trapper.enabledU2 = tempSettings.trappapalooza.enabledU2;
+            if (typeof tempSettings['trappapaloozaCoords'] !== 'undefined') autoTrimpSettings.trapperCoords.valueU2 = tempSettings.trappapaloozaCoords.valueU2;
+            if (typeof tempSettings['trappapaloozaTrap'] !== 'undefined') autoTrimpSettings.trapperTrap.enabledU2 = tempSettings.trappapaloozaTrap.enabledU2;
+            if (typeof tempSettings['trappapaloozaArmyPct'] !== 'undefined') autoTrimpSettings.trapperArmyPct.valueU2 = tempSettings.trappapaloozaArmyPct.valueU2;
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.09') {
-			if (typeof (tempSettings["autoAbandon"]) !== 'undefined') {
-				autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 2 : 0;
-				autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 2 : 0;
-			}
-		}
+            autoTrimpSettings.decay.enabledU2 = false;
+            autoTrimpSettings.decayStacksToPush.valueU2 = -1;
+            autoTrimpSettings.decayStacksToAbandon.valueU2 = -1;
+        }
+    }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.13') {
-			var values = ['value', 'valueU2'];
-			for (var z = 0; z < values.length; z++) {
-				var incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
-				if (typeof (tempSettings['raidingSettings'][values[z]][0]) !== 'undefined') {
-					for (var y = 0; y < tempSettings['raidingSettings'][values[z]].length; y++) {
-						if (y === 0) continue;
-						var currSetting = tempSettings['raidingSettings'][values[z]][y];
-						autoTrimpSettings['raidingSettings'][values[z]][y].incrementMaps = incrementMaps;
-						autoTrimpSettings['raidingSettings'][values[z]][y].raidingzone = (currSetting.raidingzone - currSetting.world).toString();
-					}
-				}
-			}
-			saveSettings();
-		}
+    //Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
+    //No other way to access it in TW currently.
+    if (usingRealTimeOffline) {
+        var changelogURL = basepath + 'updates.html';
+        changelog.push('There has been an AutoTrimps update. <a href="' + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
+    }
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.15') {
-			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
-				const currTrimple = tempSettings['uniqueMapSettingsArray'].value["Trimple_of_Doom"];
-				delete tempSettings['uniqueMapSettingsArray'].value["Trimple_of_Doom"];
-				autoTrimpSettings.uniqueMapSettingsArray.value["Trimple_Of_Doom"] = currTrimple;
-				delete autoTrimpSettings.uniqueMapSettingsArray.value["Trimple_of_Doom"];
-				if (autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] === undefined)
-					autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] = {
-						enabled: false,
-						zone: 999,
-						cell: 1,
-					}
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.20') {
-			if (typeof (tempSettings["experienceStaff"]) !== 'undefined') {
-				if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value !== 'string')
-					autoTrimpSettings.experienceStaff.value === 'undefined';
-			}
-		}
-		//Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.22') {
-			if (typeof (tempSettings["uniqueMapSettingsArray"]) !== 'undefined') {
-				var obj = {};
-				for (var item in tempSettings.uniqueMapSettingsArray.value) {
-					obj[item.replace(/_/g, " ")] = tempSettings.uniqueMapSettingsArray.value[item];
-				}
-				autoTrimpSettings.uniqueMapSettingsArray.value = obj;
-				var obj = {};
-				for (var item in tempSettings.uniqueMapSettingsArray.valueU2) {
-					obj[item.replace(/_/g, " ")] = tempSettings.uniqueMapSettingsArray.valueU2[item];
-				}
-				autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.24') {
-			if (typeof (tempSettings["voidMapSettings"]) !== 'undefined') {
-				if (autoTrimpSettings.voidMapSettings.value[0].hitsSurvived === undefined)
-					autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = 1;
-				if (autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived === undefined)
-					autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = 1;
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.26') {
-			if (typeof (tempSettings["portalVoidIncrement"]) !== 'undefined') {
-				autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.27') {
-			if (typeof (tempSettings["autGigaDeltaFactor"]) !== 'undefined') {
-				autoTrimpSettings.autoGigaDeltaFactor.value = tempSettings.autGigaDeltaFactor.value;
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.5.28') {
-			if (typeof (tempSettings["unbalance"]) !== 'undefined')
-				autoTrimpSettings.balance.enabledU2 = tempSettings.unbalance.enabledU2;
-			if (typeof (tempSettings["unbalanceZone"]) !== 'undefined')
-				autoTrimpSettings.balanceZone.valueU2 = tempSettings.unbalanceZone.valueU2;
-			if (typeof (tempSettings["unbalanceStacks"]) !== 'undefined')
-				autoTrimpSettings.balanceStacks.valueU2 = tempSettings.unbalanceStacks.valueU2;
-			if (typeof (tempSettings["unbalanceImprobDestack"]) !== 'undefined')
-				autoTrimpSettings.balanceImprobDestack.enabledU2 = tempSettings.unbalanceImprobDestack.enabledU2;
-
-			if (typeof (tempSettings["trappapalooza"]) !== 'undefined')
-				autoTrimpSettings.trapper.enabledU2 = tempSettings.trappapalooza.enabledU2;
-			if (typeof (tempSettings["trappapaloozaCoords"]) !== 'undefined')
-				autoTrimpSettings.trapperCoords.valueU2 = tempSettings.trappapaloozaCoords.valueU2;
-			if (typeof (tempSettings["trappapaloozaTrap"]) !== 'undefined')
-				autoTrimpSettings.trapperTrap.enabledU2 = tempSettings.trappapaloozaTrap.enabledU2;
-			if (typeof (tempSettings["trappapaloozaArmyPct"]) !== 'undefined')
-				autoTrimpSettings.trapperArmyPct.valueU2 = tempSettings.trappapaloozaArmyPct.valueU2;
-
-			autoTrimpSettings.decay.enabledU2 = false;
-			autoTrimpSettings.decayStacksToPush.valueU2 = -1;
-			autoTrimpSettings.decayStacksToAbandon.valueU2 = -1;
-
-		}
-	}
-
-	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
-	//No other way to access it in TW currently.
-	if (usingRealTimeOffline) {
-		var changelogURL = basepath + 'updates.html';
-		changelog.push("There has been an AutoTrimps update. <a href=\"" + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
-	}
-
-	autoTrimpSettings["ATversion"] = atSettings.initialise.version;
-	if (changelog.length !== 0) {
-		printChangelog(changelog);
-		verticalCenterTooltip(false, true);
-	}
-	updateCustomButtons(true);
-	saveSettings();
+    autoTrimpSettings['ATversion'] = atSettings.initialise.version;
+    if (changelog.length !== 0) {
+        printChangelog(changelog);
+        verticalCenterTooltip(false, true);
+    }
+    updateCustomButtons(true);
+    saveSettings();
 }
 
 function printChangelog(changes) {
-	var body = "";
-	for (var i in changes) {
-		var $item = changes[i];
-		var result = assembleChangelog($item);
-		body += result;
-	}
-	var footer =
-		'<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!\
+    var body = '';
+    for (var i in changes) {
+        var $item = changes[i];
+        var result = assembleChangelog($item);
+        body += result;
+    }
+    var footer =
+            '<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!\
         <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Server</a>\
         <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
-		action = 'cancelTooltip()',
-		title = 'Script Update Notice<br>' + atSettings.initialise.version,
-		acceptBtnText = "Thank you for playing with AutoTrimps.",
-		hideCancel = true;
+        action = 'cancelTooltip()',
+        title = 'Script Update Notice<br>' + atSettings.initialise.version,
+        acceptBtnText = 'Thank you for playing with AutoTrimps.',
+        hideCancel = true;
 
-	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
-	verticalCenterTooltip(true);
+    tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
+    verticalCenterTooltip(true);
 }
 
 function assembleChangelog(c) {
-	return `${c}<br>`
+    return `${c}<br>`;
 }
 
 //When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
 function updateChangelogButton() {
-	if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
-	var changeLogBtn = document.getElementById("atChangelog");
-	if (changeLogBtn !== null) {
-		//Swap the button class remove colour of new changelog.
-		var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
-		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
-		//Remove the new changelog text if it exists.
-		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", "");
-		autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
-		saveSettings();
-	}
+    if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
+    var changeLogBtn = document.getElementById('atChangelog');
+    if (changeLogBtn !== null) {
+        //Swap the button class remove colour of new changelog.
+        var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
+        swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
+        //Remove the new changelog text if it exists.
+        changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", '');
+        autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
+        saveSettings();
+    }
 }
 
 //Will output how many zones you can liquify to.
 function checkLiqZoneCount(universe) {
-	if (game.options.menu.liquification.enabled === 0) return 0;
-	if (universe === 2) {
-		if (!u2Mutations.tree.Liq1.purchased) return 0;
-		var amt = 0.1;
-		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
-		return ((getHighestLevelCleared(false, true) + 1) * amt);
-	}
-	var spireCount = game.global.spiresCompleted;
-	if (game.talents.liquification.purchased) spireCount++;
-	if (game.talents.liquification2.purchased) spireCount++;
-	if (game.talents.liquification3.purchased) spireCount += 2;
-	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
-	var liquidAmount = ((spireCount) / 20);
-	return (((game.stats.highestLevel.valueTotal()) * liquidAmount));
+    if (game.options.menu.liquification.enabled === 0) return 0;
+    if (universe === 2) {
+        if (!u2Mutations.tree.Liq1.purchased) return 0;
+        var amt = 0.1;
+        if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
+        return (getHighestLevelCleared(false, true) + 1) * amt;
+    }
+    var spireCount = game.global.spiresCompleted;
+    if (game.talents.liquification.purchased) spireCount++;
+    if (game.talents.liquification2.purchased) spireCount++;
+    if (game.talents.liquification3.purchased) spireCount += 2;
+    spireCount += Fluffy.isRewardActive('liquid') * 0.5;
+    var liquidAmount = spireCount / 20;
+    return game.stats.highestLevel.valueTotal() * liquidAmount;
 }

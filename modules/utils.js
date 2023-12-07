@@ -1,11 +1,5 @@
 window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
-    var message = [
-        'Message: ' + msg,
-        'URL: ' + url,
-        'Line: ' + lineNo,
-        'Column: ' + columnNo,
-        'Error object: ' + JSON.stringify(error)
-    ].join(' - ');
+    var message = ['Message: ' + msg, 'URL: ' + url, 'Line: ' + lineNo, 'Column: ' + columnNo, 'Error object: ' + JSON.stringify(error)].join(' - ');
     if (lineNo != 0) console.log('AT logged error: ' + message);
 };
 
@@ -20,11 +14,7 @@ function safeSetItems(storageName, storageSetting) {
     try {
         localStorage.setItem(storageName, storageSetting);
     } catch (c) {
-        22 === c.code &&
-            debug(
-                'Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.',
-                'other'
-            );
+        22 === c.code && debug('Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.', 'other');
     }
 }
 
@@ -120,9 +110,7 @@ function pushSpreadsheetData() {
             return game.global.fluffyExp2;
         },
         currentLevel: function () {
-            return Math.floor(
-                log10((this.getCurrentExp() / this.firstLevel) * (this.growth - 1) + 1) / log10(this.growth)
-            );
+            return Math.floor(log10((this.getCurrentExp() / this.firstLevel) * (this.growth - 1) + 1) / log10(this.growth));
         },
         calculateExp: function () {
             var level = this.currentLevel();
@@ -131,9 +119,7 @@ function pushSpreadsheetData() {
             if (level > 0) {
                 removeExp = Math.floor(this.firstLevel * ((Math.pow(this.growth, level) - 1) / (this.growth - 1)));
             }
-            var totalNeeded = Math.floor(
-                this.firstLevel * ((Math.pow(this.growth, level + 1) - 1) / (this.growth - 1))
-            );
+            var totalNeeded = Math.floor(this.firstLevel * ((Math.pow(this.growth, level + 1) - 1) / (this.growth - 1)));
             experience -= removeExp;
             totalNeeded -= removeExp;
             this.currentExp = [level, experience, totalNeeded];
@@ -149,8 +135,7 @@ function pushSpreadsheetData() {
         dailyMods = MODULES.portal.dailyMods;
         dailyPercent = MODULES.portal.dailyPercent;
     } else if (challengeActive('Daily')) {
-        if (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0'))
-            dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+        if (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0')) dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
         dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge)))) / 100;
         heliumGained *= 1 + dailyPercent;
         heliumHr *= 1 + dailyPercent;
@@ -174,8 +159,7 @@ function pushSpreadsheetData() {
                   return mapCount[k] > m ? mapCount[k] : m;
               }, -Infinity)
             : 0;
-    const mapZone =
-        graphData !== undefined ? Number(Object.keys(mapCount).find((key) => mapCount[key] === mapTotal)) : 0;
+    const mapZone = graphData !== undefined ? Number(Object.keys(mapCount).find((key) => mapCount[key] === mapTotal)) : 0;
 
     var obj = {
         user: autoTrimpSettings.gameUser.value,
@@ -188,9 +172,7 @@ function pushSpreadsheetData() {
         hZE: game.stats.highestLevel.valueTotal(),
         hZE_U2: game.stats.highestRadLevel.valueTotal(),
         fluffy: fluffy_EvoLevel.fluffy(),
-        scruffy: Number(
-            (scruffy_Level.currentLevel() + scruffy_Level.getExp()[1] / scruffy_Level.getExp()[2]).toFixed(3)
-        ),
+        scruffy: Number((scruffy_Level.currentLevel() + scruffy_Level.getExp()[1] / scruffy_Level.getExp()[2]).toFixed(3)),
         achievement: game.global.achievementBonus,
         nullifium: game.global.nullifium,
         antenna: game.buildings.Antenna.purchased,
@@ -213,14 +195,7 @@ function pushSpreadsheetData() {
         mapZone: mapZone,
         mapCount: mapTotal,
         voidsCompleted: game.stats.totalVoidMaps.value,
-        smithy:
-            game.global.universe === 1
-                ? 'N/A'
-                : !game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned
-                ? game.buildings.Smithy.owned - 2 + ' + 2'
-                : !game.mapUnlocks.SmithFree.canRunOnce
-                ? game.buildings.Smithy.owned - 1 + ' + 1'
-                : game.buildings.Smithy.owned,
+        smithy: game.global.universe === 1 ? 'N/A' : !game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned ? game.buildings.Smithy.owned - 2 + ' + 2' : !game.mapUnlocks.SmithFree.canRunOnce ? game.buildings.Smithy.owned - 1 + ' + 1' : game.buildings.Smithy.owned,
         meteorologist: game.global.universe === 1 ? 'N/A' : game.jobs.Meteorologist.owned,
         heliumGained: heliumGained,
         heliumHr: heliumHr,
@@ -297,21 +272,16 @@ function pushSpreadsheetData() {
 function getPageSetting(setting, universe = game.global.universe) {
     if (!autoTrimpSettings.hasOwnProperty(setting)) return false;
     const settingType = autoTrimpSettings[setting].type;
-    const u2Setting =
-        autoTrimpSettings[setting].universe.indexOf(0) === -1 && setting !== 'universeSetting' && universe === 2;
+    const u2Setting = autoTrimpSettings[setting].universe.indexOf(0) === -1 && setting !== 'universeSetting' && universe === 2;
     const enabled = 'enabled' + (u2Setting ? 'U2' : '');
     const selected = 'selected' + (u2Setting ? 'U2' : '');
     const value = 'value' + (u2Setting ? 'U2' : '');
 
     if (settingType === 'boolean') return autoTrimpSettings[setting][enabled];
-    else if (settingType === 'multiValue')
-        return Array.from(autoTrimpSettings[setting][value]).map((x) => parseFloat(x));
-    else if (settingType === 'multiTextValue')
-        return Array.from(autoTrimpSettings[setting][value]).map((x) => String(x));
-    else if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray')
-        return autoTrimpSettings[setting][value];
-    else if (settingType === 'value' || autoTrimpSettings[setting].type === 'valueNegative')
-        return parseFloat(autoTrimpSettings[setting][value]);
+    else if (settingType === 'multiValue') return Array.from(autoTrimpSettings[setting][value]).map((x) => parseFloat(x));
+    else if (settingType === 'multiTextValue') return Array.from(autoTrimpSettings[setting][value]).map((x) => String(x));
+    else if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray') return autoTrimpSettings[setting][value];
+    else if (settingType === 'value' || autoTrimpSettings[setting].type === 'valueNegative') return parseFloat(autoTrimpSettings[setting][value]);
     else if (settingType === 'multitoggle') return parseInt(autoTrimpSettings[setting][value]);
     else if (settingType === 'dropdown') return autoTrimpSettings[setting][selected];
 }
@@ -327,16 +297,7 @@ function setPageSetting(setting, newValue, universe = portalUniverse) {
     const value = 'value' + (u2Setting ? 'U2' : '');
 
     var enabledIndex = ['boolean'];
-    var valueIndex = [
-        'value',
-        'valueNegative',
-        'textValue',
-        'multiTextValue',
-        'mazArray',
-        'mazDefaultArray',
-        'multiValue',
-        'multitoggle'
-    ];
+    var valueIndex = ['value', 'valueNegative', 'textValue', 'multiTextValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
     var selectedIndex = ['dropdown'];
 
     if (enabledIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][enabled] = newValue;
@@ -363,8 +324,7 @@ function debug(message, messageType, icon) {
 }
 
 function timeStamp() {
-    for (var a = new Date(), b = [a.getHours(), a.getMinutes(), a.getSeconds()], c = 1; 3 > c; c++)
-        10 > b[c] && (b[c] = '0' + b[c]);
+    for (var a = new Date(), b = [a.getHours(), a.getMinutes(), a.getSeconds()], c = 1; 3 > c; c++) 10 > b[c] && (b[c] = '0' + b[c]);
     return b.join(':');
 }
 
@@ -379,14 +339,8 @@ function message2(message, b, icon, d) {
         f = e.scrollTop + 10 > e.scrollHeight - e.clientHeight,
         g = ATmessageLogTabVisible ? 'block' : 'none',
         h = '';
-    icon && '*' === icon.charAt(0)
-        ? ((icon = icon.replace('*', '')), (h = 'icomoon icon-'))
-        : (h = 'glyphicon glyphicon-'),
-        game.options.menu.timestamps.enabled &&
-            (message =
-                (1 === game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) +
-                ' ' +
-                message),
+    icon && '*' === icon.charAt(0) ? ((icon = icon.replace('*', '')), (h = 'icomoon icon-')) : (h = 'glyphicon glyphicon-'),
+        game.options.menu.timestamps.enabled && (message = (1 === game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + ' ' + message),
         icon && (message = '<span class="' + h + icon + '"></span> ' + message),
         (message = '<span class="glyphicon glyphicon-superscript"></span> ' + message),
         (message = '<span class="icomoon icon-text-color"></span>' + message);
@@ -519,8 +473,7 @@ function testEquipmentMetalSpent() {
             var nextPrestigeCount = i + 1;
             if (nextPrestigeCount >= 4) prestigeMod = (nextPrestigeCount - 3) * 0.85 + 2;
             else prestigeMod = nextPrestigeCount - 1;
-            var prestigeCost =
-                Math.round(equipment.oc * Math.pow(1.069, prestigeMod * game.global.prestige.cost + 1)) * equipMult;
+            var prestigeCost = Math.round(equipment.oc * Math.pow(1.069, prestigeMod * game.global.prestige.cost + 1)) * equipMult;
             actualCost += prestigeCost;
 
             //Calculate cost of current equip levels

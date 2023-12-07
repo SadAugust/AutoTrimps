@@ -1,15 +1,15 @@
-; (function (M, W) {
-	M["performance"] = {};
-	M["performance"].isAFK = false; //start with AFK disabled
+(function (M, W) {
+    M['performance'] = {};
+    M['performance'].isAFK = false; //start with AFK disabled
 
-	// Save updateLabels Trimps game functions, to restore it after we disable it.
-	M["performance"].updateLabels = W.updateLabels;
+    // Save updateLabels Trimps game functions, to restore it after we disable it.
+    M['performance'].updateLabels = W.updateLabels;
 
-	// Game Wrapper to insert DOM elements into
-	M["performance"].$wrapper = document.getElementById('wrapper');
+    // Game Wrapper to insert DOM elements into
+    M['performance'].$wrapper = document.getElementById('wrapper');
 
-	// AFK OVERLAY CSS Style
-	document.head.appendChild(document.createElement('style')).innerHTML = `
+    // AFK OVERLAY CSS Style
+    document.head.appendChild(document.createElement('style')).innerHTML = `
 	.at-afk-overlay
 	{
 		position: absolute;
@@ -76,84 +76,81 @@
 		transition: all 300ms linear;
 	}`;
 
-	// The overlay
-	M["performance"].AFKOverlay = document.createElement('div');
-	M["performance"].AFKOverlay.className = 'at-afk-overlay at-afk-overlay-disabled';
+    // The overlay
+    M['performance'].AFKOverlay = document.createElement('div');
+    M['performance'].AFKOverlay.className = 'at-afk-overlay at-afk-overlay-disabled';
 
-	// Title
-	var AFKOverlayTitle = document.createElement('p');
-	AFKOverlayTitle.innerText = 'TRIMPS - AFK';
-	AFKOverlayTitle.className = 'at-afk-overlay-title'
+    // Title
+    var AFKOverlayTitle = document.createElement('p');
+    AFKOverlayTitle.innerText = 'TRIMPS - AFK';
+    AFKOverlayTitle.className = 'at-afk-overlay-title';
 
-	// Zone
-	M["performance"].AFKOverlayZone = document.createElement('p');
-	M["performance"].AFKOverlayZone.innerText = 'Current zone: -';
-	M["performance"].AFKOverlayZone.className = 'at-afk-zone'
+    // Zone
+    M['performance'].AFKOverlayZone = document.createElement('p');
+    M['performance'].AFKOverlayZone.innerText = 'Current zone: -';
+    M['performance'].AFKOverlayZone.className = 'at-afk-zone';
 
-	// Helium
-	M["performance"].AFKOverlayHelium = document.createElement('p');
-	M["performance"].AFKOverlayHelium.innerText = 'Current helium: -';
-	M["performance"].AFKOverlayHelium.className = 'at-afk-helium'
+    // Helium
+    M['performance'].AFKOverlayHelium = document.createElement('p');
+    M['performance'].AFKOverlayHelium.innerText = 'Current helium: -';
+    M['performance'].AFKOverlayHelium.className = 'at-afk-helium';
 
-	// Helium per hour
-	M["performance"].AFKOverlayHeliumPerHour = document.createElement('p');
-	M["performance"].AFKOverlayHeliumPerHour.innerText = 'He/hr: -';
-	M["performance"].AFKOverlayHeliumPerHour.className = 'at-afk-heliumperhour'
+    // Helium per hour
+    M['performance'].AFKOverlayHeliumPerHour = document.createElement('p');
+    M['performance'].AFKOverlayHeliumPerHour.innerText = 'He/hr: -';
+    M['performance'].AFKOverlayHeliumPerHour.className = 'at-afk-heliumperhour';
 
-	// Status
-	M["performance"].AFKOverlayStatus = document.createElement('p');
-	M["performance"].AFKOverlayStatus.innerText = 'Status: -';
-	M["performance"].AFKOverlayStatus.className = 'at-afk-status'
+    // Status
+    M['performance'].AFKOverlayStatus = document.createElement('p');
+    M['performance'].AFKOverlayStatus.innerText = 'Status: -';
+    M['performance'].AFKOverlayStatus.className = 'at-afk-status';
 
-	// Disable(Back) button
-	M["performance"].AFKOverlayDisable = document.createElement('div');
-	M["performance"].AFKOverlayDisable.innerText = 'I\'m Back';
-	M["performance"].AFKOverlayDisable.className = 'at-afk-overlay-disable-btn'
+    // Disable(Back) button
+    M['performance'].AFKOverlayDisable = document.createElement('div');
+    M['performance'].AFKOverlayDisable.innerText = "I'm Back";
+    M['performance'].AFKOverlayDisable.className = 'at-afk-overlay-disable-btn';
 
-	M["performance"].AFKOverlayDisable.addEventListener('click', function () {
-		M["performance"].DisableAFKMode();
-	});
+    M['performance'].AFKOverlayDisable.addEventListener('click', function () {
+        M['performance'].DisableAFKMode();
+    });
 
-	// Bundle them together
-	M["performance"].AFKOverlay.appendChild(AFKOverlayTitle);
-	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayZone);
-	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayHelium);
-	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayHeliumPerHour);
-	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayStatus);
-	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayDisable);
+    // Bundle them together
+    M['performance'].AFKOverlay.appendChild(AFKOverlayTitle);
+    M['performance'].AFKOverlay.appendChild(M['performance'].AFKOverlayZone);
+    M['performance'].AFKOverlay.appendChild(M['performance'].AFKOverlayHelium);
+    M['performance'].AFKOverlay.appendChild(M['performance'].AFKOverlayHeliumPerHour);
+    M['performance'].AFKOverlay.appendChild(M['performance'].AFKOverlayStatus);
+    M['performance'].AFKOverlay.appendChild(M['performance'].AFKOverlayDisable);
 
-	// Insert the afk page, at the top level <body> tag
-	document.body.appendChild(M["performance"].AFKOverlay);
+    // Insert the afk page, at the top level <body> tag
+    document.body.appendChild(M['performance'].AFKOverlay);
 
-	M["performance"].EnableAFKMode = function EnableAFKMode() {
-		M["performance"].isAFK = true;
-		M["performance"].AFKOverlay.classList.remove('at-afk-overlay-disabled');
-		M["performance"].$wrapper.style.display = 'none';
-		//This is the whole meat - replaces the update function with nothing (means save resources)
-		W.updateLabels = function () { };
-	}
+    M['performance'].EnableAFKMode = function EnableAFKMode() {
+        M['performance'].isAFK = true;
+        M['performance'].AFKOverlay.classList.remove('at-afk-overlay-disabled');
+        M['performance'].$wrapper.style.display = 'none';
+        //This is the whole meat - replaces the update function with nothing (means save resources)
+        W.updateLabels = function () {};
+    };
 
-	M["performance"].DisableAFKMode = function DisableAFKMode() {
-		M["performance"].isAFK = false;
-		M["performance"].$wrapper.style.display = 'block';
-		M["performance"].AFKOverlay.classList.add('at-afk-overlay-disabled');
-		W.updateLabels = M["performance"].updateLabels;
-	}
+    M['performance'].DisableAFKMode = function DisableAFKMode() {
+        M['performance'].isAFK = false;
+        M['performance'].$wrapper.style.display = 'block';
+        M['performance'].AFKOverlay.classList.add('at-afk-overlay-disabled');
+        W.updateLabels = M['performance'].updateLabels;
+    };
 
-	M["performance"].UpdateAFKOverlay = function UpdateAFKOverlay() {
-		M["performance"].AFKOverlayZone.innerHTML = 'Zone: ' + game.global.world + " Cell: " + (game.global.lastClearedCell + 2) +
-
-			(game.global.mapsActive ? "<br>\ Map: " + ((getCurrentMapObject().level - game.global.world) >= 0 ? " + " : "") + (getCurrentMapObject().level - game.global.world) + " " + (getCurrentMapObject().bonus !== undefined ? getCurrentMapObject().bonus : "") : "")
-		if (game.global.universe === 1) {
-			M["performance"].AFKOverlayHelium.innerText = 'Helium: ' + prettify(Math.floor(game.resources.helium.owned));
-			M["performance"].AFKOverlayHeliumPerHour.innerText = 'He/hr: ' + prettify(game.stats.heliumHour.value());
-			M["performance"].AFKOverlayStatus.innerHTML = 'Status: ' + updateAutoMapsStatus(true)[0];
-		}
-		if (game.global.universe === 2) {
-			M["performance"].AFKOverlayHelium.innerText = 'Radon: ' + prettify(Math.floor(game.resources.radon.owned));
-			M["performance"].AFKOverlayHeliumPerHour.innerText = 'Rn/hr: ' + prettify(game.stats.heliumHour.value());
-			M["performance"].AFKOverlayStatus.innerHTML = 'Status: ' + updateAutoMapsStatus(true)[0];
-		}
-	}
-
+    M['performance'].UpdateAFKOverlay = function UpdateAFKOverlay() {
+        M['performance'].AFKOverlayZone.innerHTML = 'Zone: ' + game.global.world + ' Cell: ' + (game.global.lastClearedCell + 2) + (game.global.mapsActive ? '<br> Map: ' + (getCurrentMapObject().level - game.global.world >= 0 ? ' + ' : '') + (getCurrentMapObject().level - game.global.world) + ' ' + (getCurrentMapObject().bonus !== undefined ? getCurrentMapObject().bonus : '') : '');
+        if (game.global.universe === 1) {
+            M['performance'].AFKOverlayHelium.innerText = 'Helium: ' + prettify(Math.floor(game.resources.helium.owned));
+            M['performance'].AFKOverlayHeliumPerHour.innerText = 'He/hr: ' + prettify(game.stats.heliumHour.value());
+            M['performance'].AFKOverlayStatus.innerHTML = 'Status: ' + updateAutoMapsStatus(true)[0];
+        }
+        if (game.global.universe === 2) {
+            M['performance'].AFKOverlayHelium.innerText = 'Radon: ' + prettify(Math.floor(game.resources.radon.owned));
+            M['performance'].AFKOverlayHeliumPerHour.innerText = 'Rn/hr: ' + prettify(game.stats.heliumHour.value());
+            M['performance'].AFKOverlayStatus.innerHTML = 'Status: ' + updateAutoMapsStatus(true)[0];
+        }
+    };
 })(MODULES, window);
