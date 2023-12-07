@@ -930,7 +930,6 @@ function simulate(saveData, zone) {
 	return {
 		speed: loot * 10 / max_ticks,
 		equality: equality,
-		kills: kills,
 		killSpeed: kills / (max_ticks / 10),
 		deaths: deaths,
 	}
