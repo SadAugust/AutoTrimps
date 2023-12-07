@@ -1295,8 +1295,6 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
     }
 
     var heirloomToUse = heirloomShieldToEquip(type, false, hdCheck);
-    const gammaCheck = getHeirloomBonus_AT('Shield', 'gammaBurst', heirloomShieldToEquip(type));
-    var gammaBurstDmg = getPageSetting('gammaBurstCalc') && gammaCheck > 1 ? gammaCheck : 1;
     var ourBaseDamage = calcOurDmg(challengeActive('Unlucky') ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world, null, heirloomToUse);
     //Lead Challenge Pt. 2
     if (leadCheck) ourBaseDamage /= 1.5;
@@ -1316,7 +1314,7 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
     if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourBaseDamage *= 1 - (Math.max(1, gammaMaxStacks(false, true, type) - 1) * game.global.dailyChallenge.weakness.strength) / 100;
 
     //Adding gammaBurstDmg to calc
-    if ((type !== 'map' && game.global.universe === 2 && universeSetting < game.portal.Equality.radLevel - 14) || game.global.universe === 1) ourBaseDamage *= gammaBurstDmg;
+    if ((type !== 'map' && game.global.universe === 2 && universeSetting < game.portal.Equality.radLevel - 14) || game.global.universe === 1) ourBaseDamage *= MODULES.heirlooms.gammaBurstPct;
 
     if (checkOutputs) checkResults();
     //Return H:D for a regular scenario

@@ -402,9 +402,8 @@ function voidMaps(lineCheck) {
         maplevel: { hdStat: hdStats.autoLevel, name: 'Map Level' }
     };
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
-        const currSetting = baseSettings[y];
+    for (let y = 1; y < baseSettings.length; y++) {
+        let currSetting = baseSettings[y];
         var world = currSetting.world + voidReduction;
         var maxVoidZone = currSetting.maxvoidzone + voidReduction;
 
@@ -566,17 +565,15 @@ function mapBonus(lineCheck) {
     var spireCheck = getPageSetting('MaxStacksForSpire') && isDoingSpire();
     var spireStacks = spireCheck ? 10 : 0;
 
-    if (defaultSettings.active) {
-        if (settingIndex === null)
-            for (var y = 0; y < baseSettings.length; y++) {
-                if (y === 0) continue;
-                if (game.global.mapBonus === 10) continue;
-                const currSetting = baseSettings[y];
-                var world = currSetting.world;
-                if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
-                if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
-                settingIndex = y;
-            }
+    if (defaultSettings.active && settingIndex === null) {
+        for (let y = 1; y < baseSettings.length; y++) {
+            if (game.global.mapBonus === 10) continue;
+            let currSetting = baseSettings[y];
+            let world = currSetting.world;
+            if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
+            if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
+            settingIndex = y;
+        }
     }
 
     if (hdCheck || spireCheck) {
@@ -657,10 +654,9 @@ function mapFarm(lineCheck) {
     const dailyAddition = dailyOddOrEven();
     const zoneAddition = dailyAddition.active ? 1 : 0;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
+    for (let y = 1; y < baseSettings.length; y++) {
         var currSetting = baseSettings[y];
-        var world = currSetting.world;
+        let world = currSetting.world;
         if (currSetting.atlantrimp && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
 
         if (dailyAddition.active) {
@@ -776,10 +772,9 @@ function tributeFarm(lineCheck) {
     const dailyAddition = dailyOddOrEven();
     const zoneAddition = dailyAddition.active ? 1 : 0;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
+    for (let y = 1; y < baseSettings.length; y++) {
         var currSetting = baseSettings[y];
-        var world = currSetting.world;
+        let world = currSetting.world;
         if (dailyAddition.active) {
             if (dailyAddition.skipZone) continue;
             if (!settingShouldRun(currSetting, world, 0, settingName) && !settingShouldRun(currSetting, world, zoneAddition, settingName)) continue;
@@ -946,10 +941,9 @@ function smithyFarm(lineCheck) {
     const dailyAddition = dailyOddOrEven();
     const zoneAddition = dailyAddition.active ? 1 : 0;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
+    for (let y = 1; y < baseSettings.length; y++) {
         var currSetting = baseSettings[y];
-        var world = currSetting.world;
+        let world = currSetting.world;
         if (dailyAddition.active) {
             if (dailyAddition.skipZone) continue;
             if (!settingShouldRun(currSetting, world, 0, settingName) && !settingShouldRun(currSetting, world, zoneAddition, settingName)) continue;
@@ -1159,10 +1153,9 @@ function worshipperFarm(lineCheck) {
     const dailyAddition = dailyOddOrEven();
     const zoneAddition = dailyAddition.active ? 1 : 0;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
+    for (let y = 1; y < baseSettings.length; y++) {
         var currSetting = baseSettings[y];
-        var world = currSetting.world;
+        let world = currSetting.world;
         if (dailyAddition.active) {
             if (dailyAddition.skipZone) continue;
             if (!settingShouldRun(currSetting, world, 0, settingName) && !settingShouldRun(currSetting, world, zoneAddition, settingName)) continue;
@@ -1348,13 +1341,12 @@ function prestigeRaiding(lineCheck) {
     if (defaultSettings === null) return farmingDetails;
     if (!defaultSettings.active) return farmingDetails;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
-        const currSetting = baseSettings[y];
+    for (let y = 1; y < baseSettings.length; y++) {
+        let currSetting = baseSettings[y];
         var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? MODULES.equipment[currSetting.prestigeGoal].upgrade : 'GamesOP';
         var raidZones = currSetting.world + Number(currSetting.raidingzone);
 
-        var world = currSetting.world;
+        let world = currSetting.world;
         if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
         //Checks to see what our raid zone should be
         if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
@@ -1686,13 +1678,12 @@ function bionicRaiding(lineCheck) {
     if (!defaultSettings.active) return farmingDetails;
     if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
-        const currSetting = baseSettings[y];
+    for (let y = 1; y < baseSettings.length; y++) {
+        let currSetting = baseSettings[y];
         var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? MODULES.equipment[currSetting.prestigeGoal].upgrade : 'GamesOP';
         var raidZones = currSetting.raidingzone;
 
-        var world = currSetting.world;
+        let world = currSetting.world;
         if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
         if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
@@ -1784,10 +1775,9 @@ function toxicity(lineCheck) {
     if (!defaultSettings.active) return farmingDetails;
     if (!challengeActive('Toxicity')) return farmingDetails;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
+    for (let y = 1; y < baseSettings.length; y++) {
         var currSetting = baseSettings[y];
-        var world = currSetting.world;
+        let world = currSetting.world;
 
         if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
@@ -1982,10 +1972,9 @@ function quagmire(lineCheck) {
     if (defaultSettings === null) return farmingDetails;
     if (!challengeActive('Quagmire') || !defaultSettings.active) return farmingDetails;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
-        const currSetting = baseSettings[y];
-        var world = currSetting.world;
+    for (let y = 1; y < baseSettings.length; y++) {
+        let currSetting = baseSettings[y];
+        let world = currSetting.world;
         if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
         if (game.global.world === currSetting.world) {
@@ -2156,10 +2145,9 @@ function insanity(lineCheck) {
     if (defaultSettings === null) return farmingDetails;
     if (!challengeActive('Insanity') || !defaultSettings.active) return farmingDetails;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
-        const currSetting = baseSettings[y];
-        var world = currSetting.world;
+    for (let y = 1; y < baseSettings.length; y++) {
+        let currSetting = baseSettings[y];
+        let world = currSetting.world;
         if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
         if (game.global.world === currSetting.world) {
@@ -2320,10 +2308,9 @@ function alchemy(lineCheck) {
     if (defaultSettings === null) return farmingDetails;
     if (!challengeActive('Alchemy') || !defaultSettings.active) return farmingDetails;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
-        const currSetting = baseSettings[y];
-        var world = currSetting.world;
+    for (let y = 1; y < baseSettings.length; y++) {
+        let currSetting = baseSettings[y];
+        let world = currSetting.world;
         if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
         if (game.global.world === world || (game.global.world - world) % currSetting.repeatevery === 0) {
             settingIndex = y;
@@ -2555,10 +2542,9 @@ function hypothermia(lineCheck) {
 
     if (!challengeActive('Hypothermia')) return farmingDetails;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
-        const currSetting = baseSettings[y];
-        var world = currSetting.world;
+    for (let y = 1; y < baseSettings.length; y++) {
+        let currSetting = baseSettings[y];
+        let world = currSetting.world;
         if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
         if (game.global.world === currSetting.world) {
@@ -2733,10 +2719,9 @@ function desolationGearScum(lineCheck) {
     if (defaultSettings === null) return farmingDetails;
     if (!defaultSettings.active) return farmingDetails;
 
-    for (var y = 0; y < baseSettings.length; y++) {
-        if (y === 0) continue;
+    for (let y = 1; y < baseSettings.length; y++) {
         //Skip iterating lines if map bonus is capped.
-        const currSetting = baseSettings[y];
+        let currSetting = baseSettings[y];
         //Set cell ourselves since there is no input and you don't need to do this before c100. If you're overkilling you definitely don't need this setting.
         currSetting.cell = 100 - maxOneShotPower() + 1;
         var targetPrestige = currSetting.prestigeGoal !== 'All' ? MODULES.equipment[currSetting.prestigeGoal].upgrade : 'GamesOP';
@@ -2970,7 +2955,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
         }
     } //Standalone Hits Survived setting setup.
     else if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world) {
-        const hitsSurvivedSetting = targetHitsSurvived(true);
+        let hitsSurvivedSetting = targetHitsSurvived(true);
         if (hitsSurvivedSetting > 0 && hdStats.hitsSurvived < hitsSurvivedSetting)
             setting = {
                 autoLevel: true,
@@ -2986,18 +2971,16 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
     }
     if (!defaultSettings.active && setting === undefined) return farmingDetails;
 
-    if (defaultSettings.active) {
-        if (settingIndex === null)
-            for (var y = 0; y < baseSettings.length; y++) {
-                if (y === 0) continue;
-                const currSetting = baseSettings[y];
-                const world = currSetting.world;
-                if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
-                if (currSetting.hdType.toLowerCase().includes('void') && game.global.totalVoidMaps === 0) continue;
-                if (skipHealthCheck && currSetting.hdType.includes('hitsSurvived')) continue;
-                settingIndex = y;
-                break;
-            }
+    if (defaultSettings.active && settingIndex === null) {
+        for (let y = 1; y < baseSettings.length; y++) {
+            let currSetting = baseSettings[y];
+            let world = currSetting.world;
+            if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
+            if (currSetting.hdType.toLowerCase().includes('void') && game.global.totalVoidMaps === 0) continue;
+            if (skipHealthCheck && currSetting.hdType.includes('hitsSurvived')) continue;
+            settingIndex = y;
+            break;
+        }
     }
 
     //Setting up setting variable when we aren't void or hits survived farming
@@ -3073,7 +3056,6 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
         farmingDetails.special = mapSpecial;
         farmingDetails.gather = 'metal';
         farmingDetails.jobRatio = jobRatio;
-
         farmingDetails.hdType = hdType;
         farmingDetails.hdRatio = settingTarget;
         farmingDetails.hdRatio2 = hdRatio;
