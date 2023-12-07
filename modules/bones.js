@@ -4,7 +4,7 @@ function boneShrine() {
     const defaultSetting = baseSettings ? baseSettings[0] : null;
     if (challengeActive('Pandemonium') | (defaultSetting === null) | !defaultSetting.active) return;
 
-    const setting = _getBoneShrineSetting(baseSettings, defaultSettings);
+    const setting = _getBoneShrineSetting(baseSettings, defaultSetting);
     if (setting === undefined) return;
 
     const shrineCharges = _getBoneShrineCharges(setting);
@@ -15,10 +15,7 @@ function boneShrine() {
     if (boneShrineAncientTreasure) runUniqueMap(ancientTreasure);
 
     const map = getCurrentMapObject();
-    if (
-        !boneShrineAncientTreasure ||
-        (game.global.mapsActive && map.name === ancientTreasure && game.global.lastClearedMapCell >= map.size - 30)
-    ) {
+    if (!boneShrineAncientTreasure || (game.global.mapsActive && map.name === ancientTreasure && game.global.lastClearedMapCell >= map.size - 30)) {
         // Use bone charges
         // Equip staff for the gather type the user is using
         const gatherStaff = 'heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1);
@@ -31,11 +28,7 @@ function boneShrine() {
         for (let i = 0; i < shrineCharges; i++) {
             game.permaBoneBonuses.boosts.consume();
         }
-        debug(
-            `Consumed ${shrineCharges} bone shrine charge${shrineCharges === 1 ? '' : 's'} on zone ${
-                game.global.world
-            } and gained ${boneShrineOutput(shrineCharges)} bones.`
-        );
+        debug(`Consumed ${shrineCharges} bone shrine charge${shrineCharges === 1 ? '' : 's'} on zone ${game.global.world} and gained ${boneShrineOutput(shrineCharges)} bones.`);
 
         if (setting && settingName && setting.row) {
             let value = game.global.universe === 2 ? 'valueU2' : 'value';
@@ -47,11 +40,7 @@ function boneShrine() {
 function _getBoneShrineSetting(defaultSetting, baseSettings) {
     const boneCharges = game.permaBoneBonuses.boosts.charges;
     // If we have enough bone charges then spend them automatically to stop from capping
-    if (
-        defaultSetting.autoBone &&
-        boneCharges >= defaultSetting.bonebelow &&
-        game.global.world >= defaultSetting.world
-    ) {
+    if (defaultSetting.autoBone && boneCharges >= defaultSetting.bonebelow && game.global.world >= defaultSetting.world) {
         if (setting.bonebelow <= 0) setting.bonebelow = 999;
         defaultSetting.atlantrimp = false;
         defaultSetting.boneamount = 1;
@@ -74,8 +63,7 @@ function _getBoneShrineGather(setting) {
 function _getBoneShrineCharges(setting) {
     const boneShrineSpendBelow = setting.bonebelow === -1 ? 0 : setting.bonebelow;
     const boneCharges = game.permaBoneBonuses.boosts.charges;
-    if (!setting.autoBone && setting.boneamount > boneCharges - boneShrineSpendBelow)
-        return boneCharges - boneShrineSpendBelow;
+    if (!setting.autoBone && setting.boneamount > boneCharges - boneShrineSpendBelow) return boneCharges - boneShrineSpendBelow;
     return setting.boneamount;
 }
 
@@ -124,21 +112,8 @@ function buySingleRunBonuses() {
     }
 
     //Purchase Radonculous/Heliumy if we have enough bones and running Dailies
-    if (
-        trimpStats.isDaily &&
-        !game.singleRunBonuses.heliumy.owned &&
-        getPageSetting('buyheliumy', portalUniverse) > 0 &&
-        getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) &&
-        game.global.b >= 100
-    ) {
+    if (trimpStats.isDaily && !game.singleRunBonuses.heliumy.owned && getPageSetting('buyheliumy', portalUniverse) > 0 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100) {
         purchaseSingleRunBonus('heliumy');
-        debug(
-            'Purchased ' +
-                (currSettingUniverse === 2 ? 'Radonculous' : 'Heliumy') +
-                '  for 100 bones on this ' +
-                getPageSetting('buyheliumy', portalUniverse) +
-                '% daily.',
-            'bones'
-        );
+        debug('Purchased ' + (currSettingUniverse === 2 ? 'Radonculous' : 'Heliumy') + '  for 100 bones on this ' + getPageSetting('buyheliumy', portalUniverse) + '% daily.', 'bones');
     }
 }
