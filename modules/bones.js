@@ -7,8 +7,8 @@ function boneShrine() {
     const setting = _getBoneShrineSetting(baseSettings, defaultSettings);
     if (setting === undefined) return;
 
-    const shrineCharges = _getBoneShrineCharges();
-    const boneShrineGather = _getBoneShrineGather();
+    const shrineCharges = _getBoneShrineCharges(setting);
+    const boneShrineGather = _getBoneShrineGather(setting);
 
     const boneShrineAncientTreasure = game.mapUnlocks.AncientTreasure.canRunOnce ? setting.atlantrimp : false;
     const ancientTreasure = getAncientTreasureName();
@@ -17,7 +17,7 @@ function boneShrine() {
     const map = getCurrentMapObject();
     if (
         !boneShrineAncientTreasure ||
-        (game.global.mapsActive && map === ancientTreasure && game.global.lastClearedMapCell >= map - 30)
+        (game.global.mapsActive && map.name === ancientTreasure && game.global.lastClearedMapCell >= map.size - 30)
     ) {
         // Use bone charges
         // Equip staff for the gather type the user is using
