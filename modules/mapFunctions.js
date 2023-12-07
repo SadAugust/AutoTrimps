@@ -3338,6 +3338,10 @@ function farmingDecision() {
 		}
 	}
 
+	//If running map bonus with Quagmire active then we should run quagmire before farming if it is set to run on this zone.
+	if (farmingDetails.mapName === 'Map Bonus' && challengeActive('Quagmire') && quagmire().shouldRun)
+		farmingDetails = quagmire();
+
 	//Setup level check so that we can compare if we need to do some work with map run counters
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
 	mapSettings = farmingDetails;

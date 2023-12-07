@@ -2117,7 +2117,7 @@ function initializeAllSettings() {
 			function () { return ('W: Farm') },
 			function () {
 				var description = "<p>Enable this to force farming until you can 4 shot your current world cell on Wither.</p>";
-				description += "<p>When at cell 100 it will identify the damage required for clearing the next zone and if you don't have enough damage it will farm until you do.</p>";
+				description += "<p>When at cell 100 it will identify the damage required for reaching the speedbook on the next zone and if you don't have enough damage it will farm until you do.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
@@ -4515,7 +4515,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("c2AutoDStanceSpire", 'show');
 	//C2 Challenges
 	modifyParentNode("duelShield", 'show');
-	modifyParentNode("trapperArmyPct", 'show');
+	modifyParentNode("trapperShield", 'show');
 	modifyParentNode("experienceEndBW", 'show');
 	modifyParentNode("witherShield", 'show');
 	modifyParentNode("questSmithyMaps", 'show');
