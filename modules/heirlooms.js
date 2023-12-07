@@ -152,10 +152,6 @@ function heirloomSearch(heirloom) {
 	for (loom of game.global.heirloomsCarried)
 		if (loom.name === heirloomName)
 			return loom;
-	/* if (game.global.ShieldEquipped.name === heirloomName)
-		return game.global.ShieldEquipped;
-	if (game.global.StaffEquipped.name === heirloomName)
-		return game.global.StaffEquipped; */
 }
 
 //Loops through heirlooms and checks if they have a specified modifier on them, divides by 10 if in u2.
@@ -167,6 +163,7 @@ function heirloomModSearch(heirloom, modifier) {
 	var loom;
 	//If the heirloom exists and is in our inventory, check it for the modifier we're looking for
 	if (heirloomDetails) {
+		if (modifier === 'gammaBurst' && heirloomDetails.rarity >= 10) return Infinity;
 		for (i = (heirloomDetails.mods.length - 1); i > -1; i--) {
 			if (heirloomDetails.mods[i][0] === modifier)
 				return heirloomDetails.mods[i][1];
@@ -176,6 +173,7 @@ function heirloomModSearch(heirloom, modifier) {
 	//Else if the heirloom is equipped and is a Shield, check it for the modifier we're looking for
 	else if (game.global.ShieldEquipped.name === heirloomName) {
 		loom = game.global.ShieldEquipped;
+		if (modifier === 'gammaBurst' && loom.rarity >= 10) return Infinity;
 		for (i = (loom.mods.length - 1); i > -1; i--) {
 			if (loom.mods[i][0] === modifier)
 				return loom.mods[i][1];
@@ -199,6 +197,7 @@ function heirloomModSearch(heirloom, modifier) {
 			for (y = (type.length - 1); y > -1; y--) {
 				if (Object.keys(game.global[type[y]]).length === 0) continue;
 				loom = game.global[type[y]];
+				if (modifier === 'gammaBurst' && type[y] === 'ShieldEquipped' && loom.rarity >= 10) return Infinity;
 				for (i = (loom.mods.length - 1); i > -1; i--) {
 					if (loom.mods[i][0] === modifier)
 						return loom.mods[i][1];
@@ -408,16 +407,11 @@ function heirloomSwapping() {
 //AT versions for heirloom bonuses. 
 //Check and update each patch!
 function getHeirloomBonus_AT(type, modName, customShield) {
-	if (!customShield && (!game.heirlooms[type] || !game.heirlooms[type][modName])) {
-		console.log('oh noes', type, modName);
+	if (!customShield && (!game.heirlooms[type] || !game.heirlooms[type][modName]))
 		return 0;
-	}
-
 	var bonus;
 	//Override bonus if needed with gammaBurst otherwise check customShield and lastly use the game heirloom bonus.
-	if (modName === 'gammaBurst')
-		bonus = heirloomSearch(customShield) ? getHazardGammaBonus_AT(heirloomSearch(customShield)) : MODULES.heirlooms.gammaBurstPct;
-	else if (customShield)
+	if (customShield)
 		bonus = heirloomModSearch(customShield, modName);
 	else
 		bonus = game.heirlooms[type][modName].currentBonus;
@@ -500,7 +494,7 @@ function getEnergyShieldMult_AT(mapType, noHeirloom) {
 
 function getHazardGammaBonus_AT(heirloom) {
 	if (!heirloom) heirloom = game.global.ShieldEquipped;
-	if (heirloom.rarity < 10) return 0;
+	if (!heirloom || heirloom.rarity < 10) return 0;
 	var spent = getTotalHeirloomRefundValue(heirloom, true);
 	spent += 1e6
 	var mult = (heirloom.rarity === 11) ? 10000 : 4000;
