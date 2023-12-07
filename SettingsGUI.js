@@ -4612,7 +4612,7 @@ function challengesUnlockedObj() {
             Quagmire: { unlockZone: 70, unlockedIn: ['heHr', 'autoPortal'] },
             Wither: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
             Revenge: { unlockZone: 80, unlockedIn: ['oneOff'] },
-            Quest: { unlockZone: 85, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+            Quest: { unlockZone: 85, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
             Archaeology: { unlockZone: 90, unlockedIn: ['heHr', 'autoPortal'] },
             Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
             Storm: { unlockZone: 105, unlockedIn: ['c2', 'oneOff'] },
