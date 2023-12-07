@@ -1309,7 +1309,7 @@ function mapDestacking(lineCheck) {
 	if (lineCheck && shouldMap)
 		return setting = { priority: 1, };
 
-	var repeat = game.global.mapsActive && (getCurrentMapObject().size - getCurrentMapCell().level) > destackValue;
+	var repeat = game.global.mapsActive && (getCurrentMapObject().size - getCurrentMapCell().level + 1) >= destackValue;
 
 	var status = 'Destacking: ' + destackValue + ' stacks remaining';
 
