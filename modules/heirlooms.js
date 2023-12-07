@@ -209,6 +209,7 @@ function heirloomModSearch(heirloom, modifier) {
 }
 
 function heirloomEquipShield(heirloom) {
+	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return;
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
 
@@ -221,6 +222,7 @@ function heirloomEquipShield(heirloom) {
 }
 
 function heirloomEquipStaff(heirloom) {
+	if (!getPageSetting('heirloom') || !getPageSetting('heirloomStaff')) return;
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
 
