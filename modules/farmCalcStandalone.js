@@ -159,7 +159,7 @@ function makeAdditionalInfo() {
     const u2 = game.global.universe === 2;
     const extraType = u2 ? 'equality' : 'stance';
     const showExtraType = (u2 && getPerkLevel('Equality') > 0) || (!u2 && game.upgrades.Formations.done);
-    const loot = `Loot ${initialInfo.overall.mapLevel}${showExtraType ? (' (' + initialInfo.overall[extraType] + ')') : ''}`;
+    const loot = `Loot ${initialInfo.loot.mapLevel}${showExtraType ? (' (' + initialInfo.loot[extraType] + ')') : ''}`;
     const speed = `Speed ${initialInfo.speed.mapLevel}${showExtraType ? (' (' + initialInfo.speed[extraType] + ')') : ''}`;
     var description = `Auto Level: `;
     if (!game.global.mapsUnlocked) return description += `Maps not unlocked!`;

@@ -35,7 +35,7 @@ function callAutoMapLevel(settingName, special, maxLevel, minLevel) {
 function callAutoMapLevel_new(mapName, special) {
 	//Figure out if we're looking for speed or loot
 	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking',];
-	const mapType = speedSettings.indexOf(mapName) >= 0 ? 'speed' : 'overall';
+	const mapType = speedSettings.indexOf(mapName) >= 0 ? 'speed' : 'loot';
 	const mapModifiers = {
 		special: special ? special : trimpStats.mapSpecial,
 		biome: mapSettings.biome ? mapSettings.biome : trimpStats.mapBiome,
@@ -292,9 +292,8 @@ function populateZFarmData() {
 	//Enemy Stats
 	var enemyHealth = 1;
 	var enemyAttack = 1;
-	//Challenge modifiers
 
-	//U1
+	//U1 Challenge modifiers
 	if (universe === 1) {
 		if (challengeActive('Discipline')) {
 			minFluct = 0.005;
@@ -358,7 +357,7 @@ function populateZFarmData() {
 			enemyAttack *= game.challenges.Experience.getEnemyMult();
 		}
 	}
-	//U2
+	//U2 Challenge modifiers
 	if (universe === 2) {
 		if (challengeActive('Unlucky')) {
 			minFluct = 0.005;
@@ -473,13 +472,11 @@ function populateZFarmData() {
 		[['poison', 'wind', 'ice'][Math.ceil(zone / 5) % 3]]: nature / 100,
 		uberNature: getUberEmpowerment(),
 		transfer: natureTransfer,
-
 		//Trimp Stats
 		attack: trimpAttack,
 		trimpHealth: trimpHealth,
 		trimpBlock: trimpBlock,
 		trimpShield: trimpShield,
-
 		//Misc Trimp Stats
 		critChance: critChance % 1,
 		critDamage: 1 + critDamage,
@@ -488,12 +485,10 @@ function populateZFarmData() {
 		range: maxFluct / minFluct,
 		plaguebringer: (plaguebrought ? 0.5 : 0) + (typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
 		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
-
 		//Enemy Stats
 		challenge_health: enemyHealth,
 		challenge_attack: enemyAttack,
 		fluctuation: game.global.universe === 2 ? 0.5 : 0.2,
-
 		//Misc
 		import_chance: imps * exoticChance,
 		ok_spread: overkillRange,
@@ -501,7 +496,6 @@ function populateZFarmData() {
 		stances: stances,
 		titimp: game.unlocks.imps.Titimp,
 		titimpReduction: 1 - (speed / 10),
-
 		//Challenge Conditions
 		angelic: mastery('angelic'),
 		trapper: challengeActive('Trapper') || challengeActive('Trappapalooza'),
@@ -518,7 +512,6 @@ function populateZFarmData() {
 		berserk: challengeActive('Berserk'),
 		glass: challengeActive('Glass'),
 		desolation: challengeActive('Desolation'),
-
 		//Death Info
 		...death_stuff
 	}
@@ -532,10 +525,10 @@ function stats() {
 	if (saveData.reducer) extra = -1;
 	if (saveData.extraMapLevelsAvailable) extra = 10;
 	var mapsCanAffordPerfect = 0;
-	for (var mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
+	for (let mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
 		if (saveData.coordinate) {
-			var coords = 1;
-			for (var z = 1; z < mapLevel; ++z)
+			let coords = 1;
+			for (let z = 1; z < mapLevel; ++z)
 				coords = Math.ceil(1.25 * coords);
 			saveData.challenge_health = coords;
 			saveData.challenge_attack = coords;
@@ -545,8 +538,9 @@ function stats() {
 
 		//Check fragment cost of each map and remove them from the check if they can't be afforded.
 		if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-		//Want to guarantee at least 6 results here so that we don't accidentally miss a good map to farm on
-		if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 40)) break;
+		//Want to guarantee at least 6 results here so that we don't accidentally miss a good map to farm on.
+		//Cap maps at 30 so that we don't have to wait too long for the results. Also running a -19 map isn't gonna be efficient at all.
+		if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 30)) break;
 		stats.unshift(tmp);
 		if (tmp.zone === 'z6') break;
 	}
@@ -559,11 +553,13 @@ function zone_stats(zone, stances, saveData) {
 		mapLevel: zone - saveData.zone,
 		zone: 'z' + zone,
 		value: 0,
+		killSpeed: 0,
 		stance: '',
 		loot: 100 * (zone < saveData.zone ? 0.8 ** (saveData.zone - saveData.reducer - zone) : 1.1 ** (zone - saveData.zone)),
 		canAffordPerfect: saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9]),
 	};
 	if (!stances) stances = 'X';
+	//Loop through all stances to identify which stance is best for farming
 	for (var stance of stances) {
 		saveData.atk = saveData.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
 		if (mastery('bionic2') && zone > saveData.zone) saveData.atk *= 1.5;
@@ -571,16 +567,23 @@ function zone_stats(zone, stances, saveData) {
 		var speed = simulationResults.speed;
 		var value = speed * result.loot * (stance == 'S' ? 2 : 1);
 		var equality = simulationResults.equality;
+		var killSpeed = simulationResults.killSpeed;
 		result[stance] = {
 			speed,
 			value,
-			equality
+			equality,
+			killSpeed,
 		};
 
 		if (value > result.value) {
-			result.value = value;
-			result.stance = stance;
 			result.equality = equality;
+			result.stance = stance;
+			result.value = value;
+		}
+
+		if (killSpeed > result.killSpeed) {
+			result.killSpeed = killSpeed;
+			result.stanceSpeed = stance;
 		}
 	}
 
@@ -611,6 +614,9 @@ function simulate(saveData, zone) {
 	var equality = 1;
 	var trimpCrit = false;
 	var enemyCrit = false;
+
+	var kills = 0;
+	var deaths = 0;
 
 	var seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
@@ -710,7 +716,6 @@ function simulate(saveData, zone) {
 		reduceTrimpHealth(enemyAtk);
 		++debuff_stacks;
 	}
-	var titimpTicks = 0;
 
 	cell = 0;
 	while (ticks < max_ticks) {
@@ -739,6 +744,7 @@ function simulate(saveData, zone) {
 		//Add in 10x hp mult from Duel if necessary
 		if (saveData.duel && duelPoints > 80)
 			enemyHealth *= 10;
+		titimp = 0;
 
 		while (enemyHealth >= 1 && ticks < max_ticks) {
 			++turns;
@@ -861,6 +867,7 @@ function simulate(saveData, zone) {
 				turns = 1;
 				debuff_stacks = 0;
 				gammaStacks = 0;
+				deaths++;
 
 				//Stop it from getting Infinity glass stacks OR if you die on a shieldbreak challenge/quest
 				if (saveData.quest || (saveData.glass && glassStacks >= 10000) || saveData.trapper)
@@ -912,6 +919,7 @@ function simulate(saveData, zone) {
 			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 		}
 		++cell;
+		++kills;
 		if (cell >= saveData.size) {
 			cell = 0;
 			plague_damage = 0;
@@ -922,12 +930,15 @@ function simulate(saveData, zone) {
 	return {
 		speed: loot * 10 / max_ticks,
 		equality: equality,
+		kills: kills,
+		killSpeed: kills / (max_ticks / 10),
+		deaths: deaths,
 	}
 }
 
 //Return info about the best zone for each stance
 function get_best(results, fragmentCheck, mapModifiers) {
-	var best = { overall: { mapLevel: 0, }, ratio: 0, speed: { mapLevel: 0, value: 0, speed: 0, } }
+	var best = { loot: { mapLevel: 0, }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 } }
 	if (!game.global.mapsUnlocked) return best;
 
 	var [stats, stances] = results;
@@ -954,62 +965,41 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			i--;
 		}
 	}
-	var statsSpeed = [...stats];
 	if (stats.length === 0) return best;
-	best.stances = {};
-	best.stancesSpeed = {};
-	if (!stances) stances = 'X';
+	var statsLoot = [...stats];
+	var statsSpeed = [...stats];
+	//Find the best speed/loot zone for each stance
 	for (var stance of stances) {
-		//Find the best zone for each stance
-		stats.sort((a, b) => b[stance].value - a[stance].value);
-		best.stances[stance] = stats[0].zone;
-
-		//Find the fastest zone for each stance - Useful for map bonus etc
-		statsSpeed.sort(function (a, b) {
-			if (a[stance].speed === b[stance].speed)
-				return (a.mapLevel < b.mapLevel) ?
-					((a[stance].value < b[stance].value) ? 1 : -1) :
-					((a.mapLevel < b.mapLevel) ? 1 : -1);
-			return (a[stance].speed < b[stance].speed) ? 1 : -1
-		});
-
-		best.stancesSpeed[stance] = statsSpeed[0].zone;
-		if (statsSpeed[0][stance].speed >= best.speed.speed && statsSpeed[0][stance].value >= best.speed.value) {
-			best.speed = {
-				mapLevel: statsSpeed[0].mapLevel,
-				zone: statsSpeed[0].zone,
-				value: statsSpeed[0][statsSpeed[0].stance].value,
-				speed: statsSpeed[0][statsSpeed[0].stance].speed,
-				stance: statsSpeed[0].stance,
-			}
-			if (game.global.universe === 2) best.speed.equality = statsSpeed[0].equality;
-		}
+		statsLoot.sort((a, b) => b[stance].value - a[stance].value);
+		//Find the best speed zone for each stance
+		statsSpeed.sort((a, b) => a[stance].killSpeed - b[stance].killSpeed);
 	}
 
-	stats.sort((a, b) => b.value - a.value);
 	//Best zone to farm on for loot
-	best.overall = {
-		mapLevel: stats[0].mapLevel,
-		zone: stats[0].zone,
-		value: stats[0][stats[0].stance].value,
-		speed: stats[0][stats[0].stance].speed,
-		stance: stats[0].stance,
+	statsLoot.sort((a, b) => b.value - a.value);
+	best.loot = {
+		mapLevel: statsLoot[0].mapLevel,
+		zone: statsLoot[0].zone,
+		value: statsLoot[0][statsLoot[0].stance].value,
+		speed: statsLoot[0][statsLoot[0].stance].speed,
+		killSpeed: statsLoot[0][statsLoot[0].stance].killSpeed,
+		stance: statsLoot[0].stance,
 	};
-	if (game.global.universe === 1) best.overall.stance = stats[0].stance;
-	if (game.global.universe === 2) best.overall.equality = stats[0].equality;
-	//Second best zone to farm on for loot
-	if (stats[1]) {
-		best.second = {
-			mapLevel: stats[1].mapLevel,
-			zone: stats[1].zone,
-			value: stats[1][stats[1].stance].value,
-			speed: stats[1][stats[1].stance].speed,
-			stance: stats[1].stance,
-		};
-		if (game.global.universe === 1) best.second.stance = stats[1].stance;
-		if (game.global.universe === 2) best.second.equality = stats[1].equality;
-		best.ratio = stats[0].value / stats[1].value;
-	}
+	if (game.global.universe === 1) best.loot.stance = statsLoot[0].stance;
+	if (game.global.universe === 2) best.loot.equality = statsLoot[0].equality;
+
+	//Best zone to farm on for speed
+	statsSpeed.sort((a, b) => b.killSpeed - a.killSpeed);
+	best.speed = {
+		mapLevel: statsSpeed[0].mapLevel,
+		zone: statsSpeed[0].zone,
+		value: statsSpeed[0][statsSpeed[0].stanceSpeed].value,
+		speed: statsSpeed[0][statsSpeed[0].stanceSpeed].speed,
+		killSpeed: statsSpeed[0][statsSpeed[0].stanceSpeed].killSpeed,
+		stance: statsSpeed[0].stanceSpeed,
+	};
+	if (game.global.universe === 1) best.speed.stance = statsSpeed[0].stanceSpeed;
+	if (game.global.universe === 2) best.speed.equality = statsSpeed[0].equality;
 
 	return best;
 }
