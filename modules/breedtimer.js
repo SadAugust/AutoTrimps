@@ -110,7 +110,7 @@ function geneAssist() {
     let genDif = _getGenDifference(compareTime, target);
 
     if ((compareTime.cmp(target) < 0) & _geneticistCost() & (genDif.cmp(0) > 0)) _hireGenes(genDif);
-    else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || getPotencyMod().cmp(1) === 0) _fireGenes();
+    else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || getPotencyMod().cmp(1) === 0) _fireGenes(genDif);
 }
 
 function _shouldRunGeneAssist() {
