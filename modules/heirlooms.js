@@ -387,8 +387,8 @@ function getHeirloomBonus_AT(type, modName, customShield) {
     var bonus;
     //Override bonus if needed with gammaBurst otherwise check customShield and lastly use the game heirloom bonus.
     if (customShield) bonus = heirloomModSearch(customShield, modName);
+    else if (modName === 'gammaBurst') bonus = game.global.gammaMult / 100;
     else bonus = game.heirlooms[type][modName].currentBonus;
-
     if (bonus === undefined) return 0;
 
     if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
