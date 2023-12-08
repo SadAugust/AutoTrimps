@@ -37,11 +37,11 @@ function boneShrine() {
     }
 }
 
-function _getBoneShrineSetting(defaultSetting, baseSettings) {
+function _getBoneShrineSetting(baseSettings, defaultSetting) {
     const boneCharges = game.permaBoneBonuses.boosts.charges;
     // If we have enough bone charges then spend them automatically to stop from capping
     if (defaultSetting.autoBone && boneCharges >= defaultSetting.bonebelow && game.global.world >= defaultSetting.world) {
-        if (setting.bonebelow <= 0) setting.bonebelow = 999;
+        if (defaultSetting.bonebelow <= 0) defaultSetting.bonebelow = 999;
         defaultSetting.atlantrimp = false;
         defaultSetting.boneamount = 1;
         return defaultSetting;
@@ -50,7 +50,7 @@ function _getBoneShrineSetting(defaultSetting, baseSettings) {
     for (let i = 1; i < baseSettings.length; i++) {
         const currSetting = baseSettings[i];
         const world = currSetting.world;
-        if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
+        if (!settingShouldRun(currSetting, world, 0, 'boneShrineSettings')) continue;
         return baseSettings[i];
     }
 }
