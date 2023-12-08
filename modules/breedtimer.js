@@ -109,7 +109,7 @@ function geneAssist() {
     if (!target) return;
     let genDif = _getGenDifference(compareTime, target);
 
-    if ((compareTime.cmp(target) < 0) & _geneticistCost() & (genDif.cmp(0) > 0)) _hireGenes();
+    if ((compareTime.cmp(target) < 0) & _geneticistCost() & (genDif.cmp(0) > 0)) _hireGenes(genDif);
     else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || getPotencyMod().cmp(1) === 0) _fireGenes();
 }
 
@@ -166,7 +166,7 @@ function _getCompareTime(timeRemaining) {
 }
 
 function _getGenDifference(compareTime, target) {
-    breed = Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02));
+    const breed = Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02));
     return new MODULES.breedtimer.DecimalBreed(breed).ceil();
 }
 
