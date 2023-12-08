@@ -1544,6 +1544,7 @@ function initializeAllSettings() {
 			"MP Smithy": { enabled: false, value: 100 },
 			"MP Smithy Daily": { enabled: false, value: 100 },
 			"MP Smithy C3": { enabled: false, value: 100 },
+			"MP Smithy One Off": { enabled: false, value: 100 },
 		}, 'MAZLookalike("UniqueMaps")', 'Maps', [1, 2]);
 
 		//Map Bonus
@@ -6116,6 +6117,15 @@ function updateATVersion() {
             autoTrimpSettings.decay.enabledU2 = false;
             autoTrimpSettings.decayStacksToPush.valueU2 = -1;
             autoTrimpSettings.decayStacksToAbandon.valueU2 = -1;
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.30') {
+            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+                autoTrimpSettings.uniqueMapSettingsArray.valueU2['MP Smithy One Off'] = {
+                    enabled: false,
+                    value: 100
+                };
+            }
         }
     }
 

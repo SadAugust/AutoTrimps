@@ -2113,6 +2113,7 @@ function uniqueMapsDisplay(elem) {
         smithySettings.push('MP Smithy');
         smithySettings.push('MP Smithy Daily');
         smithySettings.push('MP Smithy C3');
+        smithySettings.push('MP Smithy One Off');
     }
 
     for (var x = 0; x < mapUnlocks.length; x++) {

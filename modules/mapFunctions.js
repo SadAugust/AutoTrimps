@@ -160,6 +160,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
             if (['mayhem', 'pandemonium', 'desolation'].indexOf(currChallenge) >= 0 && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0) smithyGoal = getPageSetting(currChallenge + 'MP');
             else if (trimpStats.isC3 && uniqueMapSetting['MP Smithy C3'].enabled && uniqueMapSetting['MP Smithy C3'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy C3'].value;
             else if (trimpStats.isDaily && uniqueMapSetting['MP Smithy Daily'].enabled && uniqueMapSetting['MP Smithy Daily'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy Daily'].value;
+            else if (trimpStats.isOneOff && uniqueMapSetting['MP Smithy One Off'].enabled && uniqueMapSetting['MP Smithy One Off'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy One Off'].value;
             else if (trimpStats.isFiller && uniqueMapSetting['MP Smithy'].enabled && uniqueMapSetting['MP Smithy'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy'].value;
             if (smithyGoal <= game.buildings.Smithy.owned) return true;
             return false;
