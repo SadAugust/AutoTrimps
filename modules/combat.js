@@ -261,7 +261,7 @@ function equalityManagement() {
     const noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
     const angelicOwned = game.talents.angelic.purchased;
     //Challenges/conditions where it's important to keep armies alive through angelic.
-    const angelicDance = angelicOwned && (runningTrappa || runningArchaeology || runningBerserk || noFrenzy || (dailyEmpower && !mapping));
+    const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningArchaeology || runningBerserk || noFrenzy || (dailyEmpower && !mapping));
     const plagueShield = MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming ? getHeirloomBonus('Shield', 'plaguebringer') > 0 : false;
 
     //Gamma burst info
