@@ -22,7 +22,8 @@ function getHeliumPerHour() {
 
 //Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
 function autoPortalCheck(specificPortalZone) {
-    if (challengeActive('Decay') || challengeActive('Melt')) decayFinishChallenge();
+    decayFinishChallenge();
+    quagmireFinishChallenge();
     if (!game.global.portalActive) return;
     if (game.global.runningChallengeSquared) c2RunnerPortal(specificPortalZone);
     else autoPortal(specificPortalZone);
@@ -499,9 +500,7 @@ function doPortal(challenge, skipDaily) {
 
 function decaySkipMaps() {
     const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
-    if (!challengeActive(challengeName) && !getPageSetting('decay')) {
-        return false;
-    }
+    if (!challengeActive(challengeName) && !getPageSetting('decay')) return false;
     const challenge = game.challenges[challengeName];
     const stacks = challenge ? challenge.stacks : 0;
     const stacksToPush = getPageSetting('decayStacksToPush');
@@ -511,17 +510,27 @@ function decaySkipMaps() {
 function decayFinishChallenge() {
     //Pre-Init
     const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
-    if (!challengeActive(challengeName) && !getPageSetting('decay')) return;
+    if (!challengeActive(challengeName) || !getPageSetting('decay')) return;
 
     //Init
     const challenge = game.challenges[challengeName];
-    var stacks = challenge ? challenge.stacks : 0;
-    var stacksToAbandon = getPageSetting('decayStacksToAbandon');
+    const stacks = challenge ? challenge.stacks : 0;
+    const stacksToAbandon = getPageSetting('decayStacksToAbandon');
 
     //Finishes the challenge if above max stacks
     if (stacksToAbandon > 0 && stacks > stacksToAbandon) {
         abandonChallenge();
         debug(`Finished ${challengeName} challenge because we had more than ${stacksToAbandon} stacks.`, 'general', 'oil');
+    }
+}
+
+function quagmireFinishChallenge() {
+    if (!challengeActive('Quagmire') || !getPageSetting('quagmireSettings')[0].active) return;
+    const zoneToAbandon = getPageSetting('quagmireSettings')[0].abandonZone;
+    //Finishes the challenge if at or above the zone to abandon
+    if (zoneToAbandon > 0 && game.global.world >= zoneToAbandon) {
+        abandonChallenge();
+        debug(`Finished Quagmire challenge because we are at or past z${zoneToAbandon}.`, 'general', 'oil');
     }
 }
 
@@ -615,6 +624,7 @@ function resetVarsZone(loadingSave) {
         MODULES.fightinfo.lastProcessedWorld = 0;
         MODULES.portal.portalForVoid = false;
         MODULES.mapFunctions.afterVoids = false;
+        hideFightButtons();
     }
 
     delete mapSettings.voidHDIndex;
@@ -631,6 +641,7 @@ function resetVarsZone(loadingSave) {
     //Challenge Repeat
     MODULES.mapFunctions.challengeContinueRunning = false;
     MODULES.mapFunctions.runUniqueMap = '';
+    MODULES.mapFunctions.quest.run = false;
     trimpStats = new TrimpStats();
     hdStats = new HDStats(true);
     //Reset map settings to default

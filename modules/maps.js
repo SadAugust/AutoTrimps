@@ -425,8 +425,8 @@ function autoMap() {
     }
 
     //Failsafes
-    //If maps aren't active, or soldier attack is negative or we're running Quest and doing a shield break OR no maps quest OR running Mapo and no credits available
-    if (!game.global.mapsUnlocked || game.global.soldierCurrentAttack < 0 || currQuest() === 8 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
+    //If maps aren't active, or soldier attack is negative or we're running no maps quest OR running Mapo and no credits available
+    if (!game.global.mapsUnlocked || game.global.soldierCurrentAttack < 0 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
         if (game.global.preMapsActive) mapsClicked();
         return;
     }

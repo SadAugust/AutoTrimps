@@ -4,6 +4,7 @@ MODULES.mapFunctions.afterVoids = false;
 MODULES.mapFunctions.hasHealthFarmed = '';
 MODULES.mapFunctions.hasVoidFarmed = '';
 MODULES.mapFunctions.runUniqueMap = '';
+MODULES.mapFunctions.quest = { run: false };
 MODULES.mapFunctions.hypothermia = { buyPackrat: false };
 MODULES.mapFunctions.desolation = { gearScum: false };
 
@@ -818,38 +819,19 @@ function tributeFarm(lineCheck) {
                 tributeGoal = mapSettings.tribute;
                 meteorologistGoal = mapSettings.meteorologist;
             } else {
-                //Factoring in the resource reduction from spending time farming during Melt
-                var lootMult = 1;
-                var totalMaps = tributeGoal + meteorologistGoal;
-                if (challengeActive('Melt')) {
-                    const mapClearTime = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
-                    var meltStacks = game.challenges.Melt.stacks;
-                    for (var x = 0; x < totalMaps; x++) {
-                        lootMult /= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
-                        meltStacks += mapClearTime;
-                        lootMult *= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
-                    }
-                }
-
+                let lootMult = decayLootMult(tributeGoal + meteorologistGoal);
                 if (tributeGoal !== 0) {
-                    var tributeMaps = mapSettings.mapName === mapName ? tributeGoal - game.global.mapRunCounter : tributeGoal;
-                    var tributeTime = tributeMaps * 25;
-                    if (tributeMaps > 4) tributeTime += Math.floor(tributeMaps / 5) * 45;
-                    var foodEarnedTributes = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT('food', tributeTime, jobRatio), false, true, mapLevel) * lootMult;
+                    let foodEarnedTributes = game.resources.food.owned + resourcesFromMap('food', mapSpecial, jobRatio, mapLevel, tributeGoal) * lootMult;
                     tributeGoal = game.buildings.Tribute.purchased + calculateMaxAfford_AT(game.buildings.Tribute, true, false, false, false, 1, foodEarnedTributes);
                 }
                 if (meteorologistGoal !== 0) {
-                    var meteorologistTime = (mapSettings.mapName === mapName ? meteorologistGoal - game.global.mapRunCounter : meteorologistGoal) * 25;
-                    if (meteorologistGoal > 4) meteorologistTime += Math.floor(meteorologistGoal / 5) * 45;
-                    var foodEarnedMets = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT('food', meteorologistTime, jobRatio), false, true, mapLevel) * lootMult;
+                    let foodEarnedMets = game.resources.food.owned + resourcesFromMap('food', mapSpecial, jobRatio, mapLevel, meteorologistGoal) * lootMult;
                     meteorologistGoal = game.jobs.Meteorologist.owned + calculateMaxAfford_AT(game.jobs.Meteorologist, false, false, true, false, 1, foodEarnedMets);
                 }
             }
         }
 
-        if (tributeGoal > game.buildings.Tribute.purchased || meteorologistGoal > game.jobs.Meteorologist.owned) {
-            shouldMap = true;
-        }
+        if (tributeGoal > game.buildings.Tribute.purchased || meteorologistGoal > game.jobs.Meteorologist.owned) shouldMap = true;
 
         if (shouldMap && tributeGoal > game.buildings.Tribute.purchased && !getPageSetting('buildingsType')) buyTributes();
 
@@ -994,28 +976,17 @@ function smithyFarm(lineCheck) {
         if (setting.mapType === 'Map Count' && smithyGoal !== 0) {
             if (mapSettings.smithies) smithyGoal = mapSettings.smithies;
             else {
-                //Initialising base food & metal vars for calcs later on
+                // Initialising base food & metal vars for calcs later on
                 var woodBase = scaleToCurrentMap_AT(simpleSeconds_AT('wood', 1, '0,1,0'), false, true, mapLevel);
                 var metalBase = scaleToCurrentMap_AT(simpleSeconds_AT('metal', 1, '0,0,1'), false, true, mapLevel);
-                var lootMult = 1;
                 var smithyCount = 0;
-                //Checking total map count user wants to run
+                // Checking total map count user wants to run
                 var totalMaps = smithyGoal;
-                //Calculating cache + jestimp + chronoimp
+                // Calculating cache + jestimp + chronoimp
                 var mapTime = totalMaps * 25;
                 if (totalMaps > 4) mapTime += Math.floor(totalMaps / 5) * 45;
                 var costMult = game.buildings.Smithy.cost.gems[1];
-
-                //Factoring in the resource reduction from spending time farming during Melt
-                if (challengeActive('Melt')) {
-                    const mapClearTime = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
-                    var meltStacks = game.challenges.Melt.stacks;
-                    for (var x = 0; x < totalMaps; x++) {
-                        lootMult /= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
-                        meltStacks += mapClearTime;
-                        lootMult *= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
-                    }
-                }
+                let lootMult = decayLootMult(totalMaps);
 
                 //Calculating wood & metal earned then using that info to identify how many Smithies you can afford from those values.
                 const woodEarned = woodBase * mapTime * lootMult;
@@ -1026,11 +997,9 @@ function smithyFarm(lineCheck) {
                 if (woodSmithies > 0 && metalSmithies > 0) {
                     //Taking the minimum value of the 2 to see which is more reasonable to aim for
                     smithyCount = Math.min(woodSmithies, metalSmithies);
-
                     //Figuring out Smithy cost of the 2 different resources
                     const woodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, smithyCount - game.buildings.Smithy.purchased);
                     const metalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, smithyCount - game.buildings.Smithy.purchased);
-
                     //Looking to see how many maps it would take to reach this smithy target
                     const woodMapCount = Math.floor((woodCost - game.resources.wood.owned) / (woodBase * 34));
                     const metalMapCount = Math.floor((metalCost - game.resources.metal.owned) / (metalBase * 34));
@@ -1341,6 +1310,7 @@ function prestigeRaiding(lineCheck) {
     var setting;
     if (defaultSettings === null) return farmingDetails;
     if (!defaultSettings.active) return farmingDetails;
+    if (currQuest() === 8) return farmingDetails;
 
     for (let y = 1; y < baseSettings.length; y++) {
         let currSetting = baseSettings[y];
@@ -2048,36 +2018,53 @@ function quest(lineCheck) {
         shouldRun: false,
         mapName: mapName
     };
-
     if (!challengeActive('Quest') || !getPageSetting('quest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
 
     shouldMap = currQuest();
+    // If we're running a one shot quest and can one shot the enemy then disable questing.
+    if (shouldMap === 7 && calcOurDmg('min', 0, false, 'world', 'never') > calcEnemyHealthCore('world', game.global.world, 50, 'Turtlimp')) shouldMap = 0;
+    // No Quest specific mapping necessary on shield break quests.
+    if (shouldMap === 8) return farmingDetails;
+    // Need to use Smithy Farm to do any smithy quests.
+    if (shouldMap === 10) return smithyFarm();
+    // Disable farming if enough maps have been farmed to meet the map cap criteria.
+    if (MODULES.mapFunctions.quest.run) shouldMap = 0;
 
-    //If we're running a one shot quest and 1) can one shot the enemy or 2) have max tenacity then don't map as it is very likely the quest won't be completed.
-    if (shouldMap === 7) {
-        if (calcOurDmg('min', 0, false, 'world', 'never') > calcEnemyHealthCore('world', game.global.world, 50, 'Turtlimp')) shouldMap = 0;
-        if (game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness'))) shouldMap = 0;
-    }
+    if (shouldMap) {
+        // As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
+        // Since we can't immediately complete a one shot Quest any other farming should be run before it.
+        if (lineCheck) return (setting = { priority: shouldMap !== 7 ? 1 : Infinity });
 
-    if (shouldMap && shouldMap !== 8) {
-        //As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
-        if (lineCheck && shouldMap) return (setting = { priority: 1 });
+        const questArray = shouldMap === 1 || shouldMap === 4 ? ['lsc', '1', 'Sea'] : shouldMap === 2 ? ['lwc', '0,1', 'Forest'] : shouldMap === 3 || shouldMap === 7 ? ['lmc', '0,0,1', 'Mountains'] : shouldMap === 5 ? ['fa', '0,0,0,1'] : ['fa', '1,1,1,0'];
+        const mapSpecial = questArray[0];
+        const questResource = game.challenges.Quest.resource;
+        const jobRatio = questArray[1];
+        const questMin = (shouldMap === 6 || shouldMap === 7) && game.global.mapBonus !== 10 ? 0 : null;
+        const mapLevel = autoLevelCheck(mapName, mapSpecial, null, questMin);
+        const mapCap = getPageSetting('questMapCap') > 0 ? getPageSetting('questMapCap') : Infinity;
+        //var biome = getBiome(null, questArray[2]);
 
-        var questArray = shouldMap === 1 || shouldMap === 4 ? ['lsc', '1'] : shouldMap === 2 ? ['lwc', '0,1'] : shouldMap === 3 || shouldMap === 7 ? ['lmc', '0,0,1'] : shouldMap === 5 ? ['fa', '0,0,0,1'] : ['fa', '1,1,1,0'];
-        var mapSpecial = questArray[0];
-        var jobRatio = questArray[1];
-        var questMin = (shouldMap === 6 || shouldMap === 7) && game.global.mapBonus !== 10 ? 0 : null;
-        var mapLevel = autoLevelCheck(mapName, mapSpecial, null, questMin);
+        if (mapSettings.mapName !== mapName && [1, 2, 3, 4, 5].indexOf(shouldMap) >= 0 && mapCap > 0) {
+            var resourcesEarned = game.resources[questResource].owned + resourcesFromMap(questResource, mapSpecial, jobRatio, mapLevel, mapCap);
+            // Disable Questing if we can't earn enough resources to complete the quest.
+            if (game.challenges.Quest.questProgress >= resourcesEarned) shouldMap = 0;
+        }
+        // Stop farming for damage if we have run more than our allocated amount of maps.
+        if (shouldMap === 7 && mapSettings.mapName === mapName && game.global.mapRunCounter >= mapCap) {
+            shouldMap = 0;
+            MODULES.mapFunctions.quest.run = true;
+        }
 
-        var repeat = shouldMap === 6 && (game.global.mapBonus >= 4 || (game.global.mapsActive && getCurrentMapObject().level - game.global.world < 0));
-
-        var status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
+        const repeat = (shouldMap === 7 && game.global.mapRunCounter + 1 >= mapCap) || (shouldMap === 6 && (game.global.mapBonus >= 4 || (game.global.mapsActive && getCurrentMapObject().level - game.global.world < 0)));
+        const status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
 
         farmingDetails.shouldRun = shouldMap;
         farmingDetails.mapName = mapName;
         farmingDetails.mapLevel = mapLevel;
         farmingDetails.autoLevel = true;
         farmingDetails.special = mapSpecial;
+        //farmingDetails.biome = biome;
+        farmingDetails.resource = questResource;
         farmingDetails.jobRatio = jobRatio;
         farmingDetails.repeat = !repeat;
         farmingDetails.status = status;

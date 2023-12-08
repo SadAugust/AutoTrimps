@@ -90,6 +90,7 @@ function mapSettingsDisplay(elem, titleText) {
         settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'autoLevel', 'bonfire', 'jobratio'];
         windowWidth = '45%';
     } else if (quagmire) {
+        settingInputsDefault.push('abandonZone');
         settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'bogs', 'jobratio'];
         windowWidth = '45%';
     } else if (toxicity) {
@@ -176,18 +177,14 @@ function mapSettingsDisplay(elem, titleText) {
         }
         if (mapBonus || hdFarm) tooltipText += "<div class='windowJobRatio" + varPrefix + "'>Job<br>Ratio</div>";
 
-        if (mapBonus) {
-            tooltipText += "<div class='windowSpecial" + varPrefix + "'>Special</div>";
-        }
-        if (raiding && !bionic) {
-            tooltipText += "<div class='windowRecycle'>Recycle<br>Maps</div>";
-        }
+        if (mapBonus) tooltipText += "<div class='windowSpecial" + varPrefix + "'>Special</div>";
+        if (raiding && !bionic) tooltipText += "<div class='windowRecycle'>Recycle<br>Maps</div>";
         if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>";
+        if (quagmire) tooltipText += "<div class='windowAbandonZone'>Abandon Challege<br>Zone</div>";
         if (voidMap) {
             tooltipText += "<div class='windowDefaultVoidMap'>Max<br>Map Bonus</div>";
             if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowDefaultVoidMap'>Use Bone<br>Charge</div>";
             tooltipText += "<div class='windowDefaultVoidMap'>Pre Void<br>Farm</div>";
-
             tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Hits Survived</div>";
             tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>HD Ratio</div>";
             tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Job Ratio</div>";
@@ -225,7 +222,8 @@ function mapSettingsDisplay(elem, titleText) {
             frozencastle: [200, 99],
             autostorage: false,
             packrat: false,
-            recycle: false
+            recycle: false,
+            abandonZone: 0
         };
 
         var style = '';
@@ -266,11 +264,11 @@ function mapSettingsDisplay(elem, titleText) {
                 tooltipText += "<div class='windowGather'><div style='text-align: center; font-size: 0.6vw;'>Gather</div><onchange='updateWindowPreset()'><select value='" + defaultVals.gather + "' id='windowGather'>" + defaultDropdowns.gather + '</select></div>';
             }
 
+            if (quagmire) tooltipText += "<div class='windowAbandonZone'><input value='" + defaultVals.abandonZone + "' type='number' id='abandonZone'/></div>";
+
             if (hypothermia) {
                 tooltipText += "<div class='windowFrozenCastle'><input value='" + defaultVals.frozencastle + "' type='text' id='windowFrozenCastleDefault'/></div>";
-
                 tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox('windowStorageDefault', null, defaultVals.autostorage) + '</div>';
-
                 tooltipText += "<div class='windowPackrat' style='text-align: center;'>" + buildNiceCheckbox('windowPackratDefault', null, defaultVals.packrat) + '</div>';
             }
 
@@ -280,9 +278,7 @@ function mapSettingsDisplay(elem, titleText) {
                 tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox('windowMaxTenacity', null, defaultVals.maxTenacity) + '</div>';
                 if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox('windowBoneCharge', null, defaultVals.boneCharge) + '</div>';
                 tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox('windowVoidFarm', null, defaultVals.voidFarm) + '</div>';
-
                 tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hitsSurvived + "' type='number' id='windowHitsSurvived'/></div>";
-
                 tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hdRatio + "' type='number' id='windowHDRatio'/></div>";
                 tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
                 tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.mapCap + "' type='text' id='windowMapCap'/></div>";
@@ -738,6 +734,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
         if (mapBonus || voidMap || boneShrine || hdFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
         if (alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
+        if (quagmire) defaultSetting.abandonZone = parseInt(document.getElementById('abandonZone').value);
         if (voidMap) {
             defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
             if (game.permaBoneBonuses.boosts.owned > 0) defaultSetting.boneCharge = readNiceCheckbox(document.getElementById('windowBoneCharge'));

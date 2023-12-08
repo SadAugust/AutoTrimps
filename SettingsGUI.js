@@ -2121,7 +2121,6 @@ function initializeAllSettings() {
 				var description = "<p>Input the zones you would like to Wither on and the script won't farm damage on this and at the end of the previous zone.</p>";
 				description += "<p>You can input multiple zones but they need to be seperated by commas.</p>";
 				description += "<p>There is a chance you might not Wither on the zones input if you are too powerful.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'multiValue', [-1], null, 'C2', [2],
 			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) });
@@ -2141,10 +2140,21 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Enable this if you want automate running quests when running the <b>Quest</b> challenge.</p>";
 				description += "<p>Will only function properly with <b>AutoMaps</b> enabled.</p>";
+				description += "<p>Prestige Raiding is disabled when shield break quests are active to try and ensure you don't die.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 85) });
+		createSetting('questMapCap',
+			function () { return ('Q: Map Cap') },
+			function () {
+				var description = "<p>The maximum amount of maps you'd like to run to do a resource or one shot quests.</p>";
+				description += "<p><b>Will potentially skip quests if this value is too low!</b></p>";
+				description += "<p>During one shot quests it will farm until either you reach the map cap or have enough damage for the quest</p>";
+				description += "<p><b>Recommended:</b> 100</p>";
+				return description;
+			}, 'value', 100, null, 'C2', [2],
+			function () { return (getPageSetting('quest', currSettingUniverse) && autoTrimpSettings.quest.require()) });
 		createSetting('questSmithyZone',
 			function () { return ('Q: Smithy Zone') },
 			function () {
@@ -2881,17 +2891,28 @@ function initializeAllSettings() {
 			'textValue', 'undefined', null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomVoidSwap', currSettingUniverse)) });
 
-		createSetting('heirloomSpire',
-			function () { return ('Spire') },
-			function () {
-				var description = "<p>Shield to use during active Spires.</p>";
-				description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
-				description += "<p>The Map Swap setting will override this whilst in maps.</p>";
-				description += "<p>Set to <b>undefined</b> to disable.</p>";
-				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
-				return description;
-			}, 'textValue', 'undefined', null, 'Heirloom', [1],
-			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 170) });
+			createSetting('heirloomSpire',
+				function () { return ('Spire') },
+				function () {
+					var description = "<p>Shield to use during active Spires.</p>";
+					description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
+					description += "<p>The Map Swap setting will override this whilst in maps.</p>";
+					description += "<p>Set to <b>undefined</b> to disable.</p>";
+					description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
+					return description;
+				}, 'textValue', 'undefined', null, 'Heirloom', [1],
+				function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 170) });
+
+			createSetting('heirloomWindStack',
+				function () { return ('Wind Stacking') },
+				function () {
+					var description = "<p>Shield to use when Wind stance is being used.</p>";
+					description += "<p>The Map Swap setting will override this whilst in maps.</p>";
+					description += "<p>Set to <b>undefined</b> to disable.</p>";
+					description += "<p><b>Recommended:</b> Plaguebringer heirloom</p>";
+					return description;
+				}, 'textValue', 'undefined', null, 'Heirloom', [1],
+				function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.empowerments.Wind.retainLevel >= 50) });
 
 		createSetting('heirloomSwapZone',
 			function () { return ('Swap Zone') },
@@ -3912,14 +3933,18 @@ function initializeAllSettings() {
 				var description = "<p>Enables the display of your " + resource().toLowerCase() + " per hour.</p>";
 				return description;
 			}, 'boolean', true, null, 'Display', [0]);
-
+		createSetting('displayHideFightButtons',
+			function () { return ('Hide Fight Buttons') },
+			function () {
+				var description = "<p>Will hide both the Fight and AutoFight buttons from the battle container.</p>";
+				return description;
+			}, 'boolean', false, null, 'Display', [0]);
 		createSetting('displayAllSettings',
 			function () { return ('Display All settings') },
 			function () {
 				var description = "<p>Will display all of the locked settings that have highest zone or other requirements to be displayed.</p>";
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
-
 		createSetting('EnableAFK',
 			function () { return ('Go AFK Mode') },
 			function () {
@@ -4397,6 +4422,7 @@ function settingChanged(id, currUniverse) {
         }
         if (id === 'c2disableFinished') modifyParentNodeUniverseSwap();
         if (id === 'displayHeHr') document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
+        if (id === 'displayHideFightButtons') hideFightButtons();
         if (id === 'timeWarpDisplay') timeWarpDisplay();
     }
 
@@ -4519,7 +4545,7 @@ function modifyParentNodeUniverseSwap() {
     modifyParentNode('AutoGenC2', 'show');
     //Heirlooms
     modifyParentNode('heirloomCompressedSwap', 'show');
-    modifyParentNode('heirloomSpire', 'show');
+    modifyParentNode('heirloomWindStack', 'show');
     modifyParentNode('heirloomSwapHDCompressed', 'show');
     modifyParentNode('heirloomStaffFragment', 'show');
     modifyParentNode('heirloomStaffResource', 'show');
@@ -5518,6 +5544,12 @@ function autoMapsButton() {
     return autoMapsContainer;
 }
 
+function hideFightButtons() {
+    const showButtons = getPageSetting('displayHideFightButtons');
+    document.getElementById('fightBtn').style.display = !showButtons ? 'block' : 'none';
+    document.getElementById('pauseFight').style.display = !showButtons ? 'block' : 'none';
+}
+
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function setupATButtons() {
     //Setup AutoTrimps settings button
@@ -5723,6 +5755,9 @@ function setupATButtons() {
     atBtnSettings.appendChild(atBtnSettingsButton);
     var tab = document.createElement('DIV');
     tab.setAttribute('id', 'logConfigHolder'), tab.setAttribute('class', 'btn-group'), tab.setAttribute('role', 'group'), tab.appendChild(atBtnSettings), document.getElementById('logBtnGroup').appendChild(tab);
+
+    //Potentially hide fight buttons
+    hideFightButtons();
 
     debug('Finished loading buttons.');
 }

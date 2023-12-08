@@ -322,8 +322,8 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
     }
     //Return Duel shield if we are running that challenge with the settings active
     if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== 'undefined') return 'duelShield';
-    if ((challengeActive('Trapper') || challengeActive('Trappapalooza')) && getPageSetting('trapper') && getPageSetting('trapperShield') !== 'undefined') return 'trapperShield';
-    if (challengeActive('Wither') && getPageSetting('wither') && getPageSetting('witherShield') !== 'undefined') return 'witherShield';
+    else if ((challengeActive('Trapper') || challengeActive('Trappapalooza')) && getPageSetting('trapper') && getPageSetting('trapperShield') !== 'undefined') return 'trapperShield';
+    else if (challengeActive('Wither') && getPageSetting('wither') && getPageSetting('witherShield') !== 'undefined') return 'witherShield';
     //Return initial shield if we are in a void map and are going to plaguebringer scum the cell after next
     //This is a backup for if the void shield setting have not been properly setup.
     else if (voidActive && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomInitial') !== 'undefined') return 'heirloomInitial';
@@ -331,6 +331,8 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
     else if (getPageSetting(afterpushShield) !== 'undefined' && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap')) return afterpushShield;
     //Run Spire shield if inside an active spire
     else if (getPageSetting('heirloomSpire') !== 'undefined' && isDoingSpire()) return 'heirloomSpire';
+    //Run Spire shield if currently in wind stance
+    else if (game.global.formation === 5 && getPageSetting('heirloomWindStack') !== 'undefined') return 'heirloomWindStack';
     //Run afterpush (c3 if running one) shield if above our swap zone
     else if (getPageSetting(afterpushShield) !== 'undefined' && game.global.world >= swapZone) return afterpushShield;
     //Otherwise run initial shield
@@ -349,6 +351,7 @@ function heirloomStaffToEquip(mapType) {
         if ((MODULES.maps.fragmentFarming || MODULES.maps.fragmentCost !== Infinity) && getPageSetting('heirloomStaffFragment') !== 'undefined') return 'heirloomStaffFragment';
         else if (mapSettings.mapName === 'Experience' && getPageSetting('experienceStaff') !== 'undefined') return 'experienceStaff';
         else if (mapSettings.mapName === 'Pandemonium Farming' && getPageSetting('pandemoniumStaff') !== 'undefined') return 'pandemoniumStaff';
+        else if (mapSettings.mapName === 'Quest' && mapSettings.resource && mapSettings.resource === 'science' && getPageSetting('heirloomStaffResource') !== 'undefined') return 'heirloomStaffResource';
         else if (getPageSetting('heirloomStaffVoid') !== 'undefined' && mapObject.location === 'Void') return 'heirloomStaffVoid';
         else if (getPageSetting('heirloomStaffMap') !== 'undefined' && mapBonus === undefined) return 'heirloomStaffMap';
         else if (mapBonus !== undefined) {

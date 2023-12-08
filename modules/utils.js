@@ -532,3 +532,28 @@ function testTrimpStats() {
 function getAncientTreasureName() {
     return game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 }
+
+function resourcesFromMap(resource, cache, jobRatio, mapLevel, mapCount) {
+    mapTime = cache[0] === 'l' ? 20 : 10;
+    if (game.unlocks.imps.Chronoimp) mapTime += 5;
+    mapTime *= mapCount;
+    if (game.unlocks.imps.Jestimp) mapTime += Math.floor(mapCount / 5) * 45;
+
+    return scaleToCurrentMap_AT(simpleSeconds_AT(resource, mapTime, jobRatio), false, true, mapLevel);
+}
+
+// Factor in the resource reduction from spending time farming during Decay or Melt
+function decayLootMult(mapCount) {
+    const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
+    if (!challengeActive(challengeName)) return 1;
+
+    const mapClearTime = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
+    let lootMult = 1;
+    let meltStacks = game.challenges.Melt.stacks;
+    for (let x = 0; x < mapCount; x++) {
+        lootMult /= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
+        meltStacks += mapClearTime;
+        lootMult *= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
+    }
+    return lootMult;
+}

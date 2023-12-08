@@ -1159,9 +1159,14 @@ ul.tab li a:hover {
 .windowWorldQuagmire,
 .windowCellQuagmire,
 .windowJobRatioQuagmire,
+.windowAbandonZone,
 .windowBogs {
     display: inline-block;
     padding-left: 1%;
+}
+
+.windowAbandonZone {
+    width: 25%;
 }
 
 .windowActiveQuagmire {
