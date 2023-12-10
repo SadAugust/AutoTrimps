@@ -254,7 +254,7 @@ function _needHousing(houseName) {
 
     // Can afford the building.
     const spendingPerc = buildingSettings.percent / 100;
-    const resourcefulMod = game.global.universe === 1 ? Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) : 1;
+    const resourcefulMod = Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful'));
     for (const resource in buildingStat.cost) {
         if (!_canAffordBuilding(resource, buildingStat, spendingPerc, resourcefulMod)) return false;
     }
@@ -334,7 +334,7 @@ function _getSlowestResource(resourcePerSecond, houseName) {
     let worstTime = -Infinity;
     const buildingStat = game.buildings[houseName];
     const housingBonus = _getHousingBonus(houseName);
-    const resourcefulMod = game.global.universe === 1 ? Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) : 1;
+    const resourcefulMod = Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful'));
     const owned = buildingStat.owned;
 
     for (const resource in buildingStat.cost) {
