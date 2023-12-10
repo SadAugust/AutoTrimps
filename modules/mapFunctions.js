@@ -3202,7 +3202,7 @@ function getAvailableSpecials(special, skipCaches) {
 
     for (var mod of cacheMods) {
         if (typeof mapSpecialModifierConfig[mod] === 'undefined') continue;
-        if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + 'wc';
+        if ((mod === 'lmc' || mod === 'smc') && (challengeActive('Metal') || challengeActive('Transmute'))) mod = mod.charAt(0) + 'wc';
         if (skipCaches && mod === 'hc') continue;
         var unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
         if (unlock <= hze) {
