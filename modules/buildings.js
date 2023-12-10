@@ -11,41 +11,6 @@ function safeBuyBuilding(building, amt) {
     if (building !== 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), 'buildings', '*hammer2');
 }
 
-function _buyStorage(hypoZone) {
-    // hypoZone is only above 0 if Hypothermia is active.
-    const buildings = {
-        Barn: 'food',
-        Shed: 'wood',
-        Forge: 'metal'
-    };
-    for (const [storage, resource] of Object.entries(buildings)) {
-        //Skips buying sheds if you're not on one of your specified bonfire zones.
-        if (storage === 'Shed' && hypoZone > game.global.world) continue;
-
-        const curRes = game.resources[resource].owned;
-        let maxRes = game.resources[resource].max;
-
-        //Identifying our max for the resource that's being checked
-        maxRes = maxRes *= 1 + getPerkLevel('Packrat') * game.portal.Packrat.modifier;
-        maxRes = calcHeirloomBonus('Shield', 'storageSize', maxRes);
-
-        //Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
-        let exoticValue = 0;
-        if (game.global.mapsActive) {
-            const map = getCurrentMapObject();
-            if (map.name === getAncientTreasureName()) exoticValue = curRes;
-            else {
-                const seconds = game.unlocks.imps.Jestimp ? 45 : game.unlocks.imps.Chronoimp ? 5 : 0;
-                exoticValue = scaleToCurrentMap(simpleSeconds(resource, seconds));
-            }
-        }
-        const firstZoneCheck = game.global.world === 1 && curRes > maxRes * 0.7;
-        const tenZonesCheck = game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * 0.5;
-        const mapsUnlockedCheck = curRes + exoticValue > maxRes * 0.85;
-        if ((firstZoneCheck | tenZonesCheck | mapsUnlockedCheck) & game.triggers[storage].done) safeBuyBuilding(storage, 1);
-    }
-}
-
 //Overall more performance efficient to remove the textStrings from getPsString so copied it from the game and removed the textStrings.
 //Check and update each patch!
 function getPsString_AT(what) {
@@ -443,6 +408,41 @@ function _getHypoZone() {
         }
     }
     return hypoZone;
+}
+
+function _buyStorage(hypoZone) {
+    // hypoZone is only above 0 if Hypothermia is active.
+    const buildings = {
+        Barn: 'food',
+        Shed: 'wood',
+        Forge: 'metal'
+    };
+    for (const [storage, resource] of Object.entries(buildings)) {
+        //Skips buying sheds if you're not on one of your specified bonfire zones.
+        if (storage === 'Shed' && hypoZone > game.global.world) continue;
+
+        const curRes = game.resources[resource].owned;
+        let maxRes = game.resources[resource].max;
+
+        //Identifying our max for the resource that's being checked
+        maxRes = maxRes *= 1 + getPerkLevel('Packrat') * game.portal.Packrat.modifier;
+        maxRes = calcHeirloomBonus('Shield', 'storageSize', maxRes);
+
+        //Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
+        let exoticValue = 0;
+        if (game.global.mapsActive) {
+            const map = getCurrentMapObject();
+            if (map.name === getAncientTreasureName()) exoticValue = curRes;
+            else {
+                const seconds = game.unlocks.imps.Jestimp ? 45 : game.unlocks.imps.Chronoimp ? 5 : 0;
+                exoticValue = scaleToCurrentMap(simpleSeconds(resource, seconds));
+            }
+        }
+        const firstZoneCheck = game.global.world === 1 && curRes > maxRes * 0.7;
+        const tenZonesCheck = game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * 0.5;
+        const mapsUnlockedCheck = curRes + exoticValue > maxRes * 0.85;
+        if ((firstZoneCheck | tenZonesCheck | mapsUnlockedCheck) & game.triggers[storage].done) safeBuyBuilding(storage, 1);
+    }
 }
 
 /**
