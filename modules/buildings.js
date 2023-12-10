@@ -231,7 +231,7 @@ function _needHousing(houseName) {
     if (!buildingSettings.enabled) return false;
 
     const maxHousing = buildingSettings.buyMax === 0 ? Infinity : buildingSettings.buyMax;
-    if (buildingStat.owned > maxHousing) return false;
+    if (buildingStat.owned >= maxHousing) return false;
 
     if (houseName === 'Collector') {
         // Stops Collectors being purchased when on Quest gem quests.
@@ -240,14 +240,13 @@ function _needHousing(houseName) {
         if (buildingStat.purchased >= 6000) return false;
     }
 
+    const safeHousingFood = ['Gateway', 'Collector'];
     // Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
     const hypoActive = challengeActive('Hypothermia');
-    const safeHousingHypo = ['Gateway', 'Collector'];
     const enoughWood = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice();
-    if (hypoActive & !safeHousingHypo.includes(houseName) & enoughWood) return false;
+    if (hypoActive & !safeHousingFood.includes(houseName) & enoughWood) return false;
 
     // Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
-    const safeHousingFood = ['Gateway', 'Collector'];
     if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && !safeHousingFood.includes(houseName)) return false;
 
     // Stops buildings being pushed if Smithy Farming so that we aren't going back and forth between Smithy gem/wood/metal maps constantly while trying to farm resources for them.
@@ -268,7 +267,7 @@ function _needHousing(houseName) {
 
 function _checkSafeGateway(buildingStat) {
     /* Returns true if SafeGateway says not to buy. */
-    const safeGateway = getPageSetting('buildingSettingsArray');
+    const safeGateway = getPageSetting('buildingSettingsArray').SafeGateway;
     if (safeGateway.enabled && (safeGateway.zone === 0 || safeGateway.zone > game.global.world)) {
         const fragsOwned = game.resources.fragments.owned;
 
@@ -315,7 +314,7 @@ function _canAffordBuilding(resourceName, buildingStat, spendingPerc, resourcefu
     const base = buildingStat.cost[resourceName][0];
     const scaling = buildingStat.cost[resourceName][1];
     const price = Math.max(base * Math.pow(scaling, owned) * resourcefulMod);
-    const maxSpending = owned * spendingPerc;
+    const maxSpending = game.resources[resourceName].owned * spendingPerc;
     return maxSpending > price;
 }
 
