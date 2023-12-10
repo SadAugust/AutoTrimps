@@ -11,15 +11,16 @@ function safeBuyBuilding(building, amt) {
     if (building !== 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), 'buildings', '*hammer2');
 }
 
-function _buyStorage(hypoZone = 0) {
+function _buyStorage(hypoZone) {
+    // hypoZone is only above 0 if Hypothermia is active.
     const buildings = {
         Barn: 'food',
         Shed: 'wood',
         Forge: 'metal'
     };
     for (const [storage, resource] of Object.entries(buildings)) {
-        //Skips buying sheds if you're not on one of your specified bonfire zones
-        if (challengeActive('Hypothermia') && hypoZone > game.global.world && storage === 'Shed') continue;
+        //Skips buying sheds if you're not on one of your specified bonfire zones.
+        if (storage === 'Shed' && hypoZone > game.global.world) continue;
 
         const curRes = game.resources[resource].owned;
         let maxRes = game.resources[resource].max;
