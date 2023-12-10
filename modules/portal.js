@@ -786,7 +786,7 @@ resetGame = function () {
     originalresetGame(...arguments);
     try {
         atlantrimpRespecOverride();
-        resetVarsZone(true);
+        //resetVarsZone(true);
     } catch (e) {
         debug('Load save failed: ' + e);
     }
