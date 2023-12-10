@@ -498,19 +498,25 @@ function _checkQuest() {
  * Buys nurseries if necessary. For the helium universe.
  */
 function _buyNursery(buildingSettings) {
-    if (!game.buildings.Nursery.locked && !challengeActive('Trapper')) {
-        const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
+    const nurseryInfo = game.buildings.Nursery;
+    if (!nurseryInfo.locked && !challengeActive('Trapper')) {
+        const nurserySetting = buildingSettings.Nursery;
         const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-        const nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
-        let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
-        if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
-        const nurseryPct = buildingSettings.Nursery.percent / 100;
-        const nurseryCanAfford = calculateMaxAfford_AT(game.buildings.Nursery, true, false, false, null, nurseryPct);
-        const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - game.buildings.Nursery.owned);
+        const preSpireSetting = getPageSetting(settingPrefix + 'PreSpireNurseries');
+        const nurseryPreSpire = isDoingSpire() && nurseryInfo.owned < preSpireSetting ? preSpireSetting : 0;
+        const nurseryPct = nurserySetting.percent / 100;
+        const nurseryCanAfford = calculateMaxAfford_AT(nurseryInfo, true, false, false, null, nurseryPct);
+        const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurserySetting.fromZ;
+
         if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
+            const advancedSettings = getPageSetting('advancedNurseries');
+            let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
+            if (nurseryAmt === 0 && !advancedSettings) nurseryAmt = Infinity;
+            const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - nurseryInfo.owned);
+
             if (nurseryPreSpire > 0 && nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
             else if (advancedNurseries()) {
-                safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
+                safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, advancedSettings));
             } else if (nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
         }
     }
