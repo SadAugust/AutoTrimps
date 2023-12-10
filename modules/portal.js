@@ -157,7 +157,7 @@ function autoPortal(specificPortalZone, skipDaily) {
     }
     //If dailyPortal is set to 'Off' then we portal into a challenge run
     else if (portalType === '0') {
-        if (game.global.world >= portalZone && specificPortalZone) {
+        if (game.global.world >= portalZone && (specificPortalZone || game.global.universe !== universe)) {
             if (challengeSelected !== 'None') challenge = challengeSelected;
             else challenge = 0;
         }
@@ -321,7 +321,6 @@ function c2Runner() {
 
 function doPortal(challenge, skipDaily) {
     if (!game.global.portalActive) return;
-
     //Spending Magmite
     if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
     //Identifying if we need to keep any heirlooms before portaling.
@@ -787,6 +786,7 @@ resetGame = function () {
     originalresetGame(...arguments);
     try {
         atlantrimpRespecOverride();
+        resetVarsZone(true);
     } catch (e) {
         debug('Load save failed: ' + e);
     }
