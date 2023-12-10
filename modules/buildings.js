@@ -367,23 +367,23 @@ function buyBuildings() {
     if (_checkQuest()) return;
 
     if (game.global.universe === 1) {
-        _buyNurseryHelium(buildingSettings);
+        _buyNursery(buildingSettings);
 
-        _buyGymsHelium(buildingSettings);
+        _buyGyms(buildingSettings);
 
-        _buyWormholesHelium(buildingSettings);
+        _buyWormholes(buildingSettings);
 
-        _buyWarpstationsHelium();
+        _buyWarpstations();
     }
 
     if (game.global.universe === 2) {
-        _buySmithyRadon(buildingSettings);
+        _buySmithy(buildingSettings);
 
-        _buyLaboratoryRadon(buildingSettings);
+        _buyLaboratory(buildingSettings);
 
-        _buyMicrochipRadon();
+        _buyMicrochip();
 
-        _buyAntennaRadon(buildingSettings);
+        _buyAntenna(buildingSettings);
     }
 
     // Purchasing Tributes
@@ -497,7 +497,7 @@ function _checkQuest() {
 /**
  * Buys nurseries if necessary. For the helium universe.
  */
-function _buyNurseryHelium(buildingSettings) {
+function _buyNursery(buildingSettings) {
     if (!game.buildings.Nursery.locked && !challengeActive('Trapper')) {
         const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
         const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
@@ -519,7 +519,7 @@ function _buyNurseryHelium(buildingSettings) {
 /**
  * Buys gyms if necessary. For the helium universe.
  */
-function _buyGymsHelium(buildingSettings) {
+function _buyGyms(buildingSettings) {
     if (!game.buildings.Gym.locked && buildingSettings.Gym && buildingSettings.Gym.enabled) {
         const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
         const purchased = game.buildings.Gym.purchased;
@@ -536,7 +536,7 @@ function _buyGymsHelium(buildingSettings) {
 /**
  * Buys wormholes if necessary. For the helium universe. Handled separately as it spends helium (danger).
  */
-function _buyWormholesHelium(buildingSettings) {
+function _buyWormholes(buildingSettings) {
     if (!game.buildings.Wormhole.locked && buildingSettings.Wormhole && buildingSettings.Wormhole.enabled) {
         const wormholeAmt = buildingSettings.Wormhole.buyMax === 0 ? Infinity : buildingSettings.Wormhole.buyMax;
         const wormholePct = buildingSettings.Wormhole.percent / 100;
@@ -553,7 +553,7 @@ function _buyWormholesHelium(buildingSettings) {
 /**
  * Buys warpstations if necessary. For the helium universe.
  */
-function _buyWarpstationsHelium() {
+function _buyWarpstations() {
     if (!game.buildings.Warpstation.locked && getPageSetting('warpstation')) {
         let warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation');
         const warpstationPct = getPageSetting('warpstationPct') / 100;
@@ -571,7 +571,7 @@ function _buyWarpstationsHelium() {
 /**
  * Buys smithies if necessary. For the radon universe.
  */
-function _buySmithyRadon(buildingSettings) {
+function _buySmithy(buildingSettings) {
     if (game.buildings.Smithy.locked) return;
 
     const smithySetting = buildingSettings.Smithy;
@@ -619,7 +619,7 @@ function _calcSmithyDuringQuest() {
 /**
  * Buys laboratories if necessary during Nurture. For the radon universe.
  */
-function _buyLaboratoryRadon(buildingSettings) {
+function _buyLaboratory(buildingSettings) {
     if (challengeActive('Nurture') && !game.buildings.Laboratory.locked && buildingSettings.Laboratory && buildingSettings.Laboratory.enabled) {
         const labAmt = buildingSettings.Laboratory.buyMax === 0 ? Infinity : buildingSettings.Laboratory.buyMax;
         const labPct = buildingSettings.Laboratory.percent / 100;
@@ -633,7 +633,7 @@ function _buyLaboratoryRadon(buildingSettings) {
 /**
  * Buys microchip if possible. No settings for the user to disable. For the radon universe.
  */
-function _buyMicrochipRadon() {
+function _buyMicrochip() {
     if (!game.buildings.Microchip.locked && canAffordBuilding('Microchip', null, null, false, false, 1)) {
         safeBuyBuilding('Microchip', 1);
     }
@@ -642,7 +642,7 @@ function _buyMicrochipRadon() {
 /**
  * Buys antenna if possible. For the radon universe.
  */
-function _buyAntennaRadon(buildingSettings) {
+function _buyAntenna(buildingSettings) {
     // TODO: Pause portal when one is building.
     if (!game.buildings.Antenna.locked && buildingSettings.Antenna && buildingSettings.Antenna.enabled) {
         const antennaAmt = buildingSettings.Antenna.buyMax === 0 ? Infinity : buildingSettings.Antenna.buyMax;
