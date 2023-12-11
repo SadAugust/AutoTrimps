@@ -689,7 +689,7 @@ function buyTributes() {
     let tributePct = mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > 0 ? 1 : tributeSetting.percent > 0 ? tributeSetting.percent / 100 : 1;
 
     let tributeAmt;
-    if (tributeSetting.buyMax === 0) tribueAmt = Infinity;
+    if (tributeSetting.buyMax === 0) tributeAmt = Infinity;
     else if (mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > tributeSetting.buyMax) tributeAmt = mapSettings.tribute;
     else tributeAmt = tributeSetting.buyMax;
 
