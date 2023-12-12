@@ -427,8 +427,8 @@ function autoEquip() {
     //Trimple/Atlantrimp overrides for don't run when farming and the user intends to run them or when inside the map itself.
     if (game.mapUnlocks.AncientTreasure.canRunOnce) {
         if (mapSettings.runAtlantrimp) return;
-        else if (MODULES.mapFunctions.runUniqueMap === 'Atlantrimp' || MODULES.mapFunctions.runUniqueMap === 'Trimple Of Doom') return;
-        else if (game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom')) return;
+        else if (MODULES.mapFunctions.runUniqueMap === getAncientTreasureName()) return;
+        else if (game.global.mapsActive && getCurrentMapObject().name === getAncientTreasureName()) return;
     }
     //Don't run before miners have been unlocked. This is to prevent a lengthy delay before miners are purchased when it buys several kinda unnecessary equips.
     if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;

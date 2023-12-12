@@ -216,7 +216,7 @@ function exitSpireCell(checkCell) {
     if (checkCell) return cell;
     if (exitCell <= 0) return;
 
-    isDoingSpire() && game.global.lastClearedCell > exitCell - 1 && endSpire();
+    isDoingSpire() && game.global.lastClearedCell + 1 > exitCell && endSpire();
 }
 
 //Checks to see if we have enough health to survive against the max attack of the worst enemy cell inside of a map.
@@ -278,6 +278,7 @@ function shouldRunUniqueMap(map) {
     //Check to see if the map should be run based on the user's settings.
     if (MODULES.mapFunctions.runUniqueMap === map.name || mapData.runConditions(map, mapSetting, liquified, aboveMapLevel)) {
         if (game.global.preMapsActive) debug('Running ' + map.name + (map.name === 'Melting Point' ? ' at ' + game.buildings.Smithy.owned + ' smithies' : '') + ' on zone ' + game.global.world + '.', 'map_Details');
+        if (MODULES.mapFunctions.runUniqueMap === map.name) MODULES.mapFunctions.runUniqueMap = '';
         return true;
     }
     return false;
@@ -296,8 +297,7 @@ function recycleMap_AT(forceAbandon) {
 //Check to see if we are running Atlantrimp or if we should be.
 function runningAtlantrimp() {
     if (getPageSetting('autoMaps') === 1 && mapSettings.atlantrimp) return true;
-    else if (game.global.mapsActive && (getCurrentMapObject().location === 'Atlantrimp' || getCurrentMapObject().location === 'Trimple Of Doom')) return true;
-
+    if (game.global.mapsActive && getCurrentMapObject().location === getAncientTreasureName()) return true;
     return false;
 }
 
@@ -305,7 +305,6 @@ function runUniqueMap(mapName) {
     if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
     if (getPageSetting('autoMaps') !== 1) return;
     if (challengeActive('Insanity')) return;
-    if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom';
 
     MODULES.mapFunctions.runUniqueMap = mapName;
     const map = game.global.mapsOwnedArray.find((map) => map.name.includes(mapName));
@@ -720,7 +719,7 @@ function mapFarm(lineCheck) {
         if (mapSettings.mapName === mapName && (mapType === 'Daily Reset' ? repeatCheck <= repeatCounter : repeatCheck >= repeatCounter)) {
             mappingDetails(mapName, mapLevel, mapSpecial);
             resetMapVars(setting, settingName);
-            if (shouldAtlantrimp) runUniqueMap('Atlantrimp');
+            if (shouldAtlantrimp) runUniqueMap(getAncientTreasureName());
         }
         var repeat = repeatCheck + 1 === repeatCounter;
         var status =
@@ -863,7 +862,7 @@ function tributeFarm(lineCheck) {
             var resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT('food', resourceSeconds, jobRatio), false, true, mapLevel);
 
             if (totalCost > game.resources.food.owned - barnCost + resourceFarmed && game.resources.food.owned > totalCost / 2) {
-                runUniqueMap('Atlantrimp');
+                runUniqueMap(getAncientTreasureName());
             }
         }
         //Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
