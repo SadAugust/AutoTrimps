@@ -239,7 +239,6 @@ function _needHousing(houseName) {
         // Fix for Infinity collectors since it doesn't take resourceful into account.
         if (buildingStat.purchased >= 6000) return false;
     }
-
     const safeHousingFood = ['Gateway', 'Collector'];
     // Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
     const hypoActive = challengeActive('Hypothermia');
@@ -509,14 +508,13 @@ function _buyNursery(buildingSettings) {
         const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurserySetting.fromZ;
 
         if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
-            const advancedSettings = getPageSetting('advancedNurseries');
             let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
-            if (nurseryAmt === 0 && !advancedSettings) nurseryAmt = Infinity;
+            if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
             const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - nurseryInfo.owned);
 
             if (nurseryPreSpire > 0 && nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
             else if (advancedNurseries()) {
-                safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, advancedSettings));
+                safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
             } else if (nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
         }
     }
