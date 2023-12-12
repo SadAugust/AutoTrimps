@@ -132,7 +132,7 @@ ul.tab li a:hover {
 }
 
 .litScroll {
-    overflow: scroll;
+    overflow-y: scroll;
     height: 30.5vw;
 }
 

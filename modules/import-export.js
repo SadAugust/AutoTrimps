@@ -107,7 +107,7 @@ function ImportExportTooltip(what, event, download) {
 	</div> `;
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
         ondisplay = function () {
-            _verticalCenterTooltip();
+            _verticalCenterTooltip(true);
         };
     } else if (what === 'c2table') {
         titleText = cinf() + ' Table';
