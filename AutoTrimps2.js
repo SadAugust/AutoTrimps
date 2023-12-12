@@ -64,9 +64,7 @@ var MODULES = {
 
 var currPortalUniverse = 0;
 var currSettingUniverse = 0;
-
 var settingChangedTimeout = false;
-
 var challengeCurrentZone = -1;
 
 var mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
@@ -515,6 +513,7 @@ function mainCleanup() {
     //If in a new zone then run this code
     if (atSettings.portal.aWholeNewWorld) {
         autoPortalCheck();
+        archaeologyAutomator();
         //If in Z1 then we can assume we have just portaled.
         if (atSettings.portal.currentworld === 1) {
             MODULES.mapFunctions.afterVoids = false;

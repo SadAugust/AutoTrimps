@@ -1291,7 +1291,7 @@ function windowToggleHelp(windowWidth) {
         helpContainer.style.display = 'none';
         parentWindow.style.overflowY = '';
     }
-    verticalCenterTooltip();
+    _verticalCenterTooltip();
     parentWindow.style.top = '10%';
     parentWindow.style.left = '1%';
     parentWindow.style.width = windowWidth;
@@ -1817,7 +1817,7 @@ function autoStructureDisplay(elem) {
     costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='autoStructureSave()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
     game.global.lockTooltip = true;
     ondisplay = function () {
-        verticalCenterTooltip(false, true);
+        _verticalCenterTooltip(false, true);
     };
 
     return [elem, tooltipText, costText, ondisplay];
@@ -1893,7 +1893,7 @@ function autoStructureSave() {
     if (errorMessage) {
         var elem = document.getElementById('autoJobsError');
         if (elem) elem.innerHTML = error;
-        verticalCenterTooltip(false, true);
+        _verticalCenterTooltip(false, true);
         return;
     }
 
@@ -2000,7 +2000,7 @@ function autoJobsDisplay(elem) {
     elem.style.left = '33.75%';
     elem.style.top = '25%';
     var ondisplay = function () {
-        verticalCenterTooltip(true);
+        _verticalCenterTooltip(true);
     };
 
     return [elem, tooltipText, costText, ondisplay];
@@ -2046,7 +2046,7 @@ function autoJobsSave() {
     if (error !== '') {
         var elem = document.getElementById('autoJobsError');
         if (elem) elem.innerHTML = error;
-        verticalCenterTooltip(true);
+        _verticalCenterTooltip(true);
         return;
     }
 
@@ -2164,7 +2164,7 @@ function uniqueMapsDisplay(elem) {
     costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='uniqueMapsSave(\"" + event + "\")'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
     game.global.lockTooltip = true;
     ondisplay = function () {
-        verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);
+        _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);
     };
     return [elem, tooltipText, costText, ondisplay];
 }
@@ -2268,7 +2268,7 @@ function messageDisplay(elem) {
     }
     tooltipText += '</div>';
     ondisplay = function () {
-        verticalCenterTooltip();
+        _verticalCenterTooltip();
     };
     game.global.lockTooltip = true;
     elem.style.top = '25%';
@@ -2455,7 +2455,7 @@ function dailyPortalModsDisplay(elem) {
     elem.style.left = '33.75%';
     elem.style.top = '25%';
     ondisplay = function () {
-        verticalCenterTooltip(true);
+        _verticalCenterTooltip(true);
     };
 
     return [elem, tooltipText, costText, ondisplay];
@@ -2622,7 +2622,7 @@ function c2RunnerDisplay(elem) {
     costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='c2RunnerSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
     game.global.lockTooltip = true;
     ondisplay = function () {
-        verticalCenterTooltip(false, false);
+        _verticalCenterTooltip(false, false);
         elem.style.width = '45%';
         elem.style.left = '30.5%';
         elem.style.top = '25%';

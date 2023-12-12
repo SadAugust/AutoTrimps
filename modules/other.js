@@ -591,3 +591,41 @@ offlineProgress.finish = function () {
         console.log('Failed to restart Time Warp to finish it off. ' + e, 'other');
     }
 };
+
+function _verticalCenterTooltip(makeLarge, makeSuperLarge) {
+    var tipElem = document.getElementById('tooltipDiv');
+    if (makeLarge) {
+        swapClass('tooltipExtra', 'tooltipExtraLg', tipElem);
+        tipElem.style.left = '25%';
+    }
+    if (makeSuperLarge) {
+        swapClass('tooltipExtra', 'tooltipExtraSuperLg', tipElem);
+        tipElem.style.left = '17.5%';
+    }
+    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    var tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
+    if (makeLarge && tipHeight / height > 0.95) {
+        document.getElementById('tipText').className = 'tinyTextTip';
+        tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
+    }
+    var dif = height - tipHeight;
+    tipElem.style.top = dif > 0 ? dif / 2 + 'px' : '0';
+}
+
+function archaeologyAutomator() {
+    if (!challengeActive('Archaeology') || !getPageSetting('archaeology')) return;
+    const string1 = getPageSetting('archaeologyString1'),
+        string2 = getPageSetting('archaeologyString2'),
+        string3 = getPageSetting('archaeologyString3');
+
+    if (string3[0] !== 'undefined' && string3[0] <= game.global.world) {
+        let string = string3.slice(1).toString();
+        if (string !== game.global.archString) game.global.archString = string;
+    } else if (string2[0] !== 'undefined' && string2[0] <= game.global.world) {
+        let string = string2.slice(1).toString();
+        if (string !== game.global.archString) game.global.archString = string;
+    } else if (string1[0] !== 'undefined') {
+        let string = string1.slice(1).toString();
+        if (string !== game.global.archString) game.global.archString = string;
+    }
+}

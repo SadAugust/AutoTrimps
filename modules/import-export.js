@@ -56,9 +56,9 @@ function ImportExportTooltip(what, event, download) {
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
     } else if (what === 'priorityOrder') {
         const priority = getPriorityOrder();
-        tooltipText =
-            //`<div class='litScroll'>
-            `<table class='bdTableSm table table-striped'>
+        tooltipText = ``;
+        if (Object.keys(priority).length > 18) tooltipText += `<div class='litScroll'>`;
+        tooltipText += `<table class='bdTableSm table table-striped'>
        		<tbody>
             	<tr>
                 	<td>Name</td>
@@ -106,6 +106,9 @@ function ImportExportTooltip(what, event, download) {
 		</table>
 	</div> `;
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
+        ondisplay = function () {
+            _verticalCenterTooltip();
+        };
     } else if (what === 'c2table') {
         titleText = cinf() + ' Table';
         //Adding U1 challenges
@@ -220,8 +223,9 @@ function ImportExportTooltip(what, event, download) {
         }
         challengeListcolor();
         c3listcolor();
-        tooltipText = `<div class='litScroll'>
-    	<table class='bdTableSm table table-striped'>
+        tooltipText = ``;
+        if (c3array.length > 0) tooltipText += `<div class='litScroll'>`;
+        tooltipText += `<table class='bdTableSm table table-striped'>
        		<tbody>
             	<tr>
                 	<td>Name</td>
@@ -233,7 +237,6 @@ function ImportExportTooltip(what, event, download) {
             	</tr>
 		`;
         for (var x = 0; x < Object.keys(challengeList).length; x++) {
-            if (x === 12) tooltipText += '<tr>';
             tooltipText +=
                 `<tr>
 					<td>` +
@@ -274,6 +277,9 @@ function ImportExportTooltip(what, event, download) {
 		</table>
 	</div> `;
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
+        ondisplay = function () {
+            _verticalCenterTooltip();
+        };
     } else if (what === 'ResetDefaultSettingsProfiles') {
         titleText = '<b>Loading AutoTrimps Default Profile...</b><p>Current Settings will be lost!';
         tooltipText = '<b>NOTICE:</b> Switching to Default AutoTrimps settings profile!!!! <br>All current settings <b>WILL</b> be lost after this point. <br>You might want to cancel, to go back and save your existing settings first.... <br>This will <b><u>Reset</u></b> the script to factory settings.';

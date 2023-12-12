@@ -437,6 +437,7 @@ function surkyResetPerkLevels(perks, skipLevel = false) {
 function initialLoad(skipLevels = false) {
     var [props, perks] = initPerks();
     perks = surkyResetPerkLevels(perks, skipLevels);
+    const universe = game.global.universe;
 
     var preset = $$('#preset').value;
     props.specialChallenge = preset;
@@ -445,7 +446,7 @@ function initialLoad(skipLevels = false) {
     var surkyInputs = JSON.parse(localStorage.getItem('surkyInputs'));
 
     // target zone to CLEAR is 1 zone before the portal zone by default
-    var currentZone = Math.max(1, game.global.universe === 2 ? game.global.world : surkyInputs.targetZone);
+    var currentZone = Math.max(1, universe === 2 ? game.global.world : surkyInputs.targetZone);
     $$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
     props.targetZone = Number($$('#targetZone').value);
 
@@ -457,15 +458,15 @@ function initialLoad(skipLevels = false) {
     props.armorLevels = Number($$('#armorLevels').value);
 
     // get current purchased tributes, mets, etc
-    var tributeCount = game.buildings.Tribute.owned || 0;
+    var tributeCount = universe === 2 ? game.buildings.Tribute.owned : 0;
     $$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
     props.tributes = Number($$('#tributes').value);
 
-    var metCount = game.jobs.Meteorologist.owned || 0;
+    var metCount = universe === 2 ? game.jobs.Meteorologist.owned : 0;
     $$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
     props.meteorologists = Number($$('#meteorologists').value);
 
-    var smithyCount = game.buildings.Smithy.owned || 0;
+    var smithyCount = universe === 2 ? game.buildings.Smithy.owned : 0;
     $$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
     props.smithyCount = Number($$('#smithyCount').value);
 
@@ -474,7 +475,7 @@ function initialLoad(skipLevels = false) {
     $$('#radonPerRun').value = props.radonPerRun;
 
     // get count of best housing building (don't bother optimizing lower than gateways, the 2nd-order adjustments won't matter enough to bother)
-    var housingCount = game.buildings.Collector.owned || 0;
+    var housingCount = universe === 2 ? game.buildings.Collector.owned : 0;
     $$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount);
     props.housingCount = Number($$('#housingCount').value);
 

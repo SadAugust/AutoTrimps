@@ -355,6 +355,14 @@ function heirloomStaffToEquip(mapType) {
         else if (getPageSetting('heirloomStaffVoid') !== 'undefined' && mapObject.location === 'Void') return 'heirloomStaffVoid';
         else if (getPageSetting('heirloomStaffMap') !== 'undefined' && mapBonus === undefined) return 'heirloomStaffMap';
         else if (mapBonus !== undefined) {
+            //Match your heirloom to your current gather setting during lc/hc maps.
+            if (mapBonus === 'lc' || mapBonus === 'hc') {
+                let gatherType = game.global.playerGathering[0].toUpperCase() + game.global.playerGathering.slice(1, 7);
+                if (gatherType === 'Science') gatherType = 'Resource';
+                const staff = getPageSetting('heirloomStaff' + gatherType);
+                if (staff && staff !== 'undefined') return 'heirloomStaff' + gatherType;
+                else if (getPageSetting('heirloomStaffMap') !== 'undefined') return 'heirloomStaffMap';
+            }
             if (getPageSetting('heirloomStaffFood') !== 'undefined' && mapBonus.includes('sc')) return 'heirloomStaffFood';
             else if (getPageSetting('heirloomStaffWood') !== 'undefined' && mapBonus.includes('wc')) return 'heirloomStaffWood';
             else if (getPageSetting('heirloomStaffMetal') !== 'undefined' && mapBonus.includes('mc')) return 'heirloomStaffMetal';

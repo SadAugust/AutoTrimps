@@ -164,7 +164,7 @@ function makeAutomapStatusTooltip(mouseover) {
         return tooltipText;
     } else {
         tooltip('Auto Maps Status', 'customText', 'lock', tooltipText, false, 'center');
-        verticalCenterTooltip(true);
+        _verticalCenterTooltip(true);
     }
 }
 
@@ -195,7 +195,7 @@ function makeResourceTooltip(mouseover) {
         return tooltipText;
     } else {
         tooltip(`${resource} per hour info`, 'customText', 'lock', tooltipText, false, 'center');
-        verticalCenterTooltip(true);
+        _verticalCenterTooltip(true);
     }
 }
 
@@ -232,7 +232,7 @@ function makeAdditionalInfoTooltip(mouseover) {
         return tooltipText;
     } else {
         tooltip('Additional Info Tooltip', 'customText', 'lock', tooltipText, false, 'center');
-        verticalCenterTooltip(true);
+        _verticalCenterTooltip(true);
     }
 }
 
@@ -248,7 +248,7 @@ function makeAutoPortalHelpTooltip() {
     tooltipText += `<p>If neither of the options above are run then it will portal into the challenge that you have selected in the <b>Auto Portal</b> setting. If that is disabled then it will portal into a challengeless run.</p>`;
 
     tooltip('Auto Portal Info', 'customText', 'lock', tooltipText, false, 'center');
-    verticalCenterTooltip(true);
+    _verticalCenterTooltip(true);
 }
 
 function makeFarmingDecisionHelpTooltip() {
@@ -299,14 +299,14 @@ function makeFarmingDecisionHelpTooltip() {
     }
 
     tooltip('Auto Maps Priority', 'customText', 'lock', tooltipText, false, 'center');
-    verticalCenterTooltip(true);
+    _verticalCenterTooltip(true);
 }
 
 function makeFragmentDecisionHelpTooltip() {
     var tooltipText = '';
 
     tooltip('Fragment Decision Info', 'customText', 'lock', tooltipText, false, 'center');
-    verticalCenterTooltip(true);
+    _verticalCenterTooltip(true);
 }
 
 function makeAdditionalInfo() {
@@ -392,6 +392,30 @@ function shouldAbandon(zoneCheck = true) {
     return false;
 }
 
+function _vanillaMAZ() {
+    if (!game.options.menu.mapAtZone.enabled || !game.global.canMapAtZone) return false;
+    const nextCell = game.global.lastClearedCell + 2;
+    const totalPortals = getTotalPortals();
+    const setZone = game.options.menu.mapAtZone.getSetZone();
+    for (let x = 0; x < setZone.length; x++) {
+        if (!setZone[x].on) continue;
+        if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
+        if (game.global.preMapsActive && setZone[x].done === totalPortals + '_' + game.global.world + '_' + nextCell) continue;
+        if (setZone[x].times === -1 && game.global.world !== setZone[x].world) continue;
+        if (setZone[x].times > 0 && (game.global.world - setZone[x].world) % setZone[x].times !== 0) continue;
+        if (setZone[x].cell === nextCell) {
+            if (setZone[x].until === 6) game.global.mapCounterGoal = 25;
+            else if (setZone[x].until === 7) game.global.mapCounterGoal = 50;
+            else if (setZone[x].until === 8) game.global.mapCounterGoal = 100;
+            else if (setZone[x].until === 9) game.global.mapCounterGoal = setZone[x].rx;
+            //Toggle void repeat on if it's disabled and stop Auto Maps from running any further.
+            if (game.options.menu.repeatVoids.enabled !== 1) toggleSetting('repeatVoids');
+            return true;
+        }
+    }
+    return false;
+}
+
 function autoMap() {
     const autoMapsEnabled = getPageSetting('autoMaps') > 0;
 
@@ -404,14 +428,14 @@ function autoMap() {
     }
 
     //Always disable repeat when running one of thesee unique maps - Should probably just be done for every unique map apart from BW?
-    if (autoMapsEnabled && MODULES.mapFunctions.runUniqueMap !== '' && game.global.mapsActive) {
+    /* if (autoMapsEnabled && MODULES.mapFunctions.runUniqueMap !== '' && game.global.mapsActive) {
         var currMap = getCurrentMapObject();
         if (currMap !== undefined && ['Trimple Of Doom', 'Atlantrimp', 'Melting Point', 'Frozen Castle'].indexOf(currMap.name) >= 0) {
             if (currMap.name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
             if (game.global.repeatMap) repeatClicked();
             return;
         }
-    }
+    } */
 
     if (!autoMapsEnabled || !game.global.mapsUnlocked) return;
 
@@ -421,11 +445,11 @@ function autoMap() {
     //Hacky way to fix an issue with having no maps available to run and no fragments to purchase them
     if (MODULES.maps.fragmentCost !== Infinity) {
         if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return;
-        else MODULES.maps.fragmentCost = Infinity;
+        MODULES.maps.fragmentCost = Infinity;
     }
 
     //Failsafes
-    //If maps aren't active, or soldier attack is negative or we're running no maps quest OR running Mapo and no credits available
+    //If maps aren't active, or soldier attack is negative or we're running no maps quest OR running Mapology and no credits available
     if (!game.global.mapsUnlocked || game.global.soldierCurrentAttack < 0 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
         if (game.global.preMapsActive) mapsClicked();
         return;
@@ -437,13 +461,13 @@ function autoMap() {
         return;
     }
 
-    //If we're inside of the Life challenge.
-    //Will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
-    if (challengeActive('Life') && !game.global.mapsActive) {
+    //When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
+    //Has a time override as there's a certain cell that will always be unliving so can bypass it this way
+    if (challengeActive('Life') && getPageSetting('life') && !game.global.mapsActive) {
         const lifeZone = getPageSetting('lifeZone');
         const lifeStacks = getPageSetting('lifeStacks');
         const currCell = game.global.world + '_' + (game.global.lastClearedCell + 1);
-        if (getPageSetting('life') && lifeZone > 0 && game.global.world >= lifeZone && lifeStacks > 0 && game.challenges.Life.stacks <= lifeStacks) {
+        if (lifeZone > 0 && game.global.world >= lifeZone && lifeStacks > 0 && game.challenges.Life.stacks <= lifeStacks) {
             if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
             if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
                 MODULES.maps.livingActive = true;
@@ -457,41 +481,14 @@ function autoMap() {
     //Go to map chamber if we should farm on Wither! Just a way to get around the issue of this potentially running too slowly and armies dying due to it.
     if (mapSettings.mapName === 'Wither Farm' && mapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive) mapsClicked(true);
 
-    //Vanilla Map at Zone
-    var vanillaMAZ = false;
-    if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
-        var nextCell = game.global.lastClearedCell;
-        if (nextCell === -1) nextCell = 1;
-        else nextCell += 2;
-        const totalPortals = getTotalPortals();
-        const setZone = game.options.menu.mapAtZone.getSetZone();
-        for (var x = 0; x < setZone.length; x++) {
-            if (!setZone[x].on) continue;
-            if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
-            if (game.global.preMapsActive && setZone[x].done === totalPortals + '_' + game.global.world + '_' + nextCell) continue;
-            if (setZone[x].times === -1 && game.global.world !== setZone[x].world) continue;
-            if (setZone[x].times > 0 && (game.global.world - setZone[x].world) % setZone[x].times !== 0) continue;
-            if (setZone[x].cell === game.global.lastClearedCell + 2) {
-                vanillaMAZ = true;
-                if (setZone[x].until === 6) game.global.mapCounterGoal = 25;
-                if (setZone[x].until === 7) game.global.mapCounterGoal = 50;
-                if (setZone[x].until === 8) game.global.mapCounterGoal = 100;
-                if (setZone[x].until === 9) game.global.mapCounterGoal = setZone[x].rx;
-                break;
-            }
-        }
-
-        //Toggle void repeat on if it's disabled.
-        if (vanillaMAZ) {
-            if (game.options.menu.repeatVoids.enabled !== 1) toggleSetting('repeatVoids');
-            return;
-        }
-    }
+    //Run vanilla Map At Zone
+    if (_vanillaMAZ()) return;
 
     //Reset to defaults
     while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
     if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
     if (game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
+    if (game.global.repeatMap) repeatClicked();
 
     //Reset to defaults when on world grid
     if (!game.global.mapsActive && !game.global.preMapsActive) {

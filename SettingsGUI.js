@@ -1731,6 +1731,40 @@ function initializeAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Toxicity")', 'Challenges', [1]);
 
+		//Archaeology
+		createSetting('archaeology',
+			function () { return ('Archaeology') },
+			function () {
+				var description = "<p>Enable this if you want to use automation features when running the <b>Archaeology</b> challenge.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 90) });
+			
+		createSetting('archaeologyString1',
+			function () { return ('A: String 1') },
+			function () {
+				var description = "<p>First string to use in <b>Archaeology</b>. Follows the same format as the game i.e: 10a,10e </p>";
+				return description;
+			}, 'multiTextValue', ['undefined'], null, 'Challenges', [2],
+			function () { return (getPageSetting('archaeology', currSettingUniverse) && autoTrimpSettings.archaeology.require()) });
+
+		createSetting('archaeologyString2',
+			function () { return ('A: String 2') },
+			function () {
+				var description = "<p>Second string to use in <b>Archaeology</b>. Follows the same format as the game, put the zone you want to start using this string at the start of the input. I.e: 84,10a,10e </p>";
+				return description;
+			}, 'multiTextValue', ['undefined'], null, 'Challenges', [2],
+			function () { return (getPageSetting('archaeology', currSettingUniverse) && autoTrimpSettings.archaeology.require()) });
+
+		createSetting('archaeologyString3',
+			function () { return ('A: String 3') },
+			function () {
+				var description = "<p>Third string to use in <b>Archaeology</b>. Follows the same format as the game, put the zone you want to start using this string at the start of the input. I.e: 94,10a,10e </p>";
+				return description;
+			}, 'multiTextValue', ['undefined'], null, 'Challenges', [2],
+			function () { return (getPageSetting('archaeology', currSettingUniverse) && autoTrimpSettings.archaeology.require()) });
+
 		//Quagmire
 		createSetting('quagmireSettings',
 			function () { return ('Quagmire Settings') },
@@ -4430,6 +4464,7 @@ function settingChanged(id, currUniverse) {
         if (id === 'displayHeHr') document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
         if (id === 'displayHideFightButtons') hideFightButtons();
         if (id === 'timeWarpDisplay') timeWarpDisplay();
+        if (id === 'archaeology') archaeologyAutomator();
     }
 
     if (btn.type === 'multitoggle') {
@@ -4544,6 +4579,7 @@ function modifyParentNodeUniverseSwap() {
     modifyParentNode('decayStacksToAbandon', 'show');
     modifyParentNode('lifeStacks', 'show');
     modifyParentNode('toxicitySettings', 'show');
+    modifyParentNode('archaeologyString3', 'show');
 
     modifyParentNode('mapologyPrestige', 'show');
     modifyParentNode('frigid', 'show');
@@ -5048,6 +5084,7 @@ function autoSetValue(id, multiValue, negative) {
     updateCustomButtons();
     saveSettings();
     if (id === 'presetCombatRespecCell') MODULES.portal.disableAutoRespec = 0;
+    if (id.includes('archaeology')) archaeologyAutomator();
     if (num > game.global.world && (id === 'dailyDontPortalBefore' || id === 'heliumHrDontPortalBefore')) {
         MODULES.mapFunctions.afterVoids = false;
         mapSettings.portalAfterVoids = false;
@@ -5782,7 +5819,7 @@ function introMessage() {
     description += "<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>";
 
     tooltip('Introduction Message', 'customText', 'lock', description, false, 'center');
-    verticalCenterTooltip(true);
+    _verticalCenterTooltip(true);
 }
 
 function updateATVersion() {
@@ -6180,7 +6217,7 @@ function updateATVersion() {
     autoTrimpSettings['ATversion'] = atSettings.initialise.version;
     if (changelog.length !== 0) {
         printChangelog(changelog);
-        verticalCenterTooltip(false, true);
+        _verticalCenterTooltip(false, true);
     }
     updateCustomButtons(true);
     saveSettings();
@@ -6203,7 +6240,7 @@ function printChangelog(changes) {
         hideCancel = true;
 
     tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
-    verticalCenterTooltip(true);
+    _verticalCenterTooltip(true);
 }
 
 function assembleChangelog(c) {
