@@ -4112,6 +4112,12 @@ function initializeAllSettings() {
 				var description = "<p>Will display the order that Auto Maps will run each setting.</p>";
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeFarmingDecisionHelpTooltip(false);', 'Help', [0]);
+		createSetting('helpPriorityOrder',
+			function () { return ('Priority Order') },
+			function () {
+				var description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
+				return description;
+			}, 'action', null, 'ImportExportTooltip(\'priorityOrder\', \'update\')', 'Help', [0]);
 		/* createSetting('helpFragments',
 			function () { return ('Fragment Decisions') },
 			function () {

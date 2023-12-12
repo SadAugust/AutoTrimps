@@ -557,3 +557,80 @@ function decayLootMult(mapCount) {
     }
     return lootMult;
 }
+
+function hypothermiaBonfireCost() {
+    if (!challengeActive('Hypothermia')) return 0;
+    let cost = game.challenges.Hypothermia.bonfirePrice();
+    if (cost > game.resources.wood.owned) return 0;
+    while (game.resources.wood.owned > cost) {
+        cost *= 1e10;
+    }
+    return cost;
+}
+
+function getPriorityOrder() {
+    let order = [];
+    let settingsList = [];
+
+    //U1
+    if (game.global.universe === 1) settingsList = ['Prestige Raiding', 'Bionic Raiding', 'Map Farm', 'HD Farm', 'Void Maps', 'Map Bonus', 'Toxicity'];
+    //U2
+    if (game.global.universe === 2) settingsList = ['Desolation Gear Scum', 'Prestige Raiding', 'Smithy Farm', 'Map Farm', 'Tribute Farm', 'Worshipper Farm', 'Quagmire', 'Insanity', 'Alchemy', 'Hypothermia', 'HD Farm', 'Void Maps', 'Map Bonus'];
+
+    const settingNames = {
+        'Prestige Raiding': { settingName: 'prestigeRaiding' },
+        'Bionic Raiding': { settingName: 'bionicRaiding' },
+        'Map Farm': { settingName: 'mapFarm' },
+        'HD Farm': { settingName: 'hdFarm' },
+        'Void Maps': { settingName: 'voidMap' },
+        'Map Bonus': { settingName: 'mapBonus' },
+        Toxicity: { settingName: 'toxicity', challenge: 'Toxicity' },
+        'Desolation Gear Scum': { settingName: 'desolation', challenge: 'Desolation' },
+        'Smithy Farm': { settingName: 'smithyFarm' },
+        'Tribute Farm': { settingName: 'tributeFarm' },
+        'Worshipper Farm': { settingName: 'worshipperFarm' },
+        Quagmire: { settingName: 'quagmire', challenge: 'Quagmire' },
+        Insanity: { settingName: 'insanity', challenge: 'Insanity' },
+        Alchemy: { settingName: 'alchemy', challenge: 'Alchemy' },
+        Hypothermia: { settingName: 'hypothermia', challenge: 'Hypothermia' }
+    };
+
+    for (let i = 0; i < settingsList.length; i++) {
+        const setting = settingNames[settingsList[i]];
+        const settingName = setting.settingName + 'Settings';
+        //Skip settings that have a challenge and the challenge isn't active
+        if (setting.challenge && !challengeActive(setting.challenge)) continue;
+        const settingData = getPageSetting(settingName);
+        for (let y = 1; y < settingData.length; y++) {
+            if (typeof settingData[y].runType !== 'undefined' && settingData[y].runType !== 'All') {
+                //Dailies
+                if (trimpStats.isDaily) {
+                    if (settingData[y].runType !== 'Daily') continue;
+                }
+                //C2/C3 runs + special challenges
+                else if (trimpStats.isC3) {
+                    if (settingData[y].runType !== 'C3') continue;
+                    else if (settingData[y].challenge3 !== 'All' && !challengeActive(settingData[y].challenge3)) continue;
+                } else if (trimpStats.isOneOff) {
+                    if (settingData[y].runType !== 'One Off') continue;
+                    else if (settingData[y].challengeOneOff !== 'All' && !challengeActive(settingData[y].challengeOneOff)) continue;
+                }
+                //Fillers (non-daily/c2/c3) and One off challenges
+                else {
+                    if (settingData[y].runType === 'Filler') {
+                        var currChallenge = settingData[y].challenge === 'No Challenge' ? '' : settingData[y].challenge;
+                        if (settingData[y].challenge !== 'All' && !challengeActive(currChallenge)) continue;
+                    } else continue;
+                }
+            }
+            settingData[y].name = settingsList[i];
+            settingData[y].index = i;
+            order.push(settingData[y]);
+        }
+    }
+    order.sort(function (a, b) {
+        if (a.priority === b.priority) return a.index === b.index ? (a.world === b.world ? (a.cell > b.cell ? 1 : -1) : a.world > b.world ? 1 : -1) : a.index > b.index ? 1 : -1;
+        return a.priority > b.priority ? 1 : -1;
+    });
+    return order;
+}

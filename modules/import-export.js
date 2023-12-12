@@ -54,6 +54,58 @@ function ImportExportTooltip(what, event, download) {
     } else if (what === 'MagmiteExplain') {
         tooltipText = "<img src='" + atSettings.initialise.basepath + "/imgs/mi.png'>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
+    } else if (what === 'priorityOrder') {
+        const priority = getPriorityOrder();
+        tooltipText =
+            //`<div class='litScroll'>
+            `<table class='bdTableSm table table-striped'>
+       		<tbody>
+            	<tr>
+                	<td>Name</td>
+                	<td>Line</td>
+                	<td>Active</td>
+                	<td>Priority</td>
+                	<td>Zone</td>
+                	<td>End Zone</td>
+                	<td>Cell</td>
+                	<td>Special</td>
+            	</tr>
+		`;
+        for (var x = 0; x < Object.keys(priority).length; x++) {
+            titleText = 'Priority Order';
+            tooltipText +=
+                `<tr>
+					<td>` +
+                priority[x].name +
+                `</td>
+					<td>` +
+                priority[x].row +
+                `</td>
+					<td>` +
+                (priority[x].active ? '&#10004;' : '&times;') +
+                `</td>
+					<td>` +
+                priority[x].priority +
+                `</td>
+                <td>` +
+                priority[x].world +
+                `</td>
+                <td>` +
+                (priority[x].name === 'Void Maps' ? priority[x].maxvoidzone : priority[x].endzone) +
+                `</td>
+                <td>` +
+                priority[x].cell +
+                `</td>
+                <td>` +
+                (priority[x].special ? mapSpecialModifierConfig[priority[x].special].name : '') +
+                `</td>
+				</tr>`;
+        }
+        tooltipText += `
+			</tbody>
+		</table>
+	</div> `;
+        costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
     } else if (what === 'c2table') {
         titleText = cinf() + ' Table';
         //Adding U1 challenges
