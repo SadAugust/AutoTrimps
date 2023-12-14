@@ -31,7 +31,7 @@ function getPotencyMod() {
     if (game.global.brokenPlanet) potencyMod = potencyMod.div(10);
 
     // Pheromones
-    potencyMod = potencyMod.mul(1 + game.portal.Pheromones.level * game.portal.Pheromones.modifier);
+    potencyMod = potencyMod.mul(1 + getPerkLevel('Pheromones') * game.portal.Pheromones.modifier);
 
     // Quick Trimps
     if (game.singleRunBonuses.quickTrimps.owned) potencyMod = potencyMod.mul(2);
@@ -57,16 +57,16 @@ function getPotencyMod() {
     // Geneticists
     if (game.jobs.Geneticist.owned > 0) potencyMod = potencyMod.mul(Math.pow(0.98, game.jobs.Geneticist.owned));
 
-    // Archaeology
-    if (challengeActive('Archaeology')) potencyMod = potencyMod.mul(game.challenges.Archaeology.getStatMult('breed'));
-
-    // Quagmire
-    if (challengeActive('Quagmire')) potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
-
-    // Mutators
     if (game.global.universe === 2) {
+        // Archaeology
+        if (challengeActive('Archaeology')) potencyMod = potencyMod.mul(game.challenges.Archaeology.getStatMult('breed'));
+
+        // Quagmire
+        if (challengeActive('Quagmire')) potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
+
         // Gene Attack
         if (u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
+
         // Gene Health
         if (u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
     }

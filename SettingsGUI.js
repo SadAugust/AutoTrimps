@@ -1745,6 +1745,10 @@ function initializeAllSettings() {
 			function () { return ('A: Breed Shield') },
 			function () {
 				var description = "<p>Shield to use during <b>Archaeology</b> when your army is dead and breeding.</p>";
+				description += "<p>This will override all other heirloom swapping features when active!</p>";
+				description += "<p>Should ideally be a shield with the <b>Breedspeed</b> modifier.</p>";
+				description += "<p>Hits Survived & Map Bonus Ratio won't be disabled when this swaps shields so remember to level other modifiers as well.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Challenges', [2],
 			function () { return (getPageSetting('archaeology', currSettingUniverse) && autoTrimpSettings.archaeology.require()) });
@@ -2004,6 +2008,7 @@ function initializeAllSettings() {
 				var description = "<p>The name of the shield you would like to equip while running <b>Duel</b>.</p>";
 				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>Duel</b>!</p>"
 				description += "<p>Should ideally be a shield without the <b>Crit Chance</b> modifier.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [2],
 			function () { return (getPageSetting('duel', currSettingUniverse) && autoTrimpSettings.duel.require()) });
@@ -2052,6 +2057,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The name of the shield you would like to equip while running <b>" + (currSettingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b>.</p>";
 				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>" + (currSettingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b>!</p>"
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
@@ -2172,6 +2178,7 @@ function initializeAllSettings() {
 				var description = "<p>The name of the shield you would like to equip while running <b>Wither</b>.</p>";
 				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>Wither</b>!</p>"
 				description += "<p>Should ideally be a shield without the <b>Plaguebringer</b> modifier.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [2],
 			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) });
@@ -2270,6 +2277,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Mayhem.</p>";
 				description += "<p>This overrides the " + cinf() + " heirloom swap setting input when set above <b>0</b>.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
@@ -2394,6 +2402,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Pandemonium.</p>";
 				description += "<p>This overrides the " + cinf() + " heirloom swap setting input when set above <b>0</b>.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
@@ -2484,6 +2493,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Desolation.</p>";
 				description += "<p>This overrides the " + cinf() + " heirloom swap setting input when set above <b>0</b>.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
@@ -5600,7 +5610,7 @@ function hideFightButtons() {
 }
 
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
-function setupATButtons() {
+function _setupATButtons() {
     //Setup AutoTrimps settings button
     var settingBtnSrch = document.getElementsByClassName('btn btn-default');
     for (var i = 0; i < settingBtnSrch.length; i++) {

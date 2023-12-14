@@ -234,6 +234,10 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
         else return 'heirloomInitial';
     }
 
+    if (swapLooms && !game.global.fighting && getPageSetting('archaeologyBreedShield') !== 'undefined' && challengeActive('Archaeology') && breedTimeRemaining().cmp(0.1) > 0) {
+        return 'archaeologyBreedShield';
+    }
+
     //Initial vars for swapping heirlooms
     var currChallenge = game.global.challengeActive.toLowerCase();
 

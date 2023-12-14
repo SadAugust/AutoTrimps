@@ -115,6 +115,13 @@ function _setupExternalScriptsPt2() {
     document.head.appendChild(script);
 }
 
+function _setupModules() {
+    _loadModules('versionNumber');
+    for (var m in atSettings.modules.installedModules) {
+        _loadModules(atSettings.modules.installedModules[m], atSettings.modules.path);
+    }
+}
+
 /*
  * Loads all the modules (bar settingsGUI), jQuery, select2 and global vars
  */
@@ -134,11 +141,7 @@ function _initialLoad() {
         var offlineWrapperParent = document.getElementById('offlineInnerWrapper').parentNode;
         offlineWrapperParent.replaceChild(settingBarRow, document.getElementById('offlineInnerWrapper').parentNode.children[1]);
     }
-
-    _loadModules('versionNumber');
-    for (var m in atSettings.modules.installedModules) {
-        _loadModules(atSettings.modules.installedModules[m], atSettings.modules.path);
-    }
+    _setupModules();
 
     //Load CSS
     var linkStylesheet = document.createElement('link');
@@ -151,6 +154,11 @@ function _initialLoad() {
 function _loadSettingsGUI() {
     //Reload script every 1 milliseconds until the utils module has been loaded.
     if (typeof _setupAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function') {
+        atSettings.intervals.counter++;
+        if (atSettings.intervals.counter % 100 === 0) {
+            console.log('Retrying in 100ms');
+            _setupModules();
+        }
         setTimeout(_loadSettingsGUI, 1);
         return;
     }
@@ -163,6 +171,11 @@ function _loadSettingsGUI() {
 
 function _loadModifiedFunctions() {
     if (atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length || typeof updateATVersion !== 'function') {
+        atSettings.intervals.counter++;
+        if (atSettings.intervals.counter % 100 === 0) {
+            console.log('Retrying in 100ms...');
+            _setupModules();
+        }
         setTimeout(_loadModifiedFunctions, 1);
         return;
     }
@@ -185,7 +198,7 @@ function _startAT() {
 
     _raspberryPiSettings();
     //Adds autoMaps, autoJobs, autoStructure, autoEquip buttons to the trimps UI.
-    setupATButtons();
+    _setupATButtons();
 
     atSettings.initialise.loaded = true;
     MODULES.heirlooms.gammaBurstPct = getHeirloomBonus('Shield', 'gammaBurst') / 100 > 0 ? getHeirloomBonus('Shield', 'gammaBurst') / 100 : 1;
@@ -207,6 +220,7 @@ function _startAT() {
 
     //Starts the loop in either normal or TimeLapse mode.
     toggleCatchUpMode();
+    atSettings.intervals.counter = 0;
     console.timeEnd();
 }
 

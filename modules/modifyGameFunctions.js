@@ -73,6 +73,13 @@ activateClicked = function () {
     originalActivateClicked(...arguments);
 };
 
+//Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
+originalFadeIn = fadeIn;
+fadeIn = function () {
+    if (arguments[0] === 'pauseFight' && getPageSetting('displayHideFightButtons')) return;
+    originalFadeIn(...arguments);
+};
+
 //Runs a map WITHOUT resetting the mapRunCounter variable so that we can have an accurate count of how many maps we've run
 //Check and update each patch!
 function runMap_AT() {

@@ -110,6 +110,11 @@ function buyJobs(forceRatios) {
     //Disabling autoJobs if AT AutoJobs is disabled.
     if (getPageSetting('jobType') === 0) return;
 
+    if (!game.global.fighting && challengeActive('Archaeology') && breedTimeRemaining().cmp(0.1) > 0) {
+        fireAllWorkers();
+        return;
+    }
+
     var jobSettings = getPageSetting('jobSettingsArray');
     freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - game.resources.trimps.employed;
 
