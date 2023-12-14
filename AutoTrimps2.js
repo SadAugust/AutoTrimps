@@ -119,8 +119,6 @@ function delayStart() {
 
     //Loads the settings from the save file, settingsGUI & the various modules installed.
     initializeAutoTrimps();
-    //Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
-    document.getElementById('activatePortalBtn').setAttribute('onClick', 'downloadSave(true); activateClicked(); pushSpreadsheetData(); autoHeirlooms(true); autoMagmiteSpender(true); pushData();');
 }
 
 //Runs second
