@@ -15,7 +15,7 @@ function prettifyMap(map) {
     if (!map) {
         return 'none';
     }
-    var descriptor;
+    let descriptor;
     if (!map.noRecycle) {
         // a crafted map
         const bonus = map.hasOwnProperty('bonus') ? mapSpecialModifierConfig[map.bonus].name : 'no bonus';
@@ -28,38 +28,19 @@ function prettifyMap(map) {
     return `[${map.id}] ${map.name}${descriptor} `;
 }
 
-function debugPrettifyMap(map) {
-    if (!map) {
-        return 'none';
-    }
-    if (['world', 'create'].includes(map)) {
-        return map;
-    }
-    var descriptor;
-    if (!map.noRecycle) {
-        // a crafted map
-        const bonus = map.hasOwnProperty('bonus') ? `+${map.bonus}` : '';
-        descriptor = `L${map.level}${bonus}`;
-    } else if (map.location === 'Void') {
-        descriptor = `V(${map.name})`;
-    } else {
-        descriptor = `U(${map.name})`;
-    }
-    return `[${map.id}]${descriptor}`;
-}
-
 function runSelectedMap(mapId, madAdjective) {
+    _abandonMapCheck();
     selectMap(mapId);
     runMap();
-    if (MODULES.maps.lastMapWeWereIn !== getCurrentMapObject()) {
-        const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
+    const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
+    if (MODULES.maps.lastMapWeWereIn !== map) {
         debug(`Running ${madAdjective} map ${prettifyMap(map)}`, 'maps', 'th-large');
-        MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+        MODULES.maps.lastMapWeWereIn = map;
     }
 }
 
 function updateAutoMapsStatus(get) {
-    var status = '';
+    let status = '';
     //Setting up status
     if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
     else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && mapSettings.mapName !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness') status = getCurrentMapObject().name;
@@ -71,18 +52,18 @@ function updateAutoMapsStatus(get) {
     if (getPageSetting('autoMaps') === 0) status = '[Auto Maps Off] ' + status;
 
     if (usingRealTimeOffline && getPageSetting('timeWarpDisplay')) {
-        var ticks = offlineProgress.ticksProcessed;
-        var maxTicks = offlineProgress.progressMax;
-        var barWidth = ((ticks / maxTicks) * 100).toFixed(1) + '%';
+        let ticks = offlineProgress.ticksProcessed;
+        let maxTicks = offlineProgress.progressMax;
+        let barWidth = ((ticks / maxTicks) * 100).toFixed(1) + '%';
 
         status = 'Time Warp - ' + barWidth + '<br>' + status;
     }
 
-    var resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
-    var resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
-    var getPercent = (game.stats.heliumHour.value() / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
-    var lifetime = (game.resources[resourceType.toLowerCase()].owned / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
-    var hiderStatus = resourceShortened + '/hr: ' + (getPercent > 0 ? getPercent.toFixed(3) : 0) + '%<br>&nbsp;&nbsp;&nbsp;' + resourceShortened + ': ' + (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
+    let resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
+    let resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
+    let getPercent = (game.stats.heliumHour.value() / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
+    let lifetime = (game.resources[resourceType.toLowerCase()].owned / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
+    let hiderStatus = resourceShortened + '/hr: ' + (getPercent > 0 ? getPercent.toFixed(3) : 0) + '%<br>&nbsp;&nbsp;&nbsp;' + resourceShortened + ': ' + (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
 
     if (get) {
         return [status, getPercent, lifetime];
@@ -90,8 +71,8 @@ function updateAutoMapsStatus(get) {
     //Set auto maps status when inside of TW
     if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay') && document.getElementById('autoMapStatusTW') !== null) {
         //Add in a header for the status to let the user know what it is
-        var statusMsg = '<h9>Auto Maps Status</h9><br>' + status;
-        var id = game.global.mapsActive ? 'autoMapStatusMapsTW' : 'autoMapStatusTW';
+        let statusMsg = '<h9>Auto Maps Status</h9><br>' + status;
+        let id = game.global.mapsActive ? 'autoMapStatusMapsTW' : 'autoMapStatusTW';
         if (document.getElementById(id).innerHTML !== status) document.getElementById(id).innerHTML = statusMsg;
         document.getElementById(id).setAttribute('onmouseover', makeAutomapStatusTooltip(true));
     }
@@ -107,7 +88,7 @@ function updateAutoMapsStatus(get) {
     }
     //Additional Info tooltip
     if ((!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('additionalInfo') !== null) {
-        var infoStatus = makeAdditionalInfo();
+        let infoStatus = makeAdditionalInfo();
         if (document.getElementById('additionalInfo').innerHTML !== infoStatus) document.getElementById('additionalInfo').innerHTML = infoStatus;
         document.getElementById('additionalInfo').parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
     }
@@ -116,12 +97,12 @@ function updateAutoMapsStatus(get) {
 function makeAutomapStatusTooltip(mouseover) {
     const mapStacksText = `Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`;
     const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy. The enemy health check is based on the highest health enemy in the map/zone.';
-    var hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against the highest damaging enemy in the map/zone${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
+    let hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against the highest damaging enemy in the map/zone${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
     const hitsSurvived = prettify(hdStats.hitsSurvived);
     const hitsSurvivedVoid = prettify(hdStats.hitsSurvivedVoid);
     const hitsSurvivedSetting = targetHitsSurvived();
     const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
-    var tooltipText = '';
+    let tooltipText = '';
 
     if (mouseover) {
         tooltipText = 'tooltip(' + '"Automaps Status", ' + '"customText", ' + 'event, ' + '"';
@@ -172,12 +153,12 @@ function makeResourceTooltip(mouseover) {
     const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
     const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
 
-    var getPercent = (game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - game.resources[resource.toLowerCase()].owned)) * 100;
-    var lifetime = (game.resources[resource.toLowerCase()].owned / (game.global['total' + resource + 'Earned'] - game.resources[resource.toLowerCase()].owned)) * 100;
+    let getPercent = (game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - game.resources[resource.toLowerCase()].owned)) * 100;
+    let lifetime = (game.resources[resource.toLowerCase()].owned / (game.global['total' + resource + 'Earned'] - game.resources[resource.toLowerCase()].owned)) * 100;
     const resourceHrMsg = getPercent > 0 ? getPercent.toFixed(3) : 0;
     const lifeTimeMsg = (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
 
-    var tooltipText = '';
+    let tooltipText = '';
 
     if (mouseover) {
         tooltipText = 'tooltip(' + `\"${resource} per hour Info\",` + '"customText", ' + 'event, ' + '"';
@@ -185,7 +166,7 @@ function makeResourceTooltip(mouseover) {
     tooltipText += `<b>${resource} per hour</b>: ${resourceHrMsg}<br>` + `Current ${resource} per hour % out of Lifetime ${resourceHr} (not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>` + `<b>${resource}</b>: ${lifeTimeMsg}<br>` + `Current run total ${resource} / earned / lifetime ${resourceHr} (not including current)<br>`;
 
     if (trimpStats.isDaily) {
-        var helium = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
+        let helium = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
         helium *= 100 + getDailyHeliumValue(countDailyWeight());
         tooltipText += `<b>After Daily ${resource} per hour</b>: ${helium.toFixed(3)}%`;
     }
@@ -200,7 +181,7 @@ function makeResourceTooltip(mouseover) {
 }
 
 function makeAdditionalInfoTooltip(mouseover) {
-    var tooltipText = '';
+    let tooltipText = '';
 
     if (mouseover) {
         tooltipText = 'tooltip(' + '"Additional Info", ' + '"customText", ' + 'event, ' + '"';
@@ -237,7 +218,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 }
 
 function makeAutoPortalHelpTooltip() {
-    var tooltipText = '';
+    let tooltipText = '';
 
     tooltipText += `<p>Auto Portal has a priority as to what it will portal into and if that isn't possible it'll try to portal into the next and so forth.</p>`;
     //C2/C3s
@@ -252,7 +233,7 @@ function makeAutoPortalHelpTooltip() {
 }
 
 function makeFarmingDecisionHelpTooltip() {
-    var tooltipText = '';
+    let tooltipText = '';
 
     tooltipText += `<p>Mapping has a priority as to what it will try to run and in what order. This is a static list and can't be modified with the exception of challenge settings only allowing certain settings to be run.</p>`;
     tooltipText += `<p>First it will check to see if you're running a setting and if you are then it will continue until that settings farming has been completed. Afterwards it will go through all of the settings (<b>challenge specific settings will only be shown when running that challenge</b>) in this order:</p>`;
@@ -303,7 +284,7 @@ function makeFarmingDecisionHelpTooltip() {
 }
 
 function makeFragmentDecisionHelpTooltip() {
-    var tooltipText = '';
+    let tooltipText = '';
 
     tooltip('Fragment Decision Info', 'customText', 'lock', tooltipText, false, 'center');
     _verticalCenterTooltip(true);
@@ -312,12 +293,12 @@ function makeFragmentDecisionHelpTooltip() {
 function makeAdditionalInfo() {
     //Void, AutoLevel, Breed Timer, Tenacity information
 
-    var lineBreak = ` | `;
+    let lineBreak = ` | `;
 
-    var description = ``;
+    let description = ``;
     //Free void tracker
     if (game.permaBoneBonuses.voidMaps.owned > 0) {
-        var voidValue = game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10;
+        let voidValue = game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10;
         description += `V ${voidValue}/10`;
         description += lineBreak;
     }
@@ -327,9 +308,9 @@ function makeAdditionalInfo() {
     description += `AL2 (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
     //Breed timer when you have an amalgamator
     if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
-        var breedTimer = Math.floor(new Date().getTime());
+        let breedTimer = Math.floor(new Date().getTime());
         if (game.options.menu.pauseGame.enabled) {
-            var dif = breedTimer - game.options.menu.pauseGame.timeAtPause;
+            let dif = breedTimer - game.options.menu.pauseGame.timeAtPause;
             breedTimer -= dif;
         }
         breedTimer -= game.global.lastSoldierSentAt;
@@ -353,11 +334,11 @@ function findMap(level, special, biome, perfect = false) {
     if (!special) special = getAvailableSpecials('lmc');
     if (!biome) biome = getBiome();
 
-    var mapLoot = biome === 'Farmlands' ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
+    let mapLoot = biome === 'Farmlands' ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
     if (game.singleRunBonuses.goldMaps.owned) mapLoot += 1;
 
-    for (var mapping in game.global.mapsOwnedArray) {
-        var map = game.global.mapsOwnedArray[mapping];
+    for (let mapping in game.global.mapsOwnedArray) {
+        let map = game.global.mapsOwnedArray[mapping];
         if (perfect) {
             if (map.size > trimpStats.mapSize) continue;
             if (map.difficulty > trimpStats.mapDifficulty) continue;
@@ -416,75 +397,42 @@ function _vanillaMAZ() {
     return false;
 }
 
-function autoMap() {
-    const autoMapsEnabled = getPageSetting('autoMaps') > 0;
-
+function _checkSitInMaps() {
     if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
         if (!game.global.preMapsActive) {
             mapsClicked(true);
             debug('AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.', 'other');
         }
-        return;
+        return true;
     }
+}
 
-    //Always disable repeat when running one of thesee unique maps - Should probably just be done for every unique map apart from BW?
-    /* if (autoMapsEnabled && MODULES.mapFunctions.runUniqueMap !== '' && game.global.mapsActive) {
-        var currMap = getCurrentMapObject();
-        if (currMap !== undefined && ['Trimple Of Doom', 'Atlantrimp', 'Melting Point', 'Frozen Castle'].indexOf(currMap.name) >= 0) {
-            if (currMap.name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
-            if (game.global.repeatMap) repeatClicked();
-            return;
+function _checkWaitForFrags() {
+    if (MODULES.maps.fragmentCost === Infinity) return;
+    if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return true;
+    MODULES.maps.fragmentCost = Infinity;
+}
+
+//When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
+//Has a time override as there's a certain cell that will always be unliving so can bypass it this way
+function _lifeMapping() {
+    if (game.global.mapsActive || challengeActive('Life') || !getPageSetting('life')) return;
+
+    const lifeZone = getPageSetting('lifeZone');
+    const lifeStacks = getPageSetting('lifeStacks');
+    const currCell = game.global.world + '_' + (game.global.lastClearedCell + 1);
+    if (lifeZone > 0 && lifeStacks > 0 && game.global.world >= lifeZone && game.challenges.Life.stacks <= lifeStacks) {
+        if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
+        if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
+            MODULES.maps.livingActive = true;
+            if (game.global.fighting || game.global.preMapsActive) mapsClicked();
+            return true;
         }
-    } */
-
-    if (!autoMapsEnabled || !game.global.mapsUnlocked) return;
-
-    //Override to disable mapping when we are the world and currently fighting
-    //if (game.challenges.Berserk.frenzyStacks > 0 && !game.global.mapsActive && !game.global.preMapsActive && challengeActive('Berserk') && getPageSetting('berserk')) return;
-
-    //Hacky way to fix an issue with having no maps available to run and no fragments to purchase them
-    if (MODULES.maps.fragmentCost !== Infinity) {
-        if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return;
-        MODULES.maps.fragmentCost = Infinity;
     }
+    MODULES.maps.livingActive = false;
+}
 
-    //Failsafes
-    //If maps aren't active, or soldier attack is negative or we're running no maps quest OR running Mapology and no credits available
-    if (!game.global.mapsUnlocked || game.global.soldierCurrentAttack < 0 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
-        if (game.global.preMapsActive) mapsClicked();
-        return;
-    }
-
-    //Stop maps from running if frag farming
-    if (MODULES.maps.fragmentFarming) {
-        fragmentFarm();
-        return;
-    }
-
-    //When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
-    //Has a time override as there's a certain cell that will always be unliving so can bypass it this way
-    if (challengeActive('Life') && getPageSetting('life') && !game.global.mapsActive) {
-        const lifeZone = getPageSetting('lifeZone');
-        const lifeStacks = getPageSetting('lifeStacks');
-        const currCell = game.global.world + '_' + (game.global.lastClearedCell + 1);
-        if (lifeZone > 0 && game.global.world >= lifeZone && lifeStacks > 0 && game.challenges.Life.stacks <= lifeStacks) {
-            if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
-            if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
-                MODULES.maps.livingActive = true;
-                if (game.global.fighting || game.global.preMapsActive) mapsClicked();
-                return;
-            }
-        }
-        MODULES.maps.livingActive = false;
-    }
-
-    //Go to map chamber if we should farm on Wither! Just a way to get around the issue of this potentially running too slowly and armies dying due to it.
-    if (mapSettings.mapName === 'Wither Farm' && mapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive) mapsClicked(true);
-
-    //Run vanilla Map At Zone
-    if (_vanillaMAZ()) return;
-
-    //Reset to defaults
+function _mappingDefaults() {
     while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
     if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
     if (game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
@@ -495,25 +443,56 @@ function autoMap() {
         game.global.mapRunCounter = 0;
         MODULES.maps.mapTimer = 0;
     }
+}
+
+function autoMap() {
+    if (!getPageSetting('autoMaps') || !game.global.mapsUnlocked) return;
+
+    if (_checkSitInMaps()) return;
+
+    //Override to disable mapping when we are the world and currently fighting
+    //if (game.challenges.Berserk.frenzyStacks > 0 && !game.global.mapsActive && !game.global.preMapsActive && challengeActive('Berserk') && getPageSetting('berserk')) return;
+
+    //Hacky way to fix an issue with having no maps available to run and no fragments to purchase them
+    if (_checkWaitForFrags()) return;
+
+    //Failsafes
+    //If maps aren't active, or soldier attack is negative or we're running no maps quest OR running Mapology and no credits available
+    if (game.global.soldierCurrentAttack < 0 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
+        if (game.global.preMapsActive) mapsClicked();
+        return;
+    }
+
+    //Stop maps from running if frag farming
+    if (MODULES.maps.fragmentFarming) {
+        fragmentFarm();
+        return;
+    }
+
+    if (_lifeMapping()) return;
+
+    if (_vanillaMAZ()) return;
+
+    _mappingDefaults();
 
     //Uniques
-    var highestMap = null;
-    var lowestMap = null;
-    var optimalMap = null;
-    const runUniques = getPageSetting('autoMaps') === 1;
+    let highestMap = null;
+    let lowestMap = null;
+    let optimalMap = null;
+    const runUniques = getPageSetting('autoMaps') === 1 && !_insanityDisableUniqueMaps();
     const bionicPool = [];
-    var voidMap = null;
-    var selectedMap = 'world';
+    let voidMap = null;
+    let selectedMap = 'world';
 
-    var perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
-    var perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
-    var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+    const perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
+    const perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
+    const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
 
     const uniqueMapsOwned = [];
     //Check to see if the cell is liquified and if so we can replace the cell condition with it
     const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
-    var uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
-    var runUnique = false;
+    const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
+    let runUnique = false;
 
     //Looping through all of our maps to find the highest, lowest and optimal map.
     for (const map of game.global.mapsOwnedArray) {
@@ -531,7 +510,7 @@ function autoMap() {
             }
         } else if (map.noRecycle) {
             if (map.location !== 'Void') uniqueMapsOwned.push(map.name);
-            if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
+            if (runUniques && shouldRunUniqueMap(map)) {
                 runUnique = true;
                 selectedMap = map.id;
                 break;
@@ -546,7 +525,7 @@ function autoMap() {
     }
 
     //Filter unique maps that we want to run and aren't available to be run.
-    var uniqueMapsToGet = Object.keys(uniqueMapSetting)
+    let uniqueMapsToGet = Object.keys(uniqueMapSetting)
         .filter((mapName) => !mapName.includes('MP Smithy'))
         .filter((mapName) => uniqueMapSetting[mapName].enabled)
         .filter((mapName) => uniqueMapSetting[mapName].zone <= game.global.world)
@@ -577,9 +556,9 @@ function autoMap() {
         //Game refuses to let you buy a map if you have 100 maps in your inventory.
         if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
         //Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-        var mapObj = getCurrentMapObject();
+        let mapObj = getCurrentMapObject();
         if (mapSettings.shouldRun && mapSettings.mapName === 'Prestige Raiding' && game.global.mapsActive && String(mapObj.level).slice(-1) === '1' && prestigesToGet(mapObj.level) === 1 && mapObj.bonus !== 'lmc' && game.resources.fragments.owned > mapCost(mapObj.level - game.global.world, 'lmc', mapBiome)) {
-            var maplevel = mapObj.level;
+            let maplevel = mapObj.level;
             recycleMap_AT();
             if (game.global.preMapsActive) {
                 setMapSliders(maplevel - game.global.world, 'lmc', mapBiome);
@@ -613,9 +592,9 @@ function autoMap() {
             //Disabling repeat if repeat conditions have been met
             if (game.global.repeatMap && mapSettings.mapName !== '' && !mapSettings.prestigeFragMapBought && mapObj !== null) {
                 //Figuring out if we have the right map level & special
-                var mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
+                let mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
 
-                var mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
+                let mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
                 if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
                     if (!mapSettings.repeat) repeatClicked();
                 }
@@ -636,28 +615,6 @@ function autoMap() {
         }
         //Creating Maps
     } else if (game.global.preMapsActive) {
-        //Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
-        function abandonMapCheck() {
-            if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
-            if (game.global.currentMapId !== '') {
-                //If we don't have info on the previous map then set it.
-                if (MODULES.maps.lastMapWeWereIn === null) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
-                //If we do have info on the previous map then check data for it.
-                if (MODULES.maps.lastMapWeWereIn !== null) {
-                    //Ensure the map has the correct biome, if not then recycle it.
-                    if (mapSettings.biome && MODULES.maps.lastMapWeWereIn.location !== mapSettings.biome) recycleMap();
-                    //If the selected map is the wrong level then recycle it.
-                    if (MODULES.maps.lastMapWeWereIn.level !== mapSettings.mapLevel + game.global.world) recycleMap();
-                    //If the selected map is the wrong special then recycle it.
-                    //Since the game doesn't track bonus if it doesn't exist we need to check if the last map we were in had a bonus or not.
-                    if (MODULES.maps.lastMapWeWereIn.bonus === undefined) {
-                        if (mapSettings.special !== '0') recycleMap();
-                    } else if (MODULES.maps.lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
-                    if (runUnique && game.global.currentMapId !== selectedMap) recycleMap();
-                }
-            }
-        }
-
         document.getElementById('mapLevelInput').value = game.global.world;
 
         if (selectedMap === 'world') {
@@ -667,7 +624,7 @@ function autoMap() {
         } else if (selectedMap === 'bionicRaid') {
             runBionicRaiding(bionicPool);
         } else if (selectedMap === 'create') {
-            abandonMapCheck();
+            _abandonMapCheck();
             //Setting sliders appropriately.
             if (mapSettings.shouldRun) {
                 if (mapSettings.mapName !== '') {
@@ -715,7 +672,7 @@ function autoMap() {
                     'fragment'
                 );
 
-                var result = buyMap();
+                let result = buyMap();
                 if (result === -2) {
                     debug('Too many maps, recycling now.', 'maps', 'th-large');
                     recycleBelow(true);
@@ -735,24 +692,47 @@ function autoMap() {
                 }
             }
         } else {
-            abandonMapCheck();
+            _abandonMapCheck();
             if (game.global.currentMapId === '') selectMap(selectedMap);
-            var themapobj = game.global.mapsOwnedArray[getMapIndex(selectedMap)];
-            var levelText;
-            if (themapobj && themapobj.level > 0) {
-                levelText = ' Level: ' + themapobj.level;
-            } else {
-                levelText = ' Level: ' + game.global.world;
+            let themapobj = game.global.mapsOwnedArray[getMapIndex(selectedMap)];
+            if (themapobj) {
+                let levelText = ' Level: ' + themapobj.level;
+                let voidOrLevelText = themapobj.location === 'Void' ? ' Void: ' : levelText;
+                debug('Running selected ' + selectedMap + voidOrLevelText + ' Name: ' + themapobj.name, 'maps', 'th-large');
             }
-            var voidOrLevelText = themapobj && themapobj.location === 'Void' ? ' Void: ' : levelText;
-            debug('Running selected ' + selectedMap + voidOrLevelText + ' Name: ' + (themapobj && themapobj.name ? themapobj.name : ''), 'maps', 'th-large');
             runMap();
             MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
         }
     }
+    _slowScumCheck();
+}
 
-    var canRunSlowScum = mapSettings.mapName === 'Map Bonus' || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Mayhem Destacking' || mapSettings.mapName === 'Pandemonium Destacking' || mapSettings.mapName === 'Desolation Gear Scum';
-    if (game.global.mapsActive && game.global.universe === 2 && canRunSlowScum && !getCurrentMapObject().noRecycle && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
-        if (game.global.mapRunCounter !== 0 || !MODULES.maps.slowScumming) mapScumming();
+function _slowScumCheck() {
+    if (MODULES.maps.slowScumming || !game.global.mapsActive || game.global.universe !== 2) return;
+    if (getPageSetting('testMapScummingValue') <= 0 || hdStats.hdRatioMap < getPageSetting('testMapScummingValue')) return;
+    let canSlowScum = ['Map Bonus', 'Prestige Raiding', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Gear Scum'].indexOf(mapSettings.mapName) !== -1;
+    if (!canSlowScum) return;
+    const mapObj = getCurrentMapObject();
+    if (mapObj.noRecycle || mapObj.size !== 20) return;
+    if (game.global.mapRunCounter !== 0 || !MODULES.maps.slowScumming) slowScum();
+}
+
+//Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
+function _abandonMapCheck() {
+    if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
+    if (game.global.currentMapId !== '') {
+        //If we don't have info on the previous map then set it.
+        if (MODULES.maps.lastMapWeWereIn === null) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
+
+        //Ensure the map has the correct biome, if not then recycle it.
+        if (mapSettings.biome && MODULES.maps.lastMapWeWereIn.location !== mapSettings.biome) recycleMap();
+        //If the selected map is the wrong level then recycle it.
+        if (MODULES.maps.lastMapWeWereIn.level !== mapSettings.mapLevel + game.global.world) recycleMap();
+        //If the selected map is the wrong special then recycle it.
+        //Since the game doesn't track bonus if it doesn't exist we need to check if the last map we were in had a bonus or not.
+        if (MODULES.maps.lastMapWeWereIn.bonus === undefined) {
+            if (mapSettings.special !== '0') recycleMap();
+        } else if (MODULES.maps.lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
+        if (runUnique && game.global.currentMapId !== selectedMap) recycleMap();
     }
 }

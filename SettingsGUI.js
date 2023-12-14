@@ -4282,7 +4282,7 @@ function initializeAllSettings() {
 				description += "<p>Will only work if you\'re in maps and on cell 1.</p>";
 				description += "<p><b>Due to the map remaking process your game will hang for roughly 60s while this finds an ideal map.</b></p>";
 				return description;
-			}, 'action', null, 'mapScumming(9);', 'Beta', [0]);
+			}, 'action', null, 'slowScum(9);', 'Beta', [0]);
 		createSetting('testMapScummingValue',
 			function () { return ('Slow Map Value') },
 			function () {
@@ -6203,6 +6203,14 @@ function updateATVersion() {
                     enabled: false,
                     value: 100
                 };
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.33') {
+            if (typeof tempSettings['testMapScummingValue'] !== 'undefined') {
+                if (!gameUserCheck()) autoTrimpSettings.testMapScummingValue.value = -1;
+                else if (typeof tempSettings['testMapScummingValue'].value === 'object' && tempSettings['testMapScummingValue'].valueU2) autoTrimpSettings.testMapScummingValue.value = tempSettings['testMapScummingValue'].valueU2;
+                else autoTrimpSettings.testMapScummingValue.value = -1;
             }
         }
     }

@@ -331,6 +331,7 @@ function ImportExportTooltip(what, event, download) {
         document.getElementById('confirmTooltipBtn').click();
         // Pausing save and setting options to my preferences
         saveGame.options.menu.pauseGame.enabled = 1;
+        saveGame.options.menu.timeAtPause = new Date().getTime();
         saveGame.options.menu.standardNotation.enabled = 0;
         saveGame.options.menu.darkTheme.enabled = 2;
         saveGame.options.menu.disablePause.enabled = 1;

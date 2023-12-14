@@ -80,7 +80,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
     if (z + maxLevel < 6) maxLevel = 0 - (z + 6);
 
     if (challengeActive('Wither') && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
-    if (challengeActive('Insanity') && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
+    if (_insanityDisableUniqueMaps() && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
 
     const isDaily = challengeActive('Daily');
     const hze = getHighestLevelCleared();
@@ -107,7 +107,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
     const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
     const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Explosive
 
-    if (challengeActive('Insanity') && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
+    if (_insanityDisableUniqueMaps() && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
         ourHealth /= game.challenges.Insanity.getHealthMult();
         ourHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
     }
@@ -152,7 +152,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
         }
 
         if (enemyHealth <= ourDmg && enemyDmg <= ourHealth + ourBlock) {
-            if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem')) mapLevel = -1;
+            if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !runningInsanity && !challengeActive('Mayhem')) mapLevel = -1;
             return mapLevel;
         }
     }
@@ -249,7 +249,7 @@ function populateZFarmData() {
         else overkillDamage = 0;
     }
 
-    if (challengeActive('Insanity') && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
+    if (_insanityDisableUniqueMaps() && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
         trimpHealth /= game.challenges.Insanity.getHealthMult();
         trimpHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
     }

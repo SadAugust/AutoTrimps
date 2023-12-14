@@ -397,7 +397,7 @@ function mainLoop() {
     if (MODULES.maps.slowScumming && game.global.mapRunCounter !== 0) {
         if (game.global.mapBonus === 10) MODULES.maps.slowScumming = false;
         else {
-            mapScumming();
+            slowScum();
             return;
         }
     }

@@ -18,7 +18,7 @@ function newArmyRdy() {
 
 function betterAutoFight() {
     if (game.global.autoBattle && !game.global.pauseFight) pauseFight();
-    if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || MODULES.maps.livingActive) return;
+    if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || MODULES.maps.lifeActive) return;
     if (!game.global.fighting && (game.global.soldierHealth > 0 || newArmyRdy())) battle(true);
 }
 
@@ -261,7 +261,7 @@ function equalityManagement() {
     const noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
     const angelicOwned = game.talents.angelic.purchased;
     //Challenges/conditions where it's important to keep armies alive through angelic.
-    const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningArchaeology || runningBerserk || noFrenzy || (dailyEmpower && !mapping));
+    const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || noFrenzy || (dailyEmpower && !mapping));
     const plagueShield = MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming ? getHeirloomBonus('Shield', 'plaguebringer') > 0 : false;
 
     //Gamma burst info

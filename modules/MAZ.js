@@ -1024,6 +1024,7 @@ function mapSettingsHelpWindow(titleText, trimple) {
         mazHelp += '<li class="indent">If you reach the <b>Max Zone</b> zone input of a line it will run regardless of dropdown inputs.';
     }
     if (smithyFarm) mazHelp += '<br><br><b>Smithy Farm</b> will farm resources in the following order <b>Metal > Wood > Gems</b>. This cannot be changed.';
+    if (insanity) mazHelp += "<br><br><b>Insanity Farm</b> will disable unique & lower than world level maps when you don't have a destack zone line setup.";
 
     //Top Row Information
     if (!golden) {
@@ -1070,6 +1071,9 @@ function mapSettingsHelpWindow(titleText, trimple) {
         if (worshipperFarm) {
             mazHelp += '<li><b>Enabled Skip</b> - A toggle to enable the skip value setting.</li>';
             mazHelp += '<li><b>Skip Value</b> - How many worshippers a small/large (dependant on what you have unlocked) savoury cache must provide for you to run your Worshipper Farming.</li>';
+        }
+        if (quagmire) {
+            mazHelp += '<li><b>Abandon Zone</b> - The zone you would like to abandon the challenge at.</li>';
         }
         if (alchemy) {
             mazHelp += '<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>';
@@ -1233,7 +1237,7 @@ function mapSettingsHelpWindow(titleText, trimple) {
         //Insanity Stacks
         mazHelp += "<li><b>Insanity</b> - How many Insanity stack you'd like to farm up to during this line.</li>";
         //Destack toggle setting
-        mazHelp += '<li><b>Destack</b> - Toggle to allow you to run maps that are lower than world level during Insanity.</li>';
+        mazHelp += '<li><b>Destack</b> - Toggle to allow you to run maps that are lower than world level during Insanity. If a destack zone is set it will allow lower than world level maps to be run from that zone onwards.</li>';
         mazHelp += '<li class="indent">When enabled Insanity Farm will assume you\'re destacking and it will aim to reduce your max Insanity to the value in the Insanity field.</li>';
     }
 

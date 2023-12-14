@@ -457,18 +457,13 @@ function autoMagmiteSpender(portal) {
     //Set Fuel zones when portaling
     if (portalWindowOpen) calculateMagmaZones();
     if (!mutations.Magma.active()) return;
-    if (portal && (getPageSetting('spendmagmite', 1) !== 1 || !portalWindowOpen)) return;
+    const magmiteSetting = getPageSetting('spendmagmite', 1);
+    if (portal && (magmiteSetting !== 1 || !portalWindowOpen)) return;
     if (getPageSetting('ratiospend', 1)) {
-        miRatio();
-        var toSpend = MODULES.magmite.upgradeToPurchase;
-        if (toSpend === '') return;
-        var upgrader = game.generatorUpgrades[toSpend];
-        if (upgrader === undefined) return;
-        if (game.global.magmite >= upgrader.cost()) {
-            debug('Auto Spending ' + upgrader.cost() + ' Magmite on: ' + toSpend + ' #' + (game.generatorUpgrades[toSpend].upgrades + 1), 'magmite');
-            buyGeneratorUpgrade(toSpend);
-            MODULES.magmite.upgradeToPurchase = '';
-        }
+        let boughtUpgrade = false;
+        do {
+            boughtUpgrade = _autoMagmiteCalc();
+        } while (boughtUpgrade);
     } else {
         try {
             var didSpend = false;
@@ -534,6 +529,20 @@ function autoMagmiteSpender(portal) {
             debug('AutoSpendMagmite Error encountered: ' + err.message, 'magmite');
         }
         if (didSpend) debug('Leftover magmite: ' + game.global.magmite, 'magmite');
+    }
+}
+
+function _autoMagmiteCalc() {
+    miRatio();
+    var toSpend = MODULES.magmite.upgradeToPurchase;
+    if (toSpend === '') return;
+    var upgrader = game.generatorUpgrades[toSpend];
+    if (upgrader === undefined) return;
+    if (game.global.magmite >= upgrader.cost()) {
+        debug('Auto Spending ' + upgrader.cost() + ' Magmite on: ' + toSpend + ' #' + (game.generatorUpgrades[toSpend].upgrades + 1), 'magmite');
+        buyGeneratorUpgrade(toSpend);
+        MODULES.magmite.upgradeToPurchase = '';
+        return true;
     }
 }
 

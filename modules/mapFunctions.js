@@ -306,9 +306,8 @@ function runningAtlantrimp() {
 function runUniqueMap(mapName) {
     if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
     if (getPageSetting('autoMaps') !== 1) return;
-    if (challengeActive('Insanity')) return;
+    if (_insanityDisableUniqueMaps()) return;
 
-    MODULES.mapFunctions.runUniqueMap = mapName;
     const map = game.global.mapsOwnedArray.find((map) => map.name.includes(mapName));
     if (map !== undefined) {
         if (game.global.mapsActive && getCurrentMapObject().name !== mapName) recycleMap_AT();
@@ -317,7 +316,7 @@ function runUniqueMap(mapName) {
             runMap_AT();
             debug('Running ' + mapName + ' on zone ' + game.global.world + '.', 'map_Details');
         }
-    }
+    } else MODULES.mapFunctions.runUniqueMap = mapName;
 }
 
 //Void Maps
@@ -2161,7 +2160,7 @@ function insanity(lineCheck) {
         }
 
         if (insanityGoal > game.challenges.Insanity.maxInsanity) insanityGoal = game.challenges.Insanity.maxInsanity;
-        if (insanityGoal > game.challenges.Insanity.insanity || (setting.destack && game.challenges.Insanity.insanity > insanityGoal)) shouldMap = true;
+        if ((!setting.destack && insanityGoal > game.challenges.Insanity.insanity) || (setting.destack && game.challenges.Insanity.insanity > insanityGoal)) shouldMap = true;
 
         var repeat = insanityGoal <= game.challenges.Insanity.insanity;
         var status = 'Insanity Farming: ' + game.challenges.Insanity.insanity + '/' + insanityGoal;
@@ -2185,6 +2184,23 @@ function insanity(lineCheck) {
     }
 
     return farmingDetails;
+}
+
+function _insanityDisableUniqueMaps() {
+    if (!challengeActive('Insanity')) return false;
+    // A quick way to identify if we are running Insanity and when our first destacking zone is to enable below world level maps.
+    // Need to have it setup to go through every setting to ensure we don't miss the first one after introducing the priority input.
+    let destackZone = 0;
+    const insanitySettings = getPageSetting('insanitySettings');
+    if (insanitySettings[0].active && insanitySettings.length > 0) {
+        for (let y = 1; y < insanitySettings.length; y++) {
+            const setting = insanitySettings[y];
+            if (!setting.active) continue;
+            if (!setting.destack) continue;
+            if (destackZone === 0 || destackZone > setting.world) destackZone = setting.world;
+        }
+    }
+    return destackZone === 0 || game.global.world <= destackZone;
 }
 
 function pandemoniumDestack(lineCheck) {
@@ -3754,7 +3770,7 @@ function dailyOddOrEven() {
 }
 
 //I hope I never use this again. Scumming for slow map enemies!
-function mapScumming(slowTarget) {
+function slowScum(slowTarget) {
     if (!game.global.mapsActive) return;
     if (game.global.lastClearedMapCell > -1) return;
     if (!atSettings.running) return;
