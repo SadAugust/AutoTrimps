@@ -89,16 +89,6 @@ function _setupExternalScripts() {
         document.head.appendChild(script);
     })();
 
-    //Loading graphs
-    var script = document.createElement('script');
-    script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
-    document.head.appendChild(script);
-}
-
-/*
- * Loads select2+css. Needs to be done after jQuery has loaded.
- */
-function _setupExternalScriptsPt2() {
     //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
     var script = document.createElement('link');
     script.rel = 'stylesheet';
@@ -107,6 +97,16 @@ function _setupExternalScriptsPt2() {
     // Append the script to the document
     document.head.appendChild(script);
 
+    //Loading graphs
+    var script = document.createElement('script');
+    script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
+    document.head.appendChild(script);
+}
+
+/*
+ * Loads select2. Needs to be done after jQuery has loaded.
+ */
+function _setupExternalScriptsPt2() {
     //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
     var script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
