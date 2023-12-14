@@ -1691,7 +1691,7 @@ function bionicRaiding(lineCheck) {
 
         var mapsToRun = game.global.mapsActive ? prestigesToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
         var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
-        var repeat = game.global.mapsActive && (mapsToRun === 1 || (specialInMap && mapsToRun === 2) || getCurrentMapObject().location !== 'Bionic');
+        var repeat = game.global.mapsActive && (mapsToRun === 1 || (specialInMap && mapsToRun === 2) || getCurrentMapObject().location !== 'Bionic' || mapsToRun === 0);
 
         farmingDetails.shouldRun = shouldMap;
         farmingDetails.mapName = mapName;
@@ -1699,6 +1699,7 @@ function bionicRaiding(lineCheck) {
         farmingDetails.raidingZone = raidzonesBW;
         farmingDetails.status = status;
         farmingDetails.settingIndex = settingIndex;
+        farmingDetails.prestigeGoal = targetPrestige;
         if (setting.priority) farmingDetails.priority = setting.priority;
     }
 

@@ -1,4 +1,4 @@
-var atSettings = {
+atSettings = {
     initialise: {
         version: '',
         basepath: 'https://SadAugust.github.io/AutoTrimps/',
@@ -25,13 +25,14 @@ var atSettings = {
 Loading modules that are required for the script to run. 
 */
 function _loadModules(fileName, prefix = '') {
-    if (atSettings.modules.loadingModules.includes(fileName)) return;
-
+    if (fileName !== 'utils' && fileName !== 'versionNumber' && atSettings.modules.loadingModules.includes(fileName)) return;
     var script = document.createElement('script');
     script.src = atSettings.initialise.basepath + prefix + fileName + '.js';
     script.id = fileName + '_MODULE';
-    script.async = false;
-    script.defer = true;
+    if (prefix === '') {
+        script.async = false;
+        script.defer = true;
+    }
     document.head.appendChild(script);
     atSettings.modules.loadingModules.push(fileName);
     //Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
