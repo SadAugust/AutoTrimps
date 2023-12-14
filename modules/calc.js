@@ -1618,7 +1618,7 @@ function getTotalHealthMod() {
 }
 
 function gammaMaxStacks(specialChall, actualCheck = true, mapType = 'world') {
-    if (getHeirloomBonus_AT('Shield', 'gammaBurst', heirloomShieldToEquip(mapType)) <= 1) return Infinity;
+    if (heirloomShieldToEquip(mapType) && getHeirloomBonus_AT('Shield', 'gammaBurst', heirloomShieldToEquip(mapType)) <= 1) return Infinity;
     var gammaMaxStacks = 5;
     if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
     if (Fluffy.isRewardActive('scruffBurst')) gammaMaxStacks--;

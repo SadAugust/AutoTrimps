@@ -5835,7 +5835,8 @@ function introMessage() {
     description += "<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>";
 
     tooltip('Introduction Message', 'customText', 'lock', description, false, 'center');
-    _verticalCenterTooltip(true);
+    if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
+    else verticalCenterTooltip(true);
 }
 
 function updateATVersion() {
@@ -6241,7 +6242,8 @@ function updateATVersion() {
     autoTrimpSettings['ATversion'] = atSettings.initialise.version;
     if (changelog.length !== 0) {
         printChangelog(changelog);
-        _verticalCenterTooltip(false, true);
+        if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(false, true);
+        else verticalCenterTooltip(false, true);
     }
     updateCustomButtons(true);
     saveSettings();
@@ -6264,7 +6266,8 @@ function printChangelog(changes) {
         hideCancel = true;
 
     tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
-    _verticalCenterTooltip(true);
+    if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
+    else verticalCenterTooltip(true);
 }
 
 function assembleChangelog(c) {
