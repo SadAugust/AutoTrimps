@@ -66,7 +66,6 @@ offlineProgress.finish = function () {
 originalActivateClicked = activateClicked;
 activateClicked = function () {
     downloadSave(true);
-    activateClicked();
     pushSpreadsheetData();
     autoHeirlooms(true);
     autoMagmiteSpender(true);

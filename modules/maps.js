@@ -625,7 +625,7 @@ function autoMap() {
             let themapobj = game.global.mapsOwnedArray[getMapIndex(selectedMap)];
             if (themapobj) {
                 let levelText = ' Level: ' + themapobj.level;
-                let voidOrLevelText = themapobj.location === 'Void' ? ' Void: ' : levelText;
+                let voidOrLevelText = themapobj.location === 'Void' ? ' (void)' : levelText;
                 debug('Running selected ' + selectedMap + voidOrLevelText + ' Name: ' + themapobj.name, 'maps', 'th-large');
             }
             runMap();
