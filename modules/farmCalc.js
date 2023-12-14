@@ -11,7 +11,9 @@ if (typeof MODULES === 'undefined') {
 //Old setup!
 function callAutoMapLevel(settingName, special, maxLevel, minLevel) {
     if (getPageSetting('autoLevelTest')) return callAutoMapLevel_new(settingName, special);
-    var mapLevel = mapSettings.levelCheck;
+    let mapLevel = mapSettings.levelCheck;
+    // Stop it from adjusting map levels and potentially wasting map credits during Mapology.
+    if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
     if (settingName === '' || mapLevel === Infinity) {
         if (mapLevel === Infinity) mapLevel = autoMapLevel(special, maxLevel, minLevel);
         if (mapLevel !== Infinity && atSettings.intervals.twoSecond) mapLevel = autoMapLevel(special, maxLevel, minLevel);
@@ -42,11 +44,13 @@ function callAutoMapLevel_new(mapName, special) {
         hdStats.autoLevelZone = game.global.world;
         hdStats.autoLevelInitial = stats();
     }
-    var mapLevel = mapSettings.levelCheck;
-    var autoLevel = 0;
+    let mapLevel = mapSettings.levelCheck;
+    // Stop it from adjusting map levels and potentially wasting map credits during Mapology.
+    if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
+    let autoLevel = 0;
     //Get initial map level if not already set
     if (mapLevel === Infinity) mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
-    //Check every 6 seconds if we should be increasing or decreasing map level so that the values don't fluctuate too often
+    //  Check every 6 seconds if we should be increasing or decreasing map level so that the values don't fluctuate too often
     else if (mapName !== '' && atSettings.intervals.sixSecond) {
         autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
         //Increasing Map Level
@@ -89,7 +93,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 
     const biome = getBiome();
     const query = !special ? true : false;
-    var universeSetting = z >= 60 && hze >= 180 ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
+    let universeSetting = z >= 60 && hze >= 180 ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
     const cell = game.talents.mapLoot2.purchased ? 20 : 25;
     if (!special) special = getAvailableSpecials('lmc');
     const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2;

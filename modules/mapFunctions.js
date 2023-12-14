@@ -1440,8 +1440,10 @@ function runPrestigeRaiding() {
         if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
         //Buy the maps we need IF we haven't already purchased them and prints out a message stating they've been bought
         //Should really say map level for this, right???
+        let mapsCanRun = 5;
+        if (challengeActive('Mapology')) mapsCanRun = Math.min(5, game.challenges.Mapology.credits);
         if (mapSettings.prestigeMapArray[0] === undefined) {
-            for (var x = 0; x < 5; x++) {
+            for (var x = 0; x < mapsCanRun; x++) {
                 if ((!mapSettings.incrementMaps && x > 0) || mapSettings.mapSliders[x] === undefined) break;
                 if (prestigeMapHasEquips(x, mapSettings.raidzones, mapSettings.prestigeGoal)) {
                     setMapSliders(mapSettings.mapSliders[x][0], mapSettings.mapSliders[x][1], mapSettings.mapSliders[x][2], mapSettings.mapSliders[x][3], mapSettings.mapSliders[x][4]);
