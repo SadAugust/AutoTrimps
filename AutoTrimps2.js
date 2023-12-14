@@ -1,4 +1,4 @@
-atSettings = {
+var atSettings = {
     initialise: {
         version: '',
         basepath: 'https://SadAugust.github.io/AutoTrimps/',
@@ -6,9 +6,7 @@ atSettings = {
     },
     modules: {
         path: 'modules/',
-        installedModules: ['utils', 'other', 'import-export', 'query', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirloomCalc', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'mutatorPreset', 'farmCalc'],
-        externalModules: [],
-        loadingModules: [],
+        installedModules: ['import-export', 'query', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirloomCalc', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils', 'mutatorPreset', 'farmCalc'],
         loadedModules: [],
         loaded: []
     },
@@ -21,122 +19,16 @@ atSettings = {
     autoSave: game.options.menu.autoSave.enabled
 };
 
-/* 
-Loading modules that are required for the script to run. 
-*/
-function _loadModules(fileName, prefix = '') {
-    if (atSettings.modules.loadedModules.includes(fileName)) return;
-    var script = document.createElement('script');
-    script.src = atSettings.initialise.basepath + prefix + fileName + '.js';
-    script.id = fileName + '_MODULE';
-    if (prefix === '') {
-        script.async = false;
-        script.defer = true;
-    }
-    document.head.appendChild(script);
-    atSettings.modules.loadingModules.push(fileName);
-    //Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
-    script.addEventListener('load', () => {
-        if (!atSettings.modules.loadedModules.includes(fileName)) atSettings.modules.loadedModules.push(fileName);
-    });
-    script.addEventListener('error', () => {
-        console.log(`Error loading ${fileName}.`);
-        _loadModules(fileName, prefix);
-    });
-}
-
-//Need to do my best to cull these asap
-function _setupGlobalVars() {
-    autoTrimpSettings = {};
-    MODULES = {
-        popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
-        stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0 },
-        graphs: {}
-    };
-
-    ATmessageLogTabVisible = true;
-    currPortalUniverse = 0;
-    currSettingUniverse = 0;
-    settingChangedTimeout = false;
-    challengeCurrentZone = -1;
-
-    mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
-    hdStats = {};
-    trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
-}
-
-/*
- * Searches html for where the AT script is being loaded from.
- * This is pretty much only useful for me as I have a local version of AT that I use for testing.
- */
-function _setupBasepath() {
+//Searches html for where the AT script is being loaded from
+//This is pretty much only useful for me as I have a local version of AT that I use for testing.
+function loadAT() {
+    console.time();
     for (var item in document.getElementsByTagName('script')) {
         if (document.getElementsByTagName('script')[item].src.includes('AutoTrimps2')) {
             atSettings.initialise.basepath = document.getElementsByTagName('script')[item].src.replace(/AutoTrimps2\.js$/, '');
             break;
         }
     }
-
-    //The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
-    basepath = atSettings.initialise.basepath;
-}
-
-/*
- * Loads jQuery & graphs
- */
-function _setupExternalScripts() {
-    //Load jQuery
-    (function () {
-        const script = document.createElement('script');
-        script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js';
-        script.type = 'text/javascript';
-        // Append the script to the document
-        document.head.appendChild(script);
-    })();
-
-    //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
-    var script = document.createElement('link');
-    script.rel = 'stylesheet';
-    script.href = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
-    script.type = 'text/css';
-    // Append the script to the document
-    document.head.appendChild(script);
-
-    //Loading graphs
-    var script = document.createElement('script');
-    script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
-    document.head.appendChild(script);
-}
-
-/*
- * Loads select2. Needs to be done after jQuery has loaded.
- */
-function _setupExternalScriptsPt2() {
-    //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
-    var script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
-    script.type = 'text/javascript';
-    // Append the script to the document
-    document.head.appendChild(script);
-}
-
-function _setupModules() {
-    _loadModules('versionNumber');
-    for (var m in atSettings.modules.installedModules) {
-        _loadModules(atSettings.modules.installedModules[m], atSettings.modules.path);
-    }
-}
-
-/*
- * Loads all the modules (bar settingsGUI), jQuery, select2 and global vars
- */
-function _initialLoad() {
-    console.time();
-    _setupBasepath();
-
-    _setupGlobalVars();
-
-    _setupExternalScripts();
 
     //Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
     if (document.getElementById('settingsRowTW') === null) {
@@ -146,54 +38,137 @@ function _initialLoad() {
         var offlineWrapperParent = document.getElementById('offlineInnerWrapper').parentNode;
         offlineWrapperParent.replaceChild(settingBarRow, document.getElementById('offlineInnerWrapper').parentNode.children[1]);
     }
-    _setupModules();
 
+    //Load jQuery
+    (function () {
+        const script = document.createElement('script');
+        script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js';
+        script.type = 'text/javascript';
+        // Append the script to the document
+        document.head.appendChild(script);
+    })();
+
+    //The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
+    basepath = atSettings.initialise.basepath;
+}
+
+loadAT();
+
+var ATmessageLogTabVisible = true;
+
+var autoTrimpSettings = {};
+var MODULES = {
+    popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
+    stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0 },
+    graphs: {}
+};
+
+var currPortalUniverse = 0;
+var currSettingUniverse = 0;
+var settingChangedTimeout = false;
+var challengeCurrentZone = -1;
+
+var mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
+var hdStats = {};
+var trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
+
+//Loading modules from basepath that are required for the script to run.
+function ATscriptLoad(fileName, prefix = '') {
+    if (atSettings.modules.loadedModules.includes(fileName)) return;
+
+    var script = document.createElement('script');
+    script.src = atSettings.initialise.basepath + prefix + fileName + '.js';
+    script.id = fileName + '_MODULE';
+    script.async = false;
+    script.defer = true;
+    document.head.appendChild(script);
+    //Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
+    script.addEventListener('load', () => {
+        if (prefix !== '' && !atSettings.modules.loadedModules.includes(fileName)) atSettings.modules.loadedModules.push(fileName);
+    });
+}
+
+//Load version number from a seperate file so that we can compare it to the current version number and let users know if they're using an outdated version.
+ATscriptLoad('versionNumber');
+ATscriptLoad('utils', atSettings.modules.path);
+
+delayStart();
+
+//Runs first
+function delayStart() {
+    //Will try to reload the utils module every 1000 milliseconds until it's loaded.
+    //Shouldn't be necessary but sometimes it can mess up and not load properly.
+    if (atSettings.intervals.counter % 100 === 0) {
+        ATscriptLoad('utils', atSettings.modules.path);
+        ATscriptLoad('versionNumber');
+    }
+    //Reload script every 10 milliseconds until the utils module has been loaded.
+    if (typeof _setupAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function') {
+        setTimeout(delayStart, 1);
+        atSettings.intervals.counter++;
+        return;
+    }
+
+    //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
+    var script = document.createElement('link');
+    script.rel = 'stylesheet';
+    script.href = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
+    script.type = 'text/css';
+    // Append the script to the document
+    document.head.appendChild(script);
+
+    //Loads the settings from the save file, settingsGUI & the various modules installed.
+    initializeAutoTrimps();
+    //Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
+    document.getElementById('activatePortalBtn').setAttribute('onClick', 'downloadSave(true); activateClicked(); pushSpreadsheetData(); autoHeirlooms(true); autoMagmiteSpender(true); pushData();');
+}
+
+//Runs second
+function initializeAutoTrimps() {
     //Load CSS
     var linkStylesheet = document.createElement('link');
     (linkStylesheet.rel = 'stylesheet'), (linkStylesheet.type = 'text/css'), (linkStylesheet.href = atSettings.initialise.basepath + 'tabs.css'), document.head.appendChild(linkStylesheet);
 
-    //Loads the settings from the save file, settingsGUI & the various modules installed.
-    _loadSettingsGUI();
-}
-
-function _loadSettingsGUI() {
-    //Reload script every 1 milliseconds until the utils module has been loaded.
-    if (typeof _setupAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function') {
-        atSettings.intervals.counter++;
-        setTimeout(_loadSettingsGUI, 1);
-        return;
-    }
-    _setupExternalScriptsPt2();
     _setupAutoTrimpsSettings();
+    ATscriptLoad('SettingsGUI');
 
-    _loadModules('SettingsGUI');
-    _loadModifiedFunctions();
-}
-
-function _loadModifiedFunctions() {
-    if (atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length || typeof updateATVersion !== 'function') {
-        atSettings.intervals.counter++;
-        setTimeout(_loadModifiedFunctions, 1);
-        return;
+    var script = document.createElement('script');
+    script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
+    document.head.appendChild(script);
+    /* ATscriptLoad( 'Graphs'); */
+    for (var m in atSettings.modules.installedModules) {
+        ATscriptLoad(atSettings.modules.installedModules[m], atSettings.modules.path);
     }
-    _loadModules('modifyGameFunctions', atSettings.modules.path);
-    _startAT();
+    ATscriptLoad('modifyGameFunctions', atSettings.modules.path);
+    delayStartAgain();
 }
 
-//Runs second
-function initializeAutoTrimps() {}
+//raspberry pi related setting changes
+//Swaps base settings to improve performance & so that I can't accidentally pause.
+//Shouldn't impact anybody else that uses AT as they'll never set the gameUser setting to SadAugust.
+function raspberryPiSettings() {
+    if (autoTrimpSettings.gameUser.value !== 'SadAugust') return;
+    if (navigator.oscpu === 'Linux armv7l') {
+        game.options.menu.hotkeys.enabled = 0;
+        game.options.menu.progressBars.enabled = 0;
+        game.options.menu.showHeirloomAnimations.enabled = 0;
+    } else {
+        game.options.menu.hotkeys.enabled = 1;
+        game.options.menu.progressBars.enabled = 2;
+        game.options.menu.showHeirloomAnimations.enabled = 1;
+    }
+}
 
-_initialLoad();
-
-function _startAT() {
+function delayStartAgain() {
     //Reload script every 10 milliseconds until these scripts have been loaded
     //Added incrementing variable at the end of every script so that we can be sure that the script has fully loaded before we start the main loop.
-    if (typeof getHazardGammaBonus_AT !== 'function') {
-        setTimeout(_startAT, 1);
+    if (atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length || typeof updateATVersion !== 'function') {
+        console.log(timeStamp() + ' Delaying start by 10ms');
+        setTimeout(delayStartAgain, 10);
         return;
     }
 
-    _raspberryPiSettings();
+    raspberryPiSettings();
     //Adds autoMaps, autoJobs, autoStructure, autoEquip buttons to the trimps UI.
     _setupATButtons();
 
@@ -205,6 +180,8 @@ function _startAT() {
 
     //Copy gameLoop for when we enter toggleCatchUpMode.
     originalGameLoop = gameLoop;
+    //Starts the loop in either normal or TimeLapse mode.
+    toggleCatchUpMode();
 
     localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
     //Setup Perky/Surky UI
@@ -212,18 +189,19 @@ function _startAT() {
     //Loads my game settings
     loadAugustSettings();
     currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
-    debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) finished loading.`);
     challengeInfo(true);
 
-    //Starts the loop in either normal or TimeLapse mode.
-    toggleCatchUpMode();
-    atSettings.intervals.counter = 0;
+    //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
+    script.type = 'text/javascript';
+    // Append the script to the document
+    document.head.appendChild(script);
+    debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) finished loading.`);
     console.timeEnd();
 }
 
-/*
- * Displays Perky UI when changing universes.
- */
+//Displays Perky UI when changing universes.
 function universeSwapped() {
     //Hard to do an alternative to this. Would have linked it to the swapPortalUniverse() function but the force going back to U1 button in U2 causes issues with that.
     //Sets up the proper calc UI when switching between portal universes.
