@@ -33,8 +33,14 @@
         - https://discord.com/channels/371177798305447938/371348913036197899/1177401054564982854
 
 4. HD Farm
+
     - Disable Map Bonus farming when speed map level is below X
     - https://discord.com/channels/371177798305447938/371348913036197899/1180873189778268171
+
+5. Auto Equality
+    - Support for the Revenge challenge
+    - When possible suicide until you have 19 stacks and then do the usual abandons from there.
+    - https://discord.com/channels/371177798305447938/371348913036197899/1184641519735558235
 
 # Help Window
 

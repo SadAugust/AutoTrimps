@@ -137,7 +137,7 @@ function buyJobs(forceRatios) {
             if (freeWorkers > 0 && game.resources.trimps.realMax() <= 3e5) {
                 if (!game.jobs.Miner.locked) safeBuyJob('Miner', 1);
                 safeBuyJob('Farmer', 1);
-                safeBuyJob('Lumberjack', 1);
+                if (!game.jobs.Lumberjack.locked) safeBuyJob('Lumberjack', 1);
             }
         }
         return;

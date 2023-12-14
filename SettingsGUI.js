@@ -1741,6 +1741,14 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 90) });
 			
+		createSetting('archaeologyBreedShield',
+			function () { return ('A: Breed Shield') },
+			function () {
+				var description = "<p>Shield to use during <b>Archaeology</b> when your army is dead and breeding.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Challenges', [2],
+			function () { return (getPageSetting('archaeology', currSettingUniverse) && autoTrimpSettings.archaeology.require()) });
+			
 		createSetting('archaeologyString1',
 			function () { return ('A: String 1') },
 			function () {
@@ -3857,7 +3865,7 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Nature
+	//Fluffy
 	const displayFluffy = true;
 	if (displayFluffy) {
 		createSetting('fluffyEvolve',
@@ -4274,7 +4282,6 @@ function initializeAllSettings() {
 	//Beta - Features that are in beta testing and may not work properly!
 	const displayBeta = true;
 	if (displayBeta) {
-
 		createSetting('testMapScumming',
 			function () { return ('Slow Map Scum') },
 			function () {
@@ -4607,11 +4614,11 @@ function modifyParentNodeUniverseSwap() {
     modifyParentNode('testTotalEquipmentCost', 'show');
 }
 
-function challengesUnlockedObj() {
+function challengesUnlockedObj(universe = currSettingUniverse) {
     var obj = {};
-    const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+    const hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 
-    if (currSettingUniverse === 1) {
+    if (universe === 1) {
         obj = {
             Discipline: {
                 unlockZone: 20,
@@ -4668,7 +4675,7 @@ function challengesUnlockedObj() {
         };
     }
 
-    if (currSettingUniverse === 2) {
+    if (universe === 2) {
         obj = {
             Unlucky: { unlockZone: 15, unlockedIn: ['c2', 'oneOff'] },
             Downsize: { unlockZone: 20, unlockedIn: ['c2', 'oneOff'] },
@@ -4710,14 +4717,13 @@ function challengesUnlockedObj() {
 }
 
 //Portal Challenge Dropdown Population
-function autoPortalChallenges(runType = 'autoPortal') {
+function autoPortalChallenges(runType = 'autoPortal', universe = currSettingUniverse) {
     var challenge = ['None'];
+    if (universe == 0) universe = autoTrimpSettings.universeSetting.value + 1;
+    if (universe === 1 && runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
+    if (universe === 2 && runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
 
-    if (currSettingUniverse == 0) currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
-    if (currSettingUniverse === 1 && runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
-    if (currSettingUniverse === 2 && runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
-
-    var obj = challengesUnlockedObj();
+    var obj = challengesUnlockedObj(universe);
     //Filter out the challenges that aren't of the right run type.
     obj = Object.entries(obj).reduce((newObj, [key, val]) => {
         if (val.unlockedIn.indexOf(runType) !== -1) {
@@ -4736,9 +4742,9 @@ function autoPortalChallenges(runType = 'autoPortal') {
         challenge.push('One Off Challenges');
     }
     if (runType === 'autoPortal' || runType === 'heHr') {
-        const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-        if (currSettingUniverse === 2 && hze >= 50) challenge.push('Challenge 3');
-        if (currSettingUniverse === 1 && hze >= 65) challenge.push('Challenge 2');
+        const hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+        if (universe === 2 && hze >= 50) challenge.push('Challenge 3');
+        if (universe === 1 && hze >= 65) challenge.push('Challenge 2');
     }
 
     return challenge;
@@ -4746,7 +4752,7 @@ function autoPortalChallenges(runType = 'autoPortal') {
 
 //Checks to see if we should inform the user of any new challenge unlocks.
 function challengeUnlockCheck() {
-    //if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+    if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
     var challenge = ['None'];
 
     function challengeUnlock(challenge, setting, c2) {

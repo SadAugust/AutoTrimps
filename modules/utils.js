@@ -4,7 +4,7 @@ window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
 };
 
 //Loads setting data from localstorage into object
-function loadPageVariables() {
+function _setupAutoTrimpsSettings() {
     const tmp = JSON.parse(localStorage.getItem('atSettings'));
     if (tmp !== null && tmp['ATversion'] !== undefined) autoTrimpSettings = tmp;
 }

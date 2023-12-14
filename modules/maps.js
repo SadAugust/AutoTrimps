@@ -28,13 +28,13 @@ function prettifyMap(map) {
     return `[${map.id}] ${map.name}${descriptor} `;
 }
 
-function runSelectedMap(mapId, madAdjective) {
-    _abandonMapCheck();
+function runSelectedMap(mapId, runUnique) {
+    _abandonMapCheck(runUnique);
     selectMap(mapId);
     runMap();
     const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
     if (MODULES.maps.lastMapWeWereIn !== map) {
-        debug(`Running ${madAdjective} map ${prettifyMap(map)}`, 'maps', 'th-large');
+        debug(`Running ${prettifyMap(map)}`, 'maps', 'th-large');
         MODULES.maps.lastMapWeWereIn = map;
     }
 }
@@ -373,78 +373,6 @@ function shouldAbandon(zoneCheck = true) {
     return false;
 }
 
-function _vanillaMAZ() {
-    if (!game.options.menu.mapAtZone.enabled || !game.global.canMapAtZone) return false;
-    const nextCell = game.global.lastClearedCell + 2;
-    const totalPortals = getTotalPortals();
-    const setZone = game.options.menu.mapAtZone.getSetZone();
-    for (let x = 0; x < setZone.length; x++) {
-        if (!setZone[x].on) continue;
-        if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
-        if (game.global.preMapsActive && setZone[x].done === totalPortals + '_' + game.global.world + '_' + nextCell) continue;
-        if (setZone[x].times === -1 && game.global.world !== setZone[x].world) continue;
-        if (setZone[x].times > 0 && (game.global.world - setZone[x].world) % setZone[x].times !== 0) continue;
-        if (setZone[x].cell === nextCell) {
-            if (setZone[x].until === 6) game.global.mapCounterGoal = 25;
-            else if (setZone[x].until === 7) game.global.mapCounterGoal = 50;
-            else if (setZone[x].until === 8) game.global.mapCounterGoal = 100;
-            else if (setZone[x].until === 9) game.global.mapCounterGoal = setZone[x].rx;
-            //Toggle void repeat on if it's disabled and stop Auto Maps from running any further.
-            if (game.options.menu.repeatVoids.enabled !== 1) toggleSetting('repeatVoids');
-            return true;
-        }
-    }
-    return false;
-}
-
-function _checkSitInMaps() {
-    if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
-        if (!game.global.preMapsActive) {
-            mapsClicked(true);
-            debug('AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.', 'other');
-        }
-        return true;
-    }
-}
-
-function _checkWaitForFrags() {
-    if (MODULES.maps.fragmentCost === Infinity) return;
-    if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return true;
-    MODULES.maps.fragmentCost = Infinity;
-}
-
-//When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
-//Has a time override as there's a certain cell that will always be unliving so can bypass it this way
-function _lifeMapping() {
-    if (game.global.mapsActive || challengeActive('Life') || !getPageSetting('life')) return;
-
-    const lifeZone = getPageSetting('lifeZone');
-    const lifeStacks = getPageSetting('lifeStacks');
-    const currCell = game.global.world + '_' + (game.global.lastClearedCell + 1);
-    if (lifeZone > 0 && lifeStacks > 0 && game.global.world >= lifeZone && game.challenges.Life.stacks <= lifeStacks) {
-        if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
-        if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
-            MODULES.maps.livingActive = true;
-            if (game.global.fighting || game.global.preMapsActive) mapsClicked();
-            return true;
-        }
-    }
-    MODULES.maps.livingActive = false;
-}
-
-function _mappingDefaults() {
-    while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
-    if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
-    if (game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
-    if (game.global.repeatMap) repeatClicked();
-
-    //Reset to defaults when on world grid
-    if (!game.global.mapsActive && !game.global.preMapsActive) {
-        game.global.mapRunCounter = 0;
-        MODULES.maps.mapTimer = 0;
-    }
-}
-
 function autoMap() {
     if (!getPageSetting('autoMaps') || !game.global.mapsUnlocked) return;
 
@@ -624,7 +552,7 @@ function autoMap() {
         } else if (selectedMap === 'bionicRaid') {
             runBionicRaiding(bionicPool);
         } else if (selectedMap === 'create') {
-            _abandonMapCheck();
+            _abandonMapCheck(runUnique);
             //Setting sliders appropriately.
             if (mapSettings.shouldRun) {
                 if (mapSettings.mapName !== '') {
@@ -650,7 +578,7 @@ function autoMap() {
                     return;
                 }
                 //Runs highest map we have available to farm fragments with
-                else runSelectedMap(highestMap.id, 'highest');
+                else runSelectedMap(highestMap.id, runUnique);
                 if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
             } else {
                 debug('Buying a Map, level: #' + maplvlpicked + (mappluslevel > 0 ? ' +' + mappluslevel : '') + ' ' + mapspecial, 'maps', 'th-large');
@@ -692,7 +620,7 @@ function autoMap() {
                 }
             }
         } else {
-            _abandonMapCheck();
+            _abandonMapCheck(runUnique);
             if (game.global.currentMapId === '') selectMap(selectedMap);
             let themapobj = game.global.mapsOwnedArray[getMapIndex(selectedMap)];
             if (themapobj) {
@@ -707,18 +635,80 @@ function autoMap() {
     _slowScumCheck();
 }
 
-function _slowScumCheck() {
-    if (MODULES.maps.slowScumming || !game.global.mapsActive || game.global.universe !== 2) return;
-    if (getPageSetting('testMapScummingValue') <= 0 || hdStats.hdRatioMap < getPageSetting('testMapScummingValue')) return;
-    let canSlowScum = ['Map Bonus', 'Prestige Raiding', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Gear Scum'].indexOf(mapSettings.mapName) !== -1;
-    if (!canSlowScum) return;
-    const mapObj = getCurrentMapObject();
-    if (mapObj.noRecycle || mapObj.size !== 20) return;
-    if (game.global.mapRunCounter !== 0 || !MODULES.maps.slowScumming) slowScum();
+function _vanillaMAZ() {
+    if (!game.options.menu.mapAtZone.enabled || !game.global.canMapAtZone) return false;
+    const nextCell = game.global.lastClearedCell + 2;
+    const totalPortals = getTotalPortals();
+    const setZone = game.options.menu.mapAtZone.getSetZone();
+    for (let x = 0; x < setZone.length; x++) {
+        if (!setZone[x].on) continue;
+        if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
+        if (game.global.preMapsActive && setZone[x].done === totalPortals + '_' + game.global.world + '_' + nextCell) continue;
+        if (setZone[x].times === -1 && game.global.world !== setZone[x].world) continue;
+        if (setZone[x].times > 0 && (game.global.world - setZone[x].world) % setZone[x].times !== 0) continue;
+        if (setZone[x].cell === nextCell) {
+            if (setZone[x].until === 6) game.global.mapCounterGoal = 25;
+            else if (setZone[x].until === 7) game.global.mapCounterGoal = 50;
+            else if (setZone[x].until === 8) game.global.mapCounterGoal = 100;
+            else if (setZone[x].until === 9) game.global.mapCounterGoal = setZone[x].rx;
+            //Toggle void repeat on if it's disabled and stop Auto Maps from running any further.
+            if (game.options.menu.repeatVoids.enabled !== 1) toggleSetting('repeatVoids');
+            return true;
+        }
+    }
+    return false;
+}
+
+function _checkSitInMaps() {
+    if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
+        if (!game.global.preMapsActive) {
+            mapsClicked(true);
+            debug('AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.', 'other');
+        }
+        return true;
+    }
+}
+
+function _checkWaitForFrags() {
+    if (MODULES.maps.fragmentCost === Infinity) return;
+    if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return true;
+    MODULES.maps.fragmentCost = Infinity;
+}
+
+//When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
+//Has a time override as there's a certain cell that will always be unliving so can bypass it this way
+function _lifeMapping() {
+    if (game.global.mapsActive || challengeActive('Life') || !getPageSetting('life')) return;
+
+    const lifeZone = getPageSetting('lifeZone');
+    const lifeStacks = getPageSetting('lifeStacks');
+    const currCell = game.global.world + '_' + (game.global.lastClearedCell + 1);
+    if (lifeZone > 0 && lifeStacks > 0 && game.global.world >= lifeZone && game.challenges.Life.stacks <= lifeStacks) {
+        if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
+        if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
+            MODULES.maps.livingActive = true;
+            if (game.global.fighting || game.global.preMapsActive) mapsClicked();
+            return true;
+        }
+    }
+    MODULES.maps.livingActive = false;
+}
+
+function _mappingDefaults() {
+    while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
+    if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
+    if (game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
+    if (game.global.repeatMap) repeatClicked();
+
+    //Reset to defaults when on world grid
+    if (!game.global.mapsActive && !game.global.preMapsActive) {
+        game.global.mapRunCounter = 0;
+        MODULES.maps.mapTimer = 0;
+    }
 }
 
 //Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
-function _abandonMapCheck() {
+function _abandonMapCheck(runUnique) {
     if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
     if (game.global.currentMapId !== '') {
         //If we don't have info on the previous map then set it.
@@ -735,4 +725,14 @@ function _abandonMapCheck() {
         } else if (MODULES.maps.lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
         if (runUnique && game.global.currentMapId !== selectedMap) recycleMap();
     }
+}
+
+function _slowScumCheck() {
+    if (MODULES.maps.slowScumming || !game.global.mapsActive || game.global.universe !== 2) return;
+    if (getPageSetting('testMapScummingValue') <= 0 || hdStats.hdRatioMap < getPageSetting('testMapScummingValue')) return;
+    let canSlowScum = ['Map Bonus', 'Prestige Raiding', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Gear Scum'].indexOf(mapSettings.mapName) !== -1;
+    if (!canSlowScum) return;
+    const mapObj = getCurrentMapObject();
+    if (mapObj.noRecycle || mapObj.size !== 20) return;
+    if (game.global.mapRunCounter !== 0 || !MODULES.maps.slowScumming) slowScum();
 }
