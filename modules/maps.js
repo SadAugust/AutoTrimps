@@ -373,7 +373,7 @@ function shouldAbandon(zoneCheck = true) {
     return false;
 }
 
-function autoMap() {
+function autoMaps() {
     if (!getPageSetting('autoMaps') || !game.global.mapsUnlocked) return;
 
     if (_checkSitInMaps()) return;

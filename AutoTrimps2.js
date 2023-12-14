@@ -25,7 +25,7 @@ atSettings = {
 Loading modules that are required for the script to run. 
 */
 function _loadModules(fileName, prefix = '') {
-    if (fileName !== 'utils' && fileName !== 'versionNumber' && atSettings.modules.loadingModules.includes(fileName)) return;
+    if (atSettings.modules.loadedModules.includes(fileName)) return;
     var script = document.createElement('script');
     script.src = atSettings.initialise.basepath + prefix + fileName + '.js';
     script.id = fileName + '_MODULE';
@@ -37,7 +37,11 @@ function _loadModules(fileName, prefix = '') {
     atSettings.modules.loadingModules.push(fileName);
     //Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
     script.addEventListener('load', () => {
-        if (prefix !== '' && !atSettings.modules.loadedModules.includes(fileName)) atSettings.modules.loadedModules.push(fileName);
+        if (!atSettings.modules.loadedModules.includes(fileName)) atSettings.modules.loadedModules.push(fileName);
+    });
+    script.addEventListener('error', () => {
+        console.log(`Error loading ${fileName}.`);
+        _loadModules(fileName, prefix);
     });
 }
 
@@ -156,10 +160,6 @@ function _loadSettingsGUI() {
     //Reload script every 1 milliseconds until the utils module has been loaded.
     if (typeof _setupAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function') {
         atSettings.intervals.counter++;
-        if (atSettings.intervals.counter % 100 === 0) {
-            console.log('Retrying in 100ms');
-            _setupModules();
-        }
         setTimeout(_loadSettingsGUI, 1);
         return;
     }
@@ -173,10 +173,6 @@ function _loadSettingsGUI() {
 function _loadModifiedFunctions() {
     if (atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length || typeof updateATVersion !== 'function') {
         atSettings.intervals.counter++;
-        if (atSettings.intervals.counter % 100 === 0) {
-            console.log('Retrying in 100ms...');
-            _setupModules();
-        }
         setTimeout(_loadModifiedFunctions, 1);
         return;
     }
@@ -344,7 +340,7 @@ function toggleCatchUpMode() {
             }
             //Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
             farmingDecision();
-            autoMap();
+            autoMaps();
             callBetterAutoFight();
             autoPortalCheck();
             if (loops % 10 === 0 || atSettings.portal.aWholeNewWorld) updateAutoMapsStatus();
@@ -428,7 +424,7 @@ function mainLoop() {
 
     if (shouldRunInTimeWarp()) {
         //AutoMaps
-        autoMap();
+        autoMaps();
         updateAutoMapsStatus();
     }
     //Status
