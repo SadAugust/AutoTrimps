@@ -2489,6 +2489,7 @@ function dailyPortalModsSave() {
 //C2 Runner
 //C2 Runner Display
 function c2RunnerDisplay(elem) {
+    MODULES.popups.mazWindowOpen = true;
     var tooltipText;
     var costText = '';
     var ondisplay = null;

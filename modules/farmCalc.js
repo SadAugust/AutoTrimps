@@ -72,6 +72,7 @@ function callAutoMapLevel_new(mapName, special) {
     else if (mapName === 'Glass' && mapLevel <= 0) mapLevel = 1;
     else if (mapName === 'Desolation Destacking' && mapLevel <= 0) mapLevel = 1;
     else if (mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
+    else if (_insanityDisableUniqueMaps() && mapLevel < 0) mapLevel = 0;
 
     return mapLevel;
 }
