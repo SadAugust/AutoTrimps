@@ -2183,7 +2183,7 @@ function insanity(lineCheck) {
         if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
             mappingDetails(mapName, mapLevel, mapSpecial, insanityGoal);
             resetMapVars(setting, settingName);
-            if (game.global.mapsActive) recycleMap_AT();
+            if (game.global.mapsActive) recycleMap_AT(true);
         }
     }
 
