@@ -2183,6 +2183,7 @@ function insanity(lineCheck) {
         if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
             mappingDetails(mapName, mapLevel, mapSpecial, insanityGoal);
             resetMapVars(setting, settingName);
+            if (game.global.mapsActive) recycleMap_AT();
         }
     }
 
@@ -3257,25 +3258,35 @@ function setMapSliders(pluslevel, special, biome, mapSliders, onlyPerfect) {
             document.getElementById('advPerfectCheckbox').dataset.checked = false;
             updateMapCost();
         }
-        //Reduce map difficulty
-        while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) difficultyAdvMapsRange.value -= 1;
+        //Highest priority is listed first
+        //Special > Difficulty > Loot > Biome > Size
+        if (mapSettings.mapName === 'Insanity Farm') {
+            while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) sizeAdvMapsRange.value -= 1;
+            if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) document.getElementById('biomeAdvMapsSelect').value = 'Random';
+            while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) lootAdvMapsRange.value -= 1;
+            while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) difficultyAdvMapsRange.value -= 1;
+            if (updateMapCost(true) > game.resources.fragments.owned) document.getElementById('advSpecialSelect').value = 0;
+        } else {
+            //Reduce map difficulty
+            while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) difficultyAdvMapsRange.value -= 1;
 
-        //Reduce map loot
-        while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) lootAdvMapsRange.value -= 1;
+            //Reduce map loot
+            while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) lootAdvMapsRange.value -= 1;
 
-        //Set biome to random if we have jestimps/caches we can run since size will be by far the most important that way
-        if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) document.getElementById('biomeAdvMapsSelect').value = 'Random';
+            //Set biome to random if we have jestimps/caches we can run since size will be by far the most important that way
+            if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) document.getElementById('biomeAdvMapsSelect').value = 'Random';
 
-        if (updateMapCost(true) > game.resources.fragments.owned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) document.getElementById('advSpecialSelect').value = 0;
+            if (updateMapCost(true) > game.resources.fragments.owned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) document.getElementById('advSpecialSelect').value = 0;
 
-        //Reduce map size
-        while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) sizeAdvMapsRange.value -= 1;
+            //Reduce map size
+            while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) sizeAdvMapsRange.value -= 1;
 
-        if (updateMapCost(true) > game.resources.fragments.owned) document.getElementById('advSpecialSelect').value = 0;
+            if (updateMapCost(true) > game.resources.fragments.owned) document.getElementById('advSpecialSelect').value = 0;
 
-        if (trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
-            document.getElementById('biomeAdvMapsSelect').value = 'Random';
-            updateMapCost();
+            if (trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
+                document.getElementById('biomeAdvMapsSelect').value = 'Random';
+                updateMapCost();
+            }
         }
     }
 
