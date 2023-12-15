@@ -21,7 +21,7 @@ function getHeliumPerHour() {
 }
 
 //Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
-function autoPortalCheck(specificPortalZone) {
+function autoPortalCheck(specificPortalZone, universe) {
     decayFinishChallenge();
     quagmireFinishChallenge();
     if (!game.global.portalActive) return;
@@ -29,10 +29,10 @@ function autoPortalCheck(specificPortalZone) {
     else autoPortal(specificPortalZone);
 }
 
-function autoPortal(specificPortalZone, skipDaily) {
+function autoPortal(specificPortalZone, universe, skipDaily) {
     if (!game.global.portalActive) return;
     if (game.global.runningChallengeSquared) return;
-    var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
+    if (!universe) universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
     const runningDaily = challengeActive('Daily');
     dontPortal = false;
     if (!MODULES.portal.portalForVoid && !runningDaily && getPageSetting('autoPortal', universe) === 'Off') return;
@@ -40,7 +40,7 @@ function autoPortal(specificPortalZone, skipDaily) {
 
     //Setting up base portalZone for both regular runs & daily runs if in one
     //Doesn't factor in universe as we only care about the universe that we're currently in, not the one we want to be in
-    var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : Infinity;
+    var portalZone = getPageSetting('autoPortalZone', universe) > 0 ? getPageSetting('autoPortalZone', universe) : Infinity;
     //Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
     if (!runningDaily && getPageSetting('autoPortal', universe).includes('Hour')) portalZone = Infinity;
 
@@ -50,27 +50,12 @@ function autoPortal(specificPortalZone, skipDaily) {
         if (getPageSetting('dailyPortal', universe) === 1) portalZone = Infinity;
     }
 
-    //Swap to next universe setting. Setup to allow for more universes in the future.
-    if (Fluffy.checkU2Allowed()) {
-        var newUniverse = universe;
-        while (getPageSetting('autoPortalUniverseSwap', newUniverse)) {
-            newUniverse++;
-            if (newUniverse > 2) {
-                newUniverse = 1;
-                break;
-            }
-        }
-        if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
-        universe = newUniverse;
-    }
-
     if (specificPortalZone) portalZone = specificPortalZone;
     if (skipDaily) portalZone = game.global.world;
 
     if (MODULES.portal.portalForVoid) {
         portalZone = checkLiqZoneCount() >= 99 ? 99 : Math.floor(checkLiqZoneCount()) + 1;
         if (game.permaBoneBonuses.voidMaps.tracker >= 100 - game.permaBoneBonuses.voidMaps.owned) {
-            specificPortalZone = game.global.world;
             portalZone = game.global.world;
         } else if (game.global.world < portalZone) {
             return;
@@ -357,6 +342,24 @@ function doPortal(challenge, skipDaily) {
         }
     }
 
+    //Swap to next universe setting. Setup to allow for more universes in the future.
+    if (Fluffy.checkU2Allowed()) {
+        var newUniverse = portalUniverse;
+        while (getPageSetting('autoPortalUniverseSwap', newUniverse)) {
+            newUniverse++;
+            if (newUniverse > 2) {
+                newUniverse = 1;
+                break;
+            }
+        }
+        if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
+        MODULES.portal.portalForVoid = false;
+        if (newUniverse !== portalUniverse) {
+            autoPortal(game.global.world, newUniverse);
+            return;
+        }
+    }
+
     if (currChall === 'Daily') {
         //Swapping to other universe if necessary to run daily.
         if (getPageSetting('dailyPortalPreviousUniverse', portalUniverse + 1)) {
@@ -402,7 +405,7 @@ function doPortal(challenge, skipDaily) {
         if ((currChall === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse))) || lastUndone === 1) {
             MODULES.portal.currentChallenge = 'None';
             MODULES.portal.portalUniverse = portalUniverse;
-            autoPortal(game.global.world, true);
+            autoPortal(game.global.world, portalUniverse, true);
             return;
         }
         //Portaling into a daily
@@ -486,6 +489,7 @@ function doPortal(challenge, skipDaily) {
     MODULES['portal'].dontPushData = false;
     MODULES['portal'].dailyMods = '';
     MODULES['portal'].dailyPercent = 0;
+    MODULES.portal.portalUniverse = Infinity;
     lastHeliumZone = 0;
     MODULES.portal.zonePostpone = 0;
 
