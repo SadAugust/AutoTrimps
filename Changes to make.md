@@ -38,9 +38,16 @@
     - https://discord.com/channels/371177798305447938/371348913036197899/1180873189778268171
 
 5. Auto Equality
+
     - Support for the Revenge challenge
     - When possible suicide until you have 19 stacks and then do the usual abandons from there.
     - https://discord.com/channels/371177798305447938/371348913036197899/1184641519735558235
+
+6. Berserk & Exterminate
+    - Only run mapping lines specific to Exterminate during the challenge.
+    - Disable HD Farm/Hits Survived/Map Bonus general ratio settings on it
+    - Important so that you don't need to go manually disable all other lines/use MAZ.
+    - https://discord.com/channels/371177798305447938/371348913036197899/1185268752070213643
 
 # Help Window
 

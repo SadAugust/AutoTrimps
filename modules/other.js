@@ -79,10 +79,10 @@ function archaeologyAutomator() {
         string3 = getPageSetting('archaeologyString3');
     let string;
 
-    if (string3[0] !== 'undefined' && string3[0] >= game.global.world) {
+    if (string3[0] !== 'undefined' && string3[0] <= game.global.world) {
         string = string3.slice(1).toString();
         if (string !== game.global.archString) game.global.archString = string;
-    } else if (string2[0] !== 'undefined' && string2[0] >= game.global.world) {
+    } else if (string2[0] !== 'undefined' && string2[0] <= game.global.world) {
         string = string2.slice(1).toString();
         if (string !== game.global.archString) game.global.archString = string;
     } else if (string1[0] !== 'undefined') {
