@@ -3245,7 +3245,7 @@ function setMapSliders(pluslevel, special, biome, mapSliders, onlyPerfect) {
     if (!mapSliders) mapSliders = [9, 9, 9];
     if (mapSliders[0] !== 9 || mapSliders[1] !== 9 || mapSliders[2] !== 9) onlyPerfect = false;
     document.getElementById('biomeAdvMapsSelect').value = biome;
-    document.getElementById('advExtraLevelSelect').value = pluslevel;
+    document.getElementById('advExtraLevelSelect').value = pluslevel > 0 ? pluslevel : 0;
     document.getElementById('advSpecialSelect').value = special;
     document.getElementById('lootAdvMapsRange').value = mapSliders[0];
     document.getElementById('sizeAdvMapsRange').value = mapSliders[1];
@@ -3579,6 +3579,7 @@ function fragmentFarm() {
                     game.options.menu.repeatUntil.enabled = 0;
                     toggleSetting('repeatUntil', null, false, true);
                 }
+                MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
             } else {
                 debug("Not enough fragments to purchase fragment farming map. Waiting for fragments. If you don't have explorers then you will have to manually disable auto maps and continue.", 'maps');
             }

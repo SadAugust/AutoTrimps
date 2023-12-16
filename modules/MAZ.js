@@ -2239,7 +2239,7 @@ function messageDisplay(elem) {
 
     var settingGroup = {
         general: false,
-        fragment: false,
+        /* fragment: false, */
         upgrades: false,
         equipment: false,
         maps: false,
@@ -2291,10 +2291,10 @@ function messageConfigHoverAT(what, event) {
             text = 'Notification Messages, Auto He/Hr.';
             title = 'General';
             break;
-        case 'fragment':
+        /* case 'fragment':
             text = 'Log the amount of fragments each created map cost.';
             title = 'Fragment';
-            break;
+            break; */
         case 'upgrades':
             text = 'Log all the upgrades that AT has purchased.';
             title = 'Upgrades';

@@ -11,34 +11,6 @@ MODULES.maps = {
     fragmentCost: Infinity
 };
 
-function prettifyMap(map) {
-    if (!map) {
-        return 'none';
-    }
-    let descriptor;
-    if (!map.noRecycle) {
-        // a crafted map
-        const bonus = map.hasOwnProperty('bonus') ? mapSpecialModifierConfig[map.bonus].name : 'no bonus';
-        descriptor = `, Level ${map.level} (${bonus})`;
-    } else if (map.location === 'Void') {
-        descriptor = ' (Void)';
-    } else {
-        descriptor = ' (Unique)';
-    }
-    return `[${map.id}] ${map.name}${descriptor} `;
-}
-
-function runSelectedMap(mapId, runUnique) {
-    _abandonMapCheck(runUnique);
-    selectMap(mapId);
-    runMap();
-    const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
-    if (MODULES.maps.lastMapWeWereIn !== map) {
-        debug(`Running ${prettifyMap(map)}`, 'maps', 'th-large');
-        MODULES.maps.lastMapWeWereIn = map;
-    }
-}
-
 function updateAutoMapsStatus(get) {
     let status = '';
     //Setting up status
@@ -403,39 +375,31 @@ function autoMaps() {
 
     _mappingDefaults();
 
-    //Uniques
+    const runUniques = getPageSetting('autoMaps') === 1 && !_insanityDisableUniqueMaps();
+    const bionicPool = [];
     let highestMap = null;
     let lowestMap = null;
     let optimalMap = null;
-    const runUniques = getPageSetting('autoMaps') === 1 && !_insanityDisableUniqueMaps();
-    const bionicPool = [];
     let voidMap = null;
     let selectedMap = 'world';
 
     const perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
     const perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
     const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
-
     const uniqueMapsOwned = [];
     //Check to see if the cell is liquified and if so we can replace the cell condition with it
-    const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
-    const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
     let runUnique = false;
 
     //Looping through all of our maps to find the highest, lowest and optimal map.
     for (const map of game.global.mapsOwnedArray) {
         if (!map.noRecycle) {
-            if (!highestMap || map.level > highestMap.level) {
-                highestMap = map;
-            }
+            if (!highestMap || map.level > highestMap.level) highestMap = map;
             if (!optimalMap) {
                 if (mapSettings.mapLevel + game.global.world === map.level && mapSettings.special === map.bonus && map.size === perfSize && map.difficulty === 0.75 && map.loot === perfMapLoot && map.location === mapBiome) {
                     optimalMap = map;
                 }
             }
-            if (!lowestMap || map.level < lowestMap.level) {
-                lowestMap = map;
-            }
+            if (!lowestMap || map.level < lowestMap.level) lowestMap = map;
         } else if (map.noRecycle) {
             if (map.location !== 'Void') uniqueMapsOwned.push(map.name);
             if (runUniques && shouldRunUniqueMap(map)) {
@@ -443,58 +407,21 @@ function autoMaps() {
                 selectedMap = map.id;
                 break;
             }
-            if (map.location === 'Bionic') {
-                bionicPool.push(map);
-            }
+            if (map.location === 'Bionic') bionicPool.push(map);
             if (map.location === 'Void' && mapSettings.shouldRun && mapSettings.mapName === 'Void Map') {
                 voidMap = selectEasierVoidMap(voidMap, map);
             }
         }
     }
 
-    //Filter unique maps that we want to run and aren't available to be run.
-    let uniqueMapsToGet = Object.keys(uniqueMapSetting)
-        .filter((mapName) => !mapName.includes('MP Smithy'))
-        .filter((mapName) => uniqueMapSetting[mapName].enabled)
-        .filter((mapName) => uniqueMapSetting[mapName].zone <= game.global.world)
-        .filter((mapName) => liquified || uniqueMapSetting[mapName].cell <= game.global.lastClearedCell + 2)
-        .filter((mapName) => !uniqueMapsOwned.includes(mapName))
-        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].universe === game.global.universe)
-        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
-        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
+    _searchForUniqueMaps(uniqueMapsOwned, runUnique);
 
-    //Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
-    if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
-
-    //Telling AT to create a map or setting void map as map to be run.
-    if (selectedMap === 'world' && mapSettings.shouldRun) {
-        if (mapSettings.mapName !== '') {
-            if (voidMap) selectedMap = voidMap.id;
-            else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = 'prestigeRaid';
-            else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = 'bionicRaid';
-            else if (optimalMap) selectedMap = optimalMap.id;
-            else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
-            if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
-        }
-    }
+    selectedMap = _setSelectedMap(selectedMap, voidMap, optimalMap);
 
     //Map Repeat
     if (game.global.mapsActive) {
-        //Recycling our maps below world level if we have 95 or more in our inventory.
-        //Game refuses to let you buy a map if you have 100 maps in your inventory.
-        if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
         //Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-        let mapObj = getCurrentMapObject();
-        if (mapSettings.shouldRun && mapSettings.mapName === 'Prestige Raiding' && game.global.mapsActive && String(mapObj.level).slice(-1) === '1' && prestigesToGet(mapObj.level) === 1 && mapObj.bonus !== 'lmc' && game.resources.fragments.owned > mapCost(mapObj.level - game.global.world, 'lmc', mapBiome)) {
-            let maplevel = mapObj.level;
-            recycleMap_AT();
-            if (game.global.preMapsActive) {
-                setMapSliders(maplevel - game.global.world, 'lmc', mapBiome);
-                buyMap();
-                runMap_AT();
-                debug('Running LMC map due to only having 1 equip remaining on this map.', 'maps');
-            }
-        }
+        const mapObj = getCurrentMapObject();
         if (selectedMap === game.global.currentMapId || (!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding') {
             //Starting with repeat on
             if (!game.global.repeatMap) repeatClicked();
@@ -520,9 +447,8 @@ function autoMaps() {
             //Disabling repeat if repeat conditions have been met
             if (game.global.repeatMap && mapSettings.mapName !== '' && !mapSettings.prestigeFragMapBought && mapObj !== null) {
                 //Figuring out if we have the right map level & special
-                let mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
-
-                let mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
+                const mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
+                const mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
                 if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
                     if (!mapSettings.repeat) repeatClicked();
                 }
@@ -536,14 +462,16 @@ function autoMaps() {
             }
         }
     } else if (!game.global.preMapsActive && !game.global.mapsActive) {
-        //Going to map chamber. Will override default 'Auto Abandon' setting if AT wants to map!
+        //Going to map chamber. Overrides default 'Auto Abandon' setting.
         if (selectedMap !== 'world') {
             if (!game.global.switchToMaps && shouldAbandon()) mapsClicked();
             if (game.global.switchToMaps) mapsClicked();
         }
         //Creating Maps
     } else if (game.global.preMapsActive) {
-        document.getElementById('mapLevelInput').value = game.global.world;
+        //Recycling maps below world level if 95 or more are owned as the cap is 100.
+        if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
+        //document.getElementById('mapLevelInput').value = game.global.world;
 
         if (selectedMap === 'world') {
             mapsClicked();
@@ -553,86 +481,72 @@ function autoMaps() {
             runBionicRaiding(bionicPool);
         } else if (selectedMap === 'create') {
             _abandonMapCheck(runUnique);
-            //Setting sliders appropriately.
-            if (mapSettings.shouldRun) {
-                if (mapSettings.mapName !== '') {
-                    setMapSliders(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
-                }
+            //Setting sliders.
+            if (mapSettings.shouldRun && mapSettings.mapName !== '') {
+                setMapSliders(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
             }
-
-            const maplvlpicked = parseInt(document.getElementById('mapLevelInput').value);
-            const mappluslevel = maplvlpicked === game.global.world && document.getElementById('advExtraLevelSelect').value > 0 ? parseInt(document.getElementById('advExtraLevelSelect').value) : '';
-            const mapspecial = document.getElementById('advSpecialSelect').value === '0' ? 'No special' : document.getElementById('advSpecialSelect').value;
             if (updateMapCost(true) > game.resources.fragments.owned) {
-                debug("Can't afford the map we designed, #" + maplvlpicked + (mappluslevel > 0 ? ' +' + mappluslevel : '') + ' ' + mapspecial, 'maps', 'th-large');
-                //Runs fragment farming if
-                //A) We have explorers unlocked
-                //B) We can afford a max loot+size sliders map
+                const mapLevel = parseInt(document.getElementById('mapLevelInput').value) + parseInt(document.getElementById('advExtraLevelSelect').value);
+                const mapSpecial = document.getElementById('advSpecialSelect').value === '0' ? 'no special' : document.getElementById('advSpecialSelect').value;
+                debug(`Can't afford the designed map (level ${mapLevel} ${mapSpecial})`, 'maps', 'th-large');
+                //Runs fragment farming if Explorers are unlocked and can afford a max loot+size sliders map
                 if (!game.jobs.Explorer.locked && mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
-                //Hacky way to disable mapping if we don't have a map and can't afford the one that we want to make.
-                //Should definitely just have it decrement the level until we can afford it or it's at the minimum level it can go but that's a step for another day.
+                //Disable mapping if we don't have a map and can't afford the one that we want to make.
                 else if (highestMap === null) {
                     MODULES.maps.fragmentCost = updateMapCost(true);
                     mapsClicked();
-                    debug('Disabling mapping until we reach ' + prettify(MODULES.maps.fragmentCost) + (MODULES.maps.fragmentCost === 1 ? ' fragment.' : ' fragments.') + " as we don't have any maps to run.");
+                    debug(`Disabling mapping until we reach ${prettify(MODULES.maps.fragmentCost)} fragments as we don't have any maps to run.`);
                     return;
                 }
                 //Runs highest map we have available to farm fragments with
                 else runSelectedMap(highestMap.id, runUnique);
-                if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
             } else {
-                debug('Buying a Map, level: #' + maplvlpicked + (mappluslevel > 0 ? ' +' + mappluslevel : '') + ' ' + mapspecial, 'maps', 'th-large');
-                updateMapCost(true);
-                debug(
-                    'Spent ' +
-                        prettify(updateMapCost(true)) +
-                        '/' +
-                        prettify(game.resources.fragments.owned) +
-                        ' (' +
-                        ((updateMapCost(true) / game.resources.fragments.owned) * 100).toFixed(2) +
-                        '%) fragments on a ' +
-                        (advExtraLevelSelect.value >= 0 ? '+' : '') +
-                        advExtraLevelSelect.value +
-                        ' ' +
-                        (advPerfectCheckbox.dataset.checked === 'true' ? 'Perfect ' : '(' + lootAdvMapsRange.value + ',' + sizeAdvMapsRange.value + ',' + difficultyAdvMapsRange.value + ') ') +
-                        advSpecialSelect.value +
-                        ' map.',
-                    'fragment'
-                );
-
                 let result = buyMap();
                 if (result === -2) {
-                    debug('Too many maps, recycling now.', 'maps', 'th-large');
-                    recycleBelow(true);
-                    debug('Retrying, Buying a Map, level: #' + maplvlpicked + (mappluslevel > 0 ? ' +' + mappluslevel : '') + ' ' + mapspecial, 'maps', 'th-large');
+                    recycleMap(game.global.mapsOwnedArray.indexOf(lowestMap));
                     result = buyMap();
-                    if (result === -2) {
-                        const mapToRecycleIfBuyingFails = lowestMap;
-                        recycleMap(game.global.mapsOwnedArray.indexOf(mapToRecycleIfBuyingFails));
-                        result = buyMap();
-                        if (result === -2) debug('AutoMaps unable to recycle to buy map!', 'maps');
-                        else debug('Retrying map buy after recycling lowest level map', 'maps');
-                    }
+                    if (result === -2) debug('AutoMaps unable to recycle to buy map!', 'maps');
                 }
                 if (result === 1) {
+                    const mapCost = updateMapCost(true);
+                    debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / game.resources.fragments.owned) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
                     runMap();
                     MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
                 }
             }
+            //Running unique maps or void maps
         } else {
-            _abandonMapCheck(runUnique);
-            if (game.global.currentMapId === '') selectMap(selectedMap);
-            let themapobj = game.global.mapsOwnedArray[getMapIndex(selectedMap)];
-            if (themapobj) {
-                let levelText = ' Level: ' + themapobj.level;
-                let voidOrLevelText = themapobj.location === 'Void' ? ' (void)' : levelText;
-                debug('Running selected ' + selectedMap + voidOrLevelText + ' Name: ' + themapobj.name, 'maps', 'th-large');
-            }
-            runMap();
-            MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+            runSelectedMap(selectedMap, runUnique);
         }
     }
+
     _slowScumCheck();
+}
+
+function prettifyMap(map) {
+    if (!map) return 'none';
+    let descriptor;
+    if (!map.noRecycle) {
+        // a crafted map
+        const bonus = map.hasOwnProperty('bonus') ? mapSpecialModifierConfig[map.bonus].name : 'no bonus';
+        descriptor = `Level ${map.level} (${bonus}) map`;
+    } else if (map.location === 'Void') {
+        descriptor = `(void map)`;
+    } else {
+        descriptor = `(unique map)`;
+    }
+    return `[${map.id}] ${map.name} ${descriptor}`;
+}
+
+function runSelectedMap(mapId, runUnique) {
+    _abandonMapCheck(runUnique);
+    selectMap(mapId);
+    runMap();
+    const mapObj = game.global.mapsOwnedArray[getMapIndex(mapId)];
+    if (MODULES.maps.lastMapWeWereIn !== mapObj) {
+        debug(`Running ${prettifyMap(mapObj)}`, 'maps', 'th-large');
+        MODULES.maps.lastMapWeWereIn = mapObj;
+    }
 }
 
 function _vanillaMAZ() {
@@ -705,6 +619,40 @@ function _mappingDefaults() {
         game.global.mapRunCounter = 0;
         MODULES.maps.mapTimer = 0;
     }
+}
+
+function _searchForUniqueMaps(mapsOwned, runUnique = true) {
+    const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
+    const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
+
+    //Filter unique maps that we want to run and aren't available to be run.
+    let uniqueMapsToGet = Object.keys(uniqueMapSetting)
+        .filter((mapName) => !mapName.includes('MP Smithy'))
+        .filter((mapName) => uniqueMapSetting[mapName].enabled)
+        .filter((mapName) => uniqueMapSetting[mapName].zone <= game.global.world)
+        .filter((mapName) => liquified || uniqueMapSetting[mapName].cell <= game.global.lastClearedCell + 2)
+        .filter((mapName) => !mapsOwned.includes(mapName))
+        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].universe === game.global.universe)
+        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
+        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
+
+    //Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
+    if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
+}
+
+//Telling AT to create a map or setting void map as map to be run.
+function _setSelectedMap(selectedMap, voidMap, optimalMap) {
+    const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+    if (selectedMap === 'world' && mapSettings.mapName !== '' && mapSettings.shouldRun) {
+        if (voidMap) selectedMap = voidMap.id;
+        else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = 'prestigeRaid';
+        else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = 'bionicRaid';
+        else if (optimalMap) selectedMap = optimalMap.id;
+        else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
+        if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
+    }
+
+    return selectedMap;
 }
 
 //Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
