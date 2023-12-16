@@ -53,7 +53,7 @@ function miRatio() {
             }
         },
         runEnd: {
-            value: game.global.lastPortal,
+            value: game.global.lastPortal * 0.9 > game.stats.highestLevel.valueTotal() ? game.global.lastPortal : game.stats.highestLevel.valueTotal(),
             update: function (value = this.value) {
                 this.value = parseInt(value);
                 calculateCurrentPop();
@@ -182,6 +182,8 @@ function calculateMagma() {
     if (MODULES.magmiteSettings.magmaFlow.value === 18) MODULES.magmite.totalMI = zonesOfMI * 18;
     else MODULES.magmite.totalMI = zonesOfMI * 16;
     MODULES.magmite.totalMI += 10 * MODULES.magmiteSettings.voids.value * MODULES.magmiteSettings.expertGen.value;
+
+    if (game.global.magmite > MODULES.magmite.totalMI) MODULES.magmite.totalMI = game.global.magmite;
 }
 
 function calculateCarpMod() {
