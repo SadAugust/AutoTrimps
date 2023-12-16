@@ -353,11 +353,9 @@ function autoMaps() {
     //Override to disable mapping when we are the world and currently fighting
     //if (game.challenges.Berserk.frenzyStacks > 0 && !game.global.mapsActive && !game.global.preMapsActive && challengeActive('Berserk') && getPageSetting('berserk')) return;
 
-    //Hacky way to fix an issue with having no maps available to run and no fragments to purchase them
     if (_checkWaitForFrags()) return;
 
-    //Failsafes
-    //If maps aren't active, or soldier attack is negative or we're running no maps quest OR running Mapology and no credits available
+    //Disable maps IF soldier attack is negative OR we're running no maps quest OR running Mapology and no credits available
     if (game.global.soldierCurrentAttack < 0 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
         if (game.global.preMapsActive) mapsClicked();
         return;
@@ -471,7 +469,6 @@ function autoMaps() {
     } else if (game.global.preMapsActive) {
         //Recycling maps below world level if 95 or more are owned as the cap is 100.
         if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
-        //document.getElementById('mapLevelInput').value = game.global.world;
 
         if (selectedMap === 'world') {
             mapsClicked();
@@ -481,38 +478,13 @@ function autoMaps() {
             runBionicRaiding(bionicPool);
         } else if (selectedMap === 'create') {
             _abandonMapCheck(runUnique);
-            //Setting sliders.
             if (mapSettings.shouldRun && mapSettings.mapName !== '') {
                 setMapSliders(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
             }
             if (updateMapCost(true) > game.resources.fragments.owned) {
-                const mapLevel = parseInt(document.getElementById('mapLevelInput').value) + parseInt(document.getElementById('advExtraLevelSelect').value);
-                const mapSpecial = document.getElementById('advSpecialSelect').value === '0' ? 'no special' : document.getElementById('advSpecialSelect').value;
-                debug(`Can't afford the designed map (level ${mapLevel} ${mapSpecial})`, 'maps', 'th-large');
-                //Runs fragment farming if Explorers are unlocked and can afford a max loot+size sliders map
-                if (!game.jobs.Explorer.locked && mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
-                //Disable mapping if we don't have a map and can't afford the one that we want to make.
-                else if (highestMap === null) {
-                    MODULES.maps.fragmentCost = updateMapCost(true);
-                    mapsClicked();
-                    debug(`Disabling mapping until we reach ${prettify(MODULES.maps.fragmentCost)} fragments as we don't have any maps to run.`);
-                    return;
-                }
-                //Runs highest map we have available to farm fragments with
-                else runSelectedMap(highestMap.id, runUnique);
+                if (_fragmentCheck(highestMap, runUnique)) return;
             } else {
-                let result = buyMap();
-                if (result === -2) {
-                    recycleMap(game.global.mapsOwnedArray.indexOf(lowestMap));
-                    result = buyMap();
-                    if (result === -2) debug('AutoMaps unable to recycle to buy map!', 'maps');
-                }
-                if (result === 1) {
-                    const mapCost = updateMapCost(true);
-                    debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / game.resources.fragments.owned) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
-                    runMap();
-                    MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
-                }
+                _purchaseMap(lowestMap);
             }
             //Running unique maps or void maps
         } else {
@@ -536,6 +508,38 @@ function prettifyMap(map) {
         descriptor = `(unique map)`;
     }
     return `[${map.id}] ${map.name} ${descriptor}`;
+}
+
+function _fragmentCheck(highestMap, runUnique) {
+    const mapLevel = parseInt(document.getElementById('mapLevelInput').value) + parseInt(document.getElementById('advExtraLevelSelect').value);
+    const mapSpecial = document.getElementById('advSpecialSelect').value === '0' ? 'no special' : document.getElementById('advSpecialSelect').value;
+    debug(`Can't afford the designed map (level ${mapLevel} ${mapSpecial})`, 'maps', 'th-large');
+    //Runs fragment farming if Explorers are unlocked and can afford a max loot+size sliders map
+    if (!game.jobs.Explorer.locked && mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
+    //Disable mapping if we don't have a map and can't afford the one that we want to make.
+    else if (highestMap === null) {
+        MODULES.maps.fragmentCost = updateMapCost(true);
+        mapsClicked();
+        debug(`Disabling mapping until we reach ${prettify(MODULES.maps.fragmentCost)} fragments as we don't have any maps to run.`);
+        return true;
+    }
+    //Runs highest map we have available to farm fragments with
+    else runSelectedMap(highestMap.id, runUnique);
+}
+
+function _purchaseMap(lowestMap) {
+    let result = buyMap();
+    if (result === -2) {
+        recycleMap(game.global.mapsOwnedArray.indexOf(lowestMap));
+        result = buyMap();
+        if (result === -2) debug('AutoMaps unable to recycle to buy map!', 'maps');
+    }
+    if (result === 1) {
+        const mapCost = updateMapCost(true);
+        debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / game.resources.fragments.owned) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
+        runMap();
+        MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+    }
 }
 
 function runSelectedMap(mapId, runUnique) {
@@ -583,6 +587,7 @@ function _checkSitInMaps() {
     }
 }
 
+//Way to fix an issue with having no maps available to run and no fragments to purchase them
 function _checkWaitForFrags() {
     if (MODULES.maps.fragmentCost === Infinity) return;
     if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return true;
