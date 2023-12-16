@@ -134,7 +134,7 @@ function mapSettingsDisplay(elem, titleText) {
         windowWidth = '75%';
     } else if (mapBonus) {
         settingInputsDefault.push('special', 'gather', 'jobratio');
-        settingInputs = ['active', 'world', 'cell', 'level', 'repeat', 'special', 'gather', 'tributes', 'mets', 'bogs', 'insanity', 'potion', 'bonfire', 'boneamount', 'bonebelow', 'worshipper', 'boneruntype', 'bonegather', 'buildings', 'done', 'jobratio', 'hdRatio', 'row'];
+        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeat', 'endzone', 'special', 'gather', 'autoLevel', 'hdRatio', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
         windowWidth = '75%';
     } else if (mapFarm) {
         settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'repeat', 'hdRatio', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
@@ -1661,7 +1661,7 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
         dropdown.prestigeGoal += "<option value='" + key + "'" + (vals.prestigeGoal === key ? " selected='selected'" : '') + '>' + key + '</option>';
     }
 
-    const challengeObj = challengesUnlockedObj();
+    const challengeObj = challengesUnlockedObj(currSettingUniverse);
 
     //Challenge Dropdowns
     const fillerObj = Object.entries(challengeObj).reduce((newObj, [key, val]) => {
