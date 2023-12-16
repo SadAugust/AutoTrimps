@@ -418,49 +418,9 @@ function autoMaps() {
 
     //Map Repeat
     if (game.global.mapsActive) {
-        //Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-        const mapObj = getCurrentMapObject();
-        if (selectedMap === game.global.currentMapId || (!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding') {
-            //Starting with repeat on
-            if (!game.global.repeatMap) repeatClicked();
-            //Changing repeat to repeat for items for Presitge & Bionic Raiding
-            if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
-                if (game.options.menu.repeatUntil.enabled !== 2) {
-                    game.options.menu.repeatUntil.enabled = 2;
-                    toggleSetting('repeatUntil', null, false, true);
-                }
-            } else if (game.options.menu.repeatUntil.enabled !== 0) {
-                game.options.menu.repeatUntil.enabled = 0;
-                toggleSetting('repeatUntil', null, false, true);
-            }
-            //Disabling repeat if we shouldn't map
-            if (!mapSettings.shouldRun) repeatClicked();
-            //Disabling repeat if we'll beat Experience from the BW we're clearing.
-            if (mapObj && game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605) {
-                repeatClicked();
-            }
-            if (mapSettings.prestigeFragMapBought && game.global.repeatMap) {
-                runPrestigeRaiding();
-            }
-            //Disabling repeat if repeat conditions have been met
-            if (game.global.repeatMap && mapSettings.mapName !== '' && !mapSettings.prestigeFragMapBought && mapObj !== null) {
-                //Figuring out if we have the right map level & special
-                const mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
-                const mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
-                if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
-                    if (!mapSettings.repeat) repeatClicked();
-                }
-                //Disabling repeat if the map isn't right or we've finished farming
-                else if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();
-            }
-        } else {
-            //Disable repeat if active and not mapping
-            if (game.global.repeatMap) {
-                repeatClicked();
-            }
-        }
-    } else if (!game.global.preMapsActive && !game.global.mapsActive) {
+        _setMapRepeat();
         //Going to map chamber. Overrides default 'Auto Abandon' setting.
+    } else if (!game.global.preMapsActive && !game.global.mapsActive) {
         if (selectedMap !== 'world') {
             if (!game.global.switchToMaps && shouldAbandon()) mapsClicked();
             if (game.global.switchToMaps) mapsClicked();
@@ -469,7 +429,6 @@ function autoMaps() {
     } else if (game.global.preMapsActive) {
         //Recycling maps below world level if 95 or more are owned as the cap is 100.
         if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
-
         if (selectedMap === 'world') {
             mapsClicked();
         } else if (selectedMap === 'prestigeRaid') {
@@ -525,6 +484,44 @@ function _fragmentCheck(highestMap, runUnique) {
     }
     //Runs highest map we have available to farm fragments with
     else runSelectedMap(highestMap.id, runUnique);
+}
+
+function _setMapRepeat() {
+    const mapObj = getCurrentMapObject();
+    if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding') {
+        //Starting with repeat on
+        if (!game.global.repeatMap) repeatClicked();
+        //Changing repeat setting to Repeat For Items if Presitge or Bionic Raiding, otherwise set to Repeat Forever
+        if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
+            if (game.options.menu.repeatUntil.enabled !== 2) {
+                game.options.menu.repeatUntil.enabled = 2;
+                toggleSetting('repeatUntil', null, false, true);
+            }
+        } else if (game.options.menu.repeatUntil.enabled !== 0) {
+            game.options.menu.repeatUntil.enabled = 0;
+            toggleSetting('repeatUntil', null, false, true);
+        }
+        //Disabling repeat if we shouldn't map
+        if (!mapSettings.shouldRun) repeatClicked();
+        //Disabling repeat if we'll beat Experience from the BW we're clearing.
+        if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605) {
+            repeatClicked();
+        }
+        if (mapSettings.prestigeFragMapBought && game.global.repeatMap) {
+            runPrestigeRaiding();
+        }
+        if (game.global.repeatMap && !mapSettings.prestigeFragMapBought) {
+            if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
+                if (!mapSettings.repeat) repeatClicked();
+            }
+            //Disabling repeat if the map isn't the right level or special
+            else {
+                const mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
+                const mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
+                if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();
+            }
+        }
+    } else if (game.global.repeatMap) repeatClicked();
 }
 
 function _purchaseMap(lowestMap) {
@@ -617,7 +614,6 @@ function _mappingDefaults() {
     while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
     if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
     if (game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
-    if (game.global.repeatMap) repeatClicked();
 
     //Reset to defaults when on world grid
     if (!game.global.mapsActive && !game.global.preMapsActive) {
