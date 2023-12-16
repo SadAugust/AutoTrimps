@@ -53,7 +53,7 @@ function miRatio() {
             }
         },
         runEnd: {
-            value: game.global.lastPortal * 0.9 > game.stats.highestLevel.valueTotal() ? game.global.lastPortal : game.stats.highestLevel.valueTotal(),
+            value: game.stats.highestLevel.valueTotal() * 0.9 < game.global.lastPortal ? game.global.lastPortal : game.stats.highestLevel.valueTotal(),
             update: function (value = this.value) {
                 this.value = parseInt(value);
                 calculateCurrentPop();
