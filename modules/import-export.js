@@ -411,7 +411,9 @@ function resetAutoTrimps(autoTrimpsSettings, b) {
 //Loads the base settings that I want to be the same when loading peoples saves as it will save me time.
 function loadAugustSettings() {
     if (atSettings.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') return;
-    autoTrimpSettings.gameUser.value = 'test';
+    if (typeof greenworks === 'undefined') autoTrimpSettings.gameUser.value = 'test';
+    autoTrimpSettings.downloadSaves.enabled = 0;
+    autoTrimpSettings.downloadSaves.enabledU2 = 0;
     saveSettings();
     game.options.menu.darkTheme.enabled = 2;
     game.options.menu.standardNotation.enabled = 0;

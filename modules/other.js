@@ -77,15 +77,16 @@ function archaeologyAutomator() {
     const string1 = getPageSetting('archaeologyString1'),
         string2 = getPageSetting('archaeologyString2'),
         string3 = getPageSetting('archaeologyString3');
+    let string;
 
-    if (string3[0] !== 'undefined' && string3[0] <= game.global.world) {
-        let string = string3.slice(1).toString();
+    if (string3[0] !== 'undefined' && string3[0] >= game.global.world) {
+        string = string3.slice(1).toString();
         if (string !== game.global.archString) game.global.archString = string;
-    } else if (string2[0] !== 'undefined' && string2[0] <= game.global.world) {
-        let string = string2.slice(1).toString();
+    } else if (string2[0] !== 'undefined' && string2[0] >= game.global.world) {
+        string = string2.slice(1).toString();
         if (string !== game.global.archString) game.global.archString = string;
     } else if (string1[0] !== 'undefined') {
-        let string = string1.slice(1).toString();
+        string = string1.toString();
         if (string !== game.global.archString) game.global.archString = string;
     }
 }

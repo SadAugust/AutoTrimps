@@ -253,6 +253,8 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
             ? getPageSetting('heirloomSwapZoneC3')
             : trimpStats.isDaily
             ? getPageSetting('heirloomSwapZoneDaily')
+            : trimpStats.isOneOff
+            ? getPageSetting('heirloomSwapZoneOneOff')
             : trimpStats.isFiller
             ? getPageSetting('heirloomSwapZone')
             : 999;

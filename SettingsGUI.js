@@ -2990,7 +2990,18 @@ function initializeAllSettings() {
 		createSetting('heirloomSwapZoneC3',
 			function () { return (cinf() + ' Swap Zone') },
 			function () {
-				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during daily runs.</p>";
+				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during " + cinf() + " runs.</p>";
+				description += "<p>If the " + cinf() + " shield setting has been setup then it will use that instead of the <b>Afterpush</b> shield.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
+				return description;
+			}, 'value', -1, null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
+			createSetting('heirloomSwapZoneOneOff',
+			function () { return ('One Off Swap Zone') },
+			function () {
+				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during one off runs.</p>";
 				description += "<p>If the " + cinf() + " shield setting has been setup then it will use that instead of the <b>Afterpush</b> shield.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
@@ -5100,7 +5111,6 @@ function autoSetValue(id, multiValue, negative) {
     updateCustomButtons();
     saveSettings();
     if (id === 'presetCombatRespecCell') MODULES.portal.disableAutoRespec = 0;
-    if (id.includes('archaeology')) archaeologyAutomator();
     if (num > game.global.world && (id === 'dailyDontPortalBefore' || id === 'heliumHrDontPortalBefore')) {
         MODULES.mapFunctions.afterVoids = false;
         mapSettings.portalAfterVoids = false;
@@ -5156,6 +5166,8 @@ function autoSetText(id, multiValue) {
     }
     updateCustomButtons();
     saveSettings();
+    if (id.includes('archaeology')) archaeologyAutomator();
+    console.log(id);
 }
 
 function autoToggle(what) {
