@@ -1777,6 +1777,27 @@ function initializeAllSettings() {
 			}, 'multiTextValue', ['undefined'], null, 'Challenges', [2],
 			function () { return (getPageSetting('archaeology', currSettingUniverse) && autoTrimpSettings.archaeology.require()) });
 
+		//Exterminate
+		createSetting('exterminate',
+			function () { return ('Exterminate') },
+			function () {
+				var description = "<p>Enable this if you want to use automation features when running the <b>Exterminate</b> challenge.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 120) });
+			
+		createSetting('exterminateWorldStaff',
+			function () { return ('E: World Staff') },
+			function () {
+				var description = "<p>Staff to use during <b>Exterminate</b> when you're not mapping.</p>";
+				description += "<p>This will override all other heirloom swapping features when active!</p>";
+				description += "<p>Should ideally be a staff with high primary resource modifiers.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Challenges', [2],
+			function () { return (getPageSetting('exterminate', currSettingUniverse) && autoTrimpSettings.exterminate.require()) });
+
 		//Quagmire
 		createSetting('quagmireSettings',
 			function () { return ('Quagmire Settings') },
@@ -4608,6 +4629,7 @@ function modifyParentNodeUniverseSwap() {
     modifyParentNode('lifeStacks', 'show');
     modifyParentNode('toxicitySettings', 'show');
     modifyParentNode('archaeologyString3', 'show');
+    modifyParentNode('exterminateWorldStaff', 'show');
 
     modifyParentNode('mapologyPrestige', 'show');
     modifyParentNode('frigid', 'show');

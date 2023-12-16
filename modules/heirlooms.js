@@ -349,8 +349,9 @@ function heirloomStaffToEquip(mapType) {
     if (!getPageSetting('heirloom')) return;
     if (!getPageSetting('heirloomStaff')) return;
 
-    if (getPageSetting('heirloomStaffWorld') !== 'undefined' && !game.global.mapsActive) {
-        return 'heirloomStaffWorld';
+    if (!game.global.mapsActive) {
+        if (challengeActive('Exterminate') && getPageSetting('exterminate') && getPageSetting('exterminateWorldStaff') !== 'undefined') return 'exterminateWorldStaff';
+        if (getPageSetting('heirloomStaffWorld') !== 'undefined') return 'heirloomStaffWorld';
     } else if (game.global.mapsActive) {
         const mapObject = getCurrentMapObject();
         const mapBonus = mapObject.bonus;
