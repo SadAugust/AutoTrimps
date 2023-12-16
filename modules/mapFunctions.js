@@ -307,6 +307,7 @@ function runUniqueMap(mapName) {
     if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
     if (getPageSetting('autoMaps') !== 1) return;
     if (_insanityDisableUniqueMaps()) return;
+    MODULES.mapFunctions.runUniqueMap = mapName;
 
     const map = game.global.mapsOwnedArray.find((map) => map.name.includes(mapName));
     if (map !== undefined) {
@@ -315,8 +316,9 @@ function runUniqueMap(mapName) {
             selectMap(map.id);
             runMap_AT();
             debug('Running ' + mapName + ' on zone ' + game.global.world + '.', 'map_Details');
+            MODULES.mapFunctions.runUniqueMap = '';
         }
-    } else MODULES.mapFunctions.runUniqueMap = mapName;
+    }
 }
 
 //Void Maps
