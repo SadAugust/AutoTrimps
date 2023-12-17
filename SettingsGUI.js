@@ -4738,7 +4738,7 @@ function challengesUnlockedObj(universe = currSettingUniverse) {
             Insanity: { unlockZone: 110, unlockedIn: ['heHr', 'autoPortal'] },
             Berserk: { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
             Exterminate: { unlockZone: 120, unlockedIn: ['oneOff'] },
-            Nurture: { unlockZone: 135, unlockedIn: ['heHr', 'autoPortal'] },
+            Nurture: { unlockZone: 130, unlockedIn: ['heHr', 'autoPortal'] },
             Pandemonium: { unlockZone: 150, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
             Alchemy: { unlockZone: 155, unlockedIn: ['heHr', 'autoPortal'] },
             Hypothermia: { unlockZone: 175, unlockedIn: ['heHr', 'autoPortal'] },
@@ -4926,7 +4926,7 @@ function challengeUnlockCheck() {
         if (hze >= 105) challenge.push('Storm');
         if (hze >= 110) challenge.push('Insanity');
         if (hze >= 115) challenge.push('Berserk');
-        if (hze >= 135) challenge.push('Nurture');
+        if (hze >= 130) challenge.push('Nurture');
         if (hze >= 150) challenge.push('Pandemonium');
         if (hze >= 155) challenge.push('Alchemy');
         if (hze >= 175) challenge.push('Hypothermia');
