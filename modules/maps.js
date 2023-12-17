@@ -371,84 +371,26 @@ function autoMaps() {
 
     if (_vanillaMAZ()) return;
 
-    _mappingDefaults();
+    _autoMapsDefaults();
 
-    const runUniques = getPageSetting('autoMaps') === 1 && !_insanityDisableUniqueMaps();
-    const bionicPool = [];
-    let highestMap = null;
-    let lowestMap = null;
-    let optimalMap = null;
-    let voidMap = null;
-    let selectedMap = 'world';
+    const mapObj = _checkOwnedMaps();
 
-    const perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
-    const perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
-    const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
-    const uniqueMapsOwned = [];
-    //Check to see if the cell is liquified and if so we can replace the cell condition with it
-    let runUnique = false;
+    _searchForUniqueMaps(mapObj.uniqueMapsOwned, mapObj.runUnique);
 
-    //Looping through all of our maps to find the highest, lowest and optimal map.
-    for (const map of game.global.mapsOwnedArray) {
-        if (!map.noRecycle) {
-            if (!highestMap || map.level > highestMap.level) highestMap = map;
-            if (!optimalMap) {
-                if (mapSettings.mapLevel + game.global.world === map.level && mapSettings.special === map.bonus && map.size === perfSize && map.difficulty === 0.75 && map.loot === perfMapLoot && map.location === mapBiome) {
-                    optimalMap = map;
-                }
-            }
-            if (!lowestMap || map.level < lowestMap.level) lowestMap = map;
-        } else if (map.noRecycle) {
-            if (map.location !== 'Void') uniqueMapsOwned.push(map.name);
-            if (runUniques && shouldRunUniqueMap(map)) {
-                runUnique = true;
-                selectedMap = map.id;
-                break;
-            }
-            if (map.location === 'Bionic') bionicPool.push(map);
-            if (map.location === 'Void' && mapSettings.shouldRun && mapSettings.mapName === 'Void Map') {
-                voidMap = selectEasierVoidMap(voidMap, map);
-            }
-        }
-    }
-
-    _searchForUniqueMaps(uniqueMapsOwned, runUnique);
-
-    selectedMap = _setSelectedMap(selectedMap, voidMap, optimalMap);
+    mapObj.selectedMap = _setSelectedMap(mapObj.selectedMap, mapObj.voidMap, mapObj.optimalMap);
 
     //Map Repeat
     if (game.global.mapsActive) {
         _setMapRepeat();
-        //Going to map chamber. Overrides default 'Auto Abandon' setting.
-    } else if (!game.global.preMapsActive && !game.global.mapsActive) {
-        if (selectedMap !== 'world') {
-            if (!game.global.switchToMaps && shouldAbandon()) mapsClicked();
-            if (game.global.switchToMaps) mapsClicked();
-        }
-        //Creating Maps
-    } else if (game.global.preMapsActive) {
-        //Recycling maps below world level if 95 or more are owned as the cap is 100.
-        if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
-        if (selectedMap === 'world') {
-            mapsClicked();
-        } else if (selectedMap === 'prestigeRaid') {
-            runPrestigeRaiding();
-        } else if (selectedMap === 'bionicRaid') {
-            runBionicRaiding(bionicPool);
-        } else if (selectedMap === 'create') {
-            _abandonMapCheck(runUnique);
-            if (mapSettings.shouldRun && mapSettings.mapName !== '') {
-                setMapSliders(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
-            }
-            if (updateMapCost(true) > game.resources.fragments.owned) {
-                if (_fragmentCheck(highestMap, runUnique)) return;
-            } else {
-                _purchaseMap(lowestMap);
-            }
-            //Running unique maps or void maps
-        } else {
-            runSelectedMap(selectedMap, runUnique);
-        }
+    }
+
+    if (!game.global.preMapsActive && !game.global.mapsActive && mapObj.selectedMap !== 'world') {
+        if (!game.global.switchToMaps && shouldAbandon()) mapsClicked();
+        if (game.global.switchToMaps) mapsClicked();
+    }
+
+    if (game.global.preMapsActive) {
+        _autoMapsCreate(mapObj);
     }
 
     _slowScumCheck();
@@ -483,7 +425,150 @@ function _fragmentCheck(highestMap, runUnique) {
         return true;
     }
     //Runs highest map we have available to farm fragments with
-    else runSelectedMap(highestMap.id, runUnique);
+    else _runSelectedMap(highestMap.id, runUnique);
+}
+
+function _vanillaMAZ() {
+    if (!game.options.menu.mapAtZone.enabled || !game.global.canMapAtZone) return false;
+    const nextCell = game.global.lastClearedCell + 2;
+    const totalPortals = getTotalPortals();
+    const setZone = game.options.menu.mapAtZone.getSetZone();
+    for (let x = 0; x < setZone.length; x++) {
+        if (!setZone[x].on) continue;
+        if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
+        if (game.global.preMapsActive && setZone[x].done === totalPortals + '_' + game.global.world + '_' + nextCell) continue;
+        if (setZone[x].times === -1 && game.global.world !== setZone[x].world) continue;
+        if (setZone[x].times > 0 && (game.global.world - setZone[x].world) % setZone[x].times !== 0) continue;
+        if (setZone[x].cell === nextCell) {
+            if (setZone[x].until === 6) game.global.mapCounterGoal = 25;
+            else if (setZone[x].until === 7) game.global.mapCounterGoal = 50;
+            else if (setZone[x].until === 8) game.global.mapCounterGoal = 100;
+            else if (setZone[x].until === 9) game.global.mapCounterGoal = setZone[x].rx;
+            //Toggle void repeat on if it's disabled and stop Auto Maps from running any further.
+            if (game.options.menu.repeatVoids.enabled !== 1) toggleSetting('repeatVoids');
+            return true;
+        }
+    }
+    return false;
+}
+
+function _checkSitInMaps() {
+    if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
+        if (!game.global.preMapsActive) {
+            mapsClicked(true);
+            debug('AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.', 'other');
+        }
+        return true;
+    }
+}
+
+//When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
+//Has a time override as there's a certain cell that will always be unliving so can bypass it this way
+function _lifeMapping() {
+    if (game.global.mapsActive || challengeActive('Life') || !getPageSetting('life')) return;
+
+    const lifeZone = getPageSetting('lifeZone');
+    const lifeStacks = getPageSetting('lifeStacks');
+    const currCell = game.global.world + '_' + (game.global.lastClearedCell + 1);
+    if (lifeZone > 0 && lifeStacks > 0 && game.global.world >= lifeZone && game.challenges.Life.stacks <= lifeStacks) {
+        if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
+        if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
+            MODULES.maps.livingActive = true;
+            if (game.global.fighting || game.global.preMapsActive) mapsClicked();
+            return true;
+        }
+    }
+    MODULES.maps.livingActive = false;
+}
+
+function _autoMapsDefaults() {
+    while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
+    if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
+    if (game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
+
+    //Reset to defaults when on world grid
+    if (!game.global.mapsActive && !game.global.preMapsActive) {
+        game.global.mapRunCounter = 0;
+        MODULES.maps.mapTimer = 0;
+    }
+}
+
+function _checkOwnedMaps() {
+    let mapObj = {
+        highestMap: null,
+        lowestMap: null,
+        optimalMap: null,
+        voidMap: null,
+        selectedMap: 'world',
+        runUnique: false,
+        bionicPool: [],
+        uniqueMapsOwned: []
+    };
+
+    const runUniques = getPageSetting('autoMaps') === 1 && !_insanityDisableUniqueMaps();
+    const perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
+    const perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
+    const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+
+    //Looping through all of our maps to find the highest, lowest and optimal map.
+    for (const map of game.global.mapsOwnedArray) {
+        if (!map.noRecycle) {
+            if (!mapObj.highestMap || map.level > mapObj.highestMap.level) mapObj.highestMap = map;
+            if (!mapObj.optimalMap) {
+                if (mapSettings.mapLevel + game.global.world === map.level && mapSettings.special === map.bonus && map.size === perfSize && map.difficulty === 0.75 && map.loot === perfMapLoot && map.location === mapBiome) {
+                    mapObj.optimalMap = map;
+                }
+            }
+            if (!mapObj.lowestMap || map.level < mapObj.lowestMap.level) mapObj.lowestMap = map;
+        } else if (map.noRecycle) {
+            if (map.location !== 'Void') mapObj.uniqueMapsOwned.push(map.name);
+            if (runUniques && shouldRunUniqueMap(map)) {
+                mapObj.runUnique = true;
+                mapObj.selectedMap = map.id;
+                break;
+            }
+            if (map.location === 'Bionic') mapObj.bionicPool.push(map);
+            if (mapSettings.mapName === 'Void Map' && map.location === 'Void' && mapSettings.shouldRun) {
+                mapObj.voidMap = selectEasierVoidMap(mapObj.voidMap, map);
+            }
+        }
+    }
+
+    return mapObj;
+}
+
+function _searchForUniqueMaps(mapsOwned, runUnique = true) {
+    const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
+    const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
+
+    //Filter unique maps that we want to run and aren't available to be run.
+    let uniqueMapsToGet = Object.keys(uniqueMapSetting)
+        .filter((mapName) => !mapName.includes('MP Smithy'))
+        .filter((mapName) => uniqueMapSetting[mapName].enabled)
+        .filter((mapName) => uniqueMapSetting[mapName].zone <= game.global.world)
+        .filter((mapName) => liquified || uniqueMapSetting[mapName].cell <= game.global.lastClearedCell + 2)
+        .filter((mapName) => !mapsOwned.includes(mapName))
+        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].universe === game.global.universe)
+        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
+        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
+
+    //Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
+    if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
+}
+
+// Deciding if we need to create a map or run voids/bw.
+function _setSelectedMap(selectedMap, voidMap, optimalMap) {
+    const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+    if (selectedMap === 'world' && mapSettings.mapName !== '' && mapSettings.shouldRun) {
+        if (voidMap) selectedMap = voidMap.id;
+        else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = 'prestigeRaid';
+        else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = 'bionicRaid';
+        else if (optimalMap) selectedMap = optimalMap.id;
+        else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
+        if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
+    }
+
+    return selectedMap;
 }
 
 function _setMapRepeat() {
@@ -539,121 +624,30 @@ function _purchaseMap(lowestMap) {
     }
 }
 
-function runSelectedMap(mapId, runUnique) {
-    _abandonMapCheck(runUnique);
-    selectMap(mapId);
-    runMap();
-    const mapObj = game.global.mapsOwnedArray[getMapIndex(mapId)];
-    if (MODULES.maps.lastMapWeWereIn !== mapObj) {
-        debug(`Running ${prettifyMap(mapObj)}`, 'maps', 'th-large');
-        MODULES.maps.lastMapWeWereIn = mapObj;
-    }
-}
-
-function _vanillaMAZ() {
-    if (!game.options.menu.mapAtZone.enabled || !game.global.canMapAtZone) return false;
-    const nextCell = game.global.lastClearedCell + 2;
-    const totalPortals = getTotalPortals();
-    const setZone = game.options.menu.mapAtZone.getSetZone();
-    for (let x = 0; x < setZone.length; x++) {
-        if (!setZone[x].on) continue;
-        if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
-        if (game.global.preMapsActive && setZone[x].done === totalPortals + '_' + game.global.world + '_' + nextCell) continue;
-        if (setZone[x].times === -1 && game.global.world !== setZone[x].world) continue;
-        if (setZone[x].times > 0 && (game.global.world - setZone[x].world) % setZone[x].times !== 0) continue;
-        if (setZone[x].cell === nextCell) {
-            if (setZone[x].until === 6) game.global.mapCounterGoal = 25;
-            else if (setZone[x].until === 7) game.global.mapCounterGoal = 50;
-            else if (setZone[x].until === 8) game.global.mapCounterGoal = 100;
-            else if (setZone[x].until === 9) game.global.mapCounterGoal = setZone[x].rx;
-            //Toggle void repeat on if it's disabled and stop Auto Maps from running any further.
-            if (game.options.menu.repeatVoids.enabled !== 1) toggleSetting('repeatVoids');
-            return true;
-        }
-    }
-    return false;
-}
-
-function _checkSitInMaps() {
-    if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
-        if (!game.global.preMapsActive) {
-            mapsClicked(true);
-            debug('AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.', 'other');
-        }
-        return true;
-    }
-}
-
-//Way to fix an issue with having no maps available to run and no fragments to purchase them
-function _checkWaitForFrags() {
-    if (MODULES.maps.fragmentCost === Infinity) return;
-    if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return true;
-    MODULES.maps.fragmentCost = Infinity;
-}
-
-//When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
-//Has a time override as there's a certain cell that will always be unliving so can bypass it this way
-function _lifeMapping() {
-    if (game.global.mapsActive || challengeActive('Life') || !getPageSetting('life')) return;
-
-    const lifeZone = getPageSetting('lifeZone');
-    const lifeStacks = getPageSetting('lifeStacks');
-    const currCell = game.global.world + '_' + (game.global.lastClearedCell + 1);
-    if (lifeZone > 0 && lifeStacks > 0 && game.global.world >= lifeZone && game.challenges.Life.stacks <= lifeStacks) {
-        if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
-        if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
-            MODULES.maps.livingActive = true;
-            if (game.global.fighting || game.global.preMapsActive) mapsClicked();
-            return true;
-        }
-    }
-    MODULES.maps.livingActive = false;
-}
-
-function _mappingDefaults() {
-    while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
-    if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
-    if (game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
-
-    //Reset to defaults when on world grid
-    if (!game.global.mapsActive && !game.global.preMapsActive) {
-        game.global.mapRunCounter = 0;
-        MODULES.maps.mapTimer = 0;
-    }
-}
-
-function _searchForUniqueMaps(mapsOwned, runUnique = true) {
-    const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
-    const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
-
-    //Filter unique maps that we want to run and aren't available to be run.
-    let uniqueMapsToGet = Object.keys(uniqueMapSetting)
-        .filter((mapName) => !mapName.includes('MP Smithy'))
-        .filter((mapName) => uniqueMapSetting[mapName].enabled)
-        .filter((mapName) => uniqueMapSetting[mapName].zone <= game.global.world)
-        .filter((mapName) => liquified || uniqueMapSetting[mapName].cell <= game.global.lastClearedCell + 2)
-        .filter((mapName) => !mapsOwned.includes(mapName))
-        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].universe === game.global.universe)
-        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
-        .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
-
-    //Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
-    if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
-}
-
-//Telling AT to create a map or setting void map as map to be run.
-function _setSelectedMap(selectedMap, voidMap, optimalMap) {
+function _autoMapsCreate(mapObj) {
+    //Recycling maps below world level if 95 or more are owned as the cap is 100.
     const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
-    if (selectedMap === 'world' && mapSettings.mapName !== '' && mapSettings.shouldRun) {
-        if (voidMap) selectedMap = voidMap.id;
-        else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = 'prestigeRaid';
-        else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = 'bionicRaid';
-        else if (optimalMap) selectedMap = optimalMap.id;
-        else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
-        if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
+    if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
+    if (mapObj.selectedMap === 'world') {
+        mapsClicked();
+    } else if (mapObj.selectedMap === 'prestigeRaid') {
+        runPrestigeRaiding();
+    } else if (mapObj.selectedMap === 'bionicRaid') {
+        runBionicRaiding(mapObj.bionicPool);
+    } else if (mapObj.selectedMap === 'create') {
+        _abandonMapCheck(mapObj.runUnique);
+        if (mapSettings.shouldRun && mapSettings.mapName !== '') {
+            setMapSliders(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
+        }
+        if (updateMapCost(true) > game.resources.fragments.owned) {
+            if (_fragmentCheck(mapObj.highestMap, mapObj.runUnique)) return;
+        } else {
+            _purchaseMap(mapObj.lowestMap);
+        }
+        //Running unique maps or void maps
+    } else {
+        _runSelectedMap(mapObj.selectedMap, mapObj.runUnique);
     }
-
-    return selectedMap;
 }
 
 //Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
@@ -674,6 +668,24 @@ function _abandonMapCheck(runUnique) {
         } else if (MODULES.maps.lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
         if (runUnique && game.global.currentMapId !== selectedMap) recycleMap();
     }
+}
+
+function _runSelectedMap(mapId, runUnique) {
+    _abandonMapCheck(runUnique);
+    selectMap(mapId);
+    runMap();
+    const mapObj = game.global.mapsOwnedArray[getMapIndex(mapId)];
+    if (MODULES.maps.lastMapWeWereIn !== mapObj) {
+        debug(`Running ${prettifyMap(mapObj)}`, 'maps', 'th-large');
+        MODULES.maps.lastMapWeWereIn = mapObj;
+    }
+}
+
+//Way to fix an issue with having no maps available to run and no fragments to purchase them
+function _checkWaitForFrags() {
+    if (MODULES.maps.fragmentCost === Infinity) return;
+    if (MODULES.maps.fragmentCost > game.resources.fragments.owned) return true;
+    MODULES.maps.fragmentCost = Infinity;
 }
 
 function _slowScumCheck() {
