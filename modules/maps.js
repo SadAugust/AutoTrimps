@@ -11,7 +11,7 @@ MODULES.maps = {
     fragmentCost: Infinity
 };
 
-function updateAutoMapsStatus(get) {
+function autoMapsStatus(get) {
     let status = '';
     //Setting up status
     if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
@@ -355,7 +355,6 @@ function autoMaps() {
 
     if (_checkWaitForFrags()) return;
 
-    //Disable maps IF soldier attack is negative OR we're running no maps quest OR running Mapology and no credits available
     if (game.global.soldierCurrentAttack < 0 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
         if (game.global.preMapsActive) mapsClicked();
         return;

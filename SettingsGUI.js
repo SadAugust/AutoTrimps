@@ -5467,7 +5467,7 @@ function settingUniverse(setting) {
 
 //Setting up the Auto Maps status inside of Time Warp.
 function autoMapsStatusTW() {
-    if (typeof updateAutoMapsStatus !== 'function' || typeof isDoingSpire !== 'function') {
+    if (typeof autoMapsStatus !== 'function' || typeof isDoingSpire !== 'function') {
         setTimeout(autoMapsStatusTW, 100);
         console.log('Retrying to setup AutoMaps status in Time Warp.');
         return;
@@ -5494,7 +5494,7 @@ function autoMapsStatusTW() {
         autoMapsStatusSection.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace[item]).children[2]);
     }
 
-    updateAutoMapsStatus(false);
+    autoMapsStatus(false);
 }
 
 //Add the Time Warp settings to the right hand side section.

@@ -174,7 +174,7 @@ function delayStartAgain() {
     MODULES.heirlooms.gammaBurstPct = getHeirloomBonus('Shield', 'gammaBurst') / 100 > 0 ? getHeirloomBonus('Shield', 'gammaBurst') / 100 : 1;
     trimpStats = new TrimpStats(true);
     hdStats = new HDStats(true);
-    updateAutoMapsStatus();
+    autoMapsStatus();
 
     //Copy gameLoop for when we enter toggleCatchUpMode.
     originalGameLoop = gameLoop;
@@ -319,7 +319,7 @@ function toggleCatchUpMode() {
             autoMaps();
             callBetterAutoFight();
             autoPortalCheck();
-            if (loops % 10 === 0 || atSettings.portal.aWholeNewWorld) updateAutoMapsStatus();
+            if (loops % 10 === 0 || atSettings.portal.aWholeNewWorld) autoMapsStatus();
             if (game.global.universe === 1) checkStanceSetting();
             if (game.global.universe === 2) equalityManagement();
             guiLoop();
@@ -401,7 +401,7 @@ function mainLoop() {
     if (shouldRunInTimeWarp()) {
         //AutoMaps
         autoMaps();
-        updateAutoMapsStatus();
+        autoMapsStatus();
     }
     //Status
     //Gather
