@@ -1208,9 +1208,13 @@ function mapDestacking(lineCheck) {
     //Balance+Unbalance Destacking
     if (challengeActive('Balance') || challengeActive('Unbalance')) {
         const challenge = challengeActive('Balance') ? 'Balance' : 'Unbalance';
-        var balanceZone = getPageSetting('balanceZone') > 0 ? getPageSetting('balanceZone') : Infinity;
-        var balanceStacks = getPageSetting('balanceStacks') > 0 ? getPageSetting('balanceStacks') : Infinity;
-        shouldMap = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks !== 0 && game.global.world >= balanceZone && (game.challenges[challenge].balanceStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 === 100 && game.challenges[challenge].balanceStacks !== 0));
+        const challengeStacks = game.challenges[challenge].balanceStacks;
+        const balanceHD = getPageSetting('balanceDestack') > 0 ? getPageSetting('balanceDestack') : Infinity;
+        const balanceZone = getPageSetting('balanceZone') > 0 ? getPageSetting('balanceZone') : Infinity;
+        const balanceStacks = getPageSetting('balanceStacks') > 0 ? getPageSetting('balanceStacks') : Infinity;
+        shouldMap = game.global.world >= balanceZone && (challengeStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 === 100 && challengeStacks !== 0));
+        if (hdStats.hdRatio > balanceHD && challengeStacks >= balanceStacks) shouldMap = true;
+        if (shouldMap && gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks === 0) shouldMap = false;
         destackValue = game.challenges[challenge].balanceStacks;
     }
 

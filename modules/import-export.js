@@ -427,3 +427,194 @@ function loadAugustSettings() {
     }
     if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
 }
+
+//Process data to google forms to update stats spreadsheet
+function pushSpreadsheetData() {
+    if (!portalWindowOpen) return;
+    if (!gameUserCheck(true)) return;
+    const graphData = JSON.parse(localStorage.getItem('portalDataCurrent'))[getportalID()];
+
+    const fluffy_EvoLevel = {
+        cap: game.portal.Capable.level,
+        prestige: Number(game.global.fluffyPrestige),
+        potential: function () {
+            return Number(Math.log((0.003 * game.global.fluffyExp) / Math.pow(5, this.prestige) + 1) / Math.log(4));
+        },
+        level: function () {
+            return Number(Math.min(Math.floor(this.potential()), this.cap));
+        },
+        progress: function () {
+            return this.level() === this.cap ? 0 : Number((4 ** (this.potential() - this.level()) - 1) / 3).toFixed(2);
+        },
+        fluffy: function () {
+            return 'E' + this.prestige + 'L' + (this.level() + this.progress());
+        }
+    };
+
+    const scruffy_Level = {
+        firstLevel: 1000,
+        growth: 4,
+        currentExp: [],
+        getExp: function () {
+            this.calculateExp();
+            return this.currentExp;
+        },
+        getCurrentExp: function () {
+            return game.global.fluffyExp2;
+        },
+        currentLevel: function () {
+            return Math.floor(log10((this.getCurrentExp() / this.firstLevel) * (this.growth - 1) + 1) / log10(this.growth));
+        },
+        calculateExp: function () {
+            var level = this.currentLevel();
+            var experience = this.getCurrentExp();
+            var removeExp = 0;
+            if (level > 0) {
+                removeExp = Math.floor(this.firstLevel * ((Math.pow(this.growth, level) - 1) / (this.growth - 1)));
+            }
+            var totalNeeded = Math.floor(this.firstLevel * ((Math.pow(this.growth, level + 1) - 1) / (this.growth - 1)));
+            experience -= removeExp;
+            totalNeeded -= removeExp;
+            this.currentExp = [level, experience, totalNeeded];
+        }
+    };
+
+    var heliumGained = game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned;
+    var heliumHr = game.stats.heliumHour.value();
+
+    var dailyMods = ' ';
+    var dailyPercent = 0;
+    if (MODULES['portal'].currentChallenge === 'Daily' && !challengeActive('Daily')) {
+        dailyMods = MODULES.portal.dailyMods;
+        dailyPercent = MODULES.portal.dailyPercent;
+    } else if (challengeActive('Daily')) {
+        if (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0')) dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+        dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge)))) / 100;
+        heliumGained *= 1 + dailyPercent;
+        heliumHr *= 1 + dailyPercent;
+    }
+
+    const mapCount =
+        graphData !== undefined
+            ? Object.keys(graphData.perZoneData.mapCount)
+                  .filter((k) => graphData.perZoneData.mapCount[k] !== null)
+                  .reduce(
+                      (a, k) => ({
+                          ...a,
+                          [k]: graphData.perZoneData.mapCount[k]
+                      }),
+                      {}
+                  )
+            : 0;
+    const mapTotal =
+        graphData !== undefined
+            ? Object.keys(mapCount).reduce(function (m, k) {
+                  return mapCount[k] > m ? mapCount[k] : m;
+              }, -Infinity)
+            : 0;
+    const mapZone = graphData !== undefined ? Number(Object.keys(mapCount).find((key) => mapCount[key] === mapTotal)) : 0;
+
+    var obj = {
+        user: autoTrimpSettings.gameUser.value,
+        date: new Date().toISOString(),
+        portals: game.global.totalPortals,
+        portals_U2: game.global.totalRadPortals,
+        helium: game.global.totalHeliumEarned,
+        radon: game.global.totalRadonEarned,
+        radonBest: game.global.bestRadon,
+        hZE: game.stats.highestLevel.valueTotal(),
+        hZE_U2: game.stats.highestRadLevel.valueTotal(),
+        fluffy: fluffy_EvoLevel.fluffy(),
+        scruffy: Number((scruffy_Level.currentLevel() + scruffy_Level.getExp()[1] / scruffy_Level.getExp()[2]).toFixed(3)),
+        achievement: game.global.achievementBonus,
+        nullifium: game.global.nullifium,
+        antenna: game.buildings.Antenna.purchased,
+        spire_Assault_Level: autoBattle.maxEnemyLevel,
+        spire_Assault_Radon: autoBattle.bonuses.Radon.level,
+        spire_Assault_Stats: autoBattle.bonuses.Stats.level,
+        spire_Assault_Scaffolding: autoBattle.bonuses.Scaffolding.level,
+        frigid: game.global.frigidCompletions,
+        mayhem: game.global.mayhemCompletions,
+        pandemonium: game.global.pandCompletions,
+        desolation: game.global.desoCompletions,
+        c2: countChallengeSquaredReward(false, false, true)[0],
+        c3: countChallengeSquaredReward(false, false, true)[1],
+        cinf: game.global.totalSquaredReward,
+        challenge: graphData !== undefined ? graphData.challenge : 'None',
+        runtime: formatTimeForDescriptions((getGameTime() - game.global.portalTime) / 1000),
+        runtimeMilliseconds: getGameTime() - game.global.portalTime,
+        zone: game.global.world,
+        voidZone: game.global.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
+        mapZone: mapZone,
+        mapCount: mapTotal,
+        voidsCompleted: game.stats.totalVoidMaps.value,
+        smithy: game.global.universe === 1 ? 'N/A' : !game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned ? game.buildings.Smithy.owned - 2 + ' + 2' : !game.mapUnlocks.SmithFree.canRunOnce ? game.buildings.Smithy.owned - 1 + ' + 1' : game.buildings.Smithy.owned,
+        meteorologist: game.global.universe === 1 ? 'N/A' : game.jobs.Meteorologist.owned,
+        heliumGained: heliumGained,
+        heliumHr: heliumHr,
+        fluffyXP: game.stats.bestFluffyExp2.value,
+        fluffyHr: game.stats.fluffyExpHour.value(),
+        fluffyBest: game.stats.bestFluffyExp2.valueTotal,
+        dailyMods: dailyMods,
+        dailyPercent: dailyPercent,
+        universe: game.global.universe,
+        sharpTrimps: game.singleRunBonuses.sharpTrimps.owned,
+        goldenMaps: game.singleRunBonuses.goldMaps.owned,
+        heliumy: game.singleRunBonuses.heliumy.owned,
+        runningChallengeSquared: game.global.runningChallengeSquared,
+        mutatedSeeds: game.stats.mutatedSeeds.valueTotal,
+        mutatedSeedsLeftover: game.global.mutatedSeeds,
+        mutatedSeedsGained: game.stats.mutatedSeeds.value,
+        patch: game.global.stringVersion,
+        bones: game.global.b
+    };
+
+    for (var chall in game.c2) {
+        if (!game.challenges[chall].allowU2) {
+            obj[chall + '_zone'] = game.c2[chall];
+            obj[chall + '_bonus'] = getIndividualSquaredReward(chall);
+        } else {
+            obj[chall + '_zone'] = game.c2[chall];
+            obj[chall + '_bonus'] = getIndividualSquaredReward(chall);
+        }
+    }
+
+    //Replaces any commas with semicolons to avoid breaking how the spreadsheet parses data.
+    for (var item in obj) {
+        if (typeof greenworks !== 'undefined' && process.version === 'v10.10.0') continue;
+        if (typeof obj[item] === 'string') obj[item] = obj[item].replaceAll(',', ';');
+    }
+
+    setTimeout(function () {
+        //Data entry ID can easily be found in the URL of the form after setting up a pre-filled link.
+        //Haven't found a way to get it from the form itself or a way to automate it so pushing the data as an object instead.
+        var data = {
+            'entry.1850071841': obj.user, //User
+            'entry.815135863': JSON.stringify(obj) //Object
+            //'entry.1864995783': new Date().toISOString(), //Timestamp
+        };
+
+        var formSuccess = true;
+        var formId = '1FAIpQLScTqY2ti8WUwIKK_WOh_X_Oky704HOs_Lt07sCTG2sHCc3quA';
+        var queryString = '/formResponse';
+        var url = 'https://docs.google.com/forms/d/e/' + formId + queryString;
+        //Can't use the form's action URL because it's not a valid URL for CORS requests.
+        //Google doesn't allow CORS requests to their forms by the looks of it
+        //Using dataType "jsonp" instead of "json" to get around this issue.
+
+        if (formSuccess) {
+            // Send request
+            $.ajax({
+                url: url,
+                type: 'POST',
+                crossDomain: true,
+                header: {
+                    'Content-type': 'application/javascript; charset=utf-8'
+                },
+                data: data,
+                dataType: 'jsonp'
+            });
+        }
+    }, 300);
+    debug('Spreadsheet update complete.', 'other');
+}

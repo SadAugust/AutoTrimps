@@ -1623,6 +1623,17 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Challenges', [1, 2],
 			function () { return (currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 35 : game.stats.highestLevel.valueTotal() >= 40) });
+
+		createSetting('balanceDestack',
+		function () { return ((currSettingUniverse === 2 ? 'U' : 'B') + ': HD Ratio') },
+		function () {
+			var description = "<p>What HD ratio cut-off to use for deciding when to destack.</p>";
+			description += "<p>Only destacks once above the stack amount set in the <b>" + (currSettingUniverse === 2 ? 'U' : 'B') + ': Stacks' + "</b> setting.</p>";
+			description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
+			description += "<p><b>Recommended:</b> 5</p>";
+			return description;
+		}, 'value', 5, null, 'Challenges', [1, 2],
+		function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
 		createSetting('balanceZone',
 			function () { return ((currSettingUniverse === 2 ? 'U' : 'B') + ': Zone') },
 			function () {
