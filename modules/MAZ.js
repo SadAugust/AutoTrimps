@@ -70,6 +70,7 @@ function mapSettingsDisplay(elem, titleText) {
     var smithyFarm = titleText.includes('Smithy');
     var worshipperFarm = titleText.includes('Worshipper');
     var quagmire = titleText.includes('Quagmire');
+    var archaeology = titleText.includes('Archaeology');
     var insanity = titleText.includes('Insanity');
     var alchemy = titleText.includes('Alchemy');
     var hypothermia = titleText.includes('Hypothermia');
@@ -80,73 +81,108 @@ function mapSettingsDisplay(elem, titleText) {
     var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 
     var settingInputsDefault = ['active'];
-    var settingInputs = [];
+    var settingInputs;
     var windowWidth;
-    if (golden) {
-        settingInputs = ['active', 'priority', 'row', 'golden', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '40%';
-    } else if (hypothermia) {
-        settingInputsDefault.push('frozencastle', 'autostorage', 'packrat');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'autoLevel', 'bonfire', 'jobratio'];
-        windowWidth = '45%';
-    } else if (quagmire) {
-        settingInputsDefault.push('abandonZone');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'bogs', 'jobratio'];
-        windowWidth = '45%';
-    } else if (toxicity) {
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'repeat', 'jobratio'];
-        windowWidth = '50%';
-    } else if (insanity) {
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'special', 'gather', 'autoLevel', 'jobratio', 'destack', 'insanity'];
-        windowWidth = '55%';
-    } else if (desolation) {
-        settingInputs = ['active', 'priority', 'row', 'world', 'repeatevery', 'endzone', 'special', 'gather', 'jobratio', 'prestigeGoal'];
-        windowWidth = '50%';
-    } else if (boneShrine) {
-        settingInputsDefault.push('autoBone', 'bonebelow', 'gather', 'world', 'jobratio');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'boneamount', 'bonebelow', 'gather', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '65%';
-    } else if (bionic) {
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '70%';
-    } else if (voidMap) {
-        settingInputsDefault.push('jobratio', 'maxTenacity', 'boneCharge', 'voidFarm', 'hitsSurvived', 'hdRatio', 'mapCap');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'maxvoidzone', 'hdRatio', 'voidHDRatio', 'portalAfter', 'hdType', 'hdType2', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '70%';
-    } else if (worshipperFarm) {
-        settingInputsDefault.push('shipSkipEnabled', 'shipskip');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'worshipper', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '70%';
-    } else if (smithyFarm) {
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeat', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'meltingPoint', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '70%';
-    } else if (hdFarm) {
-        settingInputsDefault.push('jobratio', 'mapCap');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'hdBase', 'hdMult', 'hdType', 'mapCap', 'endzone', 'autoLevel', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '70%';
-    } else if (raiding) {
-        settingInputsDefault.push('recycle');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'raidingDropdown', 'incrementMaps', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '75%';
-    } else if (alchemy) {
-        settingInputsDefault.push('voidPurchase');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'potion', 'jobratio'];
-        windowWidth = '75%';
-    } else if (mapBonus) {
-        settingInputsDefault.push('special', 'gather', 'jobratio');
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeat', 'endzone', 'special', 'gather', 'autoLevel', 'hdRatio', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '75%';
-    } else if (mapFarm) {
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'repeat', 'hdRatio', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '80%';
-    } else if (tributeFarm) {
-        settingInputs = ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'tributes', 'mets', 'buildings', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'];
-        windowWidth = '80%';
-    } else {
-        windowWidth = '50%';
-        debug('Please setup a width for this setting!' + titleText);
-    }
 
+    const settingObj = {
+        'Auto Golden': {
+            settingInputs: ['active', 'priority', 'row', 'golden', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: [],
+            windowWidth: '40%'
+        },
+        Hypothermia: {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'autoLevel', 'bonfire', 'jobratio'],
+            settingInputsDefault: ['frozencastle', 'autostorage', 'packrat'],
+            windowWidth: '45%'
+        },
+        Archaeology: {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'autoLevel', 'relics', 'jobratio'],
+            settingInputsDefault: [],
+            windowWidth: '50%'
+        },
+        Quagmire: {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'bogs', 'jobratio'],
+            settingInputsDefault: ['abandonZone'],
+            windowWidth: '45%'
+        },
+        Toxicity: {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'repeat', 'jobratio'],
+            settingInputsDefault: [],
+            windowWidth: '50%'
+        },
+        Insanity: {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'special', 'gather', 'autoLevel', 'jobratio', 'destack', 'insanity'],
+            settingInputsDefault: [],
+            windowWidth: '55%'
+        },
+        'Desolation Gear Scumming': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'repeatevery', 'endzone', 'special', 'gather', 'jobratio', 'prestigeGoal'],
+            settingInputsDefault: ['abandonZone'],
+            windowWidth: '50%'
+        },
+        'Bone Shrine': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'boneamount', 'bonebelow', 'gather', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: ['autoBone', 'bonebelow', 'gather', 'world', 'jobratio'],
+            windowWidth: '65%'
+        },
+        'Bionic Raiding': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: [],
+            windowWidth: '70%'
+        },
+        'Void Map': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'maxvoidzone', 'hdRatio', 'voidHDRatio', 'portalAfter', 'hdType', 'hdType2', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: ['jobratio', 'maxTenacity', 'boneCharge', 'voidFarm', 'hitsSurvived', 'hdRatio', 'mapCap'],
+            windowWidth: '70%'
+        },
+        'Worshipper Farm': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'worshipper', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: ['shipSkipEnabled', 'shipskip'],
+            windowWidth: '70%'
+        },
+        'Smithy Farm': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeat', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'meltingPoint', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: [],
+            windowWidth: '70%'
+        },
+        'HD Farm': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'hdBase', 'hdMult', 'hdType', 'mapCap', 'endzone', 'autoLevel', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: ['jobratio', 'mapCap'],
+            windowWidth: '70%'
+        },
+        Raiding: {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'repeatevery', 'endzone', 'raidingzone', 'prestigeGoal', 'raidingDropdown', 'incrementMaps', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: ['recycle'],
+            windowWidth: '75%'
+        },
+        Alchemy: {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'potion', 'jobratio'],
+            settingInputsDefault: ['voidPurchase'],
+            windowWidth: '75%'
+        },
+        'Map Bonus': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeat', 'endzone', 'special', 'gather', 'autoLevel', 'hdRatio', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: ['special', 'gather', 'jobratio'],
+            windowWidth: '75%'
+        },
+        'Map Farm': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'special', 'gather', 'autoLevel', 'mapType', 'repeat', 'hdRatio', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: [],
+            windowWidth: '80%'
+        },
+        'Tribute Farm': {
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'endzone', 'autoLevel', 'mapType', 'tributes', 'mets', 'buildings', 'atlantrimp', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+            settingInputsDefault: [],
+            windowWidth: '80%'
+        }
+    };
+
+    const settingInfo = settingObj[titleText];
+    if (settingInfo) {
+        settingInputs = settingInfo.settingInputs;
+        if (settingInfo.settingInputsDefault.length > 0) settingInputsDefault += settingInfo.settingInputsDefault;
+        windowWidth = settingInfo.windowWidth;
+    }
     const originalSetting = getPageSetting(settingName + 'Settings', currSettingUniverse);
     var maxSettings = 30;
     var overflow = false;
@@ -309,7 +345,7 @@ function mapSettingsDisplay(elem, titleText) {
         if (raiding && bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "'>Raiding<br/>Zone</div>";
         if (raiding && !bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "'>Map<br/>Level</div>";
         if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "'>Cell</div>";
-        if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "'>Auto<br/>Level</div>";
+        if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "'>Auto<br/>Level</div>";
         if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) tooltipText += "<div class='windowLevel" + varPrefix + "'>Map<br/>Level</div>";
         if (tributeFarm || smithyFarm || mapFarm || alchemy) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "'>Farm Type</div>";
         if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>";
@@ -320,10 +356,11 @@ function mapSettingsDisplay(elem, titleText) {
         if (mapFarm || mapBonus) tooltipText += "<div class='windowHDRatio" + varPrefix + "'>Above X<br/>HD Ratio</div>";
 
         if (mapBonus) tooltipText += "<div class='windowMapStacks'>Map<br/>Stacks</div>";
+        if (golden) tooltipText += "<div class='windowTypeAutoGolden'>Golden Type</div>";
         if (quagmire) tooltipText += "<div class='windowBogs'>Bogs</div>";
+        if (archaeology) tooltipText += "<div class='windowRelics" + varPrefix + "'>Relic String</div>";
         if (insanity) tooltipText += "<div class='windowInsanity'>Insanity</div>";
         if (alchemy) tooltipText += "<div class='windowPotionType'>Potion Type</div>";
-        if (golden) tooltipText += "<div class='windowTypeAutoGolden'>Golden Type</div>";
         if (alchemy) tooltipText += "<div class='windowPotionNumber'>Potion Number</div>";
         if (hypothermia) tooltipText += "<div class='windowBonfire'>Bonfires</div>";
 
@@ -385,6 +422,7 @@ function mapSettingsDisplay(elem, titleText) {
             insanity: 0,
             potions: 0,
             bonfires: 0,
+            relics: 0,
             boneamount: 0,
             bonebelow: 0,
             runType: 'All',
@@ -513,10 +551,10 @@ function mapSettingsDisplay(elem, titleText) {
             if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
 
             //Auto level checkbox
-            if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "' style='text-align: center; padding-left: 5px;'>" + buildNiceCheckboxAutoLevel('windowAutoLevel' + x, null, vals.autoLevel, x, varPrefix) + '</div>';
+            if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "' style='text-align: center; padding-left: 5px;'>" + buildNiceCheckboxAutoLevel('windowAutoLevel' + x, null, vals.autoLevel, x, varPrefix) + '</div>';
 
             //Level input
-            if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowLevel" + varPrefix + "'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
+            if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowLevel" + varPrefix + "'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
 
             //Map Type dropdown
             if (tributeFarm || smithyFarm || mapFarm || alchemy) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "' onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.mapType + "' id='windowMapTypeDropdown" + x + "'>" + dropdowns.mapType + '</select></div>';
@@ -554,6 +592,9 @@ function mapSettingsDisplay(elem, titleText) {
 
             //Black bogs to run
             if (quagmire) tooltipText += "<div class='windowBogs'><input value='" + vals.bogs + "' type='number' id='windowBogs" + x + "'/></div>";
+
+            //Archaeology Relic String
+            if (archaeology) tooltipText += "<div class='windowRelics" + varPrefix + "'><input value='" + vals.relics + "' type='value' id='windowRelics" + x + "'/></div>";
 
             //Insanity stacks to farm for
             if (insanity) tooltipText += "<div class='windowInsanity'><input value='" + vals.insanity + "' type='number' id='windowInsanity" + x + "'/></div>";
@@ -701,6 +742,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
     var toxicity = titleText.includes('Toxicity');
 
     var quagmire = titleText.includes('Quagmire');
+    var archaeology = titleText.includes('Archaeology');
     var insanity = titleText.includes('Insanity');
     var alchemy = titleText.includes('Alchemy');
     var hypothermia = titleText.includes('Hypothermia');
@@ -793,7 +835,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
             if (thisSetting.special === 'hc' || thisSetting.special === 'lc') thisSetting.gather = document.getElementById('windowGather' + x).value;
             else thisSetting.gather = null;
         }
-        if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
+        if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
         if (tributeFarm || smithyFarm || mapFarm || alchemy) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
         if (mapFarm && thisSetting.mapType === 'Map Count') thisSetting.repeat = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
         if (mapFarm && thisSetting.mapType !== 'Map Count') thisSetting.repeat = document.getElementById('windowRepeat' + x).value;
@@ -801,11 +843,12 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
         if (mapFarm || mapBonus) thisSetting.hdRatio = document.getElementById('windowHDRatio' + x).value;
         if (tributeFarm) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
         if (tributeFarm) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
-        if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
         if (golden) {
             thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
             thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
         }
+        if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
+        if (archaeology) thisSetting.relics = document.getElementById('windowRelics' + x).value;
         if (alchemy) {
             thisSetting.potion = document.getElementById('windowPotionType' + x).value;
             thisSetting.potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
@@ -992,6 +1035,7 @@ function mapSettingsHelpWindow(titleText, trimple) {
     var smithyFarm = titleText.includes('Smithy Farm');
     var worshipperFarm = titleText.includes('Worshipper Farm');
     var quagmire = titleText.includes('Quagmire');
+    var archaeology = titleText.includes('Archaeology');
     var insanity = titleText.includes('Insanity');
     var alchemy = titleText.includes('Alchemy');
     var hypothermia = titleText.includes('Hypothermia');
@@ -1028,7 +1072,7 @@ function mapSettingsHelpWindow(titleText, trimple) {
 
     //Top Row Information
     if (!golden) {
-        mazHelp += '<br><br>The top row section consists of toggles/inputs which add extra functions to the setting itself.<br></br><ul>';
+        mazHelp += '<br><br>The top row section consists of toggles/inputs which add extra functions to the setting itself:<br></br><ul>';
         mazHelp += '<li><b>Enabled</b> - A toggle to disable/enable the entire setting.</li>';
         if (raiding && !bionic) {
             mazHelp += '<li><b>Recycle Maps</b> - A toggle to recycle maps after raiding has finished.</li>';
@@ -1105,7 +1149,7 @@ function mapSettingsHelpWindow(titleText, trimple) {
         mazHelp += '<li class="indent"><b>Doesn\'t take overkill into account so for example if you overkill past c100 with a c100 line it will be skipped.</b></li>';
     }
     //AutoLevel
-    if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
+    if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity)
         mazHelp += '<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. ' + (radonSetting ? "Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount." : '') + '</li>';
     //Map Level
     if (mapFarm || tributeFarm || smithyFarm || worshipperFarm || hdFarm || insanity || alchemy || hypothermia || toxicity)
@@ -1232,6 +1276,8 @@ function mapSettingsHelpWindow(titleText, trimple) {
         //Black Bogs
         mazHelp += "<li><b>Bogs</b> - How many Black Bog maps you'd like to run during this line.</li>";
     }
+    //Relic String
+    if (archaeology) mazHelp += '<li><b>Relic String</b> - The relic string to be farmed on this zone. This setting will override the ingame Archaeology Automator input so only use this setting in conjunction with the scripts Archaeology string settings.</li>';
 
     if (insanity) {
         //Insanity Stacks
@@ -1419,6 +1465,7 @@ function removeRow(index, titleText) {
     var toxicity = titleText.includes('Toxicity');
 
     var quagmire = titleText.includes('Quagmire');
+    var archaeology = titleText.includes('Archaeology');
     var insanity = titleText.includes('Insanity');
     var alchemy = titleText.includes('Alchemy');
     var hypothermia = titleText.includes('Hypothermia');
@@ -1445,6 +1492,7 @@ function removeRow(index, titleText) {
     if (tributeFarm) document.getElementById('windowTributes' + index).value = 0;
     if (tributeFarm) document.getElementById('windowMets' + index).value = 0;
     if (quagmire) document.getElementById('windowBogs' + index).value = 0;
+    if (archaeology) document.getElementById('windowRelics' + index).value = 0;
     if (insanity) document.getElementById('windowInsanity' + index).value = 0;
     if (hdFarm) document.getElementById('windowHDType' + index).value = 'world';
     if (golden) document.getElementById('windowGoldenType' + index).value = 'h';
@@ -1480,7 +1528,7 @@ function removeRow(index, titleText) {
         swapClass('icon-', 'icon-checkbox-checked', checkBox);
         checkBox.setAttribute('data-checked', false);
     }
-    if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) {
+    if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) {
         var checkBox = document.getElementById('windowAutoLevel' + index);
         swapClass('icon-', 'icon-checkbox-checked', checkBox);
         checkBox.setAttribute('data-checked', true);
@@ -1519,6 +1567,7 @@ function updateWindowPreset(index, varPrefix) {
     var raiding = varPrefix.includes('Raiding');
     var toxicity = varPrefix.includes('Toxicity');
 
+    var archaeology = varPrefix.includes('Archaeology');
     var insanity = varPrefix.includes('Insanity');
     var alchemy = varPrefix.includes('Alchemy');
     var hypothermia = varPrefix.includes('Hypothermia');
@@ -1554,7 +1603,7 @@ function updateWindowPreset(index, varPrefix) {
         }
     }
 
-    if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || toxicity) {
+    if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || toxicity) {
         if (index !== '') {
             var autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
             swapClass('windowLevel', autoLevel, row);

@@ -208,6 +208,7 @@ ul.tab li a:hover {
 .windowDeleteMapBonus .icomoon,
 .windowDeleteBoneShrine .icomoon,
 .windowDeleteQuagmire .icomoon,
+.windowDeleteArchaeology .icomoon,
 .windowDeleteInsanity .icomoon,
 .windowDeleteAlchemy .icomoon,
 .windowDeleteHypothermia .icomoon,
@@ -237,6 +238,7 @@ ul.tab li a:hover {
 .windowDeleteMapBonus,
 .windowDeleteBoneShrine,
 .windowDeleteQuagmire,
+.windowDeleteArchaeology,
 .windowDeleteInsanity,
 .windowDeleteAlchemy,
 .windowDeleteHypothermia,
@@ -260,6 +262,7 @@ ul.tab li a:hover {
 .windowLevelOff .windowLevelWorshipperFarm,
 .windowLevelOff .windowLevelMapBonus,
 .windowLevelOff .windowLevelQuagmire,
+.windowLevelOff .windowLevelArchaeology,
 .windowLevelOff .windowLevelInsanity,
 .windowLevelOff .windowLevelAlchemy,
 .windowLevelOff .windowLevelHypothermia,
@@ -278,6 +281,7 @@ ul.tab li a:hover {
 .windowLevelOn .windowLevelWorshipperFarm,
 .windowLevelOn .windowLevelMapBonus,
 .windowLevelOn .windowLevelQuagmire,
+.windowLevelOn .windowLevelArchaeology,
 .windowLevelOn .windowLevelInsanity,
 .windowLevelOn .windowLevelAlchemy,
 .windowLevelOn .windowLevelHypothermia,
@@ -1191,6 +1195,51 @@ ul.tab li a:hover {
 
 .windowBogs {
     width: 18%;
+}
+
+/* Archaeology */
+.windowActiveArchaeology,
+.windowPriorityArchaeology,
+.windowWorldArchaeology,
+.windowCellArchaeology,
+.windowAutoLevelArchaeology,
+.windowLevelArchaeology,
+.windowJobRatioArchaeology,
+.windowRelicsArchaeology {
+    display: inline-block;
+    padding-left: 1%;
+}
+
+.windowActiveArchaeology {
+    width: 10%;
+}
+
+.windowPriorityArchaeology {
+    width: 10%;
+}
+
+.windowWorldArchaeology {
+    width: 10%;
+}
+
+.windowCellArchaeology {
+    width: 10%;
+}
+
+.windowAutoLevelArchaeology {
+    width: 7%;
+}
+
+.windowLevelArchaeology {
+    width: 10%;
+}
+
+.windowJobRatioArchaeology {
+    width: 18%;
+}
+
+.windowRelicsArchaeology {
+    width: 25%;
 }
 
 /* Insanity */

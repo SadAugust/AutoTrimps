@@ -1788,6 +1788,7 @@ function initializeAllSettings() {
 			}, 'multiTextValue', ['undefined'], null, 'Challenges', [2],
 			function () { return (getPageSetting('archaeology', currSettingUniverse) && autoTrimpSettings.archaeology.require()) });
 
+
 		//Exterminate
 		createSetting('exterminate',
 			function () { return ('Exterminate') },
@@ -1809,18 +1810,26 @@ function initializeAllSettings() {
 			}, 'textValue', 'undefined', null, 'Challenges', [2],
 			function () { return (getPageSetting('exterminate', currSettingUniverse) && autoTrimpSettings.exterminate.require()) });
 
-		//Quagmire
 		createSetting('quagmireSettings',
 			function () { return ('Quagmire Settings') },
 			function () {
-				var description = "<p>Here you can select how and when you would like Black Bog farming to be done during Quagmire.</p>";
+				var description = "<p>Here you can select how and when you would like Black Bog farming to be done during <b>Quagmire</b>.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Quagmire")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
 
-		//Insanity
+		createSetting('archaeologySettings',
+			function () { return ('Archaeology Settings') },
+			function () {
+				var description = "<p>Here you can select how and when you would like farm for specific relic strings during <b>Archaeology</b>.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
+				return description;
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Archaeology")', 'Challenges', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 90) });
+			
 		createSetting('insanitySettings',
 			function () { return ('Insanity Settings') },
 			function () {
@@ -1831,7 +1840,6 @@ function initializeAllSettings() {
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Insanity")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 110) });
 
-		//Alchemy
 		createSetting('alchemySettings',
 			function () { return ('Alchemy Settings') },
 			function () {
@@ -1842,7 +1850,6 @@ function initializeAllSettings() {
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Alchemy")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 155) });
 
-		//Hypothermia
 		createSetting('hypothermiaSettings',
 			function () { return ('Hypothermia Settings') },
 			function () {
@@ -6273,6 +6280,18 @@ function updateATVersion() {
                 if (!gameUserCheck()) autoTrimpSettings.testMapScummingValue.value = -1;
                 else if (typeof tempSettings['testMapScummingValue'].value === 'object' && tempSettings['testMapScummingValue'].valueU2) autoTrimpSettings.testMapScummingValue.value = tempSettings['testMapScummingValue'].valueU2;
                 else autoTrimpSettings.testMapScummingValue.value = -1;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.36') {
+            if (typeof game.global.addonUser['archaeologySettings'] === 'undefined') game.global.addonUser['archaeologySettings'] = {};
+            if (typeof game.global.addonUser['archaeologySettings']['valueU2'] === 'undefined') {
+                var obj = [];
+                for (var x = 0; x < 30; x++) {
+                    obj[x] = {};
+                    obj[x].done = '';
+                }
+                game.global.addonUser['archaeologySettings'].valueU2 = obj;
             }
         }
     }
