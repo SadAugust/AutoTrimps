@@ -259,12 +259,12 @@ function toggleCatchUpMode() {
 
             if (atSettings.running === false) return;
             if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
+            if (atSettings.intervals.thirtyMinute) timeWarpSave();
             updateInterval();
             var loopFrequency = getPageSetting('timeWarpFrequency');
             mainCleanup();
             if (game.global.mapsActive && getPageSetting('timeWarpDisplay') && usingRealTimeOffline) game.global.mapStarted -= 100;
 
-            //Run mainLoop every n game loops and always on a new zone.
             if (loops % loopFrequency === 0 || atSettings.portal.aWholeNewWorld || checkIfLiquidZone()) {
                 mainLoop();
             } else if (atSettings.intervals.thirtySecond) {
@@ -272,38 +272,7 @@ function toggleCatchUpMode() {
                 hdStats = new HDStats();
             }
 
-            //If user want to see the games UI then run this code every 600 game loops.
-            if (getPageSetting('timeWarpDisplay') && usingRealTimeOffline && loops % 600 === 0) {
-                usingRealTimeOffline = false;
-                var enemy = getCurrentEnemy();
-                updateGoodBar();
-                updateBadBar(enemy);
-                document.getElementById('goodGuyHealthMax').innerHTML = prettify(game.global.soldierHealthMax);
-                document.getElementById('badGuyHealthMax').innerHTML = prettify(enemy.maxHealth);
-
-                var blockDisplay = '';
-                //Prismatic Shield for U2
-                if (game.global.universe == 2) {
-                    var esMax = game.global.soldierEnergyShieldMax;
-                    var esMult = getEnergyShieldMult();
-                    var layers = Fluffy.isRewardActive('shieldlayer');
-                    if (layers > 0) {
-                        esMax *= layers + 1;
-                        esMult *= layers + 1;
-                    }
-                    blockDisplay = prettify(esMax) + ' (' + Math.round(esMult * 100) + '%)';
-                }
-                //Block for U1
-                else blockDisplay = prettify(game.global.soldierCurrentBlock);
-                document.getElementById('goodGuyBlock').innerHTML = blockDisplay;
-                document.getElementById('goodGuyAttack').innerHTML = calculateDamage(game.global.soldierCurrentAttack, true, true);
-                var badAttackElem = document.getElementById('badGuyAttack');
-                badAttackElem.innerHTML = calculateDamage(getCurrentEnemy().attack, true, false, false, getCurrentEnemy());
-
-                updateLabels(true);
-                displayMostEfficientEquipment();
-                usingRealTimeOffline = true;
-            }
+            if (getPageSetting('timeWarpDisplay') && usingRealTimeOffline && loops % 600 === 0) timeWarpUpdateUIDisplay();
             //Fix bug that is caused by this not running when the game is in offline mode
             else {
                 for (var equipName in game.equipment) {
@@ -314,15 +283,7 @@ function toggleCatchUpMode() {
                     }
                 }
             }
-            //Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
-            farmingDecision();
-            autoMaps();
-            callBetterAutoFight();
-            autoPortalCheck();
-            if (loops % 10 === 0 || atSettings.portal.aWholeNewWorld) autoMapsStatus();
-            if (game.global.universe === 1) checkStanceSetting();
-            if (game.global.universe === 2) equalityManagement();
-            guiLoop();
+            timeWarpRunATFunctions();
         };
 
         debug('TimeLapse Mode Enabled', 'offline');
@@ -332,6 +293,67 @@ function toggleCatchUpMode() {
             if (getPageSetting('timeWarpDisplay')) tooltip(`Time Warp`, `customText`, `lock`, `Your Time Warp duration is ${timeWarpTime}. As you have the ${autoTrimpSettings.timeWarpDisplay.name()} setting enabled you have no visible timer but you can see the progress percent in the AutoMaps status bar at the bottom of the battle container.`, false, `center`);
         }
     }
+}
+
+function timeWarpUpdateUIDisplay() {
+    usingRealTimeOffline = false;
+    var enemy = getCurrentEnemy();
+    updateGoodBar();
+    updateBadBar(enemy);
+    document.getElementById('goodGuyHealthMax').innerHTML = prettify(game.global.soldierHealthMax);
+    document.getElementById('badGuyHealthMax').innerHTML = prettify(enemy.maxHealth);
+
+    var blockDisplay = '';
+    //Prismatic Shield for U2
+    if (game.global.universe == 2) {
+        var esMax = game.global.soldierEnergyShieldMax;
+        var esMult = getEnergyShieldMult();
+        var layers = Fluffy.isRewardActive('shieldlayer');
+        if (layers > 0) {
+            esMax *= layers + 1;
+            esMult *= layers + 1;
+        }
+        blockDisplay = prettify(esMax) + ' (' + Math.round(esMult * 100) + '%)';
+    }
+    //Block for U1
+    else blockDisplay = prettify(game.global.soldierCurrentBlock);
+    document.getElementById('goodGuyBlock').innerHTML = blockDisplay;
+    document.getElementById('goodGuyAttack').innerHTML = calculateDamage(game.global.soldierCurrentAttack, true, true);
+    var badAttackElem = document.getElementById('badGuyAttack');
+    badAttackElem.innerHTML = calculateDamage(getCurrentEnemy().attack, true, false, false, getCurrentEnemy());
+
+    updateLabels(true);
+    displayMostEfficientEquipment();
+    usingRealTimeOffline = true;
+}
+
+function timeWarpRunATFunctions() {
+    //Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
+    farmingDecision();
+    autoMaps();
+    callBetterAutoFight();
+    autoPortalCheck();
+    if (loops % 10 === 0 || atSettings.portal.aWholeNewWorld) autoMapsStatus();
+    if (game.global.universe === 1) checkStanceSetting();
+    if (game.global.universe === 2) equalityManagement();
+    guiLoop();
+}
+
+function timeWarpSave() {
+    const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
+
+    game.global.lastOnline -= reduceBy;
+    game.global.portalTime -= reduceBy;
+    game.global.zoneStarted -= reduceBy;
+    game.global.lastSoldierSentAt -= reduceBy;
+    game.global.lastSkeletimp -= reduceBy;
+    save(false, true);
+    game.global.lastOnline += reduceBy;
+    game.global.portalTime += reduceBy;
+    game.global.zoneStarted += reduceBy;
+    game.global.lastSoldierSentAt += reduceBy;
+    game.global.lastSkeletimp += reduceBy;
+    debug(`Saved. ${reduceBy / 3600000} hours of offline progress left`);
 }
 
 //Offline mode check
@@ -351,6 +373,7 @@ function updateInterval() {
     //Need a ten minute interval for version checking.
     atSettings.intervals.oneMinute = atSettings.intervals.counter % (60000 / atSettings.runInterval) === 0;
     atSettings.intervals.tenMinute = atSettings.intervals.counter % 60000 === 0;
+    atSettings.intervals.thirtyMinute = atSettings.intervals.counter % 180000 === 0;
 }
 
 function mainLoop() {

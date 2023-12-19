@@ -4005,6 +4005,15 @@ function initializeAllSettings() {
 			}, 'value', 20, null, 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 
+		createSetting('timeWarpSaving',
+			function () { return ('Time Warp Saving') },
+			function () {
+				var description = "<p>Will cause the script to save your game during Time Warp so that you don't lose any time if you refresh.</p>";
+				description += "<p>Will automatically save every 30 minutes of game time.</p>";
+				return description;
+			}, 'boolean', false, null, 'Time Warp', [0],
+			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
+
 		createSetting('timeWarpDisplay',
 			function () { return ('Time Warp Display') },
 			function () {
