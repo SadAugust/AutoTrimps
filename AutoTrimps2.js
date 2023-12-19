@@ -353,7 +353,7 @@ function timeWarpSave() {
     game.global.zoneStarted += reduceBy;
     game.global.lastSoldierSentAt += reduceBy;
     game.global.lastSkeletimp += reduceBy;
-    debug(`Saved. ${reduceBy / 3600000} hours of offline progress left`);
+    debug(`Saved. ${formatTimeForDescriptions(reduceBy / 1000)} hours of offline progress left`);
 }
 
 //Offline mode check
