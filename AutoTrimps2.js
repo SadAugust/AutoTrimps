@@ -259,7 +259,7 @@ function toggleCatchUpMode() {
 
             if (atSettings.running === false) return;
             if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
-            if (atSettings.intervals.thirtyMinute) timeWarpSave();
+            if (atSettings.intervals.thirtyMinute && getPageSetting('timeWarpSaving')) timeWarpSave();
             updateInterval();
             var loopFrequency = getPageSetting('timeWarpFrequency');
             mainCleanup();
