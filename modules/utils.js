@@ -128,7 +128,7 @@ function debug(message, messageType, icon) {
 
     if (sendMessage) {
         console.log(timeStamp() + ' ' + message);
-        message2(message, 'AutoTrimps', icon, messageType);
+        message2(message, messageType, icon);
     }
 }
 
@@ -143,25 +143,26 @@ function setTitle() {
 
 var lastmessagecount = 1;
 
-function message2(message, b, icon, d) {
-    var log = document.getElementById('log'),
-        needsScroll = log.scrollTop + 10 > log.scrollHeight - log.clientHeight,
-        displayType = ATmessageLogTabVisible ? 'block' : 'none',
-        prefix = '';
+function message2(message, messageType, icon) {
+    const log = document.getElementById('log');
+    const needsScroll = log.scrollTop + 10 > log.scrollHeight - log.clientHeight;
+    const displayType = ATmessageLogTabVisible ? 'block' : 'none';
+    let prefix = '';
+
     icon && '*' === icon.charAt(0) ? ((icon = icon.replace('*', '')), (prefix = 'icomoon icon-')) : (prefix = 'glyphicon glyphicon-'),
         game.options.menu.timestamps.enabled && (message = (1 === game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + ' ' + message),
         icon && (message = '<span class="' + prefix + icon + '"></span> ' + message),
         (message = '<span class="glyphicon glyphicon-superscript"></span> ' + message),
         (message = '<span class="icomoon icon-text-color"></span>' + message);
-    var i = "<span class='" + b + 'Message message ' + d + "' style='display: " + displayType + "'>" + message + '</span>',
-        j = document.getElementsByClassName(b + 'Message');
+    var i = "<span class='" + 'AutoTrimps' + 'Message message ' + messageType + "' style='display: " + displayType + "'>" + message + '</span>',
+        j = document.getElementsByClassName('AutoTrimps Message');
     if (1 < j.length && -1 < j[j.length - 1].innerHTML.indexOf(message)) {
         var k = j[j.length - 1].innerHTML;
         lastmessagecount++;
         var l = k.lastIndexOf(' x');
         -1 !== l && (j[j.length - 1].innerHTML = k.slice(0, l)), (j[j.length - 1].innerHTML += ' x' + lastmessagecount);
     } else (lastmessagecount = 1), (log.innerHTML += i);
-    needsScroll && (log.scrollTop = log.scrollHeight), trimMessages(b);
+    needsScroll && (log.scrollTop = log.scrollHeight), trimMessages('AutoTrimps');
 }
 
 function filterMessage2(a) {
@@ -343,9 +344,10 @@ function getAncientTreasureName() {
 }
 
 function resourcesFromMap(resource, cache, jobRatio, mapLevel, mapCount) {
-    mapTime = cache[0] === 'l' ? 20 : 10;
+    mapTime = cache[0] === 'l' ? 20 : cache[0] === 's' ? 10 : 0;
     if (game.unlocks.imps.Chronoimp) mapTime += 5;
-    mapTime *= mapCount;
+    if (mapTime > 0) mapTime *= mapCount;
+    else mapTime = mapCount;
     if (game.unlocks.imps.Jestimp) mapTime += Math.floor(mapCount / 5) * 45;
 
     return scaleToCurrentMap_AT(simpleSeconds_AT(resource, mapTime, jobRatio), false, true, mapLevel);

@@ -66,6 +66,7 @@ function callAutoMapLevel_new(mapName, special) {
     else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
     else if (challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0) mapLevel = -1;
     else if (mapName === 'Quest' && mapLevel < mapBonusLevel && (currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10) mapLevel = mapBonusLevel;
+    else if (mapName === 'Insanity Farm' && mapLevel <= 0) mapLevel = 1;
     else if (mapName === 'Mayhem Destacking' && mapLevel < 0) mapLevel = getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0;
     else if (mapName === 'Pandemonium Destacking' && mapLevel <= 0) mapLevel = 1;
     else if (mapName === 'Alchemy Farm' && mapLevel <= 0) mapLevel = 1;
