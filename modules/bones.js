@@ -1,4 +1,4 @@
-function boneShrine() {
+function boneShrine(lineCheck) {
     const settingName = 'boneShrineSettings';
     const baseSettings = getPageSetting(settingName);
     const defaultSetting = baseSettings ? baseSettings[0] : null;
@@ -6,6 +6,7 @@ function boneShrine() {
 
     const setting = _getBoneShrineSetting(baseSettings, defaultSetting);
     if (setting === undefined) return;
+    if (lineCheck) return setting;
 
     const shrineCharges = _getBoneShrineCharges(setting);
     const boneShrineGather = _getBoneShrineGather(setting);
@@ -44,6 +45,7 @@ function _getBoneShrineSetting(baseSettings, defaultSetting) {
         if (defaultSetting.bonebelow <= 0) defaultSetting.bonebelow = 999;
         defaultSetting.atlantrimp = false;
         defaultSetting.boneamount = 1;
+        defaultSetting.priority = 0;
         return defaultSetting;
     }
 

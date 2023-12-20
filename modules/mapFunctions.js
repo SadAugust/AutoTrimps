@@ -580,7 +580,7 @@ function mapBonus(lineCheck) {
         }
     }
 
-    if (hdCheck || spireCheck) {
+    if ((hdCheck || spireCheck) && !berserkDisableMapping()) {
         //Set settings variable if we need to get hd or spire map bonus. Uses inputs from default settings (top) row of map bonus settings.
         const defaultEmpty = Object.keys(defaultSettings).length === 1;
         setting = {
@@ -2118,7 +2118,6 @@ function archaeology(lineCheck) {
         const mapSpecial = getAvailableSpecials('lrc', true);
         const relicObj = game.challenges.Archaeology.points;
         const relicsToPurchase = [];
-
         let mapLevel = setting.level;
 
         if (setting.autoLevel) {
@@ -2126,8 +2125,11 @@ function archaeology(lineCheck) {
         }
 
         for (let item in relicString) {
-            let relicName = game.challenges.Archaeology.getDefs()[relicString[item].replace(/[0-9]/g, '')];
-            if (relicName === undefined) return farmingDetails;
+            let relicName = game.challenges.Archaeology.getDefs()[relicString[item].slice(-1)];
+            if (relicName === undefined) {
+                farmingDetails.undefinedRelic = relicString[item].slice(-1);
+                return farmingDetails;
+            }
             let relicToBuy = relicString[item].replace(/\D/g, '');
             if (relicToBuy > relicObj[relicName]) {
                 relicsToPurchase.push(relicString[item]);
@@ -2311,6 +2313,42 @@ function _insanityDisableUniqueMaps() {
         }
     }
     return destackZone === 0 || game.global.world <= destackZone;
+}
+
+//Daily (bloodthirst), Balance, Unbalance & Storm Destacking
+function berserk(lineCheck) {
+    const mapName = 'Berserk';
+    const farmingDetails = {
+        shouldRun: false,
+        mapName: mapName
+    };
+
+    if (!challengeActive('Berserk') || !getPageSetting('berserk')) return farmingDetails;
+
+    let shouldMap = false;
+    const mapLevel = -(game.global.world - 6);
+    const mapSpecial = getAvailableSpecials('fa');
+
+    if (game.challenges.Berserk.frenzyStacks !== 25) {
+        shouldMap = true;
+    }
+
+    //As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
+    if (lineCheck && shouldMap) return (setting = { priority: 0 });
+    const stacksToObtain = 25 - game.challenges.Berserk.frenzyStacks;
+    const repeat = game.global.mapsActive && getCurrentMapObject().size - getCurrentMapCell().level + 1 >= stacksToObtain;
+    const status = mapName + ': Obtaining Frenzy Stacks';
+
+    farmingDetails.shouldRun = shouldMap;
+    farmingDetails.mapName = mapName;
+    farmingDetails.mapLevel = mapLevel;
+    farmingDetails.autoLevel = false;
+    farmingDetails.special = mapSpecial;
+    farmingDetails.destack = destackValue;
+    farmingDetails.repeat = !repeat;
+    farmingDetails.status = status;
+
+    return farmingDetails;
 }
 
 function pandemoniumDestack(lineCheck) {
@@ -3067,7 +3105,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
             setting.hdType = 'hitsSurvivedVoid';
         }
     } //Standalone Hits Survived setting setup.
-    else if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world) {
+    else if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world && !berserkDisableMapping()) {
         let hitsSurvivedSetting = targetHitsSurvived(true);
         if (hitsSurvivedSetting > 0 && hdStats.hitsSurvived < hitsSurvivedSetting)
             setting = {
@@ -3254,6 +3292,7 @@ function farmingDecision() {
         }
         //Sort priority list by priority > mapTypes index(settingName) if the priority sorting toggle is on
         if (getPageSetting('autoMapsPriority')) {
+            //mapTypes.unshift(boneShrine);
             priorityList.sort(function (a, b) {
                 if (a.priority === b.priority) return mapTypes.indexOf(a.settingName) > mapTypes.indexOf(b.settingName) ? 1 : -1;
                 return a.priority > b.priority ? 1 : -1;
@@ -3452,6 +3491,7 @@ function mapCost(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect
 function settingShouldRun(currSetting, world, zoneReduction, settingName) {
     if (!currSetting) return false;
     if (!world) return false;
+    if (berserkDisableMapping()) return false;
     if (!zoneReduction) zoneReduction = 0;
     world += zoneReduction;
     //Skips if line isn't active then skips
@@ -3484,8 +3524,14 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
     var liquified = game.global.lastClearedCell === -1 && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
     //If cell input is greater than current zone then skips
     if (!liquified && game.global.lastClearedCell + 2 < currSetting.cell) return false;
+    if (challengeActive('Berserk')) {
+        if (typeof currSetting.runType !== 'undefined') {
+            if (trimpStats.isC3 && (currSetting.runType !== 'C3' || !challengeActive(currSetting.challenge3))) return false;
+            if (trimpStats.isOneOff && (currSetting.runType !== 'One Off' || !challengeActive(currSetting.challengeOneOff))) return false;
+        }
+    }
     //Skips if challenge type isn't set to the type we're currently running or if it's not the challenge that's being run.
-    if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
+    else if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
         //Dailies
         if (trimpStats.isDaily) {
             if (currSetting.runType !== 'Daily') return false;

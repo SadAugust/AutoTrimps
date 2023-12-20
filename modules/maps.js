@@ -345,13 +345,18 @@ function shouldAbandon(zoneCheck = true) {
     return false;
 }
 
+function berserkDisableMapping() {
+    if (!challengeActive('Berserk')) return false;
+    if (!getPageSetting('berserk')) return false;
+    if (game.global.mapsActive || game.global.preMapsActive) return false;
+    if (!game.global.fighting || game.global.soldierHealth <= 0) return false;
+    if (game.challenges.Berserk.frenzyStacks > 0) return true;
+}
+
 function autoMaps() {
     if (!getPageSetting('autoMaps') || !game.global.mapsUnlocked) return;
 
     if (_checkSitInMaps()) return;
-
-    //Override to disable mapping when we are the world and currently fighting
-    //if (game.challenges.Berserk.frenzyStacks > 0 && !game.global.mapsActive && !game.global.preMapsActive && challengeActive('Berserk') && getPageSetting('berserk')) return;
 
     if (_checkWaitForFrags()) return;
 

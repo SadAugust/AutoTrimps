@@ -2356,10 +2356,10 @@ function initializeAllSettings() {
 		createSetting('berserk',
 			function () { return ('Berserk') },
 			function () {
-				var description = "<p><b>NOT IMPLEMENTED YET!</b><br> Enable this if you want the script to perform additional actions during the <b>Berserk</b> challenge.</p>";
-				description += "<p>If enabled it will disable mapping if your army is alive in the world and you have more than 0 stacks of Frenzy buff.</p>";
-				description += "<p>If your army dies then it will go into a level 6 map and farm until you have 20 stacks of Frenzy to ensure you're always the strongest you can be. It <b>will</b> also abandon maps that are in the middle of being run to go obtain these stacks!</p>";
-				description += "Definitely needs some farm X metric but the best way to do that is still to be decided."
+				var description = "<p>Enable this if you want the script to perform additional actions during the <b>Berserk</b> challenge.</p>";
+				description += "<p>If enabled it will disable mapping if your army is alive in the world and you have more than 0 stacks of Frenzy buff and only allows mapping settings with a Berserk challenge line to be run.</p>";
+				description += "<p>If your army dies then it will go into a level 6 map and farm until you have max Frenzied stacks to ensure you're always the strongest you can be. It <b>will</b> also abandon maps that are in the middle of being run to go obtain these stacks!</p>";
+				description += "<p>Make sure you setup appropriate mapping lines to farm enough should you die. I highly recommend repeat every 1 zone lines for HD Farm, Tribute Farm and Smithy Farm.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
