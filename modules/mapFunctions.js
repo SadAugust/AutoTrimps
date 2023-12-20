@@ -2130,7 +2130,7 @@ function archaeology(lineCheck) {
                 farmingDetails.undefinedRelic = relicString[item].slice(-1);
                 return farmingDetails;
             }
-            let relicToBuy = relicString[item].replace(/\D/g, '');
+            let relicToBuy = parseInt(relicString[item]);
             if (relicToBuy > relicObj[relicName]) {
                 relicsToPurchase.push(relicString[item]);
             }
@@ -2138,8 +2138,8 @@ function archaeology(lineCheck) {
 
         if (!game.options.menu.pauseGame.enabled && getPageSetting('autoMaps')) {
             while (relicsToPurchase.length > 0 && game.resources.science.owned > game.challenges.Archaeology.getNextCost()) {
-                let relicName = game.challenges.Archaeology.getDefs()[relicsToPurchase[0].replace(/[0-9]/g, '')];
-                let relicToBuy = relicsToPurchase[0].replace(/\D/g, '');
+                let relicName = game.challenges.Archaeology.getDefs()[relicsToPurchase[0].slice(-1)];
+                let relicToBuy = parseInt(relicsToPurchase[0]);
                 game.challenges.Archaeology.buyRelic(relicName + 'Relic', true);
                 if (game.challenges.Archaeology.points[relicName] >= relicToBuy) relicsToPurchase.shift();
             }
