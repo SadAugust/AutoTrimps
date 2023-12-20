@@ -489,7 +489,7 @@ function removeTrustworthyTrimps() {
     var dif = Math.floor(offlineProgress.totalOfflineTime / 100);
     var ticks = dif > offlineProgress.maxTicks ? offlineProgress.maxTicks : dif;
     var unusedTicks = dif - ticks;
-    if (unusedTicks > 0) untrustworthyTrimpsT(false, unusedTicks / 10, true);
+    if (unusedTicks > 0) untrustworthyTrimps(false, unusedTicks / 10, true);
 }
 
 //Check and update each patch!
