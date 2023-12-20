@@ -3523,7 +3523,7 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
     var liquified = game.global.lastClearedCell === -1 && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
     //If cell input is greater than current zone then skips
     if (!liquified && game.global.lastClearedCell + 2 < currSetting.cell) return false;
-    if (challengeActive('Berserk')) {
+    if (challengeActive('Berserk') && getPageSetting('berserk')) {
         if (typeof currSetting.runType !== 'undefined') {
             if (trimpStats.isC3 && (currSetting.runType !== 'C3' || !challengeActive(currSetting.challenge3))) return false;
             if (trimpStats.isOneOff && (currSetting.runType !== 'One Off' || !challengeActive(currSetting.challengeOneOff))) return false;
