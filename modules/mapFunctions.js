@@ -2103,7 +2103,7 @@ function archaeology(lineCheck) {
         let world = currSetting.world;
         if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
 
-        if (game.global.world === currSetting.world) {
+        if (game.global.world === world || (game.global.world - world) % currSetting.repeatevery === 0) {
             settingIndex = y;
             break;
         }
@@ -2113,6 +2113,7 @@ function archaeology(lineCheck) {
     if (lineCheck) return setting;
 
     if (setting !== undefined) {
+        const nextRelicCost = game.challenges.Archaeology.getNextCost();
         const relicString = setting.relics.split(',');
         const mapSpecial = getAvailableSpecials('lrc', true);
         const relicObj = game.challenges.Archaeology.points;
@@ -2144,8 +2145,20 @@ function archaeology(lineCheck) {
 
         if (relicsToPurchase.length > 0) shouldMap = true;
 
+        let canAffordNextRelic = false;
+        if (setting.mapCap && setting.mapCap > 0) {
+            const mapCap = mapSettings.mapName === mapName ? setting.mapCap - game.global.mapRunCounter : setting.mapCap;
+            if (typeof mapSettings.canAffordNextRelic !== 'undefined' && nextRelicCost === mapSettings.nextRelicCost) {
+                canAffordNextRelic = mapSettings.canAffordNextRelic;
+            } else {
+                canAffordNextRelic = game.resources.science.owned + resourcesFromMap('science', mapSpecial, setting.jobratio, mapLevel, mapCap) > nextRelicCost;
+            }
+
+            shouldMap = canAffordNextRelic;
+        }
+
         if (mapSettings.mapName === mapName && !shouldMap) {
-            mappingDetails(mapName);
+            mappingDetails(mapName, mapLevel, mapSpecial);
             resetMapVars(setting, settingName);
         }
 
@@ -2161,6 +2174,9 @@ function archaeology(lineCheck) {
         farmingDetails.gather = 'science';
         farmingDetails.jobRatio = setting.jobratio;
         farmingDetails.relicString = setting.relics;
+        if (typeof canAffordNextRelic !== 'undefined') farmingDetails.canAffordNextRelic = canAffordNextRelic;
+        farmingDetails.nextRelicCost = nextRelicCost;
+
         farmingDetails.repeat = !repeat;
         farmingDetails.status = status;
         farmingDetails.settingIndex = settingIndex;

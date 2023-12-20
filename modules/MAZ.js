@@ -96,7 +96,7 @@ function mapSettingsDisplay(elem, titleText) {
             windowWidth: '45%'
         },
         Archaeology: {
-            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'autoLevel', 'relics', 'jobratio'],
+            settingInputs: ['active', 'priority', 'row', 'world', 'cell', 'level', 'repeatevery', 'mapCap', 'endzone', 'autoLevel', 'relics', 'jobratio'],
             settingInputsDefault: [],
             windowWidth: '50%'
         },
@@ -339,7 +339,7 @@ function mapSettingsDisplay(elem, titleText) {
         tooltipText += "<div class='windowPriority" + varPrefix + "'>Priority</div>";
         if (!voidMap && !golden && !boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "'>Start<br/>Zone</div>";
         if (boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "'>Zone</div>";
-        if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy) tooltipText += "<div class='windowEndZone" + varPrefix + "'>End<br/>Zone</div>";
+        if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || archaeology || alchemy) tooltipText += "<div class='windowEndZone" + varPrefix + "'>End<br/>Zone</div>";
         if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>";
         if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "'>Min Zone</div>";
         if (voidMap) tooltipText += "<div class='windowMaxVoidZone'>Max Zone</div>";
@@ -359,7 +359,10 @@ function mapSettingsDisplay(elem, titleText) {
         if (mapBonus) tooltipText += "<div class='windowMapStacks'>Map<br/>Stacks</div>";
         if (golden) tooltipText += "<div class='windowTypeAutoGolden'>Golden Type</div>";
         if (quagmire) tooltipText += "<div class='windowBogs'>Bogs</div>";
-        if (archaeology) tooltipText += "<div class='windowRelics" + varPrefix + "'>Relic String</div>";
+        if (archaeology) {
+            tooltipText += "<div class='windowRelics" + varPrefix + "'>Relic String</div>";
+            tooltipText += "<div class='windowMapCap'>Map<br/>Cap</div>";
+        }
         if (insanity) tooltipText += "<div class='windowInsanity'>Insanity</div>";
         if (alchemy) tooltipText += "<div class='windowPotionType'>Potion Type</div>";
         if (alchemy) tooltipText += "<div class='windowPotionNumber'>Potion Number</div>";
@@ -384,7 +387,7 @@ function mapSettingsDisplay(elem, titleText) {
             tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
         }
         if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "'>Job<br/>Ratio</div>";
-        if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "'>Repeat<br/>Every</div>";
+        if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || archaeology || alchemy) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "'>Repeat<br/>Every</div>";
         if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
         if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) tooltipText += "<div class='windowSpecial" + varPrefix + "'>Special</div>";
         if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>";
@@ -538,7 +541,7 @@ function mapSettingsDisplay(elem, titleText) {
             if (!golden) tooltipText += "<div class='windowWorld" + varPrefix + "' style = " + backgroundStyle + "' oninput='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
 
             //End Zone input
-            if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy) tooltipText += "<div class='windowEndZone" + varPrefix + "'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
+            if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || archaeology || alchemy) tooltipText += "<div class='windowEndZone" + varPrefix + "'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
 
             //Highest Void Zone input - SHOULD BE CONVERTED TO USE END ZONE INSTEAD!
             if (voidMap) tooltipText += "<div class='windowMaxVoidZone'><input value='" + vals.maxvoidzone + "' type='number' id='windowMaxVoidZone" + x + "'/></div>";
@@ -595,8 +598,10 @@ function mapSettingsDisplay(elem, titleText) {
             if (quagmire) tooltipText += "<div class='windowBogs'><input value='" + vals.bogs + "' type='number' id='windowBogs" + x + "'/></div>";
 
             //Archaeology Relic String
-            if (archaeology) tooltipText += "<div class='windowRelics" + varPrefix + "'><input value='" + vals.relics + "' type='value' id='windowRelics" + x + "'/></div>";
-
+            if (archaeology) {
+                tooltipText += "<div class='windowRelics" + varPrefix + "'><input value='" + vals.relics + "' type='value' id='windowRelics" + x + "'/></div>";
+                tooltipText += "<div class='windowMapCap'><input value='" + vals.mapCap + "' type='number' id='windowMapCap" + x + "'/></div>";
+            }
             //Insanity stacks to farm for
             if (insanity) tooltipText += "<div class='windowInsanity'><input value='" + vals.insanity + "' type='number' id='windowInsanity" + x + "'/></div>";
 
@@ -631,7 +636,7 @@ function mapSettingsDisplay(elem, titleText) {
             if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
 
             //Repeat every X zones
-            if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
+            if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || archaeology || alchemy) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
 
             //Gather type dropdown for bone shrines
             if (boneShrine) tooltipText += "<div class='windowBoneGather'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + dropdowns.gather + '</select></div>';
@@ -826,8 +831,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
             thisSetting.hdType = document.getElementById('windowHDType' + x).value;
             thisSetting.mapCap = parseInt(document.getElementById('windowMapCap' + x).value, 10);
         }
-        if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
-        if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
+        if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || archaeology || alchemy) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
+        if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || archaeology || alchemy) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
         if (raiding && bionic) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
         if (raiding && !bionic) thisSetting.raidingzone = document.getElementById('windowRaidingZone' + x).value;
 
@@ -849,7 +854,10 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
             thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
         }
         if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
-        if (archaeology) thisSetting.relics = document.getElementById('windowRelics' + x).value;
+        if (archaeology) {
+            thisSetting.relics = document.getElementById('windowRelics' + x).value;
+            thisSetting.mapCap = parseInt(document.getElementById('windowMapCap' + x).value, 10);
+        }
         if (alchemy) {
             thisSetting.potion = document.getElementById('windowPotionType' + x).value;
             thisSetting.potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
@@ -1376,9 +1384,19 @@ function addRow(varPrefix, titleText) {
                 }
 
                 if (!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm') && document.getElementById('windowRepeat' + x) !== null) document.getElementById('windowRepeat' + x).value = 0;
-                if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm') || titleText.includes('Alchemy Farm')) && document.getElementById('windowRepeatEvery' + x) !== null) document.getElementById('windowRepeatEvery' + x).value = 0;
+                if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm') || titleText.includes('Archaeology') || titleText.includes('Alchemy Farm')) && document.getElementById('windowRepeatEvery' + x) !== null) document.getElementById('windowRepeatEvery' + x).value = 0;
                 if (
-                    (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm') || titleText.includes('Desolation') || titleText.includes('Alchemy Farm') || titleText.includes('Toxicity Farm')) &&
+                    (titleText.includes('Map Farm') ||
+                        titleText.includes('Tribute Farm') ||
+                        titleText.includes('Worshipper Farm') ||
+                        titleText.includes('HD Farm') ||
+                        titleText.includes('Raiding') ||
+                        titleText.includes('Map Bonus') ||
+                        titleText.includes('Smithy Farm') ||
+                        titleText.includes('Desolation') ||
+                        titleText.includes('Archaeology') ||
+                        titleText.includes('Alchemy Farm') ||
+                        titleText.includes('Toxicity Farm')) &&
                     document.getElementById('windowEndZone' + x) !== null
                 )
                     document.getElementById('windowEndZone' + x).value = 999;
@@ -1488,8 +1506,8 @@ function removeRow(index, titleText) {
     if (mapFarm || alchemy || mapBonus || insanity || toxicity) document.getElementById('windowGather' + index).value = 'food';
     if (mapFarm || smithyFarm || mapBonus || hdFarm || toxicity) document.getElementById('windowRepeat' + index).value = 0;
     if (hdFarm) document.getElementById('windowHDMult' + index).value = 0;
-    if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || alchemy) document.getElementById('windowRepeatEvery' + index).value = 0;
-    if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || alchemy) document.getElementById('windowEndZone' + index).value = 0;
+    if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || archaeology || alchemy) document.getElementById('windowRepeatEvery' + index).value = 0;
+    if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || archaeology || alchemy) document.getElementById('windowEndZone' + index).value = 0;
     if (tributeFarm) document.getElementById('windowTributes' + index).value = 0;
     if (tributeFarm) document.getElementById('windowMets' + index).value = 0;
     if (quagmire) document.getElementById('windowBogs' + index).value = 0;

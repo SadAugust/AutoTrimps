@@ -1201,9 +1201,11 @@ ul.tab li a:hover {
 .windowActiveArchaeology,
 .windowPriorityArchaeology,
 .windowWorldArchaeology,
+.windowEndZoneArchaeology,
 .windowCellArchaeology,
 .windowAutoLevelArchaeology,
 .windowLevelArchaeology,
+.windowRepeatEveryArchaeology,
 .windowJobRatioArchaeology,
 .windowRelicsArchaeology {
     display: inline-block;
@@ -1211,35 +1213,43 @@ ul.tab li a:hover {
 }
 
 .windowActiveArchaeology {
-    width: 10%;
+    width: 9%;
 }
 
 .windowPriorityArchaeology {
-    width: 10%;
-}
-
-.windowWorldArchaeology {
-    width: 10%;
-}
-
-.windowCellArchaeology {
-    width: 10%;
-}
-
-.windowAutoLevelArchaeology {
     width: 7%;
 }
 
+.windowWorldArchaeology {
+    width: 7%;
+}
+
+.windowEndZoneArchaeology {
+    width: 7%;
+}
+
+.windowCellArchaeology {
+    width: 7%;
+}
+
+.windowAutoLevelArchaeology {
+    width: 6%;
+}
+
 .windowLevelArchaeology {
-    width: 10%;
+    width: 7%;
+}
+
+.windowRepeatEveryArchaeology {
+    width: 7%;
 }
 
 .windowJobRatioArchaeology {
-    width: 18%;
+    width: 14%;
 }
 
 .windowRelicsArchaeology {
-    width: 25%;
+    width: 23%;
 }
 
 /* Insanity */
