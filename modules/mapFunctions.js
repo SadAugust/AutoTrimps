@@ -2148,7 +2148,7 @@ function archaeology(lineCheck) {
         if (relicsToPurchase.length > 0) shouldMap = true;
 
         let canAffordNextRelic = false;
-        if (setting.mapCap && setting.mapCap > 0) {
+        if (shouldMap && setting.mapCap && setting.mapCap > 0) {
             const mapCap = mapSettings.mapName === mapName ? setting.mapCap - game.global.mapRunCounter : setting.mapCap;
             if (typeof mapSettings.canAffordNextRelic !== 'undefined' && nextRelicCost === mapSettings.nextRelicCost) {
                 canAffordNextRelic = mapSettings.canAffordNextRelic;
@@ -2178,6 +2178,7 @@ function archaeology(lineCheck) {
         farmingDetails.relicString = setting.relics;
         if (typeof canAffordNextRelic !== 'undefined') farmingDetails.canAffordNextRelic = canAffordNextRelic;
         farmingDetails.nextRelicCost = nextRelicCost;
+        farmingDetails.relicsToPurchase = relicsToPurchase;
 
         farmingDetails.repeat = !repeat;
         farmingDetails.status = status;
@@ -2315,7 +2316,6 @@ function _insanityDisableUniqueMaps() {
     return destackZone === 0 || game.global.world <= destackZone;
 }
 
-//Daily (bloodthirst), Balance, Unbalance & Storm Destacking
 function berserk(lineCheck) {
     const mapName = 'Berserk';
     const farmingDetails = {
@@ -2344,7 +2344,6 @@ function berserk(lineCheck) {
     farmingDetails.mapLevel = mapLevel;
     farmingDetails.autoLevel = false;
     farmingDetails.special = mapSpecial;
-    farmingDetails.destack = destackValue;
     farmingDetails.repeat = !repeat;
     farmingDetails.status = status;
 
@@ -3263,7 +3262,7 @@ function farmingDecision() {
         if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) return (mapSettings = farmingDetails);
 
         //U2 map settings to check for.
-        mapTypes = [mapDestacking, quest, archaeology, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, obtainUniqueMap];
+        mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, obtainUniqueMap];
     }
 
     //Skipping map farming if in Decay or Melt and above stack count user input

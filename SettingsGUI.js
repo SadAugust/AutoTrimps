@@ -2363,7 +2363,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 999) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 115) });
 
 		//Pandemonium
 		createSetting('pandemonium',
