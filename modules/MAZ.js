@@ -1272,36 +1272,30 @@ function mapSettingsHelpWindow(titleText, trimple) {
     }
 
     if (worshipperFarm) {
-        //Worshipper Count
         mazHelp += "<li><b>Ship</b> - How many worshippers you'd like to farm up to during this line. Max input is 50 and it'll default to that value if you input anything higher.</li>";
     }
 
     if (toxicity) {
-        //Toxicity Stacks
         mazHelp += "<li><b>Toxic Stacks</b> - How many Toxic Stacks you'd like to farm up to during this line.</li>";
     }
 
     if (quagmire) {
-        //Black Bogs
         mazHelp += "<li><b>Bogs</b> - How many Black Bog maps you'd like to run during this line.</li>";
     }
-    //Relic String
-    if (archaeology) mazHelp += '<li><b>Relic String</b> - The relic string to be farmed on this zone. This setting will override the ingame Archaeology Automator input so only use this setting in conjunction with the scripts Archaeology string settings.</li>';
 
+    if (archaeology) {
+        mazHelp += '<li><b>Relic String</b> - The relic string to be farmed on this zone. This setting will override the ingame Archaeology Automator input so only use this setting in conjunction with the scripts Archaeology string settings.</li>';
+        mazHelp += '<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this line.</li>';
+    }
     if (insanity) {
-        //Insanity Stacks
         mazHelp += "<li><b>Insanity</b> - How many Insanity stack you'd like to farm up to during this line.</li>";
-        //Destack toggle setting
         mazHelp += '<li><b>Destack</b> - Toggle to allow you to run maps that are lower than world level during Insanity. If a destack zone is set it will allow lower than world level maps to be run from that zone onwards.</li>';
         mazHelp += '<li class="indent">When enabled Insanity Farm will assume you\'re destacking and it will aim to reduce your max Insanity to the value in the Insanity field.</li>';
     }
 
     if (alchemy) {
-        //Farm Type
         mazHelp += "<li><b>Farm Type</b> - The way in which Alchemy Farm will operate. Either by using absolute values for what you'd like to farm e.g. 5 Potions of Strength or by having the script identify how many you can farm in X maps and then farming until you reach that value.</li>";
-        //Potion Type
         mazHelp += '<li><b>Potion Type</b> - The type of potion you want to farm during this line.</li>';
-        //Potion Number
         mazHelp += "<li><b>Potion Number</b> - How many of the potion specified in 'Potion Type' you'd like to farm for.</li>";
     }
 
@@ -1314,9 +1308,9 @@ function mapSettingsHelpWindow(titleText, trimple) {
     }
 
     //Repeat Every
-    if (mapFarm || tributeFarm || worshipperFarm || smithyFarm || toxicity || desolation || alchemy) mazHelp += '<li><b>Repeat Every</b> - Line can be repeated every zone, or set to a custom number depending on need.</li>';
+    if (mapFarm || tributeFarm || worshipperFarm || smithyFarm || toxicity || desolation || archaeology || alchemy) mazHelp += '<li><b>Repeat Every</b> - Line can be repeated every zone, or set to a custom number depending on need.</li>';
     //End Zone
-    if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || toxicity || desolation || alchemy) mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this line repeat. If so, the line will stop repeating at this zone. Must be between 6 and 1000.</li>";
+    if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || toxicity || desolation || archaeology || alchemy) mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this line repeat. If so, the line will stop repeating at this zone. Must be between 6 and 1000.</li>";
     //Run Type
     if (boneShrine || voidMap || mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || golden) mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
 
