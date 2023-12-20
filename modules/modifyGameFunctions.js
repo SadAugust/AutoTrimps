@@ -26,6 +26,12 @@ offlineProgress.start = function () {
     offlineProgress.originalStart(...arguments);
     while (game.options.menu.offlineProgress.enabled !== trustWorthy) toggleSetting('offlineProgress');
     try {
+        const offlineTime = offlineProgress.totalOfflineTime / 1000 - 86400;
+        if (offlineTime > 0) {
+            // offlineTime *= 1000;
+            game.global.portalTime += offlineTime;
+            if (getZoneSeconds() >= offlineTime) game.global.zoneStarted += offlineTime;
+        }
         setupTimeWarpAT();
     } catch (e) {
         console.log('Loading Time Warp failed ' + e, 'other');
@@ -35,12 +41,9 @@ offlineProgress.start = function () {
 //Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
 offlineProgress.originalFinish = offlineProgress.finish;
 offlineProgress.finish = function () {
-    //Time we have run TW in seconds
+    const offlineTime = offlineProgress.totalOfflineTime / 1000 - 86400;
     var timeRun = (new Date().getTime() - offlineProgress.startTime) / 1000;
-    //Add on any extra time if your Time Warp was over 24 hours long.
-    var offlineTime = offlineProgress.totalOfflineTime / 1000 - 86400;
     timeRun += Math.max(0, offlineTime);
-    //if (timeRun > 86400) offlineProgress.maxTicks = timeRun * 1000;
     if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
     offlineProgress.originalFinish(...arguments);
     try {
@@ -345,22 +348,11 @@ function updateButtonColor(what, canAfford, isJob) {
 }
 
 //Check and update each patch!
-function trustworthyTrimps_AT(noTip, forceTime, negative) {
+function untrustworthyTrimps(noTip, forceTime, negative) {
     if (!game.global.lastOnline) return;
-    var rightNow = new Date().getTime();
-    var dif = 0;
-    if (forceTime) {
-        dif = forceTime;
-    } else {
-        if (game.global.lastOfflineProgress > rightNow) {
-            game.global.lastOfflineProgress = rightNow;
-            return;
-        }
-        game.global.lastOfflineProgress = rightNow;
-        dif = rightNow - game.global.lastOnline;
-        dif = Math.floor(dif / 1000);
-    }
-    //if (dif < 60) return;
+    if (!forceTime) return;
+    var dif = forceTime;
+
     var storageBought = [];
     var compatible = ['Farmer', 'Lumberjack', 'Miner', 'Dragimp', 'Explorer'];
     var storages = ['Barn', 'Shed', 'Forge'];
@@ -497,7 +489,7 @@ function removeTrustworthyTrimps() {
     var dif = Math.floor(offlineProgress.totalOfflineTime / 100);
     var ticks = dif > offlineProgress.maxTicks ? offlineProgress.maxTicks : dif;
     var unusedTicks = dif - ticks;
-    if (unusedTicks > 0) trustworthyTrimps_AT(false, unusedTicks / 10, true);
+    if (unusedTicks > 0) untrustworthyTrimpsT(false, unusedTicks / 10, true);
 }
 
 //Check and update each patch!
