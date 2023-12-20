@@ -2248,7 +2248,8 @@ function insanity(lineCheck) {
         //PRETTY SURE this needs some min/max checks to make sure we don't try to run a map that is too high or too low depending on our insanityGoal target
         //If auto level enabled will get the level of the map we should run.
         if (setting.autoLevel) {
-            mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
+            if (setting.destack) mapLevel = -(game.global.world - 6);
+            else mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
         }
 
         if (insanityGoal > game.challenges.Insanity.maxInsanity) insanityGoal = game.challenges.Insanity.maxInsanity;

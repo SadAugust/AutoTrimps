@@ -30,6 +30,7 @@ function autoPortalCheck(specificPortalZone, universe) {
 }
 
 function autoPortal(specificPortalZone, universe, skipDaily) {
+    if (MODULES.portal.portalForVoid && !game.options.menu.liquification.enabled) toggleSetting('liquification');
     if (!game.global.portalActive) return;
     if (game.global.runningChallengeSquared) return;
     if (!universe) universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
