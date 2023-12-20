@@ -617,7 +617,7 @@ function _purchaseMap(lowestMap) {
     }
     if (result === 1) {
         const mapCost = updateMapCost(true);
-        debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / game.resources.fragments.owned) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
+        debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / (game.resources.fragments.owned + mapCost)) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
         runMap();
         MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
     }

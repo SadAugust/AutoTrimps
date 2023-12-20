@@ -80,9 +80,9 @@ function mapSettingsDisplay(elem, titleText) {
     if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
     var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 
-    var settingInputsDefault = ['active'];
-    var settingInputs;
-    var windowWidth;
+    let settingInputsDefault = ['active'];
+    let settingInputs;
+    let windowWidth;
 
     const settingObj = {
         'Auto Golden': {
@@ -180,7 +180,8 @@ function mapSettingsDisplay(elem, titleText) {
     const settingInfo = settingObj[titleText];
     if (settingInfo) {
         settingInputs = settingInfo.settingInputs;
-        if (settingInfo.settingInputsDefault.length > 0) settingInputsDefault += settingInfo.settingInputsDefault;
+        settingInputsDefault = settingInfo.settingInputsDefault;
+        settingInputsDefault.unshift('active');
         windowWidth = settingInfo.windowWidth;
     }
     const originalSetting = getPageSetting(settingName + 'Settings', currSettingUniverse);
