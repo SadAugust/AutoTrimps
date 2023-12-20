@@ -372,8 +372,8 @@ function updateInterval() {
     atSettings.intervals.thirtySecond = atSettings.intervals.counter % (30000 / atSettings.runInterval) === 0;
     //Need a ten minute interval for version checking.
     atSettings.intervals.oneMinute = atSettings.intervals.counter % (60000 / atSettings.runInterval) === 0;
-    atSettings.intervals.tenMinute = atSettings.intervals.counter % 60000 === 0;
-    atSettings.intervals.thirtyMinute = atSettings.intervals.counter % 180000 === 0;
+    atSettings.intervals.tenMinute = atSettings.intervals.counter % (600000 / atSettings.runInterval) === 0;
+    atSettings.intervals.thirtyMinute = atSettings.intervals.counter % (1800000 / atSettings.runInterval) === 0;
 }
 
 function mainLoop() {
