@@ -558,10 +558,12 @@ function challengeInfo(force) {
             //Warning about disabled Mapology setting
             debug('You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.');
         }
-
         if (challengeActive('Downsize')) {
-            //Warning message when about map settings causing issues later.
-            debug('Be aware that your usual farming settings will not work properly when running ' + game.global.challengeActive + ' due to reduced population and will likely cause it to stall out so you might want to amend or disable them.');
+            debug("Be aware that since your normal farming settings will not properly work due to reduced population and lower expected end zone any mapping lines that aren't specific to this challenge won't run.");
+        }
+
+        if (_noMappingChallenges()) {
+            debug("Be aware that since the mapping you will do during this challenge is different from other challenges any mapping lines that aren't specific to this challenge won't run.");
         }
         if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
             //Warning message when AutoStructure Smithy purchasing is enabled.

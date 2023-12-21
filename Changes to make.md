@@ -38,19 +38,12 @@
     - When possible suicide until you have 19 stacks and then do the usual abandons from there.
         - https://discord.com/channels/371177798305447938/371348913036197899/1184641519735558235
 
-6. Berserk & Exterminate
-
-    - Only run mapping lines specific to Exterminate during the challenge.
-    - Disable HD Farm/Hits Survived/Map Bonus general ratio settings on it
-    - Important so that you don't need to go manually disable all other lines/use MAZ.
-        - https://discord.com/channels/371177798305447938/371348913036197899/1185268752070213643
-
-7. Smithy Farm
+6. Smithy Farm
 
     - If a smithy farm line has run MP selected, MP should be run if the target amount of smithy is already built before running this line
         - https://discord.com/channels/371177798305447938/371348913036197899/1186860923273629818
 
-8. Auto Level (new)
+7. Auto Level (new)
 
     - I saw a lot of switching back and forth between 2 levels in AL2, possibly due to titimps. Considering you lose the remaining titimps bonus when switching maps when calculation AL2 titimps bonus should be ignored or be considered always on
     - Have it check the difference between 2 results and if it's within a few % use the current map

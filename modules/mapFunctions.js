@@ -580,7 +580,7 @@ function mapBonus(lineCheck) {
         }
     }
 
-    if ((hdCheck || spireCheck) && !berserkDisableMapping()) {
+    if ((hdCheck || spireCheck) && !_berserkDisableMapping() && !_noMappingChallenges()) {
         //Set settings variable if we need to get hd or spire map bonus. Uses inputs from default settings (top) row of map bonus settings.
         const defaultEmpty = Object.keys(defaultSettings).length === 1;
         setting = {
@@ -3104,7 +3104,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
             setting.hdType = 'hitsSurvivedVoid';
         }
     } //Standalone Hits Survived setting setup.
-    else if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world && !berserkDisableMapping()) {
+    else if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world && !_berserkDisableMapping() && !_noMappingChallenges()) {
         let hitsSurvivedSetting = targetHitsSurvived(true);
         if (hitsSurvivedSetting > 0 && hdStats.hitsSurvived < hitsSurvivedSetting)
             setting = {
@@ -3490,7 +3490,7 @@ function mapCost(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect
 function settingShouldRun(currSetting, world, zoneReduction, settingName) {
     if (!currSetting) return false;
     if (!world) return false;
-    if (berserkDisableMapping()) return false;
+    if (_berserkDisableMapping()) return false;
     if (!zoneReduction) zoneReduction = 0;
     world += zoneReduction;
     //Skips if line isn't active then skips
@@ -3523,7 +3523,7 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
     var liquified = game.global.lastClearedCell === -1 && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
     //If cell input is greater than current zone then skips
     if (!liquified && game.global.lastClearedCell + 2 < currSetting.cell) return false;
-    if (challengeActive('Berserk') && getPageSetting('berserk')) {
+    if (_noMappingChallenges() || challengeActive('Downsize') || (challengeActive('Berserk') && getPageSetting('berserk'))) {
         if (typeof currSetting.runType !== 'undefined') {
             if (trimpStats.isC3 && (currSetting.runType !== 'C3' || !challengeActive(currSetting.challenge3))) return false;
             if (trimpStats.isOneOff && (currSetting.runType !== 'One Off' || !challengeActive(currSetting.challengeOneOff))) return false;

@@ -334,7 +334,7 @@ function ImportExportTooltip(what, event) {
             saveGame.options.menu.disablePause.enabled = 1;
         }
         // Adjust for remaining offline time
-        if (usingRealTimeOffline) {
+        else if (usingRealTimeOffline) {
             const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
             saveGame.global.lastOnline -= reduceBy;
             saveGame.global.portalTime -= reduceBy;
