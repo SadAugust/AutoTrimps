@@ -660,9 +660,7 @@ function resetVarsZone(loadingSave) {
 function downloadSave(portal) {
     if (!getPageSetting('downloadSaves')) return;
     if (portal && !portalWindowOpen) return;
-    tooltip('Export', null, 'update');
-    document.getElementById('downloadLink').click();
-    cancelTooltip();
+    ImportExportTooltip(null, 'downloadSave');
 }
 
 function hypoPackratReset(challenge) {

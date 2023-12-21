@@ -1886,7 +1886,7 @@ function initializeAllSettings() {
 				description += "<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>";
 				description += "<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'c2table\', \'update\')', 'C2', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("c2table")', 'C2', [0]);
 
 		createSetting('c2SharpTrimps',
 			function () { return (cinf() + ' Sharp Trimps') },
@@ -3755,7 +3755,7 @@ function initializeAllSettings() {
 				description += "<p><b>3.</b><br>Buy Efficiency if it is better than capacity.</p>";
 				description += "<p><b>4.</b><br>Buy Capacity or Supply depending on which is cheaper, or based on SupplyWall.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'MagmiteExplain\', \'update\')', 'Magma', [1],
+			}, 'infoclick', null, 'ImportExportTooltip("magmiteExplain")', 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 
 		//Automate Fuel Zones
@@ -4130,25 +4130,25 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Import a AutoTrimps settings file.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'ImportAutoTrimps\', \'update\')', 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("importAutoTrimps")', 'Import Export', [0]);
 		createSetting('ExportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
 				var description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'ExportAutoTrimps\', \'update\')', 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("exportAutoTrimps")', 'Import Export', [0]);
 		createSetting('DefaultAutoTrimps',
 			function () { return ('Reset To Default') },
 			function () {
 				var description = "<p>Reset everything to the way it was when you first installed the script.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'ResetDefaultSettingsProfiles\', \'update\')', 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("resetDefaultSettingsProfiles"\'")', 'Import Export', [0]);
 		createSetting('DownloadDebug',
 			function () { return ('Download For Debug') },
 			function () {
 				var description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip("ExportAutoTrimps","update",true)', 'Import Export', [0]);
+			}, 'action', null, 'ImportExportTooltip("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
 
 		createSetting('updateReload',
 			function () { return ('Update Reload') },
@@ -4228,7 +4228,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip(\'priorityOrder\', \'update\')', 'Help', [0]);
+			}, 'action', null, 'ImportExportTooltip("priorityOrder")', 'Help', [0]);
 		/* createSetting('helpFragments',
 			function () { return ('Fragment Decisions') },
 			function () {
@@ -4264,7 +4264,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will set the challenge that Trimps is running to your input.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip("SetCustomChallenge");', 'Test', [0]);
+			}, 'action', null, 'ImportExportTooltip("setCustomChallenge");', 'Test', [0]);
 
 		createSetting('testSetC2',
 			function () { return ('Toggle ' + cinf()) },

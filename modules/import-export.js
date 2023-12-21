@@ -1,4 +1,4 @@
-function ImportExportTooltip(what, event, download) {
+function ImportExportTooltip(what, event) {
     cancelTooltip();
     if (game.global.lockTooltip) return;
     var $elem = document.getElementById('tooltipDiv');
@@ -10,7 +10,7 @@ function ImportExportTooltip(what, event, download) {
     var tooltipText;
     var costText = '';
     var titleText = what;
-    if (what === 'ExportAutoTrimps') {
+    if (what === 'exportAutoTrimps') {
         var saveName = 'AT Settings P' + game.global.totalPortals;
         if (game.global.universe === 2 || game.global.totalRadPortals > 0) {
             saveName += ' ' + game.global.totalRadPortals + ' U' + game.global.universe;
@@ -39,7 +39,7 @@ function ImportExportTooltip(what, event, download) {
         costText += 'data:text/plain,' + encodeURIComponent(serializeSettings());
         costText += " ><div class='btn btn-danger' id='downloadBtn'>Download as File</div></a>";
         costText += '</div>';
-    } else if (what === 'ImportAutoTrimps') {
+    } else if (what === 'importAutoTrimps') {
         tooltipText = "Import your AUTOTRIMPS save string! It'll be fine, I promise.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadAutoTrimps();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
         ondisplay = function () {
@@ -51,7 +51,7 @@ function ImportExportTooltip(what, event, download) {
         ondisplay = function () {
             document.getElementById('importBox').focus();
         };
-    } else if (what === 'MagmiteExplain') {
+    } else if (what === 'magmiteExplain') {
         tooltipText = "<img src='" + atSettings.initialise.basepath + "/imgs/mi.png'>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
     } else if (what === 'priorityOrder') {
@@ -280,11 +280,11 @@ function ImportExportTooltip(what, event, download) {
         ondisplay = function () {
             _verticalCenterTooltip();
         };
-    } else if (what === 'ResetDefaultSettingsProfiles') {
+    } else if (what === 'resetDefaultSettingsProfiles') {
         titleText = '<b>Loading AutoTrimps Default Profile...</b><p>Current Settings will be lost!';
         tooltipText = '<b>NOTICE:</b> Switching to Default AutoTrimps settings profile!!!! <br>All current settings <b>WILL</b> be lost after this point. <br>You might want to cancel, to go back and save your existing settings first.... <br>This will <b><u>Reset</u></b> the script to factory settings.';
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); resetAutoTrimps();'>Reset to Default Profile</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
-    } else if (what === 'SetCustomChallenge') {
+    } else if (what === 'setCustomChallenge') {
         titleText = 'Enter Challenge To Run';
         tooltipText = "What challenge would you like to be switched to?<br/><br/><textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); testChallenge();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
@@ -298,43 +298,50 @@ function ImportExportTooltip(what, event, download) {
         ondisplay = function () {
             document.getElementById('setSettingsNameTooltip').focus();
         };
-    } else if (what === 'NameSettingsProfiles') {
-        titleText = 'Enter New Settings Profile Name';
-        tooltipText = "What would you like the name of the Settings Profile to be?<br/><br/><textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>";
-        costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); nameAndSaveNewProfile();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();document.getElementById(\"settingsProfiles\").selectedIndex=0;'>Cancel</div></div>";
-        ondisplay = function () {
-            document.getElementById('setSettingsNameTooltip').focus();
-        };
     } else if (what === 'message') {
         titleText = 'Generic message';
         tooltipText = event;
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 50%' onclick='cancelTooltip();'>OK</div></div>";
     }
+    if (what !== null) {
+        game.global.lockTooltip = true;
+        $elem.style.left = '33.75%';
+        $elem.style.top = '25%';
+        $elem.style.display = 'block';
+        document.getElementById('tipTitle').innerHTML = titleText;
+        document.getElementById('tipText').innerHTML = tooltipText;
+        document.getElementById('tipCost').innerHTML = costText;
+        if (ondisplay !== null) ondisplay();
+    }
 
-    game.global.lockTooltip = true;
-    $elem.style.left = '33.75%';
-    $elem.style.top = '25%';
-    document.getElementById('tipTitle').innerHTML = titleText;
-    document.getElementById('tipText').innerHTML = tooltipText;
-    document.getElementById('tipCost').innerHTML = costText;
-    $elem.style.display = 'block';
-    if (ondisplay !== null) ondisplay();
-
-    if (download === true && what === 'ExportAutoTrimps') {
+    if (event === 'downloadSave') {
         // Finish download of AT settings file
-        document.getElementById('downloadLink').click();
-        document.getElementById('confirmTooltipBtn').click();
+        if (what === 'exportAutoTrimps') {
+            document.getElementById('downloadLink').click();
+            document.getElementById('confirmTooltipBtn').click();
+        }
         // Export save file
         tooltip('Export', null, 'update');
-        var saveFile = document.getElementById('exportArea').value.replace(/(\r\n|\n|\r|\s)/gm, '');
-        var saveGame = JSON.parse(LZString.decompressFromBase64(saveFile));
+        const saveFile = document.getElementById('exportArea').value.replace(/(\r\n|\n|\r|\s)/gm, '');
+        let saveGame = JSON.parse(LZString.decompressFromBase64(saveFile));
         document.getElementById('confirmTooltipBtn').click();
         // Pausing save and setting options to my preferences
-        saveGame.options.menu.pauseGame.enabled = 1;
-        saveGame.options.menu.timeAtPause = new Date().getTime();
-        saveGame.options.menu.standardNotation.enabled = 0;
-        saveGame.options.menu.darkTheme.enabled = 2;
-        saveGame.options.menu.disablePause.enabled = 1;
+        if (what === 'ExportAutoTrimps') {
+            saveGame.options.menu.pauseGame.enabled = 1;
+            saveGame.options.menu.timeAtPause = new Date().getTime();
+            saveGame.options.menu.standardNotation.enabled = 0;
+            saveGame.options.menu.darkTheme.enabled = 2;
+            saveGame.options.menu.disablePause.enabled = 1;
+        }
+        // Adjust for remaining offline time
+        if (usingRealTimeOffline) {
+            const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
+            saveGame.global.lastOnline -= reduceBy;
+            saveGame.global.portalTime -= reduceBy;
+            saveGame.global.zoneStarted -= reduceBy;
+            saveGame.global.lastSoldierSentAt -= reduceBy;
+            saveGame.global.lastSkeletimp -= reduceBy;
+        }
         // Compress file and download
         saveGame = LZString.compressToBase64(JSON.stringify(saveGame));
 

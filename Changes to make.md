@@ -4,16 +4,11 @@
 
 # Challenges
 
-1. ## Berserk
-    - Disable mapping when alive.
-    - Farm in lvl6 map for max stacks
-    - Farm X amt of maps OR till you have 10x the stats of the improbability
-
 # Calc
 
 -   Fix issue with Ice debuff calculations inside Spires
     -   Deregate
-    -   https://discord.com/channels/371177798305447938/371348913036197899/1168575519864926319
+        -   https://discord.com/channels/371177798305447938/371348913036197899/1168575519864926319
 
 # Feature Requests
 
@@ -30,24 +25,36 @@
 
     - Bounty being prioritised if purchasble in X amount of time.
         - Should probably be 5mins or less?
-        - https://discord.com/channels/371177798305447938/371348913036197899/1177401054564982854
+            - https://discord.com/channels/371177798305447938/371348913036197899/1177401054564982854
 
 4. HD Farm
 
     - Disable Map Bonus farming when speed map level is below X
-    - https://discord.com/channels/371177798305447938/371348913036197899/1180873189778268171
+        - https://discord.com/channels/371177798305447938/371348913036197899/1180873189778268171
 
 5. Auto Equality
 
     - Support for the Revenge challenge
     - When possible suicide until you have 19 stacks and then do the usual abandons from there.
-    - https://discord.com/channels/371177798305447938/371348913036197899/1184641519735558235
+        - https://discord.com/channels/371177798305447938/371348913036197899/1184641519735558235
 
 6. Berserk & Exterminate
+
     - Only run mapping lines specific to Exterminate during the challenge.
     - Disable HD Farm/Hits Survived/Map Bonus general ratio settings on it
     - Important so that you don't need to go manually disable all other lines/use MAZ.
-    - https://discord.com/channels/371177798305447938/371348913036197899/1185268752070213643
+        - https://discord.com/channels/371177798305447938/371348913036197899/1185268752070213643
+
+7. Smithy Farm
+
+    - If a smithy farm line has run MP selected, MP should be run if the target amount of smithy is already built before running this line
+        - https://discord.com/channels/371177798305447938/371348913036197899/1186860923273629818
+
+8. Auto Level (new)
+
+    - I saw a lot of switching back and forth between 2 levels in AL2, possibly due to titimps. Considering you lose the remaining titimps bonus when switching maps when calculation AL2 titimps bonus should be ignored or be considered always on
+    - Have it check the difference between 2 results and if it's within a few % use the current map
+        - https://discord.com/channels/371177798305447938/371348913036197899/1187243707594977330
 
 # Help Window
 
@@ -60,4 +67,4 @@
 -   Gene Assist
     -   Gene Assist has a fun interaction with Void Maps - if you set Gene Assist to keep your breeding timer at 3 seconds, you set HD Farm to farm maps until you can survive one hit in Void Map, and then you jump into Void Gas map, suddenly you can't survive 1 hit anymore because Geneticist were fired to keep up with the breeding timer.
         -   erp.lsf
-        -   https://discord.com/channels/371177798305447938/371348913036197899/1119260831289462844
+            -   https://discord.com/channels/371177798305447938/371348913036197899/1119260831289462844
