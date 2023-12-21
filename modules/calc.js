@@ -22,7 +22,7 @@ class TrimpStats {
 
         this.isDaily = challengeActive('Daily');
         this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Experience') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-        this.isOneOff = autoPortalChallenges('oneOff', game.global.universe).slice(1).indexOf(game.global.challengeActive) > 0;
+        this.isOneOff = !game.global.runningChallengeSquared && autoPortalChallenges('oneOff', game.global.universe).slice(1).indexOf(game.global.challengeActive) > 0;
         this.isFiller = !this.isDaily && !this.isC3 && !this.isOneOff;
         this.currChallenge = game.global.challengeActive;
         this.shieldBreak = challengeActive('Bublé') || currQuest() === 8;
