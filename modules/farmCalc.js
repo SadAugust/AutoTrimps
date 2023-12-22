@@ -165,7 +165,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
     return 0;
 }
 
-function populateZFarmData() {
+function populateFarmCalcData() {
     var imps = 0;
     for (var imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp']) imps += game.unlocks.imps[imp];
     //Randimp
@@ -516,12 +516,12 @@ function populateZFarmData() {
 
 //Return a list of efficiency stats for all sensible zones
 function stats() {
-    var saveData = populateZFarmData();
-    var stats = [];
-    var extra = 0;
+    let saveData = populateFarmCalcData();
+    let stats = [];
+    let extra = 0;
     if (saveData.reducer) extra = -1;
     if (saveData.extraMapLevelsAvailable) extra = 10;
-    var mapsCanAffordPerfect = 0;
+    let mapsCanAffordPerfect = 0;
     for (let mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
         if (saveData.coordinate) {
             let coords = 1;
@@ -529,7 +529,7 @@ function stats() {
             saveData.challenge_health = coords;
             saveData.challenge_attack = coords;
         }
-        var tmp = zone_stats(mapLevel, saveData.stances, saveData);
+        let tmp = zone_stats(mapLevel, saveData.stances, saveData);
         if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 
         //Check fragment cost of each map and remove them from the check if they can't be afforded.
@@ -559,11 +559,11 @@ function zone_stats(zone, stances, saveData) {
     for (var stance of stances) {
         saveData.atk = saveData.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
         if (mastery('bionic2') && zone > saveData.zone) saveData.atk *= 1.5;
-        var simulationResults = simulate(saveData, zone, stance);
-        var speed = simulationResults.speed;
-        var value = speed * result.loot * (stance == 'S' ? 2 : 1);
-        var equality = simulationResults.equality;
-        var killSpeed = simulationResults.killSpeed;
+        const simulationResults = simulate(saveData, zone, stance);
+        const speed = simulationResults.speed;
+        const value = speed * result.loot * (stance == 'S' ? 2 : 1);
+        const equality = simulationResults.equality;
+        const killSpeed = simulationResults.killSpeed;
         result[stance] = {
             speed,
             value,
@@ -588,38 +588,38 @@ function zone_stats(zone, stances, saveData) {
 
 //Simulate farming at the given zone for a fixed time, and return the number cells cleared.
 function simulate(saveData, zone) {
-    var trimpHealth = saveData.trimpHealth;
-    var debuff_stacks = 0;
-    var titimp = 0;
-    var cell = 0;
-    var loot = 0;
-    var last_group_sent = 0;
-    var ticks = 0;
-    var plague_damage = 0;
-    var ok_damage = 0,
+    let trimpHealth = saveData.trimpHealth;
+    let debuff_stacks = 0;
+    let titimp = 0;
+    let cell = 0;
+    let loot = 0;
+    let last_group_sent = 0;
+    let ticks = 0;
+    let plague_damage = 0;
+    let ok_damage = 0,
         ok_spread = 0;
-    var poison = 0,
+    let poison = 0,
         wind = 0,
         ice = 0;
-    var gammaStacks = 0,
+    let gammaStacks = 0,
         burstDamage = 0;
-    var energyShieldMax = saveData.trimpShield,
+    let energyShieldMax = saveData.trimpShield,
         energyShield = energyShieldMax;
-    var mayhemPoison = 0;
-    var trimpOverkill = 0;
-    var duelPoints = game.challenges.Duel.trimpStacks;
-    var glassStacks = game.challenges.Glass.shards;
-    var universe = saveData.universe;
-    var magma = saveData.magma;
-    var hasWithered = false;
-    var equality = 1;
-    var trimpCrit = false;
-    var enemyCrit = false;
+    let mayhemPoison = 0;
+    let trimpOverkill = 0;
+    let duelPoints = game.challenges.Duel.trimpStacks;
+    let glassStacks = game.challenges.Glass.shards;
+    let universe = saveData.universe;
+    let magma = saveData.magma;
+    let hasWithered = false;
+    let equality = 1;
+    let trimpCrit = false;
+    let enemyCrit = false;
 
-    var kills = 0;
-    var deaths = 0;
+    let kills = 0;
+    let deaths = 0;
 
-    var seed = Math.floor(Math.random(40, 50) * 100);
+    let seed = Math.floor(Math.random(40, 50) * 100);
     const rand_mult = 4.656612873077393e-10;
 
     function rng() {

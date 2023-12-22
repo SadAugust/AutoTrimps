@@ -152,28 +152,26 @@ function heirloomModSearch(heirloom, modifier) {
     const heirloomDetails = heirloomSearch(heirloom);
     var i;
     var loom;
-    //If the heirloom exists and is in our inventory, check it for the modifier we're looking for
-    if (heirloomDetails) {
-        if (modifier === 'gammaBurst' && heirloomDetails.rarity >= 10) return Infinity;
-        for (i = heirloomDetails.mods.length - 1; i > -1; i--) {
-            if (heirloomDetails.mods[i][0] === modifier) return heirloomDetails.mods[i][1];
-        }
-        return undefined;
-    }
-    //Else if the heirloom is equipped and is a Shield, check it for the modifier we're looking for
-    else if (game.global.ShieldEquipped.name === heirloomName) {
+
+    if (game.global.ShieldEquipped.name === heirloomName) {
         loom = game.global.ShieldEquipped;
         if (modifier === 'gammaBurst' && loom.rarity >= 10) return Infinity;
         for (i = loom.mods.length - 1; i > -1; i--) {
             if (loom.mods[i][0] === modifier) return loom.mods[i][1];
         }
         return undefined;
-    }
-    //Else if the heirloom is equipped and is a Staff, check it for the modifier we're looking for
-    else if (game.global.StaffEquipped.name === heirloomName) {
+    } else if (game.global.StaffEquipped.name === heirloomName) {
         loom = game.global.StaffEquipped;
         for (i = loom.mods.length - 1; i > -1; i--) {
             if (loom.mods[i][0] === modifier) return loom.mods[i][1];
+        }
+        return undefined;
+    }
+    //If the heirloom exists and is in our inventory, check it for the modifier we're looking for
+    else if (heirloomDetails) {
+        if (modifier === 'gammaBurst' && heirloomDetails.rarity >= 10) return Infinity;
+        for (i = heirloomDetails.mods.length - 1; i > -1; i--) {
+            if (heirloomDetails.mods[i][0] === modifier) return heirloomDetails.mods[i][1];
         }
         return undefined;
     }
