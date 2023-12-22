@@ -1077,11 +1077,12 @@ function smithyFarm(lineCheck) {
                     recycleMap_AT();
                 }
             }
-            if (!shouldMap) {
-                mappingDetails(mapName, mapLevel, mapSpecial, smithyGoal);
-                resetMapVars(setting, settingName);
-                if (!challengeActive('Quest') && setting.meltingPoint) runUniqueMap('Melting Point');
-            }
+        }
+
+        if (!shouldMap) {
+            if (mapSettings.mapName === mapName) mappingDetails(mapName, mapLevel, mapSpecial, smithyGoal);
+            resetMapVars(setting, settingName);
+            if (setting.meltingPoint && game.mapUnlocks.SmithFree.canRunOnce && !challengeActive('Quest')) runUniqueMap('Melting Point');
         }
 
         var status = 'Smithy Farming for ' + resourceGoal;
