@@ -2325,6 +2325,7 @@ function berserk(lineCheck) {
     };
 
     if (!challengeActive('Berserk') || !getPageSetting('berserk')) return farmingDetails;
+    if (game.challenges.Berserk.weakened === 20) return farmingDetails;
 
     let shouldMap = false;
     const mapLevel = -(game.global.world - 6);
@@ -3521,8 +3522,8 @@ function settingShouldRun(currSetting, world, zoneReduction, settingName) {
     if (typeof currSetting.maxvoidzone !== 'undefined' && game.global.world > currSetting.maxvoidzone + zoneReduction) return false;
     if (typeof currSetting.bonebelow !== 'undefined' && game.permaBoneBonuses.boosts.charges <= currSetting.bonebelow) return false;
     //Check to see if the cell is liquified and if so we can replace the cell condition with it
-    var liquified = game.global.lastClearedCell === -1 && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
-    //If cell input is greater than current zone then skips
+    let liquified = game.global.lastClearedCell === -1 && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
+
     if (!liquified && game.global.lastClearedCell + 2 < currSetting.cell) return false;
     if (_noMappingChallenges() || challengeActive('Downsize') || (challengeActive('Berserk') && getPageSetting('berserk'))) {
         if (typeof currSetting.runType !== 'undefined') {
