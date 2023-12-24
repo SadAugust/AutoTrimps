@@ -169,7 +169,7 @@ function heirloomInfo(type) {
             FarmerSpeed: {
                 name: 'Farmer Efficiency',
                 type: 'Staff',
-                weighable: false,
+                weighable: true,
                 stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
                 softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
             },
@@ -531,6 +531,10 @@ class Heirloom {
             this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
             this.priceIncrease = priceIncreases[this.rarity];
             this.stepAmounts = {};
+            this.foodHeirloom = this.type === 'Staff' && this.name === getPageSetting('heirloomStaffFood');
+            this.woodHeirloom = this.type === 'Staff' && this.name === getPageSetting('heirloomStaffWood');
+            this.scienceHeirloom = this.type === 'Staff' && this.name === getPageSetting('heirloomStaffScience');
+            this.metalHeirloom = !this.foodHeirloom && !this.woodHeirloom && !this.scienceHeirloom;
             for (const mod of this.mods) {
                 if (mod[0] === 'empty') continue;
                 this.stepAmounts[mod[0]] = this.getStepAmount(mod[0], this.rarity);
@@ -699,14 +703,16 @@ class Heirloom {
         if (type === 'plaguebringer') {
             return (value + 100 + stepAmount) / (value + 100);
         }
-        //Not sure if adding these is a good idea but they're disabled for now.
-        /* if (type === "FarmerSpeed") {
-			return (Math.log((value + 100 + stepAmount) / (value + 100) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2)) / MODULES.autoHeirlooms.equipLevels;
-		}
-		if (type === "LumberjackSpeed") {
-			return (Math.log((value + 100 + stepAmount) / (value + 100) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2)) / MODULES.autoHeirlooms.equipLevels;
-		} */
-        if (type === 'MinerSpeed') {
+        if (type === 'FarmerSpeed' && this.foodHeirloom) {
+            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+        }
+        if (type === 'LumberjackSpeed' && this.woodHeirloom) {
+            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+        }
+        if (type === 'MinerSpeed' && this.metalHeirloom) {
+            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+        }
+        if (type === 'ScientistSpeed' && this.scienceHeirloom) {
             return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
         }
         if (type === 'ParityPower') {
@@ -1144,6 +1150,27 @@ selectMod = function () {
         console.log('Heirloom issue: ' + e, 'other');
     }
 };
+
+function autoUpgradeHeirlooms() {
+    if (!getPageSetting('autoHeirlooms')) return;
+    for (let i = 0; i < game.global.heirloomsCarried.length; i++) {
+        if (getTotalHeirloomRefundValue(game.global.heirloomsCarried[i], true) === 0) continue;
+        game.global.selectedHeirloom = [i, 'heirloomsCarried'];
+        runHeirlooms();
+    }
+    if (Object.keys(game.global.ShieldEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.ShieldEquipped, true) > 0) {
+        game.global.selectedHeirloom = [-1, 'ShieldEquipped'];
+        runHeirlooms();
+    }
+    if (Object.keys(game.global.StaffEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.StaffEquipped, true) > 0) {
+        game.global.selectedHeirloom = [-1, 'StaffEquipped'];
+        runHeirlooms();
+    }
+    if (Object.keys(game.global.CoreEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.CoreEquipped, true) > 0) {
+        game.global.selectedHeirloom = [-1, 'CoreEquipped'];
+        runHeirlooms();
+    }
+}
 
 //When unselecting any heirlooms hide ratios.
 var originalpopulateHeirloomWindow = populateHeirloomWindow;

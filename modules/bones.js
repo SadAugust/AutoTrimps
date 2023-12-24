@@ -13,7 +13,7 @@ function boneShrine(lineCheck) {
 
     const boneShrineAncientTreasure = game.mapUnlocks.AncientTreasure.canRunOnce ? setting.atlantrimp : false;
     const ancientTreasure = getAncientTreasureName();
-    if (boneShrineAncientTreasure) runUniqueMap(ancientTreasure);
+    if (boneShrineAncientTreasure) _runUniqueMap(ancientTreasure);
 
     const map = getCurrentMapObject();
     if (!boneShrineAncientTreasure || (game.global.mapsActive && map.name === ancientTreasure && game.global.lastClearedMapCell >= map.size - 30)) {

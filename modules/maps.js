@@ -563,7 +563,7 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
         .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
 
     //Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
-    if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
+    if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = _obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
 }
 
 // Deciding if we need to create a map or run voids/bw.

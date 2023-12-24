@@ -70,6 +70,7 @@ originalActivateClicked = activateClicked;
 activateClicked = function () {
     downloadSave(true);
     pushSpreadsheetData();
+    autoUpgradeHeirlooms();
     autoHeirlooms(true);
     autoMagmiteSpender(true);
     pushData();
@@ -769,6 +770,8 @@ function simpleSeconds_AT(what, seconds, workerRatio) {
         ? 'heirloomStaffWood'
         : jobName === 'Miner' && getPageSetting('heirloomStaffMetal') !== 'undefined'
         ? 'heirloomStaffMetal'
+        : jobName === 'Scientist' && getPageSetting('heirloomStaffScience') !== 'undefined'
+        ? 'heirloomStaffScience'
         : getPageSetting('heirloomStaffMap') !== 'undefined'
         ? 'heirloomStaffMap'
         : getPageSetting('heirloomStaffWorld') !== 'undefined'

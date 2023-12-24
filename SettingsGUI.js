@@ -178,6 +178,18 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2],
 			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount(1) >= 20) });
+
+		createSetting('autoHeirlooms',
+			function () { return ('Auto Allocate Heirlooms') },
+			function () { 
+				var description = "<p>Uses a modified version of the <b>Heirloom</b> calculator to identify the most optimal heirloom modifier distribution when auto portaling.</p>";
+				description += "<p>There are inputs you can adjust in the <b>Heirloom</b> window to allow you to adjust how it distributes nullifium.</p>";
+				description += "<p>If you want more advanced settings import your save into the <b>Heirloom</b> calculator.</p>";
+				description += "<p>Will <b>only</b> allocate nullifium on heirlooms that you have bought an upgrade or swapped modifiers on.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+			return description;
+			}, 'boolean', false, null, 'Core', [1, 2]);
+
 		createSetting('autoPerks',
 			function () { return ('Auto Allocate Perks') },
 			function () {
@@ -3123,6 +3135,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The staff to use when running <b>Savory Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Farmer Efficiency instead of Miner Efficiency.</p>";
 				description += "<p><b>Recommended:</b> Dedicated food efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
@@ -3133,6 +3146,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The staff to use when running <b>Wooden Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Lumberjack Efficiency instead of Miner Efficiency.</p>";
 				description += "<p><b>Recommended:</b> Dedicated wood efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
@@ -3148,11 +3162,12 @@ function initializeAllSettings() {
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
-		createSetting('heirloomStaffResource',
+		createSetting('heirloomStaffScience',
 			function () { return ('Research Cache') },
 			function () {
 				var description = "<p>The staff to use when running <b>Research Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Science Efficiency instead of Miner Efficiency.</p>";
 				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [2],
@@ -4667,7 +4682,7 @@ function modifyParentNodeUniverseSwap() {
     modifyParentNode('heirloomWindStack', 'show');
     modifyParentNode('heirloomSwapHDCompressed', 'show');
     modifyParentNode('heirloomStaffFragment', 'show');
-    modifyParentNode('heirloomStaffResource', 'show');
+    modifyParentNode('heirloomStaffScience', 'show');
 
     modifyParentNode('heirloomAutoModTarget', heirloom);
     modifyParentNode('heirloomAutoShieldMod7', heirloom);
@@ -6301,6 +6316,12 @@ function updateATVersion() {
                     obj[x].done = '';
                 }
                 game.global.addonUser['archaeologySettings'].valueU2 = obj;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.39') {
+            if (typeof tempSettings['heirloomStaffResource'] !== 'undefined') {
+                autoTrimpSettings.heirloomStaffScience.valueU2 = tempSettings.heirloomStaffResource.valueU2;
             }
         }
     }

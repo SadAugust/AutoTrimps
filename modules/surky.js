@@ -540,7 +540,7 @@ function initialLoad(skipLevels = false) {
     // calculate Scruffy level (adapted from Fluffy.getLevel() in the game source code)
     props.scruffyLevel = Math.floor(Math.log((game.global.fluffyExp2 / 1000) * 3 + 1) / Math.log(4));
 
-    var shield = null;
+    let shield = null;
     if (game.global.universe === 2 && Object.keys(game.global.ShieldEquipped).length !== 0) shield = game.global.ShieldEquipped;
     else if (game.global.lastHeirlooms.u2 && game.global.lastHeirlooms.u2.Shield) {
         if (game.global.lastHeirlooms.u2.Shield === game.global.ShieldEquipped.id) {
@@ -551,7 +551,7 @@ function initialLoad(skipLevels = false) {
             });
         }
     }
-    if (shield) {
+    if (shield && Object.keys(shield).length !== 1) {
         var critDamageMod = shield.mods.find(function (el) {
             return el[0] === 'critDamage';
         });

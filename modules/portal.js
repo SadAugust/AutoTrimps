@@ -189,6 +189,7 @@ function freeVoidPortal() {
     downloadSave();
     if (typeof pushData === 'function') pushData();
     if (!MODULES['portal'].dontPushData) pushSpreadsheetData();
+    autoUpgradeHeirlooms();
     debug('Portaling to increment void tracker (' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10) with liquification.'), 'portal');
     activatePortal();
     return;
@@ -493,7 +494,7 @@ function doPortal(challenge, skipDaily) {
     MODULES.portal.portalUniverse = Infinity;
     lastHeliumZone = 0;
     MODULES.portal.zonePostpone = 0;
-
+    autoUpgradeHeirlooms();
     activatePortal();
     resetVarsZone(true);
     if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {

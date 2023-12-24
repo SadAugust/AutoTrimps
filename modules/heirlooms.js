@@ -181,7 +181,7 @@ function heirloomModSearch(heirloom, modifier) {
             var type = ['ShieldEquipped', 'StaffEquipped'];
             var y;
             for (y = type.length - 1; y > -1; y--) {
-                if (Object.keys(game.global[type[y]]).length === 0) continue;
+                if (Object.keys(game.global[type[y]]).length === 1) continue;
                 loom = game.global[type[y]];
                 if (modifier === 'gammaBurst' && type[y] === 'ShieldEquipped' && loom.rarity >= 10) return Infinity;
                 for (i = loom.mods.length - 1; i > -1; i--) {
@@ -356,7 +356,7 @@ function heirloomStaffToEquip(mapType) {
         if ((MODULES.maps.fragmentFarming || MODULES.maps.fragmentCost !== Infinity) && getPageSetting('heirloomStaffFragment') !== 'undefined') return 'heirloomStaffFragment';
         else if (mapSettings.mapName === 'Experience' && getPageSetting('experienceStaff') !== 'undefined') return 'experienceStaff';
         else if (mapSettings.mapName === 'Pandemonium Farming' && getPageSetting('pandemoniumStaff') !== 'undefined') return 'pandemoniumStaff';
-        else if (mapSettings.mapName === 'Quest' && mapSettings.resource && mapSettings.resource === 'science' && getPageSetting('heirloomStaffResource') !== 'undefined') return 'heirloomStaffResource';
+        else if (mapSettings.mapName === 'Quest' && mapSettings.resource && mapSettings.resource === 'science' && getPageSetting('heirloomStaffScience') !== 'undefined') return 'heirloomStaffScience';
         else if (getPageSetting('heirloomStaffVoid') !== 'undefined' && mapObject.location === 'Void') return 'heirloomStaffVoid';
         else if (getPageSetting('heirloomStaffMap') !== 'undefined' && mapBonus === undefined) return 'heirloomStaffMap';
         else if (mapBonus !== undefined) {
@@ -371,7 +371,7 @@ function heirloomStaffToEquip(mapType) {
             if (getPageSetting('heirloomStaffFood') !== 'undefined' && mapBonus.includes('sc')) return 'heirloomStaffFood';
             else if (getPageSetting('heirloomStaffWood') !== 'undefined' && mapBonus.includes('wc')) return 'heirloomStaffWood';
             else if (getPageSetting('heirloomStaffMetal') !== 'undefined' && mapBonus.includes('mc')) return 'heirloomStaffMetal';
-            else if (game.global.universe === 2 && getPageSetting('heirloomStaffResource') !== 'undefined' && mapBonus.includes('rc')) return 'heirloomStaffResource';
+            else if (game.global.universe === 2 && getPageSetting('heirloomStaffScience') !== 'undefined' && mapBonus.includes('rc')) return 'heirloomStaffScience';
             else if (getPageSetting('heirloomStaffMap') !== 'undefined') return 'heirloomStaffMap';
         }
     }

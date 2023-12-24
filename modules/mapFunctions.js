@@ -303,7 +303,7 @@ function runningAtlantrimp() {
     return false;
 }
 
-function runUniqueMap(mapName) {
+function _runUniqueMap(mapName) {
     if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
     if (getPageSetting('autoMaps') !== 1) return;
     if (_insanityDisableUniqueMaps()) return;
@@ -721,7 +721,7 @@ function mapFarm(lineCheck) {
         if (mapSettings.mapName === mapName && (mapType === 'Daily Reset' ? repeatCheck <= repeatCounter : repeatCheck >= repeatCounter)) {
             mappingDetails(mapName, mapLevel, mapSpecial);
             resetMapVars(setting, settingName);
-            if (shouldAtlantrimp) runUniqueMap(getAncientTreasureName());
+            if (shouldAtlantrimp) _runUniqueMap(getAncientTreasureName());
         }
         var repeat = repeatCheck + 1 === repeatCounter;
         var status =
@@ -863,7 +863,7 @@ function tributeFarm(lineCheck) {
             var resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT('food', resourceSeconds, jobRatio), false, true, mapLevel);
 
             if (totalCost > game.resources.food.owned - barnCost + resourceFarmed && game.resources.food.owned > totalCost / 2) {
-                runUniqueMap(getAncientTreasureName());
+                _runUniqueMap(getAncientTreasureName());
             }
         }
         //Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
@@ -1082,7 +1082,7 @@ function smithyFarm(lineCheck) {
         if (!shouldMap) {
             if (mapSettings.mapName === mapName) mappingDetails(mapName, mapLevel, mapSpecial, smithyGoal);
             resetMapVars(setting, settingName);
-            if (setting.meltingPoint && game.mapUnlocks.SmithFree.canRunOnce && !challengeActive('Quest')) runUniqueMap('Melting Point');
+            if (setting.meltingPoint && game.mapUnlocks.SmithFree.canRunOnce && !challengeActive('Quest')) _runUniqueMap('Melting Point');
         }
 
         var status = 'Smithy Farming for ' + resourceGoal;
@@ -1598,7 +1598,7 @@ function findLastBionicWithItems(bionicPool) {
     return bionicPool[0];
 }
 
-function obtainUniqueMap(uniqueMap) {
+function _obtainUniqueMap(uniqueMap) {
     var shouldMap = false;
     const mapName = 'Unique Map Farm';
     const farmingDetails = {
@@ -1684,7 +1684,7 @@ function bionicRaiding(lineCheck) {
         if (!trimpStats.plusLevels && unlockLevel > game.global.world) return farmingDetails;
         else if (trimpStats.plusLevels && unlockLevel > game.global.world + 10) return farmingDetails;
         const map = game.global.mapsOwnedArray.find((map) => map.name.includes('Bionic Wonderland'));
-        if (map === undefined) return obtainUniqueMap('Bionic Wonderland');
+        if (map === undefined) return _obtainUniqueMap('Bionic Wonderland');
         var raidzonesBW = raidZones;
 
         if (prestigesToGet(raidzonesBW, targetPrestige)[0] > 0) {
@@ -2578,32 +2578,33 @@ function alchemy(lineCheck) {
 }
 
 function glass(lineCheck) {
-    var shouldMap = false;
-    var mapName = 'Glass ';
+    let shouldMap = false;
+    let mapName = 'Glass ';
     const farmingDetails = {
-        shouldRun: false,
+        shouldRun: shouldMap,
         mapName: mapName
     };
 
     if (!challengeActive('Glass') || !getPageSetting('glass')) return farmingDetails;
 
-    var jobRatio = '0,0,1';
-    var mapSpecial = getAvailableSpecials('lmc', true);
-    var mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
-    var glassStacks = getPageSetting('glassStacks');
+    const jobRatio = '0,0,1';
+    const mapSpecial = getAvailableSpecials('lmc', true);
+    const mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
+    let glassStacks = getPageSetting('glassStacks');
     if (glassStacks <= 0) glassStacks = Infinity;
+    const endZone = true; //getPageSetting('glassEndZone') <= 0 ? Infinity : getPageSetting('glassEndZone');
 
     //Gamma burst info
-    var gammaTriggerStacks = gammaMaxStacks();
-    var gammaToTrigger = gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
+    const gammaTriggerStacks = gammaMaxStacks();
+    const gammaToTrigger = gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
     if (game.global.mapsActive) gammaToTrigger = Infinity;
-    var gammaDmg = MODULES.heirlooms.gammaBurstPct;
-    var canGamma = gammaToTrigger <= 1 ? true : false;
-    var damageGoal = 2;
+    const gammaDmg = MODULES.heirlooms.gammaBurstPct;
+    const canGamma = gammaToTrigger <= 1 ? true : false;
+    const damageGoal = 2;
 
-    var equalityAmt = equalityQuery('Snimp', game.global.world, 20, 'map', 0.75, 'gamma');
-    var ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
-    var enemyHealth = calcEnemyHealthCore('map', game.global.world, 20, 'Snimp') * 0.75;
+    let equalityAmt = equalityQuery('Snimp', game.global.world, 20, 'map', 0.75, 'gamma');
+    let ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
+    let enemyHealth = calcEnemyHealthCore('map', game.global.world, 20, 'Snimp') * 0.75;
     if (glassStacks <= gammaTriggerStacks) ourDmg *= gammaDmg;
 
     //Destacking
@@ -3250,9 +3251,9 @@ function farmingDecision() {
     var mapTypes = [];
     //U1 map settings to check for.
     if (game.global.universe === 1) {
-        mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, hdFarm, voidMaps, experience, mapBonus, toxicity, obtainUniqueMap];
+        mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, hdFarm, voidMaps, experience, mapBonus, toxicity, _obtainUniqueMap];
 
-        if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, obtainUniqueMap];
+        if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
 
         if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0) mapTypes = [voidMaps];
 
@@ -3264,11 +3265,11 @@ function farmingDecision() {
         if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) return (mapSettings = farmingDetails);
 
         //U2 map settings to check for.
-        mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, obtainUniqueMap];
+        mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
     }
 
     //Skipping map farming if in Decay or Melt and above stack count user input
-    if (decaySkipMaps()) mapTypes = [prestigeClimb, voidMaps, obtainUniqueMap];
+    if (decaySkipMaps()) mapTypes = [prestigeClimb, voidMaps, _obtainUniqueMap];
 
     const priorityList = [];
     //If we are currently running a map and it should be continued then continue running it.
