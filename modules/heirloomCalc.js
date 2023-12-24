@@ -155,14 +155,14 @@ function heirloomInfo(type) {
             DragimpSpeed: {
                 name: 'Dragimp Efficiency',
                 type: 'Staff',
-                weighable: false,
+                weighable: true,
                 stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
                 softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
             },
             ExplorerSpeed: {
                 name: 'Explorer Efficiency',
                 type: 'Staff',
-                weighable: false,
+                weighable: true,
                 stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
                 softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
             },
@@ -483,7 +483,6 @@ function setupHeirloomUI() {
             saveHeirloomSettings();
             heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
         }
-        MODULES.autoHeirlooms = heirloomInputs;
         document.getElementById('VMWeightDiv').style.float = 'left';
         document.getElementById('XPWeightDiv').style.float = 'right';
     };
@@ -507,7 +506,6 @@ function saveHeirloomSettings() {
         autoTrimpSettings['autoHeirloomStorage']['value' + (game.global.universe === 2 ? 'U2' : '')] = JSON.stringify(heirloomInputs);
         saveSettings();
     }
-    MODULES.autoHeirlooms = heirloomInputs;
 }
 
 function isNumeric(n) {
@@ -527,6 +525,7 @@ class Heirloom {
             const basePrices = [5, 10, 15, 25, 75, 150, 400, 1000, 2500, 7500, 50000, 375000];
             const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000];
             const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
+            this.inputs = JSON.parse(localStorage.getItem('heirloomInputs'));
             this.isCore = this.type === 'Core';
             this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
             this.priceIncrease = priceIncreases[this.rarity];
@@ -624,11 +623,11 @@ class Heirloom {
             return (value + 100 + stepAmount) / (value + 100);
         }
         if (type === 'trimpHealth') {
-            return (value + 100 + stepAmount * MODULES.autoHeirlooms.HPWeight) / (value + 100);
+            return (value + 100 + stepAmount * this.inputs.HPWeight) / (value + 100);
         }
         if (type === 'breedSpeed') {
             // magic number is log(1.01) / log(1 / 0.98)
-            return (100 * Math.pow(value + stepAmount * MODULES.autoHeirlooms.HPWeight, 0.492524625)) / (100 * Math.pow(value, 0.492524625));
+            return (100 * Math.pow(value + stepAmount * this.inputs.HPWeight, 0.492524625)) / (100 * Math.pow(value, 0.492524625));
         }
         if (type === 'prismatic') {
             // 50 base, 50 from prismatic palace
@@ -636,7 +635,7 @@ class Heirloom {
             shieldPercent += game.portal.Prismal.radLevel;
             if (Fluffy.isRewardActive('prism')) shieldPercent += 25;
 
-            return (value + shieldPercent + 100 + stepAmount * MODULES.autoHeirlooms.HPWeight) / (value + shieldPercent + 100);
+            return (value + shieldPercent + 100 + stepAmount * this.inputs.HPWeight) / (value + shieldPercent + 100);
         }
         if (type === 'critDamage') {
             const relentlessness = game.global.universe === 2 ? 0 : game.portal.Relentlessness.level;
@@ -691,35 +690,41 @@ class Heirloom {
             return critDmgNormalizedAfter / critDmgNormalizedBefore;
         }
         if (type === 'voidMaps') {
-            if (game.global.universe === 2) return (value + stepAmount * (MODULES.autoHeirlooms.VMWeight / 10)) / value;
-            return (value + stepAmount * MODULES.autoHeirlooms.VMWeight) / value;
+            if (game.global.universe === 2) return (value + stepAmount * (this.inputs.VMWeight / 10)) / value;
+            return (value + stepAmount * this.inputs.VMWeight) / value;
         }
         if (type === 'gammaBurst') {
             return ((value + stepAmount) / 100 + 1) / 5 / ((value / 100 + 1) / 5);
         }
         if (type === 'FluffyExp') {
-            return (value + 100 + stepAmount * MODULES.autoHeirlooms.XPWeight) / (value + 100);
+            return (value + 100 + stepAmount * this.inputs.XPWeight) / (value + 100);
         }
         if (type === 'plaguebringer') {
             return (value + 100 + stepAmount) / (value + 100);
         }
+        if (type === 'DragimpSpeed') {
+            return Math.log(((value + 1 + stepAmount) / (value + 128)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
+        }
+        if (type === 'ExplorerSpeed') {
+            return Math.log(((value + 1 + stepAmount) / (value + 128)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
+        }
         if (type === 'FarmerSpeed' && this.foodHeirloom) {
-            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
         }
         if (type === 'LumberjackSpeed' && this.woodHeirloom) {
-            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
         }
         if (type === 'MinerSpeed' && this.metalHeirloom) {
-            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
         }
         if (type === 'ScientistSpeed' && this.scienceHeirloom) {
-            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+            return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
         }
         if (type === 'ParityPower') {
-            return Math.log(((value + 1 + stepAmount) / (value + 1)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+            return Math.log(((value + 1 + stepAmount) / (value + 1)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
         }
         if (type === 'inequality') {
-            return Math.pow((1 - 0.1 * (1 - (value + stepAmount) / 100)) / 0.9, MODULES.autoHeirlooms.equalityTarget) / Math.pow((1 - 0.1 * (1 - value / 100)) / 0.9, MODULES.autoHeirlooms.equalityTarget);
+            return Math.pow((1 - 0.1 * (1 - (value + stepAmount) / 100)) / 0.9, this.inputs.equalityTarget) / Math.pow((1 - 0.1 * (1 - value / 100)) / 0.9, this.inputs.equalityTarget);
         }
         if (this.isCore) {
             loadCore(this);
@@ -789,7 +794,7 @@ class Heirloom {
 
     getDamageMult() {
         var trimpAttackMult = 1 + this.getModValue('trimpAttack') / 100;
-        trimpAttackMult *= Math.pow((1 - 0.1 * (1 - this.getModValue('inequality') / 100)) / 0.9, MODULES.autoHeirlooms.equalityTarget);
+        trimpAttackMult *= Math.pow((1 - 0.1 * (1 - this.getModValue('inequality') / 100)) / 0.9, this.inputs.equalityTarget);
         const relentlessness = game.global.universe === 2 ? 0 : game.portal.Relentlessness.level;
         const criticality = game.global.universe === 2 ? game.portal.Criticality.radLevel : 0;
         var critChance = relentlessness * 5;
@@ -950,7 +955,7 @@ class Heirloom {
 
         var gain;
         if (this.type === 'Staff') {
-            gain = Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, MODULES.autoHeirlooms.equipLevels) - 1) + 1) / Math.log(1.2) / MODULES.autoHeirlooms.equipLevels;
+            gain = Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
         } else if (this.type === 'Shield') {
             gain = ((value + stepAmount) / 100 + 1) / 5 / ((value / 100 + 1) / 5);
         }
@@ -1158,15 +1163,15 @@ function autoUpgradeHeirlooms() {
         game.global.selectedHeirloom = [i, 'heirloomsCarried'];
         runHeirlooms();
     }
-    if (Object.keys(game.global.ShieldEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.ShieldEquipped, true) > 0) {
+    if (!isObjectEmpty(game.global.ShieldEquipped) && Object.keys(game.global.ShieldEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.ShieldEquipped, true) > 0) {
         game.global.selectedHeirloom = [-1, 'ShieldEquipped'];
         runHeirlooms();
     }
-    if (Object.keys(game.global.StaffEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.StaffEquipped, true) > 0) {
+    if (!isObjectEmpty(game.global.StaffEquipped) && Object.keys(game.global.StaffEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.StaffEquipped, true) > 0) {
         game.global.selectedHeirloom = [-1, 'StaffEquipped'];
         runHeirlooms();
     }
-    if (Object.keys(game.global.CoreEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.CoreEquipped, true) > 0) {
+    if (!isObjectEmpty(game.global.CoreEquipped) && Object.keys(game.global.CoreEquipped).length !== 1 && getTotalHeirloomRefundValue(game.global.CoreEquipped, true) > 0) {
         game.global.selectedHeirloom = [-1, 'CoreEquipped'];
         runHeirlooms();
     }
