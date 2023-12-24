@@ -335,6 +335,7 @@ function ImportExportTooltip(what, event) {
         }
         // Adjust for remaining offline time
         else if (usingRealTimeOffline) {
+            if (game.options.menu.autoSave.enabled !== atSettings.autoSave) saveGame.options.menu.offlineProgress.enabled = atSettings.autoSave;
             const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
             saveGame.global.lastOnline -= reduceBy;
             saveGame.global.portalTime -= reduceBy;
