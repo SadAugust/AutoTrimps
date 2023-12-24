@@ -361,7 +361,7 @@ function setupHeirloomUI() {
     };
 
     //Code to setup each input button for the heirloom UI.
-    MODULES.heirloomUI.createInput = function (perkLine, id, inputObj, savedValue, row) {
+    createInput = function (perkLine, id, inputObj, savedValue, row) {
         if (!id) return;
         if (document.getElementById(id + 'Div') !== null) {
             console.log("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.");
@@ -372,7 +372,8 @@ function setupHeirloomUI() {
         heirloomDiv.id = id + 'Div';
         var style = 'display: inline;';
         //If it's the first input in the row, float it left. If it's the last, float it right.
-        if (inputBoxes[row][Object.keys(inputBoxes[row])[0]] === inputObj) style += ' float: left;';
+        if (id === 'equalityTarget') style += ' float: right;';
+        else if (inputBoxes[row][Object.keys(inputBoxes[row])[0]] === inputObj) style += ' float: left;';
         else if (inputBoxes[row][Object.keys(inputBoxes[row])[Object.keys(inputBoxes[row]).length - 1]] === inputObj) style += ' float: right;';
         heirloomDiv.setAttribute('style', style);
 
@@ -446,18 +447,20 @@ function setupHeirloomUI() {
         //Line 1 of the UI
         //Populating it through the createInput function
         heirloomGUI.$ratiosLine1 = document.createElement('DIV');
+        heirloomGUI.$ratiosLine1.id = 'ratioLine1';
         heirloomGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
         for (var item in inputBoxes.row1) {
-            MODULES.heirloomUI.createInput(heirloomGUI.$ratiosLine1, item, inputBoxes.row1[item], heirloomInputs[item], 'row1');
+            createInput(heirloomGUI.$ratiosLine1, item, inputBoxes.row1[item], heirloomInputs[item], 'row1');
         }
         heirloomGUI.$heirloomRatios.appendChild(heirloomGUI.$ratiosLine1);
 
         //Line 2
         //Populating it through the createInput function
         heirloomGUI.$ratiosLine2 = document.createElement('DIV');
+        heirloomGUI.$ratiosLine2.id = 'ratioLine2';
         heirloomGUI.$ratiosLine2.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
         for (var item in inputBoxes.row2) {
-            MODULES.heirloomUI.createInput(heirloomGUI.$ratiosLine2, item, inputBoxes.row2[item], heirloomInputs[item], 'row2');
+            createInput(heirloomGUI.$ratiosLine2, item, inputBoxes.row2[item], heirloomInputs[item], 'row2');
         }
         heirloomGUI.$heirloomRatios.appendChild(heirloomGUI.$ratiosLine2);
 
@@ -466,18 +469,30 @@ function setupHeirloomUI() {
         $portalWrapper.appendChild(heirloomGUI.$heirloomRatios);
         //Setup Allocate Nullifium/Spirestones button
         var apGUI = MODULES.heirloomUI.GUI;
-        apGUI.$allocatorBtn1 = document.createElement('DIV');
-        apGUI.$allocatorBtn1.id = 'heirloomAllocatorBtn';
-        apGUI.$allocatorBtn1.setAttribute('class', 'btn ');
-        apGUI.$allocatorBtn1.setAttribute('onclick', 'runHeirlooms()');
-        apGUI.$allocatorBtn1.setAttribute('onmouseover', 'tooltip("Auto Allocate", "customText", event, "Buys the shown optimal levels in each modifier when pressed.")');
-        apGUI.$allocatorBtn1.setAttribute('onmouseout', 'tooltip("hide")');
+        apGUI.$allocatorBtn = document.createElement('DIV');
+        apGUI.$allocatorBtn.id = 'heirloomAllocatorBtn';
+        apGUI.$allocatorBtn.setAttribute('class', 'btn ');
+        apGUI.$allocatorBtn.setAttribute('onclick', 'runHeirlooms()');
+        apGUI.$allocatorBtn.setAttribute('onmouseover', 'tooltip("Auto Allocate", "customText", event, "Buys the shown optimal levels in each modifier when pressed.")');
+        apGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
         var oldstyle = 'background-color: #3b0076; border: 0.1vw solid #777; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; margin-right: 13.88vw';
         if (game.options.menu.darkTheme.enabled !== 2) oldstyle += ' color: black;';
-        apGUI.$allocatorBtn1.setAttribute('style', oldstyle);
-        apGUI.$allocatorBtn1.textContent = 'Allocate Nullifium';
+        apGUI.$allocatorBtn.setAttribute('style', oldstyle);
+        apGUI.$allocatorBtn.textContent = 'Allocate Nullifium';
 
-        if (document.getElementById(apGUI.$allocatorBtn1.id) === null) heirloomGUI.$ratiosLine1.insertBefore(apGUI.$allocatorBtn1, document.getElementById('XPWeightDiv'));
+        if (document.getElementById(apGUI.$allocatorBtn.id) === null) heirloomGUI.$ratiosLine1.insertBefore(apGUI.$allocatorBtn, document.getElementById('XPWeightDiv'));
+
+        apGUI.$customRatioBtn = document.createElement('DIV');
+        apGUI.$customRatioBtn.id = 'heirloomCustomRatioBtn';
+        apGUI.$customRatioBtn.setAttribute('class', 'btn settingsBtn settingBtnfalse ');
+        apGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio()');
+        apGUI.$customRatioBtn.setAttribute('onmouseover', 'tooltip("Custom Ratio", "customText", event, "Enabling this allows you to set custom ratios for this heirloom.")');
+        apGUI.$customRatioBtn.setAttribute('onmouseout', 'tooltip("hide")');
+        var oldstyle = 'float:left; border: 0.1vw solid #777; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; margin-right: 13.88vw';
+        if (game.options.menu.darkTheme.enabled !== 2) oldstyle += ' color: black;';
+        apGUI.$customRatioBtn.setAttribute('style', oldstyle);
+        apGUI.$customRatioBtn.textContent = 'Use Custom Ratios';
+        if (document.getElementById(apGUI.$customRatioBtn.id) === null) heirloomGUI.$ratiosLine2.insertBefore(apGUI.$customRatioBtn, document.getElementById('equalityTargetDiv'));
 
         if (setupNeeded) {
             saveHeirloomSettings();
@@ -492,20 +507,66 @@ function setupHeirloomUI() {
 
 setupHeirloomUI();
 
+function toggleCustomRatio() {
+    const ratioBtn = document.getElementById('heirloomCustomRatioBtn');
+    const className = ['settingBtnfalse', 'settingBtntrue'];
+    className.splice(className.indexOf(ratioBtn.className.split(' ')[2]), 1);
+    ratioBtn.setAttribute('class', 'btn settingsBtn ' + className[0]);
+
+    if (className[0] === 'settingBtntrue') {
+        saveHeirloomSettings();
+    } else {
+        let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+        delete heirloomInputs[_getSelectedHeirloom().id];
+        localStorage.setItem('heirloomInputs', JSON.stringify(heirloomInputs));
+        loadHeirloomSettings();
+    }
+    calculate();
+}
+
+function _getSelectedHeirloom() {
+    let heirloom;
+    if (game.global.selectedHeirloom[1] === 'heirloomsCarried') heirloom = game.global.heirloomsCarried[game.global.selectedHeirloom[0]];
+    else heirloom = game.global[game.global.selectedHeirloom[1]];
+
+    return heirloom;
+}
+
 function saveHeirloomSettings() {
-    const heirloomInputs = {
-        VMWeight: $$('#VMWeight').value,
-        XPWeight: $$('#XPWeight').value,
-        HPWeight: $$('#HPWeight').value,
-        equipLevels: $$('#equipLevels').value,
-        equalityTarget: $$('#equalityTarget').value
-    };
+    let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+    let update = heirloomInputs;
+    const customRatio = JSON.parse(document.getElementById('heirloomCustomRatioBtn').className.split(' ')[2].slice(10));
+    if (customRatio) {
+        heirloomInputs[_getSelectedHeirloom().id] = {};
+        update = heirloomInputs[_getSelectedHeirloom().id];
+    }
+
+    update.VMWeight = $$('#VMWeight').value;
+    update.XPWeight = $$('#XPWeight').value;
+    update.HPWeight = $$('#HPWeight').value;
+    update.equipLevels = $$('#equipLevels').value;
+    update.equalityTarget = $$('#equalityTarget').value;
 
     localStorage.setItem('heirloomInputs', JSON.stringify(heirloomInputs));
     if (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust') && autoTrimpSettings['autoHeirloomStorage']['value' + (game.global.universe === 2 ? 'U2' : '')] !== 'undefined') {
         autoTrimpSettings['autoHeirloomStorage']['value' + (game.global.universe === 2 ? 'U2' : '')] = JSON.stringify(heirloomInputs);
         saveSettings();
     }
+}
+
+function loadHeirloomSettings() {
+    let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+    if (heirloomInputs[_getSelectedHeirloom().id]) {
+        heirloomInputs = heirloomInputs[_getSelectedHeirloom().id];
+        document.getElementById('heirloomCustomRatioBtn').setAttribute('class', 'btn settingsBtn settingBtntrue');
+    } else {
+        document.getElementById('heirloomCustomRatioBtn').setAttribute('class', 'btn settingsBtn settingBtnfalse');
+    }
+    $$('#VMWeight').value = heirloomInputs.VMWeight;
+    $$('#XPWeight').value = heirloomInputs.XPWeight;
+    $$('#HPWeight').value = heirloomInputs.HPWeight;
+    $$('#equipLevels').value = heirloomInputs.equipLevels;
+    $$('#equalityTarget').value = heirloomInputs.equalityTarget;
 }
 
 function isNumeric(n) {
@@ -525,7 +586,8 @@ class Heirloom {
             const basePrices = [5, 10, 15, 25, 75, 150, 400, 1000, 2500, 7500, 50000, 375000];
             const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000];
             const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
-            this.inputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+            const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
+            this.inputs = settings[this.id] ? settings[this.id] : settings;
             this.isCore = this.type === 'Core';
             this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
             this.priceIncrease = priceIncreases[this.rarity];
@@ -1140,6 +1202,7 @@ selectHeirloom = function () {
     originalselectHeirloom(...arguments);
     try {
         calculate();
+        loadHeirloomSettings();
     } catch (e) {
         console.log('Heirloom issue: ' + e, 'other');
     }
