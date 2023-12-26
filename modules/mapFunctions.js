@@ -2569,7 +2569,7 @@ function alchemy(lineCheck) {
         }
     }
 
-    if (mapSettings.mapName === mapName && !shouldMap) {
+    if (!shouldMap) {
         mappingDetails(mapName, mapLevel, mapSpecial, alchObj.potionsOwned[mapSettings.potionIndex], alchObj.potionNames[mapSettings.potionIndex]);
         resetMapVars(setting, settingName);
     }
