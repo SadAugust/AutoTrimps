@@ -534,6 +534,7 @@ function _getSelectedHeirloom() {
 
 function saveHeirloomSettings() {
     let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+    if (heirloomInputs === null) heirloomInputs = {};
     let update = heirloomInputs;
     const customRatio = JSON.parse(document.getElementById('heirloomCustomRatioBtn').className.split(' ')[2].slice(10));
     if (customRatio) {
