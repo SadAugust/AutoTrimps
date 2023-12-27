@@ -182,33 +182,34 @@ function filterMessage2(a) {
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 
 //Will activate a 24 hour timewarp.
-function testTimeWarp(hours) {
-    var timeWarpHours = 0;
-    try {
-        timeWarpHours = parseNum(document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, ''));
-        if (timeWarpHours === null || timeWarpHours === undefined || timeWarpHours === 0) {
+function _getTimeWarpHours(inputHours) {
+    let timeWarpHours = 24; // default value
+
+    if (inputHours) {
+        timeWarpHours = inputHours;
+    } else {
+        try {
+            timeWarpHours = parseNum(document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, ''));
+            if (!timeWarpHours) {
+                debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
+            }
+        } catch (err) {
             debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
-            timeWarpHours = 24;
-        }
-    } catch (err) {
-        if (!hours) {
-            debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
-            timeWarpHours = 24;
         }
     }
 
-    if (hours) timeWarpHours = hours;
-    var timeToRun = timeWarpHours * 3600000;
+    return timeWarpHours;
+}
 
-    game.global.lastOnline -= timeToRun;
-    game.global.portalTime -= timeToRun;
-    game.global.zoneStarted -= timeToRun;
-    game.global.lastSoldierSentAt -= timeToRun;
-    game.global.lastSkeletimp -= timeToRun;
-    game.permaBoneBonuses.boosts.lastChargeAt -= timeToRun;
+//Will activate a 24 hour timewarp.
+function testTimeWarp(hours) {
+    const timeWarpHours = _getTimeWarpHours(hours);
+    const timeToRun = timeWarpHours * 3600000;
+
+    const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
+    adjustGlobalTimers(keys, -timeToRun);
 
     offlineProgress.start();
-    return;
 }
 
 function testSpeedX(interval) {

@@ -1091,6 +1091,7 @@ function smithyFarm(lineCheck) {
         farmingDetails.settingIndex = settingIndex;
         if (setting && setting.priority) farmingDetails.priority = setting.priority;
     }
+
     return farmingDetails;
 }
 

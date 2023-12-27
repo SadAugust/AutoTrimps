@@ -134,3 +134,126 @@ function _raspberryPiSettings() {
         game.options.menu.showHeirloomAnimations.enabled = 1;
     }
 }
+
+function _adjustGlobalTimers(keys, adjustment) {
+    keys.forEach((key) => {
+        if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[keys] += adjustment;
+        else game.global[key] += adjustment;
+    });
+}
+
+function _timeWarpSave() {
+    const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
+    const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp'];
+
+    _adjustGlobalTimers(keys, -reduceBy);
+
+    save(false, true);
+
+    _adjustGlobalTimers(keys, reduceBy);
+
+    debug(`Game Saved! ${formatTimeForDescriptions(reduceBy / 1000)} hours of offline progress left to process.`, `offline`);
+}
+
+function _timeWarpAutoSaveSetting() {
+    atSettings.autoSave = game.options.menu.autoSave.enabled;
+    atSettings.loops.atTimeLapseFastLoop = true;
+    if (game.options.menu.autoSave.enabled) toggleSetting('autoSave');
+}
+
+function _timeWarpUpdateUIDisplay() {
+    if (!usingRealTimeOffline || !getPageSetting('timeWarpDisplay')) return;
+    usingRealTimeOffline = false;
+    var enemy = getCurrentEnemy();
+    updateGoodBar();
+    updateBadBar(enemy);
+    document.getElementById('goodGuyHealthMax').innerHTML = prettify(game.global.soldierHealthMax);
+    document.getElementById('badGuyHealthMax').innerHTML = prettify(enemy.maxHealth);
+
+    var blockDisplay = '';
+    //Prismatic Shield for U2
+    if (game.global.universe == 2) {
+        var esMax = game.global.soldierEnergyShieldMax;
+        var esMult = getEnergyShieldMult();
+        var layers = Fluffy.isRewardActive('shieldlayer');
+        if (layers > 0) {
+            esMax *= layers + 1;
+            esMult *= layers + 1;
+        }
+        blockDisplay = prettify(esMax) + ' (' + Math.round(esMult * 100) + '%)';
+    }
+    //Block for U1
+    else blockDisplay = prettify(game.global.soldierCurrentBlock);
+    document.getElementById('goodGuyBlock').innerHTML = blockDisplay;
+    document.getElementById('goodGuyAttack').innerHTML = calculateDamage(game.global.soldierCurrentAttack, true, true);
+    var badAttackElem = document.getElementById('badGuyAttack');
+    badAttackElem.innerHTML = calculateDamage(getCurrentEnemy().attack, true, false, false, getCurrentEnemy());
+
+    updateLabels(true);
+    displayMostEfficientEquipment();
+    usingRealTimeOffline = true;
+}
+
+function _timeWarpUpdateEquipment() {
+    for (var equipName in game.equipment) {
+        var upgradeName = MODULES.equipment[equipName].upgrade;
+        if (game.upgrades[upgradeName].locked === 1) continue;
+        if (document.getElementById(upgradeName) === null) {
+            drawUpgrade(upgradeName, document.getElementById('upgradesHere'));
+        }
+    }
+}
+
+function _timeWarpATFunctions() {
+    //Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
+    farmingDecision();
+    autoMaps();
+    callBetterAutoFight();
+    autoPortalCheck();
+    if (loops % 10 === 0 || atSettings.portal.aWholeNewWorld) autoMapsStatus();
+    if (game.global.universe === 1) checkStanceSetting();
+    if (game.global.universe === 2) equalityManagement();
+    guiLoop();
+}
+
+function _handleMazWindow() {
+    const mazSettings = ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Balance Destack', 'Toxicity', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner'];
+    var tipElem = document.getElementById('tooltipDiv');
+
+    if (mazSettings.indexOf(tipElem.children.tipTitle.innerText) === -1) {
+        tipElem.style.overflowY = '';
+        tipElem.style.maxHeight = '';
+        tipElem.style.width = '';
+        MODULES.popups.mazWindowOpen = false;
+    }
+}
+
+function _handleIntervals() {
+    if (atSettings.intervals.tenMinute) atVersionChecker();
+    if (atSettings.intervals.oneSecond) {
+        trimpStats = new TrimpStats();
+        hdStats = new HDStats();
+    }
+}
+
+function _handleSlowScumming() {
+    if (MODULES.maps.slowScumming && game.global.mapRunCounter !== 0) {
+        if (game.global.mapBonus === 10) MODULES.maps.slowScumming = false;
+        else {
+            slowScum();
+            return true;
+        }
+    }
+    return false;
+}
+
+function _handlePopupTimer() {
+    if (MODULES.popups.remainingTime === 5000) {
+        MODULES.popups.remainingTime -= 0.0001;
+        MODULES.popups.intervalID = setInterval(function () {
+            if (MODULES.popups.remainingTime === Infinity) clearInterval(MODULES.popups.intervalID);
+            MODULES.popups.remainingTime -= 100;
+            if (MODULES.popups.remainingTime <= 0) MODULES.popups.remainingTime = 0;
+        }, 100);
+    }
+}
