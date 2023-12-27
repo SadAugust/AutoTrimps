@@ -60,7 +60,9 @@ var autoTrimpSettings = {};
 var MODULES = {
     popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
     stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0 },
-    graphs: {}
+    graphs: {},
+    u1unlocks: [],
+    u2unlocks: []
 };
 
 var currPortalUniverse = 0;
@@ -505,6 +507,7 @@ function mainLoopU2() {
     if (game.global.universe !== 2) return;
     //Auto Equality Management
     if (shouldRunInTimeWarp()) equalityManagement();
+    _alchemyVoidPotions();
 }
 
 function guiLoop() {

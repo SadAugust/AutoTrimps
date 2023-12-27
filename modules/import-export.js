@@ -373,38 +373,35 @@ function loadAutoTrimps() {
 }
 
 //Either sets the AT settings to default or to the ones imported in loadAutoTrimps()
-function resetAutoTrimps(autoTrimpsSettings, b) {
+function resetAutoTrimps(autoTrimpsSettings) {
     atSettings.running = false;
-    setTimeout(
-        (function (atSettings) {
-            localStorage.removeItem('atSettings');
-            autoTrimpSettings = atSettings ? atSettings : {};
-            var e = document.getElementById('settingsRow');
-            e.removeChild(document.getElementById('autoSettings'));
-            e.removeChild(document.getElementById('autoTrimpsTabBarMenu'));
+    setTimeout(() => {
+        localStorage.removeItem('atSettings');
+        autoTrimpSettings = autoTrimpsSettings || {};
+        var e = document.getElementById('settingsRow');
+        e.removeChild(document.getElementById('autoSettings'));
+        e.removeChild(document.getElementById('autoTrimpsTabBarMenu'));
 
-            automationMenuSettingsInit();
-            initializeAllTabs();
-            initializeAllSettings();
-            saveSettings();
-            updateATVersion();
-            resetSettingsPortal();
-            updateCustomButtons(true);
-            saveSettings();
-            localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
-            localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
-            localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
-            loadAugustSettings();
-            modifyParentNodeUniverseSwap();
-            if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
+        automationMenuSettingsInit();
+        initializeAllTabs();
+        initializeAllSettings();
+        saveSettings();
+        updateATVersion();
+        resetSettingsPortal();
+        updateCustomButtons(true);
+        saveSettings();
+        localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
+        localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
+        localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
+        loadAugustSettings();
+        modifyParentNodeUniverseSwap();
+        if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
 
-            //Remove the localStorage entries if they are empty and rebuild the GUI to initialise base settings
-            if (Object.keys(JSON.parse(localStorage.getItem('perkyInputs'))).length === 1) delete localStorage.perkyInputs;
-            if (Object.keys(JSON.parse(localStorage.getItem('surkyInputs'))).length === 1) delete localStorage.surkyInputs;
-            MODULES.autoPerks.displayGUI(game.global.universe);
-        })(autoTrimpsSettings),
-        101
-    );
+        //Remove the localStorage entries if they are empty and rebuild the GUI to initialise base settings
+        if (Object.keys(JSON.parse(localStorage.getItem('perkyInputs'))).length === 1) delete localStorage.perkyInputs;
+        if (Object.keys(JSON.parse(localStorage.getItem('surkyInputs'))).length === 1) delete localStorage.surkyInputs;
+        MODULES.autoPerks.displayGUI(game.global.universe);
+    }, 101);
 
     if (autoTrimpsSettings) {
         debug('Successfully imported new AT settings...', 'profile');
@@ -438,8 +435,7 @@ function loadAugustSettings() {
 
 //Process data to google forms to update stats spreadsheet
 function pushSpreadsheetData() {
-    if (!portalWindowOpen) return;
-    if (!gameUserCheck(true)) return;
+    if (!portalWindowOpen || !gameUserCheck(true)) return;
     const graphData = JSON.parse(localStorage.getItem('portalDataCurrent'))[getportalID()];
 
     const fluffy_EvoLevel = {

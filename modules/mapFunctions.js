@@ -362,19 +362,8 @@ function selectEasierVoidMap(map1, map2) {
     else return map2;
 }
 
-function voidMapHD() {
-    var hdObject = {
-        world: { hdStat: hdStats.hdRatio, hdStatVoid: hdStats.vhdRatio, name: 'World HD Ratio' },
-        map: { hdStat: hdStats.hdRatioMap, name: 'Map HD Ratio' },
-        void: { hdStat: hdStats.hdRatioVoid, hdStatVoid: hdStats.vhdRatioVoid, name: 'Void HD Ratio' },
-        hitsSurvived: { hdStat: hdStats.hitsSurvived, name: 'Hits Survived' },
-        hitsSurvivedVoid: { hdStat: hdStats.hitsSurvivedVoid, name: 'Hits Survived Void' },
-        maplevel: { hdStat: hdStats.autoLevel, name: 'Map Level' }
-    };
-}
-
 function voidMaps(lineCheck) {
-    var shouldMap = false;
+    let shouldMap = false;
     const mapName = 'Void Map';
     const farmingDetails = {
         shouldRun: false,
@@ -384,8 +373,8 @@ function voidMaps(lineCheck) {
     const settingName = 'voidMapSettings';
     const baseSettings = getPageSetting(settingName);
     const defaultSettings = baseSettings ? baseSettings[0] : null;
-    var settingIndex = null;
-    var setting;
+    let settingIndex = null;
+    let setting;
     if (defaultSettings === null) return farmingDetails;
 
     if (!defaultSettings.active && !mapSettings.portalAfterVoids && !MODULES.mapFunctions.afterVoids) return farmingDetails;
@@ -394,10 +383,10 @@ function voidMaps(lineCheck) {
     const dailyAddition = dailyOddOrEven();
     const zoneAddition = dailyAddition.active ? 1 : 0;
 
-    var dropdowns = ['hdRatio', 'voidHDRatio'];
-    var hdTypes = ['hdType', 'hdType2'];
+    const dropdowns = ['hdRatio', 'voidHDRatio'];
+    const hdTypes = ['hdType', 'hdType2'];
 
-    var hdObject = {
+    let hdObject = {
         world: { hdStat: hdStats.hdRatio, hdStatVoid: hdStats.vhdRatio, name: 'World HD Ratio' },
         map: { hdStat: hdStats.hdRatioMap, name: 'Map HD Ratio' },
         void: { hdStat: hdStats.hdRatioVoid, hdStatVoid: hdStats.vhdRatioVoid, name: 'Void HD Ratio' },
@@ -408,8 +397,8 @@ function voidMaps(lineCheck) {
 
     for (let y = 1; y < baseSettings.length; y++) {
         let currSetting = baseSettings[y];
-        var world = currSetting.world + voidReduction;
-        var maxVoidZone = currSetting.maxvoidzone + voidReduction;
+        let world = currSetting.world + voidReduction;
+        let maxVoidZone = currSetting.maxvoidzone + voidReduction;
 
         if (dailyAddition.active) {
             if (dailyAddition.skipZone) continue;
@@ -2559,13 +2548,10 @@ function alchemy(lineCheck) {
         farmingDetails.potionTarget = potionTarget;
         farmingDetails.potionIndex = potionIndex;
         if (setting.priority) farmingDetails.priority = setting.priority;
-    }
 
-    //Purchase Void & Strength potions if possible when inside a void map
-    if ((typeof defaultSettings.voidPurchase !== 'undefined' ? defaultSettings.voidPurchase : false) && game.global.voidBuff !== '') {
-        if (getCurrentMapObject().location === 'Void' && (alchObj.canAffordPotion('Potion of the Void') || alchObj.canAffordPotion('Potion of Strength'))) {
-            alchObj.craftPotion('Potion of the Void');
-            alchObj.craftPotion('Potion of Strength');
+        if (!shouldMap) {
+            resetMapVars(setting, settingName);
+            return alchemy();
         }
     }
 
@@ -2575,6 +2561,14 @@ function alchemy(lineCheck) {
     }
 
     return farmingDetails;
+}
+
+function _alchemyVoidPotions() {
+    if (!challengeActive('Alchemy') || !getPageSetting('alchemySettings')[0].active || !getPageSetting('alchemySettings')[0].voidPurchase) return;
+    if (game.global.voidBuff === '') return;
+
+    if (alchObj.canAffordPotion('Potion of the Void')) alchObj.craftPotion('Potion of the Void');
+    if (alchObj.canAffordPotion('Potion of Strength')) alchObj.craftPotion('Potion of Strength');
 }
 
 function glass(lineCheck) {
