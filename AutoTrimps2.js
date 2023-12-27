@@ -300,17 +300,19 @@ function mainLoop() {
     if (atSettings.running === false) return;
     if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
     atSettings.running = true;
-    if (shouldRunInTimeWarp()) updateInterval();
+    const runDuringTimeWarp = shouldRunInTimeWarp();
+    if (runDuringTimeWarp) updateInterval();
 
     _handleIntervals();
+    if (runDuringTimeWarp) farmingDecision();
 
-    if (shouldRunInTimeWarp()) mainCleanup();
+    if (runDuringTimeWarp) mainCleanup();
 
     if (_handleSlowScumming()) return;
 
     if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
 
-    if (shouldRunInTimeWarp()) {
+    if (runDuringTimeWarp) {
         autoMaps();
         autoMapsStatus();
     }
@@ -328,7 +330,7 @@ function mainLoop() {
     autoGoldUpgrades();
     autoEquip();
 
-    if (shouldRunInTimeWarp()) {
+    if (runDuringTimeWarp) {
         autoPortalCheck();
         displayMostEfficientEquipment();
     }

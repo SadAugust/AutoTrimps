@@ -8,28 +8,28 @@ if (typeof MODULES === 'undefined') {
     }
 }
 
+//Old setup!
 function callAutoMapLevel(settingName, special, maxLevel, minLevel) {
     if (getPageSetting('autoLevelTest')) return callAutoMapLevel_new(settingName, special);
-
     let mapLevel = mapSettings.levelCheck;
-
     // Stop it from adjusting map levels and potentially wasting map credits during Mapology.
     if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
-
-    if (!settingName || mapLevel === Infinity) {
-        mapLevel = autoMapLevel(special, maxLevel, minLevel);
+    if (settingName === '' || mapLevel === Infinity) {
+        if (mapLevel === Infinity) mapLevel = autoMapLevel(special, maxLevel, minLevel);
+        if (mapLevel !== Infinity && atSettings.intervals.twoSecond) mapLevel = autoMapLevel(special, maxLevel, minLevel);
     }
-
-    if (atSettings.intervals.sixSecond && settingName) {
-        const autoLevel = autoMapLevel(special, maxLevel, minLevel);
-        mapLevel = Math.max(autoLevel, mapLevel);
-        const autoLevelIgnoreFragments = autoMapLevel(special, maxLevel, minLevel, true);
-        mapLevel = Math.min(autoLevelIgnoreFragments, mapLevel);
+    if (atSettings.intervals.sixSecond && settingName !== '') {
+        //Increasing Map Level
+        var autoLevel = autoMapLevel(special, maxLevel, minLevel);
+        if (autoLevel > mapLevel) mapLevel = autoLevel;
+        autoLevel = autoMapLevel(special, maxLevel, minLevel, true);
+        //Decreasing Map Level
+        if (autoLevel < mapLevel) mapLevel = autoLevel;
     }
-
     return mapLevel;
 }
 
+//New setup!
 function callAutoMapLevel_new(mapName, special) {
     const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking'];
     const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
@@ -76,9 +76,10 @@ function callAutoMapLevel_new(mapName, special) {
     return mapLevel;
 }
 
-function autoMapLevel(special, maxLevel = 10, minLevel = 0 - game.global.world + 6, statCheck = false) {
+function autoMapLevel(special, maxLevel, minLevel, statCheck) {
     if (!game.global.mapsUnlocked) return 0;
-    maxLevel = Math.min(maxLevel, 10);
+    if (maxLevel > 10) maxLevel = 10;
+    if (!statCheck) statCheck = false;
     const z = game.global.world;
     if (z + maxLevel < 6) maxLevel = 0 - (z + 6);
 
@@ -91,19 +92,21 @@ function autoMapLevel(special, maxLevel = 10, minLevel = 0 - game.global.world +
     const haveMapReducer = game.talents.mapLoot.purchased;
 
     const biome = getBiome();
-    const query = !special;
+    const query = !special ? true : false;
     let universeSetting = z >= 60 && hze >= 180 ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
     const cell = game.talents.mapLoot2.purchased ? 20 : 25;
     if (!special) special = getAvailableSpecials('lmc');
     const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2;
-    let enemyName = 'Snimp';
+    var enemyName = 'Snimp';
 
+    var maxLevel = typeof maxLevel === 'undefined' || maxLevel === null ? 10 : maxLevel;
     if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
+    var minLevel = typeof minLevel === 'undefined' || minLevel === null ? 0 - z + 6 : minLevel;
     if (minLevel < -(game.global.world - 6)) minLevel = -(game.global.world - 6);
     const runningQuest = challengeActive('Quest') && currQuest() === 8;
     const runningUnlucky = challengeActive('Unlucky');
     const runningInsanity = challengeActive('Insanity');
-    let ourHealth = calcOurHealth(game.global.universe === 2 ? runningQuest : universeSetting, 'map');
+    var ourHealth = calcOurHealth(game.global.universe === 2 ? runningQuest : universeSetting, 'map');
     const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
     const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
     const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Explosive
@@ -113,35 +116,36 @@ function autoMapLevel(special, maxLevel = 10, minLevel = 0 - game.global.world +
         ourHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
     }
 
-    let dmgType = runningUnlucky ? 'max' : 'avg';
-    let critType = 'maybe';
-    let critChance = getPlayerCritChance_AT('map');
+    var dmgType = runningUnlucky ? 'max' : 'avg';
+    var critType = 'maybe';
+    var critChance = getPlayerCritChance_AT('map');
     critChance = critChance - Math.floor(critChance);
     if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.1) critType = 'never';
 
     const perfectMaps = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
 
-    for (let mapLevel = maxLevel; mapLevel >= minLevel; mapLevel--) {
+    for (var y = maxLevel; y >= minLevel; y--) {
+        var mapLevel = y;
         if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
         if (runningInsanity && mapLevel > 0) enemyName = 'Horrimp';
-        if (mapLevel === minLevel) {
+        if (y === minLevel) {
             return minLevel;
         }
         if (!statCheck && perfectMaps && game.resources.fragments.owned < mapCost(mapLevel, special, biome)) continue;
         if (!statCheck && !perfectMaps && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome)) continue;
 
         if (game.global.universe === 2) universeSetting = equalityQuery(enemyName, z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
-        let ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, mapLevel, 'force');
+        var ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, y, 'force');
         if (challengeActive('Duel')) ourDmg *= MODULES.heirlooms.gammaBurstPct;
         if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= 1 - (9 * game.global.dailyChallenge.weakness.strength) / 100;
-        let enemyHealth = calcEnemyHealthCore('map', z + mapLevel, cell, 'Turtlimp') * difficulty;
+        var enemyHealth = calcEnemyHealthCore('map', z + mapLevel, cell, 'Turtlimp') * difficulty;
 
         if (maxOneShotPower(true) > 1) {
             enemyHealth *= maxOneShotPower(true);
             if (game.global.universe === 1) ourDmg *= 0.005 * game.portal.Overkill.level;
             if (game.global.universe === 2 && !u2Mutations.tree.MadMap.purchased) ourDmg *= 0.005;
         }
-        let enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, enemyName, false, false, universeSetting) * difficulty;
+        var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, enemyName, false, false, universeSetting) * difficulty;
 
         if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
         if (dailyCrit && getPageSetting('IgnoreCrits') === 0) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
@@ -553,7 +557,7 @@ function zone_stats(zone, stances, saveData) {
     for (var stance of stances) {
         saveData.atk = saveData.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
         if (mastery('bionic2') && zone > saveData.zone) saveData.atk *= 1.5;
-        const simulationResults = simulateMap(saveData, zone, stance);
+        const simulationResults = simulate(saveData, zone, stance);
         const speed = simulationResults.speed;
         const value = speed * result.loot * (stance == 'S' ? 2 : 1);
         const equality = simulationResults.equality;
@@ -581,7 +585,7 @@ function zone_stats(zone, stances, saveData) {
 }
 
 //Simulate farming at the given zone for a fixed time, and return the number cells cleared.
-function simulateMap(saveData, zone) {
+function simulate(saveData, zone) {
     let trimpHealth = saveData.trimpHealth;
     let debuff_stacks = 0;
     let titimp = 0;
@@ -913,12 +917,12 @@ function simulateMap(saveData, zone) {
 }
 
 //Return info about the best zone for each stance
-function _getBest(results, fragmentCheck, mapModifiers) {
-    let best = { loot: { mapLevel: 0 }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 } };
+function get_best(results, fragmentCheck, mapModifiers) {
+    var best = { loot: { mapLevel: 0 }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 } };
     if (!game.global.mapsUnlocked) return best;
 
-    let [stats, stances] = results;
-    stats = [...stats];
+    var [stats, stances] = results;
+    stats = [...stats.slice()];
     //The array can sometimes have maps out of order so got to sort them into the right order at the start
     stats.sort((a, b) => b.mapLevel - a.mapLevel);
     //Check fragment cost of each map and remove them from the check if they can't be afforded.
@@ -929,41 +933,56 @@ function _getBest(results, fragmentCheck, mapModifiers) {
                 biome: getBiome()
             };
         const fragSetting = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
-        stats = stats.filter((stat, i) => {
-            const mapExists = typeof atSettings !== 'undefined' && findMap(stat.mapLevel, mapModifiers.special, mapModifiers.biome, fragSetting);
-            const canAffordMap = game.resources.fragments.owned >= (fragSetting ? mapCost : minMapFrag)(stat.mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9]);
-            return mapExists || canAffordMap;
-        });
+        for (var i = 0; i <= stats.length - 1; i++) {
+            if (fragSetting) {
+                if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
+                if (game.resources.fragments.owned >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+            }
+            if (!fragSetting) {
+                if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
+                if (game.resources.fragments.owned >= minMapFrag(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+            }
+            stats.splice(i, 1);
+            i--;
+        }
     }
-
     if (stats.length === 0) return best;
-
-    let statsLoot = [...stats];
-    let statsSpeed = [...stats];
-
-    for (let stance of stances) {
+    var statsLoot = [...stats];
+    var statsSpeed = [...stats];
+    //Find the best speed/loot zone for each stance
+    for (var stance of stances) {
         statsLoot.sort((a, b) => b[stance].value - a[stance].value);
+        //Find the best speed zone for each stance
         statsSpeed.sort((a, b) => a[stance].killSpeed - b[stance].killSpeed);
     }
 
+    //Best zone to farm on for loot
     statsLoot.sort((a, b) => b.value - a.value);
-    best.loot = _getBestStat(statsLoot[0], 'loot');
+    best.loot = {
+        mapLevel: statsLoot[0].mapLevel,
+        zone: statsLoot[0].zone,
+        value: statsLoot[0][statsLoot[0].stance].value,
+        speed: statsLoot[0][statsLoot[0].stance].speed,
+        killSpeed: statsLoot[0][statsLoot[0].stance].killSpeed,
+        stance: statsLoot[0].stance
+    };
+    if (game.global.universe === 1) best.loot.stance = statsLoot[0].stance;
+    if (game.global.universe === 2) best.loot.equality = statsLoot[0].equality;
+
+    //Best zone to farm on for speed
     statsSpeed.sort((a, b) => b.killSpeed - a.killSpeed);
-    best.speed = _getBestStat(statsSpeed[0], 'speed');
+    best.speed = {
+        mapLevel: statsSpeed[0].mapLevel,
+        zone: statsSpeed[0].zone,
+        value: statsSpeed[0][statsSpeed[0].stanceSpeed].value,
+        speed: statsSpeed[0][statsSpeed[0].stanceSpeed].speed,
+        killSpeed: statsSpeed[0][statsSpeed[0].stanceSpeed].killSpeed,
+        stance: statsSpeed[0].stanceSpeed
+    };
+    if (game.global.universe === 1) best.speed.stance = statsSpeed[0].stanceSpeed;
+    if (game.global.universe === 2) best.speed.equality = statsSpeed[0].equality;
 
     return best;
-}
-
-function _getBestStat(stat, type) {
-    const stance = type === 'loot' ? stat.stance : stat.stanceSpeed;
-    return {
-        mapLevel: stat.mapLevel,
-        zone: stat.zone,
-        value: stat[stance].value,
-        speed: stat[stance].speed,
-        killSpeed: stat[stance].killSpeed,
-        stance: game.global.universe === 1 ? stance : stat.equality
-    };
 }
 
 function _getBiomeEnemyStats(biome) {

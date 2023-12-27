@@ -4929,9 +4929,9 @@ function autoToggle(what) {
 function updateAutoTrimpSettings(forceUpdate) {
     const isGraphModuleDefined = typeof MODULES.graphs !== 'undefined';
     const isLastThemeDefined = typeof lastTheme !== 'undefined';
-    const hasThemeChanged = lastTheme && game.options.menu.darkTheme.enabled !== lastTheme;
+    const hasThemeChanged = isLastThemeDefined && game.options.menu.darkTheme.enabled !== lastTheme;
 
-    if (isGraphModuleDefined && isLastThemeDefined && hasThemeChanged) {
+    if (isGraphModuleDefined && hasThemeChanged) {
         MODULES['graphs'].themeChanged();
         lastTheme = game.options.menu.darkTheme.enabled;
     }
