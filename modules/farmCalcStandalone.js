@@ -147,7 +147,7 @@ function currQuest() {
 
 //AutoLevel information
 function makeAdditionalInfo() {
-    const initialInfo = _getBest(stats(), true);
+    const initialInfo = get_best(stats(), true);
     const u2 = game.global.universe === 2;
     const extraType = u2 ? 'equality' : 'stance';
     const showExtraType = (u2 && getPerkLevel('Equality') > 0) || (!u2 && game.upgrades.Formations.done);

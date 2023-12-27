@@ -47,11 +47,11 @@ function callAutoMapLevel_new(mapName, special) {
     if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
 
     if (mapLevel === Infinity) {
-        mapLevel = _getBest(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+        mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
     } else if (mapName && atSettings.intervals.sixSecond) {
-        const autoLevel = _getBest(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+        const autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
         mapLevel = Math.max(mapLevel, autoLevel);
-        const autoLevelIgnoreFragments = _getBest(hdStats.autoLevelInitial)[mapType].mapLevel;
+        const autoLevelIgnoreFragments = get_best(hdStats.autoLevelInitial)[mapType].mapLevel;
         mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
     }
 
