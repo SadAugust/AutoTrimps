@@ -780,7 +780,7 @@ load = function () {
         atlantrimpRespecOverride();
         resetVarsZone(true);
         if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
-        updateCustomButtons(true);
+        updateAutoTrimpSettings(true);
     } catch (e) {
         debug('Load save failed: ' + e);
     }

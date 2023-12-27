@@ -108,7 +108,7 @@ class HDStats {
         if (checkAutoLevel) {
             this.autoLevelInitial = stats();
             this.autoLevelZone = z;
-            this.autoLevelData = get_best(this.autoLevelInitial, true);
+            this.autoLevelData = _getBest(this.autoLevelInitial, true);
 
             const worldMap = Object.entries(this.autoLevelInitial[0])
                 .filter((data) => data[1].mapLevel === 0)

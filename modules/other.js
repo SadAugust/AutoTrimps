@@ -257,3 +257,150 @@ function _handlePopupTimer() {
         }, 100);
     }
 }
+
+//Checks to see if we should inform the user of any new challenge unlocks.
+function _challengeUnlockCheck() {
+    if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+
+    function isChallengeUnlocked(challenge) {
+        return (MODULES.u1unlocks && MODULES.u1unlocks.includes(challenge)) || (MODULES.u2unlocks && MODULES.u2unlocks.includes(challenge));
+    }
+
+    function isSpecialChallenge(challenge) {
+        const specialChallenges = ['Frigid', 'Experience', 'Mayhem', 'Pandemonium', 'Desolation'];
+        return specialChallenges.includes(challenge);
+    }
+
+    function challengeUnlock(challenge, setting, c2) {
+        if (isChallengeUnlocked(challenge)) return '';
+
+        const c2Msg = game.global.universe === 2 ? '3' : '2';
+        let msg = `You have unlocked the ${challenge} challenge. It has now been added to ${c2 ? 'Challenge ' + c2Msg + ' Auto Portal setting' : 'Auto Portal'}`;
+        msg += setting ? ` & there's settings for it in the scripts ${c2 ? '"C' + c2Msg + '"' : '"Challenges"'} tab.` : '.';
+        if (isSpecialChallenge(challenge)) {
+            msg += `<br><br><b>This is a special challenge and will use ${cinf()} settings when run.</b>`;
+        }
+        return msg;
+    }
+
+    let message = '';
+    let unlockedChallenges = [];
+
+    if (game.global.universe === 1) {
+        const hze = game.stats.highestLevel.valueTotal();
+
+        const challengeLevels = [
+            { level: 10, name: 'Discipline', condition: () => getTotalPerkResource(true) >= 30, c2: true },
+            { level: 25, name: 'Metal', c2: true },
+            { level: 35, name: 'Size', c2: true },
+            { level: 40, name: 'Balance', setting: true },
+            { level: 45, name: 'Meditate', c2: true },
+            { level: 55, name: 'Decay', setting: true },
+            { level: 60, name: 'Warpstation', message: "Upon unlocking Warpstations's the script has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature." },
+            { level: 60, name: 'Trimp' },
+            { level: 70, name: 'Trapper', c2: true },
+            { level: 80, name: 'Electricity', condition: () => game.global.prisonClear >= 1, c2: true },
+            { level: 100, name: 'Daily', message: 'You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.' },
+            { level: 110, name: 'Life', setting: true },
+            { level: 120, name: 'Coordinate', c2: true },
+            { level: 125, name: 'Crushed' },
+            { level: 130, name: 'Slow', setting: true, c2: true },
+            { level: 145, name: 'Nom', setting: true, c2: true },
+            { level: 150, name: 'Mapology', setting: true, c2: true },
+            { level: 165, name: 'Toxicity', setting: true, c2: true },
+            { level: 180, name: 'Watch', setting: true, c2: true },
+            { level: 180, name: 'Lead', setting: true, c2: true },
+            { level: 215, name: 'Domination', setting: true, c2: true },
+            {
+                level: 230,
+                name: 'Dimensional Generator',
+                message: "Upon unlocking the Dimensional Generator building the script has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic."
+            },
+            { level: 236, name: 'Nature', message: "Upon unlocking Nature, AutoTrimps has a new settings tab available called <b>Nature</b>'. Here you will find a variety of settings that will help with this new feature." },
+            { level: 425, name: 'Obliterated', setting: true, c2: true },
+            { level: 10, name: 'Eradicated', condition: () => game.global.totalSquaredReward >= 4500, setting: true, c2: true },
+            { level: 460, name: 'Frigid', setting: true, c2: true },
+            { level: 600, name: 'Experience', setting: true, c2: true },
+            { level: 65, name: 'Challenge 2', message: "Due to unlocking Challenge 2's there is now a Challenge 2 option under Auto Portal to be able to auto portal into them. Also you can now access the C2 tab within the the scripts settings." }
+        ];
+
+        unlockedChallenges = challengeLevels.filter((challenge) => hze >= challenge.level && (!challenge.condition || challenge.condition()) && !MODULES.u1unlocks.includes(challenge.name));
+        const unlockedChallengeArray = unlockedChallenges.map((challenge) => challenge.name);
+
+        if (Object.keys(MODULES.u1unlocks).length === 0) {
+            MODULES.u1unlocks = unlockedChallengeArray;
+            return;
+        }
+
+        MODULES.u1unlocks = unlockedChallengeArray;
+    } else if (game.global.universe === 2) {
+        const hze = game.stats.highestRadLevel.valueTotal();
+
+        const challengeLevels = [
+            { level: 25, name: 'Transmute', message: 'You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.' },
+            { level: 30, name: 'Daily', message: 'You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.' },
+            { level: 35, name: 'Unbalance', setting: true, c2: true },
+            { level: 45, name: 'Duel', setting: true, c2: true },
+            { level: 40, name: 'Bublé' },
+            { level: 50, name: 'Melt', c3: true, worshippers: true },
+            { level: 60, name: 'Trappapalooza', setting: true, c2: true },
+            { level: 70, name: 'Quagmire', setting: true, c2: false },
+            { level: 70, name: 'Wither', setting: true, c2: true },
+            { level: 85, name: 'Quest', setting: true, c2: true },
+            { level: 90, name: 'Archaeology', setting: true, c2: false },
+            { level: 100, name: 'Mayhem', setting: true, c2: true },
+            { level: 105, name: 'Storm', setting: true, c2: true },
+            { level: 110, name: 'Insanity', setting: true, c2: false },
+            { level: 115, name: 'Berserk' },
+            { level: 135, name: 'Nurture', setting: false, c2: false, lab: true },
+            { level: 150, name: 'Pandemonium', setting: true, c2: true },
+            { level: 155, name: 'Alchemy', setting: true, c2: false },
+            { level: 175, name: 'Hypothermia', setting: true, c2: false, glass: true },
+            { level: 200, name: 'Desolation', setting: true, c2: true },
+            { level: 201, name: 'Smithless', setting: true, c2: true }
+        ];
+
+        unlockedChallenges = challengeLevels.filter((challenge) => hze >= challenge.level && (!challenge.condition || challenge.condition()) && !MODULES.u2unlocks.includes(challenge.name));
+        const unlockedChallengeArray = unlockedChallenges.map((challenge) => challenge.name);
+
+        if (Object.keys(MODULES.u2unlocks).length === 0) {
+            MODULES.u2unlocks = unlockedChallengeArray;
+            return;
+        }
+
+        MODULES.u2unlocks = unlockedChallengeArray;
+    }
+
+    for (const challenge of unlockedChallenges) {
+        if (challenge.message) {
+            message = challenge.message;
+        } else {
+            message = challengeUnlock(challenge.name, challenge.setting, challenge.c2);
+        }
+
+        if (challenge.c3) {
+            message += "<br><br>Due to unlocking Challenge 3's there is now a Challenge 3 option under Auto Portal to be able to auto portal into them. Also you can now access the " + cinf() + ' tab within the the scripts settings.';
+        }
+
+        if (challenge.worshippers) {
+            message += "<br><br>You can now use the Worshipper Farm setting. This can be found in the the scripts 'Maps' tab.";
+        }
+
+        if (challenge.lab) {
+            message += " There is also setting for Laboratory's that has been added to the AutoStructure setting.";
+        }
+
+        if (challenge.glass) {
+            message += '<br><br>' + challengeUnlock('Glass', true, true);
+        }
+
+        break;
+    }
+
+    if (message !== '') {
+        message += '<br><br><b>To disable this popup, click confirm!<b>';
+        hzeMessage = message;
+        MODULES.popups.challenge = true;
+        tooltip('confirm', null, 'update', hzeMessage, 'MODULES.popups.challenge = false, delete hzeMessage', 'AutoTrimps New Unlock!');
+    }
+}

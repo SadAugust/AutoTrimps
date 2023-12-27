@@ -114,7 +114,7 @@ function setPageSetting(setting, newValue, universe = portalUniverse) {
     else if (selectedIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][selected] = newValue;
 
     //Update button values if necessary
-    if (settingType !== 'mazArray' && settingType !== 'mazDefaultArray') updateCustomButtons(true);
+    if (settingType !== 'mazArray' && settingType !== 'mazDefaultArray') updateAutoTrimpSettings(true);
     saveSettings();
 }
 
@@ -179,6 +179,15 @@ function filterMessage2(a) {
     }
 }
 
+//Check if the gameUser setting has been set to a valid user.
+function gameUserCheck(skipTest) {
+    const user = autoTrimpSettings.gameUser.value.trim().toLowerCase();
+    if (!user) return false;
+    const allowedUsers = ['sadaugust', 'kyotie', 'charles', 'test'];
+    if (skipTest) allowedUsers.pop();
+    return allowedUsers.some((allowedUser) => allowedUser === user);
+}
+
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 
 //Will activate a 24 hour timewarp.
@@ -207,7 +216,7 @@ function testTimeWarp(hours) {
     const timeToRun = timeWarpHours * 3600000;
 
     const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
-    adjustGlobalTimers(keys, -timeToRun);
+    _adjustGlobalTimers(keys, -timeToRun);
 
     offlineProgress.start();
 }

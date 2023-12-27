@@ -388,13 +388,13 @@ function resetAutoTrimps(autoTrimpsSettings) {
         saveSettings();
         updateATVersion();
         resetSettingsPortal();
-        updateCustomButtons(true);
+        updateAutoTrimpSettings(true);
         saveSettings();
         localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
         localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
         localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
         loadAugustSettings();
-        modifyParentNodeUniverseSwap();
+        _settingsToLineBreak();
         if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
 
         //Remove the localStorage entries if they are empty and rebuild the GUI to initialise base settings
