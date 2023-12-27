@@ -4832,6 +4832,7 @@ function challengeUnlockCheck() {
     }
 
     let message = '';
+    let unlockedChallenges = [];
 
     if (game.global.universe === 1) {
         const hze = game.stats.highestLevel.valueTotal();
@@ -4871,7 +4872,7 @@ function challengeUnlockCheck() {
             { level: 65, name: 'Challenge 2', message: "Due to unlocking Challenge 2's there is now a Challenge 2 option under Auto Portal to be able to auto portal into them. Also you can now access the C2 tab within the the scripts settings." }
         ];
 
-        const unlockedChallenges = challengeLevels.filter((challenge) => hze >= challenge.level && (!challenge.condition || challenge.condition()) && !MODULES.u1unlocks.includes(challenge.name));
+        unlockedChallenges = challengeLevels.filter((challenge) => hze >= challenge.level && (!challenge.condition || challenge.condition()) && !MODULES.u1unlocks.includes(challenge.name));
         const unlockedChallengeArray = unlockedChallenges.map((challenge) => challenge.name);
 
         if (Object.keys(MODULES.u1unlocks).length === 0) {
@@ -4907,7 +4908,7 @@ function challengeUnlockCheck() {
             { level: 201, name: 'Smithless', setting: true, c2: true }
         ];
 
-        const unlockedChallenges = challengeLevels.filter((challenge) => hze >= challenge.level && (!challenge.condition || challenge.condition()) && !MODULES.u2unlocks.includes(challenge.name));
+        unlockedChallenges = challengeLevels.filter((challenge) => hze >= challenge.level && (!challenge.condition || challenge.condition()) && !MODULES.u2unlocks.includes(challenge.name));
         const unlockedChallengeArray = unlockedChallenges.map((challenge) => challenge.name);
 
         if (Object.keys(MODULES.u2unlocks).length === 0) {
