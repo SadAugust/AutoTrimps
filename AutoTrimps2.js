@@ -19,25 +19,45 @@ var atSettings = {
     autoSave: game.options.menu.autoSave.enabled
 };
 
-function loadScript(url, type = 'text/javascript') {
+function loadScript(url, type = 'text/javascript', retries = 3) {
     return new Promise((resolve, reject) => {
+        if (retries < 1) {
+            reject(`Failed to load script ${url} after multiple attempts`);
+            return;
+        }
+
         const script = document.createElement('script');
         script.src = url;
         script.type = type;
         script.onload = resolve;
-        script.onerror = reject;
+        script.onerror = () => {
+            console.log(`Failed to load script ${url}. Retries left: ${retries - 1}`);
+            loadScript(url, type, retries - 1)
+                .then(resolve)
+                .catch(reject);
+        };
         document.head.appendChild(script);
     });
 }
 
-function loadStylesheet(url, rel = 'stylesheet', type = 'text/css') {
+function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3) {
     return new Promise((resolve, reject) => {
+        if (retries < 1) {
+            reject(`Failed to load stylesheet ${url} after multiple attempts`);
+            return;
+        }
+
         const link = document.createElement('link');
         link.href = url;
         link.rel = rel;
         link.type = type;
         link.onload = resolve;
-        link.onerror = reject;
+        link.onerror = () => {
+            console.log(`Failed to load stylesheet ${url}. Retries left: ${retries - 1}`);
+            loadStylesheet(url, rel, type, retries - 1)
+                .then(resolve)
+                .catch(reject);
+        };
         document.head.appendChild(link);
     });
 }
