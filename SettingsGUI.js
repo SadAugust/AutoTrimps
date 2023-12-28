@@ -2441,6 +2441,15 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require() && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
 
+		createSetting('pandemoniumAERatio',
+			function () { return ('P AE: HD Ratio') },
+			function () {
+				var description = "<p>Only farm for equipment when your <b>World HD Ratio</b> is above this value.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting and always farm if equips are available to farm.</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [2],
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require() && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
+
 		createSetting('pandemoniumStaff',
 			function () { return ('P: Staff') },
 			function () {

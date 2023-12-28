@@ -2396,6 +2396,8 @@ function pandemoniumEquipFarm(lineCheck) {
     };
 
     if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || getPageSetting('pandemoniumAE') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
+    const hdRatioSetting = getPageSetting('pandemoniumAERatio');
+    if (hdRatioSetting > 0 && hdStats.hdRatio < hdRatioSetting) return farmingDetails;
 
     var jobRatio = '1,1,100,0';
     var equipCost = cheapestEquipmentCost();
