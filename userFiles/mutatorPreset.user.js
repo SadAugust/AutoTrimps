@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name		AutoTrimps-SadAugust_Perky&Surky
+// @name		AutoTrimps-SadAugust_MutatorPreset
 // @version		1.0-SadAugust
 // @namespace	https://SadAugust.github.io/AutoTrimps
 // @description	Automate all the trimps!
@@ -13,9 +13,13 @@
 // @grant		GM_xmlhttpRequest
 // ==/UserScript==
 
-var script = document.createElement('script');
-script.id = 'AutoTrimps-SadAugust-PerkCalcs';
+function injectScript(id, src) {
+    var script = document.createElement('script');
+    script.id = id;
+    script.src = src;
+    script.setAttribute('crossorigin', 'anonymous');
+    document.head.appendChild(script);
+}
+
 //This can be edited to point to your own Github Repository URL.
-script.src = 'https://sadaugust.github.io/AutoTrimps/modules/perky.js';
-script.setAttribute('crossorigin', 'anonymous');
-document.head.appendChild(script);
+injectScript('AutoTrimps-SadAugust-MutatorPreset', 'https://sadaugust.github.io/AutoTrimps/modules/mutatorPreset.js');

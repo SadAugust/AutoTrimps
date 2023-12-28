@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name		AutoTrimps-SadAugust_HeirloomCalc
+// @name		AutoTrimps-SadAugust_FarmCalc
 // @version		1.0-SadAugust
 // @namespace	https://SadAugust.github.io/AutoTrimps
 // @description	Automate all the trimps!
@@ -13,9 +13,13 @@
 // @grant		GM_xmlhttpRequest
 // ==/UserScript==
 
-var script = document.createElement('script');
-script.id = 'AutoTrimps-SadAugust-HeirloomCalc';
+function injectScript(id, src) {
+    var script = document.createElement('script');
+    script.id = id;
+    script.src = src;
+    script.setAttribute('crossorigin', 'anonymous');
+    document.head.appendChild(script);
+}
+
 //This can be edited to point to your own Github Repository URL.
-script.src = 'https://sadaugust.github.io/AutoTrimps/modules/heirloomCalc.js';
-script.setAttribute('crossorigin', 'anonymous');
-document.head.appendChild(script);
+injectScript('AutoTrimps-SadAugust-FarmCalc', 'https://sadaugust.github.io/AutoTrimps/modules/farmCalc.js');

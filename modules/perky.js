@@ -1171,7 +1171,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
     var linkStylesheet = document.createElement('link');
     linkStylesheet.rel = 'stylesheet';
     linkStylesheet.type = 'text/css';
-    linkStylesheet.href = 'https://sadaugust.github.io/AutoTrimps/tabsStandalone.css';
+    linkStylesheet.href = 'https://sadaugust.github.io/AutoTrimps/css/tabsStandalone.css';
     document.head.appendChild(linkStylesheet);
 
     //Load Surky

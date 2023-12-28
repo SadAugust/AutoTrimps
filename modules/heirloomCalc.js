@@ -588,14 +588,15 @@ class Heirloom {
             const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000];
             const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
             const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
+            const runningAT = typeof atSettings !== 'undefined';
             this.inputs = settings[this.id] ? settings[this.id] : settings;
             this.isCore = this.type === 'Core';
             this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
             this.priceIncrease = priceIncreases[this.rarity];
             this.stepAmounts = {};
-            this.foodHeirloom = this.type === 'Staff' && this.name === getPageSetting('heirloomStaffFood');
-            this.woodHeirloom = this.type === 'Staff' && this.name === getPageSetting('heirloomStaffWood');
-            this.scienceHeirloom = this.type === 'Staff' && this.name === getPageSetting('heirloomStaffScience');
+            this.foodHeirloom = runningAT && this.type === 'Staff' && this.name === getPageSetting('heirloomStaffFood');
+            this.woodHeirloom = runningAT && this.type === 'Staff' && this.name === getPageSetting('heirloomStaffWood');
+            this.scienceHeirloom = runningAT && this.type === 'Staff' && this.name === getPageSetting('heirloomStaffScience');
             this.metalHeirloom = !this.foodHeirloom && !this.woodHeirloom && !this.scienceHeirloom;
             for (const mod of this.mods) {
                 if (mod[0] === 'empty') continue;

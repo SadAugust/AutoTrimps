@@ -1,11 +1,11 @@
 //Setup for non-AT users
 if (typeof MODULES === 'undefined') {
     MODULES = {};
+}
 
-    function mastery(name) {
-        if (!game.talents[name]) throw 'unknown mastery: ' + name;
-        return game.talents[name].purchased;
-    }
+function mastery(name) {
+    if (!game.talents[name]) throw 'unknown mastery: ' + name;
+    return game.talents[name].purchased;
 }
 
 //Old setup!
@@ -1042,7 +1042,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
     var linkStylesheet = document.createElement('link');
     linkStylesheet.rel = 'stylesheet';
     linkStylesheet.type = 'text/css';
-    linkStylesheet.href = basepathFarmCalc + 'tabsStandalone.css';
+    linkStylesheet.href = basepathFarmCalc + 'css/tabsStandalone.css';
     document.head.appendChild(linkStylesheet);
     //Load Breedtimer
     var script = document.createElement('script');
