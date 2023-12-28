@@ -25,7 +25,7 @@ offlineProgress.start = function () {
             game.global.portalTime += offlineTime;
             if (getZoneSeconds() >= offlineTime) game.global.zoneStarted += offlineTime;
         }
-        if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
+        if (typeof _setTimeWarpUI === 'function') _setTimeWarpUI();
     } catch (e) {
         console.log('Loading Time Warp failed ' + e, 'other');
     }
@@ -52,6 +52,7 @@ offlineProgress.finish = function () {
             game.global.lastSkeletimp -= timeRun;
             game.permaBoneBonuses.boosts.lastChargeAt -= timeRun;
             offlineProgress.start();
+            if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
         } else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
     } catch (e) {
         console.log('Failed to restart Time Warp to finish it off. ' + e, 'other');
