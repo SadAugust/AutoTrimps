@@ -4404,18 +4404,6 @@ function initializeAllSettings() {
 	}
 }
 
-function _getPrimaryResourceInfo() {
-    return currSettingUniverse === 2 ? { name: 'Radon', abv: 'Rn' } : { name: 'Helium', abv: 'He' };
-}
-
-function _getChallenge2Info() {
-    return currSettingUniverse === 2 ? 'C3' : 'C2';
-}
-
-function _getSpecialChallengeDescription() {
-    return `${_getChallenge2Info()}'s or special challenge (${currSettingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience'})`;
-}
-
 function updateButtonText() {
     let id = 'jobType';
     let btn = autoTrimpSettings[id];
@@ -4583,171 +4571,6 @@ function settingChanged(id, currUniverse) {
 
     saveSettings();
     updateAutoTrimpSettings(id === 'universeSetting' || id === 'heirloomAutoRareToKeep');
-}
-
-function challengesUnlockedObj(universe = currSettingUniverse) {
-    var obj = {};
-    const hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-
-    if (universe === 1) {
-        obj = {
-            Discipline: {
-                unlockZone: 20,
-                unlockCondition: function () {
-                    return getTotalPerkResource(true) >= 30;
-                },
-                unlockedIn: ['c2', 'oneOff']
-            },
-            Metal: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
-            Size: { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
-            Scientist: { unlockZone: 40, unlockedIn: ['oneOff'] },
-            Balance: { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-            Decay: { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr', 'oneOff'] },
-            Meditate: { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
-            Trimp: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
-            Trapper: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
-            Electricity: {
-                unlockZone: 80,
-                unlockCondition: function () {
-                    return game.global.prisonClear >= 1;
-                },
-                unlockedIn: ['c2', 'heHr', 'autoPortal']
-            },
-            Life: { unlockZone: 110, unlockedIn: ['autoPortal', 'heHr'] },
-            Crushed: { unlockZone: 125, unlockedIn: ['autoPortal', 'heHr'] },
-            Frugal: { unlockZone: 100, unlockedIn: ['oneOff'] },
-            Coordinate: { unlockZone: 120, unlockedIn: ['c2', 'oneOff'] },
-            Slow: { unlockZone: 130, unlockedIn: ['c2', 'oneOff'] },
-            Mapocalypse: { unlockZone: 115, unlockedIn: ['oneOff'] },
-            Nom: { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-            Mapology: { unlockZone: 150, unlockedIn: ['c2', 'oneOff'] },
-            Toxicity: { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-            Watch: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-            Lead: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-            Corrupted: { unlockZone: 190, unlockedIn: ['heHr', 'autoPortal'] },
-            Domination: { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal'] },
-            Obliterated: { unlockZone: 425, unlockedIn: ['c2', 'oneOff'] },
-            Eradicated: {
-                unlockZone: 450,
-                unlockCondition: function () {
-                    return game.global.totalSquaredReward >= 4500;
-                },
-                unlockedIn: ['c2']
-            },
-            Frigid: { unlockZone: 460, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-            Experience: { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-            //Fused C2s
-            Enlightened: { unlockZone: 45, unlockedIn: ['c2'] },
-            Paralysis: { unlockZone: 130, unlockedIn: ['c2'] },
-            Nometal: { unlockZone: 145, unlockedIn: ['c2'] },
-            Topology: { unlockZone: 150, unlockedIn: ['c2'] },
-            Waze: { unlockZone: 180, unlockedIn: ['c2'] },
-            Toxad: { unlockZone: 180, unlockedIn: ['c2'] }
-        };
-    }
-
-    if (universe === 2) {
-        obj = {
-            Unlucky: { unlockZone: 15, unlockedIn: ['c2', 'oneOff'] },
-            Downsize: { unlockZone: 20, unlockedIn: ['c2', 'oneOff'] },
-            Transmute: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
-            Unbalance: { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
-            Bublé: { unlockZone: 40, unlockedIn: ['heHr', 'autoPortal'] },
-            Duel: { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
-            Melt: { unlockZone: 50, unlockedIn: ['heHr', 'autoPortal'] },
-            Trappapalooza: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
-            Quagmire: { unlockZone: 70, unlockedIn: ['heHr', 'autoPortal'] },
-            Wither: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
-            Revenge: { unlockZone: 80, unlockedIn: ['oneOff'] },
-            Quest: { unlockZone: 85, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-            Archaeology: { unlockZone: 90, unlockedIn: ['heHr', 'autoPortal'] },
-            Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-            Storm: { unlockZone: 105, unlockedIn: ['c2', 'oneOff'] },
-            Insanity: { unlockZone: 110, unlockedIn: ['heHr', 'autoPortal'] },
-            Berserk: { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
-            Exterminate: { unlockZone: 120, unlockedIn: ['oneOff'] },
-            Nurture: { unlockZone: 130, unlockedIn: ['heHr', 'autoPortal'] },
-            Pandemonium: { unlockZone: 150, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-            Alchemy: { unlockZone: 155, unlockedIn: ['heHr', 'autoPortal'] },
-            Hypothermia: { unlockZone: 175, unlockedIn: ['heHr', 'autoPortal'] },
-            Glass: { unlockZone: 175, unlockedIn: ['c2', 'oneOff'] },
-            Desolation: { unlockZone: 200, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
-            Smithless: { unlockZone: 201, unlockedIn: ['c2', 'oneOff'] }
-        };
-    }
-
-    //Filter out the challenges that aren't unlocked yet.
-    obj = Object.entries(obj).reduce((newObj, [key, val]) => {
-        if (hze >= val.unlockZone && (typeof val.unlockCondition !== 'function' || val.unlockCondition())) {
-            newObj[key] = val;
-        }
-        return newObj;
-    }, {});
-
-    return obj;
-}
-
-function filterAndSortChallenges(obj, runType) {
-    return Object.entries(obj)
-        .filter(([key, val]) => val.unlockedIn.includes(runType))
-        .sort((a, b) => b[1].unlockZone - a[1].unlockZone)
-        .map(([key]) => key)
-        .reverse();
-}
-
-//Portal Challenge Dropdown Population
-function autoPortalChallenges(runType = 'autoPortal', universe = currSettingUniverse) {
-    let challenge = ['None'];
-    if (universe === 0) universe = autoTrimpSettings.universeSetting.value + 1;
-    if (universe === 1 && runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
-    if (universe === 2 && runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
-
-    let obj = challengesUnlockedObj(universe);
-    obj = filterAndSortChallenges(obj, runType);
-    //obj = obj.reverse();
-    challenge = [...challenge, ...obj];
-
-    if (runType === 'autoPortal') {
-        challenge.push('Custom');
-        challenge.push('One Off Challenges');
-    }
-    if (runType === 'autoPortal' || runType === 'heHr') {
-        const hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-        if (universe === 2 && hze >= 50) challenge.push('Challenge 3');
-        if (universe === 1 && hze >= 65) challenge.push('Challenge 2');
-    }
-
-    return challenge;
-}
-
-//Setup the mods for the heirloom based on the rarity selected by the user.
-function _autoHeirloomMods(heirloomType) {
-    const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-    const heirloomRarity = rarities.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse));
-    const heirloomModsArray = ['Any'];
-
-    if (typeof heirloomInfo !== 'function') {
-        return heirloomModsArray;
-    }
-
-    const heirloomData = heirloomInfo(heirloomType);
-    const heirlooms = game.heirlooms[heirloomType];
-
-    for (let item in heirlooms) {
-        if (_shouldSkipHeirloom(item, heirlooms, heirloomRarity)) {
-            continue;
-        }
-
-        heirloomModsArray.push(heirloomData[item].name);
-    }
-
-    return heirloomModsArray;
-}
-
-function _shouldSkipHeirloom(item, heirlooms, heirloomRarity) {
-    const heirloom = heirlooms[item];
-
-    return item === 'empty' || (heirloom.filter && !heirloom.filter()) || (heirloom.steps && heirloom.steps[heirloomRarity] === -1);
 }
 
 function onKeyPressSetting(event, id, multi, negative) {
@@ -5206,7 +5029,7 @@ function _appendChildren(element, children) {
 }
 
 function _createElement(type, attributes, children) {
-    var element = document.createElement(type);
+    const element = document.createElement(type);
     _setAttributes(element, attributes);
     _appendChildren(element, children);
     return element;
@@ -5215,19 +5038,19 @@ function _createElement(type, attributes, children) {
 function _createButton(id, label, setting, tooltipText, timeWarp = '') {
     const settingInfo = autoTrimpSettings[id];
     const initialStyle = timeWarp ? 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;' : '';
-    var initial = _createElement('DIV', {
+    const initial = _createElement('DIV', {
         style: initialStyle,
         class: 'col-xs-3 lowPad',
         id: `auto${label}${timeWarp}Parent`
     });
     const containerStyle = timeWarp ? 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;' : 'display: block; font-size: 0.9vw; border-color: #5D5D5D;';
-    var container = _createElement('DIV', {
+    const container = _createElement('DIV', {
         style: containerStyle,
         class: 'toggleConfigBtn pointer noselect settingsBtn settingBtn' + (setting === 2 ? 3 : setting),
         onmouseover: `tooltip("Toggle Auto${label}", "customText", event, ${tooltipText})`,
         onmouseout: 'tooltip("hide")'
     });
-    var text = _createElement(
+    const text = _createElement(
         'DIV',
         {
             id: `auto${label}Label${timeWarp}`,
@@ -5235,8 +5058,8 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
         },
         [settingInfo.type === 'multitoggle' ? autoTrimpSettings[id].name()[setting] : autoTrimpSettings[id].name()]
     );
-    var settings = _createElement('DIV', { onclick: `MAZLookalike("Auto${label}")` });
-    var settingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
+    const settings = _createElement('DIV', { onclick: `MAZLookalike("Auto${label}")` });
+    const settingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
 
     container.appendChild(text);
     if (label !== 'Equip') {

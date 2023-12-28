@@ -25,6 +25,7 @@ offlineProgress.start = function () {
             game.global.portalTime += offlineTime;
             if (getZoneSeconds() >= offlineTime) game.global.zoneStarted += offlineTime;
         }
+        if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
     } catch (e) {
         console.log('Loading Time Warp failed ' + e, 'other');
     }
