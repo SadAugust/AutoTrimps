@@ -110,7 +110,7 @@ function ImportExportTooltip(what, event) {
             _verticalCenterTooltip(true);
         };
     } else if (what === 'c2table') {
-        titleText = cinf() + ' Table';
+        titleText = _getChallenge2Info() + ' Table';
         //Adding U1 challenges
         var highestZone = game.stats.highestLevel.valueTotal();
         const c2array = [];

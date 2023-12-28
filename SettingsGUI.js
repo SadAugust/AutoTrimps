@@ -221,9 +221,9 @@ function initializeAllSettings() {
 				var universeChallenges = currSettingUniverse === 2 ? "Downsize, Duel, Berserk, Alchemy, Smithless" : "Metal, Trimp, Coord, Experience";
 
 				var description = "<p>Will automatically swap <b>" + calcName + "</b> presets when portaling into runs.</p>";
-				description += "<p>Fillers (non daily/" + cinf() + " runs) will load <b>" + fillerPreset + ".</b></p>";
+				description += "<p>Fillers (non daily/" + _getChallenge2Info() + " runs) will load <b>" + fillerPreset + ".</b></p>";
 				description += "<p>Dailies will load <b>" + dailyPreset + "</b>.</p>";
-				description += c2Description() + " runs will load <b>" + c2Preset + "</b>.</p>";
+				description += _getSpecialChallengeDescription() + " runs will load <b>" + c2Preset + "</b>.</p>";
 
 				description += "Challenges that have a dedicated preset (<b>" + universeChallenges + "</b>) will be loaded when starting that challenge.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -249,7 +249,7 @@ function initializeAllSettings() {
 					description += "<p>Will only run during the highest Spire you have reached and will respec into the Perky <b>Spire</b> preset to maximise your combat stats during it.</p>";
 				}
 				if (currSettingUniverse === 2) {
-					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + " <b>OR</b> you have more golden battle than golden radon upgrades. Otherwise it will assume it's a radon run and respec into the <b>Radon Combat Respec</b> preset.</p>";
+					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + _getSpecialChallengeDescription() + " <b>OR</b> you have more golden battle than golden radon upgrades. Otherwise it will assume it's a radon run and respec into the <b>Radon Combat Respec</b> preset.</p>";
 				}
 
 				description += "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
@@ -305,26 +305,26 @@ function initializeAllSettings() {
 			function () { return ('Auto Portal') },
 			function () {
 				var c2setting = currSettingUniverse === 2 ? "Challenge 3" : "Challenge 2";
-				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will ignore the " + cinf() + " settings and use the <b>Portal Zone</b> input for when to finish the run and portal.";
+				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will ignore the " + _getChallenge2Info() + " portal settings and use the <b>Portal Zone</b> input for when to finish the run and portal.";
 				var description = "<p>Will automatically portal into different challenges depending on the way you setup the Auto Portal related settings.</p>";
-				description += "<p><b>" + resource() + " Challenges will appear here when they've been unlocked in the game.</b></p>";
-				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b>, <b>Custom</b> or <b>One Off Challenges</b> are selected.</p>";
+				description += "<p><b>" + _getPrimaryResourceInfo().name + " Challenges will appear here when they've been unlocked in the game.</b></p>";
+				description += "<p>Additional settings appear when <b>" + _getPrimaryResourceInfo().name + " Per Hour</b>, <b>Custom</b> or <b>One Off Challenges</b> are selected.</p>";
 				description += "<p><b>Off</b><br>Disables this setting.</p>";
-				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resource().toLowerCase() + " per hour goes below your current runs best " + resource().toLowerCase() + " per hour.</p>";
-				description += "<p>There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
+				description += "<p><b>" + _getPrimaryResourceInfo().name + " Per Hour</b><br>Portals into new runs when your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour goes below your current runs best " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
+				description += "<p>There is a <b>Buffer</b> setting, which lowers the check from best " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour to (best - buffer setting) " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
 				description += "<p><b>Custom</b>/<b>One Off Challenges</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
-				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
+				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + _getChallenge2Info() + "</b> setting. If not inside of a " + _getChallenge2Info() + " then it will use the zone specified in the <b>Portal Zone</b> setting. When inside of " + _getChallenge2Info() + "s it will use <b>" + _getChallenge2Info() + " Runner Portal</b> for your portal zone. If <b>" + _getChallenge2Info() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + _getChallenge2Info() + "</b> setting in the " + _getChallenge2Info() + " settings tab.</p>"
 				description += "<p>" + specialChall + "</p>";
-				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to make use of Scruffy's level 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
+				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to make use of Scruffy's level 3 ability" : "Specific challenges until you reach zone 230 then " + _getPrimaryResourceInfo().name + " Per Hour") + "</p>";
 				return description;
 			}, 'dropdown', 'Off', function () { return autoPortalChallenges('autoPortal') }, 'Core', [1, 2]);
 
 		createSetting('heliumHourChallenge',
 			function () { return ('Challenge') },
 			function () {
-				var description = "<p>Automatically portal into this challenge when using the <b>" + resource() + " Per Hour</b> or <b>Custom</b> Auto Portal settings.</p>";
-				description += "<p><b>" + resource() + " challenges will appear here when they've been unlocked in the game.</b></p>";
+				var description = "<p>Automatically portal into this challenge when using the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> or <b>Custom</b> Auto Portal settings.</p>";
+				description += "<p><b>" + _getPrimaryResourceInfo().name + " challenges will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p><b>Recommended:</b> Last challenge available</p>";
 				return description;
 			}, 'dropdown', 'None', function () { return autoPortalChallenges('heHr') }, 'Core', [1, 2],
@@ -348,12 +348,12 @@ function initializeAllSettings() {
 					namesToCheck.indexOf(getPageSetting('autoPortal', currSettingUniverse)) !== -1);
 			});
 		createSetting('heliumC2Challenge',
-			function () { return (cinf()) },
+			function () { return (_getChallenge2Info()) },
 			function () {
-				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will ignore the " + cinf() + " settings and use the <b>Portal Zone</b> input for when to finish the run and portal.";
-				var description = "<p>Automatically portal into this C" + cinf()[1] + " when using the <b>Challenge " + cinf()[1] + "</b> Auto Portal setting.</p>";
-				description += "<p>C" + cinf()[1] + " challenges will appear here when they've been unlocked in the game.</p>";
-				description += "<p>When running a " + cinf() + ", <b>" + cinf() + " Runner Portal</b> will be used for your portal zone if <b>" + cinf() + " Runner</b> is enabled otherwise it will use the <b>Finish " + cinf() + "</b> setting. These can be found in the <b>" + cinf() + "</b> settings tab.</p>"
+				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will ignore the " + _getChallenge2Info() + " settings and use the <b>Portal Zone</b> input for when to finish the run and portal.";
+				var description = "<p>Automatically portal into this C" + _getChallenge2Info()[1] + " when using the <b>Challenge " + _getChallenge2Info()[1] + "</b> Auto Portal setting.</p>";
+				description += "<p>C" + _getChallenge2Info()[1] + " challenges will appear here when they've been unlocked in the game.</p>";
+				description += "<p>When running a " + _getChallenge2Info() + ", <b>" + _getChallenge2Info() + " Runner Portal</b> will be used for your portal zone if <b>" + _getChallenge2Info() + " Runner</b> is enabled otherwise it will use the <b>Finish " + _getChallenge2Info() + "</b> setting. These can be found in the <b>" + _getChallenge2Info() + "</b> settings tab.</p>"
 				description += "<p>" + specialChall + "</p>";
 				return description;
 			}, 'dropdown', 'None', function () { return autoPortalChallenges('c2') }, 'Core', [1, 2],
@@ -379,8 +379,8 @@ function initializeAllSettings() {
 		createSetting('heliumHrDontPortalBefore',
 			function () { return ("Don't Portal Before") },
 			function () {
-				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + resource() + " Per Hour</b> Auto Portal setting.</p>";
-				description += "<p>This is an additional check that prevents drops in " + resource().toLowerCase() + " per hour from triggering Auto Portal.</p>";
+				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> Auto Portal setting.</p>";
+				description += "<p>This is an additional check that prevents drops in " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour from triggering Auto Portal.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and assume any zone is okay to portal on.</p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
@@ -390,9 +390,9 @@ function initializeAllSettings() {
 					getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
 		createSetting('heliumHrBuffer',
-			function () { return (resourceHour() + '/Hr Buffer %') },
+			function () { return (_getPrimaryResourceInfo().abv + '/Hr Buffer %') },
 			function () {
-				var description = "<p>When using the <b>" + resource() + " Per Hour</b> Auto Portal setting, it will portal if your " + resource().toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
+				var description = "<p>When using the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> Auto Portal setting, it will portal if your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
 				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. For example a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer.</p>";
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
@@ -409,7 +409,7 @@ function initializeAllSettings() {
 				return portalOptions;
 			},
 			function () {
-				var description = "<p>How you would like to portal when below your " + resource().toLowerCase() + " per hour threshold.</p>";
+				var description = "<p>How you would like to portal when below your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour threshold.</p>";
 				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
 				description += "<p><b>Portal After Voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
 				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal After Poison Voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
@@ -423,7 +423,7 @@ function initializeAllSettings() {
 		createSetting('heliumHrExitSpire',
 			function () { return ('Exit Spires for Voids') },
 			function () {
-				var description = "<p>Will automatically exit Spires to run your voids earlier when the <b>" + resource() + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
+				var description = "<p>Will automatically exit Spires to run your voids earlier when the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1],
@@ -647,9 +647,9 @@ function initializeAllSettings() {
 
 		//C2 Timers
 		createSetting('geneAssistTimerC2',
-			function () { return ('GA: ' + cinf() + ' Timer') },
+			function () { return ('GA: ' + _getChallenge2Info() + ' Timer') },
 			function () {
-				var description = "<p>Gene Assist will use the value set here when running " + cinf() + "s.</p>";
+				var description = "<p>Gene Assist will use the value set here when running " + _getChallenge2Info() + "s.</p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
 				description += "<p><b>Recommended:</b> Use regular Gene Assist settings instead of this</p>";
@@ -657,9 +657,9 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 		createSetting('geneAssistTimerSpireC2',
-			function () { return ('GA: ' + cinf() + ' Spire Timer') },
+			function () { return ('GA: ' + _getChallenge2Info() + ' Spire Timer') },
 			function () {
-				var description = "<p>Gene Assist will use the value set here when inside of active Spires in " + cinf() + "s.</p>";
+				var description = "<p>Gene Assist will use the value set here when inside of active Spires in " + _getChallenge2Info() + "s.</p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
 				description += "<p><b>Recommended:</b> Your <b>Anticipation</b> perk timer</p>";
@@ -674,7 +674,7 @@ function initializeAllSettings() {
 	const displayBuildings = true;
 	if (displayBuildings) {
 		createSetting('buildingsType',
-			function () { return ('AutoBuildings') },
+			function () { return ('AT AutoStructure') },
 			function () {
 				//Initial button description
 				var description = "Click the left side of the button to toggle this on or off.</p>";
@@ -747,7 +747,7 @@ function initializeAllSettings() {
 			function () { return ('Auto Gigas') },
 			function () {
 				var description = "<p>If enabled, the script will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can\'t afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack.</p>";
-				description += "<p>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or " + cinf() + " zone, or Custom AutoGiga Zone.</p>";
+				description += "<p>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or " + _getChallenge2Info() + " zone, or Custom AutoGiga Zone.</p>";
 				description += "<p>Once your first gigastation of a run has been purchased this setting won't be evaluated again until your next run.</p>";
 				description += "<p><b>You must have the upgrades setting enabled for this setting to run!</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -1758,7 +1758,7 @@ function initializeAllSettings() {
 		createSetting('toxicitySettings',
 			function () { return ('Toxicity Settings') },
 			function () {
-				var description = "<p>Here you can select how and when you would like to farm a specific amount of Toxicity stacks for increased " + resource().toLowerCase() + " and resources gain.</p>";
+				var description = "<p>Here you can select how and when you would like to farm a specific amount of Toxicity stacks for increased " + _getPrimaryResourceInfo().name.toLowerCase() + " and resources gain.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -1890,17 +1890,17 @@ function initializeAllSettings() {
 	const displayC2 = true;
 	if (displayC2) {
 		createSetting('c2Finish',
-			function () { return ("Finish " + cinf()) },
+			function () { return ("Finish " + _getChallenge2Info()) },
 			function () {
-				var description = "<p>Abandons " + cinf() + "s when this zone is reached but won't portal.</p>";
-				description += "<p>If <b>" + cinf() + " Runner</b> is enabled then this setting is disabled. </p>";
+				var description = "<p>Abandons " + _getChallenge2Info() + "s when this zone is reached but won't portal.</p>";
+				description += "<p>If <b>" + _getChallenge2Info() + " Runner</b> is enabled then this setting is disabled. </p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>Will not abandon special challenges like Frigid or Experience.</p>";
-				description += "<p>Recommended: Zones ending with 0 for most " + cinf() + " runs.</p>";
+				description += "<p>Recommended: Zones ending with 0 for most " + _getChallenge2Info() + " runs.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2]);
 		createSetting('c2Table',
-			function () { return (cinf() + ' Table') },
+			function () { return (_getChallenge2Info() + ' Table') },
 			function () {
 				var description = "<p>Display your challenge runs in a convenient table which is colour coded.</p>";
 				description += "<p><b>Green</b><br>Challenges that are green are normally not worth updating.</p>";
@@ -1911,16 +1911,16 @@ function initializeAllSettings() {
 			}, 'infoclick', null, 'ImportExportTooltip("c2table")', 'C2', [0]);
 
 		createSetting('c2SharpTrimps',
-			function () { return (cinf() + ' Sharp Trimps') },
+			function () { return (_getChallenge2Info() + ' Sharp Trimps') },
 			function () {
-				var description = "<p>Buys the Sharp Trimps bonus for <b>25 bones</b> during " + c2Description() + " runs.</p>";
+				var description = "<p>Buys the Sharp Trimps bonus for <b>25 bones</b> during " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
 		createSetting('c2GoldenMaps',
-			function () { return (cinf() + ' Golden Maps') },
+			function () { return (_getChallenge2Info() + ' Golden Maps') },
 			function () {
-				var description = "<p>Buys the Golden Maps bonus for <b>20 bones</b> during " + c2Description() + " runs.</p>";
+				var description = "<p>Buys the Golden Maps bonus for <b>20 bones</b> during " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
@@ -1934,33 +1934,33 @@ function initializeAllSettings() {
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 100) });
 
 		createSetting('c2RunnerStart',
-			function () { return (cinf() + ' Runner') },
+			function () { return (_getChallenge2Info() + ' Runner') },
 			function () {
-				var description = "<p>Enable this if you want to use " + cinf() + " running features.</p>";
-				description += "<p>Allows the script to automatically start running " + cinf() + "'s when portaling in an effort to maintain your " + cinf() + " score</p>";
-				description += "<p>If enabled will disable the <b>Finish " + cinf() + "</b> setting.</p>";
+				var description = "<p>Enable this if you want to use " + _getChallenge2Info() + " running features.</p>";
+				description += "<p>Allows the script to automatically start running " + _getChallenge2Info() + "'s when portaling in an effort to maintain your " + _getChallenge2Info() + " score</p>";
+				description += "<p>If enabled will disable the <b>Finish " + _getChallenge2Info() + "</b> setting.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			},
 			'boolean', false, null, 'C2', [1, 2]);
 
 		createSetting('c2RunnerMode',
-			function () { return ([cinf() + ' Runner %', cinf() + ' Runner Set Values']) },
+			function () { return ([_getChallenge2Info() + ' Runner %', _getChallenge2Info() + ' Runner Set Values']) },
 			function () {
-				var description = "<p>Toggles between the two modes that " + cinf() + " Runner can use for selecting which " + cinf() + " to start.</p>";
-				description += "<p><b>" + cinf() + " Runner %</b><br>Will run " + cinf() + "s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see " + cinf() + " Table.</p>";
-				description += "<p><b>" + cinf() + " Runner Set Values</b><br>\
-				Uses the <b>" + cinf() + " Runner Settings</b> popup and will run enabled " + cinf() + "s when they are below the designated end zone.</p>";
-				description += "<p>If using <b>" + cinf() + " Runner Set Values</b> then the " + cinf() + " will only be be finished if the challenge is enabled and a zone above 0 has been set.</p>";
-				description += "<p>I recommend only using <b>" + cinf() + " Runner Set Values</b> if you're actively going to update the inputs as you progress.</p>";
-				description += "<p><b>Recommended:</b> " + cinf() + " Runner %</p>";
+				var description = "<p>Toggles between the two modes that " + _getChallenge2Info() + " Runner can use for selecting which " + _getChallenge2Info() + " to start.</p>";
+				description += "<p><b>" + _getChallenge2Info() + " Runner %</b><br>Will run " + _getChallenge2Info() + "s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see " + _getChallenge2Info() + " Table.</p>";
+				description += "<p><b>" + _getChallenge2Info() + " Runner Set Values</b><br>\
+				Uses the <b>" + _getChallenge2Info() + " Runner Settings</b> popup and will run enabled " + _getChallenge2Info() + "s when they are below the designated end zone.</p>";
+				description += "<p>If using <b>" + _getChallenge2Info() + " Runner Set Values</b> then the " + _getChallenge2Info() + " will only be be finished if the challenge is enabled and a zone above 0 has been set.</p>";
+				description += "<p>I recommend only using <b>" + _getChallenge2Info() + " Runner Set Values</b> if you're actively going to update the inputs as you progress.</p>";
+				description += "<p><b>Recommended:</b> " + _getChallenge2Info() + " Runner %</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 		createSetting('c2RunnerSettings',
-			function () { return (cinf() + ' Runner Settings') },
+			function () { return (_getChallenge2Info() + ' Runner Settings') },
 			function () {
-				var description = "<p>Here you can enable the challenges you would like " + cinf() + " Runner to complete and the zone you'd like the respective challenge to finish at. It will start them on the next auto portal if necessary.</p>";
+				var description = "<p>Here you can enable the challenges you would like " + _getChallenge2Info() + " Runner to complete and the zone you'd like the respective challenge to finish at. It will start them on the next auto portal if necessary.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				return description;
 			},
@@ -1969,19 +1969,19 @@ function initializeAllSettings() {
 				return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1)
 			});
 		createSetting('c2RunnerPortal',
-			function () { return (cinf() + ' Runner End Zone') },
+			function () { return (_getChallenge2Info() + ' Runner End Zone') },
 			function () {
-				var description = "<p>Automatically abandon " + cinf() + "s when this zone is reached.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting and disable ending your " + cinf() + "s.</p>";
+				var description = "<p>Automatically abandon " + _getChallenge2Info() + "s when this zone is reached.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and disable ending your " + _getChallenge2Info() + "s.</p>";
 				description += "<p><b>Recommended:</b> Desired challenge end goal</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 		createSetting('c2RunnerPercent',
-			function () { return (cinf() + ' Runner %') },
+			function () { return (_getChallenge2Info() + ' Runner %') },
 			function () {
-				var description = "<p>The percent threshhold you want " + cinf() + "s to be over.</p>";
-				description += "<p>Will only run " + cinf() + "s with a HZE% below this settings value.</p>";
+				var description = "<p>The percent threshhold you want " + _getChallenge2Info() + "s to be over.</p>";
+				description += "<p>Will only run " + _getChallenge2Info() + "s with a HZE% below this settings value.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 85</p>";
 				return description;
@@ -1989,24 +1989,24 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 
 		createSetting('c2RunnerEndMode',
-			function () { return ([cinf() + ' Runner End Challenge', cinf() + ' Runner Portal']) },
+			function () { return ([_getChallenge2Info() + ' Runner End Challenge', _getChallenge2Info() + ' Runner Portal']) },
 			function () {
-				var description = "<p>If set to <b>" + cinf() + " Runner Portal</b> this will automatically portal once you reach your " + cinf() + " end zone otherwise it will  end the challenge and continue your run on as normal.</p>";
-				description += "<p><b>Recommended:</b> " + cinf() + " Runner Portal</p>";
+				var description = "<p>If set to <b>" + _getChallenge2Info() + " Runner Portal</b> this will automatically portal once you reach your " + _getChallenge2Info() + " end zone otherwise it will  end the challenge and continue your run on as normal.</p>";
+				description += "<p><b>Recommended:</b> " + _getChallenge2Info() + " Runner Portal</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 		createSetting('c2Fused',
-			function () { return ('Fused ' + cinf() + 's') },
+			function () { return ('Fused ' + _getChallenge2Info() + 's') },
 			function () {
-				var description = "<p>Will allow " + cinf() + " Runner to do fused versions of " + cinf() + "'s rather than normal versions to reduce time spent running " + cinf() + "s.</p>";
+				var description = "<p>Will allow " + _getChallenge2Info() + " Runner to do fused versions of " + _getChallenge2Info() + "'s rather than normal versions to reduce time spent running " + _getChallenge2Info() + "s.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 
 		createSetting('c2IgnoreSpiresUntil',
-			function () { return (cinf() + ' Ignore Spires Until') },
+			function () { return (_getChallenge2Info() + ' Ignore Spires Until') },
 			function () {
 				var description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
 				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
@@ -2016,7 +2016,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('c2ExitSpireCell',
-			function () { return (cinf() + ' Exit Spire After Cell') },
+			function () { return (_getChallenge2Info() + ' Exit Spire After Cell') },
 			function () {
 				var description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
@@ -2027,7 +2027,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('c2PreSpireNurseries',
-			function () { return (cinf() + ' Nurseries pre-Spire') },
+			function () { return (_getChallenge2Info() + ' Nurseries pre-Spire') },
 			function () {
 				var description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
 				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>";
@@ -2037,7 +2037,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('c2AutoDStanceSpire',
-			function () { return (cinf() + ' Stance in Spires') },
+			function () { return (_getChallenge2Info() + ' Stance in Spires') },
 			function () {
 				var description = "<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
@@ -2088,7 +2088,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The zone you would like to stop buying additional <b>Coordination</b> from.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
-				description += "<p>If set to <b>0 or below</b> and not running the " + cinf() + " version of the challenge it will override this and set it to " + (currSettingUniverse === 2 ? '50' : '33') + ".</p>";
+				description += "<p>If set to <b>0 or below</b> and not running the " + _getChallenge2Info() + " version of the challenge it will override this and set it to " + (currSettingUniverse === 2 ? '50' : '33') + ".</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
@@ -2337,7 +2337,7 @@ function initializeAllSettings() {
 			function () { return ('M: Heirloom Swap Zone') },
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Mayhem.</p>";
-				description += "<p>This overrides the " + cinf() + " heirloom swap setting input when set above <b>0</b>.</p>";
+				description += "<p>This overrides the " + _getChallenge2Info() + " heirloom swap setting input when set above <b>0</b>.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
@@ -2462,7 +2462,7 @@ function initializeAllSettings() {
 			function () { return ('P: Heirloom Swap Zone') },
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Pandemonium.</p>";
-				description += "<p>This overrides the " + cinf() + " heirloom swap setting input when set above <b>0</b>.</p>";
+				description += "<p>This overrides the " + _getChallenge2Info() + " heirloom swap setting input when set above <b>0</b>.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
@@ -2553,7 +2553,7 @@ function initializeAllSettings() {
 			function () { return ('D: Heirloom Swap') },
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Desolation.</p>";
-				description += "<p>This overrides the " + cinf() + " heirloom swap setting input when set above <b>0</b>.</p>";
+				description += "<p>This overrides the " + _getChallenge2Info() + " heirloom swap setting input when set above <b>0</b>.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
@@ -2741,16 +2741,16 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Daily', [1, 2]);
 		createSetting('dailyPortal',
-			function () { return (['Daily Portal: Off', 'Daily Portal: ' + resourceHour() + '/Hr', 'Daily Portal: Custom']) },
+			function () { return (['Daily Portal: Off', 'Daily Portal: ' + _getPrimaryResourceInfo().abv + '/Hr', 'Daily Portal: Custom']) },
 			function () {
 				var description = "<p>Will automatically portal into different challenges depending on the way you setup the Daily Auto Portal related settings. The challenge that it portals into can be setup through the <b>Auto Portal</b> settings in the <b>Core</b> tab.</p>";
-				description += "<p>Additional settings appear when <b>Daily Portal: " + resourceHour() + "/Hr</b> or <b>Daily Portal: Custom</b> are selected.</p>";
+				description += "<p>Additional settings appear when <b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b> or <b>Daily Portal: Custom</b> are selected.</p>";
 				description += "<p><b>Daily Portal Off</b><br>Disables this setting. Be warned it will never end your dailies unless you use the Portal After option in Void Map settings!</p>";
 
-				description += "<p><b>Daily Portal: " + resourceHour() + "/Hr</b><br>Portals into new runs when your " + resource().toLowerCase() + " per hour goes below your current runs best " + resourceHour().toLowerCase() + "/hr.</p>";
-				description += "<p>There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
+				description += "<p><b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b><br>Portals into new runs when your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour goes below your current runs best " + _getPrimaryResourceInfo().abv.toLowerCase() + "/hr.</p>";
+				description += "<p>There is a <b>Buffer</b> setting, which lowers the check from best " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour to (best - buffer setting) " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				description += "<p><b>Daily Portal: Custom</b><br>Will portal into your Auto Portal challenge at the zone specified in the <b>Daily Portal Zone</b> setting.</p>";
-				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Daily Portal: Custom with a specified endzone to make use of the Scruffy level 3 ability" : ("Daily Portal: " + resourceHour() + "/Hr")) + "</p>";
+				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Daily Portal: Custom with a specified endzone to make use of the Scruffy level 3 ability" : ("Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr")) + "</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Daily', [1, 2]);
 
@@ -2767,8 +2767,8 @@ function initializeAllSettings() {
 		createSetting('dailyDontPortalBefore',
 			function () { return ("D: Don't Portal Before") },
 			function () {
-				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>Daily Portal: " + resourceHour() + "/Hr</b> Auto Portal setting.</p>";
-				description += "<p>It is an additional check that prevents drops in " + resource().toLowerCase() + " per hour from triggering Auto Portal.</p>";
+				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b> Auto Portal setting.</p>";
+				description += "<p>It is an additional check that prevents drops in " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour from triggering Auto Portal.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and assume any zone is okay to portal on.</p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
@@ -2776,9 +2776,9 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
 
 		createSetting('dailyHeliumHrBuffer',
-			function () { return ('D: ' + resourceHour() + '/Hr Buffer %') },
+			function () { return ('D: ' + _getPrimaryResourceInfo().abv + '/Hr Buffer %') },
 			function () {
-				var description = "<p>When using the <b>Daily Portal: " + resourceHour() + "/Hr</b> Auto Portal setting, it will portal if your " + resource().toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
+				var description = "<p>When using the <b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b> Auto Portal setting, it will portal if your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
 				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer).</p>";
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
@@ -2794,7 +2794,7 @@ function initializeAllSettings() {
 				return portalOptions;
 			},
 			function () {
-				var description = "<p>How you would like to portal when below your " + resource().toLowerCase() + " per hour threshold.</p>";
+				var description = "<p>How you would like to portal when below your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour threshold.</p>";
 				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
 				description += "<p><b>Portal After Voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
 				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal After Poison Voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
@@ -2808,7 +2808,7 @@ function initializeAllSettings() {
 		createSetting('dailyHeliumHrExitSpire',
 			function () { return ('Exit Spires for Voids') },
 			function () {
-				var description = "<p>Will automatically exit Spires to run your voids earlier when the <b>" + resource() + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
+				var description = "<p>Will automatically exit Spires to run your voids earlier when the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [1],
@@ -2817,7 +2817,7 @@ function initializeAllSettings() {
 		createSetting('dailyPortalFiller',
 			function () { return ('Filler Run') },
 			function () {
-				var description = "<p>Will run a filler (non daily/" + cinf() + " run) challenge (selected through the <b>Auto Portal</b> settings in the <b>Core</b> tab) inbetween dailies.</p>";
+				var description = "<p>Will run a filler (non daily/" + _getChallenge2Info() + " run) challenge (selected through the <b>Auto Portal</b> settings in the <b>Core</b> tab) inbetween dailies.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			},
@@ -2899,7 +2899,7 @@ function initializeAllSettings() {
 		createSetting('heirloomMapSwap',
 			function () { return ('Map Swap') },
 			function () {
-				var description = "<p>If below your assigned swap zone this will automatically swap from your <b>Initial</b> shield to your <b>Afterpush</b> (or <b>" + cinf() + "</b> depending on your run) shield when inside of maps.</p>";
+				var description = "<p>If below your assigned swap zone this will automatically swap from your <b>Initial</b> shield to your <b>Afterpush</b> (or <b>" + _getChallenge2Info() + "</b> depending on your run) shield when inside of maps.</p>";
 				description += "<p><b>Void shield settings will override this.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -2971,9 +2971,9 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomC3',
-			function () { return (cinf()) },
+			function () { return (_getChallenge2Info()) },
 			function () {
-				var description = "<p>Shield to use after your designated swap zone during " + c2Description() + " runs.</p>";
+				var description = "<p>Shield to use after your designated swap zone during " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
@@ -3030,7 +3030,7 @@ function initializeAllSettings() {
 		createSetting('heirloomSwapZone',
 			function () { return ('Swap Zone') },
 			function () {
-				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during filler (non daily/" + cinf() + " runs).</p>";
+				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during filler (non daily/" + _getChallenge2Info() + " runs).</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
@@ -3049,10 +3049,10 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapZoneC3',
-			function () { return (cinf() + ' Swap Zone') },
+			function () { return (_getChallenge2Info() + ' Swap Zone') },
 			function () {
-				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during " + cinf() + " runs.</p>";
-				description += "<p>If the " + cinf() + " shield setting has been setup then it will use that instead of the <b>Afterpush</b> shield.</p>";
+				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during " + _getChallenge2Info() + " runs.</p>";
+				description += "<p>If the " + _getChallenge2Info() + " shield setting has been setup then it will use that instead of the <b>Afterpush</b> shield.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
@@ -3063,7 +3063,7 @@ function initializeAllSettings() {
 			function () { return ('One Off Swap Zone') },
 			function () {
 				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during one off runs.</p>";
-				description += "<p>If the " + cinf() + " shield setting has been setup then it will use that instead of the <b>Afterpush</b> shield.</p>";
+				description += "<p>If the " + _getChallenge2Info() + " shield setting has been setup then it will use that instead of the <b>Afterpush</b> shield.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
@@ -3726,13 +3726,13 @@ function initializeAllSettings() {
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('AutoGenC2',
-			function () { return (['' + cinf() + ': Normal', '' + cinf() + ': Fuel', '' + cinf() + ': Hybrid']) },
+			function () { return (['' + _getChallenge2Info() + ': Normal', '' + _getChallenge2Info() + ': Fuel', '' + _getChallenge2Info() + ': Hybrid']) },
 			function () {
-				var description = "<p>The mode that the script will use for the entire " + c2Description() + " runs.</p>";
-				description += "<p><b>" + cinf() + " Normal</b><br>Disables this setting and uses the normal script auto generator settings.</p>";
-				description += "<p><b>" + cinf() + " Fuel</b><br>Will set the generator to collect fuel.</p>";
-				description += "<p><b>" + cinf() + " Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
-				description += "<p><b>Recommended:</b> " + cinf() + " Fuel</p>";
+				var description = "<p>The mode that the script will use for the entire " + _getSpecialChallengeDescription() + " runs.</p>";
+				description += "<p><b>" + _getChallenge2Info() + " Normal</b><br>Disables this setting and uses the normal script auto generator settings.</p>";
+				description += "<p><b>" + _getChallenge2Info() + " Fuel</b><br>Will set the generator to collect fuel.</p>";
+				description += "<p><b>" + _getChallenge2Info() + " Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
+				description += "<p><b>Recommended:</b> " + _getChallenge2Info() + " Fuel</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1]);
 
@@ -3875,7 +3875,7 @@ function initializeAllSettings() {
 		createSetting('poisonEnlight',
 			function () { return ('E: F: Poison') },
 			function () {
-				var description = "<p>Will activate Poison enlightenment when below this token threshold when running fillers (non daily/" + cinf() + " runs).</p>";
+				var description = "<p>Will activate Poison enlightenment when below this token threshold when running fillers (non daily/" + _getChallenge2Info() + " runs).</p>";
 				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
@@ -3884,7 +3884,7 @@ function initializeAllSettings() {
 		createSetting('windEnlight',
 			function () { return ('E: F: Wind') },
 			function () {
-				var description = "<p>Will activate Wind enlightenment when below this token threshold when running fillers (non daily/" + cinf() + " runs).</p>";
+				var description = "<p>Will activate Wind enlightenment when below this token threshold when running fillers (non daily/" + _getChallenge2Info() + " runs).</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
@@ -3892,7 +3892,7 @@ function initializeAllSettings() {
 		createSetting('iceEnlight',
 			function () { return ('E: F: Ice') },
 			function () {
-				var description = "<p>Will activate Ice enlightenment when below this token threshold when running fillers (non daily/" + cinf() + " runs).</p>";
+				var description = "<p>Will activate Ice enlightenment when below this token threshold when running fillers (non daily/" + _getChallenge2Info() + " runs).</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
@@ -3924,7 +3924,7 @@ function initializeAllSettings() {
 		createSetting('poisonEnlightC2',
 			function () { return ('E: C: Poison') },
 			function () {
-				var description = "<p>Will activate Poison enlightenment when below token threshold when doing " + c2Description() + " runs.</p>";
+				var description = "<p>Will activate Poison enlightenment when below token threshold when doing " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			},
@@ -3933,7 +3933,7 @@ function initializeAllSettings() {
 		createSetting('windEnlightC2',
 			function () { return ('E: C: Wind') },
 			function () {
-				var description = "<p>Will activate Wind enlightenment when below this token threshold when doing " + c2Description() + " runs.</p>";
+				var description = "<p>Will activate Wind enlightenment when below this token threshold when doing " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
@@ -3941,7 +3941,7 @@ function initializeAllSettings() {
 		createSetting('iceEnlightC2',
 			function () { return ('E: C: Ice') },
 			function () {
-				var description = "<p>Will activate Ice enlightenment when below this token threshold when doing " + c2Description() + " runs.</p>";
+				var description = "<p>Will activate Ice enlightenment when below this token threshold when doing " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
@@ -4064,9 +4064,9 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
 		createSetting('displayHeHr',
-			function () { return (resourceHour() + '/hr status') },
+			function () { return (_getPrimaryResourceInfo().abv + '/hr status') },
 			function () {
-				var description = "<p>Enables the display of your " + resource().toLowerCase() + " per hour.</p>";
+				var description = "<p>Enables the display of your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				return description;
 			}, 'boolean', true, null, 'Display', [0]);
 		createSetting('displayHideFightButtons',
@@ -4230,10 +4230,10 @@ function initializeAllSettings() {
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeAutomapStatusTooltip(false);', 'Help', [0]);
 		createSetting('helpResourceHour',
-			function () { return (resource() + ' Per Hour') },
+			function () { return (_getPrimaryResourceInfo().name + ' Per Hour') },
 			function () {
-				var description = "<p>Will display the " + resource() + "/Hr tooltip message.</p>";
-				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + resourceHour() + "/hr status</b> setting in the <b>Display</b> tab is enabled.</p>";
+				var description = "<p>Will display the " + _getPrimaryResourceInfo().name + "/Hr tooltip message.</p>";
+				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + _getPrimaryResourceInfo().abv + "/hr status</b> setting in the <b>Display</b> tab is enabled.</p>";
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeResourceTooltip();', 'Help', [0]);
 		createSetting('helpAutoPortal',
@@ -4292,11 +4292,11 @@ function initializeAllSettings() {
 			}, 'action', null, 'ImportExportTooltip("setCustomChallenge");', 'Test', [0]);
 
 		createSetting('testSetC2',
-			function () { return ('Toggle ' + cinf()) },
+			function () { return ('Toggle ' + _getChallenge2Info()) },
 			function () {
-				var description = "<p>Will toggle on the setting for if you\'re running a " + cinf() + ".</p>";
+				var description = "<p>Will toggle on the setting for if you\'re running a " + _getChallenge2Info() + ".</p>";
 				return description;
-			}, 'action', null, 'testRunningCinf();', 'Test', [0]);
+			}, 'action', null, 'testRunningC2();', 'Test', [0]);
 
 		createSetting('testBoneCharges',
 			function () { return ('Max Bone Charges') },
@@ -4404,20 +4404,16 @@ function initializeAllSettings() {
 	}
 }
 
-function resource() {
-    return currSettingUniverse === 2 ? 'Radon' : 'Helium';
+function _getPrimaryResourceInfo() {
+    return currSettingUniverse === 2 ? { name: 'Radon', abv: 'Rn' } : { name: 'Helium', abv: 'He' };
 }
 
-function resourceHour() {
-    return currSettingUniverse === 2 ? 'Rn' : 'He';
-}
-
-function cinf() {
+function _getChallenge2Info() {
     return currSettingUniverse === 2 ? 'C3' : 'C2';
 }
 
-function c2Description() {
-    return cinf() + "'s or special challenge (" + (currSettingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience') + ')';
+function _getSpecialChallengeDescription() {
+    return `${_getChallenge2Info()}'s or special challenge (${currSettingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience'})`;
 }
 
 function updateButtonText() {
@@ -4429,12 +4425,12 @@ function updateButtonText() {
         let elem = document.getElementById(elemId);
         if (elem !== null) {
             elem.parentNode.setAttribute('class', `toggleConfigBtn noselect pointer settingBtn${btnVal === 2 ? 3 : btnVal}`);
-            elem.innerHTML = btnName[btnVal];
+            elem.textContent = btnName;
         }
     }
 
-    updateElement('autoJobLabel', btn.name(), btnValue);
-    updateElement('autoJobLabelTW', btn.name(), btnValue);
+    updateElement('autoJobsLabel', btn.name()[btnValue], btnValue);
+    updateElement('autoJobsLabelTW', btn.name()[btnValue], btnValue);
 
     btnValue = getPageSetting('equipOn');
     document.getElementById('autoEquipLabel').parentNode.setAttribute('class', `toggleConfigBtn noselect pointer settingBtn${btnValue}`);
@@ -4551,7 +4547,7 @@ function settingChanged(id, currUniverse) {
         }
         if (id === 'displayHeHr') document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
         if (id === 'displayHideFightButtons') hideFightButtons();
-        if (id === 'timeWarpDisplay') timeWarpDisplay();
+        if (id === 'timeWarpDisplay') _setTimeWarpUI();
         if (id === 'archaeology') archaeologyAutomator();
     }
 
@@ -4585,8 +4581,8 @@ function settingChanged(id, currUniverse) {
         btn[selected] = document.getElementById(id).value;
     }
 
-    updateAutoTrimpSettings(id === 'universeSetting' || id === 'heirloomAutoRareToKeep');
     saveSettings();
+    updateAutoTrimpSettings(id === 'universeSetting' || id === 'heirloomAutoRareToKeep');
 }
 
 function challengesUnlockedObj(universe = currSettingUniverse) {
@@ -4830,15 +4826,13 @@ function autoSetValueToolTip(id, text, multi, negative) {
 
 function autoSetText(id, multiValue) {
     const setting = autoTrimpSettings[id];
-    const valueSuffix = autoTrimpSettings.universeSetting.value === 1 && !setting.universe.includes(0) === -1 ? 'U2' : '';
+    const valueSuffix = autoTrimpSettings.universeSetting.value === 1 && setting.universe.indexOf(0) === -1 ? 'U2' : '';
     const textBox = document.getElementById('customTextBox');
     if (!textBox) return;
     unlockTooltip();
     tooltip('hide');
-
     const textVal = multiValue ? textBox.value.replace(/, /g, ',').split(',') : textBox.value;
-
-    setting['value' + valueSuffix] = textVal;
+    setting[`value${valueSuffix}`] = textVal;
 
     const element = document.getElementById(id);
     if (textVal !== undefined && element) {
@@ -4855,9 +4849,9 @@ function autoSetText(id, multiValue) {
 }
 
 function autoSetTextToolTip(id, text, multiValue) {
-    const valueSuffix = autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1 ? 'U2' : '';
-    const tooltipDiv = document.getElementById('tooltipDiv');
     const setting = autoTrimpSettings[id];
+    const valueSuffix = autoTrimpSettings.universeSetting.value === 1 && setting.universe.indexOf(0) === -1 ? 'U2' : '';
+    const tooltipDiv = document.getElementById('tooltipDiv');
 
     const tooltipText = `Type your input below<br/><br/><input id="customTextBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multiValue})" value="${setting['value' + valueSuffix]}"></input>`;
     const costText = `<div class="maxCenter"><div class="btn btn-info" onclick="autoSetText('${id}', ${multiValue})">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>`;
@@ -5092,8 +5086,8 @@ function _setDisplayedTabs() {
         const hideTab = tabList[tab];
         if (tabElem !== null) {
             if (tab === 'tabC2') {
-                document.getElementById('C2').children[0].children[0].innerHTML = cinf() + ' - Settings for ' + c2Description();
-                document.getElementById('tabC2').children[0].innerHTML = cinf();
+                document.getElementById('C2').children[0].children[0].innerHTML = _getChallenge2Info() + ' - Settings for ' + _getSpecialChallengeDescription();
+                document.getElementById('tabC2').children[0].innerHTML = _getChallenge2Info();
             }
             tabElem.style.display = hideTab ? 'none' : '';
         }
@@ -5187,191 +5181,7 @@ function _setSettingLineBreaks(id, style = 'show') {
 }
 
 function settingUniverse(setting) {
-    if (setting === 'buyBuildings') {
-        return getPageSetting('buildingsType', portalUniverse);
-    }
-    if (setting === 'equipOn') {
-        return getPageSetting('equipOn', portalUniverse);
-    }
-    if (setting === 'autoJobs') {
-        return getPageSetting('jobType', portalUniverse);
-    }
-    if (setting === 'autoMaps') {
-        return getPageSetting('autoMaps', portalUniverse);
-    }
-}
-
-//Setting up the Auto Maps status inside of Time Warp.
-function autoMapsStatusTW() {
-    if (typeof autoMapsStatus !== 'function' || typeof isDoingSpire !== 'function') {
-        setTimeout(autoMapsStatusTW, 100);
-        console.log('Retrying to setup AutoMaps status in Time Warp.');
-        return;
-    }
-
-    //The position of the status textbox is based on if we're mapping or not mapping as each one has a different CSS position.
-    var whereToPlace = ['offlineZoneBtns', 'offlineMapBtns'];
-    var id = ['autoMapStatusMapsTW', 'autoMapStatusTW'];
-    var autoMapsStatusSection;
-
-    //Status textbox
-    var autoMapsStatusContainer;
-
-    for (var item in whereToPlace) {
-        if (document.getElementById(id[item]) !== null) continue;
-        autoMapsStatusContainer = document.createElement('DIV');
-        autoMapsStatusContainer.id = id[item];
-        autoMapsStatusContainer.setAttribute('class', 'noselect');
-        autoMapsStatusContainer.setAttribute('style', 'display: block; font-size: 1.25vw; text-align: center; background-color: rgba(0,0,0,0.3); position: absolute; bottom: 1vw; left: 10%; right: 10%');
-        autoMapsStatusContainer.setAttribute('onmouseout', 'tooltip("hide")');
-        //Place it at the bottom of the appropriate (left hand side )
-        document.getElementById(whereToPlace[item]).children[1].insertAdjacentHTML('afterend', '<br>');
-        autoMapsStatusSection = document.getElementById(whereToPlace[item]);
-        autoMapsStatusSection.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace[item]).children[2]);
-    }
-
-    autoMapsStatus(false);
-}
-
-//Add the Time Warp settings to the right hand side section.
-function setupTimeWarpAT() {
-    autoMapsStatusTW();
-
-    //Remove the automaps button if it already exists.
-    if (document.getElementById('autoMapBtnTW') !== null) document.getElementById('autoMapBtnTW').parentNode.removeChild(document.getElementById('autoMapBtnTW'));
-
-    //Add the AutoMaps button to the right hand side section.
-    if (document.getElementById('autoMapBtnTW') === null) {
-        document.getElementById('offlineExtraBtnsContainer').children[2].insertAdjacentHTML('afterend', '<br>');
-        var offlineExtraBtnsContainer = document.getElementById('offlineFightBtn').parentNode;
-        offlineExtraBtnsContainer.replaceChild(autoMapsTWButton(), document.getElementById('offlineFightBtn').parentNode.children[3]);
-    }
-
-    //Integrate the 3 AT TimeWarp related settings beneath the main UI.
-    //AT Settings, AT Auto Jobs, AT AutoStructure
-    if (document.getElementById('offlineInnerWrapper').children[4] === undefined) {
-        //Creating the row for the AT buttons that will be shown.
-        var settingsRow = document.createElement('DIV');
-        settingsRow.setAttribute('class', 'row');
-        settingsRow.setAttribute('id', 'settingBtnTW');
-        settingsRow.setAttribute('style', 'display: block');
-
-        document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
-        var offlineProgressParent = document.getElementById('offlineProgressWrapper').parentNode;
-        offlineProgressParent.replaceChild(settingsRow, document.getElementById('offlineProgressWrapper').parentNode.children[4]);
-
-        //AutoJobs button.
-        const autoJobs = true;
-        if (autoJobs) {
-            //Creating parent button
-            var jobSetting = getPageSetting('jobType');
-            var atJobInitial = document.createElement('DIV');
-            atJobInitial.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
-            atJobInitial.setAttribute('id', 'autoJobTWParent');
-            //Setting up mouseover & class, style
-            var atJobContainer = document.createElement('DIV');
-            atJobContainer.setAttribute('style', 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;');
-            atJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
-            atJobContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoJobs", "customText", event, autoTrimpSettings.jobType.description())');
-            atJobContainer.setAttribute('onmouseout', 'tooltip("hide")');
-            //Text
-            var atJobText = document.createElement('DIV');
-            atJobText.innerHTML = autoTrimpSettings.jobType.name()[jobSetting];
-            atJobText.setAttribute('id', 'autoJobLabelTW');
-            atJobText.setAttribute('onClick', "settingChanged('jobType', true)");
-            //Creating cogwheel & linking onclick
-            var atJobSettings = document.createElement('DIV');
-            atJobSettings.setAttribute('onclick', 'MAZLookalike("AutoJobs")');
-            var atJobSettingsButton = document.createElement('SPAN');
-            atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-            //Linking all the elements together and attaching them to the settings TW row.
-            atJobContainer.appendChild(atJobText);
-            atJobContainer.appendChild(atJobSettings);
-            atJobSettings.appendChild(atJobSettingsButton);
-            atJobInitial.appendChild(atJobContainer);
-            $('#settingBtnTW').append(atJobInitial);
-        }
-
-        //AutoTrimp Settings button.
-        const autoTrimpsSettings = true;
-        if (autoTrimpsSettings) {
-            //Creating parent button
-            var atSettingsInitial = document.createElement('DIV');
-            atSettingsInitial.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
-            atSettingsInitial.setAttribute('id', 'atSettingsTW');
-
-            //Setting up mouseover & class, style
-            var atSettingsContainer = document.createElement('DIV');
-            atSettingsContainer.setAttribute('style', 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;');
-            atSettingsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn4');
-            atSettingsContainer.innerHTML = 'AutoTrimp Settings';
-            atSettingsContainer.setAttribute('onClick', 'autoToggle();');
-            atSettingsContainer.setAttribute('onmouseover', 'tooltip("AutoTrimp Settings", "customText", event, "Click to open the AutoTrimps Settings menu.")');
-            atSettingsContainer.setAttribute('onmouseout', 'tooltip("hide")');
-
-            //Linking all the elements together and attaching them to the settings TW row.
-            atSettingsInitial.appendChild(atSettingsContainer);
-            $('#settingBtnTW').append(atSettingsInitial);
-        }
-
-        //AutoStructure Button.
-        const autoStructure = true;
-        if (autoStructure) {
-            //Creating parent button
-            var autoStructureBtnParent = document.createElement('DIV');
-            autoStructureBtnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
-            autoStructureBtnParent.setAttribute('id', 'autoStructureLabelTWParent');
-
-            //Setting up mouseover & class, style
-            var atStructureContainer = document.createElement('DIV');
-            atStructureContainer.setAttribute('style', 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;');
-            atStructureContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + settingUniverse('buyBuildings'));
-            atStructureContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoStructure", "customText", event, autoTrimpSettings.buildingsType.description())');
-            atStructureContainer.setAttribute('onmouseout', 'tooltip("hide")');
-
-            //Text
-            var atStructureText = document.createElement('DIV');
-            atStructureText.innerHTML = 'AT AutoStructure';
-            atStructureText.setAttribute('id', 'autoStructureLabelTW');
-            atStructureText.setAttribute('onClick', "settingChanged('buildingsType', true)");
-
-            //Creating cogwheel & linking onclick
-            var atStructureSettings = document.createElement('DIV');
-            atStructureSettings.setAttribute('onclick', 'MAZLookalike("AutoStructure")');
-            var atStructureSettingsButton = document.createElement('SPAN');
-            atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-
-            //Linking all the elements together and attaching them to the settings TW row.
-            atStructureContainer.appendChild(atStructureText);
-            atStructureContainer.appendChild(atStructureSettings);
-            atStructureSettings.appendChild(atStructureSettingsButton);
-            autoStructureBtnParent.appendChild(atStructureContainer);
-            $('#settingBtnTW').append(autoStructureBtnParent);
-        }
-    }
-
-    timeWarpDisplay();
-}
-
-//Display TW UI or regular UI depending on timeWarpDisplay setting.
-function timeWarpDisplay() {
-    if (!usingRealTimeOffline) return;
-    const displaySetting = !getPageSetting('timeWarpDisplay') ? 'block' : 'none';
-    document.getElementById('offlineWrapper').style.display = displaySetting;
-    document.getElementById('innerWrapper').style.display = displaySetting === 'block' ? 'none' : 'block';
-}
-
-function autoMapsTWButton() {
-    //Auto Maps button
-    var autoMapsContainer = document.createElement('DIV');
-    autoMapsContainer.setAttribute('id', 'autoMapBtnTW');
-    autoMapsContainer.setAttribute('class', 'btn btn-lg offlineExtraBtn settingsBtn settingBtn' + settingUniverse('autoMaps'));
-    autoMapsContainer.setAttribute('onClick', "settingChanged('autoMapsToggle', true);");
-    autoMapsContainer.setAttribute('onmouseover', 'tooltip("Toggle Auto Maps", "customText", event, autoTrimpSettings.autoMaps.description(true))');
-    autoMapsContainer.setAttribute('onmouseout', 'tooltip("hide")');
-    autoMapsContainer.innerHTML = 'Auto Maps';
-
-    return autoMapsContainer;
+    return getPageSetting(setting, currSettingUniverse);
 }
 
 function hideFightButtons() {
@@ -5380,720 +5190,369 @@ function hideFightButtons() {
     document.getElementById('pauseFight').style.display = !showButtons ? 'block' : 'none';
 }
 
+function _setAttributes(element, attributes) {
+    for (var attr in attributes) {
+        element.setAttribute(attr, attributes[attr]);
+    }
+}
+
+function _appendChildren(element, children) {
+    (children || []).forEach((child) => {
+        if (typeof child === 'string') {
+            child = document.createTextNode(child);
+        }
+        element.appendChild(child);
+    });
+}
+
+function _createElement(type, attributes, children) {
+    var element = document.createElement(type);
+    _setAttributes(element, attributes);
+    _appendChildren(element, children);
+    return element;
+}
+
+function _createButton(id, label, setting, tooltipText, timeWarp = '') {
+    const settingInfo = autoTrimpSettings[id];
+    const initialStyle = timeWarp ? 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;' : '';
+    var initial = _createElement('DIV', {
+        style: initialStyle,
+        class: 'col-xs-3 lowPad',
+        id: `auto${label}${timeWarp}Parent`
+    });
+    const containerStyle = timeWarp ? 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;' : 'display: block; font-size: 0.9vw; border-color: #5D5D5D;';
+    var container = _createElement('DIV', {
+        style: containerStyle,
+        class: 'toggleConfigBtn pointer noselect settingsBtn settingBtn' + (setting === 2 ? 3 : setting),
+        onmouseover: `tooltip("Toggle Auto${label}", "customText", event, ${tooltipText})`,
+        onmouseout: 'tooltip("hide")'
+    });
+    var text = _createElement(
+        'DIV',
+        {
+            id: `auto${label}Label${timeWarp}`,
+            onClick: `settingChanged('${id}', true)`
+        },
+        [settingInfo.type === 'multitoggle' ? autoTrimpSettings[id].name()[setting] : autoTrimpSettings[id].name()]
+    );
+    var settings = _createElement('DIV', { onclick: `MAZLookalike("Auto${label}")` });
+    var settingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
+
+    container.appendChild(text);
+    if (label !== 'Equip') {
+        container.appendChild(settings);
+        settings.appendChild(settingsButton);
+    }
+    initial.appendChild(container);
+
+    return initial;
+}
+
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function _setupATButtons() {
-    //Setup AutoTrimps settings button
-    var settingBtnSrch = document.getElementsByClassName('btn btn-default');
-    for (var i = 0; i < settingBtnSrch.length; i++) {
-        if (settingBtnSrch[i].getAttribute('onclick') === 'toggleSettingsMenu()') settingBtnSrch[i].setAttribute('onclick', 'autoToggle("trimpSettings")');
-    }
+    _createAutoTrimpsButton();
+    _createAutoMapsButton();
+    _createStatusTextbox();
+    _createResourcePerHourContainer();
+    _createMessagesButton();
+    _createAdditionalInfoTextbox();
+    _updateSettingButtons();
+    _createChangelogButton();
 
-    //AutoTrimps Changelog button
-    var newItem = document.createElement('TD');
-    var newChanges = autoTrimpSettings.ATversionChangelog !== atSettings.initialise.version;
-    newItem.appendChild(document.createTextNode('AT ' + atSettings.initialise.version.split('SadAugust ')[1] + (newChanges ? " | What's New" : '')));
-    newItem.setAttribute('id', 'atChangelog');
-    newItem.setAttribute('class', 'btn' + (newChanges ? ' btn-changelogNew' : ' btn-primary'));
-    newItem.setAttribute('onclick', "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();");
-    var settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
-    settingbarRow.insertBefore(newItem, settingbarRow.childNodes[settingbarRow.childNodes.length - 4]);
+    document.getElementById('portalTimer').setAttribute('style', 'cursor: default; min-width: 8.5vw');
 
-    //AutoTrimps setting button
-    var newItem = document.createElement('TD');
-    newItem.appendChild(document.createTextNode('AutoTrimps'));
-    newItem.setAttribute('id', 'atSettingsBtn');
-    newItem.setAttribute('class', 'btn btn-default');
-    newItem.setAttribute('onclick', 'autoToggle();');
-    var settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
-    settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
+    Array.from(document.getElementsByClassName('fightBtn')).forEach((btn) => {
+        btn.style.padding = '0.01vw 0.01vw';
+    });
 
-    //Identifying fight button column now so we can add to it later.
-    var fightButtonCol = document.getElementById('battleBtnsColumn');
+    _createAutoJobsButton();
+    _createAutoStructureButton();
+    _createAutoEquipButton();
 
-    //Auto Maps button
-    var autoMapsContainer = document.createElement('DIV');
-    autoMapsContainer.setAttribute('style', 'margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px');
-    autoMapsContainer.setAttribute('id', 'autoMapBtn');
-    autoMapsContainer.setAttribute('class', 'noselect settingsBtn settingBtn' + settingUniverse('autoMaps'));
-    autoMapsContainer.setAttribute('onClick', "settingChanged('autoMapsToggle', true);");
-    autoMapsContainer.setAttribute('onmouseover', 'tooltip("Toggle Auto Maps", "customText", event, autoTrimpSettings.autoMaps.description(true))');
-    autoMapsContainer.setAttribute('onmouseout', 'tooltip("hide")');
-    autoMapsContainer.innerHTML = 'Auto Maps';
-    fightButtonCol.appendChild(autoMapsContainer);
+    hideFightButtons();
 
-    //Status textbox
-    var autoMapsStatusContainer = document.createElement('DIV');
-    autoMapsStatusContainer.setAttribute('class', 'noselect');
-    autoMapsStatusContainer.setAttribute('style', 'display: block; font-size: 1vw; text-align: center; background-color: rgba(0,0,0,0.3);');
-    autoMapsStatusContainer.setAttribute('onmouseout', 'tooltip("hide")');
-    autoMapsStatusContainer.id = 'autoMapStatus';
-    fightButtonCol.appendChild(autoMapsStatusContainer);
+    /* 
+	Setup buttons for Time Warp UI
+	 */
 
-    //Helium/Hr Info textbox
-    var resourcePerHourContainer = document.createElement('DIV');
-    resourcePerHourContainer.setAttribute('style', 'display: ' + (getPageSetting('displayHeHr') ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);');
-    resourcePerHourContainer.setAttribute('onmouseout', 'tooltip("hide")');
-    resourcePerHourContainer.id = 'hiderStatus';
-    fightButtonCol.appendChild(resourcePerHourContainer);
+    _createSettingsRowTW();
+    _createBtnRowTW();
+    _createStatusTextboxTW();
+    _createAutoMapsButtonTW();
+    _createAutoJobsButtonTW();
+    _createAutoTrimpsButtonTW();
+    _createAutoStructureButtonTW();
+}
 
-    //Additional AT Info textbox
-    var voidMapContainer = document.createElement('DIV');
-    voidMapContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);');
-    var voidMapText = document.createElement('SPAN');
-    voidMapContainer.setAttribute(
-        'onmouseover',
-        'tooltip("Additional AT Info", "customText", event, "<b>Void</b>: The progress you have towards a free void map from the \'Void Maps\' permanent bone upgrade.<br>\
-	<b>Auto Level</b>: The level that the script recommends using whilst farming.<br>\
-	<b>B</b>: The amount of time your trimps have been breeding.<br>\
-	<b>T</b>: Your current tenacity time.")'
+function _updateSettingButtons() {
+    Array.from(document.getElementsByClassName('btn btn-default'))
+        .filter((button) => button.getAttribute('onclick') === 'toggleSettingsMenu()')
+        .forEach((button) => button.setAttribute('onclick', 'autoToggle("trimpSettings")'));
+}
+
+function _createChangelogButton() {
+    if (document.getElementById('atChangelog') !== null) return;
+    const newChanges = autoTrimpSettings.ATversionChangelog !== atSettings.initialise.version;
+    const changelog = _createElement(
+        'TD',
+        {
+            id: 'atChangelog',
+            class: 'btn' + (newChanges ? ' btn-changelogNew' : ' btn-primary'),
+            onclick: "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();"
+        },
+        ['AT ' + atSettings.initialise.version.split('SadAugust ')[1] + (newChanges ? " | What's New" : '')]
     );
-    voidMapContainer.setAttribute('onmouseout', 'tooltip("hide")');
-    voidMapText.id = 'additionalInfo';
-    voidMapContainer.appendChild(voidMapText);
-    var trimpsButtonCol = document.getElementById('trimps');
-    trimpsButtonCol.appendChild(voidMapContainer);
 
-    //Portal Timer
-    var $portalTimer = document.getElementById('portalTimer');
-    $portalTimer.setAttribute('onclick', "toggleSetting('pauseGame')");
-    $portalTimer.setAttribute('style', 'cursor: default; min-width: 8.5vw');
-    $portalTimer.classList.add('btn');
+    let settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
+    settingbarRow.insertBefore(changelog, settingbarRow.childNodes[settingbarRow.childNodes.length - 4]);
+}
 
-    var btns = document.getElementsByClassName('fightBtn');
-    for (var x = 0; x < btns.length; x++) {
-        btns[x].style.padding = '0.01vw 0.01vw';
-    }
+function _createAutoTrimpsButton() {
+    if (document.getElementById('atSettingsBtn') !== null) return;
+    const atSettings = _createElement(
+        'TD',
+        {
+            id: 'atSettingsBtn',
+            class: 'btn btn-default',
+            onclick: 'autoToggle();'
+        },
+        ['AutoTrimps']
+    );
 
-    //AutoJobs
-    //Changing Default Widths for Job buttons
+    let settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
+    settingbarRow.insertBefore(atSettings, settingbarRow.childNodes[10]);
+}
+
+function _createAutoMapsButton() {
+    if (document.getElementById('autoMapBtn') !== null) return;
+    const fightButtonCol = document.getElementById('battleBtnsColumn');
+
+    const autoMapsContainer = _createElement(
+        'DIV',
+        {
+            style: 'margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px',
+            id: 'autoMapBtn',
+            class: 'noselect settingsBtn settingBtn' + settingUniverse('autoMaps'),
+            onClick: "settingChanged('autoMapsToggle', true);",
+            onmouseover: 'tooltip("Toggle Auto Maps", "customText", event, autoTrimpSettings.autoMaps.description(true))',
+            onmouseout: 'tooltip("hide")'
+        },
+        ['Auto Maps']
+    );
+
+    fightButtonCol.appendChild(autoMapsContainer);
+}
+
+function _createAutoMapsButtonTW() {
+    if (document.getElementById('autoMapBtnTW') !== null) return;
+
+    const autoMapsContainer = _createElement(
+        'DIV',
+        {
+            id: 'autoMapBtnTW',
+            class: 'btn btn-lg offlineExtraBtn settingsBtn settingBtn' + settingUniverse('autoMaps'),
+            onClick: "settingChanged('autoMapsToggle', true);",
+            onmouseover: 'tooltip("Toggle Auto Maps", "customText", event, autoTrimpSettings.autoMaps.description(true))',
+            onmouseout: 'tooltip("hide")'
+        },
+        ['Auto Maps']
+    );
+    document.getElementById('offlineExtraBtnsContainer').children[2].insertAdjacentHTML('afterend', '<br>');
+    const offlineExtraBtnsContainer = document.getElementById('offlineFightBtn').parentNode;
+    offlineExtraBtnsContainer.replaceChild(autoMapsContainer, document.getElementById('offlineFightBtn').parentNode.children[3]);
+}
+
+function _createStatusTextbox() {
+    if (document.getElementById('autoMapStatus') !== null) return;
+    const fightButtonCol = document.getElementById('battleBtnsColumn');
+
+    const autoMapsStatusContainer = _createElement('DIV', {
+        class: 'noselect',
+        style: 'display: block; font-size: 1vw; text-align: center; background-color: rgba(0,0,0,0.3);',
+        onmouseout: 'tooltip("hide")',
+        id: 'autoMapStatus'
+    });
+
+    fightButtonCol.appendChild(autoMapsStatusContainer);
+}
+
+function _createResourcePerHourContainer() {
+    if (document.getElementById('hiderStatus') !== null) return;
+    const fightButtonCol = document.getElementById('battleBtnsColumn');
+
+    const resourcePerHourContainer = _createElement('DIV', {
+        style: 'display: ' + (getPageSetting('displayHeHr') ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);',
+        onmouseout: 'tooltip("hide")',
+        id: 'hiderStatus'
+    });
+
+    fightButtonCol.appendChild(resourcePerHourContainer);
+}
+
+function _createAdditionalInfoTextbox() {
+    if (document.getElementById('additionalInfo') !== null) return;
+    const additionalInfoContainer = _createElement('DIV', {
+        style: 'display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);',
+        onmouseover: '',
+        onmouseout: 'tooltip("hide")'
+    });
+
+    const additionalInfoText = _createElement('SPAN', { id: 'additionalInfo' });
+    additionalInfoContainer.appendChild(additionalInfoText);
+
+    const trimpsButtonCol = document.getElementById('trimps');
+    trimpsButtonCol.appendChild(additionalInfoContainer);
+}
+
+function _createAutoJobsButton() {
+    if (document.getElementById('autoJobsLabel') !== null) return;
+
     document.getElementById('fireBtn').parentElement.style.width = '14.2%';
     document.getElementById('fireBtn').parentElement.style.paddingRight = '2px';
     document.getElementById('jobsTitleSpan').parentElement.style.width = '10%';
-
-    //AutoJobs button.
-    //Creating button
-    var jobSetting = getPageSetting('jobType');
-    var atJobInitial = document.createElement('DIV');
-    atJobInitial.setAttribute('class', 'col-xs-3 lowPad');
-    var atJobContainer = document.createElement('DIV');
-
-    //Cogwheel info
-    atJobContainer.setAttribute('style', 'display: block; font-size: 0.9vw; border-color: #5D5D5D;');
-    atJobContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
-    atJobContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoJobs", "customText", event, autoTrimpSettings.jobType.description())');
-    atJobContainer.setAttribute('onmouseout', 'tooltip("hide")');
-
-    //Text
-    var atJobText = document.createElement('DIV');
-    atJobText.innerHTML = autoTrimpSettings.jobType.name()[jobSetting];
-    atJobText.setAttribute('id', 'autoJobLabel');
-    atJobText.setAttribute('onClick', "settingChanged('jobType', true)");
-
-    //Creating cogwheel & linking onclick
-    var atJobSettings = document.createElement('DIV');
-    atJobSettings.setAttribute('onclick', 'MAZLookalike("AutoJobs")');
-    var atJobSettingsButton = document.createElement('SPAN');
-    atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-
-    var atJobColumn = document.getElementById('jobsTitleDiv').children[0];
-    atJobContainer.appendChild(atJobText);
-    atJobContainer.appendChild(atJobSettings);
-    atJobSettings.appendChild(atJobSettingsButton);
-    atJobInitial.appendChild(atJobContainer);
-    atJobColumn.insertBefore(atJobInitial, document.getElementById('jobsTitleDiv').children[0].children[2]);
-
-    //AutoStructure Button.
-    //Creating button
-    var atStructureInitial = document.createElement('DIV');
-    atStructureInitial.setAttribute('class', 'col-xs-3 lowPad');
-    var atStructureContainer = document.createElement('DIV');
-
-    atStructureContainer.setAttribute('style', 'display: block; font-size: 0.9vw; border-color: #5D5D5D;');
-    atStructureContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('buyBuildings'));
-    atStructureContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoStructure", "customText", event, autoTrimpSettings.buildingsType.description())');
-    atStructureContainer.setAttribute('onmouseout', 'tooltip("hide")');
-
-    //Text
-    var atStructureText = document.createElement('DIV');
-    atStructureText.innerHTML = 'AT AutoStructure';
-    atStructureText.setAttribute('id', 'autoStructureLabel');
-    atStructureText.setAttribute('onClick', "settingChanged('buildingsType', true)");
-
-    //Creating cogwheel & linking onclick
-    var atStructureSettings = document.createElement('DIV');
-    atStructureSettings.setAttribute('onclick', 'MAZLookalike("AutoStructure")');
-    var atStructureSettingsButton = document.createElement('SPAN');
-    atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-
-    //Setting up positioning
-    var atStructureColumn = document.getElementById('buildingsTitleDiv').children[0];
-    atStructureContainer.appendChild(atStructureText);
-    atStructureContainer.appendChild(atStructureSettings);
-    atStructureSettings.appendChild(atStructureSettingsButton);
-    atStructureInitial.appendChild(atStructureContainer);
-    atStructureColumn.replaceChild(atStructureInitial, document.getElementById('buildingsTitleDiv').children[0].children[1]);
-
-    //AutoEquip Button
-    //Creating button
-    var atEquipInitial = document.createElement('DIV');
-    atEquipInitial.setAttribute('class', 'col-xs-3 lowPad');
-    var atEquipContainer = document.createElement('DIV');
-    atEquipContainer.setAttribute('style', 'display: block; font-size: 0.9vw;');
-    atEquipContainer.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('equipOn'));
-    atEquipContainer.setAttribute('onmouseover', 'tooltip("Toggle atEquip", "customText", event, "Toggle between the atEquip settings.")');
-    atEquipContainer.setAttribute('onmouseout', 'tooltip("hide")');
-
-    //Text
-    var atEquipText = document.createElement('DIV');
-    atEquipText.innerHTML = 'AT Auto Equip';
-    atEquipText.setAttribute('id', 'autoEquipLabel');
-    atEquipText.setAttribute('onClick', "settingChanged('equipOn', true)");
-
-    //Setting up positioning
-    var atEquipColumn = document.getElementById('equipmentTitleDiv').children[0];
-    atEquipContainer.appendChild(atEquipText);
-    atEquipInitial.appendChild(atEquipContainer);
-    atEquipColumn.replaceChild(atEquipInitial, document.getElementById('equipmentTitleDiv').children[0].children[2]);
-
-    //autoTrimps Button.
-    //Creating button
-    var atBtnContainer = document.createElement('DIV');
-    atBtnContainer.setAttribute('class', 'btn-group');
-    atBtnContainer.setAttribute('role', 'group');
-    atBtnContainer.setAttribute('onmouseover', 'tooltip("Toggle AutoTrimps Messages", "customText", event, "Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.")');
-    atBtnContainer.setAttribute('onmouseout', 'tooltip("hide")');
-
-    //Text
-    var atBtnText = document.createElement('button');
-    atBtnText.innerHTML = 'AT Messages';
-    atBtnText.setAttribute('id', 'AutoTrimpsFilter');
-    atBtnText.setAttribute('type', 'button');
-    atBtnText.setAttribute('onClick', "filterMessage2('AutoTrimps')");
-    atBtnText.setAttribute('class', 'btn btn-success logFlt');
-    //Setting up positioning
-    atBtnContainer.appendChild(atBtnText);
-    document.getElementById('logBtnGroup').appendChild(atBtnContainer);
-
-    //Creating cogwheel & linking onclick
-    var atBtnSettings = document.createElement('button');
-    atBtnSettings.setAttribute('id', 'logConfigBtn');
-    atBtnSettings.setAttribute('type', 'button');
-    atBtnSettings.setAttribute('onclick', 'MAZLookalike("MessageConfig")');
-    atBtnSettings.setAttribute('class', 'btn btn-default logFlt');
-    var atBtnSettingsButton = document.createElement('SPAN');
-    atBtnSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-    atBtnSettings.appendChild(atBtnSettingsButton);
-    var tab = document.createElement('DIV');
-    tab.setAttribute('id', 'logConfigHolder'), tab.setAttribute('class', 'btn-group'), tab.setAttribute('role', 'group'), tab.appendChild(atBtnSettings), document.getElementById('logBtnGroup').appendChild(tab);
-
-    //Potentially hide fight buttons
-    hideFightButtons();
-
-    debug('Finished loading buttons.');
+    const jobButton = _createButton('jobType', 'Jobs', getPageSetting('jobType'), 'autoTrimpSettings.jobType.description()');
+    const jobColumn = document.getElementById('jobsTitleDiv').children[0];
+    jobColumn.insertBefore(jobButton, jobColumn.children[2]);
 }
 
-function introMessage() {
-    const description = `
-		<p>Welcome to the SadAugust fork of AutoTrimps!</p>
-		<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>
-		<p>One of the most important things is where the settings are stored. The vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p><br>
-		<p>There are some setting that aren't located in the <b>AutoTrimps settings menu</b>, 2 of which are in the Trimps buy container (<b>AT AutoStructure & AutoJobs</b>), I recommend mousing over their tooltips and looking at what they do.</p>
-		<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. This will enabling this will allow the script to output messages into the message log window. You can control what gets printed to it by pressing the cogwheel to the right of it.</p>
-		<br><p>By default everything should be disabled but every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>
-		<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>
-	`;
-
-    tooltip('Introduction Message', 'customText', 'lock', description, false, 'center');
-    if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
-    else verticalCenterTooltip(true);
+function _createAutoStructureButton() {
+    if (document.getElementById('autoStructureLabel') !== null) return;
+    const structureButton = _createButton('buildingsType', 'Structure', settingUniverse('buildingsType'), 'autoTrimpSettings.buildingsType.description()');
+    const structureColumn = document.getElementById('buildingsTitleDiv').children[0];
+    structureColumn.replaceChild(structureButton, structureColumn.children[1]);
 }
 
-function updateATVersion() {
-    //Setting Conversion!
-    if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] === atSettings.initialise.version) return;
-    if (typeof autoTrimpSettings === 'undefined') return;
-    var changelog = [];
-
-    //Prints the new user message if it's the first time loading the script.
-    if (autoTrimpSettings['ATversion'] === undefined || !autoTrimpSettings['ATversion'].includes('SadAugust')) {
-        autoTrimpSettings['ATversion'] = atSettings.initialise.version;
-        saveSettings();
-        if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
-        introMessage();
-        return;
-    }
-
-    if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] !== atSettings.initialise.version) {
-        //On the offchance anybody is using a super old version of AT then they need their localStorage setting converted
-        if (JSON.parse(localStorage.getItem('atSettings')) === null) saveSettings();
-        const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.2.5') {
-            if (tempSettings.presetMutations !== undefined) {
-                var mutatorObj = {
-                    preset1: {},
-                    preset2: {},
-                    preset3: {}
-                };
-                if (tempSettings.presetMutations.value.preset1 !== '') mutatorObj.preset1 = JSON.parse(tempSettings.presetMutations.value.preset1);
-                if (tempSettings.presetMutations.value.preset2 !== '') mutatorObj.preset2 = JSON.parse(tempSettings.presetMutations.value.preset2);
-                if (tempSettings.presetMutations.value.preset3 !== '') mutatorObj.preset3 = JSON.parse(tempSettings.presetMutations.value.preset3);
-
-                autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
-                localStorage['mutatorPresets'] = JSON.stringify(mutatorObj);
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.2.95') {
-            var settings_List = ['mapFarmSettings'];
-            var values = ['value', 'valueU2'];
-            for (var x = 0; x < settings_List.length; x++) {
-                for (var z = 0; z < values.length; z++) {
-                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
-                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-                            autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
-                        }
-                    }
-                    saveSettings();
-                }
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.001') {
-            var settings_List = ['mapBonusSettings'];
-            var values = ['value', 'valueU2'];
-            for (var x = 0; x < settings_List.length; x++) {
-                for (var z = 0; z < values.length; z++) {
-                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
-                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-                            autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
-                        }
-                    }
-                    saveSettings();
-                }
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.14') {
-            var settings_List = ['voidMapSettings'];
-            var values = ['value', 'valueU2'];
-            for (var x = 0; x < settings_List.length; x++) {
-                for (var z = 0; z < values.length; z++) {
-                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
-                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-                            autoTrimpSettings[settings_List[x]][values[z]][y].hdType = 'world';
-                            autoTrimpSettings[settings_List[x]][values[z]][y].hdType2 = 'void';
-                        }
-                    }
-                    saveSettings();
-                }
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.17') {
-            if (typeof tempSettings['presetSwap'] !== 'undefined') {
-                autoTrimpSettings.presetSwap.enabled = false;
-            }
-            if (typeof tempSettings['autoCombatRespec'] !== 'undefined') {
-                autoTrimpSettings.presetCombatRespec.value = 0;
-                autoTrimpSettings.presetCombatRespec.valueU2 = autoTrimpSettings['autoCombatRespec'].valueU2;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.18') {
-            if (typeof tempSettings['bloodthirstDestack'] !== 'undefined') {
-                autoTrimpSettings.bloodthirstDestack.enabled = false;
-            }
-            if (typeof tempSettings['bloodthirstVoidMax'] !== 'undefined') {
-                autoTrimpSettings.bloodthirstVoidMax.enabled = false;
-            }
-            changelog.push(
-                "AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
-			You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise."
-            );
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.21') {
-            if (typeof tempSettings['IgnoreCrits'] !== 'undefined') {
-                autoTrimpSettings.IgnoreCrits.valueU2 = 0;
-            }
-        }
-
-        //Scryer stance changes
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.24') {
-            if (typeof tempSettings['UseScryerStance'] !== 'undefined') {
-                autoTrimpSettings.AutoStanceScryer.enabled = tempSettings.UseScryerStance.enabled;
-            }
-            if (typeof tempSettings['screwessence'] !== 'undefined') {
-                autoTrimpSettings.scryerEssenceOnly.enabled = tempSettings.screwessence.enabled;
-            }
-            if (typeof tempSettings['ScryerUseWhenOverkill'] !== 'undefined') {
-                autoTrimpSettings.scryerOverkill.enabled = tempSettings.ScryerUseWhenOverkill.enabled;
-            }
-            if (typeof tempSettings['use3daily'] !== 'undefined') {
-                autoTrimpSettings.dAutoStanceWind.enabled = tempSettings.use3daily.enabled;
-            }
-            if (typeof tempSettings['liqstack'] !== 'undefined') {
-                autoTrimpSettings.dWindStackingLiq.enabled = tempSettings.liqstack.enabled;
-            }
-            if (typeof tempSettings['AutoStance'] !== 'undefined') {
-                if (tempSettings.AutoStance.value > 2) {
-                    autoTrimpSettings.AutoStance.value = 2;
-                    autoTrimpSettings.AutoStanceWind.enabled = true;
-                }
-            }
-
-            const originalSettings = [
-                'ScryerUseinMaps2',
-                'ScryerUseinVoidMaps2',
-                'ScryerUseinPMaps',
-                'ScryerUseinBW',
-                'ScryerUseinSpire2',
-                'ScryerSkipBoss2',
-                'ScryUseinPoison',
-                'ScryUseinWind',
-                'ScryUseinIce',
-                'ScryerSkipCorrupteds2',
-                'ScryerSkipHealthy',
-                'ScryerDieZ',
-                'ScryerMaxZone',
-                'ScryerMinZone',
-                'onlyminmaxworld',
-                'dWindStackingMinHD',
-                'WindStackingMinHD',
-                'WindStackingMin',
-                'dWindStackingMin'
-            ];
-            const newSettings = ['scryerMaps', 'scryerVoidMaps', 'scryerPlusMaps', 'scryerBW', 'scryerSpire', 'scryerSkipBoss', 'scryerPoison', 'scryerWind', 'scryerIce', 'scryerCorrupted', 'scryerHealthy', 'scryerDieZone', 'scryerMaxZone', 'scryerMinZone', 'scryerMinMaxWorld', 'dWindStackingRatio', 'WindStackingRatio', 'WindStackingZone', 'dWindStackingZone'];
-            for (var item in originalSettings) {
-                if (typeof tempSettings[originalSettings[item]] !== 'undefined') {
-                    autoTrimpSettings[newSettings[item]].value = tempSettings[originalSettings[item]].value;
-                }
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.25') {
-            if (typeof tempSettings['radonsettings'] !== 'undefined') {
-                autoTrimpSettings.universeSetting.value = tempSettings.radonsettings.value;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.26') {
-            if (typeof tempSettings['PrestigeSkip1_2'] !== 'undefined') {
-                autoTrimpSettings.PrestigeSkip.enabled = tempSettings.PrestigeSkip1_2.value > 0;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.29') {
-            const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
-
-            const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
-
-            for (var item in u1Settings) {
-                if (typeof tempSettings[u1Settings[item] + 'DefaultSettings'] !== 'undefined') {
-                    autoTrimpSettings[u1Settings[item] + 'Settings'].value.unshift(tempSettings[u1Settings[item] + 'DefaultSettings'].value);
-                }
-            }
-
-            for (var item in u2Settings) {
-                if (typeof tempSettings[u2Settings[item] + 'DefaultSettings'] !== 'undefined') {
-                    autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.unshift(tempSettings[u2Settings[item] + 'DefaultSettings'].valueU2);
-                }
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.36') {
-            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
-                autoTrimpSettings.uniqueMapSettingsArray.valueU2['Big_Wall'] = {
-                    enabled: false,
-                    zone: 100,
-                    cell: 0
-                };
-            }
-        }
-
-        //Converting addonUser saves variable to object and storing farming settings .done stuff in it
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.37') {
-            var obj = [];
-            for (var x = 0; x < 30; x++) {
-                obj[x] = {};
-                obj[x].done = '';
-            }
-
-            if (typeof game.global.addonUser !== 'object') game.global.addonUser = {};
-
-            const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
-
-            const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
-
-            for (var item in u1Settings) {
-                if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u1Settings[item] + 'Settings'] = {};
-
-                var obj = [];
-                for (var x = 0; x < 30; x++) {
-                    obj[x] = {};
-                    obj[x].done = '';
-                }
-                game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
-
-                if (typeof autoTrimpSettings[u1Settings[item] + 'Settings'].value[0] !== 'undefined') {
-                    for (var y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
-                        autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
-                    }
-                }
-            }
-
-            for (var item in u2Settings) {
-                if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u2Settings[item] + 'Settings'] = {};
-                var obj = [];
-                for (var x = 0; x < 30; x++) {
-                    obj[x] = {};
-                    obj[x].done = '';
-                }
-                game.global.addonUser[u2Settings[item] + 'Settings'].value = obj;
-
-                if (typeof autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0] !== 'undefined') {
-                    for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
-                        autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[y].row = y;
-                    }
-                }
-            }
-        }
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.38') {
-            setupAddonUser();
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.4.09') {
-            if (typeof tempSettings['heHrDontPortalBefore'] !== 'undefined') {
-                autoTrimpSettings.heliumHrDontPortalBefore.value = tempSettings.heHrDontPortalBefore.value;
-                autoTrimpSettings.heliumHrDontPortalBefore.valueU2 = tempSettings.heHrDontPortalBefore.valueU2;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.4.20') {
-            if (typeof tempSettings['buildingSettingsArray'] !== 'undefined') {
-                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {};
-                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = false;
-                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.percent = 100;
-                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.buyMax = 0;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.06') {
-            if (typeof autoTrimpSettings.alchemySettings['valueU2'][1] !== 'undefined') {
-                for (var y = 1; y < autoTrimpSettings.alchemySettings['valueU2'].length; y++) {
-                    autoTrimpSettings.alchemySettings['valueU2'][y].repeatevery = 0;
-                    autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
-                }
-                saveSettings();
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.09') {
-            if (typeof tempSettings['autoAbandon'] !== 'undefined') {
-                autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 2 : 0;
-                autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 2 : 0;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.13') {
-            var values = ['value', 'valueU2'];
-            for (var z = 0; z < values.length; z++) {
-                var incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
-                if (typeof tempSettings['raidingSettings'][values[z]][0] !== 'undefined') {
-                    for (var y = 0; y < tempSettings['raidingSettings'][values[z]].length; y++) {
-                        if (y === 0) continue;
-                        var currSetting = tempSettings['raidingSettings'][values[z]][y];
-                        autoTrimpSettings['raidingSettings'][values[z]][y].incrementMaps = incrementMaps;
-                        autoTrimpSettings['raidingSettings'][values[z]][y].raidingzone = (currSetting.raidingzone - currSetting.world).toString();
-                    }
-                }
-            }
-            saveSettings();
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.15') {
-            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
-                const currTrimple = tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
-                delete tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
-                autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] = currTrimple;
-                delete autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_of_Doom'];
-                if (autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] === undefined)
-                    autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] = {
-                        enabled: false,
-                        zone: 999,
-                        cell: 1
-                    };
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.20') {
-            if (typeof tempSettings['experienceStaff'] !== 'undefined') {
-                if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value !== 'string') autoTrimpSettings.experienceStaff.value === 'undefined';
-            }
-        }
-        //Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.22') {
-            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
-                var obj = {};
-                for (var item in tempSettings.uniqueMapSettingsArray.value) {
-                    obj[item.replace(/_/g, ' ')] = tempSettings.uniqueMapSettingsArray.value[item];
-                }
-                autoTrimpSettings.uniqueMapSettingsArray.value = obj;
-                var obj = {};
-                for (var item in tempSettings.uniqueMapSettingsArray.valueU2) {
-                    obj[item.replace(/_/g, ' ')] = tempSettings.uniqueMapSettingsArray.valueU2[item];
-                }
-                autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.24') {
-            if (typeof tempSettings['voidMapSettings'] !== 'undefined') {
-                if (autoTrimpSettings.voidMapSettings.value[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = 1;
-                if (autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = 1;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.26') {
-            if (typeof tempSettings['portalVoidIncrement'] !== 'undefined') {
-                autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.27') {
-            if (typeof tempSettings['autGigaDeltaFactor'] !== 'undefined') {
-                autoTrimpSettings.autoGigaDeltaFactor.value = tempSettings.autGigaDeltaFactor.value;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.28') {
-            if (typeof tempSettings['unbalance'] !== 'undefined') autoTrimpSettings.balance.enabledU2 = tempSettings.unbalance.enabledU2;
-            if (typeof tempSettings['unbalanceZone'] !== 'undefined') autoTrimpSettings.balanceZone.valueU2 = tempSettings.unbalanceZone.valueU2;
-            if (typeof tempSettings['unbalanceStacks'] !== 'undefined') autoTrimpSettings.balanceStacks.valueU2 = tempSettings.unbalanceStacks.valueU2;
-            if (typeof tempSettings['unbalanceImprobDestack'] !== 'undefined') autoTrimpSettings.balanceImprobDestack.enabledU2 = tempSettings.unbalanceImprobDestack.enabledU2;
-
-            if (typeof tempSettings['trappapalooza'] !== 'undefined') autoTrimpSettings.trapper.enabledU2 = tempSettings.trappapalooza.enabledU2;
-            if (typeof tempSettings['trappapaloozaCoords'] !== 'undefined') autoTrimpSettings.trapperCoords.valueU2 = tempSettings.trappapaloozaCoords.valueU2;
-            if (typeof tempSettings['trappapaloozaTrap'] !== 'undefined') autoTrimpSettings.trapperTrap.enabledU2 = tempSettings.trappapaloozaTrap.enabledU2;
-            if (typeof tempSettings['trappapaloozaArmyPct'] !== 'undefined') autoTrimpSettings.trapperArmyPct.valueU2 = tempSettings.trappapaloozaArmyPct.valueU2;
-
-            autoTrimpSettings.decay.enabledU2 = false;
-            autoTrimpSettings.decayStacksToPush.valueU2 = -1;
-            autoTrimpSettings.decayStacksToAbandon.valueU2 = -1;
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.30') {
-            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
-                autoTrimpSettings.uniqueMapSettingsArray.valueU2['MP Smithy One Off'] = {
-                    enabled: false,
-                    value: 100
-                };
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.33') {
-            if (typeof tempSettings['testMapScummingValue'] !== 'undefined') {
-                if (!gameUserCheck()) autoTrimpSettings.testMapScummingValue.value = -1;
-                else if (typeof tempSettings['testMapScummingValue'].value === 'object' && tempSettings['testMapScummingValue'].valueU2) autoTrimpSettings.testMapScummingValue.value = tempSettings['testMapScummingValue'].valueU2;
-                else autoTrimpSettings.testMapScummingValue.value = -1;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.36') {
-            if (typeof game.global.addonUser['archaeologySettings'] === 'undefined') game.global.addonUser['archaeologySettings'] = {};
-            if (typeof game.global.addonUser['archaeologySettings']['valueU2'] === 'undefined') {
-                var obj = [];
-                for (var x = 0; x < 30; x++) {
-                    obj[x] = {};
-                    obj[x].done = '';
-                }
-                game.global.addonUser['archaeologySettings'].valueU2 = obj;
-            }
-        }
-
-        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.39') {
-            if (typeof tempSettings['heirloomStaffResource'] !== 'undefined') {
-                autoTrimpSettings.heirloomStaffScience.valueU2 = tempSettings.heirloomStaffResource.valueU2;
-            }
-        }
-    }
-
-    //Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
-    //No other way to access it in TW currently.
-    if (usingRealTimeOffline) {
-        var changelogURL = basepath + 'updates.html';
-        changelog.push('There has been an AutoTrimps update. <a href="' + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
-    }
-
-    autoTrimpSettings['ATversion'] = atSettings.initialise.version;
-    if (changelog.length !== 0) {
-        printChangelog(changelog);
-        if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(false, true);
-        else verticalCenterTooltip(false, true);
-    }
-    updateAutoTrimpSettings(true);
-    saveSettings();
+function _createAutoEquipButton() {
+    if (document.getElementById('autoEquipLabel') !== null) return;
+    const equipButton = _createButton('equipOn', 'Equip', settingUniverse('equipOn'), '"Toggle the Auto Equip setting."');
+    const equipColumn = document.getElementById('equipmentTitleDiv').children[0];
+    equipColumn.replaceChild(equipButton, equipColumn.children[2]);
 }
 
-function _assembleChangelog(changes) {
-    return changes.map((change) => `<br>${change}`).join('');
-}
+function _createMessagesButton() {
+    if (document.getElementById('AutoTrimpsFilter') === null) {
+        var atBtnContainer = _createElement('DIV', {
+            class: 'btn-group',
+            role: 'group',
+            onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, "Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.")',
+            onmouseout: 'tooltip("hide")'
+        });
 
-function _assembleChangelogFooter() {
-    return `
-		<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!
-		<br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Server</a>
-		<br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).`;
-}
+        var atBtnText = _createElement(
+            'button',
+            {
+                id: 'AutoTrimpsFilter',
+                type: 'button',
+                onClick: "filterMessage2('AutoTrimps')",
+                class: 'btn btn-success logFlt'
+            },
+            ['AT Messages']
+        );
 
-function printChangelog(changes) {
-    const body = _assembleChangelog(changes);
-    const footer = _assembleChangelogFooter();
-    const action = 'cancelTooltip()';
-    const title = `Script Update Notice<br>${atSettings.initialise.version}`;
-    const acceptBtnText = 'Thank you for playing with AutoTrimps.';
-    const hideCancel = true;
+        atBtnContainer.appendChild(atBtnText);
+        document.getElementById('logBtnGroup').appendChild(atBtnContainer);
 
-    tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
-    if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
-    else verticalCenterTooltip(true);
-}
+        const atBtnSettings = _createElement('button', {
+            id: 'logConfigBtn',
+            type: 'button',
+            onclick: 'MAZLookalike("MessageConfig")',
+            class: 'btn btn-default logFlt'
+        });
 
-//When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
-function updateChangelogButton() {
-    if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
-    var changeLogBtn = document.getElementById('atChangelog');
-    if (changeLogBtn !== null) {
-        //Swap the button class remove colour of new changelog.
-        var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
-        swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
-        //Remove the new changelog text if it exists.
-        changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", '');
-        autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
-        saveSettings();
+        const atBtnSettingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
+        atBtnSettings.appendChild(atBtnSettingsButton);
+
+        const tab = _createElement(
+            'DIV',
+            {
+                id: 'logConfigHolder',
+                class: 'btn-group',
+                role: 'group'
+            },
+            [atBtnSettings]
+        );
+
+        document.getElementById('logBtnGroup').appendChild(tab);
     }
 }
 
-//Will output how many zones you can liquify to.
-function checkLiqZoneCount(universe) {
-    if (game.options.menu.liquification.enabled === 0) return 0;
-    if (universe === 2) {
-        if (!u2Mutations.tree.Liq1.purchased) return 0;
-        var amt = 0.1;
-        if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
-        return (getHighestLevelCleared(false, true) + 1) * amt;
-    }
-    var spireCount = game.global.spiresCompleted;
-    if (game.talents.liquification.purchased) spireCount++;
-    if (game.talents.liquification2.purchased) spireCount++;
-    if (game.talents.liquification3.purchased) spireCount += 2;
-    spireCount += Fluffy.isRewardActive('liquid') * 0.5;
-    var liquidAmount = spireCount / 20;
-    return game.stats.highestLevel.valueTotal() * liquidAmount;
+function _setTimeWarpUI() {
+    if (!usingRealTimeOffline) return;
+    const displaySetting = !getPageSetting('timeWarpDisplay') ? 'block' : 'none';
+    document.getElementById('offlineWrapper').style.display = displaySetting;
+    document.getElementById('innerWrapper').style.display = displaySetting === 'block' ? 'none' : 'block';
 }
 
-automationMenuSettingsInit();
-initializeAllTabs();
-initializeAllSettings();
-updateATVersion();
+function _createSettingsRowTW() {
+    if (document.getElementById('settingsRowTW') !== null) return;
+    var settingBarRow = document.createElement('DIV');
+    settingBarRow.setAttribute('id', 'settingsRowTW');
+    document.getElementById('offlineWrapper').children[0].insertAdjacentHTML('afterend', '<br>');
+    var offlineWrapperParent = document.getElementById('offlineInnerWrapper').parentNode;
+    offlineWrapperParent.replaceChild(settingBarRow, document.getElementById('offlineInnerWrapper').parentNode.children[1]);
+}
+
+function _createBtnRowTW() {
+    const settingsRow = document.createElement('DIV');
+    settingsRow.setAttribute('class', 'row');
+    settingsRow.setAttribute('id', 'settingBtnTW');
+    settingsRow.setAttribute('style', 'display: block');
+
+    document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
+    var offlineProgressParent = document.getElementById('offlineProgressWrapper').parentNode;
+    offlineProgressParent.replaceChild(settingsRow, document.getElementById('offlineProgressWrapper').parentNode.children[4]);
+}
+
+function _createAutoJobsButtonTW() {
+    if (document.getElementById('autoJobsLabelTW') !== null) return;
+    const atJobInitial = _createButton('jobType', 'Jobs', getPageSetting('jobType'), 'autoTrimpSettings.jobType.description()', 'TW');
+    $('#settingBtnTW').append(atJobInitial);
+}
+
+function _createAutoStructureButtonTW() {
+    if (document.getElementById('autoStructureTWParent') !== null) return;
+    const atStructureInitial = _createButton('buildingsType', 'Structure', getPageSetting('buildingsType'), 'autoTrimpSettings.buildingsType.description()', 'TW');
+    $('#settingBtnTW').append(atStructureInitial);
+}
+
+function createAutoMapsStatusContainer(id) {
+    return _createElement('DIV', {
+        id: id,
+        class: 'noselect',
+        style: 'display: block; font-size: 1.25vw; text-align: center; background-color: rgba(0,0,0,0.3); position: absolute; bottom: 1vw; left: 10%; right: 10%',
+        onmouseout: 'tooltip("hide")'
+    });
+}
+
+function _createStatusTextboxTW() {
+    const whereToPlace = ['offlineZoneBtns', 'offlineMapBtns'];
+    const ids = ['autoMapStatusMapsTW', 'autoMapStatusTW'];
+
+    whereToPlace.forEach((place, index) => {
+        if (document.getElementById(ids[index]) !== null) return;
+
+        const autoMapsStatusContainer = createAutoMapsStatusContainer(ids[index]);
+        const autoMapsStatusSection = document.getElementById(place);
+        const element = autoMapsStatusSection.children[1];
+        element.insertAdjacentHTML('afterend', '<br>');
+        element.parentNode.replaceChild(autoMapsStatusContainer, element.nextSibling);
+    });
+}
+
+function _createAutoTrimpsButtonTW() {
+    if (document.getElementById('atSettingsBtnTW') !== null) return;
+
+    const atSettings = _createElement(
+        'DIV',
+        {
+            id: 'atSettingsBtnTW',
+            style: 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D; height:auto; font-size: 1.1vw;',
+            class: 'toggleConfigBtn noselect settingsBtn settingBtn4',
+            onclick: 'autoToggle();',
+            onmouseover: 'tooltip("AutoTrimp Settings", "customText", event, "Click to open the AutoTrimps Settings menu.")',
+            onmouseout: 'tooltip("hide")'
+        },
+        ['AutoTrimps Settings']
+    );
+    $('#settingBtnTW').append(atSettings);
+}

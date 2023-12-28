@@ -19,6 +19,48 @@ var atSettings = {
     autoSave: game.options.menu.autoSave.enabled
 };
 
+function loadScript(url, type = 'text/javascript') {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = url;
+        script.type = type;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+function loadStylesheet(url, rel = 'stylesheet', type = 'text/css') {
+    return new Promise((resolve, reject) => {
+        const link = document.createElement('link');
+        link.href = url;
+        link.rel = rel;
+        link.type = type;
+        link.onload = resolve;
+        link.onerror = reject;
+        document.head.appendChild(link);
+    });
+}
+
+//Loading modules from basepath that are required for the script to run.
+function loadScriptsAT(fileName, prefix = '') {
+    if (atSettings.modules.loadedModules.includes(fileName)) return;
+
+    const script = document.createElement('script');
+    script.src = `${atSettings.initialise.basepath}${prefix}${fileName}.js`;
+    script.id = `${fileName}_MODULE`;
+    script.async = false;
+    script.defer = true;
+
+    script.addEventListener('load', () => {
+        if (prefix !== '' && !atSettings.modules.loadedModules.includes(fileName)) {
+            atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
+        }
+    });
+
+    document.head.appendChild(script);
+}
+
 //Searches html for where the AT script is being loaded from
 //This is pretty much only useful for me as I have a local version of AT that I use for testing.
 function loadAT() {
@@ -29,27 +71,29 @@ function loadAT() {
     if (autoTrimpsScript) {
         atSettings.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
     }
+    loadScriptsAT('versionNumber');
 
-    //Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
-    if (document.getElementById('settingsRowTW') === null) {
-        var settingBarRow = document.createElement('DIV');
-        settingBarRow.setAttribute('id', 'settingsRowTW');
-        document.getElementById('offlineWrapper').children[0].insertAdjacentHTML('afterend', '<br>');
-        var offlineWrapperParent = document.getElementById('offlineInnerWrapper').parentNode;
-        offlineWrapperParent.replaceChild(settingBarRow, document.getElementById('offlineInnerWrapper').parentNode.children[1]);
-    }
-
-    //Load jQuery
-    (function () {
-        const script = document.createElement('script');
-        script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js';
-        script.type = 'text/javascript';
-        // Append the script to the document
-        document.head.appendChild(script);
-    })();
+    atSettings.modules.installedModules.forEach((module) => {
+        loadScriptsAT(`${module}`, `${atSettings.modules.path}`);
+    });
+    loadScriptsAT('SettingsGUI');
 
     //The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
     basepath = atSettings.initialise.basepath;
+
+    (async function () {
+        try {
+            await loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js');
+            await loadStylesheet('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
+            await loadStylesheet(atSettings.initialise.basepath + 'tabs.css');
+            await loadScript('https://Quiaaaa.github.io/AutoTrimps/Graphs.js');
+            await loadScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js');
+        } catch (error) {
+            console.error('Error loading script or stylesheet:', error);
+        }
+    })();
+
+    delayStartAgain();
 }
 
 loadAT();
@@ -74,88 +118,21 @@ var mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
 var hdStats = {};
 var trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
 
-//Loading modules from basepath that are required for the script to run.
-function ATscriptLoad(fileName, prefix = '') {
-    if (atSettings.modules.loadedModules.includes(fileName)) return;
-
-    const script = document.createElement('script');
-    script.src = `${atSettings.initialise.basepath}${prefix}${fileName}.js`;
-    script.id = `${fileName}_MODULE`;
-    script.async = false;
-    script.defer = true;
-
-    script.addEventListener('load', () => {
-        if (prefix !== '' && !atSettings.modules.loadedModules.includes(fileName)) {
-            atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
-        }
-    });
-
-    document.head.appendChild(script);
-}
-
-//Load version number from a seperate file so that we can compare it to the current version number and let users know if they're using an outdated version.
-ATscriptLoad('versionNumber');
-ATscriptLoad('utils', atSettings.modules.path);
-
-delayStart();
-
-//Runs first
-function delayStart() {
-    //Will try to reload the utils module every 1000 milliseconds until it's loaded.
-    //Shouldn't be necessary but sometimes it can mess up and not load properly.
-    if (atSettings.intervals.counter % 100 === 0) {
-        ATscriptLoad('utils', atSettings.modules.path);
-        ATscriptLoad('versionNumber');
-    }
-    //Reload script every 10 milliseconds until the utils module has been loaded.
-    if (typeof _setupAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function') {
-        setTimeout(delayStart, 1);
-        atSettings.intervals.counter++;
-        return;
-    }
-
-    //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
-    var script = document.createElement('link');
-    script.rel = 'stylesheet';
-    script.href = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
-    script.type = 'text/css';
-    // Append the script to the document
-    document.head.appendChild(script);
-
-    //Loads the settings from the save file, settingsGUI & the various modules installed.
-    initializeAutoTrimps();
-}
-
-//Runs second
-function initializeAutoTrimps() {
-    //Load CSS
-    const linkStylesheet = document.createElement('link');
-    (linkStylesheet.rel = 'stylesheet'), (linkStylesheet.type = 'text/css'), (linkStylesheet.href = atSettings.initialise.basepath + 'tabs.css'), document.head.appendChild(linkStylesheet);
-
-    _setupAutoTrimpsSettings();
-    ATscriptLoad('SettingsGUI');
-
-    const script = document.createElement('script');
-    script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
-    document.head.appendChild(script);
-
-    atSettings.modules.installedModules.forEach((module) => {
-        ATscriptLoad(`${module}`, `${atSettings.modules.path}`);
-    });
-    delayStartAgain();
-}
-
 function delayStartAgain() {
-    //Reload script every 10 milliseconds until these scripts have been loaded
-    //Added incrementing variable at the end of every script so that we can be sure that the script has fully loaded before we start the main loop.
-    if (atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length || typeof updateATVersion !== 'function' || typeof calcHeirloomBonus_AT !== 'function' || typeof _challengeUnlockCheck !== 'function') {
-        console.log(timeStamp() + ' Delaying start by 10ms');
-        setTimeout(delayStartAgain, 10);
+    const isSettingsNotLoaded = typeof _loadAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function';
+    const isModulesNotLoaded = atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length;
+    const isFunctionsNotDefined = typeof _setupATButtons !== 'function' || typeof calcHeirloomBonus_AT !== 'function' || typeof _challengeUnlockCheck !== 'function';
+
+    if (isSettingsNotLoaded || isModulesNotLoaded || isFunctionsNotDefined) {
+        setTimeout(delayStartAgain, 1);
         return;
     }
-
+    _loadAutoTrimpsSettings();
+    automationMenuSettingsInit();
+    initializeAllTabs();
+    initializeAllSettings();
     _raspberryPiSettings();
-    _setupATButtons();
+    updateATVersion();
 
     atSettings.initialise.loaded = true;
     MODULES.heirlooms.gammaBurstPct = getHeirloomBonus('Shield', 'gammaBurst') / 100 > 0 ? getHeirloomBonus('Shield', 'gammaBurst') / 100 : 1;
@@ -165,8 +142,11 @@ function delayStartAgain() {
 
     //Copy gameLoop for when we enter toggleCatchUpMode.
     originalGameLoop = gameLoop;
-    //Starts the loop in either normal or TimeLapse mode.
-    toggleCatchUpMode();
+
+    if (usingRealTimeOffline) {
+        if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
+        cancelTooltip();
+    }
 
     localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
     //Setup Perky/Surky UI
@@ -176,13 +156,10 @@ function delayStartAgain() {
     currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
     challengeInfo(true);
 
-    //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
-    var script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
-    script.type = 'text/javascript';
-    // Append the script to the document
-    document.head.appendChild(script);
-    debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) finished loading.`);
+    //Starts the loop in either normal or TimeLapse mode.
+    _setupATButtons();
+    toggleCatchUpMode();
+    debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
     console.timeEnd();
 }
 
@@ -253,6 +230,7 @@ function toggleCatchUpMode() {
             _timeWarpATFunctions();
         };
 
+        _setTimeWarpUI();
         _timeWarpAutoSaveSetting();
         const timeWarpTime = offlineProgress.formatTime(Math.floor(offlineProgress.totalOfflineTime / 1000));
         debug(`TimeLapse Mode Enabled. Your Time Warp duration is ${timeWarpTime}.`, 'offline');

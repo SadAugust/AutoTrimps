@@ -4,7 +4,7 @@ window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
 };
 
 //Loads setting data from localstorage into object
-function _setupAutoTrimpsSettings() {
+function _loadAutoTrimpsSettings() {
     const tmp = JSON.parse(localStorage.getItem('atSettings'));
     if (tmp !== null && tmp['ATversion'] !== undefined) autoTrimpSettings = tmp;
 }
@@ -263,7 +263,7 @@ function testChallenge() {
     game.global.challengeActive = challengeName;
 }
 
-function testRunningCinf() {
+function testRunningC2() {
     game.global.runningChallengeSquared = !game.global.runningChallengeSquared;
 }
 

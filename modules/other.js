@@ -93,6 +93,507 @@ function archaeologyAutomator() {
     }
 }
 
+//Will output how many zones you can liquify to.
+function checkLiqZoneCount(universe) {
+    if (game.options.menu.liquification.enabled === 0) return 0;
+    if (universe === 2) {
+        if (!u2Mutations.tree.Liq1.purchased) return 0;
+        var amt = 0.1;
+        if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
+        return (getHighestLevelCleared(false, true) + 1) * amt;
+    }
+    var spireCount = game.global.spiresCompleted;
+    if (game.talents.liquification.purchased) spireCount++;
+    if (game.talents.liquification2.purchased) spireCount++;
+    if (game.talents.liquification3.purchased) spireCount += 2;
+    spireCount += Fluffy.isRewardActive('liquid') * 0.5;
+    var liquidAmount = spireCount / 20;
+    return game.stats.highestLevel.valueTotal() * liquidAmount;
+}
+
+function introMessage() {
+    const description = `
+		<p>Welcome to the SadAugust fork of AutoTrimps!</p>
+		<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>
+		<p>One of the most important things is where the settings are stored. The vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p><br>
+		<p>There are some setting that aren't located in the <b>AutoTrimps settings menu</b>, 2 of which are in the Trimps buy container (<b>AT AutoStructure & AutoJobs</b>), I recommend mousing over their tooltips and looking at what they do.</p>
+		<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. This will enabling this will allow the script to output messages into the message log window. You can control what gets printed to it by pressing the cogwheel to the right of it.</p>
+		<br><p>By default everything should be disabled but every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>
+		<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>
+	`;
+
+    tooltip('Introduction Message', 'customText', 'lock', description, false, 'center');
+    if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
+    else verticalCenterTooltip(true);
+}
+
+function updateATVersion() {
+    //Setting Conversion!
+    if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] === atSettings.initialise.version) return;
+    if (typeof autoTrimpSettings === 'undefined') return;
+    var changelog = [];
+
+    //Prints the new user message if it's the first time loading the script.
+    if (autoTrimpSettings['ATversion'] === undefined || !autoTrimpSettings['ATversion'].includes('SadAugust')) {
+        autoTrimpSettings['ATversion'] = atSettings.initialise.version;
+        saveSettings();
+        if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+        introMessage();
+        return;
+    }
+
+    if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] !== atSettings.initialise.version) {
+        //On the offchance anybody is using a super old version of AT then they need their localStorage setting converted
+        if (JSON.parse(localStorage.getItem('atSettings')) === null) saveSettings();
+        const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.2.5') {
+            if (tempSettings.presetMutations !== undefined) {
+                var mutatorObj = {
+                    preset1: {},
+                    preset2: {},
+                    preset3: {}
+                };
+                if (tempSettings.presetMutations.value.preset1 !== '') mutatorObj.preset1 = JSON.parse(tempSettings.presetMutations.value.preset1);
+                if (tempSettings.presetMutations.value.preset2 !== '') mutatorObj.preset2 = JSON.parse(tempSettings.presetMutations.value.preset2);
+                if (tempSettings.presetMutations.value.preset3 !== '') mutatorObj.preset3 = JSON.parse(tempSettings.presetMutations.value.preset3);
+
+                autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
+                localStorage['mutatorPresets'] = JSON.stringify(mutatorObj);
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.2.95') {
+            var settings_List = ['mapFarmSettings'];
+            var values = ['value', 'valueU2'];
+            for (var x = 0; x < settings_List.length; x++) {
+                for (var z = 0; z < values.length; z++) {
+                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
+                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+                            autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
+                        }
+                    }
+                    saveSettings();
+                }
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.001') {
+            var settings_List = ['mapBonusSettings'];
+            var values = ['value', 'valueU2'];
+            for (var x = 0; x < settings_List.length; x++) {
+                for (var z = 0; z < values.length; z++) {
+                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
+                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+                            autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
+                        }
+                    }
+                    saveSettings();
+                }
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.14') {
+            var settings_List = ['voidMapSettings'];
+            var values = ['value', 'valueU2'];
+            for (var x = 0; x < settings_List.length; x++) {
+                for (var z = 0; z < values.length; z++) {
+                    if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
+                        for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+                            autoTrimpSettings[settings_List[x]][values[z]][y].hdType = 'world';
+                            autoTrimpSettings[settings_List[x]][values[z]][y].hdType2 = 'void';
+                        }
+                    }
+                    saveSettings();
+                }
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.17') {
+            if (typeof tempSettings['presetSwap'] !== 'undefined') {
+                autoTrimpSettings.presetSwap.enabled = false;
+            }
+            if (typeof tempSettings['autoCombatRespec'] !== 'undefined') {
+                autoTrimpSettings.presetCombatRespec.value = 0;
+                autoTrimpSettings.presetCombatRespec.valueU2 = autoTrimpSettings['autoCombatRespec'].valueU2;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.18') {
+            if (typeof tempSettings['bloodthirstDestack'] !== 'undefined') {
+                autoTrimpSettings.bloodthirstDestack.enabled = false;
+            }
+            if (typeof tempSettings['bloodthirstVoidMax'] !== 'undefined') {
+                autoTrimpSettings.bloodthirstVoidMax.enabled = false;
+            }
+            changelog.push(
+                "AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
+			You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise."
+            );
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.21') {
+            if (typeof tempSettings['IgnoreCrits'] !== 'undefined') {
+                autoTrimpSettings.IgnoreCrits.valueU2 = 0;
+            }
+        }
+
+        //Scryer stance changes
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.24') {
+            if (typeof tempSettings['UseScryerStance'] !== 'undefined') {
+                autoTrimpSettings.AutoStanceScryer.enabled = tempSettings.UseScryerStance.enabled;
+            }
+            if (typeof tempSettings['screwessence'] !== 'undefined') {
+                autoTrimpSettings.scryerEssenceOnly.enabled = tempSettings.screwessence.enabled;
+            }
+            if (typeof tempSettings['ScryerUseWhenOverkill'] !== 'undefined') {
+                autoTrimpSettings.scryerOverkill.enabled = tempSettings.ScryerUseWhenOverkill.enabled;
+            }
+            if (typeof tempSettings['use3daily'] !== 'undefined') {
+                autoTrimpSettings.dAutoStanceWind.enabled = tempSettings.use3daily.enabled;
+            }
+            if (typeof tempSettings['liqstack'] !== 'undefined') {
+                autoTrimpSettings.dWindStackingLiq.enabled = tempSettings.liqstack.enabled;
+            }
+            if (typeof tempSettings['AutoStance'] !== 'undefined') {
+                if (tempSettings.AutoStance.value > 2) {
+                    autoTrimpSettings.AutoStance.value = 2;
+                    autoTrimpSettings.AutoStanceWind.enabled = true;
+                }
+            }
+
+            const originalSettings = [
+                'ScryerUseinMaps2',
+                'ScryerUseinVoidMaps2',
+                'ScryerUseinPMaps',
+                'ScryerUseinBW',
+                'ScryerUseinSpire2',
+                'ScryerSkipBoss2',
+                'ScryUseinPoison',
+                'ScryUseinWind',
+                'ScryUseinIce',
+                'ScryerSkipCorrupteds2',
+                'ScryerSkipHealthy',
+                'ScryerDieZ',
+                'ScryerMaxZone',
+                'ScryerMinZone',
+                'onlyminmaxworld',
+                'dWindStackingMinHD',
+                'WindStackingMinHD',
+                'WindStackingMin',
+                'dWindStackingMin'
+            ];
+            const newSettings = ['scryerMaps', 'scryerVoidMaps', 'scryerPlusMaps', 'scryerBW', 'scryerSpire', 'scryerSkipBoss', 'scryerPoison', 'scryerWind', 'scryerIce', 'scryerCorrupted', 'scryerHealthy', 'scryerDieZone', 'scryerMaxZone', 'scryerMinZone', 'scryerMinMaxWorld', 'dWindStackingRatio', 'WindStackingRatio', 'WindStackingZone', 'dWindStackingZone'];
+            for (var item in originalSettings) {
+                if (typeof tempSettings[originalSettings[item]] !== 'undefined') {
+                    autoTrimpSettings[newSettings[item]].value = tempSettings[originalSettings[item]].value;
+                }
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.25') {
+            if (typeof tempSettings['radonsettings'] !== 'undefined') {
+                autoTrimpSettings.universeSetting.value = tempSettings.radonsettings.value;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.26') {
+            if (typeof tempSettings['PrestigeSkip1_2'] !== 'undefined') {
+                autoTrimpSettings.PrestigeSkip.enabled = tempSettings.PrestigeSkip1_2.value > 0;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.29') {
+            const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+
+            const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+
+            for (var item in u1Settings) {
+                if (typeof tempSettings[u1Settings[item] + 'DefaultSettings'] !== 'undefined') {
+                    autoTrimpSettings[u1Settings[item] + 'Settings'].value.unshift(tempSettings[u1Settings[item] + 'DefaultSettings'].value);
+                }
+            }
+
+            for (var item in u2Settings) {
+                if (typeof tempSettings[u2Settings[item] + 'DefaultSettings'] !== 'undefined') {
+                    autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.unshift(tempSettings[u2Settings[item] + 'DefaultSettings'].valueU2);
+                }
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.36') {
+            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+                autoTrimpSettings.uniqueMapSettingsArray.valueU2['Big_Wall'] = {
+                    enabled: false,
+                    zone: 100,
+                    cell: 0
+                };
+            }
+        }
+
+        //Converting addonUser saves variable to object and storing farming settings .done stuff in it
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.37') {
+            var obj = [];
+            for (var x = 0; x < 30; x++) {
+                obj[x] = {};
+                obj[x].done = '';
+            }
+
+            if (typeof game.global.addonUser !== 'object') game.global.addonUser = {};
+
+            const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+
+            const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+
+            for (var item in u1Settings) {
+                if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u1Settings[item] + 'Settings'] = {};
+
+                var obj = [];
+                for (var x = 0; x < 30; x++) {
+                    obj[x] = {};
+                    obj[x].done = '';
+                }
+                game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
+
+                if (typeof autoTrimpSettings[u1Settings[item] + 'Settings'].value[0] !== 'undefined') {
+                    for (var y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
+                        autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
+                    }
+                }
+            }
+
+            for (var item in u2Settings) {
+                if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u2Settings[item] + 'Settings'] = {};
+                var obj = [];
+                for (var x = 0; x < 30; x++) {
+                    obj[x] = {};
+                    obj[x].done = '';
+                }
+                game.global.addonUser[u2Settings[item] + 'Settings'].value = obj;
+
+                if (typeof autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0] !== 'undefined') {
+                    for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
+                        autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[y].row = y;
+                    }
+                }
+            }
+        }
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.38') {
+            setupAddonUser();
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.4.09') {
+            if (typeof tempSettings['heHrDontPortalBefore'] !== 'undefined') {
+                autoTrimpSettings.heliumHrDontPortalBefore.value = tempSettings.heHrDontPortalBefore.value;
+                autoTrimpSettings.heliumHrDontPortalBefore.valueU2 = tempSettings.heHrDontPortalBefore.valueU2;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.4.20') {
+            if (typeof tempSettings['buildingSettingsArray'] !== 'undefined') {
+                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {};
+                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = false;
+                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.percent = 100;
+                autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.buyMax = 0;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.06') {
+            if (typeof autoTrimpSettings.alchemySettings['valueU2'][1] !== 'undefined') {
+                for (var y = 1; y < autoTrimpSettings.alchemySettings['valueU2'].length; y++) {
+                    autoTrimpSettings.alchemySettings['valueU2'][y].repeatevery = 0;
+                    autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
+                }
+                saveSettings();
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.09') {
+            if (typeof tempSettings['autoAbandon'] !== 'undefined') {
+                autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 2 : 0;
+                autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 2 : 0;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.13') {
+            var values = ['value', 'valueU2'];
+            for (var z = 0; z < values.length; z++) {
+                var incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
+                if (typeof tempSettings['raidingSettings'][values[z]][0] !== 'undefined') {
+                    for (var y = 0; y < tempSettings['raidingSettings'][values[z]].length; y++) {
+                        if (y === 0) continue;
+                        var currSetting = tempSettings['raidingSettings'][values[z]][y];
+                        autoTrimpSettings['raidingSettings'][values[z]][y].incrementMaps = incrementMaps;
+                        autoTrimpSettings['raidingSettings'][values[z]][y].raidingzone = (currSetting.raidingzone - currSetting.world).toString();
+                    }
+                }
+            }
+            saveSettings();
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.15') {
+            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+                const currTrimple = tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
+                delete tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
+                autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] = currTrimple;
+                delete autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_of_Doom'];
+                if (autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] === undefined)
+                    autoTrimpSettings.uniqueMapSettingsArray.value['Trimple_Of_Doom'] = {
+                        enabled: false,
+                        zone: 999,
+                        cell: 1
+                    };
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.20') {
+            if (typeof tempSettings['experienceStaff'] !== 'undefined') {
+                if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value !== 'string') autoTrimpSettings.experienceStaff.value === 'undefined';
+            }
+        }
+        //Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.22') {
+            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+                var obj = {};
+                for (var item in tempSettings.uniqueMapSettingsArray.value) {
+                    obj[item.replace(/_/g, ' ')] = tempSettings.uniqueMapSettingsArray.value[item];
+                }
+                autoTrimpSettings.uniqueMapSettingsArray.value = obj;
+                var obj = {};
+                for (var item in tempSettings.uniqueMapSettingsArray.valueU2) {
+                    obj[item.replace(/_/g, ' ')] = tempSettings.uniqueMapSettingsArray.valueU2[item];
+                }
+                autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.24') {
+            if (typeof tempSettings['voidMapSettings'] !== 'undefined') {
+                if (autoTrimpSettings.voidMapSettings.value[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = 1;
+                if (autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = 1;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.26') {
+            if (typeof tempSettings['portalVoidIncrement'] !== 'undefined') {
+                autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.27') {
+            if (typeof tempSettings['autGigaDeltaFactor'] !== 'undefined') {
+                autoTrimpSettings.autoGigaDeltaFactor.value = tempSettings.autGigaDeltaFactor.value;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.28') {
+            if (typeof tempSettings['unbalance'] !== 'undefined') autoTrimpSettings.balance.enabledU2 = tempSettings.unbalance.enabledU2;
+            if (typeof tempSettings['unbalanceZone'] !== 'undefined') autoTrimpSettings.balanceZone.valueU2 = tempSettings.unbalanceZone.valueU2;
+            if (typeof tempSettings['unbalanceStacks'] !== 'undefined') autoTrimpSettings.balanceStacks.valueU2 = tempSettings.unbalanceStacks.valueU2;
+            if (typeof tempSettings['unbalanceImprobDestack'] !== 'undefined') autoTrimpSettings.balanceImprobDestack.enabledU2 = tempSettings.unbalanceImprobDestack.enabledU2;
+
+            if (typeof tempSettings['trappapalooza'] !== 'undefined') autoTrimpSettings.trapper.enabledU2 = tempSettings.trappapalooza.enabledU2;
+            if (typeof tempSettings['trappapaloozaCoords'] !== 'undefined') autoTrimpSettings.trapperCoords.valueU2 = tempSettings.trappapaloozaCoords.valueU2;
+            if (typeof tempSettings['trappapaloozaTrap'] !== 'undefined') autoTrimpSettings.trapperTrap.enabledU2 = tempSettings.trappapaloozaTrap.enabledU2;
+            if (typeof tempSettings['trappapaloozaArmyPct'] !== 'undefined') autoTrimpSettings.trapperArmyPct.valueU2 = tempSettings.trappapaloozaArmyPct.valueU2;
+
+            autoTrimpSettings.decay.enabledU2 = false;
+            autoTrimpSettings.decayStacksToPush.valueU2 = -1;
+            autoTrimpSettings.decayStacksToAbandon.valueU2 = -1;
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.30') {
+            if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+                autoTrimpSettings.uniqueMapSettingsArray.valueU2['MP Smithy One Off'] = {
+                    enabled: false,
+                    value: 100
+                };
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.33') {
+            if (typeof tempSettings['testMapScummingValue'] !== 'undefined') {
+                if (!gameUserCheck()) autoTrimpSettings.testMapScummingValue.value = -1;
+                else if (typeof tempSettings['testMapScummingValue'].value === 'object' && tempSettings['testMapScummingValue'].valueU2) autoTrimpSettings.testMapScummingValue.value = tempSettings['testMapScummingValue'].valueU2;
+                else autoTrimpSettings.testMapScummingValue.value = -1;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.36') {
+            if (typeof game.global.addonUser['archaeologySettings'] === 'undefined') game.global.addonUser['archaeologySettings'] = {};
+            if (typeof game.global.addonUser['archaeologySettings']['valueU2'] === 'undefined') {
+                var obj = [];
+                for (var x = 0; x < 30; x++) {
+                    obj[x] = {};
+                    obj[x].done = '';
+                }
+                game.global.addonUser['archaeologySettings'].valueU2 = obj;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.39') {
+            if (typeof tempSettings['heirloomStaffResource'] !== 'undefined') {
+                autoTrimpSettings.heirloomStaffScience.valueU2 = tempSettings.heirloomStaffResource.valueU2;
+            }
+        }
+    }
+
+    //Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
+    //No other way to access it in TW currently.
+    if (usingRealTimeOffline) {
+        var changelogURL = basepath + 'updates.html';
+        changelog.push('There has been an AutoTrimps update. <a href="' + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
+    }
+
+    autoTrimpSettings['ATversion'] = atSettings.initialise.version;
+    if (changelog.length !== 0) {
+        printChangelog(changelog);
+        if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(false, true);
+        else verticalCenterTooltip(false, true);
+    }
+    updateAutoTrimpSettings(true);
+    saveSettings();
+}
+
+function _assembleChangelog(changes) {
+    return changes.map((change) => `<br>${change}`).join('');
+}
+
+function _assembleChangelogFooter() {
+    return `
+		<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!
+		<br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Server</a>
+		<br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).`;
+}
+
+function printChangelog(changes) {
+    const body = _assembleChangelog(changes);
+    const footer = _assembleChangelogFooter();
+    const action = 'cancelTooltip()';
+    const title = `Script Update Notice<br>${atSettings.initialise.version}`;
+    const acceptBtnText = 'Thank you for playing with AutoTrimps.';
+    const hideCancel = true;
+
+    tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
+    if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
+    else verticalCenterTooltip(true);
+}
+
+//When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
+function updateChangelogButton() {
+    if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
+    var changeLogBtn = document.getElementById('atChangelog');
+    if (changeLogBtn !== null) {
+        //Swap the button class remove colour of new changelog.
+        var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
+        swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
+        //Remove the new changelog text if it exists.
+        changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", '');
+        autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
+        saveSettings();
+    }
+}
+
 //Remakes challenge/setting popup if the user doesn't click confirm and it's not showing.
 function remakeTooltip() {
     if (!MODULES.popups.challenge && !MODULES.popups.respecAtlantrimp && !MODULES.popups.portal) {
@@ -117,6 +618,7 @@ function remakeTooltip() {
         document.getElementById('tipTitle').innerHTML = '<b>NOTICE: Auto-Portaling in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>';
     }
 }
+
 /* 
 raspberry pi related setting changes
 Swaps base settings to improve performance & so that I can't accidentally pause.
@@ -278,7 +780,7 @@ function _challengeUnlockCheck() {
         let msg = `You have unlocked the ${challenge} challenge. It has now been added to ${c2 ? 'Challenge ' + c2Msg + ' Auto Portal setting' : 'Auto Portal'}`;
         msg += setting ? ` & there's settings for it in the scripts ${c2 ? '"C' + c2Msg + '"' : '"Challenges"'} tab.` : '.';
         if (isSpecialChallenge(challenge)) {
-            msg += `<br><br><b>This is a special challenge and will use ${cinf()} settings when run.</b>`;
+            msg += `<br><br><b>This is a special challenge and will use ${_getChallenge2Info()} settings when run.</b>`;
         }
         return msg;
     }
@@ -379,7 +881,7 @@ function _challengeUnlockCheck() {
         }
 
         if (challenge.c3) {
-            message += "<br><br>Due to unlocking Challenge 3's there is now a Challenge 3 option under Auto Portal to be able to auto portal into them. Also you can now access the " + cinf() + ' tab within the the scripts settings.';
+            message += "<br><br>Due to unlocking Challenge 3's there is now a Challenge 3 option under Auto Portal to be able to auto portal into them. Also you can now access the " + _getChallenge2Info() + ' tab within the the scripts settings.';
         }
 
         if (challenge.worshippers) {

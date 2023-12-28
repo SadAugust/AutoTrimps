@@ -15,7 +15,7 @@ function MAZLookalike(event, titleText) {
         UniqueMaps: 'Unique Maps',
         MessageConfig: 'Message Config',
         DailyAutoPortal: 'Daily Auto Portal',
-        c2Runner: cinf() + ' Runner'
+        c2Runner: _getChallenge2Info() + ' Runner'
     };
 
     cancelTooltip();
@@ -2552,12 +2552,12 @@ function c2RunnerDisplay(elem) {
     var costText = '';
     var ondisplay = null;
 
-    const baseText = 'Here you can enable the challenges you would like ' + cinf() + " runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.";
-    const fusedText = autoTrimpSettings['c2Fused'].universe.indexOf(currSettingUniverse) !== -1 ? " If the 'Fused " + cinf() + "s' setting is enabled it will show Fused challenges and prioritise running them over their regular counterparts." : '';
+    const baseText = 'Here you can enable the challenges you would like ' + _getChallenge2Info() + " runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.";
+    const fusedText = autoTrimpSettings['c2Fused'].universe.indexOf(currSettingUniverse) !== -1 ? " If the 'Fused " + _getChallenge2Info() + "s' setting is enabled it will show Fused challenges and prioritise running them over their regular counterparts." : '';
 
     tooltipText =
         "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to " +
-        cinf() +
+        _getChallenge2Info() +
         " Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); document.getElementById(\"tooltipDiv\").style.top = \"25%\";'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
     tooltipText += `<p>${baseText}${fusedText}</p>`;
     tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
@@ -2647,7 +2647,7 @@ function c2RunnerDisplay(elem) {
 
     if (Object.keys(fusedChallenges).length !== 0) {
         count = 0;
-        tooltipText += "<td><div class='row'><div class='col-xs-5' style='width: 100%; padding-right: 5px'>" + '' + '&nbsp;&nbsp;<span>' + '<u>Fused ' + cinf() + 's</u>' + '</span></div></div>';
+        tooltipText += "<td><div class='row'><div class='col-xs-5' style='width: 100%; padding-right: 5px'>" + '' + '&nbsp;&nbsp;<span>' + '<u>Fused ' + _getChallenge2Info() + 's</u>' + '</span></div></div>';
         tooltipText += '</td></tr><tr>';
         //Plus&Minus Portal&Void zone settings.
         for (var item in fusedChallenges) {

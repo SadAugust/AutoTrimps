@@ -468,7 +468,7 @@ function voidMaps(lineCheck) {
             setting.hdBase = Number(voidSetting.hitsSurvived);
             setting.hdType = 'hitsSurvivedVoid';
         }
-        mapSettings.voidTrigger = resource() + ' Per Hour (' + autoTrimpSettings.heliumHrPortal.name()[portalSetting] + ')';
+        mapSettings.voidTrigger = _getPrimaryResourceInfo().name + ' Per Hour (' + autoTrimpSettings.heliumHrPortal.name()[portalSetting] + ')';
     }
 
     if (setting === undefined) {

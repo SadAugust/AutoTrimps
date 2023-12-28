@@ -194,7 +194,7 @@ function makeAutoPortalHelpTooltip() {
 
     tooltipText += `<p>Auto Portal has a priority as to what it will portal into and if that isn't possible it'll try to portal into the next and so forth.</p>`;
     //C2/C3s
-    tooltipText += `<p>To start with if the <b>${cinf()} Runner</b> setting is enabled it will check and see if all of your ${cinf()}'s are up to date according to your settings.</p>`;
+    tooltipText += `<p>To start with if the <b>${_getChallenge2Info()} Runner</b> setting is enabled it will check and see if all of your ${_getChallenge2Info()}'s are up to date according to your settings.</p>`;
     //Dailies
     tooltipText += `<p>Afterwards if the <b>Auto Start Daily</b> setting is enabled then it will portal into a Daily if there are any available to run.</p>`;
     //Fillers
