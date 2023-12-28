@@ -97,7 +97,7 @@ function ImportExportTooltip(what, event) {
                 priority[x].cell +
                 `</td>
                 <td>` +
-                (priority[x].special ? mapSpecialModifierConfig[priority[x].special].name : '') +
+                (priority[x].special ? (priority[x].special === '0' ? 'No Special' : mapSpecialModifierConfig[priority[x].special].name) : '') +
                 `</td>
 				</tr>`;
         }
