@@ -96,7 +96,7 @@ var Perk = /** @class */ (function () {
     return Perk;
 })();
 
-// initialize perks object to default values
+// initialise perks object to default values
 function initPresetPerky() {
     var settingInputs = JSON.parse(localStorage.getItem('perkyInputs'));
 

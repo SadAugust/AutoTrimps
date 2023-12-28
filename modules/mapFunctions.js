@@ -2388,7 +2388,7 @@ function pandemoniumDestack(lineCheck) {
 }
 
 function pandemoniumEquipFarm(lineCheck) {
-    var shouldMap = false;
+    let shouldMap = false;
     const mapName = 'Pandemonium Farming';
     const farmingDetails = {
         shouldRun: false,
@@ -2396,20 +2396,21 @@ function pandemoniumEquipFarm(lineCheck) {
     };
 
     if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || getPageSetting('pandemoniumAE') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
+    const equipSetting = getPageSetting('pandemoniumAE');
     const hdRatioSetting = getPageSetting('pandemoniumAERatio');
     if (hdRatioSetting > 0 && hdStats.hdRatio < hdRatioSetting) return farmingDetails;
 
-    var jobRatio = '1,1,100,0';
-    var equipCost = cheapestEquipmentCost();
+    const jobRatio = '1,1,100,0';
+    const equipCost = cheapestEquipmentCost();
     if (equipCost[0] === null) return farmingDetails;
-    var nextEquipmentCost = equipCost[1];
-    var farmFromZone = getPageSetting('pandemoniumAEZone') > 0 ? getPageSetting('pandemoniumAEZone') : Infinity;
-    var mapSpecial = getAvailableSpecials('lmc');
-    var mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
+    const nextEquipmentCost = equipCost[1];
+    const farmFromZone = getPageSetting('pandemoniumAEZone') > 0 ? getPageSetting('pandemoniumAEZone') : Infinity;
+    let mapSpecial = getAvailableSpecials('lmc');
+    const mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
 
-    var lmcCache = scaleToCurrentMap_AT(simpleSeconds_AT('metal', 20, jobRatio), false, true, mapLevel);
+    const lmcCache = scaleToCurrentMap_AT(simpleSeconds_AT('metal', 20, jobRatio), false, true, mapLevel);
     mapSpecial = nextEquipmentCost > lmcCache ? 'hc' : 'lmc';
-    var resourceGain = mapSpecial === 'hc' ? lmcCache * 2 : lmcCache;
+    const resourceGain = mapSpecial === 'hc' ? lmcCache * 2 : lmcCache;
 
     //Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
     if (resourceGain >= nextEquipmentCost && game.global.world >= farmFromZone) shouldMap = true;
@@ -2417,8 +2418,8 @@ function pandemoniumEquipFarm(lineCheck) {
     //As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
     if (lineCheck && shouldMap) return (setting = { priority: 1 });
 
-    var repeat = nextEquipmentCost >= resourceGain;
-    var status = 'Pandemonium Farming Equips below ' + prettify(resourceGain);
+    const repeat = nextEquipmentCost >= resourceGain;
+    const status = 'Pandemonium Farming Equips below ' + prettify(resourceGain);
 
     farmingDetails.shouldRun = shouldMap;
     farmingDetails.mapName = mapName;
@@ -2527,12 +2528,12 @@ function alchemy(lineCheck) {
             for (var z = potionCurrent; z < potionTarget; z++) {
                 //Only craft Gaseous Brews if we can afford all of them as they increase enemy stat scaling and only provide a radon benefit there's no point in buying them straight away.
                 if (potionName === 'Gaseous Brew' && potionCostTotal > game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned) break;
+                potionCostTotal -= alchObj.getPotionCost(alchObj.potionNames[potionIndex]);
                 alchObj.craftPotion(alchObj.potionNames[potionIndex]);
             }
         }
 
         if (potionTarget > alchObj.potionsOwned[potionIndex]) shouldMap = true;
-
         //Identifying current herbs + ones that we'll get from the map we should run
         const herbTotal = game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned + alchObj.getDropRate(game.global.world + mapLevel) * herbMult;
         var repeat = herbTotal >= potionCostTotal;

@@ -111,7 +111,7 @@ function fillPresetSurky(specificPreset) {
     $$('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
 }
 
-// initialize perks object to default values
+// initialise perks object to default values
 function initPerks() {
     const props = {
         radonSpent: 0,
@@ -512,7 +512,7 @@ function initialLoad(skipLevels = false) {
             history = JSON.parse(window.localStorage.getItem('rPrHistory'));
         }
         for (var i = rnTerms - 1; i >= 0; i--) {
-            // any uninitialized value just gets the current Rn/run (should only happen once per user's localStorage)
+            // any uninitialised value just gets the current Rn/run (should only happen once per user's localStorage)
             if (!(history[i] > 0)) history[i] = rawRnRun;
         }
         for (var i = rnTerms - 1; i > 0; i--) {

@@ -540,8 +540,6 @@ function quagmireFinishChallenge() {
 }
 
 function challengeInfo(force) {
-    if (challengeCurrentZone === game.stats.zonesCleared.value) return;
-
     const challengeType = game.global.universe === 2 ? 'C3' : 'C2';
     const finishChallenge = c2FinishZone();
 

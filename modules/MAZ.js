@@ -2421,7 +2421,7 @@ function messageConfigHoverAT(what, event) {
 }
 //AT Messages Save
 function messageSave() {
-    var setting = getPageSetting('spamMessages', currPortalUniverse);
+    var setting = getPageSetting('spamMessages', portalUniverse);
     var checkboxes = document.getElementsByClassName('messageConfigCheckbox');
 
     for (var x = 0; x < checkboxes.length; x++) {

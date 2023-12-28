@@ -64,7 +64,7 @@ function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3)
 }
 
 //Loading modules from basepath that are required for the script to run.
-function loadScriptsAT(fileName, prefix = '') {
+function loadModules(fileName, prefix = '') {
     if (atSettings.modules.loadedModules.includes(fileName)) return;
 
     const script = document.createElement('script');
@@ -74,7 +74,7 @@ function loadScriptsAT(fileName, prefix = '') {
     script.defer = true;
 
     script.addEventListener('load', () => {
-        if (prefix !== '' && !atSettings.modules.loadedModules.includes(fileName)) {
+        if (prefix && !atSettings.modules.loadedModules.includes(fileName)) {
             atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
         }
     });
@@ -82,25 +82,20 @@ function loadScriptsAT(fileName, prefix = '') {
     document.head.appendChild(script);
 }
 
-//Searches html for where the AT script is being loaded from
-//This is pretty much only useful for me as I have a local version of AT that I use for testing.
-function loadAT() {
+function loadScriptsAT() {
     console.time();
-
     //The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
     basepath = atSettings.initialise.basepathOriginal + 'css/';
     const scripts = Array.from(document.getElementsByTagName('script'));
     const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
 
-    if (autoTrimpsScript) {
-        atSettings.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
-    }
-    loadScriptsAT('versionNumber');
+    if (autoTrimpsScript) atSettings.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
+    loadModules('versionNumber');
 
     atSettings.modules.installedModules.forEach((module) => {
-        loadScriptsAT(`${module}`, `${atSettings.modules.path}`);
+        loadModules(`${module}`, `${atSettings.modules.path}`);
     });
-    loadScriptsAT('SettingsGUI');
+    loadModules('SettingsGUI');
 
     (async function () {
         try {
@@ -114,10 +109,10 @@ function loadAT() {
         }
     })();
 
-    delayStartAgain();
+    initialiseScript();
 }
 
-loadAT();
+loadScriptsAT();
 
 var ATmessageLogTabVisible = true;
 
@@ -133,26 +128,25 @@ var MODULES = {
 var currPortalUniverse = 0;
 var currSettingUniverse = 0;
 var settingChangedTimeout = false;
-var challengeCurrentZone = -1;
 
 var mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
 var hdStats = {};
 var trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
 
-function delayStartAgain() {
+function initialiseScript() {
     const isSettingsNotLoaded = typeof _loadAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function';
     const isModulesNotLoaded = atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length;
     const isFunctionsNotDefined = typeof _setupATButtons !== 'function' || typeof calcHeirloomBonus_AT !== 'function' || typeof _challengeUnlockCheck !== 'function';
     if (isSettingsNotLoaded || isModulesNotLoaded || isFunctionsNotDefined) {
         //console.log('trying');
         atSettings.intervals.counter++;
-        if (atSettings.intervals.counter % 500 === 0) return loadAT();
-        return setTimeout(delayStartAgain, 1);
+        if (atSettings.intervals.counter % 500 === 0) return initialiseScript();
+        return setTimeout(initialiseScript, 1);
     }
     _loadAutoTrimpsSettings();
     automationMenuSettingsInit();
-    initializeAllTabs();
-    initializeAllSettings();
+    initialiseAllTabs();
+    initialiseAllSettings();
     _raspberryPiSettings();
     updateATVersion();
 
@@ -340,7 +334,6 @@ function mainLoop() {
 
     buySingleRunBonuses();
     automateSpireAssault();
-    challengeInfo();
 
     _handlePopupTimer();
     makeAdditionalInfo();
@@ -403,6 +396,7 @@ function _handleNewWorld() {
     if (!atSettings.portal.aWholeNewWorld) return;
     autoPortalCheck();
     archaeologyAutomator();
+    challengeInfo();
     if (atSettings.portal.currentworld === 1) {
         MODULES.mapFunctions.afterVoids = false;
         MODULES.portal.zonePostpone = 0;
@@ -439,7 +433,7 @@ function throwErrorfromMain() {
 async function atVersionChecker() {
     if (atSettings.updateAvailable) return;
 
-    const url = `${basepath}/versionNumber.js`;
+    const url = `${atSettings.initialise.basepath}/versionNumber.js`;
     const response = await fetch(url);
 
     if (response.ok) {

@@ -497,6 +497,9 @@ function buyEquips() {
     var keepBuying = false;
 
     var bestBuys = mostEfficientEquipment();
+    /* if (mapSettings.mapName === 'Pandemonium Farming') {
+        bestBuys = mapSettings.equipsToPurchase;
+    } */
     //Set up for both Attack and Health depending on which is cheaper to purchase
     var equipType = bestBuys.attack.cost < bestBuys.health.cost ? 'attack' : 'health';
     var equipName = bestBuys[equipType].name;

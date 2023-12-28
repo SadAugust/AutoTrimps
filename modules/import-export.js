@@ -383,8 +383,8 @@ function resetAutoTrimps(autoTrimpsSettings) {
         e.removeChild(document.getElementById('autoTrimpsTabBarMenu'));
 
         automationMenuSettingsInit();
-        initializeAllTabs();
-        initializeAllSettings();
+        initialiseAllTabs();
+        initialiseAllSettings();
         saveSettings();
         updateATVersion();
         resetSettingsPortal();

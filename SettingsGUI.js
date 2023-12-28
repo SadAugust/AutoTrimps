@@ -11,7 +11,7 @@ function automationMenuSettingsInit() {
     settingsRow.appendChild(autoSettings);
 }
 
-function initializeAllTabs() {
+function initialiseAllTabs() {
     const addTabsDiv = document.createElement('div');
     const addtabsUL = document.createElement('ul');
     addtabsUL.id = 'autoTrimpsTabBarMenu';
@@ -132,7 +132,7 @@ function _maximizeAllTabs() {
 }
 
 // prettier-ignore
-function initializeAllSettings() {
+function initialiseAllSettings() {
 	//Core
 	const displayCore = true;
 	if (displayCore) {
