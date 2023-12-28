@@ -92,6 +92,7 @@ function loadAT() {
             console.error('Error loading script or stylesheet:', error);
         }
     })();
+    loadStylesheet(atSettings.initialise.basepath + 'tabs.css');
 
     delayStartAgain();
 }
