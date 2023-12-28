@@ -245,7 +245,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
         }
 
         if (!skipPrestiges) {
-            if (maybeBuyPrestige.purchase && (maybeBuyPrestige.statPerResource < mostEfficient[equipType].statPerResource || mostEfficient[equipType].name === '')) {
+            if (maybeBuyPrestige.purchase && (maybeBuyPrestige.statPerResource < mostEfficient[equipType].statPerResource || mostEfficient[equipType].name)) {
                 //Skips shields in favour of other equips if we can't afford the prestige as otherwise we'll get stuck on wood equips
                 if (i === 'Shield' && game.resources[MODULES.equipment[i].resource].owned < maybeBuyPrestige.prestigeCost) continue;
                 safeRatio = maybeBuyPrestige.statPerResource;
@@ -264,7 +264,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
         //Stat per resource SHOULD BE resource per stat (so the inverse of it is)
         //Check if the current saved equip is the most efficient (should be lowest statPerResource value equip available)
         //We want the item that gives us the most stats per resource spent so check if the current item is better than the saved one
-        if (mostEfficient[equipType].statPerResource > safeRatio || mostEfficient[equipType].name === '') {
+        if (mostEfficient[equipType].statPerResource > safeRatio || mostEfficient[equipType].name) {
             mostEfficient[equipType].name = i;
             mostEfficient[equipType].statPerResource = safeRatio;
             mostEfficient[equipType].prestige = prestige;
@@ -436,8 +436,8 @@ function autoEquip() {
     //Loops through equips and buys prestiges if we can afford them and equipPrestige is set to 'AE: Always Prestige' (3).
     //If we can then instantly purchase the prestige regardless of efficiency.
     if (getPageSetting('equipPrestige') === 3) {
-        var prestigeLeft = false;
-        var prestigeInfo = '';
+        let prestigeLeft = false;
+        let prestigeInfo;
         do {
             prestigeLeft = false;
             for (var equipName in game.equipment) {
@@ -453,8 +453,8 @@ function autoEquip() {
     }
 
     //Initialise settings for later user
-    var alwaysLvl2 = getPageSetting('equip2');
-    var alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && getPageSetting('pandemoniumAE') > 0;
+    const alwaysLvl2 = getPageSetting('equip2');
+    const alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && !mapSettings.pandaEquips && getPageSetting('pandemoniumAE') > 0;
     //always2 / alwaysPandemonium
     if (alwaysLvl2 || alwaysPandemonium) {
         var equipLeft = false;
@@ -481,7 +481,7 @@ function autoEquip() {
         } while (equipLeft);
     }
 
-    var keepBuying = false;
+    let keepBuying = false;
 
     //Purchasing equipment upgrades/prestiges
     //If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
@@ -493,23 +493,23 @@ function autoEquip() {
 }
 
 function buyEquips() {
-    var maxCanAfford = 0;
-    var keepBuying = false;
-
-    var bestBuys = mostEfficientEquipment();
-    /* if (mapSettings.mapName === 'Pandemonium Farming') {
-        bestBuys = mapSettings.equipsToPurchase;
-    } */
+    let maxCanAfford = 0;
+    let keepBuying = false;
+    let bestBuys;
+    if (mapSettings.pandaEquips) {
+        bestBuys = pandemoniumEquipmentCheck(mapSettings.cacheGain);
+        if (!bestBuys) return false;
+    } else bestBuys = mostEfficientEquipment();
     //Set up for both Attack and Health depending on which is cheaper to purchase
-    var equipType = bestBuys.attack.cost < bestBuys.health.cost ? 'attack' : 'health';
-    var equipName = bestBuys[equipType].name;
-    var equipCost = bestBuys[equipType].cost;
-    var equipPrestige = bestBuys[equipType].prestige;
-    var equipCap = bestBuys[equipType].equipCap;
-    var resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
+    let equipType = bestBuys.attack.cost < bestBuys.health.cost ? 'attack' : 'health';
+    let equipName = bestBuys[equipType].name;
+    let equipCost = bestBuys[equipType].cost;
+    let equipPrestige = bestBuys[equipType].prestige;
+    let equipCap = bestBuys[equipType].equipCap;
+    let resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
 
     for (var i = 0; i < 2; i++) {
-        if (equipName !== '' && (equipPrestige || canAffordBuilding(equipName, false, false, true, false, 1)) && !game.equipment[equipName].locked) {
+        if (equipName && (equipPrestige || canAffordBuilding(equipName, false, false, true, false, 1)) && !game.equipment[equipName].locked) {
             //Check any of the overrides
             if (game.equipment[equipName].level < equipCap || equipPrestige || bestBuys[equipType].zoneGo) {
                 if (equipCost <= bestBuys[equipType].resourceSpendingPct * game.resources[resourceUsed].owned) {

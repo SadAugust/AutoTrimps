@@ -2387,6 +2387,85 @@ function pandemoniumDestack(lineCheck) {
     return farmingDetails;
 }
 
+function pandemoniumEquipmentCheck(cacheGain) {
+    const equipArray = { ...MODULES.equipment };
+
+    const equipsToPurchaseBaseline = {
+        attack: {
+            name: '',
+            cost: Infinity,
+            resourceSpendingPct: 1,
+            stat: 'attack',
+            zoneGo: true
+        },
+        health: {
+            name: '',
+            cost: Infinity,
+            resourceSpendingPct: 1,
+            stat: 'health',
+            zoneGo: true
+        }
+    };
+
+    let equipsToBuy = [];
+    let prestigesToBuy = [];
+
+    for (let equipName in game.equipment) {
+        if (game.challenges.Pandemonium.isEquipBlocked(equipName) || equipArray[equipName].resource === 'wood') continue;
+        let prestigeUpgrade = game.upgrades[equipArray[equipName].upgrade];
+
+        let equip = game.equipment[equipName];
+        if (equip.locked) continue;
+        let equipCost = equip.cost[equipArray[equipName].resource][0] * Math.pow(equip.cost[equipArray[equipName].resource][1], equip.level) * getEquipPriceMult();
+        let prestigeCost = getNextPrestigeCost(equipArray[equipName].upgrade) * getEquipPriceMult();
+        if (prestigeUpgrade.locked || prestigeUpgrade.allowed === prestigeUpgrade.done) prestigeCost = Infinity;
+        if (cacheGain > prestigeCost) {
+            equipArray[equipName].upgradeCost = prestigeCost;
+            equipArray[equipName].prestige = true;
+            prestigesToBuy.push({ [equipName]: prestigeCost });
+        } else if (cacheGain > equipCost) {
+            equipArray[equipName].cost = equipCost;
+            equipsToBuy.push({ [equipName]: equipCost });
+        }
+    }
+
+    let equipsToPurchase = { ...equipsToPurchaseBaseline };
+
+    function filterEquipments(equipmentsToBuy, equipArray, prestige) {
+        return equipmentsToBuy.filter((equip) => {
+            const equipName = Object.keys(equip)[0];
+            const stat = equipArray[equipName].stat;
+
+            if (stat === 'health' && !equipsToPurchase['health'].name) {
+                equipsToPurchase['health'].name = equipName;
+                equipsToPurchase['health'].cost = equip[equipName];
+                if (prestige) equipsToPurchase['health'].prestige = true;
+                return true;
+            }
+            if (stat === 'attack' && !equipsToPurchase['attack'].name) {
+                equipsToPurchase['attack'].name = equipName;
+                equipsToPurchase['attack'].cost = equip[equipName];
+                if (prestige) equipsToPurchase['attack'].prestige = true;
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    equipsToBuy.sort((a, b) => Object.values(a)[0] - Object.values(b)[0]);
+    filterEquipments(equipsToBuy, equipArray);
+    if (equipsToPurchase.attack.name || equipsToPurchase.health.name) return equipsToPurchase;
+
+    equipsToPurchase = { ...equipsToPurchaseBaseline };
+
+    prestigesToBuy.sort((a, b) => Object.values(a)[0] - Object.values(b)[0]);
+    filterEquipments(prestigesToBuy, equipArray, true);
+    if (equipsToPurchase.attack.name || equipsToPurchase.health.name) return equipsToPurchase;
+
+    return false;
+}
+
 function pandemoniumEquipFarm(lineCheck) {
     let shouldMap = false;
     const mapName = 'Pandemonium Farming';
@@ -2394,32 +2473,36 @@ function pandemoniumEquipFarm(lineCheck) {
         shouldRun: false,
         mapName: mapName
     };
-
-    if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || getPageSetting('pandemoniumAE') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
     const equipSetting = getPageSetting('pandemoniumAE');
+
+    if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || equipSetting < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91) return farmingDetails;
+    const farmFromZone = getPageSetting('pandemoniumAEZone') > 0 ? getPageSetting('pandemoniumAEZone') : Infinity;
+    if (game.global.world < farmFromZone) return farmingDetails;
     const hdRatioSetting = getPageSetting('pandemoniumAERatio');
     if (hdRatioSetting > 0 && hdStats.hdRatio < hdRatioSetting) return farmingDetails;
 
-    const jobRatio = '1,1,100,0';
-    const equipCost = cheapestEquipmentCost();
-    if (equipCost[0] === null) return farmingDetails;
-    const nextEquipmentCost = equipCost[1];
-    const farmFromZone = getPageSetting('pandemoniumAEZone') > 0 ? getPageSetting('pandemoniumAEZone') : Infinity;
-    let mapSpecial = getAvailableSpecials('lmc');
-    const mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
+    const jobRatio = '1,0,100';
+    let mapSpecial = getAvailableSpecials(equipSetting === 3 ? 'hc' : 'lmc');
+    const mapLevel = autoLevelCheck(mapName, 'lmc', null, null);
 
-    const lmcCache = scaleToCurrentMap_AT(simpleSeconds_AT('metal', 20, jobRatio), false, true, mapLevel);
-    mapSpecial = nextEquipmentCost > lmcCache ? 'hc' : 'lmc';
-    const resourceGain = mapSpecial === 'hc' ? lmcCache * 2 : lmcCache;
+    let cacheGain = scaleToCurrentMap_AT(simpleSeconds_AT('metal', equipSetting === 3 ? 40 : 20, jobRatio), false, true, mapLevel);
 
-    //Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
-    if (resourceGain >= nextEquipmentCost && game.global.world >= farmFromZone) shouldMap = true;
+    const equipsToPurchase = pandemoniumEquipmentCheck(cacheGain);
 
-    //As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
+    if (!equipsToPurchase) return farmingDetails;
+    let nextEquipmentCost = Infinity;
+    for (let equip in equipsToPurchase) {
+        if (equipsToPurchase[equip].cost < nextEquipmentCost) nextEquipmentCost = equipsToPurchase[equip].cost;
+    }
+
+    if (cacheGain / 2 > nextEquipmentCost) mapSpecial = 'lmc';
+
+    if (cacheGain >= nextEquipmentCost) shouldMap = true;
+
     if (lineCheck && shouldMap) return (setting = { priority: 1 });
 
-    const repeat = nextEquipmentCost >= resourceGain;
-    const status = 'Pandemonium Farming Equips below ' + prettify(resourceGain);
+    const repeat = nextEquipmentCost >= cacheGain;
+    const status = 'Pandemonium Farming Equips below ' + prettify(cacheGain);
 
     farmingDetails.shouldRun = shouldMap;
     farmingDetails.mapName = mapName;
@@ -2430,6 +2513,8 @@ function pandemoniumEquipFarm(lineCheck) {
     farmingDetails.gather = 'metal';
     farmingDetails.repeat = !repeat;
     farmingDetails.status = status;
+    farmingDetails.pandaEquips = equipsToPurchase;
+    farmingDetails.cacheGain = cacheGain;
 
     if (mapSettings.mapName === mapName && !shouldMap) {
         mappingDetails(mapName, mapLevel, mapSpecial);

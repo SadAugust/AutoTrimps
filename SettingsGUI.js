@@ -2422,7 +2422,6 @@ function initialiseAllSettings() {
 			function () {
 				var description = "<p>This setting provides some equipment farming possibilites to help speedup runs.</p>";
 				description += "<p><b>Will override equipment purchasing settings when enabled.</b></p>";
-				description += "<p><b>Metal farming will only happen if pandemonium stacks are at 0.</b></p>";
 				description += "<p><b>P: Auto Equip Off</b><br>Disables this setting.</p>";
 				description += "<p><b>P: Auto Equip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.</p>";
 				description += "<p><b>P AE: LMC</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache. Overrides worker settings to ensure that you farm as much metal as possible.</p>";
