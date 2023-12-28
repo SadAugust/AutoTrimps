@@ -2,6 +2,7 @@ var atSettings = {
     initialise: {
         version: '',
         basepath: 'https://SadAugust.github.io/AutoTrimps/',
+        basepathOriginal: 'https://SadAugust.github.io/AutoTrimps/',
         loaded: false
     },
     modules: {
@@ -85,6 +86,9 @@ function loadScriptsAT(fileName, prefix = '') {
 //This is pretty much only useful for me as I have a local version of AT that I use for testing.
 function loadAT() {
     console.time();
+
+    //The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
+    basepath = atSettings.initialise.basepathOriginal;
     const scripts = Array.from(document.getElementsByTagName('script'));
     const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
 
@@ -98,21 +102,17 @@ function loadAT() {
     });
     loadScriptsAT('SettingsGUI');
 
-    //The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
-    basepath = atSettings.initialise.basepath;
-
     (async function () {
         try {
             await loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js');
             await loadStylesheet('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
-            await loadStylesheet(atSettings.initialise.basepath + 'tabs.css');
-            await loadScript('https://Quiaaaa.github.io/AutoTrimps/Graphs.js');
+            await loadStylesheet(atSettings.initialise.basepathOriginal + 'tabs.css');
+            if (typeof formatters !== 'object') await loadScript('https://Quiaaaa.github.io/AutoTrimps/Graphs.js');
             await loadScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js');
         } catch (error) {
             console.error('Error loading script or stylesheet:', error);
         }
     })();
-    loadStylesheet(atSettings.initialise.basepath + 'tabs.css');
 
     delayStartAgain();
 }
@@ -143,10 +143,11 @@ function delayStartAgain() {
     const isSettingsNotLoaded = typeof _loadAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function';
     const isModulesNotLoaded = atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length;
     const isFunctionsNotDefined = typeof _setupATButtons !== 'function' || typeof calcHeirloomBonus_AT !== 'function' || typeof _challengeUnlockCheck !== 'function';
-
     if (isSettingsNotLoaded || isModulesNotLoaded || isFunctionsNotDefined) {
-        setTimeout(delayStartAgain, 1);
-        return;
+        //console.log('trying');
+        atSettings.intervals.counter++;
+        if (atSettings.intervals.counter % 500 === 0) return loadAT();
+        return setTimeout(delayStartAgain, 1);
     }
     _loadAutoTrimpsSettings();
     automationMenuSettingsInit();
