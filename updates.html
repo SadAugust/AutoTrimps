@@ -1,1876 +1,1876 @@
 <html>
-    <head>
-        <title>Updates</title>
-    </head>
-    <style>
-        body {
-            text-align: center;
-            background-color: #333;
-            color: #333;
-            font-size: 1.2em;
-        }
-
-        #wrapper {
-            max-width: 1020px;
-            display: inline-block;
-            text-align: left;
-            padding: 10px;
-            /* color: #e3e5e9; */
-            color: #ffffff;
-            background-color: #202124;
-            font-family: 'Roboto';
-        }
-
-        .betterList {
-            list-style: none;
-            padding: 0;
-        }
-
-        .betterList > li {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-
-        .betterList > ul > li {
-            list-style: disc;
-            margin-bottom: 5px;
-        }
-
-        .betterList > ul > li.square {
-            list-style-type: square;
-            margin-left: 1vw;
-        }
-
-        .betterList > ul > li.second-child {
-            font-weight: bold;
-            list-style: none !important;
-            margin-left: -20px;
-            padding: 3px 0 5px 0;
-            /* color: #3f3feb; */
-            color: #5b5beb;
-            color: #85caf1;
-        }
-
-        .betterList > ul > li:first-child,
-        .contentSplitter {
-            font-weight: bold;
-            list-style: none !important;
-            margin-left: -30px;
-            padding: 5px 0 5px 0;
-            color: #7094ec;
-        }
-
-        .contentSplitter {
-            margin-left: 0px;
-            font-size: 1.1em;
-            color: #053b08 !important;
-        }
-
-        .r {
-            color: #8f0b0b;
-        }
-
-        .g {
-            color: #065806;
-        }
-
-        #linksTable {
-            position: absolute;
-            left: 88%;
-            top: 0%;
-            background-color: #dadada;
-            padding: 0.5%;
-            text-align: center;
-        }
-
-        #linksTable tbody tr.linksRow td a,
-        #linksTableTitle {
-            font-size: 1.2em;
-            font-weight: bold;
-            padding: 5px 20px;
-            text-decoration: none;
-            color: black;
-        }
-
-        .linksRow td a {
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .linksRow td a:hover {
-            background-color: #8a8989;
-        }
-
-        #linksTable img#discordLogo {
-            width: 50px;
-            height: 50px;
-        }
-
-        .linksRow td {
-            border: 1px solid black;
-        }
-
-        .linksSpacer {
-            height: 6px;
-        }
-
-        @media (max-width: 1020px) {
-            #linksTable {
-                position: absolute;
-                margin-left: calc(0vw - 60px);
-                top: 0%;
-            }
-        }
-    </style>
-
-    <body>
-        <div id="wrapper" style="position: relative">
-            <table id="linksTable">
-                <tbody>
-                    <tr id="linksTableTitle">
-                        <td colspan="1">AutoTrimps</td>
-                    </tr>
-                    <tr id="linksRow" class="linksRow">
-                        <td>
-                            <a href="https://discord.gg/FDKBJeSBRm" target="_blank"><img id="discordLogo" src="imgs/discord_logo.png" /><br />Discord</a>
-                        </td>
-                    </tr>
-                    <tr id="desktopLinksRow" class="linksRow" style="display: none">
-                        <td>
-                            <a onclick="nwOpen('https://discord.gg/FDKBJeSBRm')" target="_blank"><img id="discordLogo" src="imgs/discord_logo.png" /><br />Discord</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <script type="text/javascript">
-                if (typeof nw !== 'undefined') {
-                    document.getElementById('linksRow').style.display = 'none';
-                    document.getElementById('desktopLinksRow').style.display = 'table-row';
-                }
-                function nwOpen(link) {
-                    var gui = require('nw.gui');
-                    gui.Shell.openExternal(link);
-                }
-            </script>
-            <div style="font-size: 1.3em; font-weight: bold; display: block; width: 100%; text-align: center">AutoTrimps Updates!</div>
-
-            <!-- 6.5.40 -->
-            <ul class="betterList">
-                <li>6.5.40 - 27/12/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed errors related to code refactoring.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where the Alchemy Farm void purchase setting wasn't running.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.39 -->
-            <ul class="betterList">
-                <li>6.5.39 - 24/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a setting to auto allocate nullifium to your heirlooms when auto portaling.</li>
-                    <li>The Farmer, Lumberjack and Science Efficiency modifiers are now evaluated when the heirloom name matches that of the auto heirloom setting for that resource cache.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.38 -->
-            <ul class="betterList">
-                <li>6.5.38 - 22/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>If a smithy farm line has run MP selected, MP will be run if the target amount of smithies have already been built before running this line.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.37 -->
-            <ul class="betterList">
-                <li>6.5.37 - 21/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a setting for automatically saving every 30 minutes of game time during Time Warp so that you can refresh without losing all the time already run.</li>
-                    <li>Non challenge specific mapping lines will now no longer run during Trapper, Trappapalooza, and Exterminate.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a setting for helping to automate the Berserk challenge.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where saves downloaded through the Download Saves setting lose their remaining time warp duration.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.36 -->
-            <ul class="betterList">
-                <li>6.5.36 - 19/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a HD Ratio destacking setting for Balance & Unbalance.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a relic string farming setting for the Archaeology challenge.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.35 -->
-            <ul class="betterList">
-                <li>6.5.35 - 16/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a heirloom setting for one off challenge swap zone.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a world staff heirloom setting for the Exterminate challenge.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where the first Archaeology string setting was deleting the first input.</li>
-                    <li>Fixed an issue where the Archaeology settings weren't updating your arch string as soon as they were changed.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.34 -->
-            <ul class="betterList">
-                <li>6.5.34 - 14/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Archaeology changes:</li>
-                    <li class="square">Added a breed speed shield setting.</li>
-                    <li class="square">All workers will now be fired if not fighting and you don't have a new army available.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where the scripts breed timer checks were checking against your U1 pheromones perk level.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.33 -->
-            <ul class="betterList">
-                <li>6.5.33 - 14/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>When running Insanity the script will now allow unique & lower than world level maps when you have a destack line setup and you're at or past that zone.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed instances of unique maps being repeated twice.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the spend magmite settings weren't buying as many upgrades as possible when portaling.</li>
-                    <li>Mapology will now no longer adjust map levels when mapping and caps prestige raiding maps at the amount of credits you have available.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.32 -->
-            <ul class="betterList">
-                <li>6.5.32 - 12/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a setting in the Help tab to display the order in which your settings will run when the Auto Maps Priority setting is enabled.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added settings for the Archaeology challenge to allow you to set multiple relic strings.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the mapping staff setting was being used when inside huge/large cache maps. It will now check what resource you're gathering and equip that heirloom instead.</li>
-                    <li>Fixed windows being placed in different spots depending on how tall the settings window was.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where Tribute/Collector values were being updated to current U1 values if you portaled from that universe.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.31 -->
-            <ul class="betterList">
-                <li>6.5.31 - 08/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a setting in the Display tab to hide the Fight & Auto Fight buttons.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added a wind stacking heirloom setting.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a abandon challenge input to the Quagmire settings.</li>
-                    <li>Improved Quest functionality:</li>
-                    <li class="square">There is now a setting to allow you to set a map limit for how many maps you're willing to spend farming to complete a resource or one shot quest.</li>
-                    <li class="square">Your research cache heirloom will now be used when doing a science quest.</li>
-                    <li class="square">Mapping is now allowed on shield break quests but prestige raiding is disabled during them.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where a breeding error broke the game.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.30 -->
-            <ul class="betterList">
-                <li>6.5.30 - 08/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Modified how the Trapper and Trappapalooza disable trapping setting works.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a Smithy setting for one off challenges.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where a breeding error broke the game.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.29 -->
-            <ul class="betterList">
-                <li>6.5.29 - 07/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added one off challenge dropdowns to mapping and golden upgrade settings.</li>
-                    <li>Added a shield heirloom setting for Trapper and Trappapalooza.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>When running Bionic Wonderland the script will now check against your map hd ratio/hits survived for when to buy equipment.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Black Bogs will now always be run before Map Bonus.</li>
-                    <li>Modified how Wither works with the script:</li>
-                    <li class="square">All mapping is disabled when you have withered.</li>
-                    <li class="square">The farming setting is now seperate from the main setting.</li>
-                    <li class="square">When farming at the end of the zone it checks against a c60 Snimps damage rather than c100 Improbability until mutations are active.</li>
-                    <li class="square">Added a setting to disable wither farming on X zone(s) to allow you to Wither.</li>
-                    <li class="square">Added a Shield heirloom setting.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the new auto level system was recommending suboptimal speed maps for map bonus.</li>
-                    <li>Fixed an issue where the swap to next universe setting wasn't properly swapping into U2 from U1.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where auto stance would break if above your scyer min max zone range.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>The loot decay during Melt is now factored into Tribute Farm/Smithy Farm map count calculations.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.28 -->
-            <ul class="betterList">
-                <li>6.5.28 - 03/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Modified how the Trapper and Trappapalooza disable trapping setting works.</li>
-                    <li class="square">If running Trapper then it will always trap until you have enough population to send another army.</li>
-                    <li class="square">If running Trappapalooza it will trap until you can either send a new army or you are fighting and your current soldier size + remaining trimps is greater than the targetted army size.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Made the Decay features from U1 available during the Melt challenge.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.27 -->
-            <ul class="betterList">
-                <li>6.5.27 - 01/12/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added support for the Bublé challenge! There's a dummy setting in the Challenges tab that explains how it works.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>In an effort to ensure Spires aren't failed during time warp, when in a liquification zone the script will override your Time Warp Frequency setting and temporarily set it to 1</li>
-                    <li>Fixed several Auto Level 2 issues.</li>
-                    <li class="square">It wasn't factoring in Daily enemy hp/dmg modifiers.</li>
-                    <li class="square">Didn't do anything for enlightened natures or Fluffys E10L10 ability.</li>
-                    <li class="square">Used a lower crit damage multiplier than it should have.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.26 -->
-            <ul class="betterList">
-                <li>6.5.26 - 28/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>There is now a setting to auto portal into the next available universe so that you can do it whilst inactive.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue with auto equality during Bublé/Quest where it wasn't suiciding your army if you were charging a gamma burst and an enemys attack with max equality was greater than your current shield.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.25 -->
-            <ul class="betterList">
-                <li>6.5.25 - 28/11/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the auto start daily setting being enabled before dailies had been unlocked was breaking auto portal.</li>
-                    <li>Fixed an issue on Trapper/Trappapalooza where it wasn't properly buying percent based jobs in certain scenarios.</li>
-                    <li>Fixed an issue where the script was trying to endlessly obtain unique maps that had already been unlocked if it was trying to run a unique map.</li>
-                    <li>Fixed an issue where upgrades weren't being bought fast enough during liquification zones inside time warp.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where new auto level wasn't factoring in challenge loss on death for Bublé and Quest shield break quests.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.24 -->
-            <ul class="betterList">
-                <li>6.5.24 - 27/11/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where the Void Hits Survived wasn't properly checking the Hits Survived value in the Void Map setting.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.23 -->
-            <ul class="betterList">
-                <li>6.5.23 - 27/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>The Unique Maps setting no longer has error messages if you enter a zone below where the map unlocks.</li>
-                    <li>If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it. This accounts for plus levels too.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Unique map farming will now abandon the map once your map has been obtained. If running a map before explorers have been unlocked you'll need to enable the setting in the maps tab.</li>
-                    <li>Fixed an issue where a resource requirement check was assuming you could always buy every prestige which greatly inflated the amount of science the script tried to farm.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the Scryer Void Map setting wasn't working when set to Force.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where Big Wall wasn't running before z8.</li>
-                    <li>Fixed an issue where Tribute Farms Atlantrimp toggle wasn't working.</li>
-                    <li>Smithy Farm will now allocate workers to every resource you need to farm for if the map special being used is Large Cache. It will also use depths maps and not gather food if tributes haven't been unlocked yet.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.22 -->
-            <ul class="betterList">
-                <li>6.5.22 - 24/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>The Unique Maps setting no longer has error messages if you enter a zone below where the map unlocks.</li>
-                    <li>If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it. This accounts for plus levels too.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the HD Ratio on Lead was incorrect.</li>
-                    <li>Fixed an issue where Geneticists weren't being hired/fired fast enough.</li>
-                    <li>Fixed an issue where job hiring/firing messages weren't being sent for Geneticists.</li>
-                    <li>Added the Fused C2s to the Auto Portal C2 dropdown select.</li>
-                    <li>Fluffy auto evolve will now only happen when you're either in liquification or (0 + overkill) cells away from c100.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where starting Wither with the Wither setting enabled could break the script.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.21 -->
-            <ul class="betterList">
-                <li>6.5.21 - 22/11/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>The Portal After toggle in the Void Map settings will now no longer portal if your daily/regular Auto Portal setting is disabled.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where jobs weren't fired when the script was respeccing for Fluffy evolution.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where the daily tab wasn't shown when they were still locked.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.20 -->
-            <ul class="betterList">
-                <li>6.5.20 - 21/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Auto Level will now reuse maps of any biome if the Perfect Maps setting isn't enabled.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added an additional setting for the Experience challenge that allows you to select a staff to equip whilst Wonder farming.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Vanilla Auto Fight will now send armies until you have the bloodlust upgrade instead of only sending them when on zone 1 cell 1.</li>
-                    <li>Auto Level 2 will now no longer skip world level maps in the info section when you have the Map Reducer I mastery.</li>
-                    <li>Fixed an issue where auto allocating nullifium sometimes caused issues with the heirloom due to floating point errors.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where enemy damage calculations broke when starting the Eradication challenge.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.19 -->
-            <ul class="betterList">
-                <li>6.5.19 - 17/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>The script will now ignore the 24 hour Time Warp cap and run 24 hour time warps as many times as is necessary for completing your offline time.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the Experience settings weren't allowing you to end the challenge before z605.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.18 -->
-            <ul class="betterList">
-                <li>6.5.18 - 16/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added an additional auto perks preset for the Experience challenge that will be selected when auto portaling into that challenge.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.17 -->
-            <ul class="betterList">
-                <li>6.5.17 - 14/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added a setting for the Frigid challenge which allows you to stop all mapping bar Void Maps when you have stacks of warmth.</li>
-                    <li>Added settings for the Trapper challenge to allow you to set coordination limits and custom army send percentages.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a setting for the Trappapalooza challenge to allow you to set custom army send percentages.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the AL2 speed output wasn't getting sorted properly on the base steam client.</li>
-                    <li>Fixed an issue where AL2 was always populating 40 zones worth of stats instead of stopping when reasonable.</li>
-                    <li>Fixed an issue where the auto maps status & additional info section weren't being populated when you refreshed while paused.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.16 -->
-            <ul class="betterList">
-                <li>6.5.16 - 10/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>The new auto level should (hopefully) be feature complete now. It now properly accounts for fragments and increments/decrements maps the same way that the normal auto level does. I'd greatly appreciate bugtesting on it as I intend to disable the original auto levels soon.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added additional settings in the Magma tab to automate fuel zones when the script portals.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.15 -->
-            <ul class="betterList">
-                <li>6.5.15 - 09/11/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>If using the increment maps toggle Prestige Raiding will now reserve frags for further map purchases instead of using all of your fragments on the first map. Thanks for the code for this @langerest!</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.14 -->
-            <ul class="betterList">
-                <li>6.5.14 - 08/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Changed the Ratio Spending setting in the Magma tab to use the same system as the gator calc website so it should now provide much better results.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.13 -->
-            <ul class="betterList">
-                <li>6.5.13 - 08/11/23</li>
-                <ul>
-                    <li>Changes</li>
-                    <li class="second-child">General</li>
-                    <li>Raiding settings have had their inputs changed slightly. Each line now has a increment maps checkbox and the raiding zone input has been converted to a map level dropdown.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.12 -->
-            <ul class="betterList">
-                <li>6.5.12 - 07/11/23</li>
-                <ul>
-                    <li>Changes</li>
-                    <li class="second-child">General</li>
-                    <li>HD Farm map counter will now start at 0 instead of 1.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Removed the damage check from Advanced Nurseries.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.11 -->
-            <ul class="betterList">
-                <li>6.5.11 - 06/11/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the heirloom HD swap setting was sometimes swapping back and forth every second when the heirlooms being swapped put you above/below the set HD ratio.</li>
-                    <li>Fixed an issue where the heirloom HD swap setting was suiciding armies It now uses the auto abandon check for if it should swap heirlooms.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.10 -->
-            <ul class="betterList">
-                <li>6.5.10 - 06/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added an additional option to the Poison/Wind/Ice nature settings that allows you to convert to both of the other empowerments.</li>
-                </ul>
-
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where if you couldn't afford a level in an equip it would stop you from buying prestiges for that equip</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.09 -->
-            <ul class="betterList">
-                <li>6.5.09 - 06/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a more advanced Auto Abandon setting that allows you to decide if you want to abandon your army instantly to map or only when a new army is ready (or you'll clear the zone) which should help to reduce army breeding downtime when mapping. Thanks for the code for this @langerest!</li>
-                    <li>Added a fragment heirloom input for when the script is farming fragments so that you can increase your resource gain.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added settings for always using D stance (outside maps) when running a Spire in the Combat, Daily and C2 tabs.</li>
-                </ul>
-
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the new auto map level setting wouldn't properly retain map repeat counters when switching maps.</li>
-                    <li>Fixed an issue with the heirloom blacklist settings using the wrong input type. If you use these settings you'll need to go resave your inputs for it to properly work!</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.08 -->
-            <ul class="betterList">
-                <li>6.5.08 - 03/11/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added settings to allow the script to automatically evolve Fluffy. They can be found in the Fluffy tab.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.07 -->
-            <ul class="betterList">
-                <li>6.5.07 - 29/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where enemy calculations weren't accurate inside of Spires.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.06 -->
-            <ul class="betterList">
-                <li>6.5.06 - 29/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Alchemy Farm now has 2 additional inputs, one for repeat every X zones and one for end zone so you can select when the line should stop running.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.05 -->
-            <ul class="betterList">
-                <li>6.5.05 - 28/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the avoid empower setting wasn't running on every tick inside of Time Warp.</li>
-                    <li>Fixed an issue where the avoid empower setting was assuming average enemy attack and not max enemy attack which in certain circumstances meant it wasn't suiciding when it should be.</li>
-                </ul>
-                <ul>
-                    <li>Changes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Removed the fight always settings.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.04 -->
-            <ul class="betterList">
-                <li>6.5.04 - 28/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a Map Type setting to Alchemy Farm which allows you to get the script to calculate how many brews/potions you can obtain in X maps and farm until it reaches that target.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue when running Tribute or Smithy Farm with the Map Count settings where it sometimes increased the target midway through the farm which dramatically increased time spent farming.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.03 -->
-            <ul class="betterList">
-                <li>6.5.03 - 26/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where certain settings weren't checking past the first line for if they should run.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue when Quest Smithy farming was farming too many resources to obtain the 1 smithy that is needed for the quest.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.02 -->
-            <ul class="betterList">
-                <li>6.5.02 - 26/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the map bonus setting wasn't running.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.01 -->
-            <ul class="betterList">
-                <li>6.5.01 - 25/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the helium/radon per hour portal after void maps setting wasn't running void maps.</li>
-                    <li>Potentially fixed the issue of duplicate empty dropdown boxes for each dropdown setting from appearing. If you see this issue please let me know so I can test other fixes for it.</li>
-                    <li>Fixed an issue where fragment farming would always create a new map. It will now search your maps and look for one with the right map level, special and biome and use that if available.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed a World HD Ratio issue that occurred after you reached Corruption where it was inflating enemy health calculations more and more the higher you went.</li>
-                    <li>Fixed an issue where HD Ratio skip messages were being spammed when Advanced Nurseries was enabled.</li>
-                    <li>Fixed an issue where the Mapology setting was enabling Prestige Climb even if it was disabled.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where Desolation destacking wasn't always being run before every other setting runs.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.5.00 -->
-            <ul class="betterList">
-                <li>6.5.00 - 25/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a setting that allows you to be able to adjust the mapping order of certain settings through the priority input. This can be found in the Maps tab.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.39 -->
-            <ul class="betterList">
-                <li>6.4.39 - 24/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where equality wasn't removing enemy damage multipliers when at max equality and the enemy had more attack than your trimps had health.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.38 -->
-            <ul class="betterList">
-                <li>6.4.38 - 24/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Changed the mapping order so that Prestige Raiding & Bionic Raiding are both run immediately after Prestige Climb runs instead of there being some settings inbetween them. If you think this should be reverted then let me know and I'll decide on an alternative approach.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.37 -->
-            <ul class="betterList">
-                <li>6.4.37 - 24/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added extra info to the Help tab that details mapping priority order and the auto portal priority system.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>The Bionic Raiding setting will now map and obtain the Bionic Wonderland map if you don't have it and want to run the map. This will only work if you can obtain the map from your zone but factors in plus levels if they have been unlocked.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the pre void farm map cap setting was being ignored.</li>
-                    <li>Fixed an issue where the new auto level system was only being updated when inside Time Warp or when starting a new zone.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the Spire respec setting was working based off of the highest Spire cleared and not highest Spire reached.</li>
-                    <li>Fixed an issue for the new Auto Level where Ice stacks going too high caused negative enemy damage and eventually crashed the game.</li>
-                    <li>Fixed an issue where Auto Stance enemy stat calculations were incorrect inside Spires.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.36 -->
-            <ul class="betterList">
-                <li>6.4.36 - 23/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Have made the following changes to the new auto level system:</li>
-                    <li class="square">Added a speed option that will be used when running faster maps is more important e.g. map bonus. This doesn't currently function properly if you can't afford at least a world level map but will be getting fixed.</li>
-                    <li class="square">Have now made it so that the breedtimer factors in decimal points so will more accurately know how long your trimps breed for instead of rounding up to the nearest second.</li>
-                    <li class="square">Added fragment checks for if you can afford maps. It will look through your map array to check if you already have a map of that zone + special + biome and if you do it will use that instead of creating a new map.</li>
-                    <li class="square">Fixed multiple instances where it crashed the game.</li>
-                    <li>There are still many changes to make to the auto level system such as fragment checks currently over estimating fragments needed for map as it assumes maps with max sliders but this will be getting changed soon to account for reduced sliders. These changes should hopefully fix a fair few issues that people experienced with it.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where the challenge specific Melting Point settings weren't working.</li>
-                    <li>Fixed an issue on the Pandemonium challenge where the script would break when you had no equipment unlocked.</li>
-                    <li>If fighting a double attack void map enemy auto equality will now check if you can survive 1 hit instead of setting equality to 0 if you can't survive 2 hits.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.35 -->
-            <ul class="betterList">
-                <li>6.4.35 - 20/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a map cap setting to every HD Farm line so that you can manually set how long each line should farm for. When adding a row it will input your current default map cap input so that you don't need to adjust it everytime.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.34 -->
-            <ul class="betterList">
-                <li>6.4.34 - 20/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a map cap input for the Void Map pre void farm setting to allow you to select how many maps you want it to run.</li>
-                    <!-- <li>Added a map cap setting to every HD Farm line. It will automatically use your default map cap input
+	<head>
+		<title>Updates</title>
+	</head>
+	<style>
+		body {
+			text-align: center;
+			background-color: #333;
+			color: #333;
+			font-size: 1.2em;
+		}
+
+		#wrapper {
+			max-width: 1020px;
+			display: inline-block;
+			text-align: left;
+			padding: 10px;
+			/* color: #e3e5e9; */
+			color: #ffffff;
+			background-color: #202124;
+			font-family: 'Roboto';
+		}
+
+		.betterList {
+			list-style: none;
+			padding: 0;
+		}
+
+		.betterList > li {
+			font-weight: bold;
+			font-size: 1.1em;
+			margin-bottom: 10px;
+		}
+
+		.betterList > ul > li {
+			list-style: disc;
+			margin-bottom: 5px;
+		}
+
+		.betterList > ul > li.square {
+			list-style-type: square;
+			margin-left: 1vw;
+		}
+
+		.betterList > ul > li.second-child {
+			font-weight: bold;
+			list-style: none !important;
+			margin-left: -20px;
+			padding: 3px 0 5px 0;
+			/* color: #3f3feb; */
+			color: #5b5beb;
+			color: #85caf1;
+		}
+
+		.betterList > ul > li:first-child,
+		.contentSplitter {
+			font-weight: bold;
+			list-style: none !important;
+			margin-left: -30px;
+			padding: 5px 0 5px 0;
+			color: #7094ec;
+		}
+
+		.contentSplitter {
+			margin-left: 0px;
+			font-size: 1.1em;
+			color: #053b08 !important;
+		}
+
+		.r {
+			color: #8f0b0b;
+		}
+
+		.g {
+			color: #065806;
+		}
+
+		#linksTable {
+			position: absolute;
+			left: 88%;
+			top: 0%;
+			background-color: #dadada;
+			padding: 0.5%;
+			text-align: center;
+		}
+
+		#linksTable tbody tr.linksRow td a,
+		#linksTableTitle {
+			font-size: 1.2em;
+			font-weight: bold;
+			padding: 5px 20px;
+			text-decoration: none;
+			color: black;
+		}
+
+		.linksRow td a {
+			display: inline-block;
+			cursor: pointer;
+		}
+
+		.linksRow td a:hover {
+			background-color: #8a8989;
+		}
+
+		#linksTable img#discordLogo {
+			width: 50px;
+			height: 50px;
+		}
+
+		.linksRow td {
+			border: 1px solid black;
+		}
+
+		.linksSpacer {
+			height: 6px;
+		}
+
+		@media (max-width: 1020px) {
+			#linksTable {
+				position: absolute;
+				margin-left: calc(0vw - 60px);
+				top: 0%;
+			}
+		}
+	</style>
+
+	<body>
+		<div id="wrapper" style="position: relative">
+			<table id="linksTable">
+				<tbody>
+					<tr id="linksTableTitle">
+						<td colspan="1">AutoTrimps</td>
+					</tr>
+					<tr id="linksRow" class="linksRow">
+						<td>
+							<a href="https://discord.gg/FDKBJeSBRm" target="_blank"><img id="discordLogo" src="imgs/discord_logo.png" /><br />Discord</a>
+						</td>
+					</tr>
+					<tr id="desktopLinksRow" class="linksRow" style="display: none">
+						<td>
+							<a onclick="nwOpen('https://discord.gg/FDKBJeSBRm')" target="_blank"><img id="discordLogo" src="imgs/discord_logo.png" /><br />Discord</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<script type="text/javascript">
+				if (typeof nw !== 'undefined') {
+					document.getElementById('linksRow').style.display = 'none';
+					document.getElementById('desktopLinksRow').style.display = 'table-row';
+				}
+				function nwOpen(link) {
+					var gui = require('nw.gui');
+					gui.Shell.openExternal(link);
+				}
+			</script>
+			<div style="font-size: 1.3em; font-weight: bold; display: block; width: 100%; text-align: center">AutoTrimps Updates!</div>
+
+			<!-- 6.5.40 -->
+			<ul class="betterList">
+				<li>6.5.40 - 27/12/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed errors related to code refactoring.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where the Alchemy Farm void purchase setting wasn't running.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.39 -->
+			<ul class="betterList">
+				<li>6.5.39 - 24/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a setting to auto allocate nullifium to your heirlooms when auto portaling.</li>
+					<li>The Farmer, Lumberjack and Science Efficiency modifiers are now evaluated when the heirloom name matches that of the auto heirloom setting for that resource cache.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.38 -->
+			<ul class="betterList">
+				<li>6.5.38 - 22/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 2</li>
+					<li>If a smithy farm line has run MP selected, MP will be run if the target amount of smithies have already been built before running this line.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.37 -->
+			<ul class="betterList">
+				<li>6.5.37 - 21/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a setting for automatically saving every 30 minutes of game time during Time Warp so that you can refresh without losing all the time already run.</li>
+					<li>Non challenge specific mapping lines will now no longer run during Trapper, Trappapalooza, and Exterminate.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a setting for helping to automate the Berserk challenge.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where saves downloaded through the Download Saves setting lose their remaining time warp duration.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.36 -->
+			<ul class="betterList">
+				<li>6.5.36 - 19/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a HD Ratio destacking setting for Balance & Unbalance.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a relic string farming setting for the Archaeology challenge.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.35 -->
+			<ul class="betterList">
+				<li>6.5.35 - 16/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a heirloom setting for one off challenge swap zone.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a world staff heirloom setting for the Exterminate challenge.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where the first Archaeology string setting was deleting the first input.</li>
+					<li>Fixed an issue where the Archaeology settings weren't updating your arch string as soon as they were changed.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.34 -->
+			<ul class="betterList">
+				<li>6.5.34 - 14/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 2</li>
+					<li>Archaeology changes:</li>
+					<li class="square">Added a breed speed shield setting.</li>
+					<li class="square">All workers will now be fired if not fighting and you don't have a new army available.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where the scripts breed timer checks were checking against your U1 pheromones perk level.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.33 -->
+			<ul class="betterList">
+				<li>6.5.33 - 14/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 2</li>
+					<li>When running Insanity the script will now allow unique & lower than world level maps when you have a destack line setup and you're at or past that zone.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed instances of unique maps being repeated twice.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the spend magmite settings weren't buying as many upgrades as possible when portaling.</li>
+					<li>Mapology will now no longer adjust map levels when mapping and caps prestige raiding maps at the amount of credits you have available.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.32 -->
+			<ul class="betterList">
+				<li>6.5.32 - 12/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a setting in the Help tab to display the order in which your settings will run when the Auto Maps Priority setting is enabled.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added settings for the Archaeology challenge to allow you to set multiple relic strings.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the mapping staff setting was being used when inside huge/large cache maps. It will now check what resource you're gathering and equip that heirloom instead.</li>
+					<li>Fixed windows being placed in different spots depending on how tall the settings window was.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where Tribute/Collector values were being updated to current U1 values if you portaled from that universe.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.31 -->
+			<ul class="betterList">
+				<li>6.5.31 - 08/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a setting in the Display tab to hide the Fight & Auto Fight buttons.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added a wind stacking heirloom setting.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a abandon challenge input to the Quagmire settings.</li>
+					<li>Improved Quest functionality:</li>
+					<li class="square">There is now a setting to allow you to set a map limit for how many maps you're willing to spend farming to complete a resource or one shot quest.</li>
+					<li class="square">Your research cache heirloom will now be used when doing a science quest.</li>
+					<li class="square">Mapping is now allowed on shield break quests but prestige raiding is disabled during them.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where a breeding error broke the game.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.30 -->
+			<ul class="betterList">
+				<li>6.5.30 - 08/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Modified how the Trapper and Trappapalooza disable trapping setting works.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a Smithy setting for one off challenges.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where a breeding error broke the game.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.29 -->
+			<ul class="betterList">
+				<li>6.5.29 - 07/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added one off challenge dropdowns to mapping and golden upgrade settings.</li>
+					<li>Added a shield heirloom setting for Trapper and Trappapalooza.</li>
+					<li class="second-child">Universe 1</li>
+					<li>When running Bionic Wonderland the script will now check against your map hd ratio/hits survived for when to buy equipment.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Black Bogs will now always be run before Map Bonus.</li>
+					<li>Modified how Wither works with the script:</li>
+					<li class="square">All mapping is disabled when you have withered.</li>
+					<li class="square">The farming setting is now seperate from the main setting.</li>
+					<li class="square">When farming at the end of the zone it checks against a c60 Snimps damage rather than c100 Improbability until mutations are active.</li>
+					<li class="square">Added a setting to disable wither farming on X zone(s) to allow you to Wither.</li>
+					<li class="square">Added a Shield heirloom setting.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the new auto level system was recommending suboptimal speed maps for map bonus.</li>
+					<li>Fixed an issue where the swap to next universe setting wasn't properly swapping into U2 from U1.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where auto stance would break if above your scyer min max zone range.</li>
+					<li class="second-child">Universe 2</li>
+					<li>The loot decay during Melt is now factored into Tribute Farm/Smithy Farm map count calculations.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.28 -->
+			<ul class="betterList">
+				<li>6.5.28 - 03/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Modified how the Trapper and Trappapalooza disable trapping setting works.</li>
+					<li class="square">If running Trapper then it will always trap until you have enough population to send another army.</li>
+					<li class="square">If running Trappapalooza it will trap until you can either send a new army or you are fighting and your current soldier size + remaining trimps is greater than the targetted army size.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Made the Decay features from U1 available during the Melt challenge.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.27 -->
+			<ul class="betterList">
+				<li>6.5.27 - 01/12/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added support for the Bublé challenge! There's a dummy setting in the Challenges tab that explains how it works.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>In an effort to ensure Spires aren't failed during time warp, when in a liquification zone the script will override your Time Warp Frequency setting and temporarily set it to 1</li>
+					<li>Fixed several Auto Level 2 issues.</li>
+					<li class="square">It wasn't factoring in Daily enemy hp/dmg modifiers.</li>
+					<li class="square">Didn't do anything for enlightened natures or Fluffys E10L10 ability.</li>
+					<li class="square">Used a lower crit damage multiplier than it should have.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.26 -->
+			<ul class="betterList">
+				<li>6.5.26 - 28/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>There is now a setting to auto portal into the next available universe so that you can do it whilst inactive.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue with auto equality during Bublé/Quest where it wasn't suiciding your army if you were charging a gamma burst and an enemys attack with max equality was greater than your current shield.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.25 -->
+			<ul class="betterList">
+				<li>6.5.25 - 28/11/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the auto start daily setting being enabled before dailies had been unlocked was breaking auto portal.</li>
+					<li>Fixed an issue on Trapper/Trappapalooza where it wasn't properly buying percent based jobs in certain scenarios.</li>
+					<li>Fixed an issue where the script was trying to endlessly obtain unique maps that had already been unlocked if it was trying to run a unique map.</li>
+					<li>Fixed an issue where upgrades weren't being bought fast enough during liquification zones inside time warp.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where new auto level wasn't factoring in challenge loss on death for Bublé and Quest shield break quests.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.24 -->
+			<ul class="betterList">
+				<li>6.5.24 - 27/11/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where the Void Hits Survived wasn't properly checking the Hits Survived value in the Void Map setting.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.23 -->
+			<ul class="betterList">
+				<li>6.5.23 - 27/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>The Unique Maps setting no longer has error messages if you enter a zone below where the map unlocks.</li>
+					<li>If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it. This accounts for plus levels too.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Unique map farming will now abandon the map once your map has been obtained. If running a map before explorers have been unlocked you'll need to enable the setting in the maps tab.</li>
+					<li>Fixed an issue where a resource requirement check was assuming you could always buy every prestige which greatly inflated the amount of science the script tried to farm.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the Scryer Void Map setting wasn't working when set to Force.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where Big Wall wasn't running before z8.</li>
+					<li>Fixed an issue where Tribute Farms Atlantrimp toggle wasn't working.</li>
+					<li>Smithy Farm will now allocate workers to every resource you need to farm for if the map special being used is Large Cache. It will also use depths maps and not gather food if tributes haven't been unlocked yet.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.22 -->
+			<ul class="betterList">
+				<li>6.5.22 - 24/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>The Unique Maps setting no longer has error messages if you enter a zone below where the map unlocks.</li>
+					<li>If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it. This accounts for plus levels too.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the HD Ratio on Lead was incorrect.</li>
+					<li>Fixed an issue where Geneticists weren't being hired/fired fast enough.</li>
+					<li>Fixed an issue where job hiring/firing messages weren't being sent for Geneticists.</li>
+					<li>Added the Fused C2s to the Auto Portal C2 dropdown select.</li>
+					<li>Fluffy auto evolve will now only happen when you're either in liquification or (0 + overkill) cells away from c100.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where starting Wither with the Wither setting enabled could break the script.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.21 -->
+			<ul class="betterList">
+				<li>6.5.21 - 22/11/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>The Portal After toggle in the Void Map settings will now no longer portal if your daily/regular Auto Portal setting is disabled.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where jobs weren't fired when the script was respeccing for Fluffy evolution.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where the daily tab wasn't shown when they were still locked.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.20 -->
+			<ul class="betterList">
+				<li>6.5.20 - 21/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Auto Level will now reuse maps of any biome if the Perfect Maps setting isn't enabled.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added an additional setting for the Experience challenge that allows you to select a staff to equip whilst Wonder farming.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Vanilla Auto Fight will now send armies until you have the bloodlust upgrade instead of only sending them when on zone 1 cell 1.</li>
+					<li>Auto Level 2 will now no longer skip world level maps in the info section when you have the Map Reducer I mastery.</li>
+					<li>Fixed an issue where auto allocating nullifium sometimes caused issues with the heirloom due to floating point errors.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where enemy damage calculations broke when starting the Eradication challenge.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.19 -->
+			<ul class="betterList">
+				<li>6.5.19 - 17/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>The script will now ignore the 24 hour Time Warp cap and run 24 hour time warps as many times as is necessary for completing your offline time.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the Experience settings weren't allowing you to end the challenge before z605.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.18 -->
+			<ul class="betterList">
+				<li>6.5.18 - 16/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added an additional auto perks preset for the Experience challenge that will be selected when auto portaling into that challenge.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.17 -->
+			<ul class="betterList">
+				<li>6.5.17 - 14/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added a setting for the Frigid challenge which allows you to stop all mapping bar Void Maps when you have stacks of warmth.</li>
+					<li>Added settings for the Trapper challenge to allow you to set coordination limits and custom army send percentages.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a setting for the Trappapalooza challenge to allow you to set custom army send percentages.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the AL2 speed output wasn't getting sorted properly on the base steam client.</li>
+					<li>Fixed an issue where AL2 was always populating 40 zones worth of stats instead of stopping when reasonable.</li>
+					<li>Fixed an issue where the auto maps status & additional info section weren't being populated when you refreshed while paused.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.16 -->
+			<ul class="betterList">
+				<li>6.5.16 - 10/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>The new auto level should (hopefully) be feature complete now. It now properly accounts for fragments and increments/decrements maps the same way that the normal auto level does. I'd greatly appreciate bugtesting on it as I intend to disable the original auto levels soon.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added additional settings in the Magma tab to automate fuel zones when the script portals.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.15 -->
+			<ul class="betterList">
+				<li>6.5.15 - 09/11/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>If using the increment maps toggle Prestige Raiding will now reserve frags for further map purchases instead of using all of your fragments on the first map. Thanks for the code for this @langerest!</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.14 -->
+			<ul class="betterList">
+				<li>6.5.14 - 08/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Changed the Ratio Spending setting in the Magma tab to use the same system as the gator calc website so it should now provide much better results.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.13 -->
+			<ul class="betterList">
+				<li>6.5.13 - 08/11/23</li>
+				<ul>
+					<li>Changes</li>
+					<li class="second-child">General</li>
+					<li>Raiding settings have had their inputs changed slightly. Each line now has a increment maps checkbox and the raiding zone input has been converted to a map level dropdown.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.12 -->
+			<ul class="betterList">
+				<li>6.5.12 - 07/11/23</li>
+				<ul>
+					<li>Changes</li>
+					<li class="second-child">General</li>
+					<li>HD Farm map counter will now start at 0 instead of 1.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Removed the damage check from Advanced Nurseries.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.11 -->
+			<ul class="betterList">
+				<li>6.5.11 - 06/11/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the heirloom HD swap setting was sometimes swapping back and forth every second when the heirlooms being swapped put you above/below the set HD ratio.</li>
+					<li>Fixed an issue where the heirloom HD swap setting was suiciding armies It now uses the auto abandon check for if it should swap heirlooms.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.10 -->
+			<ul class="betterList">
+				<li>6.5.10 - 06/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added an additional option to the Poison/Wind/Ice nature settings that allows you to convert to both of the other empowerments.</li>
+				</ul>
+
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where if you couldn't afford a level in an equip it would stop you from buying prestiges for that equip</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.09 -->
+			<ul class="betterList">
+				<li>6.5.09 - 06/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a more advanced Auto Abandon setting that allows you to decide if you want to abandon your army instantly to map or only when a new army is ready (or you'll clear the zone) which should help to reduce army breeding downtime when mapping. Thanks for the code for this @langerest!</li>
+					<li>Added a fragment heirloom input for when the script is farming fragments so that you can increase your resource gain.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added settings for always using D stance (outside maps) when running a Spire in the Combat, Daily and C2 tabs.</li>
+				</ul>
+
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the new auto map level setting wouldn't properly retain map repeat counters when switching maps.</li>
+					<li>Fixed an issue with the heirloom blacklist settings using the wrong input type. If you use these settings you'll need to go resave your inputs for it to properly work!</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.08 -->
+			<ul class="betterList">
+				<li>6.5.08 - 03/11/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added settings to allow the script to automatically evolve Fluffy. They can be found in the Fluffy tab.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.07 -->
+			<ul class="betterList">
+				<li>6.5.07 - 29/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where enemy calculations weren't accurate inside of Spires.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.06 -->
+			<ul class="betterList">
+				<li>6.5.06 - 29/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 2</li>
+					<li>Alchemy Farm now has 2 additional inputs, one for repeat every X zones and one for end zone so you can select when the line should stop running.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.05 -->
+			<ul class="betterList">
+				<li>6.5.05 - 28/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the avoid empower setting wasn't running on every tick inside of Time Warp.</li>
+					<li>Fixed an issue where the avoid empower setting was assuming average enemy attack and not max enemy attack which in certain circumstances meant it wasn't suiciding when it should be.</li>
+				</ul>
+				<ul>
+					<li>Changes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Removed the fight always settings.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.04 -->
+			<ul class="betterList">
+				<li>6.5.04 - 28/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a Map Type setting to Alchemy Farm which allows you to get the script to calculate how many brews/potions you can obtain in X maps and farm until it reaches that target.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue when running Tribute or Smithy Farm with the Map Count settings where it sometimes increased the target midway through the farm which dramatically increased time spent farming.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.03 -->
+			<ul class="betterList">
+				<li>6.5.03 - 26/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where certain settings weren't checking past the first line for if they should run.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue when Quest Smithy farming was farming too many resources to obtain the 1 smithy that is needed for the quest.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.02 -->
+			<ul class="betterList">
+				<li>6.5.02 - 26/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the map bonus setting wasn't running.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.01 -->
+			<ul class="betterList">
+				<li>6.5.01 - 25/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the helium/radon per hour portal after void maps setting wasn't running void maps.</li>
+					<li>Potentially fixed the issue of duplicate empty dropdown boxes for each dropdown setting from appearing. If you see this issue please let me know so I can test other fixes for it.</li>
+					<li>Fixed an issue where fragment farming would always create a new map. It will now search your maps and look for one with the right map level, special and biome and use that if available.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed a World HD Ratio issue that occurred after you reached Corruption where it was inflating enemy health calculations more and more the higher you went.</li>
+					<li>Fixed an issue where HD Ratio skip messages were being spammed when Advanced Nurseries was enabled.</li>
+					<li>Fixed an issue where the Mapology setting was enabling Prestige Climb even if it was disabled.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where Desolation destacking wasn't always being run before every other setting runs.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.5.00 -->
+			<ul class="betterList">
+				<li>6.5.00 - 25/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a setting that allows you to be able to adjust the mapping order of certain settings through the priority input. This can be found in the Maps tab.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.39 -->
+			<ul class="betterList">
+				<li>6.4.39 - 24/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where equality wasn't removing enemy damage multipliers when at max equality and the enemy had more attack than your trimps had health.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.38 -->
+			<ul class="betterList">
+				<li>6.4.38 - 24/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Changed the mapping order so that Prestige Raiding & Bionic Raiding are both run immediately after Prestige Climb runs instead of there being some settings inbetween them. If you think this should be reverted then let me know and I'll decide on an alternative approach.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.37 -->
+			<ul class="betterList">
+				<li>6.4.37 - 24/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added extra info to the Help tab that details mapping priority order and the auto portal priority system.</li>
+					<li class="second-child">Universe 1</li>
+					<li>The Bionic Raiding setting will now map and obtain the Bionic Wonderland map if you don't have it and want to run the map. This will only work if you can obtain the map from your zone but factors in plus levels if they have been unlocked.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the pre void farm map cap setting was being ignored.</li>
+					<li>Fixed an issue where the new auto level system was only being updated when inside Time Warp or when starting a new zone.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the Spire respec setting was working based off of the highest Spire cleared and not highest Spire reached.</li>
+					<li>Fixed an issue for the new Auto Level where Ice stacks going too high caused negative enemy damage and eventually crashed the game.</li>
+					<li>Fixed an issue where Auto Stance enemy stat calculations were incorrect inside Spires.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.36 -->
+			<ul class="betterList">
+				<li>6.4.36 - 23/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Have made the following changes to the new auto level system:</li>
+					<li class="square">Added a speed option that will be used when running faster maps is more important e.g. map bonus. This doesn't currently function properly if you can't afford at least a world level map but will be getting fixed.</li>
+					<li class="square">Have now made it so that the breedtimer factors in decimal points so will more accurately know how long your trimps breed for instead of rounding up to the nearest second.</li>
+					<li class="square">Added fragment checks for if you can afford maps. It will look through your map array to check if you already have a map of that zone + special + biome and if you do it will use that instead of creating a new map.</li>
+					<li class="square">Fixed multiple instances where it crashed the game.</li>
+					<li>There are still many changes to make to the auto level system such as fragment checks currently over estimating fragments needed for map as it assumes maps with max sliders but this will be getting changed soon to account for reduced sliders. These changes should hopefully fix a fair few issues that people experienced with it.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where the challenge specific Melting Point settings weren't working.</li>
+					<li>Fixed an issue on the Pandemonium challenge where the script would break when you had no equipment unlocked.</li>
+					<li>If fighting a double attack void map enemy auto equality will now check if you can survive 1 hit instead of setting equality to 0 if you can't survive 2 hits.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.35 -->
+			<ul class="betterList">
+				<li>6.4.35 - 20/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a map cap setting to every HD Farm line so that you can manually set how long each line should farm for. When adding a row it will input your current default map cap input so that you don't need to adjust it everytime.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.34 -->
+			<ul class="betterList">
+				<li>6.4.34 - 20/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a map cap input for the Void Map pre void farm setting to allow you to select how many maps you want it to run.</li>
+					<!-- <li>Added a map cap setting to every HD Farm line. It will automatically use your default map cap input
 						when adding a new row so that you don't need to adjust it everytime.</li> -->
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue repeat was disabled when running Prestige Raiding leading to it exiting and entering the same map multiple times.</li>
-                    <li>Fixed several fragment farming related issues.</li>
-                    <li>Fixed an issue where sometimes Hits Survived farming ran twice.</li>
-                    <li>Fixed an issue where challenge information was only being shown for C2/C3 versions of challenges when it should have run in the regular versions as well.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.33 -->
-            <ul class="betterList">
-                <li>6.4.33 - 19/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where Prestige Raiding was farming more fragments than it should and not removing map specials if necessary to raid.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.32 -->
-            <ul class="betterList">
-                <li>6.4.32 - 18/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where Void Map pre-farm and the Hits Survived setting weren't running.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.31 -->
-            <ul class="betterList">
-                <li>6.4.31 - 18/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where repeat wasn't being disabled inside of HD Farm and sometimes ran an extra map due to this.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where when running C2s the daily Spire timer was being used instead of the C2 one.</li>
-                    <li>Fixed an issue where the Spire breed timer was overriding the hard/electricity timers.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where smithies weren't being bought during the Quest challenge.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.30 -->
-            <ul class="betterList">
-                <li>6.4.30 - 18/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added a Warpstation spending percentage setting to allow you to set it to not always spend 100% of resources on them.</li>
-                    <li>Added a new gene assist setting for Electricity to allow a custom timer for just that challenge. This works on the non C2 version too.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the script would try to hire Lumberjacks when they had not yet been unlocked on the Metal and Transmute challenges.</li>
-                    <li>Fixed issues with hits survived calculations not factoring in Void Map difficulty.</li>
-                    <li>Fixed issues where the map hd ratio was calculating against a cell 100 enemy instead of a more appropriate one.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed issues where Auto Maps wasn't factoring in Siphonology levels for settings that desire map bonus.</li>
-                    <li>Fixed issues where hits survived & hd ratio calculations weren't factoring in damage/health multipliers on the Domination challenge.</li>
-                    <li>Fixed an issue where the specific challenge dropdown settings for auto maps weren't working on Fused C2s.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.29 -->
-            <ul class="betterList">
-                <li>6.4.29 - 14/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Gene Assist now has slightly different setup for hard challenges.</li>
-                    <li class="square">Instead of when running the C2 versions of Electricity, Nom, or Toxicity there is now a dedicated setting for Electricity and a seperate setting for Nom, Toxicity, and Lead that only functions if you don't have the Angelic mastery.</li>
-                    <li class="square">The GA: Daily Timer Hard setting now only impacts Bogged dailies if you don't have the Angelic mastery.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.28 -->
-            <ul class="betterList">
-                <li>6.4.28 - 14/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed issues with Hits Survived & HD Ratio not accounting for the worst enemy in the zone when Corruption is active.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.27 -->
-            <ul class="betterList">
-                <li>6.4.27 - 13/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Time Warp will now disable auto save whilst it is running so that you don't miss out on any offline time when refreshing the page in the middle of it.</li>
-                </ul>
-                <ul>
-                    <li>Changes</li>
-                    <li class="second-child">General</li>
-                    <li>Have made a few adjustments to the new Auto Map Level code.</li>
-                    <li class="square">Have added a new output that will identify the fastest map that you can clear so that it doesn't run slower maps that have a higher loot gain. This will only be checked when running the following settings - Map Bonus, Mayhem Destacking, Pandemonium Destacking, Desolation Destacking.</li>
-                    <li class="square">When running the Unlucky challenge it will no longer look at damage variance and instead use your max damage for calculations as a temporary solution whilst I work on adding the same functionality that the base game has for damage variance.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where when portaling inside of Time Warp it wouldn't send your army immediately with better auto fight settings enabled.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the regular and daily VM Scryer settings were forcing Scryer stance inside of void maps when the talent had not yet been purchased.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where Auto Equality would always set equality to 0 when fighting slow enemies instead of identifying if it was better to gamma burst the enemy.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.26 -->
-            <ul class="betterList">
-                <li>6.4.26 - 09/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed Auto Equality: Advanced not properly working with the Hits Survived setting and farming eternally when it shouldn't.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.25 -->
-            <ul class="betterList">
-                <li>6.4.25 - 09/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Made the following changes to the new zfarm auto level system to combat the severe performance impact inside of Time Warp.</li>
-                    <li class="square">Runs every 3 seconds outside of Time Warp and every 30 seconds inside of Time Warp instead of running every second in both situations.</li>
-                    <li class="square">Now only simulates 6 hours of map time for each map when inside of Time Warp instead of 24.</li>
-                    <li class="square">Refreshes the map level check when you start a new zone.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.24 -->
-            <ul class="betterList">
-                <li>6.4.24 - 09/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added Mapology to the list of one-off challenges.</li>
-                    <li>Fixed a typo with the Devastation one-off challenge that caused the script to break.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue that caused desolation gear scumming to stop the script from functioning.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.23 -->
-            <ul class="betterList">
-                <li>6.4.23 - 09/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where zfarm was breaking the script when reaching zone 6.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.22 -->
-            <ul class="betterList">
-                <li>6.4.22 - 08/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>If the script is trying to create a map with no special it will use maps that you own with any special as long as they meet the maplevel and biome criteria.</li>
-                    <li>Modified how map sliders are decided when you don't have enough fragments to max them.</li>
-                    <li class="square">It will incrementally decrease difficulty until 0 then loot then size until you can afford the map.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.21 -->
-            <ul class="betterList">
-                <li>6.4.21 - 08/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a new form of auto level for testing.</li>
-                    <li class="square">This system uses the shell of zfarm but has been improved to include all of the U1 challenges and now fully supports U2 and all of the challenges there too.</li>
-                    <li class="square">Can select to use this new auto map level system through a toggle in the Maps tab.</li>
-                    <li class="square">The new system completely ignores the perfect map setting for now and assumes that you can create either perfect maps or maps with max sliders so likely not worth using when that isn't achievable. This will be changed in the near future.</li>
-                    <li class="square">Can see what map level each system says you should be using through the additional info section below the trapping section. The old system is prefixed with AL and new system is prefixed with AL2.</li>
-                    <li class="square">I'd love any feedback on the new system if you test it on if it's better, worse or if any bugs exist as it's the system I intend to change to in the future which makes any testing done incredibly valuable.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.20 -->
-            <ul class="betterList">
-                <li>6.4.20 - 05/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added Antennas to the AutoStructure settings to allow the script to purchase them.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.19 -->
-            <ul class="betterList">
-                <li>6.4.19 - 03/10/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where jobs weren't properly being hired when a Scientist ratio had been input.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.18 -->
-            <ul class="betterList">
-                <li>6.4.18 - 01/10/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added an additional setting to the Use When Capped daily setting which allows you to only run dailies when the last X amount are available to run.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an early game gathering bug which caused science to be gathered forever until Scientists were unlocked. It will now stop gathering science once you reach 100 as that's what you require for the upgrade.</li>
-                    <li>Fixed an issue that caused the script not to run certain settings properly for the first few seconds when reloading the page.</li>
-                    <li>Updated some daily auto portal setting tooltips so that they accurately mention that post run challenge selection is done through the Auto Portal setting in the Core tab.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.17 -->
-            <ul class="betterList">
-                <li>6.4.17 - 30/09/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>One off challenge runs for perks/misc rewards can now be run through the Auto Portal setting. Be wary if you set it to start one of these challenges it will run it continuously until you change it so it could be unwise to set this up.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.16 -->
-            <ul class="betterList">
-                <li>6.4.16 - 30/09/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Removed the Auto Portal challenge selection for after Daily challenges. It will now use the regular Auto Portal challenge settings instead.</li>
-                    <li>The Auto Portal setting now allows you to portal in C2/C3s when Custom, Helium Per Hour or Radon Per Hour are selected.</li>
-                    <li>Improved the AutoEquip and AutoStructure purchasing process whilst inside Time Warp. This will cause it to no longer hang for as long when purchasing buildings/equipment at the start of a portal.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Void Map difficulty calculations now account for Mapocalypse.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed a bug when the script tries to automatically respec perks whilst running the Hypothermia challenge.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.15 -->
-            <ul class="betterList">
-                <li>6.4.15 - 29/09/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue on the Insanity challenge where auto map level never took into account gaining Insanity stacks when deciding map level. It will now factor in a max (70) cell map and calculate your health as if you gained an Insanity stack on every cell if not at max stacks.</li>
-                    <li>Fixed an issue where Insanity settings were outputting errors when the conflicts weren't relevant for that setting combination.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.14 -->
-            <ul class="betterList">
-                <li>6.4.14 - 27/09/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added the priority number of the farming seittings line that's being run to the Auto Maps status tooltip.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.13 -->
-            <ul class="betterList">
-                <li>6.4.13 - 24/09/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>When using Auto Jobs inside of maps with either a scientist ratio of 0 or an unentered ratio a small amount of scientists will be hired the same way they are purchased when outside of maps.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.12 -->
-            <ul class="betterList">
-                <li>6.4.12 - 22/09/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>The farming settings now have a No Challenge dropdown for filler challenge selection which will cause the line to only run when you aren't inside a challenge.</li>
-                </ul>
-
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where auto storage wasn't being toggled if unlocked when outside of the Hypothermia challenge.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Changed the Atlantrimp Respec setting so that it will swap to combat respec on runs where you have more golden battle upgrades than golden radon.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.11 -->
-            <ul class="betterList">
-                <li>6.4.11 - 14/09/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where unique map health calculations weren't properly working with Black Bogs inside of Quagmire.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.10 -->
-            <ul class="betterList">
-                <li>6.4.10 - 13/09/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where maps would be recycled when running Mapology.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Changed Worshiper Farms Skip Value input description in the Help window to properly indicate that it's based off of how many worshippers you would get from a small/large savoury cache.</li>
-                    <li>Fixed an issue where Worshipper Farms Skip Value input wasn't identifying if you only had small savoury caches unlocked and accounted for 2 map runs instead of 1 in that case.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.09 -->
-            <ul class="betterList">
-                <li>6.4.09 - 11/09/23</li>
-                <ul>
-                    <li>Changes</li>
-                    <li class="second-child">General</li>
-                    <li>Added a new setting that will allow you to not run unique maps when you don't have enough health to survive against the highest attacking enemy in the map.</li>
-                    <li>Added a zone timer dropdown for the Map Farm setting which allows you to farm until you have reached a certain amount of time in a zone.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Added a new setting that allows you to set a custom breed timer for Spires when running C2 challenges.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a new setting that allows you to disable bloodthirst time to kill checks when using auto equality.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.08 -->
-            <ul class="betterList">
-                <li>6.4.08 - 07/09/23</li>
-                <ul>
-                    <li>Changes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Smithy Farm will now farm metal before wood.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where parts of the script would continue running when paused inside of Time Warp.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the Scryer stance was being used inside Void Maps when it hadn't been unlocked.</li>
-                    <li>Fixed an issue where on the Experience challenge bionic raiding was disabled above z600 when the Experience setting was disabled.</li>
-                    <li>Fixed an issue where the script would break when trying to end the Experience challenge.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where Black Bog farming wasn't working when running Quagmire.</li>
-                    <li>Fixed an issue where the script was overwriting the games parity value with a NaN value breaking loot calcs.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.07 -->
-            <ul class="betterList">
-                <li>6.4.07 - 31/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where Parity calcs were trying to divide by 0 and breaking the games loot calculations.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.06 -->
-            <ul class="betterList">
-                <li>6.4.06 - 31/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Actual fix for the prestige purchasing crash in TW.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.05 -->
-            <ul class="betterList">
-                <li>6.4.05 - 31/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where purchasing prestiges when inside Time Warp would cause the game to crash.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.04 -->
-            <ul class="betterList">
-                <li>6.4.04 - 26/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where the Heirloom help button was disappearing when clicking allocating nullifium/spirestones.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.03 -->
-            <ul class="betterList">
-                <li>6.4.03 - 26/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the only mapping that worked in U1 was Prestige Climb & Void Maps.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.02 -->
-            <ul class="betterList">
-                <li>6.4.02 - 24/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>The auto upgrade setting now has support for the Scientist challenge and will automatically adjust the upgrades it purchases when running that challenge.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.01 -->
-            <ul class="betterList">
-                <li>6.4.01 - 24/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where Auto Heirloom mods weren't properly displaying.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.4.00 -->
-            <ul class="betterList">
-                <li>6.4.00 - 24/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Migrated the website version of the heirloom calculator into the script. Should have the exact same functionality as the website but will be undergoing some modifications in the future to allow it to purchase Explorer Efficiency & Fragment Drop Rate mods until they reach their soft cap.</li>
-                    <li>Added headers to the C2/C3 Runner Set Values setting to stop the challenge lines from being so cramped.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue on Berserk where Auto Equality was still assuming you had lives left when you couldn't obtain Frenzy any longer.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.46 -->
-            <ul class="betterList">
-                <li>6.3.46 - 20/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where Collectors weren't being purchased when you have less than 6000.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.45 -->
-            <ul class="betterList">
-                <li>6.3.45 - 19/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a new C2/C3 Runner setting. Allows you to select if you'd like the script to automatically end the run or portal after reaching your target end zone.</li>
-                    <li>The C2/C3 Runner Portal setting has been renamed to C2/C3 Runner End Zone.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the Life and Crushed challenges weren't unlocking in Auto Portal settings until the zone after they unlock.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.44 -->
-            <ul class="betterList">
-                <li>6.3.44 - 17/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Added a new Time Warp setting that will allow you to see the Trimps UI during Time Warp. You can find it in the <b>Time Warp</b> tab when the <b>Time Warp Support</b> setting is enabled.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where Spires were always being counted as active and causing nurseries to be built earlier than they should have been.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where Melt wasn't being added to auto portal settings until z55 when it should have been z50.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.43 -->
-            <ul class="betterList">
-                <li>6.3.43 - 16/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Significantly improved the backend code for checking heirloom stats so the script should run about 20% faster now.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.42 -->
-            <ul class="betterList">
-                <li>6.3.42 - 16/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where Prestige Climb was running the wrong map levels when trying to obtain prestiges.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.41 -->
-            <ul class="betterList">
-                <li>6.3.41 - 15/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Changed the <b></b>and <b>Map Bonus Ratio</b> default job ratios to <b>1,1,2</b> instead of <b>0,1,3</b>.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.40 -->
-            <ul class="betterList">
-                <li>6.3.40 - 15/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed issues with Auto Equip not properly purchasing prestiges when it was the most efficient purchase.</li>
-                    <li>Auto Equip will now cap equips at 9 if you have a prestige available to ensure you don't overspend on levels when prestiges would be more efficient.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.39 -->
-            <ul class="betterList">
-                <li>6.3.39 - 15/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where bone shrine trying to run broke the script.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.38 -->
-            <ul class="betterList">
-                <li>6.3.38 - 14/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue for the non-beta steam client that caused the game not to properly load on portal and required a manual refresh to fix.</li>
-                    <li>Fixed an issue where setting either of the pre Void Map farm settings to 0 would cause you to farm for that setting forever.</li>
-                    <li>Fixed an issue where you weren't able to save auto golden settings.</li>
-                    <li>Fixed an issue where bone shrine gather overrides could be wrong in certain scenarios.</li>
-
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue where the game would crash when the Spire Assault window was open and you tried to import AT files.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.37 -->
-            <ul class="betterList">
-                <li>6.3.37 - 11/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Time Warp will now automatically run itself again if it took more than 30 seconds to complete to ensure you miss out on as little progress as possible.</li>
-                    <li>Farming settings are no longer marked as complete inside of the Auto Trimps settings and instead are stored inside your save file so if you load a save from earlier in your portal it won't have issues with map settings being skipped.</li>
-                    <li>Prestige Climb will now identify the map level that your target prestige is on instead of always running a world level map.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue where Auto Maps would break if you had no maps in your map chamber and not enough fragments to purchase any maps.</li>
-                    <li>Fixed an issue where unique maps were being run when Auto Maps was toggled onto the No Unique option.</li>
-                    <li>Fixed an issue where <b>AE: HS Cut-off</b> wasn't properly working.</li>
-                    <li>When using Better Auto Fight armies will now only be sent out when you have max population.</li>
-                    <li>Fixed an issue with specific challenge portaling when using Liq for free void.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.36 -->
-            <ul class="betterList">
-                <li>6.3.36 - 08/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Changed when Auto Portal activates after C2/C3s. The Finish C2/C3 setting will cause the script to abandon the challenge at the desired zone but <b>C2/C3 Runner %</b> and <b>C2/C3 Runner Set Values</b> will automatically portal once the challenges have been completed.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the Magmite Fuel zone settings weren't properly working. Have changed when it's assumed that they're always enabled so read the tooltips if you use those settings.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>
-                        Fixed an issue where <b>Bone Shrine</b> was trying to run during the <b>Pandemonium</b>
-                        challenge.
-                    </li>
-                    <li>Added <b>Big Wall</b> to the <b>Unique Map Settings</b> setting.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.35 -->
-            <ul class="betterList">
-                <li>6.3.35 - 07/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Fixed an issue where the <b>Bone Shrine</b> gather dropdown on the top row wasn't displaying the correct gather type.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue with the <b>Max Zone</b> scryer setting not assuming always active when set to 0 or below.</li>
-                    <li>Fixed an issue where the script would try and spend magmite before the dimensional generator is unlocked if portaling before z230.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.34 -->
-            <ul class="betterList">
-                <li>6.3.34 - 07/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Fixed an issue with C2/C3 Runner Portal & Finish C2/C3 settings weren't portaling after exiting the C2/C3.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.33 -->
-            <ul class="betterList">
-                <li>6.3.33 - 06/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Hits Survived now uses the job ratio input in the <b>HD Farm</b> setting instead of the one in the <b>Map Bonus</b> setting.</li>
-                    <li>Updated setting descriptions for Maps, Challenges, C2/C3 and Daily tabs.</li>
-                    <li>Updated how The Finish C2/C3 setting and C2 runner interacts. Read the new tooltips in the C2 tab for more information.</li>
-                    <li>Pre-Void farming will now use the map cap set in the <b>HD Farm</b> settings to allow you to not farm forever before void maps.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>The <b>Helium Per Hour</b> auto portal settings now have the Experience challenge listed if it has been unlocked.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Removed the scripts <b>Archaeology</b> relic swapping settings.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.32 -->
-            <ul class="betterList">
-                <li>6.3.32 - 03/08/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed some errors that were caused by swapping from universe 2 to universe 1.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.31 -->
-            <ul class="betterList">
-                <li>6.3.31 - 02/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Heirlooms</li>
-                    <li>Added a new setting that will allow you to keep imperfect heirlooms when using the <b>Auto Heirlooms</b> setting.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.30 -->
-            <ul class="betterList">
-                <li>6.3.30 - 01/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Merged the 3 auto golden settings together and added the <b>Run Type</b> dropdown setting that other setting of a similar style have.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Fixed an issue where unique maps weren't being run properly in certain circumstances.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.29 -->
-            <ul class="betterList">
-                <li>6.3.29 - 01/08/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Implemented a different solution for dropdown box settings so that steam users can see the setting name before the selected dropdown option.</li>
-                    <li>Added a new auto heirloom setting to keep heirlooms of a higher rarity than your <b>Rarity to Keep</b> setting.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue with wind stance activating before its meant to.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.28 -->
-            <ul class="betterList">
-                <li>6.3.28 - 30/07/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Cleaned up the top row of the popup map settings so that they will only show inputs that can impact the extra functions it can provide.</li>
-                    <li>Updated the Help window for several popup map settings to match what the setting can currently do.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed a tooltip issue for the Decay setting <b>D: Stacks to Push</b> not stating that Prestige Climb and Void Maps will run regardless of current stacks.</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Fixed an issue with metal and wood not properly being saved for Trimple/Atlantrimp when using the Map Farm Trimple/Atlantrimp toggle.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.27 -->
-            <ul class="betterList">
-                <li>6.3.27 - 29/07/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Have setup a discord server for question/issues/feature requrests.</li>
-                    <li class="square">The server can be found by clicking the discord logo at the top right of this page.</li>
-
-                    <li>Added a new <b>Help</b> tab.</li>
-                    <li class="square">This section will house information that will hopefully make it easier to set the script up.</li>
-                    <li class="square">Have only converted the initial script loading message and auto maps + helium/radon per hour status messages to this section just now.</li>
-                    <li class="square">If there's any information that you feel would be beneficial to add here to help new users then let me know.</li>
-                    <li>Renamed the <b>Heirlooms</b> tab to <b>Heirloom</b>.</li>
-                    <li>Rearranged the layout of tabs to be in the order that they unlock rather than randomly placed.</li>
-
-                    <li class="second-child">Universe 1</li>
-                    <li>Changed both the regular and Daily <b>Windstack H:D</b> settings to always run if set to 0 or below.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue Windstacking wasn't working as it should.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.26 -->
-            <ul class="betterList">
-                <li>6.3.26 - 26/07/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Modified the prestige climb setting <b>Prestige Skip</b> into a toggle and removed the <b>Prestige Skip 2</b> functionality from it where it wouldn't map if you had less than 2 sets of unbought prestiges in a map.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Added better error handling to the AutoJobs and AutoStructure settings.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the Experience challenge setting <b>E: End BW</b> didn't display a description when mousing over it.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.25 -->
-            <ul class="betterList">
-                <li>6.3.25 - 23/07/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>Updated the display of the dropdown settings.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">General</li>
-                    <li>Disabled the universe setting toggle when universe 2 hasn't been unlocked yet.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue with scryer stance settings not working.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.24 -->
-            <ul class="betterList">
-                <li>6.3.24 - 23/07/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">General</li>
-                    <li>New setting in the Import Export tab for automatically refreshing when an update is available.<br /><span style="color: red; font-weight: bold">Be warned if there are any errors in the patch then the script will likely break and stop running!</span></li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Updated Scryer Stance related settings descriptions to match the format of other settings.</li>
-                    <li>Updated Windstacking related settings descriptions to match the format of other settings.</li>
-                    <li>Added a new setting for windstacking in liquification zones outside of dailies.</li>
-                    <li>The windstacking settings are now seperate from the AutoStance setting. If enabled and you aren't windstacking then your stance changing will default to your AutoStance setting.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.23 -->
-            <ul class="betterList">
-                <li>6.3.23 - 20/07/23</li>
-                <ul>
-                    <li>Features</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Added a way to display the trimps UI during Time Warp. The setting for this can be found in the Time Warp tab.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Fixed an issue where during Time Warp the setting completion messages displayed the wrong completion time.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where the script wasn't properly accounting for average income for gathering/buildings.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed an issue breaking the script during Transmute when using the Manual Ratios job setting.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.21 -->
-            <ul class="betterList">
-                <li>6.3.22 - 17/07/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Fixed an issue where you Prestige Raiding would always re-enter maps regardless of auto maps setting being enabled or not.</li>
-                    <li>Fixed issues with void map difficulty calculations being wrong when below z60.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue where you Perky wouldn't run properly without manually adjusting presets on initial load.</li>
-                    <li>Fixed an issue with scryer stance setting never using scryer stance.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.21 -->
-            <ul class="betterList">
-                <li>6.3.21 - 17/07/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Fixed the debug message from Void Maps. Will now show the correct info for the dropdowns you have selected instead of only showing World/Void HD Ratios.</li>
-                    <li>Cleaned up misc global variables.</li>
-                    <li>Fixed prestige raiding incorrectly reducing map level if you didn't have Scientist 4/Microchip 4.</li>
-                    <li>Fixed an issue where void hits survived calcs was incorrect.</li>
-
-                    <li class="second-child">Universe 1</li>
-                    <li>Fixed an issue with auto stance not swapping to X or H stances.</li>
-                    <li>Fixed an issue where map hits survived wasn't being calculated properly on the Crushed challenge.</li>
-                    <li>Fixed an issue with anticipation calc assuming 45s of anticipation before you unlock the talent to extend it past 30s.</li>
-
-                    <li class="second-child">Universe 2</li>
-                    <li>Fixed auto gather (metal) gathering food on Transmute instead of wood.</li>
-                    <li>Fixed an issue where when running desolation gear scumming it was recycling the map it wanted to continue.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.20 -->
-            <ul class="betterList">
-                <li>6.3.20 - 10/07/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li>Download Saves, Auto Heirlooms, and Spend Magmite (Portal) will now run when manually portaling instead of only when auto portaling.</li>
-                    <li>Fixed an issue where enemy damage calcs weren't taking the Nom buff into account.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.19 -->
-            <ul class="betterList">
-                <li>6.3.19 - 10/07/23</li>
-                <ul>
-                    <li>News</li>
-                    <li>In an effort to make it easier for users to see what has been modified, I've finally made a changelog for features/bugfixes going forward.</li>
-                    <li class="square">Any changes made will make the AT Changelog button change colour and also print <b>| What's New</b> on the button.</li>
-                    <li class="square">The changelog popup messages will no longer appear unless you are in TimeWarp where it will popup with a link to this changelog.</li>
-                    <li class="square">The UI of this changelog might go through minor modications over the next few weeks as I'm not fully set on it.</li>
-                    <li>AutoTrimps now has an hourly check to inform you when there's a new version available. If one is then the changelog button text will be appended with "<span style="color: red; font-weight: bold">Update Available!</span>".</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.18 -->
-            <ul class="betterList">
-                <li>6.3.18 - 09/07/23</li>
-                <ul>
-                    <li>New Features</li>
-
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Maps</li>
-                    <li class="square">Added an improved map recycling system. Will now no longer recycle maps when returning to world if they haven't been completed but will instead when running a new map will check if the current map has the cache, biome & map level that we want to run and if it does it will resume otherwise recycles the map.</li>
-
-                    <li class="second-child">Universe 1</li>
-                    <li>Dailies</li>
-                    <li class="square">2 new settings for dailies relating to the Bloodthirst modifier. These can be found in the <b>Daily</b> tab if you'd like to find out more.</li>
-                </ul>
-
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Desolation</li>
-                    <li class="square">Fixed an issue when force destacking before farming where it would ignore your input for <b>D: Destack From</b> and set it to that zone so it had the potential to use the wrong slider settings for destacking.</li>
-                    <li class="square">Renamed <b>D: Destack From</b> to <b>D: Only Destack Z</b> to reduce potential confusion.</li>
-                    <li class="square">Updated tooltip description for <b>D: Only Destack Z</b>.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.17 -->
-            <ul class="betterList">
-                <li>6.3.17 - 07/07/23</li>
-                <ul>
-                    <li>New Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Perky will now remember your weights when switching between presets so that you don't have to set them back up everytime.</li>
-                    <li>Have added an additional setting for Auto Allocate. It allows for automatic preset selection when auto portaling and will pick the most appropriate preset for the run before distributing your perks.</li>
-                    <li class="second-child">Universe 2</li>
-                    <li>Added a new setting for Desolation prestige gear scumming.</li>
-                    <li class="square">This is a setting that is in semi-beta (doesn't raid for Shields if available if you want to target Boots) and almost definitely shouldn't exist as it abuses some unintentional game mechanics, read the help window for the setting to know more about it.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.16 -->
-            <ul class="betterList">
-                <li>6.3.16 - 07/07/23</li>
-                <ul>
-                    <li>New Features</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Have duplicated the Daily Spire related settings for C2s so you will need to configure those settings up if you want it to function the way you previously had them.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.15 -->
-            <ul class="betterList">
-                <li>6.3.15 - 04/07/23</li>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Fixed an issue where Tributes, Meteorologists and Worshippers wouldn't be purchased due to a Trimple/Atlantrimp check.</li>
-                </ul>
-                <ul>
-                    <li>Backend Changes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Rewrote Prestige Raiding and Void Map code to reduce to global variables usage. There's potential for some bugs due to this.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.14 -->
-            <ul class="betterList">
-                <li>6.3.14 - 27/06/23</li>
-                <ul>
-                    <li>New Features</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Void Maps.</li>
-                    <li class="square">Removed the 2 set inputs for World HD Ratio and Void HD Ratio and instead replaced them with dropdown boxes which allows you to select between HD Ratios, Hits Survived, or Map Level for when to run your Void Maps.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Hits Survived checks will now check against <b>Void Hits Survived</b> when the script is looking to run Void Maps.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.13 -->
-            <ul class="betterList">
-                <li>6.3.13 - 25/06/23</li>
-                <ul>
-                    <li>New Features</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Equipment.</li>
-                    <li class="square">The <b>AE: Prestige</b> setting has an additional toggle (AE: Maybe Prestige) which will only purchase prestiges when <b>outside</b> of your AE: Zone range unless you have more than 5 levels in that equip.</li>
-                    <li class="square">Added a new setting to allow you to decide what percentage of resources you would like to spend on a prestige after running Trimple/Atlantrimp.</li>
-                    <li class="square">Added a new setting to allow you to disable Shield level/prestige purchases.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Hits Survived checks will now check against <b>Void Hits Survived</b> when the script is looking to run Void Maps.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.12 -->
-            <ul class="betterList">
-                <li>6.3.12 - 22/06/23</li>
-                <ul>
-                    <li>New Features</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-
-                    <li>Equipment</li>
-                    <li class="square">New setting <b>AE: HS Cut-off</b>. It will set your spending percentage for health equips to 100% when your <b>Hits Survived</b> value is below the input value.</li>
-                    <li class="square">With this equipment change the <b>AE: HD Cut-Off</b> setting will now only override your spending percentage for attack equips unless in U2 where it will override both attack & health equips as it's necessary for equality improvements.</li>
-
-                    <li class="second-child">Universe 2</li>
-                    <li>Challenges</li>
-                    <li class="square"><b>Duel</b> now has settings available for it in the <b>C3</b> tab.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Void Maps</li>
-                    <li class="square">Background variables now get reset when you save void map settings so that you don't continue running your voids at the wrong zone.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.11 -->
-            <ul class="betterList">
-                <li>6.3.11 - 21/06/23</li>
-                <ul>
-                    <li>New Features</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Heirlooms</li>
-                    <li class="square">The Auto Heirloom <b>Rarity to Keep</b> setting has been split into multiple settings for each heirloom type. Your previous input has been converted to the new system but if you want to go for a different rarity for each type you'll need to change it manually.</li>
-                </ul>
-            </ul>
-
-            <!-- 6.3.10 -->
-            <ul class="betterList">
-                <li>6.3.10 - 20/06/23</li>
-                <ul>
-                    <li>New Features</li>
-                    <li class="second-child">Universe 1 and Universe 2</li>
-                    <li>Void Maps</li>
-                    <li class="square">Now has additional inputs to farm to specific hits survived & hd ratio before running any void maps.</li>
-                    <li>Time Warp</li>
-                    <li class="square">There is now a <b>Time Warp</b> tab which houses a few settings for making the script more compatible with time warp.</li>
-                    <li>Equipment</li>
-                    <li class="square">The equipment setting <b>AE: Zone</b> now no longer sets your spending percentage to 100% when you're at or above the last input. Instead there is now the choice to input a zone range so if you're between those zones it will set your spending percentage to 100%. If you want that style back just set your last input to 'currentEndZone.999'.</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Challenges</li>
-                    <li class="square">Toxicity now has challenge related settings allowing you to farm for a certain amount of stacks on specific zones. These settings can be found in the <b>Challenge</b> tab.</li>
-                </ul>
-                <ul>
-                    <li>Bugfixes</li>
-                    <li class="second-child">Universe 1</li>
-                    <li>Perky</li>
-                    <li class="square">Now has a target zone input and the xp input has been hidden until Fluffy has been unlocked.</li>
-                </ul>
-            </ul>
-        </div>
-    </body>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue repeat was disabled when running Prestige Raiding leading to it exiting and entering the same map multiple times.</li>
+					<li>Fixed several fragment farming related issues.</li>
+					<li>Fixed an issue where sometimes Hits Survived farming ran twice.</li>
+					<li>Fixed an issue where challenge information was only being shown for C2/C3 versions of challenges when it should have run in the regular versions as well.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.33 -->
+			<ul class="betterList">
+				<li>6.4.33 - 19/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where Prestige Raiding was farming more fragments than it should and not removing map specials if necessary to raid.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.32 -->
+			<ul class="betterList">
+				<li>6.4.32 - 18/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where Void Map pre-farm and the Hits Survived setting weren't running.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.31 -->
+			<ul class="betterList">
+				<li>6.4.31 - 18/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where repeat wasn't being disabled inside of HD Farm and sometimes ran an extra map due to this.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where when running C2s the daily Spire timer was being used instead of the C2 one.</li>
+					<li>Fixed an issue where the Spire breed timer was overriding the hard/electricity timers.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where smithies weren't being bought during the Quest challenge.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.30 -->
+			<ul class="betterList">
+				<li>6.4.30 - 18/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added a Warpstation spending percentage setting to allow you to set it to not always spend 100% of resources on them.</li>
+					<li>Added a new gene assist setting for Electricity to allow a custom timer for just that challenge. This works on the non C2 version too.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the script would try to hire Lumberjacks when they had not yet been unlocked on the Metal and Transmute challenges.</li>
+					<li>Fixed issues with hits survived calculations not factoring in Void Map difficulty.</li>
+					<li>Fixed issues where the map hd ratio was calculating against a cell 100 enemy instead of a more appropriate one.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed issues where Auto Maps wasn't factoring in Siphonology levels for settings that desire map bonus.</li>
+					<li>Fixed issues where hits survived & hd ratio calculations weren't factoring in damage/health multipliers on the Domination challenge.</li>
+					<li>Fixed an issue where the specific challenge dropdown settings for auto maps weren't working on Fused C2s.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.29 -->
+			<ul class="betterList">
+				<li>6.4.29 - 14/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Gene Assist now has slightly different setup for hard challenges.</li>
+					<li class="square">Instead of when running the C2 versions of Electricity, Nom, or Toxicity there is now a dedicated setting for Electricity and a seperate setting for Nom, Toxicity, and Lead that only functions if you don't have the Angelic mastery.</li>
+					<li class="square">The GA: Daily Timer Hard setting now only impacts Bogged dailies if you don't have the Angelic mastery.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.28 -->
+			<ul class="betterList">
+				<li>6.4.28 - 14/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed issues with Hits Survived & HD Ratio not accounting for the worst enemy in the zone when Corruption is active.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.27 -->
+			<ul class="betterList">
+				<li>6.4.27 - 13/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Time Warp will now disable auto save whilst it is running so that you don't miss out on any offline time when refreshing the page in the middle of it.</li>
+				</ul>
+				<ul>
+					<li>Changes</li>
+					<li class="second-child">General</li>
+					<li>Have made a few adjustments to the new Auto Map Level code.</li>
+					<li class="square">Have added a new output that will identify the fastest map that you can clear so that it doesn't run slower maps that have a higher loot gain. This will only be checked when running the following settings - Map Bonus, Mayhem Destacking, Pandemonium Destacking, Desolation Destacking.</li>
+					<li class="square">When running the Unlucky challenge it will no longer look at damage variance and instead use your max damage for calculations as a temporary solution whilst I work on adding the same functionality that the base game has for damage variance.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where when portaling inside of Time Warp it wouldn't send your army immediately with better auto fight settings enabled.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the regular and daily VM Scryer settings were forcing Scryer stance inside of void maps when the talent had not yet been purchased.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where Auto Equality would always set equality to 0 when fighting slow enemies instead of identifying if it was better to gamma burst the enemy.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.26 -->
+			<ul class="betterList">
+				<li>6.4.26 - 09/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed Auto Equality: Advanced not properly working with the Hits Survived setting and farming eternally when it shouldn't.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.25 -->
+			<ul class="betterList">
+				<li>6.4.25 - 09/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Made the following changes to the new zfarm auto level system to combat the severe performance impact inside of Time Warp.</li>
+					<li class="square">Runs every 3 seconds outside of Time Warp and every 30 seconds inside of Time Warp instead of running every second in both situations.</li>
+					<li class="square">Now only simulates 6 hours of map time for each map when inside of Time Warp instead of 24.</li>
+					<li class="square">Refreshes the map level check when you start a new zone.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.24 -->
+			<ul class="betterList">
+				<li>6.4.24 - 09/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added Mapology to the list of one-off challenges.</li>
+					<li>Fixed a typo with the Devastation one-off challenge that caused the script to break.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue that caused desolation gear scumming to stop the script from functioning.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.23 -->
+			<ul class="betterList">
+				<li>6.4.23 - 09/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where zfarm was breaking the script when reaching zone 6.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.22 -->
+			<ul class="betterList">
+				<li>6.4.22 - 08/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>If the script is trying to create a map with no special it will use maps that you own with any special as long as they meet the maplevel and biome criteria.</li>
+					<li>Modified how map sliders are decided when you don't have enough fragments to max them.</li>
+					<li class="square">It will incrementally decrease difficulty until 0 then loot then size until you can afford the map.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.21 -->
+			<ul class="betterList">
+				<li>6.4.21 - 08/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a new form of auto level for testing.</li>
+					<li class="square">This system uses the shell of zfarm but has been improved to include all of the U1 challenges and now fully supports U2 and all of the challenges there too.</li>
+					<li class="square">Can select to use this new auto map level system through a toggle in the Maps tab.</li>
+					<li class="square">The new system completely ignores the perfect map setting for now and assumes that you can create either perfect maps or maps with max sliders so likely not worth using when that isn't achievable. This will be changed in the near future.</li>
+					<li class="square">Can see what map level each system says you should be using through the additional info section below the trapping section. The old system is prefixed with AL and new system is prefixed with AL2.</li>
+					<li class="square">I'd love any feedback on the new system if you test it on if it's better, worse or if any bugs exist as it's the system I intend to change to in the future which makes any testing done incredibly valuable.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.20 -->
+			<ul class="betterList">
+				<li>6.4.20 - 05/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added Antennas to the AutoStructure settings to allow the script to purchase them.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.19 -->
+			<ul class="betterList">
+				<li>6.4.19 - 03/10/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where jobs weren't properly being hired when a Scientist ratio had been input.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.18 -->
+			<ul class="betterList">
+				<li>6.4.18 - 01/10/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added an additional setting to the Use When Capped daily setting which allows you to only run dailies when the last X amount are available to run.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an early game gathering bug which caused science to be gathered forever until Scientists were unlocked. It will now stop gathering science once you reach 100 as that's what you require for the upgrade.</li>
+					<li>Fixed an issue that caused the script not to run certain settings properly for the first few seconds when reloading the page.</li>
+					<li>Updated some daily auto portal setting tooltips so that they accurately mention that post run challenge selection is done through the Auto Portal setting in the Core tab.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.17 -->
+			<ul class="betterList">
+				<li>6.4.17 - 30/09/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>One off challenge runs for perks/misc rewards can now be run through the Auto Portal setting. Be wary if you set it to start one of these challenges it will run it continuously until you change it so it could be unwise to set this up.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.16 -->
+			<ul class="betterList">
+				<li>6.4.16 - 30/09/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Removed the Auto Portal challenge selection for after Daily challenges. It will now use the regular Auto Portal challenge settings instead.</li>
+					<li>The Auto Portal setting now allows you to portal in C2/C3s when Custom, Helium Per Hour or Radon Per Hour are selected.</li>
+					<li>Improved the AutoEquip and AutoStructure purchasing process whilst inside Time Warp. This will cause it to no longer hang for as long when purchasing buildings/equipment at the start of a portal.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Void Map difficulty calculations now account for Mapocalypse.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed a bug when the script tries to automatically respec perks whilst running the Hypothermia challenge.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.15 -->
+			<ul class="betterList">
+				<li>6.4.15 - 29/09/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue on the Insanity challenge where auto map level never took into account gaining Insanity stacks when deciding map level. It will now factor in a max (70) cell map and calculate your health as if you gained an Insanity stack on every cell if not at max stacks.</li>
+					<li>Fixed an issue where Insanity settings were outputting errors when the conflicts weren't relevant for that setting combination.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.14 -->
+			<ul class="betterList">
+				<li>6.4.14 - 27/09/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added the priority number of the farming seittings line that's being run to the Auto Maps status tooltip.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.13 -->
+			<ul class="betterList">
+				<li>6.4.13 - 24/09/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>When using Auto Jobs inside of maps with either a scientist ratio of 0 or an unentered ratio a small amount of scientists will be hired the same way they are purchased when outside of maps.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.12 -->
+			<ul class="betterList">
+				<li>6.4.12 - 22/09/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>The farming settings now have a No Challenge dropdown for filler challenge selection which will cause the line to only run when you aren't inside a challenge.</li>
+				</ul>
+
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where auto storage wasn't being toggled if unlocked when outside of the Hypothermia challenge.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Changed the Atlantrimp Respec setting so that it will swap to combat respec on runs where you have more golden battle upgrades than golden radon.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.11 -->
+			<ul class="betterList">
+				<li>6.4.11 - 14/09/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where unique map health calculations weren't properly working with Black Bogs inside of Quagmire.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.10 -->
+			<ul class="betterList">
+				<li>6.4.10 - 13/09/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where maps would be recycled when running Mapology.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Changed Worshiper Farms Skip Value input description in the Help window to properly indicate that it's based off of how many worshippers you would get from a small/large savoury cache.</li>
+					<li>Fixed an issue where Worshipper Farms Skip Value input wasn't identifying if you only had small savoury caches unlocked and accounted for 2 map runs instead of 1 in that case.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.09 -->
+			<ul class="betterList">
+				<li>6.4.09 - 11/09/23</li>
+				<ul>
+					<li>Changes</li>
+					<li class="second-child">General</li>
+					<li>Added a new setting that will allow you to not run unique maps when you don't have enough health to survive against the highest attacking enemy in the map.</li>
+					<li>Added a zone timer dropdown for the Map Farm setting which allows you to farm until you have reached a certain amount of time in a zone.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Added a new setting that allows you to set a custom breed timer for Spires when running C2 challenges.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a new setting that allows you to disable bloodthirst time to kill checks when using auto equality.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.08 -->
+			<ul class="betterList">
+				<li>6.4.08 - 07/09/23</li>
+				<ul>
+					<li>Changes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Smithy Farm will now farm metal before wood.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where parts of the script would continue running when paused inside of Time Warp.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the Scryer stance was being used inside Void Maps when it hadn't been unlocked.</li>
+					<li>Fixed an issue where on the Experience challenge bionic raiding was disabled above z600 when the Experience setting was disabled.</li>
+					<li>Fixed an issue where the script would break when trying to end the Experience challenge.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where Black Bog farming wasn't working when running Quagmire.</li>
+					<li>Fixed an issue where the script was overwriting the games parity value with a NaN value breaking loot calcs.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.07 -->
+			<ul class="betterList">
+				<li>6.4.07 - 31/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where Parity calcs were trying to divide by 0 and breaking the games loot calculations.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.06 -->
+			<ul class="betterList">
+				<li>6.4.06 - 31/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Actual fix for the prestige purchasing crash in TW.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.05 -->
+			<ul class="betterList">
+				<li>6.4.05 - 31/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where purchasing prestiges when inside Time Warp would cause the game to crash.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.04 -->
+			<ul class="betterList">
+				<li>6.4.04 - 26/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where the Heirloom help button was disappearing when clicking allocating nullifium/spirestones.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.03 -->
+			<ul class="betterList">
+				<li>6.4.03 - 26/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the only mapping that worked in U1 was Prestige Climb & Void Maps.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.02 -->
+			<ul class="betterList">
+				<li>6.4.02 - 24/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>The auto upgrade setting now has support for the Scientist challenge and will automatically adjust the upgrades it purchases when running that challenge.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.01 -->
+			<ul class="betterList">
+				<li>6.4.01 - 24/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where Auto Heirloom mods weren't properly displaying.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.4.00 -->
+			<ul class="betterList">
+				<li>6.4.00 - 24/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Migrated the website version of the heirloom calculator into the script. Should have the exact same functionality as the website but will be undergoing some modifications in the future to allow it to purchase Explorer Efficiency & Fragment Drop Rate mods until they reach their soft cap.</li>
+					<li>Added headers to the C2/C3 Runner Set Values setting to stop the challenge lines from being so cramped.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue on Berserk where Auto Equality was still assuming you had lives left when you couldn't obtain Frenzy any longer.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.46 -->
+			<ul class="betterList">
+				<li>6.3.46 - 20/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where Collectors weren't being purchased when you have less than 6000.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.45 -->
+			<ul class="betterList">
+				<li>6.3.45 - 19/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a new C2/C3 Runner setting. Allows you to select if you'd like the script to automatically end the run or portal after reaching your target end zone.</li>
+					<li>The C2/C3 Runner Portal setting has been renamed to C2/C3 Runner End Zone.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the Life and Crushed challenges weren't unlocking in Auto Portal settings until the zone after they unlock.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.44 -->
+			<ul class="betterList">
+				<li>6.3.44 - 17/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Added a new Time Warp setting that will allow you to see the Trimps UI during Time Warp. You can find it in the <b>Time Warp</b> tab when the <b>Time Warp Support</b> setting is enabled.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where Spires were always being counted as active and causing nurseries to be built earlier than they should have been.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where Melt wasn't being added to auto portal settings until z55 when it should have been z50.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.43 -->
+			<ul class="betterList">
+				<li>6.3.43 - 16/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Significantly improved the backend code for checking heirloom stats so the script should run about 20% faster now.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.42 -->
+			<ul class="betterList">
+				<li>6.3.42 - 16/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where Prestige Climb was running the wrong map levels when trying to obtain prestiges.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.41 -->
+			<ul class="betterList">
+				<li>6.3.41 - 15/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Changed the <b></b>and <b>Map Bonus Ratio</b> default job ratios to <b>1,1,2</b> instead of <b>0,1,3</b>.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.40 -->
+			<ul class="betterList">
+				<li>6.3.40 - 15/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed issues with Auto Equip not properly purchasing prestiges when it was the most efficient purchase.</li>
+					<li>Auto Equip will now cap equips at 9 if you have a prestige available to ensure you don't overspend on levels when prestiges would be more efficient.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.39 -->
+			<ul class="betterList">
+				<li>6.3.39 - 15/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where bone shrine trying to run broke the script.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.38 -->
+			<ul class="betterList">
+				<li>6.3.38 - 14/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue for the non-beta steam client that caused the game not to properly load on portal and required a manual refresh to fix.</li>
+					<li>Fixed an issue where setting either of the pre Void Map farm settings to 0 would cause you to farm for that setting forever.</li>
+					<li>Fixed an issue where you weren't able to save auto golden settings.</li>
+					<li>Fixed an issue where bone shrine gather overrides could be wrong in certain scenarios.</li>
+
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue where the game would crash when the Spire Assault window was open and you tried to import AT files.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.37 -->
+			<ul class="betterList">
+				<li>6.3.37 - 11/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Time Warp will now automatically run itself again if it took more than 30 seconds to complete to ensure you miss out on as little progress as possible.</li>
+					<li>Farming settings are no longer marked as complete inside of the Auto Trimps settings and instead are stored inside your save file so if you load a save from earlier in your portal it won't have issues with map settings being skipped.</li>
+					<li>Prestige Climb will now identify the map level that your target prestige is on instead of always running a world level map.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue where Auto Maps would break if you had no maps in your map chamber and not enough fragments to purchase any maps.</li>
+					<li>Fixed an issue where unique maps were being run when Auto Maps was toggled onto the No Unique option.</li>
+					<li>Fixed an issue where <b>AE: HS Cut-off</b> wasn't properly working.</li>
+					<li>When using Better Auto Fight armies will now only be sent out when you have max population.</li>
+					<li>Fixed an issue with specific challenge portaling when using Liq for free void.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.36 -->
+			<ul class="betterList">
+				<li>6.3.36 - 08/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Changed when Auto Portal activates after C2/C3s. The Finish C2/C3 setting will cause the script to abandon the challenge at the desired zone but <b>C2/C3 Runner %</b> and <b>C2/C3 Runner Set Values</b> will automatically portal once the challenges have been completed.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the Magmite Fuel zone settings weren't properly working. Have changed when it's assumed that they're always enabled so read the tooltips if you use those settings.</li>
+					<li class="second-child">Universe 2</li>
+					<li>
+						Fixed an issue where <b>Bone Shrine</b> was trying to run during the <b>Pandemonium</b>
+						challenge.
+					</li>
+					<li>Added <b>Big Wall</b> to the <b>Unique Map Settings</b> setting.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.35 -->
+			<ul class="betterList">
+				<li>6.3.35 - 07/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Fixed an issue where the <b>Bone Shrine</b> gather dropdown on the top row wasn't displaying the correct gather type.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue with the <b>Max Zone</b> scryer setting not assuming always active when set to 0 or below.</li>
+					<li>Fixed an issue where the script would try and spend magmite before the dimensional generator is unlocked if portaling before z230.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.34 -->
+			<ul class="betterList">
+				<li>6.3.34 - 07/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Fixed an issue with C2/C3 Runner Portal & Finish C2/C3 settings weren't portaling after exiting the C2/C3.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.33 -->
+			<ul class="betterList">
+				<li>6.3.33 - 06/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Hits Survived now uses the job ratio input in the <b>HD Farm</b> setting instead of the one in the <b>Map Bonus</b> setting.</li>
+					<li>Updated setting descriptions for Maps, Challenges, C2/C3 and Daily tabs.</li>
+					<li>Updated how The Finish C2/C3 setting and C2 runner interacts. Read the new tooltips in the C2 tab for more information.</li>
+					<li>Pre-Void farming will now use the map cap set in the <b>HD Farm</b> settings to allow you to not farm forever before void maps.</li>
+					<li class="second-child">Universe 2</li>
+					<li>The <b>Helium Per Hour</b> auto portal settings now have the Experience challenge listed if it has been unlocked.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Removed the scripts <b>Archaeology</b> relic swapping settings.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.32 -->
+			<ul class="betterList">
+				<li>6.3.32 - 03/08/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed some errors that were caused by swapping from universe 2 to universe 1.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.31 -->
+			<ul class="betterList">
+				<li>6.3.31 - 02/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Heirlooms</li>
+					<li>Added a new setting that will allow you to keep imperfect heirlooms when using the <b>Auto Heirlooms</b> setting.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.30 -->
+			<ul class="betterList">
+				<li>6.3.30 - 01/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Merged the 3 auto golden settings together and added the <b>Run Type</b> dropdown setting that other setting of a similar style have.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Fixed an issue where unique maps weren't being run properly in certain circumstances.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.29 -->
+			<ul class="betterList">
+				<li>6.3.29 - 01/08/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Implemented a different solution for dropdown box settings so that steam users can see the setting name before the selected dropdown option.</li>
+					<li>Added a new auto heirloom setting to keep heirlooms of a higher rarity than your <b>Rarity to Keep</b> setting.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue with wind stance activating before its meant to.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.28 -->
+			<ul class="betterList">
+				<li>6.3.28 - 30/07/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Cleaned up the top row of the popup map settings so that they will only show inputs that can impact the extra functions it can provide.</li>
+					<li>Updated the Help window for several popup map settings to match what the setting can currently do.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed a tooltip issue for the Decay setting <b>D: Stacks to Push</b> not stating that Prestige Climb and Void Maps will run regardless of current stacks.</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Fixed an issue with metal and wood not properly being saved for Trimple/Atlantrimp when using the Map Farm Trimple/Atlantrimp toggle.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.27 -->
+			<ul class="betterList">
+				<li>6.3.27 - 29/07/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Have setup a discord server for question/issues/feature requrests.</li>
+					<li class="square">The server can be found by clicking the discord logo at the top right of this page.</li>
+
+					<li>Added a new <b>Help</b> tab.</li>
+					<li class="square">This section will house information that will hopefully make it easier to set the script up.</li>
+					<li class="square">Have only converted the initial script loading message and auto maps + helium/radon per hour status messages to this section just now.</li>
+					<li class="square">If there's any information that you feel would be beneficial to add here to help new users then let me know.</li>
+					<li>Renamed the <b>Heirlooms</b> tab to <b>Heirloom</b>.</li>
+					<li>Rearranged the layout of tabs to be in the order that they unlock rather than randomly placed.</li>
+
+					<li class="second-child">Universe 1</li>
+					<li>Changed both the regular and Daily <b>Windstack H:D</b> settings to always run if set to 0 or below.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue Windstacking wasn't working as it should.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.26 -->
+			<ul class="betterList">
+				<li>6.3.26 - 26/07/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Modified the prestige climb setting <b>Prestige Skip</b> into a toggle and removed the <b>Prestige Skip 2</b> functionality from it where it wouldn't map if you had less than 2 sets of unbought prestiges in a map.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Added better error handling to the AutoJobs and AutoStructure settings.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the Experience challenge setting <b>E: End BW</b> didn't display a description when mousing over it.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.25 -->
+			<ul class="betterList">
+				<li>6.3.25 - 23/07/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>Updated the display of the dropdown settings.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">General</li>
+					<li>Disabled the universe setting toggle when universe 2 hasn't been unlocked yet.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue with scryer stance settings not working.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.24 -->
+			<ul class="betterList">
+				<li>6.3.24 - 23/07/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">General</li>
+					<li>New setting in the Import Export tab for automatically refreshing when an update is available.<br /><span style="color: red; font-weight: bold">Be warned if there are any errors in the patch then the script will likely break and stop running!</span></li>
+					<li class="second-child">Universe 1</li>
+					<li>Updated Scryer Stance related settings descriptions to match the format of other settings.</li>
+					<li>Updated Windstacking related settings descriptions to match the format of other settings.</li>
+					<li>Added a new setting for windstacking in liquification zones outside of dailies.</li>
+					<li>The windstacking settings are now seperate from the AutoStance setting. If enabled and you aren't windstacking then your stance changing will default to your AutoStance setting.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.23 -->
+			<ul class="betterList">
+				<li>6.3.23 - 20/07/23</li>
+				<ul>
+					<li>Features</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Added a way to display the trimps UI during Time Warp. The setting for this can be found in the Time Warp tab.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Fixed an issue where during Time Warp the setting completion messages displayed the wrong completion time.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where the script wasn't properly accounting for average income for gathering/buildings.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Fixed an issue breaking the script during Transmute when using the Manual Ratios job setting.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.21 -->
+			<ul class="betterList">
+				<li>6.3.22 - 17/07/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Fixed an issue where you Prestige Raiding would always re-enter maps regardless of auto maps setting being enabled or not.</li>
+					<li>Fixed issues with void map difficulty calculations being wrong when below z60.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue where you Perky wouldn't run properly without manually adjusting presets on initial load.</li>
+					<li>Fixed an issue with scryer stance setting never using scryer stance.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.21 -->
+			<ul class="betterList">
+				<li>6.3.21 - 17/07/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Fixed the debug message from Void Maps. Will now show the correct info for the dropdowns you have selected instead of only showing World/Void HD Ratios.</li>
+					<li>Cleaned up misc global variables.</li>
+					<li>Fixed prestige raiding incorrectly reducing map level if you didn't have Scientist 4/Microchip 4.</li>
+					<li>Fixed an issue where void hits survived calcs was incorrect.</li>
+
+					<li class="second-child">Universe 1</li>
+					<li>Fixed an issue with auto stance not swapping to X or H stances.</li>
+					<li>Fixed an issue where map hits survived wasn't being calculated properly on the Crushed challenge.</li>
+					<li>Fixed an issue with anticipation calc assuming 45s of anticipation before you unlock the talent to extend it past 30s.</li>
+
+					<li class="second-child">Universe 2</li>
+					<li>Fixed auto gather (metal) gathering food on Transmute instead of wood.</li>
+					<li>Fixed an issue where when running desolation gear scumming it was recycling the map it wanted to continue.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.20 -->
+			<ul class="betterList">
+				<li>6.3.20 - 10/07/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li>Download Saves, Auto Heirlooms, and Spend Magmite (Portal) will now run when manually portaling instead of only when auto portaling.</li>
+					<li>Fixed an issue where enemy damage calcs weren't taking the Nom buff into account.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.19 -->
+			<ul class="betterList">
+				<li>6.3.19 - 10/07/23</li>
+				<ul>
+					<li>News</li>
+					<li>In an effort to make it easier for users to see what has been modified, I've finally made a changelog for features/bugfixes going forward.</li>
+					<li class="square">Any changes made will make the AT Changelog button change colour and also print <b>| What's New</b> on the button.</li>
+					<li class="square">The changelog popup messages will no longer appear unless you are in TimeWarp where it will popup with a link to this changelog.</li>
+					<li class="square">The UI of this changelog might go through minor modications over the next few weeks as I'm not fully set on it.</li>
+					<li>AutoTrimps now has an hourly check to inform you when there's a new version available. If one is then the changelog button text will be appended with "<span style="color: red; font-weight: bold">Update Available!</span>".</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.18 -->
+			<ul class="betterList">
+				<li>6.3.18 - 09/07/23</li>
+				<ul>
+					<li>New Features</li>
+
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Maps</li>
+					<li class="square">Added an improved map recycling system. Will now no longer recycle maps when returning to world if they haven't been completed but will instead when running a new map will check if the current map has the cache, biome & map level that we want to run and if it does it will resume otherwise recycles the map.</li>
+
+					<li class="second-child">Universe 1</li>
+					<li>Dailies</li>
+					<li class="square">2 new settings for dailies relating to the Bloodthirst modifier. These can be found in the <b>Daily</b> tab if you'd like to find out more.</li>
+				</ul>
+
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 2</li>
+					<li>Desolation</li>
+					<li class="square">Fixed an issue when force destacking before farming where it would ignore your input for <b>D: Destack From</b> and set it to that zone so it had the potential to use the wrong slider settings for destacking.</li>
+					<li class="square">Renamed <b>D: Destack From</b> to <b>D: Only Destack Z</b> to reduce potential confusion.</li>
+					<li class="square">Updated tooltip description for <b>D: Only Destack Z</b>.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.17 -->
+			<ul class="betterList">
+				<li>6.3.17 - 07/07/23</li>
+				<ul>
+					<li>New Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Perky will now remember your weights when switching between presets so that you don't have to set them back up everytime.</li>
+					<li>Have added an additional setting for Auto Allocate. It allows for automatic preset selection when auto portaling and will pick the most appropriate preset for the run before distributing your perks.</li>
+					<li class="second-child">Universe 2</li>
+					<li>Added a new setting for Desolation prestige gear scumming.</li>
+					<li class="square">This is a setting that is in semi-beta (doesn't raid for Shields if available if you want to target Boots) and almost definitely shouldn't exist as it abuses some unintentional game mechanics, read the help window for the setting to know more about it.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.16 -->
+			<ul class="betterList">
+				<li>6.3.16 - 07/07/23</li>
+				<ul>
+					<li>New Features</li>
+					<li class="second-child">Universe 1</li>
+					<li>Have duplicated the Daily Spire related settings for C2s so you will need to configure those settings up if you want it to function the way you previously had them.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.15 -->
+			<ul class="betterList">
+				<li>6.3.15 - 04/07/23</li>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Fixed an issue where Tributes, Meteorologists and Worshippers wouldn't be purchased due to a Trimple/Atlantrimp check.</li>
+				</ul>
+				<ul>
+					<li>Backend Changes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Rewrote Prestige Raiding and Void Map code to reduce to global variables usage. There's potential for some bugs due to this.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.14 -->
+			<ul class="betterList">
+				<li>6.3.14 - 27/06/23</li>
+				<ul>
+					<li>New Features</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Void Maps.</li>
+					<li class="square">Removed the 2 set inputs for World HD Ratio and Void HD Ratio and instead replaced them with dropdown boxes which allows you to select between HD Ratios, Hits Survived, or Map Level for when to run your Void Maps.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Hits Survived checks will now check against <b>Void Hits Survived</b> when the script is looking to run Void Maps.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.13 -->
+			<ul class="betterList">
+				<li>6.3.13 - 25/06/23</li>
+				<ul>
+					<li>New Features</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Equipment.</li>
+					<li class="square">The <b>AE: Prestige</b> setting has an additional toggle (AE: Maybe Prestige) which will only purchase prestiges when <b>outside</b> of your AE: Zone range unless you have more than 5 levels in that equip.</li>
+					<li class="square">Added a new setting to allow you to decide what percentage of resources you would like to spend on a prestige after running Trimple/Atlantrimp.</li>
+					<li class="square">Added a new setting to allow you to disable Shield level/prestige purchases.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Hits Survived checks will now check against <b>Void Hits Survived</b> when the script is looking to run Void Maps.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.12 -->
+			<ul class="betterList">
+				<li>6.3.12 - 22/06/23</li>
+				<ul>
+					<li>New Features</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+
+					<li>Equipment</li>
+					<li class="square">New setting <b>AE: HS Cut-off</b>. It will set your spending percentage for health equips to 100% when your <b>Hits Survived</b> value is below the input value.</li>
+					<li class="square">With this equipment change the <b>AE: HD Cut-Off</b> setting will now only override your spending percentage for attack equips unless in U2 where it will override both attack & health equips as it's necessary for equality improvements.</li>
+
+					<li class="second-child">Universe 2</li>
+					<li>Challenges</li>
+					<li class="square"><b>Duel</b> now has settings available for it in the <b>C3</b> tab.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Void Maps</li>
+					<li class="square">Background variables now get reset when you save void map settings so that you don't continue running your voids at the wrong zone.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.11 -->
+			<ul class="betterList">
+				<li>6.3.11 - 21/06/23</li>
+				<ul>
+					<li>New Features</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Heirlooms</li>
+					<li class="square">The Auto Heirloom <b>Rarity to Keep</b> setting has been split into multiple settings for each heirloom type. Your previous input has been converted to the new system but if you want to go for a different rarity for each type you'll need to change it manually.</li>
+				</ul>
+			</ul>
+
+			<!-- 6.3.10 -->
+			<ul class="betterList">
+				<li>6.3.10 - 20/06/23</li>
+				<ul>
+					<li>New Features</li>
+					<li class="second-child">Universe 1 and Universe 2</li>
+					<li>Void Maps</li>
+					<li class="square">Now has additional inputs to farm to specific hits survived & hd ratio before running any void maps.</li>
+					<li>Time Warp</li>
+					<li class="square">There is now a <b>Time Warp</b> tab which houses a few settings for making the script more compatible with time warp.</li>
+					<li>Equipment</li>
+					<li class="square">The equipment setting <b>AE: Zone</b> now no longer sets your spending percentage to 100% when you're at or above the last input. Instead there is now the choice to input a zone range so if you're between those zones it will set your spending percentage to 100%. If you want that style back just set your last input to 'currentEndZone.999'.</li>
+					<li class="second-child">Universe 1</li>
+					<li>Challenges</li>
+					<li class="square">Toxicity now has challenge related settings allowing you to farm for a certain amount of stacks on specific zones. These settings can be found in the <b>Challenge</b> tab.</li>
+				</ul>
+				<ul>
+					<li>Bugfixes</li>
+					<li class="second-child">Universe 1</li>
+					<li>Perky</li>
+					<li class="square">Now has a target zone input and the xp input has been hidden until Fluffy has been unlocked.</li>
+				</ul>
+			</ul>
+		</div>
+	</body>
 </html>

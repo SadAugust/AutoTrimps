@@ -1,147 +1,147 @@
 #logBtnGroup div {
-    width: 19% !important;
+	width: 19% !important;
 }
 
 div#logConfigHolder.btn-group {
-    width: 5% !important;
+	width: 5% !important;
 }
 
 #logConfigBtn {
-    padding: 6px 0 !important;
+	padding: 6px 0 !important;
 }
 
 ul.tab {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
 }
 
 ul.tab li {
-    float: left;
+	float: left;
 }
 
 ul.tab li a {
-    display: inline-block;
-    color: black;
-    text-align: center;
-    padding: 0.5vh 0.85vw;
-    text-decoration: none;
-    transition: 0.3s;
-    font-size: 0.85vw;
-    border-right: solid 1px;
+	display: inline-block;
+	color: black;
+	text-align: center;
+	padding: 0.5vh 0.85vw;
+	text-decoration: none;
+	transition: 0.3s;
+	font-size: 0.85vw;
+	border-right: solid 1px;
 }
 
 ul.tab li .active {
-    background-color: #ccc;
+	background-color: #ccc;
 }
 
 ul.tab li a:hover {
-    background-color: #ddd;
+	background-color: #ddd;
 }
 
 .tabcontent {
-    display: none;
-    border: 1px solid #ccc;
-    border-top: none;
-    -webkit-animation: fadeEffect 1s;
-    animation: fadeEffect 1s;
-    /* Fading effect takes 1 second */
-    transform: translateZ(0);
+	display: none;
+	border: 1px solid #ccc;
+	border-top: none;
+	-webkit-animation: fadeEffect 1s;
+	animation: fadeEffect 1s;
+	/* Fading effect takes 1 second */
+	transform: translateZ(0);
 }
 
 @-webkit-keyframes fadeEffect {
-    from {
-        opacity: 0;
-    }
+	from {
+		opacity: 0;
+	}
 
-    to {
-        opacity: 1;
-    }
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes fadeEffect {
-    from {
-        opacity: 0;
-    }
+	from {
+		opacity: 0;
+	}
 
-    to {
-        opacity: 1;
-    }
+	to {
+		opacity: 1;
+	}
 }
 
 #tipText .autoEggs,
 #autoEggs.settingBtntrue {
-    -webkit-animation: eggGradient 3s infinite;
-    animation: eggGradient 3s infinite;
-    color: black;
+	-webkit-animation: eggGradient 3s infinite;
+	animation: eggGradient 3s infinite;
+	color: black;
 }
 
 @keyframes eggGradient {
-    0% {
-        background-color: #83ddd6;
-    }
+	0% {
+		background-color: #83ddd6;
+	}
 
-    25% {
-        background-color: #f4c7c7;
-    }
+	25% {
+		background-color: #f4c7c7;
+	}
 
-    50% {
-        background-color: #8beab7;
-    }
+	50% {
+		background-color: #8beab7;
+	}
 
-    75% {
-        background-color: #f6f297;
-    }
+	75% {
+		background-color: #f6f297;
+	}
 
-    100% {
-        background-color: #83ddd6;
-    }
+	100% {
+		background-color: #83ddd6;
+	}
 }
 
 #trapArea {
-    border: 1px solid white;
-    display: inline-block;
-    margin-bottom: 2%;
-    margin-top: 0;
-    padding: 0;
+	border: 1px solid white;
+	display: inline-block;
+	margin-bottom: 2%;
+	margin-top: 0;
+	padding: 0;
 }
 
 #animationDiv {
-    z-index: -1 !important;
+	z-index: -1 !important;
 }
 
 .queueItemName,
 #queueTimeRemaining {
-    z-index: 0 !important;
+	z-index: 0 !important;
 }
 
 .heirloomRare8 {
-    text-shadow: none;
+	text-shadow: none;
 }
 
 #messageConfig {
-    height: 3vw;
-    font-size: 1vw;
+	height: 3vw;
+	font-size: 1vw;
 }
 
 .messageNameHolder {
-    font-size: 1.2vw;
+	font-size: 1.2vw;
 }
 
 .litScroll {
-    overflow-y: scroll;
-    height: 30.5vw;
+	overflow-y: scroll;
+	height: 30.5vw;
 }
 
 #wrapper {
-    background: none;
+	background: none;
 }
 
 #wrapper {
-    background: -webkit-linear-gradient(left, #323341 12%, #626368 29.5%, #727275 47%, #727275 53%, #4c4d56 70.5%, #323341 88%);
+	background: -webkit-linear-gradient(left, #323341 12%, #626368 29.5%, #727275 47%, #727275 53%, #4c4d56 70.5%, #323341 88%);
 }
 
 /*MAZ LAYOUT CSS*/
@@ -149,55 +149,55 @@ ul.tab li a:hover {
 .structConfigPercent,
 .dailyAutoPortalZone,
 .dailyAutoPortalChallenge {
-    display: inline-block;
-    width: 50%;
-    padding: 1%;
-    line-height: normal;
-    border-width: 1px;
-    margin-right: 5%;
+	display: inline-block;
+	width: 50%;
+	padding: 1%;
+	line-height: normal;
+	border-width: 1px;
+	margin-right: 5%;
 }
 
 .structConfigZone,
 .structConfigCell {
-    display: inline-block;
-    width: 50%;
-    padding: 1%;
-    line-height: normal;
-    border-width: 1px;
-    margin-right: 5%;
+	display: inline-block;
+	width: 50%;
+	padding: 1%;
+	line-height: normal;
+	border-width: 1px;
+	margin-right: 5%;
 }
 
 .windowRow div input {
-    width: 100%;
+	width: 100%;
 }
 
 .windowRow div select {
-    width: 100%;
+	width: 100%;
 }
 
 .windowRow {
-    padding: 0 2%;
-    margin: 0 1%;
-    font-weight: bold;
+	padding: 0 2%;
+	margin: 0 1%;
+	font-weight: bold;
 }
 
 .windowRow.titles div {
-    text-align: center;
-    font-weight: bold;
+	text-align: center;
+	font-weight: bold;
 }
 
 .windowRow.titles {
-    border: 1px solid black;
-    margin: 0 1%;
-    margin-top: 0.2vw;
-    padding: 0.2% 2%;
+	border: 1px solid black;
+	margin: 0 1%;
+	margin-top: 0.2vw;
+	padding: 0.2% 2%;
 }
 
 #windowAddRowBtn,
 #windowSwapPresetBtn {
-    position: relative;
-    margin-top: 0.5vw;
-    left: 1vw;
+	position: relative;
+	margin-top: 0.5vw;
+	left: 1vw;
 }
 
 .windowDeleteMapFarm .icomoon,
@@ -218,16 +218,16 @@ ul.tab li a:hover {
 .windowDeleteRaiding .icomoon,
 .windowDeleteBionicRaiding .icomoon,
 .windowDeleteAutoGolden .icomoon {
-    display: inline-block;
-    position: relative;
-    top: 0.6vw;
-    left: -1.5vw;
-    color: red;
-    font-weight: bold;
-    font-size: 2vw;
-    width: 0%;
-    cursor: pointer;
-    padding-left: 0%;
+	display: inline-block;
+	position: relative;
+	top: 0.6vw;
+	left: -1.5vw;
+	color: red;
+	font-weight: bold;
+	font-size: 2vw;
+	width: 0%;
+	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowDeleteMapFarm,
@@ -248,11 +248,11 @@ ul.tab li a:hover {
 .windowDeleteRaiding,
 .windowDeleteBionicRaiding,
 .windowDeleteAutoGolden {
-    display: inline-block;
-    position: relative;
-    width: 0%;
-    cursor: pointer;
-    padding-left: 0%;
+	display: inline-block;
+	position: relative;
+	width: 0%;
+	cursor: pointer;
+	padding-left: 0%;
 }
 
 .windowLevelOff .windowLevelMapFarm,
@@ -268,10 +268,10 @@ ul.tab li a:hover {
 .windowLevelOff .windowLevelHypothermia,
 .windowLevelOff .windowLevelDesolation,
 .windowLevelOff .windowLevelHDFarm {
-    opacity: 0.3;
-    cursor: not-allowed;
-    pointer-events: none;
-    padding-left: 1%;
+	opacity: 0.3;
+	cursor: not-allowed;
+	pointer-events: none;
+	padding-left: 1%;
 }
 
 .windowLevelOn .windowLevelMapFarm,
@@ -287,8 +287,8 @@ ul.tab li a:hover {
 .windowLevelOn .windowLevelHypothermia,
 .windowLevelOn .windowLevelDesolation,
 .windowLevelOn .windowLevelHDFarm {
-    opacity: 1;
-    padding-left: 1%;
+	opacity: 1;
+	padding-left: 1%;
 }
 
 /* Map Farm */
@@ -307,91 +307,91 @@ ul.tab li a:hover {
 .windowRepeatMapFarm,
 .windowHDRatioMapFarm,
 .windowMapTypeDropdownDefaultMapFarm {
-    position: relative;
-    display: inline-block;
-    padding-left: 1%;
+	position: relative;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveMapFarm {
-    width: 4%;
+	width: 4%;
 }
 
 .windowPriorityMapFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowWorldMapFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowCellMapFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowAutoLevelMapFarm {
-    width: 3%;
+	width: 3%;
 }
 
 .windowLevelMapFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowRepeatMapFarm,
 .windowHDRatioMapFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowJobRatioMapFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowRepeatEveryMapFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowEndZoneMapFarm {
-    width: 4%;
+	width: 4%;
 }
 
 .windowSpecialMapFarm {
-    width: 14%;
+	width: 14%;
 }
 
 .windowRunTypeMapFarm {
-    width: 20%;
+	width: 20%;
 }
 
 .windowMapTypeDropdownMapFarm {
-    width: 8%;
+	width: 8%;
 }
 
 .windowMapTypeDropdownDefaultMapFarm {
-    width: 20%;
+	width: 20%;
 }
 
 .windowChallengeOnMapFarm .windowChallengeMapFarm,
 .windowChallenge3OnMapFarm .windowChallenge3MapFarm,
 .windowChallengeOneOffOnMapFarm .windowChallengeOneOffMapFarm {
-    display: inline-block;
-    width: 10%;
+	display: inline-block;
+	width: 10%;
 }
 
 .windowChallenge3OnMapFarm .windowRunTypeMapFarm,
 .windowChallengeOneOffOnMapFarm .windowRunTypeMapFarm,
 .windowChallengeOnMapFarm .windowRunTypeMapFarm {
-    display: inline-block;
-    width: 10%;
+	display: inline-block;
+	width: 10%;
 }
 
 .windowChallengeOffMapFarm .windowChallengeMapFarm,
 .windowChallenge3OffMapFarm .windowChallenge3MapFarm,
 .windowChallengeOneOffOffMapFarm .windowChallengeOneOffMapFarm {
-    display: none;
+	display: none;
 }
 
 .windowGatherOn .windowSpecialMapFarm {
-    width: 6%;
-    padding-left: 1%;
+	width: 6%;
+	padding-left: 1%;
 }
 
 /* Tribute Farm */
@@ -410,91 +410,91 @@ ul.tab li a:hover {
 .windowTributes,
 .windowMets,
 .windowBuildings {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveTributeFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowPriorityTributeFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowWorldTributeFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowCellTributeFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowAutoLevelTributeFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowLevelTributeFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowJobRatioTributeFarm {
-    width: 7%;
+	width: 7%;
 }
 
 .windowRepeatEveryTributeFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowEndZoneTributeFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowMapTypeDropdownTributeFarm {
-    width: 9%;
+	width: 9%;
 }
 
 .windowMapTypeDropdownDefaultTributeFarm {
-    width: 15%;
+	width: 15%;
 }
 
 .windowTributes,
 .windowMets {
-    width: 6%;
+	width: 6%;
 }
 
 .windowBuildings {
-    width: 10%;
-    padding-left: 2%;
-    left: -0.5vw;
+	width: 10%;
+	padding-left: 2%;
+	left: -0.5vw;
 }
 
 .windowRunTypeTributeFarm {
-    width: 16%;
-    padding-left: 0%;
+	width: 16%;
+	padding-left: 0%;
 }
 
 .windowChallengeOnTributeFarm .windowChallengeTributeFarm,
 .windowChallenge3OnTributeFarm .windowChallenge3TributeFarm,
 .windowChallengeOneOffOnTributeFarm .windowChallengeOneOffTributeFarm {
-    display: inline-block;
-    width: 6%;
-    padding-left: 0%;
+	display: inline-block;
+	width: 6%;
+	padding-left: 0%;
 }
 
 .windowChallenge3OnTributeFarm .windowRunTypeTributeFarm,
 .windowChallengeOnTributeFarm .windowRunTypeTributeFarm,
 .windowChallengeOneOffOnTributeFarm .windowRunTypeTributeFarm {
-    display: inline-block;
-    width: 10%;
-    padding-left: 0%;
+	display: inline-block;
+	width: 10%;
+	padding-left: 0%;
 }
 
 .windowChallengeOffTributeFarm .windowChallengeTributeFarm,
 .windowChallenge3OffTributeFarm .windowChallenge3TributeFarm,
 .windowChallengeOneOffOffTributeFarm .windowChallengeOneOffTributeFarm {
-    display: none;
-    padding-left: 0%;
+	display: none;
+	padding-left: 0%;
 }
 
 /* Smithy Farm */
@@ -511,77 +511,77 @@ ul.tab li a:hover {
 .windowRunTypeSmithyFarm,
 .windowSmithies,
 .windowMeltingPoint {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveSmithyFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowPrioritySmithyFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowWorldSmithyFarm {
-    width: 7%;
+	width: 7%;
 }
 
 .windowEndZoneSmithyFarm {
-    width: 7%;
+	width: 7%;
 }
 
 .windowCellSmithyFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowAutoLevelSmithyFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowLevelSmithyFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowMapTypeDropdownSmithyFarm,
 .windowMapTypeDropdownDefaultSmithyFarm {
-    width: 13%;
+	width: 13%;
 }
 
 .windowSmithies {
-    width: 7%;
+	width: 7%;
 }
 
 .windowRepeatEverySmithyFarm {
-    width: 8%;
+	width: 8%;
 }
 
 .windowMeltingPoint {
-    width: 5%;
+	width: 5%;
 }
 
 .windowRunTypeSmithyFarm {
-    width: 22%;
+	width: 22%;
 }
 
 .windowChallengeOnSmithyFarm .windowChallengeSmithyFarm,
 .windowChallenge3OnSmithyFarm .windowChallenge3SmithyFarm,
 .windowChallengeOneOffOnSmithyFarm .windowChallengeOneOffSmithyFarm {
-    display: inline-block;
-    width: 10%;
+	display: inline-block;
+	width: 10%;
 }
 
 .windowChallenge3OnSmithyFarm .windowRunTypeSmithyFarm,
 .windowChallengeOnSmithyFarm .windowRunTypeSmithyFarm,
 .windowChallengeOneOffOnSmithyFarm .windowRunTypeSmithyFarm {
-    display: inline-block;
-    width: 12%;
+	display: inline-block;
+	width: 12%;
 }
 
 .windowChallengeOffSmithyFarm .windowChallengeSmithyFarm,
 .windowChallenge3OffSmithyFarm .windowChallenge3SmithyFarm,
 .windowChallengeOneOffOffSmithyFarm .windowChallengeOneOffSmithyFarm {
-    display: none;
+	display: none;
 }
 
 /* Map Bonus */
@@ -597,80 +597,80 @@ ul.tab li a:hover {
 .windowSpecialMapBonus,
 .windowRunTypeMapBonus,
 .windowMapStacks {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveMapBonus {
-    width: 5%;
+	width: 5%;
 }
 
 .windowPriorityMapBonus {
-    width: 7%;
+	width: 7%;
 }
 
 .windowWorldMapBonus {
-    width: 6%;
+	width: 6%;
 }
 
 .windowEndZoneMapBonus {
-    width: 6%;
+	width: 6%;
 }
 
 .windowCellMapBonus {
-    width: 5%;
+	width: 5%;
 }
 
 .windowAutoLevelMapBonus {
-    width: 5%;
+	width: 5%;
 }
 
 .windowLevelMapBonus {
-    width: 5%;
+	width: 5%;
 }
 
 .windowHDRatioMapBonus {
-    width: 7%;
+	width: 7%;
 }
 
 .windowJobRatioMapBonus {
-    width: 8%;
+	width: 8%;
 }
 
 .windowSpecialMapBonus {
-    width: 20%;
+	width: 20%;
 }
 
 .windowMapStacks {
-    width: 6%;
+	width: 6%;
 }
 
 .windowRunTypeMapBonus {
-    width: 20%;
+	width: 20%;
 }
 
 .windowChallengeOnMapBonus .windowChallengeMapBonus,
 .windowChallenge3OnMapBonus .windowChallenge3MapBonus,
 .windowChallengeOneOffOnMapBonus .windowChallengeOneOffMapBonus {
-    display: inline-block;
-    width: 11%;
+	display: inline-block;
+	width: 11%;
 }
 
 .windowChallenge3OnMapBonus .windowRunTypeMapBonus,
 .windowChallengeOneOffOnMapBonus .windowRunTypeMapBonus,
 .windowChallengeOnMapBonus .windowRunTypeMapBonus {
-    display: inline-block;
-    width: 9%;
+	display: inline-block;
+	width: 9%;
 }
 
 .windowChallengeOffMapBonus .windowChallengeMapBonus,
 .windowChallenge3OffMapBonus .windowChallenge3MapBonus,
 .windowChallengeOneOffOffMapBonus .windowChallengeOneOffMapBonus {
-    display: none;
+	display: none;
 }
 
 .windowGatherOn .windowSpecialMapBonus {
-    width: 12%;
+	width: 12%;
 }
 
 /* Raiding */
@@ -686,76 +686,76 @@ ul.tab li a:hover {
 .windowRaidingZoneRaiding,
 .windowIncrementMaps,
 .windowRecycle {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveRaiding {
-    width: 6%;
+	width: 6%;
 }
 
 .windowPriorityRaiding {
-    width: 5%;
+	width: 5%;
 }
 
 .windowWorldRaiding {
-    width: 5%;
+	width: 5%;
 }
 
 .windowCellRaiding {
-    width: 5%;
+	width: 5%;
 }
 
 .windowEndZoneRaiding {
-    width: 5%;
+	width: 5%;
 }
 
 .windowRepeatEveryRaiding {
-    width: 5%;
+	width: 5%;
 }
 
 .windowRaidingDropdown {
-    width: 10%;
+	width: 10%;
 }
 
 .windowRaidingZoneRaiding {
-    width: 5%;
+	width: 5%;
 }
 
 .windowRecycle {
-    width: 8%;
+	width: 8%;
 }
 
 .windowIncrementMaps {
-    width: 5%;
+	width: 5%;
 }
 
 .windowPrestigeGoalRaiding {
-    width: 19%;
+	width: 19%;
 }
 
 .windowRunTypeRaiding {
-    width: 30%;
+	width: 30%;
 }
 
 .windowChallengeOnRaiding .windowChallengeRaiding,
 .windowChallenge3OnRaiding .windowChallenge3Raiding,
 .windowChallengeOneOffOnRaiding .windowChallengeOneOffRaiding {
-    display: inline-block;
-    width: 14%;
+	display: inline-block;
+	width: 14%;
 }
 
 .windowChallenge3OnRaiding .windowRunTypeRaiding,
 .windowChallengeOnRaiding .windowRunTypeRaiding,
 .windowChallengeOneOffOnRaiding .windowRunTypeRaiding {
-    display: inline-block;
-    width: 16%;
+	display: inline-block;
+	width: 16%;
 }
 
 .windowChallengeOffRaiding .windowChallengeRaiding,
 .windowChallenge3OffRaiding .windowChallenge3Raiding,
 .windowChallengeOneOffOffRaiding .windowChallengeOneOffRaiding {
-    display: none;
+	display: none;
 }
 
 /* Bionic Raiding */
@@ -768,64 +768,64 @@ ul.tab li a:hover {
 .windowPrestigeGoalBionicRaiding,
 .windowRunTypeBionicRaiding,
 .windowRaidingZoneBionicRaiding {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveBionicRaiding {
-    width: 7%;
+	width: 7%;
 }
 
 .windowPriorityBionicRaiding {
-    width: 7%;
+	width: 7%;
 }
 
 .windowWorldBionicRaiding {
-    width: 7%;
+	width: 7%;
 }
 
 .windowCellBionicRaiding {
-    width: 7%;
+	width: 7%;
 }
 
 .windowRepeatEveryBionicRaiding {
-    width: 7%;
+	width: 7%;
 }
 
 .windowEndZoneBionicRaiding {
-    width: 7%;
+	width: 7%;
 }
 
 .windowRaidingZoneBionicRaiding {
-    width: 7%;
+	width: 7%;
 }
 
 .windowPrestigeGoalBionicRaiding {
-    width: 19%;
+	width: 19%;
 }
 
 .windowRunTypeBionicRaiding {
-    width: 31%;
+	width: 31%;
 }
 
 .windowChallengeOnBionicRaiding .windowChallengeBionicRaiding,
 .windowChallenge3OnBionicRaiding .windowChallenge3BionicRaiding,
 .windowChallengeOneOffOnBionicRaiding .windowChallengeOneOffBionicRaiding {
-    display: inline-block;
-    width: 18%;
+	display: inline-block;
+	width: 18%;
 }
 
 .windowChallenge3OnBionicRaiding .windowRunTypeBionicRaiding,
 .windowChallengeOneOffOnBionicRaiding .windowRunTypeBionicRaiding,
 .windowChallengeOnBionicRaiding .windowRunTypeBionicRaiding {
-    display: inline-block;
-    width: 13%;
+	display: inline-block;
+	width: 13%;
 }
 
 .windowChallengeOffBionicRaiding .windowChallengeBionicRaiding,
 .windowChallenge3OffBionicRaiding .windowChallenge3BionicRaiding,
 .windowChallengeOneOffOffBionicRaiding .windowChallengeOneOffBionicRaiding {
-    display: none;
+	display: none;
 }
 
 /* HD Farm */
@@ -843,85 +843,85 @@ ul.tab li a:hover {
 .windowMapCap,
 .windowRunTypeHDFarm,
 .windowMapLevelOn .windowHDMult {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveHDFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowPriorityHDFarm {
-    width: 7%;
+	width: 7%;
 }
 
 .windowWorldHDFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowCellHDFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowAutoLevelHDFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowLevelHDFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowMapCap {
-    width: 6%;
+	width: 6%;
 }
 
 .windowEndZoneHDFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowJobRatioHDFarm {
-    width: 7%;
+	width: 7%;
 }
 
 .windowMapLevelOn .windowHDMult,
 .windowMapLevelOn .windowHDBase {
-    width: 7%;
+	width: 7%;
 }
 
 .windowMapLevelOff .windowHDBase {
-    width: 14%;
+	width: 14%;
 }
 
 .windowMapLevelOff .windowHDMult {
-    display: none;
+	display: none;
 }
 
 .windowHDType {
-    width: 10%;
+	width: 10%;
 }
 
 .windowRunTypeHDFarm {
-    width: 20%;
+	width: 20%;
 }
 
 .windowChallengeOnHDFarm .windowChallengeHDFarm,
 .windowChallenge3OnHDFarm .windowChallenge3HDFarm,
 .windowChallengeOneOffOnHDFarm .windowChallengeOneOffHDFarm {
-    display: inline-block;
-    width: 10%;
+	display: inline-block;
+	width: 10%;
 }
 
 .windowChallenge3OnHDFarm .windowRunTypeHDFarm,
 .windowChallengeOneOffOnHDFarm .windowRunTypeHDFarm,
 .windowChallengeOnHDFarm .windowRunTypeHDFarm {
-    display: inline-block;
-    width: 10%;
+	display: inline-block;
+	width: 10%;
 }
 
 .windowChallengeOffHDFarm .windowChallengeHDFarm,
 .windowChallenge3OffHDFarm .windowChallenge3HDFarm,
 .windowChallengeOneOffOffHDFarm .windowChallengeOneOffHDFarm {
-    display: none;
+	display: none;
 }
 
 /* Toxicity */
@@ -936,58 +936,58 @@ ul.tab li a:hover {
 .windowEndZoneToxicity,
 .windowSpecialToxicity,
 .windowRepeatToxicity {
-    position: relative;
-    display: inline-block;
-    padding-left: 1%;
+	position: relative;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveToxicity {
-    width: 6%;
+	width: 6%;
 }
 
 .windowPriorityToxicity {
-    width: 7%;
+	width: 7%;
 }
 
 .windowWorldToxicity {
-    width: 8%;
+	width: 8%;
 }
 
 .windowCellToxicity {
-    width: 8%;
+	width: 8%;
 }
 
 .windowAutoLevelToxicity {
-    width: 6%;
+	width: 6%;
 }
 
 .windowLevelToxicity {
-    width: 8%;
+	width: 8%;
 }
 
 .windowRepeatToxicity {
-    width: 8%;
+	width: 8%;
 }
 
 .windowJobRatioToxicity {
-    width: 8%;
+	width: 8%;
 }
 
 .windowRepeatEveryToxicity {
-    width: 8%;
+	width: 8%;
 }
 
 .windowEndZoneToxicity {
-    width: 8%;
+	width: 8%;
 }
 
 .windowSpecialToxicity {
-    width: 25%;
+	width: 25%;
 }
 
 .windowGatherOn .windowSpecialToxicity {
-    width: 17%;
-    padding-left: 1%;
+	width: 17%;
+	padding-left: 1%;
 }
 
 /* Worshipper Farm */
@@ -1003,76 +1003,76 @@ ul.tab li a:hover {
 .windowWorshipper,
 .windowWorshipperSkip,
 .windowCellWorshipperFarm {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveWorshipperFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowPriorityWorshipperFarm {
-    width: 6%;
+	width: 6%;
 }
 
 .windowWorldWorshipperFarm {
-    width: 8%;
+	width: 8%;
 }
 
 .windowCellWorshipperFarm {
-    width: 8%;
+	width: 8%;
 }
 
 .windowAutoLevelWorshipperFarm {
-    width: 5%;
+	width: 5%;
 }
 
 .windowLevelWorshipperFarm {
-    width: 8%;
+	width: 8%;
 }
 
 .windowJobRatioWorshipperFarm {
-    width: 9%;
+	width: 9%;
 }
 
 .windowRepeatEveryWorshipperFarm {
-    width: 8%;
+	width: 8%;
 }
 
 .windowEndZoneWorshipperFarm {
-    width: 8%;
+	width: 8%;
 }
 
 .windowWorshipperSkip {
-    width: 8%;
+	width: 8%;
 }
 
 .windowWorshipper {
-    width: 8%;
+	width: 8%;
 }
 
 .windowRunTypeWorshipperFarm {
-    width: 25%;
+	width: 25%;
 }
 
 .windowChallengeOnWorshipperFarm .windowChallengeWorshipperFarm,
 .windowChallengeOneOffOnWorshipperFarm .windowChallengeOneOffWorshipperFarm,
 .windowChallenge3OnWorshipperFarm .windowChallenge3WorshipperFarm {
-    display: inline-block;
-    width: 12%;
+	display: inline-block;
+	width: 12%;
 }
 
 .windowChallenge3OnWorshipperFarm .windowRunTypeWorshipperFarm,
 .windowChallengeOneOffOnWorshipperFarm .windowRunTypeWorshipperFarm,
 .windowChallengeOnWorshipperFarm .windowRunTypeWorshipperFarm {
-    display: inline-block;
-    width: 13%;
+	display: inline-block;
+	width: 13%;
 }
 
 .windowChallengeOffWorshipperFarm .windowChallengeWorshipperFarm,
 .windowChallenge3OffWorshipperFarm .windowChallenge3WorshipperFarm,
 .windowChallengeOneOffOffWorshipperFarm .windowChallengeOneOffWorshipperFarm {
-    display: none;
+	display: none;
 }
 
 /* Bone Shrine */
@@ -1088,73 +1088,73 @@ ul.tab li a:hover {
 .windowBoneAmount,
 .windowBoneGather,
 .windowBoneDefault {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveBoneShrine {
-    width: 6%;
+	width: 6%;
 }
 
 .windowAutoBoneShrine {
-    width: 12%;
+	width: 12%;
 }
 
 .windowPriorityBoneShrine {
-    width: 8%;
+	width: 8%;
 }
 
 .windowWorldBoneShrine {
-    width: 9%;
+	width: 9%;
 }
 
 .windowCellBoneShrine {
-    width: 9%;
+	width: 9%;
 }
 
 .windowJobRatioBoneShrine {
-    width: 10%;
+	width: 10%;
 }
 
 .windowSpecialBoneShrine {
-    width: 22%;
+	width: 22%;
 }
 
 .windowBoneBelow,
 .windowBoneAmount {
-    width: 9%;
+	width: 9%;
 }
 
 .windowBoneDefault {
-    width: 15%;
+	width: 15%;
 }
 
 .windowBoneGather {
-    width: 10%;
+	width: 10%;
 }
 
 .windowRunTypeBoneShrine {
-    width: 25%;
+	width: 25%;
 }
 
 .windowChallengeOnBoneShrine .windowChallengeBoneShrine,
 .windowChallenge3OnBoneShrine .windowChallenge3BoneShrine,
 .windowChallengeOneOffOnBoneShrine .windowChallengeOneOffBoneShrine {
-    display: inline-block;
-    width: 12%;
+	display: inline-block;
+	width: 12%;
 }
 
 .windowChallenge3OnBoneShrine .windowRunTypeBoneShrine,
 .windowChallengeOneOffOnBoneShrine .windowRunTypeBoneShrine,
 .windowChallengeOnBoneShrine .windowRunTypeBoneShrine {
-    display: inline-block;
-    width: 13%;
+	display: inline-block;
+	width: 13%;
 }
 
 .windowChallengeOffBoneShrine .windowChallengeBoneShrine,
 .windowChallenge3OffBoneShrine .windowChallenge3BoneShrine,
 .windowChallengeOneOffOffBoneShrine .windowChallengeOneOffBoneShrine {
-    display: none;
+	display: none;
 }
 
 /* Quagmire */
@@ -1165,36 +1165,36 @@ ul.tab li a:hover {
 .windowJobRatioQuagmire,
 .windowAbandonZone,
 .windowBogs {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowAbandonZone {
-    width: 25%;
+	width: 25%;
 }
 
 .windowActiveQuagmire {
-    width: 16%;
+	width: 16%;
 }
 
 .windowPriorityQuagmire {
-    width: 16%;
+	width: 16%;
 }
 
 .windowWorldQuagmire {
-    width: 16%;
+	width: 16%;
 }
 
 .windowCellQuagmire {
-    width: 16%;
+	width: 16%;
 }
 
 .windowJobRatioQuagmire {
-    width: 16%;
+	width: 16%;
 }
 
 .windowBogs {
-    width: 18%;
+	width: 18%;
 }
 
 /* Archaeology */
@@ -1208,48 +1208,48 @@ ul.tab li a:hover {
 .windowRepeatEveryArchaeology,
 .windowJobRatioArchaeology,
 .windowRelicsArchaeology {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveArchaeology {
-    width: 9%;
+	width: 9%;
 }
 
 .windowPriorityArchaeology {
-    width: 7%;
+	width: 7%;
 }
 
 .windowWorldArchaeology {
-    width: 7%;
+	width: 7%;
 }
 
 .windowEndZoneArchaeology {
-    width: 7%;
+	width: 7%;
 }
 
 .windowCellArchaeology {
-    width: 7%;
+	width: 7%;
 }
 
 .windowAutoLevelArchaeology {
-    width: 6%;
+	width: 6%;
 }
 
 .windowLevelArchaeology {
-    width: 7%;
+	width: 7%;
 }
 
 .windowRepeatEveryArchaeology {
-    width: 7%;
+	width: 7%;
 }
 
 .windowJobRatioArchaeology {
-    width: 14%;
+	width: 14%;
 }
 
 .windowRelicsArchaeology {
-    width: 23%;
+	width: 23%;
 }
 
 /* Insanity */
@@ -1262,44 +1262,44 @@ ul.tab li a:hover {
 .windowJobRatioInsanity,
 .windowSpecialInsanity,
 .windowInsanity {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveInsanity {
-    width: 8%;
+	width: 8%;
 }
 
 .windowPriorityInsanity {
-    width: 9%;
+	width: 9%;
 }
 
 .windowWorldInsanity {
-    width: 9%;
+	width: 9%;
 }
 
 .windowCellInsanity {
-    width: 9%;
+	width: 9%;
 }
 
 .windowAutoLevelInsanity {
-    width: 5%;
+	width: 5%;
 }
 
 .windowLevelInsanity {
-    width: 9%;
+	width: 9%;
 }
 
 .windowJobRatioInsanity {
-    width: 9%;
+	width: 9%;
 }
 
 .windowSpecialInsanity {
-    width: 22%;
+	width: 22%;
 }
 
 .windowInsanity {
-    width: 9%;
+	width: 9%;
 }
 
 /* Alchemy */
@@ -1316,64 +1316,64 @@ ul.tab li a:hover {
 .windowMapTypeDropdownAlchemy,
 .windowEndZoneAlchemy,
 .windowRepeatEveryAlchemy {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveAlchemy {
-    width: 5%;
+	width: 5%;
 }
 
 .windowPriorityAlchemy {
-    width: 5%;
+	width: 5%;
 }
 
 .windowWorldAlchemy {
-    width: 5%;
+	width: 5%;
 }
 
 .windowCellAlchemy {
-    width: 5%;
+	width: 5%;
 }
 
 .windowAutoLevelAlchemy {
-    width: 5%;
+	width: 5%;
 }
 
 .windowEndZoneAlchemy {
-    width: 5%;
+	width: 5%;
 }
 
 .windowRepeatEveryAlchemy {
-    width: 5%;
+	width: 5%;
 }
 
 .windowLevelAlchemy {
-    width: 5%;
+	width: 5%;
 }
 
 .windowJobRatioAlchemy {
-    width: 8%;
+	width: 8%;
 }
 
 .windowSpecialAlchemy {
-    width: 19%;
+	width: 19%;
 }
 
 .windowPotionNumber {
-    width: 6%;
+	width: 6%;
 }
 
 .windowPotionType {
-    width: 16%;
+	width: 16%;
 }
 
 .windowMapTypeDropdownAlchemy {
-    width: 11%;
+	width: 11%;
 }
 
 .windowGatherOn .windowSpecialAlchemy {
-    width: 11%;
+	width: 11%;
 }
 
 /* Hypothermia */
@@ -1388,52 +1388,52 @@ ul.tab li a:hover {
 .windowFrozenCastle,
 .windowStorage,
 .windowPackrat {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveHypothermia {
-    width: 12%;
+	width: 12%;
 }
 
 .windowPriorityHypothermia {
-    width: 12%;
+	width: 12%;
 }
 
 .windowWorldHypothermia {
-    width: 12%;
+	width: 12%;
 }
 
 .windowCellHypothermia {
-    width: 12%;
+	width: 12%;
 }
 
 .windowAutoLevelHypothermia {
-    width: 9%;
+	width: 9%;
 }
 
 .windowLevelHypothermia {
-    width: 12%;
+	width: 12%;
 }
 
 .windowJobRatioHypothermia {
-    width: 18%;
+	width: 18%;
 }
 
 .windowBonfire {
-    width: 12%;
+	width: 12%;
 }
 
 .windowFrozenCastle {
-    width: 22%;
+	width: 22%;
 }
 
 .windowStorage {
-    width: 15%;
+	width: 15%;
 }
 
 .windowPackrat {
-    width: 15%;
+	width: 15%;
 }
 
 /* Desolation */
@@ -1447,50 +1447,50 @@ ul.tab li a:hover {
 .windowSpecialDesolation,
 .windowPrestigeGoalDesolation,
 .windowMapTypeDropdownDefaultDesolation {
-    position: relative;
-    display: inline-block;
-    padding-left: 1%;
+	position: relative;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveDesolation {
-    width: 8%;
+	width: 8%;
 }
 
 .windowPriorityDesolation {
-    width: 10%;
+	width: 10%;
 }
 
 .windowWorldDesolation {
-    width: 10%;
+	width: 10%;
 }
 
 .windowLevelDesolation {
-    width: 10%;
+	width: 10%;
 }
 
 .windowJobRatioDesolation {
-    width: 12%;
+	width: 12%;
 }
 
 .windowRepeatEveryDesolation {
-    width: 10%;
+	width: 10%;
 }
 
 .windowEndZoneDesolation {
-    width: 10%;
+	width: 10%;
 }
 
 .windowSpecialDesolation {
-    width: 20%;
+	width: 20%;
 }
 
 .windowPrestigeGoalDesolation {
-    width: 20%;
+	width: 20%;
 }
 
 .windowGatherOn .windowSpecialDesolation {
-    width: 12%;
-    padding-left: 1%;
+	width: 12%;
+	padding-left: 1%;
 }
 
 /* Void Map */
@@ -1505,69 +1505,69 @@ ul.tab li a:hover {
 .windowPortalAfter,
 .windowDefaultVoidMap,
 .windowVoidHDRatio {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 .windowActiveVoidMap {
-    width: 5%;
+	width: 5%;
 }
 
 .windowPriorityVoidMap {
-    width: 6%;
+	width: 6%;
 }
 
 .windowWorldVoidMap {
-    width: 6%;
+	width: 6%;
 }
 
 .windowMaxVoidZone {
-    width: 6%;
+	width: 6%;
 }
 
 .windowDefaultVoidMap,
 .windowHDTypeVoidMap {
-    width: 11%;
+	width: 11%;
 }
 
 .windowVoidHDRatio {
-    width: 7%;
+	width: 7%;
 }
 
 .windowCellVoidMap {
-    width: 6%;
+	width: 6%;
 }
 
 .windowPortalAfter {
-    width: 5%;
+	width: 5%;
 }
 
 .windowJobRatioVoidMap {
-    width: 9%;
+	width: 9%;
 }
 
 .windowRunTypeVoidMap {
-    width: 20%;
+	width: 20%;
 }
 
 .windowChallengeOnVoidMap .windowChallengeVoidMap,
 .windowChallenge3OnVoidMap .windowChallenge3VoidMap,
 .windowChallengeOneOffOnVoidMap .windowChallengeOneOffVoidMap {
-    display: inline-block;
-    width: 12%;
+	display: inline-block;
+	width: 12%;
 }
 
 .windowChallenge3OnVoidMap .windowRunTypeVoidMap,
 .windowChallengeOneOffOnVoidMap .windowRunTypeVoidMap,
 .windowChallengeOnVoidMap .windowRunTypeVoidMap {
-    display: inline-block;
-    width: 8%;
+	display: inline-block;
+	width: 8%;
 }
 
 .windowChallengeOffVoidMap .windowChallengeVoidMap,
 .windowChallenge3OffVoidMap .windowChallenge3VoidMap,
 .windowChallengeOneOffOffVoidMap .windowChallengeOneOffVoidMap {
-    display: none;
+	display: none;
 }
 
 /* Golden */
@@ -1576,220 +1576,220 @@ ul.tab li a:hover {
 .windowTypeAutoGolden,
 .windowRunTypeAutoGolden,
 .windowPriorityAutoGolden {
-    padding-left: 1%;
-    display: inline-block;
+	padding-left: 1%;
+	display: inline-block;
 }
 
 .windowActiveAutoGolden {
-    width: 11%;
+	width: 11%;
 }
 
 .windowPriorityAutoGolden {
-    width: 10%;
+	width: 10%;
 }
 
 .windowAmtAutoGolden {
-    width: 15%;
+	width: 15%;
 }
 
 .windowTypeAutoGolden {
-    width: 15%;
+	width: 15%;
 }
 
 .windowRunTypeAutoGolden {
-    width: 48%;
+	width: 48%;
 }
 
 .windowChallengeOnAutoGolden .windowChallengeAutoGolden,
 .windowChallenge3OnAutoGolden .windowChallenge3AutoGolden,
 .windowChallengeOneOffOnAutoGolden .windowChallengeOneOffAutoGolden {
-    display: inline-block;
-    width: 24%;
+	display: inline-block;
+	width: 24%;
 }
 
 .windowChallenge3OnAutoGolden .windowRunTypeAutoGolden,
 .windowChallengeOneOffOnAutoGolden .windowRunTypeAutoGolden,
 .windowChallengeOnAutoGolden .windowRunTypeAutoGolden {
-    display: inline-block;
-    width: 24%;
+	display: inline-block;
+	width: 24%;
 }
 
 .windowChallengeOffAutoGolden .windowChallengeAutoGolden,
 .windowChallenge3OffAutoGolden .windowChallenge3AutoGolden,
 .windowChallengeOneOffOffAutoGolden .windowChallengeOneOffAutoGolden {
-    display: none;
+	display: none;
 }
 
 .windowRepeat,
 .windowGather,
 .windowAtlantrimp {
-    display: inline-block;
-    padding-left: 1%;
+	display: inline-block;
+	padding-left: 1%;
 }
 
 #windowError {
-    font-weight: bold;
-    color: red;
+	font-weight: bold;
+	color: red;
 }
 
 .windowRepeat {
-    width: 7%;
+	width: 7%;
 }
 
 .windowAtlantrimp {
-    width: 4%;
+	width: 4%;
 }
 
 .windowGatherOff .windowGather {
-    display: none;
+	display: none;
 }
 
 .windowGatherOn .windowGather {
-    width: 8%;
+	width: 8%;
 }
 
 .uniqueMapValue {
-    display: inline-block;
-    width: 50%;
-    padding: 1%;
-    line-height: normal;
-    border-width: 1px;
-    margin-right: 10%;
+	display: inline-block;
+	width: 50%;
+	padding: 1%;
+	line-height: normal;
+	border-width: 1px;
+	margin-right: 10%;
 }
 
 .settingsBtnLocal {
-    font-size: 1.3vw;
-    cursor: pointer;
-    text-align: center;
+	font-size: 1.3vw;
+	cursor: pointer;
+	text-align: center;
 }
 
 .settingsBtnLocalCogwheel {
-    font-size: 1.3vw;
-    border-right: 1px solid black !important;
-    border-top: 1px solid black !important;
-    border-bottom: 1px solid black !important;
-    cursor: pointer;
-    text-align: center;
+	font-size: 1.3vw;
+	border-right: 1px solid black !important;
+	border-top: 1px solid black !important;
+	border-bottom: 1px solid black !important;
+	cursor: pointer;
+	text-align: center;
 }
 
 .toggleConfigBtnLocal {
-    overflow: hidden;
+	overflow: hidden;
 }
 
 .toggleConfigBtnLocal div {
-    display: inline-block;
-    text-align: center;
+	display: inline-block;
+	text-align: center;
 }
 
 .toggleConfigBtnLocal div:first-child {
-    width: 80%;
+	width: 80%;
 }
 
 .toggleConfigBtnLocal div:nth-child(2) {
-    width: 20%;
-    background-color: grey;
-    float: right;
+	width: 20%;
+	background-color: grey;
+	float: right;
 }
 
 .toggleConfigBtnLocal div:nth-child(2):hover {
-    background-color: #666666;
+	background-color: #666666;
 }
 
 .toggleConfigBtnLocal div span {
-    line-height: 1.2em;
-    font-size: 1.1em;
+	line-height: 1.2em;
+	font-size: 1.1em;
 }
 
 li.indent {
-    list-style-type: square;
-    margin-left: 1vw;
+	list-style-type: square;
+	margin-left: 1vw;
 }
 
 /* Portal Screen CSS overrides */
 
 #empHide,
 #unempHide {
-    font-size: 1.1em;
+	font-size: 1.1em;
 }
 
 .sizeSecReduced {
-    font-size: 1em !important;
-    margin-top: 0.2em;
+	font-size: 1em !important;
+	margin-top: 0.2em;
 }
 
 #titleRow {
-    height: 4.7vw;
-    margin-bottom: 0.5vw;
+	height: 4.7vw;
+	margin-bottom: 0.5vw;
 }
 
 #portalHelium {
-    font-size: 1.7vw;
-    line-height: 1.8vw;
+	font-size: 1.7vw;
+	line-height: 1.8vw;
 }
 
 #portalTotalPortals,
 #portalTotalSpent,
 #portalTotalHelium {
-    font-size: 1.3vw;
-    line-height: 1.4vw;
+	font-size: 1.3vw;
+	line-height: 1.4vw;
 }
 
 #portalTitle {
-    width: 100%;
-    font-size: 3vw;
-    text-align: center;
-    margin-top: 0.9vw;
+	width: 100%;
+	font-size: 3vw;
+	text-align: center;
+	margin-top: 0.9vw;
 }
 
 .inPortalBtn {
-    font-size: 1.3vw !important;
+	font-size: 1.3vw !important;
 }
 
 .portalThing {
-    width: 19.3%;
-    font-size: 1.231vw;
+	width: 19.3%;
+	font-size: 1.231vw;
 }
 
 .portalThing.detailed {
-    font-size: 0.75vw;
-    line-height: 0.85vw;
+	font-size: 0.75vw;
+	line-height: 0.85vw;
 }
 
 #offlineExtraBtnsContainer,
 #offlineMapBtns,
 #offlineZoneBtns {
-    height: 24vw;
-    border: 1px solid white;
-    padding-top: 2vw;
+	height: 24vw;
+	border: 1px solid white;
+	padding-top: 2vw;
 }
 
 #offlineInnerWrapper {
-    width: 50%;
-    margin-left: 25%;
-    font-size: 1.5vw;
-    padding-top: 6%;
+	width: 50%;
+	margin-left: 25%;
+	font-size: 1.5vw;
+	padding-top: 6%;
 }
 
 #settingsRowTW {
-    position: fixed;
-    bottom: 0;
-    background-color: #545353;
-    width: 100%;
-    left: 0;
-    color: white;
-    z-index: 7;
+	position: fixed;
+	bottom: 0;
+	background-color: #545353;
+	width: 100%;
+	left: 0;
+	color: white;
+	z-index: 7;
 }
 
 h9 {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 /* New stuff goes here */
 .btn-changelogNew {
-    background: #1e3c75;
-    font-weight: bold;
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-    width: 100%;
+	background: #1e3c75;
+	font-weight: bold;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	width: 100%;
 }
 
 .btn-changelogNew:hover,
@@ -1798,19 +1798,19 @@ h9 {
 .btn-changelogNew:active,
 .btn-changelogNew.active,
 .open > .dropdown-toggle.btn-new {
-    background: #345594;
-    color: white;
+	background: #345594;
+	color: white;
 }
 
 .open > .dropdown-toggle.btn-new {
-    background-image: none;
+	background-image: none;
 }
 
 .btn-changelog {
-    background: #183854;
-    font-weight: bold;
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-    width: 100%;
+	background: #183854;
+	font-weight: bold;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	width: 100%;
 }
 
 .btn-changelog:hover,
@@ -1819,97 +1819,97 @@ h9 {
 .btn-changelog:active,
 .btn-changelog.active,
 .open > .dropdown-toggle.btn-new {
-    background: #8a648a;
-    color: white;
+	background: #8a648a;
+	color: white;
 }
 
 .open > .dropdown-toggle.btn-new {
-    background-image: none;
+	background-image: none;
 }
 
 .select2 {
-    position: relative;
-    font-size: 0.8vw;
-    color: white;
-    min-width: 13.5vw;
-    max-width: 13.5vw;
-    margin-bottom: 0.1vw;
+	position: relative;
+	font-size: 0.8vw;
+	color: white;
+	min-width: 13.5vw;
+	max-width: 13.5vw;
+	margin-bottom: 0.1vw;
 }
 
 /* Dropdown results.
 Appears when you click the dropdown button! */
 .select2-container--default .select2-results > .select2-results__options {
-    max-height: 28vw !important;
-    font-size: 0.9vw;
-    line-height: 0.8vw;
+	max-height: 28vw !important;
+	font-size: 0.9vw;
+	line-height: 0.8vw;
 }
 
 /* Dropdown text button */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-    background-color: #000;
-    border: 1px white solid;
-    color: white;
-    text-align: left;
-    min-height: 1.5vw;
-    max-height: 1.5vw;
-    padding-left: 0.25vw;
+	background-color: #000;
+	border: 1px white solid;
+	color: white;
+	text-align: left;
+	min-height: 1.5vw;
+	max-height: 1.5vw;
+	padding-left: 0.25vw;
 }
 
 .select2-container .select2-selection--single {
-    display: contents;
+	display: contents;
 }
 
 .select2-control .select2-container {
-    height: auto !important;
-    padding: 0;
+	height: auto !important;
+	padding: 0;
 }
 
 .select2-search--dropdown {
-    background-color: #000;
-    color: white;
+	background-color: #000;
+	color: white;
 }
 
 .select2-search__field {
-    background-color: #000;
-    color: white;
+	background-color: #000;
+	color: white;
 }
 
 .select2-results {
-    background-color: #000;
-    color: white;
+	background-color: #000;
+	color: white;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 1.3vw;
-    width: -webkit-fill-available;
+	line-height: 1.3vw;
+	width: -webkit-fill-available;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 1.3vw;
-    right: 0px;
+	height: 1.3vw;
+	right: 0px;
 }
 
 .select-wrapper {
-    position: relative;
-    font-family: 'Helvetica', 'Arial', sans-serif;
-    display: flex;
-    pointer-events: all;
+	position: relative;
+	font-family: 'Helvetica', 'Arial', sans-serif;
+	display: flex;
+	pointer-events: all;
 
-    &[data-prefix] {
-        &:before {
-            content: attr(data-prefix);
-            display: flex;
-            align-items: center;
-            background-color: #000;
-            vertical-align: center;
-            position: absolute;
-            z-index: 0;
-            font-size: 0.8vw;
-            left: 1px;
-            bottom: 0.2vw;
-            padding: 0 5px 0 4px;
-            color: white;
-            color: #00a7e1;
-        }
-    }
+	&[data-prefix] {
+		&:before {
+			content: attr(data-prefix);
+			display: flex;
+			align-items: center;
+			background-color: #000;
+			vertical-align: center;
+			position: absolute;
+			z-index: 0;
+			font-size: 0.8vw;
+			left: 1px;
+			bottom: 0.2vw;
+			padding: 0 5px 0 4px;
+			color: white;
+			color: #00a7e1;
+		}
+	}
 }
