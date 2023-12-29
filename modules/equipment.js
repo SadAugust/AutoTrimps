@@ -245,7 +245,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
         }
 
         if (!skipPrestiges) {
-            if (maybeBuyPrestige.purchase && (maybeBuyPrestige.statPerResource < mostEfficient[equipType].statPerResource || mostEfficient[equipType].name)) {
+            if (maybeBuyPrestige.purchase && (maybeBuyPrestige.statPerResource < mostEfficient[equipType].statPerResource || !mostEfficient[equipType].name)) {
                 //Skips shields in favour of other equips if we can't afford the prestige as otherwise we'll get stuck on wood equips
                 if (i === 'Shield' && game.resources[MODULES.equipment[i].resource].owned < maybeBuyPrestige.prestigeCost) continue;
                 safeRatio = maybeBuyPrestige.statPerResource;
@@ -264,7 +264,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
         //Stat per resource SHOULD BE resource per stat (so the inverse of it is)
         //Check if the current saved equip is the most efficient (should be lowest statPerResource value equip available)
         //We want the item that gives us the most stats per resource spent so check if the current item is better than the saved one
-        if (mostEfficient[equipType].statPerResource > safeRatio || mostEfficient[equipType].name) {
+        if (mostEfficient[equipType].statPerResource > safeRatio || !mostEfficient[equipType].name) {
             mostEfficient[equipType].name = i;
             mostEfficient[equipType].statPerResource = safeRatio;
             mostEfficient[equipType].prestige = prestige;
