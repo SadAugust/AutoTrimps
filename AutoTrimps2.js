@@ -262,20 +262,17 @@ function shouldRunInTimeWarp() {
 
 function updateInterval() {
     atSettings.intervals.counter++;
-    function toMilliseconds({ seconds = 0, minutes = 0, hours = 0 }) {
-        return (seconds + minutes * 60 + hours * 3600) * 1000;
-    }
 
     const intervals = {
-        oneSecond: toMilliseconds({ seconds: 1 }),
-        twoSeconds: toMilliseconds({ seconds: 2 }),
-        fiveSeconds: toMilliseconds({ seconds: 5 }),
-        sixSeconds: toMilliseconds({ seconds: 6 }),
-        tenSeconds: toMilliseconds({ seconds: 10 }),
-        thirtySeconds: toMilliseconds({ seconds: 30 }),
-        oneMinute: toMilliseconds({ minutes: 1 }),
-        tenMinutes: toMilliseconds({ minutes: 10 }),
-        thirtyMinutes: toMilliseconds({ minutes: 30 })
+        oneSecond: 1000,
+        twoSecond: 2000,
+        fiveSecond: 5000,
+        sixSecond: 6000,
+        tenSecond: 10000,
+        thirtySecond: 30000,
+        oneMinute: 60000,
+        tenMinute: 600000,
+        thirtyMinute: 1800000
     };
 
     for (let key in intervals) {
