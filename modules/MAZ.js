@@ -463,7 +463,7 @@ function mapSettingsDisplay(elem, titleText) {
         //Taking data from the current setting and overriding the info in vals with it.
         if (currSetting.length - 1 >= x) {
             for (var item in settingInputs) {
-                var name = settingInputs[item];
+                let name = settingInputs[item];
                 //Since Golden upgrade & Alchemy farm have 2 inputs that get merged into a single string we need to handle them separately
                 if (golden && name.includes('golden')) {
                     vals.goldenType = typeof currSetting[x].golden !== 'undefined' ? currSetting[x].golden[0] : vals.golden;
@@ -605,7 +605,7 @@ function mapSettingsDisplay(elem, titleText) {
         if (alchemy) tooltipText += "<div class='windowPotionNumber'><input value='" + vals.potionsnumber + "' type='number' id='windowPotionNumber" + x + "'/></div>";
 
         //Hypothermia bonfire goal
-        if (hypothermia) tooltipText += "<div class='windowBonfire'><input value='" + vals.bonfires + "' type='number' id='windowBonfire" + x + "'/></div>";
+        if (hypothermia) tooltipText += "<div class='windowBonfire'><input value='" + vals.bonfire + "' type='number' id='windowBonfire" + x + "'/></div>";
 
         //Bone Shrine - Charges to use
         if (boneShrine) tooltipText += "<div class='windowBoneAmount'><input value='" + vals.boneamount + "' type='number' id='windowBoneAmount" + x + "'/></div>";
