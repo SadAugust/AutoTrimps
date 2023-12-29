@@ -387,7 +387,7 @@ function resetAutoTrimps(autoTrimpsSettings) {
         initialiseAllSettings();
         saveSettings();
         updateATVersion();
-        resetSettingsPortal();
+        _setButtonsPortal();
         updateAutoTrimpSettings(true);
         saveSettings();
         localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;

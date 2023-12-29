@@ -69,6 +69,7 @@ activateClicked = function () {
     autoMagmiteSpender(true);
     pushData();
     originalActivateClicked(...arguments);
+    _setButtonsPortal();
 };
 
 //Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.

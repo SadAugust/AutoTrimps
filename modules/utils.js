@@ -96,7 +96,7 @@ function getPageSetting(setting, universe = game.global.universe) {
 }
 
 //It sets the value of a setting, and then saves the settings.
-function setPageSetting(setting, newValue, universe = portalUniverse) {
+function setPageSetting(setting, newValue, universe = game.global.universe) {
     if (autoTrimpSettings.hasOwnProperty(setting) === false) return false;
 
     const settingType = autoTrimpSettings[setting].type;

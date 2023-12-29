@@ -497,6 +497,7 @@ function doPortal(challenge, skipDaily) {
     autoUpgradeHeirlooms();
     activatePortal();
     resetVarsZone(true);
+    _setButtonsPortal();
     if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
         loadMutations(preset);
         u2Mutations.closeTree();
@@ -629,7 +630,7 @@ function resetVarsZone(loadingSave) {
         MODULES.fightinfo.lastProcessedWorld = 0;
         MODULES.portal.portalForVoid = false;
         MODULES.mapFunctions.afterVoids = false;
-        hideFightButtons();
+        _setFightButtons();
     }
 
     delete mapSettings.voidHDIndex;
@@ -737,10 +738,10 @@ function atlantrimpRespecMessage(cellOverride) {
     if (game.global.universe === 1) respecName = 'Spire';
     if (respecSetting === 2) {
         MODULES.popups.respecAtlantrimp = true;
-        MODULES.popups.remainingTime = 5000;
+        MODULES.popups.remainingTime = MODULES.portal.timeout;
         var description = '<p>Respeccing into the <b>' + respecName + '</b> preset</p>';
         tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false, MODULES.popups.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
-        setTimeout(combatRespec, 5000);
+        setTimeout(combatRespec, MODULES.portal.timeout);
     }
     //If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
     else if (respecSetting === 1) {
@@ -797,45 +798,36 @@ resetGame = function () {
     }
 };
 
-function resetSettingsPortal() {
-    const value = 'value' + (game.global.universe === 2 ? 'U2' : '');
-    const enabled = 'enabled' + (game.global.universe === 2 ? 'U2' : '');
-
-    //Enabling Auto Portal
-    if (getPageSetting('autoMapsPortal')) {
-        autoTrimpSettings['autoMaps'][value] = 1;
-        document.getElementById('autoMaps').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings['autoMaps'][value]);
-        document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings['autoMaps'][value]);
+function _setButtonsPortal() {
+    if (getPageSetting('autoMapsPortal') && !getPageSetting('autoMaps')) {
+        setPageSetting('autoMaps', 1, game.global.universe);
     }
-    //Enabling Auto Equip
-    if (getPageSetting('equipPortal')) {
-        autoTrimpSettings['equipOn'][enabled] = true;
-        const autoEquip = getPageSetting('equipOn');
-        document.getElementById('equipOn').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoEquip);
-        document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + autoEquip);
+    _setAutoMapsClasses();
+
+    if (getPageSetting('equipPortal') && !getPageSetting('equipOn')) {
+        setPageSetting('equipOn', true, game.global.universe);
     }
+    _setAutoEquipClasses();
 
-    //Setting buildings button up
-    if (typeof autoTrimpSettings['buildingSettingsArray'][value].portalOption !== 'undefined') {
-        if (autoTrimpSettings['buildingSettingsArray'][value].portalOption === 'on') autoTrimpSettings['buildingsType'][enabled] = true;
-        if (autoTrimpSettings['buildingSettingsArray'][value].portalOption === 'off') autoTrimpSettings['buildingsType'][enabled] = false;
-
-        document.getElementById('buildingsType').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings['buildingsType'][enabled]);
-        document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + autoTrimpSettings['buildingsType'][enabled]);
+    const autoStructureSettings = getPageSetting('buildingSettingsArray');
+    if (typeof autoStructureSettings.portalOption !== 'undefined' && autoStructureSettings.portalOption !== '0') {
+        setPageSetting('buildingsType', autoStructureSettings.portalOption === 'on', game.global.universe);
     }
+    _setBuildingClasses();
 
-    //Setting jobs button up
-    if (typeof autoTrimpSettings['jobSettingsArray'][value].portalOption !== 'undefined') {
-        if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'autojobs off') autoTrimpSettings['jobType'][value] = 0;
-        if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'auto ratios') autoTrimpSettings['jobType'][value] = 1;
-        if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'manual ratios') autoTrimpSettings['jobType'][value] = 2;
+    const autoJobsSettings = getPageSetting('jobSettingsArray');
+    if (typeof autoJobsSettings.portalOption !== 'undefined' && autoJobsSettings.portalOption !== '0') {
+        const portalOptionMapping = {
+            'autojobs off': 0,
+            'auto ratios': 1,
+            'manual ratios': 2
+        };
 
-        const autoJobs = getPageSetting('jobType');
-
-        document.getElementById('jobType').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
-        document.getElementById('autoJobsLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
+        if (portalOptionMapping.hasOwnProperty(autoJobsSettings.portalOption)) {
+            setPageSetting('jobType', portalOptionMapping[autoJobsSettings.portalOption], game.global.universe);
+        }
     }
+    _setAutoJobsClasses();
 
-    updateButtonText();
     saveSettings();
 }

@@ -1016,14 +1016,10 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
         delete mapSettings.potionTarget;
     }
 
-    //Disables Atlantrimp for 1 second and recalculates mapSettings variable.
+    //Disables Atlantrimp for 0.5 seconds and recalculates mapSettings variable.
     //This is to prevent the issue of Atlantrimp being run when you're saving settings.
-    settingChangedTimeout = true;
+    _settingTimeout(500);
     farmingDecision();
-
-    setTimeout(function () {
-        settingChangedTimeout = false;
-    }, 100);
 }
 
 function mapSettingsHelpWindow(titleText, trimple) {

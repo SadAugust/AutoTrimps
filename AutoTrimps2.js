@@ -400,7 +400,7 @@ function _handleNewWorld() {
         MODULES.mapFunctions.afterVoids = false;
         MODULES.portal.zonePostpone = 0;
         if (!game.upgrades.Battle.done) {
-            resetSettingsPortal();
+            _setButtonsPortal();
         }
     }
     resetVarsZone();

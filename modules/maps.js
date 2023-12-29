@@ -13,9 +13,10 @@ MODULES.maps = {
 
 function autoMapsStatus(get) {
     let status = '';
+    const mapObj = getCurrentMapObject();
     //Setting up status
     if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
-    else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && mapSettings.mapName !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness') status = getCurrentMapObject().name;
+    else if (game.global.mapsActive && mapObj.noRecycle && mapObj.location !== 'Bionic' && mapObj.location !== 'Void' && mapSettings.mapName !== 'Quagmire Farm' && mapObj.location !== 'Darkness') status = mapObj.name;
     else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
     else if (mapSettings.mapName !== '') status = mapSettings.status;
     //Advancing
@@ -35,7 +36,6 @@ function autoMapsStatus(get) {
     let resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
     let getPercent = (game.stats.heliumHour.value() / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
     let lifetime = (game.resources[resourceType.toLowerCase()].owned / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
-    let hiderStatus = resourceShortened + '/hr: ' + (getPercent > 0 ? getPercent.toFixed(3) : 0) + '%<br>&nbsp;&nbsp;&nbsp;' + resourceShortened + ': ' + (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
 
     if (get) {
         return [status, getPercent, lifetime];
@@ -54,7 +54,8 @@ function autoMapsStatus(get) {
         document.getElementById('autoMapStatus').setAttribute('onmouseover', makeAutomapStatusTooltip(true));
     }
     //Set hider (he/hr) status when outside of TW
-    if ((!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('hiderStatus') !== null) {
+    if (getPageSetting('displayHeHr') && (!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('hiderStatus') !== null) {
+        let hiderStatus = resourceShortened + '/hr: ' + (getPercent > 0 ? getPercent.toFixed(3) : 0) + '%<br>&nbsp;&nbsp;&nbsp;' + resourceShortened + ': ' + (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
         if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
         document.getElementById('hiderStatus').setAttribute('onmouseover', makeResourceTooltip(true));
     }

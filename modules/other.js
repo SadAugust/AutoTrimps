@@ -927,7 +927,7 @@ function _handleSlowScumming() {
 }
 
 function _handlePopupTimer() {
-    if (MODULES.popups.remainingTime === 5000) {
+    if (MODULES.popups.remainingTime === MODULES.portal.timeout) {
         MODULES.popups.remainingTime -= 0.0001;
         MODULES.popups.intervalID = setInterval(function () {
             if (MODULES.popups.remainingTime === Infinity) clearInterval(MODULES.popups.intervalID);
