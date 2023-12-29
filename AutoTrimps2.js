@@ -114,10 +114,9 @@ function loadScriptsAT() {
 
 loadScriptsAT();
 
-var ATmessageLogTabVisible = true;
-
-var autoTrimpSettings = {};
-var MODULES = {
+ATmessageLogTabVisible = true;
+autoTrimpSettings = {};
+MODULES = {
     popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
     stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0 },
     graphs: {},
@@ -125,13 +124,13 @@ var MODULES = {
     u2unlocks: []
 };
 
-var currPortalUniverse = 0;
-var currSettingUniverse = 0;
-var settingChangedTimeout = false;
+currPortalUniverse = 0;
+currSettingUniverse = 0;
+settingChangedTimeout = false;
 
-var mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
-var hdStats = {};
-var trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
+mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
+hdStats = {};
+trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
 
 function initialiseScript() {
     const isSettingsNotLoaded = typeof _loadAutoTrimpsSettings !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function';
@@ -263,17 +262,20 @@ function shouldRunInTimeWarp() {
 
 function updateInterval() {
     atSettings.intervals.counter++;
+    function toMilliseconds({ seconds = 0, minutes = 0, hours = 0 }) {
+        return (seconds + minutes * 60 + hours * 3600) * 1000;
+    }
 
     const intervals = {
-        oneSecond: 1000,
-        twoSecond: 2000,
-        fiveSecond: 5000,
-        sixSecond: 6000,
-        tenSecond: 10000,
-        thirtySecond: 30000,
-        oneMinute: 60000,
-        tenMinute: 600000,
-        thirtyMinute: 1800000
+        oneSecond: toMilliseconds({ seconds: 1 }),
+        twoSeconds: toMilliseconds({ seconds: 2 }),
+        fiveSeconds: toMilliseconds({ seconds: 5 }),
+        sixSeconds: toMilliseconds({ seconds: 6 }),
+        tenSeconds: toMilliseconds({ seconds: 10 }),
+        thirtySeconds: toMilliseconds({ seconds: 30 }),
+        oneMinute: toMilliseconds({ minutes: 1 }),
+        tenMinutes: toMilliseconds({ minutes: 10 }),
+        thirtyMinutes: toMilliseconds({ minutes: 30 })
     };
 
     for (let key in intervals) {

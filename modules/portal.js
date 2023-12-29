@@ -772,6 +772,7 @@ atlantrimpRespecOverride();
 // On loading save
 var originalLoad = load;
 load = function () {
+    resetLoops();
     originalLoad(...arguments);
     try {
         loadAugustSettings();
