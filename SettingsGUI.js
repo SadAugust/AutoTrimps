@@ -5129,7 +5129,7 @@ function _createChangelogButton() {
         {
             id: 'atChangelog',
             class: 'btn' + (newChanges ? ' btn-changelogNew' : ' btn-primary'),
-            onclick: "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();"
+            onclick: "window.open(atSettings.initialise.basepath + 'updates.html', '_blank'); updateChangelogButton();"
         },
         ['AT ' + atSettings.initialise.version.split('SadAugust ')[1] + (newChanges ? " | What's New" : '')]
     );
