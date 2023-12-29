@@ -2461,9 +2461,8 @@ function pandemoniumEquipmentCheck(cacheGain) {
 
     prestigesToBuy.sort((a, b) => Object.values(a)[0] - Object.values(b)[0]);
     filterEquipments(prestigesToBuy, equipArray, true);
-    if (equipsToPurchase.attack.name || equipsToPurchase.health.name) return equipsToPurchase;
 
-    return false;
+    return equipsToPurchase;
 }
 
 function pandemoniumEquipFarm(lineCheck) {
@@ -2485,11 +2484,11 @@ function pandemoniumEquipFarm(lineCheck) {
     let mapSpecial = getAvailableSpecials(equipSetting === 3 ? 'hc' : 'lmc');
     const mapLevel = autoLevelCheck(mapName, 'lmc', null, null);
 
-    let cacheGain = scaleToCurrentMap_AT(simpleSeconds_AT('metal', equipSetting === 3 ? 40 : 20, jobRatio), false, true, mapLevel);
+    const cacheGain = scaleToCurrentMap_AT(simpleSeconds_AT('metal', equipSetting === 3 ? 40 : 20, jobRatio), false, true, mapLevel);
 
     const equipsToPurchase = pandemoniumEquipmentCheck(cacheGain);
 
-    if (!equipsToPurchase) return farmingDetails;
+    if (!equipsToPurchase.attack.name && !equipsToPurchase.health.name) return equipsToPurchase;
     let nextEquipmentCost = Infinity;
     for (let equip in equipsToPurchase) {
         if (equipsToPurchase[equip].cost < nextEquipmentCost) nextEquipmentCost = equipsToPurchase[equip].cost;

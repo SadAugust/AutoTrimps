@@ -181,7 +181,7 @@ function heirloomModSearch(heirloom, modifier) {
             var type = ['ShieldEquipped', 'StaffEquipped'];
             var y;
             for (y = type.length - 1; y > -1; y--) {
-                if (Object.keys(game.global[type[y]]).length === 1) continue;
+                if (Object.keys(game.global[type[y]]).length <= 1) continue;
                 loom = game.global[type[y]];
                 if (modifier === 'gammaBurst' && type[y] === 'ShieldEquipped' && loom.rarity >= 10) return Infinity;
                 for (i = loom.mods.length - 1; i > -1; i--) {

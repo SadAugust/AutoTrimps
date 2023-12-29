@@ -20,12 +20,16 @@ If clicking the link does not work, copy the contents of user.js into a new scri
 
 If you are unsure how to do that, copy this:
 
-```
-var script = document.createElement('script');
-script.id = 'AutoTrimps-SadAugust';
-script.src = 'https://SadAugust.github.io/AutoTrimps/AutoTrimps2.js';
-script.setAttribute('crossorigin',"anonymous");
-document.head.appendChild(script);
+```js
+function injectScript(id, src) {
+    var script = document.createElement('script');
+    script.id = id;
+    script.src = src;
+    script.setAttribute('crossorigin', 'anonymous');
+    document.head.appendChild(script);
+}
+
+injectScript('AutoTrimps-SadAugust', 'https://SadAugust.github.io/AutoTrimps/AutoTrimps2.js');
 ```
 
 Press F12 inside the game, this opens the console, and paste the text into it and hit enter, this will load the script. You will have to do this everytime you refresh the game though so I recommend getting tampermonkey to do it for you!

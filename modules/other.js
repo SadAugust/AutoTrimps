@@ -718,7 +718,7 @@ function updateATVersion() {
     //Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
     //No other way to access it in TW currently.
     if (usingRealTimeOffline) {
-        var changelogURL = basepath + 'updates.html';
+        var changelogURL = `${atSettings.initialise.basepath}updates.html`;
         changelog.push('There has been an AutoTrimps update. <a href="' + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
     }
 

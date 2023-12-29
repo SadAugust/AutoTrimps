@@ -496,10 +496,8 @@ function buyEquips() {
     let maxCanAfford = 0;
     let keepBuying = false;
     let bestBuys;
-    if (mapSettings.pandaEquips) {
-        bestBuys = pandemoniumEquipmentCheck(mapSettings.cacheGain);
-        if (!bestBuys) return false;
-    } else bestBuys = mostEfficientEquipment();
+    if (mapSettings.pandaEquips) bestBuys = pandemoniumEquipmentCheck(mapSettings.cacheGain);
+    else bestBuys = mostEfficientEquipment();
     //Set up for both Attack and Health depending on which is cheaper to purchase
     let equipType = bestBuys.attack.cost < bestBuys.health.cost ? 'attack' : 'health';
     let equipName = bestBuys[equipType].name;
