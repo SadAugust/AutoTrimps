@@ -53,7 +53,7 @@ function miRatio() {
 			}
 		},
 		runEnd: {
-			value: game.stats.highestLevel.valueTotal() * 0.9 < game.global.lastPortal ? game.global.lastPortal : game.stats.highestLevel.valueTotal(),
+			value: Math.max(game.stats.highestLevel.valueTotal() * 0.9 < game.global.lastPortal ? game.global.lastPortal : game.stats.highestLevel.valueTotal(), 235),
 			update: function (value = this.value) {
 				this.value = parseInt(value);
 				calculateCurrentPop();
@@ -122,6 +122,7 @@ function miRatio() {
 		//perm dg upgrades
 		storage: { value: game.permanentGeneratorUpgrades.Storage.owned ? 2 : 1 },
 		slowburn: { value: game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5 },
+		decay: { value: game.permanentGeneratorUpgrades.Shielding.owned ? 0.8 : 0.7 },
 		//optimization targets
 		minimizeZone: {
 			value: 231,
@@ -209,36 +210,36 @@ function calculateCurrentPop() {
 	var ar4 = game.global.spiresCompleted >= 4 ? 1e7 : ar3;
 	var ar5 = game.global.spiresCompleted >= 5 ? 1e6 : ar4;
 
-	var uncoords = 0;
-	var uncoordsZone = -1;
-	var uncoordsGoal = 1;
-	var fuelThisZone = [];
-	var totalFuel = [];
-	var overclockTicks = [];
-	var overclockPop = [];
-	var overclockPopThisZone = [];
-	var popWithTauntimp = [];
-	var popFromTauntimp = [];
-	var percentFromTauntimp = [];
-	var tauntimpThisZone = [];
-	var coordPop = [];
-	var amalRatio = [];
-	var adjustedRatio = [];
-	var currentAmals = [];
-	var [coordIncrease, coordinations] = calculateCoordIncrease();
+	let uncoords = 0,
+		uncoordsZone = -1,
+		uncoordsGoal = 1;
+	let fuelThisZone = [],
+		totalFuel = [],
+		overclockTicks = [],
+		overclockPop = [],
+		overclockPopThisZone = [];
+	let popWithTauntimp = [],
+		popFromTauntimp = [],
+		percentFromTauntimp = [],
+		tauntimpThisZone = [];
+	let coordPop = [],
+		amalRatio = [],
+		adjustedRatio = [],
+		currentAmals = [];
+	let [coordIncrease, coordinations] = calculateCoordIncrease();
 
-	var myHze = MODULES.magmiteSettings.runEnd.value;
+	let myHze = MODULES.magmiteSettings.runEnd.value;
 	if (MODULES.magmiteSettings.hze.value > myHze) myHze = MODULES.magmiteSettings.hze.value;
-	var tauntimpFrequency = 2.97;
+	let tauntimpFrequency = 2.97;
 	if (MODULES.magmiteSettings.randimp.value) tauntimpFrequency += 0.396;
 	if (MODULES.magmiteSettings.moreImports.value) tauntimpFrequency += (MODULES.magmiteSettings.moreImports.value * 0.05 * 99) / 100; // inc chance * possible import cells / world cells
 
 	// base CI on end zone
-	var confInterval = 1 - 1.91 / Math.sqrt((MODULES.magmiteSettings.runEnd.value - MODULES.magmiteSettings.fuelStart.value) * tauntimpFrequency);
-	var useConf = true;
-	var skippedCoords = 0;
-	var goalReached = false;
-	for (i = 0; i <= myHze - 200; i++) {
+	let confInterval = 1 - 1.91 / Math.sqrt((MODULES.magmiteSettings.runEnd.value - MODULES.magmiteSettings.fuelStart.value) * tauntimpFrequency);
+	let useConf = true;
+	let skippedCoords = 0;
+	let goalReached = false;
+	for (let i = 0; i <= myHze - 200; i++) {
 		//calc an extra 30 zones because why not
 		// i = zone offset from z230
 
@@ -360,12 +361,24 @@ function checkDGUpgrades() {
 	MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value + 1);
 	var overclockerEfficiency = MODULES.magmite.totalPop - myPop;
 	MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value - 1);
+	const magmiteDecay = MODULES.magmiteSettings.decay.value;
 
 	var eCost = MODULES.magmiteSettings.efficiency.cost;
 	var cCost = MODULES.magmiteSettings.capacity.cost;
 	var sCost = MODULES.magmiteSettings.supply.cost;
 	var oCost = MODULES.magmiteSettings.overclocker.cost;
-
+	const totalRuns = 10;
+	let totalMi = myMI;
+	let checkMi = myMI;
+	var runsNeeded = 2;
+	while (totalRuns > runsNeeded) {
+		checkMi *= magmiteDecay;
+		checkMi += myMI;
+		if (checkMi > totalMi) {
+			totalMi = checkMi;
+		}
+		runsNeeded++;
+	}
 	// MI decay calcs
 	if (eCost > myMI * 4.9) MODULES.magmiteSettings.efficiency.cost = -1;
 	else if (eCost * 2 + 8 <= myMI);
@@ -375,9 +388,9 @@ function checkDGUpgrades() {
 		var runsNeeded = 1;
 		while (eCost > myMI) {
 			MODULES.magmiteSettings.efficiency.cost += myMI;
-			eCost -= myMI * Math.pow(0.8, runsNeeded);
+			eCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
 			runsNeeded++;
-			if (runsNeeded > 20) {
+			if (runsNeeded > totalRuns) {
 				break;
 			}
 		}
@@ -391,9 +404,9 @@ function checkDGUpgrades() {
 		var runsNeeded = 1;
 		while (cCost > myMI) {
 			MODULES.magmiteSettings.capacity.cost += myMI;
-			cCost -= myMI * Math.pow(0.8, runsNeeded);
+			cCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
 			runsNeeded++;
-			if (runsNeeded > 20) {
+			if (runsNeeded > totalRuns) {
 				break;
 			}
 		}
@@ -407,9 +420,9 @@ function checkDGUpgrades() {
 		var runsNeeded = 1;
 		while (sCost > myMI) {
 			MODULES.magmiteSettings.supply.cost += myMI;
-			sCost -= myMI * Math.pow(0.8, runsNeeded);
+			sCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
 			runsNeeded++;
-			if (runsNeeded > 20) {
+			if (runsNeeded > totalRuns) {
 				break;
 			}
 		}
@@ -423,9 +436,9 @@ function checkDGUpgrades() {
 		var runsNeeded = 1;
 		while (oCost > myMI) {
 			MODULES.magmiteSettings.overclocker.cost += myMI;
-			oCost -= myMI * Math.pow(0.8, runsNeeded);
+			oCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
 			runsNeeded++;
-			if (runsNeeded > 20) {
+			if (runsNeeded > totalRuns) {
 				break;
 			}
 		}
@@ -437,10 +450,11 @@ function checkDGUpgrades() {
 	supplyEfficiency /= MODULES.magmiteSettings.supply.cost;
 	overclockerEfficiency /= MODULES.magmiteSettings.overclocker.cost;
 
-	MODULES.magmiteSettings.efficiency.efficiency = 1;
-	MODULES.magmiteSettings.capacity.efficiency = capacityEfficiency / efficiencyEfficiency;
-	MODULES.magmiteSettings.supply.efficiency = supplyEfficiency / efficiencyEfficiency;
-	MODULES.magmiteSettings.overclocker.efficiency = overclockerEfficiency / efficiencyEfficiency;
+	[eCost, cCost, sCost, oCost] = [eCost, cCost, sCost, oCost].map((cost) => (totalMi > cost ? cost : Infinity));
+	MODULES.magmiteSettings.efficiency.efficiency = eCost === Infinity ? 0 : 1;
+	MODULES.magmiteSettings.capacity.efficiency = cCost === Infinity ? 0 : capacityEfficiency / efficiencyEfficiency;
+	MODULES.magmiteSettings.supply.efficiency = sCost === Infinity ? 0 : supplyEfficiency / efficiencyEfficiency;
+	MODULES.magmiteSettings.overclocker.efficiency = oCost === Infinity ? 0 : overclockerEfficiency / efficiencyEfficiency;
 
 	MODULES.magmite.finalResult = [];
 	const upgradeNames = ['Efficiency', 'Capacity', 'Supply', 'Overclocker'];
@@ -458,7 +472,7 @@ function autoMagmiteSpender(portal) {
 	if (game.global.universe !== 1) return;
 	//Set Fuel zones when portaling
 	if (portalWindowOpen) calculateMagmaZones();
-	if (!mutations.Magma.active()) return;
+
 	const magmiteSetting = getPageSetting('spendmagmite', 1);
 	if (portal && (magmiteSetting !== 1 || !portalWindowOpen)) return;
 	if (getPageSetting('ratiospend', 1)) {
