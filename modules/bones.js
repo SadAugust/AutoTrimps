@@ -100,22 +100,24 @@ function _findTotal(resourceMap, resource) {
 	return total - resource['owned'];
 }
 
+function purchaseBonus(bonusName, cost, settingName, debugMessage) {
+	if (!game.singleRunBonuses[bonusName].owned && game.global.b >= cost && getPageSetting(settingName)) {
+		purchaseSingleRunBonus(bonusName);
+		debug(debugMessage, 'bones');
+	}
+}
+
 function buySingleRunBonuses() {
-	//Purchases Golden Maps and Sharp Trimps if we have enough bones and running C2/C3s
 	if (trimpStats.isC3) {
-		if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && getPageSetting('c2GoldenMaps')) {
-			purchaseSingleRunBonus('goldMaps');
-			debug('Purchased Golden Maps for 20 bones.', 'bones');
-		}
-		if (!game.singleRunBonuses.sharpTrimps.owned && game.global.b >= 25 && getPageSetting('c2SharpTrimps')) {
-			purchaseSingleRunBonus('sharpTrimps');
-			debug('Purchased Sharp Trimps for 25 bones.', 'bones');
-		}
+		purchaseBonus('goldMaps', 20, 'c2GoldenMaps', 'Purchased Golden Maps for 20 bones.');
+		purchaseBonus('sharpTrimps', 25, 'c2SharpTrimps', 'Purchased Sharp Trimps for 25 bones.');
 	}
 
-	//Purchase Radonculous/Heliumy if we have enough bones and running Dailies
-	if (trimpStats.isDaily && !game.singleRunBonuses.heliumy.owned && getPageSetting('buyheliumy', portalUniverse) > 0 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100) {
-		purchaseSingleRunBonus('heliumy');
-		debug('Purchased ' + (currSettingUniverse === 2 ? 'Radonculous' : 'Heliumy') + '  for 100 bones on this ' + getPageSetting('buyheliumy', portalUniverse) + '% daily.', 'bones');
-	}
+	if (!trimpStats.isDaily || game.singleRunBonuses.heliumy.owned || game.global.b < 100) return;
+	const heliumySetting = getPageSetting('buyheliumy', game.global.universe);
+	if (heliumySetting <= 0 || getDailyHeliumValue(countDailyWeight()) < heliumySetting) return;
+
+	purchaseSingleRunBonus('heliumy');
+	const bonusName = game.global.universe === 2 ? 'Radonculous' : 'Heliumy';
+	debug(`Purchased ${bonusName} for 100 bones on this ${heliumySetting}% daily.`, 'bones');
 }

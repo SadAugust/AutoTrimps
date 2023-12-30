@@ -456,8 +456,7 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 						newMax = calcHeirloomBonus('Shield', 'storageSize', newMax);
 						if (newMax > resource.owned + amt) break;
 					}
-					var s = count > 1 ? 's' : '';
-					storageBought.push(count + ' ' + storages[x] + s + ', ');
+					storageBought.push(count + ' ' + storages[x] + addAnS(count) + ', ');
 				}
 			}
 		}

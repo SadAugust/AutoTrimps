@@ -189,8 +189,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			const regularRun = !runningHypo && mapSetting.enabled && game.global.world >= mapSetting.zone && game.global.lastClearedCell + 2 >= mapSetting.cell;
 			if (regularRun) return true;
 			const hypoDefaultSettings = getPageSetting('hypothermiaSettings')[0];
-			const hypothermiaRun =
-				runningHypo && mapSettings.mapName !== 'Void Maps' && hypoDefaultSettings.active && game.global.world >= (hypoDefaultSettings.frozencastle[0] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[0]) : 200) && (game.global.lastClearedCell + 2 >= (hypoDefaultSettings.frozencastle[1] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[1]) : 99) || liquified);
+			const hypothermiaRun = runningHypo && mapSettings.mapName !== 'Void Maps' && hypoDefaultSettings.active && game.global.world >= (hypoDefaultSettings.frozencastle[0] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[0]) : 200) && (game.global.lastClearedCell + 2 >= (hypoDefaultSettings.frozencastle[1] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[1]) : 99) || liquified);
 			if (hypothermiaRun) return true;
 			return false;
 		}
@@ -2653,7 +2652,7 @@ function alchemy(lineCheck) {
 
 function _alchemyVoidPotions() {
 	if (!challengeActive('Alchemy') || !getPageSetting('alchemySettings')[0].active || !getPageSetting('alchemySettings')[0].voidPurchase) return;
-	if (game.global.voidBuff === '') return;
+	if (!game.global.voidBuff) return;
 
 	if (alchObj.canAffordPotion('Potion of the Void')) alchObj.craftPotion('Potion of the Void');
 	if (alchObj.canAffordPotion('Potion of Strength')) alchObj.craftPotion('Potion of Strength');

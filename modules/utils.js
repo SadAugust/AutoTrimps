@@ -179,6 +179,10 @@ function filterMessage2(a) {
 	}
 }
 
+function addAnS(num) {
+	return num === 1 ? '' : 's';
+}
+
 //Check if the gameUser setting has been set to a valid user.
 function gameUserCheck(skipTest) {
 	const user = autoTrimpSettings.gameUser.value.trim().toLowerCase();

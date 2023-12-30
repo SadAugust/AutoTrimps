@@ -23,7 +23,7 @@ function safeBuyJob(jobTitle, amount) {
 		}
 	}
 	if (result) {
-		debug((game.global.firing ? 'Firing ' : 'Hiring ') + prettify(amount) + ' ' + jobTitle + (amount > 1 ? 's' : ''), 'jobs', '*users');
+		debug(`${game.global.firing ? 'Firing' : 'Hiring'} ${prettify(amount)} ${jobTitle}${addAnS(amount)}`, 'jobs', '*users');
 		buyJob(jobTitle, true, true);
 		if (game.global.firing && !fireState) fireMode_AT();
 		if (!game.global.firing && fireState) fireMode_AT();

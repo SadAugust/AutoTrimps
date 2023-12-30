@@ -1,4 +1,4 @@
-var atSettings = {
+atSettings = {
 	initialise: {
 		version: '',
 		basepath: 'https://SadAugust.github.io/AutoTrimps/',
@@ -152,7 +152,7 @@ function initialiseScript() {
 
 	if (Object.values(filesNotLoaded).some(Boolean)) {
 		atSettings.intervals.counter++;
-		if (atSettings.intervals.counter % 500 === 0) return initialiseScript();
+		if (atSettings.intervals.counter % 500 === 0) return loadScriptsAT();
 		return setTimeout(initialiseScript, 1);
 	}
 
@@ -390,14 +390,15 @@ function guiLoop() {
 	}
 }
 
-function updatePortalSettings() {
-	atSettings.portal.lastrunworld = atSettings.portal.currentworld;
-	atSettings.portal.currentworld = game.global.world;
-	atSettings.portal.aWholeNewWorld = atSettings.portal.lastrunworld !== atSettings.portal.currentworld;
+function updatePortalSettingVars(setting, currentValue) {
+	atSettings.portal[setting + 'Last'] = atSettings.portal[setting + 'Current'];
+	atSettings.portal[setting + 'Current'] = currentValue;
+	atSettings.portal['aWholeNew' + setting] = atSettings.portal[setting + 'Last'] !== atSettings.portal[setting + 'Current'];
+}
 
-	atSettings.portal.lastHZE = atSettings.portal.currentHZE;
-	atSettings.portal.currentHZE = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-	atSettings.portal.aWholeNewHZE = atSettings.portal.lastHZE !== atSettings.portal.currentHZE;
+function updatePortalSettings() {
+	updatePortalSettingVars('World', game.global.world);
+	updatePortalSettingVars('HZE', game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal());
 }
 
 function _handleNewHZE() {
@@ -421,9 +422,7 @@ function _handleNewWorld() {
 	setTitle();
 	_debugZoneStart();
 	if (getPageSetting('autoEggs', 1)) easterEggClicked();
-	if (dailyOddOrEven().skipZone) {
-		debug('Zone #' + game.global.world + ':  Heirloom swapping and mapping will be affected by Daily Odd/Even.', 'daily');
-	}
+	if (dailyOddOrEven().skipZone) debug('Zone #' + game.global.world + ':  Heirloom swapping and mapping will be affected by Daily Odd/Even.', 'daily');
 	if (usingRealTimeOffline && game.global.world === 60) _timeWarpUpdateEquipment();
 }
 

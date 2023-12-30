@@ -8,7 +8,7 @@ function safeBuyBuilding(building, amt) {
 	if (!bwRewardUnlocked('Foremany') && game.global.world <= 10) amt = 1;
 
 	buyBuilding(building, true, true, amt);
-	if (building !== 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), 'buildings', '*hammer2');
+	if (building !== 'Trap') debug('Building ' + amt + ' ' + building + addAnS(amt), 'buildings', '*hammer2');
 }
 
 function advancedNurseries() {

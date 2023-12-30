@@ -5,8 +5,6 @@ MODULES.breedtimer = {
 
 function trimpsEffectivelyEmployed() {
 	let employedTrimps = game.resources.trimps.employed;
-
-	// Multitasking
 	if (game.permaBoneBonuses.multitasking.owned) employedTrimps *= 1 - game.permaBoneBonuses.multitasking.mult();
 
 	return employedTrimps;
@@ -21,7 +19,7 @@ function breedingPS() {
 }
 
 function getPotencyMod() {
-	let potency = game.resources.trimps.potency;
+	const potency = game.resources.trimps.potency;
 	let potencyMod = new MODULES.breedtimer.DecimalBreed(potency);
 
 	// Potency, Nurseries, Venimp, Broken Planet
@@ -58,16 +56,9 @@ function getPotencyMod() {
 	if (game.jobs.Geneticist.owned > 0) potencyMod = potencyMod.mul(Math.pow(0.98, game.jobs.Geneticist.owned));
 
 	if (game.global.universe === 2) {
-		// Archaeology
 		if (challengeActive('Archaeology')) potencyMod = potencyMod.mul(game.challenges.Archaeology.getStatMult('breed'));
-
-		// Quagmire
 		if (challengeActive('Quagmire')) potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
-
-		// Gene Attack
 		if (u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
-
-		// Gene Health
 		if (u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
 	}
 	return potencyMod.div(10).add(1);
@@ -177,17 +168,20 @@ function _geneticistCost(amount = 1) {
 }
 
 function _hireGenes(genDif) {
-	const genesToBuy = [Math.max(genDif.abs().toNumber()), 500, 100, 50, 10, 5, 1];
-	while (genesToBuy.length > 0 && !_geneticistCost(genesToBuy[0])) genesToBuy.shift();
-	debug('Hiring ' + prettify(genesToBuy[0]) + ' Geneticist' + (genesToBuy[0] > 1 ? 's' : ''), 'jobs', '*users');
-	addGeneticist(genesToBuy[0]);
+	const genesToBuyOptions = [Math.max(genDif.abs().toNumber()), 500, 100, 50, 10, 5, 1];
+	const genesToBuy = genesToBuyOptions.find((gene) => _geneticistCost(gene));
+
+	if (genesToBuy) {
+		debug(`Hiring ${prettify(genesToBuy)} Geneticist${addAnS(genesToBuy)}`, 'jobs', '*users');
+		addGeneticist(genesToBuy);
+	}
 }
 
 function _fireGenes(genDif) {
 	if (!genDif.isFinite()) genDif = new Decimal(-1);
 	if (genDif.cmp(0) < 0) {
 		const genesToFire = Math.max(Math.floor(genDif.abs().toNumber() * 0.8), 1);
-		debug('Firing ' + prettify(genesToFire) + ' Geneticist' + (genesToFire > 1 ? 's' : ''), 'jobs', '*users');
+		debug(`Firing ${prettify(genesToFire)} Geneticist${addAnS(genesToFire)}`, 'jobs', '*users');
 		removeGeneticist(genesToFire);
 	}
 }
