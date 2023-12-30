@@ -348,6 +348,7 @@ function heirloomStaffToEquip(mapType) {
 	if (!getPageSetting('heirloomStaff')) return;
 
 	if (!game.global.mapsActive) {
+		if (['Trapper', 'Trappapalooza'].includes(trimpStats.currChallenge) && getPageSetting('trapper') && getPageSetting('trapperWorldStaff') !== 'undefined') return 'trapperWorldStaff';
 		if (challengeActive('Exterminate') && getPageSetting('exterminate') && getPageSetting('exterminateWorldStaff') !== 'undefined') return 'exterminateWorldStaff';
 		if (getPageSetting('heirloomStaffWorld') !== 'undefined') return 'heirloomStaffWorld';
 	} else if (game.global.mapsActive) {

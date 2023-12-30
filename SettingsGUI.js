@@ -2122,6 +2122,17 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
+			
+		createSetting('trapperWorldStaff',
+			function () { return ('T: World Staff') },
+			function () {
+				let description = "<p>Staff to use during <b>" + (currSettingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b> when you're not mapping.</p>";
+				description += "<p>This will override all other heirloom swapping features when active!</p>";
+				description += "<p>Should ideally be a staff with high primary resource modifiers.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Challenges', [1,2],
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		//Mapology
 		createSetting('mapology',
@@ -4961,7 +4972,7 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields', 'equipShieldBlock'];
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperShield', 'frigid', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserk', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'frigid', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserk', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['autoGigaDeltaFactor'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff', 'mapologyPrestige'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
