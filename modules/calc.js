@@ -136,22 +136,22 @@ function getCurrentWorldCell() {
 
 function debugCalc() {
     //Pre-Init
-    var mapping = game.global.mapsActive ? true : false;
-    var mapType = !mapping ? 'world' : getCurrentMapObject().location === 'Void' ? 'void' : 'map';
-    var zone = mapType === 'world' ? game.global.world : getCurrentMapObject().level;
-    var cell = mapType === 'world' ? getCurrentWorldCell().level : getCurrentMapCell() ? getCurrentMapCell().level : 1;
-    var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
-    var name = getCurrentEnemy() ? getCurrentEnemy().name : 'Chimp';
-    var equality = game.global.universe === 2 ? Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount) : 1;
-    var enemyMin = calcEnemyAttackCore(mapType, zone, cell, name, true, false, 0) * difficulty;
-    var enemyMax = calcEnemyAttackCore(mapType, zone, cell, name, false, false, 0) * difficulty;
-    var mapLevel = mapping && game.talents.bionic2.purchased ? zone - game.global.world : 0;
-    var universeSetting = game.global.universe === 2 ? game.portal.Equality.disabledStackCount : false;
-    var universeSetting2 = game.global.universe === 2 ? false : true;
+    const mapping = game.global.mapsActive ? true : false;
+    const mapType = !mapping ? 'world' : getCurrentMapObject().location === 'Void' ? 'void' : 'map';
+    const zone = mapType === 'world' ? game.global.world : getCurrentMapObject().level;
+    const cell = mapType === 'world' ? getCurrentWorldCell().level : getCurrentMapCell() ? getCurrentMapCell().level : 1;
+    const difficulty = mapping ? getCurrentMapObject().difficulty : 1;
+    const name = getCurrentEnemy() ? getCurrentEnemy().name : 'Chimp';
+    const equality = game.global.universe === 2 ? Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount) : 1;
+    const enemyMin = calcEnemyAttackCore(mapType, zone, cell, name, true, false, 0) * difficulty;
+    const enemyMax = calcEnemyAttackCore(mapType, zone, cell, name, false, false, 0) * difficulty;
+    const mapLevel = mapping && game.talents.bionic2.purchased ? zone - game.global.world : 0;
+    const universeSetting = game.global.universe === 2 ? game.portal.Equality.disabledStackCount : false;
+    const universeSetting2 = game.global.universe === 2 ? false : true;
 
     //Init
-    var displayedMin = calcOurDmg('min', universeSetting, true, mapType, 'never', mapLevel, true);
-    var displayedMax = calcOurDmg('max', universeSetting, true, mapType, 'never', mapLevel, true);
+    const displayedMin = calcOurDmg('min', universeSetting, true, mapType, 'never', mapLevel, true);
+    const displayedMax = calcOurDmg('max', universeSetting, true, mapType, 'never', mapLevel, true);
 
     //Trimp Stats
     debug(`Our Stats`, 'other');

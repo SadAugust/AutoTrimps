@@ -119,32 +119,30 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 	}
 }
 
-function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipForLevels, equipHighlight, fakeLevels = {}, ignorePrestiges) {
-	for (var i in MODULES.equipment) {
-		if (typeof fakeLevels[i] === 'undefined') {
-			fakeLevels[i] = 0;
+function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShield = getPageSetting('equipNoShields'), skipForLevels = false, equipHighlight, fakeLevels = {}, ignorePrestiges) {
+	Object.keys(MODULES.equipment).forEach((equipName) => {
+		if (typeof fakeLevels[equipName] === 'undefined') {
+			fakeLevels[equipName] = 0;
 		}
-	}
-	if (!ignoreShield) ignoreShield = getPageSetting('equipNoShields');
-	if (!skipForLevels) skipForLevels = false;
-	var currentMap = getCurrentMapObject();
-	if (currentMap === undefined) currentMap = { location: 'world' };
-	var zoneGoHealth = !zoneGo ? zoneGoCheck(getPageSetting('equipZone'), 'health', currentMap).active : zoneGo;
-	var zoneGoAttack = !zoneGo ? zoneGoCheck(getPageSetting('equipZone'), 'attack', currentMap).active : zoneGo;
+	});
 
-	var resourceSpendingPctHealth = !resourceSpendingPct ? (zoneGoHealth ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100) : resourceSpendingPct;
-	var resourceSpendingPctAttack = !resourceSpendingPct ? (zoneGoAttack ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100) : resourceSpendingPct;
+	const currentMap = getCurrentMapObject() || { location: 'world' };
+	const zoneGoHealth = zoneGo || zoneGoCheck(getPageSetting('equipZone'), 'health', currentMap).active;
+	const zoneGoAttack = zoneGo || zoneGoCheck(getPageSetting('equipZone'), 'attack', currentMap).active;
+
+	const resourceSpendingPctHealth = resourceSpendingPct || (zoneGoHealth ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100);
+	const resourceSpendingPctAttack = resourceSpendingPct || (zoneGoAttack ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100);
 
 	if (challengeActive('Scientist') || challengeActive('Frugal')) skipForLevels = Infinity;
 
-	var mostEfficient = {
+	const mostEfficient = {
 		attack: {
 			name: '',
 			statPerResource: Infinity,
 			prestige: false,
 			cost: 0,
 			resourceSpendingPct: 0,
-			zoneGo: false,
+			zoneGo: zoneGoAttack,
 			equipCap: 0
 		},
 		health: {
@@ -153,55 +151,51 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 			prestige: false,
 			cost: 0,
 			resourceSpendingPct: 0,
-			zoneGo: false,
+			zoneGo: zoneGoHealth,
 			equipCap: 0
 		}
 	};
 
-	var highestPrestige = 0;
-	var prestigesAvailable = false;
+	let highestPrestige = 0;
+	let prestigesAvailable = false;
 
-	var canAtlantrimp = game.mapUnlocks.AncientTreasure.canRunOnce;
-	var prestigeSetting = getPageSetting('equipPrestige');
-	var prestigePct = 1;
+	const canAtlantrimp = game.mapUnlocks.AncientTreasure.canRunOnce;
+	const prestigeSetting = getPageSetting('equipPrestige');
+	let prestigePct = 1;
 	if (prestigeSetting === 2 && !canAtlantrimp) prestigePct = getPageSetting('equipPrestigePct') / 100;
 
 	//Checks what our highest prestige level is AND if there are any prestiges available to purchase
 	//If this fully runs and returns true it WILL override checking non-prestige equip stats!
-	for (var i in MODULES.equipment) {
-		var equipType = MODULES.equipment[i].stat;
-		var prestigeGo = equipType === 'attack' ? zoneGoAttack : zoneGoHealth;
-		if (game.equipment[i].prestige > highestPrestige) highestPrestige = game.equipment[i].prestige;
-		if (prestigesAvailable) continue;
-		if (ignorePrestiges) continue;
+	for (let equipName in MODULES.equipment) {
+		let equipType = MODULES.equipment[equipName].stat;
+		if (game.equipment[equipName].prestige > highestPrestige) highestPrestige = game.equipment[equipName].prestige;
+		if (prestigesAvailable || ignorePrestiges || equipName === 'Shield' || buyPrestigeMaybe(equipName).skip) continue;
 		if (prestigeSetting === 0) continue;
-		if (prestigeSetting === 1 && prestigeGo) continue;
+		if (prestigeSetting === 1 && mostEfficient[equipType].zoneGo) continue;
 		if (prestigeSetting === 2 && !canAtlantrimp) continue;
-		if (i === 'Shield') continue;
-		if (buyPrestigeMaybe(i).skip) continue;
 		prestigesAvailable = true;
 	}
 
 	//Loops through each piece of equipment to figure out the most efficient one to buy
-	for (var i in MODULES.equipment) {
-		if (game.equipment[i].locked) continue;
+	for (let equipName in MODULES.equipment) {
+		if (game.equipment[equipName].locked) continue;
 
-		var equipType = MODULES.equipment[i].stat;
-		zoneGo = equipType === 'attack' ? zoneGoAttack : zoneGoHealth;
-		var prestige = false;
+		const equipType = MODULES.equipment[equipName].stat;
+		const zoneGo = mostEfficient[equipType].zoneGo;
 		resourceSpendingPct = equipType === 'attack' ? resourceSpendingPctAttack : resourceSpendingPctHealth;
 		if (resourceSpendingPct > 1) resourceSpendingPct = 1;
-		var nextLevelValue = 1;
-		var safeRatio = 1;
+		let nextLevelValue = 1;
+		let safeRatio = 1;
+		let prestige = false;
 		//Figuring out if we should force prestige purchases or check non-prestige stats
-		var forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAtlantrimp) || prestigeSetting === 3;
+		const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAtlantrimp) || prestigeSetting === 3;
 		//Identifying the equip cap for this equip type
-		var equipCap = !skipForLevels && equipType === 'attack' ? getPageSetting('equipCapAttack') : !skipForLevels && equipType === 'health' ? getPageSetting('equipCapHealth') : skipForLevels;
+		let equipCap = !skipForLevels && equipType === 'attack' ? getPageSetting('equipCapAttack') : !skipForLevels && equipType === 'health' ? getPageSetting('equipCapHealth') : skipForLevels;
 
-		var nextLevelCost = game.equipment[i].cost[MODULES.equipment[i].resource][0] * Math.pow(game.equipment[i].cost[MODULES.equipment[i].resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
+		let nextLevelCost = game.equipment[equipName].cost[MODULES.equipment[equipName].resource][0] * Math.pow(game.equipment[equipName].cost[MODULES.equipment[equipName].resource][1], game.equipment[equipName].level + fakeLevels[equipName]) * getEquipPriceMult();
 
 		//Skipping Shields when can buy Gymystic
-		if (game.global.universe === 1 && i === 'Shield' && needGymystic()) continue;
+		if (game.global.universe === 1 && equipName === 'Shield' && needGymystic()) continue;
 		//Setting armor equips to 100% when we need to farm health
 		if (mapSettings.shouldHealthFarm && equipType === 'health') resourceSpendingPct = 1;
 		//Setting equips to 100% spending during Smithless farm. Weapons always and armor if we are using more than 0 equality levels
@@ -210,44 +204,44 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 			resourceSpendingPct = 1;
 		}
 		//Load buyPrestigeMaybe into variable so it's not called 500 times
-		const maybeBuyPrestige = buyPrestigeMaybe(i, resourceSpendingPct, game.equipment[i].level);
+		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, game.equipment[equipName].level);
 		//Stops the script from buying more than 9 levels in an equip if we have prestiges available
 		if (maybeBuyPrestige.prestigeAvailable) equipCap = 9;
 		//Skips if we have the equip capped and we aren't potentially farming for the prestige
-		if (!maybeBuyPrestige.purchase && game.equipment[i].level >= equipCap) continue;
+		if (!maybeBuyPrestige.purchase && game.equipment[equipName].level >= equipCap) continue;
 		//Skips if ignoreShield variable is true.
-		if (ignoreShield && i === 'Shield') continue;
+		if (ignoreShield && equipName === 'Shield') continue;
 		//Skips looping through equips if they're blocked during Pandemonium.
-		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
+		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) continue;
 		//Skips buying shields when you can afford bonfires on Hypothermia.
-		if (challengeActive('Hypothermia') && i === 'Shield' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
+		if (challengeActive('Hypothermia') && equipName === 'Shield' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
 		//Skips through equips if they cost more than your equip purchasing percent setting value.
 		//Potentially unnecessary with all the other checks for if we can afford a prestige -- Removed for now. Might need to come up with a different implementation if AE breaks due to this.
-		//if (!equipHighlight && !canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) && !maybeBuyPrestige.purchase) continue;
+		//if (!equipHighlight && !canAffordBuilding(equipName, null, null, true, false, 1, resourceSpendingPct * 100) && !maybeBuyPrestige.purchase) continue;
 		//Skips equips if we have prestiges available & no prestiges to get for this
 		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
 		//If prestiges available & running certain setting skips (check above for loop) look at non-prestige item stats.
 		if (!prestigesAvailable || !forcePrestige) {
-			nextLevelValue = game.equipment[i][MODULES.equipment[i].stat + 'Calculated'];
+			nextLevelValue = game.equipment[equipName][MODULES.equipment[equipName].stat + 'Calculated'];
 			safeRatio = nextLevelCost / nextLevelValue;
 		}
 
 		//Early game bandaid fix for lack of gems, science etc.
 		//Setting skipPrestiges to true if ignorePrestiges is called OR buyPrestigeMaybe.skip (we don't have enough Science or Gems for the Prestige which SHOULD only happen in the ultra early game)
-		var skipPrestiges = ignorePrestiges || maybeBuyPrestige.skip || false;
+		let skipPrestiges = ignorePrestiges || maybeBuyPrestige.skip || false;
 		//Check for further overrides for if we want to skip looking at prestiges
 		if (!skipPrestiges) {
-			if ((prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGoCheck(getPageSetting('equipZone')) && !ignorePrestiges)) && game.equipment[i].level < 6) skipPrestiges = true;
-			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[MODULES.equipment[i].resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) {
+			if ((prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGoCheck(getPageSetting('equipZone')) && !ignorePrestiges)) && game.equipment[equipName].level < 6) skipPrestiges = true;
+			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[MODULES.equipment[equipName].resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) {
 				skipPrestiges = true;
-				if (game.equipment[i].level >= equipCap) continue;
+				if (game.equipment[equipName].level >= equipCap) continue;
 			}
 		}
 
 		if (!skipPrestiges) {
 			if (maybeBuyPrestige.purchase && (maybeBuyPrestige.statPerResource < mostEfficient[equipType].statPerResource || !mostEfficient[equipType].name)) {
 				//Skips shields in favour of other equips if we can't afford the prestige as otherwise we'll get stuck on wood equips
-				if (i === 'Shield' && game.resources[MODULES.equipment[i].resource].owned < maybeBuyPrestige.prestigeCost) continue;
+				if (equipName === 'Shield' && game.resources[MODULES.equipment[equipName].resource].owned < maybeBuyPrestige.prestigeCost) continue;
 				safeRatio = maybeBuyPrestige.statPerResource;
 				nextLevelCost = maybeBuyPrestige.prestigeCost;
 				nextLevelValue = maybeBuyPrestige.newStatValue;
@@ -255,17 +249,17 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 			}
 			//Skips items if they aren't at the highest prestige level
 			//This is so that we don't unnecessarily spend resources on equips levels that aren't at the highest prestige level we own
-			else if (game.equipment[i].prestige > highestPrestige && forcePrestige) continue;
+			else if (game.equipment[equipName].prestige > highestPrestige && forcePrestige) continue;
 		}
 		//Skips shields in favour of other equips if we aren't prestiging the equip as we'll otherwise we'll get stuck on wood equips
-		if (i === 'Shield' && !prestige && (!canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) || game.equipment[i].level >= equipCap)) continue;
+		if (equipName === 'Shield' && !prestige && (!canAffordBuilding(equipName, null, null, true, false, 1, resourceSpendingPct * 100) || game.equipment[equipName].level >= equipCap)) continue;
 
 		if (safeRatio === 1) continue;
 		//Stat per resource SHOULD BE resource per stat (so the inverse of it is)
 		//Check if the current saved equip is the most efficient (should be lowest statPerResource value equip available)
 		//We want the item that gives us the most stats per resource spent so check if the current item is better than the saved one
 		if (mostEfficient[equipType].statPerResource > safeRatio || !mostEfficient[equipType].name) {
-			mostEfficient[equipType].name = i;
+			mostEfficient[equipType].name = equipName;
 			mostEfficient[equipType].statPerResource = safeRatio;
 			mostEfficient[equipType].prestige = prestige;
 			mostEfficient[equipType].cost = nextLevelCost;
@@ -279,7 +273,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 	return mostEfficient;
 }
 
-function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
+function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel = Infinity) {
 	const prestigeInfo = {
 		purchase: false,
 		prestigeAvailable: false,
@@ -295,10 +289,9 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
 	if (getPageSetting('equipNoShields') && equipName === 'Shield') return prestigeInfo;
-	if (!maxLevel) maxLevel = Infinity;
 
 	//Check to see if the equipName is valid
-	if (Object.getOwnPropertyNames(MODULES.equipment).indexOf(equipName) === -1) return prestigeInfo;
+	if (!Object.getOwnPropertyNames(MODULES.equipment).includes(equipName)) return prestigeInfo;
 
 	const prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
 	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];
@@ -308,34 +301,36 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 
 	const equipment = game.equipment[equipName];
 
+	const {
+		science: [scienceCost, scienceMultiplier],
+		gems: [gemsCost, gemsMultiplier]
+	} = prestigeUpgrade.cost.resources;
+
 	//Check to see if we have enough science to purchase the prestige
-	if (prestigeUpgrade.cost.resources.science[0] * Math.pow(prestigeUpgrade.cost.resources.science[1], equipment.prestige - 1) > game.resources.science.owned) {
+	if (scienceCost * Math.pow(scienceMultiplier, equipment.prestige - 1) > game.resources.science.owned) {
 		return prestigeInfo;
 	}
 	//Check to see if we have enough gems to purchase the prestige
-	if (prestigeUpgrade.cost.resources.gems[0] * Math.pow(prestigeUpgrade.cost.resources.gems[1], equipment.prestige - 1) > game.resources.gems.owned) {
+	if (gemsCost * Math.pow(gemsMultiplier, equipment.prestige - 1) > game.resources.gems.owned) {
 		return prestigeInfo;
 	}
 
-	var resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
-	var equipStat = typeof equipment.attack !== 'undefined' ? 'attack' : 'health';
+	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
+	const equipStat = equipment.attack !== undefined ? 'attack' : 'health';
 	if (!resourceSpendingPct) resourceSpendingPct = 1;
 
-	//Cost of the base upgrade for the prestige
-	var prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
-	//How many levels we can afford in the prestige with out current resource total
-	var newLevel = 1 + Math.max(0, Math.floor(getMaxAffordable(prestigeCost * 1.2, (game.resources[resourceUsed].owned - prestigeCost) * resourceSpendingPct, 1.2, true)));
-	//On the off chance we can't afford any levels then set the minimum to one otherwise use the actual value
+	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
+	let newLevel = 1 + Math.max(0, Math.floor(getMaxAffordable(prestigeCost * 1.2, (game.resources[resourceUsed].owned - prestigeCost) * resourceSpendingPct, 1.2, true)));
 	newLevel = Math.max(1, Math.min(maxLevel, newLevel));
 	//Figure out how many stats the new prestige + levels we can afford in it will provide
-	var oneLevelStat = Math.round(equipment[equipStat] * Math.pow(1.19, equipment.prestige * game.global.prestige[equipStat] + 1));
-	var newStatValue = newLevel * oneLevelStat;
+	const oneLevelStat = Math.round(equipment[equipStat] * Math.pow(1.19, equipment.prestige * game.global.prestige[equipStat] + 1));
+	const newStatValue = newLevel * oneLevelStat;
 	//Identify the stat total we currently get from the equip
-	var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
+	const currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 	//Work out the total cost of the prestige + levels we can afford in it
 	//var prestigeCostTotal = prestigeCost + (prestigeCost * Math.pow(1.2, (newLevel - 1)));
 	//Figure out how many stats we get per resource
-	var statPerResource = prestigeCost / oneLevelStat;
+	const statPerResource = prestigeCost / oneLevelStat;
 
 	prestigeInfo.purchase = newStatValue > currentStatValue;
 	prestigeInfo.oneLevelStat = oneLevelStat;
@@ -352,36 +347,33 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 }
 
 //Check to see if we are in the zone range that the user set
-function zoneGoCheck(setting, farmType, mapType) {
+function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 	const zoneDetails = {
 		active: true,
 		zone: game.global.world
 	};
 
-	if (!mapType) mapType = { location: 'world' };
-	var hdRatio = hdStats.hdRatio;
+	let hdRatio = hdStats.hdRatio;
 	if (mapType.location === 'Void' || (mapSettings.voidHitsSurvived && trimpStats.autoMaps)) hdRatio = hdStats.hdRatioVoid;
 	else if (mapType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) hdRatio = hdStats.hdRatioMap;
 
 	//Equipment related section for zone overrides
-	if (farmType === 'attack' || farmType === 'health') {
-		if (farmType === 'attack') {
-			//Farming for damage means we should prio attack equips
-			if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
-			//Since we're farming for more damage to kill we want to spend 100% of our resources on attack equips
-			if (mapSettings.mapName === 'Wither Farm') return zoneDetails;
-			if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
-		}
-		if (farmType === 'health') {
-			if (whichHitsSurvived() < getPageSetting('equipCutOffHS')) return zoneDetails;
-			//Farming for health means we should prio health equips
-			if (mapSettings.shouldHealthFarm) return zoneDetails;
-			//Since having to use equality will lower our damage then we want more health to reduce equality usage
-			if (mapSettings.mapName === 'Wither Farm' && mapSettings.equality > 0) return zoneDetails;
-			if (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0) return zoneDetails;
-			//Since equality has a big impact on u2 HD Ratio then we want more health to reduce equality required.
-			if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && game.portal.Equality.radLevel > 0) return zoneDetails;
-		}
+	if (farmType === 'attack') {
+		//Farming for damage means we should prio attack equips
+		if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+		//Since we're farming for more damage to kill we want to spend 100% of our resources on attack equips
+		if (mapSettings.mapName === 'Wither Farm') return zoneDetails;
+		if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
+	}
+	if (farmType === 'health') {
+		if (whichHitsSurvived() < getPageSetting('equipCutOffHS')) return zoneDetails;
+		//Farming for health means we should prio health equips
+		if (mapSettings.shouldHealthFarm) return zoneDetails;
+		//Since having to use equality will lower our damage then we want more health to reduce equality usage
+		if (mapSettings.mapName === 'Wither Farm' && mapSettings.equality > 0) return zoneDetails;
+		if (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0) return zoneDetails;
+		//Since equality has a big impact on u2 HD Ratio then we want more health to reduce equality required.
+		if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && game.portal.Equality.radLevel > 0) return zoneDetails;
 	}
 
 	var settingZone = setting;
@@ -457,10 +449,10 @@ function autoEquip() {
 	const alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && !mapSettings.pandaEquips && getPageSetting('pandemoniumAE') > 0;
 	//always2 / alwaysPandemonium
 	if (alwaysLvl2 || alwaysPandemonium) {
-		var equipLeft = false;
+		let equipLeft = false;
 		do {
 			equipLeft = false;
-			for (var equip in game.equipment) {
+			for (let equip in game.equipment) {
 				if (!game.equipment[equip].locked) {
 					//Skips trying to buy extra levels if we can't afford them
 					if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
@@ -485,7 +477,7 @@ function autoEquip() {
 
 	//Purchasing equipment upgrades/prestiges
 	//If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
-	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop) buyEquips();
+	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || checkIfLiquidZone()) buyEquips();
 	else {
 		do keepBuying = buyEquips();
 		while (keepBuying);
@@ -528,7 +520,7 @@ function buyEquips() {
 						//If the equip cap check didn't say we have 0 levels to buy then buy the max levels we can afford
 						if (maxCanAfford > 0) {
 							buyEquipment(equipName, true, true, maxCanAfford);
-							debug(`Upgrading ${maxCanAfford} ${equipName}${maxCanAfford > 1 && equipName.endsWith('s') ? 's' : ''}`, `equipment`, `*upload3`);
+							debug(`Upgrading ${maxCanAfford} ${equipName}${maxCanAfford > 1 && !equipName.endsWith('s') ? 's' : ''}`, `equipment`, `*upload3`);
 							keepBuying = true;
 						}
 					}

@@ -163,7 +163,6 @@ function initialiseScript() {
 	_raspberryPiSettings();
 	updateATVersion();
 
-	atSettings.initialise.loaded = true;
 	const gammaBurstPct = getHeirloomBonus('Shield', 'gammaBurst') / 100;
 	MODULES.heirlooms.gammaBurstPct = gammaBurstPct > 0 ? gammaBurstPct : 1;
 	trimpStats = new TrimpStats(true);
@@ -186,6 +185,7 @@ function initialiseScript() {
 	//Copy gameLoop for when we enter toggleCatchUpMode.
 	originalGameLoop = gameLoop;
 	toggleCatchUpMode();
+	atSettings.initialise.loaded = true;
 	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
 	console.timeEnd();
 }

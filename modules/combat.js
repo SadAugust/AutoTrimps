@@ -1,4 +1,5 @@
-function callBetterAutoFight() {	avoidEmpower();
+function callBetterAutoFight() {
+	avoidEmpower();
 	trimpicide();
 	if (getPageSetting('autoFight') === 0) return;
 	else if (getPageSetting('autoFight') === 1) betterAutoFight();
@@ -6,13 +7,16 @@ function callBetterAutoFight() {	avoidEmpower();
 }
 
 function newArmyRdy() {
-	if (['Trapper', 'Trappapalooza'].indexOf(trimpStats.currChallenge) > -1 && getPageSetting('trapper')) {
-		var popSetting = getPageSetting('trapperArmyPct');
-		if (popSetting > 100) popSetting = 100;
+	const { trimps } = game.resources;
+	const challenges = ['Trapper', 'Trappapalooza'];
+
+	if (challenges.includes(trimpStats.currChallenge) && getPageSetting('trapper')) {
+		let popSetting = getPageSetting('trapperArmyPct');
+		popSetting = Math.min(popSetting, 100);
 		if (popSetting <= 0) return true;
-		return game.resources.trimps.owned > game.resources.trimps.maxSoldiers * popSetting;
+		return trimps.owned > trimps.maxSoldiers * popSetting;
 	}
-	return game.resources.trimps.realMax() <= game.resources.trimps.owned;
+	return trimps.realMax() <= trimps.owned;
 }
 
 function betterAutoFight() {
@@ -54,7 +58,7 @@ function forceAbandonTrimps() {
 	if (!game.global.mapsUnlocked) return;
 	if (game.global.preMapsActive) return;
 	//Exit and restart the map. If we are in the world, enter the world again.
-	if (game.global.mapsActive) {
+	if (game.global.mapsActivee && !game.global.voidBuff) {
 		mapsClicked(true);
 		runMap();
 	} else {
@@ -143,15 +147,22 @@ function armyDeath() {
 function avoidEmpower() {
 	if (!armyDeath()) return;
 
-	if (game.global.mapsActive && game.global.voidBuff === '') {
+	if (game.global.mapsActive && !game.global.voidBuff) {
 		mapsClicked(true);
 		runMap_AT();
 	} else if (!game.global.mapsActive) {
 		mapsClicked(true);
 		mapsClicked(true);
 	}
-	debug('Abandoning Trimps to avoid Empower stacks.', 'other');
-	return;
+	debug(`Abandoning Trimps to avoid Empower stacks.`, `other`);
+}
+
+function setEquality(equality) {
+	if (game.portal.Equality.disabledStackCount !== equality) {
+		game.portal.Equality.disabledStackCount = equality;
+		manageEqualityStacks();
+		updateEqualityScaling();
+	}
 }
 
 function equalityManagementBasic() {
@@ -160,9 +171,7 @@ function equalityManagementBasic() {
 
 	if (challengeActive('Desolation') && mapSettings.equality && getPageSetting('autoMaps')) {
 		game.portal.Equality.scalingActive = false;
-		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
-		manageEqualityStacks();
-		updateEqualityScaling();
+		setEquality(game.portal.Equality.radLevel);
 		return;
 	}
 
@@ -189,9 +198,7 @@ function equalityManagementBasic() {
 	} else {
 		if (game.portal.Equality.scalingActive) {
 			game.portal.Equality.scalingActive = false;
-			game.portal.Equality.disabledStackCount = '0';
-			manageEqualityStacks();
-			updateEqualityScaling();
+			setEquality(0);
 		}
 	}
 }
@@ -209,7 +216,7 @@ function equalityManagement() {
 
 	//Misc vars
 	const debugStats = getPageSetting('debugEqualityStats');
-	const mapping = game.global.mapsActive ? true : false;
+	const mapping = game.global.mapsActive;
 	const mapObject = mapping ? getCurrentMapObject() : null;
 	const currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
 	const mapGrid = mapping ? 'mapGridArray' : 'gridArray';
@@ -219,9 +226,7 @@ function equalityManagement() {
 	const difficulty = mapping ? mapObject.difficulty : 1;
 	const armyReady = newArmyRdy();
 	const maxEquality = game.portal.Equality.radLevel;
-	var equality = 0;
-	var disableDamageAmps = false;
-	var enemyDamageMult = 1;
+	let enemyDamageMult = 1;
 
 	//Daily modifiers active
 	const isDaily = challengeActive('Daily');
@@ -229,6 +234,7 @@ function equalityManagement() {
 	const dailyEmpowerToggle = dailyEmpower && getPageSetting('empowerAutoEquality');
 	const dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
+	const explosiveMult = dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
 	const dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
 	const dailyBloodthirst = isDaily && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
 	const dailyRampage = isDaily && typeof game.global.dailyChallenge.rampage !== 'undefined'; //Rampage (trimp attack buff)
@@ -250,9 +256,7 @@ function equalityManagement() {
 
 	//Override for max equality when we ONLY want to destack during Aesolation.
 	if (runningDesolation && mapSettings.equality && game.global.world >= getPageSetting('destackOnlyZone') && getPageSetting('autoMaps')) {
-		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
-		manageEqualityStacks();
-		updateEqualityScaling();
+		setEquality(game.portal.Equality.radLevel);
 		return;
 	}
 
@@ -261,10 +265,9 @@ function equalityManagement() {
 	const angelicOwned = game.talents.angelic.purchased;
 	//Challenges/conditions where it's important to keep armies alive through angelic.
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || noFrenzy || (dailyEmpower && !mapping));
-	const plagueShield = MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming ? getHeirloomBonus('Shield', 'plaguebringer') > 0 : false;
 
 	//Gamma burst info
-	var gammaMaxStacksCheck = gammaMaxStacks(false, false, type);
+	let gammaMaxStacksCheck = gammaMaxStacks(false, false, type);
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	if (gammaDmg === 1) gammaMaxStacksCheck = 0;
 	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
@@ -277,37 +280,37 @@ function equalityManagement() {
 
 	//Returns only shield if running a shieldBraek challenge/quest
 	const ourShieldMax = calcOurHealth(true, type);
-	var ourHealth = remainingHealth(shieldBreak, angelicDance, type);
 	const ourShield = remainingHealth(true, false, type);
+	let ourHealth = remainingHealth(shieldBreak, angelicDance, type);
 
-	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
-	var ourDmgMax = 0;
-	var ourDmgEquality = 0;
+	let ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
+	let ourDmgMax = 0;
+	let unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
+	let maxDmg = calcOurDmg('max', 0, false, type, 'force', bionicTalent, true);
 	const ourEqualityModifier = game.portal.Equality.getModifier(1);
-	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
-	var unluckyDmgEquality = 0;
 
 	if (noFrenzy) {
 		const frenzyMult = 1 + 0.5 * game.portal.Frenzy.radLevel;
-		if (getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted === -1) {
-			ourDmg /= frenzyMult;
-			unluckyDmg /= frenzyMult;
-		}
-		if (!getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted !== -1) {
-			ourDmg *= frenzyMult;
-			unluckyDmg *= frenzyMult;
+		const frenzyCalcSetting = getPageSetting('frenzyCalc');
+		const frenzyStarted = game.portal.Frenzy.frenzyStarted;
+		const shouldAdjustDamage = (frenzyCalcSetting && frenzyStarted === -1) || (!frenzyCalcSetting && frenzyStarted !== -1);
+
+		if (shouldAdjustDamage) {
+			const adjustDamage = (damage) => (frenzyCalcSetting ? damage / frenzyMult : damage * frenzyMult);
+			ourDmg = adjustDamage(ourDmg);
+			if (runningUnlucky) unluckyDmg = adjustDamage(unluckyDmg);
 		}
 	}
 	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
 	if (dailyWeakness) ourDmg *= 1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100;
 
 	//Enemy stats
+	const enemy = getCurrentEnemy();
 	const enemyName = game.global[mapGrid][currentCell].name;
 	const enemyHealth = game.global[mapGrid][currentCell].health;
-	var enemyDmg = getCurrentEnemy().attack * enemyDamageModifiers() * 1.5;
-	var enemyDmgEquality = 0;
+	let enemyDmg = enemy.attack * enemyDamageModifiers() * 1.5;
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
-	var enemyDmgMax = enemyDmg * Math.pow(enemyEqualityModifier, maxEquality);
+	let enemyDmgMax = enemyDmg * Math.pow(enemyEqualityModifier, maxEquality);
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 
 	//Void Map Modifiers
@@ -317,12 +320,12 @@ function equalityManagement() {
 	//Empower related modifiers in world
 	if ((dailyEmpowerToggle && !mapping) || MODULES.maps.slowScumming) {
 		if (dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		if (dailyExplosive || MODULES.maps.slowScumming) ourDmgMax = calcOurDmg('max', 0, false, type, 'force', bionicTalent, true) * gammaDmg;
+		if (dailyExplosive || MODULES.maps.slowScumming) ourDmgMax = maxDmg * gammaDmg;
 	}
 	//Empower modifiers in maps.
 	if (type === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming) {
 		if (dailyEmpowerToggle && dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		if (dailyExplosive) enemyDamageMult += 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyExplosive) enemyDamageMult += explosiveMult;
 	}
 	if (dailyCrit && !dailyEmpower && (type === 'world' || type === 'void') && gammaToTrigger > 1) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 	//Mayhem poison
@@ -331,7 +334,7 @@ function equalityManagement() {
 	enemyDmg *= enemyDamageMult;
 
 	//Fast Enemy conditions
-	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !MODULES.fightinfo.exoticImps.includes(enemyName) : MODULES.fightinfo.fastImps.includes(enemyName));
+	let fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !MODULES.fightinfo.exoticImps.includes(enemyName) : MODULES.fightinfo.fastImps.includes(enemyName));
 	if (!fastEnemy) {
 		if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
 		else if (type === 'map' && dailyExplosive && !MODULES.maps.slowScumming) fastEnemy = true;
@@ -353,26 +356,21 @@ function equalityManagement() {
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
 	//Definitely need to add a check here for if we can die enough to get the bonus.
 	if (runningDuel && getPageSetting('duel') && getPageSetting('duelHealth') && fastEnemy && calcOurHealth(false, type) * 10 * 0.9 > ourHealth && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
-		game.portal.Equality.disabledStackCount = 0;
-		if (Number(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-		updateEqualityScaling();
+		setEquality(0);
 		return;
 	}
 
 	//Suiciding to get max bloodthirst stacks if our avg attacks to kill is greater than the attacks to proc a bloodthirst stack.
 	if (dailyBloodthirst && mapping && fastEnemy && getPageSetting('bloodthirstMaxStacks')) {
-		var maxStacks = dailyModifiers.bloodthirst.getMaxStacks(game.global.dailyChallenge.bloodthirst.strength);
-		var currStacks = game.global.dailyChallenge.bloodthirst.stacks;
-		var stacksToProc = dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength) - (game.global.dailyChallenge.bloodthirst.stacks % dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength));
-		var avgTrimpAttack = ourDmg * Math.pow(game.portal.Equality.getModifier(1), equalityQuery(enemyName, zone, currentCell, type, difficulty, 'gamma')) * gammaDmg;
-		var timeToKill = enemyHealth / avgTrimpAttack;
+		const bloodthirst = game.global.dailyChallenge.bloodthirst;
+		const maxStacks = dailyModifiers.bloodthirst.getMaxStacks(bloodthirst.strength);
+		const freq = dailyModifiers.bloodthirst.getFreq(bloodthirst.strength);
+		const stacksToProc = freq - (bloodthirst.currStacks % freq);
+		const avgTrimpAttack = ourDmg * Math.pow(ourEqualityModifier, equalityQuery(enemyName, zone, currentCell, type, difficulty, 'gamma')) * gammaDmg;
+		const timeToKill = enemyHealth / avgTrimpAttack;
 
-		if (currStacks !== maxStacks && stacksToProc < timeToKill) {
-			game.portal.Equality.disabledStackCount = 0;
-			if (Number(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) {
-				manageEqualityStacks();
-				updateEqualityScaling();
-			}
+		if (bloodthirst.currStacks !== maxStacks && stacksToProc < timeToKill) {
+			setEquality(0);
 			return;
 		}
 	}
@@ -382,105 +380,130 @@ function equalityManagement() {
 	//Our shield is at 75% or less of its max
 	//Have the same gamma stacks as it takes to proc it (so have already gamma bursted OR cant gamma burst)
 	//Won't suicide on trappa, arch, berserk challenges
-	var shouldSuicide = ourHealth === 0 || armyReady || (dailyEmpower && !mapping) || shieldBreak;
+	let shouldSuicide = ourHealth === 0 || armyReady || (dailyEmpower && !mapping) || shieldBreak;
 	if (gammaToTrigger !== gammaMaxStacksCheck) shouldSuicide = false;
 	if (ourShield > ourShieldMax * 0.75) shouldSuicide = false;
 	if (runningTrappa || runningArchaeology || runningBerserk) shouldSuicide = false;
 	//Override shouldSuicide if we can't survive an attack against enemies max dmg with our current health
 	if ((shieldBreak || (dailyEmpower && !mapping)) && enemyDmgMax >= ourHealth) shouldSuicide = true;
 
-	if (enemyHealth > 0) {
-		//Loop through equality levels to find the ideal point to kill the enemy
-		for (var i = 0; i <= maxEquality; i++) {
-			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i);
-			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
+	if (shouldSuicide) {
+		const notMapping = game.global.mapsUnlocked && !mapping && !runningMayhem;
+		const areMappingButDieAnyway = mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && game.global.titimpLeft === 0;
+		if (notMapping) {
+			suicideTrimps(true);
+			suicideTrimps(true);
+		} else if (areMappingButDieAnyway) {
+			suicideTrimps(true);
+			runMap_AT();
+		} else {
+			setEquality(0);
+			return;
+		}
+		ourHealth = remainingHealth(shieldBreak, angelicDance, type);
+	}
 
-			//Since double attack enemies hit once before and once after need to check if we can survive both hits before halving enemy damage.
-			if (i === maxEquality && enemyDmgEquality > ourHealth && enemyDamageMult !== 0 && !disableDamageAmps) {
-				enemyDmg /= enemyDamageMult;
-				i = 0;
-				disableDamageAmps = true;
+	const calculateDamageEquality = (damage, equalityModifier, equalityLevel) => {
+		return damage * Math.pow(equalityModifier, equalityLevel);
+	};
+
+	const checkEnemyDamage = (enemyDmg, enemyDmgEquality, ourHealth, enemyDamageMult, disableDamageAmps) => {
+		if (enemyDmgEquality > ourHealth && enemyDamageMult !== 0 && !disableDamageAmps) {
+			return { reset: true, disableDamageAmps: true, enemyDmg: enemyDmg / enemyDamageMult };
+		}
+		return { reset: false, disableDamageAmps, enemyDmg };
+	};
+
+	const isOddValue = (number) => number.toString()[0] % 2 === 1;
+
+	if (enemyHealth > 0) {
+		let equality = 0;
+		let disableDamageAmps = false;
+		let enemyDmgEquality = 0;
+		let ourDmgEquality = 0;
+
+		/* 
+        Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
+		Now works with void maps AND in world. Setup MODULES.heirlooms.plagueSwap to true to enable.
+		Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy. 
+        */
+		const plagueShield = MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming ? getHeirloomBonus('Shield', 'plaguebringer') > 0 : false;
+		const checkPlagueSwap = plagueShield && game.global[mapGrid][currentCell + 1];
+		const plaguebringerDamage = checkPlagueSwap ? nextCell.plaguebringer : 0;
+		const shouldPlagueSwap = checkPlagueSwap && ((mapping && !fastEnemy) || !mapping) && currentCell !== game.global[mapGrid].length - 3 && (typeof plaguebringerDamage === 'undefined' || plaguebringerDamage < enemy.maxHealth) && enemy.maxHealth * 0.05 < enemyHealth;
+
+		for (let i = 0; i <= maxEquality; i++) {
+			if (i === maxEquality) {
+				enemyDmgEquality = calculateDamageEquality(enemyDmg, enemyEqualityModifier, i);
+				const { reset, disableDamageAmps: newDisableDamageAmps, enemyDmg: newEnemyDmg } = checkEnemyDamage(enemyDmg, enemyDmgEquality, ourHealth, enemyDamageMult, disableDamageAmps);
+				if (reset) {
+					enemyDmg = newEnemyDmg;
+					i = 0;
+					disableDamageAmps = newDisableDamageAmps;
+				} else {
+					equality = maxEquality;
+					break;
+				}
 			}
+
+			while (shouldPlagueSwap && maxEquality > i && calculateDamageEquality(maxDmg, ourEqualityModifier, i) > enemyHealth) {
+				i++;
+			}
+
+			while (runningUnlucky && maxEquality > i) {
+				const unluckyDmgEquality = calculateDamageEquality(unluckyDmg, ourEqualityModifier, i);
+				if (!isOddValue(unluckyDmgEquality)) break;
+				i++;
+			}
+
+			enemyDmgEquality = calculateDamageEquality(enemyDmg, enemyEqualityModifier, i);
+			ourDmgEquality = calculateDamageEquality(ourDmg, ourEqualityModifier, i);
 
 			if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
 
-			//Skips if we are running unlucky and our damage is odd.
-			if (runningUnlucky) {
-				unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
-				if (unluckyDmgEquality.toString()[0] % 2 === 1 && i !== maxEquality) continue;
-			}
-			//Check to see if we kill the enemy with our max damage on empower dailies with explosive mod. If we can then mult enemy dmg by explosive mod value to stop us gaining empower stacks.
 			if (ourDmgMax > 0) {
-				var ourMaxDmg = ourDmgMax * Math.pow(ourEqualityModifier, i);
-				if (ourMaxDmg > enemyHealth && !MODULES.maps.slowScumming && enemyDmgEquality * (1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength)) > ourHealth) enemyDmgEquality *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
-				//Make sure that we don't kill slow enemyies with our max damage. This is to stop us overkilling the next cell and getting less plaguebringer damage.
-				if (MODULES.maps.slowScumming && mapping && currentCell % 2 !== 0) {
-					if (ourMaxDmg * Math.pow(ourEqualityModifier, i + 1) > enemyHealth) {
-						continue;
-					}
+				//Check to see if we kill the enemy with max damage on empower dailies with explosive mod. If so mult enemy dmg by explosive to stop gaining empower stacks.
+				if (!disableDamageAmps && !MODULES.maps.slowScumming && calculateDamageEquality(ourDmgMax, ourEqualityModifier, i) > enemyHealth && enemyDmgEquality * explosiveMult > ourHealth) enemyDmgEquality *= explosiveMult;
+				//Make sure that we don't kill slow enemies to ensure maximum plaguebringer transfer damage.
+				if (MODULES.maps.slowScumming && mapping && currentCell % 2 !== 0 && calculateDamageEquality(ourDmgMax, ourEqualityModifier, i + 1) > enemyHealth) {
+					continue;
 				}
 			}
 
-			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
-			//Now works with void maps AND in world. Setup MODULES.heirlooms.plagueSwap to true to enable.
-			if (plagueShield && (MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming)) {
-				var nextCell = game.global[mapGrid][currentCell + 1];
-				if (nextCell) {
-					var plaguebringerDamage = nextCell.plaguebringer;
-					var shouldSkip = calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth;
-					//Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy.
-					if (((mapping && !fastEnemy) || !mapping) && shouldSkip && currentCell !== game.global[mapGrid].length - 3 && (typeof plaguebringerDamage === 'undefined' || plaguebringerDamage < getCurrentEnemy().maxHealth) && getCurrentEnemy().maxHealth * 0.05 < enemyHealth) {
-						while (calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > getCurrentEnemy().health && i < maxEquality) {
-							i++;
-						}
-					}
-				}
-			}
-			if (shouldSuicide) {
-				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
-					suicideTrimps(true);
-					suicideTrimps(true);
-				} else if (mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && game.global.titimpLeft === 0) {
-					suicideTrimps(true);
-					runMap_AT();
-				} else {
-					equality = 0;
-				}
-				break;
-			} else if (fastEnemy && enemyDmgEquality > ourHealth) {
+			const wouldDie = enemyDmgEquality > ourHealth;
+			const wouldDieMayhem = runningMayhem && enemyDmgEquality > game.global.soldierHealth * 6 + game.challenges.Mayhem.poison;
+			if (fastEnemy && (wouldDie || wouldDieMayhem)) {
 				equality = i;
 				continue;
-			} else if (runningMayhem && fastEnemy && enemyDmgEquality > game.global.soldierHealth * 6 + game.challenges.Mayhem.poison) {
-				equality = i;
-				continue;
-			} else if (ourDmgEquality * gammaDmg < enemyHealth && gammaToTrigger > 1) {
-				equality = maxEquality;
-				break;
-			} else if (ourHealth > enemyDmgEquality && gammaToTrigger <= 1) {
-				equality = i;
-				break;
-			} else if (ourHealth > enemyDmgEquality && ourDmgEquality > enemyHealth) {
-				equality = i;
-				break;
-			} else if (ourHealth > enemyDmgEquality * gammaToTrigger && ourDmgEquality * gammaDmg > enemyHealth && !smithlessGamma && !enemyCanPoison) {
-				equality = i;
-				break;
-			} else if (ourHealth > enemyDmgEquality * gammaToTrigger && ourDmgEquality * gammaToTrigger > enemyHealth && !smithlessGamma && !enemyCanPoison) {
-				equality = i;
-				break;
-			} else if (ourHealth > enemyDmgEquality * gammaToTrigger && !smithlessGamma && !enemyCanPoison) {
-				equality = i;
-				break;
-			} else {
-				equality = maxEquality;
 			}
+
+			const shouldGamma = gammaToTrigger > 1 && enemyHealth > ourDmgEquality * gammaDmg;
+			if (shouldGamma) {
+				equality = maxEquality;
+				break;
+			}
+
+			const willSurviveOneHit = ourHealth > enemyDmgEquality;
+			if (willSurviveOneHit && (ourDmgEquality > enemyHealth || gammaToTrigger <= 1)) {
+				equality = i;
+				break;
+			}
+
+			const willSurviveToGamma = ourHealth > enemyDmgEquality * gammaToTrigger;
+			if (!smithlessGamma && !enemyCanPoison && willSurviveToGamma) {
+				equality = i;
+				break;
+			}
+
+			equality = maxEquality;
 		}
 
 		//Check to see if we will kill a slow enemy faster with 0 equality or by gamma bursting it
 		if (!fastEnemy) {
-			if (gammaToTrigger <= 1 && ourDmgEquality * gammaDmg < ourDmg) {
-				equality = 0;
-			} else if (enemyHealth / ourDmg <= gammaToTrigger) {
+			const gammaDmgCheck = gammaToTrigger <= 1 && ourDmgEquality * gammaDmg < ourDmg;
+			const wontNeedGamma = enemyHealth / ourDmg <= gammaToTrigger;
+
+			if (gammaDmgCheck || wontNeedGamma) {
 				equality = 0;
 			}
 
@@ -488,9 +511,9 @@ function equalityManagement() {
 				while ((unluckyDmg * Math.pow(ourEqualityModifier, equality)).toString()[0] % 2 === 1 && equality !== maxEquality) equality++;
 			}
 		}
-		game.portal.Equality.disabledStackCount = equality;
-		if (Number(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-		updateEqualityScaling();
+
+		setEquality(equality);
+
 		if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, equality);
 	}
 }

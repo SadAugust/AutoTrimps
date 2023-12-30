@@ -2422,6 +2422,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>This setting provides some equipment farming possibilites to help speedup runs.</p>";
 				description += "<p><b>Will override equipment purchasing settings when enabled.</b></p>";
+				description += "<p>When farming it calculates the equips you'll be able to prestige and farms levels in the other items first then prestiges and upgrades them one at a time to ensure minimal power loss.</p>";
 				description += "<p><b>P: Auto Equip Off</b><br>Disables this setting.</p>";
 				description += "<p><b>P: Auto Equip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.</p>";
 				description += "<p><b>P AE: LMC</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache. Overrides worker settings to ensure that you farm as much metal as possible.</p>";
@@ -4933,22 +4934,6 @@ function _setDisplayedTabs() {
 }
 
 function _setSelect2Dropdowns() {
-	//Reload script every 10 milliseconds until the utils module has been loaded.
-	if (typeof jQuery.fn.select2 !== 'function') {
-		setTimeout(_setSelect2Dropdowns, 10);
-
-		let script = document.createElement('script');
-		script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
-		script.type = 'text/javascript';
-		// Append the script to the document
-		document.head.appendChild(script);
-		return;
-	}
-	if (!atSettings.initialise.loaded) {
-		setTimeout(_setSelect2Dropdowns, 10);
-		return;
-	}
-
 	$(document).ready(function () {
 		$('.select2').select2({
 			templateSelection: _setSelect2DropdownsPrefix,
