@@ -4091,7 +4091,7 @@ function setupAddonUser(force) {
 			if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u1Settings[item] + 'Settings'] = {};
 			if (typeof game.global.addonUser[u1Settings[item] + 'Settings']['value'] === 'undefined') {
 				var obj = [];
-				for (var x = 0; x < 30; x++) {
+				for (var x = 0; x < 31; x++) {
 					obj[x] = {};
 					obj[x].done = '';
 				}
@@ -4103,7 +4103,7 @@ function setupAddonUser(force) {
 			if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u2Settings[item] + 'Settings'] = {};
 			if (typeof game.global.addonUser[u2Settings[item] + 'Settings']['valueU2'] === 'undefined') {
 				var obj = [];
-				for (var x = 0; x < 30; x++) {
+				for (var x = 0; x < 31; x++) {
 					obj[x] = {};
 					obj[x].done = '';
 				}
