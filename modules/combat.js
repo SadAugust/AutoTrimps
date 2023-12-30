@@ -389,7 +389,7 @@ function equalityManagement() {
 
 	if (shouldSuicide) {
 		const notMapping = game.global.mapsUnlocked && !mapping && !runningMayhem;
-		const areMappingButDieAnyway = mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && game.global.titimpLeft === 0;
+		const areMappingButDieAnyway = mapping && currentCell > 0 && type !== 'void' && mapObject.location !== 'Darkness' && game.global.titimpLeft === 0;
 		if (notMapping) {
 			suicideTrimps(true);
 			suicideTrimps(true);
