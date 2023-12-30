@@ -2131,7 +2131,7 @@ function initialiseAllSettings() {
 				description += "<p>Should ideally be a staff with high primary resource modifiers.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Challenges', [1,2],
+			}, 'textValue', 'undefined', null, 'C2', [1,2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		//Mapology
