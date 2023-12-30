@@ -66,6 +66,7 @@ function ImportExportTooltip(what, event) {
 	} else if (what === 'c2table') {
 		titleText = _getChallenge2Info() + ' Table';
 		//Adding U1 challenges
+		let c2array = [];
 		let highestZone = game.stats.highestLevel.valueTotal();
 		if (highestZone >= 35) c2array.push('Size');
 		if (highestZone >= 130) c2array.push('Slow');
@@ -85,7 +86,7 @@ function ImportExportTooltip(what, event) {
 		if (highestZone >= 150) c2array.push('Mapology');
 		if (highestZone >= 70) c2array.push('Trapper');
 
-		let obj = challengesUnlockedObj(1, true);
+		/* let obj = challengesUnlockedObj(1, true);
 		obj = filterAndSortChallenges(obj, 'c2');
 		const c2ArrayOrder = ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Coordinate', 'Trimp', 'Obliterated', 'Eradicated', 'Mapology', 'Trapper'];
 		let c2Array = c2ArrayOrder.reduce((arr, key) => {
@@ -93,7 +94,7 @@ function ImportExportTooltip(what, event) {
 				arr.push(obj[key]);
 			}
 			return arr;
-		}, []);
+		}, []); */
 		//Adding U2 challenges
 		highestZone = game.stats.highestRadLevel.valueTotal();
 		const c3array = [];
