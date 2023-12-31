@@ -428,7 +428,8 @@ function equalityManagement() {
 		Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy. 
         */
 		const plagueShield = MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming ? getHeirloomBonus('Shield', 'plaguebringer') > 0 : false;
-		const checkPlagueSwap = plagueShield && game.global[mapGrid][currentCell + 1];
+		const nextCell = game.global[mapGrid][currentCell + 1];
+		const checkPlagueSwap = plagueShield && nextCell;
 		const plaguebringerDamage = checkPlagueSwap ? nextCell.plaguebringer : 0;
 		const shouldPlagueSwap = checkPlagueSwap && ((mapping && !fastEnemy) || !mapping) && currentCell !== game.global[mapGrid].length - 3 && (typeof plaguebringerDamage === 'undefined' || plaguebringerDamage < enemy.maxHealth) && enemy.maxHealth * 0.05 < enemyHealth;
 
