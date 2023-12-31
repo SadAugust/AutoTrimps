@@ -1491,6 +1491,7 @@ function prestigeClimb(lineCheck) {
 	};
 
 	if (challengeActive('Frugal')) return farmingDetails;
+	if (_berserkDisableMapping() || _noMappingChallenges()) return farmingDetails;
 
 	var targetPrestige = getPageSetting('Prestige');
 	if (targetPrestige === 'Off') return farmingDetails;
