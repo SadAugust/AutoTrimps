@@ -65,181 +65,8 @@ function ImportExportTooltip(what, event) {
 		};
 	} else if (what === 'c2table') {
 		titleText = _getChallenge2Info() + ' Table';
-		//Adding U1 challenges
-		let c2array = [];
-		let highestZone = game.stats.highestLevel.valueTotal();
-		if (highestZone >= 35) c2array.push('Size');
-		if (highestZone >= 130) c2array.push('Slow');
-		if (highestZone >= 180) c2array.push('Watch');
-		if (getTotalPerkResource(true) >= 30) c2array.push('Discipline');
-		if (highestZone >= 40) c2array.push('Balance');
-		if (highestZone >= 45) c2array.push('Meditate');
-		if (highestZone >= 25) c2array.push('Metal');
-		if (highestZone >= 180) c2array.push('Lead');
-		if (highestZone >= 145) c2array.push('Nom');
-		if (highestZone >= 165) c2array.push('Toxicity');
-		if (game.global.prisonClear >= 1) c2array.push('Electricity');
-		if (highestZone >= 120) c2array.push('Coordinate');
-		if (highestZone >= 60) c2array.push('Trimp');
-		if (highestZone >= 425) c2array.push('Obliterated');
-		if (game.global.totalSquaredReward >= 4500) c2array.push('Eradicated');
-		if (highestZone >= 150) c2array.push('Mapology');
-		if (highestZone >= 70) c2array.push('Trapper');
+		tooltipText = _displayC2Table();
 
-		/* let obj = challengesUnlockedObj(1, true);
-		obj = filterAndSortChallenges(obj, 'c2');
-		const c2ArrayOrder = ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Coordinate', 'Trimp', 'Obliterated', 'Eradicated', 'Mapology', 'Trapper'];
-		let c2Array = c2ArrayOrder.reduce((arr, key) => {
-			if (key in obj) {
-				arr.push(obj[key]);
-			}
-			return arr;
-		}, []); */
-		//Adding U2 challenges
-		highestZone = game.stats.highestRadLevel.valueTotal();
-		const c3array = [];
-
-		if (highestZone >= 50) c3array.push('Unlucky');
-		if (highestZone >= 50) c3array.push('Unbalance');
-		if (highestZone >= 85) c3array.push('Quest');
-		if (highestZone >= 105) c3array.push('Storm');
-		if (highestZone >= 50) c3array.push('Downsize');
-		if (highestZone >= 50) c3array.push('Transmute');
-		if (highestZone >= 50) c3array.push('Duel');
-		if (highestZone >= 70) c3array.push('Wither');
-		if (highestZone >= 175) c3array.push('Glass');
-		if (highestZone >= 201) c3array.push('Smithless');
-		if (highestZone >= 60) c3array.push('Trappapalooza');
-		if (highestZone >= 115) c3array.push('Berserk');
-
-		const c3ArrayOrder = ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Transmute', 'Duel', 'Wither', 'Glass', 'Smithless', 'Trappapalooza', 'Berserk'];
-		challengeList = {};
-
-		const c2runnerArray = ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Mapology'];
-		const c3runnerArray = ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Duel', 'Smithless'];
-
-		for (var x = 0; x < c2array.length; x++) {
-			challengeList[c2array[x]] = {
-				number: x + 1,
-				percent: getIndividualSquaredReward(c2array[x]) + '%',
-				zone: game.c2[c2array[x]],
-				percentzone: (100 * (game.c2[c2array[x]] / game.stats.highestLevel.valueTotal())).toFixed(2) + '%',
-				c2runner: c2runnerArray.includes(c2array[x]) ? '✅' : '❌',
-				color: 0
-			};
-		}
-
-		if (c3array.length > 0) {
-			challengeList.C3s = {
-				number: 'Difficulty',
-				percent: 'C3 %',
-				zone: 'Zone',
-				percentzone: '%HZE',
-				c2runner: 'C3 Runner',
-				color: 0
-			};
-
-			for (var x = 0; x < c3array.length; x++) {
-				challengeList[c3array[x]] = {
-					number: x + 1,
-					percent: getIndividualSquaredReward(c3array[x]) + '%',
-					zone: game.c2[c3array[x]],
-					percentzone: (100 * (game.c2[c3array[x]] / game.stats.highestRadLevel.valueTotal())).toFixed(2) + '%',
-					c2runner: c3runnerArray.includes(c3array[x]) ? '✅' : '❌',
-					color: 0
-				};
-			}
-		}
-
-		function challengeListcolor() {
-			function a(b, c, d) {
-				var e = 100 * (game.c2[b] / game.stats.highestLevel.valueTotal());
-				challengeList[b].color = e >= c ? 'LIMEGREEN' : e < c && e >= d ? 'GOLD' : e < d && 1 <= e ? '#de0000' : 'DEEPSKYBLUE';
-			}
-			Object.keys(challengeList).forEach(function (b) {
-				null !== game.c2[b] && ('Coordinate' === b ? a(b, 45, 38) : 'Trimp' === b ? a(b, 45, 35) : 'Obliterated' === b ? a(b, 25, 20) : 'Eradicated' === b ? a(b, 14, 10) : 'Mapology' === b ? a(b, 90, 80) : 'Trapper' === b ? a(b, 85, 75) : a(b, 95, 85));
-			});
-		}
-		function c3listcolor() {
-			function colorC3(challenge, highPct, midPct) {
-				var challengePercent = 100 * (game.c2[challenge] / game.stats.highestRadLevel.valueTotal());
-				challengeList[challenge].color = 'DEEPSKYBLUE';
-				if (challengePercent >= highPct) challengeList[challenge].color = 'LIMEGREEN';
-				else if (challengePercent < highPct && challengePercent >= midPct) challengeList[challenge].color = 'GOLD';
-				else if (challengePercent < midPct && 1 <= challengePercent) challengeList[challenge].color = '#de0000';
-			}
-			Object.keys(challengeList).forEach(function (challenge) {
-				if (game.c2[challenge] !== null) {
-					if (challenge === 'Unbalance') colorC3(challenge, 90, 80);
-					else if (challenge === 'Unlucky') colorC3(challenge, 90, 80);
-					else if (challenge === 'Duel') colorC3(challenge, 90, 80);
-					else if (challenge === 'Transmute') colorC3(challenge, 90, 80);
-					else if (challenge === 'Quest') colorC3(challenge, 90, 80);
-					else if (challenge === 'Downsize') colorC3(challenge, 85, 75);
-					else if (challenge === 'Trappapalooza') colorC3(challenge, 75, 60);
-					else if (challenge === 'Wither') colorC3(challenge, 85, 75);
-					else if (challenge === 'Storm') colorC3(challenge, 90, 80);
-					else if (challenge === 'Berserk') colorC3(challenge, 85, 75);
-					else if (challenge === 'Glass') colorC3(challenge, 90, 80);
-					else if (challenge === 'Smithless') colorC3(challenge, 90, 80);
-				}
-			});
-		}
-		challengeListcolor();
-		c3listcolor();
-		tooltipText = ``;
-		if (c3array.length > 0) tooltipText += `<div class='litScroll'>`;
-		tooltipText += `<table class='bdTableSm table table-striped'>
-       		<tbody>
-            	<tr>
-                	<td>Name</td>
-                	<td>Difficulty</td>
-                	<td>C2 %</td>
-                	<td>Zone</td>
-                	<td>%HZE</td>
-                	<td>C2 Runner</td>
-            	</tr>
-		`;
-		for (var x = 0; x < Object.keys(challengeList).length; x++) {
-			tooltipText +=
-				`<tr>
-					<td>` +
-				Object.keys(challengeList)[x] +
-				`</td>
-					<td>` +
-				challengeList[Object.keys(challengeList)[x]].number +
-				`</td>
-					<td>` +
-				challengeList[Object.keys(challengeList)[x]].percent +
-				`</td>
-					<td>` +
-				challengeList[Object.keys(challengeList)[x]].zone +
-				`</td>
-					<td bgcolor='black'>
-						<font color=` +
-				challengeList[Object.keys(challengeList)[x]].color +
-				`>` +
-				challengeList[Object.keys(challengeList)[x]].percentzone +
-				`
-					</td>
-					<td>` +
-				challengeList[Object.keys(challengeList)[x]].c2runner +
-				`</td>
-				</tr>`;
-		}
-		tooltipText +=
-			`<tr>
-					<td>Total</td>
-					<td> </td>
-					<td>` +
-			game.global.totalSquaredReward.toFixed(2) +
-			`%</td>
-					<td> </td>
-					<td></td>
-            	</tr>
-			</tbody>
-		</table>
-	</div> `;
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
 		ondisplay = function () {
 			_verticalCenterTooltip();
@@ -299,18 +126,18 @@ function ImportExportTooltip(what, event) {
 		}
 		// Adjust for remaining offline time
 		else if (usingRealTimeOffline) {
-			if (game.options.menu.autoSave.enabled !== atSettings.autoSave) saveGame.options.menu.autoSave.enabled = atSettings.autoSave;
+			if (game.options.menu.autoSave.enabled !== atSettings.autoSave) {
+				saveGame.options.menu.autoSave.enabled = atSettings.autoSave;
+			}
 			const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
-			saveGame.global.lastOnline -= reduceBy;
-			saveGame.global.portalTime -= reduceBy;
-			saveGame.global.zoneStarted -= reduceBy;
-			saveGame.global.lastSoldierSentAt -= reduceBy;
-			saveGame.global.lastSkeletimp -= reduceBy;
+			['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp'].forEach((key) => {
+				saveGame.global[key] -= reduceBy;
+			});
 		}
 		// Compress file and download
 		saveGame = LZString.compressToBase64(JSON.stringify(saveGame));
 
-		var saveName = 'Trimps Save P' + game.global.totalPortals;
+		let saveName = 'Trimps Save P' + game.global.totalPortals;
 		if (game.global.universe == 2 || game.global.totalRadPortals > 0) {
 			saveName += ' ' + game.global.totalRadPortals + ' U' + game.global.universe;
 		}
@@ -364,6 +191,152 @@ function _displayPriorityOrder() {
         </tbody>
     </table>
     </div> `;
+
+	return tooltipText;
+}
+
+function _displayC2Table() {
+	let tooltipText = ``;
+	const challengeOrders = {
+		c2: ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Coordinate', 'Trimp', 'Obliterated', 'Eradicated', 'Mapology', 'Trapper'],
+		c3: ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Transmute', 'Duel', 'Wither', 'Glass', 'Smithless', 'Trappapalooza', 'Berserk']
+	};
+
+	const runnerLists = {
+		c2: ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Mapology'],
+		c3: ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Duel', 'Smithless']
+	};
+
+	const challengePercentages = {
+		c2: {
+			Coordinate: [45, 38],
+			Trimp: [45, 35],
+			Obliterated: [25, 20],
+			Eradicated: [14, 10],
+			Mapology: [90, 80],
+			Trapper: [85, 75],
+			Default: [95, 85]
+		},
+		c3: {
+			Unbalance: [90, 80],
+			Unlucky: [90, 80],
+			Duel: [90, 80],
+			Transmute: [90, 80],
+			Quest: [90, 80],
+			Downsize: [85, 75],
+			Trappapalooza: [75, 60],
+			Wither: [85, 75],
+			Storm: [90, 80],
+			Berserk: [85, 75],
+			Glass: [90, 80],
+			Smithless: [90, 80],
+			Default: [90, 80]
+		}
+	};
+
+	let challengeList = {};
+
+	const populateHeaders = (type) => {
+		challengeList[type] = {
+			number: `Difficulty`,
+			percent: `${type} %`,
+			zone: `Zone`,
+			percentzone: `%HZE`,
+			c2runner: `${type} Runner`,
+			color: 0
+		};
+	};
+
+	const processArray = (type, array, runnerList) => {
+		const radLevel = type === 'c3';
+		runList = array || [];
+		if (array.length > 0) populateHeaders(type.toUpperCase());
+		array.forEach((item, index) => {
+			challengeList[item] = {
+				number: index + 1,
+				percent: getIndividualSquaredReward(item) + '%',
+				zone: game.c2[item],
+				percentzone: (100 * (game.c2[item] / (radLevel ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal()))).toFixed(2) + '%',
+				c2runner: runnerList.includes(item) ? '✅' : '❌',
+				color: 0
+			};
+		});
+	};
+
+	Object.keys(challengeOrders).forEach((type) => {
+		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true);
+		challenges = filterAndSortChallenges(challenges, 'c2');
+		const array = challengeOrders[type].filter((item) => challenges.includes(item));
+		processArray(type, array, runnerLists[type]);
+	});
+
+	const COLORS = {
+		default: 'DEEPSKYBLUE',
+		high: 'LIMEGREEN',
+		mid: 'GOLD',
+		low: '#de0000'
+	};
+
+	function getChallengeColor(challengePercent, highPct, midPct) {
+		if (challengePercent >= highPct) return COLORS.high;
+		if (challengePercent >= midPct) return COLORS.mid;
+		if (challengePercent >= 1) return COLORS.low;
+		return COLORS.default;
+	}
+
+	function updateChallengeColor(challenge, highPct, midPct, highestLevel) {
+		const challengePercent = 100 * (game.c2[challenge] / highestLevel);
+		const color = getChallengeColor(challengePercent, highPct, midPct);
+		challengeList[challenge].color = color;
+	}
+
+	function updateChallengeListColor(challengePct, highestLevel) {
+		Object.keys(challengeList).forEach((challenge) => {
+			if (game.c2[challenge] !== null) {
+				const [highPct, midPct] = challengePct[challenge] || challengePct['Default'];
+				updateChallengeColor(challenge, highPct, midPct, highestLevel);
+			}
+		});
+	}
+
+	Object.keys(challengePercentages).forEach((type) => {
+		const highestLevel = type === 'c2' ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
+		updateChallengeListColor(challengePercentages[type], highestLevel);
+	});
+
+	const createTableRow = (key, { number, percent, zone, color, percentzone, c2runner }) => `
+		<tr>
+			<td>${key}</td>
+			<td>${number}</td>
+			<td>${percent}</td>
+			<td>${zone}</td>
+			<td bgcolor='black'><font color=${color}>${percentzone}</td>
+			<td>${c2runner}</td>
+		</tr>
+	`;
+
+	const createTable = (challengeList) => {
+		const rows = Object.keys(challengeList).map((key) => createTableRow(key, challengeList[key]));
+		return `
+			<table class='bdTableSm table table-striped'>
+				<tbody>
+					${rows.join('')}
+					<tr>
+						<td>Total</td>
+						<td> </td>
+						<td>${game.global.totalSquaredReward.toFixed(2)}%</td>
+						<td> </td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+		`;
+	};
+
+	tooltipText = createTable(challengeList);
+
+	if (challengeList.C3) tooltipText = `<div class='litScroll'>${tooltipText}`;
 
 	return tooltipText;
 }
