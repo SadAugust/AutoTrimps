@@ -2678,8 +2678,7 @@ function glass(lineCheck) {
 
 	//Gamma burst info
 	const gammaTriggerStacks = gammaMaxStacks();
-	const gammaToTrigger = gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
-	if (game.global.mapsActive) gammaToTrigger = Infinity;
+	const gammaToTrigger = game.global.mapsActive ? Infinity : gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	const canGamma = gammaToTrigger <= 1 ? true : false;
 	const damageGoal = 2;
