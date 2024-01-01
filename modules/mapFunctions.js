@@ -2671,7 +2671,7 @@ function glass(lineCheck) {
 
 	const jobRatio = '0,0,1';
 	let mapSpecial = getAvailableSpecials('lmc', true);
-	const mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
+	let mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
 	let glassStacks = getPageSetting('glassStacks');
 	if (glassStacks <= 0) glassStacks = Infinity;
 	const endZone = true; //getPageSetting('glassEndZone') <= 0 ? Infinity : getPageSetting('glassEndZone');
@@ -2724,9 +2724,9 @@ function glass(lineCheck) {
 		}
 	}
 
-	var damageTarget = enemyHealth / damageGoal;
+	const damageTarget = enemyHealth / damageGoal;
 
-	var status;
+	let status;
 	if (mapName.includes('Destack')) status = mapName + ' ' + game.challenges.Glass.shards + ' stacks remaining';
 	else status = game.global.challengeActive + ' Farm: Curr&nbsp;Dmg:&nbsp;' + prettify(ourDmg) + ' Goal&nbsp;Dmg:&nbsp;' + prettify(damageTarget);
 
