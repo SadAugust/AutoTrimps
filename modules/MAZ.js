@@ -1277,7 +1277,7 @@ function mapSettingsHelpWindow(titleText, trimple) {
 
 	if (archaeology) {
 		mazHelp += '<li><b>Relic String</b> - The relic string to be farmed on this zone. This setting will override the ingame Archaeology Automator input so only use this setting in conjunction with the scripts Archaeology string settings.</li>';
-		mazHelp += '<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this line.</li>';
+		mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this line. If set to 0 or below it will farm an infinite amount of maps. Be warned this will force the script to check if you can afford your next relic in this amount of maps (minus maps run) and if you can't it'll skip farming so ensure your job ratio is setup appropriately.</li>";
 	}
 	if (insanity) {
 		mazHelp += "<li><b>Insanity</b> - How many Insanity stack you'd like to farm up to during this line.</li>";
@@ -2029,8 +2029,7 @@ function autoJobsDisplay(elem) {
 			max = setting && setting.buyMax ? setting.buyMax : 0;
 			if (max > 1e4) max = max.toExponential().replace('+', '');
 			checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
-			tooltipText +=
-				"<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Percent: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + (setting && setting.percent ? setting.percent : 100) + "' /></div></div>";
+			tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Percent: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + (setting && setting.percent ? setting.percent : 100) + "' /></div></div>";
 		}
 		if (game.global.universe === 2) {
 			if (x === ratioJobs.length - 1)

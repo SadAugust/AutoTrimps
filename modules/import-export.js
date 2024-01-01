@@ -218,18 +218,12 @@ function _displayC2Table() {
 			Default: [95, 85]
 		},
 		c3: {
-			Unbalance: [90, 80],
-			Unlucky: [90, 80],
-			Duel: [90, 80],
-			Transmute: [90, 80],
-			Quest: [90, 80],
-			Downsize: [85, 75],
+			Downsize: [80, 70],
+			Duel: [85, 75],
 			Trappapalooza: [75, 60],
 			Wither: [85, 75],
-			Storm: [90, 80],
 			Berserk: [85, 75],
-			Glass: [90, 80],
-			Smithless: [90, 80],
+			Smithless: [80, 70],
 			Default: [90, 80]
 		}
 	};

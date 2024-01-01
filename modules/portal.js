@@ -567,7 +567,8 @@ function challengeInfo(force) {
 		}
 		if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
 			//Warning message when AutoStructure Smithy purchasing is enabled.
-			if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
+			const autoStructureSettings = getAutoStructureSetting();
+			if (autoStructureSettings && autoStructureSettings.Smithy && autoStructureSettings.enabled && autoStructureSettings.Smithy.enabled) {
 				debug('You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.');
 			}
 			//Warning message when C3 Finish Run setting isn't greater than your quest HZE.
