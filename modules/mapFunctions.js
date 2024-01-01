@@ -2670,7 +2670,7 @@ function glass(lineCheck) {
 	if (!challengeActive('Glass') || !getPageSetting('glass')) return farmingDetails;
 
 	const jobRatio = '0,0,1';
-	const mapSpecial = getAvailableSpecials('lmc', true);
+	let mapSpecial = getAvailableSpecials('lmc', true);
 	const mapLevel = autoLevelCheck(mapName, mapSpecial, null, null);
 	let glassStacks = getPageSetting('glassStacks');
 	if (glassStacks <= 0) glassStacks = Infinity;
