@@ -312,7 +312,7 @@ function findMap(level, special, biome, perfect = false) {
 
 	for (let mapping in game.global.mapsOwnedArray) {
 		let map = game.global.mapsOwnedArray[mapping];
-        if (map.location !== biome && biome !== 'Random') continue;
+		if (map.location !== biome && biome !== 'Random') continue;
 		if (perfect) {
 			if (map.size > trimpStats.mapSize) continue;
 			if (map.difficulty > trimpStats.mapDifficulty) continue;
@@ -647,7 +647,7 @@ function _autoMapsCreate(mapObj) {
 	} else if (mapObj.selectedMap === 'bionicRaid') {
 		runBionicRaiding(mapObj.bionicPool);
 	} else if (mapObj.selectedMap === 'create') {
-		_abandonMapCheck(mapObj.runUnique);
+		_abandonMapCheck(mapObj.selectedMap, mapObj.runUnique);
 		if (mapSettings.shouldRun && mapSettings.mapName !== '') {
 			setMapSliders(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 		}
@@ -656,14 +656,13 @@ function _autoMapsCreate(mapObj) {
 		} else {
 			_purchaseMap(mapObj.lowestMap);
 		}
-		//Running unique maps or void maps
 	} else {
 		_runSelectedMap(mapObj.selectedMap, mapObj.runUnique);
 	}
 }
 
 //Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
-function _abandonMapCheck(runUnique) {
+function _abandonMapCheck(selectedMap = null, runUnique) {
 	if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
 	if (game.global.currentMapId !== '') {
 		//If we don't have info on the previous map then set it.
@@ -683,7 +682,7 @@ function _abandonMapCheck(runUnique) {
 }
 
 function _runSelectedMap(mapId, runUnique) {
-	_abandonMapCheck(runUnique);
+	_abandonMapCheck(mapId, runUnique);
 	selectMap(mapId);
 	runMap();
 	const mapObj = game.global.mapsOwnedArray[getMapIndex(mapId)];
