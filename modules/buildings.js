@@ -222,7 +222,6 @@ function _buyStorage(hypoZone) {
 	};
 	for (const [storage, resource] of Object.entries(buildings)) {
 		//Skips buying sheds if you're not on one of your specified bonfire zones.
-		console.log(storage);
 		if (storage === 'Shed' && hypoZone > game.global.world) continue;
 		const curRes = game.resources[resource].owned;
 		let maxRes = game.resources[resource].max;

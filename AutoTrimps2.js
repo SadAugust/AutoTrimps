@@ -1,4 +1,4 @@
-atSettings = {
+const atSettings = {
 	initialise: {
 		version: '',
 		basepath: 'https://SadAugust.github.io/AutoTrimps/',
@@ -22,9 +22,9 @@ atSettings = {
 	autoSave: game.options.menu.autoSave.enabled
 };
 
-ATmessageLogTabVisible = true;
-autoTrimpSettings = {};
-MODULES = {
+let ATmessageLogTabVisible = true;
+let autoTrimpSettings = {};
+const MODULES = {
 	popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
 	stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0 },
 	graphs: {},
@@ -32,13 +32,13 @@ MODULES = {
 	u2unlocks: []
 };
 
-currPortalUniverse = 0;
-currSettingUniverse = 0;
-settingChangedTimeout = false;
+let currPortalUniverse = 0;
+let currSettingUniverse = 0;
+let settingChangedTimeout = false;
 
-mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
-hdStats = {};
-trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
+let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
+let hdStats = {};
+let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
 
 function loadScript(url, type = 'text/javascript', retries = 3) {
 	return new Promise((resolve, reject) => {
@@ -184,8 +184,8 @@ function initialiseScript() {
 
 	//Copy gameLoop for when we enter toggleCatchUpMode.
 	originalGameLoop = gameLoop;
-	toggleCatchUpMode();
 	atSettings.initialise.loaded = true;
+	toggleCatchUpMode();
 	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
 	console.timeEnd();
 }

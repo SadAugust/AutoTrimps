@@ -170,7 +170,7 @@ function _displayPriorityOrder() {
 	Object.keys(priority).forEach((key, x) => {
 		const item = priority[x];
 		const special = item.special ? (item.special === '0' ? 'No Special' : mapSpecialModifierConfig[item.special].name) : '';
-		const endZone = item.name === 'Void Maps' ? item.maxvoidzone : item.endzone;
+		const endZone = item.name === 'Void Maps' ? item.maxvoidzone : item.endzone ? item.endzone : '';
 		const active = item.active ? '&#10004;' : '&times;';
 
 		tooltipText += `
