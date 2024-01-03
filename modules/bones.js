@@ -20,8 +20,8 @@ function boneShrine(lineCheck) {
 		// Use bone charges
 		// Equip staff for the gather type the user is using
 		const gatherStaff = 'heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1);
-		if (getPageSetting(gatherStaff) !== 'undefined') heirloomEquipStaff(gatherStaff);
-		else heirloomEquipStaff('heirloomStaffMap');
+		if (getPageSetting(gatherStaff) !== 'undefined') heirloomEquip(gatherStaff, 'Staff');
+		else heirloomEquip('heirloomStaffMap', 'Staff');
 
 		if (getPageSetting('jobType') > 0) buyJobs(setting.jobratio);
 		safeSetGather(boneShrineGather);
@@ -89,7 +89,7 @@ function _calcResource(charges) {
 function _findTotal(resourceMap, resource) {
 	let tempMax = resource['max'];
 	let total = resource['owned'] + resource['loot'];
-	const packMod = getPerkLevel('Packrat') * game.portal.Packrat.modifier;
+	const packMod = getPerkLevel('Packrat') * getPerkModifier('Packrat');
 
 	while (total > calcHeirloomBonus('Shield', 'storageSize', tempMax + tempMax * packMod)) {
 		const nextCost = calculatePercentageBuildingCost(resourceMap[1], resourceMap[0], 0.25, tempMax);

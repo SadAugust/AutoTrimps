@@ -124,7 +124,7 @@ function mapCost(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect
 	return baseCost;
 }
 
-function currQuest() {
+function _getCurrentQuest() {
 	if (!challengeActive('Quest')) return 0;
 	if (game.global.world < game.challenges.Quest.getQuestStartZone()) return 0;
 	const questProgress = game.challenges.Quest.getQuestProgress();

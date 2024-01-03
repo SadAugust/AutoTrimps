@@ -6,28 +6,26 @@ MODULES.heirlooms = {
 };
 
 function evaluateHeirloomMods(loom, location) {
-	var heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
-	var heirloomType = heirloomLocation.type;
-
+	const heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
+	const heirloomType = heirloomLocation.type;
 	const heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	const raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep' + heirloomType));
+	const raretokeep = heirloomRarity.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`));
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
-	const heirloomEquipType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'All' : 'Core';
+	const heirloomEquipType = ['Shield', 'Staff', 'All', 'Core'][typeToKeep - 1];
 
 	if (heirloomType !== heirloomEquipType && heirloomEquipType !== 'All') return 0;
 
 	const rarity = heirloomLocation.rarity;
-	if (getPageSetting('heirloomAutoRarityPlus')) {
-		if (rarity < raretokeep) return 0;
-	} else if (rarity !== raretokeep) return 0;
+	if ((getPageSetting('heirloomAutoRarityPlus') && rarity < raretokeep) || (!getPageSetting('heirloomAutoRarityPlus') && rarity !== raretokeep)) return 0;
 
 	//Will check if the heirloom is perfect and if it is, we will return infinity to make sure it is not recycled.
 	//If it is not perfect, we will return 0 to make sure it is recycled.
 	//Identify the setting prefix for the heirloom type
-	const varAffix = heirloomType === 'Staff' ? 'heirloomAutoStaffMod' : heirloomType === 'Shield' ? 'heirloomAutoShieldMod' : heirloomType === 'Core' ? 'heirloomAutoCoreMod' : null;
-	const blacklist = getPageSetting('heirloomAuto' + heirloomType + 'Blacklist');
-	var targetMods = [];
-	var emptyMods = 0;
+	const varAffix = { Staff: 'heirloomAutoStaffMod', Shield: 'heirloomAutoShieldMod', Core: 'heirloomAutoCoreMod' }[heirloomType] || null;
+	const blacklist = getPageSetting(`heirloomAuto${heirloomType}Blacklist`);
+	const heirloomData = heirloomInfo(heirloomType);
+	let targetMods = [];
+	let emptyMods = 0;
 
 	//Increment through the setting inputs and push them to the targetMods array if not set to Any.
 	for (var x = 1; x < heirloomLocation.mods.length + 1; x++) {
@@ -36,61 +34,51 @@ function evaluateHeirloomMods(loom, location) {
 	}
 
 	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
-	var modName;
-	const heirloomData = heirloomInfo(heirloomType);
-	for (var m in heirloomLocation.mods) {
-		modName = heirloomLocation.mods[m][0];
+	for (const mod in heirloomLocation.mods) {
+		let modName = heirloomLocation.mods[mod][0];
 		if (modName === 'empty') {
 			emptyMods++;
 			continue;
 		}
-		//Check if item on the blacklist is equal to the ingames mod name. If it is, return 0.
 		if (blacklist.indexOf(game.heirlooms[heirloomType][modName].name) !== -1) return 0;
 		modName = heirloomData[modName].name;
-		//Check if item on the blacklist is equal to the AT mod name. If it is, return 0.
 		if (blacklist.indexOf(modName) !== -1) return 0;
 		targetMods = targetMods.filter((e) => e !== modName);
 	}
 
 	//Work out the target number of mods to have on the heirloom.
-	const modGoal = getPageSetting('heirloomAutoModTarget') <= 0 ? 0 : Math.min(getPageSetting('heirloomAutoModTarget'), heirloomLocation.mods.length);
+	const modGoal = Math.max(0, Math.min(getPageSetting('heirloomAutoModTarget'), heirloomLocation.mods.length));
 	const remainingMods = targetMods.length - emptyMods;
 	//Mark heirloom as perfect if remaining mods is less than or equal to 0.
 	if (remainingMods <= 0) return Infinity;
 	//Mark heirloom as imperfect but passable if remaining mods is greater or equal to heirloom mod length minus mod goal.
-	else if (remainingMods >= heirloomLocation.mods.length - modGoal) return heirloomLocation.mods.length - remainingMods;
+	if (remainingMods >= heirloomLocation.mods.length - modGoal) return heirloomLocation.mods.length - remainingMods;
 	//Mark heirloom as garbage
-	else return 0;
+	return 0;
 }
 
 function worthOfHeirlooms() {
-	var heirloomWorth = { Shield: [], Staff: [], Core: [] };
+	const heirloomWorth = { Shield: [], Staff: [], Core: [] };
 
-	//Identify heirlooms to be recycled.
-	var recycle = [];
-	for (var index in game.global.heirloomsExtra) {
-		if (evaluateHeirloomMods(index, 'heirloomsExtra') === 0) {
-			recycle.push(index);
-		}
+	// Identify heirlooms to be recycled.
+	const recycle = game.global.heirloomsExtra
+		.map((_, index) => index)
+		.filter((index) => evaluateHeirloomMods(index, 'heirloomsExtra') === 0)
+		.reverse(); // Reverse the array
+
+	// Recycle heirlooms
+	for (const index of recycle) {
+		selectHeirloom(index, 'heirloomsExtra');
+		recycleHeirloom(true);
 	}
 
-	//Recycle heirlooms
-	if (recycle.length > 0) {
-		for (var x = recycle.length; x !== 0; x--) {
-			selectHeirloom(recycle[x - 1], 'heirloomsExtra');
-			recycleHeirloom(true);
-		}
-	}
-
-	//Pushing data for remaining heirlooms
-	for (var index in game.global.heirloomsExtra) {
-		var theLoom = game.global.heirloomsExtra[index];
-		var data = { location: 'heirloomsExtra', index: index, rarity: theLoom.rarity, eff: evaluateHeirloomMods(index, 'heirloomsExtra') };
+	// Pushing data for remaining heirlooms
+	for (const [index, theLoom] of game.global.heirloomsExtra.entries()) {
+		const data = { location: 'heirloomsExtra', index, rarity: theLoom.rarity, eff: evaluateHeirloomMods(index, 'heirloomsExtra') };
 		heirloomWorth[theLoom.type].push(data);
 	}
-	var valuesort = function (a, b) {
-		return b.eff - a.eff;
-	};
+
+	const valuesort = (a, b) => b.eff - a.eff;
 	heirloomWorth['Shield'].sort(valuesort);
 	heirloomWorth['Staff'].sort(valuesort);
 	heirloomWorth['Core'].sort(valuesort);
@@ -102,118 +90,80 @@ function autoHeirlooms(portal) {
 	if (!game.global.heirloomsExtra.length > 0) return;
 	if (!getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	if (portal && !portalWindowOpen) return;
+
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
-	var heirloomWorth;
+	const heirloomTypes = heirloomType === 'All' ? ['Shield', 'Staff', game.global.universe === 1 ? 'Core' : null] : [heirloomType];
+	let heirloomWorth;
 
 	//Looping through the heirloom type set in typetokeep setting and stashing them.
-	if (heirloomType !== 'All') {
-		while (game.global.heirloomsCarried.length < getMaxCarriedHeirlooms() && game.global.heirloomsExtra.length > 0) {
+	while (game.global.heirloomsCarried.length < getMaxCarriedHeirlooms() && game.global.heirloomsExtra.length > 0) {
+		for (const type of heirloomTypes) {
+			if (!type) continue;
 			heirloomWorth = worthOfHeirlooms();
-			if (heirloomWorth[heirloomType].length > 0) {
-				var carriedHeirlooms = heirloomWorth[heirloomType].shift();
+			if (heirloomWorth[type].length > 0) {
+				const carriedHeirlooms = heirloomWorth[type].shift();
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-				if (getPageSetting('heirloomAuto' + heirloomType)) carryHeirloom();
+				if (getPageSetting('heirloomAuto' + type)) carryHeirloom();
 				else recycleHeirloom(true);
-			} else break;
-		}
-	}
-	//If typetokeep is set to all will loop through all heirloom types and stash them.
-	else {
-		const heirloomTypes = ['Shield', 'Staff'];
-		if (game.global.universe === 1) heirloomTypes.push('Core');
-
-		while (game.global.heirloomsCarried.length < getMaxCarriedHeirlooms() && game.global.heirloomsExtra.length > 0) {
-			for (var x = 0; x < heirloomTypes.length; x++) {
-				heirloomWorth = worthOfHeirlooms();
-				if (heirloomWorth[heirloomTypes[x]].length > 0) {
-					var carriedHeirlooms = heirloomWorth[heirloomTypes[x]].shift();
-					selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-					if (getPageSetting('heirloomAuto' + heirloomTypes[x])) carryHeirloom();
-					else recycleHeirloom(true);
-				}
 			}
 		}
 	}
-	return;
 }
 
 //Heirloom Swapping
 //Checks to see if we own the heirloom we are trying to equip
 function heirloomSearch(heirloom) {
 	const heirloomName = getPageSetting(heirloom);
-	var loom;
-	for (loom of game.global.heirloomsCarried) if (loom.name === heirloomName) return loom;
+	return game.global.heirloomsCarried.find((loom) => loom.name === heirloomName);
 }
 
 //Loops through heirlooms and checks if they have a specified modifier on them, divides by 10 if in u2.
 function heirloomModSearch(heirloom, modifier) {
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
-	var i;
-	var loom;
+	const heirloomsToCheck = [game.global.ShieldEquipped, game.global.StaffEquipped];
 
-	if (game.global.ShieldEquipped.name === heirloomName) {
-		loom = game.global.ShieldEquipped;
+	if (heirloomDetails) {
+		heirloomsToCheck.push(heirloomDetails);
+	}
+
+	for (const loom of heirloomsToCheck) {
+		if (loom.name !== heirloomName) continue;
 		if (modifier === 'gammaBurst' && loom.rarity >= 10) return Infinity;
-		for (i = loom.mods.length - 1; i > -1; i--) {
-			if (loom.mods[i][0] === modifier) return loom.mods[i][1];
+		for (const mod of loom.mods) {
+			if (mod[0] === modifier) return mod[1];
 		}
-		return undefined;
-	} else if (game.global.StaffEquipped.name === heirloomName) {
-		loom = game.global.StaffEquipped;
-		for (i = loom.mods.length - 1; i > -1; i--) {
-			if (loom.mods[i][0] === modifier) return loom.mods[i][1];
-		}
-		return undefined;
 	}
-	//If the heirloom exists and is in our inventory, check it for the modifier we're looking for
-	else if (heirloomDetails) {
-		if (modifier === 'gammaBurst' && heirloomDetails.rarity >= 10) return Infinity;
-		for (i = heirloomDetails.mods.length - 1; i > -1; i--) {
-			if (heirloomDetails.mods[i][0] === modifier) return heirloomDetails.mods[i][1];
-		}
-		return undefined;
-	}
-	//Checks through equipped heirlooms to try and find the mod we're searching for if the heirloom setting isn't properly set
-	else {
-		if (heirloom === undefined || heirloomName === 'undefined' || heirloomDetails === undefined) {
-			var type = ['ShieldEquipped', 'StaffEquipped'];
-			var y;
-			for (y = type.length - 1; y > -1; y--) {
-				if (Object.keys(game.global[type[y]]).length <= 1) continue;
-				loom = game.global[type[y]];
-				if (modifier === 'gammaBurst' && type[y] === 'ShieldEquipped' && loom.rarity >= 10) return Infinity;
-				for (i = loom.mods.length - 1; i > -1; i--) {
-					if (loom.mods[i][0] === modifier) return loom.mods[i][1];
-				}
+
+	if (!heirloom || heirloomName === 'undefined' || !heirloomDetails) {
+		for (const loom of [game.global.ShieldEquipped, game.global.StaffEquipped]) {
+			if (Object.keys(loom).length <= 1) continue;
+			if (modifier === 'gammaBurst' && loom.rarity >= 10) return Infinity;
+			for (const mod of loom.mods) {
+				if (mod[0] === modifier) return mod[1];
 			}
 		}
 	}
+
 	return undefined;
 }
 
-function heirloomEquipShield(heirloom) {
-	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return;
+function heirloomEquip(heirloom, type) {
+	if (!getPageSetting('heirloom') || !getPageSetting(`heirloom${type}`)) return;
+
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
+	const isHeirloomEquipped = game.global[`${type}Equipped`].name === heirloomName;
 
-	if (heirloomDetails !== undefined && game.global.ShieldEquipped.name !== heirloomName) {
+	if (heirloomDetails && !isHeirloomEquipped) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), 'heirloomsCarried', true);
 		equipHeirloom(true);
-		heirloomShieldSwapped();
-	} else if (heirloomDetails === undefined && game.global.ShieldEquipped.name !== heirloomName && atSettings.intervals.tenSecond) debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} shield. This will be causing at least one of your HD Ratios to be incorrect.`, `other`);
-}
-
-function heirloomEquipStaff(heirloom) {
-	if (!getPageSetting('heirloom') || !getPageSetting('heirloomStaff')) return;
-	const heirloomName = getPageSetting(heirloom);
-	const heirloomDetails = heirloomSearch(heirloom);
-
-	if (heirloomDetails !== undefined && game.global.StaffEquipped.name !== heirloomName) {
-		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), 'heirloomsCarried', true);
-		equipHeirloom(true);
-	} else if (heirloomDetails === undefined && game.global.StaffEquipped.name !== heirloomName && atSettings.intervals.tenSecond) debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} staff.`, `other`);
+		if (type === 'Shield') heirloomShieldSwapped();
+	} else if (!heirloomDetails && !isHeirloomEquipped && atSettings.intervals.tenSecond) {
+		const hdMessage = type === 'Shield' ? `This will be causing at least one of your HD Ratios to be incorrect.` : ``;
+		debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} ${type.toLowerCase()}.${hdMessage}`, `other`);
+	}
 }
 
 function heirloomShieldSwapped() {
@@ -310,7 +260,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 			!game.challenges.Berserk.weakened !== 20 &&
 			!challengeActive('Archaeology') &&
 			!challengeActive('Quest') &&
-			currQuest() !== 8 &&
+			_getCurrentQuest() !== 8 &&
 			//Not at final map cell
 			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
 			//Current enemy is slow
@@ -344,55 +294,62 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 }
 
 function heirloomStaffToEquip(mapType) {
-	if (!getPageSetting('heirloom')) return;
-	if (!getPageSetting('heirloomStaff')) return;
+	if (!getPageSetting('heirloom') || !getPageSetting('heirloomStaff')) return;
 
 	if (!game.global.mapsActive) {
-		if (['Trapper', 'Trappapalooza'].includes(trimpStats.currChallenge) && getPageSetting('trapper') && getPageSetting('trapperWorldStaff') !== 'undefined') return 'trapperWorldStaff';
-		if (challengeActive('Exterminate') && getPageSetting('exterminate') && getPageSetting('exterminateWorldStaff') !== 'undefined') return 'exterminateWorldStaff';
-		if (getPageSetting('heirloomStaffWorld') !== 'undefined') return 'heirloomStaffWorld';
-	} else if (game.global.mapsActive) {
-		const mapObject = getCurrentMapObject();
-		const mapBonus = mapObject.bonus;
-		if ((MODULES.maps.fragmentFarming || MODULES.maps.fragmentCost !== Infinity) && getPageSetting('heirloomStaffFragment') !== 'undefined') return 'heirloomStaffFragment';
-		else if (mapSettings.mapName === 'Experience' && getPageSetting('experienceStaff') !== 'undefined') return 'experienceStaff';
-		else if (mapSettings.mapName === 'Pandemonium Farming' && getPageSetting('pandemoniumStaff') !== 'undefined') return 'pandemoniumStaff';
-		else if (mapSettings.mapName === 'Quest' && mapSettings.resource && mapSettings.resource === 'science' && getPageSetting('heirloomStaffScience') !== 'undefined') return 'heirloomStaffScience';
-		else if (getPageSetting('heirloomStaffVoid') !== 'undefined' && mapObject.location === 'Void') return 'heirloomStaffVoid';
-		else if (getPageSetting('heirloomStaffMap') !== 'undefined' && mapBonus === undefined) return 'heirloomStaffMap';
-		else if (mapBonus !== undefined) {
-			//Match your heirloom to your current gather setting during lc/hc maps.
-			if (mapBonus === 'lc' || mapBonus === 'hc') {
-				let gatherType = game.global.playerGathering[0].toUpperCase() + game.global.playerGathering.slice(1, 7);
-				if (gatherType === 'Science') gatherType = 'Resource';
-				const staff = getPageSetting('heirloomStaff' + gatherType);
-				if (staff && staff !== 'undefined') return 'heirloomStaff' + gatherType;
-				else if (getPageSetting('heirloomStaffMap') !== 'undefined') return 'heirloomStaffMap';
-			}
-			if (getPageSetting('heirloomStaffFood') !== 'undefined' && mapBonus.includes('sc')) return 'heirloomStaffFood';
-			else if (getPageSetting('heirloomStaffWood') !== 'undefined' && mapBonus.includes('wc')) return 'heirloomStaffWood';
-			else if (getPageSetting('heirloomStaffMetal') !== 'undefined' && mapBonus.includes('mc')) return 'heirloomStaffMetal';
-			else if (game.global.universe === 2 && getPageSetting('heirloomStaffScience') !== 'undefined' && mapBonus.includes('rc')) return 'heirloomStaffScience';
-			else if (getPageSetting('heirloomStaffMap') !== 'undefined') return 'heirloomStaffMap';
+		return getWorldHeirloomStaff();
+	} else {
+		return getMapHeirloomStaff();
+	}
+}
+
+function getWorldHeirloomStaff() {
+	if (['Trapper', 'Trappapalooza'].includes(trimpStats.currChallenge) && getPageSetting('trapper') && getPageSetting('trapperWorldStaff') !== 'undefined') return 'trapperWorldStaff';
+	if (challengeActive('Exterminate') && getPageSetting('exterminate') && getPageSetting('exterminateWorldStaff') !== 'undefined') return 'exterminateWorldStaff';
+	if (getPageSetting('heirloomStaffWorld') !== 'undefined') return 'heirloomStaffWorld';
+}
+
+function getMapHeirloomStaff() {
+	const mapObject = getCurrentMapObject();
+	const mapBonus = mapObject.bonus;
+
+	if ((MODULES.maps.fragmentFarming || MODULES.maps.fragmentCost !== Infinity) && getPageSetting('heirloomStaffFragment') !== 'undefined') return 'heirloomStaffFragment';
+	if (mapSettings.mapName === 'Experience' && getPageSetting('experienceStaff') !== 'undefined') return 'experienceStaff';
+	if (mapSettings.mapName === 'Pandemonium Farming' && getPageSetting('pandemoniumStaff') !== 'undefined') return 'pandemoniumStaff';
+	if (mapSettings.mapName === 'Quest' && mapSettings.resource && mapSettings.resource === 'science' && getPageSetting('heirloomStaffScience') !== 'undefined') return 'heirloomStaffScience';
+	if (getPageSetting('heirloomStaffVoid') !== 'undefined' && mapObject.location === 'Void') return 'heirloomStaffVoid';
+	if (getPageSetting('heirloomStaffMap') !== 'undefined' && mapBonus === undefined) return 'heirloomStaffMap';
+
+	return getMapBonusHeirloomStaff(mapBonus);
+}
+
+function getMapBonusHeirloomStaff(mapBonus) {
+	if (mapBonus !== undefined) {
+		if (mapBonus === 'lc' || mapBonus === 'hc') {
+			const gatherType = game.global.playerGathering[0].toUpperCase() + game.global.playerGathering.slice(1, 7);
+			const staff = getPageSetting('heirloomStaff' + gatherType);
+			if (staff && staff !== 'undefined') return 'heirloomStaff' + gatherType;
+			if (getPageSetting('heirloomStaffMap') !== 'undefined') return 'heirloomStaffMap';
 		}
+		if (getPageSetting('heirloomStaffFood') !== 'undefined' && mapBonus.includes('sc')) return 'heirloomStaffFood';
+		if (getPageSetting('heirloomStaffWood') !== 'undefined' && mapBonus.includes('wc')) return 'heirloomStaffWood';
+		if (getPageSetting('heirloomStaffMetal') !== 'undefined' && mapBonus.includes('mc')) return 'heirloomStaffMetal';
+		if (game.global.universe === 2 && getPageSetting('heirloomStaffScience') !== 'undefined' && mapBonus.includes('rc')) return 'heirloomStaffScience';
+		if (getPageSetting('heirloomStaffMap') !== 'undefined') return 'heirloomStaffMap';
 	}
 }
 
 function heirloomSwapping() {
 	if (!getPageSetting('heirloom')) return;
 
-	var mapType = 'world';
-	if (game.global.voidBuff) mapType = 'void';
-	else if (game.global.mapsActive) mapType = 'map';
-	//Swapping Shields
+	const mapType = game.global.voidBuff ? 'void' : game.global.mapsActive ? 'map' : 'world';
 	if (getPageSetting('heirloomShield')) {
-		var shield = heirloomShieldToEquip(mapType, true);
-		if (shield !== undefined) heirloomEquipShield(shield);
+		const shield = heirloomShieldToEquip(mapType, true);
+		if (shield !== undefined) heirloomEquip(shield, 'Shield');
 	}
 
-	//Swapping Staffs
 	if (getPageSetting('heirloomStaff')) {
-		var staff = heirloomStaffToEquip(mapType, true);
-		if (staff !== undefined) heirloomEquipStaff(staff);
+		const staff = heirloomStaffToEquip(mapType, true);
+		if (staff !== undefined) heirloomEquip(staff, 'Staff');
 	}
 }

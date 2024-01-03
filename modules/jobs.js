@@ -203,9 +203,9 @@ function buyJobs(forceRatios) {
 	}
 	if (game.global.universe === 2) {
 		//Meteorologists
-		if (!game.jobs.Meteorologist.locked && (jobSettings.Meteorologist.enabled || mapSettings.shouldMeteorologist) && !runningAtlantrimp()) {
+		if (!game.jobs.Meteorologist.locked && (jobSettings.Meteorologist.enabled || mapSettings.shouldMeteorologist) && !runningAncientTreasure()) {
 			var affordableMets = getMaxAffordable(game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned), game.resources.food.owned * (mapSettings.shouldMeteorologist ? 1 : jobSettings.Meteorologist.percent / 100), game.jobs.Meteorologist.cost.food[1], true);
-			if (mapSettings.shouldMeteorologist && mapSettings.runAtlantrimp && mapSettings.totalCost > game.resources.food.owned) affordableMets = 0;
+			if (mapSettings.shouldMeteorologist && mapSettings.ancientTreasure && mapSettings.totalCost > game.resources.food.owned) affordableMets = 0;
 			if (affordableMets > 0 && !mapSettings.shouldTribute) {
 				safeBuyJob('Meteorologist', affordableMets);
 				freeWorkers -= affordableMets;
@@ -213,7 +213,7 @@ function buyJobs(forceRatios) {
 		}
 
 		//Worshippers
-		if (!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || mapSettings.mapName === 'Worshipper Farm') && !runningAtlantrimp()) {
+		if (!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || mapSettings.mapName === 'Worshipper Farm') && !runningAncientTreasure()) {
 			var affordableShips = (game.resources.food.owned / game.jobs.Worshipper.getCost()) * (mapSettings.mapName !== 'Worshipper Farm' ? jobSettings.Worshipper.percent / 100 : 1);
 			affordableShips = Math.min(Math.floor(affordableShips), 50 - game.jobs.Worshipper.owned);
 			if (affordableShips > 0) {

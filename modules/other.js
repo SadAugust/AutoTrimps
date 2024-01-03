@@ -1,12 +1,5 @@
 MODULES['other'] = {};
 
-function isCorruptionActive(targetZone) {
-	if (game.global.universe == 2) return 9999;
-	if (challengeActive('Eradicated')) return 1;
-	if (challengeActive('Corrupted')) return 60;
-	return targetZone >= (game.talents.headstart.purchased && !game.global.runningChallengeSquared ? (game.talents.headstart2.purchased ? (game.talents.headstart3.purchased ? 151 : 166) : 176) : 181);
-}
-
 function autoRoboTrimp() {
 	if (game.global.roboTrimpLevel === 0) return;
 	if (game.global.roboTrimpCooldown !== 0) return;
@@ -19,6 +12,39 @@ function autoRoboTrimp() {
 			debug('Activated Robotrimp MagnetoShriek Ability @ z' + game.global.world, 'zone', '*podcast');
 		}
 	} else if (game.global.useShriek) magnetoShriek();
+}
+
+function isCorruptionActive(targetZone) {
+	if (game.global.universe == 2) return 9999;
+	if (challengeActive('Eradicated')) return 1;
+	if (challengeActive('Corrupted')) return 60;
+	return targetZone >= (game.talents.headstart.purchased && !game.global.runningChallengeSquared ? (game.talents.headstart2.purchased ? (game.talents.headstart3.purchased ? 151 : 166) : 176) : 181);
+}
+
+function isDoingSpire() {
+	if (!game.global.spireActive) return false;
+
+	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
+	const spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
+	if (spireNo <= 0) return true;
+	const spireZone = (1 + spireNo) * 100;
+
+	return game.global.world >= spireZone;
+}
+
+function exitSpireCell(checkCell) {
+	if (!game.global.spireActive) return;
+	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
+	const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
+	const isSpireActive = isDoingSpire();
+	const cell = isSpireActive && exitCellSetting > 0 && exitCellSetting <= 100 ? exitCellSetting : 100;
+
+	if (checkCell) return exitCell;
+	if (cell <= 0) return;
+
+	if (isSpireActive && game.global.lastClearedCell + 1 > exitCell) {
+		endSpire();
+	}
 }
 
 function getZoneEmpowerment(zone) {

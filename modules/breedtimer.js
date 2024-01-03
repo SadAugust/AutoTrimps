@@ -29,7 +29,7 @@ function getPotencyMod() {
 	if (game.global.brokenPlanet) potencyMod = potencyMod.div(10);
 
 	// Pheromones
-	potencyMod = potencyMod.mul(1 + getPerkLevel('Pheromones') * game.portal.Pheromones.modifier);
+	potencyMod = potencyMod.mul(1 + getPerkLevel('Pheromones') * getPerkModifier('Pheromones'));
 
 	// Quick Trimps
 	if (game.singleRunBonuses.quickTrimps.owned) potencyMod = potencyMod.mul(2);

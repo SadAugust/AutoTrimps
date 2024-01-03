@@ -368,7 +368,7 @@ function autoMaps() {
 
 	if (_checkWaitForFrags()) return;
 
-	if (game.global.soldierCurrentAttack < 0 || currQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
+	if (game.global.soldierCurrentAttack < 0 || _getCurrentQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
 		if (game.global.preMapsActive) mapsClicked();
 		return;
 	}
@@ -541,7 +541,7 @@ function _checkOwnedMaps() {
 			}
 			if (map.location === 'Bionic') mapObj.bionicPool.push(map);
 			if (mapSettings.mapName === 'Void Map' && map.location === 'Void' && mapSettings.shouldRun) {
-				mapObj.voidMap = selectEasierVoidMap(mapObj.voidMap, map);
+				mapObj.voidMap = _selectEasierVoidMap(mapObj.voidMap, map);
 			}
 		}
 	}
@@ -585,7 +585,7 @@ function _setSelectedMap(selectedMap, voidMap, optimalMap) {
 
 function _setMapRepeat() {
 	const mapObj = getCurrentMapObject();
-	if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding') {
+	if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding' || (mapSettings.mapName === 'Quagmire Farm' && mapObj.name === 'The Black Bog')) {
 		//Starting with repeat on
 		if (!game.global.repeatMap) repeatClicked();
 		//Changing repeat setting to Repeat For Items if Presitge or Bionic Raiding, otherwise set to Repeat Forever
@@ -600,12 +600,14 @@ function _setMapRepeat() {
 		}
 		//Disabling repeat if we shouldn't map
 		if (!mapSettings.shouldRun) repeatClicked();
+		//Disable if we should run a unique map
+		if (game.global.repeatMap && MODULES.mapFunctions.runUniqueMap) repeatClicked();
 		//Disabling repeat if we'll beat Experience from the BW we're clearing.
 		if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605) {
 			repeatClicked();
 		}
 		if (mapSettings.prestigeFragMapBought && game.global.repeatMap) {
-			runPrestigeRaiding();
+			prestigeRaidingMapping();
 		}
 		if (game.global.repeatMap && !mapSettings.prestigeFragMapBought) {
 			if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
@@ -643,9 +645,9 @@ function _autoMapsCreate(mapObj) {
 	if (mapObj.selectedMap === 'world') {
 		mapsClicked();
 	} else if (mapObj.selectedMap === 'prestigeRaid') {
-		runPrestigeRaiding();
+		prestigeRaidingMapping();
 	} else if (mapObj.selectedMap === 'bionicRaid') {
-		runBionicRaiding(mapObj.bionicPool);
+		bionicRaidingMapping(mapObj.bionicPool);
 	} else if (mapObj.selectedMap === 'create') {
 		_abandonMapCheck(mapObj.selectedMap, mapObj.runUnique);
 		if (mapSettings.shouldRun && mapSettings.mapName !== '') {

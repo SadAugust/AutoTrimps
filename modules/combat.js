@@ -243,7 +243,7 @@ function equalityManagement() {
 	const runningUnlucky = challengeActive('Unlucky');
 	const runningDuel = challengeActive('Duel');
 	const runningTrappa = challengeActive('Trappapalooza');
-	const shieldBreak = challengeActive('Bublé') || currQuest() === 8; //Shield break quest
+	const shieldBreak = challengeActive('Bublé') || _getCurrentQuest() === 8; //Shield break quest
 	const runningRevenge = challengeActive('Revenge');
 	const runningArchaeology = challengeActive('Archaeology');
 	const runningMayhem = challengeActive('Mayhem');

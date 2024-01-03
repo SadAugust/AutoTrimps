@@ -459,3 +459,7 @@ function getPriorityOrder() {
 	});
 	return order;
 }
+
+function getPerkModifier(what) {
+	return game.portal[what].modifier || 0;
+}

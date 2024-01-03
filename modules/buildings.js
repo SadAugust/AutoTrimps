@@ -40,7 +40,7 @@ function _needHousing(houseName) {
 
 	if (houseName === 'Collector') {
 		// Stops Collectors being purchased when on Quest gem quests.
-		if (currQuest() === 4) return false;
+		if (_getCurrentQuest() === 4) return false;
 		// Fix for Infinity collectors since it doesn't take resourceful into account.
 		if (buildingStat.purchased >= 6000) return false;
 	}
@@ -58,7 +58,7 @@ function _needHousing(houseName) {
 
 	// Can afford the building.
 	const spendingPerc = buildingSettings.percent / 100;
-	const resourcefulMod = Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful'));
+	const resourcefulMod = Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
 	for (const resource in buildingStat.cost) {
 		if (!_canAffordBuilding(resource, buildingStat, spendingPerc, resourcefulMod)) return false;
 	}
@@ -138,7 +138,7 @@ function _getSlowestResource(resourcePerSecond, houseName) {
 	let worstTime = -Infinity;
 	const buildingStat = game.buildings[houseName];
 	const housingBonus = _getHousingBonus(houseName);
-	const resourcefulMod = Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful'));
+	const resourcefulMod = Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
 	const owned = buildingStat.owned;
 
 	for (const resource in buildingStat.cost) {
@@ -227,7 +227,7 @@ function _buyStorage(hypoZone) {
 		let maxRes = game.resources[resource].max;
 
 		//Identifying our max for the resource that's being checked
-		maxRes = maxRes *= 1 + getPerkLevel('Packrat') * game.portal.Packrat.modifier;
+		maxRes = maxRes *= 1 + getPerkLevel('Packrat') * getPerkModifier('Packrat');
 		maxRes = calcHeirloomBonus('Shield', 'storageSize', maxRes);
 
 		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
@@ -289,7 +289,7 @@ function _checkUniqueMaps() {
 function _checkQuest() {
 	//Checks to see if we are running Quest and above our first Quest zone and the current zones Quest hasn't been completed.
 	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
-		const questNumber = currQuest();
+		const questNumber = _getCurrentQuest();
 		// Still allows you to buy tributes during gem quests
 		if (questNumber === 4) buyTributes();
 		// Don not buy buildings if on a resource (food, wood, metal, gems) quest.
@@ -413,13 +413,13 @@ function _buySmithy(buildingSettings) {
  */
 function _calcSmithyDuringQuest() {
 	let smithyCanAfford = 0;
-	if ((atSettings.portal.aWholeNewWorld || currQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
+	if ((atSettings.portal.aWholeNewWorld || _getCurrentQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
 		const smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
 		const questEndZone = !game.global.runningChallengeSquared ? 85 : getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone');
 		let questZones = Math.floor((questEndZone - game.global.world) / 2 - 1);
 		if (questZones < 0) questZones = 0;
 		// Buying smithies that won't be needed for quests before user entered end goal or for Smithy quests
-		smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : currQuest() === 10 ? 1 : 0;
+		smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : _getCurrentQuest() === 10 ? 1 : 0;
 	}
 	return smithyCanAfford;
 }
@@ -495,7 +495,7 @@ function buyTributes() {
 	else if (mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > tributeSetting.buyMax) tributeAmt = mapSettings.tribute;
 	else tributeAmt = tributeSetting.buyMax;
 
-	if ((mapSettings.mapName === 'Smithy Farm' && mapSettings.gemFarm) || currQuest() === 4) {
+	if ((mapSettings.mapName === 'Smithy Farm' && mapSettings.gemFarm) || _getCurrentQuest() === 4) {
 		tributeAmt = Infinity;
 		tributePct = 1;
 	}

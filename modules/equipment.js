@@ -411,14 +411,14 @@ function autoEquip() {
 	//Disabling autoequip if the autoequip setting is disabled.
 	if (!getPageSetting('equipOn')) return;
 	//If running a wood or metal quest then disable autoequip
-	if ([2, 3].indexOf(currQuest()) >= 0) return;
+	if ([2, 3].indexOf(_getCurrentQuest()) >= 0) return;
 	//If smithy farming then disable autoequip
 	if (mapSettings.mapName === 'Smithy Farm') return;
 	//If we have just changed a setting that procs settingChangedTimeout then delay autoequip until the timeout has finished
 	if (settingChangedTimeout) return;
 	//Trimple/Atlantrimp overrides for don't run when farming and the user intends to run them or when inside the map itself.
 	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
-		if (mapSettings.runAtlantrimp) return;
+		if (mapSettings.ancientTreasure) return;
 		else if (MODULES.mapFunctions.runUniqueMap === getAncientTreasureName()) return;
 		else if (game.global.mapsActive && getCurrentMapObject().name === getAncientTreasureName()) return;
 	}
