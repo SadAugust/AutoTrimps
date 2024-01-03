@@ -556,7 +556,7 @@ function mapBonus(lineCheck) {
 	const setting = settingIndex ? baseSettings[settingIndex] : hdFarmCheck ? _mapBonusRatioSetting(defaultSettings, hdCheck, spireCheck) : undefined;
 	if (lineCheck) return setting;
 
-	if (setting) Object.assign(farmingDetails, _runMapBonus(setting, mapName, settingIndex));
+	if (setting) Object.assign(farmingDetails, _runMapBonus(setting, mapName, settingIndex, spireCheck));
 
 	//Done outside of _runMapBonus as that won't get run if we're above the set map bonus value.
 	if (mapSettings.mapName === mapName && (game.global.mapBonus >= mapSettings.mapRepeats || !farmingDetails.shouldRun)) {
@@ -593,7 +593,7 @@ function _mapBonusRatioSetting(defaultSettings, hdCheck, spireCheck) {
 	};
 }
 
-function _runMapBonus(setting, mapName, settingIndex) {
+function _runMapBonus(setting, mapName, settingIndex, spireCheck) {
 	const { repeat: repeatCounter, jobratio: jobRatio, special, autoLevel, level, priority } = setting;
 	const mapSpecial = special !== '0' ? getAvailableSpecials(special) : '0';
 	const minLevel = game.global.universe === 1 ? 0 - game.portal.Siphonology.level : 0;
