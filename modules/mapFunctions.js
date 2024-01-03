@@ -1213,9 +1213,10 @@ function prestigeClimb(lineCheck) {
 		mapName
 	};
 
-	if (challengeActive('Frugal') || _berserkDisableMapping() || _noMappingChallenges()) return farmingDetails;
-
 	const runningMapology = challengeActive('Mapology') && getPageSetting('mapology');
+
+	if (challengeActive('Frugal') || _berserkDisableMapping() || (_noMappingChallenges() && !runningMapology)) return farmingDetails;
+
 	let targetPrestige = runningMapology ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === 'Off') return farmingDetails;
 	if (game.jobs.Explorer.locked) {
