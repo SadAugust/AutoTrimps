@@ -943,7 +943,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', true, null, "Equipment", [1]);
 
-		createSetting('Prestige',
+		createSetting('prestigeClimb',
 			function () { return ('Prestige Climb') },
 			function () {
 				let description = "<p>Acquire prestiges through the selected item (inclusive) as soon as they are available in maps.</p>";
@@ -962,8 +962,8 @@ function initialiseAllSettings() {
 				}
 				return equips;
 			}, "Equipment", [1, 2]);
-		createSetting('ForcePresZ',
-			function () { return ('Force Prestige Z') },
+		createSetting('prestigeClimbZone',
+			function () { return ('PC: Force Prestige Z') },
 			function () {
 				let description = "<p>On and after this zone is reached, always try to prestige for everything immediately regardless of <b>Prestige Climb</b> input unless it is set to <b>Off</b>.</p>";
 				description += "<p>The <b>Prestige Skip</b> setting has the potential to disable this if it's enabled.</p>";
@@ -971,13 +971,23 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> The zone you start heavily slowing down</p>";
 				return description;
 			}, 'value', -1, null, "Equipment", [1, 2]);
-		createSetting('PrestigeSkip',
-			function () { return ('Prestige Skip') },
+		createSetting('prestigeClimbSkip',
+			function () { return ('PC: Prestige Skip') },
 			function () {
 				let description = "<p>Will stop <b>Presige Climb</b> from running if you have 2 or more unbought prestiges (besides Supershield) in your upgrades window.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, "Equipment", [1, 2]);
+
+		createSetting('prestigeClimbPriority',
+			function () { return ('PC: Priority') },
+			function () {
+				let description = "<p>The priority value you would like to use when running Prestige Climb.</p>";
+				description += "This only impacts the mapping order when the <b>Auto Maps Priority</b> setting in the Maps tab is enabled.</p>";
+
+				description += "<p><b>Recommended:</b> 1</p>";
+				return description;
+			}, 'value', 1, null, "Equipment", [1, 2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -5277,7 +5287,7 @@ function _createMessagesButton() {
 			{
 				id: 'AutoTrimpsFilter',
 				type: 'button',
-				onClick: "filterMessage2('AutoTrimps')",
+				onClick: "filterMessage_AT('AutoTrimps')",
 				class: 'btn btn-success logFlt'
 			},
 			['AT Messages']

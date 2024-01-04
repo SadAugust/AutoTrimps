@@ -114,7 +114,7 @@ function loadModules(fileName, prefix = '') {
 function loadScriptsAT() {
 	console.time();
 	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
-	basepath = atSettings.initialise.basepathOriginal + 'css/';
+	basepath = `${atSettings.initialise.basepathOriginal}css/`;
 	const scripts = Array.from(document.getElementsByTagName('script'));
 	const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
 
@@ -130,7 +130,7 @@ function loadScriptsAT() {
 		try {
 			await loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js');
 			await loadStylesheet('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
-			await loadStylesheet(atSettings.initialise.basepathOriginal + 'css/tabs.css');
+			await loadStylesheet(`${atSettings.initialise.basepathOriginal}css/tabs.css`);
 			await loadScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js');
 			if (typeof formatters !== 'object') await loadScript('https://Quiaaaa.github.io/AutoTrimps/Graphs.js');
 		} catch (error) {
@@ -229,7 +229,7 @@ function toggleCatchUpMode() {
 		if (atSettings.running === false || game.options.menu.pauseGame.enabled || getPageSetting('pauseScript', 1) || !getPageSetting('timeWarpSpeed')) {
 			if (usingRealTimeOffline && atSettings.loops.atTimeLapseFastLoop) {
 				resetLoops();
-				debug('Disabled Time Warp functionality.', 'offline');
+				debug(`Disabled Time Warp functionality.`, 'offline');
 			}
 			return;
 		}
@@ -422,14 +422,14 @@ function _handleNewWorld() {
 	setTitle();
 	_debugZoneStart();
 	if (getPageSetting('autoEggs', 1)) easterEggClicked();
-	if (dailyOddOrEven().skipZone) debug('Zone #' + game.global.world + ':  Heirloom swapping and mapping will be affected by Daily Odd/Even.', 'daily');
+	if (dailyOddOrEven().skipZone) debug(`Zone #${game.global.world}: Heirloom swapping and mapping will be affected by Daily Odd/Even.`, 'daily');
 	if (usingRealTimeOffline && game.global.world === 60) _timeWarpUpdateEquipment();
 }
 
 function _debugZoneStart() {
-	debug('Starting Zone ' + game.global.world, 'zone');
-	debug('Zone #' + game.global.world + ': Tauntimp (' + game.unlocks.impCount.Tauntimp + '), Magnimp (' + game.unlocks.impCount.Magnimp + '), Whipimp (' + game.unlocks.impCount.Whipimp + '), Venimp (' + game.unlocks.impCount.Venimp + ')', 'exotic');
-	debug('Zone # ' + game.global.world + ': Total pop (' + prettify(game.resources.trimps.owned) + '). A Bone Charge would give you these resources (' + boneShrineOutput(1).slice(0, -1).toLowerCase() + ')', 'run_Stats');
+	debug(`Starting Zone ${game.global.world}`, 'zone');
+	debug(`Zone #${game.global.world}: Tauntimp (${game.unlocks.impCount.Tauntimp}), Magnimp (${game.unlocks.impCount.Magnimp}), Whipimp (${game.unlocks.impCount.Whipimp}), Venimp (${game.unlocks.impCount.Venimp})`, 'exotic');
+	debug(`Zone # ${game.global.world}: Total pop (${prettify(game.resources.trimps.owned)}). A Bone Charge would give you these resources (${boneShrineOutput(1).slice(0, -1).toLowerCase()})`, 'run_Stats');
 }
 
 function mainCleanup() {
@@ -445,7 +445,7 @@ function throwErrorfromMain() {
 async function atVersionChecker() {
 	if (atSettings.updateAvailable) return;
 
-	const url = `${atSettings.initialise.basepath}/versionNumber.js`;
+	const url = `${atSettings.initialise.basepath}versionNumber.js`;
 	const response = await fetch(url);
 
 	if (response.ok) {

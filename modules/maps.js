@@ -354,9 +354,9 @@ function _berserkDisableMapping() {
 	if (game.challenges.Berserk.frenzyStacks > 0) return true;
 }
 
-function _noMappingChallenges() {
+function _noMappingChallenges(ignoreChallenge) {
 	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) return true;
-	if (challengeActive('Mapology')) return true;
+	if (!ignoreChallenge && challengeActive('Mapology')) return true;
 	if (challengeActive('Exterminate')) return true;
 }
 
@@ -411,7 +411,6 @@ function prettifyMap(map) {
 	if (!map) return 'none';
 	let descriptor;
 	if (!map.noRecycle) {
-		// a crafted map
 		const bonus = map.hasOwnProperty('bonus') ? mapSpecialModifierConfig[map.bonus].name : 'no bonus';
 		descriptor = `Level ${map.level} (${bonus}) map`;
 	} else if (map.location === 'Void') {

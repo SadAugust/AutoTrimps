@@ -1,20 +1,22 @@
 window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
-	var message = ['Message: ' + msg, 'URL: ' + url, 'Line: ' + lineNo, 'Column: ' + columnNo, 'Error object: ' + JSON.stringify(error)].join(' - ');
-	if (lineNo != 0) console.log('AT logged error: ' + message);
+	if (lineNo !== 0) {
+		const message = `Message: ${msg} - URL: ${url} - Line: ${lineNo} - Column: ${columnNo} - Error object: ${JSON.stringify(error)}`;
+		console.log(`AT logged error: ${message}`);
+	}
 };
 
 //Loads setting data from localstorage into object
 function _loadAutoTrimpsSettings() {
-	const tmp = JSON.parse(localStorage.getItem('atSettings'));
-	if (tmp !== null && tmp['ATversion'] !== undefined) autoTrimpSettings = tmp;
+	const settings = JSON.parse(localStorage.getItem('atSettings'));
+	if (settings !== null && settings['ATversion'] !== undefined) autoTrimpSettings = settings;
 }
 
 //Saves AT settings to localstorage
 function safeSetItems(storageName, storageSetting) {
 	try {
 		localStorage.setItem(storageName, storageSetting);
-	} catch (c) {
-		22 === c.code && debug('Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.', 'other');
+	} catch (error) {
+		if (error.code === 22) debug(`Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.`);
 	}
 }
 
@@ -24,39 +26,33 @@ function saveSettings() {
 }
 
 function serializeSettings() {
+	const settingProperties = {
+		boolean: ['enabled', 'enabledU2'],
+		value: ['value', 'valueU2'],
+		multiValue: ['value', 'valueU2'],
+		textValue: ['value', 'valueU2'],
+		multiTextValue: ['value', 'valueU2'],
+		valueNegative: ['value', 'valueU2'],
+		multitoggle: ['value', 'valueU2'],
+		mazArray: ['value', 'valueU2'],
+		mazDefaultArray: ['value', 'valueU2'],
+		dropdown: ['selected', 'selectedU2']
+	};
+
 	const settingString = JSON.stringify(
 		Object.keys(autoTrimpSettings).reduce((v, item) => {
 			const setting = autoTrimpSettings[item];
-			var newSetting = {};
-			switch (setting.type) {
-				case 'action':
-				case 'infoclick':
-					newSetting.id = v[item];
-					return (v[item] = newSetting), v;
-				case 'boolean':
-					newSetting.id = v[item];
-					newSetting.enabled = setting.enabled;
-					newSetting.enabledU2 = setting.enabledU2;
-					return (v[item] = newSetting), v;
-				case 'value':
-				case 'multiValue':
-				case 'textValue':
-				case 'multiTextValue':
-				case 'valueNegative':
-				case 'multitoggle':
-				case 'mazArray':
-				case 'mazDefaultArray':
-					newSetting.id = v[item];
-					newSetting.value = setting.value;
-					newSetting.valueU2 = setting.valueU2;
-					return (v[item] = newSetting), v;
-				case 'dropdown':
-					newSetting.id = v[item];
-					newSetting.selected = setting.selected;
-					newSetting.selectedU2 = setting.selectedU2;
-					return (v[item] = newSetting), v;
+			let newSetting = { id: v[item] };
+
+			const properties = settingProperties[setting.type];
+			if (properties) {
+				properties.forEach((property) => (newSetting[property] = setting[property]));
+			} else if (setting.type !== 'action' && setting.type !== 'infoclick') {
+				newSetting = setting;
 			}
-			return (v[item] = setting), v;
+
+			v[item] = newSetting;
+			return v;
 		}, {})
 	);
 
@@ -100,14 +96,14 @@ function setPageSetting(setting, newValue, universe = game.global.universe) {
 	if (autoTrimpSettings.hasOwnProperty(setting) === false) return false;
 
 	const settingType = autoTrimpSettings[setting].type;
-	const u2Setting = setting !== 'universeSetting' && universe === 2;
-	const enabled = 'enabled' + (u2Setting ? 'U2' : '');
-	const selected = 'selected' + (u2Setting ? 'U2' : '');
-	const value = 'value' + (u2Setting ? 'U2' : '');
+	const u2Setting = setting !== 'universeSetting' && universe === 2 ? 'U2' : '';
+	const enabled = 'enabled' + u2Setting;
+	const selected = 'selected' + u2Setting;
+	const value = 'value' + u2Setting;
 
-	var enabledIndex = ['boolean'];
-	var valueIndex = ['value', 'valueNegative', 'textValue', 'multiTextValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
-	var selectedIndex = ['dropdown'];
+	const enabledIndex = ['boolean'];
+	const valueIndex = ['value', 'valueNegative', 'textValue', 'multiTextValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
+	const selectedIndex = ['dropdown'];
 
 	if (enabledIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][enabled] = newValue;
 	else if (valueIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][value] = newValue;
@@ -122,13 +118,13 @@ function setPageSetting(setting, newValue, universe = game.global.universe) {
 function debug(message, messageType, icon) {
 	if (!atSettings.initialise.loaded) return;
 	const settingArray = getPageSetting('spamMessages');
-	var sendMessage = true;
+	let sendMessage = true;
 
 	if (messageType in settingArray) sendMessage = settingArray[messageType];
 
 	if (sendMessage) {
-		console.log(timeStamp() + ' ' + message);
-		message2(message, messageType, icon);
+		console.log(`${timeStamp()} ${message}`);
+		message_AT(message, messageType, icon);
 	}
 }
 
@@ -138,45 +134,63 @@ function timeStamp() {
 }
 
 function setTitle() {
-	document.title = '(' + game.global.world + ') Trimps ' + document.getElementById('versionNumber').innerHTML;
+	const world = game.global.world;
+	const versionNumber = document.getElementById('versionNumber').innerHTML;
+	document.title = `(${world}) Trimps ${versionNumber}`;
 }
 
-var lastmessagecount = 1;
-
-function message2(message, messageType, icon) {
+function message_AT(message, messageType, icon, displayClass) {
 	const log = document.getElementById('log');
 	const needsScroll = log.scrollTop + 10 > log.scrollHeight - log.clientHeight;
 	const displayType = ATmessageLogTabVisible ? 'block' : 'none';
-	let prefix = '';
 
-	icon && '*' === icon.charAt(0) ? ((icon = icon.replace('*', '')), (prefix = 'icomoon icon-')) : (prefix = 'glyphicon glyphicon-'),
-		game.options.menu.timestamps.enabled && (message = (1 === game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + ' ' + message),
-		icon && (message = '<span class="' + prefix + icon + '"></span> ' + message),
-		(message = '<span class="glyphicon glyphicon-superscript"></span> ' + message),
-		(message = '<span class="icomoon icon-text-color"></span>' + message);
-	var i = "<span class='" + 'AutoTrimps' + 'Message message ' + messageType + "' style='display: " + displayType + "'>" + message + '</span>',
-		j = document.getElementsByClassName('AutoTrimps Message');
-	if (1 < j.length && -1 < j[j.length - 1].innerHTML.indexOf(message)) {
-		var k = j[j.length - 1].innerHTML;
-		lastmessagecount++;
-		var l = k.lastIndexOf(' x');
-		-1 !== l && (j[j.length - 1].innerHTML = k.slice(0, l)), (j[j.length - 1].innerHTML += ' x' + lastmessagecount);
-	} else (lastmessagecount = 1), (log.innerHTML += i);
-	needsScroll && (log.scrollTop = log.scrollHeight), trimMessages('AutoTrimps');
+	const iconPrefix = icon && icon.charAt(0) === '*' ? 'icomoon icon-' : 'glyphicon glyphicon-';
+	icon = icon ? icon.replace('*', '') : icon;
+
+	if (game.options.menu.timestamps.enabled) {
+		message = `${game.options.menu.timestamps.enabled === 1 ? getCurrentTime() : updatePortalTimer(true)} ${message}`;
+	}
+
+	if (icon) message = `<span class="${iconPrefix}${icon}"></span> ${message}`;
+
+	message = `<span class="glyphicon glyphicon-superscript"></span> ${message}`;
+	message = `<span class="icomoon icon-text-color"></span>${message}`;
+
+	const messageHTML = `<span class="${messageType}Message message ${displayClass}" style="display: ${displayType}">${message}</span>`;
+	const messages = document.getElementsByClassName(`${messageType}Message`);
+	const lastMessageElement = messages.length > 1 ? messages[messages.length - 1] : null;
+
+	if (lastMessageElement && lastMessageElement.innerHTML.includes(message)) {
+		const lastMessage = lastMessageElement.innerHTML;
+		const countIndex = lastMessage.lastIndexOf(' x');
+		const lastMessageWithoutCount = countIndex !== -1 ? lastMessage.slice(0, countIndex) : lastMessage;
+		const lastMessageCount = countIndex !== -1 ? parseInt(lastMessage.slice(countIndex + 2)) : 1;
+		lastMessageElement.innerHTML = `${lastMessageWithoutCount} x${lastMessageCount + 1}`;
+	} else {
+		log.innerHTML += messageHTML;
+	}
+
+	// Scroll the log if needed
+	if (needsScroll) log.scrollTop = log.scrollHeight;
+
+	trimMessages(messageType);
 }
 
-function filterMessage2(a) {
-	var b = document.getElementById('log');
-	var displayed = !ATmessageLogTabVisible;
-	ATmessageLogTabVisible = displayed;
-	var c = document.getElementsByClassName(a + 'Message');
-	var e = document.getElementById(a + 'Filter');
+function filterMessage_AT(messageType) {
+	const logElement = document.getElementById('log');
+	const messageElements = document.getElementsByClassName(`${messageType}Message`);
+	const filterElement = document.getElementById(`${messageType}Filter`);
 
-	(e.className = ''), (e.className = getTabClass(displayed)), (displayed = displayed ? 'block' : 'none');
-	for (var f = 0; f < c.length; f++) {
-		c[f].style.display = displayed;
-		b.scrollTop = b.scrollHeight;
-	}
+	const isDisplayed = !ATmessageLogTabVisible;
+	const displayStyle = isDisplayed ? 'block' : 'none';
+	ATmessageLogTabVisible = isDisplayed;
+
+	filterElement.className = getTabClass(isDisplayed);
+
+	Array.from(messageElements).forEach((messageElement) => {
+		messageElement.style.display = displayStyle;
+		logElement.scrollTop = logElement.scrollHeight;
+	});
 }
 
 function addAnS(num) {
@@ -186,10 +200,9 @@ function addAnS(num) {
 //Check if the gameUser setting has been set to a valid user.
 function gameUserCheck(skipTest) {
 	const user = autoTrimpSettings.gameUser.value.trim().toLowerCase();
-	if (!user) return false;
-	const allowedUsers = ['sadaugust', 'kyotie', 'charles', 'test'];
-	if (skipTest) allowedUsers.pop();
-	return allowedUsers.some((allowedUser) => allowedUser === user);
+	const allowedUsers = ['sadaugust', 'kyotie', 'charles'];
+	if (!skipTest) allowedUsers.push('test');
+	return allowedUsers.includes(user);
 }
 
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
@@ -204,10 +217,10 @@ function _getTimeWarpHours(inputHours) {
 		try {
 			timeWarpHours = parseNum(document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, ''));
 			if (!timeWarpHours) {
-				debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
+				debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'test');
 			}
 		} catch (err) {
-			debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
+			debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'test');
 		}
 	}
 
@@ -231,12 +244,13 @@ function testSpeedX(interval) {
 		setTimeout(testSpeedX, interval, interval);
 		return;
 	}
-	var date = new Date();
-	var now = date.getTime();
+	const date = new Date();
+	const now = date.getTime();
+	let tick = 100;
+
 	game.global.lastOnline = now;
 	game.global.start = now;
 
-	var tick = 100;
 	game.global.zoneStarted -= tick;
 	game.global.portalTime -= tick;
 	game.global.lastSoldierSentAt -= tick;
@@ -246,7 +260,7 @@ function testSpeedX(interval) {
 
 	mainLoop();
 	gameLoop(null, now);
-	setTimeout(testSpeedX, interval, interval);
+	setTimeout(testSpeedX, interval);
 
 	if (date.getSeconds() % 3 === 0) updateLabels();
 }
@@ -254,16 +268,16 @@ function testSpeedX(interval) {
 function testChallenge() {
 	//read the name in from tooltip
 	try {
-		var challengeName = document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, '');
+		const challengeName = document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, '');
 		if (challengeName === null || game.challenges[challengeName] === undefined) {
-			debug("Challenge name didn't match one ingame..", 'test');
+			debug(`Challenge name didn't match one ingame.`, 'test');
 			return;
 		}
 	} catch (err) {
-		debug("Challenge name didn't match one ingame..", 'test');
+		debug(`Challenge name didn't match one ingame.`, 'test');
 		return;
 	}
-	debug('Setting challenge to ' + challengeName, 'test');
+	debug(`Setting challenge to ${challengeName}`, 'test');
 	game.global.challengeActive = challengeName;
 }
 
@@ -272,37 +286,37 @@ function testRunningC2() {
 }
 
 function testMetalIncome() {
-	var secondsPerMap = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
-	var mapsPerHour = 3600 / secondsPerMap;
-	var mapsPerDay = mapsPerHour * 24;
+	const secondsPerMap = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
+	const mapsPerHour = 3600 / secondsPerMap;
+	const mapsPerDay = mapsPerHour * 24;
 	//Factors in large cache + chronoimp
-	var mapTimer = mapsPerDay * 25;
+	let mapTimer = mapsPerDay * 25;
 	//Adding avg jestimps into mapTimer calculation
 	if (mapsPerDay > 4) mapTimer += Math.floor(mapsPerDay / 5) * 45;
-	var mapLevel = game.global.mapsActive ? getCurrentMapObject().level - game.global.world : 0;
-	var resourcesGained = scaleToCurrentMap_AT(simpleSeconds_AT('metal', mapTimer, '0,0,1'), false, true, mapLevel);
-	debug('Metal gained from 1 day ' + prettify(resourcesGained), 'test');
+	const mapLevel = game.global.mapsActive ? getCurrentMapObject().level - game.global.world : 0;
+	const resourcesGained = scaleToCurrentMap_AT(simpleSeconds_AT('metal', mapTimer, '0,0,1'), false, true, mapLevel);
+	debug(`Metal gained from 1 day ${prettify(resourcesGained)}`, 'test');
 }
 
 function testEquipmentMetalSpent() {
-	var equipMult = getEquipPriceMult();
-	var levelCost = 0;
-	var prestigeCost = 0;
+	const equipMult = getEquipPriceMult();
+	let levelCost = 0;
+	let prestigeCost = 0;
 
 	function getTotalPrestigeCost(what, prestigeCount) {
-		var actualCost = 0;
+		let actualCost = 0;
 		for (var i = 1; i <= prestigeCount; i++) {
-			var equipment = game.equipment[what];
-			var prestigeMod;
-			var nextPrestigeCount = i + 1;
+			const equipment = game.equipment[what];
+			let prestigeMod;
+			const nextPrestigeCount = i + 1;
 			if (nextPrestigeCount >= 4) prestigeMod = (nextPrestigeCount - 3) * 0.85 + 2;
 			else prestigeMod = nextPrestigeCount - 1;
-			var prestigeCost = Math.round(equipment.oc * Math.pow(1.069, prestigeMod * game.global.prestige.cost + 1)) * equipMult;
+			let prestigeCost = Math.round(equipment.oc * Math.pow(1.069, prestigeMod * game.global.prestige.cost + 1)) * equipMult;
 			actualCost += prestigeCost;
 
 			//Calculate cost of current equip levels
 			if (prestigeCount === i && equipment.level > 1) {
-				finalCost = prestigeCost;
+				let finalCost = prestigeCost;
 
 				for (var j = 2; j <= equipment.level; j++) {
 					levelCost += finalCost * Math.pow(1.2, j - 1);
@@ -313,14 +327,14 @@ function testEquipmentMetalSpent() {
 		return actualCost;
 	}
 
-	for (var i in MODULES.equipment) {
+	for (let i in MODULES.equipment) {
 		if (game.equipment[i].locked) continue;
 		prestigeCost += getTotalPrestigeCost(i, game.equipment[i].prestige - 1);
 	}
 
-	debug('Cost of all prestiges: ' + prettify(prestigeCost), 'test');
-	debug('Cost of all equip levels: ' + prettify(levelCost), 'test');
-	debug('Cost of all equipment: ' + prettify(prestigeCost + levelCost), 'test');
+	debug(`Cost of all prestiges: ${prettify(prestigeCost)}`, 'test');
+	debug(`Cost of all equip levels: ${prettify(levelCost)}`, 'test');
+	debug(`Cost of all equipment: ${prettify(prestigeCost + levelCost)}`, 'test');
 }
 
 function testMaxMapBonus() {
@@ -332,19 +346,19 @@ function testMaxTenacity() {
 }
 
 function testWorldCell() {
-	if (!game.global.mapsActive && !game.global.preMapsActive) {
-		game.global.lastClearedCell = game.global.gridArray.length - 2;
-		game.global.gridArray[game.global.lastClearedCell + 1].health = 0;
-		game.global.gridArray[game.global.gridArray.length - 1].health = 0;
-	}
+	if (game.global.mapsActive || game.global.preMapsActive) return;
+
+	game.global.lastClearedCell = game.global.gridArray.length - 2;
+	game.global.gridArray[game.global.lastClearedCell + 1].health = 0;
+	game.global.gridArray[game.global.gridArray.length - 1].health = 0;
 }
 
 function testMapCell() {
-	if (game.global.mapsActive) {
-		game.global.lastClearedMapCell = getCurrentMapObject().size - 2;
-		game.global.mapGridArray[game.global.lastClearedMapCell + 1].health = 0;
-		game.global.mapGridArray[getCurrentMapObject().size - 2].health = 0;
-	}
+	if (!game.global.mapsActive) return;
+
+	game.global.lastClearedMapCell = getCurrentMapObject().size - 2;
+	game.global.mapGridArray[game.global.lastClearedMapCell + 1].health = 0;
+	game.global.mapGridArray[getCurrentMapObject().size - 2].health = 0;
 }
 
 function testTrimpStats() {
@@ -358,10 +372,9 @@ function getAncientTreasureName() {
 }
 
 function resourcesFromMap(resource, cache, jobRatio, mapLevel, mapCount) {
-	mapTime = cache[0] === 'l' ? 20 : cache[0] === 's' ? 10 : 0;
+	let mapTime = cache[0] === 'l' ? 20 : cache[0] === 's' ? 10 : 0;
 	if (game.unlocks.imps.Chronoimp) mapTime += 5;
-	if (mapTime > 0) mapTime *= mapCount;
-	else mapTime = mapCount;
+	mapTime = mapTime > 0 ? (mapTime *= mapCount) : mapCount;
 	if (game.unlocks.imps.Jestimp) mapTime += Math.floor(mapCount / 5) * 45;
 
 	return scaleToCurrentMap_AT(simpleSeconds_AT(resource, mapTime, jobRatio), false, true, mapLevel);
@@ -373,12 +386,13 @@ function decayLootMult(mapCount) {
 	if (!challengeActive(challengeName)) return 1;
 
 	const mapClearTime = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
+	const stackCap = game.challenges[challengeName].maxStacks;
 	let lootMult = 1;
-	let meltStacks = game.challenges.Melt.stacks;
+	let decayStacks = game.challenges[challengeName].stacks;
 	for (let x = 0; x < mapCount; x++) {
-		lootMult /= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
-		meltStacks += mapClearTime;
-		lootMult *= Math.pow(game.challenges.Melt.decayValue, Math.floor(meltStacks));
+		lootMult /= Math.pow(game.challenges[challengeName].decayValue, Math.floor(decayStacks));
+		decayStacks = Math.min(decayStacks + mapClearTime, stackCap);
+		lootMult *= Math.pow(game.challenges[challengeName].decayValue, Math.floor(decayStacks));
 	}
 	return lootMult;
 }

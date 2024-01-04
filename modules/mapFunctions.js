@@ -495,7 +495,7 @@ function voidMaps(lineCheck) {
 			if (defaultSettings.voidFarm && !(challengeActive('Metal') || challengeActive('Transmute')) && MODULES.mapFunctions.hasVoidFarmed !== getTotalPortals() + '_' + game.global.world && ((defaultSettings.hitsSurvived > 0 && defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid) || (defaultSettings.hdRatio > 0 && defaultSettings.hdRatio < hdStats.vhdRatioVoid))) {
 				//Print farming message if we haven't already started HD Farming for stats.
 				if (!mapSettings.voidFarm && getPageSetting('autoMaps')) debug(mapName + ' (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') farming for stats before running void maps.', 'map_Details');
-				return hdFarm(false, false, true, true);
+				return hdFarm(false, true, true);
 			}
 		}
 
@@ -1203,9 +1203,6 @@ function prestigesToGet(targetZone = game.global.world, targetPrestige = 'Gambes
 	return [prestigeToFarmFor, mapsToRun];
 }
 
-/* 
-To be done
- */
 function prestigeClimb(lineCheck) {
 	const mapName = 'Prestige Climb';
 	const farmingDetails = {
@@ -1213,10 +1210,10 @@ function prestigeClimb(lineCheck) {
 		mapName
 	};
 
-	if (challengeActive('Frugal') || _berserkDisableMapping() || _noMappingChallenges()) return farmingDetails;
+	if (challengeActive('Frugal') || _berserkDisableMapping() || _noMappingChallenges(true)) return farmingDetails;
 
 	const runningMapology = challengeActive('Mapology') && getPageSetting('mapology');
-	let targetPrestige = runningMapology ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
+	let targetPrestige = runningMapology ? getPageSetting('mapologyPrestige') : getPageSetting('prestigeClimb');
 	if (targetPrestige === 'Off') return farmingDetails;
 	if (game.jobs.Explorer.locked) {
 		farmingDetails.biome = 'Random';
@@ -1224,7 +1221,7 @@ function prestigeClimb(lineCheck) {
 	}
 	//If we're past the zone we want to farm for all prestiges in then set targetPrestige to the highest prestige available.
 	//equipsToGet will automatically change GambesOP to Breastplate if the Slow challenge has not yet been completed.
-	if (!runningMapology && getPageSetting('ForcePresZ') >= 0 && game.global.world >= getPageSetting('ForcePresZ')) {
+	if (!runningMapology && getPageSetting('prestigeClimbZone') >= 0 && game.global.world >= getPageSetting('prestigeClimbZone')) {
 		targetPrestige = 'GambesOP';
 	}
 
@@ -1238,20 +1235,19 @@ function prestigeClimb(lineCheck) {
 
 	let shouldMap = prestigeToFarmFor > 0;
 
-	if (shouldMap && getPageSetting('PrestigeSkip')) {
+	if (shouldMap && getPageSetting('prestigeClimbSkip')) {
 		const prestigeList = ['Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
 		const numUnbought = prestigeList.filter((p) => game.upgrades[p].allowed - game.upgrades[p].done > 0).length;
 		shouldMap = numUnbought >= 2;
 	}
 
-	if (lineCheck && shouldMap) return (setting = { priority: 1 });
-
 	const mapSpecial = getAvailableSpecials('p');
 	const mapObject = getCurrentMapObject();
-
 	if (mapCost(mapLevel, mapSpecial, null, [0, 0, 0], false) > game.resources.fragments.owned && (!game.global.mapsActive || (mapObject && mapObject.level < game.global.world + mapLevel))) {
 		shouldMap = false;
 	}
+
+	if (lineCheck && shouldMap) return (setting = { priority: getPageSetting('prestigeClimbPriority') });
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, 0, mapSpecial);
@@ -1684,7 +1680,6 @@ function experience(lineCheck) {
 	return farmingDetails;
 }
 
-/*  To be done  */
 function wither(lineCheck) {
 	let shouldMap = false;
 	const mapName = 'Wither Farm';
@@ -1697,29 +1692,25 @@ function wither(lineCheck) {
 	const witherZones = getPageSetting('witherZones');
 	if (witherZones.indexOf(game.global.world) >= 0) return farmingDetails;
 
-	let jobRatio = '0,0,1';
-	let mapSpecial = getAvailableSpecials('lmc', true);
-	let mapLevel = autoLevelCheck(mapName, mapSpecial, -1, null);
-	let cell = game.global.lastClearedCell + 2;
-	let equalityAmt = 0;
-	let ourDmg = 0;
-	let enemyHealth = 0;
+	const mapSpecial = getAvailableSpecials('lmc', true);
+	const mapLevel = autoLevelCheck(mapName, mapSpecial, -1, null);
+	const cell = game.global.lastClearedCell + 2;
+	let equalityAmt,
+		ourDmg,
+		enemyHealth = false;
 
 	//Checking if we can clear to the speedbook on the next zone.
 	if (cell === 100 && witherZones.indexOf(game.global.world + 1) === -1) {
 		let dmgBuff = 1;
 		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 60, 'world', 1, 'gamma', false, 4);
-		//If we can afford a coordination on the next zone then factor it into our calcs.
-		//Equality is just a flat minus 2 (because of 25% more health, it's off by 4% so might mean 1 higher equality in some cases)
+
 		if (canAffordCoordinationTrimps()) {
 			dmgBuff = 1.25;
 			equalityAmt = Math.max(0, equalityAmt - 2);
 		}
-
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false) * dmgBuff;
 		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 60, 'Snimp', calcMutationHealth(game.global.world + 1));
-
-		if (ourDmg * 4 < enemyHealth) shouldMap = true;
+		shouldMap = ourDmg * 4 < enemyHealth;
 	}
 	//Checking if we can clear current cell.
 	else {
@@ -1728,28 +1719,25 @@ function wither(lineCheck) {
 		equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma', false, 4);
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 		enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationHealth(game.global.world));
-
-		//If we can gamma burst then factor that into damage calcs so that mapping doesn't cause us to not kill an enemy
-		if (ourDmg * (gammaToTrigger <= 1 ? MODULES.heirlooms.gammaBurstPct : 1) * 4 < enemyHealth) shouldMap = true;
+		shouldMap = ourDmg * (gammaToTrigger <= 1 ? MODULES.heirlooms.gammaBurstPct : 1) * 4 < enemyHealth;
 	}
 
-	//As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
 	if (lineCheck && shouldMap) return (setting = { priority: Infinity });
 
 	const damageTarget = enemyHealth / 4;
-
 	const status = `Wither Farm: Curr&nbsp;Dmg:&nbsp;${prettify(ourDmg)} Goal&nbsp;Dmg:&nbsp;${prettify(damageTarget)}`;
 
-	farmingDetails.shouldRun = shouldMap;
-	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = mapLevel;
-	farmingDetails.autoLevel = true;
-	farmingDetails.special = mapSpecial;
-	farmingDetails.jobRatio = jobRatio;
-	farmingDetails.damageTarget = damageTarget;
-	farmingDetails.repeat = true;
-	farmingDetails.status = status;
-	farmingDetails.equalityAmt = equalityAmt;
+	Object.assign(farmingDetails, {
+		shouldRun: shouldMap,
+		mapLevel,
+		autoLevel: true,
+		special: mapSpecial,
+		jobRatio: '0,0,1',
+		damageTarget,
+		repeat: true,
+		status,
+		equalityAmt
+	});
 
 	if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 		mappingDetails(mapName, mapLevel, mapSpecial);
@@ -1908,7 +1896,6 @@ function _runQuest(shouldMap, mapName) {
 	};
 }
 
-/* Done up to here */
 function archaeology(lineCheck) {
 	const mapName = 'Archaeology Farm';
 	const farmingDetails = {
@@ -1929,77 +1916,80 @@ function archaeology(lineCheck) {
 	const setting = baseSettings[settingIndex];
 	if (lineCheck) return setting;
 
-	if (setting) {
-		const nextRelicCost = game.challenges.Archaeology.getNextCost();
-		const relicString = setting.relics.split(',');
-		const mapSpecial = getAvailableSpecials('lrc', true);
-		const relicObj = game.challenges.Archaeology.points;
-		const relicsToPurchase = [];
-		const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-
-		for (let item in relicString) {
-			let relicName = game.challenges.Archaeology.getDefs()[relicString[item].slice(-1)];
-			if (relicName === undefined) {
-				farmingDetails.undefinedRelic = relicString[item].slice(-1);
-				return farmingDetails;
-			}
-			let relicToBuy = parseInt(relicString[item]);
-			if (relicToBuy > relicObj[relicName]) {
-				relicsToPurchase.push(relicString[item]);
-			}
-		}
-
-		if (!game.options.menu.pauseGame.enabled && getPageSetting('autoMaps')) {
-			while (relicsToPurchase.length > 0 && game.resources.science.owned > game.challenges.Archaeology.getNextCost()) {
-				let relicName = game.challenges.Archaeology.getDefs()[relicsToPurchase[0].slice(-1)];
-				let relicToBuy = parseInt(relicsToPurchase[0]);
-				game.challenges.Archaeology.buyRelic(relicName + 'Relic', true);
-				if (game.challenges.Archaeology.points[relicName] >= relicToBuy) relicsToPurchase.shift();
-			}
-		}
-
-		if (relicsToPurchase.length > 0) shouldMap = true;
-
-		let canAffordNextRelic = false;
-		if (shouldMap && setting.mapCap && setting.mapCap > 0) {
-			const mapCap = mapSettings.mapName === mapName ? setting.mapCap - game.global.mapRunCounter : setting.mapCap;
-			if (typeof mapSettings.canAffordNextRelic !== 'undefined' && nextRelicCost === mapSettings.nextRelicCost) {
-				canAffordNextRelic = mapSettings.canAffordNextRelic;
-			} else {
-				canAffordNextRelic = game.resources.science.owned + resourcesFromMap('science', mapSpecial, setting.jobratio, mapLevel, mapCap) > nextRelicCost;
-			}
-
-			shouldMap = canAffordNextRelic;
-		}
-
-		if (mapSettings.mapName === mapName && !shouldMap) {
-			mappingDetails(mapName, mapLevel, mapSpecial);
-			resetMapVars(setting, settingName);
-		}
-
-		const repeat = false;
-		const relicCost = setting.relics;
-		const status = 'Archaeology Farm: ' + relicCost;
-
-		farmingDetails.shouldRun = shouldMap;
-		farmingDetails.mapName = mapName;
-		farmingDetails.mapLevel = mapLevel;
-		farmingDetails.autoLevel = setting.autoLevel;
-		farmingDetails.special = mapSpecial;
-		farmingDetails.gather = 'science';
-		farmingDetails.jobRatio = setting.jobratio;
-		farmingDetails.relicString = setting.relics;
-		if (typeof canAffordNextRelic !== 'undefined') farmingDetails.canAffordNextRelic = canAffordNextRelic;
-		farmingDetails.nextRelicCost = nextRelicCost;
-		farmingDetails.relicsToPurchase = relicsToPurchase;
-
-		farmingDetails.repeat = !repeat;
-		farmingDetails.status = status;
-		farmingDetails.settingIndex = settingIndex;
-		if (setting.priority) farmingDetails.priority = setting.priority;
-	}
+	if (setting) Object.assign(farmingDetails, _runArchaeology(setting, mapName, settingName, settingIndex));
 
 	return farmingDetails;
+}
+
+function _runArchaeology(setting, mapName, settingName, settingIndex) {
+	const nextRelicCost = game.challenges.Archaeology.getNextCost();
+	const relicString = setting.relics.split(',');
+	const mapSpecial = getAvailableSpecials('lrc', true);
+	const relicObj = game.challenges.Archaeology.points;
+	const relicsToPurchase = [];
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
+
+	for (let item in relicString) {
+		let relicName = game.challenges.Archaeology.getDefs()[relicString[item].slice(-1)];
+		if (relicName === undefined) {
+			farmingDetails.undefinedRelic = relicString[item].slice(-1);
+			return farmingDetails;
+		}
+		let relicToBuy = parseInt(relicString[item]);
+		if (relicToBuy > relicObj[relicName]) {
+			relicsToPurchase.push(relicString[item]);
+		}
+	}
+
+	if (!game.options.menu.pauseGame.enabled && getPageSetting('autoMaps')) {
+		while (relicsToPurchase.length > 0 && game.resources.science.owned > game.challenges.Archaeology.getNextCost()) {
+			let relicName = game.challenges.Archaeology.getDefs()[relicsToPurchase[0].slice(-1)];
+			let relicToBuy = parseInt(relicsToPurchase[0]);
+			game.challenges.Archaeology.buyRelic(relicName + 'Relic', true);
+			if (game.challenges.Archaeology.points[relicName] >= relicToBuy) relicsToPurchase.shift();
+		}
+	}
+
+	let shouldMap = relicsToPurchase.length > 0;
+
+	let canAffordNextRelic = false;
+	if (shouldMap && setting.mapCap && setting.mapCap > 0) {
+		const mapCap = mapSettings.mapName === mapName ? setting.mapCap - game.global.mapRunCounter : setting.mapCap;
+		if (typeof mapSettings.canAffordNextRelic !== 'undefined' && nextRelicCost === mapSettings.nextRelicCost) {
+			canAffordNextRelic = mapSettings.canAffordNextRelic;
+		} else {
+			canAffordNextRelic = game.resources.science.owned + resourcesFromMap('science', mapSpecial, setting.jobratio, mapLevel, mapCap) > nextRelicCost;
+		}
+
+		shouldMap = canAffordNextRelic;
+	}
+
+	if (mapSettings.mapName === mapName && !shouldMap) {
+		mappingDetails(mapName, mapLevel, mapSpecial);
+		resetMapVars(setting, settingName);
+	}
+
+	const repeat = false;
+	const relicCost = setting.relics;
+	const status = 'Archaeology Farm: ' + relicCost;
+
+	return {
+		shouldRun: shouldMap,
+		mapName,
+		mapLevel,
+		autoLevel: setting.autoLevel,
+		special: mapSpecial,
+		gather: 'science',
+		jobRatio: setting.jobratio,
+		relicString: setting.relics,
+		canAffordNextRelic,
+		nextRelicCost,
+		relicsToPurchase,
+		repeat: !repeat,
+		status: status,
+		settingIndex,
+		priority: setting.priority
+	};
 }
 
 function mayhem(lineCheck) {
@@ -2459,6 +2449,7 @@ function _alchemyVoidPotions() {
 	if (alchObj.canAffordPotion('Potion of Strength')) alchObj.craftPotion('Potion of Strength');
 }
 
+/* To be done */
 function glass(lineCheck) {
 	let shouldMap = false;
 	let mapName = 'Glass ';
@@ -2575,7 +2566,6 @@ function hypothermia(lineCheck) {
 	return farmingDetails;
 }
 
-/* Done */
 function hypothermiaBuyPackrat() {
 	if (!MODULES.mapFunctions.hypothermia.buyPackrat && challengeActive('Hypothermia')) MODULES.mapFunctions.hypothermia.buyPackrat = true;
 	if (MODULES.mapFunctions.hypothermia.buyPackrat && challengeActive('')) {
@@ -2630,6 +2620,7 @@ function _runHypothermia(setting, mapName, settingName, settingIndex) {
 	};
 }
 
+/* To be done */
 function desolation(lineCheck, forceDestack) {
 	var shouldMap = false;
 	const mapName = 'Desolation Destacking';
@@ -2724,6 +2715,7 @@ function desolation(lineCheck, forceDestack) {
 	return farmingDetails;
 }
 
+/* To be done */
 function desolationGearScum(lineCheck) {
 	var shouldMap = false;
 	const mapName = 'Desolation Gear Scum';
@@ -2824,7 +2816,6 @@ function desolationGearScum(lineCheck) {
 }
 
 function smithless(lineCheck) {
-	var shouldMap = false;
 	const mapName = 'Smithless Farm';
 	const farmingDetails = {
 		shouldRun: false,
@@ -2834,39 +2825,35 @@ function smithless(lineCheck) {
 	if (!challengeActive('Smithless') || !getPageSetting('smithless')) return farmingDetails;
 
 	if (game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith) {
-		var jobRatio = '0,0,1';
-		var mapSpecial = getAvailableSpecials('lmc', true);
-		var smithlessMin = game.global.mapBonus !== 10 ? 0 : null;
-		var mapLevel = autoLevelCheck(mapName, mapSpecial, null, smithlessMin);
+		const mapSpecial = getAvailableSpecials('lmc', true);
+		const mapLevel = autoLevelCheck(farmingDetails.mapName, mapSpecial, null, game.global.mapBonus !== 10 ? 0 : null);
 
-		var name = game.global.gridArray[0].name;
-		var gammaDmg = MODULES.heirlooms.gammaBurstPct;
-		var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma');
-		var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
-		var ourDmgTenacity = ourDmg;
+		const name = game.global.gridArray[0].name;
+		const gammas = 10 % gammaMaxStacks();
+		const regularHits = 10 - gammas * gammaMaxStacks();
+		const gammaDmg = MODULES.heirlooms.gammaBurstPct;
+		const equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma');
+		let ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
+		let ourDmgTenacity = ourDmg;
 
-		var gammas = 10 % gammaMaxStacks();
-		var regularHits = 10 - gammas * gammaMaxStacks();
-
-		//Map Bonus
 		if (game.global.mapBonus > 0 && game.global.mapBonus !== 10) {
-			ourDmgTenacity /= 1 + 0.2 * game.global.mapBonus;
-			ourDmgTenacity *= 5;
+			ourDmgTenacity = (ourDmgTenacity / (1 + 0.2 * game.global.mapBonus)) * 5;
 		}
-		//Tenacity
-		if (game.portal.Tenacity.radLevel > 0) {
-			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness')))) {
-				ourDmgTenacity /= game.portal.Tenacity.getMult();
-				ourDmgTenacity *= Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness'));
+
+		if (getPerkLevel('Tenacity') > 0) {
+			const tenacityCurrentMult = game.portal.Tenacity.getMult();
+			const tenacityMaxMult = Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness'));
+			if (tenacityCurrentMult !== tenacityMaxMult) {
+				ourDmgTenacity = (ourDmgTenacity / tenacityCurrentMult) * tenacityMaxMult;
 			}
 		}
 
 		ourDmgTenacity *= getZoneMinutes() > 100 ? 1 : 1.5;
 		if (prestigesToGet(game.global.world + mapLevel)[0] > 0) ourDmgTenacity *= 1000;
 
-		var totalDmgTenacity = ourDmgTenacity * regularHits + ourDmgTenacity * gammaDmg * gammas;
+		const totalDmgTenacity = ourDmgTenacity * regularHits + ourDmgTenacity * gammaDmg * gammas;
 
-		var enemyHealth = calcEnemyHealthCore('world', game.global.world, 1, name);
+		let enemyHealth = calcEnemyHealthCore('world', game.global.world, 1, name);
 		enemyHealth *= 3e15;
 		const smithyThreshhold = [1, 0.01, 0.000001];
 		const smithyThreshholdIndex = [0.000001, 0.01, 1];
@@ -2877,30 +2864,27 @@ function smithless(lineCheck) {
 
 		if (smithyThreshhold.length === 0) return farmingDetails;
 
-		var totalDmg = ourDmg * regularHits + ourDmg * gammaDmg * gammas;
-		var damageTarget = enemyHealth / totalDmg;
+		const totalDmg = ourDmg * regularHits + ourDmg * gammaDmg * gammas;
+		const damageTarget = enemyHealth / totalDmg;
 
-		if (totalDmg < enemyHealth) {
-			shouldMap = true;
-		}
+		const shouldMap = totalDmg < enemyHealth;
 
-		//As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
 		if (lineCheck && shouldMap) return (setting = { priority: Infinity });
 
-		var status = `Smithless: Want ${damageTarget.toFixed(2)} x more damage for ${smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1}/3`;
+		const status = `Smithless: Want ${damageTarget.toFixed(2)}x more damage for ${smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1}/3`;
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = mapLevel;
 		farmingDetails.autoLevel = true;
 		farmingDetails.special = mapSpecial;
-		farmingDetails.jobRatio = jobRatio;
+		farmingDetails.jobRatio = '0,0,1';
 		farmingDetails.damageTarget = damageTarget;
 		farmingDetails.equality = equalityAmt;
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 
-		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
+		if (mapSettings.mapName === mapName && !shouldMap) {
 			mappingDetails(mapName, mapLevel, mapSpecial, smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1);
 			resetMapVars();
 		}
@@ -2909,170 +2893,173 @@ function smithless(lineCheck) {
 	return farmingDetails;
 }
 
-//Calculates the hd ratio that should be used for the current zone from each hd farm setting line.
-function hdFarmSettingRatio(setting) {
-	var mult = setting.hdMult;
-	var hd = setting.hdBase;
-	var zone = game.global.world - setting.world;
-	return zone === 0 ? hd : Math.pow(mult, zone) * hd;
-}
-
 function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
-	var shouldMap = false;
-	var shouldSkip = false;
-	var mapName = 'HD Farm';
+	let mapName = 'HD Farm';
 	const farmingDetails = {
 		shouldRun: false,
 		mapName
 	};
+
 	const settingName = 'hdFarmSettings';
 	const baseSettings = getPageSetting(settingName);
-	const defaultSettings = baseSettings ? baseSettings[0] : null;
-	var settingIndex = null;
-	var setting;
-	var mapsRunCap = Infinity;
+	if (!baseSettings) return farmingDetails;
+	const defaultSettings = baseSettings[0];
 
-	//Void Farming setting setup
-	if (voidFarm) {
-		const voidSetting = getPageSetting('voidMapSettings')[0];
-		setting = {
-			autoLevel: true,
-			hdMult: 1,
-			jobratio: voidSetting.jobratio,
-			world: game.global.world,
-			level: -1,
-			hdBase: Number(voidSetting.hdRatio),
-			hdType: 'voidFarm',
-			mapCap: typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100,
-			priority: 1
-		};
-		//Checking to see which of hits survived and hd farm should be run. Prioritises hits survived.
-		if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {
-			setting.hdBase = Number(voidSetting.hitsSurvived);
-			setting.hdType = 'hitsSurvivedVoid';
-		}
-	} //Standalone Hits Survived setting setup.
-	else if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world && !_berserkDisableMapping() && !_noMappingChallenges()) {
-		let hitsSurvivedSetting = targetHitsSurvived(true);
-		if (hitsSurvivedSetting > 0 && hdStats.hitsSurvived < hitsSurvivedSetting)
-			setting = {
-				autoLevel: true,
-				hdBase: hitsSurvivedSetting,
-				hdMult: 1,
-				world: game.global.world,
-				hdType: 'hitsSurvived',
-				jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : '1,1,2',
-				level: -1,
-				hitsSurvivedFarm: true,
-				priority: Infinity
-			};
-	}
-	if (!defaultSettings.active && setting === undefined) return farmingDetails;
+	const hitsSurvivedCheck = !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world && !_berserkDisableMapping() && !_noMappingChallenges();
+	const hitsSurvivedGoal = targetHitsSurvived(true);
+	const shouldHitsSurvived = hitsSurvivedCheck && hitsSurvivedGoal > 0 && hdStats.hitsSurvived < hitsSurvivedGoal;
 
-	if (defaultSettings.active && settingIndex === null) {
-		for (let y = 1; y < baseSettings.length; y++) {
-			let currSetting = baseSettings[y];
-			let world = currSetting.world;
-			if (!settingShouldRun(currSetting, world, 0, settingName)) continue;
-			if (currSetting.hdType.toLowerCase().includes('void') && game.global.totalVoidMaps === 0) continue;
-			if (skipHealthCheck && currSetting.hdType.includes('hitsSurvived')) continue;
-			settingIndex = y;
-			break;
-		}
-	}
+	if (!voidFarm && !shouldHitsSurvived && !defaultSettings && !defaultSettings.active) return farmingDetails;
 
-	//Setting up setting variable when we aren't void or hits survived farming
-	if (settingIndex !== null && setting === undefined) setting = baseSettings[settingIndex];
+	const settingIndex = findSettingsIndex(settingName, baseSettings, mapName, null, skipHealthCheck);
+
+	const setting = voidFarm ? _hdFarmVoidSetting() : shouldHitsSurvived ? _hdFarmHitsSurvivedSetting(hitsSurvivedGoal, defaultSettings) : baseSettings[settingIndex];
 	if (lineCheck) return setting;
 
-	if (setting !== undefined) {
-		var mapLevel = setting.level;
-		var mapSpecial = getAvailableSpecials('lmc');
-		var jobRatio = setting.jobratio;
-		var hdType = setting.hdType;
-		var hitsSurvived = hdStats.hitsSurvived;
-		var settingTarget = hdFarmSettingRatio(setting);
+	if (setting) Object.assign(farmingDetails, _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings, voidFarm));
 
-		if (mapsRunCap === Infinity) mapsRunCap = typeof setting.mapCap !== 'undefined' ? setting.mapCap : typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 100;
-		if (mapsRunCap === -1) mapsRunCap = Infinity;
+	return farmingDetails;
+}
 
-		//Rename mapName if running a hits survived setting for some checks
-		//Needs to be done before auto level code is run
-		if (hdType.includes('hitsSurvived')) {
-			mapName = 'Hits Survived';
-			if (hdType === 'hitsSurvivedVoid') hitsSurvived = hdStats.hitsSurvivedVoid;
-		}
+function hdFarmSettingRatio(setting) {
+	const zone = game.global.world - setting.world;
+	return zone === 0 ? setting.hdBase : Math.pow(setting.hdMult, zone) * setting.hdBase;
+}
 
-		if (setting.autoLevel) {
-			var minLevel = null;
-			//Setup min map level for world and hits survived farming as those settings care about map bonus
-			if ((setting.hdType === 'world' && game.global.mapBonus !== 10) || (setting.hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth'))) minLevel = game.global.universe === 1 ? 0 - game.portal.Siphonology.level : 0;
-			mapLevel = autoLevelCheck(mapName, mapSpecial, null, minLevel);
-		}
+function _hdFarmVoidSetting() {
+	const voidSetting = getPageSetting('voidMapSettings')[0];
+	const useHitsSurvived = voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid;
 
-		//Identify which type of hdRatio/hits survived we're checking against and store it into a variable for future use.
-		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'voidFarm' ? hdStats.vhdRatioVoid : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : null;
+	return {
+		autoLevel: true,
+		hdMult: 1,
+		jobratio: voidSetting.jobratio,
+		world: game.global.world,
+		level: -1,
+		hdBase: useHitsSurvived ? Number(voidSetting.hitsSurvived) : Number(voidSetting.hdRatio),
+		hdType: useHitsSurvived ? 'hitsSurvivedVoid' : 'voidFarm',
+		mapCap: typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100,
+		priority: 1
+	};
+}
 
-		//Skipping farm if map repeat value is greater than our max maps value
-		if (mapsRunCap > game.global.mapRunCounter && (hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > settingTarget)) shouldMap = true;
+function _hdFarmHitsSurvivedSetting(hitsSurvivedGoal, defaultSettings) {
+	return {
+		autoLevel: true,
+		hdBase: hitsSurvivedGoal,
+		hdMult: 1,
+		world: game.global.world,
+		hdType: 'hitsSurvived',
+		jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : '1,1,2',
+		level: -1,
+		hitsSurvivedFarm: true,
+		priority: Infinity
+	};
+}
 
-		if (mapSettings.mapName !== mapName && (hdType.includes('hitsSurvived') ? hdRatio > settingTarget : hdType !== 'maplevel' ? settingTarget > hdRatio : hdStats.autoLevel > setting.hdBase)) shouldSkip = true;
-		if (((mapSettings.mapName === mapName && !shouldMap) || game.global.mapRunCounter === mapsRunCap || shouldSkip) && hdRatio !== Infinity) {
-			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, settingTarget, hdType);
-			//Messages detailing why we are skipping mapping.
-			if (shouldSkip) {
-				if (hdType.includes('hitsSurvived')) debug('Hits Survived (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') skipped as Hits Survived goal has been met (' + hitsSurvived.toFixed(2) + '/' + settingTarget.toFixed(2) + ').', 'map_Skip');
-				else if (hdType !== 'maplevel') debug('HD Farm (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') skipped as HD Ratio goal has been met (' + hdRatio.toFixed(2) + '/' + settingTarget.toFixed(2) + ').', 'map_Skip');
-				else debug('HD Farm (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') skipped as Map Level goal has been met (Autolevel ' + setting.hdBase + '/' + hdStats.autoLevel + ').', 'map_Skip');
+function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings, voidFarm) {
+	let mapLevel = setting.level;
+	let farmingDetails = {};
+	const mapSpecial = getAvailableSpecials('lmc');
+	const jobRatio = setting.jobratio;
+	const hdType = setting.hdType;
+	const hitsSurvived = hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived;
+	const settingTarget = hdFarmSettingRatio(setting);
+
+	let mapsRunCap = setting.mapCap || defaultSettings.mapCap || 100;
+	if (mapsRunCap === -1) mapsRunCap = Infinity;
+
+	//Rename mapName if running a hits survived setting for some checks
+	//Needs to be done before auto level code is run
+	mapName = hdType.includes('hitsSurvived') ? 'Hits Survived' : 'HD Farm';
+
+	if (setting.autoLevel) {
+		const shouldMapBonus = game.global.mapBonus !== 10 && (hdType === 'world' || (hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
+		const minLevel = shouldMapBonus ? 0 - game.portal.Siphonology.level : null;
+		mapLevel = autoLevelCheck(mapName, mapSpecial, null, minLevel);
+	}
+
+	const hdTypeMap = {
+		world: 'hdRatio',
+		voidFarm: 'vhdRatioVoid',
+		void: 'hdRatioVoid',
+		map: 'hdRatioMap',
+		hitsSurvived: 'hitsSurvived',
+		hitsSurvivedVoid: 'hitsSurvivedVoid'
+	};
+
+	const hdRatio = hdStats[hdTypeMap[hdType]] || null;
+
+	//Skipping farm if map repeat value is greater than our max maps value
+	let shouldMap = mapsRunCap > game.global.mapRunCounter && (hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > settingTarget);
+
+	const shouldSkip = mapSettings.mapName !== mapName && ((hdType.includes('hitsSurvived') && hdRatio > settingTarget) || (hdType !== 'maplevel' && settingTarget > hdRatio) || (hdType === 'maplevel' && hdStats.autoLevel > setting.hdBase));
+
+	if (shouldSkip || game.global.mapRunCounter === mapsRunCap || (mapSettings.mapName === mapName && !shouldMap)) {
+		if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, settingTarget, hdType);
+		//Messages detailing why we are skipping mapping.
+		if (shouldSkip) {
+			if (hdType.includes('hitsSurvived')) {
+				debug(`Hits Survived (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as Hits Survived goal has been met (${hitsSurvived.toFixed(2)}/${settingTarget.toFixed(2)}).`, 'map_Skip');
+			} else if (hdType !== 'maplevel') {
+				debug(`HD Farm (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as HD Ratio goal has been met (${hdRatio.toFixed(2)}/${settingTarget.toFixed(2)}).`, 'map_Skip');
+			} else {
+				debug(`HD Farm (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as Map Level goal has been met (Autolevel ${setting.hdBase}/${hdStats.autoLevel}).`, 'map_Skip');
 			}
-			resetMapVars(setting, settingName);
-			shouldMap = false;
-			if (game.global.mapsActive) recycleMap_AT();
-			if (voidFarm) return voidMaps();
 		}
+		resetMapVars(setting, settingName);
+		shouldMap = false;
+		if (game.global.mapsActive) recycleMap_AT();
+		if (voidFarm) return voidMaps();
+	}
 
-		var status = '';
+	let status = '';
 
-		if (hdType.includes('hitsSurvived')) {
-			if (hdType === 'hitsSurvivedVoid') status += 'Void&nbsp;';
-			status += 'Hits&nbsp;Survived to:&nbsp;' + settingTarget.toFixed(2) + '<br>';
-			status += 'Current:&nbsp;' + prettify(hdRatio.toFixed(2));
-		} else {
-			status += 'HD&nbsp;Farm&nbsp;to:&nbsp;';
-			if (hdType !== 'maplevel') status += settingTarget.toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
-			else status += '<br>' + (setting.hdBase >= 0 ? '+' : '') + setting.hdBase + ' Auto Level';
-		}
-		mapsRunCap = mapsRunCap === Infinity ? '∞' : mapsRunCap;
-		var repeat = game.global.mapRunCounter + 1 === mapsRunCap;
-		status += '<br> Maps:&nbsp;' + game.global.mapRunCounter + '/' + mapsRunCap;
+	if (hdType.includes('hitsSurvived')) {
+		status += `${hdType === 'hitsSurvivedVoid' ? 'Void&nbsp;' : ''}
+		Hits&nbsp;Survived to:&nbsp;${settingTarget.toFixed(2)}<br>
+		Current:&nbsp;${prettify(hdRatio.toFixed(2))}`;
+	} else {
+		status += `HD&nbsp;Farm&nbsp;to:&nbsp;${
+			hdType !== 'maplevel'
+				? `${settingTarget.toFixed(2)}<br>Current&nbsp;HD:&nbsp;${hdRatio.toFixed(2)}`
+				: `<br>
+		${setting.hdBase >= 0 ? '+' : ''}${setting.hdBase} Auto Level`
+		}`;
+	}
+	status += `<br> Maps:&nbsp; ${game.global.mapRunCounter}/${mapsRunCap === Infinity ? '∞' : mapsRunCap}`;
+	const repeat = game.global.mapRunCounter + 1 === mapsRunCap;
 
-		farmingDetails.shouldRun = shouldMap;
-		farmingDetails.mapName = mapName;
-		farmingDetails.mapLevel = mapLevel;
-		farmingDetails.autoLevel = setting.autoLevel;
-		farmingDetails.special = mapSpecial;
-		farmingDetails.gather = 'metal';
-		farmingDetails.jobRatio = jobRatio;
-		farmingDetails.hdType = hdType;
-		farmingDetails.hdRatio = settingTarget;
-		farmingDetails.hdRatio2 = hdRatio;
-		farmingDetails.repeat = !repeat;
-		farmingDetails.status = status;
-		farmingDetails.runCap = mapsRunCap;
-		farmingDetails.shouldHealthFarm = hdType.includes('hitsSurvived');
-		farmingDetails.voidHitsSurvived = hdType === 'hitsSurvivedVoid' || hdType === 'void';
-		farmingDetails.settingIndex = settingIndex;
-		if (setting.priority) farmingDetails.priority = setting.priority;
-		//Retain info that we have used a bone charge if we are farming stats before we run void maps.
-		if (voidFarm) {
-			if (mapSettings.boneChargeUsed) farmingDetails.boneChargeUsed = mapSettings.boneChargeUsed;
-			if (mapSettings.voidHDIndex) farmingDetails.voidHDIndex = mapSettings.voidHDIndex;
-			if (mapSettings.dropdown) farmingDetails.dropdown = mapSettings.dropdown;
-			if (mapSettings.dropdown2) farmingDetails.dropdown2 = mapSettings.dropdown2;
-			if (mapSettings.voidTrigger) farmingDetails.voidTrigger = mapSettings.voidTrigger;
-			if (mapSettings.portalAfterVoids) farmingDetails.portalAfterVoids = mapSettings.portalAfterVoids;
-			farmingDetails.voidFarm = true;
-		}
+	Object.assign(farmingDetails, {
+		shouldRun: shouldMap,
+		mapName: mapName,
+		mapLevel: mapLevel,
+		autoLevel: setting.autoLevel,
+		special: mapSpecial,
+		gather: 'metal',
+		jobRatio: jobRatio,
+		hdType: hdType,
+		hdRatio: settingTarget,
+		hdRatio2: hdRatio,
+		repeat: !repeat,
+		status: status,
+		runCap: mapsRunCap,
+		shouldHealthFarm: hdType.includes('hitsSurvived'),
+		voidHitsSurvived: hdType === 'hitsSurvivedVoid' || hdType === 'void',
+		settingIndex: settingIndex,
+		priority: setting.priority
+	});
+
+	if (voidFarm) {
+		Object.assign(farmingDetails, {
+			boneChargeUsed: mapSettings.boneChargeUsed,
+			voidHDIndex: mapSettings.voidHDIndex,
+			dropdown: mapSettings.dropdown,
+			dropdown2: mapSettings.dropdown2,
+			voidTrigger: mapSettings.voidTrigger,
+			portalAfterVoids: mapSettings.portalAfterVoids,
+			voidFarm: true
+		});
 	}
 
 	return farmingDetails;
@@ -3081,7 +3068,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 function farmingDecision() {
 	//Setting up addon user settings.
 	setupAddonUser();
-	var farmingDetails = {
+	let farmingDetails = {
 		shouldRun: false,
 		mapName: '',
 		levelCheck: Infinity
@@ -3091,9 +3078,9 @@ function farmingDecision() {
 	/* if (challengeActive('Lead') && !game.global.runningChallengeSquared && game.global.world !== 180 && (game.global.world % 2 === 0 || game.global.lastClearedCell + 2 <= 90))
 		mapSettings = farmingDetails; */
 
-	if (!game.global.mapsUnlocked) mapSettings = farmingDetails;
+	if (!game.global.mapsUnlocked) return (mapSettings = farmingDetails);
 
-	var mapTypes = [];
+	let mapTypes = [];
 	//U1 map settings to check for.
 	if (game.global.universe === 1) {
 		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, hdFarm, voidMaps, experience, mapBonus, toxicity, _obtainUniqueMap];
@@ -3119,8 +3106,8 @@ function farmingDecision() {
 	const priorityList = [];
 	//If we are currently running a map and it should be continued then continue running it.
 	//Running the entire function again is done to ensure that we update the status message and check if it still wants to run.
-	if (mapSettings.mapName !== '' && mapTypes.indexOf(mapSettings.settingName) > 0) {
-		var mapCheck = mapSettings.settingName();
+	if (mapSettings.mapName !== '' && mapTypes.includes(mapSettings.settingName)) {
+		let mapCheck = mapSettings.settingName();
 		if (mapCheck.shouldRun) {
 			farmingDetails = mapCheck;
 			farmingDetails.settingName = mapSettings.settingName;
@@ -3131,7 +3118,7 @@ function farmingDecision() {
 	//This should only run if we aren't already running a setting.
 	if (farmingDetails.mapName === '') {
 		for (const map of mapTypes) {
-			var mapCheck = map(true);
+			let mapCheck = map(true);
 			if (mapCheck && mapCheck.mapName === undefined) {
 				mapCheck.settingName = map;
 				priorityList.push(mapCheck);
@@ -3147,7 +3134,7 @@ function farmingDecision() {
 		}
 		//Loops through each item in the priority list and checks if it should be run.
 		for (const item in priorityList) {
-			var mapCheck = priorityList[item].settingName();
+			let mapCheck = priorityList[item].settingName();
 			if (mapCheck.shouldRun) {
 				farmingDetails = mapCheck;
 				farmingDetails.settingName = priorityList[item].settingName;
@@ -3159,7 +3146,7 @@ function farmingDecision() {
 	//If in desolation then check if we should destack before farming.
 	//This will ALWAYS run when above 0 stacks and another type of farming is meant to be done as it will destack and then run the farming type.
 	if (farmingDetails.mapName !== '' && game.challenges.Desolation.chilled > 0 && getPageSetting('desolation') && !MODULES.mapFunctions.desolation.gearScum && challengeActive('Desolation') && !farmingDetails.mapName.includes('Desolation Destacking')) {
-		var desolationCheck = desolation(false, true);
+		let desolationCheck = desolation(false, true);
 		if (desolationCheck.shouldRun) {
 			farmingDetails = desolationCheck;
 			farmingDetails.settingName = desolation;
@@ -3222,12 +3209,9 @@ function getAvailableSpecials(special, skipCaches) {
 	return bestMod;
 }
 
-function setMapSliders(pluslevel, special, biome, mapSliders, onlyPerfect) {
-	var maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
+function setMapSliders(pluslevel, special = '0', biome = getBiome(), mapSliders = [9, 9, 9], onlyPerfect = true) {
+	let maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
-	if (!special) special = '0';
-	if (!biome) biome = getBiome();
-	if (!mapSliders) mapSliders = [9, 9, 9];
 	if (mapSliders[0] !== 9 || mapSliders[1] !== 9 || mapSliders[2] !== 9) onlyPerfect = false;
 	document.getElementById('biomeAdvMapsSelect').value = biome;
 	document.getElementById('advExtraLevelSelect').value = pluslevel > 0 ? pluslevel : 0;
@@ -3330,13 +3314,16 @@ function shouldSkipSettingPrestigeGoal(currSetting, mapName) {
 	return false;
 }
 
-function findSettingsIndex(settingName, baseSettings, mapName, dailyAddition) {
+function findSettingsIndex(settingName, baseSettings, mapName, dailyAddition, skipHealthCheck) {
 	for (let y = 1; y < baseSettings.length; y++) {
 		let currSetting = baseSettings[y];
 		let world = currSetting.world;
 		if (currSetting.atlantrimp && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
 		if (currSetting.hdRatio && currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
-
+		if (currSetting.hdType) {
+			if (currSetting.hdType.toLowerCase().includes('void') && game.global.totalVoidMaps === 0) continue;
+			if (skipHealthCheck && currSetting.hdType.includes('hitsSurvived')) continue;
+		}
 		currSetting.cell = currSetting.cell || 100 - maxOneShotPower() + 1;
 
 		if (shouldSkipSetting(currSetting, world, settingName, dailyAddition)) continue;
@@ -3606,8 +3593,11 @@ function prestigeMapHasEquips(number, raidzones, targetPrestige) {
 //Get raid zone based on skipping map levels above x5 if we have scientist4 or microchip4. Will subtract 5 from the map level to account for this.
 function getRaidZone(raidZone) {
 	if (getSLevel() >= 4 && !challengeActive('Mapology')) {
-		var levelsToSkip = [0, 9, 8, 7, 6];
-		if (levelsToSkip.includes(raidZone.toString().slice(-1))) raidZone = raidZone - 5;
+		const levelsToSkip = ['0', '9', '8', '7', '6'];
+		const lastDigitOfRaidZone = raidZone.toString().slice(-1);
+		if (levelsToSkip.includes(lastDigitOfRaidZone)) {
+			raidZone -= 5;
+		}
 	}
 	return raidZone;
 }
@@ -3618,16 +3608,13 @@ function calcFragmentPercentage(raidZone) {
 }
 
 //Calculate cost of maps for prestige raiding
-function prestigeRaidingSliderCost(raidZone, special, totalCost, fragmentPercentage) {
-	if (!special) special = getAvailableSpecials('p');
-	raidZone = getRaidZone(raidZone);
-	if (!totalCost) totalCost = 0;
-	raidZone = raidZone - game.global.world;
+function prestigeRaidingSliderCost(raidZone, special = getAvailableSpecials('p'), totalCost = 0, fragmentPercentage) {
+	raidZone = getRaidZone(raidZone) - game.global.world;
 
 	var fragmentsOwned = (game.resources.fragments.owned - totalCost) * fragmentPercentage;
-	var sliders = [9, 9, 9];
-	var biome = getBiome();
-	var perfect = true;
+	const sliders = [9, 9, 9];
+	let biome = getBiome();
+	let perfect = true;
 
 	//Set loot, difficulty sliders to 0, biome to Random & perfect maps to off if using frag min setting!
 	if (mapSettings.fragSetting === 1) {
@@ -3659,16 +3646,16 @@ function prestigeRaidingSliderCost(raidZone, special, totalCost, fragmentPercent
 
 //Identify total cost of prestige raiding maps
 function prestigeTotalFragCost() {
-	var cost = 0;
-	var sliders = new Array(5);
-	var fragmentPercentage = mapSettings.incrementMaps ? calcFragmentPercentage(mapSettings.raidzones) : 1;
+	const fragmentPercentage = mapSettings.incrementMaps ? calcFragmentPercentage(mapSettings.raidzones) : 1;
+	let cost = 0;
+	let sliders = new Array(5);
 
 	if (prestigesToGet(mapSettings.raidzones, mapSettings.prestigeGoal)[0]) {
 		sliders[0] = prestigeRaidingSliderCost(mapSettings.raidzones, mapSettings.special, cost, fragmentPercentage);
 		cost += mapCost(sliders[0][0], sliders[0][1], sliders[0][2], sliders[0][3], sliders[0][4]);
 	}
 	if (mapSettings.incrementMaps) {
-		for (var i = 1; i < 5; i += 1) {
+		for (let i = 1; i < 5; i += 1) {
 			if (prestigesToGet(mapSettings.raidzones - i, mapSettings.prestigeGoal)[0]) {
 				sliders[i] = prestigeRaidingSliderCost(mapSettings.raidzones - i, mapSettings.special, cost, calcFragmentPercentage(mapSettings.raidzones - i));
 				cost += mapCost(sliders[i][0], sliders[i][1], sliders[i][2], sliders[i][3], sliders[i][4]);
@@ -3685,15 +3672,15 @@ function prestigeTotalFragCost() {
 function dailyModiferReduction() {
 	if (!challengeActive('Daily')) return 0;
 
-	var dailyMods = dailyModifiersOutput().split('<br>');
-	dailyMods.length = dailyMods.length - 1;
-	var dailyReduction = 0;
-	var settingsArray = getPageSetting('dailyPortalSettingsArray');
+	//const dailyMods = dailyModifiersOutput().split('<br>').slice(0, -1);
+	const dailyMods = dailyModifiersOutput().match(/(Weakness|Famine|Large|Void|Heirlost):[^<]*/g);
+	const settingsArray = getPageSetting('dailyPortalSettingsArray');
+	let dailyReduction = 0;
 
-	for (var item in settingsArray) {
+	for (let item in settingsArray) {
 		if (!settingsArray[item].enabled) continue;
-		var dailyReductionTemp = 0;
-		var modifier = item;
+		let dailyReductionTemp = 0;
+		let modifier = item;
 		if (modifier.includes('Weakness')) modifier = 'Enemies stack a debuff with each attack, reducing Trimp attack by';
 		else if (modifier.includes('Famine')) modifier = 'less Metal, Food, Wood, and Gems from all sources';
 		else if (modifier.includes('Large')) modifier = 'All housing can store';

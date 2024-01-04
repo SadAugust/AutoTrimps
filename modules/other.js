@@ -357,8 +357,9 @@ function updateATVersion() {
 		//On the offchance anybody is using a super old version of AT then they need their localStorage setting converted
 		if (JSON.parse(localStorage.getItem('atSettings')) === null) saveSettings();
 		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+		const versionNumber = autoTrimpSettings['ATversion'].split('v')[1];
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.2.5') {
+		if (versionNumber < '6.2.5') {
 			if (tempSettings.presetMutations !== undefined) {
 				var mutatorObj = {
 					preset1: {},
@@ -374,7 +375,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.2.95') {
+		if (versionNumber < '6.2.95') {
 			var settings_List = ['mapFarmSettings'];
 			var values = ['value', 'valueU2'];
 			for (var x = 0; x < settings_List.length; x++) {
@@ -389,7 +390,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.001') {
+		if (versionNumber < '6.3.001') {
 			var settings_List = ['mapBonusSettings'];
 			var values = ['value', 'valueU2'];
 			for (var x = 0; x < settings_List.length; x++) {
@@ -404,7 +405,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.14') {
+		if (versionNumber < '6.3.14') {
 			var settings_List = ['voidMapSettings'];
 			var values = ['value', 'valueU2'];
 			for (var x = 0; x < settings_List.length; x++) {
@@ -420,7 +421,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.17') {
+		if (versionNumber < '6.3.17') {
 			if (typeof tempSettings['presetSwap'] !== 'undefined') {
 				autoTrimpSettings.presetSwap.enabled = false;
 			}
@@ -430,7 +431,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.18') {
+		if (versionNumber < '6.3.18') {
 			if (typeof tempSettings['bloodthirstDestack'] !== 'undefined') {
 				autoTrimpSettings.bloodthirstDestack.enabled = false;
 			}
@@ -443,14 +444,14 @@ function updateATVersion() {
 			);
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.21') {
+		if (versionNumber < '6.3.21') {
 			if (typeof tempSettings['IgnoreCrits'] !== 'undefined') {
 				autoTrimpSettings.IgnoreCrits.valueU2 = 0;
 			}
 		}
 
 		//Scryer stance changes
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.24') {
+		if (versionNumber < '6.3.24') {
 			if (typeof tempSettings['UseScryerStance'] !== 'undefined') {
 				autoTrimpSettings.AutoStanceScryer.enabled = tempSettings.UseScryerStance.enabled;
 			}
@@ -482,19 +483,19 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.25') {
+		if (versionNumber < '6.3.25') {
 			if (typeof tempSettings['radonsettings'] !== 'undefined') {
 				autoTrimpSettings.universeSetting.value = tempSettings.radonsettings.value;
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.26') {
+		if (versionNumber < '6.3.26') {
 			if (typeof tempSettings['PrestigeSkip1_2'] !== 'undefined') {
 				autoTrimpSettings.PrestigeSkip.enabled = tempSettings.PrestigeSkip1_2.value > 0;
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.29') {
+		if (versionNumber < '6.3.29') {
 			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
 
 			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
@@ -512,7 +513,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.36') {
+		if (versionNumber < '6.3.36') {
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				autoTrimpSettings.uniqueMapSettingsArray.valueU2['Big_Wall'] = {
 					enabled: false,
@@ -523,7 +524,7 @@ function updateATVersion() {
 		}
 
 		//Converting addonUser saves variable to object and storing farming settings .done stuff in it
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.37') {
+		if (versionNumber < '6.3.37') {
 			var obj = [];
 			for (var x = 0; x < 30; x++) {
 				obj[x] = {};
@@ -569,18 +570,18 @@ function updateATVersion() {
 				}
 			}
 		}
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.3.38') {
+		if (versionNumber < '6.3.38') {
 			setupAddonUser();
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.4.09') {
+		if (versionNumber < '6.4.09') {
 			if (typeof tempSettings['heHrDontPortalBefore'] !== 'undefined') {
 				autoTrimpSettings.heliumHrDontPortalBefore.value = tempSettings.heHrDontPortalBefore.value;
 				autoTrimpSettings.heliumHrDontPortalBefore.valueU2 = tempSettings.heHrDontPortalBefore.valueU2;
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.4.20') {
+		if (versionNumber < '6.4.20') {
 			if (typeof tempSettings['buildingSettingsArray'] !== 'undefined') {
 				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {};
 				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = false;
@@ -589,7 +590,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.06') {
+		if (versionNumber < '6.5.06') {
 			if (typeof autoTrimpSettings.alchemySettings['valueU2'][1] !== 'undefined') {
 				for (var y = 1; y < autoTrimpSettings.alchemySettings['valueU2'].length; y++) {
 					autoTrimpSettings.alchemySettings['valueU2'][y].repeatevery = 0;
@@ -599,14 +600,14 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.09') {
+		if (versionNumber < '6.5.09') {
 			if (typeof tempSettings['autoAbandon'] !== 'undefined') {
 				autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 2 : 0;
 				autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 2 : 0;
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.13') {
+		if (versionNumber < '6.5.13') {
 			var values = ['value', 'valueU2'];
 			for (var z = 0; z < values.length; z++) {
 				var incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
@@ -622,7 +623,7 @@ function updateATVersion() {
 			saveSettings();
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.15') {
+		if (versionNumber < '6.5.15') {
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				const currTrimple = tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
 				delete tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
@@ -637,13 +638,13 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.20') {
+		if (versionNumber < '6.5.20') {
 			if (typeof tempSettings['experienceStaff'] !== 'undefined') {
 				if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value !== 'string') autoTrimpSettings.experienceStaff.value === 'undefined';
 			}
 		}
 		//Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.22') {
+		if (versionNumber < '6.5.22') {
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				var obj = {};
 				for (var item in tempSettings.uniqueMapSettingsArray.value) {
@@ -658,26 +659,26 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.24') {
+		if (versionNumber < '6.5.24') {
 			if (typeof tempSettings['voidMapSettings'] !== 'undefined') {
 				if (autoTrimpSettings.voidMapSettings.value[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = 1;
 				if (autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = 1;
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.26') {
+		if (versionNumber < '6.5.26') {
 			if (typeof tempSettings['portalVoidIncrement'] !== 'undefined') {
 				autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.27') {
+		if (versionNumber < '6.5.27') {
 			if (typeof tempSettings['autGigaDeltaFactor'] !== 'undefined') {
 				autoTrimpSettings.autoGigaDeltaFactor.value = tempSettings.autGigaDeltaFactor.value;
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.28') {
+		if (versionNumber < '6.5.28') {
 			if (typeof tempSettings['unbalance'] !== 'undefined') autoTrimpSettings.balance.enabledU2 = tempSettings.unbalance.enabledU2;
 			if (typeof tempSettings['unbalanceZone'] !== 'undefined') autoTrimpSettings.balanceZone.valueU2 = tempSettings.unbalanceZone.valueU2;
 			if (typeof tempSettings['unbalanceStacks'] !== 'undefined') autoTrimpSettings.balanceStacks.valueU2 = tempSettings.unbalanceStacks.valueU2;
@@ -693,7 +694,7 @@ function updateATVersion() {
 			autoTrimpSettings.decayStacksToAbandon.valueU2 = -1;
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.30') {
+		if (versionNumber < '6.5.30') {
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				autoTrimpSettings.uniqueMapSettingsArray.valueU2['MP Smithy One Off'] = {
 					enabled: false,
@@ -702,7 +703,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.33') {
+		if (versionNumber < '6.5.33') {
 			if (typeof tempSettings['testMapScummingValue'] !== 'undefined') {
 				if (!gameUserCheck()) autoTrimpSettings.testMapScummingValue.value = -1;
 				else if (typeof tempSettings['testMapScummingValue'].value === 'object' && tempSettings['testMapScummingValue'].valueU2) autoTrimpSettings.testMapScummingValue.value = tempSettings['testMapScummingValue'].valueU2;
@@ -710,7 +711,7 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.36') {
+		if (versionNumber < '6.5.36') {
 			if (typeof game.global.addonUser['archaeologySettings'] === 'undefined') game.global.addonUser['archaeologySettings'] = {};
 			if (typeof game.global.addonUser['archaeologySettings']['valueU2'] === 'undefined') {
 				var obj = [];
@@ -722,9 +723,24 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.39') {
+		if (versionNumber < '6.5.39') {
 			if (typeof tempSettings['heirloomStaffResource'] !== 'undefined') {
 				autoTrimpSettings.heirloomStaffScience.valueU2 = tempSettings.heirloomStaffResource.valueU2;
+			}
+		}
+
+		if (versionNumber < '6.5.43') {
+			if (typeof tempSettings['Prestige'] !== 'undefined') {
+				autoTrimpSettings.prestigeClimb.selected = tempSettings.Prestige.selected;
+				autoTrimpSettings.prestigeClimb.selectedU2 = tempSettings.Prestige.selectedU2;
+			}
+			if (typeof tempSettings['PrestigeSkip'] !== 'undefined') {
+				autoTrimpSettings.prestigeClimbSkip.enabled = tempSettings.PrestigeSkip.enabled;
+				autoTrimpSettings.prestigeClimbSkip.enabledU2 = tempSettings.PrestigeSkip.enabledU2;
+			}
+			if (typeof tempSettings['ForcePresZ'] !== 'undefined') {
+				autoTrimpSettings.prestigeClimbZone.value = tempSettings.ForcePresZ.value;
+				autoTrimpSettings.prestigeClimbZone.valueU2 = tempSettings.ForcePresZ.valueU2;
 			}
 		}
 	}
