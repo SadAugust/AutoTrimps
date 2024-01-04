@@ -37,7 +37,7 @@ function exitSpireCell(checkCell) {
 	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 	const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
 	const isSpireActive = isDoingSpire();
-	const cell = isSpireActive && exitCellSetting > 0 && exitCellSetting <= 100 ? exitCellSetting : 100;
+	const cell = isSpireActive && exitCell > 0 && exitCell <= 100 ? exitCell : 100;
 
 	if (checkCell) return exitCell;
 	if (cell <= 0) return;
