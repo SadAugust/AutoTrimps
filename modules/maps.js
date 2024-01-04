@@ -355,9 +355,8 @@ function _berserkDisableMapping() {
 }
 
 function _noMappingChallenges() {
-	if (challengeActive('Trapper')) return true;
+	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) return true;
 	if (challengeActive('Mapology')) return true;
-	if (challengeActive('Trappapalooza')) return true;
 	if (challengeActive('Exterminate')) return true;
 }
 

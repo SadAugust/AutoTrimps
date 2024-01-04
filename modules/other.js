@@ -39,11 +39,12 @@ function exitSpireCell(checkCell) {
 	const isSpireActive = isDoingSpire();
 	const cell = isSpireActive && exitCell > 0 && exitCell <= 100 ? exitCell : 100;
 
-	if (checkCell) return exitCell;
+	if (checkCell) return cell;
 	if (cell <= 0) return;
 
-	if (isSpireActive && game.global.lastClearedCell + 1 > exitCell) {
+	if (isSpireActive && game.global.lastClearedCell + 1 > cell) {
 		endSpire();
+		debug(`Exiting Spire ${game.global.spiresCompleted + 1} at cell ${exitCell}`);
 	}
 }
 
