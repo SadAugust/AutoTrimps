@@ -55,28 +55,24 @@ function trimpicide() {
 function forceAbandonTrimps() {
 	if (!getPageSetting('ForceAbandon')) return;
 	if (!getPageSetting('autoMaps')) return;
-	if (!game.global.mapsUnlocked) return;
-	if (game.global.preMapsActive) return;
-	//Exit and restart the map. If we are in the world, enter the world again.
-	if (game.global.mapsActivee && !game.global.voidBuff) {
+	if (!game.global.mapsUnlocked || game.global.preMapsActive) return;
+
+	if (game.global.mapsActive) {
 		mapsClicked(true);
 		runMap();
 	} else {
 		mapsClicked(true);
 		mapsClicked(true);
 	}
-	debug('Abandoning Trimps to resend army with max Anticipation stacks.', 'other');
+	debug(`Abandoning Trimps to resend army with max Anticipation stacks.`, 'other');
 }
 
-//Check if we would die from the next enemy attack
-//Only used in U1
+//Check if we would die from the next enemy attack - Only used in U1
 function armyDeath() {
 	if (game.global.universe !== 1) return false;
-	//Misc Stats
 	const enemy = getCurrentEnemy();
 	const fluctuation = game.global.universe === 2 ? 1.5 : 1.2;
 	const runningDaily = challengeActive('Daily');
-	//const runningElectricity = challengeActive('Electricity') || challengeActive('Mapocalypse');
 	if (!runningDaily) return false;
 	if (game.global.mapsActive) return false;
 	if (runningDaily && typeof game.global.dailyChallenge.empower === 'undefined') return false;
@@ -87,16 +83,14 @@ function armyDeath() {
 	var ourHealth = game.global.soldierHealth;
 	var block = game.global.soldierCurrentBlock;
 	if (game.global.formation !== 0) block = game.global.formation === 3 ? (block /= 4) : (block *= 2);
-	//Enemy Stats
 	enemyAttack = enemy.attack * fluctuation;
-	//Ice Empowerment
+
 	if (getEmpowerment() === 'Ice') enemyAttack *= game.empowerments.Ice.getCombatModifier();
-	//Empower mod
+
 	if (runningDaily && !game.global.mapsActive && typeof game.global.dailyChallenge.empower !== 'undefined') {
 		if (typeof game.global.dailyChallenge.empower !== 'undefined') enemyAttack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 	}
-	var originalEnemyAttack = enemyAttack;
-	//Block Pierce calc
+
 	var pierce = !game.global.mapsActive ? getPierceAmt() : 0;
 	var attackMinusBlock = enemyAttack - game.global.soldierCurrentBlock;
 	if (pierce > 0) {
@@ -114,10 +108,6 @@ function armyDeath() {
 		//Plagued
 		if (typeof game.global.dailyChallenge.plague !== 'undefined') ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks);
 	}
-	//Doesn't currently do anything in the Electricity challenge but should be implemented.
-	/* if (runningElectricity) {
-		ourHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)
-	} */
 
 	if (enemy.corrupted) {
 		if (enemy.corrupted === 'corruptCrit') enemyAttack *= 5;
@@ -127,18 +117,6 @@ function armyDeath() {
 	}
 
 	ourHealth -= enemyAttack;
-
-	//Explosive code would go here. Not sure it's worth implementing as the original version doesn't include this.
-	/* if (runningDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' && game.global.soldierHealthMax > block && pierce > 0) {
-		var explodeDamage = originalEnemyAttack * dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
-		var explodeAndBlock = explodeDamage - game.global.soldierCurrentBlock;
-		if (explodeAndBlock < 0) explodeAndBlock = 0;
-		if (pierce > 0) {
-			var explodePierce = pierce * explodeDamage;
-			if (explodeAndBlock < explodePierce) explodeAndBlock = explodePierce;
-		}
-		ourHealth -= explodeAndBlock;
-	} */
 
 	return ourHealth <= 0;
 }
