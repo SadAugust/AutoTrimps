@@ -403,7 +403,7 @@ function _buySmithy(buildingSettings) {
 	//Don't buy Smithies when you can afford a bonfire on Hypo.
 	//The Smithy Farm setting has an override to purchase them 1 at a time during Smithy Farm to ensure you can still farm and don't overpurchase.
 	if (challengeActive('Hypothermia') && 
-	game.global.world < (getPageSetting('hypothermiaSettings')[0].frozencastle[0] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[0]) : 200) - 1
+	game.global.world < (getPageSetting('hypothermiaSettings')[0].frozencastle[0] !== undefined ? parseInt(getPageSetting('hypothermiaSettings')[0].frozencastle[0]) : 200) - 1
 	&& game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
 
 	if (((smithySetting.enabled && smithyAmt > purchased) || challengeActive('Quest')) && smithyCanAfford > 0) {
