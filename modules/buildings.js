@@ -387,6 +387,7 @@ function _buySmithy(buildingSettings) {
 	let smithyPct = smithySetting.percent / 100;
 	const purchased = game.buildings.Smithy.purchased;
 	const max = smithyAmt - purchased;
+
 	let smithyCanAfford = calculateMaxAfford_AT(game.buildings.Smithy, true, false, false, max, smithyPct);
 	// Overrides for Smithy farming.
 	// If you have your purchase pct less than 100% or your cap is lower than the amount you are targetting then temporarily adjust inputs.
@@ -398,9 +399,12 @@ function _buySmithy(buildingSettings) {
 	if (challengeActive('Quest') && getPageSetting('quest')) {
 		smithyCanAfford = _calcSmithyDuringQuest();
 	}
+	
 	//Don't buy Smithies when you can afford a bonfire on Hypo.
 	//The Smithy Farm setting has an override to purchase them 1 at a time during Smithy Farm to ensure you can still farm and don't overpurchase.
-	if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
+	if (challengeActive('Hypothermia') && 
+	game.global.world < (getPageSetting('hypothermiaSettings')[0].frozencastle[0] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[0]) : 200) - 1
+	&& game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
 
 	if (((smithySetting.enabled && smithyAmt > purchased) || challengeActive('Quest')) && smithyCanAfford > 0) {
 		safeBuyBuilding('Smithy', smithyCanAfford);
