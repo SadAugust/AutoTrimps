@@ -2917,7 +2917,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	if (lineCheck) return setting;
 
 	if (setting) Object.assign(farmingDetails, _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings, voidFarm));
-
+	if (farmingDetails.hasVoidFarmed) return voidMaps();
 	return farmingDetails;
 }
 
@@ -2991,9 +2991,12 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	const hdRatio = hdStats[hdTypeMap[hdType]] || null;
 
 	//Skipping farm if map repeat value is greater than our max maps value
-	let shouldMap = mapsRunCap > game.global.mapRunCounter && (hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > settingTarget);
+	let shouldMap = hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > settingTarget;
 
-	const shouldSkip = mapSettings.mapName !== mapName && ((hdType.includes('hitsSurvived') && hdRatio > settingTarget) || (hdType !== 'maplevel' && settingTarget > hdRatio) || (hdType === 'maplevel' && hdStats.autoLevel > setting.hdBase));
+	const shouldSkip = mapSettings.mapName !== mapName && !shouldMap;
+
+	if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter > mapsRunCap) shouldMap = false;
+	let hasVoidFarmed = false;
 
 	if (shouldSkip || game.global.mapRunCounter === mapsRunCap || (mapSettings.mapName === mapName && !shouldMap)) {
 		if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, settingTarget, hdType);
@@ -3010,19 +3013,19 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		resetMapVars(setting, settingName);
 		shouldMap = false;
 		if (game.global.mapsActive) recycleMap_AT();
-		if (voidFarm) return voidMaps();
+		if (voidFarm) hasVoidFarmed = true;
 	}
 
 	let status = '';
 
 	if (hdType.includes('hitsSurvived')) {
 		status += `${hdType === 'hitsSurvivedVoid' ? 'Void&nbsp;' : ''}
-		Hits&nbsp;Survived to:&nbsp;${settingTarget.toFixed(2)}<br>
+		Hits&nbsp;Survived to:&nbsp;${prettify(settingTarget.toFixed(2))}<br>
 		Current:&nbsp;${prettify(hdRatio.toFixed(2))}`;
 	} else {
 		status += `HD&nbsp;Farm&nbsp;to:&nbsp;${
 			hdType !== 'maplevel'
-				? `${settingTarget.toFixed(2)}<br>Current&nbsp;HD:&nbsp;${hdRatio.toFixed(2)}`
+				? `${prettify(settingTarget.toFixed(2))}<br>Current&nbsp;HD:&nbsp;${prettify(hdRatio.toFixed(2))}`
 				: `<br>
 		${setting.hdBase >= 0 ? '+' : ''}${setting.hdBase} Auto Level`
 		}`;
@@ -3052,6 +3055,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 
 	if (voidFarm) {
 		Object.assign(farmingDetails, {
+			hasVoidFarmed,
 			boneChargeUsed: mapSettings.boneChargeUsed,
 			voidHDIndex: mapSettings.voidHDIndex,
 			dropdown: mapSettings.dropdown,
