@@ -552,11 +552,12 @@ function mapBonus(lineCheck) {
 	const hdCheck = mapBonusRatio > 0 && hdStats.hdRatio > mapBonusRatio && getPageSetting('mapBonusStacks') > game.global.mapBonus;
 	const spireCheck = getPageSetting('MaxStacksForSpire') && isDoingSpire();
 	const hdFarmCheck = (hdCheck || spireCheck) && !_berserkDisableMapping() && !_noMappingChallenges();
+	if (!hdFarmCheck && !defaultSettings.active) return farmingDetails;
 
 	const setting = settingIndex ? baseSettings[settingIndex] : hdFarmCheck ? _mapBonusRatioSetting(defaultSettings, hdCheck, spireCheck) : undefined;
 	if (lineCheck) return setting;
 
-	if (setting) Object.assign(farmingDetails, _runMapBonus(setting, mapName, settingIndex, farmingDetails, spireCheck));
+	if (setting) Object.assign(farmingDetails, _runMapBonus(setting, mapName, settingIndex, spireCheck));
 
 	//Done outside of _runMapBonus as that won't get run if we're above the set map bonus value.
 	if (mapSettings.mapName === mapName && (game.global.mapBonus >= mapSettings.mapRepeats || !farmingDetails.shouldRun)) {
@@ -593,13 +594,13 @@ function _mapBonusRatioSetting(defaultSettings, hdCheck, spireCheck) {
 	};
 }
 
-function _runMapBonus(setting, mapName, settingIndex, farmingDetails, spireCheck) {
+function _runMapBonus(setting, mapName, settingIndex, spireCheck) {
 	const { repeat: repeatCounter, jobratio: jobRatio, special, autoLevel, level, priority } = setting;
 	const mapSpecial = special !== '0' ? getAvailableSpecials(special) : '0';
 	const minLevel = game.global.universe === 1 ? 0 - game.portal.Siphonology.level : 0;
 	const mapLevel = autoLevel ? autoLevelCheck(mapName, mapSpecial, null, minLevel) : level;
 
-	if (mapLevel < minLevel) return farmingDetails;
+	if (mapLevel < minLevel) return {};
 
 	const shouldMap = repeatCounter > game.global.mapBonus;
 	const repeat = game.global.mapBonus >= repeatCounter - 1;
