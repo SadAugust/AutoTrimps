@@ -1,5 +1,4 @@
 MODULES.mapFunctions = {};
-
 MODULES.mapFunctions.afterVoids = false;
 MODULES.mapFunctions.hasHealthFarmed = '';
 MODULES.mapFunctions.hasVoidFarmed = '';
@@ -22,7 +21,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			if (aboveMapLevel && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
 			else if (game.mapUnlocks.BigWall.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	'The Wall': {
 		zone: 15,
@@ -35,7 +34,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			if (aboveMapLevel && !game.talents.bounty.purchased) return true; //Don't bother before z16
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	'Dimension of Anger': {
 		zone: 20,
@@ -48,7 +47,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			if (game.global.world - 1 > map.level) return true; //Don't bother before z22
 			else if (game.mapUnlocks.Portal.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	'Trimple Of Doom': {
 		zone: 33,
@@ -60,7 +59,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			if (aboveMapLevel && game.portal.Relentlessness.locked) return true; //Unlock the Relentlessness perk
 			else if (game.mapUnlocks.AncientTreasure.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	'The Prison': {
 		zone: 80,
@@ -72,7 +71,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) return true; //Unlock the Electricity challenge
 			else if (game.mapUnlocks.ThePrison.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	'Bionic Wonderland': {
 		zone: 125,
@@ -82,7 +81,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			return false;
-		}
+		},
 	},
 	'Imploding Star': {
 		zone: 170,
@@ -93,7 +92,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.mapUnlocks.ImplodingStar.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	//Universe 2 Unique Maps
 	'Big Wall': {
@@ -107,7 +106,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			if (aboveMapLevel && !game.talents.bounty.purchased) return true; // we need Bounty
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	'Dimension of Rage': {
 		zone: 16,
@@ -120,7 +119,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			if (game.global.world - 1 > map.level && game.global.totalRadPortals === 0) return true; //Don't bother before z17
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	'Prismatic Palace': {
 		zone: 20,
@@ -131,7 +130,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.mapUnlocks.Prismalicious.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	Atlantrimp: {
 		zone: 33,
@@ -143,7 +142,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			if (!game.mapUnlocks.AncientTreasure.canRunOnce) return false;
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
-		}
+		},
 	},
 	'Melting Point': {
 		zone: 50,
@@ -165,7 +164,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			else if (trimpStats.isFiller && uniqueMapSetting['MP Smithy'].enabled && uniqueMapSetting['MP Smithy'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy'].value;
 			if (smithyGoal <= game.buildings.Smithy.owned) return true;
 			return false;
-		}
+		},
 	},
 	'The Black Bog': {
 		zone: 6,
@@ -176,7 +175,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (mapSettings.mapName === 'Quagmire Farm' && quagmire().shouldRun) return true;
 			return false;
-		}
+		},
 	},
 	'Frozen Castle': {
 		zone: 175,
@@ -196,8 +195,8 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			const hypothermiaRun = hypoDefaultSettings.active && game.global.world >= world && (game.global.lastClearedCell + 2 >= cell || liquified);
 			if (hypothermiaRun) return true;
 			return false;
-		}
-	}
+		},
+	},
 });
 
 //Returns false if we can't any new speed runs, unless it's the first tier
@@ -251,7 +250,7 @@ function _obtainUniqueMap(uniqueMap) {
 	const mapName = 'Unique Map Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!uniqueMap || typeof uniqueMap !== 'string') {
@@ -266,7 +265,7 @@ function _obtainUniqueMap(uniqueMap) {
 	if (!trimpStats.perfectMaps && unlockLevel > game.global.world) return farmingDetails;
 	else if (trimpStats.perfectMaps && unlockLevel > game.global.world + 10) return farmingDetails;
 
-	const map = game.global.mapsOwnedArray.find((map) => map.name.includes(uniqueMap));
+	const map = game.global.mapsOwnedArray.find(map => map.name.includes(uniqueMap));
 	const shouldMap = !map;
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
@@ -284,7 +283,7 @@ function _obtainUniqueMap(uniqueMap) {
 		special: '0',
 		repeat: false,
 		status,
-		uniqueMap
+		uniqueMap,
 	});
 
 	return farmingDetails;
@@ -297,7 +296,7 @@ function _runUniqueMap(mapName) {
 
 	MODULES.mapFunctions.runUniqueMap = mapName;
 
-	const map = game.global.mapsOwnedArray.find((map) => map.name.includes(mapName));
+	const map = game.global.mapsOwnedArray.find(map => map.name.includes(mapName));
 
 	if (map) {
 		if (game.global.mapsActive && getCurrentMapObject().name !== mapName) recycleMap_AT();
@@ -330,14 +329,14 @@ MODULES.mapFunctions.voidPrefixes = Object.freeze({
 	Poisonous: 10,
 	Destructive: 11,
 	Heinous: 20,
-	Deadly: 30
+	Deadly: 30,
 });
 
 MODULES.mapFunctions.voidSuffixes = Object.freeze({
 	Descent: 7.077,
 	Void: 8.822,
 	Nightmare: 9.436,
-	Pit: 10.6
+	Pit: 10.6,
 });
 
 function _getVoidMapDifficulty(map) {
@@ -369,7 +368,7 @@ function voidMaps(lineCheck) {
 	const mapName = 'Void Map';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	const settingName = 'voidMapSettings';
@@ -398,13 +397,13 @@ function _getVoidMapsHDObject() {
 		void: { hdStat: hdStats.hdRatioVoid, hdStatVoid: hdStats.vhdRatioVoid, name: 'Void HD Ratio' },
 		hitsSurvived: { hdStat: hdStats.hitsSurvived, name: 'Hits Survived' },
 		hitsSurvivedVoid: { hdStat: hdStats.hitsSurvivedVoid, name: 'Hits Survived Void' },
-		maplevel: { hdStat: hdStats.autoLevel, name: 'Map Level' }
+		maplevel: { hdStat: hdStats.autoLevel, name: 'Map Level' },
 	};
 }
 
 function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
-	if (!baseSettings[0].active) return settingIndex;
 	let settingIndex = null;
+	if (!baseSettings[0].active) return settingIndex;
 	const voidReduction = trimpStats.isDaily ? dailyModiferReduction() : 0;
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 
@@ -449,7 +448,7 @@ function _getVoidMapsHeHrSetting(defaultSettings, dailyAddition) {
 		world: game.global.world,
 		portalAfter: true,
 		priority: 0,
-		heHr: true
+		heHr: true,
 	};
 }
 
@@ -476,7 +475,7 @@ function _setVoidMapsInitiator(setting, settingIndex) {
 
 		mapSettings[title] = {
 			name: obj.name,
-			hdRatio: obj.hdStat
+			hdRatio: obj.hdStat,
 		};
 		if (mapSettings[title].name.includes('Hits Survived')) {
 			if (currSetting[dropdown] > hdSetting) mapSettings.voidTrigger = obj.name;
@@ -533,7 +532,7 @@ function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettin
 		dropdown: mapSettings.dropdown,
 		dropdown2: mapSettings.dropdown2,
 		voidTrigger: mapSettings.voidTrigger,
-		portalAfterVoids: mapSettings.portalAfterVoids
+		portalAfterVoids: mapSettings.portalAfterVoids,
 	});
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
@@ -550,7 +549,7 @@ function mapBonus(lineCheck) {
 	const mapName = 'Map Bonus';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	//Initialise variables
@@ -603,7 +602,7 @@ function _mapBonusRatioSetting(defaultSettings, hdCheck, spireCheck) {
 		level: 0,
 		special: isSettingsEmpty ? 'lmc' : defaultSettings.special,
 		repeat: repeatCount,
-		priority: Infinity
+		priority: Infinity,
 	};
 }
 
@@ -630,7 +629,7 @@ function _runMapBonus(setting, mapName, settingIndex, spireCheck) {
 		repeat: !repeat,
 		status,
 		settingIndex,
-		priority
+		priority,
 	};
 }
 
@@ -638,7 +637,7 @@ function mapFarm(lineCheck) {
 	const mapName = 'Map Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	const settingName = 'mapFarmSettings';
@@ -701,7 +700,7 @@ function _runMapFarm(setting, mapName, settingName, settingIndex) {
 		repeat: !repeat,
 		status,
 		settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
 	};
 }
 
@@ -714,7 +713,7 @@ function _getMapFarmActions(mapType, setting, repeatNumber) {
 				.reduce((acc, time) => 60 * acc + +time),
 			'Zone Time': (getGameTime() - game.global.zoneStarted) / 1000,
 			'Portal Time': (getGameTime() - game.global.portalTime) / 1000,
-			'Skele Spawn': (getGameTime() - game.global.lastSkeletimp) / 1000
+			'Skele Spawn': (getGameTime() - game.global.lastSkeletimp) / 1000,
 		}[mapType];
 		const status = mapType === 'Daily Reset' ? `${mapType}: ${setting.repeat} / ${updateDailyClock(true)}` : `${mapType}: ${formatSecondsAsClock(repeatCheck, 4 - setting.repeat.split(':').length)} / ${setting.repeat}`;
 		return [repeatCheck, status];
@@ -733,7 +732,7 @@ function tributeFarm(lineCheck) {
 	const mapName = 'Tribute Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (game.buildings.Tribute.locked && game.jobs.Meteorologist.locked) return farmingDetails;
@@ -807,7 +806,7 @@ function _runTributeFarm(setting, mapName, settingName, settingIndex) {
 		repeat: true,
 		status: status,
 		settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
 	};
 }
 
@@ -845,14 +844,14 @@ function _tributeFarmShouldAncientTreasure(mapSpecial, jobRatio, mapLevel, tribu
 		goal: tributeGoal,
 		current: game.buildings.Tribute.purchased,
 		baseCost: 10000,
-		increment: 1.05
+		increment: 1.05,
 	};
 
 	const meteorologistConfig = {
 		goal: meteorologistGoal,
 		current: game.jobs.Meteorologist.owned,
 		baseCost: game.jobs.Meteorologist.cost.food[0],
-		increment: game.jobs.Meteorologist.cost.food[1]
+		increment: game.jobs.Meteorologist.cost.food[1],
 	};
 
 	const tributeCost = calculateItemCost(tributeConfig);
@@ -881,7 +880,7 @@ function smithyFarm(lineCheck) {
 	const mapName = 'Smithy Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (game.buildings.Smithy.locked || challengeActive('Transmute') || challengeActive('Pandemonium')) return farmingDetails;
@@ -915,7 +914,7 @@ function _smithyFarmQuestSetting() {
 		priority: 0,
 		mapType: 'Map Count',
 		repeat: getPageSetting('questSmithyMaps'),
-		runningQuest: true
+		runningQuest: true,
 	};
 }
 
@@ -975,7 +974,7 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 	}
 
 	if (smithyGoal > game.buildings.Smithy.purchased) {
-		resources.forEach((resource) => {
+		resources.forEach(resource => {
 			const smithyCost = getBuildingItemPrice(game.buildings.Smithy, resource, false, smithyGoal - game.buildings.Smithy.purchased);
 			if (smithyCost > game.resources[resource].owned) {
 				farmStatus[resource] = true;
@@ -1041,7 +1040,7 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 		repeat: true,
 		status,
 		settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
 	};
 }
 
@@ -1049,7 +1048,7 @@ function worshipperFarm(lineCheck) {
 	const mapName = 'Worshipper Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (game.jobs.Worshipper.locked) return farmingDetails;
@@ -1108,7 +1107,7 @@ function _runWorshipperFarm(setting, mapName, settingName, settingIndex, default
 		status,
 		settingIndex,
 		priority,
-		gather: 'food'
+		gather: 'food',
 	};
 }
 
@@ -1117,7 +1116,7 @@ function mapDestacking(lineCheck) {
 	const mapName = 'Destacking';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (challengeActive('Balance') || (challengeActive('Unbalance') && !getPageSetting('balance'))) return farmingDetails;
@@ -1176,7 +1175,7 @@ function mapDestacking(lineCheck) {
 		special: mapSpecial,
 		destack: destackValue,
 		repeat: !repeat,
-		status
+		status,
 	});
 
 	return farmingDetails;
@@ -1220,7 +1219,7 @@ function prestigeClimb(lineCheck) {
 	const mapName = 'Prestige Climb';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (challengeActive('Frugal') || _berserkDisableMapping() || _noMappingChallenges(true)) return farmingDetails;
@@ -1250,7 +1249,7 @@ function prestigeClimb(lineCheck) {
 
 	if (shouldMap && getPageSetting('prestigeClimbSkip')) {
 		const prestigeList = ['Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
-		const numUnbought = prestigeList.filter((p) => game.upgrades[p].allowed - game.upgrades[p].done > 0).length;
+		const numUnbought = prestigeList.filter(p => game.upgrades[p].allowed - game.upgrades[p].done > 0).length;
 		shouldMap = numUnbought >= 2;
 	}
 
@@ -1280,7 +1279,7 @@ function prestigeClimb(lineCheck) {
 		mapLevel,
 		autoLevel: true,
 		special: mapSpecial,
-		mapsToRun
+		mapsToRun,
 	});
 
 	return farmingDetails;
@@ -1306,7 +1305,7 @@ function prestigeRaiding(lineCheck) {
 	const mapName = 'Prestige Raiding';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	const settingName = 'raidingSettings';
@@ -1326,7 +1325,7 @@ function prestigeRaiding(lineCheck) {
 	if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 		mappingDetails(mapName, mapSettings.mapLevel, mapSettings.special);
 		if (defaultSettings.recycle && game.global.preMapsActive && mapSettings.prestigeMapArray) {
-			mapSettings.prestigeMapArray.forEach((map) => recycleMap(getMapIndex(map)));
+			mapSettings.prestigeMapArray.forEach(map => recycleMap(getMapIndex(map)));
 		}
 		resetMapVars(baseSettings[mapSettings.settingIndex], settingName);
 	}
@@ -1382,7 +1381,7 @@ function _runPrestigeRaiding(setting, mapName, settingIndex, defaultSettings) {
 		totalMapCost: mapSettings.totalMapCost,
 		mapSliders: mapSettings.mapSliders,
 		prestigeMapArray: mapSettings.prestigeMapArray,
-		prestigeFragMapBought: mapSettings.prestigeFragMapBought
+		prestigeFragMapBought: mapSettings.prestigeFragMapBought,
 	};
 }
 
@@ -1425,7 +1424,7 @@ function _handlePrestigeMapBuying() {
 			if ((!mapSettings.incrementMaps && x > 0) || mapSettings.mapSliders[x] === undefined) break;
 			_buyPrestigeMap(x);
 		}
-		mapSettings.prestigeMapArray = mapSettings.prestigeMapArray.filter((e) => e.replace(/(\r\n|\n|\r)/gm, ''));
+		mapSettings.prestigeMapArray = mapSettings.prestigeMapArray.filter(e => e.replace(/(\r\n|\n|\r)/gm, ''));
 	}
 }
 
@@ -1507,7 +1506,7 @@ function bionicRaiding(lineCheck) {
 	const mapName = 'Bionic Raiding';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	const settingName = 'bionicRaidingSettings';
@@ -1538,7 +1537,7 @@ function _runBionicRaiding(setting, mapName, settingIndex) {
 	const unlockLevel = MODULES.mapFunctions.uniqueMaps['Bionic Wonderland'].zone;
 	if (!trimpStats.plusLevels && unlockLevel > game.global.world) return farmingDetails;
 	else if (trimpStats.plusLevels && unlockLevel > game.global.world + 10) return farmingDetails;
-	const map = game.global.mapsOwnedArray.find((map) => map.name.includes('Bionic Wonderland'));
+	const map = game.global.mapsOwnedArray.find(map => map.name.includes('Bionic Wonderland'));
 	if (!map) return _obtainUniqueMap('Bionic Wonderland');
 	const raidZones = _raidingRaidZone(setting, mapName);
 	const targetPrestige = _raidingTargetPrestige(setting);
@@ -1560,7 +1559,7 @@ function _runBionicRaiding(setting, mapName, settingIndex) {
 		status: status,
 		settingIndex: settingIndex,
 		prestigeGoal: targetPrestige,
-		priority: setting.priority
+		priority: setting.priority,
 	};
 }
 
@@ -1590,7 +1589,7 @@ function toxicity(lineCheck) {
 	const mapName = 'Toxicity';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Toxicity')) return farmingDetails;
@@ -1646,7 +1645,7 @@ function _runToxicity(setting, mapName, settingName, settingIndex) {
 		currentStacks: currentStacks,
 		cellsToClear: cellsToClear,
 		settingIndex: settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
 	};
 }
 
@@ -1654,7 +1653,7 @@ function experience(lineCheck) {
 	let mapName = 'Experience';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Experience') || !getPageSetting('experience')) return farmingDetails;
@@ -1687,7 +1686,7 @@ function experience(lineCheck) {
 		autoLevel: true,
 		special: mapSpecial,
 		repeat: !repeat,
-		status
+		status,
 	});
 
 	return farmingDetails;
@@ -1698,7 +1697,7 @@ function wither(lineCheck) {
 	const mapName = 'Wither Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Wither') || !getPageSetting('wither') || !getPageSetting('witherFarm') || game.challenges.Wither.healImmunity > 0) return farmingDetails;
@@ -1749,7 +1748,7 @@ function wither(lineCheck) {
 		damageTarget,
 		repeat: true,
 		status,
-		equalityAmt
+		equalityAmt,
 	});
 
 	if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
@@ -1764,7 +1763,7 @@ function quagmire(lineCheck) {
 	const mapName = 'Quagmire Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Quagmire')) return farmingDetails;
@@ -1812,7 +1811,7 @@ function _runQuagmire(setting, mapName, settingName, settingIndex, baseSettings)
 		repeat: !repeat,
 		status,
 		settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
 	};
 }
 
@@ -1820,7 +1819,7 @@ function quest(lineCheck) {
 	const mapName = 'Quest';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 	if (!challengeActive('Quest') || !getPageSetting('quest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
 
@@ -1857,11 +1856,11 @@ function _getCurrentQuest() {
 	if (questProgress === 'Failed!' || questProgress === 'Quest Complete!') return 0;
 
 	const resourceMultipliers = ['food', 'wood', 'metal', 'gems', 'science'];
-	const resourceIndex = resourceMultipliers.findIndex((resource) => questDescription.includes(resource));
+	const resourceIndex = resourceMultipliers.findIndex(resource => questDescription.includes(resource));
 	if (resourceIndex !== -1) return resourceIndex + 1;
 
 	const otherQuests = ['Complete 5 Maps at Zone level', 'One-shot 5 world enemies', "Don't let your shield break before Cell 100", "Don't run a map before Cell 100", 'Buy a Smithy'];
-	const otherIndex = otherQuests.findIndex((quest) => questDescription === quest);
+	const otherIndex = otherQuests.findIndex(quest => questDescription === quest);
 	return otherIndex !== -1 ? otherIndex + 6 : 0;
 }
 
@@ -1873,7 +1872,7 @@ function _runQuest(shouldMap, mapName) {
 		3: ['lmc', '0,0,1', 'Mountains'],
 		7: ['lmc', '0,0,1', 'Mountains'],
 		5: ['fa', '0,0,0,1'],
-		default: ['fa', '1,1,1,0']
+		default: ['fa', '1,1,1,0'],
 	};
 	const questArray = questMapTypes[shouldMap] || questMapTypes.default;
 	const [mapSpecial, jobRatio] = questArray;
@@ -1905,7 +1904,7 @@ function _runQuest(shouldMap, mapName) {
 		resource: questResource,
 		jobRatio,
 		repeat: !repeat,
-		status
+		status,
 	};
 }
 
@@ -1913,7 +1912,7 @@ function archaeology(lineCheck) {
 	const mapName = 'Archaeology Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Archaeology')) return farmingDetails;
@@ -2001,7 +2000,7 @@ function _runArchaeology(setting, mapName, settingName, settingIndex) {
 		repeat: !repeat,
 		status: status,
 		settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
 	};
 }
 
@@ -2010,7 +2009,7 @@ function mayhem(lineCheck) {
 	const mapName = 'Mayhem Destacking';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Mayhem') || !getPageSetting('mayhem')) return farmingDetails;
@@ -2049,7 +2048,7 @@ function insanity(lineCheck) {
 	const mapName = 'Insanity Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Insanity')) return farmingDetails;
@@ -2127,7 +2126,7 @@ function berserk(lineCheck) {
 	const mapName = 'Berserk';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Berserk') || !getPageSetting('berserk')) return farmingDetails;
@@ -2163,7 +2162,7 @@ function pandemoniumDestack(lineCheck) {
 	const mapName = 'Pandemonium Destacking';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || game.global.world < getPageSetting('pandemoniumZone')) return farmingDetails;
@@ -2212,15 +2211,15 @@ function pandemoniumEquipmentCheck(cacheGain) {
 			cost: Infinity,
 			resourceSpendingPct: 1,
 			stat: 'attack',
-			zoneGo: true
+			zoneGo: true,
 		},
 		health: {
 			name: '',
 			cost: Infinity,
 			resourceSpendingPct: 1,
 			stat: 'health',
-			zoneGo: true
-		}
+			zoneGo: true,
+		},
 	};
 
 	let equipsToBuy = [];
@@ -2248,7 +2247,7 @@ function pandemoniumEquipmentCheck(cacheGain) {
 	let equipsToPurchase = { ...equipsToPurchaseBaseline };
 
 	function filterEquipments(equipmentsToBuy, equipArray, prestige) {
-		return equipmentsToBuy.filter((equip) => {
+		return equipmentsToBuy.filter(equip => {
 			const equipName = Object.keys(equip)[0];
 			const stat = equipArray[equipName].stat;
 
@@ -2286,7 +2285,7 @@ function pandemoniumEquipFarm(lineCheck) {
 	const mapName = 'Pandemonium Farming';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 	const equipSetting = getPageSetting('pandemoniumAE');
 
@@ -2344,7 +2343,7 @@ function alchemy(lineCheck) {
 	const mapName = 'Alchemy Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Alchemy')) return farmingDetails;
@@ -2468,7 +2467,7 @@ function glass(lineCheck) {
 	let mapName = 'Glass ';
 	const farmingDetails = {
 		shouldRun: shouldMap,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Glass') || !getPageSetting('glass')) return farmingDetails;
@@ -2556,7 +2555,7 @@ function hypothermia(lineCheck) {
 	const mapName = 'Hypothermia Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	const settingName = 'hypothermiaSettings';
@@ -2629,7 +2628,7 @@ function _runHypothermia(setting, mapName, settingName, settingIndex) {
 		repeat: !repeat,
 		status,
 		settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
 	};
 }
 
@@ -2639,7 +2638,7 @@ function desolation(lineCheck, forceDestack) {
 	const mapName = 'Desolation Destacking';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
@@ -2734,7 +2733,7 @@ function desolationGearScum(lineCheck) {
 	const mapName = 'Desolation Gear Scum';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
@@ -2832,7 +2831,7 @@ function smithless(lineCheck) {
 	const mapName = 'Smithless Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	if (!challengeActive('Smithless') || !getPageSetting('smithless')) return farmingDetails;
@@ -2910,7 +2909,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	let mapName = 'HD Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
 	};
 
 	const settingName = 'hdFarmSettings';
@@ -2952,7 +2951,7 @@ function _hdFarmVoidSetting() {
 		hdBase: useHitsSurvived ? Number(voidSetting.hitsSurvived) : Number(voidSetting.hdRatio),
 		hdType: useHitsSurvived ? 'hitsSurvivedVoid' : 'voidFarm',
 		mapCap: typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100,
-		priority: 1
+		priority: 1,
 	};
 }
 
@@ -2966,7 +2965,7 @@ function _hdFarmHitsSurvivedSetting(hitsSurvivedGoal, defaultSettings) {
 		jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : '1,1,2',
 		level: -1,
 		hitsSurvivedFarm: true,
-		priority: Infinity
+		priority: Infinity,
 	};
 }
 
@@ -2998,7 +2997,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		void: 'hdRatioVoid',
 		map: 'hdRatioMap',
 		hitsSurvived: 'hitsSurvived',
-		hitsSurvivedVoid: 'hitsSurvivedVoid'
+		hitsSurvivedVoid: 'hitsSurvivedVoid',
 	};
 
 	const hdRatio = hdStats[hdTypeMap[hdType]] || null;
@@ -3063,7 +3062,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		shouldHealthFarm: hdType.includes('hitsSurvived'),
 		voidHitsSurvived: hdType === 'hitsSurvivedVoid' || hdType === 'void',
 		settingIndex: settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
 	});
 
 	if (voidFarm) {
@@ -3075,7 +3074,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 			dropdown2: mapSettings.dropdown2,
 			voidTrigger: mapSettings.voidTrigger,
 			portalAfterVoids: mapSettings.portalAfterVoids,
-			voidFarm: true
+			voidFarm: true,
 		});
 	}
 
@@ -3088,7 +3087,7 @@ function farmingDecision() {
 	let farmingDetails = {
 		shouldRun: false,
 		mapName: '',
-		levelCheck: Infinity
+		levelCheck: Infinity,
 	};
 
 	//Won't map till after cell 90 on Lead on Even zones
@@ -3202,7 +3201,7 @@ function getAvailableSpecials(special, skipCaches) {
 		lwc: ['lwc', 'hc', 'swc', 'lc'],
 		lmc: ['lmc', 'hc', 'smc', 'lc'],
 		lrc: ['lrc', 'src', 'fa'],
-		p: ['p', 'fa']
+		p: ['p', 'fa'],
 	};
 
 	const cacheMods = specialToMods[special] || [special];
@@ -3528,7 +3527,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 			'Void HD Ratio': hdStats.hdRatioVoid,
 			'Hits Survived': hdStats.hitsSurvived,
 			'Hits Survived Void': hdStats.hitsSurvivedVoid,
-			'Map Level': hdStats.autoLevel
+			'Map Level': hdStats.autoLevel,
 		};
 		message += ` Void maps were triggered by ${mapSettings.voidTrigger}.<br>\n`;
 
@@ -3669,7 +3668,7 @@ function prestigeTotalFragCost() {
 
 	return {
 		cost: cost,
-		sliders: sliders
+		sliders: sliders,
 	};
 }
 
@@ -3710,7 +3709,7 @@ function dailyOddOrEven() {
 		slipPct: 0,
 		slipMult: 0,
 		slipType: '',
-		remainder: 0
+		remainder: 0,
 	};
 	if (!challengeActive('Daily')) return skipDetails;
 	if (!getPageSetting('mapOddEvenIncrement')) return skipDetails;
@@ -3852,13 +3851,13 @@ function setupAddonUser(force) {
 
 		const createObjArray = () => Array.from({ length: 31 }, () => ({ done: '' }));
 
-		u1Settings.forEach((item) => {
+		u1Settings.forEach(item => {
 			const settingKey = `${item}Settings`;
 			if (!game.global.addonUser[settingKey]) game.global.addonUser[settingKey] = {};
 			if (!game.global.addonUser[settingKey].value) game.global.addonUser[settingKey].value = createObjArray();
 		});
 
-		u2Settings.forEach((item) => {
+		u2Settings.forEach(item => {
 			const settingKey = `${item}Settings`;
 			if (!game.global.addonUser[settingKey]) game.global.addonUser[settingKey] = {};
 			if (!game.global.addonUser[settingKey].valueU2) game.global.addonUser[settingKey].valueU2 = createObjArray();
