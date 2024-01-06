@@ -965,7 +965,7 @@ function initialiseAllSettings() {
 		createSetting('prestigeClimbZone',
 			function () { return ('PC: Force Prestige Z') },
 			function () {
-				let description = "<p>On and after this zone is reached, always try to prestige for everything immediately regardless of <b>Prestige Climb</b> input unless it is set to <b>Off</b>.</p>";
+				let description = "<p>On and after this zone is reached, always try to prestige for everything immediately regardless of your <b>Prestige Climb</b> input unless it is set to <b>Off</b>.</p>";
 				description += "<p>The <b>Prestige Skip</b> setting has the potential to disable this if it's enabled.</p>";
 				description += "<p><b>Disable with -1.</b></p>";
 				description += "<p><b>Recommended:</b> The zone you start heavily slowing down</p>";
@@ -974,7 +974,7 @@ function initialiseAllSettings() {
 		createSetting('prestigeClimbSkip',
 			function () { return ('PC: Prestige Skip') },
 			function () {
-				let description = "<p>Will stop <b>Presige Climb</b> from running if you have 2 or more unbought prestiges (besides Supershield) in your upgrades window.</p>";
+				let description = "<p>Will stop <b>Prestige Climb</b> from running if you have 2 or more unbought prestiges (besides Supershield) in your upgrades window.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, "Equipment", [1, 2]);
@@ -2421,7 +2421,7 @@ function initialiseAllSettings() {
 		createSetting('pandemoniumDestack',
 			function () { return ('P: HD Ratio') },
 			function () {
-				let description = "<p>What HD ratio cut-off to use when farming for the Improbability. If this setting is 100, the script will destack until you can kill the Improbability in 100 average hits or there are no Pademonium stacks remaining to clear.</p>";
+				let description = "<p>What HD ratio cut-off to use when farming for the Improbability. If this setting is 100, the script will destack until you can kill the Improbability in 100 average hits or there are no Pandemonium stacks remaining to clear.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;

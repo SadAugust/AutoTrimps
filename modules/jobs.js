@@ -242,7 +242,7 @@ function buyJobs(forceRatios) {
 		//Check if bone shrine wants to force override our job ratio
 		if (forceRatios) {
 			if (typeof forceRatios !== 'string') {
-				debug('Error! forceRatios is not setup as a string! Not buying jobs until this has been fixed!');
+				debug(`Error! forceRatios is not setup as a string! Not buying jobs until this has been fixed!`);
 				return;
 			}
 			workerRatio = forceRatios;

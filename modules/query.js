@@ -126,11 +126,11 @@ function getArmyTime() {
 }
 
 function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHealth, equalityStacks, dmgMult) {
-	debug('Equality = ' + equalityStacks, 'debugStats');
-	debug('Our dmg (min) = ' + ourDamage.toFixed(3) + ' | ' + 'Our health = ' + ourHealth.toFixed(3), 'debugStats');
-	debug('Enemy dmg = ' + enemyDmgEquality.toFixed(3) + ' | ' + 'Enemy health = ' + enemyHealth.toFixed(3), 'debugStats');
-	debug('Gamma Burst = ' + game.heirlooms.Shield.gammaBurst.stacks + ' / ' + gammaMaxStacks(), 'debugStats');
-	if (dmgMult) debug('Mult = ' + dmgMult, 'debugStats');
+	debug(`Equality = ${equalityStacks}`, 'debugStats');
+	debug(`Our dmg (min) = ${ourDamage.toFixed(3)} | Our health = ${ourHealth.toFixed(3)}`, 'debugStats');
+	debug(`Enemy dmg = ${enemyDmgEquality.toFixed(3)} | Enemy health = ${enemyHealth.toFixed(3)}`, 'debugStats');
+	debug(`Gamma Burst = ${game.heirlooms.Shield.gammaBurst.stacks} / ${gammaMaxStacks()}`, 'debugStats');
+	if (dmgMult) debug(`Mult = ${dmgMult}`, 'debugStats');
 }
 
 function formatTimeForDescriptions(number) {

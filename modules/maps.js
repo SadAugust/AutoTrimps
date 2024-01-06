@@ -466,7 +466,7 @@ function _checkSitInMaps() {
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
 		if (!game.global.preMapsActive) {
 			mapsClicked(true);
-			debug('AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.', 'other');
+			debug(`AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.`, 'other');
 		}
 		return true;
 	}
@@ -626,7 +626,7 @@ function _purchaseMap(lowestMap) {
 	if (result === -2) {
 		recycleMap(game.global.mapsOwnedArray.indexOf(lowestMap));
 		result = buyMap();
-		if (result === -2) debug('AutoMaps unable to recycle to buy map!', 'maps');
+		if (result === -2) debug(`AutoMaps unable to recycle to buy map!`, 'maps');
 	}
 	if (result === 1) {
 		const mapCost = updateMapCost(true);

@@ -401,10 +401,21 @@ function hypothermiaBonfireCost() {
 	if (!challengeActive('Hypothermia')) return 0;
 	let cost = game.challenges.Hypothermia.bonfirePrice();
 	if (cost > game.resources.wood.owned) return 0;
-	while (game.resources.wood.owned > cost) {
-		cost *= 1e10;
+	let bonfiresOwned = game.challenges.Hypothermia.totalBonfires;
+	while (game.resources.wood.owned > cost + Math.pow(100, bonfiresOwned + 1) * 1e10) {
+		bonfiresOwned++;
+		cost += Math.pow(100, bonfiresOwned) * 1e10;
 	}
 	return cost;
+}
+
+function hypothermiaEndZone() {
+	if (!challengeActive('Hypothermia')) return Infinity;
+	const hypoDefaultSettings = getPageSetting('hypothermiaSettings')[0];
+	if (!hypoDefaultSettings) return Infinity;
+	const hypoEndZone = hypoDefaultSettings.frozencastle;
+	if (!hypoEndZone) return Infinity;
+	return parseInt(hypoEndZone[0]);
 }
 
 function getPriorityOrder() {

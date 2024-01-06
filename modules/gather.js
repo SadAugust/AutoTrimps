@@ -28,7 +28,7 @@ function safeSetGather(resource) {
 	if (resource === 'metal' && challengeActive('Transmute')) resource = 'wood';
 
 	if (game.global.playerGathering !== resource) {
-		debug('Setting gather to ' + resource, 'gather');
+		debug(`Setting gather to ${resource}`, 'gather');
 		setGather(resource);
 	}
 	return;

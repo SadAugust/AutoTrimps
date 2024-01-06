@@ -888,43 +888,44 @@ function calculateParityBonus_AT(workerRatio, heirloom) {
 //Check and update each patch!
 function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {
 	if (!itemObj.cost) return 1;
-	var mostAfford = -1;
+	let mostAfford = -1;
 	if (Number.isInteger(forceMax)) forceMax = forceMax;
 	//if (!forceMax) var forceMax = false;
-	var forceMax = Number.isInteger(forceMax) ? forceMax : false;
-	var currentOwned = itemObj.purchased ? itemObj.purchased : itemObj.level ? itemObj.level : itemObj.owned;
+	forceMax = Number.isInteger(forceMax) ? forceMax : false;
+	let currentOwned = itemObj.purchased ? itemObj.purchased : itemObj.level ? itemObj.level : itemObj.owned;
+	const artMult = getEquipPriceMult();
+	const runningHypo = challengeActive('Hypothermia');
+	const hypoWoodCost = runningHypo && hypothermiaEndZone() > game.global.world ? hypothermiaBonfireCost() : 0;
 	if (!currentOwned) currentOwned = 0;
 	if (isJob && game.global.firing && !forceRatio) return Math.floor(currentOwned * game.global.maxSplit);
-	for (var item in itemObj.cost) {
-		var price = itemObj.cost[item];
-		var toBuy;
-		var resource = game.resources[item];
-		var resourcesAvailable = !resources ? resource.owned : resources;
+	for (let item in itemObj.cost) {
+		let price = itemObj.cost[item];
+		let toBuy;
+		let resource = game.resources[item];
+		let resourcesAvailable = !resources ? resource.owned : resources;
+		if (item === 'wood' && runningHypo) resourcesAvailable -= hypoWoodCost;
 		if (resourcesAvailable < 0) resourcesAvailable = 0;
 		if (game.global.maxSplit !== 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
 		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);
 
 		if (item === 'fragments' && game.global.universe === 2) {
-			var buildingSetting = getPageSetting('buildingSettingsArray');
+			const buildingSetting = getPageSetting('buildingSettingsArray');
 			resourcesAvailable =
 				buildingSetting.SafeGateway && buildingSetting.SafeGateway.zone !== 0 && game.global.world >= buildingSetting.SafeGateway.zone ? resourcesAvailable : buildingSetting.SafeGateway.enabled && resourcesAvailable > resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount ? resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount : resourcesAvailable;
 		}
 		if (!resource || typeof resourcesAvailable === 'undefined') {
-			console.log('resource ' + item + ' not found');
+			console.log(`resource ${item} not found`);
 			return 1;
 		}
 		if (typeof price[1] !== 'undefined') {
-			var start = price[0];
-			if (isEquipment) {
-				var artMult = getEquipPriceMult();
-				start = Math.ceil(start * artMult);
-			}
-			if (isBuilding && getPerkLevel('Resourceful')) start = start * Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful'));
+			let start = price[0];
+			if (isEquipment) start = Math.ceil(start * artMult);
+			if (isBuilding && getPerkLevel('Resourceful')) start = start * Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
 			toBuy = Math.floor(log10((resourcesAvailable / (start * Math.pow(price[1], currentOwned))) * (price[1] - 1) + 1) / log10(price[1]));
 		} else if (typeof price === 'function') {
 			return 1;
 		} else {
-			if (isBuilding && getPerkLevel('Resourceful')) price = Math.ceil(price * Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful')));
+			if (isBuilding && getPerkLevel('Resourceful')) price = Math.ceil(price * Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful')));
 			toBuy = Math.floor(resourcesAvailable / price);
 		}
 		if (mostAfford === -1 || mostAfford > toBuy) mostAfford = toBuy;

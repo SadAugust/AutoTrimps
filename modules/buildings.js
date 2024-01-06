@@ -8,7 +8,7 @@ function safeBuyBuilding(building, amt) {
 	if (!bwRewardUnlocked('Foremany') && game.global.world <= 10) amt = 1;
 
 	buyBuilding(building, true, true, amt);
-	if (building !== 'Trap') debug('Building ' + amt + ' ' + building + addAnS(amt), 'buildings', '*hammer2');
+	if (building !== 'Trap') debug(`Building ${amt} ${building}${addAnS(amt)}`, 'buildings', '*hammer2');
 }
 
 function advancedNurseries() {
@@ -45,10 +45,6 @@ function _needHousing(houseName) {
 		if (buildingStat.purchased >= 6000) return false;
 	}
 	const safeHousingFood = ['Gateway', 'Collector'];
-	// Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
-	const hypoActive = challengeActive('Hypothermia');
-	const enoughWood = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice();
-	if (hypoActive & !safeHousingFood.includes(houseName) & enoughWood) return false;
 
 	// Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
 	if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && !safeHousingFood.includes(houseName)) return false;
@@ -252,17 +248,7 @@ function _buyStorage(hypoZone) {
  * Special checks for Hypothermia.
  */
 function _handleStorage() {
-	let hypoZone = 0;
-	if (challengeActive('Hypothermia')) {
-		const hypoSettings = getPageSetting('hypothermiaSettings');
-		if (hypoSettings[0].active && hypoSettings[0].autostorage && hypoSettings.length > 0) {
-			for (let y = 1; y < hypoSettings.length; y++) {
-				const setting = hypoSettings[y];
-				if (!setting.active) continue;
-				if (hypoZone === 0 || hypoZone > setting.world) hypoZone = setting.world;
-			}
-		}
-	}
+	const hypoZone = _getHypoZone();
 
 	// Buys storage buildings when about to cap resources isn't needed with lossless autostorage.
 	// But hypothermia messed this up. Has a check for if on Hypo and checks for the first Hypo farm zone.
@@ -385,9 +371,7 @@ function _buySmithy(buildingSettings) {
 	const smithySetting = buildingSettings.Smithy;
 	let smithyAmt = smithySetting.buyMax === 0 ? Infinity : smithySetting.buyMax;
 	let smithyPct = smithySetting.percent / 100;
-	const purchased = game.buildings.Smithy.purchased;
-	const max = smithyAmt - purchased;
-	let smithyCanAfford = calculateMaxAfford_AT(game.buildings.Smithy, true, false, false, max, smithyPct);
+
 	// Overrides for Smithy farming.
 	// If you have your purchase pct less than 100% or your cap is lower than the amount you are targetting then temporarily adjust inputs.
 	if (mapSettings.mapName === 'Smithy Farm') {
@@ -395,12 +379,13 @@ function _buySmithy(buildingSettings) {
 		smithyPct = 1;
 	}
 
+	const purchased = game.buildings.Smithy.purchased;
+	const max = smithyAmt - purchased;
+	let smithyCanAfford = calculateMaxAfford_AT(game.buildings.Smithy, true, false, false, max, smithyPct);
+
 	if (challengeActive('Quest') && getPageSetting('quest')) {
 		smithyCanAfford = _calcSmithyDuringQuest();
 	}
-	//Don't buy Smithies when you can afford a bonfire on Hypo.
-	//The Smithy Farm setting has an override to purchase them 1 at a time during Smithy Farm to ensure you can still farm and don't overpurchase.
-	if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
 
 	if (((smithySetting.enabled && smithyAmt > purchased) || challengeActive('Quest')) && smithyCanAfford > 0) {
 		safeBuyBuilding('Smithy', smithyCanAfford);

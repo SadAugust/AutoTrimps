@@ -83,7 +83,7 @@ function _mapSettingsVals(defaultVals, lineNo) {
 		bogs: 0,
 		insanity: 0,
 		potions: 0,
-		bonfires: 0,
+		bonfire: 0,
 		relics: 0,
 		boneamount: 0,
 		bonebelow: 0,

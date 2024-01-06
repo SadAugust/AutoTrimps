@@ -492,14 +492,14 @@ function autoMagmiteSpender(portal) {
 				var cost = upgrade.cost;
 				if (game.global.magmite >= cost) {
 					buyPermanentGeneratorUpgrade(item);
-					debug('Auto Spending ' + cost + ' Magmite on: ' + item, 'magmite');
+					debug(`Auto Spending ${cost} magmite on: ${item}`, 'magmite');
 					didSpend = true;
 				}
 			}
 			var hasOv = game.permanentGeneratorUpgrades.Hybridization.owned && game.permanentGeneratorUpgrades.Storage.owned;
 			var ovclock = game.generatorUpgrades.Overclocker;
 			if (hasOv && (getPageSetting('spendmagmitesetting', 1) === 0 || getPageSetting('spendmagmitesetting', 1) === 3 || !ovclock.upgrades) && game.global.magmite >= ovclock.cost()) {
-				debug('Auto Spending ' + ovclock.cost() + ' Magmite on: Overclocker' + (ovclock.upgrades ? ' #' + (ovclock.upgrades + 1) : ''), 'magmite');
+				debug(`Auto Spending ${ovclock.cost()} Magmite on: Overclocker${ovclock.upgrades ? ` #${ovclock.upgrades + 1}` : ''}`, 'magmite');
 				buyGeneratorUpgrade('Overclocker');
 			}
 
@@ -536,15 +536,15 @@ function autoMagmiteSpender(portal) {
 				}
 				upgrade = game.generatorUpgrades[item];
 				if (game.global.magmite >= upgrade.cost()) {
-					debug('Auto Spending ' + upgrade.cost() + ' Magmite on: ' + item + ' #' + (game.generatorUpgrades[item].upgrades + 1), 'magmite');
+					debug(`Auto Spending ${upgrade.cost()} Magmite on: ${item} #${game.generatorUpgrades[item].upgrades + 1}`, 'magmite');
 					buyGeneratorUpgrade(item);
 					didSpend = true;
 				} else repeat = false;
 			}
 		} catch (err) {
-			debug('AutoSpendMagmite Error encountered: ' + err.message, 'magmite');
+			debug(`AutoSpendMagmite Error encountered: ${err.message}`, 'magmite');
 		}
-		if (didSpend) debug('Leftover magmite: ' + game.global.magmite, 'magmite');
+		if (didSpend) debug(`Leftover magmite: ${game.global.magmite}`, 'magmite');
 	}
 }
 
@@ -555,7 +555,7 @@ function _autoMagmiteCalc() {
 	var upgrader = game.generatorUpgrades[toSpend];
 	if (upgrader === undefined) return;
 	if (game.global.magmite >= upgrader.cost()) {
-		debug('Auto Spending ' + upgrader.cost() + ' Magmite on: ' + toSpend + ' #' + (game.generatorUpgrades[toSpend].upgrades + 1), 'magmite');
+		debug(`Auto Spending ${upgrader.cost()} Magmite on: ${toSpend} #${game.generatorUpgrades[toSpend].upgrades + 1}`, 'magmite');
 		buyGeneratorUpgrade(toSpend);
 		MODULES.magmite.upgradeToPurchase = '';
 		return true;
