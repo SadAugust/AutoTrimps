@@ -895,7 +895,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	let currentOwned = itemObj.purchased ? itemObj.purchased : itemObj.level ? itemObj.level : itemObj.owned;
 	const artMult = getEquipPriceMult();
 	const runningHypo = challengeActive('Hypothermia');
-	const hypoWoodCost = runningHypo && hypothermiaEndZone() > game.global.world ? hypothermiaBonfireCost() : 0;
+	const hypoWoodCost = runningHypo && hypothermiaEndZone() - 1 > game.global.world ? hypothermiaBonfireCost() : 0;
 	if (!currentOwned) currentOwned = 0;
 	if (isJob && game.global.firing && !forceRatio) return Math.floor(currentOwned * game.global.maxSplit);
 	for (let item in itemObj.cost) {
