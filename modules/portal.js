@@ -648,7 +648,7 @@ function resetVarsZone(loadingSave) {
 	//Challenge Repeat
 	MODULES.mapFunctions.challengeContinueRunning = false;
 	MODULES.mapFunctions.runUniqueMap = '';
-	MODULES.mapFunctions.quest.run = false;
+	MODULES.mapFunctions.questRun = false;
 	trimpStats = new TrimpStats();
 	hdStats = new HDStats(true);
 	//Reset map settings to default

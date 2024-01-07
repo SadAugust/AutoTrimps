@@ -483,12 +483,12 @@ function _lifeMapping() {
 	if (lifeZone > 0 && lifeStacks > 0 && game.global.world >= lifeZone && game.challenges.Life.stacks <= lifeStacks) {
 		if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
 		if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
-			MODULES.maps.livingActive = true;
+			MODULES.maps.lifeActive = true;
 			if (game.global.fighting || game.global.preMapsActive) mapsClicked();
 			return true;
 		}
 	}
-	MODULES.maps.livingActive = false;
+	MODULES.maps.lifeActive = false;
 }
 
 function _autoMapsDefaults() {
