@@ -497,7 +497,7 @@ function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettin
 
 	if (shouldMap && defaultSettings.boneCharge && !mapSettings.boneChargeUsed && game.permaBoneBonuses.boosts.charges > 0 && !game.options.menu.pauseGame.enabled) {
 		debug(`Consumed 1 bone shrine charge on zone ${game.global.world} and gained ${boneShrineOutput(1)}`, 'bones');
-		buyJobs(jobRatio);
+		buyJobs(setting.jobratio);
 		game.permaBoneBonuses.boosts.consume();
 		mapSettings.boneChargeUsed = true;
 	}
