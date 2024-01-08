@@ -208,11 +208,13 @@ function shouldRunUniqueMap(map) {
 	if (mapData === undefined || game.global.world < mapData.zone - (trimpStats.plusLevels ? 10 : 0)) return false;
 	if (game.global.universe !== mapData.universe) return false;
 	if (!trimpStats.isC3 && mapData.challenges.includes(trimpStats.currChallenge) && !challengeActive('') && enoughHealth(map)) return true;
+
 	//Remove speed run check for now
 	/* if (mapData.speedrun && shouldSpeedRun(map, game.achievements[mapData.speedrun]) && enoughHealth(map) && enoughDamage(map)) {
 		return true;
 	} */
 	//Disable mapping if we don't have enough health to survive the map and the corresponding setting is enabled.
+
 	if (getPageSetting('uniqueMapEnoughHealth') && !enoughHealth(map)) return false;
 
 	//Check to see if the cell is liquified and if so we can replace the cell condition with it

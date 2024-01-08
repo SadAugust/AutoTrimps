@@ -350,7 +350,7 @@ function _berserkDisableMapping() {
 	if (!challengeActive('Berserk')) return false;
 	if (!getPageSetting('berserk')) return false;
 	if (game.global.mapsActive || game.global.preMapsActive) return false;
-	if (!game.global.fighting || game.global.soldierHealth <= 0) return false;
+	if (!getPageSetting('berserkDisableMapping') || !game.global.fighting || game.global.soldierHealth <= 0) return false;
 	if (game.challenges.Berserk.frenzyStacks > 0) return true;
 }
 

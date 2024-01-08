@@ -148,7 +148,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
 		createSetting('upgradeType',
-			function () { return (['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords']) },
+			function () { return (['Manual Upgrades', 'Buy All Upgrades', 'Upgrades No Coords']) },
 			function () {
 				let description = "<p>Controls what you upgrade.</p>";
 				description += "<p><b>Manual Upgrades</b><br>Disables this setting.</p>";
@@ -2114,7 +2114,7 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
 		createSetting('trapperArmyPct',
-			function () { return ('T: Army Pct') },
+			function () { return ('T: Army Percent') },
 			function () {
 				let description = "<p>The percentage of owned trimps that you would like to send out when you need a new army.</p>";
 				description += "<p>If set to <b>0 or below</b> it will assume this is set to 100% and always send armies if possible.</p>";
@@ -2400,13 +2400,21 @@ function initialiseAllSettings() {
 			function () { return ('Berserk') },
 			function () {
 				let description = "<p>Enable this if you want the script to perform additional actions during the <b>Berserk</b> challenge.</p>";
-				description += "<p>If enabled it will disable mapping if your army is alive in the world and you have more than 0 stacks of Frenzy buff and only allows mapping settings with a Berserk challenge line to be run.</p>";
+				description += "<p>If enabled it will only allows mapping settings with a Berserk challenge line to be run.</p>";
 				description += "<p>If your army dies then it will go into a level 6 map and farm until you have max Frenzied stacks to ensure you're always the strongest you can be. It <b>will</b> also abandon maps that are in the middle of being run to go obtain these stacks!</p>";
-				description += "<p>Make sure you setup appropriate mapping lines to farm enough should you die. I highly recommend repeat every 1 zone lines for HD Farm, Tribute Farm and Smithy Farm.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 115) });
+		createSetting('berserkDisableMapping',
+			function () { return ('B: Disable Mapping') },
+			function () {
+				let description = "<p>Enabling this setting will disable mapping until your army dies so that you can extend your lives as long as possible.</p>";
+				description += "<p>When using this make sure you setup appropriate mapping lines to farm enough should you die. I highly recommend repeat every 1 zone lines for HD Farm, Tribute Farm and Smithy Farm.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'C2', [2],
+			function () { return (getPageSetting('berserk', currSettingUniverse) && autoTrimpSettings.berserk.require()) });
 
 		//Pandemonium
 		createSetting('pandemonium',
@@ -4094,7 +4102,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
 		createSetting('displayHeHr',
-			function () { return (_getPrimaryResourceInfo().abv + '/hr status') },
+			function () { return (_getPrimaryResourceInfo().name + ' Per Hour Status') },
 			function () {
 				let description = "<p>Enables the display of your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				return description;
@@ -4180,25 +4188,25 @@ function initialiseAllSettings() {
 	//Export/Import/Default
 	const displayImport = true;
 	if (displayImport) {
-		createSetting('ImportAutoTrimps',
+		createSetting('importAutoTrimps',
 			function () { return ('Import AutoTrimps') },
 			function () {
 				let description = "<p>Import a AutoTrimps settings file.</p>";
 				return description;
 			}, 'infoclick', null, 'ImportExportTooltip("importAutoTrimps")', 'Import Export', [0]);
-		createSetting('ExportAutoTrimps',
+		createSetting('exportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
 				let description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
 				return description;
 			}, 'infoclick', null, 'ImportExportTooltip("exportAutoTrimps")', 'Import Export', [0]);
-		createSetting('DefaultAutoTrimps',
+		createSetting('defaultAutoTrimps',
 			function () { return ('Reset To Default') },
 			function () {
 				let description = "<p>Reset everything to the way it was when you first installed the script.</p>";
 				return description;
 			}, 'infoclick', null, 'ImportExportTooltip("resetDefaultSettingsProfiles"\'")', 'Import Export', [0]);
-		createSetting('DownloadDebug',
+		createSetting('downloadForDebug',
 			function () { return ('Download For Debug') },
 			function () {
 				let description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
@@ -4206,7 +4214,7 @@ function initialiseAllSettings() {
 			}, 'action', null, 'ImportExportTooltip("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
 
 		createSetting('updateReload',
-			function () { return ('Update Reload') },
+			function () { return ('Reload For Updates') },
 			function () {
 				let description = "<p>Will reload your Trimps window when an AutoTrimps update is available.</p>";
 				description += "<p><b>Updates have the potential to have errors that would break the script so be aware this might not be wise to enable.</b></p>";
@@ -4982,7 +4990,7 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields', 'equipShieldBlock'];
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'frigid', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserk', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'frigid', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['autoGigaDeltaFactor'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff', 'mapologyPrestige'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];

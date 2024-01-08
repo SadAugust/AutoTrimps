@@ -117,7 +117,7 @@ function ImportExportTooltip(what, event) {
 		let saveGame = JSON.parse(LZString.decompressFromBase64(saveFile));
 		document.getElementById('confirmTooltipBtn').click();
 		// Pausing save and setting options to my preferences
-		if (what === 'ExportAutoTrimps') {
+		if (what === 'exportAutoTrimps') {
 			saveGame.options.menu.pauseGame.enabled = 1;
 			saveGame.options.menu.timeAtPause = new Date().getTime();
 			saveGame.options.menu.standardNotation.enabled = 0;
