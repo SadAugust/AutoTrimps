@@ -2111,23 +2111,23 @@ function autoJobsSave() {
 	if (game.global.universe === 1) {
 		//Magmamancer
 		if (game.stats.highestLevel.valueTotal() < 230) {
-			setting.magmamancer = {};
-			setting.magmamancer.enabled = true;
-			setting.magmamancer.percent = 100;
+			setting.Magmamancer = {};
+			setting.Magmamancer.enabled = true;
+			setting.Magmamancer.percent = 100;
 		}
 	}
 	if (game.global.universe === 2) {
 		//Meteorologist
 		if (game.stats.highestRadLevel.valueTotal() < 30) {
-			setting.meteorologist = {};
-			setting.meteorologist.enabled = true;
-			setting.meteorologist.percent = 100;
+			setting.Meteorologist = {};
+			setting.Meteorologist.enabled = true;
+			setting.Meteorologist.percent = 100;
 		}
 		//Worshipper
 		if (game.stats.highestRadLevel.valueTotal() < 50) {
-			setting.worshipper = {};
-			setting.worshipper.enabled = true;
-			setting.worshipper.percent = 20;
+			setting.Worshipper = {};
+			setting.Worshipper.enabled = true;
+			setting.Worshipper.percent = 20;
 		}
 	}
 
