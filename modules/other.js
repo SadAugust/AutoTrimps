@@ -120,7 +120,7 @@ function archaeologyAutomator() {
 	}
 }
 
-function challengesUnlockedObj(universe = currSettingUniverse, pureC2) {
+function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, excludeFused) {
 	var obj = {};
 	const hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 
@@ -217,9 +217,11 @@ function challengesUnlockedObj(universe = currSettingUniverse, pureC2) {
 
 	obj = Object.entries(obj).reduce((newObj, [key, val]) => {
 		if (hze >= val.unlockZone && (typeof val.unlockCondition !== 'function' || val.unlockCondition())) {
-			if (pureC2 && !specialChallenges.includes(key) && !dualC2s.includes(key)) {
+			if (!excludeSpecial && specialChallenges.includes(key)) {
 				newObj[key] = val;
-			} else if (!pureC2) {
+			} else if (!excludeFused && dualC2s.includes(key)) {
+				newObj[key] = val;
+			} else if (!specialChallenges.includes(key) && !dualC2s.includes(key)) {
 				newObj[key] = val;
 			}
 		}

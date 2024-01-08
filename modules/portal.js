@@ -232,7 +232,7 @@ function c2Runner() {
 	if (runType === 0) {
 		//Building challenge array with percent value challenges
 		if (portalUniverse === 1) {
-			var highestZone = game.stats.highestLevel.valueTotal();
+			let highestZone = game.stats.highestLevel.valueTotal();
 
 			//Adding Fused challenges to array if setting is toggled
 			if (getPageSetting('c2Fused', portalUniverse)) {
@@ -260,7 +260,7 @@ function c2Runner() {
 
 		//Adding U2 challenges
 		if (portalUniverse === 2) {
-			var highestZone = game.stats.highestRadLevel.valueTotal();
+			let highestZone = game.stats.highestRadLevel.valueTotal();
 			if (highestZone >= 50) challengeArray.push('Unlucky');
 			if (highestZone >= 50) challengeArray.push('Unbalance');
 			if (highestZone >= 85) challengeArray.push('Quest');

@@ -258,7 +258,7 @@ function _displayC2Table() {
 	};
 
 	Object.keys(challengeOrders).forEach((type) => {
-		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true);
+		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true, true);
 		challenges = filterAndSortChallenges(challenges, 'c2');
 		const array = challengeOrders[type].filter((item) => challenges.includes(item));
 		processArray(type, array, runnerLists[type]);
