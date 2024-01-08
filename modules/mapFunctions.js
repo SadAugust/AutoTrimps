@@ -319,7 +319,12 @@ function runningAncientTreasure() {
 function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
 	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
-	if (!forceAbandon && (challengeActive('Mapology') || challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || (challengeActive('Berserk') && !game.challenges.Berserk.weakened !== 20) || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
+
+	const skipChallenges = challengeActive('Mapology') || challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || (challengeActive('Berserk') && !game.challenges.Berserk.weakened !== 20);
+	const isFrenzyStarted = game.portal.Frenzy.frenzyStarted !== -1;
+	const skipMapping = ['Prestige Raiding', 'Prestige Climb'].includes(mapSettings.mapName);
+
+	if (!forceAbandon && (skipChallenges || isFrenzyStarted || skipMapping || !newArmyRdy())) return;
 
 	if (!game.global.preMapsActive) mapsClicked(true);
 	if (game.global.preMapsActive) recycleMap();
@@ -458,9 +463,8 @@ function _getVoidMapsHeHrSetting(defaultSettings, dailyAddition) {
 function _setVoidMapsInitiator(setting, settingIndex) {
 	if (setting.heHr) {
 		const portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
-		const primaryResourceInfo = _getPrimaryResourceInfo();
 		const portalName = autoTrimpSettings.heliumHrPortal.name()[portalSetting];
-		mapSettings.voidTrigger = `${primaryResourceInfo.name} Per Hour (${portalName})`;
+		mapSettings.voidTrigger = `${_getPrimaryResourceInfo().name} Per Hour (${portalName})`;
 		return;
 	}
 
@@ -511,13 +515,20 @@ function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettin
 
 	if (shouldMap && defaultSettings.voidFarm && !skipFarmChallenges && hasNotVoidFarmed && (shouldHitsSurvived || shouldHDFarm)) {
 		if (!mapSettings.voidFarm && getPageSetting('autoMaps')) {
-			debug(`${mapName} (z${game.global.world}c${game.global.lastClearedCell + 2}) farming for stats before running void maps.`, 'map_Details');
+			debug(`${mapName} (z${game.global.world}c${game.global.lastClearedCell + 2}) farming stats before running void maps.`, 'map_Details');
 		}
 		return hdFarm(false, true, true);
 	}
 
 	const stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
 	const status = `Void Maps: ${game.global.totalVoidMaps}${stackedMaps ? ` (${stackedMaps} stacked)` : ''} remaining`;
+
+	if (mapSettings.mapName === mapName && !shouldMap) {
+		mappingDetails(mapName, null, null, null, null, null);
+		resetMapVars();
+		MODULES.mapFunctions.afterVoids = false;
+		if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
+	}
 
 	Object.assign(farmingDetails, {
 		shouldRun: shouldMap,
@@ -537,13 +548,6 @@ function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettin
 		voidTrigger: mapSettings.voidTrigger,
 		portalAfterVoids: mapSettings.portalAfterVoids
 	});
-
-	if (mapSettings.mapName === mapName && !shouldMap) {
-		mappingDetails(mapName, null, null, null, null, null);
-		resetMapVars();
-		MODULES.mapFunctions.afterVoids = false;
-		if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
-	}
 
 	return farmingDetails;
 }
