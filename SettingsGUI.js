@@ -2597,9 +2597,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
-		//Desolation Prestige Scumming
-		//Currently only visible to select people for testing purposes.
-		//Should be functional but can't be sure until it has been tested.
 		createSetting('desolationSettings',
 			function () { return ('Desolation Settings') },
 			function () {
@@ -2638,7 +2635,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', true, null, 'C2', [2],
 			function () { return (getPageSetting('smithless', currSettingUniverse) && autoTrimpSettings.smithless.require()) });
-
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
