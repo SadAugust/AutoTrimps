@@ -1,9 +1,10 @@
 function callBetterAutoFight() {
 	avoidEmpower();
 	trimpicide();
-	if (getPageSetting('autoFight') === 0) return;
-	else if (getPageSetting('autoFight') === 1) betterAutoFight();
-	else if (getPageSetting('autoFight') === 2) betterAutoFightVanilla();
+	const autoFightSetting = getPageSetting('autoFight');
+	if (autoFightSetting === 0) return;
+	else if (autoFightSetting === 1) betterAutoFight();
+	else if (autoFightSetting === 2) betterAutoFightVanilla();
 }
 
 function newArmyRdy() {
@@ -28,9 +29,7 @@ function betterAutoFight() {
 function betterAutoFightVanilla() {
 	if (game.global.autoBattle && game.global.pauseFight && !game.global.spireActive) pauseFight();
 	if (game.global.gridArray.length === 0 || !game.upgrades.Battle.done || game.global.fighting) return;
-	if (game.global.world === 1 && !game.global.fighting && !game.upgrades.Bloodlust.allowed) {
-		battle(true);
-	}
+	if (game.global.world === 1 && !game.global.fighting && !game.upgrades.Bloodlust.allowed) battle(true);
 }
 
 //Suicides trimps if we don't have max anticipation stacks and sending a new army would give us max stacks.
@@ -80,8 +79,8 @@ function armyDeath() {
 	if (game.global.soldierHealth <= 0) return false;
 
 	//Trimps Stats
-	var ourHealth = game.global.soldierHealth;
-	var block = game.global.soldierCurrentBlock;
+	let ourHealth = game.global.soldierHealth;
+	let block = game.global.soldierCurrentBlock;
 	if (game.global.formation !== 0) block = game.global.formation === 3 ? (block /= 4) : (block *= 2);
 	enemyAttack = enemy.attack * fluctuation;
 
@@ -91,10 +90,10 @@ function armyDeath() {
 		if (typeof game.global.dailyChallenge.empower !== 'undefined') enemyAttack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 	}
 
-	var pierce = !game.global.mapsActive ? getPierceAmt() : 0;
-	var attackMinusBlock = enemyAttack - game.global.soldierCurrentBlock;
+	const pierce = !game.global.mapsActive ? getPierceAmt() : 0;
+	let attackMinusBlock = enemyAttack - game.global.soldierCurrentBlock;
 	if (pierce > 0) {
-		var atkPierce = pierce * enemyAttack;
+		const atkPierce = pierce * enemyAttack;
 		if (attackMinusBlock < atkPierce) attackMinusBlock = atkPierce;
 	}
 	if (attackMinusBlock <= 0) attackMinusBlock = 0;
@@ -136,11 +135,10 @@ function avoidEmpower() {
 }
 
 function setEquality(equality) {
-	if (game.portal.Equality.disabledStackCount !== equality) {
-		game.portal.Equality.disabledStackCount = equality;
-		manageEqualityStacks();
-		updateEqualityScaling();
-	}
+	if (game.portal.Equality.disabledStackCount === equality) return;
+	game.portal.Equality.disabledStackCount = equality;
+	manageEqualityStacks();
+	updateEqualityScaling();
 }
 
 function equalityManagementBasic() {
@@ -154,16 +152,16 @@ function equalityManagementBasic() {
 	}
 
 	//Looking to see if the enemy that's currently being fought is fast.
-	var fastEnemy = MODULES.fightinfo.fastImps.includes(getCurrentEnemy().name);
+	const fastEnemy = MODULES.fightinfo.fastImps.includes(getCurrentEnemy().name);
 	//Checking if the map that's active is a Deadly voice map which always has first attack.
-	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === 'Void' && getCurrentMapObject().voidBuff === 'doubleAttack';
+	const voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === 'Void' && getCurrentMapObject().voidBuff === 'doubleAttack';
 	//Checking if the Frenzy buff is active.
-	var noFrenzy = game.portal.Frenzy.frenzyStarted === '-1' && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
+	const noFrenzy = game.portal.Frenzy.radLevel > 0 && game.portal.Frenzy.frenzyStarted === -1 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 	//Checking if the experience buff is active during Exterminate.
-	var experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
+	const experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	//Checking to see if the Glass challenge is being run where all enemies are fast.
-	var runningGlass = challengeActive('Glass');
-	var runningDesolation = challengeActive('Desolation');
+	const runningGlass = challengeActive('Glass');
+	const runningDesolation = challengeActive('Desolation');
 
 	//Toggles equality scaling on
 	if ((fastEnemy && !experienced) || voidDoubleAttack || noFrenzy || runningGlass || runningDesolation) {
@@ -280,7 +278,6 @@ function equalityManagement() {
 		}
 	}
 	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
-	if (dailyWeakness) ourDmg *= 1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100;
 
 	//Enemy stats
 	const enemy = getCurrentEnemy();
@@ -330,6 +327,8 @@ function equalityManagement() {
 		else if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
 		else if (noFrenzy && (game.portal.Frenzy.frenzyActive() || enemyHealth / ourDmg > 10)) fastEnemy = true;
 	}
+
+	if (dailyWeakness) ourDmg *= 1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100;
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
 	//Definitely need to add a check here for if we can die enough to get the bonus.
