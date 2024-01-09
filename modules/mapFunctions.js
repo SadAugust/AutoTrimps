@@ -2940,6 +2940,10 @@ function smithless(lineCheck) {
 
 	if (game.global.world % 25 !== 0 || game.global.lastClearedCell !== -1 || !game.global.gridArray[0].ubersmith) return farmingDetails;
 
+	const zoneTime = getZoneMinutes();
+	const farmTime = getPageSetting('smithlessFarmTime');
+	const wantMapBonus = getPageSetting('smithlessMapBonus' && game.global.mapBonus !== 10);
+
 	const mapSpecial = getAvailableSpecials('lmc', true);
 	const mapLevel = autoLevelCheck(farmingDetails.mapName, mapSpecial, null, game.global.mapBonus !== 10 ? 0 : null);
 
@@ -2981,7 +2985,8 @@ function smithless(lineCheck) {
 	const totalDmg = ourDmg * regularHits + ourDmg * gammaDmg * gammas;
 	const damageTarget = enemyHealth / totalDmg;
 
-	const shouldMap = totalDmg < enemyHealth;
+	let shouldMap = totalDmg < enemyHealth;
+	if (shouldMap && (zoneTime === 0 || (zoneTime > 0 && zoneTime >= farmTime)) && !wantMapBonus) shouldMap = false;
 
 	if (lineCheck && shouldMap) return (setting = { priority: Infinity });
 

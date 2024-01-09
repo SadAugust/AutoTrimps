@@ -2621,6 +2621,24 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 201) });
+		createSetting('smithlessFarmTime',
+			function () { return ('S: Max Farm Time') },
+			function () {
+				let description = "<p>The max amount of time in minutes you'd like to farm for stats.</p>";
+				description += "<p>Set to <b>0</b> to disable farming and set to <b>-1 or below</b> to farm forever.</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [2],
+			function () { return (getPageSetting('smithless', currSettingUniverse) && autoTrimpSettings.smithless.require()) });
+		createSetting('smithlessMapBonus',
+			function () { return ('S: Max Map Bonus') },
+			function () {
+				let description = "<p>Will get max map bonus stacks when fighting against an Ubersmith.</p>";
+				description += "<p>It will still obtain map bonus stacks even if you disable or it goes past the time input in the farm time setting.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'C2', [2],
+			function () { return (getPageSetting('smithless', currSettingUniverse) && autoTrimpSettings.smithless.require()) });
+
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
