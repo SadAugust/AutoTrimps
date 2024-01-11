@@ -3195,7 +3195,7 @@ function farmingDecision() {
 		levelCheck: Infinity
 	};
 
-	if (!game.global.mapsUnlocked || _leadDisableMapping) return (mapSettings = farmingDetails);
+	if (!game.global.mapsUnlocked || _leadDisableMapping()) return (mapSettings = farmingDetails);
 
 	let mapTypes = [];
 	//U1 map settings to check for.
