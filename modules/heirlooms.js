@@ -172,30 +172,29 @@ function heirloomShieldSwapped() {
 }
 
 function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
-	if (!getPageSetting('heirloom')) return;
-	if (!getPageSetting('heirloomShield')) return;
+	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return;
 
-	var afterpushShield = trimpStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
+	const afterpushShield = trimpStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	//If we are slow scumming and we are on an ODD cell then equip afterpush shield otherwise equip initial shield
 	if (MODULES.maps.slowScumming && mapType === 'map') {
 		if ((game.global.lastClearedMapCell + 1) % 2 === 0 || game.global.lastClearedMapCell === getCurrentMapObject().size - 2) return afterpushShield;
 		else return 'heirloomInitial';
 	}
 
-	if (swapLooms && !game.global.fighting && getPageSetting('archaeologyBreedShield') !== 'undefined' && challengeActive('Archaeology') && breedTimeRemaining().cmp(0.1) > 0) {
-		return 'archaeologyBreedShield';
+	if (swapLooms && !game.global.fighting && breedTimeRemaining().cmp(0.1) > 0 && getPerkLevel('Anticipation') === 0) {
+		if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') return 'archaeologyBreedShield';
+		if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
 	}
 
-	//Initial vars for swapping heirlooms
-	var currChallenge = game.global.challengeActive.toLowerCase();
+	const currChallenge = game.global.challengeActive.toLowerCase();
 
 	//Identify the swap zone for shield swapping.
-	//1) If we are running mayhem/panda/deso and the challenge is active then use the challenges swap zone.
+	//1) If we are running frigid/mayhem/panda/deso and the challenge is active then use the challenges swap zone.
 	//2) If we are in a C2/C3 then use the C3 swap zone.
 	//3) If we are running a daily then use the daily swap zone.
 	//4) Otherwise if in a filler use regular swap zone.
-	var swapZone =
-		trimpStats.isC3 && (currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0
+	let swapZone =
+		trimpStats.isC3 && (currChallenge === 'frigid' || currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0
 			? getPageSetting(currChallenge + 'SwapZone')
 			: trimpStats.isC3
 			? getPageSetting('heirloomSwapZoneC3')
@@ -212,7 +211,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 	//If we have the daily odd or even setting enabled and the negative daily mod is active then add one to our swap zone
 	if (trimpStats.isDaily && dailyOddOrEven().active && swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
 	//Challenges where abandoning your current army has the potential to be REALLY bad.
-	var dontSwap = currChallenge === 'trapper' || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20) || currChallenge === 'trappapalooza';
+	const dontSwap = currChallenge === 'trapper' || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20) || currChallenge === 'trappapalooza';
 	if (swapLooms) {
 		//Disable Shield swapping if on a dontSwap challenge and our army is still fighting or has health remaining.
 		if (dontSwap && (game.global.fighting || game.global.soldierHealthRemaining > 0)) return;
@@ -352,4 +351,13 @@ function heirloomSwapping() {
 		const staff = heirloomStaffToEquip(mapType, true);
 		if (staff !== undefined) heirloomEquip(staff, 'Staff');
 	}
+}
+
+function usingBreedHeirloom() {
+	if (game.global.mapsActive) return false;
+	let breedHeirloom = getPageSetting('heirloomBreed');
+	if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') breedHeirloom = getPageSetting('archaeologyBreedShield');
+	if (breedHeirloom === 'undefined') return false;
+
+	return game.global.ShieldEquipped.name === breedHeirloom;
 }

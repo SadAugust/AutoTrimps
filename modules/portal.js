@@ -544,48 +544,48 @@ function challengeInfo(force) {
 	const challengeType = game.global.universe === 2 ? 'C3' : 'C2';
 	const finishChallenge = c2FinishZone();
 
-	if (finishChallenge - 1 === game.global.world) debug("Warning: AT will abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish " + challengeType + "' or set it to -1", 'challenge');
-	if (finishChallenge <= 0 && finishChallenge <= game.c2[game.global.challengeActive] && game.global.world < 3) {
-		debug("The zone input in the '" + challengeType + " Finish' setting (" + finishChallenge + ') is below or equal to your HZE for this challenge (' + game.c2[game.global.challengeActive] + "). Increase it or it'll end earlier than you'd probably like it to.", 'challenge');
+	if (game.global.runningChallengeSquared) {
+		if (finishChallenge - 1 === game.global.world) debug(`Warning: AT will abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish ${challengeType}' or set it to -1`, 'challenge');
+		if (finishChallenge <= 0 && finishChallenge <= game.c2[game.global.challengeActive] && game.global.world < 3) {
+			debug(`The zone input in the '${challengeType} Finish' setting (${finishChallenge}) is below or equal to your HZE for this challenge (${game.c2[game.global.challengeActive]}). Increase it or it'll end earlier than you'd probably like it to.`, 'challenge');
+		}
 	}
 
 	if (force || game.global.world === 1 || (game.global.world % 3 === 0 && game.global.world < checkLiqZoneCount(game.global.universe) + 10)) {
+		if (challengeActive('Daily') && getPageSetting('mapOddEvenIncrement') && dailyOddOrEven().active) {
+			debug(`Be aware that with the Odd/Even Increment setting enabled mapping can be delayed by a zone since your daily has either a positive or negative zone modifier.`);
+		}
 		if (challengeActive('Metal') || challengeActive('Transmute')) {
-			//Warning about job ratio + cache adjustments
-			debug('Whilst running this challenge any metal map caches will be set to wooden caches and any miner job ratios will be set to lumberjack ratios. Additionally Pre Void Farm' + (game.global.universe === 2 ? ' and Smithy Farm' : '') + ' will be disabled.');
+			debug(`Whilst running this challenge any metal map caches will be set to wooden caches and any miner job ratios will be set to lumberjack ratios. Additionally Pre Void Farm${game.global.universe === 2 ? ' and Smithy Farm' : ''} will be disabled.`);
 		}
 		if (challengeActive('Mapology') && !getPageSetting('mapology')) {
-			//Warning about disabled Mapology setting
-			debug('You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.');
+			debug(`You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.`);
 		}
 		if (challengeActive('Downsize')) {
-			debug("Be aware that since your normal farming settings will not properly work due to reduced population and lower expected end zone any mapping lines that aren't specific to this challenge won't run.");
+			debug(`Be aware that since your normal farming settings will not properly work due to reduced population and lower expected end zone any mapping lines that aren't specific to this challenge won't run.`);
 		}
 
 		if (_noMappingChallenges()) {
-			debug("Be aware that since the mapping you will do during this challenge is different from other challenges any mapping lines that aren't specific to this challenge won't run.");
+			debug(`Be aware that since the mapping you will do during this challenge is different from other challenges any mapping lines that aren't specific to this challenge won't run.`);
 		}
 		if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
-			//Warning message when AutoStructure Smithy purchasing is enabled.
 			const autoStructureSettings = getAutoStructureSetting();
 			if (autoStructureSettings && autoStructureSettings.Smithy && autoStructureSettings.enabled && autoStructureSettings.Smithy.enabled) {
-				debug('You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.');
+				debug(`You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.`);
 			}
-			//Warning message when C3 Finish Run setting isn't greater than your quest HZE.
 			if (game.global.runningChallengeSquared && (getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone')) <= game.c2.Quest) {
-				debug("The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies might be purchased earlier than they should be.");
+				debug(`The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies might be purchased earlier than they should be.`);
 			}
 		}
 		if (challengeActive('Pandemonium')) {
-			//Warning message when about map settings causing issues later.
-			debug('Be aware that your usual farming settings will not work properly due to the map resource shred mechanic so you might want to amend or disable them. Additionally Smithy Farm is disabled when running this challenge.');
+			debug(`Be aware that your usual farming settings will not work properly due to the map resource shred mechanic so you might want to amend or disable them. Additionally Smithy Farm is disabled when running this challenge.`);
 		}
 	}
 	challengeCurrentZone = game.stats.zonesCleared.value;
 }
 
 function c2FinishZone() {
-	var finishChallenge = Infinity;
+	let finishChallenge = Infinity;
 
 	//Finish challenge overrides when C∞ Runner is enabled
 	if (getPageSetting('c2RunnerStart')) {

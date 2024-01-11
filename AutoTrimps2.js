@@ -422,7 +422,6 @@ function _handleNewWorld() {
 	setTitle();
 	_debugZoneStart();
 	if (getPageSetting('autoEggs', 1)) easterEggClicked();
-	if (dailyOddOrEven().skipZone) debug(`Zone #${game.global.world}: Heirloom swapping and mapping will be affected by Daily Odd/Even.`, 'daily');
 	if (usingRealTimeOffline && game.global.world === 60) _timeWarpUpdateEquipment();
 }
 

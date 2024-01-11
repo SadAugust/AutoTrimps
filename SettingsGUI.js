@@ -957,8 +957,7 @@ function initialiseAllSettings() {
 			'dropdown', 'Off', function () {
 				let equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
 				if (game.global.slowDone) {
-					equips.push('Harmbalest');
-					equips.push('GambesOP');
+					equips.push('Harmbalest', 'GambesOP');
 				}
 				return equips;
 			}, "Equipment", [1, 2]);
@@ -1790,7 +1789,7 @@ function initialiseAllSettings() {
 				let description = "<p>Shield to use during <b>Archaeology</b> when your army is dead and breeding.</p>";
 				description += "<p>This will override all other heirloom swapping features when active!</p>";
 				description += "<p>Should ideally be a shield with the <b>Breedspeed</b> modifier.</p>";
-				description += "<p>Hits Survived & Map Bonus Ratio won't be disabled when this swaps shields so remember to level other modifiers as well.</p>";
+				description += "<p>Mapping decisions will be disabled when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Challenges', [2],
@@ -2102,7 +2101,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
-
 		createSetting('trapperTrap',
 			function () { return ('T: Disable Trapping') },
 			function () {
@@ -2112,7 +2110,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
-
 		createSetting('trapperArmyPct',
 			function () { return ('T: Army Percent') },
 			function () {
@@ -2122,7 +2119,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
-
 		createSetting('trapperShield',
 			function () { return ('T: Shield') },
 			function () {
@@ -2132,7 +2128,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
-			
 		createSetting('trapperWorldStaff',
 			function () { return ('T: World Staff') },
 			function () {
@@ -2144,7 +2139,6 @@ function initialiseAllSettings() {
 			}, 'textValue', 'undefined', null, 'C2', [1,2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
-		//Mapology
 		createSetting('mapology',
 			function () { return ('Mapology') },
 			function () {
@@ -2163,12 +2157,23 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Bootboost', function () {
 				let equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
 				if (game.global.slowDone) {
-					equips.push('Harmbalest')
-					equips.push('GambesOP')
+					equips.push('Harmbalest', 'GambesOP');
 				}
 				return equips;
 			}, 'C2', [1],
 			function () { return (getPageSetting('mapology', currSettingUniverse) && autoTrimpSettings.mapology.require()) });
+
+		createSetting('lead',
+			function () { return ('Lead') },
+			function () {
+				let description = "<p>Enabling this will disable mapping on odd zones and will only map when you're at or past cell 90 on even zones to ensure the enemies Momentum buff is providing as small a benefit as possible.</p>";
+				description += "<p>If you are in a Spire or the final zone of a nature band then it will map on that zone even if it is an odd zone.</p>";
+				description += "<p>Be careful with how you setup your mapping when this is enabled as it will skip mapping lines that are set to run on odd zones!</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', false, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 180) });
 
 		createSetting('frigid',
 			function () { return ('Frigid') },
@@ -2178,6 +2183,15 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 460) });
+		createSetting('frigidSwapZone',
+			function () { return ('F: Heirloom Swap Zone') },
+			function () {
+				let description = "<p>The zone you'd like to swap to your afterpush shield during Frigid.</p>";
+				description += "<p>This overrides the " + _getChallenge2Info() + " heirloom swap setting input when set above <b>0</b>.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (getPageSetting('frigid', currSettingUniverse) && autoTrimpSettings.frigid.require()) });
 
 		//Experience
 		createSetting('experience',
@@ -3032,6 +3046,19 @@ function initialiseAllSettings() {
 			},
 			'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+			
+		createSetting('heirloomBreed',
+			function () { return ('Breed') },
+			function () {
+				let description = "<p>Shield to use when your army is dead and breeding.</p>";
+				description += "<p>This will override all other heirloom swapping features when active!</p>";
+				description += "<p>Should ideally be a shield with the <b>Breedspeed</b> modifier.</p>";
+				description += "<p>Mapping decisions will be disabled when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
+				if (currSettingUniverse === 1) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoid',
 			function () { return ('Void') },
@@ -3270,7 +3297,8 @@ function initialiseAllSettings() {
 				let description = "<p>Overrides <b>Rarity to Keep</b> recycling heirlooms of a higher quality and instead allows the script to look at if they'd be worth keeping.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirloom', [1, 2]);
+			}, 'boolean', false, null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoModTarget',
 			function () { return ('Mod Target Count') },
@@ -4593,6 +4621,7 @@ function settingChanged(id, currUniverse) {
 		buildingsType: _setBuildingClasses,
 		displayHideFightButtons: _setFightButtons,
 		timeWarpDisplay: _setTimeWarpUI,
+		displayEnhancedGrid: MODULES.fightinfo.Update,
 		archaeology: archaeologyAutomator
 	};
 
@@ -5004,9 +5033,9 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields', 'equipShieldBlock'];
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'frigid', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'mapologyPrestige', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['autoGigaDeltaFactor'];
-	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff', 'mapologyPrestige'];
+	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterMagma = ['AutoGenC2'];
 	const breakAfterNature = ['AutoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];

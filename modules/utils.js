@@ -267,8 +267,8 @@ function testSpeedX(interval) {
 
 function testChallenge() {
 	//read the name in from tooltip
+	const challengeName = document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, '');
 	try {
-		const challengeName = document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, '');
 		if (challengeName === null || game.challenges[challengeName] === undefined) {
 			debug(`Challenge name didn't match one ingame.`, 'test');
 			return;
