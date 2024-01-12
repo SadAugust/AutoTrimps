@@ -1,11 +1,10 @@
 function tdStringCode2() {
-	var thestring = document.getElementById('importBox').value.replace(/\s/g, '');
-	var s = new String(thestring);
+	const trapIndexs = ['', 'Fire', 'Frost', 'Poison', 'Lightning', 'Strength', 'Condenser', 'Knowledge'];
+	const inputString = document.getElementById('importBox').value.replace(/\s/g, '');
+	var s = new String(inputString);
 	var index = s.indexOf('+', 0);
 	s = s.slice(0, index);
 	var length = s.length;
-
-	const trapIndexs = ['', 'Fire', 'Frost', 'Poison', 'Lightning', 'Strength', 'Condenser', 'Knowledge'];
 
 	var saveLayout = [];
 	for (var i = 0; i < length; i++) {
@@ -32,21 +31,16 @@ playerSpire.drawInfo = function (arguments) {
 };
 
 function ABItemSwap(items, ring) {
-	items = !items ? false : items;
-	ring = !ring ? false : ring;
-	var changeitems = false;
 	if (items) {
 		if ((changeitems = true)) {
 			for (var item in autoBattle.items) {
 				if (autoBattle.items[item].equipped) {
 					autoBattle.items[item].equipped = false;
-					changeitems = false;
 				}
 			}
 		}
 		for (var item of items) {
-			if (autoBattle.items[item].equipped === false) {
-				changeitems = true;
+			if (!autoBattle.items[item].equipped) {
 				if (autoBattle.items[item].hidden) autoBattle.items[item].hidden = false;
 				autoBattle.items[item].equipped = true;
 			}

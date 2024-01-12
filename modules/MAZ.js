@@ -131,7 +131,7 @@ function mapSettingsDisplay(elem, titleText) {
 		tooltipText += _mapSettingsRowPopulateInputs(vals, varPrefix, activeSetting, x, titleText, style, currSetting.length);
 	}
 
-	tooltipText += `<div id='windowAddRowBtn' style='display: ${currSetting.length < maxSettings ? 'inline-block' : 'none'}' class='btn btn-success btn-md' onclick='_mapSettingsAddRow("${varPrefix}","${titleText}")'>+ Add Row</div>`;
+	tooltipText += `<div id='windowAddRowBtn' style='display: ${currSetting.length < maxSettings ? 'inline-block' : 'none'}' class='btn btn-success btn-md' onclick='_mapSettingsAddRow("${varPrefix}")'>+ Add Row</div>`;
 	tooltipText += `</div></div><div style='display: none' id='mazHelpContainer'>${mazHelp}</div>`;
 
 	const costText = `
@@ -281,10 +281,10 @@ function _mapSettingsDefaultVals() {
 function _mapSettingsVals(lineNo, activeSetting) {
 	return {
 		active: true,
-		priority: lineNo + 1,
+		priority: parseInt(lineNo) + 1,
 		check: true,
-		world: -2,
-		cell: -1,
+		world: game.global.world,
+		cell: 1,
 		level: -1,
 		special: '0',
 		repeat: 1,
@@ -311,7 +311,7 @@ function _mapSettingsVals(lineNo, activeSetting) {
 		meltingPoint: false,
 		portalAfter: false,
 		raidingzone: '0',
-		maxvoidzone: -1,
+		maxvoidzone: 999,
 		mapType: activeSetting.mapFarm ? 'Map Count' : 'Absolute',
 		autoLevel: true,
 		endzone: 999,
@@ -332,6 +332,57 @@ function _mapSettingsVals(lineNo, activeSetting) {
 		potion: 'h',
 		potionsnumber: 0,
 		potionstype: 'h'
+	};
+}
+
+function _mapSettingsValsKeys(s) {
+	return {
+		windowActive: 'active',
+		windowPriority: 'priority',
+		windowWorld: s.golden ? 'goldenNumber' : 'world',
+		windowEndZone: 'endzone',
+		windowMaxVoidZone: 'maxvoidzone',
+		windowRaidingZone: 'raidingzone',
+		windowCell: 'cell',
+		windowAutoLevel: 'autoLevel',
+		windowLevel: 'level',
+		windowMapTypeDropdown: 'mapType',
+		windowWorshipper: 'worshipper',
+		windowRepeat: s.hdFarm ? 'hdBase' : 'repeat',
+		windowHDMult: 'hdMult',
+		windowHDType: 'hdType',
+		windowMapCap: 'mapCap',
+		windowTributes: 'tributes',
+		windowMets: 'mets',
+		windowBogs: 'bogs',
+		windowRelics: 'relics',
+		windowInsanity: 'insanity',
+		windowPotionType: 'potionstype',
+		windowPotionNumber: 'potionsnumber',
+		windowBonfire: 'bonfire',
+		windowBoneAmount: 'boneamount',
+		windowBoneBelow: 'bonebelow',
+		windowHDTypeVoidMap: 'hdType',
+		windowHDTypeVoidMap2: 'hdType2',
+		windowVoidHDRatio: 'voidHDRatio',
+		windowHDRatio: 'hdRatio',
+		windowJobRatio: 'jobratio',
+		windowRepeatEvery: 'repeatevery',
+		windowBoneGather: 'gather',
+		windowRaidingDropdown: 'raidingDropdown',
+		windowSpecial: 'special',
+		windowGather: 'gather',
+		windowAtlantrimp: 'atlantrimp',
+		windowMeltingPoint: 'meltingPoint',
+		windowBuildings: s.insanity ? 'destack' : 'buildings',
+		windowPrestigeGoal: 'prestigeGoal',
+		windowIncrementMapsDefault: 'incrementMaps',
+		windowGoldenType: 'goldentype',
+		windowRunType: 'runType',
+		windowChallenge: 'challenge',
+		windowChallenge3: 'challenge3',
+		windowChallengeOneOff: 'challengeOneOff',
+		windowPortalAfter: 'portalAfter'
 	};
 }
 
@@ -531,16 +582,11 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, s, x, titleText, style, 
 	}
 
 	const className = classNames.join(' ');
-
 	let tooltipText = `<div id='windowRow${x}' class='row windowRow ${className}'${style}>`;
 	//Delete the row button
-	if (!s.golden) tooltipText += `<div class='windowDelete${varPrefix}' onclick='_mapSettingsRemoveRow("${x}", "${titleText}", true)'><span class='icomoon icon-cross'></span></div>`;
-	//Button to delete the row for golden settings
-	if (s.golden) tooltipText += `<div class='windowDeleteAutoGolden' onclick='_mapSettingsRemoveRow("${x}", "${titleText}", true)'><span class='icomoon icon-cross'></span></div>`;
+	tooltipText += `<div class='windowDelete${varPrefix}' onclick='_mapSettingsRemoveRow("${x}", ${JSON.stringify(s).replace(/"/g, '&quot;')})'><span class='icomoon icon-cross'></span></div>`;
 	//Active checkbox
-	if (!s.golden) tooltipText += `<div class='windowActive${varPrefix}' style='text-align: center;'>${buildNiceCheckbox('windowActive' + x, null, vals.active)}</div>`;
-	//Active checkbox for golden settings
-	if (s.golden) tooltipText += `<div class='windowActiveAutoGolden' style='text-align: center;'>${buildNiceCheckbox('windowActive' + x, null, vals.active)}</div>`;
+	tooltipText += `<div class='windowActive${varPrefix}' style='text-align: center;'>${buildNiceCheckbox('windowActive' + x, null, vals.active)}</div>`;
 	//Priority input
 	tooltipText += `<div class='windowPriority${varPrefix}'><input value='${vals.priority}' type='number' id='windowPriority${x}'/></div>`;
 	//World input
@@ -616,6 +662,7 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, s, x, titleText, style, 
 	if (!s.raiding && !s.bionic && !s.smithyFarm && !s.golden) tooltipText += `<div class='windowJobRatio${varPrefix}'><input value='${vals.jobratio}' type='value' id='windowJobRatio${x}'/></div>`;
 	//Repeat every X zones
 	if (s.mapFarm || s.tributeFarm || s.worshipperFarm || s.raiding || s.bionic || s.smithyFarm || s.desolation || s.toxicity || s.archaeology || s.alchemy) tooltipText += `<div class='windowRepeatEvery${varPrefix}'><input value='${vals.repeatevery}' type='number' id='windowRepeatEvery${x}'/></div>`;
+
 	//Gather type dropdown for bone shrines
 	if (s.boneShrine) tooltipText += `<div class='windowBoneGather'><select value='${vals.gather}' id='windowBoneGather${x}'>${dropdowns.gather}</select></div>`;
 	//Raiding type dropdown
@@ -675,7 +722,7 @@ function buildNiceCheckboxAutoLevel(id, extraClass = '', enabled, index, varPref
 
 function settingsWindowSave(titleText, varPrefix, reopen) {
 	let error = '';
-	let maxSettings = 31;
+	let maxSettings = 30;
 
 	const mapFarm = titleText.includes('Map Farm');
 	const mapBonus = titleText.includes('Map Bonus');
@@ -742,17 +789,16 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
 	}
 
-	for (var x = 0; x < maxSettings; x++) {
+	let counter = 0;
+	for (let x = 0; x < maxSettings; x++) {
 		const thisSetting = {};
-
-		let world = document.getElementById('windowWorld' + x);
-		if (!world || world.value === '-2') {
-			continue;
-		}
+		const parent = document.getElementById('windowRow' + x);
+		if (parent.style.display === 'none') continue;
+		counter++;
 
 		thisSetting.active = readNiceCheckbox(document.getElementById('windowActive' + x));
 		thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
-		thisSetting.row = x + 1;
+		thisSetting.row = counter;
 		if (!golden) {
 			thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
 			if (!desolation) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
@@ -842,7 +888,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (!golden && thisSetting.world + thisSetting.level < 6 && !thisSetting.autoLevel) {
 			error += ' Line #' + (x + 1) + " can't have a zone and map combination below zone 6.<br>";
 		}
-		if (mapBonus && thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0)) {
+		if (mapBonus && !thisSetting.autoLevel && thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0)) {
 			error += ' Line #' + (x + 1) + " can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.<br>";
 		}
 		if (mapBonus && thisSetting.repeat < 1) {
@@ -1254,141 +1300,46 @@ function windowToggleHelp(windowWidth) {
 	if (document.querySelectorAll('#mazHelpContainer li').length > 13) parentWindow.style.overflowY = 'scroll';
 }
 
-function _mapSettingsAddRow(varPrefix, titleText) {
-	let settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
-	//Special case for HD Farm settings
-	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
+function _mapSettingsAddRow(varPrefix) {
+	const maxRows = 30;
 
-	for (var x = 0; x < 31; x++) {
-		var elem = document.getElementById('windowWorld' + x);
-		if (!elem) continue;
+	const rows = Array.from({ length: maxRows }, (_, x) => document.getElementById(`windowRow${x}`));
+	const firstHiddenRow = rows.find((row) => row.style.display === 'none');
 
-		if (elem.value === '-2') {
-			const parent = document.getElementById('windowRow' + x);
-			if (parent) {
-				parent.style.display = 'block';
-				if (!titleText.includes('Golden') && !titleText.includes('Desolation')) elem.value = game.global.world < 6 ? 6 : game.global.world;
+	if (firstHiddenRow) {
+		firstHiddenRow.style.display = '';
+		swapClass('disabled', 'active', firstHiddenRow);
 
-				if (currSettingUniverse === 1) {
-					//Changing rows to use the colour of the Nature type that the world input will be run on.
-					const natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
-					const natureList = ['None', 'Poison', 'Wind', 'Ice'];
-					const natureIndex = natureList.indexOf(getZoneEmpowerment(elem.value));
-					elem.parentNode.style.background = natureStyle[natureIndex];
-				}
-
-				if (!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm') && document.getElementById('windowRepeat' + x) !== null) document.getElementById('windowRepeat' + x).value = 0;
-				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm') || titleText.includes('Archaeology') || titleText.includes('Alchemy Farm')) && document.getElementById('windowRepeatEvery' + x) !== null) document.getElementById('windowRepeatEvery' + x).value = 0;
-				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm') || titleText.includes('Desolation') || titleText.includes('Archaeology') || titleText.includes('Alchemy Farm') || titleText.includes('Toxicity Farm')) && document.getElementById('windowEndZone' + x) !== null)
-					document.getElementById('windowEndZone' + x).value = 999;
-				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null) document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
-				if (titleText.includes('Bionic') && document.getElementById('windowRaidingZone' + x) !== null) document.getElementById('windowRaidingZone' + x).value = elem.value;
-				if (document.getElementById('windowBoneGather' + x) !== null) document.getElementById('windowBoneGather' + x).value = 'food';
-				if (document.getElementById('windowBuildings' + x) !== null) {
-					if (titleText.includes('Insanity')) document.getElementById('windowBuildings' + x).value = false;
-					else document.getElementById('windowBuildings' + x).value = true;
-				}
-				if (document.getElementById('windowChallenge' + x) !== null) document.getElementById('windowChallenge' + x).value = 'All';
-				if (document.getElementById('windowChallenge3' + x) !== null) document.getElementById('windowChallenge3' + x).value = 'All';
-				if (document.getElementById('windowChallengeOneOff' + x) !== null) document.getElementById('windowChallengeOneOff' + x).value = 'All';
-				if (document.getElementById('windowAtlantrimp' + x) !== null) document.getElementById('windowAtlantrimp' + x).value = false;
-				if (document.getElementById('windowMeltingPoint' + x) !== null) document.getElementById('windowMeltingPoint' + x).value = false;
-				if (document.getElementById('windowPortalAfter' + x) !== null) document.getElementById('windowPortalAfter' + x).value = false;
-				if (document.getElementById('windowAutoLevel' + x) !== null) document.getElementById('windowAutoLevel' + x).value = true;
-
-				if (titleText.includes('Map Bonus') && document.getElementById('windowLevel' + x) !== null) document.getElementById('windowLevel' + x).value = 0;
-				_mapSettingsUpdatePreset(x, varPrefix);
-				swapClass('disabled', 'active', parent);
-			}
+		const world = document.getElementById(`windowWorld${firstHiddenRow.id.slice(-1)}`);
+		if (currSettingUniverse === 1 && world) {
+			const natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
+			const natureList = ['None', 'Poison', 'Wind', 'Ice'];
+			const natureIndex = natureList.indexOf(getZoneEmpowerment(world.value));
+			world.parentNode.style.background = natureStyle[natureIndex];
 		}
 
-		if (titleText.includes('Golden') || titleText.includes('Desolation')) {
-			var elemWorld = document.getElementById('windowWorld' + x);
-			if (!elemWorld) continue;
-			if (elemWorld.value === '-2') {
-				var parent2 = document.getElementById('windowRow' + x);
-				if (parent2) {
-					parent2.style.display = 'block';
-					if (titleText.includes('Desolation')) elem.value = game.global.world < 6 ? 6 : game.global.world;
-					else elemWorld.value = 0;
-					_mapSettingsUpdatePreset(x, varPrefix);
-					break;
-				}
-			}
-		} else {
-			var elemCell = document.getElementById('windowCell' + x);
-			if (!elemCell) continue;
-			if (elemCell.value === '-1') {
-				var parent2 = document.getElementById('windowRow' + x);
-				if (parent2) {
-					parent2.style.display = 'block';
-					elemCell.value = 1;
-					_mapSettingsUpdatePreset(x, varPrefix);
-					break;
-				}
-			}
-		}
+		_mapSettingsUpdatePreset(firstHiddenRow.id.slice(-1), varPrefix);
 	}
 
 	const tooltipDiv = document.getElementById('tooltipDiv');
+	const needScroll = document.querySelectorAll('#windowContainer .active').length > 10;
 	tooltipDiv.style.top = '10%';
 	tooltipDiv.style.left = '1%';
 	tooltipDiv.style.height = 'auto';
-	tooltipDiv.style.maxHeight = window.innerHeight * 0.85 + 'px';
-	if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) tooltipDiv.style.overflowY = 'scroll';
-	else tooltipDiv.style.overflowY = 'none';
+	tooltipDiv.style.maxHeight = `${window.innerHeight * 0.85}px`;
+	tooltipDiv.style.overflowY = needScroll ? 'scroll' : 'none';
 
-	var btnElem = document.getElementById('windowAddRowBtn');
-	for (var y = 0; y < 31; y++) {
-		var elem = document.getElementById('windowWorld' + y);
-		if (elem && elem.value === '-2') {
-			btnElem.style.display = 'inline-block';
-			return;
-		}
-		var elemCell = document.getElementById('windowCell' + y);
-		if (elemCell && elem.value === '-1') {
-			btnElem.style.display = 'inline-block';
-			return;
-		}
-	}
-	btnElem.style.display = 'none';
+	const btnElem = document.getElementById('windowAddRowBtn');
+	btnElem.style.display = rows.some((row) => row.style.display === 'none') ? 'inline-block' : 'none';
 }
 
-function _mapSettingsRemoveRow(index, titleText) {
-	let elem = document.getElementById('windowRow' + index);
+function _mapSettingsRemoveRow(index, s) {
+	const elem = document.getElementById('windowRow' + index);
 	if (!elem) return;
 
-	const mapFarm = titleText.includes('Map Farm');
-	const mapBonus = titleText.includes('Map Bonus');
-	const voidMap = titleText.includes('Void Map');
-	const hdFarm = titleText.includes('HD Farm');
-	const raiding = titleText.includes('Raiding');
-	const bionic = titleText.includes('Bionic');
-	const toxicity = titleText.includes('Toxicity');
+	//Checkbox setting IDs
+	const checkBoxSettings = ['windowActive', 'windowAtlantrimp', 'windowMeltingPoint', 'windowPortalAfter', 'windowAutoLevel', 'windowBuildings'];
 
-	const quagmire = titleText.includes('Quagmire');
-	const archaeology = titleText.includes('Archaeology');
-	const insanity = titleText.includes('Insanity');
-	const alchemy = titleText.includes('Alchemy');
-	const hypothermia = titleText.includes('Hypothermia');
-	const desolation = titleText.includes('Desolation');
-	const boneShrine = titleText.includes('Bone Shrine');
-	const golden = titleText.includes('Golden');
-
-	const tributeFarm = titleText.includes('Tribute Farm');
-	const smithyFarm = titleText.includes('Smithy Farm');
-	const worshipperFarm = titleText.includes('Worshipper Farm');
-
-	/* 	//Checkbox setting IDs
-	const checkBoxSettings = {
-		windowAtlantrimp: 'false',
-		windowMeltingPoint: 'false',
-		windowPortalAfter: 'false',
-		windowAutoLevel: 'true',
-		windowBuildings: 'true'
-	};
-
-	//Get list of all the IDs from the children in document.getElementById('windowRow' + index)
 	const elemChildren = elem.children;
 	const elemChildrenIDs = [];
 	for (let x = 0; x < elemChildren.length; x++) {
@@ -1396,73 +1347,26 @@ function _mapSettingsRemoveRow(index, titleText) {
 		for (let y = 0; y < child.children.length; y++) {
 			const id = child.children[y].id;
 			if (id !== '') {
-				elemChildrenIDs.push(id);
+				elemChildrenIDs.push(id.slice(0, -index.toString().length));
 			}
 		}
 	}
 
-	const defaultVars = _mapSettingsVals(index, mapFarm); */
-
-	document.getElementById('windowWorld' + index).value = -2;
-	if (!golden && !desolation) document.getElementById('windowCell' + index).value = -1;
-	if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) document.getElementById('windowLevel' + index).value = 0;
-	if (mapFarm || alchemy || insanity || mapBonus || desolation || toxicity) document.getElementById('windowSpecial' + index).value = '0';
-	if (mapFarm || alchemy || mapBonus || insanity || toxicity) document.getElementById('windowGather' + index).value = 'food';
-	if (mapFarm || smithyFarm || mapBonus || hdFarm || toxicity) document.getElementById('windowRepeat' + index).value = 0;
-	if (hdFarm) document.getElementById('windowHDMult' + index).value = 0;
-	if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || archaeology || alchemy) document.getElementById('windowRepeatEvery' + index).value = 0;
-	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || archaeology || alchemy) document.getElementById('windowEndZone' + index).value = 0;
-	if (tributeFarm) document.getElementById('windowTributes' + index).value = 0;
-	if (tributeFarm) document.getElementById('windowMets' + index).value = 0;
-	if (quagmire) document.getElementById('windowBogs' + index).value = 0;
-	if (archaeology) document.getElementById('windowRelics' + index).value = 0;
-	if (insanity) document.getElementById('windowInsanity' + index).value = 0;
-	if (hdFarm) document.getElementById('windowHDType' + index).value = 'world';
-	if (golden) document.getElementById('windowGoldenType' + index).value = 'h';
-	if (hypothermia) document.getElementById('windowBonfire' + index).value = 0;
-	if (boneShrine) document.getElementById('windowBoneAmount' + index).value = 0;
-	if (boneShrine) document.getElementById('windowBoneBelow' + index).value = 0;
-	if (worshipperFarm) document.getElementById('windowWorshipper' + index).value = 50;
-	if (voidMap || mapFarm) document.getElementById('windowHDRatio' + index).value = 0;
-	if (voidMap) document.getElementById('windowVoidHDRatio' + index).value = 0;
-
-	if (mapFarm || tributeFarm || boneShrine) {
-		let checkBox = document.getElementById('windowAtlantrimp' + index);
-		swapClass('icon-', 'icon-checkbox-unchecked', checkBox);
-		checkBox.setAttribute('data-checked', false);
+	const initialVals = _mapSettingsVals(index, s);
+	const defaultVarsKey = _mapSettingsValsKeys(s);
+	for (let i = 0; i < elemChildrenIDs.length; i++) {
+		const id = elemChildrenIDs[i];
+		const val = defaultVarsKey[id];
+		if (val) {
+			if (checkBoxSettings.includes(id)) {
+				const checkBox = document.getElementById(id + index);
+				swapClass('icon-', `icon-checkbox-${initialVals[val] ? '' : 'un'}checked`, checkBox);
+				checkBox.setAttribute('data-checked', initialVals[val]);
+			} else {
+				document.getElementById(id + index).value = initialVals[val];
+			}
+		}
 	}
-	if (smithyFarm) {
-		let checkBox = document.getElementById('windowMeltingPoint' + index);
-		swapClass('icon-', 'icon-checkbox-unchecked', checkBox);
-		checkBox.setAttribute('data-checked', false);
-	}
-	if (voidMap) {
-		let checkBox = document.getElementById('windowPortalAfter' + index);
-		swapClass('icon-', 'icon-checkbox-unchecked', checkBox);
-		checkBox.setAttribute('data-checked', false);
-	}
-	if (tributeFarm) {
-		let checkBox = document.getElementById('windowBuildings' + index);
-		swapClass('icon-', 'icon-checkbox-checked', checkBox);
-		checkBox.setAttribute('data-checked', true);
-	}
-	if (insanity) {
-		let checkBox = document.getElementById('windowBuildings' + index);
-		swapClass('icon-', 'icon-checkbox-checked', checkBox);
-		checkBox.setAttribute('data-checked', false);
-	}
-	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) {
-		let checkBox = document.getElementById('windowAutoLevel' + index);
-		swapClass('icon-', 'icon-checkbox-checked', checkBox);
-		checkBox.setAttribute('data-checked', true);
-	}
-	if (!raiding && !smithyFarm && !golden) document.getElementById('windowJobRatio' + index).value = '1,1,1,1';
-	if (raiding || desolation) document.getElementById('windowPrestigeGoal' + index).value = 'All';
-	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) document.getElementById('windowRunType' + index).value = 'All';
-	if (raiding && !bionic) document.getElementById('windowRaidingDropdown' + index).value = 0;
-	if (tributeFarm || smithyFarm || alchemy) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
-	if (mapFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Map Count';
-	if (boneShrine) document.getElementById('windowBoneGather' + index).value = 'metal';
 
 	elem.style.display = 'none';
 	const btnElem = document.getElementById('windowAddRowBtn');
@@ -1470,17 +1374,15 @@ function _mapSettingsRemoveRow(index, titleText) {
 	swapClass('active', 'disabled', elem);
 
 	const tooltipDiv = document.getElementById('tooltipDiv');
+	const needScroll = document.querySelectorAll('#windowContainer .active').length > 10;
 	tooltipDiv.style.top = '10%';
 	tooltipDiv.style.left = '1%';
 	tooltipDiv.style.height = 'auto';
-	tooltipDiv.style.maxHeight = window.innerHeight * 0.85 + 'px';
-	if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) tooltipDiv.style.overflowY = 'scroll';
-	else tooltipDiv.style.overflowY = 'none';
+	tooltipDiv.style.maxHeight = `${window.innerHeight * 0.85}px`;
+	tooltipDiv.style.overflowY = needScroll ? 'scroll' : 'none';
 }
 
-function _mapSettingsUpdatePreset(index, varPrefix) {
-	varPrefix = !varPrefix ? document.getElementById('tipTitle').innerHTML.replace(/ /g, '') : varPrefix;
-	if (!index) index = '';
+function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementById('tipTitle').innerHTML.replace(/ /g, '')) {
 	const row = document.getElementById('windowRow' + index);
 
 	const mapFarm = varPrefix.includes('MapFarm');
