@@ -2094,7 +2094,7 @@ function _runInsanity(setting, mapName, settingName, settingIndex) {
 
 	const shouldMap = farmStacks || shouldDestack;
 
-	const repeat = (farmStacks && game.challenges.Insanity.insanity + 1 >= insanityGoal) || (destack && game.challenges.Insanity.insanity - negativeLevel <= insanityGoal);
+	const repeat = (farmStacks && game.challenges.Insanity.insanity + 1 >= insanityGoal) || (setting.destack && game.challenges.Insanity.insanity - negativeLevel <= insanityGoal);
 	const status = `Insanity Farming: ${game.challenges.Insanity.insanity}/${insanityGoal}`;
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
