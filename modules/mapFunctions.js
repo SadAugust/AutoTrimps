@@ -3351,7 +3351,7 @@ function setMapSliders(pluslevel, special = '0', biome = getBiome(), mapSliders 
 		if (mapSettings.mapName === 'Insanity Farm') {
 			_reduceMapSlidersInsanity();
 		} else {
-			_reduceMapSliders();
+			_reduceMapSliders(special);
 		}
 	}
 
