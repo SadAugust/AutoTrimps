@@ -49,7 +49,7 @@ function mapSettingsDisplay(elem, titleText) {
 
 	//If you're adding a new setting here make sure to add it to the mazSettings variable at the start of mainLoop() in AutoTrimps2.js
 	//If you don't it'll instantly get resized to a super small version of itself when you open the setting.
-	const settingNames = ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'golden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+	const settingNames = ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'autoGolden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
 
 	const activeSetting = {};
 	for (let name of settingNames) {
@@ -57,6 +57,7 @@ function mapSettingsDisplay(elem, titleText) {
 			activeSetting[name] = true;
 		}
 	}
+	if (activeSetting['autoGolden']) activeSetting['golden'] = true;
 
 	let settingInputsDefault = ['active'];
 	let settingInputs;
@@ -1068,8 +1069,7 @@ function mapSettingsHelpWindow(titleText) {
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity)
 		mazHelp += '<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. ' + (radonSetting ? "Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount." : '') + '</li>';
 	//Map Level
-	if (mapFarm || tributeFarm || smithyFarm || worshipperFarm || hdFarm || insanity || alchemy || hypothermia || toxicity)
-		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'. " + (radonSetting && !(insanity || alchemy || hypothermia) ? 'Will override inputs above -1 during the Wither challenge.' : '') + '</li>';
+	if (mapFarm || tributeFarm || smithyFarm || worshipperFarm || hdFarm || insanity || alchemy || hypothermia || toxicity) mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'. " + (radonSetting && !(insanity || alchemy || hypothermia) ? 'Will override inputs above -1 during the Wither challenge.' : '') + '</li>';
 	//Map Level for Map Bonus!
 	if (mapBonus) mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
@@ -1136,8 +1136,7 @@ function mapSettingsHelpWindow(titleText) {
 
 	if (hdFarm) {
 		mazHelp += "<li><b>HD Base</b> - What H:D you'd like to reach.</li>";
-		mazHelp +=
-			"<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
+		mazHelp += "<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
 
 		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target.</li>";
 		mazHelp += '<li class="indent">If <b>Map Level</b> has been selected it will farm until auto level reaches that level.</li>';
@@ -1280,20 +1279,7 @@ function _mapSettingsAddRow(varPrefix, titleText) {
 
 				if (!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm') && document.getElementById('windowRepeat' + x) !== null) document.getElementById('windowRepeat' + x).value = 0;
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm') || titleText.includes('Archaeology') || titleText.includes('Alchemy Farm')) && document.getElementById('windowRepeatEvery' + x) !== null) document.getElementById('windowRepeatEvery' + x).value = 0;
-				if (
-					(titleText.includes('Map Farm') ||
-						titleText.includes('Tribute Farm') ||
-						titleText.includes('Worshipper Farm') ||
-						titleText.includes('HD Farm') ||
-						titleText.includes('Raiding') ||
-						titleText.includes('Map Bonus') ||
-						titleText.includes('Smithy Farm') ||
-						titleText.includes('Desolation') ||
-						titleText.includes('Archaeology') ||
-						titleText.includes('Alchemy Farm') ||
-						titleText.includes('Toxicity Farm')) &&
-					document.getElementById('windowEndZone' + x) !== null
-				)
+				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm') || titleText.includes('Desolation') || titleText.includes('Archaeology') || titleText.includes('Alchemy Farm') || titleText.includes('Toxicity Farm')) && document.getElementById('windowEndZone' + x) !== null)
 					document.getElementById('windowEndZone' + x).value = 999;
 				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null) document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
 				if (titleText.includes('Bionic') && document.getElementById('windowRaidingZone' + x) !== null) document.getElementById('windowRaidingZone' + x).value = elem.value;
@@ -1392,6 +1378,30 @@ function _mapSettingsRemoveRow(index, titleText) {
 	const tributeFarm = titleText.includes('Tribute Farm');
 	const smithyFarm = titleText.includes('Smithy Farm');
 	const worshipperFarm = titleText.includes('Worshipper Farm');
+
+	/* 	//Checkbox setting IDs
+	const checkBoxSettings = {
+		windowAtlantrimp: 'false',
+		windowMeltingPoint: 'false',
+		windowPortalAfter: 'false',
+		windowAutoLevel: 'true',
+		windowBuildings: 'true'
+	};
+
+	//Get list of all the IDs from the children in document.getElementById('windowRow' + index)
+	const elemChildren = elem.children;
+	const elemChildrenIDs = [];
+	for (let x = 0; x < elemChildren.length; x++) {
+		const child = elemChildren[x];
+		for (let y = 0; y < child.children.length; y++) {
+			const id = child.children[y].id;
+			if (id !== '') {
+				elemChildrenIDs.push(id);
+			}
+		}
+	}
+
+	const defaultVars = _mapSettingsVals(index, mapFarm); */
 
 	document.getElementById('windowWorld' + index).value = -2;
 	if (!golden && !desolation) document.getElementById('windowCell' + index).value = -1;
@@ -1868,8 +1878,7 @@ function autoStructureSave() {
 
 //Auto Jobs
 function autoJobsDisplay(elem) {
-	const ratio =
-		"<p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. Any number that's 0 or below will stop AT hiring any workers for that job. Scientists will be hired based on a ratio that is determined by how far you are into the game, the further you get the less Scientists will be hired.</p>";
+	const ratio = "<p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. Any number that's 0 or below will stop AT hiring any workers for that job. Scientists will be hired based on a ratio that is determined by how far you are into the game, the further you get the less Scientists will be hired.</p>";
 	const percent = "<p>The right side of this window is dedicated to jobs limited more by resources than workspaces. Set the percentage of resources that you'd like to be spent on each job.</p>";
 	const magmamancer = "<p><b>Magmamancers:</b> These will only be hired when they'll do something! So once the time spent on the zone is enough to activate the first metal boost.</p>";
 	const farmersUntil = '<p><b>Farmers Until:</b> Stops buying Farmers from this zone. Map setting job ratios override this setting.</p>';
@@ -2052,8 +2061,7 @@ function autoJobsSave() {
 //Unique Maps
 function uniqueMapsDisplay(elem) {
 	const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-	const baseText =
-		"<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input. If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it.</p>";
+	const baseText = "<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input. If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it.</p>";
 	const smithy = "<p>The right side of this window is dedicated to running Melting Point when you've reached a certain Smithy value. As each runtype of vastly different there's different inputs for each type of run that you can do! Certain challenges have overrides for this, once unlocked they can be found in the C3 tab.</p>";
 	const smithyDisplay = currSettingUniverse === 2 && hze >= 50;
 
@@ -2064,8 +2072,7 @@ function uniqueMapsDisplay(elem) {
 	const smithySettings = smithyDisplay ? ['MP Smithy', 'MP Smithy Daily', 'MP Smithy C3', 'MP Smithy One Off'] : [];
 	const settingGroup = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
 
-	let tooltipText =
-		"<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp();  _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+	let tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp();  _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
 	tooltipText += `${baseText}${smithyDisplay ? smithy : ''}`;
 	tooltipText += uniqueMapsTable(settingGroup, mapUnlocks, smithySettings);
 
