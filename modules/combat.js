@@ -202,6 +202,7 @@ function equalityManagement() {
 	const bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? zone : 0;
 	const difficulty = mapping ? mapObject.difficulty : 1;
 	const armyReady = newArmyRdy();
+	const breedShieldEnabled = getPageSetting('heirloomBreed') !== 'undefined';
 	const maxEquality = game.portal.Equality.radLevel;
 	let enemyDamageMult = 1;
 
@@ -359,7 +360,7 @@ function equalityManagement() {
 	//Our shield is at 75% or less of its max
 	//Have the same gamma stacks as it takes to proc it (so have already gamma bursted OR cant gamma burst)
 	//Won't suicide on trappa, arch, berserk challenges
-	let shouldSuicide = ourHealth === 0 || armyReady || (dailyEmpower && !mapping) || shieldBreak;
+	let shouldSuicide = ourHealth === 0 || armyReady || breedShieldEnabled || (dailyEmpower && !mapping) || shieldBreak;
 	if (gammaToTrigger !== gammaMaxStacksCheck) shouldSuicide = false;
 	if (ourShield > ourShieldMax * 0.75) shouldSuicide = false;
 	if (runningTrappa || runningArchaeology || runningBerserk) shouldSuicide = false;
