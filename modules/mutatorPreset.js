@@ -267,7 +267,6 @@ function presetMutations() {
 	}
 }
 
-//Attach to the main UI button
 u2Mutations.originalopenTree = u2Mutations.openTree;
 u2Mutations.openTree = function () {
 	u2Mutations.originalopenTree(...arguments);
@@ -277,7 +276,3 @@ u2Mutations.openTree = function () {
 		console.log('Loading mutator presets failed ' + e, 'other');
 	}
 };
-
-/* //Runs this every 100ms if using standalone version.
-//Should really find a workaround to include this when openTree is called.
-if (typeof (autoTrimpSettings) === 'undefined') setInterval(presetMutations, 100); */

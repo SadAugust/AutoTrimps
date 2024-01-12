@@ -324,7 +324,7 @@ function _mapSettingsVals(lineNo, activeSetting) {
 		goldenType: 'v',
 		hdType: 'world',
 		hdType2: 'hitsSurvived',
-		goldenNumber: -2,
+		goldenNumber: -1,
 		destack: false,
 		mapCap: 100,
 		incrementMaps: false,
@@ -377,7 +377,7 @@ function _mapSettingsValsKeys(s) {
 		windowBuildings: s.insanity ? 'destack' : 'buildings',
 		windowPrestigeGoal: 'prestigeGoal',
 		windowIncrementMapsDefault: 'incrementMaps',
-		windowGoldenType: 'goldentype',
+		windowGoldenType: 'goldenType',
 		windowRunType: 'runType',
 		windowChallenge: 'challenge',
 		windowChallenge3: 'challenge3',
@@ -1469,7 +1469,7 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 }
 
 function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) {
-	if (!vals) return 'Issue with establishing values for dropdowns';
+	if (!vals) return debug('Issue with establishing values for dropdowns');
 
 	var dropdown = {};
 	var highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
