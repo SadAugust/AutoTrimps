@@ -3358,7 +3358,7 @@ function setMapSliders(pluslevel, special = '0', biome = getBiome(), mapSliders 
 	return updateMapCost(true);
 }
 
-function _reduceMapSliders() {
+function _reduceMapSliders(special) {
 	while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) difficultyAdvMapsRange.value -= 1;
 	while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) lootAdvMapsRange.value -= 1;
 
