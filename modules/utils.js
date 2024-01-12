@@ -139,10 +139,10 @@ function setTitle() {
 	document.title = `(${world}) Trimps ${versionNumber}`;
 }
 
-function message_AT(message, messageType, icon, displayClass) {
+function message_AT(message, messageType, icon) {
 	const log = document.getElementById('log');
 	const needsScroll = log.scrollTop + 10 > log.scrollHeight - log.clientHeight;
-	const displayType = ATmessageLogTabVisible ? 'block' : 'none';
+	const displayType = getPageSetting('spamMessages').show ? 'block' : 'none';
 
 	const iconPrefix = icon && icon.charAt(0) === '*' ? 'icomoon icon-' : 'glyphicon glyphicon-';
 	icon = icon ? icon.replace('*', '') : icon;
@@ -156,8 +156,8 @@ function message_AT(message, messageType, icon, displayClass) {
 	message = `<span class="glyphicon glyphicon-superscript"></span> ${message}`;
 	message = `<span class="icomoon icon-text-color"></span>${message}`;
 
-	const messageHTML = `<span class="${messageType}Message message ${displayClass}" style="display: ${displayType}">${message}</span>`;
-	const messages = document.getElementsByClassName(`${messageType}Message`);
+	const messageHTML = `<span class="AutoTrimpsMessage message ${messageType}" style="display: ${displayType}">${message}</span>`;
+	const messages = document.getElementsByClassName(`AutoTrimpsMessage`);
 	const lastMessageElement = messages.length > 1 ? messages[messages.length - 1] : null;
 
 	if (lastMessageElement && lastMessageElement.innerHTML.includes(message)) {
@@ -173,24 +173,24 @@ function message_AT(message, messageType, icon, displayClass) {
 	// Scroll the log if needed
 	if (needsScroll) log.scrollTop = log.scrollHeight;
 
-	trimMessages(messageType);
+	trimMessages('AutoTrimps');
 }
 
-function filterMessage_AT(messageType) {
+function filterMessage_AT() {
 	const logElement = document.getElementById('log');
-	const messageElements = document.getElementsByClassName(`${messageType}Message`);
-	const filterElement = document.getElementById(`${messageType}Filter`);
-
-	const isDisplayed = !ATmessageLogTabVisible;
+	const messageElements = document.getElementsByClassName(`AutoTrimpsMessage`);
+	const filterElement = document.getElementById(`AutoTrimpsFilter`);
+	let messageSetting = getPageSetting('spamMessages');
+	const isDisplayed = !getPageSetting('spamMessages').show;
 	const displayStyle = isDisplayed ? 'block' : 'none';
-	ATmessageLogTabVisible = isDisplayed;
-
+	messageSetting.show = isDisplayed;
+	saveSettings();
 	filterElement.className = getTabClass(isDisplayed);
 
 	Array.from(messageElements).forEach((messageElement) => {
 		messageElement.style.display = displayStyle;
-		logElement.scrollTop = logElement.scrollHeight;
 	});
+	logElement.scrollTop = logElement.scrollHeight;
 }
 
 function addAnS(num) {

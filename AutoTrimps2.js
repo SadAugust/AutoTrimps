@@ -22,7 +22,6 @@ const atSettings = {
 	autoSave: game.options.menu.autoSave.enabled
 };
 
-let ATmessageLogTabVisible = true;
 let autoTrimpSettings = {};
 const MODULES = {
 	popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
@@ -261,10 +260,10 @@ function toggleCatchUpMode() {
 
 		_setTimeWarpUI();
 		_timeWarpAutoSaveSetting();
-		const timeWarpTime = offlineProgress.formatTime(Math.floor(offlineProgress.totalOfflineTime / 1000));
-		debug(`TimeLapse Mode Enabled. Your Time Warp duration is ${timeWarpTime}.`, 'offline');
+		const timeWarpTime = Math.floor(offlineProgress.totalOfflineTime / 1000);
+		debug(`TimeLapse Mode Enabled. Your Time Warp duration is ${formatTimeForDescriptions(timeWarpTime)}.`, 'offline');
 		if (getPageSetting('timeWarpDisplay')) {
-			tooltip(`Time Warp`, `customText`, `lock`, `Your Time Warp duration is ${timeWarpTime}. As you have the ${autoTrimpSettings.timeWarpDisplay.name()} setting enabled you have no visible timer but you can see the progress percent in the AutoMaps status bar at the bottom of the battle container.`, false, `center`);
+			tooltip(`Time Warp`, `customText`, `lock`, `Your Time Warp duration is ${formatTimeForDescriptions(timeWarpTime)}. As you have the ${autoTrimpSettings.timeWarpDisplay.name()} setting enabled you have no visible timer but you can see the progress percent in the AutoMaps status bar at the bottom of the battle container.`, false, `center`);
 		}
 	}
 }

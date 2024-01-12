@@ -5332,14 +5332,14 @@ function _createMessagesButton() {
 			onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, "Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.")',
 			onmouseout: 'tooltip("hide")'
 		});
-
+		const btnDisplay = `btn-${getPageSetting('spamMessages').show ? 'success' : 'danger'}`;
 		let atBtnText = _createElement(
 			'button',
 			{
 				id: 'AutoTrimpsFilter',
 				type: 'button',
-				onClick: "filterMessage_AT('AutoTrimps')",
-				class: 'btn btn-success logFlt'
+				onClick: 'filterMessage_AT()',
+				class: `btn ${btnDisplay} logFlt`
 			},
 			['AT Messages']
 		);

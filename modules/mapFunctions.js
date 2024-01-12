@@ -2764,7 +2764,7 @@ function desolationGearScum(lineCheck) {
 	const setting = baseSettings[settingIndex];
 	if (lineCheck) return setting;
 
-	//if (setting) Object.assign(farmingDetails, _runDesoGearScum(setting, mapName, settingName, settingIndex));
+	//if (setting) Object.assign(farmingDetails, _runDesoGearScum(setting, mapName, settingIndex));
 	if (setting || MODULES.mapFunctions.desoGearScum) {
 		var special;
 		var jobRatio;

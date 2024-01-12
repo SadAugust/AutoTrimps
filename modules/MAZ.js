@@ -38,129 +38,123 @@ function MAZLookalike(event, titleText) {
 	if (ondisplay !== null) ondisplay();
 }
 
-function _mapSettingsVals(defaultVals, lineNo) {
-	if (defaultVals)
-		return {
-			active: false,
-			special: '0',
-			gather: 'food',
-			mapType: 'Absolute',
-			cell: 81,
-			autoBone: false,
-			bonebelow: 0,
-			world: 0,
-			jobratio: '1,1,1',
-			worshipper: 50,
-			shipSkipEnabled: false,
-			shipskip: 10,
-			voidPurchase: false,
-			maxTenacity: false,
-			boneCharge: false,
-			voidFarm: false,
-			hitsSurvived: 0,
-			hdRatio: 0,
-			mapCap: 100,
-			frozencastle: [200, 99],
-			autostorage: false,
-			packrat: false,
-			recycle: false,
-			abandonZone: 0
-		};
-
-	return {
-		active: true,
-		priority: lineNo + 1,
-		check: true,
-		world: -2, //
-		cell: -1, //
-		level: -1, //
-		special: '0',
-		repeat: 1,
-		hdRatio: 0,
-		gather: 'food',
-		tributes: 0,
-		mets: 0,
-		bogs: 0,
-		insanity: 0,
-		potions: 0,
-		bonfire: 0,
-		relics: 0,
-		boneamount: 0,
-		bonebelow: 0,
-		runType: 'All',
-		prestigeGoal: 'All',
-		raidingDropdown: 1,
-		jobratio: '1,1,1',
-		worshipper: 50,
-		hdRatio: 0, //
-		voidHDRatio: 0,
-		buildings: true,
-		atlantrimp: false,
-		meltingPoint: false,
-		portalAfter: false,
-		raidingzone: 6,
-		maxvoidzone: -1, //
-		mapType: mapFarm ? 'Map Count' : 'Absolute',
-		autoLevel: true,
-		endzone: 999,
-		repeatevery: 0,
-		challenge: 'All',
-		challenge3: 'All',
-		challengeOneOff: 'All',
-		hdBase: 1,
-		hdMult: 1,
-		goldenType: 'v',
-		hdType: 'world',
-		hdType2: 'hitsSurvived',
-		goldenNumber: -2,
-		destack: false,
-		mapCap: 100,
-		incrementMaps: false,
-		golden: 'v',
-		potion: 'h',
-		potionsnumber: 0,
-		potionstype: 'h'
-	};
-}
-
 function mapSettingsDisplay(elem, titleText) {
 	MODULES.popups.mazWindowOpen = true;
-	var tooltipText;
-	var costText = '';
-	var ondisplay = null;
+
 	//Remove spaces from titleText to make varPrefix
-	var varPrefix = titleText.replace(/\s/g, '');
+	let varPrefix = titleText.replace(/\s/g, '');
 	if (varPrefix.includes('Desolation')) varPrefix = 'Desolation';
+	let settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
+	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
+
 	//If you're adding a new setting here make sure to add it to the mazSettings variable at the start of mainLoop() in AutoTrimps2.js
 	//If you don't it'll instantly get resized to a super small version of itself when you open the setting.
-	var mapFarm = titleText.includes('Map Farm');
-	var mapBonus = titleText.includes('Map Bonus');
-	var voidMap = titleText.includes('Void Map');
-	var hdFarm = titleText.includes('HD Farm');
-	var raiding = titleText.includes('Raiding');
-	var bionic = titleText.includes('Bionic');
-	var toxicity = titleText.includes('Toxicity');
-	var boneShrine = titleText.includes('Bone Shrine');
-	var golden = titleText.includes('Golden');
-	var tributeFarm = titleText.includes('Tribute');
-	var smithyFarm = titleText.includes('Smithy');
-	var worshipperFarm = titleText.includes('Worshipper');
-	var quagmire = titleText.includes('Quagmire');
-	var archaeology = titleText.includes('Archaeology');
-	var insanity = titleText.includes('Insanity');
-	var alchemy = titleText.includes('Alchemy');
-	var hypothermia = titleText.includes('Hypothermia');
-	var desolation = titleText.includes('Desolation');
+	const settingNames = ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'golden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
 
-	var settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
-	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
-	var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
+	const activeSetting = {};
+	for (let name of settingNames) {
+		if (settingName.includes(name)) {
+			activeSetting[name] = true;
+		}
+	}
 
 	let settingInputsDefault = ['active'];
 	let settingInputs;
 	let windowWidth;
 
-	const settingObj = {
+	const settingObj = _mapSettingsInputObj();
+
+	const settingInfo = settingObj[titleText];
+	if (settingInfo) {
+		settingInputs = settingInfo.settingInputs;
+		settingInputsDefault = settingInfo.settingInputsDefault;
+		settingInputsDefault.unshift('active');
+		windowWidth = settingInfo.windowWidth;
+	}
+	const originalSetting = getPageSetting(settingName + 'Settings', currSettingUniverse);
+	const maxSettings = 30;
+	let overflow = false;
+
+	//Setting up the Help onclick setting.
+	const mazHelp = mapSettingsHelpWindow(titleText);
+
+	let tooltipText = '';
+	//Setting up default settings row
+	if (!activeSetting.golden) {
+		tooltipText += _mapSettingsDefaultTitles(varPrefix, activeSetting);
+
+		const defaultVals = _mapSettingsDefaultVals();
+		const defaultSetting = originalSetting[0];
+
+		for (let item in settingInputsDefault) {
+			let name = settingInputsDefault[item];
+			defaultVals[name] = typeof defaultSetting[name] !== 'undefined' ? defaultSetting[name] : defaultVals[name];
+		}
+
+		tooltipText += _mapSettingsDefaultPopulateInputs(defaultVals, varPrefix, activeSetting);
+	}
+
+	tooltipText += _mapSettingsRowTitles(varPrefix, activeSetting);
+
+	//As position 0 in the array stores base setting we need to take that out of the array before we start looping through rows
+	const currSetting = activeSetting.golden ? originalSetting : originalSetting.slice(1, originalSetting.length);
+
+	//Looping through each setting and setting up the rows and inputting the data from the setting into the inputs
+	for (var x = 0; x < maxSettings; x++) {
+		const vals = _mapSettingsVals(x, activeSetting);
+		let style = '';
+
+		//Taking data from the current setting and overriding the info in vals with it.
+		if (currSetting.length - 1 >= x) {
+			for (let item in settingInputs) {
+				let name = settingInputs[item];
+				//Since Golden upgrade & Alchemy farm have 2 inputs that get merged into a single string we need to handle them separately
+				if (activeSetting.golden && name.includes('golden')) {
+					vals.goldenType = typeof currSetting[x].golden !== 'undefined' ? currSetting[x].golden[0] : vals.golden;
+					vals.goldenNumber = typeof currSetting[x].golden !== 'undefined' ? currSetting[x].golden.toString().replace(/[^\d,:-]/g, '') : -2;
+					continue;
+				}
+				if (activeSetting.alchemy && name.includes('potion')) {
+					vals.potionstype = typeof currSetting[x].potion !== 'undefined' ? currSetting[x].potion[0] : vals.potion;
+					vals.potionsnumber = typeof currSetting[x].potion !== 'undefined' ? parseNum(currSetting[x].potion.toString().replace(/[^\d,:-]/g, '')) : 0;
+					continue;
+				}
+				vals[name] = typeof currSetting[x][name] !== 'undefined' ? currSetting[x][name] : vals[name];
+			}
+			if (x >= 10) overflow = true;
+		} else {
+			style = " style='display: none' ";
+			if (x < 10) overflow = false;
+		}
+
+		tooltipText += _mapSettingsRowPopulateInputs(vals, varPrefix, activeSetting, x, titleText, style, currSetting.length);
+	}
+
+	tooltipText += `<div id='windowAddRowBtn' style='display: ${currSetting.length < maxSettings ? 'inline-block' : 'none'}' class='btn btn-success btn-md' onclick='_mapSettingsAddRow("${varPrefix}","${titleText}")'>+ Add Row</div>`;
+	tooltipText += `</div></div><div style='display: none' id='mazHelpContainer'>${mazHelp}</div>`;
+
+	const costText = `
+		<div class='maxCenter'>
+			<span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave("${titleText}", "${settingName}")'>Save and Close</span>
+			<span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span>
+			<span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave("${titleText}", "${settingName}", true)'>Save</span>
+			<span class='btn btn-info btn-md' onclick='windowToggleHelp("${windowWidth}")'>Help</span>
+		</div>`;
+	const ondisplay = null;
+
+	game.global.lockTooltip = true;
+	elem.style.top = '10%';
+	elem.style.left = '1%';
+	elem.style.height = 'auto';
+	elem.style.maxHeight = `${window.innerHeight * 0.85}px`;
+	elem.style.width = windowWidth;
+	elem.style.overflowY = overflow ? 'scroll' : '';
+
+	return [elem, tooltipText, costText, ondisplay];
+}
+
+function _mapSettingsInputObj() {
+	return {
 		'Auto Golden': {
 			settingInputs: ['active', 'priority', 'row', 'golden', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
 			settingInputsDefault: [],
@@ -252,463 +246,412 @@ function mapSettingsDisplay(elem, titleText) {
 			windowWidth: '80%'
 		}
 	};
+}
 
-	const settingInfo = settingObj[titleText];
-	if (settingInfo) {
-		settingInputs = settingInfo.settingInputs;
-		settingInputsDefault = settingInfo.settingInputsDefault;
-		settingInputsDefault.unshift('active');
-		windowWidth = settingInfo.windowWidth;
+function _mapSettingsDefaultVals() {
+	return {
+		active: false,
+		special: '0',
+		gather: 'food',
+		mapType: 'Absolute',
+		cell: 81,
+		autoBone: false,
+		bonebelow: 0,
+		world: 0,
+		jobratio: '1,1,1',
+		worshipper: 50,
+		shipSkipEnabled: false,
+		shipskip: 10,
+		voidPurchase: false,
+		maxTenacity: false,
+		boneCharge: false,
+		voidFarm: false,
+		hitsSurvived: 0,
+		hdRatio: 0,
+		mapCap: 100,
+		frozencastle: [200, 99],
+		autostorage: false,
+		packrat: false,
+		recycle: false,
+		abandonZone: 0
+	};
+}
+
+function _mapSettingsVals(lineNo, activeSetting) {
+	return {
+		active: true,
+		priority: lineNo + 1,
+		check: true,
+		world: -2,
+		cell: -1,
+		level: -1,
+		special: '0',
+		repeat: 1,
+		hdRatio: 0,
+		gather: 'food',
+		tributes: 0,
+		mets: 0,
+		bogs: 0,
+		insanity: 0,
+		potions: 0,
+		bonfire: 0,
+		relics: 0,
+		boneamount: 0,
+		bonebelow: 0,
+		runType: 'All',
+		prestigeGoal: 'All',
+		raidingDropdown: 1,
+		jobratio: '1,1,1',
+		worshipper: 50,
+		hdRatio: 0,
+		voidHDRatio: 0,
+		buildings: true,
+		atlantrimp: false,
+		meltingPoint: false,
+		portalAfter: false,
+		raidingzone: '0',
+		maxvoidzone: -1,
+		mapType: activeSetting.mapFarm ? 'Map Count' : 'Absolute',
+		autoLevel: true,
+		endzone: 999,
+		repeatevery: 0,
+		challenge: 'All',
+		challenge3: 'All',
+		challengeOneOff: 'All',
+		hdBase: 1,
+		hdMult: 1,
+		goldenType: 'v',
+		hdType: 'world',
+		hdType2: 'hitsSurvived',
+		goldenNumber: -2,
+		destack: false,
+		mapCap: 100,
+		incrementMaps: false,
+		golden: 'v',
+		potion: 'h',
+		potionsnumber: 0,
+		potionstype: 'h'
+	};
+}
+
+function _mapSettingsDefaultTitles(varPrefix, s) {
+	let tooltipText = `
+		<div id='windowContainer' style='display: block'>
+			<div id='windowError'></div>
+			<div class='row windowRow titles' style='border: 0px; margin-top: -0.5vw;'>
+			<div class='windowActive${varPrefix}'>Enabled</div>`;
+	if (s.worshipperFarm) {
+		tooltipText += `<div class='windowWorshipperSkip'>Enable<br />Skip</div>`;
+		tooltipText += `<div class='windowWorshipper'>Skip<br />Value</div>`;
 	}
-	const originalSetting = getPageSetting(settingName + 'Settings', currSettingUniverse);
-	var maxSettings = 30;
-	var overflow = false;
-
-	//Setting up the Help onclick setting.
-	var mazHelp = mapSettingsHelpWindow(titleText, trimple);
-
-	tooltipText = '';
-	//Setting up initial row
-	if (!golden) {
-		//Header
-		tooltipText +=
-			"\
-			<div id = 'windowContainer' style = 'display: block' > <div id='windowError'></div>\
-			<div class='row windowRow titles' style='border: 0px; margin-top: -0.5vw;'>\
-			<div class='windowActive" +
-			varPrefix +
-			"'>Enabled</div>";
-		if (worshipperFarm) {
-			tooltipText += "<div class='windowWorshipperSkip'>Enable<br />Skip</div>";
-			tooltipText += "<div class='windowWorshipper'>Skip<br />Value</div>";
-		}
-		if (boneShrine) {
-			tooltipText += "<div class='windowAutoBoneShrine'>Auto Spend Charges</div>";
-			tooltipText += "<div class='windowBoneDefault'>Auto Spend<br>At X Charges</div>";
-			tooltipText += "<div class='windowBoneDefault'>Auto Spend<br>From Z</div>";
-			tooltipText += "<div class='windowBoneDefault'>Auto Spend<br>Gather</div>";
-			tooltipText += "<div class='windowBoneDefault'>Auto Spend<br>Job Ratio</div>";
-		}
-		if (mapBonus || hdFarm) tooltipText += "<div class='windowJobRatio" + varPrefix + "'>Job<br>Ratio</div>";
-
-		if (mapBonus) tooltipText += "<div class='windowSpecial" + varPrefix + "'>Special</div>";
-		if (raiding && !bionic) tooltipText += "<div class='windowRecycle'>Recycle<br>Maps</div>";
-		if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>";
-		if (quagmire) tooltipText += "<div class='windowAbandonZone'>Abandon Challege<br>Zone</div>";
-		if (voidMap) {
-			tooltipText += "<div class='windowDefaultVoidMap'>Max<br>Map Bonus</div>";
-			if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowDefaultVoidMap'>Use Bone<br>Charge</div>";
-			tooltipText += "<div class='windowDefaultVoidMap'>Pre Void<br>Farm</div>";
-			tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Hits Survived</div>";
-			tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>HD Ratio</div>";
-			tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Job Ratio</div>";
-			tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Map Cap</div>";
-		}
-		if (hypothermia) {
-			tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>";
-			tooltipText += "<div class='windowStorage'>Auto<br>Storage</div>";
-			tooltipText += "<div class='windowPackrat'>Packrat</div>";
-		}
-		if (hdFarm) tooltipText += "<div class='windowCell" + varPrefix + "'>Map<br>Cap</div>";
-
-		tooltipText += '</div>';
-		const defaultVals = _mapSettingsVals(true);
-
-		var style = '';
-
-		var defaultSetting = originalSetting[0];
-
-		//Reading info from each setting and setting up the default values object with necessary data
-		for (var item in settingInputsDefault) {
-			var name = settingInputsDefault[item];
-			defaultVals[name] = typeof defaultSetting[name] !== 'undefined' ? defaultSetting[name] : defaultVals[name];
-		}
-
-		const defaultDropdowns = mapSettingsDropdowns(currSettingUniverse, defaultVals, varPrefix);
-		//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
-		//Adding a class to check if we should display the gather setting if special is set to huge cache or large cache
-		var className = defaultVals.special === 'hc' || defaultVals.special === 'lc' ? ' windowGatherOn' : ' windowGatherOff';
-
-		const defaultTooltip = true;
-		//Setting up the tooltip for base settings
-		if (defaultTooltip) {
-			tooltipText += "<div id='windowRow' class='row windowRow " + className + "'>";
-			tooltipText += "<div class='windowActive" + varPrefix + "' style='text-align: center;'>" + buildNiceCheckbox('windowActiveDefault', null, defaultVals.active) + '</div>';
-			if (worshipperFarm) {
-				tooltipText += "<div class='windowWorshipperSkip' style='text-align: center;'>" + buildNiceCheckbox('windowSkipShipEnabled', null, defaultVals.shipSkipEnabled) + '</div>';
-
-				tooltipText += "<div class='windowWorshipper'><input value='" + defaultVals.shipskip + "' type='number' id='windowRepeatDefault'/></div>";
-			}
-			if (boneShrine) {
-				tooltipText += "<div class='windowAuto" + varPrefix + "' style='text-align: center;'>" + buildNiceCheckbox('windowAutoBone', null, defaultVals.autoBone) + '</div>';
-				tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.bonebelow + "' type='number' id='windowBoneBelowDefault'/></div>";
-				tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.world + "' type='number' id='windowBoneWorld'/></div>";
-				tooltipText += "<div class='windowBoneDefault'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultDropdowns.gather + '</select></div>';
-				tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
-			}
-			if (mapBonus || hdFarm) tooltipText += "<div class='windowJobRatio" + varPrefix + "'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
-			if (mapBonus) {
-				tooltipText += "<div class='windowSpecial" + varPrefix + "'  onchange='updateWindowPreset()'><select value='" + defaultVals.special + "' id='windowSpecial'>" + defaultDropdowns.special + '</select></div>';
-				tooltipText += "<div class='windowGather'><div style='text-align: center; font-size: 0.6vw;'>Gather</div><onchange='updateWindowPreset()'><select value='" + defaultVals.gather + "' id='windowGather'>" + defaultDropdowns.gather + '</select></div>';
-			}
-
-			if (quagmire) tooltipText += "<div class='windowAbandonZone'><input value='" + defaultVals.abandonZone + "' type='number' id='abandonZone'/></div>";
-
-			if (hypothermia) {
-				tooltipText += "<div class='windowFrozenCastle'><input value='" + defaultVals.frozencastle + "' type='text' id='windowFrozenCastleDefault'/></div>";
-				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox('windowStorageDefault', null, defaultVals.autostorage) + '</div>';
-				tooltipText += "<div class='windowPackrat' style='text-align: center;'>" + buildNiceCheckbox('windowPackratDefault', null, defaultVals.packrat) + '</div>';
-			}
-
-			if (raiding && !bionic) tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox('windowRecycleDefault', null, defaultVals.recycle) + '</div>';
-			if (alchemy) tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox('windowVoidPurchase', null, defaultVals.voidPurchase) + '</div>';
-			if (voidMap) {
-				tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox('windowMaxTenacity', null, defaultVals.maxTenacity) + '</div>';
-				if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox('windowBoneCharge', null, defaultVals.boneCharge) + '</div>';
-				tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox('windowVoidFarm', null, defaultVals.voidFarm) + '</div>';
-				tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hitsSurvived + "' type='number' id='windowHitsSurvived'/></div>";
-				tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hdRatio + "' type='number' id='windowHDRatio'/></div>";
-				tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
-				tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.mapCap + "' type='text' id='windowMapCap'/></div>";
-			}
-			if (hdFarm) tooltipText += "<div class='windowCell" + varPrefix + "'><input value='" + defaultVals.mapCap + "' type='number' id='mapCap'/></div>";
-
-			tooltipText += '</div>';
-		}
+	if (s.boneShrine) {
+		tooltipText += `<div class='windowAutoBoneShrine'>Auto Spend Charges</div>`;
+		tooltipText += `<div class='windowBoneDefault'>Auto Spend<br>At X Charges</div>`;
+		tooltipText += `<div class='windowBoneDefault'>Auto Spend<br>From Z</div>`;
+		tooltipText += `<div class='windowBoneDefault'>Auto Spend<br>Gather</div>`;
+		tooltipText += `<div class='windowBoneDefault'>Auto Spend<br>Job Ratio</div>`;
 	}
+	if (s.mapBonus || s.hdFarm) tooltipText += `<div class='windowJobRatio${varPrefix}'>Job<br>Ratio</div>`;
 
-	//Setting up rows for each setting
-	const rowSetup = true;
-	if (rowSetup) {
-		tooltipText +=
-			"\
-	<div id='windowContainer' style='display: block'><div id='windowError'></div>\
-	<div class='row windowRow titles'>";
-		if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "'>Active?</div>";
-		if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>";
-		tooltipText += "<div class='windowPriority" + varPrefix + "'>Priority</div>";
-		if (!voidMap && !golden && !boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "'>Start<br/>Zone</div>";
-		if (boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "'>Zone</div>";
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || archaeology || alchemy) tooltipText += "<div class='windowEndZone" + varPrefix + "'>End<br/>Zone</div>";
-		if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>";
-		if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "'>Min Zone</div>";
-		if (voidMap) tooltipText += "<div class='windowMaxVoidZone'>Max Zone</div>";
-		if (raiding && bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "'>Raiding<br/>Zone</div>";
-		if (raiding && !bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "'>Map<br/>Level</div>";
-		if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "'>Cell</div>";
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "'>Auto<br/>Level</div>";
-		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) tooltipText += "<div class='windowLevel" + varPrefix + "'>Map<br/>Level</div>";
-		if (tributeFarm || smithyFarm || mapFarm || alchemy) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "'>Farm Type</div>";
-		if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>";
-		if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>";
-
-		if (mapFarm) tooltipText += "<div class='windowRepeat" + varPrefix + "'>Map<br/>Repeats</div>";
-		if (toxicity) tooltipText += "<div class='windowRepeat" + varPrefix + "'>Toxic<br/>Stacks</div>";
-		if (mapFarm || mapBonus) tooltipText += "<div class='windowHDRatio" + varPrefix + "'>Above X<br/>HD Ratio</div>";
-
-		if (mapBonus) tooltipText += "<div class='windowMapStacks'>Map<br/>Stacks</div>";
-		if (golden) tooltipText += "<div class='windowTypeAutoGolden'>Golden Type</div>";
-		if (quagmire) tooltipText += "<div class='windowBogs'>Bogs</div>";
-		if (archaeology) {
-			tooltipText += "<div class='windowRelics" + varPrefix + "'>Relic String</div>";
-			tooltipText += "<div class='windowMapCap'>Map<br/>Cap</div>";
-		}
-		if (insanity) tooltipText += "<div class='windowInsanity'>Insanity</div>";
-		if (alchemy) tooltipText += "<div class='windowPotionType'>Potion Type</div>";
-		if (alchemy) tooltipText += "<div class='windowPotionNumber'>Potion Number</div>";
-		if (hypothermia) tooltipText += "<div class='windowBonfire'>Bonfires</div>";
-
-		if (boneShrine) tooltipText += "<div class='windowBoneAmount'>To use</div>";
-		if (boneShrine) tooltipText += "<div class='windowBoneBelow'>Use below</div>";
-		if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Worshippers</div>";
-		if (smithyFarm) tooltipText += "<div class='windowSmithies'>Smithies</div>";
-
-		if (hdFarm) {
-			tooltipText += "<div class='windowHDBase'>HD Base</div>";
-			tooltipText += "<div class='windowHDMult'>HD Mult</div>";
-			tooltipText += "<div class='windowHDType'>HD<br/>Type</div>";
-			tooltipText += "<div class='windowMapCap'>Map<br/>Cap</div>";
-		}
-
-		if (voidMap) {
-			tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#1</div>";
-			tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#1</div>";
-			tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>";
-			tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
-		}
-		if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "'>Job<br/>Ratio</div>";
-		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || archaeology || alchemy) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "'>Repeat<br/>Every</div>";
-		if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
-		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) tooltipText += "<div class='windowSpecial" + varPrefix + "'>Special</div>";
-		if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>";
-		if (mapFarm || tributeFarm || boneShrine) tooltipText += "<div class='windowAtlantrimp'>Run<br/>" + trimple + '</div>';
-		if (smithyFarm) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>";
-		if (insanity) tooltipText += "<div class='windowBuildings'>Destack</div>";
-		if (tributeFarm) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>";
-		if (raiding || desolation) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "'>Prestige<br/>Goal</div>";
-		if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>";
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) tooltipText += "<div class='windowRunType" + varPrefix + "'>Run&nbsp;Type</div>";
-		if (voidMap) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>";
-		tooltipText += '</div>';
+	if (s.mapBonus) tooltipText += `<div class='windowSpecial${varPrefix}'>Special</div>`;
+	if (s.raiding && !s.bionic) tooltipText += `<div class='windowRecycle'>Recycle<br>Maps</div>`;
+	if (s.alchemy) tooltipText += `<div class='windowStorage'>Void<br>Purchase</div>`;
+	if (s.quagmire) tooltipText += `<div class='windowAbandonZone'>Abandon Challege<br>Zone</div>`;
+	if (s.voidMap) {
+		tooltipText += `<div class='windowDefaultVoidMap'>Max<br>Map Bonus</div>`;
+		if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += `<div class='windowDefaultVoidMap'>Use Bone<br>Charge</div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'>Pre Void<br>Farm</div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'>Void Farm<br>Hits Survived</div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'>Void Farm<br>HD Ratio</div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'>Void Farm<br>Job Ratio</div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'>Void Farm<br>Map Cap</div>`;
 	}
-	//As position 0 in the array stores base setting we need to take that out of the array before we start looping through rows
-	currSetting = originalSetting.slice(1, originalSetting.length);
-	if (golden) currSetting = originalSetting;
+	if (s.hypothermia) {
+		tooltipText += `<div class='windowFrozenCastle'>Frozen<br>Castle</div>`;
+		tooltipText += `<div class='windowStorage'>Auto<br>Storage</div>`;
+		tooltipText += `<div class='windowPackrat'>Packrat</div>`;
+	}
+	if (s.hdFarm) tooltipText += `<div class='windowCell${varPrefix}'>Map<br>Cap</div>`;
 
-	//Looping through each setting and setting up the rows and inputting the data from the setting into the inputs
-	for (var x = 0; x < maxSettings; x++) {
-		let style = '';
-		let vals = _mapSettingsVals(false, x);
+	tooltipText += '</div>';
 
-		//Taking data from the current setting and overriding the info in vals with it.
-		if (currSetting.length - 1 >= x) {
-			for (var item in settingInputs) {
-				let name = settingInputs[item];
-				//Since Golden upgrade & Alchemy farm have 2 inputs that get merged into a single string we need to handle them separately
-				if (golden && name.includes('golden')) {
-					vals.goldenType = typeof currSetting[x].golden !== 'undefined' ? currSetting[x].golden[0] : vals.golden;
-					vals.goldenNumber = typeof currSetting[x].golden !== 'undefined' ? currSetting[x].golden.toString().replace(/[^\d,:-]/g, '') : -2;
-					continue;
-				}
-				if (alchemy && name.includes('potion')) {
-					vals.potionstype = typeof currSetting[x].potion !== 'undefined' ? currSetting[x].potion[0] : vals.potion;
-					vals.potionsnumber = typeof currSetting[x].potion !== 'undefined' ? parseNum(currSetting[x].potion.toString().replace(/[^\d,:-]/g, '')) : 0;
-					continue;
-				}
-				vals[name] = typeof currSetting[x][name] !== 'undefined' ? currSetting[x][name] : vals[name];
-			}
-			if (x >= 10) overflow = true;
-		}
-		//Hide row if the line isn't in use.
-		else {
-			style = " style='display: none' ";
-			if (x < 10) overflow = false;
-		}
+	return tooltipText;
+}
 
-		//Set Nature colours if zone input is above Nature start zone.
-		let backgroundStyle = '';
-		if (currSettingUniverse === 1 && !golden) {
-			let natureStyles = {
-				None: 'unset',
-				Poison: 'rgba(50, 150, 50, 0.75)',
-				Wind: 'rgba(60, 75, 130, 0.75)',
-				Ice: 'rgba(50, 50, 200, 0.75)'
-			};
-			let empowerment = getZoneEmpowerment(vals.world);
-			backgroundStyle = " 'background:" + natureStyles[empowerment] + "'";
-		}
+function _mapSettingsDefaultPopulateInputs(defaultVals, varPrefix, s) {
+	const defaultDropdowns = mapSettingsDropdowns(currSettingUniverse, defaultVals, varPrefix);
+	const className = defaultVals.special === 'hc' || defaultVals.special === 'lc' ? ' windowGatherOn' : ' windowGatherOff';
 
-		let classNames = [vals.special === 'hc' || vals.special === 'lc' ? 'windowGatherOn' : 'windowGatherOff', !vals.autoLevel ? 'windowLevelOn' : 'windowLevelOff', x <= currSetting.length - 1 ? 'active' : 'disabled'];
-
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
-			classNames.push(vals.runType === 'One Off' ? `windowChallengeOneOffOn${varPrefix}` : `windowChallengeOneOffOff${varPrefix}`);
-			classNames.push(vals.runType === 'C3' ? `windowChallenge3On${varPrefix}` : `windowChallenge3Off${varPrefix}`);
-			classNames.push(vals.runType === 'Filler' ? `windowChallengeOn${varPrefix}` : `windowChallengeOff${varPrefix}`);
-		}
-
-		if (hdFarm) {
-			classNames.push(vals.hdType === 'maplevel' ? 'windowMapLevelOff' : 'windowMapLevelOn');
-		}
-
-		let className = classNames.join(' ');
-
-		tooltipText += `<div id='windowRow${x}' class='row windowRow ${className}'${style}>`;
-		let dropdowns = mapSettingsDropdowns(currSettingUniverse, vals, varPrefix);
-
-		//Delete the row button
-		if (!golden) tooltipText += "<div class='windowDelete" + varPrefix + "' onclick='removeRow(\"" + x + '","' + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
-
-		//Button to delete the row for golden settings
-		if (golden) tooltipText += "<div class='windowDeleteAutoGolden' onclick='removeRow(\"" + x + '","' + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
-
-		//Active checkbox
-		if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "' style='text-align: center;'>" + buildNiceCheckbox('windowActive' + x, null, vals.active) + '</div>';
-
-		//Active checkbox for golden settings
-		if (golden) tooltipText += "<div class='windowActiveAutoGolden' style='text-align: center;'>" + buildNiceCheckbox('windowActive' + x, null, vals.active) + '</div>';
-
-		//Priority input
-		tooltipText += "<div class='windowPriority" + varPrefix + "'><input value='" + vals.priority + "' type='number' id='windowPriority" + x + "'/></div>";
-
-		//World input
-		if (!golden) tooltipText += "<div class='windowWorld" + varPrefix + "' style = " + backgroundStyle + "' oninput='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
-
-		//End Zone input
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity || archaeology || alchemy) tooltipText += "<div class='windowEndZone" + varPrefix + "'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
-
-		//Highest Void Zone input - SHOULD BE CONVERTED TO USE END ZONE INSTEAD!
-		if (voidMap) tooltipText += "<div class='windowMaxVoidZone'><input value='" + vals.maxvoidzone + "' type='number' id='windowMaxVoidZone" + x + "'/></div>";
-
-		//Raiding Zone input
-		if (raiding && bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "'><input value='" + vals.raidingzone + "' type='number' id='windowRaidingZone" + x + "'/></div>";
-		//Map Level Dropdown for Raiding
-		if (raiding && !bionic) tooltipText += "<div class='windowRaidingZone" + varPrefix + "'><select value='" + vals.raidingzone + "' id='windowRaidingZone" + x + "'>" + dropdowns.mapLevel + '</select></div>';
-
-		//Cell input
-		if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
-
-		//Auto level checkbox
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "' style='text-align: center; padding-left: 5px;'>" + buildNiceCheckboxAutoLevel('windowAutoLevel' + x, null, vals.autoLevel, x, varPrefix) + '</div>';
-
-		//Level input
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowLevel" + varPrefix + "'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
-
-		//Map Type dropdown
-		if (tributeFarm || smithyFarm || mapFarm || alchemy) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "' onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.mapType + "' id='windowMapTypeDropdown" + x + "'>" + dropdowns.mapType + '</select></div>';
-
-		//World input
-		if (worshipperFarm) tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
-
-		//Repeat input (Map Farm);
-		if (mapFarm || toxicity) tooltipText += "<div class='windowRepeat" + varPrefix + "'><input value='" + vals.repeat + "' type='value' id='windowRepeat" + x + "'/></div>";
-
-		//HD Ratio to farm when above
-		if (mapFarm || mapBonus) tooltipText += "<div class='windowHDRatio" + varPrefix + "'><input value='" + vals.hdRatio + "' type='value' id='windowHDRatio" + x + "'/></div>";
-
-		//Map Bonus to farm when below
-		if (mapBonus) tooltipText += "<div class='windowMapStacks'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
-
-		//Smithies to farm for
-		if (smithyFarm) tooltipText += "<div class='windowSmithies'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
-
-		if (hdFarm) {
-			//HD Base value
-			tooltipText += "<div class='windowHDBase'><div style='text-align: center; font-size: 0.6vw;'>" + (vals.hdType === 'maplevel' ? 'Map Level' : '') + "</div><input value='" + vals.hdBase + "' type='number' id='windowRepeat" + x + "'/></div>";
-			//HD Mult value
-			tooltipText += "<div class='windowHDMult'><input value='" + vals.hdMult + "' type='number' id='windowHDMult" + x + "'/></div>";
-			//HD Type dropdown
-			tooltipText += "<div class='windowHDType' onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDType" + x + "'>" + dropdowns.hdType + '</select></div>';
-			//Map Cap
-			tooltipText += "<div class='windowMapCap'><input value='" + vals.mapCap + "' type='number' id='windowMapCap" + x + "'/></div>";
-		}
-		//Tributes to farm for
-		if (tributeFarm) tooltipText += "<div class='windowTributes'><input value='" + vals.tributes + "' type='number' id='windowTributes" + x + "'/></div>";
-
-		//Meteorologists to farm for
-		if (tributeFarm) tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
-
-		//Black bogs to run
-		if (quagmire) tooltipText += "<div class='windowBogs'><input value='" + vals.bogs + "' type='number' id='windowBogs" + x + "'/></div>";
-
-		//Archaeology Relic String
-		if (archaeology) {
-			tooltipText += "<div class='windowRelics" + varPrefix + "'><input value='" + vals.relics + "' type='value' id='windowRelics" + x + "'/></div>";
-			tooltipText += "<div class='windowMapCap'><input value='" + vals.mapCap + "' type='number' id='windowMapCap" + x + "'/></div>";
-		}
-		//Insanity stacks to farm for
-		if (insanity) tooltipText += "<div class='windowInsanity'><input value='" + vals.insanity + "' type='number' id='windowInsanity" + x + "'/></div>";
-
-		//Alchemy potion type dropdown
-		if (alchemy) tooltipText += "<div class='windowPotionType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.potionstype + "' id='windowPotionType" + x + "'>" + dropdowns.potionTypes + '</select></div>';
-
-		//Alchemy potion input
-		if (alchemy) tooltipText += "<div class='windowPotionNumber'><input value='" + vals.potionsnumber + "' type='number' id='windowPotionNumber" + x + "'/></div>";
-
-		//Hypothermia bonfire goal
-		if (hypothermia) tooltipText += "<div class='windowBonfire'><input value='" + vals.bonfire + "' type='number' id='windowBonfire" + x + "'/></div>";
-
-		//Bone Shrine - Charges to use
-		if (boneShrine) tooltipText += "<div class='windowBoneAmount'><input value='" + vals.boneamount + "' type='number' id='windowBoneAmount" + x + "'/></div>";
-
-		//Bone Shrine - Use charges when below this amount
-		if (boneShrine) tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
-
-		//Void HD Dropdown #1
-		if (voidMap) tooltipText += "<div class='windowHDTypeVoidMap onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDTypeVoidMap" + x + "'>" + dropdowns.hdType + '</select></div>';
-
-		//Run void maps when HD Ratio is above this value
-		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.hdRatio + "' type='number' id='windowHDRatio" + x + "'/></div>";
-
-		//Void HD Dropdown #2
-		if (voidMap) tooltipText += "<div class='windowHDTypeVoidMap onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.hdType2 + "' id='windowHDTypeVoidMap2" + x + "'>" + dropdowns.hdType2 + '</select></div>';
-
-		//Run void maps when Void HD Ratio is above this value
-		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.voidHDRatio + "' type='number' id='windowVoidHDRatio" + x + "'/></div>";
-
-		//Job ratio input
-		if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
-
-		//Repeat every X zones
-		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity || archaeology || alchemy) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
-
-		//Gather type dropdown for bone shrines
-		if (boneShrine) tooltipText += "<div class='windowBoneGather'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + dropdowns.gather + '</select></div>';
-
-		//Raiding type dropdown
-		if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown' onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.raidingDropdown + "' id='windowRaidingDropdown" + x + "'>" + dropdowns.raidingTypes + '</select></div>';
-
-		//Special cache to use dropdown
-		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) tooltipText += "<div class='windowSpecial" + varPrefix + "'  onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + dropdowns.special + '</select></div>';
-
-		//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
-		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) tooltipText += "<div class='windowGather'><div style='text-align: center; font-size: 0.6vw;'>Gather</div><onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.gather + "' id='windowGather" + x + "'>" + dropdowns.gather + '</select></div>';
-
-		//Trimple/Atlantrimp checkbox
-		if (mapFarm || tributeFarm || boneShrine) tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox('windowAtlantrimp' + x, null, vals.atlantrimp) + '</div>';
-
-		//Melting point checkbox
-		if (smithyFarm) tooltipText += "<div class='windowMeltingPoint' style='text-align: center;'>" + buildNiceCheckbox('windowMeltingPoint' + x, null, vals.meltingPoint) + '</div>';
-
-		//Buy buildings checkbox
-		if (tributeFarm) tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox('windowBuildings' + x, null, vals.buildings) + '</div>';
-
-		//Buy buildings checkbox
-		if (insanity) tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox('windowBuildings' + x, null, vals.destack) + '</div>';
-
-		//Prestige Goal dropdown
-		if (raiding || desolation) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "' onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.prestigeGoal + "' id='windowPrestigeGoal" + x + "'>" + dropdowns.prestigeGoal + '</select></div>';
-
-		//Increment Maps checkbox
-		if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps' style='text-align: center;'>" + buildNiceCheckbox('windowIncrementMapsDefault' + x, null, vals.incrementMaps) + '</div>';
-
-		//Auto Golden input
-		if (golden) tooltipText += "<div class='windowAmtAutoGolden'><input value='" + vals.goldenNumber + "' type='number' id='windowWorld" + x + "'/></div>";
-
-		//Type of golden dropdown
-		if (golden) tooltipText += "<div class='windowTypeAutoGolden' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.goldentype + "' id='windowGoldenType" + x + "'>" + dropdowns.goldenType + '</select></div>';
-
-		//Run Type dropdown
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) tooltipText += "<div class='windowRunType" + varPrefix + "' onchange='updateWindowPreset(\"" + x + '","' + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + dropdowns.runType + '</select></div>';
-
-		//Filler challenges dropdown
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) tooltipText += "<div class='windowChallenge" + varPrefix + "'><div style='text-align: center; font-size: 0.6vw;'>Challenge</div><select value='" + vals.challenge + "' id='windowChallenge" + x + "'>" + dropdowns.challenge + '</select></div>';
-
-		//C2/C3 challenges dropdown
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
-			tooltipText += "<div class='windowChallenge3" + varPrefix + "'><div style='text-align: center; font-size: 0.6vw;'>Challenge" + (currSettingUniverse + 1) + "</div><select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + dropdowns.c2 + '</select></div>';
-
-		//C2/C3 challenges dropdown
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) tooltipText += "<div class='windowChallengeOneOff" + varPrefix + "'><div style='text-align: center; font-size: 0.6vw;'>One Offs</div><select value='" + vals.windowChallengeOneOff + "' id='windowChallengeOneOff" + x + "'>" + dropdowns.oneOff + '</select></div>';
-
-		//Portal After Void Maps checkbox
-		if (voidMap) tooltipText += "<div class='windowPortalAfter' style='text-align: center;'>" + buildNiceCheckbox('windowPortalAfter' + x, null, vals.portalAfter) + '</div>';
-		tooltipText += '</div>';
+	let tooltipText = `<div id='windowRow' class='row windowRow ${className}'>`;
+	tooltipText += `<div class='windowActive${varPrefix}' style='text-align: center;'>${buildNiceCheckbox('windowActiveDefault', null, defaultVals.active)}</div>`;
+	if (s.worshipperFarm) {
+		tooltipText += `<div class='windowWorshipperSkip' style='text-align: center;'>${buildNiceCheckbox('windowSkipShipEnabled', null, defaultVals.shipSkipEnabled)}</div>`;
+		tooltipText += `<div class='windowWorshipper'><input value='${defaultVals.shipskip}' type='number' id='windowRepeatDefault'/></div>`;
+	}
+	if (s.boneShrine) {
+		tooltipText += `<div class='windowAuto${varPrefix}' style='text-align: center;'>${buildNiceCheckbox('windowAutoBone', null, defaultVals.autoBone)}</div>`;
+		tooltipText += `<div class='windowBoneDefault'><input value='${defaultVals.bonebelow}' type='number' id='windowBoneBelowDefault'/></div>`;
+		tooltipText += `<div class='windowBoneDefault'><input value='${defaultVals.world}' type='number' id='windowBoneWorld'/></div>`;
+		tooltipText += `<div class='windowBoneDefault'><select value='${defaultVals.gather}' id='windowBoneGatherDefault'>${defaultDropdowns.gather}</select></div>`;
+		tooltipText += `<div class='windowBoneDefault'><input value='${defaultVals.jobratio}' type='text' id='windowJobRatioDefault'/></div>`;
+	}
+	if (s.mapBonus || s.hdFarm) tooltipText += `<div class='windowJobRatio${varPrefix}'><input value='${defaultVals.jobratio}' type='text' id='windowJobRatioDefault'/></div>`;
+	if (s.mapBonus) {
+		tooltipText += `<div class='windowSpecial${varPrefix}'  onchange='_mapSettingsUpdatePreset()'><select value='${defaultVals.special}' id='windowSpecial'>${defaultDropdowns.special}</select></div>`;
+		tooltipText += `<div class='windowGather'><div style='text-align: center; font-size: 0.6vw;'>Gather</div><onchange='_mapSettingsUpdatePreset()'><select value='${defaultVals.gather}' id='windowGather'>${defaultDropdowns.gather}</select></div>`;
+	}
+	if (s.quagmire) tooltipText += `<div class='windowAbandonZone'><input value='${defaultVals.abandonZone}' type='number' id='abandonZone'/></div>`;
+	if (s.hypothermia) {
+		tooltipText += `<div class='windowFrozenCastle'><input value='${defaultVals.frozencastle}' type='text' id='windowFrozenCastleDefault'/></div>`;
+		tooltipText += `<div class='windowStorage' style='text-align: center;'>${buildNiceCheckbox('windowStorageDefault', null, defaultVals.autostorage)}</div>`;
+		tooltipText += `<div class='windowPackrat' style='text-align: center;'>${buildNiceCheckbox('windowPackratDefault', null, defaultVals.packrat)}</div>`;
 	}
 
-	tooltipText += "<div id='windowAddRowBtn' style='display: " + (currSetting.length < maxSettings ? 'inline-block' : 'none') + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + '","' + titleText + '")\'>+ Add Row</div>';
-	tooltipText += "</div></div><div style='display: none' id='mazHelpContainer'>" + mazHelp + '</div>';
-	costText =
-		"<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" +
-		titleText +
-		'","' +
-		settingName +
-		"\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" +
-		titleText +
-		'","' +
-		settingName +
-		"\", true)'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp(\"" +
-		windowWidth +
-		'")\'>Help</span></div>';
+	if (s.raiding && !s.bionic) tooltipText += `<div class='windowRecycle' style='text-align: center;'>${buildNiceCheckbox('windowRecycleDefault', null, defaultVals.recycle)}</div>`;
+	if (s.alchemy) tooltipText += `<div class='windowStorage' style='text-align: center;'>${buildNiceCheckbox('windowVoidPurchase', null, defaultVals.voidPurchase)}</div>`;
+	if (s.voidMap) {
+		tooltipText += `<div class='windowDefaultVoidMap' style='text-align: center;'>${buildNiceCheckbox('windowMaxTenacity', null, defaultVals.maxTenacity)}</div>`;
+		if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += `<div class='windowDefaultVoidMap' style='text-align: center;'>${buildNiceCheckbox('windowBoneCharge', null, defaultVals.boneCharge)}</div>`;
+		tooltipText += `<div class='windowDefaultVoidMap' style='text-align: center;'>${buildNiceCheckbox('windowVoidFarm', null, defaultVals.voidFarm)}</div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'><input value='${defaultVals.hitsSurvived}' type='number' id='windowHitsSurvived'/></div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'><input value='${defaultVals.hdRatio}' type='number' id='windowHDRatio'/></div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'><input value='${defaultVals.jobratio}' type='text' id='windowJobRatioDefault'/></div>`;
+		tooltipText += `<div class='windowDefaultVoidMap'><input value='${defaultVals.mapCap}' type='text' id='windowMapCap'/></div>`;
+	}
+	if (s.hdFarm) tooltipText += `<div class='windowCell${varPrefix}'><input value='${defaultVals.mapCap}' type='number' id='mapCap'/></div>`;
 
-	game.global.lockTooltip = true;
-	elem.style.top = '10%';
-	elem.style.left = '1%';
-	elem.style.height = 'auto';
-	elem.style.maxHeight = `${window.innerHeight * 0.85}px`;
-	elem.style.width = windowWidth;
-	elem.style.overflowY = overflow ? 'scroll' : '';
+	tooltipText += `</div>`;
 
-	return [elem, tooltipText, costText, ondisplay];
+	return tooltipText;
+}
+
+function _mapSettingsRowTitles(varPrefix, s) {
+	const trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
+	let tooltipText = `
+		<div id='windowContainer' style='display: block'>
+			<div id='windowError'></div>
+			<div class='row windowRow titles'>`;
+	if (!s.golden) tooltipText += `<div class='windowActive${varPrefix}'>Active?</div>`;
+	if (s.golden) tooltipText += `<div class='windowActiveAutoGolden'>Active?</div>`;
+	tooltipText += `<div class='windowPriority${varPrefix}'>Priority</div>`;
+	if (!s.voidMap && !s.golden && !s.boneShrine) tooltipText += `<div class='windowWorld${varPrefix}'>Start<br/>Zone</div>`;
+	if (s.boneShrine) tooltipText += `<div class='windowWorld${varPrefix}'>Zone</div>`;
+	if (s.mapFarm || s.tributeFarm || s.worshipperFarm || s.hdFarm || s.raiding || s.bionic || s.mapBonus || s.smithyFarm || s.desolation || s.toxicity || s.archaeology || s.alchemy) tooltipText += `<div class='windowEndZone${varPrefix}'>End<br/>Zone</div>`;
+	if (s.golden) tooltipText += `<div class='windowAmtAutoGolden'>Amount</div>`;
+	if (s.voidMap) tooltipText += `<div class='windowWorld${varPrefix}'>Min Zone</div>`;
+	if (s.voidMap) tooltipText += `<div class='windowMaxVoidZone'>Max Zone</div>`;
+	if (s.bionic) tooltipText += `<div class='windowRaidingZone${varPrefix}'>Raiding<br/>Zone</div>`;
+	if (s.raiding) tooltipText += `<div class='windowRaidingZone${varPrefix}'>Map<br/>Level</div>`;
+	if (!s.golden && !s.desolation) tooltipText += `<div class='windowCell${varPrefix}'>Cell</div>`;
+	if (s.mapFarm || s.tributeFarm || s.smithyFarm || s.mapBonus || s.worshipperFarm || s.archaeology || s.insanity || s.alchemy || s.hypothermia || s.hdFarm || s.toxicity) tooltipText += `<div class='windowAutoLevel${varPrefix}'>Auto<br/>Level</div>`;
+	if (!s.quagmire && !s.boneShrine && !s.raiding && !s.bionic && !s.voidMap && !s.golden && !s.desolation) tooltipText += `<div class='windowLevel${varPrefix}'>Map<br/>Level</div>`;
+	if (s.tributeFarm || s.smithyFarm || s.mapFarm || s.alchemy) tooltipText += `<div class='windowMapTypeDropdown${varPrefix}'>Farm Type</div>`;
+	if (s.tributeFarm) tooltipText += `<div class='windowTributes'>Tributes</div>`;
+	if (s.tributeFarm) tooltipText += `<div class='windowMets'>Mets</div>`;
+
+	if (s.mapFarm) tooltipText += `<div class='windowRepeat${varPrefix}'>Map<br/>Repeats</div>`;
+	if (s.toxicity) tooltipText += `<div class='windowRepeat${varPrefix}'>Toxic<br/>Stacks</div>`;
+	if (s.mapFarm || s.mapBonus) tooltipText += `<div class='windowHDRatio${varPrefix}'>Above X<br/>HD Ratio</div>`;
+
+	if (s.mapBonus) tooltipText += `<div class='windowMapStacks'>Map<br/>Stacks</div>`;
+	if (s.golden) tooltipText += `<div class='windowTypeAutoGolden'>Golden Type</div>`;
+	if (s.quagmire) tooltipText += `<div class='windowBogs'>Bogs</div>`;
+	if (s.archaeology) {
+		tooltipText += `<div class='windowRelics${varPrefix}'>Relic String</div>`;
+		tooltipText += `<div class='windowMapCap'>Map<br/>Cap</div>`;
+	}
+	if (s.insanity) tooltipText += `<div class='windowInsanity'>Insanity</div>`;
+	if (s.alchemy) tooltipText += `<div class='windowPotionType'>Potion Type</div>`;
+	if (s.alchemy) tooltipText += `<div class='windowPotionNumber'>Potion Number</div>`;
+	if (s.hypothermia) tooltipText += `<div class='windowBonfire'>Bonfires</div>`;
+
+	if (s.boneShrine) tooltipText += `<div class='windowBoneAmount'>To use</div>`;
+	if (s.boneShrine) tooltipText += `<div class='windowBoneBelow'>Use below</div>`;
+	if (s.worshipperFarm) tooltipText += `<div class='windowWorshipper'>Worshippers</div>`;
+	if (s.smithyFarm) tooltipText += `<div class='windowSmithies'>Smithies</div>`;
+
+	if (s.hdFarm) {
+		tooltipText += `<div class='windowHDBase'>HD Base</div>`;
+		tooltipText += `<div class='windowHDMult'>HD Mult</div>`;
+		tooltipText += `<div class='windowHDType'>HD<br/>Type</div>`;
+		tooltipText += `<div class='windowMapCap'>Map<br/>Cap</div>`;
+	}
+
+	if (s.voidMap) {
+		tooltipText += `<div class='windowHDTypeVoidMap'>Dropdown<br/>#1</div>`;
+		tooltipText += `<div class='windowVoidHDRatio'>Option<br/>#1</div>`;
+		tooltipText += `<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>`;
+		tooltipText += `<div class='windowVoidHDRatio'>Option<br/>#2</div>`;
+	}
+	if (!s.raiding && !s.bionic && !s.smithyFarm && !s.golden) tooltipText += `<div class='windowJobRatio${varPrefix}'>Job<br/>Ratio</div>`;
+	if (s.mapFarm || s.tributeFarm || s.worshipperFarm || s.raiding || s.bionic || s.smithyFarm || s.desolation || s.toxicity || s.archaeology || s.alchemy) tooltipText += `<div class='windowRepeatEvery${varPrefix}'>Repeat<br/>Every</div>`;
+	if (s.boneShrine) tooltipText += `<div class='windowBoneGather'>Gather</div>`;
+	if (s.mapFarm || s.alchemy || s.mapBonus || s.insanity || s.desolation || s.toxicity) tooltipText += `<div class='windowSpecial${varPrefix}'>Special</div>`;
+	if (s.raiding) tooltipText += `<div class='windowRaidingDropdown'>Frag Type</div>`;
+	if (s.mapFarm || s.tributeFarm || s.boneShrine) tooltipText += `<div class='windowAtlantrimp'>Run<br/>${trimple}</div>`;
+	if (s.smithyFarm) tooltipText += `<div class='windowMeltingPoint'>Run<br/>MP</div>`;
+	if (s.insanity) tooltipText += `<div class='windowBuildings'>Destack</div>`;
+	if (s.tributeFarm) tooltipText += `<div class='windowBuildings'>Buy<br/>Buildings</div>`;
+	if (s.raiding || s.bionic || s.desolation) tooltipText += `<div class='windowPrestigeGoal${varPrefix}'>Prestige<br/>Goal</div>`;
+	if (s.raiding) tooltipText += `<div class='windowIncrementMaps'>Increment<br>Maps</div>`;
+	if (s.mapFarm || s.tributeFarm || s.smithyFarm || s.mapBonus || s.worshipperFarm || s.boneShrine || s.voidMap || s.hdFarm || s.raiding || s.bionic || s.golden) tooltipText += `<div class='windowRunType${varPrefix}'>Run&nbsp;Type</div>`;
+	if (s.voidMap) tooltipText += `<div class='windowPortalAfter'>Portal<br/>After</div>`;
+	tooltipText += '</div>';
+
+	return tooltipText;
+}
+
+function _mapSettingsRowPopulateInputs(vals, varPrefix, s, x, titleText, style, currSettingLength) {
+	const dropdowns = mapSettingsDropdowns(currSettingUniverse, vals, varPrefix);
+
+	let backgroundStyle = '';
+	if (currSettingUniverse === 1 && !s.golden) {
+		const natureStyles = {
+			None: 'unset',
+			Poison: 'rgba(50, 150, 50, 0.75)',
+			Wind: 'rgba(60, 75, 130, 0.75)',
+			Ice: 'rgba(50, 50, 200, 0.75)'
+		};
+		const empowerment = getZoneEmpowerment(vals.world);
+		backgroundStyle = ` background:${natureStyles[empowerment]}`;
+	}
+
+	let classNames = [vals.special === 'hc' || vals.special === 'lc' ? 'windowGatherOn' : 'windowGatherOff', !vals.autoLevel ? 'windowLevelOn' : 'windowLevelOff', x <= currSettingLength - 1 ? 'active' : 'disabled'];
+
+	const runTypeSetting = s.mapFarm || s.tributeFarm || s.smithyFarm || s.mapBonus || s.worshipperFarm || s.boneShrine || s.voidMap || s.hdFarm || s.raiding || s.bionic || s.golden;
+	if (runTypeSetting) {
+		classNames.push(vals.runType === 'One Off' ? `windowChallengeOneOffOn${varPrefix}` : `windowChallengeOneOffOff${varPrefix}`);
+		classNames.push(vals.runType === 'C3' ? `windowChallenge3On${varPrefix}` : `windowChallenge3Off${varPrefix}`);
+		classNames.push(vals.runType === 'Filler' ? `windowChallengeOn${varPrefix}` : `windowChallengeOff${varPrefix}`);
+	}
+
+	if (s.hdFarm) {
+		classNames.push(vals.hdType === 'maplevel' ? 'windowMapLevelOff' : 'windowMapLevelOn');
+	}
+
+	const className = classNames.join(' ');
+
+	let tooltipText = `<div id='windowRow${x}' class='row windowRow ${className}'${style}>`;
+	//Delete the row button
+	if (!s.golden) tooltipText += `<div class='windowDelete${varPrefix}' onclick='_mapSettingsRemoveRow("${x}", "${titleText}", true)'><span class='icomoon icon-cross'></span></div>`;
+	//Button to delete the row for golden settings
+	if (s.golden) tooltipText += `<div class='windowDeleteAutoGolden' onclick='_mapSettingsRemoveRow("${x}", "${titleText}", true)'><span class='icomoon icon-cross'></span></div>`;
+	//Active checkbox
+	if (!s.golden) tooltipText += `<div class='windowActive${varPrefix}' style='text-align: center;'>${buildNiceCheckbox('windowActive' + x, null, vals.active)}</div>`;
+	//Active checkbox for golden settings
+	if (s.golden) tooltipText += `<div class='windowActiveAutoGolden' style='text-align: center;'>${buildNiceCheckbox('windowActive' + x, null, vals.active)}</div>`;
+	//Priority input
+	tooltipText += `<div class='windowPriority${varPrefix}'><input value='${vals.priority}' type='number' id='windowPriority${x}'/></div>`;
+	//World input
+	if (!s.golden) tooltipText += `<div class='windowWorld${varPrefix}' style='${backgroundStyle}' oninput='_mapSettingsUpdatePreset("${x}", "${varPrefix}")'><input value='${vals.world}' type='number' id='windowWorld${x}'/></div>`;
+	//End Zone input
+	if (s.mapFarm || s.tributeFarm || s.worshipperFarm || s.hdFarm || s.raiding || s.bionic || s.mapBonus || s.smithyFarm || s.desolation || s.toxicity || s.archaeology || s.alchemy) tooltipText += `<div class='windowEndZone${varPrefix}'><input value='${vals.endzone}' type='number' id='windowEndZone${x}'/></div>`;
+	//Highest Void Zone input - SHOULD BE CONVERTED TO USE END ZONE INSTEAD!
+	if (s.voidMap) tooltipText += `<div class='windowMaxVoidZone'><input value='${vals.maxvoidzone}' type='number' id='windowMaxVoidZone${x}'/></div>`;
+	//Raiding Zone input
+	if (s.bionic) tooltipText += `<div class='windowRaidingZone${varPrefix}'><input value='${vals.raidingzone}' type='number' id='windowRaidingZone${x}'/></div>`;
+	//Map Level Dropdown for Raiding
+	if (s.raiding) tooltipText += `<div class='windowRaidingZone${varPrefix}'><select value='${vals.raidingzone}' id='windowRaidingZone${x}'>${dropdowns.mapLevel}</select></div>`;
+	//Cell input
+	if (!s.golden && !s.desolation) tooltipText += `<div class='windowCell${varPrefix}'><input value='${vals.cell}' type='number' id='windowCell${x}'/></div>`;
+	//Auto level checkbox
+	if (s.mapFarm || s.tributeFarm || s.smithyFarm || s.mapBonus || s.worshipperFarm || s.archaeology || s.insanity || s.alchemy || s.hypothermia || s.hdFarm || s.toxicity) tooltipText += `<div class='windowAutoLevel${varPrefix}' style='text-align: center; padding-left: 5px;'>${buildNiceCheckboxAutoLevel('windowAutoLevel' + x, null, vals.autoLevel, x, varPrefix)}</div>`;
+	//Level input
+	if (s.mapFarm || s.tributeFarm || s.smithyFarm || s.mapBonus || s.worshipperFarm || s.archaeology || s.insanity || s.alchemy || s.hypothermia || s.hdFarm || s.toxicity) tooltipText += `<div class='windowLevel${varPrefix}'><input value='${vals.level}' type='number' id='windowLevel${x}'/></div>`;
+	//Map Type dropdown
+	if (s.tributeFarm || s.smithyFarm || s.mapFarm || s.alchemy) tooltipText += `<div class='windowMapTypeDropdown${varPrefix}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.mapType}' id='windowMapTypeDropdown${x}'>${dropdowns.mapType}</select></div>`;
+	//World input
+	if (s.worshipperFarm) tooltipText += `<div class='windowWorshipper'><input value='${vals.worshipper}' type='number' id='windowWorshipper${x}'/></div>`;
+	//Repeat input (Map Farm);
+	if (s.mapFarm || s.toxicity) tooltipText += `<div class='windowRepeat${varPrefix}'><input value='${vals.repeat}' type='value' id='windowRepeat${x}'/></div>`;
+	//HD Ratio to farm when above
+	if (s.mapFarm || s.mapBonus) tooltipText += `<div class='windowHDRatio${varPrefix}'><input value='${vals.hdRatio}' type='value' id='windowHDRatio${x}'/></div>`;
+	//Map Bonus to farm when below
+	if (s.mapBonus) tooltipText += `<div class='windowMapStacks'><input value='${vals.repeat}' type='number' id='windowRepeat${x}'/></div>`;
+	//Smithies to farm for
+	if (s.smithyFarm) tooltipText += `<div class='windowSmithies'><input value='${vals.repeat}' type='number' id='windowRepeat${x}'/></div>`;
+	if (s.hdFarm) {
+		//HD Base value
+		tooltipText += `<div class='windowHDBase'><div style='text-align: center; font-size: 0.6vw;'>${vals.hdType === 'maplevel' ? 'Map Level' : ''}</div><input value='${vals.hdBase}' type='number' id='windowRepeat${x}'/></div>`;
+		//HD Mult value
+		tooltipText += `<div class='windowHDMult'><input value='${vals.hdMult}' type='number' id='windowHDMult${x}'/></div>`;
+		//HD Type dropdown
+		tooltipText += `<div class='windowHDType' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.hdType}' id='windowHDType${x}'>${dropdowns.hdType}</select></div>`;
+		//Map Cap
+		tooltipText += `<div class='windowMapCap'><input value='${vals.mapCap}' type='number' id='windowMapCap${x}'/></div>`;
+	}
+	//Tributes to farm for
+	if (s.tributeFarm) tooltipText += `<div class='windowTributes'><input value='${vals.tributes}' type='number' id='windowTributes${x}'/></div>`;
+	//Meteorologists to farm for
+	if (s.tributeFarm) tooltipText += `<div class='windowMets'><input value='${vals.mets}' type='number' id='windowMets${x}'/></div>`;
+	//Black bogs to run
+	if (s.quagmire) tooltipText += `<div class='windowBogs'><input value='${vals.bogs}' type='number' id='windowBogs${x}'/></div>`;
+	//Archaeology Relic String
+	if (s.archaeology) {
+		tooltipText += `<div class='windowRelics${varPrefix}'><input value='${vals.relics}' type='value' id='windowRelics${x}'/></div>`;
+		tooltipText += `<div class='windowMapCap'><input value='${vals.mapCap}' type='number' id='windowMapCap${x}'/></div>`;
+	}
+	//Insanity stacks to farm for
+	if (s.insanity) tooltipText += `<div class='windowInsanity'><input value='${vals.insanity}' type='number' id='windowInsanity${x}'/></div>`;
+	//Alchemy potion type dropdown
+	if (s.alchemy) tooltipText += `<div class='windowPotionType' onchange='_mapSettingsUpdatePreset(${x})'><select value='${vals.potionstype}' id='windowPotionType${x}'>${dropdowns.potionTypes}</select></div>`;
+	//Alchemy potion input
+	if (s.alchemy) tooltipText += `<div class='windowPotionNumber'><input value='${vals.potionsnumber}' type='number' id='windowPotionNumber${x}'/></div>`;
+	//Hypothermia bonfire goal
+	if (s.hypothermia) tooltipText += `<div class='windowBonfire'><input value='${vals.bonfire}' type='number' id='windowBonfire${x}'/></div>`;
+	//Bone Shrine - Charges to use
+	if (s.boneShrine) tooltipText += `<div class='windowBoneAmount'><input value='${vals.boneamount}' type='number' id='windowBoneAmount${x}'/></div>`;
+	//Bone Shrine - Use charges when below this amount
+	if (s.boneShrine) tooltipText += `<div class='windowBoneBelow'><input value='${vals.bonebelow}' type='number' id='windowBoneBelow${x}'/></div>`;
+	//Void HD Dropdown #1
+	if (s.voidMap) tooltipText += `<div class='windowHDTypeVoidMap' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.hdType}' id='windowHDTypeVoidMap${x}'>${dropdowns.hdType}</select></div>`;
+	//Run void maps when HD Ratio is above this value
+	if (s.voidMap) tooltipText += `<div class='windowVoidHDRatio'><input value='${vals.hdRatio}' type='number' id='windowHDRatio${x}'/></div>`;
+	//Void HD Dropdown #2
+	if (s.voidMap) tooltipText += `<div class='windowHDTypeVoidMap onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.hdType2}' id='windowHDTypeVoidMap2${x}'>${dropdowns.hdType2}</select></div>`;
+	//Run void maps when Void HD Ratio is above this value
+	if (s.voidMap) tooltipText += `<div class='windowVoidHDRatio'><input value='${vals.voidHDRatio}' type='number' id='windowVoidHDRatio${x}'/></div>`;
+	//Job ratio input
+	if (!s.raiding && !s.bionic && !s.smithyFarm && !s.golden) tooltipText += `<div class='windowJobRatio${varPrefix}'><input value='${vals.jobratio}' type='value' id='windowJobRatio${x}'/></div>`;
+	//Repeat every X zones
+	if (s.mapFarm || s.tributeFarm || s.worshipperFarm || s.raiding || s.bionic || s.smithyFarm || s.desolation || s.toxicity || s.archaeology || s.alchemy) tooltipText += `<div class='windowRepeatEvery${varPrefix}'><input value='${vals.repeatevery}' type='number' id='windowRepeatEvery${x}'/></div>`;
+	//Gather type dropdown for bone shrines
+	if (s.boneShrine) tooltipText += `<div class='windowBoneGather'><select value='${vals.gather}' id='windowBoneGather${x}'>${dropdowns.gather}</select></div>`;
+	//Raiding type dropdown
+	if (s.raiding) tooltipText += `<div class='windowRaidingDropdown' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.raidingDropdown}' id='windowRaidingDropdown${x}'>${dropdowns.raidingTypes}</select></div>`;
+	//Special cache to use dropdown
+	if (s.mapFarm || s.alchemy || s.mapBonus || s.insanity || s.desolation || s.toxicity) tooltipText += `<div class='windowSpecial${varPrefix}'  onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.special}' id='windowSpecial${x}'>${dropdowns.special}</select></div>`;
+	//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
+	if (s.mapFarm || s.alchemy || s.mapBonus || s.insanity || s.desolation || s.toxicity) tooltipText += `<div class='windowGather'><div style='text-align: center; font-size: 0.6vw;'>Gather</div><onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.gather}' id='windowGather${x}'>${dropdowns.gather}</select></div>`;
+	//Trimple/Atlantrimp checkbox
+	if (s.mapFarm || s.tributeFarm || s.boneShrine) tooltipText += `<div class='windowAtlantrimp' style='text-align: center;'>${buildNiceCheckbox('windowAtlantrimp' + x, null, vals.atlantrimp)}</div>`;
+	//Melting point checkbox
+	if (s.smithyFarm) tooltipText += `<div class='windowMeltingPoint' style='text-align: center;'>${buildNiceCheckbox('windowMeltingPoint' + x, null, vals.meltingPoint)}</div>`;
+	//Buy buildings checkbox
+	if (s.tributeFarm) tooltipText += `<div class='windowBuildings' style='text-align: center;'>${buildNiceCheckbox('windowBuildings' + x, null, vals.buildings)}</div>`;
+	//Buy buildings checkbox
+	if (s.insanity) tooltipText += `<div class='windowBuildings' style='text-align: center;'>${buildNiceCheckbox('windowBuildings' + x, null, vals.destack)}</div>`;
+	//Prestige Goal dropdown
+	if (s.raiding || s.bionic || s.desolation) tooltipText += `<div class='windowPrestigeGoal${varPrefix}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.prestigeGoal}' id='windowPrestigeGoal${x}'>${dropdowns.prestigeGoal}</select></div>`;
+	//Increment Maps checkbox
+	if (s.raiding) tooltipText += `<div class='windowIncrementMaps' style='text-align: center;'>${buildNiceCheckbox('windowIncrementMapsDefault' + x, null, vals.incrementMaps)}</div>`;
+	//Auto Golden input
+	if (s.golden) tooltipText += `<div class='windowAmtAutoGolden'><input value='${vals.goldenNumber}' type='number' id='windowWorld${x}'/></div>`;
+	//Type of golden dropdown
+	if (s.golden) tooltipText += `<div class='windowTypeAutoGolden' onchange='_mapSettingsUpdatePreset(${x})'><select value='${vals.goldentype}' id='windowGoldenType${x}'>${dropdowns.goldenType}</select></div>`;
+	//Run Type dropdown
+	if (runTypeSetting) tooltipText += `<div class='windowRunType${varPrefix}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.runType}' id='windowRunType${x}'>${dropdowns.runType}</select></div>`;
+	//Filler challenges dropdown
+	if (runTypeSetting) tooltipText += `<div class='windowChallenge${varPrefix}'><div style='text-align: center; font-size: 0.6vw;'>Challenge</div><select value='${vals.challenge}' id='windowChallenge${x}'>${dropdowns.challenge}</select></div>`;
+	//C2/C3 challenges dropdown
+	if (runTypeSetting) tooltipText += `<div class='windowChallenge3${varPrefix}'><div style='text-align: center; font-size: 0.6vw;'>Challenge${currSettingUniverse + 1}</div><select value='${vals.challenge3}' id='windowChallenge3${x}'>${dropdowns.c2}</select></div>`;
+	//C2/C3 challenges dropdown
+	if (runTypeSetting) tooltipText += `<div class='windowChallengeOneOff${varPrefix}'><div style='text-align: center; font-size: 0.6vw;'>One Offs</div><select value='${vals.windowChallengeOneOff}' id='windowChallengeOneOff${x}'>${dropdowns.oneOff}</select></div>`;
+	//Portal After Void Maps checkbox
+	if (s.voidMap) tooltipText += `<div class='windowPortalAfter' style='text-align: center;'>${buildNiceCheckbox('windowPortalAfter' + x, null, vals.portalAfter)}</div>`;
+	tooltipText += '</div>';
+
+	return tooltipText;
 }
 
 function buildNiceCheckboxAutoLevel(id, extraClass = '', enabled, index, varPrefix) {
@@ -717,45 +660,44 @@ function buildNiceCheckboxAutoLevel(id, extraClass = '', enabled, index, varPref
 	const title = enabled ? 'Checked' : 'Not Checked';
 	extraClass = `${extraClass} ${defaultClasses}`;
 
-	let html = `
-        <span title='${title}' id='${id}' class='${extraClass} ${isChecked}' onclick='swapNiceCheckbox(this); updateWindowPreset("${index}", "${varPrefix}");'></span>
+	const html = `
+        <span title='${title}' id='${id}' class='${extraClass} ${isChecked}' onclick='swapNiceCheckbox(this); _mapSettingsUpdatePreset("${index}", "${varPrefix}");'></span>
     `;
 
 	const tooltipDiv = document.getElementById('tooltipDiv');
-	if (tooltipDiv.classList.contains('tooltipExtraLg') && (tooltipDiv.children.tipTitle.innerText.includes('Farm') || tooltipDiv.children.tipTitle.innerText.includes('Map Bonus'))) {
-		updateWindowPreset(index, varPrefix);
+	if (tooltipDiv.classList.contains('tooltipExtraLg') && ['Farm', 'Map Bonus'].some((word) => tooltipDiv.children.tipTitle.innerText.includes(word))) {
+		_mapSettingsUpdatePreset(index, varPrefix);
 	}
 
 	return html;
 }
 
 function settingsWindowSave(titleText, varPrefix, reopen) {
-	var setting = [];
-	var error = '';
-	var errorMessage = false;
-	var maxSettings = 30;
+	let error = '';
+	let maxSettings = 31;
 
-	var mapFarm = titleText.includes('Map Farm');
-	var mapBonus = titleText.includes('Map Bonus');
-	var voidMap = titleText.includes('Void Map');
-	var hdFarm = titleText.includes('HD Farm');
-	var raiding = titleText.includes('Raiding');
-	var bionic = titleText.includes('Bionic');
-	var toxicity = titleText.includes('Toxicity');
+	const mapFarm = titleText.includes('Map Farm');
+	const mapBonus = titleText.includes('Map Bonus');
+	const voidMap = titleText.includes('Void Map');
+	const hdFarm = titleText.includes('HD Farm');
+	const raiding = titleText.includes('Raiding');
+	const bionic = titleText.includes('Bionic');
+	const toxicity = titleText.includes('Toxicity');
 
-	var quagmire = titleText.includes('Quagmire');
-	var archaeology = titleText.includes('Archaeology');
-	var insanity = titleText.includes('Insanity');
-	var alchemy = titleText.includes('Alchemy');
-	var hypothermia = titleText.includes('Hypothermia');
-	var desolation = titleText.includes('Desolation');
-	var boneShrine = titleText.includes('Bone Shrine');
-	var golden = titleText.includes('Golden');
-	var tributeFarm = titleText.includes('Tribute Farm');
-	var smithyFarm = titleText.includes('Smithy Farm');
-	var worshipperFarm = titleText.includes('Worshipper Farm');
+	const quagmire = titleText.includes('Quagmire');
+	const archaeology = titleText.includes('Archaeology');
+	const insanity = titleText.includes('Insanity');
+	const alchemy = titleText.includes('Alchemy');
+	const hypothermia = titleText.includes('Hypothermia');
+	const desolation = titleText.includes('Desolation');
+	const boneShrine = titleText.includes('Bone Shrine');
+	const golden = titleText.includes('Golden');
+	const tributeFarm = titleText.includes('Tribute Farm');
+	const smithyFarm = titleText.includes('Smithy Farm');
+	const worshipperFarm = titleText.includes('Worshipper Farm');
 
-	var defaultSetting = {};
+	const setting = [];
+	const defaultSetting = {};
 
 	if (!golden) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
@@ -797,17 +739,12 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
 		}
 		if (hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
-
-		if (defaultSetting.cell < 1) defaultSetting.cell = 1;
-		if (defaultSetting.cell > 100) defaultSetting.cell = 100;
-
-		if (defaultSetting.repeat < 0) defaultSetting.repeat = 0;
 	}
 
 	for (var x = 0; x < maxSettings; x++) {
-		var thisSetting = {};
+		const thisSetting = {};
 
-		var world = document.getElementById('windowWorld' + x);
+		let world = document.getElementById('windowWorld' + x);
 		if (!world || world.value === '-2') {
 			continue;
 		}
@@ -897,47 +834,36 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		}
 
 		if (!golden && (isNaN(thisSetting.world) || thisSetting.world < 6)) {
-			error += ' Preset ' + (x + 1) + " needs a value for Start Zone that's greater than 5.<br>";
-			errorMessage = true;
+			error += ' Line #' + (x + 1) + " needs a value for Start Zone that's greater than 5.<br>";
 		} else if (!golden && thisSetting.world > 1000) {
-			error += ' Preset ' + (x + 1) + " needs a value for Start Zone that's less than 1000.<br>";
-			errorMessage = true;
+			error += ' Line #' + (x + 1) + " needs a value for Start Zone that's less than 1000.<br>";
 		}
 		if (!golden && thisSetting.world + thisSetting.level < 6 && !thisSetting.autoLevel) {
-			error += ' Preset ' + (x + 1) + " can't have a zone and map combination below zone 6.<br>";
-			errorMessage = true;
+			error += ' Line #' + (x + 1) + " can't have a zone and map combination below zone 6.<br>";
 		}
 		if (mapBonus && thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0)) {
-			error += ' Preset ' + (x + 1) + " can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.<br>";
-			errorMessage = true;
+			error += ' Line #' + (x + 1) + " can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.<br>";
 		}
 		if (mapBonus && thisSetting.repeat < 1) {
-			error += ' Preset ' + (x + 1) + " can't have a map bonus value lower than 1 as you won't be able to get any map stacks.<br>";
-			errorMessage = true;
+			error += ' Line #' + (x + 1) + " can't have a map bonus value lower than 1 as you won't be able to get any map stacks.<br>";
 		}
 		if (mapFarm && thisSetting.repeat < 1 && thisSetting.repeat !== -1) {
-			error += ' Preset ' + (x + 1) + " can't have a repeat value lower than 1 as you won't run any maps when this line runs.<br>";
-			errorMessage = true;
+			error += ' Line #' + (x + 1) + " can't have a repeat value lower than 1 as you won't run any maps when this line runs.<br>";
 		}
 		if (insanity) {
-			if (thisSetting.level === 0 && !thisSetting.autoLevel && thisSetting.destack === false) {
-				error += ' Preset ' + (x + 1) + " can't have a map level of 0 as you won't gain any Insanity stacks running this map.<br>";
-				errorMessage = true;
+			if (thisSetting.level === 0 && !thisSetting.autoLevel && !thisSetting.destack) {
+				error += ' Line #' + (x + 1) + " can't have a map level of 0 as you won't gain any Insanity stacks running this map.<br>";
 			}
-			if (thisSetting.level < 0 && thisSetting.destack === false && !thisSetting.autoLevel) {
-				error += ' Preset ' + (x + 1) + " can't have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
-				errorMessage = true;
+			if (thisSetting.level < 0 && !thisSetting.destack && !thisSetting.autoLevel) {
+				error += ' Line #' + (x + 1) + " can't have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			}
-			if (thisSetting.level >= 0 && thisSetting.destack === true && !thisSetting.autoLevel) {
-				error += ' Preset ' + (x + 1) + " can't have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
-				errorMessage = true;
+			if (thisSetting.level >= 0 && thisSetting.destack && !thisSetting.autoLevel) {
+				error += ' Line #' + (x + 1) + " can't have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			}
 			if (thisSetting.insanity < 0) {
-				error += ' Preset ' + (x + 1) + " can't have a insanity value below 0.<br>";
-				errorMessage = true;
+				error += ' Line #' + (x + 1) + " can't have a insanity value below 0.<br>";
 			}
 		}
-		if (errorMessage === true) continue;
 		if (thisSetting.level > 10) thisSetting.level = 10;
 		if (thisSetting.endzone < thisSetting.world) thisSetting.endzone = thisSetting.world;
 		if (thisSetting.cell < 1) thisSetting.cell = 1;
@@ -949,10 +875,16 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (thisSetting.maxvoidzone < thisSetting.world) thisSetting.maxvoidzone = thisSetting.world;
 
 		if (thisSetting.repeat < 0 && thisSetting.repeat !== -1) thisSetting.repeat = 0;
-		if (raiding && !bionic && thisSetting.raidingzone - thisSetting.world > 10) thisSetting.raidingzone = thisSetting.world + 10;
 
 		setting.push(thisSetting);
 	}
+
+	if (error) {
+		const elem = document.getElementById('windowError');
+		if (elem) elem.innerHTML = error;
+		return;
+	}
+
 	if (golden) {
 		setting.sort(function (a, b) {
 			if (a.priority === b.priority) return 1;
@@ -967,36 +899,19 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		setting.unshift(defaultSetting);
 	}
 
-	if (error) {
-		var elem = document.getElementById('windowError');
-		if (elem) elem.innerHTML = error;
-		return;
-	}
-	var value = currSettingUniverse === 2 ? 'valueU2' : 'value';
-
-	//Set settings inside AT
 	setPageSetting(varPrefix + 'Settings', setting, currSettingUniverse);
 	if (!golden) {
-		//Set the amount of rows into the save file so that we can mark settings as done properly
-		var obj = [];
-		for (var x = 0; x < 30; x++) {
-			obj[x] = {};
-			obj[x].done = '';
-		}
-
-		if (typeof game.global.addonUser !== 'object') setupAddonUser(true);
-		if (typeof game.global.addonUser[varPrefix + 'Settings'] === 'undefined') setupAddonUser(true);
-		game.global.addonUser[varPrefix + 'Settings'][value] = obj;
+		const value = currSettingUniverse === 2 ? 'valueU2' : 'value';
+		game.global.addonUser[varPrefix + 'Settings'][value] = Array.from({ length: 31 }, () => ({ done: '' }));
 	}
 
-	var elem = document.getElementById('tooltipDiv');
+	if (!golden && !defaultSetting.active) debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.", 'mazSettings');
+	document.getElementById('tooltipDiv').style.overflowY = '';
+
+	const elem = document.getElementById('tooltipDiv');
 	swapClass(document.getElementById('tooltipDiv').classList[0], 'tooltipExtraNone', elem);
 	cancelTooltip(true);
 	if (reopen) MAZLookalike('mapSettings', titleText);
-
-	saveSettings();
-	if (!golden && !getPageSetting(varPrefix + 'Settings', currSettingUniverse)[0].active) debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.", 'mazSettings');
-	document.getElementById('tooltipDiv').style.overflowY = '';
 
 	//Disable Void Map global variables when saving Void Map settings to ensure we aren't running voids at the wrong zone after updating.
 	if (voidMap) {
@@ -1022,29 +937,29 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	farmingDecision();
 }
 
-function mapSettingsHelpWindow(titleText, trimple) {
-	//Setting up the Help onclick setting.
-	var mazHelp = 'Welcome to <b>' + titleText + '</b> settings!';
-	var mapFarm = titleText.includes('Map Farm');
-	var mapBonus = titleText.includes('Map Bonus');
-	var voidMap = titleText.includes('Void Map');
-	var hdFarm = titleText.includes('HD Farm');
-	var raiding = titleText.includes('Raiding');
-	var bionic = titleText.includes('Bionic');
-	var toxicity = titleText.includes('Toxicity');
-	var tributeFarm = titleText.includes('Tribute Farm');
-	var smithyFarm = titleText.includes('Smithy Farm');
-	var worshipperFarm = titleText.includes('Worshipper Farm');
-	var quagmire = titleText.includes('Quagmire');
-	var archaeology = titleText.includes('Archaeology');
-	var insanity = titleText.includes('Insanity');
-	var alchemy = titleText.includes('Alchemy');
-	var hypothermia = titleText.includes('Hypothermia');
-	var desolation = titleText.includes('Desolation');
-	var boneShrine = titleText.includes('Bone Shrine');
-	var golden = titleText.includes('Golden');
+function mapSettingsHelpWindow(titleText) {
+	let mazHelp = 'Welcome to <b>' + titleText + '</b> settings!';
+	const mapFarm = titleText.includes('Map Farm');
+	const mapBonus = titleText.includes('Map Bonus');
+	const voidMap = titleText.includes('Void Map');
+	const hdFarm = titleText.includes('HD Farm');
+	const raiding = titleText.includes('Raiding');
+	const bionic = titleText.includes('Bionic');
+	const toxicity = titleText.includes('Toxicity');
+	const tributeFarm = titleText.includes('Tribute Farm');
+	const smithyFarm = titleText.includes('Smithy Farm');
+	const worshipperFarm = titleText.includes('Worshipper Farm');
+	const quagmire = titleText.includes('Quagmire');
+	const archaeology = titleText.includes('Archaeology');
+	const insanity = titleText.includes('Insanity');
+	const alchemy = titleText.includes('Alchemy');
+	const hypothermia = titleText.includes('Hypothermia');
+	const desolation = titleText.includes('Desolation');
+	const boneShrine = titleText.includes('Bone Shrine');
+	const golden = titleText.includes('Golden');
 
-	var radonSetting = currSettingUniverse === 2;
+	const radonSetting = currSettingUniverse === 2;
+	const trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 
 	if (!golden) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
 	else if (golden) {
@@ -1209,7 +1124,7 @@ function mapSettingsHelpWindow(titleText, trimple) {
 
 	if (raiding) {
 		//Raiding Zone
-		var raidingZone = bionic ? 'Raiding Zone' : 'Map Level';
+		const raidingZone = bionic ? 'Raiding Zone' : 'Map Level';
 		mazHelp += '<li><b>' + raidingZone + '</b> - The ' + raidingZone.split(' ')[1].toLowerCase() + " you'd like to raid when this line is run. If <b>Repeat Every X</b> is set to a value above 0 then it will also raise the " + raidingZone.toLowerCase() + ' by that value everytime this line runs.</li>';
 		if (!bionic) mazHelp += '<li><b>Frag Type</b> - The choices how for aggresively the script will spend fragments on maps.</li>';
 		if (!bionic) mazHelp += '<li class="indent"><b>Frag</b>: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you\'re trying to purchase.</li>';
@@ -1314,7 +1229,7 @@ function mapSettingsHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Golden Type</b> - The type of Golden upgrade that you'd like to get during this line.</li>";
 
 		mazHelp += '<br>';
-		var heliumType = currSettingUniverse === 2 ? 'Radon' : 'Helium';
+		const heliumType = currSettingUniverse === 2 ? 'Radon' : 'Helium';
 		mazHelp += `You are able to have multiple lines of the same type. For example 8 Void, 12 Battle, 10 ${heliumType}, 8 Battle would end with 8 Golden Voids, 20 Golden Battle, and 10 Golden ${heliumType} upgrades. Requests to buy Golden Void will be skipped if it would put you above 72%.`;
 	}
 
@@ -1322,20 +1237,14 @@ function mapSettingsHelpWindow(titleText, trimple) {
 }
 
 function windowToggleHelp(windowWidth) {
-	var mazContainer = document.getElementById('windowContainer');
-	var helpContainer = document.getElementById('mazHelpContainer');
-	var parentWindow = document.getElementById('tooltipDiv');
-	//Changing window size depending on setting being opened.
+	const mazContainer = document.getElementById('windowContainer');
+	const helpContainer = document.getElementById('mazHelpContainer');
+	const parentWindow = document.getElementById('tooltipDiv');
 	if (!mazContainer || !helpContainer) return;
-	if (mazContainer.style.display === 'block') {
-		mazContainer.style.display = 'none';
-		helpContainer.style.display = 'block';
-		parentWindow.style.overflowY = '';
-	} else {
-		mazContainer.style.display = 'block';
-		helpContainer.style.display = 'none';
-		parentWindow.style.overflowY = '';
-	}
+
+	mazContainer.style.display = mazContainer.style.display === 'block' ? 'none' : 'block';
+	helpContainer.style.display = helpContainer.style.display === 'block' ? 'none' : 'block';
+	parentWindow.style.overflowY = '';
 	_verticalCenterTooltip();
 	parentWindow.style.top = '10%';
 	parentWindow.style.left = '1%';
@@ -1346,27 +1255,27 @@ function windowToggleHelp(windowWidth) {
 	if (document.querySelectorAll('#mazHelpContainer li').length > 13) parentWindow.style.overflowY = 'scroll';
 }
 
-function addRow(varPrefix, titleText) {
-	var settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
+function _mapSettingsAddRow(varPrefix, titleText) {
+	let settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
 	//Special case for HD Farm settings
 	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
 
-	for (var x = 0; x < 30; x++) {
+	for (var x = 0; x < 31; x++) {
 		var elem = document.getElementById('windowWorld' + x);
 		if (!elem) continue;
 
 		if (elem.value === '-2') {
-			var parent = document.getElementById('windowRow' + x);
+			const parent = document.getElementById('windowRow' + x);
 			if (parent) {
 				parent.style.display = 'block';
 				if (!titleText.includes('Golden') && !titleText.includes('Desolation')) elem.value = game.global.world < 6 ? 6 : game.global.world;
 
 				if (currSettingUniverse === 1) {
 					//Changing rows to use the colour of the Nature type that the world input will be run on.
-					var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
-					var natureList = ['None', 'Poison', 'Wind', 'Ice'];
-					var index = natureList.indexOf(getZoneEmpowerment(elem.value));
-					elem.parentNode.style.background = natureStyle[index];
+					const natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
+					const natureList = ['None', 'Poison', 'Wind', 'Ice'];
+					const natureIndex = natureList.indexOf(getZoneEmpowerment(elem.value));
+					elem.parentNode.style.background = natureStyle[natureIndex];
 				}
 
 				if (!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm') && document.getElementById('windowRepeat' + x) !== null) document.getElementById('windowRepeat' + x).value = 0;
@@ -1387,7 +1296,7 @@ function addRow(varPrefix, titleText) {
 				)
 					document.getElementById('windowEndZone' + x).value = 999;
 				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null) document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
-				if (document.getElementById('windowRaidingZone' + x) !== null) document.getElementById('windowRaidingZone' + x).value = elem.value;
+				if (titleText.includes('Bionic') && document.getElementById('windowRaidingZone' + x) !== null) document.getElementById('windowRaidingZone' + x).value = elem.value;
 				if (document.getElementById('windowBoneGather' + x) !== null) document.getElementById('windowBoneGather' + x).value = 'food';
 				if (document.getElementById('windowBuildings' + x) !== null) {
 					if (titleText.includes('Insanity')) document.getElementById('windowBuildings' + x).value = false;
@@ -1400,10 +1309,9 @@ function addRow(varPrefix, titleText) {
 				if (document.getElementById('windowMeltingPoint' + x) !== null) document.getElementById('windowMeltingPoint' + x).value = false;
 				if (document.getElementById('windowPortalAfter' + x) !== null) document.getElementById('windowPortalAfter' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null) document.getElementById('windowAutoLevel' + x).value = true;
-				if (document.getElementById('windowMapCap' + x) !== null && typeof getPageSetting(settingName + 'Settings', currSettingUniverse)[0].mapCap !== 'undefined') document.getElementById('windowMapCap' + x).value = getPageSetting(settingName + 'Settings', currSettingUniverse)[0].mapCap;
 
 				if (titleText.includes('Map Bonus') && document.getElementById('windowLevel' + x) !== null) document.getElementById('windowLevel' + x).value = 0;
-				updateWindowPreset(x, varPrefix);
+				_mapSettingsUpdatePreset(x, varPrefix);
 				swapClass('disabled', 'active', parent);
 			}
 		}
@@ -1417,7 +1325,7 @@ function addRow(varPrefix, titleText) {
 					parent2.style.display = 'block';
 					if (titleText.includes('Desolation')) elem.value = game.global.world < 6 ? 6 : game.global.world;
 					else elemWorld.value = 0;
-					updateWindowPreset(x, varPrefix);
+					_mapSettingsUpdatePreset(x, varPrefix);
 					break;
 				}
 			}
@@ -1429,23 +1337,23 @@ function addRow(varPrefix, titleText) {
 				if (parent2) {
 					parent2.style.display = 'block';
 					elemCell.value = 1;
-					updateWindowPreset(x, varPrefix);
+					_mapSettingsUpdatePreset(x, varPrefix);
 					break;
 				}
 			}
 		}
 	}
 
-	var elem = document.getElementById('tooltipDiv');
-	elem.style.top = '10%';
-	elem.style.left = '1%';
-	elem.style.height = 'auto';
-	elem.style.maxHeight = window.innerHeight * 0.85 + 'px';
-	if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) elem.style.overflowY = 'scroll';
-	else elem.style.overflowY = 'none';
+	const tooltipDiv = document.getElementById('tooltipDiv');
+	tooltipDiv.style.top = '10%';
+	tooltipDiv.style.left = '1%';
+	tooltipDiv.style.height = 'auto';
+	tooltipDiv.style.maxHeight = window.innerHeight * 0.85 + 'px';
+	if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) tooltipDiv.style.overflowY = 'scroll';
+	else tooltipDiv.style.overflowY = 'none';
 
 	var btnElem = document.getElementById('windowAddRowBtn');
-	for (var y = 0; y < 30; y++) {
+	for (var y = 0; y < 31; y++) {
 		var elem = document.getElementById('windowWorld' + y);
 		if (elem && elem.value === '-2') {
 			btnElem.style.display = 'inline-block';
@@ -1460,31 +1368,31 @@ function addRow(varPrefix, titleText) {
 	btnElem.style.display = 'none';
 }
 
-function removeRow(index, titleText) {
-	var mapFarm = titleText.includes('Map Farm');
-	var mapBonus = titleText.includes('Map Bonus');
-	var voidMap = titleText.includes('Void Map');
-	var hdFarm = titleText.includes('HD Farm');
-	var raiding = titleText.includes('Raiding');
-	var bionic = titleText.includes('Bionic');
-	var toxicity = titleText.includes('Toxicity');
-
-	var quagmire = titleText.includes('Quagmire');
-	var archaeology = titleText.includes('Archaeology');
-	var insanity = titleText.includes('Insanity');
-	var alchemy = titleText.includes('Alchemy');
-	var hypothermia = titleText.includes('Hypothermia');
-	var desolation = titleText.includes('Desolation');
-	var boneShrine = titleText.includes('Bone Shrine');
-	var golden = titleText.includes('Golden');
-
-	var tributeFarm = titleText.includes('Tribute Farm');
-	var smithyFarm = titleText.includes('Smithy Farm');
-	var worshipperFarm = titleText.includes('Worshipper Farm');
-
-	var elem = document.getElementById('windowRow' + index);
+function _mapSettingsRemoveRow(index, titleText) {
+	let elem = document.getElementById('windowRow' + index);
 	if (!elem) return;
-	var checkBox;
+
+	const mapFarm = titleText.includes('Map Farm');
+	const mapBonus = titleText.includes('Map Bonus');
+	const voidMap = titleText.includes('Void Map');
+	const hdFarm = titleText.includes('HD Farm');
+	const raiding = titleText.includes('Raiding');
+	const bionic = titleText.includes('Bionic');
+	const toxicity = titleText.includes('Toxicity');
+
+	const quagmire = titleText.includes('Quagmire');
+	const archaeology = titleText.includes('Archaeology');
+	const insanity = titleText.includes('Insanity');
+	const alchemy = titleText.includes('Alchemy');
+	const hypothermia = titleText.includes('Hypothermia');
+	const desolation = titleText.includes('Desolation');
+	const boneShrine = titleText.includes('Bone Shrine');
+	const golden = titleText.includes('Golden');
+
+	const tributeFarm = titleText.includes('Tribute Farm');
+	const smithyFarm = titleText.includes('Smithy Farm');
+	const worshipperFarm = titleText.includes('Worshipper Farm');
+
 	document.getElementById('windowWorld' + index).value = -2;
 	if (!golden && !desolation) document.getElementById('windowCell' + index).value = -1;
 	if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) document.getElementById('windowLevel' + index).value = 0;
@@ -1509,32 +1417,32 @@ function removeRow(index, titleText) {
 	if (voidMap) document.getElementById('windowVoidHDRatio' + index).value = 0;
 
 	if (mapFarm || tributeFarm || boneShrine) {
-		checkBox = document.getElementById('windowAtlantrimp' + index);
+		let checkBox = document.getElementById('windowAtlantrimp' + index);
 		swapClass('icon-', 'icon-checkbox-unchecked', checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (smithyFarm) {
-		checkBox = document.getElementById('windowMeltingPoint' + index);
+		let checkBox = document.getElementById('windowMeltingPoint' + index);
 		swapClass('icon-', 'icon-checkbox-unchecked', checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (voidMap) {
-		checkBox = document.getElementById('windowPortalAfter' + index);
+		let checkBox = document.getElementById('windowPortalAfter' + index);
 		swapClass('icon-', 'icon-checkbox-unchecked', checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (tributeFarm) {
-		checkBox = document.getElementById('windowBuildings' + index);
+		let checkBox = document.getElementById('windowBuildings' + index);
 		swapClass('icon-', 'icon-checkbox-checked', checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}
 	if (insanity) {
-		checkBox = document.getElementById('windowBuildings' + index);
+		let checkBox = document.getElementById('windowBuildings' + index);
 		swapClass('icon-', 'icon-checkbox-checked', checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity) {
-		var checkBox = document.getElementById('windowAutoLevel' + index);
+		let checkBox = document.getElementById('windowAutoLevel' + index);
 		swapClass('icon-', 'icon-checkbox-checked', checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}
@@ -1547,46 +1455,46 @@ function removeRow(index, titleText) {
 	if (boneShrine) document.getElementById('windowBoneGather' + index).value = 'metal';
 
 	elem.style.display = 'none';
-	var btnElem = document.getElementById('windowAddRowBtn');
+	const btnElem = document.getElementById('windowAddRowBtn');
 	btnElem.style.display = 'inline-block';
 	swapClass('active', 'disabled', elem);
 
-	var elem = document.getElementById('tooltipDiv');
-	elem.style.top = '10%';
-	elem.style.left = '1%';
-	elem.style.height = 'auto';
-	elem.style.maxHeight = window.innerHeight * 0.85 + 'px';
-	if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) elem.style.overflowY = 'scroll';
-	else elem.style.overflowY = 'none';
+	const tooltipDiv = document.getElementById('tooltipDiv');
+	tooltipDiv.style.top = '10%';
+	tooltipDiv.style.left = '1%';
+	tooltipDiv.style.height = 'auto';
+	tooltipDiv.style.maxHeight = window.innerHeight * 0.85 + 'px';
+	if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) tooltipDiv.style.overflowY = 'scroll';
+	else tooltipDiv.style.overflowY = 'none';
 }
 
-function updateWindowPreset(index, varPrefix) {
+function _mapSettingsUpdatePreset(index, varPrefix) {
 	varPrefix = !varPrefix ? document.getElementById('tipTitle').innerHTML.replace(/ /g, '') : varPrefix;
 	if (!index) index = '';
-	var row = document.getElementById('windowRow' + index);
+	const row = document.getElementById('windowRow' + index);
 
-	var mapFarm = varPrefix.includes('MapFarm');
-	var mapBonus = varPrefix.includes('MapBonus');
-	var voidMap = varPrefix.includes('VoidMap');
-	var hdFarm = varPrefix.includes('HDFarm');
-	var raiding = varPrefix.includes('Raiding');
-	var toxicity = varPrefix.includes('Toxicity');
+	const mapFarm = varPrefix.includes('MapFarm');
+	const mapBonus = varPrefix.includes('MapBonus');
+	const voidMap = varPrefix.includes('VoidMap');
+	const hdFarm = varPrefix.includes('HDFarm');
+	const raiding = varPrefix.includes('Raiding');
+	const toxicity = varPrefix.includes('Toxicity');
 
-	var archaeology = varPrefix.includes('Archaeology');
-	var insanity = varPrefix.includes('Insanity');
-	var alchemy = varPrefix.includes('Alchemy');
-	var hypothermia = varPrefix.includes('Hypothermia');
-	var desolation = varPrefix.includes('Desolation');
+	const archaeology = varPrefix.includes('Archaeology');
+	const insanity = varPrefix.includes('Insanity');
+	const alchemy = varPrefix.includes('Alchemy');
+	const hypothermia = varPrefix.includes('Hypothermia');
+	const desolation = varPrefix.includes('Desolation');
 
-	var boneShrine = varPrefix.includes('BoneShrine');
-	var golden = varPrefix.includes('Golden');
-	var tributeFarm = varPrefix.includes('Tribute');
-	var smithyFarm = varPrefix.includes('Smithy');
-	var worshipperFarm = varPrefix.includes('Worshipper');
+	const boneShrine = varPrefix.includes('BoneShrine');
+	const golden = varPrefix.includes('Golden');
+	const tributeFarm = varPrefix.includes('Tribute');
+	const smithyFarm = varPrefix.includes('Smithy');
+	const worshipperFarm = varPrefix.includes('Worshipper');
 
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
 		if (index !== '') {
-			var runType = document.getElementById('windowRunType' + index).value;
+			const runType = document.getElementById('windowRunType' + index).value;
 
 			if ((runType !== 'Filler' && row.classList.contains('windowChallengeOn' + varPrefix)) || (runType === 'Filler' && row.classList.contains('windowChallengeOff' + varPrefix))) {
 				newClass = runType === 'Filler' ? 'windowChallengeOn' + varPrefix : 'windowChallengeOff' + varPrefix;
@@ -1610,7 +1518,7 @@ function updateWindowPreset(index, varPrefix) {
 
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || toxicity) {
 		if (index !== '') {
-			var autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
+			const autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
 			swapClass('windowLevel', autoLevel, row);
 			document.getElementById('windowLevel' + index).disabled = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? true : false;
 		}
@@ -1626,7 +1534,7 @@ function updateWindowPreset(index, varPrefix) {
 
 	if (hdFarm) {
 		if (index !== '') {
-			var special = document.getElementById('windowHDType' + index).value;
+			const special = document.getElementById('windowHDType' + index).value;
 
 			newClass = special === 'maplevel' ? 'windowMapLevelOff' : 'windowMapLevelOn';
 			swapClass('windowMapLevel', newClass, row);
@@ -1640,11 +1548,11 @@ function updateWindowPreset(index, varPrefix) {
 
 	//Changing rows to use the colour of the Nature type that the world input will be run on.
 	if (currSettingUniverse === 1 && index !== '') {
-		var world = document.getElementById('windowWorld' + index);
-		var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
-		var natureList = ['None', 'Poison', 'Wind', 'Ice'];
-		var index = natureList.indexOf(getZoneEmpowerment(world.value));
-		world.parentNode.style.background = natureStyle[index];
+		const world = document.getElementById('windowWorld' + index);
+		const natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
+		const natureList = ['None', 'Poison', 'Wind', 'Ice'];
+		const natureIndex = natureList.indexOf(getZoneEmpowerment(world.value));
+		world.parentNode.style.background = natureStyle[natureIndex];
 	}
 }
 
@@ -1659,12 +1567,12 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	const hdTypeDropdowns = ['world', 'map', 'void', 'maplevel', 'hitsSurvived', 'hitsSurvivedVoid'];
 	const hdTypeNames = ['World HD Ratio', 'Map HD Ratio', 'Void HD Ratio', 'Map Level', 'Hits Survived', 'Void Hits Survived'];
 	dropdown.hdType = '';
-	for (var type in hdDropdowns) {
-		var hdKey = hdDropdowns[type];
+	for (let type in hdDropdowns) {
+		let hdKey = hdDropdowns[type];
 		dropdown[hdKey] = '';
 
-		for (var item in hdTypeDropdowns) {
-			var key = hdTypeDropdowns[item];
+		for (let item in hdTypeDropdowns) {
+			let key = hdTypeDropdowns[item];
 			dropdown[hdKey] += "<option value='" + key + "'" + (vals[hdKey] === key ? " selected='selected'" : '') + '>' + hdTypeNames[item] + '</option>';
 		}
 	}
@@ -1672,8 +1580,8 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	//Gather dropdown
 	const gatherDropdowns = ['food', 'wood', 'metal', 'science'];
 	dropdown.gather = '';
-	for (var item in gatherDropdowns) {
-		var key = gatherDropdowns[item];
+	for (let item in gatherDropdowns) {
+		let key = gatherDropdowns[item];
 		dropdown.gather += "<option value='" + key + "'" + (vals.gather === key ? " selected='selected'" : '') + '>' + (key.charAt(0).toUpperCase() + key.slice(1)) + '</option>';
 	}
 
@@ -1683,8 +1591,8 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	dropdown.mapType += "<option value='Map Count'" + (vals.mapType === 'Map Count' ? " selected='selected'" : '') + '>Map Count</option>';
 	if (varPrefix === 'MapFarm') {
 		const mapFarmDropdowns = ['Zone Time', 'Portal Time', 'Daily Reset', 'Skele Spawn'];
-		for (var item in mapFarmDropdowns) {
-			var key = mapFarmDropdowns[item];
+		for (let item in mapFarmDropdowns) {
+			let key = mapFarmDropdowns[item];
 			dropdown.mapType += "<option value='" + key + "'" + (vals.mapType === key ? " selected='selected'" : '') + '>' + key + '</option>';
 		}
 	}
@@ -1692,16 +1600,16 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	//Map Numbers dropdown (0-10)
 	dropdown.mapLevel = "<option value='0'" + (vals.raidingzone === '0' ? " selected='selected'" : '') + '>0</option>';
 	if (universe === 2 ? highestZone >= 50 : highestZone >= 210) {
-		for (var i = 1; i <= 10; i++) {
+		for (let i = 1; i <= 10; i++) {
 			dropdown.mapLevel += "<option value='" + i + "'" + (vals.raidingzone === i.toString() ? " selected='selected'" : '') + '>' + i + '</option>';
 		}
 	}
 
 	//Map Special dropdown
 	dropdown.special = "<option value='0'" + (vals.special === '0' ? " selected='selected'" : '') + '>No Modifier</option>';
-	for (var item in mapSpecialModifierConfig) {
-		var bonusItem = mapSpecialModifierConfig[item];
-		var unlocksAt = universe === 2 ? bonusItem.unlocksAt2 : bonusItem.unlocksAt;
+	for (let item in mapSpecialModifierConfig) {
+		let bonusItem = mapSpecialModifierConfig[item];
+		let unlocksAt = universe === 2 ? bonusItem.unlocksAt2 : bonusItem.unlocksAt;
 		if ((typeof unlocksAt === 'function' && !unlocksAt()) || unlocksAt == -1) continue;
 		if (unlocksAt > highestZone) break;
 		dropdown.special += "<option value='" + item + "'" + (vals.special === item ? " selected='selected'" : '') + '>' + bonusItem.name + '</option>';
@@ -1709,8 +1617,8 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 
 	//Prestige Goal dropdown
 	dropdown.prestigeGoal = "<option value='All'" + (vals.prestigeGoal === 'All' ? " selected='selected'" : '') + '>All</option>';
-	for (var item in Object.keys(MODULES.equipment)) {
-		var key = Object.keys(MODULES.equipment)[item];
+	for (let item in Object.keys(MODULES.equipment)) {
+		let key = Object.keys(MODULES.equipment)[item];
 		if (!game.global.slowDone && (key === 'Arbalest' || key === 'Gambeson')) continue;
 		dropdown.prestigeGoal += "<option value='" + key + "'" + (vals.prestigeGoal === key ? " selected='selected'" : '') + '>' + key + '</option>';
 	}
@@ -1724,8 +1632,8 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	}, {});
 	dropdown.challenge = "<option value='All'" + (vals.challenge === 'All' ? " selected='selected'" : '') + '>All</option>';
 	dropdown.challenge += "<option value='No Challenge'" + (vals.challenge === 'No Challenge' ? " selected='selected'" : '') + '>No Challenge</option>';
-	for (var item in Object.keys(fillerObj)) {
-		var key = Object.keys(fillerObj)[item];
+	for (let item in Object.keys(fillerObj)) {
+		let key = Object.keys(fillerObj)[item];
 		dropdown.challenge += "<option value='" + key + "'" + (vals.challenge === key ? " selected='selected'" : '') + '>' + key + '</option>';
 	}
 
@@ -1735,8 +1643,8 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 		return newObj;
 	}, {});
 	dropdown.c2 = "<option value='All'" + (vals.challenge3 === 'All' ? " selected='selected'" : '') + '>All</option>';
-	for (var item in Object.keys(c2Obj)) {
-		var key = Object.keys(c2Obj)[item];
+	for (let item in Object.keys(c2Obj)) {
+		let key = Object.keys(c2Obj)[item];
 		dropdown.c2 += "<option value='" + key + "'" + (vals.challenge3 === key ? " selected='selected'" : '') + '>' + key + '</option>';
 	}
 
@@ -1746,42 +1654,33 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 		return newObj;
 	}, {});
 	dropdown.oneOff = "<option value='All'" + (vals.challengeOneOff === 'All' ? " selected='selected'" : '') + '>All</option>';
-	for (var item in Object.keys(oneOffObj)) {
-		var key = Object.keys(oneOffObj)[item];
+	for (let item in Object.keys(oneOffObj)) {
+		let key = Object.keys(oneOffObj)[item];
 		dropdown.oneOff += "<option value='" + key + "'" + (vals.challengeOneOff === key ? " selected='selected'" : '') + '>' + key + '</option>';
 	}
 
 	//Run Type options
+	const c2Name = universe === 1 ? 'C2' : 'C3';
 	dropdown.runType = "<option value='All'" + (vals.runType === 'All' ? " selected='selected'" : '') + '>All</option>';
 	dropdown.runType += "<option value='Filler'" + (vals.runType === 'Filler' ? " selected = 'selected'" : '') + ' > Filler</option>';
 	dropdown.runType += " <option value='One Off'" + (vals.runType === 'One Off' ? " selected='selected'" : '') + '>One Offs</option>';
 	dropdown.runType += " <option value='Daily'" + (vals.runType === 'Daily' ? " selected='selected'" : '') + '>Daily</option>';
-	if (universe === 1) dropdown.runType += "<option value='C3'" + (vals.runType === 'C3' ? " selected='selected'" : '') + '>C2</option>';
-	if (universe === 2) dropdown.runType += "<option value='C3'" + (vals.runType === 'C3' ? " selected='selected'" : '') + '>C3</option>';
+	dropdown.runType += `<option value='C3'${vals.runType === 'C3' ? " selected='selected'" : ''}>${c2Name}</option>`;
 
 	//Golden dropdown options
-	if (universe === 1 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='h'" + (vals.goldenType === 'h' ? " selected='selected'" : '') + '>Helium</option>';
-	if (universe === 2 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='r'" + (vals.goldenType === 'r' ? " selected='selected'" : '') + '>Radon</option>';
+	const heliumName = universe === 1 ? 'Helium' : 'Radon';
+	const heliumShortForm = universe === 1 ? 'h' : 'r';
+
+	if (!varPrefix.includes('C3')) dropdown.goldenType = `<option value='${heliumShortForm}'${vals.goldenType === heliumShortForm ? " selected='selected'" : ''}>${heliumName}</option>`;
 	dropdown.goldenType += "<option value='b'" + (vals.goldenType === 'b' ? " selected = 'selected'" : '') + ' >Battle</option>';
 	dropdown.goldenType += "<option value='v'" + (vals.goldenType === 'v' ? " selected = 'selected'" : '') + ' >Void</option>';
 
 	//Alchemy potion types
-	dropdown.potionTypes =
-		"<option value='h'" +
-		(vals.potionstype === 'h' ? " selected='selected'" : '') +
-		">Herby Brew</option>\
-	<option value='g'" +
-		(vals.potionstype === 'g' ? " selected='selected'" : '') +
-		">Gaseous Brew</option>\
-	<option value='f'" +
-		(vals.potionstype === 'f' ? " selected='selected'" : '') +
-		">Potion of Finding</option>\
-	<option value='v'" +
-		(vals.potionstype === 'v' ? " selected='selected'" : '') +
-		">Potion of the Void</option>\
-	<option value='s'" +
-		(vals.potionstype === 's' ? " selected='selected'" : '') +
-		'>Potion of Strength</option>';
+	dropdown.potionTypes = "<option value='h'" + (vals.potionstype === 'h' ? " selected='selected'" : '') + '>Herby Brew</option>';
+	dropdown.potionTypes += "<option value='g'" + (vals.potionstype === 'g' ? " selected='selected'" : '') + '>Gaseous Brew</option>';
+	dropdown.potionTypes += "<option value='f'" + (vals.potionstype === 'f' ? " selected='selected'" : '') + '>Potion of Finding</option>';
+	dropdown.potionTypes += "<option value='v'" + (vals.potionstype === 'v' ? " selected='selected'" : '') + '>Potion of the Void</option>';
+	dropdown.potionTypes += "<option value='s'" + (vals.potionstype === 's' ? " selected='selected'" : '') + '>Potion of Strength</option>';
 
 	//Raiding fragment types
 	dropdown.raidingTypes =
@@ -1799,59 +1698,59 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 }
 
 //Auto Structure
-//Auto Structure Display
 function autoStructureDisplay(elem) {
-	var tooltipText;
-	var costText = '';
-	var ondisplay = null;
+	let tooltipText;
 
+	const hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	const baseText =
 		"<p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p>";
 	const nursery = "<p><b>Nursery:</b> Acts the same as the other settings but also has a 'From' input which will cause nurseries to only be built from that zone onwards. Spire nursery settings within AT will ignore this start zone if needed for them to work. If 'Advanced Nurseries' is enabled and 'Up To' is set to 0 it will override buying max available and instead respect the input.</p>";
 	const warpstation = '<p><b>Warpstation:</b> Settings for this type of building can be found in the AutoTrimp settings building tab!</p>';
 	const safeGateway = "<p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Till Z:', if that value is 0 it'll assume z999.</p>";
 
-	tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+	tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip(false, true);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
 	tooltipText += `${baseText}`;
-	if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) tooltipText += `${nursery}`;
-	if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 60) tooltipText += `${warpstation}`;
+	if (game.global.universe === 1 && hze >= 230) tooltipText += `${nursery}`;
+	if (game.global.universe === 1 && hze >= 60) tooltipText += `${warpstation}`;
 	if (game.global.universe === 2) tooltipText += `${safeGateway}`;
-	tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
-	var count = 0;
-	var setting, checkbox;
-	var settingGroup = getPageSetting('buildingSettingsArray');
-	for (var item in game.buildings) {
-		var building = game.buildings[item];
-		if (building.blockU2 && game.global.universe === 2) continue;
-		if (building.blockU1 && game.global.universe === 1) continue;
+	const settingGroup = getPageSetting('buildingSettingsArray');
+	tooltipText += autoStructureTable(settingGroup, hze);
+
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='autoStructureSave()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+	game.global.lockTooltip = true;
+	const ondisplay = () => _verticalCenterTooltip(false, true);
+
+	return [elem, tooltipText, costText, ondisplay];
+}
+
+function autoStructureTable(settingGroup, hze) {
+	let tooltipText = "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+	let count = 0;
+
+	for (let item in game.buildings) {
+		const building = game.buildings[item];
+		if (building[`blockU${game.global.universe}`]) continue;
 		if (item === 'Warpstation') continue;
-		if (item === 'Laboratory' && game.stats.highestRadLevel.valueTotal() < 130) continue;
+		if (item === 'Laboratory' && hze < 130) continue;
 		if (item === 'Antenna' && game.buildings[item].locked) continue;
 		if (!building.AP && item !== 'Antenna') continue;
 		if (count !== 0 && count % 2 === 0) tooltipText += '</tr><tr>';
-		setting = settingGroup[item];
-		checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
+		let setting = settingGroup[item];
+		let checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
 
-		//Start
 		tooltipText += "<td><div class='row'>";
-		//Checkbox & name
 		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + '</span></div>';
-		//Percent options
 		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Perc: <input class='structConfigPercent' id='structPercent" + item + "' type='number' value='" + (setting && setting.percent ? setting.percent : 100) + "' /></div>";
-		//Max options
 		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Up to: <input class='structConfigQuantity' id='structMax" + item + "' type='number' value='" + (setting && setting.buyMax ? setting.buyMax : 0) + "' /></div>";
-		//Finish
 		tooltipText += '</div></td>';
 		count++;
 	}
 	tooltipText += '</tr><tr>';
 
 	//Nursery Start Zone setting after reaching Magma
-	if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) {
-		//Start
+	if (game.global.universe === 1 && hze >= 230) {
 		tooltipText += "<td><div class='row'>";
-		//Checkbox & name
 		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + '&nbsp;&nbsp;<span>' + 'Nursery (cont)' + '</span></div>';
 		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>From: <input class='structConfigQuantity' id='nurseryFromZ" + "' type='number' value='" + (settingGroup.Nursery && settingGroup.Nursery.fromZ ? settingGroup.Nursery.fromZ : 0) + "' /></div>";
 	}
@@ -1859,47 +1758,44 @@ function autoStructureDisplay(elem) {
 	if (game.global.universe === 2) {
 		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'>" + buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', typeof settingGroup.SafeGateway === 'undefined' ? false : settingGroup.SafeGateway.enabled) + '&nbsp;&nbsp;<span>' + 'Safe Gateway' + '</span></div>';
 		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number' value='" + (settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount ? settingGroup.SafeGateway.mapCount : 0) + "' /></div>";
-		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigPercent' id='structMax" + item + "' type='number' value='" + (settingGroup.SafeGateway && settingGroup.SafeGateway.zone ? settingGroup.SafeGateway.zone : 0) + "' /></div>";
+		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigPercent' id='structMax' type='number' value='" + (settingGroup.SafeGateway && settingGroup.SafeGateway.zone ? settingGroup.SafeGateway.zone : 0) + "' /></div>";
 		tooltipText += '</div></td>';
 	}
-	//On Portal Settings
-	var values = ['Off', 'On'];
+	//Portal Settings
+	const values = ['Off', 'On'];
 	tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style=' padding-right: 5px'> Setting on Portal:" + '</span></div>';
 	tooltipText += "<div class='col-xs-5 style=' width: 33%; padding-left: 5px; text-align: right'><select style='width: 70%' id='autoJobSelfGather'><option value='0'>No change</option>";
-	for (var x = 0; x < values.length; x++) {
+	for (let x = 0; x < values.length; x++) {
 		tooltipText += '<option' + (settingGroup.portalOption && settingGroup.portalOption === values[x].toLowerCase() ? " selected='selected'" : '') + " value='" + values[x].toLowerCase() + "'>" + values[x] + '</option>';
 	}
 
 	tooltipText += '</tr><tr>';
 	tooltipText += '</tr></tbody></table > ';
-	costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='autoStructureSave()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
-	game.global.lockTooltip = true;
-	ondisplay = function () {
-		_verticalCenterTooltip(false, true);
-	};
 
-	return [elem, tooltipText, costText, ondisplay];
+	return tooltipText;
 }
-//AutoStructure Save
+
 function autoStructureSave() {
-	var error = '';
-	var errorMessage = false;
-	var setting = {};
-	var checkboxes = document.getElementsByClassName('autoCheckbox');
-	var percentboxes = document.getElementsByClassName('structConfigPercent');
-	var quantboxes = document.getElementsByClassName('structConfigQuantity');
-	for (var x = 0; x < checkboxes.length; x++) {
-		var name = checkboxes[x].id.split('structConfig')[1];
-		var checked = checkboxes[x].dataset.checked === 'true';
-		if (!setting[name]) setting[name] = {};
-		setting[name].enabled = checked;
+	const checkboxes = document.getElementsByClassName('autoCheckbox');
+	const percentboxes = document.getElementsByClassName('structConfigPercent');
+	const quantboxes = document.getElementsByClassName('structConfigQuantity');
+	const setting = {};
+	let error = '';
+
+	for (let x = 0; x < checkboxes.length; x++) {
+		const name = checkboxes[x].id.split('structConfig')[1];
+		const checked = checkboxes[x].dataset.checked === 'true';
+		setting[name] = {
+			enabled: checked
+		};
+
 		if (game.global.universe === 2 && name === 'SafeGateway') {
-			var count = parseInt(quantboxes[x].value, 10);
+			let count = parseInt(quantboxes[x].value, 10);
 			if (count > 10000) count = 10000;
 			count = isNumberBad(count) ? 3 : count;
 			setting[name].mapCount = count;
 
-			var zone = parseInt(percentboxes[x].value, 10);
+			let zone = parseInt(percentboxes[x].value, 10);
 			if (zone > 999) zone = 999;
 			zone = isNumberBad(zone) ? 3 : zone;
 			setting[name].zone = zone;
@@ -1907,310 +1803,305 @@ function autoStructureSave() {
 			continue;
 		}
 
-		var perc = parseFloat(percentboxes[x].value, 10);
+		let perc = parseFloat(percentboxes[x].value, 10);
 		if (perc > 100) perc = 100;
 		setting[name].percent = perc;
 
-		//Error checking
 		if (setting[name].percent < 0 || isNaN(setting[name].percent)) {
-			error += 'Your spending percentage for ' + name + 's needs to be above a valid number of 0 or above.<br>';
-			errorMessage = true;
+			error += `Your spending percentage for ${name}s needs to be above a valid number of 0 or above.<br>`;
 		}
 
-		var max = parseInt(quantboxes[x].value, 10);
+		let max = parseInt(quantboxes[x].value, 10);
 		if (max > 10000) max = 10000;
 		setting[name].buyMax = max;
 
-		//Error checking
 		if (setting[name].buyMax < 0 || isNaN(setting[name].buyMax)) {
-			error += 'Your spending percentage for ' + name + 's needs to be above a valid number of 0 or above.<br>';
-			errorMessage = true;
+			error += `Your Up To value for ${name}s needs to be above a valid number of 0 or above.<br>`;
 		}
 
 		if (name === 'Nursery') {
 			if (game.stats.highestLevel.valueTotal() < 230) {
 				setting[name].fromZ = 0;
 			} else {
-				var fromZ = parseInt(document.getElementById('nurseryFromZ').value, 10);
+				let fromZ = parseInt(document.getElementById('nurseryFromZ').value, 10);
 				if (fromZ > 999) fromZ = 999;
 				fromZ = isNumberBad(fromZ) ? 999 : fromZ;
 				setting[name].fromZ = fromZ;
 
-				//Error checking
 				if (setting[name].fromZ < 0 || isNaN(setting[name].fromZ)) {
-					error += 'Your zone input for ' + name + 's needs to be above a valid number of 0 or above.<br>';
-					errorMessage = true;
+					error += `Your zone input for ${name}s needs to be above a valid number of 0 or above.<br>`;
 				}
 			}
 		}
 	}
 
-	var portalElem = document.getElementById('autoJobSelfGather');
-	if (portalElem && portalElem.value) setting.portalOption = portalElem.value;
-
-	if (errorMessage) {
-		var elem = document.getElementById('autoJobsError');
+	if (error) {
+		const elem = document.getElementById('autoJobsError');
 		if (elem) elem.innerHTML = error;
 		_verticalCenterTooltip(false, true);
 		return;
 	}
 
 	//Adding in buildings that are locked so that there won't be any issues later on
-	if (game.global.universe === 2 && game.stats.highestRadLevel.valueTotal() < 130) {
-		setting.Laboratory = {};
-		setting.Laboratory.enabled = false;
-		setting.Laboratory.percent = 100;
-		setting.Laboratory.buyMax = 0;
+	if (game.global.universe === 2) {
+		if (!setting.Laboratory) {
+			setting.Laboratory = {
+				enabled: false,
+				percent: 100,
+				buyMax: 0
+			};
+		}
+		if (!setting.Antenna) {
+			setting.Antenna = {
+				enabled: false,
+				percent: 100,
+				buyMax: 0
+			};
+		}
 	}
-	if (game.global.universe === 2 && game.buildings.Antenna.locked) {
-		setting.Antenna = {};
-		setting.Antenna.enabled = false;
-		setting.Antenna.percent = 100;
-		setting.Antenna.buyMax = 0;
-	}
+
+	setting.portalOption = document.getElementById('autoJobSelfGather').value;
 
 	setPageSetting('buildingSettingsArray', setting);
 	cancelTooltip();
 }
 
 //Auto Jobs
-//Auto Jobs Display
 function autoJobsDisplay(elem) {
-	var tooltipText;
-	var costText = '';
-	var ondisplay = null;
-
 	const ratio =
 		"<p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. Any number that's 0 or below will stop AT hiring any workers for that job. Scientists will be hired based on a ratio that is determined by how far you are into the game, the further you get the less Scientists will be hired.</p>";
 	const percent = "<p>The right side of this window is dedicated to jobs limited more by resources than workspaces. Set the percentage of resources that you'd like to be spent on each job.</p>";
 	const magmamancer = "<p><b>Magmamancers:</b> These will only be hired when they'll do something! So once the time spent on the zone is enough to activate the first metal boost.</p>";
-	const farmersUntil = '<p><b>Farmers Until:</b> Stops buying Farmers from this zone. Farming setting job ratios override this setting and will hire farmers if set to.</p>';
+	const farmersUntil = '<p><b>Farmers Until:</b> Stops buying Farmers from this zone. Map setting job ratios override this setting.</p>';
 	const lumberjackMP = '<p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p>';
 
-	var autoRatios = '<p><b>AutoRatios</b>';
-	autoRatios += '<br><b>Running ' + (portalUniverse === 2 ? 'Transmute' : 'Metal') + ' will override these values and use 4/5/0.</b>';
+	let autoRatios = '<p><b>AutoRatios</b> - Running <b>' + (portalUniverse === 2 ? 'Transmute' : 'Metal') + '</b> will override these values and use <b>4/5/0.</b>';
 	autoRatios += '<br><b>1/1/1</b> Up until 300k trimps.';
-	autoRatios += '<br><b>3/3/5</b> Up until 3mil trimps.';
-	autoRatios += '<br><b>3/1/4</b> When above 3 mil trimps.';
+	autoRatios += '<br><b>3/3/5</b> Up until 3 million trimps.';
+	autoRatios += '<br><b>3/1/4</b> When above 3 million trimps.';
 	autoRatios += '<br><b>1/1/10</b> When above 1000 tributes.';
 	autoRatios += '<br><b>1/2/22</b> When above 1500 tributes.';
 	autoRatios += '<br><b>1/7/12</b> When above 3000 tributes and at or above z230.';
 	autoRatios += '<br><b>1/1/98</b> When at or above z300.';
-	if (game.global.universe === 2) autoRatios += '<br><b>1/1/1</b> When using a Hazardous or better heirloom.</p>';
+	if (game.global.universe === 2) autoRatios += '<br><b>1/1/1</b> When using a Hazardous or better heirloom.';
 	autoRatios += '</p>';
 
-	tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'> ";
-
+	let tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip(true);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'> ";
 	tooltipText += `${ratio}`;
 	tooltipText += `${percent}`;
 	if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) tooltipText += `${magmamancer}`;
-	if (game.global.universe === 2) tooltipText += `${farmersUntil}`;
-	if (game.global.universe === 2) tooltipText += `${lumberjackMP}`;
+	if (game.global.universe === 2) tooltipText += `${farmersUntil}${lumberjackMP}`;
 	tooltipText += `${autoRatios}`;
-	tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
-	var percentJobs = ['Explorer'];
-	if (game.global.universe === 1) percentJobs.push('Trainer');
-	if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) percentJobs.push('Magmamancer');
-	if (game.global.universe === 2 && game.stats.highestRadLevel.valueTotal() >= 30) percentJobs.push('Meteorologist');
-	if (game.global.universe === 2 && game.stats.highestRadLevel.valueTotal() >= 50) percentJobs.push('Worshipper');
-	var ratioJobs = ['Farmer', 'Lumberjack', 'Miner'];
-	var settingGroup = getPageSetting('jobSettingsArray');
-	for (var x = 0; x < ratioJobs.length; x++) {
-		tooltipText += '<tr>';
-		var item = ratioJobs[x];
-		var setting = settingGroup[item];
-		var max;
-		var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
-		tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + (setting && setting.ratio >= 0 ? setting.ratio : 0) + "' /></div></div>";
-		tooltipText += '</td>';
-		if (percentJobs.length > x) {
-			item = percentJobs[x];
-			setting = settingGroup[item];
-			max = setting && setting.buyMax ? setting.buyMax : 0;
-			if (max > 1e4) max = max.toExponential().replace('+', '');
-			checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
-			tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Percent: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + (setting && setting.percent ? setting.percent : 100) + "' /></div></div>";
-		}
-		if (game.global.universe === 2) {
-			if (x === ratioJobs.length - 1)
-				tooltipText +=
-					"<tr><td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" +
-					buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', settingGroup.FarmersUntil.enabled) +
-					'&nbsp;&nbsp;<span>' +
-					"Farmers Until</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Zone: <input class='jobConfigQuantity' id='FarmersUntilZone' type='number' value='" +
-					(settingGroup.FarmersUntil.zone ? settingGroup.FarmersUntil.zone : 999) +
-					"' /></div></div></td>";
-			if (x === ratioJobs.length - 1) tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', settingGroup.NoLumberjacks.enabled) + '&nbsp;&nbsp;<span>' + 'No Lumberjacks Post MP</span></div></td></tr>';
-		}
+
+	const hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	let percentJobs = ['Explorer'];
+	if (game.global.universe === 1) {
+		percentJobs.push('Trainer');
+		if (hze >= 230) percentJobs.push('Magmamancer');
 	}
-	var values = ['AutoJobs Off', 'Auto Ratios', 'Manual Ratios'];
-	tooltipText += "<tr><td style='width: 40%'><div class='col-xs-6' style='padding-right: 5px'>Setting on Portal:</div><div class='col-xs-6 lowPad' style='text-align: right'><select style='width: 100%' id='autoJobSelfGather'><option value='0'>No change</option>";
-	for (var x = 0; x < values.length; x++) {
-		tooltipText += '<option' + (settingGroup.portalOption && settingGroup.portalOption === values[x].toLowerCase() ? " selected='selected'" : '') + " value='" + values[x].toLowerCase() + "'>" + values[x] + '</option>';
+	if (game.global.universe === 2) {
+		if (hze >= 30) percentJobs.push('Meteorologist');
+		if (hze >= 50) percentJobs.push('Worshipper');
 	}
 
-	tooltipText += '</div></td></tr>';
-	tooltipText += '</tbody></table>';
-	costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='autoJobsSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+	const ratioJobs = ['Farmer', 'Lumberjack', 'Miner'];
+	const settingGroup = getPageSetting('jobSettingsArray');
+	tooltipText += autoJobsTable(settingGroup, ratioJobs, percentJobs);
+
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='autoJobsSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 
 	game.global.lockTooltip = true;
 	elem.style.left = '33.75%';
 	elem.style.top = '25%';
-	var ondisplay = function () {
-		_verticalCenterTooltip(true);
-	};
+	const ondisplay = () => _verticalCenterTooltip(true);
 
 	return [elem, tooltipText, costText, ondisplay];
 }
-//AJ Save
-function autoJobsSave() {
-	var error = '';
-	var setting = {};
-	var checkboxes = document.getElementsByClassName('autoCheckbox');
-	var quantboxes = document.getElementsByClassName('jobConfigQuantity');
-	var ratios = ['Farmer', 'Lumberjack', 'Miner'];
-	for (var x = 0; x < checkboxes.length; x++) {
-		var name = checkboxes[x].id.split('autoJobCheckbox')[1];
-		var checked = checkboxes[x].dataset.checked === 'true';
-		if (!setting[name]) setting[name] = {};
-		setting[name].enabled = checked;
 
-		if (game.global.universe === 2) {
-			if (name === 'NoLumberjacks') continue;
-			if (name === 'FarmersUntil') {
-				setting[name].zone = quantboxes[x].value;
-				continue;
-			}
+function autoJobsTable(settingGroup, ratioJobs, percentJobs) {
+	let tooltipText = "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+
+	for (let x = 0; x < ratioJobs.length; x++) {
+		tooltipText += '<tr>';
+		let item = ratioJobs[x];
+		let setting = settingGroup[item];
+		let checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
+
+		tooltipText += "<td style='width: 40%'><div class='row'>";
+		tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + '</span></div>';
+		tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + (setting && setting.ratio >= 0 ? setting.ratio : 0) + "' /></div>";
+		tooltipText += '</div></td>';
+		if (percentJobs.length > x) {
+			item = percentJobs[x];
+			setting = settingGroup[item];
+			let max = setting && setting.buyMax ? setting.buyMax : 0;
+			if (max > 1e4) max = max.toExponential().replace('+', '');
+			checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
+			tooltipText += "<td style='width: 60%'><div class='row'>";
+			tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + '</span></div>';
+			tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'>Percent: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + (setting && setting.percent ? setting.percent : 100) + "' />";
+			tooltipText += '</div></div>';
 		}
-
-		if (ratios.indexOf(name) !== -1) {
-			setting[name].ratio = parseFloat(quantboxes[x].value);
-			//Error checking
-			if (setting[name].ratio < 0 || isNaN(setting[name].ratio)) {
-				error += 'Your ratio for ' + name + 's needs to be above a valid number of 0 or above.<br>';
-				continue;
-			}
-		}
-		var jobquant = document.getElementById('autoJobQuant' + name).value;
-		setting[name].percent = parseFloat(jobquant);
-
-		//Error checking
-		if (setting[name].percent < 0 || isNaN(setting[name].percent)) error += 'Your spending percentage for ' + name + 's needs to be above a valid number of 0 or above.<br>';
 	}
-	var portalElem = document.getElementById('autoJobSelfGather');
-	if (portalElem && portalElem.value) setting.portalOption = portalElem.value;
 
-	if (error !== '') {
-		var elem = document.getElementById('autoJobsError');
+	if (game.global.universe === 2) {
+		tooltipText += "<tr><td style='width: 40%'><div class='row'>";
+		tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', settingGroup.FarmersUntil.enabled) + '&nbsp;&nbsp;<span>' + 'Farmers Until</span></div>';
+		tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'>Zone: <input class='jobConfigQuantity' id='FarmersUntilZone' type='number' value='" + (settingGroup.FarmersUntil.zone ? settingGroup.FarmersUntil.zone : 999) + "' /></div>";
+		tooltipText += '</div></td>';
+
+		tooltipText += "<td style='width: 60%'><div class='row'>";
+		tooltipText += "<div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', settingGroup.NoLumberjacks.enabled) + '&nbsp;&nbsp;<span>' + 'No Lumberjacks Post MP</span></div>';
+		tooltipText += '</td></tr>';
+	}
+
+	const portalOptions = ['AutoJobs Off', 'Auto Ratios', 'Manual Ratios'];
+	tooltipText += "<tr><td style='width: 40%'>";
+	tooltipText += "<div class='col-xs-6' style='padding-right: 3px; font-size: 1vw; '>Setting on Portal:</div>";
+	tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'><select style='width: 100%' id='autoJobPortal'><option value='0'>No change</option>";
+
+	for (let x = 0; x < portalOptions.length; x++) {
+		tooltipText += '<option' + (settingGroup.portalOption && settingGroup.portalOption === portalOptions[x].toLowerCase() ? " selected='selected'" : '') + " value='" + portalOptions[x].toLowerCase() + "'>" + portalOptions[x] + '</option>';
+	}
+
+	tooltipText += '</div></td></tr>';
+	tooltipText += '</tbody></table>';
+
+	return tooltipText;
+}
+
+function autoJobsSave() {
+	const checkBoxes = Array.from(document.getElementsByClassName('autoCheckbox'));
+	const quantBoxes = Array.from(document.getElementsByClassName('jobConfigQuantity'));
+	const ratioJobs = ['Farmer', 'Lumberjack', 'Miner'];
+	const setting = {};
+
+	let error = '';
+
+	checkBoxes.forEach((checkbox, index) => {
+		const name = checkbox.id.split('autoJobCheckbox')[1];
+		const checked = checkbox.dataset.checked === 'true';
+		setting[name] = {
+			enabled: checked
+		};
+
+		if (name === 'NoLumberjacks') return;
+
+		if (name === 'FarmersUntil') {
+			setting[name].zone = parseInt(quantBoxes[index].value);
+
+			if (setting[name].zone < 0 || isNaN(setting[name].zone)) {
+				error += `Your zone input for ${name}s needs to be above a valid number of 0 or above.<br>`;
+			}
+			return;
+		}
+
+		if (ratioJobs.includes(name)) {
+			setting[name].ratio = parseFloat(quantBoxes[index].value);
+
+			if (setting[name].ratio < 0 || isNaN(setting[name].ratio)) {
+				error += `Your ratio for ${name}s needs to be above a valid number of 0 or above.<br>`;
+			}
+			return;
+		}
+
+		const jobQuant = document.getElementById('autoJobQuant' + name).value;
+		setting[name].percent = parseFloat(jobQuant);
+
+		if (setting[name].percent < 0 || isNaN(setting[name].percent)) {
+			error += `Your spending percentage for ${name}s needs to be above a valid number of 0 or above.<br>`;
+		}
+	});
+
+	if (error) {
+		let elem = document.getElementById('autoJobsError');
 		if (elem) elem.innerHTML = error;
 		_verticalCenterTooltip(true);
-		return;
 	}
 
 	//Adding in jobs that are locked so that there won't be any issues later on
 	if (game.global.universe === 1) {
-		//Magmamancer
-		if (game.stats.highestLevel.valueTotal() < 230) {
-			setting.Magmamancer = {};
-			setting.Magmamancer.enabled = true;
-			setting.Magmamancer.percent = 100;
+		if (!setting.Magmamancer) {
+			setting.Magmamancer = {
+				enabled: false,
+				percent: 100
+			};
 		}
 	}
 	if (game.global.universe === 2) {
-		//Meteorologist
-		if (game.stats.highestRadLevel.valueTotal() < 30) {
-			setting.Meteorologist = {};
-			setting.Meteorologist.enabled = true;
-			setting.Meteorologist.percent = 100;
+		if (!setting.Meteorologist) {
+			setting.Meteorologist = {
+				enabled: true,
+				percent: 20
+			};
 		}
-		//Worshipper
-		if (game.stats.highestRadLevel.valueTotal() < 50) {
-			setting.Worshipper = {};
-			setting.Worshipper.enabled = true;
-			setting.Worshipper.percent = 20;
+		if (!setting.Worshipper) {
+			setting.Worshipper = {
+				enabled: true,
+				percent: 20
+			};
 		}
 	}
+
+	setting.portalOption = document.getElementById('autoJobPortal').value;
 
 	setPageSetting('jobSettingsArray', setting);
 	cancelTooltip();
 }
 
 //Unique Maps
-//Unique Maps Display
 function uniqueMapsDisplay(elem) {
-	var tooltipText;
-	var costText = '';
-	var ondisplay = null;
-
+	const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	const baseText =
 		"<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input. If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it.</p>";
 	const smithy = "<p>The right side of this window is dedicated to running Melting Point when you've reached a certain Smithy value. As each runtype of vastly different there's different inputs for each type of run that you can do! Certain challenges have overrides for this, once unlocked they can be found in the C3 tab.</p>";
+	const smithyDisplay = currSettingUniverse === 2 && hze >= 50;
 
-	tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
-	tooltipText += `${baseText}`;
-	if (currSettingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 50) tooltipText += `${smithy}`;
-	tooltipText += "</div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
+	const mapUnlocks = Object.keys(MODULES.mapFunctions.uniqueMaps).filter((mapName) => {
+		const { universe, zone } = MODULES.mapFunctions.uniqueMaps[mapName];
+		return !['Bionic Wonderland', 'The Black Bog'].includes(mapName) && universe === currSettingUniverse && zone <= hze;
+	});
+	const smithySettings = smithyDisplay ? ['MP Smithy', 'MP Smithy Daily', 'MP Smithy C3', 'MP Smithy One Off'] : [];
+	const settingGroup = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
 
-	var setting, checkbox;
-	var settingGroup = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
+	let tooltipText =
+		"<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp();  _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+	tooltipText += `${baseText}${smithyDisplay ? smithy : ''}`;
+	tooltipText += uniqueMapsTable(settingGroup, mapUnlocks, smithySettings);
 
-	var smithySettings = [];
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='uniqueMapsSave()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 
-	var hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-	//Populating array of maps that are unlocked
-	var mapUnlocks = Object.keys(MODULES.mapFunctions.uniqueMaps)
-		.filter((mapName) => ['Bionic Wonderland', 'The Black Bog'].indexOf(mapName) === -1)
-		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].universe === currSettingUniverse)
-		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= hze);
+	game.global.lockTooltip = true;
+	const ondisplay = () => _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);
+	return [elem, tooltipText, costText, ondisplay];
+}
 
-	//Adding in Smithy Melting Point settings
-	if (currSettingUniverse === 2 && hze >= 50) {
-		smithySettings.push('MP Smithy');
-		smithySettings.push('MP Smithy Daily');
-		smithySettings.push('MP Smithy C3');
-		smithySettings.push('MP Smithy One Off');
-	}
+function uniqueMapsTable(settingGroup, mapUnlocks, smithySettings) {
+	let tooltipText = "</div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
 
-	for (var x = 0; x < mapUnlocks.length; x++) {
+	for (let x = 0; x < mapUnlocks.length; x++) {
 		tooltipText += '<tr>';
-		var item = mapUnlocks[x];
-		var setting = settingGroup[item];
-		var max;
-		var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
+		let item = mapUnlocks[x];
+		let setting = settingGroup[item];
+		let checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
 
-		item = mapUnlocks[x];
-		setting = settingGroup[item];
-		max = setting && setting.buyMax ? setting.buyMax : 0;
+		let max = setting && setting.buyMax ? setting.buyMax : 0;
 		if (max > 1e4) max = max.toExponential().replace('+', '');
 
-		//Checkbox
-		checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
-
-		//Start
 		tooltipText += "<td><div class='row'>";
-		//Checkbox & name
 		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item.replace(/_/g, '&nbsp;<span>') + '</span></div>';
-		//Zone options
 		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Zone: <input class='structConfigZone' id='structPercent" + item + "' type='number'  value='" + (setting && setting.zone ? setting.zone : 999) + "'/></div>";
-		//Cell options
 		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Cell: <input class='structConfigCell' id='structMax" + item + "' type='number'  value='" + (setting && setting.cell ? setting.cell : 0) + "'/></div>";
-		//Finish
 		tooltipText += '</div></td>';
 
 		if (smithySettings.length > x) {
 			item = smithySettings[x];
 			setting = settingGroup[item];
 			checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
-			tooltipText +=
-				"<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" +
-				checkbox +
-				'&nbsp;&nbsp;<span>' +
-				item.replace(/_/g, '&nbsp;<span>') +
-				"</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Value: <input class='jobConfigQuantity' id='uniqueMapValue" +
-				item +
-				"' type='number'  value='" +
-				(setting && setting.value ? setting.value : 1) +
-				"'/></div></div>";
+			tooltipText += "<td style='width: 40%'><div class='row'>";
+			tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item.replace(/_/g, '&nbsp;<span>') + '</span></div>';
+			tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'>Value: <input class='jobConfigQuantity' id='uniqueMapValue" + item + "' type='number'  value='" + (setting && setting.value ? setting.value : 1) + "'/></div></div>";
+			tooltipText += '</div></td>';
 		} else {
 			tooltipText += '<tr>';
 		}
@@ -2218,61 +2109,41 @@ function uniqueMapsDisplay(elem) {
 
 	tooltipText += '</tr><tr>';
 	tooltipText += '</tr></tbody></table>';
-	costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='uniqueMapsSave(\"" + event + "\")'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
-	game.global.lockTooltip = true;
-	ondisplay = function () {
-		_verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);
-	};
-	return [elem, tooltipText, costText, ondisplay];
+
+	return tooltipText;
 }
-//Unique Maps Save
-function uniqueMapsSave(setting) {
-	var error = '';
-	var errorMessage = false;
-	var ATsetting = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
-	var setting = ATsetting;
-	var checkboxes = document.getElementsByClassName('autoCheckbox');
-	var zoneBoxes = document.getElementsByClassName('structConfigZone');
-	var cellBoxes = document.getElementsByClassName('structConfigCell');
-	var y = 0;
-	var z = 0;
-	for (var x = 0; x < checkboxes.length; x++) {
-		var name = checkboxes[x].id.split('autoJobCheckbox')[1];
-		var checked = checkboxes[x].dataset.checked === 'true';
-		//if (!checked && !setting[name]) continue;
+
+function uniqueMapsSave() {
+	const setting = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
+	const checkboxes = Array.from(document.getElementsByClassName('autoCheckbox'));
+	const zoneBoxes = Array.from(document.getElementsByClassName('structConfigZone'));
+	const cellBoxes = Array.from(document.getElementsByClassName('structConfigCell'));
+	let y = 0;
+	let z = 0;
+
+	for (let x = 0; x < checkboxes.length; x++) {
+		const name = checkboxes[x].id.split('autoJobCheckbox')[1];
+		const checked = checkboxes[x].dataset.checked === 'true';
 		if (!setting[name]) setting[name] = {};
 		setting[name].enabled = checked;
 
 		if (name.includes('MP Smithy')) {
-			var valueBoxes = document.getElementsByClassName('jobConfigQuantity');
-			var value = parseInt(valueBoxes[z].value, 10);
-			if (value > 10000) value = 10000;
-			value = isNumberBad(value) ? 999 : value;
+			let valueBoxes = document.getElementsByClassName('jobConfigQuantity');
+			let value = parseInt(valueBoxes[z].value, 10);
+			value = Math.min(isNumberBad(value) ? 999 : value, 10000);
 			setting[name].value = value;
 			z++;
 			continue;
 		}
 
-		var zone = parseInt(zoneBoxes[y].value, 10);
-		if (zone > 999) zone = 999;
-		if (zone < 0) zone = 0;
-		zone = isNumberBad(zone) ? 0 : zone;
-
+		let zone = parseInt(zoneBoxes[y].value, 10);
+		zone = isNumberBad(zone) ? 0 : Math.max(Math.min(zone, 999), 0);
 		setting[name].zone = zone;
 
-		var cell = parseInt(cellBoxes[y].value, 10);
-		if (cell > 100) cell = 100;
-		if (cell < 1) cell = 1;
-		cell = isNumberBad(cell) ? 0 : cell;
+		let cell = parseInt(cellBoxes[y].value, 10);
+		cell = isNumberBad(cell) ? 0 : Math.max(Math.min(cell, 100), 1);
 		setting[name].cell = cell;
-
 		y++;
-	}
-
-	if (errorMessage) {
-		var elem = document.getElementById('autoJobsError');
-		if (elem) elem.innerHTML = error;
-		return;
 	}
 
 	setPageSetting('uniqueMapSettingsArray', setting, currSettingUniverse);
@@ -2280,432 +2151,287 @@ function uniqueMapsSave(setting) {
 }
 
 //AT Messages
-//AT Messages Display
 function messageDisplay(elem) {
-	var tooltipText;
-	var costText = '';
-	var ondisplay = null;
+	const msgs = getPageSetting('spamMessages');
+	const keys = ['general', 'upgrades', 'equipment', 'maps', 'map_Details', 'map_Destacking', 'map_Skip', 'other', 'buildings', 'jobs', 'zone', 'exotic', 'gather', 'stance', 'run_Stats', 'nature'];
+	const settingGroup = keys.reduce((obj, key) => {
+		obj[key] = false;
+		return obj;
+	}, {});
 
-	tooltipText = "<div id='messageConfig'>Here you can finely tune your message settings. Mouse over the name of a filter for more info.</div>";
-	var value = 'value';
-	if (game.global.universe === 2) value += 'U2';
-
-	var settingGroup = {
-		general: false,
-		/* fragment: false, */
-		upgrades: false,
-		equipment: false,
-		maps: false,
-		map_Details: false,
-		map_Destacking: false,
-		map_Skip: false,
-		other: false,
-		buildings: false,
-		jobs: false,
-		zone: false,
-		exotic: false,
-		gather: false,
-		stance: false,
-		run_Stats: false,
-		nature: false
-	};
-
-	var msgs = autoTrimpSettings.spamMessages.value;
-
+	let tooltipText = "<div id='messageConfig'>Here you can finely tune your message settings. Mouse over the name of a filter for more info.</div>";
 	tooltipText += "<div class='row'>";
-	for (var x = 0; x < 1; x++) {
+	for (let x = 0; x < 1; x++) {
 		tooltipText += "<div class='col-xs-4'></span><br/>";
-		for (var item in settingGroup) {
+		for (let item in settingGroup) {
 			if (item === 'enabled') continue;
-			var realName = item.charAt(0).toUpperCase() + item.substr(1);
-			realName = realName.replace(/_/g, ' ');
-			tooltipText += "<span class='messageConfigContainer'><span class='messageCheckboxHolder'>" + buildNiceCheckbox(item, 'messageConfigCheckbox', msgs[item]) + '</span><span onmouseover=\'messageConfigHoverAT("' + item + "\", event)' onmouseout='tooltip(\"hide\")' class='messageNameHolderAT'> - " + realName + '</span></span><br/>';
+			const realName = (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
+			tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox(item, 'messageConfigCheckbox', msgs[item])}</span><span onmouseover='messageConfigHoverAT("${item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
 		}
 		tooltipText += '</div>';
 	}
 	tooltipText += '</div>';
-	ondisplay = function () {
-		_verticalCenterTooltip();
-	};
+
+	const ondisplay = () => _verticalCenterTooltip();
 	game.global.lockTooltip = true;
 	elem.style.top = '25%';
 	elem.style.left = '35%';
-	swapClass('tooltipExtra', 'tooltipLg', elem);
-	costText = "<div class='maxCenter'><div class='btn btn-info' id='confirmTooltipBtn' onclick='cancelTooltip();messageSave();'>Confirm</div> <div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+
+	const costText = `
+	<div class='maxCenter'>
+		<div class='btn btn-info' id='confirmTooltipBtn' onclick='cancelTooltip();messageSave();'>Confirm</div>
+		<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>
+	</div>
+	`;
 
 	return [elem, tooltipText, costText, ondisplay];
 }
-//AT Messages Hover
-function messageConfigHoverAT(what, event) {
-	var text = '';
-	var title = '';
-	switch (what) {
-		case 'general':
-			text = 'Notification Messages, Auto He/Hr.';
-			title = 'General';
-			break;
-		/* case 'fragment':
-            text = 'Log the amount of fragments each created map cost.';
-            title = 'Fragment';
-            break; */
-		case 'upgrades':
-			text = 'Log all the upgrades that AT has purchased.';
-			title = 'Upgrades';
-			break;
-		case 'equipment':
-			text = 'Log the equipment & prestiges that AT buys.';
-			title = 'Equipment';
-			break;
-		case 'maps':
-			text = 'Log the maps that AT decides to pick, buy, run, or recycle.';
-			title = 'Maps';
-			break;
-		case 'map_Details':
-			text = 'Logs run time & map count when AT decides to farm.';
-			title = 'Map Details';
-			break;
-		case 'map_Destacking':
-			text = 'Logs run time & map count when AT does any map based destacking.';
-			title = 'Map Destacking';
-			break;
-		case 'map_Skip':
-			text = 'Logs when AT skips Worshipper Farm, HD Farm & Hits Survived.';
-			title = 'Map Skip';
-			break;
-		case 'other':
-			text = 'Log Better Auto Fight, Trimpicide & AutoBreed/Gene Timer changes, etc - a catch all.';
-			title = 'Other';
-			break;
-		case 'buildings':
-			text = 'Log the buildings that AT purchases.';
-			title = 'Buildings';
-			break;
-		case 'jobs':
-			text = 'Log the jobs that AT purchases.';
-			title = 'Jobs';
-			break;
-		case 'zone':
-			text = 'Log when you start a new zone.';
-			title = 'Zone';
-			break;
-		case 'exotic':
-			text = 'Log the amount of world exotics you start a zone with.';
-			title = 'Exotic';
-			break;
-		case 'gather':
-			text = 'Log the action that AT tries to gather.';
-			title = 'Gather';
-			break;
-		case 'stance':
-			text = 'Logs when AT decides to change stance and what it changes to.';
-			title = 'Stance';
-			break;
-		case 'nature':
-			text = 'Logs when the script spends nature tokens.';
-			title = 'Nature';
-			break;
-		case 'run_Stats':
-			text = "Logs the total trimps you have and how many resources you'd gain from a bone charge when entering a new zone.";
-			title = 'Run Stats';
-			break;
-		default:
-			return;
-	}
-	document.getElementById('messageConfig').innerHTML = '<b>' + title + '</b> - ' + text;
-	tooltip(title, 'customText', event, text);
-}
-//AT Messages Save
-function messageSave() {
-	var setting = getPageSetting('spamMessages', portalUniverse);
-	var checkboxes = document.getElementsByClassName('messageConfigCheckbox');
 
-	for (var x = 0; x < checkboxes.length; x++) {
-		var name = checkboxes[x].id;
-		var checked = checkboxes[x].dataset.checked === 'true';
-		setting[name] = checked;
-	}
+function messageConfigHoverAT(what, event) {
+	const messageConfigMap = {
+		general: { title: 'General', text: 'Notification Messages, Auto He/Hr.' },
+		upgrades: { title: 'Upgrades', text: 'Log all the upgrades that AT has purchased.' },
+		equipment: { title: 'Equipment', text: 'Log the equipment & prestiges that AT buys.' },
+		maps: { title: 'Maps', text: 'Log the maps that AT decides to pick, buy, run, or recycle.' },
+		map_Details: { title: 'Map Details', text: 'Logs run time & map count when AT decides to farm.' },
+		map_Destacking: { title: 'Map Destacking', text: 'Logs run time & map count when AT does any map based destacking.' },
+		map_Skip: { title: 'Map Skip', text: 'Logs when AT skips Worshipper Farm, HD Farm & Hits Survived.' },
+		other: { title: 'Other', text: 'Log Better Auto Fight, Trimpicide & AutoBreed/Gene Timer changes, etc - a catch all.' },
+		buildings: { title: 'Buildings', text: 'Log the buildings that AT purchases.' },
+		jobs: { title: 'Jobs', text: 'Log the jobs that AT purchases.' },
+		zone: { title: 'Zone', text: 'Log when you start a new zone.' },
+		exotic: { title: 'Exotic', text: 'Log the amount of world exotics you start a zone with.' },
+		gather: { title: 'Gather', text: 'Log the action that AT tries to gather.' },
+		stance: { title: 'Stance', text: 'Logs when AT decides to change stance and what it changes to.' },
+		nature: { title: 'Nature', text: 'Logs when the script spends nature tokens.' },
+		run_Stats: { title: 'Run Stats', text: "Logs the total trimps you have and how many resources you'd gain from a bone charge when entering a new zone." }
+	};
+
+	const config = messageConfigMap[what];
+	if (!config) return;
+
+	document.getElementById('messageConfig').innerHTML = `<b>${config.title}</b><br>${config.text}`;
+	tooltip(config.title, 'customText', event, config.text);
+}
+
+function messageSave() {
+	const setting = getPageSetting('spamMessages', portalUniverse);
+	const checkboxes = Array.from(document.getElementsByClassName('messageConfigCheckbox'));
+
+	checkboxes.forEach((checkbox) => {
+		setting[checkbox.id] = checkbox.dataset.checked === 'true';
+	});
 
 	setPageSetting('spamMessages', setting);
 	cancelTooltip();
 }
 
 //Daily Portal Mods
-//Daily Portal Mods Display
 function dailyPortalModsDisplay(elem) {
-	var tooltipText;
-	var costText = '';
-	var ondisplay = null;
-
 	const baseText =
-		"<p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource empower modifier and you have '-3' input in that box then it will set both your void map zone and daily portal zone to 3 zones lower than your settings. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Empower and Famine by doing a -3 in each box.</p>";
+		"<p>This setting allows you to adjust the portal zones based on the modifiers of the daily challenge you're running. For instance, if your Daily has a resource empower modifier and you input '-3', both your void map zone and daily portal zone will be set to 3 zones lower than your current settings. Please note that the lowest value will always be used. Therefore, if a daily challenge has both Empower and Famine modifiers, inputting '-3' in each box will not result in a combined adjustment of -6 zones.</p>";
 
-	const reflect = '<p><b>Reflect:</b> % damage reflect damage modifier</p>';
-	const empower = '<p><b>Empower:</b> Empower modifier</p>';
-	const mutimp = '<p><b>Mutimp:</b> % chance to turn enemies into Mutimps</p>';
-	const bloodthirst = '<p><b>Bloodthirst:</b> Enemies gaining the bloodthirst buff on kills</p>';
-	const famine = '<p><b>Famine:</b> Gives % less resources</p>';
-	const large = '<p><b>Large:</b> Gives % less housing</p>';
-	const weakness = '<p><b>Weakness:</b> Gives % less attack when trimps attack</p>';
-	const empoweredVoid = '<p><b>Empowered Void:</b> Enemies gain a % health & damage increase inside void maps</p>';
-	const heirlost = '<p><b>Heirlost:</b> % bonus reduction on your heirlooms</p>';
+	const tooltips = {
+		reflect: '<p><b>Reflect:</b> % damage reflect damage modifier</p>',
+		empower: '<p><b>Empower:</b> Empower modifier</p>',
+		mutimp: '<p><b>Mutimp:</b> % chance to turn enemies into Mutimps</p>',
+		bloodthirst: '<p><b>Bloodthirst:</b> Enemies gaining the bloodthirst buff on kills</p>',
+		famine: '<p><b>Famine:</b> Gives % less resources</p>',
+		large: '<p><b>Large:</b> Gives % less housing</p>',
+		weakness: '<p><b>Weakness:</b> Gives % less attack when trimps attack</p>',
+		empoweredVoid: '<p><b>Empowered Void:</b> Enemies gain a % health & damage increase inside void maps</p>',
+		heirlost: '<p><b>Heirlost:</b> % bonus reduction on your heirlooms</p>'
+	};
 
-	tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
-	tooltipText += `${baseText}`;
+	const universeTooltips = {
+		1: ['empower', 'mutimp', 'bloodthirst', 'famine', 'large', 'weakness', 'reflect'],
+		2: ['empower', 'mutimp', 'bloodthirst', 'famine', 'large', 'weakness', 'empoweredVoid', 'heirlost']
+	};
 
-	if (currSettingUniverse === 1) tooltipText += `${reflect}`;
-	tooltipText += `${empower}`;
-	tooltipText += `${mutimp}`;
-	tooltipText += `${bloodthirst}`;
-	tooltipText += `${famine}`;
-	tooltipText += `${large}`;
-	tooltipText += `${weakness}`;
-	if (currSettingUniverse === 2) tooltipText += `${empoweredVoid}`;
-	if (currSettingUniverse === 2) tooltipText += `${heirlost}`;
-
+	let tooltipText = `<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip(true);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>${baseText}`;
+	tooltipText += universeTooltips[currSettingUniverse].map((key) => tooltips[key]).join('');
 	tooltipText += "</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
-	var count = 0;
-	var setting, checkbox;
-	var setting_AT = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
+	const settingArray = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
+	const settings = ['Reflect', 'Empower', 'Mutimp', 'Bloodthirst', 'Famine', 'Large', 'Weakness', 'Empowered_Void', 'Heirlost'];
+	const settingGroup = {};
 
-	var settingGroup = {
-		Reflect: {},
-		Empower: {},
-		Mutimp: {},
-		Bloodthirst: {},
-		Famine: {},
-		Large: {},
-		Weakness: {},
-		Empowered_Void: {},
-		Heirlost: {}
-	};
+	settings.forEach((setting) => {
+		settingGroup[setting] = {};
+	});
 
 	//Skip Lines to seperate
 	tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 100%; padding-right: 5px'>" + '' + '&nbsp;&nbsp;<span>' + '<u>Modifier ± Zones</u>' + '</span></div></div>';
 	tooltipText += '</td></tr><tr>';
 
-	//Plus&Minus Portal&Void zone settings.
-	for (var item in settingGroup) {
-		if (currSettingUniverse === 1 && item === 'Empowered_Void') continue;
-		if (currSettingUniverse === 1 && item === 'Heirlost') continue;
+	let count = 0;
+
+	for (let item in settingGroup) {
+		if (currSettingUniverse === 1 && (item === 'Empowered_Void' || item === 'Heirlost')) continue;
 		if (currSettingUniverse === 2 && item === 'Reflect') continue;
 		if (count !== 0 && count % 2 === 0) tooltipText += '</tr><tr>';
-		setting = setting_AT[item];
-		checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
-		var itemName = item.charAt(0).toUpperCase() + item.substr(1);
-		itemName = itemName.replace(/_/g, ' ');
-		//Start
-		tooltipText += "<td><div class='row'>";
-		//Checkbox & name
-		tooltipText += "<div class='col-xs-6' style='width: 52%; padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + itemName + '</span></div>';
-		//Zone options
-		tooltipText += "<div class='col-xs-6' style='width: 48%; text-align: right'>± Zone: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + (setting && setting.zone ? setting.zone : 0) + "'/></div>";
-		//Finish
-		tooltipText += '</div></td>';
+		const setting = settingArray[item];
+		const checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
+		const itemName = (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
+		tooltipText += `
+        <td>
+            <div class='row'>
+                <div class='col-xs-6' style='width: 52%; padding-right: 5px'>
+                    ${checkbox}&nbsp;&nbsp;<span>${itemName}</span>
+                </div>
+                <div class='col-xs-6' style='width: 48%; text-align: right'>
+                    ± Zone: <input class='structConfigPercent' id='structZone${item}' type='number'  value='${setting && setting.zone ? setting.zone : 0}'/>
+                </div>
+            </div>
+        </td>`;
 		count++;
 	}
+
 	tooltipText += '</tr>';
 	tooltipText += '</div></td></tr>';
 	tooltipText += '</tbody></table>';
-	costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='dailyPortalModsSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='dailyPortalModsSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 	game.global.lockTooltip = true;
 	elem.style.left = '33.75%';
 	elem.style.top = '25%';
-	ondisplay = function () {
-		_verticalCenterTooltip(true);
-	};
+	const ondisplay = () => _verticalCenterTooltip(true);
 
 	return [elem, tooltipText, costText, ondisplay];
 }
-//Daily Portal Mods Save
-function dailyPortalModsSave() {
-	var setting = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
-	var checkboxes = document.getElementsByClassName('autoCheckbox');
-	var percentboxes = document.getElementsByClassName('structConfigPercent');
 
-	for (var x = 0; x < checkboxes.length; x++) {
-		var name = checkboxes[x].id.split('structConfig')[1];
-		var checked = checkboxes[x].dataset.checked === 'true';
-		if (!setting[name]) setting[name] = {};
+function dailyPortalModsSave() {
+	const setting = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
+	const checkboxes = Array.from(document.getElementsByClassName('autoCheckbox'));
+	const percentboxes = Array.from(document.getElementsByClassName('structConfigPercent'));
+
+	checkboxes.forEach((checkbox, index) => {
+		const name = checkbox.id.split('structConfig')[1];
+		const checked = checkbox.dataset.checked === 'true';
+		setting[name] = setting[name] || {};
 		setting[name].enabled = checked;
 
-		var zone = parseInt(percentboxes[x].value, 10);
-		if (zone > 100) zone = 100;
-		zone = Number.isInteger(zone) ? zone : 0;
+		let zone = parseInt(percentboxes[index].value, 10);
+		zone = zone > 100 ? 100 : Number.isInteger(zone) ? zone : 0;
 		setting[name].zone = zone;
-	}
+	});
 
 	setPageSetting('dailyPortalSettingsArray', setting, currSettingUniverse);
 	cancelTooltip();
 }
 
 //C2 Runner
-//C2 Runner Display
 function c2RunnerDisplay(elem) {
 	MODULES.popups.mazWindowOpen = true;
-	var tooltipText;
-	var costText = '';
-	var ondisplay = null;
 
-	const baseText = 'Here you can enable the challenges you would like ' + _getChallenge2Info() + " runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.";
-	const fusedText = autoTrimpSettings['c2Fused'].universe.indexOf(currSettingUniverse) !== -1 ? " If the 'Fused " + _getChallenge2Info() + "s' setting is enabled it will show Fused challenges and prioritise running them over their regular counterparts." : '';
+	const baseText = `Here you can enable the challenges you would like ${_getChallenge2Info()} runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.`;
+	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(currSettingUniverse) !== -1 ? ` If the 'Fused ${_getChallenge2Info()}s' setting is enabled it will show Fused challenges and prioritise running them over their regular counterparts.` : '';
 
-	tooltipText =
-		"<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to " +
-		_getChallenge2Info() +
-		" Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); document.getElementById(\"tooltipDiv\").style.top = \"25%\";'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
-	tooltipText += `<p>${baseText}${fusedText}</p>`;
-	tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+	let tooltipText = `
+		<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div>
+		<p>Welcome to ${_getChallenge2Info()} Runner Settings! 
+		<span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); document.getElementById("tooltipDiv").style.top = "25%"; _verticalCenterTooltip();'>Help</span></p>
+		<div id='autoTooltipHelpDiv' style='display: none'>
+		<p>${baseText}${fusedText}</p>
+		</div>
+		<table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>
+	`;
 
 	//Skip Lines to seperate
 	tooltipText += '</td></tr><tr>';
 	//Setup challenges that will be displayed
-	var count = 0;
-	var setting, checkbox;
-	var settingGroup = {};
-	var fusedChallenges = {};
+	let count = 0;
+	let addedFusedHeader = false;
+	const fusedC2s = ['Enlightened', 'Paralysis', 'Nometal', 'Topology', 'Waze', 'Toxad'];
+	const settingGroup = {};
+	const c2RunnerSettings = getPageSetting('c2RunnerSettings', currSettingUniverse);
 
-	if (currSettingUniverse === 1) {
-		var highestZone = game.stats.highestLevel.valueTotal();
-		if (getTotalPerkResource(true) >= 30) settingGroup.Discipline = {};
-		if (highestZone >= 25) settingGroup.Metal = {};
-		if (highestZone >= 35) settingGroup.Size = {};
-		if (highestZone >= 40) settingGroup.Balance = {};
-		if (highestZone >= 45) settingGroup.Meditate = {};
-		if (highestZone >= 60) settingGroup.Trimp = {};
-		if (highestZone >= 70) settingGroup.Trapper = {};
-		if (game.global.prisonClear >= 1) settingGroup.Electricity = {};
-		if (highestZone >= 120) settingGroup.Coordinate = {};
-		if (highestZone >= 130) settingGroup.Slow = {};
-		if (highestZone >= 145) settingGroup.Nom = {};
-		if (highestZone >= 150) settingGroup.Mapology = {};
-		if (highestZone >= 165) settingGroup.Toxicity = {};
-		if (highestZone >= 180) settingGroup.Watch = {};
-		if (highestZone >= 180) settingGroup.Lead = {};
-		if (highestZone >= 425) settingGroup.Obliterated = {};
-		if (game.global.totalSquaredReward >= 4500) settingGroup.Eradicated = {};
-		//Fused C2s
-		if (getPageSetting('c2Fused', currSettingUniverse)) {
-			if (highestZone >= 45) fusedChallenges.Enlightened = {};
-			if (highestZone >= 180) fusedChallenges.Waze = {};
-			if (highestZone >= 180) fusedChallenges.Toxad = {};
-			if (highestZone >= 130) fusedChallenges.Paralysis = {};
-			if (highestZone >= 145) fusedChallenges.Nometal = {};
-			if (highestZone >= 150) fusedChallenges.Topology = {};
-		}
-	} else if (currSettingUniverse === 2) {
-		var highestZone = game.stats.highestRadLevel.valueTotal();
-		if (highestZone >= 15) settingGroup.Unlucky = {};
-		if (highestZone >= 20) settingGroup.Downsize = {};
-		if (highestZone >= 25) settingGroup.Transmute = {};
-		if (highestZone >= 35) settingGroup.Unbalance = {};
-		if (highestZone >= 45) settingGroup.Duel = {};
-		if (highestZone >= 60) settingGroup.Trappapalooza = {};
-		if (highestZone >= 70) settingGroup.Wither = {};
-		if (highestZone >= 85) settingGroup.Quest = {};
-		if (highestZone >= 105) settingGroup.Storm = {};
-		if (highestZone >= 115) settingGroup.Berserk = {};
-		if (highestZone >= 175) settingGroup.Glass = {};
-		if (highestZone >= 201) settingGroup.Smithless = {};
-	}
+	let obj = challengesUnlockedObj(currSettingUniverse, true, !getPageSetting('c2Fused', currSettingUniverse));
+	obj = filterAndSortChallenges(obj, 'c2');
 
-	const headerNames = ['Challenge', 'Current Zone', 'End Zone'];
+	obj.forEach((setting) => {
+		settingGroup[setting] = {};
+	});
 
-	for (var y = 0; y < 2; y++) {
-		tooltipText += "<td><div class='row'>";
-		tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px;  white-space: nowrap'>" + '<span>' + '<u>' + headerNames[0] + '</u>' + '</span></div>';
-		tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px;text-align: center; white-space: nowrap'>" + '<span>' + '<u>' + headerNames[1] + '</u>' + '</span></div>';
-		tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right; white-space: nowrap'>" + '<span>' + '<u>' + headerNames[2] + '</u>' + '&nbsp;&nbsp;</span></div>';
-		tooltipText += '</div></td>';
-	}
+	const headers = [
+		{ name: 'Challenge', style: 'width: 33%; padding-right: 5px; white-space: nowrap' },
+		{ name: 'Current Zone', style: 'width: 33%; padding-right: 5px; text-align: center; white-space: nowrap' },
+		{ name: 'End Zone', style: 'width: 32%; padding-left: 5px; text-align: right; white-space: nowrap' }
+	];
+
+	const headerHTML = headers.map(({ name, style }) => `<div class='col-xs-3' style='${style}'><span><u>${name}</u></span></div>`).join('');
+
+	tooltipText += `<td><div class='row'>${headerHTML}</div></td>`.repeat(2);
 
 	tooltipText += '</tr><tr>';
-	for (var item in settingGroup) {
+	for (let item in settingGroup) {
+		if (fusedC2s.includes(item) && !addedFusedHeader) {
+			count = 0;
+			tooltipText += `
+				<tr>
+					<td>
+						<div class='row'>
+							<div class='col-xs-5' style='width: 100%; padding-right: 5px'>
+								&nbsp;&nbsp;<span><u>Fused ${_getChallenge2Info()}s</u></span>
+							</div>
+						</div>
+					</td>
+				</tr>`;
+			addedFusedHeader = true;
+		}
 		if (count !== 0 && count % 2 === 0) tooltipText += '</tr><tr>';
-		setting = getPageSetting('c2RunnerSettings', currSettingUniverse)[item] !== 'undefined' ? getPageSetting('c2RunnerSettings', currSettingUniverse)[item] : (setting = item = { enabled: false, zone: 0 });
-		checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
-		var itemName = item;
-		//Start
-		tooltipText += "<td><div class='row'>";
+		const setting = c2RunnerSettings[item] !== 'undefined' ? c2RunnerSettings[item] : (setting = item = { enabled: false, zone: 0 });
+		const checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
 
-		//Checkbox & name
-		tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px; white-space: nowrap'>" + checkbox + '&nbsp;&nbsp;<span>' + itemName + '</span></div>';
-		//Challenges current zone
-		tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px;text-align: center;  white-space: nowrap'>" + game.c2[itemName] + '</span></div>';
-		//Zone input
-		tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right; white-space: nowrap'><input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + (setting && setting.zone ? setting.zone : 0) + "'/></div>";
-		//Finish
-		tooltipText += '</div></td>';
+		const challenge = game.challenges[item];
+		const challengeList = challenge.multiChallenge || [item];
+		let challengeLevel = 0;
+
+		for (let y = 0; y < challengeList.length; y++) {
+			if (challengeLevel > 0) challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
+			else challengeLevel += game.c2[challengeList[y]];
+		}
+
+		tooltipText += `
+			<td>
+				<div class='row'>
+					<div class='col-xs-3' style='width: 33%; padding-right: 5px; white-space: nowrap'>${checkbox}&nbsp;&nbsp;<span>${item}</span></div>
+					<div class='col-xs-3' style='width: 33%; padding-right: 5px;text-align: center;  white-space: nowrap'>${challengeLevel}</span></div>
+					<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right; white-space: nowrap'><input class='structConfigPercent' id='structZone${item}' type='number'  value='${setting && setting.zone ? setting.zone : 0}'/></div>
+				</div>
+			</td>`;
 		count++;
 	}
 	tooltipText += '</tr>';
 
-	if (Object.keys(fusedChallenges).length !== 0) {
-		count = 0;
-		tooltipText += "<td><div class='row'><div class='col-xs-5' style='width: 100%; padding-right: 5px'>" + '' + '&nbsp;&nbsp;<span>' + '<u>Fused ' + _getChallenge2Info() + 's</u>' + '</span></div></div>';
-		tooltipText += '</td></tr><tr>';
-		//Plus&Minus Portal&Void zone settings.
-		for (var item in fusedChallenges) {
-			if (count !== 0 && count % 2 === 0) tooltipText += '</tr><tr>';
-			setting = getPageSetting('c2RunnerSettings', currSettingUniverse)[item] !== 'undefined' ? getPageSetting('c2RunnerSettings', currSettingUniverse)[item] : (setting = item = { enabled: false, zone: 0 });
-			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
-
-			var challenge = game.challenges[item];
-			var challengeLevel = 0;
-			var challengeList = challenge.multiChallenge;
-
-			for (var y = 0; y < challengeList.length; y++) {
-				if (challengeLevel > 0) challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
-				else challengeLevel += game.c2[challengeList[y]];
-			}
-
-			var itemName = item;
-			//Start
-			tooltipText += "<td><div class='row'>";
-			//Checkbox & name
-			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px; white-space: nowrap'>" + checkbox + '&nbsp;&nbsp;<span>' + itemName + '</span></div>';
-			//Challenges current zone
-			tooltipText += "<div class='col-xs-3' style='width: 33%; padding-right: 5px; text-align: center; white-space: nowrap'>" + challengeLevel + '</span></div>';
-			//Zone input
-			tooltipText += "<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right; white-space: nowrap'><input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + (setting && setting.zone ? setting.zone : 0) + "'/></div>";
-			//Finish
-			tooltipText += '</div></td>';
-			count++;
-		}
-		tooltipText += '</tr>';
-	}
-
 	tooltipText += '</div></td></tr>';
 	tooltipText += '</tbody></table>';
-	costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='c2RunnerSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 	game.global.lockTooltip = true;
-	ondisplay = function () {
-		_verticalCenterTooltip(false, false);
-		elem.style.width = '45%';
-		elem.style.left = '30.5%';
-		elem.style.top = '25%';
-	};
+
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='c2RunnerSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+	elem.style.width = '45%';
+	elem.style.left = '30.5%';
+	elem.style.top = '25%';
+	const ondisplay = () => _verticalCenterTooltip();
 
 	return [elem, tooltipText, costText, ondisplay];
 }
-//C2 Runner Save
-function c2RunnerSave() {
-	var setting = getPageSetting('c2RunnerSettings', currSettingUniverse);
-	var checkboxes = document.getElementsByClassName('autoCheckbox');
-	var percentboxes = document.getElementsByClassName('structConfigPercent');
 
-	for (var x = 0; x < checkboxes.length; x++) {
-		var name = checkboxes[x].id.split('structConfig')[1];
-		var checked = checkboxes[x].dataset.checked === 'true';
-		//if (!checked && !setting[name]) continue;
-		if (!setting[name]) setting[name] = {};
+function c2RunnerSave() {
+	const setting = getPageSetting('c2RunnerSettings', currSettingUniverse);
+	const checkboxes = Array.from(document.getElementsByClassName('autoCheckbox'));
+	const percentboxes = Array.from(document.getElementsByClassName('structConfigPercent'));
+
+	checkboxes.forEach((checkbox, index) => {
+		const name = checkbox.id.split('structConfig')[1];
+		const checked = checkbox.dataset.checked === 'true';
+		setting[name] = setting[name] || {};
 		setting[name].enabled = checked;
 
-		var zone = parseInt(percentboxes[x].value, 10);
+		let zone = parseInt(percentboxes[index].value, 10);
 		if (zone > 810) zone = 810;
 		zone = Number.isInteger(zone) ? zone : 0;
 		setting[name].zone = zone;
-	}
+	});
 
 	setPageSetting('c2RunnerSettings', setting, currSettingUniverse);
 	cancelTooltip();

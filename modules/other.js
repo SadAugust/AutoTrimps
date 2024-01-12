@@ -1,17 +1,13 @@
 MODULES['other'] = {};
 
 function autoRoboTrimp() {
-	if (game.global.roboTrimpLevel === 0) return;
-	if (game.global.roboTrimpCooldown !== 0) return;
-	if (getPageSetting('AutoRoboTrimp') > game.global.world || getPageSetting('AutoRoboTrimp') <= 0) return;
+	if (game.global.roboTrimpLevel === 0 || game.global.roboTrimpCooldown !== 0) return;
+	const autoRoboTrimpSetting = getPageSetting('AutoRoboTrimp');
+	if (autoRoboTrimpSetting <= 0) return;
 
-	var shouldShriek = (game.global.world - parseInt(getPageSetting('AutoRoboTrimp'))) % 5 === 0;
-	if (shouldShriek) {
-		if (!game.global.useShriek) {
-			magnetoShriek();
-			debug('Activated Robotrimp MagnetoShriek Ability @ z' + game.global.world, 'zone', '*podcast');
-		}
-	} else if (game.global.useShriek) magnetoShriek();
+	const shouldShriek = game.global.world >= autoRoboTrimpSetting && (game.global.world - parseInt(autoRoboTrimpSetting)) % 5 === 0;
+	if (shouldShriek && !game.global.useShriek) debug('Activated Robotrimp MagnetoShriek Ability @ z' + game.global.world, 'zone', '*podcast');
+	if (game.global.useShriek !== shouldShriek) magnetoShriek();
 }
 
 function isCorruptionActive(targetZone) {
@@ -50,9 +46,9 @@ function exitSpireCell(checkCell) {
 
 function getZoneEmpowerment(zone) {
 	if (!zone) return 'None';
-	var natureStartingZone = game.global.universe === 1 ? getNatureStartZone() : 236;
+	const natureStartingZone = game.global.universe === 1 ? getNatureStartZone() : 236;
 	if (zone < natureStartingZone) return 'None';
-	var activeEmpowerments = ['Poison', 'Wind', 'Ice'];
+	const activeEmpowerments = ['Poison', 'Wind', 'Ice'];
 	zone = Math.floor((zone - natureStartingZone) / 5);
 	zone = zone % activeEmpowerments.length;
 	return activeEmpowerments[zone];
@@ -66,10 +62,10 @@ function fluffyEvolution() {
 	if (game.global.world < getPageSetting('fluffyMinZone')) return;
 	if (game.global.world > getPageSetting('fluffyMaxZone')) return;
 	//Only evolve if you can afford all the bone portals that you want to purchase at the start of your next evolution
-	var bpsToUse = getPageSetting('fluffyBP');
+	let bpsToUse = getPageSetting('fluffyBP');
 	if (bpsToUse > 0 && game.global.b % 100 < bpsToUse) return;
 
-	var perkRespec = false;
+	let perkRespec = false;
 	if (getPageSetting('fluffyRespec') && getPageSetting('autoPerks') && !game.portal.Cunning.locked) {
 		const perkLevels = getPerkLevel('Cunning') + getPerkLevel('Curious') + getPerkLevel('Classy');
 		if (perkLevels <= 0) {
@@ -171,13 +167,49 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 			},
 			Frigid: { unlockZone: 460, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
 			Experience: { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			//Fused C2s
-			Enlightened: { unlockZone: 45, unlockedIn: ['c2'] },
-			Paralysis: { unlockZone: 130, unlockedIn: ['c2'] },
-			Nometal: { unlockZone: 145, unlockedIn: ['c2'] },
-			Topology: { unlockZone: 150, unlockedIn: ['c2'] },
-			Waze: { unlockZone: 180, unlockedIn: ['c2'] },
-			Toxad: { unlockZone: 180, unlockedIn: ['c2'] }
+			//Fused Challenges - These need to go in reverse order of when they unlock.
+			Toxad: {
+				unlockZone: game.stats.highestLevel.valueTotal(),
+				unlockCondition: function () {
+					return game.stats.highestLevel.valueTotal() >= 180;
+				},
+				unlockedIn: ['c2']
+			},
+			Waze: {
+				unlockZone: game.stats.highestLevel.valueTotal(),
+				unlockCondition: function () {
+					return game.stats.highestLevel.valueTotal() >= 180;
+				},
+				unlockedIn: ['c2']
+			},
+			Topology: {
+				unlockZone: game.stats.highestLevel.valueTotal(),
+				unlockCondition: function () {
+					return game.stats.highestLevel.valueTotal() >= 150;
+				},
+				unlockedIn: ['c2']
+			},
+			Nometal: {
+				unlockZone: game.stats.highestLevel.valueTotal(),
+				unlockCondition: function () {
+					return game.stats.highestLevel.valueTotal() >= 145;
+				},
+				unlockedIn: ['c2']
+			},
+			Paralysis: {
+				unlockZone: game.stats.highestLevel.valueTotal(),
+				unlockCondition: function () {
+					return game.stats.highestLevel.valueTotal() >= 130;
+				},
+				unlockedIn: ['c2']
+			},
+			Enlightened: {
+				unlockZone: game.stats.highestLevel.valueTotal(),
+				unlockCondition: function () {
+					return game.stats.highestLevel.valueTotal() >= 45;
+				},
+				unlockedIn: ['c2']
+			}
 		};
 	}
 
@@ -745,6 +777,10 @@ function updateATVersion() {
 				autoTrimpSettings.prestigeClimbZone.valueU2 = tempSettings.ForcePresZ.valueU2;
 			}
 		}
+
+		if (versionNumber < '6.5.49') {
+			autoTrimpSettings.spamMessages.value.show = true;
+		}
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
@@ -854,13 +890,12 @@ function _adjustGlobalTimers(keys, adjustment) {
 }
 
 function _timeWarpSave() {
-	const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
+	const timeRun = new Date().getTime() - offlineProgress.startTime;
+	const reduceBy = offlineProgress.totalOfflineTime + timeRun - offlineProgress.ticksProcessed * 100;
 	const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp'];
 
 	_adjustGlobalTimers(keys, -reduceBy);
-
 	save(false, true);
-
 	_adjustGlobalTimers(keys, reduceBy);
 
 	debug(`Game Saved! ${formatTimeForDescriptions(reduceBy / 1000)} of offline progress left to process.`, `offline`);
