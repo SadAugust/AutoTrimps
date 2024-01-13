@@ -3536,6 +3536,8 @@ function autoLevelCheck(mapName, mapSpecial, maxZone, minZone) {
 		repeatCounter = game.global.mapRunCounter + 1;
 	}
 
+	isSmithyFarm ? (MODULES.maps.mapRepeatsSmithy[index] = repeatCounter) : (MODULES.maps.mapRepeats = repeatCounter);
+
 	return mapLevel;
 }
 
