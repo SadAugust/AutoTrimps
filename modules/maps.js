@@ -104,14 +104,7 @@ function makeAutomapStatusTooltip(mouseover) {
 	}
 
 	//HD Ratios
-	tooltipText +=
-		'<br>' +
-		`<b>HD Ratio Info</b><br>` +
-		`${hdRatioText}<br>` +
-		`World HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatio)}</b><br>` +
-		`Map HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioMap)}</b><br>` +
-		`Void HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioVoid)}</b><br>` +
-		`${mapStacksText}<br>`;
+	tooltipText += '<br>' + `<b>HD Ratio Info</b><br>` + `${hdRatioText}<br>` + `World HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatio)}</b><br>` + `Map HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioMap)}</b><br>` + `Void HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioVoid)}</b><br>` + `${mapStacksText}<br>`;
 
 	if (mouseover) {
 		tooltipText += '")';
@@ -360,7 +353,7 @@ function _noMappingChallenges(ignoreChallenge) {
 }
 
 function _leadDisableMapping() {
-	if (!challengeActive('Lead') || !getPageSetting('lead')) return false;
+	if (!challengeActive('Lead') || !getPageSetting('lead') || game.global.spireActive) return false;
 
 	const evenZone = game.global.world % 2 === 0;
 	const clearedCell = game.global.lastClearedCell + 2 < 90;
@@ -389,7 +382,10 @@ function autoMaps() {
 
 	if (_lifeMapping()) return;
 
-	if (_leadDisableMapping()) return;
+	if (_leadDisableMapping()) {
+		if (game.global.preMapsActive) mapsClicked();
+		return;
+	}
 
 	if (_vanillaMAZ()) return;
 
@@ -401,19 +397,14 @@ function autoMaps() {
 
 	mapObj.selectedMap = _setSelectedMap(mapObj.selectedMap, mapObj.voidMap, mapObj.optimalMap);
 
-	//Map Repeat
-	if (game.global.mapsActive) {
-		_setMapRepeat();
-	}
+	if (game.global.mapsActive) _setMapRepeat();
 
 	if (!game.global.preMapsActive && !game.global.mapsActive && mapObj.selectedMap !== 'world') {
 		if (!game.global.switchToMaps && shouldAbandon()) mapsClicked();
 		if (game.global.switchToMaps) mapsClicked();
 	}
 
-	if (game.global.preMapsActive) {
-		_autoMapsCreate(mapObj);
-	}
+	if (game.global.preMapsActive) _autoMapsCreate(mapObj);
 
 	_slowScumCheck();
 }
