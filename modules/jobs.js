@@ -115,8 +115,8 @@ function buyJobs(forceRatios) {
 		return;
 	}
 
-	var jobSettings = getPageSetting('jobSettingsArray');
-	freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - game.resources.trimps.employed;
+	const jobSettings = getPageSetting('jobSettingsArray');
+	let freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - game.resources.trimps.employed;
 
 	var ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	var ratioWorkerCount = 0;

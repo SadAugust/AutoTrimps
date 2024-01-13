@@ -922,7 +922,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (thisSetting.maxvoidzone < thisSetting.world) thisSetting.maxvoidzone = thisSetting.world;
 
 		if (thisSetting.repeat < 0 && thisSetting.repeat !== -1) thisSetting.repeat = 0;
-
 		setting.push(thisSetting);
 	}
 

@@ -3026,7 +3026,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	const hitsSurvivedGoal = targetHitsSurvived(true);
 	const shouldHitsSurvived = hitsSurvivedCheck && hitsSurvivedGoal > 0 && hdStats.hitsSurvived < hitsSurvivedGoal;
 
-	if (!voidFarm && !shouldHitsSurvived && !defaultSettings && !defaultSettings.active) return farmingDetails;
+	if (!voidFarm && !shouldHitsSurvived && (!defaultSettings || !defaultSettings.active)) return farmingDetails;
 
 	const settingIndex = findSettingsIndex(settingName, baseSettings, mapName, null, skipHealthCheck);
 
@@ -3446,7 +3446,7 @@ function findSettingsIndex(settingName, baseSettings, mapName, dailyAddition, sk
 		if (shouldSkipSetting(currSetting, world, settingName, dailyAddition)) continue;
 		if (shouldSkipSettingPrestigeGoal(currSetting, mapName)) continue;
 
-		currSetting.repeatevery = currSetting.repeatevery || 0;
+		currSetting.repeatevery = currSetting.repeatevery || (currSetting.hdMult ? 1 : 0);
 
 		if (isWorldMatch(world, currSetting.repeatevery) || (dailyAddition && dailyAddition.active && isWorldMatch(world + 1, currSetting.repeatevery))) {
 			return y;

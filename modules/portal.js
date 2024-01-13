@@ -35,7 +35,6 @@ function autoPortal(specificPortalZone, universe, skipDaily) {
 	if (game.global.runningChallengeSquared) return;
 	if (!universe) universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 	const runningDaily = challengeActive('Daily');
-	dontPortal = false;
 	if (!MODULES.portal.portalForVoid && !runningDaily && getPageSetting('autoPortal', universe) === 'Off') return;
 	if (!MODULES.portal.portalForVoid && runningDaily && getPageSetting('dailyPortal', universe) === '0') return;
 
@@ -581,7 +580,6 @@ function challengeInfo(force) {
 			debug(`Be aware that your usual farming settings will not work properly due to the map resource shred mechanic so you might want to amend or disable them. Additionally Smithy Farm is disabled when running this challenge.`);
 		}
 	}
-	challengeCurrentZone = game.stats.zonesCleared.value;
 }
 
 function c2FinishZone() {
@@ -640,8 +638,6 @@ function resetVarsZone(loadingSave) {
 	//General
 	MODULES.maps.mapTimer = 0;
 	MODULES.maps.fragmentCost = Infinity;
-	//Fragment Farming
-	initialFragmentMapID = undefined;
 	//Auto Level variables
 	MODULES.maps.mapRepeats = 0;
 	mapSettings.levelCheck = Infinity;

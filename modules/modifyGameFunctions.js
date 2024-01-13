@@ -165,10 +165,9 @@ function suicideTrimps() {
 function drawAllBuildings(force) {
 	if (usingRealTimeOffline && !force) return;
 	var elem = document.getElementById('buildingsHere');
-	var building;
 	elem.innerHTML = '';
 	for (var item in game.buildings) {
-		building = game.buildings[item];
+		let building = game.buildings[item];
 		if (building.locked === 1) continue;
 		drawBuilding(item, elem);
 		if (building.alert && game.options.menu.showAlerts.enabled) {
@@ -910,8 +909,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 
 		if (item === 'fragments' && game.global.universe === 2) {
 			const buildingSetting = getPageSetting('buildingSettingsArray');
-			resourcesAvailable =
-				buildingSetting.SafeGateway && buildingSetting.SafeGateway.zone !== 0 && game.global.world >= buildingSetting.SafeGateway.zone ? resourcesAvailable : buildingSetting.SafeGateway.enabled && resourcesAvailable > resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount ? resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount : resourcesAvailable;
+			resourcesAvailable = buildingSetting.SafeGateway && buildingSetting.SafeGateway.zone !== 0 && game.global.world >= buildingSetting.SafeGateway.zone ? resourcesAvailable : buildingSetting.SafeGateway.enabled && resourcesAvailable > resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount ? resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount : resourcesAvailable;
 		}
 		if (!resource || typeof resourcesAvailable === 'undefined') {
 			console.log(`resource ${item} not found`);
