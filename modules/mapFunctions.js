@@ -3446,7 +3446,7 @@ function findSettingsIndex(settingName, baseSettings, mapName, dailyAddition, sk
 		if (shouldSkipSetting(currSetting, world, settingName, dailyAddition)) continue;
 		if (shouldSkipSettingPrestigeGoal(currSetting, mapName)) continue;
 
-		currSetting.repeatevery = currSetting.repeatevery || (currSetting.hdMult ? 1 : 0);
+		currSetting.repeatevery = currSetting.repeatevery || (currSetting.hdType ? 1 : 0);
 
 		if (isWorldMatch(world, currSetting.repeatevery) || (dailyAddition && dailyAddition.active && isWorldMatch(world + 1, currSetting.repeatevery))) {
 			return y;

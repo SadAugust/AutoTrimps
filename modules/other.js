@@ -781,6 +781,29 @@ function updateATVersion() {
 		if (versionNumber < '6.5.49') {
 			autoTrimpSettings.spamMessages.value.show = true;
 		}
+
+		if (versionNumber < '6.5.50') {
+			if (typeof autoTrimpSettings.voidMapSettings['value'][1] !== 'undefined') {
+				for (var y = 1; y < autoTrimpSettings.voidMapSettings['value'].length; y++) {
+					autoTrimpSettings.voidMapSettings['value'][y].repeatevery = 1;
+				}
+			}
+			if (typeof autoTrimpSettings.voidMapSettings['valueU2'][1] !== 'undefined') {
+				for (var y = 1; y < autoTrimpSettings.voidMapSettings['valueU2'].length; y++) {
+					autoTrimpSettings.voidMapSettings['valueU2'][y].repeatevery = 1;
+				}
+			}
+			if (typeof autoTrimpSettings.hdFarmSettings['value'][1] !== 'undefined') {
+				for (var y = 1; y < autoTrimpSettings.hdFarmSettings['value'].length; y++) {
+					autoTrimpSettings.hdFarmSettings['value'][y].repeatevery = 1;
+				}
+			}
+			if (typeof autoTrimpSettings.hdFarmSettings['valueU2'][1] !== 'undefined') {
+				for (var y = 1; y < autoTrimpSettings.hdFarmSettings['valueU2'].length; y++) {
+					autoTrimpSettings.hdFarmSettings['valueU2'][y].repeatevery = 1;
+				}
+			}
+		}
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
