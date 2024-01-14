@@ -542,7 +542,7 @@ function populateFarmCalcData() {
 }
 
 //Return a list of efficiency stats for all sensible zones
-function stats(lootFunction) {
+function stats(lootFunction = lootDefault) {
 	const saveData = populateFarmCalcData();
 	let stats = [];
 	let extra = 0;
