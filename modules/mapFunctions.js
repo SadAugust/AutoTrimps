@@ -2654,9 +2654,9 @@ function desolation(lineCheck, forceDestack) {
 
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
 
+	let destackZone = getPageSetting('desolationZone') > 0 ? getPageSetting('desolationZone') : Infinity;
+	let destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	const destackHits = getPageSetting('desolationDestack') > 0 ? getPageSetting('desolationDestack') : Infinity;
-	const destackZone = getPageSetting('desolationZone') > 0 ? getPageSetting('desolationZone') : Infinity;
-	const destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	const destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : Infinity;
 
 	const equality = game.global.world >= destackOnlyZone || game.jobs.Explorer.locked;
@@ -2686,7 +2686,6 @@ function desolation(lineCheck, forceDestack) {
 		if (!shouldMap) recycleMap_AT(true);
 	}
 
-	//As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
 	if (lineCheck && shouldMap) return (setting = { priority: 0 });
 
 	const repeat = game.challenges.Desolation.chilled <= mapLevel + 1;
