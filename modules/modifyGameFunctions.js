@@ -320,7 +320,7 @@ function updateButtonColor(what, canAfford, isJob) {
 		swapClass('thingColor', className, elem);
 		return;
 	}
-	if (isJob && game.global.firing === true) {
+	if (isJob && game.global.firing) {
 		if (game.jobs[what].owned >= 1) {
 			//note for future self:
 			//if you need to add more states here, change these to use the swapClass func -grabz

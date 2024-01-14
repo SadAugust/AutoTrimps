@@ -290,7 +290,7 @@ function autoGather() {
 			safeSetGather(lowestResource);
 			return;
 		}
-	} else if (trapTrimpsOK && game.global.trapBuildToggled === true && lowOnTraps) {
+	} else if (trapTrimpsOK && game.global.trapBuildToggled && lowOnTraps) {
 		safeSetGather('buildings');
 		return;
 	} else {

@@ -8,28 +8,42 @@ function mastery(name) {
 	return game.talents[name].purchased;
 }
 
-//Old setup!
-function callAutoMapLevel(settingName, special, maxLevel, minLevel) {
-	if (getPageSetting('autoLevelTest')) return callAutoMapLevel_new(settingName, special);
+function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
+	if (getPageSetting('autoLevelTest')) return callAutoMapLevel_new(mapName, special);
+
 	let mapLevel = mapSettings.levelCheck;
-	// Stop it from adjusting map levels and potentially wasting map credits during Mapology.
 	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
-	if (settingName === '' || mapLevel === Infinity) {
-		if (mapLevel === Infinity) mapLevel = autoMapLevel(special, maxLevel, minLevel);
-		if (mapLevel !== Infinity && atSettings.intervals.twoSecond) mapLevel = autoMapLevel(special, maxLevel, minLevel);
-	}
-	if (atSettings.intervals.sixSecond && settingName !== '') {
-		//Increasing Map Level
-		var autoLevel = autoMapLevel(special, maxLevel, minLevel);
+
+	if (mapLevel === Infinity) {
+		mapLevel = autoMapLevel(special, maxLevel, minLevel);
+	} else if (mapName && atSettings.intervals.sixSecond) {
+		const autoLevel = autoMapLevel(special, maxLevel, minLevel);
 		if (autoLevel > mapLevel) mapLevel = autoLevel;
-		autoLevel = autoMapLevel(special, maxLevel, minLevel, true);
-		//Decreasing Map Level
-		if (autoLevel < mapLevel) mapLevel = autoLevel;
+		const autoLevelIgnoreFragments = autoMapLevel(special, maxLevel, minLevel, true);
+		if (autoLevelIgnoreFragments < mapLevel) mapLevel = autoLevelIgnoreFragments;
 	}
+
+	if (_getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
+
+	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
+	const mapBonusConditions = [
+		{ condition: mapName === 'Map Bonus', level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10, level: mapBonusLevel },
+		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth'), level: mapBonusLevel },
+		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
+		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(_getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
+		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
+		{ condition: mapName === 'Mayhem Destacking' && mapLevel < 0, level: getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0 },
+		{ condition: mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel, level: mapBonusLevel },
+		{ condition: _insanityDisableUniqueMaps() && mapLevel < 0, level: 0 }
+	];
+
+	const matchingCondition = mapBonusConditions.find(({ condition }) => condition);
+	if (matchingCondition) mapLevel = matchingCondition.level;
+
 	return mapLevel;
 }
 
-//New setup!
 function callAutoMapLevel_new(mapName, special) {
 	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking', 'Desolation Destacking'];
 	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';

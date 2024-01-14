@@ -671,8 +671,7 @@ function mapFarm(lineCheck) {
 
 function _runMapFarm(setting, mapName, settingName, settingIndex) {
 	const mapSpecial = getAvailableSpecials(setting.special);
-	let mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-	if (setting.autoLevel && mapLevel >= 0 && challengeActive('Wither')) mapLevel = -1;
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 	let repeatCounter = setting.repeat === -1 ? Infinity : setting.repeat;
 	const repeatNumber = repeatCounter === Infinity ? '∞' : repeatCounter;
 	const jobRatio = setting.jobratio;
@@ -773,8 +772,7 @@ function _runTributeFarm(setting, mapName, settingName, settingIndex) {
 	const shouldAtlantrimp = setting.atlantrimp && game.mapUnlocks.AncientTreasure.canRunOnce;
 	let tributeGoal = game.buildings.Tribute.locked === 1 ? 0 : setting.tributes;
 	let meteorologistGoal = game.jobs.Meteorologist.locked === 1 ? 0 : setting.mets;
-	let mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-	if (setting.autoLevel && mapLevel >= 0 && challengeActive('Wither')) mapLevel = -1;
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 	let totalCost = 0;
 
 	if (setting.mapType === 'Map Count') {
@@ -966,8 +964,7 @@ function _smithyFarmCalculateGoal(setting, mapLevel, smithyGoal) {
 function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 	let shouldMap = false;
 	let mapSpecial = getAvailableSpecials('lmc', true);
-	let mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-	if (setting.autoLevel && mapLevel >= 0 && challengeActive('Wither')) mapLevel = -1;
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 	let smithyGoal = setting.repeat;
 	let biome = getBiome();
 	let jobRatio = [0, 0, 0, 0];
@@ -1089,9 +1086,7 @@ function _runWorshipperFarm(setting, mapName, settingName, settingIndex, default
 	const cacheTime = mapSpecial === 'lsc' ? 20 : 10;
 	const biome = getBiome(null, 'Sea');
 	const worshippersOwned = game.jobs.Worshipper.owned;
-	let mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-
-	if (setting.autoLevel && mapLevel >= 0 && challengeActive('Wither')) mapLevel = -1;
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 
 	const checkShouldSkip = defaultSettings.shipSkipEnabled && worshippersOwned !== 50;
 	const skipIfAbove = game.jobs.Worshipper.getCost() * defaultSettings.shipskip;
