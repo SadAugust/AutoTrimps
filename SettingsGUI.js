@@ -2596,7 +2596,7 @@ function initialiseAllSettings() {
 		createSetting('desolationSpecial',
 			function () { return ('D: Hyperspeed 2 LMC') },
 			function () {
-				let description = "<p>If enabled will use the Large Metal Cache special when destacking on zones that you have the hyperspeed 2 talent active.</p>";
+				let description = "<p>If enabled this will use the Large Metal Cache special rather than not using a special modifier when destacking on zones that you have the hyperspeed 2 talent active.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'C2', [2],

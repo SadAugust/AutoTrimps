@@ -187,7 +187,6 @@ function equalityManagement() {
 	if (equalitySetting === 0) return;
 	if (equalitySetting === 1) return equalityManagementBasic();
 
-	//Turning off equality scaling and setting always abandon to on so that it can suicide armies
 	game.portal.Equality.scalingActive = false;
 	game.options.menu.alwaysAbandon.enabled = 1;
 
@@ -221,7 +220,7 @@ function equalityManagement() {
 	const runningUnlucky = challengeActive('Unlucky');
 	const runningDuel = challengeActive('Duel');
 	const runningTrappa = challengeActive('Trappapalooza');
-	const shieldBreak = challengeActive('Bublé') || _getCurrentQuest() === 8; //Shield break quest
+	const shieldBreak = challengeActive('Bublé') || _getCurrentQuest() === 8;
 	const runningRevenge = challengeActive('Revenge');
 	const runningArchaeology = challengeActive('Archaeology');
 	const runningMayhem = challengeActive('Mayhem');
@@ -230,33 +229,26 @@ function equalityManagement() {
 	const runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	const runningGlass = challengeActive('Glass');
 	const runningDesolation = challengeActive('Desolation');
-	const runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
+	const runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith;
 
-	//Override for max equality when we ONLY want to destack during Aesolation.
 	if (runningDesolation && mapSettings.equality && game.global.world >= getPageSetting('destackOnlyZone') && getPageSetting('autoMaps')) {
 		setEquality(game.portal.Equality.radLevel);
 		return;
 	}
 
-	//Perk/Talent conditions
 	const noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 	const angelicOwned = game.talents.angelic.purchased;
-	//Challenges/conditions where it's important to keep armies alive through angelic.
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || noFrenzy || (dailyEmpower && !mapping));
 
-	//Gamma burst info
 	let gammaMaxStacksCheck = gammaMaxStacks(false, false, type);
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	if (gammaDmg === 1) gammaMaxStacksCheck = 0;
 	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	const smithlessGamma = runningSmithless && 10 - game.challenges.Smithless.uberAttacks > gammaToTrigger;
 
-	//Initialising Stat variables
-	//Our stats
 	const dmgType = runningUnlucky ? 'max' : 'avg';
 	const critType = challengeActive('Wither') || challengeActive('Glass') ? 'never' : 'maybe';
 
-	//Returns only shield if running a shieldBraek challenge/quest
 	const ourShieldMax = calcOurHealth(true, type);
 	const ourShield = remainingHealth(true, false, type);
 	let ourHealth = remainingHealth(shieldBreak, angelicDance, type);
@@ -281,7 +273,6 @@ function equalityManagement() {
 	}
 	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(dailyChallenge.rampage.strength, dailyChallenge.rampage.stacks);
 
-	//Enemy stats
 	const enemy = getCurrentEnemy();
 	const enemyName = game.global[mapGrid][currentCell].name;
 	const enemyHealth = game.global[mapGrid][currentCell].health;
@@ -290,27 +281,22 @@ function equalityManagement() {
 	let enemyDmgMax = enemyDmg * Math.pow(enemyEqualityModifier, maxEquality);
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 
-	//Void Map Modifiers
 	if (game.global.voidBuff === 'doubleAttack') enemyDamageMult += 2;
 	if (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || shieldBreak)) enemyDamageMult += 5;
-	//Daily Modifiers
-	//Empower related modifiers in world
+
 	if ((dailyEmpowerToggle && !mapping) || MODULES.maps.slowScumming) {
 		if (dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 		if (dailyExplosive || MODULES.maps.slowScumming) ourDmgMax = maxDmg * gammaDmg;
 	}
-	//Empower modifiers in maps.
 	if (type === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming) {
 		if (dailyEmpowerToggle && dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 		if (dailyExplosive) enemyDamageMult += explosiveMult;
 	}
 	if (dailyCrit && !dailyEmpower && (type === 'world' || type === 'void') && gammaToTrigger > 1) enemyDamageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
-	//Mayhem poison
 	if (enemyCanPoison) enemyDamageMult += 1.2;
 
 	enemyDmg *= enemyDamageMult;
 
-	//Fast Enemy conditions
 	let fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !MODULES.fightinfo.exoticImps.includes(enemyName) : MODULES.fightinfo.fastImps.includes(enemyName));
 	if (!fastEnemy) {
 		if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
@@ -339,7 +325,6 @@ function equalityManagement() {
 		return;
 	}
 
-	//Suiciding to get max bloodthirst stacks if our avg attacks to kill is greater than the attacks to proc a bloodthirst stack.
 	if (dailyBloodthirst && mapping && fastEnemy && getPageSetting('bloodthirstMaxStacks')) {
 		const bloodthirst = dailyChallenge.bloodthirst;
 		const maxStacks = dailyModifiers.bloodthirst.getMaxStacks(bloodthirst.strength);

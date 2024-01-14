@@ -209,14 +209,14 @@ function survive(formation = 'S', critPower = 2, ignoreArmy) {
 	if (formation === 'S' && (game.global.world < 60 || game.stats.highestLevel.valueTotal() < 180)) return false;
 
 	//Base stats
-	var health = MODULES.stats.baseHealth;
-	var block = MODULES.stats.baseBlock;
-	var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
+	let health = MODULES.stats.baseHealth;
+	let block = MODULES.stats.baseBlock;
+	let missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
 
 	//More stats
-	var minDamage = MODULES.stats.baseMinDamage;
-	var maxDamage = MODULES.stats.baseMaxDamage;
-	var newSquadRdy = !ignoreArmy && newArmyRdy();
+	let minDamage = MODULES.stats.baseMinDamage;
+	let maxDamage = MODULES.stats.baseMaxDamage;
+	let newSquadRdy = !ignoreArmy && newArmyRdy();
 
 	//Applies the formation modifiers
 	if (formation === 'XB') {
@@ -244,25 +244,25 @@ function survive(formation = 'S', critPower = 2, ignoreArmy) {
 	}
 
 	//Max health for XB formation
-	var maxHealth = health * (formation === 'XB' ? 2 : 1);
+	let maxHealth = health * (formation === 'XB' ? 2 : 1);
 
 	//Empowerments - Poison
 	minDamage += addPoison(true);
 	maxDamage += addPoison(true);
 
 	//Pierce
-	var pierce = game.global.brokenPlanet && !game.global.mapsActive ? getPierceAmt() : 0;
+	let pierce = game.global.brokenPlanet && !game.global.mapsActive ? getPierceAmt() : 0;
 	if (formation !== 'B' && game.global.formation === 3) pierce *= 2;
 
-	var notSpire = game.global.mapsActive || !game.global.spireActive;
+	let notSpire = game.global.mapsActive || !game.global.spireActive;
 	//Decides if the trimps can survive in this formation
-	var harm = directDamage(block, pierce, health - missingHealth, minDamage, critPower, formation) + challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower, formation);
+	let harm = directDamage(block, pierce, health - missingHealth, minDamage, critPower, formation) + challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower, formation);
 
 	//Updated Genes and Block
-	var blockier = calcOurBlock(false, false);
-	var healthier = health * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
-	var maxHealthier = maxHealth * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
-	var harm2 = directDamage(blockier, pierce, healthier, minDamage, critPower, formation) + challengeDamage(maxHealthier, minDamage, maxDamage, 0, blockier, pierce, critPower, formation);
+	let blockier = calcOurBlock(false, false);
+	let healthier = health * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
+	let maxHealthier = maxHealth * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
+	let harm2 = directDamage(blockier, pierce, healthier, minDamage, critPower, formation) + challengeDamage(maxHealthier, minDamage, maxDamage, 0, blockier, pierce, critPower, formation);
 
 	return (newSquadRdy && notSpire && healthier > harm2) || health - missingHealth > harm;
 }
