@@ -2593,6 +2593,14 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
+		createSetting('desolationSpecial',
+			function () { return ('D: Hyperspeed 2 LMC') },
+			function () {
+				let description = "<p>If enabled will use the Large Metal Cache special when destacking on zones that you have the hyperspeed 2 talent active.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'C2', [2],
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationMP',
 			function () { return ('D: Melting Point') },
 			function () {

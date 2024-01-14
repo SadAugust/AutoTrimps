@@ -2658,10 +2658,11 @@ function desolation(lineCheck, forceDestack) {
 	let destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	const destackHits = getPageSetting('desolationDestack') > 0 ? getPageSetting('desolationDestack') : Infinity;
 	const destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : Infinity;
+	const destackSpecial = getPageSetting('desolationSpecial');
 
 	const equality = game.global.world >= destackOnlyZone || game.jobs.Explorer.locked;
 
-	let mapSpecial = trimpStats.hyperspeed2 ? 'lmc' : 'fa';
+	let mapSpecial = getAvailableSpecials(trimpStats.hyperspeed2 && destackSpecial ? 'lmc' : 'fa');
 	let mapLevel = autoLevelCheck(mapName, mapSpecial, 10, 0);
 	let sliders = [9, 9, 9];
 	let biome = getBiome();
@@ -2714,6 +2715,7 @@ function desolation(lineCheck, forceDestack) {
 
 function _getDesolationMapLevel(trimpHealth, mapName, mapSpecial, sliders) {
 	let mapLevel;
+
 	for (let y = 10; y >= 0; y--) {
 		mapLevel = y;
 		if (game.global.mapsActive && mapSettings.mapName === mapName && (getCurrentMapObject().bonus === undefined ? '0' : getCurrentMapObject().bonus) === mapSpecial && getCurrentMapObject().level - game.global.world === mapLevel) break;
@@ -2723,9 +2725,11 @@ function _getDesolationMapLevel(trimpHealth, mapName, mapSpecial, sliders) {
 		if (enemyDmg > trimpHealth) continue;
 		break;
 	}
+
 	if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + mapLevel) {
 		recycleMap_AT();
 	}
+
 	return mapLevel;
 }
 
