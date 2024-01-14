@@ -577,7 +577,7 @@ function lootDefault(zone, saveData)
 
 function lootDestack(zone, saveData)
 {
-	return zone <= saveData.zone ? 0 : zone - saveData.zone;
+	return zone < saveData.zone ? 0 : zone - saveData.zone + 1;
 }
 
 //Return efficiency stats for the given zone
