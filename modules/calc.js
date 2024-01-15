@@ -1255,15 +1255,10 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	return health;
 }
 
-function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, checkOutputs) {
-	if (!targetZone) targetZone = game.global.world;
-	if (!type) type = 'world';
-	if (!maxTenacity) maxTenacity = false;
-	if (!difficulty) difficulty = 1;
-	//Init
-	var enemyHealth = 0;
-	var universeSetting;
-	var voidHealth = 0;
+function calcHDRatio(targetZone = game.global.world, type = 'world', maxTenacity = false, difficulty = 1, hdCheck = true, checkOutputs) {
+	const heirloomToUse = heirloomShieldToEquip(type, false, hdCheck);
+	let enemyHealth = 0;
+	let universeSetting;
 
 	function checkResults() {
 		debug(`ourBaseDamage: ${ourBaseDamage}`, `debug`);
@@ -1278,7 +1273,7 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 	if (leadCheck) targetZone++;
 
 	if (type === 'world') {
-		var customHealth = undefined;
+		let customHealth = undefined;
 		if (game.global.universe === 1) {
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
@@ -1290,12 +1285,11 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 		universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, type, difficulty, 'gamma', true) : 'X';
 	} else if (type === 'void') {
 		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Cthulimp') * difficulty;
-		voidHealth = enemyHealth;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
 	}
 
-	var heirloomToUse = heirloomShieldToEquip(type, false, hdCheck);
-	var ourBaseDamage = calcOurDmg(challengeActive('Unlucky') ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world, null, heirloomToUse);
+	let ourBaseDamage = calcOurDmg(challengeActive('Unlucky') ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world, null, heirloomToUse);
+
 	//Lead Challenge Pt. 2
 	if (leadCheck) ourBaseDamage /= 1.5;
 	ourBaseDamage += addPoison(false, targetZone);
@@ -1311,7 +1305,8 @@ function calcHDRatio(targetZone, type, maxTenacity, difficulty, hdCheck = true, 
 		}
 	}
 
-	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourBaseDamage *= 1 - (Math.max(1, gammaMaxStacks(false, true, type) - 1) * game.global.dailyChallenge.weakness.strength) / 100;
+	const maxGammaStacks = gammaMaxStacks(false, true, type) - 1;
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined' && maxGammaStacks !== Infinity) ourBaseDamage *= 1 - (Math.max(1, maxGammaStacks) * game.global.dailyChallenge.weakness.strength) / 100;
 
 	//Adding gammaBurstDmg to calc
 	if ((type !== 'map' && game.global.universe === 2 && universeSetting < game.portal.Equality.radLevel - 14) || game.global.universe === 1) ourBaseDamage *= MODULES.heirlooms.gammaBurstPct;
