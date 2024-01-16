@@ -72,6 +72,15 @@ activateClicked = function () {
 	_setButtonsPortal();
 };
 
+originalCheckAchieve = checkAchieve;
+checkAchieve = function () {
+	if (arguments[0] === 'totalMaps') {
+		const mapObj = getCurrentMapObject();
+		mapObj.clears++;
+	}
+	originalCheckAchieve(...arguments);
+};
+
 //Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
 originalFadeIn = fadeIn;
 fadeIn = function () {

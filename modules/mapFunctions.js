@@ -19,7 +19,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Shieldblock.allowed) return false;
 			if (aboveMapLevel && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
-			else if (game.mapUnlocks.BigWall.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -32,7 +32,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
 			if (aboveMapLevel && !game.talents.bounty.purchased) return true; //Don't bother before z16
-			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -45,7 +45,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
 			if (game.global.world - 1 > map.level) return true; //Don't bother before z22
-			else if (game.mapUnlocks.Portal.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -57,7 +57,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (aboveMapLevel && game.portal.Relentlessness.locked) return true; //Unlock the Relentlessness perk
-			else if (game.mapUnlocks.AncientTreasure.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -69,7 +69,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) return true; //Unlock the Electricity challenge
-			else if (game.mapUnlocks.ThePrison.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -90,7 +90,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		universe: 1,
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (game.mapUnlocks.ImplodingStar.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -104,7 +104,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
 			if (aboveMapLevel && !game.talents.bounty.purchased) return true; // we need Bounty
-			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -117,7 +117,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
 			if (game.global.world - 1 > map.level && game.global.totalRadPortals === 0) return true; //Don't bother before z17
-			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -128,7 +128,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		universe: 2,
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (game.mapUnlocks.Prismalicious.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -281,7 +281,8 @@ function _obtainUniqueMap(uniqueMap) {
 }
 
 function _runUniqueMap(mapName) {
-	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
+	const mapObj = getCurrentMapObject();
+	if (game.global.mapsActive && mapObj.name === mapName) return;
 	if (getPageSetting('autoMaps') !== 1) return;
 	if (_insanityDisableUniqueMaps()) return;
 
@@ -289,7 +290,7 @@ function _runUniqueMap(mapName) {
 	const map = game.global.mapsOwnedArray.find((map) => map.name.includes(mapName));
 
 	if (map) {
-		if (game.global.mapsActive && getCurrentMapObject().name !== mapName) recycleMap_AT();
+		if (game.global.mapsActive && mapObj.name !== mapName) recycleMap_AT();
 		if (game.global.preMapsActive && game.global.currentMapId === '') {
 			selectMap(map.id);
 			runMap_AT();
@@ -2598,7 +2599,7 @@ function _hypothermiaBuyPackrat() {
 }
 
 function _runHypothermia(setting, mapName, settingName, settingIndex) {
-	const bonfireGoal = setting.bonfire;
+	let bonfireGoal = setting.bonfire;
 	const mapSpecial = getAvailableSpecials('lwc', true);
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 	const jobRatio = setting.jobratio;
@@ -2615,12 +2616,28 @@ function _runHypothermia(setting, mapName, settingName, settingIndex) {
 		bonfireCostTotal += game.buildings.Shed.cost.wood();
 	}
 
-	const shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
+	let shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
+
+	if (shouldMap && setting.mapCap && setting.mapCap > 0) {
+		const mapCap = mapSettings.mapName === mapName ? setting.mapCap - game.global.mapRunCounter : setting.mapCap;
+		if (typeof mapSettings.bonfire !== 'undefined') {
+			bonfireGoal = mapSettings.bonfire;
+		} else {
+			const resourcesGained = game.resources.wood.owned + resourcesFromMap('wood', mapSpecial, setting.jobratio, mapLevel, mapCap);
+			while (bonfireCostTotal < resourcesGained) {
+				bonfireCostTotal -= 1e10 * Math.pow(100, bonfireGoal);
+				bonfireGoal--;
+			}
+		}
+
+		shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
+	}
+
 	const repeat = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMap_AT(simpleSeconds_AT('wood', 20, jobRatio), false, true, mapLevel) + game.resources.wood.owned > bonfireCostTotal;
 	const status = `Hypo Farming To: ${prettify(bonfireCostTotal)} wood`;
 
-	if (mapSettings.mapName === mapName && !shouldMap) {
-		mappingDetails(mapName, mapLevel, mapSpecial, bonfireCostTotal);
+	if (!shouldMap) {
+		if (mapSettings.mapName === mapName) mappingDetails(mapName, mapLevel, mapSpecial, bonfireCostTotal);
 		resetMapVars(setting, settingName);
 	}
 
