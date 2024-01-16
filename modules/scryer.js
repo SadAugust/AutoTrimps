@@ -30,9 +30,9 @@ function readyToSwitch(stance = 'S') {
 }
 
 function useScryerStance() {
-	const useWindStance = game.global.uberNature === 'Wind' && (getEmpowerment() !== 'Wind' || useWindStance());
-	let scry = useWindStance ? 5 : 4;
-	let scryF = useWindStance ? 'W' : 'S';
+	const shouldWindStance = game.global.uberNature === 'Wind' && (getEmpowerment() !== 'Wind' || useWindStance());
+	let scry = shouldWindStance ? 5 : 4;
+	let scryF = shouldWindStance ? 'W' : 'S';
 
 	let AutoStance = getPageSetting('AutoStance');
 

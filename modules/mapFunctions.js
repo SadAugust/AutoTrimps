@@ -42,7 +42,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'angerTimed',
 		universe: 1,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
 			if (game.global.world - 1 > map.level) return true; //Don't bother before z22
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
@@ -79,7 +79,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'bionicTimed',
 		universe: 1,
 		mapUnlock: true,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function () {
 			return false;
 		}
 	},
@@ -89,7 +89,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'starTimed',
 		universe: 1,
 		mapUnlock: true,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -114,7 +114,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: '',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
 			if (game.global.world - 1 > map.level && game.global.totalRadPortals === 0) return true; //Don't bother before z17
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
@@ -127,7 +127,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'palaceTimed',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -138,7 +138,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'atlantrimpTimed',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (!game.mapUnlocks.AncientTreasure.canRunOnce) return false;
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
@@ -150,7 +150,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'meltingTimed',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (!game.mapUnlocks.SmithFree.canRunOnce) return false;
 			if (!trimpStats.isC3 && !trimpStats.isDaily && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 
@@ -172,7 +172,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: '',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function () {
 			if (mapSettings.mapName === 'Quagmire Farm' && quagmire().shouldRun) return true;
 			return false;
 		}
@@ -183,7 +183,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: '',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			const runningHypo = challengeActive('Hypothermia');
 			const regularRun = !runningHypo && mapSetting.enabled && game.global.world >= mapSetting.zone && game.global.lastClearedCell + 2 >= mapSetting.cell;
 			if (regularRun) return true;
