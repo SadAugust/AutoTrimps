@@ -176,6 +176,9 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 		prestigesAvailable = true;
 	}
 
+	const attackCap = getPageSetting('equipCapAttack');
+	const healthCap = getPageSetting('equipCapHealth');
+
 	//Loops through each piece of equipment to figure out the most efficient one to buy
 	for (let equipName in MODULES.equipment) {
 		if (game.equipment[equipName].locked) continue;
@@ -190,7 +193,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 		//Figuring out if we should force prestige purchases or check non-prestige stats
 		const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAtlantrimp) || prestigeSetting === 3;
 		//Identifying the equip cap for this equip type
-		let equipCap = !skipForLevels && equipType === 'attack' ? getPageSetting('equipCapAttack') : !skipForLevels && equipType === 'health' ? getPageSetting('equipCapHealth') : skipForLevels;
+		let equipCap = !skipForLevels && equipType === 'attack' ? attackCap : !skipForLevels && equipType === 'health' ? healthCap : skipForLevels;
 
 		let nextLevelCost = game.equipment[equipName].cost[MODULES.equipment[equipName].resource][0] * Math.pow(game.equipment[equipName].cost[MODULES.equipment[equipName].resource][1], game.equipment[equipName].level + fakeLevels[equipName]) * getEquipPriceMult();
 
@@ -206,7 +209,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 		//Load buyPrestigeMaybe into variable so it's not called 500 times
 		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, game.equipment[equipName].level);
 		//Stops the script from buying more than 9 levels in an equip if we have prestiges available
-		if (maybeBuyPrestige.prestigeAvailable) equipCap = 9;
+		if (maybeBuyPrestige.prestigeAvailable && equipCap > 9) equipCap = 9;
 		//Skips if we have the equip capped and we aren't potentially farming for the prestige
 		if (!maybeBuyPrestige.purchase && game.equipment[equipName].level >= equipCap) continue;
 		//Skips if ignoreShield variable is true.
