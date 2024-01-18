@@ -19,7 +19,7 @@ function safeBuyJob(jobTitle, amount) {
 	}
 
 	if (result) {
-		debug(`${game.global.firing ? 'Firing' : 'Hiring'} ${prettify(amount)} ${jobTitle}${addAnS(amount)}`, 'jobs', '*users');
+		debug(`${game.global.firing ? 'Firing' : 'Hiring'} ${prettify(Math.abs(amount))} ${jobTitle}${addAnS(amount)}`, 'jobs', '*users');
 		buyJob(jobTitle, true, true);
 		if (game.global.firing !== fireState) fireMode_AT();
 	}
@@ -240,7 +240,10 @@ function _getDesiredRatios(forceRatios, jobSettings) {
 	const jobRatios = { ratioHaz: [1, 1, 1], ratio7: [1, 1, 98], ratio6: [1, 7, 12], ratio5: [1, 2, 22], ratio4: [1, 1, 10], ratio3: [3, 1, 4], ratio2: [3, 3, 5], ratio1: [1.1, 1.15, 1.2] };
 	let scientistMod;
 
-	if (game.global.world >= 65) scientistMod = scientistRatios.ratio4;
+	if (game.global.world >= 150) scientistMod = scientistRatios.ratio7;
+	else if (game.global.world >= 120) scientistMod = scientistRatios.ratio6;
+	else if (game.global.world >= 90) scientistMod = scientistRatios.ratio5;
+	else if (game.global.world >= 65) scientistMod = scientistRatios.ratio4;
 	else if (game.global.world >= 50) scientistMod = scientistRatios.ratio3;
 	else if (game.jobs.Farmer.owned < 100) scientistMod = scientistRatios.ratio2;
 	else scientistMod = scientistRatios.ratio;
@@ -251,9 +254,9 @@ function _getDesiredRatios(forceRatios, jobSettings) {
 	if (overrideRatio) {
 		workerRatio = forceRatios || mapSettings.jobRatio;
 
-		desiredRatios = workerRatio.split(',').map((val, index) => {
-			const job = game.jobs[ratioWorkers[index]];
-			return job.locked || !val ? 0 : Number(val);
+		const workerRatios = workerRatio.split(',');
+		ratioWorkers.forEach((worker, i) => {
+			desiredRatios[i] = game.jobs[worker].locked || !workerRatios[i] ? 0 : Number(workerRatios[i]);
 		});
 	}
 

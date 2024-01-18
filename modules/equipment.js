@@ -66,51 +66,6 @@ MODULES.equipment = {
 	}
 };
 
-//Working out cheapest equips & prestiges
-function cheapestEquipmentCost() {
-	//Initialising Variables
-	var equipmentName = null;
-	var prestigeName = null;
-	var nextLevelEquipmentCost = null;
-	var nextEquipmentCost = null;
-	var nextLevelPrestigeCost = null;
-	var nextPrestigeCost = null;
-	var prestigeUpgradeName;
-	var prestigeUpgrade;
-	var runningPandemonium = challengeActive('Pandemonium');
-
-	//Looping through each piece of equipment to find the one that's cheapest
-	for (var equipName in game.equipment) {
-		//Blocks unavailable ones if we're running Pandemonium.
-		if (runningPandemonium && (game.challenges.Pandemonium.isEquipBlocked(equipName) || MODULES.equipment[equipName].resource === 'wood')) continue;
-		if (game.equipment[equipName].locked) continue;
-
-		//Checking cost of next equipment level.
-		nextLevelEquipmentCost = game.equipment[equipName].cost[MODULES.equipment[equipName].resource][0] * Math.pow(game.equipment[equipName].cost[MODULES.equipment[equipName].resource][1], game.equipment[equipName].level) * getEquipPriceMult();
-		//Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
-		if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost === null) {
-			equipmentName = equipName;
-			nextEquipmentCost = nextLevelEquipmentCost;
-		}
-
-		//Checking cost of prestiges if any are available to purchase
-		prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
-		prestigeUpgrade = game.upgrades[prestigeUpgradeName];
-		//If the prestige is locked or we've already purchased all the prestiges for this equip then skip to the next equip
-		if (prestigeUpgrade.locked || prestigeUpgrade.allowed === prestigeUpgrade.done) continue;
-
-		//Checking cost of next prestige level.
-		nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
-		//Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
-		if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost === null) {
-			prestigeName = prestigeUpgradeName;
-			nextPrestigeCost = nextLevelPrestigeCost;
-		}
-	}
-	if (equipName === null) return null;
-	return [equipmentName, nextEquipmentCost, prestigeName, nextPrestigeCost];
-}
-
 function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 	if (!isCompounding) {
 		return Math.floor((costScaling - 2 * baseCost + Math.sqrt(Math.pow(2 * baseCost - costScaling, 2) + 8 * costScaling * totalResource)) / 2);
