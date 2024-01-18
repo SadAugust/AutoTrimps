@@ -2951,7 +2951,7 @@ function smithless(lineCheck) {
 
 	const zoneTime = getZoneMinutes();
 	const farmTime = getPageSetting('smithlessFarmTime');
-	const wantMapBonus = getPageSetting('smithlessMapBonus' && game.global.mapBonus !== 10);
+	const wantMapBonus = getPageSetting('smithlessMapBonus') && game.global.mapBonus !== 10;
 
 	const mapSpecial = getAvailableSpecials('lmc', true);
 	const mapLevel = autoLevelCheck(farmingDetails.mapName, mapSpecial, null, game.global.mapBonus !== 10 ? 0 : null);
@@ -2997,7 +2997,7 @@ function smithless(lineCheck) {
 	const damageTarget = enemyHealth / totalDmg;
 
 	let shouldMap = totalDmg < enemyHealth;
-	if (shouldMap && (zoneTime === 0 || (zoneTime > 0 && zoneTime >= farmTime)) && !wantMapBonus) shouldMap = false;
+	if (shouldMap && (farmTime === 0 || (farmTime > 0 && zoneTime >= farmTime)) && !wantMapBonus) shouldMap = false;
 
 	if (lineCheck && shouldMap) return (setting = { priority: Infinity });
 
