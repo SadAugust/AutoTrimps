@@ -24,7 +24,7 @@ const atSettings = {
 
 let autoTrimpSettings = {};
 const MODULES = {
-	popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
+	popups: { challenge: false, respecAncientTreasure: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
 	stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0 },
 	graphs: {},
 	u1unlocks: [],
@@ -411,7 +411,6 @@ function _handleNewWorld() {
 	archaeologyAutomator();
 	challengeInfo();
 	if (atSettings.portal.currentworld === 1) {
-		MODULES.mapFunctions.afterVoids = false;
 		MODULES.portal.zonePostpone = 0;
 		if (!game.upgrades.Battle.done) {
 			_setButtonsPortal();

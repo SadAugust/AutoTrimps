@@ -531,7 +531,6 @@ function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettin
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, null, null, null, null, null);
 		resetMapVars();
-		MODULES.mapFunctions.afterVoids = false;
 		if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
 	}
 
@@ -782,7 +781,7 @@ function _runTributeFarm(setting, mapName, settingName, settingIndex) {
 
 	const shouldMap = tributeGoal > game.buildings.Tribute.purchased || meteorologistGoal > game.jobs.Meteorologist.owned;
 
-	if (shouldMap && tributeGoal > game.buildings.Tribute.purchased && !getPageSetting('buildingsType')) buyTributes();
+	if (shouldMap && tributeGoal > game.buildings.Tribute.purchased && !getPageSetting('buildingsType')) _buyTribute();
 
 	//Figuring out if we have enough resources to run Atlantrimp when setting is enabled.
 	if (shouldAtlantrimp && shouldMap) {
@@ -3629,14 +3628,13 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 			'Hits Survived Void': hdStats.hitsSurvivedVoid,
 			'Map Level': hdStats.autoLevel
 		};
-		message += ` Void maps were triggered by ${mapSettings.voidTrigger}.<br>\n`;
+		message += ` Void maps were triggered by ${mapSettings.voidTrigger}.`;
 
 		if (mapSettings.dropdown) {
+			message += `<br>\n`;
 			message += `${mapSettings.dropdown.name} (Start: ${prettify(mapSettings.dropdown.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown.name])})<br>\n`;
 			message += `${mapSettings.dropdown2.name} (Start: ${prettify(mapSettings.dropdown2.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown2.name])})`;
 		}
-
-		message += `).`;
 	} else if (mapName === 'Hits Survived') message += ` Finished with hits survived at ${prettify(whichHitsSurvived())}/${targetHitsSurvived()}.`;
 	else if (mapName === 'HD Farm' && extra !== null) message += ` Finished with a HD Ratio of ${extra.toFixed(2)}/${extra2.toFixed(2)}.`;
 	else if (mapName === 'HD Farm') message += ` Finished with an auto level of ${hdStats.autoLevel > 0 ? '+' : ''}${hdStats.autoLevel}.`;

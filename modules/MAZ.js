@@ -747,6 +747,14 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	const setting = [];
 	const defaultSetting = {};
 
+	/* const settingTypeDefaultObj = {
+		checkBox: ['active', 'shipSkipEnabled', 'autoBone', 'voidPurchase', 'maxTenacity', 'boneCharge', 'voidFarm', 'autoStorage', 'packrat', 'recycle'],
+		selectBox: ['special', 'gather', 'jobratio', 'hitsSurvived', 'hdRatio', 'frozencastle'],
+		float: ['hdBase', 'hdMult', 'mapCap'],
+		int: ['priority', 'world', 'cell', 'level', 'repeat', 'repeatevery', 'shipskip', 'endzone', 'bonebelow', 'hitsSurvived', 'mapCap', 'toUse', 'useBelow', 'toxicStacks', 'bogs', 'potionsNumber', 'bonfires', 'smithies', 'amount'],
+		inputBox: ['raidingzone']
+	}; */
+
 	if (!golden) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
 		if (worshipperFarm) {
@@ -789,6 +797,15 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
 	}
 
+	/* const rowElem = document.getElementById('windowRow' + 0);
+	const rowIDs = _mapSettingsGetRowIDs(rowElem, 0);
+
+	const settingTypeRowObj = {
+		checkBox: ['active', 'autoLevel', 'portalAfter', 'buildings', 'atlantrimp', 'meltingpoint', 'incrementMaps', 'destack', 'autoStorage', 'autoBone', 'voidPurchase', 'maxTenacity', 'boneCharge', 'voidFarm', 'packrat', 'recycle'],
+		selectBox: ['hdType', 'raidingzone', 'special', 'gather', 'jobratio', 'hitsSurvived', 'hdRatio', 'frozencastle', 'prestige', 'potion', 'golden', 'goldenType'],
+	}
+	if (s.raiding) settingTypeRowObj.selectBox.push('raidingzone');
+	if (s.bionic) settingTypeRowObj.selectBox.int('raidingzone'); */
 	let counter = 0;
 	for (let x = 0; x < maxSettings; x++) {
 		const thisSetting = {};
@@ -1096,26 +1113,18 @@ function mapSettingsHelpWindow(titleText) {
 	//Row Settings
 	mazHelp += '</ul></br> The settings for each row that is added:<ul>';
 
-	//All Settings
 	mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this line completely</li>";
-	//Active
 	mazHelp += '<li><b>Active</b> - A toggle to disable/enable this line.</li>';
-	//Priority
 	mazHelp += '<li><b>Priority</b> - If this setting has two or more lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>';
-	//Zone
 	if (!voidMap && !golden) mazHelp += '<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>';
-	//Cell
 	if (!golden && !desolation) {
 		mazHelp += '<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell.</li>';
 		mazHelp += '<li class="indent"><b>Runs on the cell you have input or after if you have already gone past that cell on your zone.</b></li>';
 		mazHelp += '<li class="indent"><b>Doesn\'t take overkill into account so for example if you overkill past c100 with a c100 line it will be skipped.</b></li>';
 	}
-	//AutoLevel
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || archaeology || insanity || alchemy || hypothermia || hdFarm || toxicity)
 		mazHelp += '<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. ' + (radonSetting ? "Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount." : '') + '</li>';
-	//Map Level
 	if (mapFarm || tributeFarm || smithyFarm || worshipperFarm || hdFarm || insanity || alchemy || hypothermia || toxicity) mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'. " + (radonSetting && !(insanity || alchemy || hypothermia) ? 'Will override inputs above -1 during the Wither challenge.' : '') + '</li>';
-	//Map Level for Map Bonus!
 	if (mapBonus) mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
 	if (!raiding && !smithyFarm && !hdFarm && !golden) {
@@ -1124,27 +1133,18 @@ function mapSettingsHelpWindow(titleText) {
 	}
 	if (mapFarm || mapBonus || insanity || alchemy || desolation || toxicity) mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with wooden caches during the Transmute challenge.</li>";
 
-	//Setting specific inputs
 	//Row Settings
 	mazHelp += '</ul></br><b>These inputs are specific to this setting and can be quite important for how you try to set this up:</b><ul><br>';
 
 	if (voidMap) {
-		//Min Run Zone
 		mazHelp += '<li><b>Min Zone</b> - The lower bound zone to run voids maps on.</li>';
-		//Max Run Zone
 		mazHelp += '<li><b>Max Zone</b> - The upper bound zone to run voids maps on.</li>';
-
-		//Dropdown
 		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the Auto Maps status tooltip.</li>";
-
 		mazHelp += '<li class="indent">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you\'ve selected one of Auto Level, Hits Survived, Hits Survived Void it will check if the value is lower than it and skip if it is.<br></li>';
-
 		mazHelp += "<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run. Won't do anything if AutoPortal is disabled!</b></li>";
 	}
 
 	if (mapFarm) {
-		//Repeat Count
-
 		mazHelp += '<li><b>Farm Type</b> The different ways that the script can determine how many maps are run.</li>';
 		mazHelp += '<li class="indent"><b>Map Count</b> - Will run maps until it has reached the specified repeat counter.</li>';
 		mazHelp += '<li class="indent"><b>Zone Time</b> - Uses DD:HH:MM:SS format and will run maps until the zone time surpasses the time set in repeat counter.</li>';
@@ -1153,9 +1153,7 @@ function mapSettingsHelpWindow(titleText) {
 		mazHelp += '<li class="indent"><b>Skele Spawn</b> - Uses DD:HH:MM:SS format and will run maps until the time since your last Skeletimp kill was this amount of time or greater.</li>';
 
 		mazHelp += "<li><b>Map Repeats</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
-		//Run when HD Ratio above X value
 		mazHelp += '<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in Auto Maps status tooltip) is above this value (and above 0).<br>';
-		//Trimple Map Farm
 		mazHelp += '<li><b>Run ' + trimple + '</b> - Will run ' + trimple + ' once this line has been completed.</li>';
 		mazHelp += '<li class="indent">Whilst farming for this line the script will stop purchasing equips until ' + trimple + ' has been run so that there are no wasted resources.</li>';
 		mazHelp += '<li class="indent">If ' + trimple + " has been run then any line with this enabled won't be run." + '</li>';
@@ -1163,12 +1161,10 @@ function mapSettingsHelpWindow(titleText) {
 
 	if (mapBonus) {
 		mazHelp += '<li><b>Map Stacks</b> - How many stacks the script should aim for when running this line.</li>';
-		//Run when HD Ratio above X value
 		mazHelp += '<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in Auto Maps status tooltip) is above this value (and above 0).<br>';
 	}
 
 	if (raiding) {
-		//Raiding Zone
 		const raidingZone = bionic ? 'Raiding Zone' : 'Map Level';
 		mazHelp += '<li><b>' + raidingZone + '</b> - The ' + raidingZone.split(' ')[1].toLowerCase() + " you'd like to raid when this line is run. If <b>Repeat Every X</b> is set to a value above 0 then it will also raise the " + raidingZone.toLowerCase() + ' by that value everytime this line runs.</li>';
 		if (!bionic) mazHelp += '<li><b>Frag Type</b> - The choices how for aggresively the script will spend fragments on maps.</li>';
@@ -1190,35 +1186,23 @@ function mapSettingsHelpWindow(titleText) {
 	}
 
 	if (boneShrine) {
-		//To use
 		mazHelp += '<li><b>To use</b> - How many bone charges to use on this line.</li>';
-		//Use Below
 		mazHelp += "<li><b>Use below</b> - This value will stop bone charges being spent when you're at or below this value.</li>";
-		//Trimple Bone Shrine
 		mazHelp += '<li><b>Run ' + trimple + '</b> - Will run ' + trimple + ' during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until ' + trimple + ' has been run so that there is no wasted resources. <b>Will run ' + trimple + ' and use the charges after cell 95.</b></li>';
-		//Gather setting
 		mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
 	}
 
 	if (tributeFarm) {
-		//Farm Type
 		mazHelp += "<li><b>Farm Type</b> - The way in which Tribute Farming will operate. Either by using absolute values for what you'd like to farm e.g. 2700 Tributes and 37 Meteorologists or by having the script identify how many of each you can farm in X maps and then farming until you reach those values.</li>";
-		//Tributes
 		mazHelp += "<li><b>Tributes</b> - The amount of Tributes that should be farmed up to on this zone. If the value is greater than your Tribute Cap setting then it'll adjust it to the Tribute input whilst doing this farm.</li>";
-		//Meteorologists
 		mazHelp += '<li><b>Meteorologist</b> - The amount of Meteorologist that should be farmed up to on this zone.</li>';
-		//Buy Buildings
 		mazHelp += "<li><b>Buy Buildings</b> - If you'd like to buy buildings during this farming line to reduce the amount of maps it takes to farm your specified Tribute or Meteorologist inputs. When unselected it will automatically disable vanilla AutoStructure if it's enabled to remove the possibility of resources being spent there too.</li>";
-		//Trimple Tribute Farm
 		mazHelp += '<li><b>Run ' + trimple + '</b> - Will run ' + trimple + ' during this line. Autoamtically calculates when it would be more efficient to run ' + trimple + ' or continue farming Savory Cache maps to reach your target in the fastest time possible.</b></li>';
 	}
 
 	if (smithyFarm) {
-		//Smithy Count
 		mazHelp += "<li><b>Smithies</b> - Smithy count you'd like to reach during this line. If you currently own 18 and want to reach 21 you'd enter 21 into this field.</li>";
-		//Farm Type
 		mazHelp += "<li><b>Farm Type</b> - The way in which Smithy Farming will operate. Either by using absolute values for what you'd like to farm e.g. 27 Smithies or by having the script identify how many you can farm in X maps and then farming until you reach that value.</li>";
-		//Runs MP after the line
 		mazHelp += '<li><b>Run MP</b> - Will run Melting Point after this line has been run.</b></li>';
 	}
 
@@ -1258,18 +1242,13 @@ function mapSettingsHelpWindow(titleText) {
 		mazHelp += '<li><b>Prestige Goal</b> - The script will identify if the prestige selected here is available in the zone you have input and if so will run a map to get that prestige.</li>';
 	}
 
-	//Repeat Every
 	if (mapFarm || tributeFarm || worshipperFarm || smithyFarm || toxicity || desolation || archaeology || alchemy) mazHelp += '<li><b>Repeat Every</b> - Line can be repeated every zone, or set to a custom number depending on need.</li>';
-	//End Zone
 	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || toxicity || desolation || archaeology || alchemy) mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this line repeat. If so, the line will stop repeating at this zone. Must be between 6 and 1000.</li>";
-	//Run Type
 	if (boneShrine || voidMap || mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || golden) mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
 
 	if (golden) {
-		//Amount of golden upgrades to get
 		mazHelp += '<li><b>Amount</b> - The amount of golden upgrades to purchase before moving onto the next line.</li>';
 		mazHelp += '<li class="indent">Setting this input to <b>-1</b> will purchase this golden type infinitely.</li>';
-		//Golden Type
 		mazHelp += "<li><b>Golden Type</b> - The type of Golden upgrade that you'd like to get during this line.</li>";
 
 		mazHelp += '<br>';
@@ -1297,6 +1276,22 @@ function windowToggleHelp(windowWidth) {
 	parentWindow.style.maxHeight = window.innerHeight * 0.85 + 'px';
 
 	if (document.querySelectorAll('#mazHelpContainer li').length > 13) parentWindow.style.overflowY = 'scroll';
+}
+
+function _mapSettingsGetRowIDs(elem, index) {
+	const elemChildren = elem.children;
+	const elemChildrenIDs = [];
+	for (let x = 0; x < elemChildren.length; x++) {
+		const child = elemChildren[x];
+		for (let y = 0; y < child.children.length; y++) {
+			const id = child.children[y].id;
+			if (id !== '') {
+				if (index) elemChildrenIDs.push(id.slice(0, -index.toString().length));
+				else elemChildrenIDs.push(id);
+			}
+		}
+	}
+	return elemChildrenIDs;
 }
 
 function _mapSettingsAddRow(varPrefix) {
@@ -1339,17 +1334,7 @@ function _mapSettingsRemoveRow(index, s) {
 	//Checkbox setting IDs
 	const checkBoxSettings = ['windowActive', 'windowAtlantrimp', 'windowMeltingPoint', 'windowPortalAfter', 'windowAutoLevel', 'windowBuildings'];
 
-	const elemChildren = elem.children;
-	const elemChildrenIDs = [];
-	for (let x = 0; x < elemChildren.length; x++) {
-		const child = elemChildren[x];
-		for (let y = 0; y < child.children.length; y++) {
-			const id = child.children[y].id;
-			if (id !== '') {
-				elemChildrenIDs.push(id.slice(0, -index.toString().length));
-			}
-		}
-	}
+	const elemChildrenIDs = _mapSettingsGetRowIDs(elem, index);
 
 	const initialVals = _mapSettingsVals(index, s);
 	const defaultVarsKey = _mapSettingsValsKeys(s);
@@ -1927,6 +1912,7 @@ function autoJobsSave() {
 		let elem = document.getElementById('autoJobsError');
 		if (elem) elem.innerHTML = error;
 		_verticalCenterTooltip(true);
+		return;
 	}
 
 	//Adding in jobs that are locked so that there won't be any issues later on

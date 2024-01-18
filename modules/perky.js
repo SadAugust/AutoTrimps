@@ -12,18 +12,15 @@ if (typeof $$ !== 'function') {
 
 function legalizeInput(settingID) {
 	if (!settingID) return;
-	settingID = document.getElementById(settingID);
-	var defaultValue = settingID.placeholder;
-	var minValue = settingID.min;
-	var maxValue = settingID.max;
-	var val = 0;
+	const element = document.getElementById(settingID);
+	const { placeholder: defaultValue, min: minValue, max: maxValue } = element;
 
-	val = parseFloat(settingID.value);
-	var badNum = isNaN(val);
-	if (badNum) val = defaultValue;
-	if (minValue !== null && val < minValue) settingID.value = minValue;
-	else if (maxValue !== null && val > maxValue) settingID.value = maxValue;
-	else settingID.value = val;
+	let value = parseFloat(element.value);
+	value = isNaN(value) ? defaultValue : value;
+	value = minValue !== null && value < minValue ? minValue : value;
+	value = maxValue !== null && value > maxValue ? maxValue : value;
+
+	element.value = value;
 }
 
 function runPerky() {
@@ -33,11 +30,14 @@ function runPerky() {
 
 function allocatePerky() {
 	//Enable Fluffy xp input when it's not active.
-	if (game.global.spiresCompleted >= 2 && $$('#weight-xpDiv').style.display !== 'inline') $$('#weight-xpDiv').style.display = 'inline';
+	const xpDivStyle = $$('#weight-xpDiv').style;
+	if (game.global.spiresCompleted >= 2 && xpDivStyle.display !== 'inline') xpDivStyle.display = 'inline';
+
 	//Generate perk string
 	const perks = optimize();
-	for (var name in perks) perks[name] = perks[name].level;
+	for (let name in perks) perks[name] = perks[name].level;
 	const perkString = LZString.compressToBase64(JSON.stringify(perks));
+
 	//Bring up import window if it's not already up and import perk string.
 	tooltip('Import Perks', null, 'update');
 	document.getElementById('perkImportBox').value = perkString;
@@ -71,23 +71,27 @@ var Perk = /** @class */ (function () {
 	Perk.prototype.level_up = function (amount) {
 		this.level += amount;
 		this.bonus = this.scaling(this.level);
+		let spent = this.cost;
+
 		if (this.cost_increment) {
-			var spent = amount * (this.cost + (this.cost_increment * (amount - 1)) / 2);
+			spent = amount * (this.cost + (this.cost_increment * (amount - 1)) / 2);
 			this.cost += amount * this.cost_increment;
-			return spent;
 		} else {
-			var spent = this.cost;
 			this.cost = Math.ceil(this.level / 2 + this.base_cost * Math.pow(this.cost_exponent, this.level));
-			return spent;
 		}
+
+		return spent;
 	};
-	Perk.prototype.spent = function (log) {
-		if (log === void 0) {
-			log = false;
+	Perk.prototype.spent = function () {
+		if (this.cost_increment) {
+			return (this.level * (this.base_cost + this.cost - this.cost_increment)) / 2;
 		}
-		if (this.cost_increment) return (this.level * (this.base_cost + this.cost - this.cost_increment)) / 2;
-		var total = 0;
-		for (var x = 0; x < this.level; ++x) total += Math.ceil(x / 2 + this.base_cost * Math.pow(this.cost_exponent, x));
+
+		let total = 0;
+		for (let x = 0; x < this.level; ++x) {
+			total += Math.ceil(x / 2 + this.base_cost * Math.pow(this.cost_exponent, x));
+		}
+
 		return total;
 	};
 	Perk.prototype.log_ratio = function () {
@@ -96,28 +100,20 @@ var Perk = /** @class */ (function () {
 	return Perk;
 })();
 
-// initialise perks object to default values
 function initPresetPerky() {
-	var settingInputs = JSON.parse(localStorage.getItem('perkyInputs'));
+	const settingInputs = JSON.parse(localStorage.getItem('perkyInputs'));
 
 	//Initial setup if we don't already have a save file setup
 	if (settingInputs === null || Object.keys(settingInputs).length === 0) {
-		settingInputs = {};
-		return settingInputs;
+		return {};
 	}
 
-	function presetData(preset) {
-		if (settingInputs === null) return null;
-		if (settingInputs[preset] === null || settingInputs[preset] === undefined) return null;
-		return settingInputs[preset];
-	}
-
-	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
+	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
 	const presets = {};
-	for (var item in presetNames) {
-		item = presetNames[item].value;
-		if (item.includes('— ')) continue;
-		presets[item] = presetData(item);
+	for (let item of presetNames) {
+		const value = item.value;
+		if (value.includes('— ')) continue;
+		presets[value] = settingInputs[value] || null;
 	}
 
 	return {
@@ -172,22 +168,21 @@ function fillPresetPerky(specificPreset) {
 
 function savePerkySettings() {
 	const saveData = initPresetPerky();
-	//Initial setup and saving preset value
 	const settingInputs = { preset: $$('#preset').value };
-	//Saving the values of the inputs for the weights
-	for (var item in MODULES.autoPerks.GUI.inputs) {
+
+	for (let item in MODULES.autoPerks.GUI.inputs) {
 		item = MODULES.autoPerks.GUI.inputs[item];
 		settingInputs[item] = $$('#' + item).value;
 	}
 	//Save inputs for all the presets that users can select.
 	//Overrides data for current preset otherwises saves any already saved data for the others.
-	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
+	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
 	if (Object.keys(saveData).length !== 0) {
-		for (var item in presetNames) {
-			item = presetNames[item].value;
-			if (item.includes('— ')) continue;
-			if (settingInputs.preset === item) settingInputs[item] = [settingInputs['weight-he'], settingInputs['weight-atk'], settingInputs['weight-hp'], settingInputs['weight-xp']];
-			else settingInputs[item] = saveData[item];
+		for (let item of presetNames) {
+			const value = item.value;
+			if (value.includes('— ')) continue;
+			if (settingInputs.preset === value) settingInputs[value] = [settingInputs['weight-he'], settingInputs['weight-atk'], settingInputs['weight-hp'], settingInputs['weight-xp']];
+			else settingInputs[value] = saveData[value];
 		}
 	}
 
@@ -198,75 +193,72 @@ function savePerkySettings() {
 	}
 }
 
-function dgPopGain() {
-	var max_zone = game.stats.highestLevel.valueTotal() / 2 + 115;
-	var eff = 500e6 + 50e6 * game.generatorUpgrades.Efficiency.upgrades;
-	var capa = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades;
-	var max_fuel = game.permanentGeneratorUpgrades.Storage.owned ? capa * 1.5 : capa;
-	var supply = 230 + 2 * game.generatorUpgrades.Supply.upgrades;
-	var overclock = game.generatorUpgrades.Overclocker.upgrades;
-	overclock = overclock && 1 - 0.5 * Math.pow(0.99, overclock - 1);
-	var burn = game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5;
-	var cells = mastery('magmaFlow') ? 18 : 16;
-	var accel = mastery('quickGen') ? 1.03 : 1.02;
-	var hs2 = mastery('hyperspeed2') ? game.stats.highestLevel.valueTotal() / 2 : 0;
-	var bs = 0.5 * mastery('blacksmith') + 0.25 * mastery('blacksmith2') + 0.15 * mastery('blacksmith3');
-	bs *= game.stats.highestLevel.valueTotal();
-	var housing = 0;
-	var fuel = 0;
-	var time = 0;
+function calculateDgPopGain() {
+	const maxZone = game.stats.highestLevel.valueTotal() / 2 + 115;
+	const efficiency = 5e8 + 5e7 * game.generatorUpgrades.Efficiency.upgrades;
+	const capacity = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades;
+	const maxFuel = game.permanentGeneratorUpgrades.Storage.owned ? capacity * 1.5 : capacity;
+	const supply = 230 + 2 * game.generatorUpgrades.Supply.upgrades;
+	const overclock = game.generatorUpgrades.Overclocker.upgrades && 1 - 0.5 * Math.pow(0.99, game.generatorUpgrades.Overclocker.upgrades - 1);
+	const burnRate = game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5;
+	const cells = mastery('magmaFlow') ? 18 : 16;
+	const acceleration = mastery('quickGen') ? 1.03 : 1.02;
+	const hyperspeed2 = mastery('hyperspeed2') ? game.stats.highestLevel.valueTotal() / 2 : 0;
+	const blacksmith = 0.5 * mastery('blacksmith') + 0.25 * mastery('blacksmith2') + 0.15 * mastery('blacksmith3');
+	const blacksmithTotal = blacksmith * game.stats.highestLevel.valueTotal();
+	let housing = 0;
+	let fuel = 0;
+	let time = 0;
 
-	function tick(mult) {
-		housing += mult * eff * Math.sqrt(Math.min(capa, fuel));
-		fuel = Math.max(0, fuel - burn);
-	}
-
-	for (var zone = 230; zone <= max_zone; ++zone) {
+	for (let zone = 230; zone <= maxZone; ++zone) {
 		fuel += cells * (0.01 * Math.min(zone, supply) - 2.1);
-
-		var tick_time = Math.ceil(60 / Math.pow(accel, Math.floor((zone - 230) / 3)));
-		time += zone > bs ? 28 : zone > hs2 ? 20 : 15;
-		while (time >= tick_time) {
-			time -= tick_time;
-			tick(1);
+		const tickTime = Math.ceil(60 / Math.pow(acceleration, Math.floor((zone - 230) / 3)));
+		time += zone > blacksmithTotal ? 28 : zone > hyperspeed2 ? 20 : 15;
+		while (time >= tickTime) {
+			time -= tickTime;
+			housing += efficiency * Math.sqrt(Math.min(capacity, fuel));
+			fuel = Math.max(0, fuel - burnRate);
 		}
-
-		while (fuel > max_fuel) tick(overclock);
-
+		while (fuel > maxFuel) {
+			housing += overclock * efficiency * Math.sqrt(Math.min(capacity, fuel));
+			fuel = Math.max(0, fuel - burnRate);
+		}
 		housing *= 1.009;
 	}
 
-	while (fuel >= burn) tick(1);
+	while (fuel >= burnRate) {
+		housing += efficiency * Math.sqrt(Math.min(capacity, fuel));
+		fuel = Math.max(0, fuel - burnRate);
+	}
 
 	return housing;
 }
 
 function populatePerkyData() {
-	var zone = $$('#targetZone').value;
+	const zone = $$('#targetZone').value;
 
 	// Income
-	var tt = mastery('turkimp2') ? 1 : mastery('turkimp') ? 0.4 : 0.25;
-	var prod = 1 + tt;
-	var loot = 1 + 0.333 * tt;
-	var spires = Math.min(Math.floor((zone - 101) / 100), game.global.spiresCompleted);
+	const spires = Math.min(Math.floor((zone - 101) / 100), game.global.spiresCompleted);
+	const turkimpTimer = mastery('turkimp2') ? 1 : mastery('turkimp') ? 0.4 : 0.25;
+	const cache = zone < 60 ? 0 : zone < 85 ? 7 : zone < 160 ? 10 : zone < 185 ? 14 : 20;
+	let prod = 1 + turkimpTimer;
+	let loot = 1 + 0.333 * turkimpTimer;
 	loot *= zone < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
 	loot *= zone < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
 
-	var chronojest = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp;
-	var cache = zone < 60 ? 0 : zone < 85 ? 7 : zone < 160 ? 10 : zone < 185 ? 14 : 20;
+	let chronojest = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp;
 
-	for (var mod of game.global.StaffEquipped.mods || []) {
+	for (let mod of game.global.StaffEquipped.mods || []) {
 		if (mod[0] === 'MinerSpeed') prod *= 1 + 0.01 * mod[1];
 		else if (mod[0] === 'metalDrop') loot *= 1 + 0.01 * mod[1];
 	}
 
 	chronojest += (mastery('mapLoot2') ? 5 : 4) * cache;
 
-	var preset = $$('#preset').value;
-	if (preset === 'trapper' && (!game || game.global.challengeActive !== 'Trapper')) throw 'This preset requires a save currently running Trapper². Start a new run using “Trapper² (initial)”, export, and try again.';
-	result = {
+	const preset = $$('#preset').value;
+	const result = {
 		total_he: countHeliumSpent(false, true) + game.global.heliumLeftover + (portalWindowOpen ? game.resources.helium.owned : 0),
-		zone: zone,
+		zone,
 		perks: parse_perks(),
 		weight: {
 			helium: +$$('#weight-he').value,
@@ -283,7 +275,7 @@ function populatePerkyData() {
 		mod: {
 			storage: 0.125,
 			soldiers: 0,
-			dg: +dgPopGain(),
+			dg: +calculateDgPopGain(),
 			tent_city: preset === 'tent',
 			whip: game.unlocks.imps.Whipimp,
 			magn: game.unlocks.imps.Magnimp,
@@ -296,7 +288,7 @@ function populatePerkyData() {
 		}
 	};
 	if (preset === 'nerfed') {
-		result.total_he = 99990000;
+		result.total_he = 1e8 - 1e4;
 		result.zone = 200;
 		result.mod.dg = 0;
 	}
@@ -325,76 +317,65 @@ function populatePerkyData() {
 		result.zone = 181;
 	}
 	if (preset === 'nerfeder') {
-		result.total_he = 999900000;
+		result.total_he = 1e9 - 1e5;
 		result.zone = 300;
 	}
 	return result;
 }
 
 function parse_perks() {
-	var add = function (x) {
-		return function (level) {
-			return 1 + x * 0.01 * level;
-		};
-	};
-	var mult = function (x) {
-		return function (level) {
-			return Math.pow(1 + x * 0.01, level);
-		};
+	const add = (x) => (level) => 1 + x * 0.01 * level;
+	const mult = (x) => (level) => Math.pow(1 + x * 0.01, level);
+
+	const perkData = {
+		Looting_II: add(0.25),
+		Carpentry_II: add(0.25),
+		Motivation_II: add(1),
+		Power_II: add(1),
+		Toughness_II: add(1),
+		Capable: () => 1,
+		Cunning: add(25),
+		Curious: add(160),
+		Classy: mult(4.5678375),
+		Overkill: add(500),
+		Resourceful: mult(-5),
+		Coordinated: mult(-2),
+		Siphonology: (level) => Math.pow(1 + level, 0.1),
+		Anticipation: add(6),
+		Resilience: mult(10),
+		Meditation: add(1),
+		Relentlessness: (level) => 1 + 0.05 * level * (1 + 0.3 * level),
+		Carpentry: mult(10),
+		Artisanistry: mult(-5),
+		Range: add(1),
+		Agility: mult(-5),
+		Bait: add(100),
+		Trumps: add(20),
+		Pheromones: add(10),
+		Packrat: add(20),
+		Motivation: add(5),
+		Power: add(5),
+		Toughness: add(5),
+		Looting: add(5)
 	};
 
-	const perks = {
-		//Perk(base_cost, scaling)
-		Looting_II: new Perk('Looting_II', add(0.25)),
-		Carpentry_II: new Perk('Carpentry_II', add(0.25)),
-		Motivation_II: new Perk('Motivation_II', add(1)),
-		Power_II: new Perk('Power_II', add(1)),
-		Toughness_II: new Perk('Toughness_II', add(1)),
-		Capable: new Perk('Capable', function (l) {
-			return 1;
-		}),
-		Cunning: new Perk('Cunning', add(25)),
-		Curious: new Perk('Curious', add(160)),
-		Classy: new Perk('Classy', mult(4.5678375)),
-		Overkill: new Perk('Overkill', add(500)),
-		Resourceful: new Perk('Resourceful', mult(-5)),
-		Coordinated: new Perk('Coordinated', mult(-2)),
-		Siphonology: new Perk('Siphonology', function (l) {
-			return Math.pow(1 + l, 0.1);
-		}),
-		Anticipation: new Perk('Anticipation', add(6)),
-		Resilience: new Perk('Resilience', mult(10)),
-		Meditation: new Perk('Meditation', add(1)),
-		Relentlessness: new Perk('Relentlessness', function (l) {
-			return 1 + 0.05 * l * (1 + 0.3 * l);
-		}),
-		Carpentry: new Perk('Carpentry', mult(10)),
-		Artisanistry: new Perk('Artisanistry', mult(-5)),
-		Range: new Perk('Range', add(1)),
-		Agility: new Perk('Agility', mult(-5)),
-		Bait: new Perk('Bait', add(100)),
-		Trumps: new Perk('Trumps', add(20)),
-		Pheromones: new Perk('Pheromones', add(10)),
-		Packrat: new Perk('Packrat', add(20)),
-		Motivation: new Perk('Motivation', add(5)),
-		Power: new Perk('Power', add(5)),
-		Toughness: new Perk('Toughness', add(5)),
-		Looting: new Perk('Looting', add(5))
-	};
+	const perks = {};
+	for (const [name, func] of Object.entries(perkData)) {
+		perks[name] = new Perk(name, func);
+	}
 
 	return perks;
 }
 
 function optimize() {
 	const params = populatePerkyData();
-	var total_he = params.total_he,
+	const total_he = params.total_he,
 		zone = params.zone,
 		fluffy = params.fluffy,
 		perks = params.perks,
 		weight = params.weight,
 		mod = params.mod;
-	var he_left = total_he;
-	var Looting_II = perks.Looting_II,
+	const Looting_II = perks.Looting_II,
 		Carpentry_II = perks.Carpentry_II,
 		Motivation_II = perks.Motivation_II,
 		Power_II = perks.Power_II,
@@ -423,29 +404,31 @@ function optimize() {
 		Power = perks.Power,
 		Toughness = perks.Toughness,
 		Looting = perks.Looting;
-	for (var _i = 0, _a = ['whip', 'magn', 'taunt', 'ven']; _i < _a.length; _i++) {
-		var name = _a[_i];
-		mod[name] = Math.pow(1.003, zone * 99 * 0.03 * mod[name]);
-	}
-	var books = Math.pow(1.25, zone) * Math.pow(zone > 100 ? 1.28 : 1.2, Math.max(zone - 59, 0));
-	var gigas = Math.max(0, Math.min(zone - 60, zone / 2 - 25, zone / 3 - 12, zone / 5, zone / 10 + 17, 39));
-	var base_housing = Math.pow(1.25, 5 + Math.min(zone / 2, 30) + gigas);
-	var mystic = zone >= 25 ? Math.floor(Math.min(zone / 5, 9 + zone / 25, 15)) : 0;
-	var tacular = (20 + zone - (zone % 5)) / 100;
-	var base_income = 600 * mod.whip * books;
-	var base_helium = Math.pow(zone - 19, 2);
-	var max_tiers = zone / 5 + +((zone - 1) % 10 < 5);
-	var exponents = {
+	const impNames = ['whip', 'magn', 'taunt', 'ven'];
+	impNames.forEach((name) => (mod[name] = Math.pow(1.003, zone * 99 * 0.03 * mod[name])));
+
+	const books = Math.pow(1.25, zone) * Math.pow(zone > 100 ? 1.28 : 1.2, Math.max(zone - 59, 0));
+	const gigas = Math.max(0, Math.min(zone - 60, zone / 2 - 25, zone / 3 - 12, zone / 5, zone / 10 + 17, 39));
+	const base_housing = Math.pow(1.25, 5 + Math.min(zone / 2, 30) + gigas);
+	const mystic = zone >= 25 ? Math.floor(Math.min(zone / 5, 9 + zone / 25, 15)) : 0;
+	const tacular = (20 + zone - (zone % 5)) / 100;
+	const base_income = 600 * mod.whip * books;
+	const base_helium = Math.pow(zone - 19, 2);
+	const max_tiers = zone / 5 + +((zone - 1) % 10 < 5);
+	const exponents = {
 		cost: Math.pow(1.069, 0.85 * (zone < 60 ? 57 : 53)),
 		attack: Math.pow(1.19, 13),
 		health: Math.pow(1.19, 14),
 		block: Math.pow(1.19, 10)
 	};
-	var equip_cost = {
-		attack: (211 * (weight.attack + weight.health)) / weight.attack,
-		health: (248 * (weight.attack + weight.health)) / weight.health,
-		block: (5 * (weight.attack + weight.health)) / weight.health
+	const weightSum = weight.attack + weight.health;
+	const equip_cost = {
+		attack: (211 * weightSum) / weight.attack,
+		health: (248 * weightSum) / weight.health,
+		block: (5 * weightSum) / weight.health
 	};
+
+	let he_left = total_he;
 	// Number of ticks it takes to one-shot an enemy.
 	function ticks() {
 		return 1 + +(Agility.bonus > 0.9) + Math.ceil(10 * Agility.bonus);
@@ -457,35 +440,35 @@ function optimize() {
 		return Looting.bonus * Looting_II.bonus;
 	};
 	function gem_income() {
-		var drag = moti() * mod.whip;
-		var loot = looting() * mod.magn * 0.75 * 0.8;
-		var chronojest = (mod.chronojest * drag * loot) / 30;
+		const drag = moti() * mod.whip;
+		const loot = looting() * mod.magn * 0.75 * 0.8;
+		const chronojest = (mod.chronojest * drag * loot) / 30;
 		return drag + loot + chronojest;
 	}
 	// Max population
 	var trimps = mod.tent_city
 		? function () {
-				var carp = Carpentry.bonus * Carpentry_II.bonus;
-				var territory = Trumps.bonus;
+				const carp = Carpentry.bonus * Carpentry_II.bonus;
+				const territory = Trumps.bonus;
 				return 10 * (mod.taunt + territory * (mod.taunt - 1) * 111) * carp;
 		  }
 		: function () {
-				var carp = Carpentry.bonus * Carpentry_II.bonus;
-				var bonus = 3 + Math.log((base_housing * gem_income()) / Resourceful.bonus) / Math.log(1.4);
-				var territory = Trumps.bonus * zone;
+				const carp = Carpentry.bonus * Carpentry_II.bonus;
+				const bonus = 3 + Math.log((base_housing * gem_income()) / Resourceful.bonus) / Math.log(1.4);
+				const territory = Trumps.bonus * zone;
 				return 10 * (base_housing * bonus + territory) * carp * mod.taunt + mod.dg * carp;
 		  };
 	function income(ignore_prod) {
-		var storage = (mod.storage * Resourceful.bonus) / Packrat.bonus;
-		var loot = (looting() * mod.magn) / ticks();
-		var prod = ignore_prod ? 0 : moti() * mod.prod;
-		var chronojest = mod.chronojest * 0.1 * prod * loot;
+		const storage = (mod.storage * Resourceful.bonus) / Packrat.bonus;
+		const loot = (looting() * mod.magn) / ticks();
+		const prod = ignore_prod ? 0 : moti() * mod.prod;
+		const chronojest = mod.chronojest * 0.1 * prod * loot;
 		return base_income * (prod + loot * mod.loot + chronojest) * (1 - storage) * trimps();
 	}
 	function equip(stat) {
-		var cost = equip_cost[stat] * Artisanistry.bonus;
-		var levels = 1.136;
-		var tiers = Math.log(1 + income() / cost) / Math.log(exponents.cost);
+		const cost = equip_cost[stat] * Artisanistry.bonus;
+		let levels = 1.136;
+		let tiers = Math.log(1 + income() / cost) / Math.log(exponents.cost);
 		if (tiers > max_tiers + 0.45) {
 			levels = Math.log(1 + Math.pow(exponents.cost, tiers - max_tiers) * 0.2) / Math.log(1.2);
 			tiers = max_tiers;
@@ -505,36 +488,36 @@ function optimize() {
 	}
 	// Breed speed
 	function breed() {
-		var nurseries = building(2e6, 1.06) / (1 + 0.1 * Math.min(magma(), 20));
-		var potency = 0.0085 * (zone >= 60 ? 0.1 : 1) * Math.pow(1.1, Math.floor(zone / 5));
+		const nurseries = building(2e6, 1.06) / (1 + 0.1 * Math.min(magma(), 20));
+		const potency = 0.0085 * (zone >= 60 ? 0.1 : 1) * Math.pow(1.1, Math.floor(zone / 5));
 		return potency * Math.pow(1.01, nurseries) * Pheromones.bonus * mod.ven;
 	}
 	// Number of Trimps sent at a time, pre-gators
-	var group_size = [];
-	for (var coord = 0; coord <= Math.log(1 + he_left / 500e3) / Math.log(1.3); ++coord) {
-		var ratio_1 = 1 + 0.25 * Math.pow(0.98, coord);
-		var available_coords = zone - 1 + (magma() ? 100 : 0);
-		var result = 1;
-		for (var i = 0; i < available_coords; ++i) result = Math.ceil(result * ratio_1);
+	const group_size = [];
+	for (let coord = 0; coord <= Math.log(1 + he_left / 5e5) / Math.log(1.3); ++coord) {
+		const ratio_1 = 1 + 0.25 * Math.pow(0.98, coord);
+		const available_coords = zone - 1 + (magma() ? 100 : 0);
+		let result = 1;
+		for (let i = 0; i < available_coords; ++i) result = Math.ceil(result * ratio_1);
 		group_size[coord] = result;
 	}
 	// Strength multiplier from coordinations
 	function soldiers() {
-		var ratio = 1 + 0.25 * Coordinated.bonus;
-		var pop = (mod.soldiers || trimps()) / 3;
+		const ratio = 1 + 0.25 * Coordinated.bonus;
+		let pop = (mod.soldiers || trimps()) / 3;
 		if (mod.soldiers > 1) pop += 36000 * Bait.bonus;
-		var unbought_coords = Math.max(0, Math.log(group_size[Coordinated.level] / pop) / Math.log(ratio));
+		const unbought_coords = Math.max(0, Math.log(group_size[Coordinated.level] / pop) / Math.log(ratio));
 		return group_size[0] * Math.pow(1.25, -unbought_coords);
 	}
 	// Fracional number of Amalgamators expected
 	function gators() {
 		if (zone < 230 || mod.soldiers > 1) return 0;
-		var ooms = Math.log(trimps() / group_size[Coordinated.level]) / Math.log(10);
+		const ooms = Math.log(trimps() / group_size[Coordinated.level]) / Math.log(10);
 		return Math.max(0, (ooms - 7 + Math.floor((zone - 215) / 100)) / 3);
 	}
 	// Total attack
 	function attack() {
-		var attack = (0.15 + equip('attack')) * Math.pow(0.8, magma());
+		let attack = (0.15 + equip('attack')) * Math.pow(0.8, magma());
 		attack *= Power.bonus * Power_II.bonus * Relentlessness.bonus;
 		attack *= Siphonology.bonus * Range.bonus * Anticipation.bonus;
 		attack *= fluffy.attack[Capable.level];
@@ -543,24 +526,24 @@ function optimize() {
 	}
 	// Total survivability (accounts for health and block)
 	function health() {
-		var health = (0.6 + equip('health')) * Math.pow(0.8, magma());
+		let health = (0.6 + equip('health')) * Math.pow(0.8, magma());
 		health *= Toughness.bonus * Toughness_II.bonus * Resilience.bonus;
 		// block
-		var gyms = building(400, 1.185);
-		var trainers = (gyms * Math.log(1.185) - Math.log(1 + gyms)) / Math.log(1.1) + 25 - mystic;
-		var block = 0.04 * gyms * Math.pow(1 + mystic / 100, gyms) * (1 + tacular * trainers);
+		const gyms = building(400, 1.185);
+		const trainers = (gyms * Math.log(1.185) - Math.log(1 + gyms)) / Math.log(1.1) + 25 - mystic;
+		let block = 0.04 * gyms * Math.pow(1 + mystic / 100, gyms) * (1 + tacular * trainers);
 		// target number of attacks to survive
-		var attacks = 60;
+		let attacks = 60;
 		if (zone < 70) {
 			// no geneticists
 			// number of ticks needed to repopulate an army
-			var timer = Math.log(1 + (soldiers() * breed()) / Bait.bonus) / Math.log(1 + breed());
+			const timer = Math.log(1 + (soldiers() * breed()) / Bait.bonus) / Math.log(1 + breed());
 			attacks = timer / ticks();
 		} else {
 			// geneticists
-			var fighting = Math.min(group_size[Coordinated.level] / trimps(), 1 / 3);
-			var target_speed = fighting > 1e-9 ? (Math.pow(0.5 / (0.5 - fighting), 0.1 / mod.breed_timer) - 1) * 10 : fighting / mod.breed_timer;
-			var geneticists = Math.log(breed() / target_speed) / -Math.log(0.98);
+			const fighting = Math.min(group_size[Coordinated.level] / trimps(), 1 / 3);
+			const target_speed = fighting > 1e-9 ? (Math.pow(0.5 / (0.5 - fighting), 0.1 / mod.breed_timer) - 1) * 10 : fighting / mod.breed_timer;
+			const geneticists = Math.log(breed() / target_speed) / -Math.log(0.98);
 			health *= Math.pow(1.01, geneticists);
 			health *= Math.pow(1.332, gators());
 		}
@@ -569,53 +552,53 @@ function optimize() {
 		else block = Math.min(block, 4 * health);
 		return soldiers() * (block + health);
 	}
-	var xp = function () {
+	const xp = function () {
 		return Cunning.bonus * Curious.bonus * Classy.bonus;
 	};
-	var agility = function () {
+	const agility = function () {
 		return 1 / Agility.bonus;
 	};
-	var helium = function () {
+	const helium = function () {
 		return base_helium * looting() + 45;
 	};
-	var overkill = function () {
+	const overkill = function () {
 		return Overkill.bonus;
 	};
-	var stats = { agility: agility, helium: helium, xp: xp, attack: attack, health: health, overkill: overkill, trimps: trimps, income: income };
+	const stats = { agility: agility, helium: helium, xp: xp, attack: attack, health: health, overkill: overkill, trimps: trimps, income: income };
 	function score() {
-		var result = 0;
-		for (var i in weight) {
+		let result = 0;
+		for (let i in weight) {
 			if (!weight[i]) continue;
-			var stat = stats[i]();
+			const stat = stats[i]();
 			if (!isFinite(stat)) throw Error(i + ' is ' + stat);
 			result += weight[i] * Math.log(stat);
 		}
 		return result;
 	}
 	function recompute_marginal_efficiencies() {
-		var baseline = score();
-		for (var name in perks) {
-			var perk = perks[name];
+		const baseline = score();
+		for (let name in perks) {
+			let perk = perks[name];
 			if (perk.cost_increment || !perk.levellable(he_left)) continue;
 			perk.level_up(1);
 			perk.gain = score() - baseline;
 			perk.level_up(-1);
 		}
-		for (var _i = 0, _a = ['Looting', 'Carpentry', 'Motivation', 'Power', 'Toughness']; _i < _a.length; _i++) {
-			var name = _a[_i];
+		const perkNames = ['Looting', 'Carpentry', 'Motivation', 'Power', 'Toughness'];
+		for (let name of perkNames) {
 			perks[name + '_II'].gain = (perks[name].gain * perks[name + '_II'].log_ratio()) / perks[name].log_ratio();
 		}
 	}
 	function solve_quadratic_equation(a, b, c) {
-		var delta = b * b - 4 * a * c;
+		const delta = b * b - 4 * a * c;
 		return (-b + Math.sqrt(delta)) / (2 * a);
 	}
 	function spend_he(perk, budget) {
 		perk.gain /= perk.log_ratio();
 		if (perk.cost_increment) {
-			var ratio_2 = (1 + perk.level) / (1000 + Looting_II.level + Carpentry_II.level + Motivation_II.level + Power_II.level + Toughness_II.level);
+			const ratio_2 = (1 + perk.level) / (1000 + Looting_II.level + Carpentry_II.level + Motivation_II.level + Power_II.level + Toughness_II.level);
 			budget *= 0.5 * Math.pow(ratio_2, 2);
-			var x = solve_quadratic_equation(perk.cost_increment / 2, perk.cost - perk.cost_increment / 2, -budget);
+			const x = solve_quadratic_equation(perk.cost_increment / 2, perk.cost - perk.cost_increment / 2, -budget);
 			he_left -= perk.level_up(Math.floor(Math.max(Math.min(x, perk.max_level - perk.level), 1, perk.level / 1e12)));
 		} else {
 			budget = Math.pow(budget, 0.5);
@@ -630,44 +613,44 @@ function optimize() {
 	if (zone > 90 && mod.soldiers <= 1 && Bait.min_level === 0) Bait.max_level = 0;
 	// Fluffy
 	fluffy.attack = [];
-	var potential = Math.log((0.003 * fluffy.xp) / Math.pow(5, fluffy.prestige) + 1) / Math.log(4);
-	for (var cap = 0; cap <= 10; ++cap) {
-		var level = Math.min(Math.floor(potential), cap);
-		var progress = level === cap ? 0 : (Math.pow(4, potential - level) - 1) / 3;
+	const potential = Math.log((0.003 * fluffy.xp) / Math.pow(5, fluffy.prestige) + 1) / Math.log(4);
+	for (let cap = 0; cap <= 10; ++cap) {
+		const level = Math.min(Math.floor(potential), cap);
+		const progress = level === cap ? 0 : (Math.pow(4, potential - level) - 1) / 3;
 		fluffy.attack[cap] = 1 + Math.pow(5, fluffy.prestige) * 0.1 * (level / 2 + progress) * (level + 1);
 	}
 	// Minimum levels on perks
-	for (var name in perks) {
-		var perk = perks[name];
+	for (let name in perks) {
+		const perk = perks[name];
 		if (perk.cost_increment) he_left -= perk.level_up(perk.min_level);
 		else while (perk.level < perk.min_level) he_left -= perk.level_up(1);
 	}
-	var ratio = 0.25;
+	let ratio = 0.25;
 	while (Capable.levellable(he_left * ratio)) {
 		he_left -= Capable.level_up(1);
 		ratio = Capable.level <= Math.floor(potential) && zone > 300 && weight.xp > 0 ? 0.25 : 0.01;
 	}
 	if (zone <= 300 || potential >= Capable.level) weight.xp = 0;
 	// Main loop
-	var sorted_perks = Object.keys(perks)
+	const sorted_perks = Object.keys(perks)
 		.map(function (name) {
 			return perks[name];
 		})
 		.filter(function (perk) {
 			return perk.levellable(he_left);
 		});
-	var reference_he = he_left;
-	for (var x = 0.999; x > 1e-12; x *= x) {
-		var he_target = reference_he * x;
+	const reference_he = he_left;
+	for (let x = 0.999; x > 1e-12; x *= x) {
+		const he_target = reference_he * x;
 		recompute_marginal_efficiencies();
 		sorted_perks.sort(function (a, b) {
 			return b.gain / b.cost - a.gain / a.cost;
 		});
 		while (he_left > he_target && sorted_perks.length) {
-			var best = sorted_perks.shift();
+			const best = sorted_perks.shift();
 			if (!best.levellable(he_left)) continue;
 			spend_he(best, he_left - he_target);
-			var i = 0;
+			let i = 0;
 			while (sorted_perks[i] && sorted_perks[i].gain / sorted_perks[i].cost > best.gain / best.cost) i++;
 			sorted_perks.splice(i, 0, best);
 		}
@@ -732,11 +715,10 @@ MODULES.autoPerks = {
 		});
 	},
 	displayGUI: function (universe) {
-		if (universe === 1) universe = 'Perky';
-		else if (universe === 2) universe = 'Surky';
-		const presets = MODULES.autoPerks['presets' + universe];
-		const inputBoxes = MODULES.autoPerks['inputBoxes' + universe];
-		var settingInputs = JSON.parse(localStorage.getItem(universe.toLowerCase() + 'Inputs'));
+		universe = universe === 1 ? 'Perky' : universe === 2 ? 'Surky' : universe;
+		const presets = MODULES.autoPerks[`presets${universe}`];
+		const inputBoxes = MODULES.autoPerks[`inputBoxes${universe}`];
+		let settingInputs = JSON.parse(localStorage.getItem(`${universe.toLowerCase()}Inputs`));
 
 		//As a safety measure we should remove the GUI if it already exists.
 		if (MODULES.autoPerks.GUI && Object.keys(MODULES.autoPerks.GUI).length !== 0) MODULES.autoPerks.removeGUI();
@@ -754,19 +736,19 @@ MODULES.autoPerks = {
 		apGUI.$allocatorBtn1.setAttribute('onmouseout', 'tooltip("hide")');
 		apGUI.$allocatorBtn1.textContent = 'Allocate Perks';
 		//Distance from Portal/Cancel/Respec buttons
-		var $buttonbar = document.getElementById('portalBtnContainer');
-		if (document.getElementById(apGUI.$allocatorBtn1.id) === null) $buttonbar.appendChild(apGUI.$allocatorBtn1);
+		let $buttonbar = document.getElementById('portalBtnContainer');
+		if (!document.getElementById(apGUI.$allocatorBtn1.id)) $buttonbar.appendChild(apGUI.$allocatorBtn1);
 		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
 		apGUI.$customRatios = document.createElement('DIV');
 		apGUI.$customRatios.id = 'customRatios';
 
 		apGUI.$ratiosLine = {};
 		//Setup inputs boxes for the UI.
-		for (var x = 0; x < Object.keys(inputBoxes).length; x++) {
-			var row = Object.keys(inputBoxes)[x];
+		for (let x = 0; x < Object.keys(inputBoxes).length; x++) {
+			let row = Object.keys(inputBoxes)[x];
 			apGUI.$ratiosLine[row] = document.createElement('DIV');
 			apGUI.$ratiosLine[row].setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
-			for (var item in inputBoxes[row]) {
+			for (let item in inputBoxes[row]) {
 				MODULES.autoPerks.createInput(apGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, universe);
 				MODULES.autoPerks.GUI.inputs.push(item);
 			}
@@ -1023,8 +1005,7 @@ MODULES.autoPerks = {
 			},
 			combatRadon: {
 				name: 'Radon Combat Respec',
-				description:
-					"As a respec ONLY, optimize for maximum combat stats given current equipment and population. Coord Limited value is ignored and instead uses your save to determine how much housing perk levels are needed to buy your current coord amount. If you are in Trappa, the optimization assumes you have sent your last army so that health perks won't be applied - DO NOT USE in Trappa until after you send your last army."
+				description: "As a respec ONLY, optimize for maximum combat stats given current equipment and population. Coord Limited value is ignored and instead uses your save to determine how much housing perk levels are needed to buy your current coord amount. If you are in Trappa, the optimization assumes you have sent your last army so that health perks won't be applied - DO NOT USE in Trappa until after you send your last army."
 			},
 			resminus: {
 				name: 'Resources (-maps)',

@@ -339,17 +339,21 @@ function shouldAbandon(zoneCheck = true) {
 	return false;
 }
 
-function _berserkDisableMapping() {
-	if (!challengeActive('Berserk') || !getPageSetting('berserk')) return false;
-	if (game.global.mapsActive || game.global.preMapsActive) return false;
-	if (!getPageSetting('berserkDisableMapping') || !game.global.fighting || game.global.soldierHealth <= 0) return false;
-	if (game.challenges.Berserk.frenzyStacks > 0) return true;
-}
-
 function _noMappingChallenges(ignoreChallenge) {
-	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) return true;
+	if (noBreedChallenge()) return true;
 	if (!ignoreChallenge && challengeActive('Mapology')) return true;
 	if (challengeActive('Exterminate')) return true;
+}
+
+function decaySkipMaps() {
+	const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
+	if (!challengeActive(challengeName) && !getPageSetting('decay')) return false;
+
+	const challenge = game.challenges[challengeName];
+	const currentStacks = challenge ? challenge.stacks : 0;
+	const stacksToPush = getPageSetting('decayStacksToPush');
+
+	return stacksToPush > 0 && currentStacks > stacksToPush;
 }
 
 function _leadDisableMapping() {
@@ -360,6 +364,13 @@ function _leadDisableMapping() {
 	const natureFinalZone = game.global.world >= getNatureStartZone() && getEmpowerment() !== getZoneEmpowerment(game.global.world + 1);
 
 	return !(clearedCell && (!evenZone || natureFinalZone));
+}
+
+function _berserkDisableMapping() {
+	if (!challengeActive('Berserk') || !getPageSetting('berserk')) return false;
+	if (game.global.mapsActive || game.global.preMapsActive) return false;
+	if (!getPageSetting('berserkDisableMapping') || !game.global.fighting || game.global.soldierHealth <= 0) return false;
+	if (game.challenges.Berserk.frenzyStacks > 0) return true;
 }
 
 function autoMaps() {

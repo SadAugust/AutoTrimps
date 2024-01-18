@@ -521,7 +521,7 @@ function populateFarmCalcData() {
 		titimpReduction: 1 - speed / 10,
 		//Challenge Conditions
 		angelic: mastery('angelic'),
-		trapper: challengeActive('Trapper') || challengeActive('Trappapalooza'),
+		trapper: noBreedChallenge(),
 		coordinate: challengeActive('Coordinate'),
 		devastation: challengeActive('Devastation') || challengeActive('Revenge'),
 		domination: challengeActive('Domination'),

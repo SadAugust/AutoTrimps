@@ -186,8 +186,7 @@ function buyBuildings() {
 		_buyAntenna(buildingSettings);
 	}
 
-	// Purchasing Tributes
-	buyTributes();
+	_buyTribute();
 
 	_keepBuyingHousing(buildingSettings);
 }
@@ -277,7 +276,7 @@ function _checkQuest() {
 	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
 		const questNumber = _getCurrentQuest();
 		// Still allows you to buy tributes during gem quests
-		if (questNumber === 4) buyTributes();
+		if (questNumber === 4) _buyTribute();
 		// Don not buy buildings if on a resource (food, wood, metal, gems) quest.
 		if ([1, 2, 3, 4].indexOf(questNumber) >= 0) return true;
 	}
@@ -462,7 +461,7 @@ function _keepBuyingHousing(buildingSettings) {
 	}
 }
 
-function buyTributes() {
+function _buyTribute() {
 	if (game.buildings.Tribute.locked) return;
 	const tributeSetting = getPageSetting('buildingSettingsArray').Tribute;
 

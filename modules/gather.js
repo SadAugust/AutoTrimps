@@ -1,74 +1,59 @@
 MODULES.gather = {
 	trapBuffering: false,
-	maxTrapBuffering: false,
-	maxZoneDuration: 0
+	maxTrapBuffering: false
 };
 
 //Traps per second
 function calcTPS() {
-	var tps = Math.min(10, game.global.playerModifier / 5);
-	if (game.global.universe === 2 && Fluffy.isRewardActive('trapper')) tps *= 10;
+	const fluffyTrapMult = game.global.universe === 2 && Fluffy.isRewardActive('trapper') ? 10 : 1;
+	const tps = Math.min(10, game.global.playerModifier / 5) * fluffyTrapMult;
 	return tps;
-}
-
-function calcMaxTraps() {
-	//Tries to keep in mind the longest duration any zone has lasted in this portal
-	var time = getZoneSeconds();
-	if (game.global.world === 1) MODULES.gather.maxZoneDuration = time;
-	if (time > MODULES.gather.maxZoneDuration) MODULES.gather.maxZoneDuration = time;
-
-	//Return enough traps to last 1/4 of the longest duration zone we've seen so far
-	return Math.ceil((calcTPS() * MODULES.gather.maxZoneDuration) / 4);
 }
 
 function safeSetGather(resource) {
 	if (!resource) return;
 
-	//Can't gather metal on this challenge so need to override it
 	if (resource === 'metal' && challengeActive('Transmute')) resource = 'wood';
 
-	if (game.global.playerGathering !== resource) {
-		debug(`Setting gather to ${resource}`, 'gather');
-		setGather(resource);
-	}
-	return;
+	if (game.global.playerGathering === resource) return;
+
+	debug(`Setting gather to ${resource}`, 'gather');
+	setGather(resource);
 }
 
 //Gather selection
 function autoGather() {
-	var manualGather = getPageSetting('gatherType');
-
+	const manualGather = getPageSetting('gatherType');
 	if (manualGather === 0) return;
 
-	var scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done;
-	var minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done;
+	const scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done;
+	const minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done;
 
 	//Setting it to use mining/building only!
 	if (!scientistsAvailable && !minersAvailable && manualGather === 2 && document.getElementById('metalCollectBtn').style.display !== 'none' && document.getElementById('metal').style.visibility !== 'hidden') {
 		autoGatherMetal();
 		return;
 	}
-	var trapChallenge = challengeActive('Trapper') || challengeActive('Trappapalooza');
 
-	var needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
-	var notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
-	var trapperTrapUntilFull = trapChallenge && notFullPop;
-	var trapsBufferSize = Math.ceil(5 * calcTPS());
-	var minTraps = needBattle ? 0 : Math.ceil(calcTPS());
-	var maxTraps = calcMaxTraps();
-	var trapTrimpsOK = (!game.upgrades.Battle.done || getPageSetting('TrapTrimps')) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
+	const trapChallenge = noBreedChallenge();
+	const needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
+	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
+	const trapperTrapUntilFull = trapChallenge && notFullPop;
+	const trapsBufferSize = Math.ceil(5 * calcTPS());
+	const minTraps = needBattle ? 0 : Math.ceil(calcTPS());
+	const maxTraps = Math.max(100, getZoneSeconds() / 4);
+	let trapTrimpsOK = (!game.upgrades.Battle.done || getPageSetting('TrapTrimps')) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 
 	//Identify if we should disable trapping when running Trappa/Trapper
 	if (trapTrimpsOK && trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap')) {
-		var coordTarget = getPageSetting('trapperCoords') > 0 ? getPageSetting('trapperCoords') - 1 : 999;
+		let coordTarget = getPageSetting('trapperCoords') > 0 ? getPageSetting('trapperCoords') - 1 : 999;
 		if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
-		var remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
-		var targetArmySize = 1;
-		var coordinatedMult = getPerkLevel('Coordinated') > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, getPerkLevel('Coordinated')) + 1 : 1;
+		const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
+		const coordinatedMult = getPerkLevel('Coordinated') > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, getPerkLevel('Coordinated')) + 1 : 1;
 		//Work out the army size that we need to calculate traps based off of.
-		targetArmySize = game.resources.trimps.maxSoldiers;
+		let targetArmySize = game.resources.trimps.maxSoldiers;
 		if (game.upgrades.Coordination.done >= coordTarget)
-			for (var z = game.upgrades.Coordination.done; z < coordTarget; ++z) {
+			for (let z = game.upgrades.Coordination.done; z < coordTarget; ++z) {
 				targetArmySize = Math.ceil(1.25 * targetArmySize);
 				targetArmySize = Math.ceil(targetArmySize * coordinatedMult);
 			}
@@ -77,36 +62,36 @@ function autoGather() {
 	}
 
 	//Vars
-	var lowOnTraps = game.buildings.Trap.owned < minTraps;
-	var trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
-	var fullOfTraps = game.buildings.Trap.owned >= maxTraps;
-	var maxTrapsReady = game.buildings.Trap.owned >= maxTraps + trapsBufferSize;
+	const lowOnTraps = game.buildings.Trap.owned < minTraps;
+	const trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
+	const fullOfTraps = game.buildings.Trap.owned >= maxTraps;
+	const maxTrapsReady = game.buildings.Trap.owned >= maxTraps + trapsBufferSize;
 	if (lowOnTraps) MODULES.gather.trapBuffering = true;
 	if (trapsReady) MODULES.gather.trapBuffering = false;
 	if (maxTrapsReady) MODULES.gather.maxTrapBuffering = false;
 
 	// Init - Science
 	const resourcesNeeded = setResourceNeeded();
-	var firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
-	var researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden';
-	var scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
-	var needScience = game.resources.science.owned < resourcesNeeded.science;
-	var needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
+	const firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
+	const researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden';
+	const scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
+	const needScience = game.resources.science.owned < resourcesNeeded.science;
+	const needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
 	//Init - Others
-	var needMiner = firstFightOK && minersAvailable;
-	var breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
-	var hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
-	var building = game.global.buildingsQueue[0];
+	const needMiner = firstFightOK && minersAvailable;
+	const breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
+	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
+	const building = game.global.buildingsQueue[0];
 	//Verifies if trapping is still relevant
 	//Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
 	//And there is enough breed time remaining to open an entire trap (prevents wasting time and traps during early zones)
-	var trappingIsRelevant =
+	const trappingIsRelevant =
 		trapperTrapUntilFull ||
 		breedingPS()
 			.div(10)
 			.lt(calcTPS() * (game.portal.Bait.level + 1));
-	var trapWontBeWasted = trapperTrapUntilFull || breedTimeRemaining().gte(1 / calcTPS()) || (game.global.playerGathering === 'trimps' && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1)));
+	const trapWontBeWasted = trapperTrapUntilFull || breedTimeRemaining().gte(1 / calcTPS()) || (game.global.playerGathering === 'trimps' && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1)));
 
 	//Build if we are building an Antenna. Priority over everything else.
 	if (game.global.buildingsQueue.length && building === 'Antenna.1') {
@@ -166,7 +151,7 @@ function autoGather() {
 
 	//Get coord if army size is not the problem.
 	//Should only be a necessary thing when at z5 or below as that's where you'll be most resource starved
-	var coordUpgrade = game.upgrades['Coordination'];
+	const coordUpgrade = game.upgrades['Coordination'];
 	if (game.global.world <= 5 && !coordUpgrade.locked && canAffordCoordinationTrimps()) {
 		if (resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned) {
 			// Help with science.
@@ -204,7 +189,7 @@ function autoGather() {
 		}
 
 		//Setting gather to the setting that corresponds to your current map special.
-		var currentBonus = getCurrentMapObject().bonus;
+		const currentBonus = getCurrentMapObject().bonus;
 		if (currentBonus) {
 			if (currentBonus.includes('sc') || currentBonus.includes('hc')) safeSetGather('food');
 			else if (currentBonus.includes('wc')) safeSetGather('wood');
@@ -256,14 +241,14 @@ function autoGather() {
 		return;
 	}
 
-	var manualResourceList = {
+	const manualResourceList = {
 		food: 'Farmer',
 		wood: 'Lumberjack',
 		metal: 'Miner'
 	};
-	var lowestResource = 'food';
-	var lowestResourceRate = -1;
-	var haveWorkers = true;
+	let lowestResource = 'food';
+	let lowestResourceRate = -1;
+	let haveWorkers = true;
 	for (var resource in manualResourceList) {
 		var job = manualResourceList[resource];
 		var currentRate = game.jobs[job].owned * game.jobs[job].modifier;

@@ -254,7 +254,7 @@ function initialiseAllSettings() {
 
 				description += "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
 				description += "<p><b>" + trimpleShortened + " Respec Popup</b><br>Will display a popup after completing " + trimple + " asking whether you would like to respec into the preset listed above.</p>";
-				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>5 seconds after completing " + trimple + " the script will respec you into the <b>" + calcName + "</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec.</p>";
+				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>4 seconds after completing " + trimple + " the script will respec you into the <b>" + calcName + "</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec.</p>";
 				description += "<p>I'd recommend only using this with both the <b>Auto Allocate Perks</b> and <b>Void Map Liquification</b> settings enabled. Without these you will go into your next run in a suboptimal perk setup.</p>";
 
 				if (currSettingUniverse === 1) description += "<p>Has an additional setting (<b>Spire Respec Cell</b>) which has a <b>5</b> second delay after toggling this setting before it will function.</p>";

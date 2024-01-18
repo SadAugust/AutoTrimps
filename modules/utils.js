@@ -488,3 +488,7 @@ function getPriorityOrder() {
 function getPerkModifier(what) {
 	return game.portal[what].modifier || 0;
 }
+
+function noBreedChallenge() {
+	return challengeActive('Trapper') || challengeActive('Trappapalooza');
+}

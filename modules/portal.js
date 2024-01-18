@@ -1,5 +1,5 @@
 MODULES.portal = {
-	timeout: 5000,
+	timeout: 4000,
 	bufferExceedFactor: 5,
 	portalForVoid: false,
 	portalUniverse: Infinity,
@@ -10,18 +10,8 @@ MODULES.portal = {
 	zonePostpone: 0
 };
 
-function getHeliumPerHour() {
-	var timeThisPortal = new Date().getTime() - game.global.portalTime;
-	if (timeThisPortal < 1) return 0;
-	timeThisPortal /= 3600000;
-	var resToUse;
-	if (game.global.universe === 2) resToUse = game.resources.radon.owned;
-	else resToUse = game.resources.helium.owned;
-	return resToUse / timeThisPortal;
-}
-
 //Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
-function autoPortalCheck(specificPortalZone, universe) {
+function autoPortalCheck(specificPortalZone) {
 	decayFinishChallenge();
 	quagmireFinishChallenge();
 	if (!game.global.portalActive) return;
@@ -31,135 +21,176 @@ function autoPortalCheck(specificPortalZone, universe) {
 
 function autoPortal(specificPortalZone, universe, skipDaily) {
 	if (MODULES.portal.portalForVoid && !game.options.menu.liquification.enabled) toggleSetting('liquification');
-	if (!game.global.portalActive) return;
-	if (game.global.runningChallengeSquared) return;
-	if (!universe) universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
+	if (!game.global.portalActive || game.global.runningChallengeSquared) return;
+
+	universe = universe || (MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe);
 	const runningDaily = challengeActive('Daily');
-	if (!MODULES.portal.portalForVoid && !runningDaily && getPageSetting('autoPortal', universe) === 'Off') return;
-	if (!MODULES.portal.portalForVoid && runningDaily && getPageSetting('dailyPortal', universe) === '0') return;
+	if (!shouldPortal(runningDaily, universe)) return;
 
-	//Setting up base portalZone for both regular runs & daily runs if in one
-	//Doesn't factor in universe as we only care about the universe that we're currently in, not the one we want to be in
-	var portalZone = getPageSetting('autoPortalZone', universe) > 0 ? getPageSetting('autoPortalZone', universe) : Infinity;
-	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
-	if (!runningDaily && getPageSetting('autoPortal', universe).includes('Hour')) portalZone = Infinity;
+	const portalZone = MODULES.portal.portalForVoid ? _getPortalZoneVoid() : _getPortalZone(runningDaily, universe, specificPortalZone, skipDaily);
+	if (MODULES.portal.portalForVoid && portalZone <= 0) return;
 
-	//Same as above but overriding for dailies
-	if (runningDaily) {
-		portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
-		if (getPageSetting('dailyPortal', universe) === 1) portalZone = Infinity;
-	}
-
-	if (specificPortalZone) portalZone = specificPortalZone;
-	if (skipDaily) portalZone = game.global.world;
-
-	if (MODULES.portal.portalForVoid) {
-		portalZone = checkLiqZoneCount() >= 99 ? 99 : Math.floor(checkLiqZoneCount()) + 1;
-		if (game.permaBoneBonuses.voidMaps.tracker >= 100 - game.permaBoneBonuses.voidMaps.owned) {
-			portalZone = game.global.world;
-		} else if (game.global.world < portalZone) {
-			return;
-		}
-	}
-
-	var challenge = 'None';
-	var portalType = getPageSetting('autoPortal', universe);
-	//He/hr settings. If inside a daily then need to check for '1' as that is the daily setting value for he/hr.
 	const heHrSettings = ['Helium Per Hour', 'Radon Per Hour', '1'];
-	const challenge2Settings = ['Challenge 2', 'Challenge 3'];
+	let portalType = getPageSetting('autoPortal', universe);
+	let challengeSelected = portalType;
 
-	const challengeSelected = heHrSettings.indexOf(portalType) !== -1 || portalType.includes('Custom') ? getPageSetting('heliumHourChallenge', universe) : portalType.includes('One Off Challenges') ? getPageSetting('heliumOneOffChallenge', universe) : portalType;
+	if (heHrSettings.includes(portalType) || portalType.includes('Custom')) {
+		challengeSelected = getPageSetting('heliumHourChallenge', universe);
+	} else if (portalType.includes('One Off Challenges')) {
+		challengeSelected = getPageSetting('heliumOneOffChallenge', universe);
+	}
 
 	if (runningDaily) portalType = getPageSetting('dailyPortal', universe).toString();
-	//Helium or Radon per hour portaling checks
-	if (heHrSettings.indexOf(portalType) !== -1) {
-		var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium';
-		var prefix = runningDaily ? 'dailyHelium' : 'helium';
-		var OKtoPortal = false;
-		var minZone = getPageSetting(runningDaily ? 'dailyDontPortalBefore' : 'heliumHrDontPortalBefore', universe);
-		game.stats.bestHeliumHourThisRun.evaluate();
-		var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
-		var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
-		var myHeliumHr = getHeliumPerHour();
-		var heliumHrBuffer = Math.abs(getPageSetting(prefix + 'HrBuffer', universe));
-		if (!atSettings.portal.aWholeNewWorld) heliumHrBuffer *= MODULES['portal'].bufferExceedFactor;
-		var bufferExceeded = myHeliumHr < bestHeHr * (1 - heliumHrBuffer / 100);
-		if (bufferExceeded && game.global.world >= minZone) {
-			OKtoPortal = true;
-			if (atSettings.portal.aWholeNewWorld) MODULES.portal.zonePostpone = 0;
+
+	if (heHrSettings.includes(portalType)) {
+		handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily);
+	} else {
+		handlePortalType(portalType, portalZone, specificPortalZone, universe, challengeSelected, skipDaily);
+	}
+}
+
+function shouldPortal(runningDaily, universe) {
+	const portalSetting = runningDaily ? getPageSetting('dailyPortal', universe) : getPageSetting('autoPortal', universe);
+	const portalOff = runningDaily ? '0' : 'Off';
+
+	return !(MODULES.portal.portalForVoid && portalSetting === portalOff);
+}
+
+function _getPortalZoneVoid() {
+	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
+	const maxTracker = 100 - owned;
+	if (tracker >= maxTracker) return game.global.world;
+
+	const liquificationZone = checkLiqZoneCount();
+	const portalZone = liquificationZone >= 99 ? 99 : Math.floor(liquificationZone) + 1;
+	if (game.global.world < portalZone) return 0;
+
+	return portalZone;
+}
+
+function _getPortalZone(runningDaily, universe, specificPortalZone, skipDaily) {
+	if (skipDaily) return game.global.world;
+	if (specificPortalZone) return specificPortalZone;
+	if (runningDaily) return _getPortalZoneDaily(universe);
+	if (!runningDaily && getPageSetting('autoPortal', universe).includes('Hour')) return Infinity;
+
+	const portalZone = getPageSetting('autoPortalZone', universe);
+	return portalZone > 0 ? portalZone : Infinity;
+}
+
+function _getPortalZoneDaily(universe) {
+	if (getPageSetting('dailyPortal', universe) === 1) return Infinity;
+
+	const portalZone = getPageSetting('dailyPortalZone');
+	return portalZone > 0 ? portalZone : Infinity;
+}
+
+function handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily) {
+	const resourceType = game.global.universe === 2 ? 'Radon' : 'Helium';
+	const prefix = runningDaily ? 'dailyHelium' : 'helium';
+	const minZone = getPageSetting(runningDaily ? 'dailyDontPortalBefore' : 'heliumHrDontPortalBefore', universe);
+	game.stats.bestHeliumHourThisRun.evaluate();
+	const bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
+	const bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
+	const myHeliumHr = _getHeliumPerHour(resourceType.toLowerCase());
+	let heliumHrBuffer = Math.abs(getPageSetting(prefix + 'HrBuffer', universe));
+	let OKtoPortal = false;
+	if (!atSettings.portal.aWholeNewWorld) heliumHrBuffer *= MODULES.portal.bufferExceedFactor;
+	const bufferExceeded = myHeliumHr < bestHeHr * (1 - heliumHrBuffer / 100);
+	if (bufferExceeded && game.global.world >= minZone) {
+		OKtoPortal = true;
+		if (atSettings.portal.aWholeNewWorld) MODULES.portal.zonePostpone = 0;
+	}
+	if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld) OKtoPortal = false;
+	if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
+		handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily);
+	}
+}
+
+function _getHeliumPerHour(resourceType) {
+	let timeThisPortal = new Date().getTime() - game.global.portalTime;
+	if (timeThisPortal < 1) return 0;
+	timeThisPortal /= 3.6e6;
+	const resToUse = game.resources[resourceType].owned;
+	return resToUse / timeThisPortal;
+}
+
+function handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily) {
+	if (getPageSetting(prefix + 'HrPortal', universe) > 0 && game.global.totalVoidMaps > 0) {
+		_handleHeHrAfterVoids(prefix, universe);
+	}
+
+	if (MODULES.mapFunctions.afterVoids && game.global.totalVoidMaps > 0) {
+		if (game.global.spireActive && getPageSetting(prefix + 'HrExitSpire')) {
+			debug(`Exiting Spire to run voids faster.`, 'portal');
+			endSpire();
 		}
-		if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld) OKtoPortal = false;
-		if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
-			if (getPageSetting(prefix + 'HrPortal', universe) > 0 && game.global.totalVoidMaps > 0) {
-				if (!MODULES.mapFunctions.afterVoids) {
-					if (getPageSetting(prefix + 'HrPortal', universe) === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug('Z' + game.global.world + ' - Pushing to next Poison zone then portaling after void maps have been run.', 'portal');
-					else debug('Z' + game.global.world + ' - Portaling after void maps have been run.', 'portal');
-				}
-				MODULES.mapFunctions.afterVoids = true;
-			}
-			if (MODULES.mapFunctions.afterVoids) {
-				if (game.global.spireActive && getPageSetting(prefix + 'HrExitSpire')) {
-					debug('Exiting Spire to run voids faster.', 'portal');
-					endSpire();
-				}
-				return;
-			}
+		return;
+	}
 
-			setTimeout(debug('My ' + resourceType + 'Hr was: ' + myHeliumHr + ' & the Best ' + resourceType + 'Hr was: ' + bestHeHr + ' at zone: ' + bestHeHrZone, 'portal'), 1000);
-			cancelTooltip();
+	if (usingRealTimeOffline || (MODULES.mapFunctions.afterVoids && game.global.totalVoidMaps === 0)) {
+		const challenge = challengeSelected !== 'None' ? challengeSelected : 0;
+		doPortal(challenge, skipDaily);
 
-			//Add time warp check to ensure we don't have a 5 second wait during time warp
-			if (usingRealTimeOffline) {
-				if (challengeSelected !== 'None') challenge = challengeSelected;
-				else challenge = 0;
+		setTimeout(() => {
+			debug(`My ${resourceType}Hr was: ${prettify(myHeliumHr)} & the Best ${resourceType}Hr was: ${prettify(bestHeHr)} at zone: ${bestHeHrZone}`, 'portal');
+		}, 1000);
+	} else {
+		_handleHeHrPortalDelay(resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily);
+	}
+}
 
-				doPortal(challenge, skipDaily);
-				return;
-			} else {
-				MODULES.portal.zonePostpone += 1;
-				MODULES.popups.portal = true;
-				if (MODULES.popups.remainingTime === Infinity) MODULES.popups.remainingTime = 5000;
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone+=1;; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
-				setTimeout(function () {
-					cancelTooltip();
-					MODULES.popups.portal = false;
-					MODULES.popups.remainingTime = Infinity;
-				}, MODULES['portal'].timeout);
-				setTimeout(function () {
-					if (MODULES.portal.zonePostpone >= 2) return;
-					if (challengeSelected !== 'None') challenge = challengeSelected;
-					else challenge = 0;
+function _handleHeHrAfterVoids(prefix, universe) {
+	if (!MODULES.mapFunctions.afterVoids) {
+		const notPoisonZone = getPageSetting(prefix + 'HrPortal', universe) === 2 && getZoneEmpowerment(game.global.world) !== 'Poison';
+		if (notPoisonZone) debug(`Z${game.global.world} - Pushing to next Poison zone then portaling after void maps have been run.`, 'portal');
+		else debug(`Z${game.global.world} - Portaling after void maps have been run.`, 'portal');
+	}
+	MODULES.mapFunctions.afterVoids = true;
+}
 
-					doPortal(challenge, skipDaily);
-					return;
-				}, MODULES['portal'].timeout + 100);
-			}
-		}
-		if (game.global.world >= portalZone) {
+function _handleHeHrPortalDelay(resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily) {
+	MODULES.portal.zonePostpone += 1;
+	MODULES.popups.portal = true;
+	if (MODULES.popups.remainingTime === Infinity) MODULES.popups.remainingTime = 4000;
+	tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone++; MODULES.popups.portal = false', `<b>NOTICE: Auto-Portaling in ${MODULES.popups.remainingTime} seconds....</b>`, 'Delay Portal');
+	setTimeout(() => {
+		cancelTooltip();
+		MODULES.popups.portal = false;
+		MODULES.popups.remainingTime = Infinity;
+	}, MODULES.portal.timeout);
+	setTimeout(() => {
+		if (MODULES.portal.zonePostpone >= 2) return;
+		const challenge = challengeSelected !== 'None' ? challengeSelected : 0;
+		doPortal(challenge, skipDaily);
+
+		setTimeout(() => {
+			debug(`My ${resourceType}Hr was: ${prettify(myHeliumHr)} & the Best ${prettify(resourceType)}Hr was: ${prettify(bestHeHr)} at zone: ${bestHeHrZone}`, 'portal');
+		}, 1000);
+	}, MODULES.portal.timeout + 100);
+}
+
+function handlePortalType(portalType, portalZone, specificPortalZone, universe, challengeSelected, skipDaily) {
+	const challenge2Settings = ['Challenge 2', 'Challenge 3'];
+	const atPortalZone = game.global.world >= portalZone;
+	let challenge = 'None';
+
+	if (portalType === '0') {
+		if (atPortalZone && (specificPortalZone || game.global.universe !== universe)) {
 			if (challengeSelected !== 'None') challenge = challengeSelected;
 			else challenge = 0;
 		}
-	}
-	//If dailyPortal is set to 'Off' then we portal into a challenge run
-	else if (portalType === '0') {
-		if (game.global.world >= portalZone && (specificPortalZone || game.global.universe !== universe)) {
-			if (challengeSelected !== 'None') challenge = challengeSelected;
-			else challenge = 0;
-		}
-	}
-	//If AutoPortal  is set to 'Off' then we portal into a no challenge run
-	else if (portalType === 'Off') {
-		if (game.global.world >= portalZone && specificPortalZone) challenge = 0;
-	}
-	//Otherwise we portal into a challenge run
-	else if (portalType === 'Custom' || portalType === '2' || portalType === 'One Off Challenges' || challenge2Settings.indexOf(portalType) !== -1) {
-		if (game.global.world >= portalZone) {
+	} else if (portalType === 'Off') {
+		if (atPortalZone && specificPortalZone) challenge = 0;
+	} else if (portalType === 'Custom' || portalType === '2' || portalType === 'One Off Challenges' || challenge2Settings.includes(portalType)) {
+		if (atPortalZone) {
 			if (challengeSelected !== 'None') challenge = challengeSelected;
 			else challenge = 0;
 		}
 	} else {
-		if ((!game.global.challengeActive && !MODULES.portal.portalForVoid) || (game.global.world >= portalZone && specificPortalZone)) {
+		if ((!game.global.challengeActive && !MODULES.portal.portalForVoid) || (atPortalZone && specificPortalZone)) {
 			doPortal(challengeSelected, skipDaily);
+			return;
 		}
 	}
 	if (challenge === 'Off') challenge = 0;
@@ -169,35 +200,39 @@ function autoPortal(specificPortalZone, universe, skipDaily) {
 function freeVoidPortal() {
 	MODULES.portal.portalForVoid = true;
 	const universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
-	if (!getPageSetting('portalVoidIncrement', universe)) MODULES.portal.portalForVoid = false;
-	if (game.permaBoneBonuses.voidMaps.owned < 5) MODULES.portal.portalForVoid = false;
-	if (game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
-	if (game.permaBoneBonuses.voidMaps.tracker >= 100 - game.permaBoneBonuses.voidMaps.owned && game.global.canRespecPerks) MODULES.portal.portalForVoid = false;
-	if (checkLiqZoneCount(1) < 20) MODULES.portal.portalForVoid = false;
-	if (MODULES.portal.portalForVoid === false) return;
+	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
 
-	if (!game.global.canRespecPerks) debug('Portaling to refresh respec.', 'portal');
+	if (!getPageSetting('portalVoidIncrement', universe) || game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
+	if (owned < 5 || (tracker >= 100 - owned && game.global.canRespecPerks)) MODULES.portal.portalForVoid = false;
+	if (checkLiqZoneCount(1) < 20) MODULES.portal.portalForVoid = false;
+
+	if (!MODULES.portal.portalForVoid) return;
+
+	if (!game.global.canRespecPerks) debug(`Portaling to refresh respec.`, 'portal');
+
 	if (MODULES.portal.portalUniverse === Infinity || (game.global.universe !== 1 && game.global.universe === MODULES.portal.portalUniverse)) {
 		if (portalUniverse !== 1) {
-			//If we're not in U1 then we need to swap to U1 to portal.
 			MODULES.portal.portalUniverse = game.global.universe;
 			while (portalUniverse !== 1) swapPortalUniverse();
 		}
 		universeSwapped();
 	}
+
 	downloadSave();
 	if (typeof pushData === 'function') pushData();
 	if (!MODULES['portal'].dontPushData) pushSpreadsheetData();
 	autoUpgradeHeirlooms();
-	debug('Portaling to increment void tracker (' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10) with liquification.'), 'portal');
+
+	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
+	debug(`Portaling to increment void tracker (${trackerValue}/10) with liquification.`, 'portal');
+
 	activatePortal();
-	return;
 }
 
 function c2RunnerPortal(portalZone) {
 	if (!game.global.runningChallengeSquared) return;
 
-	if (game.global.world >= portalZone) {
+	if (portalZone && game.global.world >= portalZone) {
 		finishChallengeSquared();
 		autoPortal(portalZone);
 		return;
@@ -217,16 +252,18 @@ function c2RunnerPortal(portalZone) {
 }
 
 function c2Runner() {
-	if (!game.global.portalActive) return;
-	if (!portalWindowOpen) return;
+	if (!game.global.portalActive || !portalWindowOpen) return;
 	if ((portalUniverse === 1 && game.stats.highestLevel.valueTotal() < 65) || (portalUniverse === 2 && game.stats.highestRadLevel.valueTotal() < 50)) return;
 	if (!getPageSetting('c2RunnerStart', portalUniverse)) return;
-	if (getPageSetting('c2RunnerMode', portalUniverse) === 0 && (getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0)) return;
+
+	const runType = getPageSetting('c2RunnerMode', portalUniverse);
+	const c2RunnerPortal = getPageSetting('c2RunnerPortal', portalUniverse);
+	const c2RunnerPercent = getPageSetting('c2RunnerPercent', portalUniverse);
+	if (runType === 0 && (c2RunnerPortal <= 0 || c2RunnerPercent <= 0)) return;
 
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
 	const worldType = portalUniverse === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
-	const runType = getPageSetting('c2RunnerMode', portalUniverse);
 	const c2Setting = getPageSetting('c2RunnerSettings', portalUniverse);
 	if (runType === 0) {
 		//Building challenge array with percent value challenges
@@ -270,7 +307,7 @@ function c2Runner() {
 		}
 	} else if (runType === 1) {
 		//Building challenge array with set value challenges
-		for (var x in c2Setting) {
+		for (let x in c2Setting) {
 			if (typeof c2Setting[x] === 'undefined') continue;
 			if (!c2Setting[x].enabled) continue;
 			if (c2Setting[x].zone <= 0) continue;
@@ -279,11 +316,11 @@ function c2Runner() {
 	}
 
 	//Looping through challenge array to figure out if things should be run.
-	for (var x = 0; x < challengeArray.length; x++) {
-		var challenge = game.challenges[challengeArray[x]];
-		var challengeList;
-		var challengeLevel = 0;
-		var check = false;
+	for (let x = 0; x < challengeArray.length; x++) {
+		const challenge = game.challenges[challengeArray[x]];
+		let challengeList;
+		let challengeLevel = 0;
+		let check = false;
 
 		if (challenge.multiChallenge) challengeList = challenge.multiChallenge;
 		else challengeList = [challengeArray[x]];
@@ -291,14 +328,14 @@ function c2Runner() {
 			if (challengeLevel > 0) challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
 			else challengeLevel += game.c2[challengeList[y]];
 		}
-		if (runType === 0) check = 100 * (challengeLevel / (game.global[worldType] + 1)) < getPageSetting('c2RunnerPercent', portalUniverse);
+		if (runType === 0) check = 100 * (challengeLevel / (game.global[worldType] + 1)) < c2RunnerPercent;
 		else check = challengeLevel < c2Setting[challengeArray[x]].zone;
 
 		if (check) {
 			if (challengeActive(challengeArray[x])) continue;
 			if (!challengeSquaredMode) toggleChallengeSquared();
 			selectChallenge(challengeArray[x]);
-			debug(universePrefix + 'Runner: Starting ' + universePrefix + 'Challenge ' + challengeArray[x], 'portal');
+			debug(`${universePrefix} Runner: Starting ${universePrefix} Challenge ${challengeArray[x]}`, 'portal');
 			return;
 		}
 	}
@@ -430,7 +467,9 @@ function doPortal(challenge, skipDaily) {
 		}
 		selectChallenge(challenge);
 	}
-	debug('Portaling with void tracker at ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10.'), 'portal');
+	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
+	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
+	debug(`Portaling with void tracker at ${trackerValue}/10.`, 'portal');
 	universeSwapped();
 	var preset;
 	//Identifying which challenge type we're running to setup for the preset swapping function
@@ -503,27 +542,15 @@ function doPortal(challenge, skipDaily) {
 	}
 }
 
-function decaySkipMaps() {
-	const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
-	if (!challengeActive(challengeName) && !getPageSetting('decay')) return false;
-	const challenge = game.challenges[challengeName];
-	const stacks = challenge ? challenge.stacks : 0;
-	const stacksToPush = getPageSetting('decayStacksToPush');
-	return stacksToPush > 0 && stacks > stacksToPush;
-}
-
 function decayFinishChallenge() {
-	//Pre-Init
 	const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
 	if (!challengeActive(challengeName) || !getPageSetting('decay')) return;
 
-	//Init
 	const challenge = game.challenges[challengeName];
-	const stacks = challenge ? challenge.stacks : 0;
+	const currentStacks = challenge ? challenge.stacks : 0;
 	const stacksToAbandon = getPageSetting('decayStacksToAbandon');
 
-	//Finishes the challenge if above max stacks
-	if (stacksToAbandon > 0 && stacks > stacksToAbandon) {
+	if (stacksToAbandon > 0 && currentStacks > stacksToAbandon) {
 		abandonChallenge();
 		debug(`Finished ${challengeName} challenge because we had more than ${stacksToAbandon} stacks.`, 'general', 'oil');
 	}
@@ -532,10 +559,10 @@ function decayFinishChallenge() {
 function quagmireFinishChallenge() {
 	if (!challengeActive('Quagmire') || !getPageSetting('quagmireSettings')[0].active) return;
 	const zoneToAbandon = getPageSetting('quagmireSettings')[0].abandonZone;
-	//Finishes the challenge if at or above the zone to abandon
+
 	if (zoneToAbandon > 0 && game.global.world >= zoneToAbandon) {
 		abandonChallenge();
-		debug(`Finished Quagmire challenge because we are at or past z${zoneToAbandon}.`, 'general', 'oil');
+		debug(`Finished Quagmire challenge because we are at or past zone ${zoneToAbandon}.`, 'general', 'oil');
 	}
 }
 
@@ -585,27 +612,23 @@ function challengeInfo(force) {
 function c2FinishZone() {
 	let finishChallenge = Infinity;
 
-	//Finish challenge overrides when C∞ Runner is enabled
 	if (getPageSetting('c2RunnerStart')) {
-		//Using C∞ Runner %
-		if (getPageSetting('c2RunnerMode') === 0) finishChallenge = getPageSetting('c2RunnerPortal');
-		//Using C∞ Runner Settings
-		//If not enabled then set to Infinity!
-		else if (getPageSetting('c2RunnerMode') === 1) {
-			finishChallenge = getPageSetting('c2RunnerSettings')[game.global.challengeActive] && getPageSetting('c2RunnerSettings')[game.global.challengeActive].enabled ? getPageSetting('c2RunnerSettings')[game.global.challengeActive].zone : Infinity;
-		}
-	} else finishChallenge = getPageSetting('c2Finish');
+		const c2RunnerMode = getPageSetting('c2RunnerMode');
+		const c2RunnerPortal = getPageSetting('c2RunnerPortal');
+		const c2RunnerSettings = getPageSetting('c2RunnerSettings')[game.global.challengeActive];
 
-	if (finishChallenge <= 0) finishChallenge = Infinity;
+		finishChallenge = c2RunnerMode === 0 ? c2RunnerPortal : c2RunnerSettings && c2RunnerSettings.enabled ? c2RunnerSettings.zone : Infinity;
+	} else {
+		finishChallenge = getPageSetting('c2Finish');
+	}
 
-	return finishChallenge;
+	return finishChallenge <= 0 ? Infinity : finishChallenge;
 }
 
 function finishChallengeSquared() {
-	//Cancel out of challenge run
+	debug(`Finished ${game.global.challengeActive} at zone ${game.global.world}`, 'challenge', 'oil');
 	abandonChallenge();
 	cancelTooltip();
-	debug('Finished challenge because we are on zone ' + game.global.world, 'challenge', 'oil');
 	return;
 }
 
@@ -678,8 +701,8 @@ function hypoPackratReset(challenge) {
 
 //Auto-Respec into combat spec after running Trimple/Atlantrimp
 function combatRespec() {
-	if (!MODULES.popups.respecAtlantrimp) return;
-	MODULES.popups.respecAtlantrimp = false;
+	if (!MODULES.popups.respecAncientTreasure) return;
+	MODULES.popups.respecAncientTreasure = false;
 	MODULES.popups.remainingTime = Infinity;
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
 	const currPreset = $$('#preset').value;
@@ -689,14 +712,18 @@ function combatRespec() {
 	//Changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not.
 	else if (trimpStats.isC3 || trimpStats.isOneOff) fillPresetSurky('combat');
 	else fillPresetSurky('combatRadon');
+
 	//Respecing perks
 	if (game.global.universe === 2) runSurky();
 	else allocatePerky();
+
 	//Fire all workers so that we don't run into issues when finishing the respec
 	fireAllWorkers();
 	activateClicked();
+
 	const calcName = game.global.universe === 2 ? 'Surky' : 'Perky';
-	debug(calcName + ' - Respeccing into the ' + $$('#preset')[$$('#preset').selectedIndex].innerHTML + ' preset.', 'portal');
+	const respecPresetName = $$('#preset')[$$('#preset').selectedIndex].innerHTML;
+	debug(`${calcName} - Respeccing into the ${respecPresetName} preset.`, 'portal');
 
 	//Reverting back to original preset
 	if (game.global.universe === 2) fillPresetSurky(currPreset);
@@ -719,7 +746,7 @@ function atlantrimpRespecMessage(cellOverride) {
 		//Disable this from running if we have already disabled it this portal.
 		//This variable is reset when changing the "presetCombatRespecCell" settings input.
 		if (MODULES.portal.disableAutoRespec === getTotalPortals()) return;
-		var cell = getPageSetting('presetCombatRespecCell');
+		const cell = getPageSetting('presetCombatRespecCell');
 		//Override for if cell is set to 0 or below.
 		if (cell <= 0) return;
 		if (game.global.lastClearedCell + 2 < cell) return;
@@ -727,24 +754,24 @@ function atlantrimpRespecMessage(cellOverride) {
 		MODULES.portal.disableAutoRespec = getTotalPortals();
 	}
 
-	MODULES.popups.respecAtlantrimp = false;
+	MODULES.popups.respecAncientTreasure = false;
 
-	var respecSetting = getPageSetting('presetCombatRespec');
+	const respecSetting = getPageSetting('presetCombatRespec');
 	//If setting is enabled, respec into Surky combat respec
-	var respecName = !trimpStats.isC3 && !trimpStats.isOneOff ? 'Radon ' : '' + 'Combat Respec';
+	let respecName = !trimpStats.isC3 && !trimpStats.isOneOff ? 'Radon ' : '' + 'Combat Respec';
 	if (game.global.universe === 1) respecName = 'Spire';
 	if (respecSetting === 2) {
-		MODULES.popups.respecAtlantrimp = true;
+		MODULES.popups.respecAncientTreasure = true;
 		MODULES.popups.remainingTime = MODULES.portal.timeout;
 		var description = '<p>Respeccing into the <b>' + respecName + '</b> preset</p>';
-		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false, MODULES.popups.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
+		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAncientTreasure = false, MODULES.popups.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
 		setTimeout(combatRespec, MODULES.portal.timeout);
 	}
 	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
 	else if (respecSetting === 1) {
-		var mapName = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
-		var description = '<p>Click <b>Force Respec</b> to respec into the <b>' + respecName + '</b> preset.</p>';
-		tooltip('confirm', null, 'update', description, 'MODULES.popups.respecAtlantrimp = true; combatRespec()', '<b>Post ' + mapName + ' Respec</b>', 'Force Respec');
+		const mapName = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
+		const description = '<p>Click <b>Force Respec</b> to respec into the <b>' + respecName + '</b> preset.</p>';
+		tooltip('confirm', null, 'update', description, 'MODULES.popups.respecAncientTreasure = true; combatRespec()', '<b>Post ' + mapName + ' Respec</b>', 'Force Respec');
 	}
 }
 
@@ -789,7 +816,6 @@ resetGame = function () {
 	originalresetGame(...arguments);
 	try {
 		atlantrimpRespecOverride();
-		//resetVarsZone(true);
 	} catch (e) {
 		debug('Load save failed: ' + e);
 	}
