@@ -6,7 +6,7 @@ function autoRoboTrimp() {
 	if (autoRoboTrimpSetting <= 0) return;
 
 	const shouldShriek = game.global.world >= autoRoboTrimpSetting && (game.global.world - parseInt(autoRoboTrimpSetting)) % 5 === 0;
-	if (shouldShriek && !game.global.useShriek) debug('Activated Robotrimp MagnetoShriek Ability @ z' + game.global.world, 'zone', '*podcast');
+	if (shouldShriek && !game.global.useShriek) debug(`Activated Robotrimp MagnetoShriek Ability at zone ${game.global.world}`, 'zone', '*podcast');
 	if (game.global.useShriek !== shouldShriek) magnetoShriek();
 }
 

@@ -6,7 +6,7 @@ function safeSetStance(stance) {
 
 	//This shouldnt be necessary?????????
 	if (game.global.formation !== stance) {
-		debug('Setting stance from ' + formationLetter[currFormation] + ' to ' + formationLetter[stance] + '.', 'stance');
+		debug(`Setting stance from ${formationLetter[currFormation]} to ${formationLetter[stance]}.`, 'stance');
 		setFormation(stance.toString());
 	}
 

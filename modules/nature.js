@@ -17,7 +17,7 @@ function autoNatureTokens() {
 			empowerment.tokens -= cost;
 			empowerment.level++;
 			spentTokens = true;
-			if (natureLevel !== game.empowerments[nature].level) debug('Upgraded Empowerment of ' + nature, 'nature');
+			if (natureLevel !== game.empowerments[nature].level) debug(`Upgraded Empowerment of ${nature}`, 'nature');
 		} else if (setting === 'Transfer') {
 			//Skips if at max transfer rate
 			if (empowerment.retainLevel >= 80) continue;
@@ -27,7 +27,7 @@ function autoNatureTokens() {
 			empowerment.tokens -= cost;
 			empowerment.retainLevel++;
 			spentTokens = true;
-			debug('Upgraded ' + nature + ' transfer rate', 'nature');
+			debug(`Upgraded ${nature} transfer rate`, 'nature');
 		} else {
 			//Skips if not enough tokens to transfer & maintain threshold
 			if (setting.slice(0, 7) !== 'Convert') continue;
@@ -41,7 +41,7 @@ function autoNatureTokens() {
 				const convertRate = game.talents.nature.purchased ? 8 : 5;
 				game.empowerments[targetNature[item]].tokens += convertRate;
 				spentTokens = true;
-				debug('Converted ' + nature + ' tokens to ' + targetNature[item], 'nature');
+				debug(`Converted ${nature} tokens to ${targetNature[item]}`, 'nature');
 			}
 		}
 	}
@@ -52,7 +52,7 @@ function purchaseEnlight(nature) {
 	if (game.global.uberNature !== '' || game.empowerments[nature].getLevel() < 50) return;
 	naturePurchase('uberEmpower', nature);
 	cancelTooltip();
-	debug('Purchased ' + nature + ' englightenment', 'nature');
+	debug(`Purchased ${nature} englightenment`, 'nature');
 }
 
 function autoEnlight() {

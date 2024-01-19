@@ -968,7 +968,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		game.global.addonUser[varPrefix + 'Settings'][value] = Array.from({ length: 31 }, () => ({ done: '' }));
 	}
 
-	if (!golden && !defaultSetting.active) debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.", 'mazSettings');
+	if (!golden && !defaultSetting.active) debug(`${titleText} has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.`, 'mazSettings');
 	document.getElementById('tooltipDiv').style.overflowY = '';
 
 	const elem = document.getElementById('tooltipDiv');
@@ -1453,7 +1453,7 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 }
 
 function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) {
-	if (!vals) return debug('Issue with establishing values for dropdowns');
+	if (!vals) return debug(`Issue with establishing values for dropdowns`);
 
 	var dropdown = {};
 	var highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();

@@ -215,8 +215,8 @@ function _buyStorage(hypoZone) {
 		Shed: 'wood',
 		Forge: 'metal'
 	};
+	const map = getCurrentMapObject();
 	for (const [storage, resource] of Object.entries(buildings)) {
-		//Skips buying sheds if you're not on one of your specified bonfire zones.
 		if (storage === 'Shed' && hypoZone > game.global.world) continue;
 		const curRes = game.resources[resource].owned;
 		let maxRes = game.resources[resource].max;
@@ -228,7 +228,6 @@ function _buyStorage(hypoZone) {
 		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
 		let exoticValue = 0;
 		if (game.global.mapsActive) {
-			const map = getCurrentMapObject();
 			if (map.name === getAncientTreasureName()) exoticValue = curRes;
 			else {
 				const seconds = game.unlocks.imps.Jestimp ? 45 : game.unlocks.imps.Chronoimp ? 5 : 0;
@@ -462,30 +461,17 @@ function _keepBuyingHousing(buildingSettings) {
 }
 
 function _buyTribute() {
-	if (game.buildings.Tribute.locked) return;
+	if (game.buildings.Tribute.locked || (game.jobs.Meteorologist.locked && !mapSettings.shouldTribute && _getAffordableMets() > 0)) return;
 	const tributeSetting = getPageSetting('buildingSettingsArray').Tribute;
 
-	//Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
-	if (!game.jobs.Meteorologist.locked && !mapSettings.shouldTribute && _getAffordableMets() > 0) return;
-
-	//Won't buy Tributes if the users building setting is disabled OR we are met farming OR worshipper farming.
 	if ((!tributeSetting.enabled || mapSettings.shouldMeteorologist || mapSettings.mapName === 'Worshipper Farm') && !mapSettings.shouldTribute) return;
 
-	//Spend 100% of food on Tributes if Tribute Farming otherwise uses the value in the users building settings.
-	let tributePct = mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > 0 ? 1 : tributeSetting.percent > 0 ? tributeSetting.percent / 100 : 1;
-
-	let tributeAmt;
-	if (tributeSetting.buyMax === 0) tributeAmt = Infinity;
-	else if (mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > tributeSetting.buyMax) tributeAmt = mapSettings.tribute;
-	else tributeAmt = tributeSetting.buyMax;
-
-	if ((mapSettings.mapName === 'Smithy Farm' && mapSettings.gemFarm) || _getCurrentQuest() === 4) {
-		tributeAmt = Infinity;
-		tributePct = 1;
-	}
+	const farmingGems = (mapSettings.mapName === 'Smithy Farm' && mapSettings.gemFarm) || _getCurrentQuest() === 4;
+	const tributePct = farmingGems || (mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > 0) ? 1 : tributeSetting.percent > 0 ? tributeSetting.percent / 100 : 1;
+	const tributeAmt = farmingGems || tributeSetting.buyMax === 0 ? Infinity : mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > tributeSetting.buyMax ? mapSettings.tribute : tributeSetting.buyMax;
 
 	const tribute = game.buildings.Tribute;
-	let tributeCanAfford = calculateMaxAfford_AT(tribute, true, false, false, tributeAmt - tribute.purchased, tributePct);
+	const tributeCanAfford = calculateMaxAfford_AT(tribute, true, false, false, tributeAmt - tribute.purchased, tributePct);
 	if (tributeAmt > tribute.purchased && tributeCanAfford > 0) safeBuyBuilding('Tribute', tributeCanAfford);
 }
 
@@ -523,8 +509,6 @@ function _buyHousing(buildingSettings) {
 	const purchased = game.buildings[houseName].purchased;
 	if (houseName === 'Collector' && maxCanAfford + purchased >= 6000) maxCanAfford = 6000 - purchased;
 
-	// Finally purchases the correct amount of housing.
-	// calculateMaxAfford_AT will return 0 if we can't afford any housing as we have set a custom ratio so check if higher than that.
 	if (maxCanAfford) {
 		safeBuyBuilding(houseName, maxCanAfford);
 		return true;

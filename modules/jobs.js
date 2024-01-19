@@ -8,7 +8,8 @@ function safeBuyJob(jobTitle, amount) {
 	const currBuyAmt = game.global.buyAmt;
 
 	game.global.firing = amount < 0;
-	game.global.buyAmt = Math.abs(amount);
+	amount = Math.abs(amount);
+	game.global.buyAmt = amount;
 
 	let result = game.global.firing || canAffordJobCheck(jobTitle, amount);
 
@@ -19,7 +20,7 @@ function safeBuyJob(jobTitle, amount) {
 	}
 
 	if (result) {
-		debug(`${game.global.firing ? 'Firing' : 'Hiring'} ${prettify(Math.abs(amount))} ${jobTitle}${addAnS(amount)}`, 'jobs', '*users');
+		debug(`${game.global.firing ? 'Firing' : 'Hiring'} ${prettify(amount)} ${jobTitle}${addAnS(amount)}`, 'jobs', '*users');
 		buyJob(jobTitle, true, true);
 		if (game.global.firing !== fireState) fireMode_AT();
 	}
@@ -67,23 +68,19 @@ function buyJobs(forceRatios) {
 
 	const jobSettings = getPageSetting('jobSettingsArray');
 	const maxTrimps = game.resources.trimps.realMax();
-	let { owned, employed, maxSoldiers } = game.resources.trimps;
+	const { owned, employed, maxSoldiers } = game.resources.trimps;
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
 	let freeWorkers = _calculateFreeWorkers(owned, employed);
 
-	//Check breeding trimps and if we can have enough breeding then purchase workers.
 	if (!noBreedChallenge() && owned < maxTrimps * 0.9) {
 		_handleBreedingTrimps(owned, maxTrimps, employed);
 		return;
 	}
 
 	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
-
 	freeWorkers = _buyRatioJobs(freeWorkers, jobSettings);
-
 	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings);
-
 	_handleJobRatios(desiredRatios, freeWorkers);
 }
 
@@ -199,15 +196,20 @@ function _buyWorshipper(jobSettings) {
 
 function _getDesiredRatios(forceRatios, jobType, jobSettings) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
-
+	const overrideRatio = forceRatios || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio && mapSettings.jobRatio !== '-1');
 	let desiredRatios = [0, 0, 0, 0];
-	let overrideRatio = forceRatios || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio && mapSettings.jobRatio !== '-1');
 
 	if (overrideRatio) {
 		const workerRatios = (forceRatios || mapSettings.jobRatio).split(',');
 		desiredRatios = ratioWorkers.map((_, i) => (!workerRatios[i] ? 0 : Number(workerRatios[i])));
 	} else {
 		desiredRatios = jobType === 2 ? ratioWorkers.map((worker) => (!jobSettings[worker] || !jobSettings[worker].enabled ? 0 : Number(jobSettings[worker].ratio))) : _getAutoJobRatio();
+	}
+
+	if (challengeActive('Metal') || challengeActive('Transmute')) {
+		if (!game.jobs.Lumberjack.locked) desiredRatios[1] += desiredRatios[2];
+		else desiredRatios[0] += desiredRatios[2];
+		desiredRatios[2] = 0;
 	}
 
 	const scienceNeeded = setResourceNeeded().science;
@@ -219,7 +221,7 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings) {
 			if (worker === 'Scientist') {
 				if (desiredRatios[workerIndex] === 0) desiredRatios[workerIndex] = 1;
 			} else {
-				desiredRatios[workerIndex] = scientistMod * (overrideRatio ? desiredRatios[workerIndex] : parseFloat(desiredRatios[workerIndex]));
+				desiredRatios[workerIndex] = scientistMod * parseFloat(desiredRatios[workerIndex]);
 			}
 		} else {
 			desiredRatios[workerIndex] = 0;
@@ -231,53 +233,42 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings) {
 		if (jobSettings.NoLumberjacks.enabled && !game.mapUnlocks.SmithFree.canRunOnce) desiredRatios[1] = 0;
 	}
 
-	if (challengeActive('Metal') || challengeActive('Transmute')) {
-		if (!game.jobs.Lumberjack.locked) desiredRatios[1] += desiredRatios[2];
-		else desiredRatios[0] += desiredRatios[2];
-		desiredRatios[2] = 0;
-	}
-
-	if (!game.upgrades.Scientists.done) desiredRatios[3] = 0;
 	return desiredRatios;
 }
 
 function _getScientistRatio() {
 	const scientistRatios = { ratio: 8, ratio2: 4, ratio3: 16, ratio4: 64, ratio5: 256, ratio6: 1024, ratio7: 4098 };
-	let scientistMod;
-	if (game.global.world >= 150) scientistMod = scientistRatios.ratio7;
-	else if (game.global.world >= 120) scientistMod = scientistRatios.ratio6;
-	else if (game.global.world >= 90) scientistMod = scientistRatios.ratio5;
-	else if (game.global.world >= 65) scientistMod = scientistRatios.ratio4;
-	else if (game.global.world >= 50) scientistMod = scientistRatios.ratio3;
-	else if (game.jobs.Farmer.owned < 100) scientistMod = scientistRatios.ratio2;
-	else scientistMod = scientistRatios.ratio;
-	return scientistMod;
+
+	const conditions = [
+		{ condition: () => game.global.world >= 150, ratio: scientistRatios.ratio7 },
+		{ condition: () => game.global.world >= 120, ratio: scientistRatios.ratio6 },
+		{ condition: () => game.global.world >= 90, ratio: scientistRatios.ratio5 },
+		{ condition: () => game.global.world >= 65, ratio: scientistRatios.ratio4 },
+		{ condition: () => game.global.world >= 50, ratio: scientistRatios.ratio3 },
+		{ condition: () => game.jobs.Farmer.owned < 100, ratio: scientistRatios.ratio2 },
+		{ condition: () => true, ratio: scientistRatios.ratio }
+	];
+
+	return conditions.find(({ condition }) => condition()).ratio;
 }
 
 function _getAutoJobRatio() {
 	const jobRatios = { ratioHaz: [1, 1, 1, 0], ratio7: [1, 1, 98, 0], ratio6: [1, 7, 12, 0], ratio5: [1, 2, 22, 0], ratio4: [1, 1, 10, 0], ratio3: [3, 1, 4, 0], ratio2: [3, 3, 5, 0], ratio1: [1.1, 1.15, 1.2, 0] };
 
-	if (game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1) {
-		return jobRatios.ratioHaz;
-	} else if (game.global.world >= 300) {
-		return jobRatios.ratio7;
-	} else if (game.buildings.Tribute.owned > 3000 && mutations.Magma.active()) {
-		return jobRatios.ratio6;
-	} else if (game.buildings.Tribute.owned > 1500) {
-		return jobRatios.ratio5;
-	} else if (game.buildings.Tribute.owned > 1000) {
-		return jobRatios.ratio4;
-	} else if (game.resources.trimps.realMax() > 3000000) {
-		return jobRatios.ratio3;
-	} else if (game.resources.trimps.realMax() > 300000) {
-		return jobRatios.ratio2;
-	} else if (challengeActive('Metal') || challengeActive('Transmute')) {
-		return [4, 5, 0, 0];
-	} else if (game.global.world < 5) {
-		return [1.5, 0.7, 1, 0];
-	} else {
-		return jobRatios.ratio1;
-	}
+	const conditions = [
+		{ condition: () => game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1, ratio: jobRatios.ratioHaz },
+		{ condition: () => game.global.world >= 300, ratio: jobRatios.ratio7 },
+		{ condition: () => game.buildings.Tribute.owned > 3000 && mutations.Magma.active(), ratio: jobRatios.ratio6 },
+		{ condition: () => game.buildings.Tribute.owned > 1500, ratio: jobRatios.ratio5 },
+		{ condition: () => game.buildings.Tribute.owned > 1000, ratio: jobRatios.ratio4 },
+		{ condition: () => game.resources.trimps.realMax() > 3000000, ratio: jobRatios.ratio3 },
+		{ condition: () => game.resources.trimps.realMax() > 300000, ratio: jobRatios.ratio2 },
+		{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
+		{ condition: () => game.global.world < 5, ratio: [1.5, 0.7, 1, 0] },
+		{ condition: () => true, ratio: jobRatios.ratio1 }
+	];
+
+	return conditions.find(({ condition }) => condition()).ratio;
 }
 
 function _handleJobRatios(desiredRatios, freeWorkers) {

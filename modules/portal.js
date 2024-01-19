@@ -407,7 +407,7 @@ function doPortal(challenge, skipDaily) {
 
 	//Running C∞ runner
 	c2Runner();
-	if (!challengeSquaredMode) debug('C' + (portalUniverse + 1) + ' Runner: All C' + (portalUniverse + 1) + 's above Threshold!', 'portal');
+	if (!challengeSquaredMode) debug(`C${portalUniverse + 1} Runner: All C ${portalUniverse + 1}'s above level threshold!`, 'portal');
 
 	//Running Dailies
 	if (!skipDaily && (currChall === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
@@ -416,10 +416,9 @@ function doPortal(challenge, skipDaily) {
 		if (dailyAvailable) selectChallenge('Daily');
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
-		let lastUndone;
 		const dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map((item) => item.replace(/-/g, ''));
-
-		for (lastUndone = -7; lastUndone <= 0; lastUndone++) {
+		let lastUndone;
+		for (lastUndone = -6; lastUndone <= 0; lastUndone++) {
 			const dailyTime = getDailyTimeString(lastUndone);
 			if (dailiesToSkip.includes(dailyTime.toString())) continue;
 			if (game.global.recentDailies.indexOf(dailyTime) === -1) break;
@@ -427,7 +426,7 @@ function doPortal(challenge, skipDaily) {
 
 		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and have the last X dailies available.
 		if (getPageSetting('dailyDontCap', portalUniverse)) {
-			var dailiesCompleted = 0;
+			let dailiesCompleted = 0;
 
 			for (var x = -6; x <= 1 - getPageSetting('dailyDontCapAmt', portalUniverse); x++) {
 				if (game.global.recentDailies.indexOf(getDailyTimeString(x)) !== -1) dailiesCompleted++;
@@ -436,8 +435,7 @@ function doPortal(challenge, skipDaily) {
 		}
 		if (!getPageSetting('dailyPortalStart', portalUniverse)) lastUndone = 1;
 
-		//Printing msg to state all dailies have been compelted
-		if (lastUndone === 1) debug('All dailies have been completed.', 'portal');
+		if (lastUndone === 1) debug(`All dailies have been completed.`, 'portal');
 
 		//Portaling into a filler/c2/c3 if dailyPortalFiller is enabled OR all dailies completed or dailyPortalStart is disabled.
 		if ((currChall === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse))) || lastUndone === 1) {
@@ -456,7 +454,7 @@ function doPortal(challenge, skipDaily) {
 		if (dailyAvailable) {
 			getDailyChallenge(lastUndone);
 			challenge = 'Daily';
-			debug('Portaling into Daily for: ' + getDailyTimeString(lastUndone, true) + ' now!', 'portal');
+			debug(`Portaling into Daily for: ${getDailyTimeString(lastUndone, true)} now!`, 'portal');
 		}
 	}
 	//Selecting challenge that AT has chosen to run.
@@ -812,7 +810,7 @@ load = function () {
 		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
 		updateAutoTrimpSettings(true);
 	} catch (e) {
-		debug('Load save failed: ' + e);
+		debug(`Load save failed: ${e}`);
 	}
 };
 
@@ -823,7 +821,7 @@ resetGame = function () {
 	try {
 		atlantrimpRespecOverride();
 	} catch (e) {
-		debug('Load save failed: ' + e);
+		debug(`Load save failed: ${e}`);
 	}
 };
 

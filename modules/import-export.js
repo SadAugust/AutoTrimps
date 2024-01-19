@@ -14,7 +14,7 @@ function ImportExportTooltip(what, event) {
 	let ondisplay = null;
 
 	if (what === 'exportAutoTrimps') {
-		var saveName = 'AT Settings P' + game.global.totalPortals;
+		let saveName = 'AT Settings P' + game.global.totalPortals;
 		if (game.global.universe === 2 || game.global.totalRadPortals > 0) {
 			saveName += ' ' + game.global.totalRadPortals + ' U' + game.global.universe;
 		}

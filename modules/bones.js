@@ -74,7 +74,7 @@ function boneShrineOutput(charges) {
 	const resources = Object.keys(resourceMaps).map(_calcResource(charges));
 	let totals = Object.entries(resourceMaps).map((resourceMap, i) => _findTotal(resourceMap, resources[i]));
 	totals = totals.map((x) => prettify(x));
-	return totals[0] + ' Food, ' + totals[1] + ' Wood, and ' + totals[2] + ' Metal.';
+	return `${totals[0]} Food, ${totals[1]} Wood, and ${totals[2]} Metal.`;
 }
 
 function _calcResource(charges) {

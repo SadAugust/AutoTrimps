@@ -27,7 +27,7 @@ function gigaTargetZone() {
 	//Failsafe
 	if (targetZone < 60) {
 		targetZone = Math.max(65, game.global.highestLevelCleared);
-		debug('Auto Gigastation: Warning! Unable to find a proper targetZone. Using your HZE instead', 'general', '*rocket');
+		debug(`Auto Gigastation: Warning! Unable to find a proper targetZone. Using your HZE instead`, 'general', '*rocket');
 	}
 
 	return targetZone;
@@ -252,7 +252,7 @@ function buyUpgrades() {
 			if (game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
 		}
 		buyUpgrade(upgrade, true, true);
-		debug('Upgraded ' + upgrade, 'upgrades', '*upload2');
+		debug(`Upgraded ${upgrade}`, 'upgrades', '*upload2');
 	}
 }
 
