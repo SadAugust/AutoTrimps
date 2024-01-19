@@ -220,7 +220,7 @@ function freeVoidPortal() {
 
 	downloadSave();
 	if (typeof pushData === 'function') pushData();
-	if (!MODULES['portal'].dontPushData) pushSpreadsheetData();
+	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
 	autoUpgradeHeirlooms();
 
 	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
@@ -344,15 +344,14 @@ function c2Runner() {
 
 function doPortal(challenge, skipDaily) {
 	if (!game.global.portalActive) return;
-	//Spending Magmite
+
 	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
-	//Identifying if we need to keep any heirlooms before portaling.
 	autoHeirlooms();
-	//Open portal window
+
 	if (!portalWindowOpen) portalClicked();
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
-	var currChall = MODULES.portal.currentChallenge;
+	let currChall = MODULES.portal.currentChallenge;
 
 	//Cancel out of dailies/c2s/buble if we're running any of them
 	if (challengeActive('Daily') || game.global.runningChallengeSquared || challengeActive('Bublé')) {
@@ -417,12 +416,13 @@ function doPortal(challenge, skipDaily) {
 		if (dailyAvailable) selectChallenge('Daily');
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
-		var lastUndone = -7;
-		dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map((item) => item.replace(/-/g, ''));
-		while (++lastUndone <= 0) {
-			if (dailiesToSkip.includes(getDailyTimeString(lastUndone).toString())) continue;
-			var dailyCompleted = game.global.recentDailies.indexOf(getDailyTimeString(lastUndone)) !== -1;
-			if (!dailyCompleted) break;
+		let lastUndone;
+		const dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map((item) => item.replace(/-/g, ''));
+
+		for (lastUndone = -7; lastUndone <= 0; lastUndone++) {
+			const dailyTime = getDailyTimeString(lastUndone);
+			if (dailiesToSkip.includes(dailyTime.toString())) continue;
+			if (game.global.recentDailies.indexOf(dailyTime) === -1) break;
 		}
 
 		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and have the last X dailies available.
@@ -471,7 +471,35 @@ function doPortal(challenge, skipDaily) {
 	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
 	debug(`Portaling with void tracker at ${trackerValue}/10.`, 'portal');
 	universeSwapped();
-	var preset;
+
+	portalPerkCalc();
+
+	let preset = 0;
+
+	//Reset packrat to 3 on Hypothermia - Setup mutator respec
+	if (portalUniverse === 2) {
+		hypoPackratReset(challenge);
+		preset = challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation' ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
+		if (getPageSetting('presetSwapMutators', 2) && JSON.parse(localStorage.getItem('mutatorPresets'))['preset' + preset] !== '') {
+			u2Mutations.toggleRespec();
+		}
+	}
+	//Download save, push graphs data, push to spreadsheet for select users, activate portal, reset vars, and load mutators if necessary.
+	downloadSave();
+	if (typeof pushData === 'function') pushData();
+	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
+	autoUpgradeHeirlooms();
+	activatePortal();
+	resetVarsZone(true);
+	_setButtonsPortal();
+	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
+		loadMutations(preset);
+		u2Mutations.closeTree();
+	}
+}
+
+function portalPerkCalc() {
+	let preset;
 	//Identifying which challenge type we're running to setup for the preset swapping function
 	if (getPageSetting('presetSwap', portalUniverse)) {
 		if (portalUniverse === 1) {
@@ -509,36 +537,6 @@ function doPortal(challenge, skipDaily) {
 	if (typeof MODULES.autoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
 		if (portalUniverse === 1) allocatePerky();
 		if (portalUniverse === 2) runSurky();
-	}
-
-	preset = 0;
-
-	//Reset packrat to 3 on Hypothermia - Setup mutator respec
-	if (portalUniverse === 2) {
-		hypoPackratReset(challenge);
-		preset = challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation' ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
-		if (getPageSetting('presetSwapMutators', 2) && JSON.parse(localStorage.getItem('mutatorPresets'))['preset' + preset] !== '') {
-			u2Mutations.toggleRespec();
-		}
-	}
-	//Download save, push graphs data, push to spreadsheet for select users, activate portal, reset vars, and load mutators if necessary.
-	downloadSave();
-	if (typeof pushData === 'function') pushData();
-	if (!MODULES['portal'].dontPushData) pushSpreadsheetData();
-	MODULES['portal'].currentChallenge = 'None';
-	MODULES['portal'].dontPushData = false;
-	MODULES['portal'].dailyMods = '';
-	MODULES['portal'].dailyPercent = 0;
-	MODULES.portal.portalUniverse = Infinity;
-	lastHeliumZone = 0;
-	MODULES.portal.zonePostpone = 0;
-	autoUpgradeHeirlooms();
-	activatePortal();
-	resetVarsZone(true);
-	_setButtonsPortal();
-	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
-		loadMutations(preset);
-		u2Mutations.closeTree();
 	}
 }
 
@@ -652,6 +650,14 @@ function resetVarsZone(loadingSave) {
 		MODULES.fightinfo.lastProcessedWorld = 0;
 		MODULES.portal.portalForVoid = false;
 		MODULES.mapFunctions.afterVoids = false;
+
+		MODULES.portal.currentChallenge = 'None';
+		MODULES.portal.dontPushData = false;
+		MODULES.portal.dailyMods = '';
+		MODULES.portal.dailyPercent = 0;
+		MODULES.portal.portalUniverse = Infinity;
+		MODULES.portal.zonePostpone = 0;
+
 		_setFightButtons();
 	}
 

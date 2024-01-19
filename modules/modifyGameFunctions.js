@@ -63,13 +63,18 @@ offlineProgress.finish = function () {
 originalActivateClicked = activateClicked;
 activateClicked = function () {
 	downloadSave(true);
-	pushSpreadsheetData();
+	if (typeof pushData === 'function') pushData();
+	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
 	autoUpgradeHeirlooms();
 	autoHeirlooms(true);
 	autoMagmiteSpender(true);
-	pushData();
 	originalActivateClicked(...arguments);
+	resetVarsZone(true);
 	_setButtonsPortal();
+	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
+		loadMutations(preset);
+		u2Mutations.closeTree();
+	}
 };
 
 originalCheckAchieve = checkAchieve;

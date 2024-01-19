@@ -471,7 +471,7 @@ function pushSpreadsheetData() {
 
 	var dailyMods = ' ';
 	var dailyPercent = 0;
-	if (MODULES['portal'].currentChallenge === 'Daily' && !challengeActive('Daily')) {
+	if (MODULES.portal.currentChallenge === 'Daily' && !challengeActive('Daily')) {
 		dailyMods = MODULES.portal.dailyMods;
 		dailyPercent = MODULES.portal.dailyPercent;
 	} else if (challengeActive('Daily')) {
