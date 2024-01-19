@@ -1509,7 +1509,7 @@ function calcMutationHealth(targetZone) {
 }
 
 function enemyDamageModifiers() {
-	var attack = 1;
+	let attack = 1;
 
 	//All U1
 	attack *= challengeActive('Balance') ? 2.35 : 1;

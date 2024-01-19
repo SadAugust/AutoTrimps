@@ -1126,7 +1126,7 @@ function mapDestacking(lineCheck) {
 		mapName
 	};
 
-	if (challengeActive('Balance') || (challengeActive('Unbalance') && !getPageSetting('balance'))) return farmingDetails;
+	if ((challengeActive('Balance') || challengeActive('Unbalance')) && !getPageSetting('balance')) return farmingDetails;
 	if (challengeActive('Daily') && (!getPageSetting('bloodthirstDestack') || typeof game.global.dailyChallenge.bloodthirst === 'undefined')) return farmingDetails;
 	if (challengeActive('Storm') && !getPageSetting('storm')) return farmingDetails;
 

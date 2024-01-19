@@ -381,7 +381,7 @@ function doPortal(challenge, skipDaily) {
 
 	//Swap to next universe setting. Setup to allow for more universes in the future.
 	if (Fluffy.checkU2Allowed()) {
-		var newUniverse = portalUniverse;
+		let newUniverse = portalUniverse;
 		while (getPageSetting('autoPortalUniverseSwap', newUniverse)) {
 			newUniverse++;
 			if (newUniverse > 2) {
@@ -428,7 +428,7 @@ function doPortal(challenge, skipDaily) {
 		if (getPageSetting('dailyDontCap', portalUniverse)) {
 			let dailiesCompleted = 0;
 
-			for (var x = -6; x <= 1 - getPageSetting('dailyDontCapAmt', portalUniverse); x++) {
+			for (let x = -6; x <= 1 - getPageSetting('dailyDontCapAmt', portalUniverse); x++) {
 				if (game.global.recentDailies.indexOf(getDailyTimeString(x)) !== -1) dailiesCompleted++;
 			}
 			if (dailiesCompleted === 8 - getPageSetting('dailyDontCapAmt', portalUniverse)) lastUndone = 1;
