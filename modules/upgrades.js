@@ -237,7 +237,7 @@ function buyUpgrades() {
 		}
 		//Gigastations
 		else if (upgrade === 'Gigastation') {
-			if (!getPageSetting('buildingsType')) continue;
+			if (!getPageSetting('buildingsType') || !getPageSetting('warpstation')) continue;
 			if (!bwRewardUnlocked('DecaBuild')) {
 				if (getPageSetting('autoGigas') && game.upgrades.Gigastation.done === 0 && !firstGiga()) continue;
 				else if (game.global.lastWarp ? game.buildings.Warpstation.owned < Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation') : game.buildings.Warpstation.owned < getPageSetting('firstGigastation')) continue;

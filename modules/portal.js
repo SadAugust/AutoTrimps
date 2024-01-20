@@ -102,7 +102,7 @@ function handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily
 		if (atSettings.portal.aWholeNewWorld) MODULES.portal.zonePostpone = 0;
 	}
 	if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld) OKtoPortal = false;
-	if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
+	if (MODULES.mapFunctions.afterVoids || (OKtoPortal && MODULES.portal.zonePostpone === 0)) {
 		handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily);
 	}
 }
