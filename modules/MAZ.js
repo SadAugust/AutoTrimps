@@ -718,7 +718,10 @@ function buildNiceCheckboxAutoLevel(id, extraClass = '', enabled, index, varPref
         <span title='${title}' id='${id}' class='${extraClass} ${isChecked}' onclick='swapNiceCheckbox(this); _mapSettingsUpdatePreset("${index}", "${varPrefix}");'></span>
     `;
 
-	_mapSettingsUpdatePreset(index, varPrefix);
+	const tooltipDiv = document.getElementById('tooltipDiv');
+	if (tooltipDiv.classList.contains('tooltipExtraLg') && ['Farm', 'Map Bonus'].some((word) => tooltipDiv.children.tipTitle.innerText.includes(word))) {
+		_mapSettingsUpdatePreset(index, varPrefix);
+	}
 
 	return html;
 }
