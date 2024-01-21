@@ -431,7 +431,7 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 		for (let x = 0; x < zoneAddition + 1; x++) {
 			const shouldSkipLine = dropdowns.every((dropdown, index) => {
 				if (currSetting[dropdowns[0]] === 0 && currSetting[dropdowns[1]] === 0) return false;
-
+				if (currSetting[hdTypes[index]] === 'disabled') return false;
 				const obj = hdObject[currSetting[hdTypes[index]]];
 				const hdSetting = obj.hdStatVoid || obj.hdStat;
 				if (currSetting[hdTypes[index]].includes('Hits Survived')) return currSetting[dropdown] > hdSetting;
@@ -482,6 +482,7 @@ function _setVoidMapsInitiator(setting, settingIndex) {
 	dropdowns.forEach((dropdown, index) => {
 		const title = dropdownTitles[index];
 		const type = hdTypes[index];
+		if (currSetting[type] === 'disabled') return;
 		const obj = hdObject[currSetting[type]];
 		const hdSetting = obj.hdStatVoid || obj.hdStat;
 
@@ -1350,15 +1351,16 @@ function _runPrestigeRaiding(setting, mapName, settingIndex, defaultSettings) {
 	let status = `Prestige Raiding: ${equipsToFarm} items remaining`;
 	if (mapSettings.prestigeFragMapBought) status = `Prestige Frag Farm to: ${mapSettings.totalMapCost ? prettify(mapSettings.totalMapCost) : '∞'}`;
 
-	const mapsToRun = game.global.mapsActive ? prestigesToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
-	const specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
+	const mapObj = getCurrentMapObject();
+	const mapsToRun = game.global.mapsActive ? prestigesToGet(mapObj.level, targetPrestige)[1] : Infinity;
+	const specialInMap = game.global.mapsActive && game.global.mapGridArray[mapObj.size - 2].special === targetPrestige;
 
-	const repeat = mapsToRun <= 1 || (specialInMap && mapsToRun === 2);
+	const repeat = !mapSettings.prestigeMapArray || mapsToRun <= 1 || (specialInMap && mapsToRun === 2);
 
 	if (mapSettings.prestigeMapArray && mapSettings.prestigeMapArray[0] !== undefined && shouldMap) {
 		const mapIndex = getMapIndex(mapSettings.prestigeMapArray[0]);
 		const mapOwned = game.global.mapsOwnedArray[mapIndex] === undefined;
-		const prestigesToGetZero = game.global.mapsActive && prestigesToGet(getCurrentMapObject().level)[0] === 0;
+		const prestigesToGetZero = game.global.mapsActive && prestigesToGet(mapObj.level)[0] === 0;
 
 		if (mapOwned || prestigesToGetZero) {
 			debug(`There was an error with your purchased map(s). Restarting the raiding procedure.`);
@@ -1398,15 +1400,15 @@ function prestigeRaidingMapping() {
 		if (!totalMapCost) mapSettings.totalMapCost = costAndSliders.cost;
 		if (!mapSliders) mapSettings.mapSliders = costAndSliders.sliders;
 	}
-
 	mapSettings.prestigeMapArray = prestigeMapArray || new Array(5);
 	mapSettings.prestigeFragMapBought = prestigeFragMapBought || false;
 
-	if (mapSliders && prestigeMapArray[0] === undefined) {
+	if (prestigeMapArray === undefined || prestigeMapArray[0] === undefined) {
 		if (totalMapCost < game.resources.fragments.owned) {
 			_handlePrestigeFragMapBought();
-		} else if (game.global.preMapsActive) {
-			fragmentFarm();
+		} else {
+			fragmentFarm(true);
+			console.log('here');
 			mapSettings.prestigeFragMapBought = true;
 		}
 	}

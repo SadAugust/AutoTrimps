@@ -476,15 +476,10 @@ function initialiseAllSettings() {
 		createSetting('jobType',
 			function () { return (["Don't Buy Jobs", 'Auto Ratios', 'Manual Ratios']) },
 			function () {
-				//Initial button description
 				let description = "<p>Click the left side of the button to toggle between the AutoJobs settings. Each of them will adjust the 3 primary resource jobs but you'll have to manually set the rest by clicking the cogwheel on the right side of this button.</p>";
-				//Don't Buy Jobs
 				description += "<p><b>Don't Buy Jobs</b><br>Will disable the script from purchasing any jobs.</p>";
-				//Auto Ratios
 				description += "<p><b>Auto Ratios</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out the Help section for this setting by clicking on the cogwheel.</p>";
-				//Manual Ratios
 				description += "<p><b>Manual Ratios</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>";
-				//Override info
 				description += "<p>Automatically swaps the games default hiring setting <b>Not Firing For Jobs</b> to <b>Firing For Jobs</b>.</p>";
 				description += "<p>Map setting job ratios always override both <b>Auto Ratios</b> & <b>Manual Ratios</b> when AutoMaps is enabled.</p>";
 				return description;
@@ -795,6 +790,18 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'value', 2, null, 'Buildings', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 230 && autoTrimpSettings.advancedNurseries.enabled) });
+		createSetting('advancedNurseriesIce',
+			function () { return (['AN: Buy In Ice', "AN: Disable In Ice", 'AN: Disable In Ice (Spire)']) },
+			function () {
+				let description = "<p>How you would like Nursery purchasing to be handled during Ice empowerment zones.</p>";
+				description += "<p><b>AN: Buy In Ice</b><br>Will purchase Nurseries regardless of if you're in an Ice empowerment zone.</p>";
+				description += "<p><b>AN: Disable In Ice</b><br>Will stop <b>Advanced Nurseries</b> from purchasing any nurseries during <b>Ice</b> empowerment zones.</p>";
+				description += "<p><b>AN: Disable Ice (Spire)</b><br>Works the same as <b>AN: Disable In Ice</b> except this setting will still purchase nurseries when inside of a Spire</p>";
+				description += "<p><b>Recommended:</b> AN: Buy In Ice</p>";
+				return description;
+			},
+			'multitoggle', 0, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230 && autoTrimpSettings.advancedNurseries.enabled) });
 	}
 
@@ -2265,6 +2272,7 @@ function initialiseAllSettings() {
 				let description = "<p>Input the zones you would like to Wither on and the script won't farm damage on this and at the end of the previous zone.</p>";
 				description += "<p>You can input multiple zones but they need to be seperated by commas.</p>";
 				description += "<p>There is a chance you might not Wither on the zones input if you are too powerful.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
 				return description;
 			}, 'multiValue', [-1], null, 'C2', [2],
 			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) });
@@ -2278,6 +2286,14 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [2],
 			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) });
+		/* createSetting('witherMutatorPreset',
+			function () { return ('W: Muatator Preset') },
+			function () {
+				let description = "<p>Will display an additional mutator preset when enabled.</p>";
+				description += "<p>This will override <b>Preset Swap Mutators</b> selecting other mutator presets when in the <b>Wither</b> challenge!</p>"
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
+			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) }); */
 
 		//Quest
 		createSetting('quest',

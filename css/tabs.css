@@ -1502,9 +1502,11 @@ ul.tab li a:hover {
 .windowJobRatioVoidMap,
 .windowRunTypeVoidMap,
 .windowHDTypeVoidMap,
+.windowHDTypeVoidMap2,
 .windowPortalAfter,
 .windowDefaultVoidMap,
-.windowVoidHDRatio {
+.windowVoidHDRatio,
+.windowVoidHDRatio2 {
 	display: inline-block;
 	padding-left: 1%;
 }
@@ -1526,11 +1528,13 @@ ul.tab li a:hover {
 }
 
 .windowDefaultVoidMap,
-.windowHDTypeVoidMap {
+.windowHDTypeVoidMap,
+.windowHDTypeVoidMap2 {
 	width: 11%;
 }
 
-.windowVoidHDRatio {
+.windowVoidHDRatio,
+.windowVoidHDRatio2 {
 	width: 7%;
 }
 
@@ -1568,6 +1572,20 @@ ul.tab li a:hover {
 .windowChallenge3OffVoidMap .windowChallenge3VoidMap,
 .windowChallengeOneOffOffVoidMap .windowChallengeOneOffVoidMap {
 	display: none;
+}
+
+.windowHDTypeDisabledOn .windowVoidHDRatio,
+.windowHDTypeDisabled2On .windowVoidHDRatio2 {
+	opacity: 0.3;
+	cursor: not-allowed;
+	pointer-events: none;
+	padding-left: 1%;
+}
+
+.windowHDTypeDisabledOff .windowVoidHDRatio,
+.windowHDTypeDisabled2Off .windowVoidHDRatio2 {
+	opacity: 1;
+	padding-left: 1%;
 }
 
 /* Golden */

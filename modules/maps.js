@@ -359,11 +359,11 @@ function decaySkipMaps() {
 function _leadDisableMapping() {
 	if (!challengeActive('Lead') || !getPageSetting('lead') || game.global.spireActive) return false;
 
-	const evenZone = game.global.world % 2 === 0;
-	const clearedCell = game.global.lastClearedCell + 2 < 90;
+	const oddZone = game.global.world % 2 !== 0;
+	const aboveCell90 = game.global.lastClearedCell + 2 > 90 || checkIfLiquidZone();
 	const natureFinalZone = game.global.world >= getNatureStartZone() && getEmpowerment() !== getZoneEmpowerment(game.global.world + 1);
 
-	return !(clearedCell && (!evenZone || natureFinalZone));
+	return !(aboveCell90 && (oddZone || natureFinalZone));
 }
 
 function _berserkDisableMapping() {

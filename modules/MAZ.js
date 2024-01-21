@@ -581,6 +581,11 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, s, x, titleText, style, 
 		classNames.push(vals.hdType === 'maplevel' ? 'windowMapLevelOff' : 'windowMapLevelOn');
 	}
 
+	if (s.voidMap) {
+		classNames.push(vals.hdType === 'disabled' ? 'windowHDTypeDisabledOn' : 'windowHDTypeDisabledOff');
+		classNames.push(vals.hdType2 === 'disabled' ? 'windowHDTypeDisabled2On' : 'windowHDTypeDisabled2Off');
+	}
+
 	const className = classNames.join(' ');
 	let tooltipText = `<div id='windowRow${x}' class='row windowRow ${className}'${style}>`;
 	//Delete the row button
@@ -655,9 +660,9 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, s, x, titleText, style, 
 	//Run void maps when HD Ratio is above this value
 	if (s.voidMap) tooltipText += `<div class='windowVoidHDRatio'><input value='${vals.hdRatio}' type='number' id='windowHDRatio${x}'/></div>`;
 	//Void HD Dropdown #2
-	if (s.voidMap) tooltipText += `<div class='windowHDTypeVoidMap onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.hdType2}' id='windowHDTypeVoidMap2${x}'>${dropdowns.hdType2}</select></div>`;
+	if (s.voidMap) tooltipText += `<div class='windowHDTypeVoidMap2' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'><select value='${vals.hdType2}' id='windowHDTypeVoidMap2${x}'>${dropdowns.hdType2}</select></div>`;
 	//Run void maps when Void HD Ratio is above this value
-	if (s.voidMap) tooltipText += `<div class='windowVoidHDRatio'><input value='${vals.voidHDRatio}' type='number' id='windowVoidHDRatio${x}'/></div>`;
+	if (s.voidMap) tooltipText += `<div class='windowVoidHDRatio2'><input value='${vals.voidHDRatio}' type='number' id='windowVoidHDRatio${x}'/></div>`;
 	//Job ratio input
 	if (!s.raiding && !s.bionic && !s.smithyFarm && !s.golden) tooltipText += `<div class='windowJobRatio${varPrefix}'><input value='${vals.jobratio}' type='value' id='windowJobRatio${x}'/></div>`;
 	//Repeat every X zones
@@ -699,6 +704,7 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, s, x, titleText, style, 
 	if (s.voidMap) tooltipText += `<div class='windowPortalAfter' style='text-align: center;'>${buildNiceCheckbox('windowPortalAfter' + x, null, vals.portalAfter)}</div>`;
 	tooltipText += '</div>';
 
+	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg')) _mapSettingsUpdatePreset(x, varPrefix);
 	return tooltipText;
 }
 
@@ -712,10 +718,7 @@ function buildNiceCheckboxAutoLevel(id, extraClass = '', enabled, index, varPref
         <span title='${title}' id='${id}' class='${extraClass} ${isChecked}' onclick='swapNiceCheckbox(this); _mapSettingsUpdatePreset("${index}", "${varPrefix}");'></span>
     `;
 
-	const tooltipDiv = document.getElementById('tooltipDiv');
-	if (tooltipDiv.classList.contains('tooltipExtraLg') && ['Farm', 'Map Bonus'].some((word) => tooltipDiv.children.tipTitle.innerText.includes(word))) {
-		_mapSettingsUpdatePreset(index, varPrefix);
-	}
+	_mapSettingsUpdatePreset(index, varPrefix);
 
 	return html;
 }
@@ -1140,7 +1143,7 @@ function mapSettingsHelpWindow(titleText) {
 		mazHelp += '<li><b>Min Zone</b> - The lower bound zone to run voids maps on.</li>';
 		mazHelp += '<li><b>Max Zone</b> - The upper bound zone to run voids maps on.</li>';
 		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the Auto Maps status tooltip.</li>";
-		mazHelp += '<li class="indent">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you\'ve selected one of Auto Level, Hits Survived, Hits Survived Void it will check if the value is lower than it and skip if it is.<br></li>';
+		mazHelp += '<li class="indent">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you\'ve selected one of Hits Survived, Hits Survived Void it will check if the value is lower than it and skip if it is. Disabled just skips checking that input.<br></li>';
 		mazHelp += "<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run. Won't do anything if AutoPortal is disabled!</b></li>";
 	}
 
@@ -1388,6 +1391,9 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 	const smithyFarm = varPrefix.includes('Smithy');
 	const worshipperFarm = varPrefix.includes('Worshipper');
 
+	let newClass;
+	let newClass2;
+
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
 		if (index !== '') {
 			const runType = document.getElementById('windowRunType' + index).value;
@@ -1416,30 +1422,47 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 		if (index !== '') {
 			const autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
 			swapClass('windowLevel', autoLevel, row);
-			document.getElementById('windowLevel' + index).disabled = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? true : false;
+			document.getElementById('windowLevel' + index).disabled = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true';
 		}
 	}
 
 	if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) {
 		if (index !== '' || mapBonus) {
-			var special = document.getElementById('windowSpecial' + index).value;
+			const special = document.getElementById('windowSpecial' + index).value;
 			newClass = special === 'hc' || special === 'lc' ? 'windowGatherOn' : 'windowGatherOff';
 			swapClass('windowGather', newClass, row);
 		}
 	}
 
-	if (hdFarm) {
-		if (index !== '') {
-			const special = document.getElementById('windowHDType' + index).value;
+	if (hdFarm && index !== '') {
+		const special = document.getElementById('windowHDType' + index).value;
 
-			newClass = special === 'maplevel' ? 'windowMapLevelOff' : 'windowMapLevelOn';
-			swapClass('windowMapLevel', newClass, row);
-			if (special === 'maplevel') {
-				document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = 'Map Level';
-			} else {
-				document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = '';
-			}
+		newClass = special === 'maplevel' ? 'windowMapLevelOff' : 'windowMapLevelOn';
+		swapClass('windowMapLevel', newClass, row);
+		if (special === 'maplevel') {
+			document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = 'Map Level';
+		} else {
+			document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = '';
 		}
+	}
+
+	if (voidMap && index !== '') {
+		const hdDropdowns = ['windowHDTypeVoidMap', 'windowHDTypeVoidMap2'];
+		const hdInputs = ['windowHDRatio', 'windowVoidHDRatio'];
+		const classes = ['windowHDTypeDisabled', 'windowHDTypeDisabled2'];
+
+		hdDropdowns.forEach((dropdownId, i) => {
+			const isDisabled = document.getElementById(dropdownId + index).value === 'disabled';
+			const onClass = `${classes[i]}On`;
+			const offClass = `${classes[i]}Off`;
+			const [newClass, newClass2] = isDisabled ? [onClass, offClass] : [offClass, onClass];
+
+			if ((isDisabled && row.classList.contains(offClass)) || (!isDisabled && row.classList.contains(onClass))) {
+				swapClass(newClass2, newClass, row);
+				document.getElementById(hdInputs[i] + index).disabled = newClass === onClass;
+			}
+			document.getElementById(hdInputs[i] + index).disabled = newClass === onClass;
+		});
 	}
 
 	//Changing rows to use the colour of the Nature type that the world input will be run on.
@@ -1457,11 +1480,10 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 
 	var dropdown = {};
 	var highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
-
 	//HD Type dropdown
 	const hdDropdowns = ['hdType', 'hdType2'];
-	const hdTypeDropdowns = ['world', 'map', 'void', 'maplevel', 'hitsSurvived', 'hitsSurvivedVoid'];
-	const hdTypeNames = ['World HD Ratio', 'Map HD Ratio', 'Void HD Ratio', 'Map Level', 'Hits Survived', 'Void Hits Survived'];
+	const hdTypeDropdowns = varPrefix === 'VoidMap' ? ['world', 'map', 'void', 'hitsSurvived', 'hitsSurvivedVoid', 'disabled'] : ['world', 'map', 'void', 'maplevel', 'hitsSurvived', 'hitsSurvivedVoid'];
+	const hdTypeNames = varPrefix === 'VoidMap' ? ['World HD Ratio', 'Map HD Ratio', 'Void HD Ratio', 'Hits Survived', 'Void Hits Survived', 'Disabled'] : ['World HD Ratio', 'Map HD Ratio', 'Void HD Ratio', 'Map Level', 'Hits Survived', 'Void Hits Survived'];
 	dropdown.hdType = '';
 	for (let type in hdDropdowns) {
 		let hdKey = hdDropdowns[type];

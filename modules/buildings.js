@@ -15,6 +15,8 @@ function advancedNurseries() {
 	if (!getPageSetting('advancedNurseries')) return false;
 	if (game.stats.highestLevel.valueTotal() < 230) return false;
 	if (game.global.universe !== 1) return false;
+	const disableIce = getPageSetting('advancedNurseriesIce');
+	if (disableIce > 0 && getEmpowerment() === 'Ice' && (disableIce === 1 || (disableIce === 2 && game.global.spireActive))) return false;
 	// Only build nurseries if: A) Lacking Health & B) Has max health map stacks
 	const lackingHealth = whichHitsSurvived() < targetHitsSurvived();
 	const maxMapBonus = game.global.mapBonus >= getPageSetting('mapBonusHealth');

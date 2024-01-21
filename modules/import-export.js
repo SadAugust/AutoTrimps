@@ -14,11 +14,9 @@ function ImportExportTooltip(what, event) {
 	let ondisplay = null;
 
 	if (what === 'exportAutoTrimps') {
-		const u2Message = game.global.universe === 2 || game.global.totalRadPortals > 0 ? `${game.global.totalRadPortals} U${game.global.universe}` : '';
-		let saveName = `AT Settings P${game.global.totalPortals}`;
-		if (game.global.universe === 2 || game.global.totalRadPortals > 0) {
-			saveName += ' ' + game.global.totalRadPortals + ' U' + game.global.universe;
-		}
+		const u2Affix = game.global.universe === 2 || game.global.totalRadPortals > 0 ? ` ${game.global.totalRadPortals} U${game.global.universe}` : '';
+		const saveName = `AT Settings P${game.global.totalPortals}${u2Affix}`;
+
 		tooltipText = "This is your AutoTrimp settings save string. There are many like it but this one is yours. Save this save somewhere safe so you can save time next time. <br/><br/><textarea id='exportArea' style='width: 100%' rows='5'>" + serializeSettings() + '</textarea>';
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>";
 		if (document.queryCommandSupported('copy')) {

@@ -129,7 +129,7 @@ function loadScriptsAT() {
 		try {
 			await loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js');
 			await loadStylesheet('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
-			await loadStylesheet(`${atSettings.initialise.basepathOriginal}css/tabs.css`);
+			await loadStylesheet(`${atSettings.initialise.basepath}css/tabs.css`);
 			await loadScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js');
 			if (typeof formatters !== 'object') await loadScript('https://Quiaaaa.github.io/AutoTrimps/Graphs.js');
 		} catch (error) {
