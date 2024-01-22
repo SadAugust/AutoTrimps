@@ -108,10 +108,8 @@ function _handleBreedingTrimps(owned, maxTrimps, employed) {
 
 function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
 	if (!noBreedChallenge()) return freeWorkers;
-	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
-	const ratioWorkerCount = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 
-	freeWorkers = owned - employed + ratioWorkerCount;
+	freeWorkers = owned - employed;
 	if ((!game.global.fighting || game.global.soldierHealth <= 0) && freeWorkers > maxSoldiers) freeWorkers -= maxSoldiers;
 	if (getPageSetting('trapper')) {
 		let coordTarget = getPageSetting('trapperCoords') - 1;
