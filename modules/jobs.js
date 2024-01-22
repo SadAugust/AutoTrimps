@@ -50,7 +50,6 @@ function fireMode_AT() {
 	elem.innerHTML = buttonText;
 }
 
-//Fires all workers to ensure we can do things like respec
 function fireAllWorkers() {
 	['Farmer', 'Lumberjack', 'Miner', 'Scientist'].forEach((job) => {
 		if (game.jobs[job].owned > 0) safeBuyJob(job, -game.jobs[job].owned);
@@ -67,20 +66,20 @@ function buyJobs(forceRatios) {
 	}
 
 	const jobSettings = getPageSetting('jobSettingsArray');
+	_buyRatioJobs(jobSettings);
+
 	const maxTrimps = game.resources.trimps.realMax();
 	const maxSoldiers = game.resources.trimps.getCurrentSend();
 	const { owned, employed } = game.resources.trimps;
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
 	let freeWorkers = _calculateFreeWorkers(owned, employed);
-
 	if (!noBreedChallenge() && owned < maxTrimps * 0.9) {
 		_handleBreedingTrimps(owned, maxTrimps, employed);
 		return;
 	}
 
 	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
-	freeWorkers = _buyRatioJobs(freeWorkers, jobSettings);
 	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings);
 	_handleJobRatios(desiredRatios, freeWorkers);
 }
@@ -108,8 +107,10 @@ function _handleBreedingTrimps(owned, maxTrimps, employed) {
 
 function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
 	if (!noBreedChallenge()) return freeWorkers;
+	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
+	const ratioWorkerCount = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 
-	freeWorkers = owned - employed;
+	freeWorkers = owned - employed + ratioWorkerCount;
 	if ((!game.global.fighting || game.global.soldierHealth <= 0) && freeWorkers > maxSoldiers) freeWorkers -= maxSoldiers;
 	if (getPageSetting('trapper')) {
 		let coordTarget = getPageSetting('trapperCoords') - 1;
@@ -121,77 +122,73 @@ function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
 		if (freeWorkers > nextCoordCost && canBuyCoordination) freeWorkers -= nextCoordCost;
 	}
 
+	const reserveMod = 1 + game.resources.trimps.owned / 1e8;
+	freeWorkers -= game.resources.trimps.owned > 1e6 ? reserveMod : 0;
+
 	return freeWorkers;
 }
 
-function _buyRatioJobs(freeWorkers, jobSettings) {
-	freeWorkers -= _buyExplorer(jobSettings);
+function _buyRatioJobs(jobSettings) {
+	_buyExplorer(jobSettings);
 
 	if (game.global.universe === 1) {
-		freeWorkers -= _buyTrainer(jobSettings);
-		freeWorkers -= _buyMagmamancer(jobSettings);
+		_buyTrainer(jobSettings);
+		_buyMagmamancer(jobSettings);
 	}
 
 	if (game.global.universe === 2) {
-		freeWorkers -= _buyMeteorologist(jobSettings);
-		freeWorkers -= _buyWorshipper(jobSettings);
+		_buyMeteorologist(jobSettings);
+		_buyWorshipper(jobSettings);
 	}
-
-	return freeWorkers;
 }
 
 function _buyExplorer(jobSettings) {
-	if (game.jobs.Explorer.locked || !jobSettings.Explorer.enabled || mapSettings.mapName === 'Tribute Farm') return 0;
+	if (game.jobs.Explorer.locked || !jobSettings.Explorer.enabled || mapSettings.mapName === 'Tribute Farm') return;
 	const { cost, owned } = game.jobs.Explorer;
 	const affordableExplorers = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * (jobSettings.Explorer.percent / 100), cost.food[1], true);
 
 	if (affordableExplorers > 0) safeBuyJob('Explorer', affordableExplorers);
-	return affordableExplorers;
 }
 
 function _buyTrainer(jobSettings) {
-	if (game.jobs.Trainer.locked || !jobSettings.Trainer.enabled) return 0;
+	if (game.jobs.Trainer.locked || !jobSettings.Trainer.enabled) return;
 	const { cost, owned } = game.jobs.Trainer;
 	const affordableTrainers = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * (jobSettings.Trainer.percent / 100), cost.food[1], true);
 
 	if (affordableTrainers > 0) safeBuyJob('Trainer', affordableTrainers);
-	return affordableTrainers;
 }
 
 function _buyMagmamancer(jobSettings) {
-	if (game.jobs.Magmamancer.locked || !jobSettings.Magmamancer.enabled) return 0;
+	if (game.jobs.Magmamancer.locked || !jobSettings.Magmamancer.enabled) return;
 	let timeOnZone = Math.floor((Date.now() - game.global.zoneStarted) / 60000);
 	timeOnZone += game.talents.magmamancer.purchased ? 5 : 0;
 	timeOnZone += game.talents.stillMagmamancer.purchased ? game.global.spireRows : 0;
 
-	if (timeOnZone < 10) return 0;
+	if (timeOnZone < 10) return;
 
 	const { cost, owned } = game.jobs.Magmamancer;
 	const affordableMagmamancer = getMaxAffordable(cost.gems[0] * Math.pow(cost.gems[1], owned), game.resources.gems.owned * (jobSettings.Magmamancer.percent / 100), cost.gems[1], true);
 
 	if (affordableMagmamancer > 0) safeBuyJob('Magmamancer', affordableMagmamancer);
-	return affordableMagmamancer;
 }
 
 function _buyMeteorologist(jobSettings) {
-	if (game.jobs.Meteorologist.locked || (!jobSettings.Meteorologist.enabled && !mapSettings.shouldMeteorologist) || runningAncientTreasure()) return 0;
+	if (game.jobs.Meteorologist.locked || (!jobSettings.Meteorologist.enabled && !mapSettings.shouldMeteorologist) || runningAncientTreasure()) return;
 	const { cost, owned } = game.jobs.Meteorologist;
 	const costMult = mapSettings.shouldMeteorologist ? 1 : jobSettings.Meteorologist.percent / 100;
 	let affordableMets = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * costMult, cost.food[1], true);
 	if (mapSettings.shouldMeteorologist && mapSettings.ancientTreasure && mapSettings.totalCost > game.resources.food.owned) affordableMets = 0;
 
 	if (affordableMets > 0 && !mapSettings.shouldTribute) safeBuyJob('Meteorologist', affordableMets);
-	return mapSettings.shouldTribute ? 0 : affordableMets;
 }
 
 function _buyWorshipper(jobSettings) {
-	if (game.jobs.Worshipper.locked || !jobSettings.Worshipper.enabled) return 0;
+	if (game.jobs.Worshipper.locked || !jobSettings.Worshipper.enabled) return;
 	const { owned, getCost } = game.jobs.Worshipper;
 	const costMult = mapSettings.mapName !== 'Worshipper Farm' ? jobSettings.Worshipper.percent / 100 : 1;
 	const affordableShips = Math.min(Math.floor((game.resources.food.owned / getCost()) * costMult), 50 - owned);
 
 	if (affordableShips > 0) safeBuyJob('Worshipper', affordableShips);
-	return affordableShips;
 }
 
 function _getDesiredRatios(forceRatios, jobType, jobSettings) {
@@ -253,7 +250,7 @@ function _getScientistRatio() {
 }
 
 function _getAutoJobRatio() {
-	const jobRatios = { ratioHaz: [1, 1, 1, 0], ratio7: [1, 1, 98, 0], ratio6: [1, 7, 12, 0], ratio5: [1, 2, 22, 0], ratio4: [1, 1, 10, 0], ratio3: [3, 1, 4, 0], ratio2: [3, 3, 5, 0], ratio1: [1.1, 1.15, 1.2, 0] };
+	const jobRatios = { ratioHaz: [1, 1, 1, 0], ratio7: [1, 1, 100, 0], ratio6: [1, 7, 12, 0], ratio5: [1, 2, 22, 0], ratio4: [1, 1, 10, 0], ratio3: [3, 1, 4, 0], ratio2: [3, 3, 5, 0], ratio1: [1.1, 1.15, 1.2, 0] };
 
 	const conditions = [
 		{ condition: () => game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1, ratio: jobRatios.ratioHaz },
