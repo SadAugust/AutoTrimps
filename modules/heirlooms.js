@@ -35,7 +35,7 @@ function evaluateHeirloomMods(loom, location) {
 
 	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
 	for (const mod of heirloomLocation.mods) {
-		let modName = heirloomLocation.mods[mod][0];
+		modName = [mod][0][0];
 		if (modName === 'empty') {
 			emptyMods++;
 			continue;
