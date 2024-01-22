@@ -68,7 +68,8 @@ function buyJobs(forceRatios) {
 
 	const jobSettings = getPageSetting('jobSettingsArray');
 	const maxTrimps = game.resources.trimps.realMax();
-	const { owned, employed, maxSoldiers } = game.resources.trimps;
+	const maxSoldiers = game.resources.trimps.getCurrentSend();
+	const { owned, employed } = game.resources.trimps;
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
 	let freeWorkers = _calculateFreeWorkers(owned, employed);
@@ -112,7 +113,6 @@ function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
 
 	freeWorkers = owned - employed + ratioWorkerCount;
 	if ((!game.global.fighting || game.global.soldierHealth <= 0) && freeWorkers > maxSoldiers) freeWorkers -= maxSoldiers;
-
 	if (getPageSetting('trapper')) {
 		let coordTarget = getPageSetting('trapperCoords') - 1;
 		if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
