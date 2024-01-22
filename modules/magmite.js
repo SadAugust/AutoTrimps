@@ -563,23 +563,21 @@ function _autoMagmiteCalc() {
 }
 
 function autoGenerator() {
-	if (!getPageSetting('UseAutoGen', 1)) return;
-	//Dimensional Generator locked
-	if (game.global.world < 230) return;
+	if (!getPageSetting('UseAutoGen', 1) || game.global.world < 230) return;
 
 	//Saves the user configuration
-	var beforeFuelState = getPageSetting('beforegen');
-	var afterFuelState = getPageSetting('defaultgen');
+	let beforeFuelState = getPageSetting('beforegen');
+	let afterFuelState = getPageSetting('defaultgen');
 
-	//Daily
-	if (trimpStats.isDaily && getPageSetting('AutoGenDC') !== 0) {
-		if (game.global.generatorMode !== getPageSetting('AutoGenDC')) changeGeneratorState(getPageSetting('AutoGenDC'));
+	const dailySetting = getPageSetting('AutoGenDC');
+	if (trimpStats.isDaily && dailySetting !== 0) {
+		if (game.global.generatorMode !== dailySetting) changeGeneratorState(dailySetting);
 		return;
 	}
 
-	//C2
-	if (trimpStats.isC3 && getPageSetting('AutoGenC2') !== 0) {
-		if (game.global.generatorMode !== getPageSetting('AutoGenC2')) changeGeneratorState(getPageSetting('AutoGenC2'));
+	const c2Setting = getPageSetting('AutoGenC2');
+	if (trimpStats.isC3 && c2Setting !== 0) {
+		if (game.global.generatorMode !== c2Setting) changeGeneratorState(c2Setting);
 		return;
 	}
 
@@ -593,11 +591,9 @@ function autoGenerator() {
 		}
 		if (game.global.generatorMode !== beforeFuelState) changeGeneratorState(beforeFuelState);
 	}
-
 	//Fuel
 	else if (getPageSetting('fuelend') < 0 || game.global.world < getPageSetting('fuelend')) {
 		var fuelState = 1;
-		//If we have no Overclocker levels then use Hybrid (if owned) otherwise use pseudo-hybrid
 		if (game.generatorUpgrades.Overclocker.upgrades === 0) {
 			if (game.permanentGeneratorUpgrades.Hybridization.owned) fuelState = 2;
 			else {
@@ -606,7 +602,6 @@ function autoGenerator() {
 		}
 		if (game.global.generatorMode !== fuelState) changeGeneratorState(fuelState);
 	}
-
 	//After Fuel
 	else {
 		//Pseudo-Hybrid. It fuels until full, then goes into Mi mode

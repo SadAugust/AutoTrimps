@@ -3874,19 +3874,7 @@ function initialiseAllSettings() {
 				return ('<b>Normal:</b> Spends Magmite Normally as Explained in Magmite spending behaviour. <br><b>Normal & No OC:</b> Same as normal, except skips OC afterbuying 1 OC upgrade. <br><b>OneTime Only:</b> Only Buys the One off upgrades except skips OC afterbuying 1 OC upgrade. <br><b>OneTime & OC:</b> Buys all One off upgrades, then buys OC only.')
 			}, 'multitoggle', 0, null, 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
-		createSetting('MagmiteExplain',
-			function () { return ('Magmite spending behaviour') },
-			function () {
-				let description = "<p>Infographic on how the magmite spending process works.</p>";
-				description += "<p><b>1.</b><br>Buy one-and-done upgrades, expensive first, then consider 1st level of Overclocker.</p>";
-				description += "<p><b>2.</b><br>Buy Overclocker IF AND ONLY IF we can afford it.</p>";
-				description += "<p><b>2.5.</b><br>Exit if one time only upgrade.</p>";
-				description += "<p><b>3.</b><br>Buy Efficiency if it is better than capacity.</p>";
-				description += "<p><b>4.</b><br>Buy Capacity or Supply depending on which is cheaper, or based on SupplyWall.</p>";
-				return description;
-			}, 'infoclick', null, 'ImportExportTooltip("magmiteExplain")', 'Magma', [1],
-			function () { return (!autoTrimpSettings.ratiospend.enabled) });
-
+		
 		//Automate Fuel Zones
 		createSetting('magmiteAutoFuel',
 			function () { return ('Automate Fuel Zones') },
@@ -4271,7 +4259,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Reset everything to the way it was when you first installed the script.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip("resetDefaultSettingsProfiles"\'")', 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("resetDefaultSettingsProfiles")', 'Import Export', [0]);
 		createSetting('downloadForDebug',
 			function () { return ('Download For Debug') },
 			function () {
@@ -5002,17 +4990,17 @@ function _setDisplayedTabs() {
 	const radonOn = autoTrimpSettings.universeSetting.value === 1;
 
 	const tabList = {
+		tabBeta: !gameUserCheck(),
 		tabBuildings: !displayAllSettings && (radonOn || (!radonOn && hze < 60)),
-		tabDaily: !displayAllSettings && !radonOn && hze < 99,
 		tabC2: !displayAllSettings && !radonOn && hze < 65,
-		tabSpire: radonOn || (!displayAllSettings && hze < 190),
+		tabChallenges: !displayAllSettings && ((radonOn && highestRadonZone < 35) || (!radonOn && hze < 40)),
+		tabDaily: !displayAllSettings && !radonOn && hze < 99,
+		tabFluffy: radonOn || (!displayAllSettings && game.global.spiresCompleted < 2),
 		tabJobs: radonOn || (!displayAllSettings && hze < 70),
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
-		tabFluffy: radonOn || (!displayAllSettings && game.global.spiresCompleted < 2),
-		tabChallenges: !displayAllSettings && ((radonOn && highestRadonZone < 35) || (!radonOn && hze < 40)),
-		tabTest: !gameUserCheck(),
-		tabBeta: !gameUserCheck()
+		tabSpire: radonOn || (!displayAllSettings && hze < 190),
+		tabTest: !gameUserCheck()
 	};
 	for (let tab in tabList) {
 		const tabElem = document.getElementById(tab);
@@ -5023,6 +5011,11 @@ function _setDisplayedTabs() {
 				document.getElementById('tabC2').children[0].innerHTML = _getChallenge2Info();
 			}
 			tabElem.style.display = hideTab ? 'none' : '';
+			const tabDisplay = document.getElementById(tab.substring(3));
+			if (hideTab) {
+				if (tabDisplay.style.display === 'block') tabDisplay.style.display = 'none';
+				if (tabElem.children[0].classList.contains('active')) tabElem.children[0].classList.remove('active');
+			}
 		}
 	}
 

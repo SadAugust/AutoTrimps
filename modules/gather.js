@@ -61,7 +61,6 @@ function autoGather() {
 		if ((challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize) || remainingTrimps > targetArmySize) trapTrimpsOK = false;
 	}
 
-	//Vars
 	const lowOnTraps = game.buildings.Trap.owned < minTraps;
 	const trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
 	const fullOfTraps = game.buildings.Trap.owned >= maxTraps;
@@ -249,9 +248,9 @@ function autoGather() {
 	let lowestResource = 'food';
 	let lowestResourceRate = -1;
 	let haveWorkers = true;
-	for (var resource in manualResourceList) {
-		var job = manualResourceList[resource];
-		var currentRate = game.jobs[job].owned * game.jobs[job].modifier;
+	for (let resource in manualResourceList) {
+		let job = manualResourceList[resource];
+		let currentRate = game.jobs[job].owned * game.jobs[job].modifier;
 		if (document.getElementById(resource).style.visibility !== 'hidden') {
 			if (currentRate === 0) {
 				currentRate = game.resources[resource].owned;

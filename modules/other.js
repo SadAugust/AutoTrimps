@@ -642,13 +642,12 @@ function updateATVersion() {
 		}
 
 		if (versionNumber < '6.5.13') {
-			var values = ['value', 'valueU2'];
+			const values = ['value', 'valueU2'];
 			for (var z = 0; z < values.length; z++) {
-				var incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
+				const incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
 				if (typeof tempSettings['raidingSettings'][values[z]][0] !== 'undefined') {
-					for (var y = 0; y < tempSettings['raidingSettings'][values[z]].length; y++) {
-						if (y === 0) continue;
-						var currSetting = tempSettings['raidingSettings'][values[z]][y];
+					for (let y = 1; y < tempSettings['raidingSettings'][values[z]].length; y++) {
+						const currSetting = tempSettings['raidingSettings'][values[z]][y];
 						autoTrimpSettings['raidingSettings'][values[z]][y].incrementMaps = incrementMaps;
 						autoTrimpSettings['raidingSettings'][values[z]][y].raidingzone = (currSetting.raidingzone - currSetting.world).toString();
 					}
@@ -803,6 +802,21 @@ function updateATVersion() {
 					autoTrimpSettings.hdFarmSettings['valueU2'][y].repeatevery = 1;
 				}
 			}
+		}
+
+		if (versionNumber < '6.5.55') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			const settingName = 'voidMapSettings';
+			const values = ['value', 'valueU2'];
+			for (let z = 0; z < values.length; z++) {
+				if (typeof tempSettings[settingName][values[z]][0] !== 'undefined') {
+					for (var y = 1; y < tempSettings[settingName][values[z]].length; y++) {
+						let currSetting = tempSettings[settingName][values[z]][y];
+						autoTrimpSettings[settingName][values[z]][y].endzone = currSetting.maxvoidzone;
+					}
+				}
+			}
+			saveSettings();
 		}
 	}
 

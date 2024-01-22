@@ -425,7 +425,7 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 	for (let y = 1; y < baseSettings.length; y++) {
 		const currSetting = baseSettings[y];
 		let world = currSetting.world + voidReduction;
-		let maxVoidZone = currSetting.maxvoidzone + voidReduction;
+		let endzone = currSetting.endzone + voidReduction;
 		if (shouldSkipSetting(currSetting, world, settingName, dailyAddition)) continue;
 
 		for (let x = 0; x < zoneAddition + 1; x++) {
@@ -437,13 +437,13 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 				if (currSetting[hdTypes[index]].includes('Hits Survived')) return currSetting[dropdown] > hdSetting;
 				return currSetting[dropdown] < hdSetting;
 			});
-			if (shouldSkipLine && maxVoidZone !== game.global.world) continue;
-			if (maxVoidZone === game.global.world || game.global.world - world >= 0) {
+			if (shouldSkipLine && endzone !== game.global.world) continue;
+			if (endzone === game.global.world || game.global.world - world >= 0) {
 				settingIndex = y;
 				break;
 			}
 			world += zoneAddition;
-			maxVoidZone += zoneAddition;
+			endzone += zoneAddition;
 		}
 	}
 
@@ -3496,7 +3496,7 @@ function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
 	//Skips if past designated end zone
 	if (game.global.world > currSetting.endzone + zoneReduction) return false;
 
-	if (currSetting.maxvoidzone && game.global.world > currSetting.maxvoidzone + zoneReduction) return false;
+	if (currSetting.endzone && game.global.world > currSetting.endzone + zoneReduction) return false;
 	if (currSetting.bonebelow && game.permaBoneBonuses.boosts.charges <= currSetting.bonebelow) return false;
 
 	const liquified = liquifiedZone();

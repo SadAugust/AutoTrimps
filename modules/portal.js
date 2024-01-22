@@ -95,8 +95,10 @@ function handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily
 	const myHeliumHr = _getHeliumPerHour(resourceType.toLowerCase());
 	let heliumHrBuffer = Math.abs(getPageSetting(prefix + 'HrBuffer', universe));
 	let OKtoPortal = false;
+
 	if (!atSettings.portal.aWholeNewWorld) heliumHrBuffer *= MODULES.portal.bufferExceedFactor;
 	const bufferExceeded = myHeliumHr < bestHeHr * (1 - heliumHrBuffer / 100);
+
 	if (bufferExceeded && game.global.world >= minZone) {
 		OKtoPortal = true;
 		if (atSettings.portal.aWholeNewWorld) MODULES.portal.zonePostpone = 0;

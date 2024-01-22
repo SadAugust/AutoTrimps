@@ -28,32 +28,31 @@ function evaluateHeirloomMods(loom, location) {
 	let emptyMods = 0;
 
 	//Increment through the setting inputs and push them to the targetMods array if not set to Any.
-	for (var x = 1; x < heirloomLocation.mods.length + 1; x++) {
-		if (getPageSetting(varAffix + x) === 'Any') continue;
-		targetMods.push(getPageSetting(varAffix + x));
+	for (let x = 1; x < heirloomLocation.mods.length + 1; x++) {
+		const modSetting = getPageSetting(varAffix + x);
+		if (modSetting !== 'Any') targetMods.push(modSetting);
 	}
 
 	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
-	for (const mod in heirloomLocation.mods) {
+	for (const mod of heirloomLocation.mods) {
 		let modName = heirloomLocation.mods[mod][0];
 		if (modName === 'empty') {
 			emptyMods++;
 			continue;
 		}
-		if (blacklist.indexOf(game.heirlooms[heirloomType][modName].name) !== -1) return 0;
+		if (blacklist.includes(game.heirlooms[heirloomType][modName].name)) return 0;
 		modName = heirloomData[modName].name;
-		if (blacklist.indexOf(modName) !== -1) return 0;
+		if (blacklist.includes(modName)) return 0;
 		targetMods = targetMods.filter((e) => e !== modName);
 	}
 
 	//Work out the target number of mods to have on the heirloom.
 	const modGoal = Math.max(0, Math.min(getPageSetting('heirloomAutoModTarget'), heirloomLocation.mods.length));
 	const remainingMods = targetMods.length - emptyMods;
-	//Mark heirloom as perfect if remaining mods is less than or equal to 0.
+
 	if (remainingMods <= 0) return Infinity;
-	//Mark heirloom as imperfect but passable if remaining mods is greater or equal to heirloom mod length minus mod goal.
 	if (remainingMods >= heirloomLocation.mods.length - modGoal) return heirloomLocation.mods.length - remainingMods;
-	//Mark heirloom as garbage
+
 	return 0;
 }
 
@@ -78,35 +77,32 @@ function worthOfHeirlooms() {
 		heirloomWorth[theLoom.type].push(data);
 	}
 
-	const valuesort = (a, b) => b.eff - a.eff;
-	heirloomWorth['Shield'].sort(valuesort);
-	heirloomWorth['Staff'].sort(valuesort);
-	heirloomWorth['Core'].sort(valuesort);
+	function sortByEfficiency(heirlooms) {
+		heirlooms.sort((a, b) => b.eff - a.eff);
+	}
+
+	Object.values(heirloomWorth).forEach(sortByEfficiency);
 
 	return heirloomWorth;
 }
 
 function autoHeirlooms(portal) {
-	if (!game.global.heirloomsExtra.length > 0) return;
-	if (!getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
+	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	if (portal && !portalWindowOpen) return;
 
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
 	const heirloomTypes = heirloomType === 'All' ? ['Shield', 'Staff', game.global.universe === 1 ? 'Core' : null] : [heirloomType];
-	let heirloomWorth;
 
 	//Looping through the heirloom type set in typetokeep setting and stashing them.
 	while (game.global.heirloomsCarried.length < getMaxCarriedHeirlooms() && game.global.heirloomsExtra.length > 0) {
+		const heirloomWorth = worthOfHeirlooms();
 		for (const type of heirloomTypes) {
-			if (!type) continue;
-			heirloomWorth = worthOfHeirlooms();
-			if (heirloomWorth[type].length > 0) {
-				const carriedHeirlooms = heirloomWorth[type].shift();
-				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-				if (getPageSetting('heirloomAuto' + type)) carryHeirloom();
-				else recycleHeirloom(true);
-			}
+			if (!type || heirloomWorth[type].length <= 0) continue;
+			const carriedHeirlooms = heirloomWorth[type].shift();
+			selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
+			if (getPageSetting('heirloomAuto' + type)) carryHeirloom();
+			else recycleHeirloom(true);
 		}
 	}
 }
@@ -124,9 +120,7 @@ function heirloomModSearch(heirloom, modifier) {
 	const heirloomDetails = heirloomSearch(heirloom);
 	const heirloomsToCheck = [game.global.ShieldEquipped, game.global.StaffEquipped];
 
-	if (heirloomDetails) {
-		heirloomsToCheck.push(heirloomDetails);
-	}
+	if (heirloomDetails) heirloomsToCheck.push(heirloomDetails);
 
 	for (const loom of heirloomsToCheck) {
 		if (loom.name !== heirloomName) continue;
@@ -246,27 +240,22 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
 	if (mapType === 'world' && !dontSwap && game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
 
-	var voidActive = mapType === 'void';
+	let voidActive = mapType === 'void';
 	if (voidActive && swapLooms) {
+		//const fastChallenges = !challengeActive('Glass') && !challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20 && !challengeActive('Archaeology') && !challengeActive('Quest') && _getCurrentQuest() !== 8;
 		MODULES.heirlooms.plagueSwap =
-			//Check we're in U2, we're in a void map and setting is enabled.
 			game.global.universe === 2 &&
 			game.global.voidBuff &&
 			getPageSetting('heirloomVoidSwap') &&
-			//Not running fast challenge
 			!challengeActive('Glass') &&
 			!challengeActive('Berserk') &&
 			!game.challenges.Berserk.weakened !== 20 &&
 			!challengeActive('Archaeology') &&
 			!challengeActive('Quest') &&
 			_getCurrentQuest() !== 8 &&
-			//Not at final map cell
 			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
-			//Current enemy is slow
 			!MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
-			//Next cell is fast
 			MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
-			//Not in double attack voids
 			game.global.voidBuff !== 'doubleAttack';
 	}
 	if (voidActive && (getPageSetting('heirloomVoid') !== 'undefined' || (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== 'undefined'))) {
@@ -282,13 +271,9 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 	else if (voidActive && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomInitial') !== 'undefined') return 'heirloomInitial';
 	//Run afterpush (c3 if running one) shield if we are in a map or a void.
 	else if (getPageSetting(afterpushShield) !== 'undefined' && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap')) return afterpushShield;
-	//Run Spire shield if inside an active spire
 	else if (getPageSetting('heirloomSpire') !== 'undefined' && isDoingSpire()) return 'heirloomSpire';
-	//Run Spire shield if currently in wind stance
 	else if (game.global.formation === 5 && getPageSetting('heirloomWindStack') !== 'undefined') return 'heirloomWindStack';
-	//Run afterpush (c3 if running one) shield if above our swap zone
 	else if (getPageSetting(afterpushShield) !== 'undefined' && game.global.world >= swapZone) return afterpushShield;
-	//Otherwise run initial shield
 	else if (getPageSetting('heirloomInitial') !== 'undefined') return 'heirloomInitial';
 }
 

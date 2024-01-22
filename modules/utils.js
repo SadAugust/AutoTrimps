@@ -418,6 +418,20 @@ function hypothermiaEndZone() {
 	return parseInt(hypoEndZone[0]);
 }
 
+function _priorityChallengeCheck(challenge) {
+	if (game.global.multiChallenge[what]) return true;
+	else if (game.global.challengeActive == what) return true;
+	else return false;
+}
+
+function _getPriorityOrderDropdowns(universe, challenge) {
+	const dropdowns = {};
+	dropdowns.universe = '';
+	for (let i = 1; i <= 2; i++) {
+		dropdowns.universe += `<option value='${i}'${game.global.universe === i ? " selected='selected'" : ''}>${i}</option>`;
+	}
+}
+
 function getPriorityOrder() {
 	let order = [];
 	let settingsList = [];

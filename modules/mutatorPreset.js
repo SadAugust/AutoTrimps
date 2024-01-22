@@ -21,15 +21,15 @@ function presetMutTab(tabNum) {
 }
 
 function tooltipAT(what, event, textString, headingName) {
-	var elem = document.getElementById('tooltipDiv');
+	let elem = document.getElementById('tooltipDiv');
 	swapClass('tooltipExtra', 'tooltipExtraNone', elem);
 	document.getElementById('tipText').className = '';
-	var ondisplay = null;
+	let ondisplay = null;
 	openTooltip = null;
 
-	var tooltipText;
-	var costText = '';
-	var titleText;
+	let tooltipText;
+	let costText = '';
+	let titleText = '';
 
 	if (what === 'Mutator Preset') {
 		if (headingName === 'Save') {
@@ -45,15 +45,17 @@ function tooltipAT(what, event, textString, headingName) {
 			what = 'Reset Mutation Preset';
 			tooltipText = 'Click to reset your currently selected mutation preset. This will remove all mutators from the preset and set it to empty so when portaling you could end up with no mutators active.';
 		} else if (textString > 0 && textString <= 3) {
-			let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
-			let preset = mutatorObj['preset' + textString];
-			let tooltipText = '';
+			const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+			const preset = mutatorObj['preset' + textString];
 
-			//Add tooltip text to indicate when this preset will be loaded if running AT.
 			if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
-				if (textString === 1) tooltipText += "<p style='font-weight: bold'>This preset will be loaded when portaling into Filler challenges with the 'Preset Swap Mutators' setting enabled.</p><br>";
-				if (textString === 2) tooltipText += "<p style='font-weight: bold'>This preset will be loaded when portaling into Daily challenges with the 'Preset Swap Mutators' setting enabled.</p><br>";
-				if (textString === 3) tooltipText += "<p style='font-weight: bold'>This preset will be loaded when portaling into C3 or special challenges (Mayhem, Pandemonium, Desolation) with the 'Preset Swap Mutators' setting enabled.</p><br>";
+				const presetMessages = {
+					1: "This preset will be loaded when portaling into Filler challenges with the 'Preset Swap Mutators' setting enabled.",
+					2: "This preset will be loaded when portaling into Daily challenges with the 'Preset Swap Mutators' setting enabled.",
+					3: "This preset will be loaded when portaling into C3 or special challenges (Mayhem, Pandemonium, Desolation) with the 'Preset Swap Mutators' setting enabled."
+				};
+
+				tooltipText += `<p style='font-weight: bold'>${presetMessages[textString] || ''}</p><br>`;
 			}
 
 			what = headingName;
@@ -86,19 +88,22 @@ function tooltipAT(what, event, textString, headingName) {
 			}
 		}
 	} else if (what === 'Rename Preset') {
-		what === 'Rename Preset ' + MODULES.mutatorPreset.selected;
 		const presetGroup = JSON.parse(localStorage.getItem('mutatorPresets'));
-		tooltipText = 'Type a name below for your Mutator Preset! This name will show up on the Preset bar and make it easy to identify which Preset is which.';
 		const preset = presetGroup['preset' + MODULES.mutatorPreset.selected];
 		const oldName = preset && preset.name ? preset.name : '';
-		tooltipText += "<br/><br/><input id='renamePresetBox' maxlength='25' style='width: 50%' value='" + oldName + "' />";
-		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='renameMutations()'>Apply</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
+		tooltipText = `Type a name below for your Mutator Preset! This name will show up on the Preset bar and make it easy to identify which Preset is which.
+		<br/><br/><input id='renamePresetBox' maxlength='25' style='width: 50%' value='${oldName}' />`;
+		costText = `<div class='maxCenter'>
+		<div id='confirmTooltipBtn' class='btn btn-info' onclick='renameMutations()'>Apply</div>
+		<div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div>
+		</div>`;
+
 		game.global.lockTooltip = true;
 		elem.style.left = '33.75%';
 		elem.style.top = '25%';
+
 		ondisplay = function () {
 			const box = document.getElementById('renamePresetBox');
-			// Chrome chokes on setSelectionRange on a number box; fall back to select()
 			try {
 				box.setSelectionRange(0, box.value.length);
 			} catch (e) {
@@ -106,7 +111,6 @@ function tooltipAT(what, event, textString, headingName) {
 			}
 			box.focus();
 		};
-		noExtraCheck = true;
 	}
 
 	titleText = titleText ? titleText : what;
