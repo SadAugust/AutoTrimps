@@ -5012,10 +5012,8 @@ function _setDisplayedTabs() {
 			}
 			tabElem.style.display = hideTab ? 'none' : '';
 			const tabDisplay = document.getElementById(tab.substring(3));
-			if (hideTab) {
-				if (tabDisplay.style.display === 'block') tabDisplay.style.display = 'none';
-				if (tabElem.children[0].classList.contains('active')) tabElem.children[0].classList.remove('active');
-			}
+			if (hideTab && tabDisplay.style.display === 'block') tabDisplay.style.display = 'none';
+			else if (!hideTab && tabElem.children[0].classList.contains('active')) tabDisplay.style.display = 'block';
 		}
 	}
 
