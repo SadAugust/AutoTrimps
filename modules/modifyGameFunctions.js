@@ -79,7 +79,7 @@ activateClicked = function () {
 
 originalCheckAchieve = checkAchieve;
 checkAchieve = function () {
-	if (arguments[0] === 'totalMaps') {
+	if (arguments && arguments[0] === 'totalMaps') {
 		const mapObj = getCurrentMapObject();
 		mapObj.clears++;
 	}
@@ -729,44 +729,23 @@ function getPsString_AT(what) {
 }
 
 //Check and update each patch!
-function simpleSeconds_AT(what, seconds, workerRatio) {
-	var workerRatio = !workerRatio ? null : workerRatio;
+function simpleSeconds_AT(what, seconds, workerRatio = null) {
+	if (typeof workerRatio === 'undefined' || workerRatio === null) return;
 
-	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
-		var desiredRatios = Array.from(workerRatio.split(','));
-		desiredRatios = [desiredRatios[0] !== undefined ? Number(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? Number(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? Number(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0];
-		var totalFraction = desiredRatios.reduce((a, b) => {
-			return a + b;
-		});
-	}
+	const desiredRatios = workerRatio.split(',').map((ratio) => (ratio ? Number(ratio) : 0));
+	const totalFraction = desiredRatios.reduce((a, b) => a + b, 0);
 
-	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
-	var jobName;
-	var pos;
-	switch (what) {
-		case 'food':
-			jobName = 'Farmer';
-			pos = 0;
-			break;
-		case 'wood':
-			jobName = 'Lumberjack';
-			pos = 1;
-			break;
-		case 'metal':
-			jobName = 'Miner';
-			pos = 2;
-			break;
-		case 'gems':
-			jobName = 'Dragimp';
-			break;
-		case 'fragments':
-			jobName = 'Explorer';
-			break;
-		case 'science':
-			jobName = 'Scientist';
-			pos = 3;
-			break;
-	}
+	const jobMap = {
+		food: { jobName: 'Farmer', pos: 0 },
+		wood: { jobName: 'Lumberjack', pos: 1 },
+		metal: { jobName: 'Miner', pos: 2 },
+		gems: { jobName: 'Dragimp' },
+		fragments: { jobName: 'Explorer' },
+		science: { jobName: 'Scientist', pos: 3 }
+	};
+
+	const { jobName, pos } = jobMap[what];
+
 	var heirloom = !jobName
 		? null
 		: jobName === 'Miner' && challengeActive('Pandemonium') && getPageSetting('pandemoniumStaff') !== 'undefined'
@@ -785,12 +764,12 @@ function simpleSeconds_AT(what, seconds, workerRatio) {
 		? 'heirloomStaffWorld'
 		: null;
 	if (game.global.StaffEquipped.name !== heirloom && heirloomSearch(heirloom) === undefined) heirloom = null;
-	var job = game.jobs[jobName];
-	var trimpworkers = game.resources.trimps.realMax() / 2 - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned;
-	if (challengeActive('Trappapalooza')) trimpworkers = game.resources.trimps.owned;
-	var workers = workerRatio !== null ? Math.floor((trimpworkers * desiredRatios[pos]) / totalFraction) : mapSettings.mapName === 'Worshipper Farm' ? trimpworkers : job.owned;
 
-	var amt = workers * job.modifier * seconds;
+	const job = game.jobs[jobName];
+	const trimpworkers = noBreedChallenge() ? game.resources.trimps.owned : game.resources.trimps.realMax() / 2 - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned;
+	const workers = workerRatio !== null ? Math.floor((trimpworkers * desiredRatios[pos]) / totalFraction) : mapSettings.mapName === 'Worshipper Farm' ? trimpworkers : job.owned;
+
+	let amt = workers * job.modifier * seconds;
 	amt += amt * getPerkLevel('Motivation') * game.portal.Motivation.modifier;
 	if (what !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0) amt *= 1 + game.permaBoneBonuses.multitasking.mult();
 	if (what !== 'science' && what !== 'fragments' && challengeActive('Alchemy')) amt *= alchObj.getPotionEffect('Potion of Finding');
@@ -802,7 +781,7 @@ function simpleSeconds_AT(what, seconds, workerRatio) {
 	if (what === 'food' || what === 'wood' || what === 'metal') {
 		if (workerRatio) amt *= calculateParityBonus_AT(desiredRatios, heirloomSearch(heirloom));
 		else amt *= getParityBonus();
-		if (autoBattle.oneTimers.Gathermate.owned) amt *= autoBattle.oneTimers.Gathermate.getMult();
+		if (autoBattle.oneTimers.Gathermate.owned && game.global.universe == 2) amt *= autoBattle.oneTimers.Gathermate.getMult();
 	}
 	if (((what === 'food' || what === 'wood') && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) amt *= game.jobs.Meteorologist.getExtraMult();
 	if (Fluffy.isRewardActive('gatherer')) amt *= 2;
@@ -826,7 +805,7 @@ function simpleSeconds_AT(what, seconds, workerRatio) {
 	if (heirloom === null) amt = calcHeirloomBonus('Staff', jobName + 'Speed', amt);
 	else amt = calcHeirloomBonus_AT('Staff', jobName + 'Speed', amt, false, heirloom);
 
-	var turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
+	const turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
 
 	if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === 'food' || what === 'metal' || what === 'wood')) {
 		amt *= turkimpBonus;
@@ -840,7 +819,7 @@ function scaleToCurrentMap_AT(amt, ignoreBonuses, ignoreScry, map) {
 	if (map) map = game.global.world + map;
 	if (!map) map = game.global.mapsActive ? getCurrentMapObject().level : challengeActive('Pandemonium') ? game.global.world - 1 : game.global.world;
 	game.global.world + map;
-	var compare = game.global.world;
+	let compare = game.global.world;
 	if (map > compare && map.location !== 'Bionic') {
 		amt *= Math.pow(1.1, map - compare);
 	} else {
@@ -852,7 +831,7 @@ function scaleToCurrentMap_AT(amt, ignoreBonuses, ignoreScry, map) {
 	}
 	if (ignoreBonuses) return amt;
 	//Add map loot bonus
-	var maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
+	const maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	amt = Math.round(amt * maploot);
 	amt = scaleLootBonuses(amt, ignoreScry);
 	return amt;
@@ -860,41 +839,30 @@ function scaleToCurrentMap_AT(amt, ignoreBonuses, ignoreScry, map) {
 
 //Check and update each patch!
 function calculateParityBonus_AT(workerRatio, heirloom) {
-	if (!game.global.StaffEquipped || game.global.StaffEquipped.rarity < 10) {
-		game.global.parityBonus = 1;
-		return 1;
-	}
-	var allowed = ['Farmer', 'Lumberjack', 'Miner'];
-	var totalWorkers = 0;
-	var numWorkers = [];
-	if (!workerRatio) {
-		for (var x = 0; x < allowed.length; x++) {
-			var thisWorkers = game.jobs[allowed[x]].owned;
-			totalWorkers += thisWorkers;
-			numWorkers[x] = thisWorkers;
-		}
-		var workerRatios = [];
-		for (var x = 0; x < numWorkers.length; x++) {
-			workerRatios.push(numWorkers[x] / totalWorkers);
-		}
-	} else {
-		var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
-		var workerRatios = workerRatio;
-		var ratio = workerRatios.reduce((a, b) => a + b, 0);
-		var freeWorkerDivided = Math.max(1, freeWorkers / ratio);
+	if (!game.global.StaffEquipped || game.global.StaffEquipped.rarity < 10) return 1;
 
-		for (var x = 0; x < allowed.length; x++) {
-			var thisWorkers = freeWorkerDivided * workerRatios[x];
-			totalWorkers += thisWorkers;
-			numWorkers[x] = thisWorkers;
-		}
+	const allowed = ['Farmer', 'Lumberjack', 'Miner'];
+	let totalWorkers = 0;
+	let numWorkers = [];
+
+	if (!workerRatio) {
+		numWorkers = allowed.map((job) => game.jobs[job].owned);
+		totalWorkers = numWorkers.reduce((a, b) => a + b, 0);
+	} else {
+		const freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+		const workerRatios = workerRatio;
+		const ratio = workerRatios.reduce((a, b) => a + b, 0);
+		const freeWorkerDivided = Math.max(1, freeWorkers / ratio);
+
+		numWorkers = workerRatios.map((workerRatio) => freeWorkerDivided * workerRatio);
+		totalWorkers = numWorkers.reduce((a, b) => a + b, 0);
 	}
-	var resourcePop = totalWorkers;
-	resourcePop = Math.log(resourcePop) / Math.log(3);
-	var largestWorker = Math.log(Math.max(...numWorkers)) / Math.log(3);
-	var spreadFactor = resourcePop - largestWorker;
-	var preLoomBonus = spreadFactor * spreadFactor;
-	var finalWithParity = (1 + preLoomBonus) * getHazardParityMult(heirloom);
+
+	const resourcePop = Math.log(totalWorkers) / Math.log(3);
+	const largestWorker = Math.log(Math.max(...numWorkers)) / Math.log(3);
+	const spreadFactor = resourcePop - largestWorker;
+	const preLoomBonus = spreadFactor * spreadFactor;
+	const finalWithParity = (1 + preLoomBonus) * getHazardParityMult(heirloom);
 	return finalWithParity;
 }
 

@@ -1,75 +1,19 @@
-function ImportExportTooltip(what, event) {
-	cancelTooltip();
-	const tooltipDiv = document.getElementById('tooltipDiv');
-	let tooltipText;
-	let costText = '';
-	let ondisplay = null;
+function ImportExportTooltip(what, event) {}
 
-	if (document.getElementById('tipTitle').innerHTML === 'Spire Assault') autoBattle.help();
-
-	swapClass('tooltipExtra', 'tooltipExtraNone', tooltipDiv);
-
-	const eventHandlers = {
-		exportAutoTrimps: _displayExportAutoTrimps,
-		importAutoTrimps: _displayImportAutoTrimps,
-		spireImport: _displaySpireImport,
-		priorityOrder: _displayPriorityOrder,
-		c2table: _displayC2Table,
-		resetDefaultSettingsProfiles: _displayResetDefaultSettingsProfiles,
-		setCustomChallenge: _displaySetCustomChallenge,
-		timeWarp: _displayTimeWarp,
-		message: () => {}
+function _displayImportAutoTrimps(tooltipDiv) {
+	const tooltipText = "Import your AutoTrimps setting string to load those settings.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadAutoTrimps();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+	const ondisplay = function () {
+		_verticalCenterTooltip();
+		document.getElementById('importBox').focus();
 	};
 
-	const titleTexts = {
-		exportAutoTrimps: 'Export AutoTrimps Settings',
-		importAutoTrimps: 'Import AutoTrimps Settings',
-		spireImport: 'Import Spire Settings',
-		priorityOrder: 'Priority Order Table',
-		c2table: _getChallenge2Info() + ' Table',
-		resetDefaultSettingsProfiles: 'Reset Default Settings',
-		setCustomChallenge: 'Set Custom Challenge',
-		timeWarp: 'Time Warp Hours',
-		message: 'Generic Message'
-	};
-
-	const titleText = titleTexts[what] || what;
-
-	if (what === 'exportAutoTrimps') {
-		[tooltipText, costText, ondisplay] = _displayExportAutoTrimps();
-	} else if (what === 'importAutoTrimps') {
-		[tooltipText, costText, ondisplay] = _displayImportAutoTrimps();
-	} else if (what === 'spireImport') {
-		[tooltipText, costText, ondisplay] = _displaySpireImport();
-	} else if (what === 'priorityOrder') {
-		[tooltipText, costText, ondisplay] = _displayPriorityOrder();
-	} else if (what === 'c2table') {
-		[tooltipText, costText, ondisplay] = _displayC2Table();
-	} else if (what === 'resetDefaultSettingsProfiles') {
-		[tooltipText, costText] = _displayResetDefaultSettingsProfiles();
-	} else if (what === 'setCustomChallenge') {
-		[tooltipText, costText] = _displaySetCustomChallenge();
-	} else if (what === 'timeWarp') {
-		[tooltipText, costText] = _displayTimeWarp();
-	} else if (what === 'message') {
-		tooltipText = event;
-		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 50%' onclick='cancelTooltip();'>OK</div></div>";
-	}
-	if (what) {
-		game.global.lockTooltip = true;
-		tooltipDiv.style.left = '33.75%';
-		tooltipDiv.style.top = '25%';
-		tooltipDiv.style.display = 'block';
-		document.getElementById('tipTitle').innerHTML = titleText;
-		document.getElementById('tipText').innerHTML = tooltipText;
-		document.getElementById('tipCost').innerHTML = costText;
-		ondisplay && ondisplay();
-	}
-
-	if (event === 'downloadSave') _downloadSave(what);
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayExportAutoTrimps() {
+function _displayExportAutoTrimps(tooltipDiv) {
 	const tooltipText = `This is your AutoTrimp settings save string. There are many like it but this one is yours. 
 	Save this save somewhere safe so you can save time next time.<br/><br/>
 	<textarea id='exportArea' style='width: 100%' rows='5'>${serializeSettings()}</textarea>`;
@@ -89,6 +33,7 @@ function _displayExportAutoTrimps() {
 	`;
 
 	const ondisplay = () => {
+		_verticalCenterTooltip();
 		const exportArea = document.getElementById('exportArea');
 		const clipBoardBtn = document.getElementById('clipBoardBtn');
 
@@ -100,30 +45,42 @@ function _displayExportAutoTrimps() {
 		});
 	};
 
-	return [tooltipText, costText, ondisplay];
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayImportAutoTrimps() {
-	const tooltipText = "Import your AUTOTRIMPS save string! It'll be fine, I promise.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
-	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadAutoTrimps();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
+function _displayResetDefaultSettingsProfiles(tooltipDiv) {
+	const tooltipText = `This will restore your current AutoTrimps settings to their original values.<br/><br/>Are you sure you want to do this?`;
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); resetAutoTrimps();'>Reset to Default Profile</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
 	const ondisplay = function () {
-		document.getElementById('importBox').focus();
+		_verticalCenterTooltip();
 	};
 
-	return [tooltipText, costText, ondisplay];
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
-function _displaySpireImport() {
-	const tooltipText = `Import your SPIRE string! <br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>`;
+
+function _displaySpireImport(tooltipDiv) {
+	const tooltipText = `Import your Spire string! These are most typically acquired through the <a href="http://swaqvalley.com/td_calc" target="_blank">TD Calc website</a><br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>`;
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); tdStringCode2();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
 	const ondisplay = function () {
+		_verticalCenterTooltip();
 		document.getElementById('importBox').focus();
 	};
 
-	return [tooltipText, costText, ondisplay];
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayPriorityOrder() {
+function _displayPriorityOrder(tooltipDiv) {
 	const priority = getPriorityOrder();
+	let tooltipText = '';
 	/* const challengeList = challengesUnlockedObj(1, true, true);
 	const dropdowns = _getPriorityOrderDropdowns();
 
@@ -132,8 +89,10 @@ function _displayPriorityOrder() {
 	challengeText += `<div class='windowDisplay windowBoneDefault'><select value='${game.global.challengeActive}' id='windowBoneGatherDefault'>${dropdowns.universe}</select></div>`;
 	challengeText += `<div class='windowDisplay windowDefaultVoidMap'>Challenge</div>`;
 	challengeText += `<div class='windowDisplay windowBoneDefault'><select value='${game.global.challengeActive}' id='windowBoneGatherDefault'>${dropdowns.universe}</select></div>`;
-	challengeText += `</div>`; */
-	let tooltipText = challengeText + (Object.keys(priority).length > 18 ? `<div class='litScroll'>` : '');
+	challengeText += `</div>`; 
+	tooltipText += challengeText;
+	*/
+	tooltipText += Object.keys(priority).length > 18 ? `<div class='litScroll'>` : '';
 	tooltipText += `<table class='bdTableSm table table-striped'>
         <tbody>
             <tr>
@@ -177,11 +136,13 @@ function _displayPriorityOrder() {
 	const ondisplay = function () {
 		_verticalCenterTooltip(true);
 	};
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
 
-	return [tooltipText, costText, ondisplay];
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayC2Table() {
+function _displayC2Table(tooltipDiv) {
 	const challengeOrders = {
 		c2: ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Coordinate', 'Trimp', 'Obliterated', 'Eradicated', 'Mapology', 'Trapper'],
 		c3: ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Transmute', 'Duel', 'Wither', 'Glass', 'Smithless', 'Trappapalooza', 'Berserk']
@@ -321,27 +282,41 @@ function _displayC2Table() {
 	const ondisplay = function () {
 		_verticalCenterTooltip();
 	};
-	return [tooltipText, costText, ondisplay];
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayResetDefaultSettingsProfiles() {
-	const tooltipText = `This will reset your current AutoTrimps settings to the default settings.<br/><br/>Are you sure you want to do this?`;
-	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); resetAutoTrimps();'>Reset to Default Profile</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
-	return [tooltipText, costText];
-}
-
-function _displaySetCustomChallenge() {
-	const tooltipText = `This will set your current challenge to the challenge you enter.
-	<textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>`;
+function _displaySetCustomChallenge(tooltipDiv) {
+	const tooltipText = `This will set your current challenge to the challenge you enter.<br/><br/>
+	<textarea id='importBox' style='width: 100%' rows='1'></textarea>`;
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); testChallenge();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
-	return [tooltipText, costText];
+
+	const ondisplay = function () {
+		_verticalCenterTooltip();
+		document.getElementById('importBox').focus();
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayTimeWarp() {
-	const tooltipText = `This will time warp for the amount of hours you enter.
-	<textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>`;
+function _displayTimeWarp(tooltipDiv) {
+	const tooltipText = `This will time warp for the amount of hours you enter.<br/><br/>
+	<textarea id='importBox' style='width: 100%' rows='1'></textarea>`;
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); testTimeWarp();'>Activate Time Warp</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
-	return [tooltipText, costText];
+	const ondisplay = function () {
+		_verticalCenterTooltip();
+		document.getElementById('importBox').focus();
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
 function _downloadSave(what) {
@@ -428,9 +403,13 @@ function resetAutoTrimps(autoTrimpsSettings) {
 
 	const message = autoTrimpsSettings ? 'Successfully imported new AT settings...' : 'Successfully reset AT settings to Defaults...';
 	const tooltipMessage = autoTrimpsSettings ? 'Successfully imported Autotrimps settings file.' : 'Autotrimps has been successfully reset to its default settings!';
+	const title = autoTrimpsSettings ? 'Settings Imported' : 'Settings Reset';
 
 	debug(message, 'profile');
-	ImportExportTooltip('message', tooltipMessage);
+	tooltip(`${title}`, `customText`, `lock`, `${tooltipMessage}`, false, `center`);
+	_verticalCenterTooltip();
+	document.getElementById('tipCost').children[0].id = 'tipCostID';
+	document.getElementById('tipCostID').focus();
 	atSettings.running = true;
 }
 

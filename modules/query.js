@@ -1,41 +1,58 @@
-function getPerSecBeforeManual(a) {
-	var b = 0,
-		c = game.jobs[a].increase;
-	if ('custom' === c) return 0;
-	if (0 < game.jobs[a].owned) {
-		if (
-			((b = game.jobs[a].owned * game.jobs[a].modifier),
-			0 < game.portal.Motivation.level && (b += b * game.portal.Motivation.level * game.portal.Motivation.modifier),
-			game.global.universe === 1 && 0 < game.portal.Motivation_II.level && (b *= 1 + game.portal.Motivation_II.level * game.portal.Motivation_II.modifier),
-			game.global.universe === 1 && 0 < game.portal.Meditation.level && (b *= (1 + 0.01 * game.portal.Meditation.getBonusPercent()).toFixed(2)),
-			game.global.universe === 1 && 0 < game.jobs.Magmamancer.owned && 'metal' === c && (b *= game.jobs.Magmamancer.getBonusPercent()),
-			challengeActive('Meditate') ? (b *= 1.25) : challengeActive('Size') && (b *= 1.5),
-			challengeActive('Toxicity'))
-		) {
-			var d = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
-			b *= 1 + d;
+function calculatePerSecondRate(jobName) {
+	let rate = 0;
+	const increaseType = game.jobs[jobName].increase;
+
+	if (increaseType === 'custom') return 0;
+
+	if (game.jobs[jobName].owned > 0) {
+		rate = game.jobs[jobName].owned * game.jobs[jobName].modifier;
+
+		if (game.portal.Motivation.level > 0) rate += rate * game.portal.Motivation.level * game.portal.Motivation.modifier;
+
+		if (game.global.universe === 1) {
+			if (game.portal.Motivation_II.level > 0) rate *= 1 + game.portal.Motivation_II.level * game.portal.Motivation_II.modifier;
+
+			if (game.portal.Meditation.level > 0) rate *= (1 + 0.01 * game.portal.Meditation.getBonusPercent()).toFixed(2);
+
+			if (game.jobs.Magmamancer.owned > 0 && increaseType === 'metal') rate *= game.jobs.Magmamancer.getBonusPercent();
 		}
-		challengeActive('Balance') && (b *= game.challenges.Balance.getGatherMult()),
-			challengeActive('Decay') && ((b *= 10), (b *= Math.pow(0.995, game.challenges.Decay.stacks))),
-			challengeActive('Daily') && ('undefined' !== typeof game.global.dailyChallenge.dedication && (b *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength)), 'undefined' !== typeof game.global.dailyChallenge.famine && 'fragments' !== c && 'science' !== c && (b *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength))),
-			challengeActive('Watch') && (b /= 2),
-			challengeActive('Lead') && 1 === game.global.world % 2 && (b *= 2),
-			(b = calcHeirloomBonus('Staff', a + 'Speed', b));
+
+		if (challengeActive('Meditate')) rate *= 1.25;
+		else if (challengeActive('Size')) rate *= 1.5;
+
+		if (challengeActive('Toxicity')) {
+			const toxicityBonus = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
+			rate *= 1 + toxicityBonus;
+		}
+
+		if (challengeActive('Balance')) rate *= game.challenges.Balance.getGatherMult();
+
+		if (challengeActive('Decay')) {
+			rate *= 10;
+			rate *= Math.pow(0.995, game.challenges.Decay.stacks);
+		}
+
+		if (challengeActive('Daily')) {
+			if (typeof game.global.dailyChallenge.dedication !== 'undefined') {
+				rate *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
+			}
+
+			if (typeof game.global.dailyChallenge.famine !== 'undefined' && increaseType !== 'fragments' && increaseType !== 'science') {
+				rate *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
+			}
+		}
+
+		if (challengeActive('Watch')) rate /= 2;
+
+		if (challengeActive('Lead') && game.global.world % 2 === 1) rate *= 2;
+
+		rate = calcHeirloomBonus('Staff', jobName + 'Speed', rate);
 	}
-	return b;
-}
 
-function getCorruptedCellsNum() {
-	for (var a, b = 0, c = 0; c < game.global.gridArray.length - 1; c++) (a = game.global.gridArray[c]), 'Corruption' === a.mutation && b++;
-	return b;
+	return rate;
 }
-
-function getCorruptScale(a) {
-	return 'attack' === a ? mutations.Corruption.statScale(3) : 'health' === a ? mutations.Corruption.statScale(10) : void 0;
-}
-
-function isBuildingInQueue(a) {
-	for (var c in game.global.buildingsQueue) if (game.global.buildingsQueue[c].includes(a)) return !0;
+function isBuildingInQueue(buildingName) {
+	return game.global.buildingsQueue.some((queueItem) => queueItem.includes(buildingName));
 }
 
 function getCostToUpgrade(upgradeName, resource) {
@@ -54,9 +71,9 @@ function setResourceNeeded() {
 	};
 	const upgradeList = populateUpgradeList();
 
-	for (var upgrade in upgradeList) {
+	for (let upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
-		var gameUpgrade = game.upgrades[upgrade];
+		let gameUpgrade = game.upgrades[upgrade];
 		if (gameUpgrade.allowed > gameUpgrade.done) {
 			resourcesNeeded.science += getCostToUpgrade(upgrade, 'science');
 			if (upgrade === 'Trapstorm') continue;
@@ -71,58 +88,12 @@ function setResourceNeeded() {
 
 	//Looping through all equipment to get the cost of upgrading them as they aren't in the upgrade list
 	const equipmentList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
-	for (var prestigeName in equipmentList) {
+	for (let prestigeName in equipmentList) {
 		prestigeName = equipmentList[prestigeName];
 		if (game.upgrades[prestigeName].allowed > game.upgrades[prestigeName].done) resourcesNeeded.science += getCostToUpgrade(prestigeName, 'science');
 	}
 
 	return resourcesNeeded;
-}
-
-function getPotencyMod(howManyMoreGenes) {
-	var potencyMod = game.resources.trimps.potency;
-	//Add potency (book)
-	if (game.upgrades.Potency.done > 0) potencyMod *= Math.pow(1.1, game.upgrades.Potency.done);
-	//Add Nurseries
-	if (game.buildings.Nursery.owned > 0) potencyMod *= Math.pow(1.01, game.buildings.Nursery.owned);
-	//Add Venimp
-	if (game.unlocks.impCount.Venimp > 0) potencyMod *= Math.pow(1.003, game.unlocks.impCount.Venimp);
-	//Broken Planet
-	if (game.global.brokenPlanet) potencyMod /= 10;
-	//Pheromones
-	potencyMod *= 1 + game.portal.Pheromones.level * game.portal.Pheromones.modifier;
-	//Geneticist
-	if (!howManyMoreGenes) howManyMoreGenes = 0;
-	if (game.jobs.Geneticist.owned > 0) potencyMod *= Math.pow(0.98, game.jobs.Geneticist.owned + howManyMoreGenes);
-	//Quick Trimps
-	if (game.unlocks.quickTrimps) potencyMod *= 2;
-	//Daily mods
-	if (challengeActive('Daily')) {
-		if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined') {
-			potencyMod *= dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength);
-		}
-		if (typeof game.global.dailyChallenge.toxic !== 'undefined') {
-			potencyMod *= dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks);
-		}
-	}
-	if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0) {
-		potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks);
-	}
-	if (game.global.voidBuff === 'slowBreed') {
-		potencyMod *= 0.2;
-	}
-	potencyMod = calcHeirloomBonus('Shield', 'breedSpeed', potencyMod);
-	return potencyMod;
-}
-
-function getArmyTime() {
-	var breeding = game.resources.trimps.owned - game.resources.trimps.employed;
-	var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
-	var adjustedMax = game.portal.Coordinated.level ? game.portal.Coordinated.currentSend : game.resources.trimps.maxSoldiers;
-	var potencyMod = getPotencyMod();
-	var tps = breeding * potencyMod;
-	var addTime = adjustedMax / tps;
-	return addTime;
 }
 
 function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHealth, equalityStacks, dmgMult) {
@@ -134,19 +105,23 @@ function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHea
 }
 
 function formatTimeForDescriptions(number) {
-	var timeTaken = '';
-	var seconds = Math.floor(number % 60);
-	var minutes = Math.floor((number / 60) % 60);
-	var hours = Math.floor((number / 60 / 60) % 24);
-	var days = Math.floor((number / 60 / 60 / 24) % 365);
-	var years = Math.floor(number / 60 / 60 / 24 / 365);
-	if (years > 0) timeTaken += years + 'y';
-	if (days > 0) timeTaken += days + 'd';
-	if (hours > 0) timeTaken += hours + 'h';
-	if (minutes > 0) timeTaken += minutes + 'm';
-	timeTaken += seconds + 's';
+	const timeUnits = {
+		year: Math.floor(number / 60 / 60 / 24 / 365),
+		day: Math.floor((number / 60 / 60 / 24) % 365),
+		hour: Math.floor((number / 60 / 60) % 24),
+		minute: Math.floor((number / 60) % 60),
+		second: Math.floor(number % 60)
+	};
 
-	return timeTaken;
+	let timeString = '';
+
+	for (const [unit, value] of Object.entries(timeUnits)) {
+		if (value > 0) {
+			timeString += `${value}${unit[0]} `;
+		}
+	}
+
+	return timeString.trim();
 }
 
 function timeForFormatting(number) {

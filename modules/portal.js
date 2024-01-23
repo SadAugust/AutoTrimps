@@ -689,7 +689,7 @@ function resetVarsZone(loadingSave) {
 function downloadSave(portal) {
 	if (!getPageSetting('downloadSaves')) return;
 	if (portal && !portalWindowOpen) return;
-	ImportExportTooltip(null, 'downloadSave');
+	MAZLookalike(null, 'downloadSave');
 }
 
 function hypoPackratReset(challenge) {

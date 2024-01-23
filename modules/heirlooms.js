@@ -18,24 +18,19 @@ function evaluateHeirloomMods(loom, location) {
 	const rarity = heirloomLocation.rarity;
 	if ((getPageSetting('heirloomAutoRarityPlus') && rarity < raretokeep) || (!getPageSetting('heirloomAutoRarityPlus') && rarity !== raretokeep)) return 0;
 
-	//Will check if the heirloom is perfect and if it is, we will return infinity to make sure it is not recycled.
-	//If it is not perfect, we will return 0 to make sure it is recycled.
-	//Identify the setting prefix for the heirloom type
 	const varAffix = { Staff: 'heirloomAutoStaffMod', Shield: 'heirloomAutoShieldMod', Core: 'heirloomAutoCoreMod' }[heirloomType] || null;
 	const blacklist = getPageSetting(`heirloomAuto${heirloomType}Blacklist`);
 	const heirloomData = heirloomInfo(heirloomType);
 	let targetMods = [];
 	let emptyMods = 0;
 
-	//Increment through the setting inputs and push them to the targetMods array if not set to Any.
 	for (let x = 1; x < heirloomLocation.mods.length + 1; x++) {
 		const modSetting = getPageSetting(varAffix + x);
 		if (modSetting !== 'Any') targetMods.push(modSetting);
 	}
 
-	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
 	for (const mod of heirloomLocation.mods) {
-		modName = [mod][0][0];
+		let modName = [mod][0][0];
 		if (modName === 'empty') {
 			emptyMods++;
 			continue;
@@ -59,29 +54,24 @@ function evaluateHeirloomMods(loom, location) {
 function worthOfHeirlooms() {
 	const heirloomWorth = { Shield: [], Staff: [], Core: [] };
 
-	// Identify heirlooms to be recycled.
 	const recycle = game.global.heirloomsExtra
 		.map((_, index) => index)
 		.filter((index) => evaluateHeirloomMods(index, 'heirloomsExtra') === 0)
-		.reverse(); // Reverse the array
+		.reverse();
 
-	// Recycle heirlooms
 	for (const index of recycle) {
 		selectHeirloom(index, 'heirloomsExtra');
 		recycleHeirloom(true);
 	}
 
-	// Pushing data for remaining heirlooms
 	for (const [index, theLoom] of game.global.heirloomsExtra.entries()) {
 		const data = { location: 'heirloomsExtra', index, rarity: theLoom.rarity, eff: evaluateHeirloomMods(index, 'heirloomsExtra') };
 		heirloomWorth[theLoom.type].push(data);
 	}
 
-	function sortByEfficiency(heirlooms) {
+	Object.values(heirloomWorth).forEach((heirlooms) => {
 		heirlooms.sort((a, b) => b.eff - a.eff);
-	}
-
-	Object.values(heirloomWorth).forEach(sortByEfficiency);
+	});
 
 	return heirloomWorth;
 }
@@ -93,17 +83,17 @@ function autoHeirlooms(portal) {
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
 	const heirloomTypes = heirloomType === 'All' ? ['Shield', 'Staff', game.global.universe === 1 ? 'Core' : null] : [heirloomType];
+	const heirloomTypeEnabled = heirloomTypes.map((type) => getPageSetting(`heirloomAuto${type}`));
 
-	//Looping through the heirloom type set in typetokeep setting and stashing them.
 	while (game.global.heirloomsCarried.length < getMaxCarriedHeirlooms() && game.global.heirloomsExtra.length > 0) {
 		const heirloomWorth = worthOfHeirlooms();
-		for (const type of heirloomTypes) {
-			if (!type || heirloomWorth[type].length <= 0) continue;
+		heirloomTypes.forEach((type, index) => {
+			if (!type || heirloomWorth[type].length <= 0) return;
 			const carriedHeirlooms = heirloomWorth[type].shift();
 			selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-			if (getPageSetting('heirloomAuto' + type)) carryHeirloom();
+			if (heirloomTypeEnabled[index]) carryHeirloom();
 			else recycleHeirloom(true);
-		}
+		});
 	}
 }
 

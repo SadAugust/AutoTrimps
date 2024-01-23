@@ -215,7 +215,7 @@ function _getTimeWarpHours(inputHours) {
 		timeWarpHours = inputHours;
 	} else {
 		try {
-			timeWarpHours = parseNum(document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, ''));
+			timeWarpHours = parseNum(document.getElementById('importBox').value.replace(/[\n\r]/gm, ''));
 			if (!timeWarpHours) {
 				debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'test');
 			}
@@ -267,7 +267,7 @@ function testSpeedX(interval) {
 
 function testChallenge() {
 	//read the name in from tooltip
-	const challengeName = document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, '');
+	const challengeName = document.getElementById('importBox').value.replace(/[\n\r]/gm, '');
 	try {
 		if (challengeName === null || game.challenges[challengeName] === undefined) {
 			debug(`Challenge name didn't match one ingame.`, 'test');

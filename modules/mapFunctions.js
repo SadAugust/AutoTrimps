@@ -1408,7 +1408,6 @@ function prestigeRaidingMapping() {
 			_handlePrestigeFragMapBought();
 		} else {
 			fragmentFarm(true);
-			console.log('here');
 			mapSettings.prestigeFragMapBought = true;
 		}
 	}

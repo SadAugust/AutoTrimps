@@ -6,7 +6,16 @@ function MAZLookalike(event, titleText) {
 		UniqueMaps: uniqueMapsDisplay,
 		MessageConfig: messageDisplay,
 		DailyAutoPortal: dailyPortalModsDisplay,
-		c2Runner: c2RunnerDisplay
+		c2Runner: c2RunnerDisplay,
+		/* Import Export Functions */
+		exportAutoTrimps: _displayExportAutoTrimps,
+		importAutoTrimps: _displayImportAutoTrimps,
+		spireImport: _displaySpireImport,
+		priorityOrder: _displayPriorityOrder,
+		c2table: _displayC2Table,
+		resetDefaultSettingsProfiles: _displayResetDefaultSettingsProfiles,
+		setCustomChallenge: _displaySetCustomChallenge,
+		timeWarp: _displayTimeWarp
 	};
 
 	const titleTexts = {
@@ -15,14 +24,23 @@ function MAZLookalike(event, titleText) {
 		UniqueMaps: 'Unique Maps',
 		MessageConfig: 'Message Config',
 		DailyAutoPortal: 'Daily Auto Portal',
-		c2Runner: _getChallenge2Info() + ' Runner'
+		c2Runner: _getChallenge2Info() + ' Runner',
+		/* Import Export Titles */
+		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
+		importAutoTrimps: 'Import AutoTrimps Settings',
+		spireImport: 'Import Spire Settings',
+		priorityOrder: 'Priority Order Table',
+		c2table: _getChallenge2Info() + ' Table',
+		resetDefaultSettingsProfiles: 'Reset Default Settings',
+		setCustomChallenge: 'Set Custom Challenge',
+		timeWarp: 'Time Warp Hours'
 	};
 
 	cancelTooltip();
 	let tooltipDiv = document.getElementById('tooltipDiv');
 	let tooltipText;
 	let costText = '';
-	let ondisplay = null; //Called after the tooltip is displayed if not null
+	let ondisplay = null;
 	if (event !== 'mapSettings') swapClass('tooltipExtra', 'tooltipExtraNone', tooltipDiv);
 
 	if (eventHandlers[event]) {
@@ -30,12 +48,17 @@ function MAZLookalike(event, titleText) {
 		[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText);
 	}
 
-	document.getElementById('tipText').className = '';
-	document.getElementById('tipText').innerHTML = tooltipText;
-	document.getElementById('tipTitle').innerHTML = titleText;
-	document.getElementById('tipCost').innerHTML = costText;
-	tooltipDiv.style.display = 'block';
-	if (ondisplay !== null) ondisplay();
+	if (event) {
+		game.global.lockTooltip = true;
+		document.getElementById('tipText').className = '';
+		document.getElementById('tipText').innerHTML = tooltipText;
+		document.getElementById('tipTitle').innerHTML = titleText;
+		document.getElementById('tipCost').innerHTML = costText;
+		tooltipDiv.style.display = 'block';
+		if (typeof ondisplay === 'function') ondisplay();
+	}
+
+	if (titleText === 'downloadSave') _downloadSave(event);
 }
 
 function mapSettingsDisplay(elem, titleText) {
@@ -143,7 +166,6 @@ function mapSettingsDisplay(elem, titleText) {
 		</div>`;
 	const ondisplay = null;
 
-	game.global.lockTooltip = true;
 	elem.style.top = '10%';
 	elem.style.left = '1%';
 	elem.style.height = 'auto';
@@ -1128,7 +1150,7 @@ function mapSettingsHelpWindow(titleText) {
 		mazHelp += '<li><b>End Zone</b> - The upper bound zone to run voids maps on.</li>';
 		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the Auto Maps status tooltip.</li>";
 		mazHelp += '<li class="indent">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you\'ve selected one of Hits Survived, Hits Survived Void it will check if the value is lower than it and skip if it is. Disabled just skips checking that input.<br></li>';
-		mazHelp += "<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run. Won't do anything if AutoPortal is disabled!</b></li>";
+		mazHelp += '<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run.</b></li>';
 	}
 
 	if (mapFarm) {
@@ -1620,7 +1642,7 @@ function autoStructureDisplay(elem) {
 	tooltipText += autoStructureTable(settingGroup, hze);
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='autoStructureSave()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
-	game.global.lockTooltip = true;
+
 	const ondisplay = () => _verticalCenterTooltip(false, true);
 
 	return [elem, tooltipText, costText, ondisplay];
@@ -1783,7 +1805,7 @@ function autoJobsDisplay(elem) {
 	autoRatios += '<br><b>1/1/10</b> When above 1000 tributes.';
 	autoRatios += '<br><b>1/2/22</b> When above 1500 tributes.';
 	autoRatios += '<br><b>1/7/12</b> When above 3000 tributes and at or above z230.';
-	autoRatios += '<br><b>1/1/98</b> When at or above z300.';
+	autoRatios += '<br><b>1/1/100</b> When at or above z300.';
 	if (game.global.universe === 2) autoRatios += '<br><b>1/1/1</b> When using a Hazardous or better heirloom.';
 	autoRatios += '</p>';
 
@@ -1811,7 +1833,6 @@ function autoJobsDisplay(elem) {
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='autoJobsSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 
-	game.global.lockTooltip = true;
 	elem.style.left = '33.75%';
 	elem.style.top = '25%';
 	const ondisplay = () => _verticalCenterTooltip(true);
@@ -1971,7 +1992,6 @@ function uniqueMapsDisplay(elem) {
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='uniqueMapsSave()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 
-	game.global.lockTooltip = true;
 	const ondisplay = () => _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);
 	return [elem, tooltipText, costText, ondisplay];
 }
@@ -2073,7 +2093,7 @@ function messageDisplay(elem) {
 	tooltipText += '</div>';
 
 	const ondisplay = () => _verticalCenterTooltip();
-	game.global.lockTooltip = true;
+
 	elem.style.top = '25%';
 	elem.style.left = '35%';
 
@@ -2191,7 +2211,7 @@ function dailyPortalModsDisplay(elem) {
 	tooltipText += '</div></td></tr>';
 	tooltipText += '</tbody></table>';
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='dailyPortalModsSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
-	game.global.lockTooltip = true;
+
 	elem.style.left = '33.75%';
 	elem.style.top = '25%';
 	const ondisplay = () => _verticalCenterTooltip(true);
@@ -2305,7 +2325,6 @@ function c2RunnerDisplay(elem) {
 
 	tooltipText += '</div></td></tr>';
 	tooltipText += '</tbody></table>';
-	game.global.lockTooltip = true;
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='c2RunnerSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 	elem.style.width = '45%';

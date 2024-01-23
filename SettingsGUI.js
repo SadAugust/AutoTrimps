@@ -1924,7 +1924,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>";
 				description += "<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip("c2table")', 'C2', [0]);
+			}, 'infoclick', null, 'MAZLookalike("c2table")', 'C2', [0]);
 
 		createSetting('c2SharpTrimps',
 			function () { return (_getChallenge2Info() + ' Sharp Trimps') },
@@ -4247,25 +4247,25 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Import a AutoTrimps settings file.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip("importAutoTrimps")', 'Import Export', [0]);
+			}, 'infoclick', null, 'MAZLookalike("importAutoTrimps")', 'Import Export', [0]);
 		createSetting('exportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
 				let description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip("exportAutoTrimps")', 'Import Export', [0]);
+			}, 'infoclick', null, 'MAZLookalike("exportAutoTrimps")', 'Import Export', [0]);
 		createSetting('defaultAutoTrimps',
 			function () { return ('Reset To Default') },
 			function () {
 				let description = "<p>Reset everything to the way it was when you first installed the script.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip("resetDefaultSettingsProfiles")', 'Import Export', [0]);
+			}, 'infoclick', null, 'MAZLookalike("resetDefaultSettingsProfiles")', 'Import Export', [0]);
 		createSetting('downloadForDebug',
 			function () { return ('Download For Debug') },
 			function () {
 				let description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
+			}, 'action', null, 'MAZLookalike("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
 
 		createSetting('updateReload',
 			function () { return ('Reload For Updates') },
@@ -4345,7 +4345,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip("priorityOrder")', 'Help', [0]);
+			}, 'action', null, 'MAZLookalike("priorityOrder")', 'Help', [0]);
 		/* createSetting('helpFragments',
 			function () { return ('Fragment Decisions') },
 			function () {
@@ -4381,7 +4381,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will set the challenge that Trimps is running to your input.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip("setCustomChallenge");', 'Test', [0]);
+			}, 'action', null, 'MAZLookalike("setCustomChallenge");', 'Test', [0]);
 
 		createSetting('testSetC2',
 			function () { return ('Toggle ' + _getChallenge2Info()) },
@@ -4412,7 +4412,7 @@ function initialiseAllSettings() {
 				let description = "<p>Allows you to input how many hours of Time Warp you would like to do.</p>";
 				description += "<p>If you input a value higher than 24 it will increase the max time you can time warp for to the value you have input.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip("timeWarp");', 'Test', [0]);
+			}, 'action', null, 'MAZLookalike("timeWarp");', 'Test', [0]);
 
 		createSetting('testTotalEquipmentCost',
 			function () { return ('Total Equipment Cost') },

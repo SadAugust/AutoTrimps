@@ -25,9 +25,7 @@ function tooltipAT(what, event, textString, headingName) {
 	swapClass('tooltipExtra', 'tooltipExtraNone', elem);
 	document.getElementById('tipText').className = '';
 	let ondisplay = null;
-	openTooltip = null;
-
-	let tooltipText;
+	let tooltipText = '';
 	let costText = '';
 	let titleText = '';
 
@@ -50,19 +48,19 @@ function tooltipAT(what, event, textString, headingName) {
 
 			if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
 				const presetMessages = {
-					1: "This preset will be loaded when portaling into Filler challenges with the 'Preset Swap Mutators' setting enabled.",
-					2: "This preset will be loaded when portaling into Daily challenges with the 'Preset Swap Mutators' setting enabled.",
-					3: "This preset will be loaded when portaling into C3 or special challenges (Mayhem, Pandemonium, Desolation) with the 'Preset Swap Mutators' setting enabled."
+					1: 'This preset will be loaded when portaling into <b>Filler</b> challenges with the <b>Preset Swap Mutators</b> setting enabled.',
+					2: 'This preset will be loaded when portaling into <b>Daily</b> challenges with the <b>Preset Swap Mutators</b> setting enabled.',
+					3: 'This preset will be loaded when portaling into <b>C3 or special challenges (Mayhem, Pandemonium, Desolation)</b> with the <b>Preset Swap Mutators</b> setting enabled.'
 				};
 
-				tooltipText += `<p style='font-weight: bold'>${presetMessages[textString] || ''}</p><br>`;
+				tooltipText += `<p>${presetMessages[textString] || ''}</p>`;
 			}
 
 			what = headingName;
 			if (isObjectEmpty(preset) || Object.keys(preset).length <= 1) {
-				tooltipText += "<span class='red'>This Preset slot is empty!</span> Select this slot and then click 'Save' to save your current Mutator configuration to this slot.";
+				tooltipText += "<span class='red'>This preset slot is empty!</span> Select this slot and then click 'Save' to save your current Mutator configuration to this slot.";
 			} else {
-				tooltipText += "<p style='font-weight: bold'>This Preset holds " + preset.purchaseCount + ' mutators:</p>';
+				tooltipText += "<p style='font-weight: bold'>This preset holds " + preset.purchaseCount + ' mutators:</p>';
 				let count = 0;
 				const colorMapping = {
 					Scruffy: 'Yellow',
@@ -158,7 +156,7 @@ function loadMutations(preset = MODULES.mutatorPreset.selected) {
 	if (Object.keys(saveData).length === 0) return;
 	const outerRing = [];
 
-	for (var item in u2Mutations.tree) {
+	for (let item in u2Mutations.tree) {
 		if (item.purchased) continue;
 		if (saveData[item] === true) {
 			if (!u2Mutations.checkRequirements(item)) outerRing.push(item);
@@ -168,7 +166,7 @@ function loadMutations(preset = MODULES.mutatorPreset.selected) {
 
 	while (outerRing.length > 0 && game.global.mutatedSeeds > u2Mutations.nextCost()) {
 		if (!u2Mutations.checkRequirements(outerRing[0])) outerRing.push(outerRing.shift());
-		var mutName = outerRing[0];
+		const mutName = outerRing[0];
 		if (u2Mutations.checkRequirements(mutName)) {
 			u2Mutations.purchase(mutName);
 			outerRing.shift();
@@ -181,15 +179,15 @@ function loadMutations(preset = MODULES.mutatorPreset.selected) {
 
 function renameMutations(needTooltip) {
 	if (MODULES.mutatorPreset.selected === 0) return;
-	var mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
-	var presetGroup = mutatorObj['preset' + MODULES.mutatorPreset.selected];
+	let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	let presetGroup = mutatorObj['preset' + MODULES.mutatorPreset.selected];
 
 	if (needTooltip) {
 		tooltipAT('Rename Preset', 'update');
 		return;
 	}
 
-	var elem = document.getElementById('renamePresetBox');
+	const elem = document.getElementById('renamePresetBox');
 	if (!elem || !elem.value) return;
 	presetGroup.name = htmlEncode(elem.value.substring(0, 25));
 	cancelTooltip();
@@ -207,9 +205,9 @@ function renameMutations(needTooltip) {
 function resetMutations() {
 	if (MODULES.mutatorPreset.selected === 0) return;
 
-	var mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
-	var mutatorObjPreset = mutatorObj['preset' + MODULES.mutatorPreset.selected];
-	var presetName = mutatorObjPreset.name ? mutatorObjPreset.name : MODULES.mutatorPreset.selected;
+	let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	let mutatorObjPreset = mutatorObj['preset' + MODULES.mutatorPreset.selected];
+	let presetName = mutatorObjPreset.name ? mutatorObjPreset.name : MODULES.mutatorPreset.selected;
 	mutatorObj['preset' + MODULES.mutatorPreset.selected] = {
 		name: presetName
 	};
@@ -218,6 +216,7 @@ function resetMutations() {
 		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
 		saveSettings();
 	}
+
 	localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
 }
 
@@ -227,7 +226,7 @@ function presetMutations() {
 
 	//Initial setup of localStorage if it doesn't exist
 	if (typeof localStorage['mutatorPresets'] === 'undefined') {
-		var mutatorObj = {
+		let mutatorObj = {
 			preset1: { name: 1 },
 			preset2: { name: 2 },
 			preset3: { name: 3 }
@@ -241,23 +240,23 @@ function presetMutations() {
 
 	//Setting up initial variables that will be called later during for loop
 	const containerID = ['u2MutPresetBtn1', 'u2MutPresetBtn2', 'u2MutPresetBtn3', 'u2MutSave', 'u2MutLoad', 'u2MutRename', 'u2MutReset'];
-	var containerText = ['1', '2', '3', 'Save', 'Load', 'Rename', 'Reset'];
+	const containerText = ['1', '2', '3', 'Save', 'Load', 'Rename', 'Reset'];
 	const onClick = ['presetMutTab(1)', 'presetMutTab(2)', 'presetMutTab(3)', 'saveMutations()', 'loadMutations(MODULES.mutatorPreset.selected)', 'renameMutations(true)', 'resetMutations()'];
 
 	//If there are presets saved, then we will use those names instead of the default ones
 	//This will also allow for the user to change the names of the presets
-	var mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
 
-	for (var x = 1; x <= 3; x++) {
+	for (let x = 1; x <= 3; x++) {
 		if (mutatorObj['preset' + x].name) containerText[x - 1] = mutatorObj['preset' + x].name;
 	}
 
 	document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
-	for (var x = containerID.length; x > 0; x--) {
+	for (let x = containerID.length; x > 0; x--) {
 		//Insert break to replace later
 		document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
 
-		var u2MutContainer = document.createElement('SPAN');
+		const u2MutContainer = document.createElement('SPAN');
 		u2MutContainer.setAttribute('style', 'font-size: 1.1em; margin-top: 0.25em;');
 		u2MutContainer.setAttribute('id', containerID[x - 1]);
 		//Disable save/load buttons if no preset is selected
@@ -265,13 +264,13 @@ function presetMutations() {
 		//Set button class based on selected preset
 		else if (x === MODULES.mutatorPreset.selected) u2MutContainer.setAttribute('class', 'btn btn-lg btn-success');
 		else u2MutContainer.setAttribute('class', 'btn btn-lg btn-info');
-		var presetText = x <= 3 ? 'Preset: ' : '';
+		const presetText = x <= 3 ? 'Preset: ' : '';
 		u2MutContainer.setAttribute('onmouseover', 'tooltipAT("Mutator Preset", event, ' + x + ', "' + presetText + containerText[x - 1] + '")');
 		u2MutContainer.setAttribute('onmouseout', 'tooltip("hide")');
 		u2MutContainer.innerHTML = presetText + containerText[x - 1];
 		u2MutContainer.setAttribute('onClick', onClick[x - 1]);
 
-		var u2MutColumn = document.getElementById('swapToMasteryBtn').parentNode;
+		const u2MutColumn = document.getElementById('swapToMasteryBtn').parentNode;
 		//Replace earlier line break with setup element & then inserting another one
 		u2MutColumn.replaceChild(u2MutContainer, document.getElementById('swapToMasteryBtn').parentNode.children[3]);
 		document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');

@@ -165,7 +165,7 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 				},
 				unlockedIn: ['c2']
 			},
-			Frigid: { unlockZone: 460, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			Frigid: { unlockZone: 460, unlockedIn: ['c2', 'autoPortal'] },
 			Experience: { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
 			//Fused Challenges - These need to go in reverse order of when they unlock.
 			Toxad: {
@@ -228,17 +228,17 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 			Revenge: { unlockZone: 80, unlockedIn: ['oneOff'] },
 			Quest: { unlockZone: 85, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
 			Archaeology: { unlockZone: 90, unlockedIn: ['heHr', 'autoPortal'] },
-			Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'autoPortal'] },
 			Storm: { unlockZone: 105, unlockedIn: ['c2', 'oneOff'] },
 			Insanity: { unlockZone: 110, unlockedIn: ['heHr', 'autoPortal'] },
 			Berserk: { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
 			Exterminate: { unlockZone: 120, unlockedIn: ['oneOff'] },
 			Nurture: { unlockZone: 130, unlockedIn: ['heHr', 'autoPortal'] },
-			Pandemonium: { unlockZone: 150, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			Pandemonium: { unlockZone: 150, unlockedIn: ['c2', 'autoPortal'] },
 			Alchemy: { unlockZone: 155, unlockedIn: ['heHr', 'autoPortal'] },
 			Hypothermia: { unlockZone: 175, unlockedIn: ['heHr', 'autoPortal'] },
 			Glass: { unlockZone: 175, unlockedIn: ['c2', 'oneOff'] },
-			Desolation: { unlockZone: 200, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			Desolation: { unlockZone: 200, unlockedIn: ['c2', 'autoPortal'] },
 			Smithless: { unlockZone: 201, unlockedIn: ['c2', 'oneOff'] }
 		};
 	}
