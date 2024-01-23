@@ -70,9 +70,8 @@ function tooltipAT(what, event, textString, headingName) {
 				};
 
 				for (let item in preset) {
-					if (item === 'name' || item === 'purchaseCount' || preset[item] === false) continue;
-					let mutName = item;
-					if (u2Mutations.tree[item].dn) mutName = u2Mutations.tree[item].dn;
+					if (['name', 'purchaseCount'].includes(item) || !preset[item]) continue;
+					const mutName = u2Mutations.tree[item].dn ? u2Mutations.tree[item].dn : item;
 
 					if (colorMapping[mutName]) {
 						if (count > 0) tooltipText += '<br><br>';
@@ -112,7 +111,6 @@ function tooltipAT(what, event, textString, headingName) {
 	}
 
 	titleText = titleText ? titleText : what;
-	lastTooltipTitle = titleText;
 
 	document.getElementById('tipTitle').innerHTML = titleText;
 	document.getElementById('tipText').innerHTML = tooltipText;
