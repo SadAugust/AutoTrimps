@@ -86,8 +86,8 @@ function autoHeirlooms(portal) {
 	const heirloomTypeEnabled = heirloomTypes.map((type) => getPageSetting(`heirloomAuto${type}`));
 
 	while (game.global.heirloomsCarried.length < getMaxCarriedHeirlooms() && game.global.heirloomsExtra.length > 0) {
-		const heirloomWorth = worthOfHeirlooms();
 		heirloomTypes.forEach((type, index) => {
+			const heirloomWorth = worthOfHeirlooms();
 			if (!type || heirloomWorth[type].length <= 0) return;
 			const carriedHeirlooms = heirloomWorth[type].shift();
 			selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');

@@ -135,7 +135,7 @@ function handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, 
 		doPortal(challenge, skipDaily);
 
 		setTimeout(() => {
-			debug(`My ${resourceType}Hr was: ${prettify(myHeliumHr)} & the Best ${resourceType}Hr was: ${prettify(bestHeHr)} at zone: ${bestHeHrZone}`, 'portal');
+			debug(`My ${resourceType}Hr was: ${prettify(myHeliumHr)} & the Best ${resourceType}Hr was: ${prettify(bestHeHr)} at zone ${bestHeHrZone}`, 'portal');
 		}, 1000);
 	} else {
 		_handleHeHrPortalDelay(resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily);
@@ -167,7 +167,7 @@ function _handleHeHrPortalDelay(resourceType, myHeliumHr, bestHeHr, bestHeHrZone
 		doPortal(challenge, skipDaily);
 
 		setTimeout(() => {
-			debug(`My ${resourceType}Hr was: ${prettify(myHeliumHr)} & the Best ${prettify(resourceType)}Hr was: ${prettify(bestHeHr)} at zone: ${bestHeHrZone}`, 'portal');
+			debug(`My ${resourceType}Hr was: ${prettify(myHeliumHr)} & the Best ${resourceType}Hr was: ${prettify(bestHeHr)} at zone ${bestHeHrZone}`, 'portal');
 		}, 1000);
 	}, MODULES.portal.timeout + 100);
 }
@@ -358,7 +358,8 @@ function doPortal(challenge, skipDaily) {
 	//Cancel out of dailies/c2s/buble if we're running any of them
 	if (challengeActive('Daily') || game.global.runningChallengeSquared || challengeActive('Bublé')) {
 		if (challengeActive('Daily') && (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0'))) {
-			MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+			const dailyMods = dailyModifiersOutput();
+			MODULES.portal.dailyMods = dailyMods ? dailyMods.replace(/<br>/g, '|').slice(0, -1) : '';
 			MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
 		}
 		confirmAbandonChallenge();
@@ -409,7 +410,7 @@ function doPortal(challenge, skipDaily) {
 
 	//Running C∞ runner
 	c2Runner();
-	if (!challengeSquaredMode) debug(`C${portalUniverse + 1} Runner: All C ${portalUniverse + 1}'s above level threshold!`, 'portal');
+	if (!challengeSquaredMode) debug(`C${portalUniverse + 1} Runner: All C${portalUniverse + 1}'s above level threshold!`, 'portal');
 
 	//Running Dailies
 	if (!skipDaily && (currChall === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {

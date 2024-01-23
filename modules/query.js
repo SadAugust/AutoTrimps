@@ -1,4 +1,4 @@
-function calculatePerSecondRate(jobName) {
+function getPerSecBeforeManual(jobName) {
 	let rate = 0;
 	const increaseType = game.jobs[jobName].increase;
 
