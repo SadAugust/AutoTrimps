@@ -86,7 +86,7 @@ function buyJobs(forceRatios) {
 
 function _calculateFreeWorkers(owned, employed) {
 	const maxTrimps = game.resources.trimps.realMax();
-	const currentFreeWorkers = Math.ceil(Math.min(maxTrimps / 2), owned) - employed;
+	const currentFreeWorkers = Math.ceil(Math.min(maxTrimps / 2, owned)) - employed;
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const ratioWorkerCount = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 	return currentFreeWorkers + ratioWorkerCount;
