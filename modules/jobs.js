@@ -17,11 +17,12 @@ function safeBuyJob(jobTitle, amount) {
 		game.global.buyAmt = 'Max';
 		game.global.maxSplit = 1;
 		result = canAffordJobCheck(jobTitle, amount);
+		amount = calculateMaxAfford(jobTitle, false, false, true);
 	}
 
 	if (result) {
-		debug(`${game.global.firing ? 'Firing' : 'Hiring'} ${prettify(amount)} ${jobTitle}${addAnS(amount)}`, 'jobs', '*users');
 		buyJob(jobTitle, true, true);
+		debug(`${game.global.firing ? 'Firing' : 'Hiring'} ${prettify(amount)} ${jobTitle}${addAnS(amount)}`, 'jobs', '*users');
 		if (game.global.firing !== fireState) fireMode_AT();
 	}
 
@@ -113,13 +114,22 @@ function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
 	freeWorkers = owned - employed + ratioWorkerCount;
 	if ((!game.global.fighting || game.global.soldierHealth <= 0) && freeWorkers > maxSoldiers) freeWorkers -= maxSoldiers;
 	if (getPageSetting('trapper')) {
-		let coordTarget = getPageSetting('trapperCoords') - 1;
-		if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
-		const nextCoordCost = Math.ceil(1.25 * maxSoldiers) - maxSoldiers;
+		const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
+		let coordTarget = getPageSetting('trapperCoords');
 		const { done, allowed } = game.upgrades.Coordination;
-		const canBuyCoordination = done < coordTarget && done !== allowed;
+		const nextCoordCost = Math.ceil(1.25 * maxSoldiers) - maxSoldiers;
 
-		if (freeWorkers > nextCoordCost && canBuyCoordination) freeWorkers -= nextCoordCost;
+		if (trappaCoordToggle === 1) {
+			coordTarget--;
+			if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
+			const canBuyCoordination = done < coordTarget && done !== allowed;
+			if (freeWorkers > nextCoordCost && canBuyCoordination) freeWorkers -= nextCoordCost;
+		}
+
+		if (trappaCoordToggle === 2) {
+			const shouldBuyCoord = coordTarget > game.resources.trimps.maxSoldiers * 1.25;
+			if (freeWorkers > nextCoordCost && done !== allowed && shouldBuyCoord) freeWorkers -= nextCoordCost;
+		}
 	}
 
 	const reserveMod = 1 + game.resources.trimps.owned / 1e8;
@@ -272,15 +282,22 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const totalFraction = desiredRatios.reduce((a, b) => a + b, 0) || 1;
 	const desiredWorkers = [0, 0, 0, 0];
+	let ownedWorkers = 0;
 	let totalWorkerCost = 0;
 
 	for (let i = 0; i < ratioWorkers.length; i++) {
+		ownedWorkers += game.jobs[ratioWorkers[i]].owned;
 		desiredWorkers[i] = Math.floor((freeWorkers * desiredRatios[i]) / totalFraction - game.jobs[ratioWorkers[i]].owned);
 		if (desiredWorkers[i] > 0) totalWorkerCost += game.jobs[ratioWorkers[i]].cost.food * desiredWorkers[i];
 	}
 
 	if (totalWorkerCost > game.resources.food.owned) {
-		safeBuyJob('Farmer', freeWorkers);
+		if (game.jobs.Farmer.owned > 0) {
+			safeBuyJob('Farmer', freeWorkers - ownedWorkers);
+		} else {
+			fireAllWorkers();
+			safeBuyJob('Farmer', freeWorkers);
+		}
 	} else {
 		for (let i = 0; i < desiredWorkers.length; i++) {
 			if (desiredWorkers[i] > 0) continue;

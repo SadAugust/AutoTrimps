@@ -564,7 +564,6 @@ function mapBonus(lineCheck) {
 		mapName
 	};
 
-	//Initialise variables
 	const settingName = 'mapBonusSettings';
 	const baseSettings = getPageSetting(settingName);
 	const defaultSettings = baseSettings ? baseSettings[0] : null;
@@ -1436,7 +1435,7 @@ function _handlePrestigeFragMapBought() {
 	if (mapSettings.prestigeFragMapBought) {
 		if (game.global.repeatMap) repeatClicked();
 		if (game.global.preMapsActive) {
-			mapSettings.prestigeFragMapBought = false;
+			delete mapSettings.prestigeFragMapBought;
 			MODULES.maps.fragmentFarming = false;
 		}
 	}
@@ -3634,7 +3633,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		if (mapSettings.dropdown) {
 			message += `<br>\n`;
 			message += `${mapSettings.dropdown.name} (Start: ${prettify(mapSettings.dropdown.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown.name])})<br>\n`;
-			message += `${mapSettings.dropdown2.name} (Start: ${prettify(mapSettings.dropdown2.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown2.name])})`;
+			if (mapSettings.dropdown2) message += `${mapSettings.dropdown2.name} (Start: ${prettify(mapSettings.dropdown2.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown2.name])})`;
 		}
 	} else if (mapName === 'Hits Survived') message += ` Finished with hits survived at ${prettify(whichHitsSurvived())}/${targetHitsSurvived()}.`;
 	else if (mapName === 'HD Farm' && extra !== null) message += ` Finished with a HD Ratio of ${extra.toFixed(2)}/${extra2.toFixed(2)}.`;

@@ -845,7 +845,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 				thisSetting.cell = Math.min(Math.max(thisSetting.cell, 1), 100);
 			}
 		}
-		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) thisSetting.level = Math.max(parseInt(document.getElementById('windowLevel' + x).value, 10), 10);
+		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) thisSetting.level = Math.min(parseInt(document.getElementById('windowLevel' + x).value, 10), 10);
 		if (smithyFarm || mapBonus) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
 		if (hdFarm) {
 			thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);

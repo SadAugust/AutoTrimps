@@ -27,7 +27,7 @@ function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
 
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
 	const mapBonusConditions = [
-		{ condition: mapName === 'Map Bonus', level: mapBonusLevel },
+		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel, level: mapBonusLevel },
 		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth'), level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
@@ -47,11 +47,11 @@ function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
 function callAutoMapLevel_new(mapName, special) {
 	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking'];
 	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
+	const lootFunction = mapName === 'Desolation Destacking' ? lootDestack : lootDefault;
 	const mapModifiers = {
 		special: special || trimpStats.mapSpecial,
 		biome: mapSettings.biome || trimpStats.mapBiome
 	};
-	const lootFunction = mapName === 'Desolation Destacking' ? lootDestack : lootDefault;
 
 	if (hdStats.autoLevelZone !== game.global.world) {
 		hdStats.autoLevelZone = game.global.world;
@@ -74,7 +74,7 @@ function callAutoMapLevel_new(mapName, special) {
 
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
 	const mapBonusConditions = [
-		{ condition: mapName === 'Map Bonus', level: mapBonusLevel },
+		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel, level: mapBonusLevel },
 		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth'), level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
@@ -570,35 +570,33 @@ function stats(lootFunction = lootDefault) {
 	return [stats, saveData.stances];
 }
 
-function lootDefault(zone, saveData)
-{
+function lootDefault(zone, saveData) {
 	return 100 * (zone < saveData.zone ? 0.8 ** (saveData.zone - saveData.reducer - zone) : 1.1 ** (zone - saveData.zone));
 }
 
-function lootDestack(zone, saveData)
-{
+function lootDestack(zone, saveData) {
 	return zone < saveData.zone ? 0 : zone - saveData.zone + 1;
 }
 
 //Return efficiency stats for the given zone
-function zone_stats(zone, stances = 'X', saveData, lootFunction) {
+function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 	const result = {
 		mapLevel: zone - saveData.zone,
 		zone: 'z' + zone,
 		value: 0,
 		killSpeed: 0,
-		stance: 'X',
+		stance: '',
 		loot: lootFunction(zone, saveData),
 		canAffordPerfect: saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9])
 	};
 
 	//Loop through all stances to identify which stance is best for farming
 	for (let stance of stances) {
-		saveData.atk = saveData.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
+		saveData.atk = saveData.attack * (stance === 'D' ? 4 : stance === 'X' ? 1 : 0.5);
 		if (mastery('bionic2') && zone > saveData.zone) saveData.atk *= 1.5;
-		const simulationResults = simulate(saveData, zone, stance);
+		const simulationResults = simulate(saveData, zone);
 		const speed = simulationResults.speed;
-		const value = speed * result.loot * (stance == 'S' ? 2 : 1);
+		const value = speed * result.loot * (stance === 'S' ? 2 : 1);
 		const equality = simulationResults.equality;
 		const killSpeed = simulationResults.killSpeed;
 		result[stance] = {
