@@ -160,7 +160,7 @@ function sciUpgrades() {
 }
 
 function populateUpgradeList() {
-	var upgradeList = [];
+	let upgradeList = [];
 
 	if (challengeActive('Scientist')) upgradeList = sciUpgrades();
 	else {
@@ -207,31 +207,36 @@ function populateUpgradeList() {
 			'Prismatic',
 			'Prismalicious'
 			//Equipment Prestiges -- Excluded from the setResourceNeeded & buyUpgrade functions so don't need to be in the list
-			//'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP', 'Supershield'
 		];
 	}
 	return upgradeList;
 }
 
 function buyUpgrades() {
-	var upgradeSetting = getPageSetting('upgradeType');
+	const upgradeSetting = getPageSetting('upgradeType');
 	if (upgradeSetting === 0) return;
 
 	const upgradeList = populateUpgradeList();
-	for (var upgrade in upgradeList) {
+	for (let upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
-		var gameUpgrade = game.upgrades[upgrade];
-		var available = gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade);
+		const gameUpgrade = game.upgrades[upgrade];
+		const available = gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade);
 		if (!available) continue;
 		if (upgrade === 'Coordination') {
 			//Coord & Amals
 			if (upgradeSetting === 2 || !canAffordCoordinationTrimps()) continue;
 			//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
 			if (challengeActive('Trappapalooza') || (challengeActive('Trapper') && getPageSetting('trapper'))) {
-				var coordTarget = getPageSetting('trapperCoords');
-				if (coordTarget > 0) coordTarget--;
-				if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
-				if (coordTarget > 0 && game.upgrades.Coordination.done >= coordTarget) continue;
+				const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
+				let coordTarget = getPageSetting('trapperCoords');
+				if (trappaCoordToggle === 1) {
+					if (coordTarget > 0) coordTarget--;
+					if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
+					if (coordTarget > 0 && gameUpgrade.done >= coordTarget) continue;
+				}
+				if (trappaCoordToggle === 2) {
+					if (game.resources.trimps.maxSoldiers * 1.25 > coordTarget) continue;
+				}
 				buyJobs();
 			}
 		}

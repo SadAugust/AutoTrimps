@@ -116,7 +116,7 @@ function formatTimeForDescriptions(number) {
 	let timeString = '';
 
 	for (const [unit, value] of Object.entries(timeUnits)) {
-		if (value > 0) {
+		if (value > 0 || unit === 'second') {
 			timeString += `${value}${unit[0]} `;
 		}
 	}

@@ -323,24 +323,21 @@ function setupHeirloomUI() {
 			},
 			VMWeight: {
 				name: 'Weight: Void Maps',
-				description:
-					'VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain.',
+				description: 'VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 12
 			},
 			XPWeight: {
 				name: 'Weight: XP',
-				description:
-					'VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain.',
+				description: 'VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 11.25
 			},
 			HPWeight: {
 				name: 'Weight: HP',
-				description:
-					'VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain.',
+				description: 'VM weight, XP weight, and HP weight are multipliers to the value of the Void Map Drop Chance, Fluffy Exp, and Trimp Health/Breed Speed mods respectively. So if your next VMDC upgrade were to increase your value by 0.5%, the default weight of 12 will multiply it by 12 so it will be calculated as if it were to increase your value by 6%. The default weights (12/11.25) are used to provide a good balance between damage and helium/exp gain.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
@@ -946,7 +943,6 @@ class Heirloom {
 		var name = '';
 		var index = -1;
 		const purchases = [0, 0, 0, 0, 0, 0, 0];
-
 		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			efficiency = 1;
@@ -992,7 +988,6 @@ class Heirloom {
 			if (this.hardCaps[name] && heirloom.mods[index][1] > this.hardCaps[name]) {
 				heirloom.mods[index][1] = this.hardCaps[name];
 			}
-			if (heirloom.heirloomInfo[name].heirloopy && game.global.universe === 2 && !Fluffy.isRewardActive('heirloopy')) mod[1] *= 10;
 		}
 
 		return heirloom;
