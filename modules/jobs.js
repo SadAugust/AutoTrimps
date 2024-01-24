@@ -73,7 +73,7 @@ function buyJobs(forceRatios) {
 	const { owned, employed } = game.resources.trimps;
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
-	let freeWorkers = _calculateFreeWorkers(owned, employed);
+	let freeWorkers = _calculateFreeWorkers(owned, maxTrimps, employed);
 	if (!noBreedChallenge() && owned < maxTrimps * 0.9) {
 		_handleBreedingTrimps(owned, maxTrimps, employed);
 		return;
@@ -84,18 +84,21 @@ function buyJobs(forceRatios) {
 	_handleJobRatios(desiredRatios, freeWorkers);
 }
 
-function _calculateFreeWorkers(owned, employed) {
-	const maxTrimps = game.resources.trimps.realMax();
-	const currentFreeWorkers = Math.ceil(Math.min(maxTrimps / 2, owned)) - employed;
+function _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed) {
+	return Math.ceil(Math.min(maxTrimps / 2, owned)) - employed;
+}
+
+function _calculateFreeWorkers(owned, maxTrimps, employed) {
+	const currentFreeWorkers = _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed);
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const ratioWorkerCount = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 	return currentFreeWorkers + ratioWorkerCount;
 }
 
 function _handleBreedingTrimps(owned, maxTrimps, employed) {
+	const freeWorkers = _calculateCurrentlyFreeWorkers(owned, employed);
 	const breedingTrimps = owned - trimpsEffectivelyEmployed();
-	const excessBreedingTrimps = breedingTrimps > maxTrimps * 0.33;
-	const freeWorkers = Math.ceil(maxTrimps / 2) - employed;
+	const excessBreedingTrimps = breedingTrimps > maxTrimps / 3;
 	const canHireWorkers = freeWorkers > 0 && maxTrimps <= 3e5;
 
 	if (excessBreedingTrimps && canHireWorkers) {
@@ -274,6 +277,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	const desiredWorkers = [0, 0, 0, 0];
 	let totalWorkerCost = 0;
 
+	//TODO This function is probably resulting in a missing worker at some points
 	for (let i = 0; i < ratioWorkers.length; i++) {
 		desiredWorkers[i] = Math.floor((freeWorkers * desiredRatios[i]) / totalFraction - game.jobs[ratioWorkers[i]].owned);
 		if (desiredWorkers[i] > 0) totalWorkerCost += game.jobs[ratioWorkers[i]].cost.food * desiredWorkers[i];
