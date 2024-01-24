@@ -95,12 +95,13 @@ function _calculateFreeWorkers(owned, employed) {
 
 function _handleBreedingTrimps(owned, maxTrimps, employed) {
 	const breedingTrimps = owned - trimpsEffectivelyEmployed();
-	const excessBreedingTrimps = breedingTrimps > maxTrimps * 0.33;
+	const battleDone = game.upgrades.Battle.done;
+	const excessBreedingTrimps = (breedingTrimps === 1 && !battleDone) || breedingTrimps > maxTrimps * 0.33;
 	const freeWorkers = Math.ceil(maxTrimps / 2) - employed;
 	const canHireWorkers = freeWorkers > 0 && maxTrimps <= 3e5;
 
 	if (excessBreedingTrimps && canHireWorkers) {
-		safeBuyJob('Farmer', 1);
+		if (battleDone || game.jobs.Farmer.owned === 0 || game.jobs.Lumberjack.owned === game.jobs.Farmer.owned) safeBuyJob('Farmer', 1);
 		if (!game.jobs.Lumberjack.locked) safeBuyJob('Lumberjack', 1);
 		if (!game.jobs.Miner.locked) safeBuyJob('Miner', 1);
 	}
@@ -284,7 +285,6 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	const desiredWorkers = [0, 0, 0, 0];
 	let ownedWorkers = 0;
 	let totalWorkerCost = 0;
-
 	for (let i = 0; i < ratioWorkers.length; i++) {
 		ownedWorkers += game.jobs[ratioWorkers[i]].owned;
 		desiredWorkers[i] = Math.floor((freeWorkers * desiredRatios[i]) / totalFraction - game.jobs[ratioWorkers[i]].owned);
