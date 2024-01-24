@@ -506,3 +506,7 @@ function getPerkModifier(what) {
 function noBreedChallenge() {
 	return challengeActive('Trapper') || challengeActive('Trappapalooza');
 }
+
+function argSort(array) {
+	return array.map((value, index) => [value, index]).sort().map(a => a[1]);
+}

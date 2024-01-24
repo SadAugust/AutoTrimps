@@ -1,3 +1,6 @@
+//TODO Delete later
+var testEnableHandler = true;
+
 function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || game.jobs[jobTitle].locked) {
 		return;
@@ -75,7 +78,7 @@ function buyJobs(forceRatios) {
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
 	let freeWorkers = _calculateFreeWorkers(owned, maxTrimps, employed);
-	if (!noBreedChallenge() && owned < maxTrimps * 0.9) {
+	if (testEnableHandler && !noBreedChallenge() && owned < maxTrimps * 0.9) {
 		_handleBreedingTrimps(owned, maxTrimps, employed);
 		return;
 	}
@@ -285,16 +288,23 @@ function _getAutoJobRatio() {
 function _handleJobRatios(desiredRatios, freeWorkers) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const totalFraction = desiredRatios.reduce((a, b) => a + b, 0) || 1;
-	const desiredWorkers = [0, 0, 0, 0];
 	let ownedWorkers = 0;
-	let totalWorkerCost = 0;
 
-	//TODO This function is probably resulting in a missing worker at some points
-	for (let i = 0; i < ratioWorkers.length; i++) {
-		ownedWorkers += game.jobs[ratioWorkers[i]].owned;
-		desiredWorkers[i] = Math.floor((freeWorkers * desiredRatios[i]) / totalFraction - game.jobs[ratioWorkers[i]].owned);
-		if (desiredWorkers[i] > 0) totalWorkerCost += game.jobs[ratioWorkers[i]].cost.food * desiredWorkers[i];
-	}
+	//Calculates both the decimal and the floored number of desired workers
+	const fDesiredWorkers = desiredRatios.map(r => r * freeWorkers / totalFraction);
+	let desiredWorkers = fDesiredWorkers.map(w => Math.floor(w));
+
+	//Calculates how many workers will be left out of the initial distribution
+	const remainder = freeWorkers - desiredWorkers.map((partialSum, value) => partialSum + value, 0);
+
+	//Decides where to put them
+	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
+	const whereToIncrement = argSort(diff).toReversed().slice(0, remainder);
+	whereToIncrement.forEach(idx => desiredWorkers[idx]++)
+
+	//Calculates the actual number of workers to buy or fire, and the cost of doing so
+	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
+	let totalWorkerCost = desiredWorkers.filter(w => w > 0).reduce((partialSum, w, idx) => partialSum + w * game.jobs[ratioWorkers[idx]].cost.food, 0)
 
 	if (totalWorkerCost > game.resources.food.owned) {
 		if (game.jobs.Farmer.owned > 0) {
@@ -304,15 +314,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 			safeBuyJob('Farmer', freeWorkers);
 		}
 	} else {
-		for (let i = 0; i < desiredWorkers.length; i++) {
-			if (desiredWorkers[i] > 0) continue;
-			if (Math.abs(desiredWorkers[i]) <= 0) continue;
-			safeBuyJob(ratioWorkers[i], -Math.abs(desiredWorkers[i]));
-		}
-
-		for (let i = 0; i < desiredWorkers.length; i++) {
-			if (desiredWorkers[i] <= 0) continue;
-			safeBuyJob(ratioWorkers[i], Math.abs(desiredWorkers[i]));
-		}
+		desiredWorkers.filter(w => w < 0).forEach((w, idx) => safeBuyJob(ratioWorkers[idx], w))
+		desiredWorkers.filter(w => w > 0).forEach((w, idx) => safeBuyJob(ratioWorkers[idx], w))
 	}
 }
