@@ -96,7 +96,7 @@ function _calculateFreeWorkers(owned, maxTrimps, employed) {
 }
 
 function _handleBreedingTrimps(owned, maxTrimps, employed) {
-	const freeWorkers = _calculateCurrentlyFreeWorkers(owned, employed);
+	const freeWorkers = _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed);
 	const breedingTrimps = owned - trimpsEffectivelyEmployed();
 	const excessBreedingTrimps = breedingTrimps > maxTrimps / 3;
 	const canHireWorkers = freeWorkers > 0 && maxTrimps <= 3e5;
