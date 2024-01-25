@@ -21,7 +21,6 @@ function safeSetGather(resource) {
 	setGather(resource);
 }
 
-//Gather selection
 function autoGather() {
 	const manualGather = getPageSetting('gatherType');
 	if (manualGather === 0) return;
@@ -72,15 +71,13 @@ function autoGather() {
 	if (trapsReady) MODULES.gather.trapBuffering = false;
 	if (maxTrapsReady) MODULES.gather.maxTrapBuffering = false;
 
-	// Init - Science
-	const resourcesNeeded = setResourceNeeded();
+	const resourcesNeeded = getUpgradeCosts();
 	const firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
-	const researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden';
 	const scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
+	const researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && scienceAvailable;
 	const needScience = game.resources.science.owned < resourcesNeeded.science;
 	const needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
-	//Init - Others
 	const needMiner = firstFightOK && minersAvailable;
 	const breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
@@ -155,29 +152,25 @@ function autoGather() {
 	const coordUpgrade = game.upgrades['Coordination'];
 	if (game.global.world <= 5 && !coordUpgrade.locked && canAffordCoordinationTrimps()) {
 		if (resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned) {
-			// Help with science.
 			safeSetGather('science');
 			return;
 		}
 		if (resolvePow(coordUpgrade.cost.resources.food, coordUpgrade) > game.resources.food.owned) {
-			// Help with food.
 			safeSetGather('food');
 			return;
 		}
 		if (resolvePow(coordUpgrade.cost.resources.wood, coordUpgrade) > game.resources.wood.owned) {
-			// Help with wood.
 			safeSetGather('wood');
 			return;
 		}
 		if (resolvePow(coordUpgrade.cost.resources.metal, coordUpgrade) > game.resources.metal.owned) {
-			// Help with metal.
 			safeSetGather('metal');
 			return;
 		}
 	}
 
 	//High Priority Research - When manual research still has more impact than scientists
-	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist') && game.resources.science.owned < 100) {
+	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true) && game.resources.science.owned < 100) {
 		safeSetGather('science');
 		return;
 	}
@@ -268,7 +261,7 @@ function autoGather() {
 		}
 	}
 	if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
-		if (manualGather !== 3 && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers && game.resources.science.owned < getPsString_AT('science', true) * 60) {
+		if (manualGather !== 3 && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers && game.resources.science.owned < getPsString_AT('science') * 60) {
 			safeSetGather('science');
 			return;
 		} else {

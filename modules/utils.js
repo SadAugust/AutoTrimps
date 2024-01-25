@@ -1,8 +1,8 @@
 window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
-	if (lineNo !== 0) {
-		const message = `Message: ${msg} - URL: ${url} - Line: ${lineNo} - Column: ${columnNo} - Error object: ${JSON.stringify(error)}`;
-		console.log(`AT logged error: ${message}`);
-	}
+	if (lineNo === 0) return;
+
+	const message = `Message: ${msg} - URL: ${url} - Line: ${lineNo} - Column: ${columnNo} - Error object: ${JSON.stringify(error)}`;
+	console.log(`AT logged error: ${message}`);
 };
 
 //Loads setting data from localstorage into object
@@ -60,13 +60,13 @@ function serializeSettings() {
 }
 
 function dailyModifiersOutput() {
-	var daily = game.global.dailyChallenge;
-	var dailyMods = dailyModifiers;
-	if (!daily) return '';
-	var returnText = '';
-	for (var item in daily) {
+	const daily = game.global.dailyChallenge;
+	if (Object.keys(daily).length === 0) return '';
+	const dailyMods = dailyModifiers;
+	let returnText = '';
+	for (let item in daily) {
 		if (item === 'seed') continue;
-		returnText += dailyMods[item].description(daily[item].strength) + '<br>';
+		returnText += `${dailyMods[item].description(daily[item].strength)} <br>`;
 	}
 	return returnText;
 }
@@ -76,35 +76,33 @@ function dailyModifiersOutput() {
 //If the setting is not found it will return false.
 function getPageSetting(setting, universe = game.global.universe) {
 	if (!autoTrimpSettings.hasOwnProperty(setting)) return false;
-	const settingType = autoTrimpSettings[setting].type;
 	const u2Setting = autoTrimpSettings[setting].universe.indexOf(0) === -1 && setting !== 'universeSetting' && universe === 2;
-	const enabled = 'enabled' + (u2Setting ? 'U2' : '');
-	const selected = 'selected' + (u2Setting ? 'U2' : '');
-	const value = 'value' + (u2Setting ? 'U2' : '');
+	const suffix = u2Setting ? 'U2' : '';
+	const [enabled, selected, value] = ['enabled', 'selected', 'value'].map((prop) => prop + suffix);
 
+	const settingType = autoTrimpSettings[setting].type;
 	if (settingType === 'boolean') return autoTrimpSettings[setting][enabled];
 	else if (settingType === 'multiValue') return Array.from(autoTrimpSettings[setting][value]).map((x) => parseFloat(x));
 	else if (settingType === 'multiTextValue') return Array.from(autoTrimpSettings[setting][value]).map((x) => String(x));
 	else if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray') return autoTrimpSettings[setting][value];
-	else if (settingType === 'value' || autoTrimpSettings[setting].type === 'valueNegative') return parseFloat(autoTrimpSettings[setting][value]);
+	else if (settingType === 'value' || settingType === 'valueNegative') return parseFloat(autoTrimpSettings[setting][value]);
 	else if (settingType === 'multitoggle') return parseInt(autoTrimpSettings[setting][value]);
 	else if (settingType === 'dropdown') return autoTrimpSettings[setting][selected];
 }
 
 //It sets the value of a setting, and then saves the settings.
 function setPageSetting(setting, newValue, universe = game.global.universe) {
-	if (autoTrimpSettings.hasOwnProperty(setting) === false) return false;
+	if (!autoTrimpSettings.hasOwnProperty(setting)) return false;
 
-	const settingType = autoTrimpSettings[setting].type;
-	const u2Setting = setting !== 'universeSetting' && universe === 2 ? 'U2' : '';
-	const enabled = 'enabled' + u2Setting;
-	const selected = 'selected' + u2Setting;
-	const value = 'value' + u2Setting;
+	const u2Setting = autoTrimpSettings[setting].universe.indexOf(0) === -1 && setting !== 'universeSetting' && universe === 2;
+	const suffix = u2Setting ? 'U2' : '';
+	const [enabled, selected, value] = ['enabled', 'selected', 'value'].map((prop) => prop + suffix);
 
 	const enabledIndex = ['boolean'];
 	const valueIndex = ['value', 'valueNegative', 'textValue', 'multiTextValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
 	const selectedIndex = ['dropdown'];
 
+	const settingType = autoTrimpSettings[setting].type;
 	if (enabledIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][enabled] = newValue;
 	else if (valueIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][value] = newValue;
 	else if (selectedIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][selected] = newValue;
@@ -117,10 +115,9 @@ function setPageSetting(setting, newValue, universe = game.global.universe) {
 //Looks at the spamMessages setting and if the message is enabled, it will print it to the message log & console.
 function debug(message, messageType, icon) {
 	if (!atSettings.initialise.loaded) return;
-	const settingArray = getPageSetting('spamMessages');
-	let sendMessage = true;
 
-	if (messageType in settingArray) sendMessage = settingArray[messageType];
+	const settingArray = getPageSetting('spamMessages');
+	const sendMessage = messageType in settingArray ? settingArray[messageType] : true;
 
 	if (sendMessage) {
 		console.log(`${timeStamp()} ${message}`);
@@ -129,8 +126,8 @@ function debug(message, messageType, icon) {
 }
 
 function timeStamp() {
-	for (var a = new Date(), b = [a.getHours(), a.getMinutes(), a.getSeconds()], c = 1; 3 > c; c++) 10 > b[c] && (b[c] = '0' + b[c]);
-	return b.join(':');
+	const date = new Date();
+	return date.toTimeString().split(' ')[0];
 }
 
 function setTitle() {
@@ -180,7 +177,7 @@ function filterMessage_AT() {
 	const logElement = document.getElementById('log');
 	const messageElements = document.getElementsByClassName(`AutoTrimpsMessage`);
 	const filterElement = document.getElementById(`AutoTrimpsFilter`);
-	let messageSetting = getPageSetting('spamMessages');
+	const messageSetting = getPageSetting('spamMessages');
 	const isDisplayed = !getPageSetting('spamMessages').show;
 	const displayStyle = isDisplayed ? 'block' : 'none';
 	messageSetting.show = isDisplayed;
@@ -207,7 +204,7 @@ function gameUserCheck(skipTest) {
 
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 
-//Will activate a 24 hour timewarp.
+//Will activate timewarp.
 function _getTimeWarpHours(inputHours) {
 	let timeWarpHours = 24; // default value
 
@@ -305,7 +302,7 @@ function testEquipmentMetalSpent() {
 
 	function getTotalPrestigeCost(what, prestigeCount) {
 		let actualCost = 0;
-		for (var i = 1; i <= prestigeCount; i++) {
+		for (let i = 1; i <= prestigeCount; i++) {
 			const equipment = game.equipment[what];
 			let prestigeMod;
 			const nextPrestigeCount = i + 1;
@@ -420,7 +417,7 @@ function hypothermiaEndZone() {
 
 function _priorityChallengeCheck(challenge) {
 	if (game.global.multiChallenge[what]) return true;
-	else if (game.global.challengeActive == what) return true;
+	else if (game.global.challengeActive === what) return true;
 	else return false;
 }
 
@@ -436,9 +433,7 @@ function getPriorityOrder() {
 	let order = [];
 	let settingsList = [];
 
-	//U1
 	if (game.global.universe === 1) settingsList = ['Prestige Raiding', 'Bionic Raiding', 'Map Farm', 'HD Farm', 'Void Maps', 'Map Bonus', 'Toxicity'];
-	//U2
 	if (game.global.universe === 2) settingsList = ['Desolation Gear Scum', 'Prestige Raiding', 'Smithy Farm', 'Map Farm', 'Tribute Farm', 'Worshipper Farm', 'Quagmire', 'Insanity', 'Alchemy', 'Hypothermia', 'HD Farm', 'Void Maps', 'Map Bonus'];
 
 	const settingNames = {
@@ -467,20 +462,15 @@ function getPriorityOrder() {
 		const settingData = getPageSetting(settingName);
 		for (let y = 1; y < settingData.length; y++) {
 			if (typeof settingData[y].runType !== 'undefined' && settingData[y].runType !== 'All') {
-				//Dailies
 				if (trimpStats.isDaily) {
 					if (settingData[y].runType !== 'Daily') continue;
-				}
-				//C2/C3 runs + special challenges
-				else if (trimpStats.isC3) {
+				} else if (trimpStats.isC3) {
 					if (settingData[y].runType !== 'C3') continue;
 					else if (settingData[y].challenge3 !== 'All' && !challengeActive(settingData[y].challenge3)) continue;
 				} else if (trimpStats.isOneOff) {
 					if (settingData[y].runType !== 'One Off') continue;
 					else if (settingData[y].challengeOneOff !== 'All' && !challengeActive(settingData[y].challengeOneOff)) continue;
-				}
-				//Fillers (non-daily/c2/c3) and One off challenges
-				else {
+				} else {
 					if (settingData[y].runType === 'Filler') {
 						var currChallenge = settingData[y].challenge === 'No Challenge' ? '' : settingData[y].challenge;
 						if (settingData[y].challenge !== 'All' && !challengeActive(currChallenge)) continue;

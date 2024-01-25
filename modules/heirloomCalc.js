@@ -1592,8 +1592,8 @@ function imAnEnemy(health = 0) {
 		MODULES.autoHeirlooms.ticks += 1;
 
 		//Add additional ticks if needed to account for runestone buffs
-		if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type != 'Knowledge' && MODULES.autoHeirlooms.detailed[p].type != 'Frost') MODULES.autoHeirlooms.ticks += 1;
-		if (MODULES.autoHeirlooms.detailed[p].frozen && MODULES.autoHeirlooms.detailed[p].type != 'Frost') MODULES.autoHeirlooms.ticks += 2;
+		if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type !== 'Knowledge' && MODULES.autoHeirlooms.detailed[p].type !== 'Frost') MODULES.autoHeirlooms.ticks += 1;
+		if (MODULES.autoHeirlooms.detailed[p].frozen && MODULES.autoHeirlooms.detailed[p].type !== 'Frost') MODULES.autoHeirlooms.ticks += 2;
 
 		// damage
 		damageTaken += addDamage;

@@ -183,7 +183,6 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 			safeRatio = nextLevelCost / nextLevelValue;
 		}
 
-		//Early game bandaid fix for lack of gems, science etc.
 		//Setting skipPrestiges to true if ignorePrestiges is called OR buyPrestigeMaybe.skip (we don't have enough Science or Gems for the Prestige which SHOULD only happen in the ultra early game)
 		let skipPrestiges = ignorePrestiges || maybeBuyPrestige.skip || false;
 		//Check for further overrides for if we want to skip looking at prestiges
@@ -312,16 +311,12 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 		//Farming for damage means we should prio attack equips
 		if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 		//Since we're farming for more damage to kill we want to spend 100% of our resources on attack equips
-		if (mapSettings.mapName === 'Wither Farm') return zoneDetails;
-		if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
+		if (mapSettings.mapName === 'Wither Farm' || mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 	}
 	if (farmType === 'health') {
-		if (whichHitsSurvived() < getPageSetting('equipCutOffHS')) return zoneDetails;
-		//Farming for health means we should prio health equips
-		if (mapSettings.shouldHealthFarm) return zoneDetails;
+		if (whichHitsSurvived() < getPageSetting('equipCutOffHS') || mapSettings.shouldHealthFarm) return zoneDetails;
 		//Since having to use equality will lower our damage then we want more health to reduce equality usage
-		if (mapSettings.mapName === 'Wither Farm' && mapSettings.equality > 0) return zoneDetails;
-		if (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0) return zoneDetails;
+		if ((mapSettings.mapName === 'Smithless Farm' || mapSettings.mapName === 'Wither Farm') && mapSettings.equality > 0) return zoneDetails;
 		//Since equality has a big impact on u2 HD Ratio then we want more health to reduce equality required.
 		if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && game.portal.Equality.radLevel > 0) return zoneDetails;
 	}
@@ -329,32 +324,20 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 	const settingZone = setting;
 	const world = game.global.world.toString();
 
-	let p = -1;
-	for (let i = 0; i < settingZone.length; i++) {
-		let zone = settingZone[i].toString();
-		//Check to see if we are in the zone range that the user set
-		if (zone.indexOf('.') >= 0 && game.global.world >= zone.split('.')[0] && game.global.world <= zone.split('.')[1]) {
-			p = i;
-			break;
+	let p = settingZone.findIndex((zone) => {
+		zone = zone.toString();
+		if (zone.indexOf('.') >= 0) {
+			let [start, end] = zone.split('.');
+			return game.global.world >= start && game.global.world <= end;
 		}
-		//Return true if zone match world
-		else if (world === zone) {
-			p = i;
-			break;
-		}
-	}
+		return world === zone;
+	});
 
 	if (p !== -1) {
-		zoneDetails.zone = settingZone[p];
-		return zoneDetails;
-	}
-	//Setting config to false since nothing matches
-	else {
-		zoneDetails.active = false;
-		zoneDetails.zone = 999;
+		return { ...zoneDetails, zone: settingZone[p] };
 	}
 
-	return zoneDetails;
+	return { ...zoneDetails, active: false, zone: 999 };
 }
 
 function autoEquip() {
@@ -363,16 +346,14 @@ function autoEquip() {
 	//If running a wood or metal quest then disable autoequip
 	if ([2, 3].indexOf(_getCurrentQuest()) >= 0) return;
 	//If smithy farming then disable autoequip
-	if (mapSettings.mapName === 'Smithy Farm') return;
-	//If we have just changed a setting that procs settingChangedTimeout then delay autoequip until the timeout has finished
-	if (settingChangedTimeout) return;
+	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
 	//Trimple/Atlantrimp overrides for don't run when farming and the user intends to run them or when inside the map itself.
 	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
 		if (mapSettings.ancientTreasure) return;
 		else if (MODULES.mapFunctions.runUniqueMap === getAncientTreasureName()) return;
 		else if (game.global.mapsActive && getCurrentMapObject().name === getAncientTreasureName()) return;
 	}
-	//Don't run before miners have been unlocked. This is to prevent a lengthy delay before miners are purchased when it buys several kinda unnecessary equips.
+
 	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 
 	//Loops through equips and buys prestiges if we can afford them and equipPrestige is set to 'AE: Always Prestige' (3).
@@ -382,7 +363,7 @@ function autoEquip() {
 		let prestigeInfo;
 		do {
 			prestigeLeft = false;
-			for (var equipName in game.equipment) {
+			for (let equipName in game.equipment) {
 				prestigeInfo = buyPrestigeMaybe(equipName);
 				if (!game.equipment[equipName].locked && !prestigeInfo.skip) {
 					if (game.resources[prestigeInfo.resource].owned < prestigeInfo.prestigeCost) continue;
@@ -404,9 +385,7 @@ function autoEquip() {
 			equipLeft = false;
 			for (let equip in game.equipment) {
 				if (!game.equipment[equip].locked) {
-					//Skips trying to buy extra levels if we can't afford them
 					if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
-					//Skips levels if we're running Pandemonium and the equip isn't available for purchaes
 					if (trimpStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 
 					if (alwaysLvl2 && game.equipment[equip].level < 2) {
@@ -453,7 +432,7 @@ function buyEquips() {
 			debug(`Upgrading ${equip.name} - Prestige ${equipData.prestige}`, `equipment`, '*upload');
 			keepBuying = true;
 		} else {
-			//Find out how many levels we can afford with 0.1% of resources - If this value is below 1 we set it to 1 so that we always buy at least 1 level
+			//Find out how many levels we can afford with 0.1% of resources.
 			let maxCanAfford = Math.max(1, getMaxAffordable(equip.cost, game.resources[resourceUsed].owned * 0.001, 1.2, true));
 			maxCanAfford = Math.min(maxCanAfford, equip.equipCap - equipData.level);
 			if (maxCanAfford > 0) {

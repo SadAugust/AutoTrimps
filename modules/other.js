@@ -11,7 +11,7 @@ function autoRoboTrimp() {
 }
 
 function isCorruptionActive(targetZone) {
-	if (game.global.universe == 2) return 9999;
+	if (game.global.universe === 2) return 9999;
 	if (challengeActive('Eradicated')) return 1;
 	if (challengeActive('Corrupted')) return 60;
 	return targetZone >= (game.talents.headstart.purchased && !game.global.runningChallengeSquared ? (game.talents.headstart2.purchased ? (game.talents.headstart3.purchased ? 151 : 166) : 176) : 181);
@@ -955,7 +955,7 @@ function _timeWarpUpdateUIDisplay() {
 
 	var blockDisplay = '';
 	//Prismatic Shield for U2
-	if (game.global.universe == 2) {
+	if (game.global.universe === 2) {
 		var esMax = game.global.soldierEnergyShieldMax;
 		var esMult = getEnergyShieldMult();
 		var layers = Fluffy.isRewardActive('shieldlayer');

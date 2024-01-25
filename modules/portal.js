@@ -367,7 +367,7 @@ function doPortal(challenge, skipDaily) {
 		cancelTooltip();
 		portalClicked();
 	}
-	//Initialising variables that will be used later.
+
 	freeVoidPortal();
 	if (MODULES.portal.portalForVoid) {
 		MODULES.portal.dontPushData = true;

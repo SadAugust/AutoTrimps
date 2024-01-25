@@ -40,7 +40,7 @@ function miRatio() {
 				this.value = parseInt(value);
 				if (this.value < MODULES.magmiteSettings.fuelStart.value) MODULES.magmiteSettings.fuelStart.value = this.value;
 				if (this.value > MODULES.magmiteSettings.runEnd.value) MODULES.magmiteSettings.runEnd.value = this.value;
-				if (MODULES.magmiteSettings.fuelZones.value != this.value - MODULES.magmiteSettings.fuelStart.value) MODULES.magmiteSettings.fuelZones.update(this.value - MODULES.magmiteSettings.fuelStart.value);
+				if (MODULES.magmiteSettings.fuelZones.value !== this.value - MODULES.magmiteSettings.fuelStart.value) MODULES.magmiteSettings.fuelZones.update(this.value - MODULES.magmiteSettings.fuelStart.value);
 				calculateCurrentPop();
 			}
 		},
@@ -48,7 +48,7 @@ function miRatio() {
 			value: fuelEnd - fuelStart,
 			update: function (value = this.value) {
 				this.value = parseInt(value);
-				if (MODULES.magmiteSettings.fuelEnd.value != MODULES.magmiteSettings.fuelStart.value + this.value) MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.fuelStart.value + this.value);
+				if (MODULES.magmiteSettings.fuelEnd.value !== MODULES.magmiteSettings.fuelStart.value + this.value) MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.fuelStart.value + this.value);
 				calculateCurrentPop();
 			}
 		},
@@ -244,36 +244,36 @@ function calculateCurrentPop() {
 		// i = zone offset from z230
 
 		//calc fuel gain
-		if (i == 0) fuelThisZone[0] = 0.2;
+		if (i === 0) fuelThisZone[0] = 0.2;
 		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, MODULES.magmiteSettings.supply.maxSupply);
 		if (i + 230 >= MODULES.magmiteSettings.fuelStart.value && i + 230 <= MODULES.magmiteSettings.fuelEnd.value) {
-			if (i == 0) totalFuel[0] = 0.2;
+			if (i === 0) totalFuel[0] = 0.2;
 			else totalFuel[i] = MODULES.magmiteSettings.magmaFlow.value * fuelThisZone[i] + totalFuel[i - 1];
 		} else totalFuel[i] = 0;
 
 		//calc generated pop
 		overclockTicks[i] = Math.max((totalFuel[i] - MODULES.magmiteSettings.storage.value * MODULES.magmiteSettings.capacity.maxCapacity) / MODULES.magmiteSettings.slowburn.value, 0);
 		overclockPop[i] = Math.floor(overclockTicks[i]) * (MODULES.magmite.carpMod * MODULES.magmite.tickRatio) * MODULES.magmiteSettings.overclocker.bonus;
-		if (i == 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
+		if (i === 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
 		else overclockPopThisZone[i] = Math.max(overclockPop[i] - overclockPop[i - 1], 0);
 
 		//calc tauntimp pop
-		if (i == 0) popWithTauntimp[0] = Math.floor(overclockPopThisZone[0] * Math.pow(1.003, tauntimpFrequency));
+		if (i === 0) popWithTauntimp[0] = Math.floor(overclockPopThisZone[0] * Math.pow(1.003, tauntimpFrequency));
 		else if (useConf) popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency * confInterval));
 		else popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency));
 
 		//calc pop stats
-		if (i == 0) sum[0] = overclockPopThisZone[0];
+		if (i === 0) sum[0] = overclockPopThisZone[0];
 		else sum[i] = overclockPopThisZone[i] + sum[i - 1];
 		popFromTauntimp[i] = popWithTauntimp[i] - sum[i];
 		if (popWithTauntimp[i] > 0) percentFromTauntimp[i] = popFromTauntimp[i] / popWithTauntimp[i];
 		else percentFromTauntimp[i] = 0;
-		if (i == 0) tauntimpThisZone[0] = 0;
+		if (i === 0) tauntimpThisZone[0] = 0;
 		else tauntimpThisZone[i] = popFromTauntimp[i] - popFromTauntimp[i - 1];
 
 		//calc army size
-		if (i == 0) coordPop[0] = Math.ceil((coordinations[coordinations.length - (1 + uncoords)] / 3) * (1 + coordIncrease / 100)) * 3;
-		else if (uncoordsZone == -1) {
+		if (i === 0) coordPop[0] = Math.ceil((coordinations[coordinations.length - (1 + uncoords)] / 3) * (1 + coordIncrease / 100)) * 3;
+		else if (uncoordsZone === -1) {
 			coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + coordIncrease / 100)) * 3;
 		} else {
 			if (i + 230 > uncoordsZone && currentAmals[i - 1] < uncoordsGoal && !goalReached) {
@@ -291,8 +291,8 @@ function calculateCurrentPop() {
 
 		//calc gators
 		amalRatio[i] = popWithTauntimp[i] / (coordPop[i] / 3);
-		if (i == 0) currentAmals[0] = 0;
-		else if ((i - 1) % 5 != 0 || (i - 71) % 100 == 0) {
+		if (i === 0) currentAmals[0] = 0;
+		else if ((i - 1) % 5 !== 0 || (i - 71) % 100 === 0) {
 			currentAmals[i] = currentAmals[i - 1];
 
 			//TODO There has to be a less repetive way to write this

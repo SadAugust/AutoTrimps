@@ -29,10 +29,11 @@ function boneShrine(lineCheck) {
 		for (let i = 0; i < shrineCharges; i++) {
 			game.permaBoneBonuses.boosts.consume();
 		}
+
 		debug(`Consumed ${shrineCharges} bone shrine charge${shrineCharges === 1 ? '' : 's'} on zone ${game.global.world} and gained ${boneShrineOutput(shrineCharges)}`);
 
 		if (setting && settingName && setting.row) {
-			let value = game.global.universe === 2 ? 'valueU2' : 'value';
+			const value = game.global.universe === 2 ? 'valueU2' : 'value';
 			game.global.addonUser[settingName][value][setting.row].done = getTotalPortals() + '_' + game.global.world;
 		}
 	}

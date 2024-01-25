@@ -1,7 +1,5 @@
 function safeBuyJob(jobTitle, amount) {
-	if (!Number.isFinite(amount) || amount === 0 || game.jobs[jobTitle].locked) {
-		return;
-	}
+	if (!Number.isFinite(amount) || amount === 0 || game.jobs[jobTitle].locked) return;
 
 	const freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	const fireState = game.global.firing;
@@ -220,7 +218,7 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings) {
 		desiredRatios[2] = 0;
 	}
 
-	const scienceNeeded = setResourceNeeded().science;
+	const scienceNeeded = getUpgradeCosts().science;
 	const isScienceNeeded = scienceNeeded > 0 && scienceNeeded > game.resources.science.owned;
 	const scientistMod = desiredRatios[3] !== 0 || isScienceNeeded ? 1 : _getScientistRatio();
 
@@ -283,31 +281,33 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const totalFraction = desiredRatios.reduce((a, b) => a + b, 0) || 1;
 	const desiredWorkers = [0, 0, 0, 0];
-	let ownedWorkers = 0;
 	let totalWorkerCost = 0;
 	for (let i = 0; i < ratioWorkers.length; i++) {
-		ownedWorkers += game.jobs[ratioWorkers[i]].owned;
 		desiredWorkers[i] = Math.floor((freeWorkers * desiredRatios[i]) / totalFraction - game.jobs[ratioWorkers[i]].owned);
 		if (desiredWorkers[i] > 0) totalWorkerCost += game.jobs[ratioWorkers[i]].cost.food * desiredWorkers[i];
 	}
 
 	if (totalWorkerCost > game.resources.food.owned) {
-		if (game.jobs.Farmer.owned > 0) {
-			safeBuyJob('Farmer', freeWorkers - ownedWorkers);
-		} else {
-			fireAllWorkers();
-			safeBuyJob('Farmer', freeWorkers);
+		const farmersToHire = Math.min(calculateMaxAfford('Farmer', false, false, true), Math.max(1, freeWorkers / 10) - game.jobs.Farmer.owned);
+		if (farmersToHire > game.jobs.Farmer.owned) {
+			_freeWorkspaces(farmersToHire);
+			safeBuyJob('Farmer', farmersToHire);
 		}
 	} else {
-		for (let i = 0; i < desiredWorkers.length; i++) {
-			if (desiredWorkers[i] > 0) continue;
-			if (Math.abs(desiredWorkers[i]) <= 0) continue;
-			safeBuyJob(ratioWorkers[i], -Math.abs(desiredWorkers[i]));
-		}
+		desiredWorkers.forEach((amount, index) => {
+			if (amount < 0) safeBuyJob(ratioWorkers[index], amount);
+		});
 
-		for (let i = 0; i < desiredWorkers.length; i++) {
-			if (desiredWorkers[i] <= 0) continue;
-			safeBuyJob(ratioWorkers[i], Math.abs(desiredWorkers[i]));
-		}
+		desiredWorkers.forEach((amount, index) => {
+			if (amount > 0 && game.workspaces > 0) safeBuyJob(ratioWorkers[index], amount);
+		});
 	}
+}
+
+function _freeWorkspaces(amount = 1) {
+	const jobs = ['Miner', 'Lumberjack'];
+	const toCheck = jobs.filter((job) => game.jobs[job].owned >= amount);
+	if (toCheck.length === 0) return;
+	const selected = toCheck[Math.floor(Math.random() * toCheck.length)];
+	game.jobs[selected].owned -= amount;
 }
