@@ -314,7 +314,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 			safeBuyJob('Farmer', freeWorkers);
 		}
 	} else {
-		desiredWorkers.filter(w => w < 0).forEach((w, idx) => safeBuyJob(ratioWorkers[idx], w))
-		desiredWorkers.filter(w => w > 0).forEach((w, idx) => safeBuyJob(ratioWorkers[idx], w))
+		desiredWorkers.forEach((w, idx) => { if (w < 0) safeBuyJob(ratioWorkers[idx], w) });
+		desiredWorkers.forEach((w, idx) => { if (w > 0) safeBuyJob(ratioWorkers[idx], w) });
 	}
 }
