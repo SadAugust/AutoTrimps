@@ -300,16 +300,17 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	//Decides where to put them
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff).reverse().slice(0, remainder);
-	whereToIncrement.forEach(idx => desiredWorkers[idx]++)
+	whereToIncrement.forEach(idx => desiredWorkers[idx]++);
 
 	//Calculates the actual number of workers to buy or fire, and the cost of doing so
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
-	let totalWorkerCost = desiredWorkers.filter(w => w > 0).reduce((partialSum, w, idx) => partialSum + w * game.jobs[ratioWorkers[idx]].cost.food, 0)
+	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
 
 	if (totalWorkerCost > game.resources.food.owned) {
 		if (game.jobs.Farmer.owned > 0) {
 			safeBuyJob('Farmer', freeWorkers - ownedWorkers);
 		} else {
+			//TODO I'm worried about this part of the code (Ray)
 			fireAllWorkers();
 			safeBuyJob('Farmer', freeWorkers);
 		}
