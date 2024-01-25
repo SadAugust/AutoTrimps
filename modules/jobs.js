@@ -1,6 +1,3 @@
-//TODO Delete later
-var testEnableHandler = true;
-
 function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || game.jobs[jobTitle].locked) {
 		return;
@@ -78,14 +75,14 @@ function buyJobs(forceRatios) {
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
 	let freeWorkers = _calculateFreeWorkers(owned, maxTrimps, employed);
-	if (testEnableHandler && !noBreedChallenge() && owned < maxTrimps * 0.9) {
-		_handleBreedingTrimps(owned, maxTrimps, employed);
-		return;
-	}
+	let breedingPreserved = _checkBreedingTrimps(owned, maxTrimps, employed);
 
-	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
-	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings);
-	_handleJobRatios(desiredRatios, freeWorkers);
+	//Checks if
+	if (noBreedChallenge() || owned >= maxTrimps * 0.9 || breedingPreserved) {
+		freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
+		const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings);
+		_handleJobRatios(desiredRatios, freeWorkers);
+	}
 }
 
 function _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed) {
@@ -99,18 +96,21 @@ function _calculateFreeWorkers(owned, maxTrimps, employed) {
 	return currentFreeWorkers + ratioWorkerCount;
 }
 
-function _handleBreedingTrimps(owned, maxTrimps, employed) {
+function _checkBreedingTrimps(owned, maxTrimps, employed) {
 	const freeWorkers = _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed);
 	const breedingTrimps = owned - trimpsEffectivelyEmployed();
 	const battleDone = game.upgrades.Battle.done;
-	const excessBreedingTrimps = (breedingTrimps === 1 && !battleDone) || breedingTrimps > maxTrimps / 3;
+	const excessBreedingTrimps = !battleDone || breedingTrimps > (maxTrimps / 3);
 	const canHireWorkers = freeWorkers > 0 && maxTrimps <= 3e5;
+	
+	return excessBreedingTrimps && canHireWorkers;
 
-	if (excessBreedingTrimps && canHireWorkers) {
-		if (battleDone || game.jobs.Farmer.owned === 0 || game.jobs.Lumberjack.owned === game.jobs.Farmer.owned) safeBuyJob('Farmer', 1);
-		if (!game.jobs.Lumberjack.locked) safeBuyJob('Lumberjack', 1);
-		if (!game.jobs.Miner.locked) safeBuyJob('Miner', 1);
-	}
+	//TODO Test & Delete
+	// if (excessBreedingTrimps && canHireWorkers) {
+	// 	if (battleDone || game.jobs.Farmer.owned === 0 || game.jobs.Lumberjack.owned === game.jobs.Farmer.owned) safeBuyJob('Farmer', 1);
+	// 	if (!game.jobs.Lumberjack.locked) safeBuyJob('Lumberjack', 1);
+	// 	if (!game.jobs.Miner.locked) safeBuyJob('Miner', 1);
+	// }
 }
 
 function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
@@ -310,7 +310,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 		if (game.jobs.Farmer.owned > 0) {
 			safeBuyJob('Farmer', freeWorkers - ownedWorkers);
 		} else {
-			//TODO I'm worried about this part of the code (Ray)
+			//TODO ENH: Fire only up to freeWorkers
 			fireAllWorkers();
 			safeBuyJob('Farmer', freeWorkers);
 		}
