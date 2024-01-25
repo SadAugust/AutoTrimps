@@ -2,29 +2,30 @@ function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || game.jobs[jobTitle].locked) return;
 
 	const freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-	const fireState = game.global.firing;
-	const currBuyAmt = game.global.buyAmt;
+	if (amount > 0 && freeWorkers <= 0) return;
 
+	const { firing, buyAmt } = game.global;
 	game.global.firing = amount < 0;
 	amount = Math.abs(amount);
+	if (!game.global.firing) amount = Math.min(amount, freeWorkers);
 	game.global.buyAmt = amount;
 
 	let result = game.global.firing || canAffordJobCheck(jobTitle, amount);
 
-	if (!result && freeWorkers > 0) {
+	if (!result) {
 		game.global.buyAmt = 'Max';
 		game.global.maxSplit = 1;
-		result = canAffordJobCheck(jobTitle, amount);
 		amount = calculateMaxAfford(jobTitle, false, false, true);
+		result = canAffordJobCheck(jobTitle, amount);
 	}
 
 	if (result) {
 		buyJob(jobTitle, true, true);
 		debug(`${game.global.firing ? 'Firing' : 'Hiring'} ${prettify(amount)} ${jobTitle}${addAnS(amount)}`, 'jobs', '*users');
-		if (game.global.firing !== fireState) fireMode_AT();
 	}
 
-	game.global.buyAmt = currBuyAmt;
+	if (game.global.firing !== firing) _toggleFireMode();
+	game.global.buyAmt = buyAmt;
 }
 
 function canAffordJobCheck(what, amt) {
@@ -35,10 +36,10 @@ function canAffordJobCheck(what, amt) {
 		amt = calculateMaxAfford(job, false, false, true);
 	}
 
-	return Object.keys(job.cost).every((costItem) => checkJobItem(what, false, costItem, null, amt) === true);
+	return Object.keys(job.cost).every((costItem) => checkJobItem(what, false, costItem, null, amt));
 }
 
-function fireMode_AT() {
+function _toggleFireMode() {
 	game.global.firing = !game.global.firing;
 	const elem = document.getElementById('fireBtn');
 	const firingClass = game.global.firing ? 'fireBtnFiring' : 'fireBtnNotFiring';
@@ -299,7 +300,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 		});
 
 		desiredWorkers.forEach((amount, index) => {
-			if (amount > 0 && game.workspaces > 0) safeBuyJob(ratioWorkers[index], amount);
+			if (amount > 0) safeBuyJob(ratioWorkers[index], amount);
 		});
 	}
 }
