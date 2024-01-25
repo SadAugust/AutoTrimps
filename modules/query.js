@@ -8,6 +8,10 @@ function getCostToUpgrade(upgradeName, resource) {
 
 	if (!cost) return 0;
 
+	if (!Array.isArray(cost) || cost.length < 2) {
+		return cost;
+	}
+
 	const [baseCost, multiplier] = cost;
 
 	return multiplier !== undefined ? Math.floor(baseCost * Math.pow(multiplier, upgrade.done)) : baseCost;
