@@ -299,7 +299,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 
 	//Decides where to put them
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
-	const whereToIncrement = argSort(diff).toReversed().slice(0, remainder);
+	const whereToIncrement = argSort(diff).reverse().slice(0, remainder);
 	whereToIncrement.forEach(idx => desiredWorkers[idx]++)
 
 	//Calculates the actual number of workers to buy or fire, and the cost of doing so
