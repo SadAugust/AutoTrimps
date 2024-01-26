@@ -134,8 +134,10 @@ function autoGather() {
 	}
 
 	//Highest Priority Trapping (doing Trapper or without breeding trimps)
-	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull && !scientistsAvailable && !minersAvailable))
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull && !scientistsAvailable && !minersAvailable)) {
 		setTrapBait(lowOnTraps);
+		return;
+	}
 
 	//Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
 	if (manualGather !== 3 && researchAvailable && (needBattle || needMinerScienceNow && needScientistsScienceNow)) {
@@ -156,8 +158,10 @@ function autoGather() {
 	}
 
 	//High Priority Trapping (refilling after a sudden increase in population)
-	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize)
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize) {
 		setTrapBait(lowOnTraps);
+		return;
+	}
 
 	//Highest Priority Research if we have less science than needed to buy Miner and Scientist
 	if (manualGather !== 3 && researchAvailable && (needMinerScience || needScientistsScience)) {
