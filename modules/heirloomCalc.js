@@ -1242,7 +1242,7 @@ var originalpopulateHeirloomWindow = populateHeirloomWindow;
 populateHeirloomWindow = function () {
 	originalpopulateHeirloomWindow(...arguments);
 	try {
-		if (document.getElementById('heirloomRatios').style.display !== 'none') document.getElementById('heirloomRatios').style.display = 'none';
+		if (elementExists('heirloomRatios')) document.getElementById('heirloomRatios').style.display = 'none';
 	} catch (e) {
 		console.log('Heirloom issue: ' + e, 'other');
 	}

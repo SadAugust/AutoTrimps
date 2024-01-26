@@ -597,3 +597,12 @@ function argSort(array) {
 		.sort()
 		.map((a) => a[1]);
 }
+
+function elementExists(element) {
+	return document.getElementById(element).style.display !== 'none';
+}
+
+function elementVisible(element) {
+	visible = document.getElementById(element).style.visibility !== 'hidden';
+	return elementExists(element) && visible;
+}
