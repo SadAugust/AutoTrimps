@@ -79,7 +79,7 @@ function buyJobs(forceRatios) {
 	freeWorkers = Math.min(freeWorkers, _employableTrimps(owned, maxTrimps));
 
 	//Checks if
-	if (noBreedChallenge() || owned >= maxTrimps * 0.9 || breedingPreserved) {
+	if (noBreedChallenge() || owned >= maxTrimps * 0.9) {
 		freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
 		const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings);
 		_handleJobRatios(desiredRatios, freeWorkers);
