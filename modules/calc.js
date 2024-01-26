@@ -183,10 +183,9 @@ function getTrimpAttack(realDamage) {
 	if (realDamage) return game.global.soldierCurrentAttack;
 
 	let dmg = (6 + calcEquipment('attack')) * game.resources.trimps.maxSoldiers;
-	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
 	if (mutations.Magma.active()) dmg *= mutations.Magma.getTrimpDecay();
-	if (game.portal.Power[perkLevel] > 0) dmg += dmg * game.portal.Power[perkLevel] * getPerkModifier('Power');
-	if (game.portal.Power_II[perkLevel] > 0) dmg *= 1 + getPerkModifier('Power_II') * game.portal.Power_II[perkLevel];
+	if (getPerkLevel('Power') > 0) dmg += dmg * getPerkLevel('Power') * getPerkModifier('Power');
+	if (getPerkLevel('Power_II') > 0) dmg *= 1 + getPerkModifier('Power_II') * getPerkLevel('Power_II');
 	if (game.global.universe === 1 && game.global.formation !== 0 && game.global.formation !== 5) dmg *= game.global.formation === 2 ? 4 : 0.5;
 
 	return dmg;
@@ -195,7 +194,6 @@ function getTrimpAttack(realDamage) {
 function getTrimpHealth(realHealth, mapType) {
 	//This is the actual health of the army ATM, without considering items bought, but not yet in use
 	if (realHealth) return game.global.soldierHealthMax;
-	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
 	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(mapType) : null;
 
 	//Health from equipments and coordination
@@ -209,17 +207,17 @@ function getTrimpHealth(realHealth, mapType) {
 	//Antenna Array
 	health *= game.global.universe === 2 && game.buildings.Antenna.owned >= 10 ? game.jobs.Meteorologist.getExtraMult() : 1;
 	//Toughness
-	health *= game.portal.Toughness[perkLevel] > 0 ? 1 + game.portal.Toughness[perkLevel] * game.portal.Toughness.modifier : 1;
+	health *= getPerkLevel('Toughness') > 0 ? 1 + getPerkLevel('Toughness') * getPerkModifier('Toughness') : 1;
 	//Toughness II
-	health *= game.portal.Toughness_II[perkLevel] > 0 ? 1 + game.portal.Toughness_II[perkLevel] * game.portal.Toughness_II.modifier : 1;
+	health *= getPerkLevel('Toughness_II') > 0 ? 1 + getPerkLevel('Toughness_II') * getPerkModifier('Toughness_II') : 1;
 	//Resilience
-	health *= game.portal.Resilience[perkLevel] > 0 ? Math.pow(game.portal.Resilience.modifier + 1, game.portal.Resilience[perkLevel]) : 1;
+	health *= getPerkLevel('Resilience') > 0 ? Math.pow(getPerkModifier('Resilience') + 1, getPerkLevel('Resilience')) : 1;
 	//Scruffy is Life
 	health *= Fluffy.isRewardActive('healthy') ? 1.5 : 1;
 	//Geneticists
 	health *= game.jobs.Geneticist.owned > 0 ? Math.pow(1.01, game.global.lastLowGen) : 1;
 	//Observation
-	health *= game.global.universe === 2 && game.portal.Observation[perkLevel] > 0 ? game.portal.Observation.getMult() : 1;
+	health *= game.global.universe === 2 && game.portal.Observation.trinkets > 0 ? game.portal.Observation.getMult() : 1;
 	//Formation -- X and W stance both have full HP.
 	health *= game.global.universe === 1 && game.global.formation !== 0 && game.global.formation !== 5 ? (game.global.formation === 1 ? 4 : 0.5) : 1;
 	//Frigid Completions
@@ -406,16 +404,16 @@ function addPoison(realDamage, zone = game.global.world) {
 }
 
 function getCritMulti(crit, customShield) {
-	var critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
-	var critD = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) : getPlayerCritDamageMult();
-	var critDHModifier;
+	let critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
+	const critD = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) : getPlayerCritDamageMult();
+	let critDHModifier;
 
 	if (crit === 'never') critChance = Math.floor(critChance);
 	else if (crit === 'force') critChance = Math.ceil(critChance);
-	var dmgMulti = getMegaCritDamageMult(Math.floor(critChance));
-	var lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
-	var highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
-	var highTierChance = critChance - Math.floor(critChance);
+	const dmgMulti = getMegaCritDamageMult(Math.floor(critChance));
+	const lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
+	const highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
+	const highTierChance = critChance - Math.floor(critChance);
 
 	if (critChance < 0) critDHModifier = 1 + critChance - critChance / 5;
 	else if (critChance < 1) critDHModifier = 1 - critChance + critChance * critD;
@@ -443,7 +441,7 @@ function getAnticipationBonus(stacks) {
 	if (stacks === undefined) stacks = game.global.antiStacks;
 
 	const maxStacks = game.talents.patience.purchased ? 45 : 30;
-	const perkMult = game.portal.Anticipation.level * game.portal.Anticipation.modifier;
+	const perkMult = getPerkLevel('Anticipation') * getPerkModifier('Anticipation');
 	const stacks45 = typeof autoTrimpSettings === 'undefined' ? maxStacks : getPageSetting('45stacks');
 
 	//Regular anticipation
@@ -455,16 +453,14 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 	if (!mapType) mapType = !game.global.mapsActive ? 'world' : getCurrentMapObject().location === 'Void' ? 'void' : 'map';
 	if (!mapLevel) mapLevel = mapType === 'world' || !game.global.mapsActive ? 0 : getCurrentMapObject().level - game.global.world;
 
-	var specificStance = game.global.universe === 1 ? equality : false;
-	var heirloomToCheck = typeof autoTrimpSettings === 'undefined' ? null : !specificHeirloom ? heirloomShieldToEquip(mapType) : specificHeirloom;
+	const specificStance = game.global.universe === 1 ? equality : false;
+	const heirloomToCheck = typeof autoTrimpSettings === 'undefined' ? null : !specificHeirloom ? heirloomShieldToEquip(mapType) : specificHeirloom;
 
-	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
-
-	var attack = getTrimpAttack(realDamage);
-	var minFluct = 0.8;
-	var maxFluct = 1.2;
+	let attack = getTrimpAttack(realDamage);
+	let minFluct = 0.8;
+	let maxFluct = 1.2;
 	//Range
-	if (game.portal.Range.level > 0) minFluct += 0.02 * game.portal.Range.level;
+	if (getPerkLevel('Range') > 0) minFluct += 0.02 * getPerkLevel('Range');
 
 	// Smithies
 	attack *= game.buildings.Smithy.owned > 0 ? Math.pow(game.buildings.Smithy.getBaseMult(), game.buildings.Smithy.owned) : 1;
@@ -482,7 +478,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 	// Hunger
 	attack *= game.portal.Hunger.getMult();
 	// Observation
-	attack *= game.global.universe === 2 ? game.portal.Observation.getMult() : 1;
+	attack *= game.global.universe === 2 && game.portal.Observation.trinkets > 0 ? game.portal.Observation.getMult() : 1;
 	//Titimp
 	attack *= mapType !== 'world' && useTitimp === 'force' ? 2 : mapType !== 'world' && mapType !== '' && useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
 	// Robotrimp
@@ -503,7 +499,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 	const heirloomAttack = typeof atSettings !== 'undefined' ? calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpAttack', 1, true);
 	attack *= heirloomAttack > 1 ? 1 + heirloomAttack / 100 : 1;
 	// Frenzy perk
-	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (autoBattle.oneTimers.Mass_Hysteria.owned || (typeof atSettings !== 'undefined' && getPageSetting('frenzyCalc'))) ? 1 + 0.5 * game.portal.Frenzy[perkLevel] : 1;
+	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (autoBattle.oneTimers.Mass_Hysteria.owned || (typeof atSettings !== 'undefined' && getPageSetting('frenzyCalc'))) ? 1 + 0.5 * getPerkLevel('Frenzy') : 1;
 	//Championism
 	attack *= game.global.universe === 2 ? game.portal.Championism.getMult() : 1;
 	// Golden Upgrade
@@ -630,11 +626,11 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 	}
 
 	// Equality
-	if (game.global.universe === 2 && game.portal.Equality[perkLevel] > 0) {
+	if (game.global.universe === 2 && getPerkLevel('Equality') > 0) {
 		const equalityMult = typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(heirloomToCheck) : game.portal.Equality.getMult(true);
 		if (!isNaN(parseInt(equality))) {
 			attack *= Math.pow(equalityMult, equality);
-			if (equality > game.portal.Equality[perkLevel]) console.log(`You don't have this many levels in Equality. ${equality}/${game.portal.Equality.radLevel} equality used. Player Dmg. `);
+			if (equality > getPerkLevel('Equality')) console.log(`You don't have this many levels in Equality. ${equality}/${getPerkLevel('Equality')} equality used. Player Dmg. `);
 		} else if (atSettings.intervals.tenSecond) console.log(`Equality is not a number. ${equality} equality used. Player Dmg. `);
 	}
 
@@ -896,7 +892,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 		if (equality) {
 			if (!isNaN(parseInt(equality))) {
 				attack *= Math.pow(game.portal.Equality.getModifier(), equality);
-				if (equality > game.portal.Equality.radLevel) debug(`You don't have this many levels in Equality. - Enemy Dmg. ${equality} / ${game.portal.Equality.radLevel} equality used.`);
+				if (equality > getPerkLevel('Equality')) debug(`You don't have this many levels in Equality. - Enemy Dmg. ${equality}/${getPerkLevel('Equality')} equality used.`);
 			} else if (atSettings.intervals.tenSecond) {
 				debug(`Equality is not a number. - Enemy Dmg. ${equality} equality used.`);
 			}
@@ -1233,7 +1229,7 @@ function calcHDRatio(targetZone = game.global.world, type = 'world', maxTenacity
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined' && maxGammaStacks !== Infinity) ourBaseDamage *= 1 - (Math.max(1, maxGammaStacks) * game.global.dailyChallenge.weakness.strength) / 100;
 
 	//Adding gammaBurstDmg to calc
-	if ((type !== 'map' && game.global.universe === 2 && universeSetting < game.portal.Equality.radLevel - 14) || game.global.universe === 1) ourBaseDamage *= MODULES.heirlooms.gammaBurstPct;
+	if ((type !== 'map' && game.global.universe === 2 && universeSetting < getPerkLevel('Equality') - 14) || game.global.universe === 1) ourBaseDamage *= MODULES.heirlooms.gammaBurstPct;
 
 	if (checkOutputs) checkResults();
 	//Return H:D for a regular scenario
@@ -1348,7 +1344,7 @@ function calcMutationAttack(targetZone) {
 
 	var highest = 1;
 	var gridArray = game.global.gridArray;
-	var heirloomToCheck = heirloomShieldToEquip('world');
+	const heirloomToCheck = heirloomShieldToEquip('world');
 	var compressedSwap = getPageSetting('heirloomCompressedSwap');
 	var compressedSwapValue = getPageSetting('heirloomSwapHDCompressed');
 
@@ -1409,7 +1405,7 @@ function calcMutationHealth(targetZone) {
 
 	var highest = 0;
 	var gridArray = game.global.gridArray;
-	var heirloomToCheck = heirloomShieldToEquip('world');
+	const heirloomToCheck = heirloomShieldToEquip('world');
 	var compressedSwap = getPageSetting('heirloomCompressedSwap');
 	var compressedSwapValue = getPageSetting('heirloomSwapHDCompressed');
 
@@ -1484,19 +1480,18 @@ function enemyDamageModifiers() {
 
 function getTotalHealthMod() {
 	var healthMulti = 1;
-	const perkLevel = game.global.universe === 2 ? 'radLevel' : 'level';
 	//Smithies
 	healthMulti *= game.buildings.Smithy.owned > 0 ? game.buildings.Smithy.getMult() : 1;
 	//Antenna Array
 	healthMulti *= game.global.universe === 2 && game.buildings.Antenna.owned >= 10 ? game.jobs.Meteorologist.getExtraMult() : 1;
 	//Toughness add
-	healthMulti *= game.portal.Toughness[perkLevel] > 0 ? 1 + game.portal.Toughness[perkLevel] * game.portal.Toughness.modifier : 1;
+	healthMulti *= getPerkLevel('Toughness') > 0 ? 1 + getPerkLevel('Toughness') * getPerkModifier('Toughness') : 1;
 	//Resilience
-	healthMulti *= game.portal.Resilience[perkLevel] > 0 ? Math.pow(game.portal.Resilience.modifier + 1, game.portal.Resilience[perkLevel]) : 1;
+	healthMulti *= getPerkLevel('Resilience') > 0 ? Math.pow(getPerkModifier('Resilience') + 1, getPerkLevel('Resilience')) : 1;
 	//Scruffy is Life
 	healthMulti *= Fluffy.isRewardActive('healthy') ? 1.5 : 1;
 	//Observation
-	healthMulti *= game.portal.Observation[perkLevel] > 0 ? game.portal.Observation.getMult() : 1;
+	healthMulti *= game.global.universe === 2 && game.portal.Observation.trinkets > 0 ? game.portal.Observation.getMult() : 1;
 	//Mayhem Completions
 	healthMulti *= game.global.mayhemCompletions > 0 ? game.challenges.Mayhem.getTrimpMult() : 1;
 	//Pandemonium Completions
@@ -1560,7 +1555,7 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 	const dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Explosive
 	const dailyBloodthirst = isDaily && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
-	const maxEquality = game.portal.Equality.radLevel;
+	const maxEquality = getPerkLevel('Equality');
 	const overkillCount = maxOneShotPower(true);
 
 	let critType = 'maybe';
