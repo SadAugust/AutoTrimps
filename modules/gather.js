@@ -184,7 +184,7 @@ function autoGather() {
 
 	//Get coord if army size is not the problem.
 	const coordUpgrade = game.upgrades['Coordination'];
-	if (game.global.world < coordUpgrade.allowed && canAffordCoordinationTrimps()) {
+	if (game.global.world > coordUpgrade.done && canAffordCoordinationTrimps()) {
 		//TODO Put these resources in a priority queue
 		//TODO Refactoring
 
