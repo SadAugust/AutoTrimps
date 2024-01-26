@@ -103,7 +103,7 @@ function _employableTrimps(owned, maxTrimps, employed) {
 	if (!game.upgrades.Battle.done) return owned;
 
 	//Preserves enough unemployed trimps that at least a third of maxTrimps will remain breeding
-	let employable = Math.ceil((breedingTrimps - maxTrimps/3) / game.permaBoneBonuses.multitasking.mult());
+	let employable = Math.ceil((breedingTrimps - maxTrimps/3) / (1 - game.permaBoneBonuses.multitasking.mult()));
 
 	//The trimps already employed are considered employable as well
 	return employed + Math.max(0, Math.min(employable, owned));
