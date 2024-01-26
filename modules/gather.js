@@ -182,12 +182,6 @@ function autoGather() {
 		return;
 	}
 
-	//High Priority Research - When manual research still has more impact than scientists
-	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true)) {
-		safeSetGather('science');
-		return;
-	}
-
 	//Get coord if army size is not the problem.
 	const coordUpgrade = game.upgrades['Coordination'];
 	if (game.global.world > coordUpgrade.done && canAffordCoordinationTrimps()) {
@@ -243,6 +237,12 @@ function autoGather() {
 			else safeSetGather('metal');
 			return;
 		}
+	}
+
+	//High Priority Research - When manual research still has more impact than scientists
+	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true)) {
+		safeSetGather('science');
+		return;
 	}
 
 	//Mid Priority Trapping
