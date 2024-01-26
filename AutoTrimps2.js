@@ -295,24 +295,21 @@ function updateInterval() {
 
 function mainLoop() {
 	toggleCatchUpMode();
-
-	if (MODULES.popups.mazWindowOpen) {
-		_handleMazWindow();
-	}
-
+	if (MODULES.popups.mazWindowOpen) _handleMazWindow();
 	remakeTooltip();
 	universeSwapped();
 
-	if (atSettings.running === false) return;
-	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
+	if (!atSettings.running || getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 	atSettings.running = true;
 	const runDuringTimeWarp = shouldRunInTimeWarp();
 	if (runDuringTimeWarp) updateInterval();
 
 	_handleIntervals();
-	if (runDuringTimeWarp) farmingDecision();
 
-	if (runDuringTimeWarp) mainCleanup();
+	if (runDuringTimeWarp) {
+		farmingDecision();
+		mainCleanup();
+	}
 
 	if (_handleSlowScumming()) return;
 
@@ -324,9 +321,7 @@ function mainLoop() {
 	}
 
 	autoGather();
-
 	if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && !game.global.trapBuildToggled) toggleAutoTrap();
-
 	buyBuildings();
 	buyJobs();
 	buyUpgrades();
@@ -343,10 +338,8 @@ function mainLoop() {
 
 	mainLoopU1();
 	mainLoopU2();
-
 	buySingleRunBonuses();
 	automateSpireAssault();
-
 	_handlePopupTimer();
 	makeAdditionalInfo();
 }
@@ -354,16 +347,13 @@ function mainLoop() {
 //U1 functions
 function mainLoopU1() {
 	if (game.global.universe !== 1) return;
-	//Core
 	geneAssist();
 	autoRoboTrimp();
 	autoEnlight();
 	autoNatureTokens();
 	if (getPageSetting('spendmagmite') === 2 && !settingChangedTimeout) autoMagmiteSpender();
 	autoGenerator();
-	//Stance
 	if (shouldRunInTimeWarp()) checkStanceSetting();
-	//Spire. Exit cell & respec
 	if (game.global.spireActive) {
 		exitSpireCell();
 		atlantrimpRespecMessage();
@@ -374,19 +364,13 @@ function mainLoopU1() {
 //U2 functions
 function mainLoopU2() {
 	if (game.global.universe !== 2) return;
-	//Auto Equality Management
 	if (shouldRunInTimeWarp()) equalityManagement();
 	_alchemyVoidPotions();
 }
 
 function guiLoop() {
-	if (getPageSetting('displayEnhancedGrid')) {
-		MODULES.fightinfo.Update();
-	}
-
-	if (MODULES.performance && MODULES.performance.isAFK) {
-		MODULES.performance.UpdateAFKOverlay();
-	}
+	if (getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
+	if (MODULES.performance && MODULES.performance.isAFK) MODULES.performance.UpdateAFKOverlay();
 }
 
 function updatePortalSettingVars(setting, currentValue) {
@@ -433,10 +417,6 @@ function mainCleanup() {
 	updatePortalSettings();
 	_handleNewHZE();
 	_handleNewWorld();
-}
-
-function throwErrorfromMain() {
-	throw new Error('We have successfully read the thrown error message out of the main file');
 }
 
 async function atVersionChecker() {

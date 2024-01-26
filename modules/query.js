@@ -84,3 +84,15 @@ function formatTimeForDescriptions(number) {
 function timeForFormatting(number) {
 	return Math.floor((getGameTime() - number) / 1000);
 }
+
+function _getPrimaryResourceInfo() {
+	return currSettingUniverse === 2 ? { name: 'Radon', abv: 'Rn' } : { name: 'Helium', abv: 'He' };
+}
+
+function _getChallenge2Info() {
+	return currSettingUniverse === 2 ? 'C3' : 'C2';
+}
+
+function _getSpecialChallengeDescription() {
+	return `${_getChallenge2Info()}'s or special challenge (${currSettingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience'})`;
+}

@@ -496,3 +496,89 @@ function getPerkModifier(what) {
 function noBreedChallenge() {
 	return challengeActive('Trapper') || challengeActive('Trappapalooza');
 }
+
+function downloadSave(portal) {
+	if (!getPageSetting('downloadSaves')) return;
+	if (portal && !portalWindowOpen) return;
+	MAZLookalike(null, 'downloadSave');
+}
+
+function _assembleChangelog(changes) {
+	return changes.map((change) => `<br>${change}`).join('');
+}
+
+function _assembleChangelogFooter() {
+	return `
+		<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!
+		<br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Server</a>
+		<br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).`;
+}
+
+function printChangelog(changes) {
+	const body = _assembleChangelog(changes);
+	const footer = _assembleChangelogFooter();
+	const action = 'cancelTooltip()';
+	const title = `Script Update Notice<br>${atSettings.initialise.version}`;
+	const acceptBtnText = 'Thank you for playing with AutoTrimps.';
+	const hideCancel = true;
+
+	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
+	if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
+	else verticalCenterTooltip(true);
+}
+
+function _adjustGlobalTimers(keys, adjustment) {
+	keys.forEach((key) => {
+		if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[keys] += adjustment;
+		else game.global[key] += adjustment;
+	});
+}
+
+function setupAddonUser(force) {
+	if (typeof game.global.addonUser === 'object' && !force) return;
+
+	game.global.addonUser = {};
+
+	const settings = {
+		value: ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'],
+		valueU2: ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation']
+	};
+
+	const createObjArray = () => Array.from({ length: 31 }, () => ({ done: '' }));
+
+	Object.entries(settings).forEach(([valueKey, settingNames]) => {
+		settingNames.forEach((item) => {
+			const settingKey = `${item}Settings`;
+			game.global.addonUser[settingKey] = game.global.addonUser[settingKey] || {};
+			game.global.addonUser[settingKey][valueKey] = game.global.addonUser[settingKey][valueKey] || createObjArray();
+		});
+	});
+
+	const mapItems = {
+		fragmentFarming: false,
+		lifeActive: false,
+		lifeCell: 0,
+		slowScumming: false,
+		mapRepeats: 0,
+		mapRepeatsSmithy: [0, 0, 0],
+		mapTimer: 0,
+		lastMapWeWereIn: null,
+		fragmentCost: Infinity
+	};
+
+	const mapFunctionItems = {
+		afterVoids: false,
+		hasHealthFarmed: '',
+		hasVoidFarmed: '',
+		runUniqueMap: '',
+		questRun: false,
+		hypoPackrat: false,
+		desoGearScum: false
+	};
+
+	game.global.addonUser = {
+		...game.global.addonUser,
+		maps: { ...mapItems },
+		mapFunctions: { ...mapFunctionItems }
+	};
+}

@@ -284,16 +284,15 @@ function getWorldHeirloomStaff() {
 }
 
 function getMapHeirloomStaff() {
-	const mapObject = getCurrentMapObject();
-	const mapBonus = mapObject.bonus;
-
 	if ((MODULES.maps.fragmentFarming || MODULES.maps.fragmentCost !== Infinity) && getPageSetting('heirloomStaffFragment') !== 'undefined') return 'heirloomStaffFragment';
 	if (mapSettings.mapName === 'Experience' && getPageSetting('experienceStaff') !== 'undefined') return 'experienceStaff';
 	if (mapSettings.mapName === 'Pandemonium Farming' && getPageSetting('pandemoniumStaff') !== 'undefined') return 'pandemoniumStaff';
 	if (mapSettings.mapName === 'Quest' && mapSettings.resource && mapSettings.resource === 'science' && getPageSetting('heirloomStaffScience') !== 'undefined') return 'heirloomStaffScience';
+
+	const mapObject = getCurrentMapObject();
+	const mapBonus = mapObject.bonus;
 	if (getPageSetting('heirloomStaffVoid') !== 'undefined' && mapObject.location === 'Void') return 'heirloomStaffVoid';
 	if (getPageSetting('heirloomStaffMap') !== 'undefined' && mapBonus === undefined) return 'heirloomStaffMap';
-
 	return getMapBonusHeirloomStaff(mapBonus);
 }
 
@@ -301,8 +300,8 @@ function getMapBonusHeirloomStaff(mapBonus) {
 	if (mapBonus !== undefined) {
 		if (mapBonus === 'lc' || mapBonus === 'hc') {
 			const gatherType = game.global.playerGathering[0].toUpperCase() + game.global.playerGathering.slice(1, 7);
-			const staff = getPageSetting('heirloomStaff' + gatherType);
-			if (staff && staff !== 'undefined') return 'heirloomStaff' + gatherType;
+			const staff = getPageSetting(`heirloomStaff${gatherType}`);
+			if (staff && staff !== 'undefined') return `heirloomStaff${gatherType}`;
 			if (getPageSetting('heirloomStaffMap') !== 'undefined') return 'heirloomStaffMap';
 		}
 		if (getPageSetting('heirloomStaffFood') !== 'undefined' && mapBonus.includes('sc')) return 'heirloomStaffFood';
@@ -319,12 +318,12 @@ function heirloomSwapping() {
 	const mapType = game.global.voidBuff ? 'void' : game.global.mapsActive ? 'map' : 'world';
 	if (getPageSetting('heirloomShield')) {
 		const shield = heirloomShieldToEquip(mapType, true);
-		if (shield !== undefined) heirloomEquip(shield, 'Shield');
+		if (shield) heirloomEquip(shield, 'Shield');
 	}
 
 	if (getPageSetting('heirloomStaff')) {
 		const staff = heirloomStaffToEquip(mapType, true);
-		if (staff !== undefined) heirloomEquip(staff, 'Staff');
+		if (staff) heirloomEquip(staff, 'Staff');
 	}
 }
 

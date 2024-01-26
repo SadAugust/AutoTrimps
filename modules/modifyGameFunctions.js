@@ -1,3 +1,49 @@
+//Override for the Atlantrimp fire function to add Surky respec
+function atlantrimpRespecOverride() {
+	if (typeof game.mapUnlocks.AncientTreasure.originalFire !== 'undefined') return;
+	//Add Surky respec to Trimple/Atlantrimp map completion
+	game.mapUnlocks.AncientTreasure.originalFire = game.mapUnlocks.AncientTreasure.fire;
+
+	game.mapUnlocks.AncientTreasure.fire = function () {
+		game.mapUnlocks.AncientTreasure.originalFire(...arguments);
+		try {
+			atlantrimpRespecMessage(true);
+		} catch (e) {
+			console.log('Loading respec function failed! ' + e, 'other');
+		}
+	};
+}
+
+//Runs when AT initially loads
+atlantrimpRespecOverride();
+
+// On loading save
+var originalLoad = load;
+load = function () {
+	resetLoops();
+	originalLoad(...arguments);
+	try {
+		loadAugustSettings();
+		atlantrimpRespecOverride();
+		resetVarsZone(true);
+		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
+		updateAutoTrimpSettings(true);
+	} catch (e) {
+		debug(`Load save failed: ${e}`);
+	}
+};
+
+// On portal/game reset
+var originalresetGame = resetGame;
+resetGame = function () {
+	originalresetGame(...arguments);
+	try {
+		atlantrimpRespecOverride();
+	} catch (e) {
+		debug(`Load save failed: ${e}`);
+	}
+};
+
 //Hacky way to allow the SA popup button to work within TW.
 autoBattle.originalpopup = autoBattle.popup;
 autoBattle.popup = function () {
@@ -44,7 +90,7 @@ offlineProgress.finish = function () {
 			timeRun *= 1000;
 
 			const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
-			_adjustGlobalTimers(keys, -timeToRun);
+			_adjustGlobalTimers(keys, -timeRun);
 
 			offlineProgress.start();
 			if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();

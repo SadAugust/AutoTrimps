@@ -431,15 +431,16 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
 	if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = _obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
 }
 
-// Deciding if we need to create a map or run voids/bw.
 function _setSelectedMap(selectedMap, voidMap, optimalMap) {
-	const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
 	if (selectedMap === 'world' && mapSettings.mapName !== '' && mapSettings.shouldRun) {
 		if (voidMap) selectedMap = voidMap.id;
 		else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = 'prestigeRaid';
 		else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = 'bionicRaid';
 		else if (optimalMap) selectedMap = optimalMap.id;
-		else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
+		else {
+			const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+			selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
+		}
 		if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
 	}
 
@@ -449,7 +450,6 @@ function _setSelectedMap(selectedMap, voidMap, optimalMap) {
 function _setMapRepeat() {
 	const mapObj = getCurrentMapObject();
 	if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding' || (mapSettings.mapName === 'Quagmire Farm' && mapObj.name === 'The Black Bog')) {
-		//Starting with repeat on
 		if (!game.global.repeatMap) repeatClicked();
 		//Changing repeat setting to Repeat For Items if Presitge or Bionic Raiding, otherwise set to Repeat Forever
 		if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
@@ -461,23 +461,14 @@ function _setMapRepeat() {
 			game.options.menu.repeatUntil.enabled = 0;
 			toggleSetting('repeatUntil', null, false, true);
 		}
-		//Disabling repeat if we shouldn't map
 		if (!mapSettings.shouldRun) repeatClicked();
-		//Disable if we should run a unique map
 		if (game.global.repeatMap && MODULES.mapFunctions.runUniqueMap) repeatClicked();
-		//Disabling repeat if we'll beat Experience from the BW we're clearing.
-		if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605) {
-			repeatClicked();
-		}
-		if (mapSettings.prestigeFragMapBought && game.global.repeatMap) {
-			prestigeRaidingMapping();
-		}
+		if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605) repeatClicked();
+		if (mapSettings.prestigeFragMapBought && game.global.repeatMap) prestigeRaidingMapping();
 		if (game.global.repeatMap && !mapSettings.prestigeFragMapBought) {
 			if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
 				if (!mapSettings.repeat) repeatClicked();
-			}
-			//Disabling repeat if the map isn't the right level or special
-			else {
+			} else {
 				const mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
 				const mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
 				if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();

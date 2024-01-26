@@ -7,7 +7,8 @@ MODULES.portal = {
 	dontPushData: false,
 	dailyMods: '',
 	dailyPercent: 0,
-	zonePostpone: 0
+	zonePostpone: 0,
+	disableAutoRespec: 0
 };
 
 //Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
@@ -199,7 +200,88 @@ function handlePortalType(portalType, portalZone, specificPortalZone, universe, 
 	if (challenge !== 'None') doPortal(challenge, skipDaily);
 }
 
-function freeVoidPortal() {
+function c2RunnerPortal(portalZone) {
+	if (!game.global.runningChallengeSquared) return;
+
+	if (portalZone && game.global.world >= portalZone) {
+		finishChallengeSquared();
+		autoPortal(portalZone);
+		return;
+	}
+
+	if (!portalZone) portalZone = c2FinishZone();
+	if (portalZone <= 0) portalZone = Infinity;
+
+	if (game.global.world >= portalZone) {
+		finishChallengeSquared();
+		//Only portal automatically if using C2 Runner Pct input.
+		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
+			autoPortal(portalZone);
+		}
+	}
+	return;
+}
+
+function doPortal(challenge, skipDaily) {
+	if (!game.global.portalActive) return;
+
+	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
+	autoHeirlooms();
+	if (!portalWindowOpen) portalClicked();
+
+	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
+
+	if (challengeActive('Daily') || game.global.runningChallengeSquared || challengeActive('Bublé')) _autoPortalAbandonChallenge();
+
+	_autoPortalVoidTracker();
+	if (MODULES.portal.portalForVoid) {
+		MODULES.portal.dontPushData = true;
+		return;
+	}
+
+	while (MODULES.portal.portalUniverse !== Infinity) {
+		swapPortalUniverse();
+		if (portalUniverse === MODULES.portal.portalUniverse) {
+			universeSwapped();
+			MODULES.portal.portalUniverse = Infinity;
+		}
+	}
+
+	if (Fluffy.checkU2Allowed()) {
+		_autoPortalUniverseSwap();
+		if (!game.global.portalActive) return;
+	}
+
+	if (MODULES.portal.currentChallenge === 'Daily') {
+		if (getPageSetting('dailyPortalPreviousUniverse', portalUniverse + 1)) {
+			swapPortalUniverse();
+			universeSwapped();
+		}
+	}
+
+	_autoPortalC2();
+
+	challenge = _autoPortalDaily(challenge, portalUniverse, challengeSquaredMode, skipDaily);
+	if (!game.global.portalActive) return;
+
+	if (!game.global.selectedChallenge && challenge && !challengeSquaredMode) challenge = _autoPortalRegular(challenge);
+
+	_autoPortalActivate(challenge);
+}
+
+function _autoPortalAbandonChallenge() {
+	if (challengeActive('Daily') && (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0'))) {
+		const dailyMods = dailyModifiersOutput();
+		MODULES.portal.dailyMods = dailyMods ? dailyMods.replace(/<br>/g, '|').slice(0, -1) : '';
+		MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
+	}
+	confirmAbandonChallenge();
+	abandonChallenge();
+	cancelTooltip();
+	portalClicked();
+}
+
+function _autoPortalVoidTracker() {
 	MODULES.portal.portalForVoid = true;
 	const universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
@@ -231,29 +313,23 @@ function freeVoidPortal() {
 	activatePortal();
 }
 
-function c2RunnerPortal(portalZone) {
-	if (!game.global.runningChallengeSquared) return;
-
-	if (portalZone && game.global.world >= portalZone) {
-		finishChallengeSquared();
-		autoPortal(portalZone);
-		return;
-	}
-
-	if (!portalZone) portalZone = c2FinishZone();
-	if (portalZone <= 0) portalZone = Infinity;
-
-	if (game.global.world >= portalZone) {
-		finishChallengeSquared();
-		//Only portal automatically if using C2 Runner Pct input.
-		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
-			autoPortal(portalZone);
+function _autoPortalUniverseSwap() {
+	let newUniverse = portalUniverse;
+	while (getPageSetting('autoPortalUniverseSwap', newUniverse)) {
+		newUniverse++;
+		if (newUniverse > 2) {
+			newUniverse = 1;
+			break;
 		}
 	}
-	return;
+	if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
+	MODULES.portal.portalForVoid = false;
+	if (newUniverse !== portalUniverse) {
+		autoPortal(game.global.world, newUniverse);
+	}
 }
 
-function c2Runner() {
+function _autoPortalC2() {
 	if (!game.global.portalActive || !portalWindowOpen) return;
 	if ((portalUniverse === 1 && game.stats.highestLevel.valueTotal() < 65) || (portalUniverse === 2 && game.stats.highestRadLevel.valueTotal() < 50)) return;
 	if (!getPageSetting('c2RunnerStart', portalUniverse)) return;
@@ -264,11 +340,10 @@ function c2Runner() {
 	if (runType === 0 && (c2RunnerPortal <= 0 || c2RunnerPercent <= 0)) return;
 
 	const challengeArray = [];
-	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
+	const universePrefix = portalUniverse === 2 ? 'C3' : 'C2';
 	const worldType = portalUniverse === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
 	const c2Setting = getPageSetting('c2RunnerSettings', portalUniverse);
 	if (runType === 0) {
-		//Building challenge array with percent value challenges
 		if (portalUniverse === 1) {
 			let highestZone = game.stats.highestLevel.valueTotal();
 
@@ -296,7 +371,6 @@ function c2Runner() {
 			if (highestZone >= 150) challengeArray.push('Mapology');
 		}
 
-		//Adding U2 challenges
 		if (portalUniverse === 2) {
 			let highestZone = game.stats.highestRadLevel.valueTotal();
 			if (highestZone >= 50) challengeArray.push('Unlucky');
@@ -308,7 +382,6 @@ function c2Runner() {
 			if (highestZone >= 201) challengeArray.push('Smithless');
 		}
 	} else if (runType === 1) {
-		//Building challenge array with set value challenges
 		for (let x in c2Setting) {
 			if (typeof c2Setting[x] === 'undefined') continue;
 			if (!c2Setting[x].enabled) continue;
@@ -337,87 +410,19 @@ function c2Runner() {
 			if (challengeActive(challengeArray[x])) continue;
 			if (!challengeSquaredMode) toggleChallengeSquared();
 			selectChallenge(challengeArray[x]);
-			debug(`${universePrefix} Runner: Starting ${universePrefix} Challenge ${challengeArray[x]}`, 'portal');
+			debug(`${universePrefix} Runner: Starting ${challengeArray[x]}`, 'portal');
 			return;
 		}
 	}
+
+	if (!challengeSquaredMode) debug(`C${portalUniverse + 1} Runner: All C${portalUniverse + 1}'s above level threshold!`, 'portal');
 	return;
 }
 
-function doPortal(challenge, skipDaily) {
-	if (!game.global.portalActive) return;
-
-	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
-	autoHeirlooms();
-
-	if (!portalWindowOpen) portalClicked();
-
-	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
-	let currChall = MODULES.portal.currentChallenge;
-
-	//Cancel out of dailies/c2s/buble if we're running any of them
-	if (challengeActive('Daily') || game.global.runningChallengeSquared || challengeActive('Bublé')) {
-		if (challengeActive('Daily') && (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0'))) {
-			const dailyMods = dailyModifiersOutput();
-			MODULES.portal.dailyMods = dailyMods ? dailyMods.replace(/<br>/g, '|').slice(0, -1) : '';
-			MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
-		}
-		confirmAbandonChallenge();
-		abandonChallenge();
-		cancelTooltip();
-		portalClicked();
-	}
-
-	freeVoidPortal();
-	if (MODULES.portal.portalForVoid) {
-		MODULES.portal.dontPushData = true;
-		return;
-	}
-
-	while (MODULES.portal.portalUniverse !== Infinity) {
-		swapPortalUniverse();
-		if (portalUniverse === MODULES.portal.portalUniverse) {
-			universeSwapped();
-			MODULES.portal.portalUniverse = Infinity;
-		}
-	}
-
-	//Swap to next universe setting. Setup to allow for more universes in the future.
-	if (Fluffy.checkU2Allowed()) {
-		let newUniverse = portalUniverse;
-		while (getPageSetting('autoPortalUniverseSwap', newUniverse)) {
-			newUniverse++;
-			if (newUniverse > 2) {
-				newUniverse = 1;
-				break;
-			}
-		}
-		if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
-		MODULES.portal.portalForVoid = false;
-		if (newUniverse !== portalUniverse) {
-			autoPortal(game.global.world, newUniverse);
-			return;
-		}
-	}
-
-	if (currChall === 'Daily') {
-		//Swapping to other universe if necessary to run daily.
-		if (getPageSetting('dailyPortalPreviousUniverse', portalUniverse + 1)) {
-			swapPortalUniverse();
-			universeSwapped();
-		}
-	}
-
-	//Running C∞ runner
-	c2Runner();
-	if (!challengeSquaredMode) debug(`C${portalUniverse + 1} Runner: All C${portalUniverse + 1}'s above level threshold!`, 'portal');
-
-	//Running Dailies
-	if (!skipDaily && (currChall === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
-		//Check to see if dailies are available to run. This check is only useful for the Daily Previous Universe setting as it can break if you haven't unlocked dailies yet in the new universe
+function _autoPortalDaily(challenge, portalUniverse, challengeSquaredMode, skipDaily = false) {
+	if (!skipDaily && (MODULES.portal.currentChallenge === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
 		const dailyAvailable = document.getElementById('challengeDaily') !== null;
 		if (dailyAvailable) selectChallenge('Daily');
-		//Checking to see which dailies can be run
 		checkCompleteDailies();
 		const dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map((item) => item.replace(/-/g, ''));
 		let lastUndone;
@@ -427,7 +432,6 @@ function doPortal(challenge, skipDaily) {
 			if (game.global.recentDailies.indexOf(dailyTime) === -1) break;
 		}
 
-		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and have the last X dailies available.
 		if (getPageSetting('dailyDontCap', portalUniverse)) {
 			let dailiesCompleted = 0;
 
@@ -440,14 +444,13 @@ function doPortal(challenge, skipDaily) {
 
 		if (lastUndone === 1) debug(`All dailies have been completed.`, 'portal');
 
-		//Portaling into a filler/c2/c3 if dailyPortalFiller is enabled OR all dailies completed or dailyPortalStart is disabled.
-		if ((currChall === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse))) || lastUndone === 1) {
+		if ((MODULES.portal.currentChallenge === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse))) || lastUndone === 1) {
 			MODULES.portal.currentChallenge = 'None';
 			MODULES.portal.portalUniverse = portalUniverse;
 			autoPortal(game.global.world, portalUniverse, true);
-			return;
+			return challenge;
 		}
-		//Portaling into a daily
+
 		if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse)) {
 			swapPortalUniverse();
 			universeSwapped();
@@ -456,28 +459,30 @@ function doPortal(challenge, skipDaily) {
 		}
 		if (dailyAvailable) {
 			getDailyChallenge(lastUndone);
-			challenge = 'Daily';
 			debug(`Portaling into Daily for: ${getDailyTimeString(lastUndone, true)} now!`, 'portal');
+			challenge = 'Daily';
 		}
 	}
-	//Selecting challenge that AT has chosen to run.
-	if (game.global.selectedChallenge === '' && challenge && !challengeSquaredMode) {
-		if (challenge.includes('Challenge ')) {
-			challenge = getPageSetting('heliumC2Challenge', portalUniverse) === 'None' ? 0 : getPageSetting('heliumC2Challenge', portalUniverse);
-			if (challenge !== 0 && game.challenges[challenge].allowSquared) toggleChallengeSquared();
-		}
-		selectChallenge(challenge);
+	return challenge;
+}
+
+function _autoPortalRegular(challenge) {
+	if (challenge.includes('Challenge ')) {
+		challenge = getPageSetting('heliumC2Challenge', portalUniverse) === 'None' ? 0 : getPageSetting('heliumC2Challenge', portalUniverse);
+		if (challenge !== 0 && game.challenges[challenge].allowSquared) toggleChallengeSquared();
 	}
+	selectChallenge(challenge);
+	return challenge;
+}
+
+function _autoPortalActivate(challenge) {
 	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
 	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
 	debug(`Portaling with void tracker at ${trackerValue}/10.`, 'portal');
 	universeSwapped();
-
 	portalPerkCalc();
 
 	let preset = 0;
-
-	//Reset packrat to 3 on Hypothermia - Setup mutator respec
 	if (portalUniverse === 2) {
 		hypoPackratReset(challenge);
 
@@ -687,15 +692,8 @@ function resetVarsZone(loadingSave) {
 	farmingDecision();
 }
 
-function downloadSave(portal) {
-	if (!getPageSetting('downloadSaves')) return;
-	if (portal && !portalWindowOpen) return;
-	MAZLookalike(null, 'downloadSave');
-}
-
 function hypoPackratReset(challenge) {
-	if (challenge !== 'Hypothermia') return;
-	if (!getPageSetting('hypothermiaSettings', portalUniverse)[0].packrat) return;
+	if (challenge !== 'Hypothermia' || !getPageSetting('hypothermiaSettings', portalUniverse)[0].packrat) return;
 
 	toggleRemovePerks();
 	numTab(6, true);
@@ -737,8 +735,6 @@ function combatRespec() {
 	if (game.global.universe === 2) fillPresetSurky(currPreset);
 	else fillPresetPerky(currPreset);
 }
-
-MODULES.portal.disableAutoRespec = 0;
 
 //Force tooltip appearance for Surky combat respec post Atlantrimp
 function atlantrimpRespecMessage(cellOverride) {
@@ -782,52 +778,6 @@ function atlantrimpRespecMessage(cellOverride) {
 		tooltip('confirm', null, 'update', description, 'MODULES.popups.respecAncientTreasure = true; combatRespec()', '<b>Post ' + mapName + ' Respec</b>', 'Force Respec');
 	}
 }
-
-//Override for the Atlantrimp fire function to add Surky respec
-function atlantrimpRespecOverride() {
-	if (typeof game.mapUnlocks.AncientTreasure.originalFire !== 'undefined') return;
-	//Add Surky respec to Trimple/Atlantrimp map completion
-	game.mapUnlocks.AncientTreasure.originalFire = game.mapUnlocks.AncientTreasure.fire;
-
-	game.mapUnlocks.AncientTreasure.fire = function () {
-		game.mapUnlocks.AncientTreasure.originalFire(...arguments);
-		try {
-			atlantrimpRespecMessage(true);
-		} catch (e) {
-			console.log('Loading respec function failed! ' + e, 'other');
-		}
-	};
-}
-
-//Runs when AT initially loads
-atlantrimpRespecOverride();
-
-// On loading save
-var originalLoad = load;
-load = function () {
-	resetLoops();
-	originalLoad(...arguments);
-	try {
-		loadAugustSettings();
-		atlantrimpRespecOverride();
-		resetVarsZone(true);
-		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
-		updateAutoTrimpSettings(true);
-	} catch (e) {
-		debug(`Load save failed: ${e}`);
-	}
-};
-
-// On portal/game reset
-var originalresetGame = resetGame;
-resetGame = function () {
-	originalresetGame(...arguments);
-	try {
-		atlantrimpRespecOverride();
-	} catch (e) {
-		debug(`Load save failed: ${e}`);
-	}
-};
 
 function _setButtonsPortal() {
 	if (getPageSetting('autoMapsPortal') && !getPageSetting('autoMaps')) {

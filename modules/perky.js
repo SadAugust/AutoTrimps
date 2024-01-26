@@ -103,7 +103,6 @@ var Perk = /** @class */ (function () {
 function initPresetPerky() {
 	const settingInputs = JSON.parse(localStorage.getItem('perkyInputs'));
 
-	//Initial setup if we don't already have a save file setup
 	if (settingInputs === null || Object.keys(settingInputs).length === 0) {
 		return {};
 	}
@@ -125,7 +124,6 @@ function initPresetPerky() {
 	};
 }
 
-//Fill preset weights from the dropdown menu
 function fillPresetPerky(specificPreset) {
 	if (specificPreset) $$('#preset').value = specificPreset;
 
@@ -158,7 +156,6 @@ function fillPresetPerky(specificPreset) {
 	const preset = $$('#preset').value;
 	const weights = localData[preset] === null || localData[preset] === undefined ? defaultWeights[preset] : localData[preset];
 
-	//If we're changing the preset that's being used then we need to update the inputs that the user sees
 	const ids = ['weight-he', 'weight-atk', 'weight-hp', 'weight-xp'];
 	ids.forEach((id, index) => {
 		document.querySelector(`#${id}`).value = +weights[index];
@@ -173,8 +170,7 @@ function savePerkySettings() {
 	MODULES.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
 	});
-	//Save inputs for all the presets that users can select.
-	//Overrides data for current preset otherwises saves any already saved data for the others.
+
 	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
 	if (Object.keys(saveData).length !== 0) {
 		for (let item of presetNames) {
@@ -704,6 +700,7 @@ MODULES.autoPerks = {
 		apGUI.$customRatios.id = 'customRatios';
 
 		apGUI.$ratiosLine = {};
+
 		//Setup inputs boxes for the UI.
 		for (let x = 0; x < Object.keys(inputBoxes).length; x++) {
 			let row = Object.keys(inputBoxes)[x];
@@ -749,7 +746,6 @@ MODULES.autoPerks = {
 		$portalWrapper.appendChild(apGUI.$customRatios);
 
 		if (universe === 'Perky') {
-			//If Perky hasn't been run before, finds the closest zone to your target zone that you have already completed and sets your weight to be the same as that zone range.
 			if (!settingInputs) {
 				document.querySelector('#targetZone').value = Math.max(20, game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
 				let presetToUse;
