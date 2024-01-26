@@ -173,6 +173,7 @@ function buyUpgrades() {
 				else if (game.global.lastWarp ? game.buildings.Warpstation.owned < Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation') : game.buildings.Warpstation.owned < getPageSetting('firstGigastation')) continue;
 			}
 		} else if (upgrade === 'Bloodlust') {
+			if (game.global.world === 1) continue;
 			const needMiner = !challengeActive('Metal') && !game.upgrades.Miners.done;
 			const needScientists = !challengeActive('Scientist') && !game.upgrades.Scientists.done;
 			if (needScientists && game.resources.science.owned < 160 && game.resources.food.owned < 450) continue;

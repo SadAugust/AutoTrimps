@@ -355,7 +355,7 @@ function calcHitsSurvived(targetZone = game.global.world, type = 'world', diffic
 		} else if (game.global.universe === 2 && targetZone > 200) customAttack = calcMutationAttack(targetZone);
 	}
 
-	const enemyName = type === 'void' ? 'Cthulimp' : 'Improbability';
+	const enemyName = type === 'void' ? 'Cthulimp' : targetZone >= 59 ? 'Improbability' : 'Snimp';
 
 	let hitsToSurvive = targetHitsSurvived(false, type);
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
@@ -1194,12 +1194,16 @@ function calcHDRatio(targetZone = game.global.world, type = 'world', maxTenacity
 
 	if (type === 'world') {
 		let customHealth = undefined;
+		let enemyName = 'Turtlimp';
+		if (targetZone === 5 || targetZone === 10 || (targetZone >= 15 && targetZone <= 58)) enemyName = 'Blimp';
+		if (targetZone >= 59) enemyName = 'Improbability';
 		if (game.global.universe === 1) {
+			if (targetZone > 229) enemyName = 'Omnipotrimp';
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedHealth(targetZone);
 		} else if (game.global.universe === 2) if (targetZone > 200) customHealth = calcMutationHealth(targetZone);
-		enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Improbability', customHealth) * difficulty;
-		universeSetting = game.global.universe === 2 ? equalityQuery('Improbability', targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
+		enemyHealth = calcEnemyHealth(type, targetZone, 100, enemyName, customHealth) * difficulty;
+		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, 100, type, difficulty, 'gamma', false, 1, true) : 'X';
 	} else if (type === 'map') {
 		enemyHealth = calcEnemyHealth(type, targetZone, 20, 'Turtlimp') * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, type, difficulty, 'gamma', true) : 'X';

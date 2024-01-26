@@ -27,6 +27,7 @@ function getUpgradeCosts() {
 	const upgradeList = populateUpgradeList();
 
 	upgradeList.forEach((upgrade) => {
+		if (upgrade === 'Bloodlust' && game.global.world === 1) return;
 		const { allowed, done } = game.upgrades[upgrade];
 		if (allowed > done) {
 			resourcesNeeded.science += getCostToUpgrade(upgrade, 'science');
