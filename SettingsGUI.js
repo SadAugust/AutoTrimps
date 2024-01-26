@@ -869,6 +869,7 @@ function initialiseAllSettings() {
 			function () { return ('AE: Percent') },
 			function () {
 				let description = "<p>What percent of resources you'd like to spend on equipment.</p>";
+				description += "<p>If set to <b>0 or below</b> it will overide this and set the equip spending percent to 100%.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 10, null, "Equipment", [1, 2],
@@ -1447,7 +1448,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will switch the auto level system that is being used to the new one based off of and adapted from the zfarm code.</p>";
 				description += "<p><b>Recommended:</b> On when active and can test</p>";
 				return description;
-			}, 'boolean', false, null, 'Maps', [1, 2]);
+			}, 'boolean', true, null, 'Maps', [1, 2]);
 
 		createSetting('uniqueMapEnoughHealth',
 			function () { return ('Unique Map Health Check') },
@@ -1497,13 +1498,14 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 10, null, "Maps", [1, 2]);
 
-		/* createSetting('ignoreMapBonus',
-			function () { return ('Ignore Map Bonus wqoieqjowieijqweij') },
+		createSetting('mapBonusMinLevel',
+			function () { return ('Map Bonus Min Level') },
 			function () {
-				let description = "<p>Map Bonus stacks will be obtained to this amount when your current <b>World HD Ratio</b> is above the threshold set in the <b>Map Bonus Ratio</b> setting.</p>";
-				description += "<p><b>Recommended:</b> 10</p>";
+				let description = "<p>When using the <b>Map Bonus Health</b>, <b>Map Bonus Stacks</b> and <b>Map Bonus</b> settings this will allow you to decide not to maps for map bonus stacks when the optimal map level is this many levels before your minimum map bonus level.</p>";
+				description += "<p>This is disabled when you have bought all the prestiges available to you and have prestiges available in the minimum map bonus level.</p>";
+				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', 10, null, "Maps", [1, 2]); */
+			}, 'value', -1, null, "Maps", [1, 2]);
 
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },

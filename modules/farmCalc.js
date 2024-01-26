@@ -25,22 +25,7 @@ function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
 
 	if (_getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
 
-	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
-	const mapBonusConditions = [
-		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel, level: mapBonusLevel },
-		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10, level: mapBonusLevel },
-		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth'), level: mapBonusLevel },
-		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
-		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(_getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
-		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
-		{ condition: mapName === 'Mayhem Destacking' && mapLevel < 0, level: getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0 },
-		{ condition: mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel, level: mapBonusLevel },
-		{ condition: _insanityDisableUniqueMaps() && mapLevel < 0, level: 0 }
-	];
-
-	const matchingCondition = mapBonusConditions.find(({ condition }) => condition);
-	if (matchingCondition) mapLevel = matchingCondition.level;
-
+	mapLevel = autoLevelOverides(mapName, mapLevel);
 	return mapLevel;
 }
 
@@ -72,11 +57,18 @@ function callAutoMapLevel_new(mapName, special) {
 
 	if (_getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
 
+	mapLevel = autoLevelOverides(mapName, mapLevel);
+	return mapLevel;
+}
+
+function autoLevelOverides(mapName, mapLevel) {
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
+	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapLevel > (getPageSetting('mapBonusMinLevel') > 0 ? -getPageSetting('mapBonusMinLevel') : 0);
+
 	const mapBonusConditions = [
-		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel, level: mapBonusLevel },
-		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10, level: mapBonusLevel },
-		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth'), level: mapBonusLevel },
+		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && !mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && !mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel, level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
 		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(_getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },

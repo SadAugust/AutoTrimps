@@ -406,7 +406,6 @@ function buyEquips() {
 		}
 	}
 
-	hdStats.hdRatio = calcHDRatio(game.global.world, 'world');
 	return keepBuying;
 }
 

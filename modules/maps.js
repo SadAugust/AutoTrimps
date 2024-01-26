@@ -287,9 +287,9 @@ function prettifyMap(map) {
 }
 
 function _fragmentCheck(highestMap, runUnique) {
-	const mapLevel = parseInt(document.getElementById('mapLevelInput').value) + parseInt(document.getElementById('advExtraLevelSelect').value);
+	const mapLevel = parseInt(document.getElementById('mapLevelInput').value) + parseInt(document.getElementById('advExtraLevelSelect').value) || 6;
 	const mapSpecial = document.getElementById('advSpecialSelect').value === '0' ? 'no special' : document.getElementById('advSpecialSelect').value;
-	debug(`Can't afford the designed map (level ${mapLevel} ${mapSpecial})`, 'maps', 'th-large');
+	debug(`Can't afford the designed map (level ${mapLevel}${mapSpecial ? ' ' : ''}${mapSpecial})`, 'maps', 'th-large');
 	//Runs fragment farming if Explorers are unlocked and can afford a max loot+size sliders map
 	if (!game.jobs.Explorer.locked && mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
 	//Disable mapping if we don't have a map and can't afford the one that we want to make.

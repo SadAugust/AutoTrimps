@@ -1184,40 +1184,6 @@ function mapDestacking(lineCheck) {
 	return farmingDetails;
 }
 
-function prestigesToGet(targetZone = game.global.world, targetPrestige = 'GambesOP') {
-	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
-	//Skip locked equips
-	if (!game.global.slowDone && prestigeList.indexOf(targetPrestige) > 10) targetPrestige = 'Bestplate';
-
-	//Figure out how many equips to farm for
-	let mapsToRun = 0;
-	let prestigeToFarmFor = 0;
-
-	const hasSciFour = (game.global.universe === 1 && game.global.sLevel >= 4) || (game.global.universe === 2 && game.buildings.Microchip.owned >= 4);
-	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;
-
-	//Loops through all prestiges
-	for (const p of prestigeList) {
-		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
-		const prestigeUnlock = game.mapUnlocks[p];
-		const pMapLevel = prestigeUnlock.last + 5;
-
-		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= targetZone) {
-			mapsToRun += Math.max(1, Math.ceil((targetZone - pMapLevel) / prestigeInterval));
-			let prestigeCount = Math.floor((targetZone - prestigeUnlock.last) / 5);
-
-			if (hasSciFour && prestigeCount % 2 === 1) {
-				prestigeCount++;
-			}
-			prestigeToFarmFor += prestigeCount;
-		}
-
-		if (p === targetPrestige) break;
-	}
-
-	return [prestigeToFarmFor, mapsToRun];
-}
-
 function prestigeClimb(lineCheck) {
 	const mapName = 'Prestige Climb';
 	const farmingDetails = {
@@ -1249,16 +1215,12 @@ function prestigeClimb(lineCheck) {
 	}
 
 	let shouldMap = prestigeToFarmFor > 0;
-
-	if (shouldMap && getPageSetting('prestigeClimbSkip')) {
-		const prestigeList = ['Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
-		const numUnbought = prestigeList.filter((p) => game.upgrades[p].allowed - game.upgrades[p].done > 0).length;
-		shouldMap = numUnbought >= 2;
-	}
+	if (shouldMap && getPageSetting('prestigeClimbSkip')) shouldMap = prestigesUnboughtCount() >= 2;
 
 	const mapSpecial = getAvailableSpecials('p');
 	const mapObject = getCurrentMapObject();
-	if (mapCost(mapLevel, mapSpecial, null, [0, 0, 0], false) > game.resources.fragments.owned && (!game.global.mapsActive || (mapObject && mapObject.level < game.global.world + mapLevel))) {
+	const worldMapCost = mapCost(mapLevel, mapSpecial, null, [0, 0, 0], false);
+	if (worldMapCost > game.resources.fragments.owned && (!game.global.mapsActive || (mapObject && mapObject.level < game.global.world + mapLevel))) {
 		shouldMap = false;
 	}
 

@@ -60,6 +60,7 @@ function autoGather() {
 
 	//Identify if we should disable trapping when running Trappa/Trapper
 	if (trapTrimpsOK && trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap')) {
+		//Need a way to figure out how many coords it will purchase if using trappaCoordToggle === 2 since the goal with that feature is to cap army at X soliders so probably need to increment coordination until we reach that point
 		const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
 		if (trappaCoordToggle === 1) {
 			let targetArmySize = baseArmySize;
@@ -183,7 +184,7 @@ function autoGather() {
 	}
 
 	//Get coordination upgrade if army size is not the problem.
-	if (Coordination.allowed > Coordination.done && canAffordCoordinationTrimps() && !canAffordTwoLevel(Coordination)) {
+	if (game.global.world > Coordination.done && canAffordCoordinationTrimps() && !canAffordTwoLevel(Coordination)) {
 		//TODO Put these resources in a priority queue
 		//TODO Refactoring
 

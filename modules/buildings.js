@@ -24,7 +24,6 @@ function advancedNurseries() {
 }
 
 function _housingToCheck() {
-	// Which houses we actually want to check
 	const housingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
 	return housingTypes.filter(_needHousing);
 }
@@ -84,7 +83,6 @@ function _checkSafeGateway(buildingStat) {
 }
 
 function _getResourcePerSecond() {
-	// Return resource types and their production per second.
 	const resourceTypes = ['food', 'wood', 'metal', 'gems', 'fragments'];
 	const resourcePerSecond = {};
 	for (const resource of resourceTypes) resourcePerSecond[resource] = getPsString_AT(resource);

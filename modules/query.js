@@ -96,3 +96,42 @@ function _getChallenge2Info() {
 function _getSpecialChallengeDescription() {
 	return `${_getChallenge2Info()}'s or special challenge (${currSettingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience'})`;
 }
+
+function prestigesToGet(targetZone = game.global.world, targetPrestige = 'GambesOP') {
+	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+
+	if (!game.global.slowDone && prestigeList.indexOf(targetPrestige) > 10) targetPrestige = 'Bestplate';
+
+	let mapsToRun = 0;
+	let prestigeToFarmFor = 0;
+
+	const hasSciFour = (game.global.universe === 1 && game.global.sLevel >= 4) || (game.global.universe === 2 && game.buildings.Microchip.owned >= 4);
+	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;
+
+	for (const p of prestigeList) {
+		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
+		const prestigeUnlock = game.mapUnlocks[p];
+		const pMapLevel = prestigeUnlock.last + 5;
+
+		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= targetZone) {
+			mapsToRun += Math.max(1, Math.ceil((targetZone - pMapLevel) / prestigeInterval));
+			let prestigeCount = Math.floor((targetZone - prestigeUnlock.last) / 5);
+
+			if (hasSciFour && prestigeCount % 2 === 1) {
+				prestigeCount++;
+			}
+			prestigeToFarmFor += prestigeCount;
+		}
+
+		if (p === targetPrestige) break;
+	}
+
+	return [prestigeToFarmFor, mapsToRun];
+}
+
+function prestigesUnboughtCount() {
+	const prestigeList = ['Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+	const numUnbought = prestigeList.filter((p) => game.upgrades[p].allowed - game.upgrades[p].done > 0).length;
+
+	return numUnbought;
+}
