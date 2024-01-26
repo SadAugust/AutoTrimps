@@ -76,7 +76,7 @@ function buyJobs(forceRatios) {
 
 	//Calculates the amount of trimps that should be employed
 	let freeWorkers = _calculateFreeWorkers(owned, maxTrimps, employed);
-	freeWorkers = Math.min(freeWorkers, _employableTrimps(owned, maxTrimps));
+	freeWorkers = Math.min(freeWorkers, _employableTrimps(owned, maxTrimps, employed));
 	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
 
 	//Hires the trimps according to the desired ratios
