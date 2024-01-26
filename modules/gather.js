@@ -6,8 +6,7 @@ MODULES.gather = {
 //Traps per second
 function calcTPS() {
 	const fluffyTrapMult = game.global.universe === 2 && Fluffy.isRewardActive('trapper') ? 10 : 1;
-	const tps = Math.min(10, game.global.playerModifier / 5) * fluffyTrapMult;
-	return tps;
+	return Math.min(10, game.global.playerModifier / 5) * fluffyTrapMult;
 }
 
 function safeSetGather(resource) {
@@ -118,7 +117,7 @@ function autoGather() {
 	}
 
 	//High Priority Trapping (doing Trapper or without breeding trimps)
-	if (!scientistsAvailable && !minersAvailable && trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull)) {
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull && !scientistsAvailable && !minersAvailable)) {
 		//Bait trimps if we have traps
 		if (!lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
 			safeSetGather('trimps');
@@ -139,7 +138,7 @@ function autoGather() {
 	}
 
 	//Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
-	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.autoCraftModifier === 0 || (getPlayerModifier() > 100 && building !== 'Trap.1'))) {
+	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building !== 'Trap.1' && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier === 0 || getPlayerModifier() > 100)) {
 		safeSetGather('buildings');
 		return;
 	}
@@ -279,17 +278,13 @@ function autoGather() {
 	if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
 		if (manualGather !== 3 && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers && game.resources.science.owned < getPsString_AT('science') * 60) {
 			safeSetGather('science');
-			return;
 		} else {
 			safeSetGather(lowestResource);
-			return;
 		}
 	} else if (trapTrimpsOK && game.global.trapBuildToggled && lowOnTraps) {
 		safeSetGather('buildings');
-		return;
 	} else {
 		safeSetGather(lowestResource);
-		return;
 	}
 }
 
