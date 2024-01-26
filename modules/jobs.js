@@ -254,7 +254,7 @@ function _getScientistRatio(maxTrimps) {
 }
 
 function _getAutoJobRatio(maxTrimps) {
-	const jobRatios = { ratioHaz: [1, 1, 1, 0], ratio7: [1, 1, 100, 0], ratio6: [1, 7, 12, 0], ratio5: [1, 2, 22, 0], ratio4: [1, 1, 10, 0], ratio3: [3, 1, 4, 0], ratio2: [3, 3, 5, 0], ratio1: [1.1, 1.15, 1.2, 0] };
+	const jobRatios = { ratioHaz: [1, 1, 1, 0], ratio7: [1, 1, 100, 0], ratio6: [1, 7, 12, 0], ratio5: [1, 2, 22, 0], ratio4: [1, 1, 10, 0], ratio3: [3, 1, 4, 0], ratio2: [3, 3, 5, 0], ratio1: [1, 1, 1, 0] };
 
 	const conditions = [
 		{ condition: () => game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1, ratio: jobRatios.ratioHaz },
@@ -265,7 +265,6 @@ function _getAutoJobRatio(maxTrimps) {
 		{ condition: () => maxTrimps > 3000000, ratio: jobRatios.ratio3 },
 		{ condition: () => maxTrimps > 300000, ratio: jobRatios.ratio2 },
 		{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
-		{ condition: () => game.global.world < 5, ratio: [1.5, 0.7, 1, 0] },
 		{ condition: () => true, ratio: jobRatios.ratio1 }
 	];
 
