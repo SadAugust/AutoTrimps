@@ -308,9 +308,9 @@ function autoEquip() {
 	}
 
 	//If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
-	const dontLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || checkIfLiquidZone();
+	const dontWhileLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || checkIfLiquidZone();
 
-	if (dontLoop) {
+	if (dontWhileLoop) {
 		buyEquipsPrestige();
 		buyEquipsAlways2();
 		buyEquips();

@@ -310,7 +310,6 @@ function mainLoop() {
 		farmingDecision();
 		mainCleanup();
 	}
-
 	if (_handleSlowScumming()) return;
 
 	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();

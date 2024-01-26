@@ -9,7 +9,6 @@ function safeBuyJob(jobTitle, amount) {
 	amount = Math.abs(amount);
 	if (!game.global.firing) amount = Math.min(amount, freeWorkers);
 	game.global.buyAmt = amount;
-
 	let result = game.global.firing || canAffordJobCheck(jobTitle, amount);
 
 	if (!result) {
@@ -288,13 +287,11 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff).reverse().slice(0, remainder);
 	whereToIncrement.forEach((idx) => desiredWorkers[idx]++);
-
 	//Calculates the actual number of workers to buy or fire, and the cost of doing so
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
 	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
-
 	if (totalWorkerCost > game.resources.food.owned) {
-		const farmersToHire = Math.min(calculateMaxAfford('Farmer', false, false, true), Math.max(1, freeWorkers / 10) - game.jobs.Farmer.owned);
+		const farmersToHire = Math.max(calculateMaxAfford('Farmer', false, false, true), Math.max(1, freeWorkers / 10) - game.jobs.Farmer.owned);
 		if (farmersToHire > game.jobs.Farmer.owned) {
 			_freeWorkspaces(farmersToHire);
 			safeBuyJob('Farmer', farmersToHire);

@@ -1314,43 +1314,34 @@ function calcCorruptedHealth(targetZone) {
 }
 
 //Avg damage of mutated enemy
-function mutationBaseAttack(cell, targetZone) {
-	if (!targetZone) targetZone = game.global.world;
+function mutationBaseAttack(cell, targetZone = game.global.world) {
+	cell = game.global.gridArray[cell];
+	let baseAttack = calcEnemyBaseAttack('world', targetZone, cell.cs || cell.level, cell.name, true);
+	let addAttack = cell.cc ? u2Mutations.types.Compression.attack(cell, baseAttack) : 0;
 
-	var baseAttack;
-	var addAttack = 0;
-	var cell = game.global.gridArray[cell];
-	if (cell.cs) {
-		baseAttack = calcEnemyBaseAttack('world', targetZone, cell.cs, cell.name, true);
-	} else {
-		baseAttack = calcEnemyBaseAttack('world', targetZone, cell.level, cell.name, true);
-	}
-	if (cell.cc) addAttack = u2Mutations.types.Compression.attack(cell, baseAttack);
-	if (cell.u2Mutation.indexOf('NVA') !== -1) baseAttack *= 0.01;
-	else if (cell.u2Mutation.indexOf('NVX') !== -1) baseAttack *= 10;
+	if (cell.u2Mutation.includes('NVA')) baseAttack *= 0.01;
+	else if (cell.u2Mutation.includes('NVX')) baseAttack *= 10;
+
 	baseAttack += addAttack;
 	baseAttack *= Math.pow(1.01, targetZone - 201);
 	return baseAttack;
 }
 
-function calcMutationAttack(targetZone) {
-	if (game.global.universe !== 2) return;
-	if (!targetZone) targetZone = game.global.world;
-	if (targetZone < 201) return;
-	var attack;
-	var hasRage = false;
-	var worstCell = 0;
-	var cell;
+function calcMutationAttack(targetZone = game.global.world) {
+	if (game.global.universe !== 2 || targetZone < 201) return;
 
-	var highest = 1;
-	var gridArray = game.global.gridArray;
+	let attack;
+	let worstCell = 0;
+
+	let highest = 1;
+	const gridArray = game.global.gridArray;
 	const heirloomToCheck = heirloomShieldToEquip('world');
-	var compressedSwap = getPageSetting('heirloomCompressedSwap');
-	var compressedSwapValue = getPageSetting('heirloomSwapHDCompressed');
+	const compressedSwap = getPageSetting('heirloomCompressedSwap');
+	const compressedSwapValue = getPageSetting('heirloomSwapHDCompressed');
 
-	for (var i = 0; i < gridArray.length; i++) {
-		hasRage = gridArray[i].u2Mutation.includes('RGE');
-		if (gridArray[i].u2Mutation.includes('CMP') && !gridArray[i].u2Mutation.includes('RGE')) {
+	for (let i = 0; i < gridArray.length; i++) {
+		let hasRage = gridArray[i].u2Mutation.includes('RGE');
+		if (gridArray[i].u2Mutation.includes('CMP') && !hasRage) {
 			for (var y = i + 1; y < i + u2Mutations.types.Compression.cellCount(); y++) {
 				if (gridArray[y].u2Mutation.includes('RGE')) {
 					hasRage = true;
@@ -1358,13 +1349,12 @@ function calcMutationAttack(targetZone) {
 				}
 			}
 		}
-		cell = i;
-		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
-			var ragingMult = hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1;
-			if (gridArray[cell].u2Mutation.includes('CMP') && compressedSwap && compressedSwapValue) {
-				if (heirloomToCheck !== 'heirloomInitial' || hdStats.hdRatioHeirloom >= compressedSwapValue || MODULES.heirlooms.compressedCalc) ragingMult = 2.8;
+		if (gridArray[i].u2Mutation && gridArray[i].u2Mutation.length) {
+			let ragingMult = hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1;
+			if (gridArray[i].u2Mutation.includes('CMP') && compressedSwap && compressedSwapValue) {
+				if (heirloomToCheck !== 'heirloomInitial' || hdStats.hdRatioHeirloom >= compressedSwapValue || MODULES.heirlooms.compressedCalc) ragingMult *= 0.7;
 			}
-			highest = Math.max(mutationBaseAttack(cell, targetZone) * ragingMult, highest);
+			highest = Math.max(mutationBaseAttack(i, targetZone) * ragingMult, highest);
 			if (highest > attack) worstCell = i;
 			attack = highest;
 		}
@@ -1375,20 +1365,14 @@ function calcMutationAttack(targetZone) {
 	return attack;
 }
 
-function mutationBaseHealth(cell, targetZone) {
-	if (!targetZone) targetZone = game.global.world;
-	var baseHealth;
-	var addHealth = 0;
-	var cell = game.global.gridArray[cell];
+function mutationBaseHealth(cell, targetZone = game.global.world) {
+	cell = game.global.gridArray[cell];
+	let baseHealth = calcEnemyBaseHealth('world', targetZone, cell.cs || cell.level, cell.name, true);
+	let addHealth = cell.cc ? u2Mutations.types.Compression.health(cell, baseHealth) : 0;
 
-	if (cell.cs) {
-		baseHealth = calcEnemyBaseHealth('world', targetZone, cell.cs, cell.name, true);
-	} else {
-		baseHealth = calcEnemyBaseHealth('world', targetZone, cell.level, cell.name, true);
-	}
-	if (cell.cc) addHealth = u2Mutations.types.Compression.health(cell, baseHealth);
-	if (cell.u2Mutation.indexOf('NVA') !== -1) baseHealth *= 0.01;
-	else if (cell.u2Mutation.indexOf('NVX') !== -1) baseHealth *= 0.1;
+	if (cell.u2Mutation.includes('NVA')) baseHealth *= 0.01;
+	else if (cell.u2Mutation.includes('NVX')) baseHealth *= 0.1;
+
 	baseHealth += addHealth;
 	baseHealth *= 2;
 	baseHealth *= Math.pow(1.02, targetZone - 201);
