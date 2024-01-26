@@ -30,7 +30,7 @@ function runPerky() {
 
 function allocatePerky() {
 	//Enable Fluffy xp input when it's not active.
-	const xpDivStyle = $$('#weight-xpDiv').style;
+	const xpDivStyle = document.querySelector('#weight-xpDiv').style;
 	if (game.global.spiresCompleted >= 2 && xpDivStyle.display !== 'inline') xpDivStyle.display = 'inline';
 
 	//Generate perk string
@@ -103,7 +103,6 @@ var Perk = /** @class */ (function () {
 function initPresetPerky() {
 	const settingInputs = JSON.parse(localStorage.getItem('perkyInputs'));
 
-	//Initial setup if we don't already have a save file setup
 	if (settingInputs === null || Object.keys(settingInputs).length === 0) {
 		return {};
 	}
@@ -125,7 +124,6 @@ function initPresetPerky() {
 	};
 }
 
-//Fill preset weights from the dropdown menu
 function fillPresetPerky(specificPreset) {
 	if (specificPreset) $$('#preset').value = specificPreset;
 
@@ -158,24 +156,21 @@ function fillPresetPerky(specificPreset) {
 	const preset = $$('#preset').value;
 	const weights = localData[preset] === null || localData[preset] === undefined ? defaultWeights[preset] : localData[preset];
 
-	//If we're changing the preset that's being used then we need to update the inputs that the user sees
-	$$('#weight-he').value = +weights[0];
-	$$('#weight-atk').value = +weights[1];
-	$$('#weight-hp').value = +weights[2];
-	$$('#weight-xp').value = +weights[3];
+	const ids = ['weight-he', 'weight-atk', 'weight-hp', 'weight-xp'];
+	ids.forEach((id, index) => {
+		document.querySelector(`#${id}`).value = +weights[index];
+	});
 	savePerkySettings();
 }
 
 function savePerkySettings() {
 	const saveData = initPresetPerky();
-	const settingInputs = { preset: $$('#preset').value };
+	const settingInputs = { preset: document.querySelector('#preset').value };
 
-	for (let item in MODULES.autoPerks.GUI.inputs) {
-		item = MODULES.autoPerks.GUI.inputs[item];
-		settingInputs[item] = $$('#' + item).value;
-	}
-	//Save inputs for all the presets that users can select.
-	//Overrides data for current preset otherwises saves any already saved data for the others.
+	MODULES.autoPerks.GUI.inputs.forEach((item) => {
+		settingInputs[item] = document.querySelector(`#${item}`).value;
+	});
+
 	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
 	if (Object.keys(saveData).length !== 0) {
 		for (let item of presetNames) {
@@ -369,41 +364,10 @@ function parse_perks() {
 
 function optimize() {
 	const params = populatePerkyData();
-	const total_he = params.total_he,
-		zone = params.zone,
-		fluffy = params.fluffy,
-		perks = params.perks,
-		weight = params.weight,
-		mod = params.mod;
-	const Looting_II = perks.Looting_II,
-		Carpentry_II = perks.Carpentry_II,
-		Motivation_II = perks.Motivation_II,
-		Power_II = perks.Power_II,
-		Toughness_II = perks.Toughness_II,
-		Capable = perks.Capable,
-		Cunning = perks.Cunning,
-		Curious = perks.Curious,
-		Classy = perks.Classy,
-		Overkill = perks.Overkill,
-		Resourceful = perks.Resourceful,
-		Coordinated = perks.Coordinated,
-		Siphonology = perks.Siphonology,
-		Anticipation = perks.Anticipation,
-		Resilience = perks.Resilience,
-		Meditation = perks.Meditation,
-		Relentlessness = perks.Relentlessness,
-		Carpentry = perks.Carpentry,
-		Artisanistry = perks.Artisanistry,
-		Range = perks.Range,
-		Agility = perks.Agility,
-		Bait = perks.Bait,
-		Trumps = perks.Trumps,
-		Pheromones = perks.Pheromones,
-		Packrat = perks.Packrat,
-		Motivation = perks.Motivation,
-		Power = perks.Power,
-		Toughness = perks.Toughness,
-		Looting = perks.Looting;
+	const { total_he, zone, fluffy, perks, weight, mod } = params;
+
+	const { Looting_II, Carpentry_II, Motivation_II, Power_II, Toughness_II, Capable, Cunning, Curious, Classy, Overkill, Resourceful, Coordinated, Siphonology, Anticipation, Resilience, Meditation, Relentlessness, Carpentry, Artisanistry, Range, Agility, Bait, Trumps, Pheromones, Packrat, Motivation, Power, Toughness, Looting } = perks;
+
 	const impNames = ['whip', 'magn', 'taunt', 'ven'];
 	impNames.forEach((name) => (mod[name] = Math.pow(1.003, zone * 99 * 0.03 * mod[name])));
 
@@ -663,57 +627,50 @@ function optimize() {
 }
 
 MODULES.autoPerks = {
-	createInput: function (perkLine, id, inputObj, savedValue, onchange) {
-		if (!id) return;
-		if (document.getElementById(id + 'Div') !== null) {
+	createInput: function (perkLine, id, inputObj, savedValue, settingName) {
+		if (!id || document.getElementById(id + 'Div') !== null) {
 			console.log("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.");
 			return;
 		}
-		if (onchange === 'Surky') onchange = 'legalizeInput(this.id); saveSurkySettings();';
-		if (onchange === 'Perky') onchange = 'legalizeInput(this.id); savePerkySettings();';
+		const onchange = `legalizeInput(this.id); save${settingName}Settings();`;
 		//Creating container for both the label and the input.
-		var perkDiv = document.createElement('DIV');
-		perkDiv.id = id + 'Div';
-		perkDiv.setAttribute('style', 'display: inline;');
+		const perkDiv = document.createElement('DIV');
+		perkDiv.id = `${id}Div`;
+		perkDiv.style.display = 'inline';
 
 		//Creating input box for users to enter their own ratios/stats.
-		var perkInput = document.createElement('Input');
-		perkInput.setAttribute('type', 'number');
+		const perkInput = document.createElement('Input');
+		perkInput.type = 'number';
 		perkInput.id = id;
-		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
-		if (game.options.menu.darkTheme.enabled !== 2) perkInputStyle += ' color: black;';
-		perkInput.setAttribute('style', perkInputStyle);
-		perkInput.setAttribute('value', savedValue || inputObj.defaultValue);
-		perkInput.setAttribute('min', inputObj.minValue);
-		perkInput.setAttribute('max', inputObj.maxValue);
-		perkInput.setAttribute('placeholder', inputObj.defaultValue);
+		perkInput.style.cssText = `text-align: center; width: calc(100vw/22); font-size: 1vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		perkInput.value = savedValue || inputObj.defaultValue;
+		perkInput.min = inputObj.minValue;
+		perkInput.max = inputObj.maxValue;
+		perkInput.placeholder = inputObj.defaultValue;
 		perkInput.setAttribute('onchange', onchange);
-		perkInput.setAttribute('onmouseover', 'tooltip("' + inputObj.name + '", "customText", event, "' + inputObj.description + '")');
-		perkInput.setAttribute('onmouseout', 'tooltip("hide")');
+		perkInput.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
+		perkInput.onmouseout = () => tooltip('hide');
 
-		var perkText = document.createElement('Label');
-		perkText.id = id + 'Text';
+		const perkText = document.createElement('Label');
+		perkText.id = `${id}Text`;
 		perkText.innerHTML = inputObj.name;
-		perkText.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
-		//Combining the input and the label into the container. Then attaching the container to the main div.
+		perkText.style.cssText = 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw;';
+
 		perkDiv.appendChild(perkText);
 		perkDiv.appendChild(perkInput);
 		perkLine.appendChild(perkDiv);
 	},
 
 	removeGUI: function () {
-		Object.keys(MODULES.autoPerks.GUI).forEach(function (key) {
-			var $$elem = MODULES.autoPerks.GUI[key];
-			if (!$$elem) {
-				console.log('error in: ' + key);
-				return;
-			}
-			if ($$elem.parentNode) {
-				$$elem.parentNode.removeChild($$elem);
-				delete $elem;
+		Object.keys(MODULES.autoPerks.GUI).forEach((key) => {
+			const elem = MODULES.autoPerks.GUI[key];
+			if (elem && elem.parentNode) {
+				elem.parentNode.removeChild(elem);
+				delete MODULES.autoPerks.GUI[key];
 			}
 		});
 	},
+
 	displayGUI: function (universe) {
 		universe = universe === 1 ? 'Perky' : universe === 2 ? 'Surky' : universe;
 		const presets = MODULES.autoPerks[`presets${universe}`];
@@ -743,6 +700,7 @@ MODULES.autoPerks = {
 		apGUI.$customRatios.id = 'customRatios';
 
 		apGUI.$ratiosLine = {};
+
 		//Setup inputs boxes for the UI.
 		for (let x = 0; x < Object.keys(inputBoxes).length; x++) {
 			let row = Object.keys(inputBoxes)[x];
@@ -758,61 +716,60 @@ MODULES.autoPerks = {
 		//Creating container for both the label and the input.
 		apGUI.$presetDiv = document.createElement('DIV');
 		apGUI.$presetDiv.id = 'Preset Div';
-		apGUI.$presetDiv.setAttribute('style', 'display: inline; width: calc(100vw/34;');
+		apGUI.$presetDiv.style.cssText = 'display: inline; width: calc(100vw/34);';
 
 		//Setting up preset label
 		apGUI.$presetLabel = document.createElement('Label');
 		apGUI.$presetLabel.id = 'PresetText';
 		apGUI.$presetLabel.innerHTML = '&nbsp;&nbsp;&nbsp;Preset:';
-		apGUI.$presetLabel.setAttribute('style', 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;');
+		apGUI.$presetLabel.style.cssText = 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;';
 
 		//Setup preset list
-		var presetListHtml = '<select id="preset" onchange="fillPreset' + universe + '()" data-saved>';
-		presetListHtml += '<option disabled>— Zone Progression —</option>';
-		for (var item in presets.regular) presetListHtml += '<option value="' + item + '" title ="' + presets.regular[item].description + '">' + presets.regular[item].name + '</option>';
-		presetListHtml += '<option disabled>— Special Purpose Presets —</option>';
-		for (var item in presets.special) presetListHtml += '<option value="' + item + '" title ="' + presets.special[item].description + '">' + presets.special[item].name + '</option>';
-		presetListHtml += '</select >';
+		let presetListHtml = `<select id="preset" onchange="fillPreset${universe}()" data-saved>
+   		<option disabled>— Zone Progression —</option>`;
+		for (let item in presets.regular) presetListHtml += `<option value="${item}" title="${presets.regular[item].description}">${presets.regular[item].name}</option>`;
+		presetListHtml += `<option disabled>— Special Purpose Presets —</option>`;
+		for (let item in presets.special) presetListHtml += `<option value="${item}" title="${presets.special[item].description}">${presets.special[item].name}</option>`;
+		presetListHtml += `</select>`;
 
 		//Setting up preset dropdown
 		apGUI.$preset = document.createElement('select');
 		apGUI.$preset.id = 'preset';
-		apGUI.$preset.setAttribute('onchange', 'fillPreset' + universe + '();');
-		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
-		if (game.options.menu.darkTheme.enabled !== 2) oldstyle += ' color: black;';
-		apGUI.$preset.setAttribute('style', oldstyle);
+		apGUI.$preset.onchange = () => window[`fillPreset${universe}`]();
+		apGUI.$preset.style.cssText = `text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
 		apGUI.$preset.innerHTML = presetListHtml;
 
 		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
 		apGUI.$presetDiv.appendChild(apGUI.$preset);
 		if (document.getElementById(apGUI.$presetDiv.id) === null) apGUI.$ratiosLine.row1.appendChild(apGUI.$presetDiv);
-		var $portalWrapper = document.getElementById('portalWrapper');
+		let $portalWrapper = document.getElementById('portalWrapper');
 		$portalWrapper.appendChild(apGUI.$customRatios);
 
 		if (universe === 'Perky') {
-			//If Perky hasn't been run before, finds the closest zone to your target zone that you have already completed and sets your weight to be the same as that zone range.
-			if (settingInputs === null) {
-				$$('#targetZone').value = Math.max(20, game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
-				var presetToUse;
-				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
-					if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared) presetToUse = option.value;
+			if (!settingInputs) {
+				document.querySelector('#targetZone').value = Math.max(20, game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
+				let presetToUse;
+				Array.from(document.querySelectorAll('#preset > *')).forEach((option) => {
+					if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared) {
+						presetToUse = option.value;
+					}
 				});
+
 				fillPresetPerky(presetToUse);
-				settingInputs = JSON.parse(localStorage.getItem(universe.toLowerCase() + 'Inputs'));
+				settingInputs = JSON.parse(localStorage.getItem(`${universe.toLowerCase()}Inputs`));
 			}
-			$$('#preset').value = settingInputs.preset;
-			//Disable Fluffy xp input when it's not active.
-			if (game.global.spiresCompleted < 2) $$('#weight-xpDiv').style.display = 'none';
+			document.querySelector('#preset').value = settingInputs.preset;
+			if (game.global.spiresCompleted < 2) document.querySelector('#weight-xpDiv').style.display = 'none';
 		} else if (universe === 'Surky') {
-			if (settingInputs === null) {
+			if (!settingInputs) {
 				saveSurkySettings(true);
 				settingInputs = JSON.parse(localStorage.getItem(universe.toLowerCase() + 'Inputs'));
 			}
-			const preset = settingInputs.preset === null || settingInputs.preset === undefined ? 'ezfarm' : settingInputs.preset;
-			$$('#preset').value = preset;
-			$$('#radonPerRunDiv').style.display = 'none';
-			$$('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
-			$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
+			const preset = settingInputs.preset || 'ezfarm';
+			document.querySelector('#preset').value = preset;
+			document.querySelector('#radonPerRunDiv').style.display = 'none';
+			document.querySelector('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
+			document.querySelector('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
 			initialLoad();
 		}
 	},
@@ -1149,14 +1106,14 @@ if (typeof autoTrimpSettings === 'undefined') {
 //After initial load everything should work perfectly.
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	//Load CSS so that the UI is visible
-	var linkStylesheet = document.createElement('link');
+	const linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';
 	linkStylesheet.type = 'text/css';
 	linkStylesheet.href = 'https://sadaugust.github.io/AutoTrimps/css/tabsStandalone.css';
 	document.head.appendChild(linkStylesheet);
 
 	function injectScript(id, src) {
-		var script = document.createElement('script');
+		const script = document.createElement('script');
 		script.id = id;
 		script.src = src;
 		script.setAttribute('crossorigin', 'anonymous');

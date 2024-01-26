@@ -1,20 +1,20 @@
 function tdStringCode2() {
 	const trapIndexs = ['', 'Fire', 'Frost', 'Poison', 'Lightning', 'Strength', 'Condenser', 'Knowledge'];
 	const inputString = document.getElementById('importBox').value.replace(/\s/g, '');
-	var s = new String(inputString);
-	var index = s.indexOf('+', 0);
+	let s = new String(inputString);
+	let index = s.indexOf('+', 0);
 	s = s.slice(0, index);
-	var length = s.length;
+	let length = s.length;
 
-	var saveLayout = [];
-	for (var i = 0; i < length; i++) {
+	let saveLayout = [];
+	for (let i = 0; i < length; i++) {
 		saveLayout.push(trapIndexs[s.charAt(i)]);
 	}
 	playerSpire['savedLayout' + -1] = saveLayout;
 
 	if (playerSpire.runestones + playerSpire.getCurrentLayoutPrice() < playerSpire.getSavedLayoutPrice(-1)) return false;
 	playerSpire.resetTraps();
-	for (var x = 0; x < saveLayout.length; x++) {
+	for (let x = 0; x < saveLayout.length; x++) {
 		if (!saveLayout[x]) continue;
 		playerSpire.buildTrap(x, saveLayout[x]);
 	}
@@ -22,21 +22,19 @@ function tdStringCode2() {
 
 var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
 playerSpire.drawInfo = function (arguments) {
-	var ret = oldPlayerSpireDrawInfo.apply(this, arguments);
-	var elem = document.getElementById('spireTrapsWindow');
+	let ret = oldPlayerSpireDrawInfo.apply(this, arguments);
+	let elem = document.getElementById('spireTrapsWindow');
 	if (!elem) return arguments;
-	var importBtn = "<div onclick='MAZLookalike(\"spireImport\")' class='spireControlBox'>Import</div>";
+	let importBtn = `<div onclick="MAZLookalike('spireImport')" class="spireControlBox">Import</div>`;
 	elem.innerHTML = importBtn + elem.innerHTML;
 	return arguments;
 };
 
 function ABItemSwap(items, ring) {
 	if (items) {
-		if ((changeitems = true)) {
-			for (var item in autoBattle.items) {
-				if (autoBattle.items[item].equipped) {
-					autoBattle.items[item].equipped = false;
-				}
+		for (var item in autoBattle.items) {
+			if (autoBattle.items[item].equipped) {
+				autoBattle.items[item].equipped = false;
 			}
 		}
 		for (var item of items) {
@@ -140,56 +138,50 @@ function automateSpireAssault() {
 }
 
 function totalSAResources() {
-	//total Dust!
-	var dust = 0;
-	var shards = 0;
-	//Contracts
-	var dustContracts = 0;
-	var shardContracts = 0;
-	for (var item in autoBattle.items) {
-		if (item === 'Sword' || item === 'Menacing_Mask' || item === 'Armor' || item === 'Rusty_Dagger' || item === 'Fists_of_Goo' || item === 'Battery_Stick' || item === 'Pants') continue;
+	let dust = 0;
+	let shards = 0;
+
+	let dustContracts = 0;
+	let shardContracts = 0;
+	for (let item in autoBattle.items) {
+		const itemsToSkip = ['Sword', 'Menacing_Mask', 'Armor', 'Rusty_Dagger', 'Fists_of_Goo', 'Battery_Stick', 'Pants'];
+		if (itemsToSkip.includes(item)) continue;
 		if (typeof autoBattle.items[item].dustType === 'undefined') dustContracts += autoBattle.contractPrice(item);
 		else shardContracts += autoBattle.contractPrice(item);
 	}
 	dust += dustContracts;
 	shards += shardContracts;
 
-	//Items
-	var dustItems = 0;
-	var shardItems = 0;
-	for (var item in autoBattle.items) {
+	let dustItems = 0;
+	let shardItems = 0;
+	for (let item in autoBattle.items) {
+		const { startPrice, priceMod, level, dustType } = autoBattle.items[item];
 		//if (typeof (autoBattle.items[item].dustType) !== 'undefined' && autoBattle.items[item].dustType === 'shards') continue;
-		var itemPrice = autoBattle.items[item].startPrice;
-		var itemPriceMod = autoBattle.items[item].priceMod;
-		if (typeof autoBattle.items[item].startPrice === 'undefined') itemPrice = 5;
-		if (typeof autoBattle.items[item].priceMod === 'undefined') itemPriceMod = 3;
-		for (var x = 0; x < autoBattle.items[item].level; x++) {
-			if (typeof autoBattle.items[item].dustType === 'undefined') dustItems += itemPrice * (Math.pow(itemPriceMod, x) / itemPriceMod);
+		let itemPrice = startPrice !== undefined ? startPrice : 5;
+		let itemPriceMod = priceMod !== undefined ? priceMod : 3;
+		for (var x = 0; x < level; x++) {
+			if (typeof dustType === 'undefined') dustItems += itemPrice * (Math.pow(itemPriceMod, x) / itemPriceMod);
 			else shardItems += itemPrice * (Math.pow(itemPriceMod, x) / itemPriceMod);
 		}
 	}
 	dust += dustItems;
 	shards += shardItems;
 
-	//Bonuses
-	var dustBonuses = 0;
-	var shardBonuses = 0;
-	for (var bonus in autoBattle.bonuses) {
-		var bonusPrice = autoBattle.bonuses[bonus].price;
-		var bonusPriceMod = autoBattle.bonuses[bonus].priceMod;
-		for (var x = 0; x < autoBattle.bonuses[bonus].level; x++) {
-			if (bonus !== 'Scaffolding') dustBonuses += Math.ceil(bonusPrice * Math.pow(bonusPriceMod, x));
-			else shardBonuses += Math.ceil(bonusPrice * Math.pow(bonusPriceMod, x));
+	let dustBonuses = 0;
+	let shardBonuses = 0;
+	for (let bonus in autoBattle.bonuses) {
+		const { price, priceMod, level } = autoBattle.bonuses[bonus];
+		for (let x = 0; x < level; x++) {
+			if (bonus !== 'Scaffolding') dustBonuses += Math.ceil(price * Math.pow(priceMod, x));
+			else shardBonuses += Math.ceil(price * Math.pow(priceMod, x));
 		}
 	}
-
 	dust += dustBonuses;
 	shards += shardBonuses;
 
-	//One Timers
-	var dustOneTimers = 0;
-	var shardOneTimers = 0;
-	for (var item in autoBattle.oneTimers) {
+	let dustOneTimers = 0;
+	let shardOneTimers = 0;
+	for (let item in autoBattle.oneTimers) {
 		if (typeof autoBattle.oneTimers[item].useShards === 'undefined') dustOneTimers += autoBattle.oneTimerPrice(item);
 		else shardOneTimers += autoBattle.oneTimerPrice(item);
 	}
@@ -197,9 +189,9 @@ function totalSAResources() {
 	shards += shardOneTimers;
 
 	//Ring
-	var ringCost = 0;
+	let ringCost = 0;
 	if (autoBattle.oneTimers['The_Ring'].owned && autoBattle.rings.level > 1) {
-		ringCost += Math.ceil(15 * Math.pow(2, autoBattle.rings.level) - 30); // Subtracting 30 for the first level or something.
+		ringCost += Math.ceil(15 * Math.pow(2, autoBattle.rings.level) - 30);
 	}
 	shards += ringCost;
 

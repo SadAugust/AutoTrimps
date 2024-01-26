@@ -671,9 +671,7 @@ function initialiseAllSettings() {
 		createSetting('buildingsType',
 			function () { return ('AT AutoStructure') },
 			function () {
-				//Initial button description
 				let description = "Click the left side of the button to toggle this on or off.</p>";
-				//Cogwheel info
 				description += "<p>Click the cog icon on the right side of this button to tell your Foremen what you want and when you want it.</p>";
 				description += "For more detailed information for this setting check out its Help section.</p>";
 				return description;
@@ -4727,12 +4725,12 @@ function parseSuffix(num) {
 function autoSetValueToolTip(id, text, multi, negative) {
 	const valueSuffix = autoTrimpSettings.universeSetting.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1 ? 'U2' : '';
 	const tooltipDiv = document.getElementById('tooltipDiv');
-	const tooltipText = `Type a number below. You can use shorthand such as 2e5, 1sx, or 200k. ${negative ? ' Accepts negative numbers as validated inputs.' : ' Put -1 for Infinite.'}<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multi}, ${negative})" value="${autoTrimpSettings[id]['value' + valueSuffix]}"></input>`;
+	const tooltipText = `Type a number below. You can use shorthand such as 2e5, 1sx, or 200k. ${negative ? 'Accepts negative numbers as validated inputs.' : 'Put -1 for Infinite.'}<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multi}, ${negative})" value="${autoTrimpSettings[id]['value' + valueSuffix]}"></input>`;
 	const costText = `<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue('${id}', ${multi}, ${negative})">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>`;
 	game.global.lockTooltip = true;
 	tooltipDiv.style.left = '32.5%';
 	tooltipDiv.style.top = '25%';
-	document.getElementById('tipTitle').textContent = `${text}:  Value Input`;
+	document.getElementById('tipTitle').textContent = `${text}: Value Input`;
 	document.getElementById('tipText').innerHTML = tooltipText;
 	document.getElementById('tipCost').innerHTML = costText;
 	tooltipDiv.style.display = 'block';
@@ -4780,7 +4778,7 @@ function autoSetTextToolTip(id, text, multiValue) {
 	game.global.lockTooltip = true;
 	tooltipDiv.style.left = '32.5%';
 	tooltipDiv.style.top = '25%';
-	document.getElementById('tipTitle').textContent = `${text}:  Value Input`;
+	document.getElementById('tipTitle').textContent = `${text}: Value Input`;
 	document.getElementById('tipText').innerHTML = tooltipText;
 	document.getElementById('tipCost').innerHTML = costText;
 	tooltipDiv.style.display = 'block';

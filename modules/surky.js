@@ -21,26 +21,19 @@ function allocateSurky(perks) {
 }
 
 function initPresetSurky() {
-	var settingInputs = JSON.parse(localStorage.getItem('surkyInputs'));
+	const settingInputs = JSON.parse(localStorage.getItem('surkyInputs'));
 
 	//Initial setup if we don't already have a save file setup
-	if (settingInputs === null) {
-		settingInputs = {};
-		return settingInputs;
+	if (settingInputs === null || Object.keys(settingInputs).length === 0) {
+		return {};
 	}
 
-	function presetData(preset) {
-		if (settingInputs === null) return null;
-		if (settingInputs[preset] === null || settingInputs[preset] === undefined) return null;
-		return settingInputs[preset];
-	}
-
-	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
+	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
 	const presets = {};
-	for (var item in presetNames) {
-		item = presetNames[item].value;
-		if (item.includes('— ')) continue;
-		presets[item] = presetData(item);
+	for (let item of presetNames) {
+		const value = item.value;
+		if (value.includes('— ')) continue;
+		presets[value] = settingInputs[value] || null;
 	}
 
 	return {
@@ -54,16 +47,15 @@ function initPresetSurky() {
 function saveSurkySettings() {
 	const saveData = initPresetSurky();
 	//Initial setup and saving preset value
-	const settingInputs = { preset: $$('#preset').value };
-	//Saving the values of the inputs for the weights
-	for (var item in MODULES.autoPerks.GUI.inputs) {
-		item = MODULES.autoPerks.GUI.inputs[item];
-		settingInputs[item] = $$('#' + item).value;
-	}
+	const settingInputs = { preset: document.querySelector('#preset').value };
+
+	MODULES.autoPerks.GUI.inputs.forEach((item) => {
+		settingInputs[item] = document.querySelector(`#${item}`).value;
+	});
 	//Save inputs for all the presets that users can select.
 	//Overrides data for current preset otherwises saves any already saved data for the others.
-	const presetNames = [].slice.apply(document.querySelectorAll('#preset > *'));
-	for (var item in presetNames) {
+	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
+	for (let item in presetNames) {
 		item = presetNames[item].value;
 		if (item.includes('— ')) continue;
 		if (settingInputs.preset === item) settingInputs[item] = [settingInputs['clearWeight'], settingInputs['survivalWeight'], settingInputs['radonWeight']];
@@ -72,7 +64,7 @@ function saveSurkySettings() {
 
 	localStorage.setItem('surkyInputs', JSON.stringify(settingInputs));
 	if (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
-		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(settingInputs);
+		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(settingInputs);
 		saveSettings();
 	}
 }
@@ -435,7 +427,7 @@ function surkyResetPerkLevels(perks, skipLevel = false) {
 }
 
 function initialLoad(skipLevels = false) {
-	var [props, perks] = initPerks();
+	let [props, perks] = initPerks();
 	perks = surkyResetPerkLevels(perks, skipLevels);
 	const universe = game.global.universe;
 

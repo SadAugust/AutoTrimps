@@ -1,13 +1,56 @@
+//Override for the Atlantrimp fire function to add Surky respec
+function atlantrimpRespecOverride() {
+	if (typeof game.mapUnlocks.AncientTreasure.originalFire !== 'undefined') return;
+	//Add Surky respec to Trimple/Atlantrimp map completion
+	game.mapUnlocks.AncientTreasure.originalFire = game.mapUnlocks.AncientTreasure.fire;
+
+	game.mapUnlocks.AncientTreasure.fire = function () {
+		game.mapUnlocks.AncientTreasure.originalFire(...arguments);
+		try {
+			atlantrimpRespecMessage(true);
+		} catch (e) {
+			console.log('Loading respec function failed! ' + e, 'other');
+		}
+	};
+}
+
+//Runs when AT initially loads
+atlantrimpRespecOverride();
+
+// On loading save
+var originalLoad = load;
+load = function () {
+	resetLoops();
+	originalLoad(...arguments);
+	try {
+		loadAugustSettings();
+		atlantrimpRespecOverride();
+		resetVarsZone(true);
+		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
+		updateAutoTrimpSettings(true);
+	} catch (e) {
+		debug(`Load save failed: ${e}`);
+	}
+};
+
+// On portal/game reset
+var originalresetGame = resetGame;
+resetGame = function () {
+	originalresetGame(...arguments);
+	try {
+		atlantrimpRespecOverride();
+	} catch (e) {
+		debug(`Load save failed: ${e}`);
+	}
+};
+
 //Hacky way to allow the SA popup button to work within TW.
 autoBattle.originalpopup = autoBattle.popup;
 autoBattle.popup = function () {
-	var offlineMode = false;
-	if (usingRealTimeOffline) {
-		offlineMode = true;
-		usingRealTimeOffline = false;
-	}
+	const offlineMode = usingRealTimeOffline;
+	usingRealTimeOffline = false;
 	autoBattle.originalpopup(...arguments);
-	if (offlineMode) usingRealTimeOffline = true;
+	usingRealTimeOffline = offlineMode;
 };
 
 //Attach AT related buttons to the main TW UI.
@@ -45,12 +88,10 @@ offlineProgress.finish = function () {
 			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.min(timeRun, offlineProgress.maxTicks / 10))} to catchup on the time you missed whilst running it.`);
 			//Convert time to milliseconds and subtract it from the variables that TW uses to calculate offline progress so we don't have tons of time related issues.
 			timeRun *= 1000;
-			game.global.lastOnline -= timeRun;
-			game.global.portalTime -= timeRun;
-			game.global.zoneStarted -= timeRun;
-			game.global.lastSoldierSentAt -= timeRun;
-			game.global.lastSkeletimp -= timeRun;
-			game.permaBoneBonuses.boosts.lastChargeAt -= timeRun;
+
+			const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
+			_adjustGlobalTimers(keys, -timeRun);
+
 			offlineProgress.start();
 			if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
 		} else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
@@ -198,7 +239,7 @@ function drawAllUpgrades(force) {
 	var elem = document.getElementById('upgradesHere');
 	elem.innerHTML = '';
 	for (var item in game.upgrades) {
-		if (game.upgrades[item].locked == 1) continue;
+		if (game.upgrades[item].locked === 1) continue;
 		drawUpgrade(item, elem);
 		if (game.upgrades[item].alert && game.options.menu.showAlerts.enabled) {
 			document.getElementById('upgradesAlert').innerHTML = '!';
@@ -215,7 +256,7 @@ function drawAllEquipment(force) {
 	var elem = document.getElementById('equipmentHere');
 	elem.innerHTML = '';
 	for (var item in game.equipment) {
-		if (game.equipment[item].locked == 1) continue;
+		if (game.equipment[item].locked === 1) continue;
 		drawEquipment(item, elem);
 	}
 	displayEfficientEquipment();
@@ -227,8 +268,8 @@ function drawAllJobs(force) {
 	var elem = document.getElementById('jobsHere');
 	elem.innerHTML = '';
 	for (var item in game.jobs) {
-		if (game.jobs[item].locked == 1) continue;
-		if (item == 'Geneticist' && game.global.Geneticistassist) {
+		if (game.jobs[item].locked === 1) continue;
+		if (item === 'Geneticist' && game.global.Geneticistassist) {
 			drawGeneticistassist(elem);
 		} else drawJob(item, elem);
 		if (game.jobs[item].alert && game.options.menu.showAlerts.enabled) {
@@ -250,13 +291,13 @@ function updateLabels(force) {
 			toUpdate.owned = parseFloat(toUpdate.owned);
 			if (!(toUpdate.owned > 0)) toUpdate.owned = 0;
 		}
-		if (item == 'radon') continue;
-		if (item == 'helium' && game.global.universe == 2) toUpdate = game.resources.radon;
+		if (item === 'radon') continue;
+		if (item === 'helium' && game.global.universe === 2) toUpdate = game.resources.radon;
 		document.getElementById(item + 'Owned').innerHTML = prettify(Math.floor(toUpdate.owned));
-		if (toUpdate.max == -1 || document.getElementById(item + 'Max') === null) continue;
+		if (toUpdate.max === -1 || document.getElementById(item + 'Max') === null) continue;
 		var newMax = toUpdate.max;
-		if (item != 'trimps') newMax = calcHeirloomBonus('Shield', 'storageSize', newMax * (game.portal.Packrat.modifier * getPerkLevel('Packrat') + 1));
-		else if (item == 'trimps') newMax = toUpdate.realMax();
+		if (item !== 'trimps') newMax = calcHeirloomBonus('Shield', 'storageSize', newMax * (game.portal.Packrat.modifier * getPerkLevel('Packrat') + 1));
+		else if (item === 'trimps') newMax = toUpdate.realMax();
 		document.getElementById(item + 'Max').innerHTML = prettify(newMax);
 		var bar = document.getElementById(item + 'Bar');
 		if (game.options.menu.progressBars.enabled) {
@@ -269,7 +310,7 @@ function updateLabels(force) {
 	//Buildings, trap is the only unique building, needs to be displayed in trimp area as well
 	for (var itemA in game.buildings) {
 		toUpdate = game.buildings[itemA];
-		if (toUpdate.locked == 1) continue;
+		if (toUpdate.locked === 1) continue;
 		var elem = document.getElementById(itemA + 'Owned');
 		if (elem === null) {
 			unlockBuilding(itemA);
@@ -277,7 +318,7 @@ function updateLabels(force) {
 		}
 		if (elem === null) continue;
 		elem.innerHTML = game.options.menu.menuFormatting.enabled ? prettify(toUpdate.owned) : toUpdate.owned;
-		if (itemA == 'Trap') {
+		if (itemA === 'Trap') {
 			var trap1 = document.getElementById('trimpTrapText');
 			if (trap1) trap1.innerHTML = prettify(toUpdate.owned);
 			var trap2 = document.getElementById('trimpTrapText2');
@@ -287,8 +328,8 @@ function updateLabels(force) {
 	//Jobs, check PS here and stuff. Trimps per second is handled by breed() function
 	for (var itemB in game.jobs) {
 		toUpdate = game.jobs[itemB];
-		if (toUpdate.locked == 1 && toUpdate.increase == 'custom') continue;
-		if (toUpdate.locked == 1) {
+		if (toUpdate.locked === 1 && toUpdate.increase === 'custom') continue;
+		if (toUpdate.locked === 1) {
 			if (game.resources[toUpdate.increase].owned > 0) updatePs(toUpdate, false, itemB);
 			continue;
 		}
@@ -297,14 +338,13 @@ function updateLabels(force) {
 			drawAllJobs(true);
 		}
 		document.getElementById(itemB + 'Owned').innerHTML = game.options.menu.menuFormatting.enabled ? prettify(toUpdate.owned) : toUpdate.owned;
-		var perSec = toUpdate.owned * toUpdate.modifier;
 		updatePs(toUpdate, false, itemB);
 	}
 	//Upgrades, owned will only exist if 'allowed' exists on object
 	for (var itemC in game.upgrades) {
 		toUpdate = game.upgrades[itemC];
 		if (toUpdate.allowed - toUpdate.done >= 1) toUpdate.locked = 0;
-		if (toUpdate.locked == 1) continue;
+		if (toUpdate.locked === 1) continue;
 		if (document.getElementById(itemC) === null) unlockUpgrade(itemC, true);
 	}
 	//Equipment
@@ -318,19 +358,19 @@ function updateButtonColor(what, canAfford, isJob) {
 	} else {
 		if (usingRealTimeOffline) return;
 	}
-	if (what == 'Amalgamator') return;
+	if (what === 'Amalgamator') return;
 	var elem = document.getElementById(what);
 	if (elem === null) {
 		return;
 	}
-	if (game.options.menu.lockOnUnlock.enabled == 1 && new Date().getTime() - 1000 <= game.global.lastUnlock) canAfford = false;
-	if (game.global.challengeActive == 'Archaeology' && game.upgrades[what] && game.upgrades[what].isRelic) {
+	if (game.options.menu.lockOnUnlock.enabled === 1 && new Date().getTime() - 1000 <= game.global.lastUnlock) canAfford = false;
+	if (game.global.challengeActive === 'Archaeology' && game.upgrades[what] && game.upgrades[what].isRelic) {
 		var className = 'thingColor' + (canAfford ? 'CanAfford' : 'CanNotAfford');
 		var nextAuto = game.challenges.Archaeology.checkAutomator();
-		if (nextAuto == 'off') className += 'RelicOff';
-		else if (nextAuto == 'satisfied') className += 'RelicSatisfied';
-		else if (nextAuto == what + 'Cost') className += 'RelicNextWaiting';
-		else if (nextAuto + 'Relic' == what) className += 'RelicBuying';
+		if (nextAuto === 'off') className += 'RelicOff';
+		else if (nextAuto === 'satisfied') className += 'RelicSatisfied';
+		else if (nextAuto === what + 'Cost') className += 'RelicNextWaiting';
+		else if (nextAuto + 'Relic' === what) className += 'RelicBuying';
 		swapClass('thingColor', className, elem);
 		return;
 	}
@@ -345,13 +385,13 @@ function updateButtonColor(what, canAfford, isJob) {
 		}
 		return;
 	}
-	if (what == 'Warpstation') {
+	if (what === 'Warpstation') {
 		if (canAfford) elem.style.backgroundColor = getWarpstationColor();
 		else elem.style.backgroundColor = '';
 	}
 
 	if (canAfford) {
-		if (what == 'Gigastation' && (ctrlPressed || game.options.menu.ctrlGigas.enabled)) swapClass('thingColor', 'thingColorCtrl', elem);
+		if (what === 'Gigastation' && (ctrlPressed || game.options.menu.ctrlGigas.enabled)) swapClass('thingColor', 'thingColorCtrl', elem);
 		else swapClass('thingColor', 'thingColorCanAfford', elem);
 	} else swapClass('thingColor', 'thingColorCanNotAfford', elem);
 }
@@ -372,21 +412,20 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 		var amt = job.owned * job.modifier;
 		amt += amt * getPerkLevel('Motivation') * game.portal.Motivation.modifier;
 		if (getPerkLevel('Motivation_II') > 0) amt *= 1 + getPerkLevel('Motivation_II') * game.portal.Motivation_II.modifier;
-		if (resName != 'gems' && game.permaBoneBonuses.multitasking.owned > 0 && game.resources.trimps.owned >= game.resources.trimps.realMax()) amt *= 1 + game.permaBoneBonuses.multitasking.mult();
-		if (job != 'Explorer') {
-			if (game.global.challengeActive == 'Alchemy') amt *= alchObj.getPotionEffect('Potion of Finding');
-			amt *= alchObj.getPotionEffect('Elixir of Finding');
+		if (resName !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0 && game.resources.trimps.owned >= game.resources.trimps.realMax()) amt *= 1 + game.permaBoneBonuses.multitasking.mult();
+		if (job !== 'Explorer') {
+			if (game.global.challengeActive === 'Alchemy') amt *= alchObj.getPotionEffect('Potion of Finding');
 		}
-		if (game.global.challengeActive == 'Frigid') amt *= game.challenges.Frigid.getShatteredMult();
-		if (game.global.pandCompletions && job != 'Explorer') amt *= game.challenges.Pandemonium.getTrimpMult();
-		if (game.global.desoCompletions && job != 'Explorer') amt *= game.challenges.Desolation.getTrimpMult();
-		if (!game.portal.Observation.radLocked && game.global.universe == 2 && game.portal.Observation.trinkets > 0) amt *= game.portal.Observation.getMult();
-		if (resName == 'food' || resName == 'wood' || resName == 'metal') {
+		if (game.global.challengeActive === 'Frigid') amt *= game.challenges.Frigid.getShatteredMult();
+		if (game.global.pandCompletions && job !== 'Explorer') amt *= game.challenges.Pandemonium.getTrimpMult();
+		if (game.global.desoCompletions && job !== 'Explorer') amt *= game.challenges.Desolation.getTrimpMult();
+		if (!game.portal.Observation.radLocked && game.global.universe === 2 && game.portal.Observation.trinkets > 0) amt *= game.portal.Observation.getMult();
+		if (resName === 'food' || resName === 'wood' || resName === 'metal') {
 			amt *= getParityBonus();
-			if (autoBattle.oneTimers.Gathermate.owned && game.global.universe == 2) amt *= autoBattle.oneTimers.Gathermate.getMult();
+			if (autoBattle.oneTimers.Gathermate.owned && game.global.universe === 2) amt *= autoBattle.oneTimers.Gathermate.getMult();
 		}
 		if (Fluffy.isRewardActive('gatherer')) amt *= 2;
-		if (getPerkLevel('Meditation') > 0 || (game.jobs.Magmamancer.owned > 0 && resName == 'metal')) {
+		if (getPerkLevel('Meditation') > 0 || (game.jobs.Magmamancer.owned > 0 && resName === 'metal')) {
 			var medLevel = getPerkLevel('Meditation');
 			var toAlter;
 			var originalAmt = amt;
@@ -398,7 +437,7 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 			var remaining = 100;
 			//if a 10 minute chunk is larger than the time offline, no need to scale in chunks, skip to the end.
 			var loops = 6;
-			if (game.jobs.Magmamancer.owned && resName == 'metal') loops = 12;
+			if (game.jobs.Magmamancer.owned && resName === 'metal') loops = 12;
 			if (timeAtLastOnline < loops && chunkPercent < 100) {
 				//Start from however many stacks were held before logging out. End at 5 stacks, the 6th will be all time remaining rather than chunks and handled at the end
 				for (var z = timeAtLastOnline; z < loops; z++) {
@@ -406,8 +445,8 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 					if (remaining < chunkPercent) break;
 					//Remove a chunk from remaining, as it is about to be calculated
 					remaining -= chunkPercent;
-					//Check for z == 0 after removing chunkPercent, that way however much time was left before the first stack doesn't get calculated as having a stack
-					if (z == 0) continue;
+					//Check for z === 0 after removing chunkPercent, that way however much time was left before the first stack doesn't get calculated as having a stack
+					if (z === 0) continue;
 					//Find out exactly how much of amt needs to be modified to make up for this chunk
 					toAlter = (originalAmt * chunkPercent) / 100;
 					//Remove it from toAlter
@@ -415,7 +454,7 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 					//Modify and add back
 					if (medLevel && z < 6) amt += toAlter * (1 + z * 0.01 * medLevel);
 					//loops will only set to 72 if the current resource is metal and the player has Magmamancers
-					if (loops == 12) amt += toAlter * game.jobs.Magmamancer.getBonusPercent(false, z);
+					if (loops === 12) amt += toAlter * game.jobs.Magmamancer.getBonusPercent(false, z);
 				}
 			}
 			if (remaining) {
@@ -425,22 +464,22 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 				amt -= toAlter;
 				//Modify and add back the final amount
 				if (medLevel) amt += toAlter * (1 + game.portal.Meditation.getBonusPercent() * 0.01);
-				if (loops == 12) amt += toAlter * game.jobs.Magmamancer.getBonusPercent();
+				if (loops === 12) amt += toAlter * game.jobs.Magmamancer.getBonusPercent();
 			}
 		}
-		if (game.global.challengeActive == 'Decay' || game.global.challengeActive == 'Melt') {
+		if (game.global.challengeActive === 'Decay' || game.global.challengeActive === 'Melt') {
 			var challenge = game.challenges[game.global.challengeActive];
 			amt *= 10;
 			amt *= Math.pow(challenge.decayValue, challenge.stacks);
 		}
 		if (challengeActive('Meditate')) amt *= 1.25;
 		if (challengeActive('Balance')) amt *= game.challenges.Balance.getGatherMult();
-		if (game.global.challengeActive == 'Unbalance') amt *= game.challenges.Unbalance.getGatherMult();
-		if (game.global.challengeActive == 'Archaeology' && resource != 'fragments') amt *= game.challenges.Archaeology.getStatMult('science');
-		if (game.global.challengeActive == 'Insanity' && resource != 'fragments') amt *= game.challenges.Insanity.getLootMult();
-		if (game.challenges.Nurture.boostsActive() && resource != 'fragments') amt *= game.challenges.Nurture.getResourceBoost();
-		if (game.global.challengeActive == 'Desolation' && resource != 'fragments') amt *= game.challenges.Desolation.trimpResourceMult();
-		if (game.global.challengeActive == 'Daily') {
+		if (game.global.challengeActive === 'Unbalance') amt *= game.challenges.Unbalance.getGatherMult();
+		if (game.global.challengeActive === 'Archaeology' && resource !== 'fragments') amt *= game.challenges.Archaeology.getStatMult('science');
+		if (game.global.challengeActive === 'Insanity' && resource !== 'fragments') amt *= game.challenges.Insanity.getLootMult();
+		if (game.challenges.Nurture.boostsActive() && resource !== 'fragments') amt *= game.challenges.Nurture.getResourceBoost();
+		if (game.global.challengeActive === 'Desolation' && resource !== 'fragments') amt *= game.challenges.Desolation.trimpResourceMult();
+		if (game.global.challengeActive === 'Daily') {
 			if (typeof game.global.dailyChallenge.famine !== 'undefined' && x < 4) {
 				amt *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 			}
@@ -476,7 +515,7 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 		if (amt > 0) {
 			if (negative) amt = -amt;
 			resource.owned += amt;
-			if (resName == 'gems') game.stats.gemsCollected.value += amt;
+			if (resName === 'gems') game.stats.gemsCollected.value += amt;
 		}
 	}
 
@@ -535,149 +574,79 @@ function cloudSaveCallback(data) {}
 
 //Overall more performance efficient to remove the textStrings from getPsString so copied it from the game and removed the textStrings.
 //Check and update each patch!
-function getPsString_AT(what) {
+function getPsString_AT(what, ignoreManual = false) {
 	if (what === 'helium') return;
 	const resOrder = ['food', 'wood', 'metal', 'science', 'gems', 'fragments'];
 	const books = ['farming', 'lumber', 'miner', 'science'];
 	const jobs = ['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Dragimp', 'Explorer'];
 	const index = resOrder.indexOf(what);
 	const job = game.jobs[jobs[index]];
-	const book = game.upgrades['Speed' + books[index]];
+	const book = game.upgrades[`Speed${books[index]}`];
 	const mBook = game.upgrades['Mega' + books[index]];
 	const base = what === 'fragments' ? 0.4 : 0.5;
 
-	//Add base and job count
 	let currentCalc = job.owned * base;
 
-	//Add books
 	if (what !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0) {
 		const str = game.resources.trimps.owned >= game.resources.trimps.realMax() ? game.permaBoneBonuses.multitasking.mult() : 0;
 		currentCalc *= 1 + str;
 	}
-	//Add books
-	if (typeof book !== 'undefined' && book.done > 0) {
-		const bookStrength = Math.pow(1.25, book.done);
-		currentCalc *= bookStrength;
-	}
-	//Add Megabooks
+
+	if (typeof book !== 'undefined' && book.done > 0) currentCalc *= Math.pow(1.25, book.done);
+
 	if (typeof mBook !== 'undefined' && mBook.done > 0) {
 		const mod = game.global.frugalDone ? 1.6 : 1.5;
-		const mBookStrength = Math.pow(mod, mBook.done);
-		currentCalc *= mBookStrength;
-	}
-	//Add bounty
-	if (what !== 'gems' && game.upgrades.Bounty.done > 0) {
-		currentCalc *= 2;
-	}
-	//Add Tribute
-	if (what === 'gems' && game.buildings.Tribute.owned > 0) {
-		const tributeStrength = Math.pow(game.buildings.Tribute.increase.by, game.buildings.Tribute.owned);
-		currentCalc *= tributeStrength;
-	}
-	//Add Whipimp
-	if (game.unlocks.impCount.Whipimp > 0) {
-		const whipStrength = Math.pow(1.003, game.unlocks.impCount.Whipimp);
-		currentCalc *= whipStrength;
-	}
-	//Add motivation
-	if (getPerkLevel('Motivation') > 0) {
-		const motivationStrength = getPerkLevel('Motivation') * game.portal.Motivation.modifier;
-		currentCalc *= motivationStrength + 1;
-	}
-	//Add motivation 2
-	if (getPerkLevel('Motivation_II') > 0) {
-		const motivationStrength = getPerkLevel('Motivation_II') * game.portal.Motivation_II.modifier;
-		currentCalc *= motivationStrength + 1;
-	}
-	//Observation
-	if (!game.portal.Observation.radLocked && game.global.universe === 2 && game.portal.Observation.trinkets > 0) {
-		const mult = game.portal.Observation.getMult();
-		currentCalc *= mult;
-	}
-	//Add Fluffy Gatherer
-	if (Fluffy.isRewardActive('gatherer')) {
-		currentCalc *= 2;
-	}
-	//Add Meditation
-	if (getPerkLevel('Meditation') > 0) {
-		const medStrength = game.portal.Meditation.getBonusPercent();
-		if (medStrength > 0) {
-			currentCalc *= 1 + medStrength * 0.01;
-		}
-	}
-	//Add Alchemy
-	let potionFinding;
-	if (challengeActive('Alchemy')) potionFinding = alchObj.getPotionEffect('Potion of Finding');
-	if (potionFinding > 1 && what !== 'fragments' && what !== 'science') {
-		currentCalc *= potionFinding;
-	}
-	potionFinding = alchObj.getPotionEffect('Elixir of Finding');
-	if (potionFinding > 1 && what !== 'fragments' && what !== 'science') {
-		currentCalc *= potionFinding;
-	}
-	//Add Magmamancer
-	if (game.jobs.Magmamancer.owned > 0 && what === 'metal') {
-		const manceStrength = game.jobs.Magmamancer.getBonusPercent();
-		if (manceStrength > 1) currentCalc *= manceStrength;
-	}
-	//Add Speedbooks
-	if (game.upgrades.Speedexplorer.done > 0 && what === 'fragments') {
-		const bonus = Math.pow(4, game.upgrades.Speedexplorer.done);
-		currentCalc *= bonus;
-	}
-	//Add Size
-	if (challengeActive('Size') && (what === 'food' || what === 'metal' || what === 'wood')) {
-		currentCalc *= 1.5;
-	}
-	//Add frigid
-	if (challengeActive('Frigid')) {
-		currentCalc *= game.challenges.Frigid.getShatteredMult();
-	}
-	//Add downsize
-	if (challengeActive('Downsize')) {
-		currentCalc *= 5;
-	}
-	//Add Meditate
-	if (challengeActive('Meditate')) {
-		currentCalc *= 1.25;
+		currentCalc *= Math.pow(mod, mBook.done);
 	}
 
-	if (challengeActive('Toxicity')) {
-		const toxMult = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
-		currentCalc *= 1 + toxMult;
-	}
-	if (challengeActive('Balance') || challengeActive('Unbalance')) {
-		const chal = challengeActive('Balance') ? game.challenges.Balance : game.challenges.Unbalance;
-		currentCalc *= chal.getGatherMult();
-	}
-	if (challengeActive('Decay') || challengeActive('Melt')) {
+	if (what !== 'gems' && game.upgrades.Bounty.done > 0) currentCalc *= 2;
+	if (what === 'gems' && game.buildings.Tribute.owned > 0) currentCalc *= Math.pow(game.buildings.Tribute.increase.by, game.buildings.Tribute.owned);
+	if (game.unlocks.impCount.Whipimp > 0) currentCalc *= Math.pow(1.003, game.unlocks.impCount.Whipimp);
+	if (getPerkLevel('Motivation') > 0) currentCalc *= 1 + getPerkLevel('Motivation') * getPerkModifier('Motivation');
+
+	const balanceChallenge = ['Balance', 'Unbalance'].find(challengeActive);
+	if (balanceChallenge) currentCalc *= game.challenges[balance].getGatherMult();
+
+	const decayChallenge = ['Decay', 'Melt'].find(challengeActive);
+	if (decayChallenge) {
 		currentCalc *= 10;
-		const currChall = challengeActive('Decay') ? 'Decay' : 'Melt';
-		const stackStr = Math.pow(game.challenges[currChall].decayValue, game.challenges[currChall].stacks);
+		const stackStr = Math.pow(game.challenges[decayChallenge].decayValue, game.challenges[decayChallenge].stacks);
 		currentCalc *= stackStr;
 	}
-	if (challengeActive('Watch')) {
-		currentCalc /= 2;
-	}
-	if (challengeActive('Lead') && game.global.world % 2 === 1) {
-		currentCalc *= 2;
+
+	if (game.global.universe === 1) {
+		if (['food', 'metal', 'wood'].includes(what) && challengeActive('Size')) currentCalc *= 1.5;
+		if (challengeActive('Meditate')) currentCalc *= 1.25;
+		if (getPerkLevel('Meditation') > 0) currentCalc *= 1 + game.portal.Meditation.getBonusPercent() * 0.01;
+		if (challengeActive('Toxicity')) currentCalc *= 1 + (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
+		if (challengeActive('Watch')) currentCalc /= 2;
+		if (challengeActive('Lead') && game.global.world % 2 === 1) currentCalc *= 2;
+		if (getPerkLevel('Motivation_II') > 0) currentCalc *= 1 + getPerkLevel('Motivation_II') * getPerkModifier('Motivation_II');
+		if (what === 'metal' && game.jobs.Magmamancer.owned > 0) currentCalc *= game.jobs.Magmamancer.getBonusPercent();
+		if (challengeActive('Frigid')) currentCalc *= game.challenges.Frigid.getShatteredMult();
+		if (what !== 'fragments' && getEmpowerment() === 'Wind') currentCalc *= 1 + game.empowerments.Wind.getCombatModifier();
 	}
 
-	if (challengeActive('Archaeology') && what !== 'fragments') {
-		currentCalc *= game.challenges.Archaeology.getStatMult('science');
+	if (game.global.universe === 2) {
+		if (challengeActive('Downsize')) currentCalc *= 5;
+		if (Fluffy.isRewardActive('gatherer')) currentCalc *= 2;
+		if (what !== 'fragments' && challengeActive('Archaeology')) currentCalc *= game.challenges.Archaeology.getStatMult('science');
+		if (challengeActive('Insanity')) currentCalc *= game.challenges.Insanity.getLootMult();
+		if (what !== 'fragments' && game.challenges.Nurture.boostsActive()) currentCalc *= game.challenges.Nurture.getResourceBoost();
+		if (what !== 'science' && what !== 'fragments' && challengeActive('Alchemy')) currentCalc *= alchObj.getPotionEffect('Potion of Finding');
+		if (game.portal.Observation.trinkets > 0) currentCalc *= game.portal.Observation.getMult();
+		if (what === 'wood' && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0) currentCalc *= game.challenges.Hypothermia.getWoodMult(true);
+		if (challengeActive('Desolation') && what !== 'fragments') currentCalc *= game.challenges.Desolation.trimpResourceMult();
+		if (['food', 'metal', 'wood'].includes(what) && autoBattle.oneTimers.Gathermate.owned) currentCalc *= autoBattle.oneTimers.Gathermate.getMult();
+		if ((['food', 'wood'].includes(what) && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) {
+			currentCalc *= game.jobs.Meteorologist.getExtraMult();
+		}
 	}
-	if (challengeActive('Insanity')) {
-		currentCalc *= game.challenges.Insanity.getLootMult();
-	}
-	if (game.challenges.Nurture.boostsActive() && what !== 'fragments') {
-		currentCalc *= game.challenges.Nurture.getResourceBoost();
-	}
-	if (game.global.pandCompletions && what !== 'fragments') {
-		currentCalc *= game.challenges.Pandemonium.getTrimpMult();
-	}
-	if (game.global.desoCompletions && what !== 'fragments') {
-		currentCalc *= game.challenges.Desolation.getTrimpMult();
-	}
+
+	if (game.upgrades.Speedexplorer.done > 0 && what === 'fragments') currentCalc *= Math.pow(4, game.upgrades.Speedexplorer.done);
+	if (game.global.pandCompletions && what !== 'fragments') currentCalc *= game.challenges.Pandemonium.getTrimpMult();
+	if (game.global.desoCompletions && what !== 'fragments') currentCalc *= game.challenges.Desolation.getTrimpMult();
+
 	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.dedication !== 'undefined') {
 			currentCalc *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
@@ -686,45 +655,26 @@ function getPsString_AT(what) {
 			currentCalc *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 		}
 	}
-	if (challengeActive('Hypothermia') && what === 'wood') {
-		currentCalc *= game.challenges.Hypothermia.getWoodMult(true);
-	}
-	if (challengeActive('Desolation') && what !== 'fragments') {
-		currentCalc *= game.challenges.Desolation.trimpResourceMult();
-	}
-	if (((what === 'food' || what === 'wood') && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) {
-		currentCalc *= game.jobs.Meteorologist.getExtraMult();
-	}
-	if ((what === 'food' || what === 'metal' || what === 'wood') && getParityBonus() > 1) {
-		currentCalc *= getParityBonus();
-	}
-	if ((what === 'food' || what === 'metal' || what === 'wood') && autoBattle.oneTimers.Gathermate.owned && game.global.universe === 2) {
-		currentCalc *= autoBattle.oneTimers.Gathermate.getMult();
-	}
-	if (what !== 'fragments' && getEmpowerment() === 'Wind') {
-		currentCalc *= 1 + game.empowerments.Wind.getCombatModifier();
-	}
-	const heirloomBonus = calcHeirloomBonus('Staff', jobs[index] + 'Speed', 0, true);
-	if (heirloomBonus > 0) {
-		currentCalc *= heirloomBonus / 100 + 1;
-	}
-	//Add player
-	if (game.global.playerGathering === what) {
-		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === 'food' || what === 'wood' || what === 'metal')) {
-			let tBonus = 50;
-			if (game.talents.turkimp2.purchased) tBonus = 100;
-			else if (game.talents.turkimp2.purchased) tBonus = 75;
-			currentCalc *= 1 + tBonus / 100;
+
+	if (['food', 'metal', 'wood'].includes(what) && getParityBonus() > 1) currentCalc *= getParityBonus();
+	const heirloomBonus = calcHeirloomBonus('Staff', `${jobs[index]}Speed`, 0, true);
+	if (heirloomBonus > 0) currentCalc *= heirloomBonus / 100 + 1;
+
+	if (!ignoreManual) {
+		if (game.global.playerGathering === what) {
+			if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(what)) {
+				const turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
+				currentCalc *= turkimpBonus;
+			}
+			currentCalc += getPlayerModifier();
 		}
-		currentCalc += getPlayerModifier();
-	}
-	//Add Loot, ALWAYS LAST
-	if (game.options.menu.useAverages.enabled) {
-		let avg = getAvgLootSecond(what);
-		if (avg > 0.001) {
-			currentCalc += avg;
+
+		if (game.options.menu.useAverages.enabled) {
+			const avg = getAvgLootSecond(what);
+			if (avg > 0.001) currentCalc += avg;
 		}
 	}
+
 	return currentCalc;
 }
 
@@ -746,7 +696,7 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 
 	const { jobName, pos } = jobMap[what];
 
-	var heirloom = !jobName
+	let heirloom = !jobName
 		? null
 		: jobName === 'Miner' && challengeActive('Pandemonium') && getPageSetting('pandemoniumStaff') !== 'undefined'
 		? 'pandemoniumStaff'
@@ -763,6 +713,7 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 		: getPageSetting('heirloomStaffWorld') !== 'undefined'
 		? 'heirloomStaffWorld'
 		: null;
+
 	if (game.global.StaffEquipped.name !== heirloom && heirloomSearch(heirloom) === undefined) heirloom = null;
 
 	const job = game.jobs[jobName];
@@ -770,44 +721,63 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 	const workers = workerRatio !== null ? Math.floor((trimpworkers * desiredRatios[pos]) / totalFraction) : mapSettings.mapName === 'Worshipper Farm' ? trimpworkers : job.owned;
 
 	let amt = workers * job.modifier * seconds;
+
 	amt += amt * getPerkLevel('Motivation') * game.portal.Motivation.modifier;
 	if (what !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0) amt *= 1 + game.permaBoneBonuses.multitasking.mult();
-	if (what !== 'science' && what !== 'fragments' && challengeActive('Alchemy')) amt *= alchObj.getPotionEffect('Potion of Finding');
-	if (challengeActive('Frigid')) amt *= game.challenges.Frigid.getShatteredMult();
-	if (game.global.pandCompletions && game.global.universe === 2 && what !== 'fragments') amt *= game.challenges.Pandemonium.getTrimpMult();
-	if (game.global.desoCompletions && game.global.universe === 2 && what !== 'fragments') amt *= game.challenges.Desolation.getTrimpMult();
-	if (getPerkLevel('Observation') > 0 && game.portal.Observation.trinkets > 0) amt *= game.portal.Observation.getMult();
 
-	if (what === 'food' || what === 'wood' || what === 'metal') {
+	const balanceChallenge = ['Balance', 'Unbalance'].find(challengeActive);
+	if (balanceChallenge) amt *= game.challenges[balance].getGatherMult();
+
+	const decayChallenge = ['Decay', 'Melt'].find(challengeActive);
+	if (decayChallenge) {
+		amt *= 10;
+		const stackStr = Math.pow(game.challenges[decayChallenge].decayValue, game.challenges[decayChallenge].stacks);
+		amt *= stackStr;
+	}
+
+	if (game.global.universe === 1) {
+		if (['food', 'metal', 'wood'].includes(what) && challengeActive('Size')) amt *= 1.5;
+		if (challengeActive('Meditate')) amt *= 1.25;
+		if (getPerkLevel('Meditation') > 0) amt *= 1 + game.portal.Meditation.getBonusPercent() * 0.01;
+		if (challengeActive('Toxicity')) amt *= 1 + (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
+		if (challengeActive('Watch')) amt /= 2;
+		if (challengeActive('Lead') && game.global.world % 2 === 1) amt *= 2;
+		if (getPerkLevel('Motivation_II') > 0) amt *= 1 + getPerkLevel('Motivation_II') * getPerkModifier('Motivation_II');
+		if (what === 'metal' && game.jobs.Magmamancer.owned > 0) amt *= game.jobs.Magmamancer.getBonusPercent();
+		if (challengeActive('Frigid')) amt *= game.challenges.Frigid.getShatteredMult();
+		if (getEmpowerment() === 'Wind') amt *= 1 + game.empowerments.Wind.getCombatModifier();
+	}
+
+	if (game.global.universe === 2) {
+		if (Fluffy.isRewardActive('gatherer')) amt *= 2;
+		if ((['food', 'wood'].includes(what) && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) amt *= game.jobs.Meteorologist.getExtraMult();
+		if (game.challenges.Nurture.boostsActive()) amt *= game.challenges.Nurture.getResourceBoost();
+		if (game.portal.Observation.trinkets > 0) amt *= game.portal.Observation.getMult();
+		if (what !== 'science' && what !== 'fragments' && challengeActive('Alchemy')) amt *= alchObj.getPotionEffect('Potion of Finding');
+		if (what === 'wood' && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0) amt *= game.challenges.Hypothermia.getWoodMult();
+		if (challengeActive('Desolation')) amt *= game.challenges.Desolation.trimpResourceMult();
+	}
+
+	if (['food', 'metal', 'wood'].includes(what)) {
 		if (workerRatio) amt *= calculateParityBonus_AT(desiredRatios, heirloomSearch(heirloom));
 		else amt *= getParityBonus();
-		if (autoBattle.oneTimers.Gathermate.owned && game.global.universe == 2) amt *= autoBattle.oneTimers.Gathermate.getMult();
+		if (autoBattle.oneTimers.Gathermate.owned && game.global.universe === 2) amt *= autoBattle.oneTimers.Gathermate.getMult();
 	}
-	if (((what === 'food' || what === 'wood') && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) amt *= game.jobs.Meteorologist.getExtraMult();
-	if (Fluffy.isRewardActive('gatherer')) amt *= 2;
-	if (challengeActive('Unbalance')) amt *= game.challenges.Unbalance.getGatherMult();
+
+	if (game.global.pandCompletions && what !== 'fragments') amt *= game.challenges.Pandemonium.getTrimpMult();
+	if (game.global.desoCompletions && what !== 'fragments') amt *= game.challenges.Desolation.getTrimpMult();
 
 	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what !== 'fragments' && what !== 'science') amt *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 		if (typeof game.global.dailyChallenge.dedication !== 'undefined') amt *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
 	}
-	if (challengeActive('Melt')) {
-		amt *= 10;
-		amt *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
-	}
 
-	if (game.challenges.Nurture.boostsActive()) amt *= game.challenges.Nurture.getResourceBoost();
-
-	if (what === 'wood' && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0) amt *= game.challenges.Hypothermia.getWoodMult();
-
-	if (challengeActive('Desolation')) amt *= game.challenges.Desolation.trimpResourceMult();
-	//Calculating heirloom bonus
-	if (heirloom === null) amt = calcHeirloomBonus('Staff', jobName + 'Speed', amt);
-	else amt = calcHeirloomBonus_AT('Staff', jobName + 'Speed', amt, false, heirloom);
+	const calcHeirloomBonusFunc = heirloom ? calcHeirloomBonus_AT : calcHeirloomBonus;
+	amt = calcHeirloomBonusFunc('Staff', `${jobName}Speed`, amt, false, heirloom);
 
 	const turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
 
-	if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === 'food' || what === 'metal' || what === 'wood')) {
+	if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(what)) {
 		amt *= turkimpBonus;
 		amt += getPlayerModifier() * seconds;
 	}
@@ -816,23 +786,23 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 
 //Check and update each patch!
 function scaleToCurrentMap_AT(amt, ignoreBonuses, ignoreScry, map) {
-	if (map) map = game.global.world + map;
-	if (!map) map = game.global.mapsActive ? getCurrentMapObject().level : challengeActive('Pandemonium') ? game.global.world - 1 : game.global.world;
-	game.global.world + map;
+	map = map ? game.global.world + map : game.global.mapsActive ? getCurrentMapObject().level : challengeActive('Pandemonium') ? game.global.world - 1 : game.global.world;
 	let compare = game.global.world;
-	if (map > compare && map.location !== 'Bionic') {
+
+	if (map > compare) {
 		amt *= Math.pow(1.1, map - compare);
 	} else {
 		if (game.talents.mapLoot.purchased) compare--;
 		if (map < compare) {
-			//-20% loot compounding for each level below world
 			amt *= Math.pow(0.8, compare - map);
 		}
 	}
+
 	if (ignoreBonuses) return amt;
-	//Add map loot bonus
-	const maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
-	amt = Math.round(amt * maploot);
+
+	const goldenMaps = game.singleRunBonuses.goldMaps.owned ? 1 : 0;
+	const mapLoot = (game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6) + goldenMaps;
+	amt = Math.round(amt * mapLoot);
 	amt = scaleLootBonuses(amt, ignoreScry);
 	return amt;
 }
@@ -882,7 +852,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	for (let item in itemObj.cost) {
 		let price = itemObj.cost[item];
 		let toBuy;
-		let resource = game.resources[item];
+		const resource = game.resources[item];
 		let resourcesAvailable = !resources ? resource.owned : resources;
 		if (item === 'wood' && runningHypo) resourcesAvailable -= hypoWoodCost;
 		if (resourcesAvailable < 0) resourcesAvailable = 0;
@@ -922,7 +892,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 //Check and update each patch!
 function getHeirloomBonus_AT(type, modName, customShield) {
 	if (!customShield && (!game.heirlooms[type] || !game.heirlooms[type][modName])) return 0;
-	var bonus;
+	let bonus;
 	//Override bonus if needed with gammaBurst otherwise check customShield and lastly use the game heirloom bonus.
 	if (customShield) bonus = heirloomModSearch(customShield, modName);
 	else if (modName === 'gammaBurst') bonus = game.global.gammaMult / 100;
@@ -936,10 +906,9 @@ function getHeirloomBonus_AT(type, modName, customShield) {
 }
 
 function calcHeirloomBonus_AT(type, modName, number, getValueOnly, customShield) {
-	var mod = getHeirloomBonus_AT(type, modName, customShield);
-	if (!mod) return number;
+	let mod = getHeirloomBonus_AT(type, modName, customShield);
 	if (getValueOnly) return mod;
-	if (mod <= 0) return number;
+	if (!mod || mod <= 0) return number;
 	return number * (mod / 100 + 1);
 }
 
@@ -947,8 +916,8 @@ function getPlayerCritChance_AT(customShield) {
 	//returns decimal: 1 = 100%
 	if (challengeActive('Frigid') && game.challenges.Frigid.warmth <= 0) return 0;
 	if (challengeActive('Duel')) return game.challenges.Duel.enemyStacks / 100;
-	var heirloomValue = getHeirloomBonus_AT('Shield', 'critChance', customShield);
-	var critChance = 0;
+	const heirloomValue = getHeirloomBonus_AT('Shield', 'critChance', customShield);
+	let critChance = 0;
 	critChance += game.portal.Relentlessness.modifier * getPerkLevel('Relentlessness');
 	critChance += heirloomValue / 100;
 	if (game.talents.crit.purchased && heirloomValue) critChance += heirloomValue * 0.005;
@@ -965,20 +934,19 @@ function getPlayerCritChance_AT(customShield) {
 }
 
 function getPlayerCritDamageMult_AT(customShield) {
-	var relentLevel = getPerkLevel('Relentlessness');
-	var heirloomValue = getHeirloomBonus_AT('Shield', 'critDamage', customShield);
-	var critMult = game.portal.Relentlessness.otherModifier * relentLevel + heirloomValue / 100 + 1;
+	const relentLevel = getPerkLevel('Relentlessness');
+	const heirloomValue = getHeirloomBonus_AT('Shield', 'critDamage', customShield);
+	let critMult = game.portal.Relentlessness.otherModifier * relentLevel + heirloomValue / 100 + 1;
 	critMult += getPerkLevel('Criticality') * game.portal.Criticality.modifier;
 	if (relentLevel > 0) critMult += 1;
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
-	critMult += alchObj.getPotionEffect('Elixir of Accuracy');
 	return critMult;
 }
 
 function getPlayerEqualityMult_AT(customShield) {
-	var modifier = game.portal.Equality.modifier;
-	var tempModifier = 1 - modifier;
-	var heirloomValue = getHeirloomBonus_AT('Shield', 'inequality', customShield);
+	let modifier = game.portal.Equality.modifier;
+	let tempModifier = 1 - modifier;
+	const heirloomValue = getHeirloomBonus_AT('Shield', 'inequality', customShield);
 	tempModifier *= heirloomValue / 100;
 	modifier += tempModifier;
 	return modifier;
@@ -986,7 +954,7 @@ function getPlayerEqualityMult_AT(customShield) {
 
 function getEnergyShieldMult_AT(mapType, noHeirloom) {
 	if (game.global.universe !== 2) return 0;
-	var total = 0;
+	let total = 0;
 	if (game.upgrades.Prismatic.done) total += 0.5; //Prismatic: Drops Z2
 	if (game.upgrades.Prismalicious.done) total += 0.5; //Prismalicious: Drops from Prismatic Palace at Z20
 	if (getPerkLevel('Prismal') > 0) total += getPerkLevel('Prismal') * game.portal.Prismal.modifier; //Prismal perk, total possible is 100%
@@ -995,7 +963,7 @@ function getEnergyShieldMult_AT(mapType, noHeirloom) {
 	if (autoBattle.oneTimers.Suprism.owned) total += autoBattle.oneTimers.Suprism.getMult(); //SpireAssault - 3% per level
 
 	if (!noHeirloom) {
-		var heirloomValue = getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType));
+		const heirloomValue = getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType));
 		if (heirloomValue > 0) total += heirloomValue / 100;
 	}
 	return total;
@@ -1004,9 +972,8 @@ function getEnergyShieldMult_AT(mapType, noHeirloom) {
 function getHazardGammaBonus_AT(heirloom) {
 	if (!heirloom) heirloom = game.global.ShieldEquipped;
 	if (!heirloom || heirloom.rarity < 10) return 0;
-	var spent = getTotalHeirloomRefundValue(heirloom, true);
-	spent += 1e6;
-	var mult = heirloom.rarity === 11 ? 10000 : 4000;
-	var bonus = log10(spent) * mult;
+	const spent = getTotalHeirloomRefundValue(heirloom, true) + 1e6;
+	const mult = heirloom.rarity === 11 ? 10000 : 4000;
+	const bonus = log10(spent) * mult;
 	return bonus;
 }

@@ -1534,7 +1534,7 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	for (let item in mapSpecialModifierConfig) {
 		let bonusItem = mapSpecialModifierConfig[item];
 		let unlocksAt = universe === 2 ? bonusItem.unlocksAt2 : bonusItem.unlocksAt;
-		if ((typeof unlocksAt === 'function' && !unlocksAt()) || unlocksAt == -1) continue;
+		if ((typeof unlocksAt === 'function' && !unlocksAt()) || unlocksAt === -1) continue;
 		if (unlocksAt > highestZone) break;
 		dropdown.special += "<option value='" + item + "'" + (vals.special === item ? " selected='selected'" : '') + '>' + bonusItem.name + '</option>';
 	}

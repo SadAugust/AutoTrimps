@@ -598,7 +598,6 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 		maxFluct = 1.995;
 	}
 
-	// Dailies
 	if (challengeActive('Daily')) {
 		var minDailyMod = 1;
 		var maxDailyMod = 1;
@@ -642,7 +641,6 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 	//Override for if the user wants to for some reason floor their crit chance
 	if (typeof atSettings !== 'undefined' && getPageSetting('floorCritCalc')) critMode = 'never';
 
-	//Init Damage Variation (Crit)
 	//If we have critMode defined there's no point in calculating it 3 different times
 	//If not defined then get an accurate value for all 3
 	var min, max, avg;
@@ -751,7 +749,6 @@ function calcEnemyBaseAttack(type, zone, cell, name, query = false) {
 		}
 	}
 
-	//Init
 	const attackBase = game.global.universe === 2 ? 750 : 50;
 	let attack = attackBase * Math.sqrt(zone) * Math.pow(3.27, zone / 2) - 10;
 
@@ -809,7 +806,6 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : 'Snimp';
 	if (!minOrMax) minOrMax = false;
 
-	//Init
 	var attack = calcEnemyBaseAttack(type, zone, cell, name);
 	var fluctuation = game.global.universe === 2 ? 0.5 : 0.2;
 	if (game.global.universe === 1) {
@@ -858,17 +854,15 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 		if (challengeActive('Frigid')) attack *= game.challenges.Frigid.getEnemyMult();
 		if (challengeActive('Experience')) attack *= game.challenges.Experience.getEnemyMult();
 
-		//Coordinate
 		if (challengeActive('Coordinate')) {
-			var amt = 1;
-			for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
+			let amt = 1;
+			for (let i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
 			attack *= amt;
 		}
 
-		//Obliterated and Eradicated
 		if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
-			var oblitMult = challengeActive('Eradicated') ? game.challenges.Eradicated.scaleModifier : 1e12;
-			var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
+			let oblitMult = challengeActive('Eradicated') ? game.challenges.Eradicated.scaleModifier : 1e12;
+			const zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
 			oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
 			attack *= oblitMult;
 		}
@@ -911,23 +905,14 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 
 	//Dailies
 	if (challengeActive('Daily')) {
-		//Bad Strength
 		if (typeof game.global.dailyChallenge.badStrength !== 'undefined') attack *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
-
-		//Bad Map Strength
 		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && type !== 'world') attack *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
-
-		//Bloodthirst
 		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined') {
-			var bloodThirstStrength = game.global.dailyChallenge.bloodthirst.strength;
+			const bloodThirstStrength = game.global.dailyChallenge.bloodthirst.strength;
 			if (type === 'void' && getPageSetting('bloodthirstVoidMax')) attack *= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, dailyModifiers.bloodthirst.getMaxStacks(bloodThirstStrength));
-			else if (!getPageSetting('bloodthirstDestack')) attack *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks);
+			else if (!getPageSetting('bloodthirstDestack')) attack *= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, game.global.dailyChallenge.bloodthirst.stacks);
 		}
-
-		//Empower
 		if (typeof game.global.dailyChallenge.empower !== 'undefined' && type === 'world') attack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
-
-		//Empower voids
 		if (typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && type === 'void') attack *= dailyModifiers.empoweredVoid.getMult(game.global.dailyChallenge.empoweredVoid.strength);
 	}
 
@@ -935,10 +920,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 }
 
 function calcEnemyAttack(type = 'world', zone = game.global.world, cell = 100, name = 'Improbability', minOrMax, customAttack, equality) {
-	//Init
 	var attack = calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equality);
-	var corrupt = zone >= mutations.Corruption.start();
-	var healthy = mutations.Healthy.active();
 
 	//Challenges
 	if (challengeActive('Nom')) {
@@ -963,11 +945,9 @@ function calcEnemyAttack(type = 'world', zone = game.global.world, cell = 100, n
 }
 
 function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth) {
-	//Init
 	var enemy = getCurrentEnemy();
 	if (!enemy) return 1;
 
-	//Init
 	var attack = calcEnemyAttackCore();
 	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
 
@@ -991,7 +971,6 @@ function calcEnemyBaseHealth(mapType, zone, cell, name, ignoreCompressed) {
 	if (!cell) cell = mapType === 'world' || !game.global.mapsActive ? getCurrentWorldCell().level : getCurrentMapCell() ? getCurrentMapCell().level : 1;
 	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : 'Turtlimp';
 
-	//Init
 	var base = game.global.universe === 2 ? 10e7 : 130;
 	var health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
 
@@ -1066,7 +1045,6 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	if (!cell) cell = type === 'world' || !game.global.mapsActive ? getCurrentWorldCell().level : getCurrentMapCell() ? getCurrentMapCell().level : 1;
 	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : 'Turtlimp';
 
-	//Init
 	var health = calcEnemyBaseHealth(type, zone, cell, name);
 
 	//Curr zone Mutation HP
@@ -1104,8 +1082,8 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 		}
 		//Obliterated + Eradicated
 		if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
-			var oblitMult = challengeActive('Eradicated') ? game.challenges.Eradicated.scaleModifier : 1e12;
-			var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
+			let oblitMult = challengeActive('Eradicated') ? game.challenges.Eradicated.scaleModifier : 1e12;
+			const zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
 			oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
 			health *= oblitMult;
 		}
@@ -1151,7 +1129,6 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 }
 
 function calcEnemyHealth(type, zone, cell = 99, name = 'Turtlimp', customHealth) {
-	//Init
 	var health = calcEnemyHealthCore(type, zone, cell, name, customHealth);
 
 	//Challenges - worst case for Lead and Domination
@@ -1172,7 +1149,6 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	var enemy = type === 'world' ? game.global.gridArray[cell - 1] : game.global.mapGridArray[cell - 1];
 	if (!enemy) return -1;
 
-	//Init
 	var corrupt = enemy.corrupted && enemy.corrupted !== 'none';
 	var healthy = corrupt && enemy.corrupted.startsWith('healthy');
 	var name = corrupt ? 'Chimp' : forcedName ? forcedName : enemy.name;
@@ -1469,7 +1445,7 @@ function enemyDamageModifiers() {
 	//Obliterated and Eradicated
 	if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
 		var oblitMult = challengeActive('Eradicated') ? game.challenges.Eradicated.scaleModifier : 1e12;
-		var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
+		const zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
 		oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
 		attack *= oblitMult;
 	}
@@ -1570,16 +1546,10 @@ function gammaMaxStacks(specialChall, actualCheck = true, mapType = 'world') {
 	return gammaMaxStacks;
 }
 
-function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits, hdCheck) {
-	if (Object.keys(game.global.gridArray).length === 0) return 0;
-	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1) return 0;
+function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCell, mapType = 'world', difficulty = 1, farmType = 'gamma', forceOK, hits, hdCheck) {
+	if (Object.keys(game.global.gridArray).length === 0 || getPerkLevel('Equality') === 0) return 0;
 
-	if (!enemyName) enemyName = 'Snimp';
-	if (!zone) zone = game.global.world;
-	if (!mapType) mapType = 'world';
 	if (!currentCell) currentCell = mapType === 'world' || mapType === 'void' ? 98 : 20;
-	if (!difficulty) difficulty = 1;
-	if (!farmType) farmType = 'gamma';
 
 	const bionicTalent = zone - game.global.world;
 	const checkMutations = mapType === 'world' && zone > 200;
@@ -1593,18 +1563,16 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	const maxEquality = game.portal.Equality.radLevel;
 	const overkillCount = maxOneShotPower(true);
 
-	var critType = 'maybe';
+	let critType = 'maybe';
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never';
 
-	//Challenge conditions
-	var runningUnlucky = challengeActive('Unlucky');
-	var runningQuest = _getCurrentQuest() === 8 || challengeActive('Bublé'); //Shield break quest
+	const runningUnlucky = challengeActive('Unlucky');
+	const runningQuest = _getCurrentQuest() === 8 || challengeActive('Bublé'); //Shield break quest
 
-	//Initialising name/health/dmg variables
 	//Enemy stats
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
-	var enemyHealth = calcEnemyHealth(mapType, zone, currentCell, enemyName) * difficulty;
-	var enemyDmg = calcEnemyAttack(mapType, zone, currentCell, enemyName, false, false, 0) * difficulty;
+	let enemyHealth = calcEnemyHealth(mapType, zone, currentCell, enemyName) * difficulty;
+	let enemyDmg = calcEnemyAttack(mapType, zone, currentCell, enemyName, false, false, 0) * difficulty;
 
 	if ((mapType === 'map' && dailyCrit) || dailyExplosive) {
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
@@ -1621,14 +1589,14 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 	}
 	//Our stats
-	var dmgType = runningUnlucky ? 'max' : 'avg';
-	var ourHealth = calcOurHealth(runningQuest, mapType);
-	var ourDmg = calcOurDmg(dmgType, 0, false, mapType, critType, bionicTalent, titimp);
+	let dmgType = runningUnlucky ? 'max' : 'avg';
+	let ourHealth = calcOurHealth(runningQuest, mapType);
+	let ourDmg = calcOurDmg(dmgType, 0, false, mapType, critType, bionicTalent, titimp);
 
-	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, mapType, 'never', bionicTalent, titimp)) : 2;
+	let unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, mapType, 'never', bionicTalent, titimp)) : 2;
 
 	//Figuring out gamma to proc value
-	var gammaToTrigger = gammaMaxStacks(false, false, mapType);
+	let gammaToTrigger = gammaMaxStacks(false, false, mapType);
 
 	if (checkMutations) {
 		enemyDmg = calcEnemyAttack(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
@@ -1645,9 +1613,9 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 	if (isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= 1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100;
 
-	var ourDmgEquality = 0;
-	var enemyDmgEquality = 0;
-	var unluckyDmgEquality = 0;
+	let ourDmgEquality = 0;
+	let enemyDmgEquality = 0;
+	let unluckyDmgEquality = 0;
 	const ourEqualityModifier = typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType)) : game.portal.Equality.getMult(true);
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
@@ -1658,7 +1626,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	}
 
 	if (enemyHealth !== 0) {
-		for (var i = 0; i <= maxEquality; i++) {
+		for (let i = 0; i <= maxEquality; i++) {
 			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i);
 			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
 			if (runningUnlucky) {

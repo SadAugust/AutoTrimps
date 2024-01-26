@@ -579,9 +579,9 @@ function loadAugustSettings() {
 	game.options.menu.boneAlerts.enabled = 0;
 	game.options.menu.romanNumerals.enabled = 0;
 
-	var toggles = ['darkTheme', 'standardNotation', 'hotkeys'];
-	for (var i in toggles) {
-		var setting = game.options.menu[toggles[i]];
+	let toggles = ['darkTheme', 'standardNotation', 'hotkeys'];
+	for (let i in toggles) {
+		let setting = game.options.menu[toggles[i]];
 		if (setting.onToggle) setting.onToggle();
 	}
 	if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
@@ -624,24 +624,24 @@ function pushSpreadsheetData() {
 			return Math.floor(log10((this.getCurrentExp() / this.firstLevel) * (this.growth - 1) + 1) / log10(this.growth));
 		},
 		calculateExp: function () {
-			var level = this.currentLevel();
-			var experience = this.getCurrentExp();
-			var removeExp = 0;
+			const level = this.currentLevel();
+			let experience = this.getCurrentExp();
+			let removeExp = 0;
 			if (level > 0) {
 				removeExp = Math.floor(this.firstLevel * ((Math.pow(this.growth, level) - 1) / (this.growth - 1)));
 			}
-			var totalNeeded = Math.floor(this.firstLevel * ((Math.pow(this.growth, level + 1) - 1) / (this.growth - 1)));
+			let totalNeeded = Math.floor(this.firstLevel * ((Math.pow(this.growth, level + 1) - 1) / (this.growth - 1)));
 			experience -= removeExp;
 			totalNeeded -= removeExp;
 			this.currentExp = [level, experience, totalNeeded];
 		}
 	};
 
-	var heliumGained = game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned;
-	var heliumHr = game.stats.heliumHour.value();
+	let heliumGained = game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned;
+	let heliumHr = game.stats.heliumHour.value();
 
-	var dailyMods = ' ';
-	var dailyPercent = 0;
+	let dailyMods = ' ';
+	let dailyPercent = 0;
 	if (MODULES.portal.currentChallenge === 'Daily' && !challengeActive('Daily')) {
 		dailyMods = MODULES.portal.dailyMods;
 		dailyPercent = MODULES.portal.dailyPercent;
@@ -672,7 +672,7 @@ function pushSpreadsheetData() {
 			: 0;
 	const mapZone = graphData !== undefined ? Number(Object.keys(mapCount).find((key) => mapCount[key] === mapTotal)) : 0;
 
-	var obj = {
+	let obj = {
 		user: autoTrimpSettings.gameUser.value,
 		date: new Date().toISOString(),
 		portals: game.global.totalPortals,
@@ -727,7 +727,7 @@ function pushSpreadsheetData() {
 		bones: game.global.b
 	};
 
-	for (var chall in game.c2) {
+	for (let chall in game.c2) {
 		if (!game.challenges[chall].allowU2) {
 			obj[chall + '_zone'] = game.c2[chall];
 			obj[chall + '_bonus'] = getIndividualSquaredReward(chall);
@@ -738,41 +738,31 @@ function pushSpreadsheetData() {
 	}
 
 	//Replaces any commas with semicolons to avoid breaking how the spreadsheet parses data.
-	for (var item in obj) {
+	for (let item in obj) {
 		if (typeof greenworks !== 'undefined' && process.version === 'v10.10.0') continue;
 		if (typeof obj[item] === 'string') obj[item] = obj[item].replaceAll(',', ';');
 	}
 
-	setTimeout(function () {
-		//Data entry ID can easily be found in the URL of the form after setting up a pre-filled link.
-		//Haven't found a way to get it from the form itself or a way to automate it so pushing the data as an object instead.
-		var data = {
-			'entry.1850071841': obj.user, //User
-			'entry.815135863': JSON.stringify(obj) //Object
-			//'entry.1864995783': new Date().toISOString(), //Timestamp
-		};
+	//Data entry ID can easily be found in the URL of the form after setting up a pre-filled link.
+	//Haven't found a way to get it from the form itself or a way to automate it so pushing the data as an object instead.
+	const data = {
+		'entry.1850071841': obj.user,
+		'entry.815135863': JSON.stringify(obj)
+	};
 
-		var formSuccess = true;
-		var formId = '1FAIpQLScTqY2ti8WUwIKK_WOh_X_Oky704HOs_Lt07sCTG2sHCc3quA';
-		var queryString = '/formResponse';
-		var url = 'https://docs.google.com/forms/d/e/' + formId + queryString;
-		//Can't use the form's action URL because it's not a valid URL for CORS requests.
-		//Google doesn't allow CORS requests to their forms by the looks of it
-		//Using dataType "jsonp" instead of "json" to get around this issue.
+	const formId = '1FAIpQLScTqY2ti8WUwIKK_WOh_X_Oky704HOs_Lt07sCTG2sHCc3quA';
+	const queryString = '/formResponse';
+	const url = `https://docs.google.com/forms/d/e/${formId}${queryString}`;
 
-		if (formSuccess) {
-			// Send request
-			$.ajax({
-				url: url,
-				type: 'POST',
-				crossDomain: true,
-				header: {
-					'Content-type': 'application/javascript; charset=utf-8'
-				},
-				data: data,
-				dataType: 'jsonp'
-			});
-		}
-	}, 300);
-	debug(`Spreadsheet update complete.`, 'other');
+	$.ajax({
+		url: url,
+		type: 'POST',
+		crossDomain: true,
+		headers: {
+			'Content-Type': 'application/json; charset=utf-8'
+		},
+		data: data,
+		dataType: 'jsonp'
+	});
+	debug(`Spreadsheet upload complete.`);
 }

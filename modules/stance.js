@@ -74,7 +74,7 @@ function maxOneShotPower(planToMap, targetZone) {
 		//Fluffy
 		if (Fluffy.isRewardActive('overkiller')) power += Fluffy.isRewardActive('overkiller');
 		//Ice
-		if (getUberEmpowerment() == 'Ice') power += 2;
+		if (getUberEmpowerment() === 'Ice') power += 2;
 		if (getEmpowerment() === 'Ice' && game.empowerments.Ice.getLevel() >= 50) power++;
 		if (getEmpowerment() === 'Ice' && game.empowerments.Ice.getLevel() >= 100) power++;
 	} else if (game.global.universe === 2) {
