@@ -73,37 +73,39 @@ function buyJobs(forceRatios) {
 	const { owned, employed } = game.resources.trimps;
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
-	let freeWorkers = _calculateFreeWorkers(owned, employed);
-	if (!noBreedChallenge() && owned < maxTrimps * 0.9) {
-		_handleBreedingTrimps(owned, maxTrimps, employed);
-		return;
-	}
-
+	//Calculates the amount of trimps that should be employed
+	let freeWorkers = _calculateFreeWorkers(owned, maxTrimps, employed);
+	freeWorkers = Math.min(freeWorkers, _employableTrimps(owned, maxTrimps, employed));
 	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
+
+	//Hires the trimps according to the desired ratios
 	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings);
 	_handleJobRatios(desiredRatios, freeWorkers);
 }
 
-function _calculateFreeWorkers(owned, employed) {
-	const maxTrimps = game.resources.trimps.realMax();
-	const currentFreeWorkers = Math.ceil(Math.min(maxTrimps / 2), owned) - employed;
+function _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed) {
+	return Math.ceil(Math.min(maxTrimps / 2, owned)) - employed;
+}
+
+function _calculateFreeWorkers(owned, maxTrimps, employed) {
+	const currentFreeWorkers = _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed);
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const ratioWorkerCount = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 	return currentFreeWorkers + ratioWorkerCount;
 }
 
-function _handleBreedingTrimps(owned, maxTrimps, employed) {
+function _employableTrimps(owned, maxTrimps, employed) {
+	//Init
 	const breedingTrimps = owned - trimpsEffectivelyEmployed();
-	const battleDone = game.upgrades.Battle.done;
-	const excessBreedingTrimps = (breedingTrimps === 1 && !battleDone) || breedingTrimps > maxTrimps * 0.33;
-	const freeWorkers = Math.ceil(maxTrimps / 2) - employed;
-	const canHireWorkers = freeWorkers > 0 && maxTrimps <= 3e5;
 
-	if (excessBreedingTrimps && canHireWorkers) {
-		if (battleDone || game.jobs.Farmer.owned === 0 || game.jobs.Lumberjack.owned === game.jobs.Farmer.owned) safeBuyJob('Farmer', 1);
-		if (!game.jobs.Lumberjack.locked) safeBuyJob('Lumberjack', 1);
-		if (!game.jobs.Miner.locked) safeBuyJob('Miner', 1);
-	}
+	//Uses all available trimps before Battle has been purchased
+	if (!game.upgrades.Battle.done) return owned;
+
+	//Preserves enough unemployed trimps that at least a third of maxTrimps will remain breeding
+	let employable = Math.ceil((breedingTrimps - maxTrimps/3) / (1 - game.permaBoneBonuses.multitasking.mult()));
+
+	//The trimps already employed are considered employable as well
+	return employed + Math.max(0, Math.min(employable, owned));
 }
 
 function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
@@ -281,12 +283,23 @@ function _getAutoJobRatio() {
 function _handleJobRatios(desiredRatios, freeWorkers) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const totalFraction = desiredRatios.reduce((a, b) => a + b, 0) || 1;
-	const desiredWorkers = [0, 0, 0, 0];
-	let totalWorkerCost = 0;
-	for (let i = 0; i < ratioWorkers.length; i++) {
-		desiredWorkers[i] = Math.floor((freeWorkers * desiredRatios[i]) / totalFraction - game.jobs[ratioWorkers[i]].owned);
-		if (desiredWorkers[i] > 0) totalWorkerCost += game.jobs[ratioWorkers[i]].cost.food * desiredWorkers[i];
-	}
+	let ownedWorkers = 0;
+
+	//Calculates both the decimal and the floored number of desired workers
+	const fDesiredWorkers = desiredRatios.map(r => r * freeWorkers / totalFraction);
+	let desiredWorkers = fDesiredWorkers.map(w => Math.floor(w));
+
+	//Calculates how many workers will be left out of the initial distribution
+	const remainder = freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
+
+	//Decides where to put them
+	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
+	const whereToIncrement = argSort(diff).reverse().slice(0, remainder);
+	whereToIncrement.forEach(idx => desiredWorkers[idx]++);
+
+	//Calculates the actual number of workers to buy or fire, and the cost of doing so
+	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
+	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
 
 	if (totalWorkerCost > game.resources.food.owned) {
 		const farmersToHire = Math.min(calculateMaxAfford('Farmer', false, false, true), Math.max(1, freeWorkers / 10) - game.jobs.Farmer.owned);

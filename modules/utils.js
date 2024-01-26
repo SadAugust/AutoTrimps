@@ -590,3 +590,7 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 		return Math.floor(Math.log(1 - ((1 - costScaling) * totalResource) / baseCost) / Math.log(costScaling));
 	}
 }
+
+function argSort(array) {
+	return array.map((value, index) => [value, index]).sort().map(a => a[1]);
+}

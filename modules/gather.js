@@ -6,8 +6,7 @@ MODULES.gather = {
 //Traps per second
 function calcTPS() {
 	const fluffyTrapMult = game.global.universe === 2 && Fluffy.isRewardActive('trapper') ? 10 : 1;
-	const tps = Math.min(10, game.global.playerModifier / 5) * fluffyTrapMult;
-	return tps;
+	return Math.min(10, game.global.playerModifier / 5) * fluffyTrapMult;
 }
 
 function safeSetGather(resource) {
@@ -21,12 +20,27 @@ function safeSetGather(resource) {
 	setGather(resource);
 }
 
+function setTrapBait(lowOnTraps) {
+	//Bait trimps if we have traps
+	if (!lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
+		safeSetGather('trimps');
+		return;
+	}
+
+	//Or build them, if they are on the queue
+	if (isBuildingInQueue('Trap') || safeBuyBuilding('Trap', 1)) {
+		MODULES.gather.trapBuffering = true;
+		safeSetGather('buildings');
+	}
+}
+
 function autoGather() {
 	const manualGather = getPageSetting('gatherType');
 	if (manualGather === 0) return;
 
 	const scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done;
 	const minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done;
+	const metalButtonAvailable = document.getElementById('metalCollectBtn').style.display !== 'none' && document.getElementById('metal').style.visibility !== 'hidden';
 
 	//Setting it to use mining/building only!
 	if (!scientistsAvailable && !minersAvailable && manualGather === 2 && document.getElementById('metalCollectBtn').style.display !== 'none' && document.getElementById('metal').style.visibility !== 'hidden') {
@@ -37,6 +51,7 @@ function autoGather() {
 	const trapChallenge = noBreedChallenge();
 	const needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
 	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
+	const baseArmySize = game.resources.trimps.maxSoldiers;
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
 	const trapsBufferSize = Math.ceil(5 * calcTPS());
 	const minTraps = needBattle ? 0 : Math.ceil(calcTPS());
@@ -47,19 +62,22 @@ function autoGather() {
 	if (trapTrimpsOK && trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap')) {
 		const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
 		if (trappaCoordToggle === 1) {
+			let targetArmySize = baseArmySize;
 			let coordTarget = getPageSetting('trapperCoords') > 0 ? getPageSetting('trapperCoords') - 1 : 999;
 			if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
 			const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
 			const coordinatedMult = getPerkLevel('Coordinated') > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, getPerkLevel('Coordinated')) + 1 : 1;
+
 			//Work out the army size that we need to calculate traps based off of.
-			let targetArmySize = game.resources.trimps.maxSoldiers;
-			if (game.upgrades.Coordination.done >= coordTarget)
+			if (game.upgrades.Coordination.done >= coordTarget) {
 				for (let z = game.upgrades.Coordination.done; z < coordTarget; ++z) {
-					targetArmySize = Math.ceil(1.25 * targetArmySize);
-					targetArmySize = Math.ceil(targetArmySize * coordinatedMult);
+					targetArmySize = Math.ceil(1.25 * baseArmySize);
+					targetArmySize = Math.ceil(baseArmySize * coordinatedMult);
 				}
+			}
+
 			//Disable trapping if we are fighting with our max coord army (or better) OR if we have enough trimps to fill our max coord army
-			if ((challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize) || remainingTrimps > targetArmySize) trapTrimpsOK = false;
+			if ((challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= baseArmySize) || remainingTrimps > baseArmySize) trapTrimpsOK = false;
 		}
 	}
 
@@ -72,24 +90,26 @@ function autoGather() {
 	if (maxTrapsReady) MODULES.gather.maxTrapBuffering = false;
 
 	const resourcesNeeded = getUpgradeCosts();
-	const firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
 	const scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
 	const researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && scienceAvailable;
-	const needScience = game.resources.science.owned < resourcesNeeded.science;
-	const needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
-	const needMiner = firstFightOK && minersAvailable;
+	const needScience = game.resources.science.owned < resourcesNeeded.science;
+	const needScientists = scienceAvailable && !game.upgrades.Scientists.done;
+	const needScientistsScience = needScientists && game.resources.science.owned < 100;
+	const needScientistsScienceNow = needScientistsScience && !game.upgrades.Scientists.locked;
+
+	const needMiner = !game.upgrades.Miners.done && game.global.challengeActive != "Metal";
+	const needMinerScience = needMiner && game.resources.science.owned < 60;
+	const needMinerScienceNow = needMinerScience && !game.upgrades.Miners.locked;
+
 	const breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 	const building = game.global.buildingsQueue[0];
+
 	//Verifies if trapping is still relevant
 	//Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
 	//And there is enough breed time remaining to open an entire trap (prevents wasting time and traps during early zones)
-	const trappingIsRelevant =
-		trapperTrapUntilFull ||
-		breedingPS()
-			.div(10)
-			.lt(calcTPS() * (game.portal.Bait.level + 1));
+	const trappingIsRelevant = trapperTrapUntilFull || breedingPS().div(10).lt(calcTPS() * (game.portal.Bait.level + 1));
 	const trapWontBeWasted = trapperTrapUntilFull || breedTimeRemaining().gte(1 / calcTPS()) || (game.global.playerGathering === 'trimps' && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1)));
 
 	//Build if we are building an Antenna. Priority over everything else.
@@ -98,7 +118,7 @@ function autoGather() {
 		return;
 	}
 
-	//Highest Priority Food/Wood for traps when we either cant afford Traps or don't have them unlocked as the requirement for the unlock is the cost of the building
+	//Highest Priority Food/Wood for traps when we either cant afford Traps or don't have them unlocked as the requirement for unlocking it is the cost of the building
 	if (game.buildings.Trap.locked || !canAffordBuilding('Trap')) {
 		//If not building and not trapping
 		if (!trapsReady && game.global.buildingsQueue.length === 0 && (game.global.playerGathering !== 'trimps' || game.buildings.Trap.owned === 0)) {
@@ -114,65 +134,91 @@ function autoGather() {
 		}
 	}
 
-	//High Priority Trapping (doing Trapper or without breeding trimps)
-	if (!scientistsAvailable && !minersAvailable && trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull)) {
-		//Bait trimps if we have traps
-		if (!lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
-			safeSetGather('trimps');
-			return;
-		}
-		//Or build them, if they are on the queue
-		else if (isBuildingInQueue('Trap') || safeBuyBuilding('Trap', 1)) {
-			MODULES.gather.trapBuffering = true;
-			safeSetGather('buildings');
-			return;
-		}
+	//Highest Priority Trapping (doing Trapper or without breeding trimps)
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull && !scientistsAvailable && !minersAvailable)) {
+		setTrapBait(lowOnTraps);
+		return;
 	}
 
-	//Highest Priority Research if we have less science than needed to buy Battle, Miner and Scientists
-	if (manualGather !== 3 && researchAvailable && (needBattle || needScientists || needMiner) && game.resources.science.owned < 100) {
+	//Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
+	if (manualGather !== 3 && researchAvailable && (needBattle || needMinerScienceNow && needScientistsScienceNow)) {
 		safeSetGather('science');
 		return;
 	}
 
 	//Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
-	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier === 0 || (getPlayerModifier() > 100 && building !== 'Trap.1'))) {
+	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || building !== 'Trap.1' && (game.global.autoCraftModifier === 0 || getPlayerModifier() > 100))) {
 		safeSetGather('buildings');
 		return;
 	}
 
 	//Also Build if we have storage buildings on top of the queue
-	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || game.building === 'Shed.1' || building === 'Forge.1') {
+	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || building === 'Shed.1' || building === 'Forge.1') {
 		safeSetGather('buildings');
 		return;
 	}
 
+	//High Priority Trapping (refilling after a sudden increase in population)
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize) {
+		setTrapBait(lowOnTraps);
+		return;
+	}
+
+	//Highest Priority Research if we have less science than needed to buy Miner and Scientist
+	if (manualGather !== 3 && researchAvailable && (needMinerScience || needScientistsScience)) {
+		safeSetGather('science');
+		return;
+	}
+
+	//Gather resources for Miner
+	if (needMiner && (game.resources.metal.owned < 100 || game.resources.wood.owned < 300)) {
+		safeSetGather(metalButtonAvailable && game.resources.metal.owned < 100 ? 'metal' : 'wood');
+		return;
+	}
+
+	//Gather resources for Scientist
+	if (needScientists && game.resources.food.owned < 350) {
+		safeSetGather('food');
+		return;
+	}
+
 	//Get coord if army size is not the problem.
-	//Should only be a necessary thing when at z5 or below as that's where you'll be most resource starved
 	const coordUpgrade = game.upgrades['Coordination'];
-	if (game.global.world <= 5 && !coordUpgrade.locked && canAffordCoordinationTrimps()) {
-		if (resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned) {
+	if (game.global.world > coordUpgrade.done && canAffordCoordinationTrimps()) {
+		//TODO Put these resources in a priority queue
+		//TODO Refactoring
+
+		//Science
+		let needResource = resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned;
+		let playerRelevant = getPlayerModifier() > getPsString_AT('science', true) / 10;
+		if (manualGather !== 3 && researchAvailable && needResource && playerRelevant) {
 			safeSetGather('science');
 			return;
 		}
-		if (resolvePow(coordUpgrade.cost.resources.food, coordUpgrade) > game.resources.food.owned) {
+
+		//Food
+		needResource = resolvePow(coordUpgrade.cost.resources.food, coordUpgrade) > game.resources.food.owned;
+		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('food', true) / 10;
+		if (needResource && playerRelevant) {
 			safeSetGather('food');
 			return;
 		}
-		if (resolvePow(coordUpgrade.cost.resources.wood, coordUpgrade) > game.resources.wood.owned) {
+
+		//Wood
+		needResource = resolvePow(coordUpgrade.cost.resources.wood, coordUpgrade) > game.resources.wood.owned;
+		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('wood', true) / 10;
+		if (game.triggers.wood.done && needResource && playerRelevant) {
 			safeSetGather('wood');
 			return;
 		}
-		if (resolvePow(coordUpgrade.cost.resources.metal, coordUpgrade) > game.resources.metal.owned) {
+
+		//Metal
+		needResource = resolvePow(coordUpgrade.cost.resources.metal, coordUpgrade) > game.resources.metal.owned;
+		playerRelevant = getPlayerModifier() > getPsString_AT('metal', true) / 10;
+		if (metalButtonAvailable && needResource && playerRelevant) {
 			safeSetGather('metal');
 			return;
 		}
-	}
-
-	//High Priority Research - When manual research still has more impact than scientists
-	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true) && game.resources.science.owned < 100) {
-		safeSetGather('science');
-		return;
 	}
 
 	if (hasTurkimp && game.global.mapsActive) {
@@ -193,9 +239,9 @@ function autoGather() {
 		}
 	}
 
-	//Gather resources for Miner
-	if (needMiner && (game.resources.metal.owned < 100 || game.resources.wood.owned < 300)) {
-		safeSetGather(game.resources.metal.owned < 100 ? 'metal' : 'wood');
+	//High Priority Research - When manual research still has more impact than scientists
+	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true)) {
+		safeSetGather('science');
 		return;
 	}
 
@@ -263,17 +309,13 @@ function autoGather() {
 	if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
 		if (manualGather !== 3 && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers && game.resources.science.owned < getPsString_AT('science') * 60) {
 			safeSetGather('science');
-			return;
 		} else {
 			safeSetGather(lowestResource);
-			return;
 		}
 	} else if (trapTrimpsOK && game.global.trapBuildToggled && lowOnTraps) {
 		safeSetGather('buildings');
-		return;
 	} else {
 		safeSetGather(lowestResource);
-		return;
 	}
 }
 

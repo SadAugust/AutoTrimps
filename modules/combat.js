@@ -29,7 +29,7 @@ function betterAutoFight() {
 function betterAutoFightVanilla() {
 	if (game.global.autoBattle && game.global.pauseFight && !game.global.spireActive) pauseFight();
 	if (game.global.gridArray.length === 0 || !game.upgrades.Battle.done || game.global.fighting) return;
-	if (game.global.world === 1 && !game.global.fighting && !game.upgrades.Bloodlust.allowed) battle(true);
+	if (game.global.world === 1 && !game.global.fighting && game.resources.trimps.owned === game.resources.trimps.realMax()) battle(true);
 }
 
 //Suicides trimps if we don't have max anticipation stacks and sending a new army would give us max stacks.
