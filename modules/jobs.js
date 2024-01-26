@@ -77,7 +77,7 @@ function buyJobs(forceRatios) {
 	freeWorkers = Math.min(freeWorkers, _employableTrimps(owned, maxTrimps, employed));
 	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
 
-	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings);
+	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps);
 	_handleJobRatios(desiredRatios, freeWorkers);
 }
 
@@ -196,7 +196,7 @@ function _buyWorshipper(jobSettings) {
 	if (affordableShips > 0) safeBuyJob('Worshipper', affordableShips);
 }
 
-function _getDesiredRatios(forceRatios, jobType, jobSettings) {
+function _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const overrideRatio = forceRatios || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio && mapSettings.jobRatio !== '-1');
 	let desiredRatios = [0, 0, 0, 0];
@@ -205,7 +205,7 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings) {
 		const workerRatios = (forceRatios || mapSettings.jobRatio).split(',');
 		desiredRatios = ratioWorkers.map((_, i) => (!workerRatios[i] ? 0 : Number(workerRatios[i])));
 	} else {
-		desiredRatios = jobType === 2 ? ratioWorkers.map((worker) => (!jobSettings[worker] || !jobSettings[worker].enabled ? 0 : Number(jobSettings[worker].ratio))) : _getAutoJobRatio();
+		desiredRatios = jobType === 2 ? ratioWorkers.map((worker) => (!jobSettings[worker] || !jobSettings[worker].enabled ? 0 : Number(jobSettings[worker].ratio))) : _getAutoJobRatio(maxTrimps);
 	}
 
 	if (challengeActive('Metal') || challengeActive('Transmute')) {
@@ -216,7 +216,7 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings) {
 
 	const scienceNeeded = getUpgradeCosts().science;
 	const isScienceNeeded = scienceNeeded > 0 && scienceNeeded > game.resources.science.owned;
-	const scientistMod = desiredRatios[3] !== 0 || isScienceNeeded ? 1 : _getScientistRatio();
+	const scientistMod = desiredRatios[3] !== 0 || (maxTrimps >= 1e5 && isScienceNeeded) ? 1 : _getScientistRatio(maxTrimps);
 
 	ratioWorkers.forEach((worker, workerIndex) => {
 		if (!game.jobs[worker].locked) {
@@ -238,8 +238,8 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings) {
 	return desiredRatios;
 }
 
-function _getScientistRatio() {
-	const scientistRatios = { ratio: 8, ratio2: 4, ratio3: 16, ratio4: 64, ratio5: 256, ratio6: 1024, ratio7: 4098 };
+function _getScientistRatio(maxTrimps) {
+	const scientistRatios = { ratio: 5, ratio2: 4, ratio3: 16, ratio4: 64, ratio5: 256, ratio6: 1024, ratio7: 4098 };
 
 	const conditions = [
 		{ condition: () => game.global.world >= 150, ratio: scientistRatios.ratio7 },
@@ -247,14 +247,14 @@ function _getScientistRatio() {
 		{ condition: () => game.global.world >= 90, ratio: scientistRatios.ratio5 },
 		{ condition: () => game.global.world >= 65, ratio: scientistRatios.ratio4 },
 		{ condition: () => game.global.world >= 50, ratio: scientistRatios.ratio3 },
-		{ condition: () => game.jobs.Farmer.owned < 100, ratio: scientistRatios.ratio2 },
+		{ condition: () => maxTrimps >= 400, ratio: scientistRatios.ratio2 },
 		{ condition: () => true, ratio: scientistRatios.ratio }
 	];
 
 	return conditions.find(({ condition }) => condition()).ratio;
 }
 
-function _getAutoJobRatio() {
+function _getAutoJobRatio(maxTrimps) {
 	const jobRatios = { ratioHaz: [1, 1, 1, 0], ratio7: [1, 1, 100, 0], ratio6: [1, 7, 12, 0], ratio5: [1, 2, 22, 0], ratio4: [1, 1, 10, 0], ratio3: [3, 1, 4, 0], ratio2: [3, 3, 5, 0], ratio1: [1.1, 1.15, 1.2, 0] };
 
 	const conditions = [
@@ -263,8 +263,8 @@ function _getAutoJobRatio() {
 		{ condition: () => game.buildings.Tribute.owned > 3000 && mutations.Magma.active(), ratio: jobRatios.ratio6 },
 		{ condition: () => game.buildings.Tribute.owned > 1500, ratio: jobRatios.ratio5 },
 		{ condition: () => game.buildings.Tribute.owned > 1000, ratio: jobRatios.ratio4 },
-		{ condition: () => game.resources.trimps.realMax() > 3000000, ratio: jobRatios.ratio3 },
-		{ condition: () => game.resources.trimps.realMax() > 300000, ratio: jobRatios.ratio2 },
+		{ condition: () => maxTrimps > 3000000, ratio: jobRatios.ratio3 },
+		{ condition: () => maxTrimps > 300000, ratio: jobRatios.ratio2 },
 		{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
 		{ condition: () => game.global.world < 5, ratio: [1.5, 0.7, 1, 0] },
 		{ condition: () => true, ratio: jobRatios.ratio1 }

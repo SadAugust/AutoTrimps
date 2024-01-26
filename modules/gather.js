@@ -36,8 +36,10 @@ function autoGather() {
 	const manualGather = getPageSetting('gatherType');
 	if (manualGather === 0) return;
 
-	const scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done;
-	const minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done;
+	const { Scientists, Miners, Battle, Coordination } = game.upgrades;
+
+	const scientistsAvailable = Scientists.allowed && !Scientists.done;
+	const minersAvailable = Miners.allowed && !Miners.done;
 	const metalButtonAvailable = document.getElementById('metalCollectBtn').style.display !== 'none' && document.getElementById('metal').style.visibility !== 'hidden';
 
 	//Setting it to use mining/building only!
@@ -47,14 +49,14 @@ function autoGather() {
 	}
 
 	const trapChallenge = noBreedChallenge();
-	const needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
+	const needBattle = !Battle.done && game.resources.science.owned < 10;
 	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
 	const baseArmySize = game.resources.trimps.maxSoldiers;
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
 	const trapsBufferSize = Math.ceil(5 * calcTPS());
 	const minTraps = needBattle ? 0 : Math.ceil(calcTPS());
 	const maxTraps = Math.max(100, getZoneSeconds() / 4);
-	let trapTrimpsOK = (!game.upgrades.Battle.done || getPageSetting('TrapTrimps')) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
+	let trapTrimpsOK = (!Battle.done || getPageSetting('TrapTrimps')) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 
 	//Identify if we should disable trapping when running Trappa/Trapper
 	if (trapTrimpsOK && trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap')) {
@@ -65,8 +67,8 @@ function autoGather() {
 			if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
 			const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
 			const coordinatedMult = getPerkLevel('Coordinated') > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, getPerkLevel('Coordinated')) + 1 : 1;
-			if (game.upgrades.Coordination.done >= coordTarget) {
-				for (let z = game.upgrades.Coordination.done; z < coordTarget; ++z) {
+			if (Coordination.done >= coordTarget) {
+				for (let z = Coordination.done; z < coordTarget; ++z) {
 					targetArmySize = Math.ceil(1.25 * targetArmySize);
 					targetArmySize = Math.ceil(targetArmySize * coordinatedMult);
 				}
@@ -89,13 +91,13 @@ function autoGather() {
 	const researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && scienceAvailable;
 
 	const needScience = game.resources.science.owned < resourcesNeeded.science;
-	const needScientists = scienceAvailable && !game.upgrades.Scientists.done;
+	const needScientists = scienceAvailable && !Scientists.done;
 	const needScientistsScience = needScientists && game.resources.science.owned < 100;
-	const needScientistsScienceNow = needScientistsScience && !game.upgrades.Scientists.locked;
+	const needScientistsScienceNow = needScientistsScience && !Scientists.locked;
 
-	const needMiner = !game.upgrades.Miners.done && !challengeActive('Metal');
+	const needMiner = !Miners.done && !challengeActive('Metal');
 	const needMinerScience = needMiner && game.resources.science.owned < 60;
-	const needMinerScienceNow = needMinerScience && !game.upgrades.Miners.locked;
+	const needMinerScienceNow = needMinerScience && !Miners.locked;
 
 	const breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
@@ -180,34 +182,33 @@ function autoGather() {
 		return;
 	}
 
-	//Get coord if army size is not the problem.
-	const coordUpgrade = game.upgrades['Coordination'];
-	if (coordUpgrade.allowed > coordUpgrade.done && canAffordCoordinationTrimps()) {
+	//Get coordination upgrade if army size is not the problem.
+	if (Coordination.allowed > Coordination.done && canAffordCoordinationTrimps() && !canAffordTwoLevel(Coordination)) {
 		//TODO Put these resources in a priority queue
 		//TODO Refactoring
 
-		let needResource = resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned;
+		let needResource = resolvePow(Coordination.cost.resources.science, Coordination) > game.resources.science.owned;
 		let playerRelevant = getPlayerModifier() > getPsString_AT('science', true) / 10;
 		if (manualGather !== 3 && researchAvailable && needResource && playerRelevant) {
 			safeSetGather('science');
 			return;
 		}
 
-		needResource = resolvePow(coordUpgrade.cost.resources.food, coordUpgrade) > game.resources.food.owned;
+		needResource = resolvePow(Coordination.cost.resources.food, Coordination) > game.resources.food.owned;
 		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('food', true) / 10;
 		if (needResource && playerRelevant) {
 			safeSetGather('food');
 			return;
 		}
 
-		needResource = resolvePow(coordUpgrade.cost.resources.wood, coordUpgrade) > game.resources.wood.owned;
+		needResource = resolvePow(Coordination.cost.resources.wood, Coordination) > game.resources.wood.owned;
 		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('wood', true) / 10;
 		if (game.triggers.wood.done && needResource && playerRelevant) {
 			safeSetGather('wood');
 			return;
 		}
 
-		needResource = resolvePow(coordUpgrade.cost.resources.metal, coordUpgrade) > game.resources.metal.owned;
+		needResource = resolvePow(Coordination.cost.resources.metal, Coordination) > game.resources.metal.owned;
 		playerRelevant = getPlayerModifier() > getPsString_AT('metal', true) / 10;
 		if (metalButtonAvailable && needResource && playerRelevant) {
 			safeSetGather('metal');
