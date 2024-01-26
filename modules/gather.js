@@ -40,6 +40,7 @@ function autoGather() {
 
 	const scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done;
 	const minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done;
+	const metalButtonAvailable = document.getElementById('metalCollectBtn').style.display !== 'none' && document.getElementById('metal').style.visibility !== 'hidden';
 
 	//Setting it to use mining/building only!
 	if (!scientistsAvailable && !minersAvailable && manualGather === 2 && document.getElementById('metalCollectBtn').style.display !== 'none' && document.getElementById('metal').style.visibility !== 'hidden') {
@@ -171,7 +172,7 @@ function autoGather() {
 
 	//Gather resources for Miner
 	if (needMiner && (game.resources.metal.owned < 100 || game.resources.wood.owned < 300)) {
-		safeSetGather(game.resources.metal.owned < 100 ? 'metal' : 'wood');
+		safeSetGather(metalButtonAvailable && game.resources.metal.owned < 100 ? 'metal' : 'wood');
 		return;
 	}
 
@@ -182,30 +183,46 @@ function autoGather() {
 	}
 
 	//Get coord if army size is not the problem.
-	//Should only be a necessary thing when at z5 or below as that's where you'll be most resource starved
 	const coordUpgrade = game.upgrades['Coordination'];
-	if (game.global.world <= 5 && !coordUpgrade.locked && canAffordCoordinationTrimps()) {
+	if (game.global.world < coordUpgrade.allowed && canAffordCoordinationTrimps()) {
 		//TODO Put these resources in a priority queue
-		if (resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned) {
+		//TODO Refactoring
+
+		//Science
+		let needResource = resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned;
+		let playerRelevant = getPlayerModifier() > getPsString_AT('science', true) / 10;
+		if (manualGather !== 3 && researchAvailable && needResource && playerRelevant) {
 			safeSetGather('science');
 			return;
 		}
-		if (resolvePow(coordUpgrade.cost.resources.food, coordUpgrade) > game.resources.food.owned) {
+
+		//Food
+		needResource = resolvePow(coordUpgrade.cost.resources.food, coordUpgrade) > game.resources.food.owned;
+		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('food', true) / 10;
+		if (needResource && playerRelevant) {
 			safeSetGather('food');
 			return;
 		}
-		if (resolvePow(coordUpgrade.cost.resources.wood, coordUpgrade) > game.resources.wood.owned) {
+
+		//Wood
+		needResource = resolvePow(coordUpgrade.cost.resources.wood, coordUpgrade) > game.resources.wood.owned;
+		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('wood', true) / 10;
+		if (game.triggers.wood.done && needResource && playerRelevant) {
 			safeSetGather('wood');
 			return;
 		}
-		if (resolvePow(coordUpgrade.cost.resources.metal, coordUpgrade) > game.resources.metal.owned) {
+
+		//Metal
+		needResource = resolvePow(coordUpgrade.cost.resources.metal, coordUpgrade) > game.resources.metal.owned;
+		playerRelevant = getPlayerModifier() > getPsString_AT('metal', true) / 10;
+		if (metalButtonAvailable && needResource && playerRelevant) {
 			safeSetGather('metal');
 			return;
 		}
 	}
 
 	//High Priority Research - When manual research still has more impact than scientists
-	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true) && game.resources.science.owned < 100) {
+	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true)) {
 		safeSetGather('science');
 		return;
 	}
