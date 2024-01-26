@@ -75,10 +75,16 @@ function autoGather() {
 	const firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
 	const scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
 	const researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && scienceAvailable;
-	const needScience = game.resources.science.owned < resourcesNeeded.science;
-	const needScientists = firstFightOK && scientistsAvailable && scienceAvailable;
 
-	const needMiner = firstFightOK && minersAvailable;
+	const needScience = game.resources.science.owned < resourcesNeeded.science;
+	const needScientists = firstFightOK && scienceAvailable && !game.upgrades.Scientists.done;
+	const needScientistsScience = needScientists && game.resources.science.owned < 100;
+	const needScientistsScienceNow = needScientistsScience && !game.upgrades.Scientists.locked;
+
+	const needMiner = firstFightOK && game.global.challengeActive != "Metal" && !game.upgrades.Miners.done;
+	const needMinerScience = needMiner && game.resources.science.owned < 60;
+	const needMinerScienceNow = needMinerScience && !game.upgrades.Miners.locked;
+
 	const breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 	const building = game.global.buildingsQueue[0];
@@ -126,8 +132,8 @@ function autoGather() {
 		}
 	}
 
-	//Highest Priority Research if we have less science than needed to buy Battle and Miner
-	if (manualGather !== 3 && researchAvailable && (needBattle || needMiner) && game.resources.science.owned < 60) {
+	//Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
+	if (manualGather !== 3 && researchAvailable && (needBattle || needMinerScienceNow && needScientistsScienceNow)) {
 		safeSetGather('science');
 		return;
 	}
@@ -144,9 +150,21 @@ function autoGather() {
 		return;
 	}
 
-	//Highest Priority Research if we have less science than needed to buy Scientists
-	if (manualGather !== 3 && researchAvailable && needScientists && game.resources.science.owned < 100) {
+	//Highest Priority Research if we have less science than needed to buy Miner and Scientist
+	if (manualGather !== 3 && researchAvailable && (needMinerScience || needScientistsScience)) {
 		safeSetGather('science');
+		return;
+	}
+
+	//Gather resources for Miner
+	if (needMiner && (game.resources.metal.owned < 100 || game.resources.wood.owned < 300)) {
+		safeSetGather(game.resources.metal.owned < 100 ? 'metal' : 'wood');
+		return;
+	}
+
+	//Gather resources for Scientist
+	if (needScientists && game.resources.food.owned < 350) {
+		safeSetGather('food');
 		return;
 	}
 
@@ -195,12 +213,6 @@ function autoGather() {
 			else safeSetGather('metal');
 			return;
 		}
-	}
-
-	//Gather resources for Miner
-	if (needMiner && (game.resources.metal.owned < 100 || game.resources.wood.owned < 300)) {
-		safeSetGather(game.resources.metal.owned < 100 ? 'metal' : 'wood');
-		return;
 	}
 
 	//Mid Priority Trapping
