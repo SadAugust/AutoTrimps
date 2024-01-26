@@ -74,8 +74,9 @@ function buyJobs(forceRatios) {
 	const { owned, employed } = game.resources.trimps;
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
+	//Calculates the amount of trimps that should be employed
 	let freeWorkers = _calculateFreeWorkers(owned, maxTrimps, employed);
-	let breedingPreserved = _checkBreedingTrimps(owned, maxTrimps, employed);
+	freeWorkers = Math.min(freeWorkers, _employableTrimps(owned, maxTrimps));
 
 	//Checks if
 	if (noBreedChallenge() || owned >= maxTrimps * 0.9 || breedingPreserved) {
@@ -96,21 +97,18 @@ function _calculateFreeWorkers(owned, maxTrimps, employed) {
 	return currentFreeWorkers + ratioWorkerCount;
 }
 
-function _checkBreedingTrimps(owned, maxTrimps, employed) {
-	const freeWorkers = _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed);
+function _employableTrimps(owned, maxTrimps, employed) {
+	//Init
 	const breedingTrimps = owned - trimpsEffectivelyEmployed();
-	const battleDone = game.upgrades.Battle.done;
-	const excessBreedingTrimps = !battleDone || breedingTrimps > (maxTrimps / 3);
-	const canHireWorkers = freeWorkers > 0 && maxTrimps <= 3e5;
-	
-	return excessBreedingTrimps && canHireWorkers;
 
-	//TODO Test & Delete
-	// if (excessBreedingTrimps && canHireWorkers) {
-	// 	if (battleDone || game.jobs.Farmer.owned === 0 || game.jobs.Lumberjack.owned === game.jobs.Farmer.owned) safeBuyJob('Farmer', 1);
-	// 	if (!game.jobs.Lumberjack.locked) safeBuyJob('Lumberjack', 1);
-	// 	if (!game.jobs.Miner.locked) safeBuyJob('Miner', 1);
-	// }
+	//Uses all available trimps before Battle has been purchased
+	if (!game.upgrades.Battle.done) return owned;
+
+	//Preserves enough unemployed trimps that at least a third of maxTrimps will remain breeding
+	let employable = Math.ceil((breedingTrimps - maxTrimps/3) / game.permaBoneBonuses.multitasking.mult());
+
+	//The trimps already employed are considered employable as well
+	return employed + Math.max(0, Math.min(employable, owned));
 }
 
 function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
