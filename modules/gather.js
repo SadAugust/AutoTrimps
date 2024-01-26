@@ -71,16 +71,15 @@ function autoGather() {
 	if (maxTrapsReady) MODULES.gather.maxTrapBuffering = false;
 
 	const resourcesNeeded = getUpgradeCosts();
-	const firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
 	const scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
 	const researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && scienceAvailable;
 
 	const needScience = game.resources.science.owned < resourcesNeeded.science;
-	const needScientists = firstFightOK && scienceAvailable && !game.upgrades.Scientists.done;
+	const needScientists = scienceAvailable && !game.upgrades.Scientists.done;
 	const needScientistsScience = needScientists && game.resources.science.owned < 100;
 	const needScientistsScienceNow = needScientistsScience && !game.upgrades.Scientists.locked;
 
-	const needMiner = firstFightOK && game.global.challengeActive != "Metal" && !game.upgrades.Miners.done;
+	const needMiner = !game.upgrades.Miners.done && game.global.challengeActive != "Metal";
 	const needMinerScience = needMiner && game.resources.science.owned < 60;
 	const needMinerScienceNow = needMinerScience && !game.upgrades.Miners.locked;
 
