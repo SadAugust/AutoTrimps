@@ -20,6 +20,20 @@ function safeSetGather(resource) {
 	setGather(resource);
 }
 
+function setTrapBait() {
+	//Bait trimps if we have traps
+	if (!lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
+		safeSetGather('trimps');
+		return;
+	}
+
+	//Or build them, if they are on the queue
+	if (isBuildingInQueue('Trap') || safeBuyBuilding('Trap', 1)) {
+		MODULES.gather.trapBuffering = true;
+		safeSetGather('buildings');
+	}
+}
+
 function autoGather() {
 	const manualGather = getPageSetting('gatherType');
 	if (manualGather === 0) return;
@@ -36,6 +50,7 @@ function autoGather() {
 	const trapChallenge = noBreedChallenge();
 	const needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
 	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
+	const baseArmySize = game.resources.trimps.maxSoldiers;
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
 	const trapsBufferSize = Math.ceil(5 * calcTPS());
 	const minTraps = needBattle ? 0 : Math.ceil(calcTPS());
@@ -46,19 +61,22 @@ function autoGather() {
 	if (trapTrimpsOK && trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap')) {
 		const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
 		if (trappaCoordToggle === 1) {
+			let targetArmySize = baseArmySize;
 			let coordTarget = getPageSetting('trapperCoords') > 0 ? getPageSetting('trapperCoords') - 1 : 999;
 			if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
 			const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
 			const coordinatedMult = getPerkLevel('Coordinated') > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, getPerkLevel('Coordinated')) + 1 : 1;
+
 			//Work out the army size that we need to calculate traps based off of.
-			let targetArmySize = game.resources.trimps.maxSoldiers;
-			if (game.upgrades.Coordination.done >= coordTarget)
+			if (game.upgrades.Coordination.done >= coordTarget) {
 				for (let z = game.upgrades.Coordination.done; z < coordTarget; ++z) {
-					targetArmySize = Math.ceil(1.25 * targetArmySize);
-					targetArmySize = Math.ceil(targetArmySize * coordinatedMult);
+					targetArmySize = Math.ceil(1.25 * baseArmySize);
+					targetArmySize = Math.ceil(baseArmySize * coordinatedMult);
 				}
+			}
+
 			//Disable trapping if we are fighting with our max coord army (or better) OR if we have enough trimps to fill our max coord army
-			if ((challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize) || remainingTrimps > targetArmySize) trapTrimpsOK = false;
+			if ((challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= baseArmySize) || remainingTrimps > baseArmySize) trapTrimpsOK = false;
 		}
 	}
 
@@ -115,20 +133,9 @@ function autoGather() {
 		}
 	}
 
-	//High Priority Trapping (doing Trapper or without breeding trimps)
-	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull && !scientistsAvailable && !minersAvailable)) {
-		//Bait trimps if we have traps
-		if (!lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
-			safeSetGather('trimps');
-			return;
-		}
-		//Or build them, if they are on the queue
-		else if (isBuildingInQueue('Trap') || safeBuyBuilding('Trap', 1)) {
-			MODULES.gather.trapBuffering = true;
-			safeSetGather('buildings');
-			return;
-		}
-	}
+	//Highest Priority Trapping (doing Trapper or without breeding trimps)
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull && !scientistsAvailable && !minersAvailable))
+		setTrapBait();
 
 	//Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
 	if (manualGather !== 3 && researchAvailable && (needBattle || needMinerScienceNow && needScientistsScienceNow)) {
@@ -147,6 +154,10 @@ function autoGather() {
 		safeSetGather('buildings');
 		return;
 	}
+
+	//High Priority Trapping (refilling after a sudden increase in population)
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize)
+		setTrapBait();
 
 	//Highest Priority Research if we have less science than needed to buy Miner and Scientist
 	if (manualGather !== 3 && researchAvailable && (needMinerScience || needScientistsScience)) {
