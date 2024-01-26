@@ -76,20 +76,17 @@ function autoGather() {
 	const scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
 	const researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && scienceAvailable;
 	const needScience = game.resources.science.owned < resourcesNeeded.science;
-	const needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
+	const needScientists = firstFightOK && scientistsAvailable && scienceAvailable;
 
 	const needMiner = firstFightOK && minersAvailable;
 	const breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 	const building = game.global.buildingsQueue[0];
+
 	//Verifies if trapping is still relevant
 	//Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
 	//And there is enough breed time remaining to open an entire trap (prevents wasting time and traps during early zones)
-	const trappingIsRelevant =
-		trapperTrapUntilFull ||
-		breedingPS()
-			.div(10)
-			.lt(calcTPS() * (game.portal.Bait.level + 1));
+	const trappingIsRelevant = trapperTrapUntilFull || breedingPS().div(10).lt(calcTPS() * (game.portal.Bait.level + 1));
 	const trapWontBeWasted = trapperTrapUntilFull || breedTimeRemaining().gte(1 / calcTPS()) || (game.global.playerGathering === 'trimps' && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1)));
 
 	//Build if we are building an Antenna. Priority over everything else.
@@ -98,7 +95,7 @@ function autoGather() {
 		return;
 	}
 
-	//Highest Priority Food/Wood for traps when we either cant afford Traps or don't have them unlocked as the requirement for the unlock is the cost of the building
+	//Highest Priority Food/Wood for traps when we either cant afford Traps or don't have them unlocked as the requirement for unlocking it is the cost of the building
 	if (game.buildings.Trap.locked || !canAffordBuilding('Trap')) {
 		//If not building and not trapping
 		if (!trapsReady && game.global.buildingsQueue.length === 0 && (game.global.playerGathering !== 'trimps' || game.buildings.Trap.owned === 0)) {
@@ -129,21 +126,27 @@ function autoGather() {
 		}
 	}
 
-	//Highest Priority Research if we have less science than needed to buy Battle, Miner and Scientists
-	if (manualGather !== 3 && researchAvailable && (needBattle || needScientists || needMiner) && game.resources.science.owned < 100) {
+	//Highest Priority Research if we have less science than needed to buy Battle and Miner
+	if (manualGather !== 3 && researchAvailable && (needBattle || needMiner) && game.resources.science.owned < 60) {
 		safeSetGather('science');
 		return;
 	}
 
 	//Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
-	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier === 0 || (getPlayerModifier() > 100 && building !== 'Trap.1'))) {
+	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.autoCraftModifier === 0 || (getPlayerModifier() > 100 && building !== 'Trap.1'))) {
 		safeSetGather('buildings');
 		return;
 	}
 
 	//Also Build if we have storage buildings on top of the queue
-	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || game.building === 'Shed.1' || building === 'Forge.1') {
+	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || building === 'Shed.1' || building === 'Forge.1') {
 		safeSetGather('buildings');
+		return;
+	}
+
+	//Highest Priority Research if we have less science than needed to buy Scientists
+	if (manualGather !== 3 && researchAvailable && needScientists && game.resources.science.owned < 100) {
+		safeSetGather('science');
 		return;
 	}
 
@@ -151,6 +154,7 @@ function autoGather() {
 	//Should only be a necessary thing when at z5 or below as that's where you'll be most resource starved
 	const coordUpgrade = game.upgrades['Coordination'];
 	if (game.global.world <= 5 && !coordUpgrade.locked && canAffordCoordinationTrimps()) {
+		//TODO Put these resources in a priority queue
 		if (resolvePow(coordUpgrade.cost.resources.science, coordUpgrade) > game.resources.science.owned) {
 			safeSetGather('science');
 			return;
