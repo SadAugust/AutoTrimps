@@ -138,7 +138,7 @@ function autoGather() {
 	}
 
 	//Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
-	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building !== 'Trap.1' && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier === 0 || getPlayerModifier() > 100)) {
+	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || building !== 'Trap.1' && (game.global.autoCraftModifier === 0 || getPlayerModifier() > 100))) {
 		safeSetGather('buildings');
 		return;
 	}
