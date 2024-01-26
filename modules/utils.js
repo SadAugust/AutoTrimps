@@ -582,3 +582,11 @@ function setupAddonUser(force) {
 		mapFunctions: { ...mapFunctionItems }
 	};
 }
+
+function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
+	if (!isCompounding) {
+		return Math.floor((costScaling - 2 * baseCost + Math.sqrt(Math.pow(2 * baseCost - costScaling, 2) + 8 * costScaling * totalResource)) / 2);
+	} else {
+		return Math.floor(Math.log(1 - ((1 - costScaling) * totalResource) / baseCost) / Math.log(costScaling));
+	}
+}

@@ -66,20 +66,10 @@ MODULES.equipment = {
 	}
 };
 
-function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
-	if (!isCompounding) {
-		return Math.floor((costScaling - 2 * baseCost + Math.sqrt(Math.pow(2 * baseCost - costScaling, 2) + 8 * costScaling * totalResource)) / 2);
-	} else {
-		return Math.floor(Math.log(1 - ((1 - costScaling) * totalResource) / baseCost) / Math.log(costScaling));
-	}
-}
-
 function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
 	if (mapSettings.pandaEquips) return pandemoniumEquipmentCheck(mapSettings.cacheGain);
 
 	const currentMap = getCurrentMapObject() || { location: 'world' };
-	const attackCap = getPageSetting('equipCapAttack');
-	const healthCap = getPageSetting('equipCapHealth');
 	const equipZone = getPageSetting('equipZone');
 	const equipPercent = getPageSetting('equipPercent');
 	const equipMult = getEquipPriceMult();
@@ -97,7 +87,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 	const calculateEquipCap = (type) => {
 		if (challengeActive('Scientist') || challengeActive('Frugal')) return Infinity;
 		if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return Infinity;
-		return type === 'attack' ? attackCap : healthCap;
+		return type === 'attack' ? getPageSetting('equipCapAttack') : getPageSetting('equipCapHealth');
 	};
 
 	const canAtlantrimp = game.mapUnlocks.AncientTreasure.canRunOnce;
@@ -147,16 +137,17 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 
 		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
 		const equipCap = maybeBuyPrestige.prestigeAvailable ? Math.max(mostEfficient[equipType].equipCap, 9) : mostEfficient[equipType].equipCap;
+
 		if ((prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) || (!maybeBuyPrestige.purchase && equipData.level >= equipCap)) continue;
 
 		if (!prestigesAvailable || !forcePrestige) {
 			nextLevelCost = equipData.cost[equipModule.resource][0] * Math.pow(equipData.cost[equipModule.resource][1], equipData.level) * equipMult;
-			nextLevelValue = equipData[`${equipModule.stat}Calculated`];
+			nextLevelValue = equipData[`${equipType}Calculated`];
 			safeRatio = nextLevelCost / nextLevelValue;
 		}
 
 		//Check for further overrides for if we want to skip looking at prestiges
-		if (!maybeBuyPrestige.skip && !((prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGoCheck(equipZone))) && equipData.level < 6)) {
+		if (!maybeBuyPrestige.skip && !((prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo)) && equipData.level < 6)) {
 			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) {
 				if (equipData.level >= equipCap) continue;
 			} else if (maybeBuyPrestige.purchase && (maybeBuyPrestige.statPerResource < mostEfficient[equipType].statPerResource || !mostEfficient[equipType].name)) {
@@ -167,6 +158,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 				prestige = true;
 			} else if (forcePrestige && equipData.prestige > highestPrestige) continue;
 		}
+
 		if (safeRatio === 1) continue;
 		if (equipName === 'Shield' && !prestige && (equipData.level >= equipCap || !canAffordBuilding(equipName, null, null, true, false, 1, resourceSpendingPct * 100))) continue;
 
@@ -381,7 +373,7 @@ function buyEquipsAlways2() {
 		}
 	}
 
-	return keepBuying;
+	return equipLeft;
 }
 
 function buyEquips() {
