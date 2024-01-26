@@ -73,12 +73,10 @@ function buyJobs(forceRatios) {
 	const { owned, employed } = game.resources.trimps;
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
-	//Calculates the amount of trimps that should be employed
 	let freeWorkers = _calculateFreeWorkers(owned, maxTrimps, employed);
 	freeWorkers = Math.min(freeWorkers, _employableTrimps(owned, maxTrimps, employed));
 	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
 
-	//Hires the trimps according to the desired ratios
 	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings);
 	_handleJobRatios(desiredRatios, freeWorkers);
 }
@@ -95,16 +93,11 @@ function _calculateFreeWorkers(owned, maxTrimps, employed) {
 }
 
 function _employableTrimps(owned, maxTrimps, employed) {
-	//Init
 	const breedingTrimps = owned - trimpsEffectivelyEmployed();
-
-	//Uses all available trimps before Battle has been purchased
 	if (!game.upgrades.Battle.done) return owned;
 
-	//Preserves enough unemployed trimps that at least a third of maxTrimps will remain breeding
-	let employable = Math.ceil((breedingTrimps - maxTrimps/3) / (1 - game.permaBoneBonuses.multitasking.mult()));
+	let employable = Math.ceil((breedingTrimps - maxTrimps / 3) / (1 - game.permaBoneBonuses.multitasking.mult()));
 
-	//The trimps already employed are considered employable as well
 	return employed + Math.max(0, Math.min(employable, owned));
 }
 
@@ -283,11 +276,10 @@ function _getAutoJobRatio() {
 function _handleJobRatios(desiredRatios, freeWorkers) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const totalFraction = desiredRatios.reduce((a, b) => a + b, 0) || 1;
-	let ownedWorkers = 0;
 
 	//Calculates both the decimal and the floored number of desired workers
-	const fDesiredWorkers = desiredRatios.map(r => r * freeWorkers / totalFraction);
-	let desiredWorkers = fDesiredWorkers.map(w => Math.floor(w));
+	const fDesiredWorkers = desiredRatios.map((r) => (r * freeWorkers) / totalFraction);
+	let desiredWorkers = fDesiredWorkers.map((w) => Math.floor(w));
 
 	//Calculates how many workers will be left out of the initial distribution
 	const remainder = freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
@@ -295,7 +287,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	//Decides where to put them
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff).reverse().slice(0, remainder);
-	whereToIncrement.forEach(idx => desiredWorkers[idx]++);
+	whereToIncrement.forEach((idx) => desiredWorkers[idx]++);
 
 	//Calculates the actual number of workers to buy or fire, and the cost of doing so
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
