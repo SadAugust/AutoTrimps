@@ -225,7 +225,7 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps) {
 				desiredRatios[workerIndex] = scientistMod * parseFloat(desiredRatios[workerIndex]);
 			}
 		} else {
-			desiredRatios[workerIndex] = 0;
+			desiredRatios[workerIndex] = -1;
 		}
 	});
 
