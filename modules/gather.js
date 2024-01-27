@@ -87,7 +87,7 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 
 		let needResource = resolvePow(Coordination.cost.resources.science, Coordination) > game.resources.science.owned;
 		let playerRelevant = getPlayerModifier() > getPsString_AT('science', true) / 10;
-		if (researchAvailable && needResource && playerRelevant) {
+		if (researchAvailable && needResource && playerRelevant && !hasTurkimp) {
 			safeSetGather('science');
 			return true;
 		}
@@ -112,6 +112,13 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 			safeSetGather('metal');
 			return true;
 		}
+
+        needResource = resolvePow(Coordination.cost.resources.science, Coordination) > game.resources.science.owned;
+        playerRelevant = getPlayerModifier() > getPsString_AT('science', true) / 10;
+        if (manualGather !== 3 && researchAvailable && needResource && playerRelevant && hasTurkimp) {
+            safeSetGather('science');
+            return;
+        }
 	}
 	return false;
 }
