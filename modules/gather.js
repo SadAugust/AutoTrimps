@@ -124,7 +124,7 @@ function _willTrapsBeWasted() {
 	return !(gteTime || lteTime);
 }
 
-function _lastResort(researchAvailable, trapTrimpsOK) {
+function _lastResort(researchAvailable, trapTrimpsOK, minTraps) {
 	const manualResourceList = {
 		food: 'Farmer',
 		wood: 'Lumberjack',
@@ -341,7 +341,7 @@ function autoGather() {
 		return;
 	}
 
-	_lastResort();
+	_lastResort(researchAvailable, trapTrimpsOK, minTraps);
 }
 
 // Mining/Building only setting
