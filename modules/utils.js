@@ -591,9 +591,12 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 	}
 }
 
-function argSort(array) {
+function argSort(array, reverseStability = false) {
 	return array
 		.map((value, index) => [value, index])
-		.sort()
+		.sort((a1, a2) => {
+			let diff = a1[0] - a2[0];
+			return diff ? diff : (reverseStability ? a2[1] - a1[1] : 0);
+		})
 		.map((a) => a[1]);
 }
