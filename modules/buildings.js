@@ -53,12 +53,12 @@ function _needHousing(houseName) {
 	// Stops buildings being pushed if Smithy Farming so that we aren't going back and forth between Smithy gem/wood/metal maps constantly while trying to farm resources for them.
 	if (mapSettings.mapName === 'Smithy Farm' && houseName !== 'Gateway') return false;
 
-	// Can afford the building.
-	const spendingPerc = buildingSettings.percent / 100;
-	const resourcefulMod = Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
-	for (const resource in buildingStat.cost) {
-		if (!_canAffordBuilding(resource, buildingStat, spendingPerc, resourcefulMod)) return false;
-	}
+	// Can afford the building. TODO Test without this part, then
+	// const spendingPerc = buildingSettings.percent / 100;
+	// const resourcefulMod = Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
+	// for (const resource in buildingStat.cost) {
+	// 	if (!_canAffordBuilding(resource, buildingStat, spendingPerc, resourcefulMod)) return false;
+	// }
 
 	if (game.global.universe === 2 && houseName === 'Gateway') {
 		if (_checkSafeGateway(buildingStat)) return false;
