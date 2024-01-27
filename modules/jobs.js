@@ -210,7 +210,7 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps) {
 	if (challengeActive('Metal') || challengeActive('Transmute')) {
 		if (!game.jobs.Lumberjack.locked) desiredRatios[1] += desiredRatios[2];
 		else desiredRatios[0] += desiredRatios[2];
-		desiredRatios[2] = 0;
+		desiredRatios[2] = -1;
 	}
 
 	const scienceNeeded = getUpgradeCosts().science;
@@ -230,8 +230,8 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps) {
 	});
 
 	if (game.global.universe === 2 && !overrideRatio) {
-		if (jobSettings.FarmersUntil.enabled && game.global.world >= jobSettings.FarmersUntil.zone) desiredRatios[0] = 0;
-		if (jobSettings.NoLumberjacks.enabled && !game.mapUnlocks.SmithFree.canRunOnce) desiredRatios[1] = 0;
+		if (jobSettings.FarmersUntil.enabled && game.global.world >= jobSettings.FarmersUntil.zone) desiredRatios[0] = -1;
+		if (jobSettings.NoLumberjacks.enabled && !game.mapUnlocks.SmithFree.canRunOnce) desiredRatios[1] = -1;
 	}
 
 	return desiredRatios;
@@ -273,6 +273,9 @@ function _getAutoJobRatio(maxTrimps) {
 
 function _handleJobRatios(desiredRatios, freeWorkers) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
+	const hireWorkers = desiredRatios.map((ratio) => ratio !== -1);
+	desiredRatios = desiredRatios.map((r) => (r === -1 ? 0 : r));
+
 	const totalFraction = desiredRatios.reduce((a, b) => a + b, 0) || 1;
 
 	//Calculates both the decimal and the floored number of desired workers
@@ -285,11 +288,11 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	//Decides where to put them
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff, true).slice(diff.length - remainder);
-	whereToIncrement.forEach((idx) => desiredWorkers[idx]++);
+	whereToIncrement.forEach((idx) => (hireWorkers[idx] ? desiredWorkers[idx]++ : null));
 	//Calculates the actual number of workers to buy or fire, and the cost of doing so
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
 	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
-	if (totalWorkerCost > game.resources.food.owned) {
+	if (hireWorkers[0] && totalWorkerCost > game.resources.food.owned) {
 		const totalWorkersOwned = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 		const maxWorkersToHire = Math.max(Math.floor(freeWorkers / 10), freeWorkers - totalWorkersOwned);
 		const farmersToHire = Math.max(calculateMaxAfford('Farmer', false, false, true), maxWorkersToHire + 1 - game.jobs.Farmer.owned);
