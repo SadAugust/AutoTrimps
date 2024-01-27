@@ -80,10 +80,9 @@ function _isTrappingRelevant(trapperTrapUntilFull) {
 	return trapperTrapUntilFull || trappingIsRelevant;
 }
 
-function _getCoordinationUpgrade(Coordination, researchAvailable) {
+function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 	if (game.global.world > Coordination.done && canAffordCoordinationTrimps() && !canAffordTwoLevel(Coordination)) {
 		// TODO: Put these resources in a priority queue
-		const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 		const metalButtonAvailable = elementVisible('metal');
 
 		let needResource = resolvePow(Coordination.cost.resources.science, Coordination) > game.resources.science.owned;
@@ -124,13 +123,12 @@ function _willTrapsBeWasted() {
 	return !(gteTime || lteTime);
 }
 
-function _lastResort(researchAvailable, trapTrimpsOK, minTraps) {
+function _lastResort(researchAvailable, trapTrimpsOK, lowOnTraps) {
 	const manualResourceList = {
 		food: 'Farmer',
 		wood: 'Lumberjack',
 		metal: 'Miner'
 	};
-	const lowOnTraps = game.buildings.Trap.owned < minTraps;
 
 	let lowestResource = 'food';
 	let lowestResourceRate = -1;
@@ -146,6 +144,7 @@ function _lastResort(researchAvailable, trapTrimpsOK, minTraps) {
 			}
 		}
 	}
+
 	if (researchAvailable && game.global.turkimpTimer < 1 && game.resources.science.owned < getPsString_AT('science') * 60) {
 		safeSetGather('science');
 	} else if (trapTrimpsOK && game.global.trapBuildToggled && lowOnTraps) {
@@ -280,7 +279,7 @@ function autoGather() {
 	}
 
 	// Get coordination upgrade if army size is not the problem.
-	if (_getCoordinationUpgrade(Coordination, researchAvailable)) return;
+	if (_getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp)) return;
 
 	if (hasTurkimp && game.global.mapsActive) {
 		if (mapSettings.gather !== undefined && mapSettings.gather !== null) {
@@ -341,7 +340,7 @@ function autoGather() {
 		return;
 	}
 
-	_lastResort(researchAvailable, trapTrimpsOK, minTraps);
+	_lastResort(researchAvailable, trapTrimpsOK, lowOnTraps);
 }
 
 // Mining/Building only setting
