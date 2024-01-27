@@ -284,7 +284,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 
 	//Decides where to put them
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
-	const whereToIncrement = argSort(diff).reverse().slice(0, remainder);
+	const whereToIncrement = argSort(diff, true).slice(diff.length - remainder);
 	whereToIncrement.forEach((idx) => desiredWorkers[idx]++);
 	//Calculates the actual number of workers to buy or fire, and the cost of doing so
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
