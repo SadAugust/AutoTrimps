@@ -296,9 +296,37 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 }
 
 function autoEquip() {
+	//Init
+	const { Miners, Speedminer, Megaminer } = game.upgrades;
+	const scienceOwned = game.resources.science.owned;
+	const metalOwned = game.resources.metal.owned;
+
 	if (!getPageSetting('equipOn')) return;
-	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
-	//If running a wood or metal quest then disable autoequip
+
+	//Saves metal for upgrades
+	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
+		function shouldSaveForSpeedUpgrade(upgradeObj, metalPercentageAllowed) {
+			//No upgrades available
+			if (upgradeObj.done >= upgradeObj.allowed)
+				return false;
+
+			//Not enough science to start saving
+			if (scienceOwned < resolvePow(upgradeObj.cost.resources.science, upgradeObj))
+				return false;
+
+			//Not enough metal to start saving
+			return metalOwned >= resolvePow(upgradeObj.cost.resources.metal, upgradeObj) * metalPercentageAllowed;
+		}
+
+		//Saves metal for Speed upgrades
+		if (shouldSaveForSpeedUpgrade(Speedminer, 1/4) || shouldSaveForSpeedUpgrade(Megaminer, 1.0/9.6))
+			return false;
+
+		//Saves metal for Miners
+		if (Miners.allowed && !Miners.done) return;
+	}
+
+	//If running a wood or metal quest then disable autoEquip
 	if ([2, 3].indexOf(_getCurrentQuest()) >= 0) return;
 	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
 	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
