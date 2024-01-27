@@ -43,7 +43,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		universe: 1,
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified) {
-			if (document.getElementById('portalBtn').style.display !== 'none') return false;
+			if (elementExists('portalBtn')) return false;
 			if (game.global.world - 1 > map.level) return true; //Don't bother before z22
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
@@ -115,7 +115,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		universe: 2,
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified) {
-			if (document.getElementById('portalBtn').style.display !== 'none') return false;
+			if (elementExists('portalBtn')) return false;
 			if (game.global.world - 1 > map.level && game.global.totalRadPortals === 0) return true; //Don't bother before z17
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
