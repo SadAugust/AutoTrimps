@@ -1,16 +1,16 @@
 function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || game.jobs[jobTitle].locked) return;
 
+	const percentWorker = ['Explorer', 'Trainer', 'Magmamancer', 'Meteorologist', 'Worshipper'].includes(jobTitle);
 	const freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-	if (amount > 0 && freeWorkers <= 0) return;
+	if (!percentWorker && amount > 0 && freeWorkers <= 0) return;
 
 	const { firing, buyAmt } = game.global;
 	game.global.firing = amount < 0;
 	amount = Math.abs(amount);
-	if (!game.global.firing) amount = Math.min(amount, freeWorkers);
+	if (!game.global.firing && !percentWorker) amount = Math.min(amount, freeWorkers);
 	game.global.buyAmt = amount;
 	let result = game.global.firing || canAffordJobCheck(jobTitle, amount);
-
 	if (!result) {
 		game.global.buyAmt = 'Max';
 		game.global.maxSplit = 1;
