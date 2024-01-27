@@ -577,7 +577,7 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 		zone: 'z' + zone,
 		value: 0,
 		killSpeed: 0,
-		stance: '',
+		stance: 'X',
 		loot: lootFunction(zone, saveData),
 		canAffordPerfect: saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9])
 	};
