@@ -30,13 +30,16 @@ function _setTrapBait(lowOnTraps) {
 	}
 }
 
-function _isTrappingOK(Battle, trapperTrapUntilFull) {
+function _isTrappingOK(Battle) {
+	const trapChallenge = noBreedChallenge();
+	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
+	const trapperTrapUntilFull = trapChallenge && notFullPop;
 	const baseCheck = (!Battle.done || getPageSetting('TrapTrimps')) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 	if (!baseCheck) return false;
 
 	// Identify if we should disable trapping when running Trappa/Trapper.
-	const trapChallengeCheck = noBreedChallenge() && getPageSetting('trapper') && getPageSetting('trapperTrap');
-	if (!trapChallengeCheck) return false;
+	const trapChallengeCheck = trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap');
+	if (!trapChallengeCheck) return true;
 
 	// TODO: Need a way to figure out how many coords it will purchase if using trappaCoordToggle === 2 since the goal with that feature is to cap army at X soliders so probably need to increment coordination until we reach that point
 	const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
@@ -69,7 +72,7 @@ function _isTrappingOK(Battle, trapperTrapUntilFull) {
 	return true;
 }
 
-function _isTrappingRelevant() {
+function _isTrappingRelevant(trapperTrapUntilFull) {
 	// Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
 	const trappingIsRelevant = breedingPS()
 		.div(10)
@@ -176,7 +179,7 @@ function autoGather() {
 	const trapsBufferSize = Math.ceil(5 * _calcTPS());
 	const minTraps = needBattle ? 0 : Math.ceil(_calcTPS());
 	const maxTraps = Math.max(100, getZoneSeconds() / 4);
-	const trapTrimpsOK = _isTrappingOK(Battle, trapperTrapUntilFull);
+	const trapTrimpsOK = _isTrappingOK(Battle);
 
 	const lowOnTraps = game.buildings.Trap.owned < minTraps;
 	const trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
@@ -204,7 +207,7 @@ function autoGather() {
 	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 	const building = game.global.buildingsQueue[0];
 
-	const trappingIsRelevant = trapTrimpsOK && _isTrappingRelevant();
+	const trappingIsRelevant = trapTrimpsOK && _isTrappingRelevant(trapperTrapUntilFull);
 	const trapWontBeWasted = trapperTrapUntilFull || !_willTrapsBeWasted();
 
 	if (game.global.buildingsQueue.length && building === 'Antenna.1') {
