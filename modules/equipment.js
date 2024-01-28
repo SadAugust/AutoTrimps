@@ -422,7 +422,7 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 		const prestigeName = MODULES.equipment[item].upgrade;
 		const equipType = MODULES.equipment[item].stat;
 		const prestigeElement = document.getElementById(prestigeName);
-		const itemElement = document.getElementById(item);
+		let itemElement = document.getElementById(item);
 		//Looking at the prestiges for each item to see if it's available and if so then add the efficient class to it
 		if (game.upgrades[prestigeName].locked === 0 && prestigeElement) {
 			//If the prestige doesn't have the efficient class then add it
@@ -437,6 +437,7 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 			if (itemElement.classList.contains('efficientYes')) swapClass('efficient', 'efficientNo', itemElement);
 			bestBuys[equipType].name = prestigeName;
 			item = prestigeName;
+			itemElement = prestigeElement;
 		}
 
 		if (itemElement) {

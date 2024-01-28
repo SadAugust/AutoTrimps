@@ -282,13 +282,12 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	let desiredWorkers = fDesiredWorkers.map((w) => Math.floor(w));
 
 	//Calculates how many workers will be left out of the initial distribution
-	const remainder = freeWorkers > 10e6 ? 0 : freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
+	const remainder = freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
 
 	//Decides where to put them
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff, true).slice(diff.length - remainder);
 	whereToIncrement.forEach((idx) => (hireWorkers[idx] ? desiredWorkers[idx]++ : null));
-
 	//Calculates the actual number of workers to buy or fire, and the cost of doing so
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
 	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
