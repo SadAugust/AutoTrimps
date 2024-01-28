@@ -1,6 +1,7 @@
 MODULES.gather = {
 	trapBuffering: false,
-	maxTrapBuffering: false
+	maxTrapBuffering: false,
+	coordBuffering: undefined
 };
 
 //Traps per second
@@ -16,6 +17,8 @@ function safeSetGather(resource) {
 
 	debug(`Setting gather to ${resource}`, 'gather');
 	setGather(resource);
+
+	MODULES.gather.coordBuffering = undefined;
 }
 
 function _setTrapBait(lowOnTraps) {
@@ -81,46 +84,55 @@ function _isTrappingRelevant(trapperTrapUntilFull) {
 }
 
 function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
-	if (game.global.world > Coordination.done && canAffordCoordinationTrimps() && !canAffordTwoLevel(Coordination)) {
-		// TODO: Put these resources in a priority queue
-		const metalButtonAvailable = elementVisible('metal');
+	//Checks if we are in need of another coordination upgrade
+	if (Coordination.done >= game.global.world  || !canAffordCoordinationTrimps() || canAffordTwoLevel(Coordination)) return false;
 
-		let needResource = resolvePow(Coordination.cost.resources.science, Coordination) > game.resources.science.owned;
-		let playerRelevant = getPlayerModifier() > getPsString_AT('science', true) / 10;
-		if (researchAvailable && needResource && playerRelevant && !hasTurkimp) {
-			safeSetGather('science');
-			return true;
-		}
+	//Checks if the given resource is allowed to be gathered
+	const isResourceAllowed = (resourceName) => ({
+		'science': researchAvailable,
+		'food': true,
+		'wood': game.triggers.wood.done,
+		'metal': elementVisible('metal')
+	})[resourceName];
 
-		needResource = resolvePow(Coordination.cost.resources.food, Coordination) > game.resources.food.owned;
-		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('food', true) / 10;
-		if (needResource && playerRelevant) {
-			safeSetGather('food');
-			return true;
-		}
+	//Checks if the player would help speeding up the resource gathering by at least 10%
+	const isPlayerRelevant = (resourceName) =>
+		hasTurkimp && resourceName.toLowerCase() !== 'science' ||
+			getPlayerModifier() > getPsString_AT(resourceName, true) / 10;
 
-		needResource = resolvePow(Coordination.cost.resources.wood, Coordination) > game.resources.wood.owned;
-		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('wood', true) / 10;
-		if (game.triggers.wood.done && needResource && playerRelevant) {
-			safeSetGather('wood');
-			return true;
-		}
+	//Calculates the required amount of any resource used by the Coordination upgrade
+	const neededResourceAmount = (resourceName) =>
+		resolvePow(Coordination.cost.resources[resourceName], Coordination)
 
-		needResource = resolvePow(Coordination.cost.resources.metal, Coordination) > game.resources.metal.owned;
-		playerRelevant = getPlayerModifier() > getPsString_AT('metal', true) / 10;
-		if (metalButtonAvailable && needResource && playerRelevant) {
-			safeSetGather('metal');
-			return true;
-		}
+	//Calculates the priority
+	const getPriority = (resourceName) => {
+		//Exception: Science only relies on Turkimp
+		if (resourceName.toLowerCase() === 'science')
+			return hasTurkimp ? -1 : 1;
 
-        needResource = resolvePow(Coordination.cost.resources.science, Coordination) > game.resources.science.owned;
-        playerRelevant = getPlayerModifier() > getPsString_AT('science', true) / 10;
-        if (manualGather !== 3 && researchAvailable && needResource && playerRelevant && hasTurkimp) {
-            safeSetGather('science');
-            return;
-        }
+		//The priority equals the % of the resource we still need to gather (-1 means "last", not "don't gather")
+		let priority = 1 - game.resources[resourceName].owned / neededResourceAmount(resourceName);
+
+		//Uses a buffer to avoid flickering between resources
+		return priority + (MODULES.gather.coordBuffering === resourceName && priority > 0 ? 0.1 : 0);
 	}
-	return false;
+
+	//Defines the priority of each resource
+	let priorityList = ['science', 'food', 'wood', 'metal']
+		.filter(resourceName => isResourceAllowed(resourceName) && isPlayerRelevant(resourceName))
+		.map(resourceName => ({name: resourceName, priority: getPriority(resourceName)}))
+		.filter(resource => resource.priority)
+		.sort((r1, r2) => r2.priority - r1.priority);
+
+	//No resource to gather?
+	if (!priorityList.length)
+		return false;
+
+	//Gathers the highest priority resource
+	safeSetGather(priorityList[0].name);
+	MODULES.gather.coordBuffering = priorityList[0].name;
+
+	return true;
 }
 
 function _willTrapsBeWasted() {
