@@ -61,12 +61,12 @@ function _isTrappingOK(Battle) {
 	const trapperCoords = getPageSetting('trapperCoords');
 	const coordinated = getPerkLevel('Coordinated');
 
+	let targetArmySize = baseArmySize;
+	const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
+	const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
 	if (trappaCoordToggle === 1) {
-		let targetArmySize = baseArmySize;
 		let coordTarget = trapperCoords > 0 ? trapperCoords - 1 : 999;
 		if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimpStats.currChallenge === 'Trapper' ? 32 : 49;
-		const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
-		const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
 		if (Coordination.done >= coordTarget) {
 			for (let z = Coordination.done; z < coordTarget; ++z) {
 				targetArmySize = Math.ceil(1.25 * targetArmySize);

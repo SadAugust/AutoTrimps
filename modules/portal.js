@@ -261,7 +261,7 @@ function doPortal(challenge, skipDaily) {
 
 	_autoPortalC2();
 
-	challenge = _autoPortalDaily(challenge, portalUniverse, challengeSquaredMode, skipDaily);
+	challenge = _autoPortalDaily(challenge, portalUniverse, skipDaily);
 	if (!game.global.portalActive) return;
 
 	if (!game.global.selectedChallenge && challenge && !challengeSquaredMode) challenge = _autoPortalRegular(challenge);
@@ -419,13 +419,13 @@ function _autoPortalC2() {
 	return;
 }
 
-function _autoPortalDaily(challenge, portalUniverse, challengeSquaredMode, skipDaily = false) {
+function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
 	if (!skipDaily && (MODULES.portal.currentChallenge === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
 		const dailyAvailable = document.getElementById('challengeDaily') !== null;
-		if (dailyAvailable) selectChallenge('Daily');
 		checkCompleteDailies();
 		const dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map((item) => item.replace(/-/g, ''));
 		let lastUndone;
+
 		for (lastUndone = -6; lastUndone <= 0; lastUndone++) {
 			const dailyTime = getDailyTimeString(lastUndone);
 			if (dailiesToSkip.includes(dailyTime.toString())) continue;
@@ -440,9 +440,13 @@ function _autoPortalDaily(challenge, portalUniverse, challengeSquaredMode, skipD
 			}
 			if (dailiesCompleted === 8 - getPageSetting('dailyDontCapAmt', portalUniverse)) lastUndone = 1;
 		}
+
 		if (!getPageSetting('dailyPortalStart', portalUniverse)) lastUndone = 1;
 
-		if (lastUndone === 1) debug(`All dailies have been completed.`, 'portal');
+		if (lastUndone === 1) {
+			debug(`All dailies have been completed.`, 'portal');
+			return challenge;
+		}
 
 		if ((MODULES.portal.currentChallenge === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse))) || lastUndone === 1) {
 			MODULES.portal.currentChallenge = 'None';
@@ -457,12 +461,15 @@ function _autoPortalDaily(challenge, portalUniverse, challengeSquaredMode, skipD
 			selectChallenge('Daily');
 			checkCompleteDailies();
 		}
+
 		if (dailyAvailable) {
+			selectChallenge('Daily');
 			getDailyChallenge(lastUndone);
 			debug(`Portaling into Daily for: ${getDailyTimeString(lastUndone, true)} now!`, 'portal');
 			challenge = 'Daily';
 		}
 	}
+
 	return challenge;
 }
 
@@ -471,6 +478,7 @@ function _autoPortalRegular(challenge) {
 		challenge = getPageSetting('heliumC2Challenge', portalUniverse) === 'None' ? 0 : getPageSetting('heliumC2Challenge', portalUniverse);
 		if (challenge !== 0 && game.challenges[challenge].allowSquared) toggleChallengeSquared();
 	}
+
 	selectChallenge(challenge);
 	return challenge;
 }
