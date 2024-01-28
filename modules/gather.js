@@ -22,7 +22,7 @@ function safeSetGather(resource) {
 }
 
 function _setTrapBait(lowOnTraps) {
-	if (!lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
+	if (!lowOnTraps && !MODULES.gather.trapBuffering) {
 		safeSetGather('trimps');
 		return;
 	}
@@ -111,7 +111,7 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 			return hasTurkimp ? -1 : 1;
 
 		//The priority equals the % of the resource we still need to gather (-1 means "last", not "don't gather")
-		let priority = 1 - game.resources[resourceName].owned / neededResourceAmount(resourceName);
+		let priority = 1 - Math.min(1, game.resources[resourceName].owned / neededResourceAmount(resourceName));
 
 		//Uses a buffer to avoid flickering between resources
 		return priority + (MODULES.gather.coordBuffering === resourceName && priority > 0 ? 0.1 : 0);
