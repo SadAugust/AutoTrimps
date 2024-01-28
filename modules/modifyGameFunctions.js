@@ -605,7 +605,7 @@ function getPsString_AT(what, ignoreManual = false) {
 	if (getPerkLevel('Motivation') > 0) currentCalc *= 1 + getPerkLevel('Motivation') * getPerkModifier('Motivation');
 
 	const balanceChallenge = ['Balance', 'Unbalance'].find(challengeActive);
-	if (balanceChallenge) currentCalc *= game.challenges[balance].getGatherMult();
+	if (balanceChallenge) currentCalc *= game.challenges[balanceChallenge].getGatherMult();
 
 	const decayChallenge = ['Decay', 'Melt'].find(challengeActive);
 	if (decayChallenge) {
@@ -726,7 +726,7 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 	if (what !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0) amt *= 1 + game.permaBoneBonuses.multitasking.mult();
 
 	const balanceChallenge = ['Balance', 'Unbalance'].find(challengeActive);
-	if (balanceChallenge) amt *= game.challenges[balance].getGatherMult();
+	if (balanceChallenge) amt *= game.challenges[balanceChallenge].getGatherMult();
 
 	const decayChallenge = ['Decay', 'Melt'].find(challengeActive);
 	if (decayChallenge) {
