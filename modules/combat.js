@@ -569,7 +569,7 @@ function _getOurDmg(worldType, enemy) {
 	const dailyRampage = runningDaily && typeof dailyChallenge.rampage !== 'undefined';
 	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(dailyChallenge.rampage.strength, dailyChallenge.rampage.stacks);
 
-	if ((noFrenzy && game.portal.Frenzy.frenzyActive()) || enemy.health / ourDmg > 10) fastEnemy = true;
+	if (noFrenzy && (game.portal.Frenzy.frenzyActive() || enemy.health / ourDmg > 10)) fastEnemy = true;
 
 	const dailyWeakness = runningDaily && typeof dailyChallenge.weakness !== 'undefined';
 	if (dailyWeakness) ourDmg *= 1 - ((dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * dailyChallenge.weakness.strength) / 100;
