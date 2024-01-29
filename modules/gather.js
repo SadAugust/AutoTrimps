@@ -194,8 +194,8 @@ function autoGather() {
 	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
 	const baseArmySize = game.resources.trimps.maxSoldiers;
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
-	const trapsBufferSize = Math.max(5, Math.ceil(5 * _calcTPS()));
-	const minTraps = needBattle ? 0 : Math.ceil(_calcTPS());
+	const trapsBufferSize = needBattle ? 0 : Math.max(5, Math.ceil(5 * _calcTPS()));
+	const minTraps = Math.ceil(_calcTPS());
 	const maxTraps = getZoneSeconds() / 4;
 	const trapTrimpsOK = _isTrappingOK(Battle);
 
