@@ -80,20 +80,128 @@ function autoHeirlooms(portal) {
 	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	if (portal && !portalWindowOpen) return;
 
+	// I don't like how this is setup as I think it should just be a multi-select instead of having its option
+	// split into 2 stages, if All is selected.
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
-	const heirloomTypes = heirloomType === 'All' ? ['Shield', 'Staff', game.global.universe === 1 ? 'Core' : null] : [heirloomType];
-	const heirloomTypeEnabled = heirloomTypes.map((type) => getPageSetting(`heirloomAuto${type}`));
+	const heirloomTypes = heirloomType === 'All'
+		? (game.global.universe === 1 ? ['Shield', 'Staff', 'Core'] : ['Shield', 'Staff'])
+		: [heirloomType];
 
-	while (game.global.heirloomsCarried.length < getMaxCarriedHeirlooms() && game.global.heirloomsExtra.length > 0) {
-		const heirloomWorth = worthOfHeirlooms();
-		heirloomTypes.forEach((type, index) => {
-			if (type === null || !type || heirloomWorth[type].length <= 0) return;
-			const carriedHeirlooms = heirloomWorth[type].shift();
-			selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-			if (heirloomTypeEnabled[index]) carryHeirloom();
-			else recycleHeirloom(true);
-		});
+	// Instead of getting an array of booleans and having 2 ways of referencing the same concept
+	// we can instead make an object mapping the type names to the enabled status.
+	// {
+	// 	Shield: {Boolean}
+	//  ...
+	// }
+	const heirloomTypeEnabled = Object.fromEntries(
+		heirloomTypes.map((type) => [type, getPageSetting(`heirloomAuto${type}`)])
+	);
+
+	// This function seems poorly named and none of its return value isn't actually needed for this operation,
+	// its not always great to work with functions that have side-effects which aren't hinted at by the function name.
+	// The main use of this function is actually culling the heirloom options as it indirectly modifies
+	// game.global.heirloomsExtra.
+
+	// Side note this function does seem to include some amnt of data about amount of missing mods and
+	// sorts based on that, however that means that by calling that function every step of the loop causes
+	// recreation of the list and re-sort. Instead we can finds the worths and then slash out any types we
+	// don't want to keep.
+
+	const weights = worthOfHeirlooms()
+
+	// Instead of updating our data to stay simultaneous, we can just check whether the heirlooms
+	// should be recycled starting from the back of heirloomsExtra.
+
+	let idx = game.global.heirloomsExtra.length - 1;
+	while (idx >= 0) {
+		selectHeirloom(idx, 'heirloomsExtra');
+		if (!heirloomTypeEnabled[game.global.heirloomsExtra[idx].type]) recycleHeirloom(true);
+	}
+
+
+	// Since removed heirlooms which aren't kept due to settings we can also remove their weights,
+	// this keeps the data we record concise to the problem at hand.
+	let types = 0;
+
+	for (let key in weights) {
+		if (heirloomTypeEnabled[key])
+			types++;
+		else
+			delete weights[key];
+	}
+
+	// This avoids a potential div by 0 and since we don't have any types we want to keep no point in continuing.
+
+	if (types == 0) return;
+
+	// Now that we have gotten rid of anything we don't want we check how many of the remaining heirlooms
+	// we can actually hold. We want to divide this space over the heirlooms types in a round robin fashion.
+
+	const carrySpace = getMaxCarriedHeirlooms() - game.global.heirloomsCarried.length;
+
+	const counts = Object.fromEntries(
+		Object.entries(weights).map(
+			([typeKey, looms]) => [typeKey, Math.min(looms.length, Math.floor(carrySpace / types))]
+		)
+	);
+
+	// After this first step we redefine types to be the amount of types that could still need more carries.
+	// We also calculate how much of the carry space we have used.
+	let used = Object.values(counts).reduce((acc, val) => acc += val, 0);
+	types = Object.entries(counts).reduce((acc, [key, count]) => acc += count < weights[key].length);
+
+	// While we have unassigned types and we still have enough space to equally distribute looms over all types we
+	// attempt to do so.
+	while (types > 0 && used <= carrySpace - types) {
+		for (const key in Object.keys(counts)) {
+			const uncountedLooms = weights[key].length - counts[key];
+			if (uncountedLooms == 0) continue;
+
+			// If a loom type can be fully accounted for with an equal split of the remaining space we distribute it and
+			// thus remove it from the types that still need more space
+			let inc = Math.floor(carrySpace / types);
+			if (uncountedLooms < inc) {
+				inc = uncountedLooms;
+				types--;
+			}
+
+			counts[key] += inc;
+			used += inc;
+		}
+	}
+
+	// Assign the n remaining space that isn't divisable to the first n loom types (which still have unstored looms) in
+	// the case there is any.
+	if (used < game.global.heirloomsExtra.length) {
+		let n = 0;
+		while (used < carrySpace) {
+			const key = counts[Object.keys(counts)[n]];
+			if (counts[key] < weights[key].length)
+				counts[key]++;
+			n++;
+		}
+	}
+
+	// Recycle any looms that didn't make the cutoff.
+
+	Object.entries(weights).forEach(
+		([key, loomList]) => {
+			while (counts[key] < loomList.length) {
+				selectHeirloom(loomList.pop().index, 'heirloomsExtra');
+				recycleHeirloom(true);
+			}
+		}
+	)
+
+	// We are now sure that any heirloom still in the carry slot is one we want to keep and that there is enough
+	// space to hold all of them. We also know they are the "best" possible heirlooms of each type.
+
+	// So we can just once again itterate through heirloomsExtra backwards and carry every single one this time.
+
+	while (game.global.heirloomsExtra.length > 0) {
+		selectHeirloom(game.global.heirloomsExtra.length - 1, 'heirloomsExtra');
+		if (!heirloomTypeEnabled[game.global.heirloomsExtra[idx].type]) recycleHeirloom(true);
 	}
 }
 
