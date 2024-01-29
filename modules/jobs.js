@@ -282,7 +282,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	let desiredWorkers = fDesiredWorkers.map((w) => Math.floor(w));
 
 	//Calculates how many workers will be left out of the initial distribution
-	const remainder = freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
+	const remainder = freeWorkers > 10e6 ? 0 : freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
 
 	//Decides where to put them
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
