@@ -584,12 +584,11 @@ function _checkDuelSuicide(worldType, fastEnemy, ourHealth) {
 	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	const gammaCheck = gammaToTrigger === gammaMaxStacksCheck;
 	const runningDuel = challengeActive('Duel');
-	const duelSetting = getPageSetting('duel');
-	const duelHealthSetting = getPageSetting('duelHealth');
-	const healthCheck = calcOurHealth(false, worldType) * 10 * 0.9 > ourHealth;
+	const duelSetting = getPageSetting('duel') && getPageSetting('duelHealth');
+	const healthCheck = calcOurHealth(false, worldType) * 9 > ourHealth; // Check for duel health buff.
 	const noAttacks = game.global.armyAttackCount === 0;
 
-	if (runningDuel && fastEnemy && duelSetting && duelHealthSetting && healthCheck && gammaCheck && noAttacks) {
+	if (runningDuel && fastEnemy && duelSetting && healthCheck && gammaCheck && noAttacks) {
 		_setEquality(0);
 		return true;
 	}
@@ -609,10 +608,11 @@ function _checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType) {
 	const freq = dailyModifiers.bloodthirst.getFreq(bloodthirst.strength);
 	const stacksToProc = freq - (bloodthirst.currStacks % freq);
 
+	const mapObject = mapping ? getCurrentMapObject() : 1;
 	const zone = worldType === 'world' || !mapping ? game.global.world : mapObject.level;
 	const ourEqualityModifier = game.portal.Equality.getModifier(1);
 	const currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
-	const difficulty = mapping ? getCurrentMapObject().difficulty : 1;
+	const difficulty = mapping ? mapObject.difficulty : 1;
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	const avgTrimpAttack = ourDmg * Math.pow(ourEqualityModifier, equalityQuery(enemy.name, zone, currentCell, worldType, difficulty, 'gamma')) * gammaDmg;
 	const timeToKill = enemy.health / avgTrimpAttack;
