@@ -30,7 +30,7 @@ function _setTrapBait(lowOnTraps) {
 	}
 }
 
-function _isTrappingOK(Battle) {
+function _isTrappingOK(Battle, Coordination) {
 	const trapChallenge = noBreedChallenge();
 	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
@@ -178,7 +178,7 @@ function autoGather() {
 	const trapsBufferSize = Math.ceil(5 * _calcTPS());
 	const minTraps = needBattle ? 0 : Math.ceil(_calcTPS());
 	const maxTraps = Math.max(100, getZoneSeconds() / 4);
-	const trapTrimpsOK = _isTrappingOK(Battle);
+	const trapTrimpsOK = _isTrappingOK(Battle, Coordination);
 
 	const lowOnTraps = game.buildings.Trap.owned < minTraps;
 	const trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
