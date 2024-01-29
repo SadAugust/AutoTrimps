@@ -492,7 +492,7 @@ function equalityManagement2() {
 }
 
 function _checkDesoDestack() {
-	const runningDesolation = challengeActive('desolation');
+	const runningDesolation = challengeActive('Desolation');
 	const destackZone = game.global.world >= getPageSetting('destackOnlyZone');
 	const autoMapsEnabled = getPageSetting('autoMaps');
 	if (runningDesolation && mapSettings.equality && destackZone && autoMapsEnabled) {
