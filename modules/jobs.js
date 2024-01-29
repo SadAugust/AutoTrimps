@@ -254,18 +254,18 @@ function _getScientistRatio(maxTrimps) {
 }
 
 function _getAutoJobRatio(maxTrimps) {
-	const jobRatios = { ratioHaz: [1, 1, 1, 0], ratio7: [1, 1, 100, 0], ratio6: [1, 7, 12, 0], ratio5: [1, 2, 22, 0], ratio4: [1, 1, 10, 0], ratio3: [3, 1, 4, 0], ratio2: [3, 3, 5, 0], ratio1: [1, 1, 1, 0] };
-
 	const conditions = [
-		{ condition: () => game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1, ratio: jobRatios.ratioHaz },
-		{ condition: () => game.global.world >= 300, ratio: jobRatios.ratio7 },
-		{ condition: () => game.buildings.Tribute.owned > 3000 && mutations.Magma.active(), ratio: jobRatios.ratio6 },
-		{ condition: () => game.buildings.Tribute.owned > 1500, ratio: jobRatios.ratio5 },
-		{ condition: () => game.buildings.Tribute.owned > 1000, ratio: jobRatios.ratio4 },
-		{ condition: () => maxTrimps > 3000000, ratio: jobRatios.ratio3 },
-		{ condition: () => maxTrimps > 300000, ratio: jobRatios.ratio2 },
+		{ condition: () => game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1, ratio: [1, 1, 1, 0] },
+		{ condition: () => game.global.world >= 300, ratio: [1, 1, 100, 0] },
+		{ condition: () => game.buildings.Tribute.owned > 3000 && mutations.Magma.active(), ratio: [1, 7, 12, 0] },
+		{ condition: () => game.buildings.Tribute.owned > 1500, ratio: [1, 2, 22, 0] },
+		{ condition: () => game.buildings.Tribute.owned > 1000, ratio: [1, 1, 10, 0] },
+		{ condition: () => maxTrimps > 3000000, ratio: [3, 1, 4, 0] },
+		{ condition: () => maxTrimps > 300000, ratio: [3, 3, 5, 0] },
+		{ condition: () => game.global.mapsActive && !game.mapUnlocks.Shieldblock.canRunOnce, ratio: [1, 1.5, 2] },
+		{ condition: () => game.global.mapsActive, ratio: [1, 1, 2] },
 		{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
-		{ condition: () => true, ratio: jobRatios.ratio1 }
+		{ condition: () => true, ratio: [1, 1, 1, 0] }
 	];
 
 	return conditions.find(({ condition }) => condition()).ratio;
