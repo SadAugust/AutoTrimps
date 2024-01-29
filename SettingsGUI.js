@@ -1524,7 +1524,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '1,1,2', mapCap: 100 }], 'MAZLookalike("mapSettings", "HD Farm")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '-1', mapCap: 100 }], 'MAZLookalike("mapSettings", "HD Farm")', 'Maps', [1, 2]);
 
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
@@ -1593,7 +1593,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '1,1,2', special: '0', }], 'MAZLookalike("mapSettings", "Map Bonus")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '-1', special: '0', }], 'MAZLookalike("mapSettings", "Map Bonus")', 'Maps', [1, 2]);
 
 		//Map Farm
 		createSetting('mapFarmSettings',
@@ -4216,8 +4216,8 @@ function initialiseAllSettings() {
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
 			general: false,
-			fragment: false,
 			upgrades: false,
+			fragment: false,
 			equipment: false,
 			maps: false,
 			map_Details: true,
@@ -4228,6 +4228,10 @@ function initialiseAllSettings() {
 			jobs: false,
 			zone: true,
 			exotic: false,
+			gather: false,
+			stance: false,
+			run_Stats: false,
+			nature: false,
 		}, null, 'Display', [0],
 			function () { return false });
 	}
