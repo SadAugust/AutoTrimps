@@ -201,7 +201,7 @@ function autoHeirlooms(portal) {
 
 	while (game.global.heirloomsExtra.length > 0) {
 		selectHeirloom(game.global.heirloomsExtra.length - 1, 'heirloomsExtra');
-		if (!heirloomTypeEnabled[game.global.heirloomsExtra[idx].type]) recycleHeirloom(true);
+		carryHeirloom();
 	}
 }
 
