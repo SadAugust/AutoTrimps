@@ -203,9 +203,13 @@ function autoGather() {
 	const trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
 	const fullOfTraps = game.buildings.Trap.owned >= maxTraps;
 	const maxTrapsReady = game.buildings.Trap.owned >= maxTraps + trapsBufferSize;
+
 	if (lowOnTraps) MODULES.gather.trapBuffering = true;
 	if (trapsReady) MODULES.gather.trapBuffering = false;
 	if (maxTrapsReady) MODULES.gather.maxTrapBuffering = false;
+
+	const shouldBait = (untilFull = false) =>
+		(untilFull ? !fullOfTraps : lowOnTraps) || maxTrapsReady;
 
 	const resourcesNeeded = getUpgradeCosts();
 	const scienceAvailable = elementVisible('science');
@@ -274,7 +278,7 @@ function autoGather() {
 	}
 
 	// High Priority Trapping (refilling after a sudden increase in population)
-	if (trappingIsRelevant && trapWontBeWasted && game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize) {
+	if (trappingIsRelevant && trapWontBeWasted && (game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize || shouldBait())) {
 		_setTrapBait(lowOnTraps);
 		return;
 	}
@@ -324,21 +328,21 @@ function autoGather() {
 		return;
 	}
 
-	// Mid Priority Trapping
-	if (trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
+	// Medium Priority Trapping
+	if (trappingIsRelevant && trapWontBeWasted && notFullPop && !shouldBait() && game.buildings.Trap.owned > 0) {
 		safeSetGather('trimps');
 		return;
 	}
 
 	// High Priority Trap Building
-	if (trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (lowOnTraps || MODULES.gather.trapBuffering)) {
+	if (trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && shouldBait()) {
 		MODULES.gather.trapBuffering = true;
 		safeBuyBuilding('Trap', 1);
 		safeSetGather('buildings');
 		return;
 	}
 
-	// Mid Priority Research
+	// Medium Priority Research
 	if (researchAvailable && needScience) {
 		safeSetGather('science');
 		return;
@@ -351,7 +355,7 @@ function autoGather() {
 	}
 
 	// Low Priority Trap Building
-	if (trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (!fullOfTraps || MODULES.gather.maxTrapBuffering)) {
+	if (trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && shouldBait(true)) {
 		MODULES.gather.trapBuffering = !fullOfTraps;
 		MODULES.gather.maxTrapBuffering = true;
 		safeBuyBuilding('Trap', 1);
