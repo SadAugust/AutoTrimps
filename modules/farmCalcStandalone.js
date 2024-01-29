@@ -124,25 +124,22 @@ function mapCost(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect
 	return baseCost;
 }
 
-function _getCurrentQuest() {
-	if (!challengeActive('Quest')) return 0;
+function getCurrentQuest() {
+	if (!challengeActive('Quest') || !getPageSetting('quest')) return 0;
 	if (game.global.world < game.challenges.Quest.getQuestStartZone()) return 0;
+
 	const questProgress = game.challenges.Quest.getQuestProgress();
 	const questDescription = game.challenges.Quest.getQuestDescription();
+
 	if (questProgress === 'Failed!' || questProgress === 'Quest Complete!') return 0;
-	//Resource multipliers
-	else if (questDescription.includes('food')) return 1;
-	else if (questDescription.includes('wood')) return 2;
-	else if (questDescription.includes('metal')) return 3;
-	else if (questDescription.includes('gems')) return 4;
-	else if (questDescription.includes('science')) return 5;
-	//Everything else
-	else if (questDescription === 'Complete 5 Maps at Zone level') return 6;
-	else if (questDescription === 'One-shot 5 world enemies') return 7;
-	else if (questDescription === "Don't let your shield break before Cell 100") return 8;
-	else if (questDescription === "Don't run a map before Cell 100") return 9;
-	else if (questDescription === 'Buy a Smithy') return 10;
-	else return 0;
+
+	const resourceMultipliers = ['food', 'wood', 'metal', 'gems', 'science'];
+	const resourceIndex = resourceMultipliers.findIndex((resource) => questDescription.includes(resource));
+	if (resourceIndex !== -1) return resourceIndex + 1;
+
+	const otherQuests = ['Complete 5 Maps at Zone level', 'One-shot 5 world enemies', "Don't let your shield break before Cell 100", "Don't run a map before Cell 100", 'Buy a Smithy'];
+	const otherIndex = otherQuests.findIndex((quest) => questDescription === quest);
+	return otherIndex !== -1 ? otherIndex + 6 : 0;
 }
 
 //AutoLevel information
