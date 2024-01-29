@@ -466,8 +466,8 @@ function checkFastEnemy(enemy) {
 	if (challengeActive('Trappapalooza')) return true;
 	if (challengeActive('Bublé') || getCurrentQuest() === 8) return true;
 	if (challengeActive('Exterminate') && game.challenges.Exterminate.experienced) return false;
-	if (challengeActive('Glass')) fastEnemy = true;
-	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) fastEnemy = true;
+	if (challengeActive('Glass')) return true;
+	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) return true;
 	if (challengeActive('Duel')) {
 		if (!mapping) return true;
 		else if (game.challenges.Duel.enemyStacks < 10) return true;
