@@ -113,8 +113,7 @@ function autoHeirlooms(portal) {
 	// Instead of updating our data to stay simultaneous, we can just check whether the heirlooms
 	// should be recycled starting from the back of heirloomsExtra.
 
-	let idx = game.global.heirloomsExtra.length - 1;
-	while (idx >= 0) {
+	for (let idx = game.global.heirloomsExtra.length - 1; idx >= 0; idx--) {
 		selectHeirloom(idx, 'heirloomsExtra');
 		if (!heirloomTypeEnabled[game.global.heirloomsExtra[idx].type]) recycleHeirloom(true);
 	}
