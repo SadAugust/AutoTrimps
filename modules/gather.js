@@ -285,15 +285,15 @@ function autoGather() {
 		return;
 	}
 
-	// Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
-	if (researchAvailable && (needBattle || needMinerScienceNow || needScientistsScienceNow)) {
-		safeSetGather('science');
-		return;
-	}
-
 	// High Priority Trapping (refilling after a sudden increase in population)
 	if (trappingIsRelevant && trapWontBeWasted && (game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize)) {
 		_setTrapBait(lowOnTraps, true);
+		return;
+	}
+
+	// Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
+	if (researchAvailable && (needBattle || needMinerScienceNow || needScientistsScienceNow)) {
+		safeSetGather('science');
 		return;
 	}
 
