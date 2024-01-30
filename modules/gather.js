@@ -35,13 +35,16 @@ function safeSetGather(resource) {
 function _setTrapBait(lowOnTraps, ignoreBuffer = false, buildOnly = false) {
 	if (!lowOnTraps && (!MODULES.gather.trapBuffering || ignoreBuffer) && !buildOnly) {
 		safeSetGather('trimps');
-		return;
+		return true;
 	}
 
 	if (isBuildingInQueue('Trap') || safeBuyBuilding('Trap', 1)) {
 		MODULES.gather.trapBuffering = true;
 		safeSetGather('buildings');
+		return true;
 	}
+
+	return false;
 }
 
 function _isTrappingOK(Battle, Coordination) {
@@ -94,6 +97,11 @@ function _isTrappingRelevant(trapperTrapUntilFull) {
 	return trapperTrapUntilFull || trappingIsRelevant;
 }
 
+function isPlayerRelevant(resourceName, hasTurkimp, customRatio = 0.1) {
+	const turkimp = hasTurkimp && resourceName.toLowerCase() !== 'science';
+	return turkimp || getPlayerModifier() > getPsString_AT(resourceName, true) * customRatio;
+}
+
 function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 	//Checks if we are in need of another coordination upgrade
 	if (Coordination.done >= game.global.world  || !canAffordCoordinationTrimps() || canAffordTwoLevel(Coordination)) return false;
@@ -105,11 +113,6 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 		'wood': game.triggers.wood.done,
 		'metal': elementVisible('metal')
 	})[resourceName];
-
-	//Checks if the player would help speeding up the resource gathering by at least 10%
-	const isPlayerRelevant = (resourceName) =>
-		hasTurkimp && resourceName.toLowerCase() !== 'science' ||
-			getPlayerModifier() > getPsString_AT(resourceName, true) / 10;
 
 	//Calculates the required amount of any resource used by the Coordination upgrade
 	const neededResourceAmount = (resourceName) =>
@@ -130,7 +133,7 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 
 	//Defines the priority of each resource
 	let priorityList = ['science', 'food', 'wood', 'metal']
-		.filter(resourceName => isResourceAllowed(resourceName) && isPlayerRelevant(resourceName))
+		.filter(resourceName => isResourceAllowed(resourceName) && isPlayerRelevant(resourceName, hasTurkimp))
 		.map(resourceName => ({name: resourceName, priority: getPriority(resourceName)}))
 		.filter(resource => resource.priority)
 		.sort((r1, r2) => r2.priority - r1.priority);
@@ -153,7 +156,7 @@ function _willTrapsBeWasted() {
 	return !(gteTime || lteTime);
 }
 
-function _lastResort(researchAvailable, trapTrimpsOK, lowOnTraps) {
+function _lastResort(researchAvailable, trapTrimpsOK, lowOnTraps, needScience) {
 	const manualResourceList = {
 		food: 'Farmer',
 		wood: 'Lumberjack',
@@ -175,13 +178,29 @@ function _lastResort(researchAvailable, trapTrimpsOK, lowOnTraps) {
 		}
 	}
 
-	if (researchAvailable && game.global.turkimpTimer < 1 && game.resources.science.owned < getPsString_AT('science') * 60) {
+	if (researchAvailable && game.global.turkimpTimer < 1 && (needScience || game.resources.science.owned < getPsString_AT('science') * 60)) {
 		safeSetGather('science');
 	} else if (trapTrimpsOK && game.global.trapBuildToggled && lowOnTraps) {
 		safeSetGather('buildings');
 	} else {
 		safeSetGather(lowestResource);
 	}
+}
+
+function _gatherTrapResources() {
+	//Need Food
+	if (game.resources.food.owned < 10 && isPlayerRelevant('food', false, 0.01)) {
+		safeSetGather('food');
+		return true;
+	}
+
+	//Need Wood
+	if (game.triggers.wood.done && game.resources.wood.owned < 10 && isPlayerRelevant('wood', false, 0.01)) {
+		safeSetGather('wood');
+		return true;
+	}
+
+	return false;
 }
 
 function autoGather() {
@@ -232,12 +251,8 @@ function autoGather() {
 	const needScience = game.resources.science.owned < resourcesNeeded.science;
 	const needScientists = scienceAvailable && !Scientists.done;
 	const needScientistsScience = needScientists && game.resources.science.owned < 100;
-	const needScientistsScienceNow = needScientistsScience && !Scientists.locked;
-
 	const needMiner = !Miners.done && !challengeActive('Metal');
 	const needMinerScience = needMiner && game.resources.science.owned < 60;
-	const needMinerScienceNow = needMinerScience && !Miners.locked;
-
 	const breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 	const building = game.global.buildingsQueue[0];
@@ -255,94 +270,88 @@ function autoGather() {
 	if (game.buildings.Trap.locked || !canAffordTrap) {
 		//If not building and not trapping
 		if (!trapsReady && game.global.buildingsQueue.length === 0 && (game.global.playerGathering !== 'trimps' || game.buildings.Trap.owned === 0)) {
-			if (game.resources.food.owned < 10) {
-				safeSetGather('food');
+			//Food and wood for traps
+			if (_gatherTrapResources())
 				return;
-			}
-
-			if (game.triggers.wood.done && game.resources.wood.owned < 10) {
-				safeSetGather('wood');
-				return;
-			}
 		}
 	}
 
 	// Highest Priority Trapping (doing Trapper or without breeding trimps)
 	if (trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || (trapperTrapUntilFull && !scientistsAvailable && !minersAvailable))) {
-		_setTrapBait(lowOnTraps, true);
-		return;
+		if (_setTrapBait(lowOnTraps, true))
+			return;
 	}
 
-	// Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
-	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || (building !== 'Trap.1' && (game.global.autoCraftModifier === 0 || getPlayerModifier() > 100)))) {
+	// Builds if we have storage buildings on top of the queue
+	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || building === 'Shed.1' || building === 'Forge.1') {
 		safeSetGather('buildings');
 		return;
 	}
 
-	// Also Build if we have storage buildings on top of the queue
-	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || building === 'Shed.1' || building === 'Forge.1') {
+	// Highest Priority Research if we have less science than needed to buy Battle
+	if (researchAvailable && needBattle && isPlayerRelevant('science', hasTurkimp, 0.01)) {
+		safeSetGather('science');
+		return;
+	}
+
+	// Builds if we don't have Foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap (TODO Better condition than pMod > 100)
+	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || (building !== 'Trap.1' && (game.global.autoCraftModifier === 0 || getPlayerModifier() > 100)))) {
 		safeSetGather('buildings');
 		return;
 	}
 
 	// High Priority Trapping (refilling after a sudden increase in population)
 	if (trappingIsRelevant && trapWontBeWasted && (game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize)) {
-		_setTrapBait(lowOnTraps, true);
-		return;
-	}
-
-	// Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
-	if (researchAvailable && (needBattle || needMinerScienceNow || needScientistsScienceNow)) {
-		safeSetGather('science');
-		return;
+		if (_setTrapBait(lowOnTraps, true))
+			return;
 	}
 
 	// High Priority Trap Building (has fewer traps than needed during a sudden increase in population)
 	if (trappingIsRelevant && lowTrapSupply) {
-		//Need Food
-		if (game.resources.food.owned < 10) {
-			safeSetGather('food');
+		//Food and wood for traps
+		if (_gatherTrapResources())
 			return;
-		}
-
-		//Need Wood
-		if (game.triggers.wood.done && game.resources.wood.owned < 10) {
-			safeSetGather('wood');
-			return;
-		}
 
 		//Builds traps
-		safeBuyBuilding('Trap', 1);
-		safeSetGather('buildings');
-		return;
+		if (canAffordTrap) {
+			safeBuyBuilding('Trap', 1);
+			safeSetGather('buildings');
+			return;
+		}
 	}
 
-	// Highest Priority Research if we have less science than needed to buy Miner
-	if (researchAvailable && needMinerScience) {
+	// High Priority Research if we have less science than needed to buy Miner
+	if (researchAvailable && needMinerScience && isPlayerRelevant('science', hasTurkimp, 0.01)) {
 		safeSetGather('science');
 		return;
 	}
 
 	// Gather metal for Miner
-	if (needMiner && metalButtonAvailable && game.resources.metal.owned < 100) {
+	if (needMiner && metalButtonAvailable && game.resources.metal.owned < 100 && isPlayerRelevant('metal', hasTurkimp)) {
 		safeSetGather('metal');
 		return;
 	}
 
-	// Highest Priority Research if we have less science than needed to buy Scientist
-	if (researchAvailable && needScientistsScience) {
+	// Higher Priority Research we already have enough food for Scientists
+	if (researchAvailable && needScientistsScience && game.resources.food.owned > 300 && isPlayerRelevant('science', hasTurkimp, 0.01)) {
 		safeSetGather('science');
 		return;
 	}
 
 	// Gathers wood for Miner
-	if (needMiner && game.triggers.wood.done && game.resources.wood.owned < 300) {
+	if (needMiner && game.triggers.wood.done && game.resources.wood.owned < 300 && isPlayerRelevant('wood', hasTurkimp)) {
 		safeSetGather('wood');
 		return;
 	}
 
+	// Higher Priority Research if we have less science than needed to buy Scientist
+	if (researchAvailable && needScientistsScience && isPlayerRelevant('science', hasTurkimp, 0.01)) {
+		safeSetGather('science');
+		return;
+	}
+
 	// Gather resources for Scientist
-	if (needScientists && game.resources.food.owned < 350) {
+	if (needScientists && game.resources.food.owned < 350 && isPlayerRelevant('food', hasTurkimp, 0.01)) {
 		safeSetGather('food');
 		return;
 	}
@@ -369,7 +378,7 @@ function autoGather() {
 	}
 
 	// High Priority Research - When manual research still has more impact than scientists
-	if (researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true)) {
+	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 1)) {
 		safeSetGather('science');
 		return;
 	}
@@ -389,7 +398,7 @@ function autoGather() {
 	}
 
 	// Medium Priority Research
-	if (researchAvailable && needScience) {
+	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp)) {
 		safeSetGather('science');
 		return;
 	}
@@ -397,6 +406,12 @@ function autoGather() {
 	// Metal if Turkimp is active
 	if (hasTurkimp) {
 		safeSetGather('metal');
+		return;
+	}
+
+	// Low Priority Research
+	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 0.01)) {
+		safeSetGather('science');
 		return;
 	}
 
@@ -409,7 +424,7 @@ function autoGather() {
 		return;
 	}
 
-	_lastResort(researchAvailable, trapTrimpsOK, lowOnTraps);
+	_lastResort(researchAvailable, trapTrimpsOK, lowOnTraps, needScience);
 }
 
 // Mining/Building only setting
