@@ -317,15 +317,27 @@ function autoGather() {
 		return;
 	}
 
-	// Highest Priority Research if we have less science than needed to buy Miner and Scientist
-	if (researchAvailable && (needMinerScience || needScientistsScience)) {
+	// Highest Priority Research if we have less science than needed to buy Miner
+	if (researchAvailable && needMinerScience) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Gather resources for Miner
-	if (needMiner && (game.resources.metal.owned < 100 || game.resources.wood.owned < 300)) {
-		safeSetGather(metalButtonAvailable && game.resources.metal.owned < 100 ? 'metal' : 'wood');
+	// Gather metal for Miner
+	if (needMiner && metalButtonAvailable && game.resources.metal.owned < 100) {
+		safeSetGather('metal');
+		return;
+	}
+
+	// Highest Priority Research if we have less science than needed to buy Scientist
+	if (researchAvailable && needScientistsScience) {
+		safeSetGather('science');
+		return;
+	}
+
+	// Gathers wood for Miner
+	if (needMiner && game.triggers.wood.done && game.resources.wood.owned < 300) {
+		safeSetGather('wood');
 		return;
 	}
 
