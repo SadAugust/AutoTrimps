@@ -118,7 +118,7 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 	//Calculates the priority
 	const getPriority = (resourceName) => {
 		//Exception: Science only relies on Turkimp
-		if (resourceName.toLowerCase() === 'science')
+		if (resourceName.toLowerCase() === 'science' && game.resources[resourceName].owned < neededResourceAmount(resourceName))
 			return hasTurkimp ? -1 : 1;
 
 		//The priority equals the % of the resource we still need to gather (-1 means "last", not "don't gather")
