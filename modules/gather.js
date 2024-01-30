@@ -259,12 +259,6 @@ function autoGather() {
 		return;
 	}
 
-	// Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
-	if (researchAvailable && (needBattle || needMinerScienceNow || needScientistsScienceNow)) {
-		safeSetGather('science');
-		return;
-	}
-
 	// Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
 	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || (building !== 'Trap.1' && (game.global.autoCraftModifier === 0 || getPlayerModifier() > 100)))) {
 		safeSetGather('buildings');
@@ -274,6 +268,12 @@ function autoGather() {
 	// Also Build if we have storage buildings on top of the queue
 	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || building === 'Shed.1' || building === 'Forge.1') {
 		safeSetGather('buildings');
+		return;
+	}
+
+	// Highest Priority Research if we have less science than needed to buy Battle, Miner or part of Scientist, and they are already unlocked
+	if (researchAvailable && (needBattle || needMinerScienceNow || needScientistsScienceNow)) {
+		safeSetGather('science');
 		return;
 	}
 
