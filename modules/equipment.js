@@ -317,7 +317,7 @@ function autoEquip() {
 			return false;
 
 		//Saves metal for Miners
-		if (Miners.allowed && !Miners.done) return;
+		if (!challengeActive('Metal') && !Miners.done) return;
 	}
 
 	//If running a wood or metal quest then disable autoEquip
