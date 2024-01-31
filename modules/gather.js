@@ -133,7 +133,7 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 
 	//Defines the priority of each resource
 	let priorityList = ['science', 'food', 'wood', 'metal']
-		.filter(resourceName => isResourceAllowed(resourceName) && isPlayerRelevant(resourceName, hasTurkimp))
+		.filter(resourceName => isResourceAllowed(resourceName) && isPlayerRelevant(resourceName, hasTurkimp, 0.25))
 		.map(resourceName => ({name: resourceName, priority: getPriority(resourceName)}))
 		.filter(resource => resource.priority)
 		.sort((r1, r2) => r2.priority - r1.priority);
@@ -307,13 +307,13 @@ function autoGather() {
 	}
 
 	// High Priority Research if we have less science than needed to buy Bloodlust
-	if (researchAvailable && !Bloodlust.done && game.global.world >= 2 && isPlayerRelevant('science', hasTurkimp)) {
+	if (researchAvailable && !Bloodlust.done && game.global.world >= 2 && isPlayerRelevant('science', hasTurkimp, 0.1)) {
 		safeSetGather('science');
 		return;
 	}
 
 	// Gathers food for Bloodlust
-	if (!Bloodlust.done && game.global.world >= 2 && isPlayerRelevant('food', hasTurkimp)) {
+	if (!Bloodlust.done && game.global.world >= 2 && isPlayerRelevant('food', hasTurkimp, 0.1)) {
 		safeSetGather('food');
 		return;
 	}
@@ -389,8 +389,8 @@ function autoGather() {
 		}
 	}
 
-	// High Priority Research - When manual research still has more impact than scientists
-	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 1)) {
+	// High Priority Research - When manual research is still relevant
+	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 0.25)) {
 		safeSetGather('science');
 		return;
 	}
@@ -409,12 +409,6 @@ function autoGather() {
 		return;
 	}
 
-	// Medium Priority Research
-	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp)) {
-		safeSetGather('science');
-		return;
-	}
-
 	// Metal if Turkimp is active
 	if (hasTurkimp) {
 		safeSetGather('metal');
@@ -422,7 +416,7 @@ function autoGather() {
 	}
 
 	// Low Priority Research
-	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 0.01)) {
+	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp)) {
 		safeSetGather('science');
 		return;
 	}
