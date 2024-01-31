@@ -207,7 +207,7 @@ function autoGather() {
 	const manualGather = getPageSetting('gatherType');
 	if (manualGather === 0) return;
 
-	const { Scientists, Miners, Battle, Coordination } = game.upgrades;
+	const { Battle, Bloodlust, Miners, Scientists, Coordination } = game.upgrades;
 
 	const scientistsAvailable = Scientists.allowed && !Scientists.done;
 	const minersAvailable = Miners.allowed && !Miners.done;
@@ -304,6 +304,18 @@ function autoGather() {
 	if (trappingIsRelevant && trapWontBeWasted && (game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize)) {
 		if (_setTrapBait(lowOnTraps, true))
 			return;
+	}
+
+	// High Priority Research if we have less science than needed to buy Bloodlust
+	if (researchAvailable && !Bloodlust.done && game.global.world >= 2 && isPlayerRelevant('science', hasTurkimp)) {
+		safeSetGather('science');
+		return;
+	}
+
+	// Gathers food for Bloodlust
+	if (!Bloodlust.done && game.global.world >= 2 && isPlayerRelevant('food', hasTurkimp)) {
+		safeSetGather('food');
+		return;
 	}
 
 	// High Priority Trap Building (has fewer traps than needed during a sudden increase in population)
