@@ -1365,8 +1365,9 @@ function prestigeRaidingMapping() {
 	mapSettings.prestigeFragMapBought = prestigeFragMapBought || false;
 
 	if (prestigeMapArray === undefined || prestigeMapArray[0] === undefined) {
-		if (totalMapCost < game.resources.fragments.owned) {
+		if (prestigeMapArray[0] || totalMapCost < game.resources.fragments.owned) {
 			_handlePrestigeFragMapBought();
+			mapSettings.prestigeFragMapBought = false;
 		} else {
 			fragmentFarm(true);
 			mapSettings.prestigeFragMapBought = true;
@@ -3618,6 +3619,7 @@ function fragmentFarm() {
 
 	if (canAffordMap) {
 		if (!mapSettings.shouldRun && !MODULES.maps.fragmentFarming) debug(`Fragment farming successful`);
+		delete mapSettings.prestigeFragMapBought;
 		MODULES.maps.fragmentFarming = false;
 		return;
 	}
