@@ -1810,24 +1810,6 @@ function quest(lineCheck) {
 	return farmingDetails;
 }
 
-function getCurrentQuest() {
-	if (!challengeActive('Quest') || !getPageSetting('quest')) return 0;
-	if (game.global.world < game.challenges.Quest.getQuestStartZone()) return 0;
-
-	const questProgress = game.challenges.Quest.getQuestProgress();
-	const questDescription = game.challenges.Quest.getQuestDescription();
-
-	if (questProgress === 'Failed!' || questProgress === 'Quest Complete!') return 0;
-
-	const resourceMultipliers = ['food', 'wood', 'metal', 'gems', 'science'];
-	const resourceIndex = resourceMultipliers.findIndex((resource) => questDescription.includes(resource));
-	if (resourceIndex !== -1) return resourceIndex + 1;
-
-	const otherQuests = ['Complete 5 Maps at Zone level', 'One-shot 5 world enemies', "Don't let your shield break before Cell 100", "Don't run a map before Cell 100", 'Buy a Smithy'];
-	const otherIndex = otherQuests.findIndex((quest) => questDescription === quest);
-	return otherIndex !== -1 ? otherIndex + 6 : 0;
-}
-
 function _runQuest(shouldMap, mapName) {
 	const questMapTypes = {
 		1: ['lsc', '1', 'Sea'],
@@ -1838,6 +1820,7 @@ function _runQuest(shouldMap, mapName) {
 		5: ['fa', '0,0,0,1'],
 		default: ['fa', '1,1,1,0']
 	};
+
 	const questArray = questMapTypes[shouldMap] || questMapTypes.default;
 	const [mapSpecial, jobRatio] = questArray;
 	const questResource = game.challenges.Quest.resource;
@@ -1847,7 +1830,6 @@ function _runQuest(shouldMap, mapName) {
 
 	if (mapSettings.mapName !== mapName && mapCap > 0 && [1, 2, 3, 4, 5].includes(shouldMap)) {
 		const resourcesEarned = game.resources[questResource].owned + resourcesFromMap(questResource, mapSpecial, jobRatio, mapLevel, mapCap);
-		// Disable Questing if we can't earn enough resources to complete the quest.
 		shouldMap = game.challenges.Quest.questProgress >= resourcesEarned ? 0 : shouldMap;
 	}
 	// Stop farming for damage if we have run more than our allocated amount of maps.

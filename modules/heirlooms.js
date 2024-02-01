@@ -134,27 +134,11 @@ function autoHeirlooms(portal) {
 		}
 	}
 
-	// Instead of using an array to say if a loom should be removed we instead use a bitmask as it is more efficient.
-	// Here every bit just represents the corresponding index its the same thing as an array of booleans
-
 	const toKeepBitmask = Object.entries(weights).reduce((acc, [key, loomList]) => {
-		// We know we get to keep counts amount of heirlooms for each type, and since the weights array is sorted from
-		// heighest value to lowest we just grab the first counts heirlooms and mark them as the ones we want to keep.
-		// Thus the fact they are out of order in the weights array doesn't matter as we will be sure to later
-		// remove from the array starting at the back.
-
 		for (let i = 0; i < counts[key]; i++) {
-			// Here we set the bit on position i to 1 via a bitshift
 			acc |= 1 << loomList[i].index;
 		}
 	}, 0b0);
-
-	// Because we know the game recycles all heirlooms on portal there isn't really a reason to
-	// explicitly recyle in this function. So instead we save a lot of processing by, only ever selecting heirlooms
-	// we know we are going to keep.
-
-	// This for loop assures we are always removing from the back of the array and thus won't get
-	// array out of bound errors.
 
 	for (let idx = game.global.heirloomsExtra.length - 1; idx >= 0; idx--) {
 		if (toKeepBitmask & (1 << idx)) {

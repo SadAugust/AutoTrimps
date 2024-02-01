@@ -184,7 +184,7 @@ function getTrimpAttack(realDamage) {
 
 	let dmg = (6 + calcEquipment('attack')) * game.resources.trimps.maxSoldiers;
 	if (mutations.Magma.active()) dmg *= mutations.Magma.getTrimpDecay();
-	if (getPerkLevel('Power') > 0) dmg += dmg * getPerkLevel('Power') * getPerkModifier('Power');
+	if (getPerkLevel('Power') > 0) dmg *= 1 + getPerkLevel('Power') * getPerkModifier('Power');
 	if (getPerkLevel('Power_II') > 0) dmg *= 1 + getPerkModifier('Power_II') * getPerkLevel('Power_II');
 	if (game.global.universe === 1 && game.global.formation !== 0 && game.global.formation !== 5) dmg *= game.global.formation === 2 ? 4 : 0.5;
 
@@ -425,68 +425,6 @@ function getCritMulti(crit, customShield) {
 	return critDHModifier;
 }
 
-function getCurrentEnemy(cell = 1) {
-	if (game.global.gridArray.length <= 0) return {};
-
-	const mapping = game.global.mapsActive;
-	const currentCell = mapping ? game.global.lastClearedMapCell + cell : game.global.lastClearedCell + cell;
-	const mapGrid = mapping ? 'mapGridArray' : 'gridArray';
-
-	if (typeof game.global[mapGrid][currentCell] === 'undefined') return game.global[mapGrid][game.global[mapGrid].length - 1];
-
-	return game.global[mapGrid][currentCell];
-}
-
-function checkFastEnemy(enemy) {
-	const enemyName = enemy.name;
-	const mapping = game.global.mapsActive;
-	const mapObject = mapping ? getCurrentMapObject() : null;
-	const worldType = !mapping ? 'world' : mapObject.location === 'Void' ? 'void' : 'map';
-
-	const fastImp = MODULES.fightinfo.fastImps.includes(enemyName);
-	if (fastImp) return true;
-
-	const isDaily = challengeActive('Daily');
-	const dailyChallenge = game.global.dailyChallenge;
-	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
-	if (dailyEmpower && !mapping) return true;
-
-	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
-	if (dailyExplosive) {
-		if (worldType === 'map' && !MODULES.maps.slowScumming) return true;
-		if (worldType === 'world') return true;
-	}
-
-	if (game.global.voidBuff === 'doubleAttack') return true;
-
-	if (game.global.universe === 1) return false;
-
-	// U2 specifics
-	if (challengeActive('Archaeology')) return true;
-	if (challengeActive('Trappapalooza')) return true;
-	if (challengeActive('Bublé') || getCurrentQuest() === 8) return true;
-	if (challengeActive('Exterminate') && game.challenges.Exterminate.experienced) return false;
-	if (challengeActive('Glass')) return true;
-	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) return true;
-	if (challengeActive('Duel')) {
-		if (!mapping) return true;
-		else if (game.challenges.Duel.enemyStacks < 10) return true;
-	}
-	if (challengeActive('Revenge')) return true;
-	if (challengeActive('Smithless')) {
-		if (!mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith) return true;
-	}
-	if (challengeActive('Desolation') && mapping) {
-		// Exotic mapimps in deso are bugged and slow
-		const exoticImp = MODULES.fightinfo.exoticImps.includes(enemyName);
-		return !exoticImp;
-	}
-
-	if (worldType === 'world' && game.global.world > 200 && game.global.gridArray[enemy.level - 1].u2Mutation.length > 0) return true;
-
-	return false;
-}
-
 function getAnticipationBonus(stacks) {
 	if (stacks === undefined) stacks = game.global.antiStacks;
 
@@ -504,54 +442,24 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 	if (!mapLevel) mapLevel = mapType === 'world' || !game.global.mapsActive ? 0 : getCurrentMapObject().level - game.global.world;
 
 	const specificStance = game.global.universe === 1 ? equality : false;
-	const heirloomToCheck = typeof autoTrimpSettings === 'undefined' ? null : !specificHeirloom ? heirloomShieldToEquip(mapType) : specificHeirloom;
+	heirloomToCheck = typeof autoTrimpSettings === 'undefined' ? null : !specificHeirloom ? heirloomShieldToEquip(mapType) : specificHeirloom;
 
 	let attack = getTrimpAttack(realDamage);
-	let minFluct = 0.8;
-	let maxFluct = 1.2;
-	//Range
-	if (getPerkLevel('Range') > 0) minFluct += 0.02 * getPerkLevel('Range');
+	const fluctChallenge = challengeActive('Discipline') || challengeActive('Unlucky');
+	let minFluct = fluctChallenge ? 0.005 : 0.8;
+	let maxFluct = fluctChallenge ? 1.995 : 1.2;
+	if (!fluctChallenge && getPerkLevel('Range') > 0) minFluct += 0.02 * getPerkLevel('Range');
 
-	// Smithies
-	attack *= game.buildings.Smithy.owned > 0 ? Math.pow(game.buildings.Smithy.getBaseMult(), game.buildings.Smithy.owned) : 1;
-	// Achievement bonus
-	attack *= game.global.achievementBonus > 0 ? 1 + game.global.achievementBonus / 100 : 1;
-	//Anticipation
-	attack *= game.global.antiStacks > 0 ? getAnticipationBonus() : 1;
-	//Formation
-	if (specificStance && game.global.formation !== 0 && game.global.formation !== 5) attack /= game.global.formation === 2 ? 4 : 0.5;
-	if (specificStance && specificStance !== 'X' && specificStance !== 'W') attack *= specificStance === 'D' ? 4 : 0.5;
-	// Map Bonus
+	attack *= 1 + Math.max(0, game.global.achievementBonus) / 100;
 	attack *= mapType !== 'world' ? 1 : game.talents.mapBattery.purchased && game.global.mapBonus === 10 ? 5 : 1 + game.global.mapBonus * 0.2;
-	// Tenacity
-	attack *= game.portal.Tenacity.getMult();
-	// Hunger
-	attack *= game.portal.Hunger.getMult();
-	// Observation
-	attack *= game.global.universe === 2 && game.portal.Observation.trinkets > 0 ? game.portal.Observation.getMult() : 1;
-	//Titimp
 	attack *= mapType !== 'world' && useTitimp === 'force' ? 2 : mapType !== 'world' && mapType !== '' && useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
-	// Robotrimp
 	attack *= 1 + 0.2 * game.global.roboTrimpLevel;
-	// Mayhem Completions
 	attack *= game.challenges.Mayhem.getTrimpMult();
-	// Pandemonium Completions
 	attack *= game.challenges.Pandemonium.getTrimpMult();
-	//Desolation Completions
-	attack *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-	attack *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
-	attack *= challengeActive('Desolation') ? game.challenges.Desolation.trimpAttackMult() : 1;
-	attack *= game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
-	attack *= game.global.universe === 2 && u2Mutations.tree.Brains.purchased ? u2Mutations.tree.Brains.getBonus() : 1;
-	//AutoBattle
-	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
+	attack *= game.challenges.Desolation.getTrimpMult();
 	// Heirloom (Shield)
 	const heirloomAttack = typeof atSettings !== 'undefined' ? calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpAttack', 1, true);
 	attack *= heirloomAttack > 1 ? 1 + heirloomAttack / 100 : 1;
-	// Frenzy perk
-	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (autoBattle.oneTimers.Mass_Hysteria.owned || (typeof atSettings !== 'undefined' && getPageSetting('frenzyCalc'))) ? 1 + 0.5 * getPerkLevel('Frenzy') : 1;
-	//Championism
-	attack *= game.global.universe === 2 ? game.portal.Championism.getMult() : 1;
 	// Golden Upgrade
 	attack *= 1 + game.goldenUpgrades.Battle.currentBonus;
 	// Herbalist Mastery
@@ -561,7 +469,14 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 		attack *= game.talents.voidPower2.purchased ? (game.talents.voidPower3.purchased ? 1.65 : 1.35) : 1.15;
 		attack *= game.talents.voidMastery.purchased ? 5 : 1;
 	}
+
 	if (game.global.universe === 1) {
+		attack *= game.challenges.Frigid.getTrimpMult();
+		//Anticipation
+		attack *= game.global.antiStacks > 0 ? getAnticipationBonus() : 1;
+		//Formation
+		if (specificStance && game.global.formation !== 0 && game.global.formation !== 5) attack /= game.global.formation === 2 ? 4 : 0.5;
+		if (specificStance && specificStance !== 'X' && specificStance !== 'W') attack *= specificStance === 'D' ? 4 : 0.5;
 		//Scryhard I - MAKE SURE THIS WORKS!
 		var fightingCorrupted = (getCurrentEnemy() && getCurrentEnemy().corrupted) || (!realDamage && (mutations.Healthy.active() || mutations.Corruption.active()));
 		if (game.talents.scry.purchased && fightingCorrupted && ((!specificStance && game.global.formation === 4) || specificStance === 'S' || specificStance === 'W')) attack *= 2;
@@ -571,78 +486,83 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 		if (game.talents.stillRowing2.purchased) attack *= game.global.spireRows * 0.06 + 1;
 		//Strength in Health
 		if (game.talents.healthStrength.purchased && mutations.Healthy.active()) attack *= 0.15 * mutations.Healthy.cellCount() + 1;
+
+		//Empowerments - Ice (Experimental)
+		if (getEmpowerment() === 'Ice') {
+			//Uses the actual number in some places like Stances
+			if (!getPageSetting('fullice') || realDamage) attack *= 1 + game.empowerments.Ice.getDamageModifier();
+			//Otherwise, use the number we would have after a transfer
+			else {
+				var afterTransfer = 1 + Math.ceil(game.empowerments.Ice.currentDebuffPower * getRetainModifier('Ice'));
+				var mod = 1 - Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
+				if (Fluffy.isRewardActive('naturesWrath')) mod *= 2;
+				attack *= 1 + mod;
+			}
+		}
+		//Amalgamator
+		attack *= game.jobs.Amalgamator.owned > 0 ? game.jobs.Amalgamator.getDamageMult() : 1;
+		//Poison Empowerment
+		attack *= game.global.uberNature === 'Poison' ? 3 : 1;
+
+		//Challenges
+		if (challengeActive('Life')) attack *= game.challenges.Life.getHealthMult();
+		if (challengeActive('Lead') && game.global.world % 2 === 1) attack *= 1.5;
+		if (challengeActive('Decay')) attack *= 5 * Math.pow(0.995, game.challenges.Decay.stacks);
 	}
-	// Bionic Magnet Mastery
+
+	if (game.global.universe === 2) {
+		attack *= game.buildings.Smithy.getMult();
+		attack *= game.portal.Hunger.getMult();
+		attack *= autoBattle.bonuses.Stats.getMult();
+		attack *= game.portal.Championism.getMult();
+		attack *= game.portal.Tenacity.getMult();
+		attack *= getPerkLevel('Frenzy') > 0 && !challengeActive('Berserk') && (autoBattle.oneTimers.Mass_Hysteria.owned || (typeof atSettings !== 'undefined' && getPageSetting('frenzyCalc'))) ? 1 + 0.5 * getPerkLevel('Frenzy') : 1;
+		attack *= game.portal.Observation.trinkets > 0 ? game.portal.Observation.getMult() : 1;
+
+		attack *= challengeActive('Desolation') ? game.challenges.Desolation.trimpAttackMult() : 1;
+		attack *= u2Mutations.tree.Attack.purchased ? 1.5 : 1;
+		attack *= u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
+		attack *= u2Mutations.tree.Brains.purchased ? u2Mutations.tree.Brains.getBonus() : 1;
+
+		if (challengeActive('Quagmire')) {
+			const exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
+			const mod = mapType !== 'world' ? 0.05 : mapType === 'world' ? 0.1 : game.global.mapsActive ? 0.05 : 0.1;
+			if (exhaustedStacks === 0) attack *= 1;
+			else if (exhaustedStacks < 0) attack *= Math.pow(1 + mod, Math.abs(exhaustedStacks));
+			else attack *= Math.pow(1 - mod, exhaustedStacks);
+		}
+
+		const challengeFunctions = {
+			Unbalance: () => game.challenges.Unbalance.getAttackMult(),
+			Duel: () => (game.challenges.Duel.trimpStacks > 50 ? 3 : 1),
+			Melt: () => game.challenges.Melt.getAttackMult(),
+			Revenge: () => game.challenges.Revenge.getMult(),
+			Quest: () => game.challenges.Quest.getAttackMult(),
+			Archaeology: () => game.challenges.Archaeology.getStatMult('attack'),
+			Storm: () => (game.global.mapsActive ? Math.pow(0.9995, game.challenges.Storm.beta) : 1),
+			Berserk: () => game.challenges.Berserk.getAttackMult(),
+			Nurture: () => (game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1),
+			Alchemy: () => alchObj.getPotionEffect('Potion of Strength'),
+			Smithless: () => (game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1)
+		};
+
+		Object.keys(challengeFunctions).forEach((challenge) => {
+			attack *= challengeActive(challenge) ? challengeFunctions[challenge]() : 1;
+		});
+
+		attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
+	}
+
 	attack *= mapType === 'map' && game.talents.bionic2.purchased && mapLevel > 0 ? 1.5 : 1;
-	// Sugar rush event bonus
 	attack *= game.global.sugarRush ? sugarRush.getAttackStrength() : 1;
-	// Challenge 2 or 3 reward
-	attack *= 1 + game.global.totalSquaredReward / 100;
-	//Fluffy
+	attack *= 1 + Math.max(0, game.global.totalSquaredReward) / 100;
 	if (Fluffy.isActive()) {
 		attack *= Fluffy.getDamageModifier();
 		if (Fluffy.isRewardActive('voidSiphon') && game.stats.totalVoidMaps.value) attack *= 1 + game.stats.totalVoidMaps.value * 0.05;
 		if (game.global.universe === 1 && game.talents.kerfluffle.purchased) attack *= game.talents.kerfluffle.mult();
 	}
-
-	//Empowerments - Ice (Experimental)
-	if (getEmpowerment() === 'Ice') {
-		//Uses the actual number in some places like Stances
-		if (!getPageSetting('fullice') || realDamage) attack *= 1 + game.empowerments.Ice.getDamageModifier();
-		//Otherwise, use the number we would have after a transfer
-		else {
-			var afterTransfer = 1 + Math.ceil(game.empowerments.Ice.currentDebuffPower * getRetainModifier('Ice'));
-			var mod = 1 - Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
-			if (Fluffy.isRewardActive('naturesWrath')) mod *= 2;
-			attack *= 1 + mod;
-		}
-	}
-	//Amalgamator
-	attack *= game.jobs.Amalgamator.owned > 0 ? game.jobs.Amalgamator.getDamageMult() : 1;
-	// Pspire Strength Towers
 	attack *= 1 + playerSpireTraps.Strength.getWorldBonus() / 100;
-	//Poison Empowerment
-	attack *= game.global.uberNature === 'Poison' ? 3 : 1;
-	// Sharp Trimps
 	attack *= game.singleRunBonuses.sharpTrimps.owned ? 1.5 : 1;
-	//Mutator
-	attack *= game.global.universe === 2 && u2Mutations.tree.Attack.purchased ? 1.5 : 1;
-
-	//Challenges
-	if (challengeActive('Life')) attack *= game.challenges.Life.getHealthMult();
-	if (challengeActive('Lead') && game.global.world % 2 === 1) attack *= 1.5;
-
-	//Decay
-	if (challengeActive('Decay')) attack *= 5 * Math.pow(0.995, game.challenges.Decay.stacks);
-
-	// Challenges
-	attack *= challengeActive('Unbalance') ? game.challenges.Unbalance.getAttackMult() : 1;
-	attack *= challengeActive('Duel') && game.challenges.Duel.trimpStacks > 50 ? 3 : 1;
-	attack *= challengeActive('Melt') ? 5 * Math.pow(0.99, game.challenges.Melt.stacks) : 1;
-	if (challengeActive('Quagmire')) {
-		var exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
-		var mod = mapType !== 'world' ? 0.05 : mapType === 'world' ? 0.1 : game.global.mapsActive ? 0.05 : 0.1;
-		if (exhaustedStacks === 0) attack *= 1;
-		else if (exhaustedStacks < 0) attack *= Math.pow(1 + mod, Math.abs(exhaustedStacks));
-		else attack *= Math.pow(1 - mod, exhaustedStacks);
-	}
-	attack *= challengeActive('Revenge') ? game.challenges.Revenge.getMult() : 1;
-	attack *= challengeActive('Quest') ? game.challenges.Quest.getAttackMult() : 1;
-	attack *= challengeActive('Archaeology') ? game.challenges.Archaeology.getStatMult('attack') : 1;
-	attack *= challengeActive('Storm') && game.global.mapsActive ? Math.pow(0.9995, game.challenges.Storm.beta) : 1;
-	attack *= challengeActive('Berserk') ? game.challenges.Berserk.getAttackMult() : 1;
-	attack *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
-	attack *= challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Strength') : 1;
-	attack *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
-
-	//Nova mutation
-	attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
-
-	//Discipline / Unlucky
-	if (challengeActive('Discipline') || challengeActive('Unlucky')) {
-		minFluct = 0.005;
-		maxFluct = 1.995;
-	}
 
 	if (challengeActive('Daily')) {
 		var minDailyMod = 1;
@@ -790,8 +710,7 @@ function calcEnemyBaseAttack(type, zone, cell, name, query = false) {
 
 	if (!query && zone >= 200 && cell !== 100 && type === 'world' && game.global.universe === 2 && game.global[mapGrid][cell].u2Mutation) {
 		if (cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
-			attack = u2Mutations.getAttack(game.global[mapGrid][cell - 1]);
-			return attack;
+			return u2Mutations.getAttack(game.global[mapGrid][cell - 1]);
 		}
 	}
 
@@ -1017,28 +936,27 @@ function calcEnemyBaseHealth(mapType, zone, cell, name, ignoreCompressed) {
 	if (!cell) cell = mapType === 'world' || !game.global.mapsActive ? getCurrentWorldCell().level : getCurrentMapCell() ? getCurrentMapCell().level : 1;
 	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : 'Turtlimp';
 
-	var base = game.global.universe === 2 ? 10e7 : 130;
-	var health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
-
 	if (!ignoreCompressed && mapType === 'world' && game.global.universe === 2 && game.global.world > 200 && typeof game.global.gridArray[cell - 1].u2Mutation !== 'undefined') {
-		if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') !== -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') !== -1)) {
+		const extraCells = u2Mutations.types.Compression.repeats() - 1;
+		const gridArray = game.global.gridArray;
+		if (gridArray[cell - 1].u2Mutation.length > 0 && ['CSX', 'CSP'].some((mutation) => gridArray[cell].u2Mutation.includes(mutation))) {
 			cell = cell - 1;
-			var grid = game.global.gridArray;
-			var go = false;
-			var row = 0;
-			var currRow = Number(String(cell)[0]) * 10;
-			if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSX') !== -1) {
-				for (var i = 5; 9 >= i; i++) {
-					if (grid[i * 10].u2Mutation.indexOf('CSP') !== -1) {
+			let go = false;
+			let row = 0;
+			let currRow = Math.floor(cell / 10) * 10;
+
+			if (gridArray[cell].u2Mutation.includes('CSX')) {
+				for (let i = 5; 9 >= i; i++) {
+					if (gridArray[i * 10].u2Mutation.includes('CSP')) {
 						row = i * 10;
 						go = true;
 					}
 				}
 				cell += row - currRow;
 			}
-			if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSP') !== -1) {
-				for (var i = 0; 5 >= i; i++) {
-					if (grid[i * 10].u2Mutation.indexOf('CSX') !== -1) {
+			if (!go && gridArray[cell].u2Mutation.includes('CSP')) {
+				for (let i = 0; 5 >= i; i++) {
+					if (gridArray[i * 10].u2Mutation.includes('CSX')) {
 						row = i * 10;
 						go = true;
 					}
@@ -1047,38 +965,28 @@ function calcEnemyBaseHealth(mapType, zone, cell, name, ignoreCompressed) {
 			}
 		}
 	}
-	//First Two Zones
+
+	const base = game.global.universe === 2 ? 10e7 : 130;
+	let health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
+
 	if (zone === 1 || (zone === 2 && cell < 10)) {
-		health *= 0.6;
-		health = health * 0.25 + health * 0.72 * (cell / 100);
+		health *= 0.6 * (0.25 + 0.72 * (cell / 100));
+	} else if (zone < 60) {
+		health *= 0.4 * (1 + cell / 110);
+	} else {
+		health *= 0.5 * (1 + 0.8 * (cell / 100)) * Math.pow(1.1, zone - 59);
 	}
 
-	//Before Breaking the Planet
-	else if (zone < 60) health = health * 0.4 + health * 0.4 * (cell / 110);
-	//After Breaking the Planet
-	else {
-		health = health * 0.5 + health * 0.8 * (cell / 100);
-		health *= Math.pow(1.1, zone - 59);
-	}
-
-	//Flat HP reduction for before Z60.
 	if (zone < 60) health *= 0.75;
-
-	//Maps
 	if (zone > 5 && mapType !== 'world') health *= 1.1;
 
-	//U2 Settings
 	if (game.global.universe === 2) {
-		var part1 = zone > 60 ? 60 : zone;
-		var part2 = zone - 60;
-		var part3 = zone - 300;
-		if (part2 < 0) part2 = 0;
-		if (part3 < 0) part3 = 0;
-		health *= Math.pow(1.4, part1);
-		health *= Math.pow(1.32, part2);
-		health *= Math.pow(1.15, part3);
+		const part1 = Math.min(zone, 60);
+		const part2 = Math.max(zone - 60, 0);
+		const part3 = Math.max(zone - 300, 0);
+		health *= Math.pow(1.4, part1) * Math.pow(1.32, part2) * Math.pow(1.15, part3);
 	}
-	//Specific Imp
+
 	if (name) health *= game.badGuys[name].health;
 
 	return health;
@@ -1513,6 +1421,7 @@ function enemyDamageModifiers() {
 			attack *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 		}
 	}
+
 	return attack;
 }
 

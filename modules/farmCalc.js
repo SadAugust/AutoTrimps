@@ -622,7 +622,6 @@ function simulate(saveData, zone) {
 	let loot = 0;
 	let last_group_sent = 0;
 	let ticks = 0;
-	let plague_damage = 0;
 	let ok_damage = 0,
 		ok_spread = 0;
 	let poison = 0,
@@ -630,10 +629,8 @@ function simulate(saveData, zone) {
 		ice = 0;
 	let gammaStacks = 0,
 		burstDamage = 0;
-	let energyShieldMax = saveData.trimpShield,
-		energyShield = energyShieldMax;
+	const energyShieldMax = saveData.trimpShield;
 	let mayhemPoison = 0;
-	let trimpOverkill = 0;
 	let duelPoints = game.challenges.Duel.trimpStacks;
 	let glassStacks = game.challenges.Glass.shards;
 	let universe = saveData.universe;
@@ -661,109 +658,107 @@ function simulate(saveData, zone) {
 		else return trimpHealth <= 0;
 	}
 
-	var biomeImps = saveData.biome;
+	const biomeImps = saveData.biome;
 	//Identify how much equality is needed to clear the worst enemy on the map
 	if (universe === 2) {
-		var enemyName = 'Snimp';
-		if (saveData.insanity) {
-			enemyName = 'Horrimp';
-			biomeImps.push([15, 60, true]);
-		}
+		const enemyName = saveData.insanity ? 'Horrimp' : 'Snimp';
+		if (saveData.insanity) biomeImps.push([15, 60, true]);
 		equality = equalityQuery(enemyName, zone, saveData.size, 'map', saveData.difficulty);
 	}
 	//Six hours of simulation inside of TW and a day outside of it.
 	const max_ticks = saveData.maxTicks;
 	//Create map array of enemy stats
-	var hp_array = [];
-	var atk_array = [];
-	for (var i = 0; i < saveData.size; ++i) {
-		var enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, 'Chimp');
-		if (saveData.magma) enemyHealth *= calcCorruptionScale(saveData.zone, 10) / 2;
 
-		var enemyAttack = calcEnemyBaseAttack('map', zone, cell + 1, 'Chimp');
-		if (saveData.magma) enemyAttack *= calcCorruptionScale(zone, 3) / 2;
+	const calculateEnemyStats = (zone, cell, enemyType, saveData) => {
+		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyType);
+		let enemyAttack = calcEnemyBaseAttack('map', zone, cell + 1, enemyType);
 
-		cell++;
-		//Domination has a stat bonus for final enemy and stat penalty for all others
-		if (saveData.domination) {
-			if (cell === saveData.size) {
-				enemyAttack *= 2.5;
-				enemyHealth *= 7.5;
-			} else {
-				enemyAttack *= 0.1;
-				enemyHealth *= 0.1;
-			}
+		if (saveData.magma) {
+			const corruptionScale = calcCorruptionScale(zone, 10);
+			enemyHealth *= corruptionScale / 2;
+			enemyAttack *= corruptionScale / 2;
 		}
-		atk_array.push(saveData.difficulty * saveData.challenge_attack * enemyAttack);
-		hp_array.push(saveData.difficulty * saveData.challenge_health * enemyHealth);
-	}
+
+		if (saveData.domination) {
+			const modifier = cell === saveData.size ? 2.5 : 0.1;
+			enemyAttack *= modifier;
+			enemyHealth *= modifier;
+		}
+
+		return {
+			attack: saveData.difficulty * saveData.challenge_attack * enemyAttack,
+			health: saveData.difficulty * saveData.challenge_health * enemyHealth
+		};
+	};
+
+	const hp_array = Array.from({ length: saveData.size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData).health);
+	const atk_array = Array.from({ length: saveData.size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData).attack);
 
 	function reduceTrimpHealth(amt, directHit) {
 		if (saveData.mayhem) mayhemPoison += amt * 0.2;
-		if (!directHit && universe === 2) {
-			var initialShield = energyShield;
-			energyShield -= amt;
-			if (energyShield > 0) return;
-			else amt -= initialShield;
+
+		if (!directHit) {
+			if (universe === 2) {
+				const initialShield = energyShield;
+				energyShield = Math.max(0, energyShield - amt);
+				amt = Math.max(0, amt - initialShield);
+			} else if (universe === 1) {
+				amt = Math.max(0, amt - saveData.trimpBlock);
+			}
 		}
-		//Reduce by block
-		if (!directHit && universe === 1) amt -= saveData.trimpBlock;
-		//Frigid shatter
+
 		if (saveData.frigid && amt >= saveData.trimpHealth / 5) amt = saveData.trimpHealth;
-		trimpHealth -= Math.max(0, amt);
+
+		trimpHealth = Math.max(0, trimpHealth - amt);
 	}
 
 	function enemy_hit(enemyAttack) {
 		//Damage fluctations
-		var enemyAtk = enemyAttack;
-
+		let enemyAtk = enemyAttack;
 		enemyAtk *= 1 + saveData.fluctuation * (2 * rng() - 1);
-		//Enemy crit chance
-		var enemyCC = 0.25;
+		const enemyCC = saveData.duel ? duelPoints / 100 : 0.25;
+
 		if (saveData.duel) {
-			enemyCC = duelPoints / 100;
 			if (duelPoints < 50) enemyAtk *= 3;
 		}
 		if (rng() < enemyCC) {
 			enemyAtk *= saveData.enemy_cd;
 			enemyCrit = true;
 		}
-		//Ice modifier
+
 		if (saveData.ice > 0) enemyAtk *= 0.366 ** (ice * saveData.ice);
-		//Equality mult
 		if (universe === 2) enemyAtk *= Math.pow(0.9, equality);
-		//Safety precaution for infinite Ice stacks
-		enemyAtk = Math.max(0, enemyAtk);
-		reduceTrimpHealth(enemyAtk);
+
+		reduceTrimpHealth(Math.max(0, enemyAtk));
 		++debuff_stacks;
 	}
 
 	cell = 0;
 	while (ticks < max_ticks) {
-		var turns = 0;
-		var pbTurns = 0;
-		var imp = rng();
-		var imp_stats = imp < saveData.import_chance ? [1, 1, false] : biomeImps[Math.floor(rng() * biomeImps.length)];
-		var enemyAttack = imp_stats[0] * atk_array[cell];
-		var enemyHealth = imp_stats[1] * hp_array[cell];
+		const imp = rng();
+		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biomeImps[Math.floor(rng() * biomeImps.length)];
+		let enemyAttack = imp_stats[0] * atk_array[cell];
+		let enemyHealth = imp_stats[1] * hp_array[cell];
+		const enemy_max_hp = enemyHealth;
+		const fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
 
-		var enemy_max_hp = enemyHealth;
-		var fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
-		var oneShot = true;
-		trimpOverkill = 0;
+		let turns = 0;
+		let pbTurns = 0;
+
+		let oneShot = true;
+		let trimpOverkill = 0;
 
 		if (ok_spread !== 0) {
 			enemyHealth -= ok_damage;
 			--ok_spread;
 		}
+
+		let plague_damage = 0;
 		enemyHealth = Math.min(enemyHealth, Math.max(enemy_max_hp * 0.05, enemyHealth - plague_damage));
-		plague_damage = 0;
-		energyShield = energyShieldMax;
-		//Add in the mult from glass stacks as they need to be adjusted every enemy
+		let energyShield = energyShieldMax;
+
 		if (saveData.glass) enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
-		//Add in 10x hp mult from Duel if necessary
 		if (saveData.duel && duelPoints > 80) enemyHealth *= 10;
-		titimp = 0;
 
 		while (enemyHealth >= 1 && ticks < max_ticks) {
 			++turns;
