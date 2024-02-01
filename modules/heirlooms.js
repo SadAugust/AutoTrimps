@@ -299,7 +299,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 
 	let voidActive = mapType === 'void';
 	if (voidActive && swapLooms) {
-		//const fastChallenges = !challengeActive('Glass') && !challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20 && !challengeActive('Archaeology') && !challengeActive('Quest') && _getCurrentQuest() !== 8;
+		//const fastChallenges = !challengeActive('Glass') && !challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20 && !challengeActive('Archaeology') && !challengeActive('Quest') && getCurrentQuest() !== 8;
 		MODULES.heirlooms.plagueSwap =
 			game.global.universe === 2 &&
 			game.global.voidBuff &&
@@ -309,7 +309,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 			!game.challenges.Berserk.weakened !== 20 &&
 			!challengeActive('Archaeology') &&
 			!challengeActive('Quest') &&
-			_getCurrentQuest() !== 8 &&
+			getCurrentQuest() !== 8 &&
 			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
 			!MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
 			MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&

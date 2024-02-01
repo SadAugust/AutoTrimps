@@ -901,7 +901,7 @@ function smithyFarm(lineCheck) {
 	const defaultSettings = baseSettings[0];
 	if (!defaultSettings || (!defaultSettings.active && !challengeActive('Quest'))) return farmingDetails;
 
-	const smithyQuest = _getCurrentQuest() === 10;
+	const smithyQuest = getCurrentQuest() === 10;
 	if (challengeActive('Quest') && getPageSetting('quest') && !smithyQuest && !(game.global.world >= getPageSetting('questSmithyZone') && defaultSettings.active)) return farmingDetails;
 
 	const dailyAddition = dailyOddOrEven();
@@ -1278,7 +1278,7 @@ function prestigeRaiding(lineCheck) {
 	if (!baseSettings) return farmingDetails;
 
 	const defaultSettings = baseSettings[0];
-	if (!defaultSettings || !defaultSettings.active || _getCurrentQuest() === 8) return farmingDetails;
+	if (!defaultSettings || !defaultSettings.active || getCurrentQuest() === 8) return farmingDetails;
 
 	const settingIndex = findSettingsIndex(settingName, baseSettings, mapName);
 	const setting = baseSettings[settingIndex];
@@ -1787,7 +1787,7 @@ function quest(lineCheck) {
 	};
 	if (!challengeActive('Quest') || !getPageSetting('quest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
 
-	let shouldMap = _getCurrentQuest();
+	let shouldMap = getCurrentQuest();
 
 	// If we're running a one shot quest and can one shot the enemy then disable questing.
 	if (shouldMap === 7 && calcOurDmg('min', 0, false, 'world', 'never') > calcEnemyHealthCore('world', game.global.world, 50, 'Turtlimp')) shouldMap = 0;
@@ -1810,7 +1810,7 @@ function quest(lineCheck) {
 	return farmingDetails;
 }
 
-function _getCurrentQuest() {
+function getCurrentQuest() {
 	if (!challengeActive('Quest') || !getPageSetting('quest')) return 0;
 	if (game.global.world < game.challenges.Quest.getQuestStartZone()) return 0;
 
@@ -3500,7 +3500,7 @@ function autoLevelCheck(mapName, mapSpecial, maxZone, minZone) {
 		repeatCounter = 0;
 	}
 
-	if (challengeActive('Bublé') || _getCurrentQuest() === 8) mapLevel = callAutoMapLevel(mapName, mapSpecial);
+	if (challengeActive('Bublé') || getCurrentQuest() === 8) mapLevel = callAutoMapLevel(mapName, mapSpecial);
 	else mapLevel = callAutoMapLevel(mapName, mapSpecial, maxZone, minZone);
 
 	if (mapLevel !== mapSettings.levelCheck && mapSettings.levelCheck !== Infinity) {

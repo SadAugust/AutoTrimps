@@ -294,7 +294,7 @@ function autoEquip() {
 	if (!getPageSetting('equipOn')) return;
 	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 	//If running a wood or metal quest then disable autoequip
-	if ([2, 3].indexOf(_getCurrentQuest()) >= 0) return;
+	if ([2, 3].indexOf(getCurrentQuest()) >= 0) return;
 	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
 	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
 		if (mapSettings.ancientTreasure) return;

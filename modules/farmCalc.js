@@ -23,7 +23,7 @@ function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
 		if (autoLevelIgnoreFragments < mapLevel) mapLevel = autoLevelIgnoreFragments;
 	}
 
-	if (_getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
+	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
 
 	mapLevel = autoLevelOverides(mapName, mapLevel);
 	return mapLevel;
@@ -55,7 +55,7 @@ function callAutoMapLevel_new(mapName, special) {
 		mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
 	}
 
-	if (_getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
+	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
 
 	mapLevel = autoLevelOverides(mapName, mapLevel);
 	return mapLevel;
@@ -70,7 +70,7 @@ function autoLevelOverides(mapName, mapLevel) {
 		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && !mapBonusMinLevel, level: mapBonusLevel },
 		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel, level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
-		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(_getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
+		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
 		{ condition: mapName === 'Mayhem Destacking' && mapLevel < 0, level: getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0 },
 		{ condition: mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel, level: mapBonusLevel },
@@ -108,7 +108,7 @@ function autoMapLevel(special = getAvailableSpecials('lmc'), maxLevel, minLevel,
 	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
 	minLevel = minLevel || 0 - z + 6;
 	if (minLevel < -(z - 6)) minLevel = -(z - 6);
-	const runningQuest = challengeActive('Quest') && _getCurrentQuest() === 8;
+	const runningQuest = challengeActive('Quest') && getCurrentQuest() === 8;
 	const runningUnlucky = challengeActive('Unlucky');
 	const runningInsanity = challengeActive('Insanity');
 	const runningDuel = challengeActive('Duel');
@@ -198,7 +198,7 @@ function populateFarmCalcData() {
 
 	//Challenge Checks
 	const runningUnlucky = challengeActive('Unlucky');
-	const runningQuest = challengeActive('Bublé') || _getCurrentQuest() === 8;
+	const runningQuest = challengeActive('Bublé') || getCurrentQuest() === 8;
 	const runningDuel = challengeActive('Duel');
 
 	//Map Modifiers (for the map we're on)
