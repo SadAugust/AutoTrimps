@@ -90,11 +90,6 @@ function autoHeirlooms(portal) {
 		return obj;
 	}, {});
 
-	for (let idx = game.global.heirloomsExtra.length - 1; idx >= 0; idx--) {
-		selectHeirloom(idx, 'heirloomsExtra');
-		if (!heirloomTypeEnabled[game.global.heirloomsExtra[idx].type]) recycleHeirloom(true);
-	}
-
 	const weights = worthOfHeirlooms();
 	let types = 0;
 
@@ -141,22 +136,32 @@ function autoHeirlooms(portal) {
 
 	// Instead of using an array to say if a loom should be removed we instead use a bitmask as it is more efficient.
 	// Here every bit just represents the corresponding index its the same thing as an array of booleans
-	let removalBitMask = 0b0;
+	let toKeepBitmask = 0b0;
 
 	Object.entries(weights).forEach(([key, loomList]) => {
-		while (counts[key] < loomList.length) {
-			// Here we set the bit on position loomList.pop().index to 1 via a bitshift
-			removalBitMask |= 1 << loomList.pop().index;
+		// We know we get to keep counts amount of heirlooms for each type, and since the weights array is sorted from
+		// heighest value to lowest we just grab the first counts heirlooms and mark them as the ones we want to keep.
+		// Thus the fact they are out of order in the weights array doesn't matter as we will be sure to later
+		// remove from the array starting at the back.
+
+		for (let i = 0; i < counts[key]; i++) {
+			// Here we set the bit on position i to 1 via a bitshift
+			toKeepBitmask |= 1 << loomList[i].index;
 		}
 	});
 
-	while (game.global.heirloomsExtra.length > 0) {
-		let i = game.global.heirloomsExtra.length - 1;
-		selectHeirloom(i, 'heirloomsExtra');
-		// Here as we remove each heirloom FROM THE BACK of the array we check if the bit at position i is selected
-		// If it is we remove the heirloom, otherwise we carry it.
-		if (removalBitMask & (1 << i)) recycleHeirloom();
-		else carryHeirloom();
+	// Because we know the game recycles all heirlooms on portal there isn't really a reason to
+	// explicitly recyle in this function. So instead we save a lot of processing by, only ever selecting heirlooms
+	// we know we are going to keep.
+
+	// This for loop assures we are always removing from the back of the array and thus won't get
+	// array out of bound errors.
+
+	for (let idx = game.global.heirloomsExtra.length - 1; idx >= 0; idx--) {
+		if (toKeepBitmask & (1 << idx)) {
+			selectHeirloom(idx, 'heirloomsExtra');
+			carryHeirloom();
+		}
 	}
 }
 
