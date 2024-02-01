@@ -117,11 +117,12 @@ function _getHighestPrestige(prestigeSetting, canAncientTreasure, noPrestigeChal
 
 	if (!noPrestigeChallenge) {
 		for (let equipName in MODULES.equipment) {
+			if (equipName === 'Shield') continue;
 			const equipType = MODULES.equipment[equipName].stat;
 			const currentPrestige = game.equipment[equipName].prestige;
 			highestPrestige = Math.max(highestPrestige, currentPrestige);
 
-			if (prestigesAvailable || equipName === 'Shield' || buyPrestigeMaybe(equipName).skip) continue;
+			if (prestigesAvailable || buyPrestigeMaybe(equipName).skip) continue;
 			if (prestigeSetting === 0 || (prestigeSetting === 1 && mostEfficient[equipType].zoneGo) || (prestigeSetting === 2 && !canAncientTreasure)) continue;
 
 			prestigesAvailable = true;
