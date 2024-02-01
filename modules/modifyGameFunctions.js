@@ -60,11 +60,11 @@ offlineProgress.start = function () {
 	const trustWorthy = game.options.menu.offlineProgress.enabled;
 	if (game.options.menu.offlineProgress.enabled === 1) game.options.menu.offlineProgress.enabled = 2;
 	offlineProgress.originalStart(...arguments);
+	toggleCatchUpMode();
 	while (game.options.menu.offlineProgress.enabled !== trustWorthy) toggleSetting('offlineProgress');
 	try {
 		const offlineTime = offlineProgress.totalOfflineTime / 1000 - 86400;
 		if (offlineTime > 0) {
-			// offlineTime *= 1000;
 			game.global.portalTime += offlineTime;
 			if (getZoneSeconds() >= offlineTime) game.global.zoneStarted += offlineTime;
 		}

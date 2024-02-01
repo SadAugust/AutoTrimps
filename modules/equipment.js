@@ -74,7 +74,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 	const noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal');
 
 	const mostEfficientObj = _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge);
-	const [highestPrestige, prestigesAvailable] = _getHighestPrestige(prestigeSetting, canAncientTreasure, noPrestigeChallenge);
+	const [highestPrestige, prestigesAvailable] = _getHighestPrestige(mostEfficientObj, prestigeSetting, canAncientTreasure, noPrestigeChallenge);
 	return _populateMostEfficientEquipment(mostEfficientObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield);
 }
 
@@ -111,7 +111,7 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 	};
 }
 
-function _getHighestPrestige(prestigeSetting, canAncientTreasure, noPrestigeChallenge) {
+function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure, noPrestigeChallenge) {
 	let highestPrestige = 0;
 	let prestigesAvailable = false;
 

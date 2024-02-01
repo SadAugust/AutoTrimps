@@ -139,7 +139,8 @@ function setTitle() {
 function message_AT(message, messageType, icon) {
 	const log = document.getElementById('log');
 	const needsScroll = log.scrollTop + 10 > log.scrollHeight - log.clientHeight;
-	const displayType = getPageSetting('spamMessages').show ? 'block' : 'none';
+	const showMessages = getPageSetting('spamMessages').show;
+	const displayType = showMessages || typeof showMessages === 'undefined' ? 'block' : 'none';
 
 	const iconPrefix = icon && icon.charAt(0) === '*' ? 'icomoon icon-' : 'glyphicon glyphicon-';
 	icon = icon ? icon.replace('*', '') : icon;
@@ -231,7 +232,6 @@ function testTimeWarp(hours) {
 
 	const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
 	_adjustGlobalTimers(keys, -timeToRun);
-
 	offlineProgress.start();
 }
 
