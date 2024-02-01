@@ -1352,29 +1352,24 @@ function _runPrestigeRaiding(setting, mapName, settingIndex, defaultSettings) {
 }
 
 function prestigeRaidingMapping() {
-	const { mapName, totalMapCost, mapSliders, prestigeMapArray, prestigeFragMapBought } = mapSettings;
+	if (mapSettings.mapName !== 'Prestige Raiding') return;
 
-	if (mapName !== 'Prestige Raiding' || !getPageSetting('autoMaps')) return;
-
-	if (!totalMapCost || !mapSliders) {
-		const costAndSliders = prestigeTotalFragCost();
-		if (!totalMapCost) mapSettings.totalMapCost = costAndSliders.cost;
-		if (!mapSliders) mapSettings.mapSliders = costAndSliders.sliders;
-	}
-	mapSettings.prestigeMapArray = prestigeMapArray || new Array(5);
-	mapSettings.prestigeFragMapBought = prestigeFragMapBought || false;
-
-	if (prestigeMapArray === undefined || prestigeMapArray[0] === undefined) {
-		if (prestigeMapArray[0] || totalMapCost < game.resources.fragments.owned) {
-			_handlePrestigeFragMapBought();
-			mapSettings.prestigeFragMapBought = false;
-		} else {
-			fragmentFarm(true);
-			mapSettings.prestigeFragMapBought = true;
-		}
+	if (!mapSettings.totalMapCost) {
+		const { cost, sliders } = prestigeTotalFragCost();
+		mapSettings.totalMapCost = cost;
+		mapSettings.mapSliders = sliders;
 	}
 
-	if (!prestigeFragMapBought && game.global.preMapsActive) {
+	mapSettings.prestigeMapArray = mapSettings.prestigeMapArray || new Array(5);
+	mapSettings.prestigeFragMapBought = mapSettings.prestigeFragMapBought || false;
+
+	if (!mapSettings.prestigeMapArray || typeof mapSettings.prestigeMapArray[0] === 'undefined') {
+		const enoughFragments = mapSettings.totalMapCost < game.resources.fragments.owned;
+		mapSettings.prestigeFragMapBought = !enoughFragments;
+		enoughFragments ? _handlePrestigeFragMapBought() : fragmentFarm(true);
+	}
+
+	if (!mapSettings.prestigeFragMapBought && game.global.preMapsActive) {
 		_handlePrestigeMapBuying();
 		_handlePrestigeMapRunning();
 	}
