@@ -139,16 +139,24 @@ function autoHeirlooms(portal) {
 		}
 	}
 
+	// Instead of using an array to say if a loom should be removed we instead use a bitmask as it is more efficient.
+	// Here every bit just represents the corresponding index its the same thing as an array of booleans
+	let removalBitMask = 0b0;
+
 	Object.entries(weights).forEach(([key, loomList]) => {
 		while (counts[key] < loomList.length) {
-			selectHeirloom(loomList.pop().index, 'heirloomsExtra');
-			recycleHeirloom(true);
+			// Here we set the bit on position loomList.pop().index to 1 via a bitshift
+			removalBitMask |= 1 << loomList.pop().index;
 		}
 	});
 
 	while (game.global.heirloomsExtra.length > 0) {
-		selectHeirloom(game.global.heirloomsExtra.length - 1, 'heirloomsExtra');
-		carryHeirloom();
+		let i = game.global.heirloomsExtra.length - 1;
+		selectHeirloom(i, 'heirloomsExtra');
+		// Here as we remove each heirloom FROM THE BACK of the array we check if the bit at position i is selected
+		// If it is we remove the heirloom, otherwise we carry it.
+		if (removalBitMask & (1 << i)) recycleHeirloom();
+		else carryHeirloom();
 	}
 }
 
