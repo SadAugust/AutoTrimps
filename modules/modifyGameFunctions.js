@@ -940,6 +940,7 @@ function getPlayerCritDamageMult_AT(customShield) {
 	critMult += getPerkLevel('Criticality') * game.portal.Criticality.modifier;
 	if (relentLevel > 0) critMult += 1;
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
+	critMult += alchObj.getPotionEffect('Elixir of Accuracy');
 	return critMult;
 }
 
