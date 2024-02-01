@@ -102,9 +102,28 @@ function isPlayerRelevant(resourceName, hasTurkimp, customRatio = 0.1) {
 	return turkimp || getPlayerModifier() > getPsString_AT(resourceName, true) * customRatio;
 }
 
-function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
-	//Checks if we are in need of another coordination upgrade
-	if (Coordination.done >= game.global.world  || !canAffordCoordinationTrimps() || canAffordTwoLevel(Coordination)) return false;
+function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
+	//Init
+	const upgradeObj = game.upgrades[upgradeName];
+
+	//Checks if we meet the conditions for each upgrade
+	const upgradeAllowed = (({
+		'Efficiency':   upgradeObj.done < Math.floor(game.global.world / 2),
+		'Speedfarming': upgradeObj.done < Math.min(game.global.world, 59),
+		'Speedlumber':  upgradeObj.done < Math.min(game.global.world, 59),
+		'Speedminer':   upgradeObj.done < Math.min(game.global.world, 59) && !challengeActive('Metal'),
+		'Speedscience': upgradeObj.done < Math.min(game.global.world, 59) && !challengeActive('Scientist'),
+		'Megafarming':  upgradeObj.done < game.global.world - 59,
+		'Megalumber':   upgradeObj.done < game.global.world - 59,
+		'Megaminer':    upgradeObj.done < game.global.world - 59 && !challengeActive('Metal'),
+		'Megascience':  upgradeObj.done < Math.floor((game.global.world - 59) / 2) && !challengeActive('Scientist'),
+		'Gymystic':     upgradeObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5)),
+		'Coordination': upgradeObj.done < game.global.world && canAffordCoordinationTrimps()
+	})[upgradeName]);
+
+	//Returns if we don't
+	if (!upgradeAllowed)
+		return false;
 
 	//Checks if the given resource is allowed to be gathered
 	const isResourceAllowed = (resourceName) => ({
@@ -116,7 +135,7 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 
 	//Calculates the required amount of any resource used by the Coordination upgrade
 	const neededResourceAmount = (resourceName) =>
-		resolvePow(Coordination.cost.resources[resourceName], Coordination)
+		upgradeObj.cost.resources[resourceName] ? resolvePow(upgradeObj.cost.resources[resourceName], upgradeObj) : 0
 
 	//Calculates the priority
 	const getPriority = (resourceName) => {
@@ -368,8 +387,15 @@ function autoGather() {
 		return;
 	}
 
-	// Get coordination upgrade if army size is not the problem.
-	if (_getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp)) return;
+	//Gathers resources for some important upgrades
+	let upgradesToGather = ['Efficiency', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience'];
+	upgradesToGather = upgradesToGather.concat(['Megaminer', 'Megalumber', 'Megafarming', 'Megascience', 'Coordination', 'Gymystic']);
+
+	//Upgrade accelerator
+	for (let upgrade of upgradesToGather) {
+		if (_gatherUpgrade(upgrade, researchAvailable, hasTurkimp))
+			return;
+	}
 
 	if (hasTurkimp && game.global.mapsActive) {
 		if (mapSettings.gather !== undefined && mapSettings.gather !== null) {
