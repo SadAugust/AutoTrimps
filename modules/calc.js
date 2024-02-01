@@ -482,7 +482,7 @@ function checkFastEnemy(enemy) {
 		return !exoticImp;
 	}
 
-	if (worldType === 'world' && game.global.world > 200 && game.global.gridArray[enemy.level].u2Mutation.length > 0) return true;
+	if (worldType === 'world' && game.global.world > 200 && game.global.gridArray[enemy.level - 1].u2Mutation.length > 0) return true;
 
 	return false;
 }
