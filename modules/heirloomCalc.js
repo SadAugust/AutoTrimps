@@ -1198,8 +1198,10 @@ var originalselectHeirloom = selectHeirloom;
 selectHeirloom = function () {
 	originalselectHeirloom(...arguments);
 	try {
-		calculate();
-		loadHeirloomSettings();
+		if (heirloomsShown) {
+			calculate();
+			loadHeirloomSettings();
+		}
 	} catch (e) {
 		console.log('Heirloom issue: ' + e, 'other');
 	}

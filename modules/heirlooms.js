@@ -52,6 +52,7 @@ function evaluateHeirloomMods(loom, location) {
 }
 
 function worthOfHeirlooms() {
+	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	const heirloomWorth = { Shield: [], Staff: [], Core: [] };
 
 	const recycle = game.global.heirloomsExtra
@@ -89,13 +90,12 @@ function autoHeirlooms(portal) {
 		return obj;
 	}, {});
 
-	const weights = worthOfHeirlooms();
-
 	for (let idx = game.global.heirloomsExtra.length - 1; idx >= 0; idx--) {
 		selectHeirloom(idx, 'heirloomsExtra');
 		if (!heirloomTypeEnabled[game.global.heirloomsExtra[idx].type]) recycleHeirloom(true);
 	}
 
+	const weights = worthOfHeirlooms();
 	let types = 0;
 
 	for (let key in weights) {
@@ -103,7 +103,7 @@ function autoHeirlooms(portal) {
 		else delete weights[key];
 	}
 
-	if (types == 0) return;
+	if (types === 0) return;
 
 	const carrySpace = getMaxCarriedHeirlooms() - game.global.heirloomsCarried.length;
 	const counts = Object.entries(weights).reduce((acc, [typeKey, looms]) => {
@@ -117,7 +117,7 @@ function autoHeirlooms(portal) {
 	while (types > 0 && used <= carrySpace - types) {
 		for (const key in Object.keys(counts)) {
 			const uncountedLooms = weights[key].length - counts[key];
-			if (uncountedLooms == 0) continue;
+			if (uncountedLooms === 0) continue;
 
 			let inc = Math.floor(carrySpace / types);
 			if (uncountedLooms < inc) {
