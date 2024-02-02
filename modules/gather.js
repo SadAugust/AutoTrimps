@@ -141,7 +141,7 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 	const getPriority = (resourceName) => {
 		//Exception: Science only relies on Turkimp
 		if (resourceName.toLowerCase() === 'science' && game.resources[resourceName].owned < neededResourceAmount(resourceName))
-			return hasTurkimp ? -1 : 1;
+			return hasTurkimp ? -1 : 2;
 
 		//The priority equals the % of the resource we still need to gather (-1 means "last", not "don't gather")
 		let priority = 1 - Math.min(1, game.resources[resourceName].owned / neededResourceAmount(resourceName));
