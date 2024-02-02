@@ -515,7 +515,7 @@ function _buyHousing(buildingSettings) {
 	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
 		const skipHouse = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort'].includes(houseName);
-		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Speedminer', 'Megafarming', 'Megalumber', 'Megaminer'];
+		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber'];
 
 		//Do not save Gems or Fragments TODO Don't save ie metal from Huts
 		if (skipHouse && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up])))
