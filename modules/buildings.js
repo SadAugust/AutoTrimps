@@ -315,18 +315,23 @@ function _buyNursery(buildingSettings) {
  * Buys gyms if necessary. For the helium universe.
  */
 function _buyGyms(buildingSettings) {
-	//TODO Prioritize coordination over early gyms
-	//TODO Save wood for Speed upgrades
-	if (!game.buildings.Gym.locked && buildingSettings.Gym && buildingSettings.Gym.enabled) {
-		const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
-		const purchased = game.buildings.Gym.purchased;
-		const max = gymAmt - purchased;
-		const gymPct = buildingSettings.Gym.percent / 100;
+	//Checks if Gyms are enabled
+	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled)
+		return;
 
-		const gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct);
-		if (gymAmt > purchased && gymCanAfford > 0 && !needGymystic()) {
-			safeBuyBuilding('Gym', gymCanAfford);
-		}
+	//Saves wood for Speed upgrades
+	const saveWood = ['Efficiency', 'Speedlumber', 'Megalumber'].some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
+	if (!challengeActive('Scientist') && saveWood && (getPageSetting('upgradeType') || game.global.autoUpgrades))
+		return;
+
+	const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
+	const purchased = game.buildings.Gym.purchased;
+	const max = gymAmt - purchased;
+	const gymPct = buildingSettings.Gym.percent / 100;
+
+	const gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct);
+	if (gymAmt > purchased && gymCanAfford > 0 && !needGymystic()) {
+		safeBuyBuilding('Gym', gymCanAfford);
 	}
 }
 
@@ -512,7 +517,7 @@ function _buyHousing(buildingSettings) {
 		const skipHouse = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort'].includes(houseName);
 		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Speedminer', 'Megafarming', 'Megalumber', 'Megaminer'];
 
-		//Do not save Gems or Fragments
+		//Do not save Gems or Fragments TODO Don't save ie metal from Huts
 		if (skipHouse && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up])))
 			return;
 	}
