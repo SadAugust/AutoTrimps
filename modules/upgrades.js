@@ -90,6 +90,30 @@ function needGymystic() {
 	return game.upgrades['Gymystic'].allowed > game.upgrades['Gymystic'].done;
 }
 
+function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0, woodRequired = 0, metalRequired = 0) {
+	//Init
+	const [foodOwned, woodOwned, metalOwned, scienceOwned] = ['food', 'wood', 'metal', 'science'].map(r => game.resources[r].owned);
+
+	//No upgrades available
+	if (upgradeObj.done >= upgradeObj.allowed)
+		return false;
+
+	//Not enough science to start saving
+	if (scienceOwned < resolvePow(upgradeObj.cost.resources.science, upgradeObj))
+		return false;
+
+	//Not enough food to start saving
+	if (foodOwned < (upgradeObj.cost.resources.food ? resolvePow(upgradeObj.cost.resources.food, upgradeObj) * foodRequired : 0))
+		return false;
+
+	//Not enough wood to start saving
+	if (woodOwned < (upgradeObj.cost.resources.wood ? resolvePow(upgradeObj.cost.resources.wood, upgradeObj) * woodRequired : 0))
+		return false;
+
+	//Not enough metal to start saving
+	return metalOwned >= (upgradeObj.cost.resources.metal ? resolvePow(upgradeObj.cost.resources.metal, upgradeObj) * metalRequired : 0);
+}
+
 function sciUpgrades() {
 	if (!challengeActive('Scientist')) return [];
 	const upgradeList = [];
@@ -126,7 +150,7 @@ function sciUpgrades() {
 function populateUpgradeList() {
 	if (challengeActive('Scientist')) return sciUpgrades();
 
-	const upgradeList = ['Miners', 'Scientists', 'Coordination', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience', 'Speedexplorer', 'Efficiency', 'Explorers', 'Battle', 'Bloodlust', 'Bounty', 'Egg', 'UberHut', 'UberHouse', 'UberMansion', 'UberHotel', 'UberResort', 'Trapstorm', 'Potency'];
+	const upgradeList = ['Miners', 'Scientists', 'Efficiency', 'Coordination', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience', 'Speedexplorer', 'Explorers', 'Battle', 'Bloodlust', 'Bounty', 'Egg', 'UberHut', 'UberHouse', 'UberMansion', 'UberHotel', 'UberResort', 'Trapstorm', 'Potency'];
 
 	if (game.global.universe === 1) {
 		upgradeList.push('Megaminer', 'Megalumber', 'Megafarming', 'Megascience', 'TrainTacular', 'Trainers', 'Blockmaster', 'Anger', 'Formations', 'Dominance', 'Barrier', 'Gymystic', 'Gigastation', 'Shieldblock', 'Magmamancers');

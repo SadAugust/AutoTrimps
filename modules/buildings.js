@@ -316,6 +316,7 @@ function _buyNursery(buildingSettings) {
  */
 function _buyGyms(buildingSettings) {
 	//TODO Prioritize coordination over early gyms
+	//TODO Save wood for Speed upgrades
 	if (!game.buildings.Gym.locked && buildingSettings.Gym && buildingSettings.Gym.enabled) {
 		const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
 		const purchased = game.buildings.Gym.purchased;
@@ -503,7 +504,18 @@ function _buyHousing(buildingSettings) {
 	// Skips if we can't afford the building.
 	if (!canAffordBuilding(houseName)) return false;
 
-	//TODO Save resources for certain upgrades somehow
+	//Avoids a useless warning
+	houseName = houseName.toString();
+
+	//Saves resources for upgrades
+	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
+		const skipHouse = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort'].includes(houseName);
+		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Speedminer', 'Megafarming', 'Megalumber', 'Megaminer'];
+
+		//Do not save Gems or Fragments
+		if (skipHouse && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up], 1/4, 1/4, 1/4)))
+			return;
+	}
 
 	// Identify the amount of this type of housing we can afford and stay within our housing cap.
 	const housingAmt = buildingSettings[houseName].buyMax === 0 ? Infinity : buildingSettings[houseName].buyMax;

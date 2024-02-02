@@ -292,45 +292,23 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 function autoEquip() {
 	//Init
 	const { Miners, Speedminer, Megaminer, Efficiency } = game.upgrades;
-	const scienceOwned = game.resources.science.owned;
-	const metalOwned = game.resources.metal.owned;
-	const woodOwned = game.resources.metal.owned;
-	const foodOwned = game.resources.metal.owned;
 
 	if (!getPageSetting('equipOn')) return;
 
 	//Saves metal for upgrades
 	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
-		function shouldSaveForSpeedUpgrade(upgradeObj, metalPercentageAllowed, foodWoodPercentageRequired) {
-			//No upgrades available
-			if (upgradeObj.done >= upgradeObj.allowed)
-				return false;
-
-			//Not enough science to start saving
-			if (scienceOwned < resolvePow(upgradeObj.cost.resources.science, upgradeObj))
-				return false;
-
-			//Not wood to start saving
-			if (woodOwned < upgradeObj.cost.resources.wood ? resolvePow(upgradeObj.cost.resources.wood, upgradeObj) * foodWoodPercentageRequired : 0)
-				return false;
-
-			//Not food to start saving
-			if (foodOwned < upgradeObj.cost.resources.food ? resolvePow(upgradeObj.cost.resources.food, upgradeObj) * foodWoodPercentageRequired : 0)
-				return false;
-
-			//Not enough metal to start saving
-			return metalOwned >= resolvePow(upgradeObj.cost.resources.metal, upgradeObj) * metalPercentageAllowed;
-		}
-
 		//Saves metal for Speed upgrades
-		if (shouldSaveForSpeedUpgrade(Speedminer, 1/4) || shouldSaveForSpeedUpgrade(Megaminer, 1.0/9.6))
+		if (shouldSaveForSpeedUpgrade(Speedminer, 0, 0, 1/4))
+			return false;
+
+		if (shouldSaveForSpeedUpgrade(Megaminer, 0, 0, 1/4))
 			return false;
 
 		//Saves metal for Efficiency upgrades
-		if (shouldSaveForSpeedUpgrade(Efficiency, 1/4, 3/4))
+		if (shouldSaveForSpeedUpgrade(Efficiency, 2/4, 2/4, 1/4))
 			return false;
 
-		//Saves metal for Miners
+		//Saves resources for Miners
 		if (!challengeActive('Metal') && !Miners.done) return;
 	}
 
