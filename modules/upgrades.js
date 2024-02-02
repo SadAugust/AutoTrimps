@@ -141,9 +141,12 @@ function populateUpgradeList() {
 
 function buyUpgrades() {
 	const upgradeSetting = getPageSetting('upgradeType');
+	const researchIsRelevant = isPlayerRelevant('science', false, 0.25);
 	if (upgradeSetting === 0) return;
 
 	const upgradeList = populateUpgradeList();
+
+	//TODO Prioritize early Efficiency somehow. At least over Speedscience, maybe over other Speed upgrades, but only maaaybe over Coordination
 
 	for (let upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
@@ -183,8 +186,12 @@ function buyUpgrades() {
 		//Prioritise Science/scientist upgrades
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld) {
 			if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed) continue;
-			if (game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
-			if (game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
+
+			//Doesn't prioritize speed over efficiency is manual research is still relevant
+			if (game.upgrades.Efficiency.done >= game.upgrades.Efficiency.allowed || !researchIsRelevant || upgrade !== 'Efficiency') {
+				if (game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
+				if (game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
+			}
 		}
 
 		buyUpgrade(upgrade, true, true);
