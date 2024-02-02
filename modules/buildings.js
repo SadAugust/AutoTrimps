@@ -2,7 +2,7 @@ function safeBuyBuilding(building, amt) {
 	const queued = isBuildingInQueue(building);
 	const locked = game.buildings[building].locked;
 	const notAfford = !canAffordBuilding(building, false, false, false, false, amt);
-	if (queued | locked | notAfford) return;
+	if (queued || locked || notAfford) return;
 
 	//Cap the amount we purchase to ensure we don't spend forever building
 	if (!bwRewardUnlocked('Foremany') && game.global.world <= 10) amt = 1;
@@ -236,10 +236,11 @@ function _buyStorage(hypoZone) {
 				exoticValue = scaleToCurrentMap(simpleSeconds(resource, seconds));
 			}
 		}
-		const firstZoneCheck = game.global.world === 1 && curRes > maxRes * 0.7;
-		const tenZonesCheck = game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * 0.5;
+
+		const firstZoneCheck = game.global.world === 1 && curRes > maxRes * 0.9;
+		const tenZonesCheck = game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * 0.9;
 		const mapsUnlockedCheck = curRes + exoticValue > maxRes * 0.85;
-		if ((firstZoneCheck | tenZonesCheck | mapsUnlockedCheck) & game.triggers[storage].done) safeBuyBuilding(storage, 1);
+		if ((firstZoneCheck || tenZonesCheck || mapsUnlockedCheck) && game.triggers[storage].done) safeBuyBuilding(storage, 1);
 	}
 }
 
@@ -314,6 +315,7 @@ function _buyNursery(buildingSettings) {
  * Buys gyms if necessary. For the helium universe.
  */
 function _buyGyms(buildingSettings) {
+	//TODO Prioritize coordination over early gyms
 	if (!game.buildings.Gym.locked && buildingSettings.Gym && buildingSettings.Gym.enabled) {
 		const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
 		const purchased = game.buildings.Gym.purchased;
@@ -500,6 +502,8 @@ function _buyHousing(buildingSettings) {
 	if (isBuildingInQueue(houseName)) return false;
 	// Skips if we can't afford the building.
 	if (!canAffordBuilding(houseName)) return false;
+
+	//TODO Save resources for certain upgrades somehow
 
 	// Identify the amount of this type of housing we can afford and stay within our housing cap.
 	const housingAmt = buildingSettings[houseName].buyMax === 0 ? Infinity : buildingSettings[houseName].buyMax;
