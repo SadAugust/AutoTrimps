@@ -164,8 +164,13 @@ function populateUpgradeList() {
 }
 
 function buyUpgrades() {
-	const upgradeSetting = getPageSetting('upgradeType');
 	const researchIsRelevant = isPlayerRelevant('science', false, 0.25);
+	const upgradeSetting = getPageSetting('upgradeType');
+	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
+	const needMega = game.upgrades.Megascience.done < game.upgrades.Megascience.allowed;
+	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
+
+
 	if (upgradeSetting === 0) return;
 
 	const upgradeList = populateUpgradeList();
@@ -211,10 +216,14 @@ function buyUpgrades() {
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld) {
 			if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed) continue;
 
-			//Doesn't prioritize speed over efficiency is manual research is still relevant
-			if (game.upgrades.Efficiency.done >= game.upgrades.Efficiency.allowed || !researchIsRelevant || upgrade !== 'Efficiency') {
-				if (game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
-				if (game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
+			//Prioritize Efficiency over Speedscience while manual research is still relevant
+			if (needEff && researchIsRelevant && (upgrade === 'Speedscience' || upgrade === 'Megascience'))
+				continue;
+
+			//Doesn't skip Efficiency for Speedscience
+			if (!needEff || !researchIsRelevant || upgrade !== 'Efficiency') {
+				if (needSpeed && upgrade !== 'Speedscience') continue;
+				if (needMega && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
 			}
 		}
 

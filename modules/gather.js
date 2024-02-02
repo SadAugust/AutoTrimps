@@ -112,7 +112,7 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 		'Speedfarming': upgradeObj.done < Math.min(game.global.world, 59),
 		'Speedlumber':  upgradeObj.done < Math.min(game.global.world, 59),
 		'Speedminer':   upgradeObj.done < Math.min(game.global.world, 59) && !challengeActive('Metal'),
-		'Speedscience': upgradeObj.done < Math.min(game.global.world, 59) && !challengeActive('Scientist'),
+		'Speedscience': upgradeObj.done < Math.min(game.global.world - 1, 59) && !challengeActive('Scientist'),
 		'Megafarming':  upgradeObj.done < game.global.world - 59,
 		'Megalumber':   upgradeObj.done < game.global.world - 59,
 		'Megaminer':    upgradeObj.done < game.global.world - 59 && !challengeActive('Metal'),
@@ -133,7 +133,7 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 		'metal': elementVisible('metal')
 	})[resourceName];
 
-	//Calculates the required amount of any resource used by the Coordination upgrade
+	//Calculates the required amount of any resource used by the upgrade
 	const neededResourceAmount = (resourceName) =>
 		upgradeObj.cost.resources[resourceName] ? resolvePow(upgradeObj.cost.resources[resourceName], upgradeObj) : 0
 
