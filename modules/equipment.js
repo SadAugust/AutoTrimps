@@ -298,14 +298,14 @@ function autoEquip() {
 	//Saves metal for upgrades
 	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
 		//Saves metal for Speed upgrades
-		if (shouldSaveForSpeedUpgrade(Speedminer, 0, 0, 1/4))
+		if (shouldSaveForSpeedUpgrade(Speedminer))
 			return false;
 
-		if (shouldSaveForSpeedUpgrade(Megaminer, 0, 0, 1/4))
+		if (shouldSaveForSpeedUpgrade(Megaminer))
 			return false;
 
 		//Saves metal for Efficiency upgrades
-		if (shouldSaveForSpeedUpgrade(Efficiency, 2/4, 2/4, 1/4))
+		if (shouldSaveForSpeedUpgrade(Efficiency, 2/4, 2/4))
 			return false;
 
 		//Saves resources for Miners

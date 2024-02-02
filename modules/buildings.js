@@ -513,7 +513,7 @@ function _buyHousing(buildingSettings) {
 		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Speedminer', 'Megafarming', 'Megalumber', 'Megaminer'];
 
 		//Do not save Gems or Fragments
-		if (skipHouse && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up], 1/4, 1/4, 1/4)))
+		if (skipHouse && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up])))
 			return;
 	}
 

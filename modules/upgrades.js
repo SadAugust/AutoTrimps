@@ -90,7 +90,7 @@ function needGymystic() {
 	return game.upgrades['Gymystic'].allowed > game.upgrades['Gymystic'].done;
 }
 
-function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0, woodRequired = 0, metalRequired = 0) {
+function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1/4, woodRequired = 1/4, metalRequired = 1/4, scienceRequired = 2/4) {
 	//Init
 	const [foodOwned, woodOwned, metalOwned, scienceOwned] = ['food', 'wood', 'metal', 'science'].map(r => game.resources[r].owned);
 
@@ -99,7 +99,7 @@ function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0, woodRequired = 
 		return false;
 
 	//Not enough science to start saving
-	if (scienceOwned < resolvePow(upgradeObj.cost.resources.science, upgradeObj))
+	if (scienceOwned < resolvePow(upgradeObj.cost.resources.science, upgradeObj) * scienceRequired)
 		return false;
 
 	//Not enough food to start saving
@@ -169,7 +169,7 @@ function buyUpgrades() {
 	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
 	const needMega = game.upgrades.Megascience.done < game.upgrades.Megascience.allowed;
 	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
-	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency'], 1/4, 1/4, 1/4);
+	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
 
 
 	if (upgradeSetting === 0) return;
