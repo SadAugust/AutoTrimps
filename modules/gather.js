@@ -99,7 +99,7 @@ function _isTrappingRelevant(trapperTrapUntilFull) {
 
 function isPlayerRelevant(resourceName, hasTurkimp, customRatio = 0.1) {
 	const turkimp = hasTurkimp && resourceName.toLowerCase() !== 'science';
-	return turkimp || getPlayerModifier() > getPsString_AT(resourceName, true) * customRatio;
+	return turkimp || getPlayerModifier() >= getPsString_AT(resourceName, true) * customRatio;
 }
 
 function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
@@ -388,8 +388,12 @@ function autoGather() {
 	}
 
 	//Gathers resources for some important upgrades
-	let upgradesToGather = ['Efficiency', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience'];
-	upgradesToGather = upgradesToGather.concat(['Megaminer', 'Megalumber', 'Megafarming', 'Megascience', 'Coordination', 'Gymystic']);
+	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
+	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming', 'Coordination', 'Gymystic']);
+
+	//Doesn't focus on Speedscience if manual research is still way too relevant
+	if (isPlayerRelevant('science', hasTurkimp, 4))
+		upgradesToGather = upgradesToGather.filter(up => !['Speedscience', 'Megascience'].includes(up))
 
 	//Upgrade accelerator
 	for (let upgrade of upgradesToGather) {

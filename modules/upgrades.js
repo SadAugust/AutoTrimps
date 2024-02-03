@@ -164,6 +164,7 @@ function populateUpgradeList() {
 }
 
 function buyUpgrades() {
+	const scientistsAreRelevant = !isPlayerRelevant('science', false, 4);
 	const researchIsRelevant = isPlayerRelevant('science', false, 0.25);
 	const upgradeSetting = getPageSetting('upgradeType');
 	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
@@ -171,12 +172,9 @@ function buyUpgrades() {
 	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
 	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
 
-
 	if (upgradeSetting === 0) return;
 
 	const upgradeList = populateUpgradeList();
-
-	//TODO Prioritize early Efficiency somehow. At least over Speedscience, maybe over other Speed upgrades, but only maaaybe over Coordination
 
 	for (let upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
@@ -221,10 +219,10 @@ function buyUpgrades() {
 			if (needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency')
 				continue;
 
-			//Doesn't skip Efficiency for Speedscience
+			//Prioritizes Speedscience if it's relevant
 			if (!needEff || !researchIsRelevant || upgrade !== 'Efficiency') {
-				if (needSpeed && upgrade !== 'Speedscience') continue;
-				if (needMega && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
+				if (needSpeed && scientistsAreRelevant && upgrade !== 'Speedscience') continue;
+				if (needMega && scientistsAreRelevant && ['Speedscience', 'Megascience'].includes(upgrade)) continue;
 			}
 		}
 
