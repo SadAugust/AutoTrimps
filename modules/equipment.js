@@ -301,14 +301,14 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 
 function autoEquip() {
 	//Init
-	const { Miners, Efficiency } = game.upgrades;
+	const { Miners, Efficiency, Coordination } = game.upgrades;
 
 	if (!getPageSetting('equipOn')) return;
 
 	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
 		//Saves metal for Efficiency upgrades
-		if (shouldSaveForSpeedUpgrade(Efficiency, 2/4, 2/4))
+		if ([Efficiency, Coordination].some(up => shouldSaveForSpeedUpgrade(up, 2/4, 2/4)))
 			return false;
 
 		//Saves resources for Miners

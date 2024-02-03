@@ -98,6 +98,10 @@ function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1/4, woodRequired 
 	if (upgradeObj.done >= upgradeObj.allowed)
 		return false;
 
+	//Not enough trimps for Coordination
+	if (upgradeObj === game.upgrades.Coordination && !canAffordCoordinationTrimps())
+		return false;
+
 	//Not enough science to start saving
 	if (scienceOwned < resolvePow(upgradeObj.cost.resources.science, upgradeObj) * scienceRequired)
 		return false;
