@@ -391,17 +391,25 @@ function _shouldPBSwap(mapping, enemy, fastEnemy) {
 
 	const nextEnemy = getCurrentEnemy(2);
 	const checkPlagueSwap = plagueShield && enemy.level < nextEnemy.level;
-	const plaguebringerDamage = checkPlagueSwap ? nextCell.plaguebringer : 0;
+	const plaguebringerDamage = checkPlagueSwap ? nextEnemy.plaguebringer : 0;
 	const mapSize = mapping ? game.global['mapGridArray'].length : game.global['gridArray'].length;
 	return checkPlagueSwap && ((mapping && !fastEnemy) || !mapping) && enemy.level !== mapSize - 2 && (typeof plaguebringerDamage === 'undefined' || plaguebringerDamage < enemy.maxHealth) && enemy.maxHealth * 0.05 < enemy.health;
 }
 
 function _getEnemyDmg(mapping, worldType) {
 	const enemy = getCurrentEnemy();
-	let damage = enemy.attack * enemyDamageModifiers() * 1.5;
-	let damageMult = 1;
+	const damageMult = _getEnemyDmgMultiplier(mapping, worldType);
+	const damage = enemy.attack * enemyDamageModifiers() * 1.5 * damageMult;
 
-	if (challengeActive('Mayhem')) damage /= game.challenges.Mayhem.getEnemyMult();
+	const maxEquality = getPerkLevel('Equality');
+	const equalityModifier = game.portal.Equality.getModifier();
+	const damageMax = damage * Math.pow(equalityModifier, maxEquality);
+
+	return { enemyDmg: damage, enemyDmgMax: damageMax, enemyDmgMult: damageMult };
+}
+
+function _getEnemyDmgMultiplier(mapping, worldType) {
+	let damageMult = 1;
 
 	if (game.global.voidBuff === 'doubleAttack') damageMult += 2;
 
@@ -420,8 +428,8 @@ function _getEnemyDmg(mapping, worldType) {
 		const dailyCrit = typeof dailyChallenge.crits !== 'undefined';
 		const dailyExplosive = typeof dailyChallenge.explosive !== 'undefined';
 
-		if ((dailyEmpowerCheck && !mapping) || MODULES.maps.slowScumming) {
-			if (dailyCrit) damageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
+		if (dailyCrit && ((dailyEmpowerCheck && !mapping) || MODULES.maps.slowScumming)) {
+			damageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 		}
 
 		if (worldType === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming) {
@@ -437,13 +445,7 @@ function _getEnemyDmg(mapping, worldType) {
 	const enemyCanPoison = runningMayhem && (mapping || enemy.level === 100);
 	if (enemyCanPoison) damageMult += 1.2;
 
-	damage *= damageMult;
-
-	const equalityModifier = game.portal.Equality.getModifier();
-	const maxEquality = getPerkLevel('Equality');
-	const damageMax = damage * Math.pow(equalityModifier, maxEquality);
-
-	return { enemyDmg: damage, enemyDmgMax: damageMax, enemyDmgMult: damageMult };
+	return damageMult;
 }
 
 function _PBShieldSwapping(mapping, worldType, enemy, enemyDmg, enemyDmgMult, fastEnemy, ourHealth, ourDmg, unluckyDmg) {
