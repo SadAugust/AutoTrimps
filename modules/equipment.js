@@ -308,7 +308,7 @@ function autoEquip() {
 	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
 		//Saves metal for Efficiency upgrades
-		if ([Efficiency, Coordination].some(up => shouldSaveForSpeedUpgrade(up, 2/4, 2/4)))
+		if ([Efficiency, Coordination].some(up => shouldSaveForSpeedUpgrade(up)))
 			return false;
 
 		//Saves resources for Miners
