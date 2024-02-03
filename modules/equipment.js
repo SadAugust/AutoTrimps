@@ -66,6 +66,12 @@ MODULES.equipment = {
 	}
 };
 
+function _shouldSaveResource(resourceName) {
+	const upgrades = resourceName == 'metal' ? ['Speedminer', 'Megaminer'] : ['Speedlumber', 'Megalumber'];
+	const shouldSave = !challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades);
+	return shouldSave && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
+}
+
 function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
 	if (mapSettings.pandaEquips) return pandemoniumEquipmentCheck(mapSettings.cacheGain);
 
@@ -232,6 +238,10 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
 	const equipStat = equipment.attack !== undefined ? 'attack' : 'health';
 
+	//Saves resources for upgrades
+	if (_shouldSaveResource(resourceUsed))
+		return prestigeInfo;
+
 	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 	const newLevel = Math.max(1, Math.min(maxLevel, 1 + Math.max(0, Math.floor(getMaxAffordable(prestigeCost * 1.2, (game.resources[resourceUsed].owned - prestigeCost) * resourceSpendingPct, 1.2, true)))));
 	const oneLevelStat = Math.round(equipment[equipStat] * Math.pow(1.19, equipment.prestige * game.global.prestige[equipStat] + 1));
@@ -291,19 +301,12 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 
 function autoEquip() {
 	//Init
-	const { Miners, Speedminer, Megaminer, Efficiency } = game.upgrades;
+	const { Miners, Efficiency } = game.upgrades;
 
 	if (!getPageSetting('equipOn')) return;
 
-	//Saves metal for upgrades
+	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
-		//Saves metal for Speed upgrades
-		if (shouldSaveForSpeedUpgrade(Speedminer))
-			return false;
-
-		if (shouldSaveForSpeedUpgrade(Megaminer))
-			return false;
-
 		//Saves metal for Efficiency upgrades
 		if (shouldSaveForSpeedUpgrade(Efficiency, 2/4, 2/4))
 			return false;
@@ -378,6 +381,10 @@ function buyEquipsAlways2() {
 			if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
 			if (trimpStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 
+			//Saves resources for upgrades
+			if (_shouldSaveResource(MODULES.equipment[equip].resource))
+				continue;
+
 			if (alwaysLvl2 && game.equipment[equip].level < 2) {
 				buyEquipment(equip, true, true, 1);
 				debug(`Upgrading 1 ${equip}`, `equipment`, `*upload3`);
@@ -406,6 +413,10 @@ function buyEquips() {
 		if (!equip.name || equipData.locked || !(equip.prestige || canAffordBuilding(equip.name, false, false, true, false, 1))) continue;
 		if (equipData.level >= equip.equipCap && !equip.prestige && !equip.zoneGo) continue;
 		if (equip.cost > equip.resourceSpendingPct * game.resources[resourceUsed].owned) continue;
+
+		//Saves resources for upgrades
+		if (_shouldSaveResource(resourceUsed))
+			continue;
 
 		if (equip.prestige) {
 			buyUpgrade(MODULES.equipment[equip.name].upgrade, true, true);
@@ -448,8 +459,8 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 			if (prestigeElement.classList.contains('efficientYes') && (item !== bestBuys[equipType].name || (item === bestBuys[equipType].name && !bestBuys[equipType].prestige))) swapClass('efficient', 'efficientNo', prestigeElement);
 		}
 
-		//If we are looking at the most efficient item and it's not a prestige then add the efficientYes class to it
-		//If the equip already has the efficientYes class swap it to efficientNo
+		//If we are looking at the most efficient item, and it's not a prestige, then add the efficientYes class to it
+		//If the equipment already has the efficientYes class swap it to efficientNo
 		if (item === bestBuys[equipType].name && bestBuys[equipType].prestige && itemElement) {
 			if (itemElement.classList.contains('efficientYes')) swapClass('efficient', 'efficientNo', itemElement);
 			bestBuys[equipType].name = prestigeName;
