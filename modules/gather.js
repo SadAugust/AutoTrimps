@@ -112,7 +112,7 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 		'Speedfarming': upgradeObj.done < Math.min(game.global.world, 59),
 		'Speedlumber':  upgradeObj.done < Math.min(game.global.world, 59),
 		'Speedminer':   upgradeObj.done < Math.min(game.global.world, 59) && !challengeActive('Metal'),
-		'Speedscience': upgradeObj.done < Math.min(game.global.world - 1, 59) && !challengeActive('Scientist'),
+		'Speedscience': upgradeObj.done < Math.floor(game.global.world / 2) && !challengeActive('Scientist'),
 		'Megafarming':  upgradeObj.done < game.global.world - 59,
 		'Megalumber':   upgradeObj.done < game.global.world - 59,
 		'Megaminer':    upgradeObj.done < game.global.world - 59 && !challengeActive('Metal'),
