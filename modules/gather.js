@@ -395,6 +395,10 @@ function autoGather() {
 	if (isPlayerRelevant('science', hasTurkimp, 4))
 		upgradesToGather = upgradesToGather.filter(up => !['Speedscience', 'Megascience'].includes(up))
 
+	//Prioritizes upgrades that are pilling up
+	upgradesToGather = upgradesToGather.sort((up1, up2)=>
+		(game.upgrades[up2].allowed - game.upgrades[up2].done) - (game.upgrades[up1].allowed - game.upgrades[up1].done));
+
 	//Upgrade accelerator
 	for (let upgrade of upgradesToGather) {
 		if (_gatherUpgrade(upgrade, researchAvailable, hasTurkimp))
