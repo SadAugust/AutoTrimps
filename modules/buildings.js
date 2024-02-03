@@ -320,7 +320,8 @@ function _buyGyms(buildingSettings) {
 		return;
 
 	//Saves wood for Speed upgrades
-	const saveWood = ['Efficiency', 'Speedlumber', 'Megalumber'].some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
+	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination'];
+	const saveWood = upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 	if (!challengeActive('Scientist') && saveWood && (getPageSetting('upgradeType') || game.global.autoUpgrades))
 		return;
 
