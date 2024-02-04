@@ -67,7 +67,7 @@ MODULES.equipment = {
 };
 
 function _shouldSaveResource(resourceName) {
-	const upgrades = resourceName == 'metal' ? ['Speedminer', 'Megaminer'] : ['Speedlumber', 'Megalumber', 'Blockmaster'];
+	const upgrades = resourceName == 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber'];
 	const shouldSave = !challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades);
 	return shouldSave && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
