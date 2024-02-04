@@ -390,8 +390,18 @@ function autoGather() {
 		return;
 	}
 
+	//Efficiency has the highest priority amongst upgrades
+	if (_gatherUpgrade('Efficiency', researchAvailable, hasTurkimp))
+		return;
+
+	// Medium Priority Trapping (soldiers are dead)
+	if (trappingIsRelevant && trapWontBeWasted && game.global.soldierHealth <= 0) {
+		if (_setTrapBait(lowOnTraps, true))
+			return;
+	}
+
 	//Gathers resources for some important upgrades
-	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
+	let upgradesToGather = ['Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
 	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming']);
 	upgradesToGather = upgradesToGather.concat(['Coordination', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency','Gymystic']);
 
