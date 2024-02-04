@@ -320,7 +320,7 @@ function _buyGyms(buildingSettings) {
 		return;
 
 	//Saves wood for Speed upgrades
-	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination'];
+	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination', 'Blockmaster'];
 	const saveWood = upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 	if (!challengeActive('Scientist') && saveWood && (getPageSetting('upgradeType') || game.global.autoUpgrades))
 		return;
@@ -516,7 +516,7 @@ function _buyHousing(buildingSettings) {
 	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
 		const skipHouse = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort'].includes(houseName);
-		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Coordination'];
+		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Coordination', 'Blockmaster'];
 
 		//Do not save Gems or Fragments TODO Don't save ie metal from Huts
 		if (skipHouse && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up], 2/4, 2/4, 1/4, 3/4)))

@@ -389,7 +389,8 @@ function autoGather() {
 
 	//Gathers resources for some important upgrades
 	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
-	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming', 'Coordination', 'Gymystic']);
+	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming']);
+	upgradesToGather = upgradesToGather.concat(['Coordination', 'Blockmaster', 'Trainers', 'Gymystic']);
 
 	//Doesn't focus on Speedscience if manual research is still way too relevant
 	if (isPlayerRelevant('science', hasTurkimp, 4))
