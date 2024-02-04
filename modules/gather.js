@@ -120,7 +120,8 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 		'Gymystic':     upgradeObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5)),
 		'Coordination': upgradeObj.done < game.global.world && canAffordCoordinationTrimps(),
 		'Trainers':     upgradeObj.done < game.global.world >= 3 ? 1 : 0,
-		'Blockmaster':  upgradeObj.done < game.global.world >= 4 ? 1 : 0
+		'Blockmaster':  upgradeObj.done < game.global.world >= 4 ? 1 : 0,
+		'TrainTacular':  upgradeObj.done < Math.floor(game.global.world / 5)
 	})[upgradeName]);
 
 	//Returns if we don't
@@ -392,7 +393,7 @@ function autoGather() {
 	//Gathers resources for some important upgrades
 	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
 	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming']);
-	upgradesToGather = upgradesToGather.concat(['Coordination', 'Blockmaster', 'Trainers', 'Gymystic']);
+	upgradesToGather = upgradesToGather.concat(['Coordination', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency','Gymystic']);
 
 	//Doesn't focus on Speedscience if manual research is still way too relevant
 	if (isPlayerRelevant('science', hasTurkimp, 4))

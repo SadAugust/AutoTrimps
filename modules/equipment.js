@@ -67,7 +67,7 @@ MODULES.equipment = {
 };
 
 function _shouldSaveResource(resourceName) {
-	const upgrades = resourceName == 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber'];
+	const upgrades = resourceName == 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber', 'Potency'];
 	const shouldSave = !challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades);
 	return shouldSave && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
@@ -301,14 +301,14 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 
 function autoEquip() {
 	//Init
-	const { Miners, Efficiency, Coordination } = game.upgrades;
+	const { Miners, Efficiency, Coordination, TrainTacular} = game.upgrades;
 
 	if (!getPageSetting('equipOn')) return;
 
 	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
 		//Saves metal for Efficiency upgrades
-		if ([Efficiency, Coordination].some(up => shouldSaveForSpeedUpgrade(up)))
+		if ([Efficiency, Coordination, TrainTacular].some(up => shouldSaveForSpeedUpgrade(up)))
 			return false;
 
 		//Saves resources for Miners
