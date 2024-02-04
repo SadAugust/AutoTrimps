@@ -118,7 +118,9 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 		'Megaminer':    upgradeObj.done < game.global.world - 59 && !challengeActive('Metal'),
 		'Megascience':  upgradeObj.done < Math.floor((game.global.world - 59) / 2) && !challengeActive('Scientist'),
 		'Gymystic':     upgradeObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5)),
-		'Coordination': upgradeObj.done < game.global.world && canAffordCoordinationTrimps()
+		'Coordination': upgradeObj.done < game.global.world && canAffordCoordinationTrimps(),
+		'Trainers':     upgradeObj.done < game.global.world >= 3 ? 1 : 0,
+		'Blockmaster':  upgradeObj.done < game.global.world >= 4 ? 1 : 0
 	})[upgradeName]);
 
 	//Returns if we don't
