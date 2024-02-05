@@ -3285,6 +3285,7 @@ function setMapSliders(pluslevel, special = '0', biome = getBiome(), mapSliders 
 	let maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (mapSliders[0] !== 9 || mapSliders[1] !== 9 || mapSliders[2] !== 9) perfectMaps = false;
+
 	document.getElementById('biomeAdvMapsSelect').value = biome;
 	document.getElementById('advExtraLevelSelect').value = pluslevel > 0 ? pluslevel : 0;
 	document.getElementById('advSpecialSelect').value = special;

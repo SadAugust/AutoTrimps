@@ -163,9 +163,10 @@ function getTrimpAttack(realDamage) {
 	return dmg;
 }
 
-function applyMultipliers(multipliers, stat, challenge) {
+function applyMultipliers(multipliers, stat, challenge, postChallengeCheck) {
 	Object.keys(multipliers).forEach((key) => {
-		if (challenge) stat *= challengeActive(key) || (key === 'Nurture' && game.challenges.Nurture.boostsActive()) ? multipliers[key]() : 1;
+		if (challenge && postChallengeCheck && key === 'Nurture' && game.challenges.Nurture.boostsActive()) stat *= multipliers[key]();
+		else if (challenge) stat *= challengeActive(key) ? multipliers[key]() : 1;
 		else stat *= multipliers[key]();
 	});
 	return stat;
@@ -235,7 +236,7 @@ function getTrimpHealth(realHealth, mapType) {
 			Desolation: () => game.challenges.Desolation.trimpHealthMult(),
 			Smithless: () => (game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1)
 		};
-		health = applyMultipliers(challengeMultipliers, health, true);
+		health = applyMultipliers(challengeMultipliers, health, true, true);
 	}
 
 	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
@@ -524,7 +525,7 @@ function calcOurDmg(minMaxAvg = 'avg', equality, realDamage = false, mapType, cr
 			Desolation: () => game.challenges.Desolation.trimpAttackMult(),
 			Smithless: () => (game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1)
 		};
-		attack = applyMultipliers(challengeMultipliers, attack, true);
+		attack = applyMultipliers(challengeMultipliers, attack, true, true);
 	}
 
 	if (challengeActive('Daily')) {
@@ -730,15 +731,11 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax = false, customAtt
 			Domination: () => 2.5,
 			Scientist: () => (getScientistLevel() === 5 ? 10 : 1),
 			Frigid: () => game.challenges.Frigid.getEnemyMult(),
-			Experience: () => game.challenges.Experience.getEnemyMult()
+			Experience: () => game.challenges.Experience.getEnemyMult(),
+			Obliterated: () => oblitStatMultiplier('Obliterated'),
+			Eradicated: () => oblitStatMultiplier('Eradicated')
 		};
 		attack = applyMultipliers(challengeMultipliers, attack, true);
-
-		if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
-			const oblitMult = challengeActive('Eradicated') ? game.challenges.Eradicated.scaleModifier : 1e12;
-			const zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
-			attack *= oblitMult * Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
-		}
 	}
 
 	if (game.global.universe === 2) {
@@ -902,41 +899,36 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	if (customHealth) health = customHealth;
 
 	if (game.global.universe === 1) {
-		health *= challengeActive('Balance') ? 2 : 1;
-		health *= challengeActive('Meditate') ? 2 : 1;
-		health *= challengeActive('Toxicity') ? 2 : 1;
-		health *= challengeActive('Life') ? 10 : 1;
-		health *= challengeActive('Experience') ? game.challenges.Experience.getEnemyMult() : 1;
-		health *= challengeActive('Frigid') ? game.challenges.Frigid.getEnemyMult() : 1;
-		if (challengeActive('Coordinate')) health *= Array.from({ length: zone - 1 }, () => 1.25).reduce((a, b) => Math.ceil(a * b), 1);
-
-		if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
-			const oblitMult = challengeActive('Eradicated') ? game.challenges.Eradicated.scaleModifier : 1e12;
-			const zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
-			health *= oblitMult * Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
-		}
+		const challengeMultipliers = {
+			Balance: () => 2,
+			Meditate: () => 2,
+			Life: () => 10,
+			Coordinate: () => Array.from({ length: zone - 1 }, () => 1.25).reduce((a, b) => Math.ceil(a * b), 1),
+			Toxicity: () => 2,
+			Frigid: () => game.challenges.Frigid.getEnemyMult(),
+			Experience: () => game.challenges.Experience.getEnemyMult(),
+			Obliterated: () => oblitStatMultiplier('Obliterated'),
+			Eradicated: () => oblitStatMultiplier('Eradicated')
+		};
+		health = applyMultipliers(challengeMultipliers, health, true);
 	}
 
 	if (game.global.universe === 2) {
-		health *= challengeActive('Unbalance') && type !== 'world' ? 2 : challengeActive('Unbalance') ? 3 : 1;
-		health *= challengeActive('Quest') ? game.challenges.Quest.getHealthMult() : 1;
-		health *= challengeActive('Revenge') && game.global.world % 2 === 0 ? 10 : 1;
-
-		if (challengeActive('Mayhem')) {
-			if (type === 'world') health *= game.challenges.Mayhem.getBossMult();
-			health *= game.challenges.Mayhem.getEnemyMult();
-		}
-		health *= challengeActive('Storm') && type === 'world' ? game.challenges.Storm.getHealthMult() : 1;
-		health *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
-		if (challengeActive('Nurture')) {
-			health *= type === 'world' ? 2 : 10;
-			health *= game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-		}
-		if (challengeActive('Pandemonium')) health *= type === 'world' ? game.challenges.Pandemonium.getBossMult() : type !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
-		if (challengeActive('Desolation')) health *= game.challenges.Desolation.getEnemyMult();
-		health *= challengeActive('Alchemy') ? alchObj.getEnemyStats(false, false) + 1 : 1;
-		health *= challengeActive('Hypothermia') ? game.challenges.Hypothermia.getEnemyMult() : 1;
-		health *= challengeActive('Glass') ? game.challenges.Glass.healthMult() : 1;
+		const challengeMultipliers = {
+			Unbalance: () => (type !== 'world' ? 2 : 3),
+			Quest: () => game.challenges.Quest.getHealthMult(),
+			Revenge: () => (game.global.world % 2 === 0 ? 10 : 1),
+			Mayhem: () => game.challenges.Mayhem.getEnemyMult() * (type === 'world' ? game.challenges.Mayhem.getBossMult() : 1),
+			Storm: () => (type === 'world' ? game.challenges.Storm.getHealthMult() : 1),
+			Exterminate: () => game.challenges.Exterminate.getSwarmMult(),
+			Nurture: () => game.buildings.Laboratory.getEnemyMult() * (type === 'world' ? 2 : 10),
+			Pandemonium: () => (type === 'world' ? game.challenges.Pandemonium.getBossMult() : game.challenges.Pandemonium.getPandMult()),
+			Alchemy: () => alchObj.getEnemyStats(type !== 'world', type === 'void') + 1,
+			Hypothermia: () => game.challenges.Hypothermia.getEnemyMult(),
+			Glass: () => game.challenges.Glass.healthMult(),
+			Desolation: () => game.challenges.Desolation.getEnemyMult()
+		};
+		health = applyMultipliers(challengeMultipliers, health, true);
 	}
 
 	//Dailies
@@ -948,6 +940,12 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	}
 
 	return health;
+}
+
+function oblitStatMultiplier(challenge) {
+	const oblitMult = challenge === 'Eradicated' ? game.challenges.Eradicated.scaleModifier : 1e12;
+	const zoneModifier = Math.floor(game.global.world / game.challenges[challenge].zoneScaleFreq);
+	return oblitMult * Math.pow(game.challenges[challenge].zoneScaling, zoneModifier);
 }
 
 function calcEnemyHealth(type, zone, cell = 99, name = 'Turtlimp', customHealth) {
@@ -1244,15 +1242,11 @@ function enemyDamageModifiers() {
 	if (game.global.universe === 1) {
 		const challengeMultipliers = {
 			Meditate: () => 1.5,
-			Corrupted: () => 3
+			Corrupted: () => 3,
+			Obliterated: () => oblitStatMultiplier('Obliterated'),
+			Eradicated: () => oblitStatMultiplier('Eradicated')
 		};
 		attack = applyMultipliers(challengeMultipliers, attack, true);
-
-		if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
-			const oblitMult = challengeActive('Eradicated') ? game.challenges.Eradicated.scaleModifier : 1e12;
-			const zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
-			attack *= oblitMult * Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
-		}
 	}
 
 	if (game.global.universe === 2) {
