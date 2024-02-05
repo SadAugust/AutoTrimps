@@ -41,7 +41,7 @@ function _needHousing(houseName, ignoreAffordability) {
 
 	if (houseName === 'Collector') {
 		// Stops Collectors being purchased when on Quest gem quests.
-		if (_getCurrentQuest() === 4) return false;
+		if (getCurrentQuest() === 4) return false;
 		// Fix for Infinity collectors since it doesn't take resourceful into account.
 		if (buildingStat.purchased >= 6000) return false;
 	}
@@ -276,7 +276,7 @@ function _checkUniqueMaps() {
 function _checkQuest() {
 	//Checks to see if we are running Quest and above our first Quest zone and the current zones Quest hasn't been completed.
 	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
-		const questNumber = _getCurrentQuest();
+		const questNumber = getCurrentQuest();
 		// Still allows you to buy tributes during gem quests
 		if (questNumber === 4) _buyTribute();
 		// Don not buy buildings if on a resource (food, wood, metal, gems) quest.
@@ -407,13 +407,13 @@ function _buySmithy(buildingSettings) {
  */
 function _calcSmithyDuringQuest() {
 	let smithyCanAfford = 0;
-	if ((atSettings.portal.aWholeNewWorld || _getCurrentQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
+	if ((atSettings.portal.aWholeNewWorld || getCurrentQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
 		const smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
 		const questEndZone = !game.global.runningChallengeSquared ? 85 : getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone');
 		let questZones = Math.floor((questEndZone - game.global.world) / 2 - 1);
 		if (questZones < 0) questZones = 0;
 		// Buying smithies that won't be needed for quests before user entered end goal or for Smithy quests
-		smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : _getCurrentQuest() === 10 ? 1 : 0;
+		smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : getCurrentQuest() === 10 ? 1 : 0;
 	}
 	return smithyCanAfford;
 }
@@ -477,7 +477,7 @@ function _buyTribute() {
 
 	if ((!tributeSetting.enabled || mapSettings.shouldMeteorologist || mapSettings.mapName === 'Worshipper Farm') && !mapSettings.shouldTribute) return;
 
-	const farmingGems = (mapSettings.mapName === 'Smithy Farm' && mapSettings.gemFarm) || _getCurrentQuest() === 4;
+	const farmingGems = (mapSettings.mapName === 'Smithy Farm' && mapSettings.gemFarm) || getCurrentQuest() === 4;
 	const tributePct = farmingGems || (mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > 0) ? 1 : tributeSetting.percent > 0 ? tributeSetting.percent / 100 : 1;
 	const tributeAmt = farmingGems || tributeSetting.buyMax === 0 ? Infinity : mapSettings.mapName === 'Tribute Farm' && mapSettings.tribute > tributeSetting.buyMax ? mapSettings.tribute : tributeSetting.buyMax;
 

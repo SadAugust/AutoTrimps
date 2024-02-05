@@ -253,8 +253,7 @@ function toggleCatchUpMode() {
 			}
 
 			if (loops % 600 === 0) _timeWarpUpdateUIDisplay();
-			//Fix bug that is caused by this not running when the game is in offline mode
-			else _timeWarpUpdateEquipment();
+			if (!elementVisible('science')) checkTriggers();
 			_timeWarpATFunctions();
 		};
 
@@ -390,6 +389,7 @@ function _handleNewHZE() {
 
 function _handleNewWorld() {
 	if (!atSettings.portal.aWholeNewWorld) return;
+	if ((usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop) && game.global.world === 60) _timeWarpUpdateEquipment();
 	autoPortalCheck();
 	archaeologyAutomator();
 	challengeInfo();
@@ -403,7 +403,6 @@ function _handleNewWorld() {
 	setTitle();
 	_debugZoneStart();
 	if (getPageSetting('autoEggs', 1)) easterEggClicked();
-	if (usingRealTimeOffline && game.global.world === 60) _timeWarpUpdateEquipment();
 }
 
 function _debugZoneStart() {

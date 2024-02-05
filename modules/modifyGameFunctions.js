@@ -60,11 +60,11 @@ offlineProgress.start = function () {
 	const trustWorthy = game.options.menu.offlineProgress.enabled;
 	if (game.options.menu.offlineProgress.enabled === 1) game.options.menu.offlineProgress.enabled = 2;
 	offlineProgress.originalStart(...arguments);
+	toggleCatchUpMode();
 	while (game.options.menu.offlineProgress.enabled !== trustWorthy) toggleSetting('offlineProgress');
 	try {
 		const offlineTime = offlineProgress.totalOfflineTime / 1000 - 86400;
 		if (offlineTime > 0) {
-			// offlineTime *= 1000;
 			game.global.portalTime += offlineTime;
 			if (getZoneSeconds() >= offlineTime) game.global.zoneStarted += offlineTime;
 		}
@@ -940,6 +940,7 @@ function getPlayerCritDamageMult_AT(customShield) {
 	critMult += getPerkLevel('Criticality') * game.portal.Criticality.modifier;
 	if (relentLevel > 0) critMult += 1;
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
+	critMult += alchObj.getPotionEffect('Elixir of Accuracy');
 	return critMult;
 }
 

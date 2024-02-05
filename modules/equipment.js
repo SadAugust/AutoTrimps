@@ -80,7 +80,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShiel
 	const noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal');
 
 	const mostEfficientObj = _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge);
-	const [highestPrestige, prestigesAvailable] = _getHighestPrestige(prestigeSetting, canAncientTreasure, noPrestigeChallenge);
+	const [highestPrestige, prestigesAvailable] = _getHighestPrestige(mostEfficientObj, prestigeSetting, canAncientTreasure, noPrestigeChallenge);
 	return _populateMostEfficientEquipment(mostEfficientObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield);
 }
 
@@ -117,17 +117,18 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 	};
 }
 
-function _getHighestPrestige(prestigeSetting, canAncientTreasure, noPrestigeChallenge) {
+function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure, noPrestigeChallenge) {
 	let highestPrestige = 0;
 	let prestigesAvailable = false;
 
 	if (!noPrestigeChallenge) {
 		for (let equipName in MODULES.equipment) {
+			if (equipName === 'Shield') continue;
 			const equipType = MODULES.equipment[equipName].stat;
 			const currentPrestige = game.equipment[equipName].prestige;
 			highestPrestige = Math.max(highestPrestige, currentPrestige);
 
-			if (prestigesAvailable || equipName === 'Shield' || buyPrestigeMaybe(equipName).skip) continue;
+			if (prestigesAvailable || buyPrestigeMaybe(equipName).skip) continue;
 			if (prestigeSetting === 0 || (prestigeSetting === 1 && mostEfficient[equipType].zoneGo) || (prestigeSetting === 2 && !canAncientTreasure)) continue;
 
 			prestigesAvailable = true;
@@ -316,7 +317,7 @@ function autoEquip() {
 	}
 
 	//If running a wood or metal quest then disable autoEquip
-	if ([2, 3].indexOf(_getCurrentQuest()) >= 0) return;
+	if ([2, 3].indexOf(getCurrentQuest()) >= 0) return;
 	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
 	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
 		if (mapSettings.ancientTreasure) return;

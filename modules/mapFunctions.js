@@ -901,7 +901,7 @@ function smithyFarm(lineCheck) {
 	const defaultSettings = baseSettings[0];
 	if (!defaultSettings || (!defaultSettings.active && !challengeActive('Quest'))) return farmingDetails;
 
-	const smithyQuest = _getCurrentQuest() === 10;
+	const smithyQuest = getCurrentQuest() === 10;
 	if (challengeActive('Quest') && getPageSetting('quest') && !smithyQuest && !(game.global.world >= getPageSetting('questSmithyZone') && defaultSettings.active)) return farmingDetails;
 
 	const dailyAddition = dailyOddOrEven();
@@ -1278,7 +1278,7 @@ function prestigeRaiding(lineCheck) {
 	if (!baseSettings) return farmingDetails;
 
 	const defaultSettings = baseSettings[0];
-	if (!defaultSettings || !defaultSettings.active || _getCurrentQuest() === 8) return farmingDetails;
+	if (!defaultSettings || !defaultSettings.active || getCurrentQuest() === 8) return farmingDetails;
 
 	const settingIndex = findSettingsIndex(settingName, baseSettings, mapName);
 	const setting = baseSettings[settingIndex];
@@ -1352,28 +1352,24 @@ function _runPrestigeRaiding(setting, mapName, settingIndex, defaultSettings) {
 }
 
 function prestigeRaidingMapping() {
-	const { mapName, totalMapCost, mapSliders, prestigeMapArray, prestigeFragMapBought } = mapSettings;
+	if (mapSettings.mapName !== 'Prestige Raiding') return;
 
-	if (mapName !== 'Prestige Raiding' || !getPageSetting('autoMaps')) return;
-
-	if (!totalMapCost || !mapSliders) {
-		const costAndSliders = prestigeTotalFragCost();
-		if (!totalMapCost) mapSettings.totalMapCost = costAndSliders.cost;
-		if (!mapSliders) mapSettings.mapSliders = costAndSliders.sliders;
-	}
-	mapSettings.prestigeMapArray = prestigeMapArray || new Array(5);
-	mapSettings.prestigeFragMapBought = prestigeFragMapBought || false;
-
-	if (prestigeMapArray === undefined || prestigeMapArray[0] === undefined) {
-		if (totalMapCost < game.resources.fragments.owned) {
-			_handlePrestigeFragMapBought();
-		} else {
-			fragmentFarm(true);
-			mapSettings.prestigeFragMapBought = true;
-		}
+	if (!mapSettings.totalMapCost) {
+		const { cost, sliders } = prestigeTotalFragCost();
+		mapSettings.totalMapCost = cost;
+		mapSettings.mapSliders = sliders;
 	}
 
-	if (!prestigeFragMapBought && game.global.preMapsActive) {
+	mapSettings.prestigeMapArray = mapSettings.prestigeMapArray || new Array(5);
+	mapSettings.prestigeFragMapBought = mapSettings.prestigeFragMapBought || false;
+
+	if (!mapSettings.prestigeMapArray || typeof mapSettings.prestigeMapArray[0] === 'undefined') {
+		const enoughFragments = mapSettings.totalMapCost < game.resources.fragments.owned;
+		mapSettings.prestigeFragMapBought = !enoughFragments;
+		enoughFragments ? _handlePrestigeFragMapBought() : fragmentFarm(true);
+	}
+
+	if (!mapSettings.prestigeFragMapBought && game.global.preMapsActive) {
 		_handlePrestigeMapBuying();
 		_handlePrestigeMapRunning();
 	}
@@ -1791,7 +1787,7 @@ function quest(lineCheck) {
 	};
 	if (!challengeActive('Quest') || !getPageSetting('quest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
 
-	let shouldMap = _getCurrentQuest();
+	let shouldMap = getCurrentQuest();
 
 	// If we're running a one shot quest and can one shot the enemy then disable questing.
 	if (shouldMap === 7 && calcOurDmg('min', 0, false, 'world', 'never') > calcEnemyHealthCore('world', game.global.world, 50, 'Turtlimp')) shouldMap = 0;
@@ -1814,24 +1810,6 @@ function quest(lineCheck) {
 	return farmingDetails;
 }
 
-function _getCurrentQuest() {
-	if (!challengeActive('Quest') || !getPageSetting('quest')) return 0;
-	if (game.global.world < game.challenges.Quest.getQuestStartZone()) return 0;
-
-	const questProgress = game.challenges.Quest.getQuestProgress();
-	const questDescription = game.challenges.Quest.getQuestDescription();
-
-	if (questProgress === 'Failed!' || questProgress === 'Quest Complete!') return 0;
-
-	const resourceMultipliers = ['food', 'wood', 'metal', 'gems', 'science'];
-	const resourceIndex = resourceMultipliers.findIndex((resource) => questDescription.includes(resource));
-	if (resourceIndex !== -1) return resourceIndex + 1;
-
-	const otherQuests = ['Complete 5 Maps at Zone level', 'One-shot 5 world enemies', "Don't let your shield break before Cell 100", "Don't run a map before Cell 100", 'Buy a Smithy'];
-	const otherIndex = otherQuests.findIndex((quest) => questDescription === quest);
-	return otherIndex !== -1 ? otherIndex + 6 : 0;
-}
-
 function _runQuest(shouldMap, mapName) {
 	const questMapTypes = {
 		1: ['lsc', '1', 'Sea'],
@@ -1842,6 +1820,7 @@ function _runQuest(shouldMap, mapName) {
 		5: ['fa', '0,0,0,1'],
 		default: ['fa', '1,1,1,0']
 	};
+
 	const questArray = questMapTypes[shouldMap] || questMapTypes.default;
 	const [mapSpecial, jobRatio] = questArray;
 	const questResource = game.challenges.Quest.resource;
@@ -1851,7 +1830,6 @@ function _runQuest(shouldMap, mapName) {
 
 	if (mapSettings.mapName !== mapName && mapCap > 0 && [1, 2, 3, 4, 5].includes(shouldMap)) {
 		const resourcesEarned = game.resources[questResource].owned + resourcesFromMap(questResource, mapSpecial, jobRatio, mapLevel, mapCap);
-		// Disable Questing if we can't earn enough resources to complete the quest.
 		shouldMap = game.challenges.Quest.questProgress >= resourcesEarned ? 0 : shouldMap;
 	}
 	// Stop farming for damage if we have run more than our allocated amount of maps.
@@ -3504,7 +3482,7 @@ function autoLevelCheck(mapName, mapSpecial, maxZone, minZone) {
 		repeatCounter = 0;
 	}
 
-	if (challengeActive('Bublé') || _getCurrentQuest() === 8) mapLevel = callAutoMapLevel(mapName, mapSpecial);
+	if (challengeActive('Bublé') || getCurrentQuest() === 8) mapLevel = callAutoMapLevel(mapName, mapSpecial);
 	else mapLevel = callAutoMapLevel(mapName, mapSpecial, maxZone, minZone);
 
 	if (mapLevel !== mapSettings.levelCheck && mapSettings.levelCheck !== Infinity) {
@@ -3618,6 +3596,7 @@ function fragmentFarm() {
 
 	if (canAffordMap) {
 		if (!mapSettings.shouldRun && !MODULES.maps.fragmentFarming) debug(`Fragment farming successful`);
+		delete mapSettings.prestigeFragMapBought;
 		MODULES.maps.fragmentFarming = false;
 		return;
 	}

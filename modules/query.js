@@ -28,6 +28,7 @@ function getUpgradeCosts() {
 
 	upgradeList.forEach((upgrade) => {
 		if (upgrade === 'Bloodlust' && game.global.world === 1) return;
+		if (upgrade === 'Blockmaster' && game.global.world < 1) return;
 		const { allowed, done } = game.upgrades[upgrade];
 		if (allowed > done) {
 			resourcesNeeded.science += getCostToUpgrade(upgrade, 'science');
@@ -135,4 +136,72 @@ function prestigesUnboughtCount() {
 	const numUnbought = prestigeList.filter((p) => game.upgrades[p].allowed - game.upgrades[p].done > 0).length;
 
 	return numUnbought;
+}
+
+function getCurrentEnemy(cell = 1) {
+	if (game.global.gridArray.length <= 0) return {};
+
+	const mapping = game.global.mapsActive;
+	const currentCell = mapping ? game.global.lastClearedMapCell + cell : game.global.lastClearedCell + cell;
+	const mapGrid = mapping ? 'mapGridArray' : 'gridArray';
+
+	if (typeof game.global[mapGrid][currentCell] === 'undefined') return game.global[mapGrid][game.global[mapGrid].length - 1];
+
+	return game.global[mapGrid][currentCell];
+}
+
+function checkFastEnemy(enemy) {
+	const enemyName = enemy.name;
+	const mapping = game.global.mapsActive;
+	const mapObject = mapping ? getCurrentMapObject() : null;
+	const worldType = !mapping ? 'world' : mapObject.location === 'Void' ? 'void' : 'map';
+
+	const fastImp = MODULES.fightinfo.fastImps.includes(enemyName);
+	if (fastImp) return true;
+
+	const isDaily = challengeActive('Daily');
+	const dailyChallenge = game.global.dailyChallenge;
+	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
+	if (dailyEmpower && !mapping) return true;
+
+	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
+	if (dailyExplosive) {
+		if (worldType === 'map' && !MODULES.maps.slowScumming) return true;
+		if (worldType === 'world') return true;
+	}
+
+	if (game.global.voidBuff === 'doubleAttack') return true;
+
+	if (game.global.universe === 1) return false;
+
+	// U2 specifics
+	if (challengeActive('Archaeology')) return true;
+	if (challengeActive('Trappapalooza')) return true;
+	if (challengeActive('Bublé') || getCurrentQuest() === 8) return true;
+	if (challengeActive('Exterminate') && game.challenges.Exterminate.experienced) return false;
+	if (challengeActive('Glass')) return true;
+	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) return true;
+	if (challengeActive('Duel')) {
+		if (!mapping) return true;
+		else if (game.challenges.Duel.enemyStacks < 10) return true;
+	}
+	if (challengeActive('Revenge')) return true;
+	if (challengeActive('Smithless')) {
+		if (!mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith) return true;
+	}
+	if (challengeActive('Desolation') && mapping) {
+		// Exotic mapimps in deso are bugged and slow
+		const exoticImp = MODULES.fightinfo.exoticImps.includes(enemyName);
+		return !exoticImp;
+	}
+
+	if (worldType === 'world' && game.global.world > 200 && game.global.gridArray[enemy.level - 1].u2Mutation.length > 0) return true;
+
+	return false;
+}
+
+function getGameTime() {
+	const { start: startTime, time: globalTime } = game.global;
+	if (game.options.menu.pauseGame.enabled) return startTime + (game.options.menu.pauseGame.timeAtPause - startTime) + globalTime;
+	return startTime + globalTime;
 }

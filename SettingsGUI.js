@@ -681,19 +681,18 @@ function initialiseAllSettings() {
 			function () { return ('Building Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
-			Hut: { enabled: true, percent: 100, buyMax: 200 },
-			House: { enabled: true, percent: 100, buyMax: 200 },
-			Mansion: { enabled: true, percent: 100, buyMax: 200 },
-			Hotel: { enabled: true, percent: 100, buyMax: 200 },
+			Hut: { enabled: true, percent: 80, buyMax: 200 },
+			House: { enabled: true, percent: 80, buyMax: 200 },
+			Mansion: { enabled: true, percent: 80, buyMax: 200 },
+			Hotel: { enabled: true, percent: 80, buyMax: 200 },
 			Wormhole: { enabled: false, percent: 1, buyMax: 1 },
 			Resort: { enabled: true, percent: 100, buyMax: 200 },
 			Gateway: { enabled: true, percent: 10, buyMax: 200 },
 			Collector: { enabled: true, percent: 100, buyMax: 200 },
 			Gym: { enabled: true, percent: 75, buyMax: 0 },
-			Tribute: { enabled: true, percent: 100, buyMax: 0 },
-			Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 0 },
+			Tribute: { enabled: true, percent: 20, buyMax: 0 },
+			Nursery: { enabled: false, percent: 100, buyMax: 0, fromZ: 0 },
 			Smithy: { enabled: true, percent: 100, buyMax: 0 },
-			Tribute: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
 			SafeGateway: { enabled: false, mapCount: 1, zone: 0 }
 		}, null, 'Buildings', [1, 2],
@@ -832,9 +831,9 @@ function initialiseAllSettings() {
 				let description = "<p>If your Hits Survived (trimpHealth/enemyDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at armor purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase gear whenever you slow down in world.<br></p>";
 				description += "<p>Your Hits Survived ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
-				description += "<p><b>Recommended:</b> 1.25</p>";
+				description += "<p><b>Recommended:</b> 1.5</p>";
 				return description;
-			}, 'value', 1.25, null, "Equipment", [1, 2],
+			}, 'value', 2.5, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCapAttack',
 			function () { return ('AE: Weapon Cap') },
@@ -891,7 +890,7 @@ function initialiseAllSettings() {
 
 				description += "<p><b>AE: Prestige Off</b><br>Will only purchase prestiges for equipment when you have 6 or more levels in it.</p>";
 
-				description += "<p><b>AE: Maybe Prestige</b><br>Will only purchase prestiges you have either 6 or more levels in an equip <b>OR</b> when outside of your <b>AE: Zone</b> range <b>OR</b> when you can afford them.</p>";
+				description += "<p><b>AE: Maybe Prestige</b><br>Will only purchase prestiges when they are more efficient than leveling the piece of equipment further.</p>";
 
 				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run " + trimple + ".";
 
@@ -1505,7 +1504,7 @@ function initialiseAllSettings() {
 				description += "<p>This is disabled when you have bought all the prestiges available to you and have prestiges available in the minimum map bonus level.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', -1, null, "Maps", [1, 2]);
+			}, 'value', 1, null, "Maps", [1, 2]);
 
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },
@@ -4541,8 +4540,8 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 	const btnAttributes = {
 		innerHTML: name(),
-		style: 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;',
-		onmouseover: 'tooltip("' + name() + '", "customText", event, "' + description() + '")',
+		style: `position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;`,
+		onmouseover: `tooltip("${name()}", "customText", event, "${description()}")`,
 		onmouseout: 'tooltip("hide")',
 		id: id
 	};
@@ -4550,7 +4549,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	// Define the actions for each setting type
 	const settingActions = {
 		boolean: () => {
-			btnAttributes.onclick = 'settingChanged("' + id + '")';
+			btnAttributes.onclick = `settingChanged("${id}")`;
 		},
 		value: () => {
 			btnAttributes.class = 'noselect settingsBtn btn-info';
@@ -4563,14 +4562,13 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		dropdown: () => {
 			btnAttributes.onmouseout = 'tooltip("hide")';
 			btnAttributes.class = 'select2';
-			//Need to adjust this information on parent frame for dropdowns
-			parentAttributes.onmouseover = 'tooltip("' + name() + '", "customText", event, "' + description() + '")';
+			parentAttributes.onmouseover = `tooltip("${name()}", "customText", event, "${description()}")`;
 			parentAttributes.onmouseout = 'tooltip("hide")';
-			parentAttributes.onchange = 'settingChanged("' + id + '")';
+			parentAttributes.onchange = `settingChanged("${id}")`;
 		},
 		multitoggle: () => {
-			btnAttributes.onclick = 'settingChanged("' + id + '")';
-			btnAttributes.onmouseover = 'tooltip("' + name().join(' / ') + '", "customText", event, "' + description() + '")';
+			btnAttributes.onclick = `settingChanged("${id}")`;
+			btnAttributes.onmouseover = `tooltip("${name().join(' / ')}", "customText", event, "${description()}")`;
 			btnAttributes.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]['value']];
 		},
 		action: () => {
@@ -4886,9 +4884,7 @@ function _toggleElem(elementId, isVisible) {
 	if (!element) return;
 
 	const setting = autoTrimpSettings[elementId];
-	if (isVisible && setting.require && !getPageSetting('displayAllSettings') && !setting.require()) {
-		isVisible = false;
-	}
+	if (isVisible && setting.require && !getPageSetting('displayAllSettings') && !setting.require()) isVisible = false;
 
 	const displayState = isVisible ? '' : 'none';
 	const parentDisplayState = isVisible ? 'inline-block' : 'none';
@@ -5084,11 +5080,8 @@ function _setSettingLineBreaks(id, style = 'show') {
 	const elemSibling = elem.nextElementSibling;
 	const nextElemSibling = elemSibling.nextElementSibling;
 
-	//Insert break if it doesn't exist.
 	if (style === 'show' && !isBreak(elemSibling) && elemSibling.style.display !== 'none') elem.insertAdjacentHTML('afterend', '<br>');
-	//Remove the break if it exists.
 	if (style === 'hide' && isBreak(elemSibling)) elemSibling.remove();
-	//Remove break if we are hiding the element and the next element is a break.
 	if (isBreak(elemSibling) && nextElemSibling.style.display === 'none') elemSibling.remove();
 }
 

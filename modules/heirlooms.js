@@ -52,6 +52,7 @@ function evaluateHeirloomMods(loom, location) {
 }
 
 function worthOfHeirlooms() {
+	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	const heirloomWorth = { Shield: [], Staff: [], Core: [] };
 
 	const recycle = game.global.heirloomsExtra
@@ -82,18 +83,68 @@ function autoHeirlooms(portal) {
 
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
-	const heirloomTypes = heirloomType === 'All' ? ['Shield', 'Staff', game.global.universe === 1 ? 'Core' : null] : [heirloomType];
-	const heirloomTypeEnabled = heirloomTypes.map((type) => getPageSetting(`heirloomAuto${type}`));
+	const heirloomTypes = heirloomType === 'All' ? (game.global.universe === 1 ? ['Shield', 'Staff', 'Core'] : ['Shield', 'Staff']) : [heirloomType];
 
-	while (game.global.heirloomsCarried.length < getMaxCarriedHeirlooms() && game.global.heirloomsExtra.length > 0) {
-		const heirloomWorth = worthOfHeirlooms();
-		heirloomTypes.forEach((type, index) => {
-			if (type === null || !type || heirloomWorth[type].length <= 0) return;
-			const carriedHeirlooms = heirloomWorth[type].shift();
-			selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-			if (heirloomTypeEnabled[index]) carryHeirloom();
-			else recycleHeirloom(true);
-		});
+	const heirloomTypeEnabled = heirloomTypes.reduce((obj, type) => {
+		obj[type] = getPageSetting(`heirloomAuto${type}`);
+		return obj;
+	}, {});
+
+	const weights = worthOfHeirlooms();
+	let types = 0;
+
+	for (let key in weights) {
+		if (heirloomTypeEnabled[key]) types++;
+		else delete weights[key];
+	}
+
+	if (types === 0) return;
+
+	const carrySpace = getMaxCarriedHeirlooms() - game.global.heirloomsCarried.length;
+	const counts = Object.entries(weights).reduce((acc, [typeKey, looms]) => {
+		acc[typeKey] = Math.min(looms.length, Math.floor(carrySpace / types));
+		return acc;
+	}, {});
+
+	let used = Object.values(counts).reduce((acc, val) => (acc += val), 0);
+	types = Object.entries(counts).reduce((acc, [key, count]) => (acc += count < weights[key].length));
+
+	while (types > 0 && used <= carrySpace - types) {
+		for (const key in Object.keys(counts)) {
+			const uncountedLooms = weights[key].length - counts[key];
+			if (uncountedLooms === 0) continue;
+
+			let inc = Math.floor(carrySpace / types);
+			if (uncountedLooms < inc) {
+				inc = uncountedLooms;
+				types--;
+			}
+
+			counts[key] += inc;
+			used += inc;
+		}
+	}
+
+	if (used < game.global.heirloomsExtra.length) {
+		let n = 0;
+		while (used < carrySpace) {
+			const key = counts[Object.keys(counts)[n]];
+			if (counts[key] < weights[key].length) counts[key]++;
+			n++;
+		}
+	}
+
+	const toKeepBitmask = Object.entries(weights).reduce((acc, [key, loomList]) => {
+		for (let i = 0; i < counts[key]; i++) {
+			acc |= 1 << loomList[i].index;
+		}
+	}, 0b0);
+
+	for (let idx = game.global.heirloomsExtra.length - 1; idx >= 0; idx--) {
+		if (toKeepBitmask & (1 << idx)) {
+			selectHeirloom(idx, 'heirloomsExtra');
+			carryHeirloom();
+		}
 	}
 }
 
@@ -232,7 +283,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 
 	let voidActive = mapType === 'void';
 	if (voidActive && swapLooms) {
-		//const fastChallenges = !challengeActive('Glass') && !challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20 && !challengeActive('Archaeology') && !challengeActive('Quest') && _getCurrentQuest() !== 8;
+		//const fastChallenges = !challengeActive('Glass') && !challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20 && !challengeActive('Archaeology') && !challengeActive('Quest') && getCurrentQuest() !== 8;
 		MODULES.heirlooms.plagueSwap =
 			game.global.universe === 2 &&
 			game.global.voidBuff &&
@@ -242,7 +293,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 			!game.challenges.Berserk.weakened !== 20 &&
 			!challengeActive('Archaeology') &&
 			!challengeActive('Quest') &&
-			_getCurrentQuest() !== 8 &&
+			getCurrentQuest() !== 8 &&
 			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
 			!MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
 			MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&

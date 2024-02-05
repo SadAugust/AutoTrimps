@@ -262,8 +262,8 @@ function _getAutoJobRatio(maxTrimps) {
 		{ condition: () => game.buildings.Tribute.owned > 1000, ratio: [1, 1, 10, 0] },
 		{ condition: () => maxTrimps > 3000000, ratio: [3, 1, 4, 0] },
 		{ condition: () => maxTrimps > 300000, ratio: [3, 3, 5, 0] },
-		{ condition: () => game.global.mapsActive && !game.mapUnlocks.Shieldblock.canRunOnce, ratio: [1, 1.5, 2] },
-		{ condition: () => game.global.mapsActive, ratio: [1, 1, 2] },
+		{ condition: () => game.global.mapsActive && !game.mapUnlocks.Shieldblock.canRunOnce, ratio: [1, 1.5, 2, 0] },
+		{ condition: () => game.global.mapsActive, ratio: [1, 1, 2, 0] },
 		{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
 		{ condition: () => true, ratio: [1, 1, 1, 0] }
 	];

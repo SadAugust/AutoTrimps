@@ -139,7 +139,8 @@ function setTitle() {
 function message_AT(message, messageType, icon) {
 	const log = document.getElementById('log');
 	const needsScroll = log.scrollTop + 10 > log.scrollHeight - log.clientHeight;
-	const displayType = getPageSetting('spamMessages').show ? 'block' : 'none';
+	const showMessages = getPageSetting('spamMessages').show;
+	const displayType = showMessages || typeof showMessages === 'undefined' ? 'block' : 'none';
 
 	const iconPrefix = icon && icon.charAt(0) === '*' ? 'icomoon icon-' : 'glyphicon glyphicon-';
 	icon = icon ? icon.replace('*', '') : icon;
@@ -231,7 +232,6 @@ function testTimeWarp(hours) {
 
 	const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
 	_adjustGlobalTimers(keys, -timeToRun);
-
 	offlineProgress.start();
 }
 
@@ -608,4 +608,22 @@ function elementExists(element) {
 function elementVisible(element) {
 	visible = document.getElementById(element).style.visibility !== 'hidden';
 	return elementExists(element) && visible;
+}
+
+function getCurrentQuest() {
+	if (!challengeActive('Quest') || !getPageSetting('quest')) return 0;
+	if (game.global.world < game.challenges.Quest.getQuestStartZone()) return 0;
+
+	const questProgress = game.challenges.Quest.getQuestProgress();
+	const questDescription = game.challenges.Quest.getQuestDescription();
+
+	if (questProgress === 'Failed!' || questProgress === 'Quest Complete!') return 0;
+
+	const resourceMultipliers = ['food', 'wood', 'metal', 'gems', 'science'];
+	const resourceIndex = resourceMultipliers.findIndex((resource) => questDescription.includes(resource));
+	if (resourceIndex !== -1) return resourceIndex + 1;
+
+	const otherQuests = ['Complete 5 Maps at Zone level', 'One-shot 5 world enemies', "Don't let your shield break before Cell 100", "Don't run a map before Cell 100", 'Buy a Smithy'];
+	const otherIndex = otherQuests.findIndex((quest) => questDescription === quest);
+	return otherIndex !== -1 ? otherIndex + 6 : 0;
 }
