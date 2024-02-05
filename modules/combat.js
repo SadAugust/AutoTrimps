@@ -398,7 +398,7 @@ function _shouldPBSwap(mapping, enemy, fastEnemy) {
 
 function _getEnemyDmg(mapping, worldType) {
 	const enemy = getCurrentEnemy();
-	const damageMult = _getEnemyDmgMultiplier(mapping, worldType);
+	const damageMult = _getEnemyDmgMultiplier(mapping, worldType, enemy);
 	const damage = enemy.attack * enemyDamageModifiers() * 1.5 * damageMult;
 
 	const maxEquality = getPerkLevel('Equality');
@@ -408,7 +408,7 @@ function _getEnemyDmg(mapping, worldType) {
 	return { enemyDmg: damage, enemyDmgMax: damageMax, enemyDmgMult: damageMult };
 }
 
-function _getEnemyDmgMultiplier(mapping, worldType) {
+function _getEnemyDmgMultiplier(mapping, worldType, enemy) {
 	let damageMult = 1;
 
 	if (game.global.voidBuff === 'doubleAttack') damageMult += 2;
