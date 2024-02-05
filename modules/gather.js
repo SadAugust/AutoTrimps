@@ -176,7 +176,7 @@ function _willTrapsBeWasted() {
 	const gteTime = breedTimeRemaining().gte(1 / _calcTPS());
 	const lteTime = game.global.playerGathering === 'trimps' && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1));
 	const excessBait = 1 + game.portal.Bait.modifier * game.portal.Bait.level >= game.resources.trimps.realMax() - game.resources.trimps.owned
-	return !(gteTime || lteTime || excessBait);
+	return excessBait || !(gteTime || lteTime);
 }
 
 function _lastResort(researchAvailable, trapTrimpsOK, lowOnTraps, needScience) {
