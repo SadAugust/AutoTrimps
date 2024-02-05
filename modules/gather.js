@@ -413,7 +413,8 @@ function autoGather() {
 	upgradesToGather = upgradesToGather
 		.map((up, idx) => ({up, idx}))
 		.sort((a, b)=>
-			(game.upgrades[b.up].allowed - game.upgrades[b.up].done) - (game.upgrades[a.up].allowed - game.upgrades[a.up].done) || a.idx - b.idx);
+			(game.upgrades[b.up].allowed - game.upgrades[b.up].done) - (game.upgrades[a.up].allowed - game.upgrades[a.up].done) || a.idx - b.idx)
+		.map(({up}) => up)
 
 	//Upgrade accelerator
 	for (let upgrade of upgradesToGather) {
