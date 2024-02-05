@@ -596,7 +596,7 @@ function argSort(array, reverseStability = false) {
 		.map((value, index) => [value, index])
 		.sort((a1, a2) => {
 			let diff = a1[0] - a2[0];
-			return diff ? diff : reverseStability ? a2[1] - a1[1] : 0;
+			return diff ? diff : reverseStability ? a2[1] - a1[1] : a1[1] - a2[1];
 		})
 		.map((a) => a[1]);
 }

@@ -410,8 +410,10 @@ function autoGather() {
 		upgradesToGather = upgradesToGather.filter(up => !['Speedscience', 'Megascience'].includes(up))
 
 	//Prioritizes upgrades that are pilling up
-	upgradesToGather = upgradesToGather.sort((up1, up2)=>
-		(game.upgrades[up2].allowed - game.upgrades[up2].done) - (game.upgrades[up1].allowed - game.upgrades[up1].done));
+	upgradesToGather = upgradesToGather
+		.map((up, idx) => ({up, idx}))
+		.sort((a, b)=>
+			(game.upgrades[b.up].allowed - game.upgrades[b.up].done) - (game.upgrades[a.up].allowed - game.upgrades[a.up].done) || a.idx - b.idx);
 
 	//Upgrade accelerator
 	for (let upgrade of upgradesToGather) {
