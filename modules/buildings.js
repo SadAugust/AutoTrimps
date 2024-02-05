@@ -239,7 +239,7 @@ function _buyStorage(hypoZone) {
 
 		const firstZoneCheck = game.global.world === 1 && curRes > maxRes * 0.9;
 		const tenZonesCheck = game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * 0.9;
-		const mapsUnlockedCheck = curRes + exoticValue > maxRes * 0.85;
+		const mapsUnlockedCheck = curRes + exoticValue > maxRes * 0.9;
 		if ((firstZoneCheck || tenZonesCheck || mapsUnlockedCheck) && game.triggers[storage].done) safeBuyBuilding(storage, 1);
 	}
 }
