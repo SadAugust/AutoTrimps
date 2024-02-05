@@ -146,17 +146,12 @@ function makeResourceTooltip(mouseover) {
 	}
 }
 
-function findMap(level, special, biome, perfect = false) {
-	//Pre-Init
-	if (!level) level = 0;
-	if (!special) special = getAvailableSpecials('lmc');
-	if (!biome) biome = getBiome();
-
+function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBiome(), perfect = getPageSetting('onlyPerfectMaps')) {
 	let mapLoot = biome === 'Farmlands' ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
 	if (game.singleRunBonuses.goldMaps.owned) mapLoot += 1;
 
 	for (let mapping in game.global.mapsOwnedArray) {
-		let map = game.global.mapsOwnedArray[mapping];
+		const map = game.global.mapsOwnedArray[mapping];
 		if (map.location !== biome && biome !== 'Random') continue;
 		if (perfect) {
 			if (map.size > trimpStats.mapSize) continue;
@@ -288,8 +283,14 @@ function prettifyMap(map) {
 
 function _fragmentCheck(highestMap, runUnique) {
 	const mapLevel = parseInt(document.getElementById('mapLevelInput').value) + parseInt(document.getElementById('advExtraLevelSelect').value) || 6;
-	const mapSpecial = document.getElementById('advSpecialSelect').value === '0' ? 'no special' : document.getElementById('advSpecialSelect').value;
-	debug(`Can't afford the designed map (level ${mapLevel}${mapSpecial ? ' ' : ''}${mapSpecial})`, 'maps', 'th-large');
+	const mapSpecial = document.getElementById('advSpecialSelect').value || '0';
+	const mapBiome = document.getElementById('biomeAdvMapsSelect').value;
+
+	const mapCheck = findMap(game.global.world - mapLevel, mapSpecial, mapBiome);
+	if (mapCheck) return _runSelectedMap(mapCheck, runUnique);
+
+	const mapSpecialMsg = mapSpecial === '0' ? 'no bonus' : mapSpecial;
+	debug(`Can't afford the designed map (level ${mapLevel} ${mapSpecialMsg})`, 'maps', 'th-large');
 	//Runs fragment farming if Explorers are unlocked and can afford a max loot+size sliders map
 	if (!game.jobs.Explorer.locked && mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) fragmentFarm();
 	//Disable mapping if we don't have a map and can't afford the one that we want to make.
