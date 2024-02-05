@@ -392,7 +392,7 @@ function autoGather() {
 	}
 
 	//Efficiency has the highest priority amongst upgrades
-	if (_gatherUpgrade('Efficiency', researchAvailable, hasTurkimp))
+	if (!game.global.mapsActive && _gatherUpgrade('Efficiency', researchAvailable, hasTurkimp))
 		return;
 
 	// Medium Priority Trapping (soldiers are dead)
