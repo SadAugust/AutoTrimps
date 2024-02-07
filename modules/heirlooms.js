@@ -127,10 +127,13 @@ function autoHeirlooms(portal) {
 
 	if (used < game.global.heirloomsExtra.length) {
 		let n = 0;
-		while (used < carrySpace) {
-			const key = counts[Object.keys(counts)[n]];
-			if (counts[key] < weights[key].length) counts[key]++;
-			n++;
+		while (used < carrySpace && used < game.global.heirloomsExtra.length) {
+			const key = Object.keys(counts)[n];
+			if (counts[key] < weights[key].length) {
+				counts[key]++;
+				used++;
+			}
+			n = (n + 1) % Object.keys(weights).length;
 		}
 	}
 
