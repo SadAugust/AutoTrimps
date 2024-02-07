@@ -341,7 +341,7 @@ function _checkSitInMaps() {
 //When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
 //Has a time override as there's a certain cell that will always be unliving so can bypass it this way
 function _lifeMapping() {
-	if (game.global.mapsActive || challengeActive('Life') || !getPageSetting('life')) return;
+	if (game.global.mapsActive || !challengeActive('Life') || !getPageSetting('life')) return;
 
 	const lifeZone = getPageSetting('lifeZone');
 	const lifeStacks = getPageSetting('lifeStacks');
