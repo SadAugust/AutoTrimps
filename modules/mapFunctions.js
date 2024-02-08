@@ -2320,11 +2320,10 @@ function _runAlchemy(setting, mapName, settingName, settingIndex) {
 	const potionGoal = setting.potion;
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, 1) : setting.level;
 
-	//Working out which potion the input corresponds to.
 	const potionIndex = ['h', 'g', 'f', 'v', 's'].indexOf(potionGoal.charAt('0'));
 	const potionName = alchObj.potionNames[potionIndex];
 	let potionTarget = potionGoal.toString().replace(/[^\d,:-]/g, '');
-	//Alchemy biome selection, will select Farmlands if it's unlocked and appropriate otherwise it'll use the default map type for that herb.
+
 	const potionBiomes = ['Mountain', 'Forest', 'Sea', 'Depths', 'Plentiful'];
 	const farmlandResources = ['Metal', 'Wood', 'Food', 'Gems', 'Any'];
 	const biome = game.global.farmlandsUnlocked && farmlandResources[potionIndex] === getFarmlandsResType() ? 'Farmlands' : potionBiomes[potionIndex];
@@ -2347,8 +2346,9 @@ function _runAlchemy(setting, mapName, settingName, settingIndex) {
 
 	//When mapType is set as Map Count work out how many of each Potion/Brew we can farm in the amount of maps specified.
 	if (setting.mapType && setting.mapType === 'Map Count') {
-		potionTarget = mapSettings.potionTarget || potionCurrent;
-		if (!mapSettings.potionTarget) {
+		if (mapSettings.potionTarget) {
+			potionTarget = mapSettings.potionTarget;
+		} else {
 			let herbsGained = game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned + alchObj.getDropRate(game.global.world + mapLevel) * herbMult * potionTarget;
 			while (herbsGained > Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult) {
 				herbsGained -= Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult;
