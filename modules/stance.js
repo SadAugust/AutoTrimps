@@ -111,14 +111,11 @@ function oneShotPower(specificStance, offset = 0, maxOrMin) {
 	return power - 1;
 }
 
-function challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower = 2, formation) {
-	//Pre-Init
-	if (!maxHealth) maxHealth = calcOurHealth();
+function challengeDamage(maxHealth = calcOurHealth(), minDamage, maxDamage, missingHealth, block = calcOurBlock(false), pierce, critPower = 2, formation) {
 	if (!minDamage) minDamage = calcOurDmg('min', formation) + addPoison(true);
 	if (!maxDamage) maxDamage = calcOurDmg('max', formation) + addPoison(true);
 	if (!missingHealth) missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
 	if (!pierce) pierce = game.global.brokenPlanet && !game.global.mapsActive ? getPierceAmt() : 0;
-	if (!block) block = calcOurBlock(false);
 
 	//Enemy
 	var enemy = getCurrentEnemy();
@@ -168,28 +165,24 @@ function challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, 
 	return harm;
 }
 
-function directDamage(block, pierce, currentHealth, minDamage, critPower = 2, stance = 'X') {
-	//Pre Init
-	if (!block) block = calcOurBlock(true, true);
+function directDamage(block = calcOurBlock(true, true), pierce, currentHealth, minDamage, critPower = 2, stance = 'X') {
 	if (!pierce) pierce = game.global.brokenPlanet && !game.global.mapsActive ? getPierceAmt() : 0;
 	if (!currentHealth) currentHealth = calcOurHealth(true, false, true) - (game.global.soldierHealthMax - game.global.soldierHealth);
 	if (!minDamage) minDamage = calcOurDmg('min', stance, true, false, 'never') * (game.global.titimpLeft > 0 ? 2 : 1) + addPoison(true);
 
-	//Enemy
-	var enemy = getCurrentEnemy();
-	var enemyHealth = enemy.health;
-	var enemyDamage = calcSpecificEnemyAttack(critPower, block, currentHealth);
+	const enemy = getCurrentEnemy();
+	const enemyHealth = enemy.health;
+	const enemyDamage = calcSpecificEnemyAttack(critPower, block, currentHealth);
 
 	//Applies pierce
-	var harm = Math.max(enemyDamage - block, pierce * enemyDamage, 0);
+	let harm = Math.max(enemyDamage - block, pierce * enemyDamage, 0);
 
-	//Fast Enemies
-	var isDoubleAttack = game.global.voidBuff === 'doubleAttack' || enemy.corrupted === 'corruptDbl' || enemy.corrupted === 'healthyDbl';
-	var enemyFast = isDoubleAttack || challengeActive('Slow') || ((game.badGuys[enemy.name].fast || enemy.mutation === 'Corruption') && !challengeActive('Coordinate') && !challengeActive('Nom'));
+	const isDoubleAttack = game.global.voidBuff === 'doubleAttack' || enemy.corrupted === 'corruptDbl' || enemy.corrupted === 'healthyDbl';
+	const enemyFast = isDoubleAttack || challengeActive('Slow') || ((game.badGuys[enemy.name].fast || enemy.mutation === 'Corruption') && !challengeActive('Coordinate') && !challengeActive('Nom'));
 
 	//Dodge Dailies
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.slippery !== 'undefined') {
-		var slipStr = game.global.dailyChallenge.slippery.strength;
+		const slipStr = game.global.dailyChallenge.slippery.strength;
 		var dodgeDaily = (slipStr > 15 && game.global.world % 2 === 0) || (slipStr <= 15 && game.global.world % 2 === 1);
 	}
 

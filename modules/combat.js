@@ -150,8 +150,7 @@ function _setEquality(equality) {
 }
 
 function _equalityManagementBasic() {
-	if (game.global.preMapsActive) return;
-	if (game.global.gridArray.length <= 0) return;
+	if (game.global.preMapsActive || game.global.gridArray.length <= 0) return;
 
 	const runningDesolation = challengeActive('Desolation');
 
@@ -274,7 +273,7 @@ function _getOurDmg(worldType, enemy) {
 		}
 	}
 
-	const dailyRampage = runningDaily && typeof dailyChallenge.rampage !== 'undefined';
+	const dailyRampage = runningDaily && worldType !== 'map' && typeof dailyChallenge.rampage !== 'undefined';
 	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(dailyChallenge.rampage.strength, dailyChallenge.rampage.stacks);
 
 	if (frenzyCanExpire && (frenzyActive || enemy.health / ourDmg > 10)) fastEnemy = true;
@@ -573,6 +572,8 @@ function _PBShieldSwapping(mapping, worldType, enemy, enemyDmg, enemyDmgMult, fa
 }
 
 function _equalityManagementAdvanced() {
+	if (game.global.preMapsActive || game.global.gridArray.length <= 0) return;
+
 	game.portal.Equality.scalingActive = false;
 	game.options.menu.alwaysAbandon.enabled = 1;
 

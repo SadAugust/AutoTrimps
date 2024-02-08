@@ -1684,7 +1684,7 @@ function wither(lineCheck) {
 			equalityAmt = Math.max(0, equalityAmt - 2);
 		}
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false) * dmgBuff;
-		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 60, 'Snimp', calcMutationHealth(game.global.world + 1));
+		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 60, 'Snimp', calcMutationStats(game.global.world + 1, 'health'));
 		shouldMap = ourDmg * 4 < enemyHealth;
 	}
 	//Checking if we can clear current cell.
@@ -1693,7 +1693,7 @@ function wither(lineCheck) {
 		const name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1].name : undefined;
 		equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma', false, 4);
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
-		enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationHealth(game.global.world));
+		enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationStats(game.global.world, 'health'));
 		shouldMap = ourDmg * (gammaToTrigger <= 1 ? MODULES.heirlooms.gammaBurstPct : 1) * 4 < enemyHealth;
 	}
 

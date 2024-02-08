@@ -691,8 +691,7 @@ function simulate(saveData, zone) {
 		};
 	};
 
-	const hp_array = Array.from({ length: saveData.size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData).health);
-	const atk_array = Array.from({ length: saveData.size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData).attack);
+	const mapArray = Array.from({ length: saveData.size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
 
 	function reduceTrimpHealth(amt, directHit) {
 		if (saveData.mayhem) mayhemPoison += amt * 0.2;
@@ -712,16 +711,15 @@ function simulate(saveData, zone) {
 		trimpHealth = Math.max(0, trimpHealth - amt);
 	}
 
-	function enemy_hit(enemyAttack) {
+	function enemy_hit(enemyAttack, rngRoll) {
 		//Damage fluctations
 		let enemyAtk = enemyAttack;
-		enemyAtk *= 1 + saveData.fluctuation * (2 * rng() - 1);
+		enemyAtk *= 1 + saveData.fluctuation * (2 * rngRoll - 1);
 		const enemyCC = saveData.duel ? duelPoints / 100 : 0.25;
 
-		if (saveData.duel) {
-			if (duelPoints < 50) enemyAtk *= 3;
-		}
-		if (rng() < enemyCC) {
+		if (saveData.duel && duelPoints < 50) enemyAtk *= 3;
+
+		if (rngRoll < enemyCC) {
 			enemyAtk *= saveData.enemy_cd;
 			enemyCrit = true;
 		}
@@ -735,10 +733,11 @@ function simulate(saveData, zone) {
 
 	cell = 0;
 	while (ticks < max_ticks) {
-		const imp = rng();
-		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biomeImps[Math.floor(rng() * biomeImps.length)];
-		let enemyAttack = imp_stats[0] * atk_array[cell];
-		let enemyHealth = imp_stats[1] * hp_array[cell];
+		let rngRoll = rng();
+		const imp = rngRoll;
+		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biomeImps[Math.floor(rngRoll * biomeImps.length)];
+		let enemyAttack = imp_stats[0] * mapArray[cell].attack;
+		let enemyHealth = imp_stats[1] * mapArray[cell].health;
 		const enemy_max_hp = enemyHealth;
 		const fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
 
@@ -762,6 +761,7 @@ function simulate(saveData, zone) {
 
 		while (enemyHealth >= 1 && ticks < max_ticks) {
 			++turns;
+			rngRoll = turns > 0 ? rng() : rngRoll;
 			trimpCrit = false;
 			enemyCrit = false;
 			//Check if we didn't kill the enemy last turn for Wither & Glass checks
@@ -787,18 +787,18 @@ function simulate(saveData, zone) {
 			}
 
 			// Fast enemy attack
-			if (fast) enemy_hit(enemyAttack);
+			if (fast) enemy_hit(enemyAttack, rngRoll);
 
 			// Trimp attack
 			if (!armyDead()) {
 				ok_spread = saveData.ok_spread;
 				var trimpAttack = saveData.atk;
-				if (!saveData.unlucky) trimpAttack *= 1 + saveData.range * rng();
+				if (!saveData.unlucky) trimpAttack *= 1 + saveData.range * rngRoll;
 				if (saveData.duel) {
 					saveData.critChance = 1 - duelPoints / 100;
 					if (duelPoints > 50) trimpAttack *= 3;
 				}
-				if (rng() < saveData.critChance) {
+				if (rngRoll < saveData.critChance) {
 					trimpAttack *= saveData.critDamage;
 					trimpCrit = true;
 				}
@@ -854,7 +854,6 @@ function simulate(saveData, zone) {
 				duelPoints = Math.max(duelPoints, 0);
 			}
 
-			// Trimp death
 			if (armyDead()) {
 				ticks += Math.ceil(turns * saveData.speed);
 				ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
@@ -900,7 +899,7 @@ function simulate(saveData, zone) {
 		}
 		//Handles post death Nature effects.
 		if (magma) {
-			var increasedBy = pbTurns * saveData.natureIncrease;
+			const increasedBy = pbTurns * saveData.natureIncrease;
 			//Wind stacks
 			if (saveData.wind > 0) {
 				wind = Math.min(wind + increasedBy, saveData.windCap);
@@ -919,7 +918,6 @@ function simulate(saveData, zone) {
 			glassStacks = Math.max(0, glassStacks);
 		}
 		if (saveData.berserk) {
-			//1% heal onkill
 			trimpHealth += saveData.trimpHealth / 100;
 			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 		}
