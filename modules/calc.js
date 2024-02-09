@@ -641,12 +641,11 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 		const dailyChallenge = game.global.dailyChallenge;
 		if (typeof dailyChallenge.bloodthirst !== 'undefined') {
 			const bloodThirstStrength = dailyChallenge.bloodthirst.strength;
-			const bloodthirstMult = dailyModifiers.bloodthirst.getMult;
 
 			if (worldType === 'void' && getPageSetting('bloodthirstVoidMax')) {
-				attack *= bloodthirstMult(bloodThirstStrength, dailyModifiers.bloodthirst.getMaxStacks(bloodThirstStrength));
+				attack *= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, dailyModifiers.bloodthirst.getMaxStacks(bloodThirstStrength));
 			} else if (!getPageSetting('bloodthirstDestack')) {
-				attack *= bloodthirstMult(bloodThirstStrength, dailyChallenge.bloodthirst.stacks);
+				attack *= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, dailyChallenge.bloodthirst.stacks);
 			}
 		}
 	}
