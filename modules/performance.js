@@ -81,7 +81,7 @@
 	M['performance'].AFKOverlay.className = 'at-afk-overlay at-afk-overlay-disabled';
 
 	// Title
-	var AFKOverlayTitle = document.createElement('p');
+	let AFKOverlayTitle = document.createElement('p');
 	AFKOverlayTitle.innerText = 'TRIMPS - AFK';
 	AFKOverlayTitle.className = 'at-afk-overlay-title';
 

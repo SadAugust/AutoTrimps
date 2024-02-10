@@ -219,136 +219,373 @@ function suicideTrimps() {
 //Check and update each patch!
 function drawAllBuildings(force) {
 	if (usingRealTimeOffline && !force) return;
-	var elem = document.getElementById('buildingsHere');
-	elem.innerHTML = '';
-	for (var item in game.buildings) {
-		let building = game.buildings[item];
-		if (building.locked === 1) continue;
-		drawBuilding(item, elem);
-		if (building.alert && game.options.menu.showAlerts.enabled) {
-			document.getElementById('buildingsAlert').innerHTML = '!';
-			if (document.getElementById(item + 'Alert')) document.getElementById(item + 'Alert').innerHTML = '!';
-		}
+
+	const buildings = game.buildings;
+	const elem = document.getElementById('buildingsHere');
+	let innerHTML = '';
+	let alert = false;
+
+	for (const item in buildings) {
+		const building = buildings[item];
+		if (building.locked) continue;
+		if (building.alert) alert = true;
+		innerHTML += drawBuilding(item);
 	}
+
+	if (elem.innerHTML !== innerHTML) elem.innerHTML = innerHTML;
+	if (alert && elem.innerHTML !== '' && game.options.menu.showAlerts.enabled) {
+		const alertElem = document.getElementById('buildingsAlert');
+		if (alertElem.innerHTML !== '!') alertElem.innerHTML = '!';
+	}
+
 	updateGeneratorInfo();
+}
+
+function drawBuilding(what) {
+	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
+	if (usingScreenReader) {
+		return `
+			<button class="thing noSelect pointer buildingThing" onclick="tooltip('${what}','buildings','screenRead')">${what} Info</button>
+			<button title="" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer buildingThing" id="${what}" onclick="buyBuilding('${what}')">
+				<span class="thingName"><span id="${what}Alert" class="alert badge">${alertMessage}</span>${what}</span>, 
+				<span class="thingOwned" id="${what}Owned">${game.buildings[what].owned}</span>
+				<span class="cantAffordSR">, Not Affordable</span>
+				<span class="affordSR">, Can Buy</span>
+			</button>`;
+	}
+	return `<div onmouseover="tooltip('${what}','buildings',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer buildingThing" id="${what}" onclick="buyBuilding('${what}')">
+			<span class="thingName">
+			<span id="${what}Alert" class="alert badge">${alertMessage}</span>${what}</span><br/>
+			<span class="thingOwned" id="${what}Owned">${game.buildings[what].owned}</span>
+		</div>`;
 }
 
 //Check and update each patch!
 function drawAllUpgrades(force) {
-	if (usingRealTimeOffline && !force) return;
-	var elem = document.getElementById('upgradesHere');
-	elem.innerHTML = '';
-	for (var item in game.upgrades) {
-		if (game.upgrades[item].locked === 1) continue;
-		drawUpgrade(item, elem);
-		if (game.upgrades[item].alert && game.options.menu.showAlerts.enabled) {
-			document.getElementById('upgradesAlert').innerHTML = '!';
-			if (document.getElementById(item + 'Alert')) document.getElementById(item + 'Alert').innerHTML = '!';
-		}
+	if ((usingRealTimeOffline || (liquifiedZone() && !game.global.mapsActive)) && !force) return;
+
+	const upgrades = game.upgrades;
+	const elem = document.getElementById('upgradesHere');
+	let innerHTML = '';
+	let alert = false;
+
+	for (const item in upgrades) {
+		if (upgrades[item].locked === 1) continue;
+		if (upgrades[item].alert) alert = true;
+		innerHTML += drawUpgrade(item);
 	}
+
+	if (elem.innerHTML !== innerHTML) elem.innerHTML = innerHTML;
+	if (alert && elem.innerHTML !== '' && game.options.menu.showAlerts.enabled) {
+		const alertElem = document.getElementById('upgradesAlert');
+		if (alertElem.innerHTML !== '!') alertElem.innerHTML = '!';
+	}
+
 	goldenUpgradesShown = false;
 	displayGoldenUpgrades();
+}
+
+function drawUpgrade(what) {
+	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
+	const upgrade = game.upgrades[what];
+	if (upgrade.prestiges && (!upgrade.cost.resources[metal] || !upgrade.cost.resources[wood])) {
+		const resName = what == 'Supershield' ? 'wood' : 'metal';
+		upgrade.cost.resources[resName] = getNextPrestigeCost(what);
+	}
+	let done = upgrade.done;
+	let dif = upgrade.allowed - done - 1;
+	let name = typeof upgrade.name !== 'undefined' ? upgrade.name : what;
+	let html;
+
+	if (upgrade.isRelic) done = game.challenges.Archaeology.getPoints(upgrade.relic);
+	else if (dif >= 1) done += `(+${dif})`;
+	if (usingScreenReader) {
+		html = `<button id="srTooltip${what}" class="thing noSelect pointer upgradeThing" onclick="tooltip('${what}','upgrades','screenRead')">${what} Info</button>
+			<button onmouseover="tooltip('${what}','upgrades',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer upgradeThing" id="${what}" onclick="buyUpgrade('${what}')">
+				<span id="${what}Alert" class="alert badge">${alertMessage}</span>
+				<span class="thingName">${name}</span>, 
+				<span class="thingOwned" id="${what}Owned">${done}</span>
+				<span class="cantAffordSR">, Not Affordable</span>
+				<span class="affordSR">, Can Buy</span>
+			</button>`;
+	} else {
+		html = `<div onmouseover="tooltip('${what}','upgrades',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer upgradeThing" id="${what}" onclick="buyUpgrade('${what}')">
+			<span id="${what}Alert" class="alert badge">${alertMessage}</span>
+			<span class="thingName">${name}</span><br/>
+			<span class="thingOwned" id="${what}Owned">${done}</span>
+		</div>`;
+	}
+
+	return html;
 }
 
 //Check and update each patch!
 function drawAllEquipment(force) {
 	if (usingRealTimeOffline && !force) return;
-	var elem = document.getElementById('equipmentHere');
-	elem.innerHTML = '';
-	for (var item in game.equipment) {
-		if (game.equipment[item].locked === 1) continue;
-		drawEquipment(item, elem);
+
+	const equipment = game.equipment;
+	const elem = document.getElementById('equipmentHere');
+	let innerHTML = '';
+
+	for (const item in equipment) {
+		if (equipment[item].locked) continue;
+		innerHTML += drawEquipment(item);
 	}
+
+	if (elem.innerHTML !== innerHTML) elem.innerHTML = innerHTML;
+
 	displayEfficientEquipment();
+}
+
+function drawEquipment(what) {
+	let numeral = '';
+	let equipment = game.equipment[what];
+	if (equipment.prestige > 1) numeral = usingScreenReader ? prettify(equipment.prestige) : romanNumeral(equipment.prestige);
+
+	if (usingScreenReader) {
+		return `
+			<button class="thing noSelect pointer" onclick="tooltip('${what}','equipment','screenRead')">${what} Info</button>
+			<button onmouseover="tooltip('${what}','equipment',event)" onmouseout="tooltip('hide')" class="noselect pointer thingColorCanNotAfford thing" id="${what}" onclick="buyEquipment('${what}')">
+				<span class="thingName">${what} <span id="${what}Numeral">${numeral}</span></span>, 
+				<span class="thingOwned">Level: <span id="${what}Owned">${equipment.level}</span></span>
+				<span class="cantAffordSR">, Not Affordable</span>
+				<span class="affordSR">, Can Buy</span>
+			</button>`;
+	}
+	return `<div 
+				onmouseover="tooltip('${what}','equipment',event)" onmouseout="tooltip('hide')" class="efficientNo noselect pointer thingColorCanNotAfford thing" id="${what}" onclick="buyEquipment('${what}')">
+				<span class="thingName">${what} <span id="${what}Numeral">${numeral}</span></span><br/>
+				<span class="thingOwned">Level: <span id="${what}Owned">${equipment.level}</span></span>
+			</div>`;
 }
 
 //Check and update each patch!
 function drawAllJobs(force) {
 	if (usingRealTimeOffline && !force) return;
-	var elem = document.getElementById('jobsHere');
-	elem.innerHTML = '';
-	for (var item in game.jobs) {
-		if (game.jobs[item].locked === 1) continue;
+
+	const jobs = game.jobs;
+	const elem = document.getElementById('jobsHere');
+	let innerHTML = '';
+	let alert = false;
+
+	for (const item in jobs) {
+		if (jobs[item].locked) continue;
 		if (item === 'Geneticist' && game.global.Geneticistassist) {
-			drawGeneticistassist(elem);
-		} else drawJob(item, elem);
-		if (game.jobs[item].alert && game.options.menu.showAlerts.enabled) {
-			document.getElementById('jobsAlert').innerHTML = '!';
-			if (document.getElementById(item + 'Alert')) document.getElementById(item + 'Alert').innerHTML = '!';
+			innerHTML += drawGeneticistassist();
+			toggleGeneticistassist(true);
+		} else {
+			innerHTML += drawJob(item);
 		}
+		if (jobs[item].alert) alert = true;
 	}
+
+	if (elem.innerHTML !== innerHTML) elem.innerHTML = innerHTML;
+	if (alert && elem.innerHTML !== '' && game.options.menu.showAlerts.enabled) {
+		const alertElem = document.getElementById('jobsAlert');
+		if (alertElem.innerHTML !== '!') alertElem.innerHTML = '!';
+	}
+}
+
+function drawJob(what) {
+	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
+	if (usingScreenReader) {
+		return `
+			<button class="thing noSelect pointer jobThing" onclick="tooltip('${what}','jobs','screenRead')">${what} Info</button>
+			<button onmouseover="tooltip('${what}','jobs',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer jobThing" id="${what}" onclick="buyJob('${what}')">
+				<span class="thingName"><span id="${what}Alert" class="alert badge">${alertMessage}</span>${what}</span>, 
+				<span class="thingOwned" id="${what}Owned">0</span>
+				<span class="cantAffordSR">, Not Affordable</span>
+				<span class="affordSR">, Can Buy</span>
+			</button>`;
+	}
+	return `<div onmouseover="tooltip('${what}','jobs',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer jobThing" id="${what}" onclick="buyJob('${what}')">
+				<span class="thingName"><span id="${what}Alert" class="alert badge">${alertMessage}</span>${what}</span><br/>
+				<span class="thingOwned" id="${what}Owned">0</span>
+			</div>`;
+}
+
+function drawGeneticistassist() {
+	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
+	if (usingScreenReader) {
+		return `<button class="thing noSelect pointer jobThing" onclick="tooltip('Geneticist','jobs','screenRead')">Geneticist Info</button>
+			<button onmouseover="tooltip('Geneticist','jobs',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer jobThing" id="Geneticist" onclick="buyJob('Geneticist')">
+				<span class="thingName"><span id="GeneticistAlert" class="alert badge">${alertMessage}</span>Geneticist</span><br/>
+				<span class="thingOwned" id="GeneticistOwned">0</span>
+			</button>
+			<button class="thing noSelect pointer jobThing"  onclick="tooltip('Geneticistassist',null,'screenRead')">Geneticistassist Info</button>
+			<button onmouseover="tooltip('Geneticistassist',null,event)" onmouseout="tooltip('hide')" class="thing thingColorNone noselect stateHappy pointer jobThing" id="Geneticistassist" onclick="toggleGeneticistassist()">Geneticistassist
+				<span id="GAIndicator"></span><br/>
+				<span id="GeneticistassistSetting">&nbsp;</span>
+			</button>`;
+	}
+	return `<div id="GeneticistassistContainer" class="thing">
+			<div onmouseover="tooltip('Geneticist','jobs',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer jobThing" id="Geneticist" onclick="buyJob('Geneticist')">
+				<span class="thingName"><span id="GeneticistAlert" class="alert badge">${alertMessage}</span>Geneticist</span><br/>
+				<span class="thingOwned" id="GeneticistOwned">0</span>
+			</div>
+			<div onmouseover="tooltip('Geneticistassist',null,event)" onmouseout="tooltip('hide')" class="thing thingColorNone noselect stateHappy pointer jobThing" id="Geneticistassist" onclick="toggleGeneticistassist()">Geneticistassist
+				<span id="GAIndicator"></span><br/>
+				<span id="GeneticistassistSetting">&nbsp;</span>
+			</div>
+		</div>`;
+}
+
+function dropPrestiges() {
+	const toDrop = addSpecials(true, true, null, true);
+
+	for (let x = 0; x < toDrop.length; x++) {
+		unlockUpgrade(toDrop[x]);
+		let prestigeUnlock = game.mapUnlocks[toDrop[x]];
+		if (getSLevel() >= 4 && !challengeActive('Mapology') && Math.ceil(prestigeUnlock.last / 5) % 2 == 0) {
+			unlockUpgrade(toDrop[x]);
+			prestigeUnlock.last += 10;
+		} else prestigeUnlock.last += 5;
+	}
+
+	if (liquifiedZone()) drawAllUpgrades(true);
 }
 
 //Check and update each patch!
 function updateLabels(force) {
 	//Tried just updating as something changes, but seems to be better to do all at once all the time
 	if (usingRealTimeOffline && !force) return;
-	var toUpdate;
 	//Resources (food, wood, metal, trimps, science). Per second will be handled in separate function, and called from job loop.
-	for (var item in game.resources) {
-		toUpdate = game.resources[item];
+	checkAndDisplayResources();
+	updateSideTrimps();
+	//Buildings, trap is the only unique building, needs to be displayed in trimp area as well
+	checkAndDisplayBuildings();
+	//Jobs, check PS here and stuff. Trimps per second is handled by breed() function
+	checkAndDisplayJobs();
+	//Upgrades, owned will only exist if 'allowed' exists on object
+	checkAndDisplayUpgrades();
+	//Equipment
+	checkAndDisplayEquipment();
+}
+
+function updateSideTrimps() {
+	const trimps = game.resources.trimps;
+	const realMax = trimps.realMax();
+
+	let elem = document.getElementById('trimpsEmployed');
+	let elemText = prettify(trimps.employed);
+	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+
+	const multitaskingMult = game.permaBoneBonuses.multitasking.owned ? game.permaBoneBonuses.multitasking.mult() : 1;
+	const breedEmployed = trimps.employed * multitaskingMult;
+	const breedCount = trimps.owned - breedEmployed > 2 ? prettify(Math.floor(trimps.owned - breedEmployed)) : 0;
+
+	elem = document.getElementById('trimpsUnemployed');
+	elemText = breedCount;
+	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+
+	elem = document.getElementById('maxEmployed');
+	elemText = prettify(Math.ceil(realMax / 2));
+	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+
+	let free = Math.ceil(realMax / 2) - trimps.employed;
+	if (free < 0) free = 0;
+	const s = free > 1 ? 's' : '';
+
+	elem = document.getElementById('jobsTitleUnemployed');
+	elemText = `${prettify(free)} workspace${s}`;
+	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+}
+
+function checkAndDisplayResources() {
+	for (const item in game.resources) {
+		let toUpdate = game.resources[item];
 		if (!(toUpdate.owned > 0)) {
 			toUpdate.owned = parseFloat(toUpdate.owned);
 			if (!(toUpdate.owned > 0)) toUpdate.owned = 0;
 		}
 		if (item === 'radon') continue;
 		if (item === 'helium' && game.global.universe === 2) toUpdate = game.resources.radon;
-		document.getElementById(item + 'Owned').innerHTML = prettify(Math.floor(toUpdate.owned));
-		if (toUpdate.max === -1 || document.getElementById(item + 'Max') === null) continue;
-		var newMax = toUpdate.max;
+
+		let elem = document.getElementById(`${item}Owned`);
+		let elemText = prettify(Math.floor(toUpdate.owned));
+		if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+
+		if (toUpdate.max === -1 || document.getElementById(`${item}Max`) === null) continue;
+		let newMax = toUpdate.max;
 		if (item !== 'trimps') newMax = calcHeirloomBonus('Shield', 'storageSize', newMax * (game.portal.Packrat.modifier * getPerkLevel('Packrat') + 1));
 		else if (item === 'trimps') newMax = toUpdate.realMax();
-		document.getElementById(item + 'Max').innerHTML = prettify(newMax);
-		var bar = document.getElementById(item + 'Bar');
+
+		elem = document.getElementById(`${item}Max`);
+		elemText = prettify(newMax);
+		if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+
+		const bar = document.getElementById(`${item}Bar`);
 		if (game.options.menu.progressBars.enabled) {
-			var percentToMax = (toUpdate.owned / newMax) * 100;
+			const percentToMax = (toUpdate.owned / newMax) * 100;
 			swapClass('percentColor', getBarColorClass(100 - percentToMax), bar);
-			bar.style.width = percentToMax + '%';
+			bar.style.width = `${percentToMax}%`;
 		}
 	}
-	updateSideTrimps();
-	//Buildings, trap is the only unique building, needs to be displayed in trimp area as well
-	for (var itemA in game.buildings) {
-		toUpdate = game.buildings[itemA];
+}
+
+function checkAndDisplayBuildings() {
+	for (const item in game.buildings) {
+		let toUpdate = game.buildings[item];
 		if (toUpdate.locked === 1) continue;
-		var elem = document.getElementById(itemA + 'Owned');
+		let elem = document.getElementById(`${item}Owned`);
 		if (elem === null) {
-			unlockBuilding(itemA);
-			elem = document.getElementById(itemA + 'Owned');
+			unlockBuilding(item);
+			elem = document.getElementById(`${item}Owned`);
 		}
 		if (elem === null) continue;
-		elem.innerHTML = game.options.menu.menuFormatting.enabled ? prettify(toUpdate.owned) : toUpdate.owned;
-		if (itemA === 'Trap') {
-			var trap1 = document.getElementById('trimpTrapText');
-			if (trap1) trap1.innerHTML = prettify(toUpdate.owned);
-			var trap2 = document.getElementById('trimpTrapText2');
-			if (trap2) trap2.innerHTML = prettify(toUpdate.owned);
+		let elemText = game.options.menu.menuFormatting.enabled ? prettify(toUpdate.owned) : toUpdate.owned;
+		if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+		if (item === 'Trap') {
+			const trap1 = document.getElementById('trimpTrapText');
+			if (trap1 && trap1.innerHTML !== elemText.toString()) trap1.innerHTML = elemText;
+			const trap2 = document.getElementById('trimpTrapText2');
+			if (trap2 && trap2.innerHTML !== elemText.toString()) trap2.innerHTML = elemText;
 		}
 	}
-	//Jobs, check PS here and stuff. Trimps per second is handled by breed() function
-	for (var itemB in game.jobs) {
-		toUpdate = game.jobs[itemB];
-		if (toUpdate.locked === 1 && toUpdate.increase === 'custom') continue;
+}
+
+function checkAndDisplayJobs() {
+	const jobs = game.jobs;
+	for (const item in jobs) {
+		let toUpdate = jobs[item];
 		if (toUpdate.locked === 1) {
-			if (game.resources[toUpdate.increase].owned > 0) updatePs(toUpdate, false, itemB);
+			if (toUpdate.increase === 'custom') continue;
+			if (game.resources[toUpdate.increase].owned > 0) updatePs(toUpdate, false, item);
 			continue;
 		}
-		if (document.getElementById(itemB) === null) {
-			unlockJob(itemB);
+
+		if (document.getElementById(item) === null) {
+			unlockJob(item);
 			drawAllJobs(true);
 		}
-		document.getElementById(itemB + 'Owned').innerHTML = game.options.menu.menuFormatting.enabled ? prettify(toUpdate.owned) : toUpdate.owned;
-		updatePs(toUpdate, false, itemB);
+
+		let elem = document.getElementById(`${item}Owned`);
+		let elemText = game.options.menu.menuFormatting.enabled ? prettify(toUpdate.owned) : toUpdate.owned;
+		if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+		updatePs(toUpdate, false, item);
 	}
-	//Upgrades, owned will only exist if 'allowed' exists on object
-	for (var itemC in game.upgrades) {
-		toUpdate = game.upgrades[itemC];
+}
+
+function checkAndDisplayUpgrades() {
+	const upgrades = game.upgrades;
+	for (const item in upgrades) {
+		let toUpdate = upgrades[item];
 		if (toUpdate.allowed - toUpdate.done >= 1) toUpdate.locked = 0;
 		if (toUpdate.locked === 1) continue;
-		if (document.getElementById(itemC) === null) unlockUpgrade(itemC, true);
+		if (document.getElementById(item) === null) unlockUpgrade(item, true);
 	}
-	//Equipment
-	checkAndDisplayEquipment();
+}
+
+function checkAndDisplayEquipment() {
+	const equipment = game.equipment;
+	for (const item in equipment) {
+		let toUpdate = equipment[item];
+		if (toUpdate.locked === 1) continue;
+		if (document.getElementById(item) === null) drawAllEquipment();
+		const elem = document.getElementById(`${item}Owned`);
+		const elemText = toUpdate.level.toString();
+		if (elem.innerHTML !== elemText) elem.innerHTML = elemText;
+	}
 }
 
 //Check and update each patch!
@@ -359,14 +596,14 @@ function updateButtonColor(what, canAfford, isJob) {
 		if (usingRealTimeOffline) return;
 	}
 	if (what === 'Amalgamator') return;
-	var elem = document.getElementById(what);
+	const elem = document.getElementById(what);
 	if (elem === null) {
 		return;
 	}
 	if (game.options.menu.lockOnUnlock.enabled === 1 && new Date().getTime() - 1000 <= game.global.lastUnlock) canAfford = false;
 	if (game.global.challengeActive === 'Archaeology' && game.upgrades[what] && game.upgrades[what].isRelic) {
-		var className = 'thingColor' + (canAfford ? 'CanAfford' : 'CanNotAfford');
-		var nextAuto = game.challenges.Archaeology.checkAutomator();
+		const nextAuto = game.challenges.Archaeology.checkAutomator();
+		let className = 'thingColor' + (canAfford ? 'CanAfford' : 'CanNotAfford');
 		if (nextAuto === 'off') className += 'RelicOff';
 		else if (nextAuto === 'satisfied') className += 'RelicSatisfied';
 		else if (nextAuto === what + 'Cost') className += 'RelicNextWaiting';
@@ -977,4 +1214,564 @@ function getHazardGammaBonus_AT(heirloom) {
 	const mult = heirloom.rarity === 11 ? 10000 : 4000;
 	const bonus = log10(spent) * mult;
 	return bonus;
+}
+
+//See if GS can implement these modified functions as they're more performance efficient
+function updateTurkimpTime() {
+	const elem = document.getElementById('turkimpTime');
+	if (game.talents.turkimp2.purchased) {
+		const icon = `<span class="icomoon icon-infinity"></span>`;
+		if (elem.innerHTML !== icon) elem.innerHTML = icon;
+		return;
+	}
+
+	if (game.global.turkimpTimer <= 0) return;
+
+	game.global.turkimpTimer -= 100;
+	let timeRemaining = game.global.turkimpTimer;
+
+	if (timeRemaining <= 0) {
+		game.global.turkimpTimer = 0;
+		document.getElementById('turkimpBuff').style.display = 'none';
+		if (game.global.playerGathering) setGather(game.global.playerGathering);
+		elem.innerHTML = '00:00';
+		return;
+	}
+
+	timeRemaining /= 1000;
+	let mins = Math.floor(timeRemaining / 60);
+	let seconds = Math.ceil(timeRemaining % 60);
+	if (seconds === 60) {
+		seconds = 0;
+		mins++;
+	}
+
+	const formattedMins = mins < 10 ? `0${mins}` : mins;
+	const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+	const formattedTime = `${formattedMins}:${formattedSeconds}`;
+	if (elem.innerHTML !== formattedTime) elem.innerHTML = formattedTime;
+}
+
+function breed() {
+	const breedElem = document.getElementById('trimpsTimeToFill');
+	const trimps = game.resources.trimps;
+	const trimpsMax = trimps.realMax();
+	let employedTrimps = trimps.employed;
+	checkAchieve('trimps', trimps.owned);
+
+	if (game.permaBoneBonuses.multitasking.owned) employedTrimps *= 1 - game.permaBoneBonuses.multitasking.mult();
+	const maxBreedable = new DecimalBreed(trimpsMax).minus(employedTrimps);
+	if (missingTrimps.cmp(0) < 0) missingTrimps = new DecimalBreed(0);
+	let decimalOwned = missingTrimps.add(trimps.owned);
+	let breeding = decimalOwned.minus(employedTrimps);
+	if (breeding.cmp(2) == -1 || challengeActive('Trapper') || challengeActive('Trappapalooza')) {
+		updatePs(0, true);
+		if (breedElem.innerHTML !== '') breedElem.innerHTML = '';
+		srLastBreedTime = '';
+		return;
+	}
+	let potencyMod = new DecimalBreed(trimps.potency);
+	//Add potency (book)
+	if (game.upgrades.Potency.done > 0) potencyMod = potencyMod.mul(Math.pow(1.1, game.upgrades.Potency.done));
+	//Add Nurseries
+	if (game.buildings.Nursery.owned > 0) potencyMod = potencyMod.mul(Math.pow(1.01, game.buildings.Nursery.owned));
+	//Add Venimp
+	if (game.unlocks.impCount.Venimp > 0) potencyMod = potencyMod.mul(Math.pow(1.003, game.unlocks.impCount.Venimp));
+	//Broken Planet
+	if (game.global.brokenPlanet) potencyMod = potencyMod.div(10);
+	//Pheromones
+	potencyMod = potencyMod.mul(1 + getPerkLevel('Pheromones') * game.portal.Pheromones.modifier);
+
+	//Quick Trimps
+	if (game.singleRunBonuses.quickTrimps.owned) potencyMod = potencyMod.mul(2);
+	//Challenges
+	if (challengeActive('Daily')) {
+		if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined') {
+			potencyMod = potencyMod.mul(dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength));
+		}
+		if (typeof game.global.dailyChallenge.toxic !== 'undefined') {
+			potencyMod = potencyMod.mul(dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks));
+		}
+	}
+	if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0) {
+		potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
+	}
+	if (challengeActive('Archaeology')) {
+		potencyMod = potencyMod.mul(game.challenges.Archaeology.getStatMult('breed'));
+	}
+	if (game.global.voidBuff == 'slowBreed') {
+		potencyMod = potencyMod.mul(0.2);
+	}
+	if (challengeActive('Quagmire')) {
+		potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
+	}
+	potencyMod = calcHeirloomBonusDecimal('Shield', 'breedSpeed', potencyMod);
+	//console.log(getDesiredGenes(potencyMod.toNumber()));
+
+	//Geneticist
+	if (game.jobs.Geneticist.owned > 0) potencyMod = potencyMod.mul(Math.pow(0.98, game.jobs.Geneticist.owned));
+	//Mutators
+	//Gene Attack
+	if (game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
+	//Gene Health
+	if (game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
+	breeding = potencyMod.mul(breeding);
+	updatePs(breeding.toNumber(), true);
+	potencyMod = potencyMod.div(10).add(1);
+	let timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
+		.div(DecimalBreed.log10(potencyMod))
+		.div(10);
+	//Calculate full breed time
+	let fullBreed = '';
+	const currentSend = trimps.getCurrentSend();
+	let totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
+		.div(DecimalBreed.log10(potencyMod))
+		.div(10);
+	//breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
+	game.global.breedTime = currentSend / breeding.toNumber();
+	if (!game.jobs.Geneticist.locked && game.global.Geneticistassist && game.global.GeneticistassistSetting > 0) {
+		const target = new Decimal(game.global.GeneticistassistSetting);
+		//tired of typing Geneticistassist
+		let GAElem = document.getElementById('Geneticistassist');
+		let GAIndicator = document.getElementById('GAIndicator');
+		let canRun = false;
+		const now = new Date().getTime();
+		if (lastGAToggle === -1) canRun = true;
+		else if (now > lastGAToggle + 2000) {
+			lastGAToggle = -1;
+			canRun = true;
+		}
+		if (!GAElem && usingRealTimeOffline) {
+			drawAllJobs(true);
+			GAElem = document.getElementById('Geneticistassist');
+			GAIndicator = document.getElementById('GAIndicator');
+		}
+		if (GAElem && canRun) {
+			let thresh = new DecimalBreed(totalTime.mul(0.02));
+			let compareTime;
+			let htmlMessage = '';
+			if (timeRemaining.cmp(1) > 0 && timeRemaining.cmp(target.add(1)) > 0) {
+				compareTime = new DecimalBreed(timeRemaining.add(-1));
+			} else {
+				compareTime = new DecimalBreed(totalTime);
+			}
+			if (!thresh.isFinite()) thresh = new Decimal(0);
+			if (!compareTime.isFinite()) compareTime = new Decimal(999);
+			let genDif = new DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
+
+			if (compareTime.cmp(target) < 0) {
+				swapClass('state', 'stateHiring', GAElem);
+				if (game.resources.food.owned * 0.01 < getNextGeneticistCost()) {
+					htmlMessage = " (<span style='font-size: 0.8em' class='glyphicon glyphicon-apple'></span>)";
+				} else if (timeRemaining.cmp(1) < 0 || target.minus((now - game.global.lastSoldierSentAt) / 1000).cmp(timeRemaining) > 0) {
+					if (genDif.cmp(0) > 0) {
+						if (genDif.cmp(10) > 0) genDif = new Decimal(10);
+						addGeneticist(genDif.toNumber());
+					}
+					htmlMessage = ' (+)';
+				} else htmlMessage = " (<span style='font-size: 0.8em' class='icmoon icon-clock3'></span>)";
+			} else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || potencyMod.cmp(1) == 0) {
+				if (!genDif.isFinite()) genDif = new Decimal(-1);
+				swapClass('state', 'stateFiring', GAElem);
+				htmlMessage = ' (-)';
+				if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled != 2) {
+					if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
+					removeGeneticist(genDif.abs().toNumber());
+				}
+			} else {
+				swapClass('state', 'stateHappy', GAElem);
+				htmlMessage = '';
+			}
+
+			if (GAIndicator && GAIndicator.innerHTML !== htmlMessage) GAIndicator.innerHTML = htmlMessage;
+		}
+	}
+
+	timeRemaining = timeRemaining.toNumber();
+	totalTime = totalTime.toNumber();
+	decimalOwned = decimalOwned.add(breeding.div(10));
+	timeRemaining = game.options.menu.showFullBreed.enabled > 0 ? timeRemaining.toFixed(1) : Math.ceil(timeRemaining);
+	const remainingTime = `${timeRemaining} Secs`;
+	//Display full breed time if desired
+	const totalTimeText = Math.ceil(totalTime * 10) / 10;
+	if (game.options.menu.showFullBreed.enabled) {
+		fullBreed = `${totalTimeText} Secs`;
+		timeRemaining = `${timeRemaining} / ${fullBreed}`;
+	}
+
+	if (decimalOwned.cmp(trimpsMax) >= 0 && trimps.owned >= trimpsMax) {
+		trimps.owned = trimpsMax;
+		missingTrimps = new DecimalBreed(0);
+		var updateGenes = false;
+		if (game.options.menu.geneSend.enabled == 3 && game.global.lastBreedTime / 1000 < game.global.GeneticistassistSetting) {
+			game.global.lastBreedTime += 100;
+			if (remainingTime === 0.0) updateGenes = true;
+		}
+		srLastBreedTime = fullBreed ? fullBreed : '';
+		if (breedElem.innerHTML !== srLastBreedTime) breedElem.innerHTML = srLastBreedTime;
+		if (updateGenes || (!game.global.fighting && totalTimeText === '0.0')) {
+			updateStoredGenInfo(breeding.toNumber());
+		}
+		return;
+	}
+
+	srLastBreedTime = timeRemaining;
+	if (breedElem.innerHTML !== timeRemaining) breedElem.innerHTML = timeRemaining;
+	trimps.owned = decimalOwned.toNumber();
+	if (decimalOwned.cmp(trimps.owned) != 0 && breeding.cmp(0) > 0) {
+		missingTrimps = decimalOwned.minus(trimps.owned);
+	} else {
+		missingTrimps = new DecimalBreed(0);
+	}
+	if (trimps.owned >= trimpsMax) trimps.owned = trimpsMax;
+	else game.global.realBreedTime += 100;
+	game.global.lastBreedTime += 100;
+	updateStoredGenInfo(breeding);
+}
+
+Fluffy.updateExp = function () {
+	const expElem = document.getElementById('fluffyExp');
+	const lvlElem = document.getElementById('fluffyLevel');
+	const fluffyInfo = this.cruffysTipActive() ? game.challenges.Nurture.getExp() : this.getExp();
+	const width = Math.ceil((fluffyInfo[1] / fluffyInfo[2]) * 100);
+	if (width > 100) width = 100;
+	expElem.style.width = width + '%';
+	if (lvlElem.innerHTML !== fluffyInfo[0].toString()) {
+		lvlElem.innerHTML = fluffyInfo[0];
+	}
+};
+
+function drawGrid(maps) {
+	const grid = maps ? document.getElementById('mapGrid') : document.getElementById('grid');
+	let map = maps ? getCurrentMapObject() : null;
+	let cols = 10;
+	let rows = 10;
+
+	if (maps) {
+		if (map.size === 150) {
+			rows = 10;
+			cols = 15;
+		} else {
+			cols = Math.floor(Math.sqrt(map.size));
+			if (map.size % cols === 0) rows = map.size / cols;
+			else {
+				const sizeGreaterThanCols = map.size - cols * cols > cols;
+				rows = sizeGreaterThanCols ? cols + 2 : cols + 1;
+			}
+		}
+	}
+
+	let className = '';
+	if (game.global.universe === 1 && !maps && game.global.world >= 60 && game.global.world <= 80) {
+		if (game.global.world === 60) className = 'gridOverlayGreenGradient1';
+		else if (game.global.world <= 65) className = 'gridOverlayGreenGradient2';
+		else if (game.global.world <= 70) className = 'gridOverlayGreenGradient3';
+		else if (game.global.world <= 75) className = 'gridOverlayGreenGradient4';
+		else className = 'gridOverlayGreenGradient5';
+	}
+
+	if (!maps && game.global.gridArray[0].name === 'Liquimp') className += 'liquid';
+	else if (!maps && game.global.spireActive) className = 'spire';
+	else if (maps && map.location === 'Darkness') className = 'blackMap';
+
+	const idText = maps ? 'mapCell' : 'cell';
+	let counter = 0;
+	let size = maps ? game.global.mapGridArray.length : 0;
+	let rowHTML = '';
+
+	for (let i = 0; i < rows; i++) {
+		if (maps && counter >= size) break;
+		let html = '';
+		for (let x = 0; x < cols; x++) {
+			if (maps && counter >= size) break;
+
+			const cell = game.global[maps ? 'mapGridArray' : 'gridArray'][counter];
+			const id = `${idText}${counter}`;
+			const width = `${100 / cols}%`;
+			const paddingTop = `${100 / cols / 19}vh`;
+			const paddingBottom = `${100 / cols / 19}vh`;
+			const fontSize = `${cols / 14 + 1}vh`;
+
+			let className = ['battleCell', 'cellColorNotBeaten'];
+			let background = '';
+			let backgroundColor = '';
+			let title = '';
+			let role = '';
+			const innerHTML = cell.text === '' ? '&nbsp;' : cell.text;
+
+			if (maps) {
+				if (cell.name === 'Pumpkimp') className.push('mapPumpkimp');
+				if (map.location === 'Void') className.push('voidCell');
+				if (cell.vm) className.push(cell.vm);
+			} else {
+				if (cell.u2Mutation && cell.u2Mutation.length) {
+					className.push('mutatedCell');
+					background = 'initial';
+					backgroundColor = u2Mutations.getColor(cell.u2Mutation);
+				} else if (cell.mutation) className.push(cell.mutation);
+				if (cell.vm) className.push(cell.vm);
+				if (cell.empowerment) {
+					className.push(`empoweredCell${cell.empowerment}`);
+					title = `Token of ${cell.empowerment}`;
+				} else if (checkIfSpireWorld() && game.global.spireActive) className.push('spireCell');
+				if (cell.special === 'easterEgg') {
+					game.global.eggLoc = counter;
+					className.push('eggCell');
+					title = 'Colored Egg';
+					role = 'button';
+				}
+			}
+
+			html += `<li id="${id}" 
+						style="width:${width};padding-top:${paddingTop};padding-bottom:${paddingBottom};font-size:${fontSize};background:${background};background-color:${backgroundColor};" 
+						class="${className.join(' ')}" 
+						title="${title}" 
+						role="${role}">
+						${innerHTML}
+					</li>`;
+			counter++;
+		}
+
+		rowHTML = `<ul id="row${i}" class="battleRow">${html}</ul>` + rowHTML;
+	}
+
+	grid.className = className;
+	grid.innerHTML = rowHTML;
+
+	const eggCell = document.querySelector('.eggCell');
+	if (eggCell) eggCell.addEventListener('click', easterEggClicked);
+}
+
+function updateAllBattleNumbers(skipNum) {
+	if (usingRealTimeOffline) return;
+
+	const prefix = game.global.mapsActive ? 'Map' : '';
+	const cellNum = game.global[`lastCleared${prefix}Cell`] + 1;
+	const cell = game.global[`${prefix ? 'mapGridArray' : 'gridArray'}`][cellNum];
+	const cellElem = document.getElementById(`${prefix ? 'mapCell' : 'cell'}${cellNum}`);
+	if (!cellElem) return;
+
+	swapClass('cellColor', 'cellColorCurrent', cellElem);
+	let elem = document.getElementById('goodGuyHealthMax');
+	let elemText = prettify(game.global.soldierHealthMax);
+	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+	updateGoodBar();
+	updateBadBar(cell);
+
+	elem = document.getElementById('badGuyHealthMax');
+	elemText = prettify(cell.maxHealth);
+	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+
+	if (!skipNum) {
+		elem = document.getElementById('trimpsFighting');
+		elemText = prettify(game.resources.trimps.getCurrentSend());
+		if (challengeActive('Trimp') && game.jobs.Amalgamator.owned > 0) elemText = toZalgo(elemText, game.global.world);
+		if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+	}
+
+	let blockDisplay = '';
+	if (game.global.universe == 2) {
+		const layers = Fluffy.isRewardActive('shieldlayer');
+		let shieldMax = game.global.soldierEnergyShieldMax;
+		let shieldMult = getEnergyShieldMult();
+		if (layers > 0) {
+			shieldMax *= layers + 1;
+			shieldMult *= layers + 1;
+		}
+		blockDisplay = `${prettify(shieldMax)} (${Math.round(shieldMult * 100)}%)`;
+	} else {
+		blockDisplay = prettify(game.global.soldierCurrentBlock);
+	}
+
+	elem = document.getElementById('goodGuyBlock');
+	if (elem.innerHTML !== blockDisplay.toString()) elem.innerHTML = blockDisplay;
+
+	elem = document.getElementById('goodGuyAttack');
+	elemText = calculateDamage(game.global.soldierCurrentAttack, true, true);
+	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+
+	elem = document.getElementById('badGuyAttack');
+	elemText = `${calculateDamage(cell.attack, true, false, false, cell)}${game.global.usingShriek ? ' <span class="icomoon icon-chain"></span>' : ''}`;
+	if (elem.innerHTML !== elemText) elem.innerHTML = elemText;
+
+	if (game.global.usingShriek) swapClass('dmgColor', 'dmgColorRed', elem);
+}
+
+function setVoidCorruptionIcon(regularMap) {
+	const scaleDivider = regularMap || !mutations.Magma.active() ? 2 : 1;
+	let attackScale = mutations.Corruption.statScale(3) / scaleDivider;
+	let healthScale = mutations.Corruption.statScale(10) / scaleDivider;
+
+	let title = regularMap ? 'Map Corruption' : 'Void Corruption';
+	let text = `This ${regularMap ? 'map' : 'Void Map'} has become unstable due to Corruption. Enemy attack increased by ${prettify(attackScale)}X, and health increased by ${prettify(healthScale)}X.`;
+
+	if (!regularMap) {
+		text += ' Helium at the end of the map is now double what you would earn from a World Zone, including Corrupted cells!';
+	}
+
+	const corruptionElem = document.getElementById('corruptionBuff');
+	const elemText = `<span class="badge badBadge voidBadge" onmouseover="tooltip('${title}', 'customText', event, '${text}')" onmouseout="tooltip('hide')"><span class="glyphicon glyphicon-plus"></span></span>&nbsp;`;
+	if (corruptionElem.innerHTML !== elemText.toString()) corruptionElem.innerHTML = elemText;
+}
+
+function rewardLiquidZone() {
+	messageLock = true;
+	game.stats.battlesWon.value += 99;
+	var voidMaps = 0;
+	var unlocks = ['', '']; //[unique, repeated]
+	var food = game.resources.food.owned;
+	var wood = game.resources.wood.owned;
+	var metal = game.resources.metal.owned;
+	var helium = game.resources.helium.owned;
+	var fragments = game.resources.fragments.owned;
+	var trimpsCount = game.resources.trimps.realMax();
+	var tokText;
+	var trackedImps = {
+		Feyimp: 0,
+		Magnimp: 0,
+		Tauntimp: 0,
+		Venimp: 0,
+		Whipimp: 0,
+		Skeletimp: 0,
+		Megaskeletimp: 0
+	};
+	var hiddenUpgrades = ['fiveTrimpMax', 'Map', 'fruit', 'groundLumber', 'freeMetals', 'Foreman', 'FirstMap'];
+	for (var x = 1; x < 100; x++) {
+		game.global.voidSeed++;
+		game.global.scrySeed++;
+		if (isScryerBonusActive()) tryScry();
+		if (checkVoidMap() == 1) voidMaps++;
+		var cell = game.global.gridArray[x];
+		if (cell.special !== '') {
+			var unlock = game.worldUnlocks[cell.special];
+			if (typeof unlock !== 'undefined' && typeof unlock.fire !== 'undefined') {
+				unlock.fire(x);
+				if (hiddenUpgrades.indexOf(cell.special) == -1) {
+					var index = unlock.world < 0 ? 1 : 0;
+					if (unlocks[index] !== '') unlocks[index] += ', ';
+					if (typeof unlock.displayAs !== 'undefined') unlocks[index] += unlock.displayAs;
+					else unlocks[index] += cell.special;
+				}
+			} else {
+				unlockEquipment(cell.special);
+			}
+		}
+		if (cell.mutation && typeof mutations[cell.mutation].reward !== 'undefined') mutations[cell.mutation].reward(cell.corrupted);
+		if (cell.empowerment) {
+			var tokReward = rewardToken(cell.empowerment);
+			if (game.global.messages.Loot.token && game.global.messages.Loot.enabled && tokReward) {
+				tokText = "<span class='message empoweredCell" + cell.empowerment + "'>Found " + prettify(tokReward) + ' Token' + (tokReward == 1 ? '' : 's') + ' of ' + cell.empowerment + '!</span>';
+			}
+		}
+		if (typeof game.badGuys[cell.name].loot !== 'undefined') game.badGuys[cell.name].loot(cell.level);
+		if (typeof trackedImps[cell.name] !== 'undefined') {
+			trackedImps[cell.name]++;
+		}
+	}
+	messageLock = false;
+	var text = '';
+	var addUniques = unlocks[0] !== '' && game.global.messages.Unlocks.unique;
+	var addRepeateds = unlocks[1] !== '' && game.global.messages.Unlocks.repeated;
+	if ((addUniques || addRepeateds) && game.global.messages.Unlocks.enabled) {
+		text += 'Unlocks Found: ';
+		if (addUniques) {
+			text += unlocks[0];
+			if (addRepeateds) text += ', ';
+		}
+		if (addRepeateds) text += unlocks[1];
+		text += '<br/>';
+	}
+	if (game.global.messages.Loot.enabled && (game.global.messages.Loot.primary || game.global.messages.Loot.secondary)) {
+		text += 'Resources Found:';
+		var heCount = game.resources.helium.owned - helium;
+		if (game.global.messages.Loot.helium && heCount > 0) {
+			text += ' Helium - ' + prettify(heCount) + ',';
+		}
+		if (game.global.messages.Loot.secondary) {
+			text += ' Max Trimps - ' + prettify(game.resources.trimps.realMax() - trimpsCount) + ',';
+			text += ' Fragments - ' + prettify(game.resources.fragments.owned - fragments) + ',';
+		}
+		if (game.global.messages.Loot.primary) {
+			text += ' Food - ' + prettify(game.resources.food.owned - food) + ',';
+			text += ' Wood - ' + prettify(game.resources.wood.owned - wood) + ',';
+			text += ' Metal - ' + prettify(game.resources.metal.owned - metal) + ',';
+		}
+
+		text = text.slice(0, -1);
+		text += '<br/>';
+	}
+	var trackedList = '';
+	var bones = '';
+	for (var item in trackedImps) {
+		if (trackedImps[item] > 0) {
+			if (item == 'Skeletimp' || item == 'Megaskeletimp') {
+				bones = item;
+				continue;
+			}
+			if (trackedList !== '') trackedList += ', ';
+			trackedList += item + ' - ' + trackedImps[item];
+		}
+	}
+	if (trackedList != '' && game.global.messages.Loot.exotic && game.global.messages.Loot.enabled) {
+		trackedList = 'Rare Imps: ' + trackedList + '<br/>';
+		text += trackedList;
+	}
+	if (bones != '' && game.global.messages.Loot.bone && game.global.messages.Loot.enabled) {
+		bones = 'Found a ' + bones + '!<br/>';
+		text += bones;
+	}
+	if (tokText != null) {
+		text += tokText + '<br/>';
+	}
+	if (text) {
+		text = 'You liquified a Liquimp!<br/>' + text;
+		text = text.slice(0, -5);
+		message(text, 'Notices', 'star', 'LiquimpMessage');
+	}
+	if (challengeActive('Lead')) {
+		game.challenges.Lead.stacks -= 100;
+		manageLeadStacks();
+	}
+	game.stats.zonesLiquified.value++;
+	nextWorld();
+	drawAllUpgrades(true);
+}
+
+function updateNextGeneratorTickTime() {
+	//update tick time
+	const nextTickElem = document.getElementById('generatorNextTick');
+	if (game.global.genPaused) {
+		const message = mousedOverClock ? "<span class='icomoon icon-controller-play'></span>" : '<span class="icomoon icon-pause3"></span>';
+		if (nextTickElem !== message) nextTickElem.innerHTML = message;
+		return;
+	}
+
+	const tickTime = getGeneratorTickTime();
+	let framesPerVisual = 10;
+	let nextTickIn = (tickTime * 1000 - game.global.timeSinceLastGeneratorTick) / 1000;
+	nextTickIn = isNumberBad(nextTickIn) ? 0 : Math.round(nextTickIn * 10) / 10;
+	nextTickIn = Math.round(nextTickIn * 10) / 10;
+
+	if (Math.round((nextTickIn + 0.1) * 10) / 10 === tickTime) {
+		thisTime = framesPerVisual - 1;
+	}
+
+	const message = mousedOverClock && game.permanentGeneratorUpgrades.Supervision.owned ? "<span class='icomoon icon-pause3'></span>" : prettify(Math.floor(nextTickIn + 1));
+	if (nextTickElem !== message.toString()) nextTickElem.innerHTML = message;
+
+	let countingTick = Math.round((tickTime - nextTickIn) * 10) / 10;
+	countingTick = Math.round(countingTick * 10) / 10;
+	if (game.options.menu.generatorAnimation.enabled == 1 && thisTime >= framesPerVisual - 1) {
+		thisTime = 0;
+		let timeRemaining = tickTime - countingTick;
+		if (timeRemaining !== 0 && timeRemaining <= framesPerVisual / 10) {
+			timeRemaining = Math.round((timeRemaining - 0.1) * 10) / 10;
+			thisTime = framesPerVisual;
+			framesPerVisual = timeRemaining * 10;
+			thisTime -= framesPerVisual;
+		}
+		goRadial(document.getElementById('generatorRadial'), countingTick, tickTime, 100 * framesPerVisual);
+	} else {
+		thisTime++;
+	}
 }

@@ -14,7 +14,7 @@
 // ==/UserScript==
 
 function injectScript(id, src) {
-	var script = document.createElement('script');
+	const script = document.createElement('script');
 	script.id = id;
 	script.src = src;
 	script.setAttribute('crossorigin', 'anonymous');

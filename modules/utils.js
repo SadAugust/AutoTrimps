@@ -315,7 +315,7 @@ function testEquipmentMetalSpent() {
 			if (prestigeCount === i && equipment.level > 1) {
 				let finalCost = prestigeCost;
 
-				for (var j = 2; j <= equipment.level; j++) {
+				for (let j = 2; j <= equipment.level; j++) {
 					levelCost += finalCost * Math.pow(1.2, j - 1);
 				}
 			}
@@ -472,7 +472,7 @@ function getPriorityOrder() {
 					else if (settingData[y].challengeOneOff !== 'All' && !challengeActive(settingData[y].challengeOneOff)) continue;
 				} else {
 					if (settingData[y].runType === 'Filler') {
-						var currChallenge = settingData[y].challenge === 'No Challenge' ? '' : settingData[y].challenge;
+						const currChallenge = settingData[y].challenge === 'No Challenge' ? '' : settingData[y].challenge;
 						if (settingData[y].challenge !== 'All' && !challengeActive(currChallenge)) continue;
 					} else continue;
 				}
