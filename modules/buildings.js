@@ -434,6 +434,7 @@ function _buyMicrochip() {
  * Buys antenna if possible. For the radon universe.
  */
 function _buyAntenna(buildingSettings) {
+	// TODO: Pause portal when one is building.
 	if (!game.buildings.Antenna.locked && buildingSettings.Antenna && buildingSettings.Antenna.enabled) {
 		const antennaAmt = buildingSettings.Antenna.buyMax === 0 ? Infinity : buildingSettings.Antenna.buyMax;
 		const antennaPct = buildingSettings.Antenna.percent / 100;
@@ -449,7 +450,7 @@ function _buyAntenna(buildingSettings) {
  */
 function _keepBuyingHousing(buildingSettings) {
 	// If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
-	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || liquifiedZone()) {
+	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || checkIfLiquidZone()) {
 		_buyHousing(buildingSettings);
 	} else {
 		let boughtHousing = false;
@@ -460,7 +461,7 @@ function _keepBuyingHousing(buildingSettings) {
 }
 
 function _buyTribute() {
-	if (game.buildings.Tribute.locked || isBuildingInQueue('Tribute') || (!game.jobs.Meteorologist.locked && !mapSettings.shouldTribute && _getAffordableMets() > 0)) return;
+	if (game.buildings.Tribute.locked || (game.jobs.Meteorologist.locked && !mapSettings.shouldTribute && _getAffordableMets() > 0)) return;
 	const tributeSetting = getPageSetting('buildingSettingsArray').Tribute;
 
 	if ((!tributeSetting.enabled || mapSettings.shouldMeteorologist || mapSettings.mapName === 'Worshipper Farm') && !mapSettings.shouldTribute) return;

@@ -198,7 +198,7 @@ function populateFarmCalcData() {
 
 	//Challenge Checks
 	const runningUnlucky = challengeActive('Unlucky');
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
+	const runningQuest = challengeActive('Bublé') || getCurrentQuest() === 8;
 	const runningDuel = challengeActive('Duel');
 
 	//Map Modifiers (for the map we're on)
@@ -215,7 +215,7 @@ function populateFarmCalcData() {
 	//Trimps Stats
 	const dmgType = runningUnlucky ? 'max' : 'min';
 	let trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, 'never');
-	let trimpHealth = calcOurHealth(universe === 2 ? shieldBreak : 'X', 'map');
+	let trimpHealth = calcOurHealth(universe === 2 ? runningQuest : 'X', 'map');
 	let trimpBlock = universe === 1 ? calcOurBlock('X', 'map') : 0;
 	let trimpShield = universe === 2 ? calcOurHealth(true, 'map') : 0;
 	trimpHealth -= trimpShield;
@@ -266,7 +266,7 @@ function populateFarmCalcData() {
 	//Check if we have a fast enemy
 	//Fast Enemy conditions
 	let fastEnemy = challengeActive('Desolation');
-	if (shieldBreak) fastEnemy = true;
+	if (runningQuest) fastEnemy = true;
 	else if (challengeActive('Revenge')) fastEnemy = true;
 	else if (challengeActive('Trappapalooza')) fastEnemy = true;
 	else if (challengeActive('Archaeology')) fastEnemy = true;
@@ -522,7 +522,7 @@ function populateFarmCalcData() {
 		unlucky: runningUnlucky,
 		duel: runningDuel,
 		wither: challengeActive('Wither'),
-		shieldBreak: shieldBreak,
+		quest: runningQuest,
 		mayhem: challengeActive('Mayhem'),
 		insanity: challengeActive('Insanity'),
 		berserk: challengeActive('Berserk'),
@@ -639,11 +639,9 @@ function simulate(saveData, zone) {
 	let equality = 1;
 	let trimpCrit = false;
 	let enemyCrit = false;
-	let enemyCC = 0.25;
 
 	let kills = 0;
 	let deaths = 0;
-	let initialShield;
 
 	let seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
@@ -656,21 +654,20 @@ function simulate(saveData, zone) {
 	}
 
 	function armyDead() {
-		if (saveData.shieldBreak) return energyShield <= 0;
+		if (saveData.quest) return energyShield <= 0;
 		else return trimpHealth <= 0;
 	}
 
 	const biomeImps = saveData.biome;
-
+	//Identify how much equality is needed to clear the worst enemy on the map
 	if (universe === 2) {
 		const enemyName = saveData.insanity ? 'Horrimp' : 'Snimp';
 		if (saveData.insanity) biomeImps.push([15, 60, true]);
 		equality = equalityQuery(enemyName, zone, saveData.size, 'map', saveData.difficulty);
 	}
-	const equalityPower = Math.pow(0.9, equality);
-
 	//Six hours of simulation inside of TW and a day outside of it.
 	const max_ticks = saveData.maxTicks;
+	//Create map array of enemy stats
 
 	const calculateEnemyStats = (zone, cell, enemyType, saveData) => {
 		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyType);
@@ -701,7 +698,7 @@ function simulate(saveData, zone) {
 
 		if (!directHit) {
 			if (universe === 2) {
-				initialShield = energyShield;
+				const initialShield = energyShield;
 				energyShield = Math.max(0, energyShield - amt);
 				amt = Math.max(0, amt - initialShield);
 			} else if (universe === 1) {
@@ -715,22 +712,22 @@ function simulate(saveData, zone) {
 	}
 
 	function enemy_hit(enemyAttack, rngRoll) {
-		enemyAttack *= 1 + saveData.fluctuation * (2 * rngRoll - 1);
+		//Damage fluctations
+		let enemyAtk = enemyAttack;
+		enemyAtk *= 1 + saveData.fluctuation * (2 * rngRoll - 1);
+		const enemyCC = saveData.duel ? duelPoints / 100 : 0.25;
 
-		if (saveData.duel) {
-			enemyCC = 1 - duelPoints / 100;
-			if (duelPoints < 50) enemyAttack *= 3;
-		}
+		if (saveData.duel && duelPoints < 50) enemyAtk *= 3;
 
 		if (rngRoll < enemyCC) {
-			enemyAttack *= saveData.enemy_cd;
+			enemyAtk *= saveData.enemy_cd;
 			enemyCrit = true;
 		}
 
-		if (saveData.ice > 0) enemyAttack *= 0.366 ** (ice * saveData.ice);
-		if (universe === 2 && equality > 0) enemyAttack *= equalityPower;
+		if (saveData.ice > 0) enemyAtk *= 0.366 ** (ice * saveData.ice);
+		if (universe === 2) enemyAtk *= Math.pow(0.9, equality);
 
-		if (enemyAttack > 0) reduceTrimpHealth(Math.max(0, enemyAttack));
+		reduceTrimpHealth(Math.max(0, enemyAtk));
 		++debuff_stacks;
 	}
 
@@ -783,12 +780,13 @@ function simulate(saveData, zone) {
 					enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 				}
 			} else oneShot = true;
-
+			//Angelic talent heal
 			if (saveData.angelic && !saveData.berserk) {
 				trimpHealth += saveData.trimpHealth / 2;
 				if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
 			}
 
+			// Fast enemy attack
 			if (fast) enemy_hit(enemyAttack, rngRoll);
 
 			// Trimp attack
@@ -815,8 +813,10 @@ function simulate(saveData, zone) {
 				pbTurns++;
 			}
 
+			// Slow enemy attack
 			if (!fast && enemyHealth >= 1 && !armyDead()) enemy_hit(enemyAttack);
 
+			// Mayhem poison
 			if (saveData.mayhem && mayhemPoison >= 1) trimpHealth -= mayhemPoison;
 
 			if (enemyHealth >= 1) {
@@ -833,18 +833,19 @@ function simulate(saveData, zone) {
 				}
 			}
 
+			// Bleeds
 			if (saveData.bleed) trimpHealth -= saveData.bleed * saveData.trimpHealth;
 			if (saveData.plague) trimpHealth -= debuff_stacks * saveData.plague * saveData.trimpHealth;
 
+			//+1 point for crits, +2 points for killing, +5 for oneshots
 			if (saveData.duel) {
-				// +1 point for crits, +2 points for killing, +5 for oneshots
 				if (enemyCrit) duelPoints--;
 				if (trimpCrit) duelPoints++;
-
+				//Trimps
 				if (trimpHealth < 1) {
 					if (turns === 1) duelPoints -= 5;
 					else duelPoints -= 2;
-				}
+				} //Enemy
 				if (enemyHealth < 1) {
 					if (oneShot) duelPoints += 5;
 					else duelPoints += 2;
@@ -868,14 +869,14 @@ function simulate(saveData, zone) {
 					trimpHealth *= 10;
 					energyShield *= 10;
 				}
-
 				ticks += 1;
 				turns = 1;
 				debuff_stacks = 0;
 				gammaStacks = 0;
 				deaths++;
 
-				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = max_ticks;
+				//Stop it from getting Infinity glass stacks OR if you die on a shieldbreak challenge/quest
+				if (saveData.quest || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = max_ticks;
 				//Amp enemy dmg and health by 25% per stack
 				if (saveData.nom) {
 					enemyAttack *= 1.25;

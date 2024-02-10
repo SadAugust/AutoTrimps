@@ -360,7 +360,7 @@ function useWindStance() {
 	const settingPrefix = trimpStats.isDaily ? 'd' : '';
 	if (!getPageSetting(settingPrefix + 'AutoStanceWind')) return false;
 
-	if (liquifiedZone() && getPageSetting(settingPrefix + 'WindStackingLiq')) return true;
+	if (checkIfLiquidZone() && getPageSetting(settingPrefix + 'WindStackingLiq')) return true;
 	if ((hdStats.hdRatio < getPageSetting(settingPrefix + 'WindStackingRatio') || getPageSetting(settingPrefix + 'WindStackingRatio') <= 0) && game.global.world >= getPageSetting(settingPrefix + 'WindStackingZone')) return true;
 	else return false;
 }
