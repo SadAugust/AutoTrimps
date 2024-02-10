@@ -207,7 +207,7 @@ function _leadDisableMapping() {
 	if (!challengeActive('Lead') || !getPageSetting('lead') || game.global.spireActive) return false;
 
 	const oddZone = game.global.world % 2 !== 0;
-	const aboveCell90 = game.global.lastClearedCell + 2 > 90 || checkIfLiquidZone();
+	const aboveCell90 = game.global.lastClearedCell + 2 > 90 || liquifiedZone();
 	const natureFinalZone = game.global.world >= getNatureStartZone() && getEmpowerment() !== getZoneEmpowerment(game.global.world + 1);
 
 	return !(aboveCell90 && (oddZone || natureFinalZone));

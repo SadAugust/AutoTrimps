@@ -245,7 +245,7 @@ function toggleCatchUpMode() {
 			if (atSettings.intervals.thirtyMinute && getPageSetting('timeWarpSaving')) _timeWarpSave();
 			mainCleanup();
 			if (game.global.mapsActive && getPageSetting('timeWarpDisplay')) _adjustGlobalTimers(['mapStarted'], -100);
-			if (loops % getPageSetting('timeWarpFrequency') === 0 || atSettings.portal.aWholeNewWorld || checkIfLiquidZone()) {
+			if (loops % getPageSetting('timeWarpFrequency') === 0 || atSettings.portal.aWholeNewWorld || liquifiedZone()) {
 				mainLoop();
 			} else if (atSettings.intervals.thirtySecond) {
 				trimpStats = new TrimpStats();

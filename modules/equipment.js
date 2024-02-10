@@ -321,7 +321,7 @@ function autoEquip() {
 }
 
 function _autoEquipTimeWarp() {
-	const dontWhileLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || checkIfLiquidZone();
+	const dontWhileLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || liquifiedZone();
 	if (!dontWhileLoop) return false;
 
 	buyEquipsPrestige();
@@ -412,7 +412,7 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
 
-	const bestBuys = mostEfficientEquipment(1, false, true);
+	const bestBuys = mostEfficientEquipment(1, undefined, true);
 
 	for (let item in game.equipment) {
 		if (game.equipment[item].locked || item === 'Shield') continue;
