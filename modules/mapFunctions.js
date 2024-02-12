@@ -156,7 +156,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 
 			const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
 			const currChallenge = trimpStats.currChallenge.toLowerCase();
-			var smithyGoal = Infinity;
+			let smithyGoal = Infinity;
 			if (['mayhem', 'pandemonium', 'desolation'].indexOf(currChallenge) >= 0 && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0) smithyGoal = getPageSetting(currChallenge + 'MP');
 			else if (trimpStats.isC3 && uniqueMapSetting['MP Smithy C3'].enabled && uniqueMapSetting['MP Smithy C3'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy C3'].value;
 			else if (trimpStats.isDaily && uniqueMapSetting['MP Smithy Daily'].enabled && uniqueMapSetting['MP Smithy Daily'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy Daily'].value;
@@ -1751,7 +1751,7 @@ function quagmire(lineCheck) {
 function _runQuagmire(setting, mapName, settingName, settingIndex, baseSettings) {
 	let bogsToRun = 100;
 
-	for (var i = 1; i < baseSettings.length; i++) {
+	for (let i = 1; i < baseSettings.length; i++) {
 		let currSetting = baseSettings[i];
 		if (!currSetting.active || currSetting.world > game.global.world || (currSetting.world === game.global.world && currSetting.cell > game.global.lastClearedCell + 2)) continue;
 		bogsToRun -= parseInt(currSetting.bogs);
@@ -2349,7 +2349,10 @@ function _runAlchemy(setting, mapName, settingName, settingIndex) {
 		if (mapSettings.potionTarget) {
 			potionTarget = mapSettings.potionTarget;
 		} else {
-			let herbsGained = game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned + alchObj.getDropRate(game.global.world + mapLevel) * herbMult * potionTarget;
+			const mapCount = potionTarget;
+			let herbsGained = game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned + alchObj.getDropRate(game.global.world + mapLevel) * herbMult * mapCount;
+
+			potionTarget = potionCurrent;
 			while (herbsGained > Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult) {
 				herbsGained -= Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult;
 				potionTarget++;
@@ -2696,7 +2699,7 @@ function _desolationGearScumSetting(defaultSettings) {
 
 /* To be done */
 function desolationGearScum(lineCheck) {
-	var shouldMap = false;
+	let shouldMap = false;
 	const mapName = 'Desolation Gear Scum';
 	const farmingDetails = {
 		shouldRun: false,
@@ -2719,10 +2722,10 @@ function desolationGearScum(lineCheck) {
 
 	//if (setting) Object.assign(farmingDetails, _runDesoGearScum(setting, mapName, settingIndex));
 	if (setting || MODULES.mapFunctions.desoGearScum) {
-		var special;
-		var jobRatio;
-		var gather;
-		var mapLevel = game.global.lastClearedCell < 80 ? 0 : 1;
+		let special;
+		let jobRatio;
+		let gather;
+		let mapLevel = game.global.lastClearedCell < 80 ? 0 : 1;
 		if (settingIndex) {
 			special = getAvailableSpecials(setting.special);
 			jobRatio = setting.jobratio;
@@ -2733,18 +2736,18 @@ function desolationGearScum(lineCheck) {
 
 		//Check if a max attack+gamma burst can clear the improb.
 		//If it can't continue as normal, if it can then we start the +1 map for prestige scumming.
-		var currCell = game.global.lastClearedCell + 2;
-		var name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1].name : undefined;
-		var enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, name);
-		var equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
-		var ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
-		var gammaDmg = MODULES.heirlooms.gammaBurstPct;
-		var ourDmgTotal = ourDmg * gammaDmg * 5;
+		let currCell = game.global.lastClearedCell + 2;
+		let name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1].name : undefined;
+		let enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, name);
+		let equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
+		let ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
+		let gammaDmg = MODULES.heirlooms.gammaBurstPct;
+		let ourDmgTotal = ourDmg * gammaDmg * 5;
 
 		//Check if we will overshoot the improb with our regular hit/gamma burst.
 		//Add together the health of the cells between our current cell and the improb that we are able to overkill.
 		if (currCell !== 100) {
-			for (var x = currCell + 1; x <= 100; x++) {
+			for (let x = currCell + 1; x <= 100; x++) {
 				name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[x - 1].name : undefined;
 				enemyHealth += calcEnemyHealthCore('world', name);
 			}
@@ -3728,7 +3731,7 @@ function dailyModiferReduction() {
 		else if (modifier.includes('Void')) modifier = 'Enemies in Void Maps have';
 		else if (modifier.includes('Heirlost')) modifier = 'Heirloom combat and resource bonuses are reduced by';
 
-		for (var x = 0; x < dailyMods.length; x++) {
+		for (let x = 0; x < dailyMods.length; x++) {
 			if (dailyMods[x].includes(modifier)) {
 				dailyReductionTemp = settingsArray[item].zone;
 			}

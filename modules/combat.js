@@ -40,14 +40,12 @@ function _trimpicide() {
 	if (!game.global.fighting) return;
 	if (!getPageSetting('ForceAbandon')) return;
 
-	const mapsActive = game.global.mapsActive;
-	if (!mapsActive && game.global.spireActive) return;
-	if (mapsActive && !newArmyRdy()) return;
-
 	const antistacklimit = game.talents.patience.purchased ? 45 : 30;
 	if (game.global.antiStacks >= antistacklimit) return;
 
-	// Calculates Anticipation stacks based on time since last breed.
+	const mapsActive = game.global.mapsActive;
+	if (!mapsActive && game.global.spireActive) return;
+	if (mapsActive && !newArmyRdy()) return;
 
 	const amalgsOwned = game.jobs.Amalgamator.owned > 0;
 	const lastTimeSent = Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000);

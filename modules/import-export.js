@@ -541,7 +541,7 @@ function makeAdditionalInfo() {
 	description += `AL2 (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
 	//Breed timer when you have an amalgamator
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
-		let breedTimer = Math.floor(new Date().getTime());
+		let breedTimer = new Date().getTime();
 		if (game.options.menu.pauseGame.enabled) {
 			let dif = breedTimer - game.options.menu.pauseGame.timeAtPause;
 			breedTimer -= dif;
@@ -550,7 +550,7 @@ function makeAdditionalInfo() {
 		breedTimer /= 1000;
 
 		description += lineBreak;
-		description += `B: ${breedTimer.toFixed(0)}s`;
+		description += `B: ${Math.floor(breedTimer).toFixed(0)}s`;
 	}
 	//Tenacity timer when you have tenacity
 	else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
