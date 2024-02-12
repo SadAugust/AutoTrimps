@@ -48,12 +48,13 @@ function _trimpicide() {
 	if (mapsActive && !newArmyRdy()) return;
 
 	const amalgsOwned = game.jobs.Amalgamator.owned > 0;
-	const lastTimeSent = Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000);
+	const lastTimeSent = Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000);
 	const breedTime = Math.floor(game.global.lastBreedTime / 1000);
-
 	const baseCheck = (amalgsOwned ? lastTimeSent : breedTime) >= antistacklimit;
 
-	if (baseCheck) _forceAbandonTrimps();
+	if (baseCheck) {
+		_forceAbandonTrimps();
+	}
 }
 
 // Abandons trimps to get max anticipation stacks.
