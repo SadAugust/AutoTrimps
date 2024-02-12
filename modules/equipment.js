@@ -227,6 +227,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	if (scienceCost * Math.pow(scienceMultiplier, equipment.prestige - 1) > game.resources.science.owned) {
 		return prestigeInfo;
 	}
+
 	if (gemsCost * Math.pow(gemsMultiplier, equipment.prestige - 1) > game.resources.gems.owned) {
 		return prestigeInfo;
 	}
@@ -353,6 +354,7 @@ function buyEquipsAlways2() {
 	const alwaysLvl2 = getPageSetting('equip2');
 	const alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && !mapSettings.pandaEquips && getPageSetting('pandemoniumAE') > 0;
 	if (!alwaysLvl2 && !alwaysPandemonium) return false;
+
 	let equipLeft = false;
 
 	for (let equip in game.equipment) {

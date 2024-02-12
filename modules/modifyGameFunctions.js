@@ -2078,7 +2078,7 @@ function applyDailyMultipliers(modifier, value = 1) {
 	return dailyModifiers[modifier].getMult(dailyChallenge[modifier].strength, dailyChallenge[modifier].stacks);
 }
 
-/* function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell, noFluctuation) {
+function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell, noFluctuation) {
 	//number = base attack
 	let fluctuation = 0.2; // % fluctuation
 	let maxFluct = -1;
@@ -2159,7 +2159,7 @@ function applyDailyMultipliers(modifier, value = 1) {
 				novaStacks: () => (!game.global.mapsActive && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1),
 				spireDaily: () => (Fluffy.isRewardActive('SADailies') && challengeActive('Daily') ? Fluffy.rewardConfig.SADailies.attackMod() : 1)
 			};
-			number = applyMultipliers(multipliers, number, true, true);
+			number = applyMultipliers(multipliers, number);
 
 			const challengeMultipliers = {
 				Unbalance: () => game.challenges.Unbalance.getAttackMult(),
@@ -2178,7 +2178,6 @@ function applyDailyMultipliers(modifier, value = 1) {
 			};
 			number = applyMultipliers(challengeMultipliers, number, true, true);
 		}
-
 		if (challengeActive('Daily')) {
 			if (game.talents.daily.purchased) number *= 1.5;
 			if (typeof game.global.dailyChallenge.minDamage !== 'undefined') {
@@ -2301,7 +2300,7 @@ function applyDailyMultipliers(modifier, value = 1) {
 	}
 
 	return rollMax();
-} */
+}
 
 function buyBuilding(what, confirmed, fromAuto, forceAmt) {
 	if (game.options.menu.pauseGame.enabled || what === 'Hub') return false;

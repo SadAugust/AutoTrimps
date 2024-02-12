@@ -41,7 +41,6 @@ function evaluateHeirloomMods(loom, location) {
 		targetMods = targetMods.filter((e) => e !== modName);
 	}
 
-	//Work out the target number of mods to have on the heirloom.
 	const modGoal = Math.max(0, Math.min(getPageSetting('heirloomAutoModTarget'), heirloomLocation.mods.length));
 	const remainingMods = targetMods.length - emptyMods;
 
