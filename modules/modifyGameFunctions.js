@@ -1271,6 +1271,7 @@ function updateTurkimpTime() {
 	if (elem.innerHTML !== formattedTime) elem.innerHTML = formattedTime;
 }
 
+var DecimalBreed = Decimal.clone({ precision: 30, rounding: 4 });
 function breed() {
 	const breedElem = document.getElementById('trimpsTimeToFill');
 	const trimps = game.resources.trimps;
@@ -2077,7 +2078,7 @@ function applyDailyMultipliers(modifier, value = 1) {
 	return dailyModifiers[modifier].getMult(dailyChallenge[modifier].strength, dailyChallenge[modifier].stacks);
 }
 
-function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell, noFluctuation) {
+/* function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell, noFluctuation) {
 	//number = base attack
 	let fluctuation = 0.2; // % fluctuation
 	let maxFluct = -1;
@@ -2300,7 +2301,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 	}
 
 	return rollMax();
-}
+} */
 
 function buyBuilding(what, confirmed, fromAuto, forceAmt) {
 	if (game.options.menu.pauseGame.enabled || what === 'Hub') return false;

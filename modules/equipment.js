@@ -152,6 +152,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 
 		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
 		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
+
 		const equipCap = maybeBuyPrestige.prestigeAvailable ? Math.min(mostEfficient[equipType].equipCap, 9) : mostEfficient[equipType].equipCap;
 		const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
 		const skipPrestiges = ancientTreasurePrestigeSkip || (6 > equipData.level && (prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo)));
@@ -204,10 +205,10 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		skip: true
 	};
 
+	if (!Object.getOwnPropertyNames(MODULES.equipment).includes(equipName)) return prestigeInfo;
+	if (equipName === 'Shield' && getPageSetting('equipNoShields')) return prestigeInfo;
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
-	if (equipName === 'Shield' && getPageSetting('equipNoShields')) return prestigeInfo;
-	if (!Object.getOwnPropertyNames(MODULES.equipment).includes(equipName)) return prestigeInfo;
 
 	const prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
 	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];

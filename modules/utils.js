@@ -225,6 +225,13 @@ function _getTimeWarpHours(inputHours) {
 	return timeWarpHours;
 }
 
+function _adjustGlobalTimers(keys, adjustment) {
+	keys.forEach((key) => {
+		if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[keys] += adjustment;
+		else game.global[key] += adjustment;
+	});
+}
+
 //Will activate a 24 hour timewarp.
 function testTimeWarp(hours) {
 	const timeWarpHours = _getTimeWarpHours(hours);
