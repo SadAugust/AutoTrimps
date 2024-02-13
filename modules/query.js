@@ -275,3 +275,8 @@ function whichHitsSurvived() {
 	else if (worldType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) return hdStats.hitsSurvivedMap;
 	return hdStats.hitsSurvived;
 }
+
+function whichAutoLevel() {
+	if (getPageSetting('autoLevelTest')) return hdStats.autoLevelLoot;
+	else return hdStats.autoLevel;
+}

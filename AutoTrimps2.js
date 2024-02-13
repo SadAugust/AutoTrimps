@@ -9,7 +9,7 @@ const atSettings = {
 		path: 'modules/',
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
-		installedModules: ['import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirloomCalc', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils', 'mutatorPreset', 'farmCalc'],
+		installedModules: ['gameUpdates', 'import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirloomCalc', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils', 'mutatorPreset', 'farmCalc'],
 		loadedModules: [],
 		loadedExternal: []
 	},
@@ -36,7 +36,7 @@ let currSettingUniverse = 0;
 let settingChangedTimeout = false;
 
 let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
-let hdStats = {};
+let hdStats = { autoLevel: Infinity };
 let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
 
 function loadScript(url, type = 'text/javascript', retries = 3) {
@@ -252,7 +252,7 @@ function toggleCatchUpMode() {
 				hdStats = new HDStats();
 			}
 
-			if (loops % 600 === 0) _timeWarpUpdateUIDisplay();
+			if (shouldUpdate()) _timeWarpUpdateUIDisplay();
 			if (!elementVisible('science')) checkTriggers();
 			_timeWarpATFunctions();
 		};
@@ -367,7 +367,7 @@ function mainLoopU2() {
 }
 
 function guiLoop() {
-	if (getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
+	if (getPageSetting('displayEnhancedGrid') && !usingRealTimeOffline) MODULES.fightinfo.Update();
 	if (MODULES.performance && MODULES.performance.isAFK) MODULES.performance.UpdateAFKOverlay();
 }
 

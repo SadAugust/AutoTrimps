@@ -529,13 +529,12 @@ function makeAdditionalInfo() {
 
 	if (game.permaBoneBonuses.voidMaps.owned > 0) {
 		let voidValue = game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10;
-		description += `V ${voidValue}/10`;
+		description += `V: ${voidValue}/10`;
 		description += lineBreak;
 	}
-
-	description += `AL: ${hdStats.autoLevel}`;
-	description += lineBreak;
-	description += `AL2 (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
+	const autoLevel = whichAutoLevel();
+	if (autoLevel === hdStats.autoLevel) description += `AL: ${autoLevel}`;
+	else description += `AL: L:${autoLevel} S:${hdStats.autoLevelSpeed})`;
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		const breedTimer = Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000);

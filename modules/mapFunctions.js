@@ -407,8 +407,7 @@ function _getVoidMapsHDObject() {
 		map: { hdStat: hdStats.hdRatioMap, name: 'Map HD Ratio' },
 		void: { hdStat: hdStats.hdRatioVoid, hdStatVoid: hdStats.vhdRatioVoid, name: 'Void HD Ratio' },
 		hitsSurvived: { hdStat: hdStats.hitsSurvived, name: 'Hits Survived' },
-		hitsSurvivedVoid: { hdStat: hdStats.hitsSurvivedVoid, name: 'Hits Survived Void' },
-		maplevel: { hdStat: hdStats.autoLevel, name: 'Map Level' }
+		hitsSurvivedVoid: { hdStat: hdStats.hitsSurvivedVoid, name: 'Hits Survived Void' }
 	};
 }
 
@@ -3064,7 +3063,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	const hdRatio = hdStats[hdTypeMap[hdType]] || null;
 
 	//Skipping farm if map repeat value is greater than our max maps value
-	let shouldMap = hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > settingTarget;
+	let shouldMap = hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > whichAutoLevel() : hdRatio > settingTarget;
 
 	const shouldSkip = mapSettings.mapName !== mapName && !shouldMap;
 
@@ -3080,7 +3079,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 			} else if (hdType !== 'maplevel') {
 				debug(`HD Farm (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as HD Ratio goal has been met (${hdRatio.toFixed(2)}/${settingTarget.toFixed(2)}).`, 'map_Skip');
 			} else {
-				debug(`HD Farm (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as Map Level goal has been met (Autolevel ${setting.hdBase}/${hdStats.autoLevel}).`, 'map_Skip');
+				const autoLevel = whichAutoLevel();
+				debug(`HD Farm (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as Map Level goal has been met (Auto Level ${setting.hdBase}/${autoLevel}).`, 'map_Skip');
 			}
 		}
 		resetMapVars(setting, settingName);
@@ -3569,8 +3569,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 			'Map HD Ratio': hdStats.hdRatioMap,
 			'Void HD Ratio': hdStats.hdRatioVoid,
 			'Hits Survived': hdStats.hitsSurvived,
-			'Hits Survived Void': hdStats.hitsSurvivedVoid,
-			'Map Level': hdStats.autoLevel
+			'Hits Survived Void': hdStats.hitsSurvivedVoid
 		};
 		message += ` Void maps were triggered by ${mapSettings.voidTrigger}.`;
 
@@ -3581,8 +3580,10 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		}
 	} else if (mapName === 'Hits Survived') message += ` Finished with hits survived at ${prettify(whichHitsSurvived())}/${targetHitsSurvived()}.`;
 	else if (mapName === 'HD Farm' && extra !== null) message += ` Finished with a HD Ratio of ${extra.toFixed(2)}/${extra2.toFixed(2)}.`;
-	else if (mapName === 'HD Farm') message += ` Finished with an auto level of ${hdStats.autoLevel > 0 ? '+' : ''}${hdStats.autoLevel}.`;
-	else if (mapName === 'Tribute Farm') message += ` Finished with ${game.buildings.Tribute.purchased} tributes and ${game.jobs.Meteorologist.owned} meteorologists.`;
+	else if (mapName === 'HD Farm') {
+		const autoLevel = whichAutoLevel();
+		message += ` Finished with an auto level of ${autoLevel > 0 ? '+' : ''}${autoLevel}.`;
+	} else if (mapName === 'Tribute Farm') message += ` Finished with ${game.buildings.Tribute.purchased} tributes and ${game.jobs.Meteorologist.owned} meteorologists.`;
 	else if (mapName === 'Smithy Farm') message += ` Finished with ${game.buildings.Smithy.purchased} smithies.`;
 	else if (mapName === 'Insanity Farm') message += ` Finished with ${game.challenges.Insanity.insanity} stacks.`;
 	else if (mapName === 'Alchemy Farm') message += ` Finished with ${extra} ${extra2}.`;

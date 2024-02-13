@@ -32,6 +32,7 @@ class TrimpStats {
 
 class HDStats {
 	constructor() {
+		this.autoLevel = hdStats.autoLevel;
 		this.autoLevelInitial = hdStats.autoLevelInitial;
 		this.autoLevelZone = hdStats.autoLevelZone;
 		this.autoLevelData = hdStats.autoLevelData;
@@ -41,6 +42,7 @@ class HDStats {
 		const { world, universe } = game.global;
 
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
+		const autoLevel = whichAutoLevel();
 
 		let voidPercent = 4.5;
 		if (world <= 59) {
@@ -71,26 +73,27 @@ class HDStats {
 		this.hitsSurvivedMap = calcHitsSurvived(world, 'map', mapDifficulty);
 		this.hitsSurvivedVoid = calcHitsSurvived(world, 'void', voidPercent);
 
-		this.autoLevel = autoMapLevel();
+		if (autoLevel === this.autoLevel) this.autoLevel = autoMapLevel();
+		else {
+			const checkAutoLevel = this.autoLevelInitial === undefined ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
 
-		const checkAutoLevel = this.autoLevelInitial === undefined ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
+			if (checkAutoLevel) {
+				this.autoLevelInitial = stats();
+				this.autoLevelZone = world;
+				this.autoLevelData = get_best(this.autoLevelInitial, true);
 
-		if (checkAutoLevel) {
-			this.autoLevelInitial = stats();
-			this.autoLevelZone = world;
-			this.autoLevelData = get_best(this.autoLevelInitial, true);
+				const findResult = Object.entries(this.autoLevelInitial[0]).find(([key, data]) => data.mapLevel === 0);
+				const worldMap = findResult ? findResult[1] : undefined;
+				const { loot, speed } = this.autoLevelData;
 
-			const findResult = Object.entries(this.autoLevelInitial[0]).find(([key, data]) => data.mapLevel === 0);
-			const worldMap = findResult ? findResult[1] : undefined;
-			const { loot, speed } = this.autoLevelData;
+				if (worldMap && worldMap[loot.stance] && worldMap[speed.stance]) {
+					loot.mapLevel = loot.mapLevel === -1 && loot.value === worldMap[loot.stance].value ? 0 : loot.mapLevel;
+					speed.mapLevel = speed.mapLevel === -1 && speed.killSpeed === worldMap[speed.stance].killSpeed ? 0 : speed.mapLevel;
+				}
 
-			if (worldMap && worldMap[loot.stance] && worldMap[speed.stance]) {
-				loot.mapLevel = loot.mapLevel === -1 && loot.value === worldMap[loot.stance].value ? 0 : loot.mapLevel;
-				speed.mapLevel = speed.mapLevel === -1 && speed.killSpeed === worldMap[speed.stance].killSpeed ? 0 : speed.mapLevel;
+				this.autoLevelLoot = this.autoLevelData.loot.mapLevel;
+				this.autoLevelSpeed = this.autoLevelData.speed.mapLevel;
 			}
-
-			this.autoLevelLoot = this.autoLevelData.loot.mapLevel;
-			this.autoLevelSpeed = this.autoLevelData.speed.mapLevel;
 		}
 	}
 }

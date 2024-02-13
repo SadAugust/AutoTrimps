@@ -534,13 +534,6 @@ function printChangelog(changes) {
 	else verticalCenterTooltip(true);
 }
 
-function _adjustGlobalTimers(keys, adjustment) {
-	keys.forEach((key) => {
-		if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[keys] += adjustment;
-		else game.global[key] += adjustment;
-	});
-}
-
 function setupAddonUser(force) {
 	if (typeof game.global.addonUser === 'object' && !force) return;
 
