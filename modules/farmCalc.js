@@ -112,7 +112,7 @@ function autoMapLevel(special = getAvailableSpecials('lmc'), maxLevel, minLevel,
 	const runningUnlucky = challengeActive('Unlucky');
 	const runningInsanity = challengeActive('Insanity');
 	const runningDuel = challengeActive('Duel');
-	var ourHealth = calcOurHealth(game.global.universe === 2 ? runningQuest : universeSetting, 'map');
+	let ourHealth = calcOurHealth(game.global.universe === 2 ? runningQuest : universeSetting, 'map');
 	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
 	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Explosive

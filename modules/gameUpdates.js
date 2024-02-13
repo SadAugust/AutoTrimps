@@ -627,7 +627,6 @@ function scaleHeirloomModUniverse(type, modName, value) {
 
 var DecimalBreed = Decimal.clone({ precision: 30, rounding: 4 });
 function breed() {
-	return;
 	const breedElem = document.getElementById('trimpsTimeToFill');
 	const trimps = game.resources.trimps;
 	const trimpsMax = trimps.realMax();
