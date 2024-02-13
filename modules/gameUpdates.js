@@ -269,7 +269,7 @@ function updateSideTrimps() {
 
 	let elem = document.getElementById('trimpsEmployed');
 	let elemText = prettify(trimps.employed);
-	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+	if (elem.innerHTML !== elemText.toString() && shouldUpdate()) elem.innerHTML = elemText;
 
 	const multitaskingMult = game.permaBoneBonuses.multitasking.owned ? game.permaBoneBonuses.multitasking.mult() : 1;
 	const breedEmployed = trimps.employed * multitaskingMult;
@@ -277,11 +277,11 @@ function updateSideTrimps() {
 
 	elem = document.getElementById('trimpsUnemployed');
 	elemText = breedCount;
-	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+	if (elem.innerHTML !== elemText.toString() && shouldUpdate()) elem.innerHTML = elemText;
 
 	elem = document.getElementById('maxEmployed');
 	elemText = prettify(Math.ceil(realMax / 2));
-	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+	if (elem.innerHTML !== elemText.toString() && shouldUpdate()) elem.innerHTML = elemText;
 
 	let free = Math.ceil(realMax / 2) - trimps.employed;
 	if (free < 0) free = 0;
@@ -289,7 +289,7 @@ function updateSideTrimps() {
 
 	elem = document.getElementById('jobsTitleUnemployed');
 	elemText = `${prettify(free)} workspace${s}`;
-	if (elem.innerHTML !== elemText.toString()) elem.innerHTML = elemText;
+	if (elem.innerHTML !== elemText.toString() && shouldUpdate()) elem.innerHTML = elemText;
 }
 
 function checkAndDisplayResources() {
@@ -791,7 +791,7 @@ function breed() {
 	}
 
 	srLastBreedTime = timeRemaining;
-	if (breedElem.innerHTML !== timeRemaining.toString()) breedElem.innerHTML = timeRemaining;
+	if (breedElem.innerHTML !== timeRemaining.toString() && shouldUpdate()) breedElem.innerHTML = timeRemaining;
 	trimps.owned = decimalOwned.toNumber();
 	if (decimalOwned.cmp(trimps.owned) != 0 && breeding.cmp(0) > 0) {
 		missingTrimps = decimalOwned.minus(trimps.owned);
@@ -2021,7 +2021,7 @@ function numTab(what, p) {
 		} else num = game.global.lastCustomAmt;
 		if (num === 0) num = 1;
 		if (!isNumberBad(num)) {
-			let = document.getElementById('tab5Text');
+			let elem = document.getElementById('tab5Text');
 			const elemText = `+${prettify(num)}`;
 			if (elem && elem.innerHTML !== elemText) elem.innerHTML = elemText;
 
