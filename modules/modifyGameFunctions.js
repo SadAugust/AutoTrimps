@@ -2338,10 +2338,11 @@ function craftBuildings(makeUp) {
 	const buildingsBar = document.getElementById('animationDiv');
 	if (!buildingsBar) return;
 
+	const buildingsQueue = game.global.buildingsQueue;
 	const timeRemaining = document.getElementById('queueTimeRemaining');
 	const speedElem = document.getElementById('buildSpeed');
 
-	if (game.global.crafting === '' && game.global.buildingsQueue.length > 0) {
+	if (game.global.crafting === '' && buildingsQueue.length > 0) {
 		setNewCraftItem();
 	}
 
@@ -2362,13 +2363,13 @@ function craftBuildings(makeUp) {
 		let timeLeft = (game.global.timeLeftOnCraft / modifier).toFixed(1);
 		if (timeLeft < 0.1 || isNumberBad(timeLeft)) timeLeft = 0.1;
 		elemText = ` - ${timeLeft} Seconds`;
-		if (timeRemaining.textContent !== elemText) timeRemaining.textContent = elemText;
+		if (timeRemaining && timeRemaining.textContent !== elemText) timeRemaining.textContent = elemText;
 
 		buildingsBar.style.opacity = game.options.menu.queueAnimation.enabled ? percent : '0';
 		if (game.global.timeLeftOnCraft > 0) return;
 	}
 
-	if (game.global.trapBuildToggled && game.global.trapBuildAllowed && game.global.buildingsQueue.length === 1 && game.global.buildingsQueue[0] === 'Trap.1') {
+	if (game.global.trapBuildToggled && game.global.trapBuildAllowed && buildingsQueue.length === 1 && buildingsQueue[0] === 'Trap.1') {
 		buildBuilding(game.global.crafting);
 		autoTrap();
 		return;
@@ -2389,7 +2390,6 @@ function removeQueueItem(what, force) {
 	const queue = document.getElementById('queueItemsHere');
 
 	if (what === 'first') {
-		const elem = queue.firstChild;
 		let multiCraftMax = bwRewardUnlocked('DecaBuild') ? 10 : bwRewardUnlocked('DoubleBuild') ? 2 : 1;
 		let [item, amount] = game.global.buildingsQueue[0].split('.');
 		amount = parseInt(amount, 10);
@@ -2398,16 +2398,17 @@ function removeQueueItem(what, force) {
 		amount -= multiCraftMax;
 		buildBuilding(item, multiCraftMax);
 
+		const elem = queue.firstChild;
 		if (amount > 0) {
 			const newQueue = `${item}.${amount}`;
 			const name = `${item} X${amount}`;
 			game.global.buildingsQueue[0] = newQueue;
 			elem.firstChild.innerHTML = name;
-			checkEndOfQueue();
-			return;
+		} else {
+			queue.removeChild(elem);
+			game.global.buildingsQueue.splice(0, 1);
 		}
-		queue.removeChild(elem);
-		game.global.buildingsQueue.splice(0, 1);
+
 		checkEndOfQueue();
 		return;
 	}
