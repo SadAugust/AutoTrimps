@@ -328,7 +328,7 @@ function _downloadSave(what = '') {
 
 	if (what === 'exportAutoTrimps') {
 		saveGame.options.menu.pauseGame.enabled = 1;
-		saveGame.options.menu.timeAtPause = new Date().getTime();
+		saveGame.options.menu.pauseGame.timeAtPause = new Date().getTime();
 		saveGame.options.menu.standardNotation.enabled = 0;
 		saveGame.options.menu.darkTheme.enabled = 2;
 		saveGame.options.menu.disablePause.enabled = 1;
@@ -532,9 +532,10 @@ function makeAdditionalInfo() {
 		description += `V: ${voidValue}/10`;
 		description += lineBreak;
 	}
+
 	const autoLevel = whichAutoLevel();
-	if (autoLevel === hdStats.autoLevel) description += `AL: ${autoLevel}`;
-	else description += `AL: L:${autoLevel} S:${hdStats.autoLevelSpeed})`;
+	if (autoLevel === 'original') description += `AL: ${hdStats.autoLevel}`;
+	else description += `AL: (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		const breedTimer = Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000);

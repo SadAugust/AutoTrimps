@@ -929,6 +929,7 @@ function simulate(saveData, zone) {
 			energyShield = energyShieldMax;
 		}
 	}
+
 	return {
 		speed: (loot * 10) / max_ticks,
 		equality: equality,

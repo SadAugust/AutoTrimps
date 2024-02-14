@@ -277,6 +277,6 @@ function whichHitsSurvived() {
 }
 
 function whichAutoLevel() {
-	if (getPageSetting('autoLevelTest')) return hdStats.autoLevelLoot;
-	else return hdStats.autoLevel;
+	if (getPageSetting('autoLevelTest')) return 'autoLevel';
+	else return 'original';
 }

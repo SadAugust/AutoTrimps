@@ -73,7 +73,7 @@ class HDStats {
 		this.hitsSurvivedMap = calcHitsSurvived(world, 'map', mapDifficulty);
 		this.hitsSurvivedVoid = calcHitsSurvived(world, 'void', voidPercent);
 
-		if (autoLevel === this.autoLevel) this.autoLevel = autoMapLevel();
+		if (autoLevel === 'original') this.autoLevel = autoMapLevel();
 		else {
 			const checkAutoLevel = this.autoLevelInitial === undefined ? true : usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond;
 
