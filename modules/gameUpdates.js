@@ -1170,7 +1170,7 @@ function rewardLiquidZone() {
 		}
 		if (cell.mutation && typeof mutations[cell.mutation].reward !== 'undefined') mutations[cell.mutation].reward(cell.corrupted);
 		if (cell.empowerment) {
-			var tokReward = rewardToken(cell.empowerment);
+			const tokReward = rewardToken(cell.empowerment);
 			if (game.global.messages.Loot.token && game.global.messages.Loot.enabled && tokReward) {
 				tokText = "<span class='message empoweredCell" + cell.empowerment + "'>Found " + prettify(tokReward) + ' Token' + (tokReward === 1 ? '' : 's') + ' of ' + cell.empowerment + '!</span>';
 			}
@@ -1224,15 +1224,15 @@ function rewardLiquidZone() {
 			trackedList += item + ' - ' + trackedImps[item];
 		}
 	}
-	if (trackedList !== '' && game.global.messages.Loot.exotic && game.global.messages.Loot.enabled) {
+	if (trackedList != '' && game.global.messages.Loot.exotic && game.global.messages.Loot.enabled) {
 		trackedList = 'Rare Imps: ' + trackedList + '<br/>';
 		text += trackedList;
 	}
-	if (bones !== '' && game.global.messages.Loot.bone && game.global.messages.Loot.enabled) {
+	if (bones != '' && game.global.messages.Loot.bone && game.global.messages.Loot.enabled) {
 		bones = 'Found a ' + bones + '!<br/>';
 		text += bones;
 	}
-	if (tokText !== null) {
+	if (tokText) {
 		text += tokText + '<br/>';
 	}
 	if (text) {
