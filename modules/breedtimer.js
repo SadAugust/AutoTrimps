@@ -61,6 +61,7 @@ function getPotencyMod() {
 		if (u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
 		if (u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
 	}
+
 	return potencyMod.div(10).add(1);
 }
 

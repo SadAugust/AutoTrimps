@@ -79,73 +79,28 @@ function worthOfHeirlooms() {
 function autoHeirlooms(portal) {
 	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	if (portal && !portalWindowOpen) return;
-
+	const maxHeirlooms = getMaxCarriedHeirlooms();
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
+	const weights = worthOfHeirlooms();
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
-	const heirloomTypes = heirloomType === 'All' ? (game.global.universe === 1 ? ['Shield', 'Staff', 'Core'] : ['Shield', 'Staff']) : [heirloomType];
 
+	const heirloomTypes = heirloomType === 'All' ? (game.global.universe === 1 ? ['Shield', 'Staff', 'Core'] : ['Shield', 'Staff']) : [heirloomType];
 	const heirloomTypeEnabled = heirloomTypes.reduce((obj, type) => {
 		obj[type] = getPageSetting(`heirloomAuto${type}`);
 		return obj;
 	}, {});
 
-	const weights = worthOfHeirlooms();
-	let types = 0;
-
-	for (let key in weights) {
-		if (heirloomTypeEnabled[key]) types++;
-		else delete weights[key];
-	}
-
+	let types = Object.keys(weights).filter((key) => heirloomTypeEnabled[key]).length;
 	if (types === 0) return;
 
-	const carrySpace = getMaxCarriedHeirlooms() - game.global.heirloomsCarried.length;
-	const counts = Object.entries(weights).reduce((acc, [typeKey, looms]) => {
-		acc[typeKey] = Math.min(looms.length, Math.floor(carrySpace / types));
-		return acc;
-	}, {});
-
-	let used = Object.values(counts).reduce((acc, val) => (acc += val), 0);
-	types = Object.entries(counts).reduce((acc, [key, count]) => (acc += count < weights[key].length));
-
-	while (types > 0 && used <= carrySpace - types) {
-		for (const key in Object.keys(counts)) {
-			const uncountedLooms = weights[key].length - counts[key];
-			if (uncountedLooms === 0) continue;
-
-			let inc = Math.floor(carrySpace / types);
-			if (uncountedLooms < inc) {
-				inc = uncountedLooms;
-				types--;
+	while (game.global.heirloomsCarried.length < maxHeirlooms && game.global.heirloomsExtra.length > 0) {
+		for (let x = 0; x < heirloomTypes.length; x++) {
+			if (weights[heirloomTypes[x]].length > 0) {
+				let carriedHeirlooms = weights[heirloomTypes[x]].shift();
+				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
+				if (heirloomTypeEnabled[heirloomTypes[x]]) carryHeirloom();
+				else recycleHeirloom(true);
 			}
-
-			counts[key] += inc;
-			used += inc;
-		}
-	}
-
-	if (used < game.global.heirloomsExtra.length) {
-		let n = 0;
-		while (used < carrySpace && used < game.global.heirloomsExtra.length) {
-			const key = Object.keys(counts)[n];
-			if (counts[key] < weights[key].length) {
-				counts[key]++;
-				used++;
-			}
-			n = (n + 1) % Object.keys(weights).length;
-		}
-	}
-
-	const toKeepBitmask = Object.entries(weights).reduce((acc, [key, loomList]) => {
-		for (let i = 0; i < counts[key]; i++) {
-			acc |= 1 << loomList[i].index;
-		}
-	}, 0b0);
-
-	for (let idx = game.global.heirloomsExtra.length - 1; idx >= 0; idx--) {
-		if (toKeepBitmask & (1 << idx)) {
-			selectHeirloom(idx, 'heirloomsExtra');
-			carryHeirloom();
 		}
 	}
 }
