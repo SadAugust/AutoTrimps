@@ -157,6 +157,8 @@ function runMap_AT() {
 		game.challenges.Quest.questProgress++;
 		if (game.challenges.Quest.questProgress === 1) game.challenges.Quest.failQuest();
 	}
+	if (game.global.formation !== 4 && game.global.formation !== 5) game.global.canScryCache = false;
+
 	var mapId = game.global.lookingAtMap;
 	game.global.preMapsActive = false;
 	game.global.mapsActive = true;
@@ -393,7 +395,6 @@ function loadFromSteam() {
 function cloudSaveCallback(data) {}
 
 //Overall more performance efficient to remove the textStrings from getPsString so copied it from the game and removed the textStrings.
-//Check and update each patch!
 function getPsString_AT(what, ignoreManual = false) {
 	if (what === 'helium') return;
 	const resOrder = ['food', 'wood', 'metal', 'science', 'gems', 'fragments'];

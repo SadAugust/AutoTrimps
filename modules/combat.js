@@ -124,7 +124,7 @@ function _avoidEmpower() {
 
 	if (game.global.mapsActive && !game.global.voidBuff) {
 		mapsClicked(true);
-		runMap_AT();
+		runMap(false);
 	} else if (!game.global.mapsActive) {
 		mapsClicked(true);
 		mapsClicked(true);
@@ -363,7 +363,7 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax) {
 		suicideTrimps(true);
 	} else if (mappingButDieAnyway) {
 		suicideTrimps(true);
-		runMap_AT();
+		runMap(false);
 	} else {
 		_setEquality(0);
 		return false;

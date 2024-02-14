@@ -293,7 +293,7 @@ function _runUniqueMap(mapName) {
 		if (game.global.mapsActive && mapObj.name !== mapName) recycleMap_AT();
 		if (game.global.preMapsActive && game.global.currentMapId === '') {
 			selectMap(map.id);
-			runMap_AT();
+			runMap(false);
 			debug(`Running ${mapName} on zone ${game.global.world}.`, 'map_Details');
 			MODULES.mapFunctions.runUniqueMap = '';
 		}
@@ -1373,7 +1373,7 @@ function prestigeRaidingMapping() {
 		_handlePrestigeMapRunning();
 	}
 
-	if (game.global.preMapsActive) runMap_AT();
+	if (game.global.preMapsActive) runMap(false);
 }
 
 function _handlePrestigeMapBuying() {
@@ -1431,7 +1431,7 @@ function _runPurchasedMap(mapId, x) {
 	} else {
 		debug(`Prestige Raiding (z${game.global.world}) running a level ${purchasedMap.level} map. Map #${mapSettings.prestigeMapArray.length - x}`, 'map_Details');
 		selectMap(mapId);
-		runMap_AT();
+		runMap(false);
 	}
 }
 
