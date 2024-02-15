@@ -435,22 +435,22 @@ function getPsValues() {
 	if (game.global.universe === 2) {
 		if (challengeActive('Downsize')) baseMult *= 5;
 		if (Fluffy.isRewardActive('gatherer')) baseMult *= 2;
-		if (challengeActive('Insanity')) currentCalc *= game.challenges.Insanity.getLootMult();
-		if (game.portal.Observation.trinkets > 0) currentCalc *= game.portal.Observation.getMult();
+		if (challengeActive('Insanity')) baseMult *= game.challenges.Insanity.getLootMult();
+		if (game.portal.Observation.trinkets > 0) baseMult *= game.portal.Observation.getMult();
 	}
 
 	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.dedication !== 'undefined') {
-			currentCalc *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
+			baseMult *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
 		}
 		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what !== 'fragments' && what !== 'science') {
-			currentCalc *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
+			baseMult *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 		}
 	}
 
 	let noFragMult = 1;
-	if (game.global.pandCompletions) currentCalc *= game.challenges.Pandemonium.getTrimpMult();
-	if (game.global.desoCompletions) currentCalc *= game.challenges.Desolation.getTrimpMult();
+	if (game.global.pandCompletions) noFragMult *= game.challenges.Pandemonium.getTrimpMult();
+	if (game.global.desoCompletions) noFragMult *= game.challenges.Desolation.getTrimpMult();
 
 	if (game.global.universe === 1) {
 		if (getEmpowerment() === 'Wind') noFragMult *= 1 + game.empowerments.Wind.getCombatModifier();
