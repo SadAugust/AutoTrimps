@@ -1,5 +1,3 @@
-//Creates a new div element, gives it an id, sets the style to display:none, and then appends it to the settingsRow div.
-//Div for the settings menu
 function automationMenuSettingsInit() {
 	const settingsRow = document.getElementById('settingsRow');
 	const autoSettings = document.createElement('DIV');
@@ -5155,7 +5153,6 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 	return initial;
 }
 
-//Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function _setupATButtons() {
 	_createAutoTrimpsButton();
 	_createAutoMapsButton();

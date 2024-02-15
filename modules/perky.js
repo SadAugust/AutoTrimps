@@ -400,7 +400,7 @@ function optimize() {
 	function moti() {
 		return Motivation.bonus * Motivation_II.bonus * Meditation.bonus;
 	}
-	var looting = function () {
+	const looting = function () {
 		return Looting.bonus * Looting_II.bonus;
 	};
 	function gem_income() {
@@ -410,7 +410,7 @@ function optimize() {
 		return drag + loot + chronojest;
 	}
 	// Max population
-	var trimps = mod.tent_city
+	const trimps = mod.tent_city
 		? function () {
 				const carp = Carpentry.bonus * Carpentry_II.bonus;
 				const territory = Trumps.bonus;
@@ -651,7 +651,7 @@ MODULES.autoPerks = {
 		perkInput.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
 		perkInput.onmouseout = () => tooltip('hide');
 
-		const perkText = document.createElement('Label');
+		const perkText = document.createElement('span');
 		perkText.id = `${id}Text`;
 		perkText.innerHTML = inputObj.name;
 		perkText.style.cssText = 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw;';
@@ -719,7 +719,7 @@ MODULES.autoPerks = {
 		apGUI.$presetDiv.style.cssText = 'display: inline; width: calc(100vw/34);';
 
 		//Setting up preset label
-		apGUI.$presetLabel = document.createElement('Label');
+		apGUI.$presetLabel = document.createElement('span');
 		apGUI.$presetLabel.id = 'PresetText';
 		apGUI.$presetLabel.innerHTML = '&nbsp;&nbsp;&nbsp;Preset:';
 		apGUI.$presetLabel.style.cssText = 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;';

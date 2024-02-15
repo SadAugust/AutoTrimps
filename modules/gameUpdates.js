@@ -592,7 +592,7 @@ function gather() {
 }
 
 function updateTitimp() {
-	if (!shouldUpdate()) return;
+	if (usingRealTimeOffline) return;
 	const elem = document.getElementById('titimpBuff');
 	if (game.global.titimpLeft < 1) {
 		if (elem.innerHTML !== '') {
@@ -699,14 +699,15 @@ function breed() {
 	breeding = potencyMod.mul(breeding);
 	updatePs(breeding.toNumber(), true);
 	potencyMod = potencyMod.div(10).add(1);
+	const logPotencyMod = DecimalBreed.log10(potencyMod);
 	let timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
-		.div(DecimalBreed.log10(potencyMod))
+		.div(logPotencyMod)
 		.div(10);
 	//Calculate full breed time
 	let fullBreed = '';
 	const currentSend = trimps.getCurrentSend();
 	let totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
-		.div(DecimalBreed.log10(potencyMod))
+		.div(logPotencyMod)
 		.div(10);
 	//breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
 	game.global.breedTime = currentSend / breeding.toNumber();
@@ -859,65 +860,6 @@ u2Mutations.setAlert = function () {
 	}
 };
 
-offlineProgress.updateMapBtns = function () {
-	if (game.global.preMapsActive || game.global.mapsActive) {
-		if (this.zoneBtnsElem.style.display !== 'block') {
-			this.zoneBtnsElem.style.display = 'block';
-			this.mapBtnsElem.style.display = 'none';
-		}
-	} else {
-		if (this.mapBtnsElem.style.display !== 'block') {
-			this.zoneBtnsElem.style.display = 'none';
-			this.mapBtnsElem.style.display = 'block';
-		}
-	}
-	if (this.mapsAllowed < 1) {
-		if (this.mapBtnsInnerElem.style.display !== 'block') {
-			this.mapBtnsInnerElem.style.display = 'none';
-			this.mapTextElem.innerHTML = 'No maps available<br/>Gain 1 map for each 8 hours away';
-		}
-		return;
-	}
-	this.mapBtnsInnerElem.style.display = 'block';
-	const world = game.global.world;
-	const frags = game.resources.fragments.owned;
-	for (let x = 0; x < 4; x++) {
-		const useWorld = world - x;
-		if (useWorld < 6) {
-			this.mapBtns[x].style.display = 'none';
-			continue;
-		}
-		document.getElementById('mapLevelInput').value = useWorld;
-		const price = updateMapCost(true);
-
-		let mapText = '';
-		let displayStyle = '';
-		let innerHTML = '';
-
-		if (x === 4 && price > frags) {
-			mapText = "Oof, you don't have enough fragments to run a map.";
-			displayStyle = 'none';
-		} else {
-			mapText = `You can run <b>${this.mapsAllowed} map${needAnS(this.mapsAllowed)}</b> while you wait!<br>Use ${this.mapsAllowed === 1 ? 'it' : 'them'} wisely...<br>You have ${prettify(frags)} Fragments.`;
-			displayStyle = 'inline-block';
-		}
-
-		innerHTML = `Z ${useWorld} map<br>${prettify(price)} Frags<br>${this.countMapItems(useWorld)} items`;
-
-		if (this.mapTextElem.innerHTML !== mapText) {
-			this.mapTextElem.innerHTML = mapText;
-		}
-
-		if (this.mapBtns[x].style.display !== displayStyle) {
-			this.mapBtns[x].style.display = displayStyle;
-		}
-
-		if (this.mapBtns[x].innerHTML !== innerHTML) {
-			this.mapBtns[x].innerHTML = innerHTML;
-		}
-	}
-};
-
 function drawGrid(maps) {
 	const grid = maps ? document.getElementById('mapGrid') : document.getElementById('grid');
 	let map = maps ? getCurrentMapObject() : null;
@@ -937,10 +879,6 @@ function drawGrid(maps) {
 			}
 		}
 	}
-
-	/* if (maps && cols * rows === map.size && !shouldUpdate(true)) {
-		return;
-	} */
 
 	let className = '';
 	if (game.global.universe === 1 && !maps && game.global.world >= 60 && game.global.world <= 80) {
@@ -2307,6 +2245,15 @@ function startFight() {
 		}
 
 		if (game.global.universe === 1) {
+			if (game.global.spireActive && checkIfSpireWorld() && !game.global.mapsActive) {
+				cell.origAttack = cell.attack;
+				cell.origHealth = cell.health;
+				cell.attack = getSpireStats(cell.level, cell.name, 'attack');
+				cell.health = getSpireStats(cell.level, cell.name, 'health');
+			}
+			/* 	This should likely be above the spire check as it overwrites Spire stats 
+				Potential issue is it multiplies hp/atk so would cause Spire enemies with these modifiers to be significantly tougher
+			*/
 			if (cell.empowerment) {
 				if (cell.mutation !== 'Corruption') {
 					cell.health = mutations.Corruption.health(cell.level, cell.name);
@@ -2314,13 +2261,6 @@ function startFight() {
 				}
 				healthMult *= 4;
 				attackMult *= 1.2;
-			}
-
-			if (game.global.spireActive && checkIfSpireWorld() && !game.global.mapsActive) {
-				cell.origAttack = cell.attack;
-				cell.origHealth = cell.health;
-				cell.attack = getSpireStats(cell.level, cell.name, 'attack');
-				cell.health = getSpireStats(cell.level, cell.name, 'health');
 			}
 
 			if (cell.corrupted === 'corruptStrong') attackMult *= 2;
@@ -2472,17 +2412,19 @@ function startFight() {
 			}
 		}
 
+		const empowerment = getEmpowerment();
+		const empowermentUber = getUberEmpowerment();
 		if (cell.health < 1) {
 			let overkillerCount = 0;
 			if (game.global.universe === 1) {
 				overkillerCount = Fluffy.isRewardActive('overkiller');
 				if (game.talents.overkill.purchased) overkillerCount++;
-				if (getEmpowerment() === 'Ice') {
+				if (empowerment === 'Ice') {
 					const iceLevel = game.empowerments.Ice.getLevel();
 					if (iceLevel >= 50) overkillerCount++;
 					if (iceLevel >= 100) overkillerCount++;
 				}
-				if (getUberEmpowerment() === 'Ice') overkillerCount += 2;
+				if (empowermentUber === 'Ice') overkillerCount += 2;
 			} else {
 				if (u2Mutations.tree.MaxOverkill.purchased && canU2Overkill()) overkillerCount++;
 			}
@@ -2507,22 +2449,21 @@ function startFight() {
 					if (cell.health < cell.maxHealth * 0.05) cell.health = cell.maxHealth * 0.05;
 				}
 
-				const empowerment = getEmpowerment();
 				if (empowerment) {
 					if (empowerment === 'Poison') {
+						/* stackPoison handles the poison debuff and plaguebrought scaling */
 						stackPoison(cell.plaguebringer);
-						//stackPoison handles the poison debuff and plaguebrought scaling
 					}
 					if (empowerment === 'Wind') {
 						let hits = cell.plagueHits;
-						if (getUberEmpowerment() === 'Wind') hits *= 2;
+						if (empowermentUber === 'Wind') hits *= 2;
 						if (Fluffy.isRewardActive('plaguebrought')) hits *= 2;
 						game.empowerments[empowerment].currentDebuffPower += Math.ceil(hits);
 						handleWindDebuff();
 					}
 					if (empowerment === 'Ice') {
 						let hits = cell.plagueHits;
-						if (getUberEmpowerment() === 'Ice') hits *= 2;
+						if (empowermentUber === 'Ice') hits *= 2;
 						if (Fluffy.isRewardActive('plaguebrought')) hits *= 2;
 						game.empowerments[empowerment].currentDebuffPower += Math.ceil(hits);
 						handleIceDebuff();
@@ -2884,6 +2825,7 @@ function fight(makeUp) {
 	let cellElem;
 	let isVoid = false;
 	game.global.passive = false;
+
 	if (game.global.mapsActive) {
 		cellNum = game.global.lastClearedMapCell + 1;
 		cell = game.global.mapGridArray[cellNum];
@@ -2894,6 +2836,7 @@ function fight(makeUp) {
 		cell = game.global.gridArray[cellNum];
 		cellElem = document.getElementById('cell' + cellNum);
 	}
+
 	if (game.global.soldierHealth <= 0) {
 		if (isVoid) game.global.voidDeaths++;
 		game.stats.trimpsKilled.value += game.resources.trimps.soldiers;
@@ -2918,6 +2861,7 @@ function fight(makeUp) {
 				updateDailyStacks('empower');
 			}
 		}
+
 		let s = game.resources.trimps.soldiers > 1 ? 's ' : ' ';
 		const randomText = game.trimpDeathTexts[Math.floor(Math.random() * game.trimpDeathTexts.length)];
 		let msgText = `${prettify(game.resources.trimps.soldiers)} Trimp${s} just ${randomText}.`;
@@ -2926,6 +2870,7 @@ function fight(makeUp) {
 		if (game.global.spireActive && !game.global.mapsActive) deadInSpire();
 		game.global.fighting = false;
 		game.resources.trimps.soldiers = 0;
+
 		if (challengeActive('Nom')) {
 			cell.nomStacks = cell.nomStacks ? cell.nomStacks + 1 : 1;
 			if (cell.nomStacks > 100) cell.nomStacks = 100;
@@ -2935,14 +2880,17 @@ function fight(makeUp) {
 			if (cell.health > cell.maxHealth) cell.health = cell.maxHealth;
 			updateBadBar(cell);
 		}
+
 		return;
 	}
 	if (cell.health <= 0 || !isFinite(cell.health)) {
 		game.stats.battlesWon.value++;
+
 		if (!game.global.mapsActive) {
 			game.global.voidSeed++;
 			game.global.scrySeed++;
 		}
+
 		if ((game.global.formation === 4 || game.global.formation === 5) && !game.global.mapsActive && !game.global.waitToScry) tryScry();
 		if (game.jobs.Worshipper.owned > 0 && !game.global.mapsActive) tryWorship();
 		if (challengeActive('Nom') && cell.nomStacks === 100) giveSingleAchieve('Great Host');
@@ -3014,11 +2962,13 @@ function fight(makeUp) {
 				if (prevCellElem) swapClass('cellColor', 'cellColorOverkill', prevCellElem);
 			}
 			swapClass('cellColor', 'cellColorOverkill', cellElem);
-		} else swapClass('cellColor', 'cellColorBeaten', cellElem);
-		if (game.global.mapsActive) game.global.lastClearedMapCell = cellNum;
-		else {
-			game.global.lastClearedCell = cellNum;
+		} else {
+			swapClass('cellColor', 'cellColorBeaten', cellElem);
 		}
+
+		if (game.global.mapsActive) game.global.lastClearedMapCell = cellNum;
+		else game.global.lastClearedCell = cellNum;
+
 		game.global.fighting = false;
 		document.getElementById('badGuyCol').style.visibility = 'hidden';
 		//Loot!
@@ -3026,8 +2976,9 @@ function fight(makeUp) {
 			rewardToken(cell.empowerment);
 		}
 		let unlock;
-		if (game.global.mapsActive) unlock = game.mapUnlocks[cell.special];
-		else {
+		if (game.global.mapsActive) {
+			unlock = game.mapUnlocks[cell.special];
+		} else {
 			checkVoidMap();
 			unlock = game.worldUnlocks[cell.special];
 		}
@@ -3109,9 +3060,9 @@ function fight(makeUp) {
 			let skip = false;
 			if (isVoid) {
 				if (currentMapObj.stacked > 0) {
-					let timeout = 1000;
-					if (currentMapObj.stacked > 3) timeout = 750;
-					if (currentMapObj.stacked > 6) timeout = 500;
+					let timeout = 750;
+					if (currentMapObj.stacked > 3) timeout = 300;
+					if (currentMapObj.stacked > 6) timeout = 100;
 					if (usingRealTimeOffline || !game.options.menu.voidPopups.enabled) timeout = 10;
 					rewardingTimeoutHeirlooms = true;
 
@@ -3131,7 +3082,6 @@ function fight(makeUp) {
 				currentMapObj.noRecycle = false;
 				recycleMap(-1, true, true);
 				if (game.options.menu.repeatVoids.enabled === 1) {
-					//repeat void maps
 					if (game.global.totalVoidMaps > 0) doNextVoid = getNextVoidId();
 				}
 				skip = true;
@@ -3797,7 +3747,7 @@ function nextWorld() {
 	liquifyZone();
 	drawGrid();
 	buyAutoJobs(true);
-	var msgText = getWorldText(game.global.world);
+	let msgText = getWorldText(game.global.world);
 	if (msgText) {
 		var extraClass = null;
 		if (Array.isArray(msgText)) {
@@ -3837,7 +3787,7 @@ function nextWorld() {
 		manageLeadStacks();
 	}
 	if (challengeActive('Decay') || challengeActive('Melt')) {
-		var challenge = game.challenges[game.global.challengeActive];
+		let challenge = game.challenges[game.global.challengeActive];
 		challenge.stacks = 0;
 	}
 	if (challengeActive('Daily')) {
@@ -3854,7 +3804,7 @@ function nextWorld() {
 		}
 	}
 	if (game.talents.blacksmith.purchased && (!challengeActive('Mapology') || !game.global.runningChallengeSquared)) {
-		var smithWorld = 0.5;
+		let smithWorld = 0.5;
 		if (game.talents.blacksmith3.purchased) smithWorld = 0.9;
 		else if (game.talents.blacksmith2.purchased) smithWorld = 0.75;
 		smithWorld = Math.floor((getHighestLevelCleared(false, true) + 1) * smithWorld);
@@ -3863,7 +3813,7 @@ function nextWorld() {
 		}
 	}
 	if (game.talents.bionic.purchased && game.global.universe === 1) {
-		var bTier = (game.global.world - 126) / 15;
+		let bTier = (game.global.world - 126) / 15;
 		if (game.global.world >= 126) game.mapUnlocks.BionicWonderland.canRunOnce = false;
 		if (bTier % 1 === 0 && bTier === game.global.bionicOwned && game.global.roboTrimpLevel >= bTier) {
 			game.mapUnlocks.roboTrimp.createMap(bTier);
@@ -3881,7 +3831,7 @@ function nextWorld() {
 		if (Math.floor((game.global.world - game.mapUnlocks.Speedexplorer.next) / 10)) {
 			game.mapUnlocks.Speedexplorer.fire(0, true);
 			if (game.global.currentMapId) {
-				for (var x = 0; x < game.global.mapGridArray.length; x++) {
+				for (let x = 0; x < game.global.mapGridArray.length; x++) {
 					if (game.global.mapGridArray[x].special === 'Speedexplorer') game.global.mapGridArray[x].special = '';
 				}
 			}
@@ -3916,8 +3866,8 @@ function nextWorld() {
 		if (game.stats.cellsOverkilled.value + game.stats.zonesLiquified.value * 50 === 2950) giveSingleAchieve('Gotta Go Fast');
 		if (getHighestPrestige() <= 3) giveSingleAchieve('Shaggy');
 		//Without Hiring Anything
-		var jobCount = 0;
-		for (var job in game.jobs) jobCount += game.jobs[job].owned; //Dragimp adds 1
+		let jobCount = 0;
+		for (let job in game.jobs) jobCount += game.jobs[job].owned; //Dragimp adds 1
 		if (jobCount - game.jobs.Dragimp.owned - game.jobs.Amalgamator.owned === 0 && game.stats.trimpsFired.value === 0) giveSingleAchieve('Unemployment');
 		if (game.global.universe === 2) buffVoidMaps();
 	} else if (game.global.world === 65) checkChallengeSquaredAllowed();
@@ -3956,7 +3906,7 @@ function nextWorld() {
 	}
 
 	if (game.global.challengeActive) {
-		var challenge = game.challenges[game.global.challengeActive];
+		let challenge = game.challenges[game.global.challengeActive];
 		if (!game.global.runningChallengeSquared && challenge.completeAfterZone && challenge.completeAfterZone === game.global.world - 1 && typeof challenge.onComplete !== 'undefined') challenge.onComplete();
 		else if (typeof challenge.onNextWorld !== 'undefined') challenge.onNextWorld();
 	}
@@ -3967,8 +3917,8 @@ function nextWorld() {
 	if (!game.portal.Observation.radLocked && game.global.universe === 2) game.portal.Observation.onNextWorld();
 	if (game.global.capTrimp) message("I'm terribly sorry, but your Trimp<sup>2</sup> run appears to have more than one Trimp fighting, which kinda defeats the purpose. Your score for this Challenge<sup>2</sup> will be capped at 230.", 'Notices');
 	if (game.global.world >= getObsidianStart()) {
-		var next = game.global.highestRadonLevelCleared >= 99 ? '50' : '10';
-		var text;
+		let next = game.global.highestRadonLevelCleared >= 99 ? '50' : '10';
+		let text;
 		if (!Fluffy.checkU2Allowed()) text = " Fluffy has an idea for remelting the world, but it will take a tremendous amount of energy from a place Fluffy isn't yet powerful enough to send you. Fluffy asks you to help him reach the <b>10th Level of his 8th Evolution</b>, and he promises he'll make it worth your time.";
 		else if (game.global.world === 810) text = '';
 		else text = ' However, all is not lost! Every ' + next + ' Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.';
@@ -3984,7 +3934,7 @@ function nextWorld() {
 		createMap(175, 'Frozen Castle', 'Frozen', 10, 100, 5, true, true);
 	}
 	if (game.global.world >= 176 && game.global.world <= 200 && game.global.universe === 2) {
-		for (var z = 0; z < game.global.mapsOwnedArray.length; z++) {
+		for (let z = 0; z < game.global.mapsOwnedArray.length; z++) {
 			if (game.global.mapsOwnedArray[z].location === 'Frozen') {
 				game.global.mapsOwnedArray[z].level = game.global.world;
 				if (game.global.currentMapId === game.global.mapsOwnedArray[z].id) {
@@ -4094,6 +4044,25 @@ offlineProgress.updateFormations = function (force) {
 	}
 };
 
+function calculateMapCost(plusLevel = 0) {
+	const mapPresets = game.global.universe === 2 ? game.global.mapPresets2 : game.global.mapPresets;
+	const { loot, difficulty, size, biome, perf, specMod } = mapPresets[`p${game.global.selectedMapPreset}`];
+
+	const mapLevel = Math.max(game.global.world + plusLevel, 6);
+	let baseCost = loot + difficulty + size;
+	baseCost *= game.global.world >= 60 ? 0.74 : 1;
+
+	if (perf && [loot, difficulty, size].reduce((a, b) => a + b) === 27) baseCost += 6;
+	if (plusLevel > 0) baseCost += plusLevel * 10;
+	if (specMod !== '0') baseCost += mapSpecialModifierConfig[specMod].costIncrease;
+
+	baseCost += mapLevel;
+	baseCost = Math.floor((baseCost / 150) * Math.pow(1.14, baseCost - 1) * mapLevel * 2 * Math.pow(1.03 + mapLevel / 50000, mapLevel));
+	baseCost *= biome !== 'Random' ? 2 : 1;
+
+	return baseCost;
+}
+
 offlineProgress.updateMapBtns = function () {
 	if (game.global.preMapsActive || game.global.mapsActive) {
 		if (this.zoneBtnsElem.style.display !== 'block') {
@@ -4106,13 +4075,18 @@ offlineProgress.updateMapBtns = function () {
 			this.mapBtnsElem.style.display = 'block';
 		}
 	}
+
 	if (this.mapsAllowed < 1) {
 		if (this.mapBtnsInnerElem.style.display !== 'block') {
 			this.mapBtnsInnerElem.style.display = 'none';
-			this.mapTextElem.innerHTML = 'No maps available<br/>Gain 1 map for each 8 hours away';
+			const elemText = 'No maps available<br>Gain 1 map for each 8 hours away';
+			if (this.mapTextElem.innerHTML !== elemText) {
+				this.mapTextElem.innerHTML = elemText;
+			}
 		}
 		return;
 	}
+
 	this.mapBtnsInnerElem.style.display = 'block';
 	const world = game.global.world;
 	const frags = game.resources.fragments.owned;
@@ -4122,8 +4096,8 @@ offlineProgress.updateMapBtns = function () {
 			this.mapBtns[x].style.display = 'none';
 			continue;
 		}
-		document.getElementById('mapLevelInput').value = useWorld;
-		const price = updateMapCost(true);
+
+		const price = calculateMapCost(0 - x);
 
 		let mapText = '';
 		let displayStyle = '';
@@ -4385,12 +4359,12 @@ function manageEqualityStacks() {
 
 	if (game.portal.Equality.scalingActive) {
 		swapClass('equalityTabScaling', 'equalityTabScalingOn', tabElem);
-		elemText = 'On)';
+		elemText += 'On)';
 		text += '. Scaling is on.';
 		manageStacks('Equality Scaling', activeStacks, true, 'equalityStacks', 'icomoon icon-arrow-bold-down', text, false);
 	} else {
 		swapClass('equalityTabScaling', 'equalityTabScalingOff', tabElem);
-		elemText = 'Off)';
+		elemText += 'Off)';
 		text += '. Scaling is off.';
 		manageStacks('Equality Scaling', activeStacks, true, 'equalityStacks', 'icomoon icon-arrow-bold-down', text, false);
 	}
