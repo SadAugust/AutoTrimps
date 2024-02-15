@@ -83,10 +83,8 @@ offlineProgress.finish = function () {
 	if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
 	offlineProgress.originalFinish(...arguments);
 	try {
-		//Rerun TW if it took over 30 seconds to complete
 		if (timeRun > 30) {
-			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.min(timeRun, offlineProgress.maxTicks / 10))} to catchup on the time you missed whilst running it.`);
-			//Convert time to milliseconds and subtract it from the variables that TW uses to calculate offline progress so we don't have tons of time related issues.
+			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.floor(Math.min(timeRun, offlineProgress.maxTicks / 10)))} to catchup on the time you missed whilst running it.`);
 			timeRun *= 1000;
 
 			const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
@@ -395,78 +393,51 @@ function loadFromSteam() {
 function cloudSaveCallback(data) {}
 
 //Overall more performance efficient to remove the textStrings from getPsString so copied it from the game and removed the textStrings.
-function getPsString_AT(what, ignoreManual = false) {
-	if (what === 'helium') return;
+function getPsValues() {
+	const what = ['food', 'wood', 'metal', 'science', 'gems', 'fragments'];
+	const resourcesObj = {
+		food: { normal: 0, manual: 0 },
+		wood: { normal: 0, manual: 0 },
+		metal: { normal: 0, manual: 0 },
+		science: { normal: 0, manual: 0 },
+		gems: { normal: 0, manual: 0 },
+		fragments: { normal: 0, manual: 0 }
+	};
+
 	const resOrder = ['food', 'wood', 'metal', 'science', 'gems', 'fragments'];
 	const books = ['farming', 'lumber', 'miner', 'science'];
 	const jobs = ['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Dragimp', 'Explorer'];
-	const index = resOrder.indexOf(what);
-	const job = game.jobs[jobs[index]];
-	const book = game.upgrades[`Speed${books[index]}`];
-	const mBook = game.upgrades['Mega' + books[index]];
-	const base = what === 'fragments' ? 0.4 : 0.5;
 
-	let currentCalc = job.owned * base;
+	const multitaskingMult = game.permaBoneBonuses.multitasking.owned > 0 && game.resources.trimps.owned >= game.resources.trimps.realMax() ? game.permaBoneBonuses.multitasking.mult() : 0;
+	const parityMult = getParityBonus();
+	const playerModifier = getPlayerModifier();
 
-	if (what !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0) {
-		const str = game.resources.trimps.owned >= game.resources.trimps.realMax() ? game.permaBoneBonuses.multitasking.mult() : 0;
-		currentCalc *= 1 + str;
-	}
-
-	if (typeof book !== 'undefined' && book.done > 0) currentCalc *= Math.pow(1.25, book.done);
-
-	if (typeof mBook !== 'undefined' && mBook.done > 0) {
-		const mod = game.global.frugalDone ? 1.6 : 1.5;
-		currentCalc *= Math.pow(mod, mBook.done);
-	}
-
-	if (what !== 'gems' && game.upgrades.Bounty.done > 0) currentCalc *= 2;
-	if (what === 'gems' && game.buildings.Tribute.owned > 0) currentCalc *= Math.pow(game.buildings.Tribute.increase.by, game.buildings.Tribute.owned);
-	if (game.unlocks.impCount.Whipimp > 0) currentCalc *= Math.pow(1.003, game.unlocks.impCount.Whipimp);
-	if (getPerkLevel('Motivation') > 0) currentCalc *= 1 + getPerkLevel('Motivation') * getPerkModifier('Motivation');
+	let baseMult = 1;
+	if (game.unlocks.impCount.Whipimp > 0) baseMult *= Math.pow(1.003, game.unlocks.impCount.Whipimp);
+	if (getPerkLevel('Motivation') > 0) baseMult *= 1 + getPerkLevel('Motivation') * getPerkModifier('Motivation');
 
 	const balanceChallenge = ['Balance', 'Unbalance'].find(challengeActive);
-	if (balanceChallenge) currentCalc *= game.challenges[balanceChallenge].getGatherMult();
+	if (balanceChallenge) baseMult *= game.challenges[balanceChallenge].getGatherMult();
 
 	const decayChallenge = ['Decay', 'Melt'].find(challengeActive);
-	if (decayChallenge) {
-		currentCalc *= 10;
-		const stackStr = Math.pow(game.challenges[decayChallenge].decayValue, game.challenges[decayChallenge].stacks);
-		currentCalc *= stackStr;
-	}
+	if (decayChallenge) baseMult *= 10 * Math.pow(game.challenges[decayChallenge].decayValue, game.challenges[decayChallenge].stacks);
 
 	if (game.global.universe === 1) {
-		if (['food', 'metal', 'wood'].includes(what) && challengeActive('Size')) currentCalc *= 1.5;
-		if (challengeActive('Meditate')) currentCalc *= 1.25;
-		if (getPerkLevel('Meditation') > 0) currentCalc *= 1 + game.portal.Meditation.getBonusPercent() * 0.01;
-		if (challengeActive('Toxicity')) currentCalc *= 1 + (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
-		if (challengeActive('Watch')) currentCalc /= 2;
-		if (challengeActive('Lead') && game.global.world % 2 === 1) currentCalc *= 2;
-		if (getPerkLevel('Motivation_II') > 0) currentCalc *= 1 + getPerkLevel('Motivation_II') * getPerkModifier('Motivation_II');
-		if (what === 'metal' && game.jobs.Magmamancer.owned > 0) currentCalc *= game.jobs.Magmamancer.getBonusPercent();
-		if (challengeActive('Frigid')) currentCalc *= game.challenges.Frigid.getShatteredMult();
-		if (what !== 'fragments' && getEmpowerment() === 'Wind') currentCalc *= 1 + game.empowerments.Wind.getCombatModifier();
+		if (challengeActive('Meditate')) baseMult *= 1.25;
+		if (getPerkLevel('Meditation') > 0) baseMult *= 1 + game.portal.Meditation.getBonusPercent() * 0.01;
+		if (challengeActive('Toxicity')) baseMult *= 1 + (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
+		if (challengeActive('Watch')) baseMult /= 2;
+		if (challengeActive('Lead') && game.global.world % 2 === 1) baseMult *= 2;
+		if (getPerkLevel('Motivation_II') > 0) baseMult *= 1 + getPerkLevel('Motivation_II') * getPerkModifier('Motivation_II');
+		if (challengeActive('Frigid')) baseMult *= game.challenges.Frigid.getShatteredMult();
 	}
 
 	if (game.global.universe === 2) {
-		if (challengeActive('Downsize')) currentCalc *= 5;
-		if (Fluffy.isRewardActive('gatherer')) currentCalc *= 2;
-		if (what !== 'fragments' && challengeActive('Archaeology')) currentCalc *= game.challenges.Archaeology.getStatMult('science');
+		if (challengeActive('Downsize')) baseMult *= 5;
+		if (Fluffy.isRewardActive('gatherer')) baseMult *= 2;
 		if (challengeActive('Insanity')) currentCalc *= game.challenges.Insanity.getLootMult();
-		if (what !== 'fragments' && game.challenges.Nurture.boostsActive()) currentCalc *= game.challenges.Nurture.getResourceBoost();
-		if (what !== 'science' && what !== 'fragments' && challengeActive('Alchemy')) currentCalc *= alchObj.getPotionEffect('Potion of Finding');
 		if (game.portal.Observation.trinkets > 0) currentCalc *= game.portal.Observation.getMult();
-		if (what === 'wood' && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0) currentCalc *= game.challenges.Hypothermia.getWoodMult(true);
-		if (challengeActive('Desolation') && what !== 'fragments') currentCalc *= game.challenges.Desolation.trimpResourceMult();
-		if (['food', 'metal', 'wood'].includes(what) && autoBattle.oneTimers.Gathermate.owned) currentCalc *= autoBattle.oneTimers.Gathermate.getMult();
-		if ((['food', 'wood'].includes(what) && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) {
-			currentCalc *= game.jobs.Meteorologist.getExtraMult();
-		}
 	}
-
-	if (game.upgrades.Speedexplorer.done > 0 && what === 'fragments') currentCalc *= Math.pow(4, game.upgrades.Speedexplorer.done);
-	if (game.global.pandCompletions && what !== 'fragments') currentCalc *= game.challenges.Pandemonium.getTrimpMult();
-	if (game.global.desoCompletions && what !== 'fragments') currentCalc *= game.challenges.Desolation.getTrimpMult();
 
 	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.dedication !== 'undefined') {
@@ -477,26 +448,77 @@ function getPsString_AT(what, ignoreManual = false) {
 		}
 	}
 
-	if (['food', 'metal', 'wood'].includes(what) && getParityBonus() > 1) currentCalc *= getParityBonus();
-	const heirloomBonus = calcHeirloomBonus('Staff', `${jobs[index]}Speed`, 0, true);
-	if (heirloomBonus > 0) currentCalc *= heirloomBonus / 100 + 1;
+	let noFragMult = 1;
+	if (game.global.pandCompletions) currentCalc *= game.challenges.Pandemonium.getTrimpMult();
+	if (game.global.desoCompletions) currentCalc *= game.challenges.Desolation.getTrimpMult();
 
-	if (!ignoreManual) {
-		if (game.global.playerGathering === what) {
-			if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(what)) {
-				const turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
-				currentCalc *= turkimpBonus;
-			}
-			currentCalc += getPlayerModifier();
-		}
-
-		if (game.options.menu.useAverages.enabled) {
-			const avg = getAvgLootSecond(what);
-			if (avg > 0.001) currentCalc += avg;
-		}
+	if (game.global.universe === 1) {
+		if (getEmpowerment() === 'Wind') noFragMult *= 1 + game.empowerments.Wind.getCombatModifier();
 	}
 
-	return currentCalc;
+	if (game.global.universe === 2) {
+		if (challengeActive('Archaeology')) noFragMult *= game.challenges.Archaeology.getStatMult('science');
+		if (game.challenges.Nurture.boostsActive()) noFragMult *= game.challenges.Nurture.getResourceBoost();
+		if (challengeActive('Desolation')) noFragMult *= game.challenges.Desolation.getTrimpMult();
+	}
+
+	for (const resource of what) {
+		const index = resOrder.indexOf(resource);
+		const job = game.jobs[jobs[index]];
+		const book = game.upgrades[`Speed${books[index]}`];
+		const mBook = game.upgrades['Mega' + books[index]];
+		const base = resource === 'fragments' ? 0.4 : 0.5;
+
+		let currentCalc = job.owned * base;
+		currentCalc *= baseMult;
+		if (resource !== 'fragments') currentCalc *= noFragMult;
+
+		if (resource !== 'gems') currentCalc *= 1 + multitaskingMult;
+		if (typeof book !== 'undefined' && book.done > 0) currentCalc *= Math.pow(1.25, book.done);
+		if (typeof mBook !== 'undefined' && mBook.done > 0) currentCalc *= Math.pow(game.global.frugalDone ? 1.6 : 1.5, mBook.done);
+
+		if (resource !== 'gems' && game.upgrades.Bounty.done > 0) currentCalc *= 2;
+		if (resource === 'gems' && game.buildings.Tribute.owned > 0) currentCalc *= Math.pow(game.buildings.Tribute.increase.by, game.buildings.Tribute.owned);
+
+		if (game.global.universe === 1) {
+			if (['food', 'metal', 'wood'].includes(resource) && challengeActive('Size')) currentCalc *= 1.5;
+			if (resource === 'metal' && game.jobs.Magmamancer.owned > 0) currentCalc *= game.jobs.Magmamancer.getBonusPercent();
+		}
+
+		if (game.global.universe === 2) {
+			if (resource !== 'science' && resource !== 'fragments' && challengeActive('Alchemy')) currentCalc *= alchObj.getPotionEffect('Potion of Finding');
+			if (resource === 'wood' && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0) currentCalc *= game.challenges.Hypothermia.getWoodMult(true);
+			if (['food', 'metal', 'wood'].includes(resource) && autoBattle.oneTimers.Gathermate.owned) currentCalc *= autoBattle.oneTimers.Gathermate.getMult();
+			if ((['food', 'wood'].includes(resource) && game.buildings.Antenna.owned >= 5) || (resource === 'metal' && game.buildings.Antenna.owned >= 15)) currentCalc *= game.jobs.Meteorologist.getExtraMult();
+		}
+
+		if (resource === 'fragments' && game.upgrades.Speedexplorer.done > 0) currentCalc *= Math.pow(4, game.upgrades.Speedexplorer.done);
+
+		if (['food', 'metal', 'wood'].includes(resource) && parityMult > 1) currentCalc *= parityMult;
+		const heirloomBonus = calcHeirloomBonus('Staff', `${jobs[index]}Speed`, 0, true);
+		if (heirloomBonus > 0) currentCalc *= heirloomBonus / 100 + 1;
+
+		resourcesObj[resource].normal = currentCalc;
+
+		if (['food', 'metal', 'wood', 'science'].includes(resource)) {
+			if (game.global.playerGathering === resource) {
+				if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(resource)) {
+					const turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
+					currentCalc *= turkimpBonus;
+				}
+				currentCalc += playerModifier;
+			}
+
+			if (game.options.menu.useAverages.enabled) {
+				const avg = getAvgLootSecond(resource);
+				if (avg > 0.001) currentCalc += avg;
+			}
+		}
+
+		resourcesObj[resource].manual = currentCalc;
+	}
+
+	return resourcesObj;
 }
 
 //Check and update each patch!

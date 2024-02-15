@@ -84,30 +84,29 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 	if (game.global.world > Coordination.done && canAffordCoordinationTrimps() && !canAffordTwoLevel(Coordination)) {
 		// TODO: Put these resources in a priority queue
 		const metalButtonAvailable = elementVisible('metal');
-
 		let needResource = resolvePow(Coordination.cost.resources.science, Coordination) > game.resources.science.owned;
-		let playerRelevant = getPlayerModifier() > getPsString_AT('science', true) / 10;
+		let playerRelevant = getPlayerModifier() > trimpStats.resourcesPS['science'].normal / 10;
 		if (researchAvailable && needResource && playerRelevant) {
 			safeSetGather('science');
 			return true;
 		}
 
 		needResource = resolvePow(Coordination.cost.resources.food, Coordination) > game.resources.food.owned;
-		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('food', true) / 10;
+		playerRelevant = hasTurkimp || getPlayerModifier() > trimpStats.resourcesPS['food'].normal / 10;
 		if (needResource && playerRelevant) {
 			safeSetGather('food');
 			return true;
 		}
 
 		needResource = resolvePow(Coordination.cost.resources.wood, Coordination) > game.resources.wood.owned;
-		playerRelevant = hasTurkimp || getPlayerModifier() > getPsString_AT('wood', true) / 10;
+		playerRelevant = hasTurkimp || getPlayerModifier() > trimpStats.resourcesPS['wood'].normal / 10;
 		if (game.triggers.wood.done && needResource && playerRelevant) {
 			safeSetGather('wood');
 			return true;
 		}
 
 		needResource = resolvePow(Coordination.cost.resources.metal, Coordination) > game.resources.metal.owned;
-		playerRelevant = getPlayerModifier() > getPsString_AT('metal', true) / 10;
+		playerRelevant = getPlayerModifier() > trimpStats.resourcesPS['metal'].normal / 10;
 		if (metalButtonAvailable && needResource && playerRelevant) {
 			safeSetGather('metal');
 			return true;
@@ -118,9 +117,13 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 
 function _willTrapsBeWasted() {
 	// There is enough breed time remaining to open an entire trap (prevents wasting time and traps during early zones)
-	const gteTime = breedTimeRemaining().gte(1 / _calcTPS());
-	const lteTime = game.global.playerGathering === 'trimps' && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1));
+	const breedTimer = _breedTimeRemaining();
+	const trapsPerSecond = 1 / _calcTPS();
+	const gteTime = breedTimer >= trapsPerSecond;
+	const lteTime = game.global.playerGathering === 'trimps' && breedTimer <= 0.1;
 	return !(gteTime || lteTime);
+	//const lteTime = game.global.playerGathering === 'trimps' && breedTimer.lte(MODULES.breedtimer.DecimalBreed(0.1));
+	//const gteTime = breedTimer.gte(1 / _calcTPS());
 }
 
 function _lastResort(researchAvailable, trapTrimpsOK, lowOnTraps) {
@@ -145,7 +148,7 @@ function _lastResort(researchAvailable, trapTrimpsOK, lowOnTraps) {
 		}
 	}
 
-	if (researchAvailable && game.global.turkimpTimer < 1 && game.resources.science.owned < getPsString_AT('science') * 60) {
+	if (researchAvailable && game.global.turkimpTimer < 1 && game.resources.science.owned < trimpStats.resourcesPS['science'].manual * 60) {
 		safeSetGather('science');
 	} else if (trapTrimpsOK && game.global.trapBuildToggled && lowOnTraps) {
 		safeSetGather('buildings');
@@ -300,7 +303,7 @@ function autoGather() {
 	}
 
 	// High Priority Research - When manual research still has more impact than scientists
-	if (researchAvailable && needScience && getPlayerModifier() > getPsString_AT('science', true)) {
+	if (researchAvailable && needScience && getPlayerModifier() > trimpStats.resourcesPS['science'].normal) {
 		safeSetGather('science');
 		return;
 	}

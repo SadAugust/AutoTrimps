@@ -25,11 +25,11 @@ function autoMapsStatus(get) {
 	if (getPageSetting('autoMaps') === 0) status = '[Auto Maps Off] ' + status;
 
 	if (usingRealTimeOffline && getPageSetting('timeWarpDisplay')) {
-		let ticks = offlineProgress.ticksProcessed;
-		let maxTicks = offlineProgress.progressMax;
-		let barWidth = ((ticks / maxTicks) * 100).toFixed(1) + '%';
-
-		status = 'Time Warp - ' + barWidth + '<br>' + status;
+		const { startTime, ticksProcessed, progressMax } = offlineProgress;
+		const barWidth = ((ticksProcessed / progressMax) * 100).toFixed(1) + '%';
+		const timeSpent = Math.floor((new Date().getTime() - startTime) / 1000);
+		const speed = ticksProcessed / (timeSpent * 10);
+		status = `Time Warp (${barWidth} ${prettify(speed)}x)<br>${status}`;
 	}
 
 	let resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';

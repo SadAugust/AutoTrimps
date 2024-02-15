@@ -85,7 +85,7 @@ function _checkSafeGateway(buildingStat) {
 function _getResourcePerSecond() {
 	const resourceTypes = ['food', 'wood', 'metal', 'gems', 'fragments'];
 	const resourcePerSecond = {};
-	for (const resource of resourceTypes) resourcePerSecond[resource] = getPsString_AT(resource);
+	for (const resource of resourceTypes) resourcePerSecond[resource] = trimpStats.resourcesPS[resource].manual;
 	return resourcePerSecond;
 }
 

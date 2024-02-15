@@ -142,15 +142,16 @@
 
 	M['performance'].UpdateAFKOverlay = function UpdateAFKOverlay() {
 		M['performance'].AFKOverlayZone.innerHTML = 'Zone: ' + game.global.world + ' Cell: ' + (game.global.lastClearedCell + 2) + (game.global.mapsActive ? '<br> Map: ' + (getCurrentMapObject().level - game.global.world >= 0 ? ' + ' : '') + (getCurrentMapObject().level - game.global.world) + ' ' + (getCurrentMapObject().bonus !== undefined ? getCurrentMapObject().bonus : '') : '');
-		if (game.global.universe === 1) {
-			M['performance'].AFKOverlayHelium.innerText = 'Helium: ' + prettify(Math.floor(game.resources.helium.owned));
-			M['performance'].AFKOverlayHeliumPerHour.innerText = 'He/hr: ' + prettify(game.stats.heliumHour.value());
-			M['performance'].AFKOverlayStatus.innerHTML = 'Status: ' + autoMapsStatus(true)[0];
-		}
-		if (game.global.universe === 2) {
-			M['performance'].AFKOverlayHelium.innerText = 'Radon: ' + prettify(Math.floor(game.resources.radon.owned));
-			M['performance'].AFKOverlayHeliumPerHour.innerText = 'Rn/hr: ' + prettify(game.stats.heliumHour.value());
-			M['performance'].AFKOverlayStatus.innerHTML = 'Status: ' + autoMapsStatus(true)[0];
-		}
+
+		const universeResources = {
+			1: { resourceType: 'Helium', resourcePerHour: 'He/hr' },
+			2: { resourceType: 'Radon', resourcePerHour: 'Rn/hr' }
+		};
+
+		const { resourceType, resourcePerHour } = universeResources[game.global.universe] || {};
+
+		M['performance'].AFKOverlayHelium.innerText = `${resourceType}: ${prettify(Math.floor(game.resources[resourceType.toLowerCase()].owned))}`;
+		M['performance'].AFKOverlayHeliumPerHour.innerText = `${resourcePerHour}: ${prettify(game.stats.heliumHour.value())}`;
+		M['performance'].AFKOverlayStatus.innerHTML = `Status: ${autoMapsStatus(true)[0]}`;
 	};
 })(MODULES, window);

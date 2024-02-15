@@ -81,7 +81,7 @@ function drawBuilding(what) {
 }
 
 function drawAllUpgrades(force) {
-	if ((usingRealTimeOffline || (liquifiedZone() && !game.global.mapsActive)) && !force) {
+	if (usingRealTimeOffline && !force) {
 		goldenUpgradesShown = true;
 		displayGoldenUpgrades();
 		return;
@@ -1065,7 +1065,7 @@ function updateAllBattleNumbers(skipNum) {
 	}
 
 	elem = document.getElementById('goodGuyBlock');
-	if (elem.innerHTML != blockDisplay) elem.innerHTML = blockDisplay;
+	if (elem.innerHTML !== blockDisplay.toString()) elem.innerHTML = blockDisplay;
 
 	elem = document.getElementById('goodGuyAttack');
 	elemText = calculateDamage(game.global.soldierCurrentAttack, true, true);
@@ -1127,17 +1127,17 @@ function setMutationTooltip(which, mutation) {
 }
 
 function rewardLiquidZone() {
-	messageLock = true;
 	game.stats.battlesWon.value += 99;
-	var voidMaps = 0;
-	var unlocks = ['', '']; //[unique, repeated]
-	var food = game.resources.food.owned;
-	var wood = game.resources.wood.owned;
-	var metal = game.resources.metal.owned;
-	var helium = game.resources.helium.owned;
-	var fragments = game.resources.fragments.owned;
-	var trimpsCount = game.resources.trimps.realMax();
-	var tokText;
+
+	const messages = game.global.messages.Loot;
+	const initialResources = {
+		food: game.resources.food.owned,
+		wood: game.resources.wood.owned,
+		metal: game.resources.metal.owned,
+		helium: game.resources.helium.owned,
+		fragments: game.resources.fragments.owned,
+		trimpsCount: game.resources.trimps.realMax()
+	};
 	const trackedImps = {
 		Feyimp: 0,
 		Magnimp: 0,
@@ -1147,19 +1147,26 @@ function rewardLiquidZone() {
 		Skeletimp: 0,
 		Megaskeletimp: 0
 	};
-	var hiddenUpgrades = ['fiveTrimpMax', 'Map', 'fruit', 'groundLumber', 'freeMetals', 'Foreman', 'FirstMap'];
-	for (var x = 1; x < 100; x++) {
+
+	let voidMaps = 0;
+	let unlocks = ['', '']; //[unique, repeated]
+	let text = '';
+	let tokText;
+
+	messageLock = true;
+	const hiddenUpgrades = new Set(['fiveTrimpMax', 'Map', 'fruit', 'groundLumber', 'freeMetals', 'Foreman', 'FirstMap']);
+	for (let x = 1; x < 100; x++) {
 		game.global.voidSeed++;
 		game.global.scrySeed++;
 		if (isScryerBonusActive()) tryScry();
 		if (checkVoidMap() === 1) voidMaps++;
-		var cell = game.global.gridArray[x];
+		const cell = game.global.gridArray[x];
 		if (cell.special !== '') {
-			var unlock = game.worldUnlocks[cell.special];
+			let unlock = game.worldUnlocks[cell.special];
 			if (typeof unlock !== 'undefined' && typeof unlock.fire !== 'undefined') {
 				unlock.fire(x);
-				if (hiddenUpgrades.indexOf(cell.special) === -1) {
-					var index = unlock.world < 0 ? 1 : 0;
+				if (!hiddenUpgrades.has(cell.special)) {
+					let index = unlock.world < 0 ? 1 : 0;
 					if (unlocks[index] !== '') unlocks[index] += ', ';
 					if (typeof unlock.displayAs !== 'undefined') unlocks[index] += unlock.displayAs;
 					else unlocks[index] += cell.special;
@@ -1171,8 +1178,8 @@ function rewardLiquidZone() {
 		if (cell.mutation && typeof mutations[cell.mutation].reward !== 'undefined') mutations[cell.mutation].reward(cell.corrupted);
 		if (cell.empowerment) {
 			const tokReward = rewardToken(cell.empowerment);
-			if (game.global.messages.Loot.token && game.global.messages.Loot.enabled && tokReward) {
-				tokText = "<span class='message empoweredCell" + cell.empowerment + "'>Found " + prettify(tokReward) + ' Token' + (tokReward === 1 ? '' : 's') + ' of ' + cell.empowerment + '!</span>';
+			if (messages.token && messages.enabled && tokReward) {
+				tokText = `<span class='message empoweredCell${cell.empowerment}'>Found ${prettify(tokReward)} Token${tokReward === 1 ? '' : 's'} of ${cell.empowerment}!</span>`;
 			}
 		}
 		if (typeof game.badGuys[cell.name].loot !== 'undefined') game.badGuys[cell.name].loot(cell.level);
@@ -1181,62 +1188,63 @@ function rewardLiquidZone() {
 		}
 	}
 	messageLock = false;
-	var text = '';
-	var addUniques = unlocks[0] !== '' && game.global.messages.Unlocks.unique;
-	var addRepeateds = unlocks[1] !== '' && game.global.messages.Unlocks.repeated;
+
+	const addUniques = unlocks[0] !== '' && game.global.messages.Unlocks.unique;
+	const addRepeateds = unlocks[1] !== '' && game.global.messages.Unlocks.repeated;
+
 	if ((addUniques || addRepeateds) && game.global.messages.Unlocks.enabled) {
-		text += 'Unlocks Found: ';
+		let unlockText = [];
 		if (addUniques) {
-			text += unlocks[0];
-			if (addRepeateds) text += ', ';
+			unlockText.push(unlocks[0]);
 		}
-		if (addRepeateds) text += unlocks[1];
-		text += '<br/>';
+		if (addRepeateds) {
+			unlockText.push(unlocks[1]);
+		}
+		text += `Unlocks Found: ${unlockText.join(', ')}<br/>`;
 	}
-	if (game.global.messages.Loot.enabled && (game.global.messages.Loot.primary || game.global.messages.Loot.secondary)) {
-		text += 'Resources Found:';
-		var heCount = game.resources.helium.owned - helium;
-		if (game.global.messages.Loot.helium && heCount > 0) {
-			text += ' Helium - ' + prettify(heCount) + ',';
+
+	if (messages.enabled && (messages.primary || messages.secondary)) {
+		let resourceText = [];
+		const heCount = game.resources.helium.owned - initialResources.helium;
+		if (messages.helium && heCount > 0) {
+			resourceText.push(` Helium - ${prettify(heCount)}`);
 		}
-		if (game.global.messages.Loot.secondary) {
-			text += ' Max Trimps - ' + prettify(game.resources.trimps.realMax() - trimpsCount) + ',';
-			text += ' Fragments - ' + prettify(game.resources.fragments.owned - fragments) + ',';
+		if (messages.secondary) {
+			resourceText.push(` Max Trimps - ${prettify(game.resources.trimps.realMax() - initialResources.trimpsCount)}`);
+			resourceText.push(` Fragments - ${prettify(game.resources.fragments.owned - initialResources.fragments)}`);
 		}
-		if (game.global.messages.Loot.primary) {
-			text += ' Food - ' + prettify(game.resources.food.owned - food) + ',';
-			text += ' Wood - ' + prettify(game.resources.wood.owned - wood) + ',';
-			text += ' Metal - ' + prettify(game.resources.metal.owned - metal) + ',';
+		if (messages.primary) {
+			resourceText.push(` Food - ${prettify(game.resources.food.owned - initialResources.food)}`);
+			resourceText.push(` Wood - ${prettify(game.resources.wood.owned - initialResources.wood)}`);
+			resourceText.push(` Metal - ${prettify(game.resources.metal.owned - initialResources.metal)}`);
 		}
 
-		text = text.slice(0, -1);
-		text += '<br/>';
+		text += `Resources Found:${resourceText.join(',')}<br/>`;
 	}
-	var trackedList = '';
-	var bones = '';
+
+	const trackedList = [];
+	let bones;
 	for (let item in trackedImps) {
 		if (trackedImps[item] > 0) {
 			if (item === 'Skeletimp' || item === 'Megaskeletimp') {
-				bones = item;
+				bones = true;
 				continue;
 			}
-			if (trackedList !== '') trackedList += ', ';
-			trackedList += item + ' - ' + trackedImps[item];
+			trackedList.push(` ${item} - ${trackedImps[item]}`);
 		}
 	}
-	if (trackedList != '' && game.global.messages.Loot.exotic && game.global.messages.Loot.enabled) {
-		trackedList = 'Rare Imps: ' + trackedList + '<br/>';
-		text += trackedList;
+
+	if (trackedList && messages.exotic && messages.enabled) {
+		text += `Rare Imps: ${trackedList}<br/>`;
 	}
-	if (bones != '' && game.global.messages.Loot.bone && game.global.messages.Loot.enabled) {
-		bones = 'Found a ' + bones + '!<br/>';
-		text += bones;
+	if (bones && messages.bone && messages.enabled) {
+		text += `Found a ${bones}!<br/>`;
 	}
 	if (tokText) {
-		text += tokText + '<br/>';
+		text += `${tokText}<br/>`;
 	}
 	if (text) {
-		text = 'You liquified a Liquimp!<br/>' + text;
+		text = `You liquified a Liquimp!<br/>${text}`;
 		text = text.slice(0, -5);
 		message(text, 'Notices', 'star', 'LiquimpMessage');
 	}
@@ -1245,6 +1253,7 @@ function rewardLiquidZone() {
 		game.challenges.Lead.stacks -= 100;
 		manageLeadStacks();
 	}
+
 	game.stats.zonesLiquified.value++;
 	nextWorld();
 	drawAllUpgrades();
@@ -1372,7 +1381,7 @@ function changeGeneratorState(to, updateOnly) {
 	if (game.global.genPaused) to = runningEradicated ? 1 : 0;
 	if (to === 2 && game.global.magmaFuel < getGeneratorFuelCap(false, true)) to = 3;
 
-	if (to === originalMode) return;
+	if (to === originalMode && !updateOnly) return;
 
 	const state = ['Passive', 'Active', 'HybridPassive', 'HybridActive'][to];
 	swapClass('generatorState', 'generatorState' + state, document.getElementById('generatorWindow'));
@@ -1898,6 +1907,26 @@ function craftBuildings(makeUp) {
 		checkEndOfQueue();
 	} else {
 		setNewCraftItem();
+	}
+}
+
+function setNewCraftItem() {
+	const queueItem = game.global.buildingsQueue[0].split('.')[0];
+	game.global.crafting = queueItem;
+	game.global.timeLeftOnCraft = getCraftTime(game.buildings[queueItem]);
+	const elem = document.getElementById('queueItemsHere').firstChild;
+	let timeLeft = (game.global.timeLeftOnCraft / (game.global.autoCraftModifier + getPlayerModifier())).toFixed(1);
+
+	if (elem) {
+		const timeElem = document.getElementById('queueTimeRemaining');
+		if (timeLeft < 0.1 || isNumberBad(timeLeft)) timeLeft = 0.1;
+		if (!timeElem) elem.innerHTML += "<span id='queueTimeRemaining'> - " + timeLeft + " Seconds</span><div id='animationDiv'></div>";
+		else timeElem.textContent = ' - ' + timeLeft + ' Seconds';
+	}
+
+	if (elem && timeLeft <= 0.1) {
+		timeLeft = 0.1;
+		if (game.options.menu.queueAnimation.enabled) document.getElementById('animationDiv').style.opacity = '1';
 	}
 }
 
@@ -4207,8 +4236,9 @@ function runEverySecond(makeUp) {
 	if (game.global.sugarRush > 0) sugarRush.tick();
 	//Achieves
 	checkAchieve('totalGems');
+	const heHr = game.stats.heliumHour.value();
 	if (game.buildings.Trap.owned > 1000000) giveSingleAchieve('Hoarder');
-	if (Math.floor(game.stats.heliumHour.value()) === 1337) {
+	if (Math.floor(heHr) === 1337) {
 		if (game.global.universe === 1) giveSingleAchieve('Elite Feat');
 		if (game.global.universe === 2) giveSingleAchieve('Eliter Feat');
 	}
@@ -4220,10 +4250,10 @@ function runEverySecond(makeUp) {
 	if (trimpStatsDisplayed) displayAllStats();
 	if (game.resources.helium.owned > 0 || game.resources.radon.owned > 0) {
 		game.stats.bestHeliumHourThisRun.evaluate();
-		let newHeliumPhHTML = `${prettify(game.stats.heliumHour.value())}/hr`;
-
-		if (document.getElementById('heliumPh').innerHTML !== newHeliumPhHTML && shouldUpdate()) {
-			document.getElementById('heliumPh').innerHTML = newHeliumPhHTML;
+		const newHeliumPhHTML = `${prettify(heHr)}/hr`;
+		const heliumPhElem = document.getElementById('heliumPh');
+		if (heliumPhElem.innerHTML !== newHeliumPhHTML && shouldUpdate()) {
+			heliumPhElem.innerHTML = newHeliumPhHTML;
 		}
 		if (game.global.universe === 1) checkAchieve('heliumHour');
 	}
@@ -4452,4 +4482,17 @@ function runMap(resetCounter = true) {
 
 	if (challengeActive('Insanity')) game.challenges.Insanity.drawStacks();
 	if (challengeActive('Pandemonium')) game.challenges.Pandemonium.drawStacks();
+}
+
+function autoTrap() {
+	if (game.resources.food.owned >= 10 && game.resources.wood.owned >= 10) {
+		game.resources.food.owned -= 10;
+		game.resources.wood.owned -= 10;
+		game.buildings.Trap.purchased++;
+		if (game.global.buildingsQueue[0] === 'Trap.1') {
+			setNewCraftItem();
+		} else {
+			startQueue('Trap', 1);
+		}
+	}
 }

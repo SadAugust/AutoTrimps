@@ -102,6 +102,7 @@ function autoHeirlooms(portal) {
 				else recycleHeirloom(true);
 			}
 		}
+		break;
 	}
 }
 

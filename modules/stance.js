@@ -261,12 +261,14 @@ function survive(formation = 'S', critPower = 2, ignoreArmy) {
 }
 
 function checkStanceSetting() {
-	var settingPrefix = trimpStats.isDaily ? 'd' : '';
+	if (!game.upgrades.Formations.done) return;
+
+	const settingPrefix = trimpStats.isDaily ? 'd' : '';
 	if (game.global.spireActive && getPageSetting((trimpStats.isC3 ? 'c2' : settingPrefix) + 'AutoDStanceSpire')) autoStanceD(true);
 	else if (getPageSetting('AutoStanceScryer')) useScryerStance();
-	else if (game.global.mapsActive && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps') && getCurrentMapObject().location === 'Void') useScryerStance();
+	else if (game.global.mapsActive && game.global.voidBuff && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) useScryerStance();
 	else {
-		var AutoStance = getPageSetting('AutoStance');
+		const AutoStance = getPageSetting('AutoStance');
 		if (getPageSetting(settingPrefix + 'AutoStanceWind')) autoStanceWind();
 		else if (AutoStance === 1) autoStance();
 		else if (AutoStance === 2) autoStanceD();
@@ -327,21 +329,17 @@ function autoStance(force) {
 }
 
 function autoStanceD(force) {
-	if (getPageSetting('AutoStance') !== 2 && !force) return;
-	if (game.global.gridArray.length === 0) return;
-	if (game.global.soldierHealth <= 0) return;
-	if (!game.upgrades.Formations.done) return;
-	if (game.global.world <= 70) return;
+	if (!game.upgrades.Dominance.done || game.global.soldierHealth <= 0) return;
+	if (!force && getPageSetting('AutoStance') !== 2) return;
+
 	safeSetStance(2);
 }
 
 function autoStanceWind() {
 	//Fail safes
 	if (game.global.gridArray.length === 0) return;
-	if (game.global.soldierHealth <= 0) return;
-	if (!game.upgrades.Formations.done) return;
-	if (game.global.world <= 70) return;
-	var currentStance = useWindStance();
+	if (!game.upgrades.Formations.done || game.global.soldierHealth <= 0) return;
+	const currentStance = useWindStance();
 	//If we should use Wind Stance, and the checks in useWindStance don't return false then use it
 	if (currentStance) {
 		safeSetStance(5);
@@ -354,13 +352,15 @@ function autoStanceWind() {
 }
 
 function useWindStance() {
-	if (game.global.uberNature !== 'Wind') return false;
-	if (getEmpowerment() !== 'Wind') return false;
-	if (game.global.mapsActive) return false;
+	if (game.global.mapsActive || getUberEmpowerment() !== 'Wind' || getEmpowerment() !== 'Wind') return false;
+
 	const settingPrefix = trimpStats.isDaily ? 'd' : '';
 	if (!getPageSetting(settingPrefix + 'AutoStanceWind')) return false;
 
 	if (liquifiedZone() && getPageSetting(settingPrefix + 'WindStackingLiq')) return true;
-	if ((hdStats.hdRatio < getPageSetting(settingPrefix + 'WindStackingRatio') || getPageSetting(settingPrefix + 'WindStackingRatio') <= 0) && game.global.world >= getPageSetting(settingPrefix + 'WindStackingZone')) return true;
-	else return false;
+
+	const windStackRatio = getPageSetting(settingPrefix + 'WindStackingRatio');
+	if ((hdStats.hdRatio < windStackRatio || windStackRatio <= 0) && game.global.world >= getPageSetting(settingPrefix + 'WindStackingZone')) return true;
+
+	return false;
 }

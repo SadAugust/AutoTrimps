@@ -5341,7 +5341,7 @@ function _createMessagesButton() {
 		let atBtnContainer = _createElement('DIV', {
 			class: 'btn-group',
 			role: 'group',
-			onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, "Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.")',
+			onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, `This will control the visibility of AutoTrimps messages in the log window based on your settings.<br>Note: Only map-related messages will be displayed during Time Warp.`)',
 			onmouseout: 'tooltip("hide")'
 		});
 		const btnDisplay = `btn-${getPageSetting('spamMessages').show ? 'success' : 'danger'}`;

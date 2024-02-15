@@ -116,12 +116,13 @@ function setPageSetting(setting, newValue, universe = game.global.universe) {
 function debug(message, messageType, icon) {
 	if (!atSettings.initialise.loaded) return;
 
+	const canRunTW = ['maps', 'map_Destacking', 'map_Details', 'map_Skip'].includes(messageType);
 	const settingArray = getPageSetting('spamMessages');
-	const sendMessage = messageType in settingArray ? settingArray[messageType] : true;
+	const sendMessage = messageType in settingArray ? settingArray[messageType] : false;
 
 	if (sendMessage) {
 		console.log(`${timeStamp()} ${message}`);
-		message_AT(message, messageType, icon);
+		if (!usingRealTimeOffline || canRunTW) message_AT(message, messageType, icon);
 	}
 }
 
@@ -309,6 +310,7 @@ function testEquipmentMetalSpent() {
 
 	function getTotalPrestigeCost(what, prestigeCount) {
 		let actualCost = 0;
+
 		for (let i = 1; i <= prestigeCount; i++) {
 			const equipment = game.equipment[what];
 			let prestigeMod;
@@ -320,10 +322,8 @@ function testEquipmentMetalSpent() {
 
 			//Calculate cost of current equip levels
 			if (prestigeCount === i && equipment.level > 1) {
-				let finalCost = prestigeCost;
-
 				for (let j = 2; j <= equipment.level; j++) {
-					levelCost += finalCost * Math.pow(1.2, j - 1);
+					levelCost += prestigeCost * Math.pow(1.2, j - 1);
 				}
 			}
 		}
@@ -359,10 +359,11 @@ function testWorldCell() {
 
 function testMapCell() {
 	if (!game.global.mapsActive) return;
+	const mapObject = getCurrentMapObject();
 
-	game.global.lastClearedMapCell = getCurrentMapObject().size - 2;
+	game.global.lastClearedMapCell = mapObject.size - 2;
 	game.global.mapGridArray[game.global.lastClearedMapCell + 1].health = 0;
-	game.global.mapGridArray[getCurrentMapObject().size - 2].health = 0;
+	game.global.mapGridArray[mapObject.size - 2].health = 0;
 }
 
 function testTrimpStats() {
@@ -393,11 +394,13 @@ function decayLootMult(mapCount) {
 	const stackCap = game.challenges[challengeName].maxStacks;
 	let lootMult = 1;
 	let decayStacks = game.challenges[challengeName].stacks;
+
 	for (let x = 0; x < mapCount; x++) {
 		lootMult /= Math.pow(game.challenges[challengeName].decayValue, Math.floor(decayStacks));
 		decayStacks = Math.min(decayStacks + mapClearTime, stackCap);
 		lootMult *= Math.pow(game.challenges[challengeName].decayValue, Math.floor(decayStacks));
 	}
+
 	return lootMult;
 }
 
@@ -405,7 +408,9 @@ function hypothermiaBonfireCost() {
 	if (!challengeActive('Hypothermia')) return 0;
 	let cost = game.challenges.Hypothermia.bonfirePrice();
 	if (cost > game.resources.wood.owned) return 0;
+
 	let bonfiresOwned = game.challenges.Hypothermia.totalBonfires;
+
 	while (game.resources.wood.owned > cost + Math.pow(100, bonfiresOwned + 1) * 1e10) {
 		bonfiresOwned++;
 		cost += Math.pow(100, bonfiresOwned) * 1e10;

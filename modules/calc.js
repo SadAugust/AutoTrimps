@@ -26,6 +26,8 @@ class TrimpStats {
 		this.mapSpecial = getAvailableSpecials('lmc');
 		this.mapBiome = getBiome();
 
+		this.resourcesPS = getPsValues();
+
 		this.mountainPriority = !(imps.Chronoimp || imps.Jestimp || ['lmc', 'smc'].includes(getAvailableSpecials('lmc', true)));
 	}
 }

@@ -78,10 +78,28 @@ function breedTotalTime() {
 function breedTimeRemaining() {
 	let trimps = game.resources.trimps;
 	let trimpsMax = trimps.realMax();
+	const trimpsEmployed = trimpsEffectivelyEmployed();
 
-	let maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
-	let breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
+	let maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEmployed);
+	let breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEmployed);
 	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
+}
+
+/* This version doesn't use decimal.js to calculate breedtimer for trap calculations */
+function _breedTimeRemaining() {
+	let trimps = game.resources.trimps;
+	let trimpsMax = trimps.realMax();
+	const trimpsEmployed = trimpsEffectivelyEmployed();
+
+	let maxBreedable = trimpsMax - trimpsEmployed;
+	let breeding = trimps.owned - trimpsEmployed;
+
+	if (maxBreedable <= 0 || breeding <= 0) return 0;
+
+	let potencyMod = getPotencyMod().toNumber();
+	if (potencyMod === 0) return Infinity;
+
+	return Math.log10(maxBreedable / breeding) / Math.log10(potencyMod) / 10;
 }
 
 function geneAssist() {
