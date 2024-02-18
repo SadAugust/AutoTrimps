@@ -284,7 +284,7 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	//Calculates how many workers will be left out of the initial distribution
 	const remainder = freeWorkers > 10e6 ? 0 : freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
 
-	//Decides where to put them
+	//Decides where to put them TODO Don't take trimps OUT of scientists early on
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff, true).slice(diff.length - remainder);
 	whereToIncrement.forEach((idx) => (hireWorkers[idx] ? desiredWorkers[idx]++ : null));
