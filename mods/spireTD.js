@@ -1,12 +1,11 @@
-function tdStringCode2() {
+function tdStringCode(inputString) {
 	const trapIndexs = ['', 'Fire', 'Frost', 'Poison', 'Lightning', 'Strength', 'Condenser', 'Knowledge'];
-	const inputString = document.getElementById('importBox').value.replace(/\s/g, '');
-	let s = new String(inputString);
-	let index = s.indexOf('+', 0);
+	let s = new String(inputString.replace(/\s/g, ''));
+	const index = s.indexOf('+', 0);
 	s = s.slice(0, index);
-	let length = s.length;
+	const length = s.length;
 
-	let saveLayout = [];
+	const saveLayout = [];
 	for (let i = 0; i < length; i++) {
 		saveLayout.push(trapIndexs[s.charAt(i)]);
 	}
@@ -32,12 +31,18 @@ playerSpire.updateRsPs = function () {
 	}
 };
 
+function _getClipboardText(ev) {
+	return ev.clipboardData.getData('text/plain').replace(/\s/g, '');
+}
+
 var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
 playerSpire.drawInfo = function (arguments) {
 	let ret = oldPlayerSpireDrawInfo.apply(this, arguments);
 	let elem = document.getElementById('spireTrapsWindow');
 	if (!elem) return arguments;
-	let importBtn = `<div onclick="_displaySpireImport()" class="spireControlBox">Import</div>`;
+	//let importBtn = `<div onclick="_displaySpireImport()" class="spireControlBox">Import</div>`;
+	const importBtn = '<input style="width:19%;border:2px solid #dadada;padding:0.5vw;display:inline-block;margin:0.5%;text-align:center;" placeholder="Import" onpaste="tdStringCode(_getClipboardText(event));">';
+
 	elem.innerHTML = importBtn + elem.innerHTML;
 	return arguments;
 };
