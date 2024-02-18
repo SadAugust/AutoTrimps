@@ -7,10 +7,13 @@ const atSettings = {
 	},
 	modules: {
 		path: 'modules/',
+		pathMods: 'mods/',
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
-		installedModules: ['gameUpdates', 'import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirloomCalc', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils', 'mutatorPreset', 'farmCalc'],
+		installedMods: ['gameUpdates', 'spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky'],
+		installedModules: ['import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils'],
 		loadedModules: [],
+		loadedMods: [],
 		loadedExternal: []
 	},
 	updateAvailable: false,
@@ -90,8 +93,12 @@ function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3)
 
 //Loading modules from basepath that are required for the script to run.
 function loadModules(fileName, prefix = '') {
-	if (prefix && atSettings.modules.loadedModules.includes(fileName)) {
-		return;
+	if (prefix) {
+		if (prefix === atSettings.modules.path && atSettings.modules.loadedModules.includes(fileName)) {
+			return;
+		} else if (prefix === atSettings.modules.pathMods && atSettings.modules.loadedMods.includes(fileName)) {
+			return;
+		}
 	}
 
 	const script = document.createElement('script');
@@ -102,8 +109,10 @@ function loadModules(fileName, prefix = '') {
 
 	script.addEventListener('load', () => {
 		if (!atSettings.modules.loadedModules.includes(fileName) && !atSettings.modules.loadedMain.includes(fileName)) {
-			if (prefix) atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
-			else atSettings.modules.loadedMain = [...atSettings.modules.loadedMain, fileName];
+			if (prefix) {
+				if (prefix === atSettings.modules.path) atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
+				else atSettings.modules.loadedMods = [...atSettings.modules.loadedMods, fileName];
+			} else atSettings.modules.loadedMain = [...atSettings.modules.loadedMain, fileName];
 		}
 	});
 
@@ -120,9 +129,14 @@ function loadScriptsAT() {
 	if (autoTrimpsScript) atSettings.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
 	loadModules('versionNumber');
 
+	atSettings.modules.installedMods.forEach((module) => {
+		loadModules(`${module}`, `${atSettings.modules.pathMods}`);
+	});
+
 	atSettings.modules.installedModules.forEach((module) => {
 		loadModules(`${module}`, `${atSettings.modules.path}`);
 	});
+
 	loadModules('SettingsGUI');
 
 	(async function () {
@@ -146,6 +160,7 @@ function initialiseScript() {
 	const filesNotLoaded = {
 		main: atSettings.modules.installedMain.length > atSettings.modules.loadedMain.length,
 		modules: atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length,
+		mods: atSettings.modules.installedMods.length > atSettings.modules.loadedMods.length,
 		externalScripts: 5 > atSettings.modules.loadedExternal.length
 	};
 
@@ -319,7 +334,6 @@ function mainLoop() {
 	}
 
 	autoGather();
-	if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && !game.global.trapBuildToggled) toggleAutoTrap();
 	buyBuildings();
 	buyJobs();
 	buyUpgrades();

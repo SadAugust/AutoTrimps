@@ -3092,11 +3092,11 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	let status = '';
 
 	if (hdType.includes('hitsSurvived')) {
-		status += `${hdType === 'hitsSurvivedVoid' ? 'Void&nbsp;' : ''}
+		status = `${hdType === 'hitsSurvivedVoid' ? 'Void&nbsp;' : ''}
 		Hits&nbsp;Survived to:&nbsp;${prettify(settingTarget.toFixed(2))}<br>
 		Current:&nbsp;${prettify(hdRatio.toFixed(2))}`;
 	} else {
-		status += `HD&nbsp;Farm&nbsp;to:&nbsp;${
+		status = `HD&nbsp;Farm&nbsp;to:&nbsp;${
 			hdType !== 'maplevel'
 				? `${prettify(settingTarget.toFixed(2))}<br>Current&nbsp;HD:&nbsp;${prettify(hdRatio.toFixed(2))}`
 				: `<br>
@@ -3152,7 +3152,6 @@ function farmingDecision() {
 	};
 
 	if (!game.global.mapsUnlocked || _leadDisableMapping()) return (mapSettings = farmingDetails);
-
 	let mapTypes = [];
 	//U1 map settings to check for.
 	if (game.global.universe === 1) {
@@ -3857,4 +3856,165 @@ function slowScum(slowTarget) {
 	console.timeEnd();
 	atSettings.running = true;
 	debug(msg, 'mapping_Details');
+}
+
+function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
+	if (getPageSetting('autoLevelTest')) return callAutoMapLevel_new(mapName, special);
+
+	let mapLevel = mapSettings.levelCheck;
+	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
+
+	if (mapLevel === Infinity) {
+		mapLevel = autoMapLevel(special, maxLevel, minLevel);
+	} else if (mapName && atSettings.intervals.sixSecond) {
+		const autoLevel = autoMapLevel(special, maxLevel, minLevel);
+		if (autoLevel > mapLevel) mapLevel = autoLevel;
+		const autoLevelIgnoreFragments = autoMapLevel(special, maxLevel, minLevel, true);
+		if (autoLevelIgnoreFragments < mapLevel) mapLevel = autoLevelIgnoreFragments;
+	}
+
+	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
+
+	mapLevel = autoLevelOverides(mapName, mapLevel);
+	return mapLevel;
+}
+
+function callAutoMapLevel_new(mapName, special) {
+	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking'];
+	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
+	const lootFunction = mapName === 'Desolation Destacking' ? lootDestack : lootDefault;
+	const mapModifiers = {
+		special: special || trimpStats.mapSpecial,
+		biome: mapSettings.biome || trimpStats.mapBiome
+	};
+
+	if (hdStats.autoLevelZone !== game.global.world) {
+		hdStats.autoLevelZone = game.global.world;
+		hdStats.autoLevelInitial = stats(lootFunction);
+	}
+
+	let mapLevel = mapSettings.levelCheck;
+	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
+
+	if (mapLevel === Infinity) {
+		mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+	} else if (mapName && atSettings.intervals.sixSecond) {
+		const autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+		mapLevel = Math.max(mapLevel, autoLevel);
+		const autoLevelIgnoreFragments = get_best(hdStats.autoLevelInitial)[mapType].mapLevel;
+		mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
+	}
+
+	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
+
+	mapLevel = autoLevelOverides(mapName, mapLevel);
+	return mapLevel;
+}
+
+function autoLevelOverides(mapName, mapLevel) {
+	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
+	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapLevel > (getPageSetting('mapBonusMinLevel') > 0 ? -getPageSetting('mapBonusMinLevel') : 0);
+
+	const mapBonusConditions = [
+		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && !mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && !mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
+		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
+		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
+		{ condition: mapName === 'Mayhem Destacking' && mapLevel < 0, level: getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0 },
+		{ condition: mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel, level: mapBonusLevel },
+		{ condition: _insanityDisableUniqueMaps() && mapLevel < 0, level: 0 }
+	];
+
+	const matchingCondition = mapBonusConditions.find(({ condition }) => condition);
+	if (matchingCondition) mapLevel = matchingCondition.level;
+
+	return mapLevel;
+}
+
+function autoMapLevel(special = getAvailableSpecials('lmc'), maxLevel, minLevel, statCheck = false) {
+	if (!game.global.mapsUnlocked) return 0;
+	if (maxLevel > 10) maxLevel = 10;
+	const z = game.global.world;
+	if (z + maxLevel < 6) maxLevel = 0 - (z + 6);
+
+	if (challengeActive('Wither') && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
+	if (_insanityDisableUniqueMaps() && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
+
+	const isDaily = challengeActive('Daily');
+	const hze = getHighestLevelCleared();
+	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 49 : hze >= 209;
+	const haveMapReducer = game.talents.mapLoot.purchased;
+
+	const biome = getBiome();
+	const query = !special ? true : false;
+	let universeSetting = z >= 60 && hze >= 180 ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
+	const cell = game.talents.mapLoot2.purchased ? 20 : 25;
+	const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2;
+	let enemyName = 'Snimp';
+
+	maxLevel = maxLevel || 10;
+	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
+	minLevel = minLevel || 0 - z + 6;
+	if (minLevel < -(z - 6)) minLevel = -(z - 6);
+	const runningQuest = challengeActive('Quest') && getCurrentQuest() === 8;
+	const runningUnlucky = challengeActive('Unlucky');
+	const runningInsanity = challengeActive('Insanity');
+	const runningDuel = challengeActive('Duel');
+	let ourHealth = calcOurHealth(game.global.universe === 2 ? runningQuest : universeSetting, 'map');
+	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
+	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
+	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Explosive
+	const dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //Weakness
+
+	if (_insanityDisableUniqueMaps() && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
+		ourHealth /= game.challenges.Insanity.getHealthMult();
+		ourHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
+	}
+
+	let dmgType = runningUnlucky ? 'max' : 'avg';
+	let critType = 'maybe';
+	let critChance = getPlayerCritChance_AT('map');
+	critChance = critChance - Math.floor(critChance);
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.1) critType = 'never';
+	const overkillRange = maxOneShotPower(true);
+
+	const perfectMaps = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
+
+	for (let y = maxLevel; y >= minLevel; y--) {
+		if (y === minLevel) return minLevel;
+		let mapLevel = y;
+		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
+		if (runningInsanity && mapLevel > 0) enemyName = 'Horrimp';
+		if (!statCheck && perfectMaps && game.resources.fragments.owned < mapCost(mapLevel, special, biome)) continue;
+		if (!statCheck && !perfectMaps && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome)) continue;
+
+		if (game.global.universe === 2) universeSetting = equalityQuery(enemyName, z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
+		let ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, y, 'force');
+		if (runningDuel) ourDmg *= MODULES.heirlooms.gammaBurstPct;
+		if (isDaily && dailyWeakness) ourDmg *= 1 - (9 * game.global.dailyChallenge.weakness.strength) / 100;
+		let enemyHealth = calcEnemyHealthCore('map', z + mapLevel, cell, 'Turtlimp') * difficulty;
+
+		if (overkillRange > 1) {
+			enemyHealth *= overkillRange;
+			if (game.global.universe === 1) ourDmg *= 0.005 * game.portal.Overkill.level;
+			if (game.global.universe === 2 && !u2Mutations.tree.MadMap.purchased) ourDmg *= 0.005;
+		}
+		let enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, enemyName, false, false, universeSetting) * difficulty;
+
+		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyCrit && getPageSetting('IgnoreCrits') === 0) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+
+		if (challengeActive('Duel')) {
+			enemyDmg *= 10;
+			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
+		}
+
+		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth + ourBlock) {
+			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !runningInsanity && !challengeActive('Mayhem')) mapLevel = -1;
+			return mapLevel;
+		}
+	}
+	return 0;
 }

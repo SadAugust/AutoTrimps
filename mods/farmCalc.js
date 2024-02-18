@@ -1091,7 +1091,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 
 	injectScript('AutoTrimps-SadAugust_breedtimer', 'https://sadaugust.github.io/AutoTrimps/modules/breedtimer.js');
 	injectScript('AutoTrimps-SadAugust_calc', 'https://sadaugust.github.io/AutoTrimps/modules/calc.js');
-	injectScript('AutoTrimps-SadAugust_farmCalcStandalone', 'https://sadaugust.github.io/AutoTrimps/modules/farmCalcStandalone.js');
+	injectScript('AutoTrimps-SadAugust_farmCalcStandalone', 'https://sadaugust.github.io/AutoTrimps/mods/farmCalcStandalone.js');
 
 	function updateAdditionalInfo() {
 		if (!usingRealTimeOffline) {

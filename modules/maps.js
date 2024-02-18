@@ -194,7 +194,7 @@ function _noMappingChallenges(ignoreChallenge) {
 
 function decaySkipMaps() {
 	const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
-	if (!challengeActive(challengeName) && !getPageSetting('decay')) return false;
+	if (!challengeActive(challengeName) || !getPageSetting('decay')) return false;
 
 	const challenge = game.challenges[challengeName];
 	const currentStacks = challenge ? challenge.stacks : 0;

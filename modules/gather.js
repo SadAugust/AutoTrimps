@@ -74,9 +74,7 @@ function _isTrappingOK(Battle, Coordination) {
 
 function _isTrappingRelevant(trapperTrapUntilFull) {
 	// Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
-	const trappingIsRelevant = breedingPS()
-		.div(10)
-		.lt(_calcTPS() * getPerkLevel('Bait') + 1);
+	const trappingIsRelevant = _breedingPS() / 10 < _calcTPS() * getPerkLevel('Bait') + 1;
 	return trapperTrapUntilFull || trappingIsRelevant;
 }
 
@@ -116,14 +114,10 @@ function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
 }
 
 function _willTrapsBeWasted() {
-	// There is enough breed time remaining to open an entire trap (prevents wasting time and traps during early zones)
 	const breedTimer = _breedTimeRemaining();
-	const trapsPerSecond = 1 / _calcTPS();
-	const gteTime = breedTimer >= trapsPerSecond;
+	const gteTime = breedTimer >= 1 / _calcTPS();
 	const lteTime = game.global.playerGathering === 'trimps' && breedTimer <= 0.1;
 	return !(gteTime || lteTime);
-	//const lteTime = game.global.playerGathering === 'trimps' && breedTimer.lte(MODULES.breedtimer.DecimalBreed(0.1));
-	//const gteTime = breedTimer.gte(1 / _calcTPS());
 }
 
 function _lastResort(researchAvailable, trapTrimpsOK, lowOnTraps) {

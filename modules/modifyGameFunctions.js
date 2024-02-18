@@ -84,7 +84,7 @@ offlineProgress.finish = function () {
 	offlineProgress.originalFinish(...arguments);
 	try {
 		if (timeRun > 30) {
-			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.floor(Math.min(timeRun, offlineProgress.maxTicks / 10)))} to catchup on the time you missed whilst running it.`);
+			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.floor(Math.min(timeRun, offlineProgress.maxTicks / 10)))} to catchup on the time you missed whilst running it.`, 'offline');
 			timeRun *= 1000;
 
 			const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];

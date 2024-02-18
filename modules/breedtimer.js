@@ -18,6 +18,14 @@ function breedingPS() {
 	return getPotencyMod().minus(1).mul(10).mul(breeding);
 }
 
+function _breedingPS() {
+	let trimps = game.resources.trimps;
+	let breeding = trimps.owned - trimpsEffectivelyEmployed();
+
+	// Gets the modifier, then: 1.1x format -> 0.1 format -> 1.0 x breeding
+	return (_getPotencyMod() - 1) * 10 * breeding;
+}
+
 function getPotencyMod() {
 	const potency = game.resources.trimps.potency;
 	let potencyMod = new MODULES.breedtimer.DecimalBreed(potency);
@@ -65,6 +73,52 @@ function getPotencyMod() {
 	return potencyMod.div(10).add(1);
 }
 
+function _getPotencyMod() {
+	let potencyMod = game.resources.trimps.potency;
+
+	// Potency, Nurseries, Venimp, Broken Planet
+	if (game.upgrades.Potency.done > 0) potencyMod *= Math.pow(1.1, game.upgrades.Potency.done);
+	if (game.buildings.Nursery.owned > 0) potencyMod *= Math.pow(1.01, game.buildings.Nursery.owned);
+	if (game.unlocks.impCount.Venimp > 0) potencyMod *= Math.pow(1.003, game.unlocks.impCount.Venimp);
+	if (game.global.brokenPlanet) potencyMod /= 10;
+
+	// Pheromones
+	potencyMod *= 1 + getPerkLevel('Pheromones') * getPerkModifier('Pheromones');
+
+	// Quick Trimps
+	if (game.singleRunBonuses.quickTrimps.owned) potencyMod *= 2;
+
+	// Dailies
+	if (challengeActive('Daily')) {
+		// Dysfunctional
+		if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined') potencyMod *= dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength);
+
+		// Toxic
+		if (typeof game.global.dailyChallenge.toxic !== 'undefined') potencyMod *= dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks);
+	}
+
+	// Toxicity
+	if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0) potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks);
+
+	// Void Maps (Slow Breed)
+	if (game.global.voidBuff === 'slowBreed') potencyMod *= 0.2;
+
+	// Heirlooms
+	potencyMod = calcHeirloomBonusDecimal('Shield', 'breedSpeed', potencyMod);
+
+	// Geneticists
+	if (game.jobs.Geneticist.owned > 0) potencyMod *= Math.pow(0.98, game.jobs.Geneticist.owned);
+
+	if (game.global.universe === 2) {
+		if (challengeActive('Archaeology')) potencyMod *= game.challenges.Archaeology.getStatMult('breed');
+		if (challengeActive('Quagmire')) potencyMod *= game.challenges.Quagmire.getExhaustMult();
+		if (u2Mutations.tree.GeneAttack.purchased) potencyMod /= 50;
+		if (u2Mutations.tree.GeneHealth.purchased) potencyMod /= 50;
+	}
+
+	return potencyMod / 10 + 1;
+}
+
 function breedTotalTime() {
 	let trimps = game.resources.trimps;
 	let trimpsMax = trimps.realMax();
@@ -80,8 +134,9 @@ function breedTimeRemaining() {
 	let trimpsMax = trimps.realMax();
 	const trimpsEmployed = trimpsEffectivelyEmployed();
 
-	let maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEmployed);
 	let breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEmployed);
+	if (breeding <= 0) return new DecimalBreed(Infinity);
+	let maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEmployed);
 	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
 }
 
@@ -94,9 +149,9 @@ function _breedTimeRemaining() {
 	let maxBreedable = trimpsMax - trimpsEmployed;
 	let breeding = trimps.owned - trimpsEmployed;
 
-	if (maxBreedable <= 0 || breeding <= 0) return 0;
+	if (maxBreedable <= 0 || breeding <= 0) return Infinity;
 
-	let potencyMod = getPotencyMod().toNumber();
+	let potencyMod = _getPotencyMod();
 	if (potencyMod === 0) return Infinity;
 
 	return Math.log10(maxBreedable / breeding) / Math.log10(potencyMod) / 10;

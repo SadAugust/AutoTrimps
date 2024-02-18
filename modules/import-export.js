@@ -67,21 +67,6 @@ function _displayResetDefaultSettingsProfiles(tooltipDiv) {
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displaySpireImport(tooltipDiv) {
-	const tooltipText = `Import your Spire string! These are most typically acquired through the <a href="http://swaqvalley.com/td_calc" target="_blank">TD Calc website</a><br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>`;
-	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); tdStringCode2();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
-
-	const ondisplay = function () {
-		_verticalCenterTooltip();
-		document.getElementById('importBox').focus();
-	};
-
-	tooltipDiv.style.left = '33.75%';
-	tooltipDiv.style.top = '25%';
-
-	return [tooltipDiv, tooltipText, costText, ondisplay];
-}
-
 function _displayPriorityOrder(tooltipDiv) {
 	const priority = getPriorityOrder();
 	let tooltipText = Object.keys(priority).length > 18 ? `<div class='litScroll'>` : '';

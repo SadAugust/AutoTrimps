@@ -1120,7 +1120,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		document.head.appendChild(script);
 	}
 
-	injectScript('AutoTrimps-SadAugust_Surky', 'https://sadaugust.github.io/AutoTrimps/modules/surky.js');
+	injectScript('AutoTrimps-SadAugust_Surky', 'https://sadaugust.github.io/AutoTrimps/mods/surky.js');
 
 	//Load the portal UI
 	setTimeout(function () {

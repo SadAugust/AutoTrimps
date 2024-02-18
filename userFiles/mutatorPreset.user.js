@@ -22,4 +22,4 @@ function injectScript(id, src) {
 }
 
 //This can be edited to point to your own Github Repository URL.
-injectScript('AutoTrimps-SadAugust-MutatorPreset', 'https://sadaugust.github.io/AutoTrimps/modules/mutatorPreset.js');
+injectScript('AutoTrimps-SadAugust-MutatorPreset', 'https://sadaugust.github.io/AutoTrimps/mods/mutatorPreset.js');

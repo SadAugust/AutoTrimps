@@ -116,11 +116,11 @@ function setPageSetting(setting, newValue, universe = game.global.universe) {
 function debug(message, messageType, icon) {
 	if (!atSettings.initialise.loaded) return;
 
-	const canRunTW = ['maps', 'map_Destacking', 'map_Details', 'map_Skip'].includes(messageType);
 	const settingArray = getPageSetting('spamMessages');
+	const canRunTW = ['maps', 'map_Destacking', 'map_Details', 'map_Skip', 'offline'].includes(messageType);
 	const sendMessage = messageType in settingArray ? settingArray[messageType] : false;
 
-	if (sendMessage) {
+	if (sendMessage || messageType === 'offline') {
 		console.log(`${timeStamp()} ${message}`);
 		if (!usingRealTimeOffline || canRunTW) message_AT(message, messageType, icon);
 	}
@@ -216,10 +216,10 @@ function _getTimeWarpHours(inputHours) {
 		try {
 			timeWarpHours = parseNum(document.getElementById('importBox').value.replace(/[\n\r]/gm, ''));
 			if (!timeWarpHours) {
-				debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'test');
+				debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'offline');
 			}
 		} catch (err) {
-			debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'test');
+			debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'offline');
 		}
 	}
 
@@ -233,7 +233,6 @@ function _adjustGlobalTimers(keys, adjustment) {
 	});
 }
 
-//Will activate a 24 hour timewarp.
 function testTimeWarp(hours) {
 	const timeWarpHours = _getTimeWarpHours(hours);
 	const timeToRun = timeWarpHours * 3600000;
