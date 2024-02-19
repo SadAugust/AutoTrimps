@@ -104,7 +104,7 @@ function _getPotencyMod() {
 	if (game.global.voidBuff === 'slowBreed') potencyMod *= 0.2;
 
 	// Heirlooms
-	potencyMod = calcHeirloomBonusDecimal('Shield', 'breedSpeed', potencyMod);
+	potencyMod = calcHeirloomBonus('Shield', 'breedSpeed', potencyMod);
 
 	// Geneticists
 	if (game.jobs.Geneticist.owned > 0) potencyMod *= Math.pow(0.98, game.jobs.Geneticist.owned);
