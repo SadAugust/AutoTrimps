@@ -3092,8 +3092,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	let status = '';
 
 	if (hdType.includes('hitsSurvived')) {
-		status = `${hdType === 'hitsSurvivedVoid' ? 'Void&nbsp;' : ''}
-		Hits&nbsp;Survived to:&nbsp;${prettify(settingTarget.toFixed(2))}<br>
+		status = `${hdType === 'hitsSurvivedVoid' ? 'Void&nbsp;' : ''}`;
+		status += `Hits&nbsp;Survived to:&nbsp;${prettify(settingTarget.toFixed(2))}<br>
 		Current:&nbsp;${prettify(hdRatio.toFixed(2))}`;
 	} else {
 		status = `HD&nbsp;Farm&nbsp;to:&nbsp;${

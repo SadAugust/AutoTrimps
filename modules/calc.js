@@ -1081,9 +1081,11 @@ function enemyDamageModifiers() {
 }
 
 function gammaMaxStacks(specialChall, actualCheck = true, worldType = 'world') {
-	if (heirloomShieldToEquip(worldType) && getHeirloomBonus_AT('Shield', 'gammaBurst', heirloomShieldToEquip(worldType)) <= 1) return Infinity;
-	if (actualCheck && MODULES.heirlooms.gammaBurstPct === 1) return 1;
-	if (typeof atSettings !== 'undefined' && specialChall && game.global.mapsActive) return Infinity;
+	if (typeof atSettings !== 'undefined') {
+		if (heirloomShieldToEquip(worldType) && getHeirloomBonus_AT('Shield', 'gammaBurst', heirloomShieldToEquip(worldType)) <= 1) return Infinity;
+		if (actualCheck && MODULES.heirlooms.gammaBurstPct === 1) return 1;
+		if (specialChall && game.global.mapsActive) return Infinity;
+	}
 
 	let gammaMaxStacks = 5;
 	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;

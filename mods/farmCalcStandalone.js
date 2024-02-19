@@ -1,3 +1,23 @@
+function getPerkModifier(what) {
+	return game.portal[what].modifier || 0;
+}
+
+function getCurrentEnemy(cell = 1) {
+	if (game.global.gridArray.length <= 0) return {};
+
+	const mapping = game.global.mapsActive;
+	const currentCell = mapping ? game.global.lastClearedMapCell + cell : game.global.lastClearedCell + cell;
+	const mapGrid = mapping ? 'mapGridArray' : 'gridArray';
+
+	if (typeof game.global[mapGrid][currentCell] === 'undefined') return game.global[mapGrid][game.global[mapGrid].length - 1];
+
+	return game.global[mapGrid][currentCell];
+}
+
+function noBreedChallenge() {
+	return challengeActive('Trapper') || challengeActive('Trappapalooza');
+}
+
 function canU2OverkillAT(targetZone) {
 	if (!u2Mutations.tree.Overkill1.purchased) return false;
 
