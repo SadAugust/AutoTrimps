@@ -1,5 +1,4 @@
-function shouldUpdate() {
-	if (!usingRealTimeOffline || loops % 600 === 0) return true;
+function shouldUpdate() {	if (!usingRealTimeOffline || loops % 600 === 0) return true;
 	return false;
 }
 
@@ -833,7 +832,7 @@ Fluffy.updateExp = function () {
 	const expElem = document.getElementById('fluffyExp');
 	const lvlElem = document.getElementById('fluffyLevel');
 	const fluffyInfo = this.cruffysTipActive() ? game.challenges.Nurture.getExp() : this.getExp();
-	const width = Math.ceil((fluffyInfo[1] / fluffyInfo[2]) * 100);
+	let width = Math.ceil((fluffyInfo[1] / fluffyInfo[2]) * 100);
 
 	if (width > 100) width = 100;
 	expElem.style.width = width + '%';
