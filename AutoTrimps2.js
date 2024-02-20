@@ -439,7 +439,7 @@ function mainCleanup() {
 }
 
 async function atVersionChecker() {
-	if (atSettings.updateAvailable) return;
+	if (atSettings.updateAvailable || usingRealTimeOffline) return;
 
 	const url = `${atSettings.initialise.basepath}versionNumber.js`;
 	const response = await fetch(url);

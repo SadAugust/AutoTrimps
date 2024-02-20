@@ -3,18 +3,11 @@ function shouldUpdate() {
 	return false;
 }
 
-function applyMultipliers(multipliers, stat, challenge, postChallengeCheck, enemy) {
+function applyMultipliers(multipliers, stat, challenge, postChallengeCheck) {
 	Object.keys(multipliers).forEach((key) => {
 		if (challenge && postChallengeCheck && key === 'Nurture' && game.challenges.Nurture.boostsActive()) stat *= multipliers[key]();
 		else if (challenge) stat *= challengeActive(key) ? multipliers[key]() : 1;
 		else stat *= multipliers[key]();
-
-		if (stat < 0 && !enemy) {
-			console.log('Trimps have negative damage. Please report these messages. Base soldier attack = ', game.global.soldierCurrentAttack);
-			console.log(`Negative stat caused by: ${key}. Multiplier: ${multipliers[key]()}. ChallengeActive = ${game.global.challengeActive}`);
-			message(`Negative stat caused by: ${key}. Multiplier: ${multipliers[key]()}. Current Challenge = ${game.global.challengeActive}`, 'Notices');
-			stat *= -1;
-		}
 	});
 
 	return stat;
@@ -617,17 +610,19 @@ function gather() {
 function updateTitimp() {
 	if (usingRealTimeOffline) return;
 	const elem = document.getElementById('titimpBuff');
+
 	if (game.global.titimpLeft < 1) {
 		if (elem.innerHTML !== '') {
 			elem.innerHTML = '';
 		}
 		return;
 	}
-	const number = Math.floor(game.global.titimpLeft);
-	const newInnerHTML = `<span class="badge antiBadge" onmouseover="tooltip('Titimp', 'customText', event, 'Your Trimps are dealing double damage, thanks to the Titimp!');" onmouseout="tooltip('hide')">${number}<span class="icomoon icon-hammer"></span></span>`;
 
-	if (elem.innerHTML !== newInnerHTML) {
-		elem.innerHTML = newInnerHTML;
+	const timer = Math.floor(game.global.titimpLeft);
+	const htmlMessage = `<span class="badge antiBadge" onmouseover="tooltip('Titimp', 'customText', event, 'Your Trimps are dealing double damage, thanks to the Titimp!');" onmouseout="tooltip('hide')">${timer}<span class="icomoon icon-hammer"></span></span>`;
+
+	if (elem.innerHTML !== htmlMessage) {
+		elem.innerHTML = htmlMessage;
 	}
 }
 
@@ -1008,7 +1003,7 @@ function updateAllBattleNumbers(skipNum) {
 		elem = document.getElementById('trimpsFighting');
 		elemText = prettify(game.resources.trimps.getCurrentSend());
 		if (challengeActive('Trimp') && game.jobs.Amalgamator.owned > 0) elemText = toZalgo(elemText, game.global.world);
-		if (elem.innerHTML != elemText) elem.innerHTML = elemText;
+		if (elem && elem.innerHTML != elemText) elem.innerHTML = elemText;
 	}
 
 	let blockDisplay = '';
@@ -1059,6 +1054,130 @@ function setVoidCorruptionIcon(regularMap) {
 	if (corruptionElem.innerHTML !== elemText) corruptionElem.innerHTML = elemText;
 }
 
+function manageLeadStacks(remove) {
+	const challenge = game.challenges.Lead;
+	const elem = document.getElementById('leadBuff');
+	let determinedBuff = document.getElementById('determinedBuff');
+
+	if (game.global.world % 2 === 1) {
+		if (!determinedBuff) {
+			const goodGuyElem = document.getElementById('goodGuyName');
+			const htmlMessage = '&nbsp<span class="badge antiBadge" id="determinedBuff" onmouseover="tooltip(\'Determined\', \'customText\', event, \'Your Trimps are determined to succeed. They gain 50% attack and earn double resources from all sources.\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-sun2"></span></span>';
+			if (goodGuyElem.innerHTML !== htmlMessage) goodGuyElem.innerHTML = htmlMessage;
+			determinedBuff = document.getElementById('determinedBuff');
+		}
+		determinedBuff.style.display = 'inline';
+	} else if (!determinedBuff) {
+		determinedBuff.style.display = 'none';
+	}
+
+	if (challenge.stacks <= 0) return;
+	if (remove && challenge.stacks) challenge.stacks--;
+
+	if (!elem) {
+		const badGuyElem = document.getElementById('badGuyName');
+		const htmlMessage = `&nbsp;<span class="badge badBadge" id="leadBuff" onmouseover="tooltip('Momentum', null, event)" onmouseout="tooltip('hide')"><span id="leadStacks">${challenge.stacks}</span><span id="momentumIcon" class="icomoon icon-hourglass"></span></span>`;
+		if (badGuyElem.innerHTML !== htmlMessage) {
+			badGuyElem.innerHTML += htmlMessage;
+		}
+	} else {
+		const stacksElem = document.getElementById('leadStacks');
+		if (stacksElem.innerHTML !== challenge.stacks) {
+			stacksElem.innerHTML = challenge.stacks;
+		}
+	}
+
+	swapClass('icon-hourglass', 'icon-hourglass-' + (3 - Math.floor(challenge.stacks / 67)), document.getElementById('momentumIcon'));
+}
+
+function manageLeadStacks(remove) {
+	if (usingRealTimeOffline) return;
+	const challenge = game.challenges.Lead;
+	const elem = document.getElementById('leadBuff');
+	let determinedBuff = document.getElementById('determinedBuff');
+
+	if (game.global.world % 2 === 1) {
+		if (!determinedBuff) {
+			document.getElementById('goodGuyName').innerHTML += '&nbsp<span class="badge antiBadge" id="determinedBuff" onmouseover="tooltip(\'Determined\', \'customText\', event, \'Your Trimps are determined to succeed. They gain 50% attack and earn double resources from all sources.\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-sun2"></span></span>';
+			determinedBuff = document.getElementById('determinedBuff');
+		}
+		determinedBuff.style.display = 'inline';
+	} else if (determinedBuff) {
+		determinedBuff.style.display = 'none';
+	}
+
+	if (challenge.stacks <= 0) return;
+	if (remove && challenge.stacks) challenge.stacks--;
+
+	if (!elem) {
+		document.getElementById('badGuyName').innerHTML += '&nbsp;<span class="badge badBadge" id="leadBuff" onmouseover="tooltip(\'Momentum\', null, event)" onmouseout="tooltip(\'hide\')"><span id="leadStacks">' + challenge.stacks + '</span><span id="momentumIcon" class="icomoon icon-hourglass"></span></span>';
+	} else {
+		const stacksElem = document.getElementById('leadStacks');
+		if (stacksElem.innerHTML !== challenge.stacks) {
+			stacksElem.innerHTML = challenge.stacks;
+		}
+	}
+
+	swapClass('icon-hourglass', 'icon-hourglass-' + (3 - Math.floor(challenge.stacks / 67)), document.getElementById('momentumIcon'));
+}
+
+function updateToxicityStacks() {
+	if (!shouldUpdate()) return;
+	const elem = document.getElementById('toxicityBuff');
+	const stackCount = game.challenges.Toxicity.stacks;
+
+	if (!elem) {
+		const badGuyElem = document.getElementById('badGuyName');
+		const htmlMessage = `&nbsp<span class="badge badBadge" id="toxicityBuff" onmouseover="tooltip('Toxic', null, event)" onmouseout="tooltip('hide')"><span id="toxicityStacks">${stackCount}</span><span class="icomoon icon-radioactive"></span></span>`;
+		if (badGuyElem.innerHTML !== htmlMessage) badGuyElem.innerHTML += htmlMessage;
+		return;
+	}
+
+	const stacksElem = document.getElementById('toxicityStacks');
+	if (stacksElem.innerHTML !== stackCount) stacksElem.innerHTML = stackCount;
+}
+
+function updateLivingStacks() {
+	if (!shouldUpdate()) return;
+	const elem = document.getElementById('livingBuff');
+	const stackCount = game.challenges.Life.stacks;
+	if (stackCount < game.challenges.Life.lowestStacks) game.challenges.Life.lowestStacks = stackCount;
+
+	if (!elem) {
+		const goodGuyElem = document.getElementById('goodGuyName');
+		const htmlMessage = `&nbsp<span class="badge antiBadge" id="livingBuff" onmouseover="tooltip('Unliving', null, event)" onmouseout="tooltip('hide')"><span id="livingStacks">${stackCount}</span>&nbsp;<span style="margin-top: 2%" class="icomoon icon-shareable"></span></span>`;
+		if (goodGuyElem.innerHTML !== htmlMessage) goodGuyElem.innerHTML += htmlMessage;
+		return;
+	}
+
+	const stacksElem = document.getElementById('livingStacks');
+	if (stacksElem.innerHTML !== stackCount) stacksElem.innerHTML = stackCount;
+}
+
+function updateElectricityStacks(tipOnly) {
+	if (!shouldUpdate()) return;
+	const elem = document.getElementById('debuffSpan');
+
+	if (game.challenges.Electricity.stacks > 0) {
+		const number = game.challenges.Electricity.stacks * 10;
+		const addText = 'Your Trimps are dealing ' + number + '% less damage and taking ' + number + '% of their total health as damage per attack.';
+		const htmlMessage = `<span class="badge trimpBadge" onmouseover="tooltip('Electrified', 'customText', event, '${addText}'); updateElectricityTip()" onmouseout="tooltip('hide')">${game.challenges.Electricity.stacks}<span class="icomoon icon-power"></span></span>`;
+		if (elem.innerHTML !== htmlMessage) elem.innerHTML = htmlMessage;
+
+		if (tipOnly) {
+			const tooltip = document.getElementById('tipText');
+			if (tooltip.innerHTML !== addText) tooltip.innerHTML = addText;
+			return;
+		}
+
+		const goodGuyAttack = calculateDamage(game.global.soldierCurrentAttack, true, true);
+		const goodGuyElem = document.getElementById('goodGuyAttack');
+		if (goodGuyElem.innerHTML !== goodGuyAttack) goodGuyElem.innerHTML = goodGuyAttack;
+	} else {
+		if (elem.innerHTML !== '') elem.innerHTML = '';
+	}
+}
+
 function updateAntiStacks() {
 	if (!shouldUpdate()) return;
 
@@ -1073,7 +1192,53 @@ function updateAntiStacks() {
 		elemText = `<span class="badge antiBadge" onmouseover="tooltip('Anticipation', 'customText', event, 'Your Trimps are dealing ${number}% extra damage for taking ${game.global.antiStacks} second${s} to ${verb}.')" onmouseout="tooltip('hide')">${game.global.antiStacks}<span class="icomoon icon-target2"></span></span>`;
 	}
 
-	if (elem.innerHTML !== elemText) elem.innerHTML = elemText;
+	if (elem && elem.innerHTML !== elemText) elem.innerHTML = elemText;
+}
+
+function updateTitimp() {
+	const elem = document.getElementById('titimpBuff');
+	if (game.global.titimpLeft < 1) {
+		if (elem.innerHTML !== '') elem.innerHTML = '';
+		return;
+	}
+
+	const timer = Math.floor(game.global.titimpLeft);
+	const message = `<span class="badge antiBadge" onmouseover="tooltip('Titimp', 'customText', event, 'Your Trimps are dealing double damage, thanks to the Titimp!');" onmouseout="tooltip('hide')">${timer}<span class="icomoon icon-hammer"></span></span>`;
+	if (elem.innerHTML !== message) elem.innerHTML = message;
+}
+
+function updateNomStacks(number) {
+	if (!shouldUpdate()) return;
+	const elem = document.getElementById('nomStack');
+	if (!elem) {
+		document.getElementById('badGuyName').innerHTML += `<span class="badge badBadge" onmouseover="tooltip('Nom', 'customText', event, 'This Bad Guy is nice and plump from eating Trimps. Increases attack damage by 25% per stack');" onmouseout="tooltip('hide')"><span id="nomStack">${number}</span><span class="glyphicon glyphicon-scale"></span></span>`;
+	} else {
+		if (elem.innerHTML !== number) elem.innerHTML = number;
+	}
+}
+
+function updateBalanceStacks() {
+	if (!shouldUpdate()) return;
+	let elem = document.getElementById('balanceSpan');
+	if (!elem) {
+		document.getElementById('goodGuyName').innerHTML += `<span id='balanceSpan'></span>`;
+		elem = document.getElementById('balanceSpan');
+	}
+
+	const isUnbalanceActive = challengeActive('Unbalance');
+	const challenge = isUnbalanceActive ? game.challenges.Unbalance : game.challenges.Balance;
+	const statFunction = isUnbalanceActive ? challenge.getAttackMult : challenge.getHealthMult;
+	const statMessage = isUnbalanceActive ? 'less attack' : 'less health';
+
+	if (challenge.balanceStacks > 0) {
+		const htmlMessage = `<span class="badge antiBadge" onmouseover="tooltip('Unbalance', 'customText', event, 'Your Trimps have ${statFunction(true)} ${statMessage}, but all Trimps can gather ${challenge.getGatherMult(true)} faster. You will gain one stack from killing Bad Guys in the world, and lose one stack for killing Bad Guys in maps.');" onmouseout="tooltip('hide')"><span id="balanceStack">${challenge.balanceStacks}</span><span class="icomoon icon-balance-scale"></span></span>`;
+		if (elem.innerHTML !== htmlMessage) {
+			elem.style.display = 'inline-block';
+			elem.innerHTML = htmlMessage;
+		}
+	} else {
+		elem.style.display = 'none';
+	}
 }
 
 function setMutationTooltip(which, mutation) {
@@ -1636,7 +1801,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 				Desolation: () => game.challenges.Desolation.trimpAttackMult(),
 				Smithless: () => game.challenges.Smithless.getTrimpMult()
 			};
-			number = applyMultipliers(challengeMultipliers, number, true, true);
+			number = applyMultipliers(challengeMultipliers, number, true);
 		}
 		if (challengeActive('Daily')) {
 			if (game.talents.daily.purchased) number *= 1.5;
@@ -1666,7 +1831,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 				Corrupted: () => 3,
 				Scientist: () => (getScientistLevel() === 5 ? 10 : 1)
 			};
-			number = applyMultipliers(challengeMultipliers, number, true, false, true);
+			number = applyMultipliers(challengeMultipliers, number, true, false);
 			if (game.global.usingShriek) number *= game.mapUnlocks.roboTrimp.getShriekValue();
 		}
 
@@ -1681,7 +1846,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 				Pandemonium: () => (!game.global.mapsActive && cell && cell.level === 100 ? game.challenges.Pandemonium.getBossMult() : game.challenges.Pandemonium.getPandMult()),
 				Glass: () => game.challenges.Glass.attackMult()
 			};
-			number = applyMultipliers(challengeMultipliers, number, true, false, true);
+			number = applyMultipliers(challengeMultipliers, number, true, false);
 
 			if (!game.global.mapsActive && game.global.novaMutStacks > 0) number *= u2Mutations.types.Nova.enemyAttackMult();
 			if (cell.u2Mutation && cell.u2Mutation.length && u2Mutations.types.Rage.hasRage(cell)) number *= u2Mutations.types.Rage.enemyAttackMult();
