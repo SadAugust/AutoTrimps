@@ -92,6 +92,12 @@ offlineProgress.finish = function () {
 
 			offlineProgress.start();
 			if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
+
+			document.getElementById('queueItemsHere').innerHTML = '';
+			for (let item in game.global.buildingsQueue) {
+				addQueueItem(game.global.buildingsQueue[item]);
+			}
+			game.global.nextQueueId = game.global.buildingsQueue.length;
 		} else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
 	} catch (e) {
 		console.log('Failed to restart Time Warp to finish it off. ' + e, 'other');

@@ -38,17 +38,17 @@ function _getClipboardText(ev) {
 var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
 playerSpire.drawInfo = function (arguments) {
 	let ret = oldPlayerSpireDrawInfo.apply(this, arguments);
-	let elem = document.getElementById('spireTrapsWindow');
+	const elem = document.getElementById('spireTrapsWindow');
+	const tooltipText = `Click to paste and import your Spire string! These are typically acquired through the Spire TD Calc website`;
 	if (!elem) return arguments;
-	//let importBtn = `<div onclick="_displaySpireImport()" class="spireControlBox">Import</div>`;
-	const importBtn = '<input style="width:19%;border:2px solid #dadada;padding:0.5vw;display:inline-block;margin:0.5%;text-align:center;" placeholder="Import" onpaste="tdStringCode(_getClipboardText(event));">';
+	const importBtn = `<input style="width:19%;border:2px solid #dadada;padding:0.5vw;display:inline-block;margin:0.5%;text-align:center;" placeholder="Import" onpaste="tdStringCode(_getClipboardText(event));" title="${tooltipText}">`;
 
 	elem.innerHTML = importBtn + elem.innerHTML;
 	return arguments;
 };
 
 function _displaySpireImport() {
-	const tooltipText = `Import your Spire string! These are typically acquired through the <a href="http://swaqvalley.com/td_calc" target="_blank">Spire TD Calc website</a><br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>`;
+	const tooltipText = `Click onto and paste to import your Spire string! These are typically acquired through the <a href="http://swaqvalley.com/td_calc" target="_blank">Spire TD Calc website</a><br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>`;
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); tdStringCode2();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
 
 	const ondisplay = function () {

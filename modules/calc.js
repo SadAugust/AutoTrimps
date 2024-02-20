@@ -121,21 +121,6 @@ function _getEnemyName(name = 'Chimp') {
 	return getCurrentEnemy().name || { name };
 }
 
-function applyMultipliers(multipliers, stat, challenge, postChallengeCheck) {
-	Object.keys(multipliers).forEach((key) => {
-		if (challenge && postChallengeCheck && key === 'Nurture' && game.challenges.Nurture.boostsActive()) stat *= multipliers[key]();
-		else if (challenge) stat *= challengeActive(key) ? multipliers[key]() : 1;
-		else stat *= multipliers[key]();
-	});
-	return stat;
-}
-
-function applyDailyMultipliers(modifier, value = 1) {
-	const dailyChallenge = game.global.dailyChallenge;
-	if (typeof dailyChallenge[modifier] === 'undefined') return value;
-	return dailyModifiers[modifier].getMult(dailyChallenge[modifier].strength, dailyChallenge[modifier].stacks);
-}
-
 function calcEquipment(equipType = 'attack') {
 	let bonus = 0;
 	let equipmentList;

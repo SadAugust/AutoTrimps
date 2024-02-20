@@ -127,25 +127,29 @@ function loadScriptsAT() {
 	const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
 
 	if (autoTrimpsScript) atSettings.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
-	loadModules('versionNumber');
-
-	atSettings.modules.installedMods.forEach((module) => {
-		loadModules(`${module}`, `${atSettings.modules.pathMods}`);
-	});
-
-	atSettings.modules.installedModules.forEach((module) => {
-		loadModules(`${module}`, `${atSettings.modules.path}`);
-	});
-
-	loadModules('SettingsGUI');
 
 	(async function () {
 		try {
-			await loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js');
-			await loadStylesheet('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
-			await loadStylesheet(`${atSettings.initialise.basepath}css/tabs.css`);
-			await loadScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js');
-			if (typeof formatters !== 'object') await loadScript('https://Quiaaaa.github.io/AutoTrimps/Graphs.js');
+			const modules = ['versionNumber', ...atSettings.modules.installedMods, ...atSettings.modules.installedModules, 'SettingsGUI'];
+
+			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js'];
+
+			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atSettings.initialise.basepath}css/tabs.css`];
+
+			for (const module of modules) {
+				const path = atSettings.modules.installedMods.includes(module) ? atSettings.modules.pathMods : atSettings.modules.installedModules.includes(module) ? atSettings.modules.path : '';
+				await loadModules(module, path);
+			}
+
+			for (const script of scripts) {
+				if (atSettings.modules.loadedExternal.includes(script)) continue;
+				await loadScript(script);
+			}
+
+			for (const stylesheet of stylesheets) {
+				if (atSettings.modules.loadedExternal.includes(stylesheet)) continue;
+				await loadStylesheet(stylesheet);
+			}
 		} catch (error) {
 			console.error('Error loading script or stylesheet:', error);
 		}
@@ -166,7 +170,10 @@ function initialiseScript() {
 
 	if (Object.values(filesNotLoaded).some(Boolean)) {
 		atSettings.intervals.counter++;
-		if (atSettings.intervals.counter % 500 === 0) return loadScriptsAT();
+		if (atSettings.intervals.counter % 500 === 0) {
+			console.timeEnd();
+			return loadScriptsAT();
+		}
 		return setTimeout(initialiseScript, 1);
 	}
 
