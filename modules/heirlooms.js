@@ -9,14 +9,14 @@ function evaluateHeirloomMods(loom, location) {
 	const heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
 	const heirloomType = heirloomLocation.type;
 	const heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	const raretokeep = heirloomRarity.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`));
+	const rareToKeep = heirloomRarity.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`));
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomEquipType = ['Shield', 'Staff', 'All', 'Core'][typeToKeep - 1];
 
 	if (heirloomType !== heirloomEquipType && heirloomEquipType !== 'All') return 0;
-
+	const heirloomRaritySetting = getPageSetting('heirloomAutoRarityPlus');
 	const rarity = heirloomLocation.rarity;
-	if ((getPageSetting('heirloomAutoRarityPlus') && rarity < raretokeep) || (!getPageSetting('heirloomAutoRarityPlus') && rarity !== raretokeep)) return 0;
+	if ((heirloomRaritySetting && rarity < rareToKeep) || (!heirloomRaritySetting && rarity !== rareToKeep)) return 0;
 
 	const varAffix = { Staff: 'heirloomAutoStaffMod', Shield: 'heirloomAutoShieldMod', Core: 'heirloomAutoCoreMod' }[heirloomType] || null;
 	const blacklist = getPageSetting(`heirloomAuto${heirloomType}Blacklist`);
@@ -53,19 +53,22 @@ function evaluateHeirloomMods(loom, location) {
 function worthOfHeirlooms() {
 	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	const heirloomWorth = { Shield: [], Staff: [], Core: [] };
+	let heirloomEvaluations = game.global.heirloomsExtra.map((_, index) => evaluateHeirloomMods(index, 'heirloomsExtra'));
 
-	const recycle = game.global.heirloomsExtra
-		.map((_, index) => index)
-		.filter((index) => evaluateHeirloomMods(index, 'heirloomsExtra') === 0)
+	const recycle = heirloomEvaluations
+		.map((value, index) => ({ value, index }))
+		.filter(({ value }) => value === 0)
+		.map(({ index }) => index)
 		.reverse();
 
 	for (const index of recycle) {
 		selectHeirloom(index, 'heirloomsExtra');
 		recycleHeirloom(true);
+		heirloomEvaluations.splice(index, 1);
 	}
 
 	for (const [index, theLoom] of game.global.heirloomsExtra.entries()) {
-		const data = { location: 'heirloomsExtra', index, rarity: theLoom.rarity, eff: evaluateHeirloomMods(index, 'heirloomsExtra') };
+		const data = { location: 'heirloomsExtra', index, rarity: theLoom.rarity, eff: heirloomEvaluations[index] };
 		heirloomWorth[theLoom.type].push(data);
 	}
 
@@ -81,7 +84,7 @@ function autoHeirlooms(portal) {
 	if (portal && !portalWindowOpen) return;
 	const maxHeirlooms = getMaxCarriedHeirlooms();
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
-	const weights = worthOfHeirlooms();
+	let weights = worthOfHeirlooms();
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
 
 	const heirloomTypes = heirloomType === 'All' ? (game.global.universe === 1 ? ['Shield', 'Staff', 'Core'] : ['Shield', 'Staff']) : [heirloomType];
@@ -95,6 +98,7 @@ function autoHeirlooms(portal) {
 
 	while (game.global.heirloomsCarried.length < maxHeirlooms && game.global.heirloomsExtra.length > 0) {
 		for (let x = 0; x < heirloomTypes.length; x++) {
+			weights = worthOfHeirlooms();
 			if (weights[heirloomTypes[x]].length > 0) {
 				let carriedHeirlooms = weights[heirloomTypes[x]].shift();
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
@@ -174,7 +178,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 		else return 'heirloomInitial';
 	}
 
-	if (swapLooms && !game.global.fighting && breedTimeRemaining().cmp(0.1) > 0 && getPerkLevel('Anticipation') === 0) {
+	if (swapLooms && !game.global.fighting && getPerkLevel('Anticipation') === 0 && _breedTimeRemaining() > 0) {
 		if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') return 'archaeologyBreedShield';
 		if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
 	}
