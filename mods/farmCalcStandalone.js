@@ -153,7 +153,7 @@ function makeAdditionalInfo() {
 
 	const displayOutputs = (type) => {
 		type = initialInfo[type];
-		const plusMinus = type.mapLevel > 0 ? '+' : type.mapLevel < 0 ? '-' : '';
+		const plusMinus = type.mapLevel > 0 ? '+' : '';
 
 		if (showExtraType) return `${plusMinus}${type.mapLevel} (${u2 ? type.equality + 'eq' : type.stance})`;
 		return `${plusMinus}${type.mapLevel}`;

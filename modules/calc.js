@@ -162,7 +162,7 @@ function calcCorruptionScale(zone = game.global.world, base = 10) {
 function calcSpire(what = 'attack', cell, name, checkCell) {
 	if (!cell) {
 		const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-		const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
+		const exitCell = typeof atSettings !== 'undefined' ? getPageSetting(settingPrefix + 'ExitSpireCell') : 100;
 		cell = isDoingSpire() && exitCell > 0 && exitCell <= 100 ? exitCell : 100;
 	}
 
@@ -321,7 +321,7 @@ function _getAnticipationBonus(stacks = game.global.antiStacks) {
 function _getTrimpIceMult(realDamage) {
 	if (getEmpowerment() !== 'Ice') return 1;
 
-	if (realDamage || !getPageSetting('fullice')) {
+	if (realDamage || (typeof atSettings !== 'undefined' && !getPageSetting('fullice'))) {
 		return 1 + game.empowerments.Ice.getDamageModifier();
 	} else {
 		const afterTransfer = 1 + Math.ceil(game.empowerments.Ice.currentDebuffPower * getRetainModifier('Ice'));
@@ -349,7 +349,7 @@ function addPoison(realDamage, zone = game.global.world) {
 	if (getEmpowerment(zone) !== 'Poison') return 0;
 	if (realDamage) return game.empowerments.Poison.getDamage();
 	//Dynamically determines how much we are benefiting from poison based on Current Amount * Transfer Rate
-	if (getPageSetting('addpoison')) return game.empowerments.Poison.getDamage() * getRetainModifier('Poison');
+	if (typeof atSettings !== 'undefined' && getPageSetting('addpoison')) return game.empowerments.Poison.getDamage() * getRetainModifier('Poison');
 	return 0;
 }
 
@@ -514,7 +514,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 }
 
 function badGuyCritMult(enemy = getCurrentEnemy(), critPower = 2, block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
-	const ignoreCrits = getPageSetting('IgnoreCrits');
+	const ignoreCrits = typeof atSettings !== 'undefined' && getPageSetting('IgnoreCrits');
 	if (critPower <= 0 || ignoreCrits === 2) return 1;
 
 	let regular = 1;
@@ -645,7 +645,7 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 		if (worldType === 'void') attack *= applyDailyMultipliers('empoweredVoid', 1);
 
 		const dailyChallenge = game.global.dailyChallenge;
-		if (typeof dailyChallenge.bloodthirst !== 'undefined') {
+		if (typeof dailyChallenge.bloodthirst !== 'undefined' && typeof atSettings !== 'undefined') {
 			const bloodThirstStrength = dailyChallenge.bloodthirst.strength;
 
 			if (worldType === 'void' && getPageSetting('bloodthirstVoidMax')) {
@@ -672,7 +672,7 @@ function calcEnemyAttack(worldType = 'world', zone = game.global.world, cell = 1
 		if (worldType === 'world' && game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
 	}
 
-	if (getEmpowerment() === 'Ice' && getPageSetting('fullice')) {
+	if (typeof atSettings !== 'undefined' && getEmpowerment() === 'Ice' && getPageSetting('fullice')) {
 		const afterTransfer = 1 + Math.ceil(game.empowerments.Ice.currentDebuffPower * getRetainModifier('Ice'));
 		attack *= Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
 	}
