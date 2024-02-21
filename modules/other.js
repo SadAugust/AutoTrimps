@@ -74,7 +74,7 @@ function fluffyEvolution() {
 
 	Fluffy.prestige();
 
-	for (let i = 0; i < bonePortalsToUse; i++) {
+	for (let i = 0; i < bpsToUse; i++) {
 		purchaseMisc('helium');
 	}
 	hideBones();
