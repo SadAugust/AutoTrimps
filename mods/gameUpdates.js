@@ -1,6 +1,9 @@
 function shouldUpdate() {
-	if (!usingRealTimeOffline || loops % 600 === 0) return true;
-	return false;
+	return !usingRealTimeOffline || loops % 600 === 0;
+}
+
+function liquifiedZone() {
+	return game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
 }
 
 function applyMultipliers(multipliers, stat, challenge, postChallengeCheck) {
@@ -457,10 +460,6 @@ function updateButtonColor(what, canAfford, isJob) {
 	}
 }
 
-function liquifiedZone() {
-	return game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
-}
-
 function updateTurkimpTime() {
 	const elem = document.getElementById('turkimpTime');
 
@@ -654,11 +653,12 @@ function scaleHeirloomModUniverse(type, modName, value) {
 function breed() {
 	const breedElem = document.getElementById('trimpsTimeToFill');
 	const trimps = game.resources.trimps;
-	const trimpsMax = trimps.realMax();
-	let employedTrimps = trimps.employed;
 	checkAchieve('trimps', trimps.owned);
 
+	const trimpsMax = trimps.realMax();
+	let employedTrimps = trimps.employed;
 	if (game.permaBoneBonuses.multitasking.owned) employedTrimps *= 1 - game.permaBoneBonuses.multitasking.mult();
+
 	const maxBreedable = new DecimalBreed(trimpsMax).minus(employedTrimps);
 	if (missingTrimps.cmp(0) < 0) missingTrimps = new DecimalBreed(0);
 	let decimalOwned = missingTrimps.add(trimps.owned);
@@ -1681,7 +1681,6 @@ function handleWindDebuff() {
 }
 
 function manageStacks(stackName, stackCount, isTrimps, elemName, icon, tooltipText, forceHide, addSpace, addClass) {
-	if (!shouldUpdate()) return;
 	const parentName = isTrimps ? 'goodGuyName' : 'badDebuffSpan';
 	const parent = document.getElementById(parentName);
 	let elem = document.getElementById(elemName);
@@ -1874,7 +1873,6 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 
 	const min = Math.floor(number * (1 - minFluct));
 	if (min < 0 && isTrimp) {
-		console.log('bugged min', number, minFluct);
 		message(`bugged min ${number}, ${minFluct}`, 'Notices');
 	}
 
@@ -1885,7 +1883,6 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 	let actuallyLucky = false;
 
 	if (max < 0 && isTrimp) {
-		console.log('bugged max', number, maxFluct);
 		message(`bugged max ${number}, ${maxFluct}`, 'Notices');
 	}
 
@@ -4324,7 +4321,7 @@ offlineProgress.getHelpText = function () {
 };
 
 offlineProgress.updateBar = function (current) {
-	var width = ((current / this.progressMax) * 100).toFixed(1) + '%';
+	const width = ((current / this.progressMax) * 100).toFixed(1) + '%';
 	this.progressElem.style.width = width;
 	let newCellHTML = `Cell ${game.global.lastClearedCell + 2}`;
 	let newZoneHTML = `Zone ${game.global.world}`;
@@ -4359,13 +4356,13 @@ offlineProgress.updateBar = function (current) {
 		this.extraInfoElem.innerHTML = 'Starting Offline Progress... (Updates every 2000 processed loops)';
 		return;
 	}
-	var timeSpent = Math.floor((new Date().getTime() - this.startTime) / 1000);
+	const timeSpent = Math.floor((new Date().getTime() - this.startTime) / 1000);
 	if (timeSpent > this.nextFluffIn) {
 		this.fluff();
 		this.nextFluffIn = timeSpent + 30;
 	}
-	var speed = current / (timeSpent * 10);
-	var remaining = Math.floor((this.progressMax - current) / speed / 10);
+	const speed = current / (timeSpent * 10);
+	const remaining = Math.floor((this.progressMax - current) / speed / 10);
 	let newExtraText = `${prettify(current / 10)} seconds processed in ${prettify(timeSpent)} seconds (${this.loopTicks}L/F, ${prettify(speed)}x speed)<br>Estimated completion in ${this.formatTimeClock(remaining)}<br>${this.currentFluff}`;
 
 	if (this.extraInfoElem.innerHTML !== newExtraText) {
@@ -4374,7 +4371,7 @@ offlineProgress.updateBar = function (current) {
 	let newEffectiveHTML = '';
 	if (this.ticksProcessed - this.lastEnemyKilled > 25000) {
 		newEffectiveHTML = 'Progress has slowed to a crawl!';
-		var cell = game.global.gridArray[game.global.lastClearedCell + 1];
+		const cell = game.global.gridArray[game.global.lastClearedCell + 1];
 		if (cell && cell.health > cell.maxHealth) cell.health = cell.maxHealth;
 	}
 
