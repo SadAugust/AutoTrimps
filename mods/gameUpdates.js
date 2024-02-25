@@ -4659,3 +4659,28 @@ function autoTrap() {
 		}
 	}
 }
+
+function giveSingleAchieve(name) {
+	const u1Achievements = ['Power Tower'];
+	const u2Achievements = ['Huffstle', 'Just Smack It', 'Heavy Trinker', 'Peace'];
+
+	let area = game.global.universe === 2 ? 'oneOffs2' : 'oneOffs';
+	if (u1Achievements.includes(name)) area = 'oneOffs';
+	if (u2Achievements.includes(name)) area = 'oneOffs2';
+
+	const achievement = game.achievements[area];
+	const index = achievement.names.indexOf(name);
+
+	if (index === -1 || achievement.finished[index]) return;
+
+	if (typeof greenworks !== 'undefined') {
+		activateSteamAchieve(area, name);
+	}
+
+	displayAchievementPopup(area, false, index);
+	achievement.newStuff.push(index);
+	achievement.finished[index] = true;
+	calculateAchievementBonus();
+
+	if (trimpAchievementsOpen) displayAchievements();
+}
