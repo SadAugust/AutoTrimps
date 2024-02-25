@@ -424,7 +424,7 @@ function updateButtonColor(what, canAfford, isJob) {
 	if (!elem) return;
 
 	if (game.options.menu.lockOnUnlock.enabled === 1 && new Date().getTime() - 1000 <= game.global.lastUnlock) canAfford = false;
-	if (game.global.challengeActive === 'Archaeology' && game.upgrades[what] && game.upgrades[what].isRelic) {
+	if (challengeActive('Archaeology') && game.upgrades[what] && game.upgrades[what].isRelic) {
 		const nextAuto = game.challenges.Archaeology.checkAutomator();
 		let className = 'thingColor' + (canAfford ? 'CanAfford' : 'CanNotAfford');
 		if (nextAuto === 'off') className += 'RelicOff';
@@ -2350,7 +2350,7 @@ function startFight() {
 	if (game.global.brokenPlanet && !game.global.mapsActive) {
 		badName += " <span class=\"badge badBadge\" onmouseover=\"tooltip('Pierce', 'customText', event, '" + prettify(getPierceAmt() * 100) + '% of the damage from this Bad Guy pierces through block\')" onmouseout="tooltip(\'hide\')"><span class="glyphicon glyphicon-tint"></span></span>';
 	}
-	if (challengeActive('Glass') || challengeActive('Slow') || (challengeActive('Desolation') && game.global.mapsActive) || (cell.u2Mutation && cell.u2Mutation.length) || ((game.badGuys[cell.name].fast || cell.mutation === 'Corruption') && game.global.challengeActive !== 'Coordinate' && game.global.challengeActive !== 'Nom'))
+	if (challengeActive('Glass') || challengeActive('Slow') || (challengeActive('Desolation') && game.global.mapsActive) || (cell.u2Mutation && cell.u2Mutation.length) || ((game.badGuys[cell.name].fast || cell.mutation === 'Corruption') && !challengeActive('Coordinate') && !challengeActive('Nom')))
 		badName += ' <span class="badge badBadge" onmouseover="tooltip(\'Fast\', \'customText\', event, \'This Bad Guy is fast and attacks first\')" onmouseout="tooltip(\'hide\')"><span class="glyphicon glyphicon-forward"></span></span>';
 	if (challengeActive('Electricity') || challengeActive('Mapocalypse')) {
 		badName += ' <span class="badge badBadge" onmouseover="tooltip(\'Electric\', \'customText\', event, \'This Bad Guy is electric and stacks a debuff on your Trimps\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-power-cord"></span></span>';
@@ -2584,7 +2584,7 @@ function startFight() {
 		cell.maxHealth = cell.health;
 		if (overkill === 'shatter' || overkill === 'compressed') cell.health = 0;
 		else if (game.global.universe === 1 && getPerkLevel('Overkill') && !(!map && game.global.gridArray[0].name === 'Liquimp')) cell.health -= overkill * getPerkLevel('Overkill') * 0.005;
-		else if (game.global.universe === 2 && (game.global.challengeActive !== 'Wither' || !game.global.runningChallengeSquared) && (u2Mutations.tree.Overkill1.purchased || (game.global.mapsActive && u2Mutations.tree.MadMap.purchased))) {
+		else if (game.global.universe === 2 && (!challengeActive('Wither') || !game.global.runningChallengeSquared) && (u2Mutations.tree.Overkill1.purchased || (game.global.mapsActive && u2Mutations.tree.MadMap.purchased))) {
 			if (game.global.mapsActive && u2Mutations.tree.MadMap.purchased) {
 				cell.health -= overkill;
 			} else {
@@ -4037,7 +4037,7 @@ function nextWorld() {
 		increaseTheHeat();
 		decayNurseries();
 	}
-	if (game.global.challengeActive === 'Eradicated' && game.global.world <= 101) unlockUpgrade('Coordination');
+	if (challengeActive('Eradicated') && game.global.world <= 101) unlockUpgrade('Coordination');
 	if (game.global.world === 30 && game.global.canRespecPerks && !game.global.bonePortalThisRun && countHeliumSpent() <= 60) giveSingleAchieve('Underachiever');
 	else if (game.global.world === 10 && game.stats.trimpsKilled.value <= 5) giveSingleAchieve('Peacekeeper');
 	else if (game.global.world === 60) {
@@ -4143,6 +4143,16 @@ function screwThisUniverse(confirmed) {
 	checkEquipPortalHeirlooms();
 	document.getElementById('finishDailyBtnContainer').style.display = 'none';
 }
+
+game.worldUnlocks.Magmamancer.fire = function () {
+	if (challengeActive('Metal') || game.global.challengeActive == 'Transmute') {
+		const challenge = challengeActive('Metal') ? game.challenges.Metal : game.challenges[game.global.challengeActive];
+		challenge.holdMagma = true;
+		message("This book really doesn't help too much while you're dealing with the minerlessness of this dimension. Better let your scientists hold this one for you for a bit.", 'Notices');
+		return;
+	}
+	unlockUpgrade('Magmamancers');
+};
 
 offlineProgress.fluff = function () {
 	const fluffs = [
@@ -4603,7 +4613,7 @@ function runMap(resetCounter = true) {
 		game.achievements.mapless.earnable = false;
 		game.achievements.mapless.lastZone = game.global.world;
 	}
-	if (game.global.challengeActive == 'Quest' && game.challenges.Quest.questId === 5 && !game.challenges.Quest.questComplete) {
+	if (challengeActive('Quest') && game.challenges.Quest.questId === 5 && !game.challenges.Quest.questComplete) {
 		game.challenges.Quest.questProgress++;
 		if (game.challenges.Quest.questProgress === 1) game.challenges.Quest.failQuest();
 	}
