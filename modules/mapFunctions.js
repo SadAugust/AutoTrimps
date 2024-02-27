@@ -156,7 +156,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 
 			const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
 			const currChallenge = trimpStats.currChallenge.toLowerCase();
-			var smithyGoal = Infinity;
+			let smithyGoal = Infinity;
 			if (['mayhem', 'pandemonium', 'desolation'].indexOf(currChallenge) >= 0 && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0) smithyGoal = getPageSetting(currChallenge + 'MP');
 			else if (trimpStats.isC3 && uniqueMapSetting['MP Smithy C3'].enabled && uniqueMapSetting['MP Smithy C3'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy C3'].value;
 			else if (trimpStats.isDaily && uniqueMapSetting['MP Smithy Daily'].enabled && uniqueMapSetting['MP Smithy Daily'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy Daily'].value;
@@ -293,7 +293,7 @@ function _runUniqueMap(mapName) {
 		if (game.global.mapsActive && mapObj.name !== mapName) recycleMap_AT();
 		if (game.global.preMapsActive && game.global.currentMapId === '') {
 			selectMap(map.id);
-			runMap_AT();
+			runMap(false);
 			debug(`Running ${mapName} on zone ${game.global.world}.`, 'map_Details');
 			MODULES.mapFunctions.runUniqueMap = '';
 		}
@@ -407,8 +407,7 @@ function _getVoidMapsHDObject() {
 		map: { hdStat: hdStats.hdRatioMap, name: 'Map HD Ratio' },
 		void: { hdStat: hdStats.hdRatioVoid, hdStatVoid: hdStats.vhdRatioVoid, name: 'Void HD Ratio' },
 		hitsSurvived: { hdStat: hdStats.hitsSurvived, name: 'Hits Survived' },
-		hitsSurvivedVoid: { hdStat: hdStats.hitsSurvivedVoid, name: 'Hits Survived Void' },
-		maplevel: { hdStat: hdStats.autoLevel, name: 'Map Level' }
+		hitsSurvivedVoid: { hdStat: hdStats.hitsSurvivedVoid, name: 'Hits Survived Void' }
 	};
 }
 
@@ -1374,7 +1373,7 @@ function prestigeRaidingMapping() {
 		_handlePrestigeMapRunning();
 	}
 
-	if (game.global.preMapsActive) runMap_AT();
+	if (game.global.preMapsActive) runMap(false);
 }
 
 function _handlePrestigeMapBuying() {
@@ -1432,7 +1431,7 @@ function _runPurchasedMap(mapId, x) {
 	} else {
 		debug(`Prestige Raiding (z${game.global.world}) running a level ${purchasedMap.level} map. Map #${mapSettings.prestigeMapArray.length - x}`, 'map_Details');
 		selectMap(mapId);
-		runMap_AT();
+		runMap(false);
 	}
 }
 
@@ -1684,7 +1683,7 @@ function wither(lineCheck) {
 			equalityAmt = Math.max(0, equalityAmt - 2);
 		}
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false) * dmgBuff;
-		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 60, 'Snimp', calcMutationHealth(game.global.world + 1));
+		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 60, 'Snimp', calcMutationStats(game.global.world + 1, 'health'));
 		shouldMap = ourDmg * 4 < enemyHealth;
 	}
 	//Checking if we can clear current cell.
@@ -1693,7 +1692,7 @@ function wither(lineCheck) {
 		const name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1].name : undefined;
 		equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma', false, 4);
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
-		enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationHealth(game.global.world));
+		enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationStats(game.global.world, 'health'));
 		shouldMap = ourDmg * (gammaToTrigger <= 1 ? MODULES.heirlooms.gammaBurstPct : 1) * 4 < enemyHealth;
 	}
 
@@ -1751,7 +1750,7 @@ function quagmire(lineCheck) {
 function _runQuagmire(setting, mapName, settingName, settingIndex, baseSettings) {
 	let bogsToRun = 100;
 
-	for (var i = 1; i < baseSettings.length; i++) {
+	for (let i = 1; i < baseSettings.length; i++) {
 		let currSetting = baseSettings[i];
 		if (!currSetting.active || currSetting.world > game.global.world || (currSetting.world === game.global.world && currSetting.cell > game.global.lastClearedCell + 2)) continue;
 		bogsToRun -= parseInt(currSetting.bogs);
@@ -2320,11 +2319,10 @@ function _runAlchemy(setting, mapName, settingName, settingIndex) {
 	const potionGoal = setting.potion;
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, 1) : setting.level;
 
-	//Working out which potion the input corresponds to.
 	const potionIndex = ['h', 'g', 'f', 'v', 's'].indexOf(potionGoal.charAt('0'));
 	const potionName = alchObj.potionNames[potionIndex];
 	let potionTarget = potionGoal.toString().replace(/[^\d,:-]/g, '');
-	//Alchemy biome selection, will select Farmlands if it's unlocked and appropriate otherwise it'll use the default map type for that herb.
+
 	const potionBiomes = ['Mountain', 'Forest', 'Sea', 'Depths', 'Plentiful'];
 	const farmlandResources = ['Metal', 'Wood', 'Food', 'Gems', 'Any'];
 	const biome = game.global.farmlandsUnlocked && farmlandResources[potionIndex] === getFarmlandsResType() ? 'Farmlands' : potionBiomes[potionIndex];
@@ -2347,9 +2345,13 @@ function _runAlchemy(setting, mapName, settingName, settingIndex) {
 
 	//When mapType is set as Map Count work out how many of each Potion/Brew we can farm in the amount of maps specified.
 	if (setting.mapType && setting.mapType === 'Map Count') {
-		potionTarget = mapSettings.potionTarget || potionCurrent;
-		if (!mapSettings.potionTarget) {
-			let herbsGained = game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned + alchObj.getDropRate(game.global.world + mapLevel) * herbMult * potionTarget;
+		if (mapSettings.potionTarget) {
+			potionTarget = mapSettings.potionTarget;
+		} else {
+			const mapCount = potionTarget;
+			let herbsGained = game.herbs[alchObj.potions[potionIndex].cost[0][0]].cowned + alchObj.getDropRate(game.global.world + mapLevel) * herbMult * mapCount;
+
+			potionTarget = potionCurrent;
 			while (herbsGained > Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult) {
 				herbsGained -= Math.pow(alchObj.potions[potionIndex].cost[0][2], potionTarget) * alchObj.potions[potionIndex].cost[0][1] * potionMult;
 				potionTarget++;
@@ -2696,7 +2698,7 @@ function _desolationGearScumSetting(defaultSettings) {
 
 /* To be done */
 function desolationGearScum(lineCheck) {
-	var shouldMap = false;
+	let shouldMap = false;
 	const mapName = 'Desolation Gear Scum';
 	const farmingDetails = {
 		shouldRun: false,
@@ -2719,10 +2721,10 @@ function desolationGearScum(lineCheck) {
 
 	//if (setting) Object.assign(farmingDetails, _runDesoGearScum(setting, mapName, settingIndex));
 	if (setting || MODULES.mapFunctions.desoGearScum) {
-		var special;
-		var jobRatio;
-		var gather;
-		var mapLevel = game.global.lastClearedCell < 80 ? 0 : 1;
+		let special;
+		let jobRatio;
+		let gather;
+		let mapLevel = game.global.lastClearedCell < 80 ? 0 : 1;
 		if (settingIndex) {
 			special = getAvailableSpecials(setting.special);
 			jobRatio = setting.jobratio;
@@ -2733,18 +2735,18 @@ function desolationGearScum(lineCheck) {
 
 		//Check if a max attack+gamma burst can clear the improb.
 		//If it can't continue as normal, if it can then we start the +1 map for prestige scumming.
-		var currCell = game.global.lastClearedCell + 2;
-		var name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1].name : undefined;
-		var enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, name);
-		var equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
-		var ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
-		var gammaDmg = MODULES.heirlooms.gammaBurstPct;
-		var ourDmgTotal = ourDmg * gammaDmg * 5;
+		let currCell = game.global.lastClearedCell + 2;
+		let name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1].name : undefined;
+		let enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, name);
+		let equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
+		let ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
+		let gammaDmg = MODULES.heirlooms.gammaBurstPct;
+		let ourDmgTotal = ourDmg * gammaDmg * 5;
 
 		//Check if we will overshoot the improb with our regular hit/gamma burst.
 		//Add together the health of the cells between our current cell and the improb that we are able to overkill.
 		if (currCell !== 100) {
-			for (var x = currCell + 1; x <= 100; x++) {
+			for (let x = currCell + 1; x <= 100; x++) {
 				name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[x - 1].name : undefined;
 				enemyHealth += calcEnemyHealthCore('world', name);
 			}
@@ -3061,7 +3063,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	const hdRatio = hdStats[hdTypeMap[hdType]] || null;
 
 	//Skipping farm if map repeat value is greater than our max maps value
-	let shouldMap = hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > settingTarget;
+	let shouldMap = hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > whichAutoLevel() : hdRatio > settingTarget;
 
 	const shouldSkip = mapSettings.mapName !== mapName && !shouldMap;
 
@@ -3077,7 +3079,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 			} else if (hdType !== 'maplevel') {
 				debug(`HD Farm (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as HD Ratio goal has been met (${hdRatio.toFixed(2)}/${settingTarget.toFixed(2)}).`, 'map_Skip');
 			} else {
-				debug(`HD Farm (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as Map Level goal has been met (Autolevel ${setting.hdBase}/${hdStats.autoLevel}).`, 'map_Skip');
+				const autoLevel = whichAutoLevel();
+				debug(`HD Farm (z${game.global.world}c${game.global.lastClearedCell + 2}) skipped as Map Level goal has been met (Auto Level ${setting.hdBase}/${autoLevel}).`, 'map_Skip');
 			}
 		}
 		resetMapVars(setting, settingName);
@@ -3089,11 +3092,11 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	let status = '';
 
 	if (hdType.includes('hitsSurvived')) {
-		status += `${hdType === 'hitsSurvivedVoid' ? 'Void&nbsp;' : ''}
-		Hits&nbsp;Survived to:&nbsp;${prettify(settingTarget.toFixed(2))}<br>
+		status = `${hdType === 'hitsSurvivedVoid' ? 'Void&nbsp;' : ''}`;
+		status += `Hits&nbsp;Survived to:&nbsp;${prettify(settingTarget.toFixed(2))}<br>
 		Current:&nbsp;${prettify(hdRatio.toFixed(2))}`;
 	} else {
-		status += `HD&nbsp;Farm&nbsp;to:&nbsp;${
+		status = `HD&nbsp;Farm&nbsp;to:&nbsp;${
 			hdType !== 'maplevel'
 				? `${prettify(settingTarget.toFixed(2))}<br>Current&nbsp;HD:&nbsp;${prettify(hdRatio.toFixed(2))}`
 				: `<br>
@@ -3149,7 +3152,6 @@ function farmingDecision() {
 	};
 
 	if (!game.global.mapsUnlocked || _leadDisableMapping()) return (mapSettings = farmingDetails);
-
 	let mapTypes = [];
 	//U1 map settings to check for.
 	if (game.global.universe === 1) {
@@ -3566,8 +3568,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 			'Map HD Ratio': hdStats.hdRatioMap,
 			'Void HD Ratio': hdStats.hdRatioVoid,
 			'Hits Survived': hdStats.hitsSurvived,
-			'Hits Survived Void': hdStats.hitsSurvivedVoid,
-			'Map Level': hdStats.autoLevel
+			'Hits Survived Void': hdStats.hitsSurvivedVoid
 		};
 		message += ` Void maps were triggered by ${mapSettings.voidTrigger}.`;
 
@@ -3578,8 +3579,10 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		}
 	} else if (mapName === 'Hits Survived') message += ` Finished with hits survived at ${prettify(whichHitsSurvived())}/${targetHitsSurvived()}.`;
 	else if (mapName === 'HD Farm' && extra !== null) message += ` Finished with a HD Ratio of ${extra.toFixed(2)}/${extra2.toFixed(2)}.`;
-	else if (mapName === 'HD Farm') message += ` Finished with an auto level of ${hdStats.autoLevel > 0 ? '+' : ''}${hdStats.autoLevel}.`;
-	else if (mapName === 'Tribute Farm') message += ` Finished with ${game.buildings.Tribute.purchased} tributes and ${game.jobs.Meteorologist.owned} meteorologists.`;
+	else if (mapName === 'HD Farm') {
+		const autoLevel = whichAutoLevel();
+		message += ` Finished with an auto level of ${autoLevel > 0 ? '+' : ''}${autoLevel}.`;
+	} else if (mapName === 'Tribute Farm') message += ` Finished with ${game.buildings.Tribute.purchased} tributes and ${game.jobs.Meteorologist.owned} meteorologists.`;
 	else if (mapName === 'Smithy Farm') message += ` Finished with ${game.buildings.Smithy.purchased} smithies.`;
 	else if (mapName === 'Insanity Farm') message += ` Finished with ${game.challenges.Insanity.insanity} stacks.`;
 	else if (mapName === 'Alchemy Farm') message += ` Finished with ${extra} ${extra2}.`;
@@ -3728,7 +3731,7 @@ function dailyModiferReduction() {
 		else if (modifier.includes('Void')) modifier = 'Enemies in Void Maps have';
 		else if (modifier.includes('Heirlost')) modifier = 'Heirloom combat and resource bonuses are reduced by';
 
-		for (var x = 0; x < dailyMods.length; x++) {
+		for (let x = 0; x < dailyMods.length; x++) {
 			if (dailyMods[x].includes(modifier)) {
 				dailyReductionTemp = settingsArray[item].zone;
 			}
@@ -3853,4 +3856,165 @@ function slowScum(slowTarget) {
 	console.timeEnd();
 	atSettings.running = true;
 	debug(msg, 'mapping_Details');
+}
+
+function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
+	if (getPageSetting('autoLevelTest')) return callAutoMapLevel_new(mapName, special);
+
+	let mapLevel = mapSettings.levelCheck;
+	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
+
+	if (mapLevel === Infinity) {
+		mapLevel = autoMapLevel(special, maxLevel, minLevel);
+	} else if (mapName && atSettings.intervals.sixSecond) {
+		const autoLevel = autoMapLevel(special, maxLevel, minLevel);
+		if (autoLevel > mapLevel) mapLevel = autoLevel;
+		const autoLevelIgnoreFragments = autoMapLevel(special, maxLevel, minLevel, true);
+		if (autoLevelIgnoreFragments < mapLevel) mapLevel = autoLevelIgnoreFragments;
+	}
+
+	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
+
+	mapLevel = autoLevelOverides(mapName, mapLevel);
+	return mapLevel;
+}
+
+function callAutoMapLevel_new(mapName, special) {
+	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking'];
+	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
+	const lootFunction = mapName === 'Desolation Destacking' ? lootDestack : lootDefault;
+	const mapModifiers = {
+		special: special || trimpStats.mapSpecial,
+		biome: mapSettings.biome || trimpStats.mapBiome
+	};
+
+	if (hdStats.autoLevelZone !== game.global.world) {
+		hdStats.autoLevelZone = game.global.world;
+		hdStats.autoLevelInitial = stats(lootFunction);
+	}
+
+	let mapLevel = mapSettings.levelCheck;
+	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
+
+	if (mapLevel === Infinity) {
+		mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+	} else if (mapName && atSettings.intervals.sixSecond) {
+		const autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+		mapLevel = Math.max(mapLevel, autoLevel);
+		const autoLevelIgnoreFragments = get_best(hdStats.autoLevelInitial)[mapType].mapLevel;
+		mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
+	}
+
+	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
+
+	mapLevel = autoLevelOverides(mapName, mapLevel);
+	return mapLevel;
+}
+
+function autoLevelOverides(mapName, mapLevel) {
+	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
+	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapLevel > (getPageSetting('mapBonusMinLevel') > 0 ? -getPageSetting('mapBonusMinLevel') : 0);
+
+	const mapBonusConditions = [
+		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && !mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && !mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
+		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
+		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
+		{ condition: mapName === 'Mayhem Destacking' && mapLevel < 0, level: getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0 },
+		{ condition: mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel, level: mapBonusLevel },
+		{ condition: _insanityDisableUniqueMaps() && mapLevel < 0, level: 0 }
+	];
+
+	const matchingCondition = mapBonusConditions.find(({ condition }) => condition);
+	if (matchingCondition) mapLevel = matchingCondition.level;
+
+	return mapLevel;
+}
+
+function autoMapLevel(special = getAvailableSpecials('lmc'), maxLevel, minLevel, statCheck = false) {
+	if (!game.global.mapsUnlocked) return 0;
+	if (maxLevel > 10) maxLevel = 10;
+	const z = game.global.world;
+	if (z + maxLevel < 6) maxLevel = 0 - (z + 6);
+
+	if (challengeActive('Wither') && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
+	if (_insanityDisableUniqueMaps() && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
+
+	const isDaily = challengeActive('Daily');
+	const hze = getHighestLevelCleared();
+	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 49 : hze >= 209;
+	const haveMapReducer = game.talents.mapLoot.purchased;
+
+	const biome = getBiome();
+	const query = !special ? true : false;
+	let universeSetting = z >= 60 && hze >= 180 ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
+	const cell = game.talents.mapLoot2.purchased ? 20 : 25;
+	const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2;
+	let enemyName = 'Snimp';
+
+	maxLevel = maxLevel || 10;
+	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
+	minLevel = minLevel || 0 - z + 6;
+	if (minLevel < -(z - 6)) minLevel = -(z - 6);
+	const runningQuest = challengeActive('Quest') && getCurrentQuest() === 8;
+	const runningUnlucky = challengeActive('Unlucky');
+	const runningInsanity = challengeActive('Insanity');
+	const runningDuel = challengeActive('Duel');
+	let ourHealth = calcOurHealth(game.global.universe === 2 ? runningQuest : universeSetting, 'map');
+	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
+	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
+	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Explosive
+	const dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //Weakness
+
+	if (_insanityDisableUniqueMaps() && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
+		ourHealth /= game.challenges.Insanity.getHealthMult();
+		ourHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
+	}
+
+	let dmgType = runningUnlucky ? 'max' : 'avg';
+	let critType = 'maybe';
+	let critChance = getPlayerCritChance_AT('map');
+	critChance = critChance - Math.floor(critChance);
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.1) critType = 'never';
+	const overkillRange = maxOneShotPower(true);
+
+	const perfectMaps = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
+
+	for (let y = maxLevel; y >= minLevel; y--) {
+		if (y === minLevel) return minLevel;
+		let mapLevel = y;
+		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
+		if (runningInsanity && mapLevel > 0) enemyName = 'Horrimp';
+		if (!statCheck && perfectMaps && game.resources.fragments.owned < mapCost(mapLevel, special, biome)) continue;
+		if (!statCheck && !perfectMaps && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome)) continue;
+
+		if (game.global.universe === 2) universeSetting = equalityQuery(enemyName, z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
+		let ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, y, 'force');
+		if (runningDuel) ourDmg *= MODULES.heirlooms.gammaBurstPct;
+		if (isDaily && dailyWeakness) ourDmg *= 1 - (9 * game.global.dailyChallenge.weakness.strength) / 100;
+		let enemyHealth = calcEnemyHealthCore('map', z + mapLevel, cell, 'Turtlimp') * difficulty;
+
+		if (overkillRange > 1) {
+			enemyHealth *= overkillRange;
+			if (game.global.universe === 1) ourDmg *= 0.005 * game.portal.Overkill.level;
+			if (game.global.universe === 2 && !u2Mutations.tree.MadMap.purchased) ourDmg *= 0.005;
+		}
+		let enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, enemyName, false, false, universeSetting) * difficulty;
+
+		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyCrit && getPageSetting('IgnoreCrits') === 0) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+
+		if (challengeActive('Duel')) {
+			enemyDmg *= 10;
+			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
+		}
+
+		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth + ourBlock) {
+			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !runningInsanity && !challengeActive('Mayhem')) mapLevel = -1;
+			return mapLevel;
+		}
+	}
+	return 0;
 }

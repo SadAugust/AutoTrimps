@@ -2,7 +2,7 @@
 
 # Current Version - Ongoing Development!
 
--   SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date with patch 5.9.2.
+- SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date with patch 5.9.2.
 
 # AT Script Installation
 
@@ -41,8 +41,7 @@ Configure settings. Will NOT work as intended with default settings.
 ## Steam
 
 Step 1:
-
-Go to this link to open the mods.js file: <a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/mods.js">mods.js</a>  
+Go to this link to open the mods.js file: <a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/mods.js">mods.js</a>  
 Then, right click the Raw button, hit Save link as, and save the mods.js file somewhere to your computer where you can find it, like desktop.  
 ![Download mods.js](https://i.imgur.com/opuO6yd.png)
 
@@ -73,11 +72,11 @@ Step 2:
 
 Click the relevant link below
 
-<a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/farmCalc.user.js">Heirloom Calculator</a>
+<a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/farmCalc.user.js">Heirloom Calculator</a>
 
-<a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/heirloomCalc.user.js">Farm Calculator (zfarm)</a>
+<a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/heirloomCalc.user.js">Farm Calculator (zfarm)</a>
 
-<a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
+<a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
 
 If clicking the link does not work, copy the contents of the file into a new script inside tampermonkey.
 
@@ -118,6 +117,6 @@ Step 4:
 
 Restart the game, or if the game is already running, hit F5 to refresh.
 
--   Note for Farm Calculator (zfarm)
+- Note for Farm Calculator (zfarm)
 
 This works in both universes and shows you the optimal stance/equality level to use for the map shown. The information for it can be found at the bottom of the Trimps breeding/trapping section as can be seen in the image below. ![Farm Calc Position](https://i.imgur.com/siZH8Dh.png)

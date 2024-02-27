@@ -25,11 +25,11 @@ function autoMapsStatus(get) {
 	if (getPageSetting('autoMaps') === 0) status = '[Auto Maps Off] ' + status;
 
 	if (usingRealTimeOffline && getPageSetting('timeWarpDisplay')) {
-		let ticks = offlineProgress.ticksProcessed;
-		let maxTicks = offlineProgress.progressMax;
-		let barWidth = ((ticks / maxTicks) * 100).toFixed(1) + '%';
-
-		status = 'Time Warp - ' + barWidth + '<br>' + status;
+		const { startTime, ticksProcessed, progressMax } = offlineProgress;
+		const barWidth = ((ticksProcessed / progressMax) * 100).toFixed(1) + '%';
+		const timeSpent = Math.floor((new Date().getTime() - startTime) / 1000);
+		const speed = ticksProcessed / (timeSpent * 10);
+		status = `Time Warp (${barWidth} ${prettify(speed)}x)<br>${status}`;
 	}
 
 	let resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
@@ -194,7 +194,7 @@ function _noMappingChallenges(ignoreChallenge) {
 
 function decaySkipMaps() {
 	const challengeName = game.global.universe === 2 ? 'Melt' : 'Decay';
-	if (!challengeActive(challengeName) && !getPageSetting('decay')) return false;
+	if (!challengeActive(challengeName) || !getPageSetting('decay')) return false;
 
 	const challenge = game.challenges[challengeName];
 	const currentStacks = challenge ? challenge.stacks : 0;
@@ -207,7 +207,7 @@ function _leadDisableMapping() {
 	if (!challengeActive('Lead') || !getPageSetting('lead') || game.global.spireActive) return false;
 
 	const oddZone = game.global.world % 2 !== 0;
-	const aboveCell90 = game.global.lastClearedCell + 2 > 90 || checkIfLiquidZone();
+	const aboveCell90 = game.global.lastClearedCell + 2 > 90 || liquifiedZone();
 	const natureFinalZone = game.global.world >= getNatureStartZone() && getEmpowerment() !== getZoneEmpowerment(game.global.world + 1);
 
 	return !(aboveCell90 && (oddZone || natureFinalZone));
@@ -341,7 +341,7 @@ function _checkSitInMaps() {
 //When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
 //Has a time override as there's a certain cell that will always be unliving so can bypass it this way
 function _lifeMapping() {
-	if (game.global.mapsActive || challengeActive('Life') || !getPageSetting('life')) return;
+	if (game.global.mapsActive || !challengeActive('Life') || !getPageSetting('life')) return;
 
 	const lifeZone = getPageSetting('lifeZone');
 	const lifeStacks = getPageSetting('lifeStacks');

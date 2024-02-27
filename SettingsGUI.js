@@ -1,5 +1,3 @@
-//Creates a new div element, gives it an id, sets the style to display:none, and then appends it to the settingsRow div.
-//Div for the settings menu
 function automationMenuSettingsInit() {
 	const settingsRow = document.getElementById('settingsRow');
 	const autoSettings = document.createElement('DIV');
@@ -5155,7 +5153,6 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 	return initial;
 }
 
-//Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function _setupATButtons() {
 	_createAutoTrimpsButton();
 	_createAutoMapsButton();
@@ -5341,7 +5338,7 @@ function _createMessagesButton() {
 		let atBtnContainer = _createElement('DIV', {
 			class: 'btn-group',
 			role: 'group',
-			onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, "Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.")',
+			onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, `This will control the visibility of AutoTrimps messages in the log window based on your settings.<br>Note: Only map-related messages will be displayed during Time Warp.`)',
 			onmouseout: 'tooltip("hide")'
 		});
 		const btnDisplay = `btn-${getPageSetting('spamMessages').show ? 'success' : 'danger'}`;

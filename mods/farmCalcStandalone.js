@@ -1,8 +1,28 @@
+function getPerkModifier(what) {
+	return game.portal[what].modifier || 0;
+}
+
+function getCurrentEnemy(cell = 1) {
+	if (game.global.gridArray.length <= 0) return {};
+
+	const mapping = game.global.mapsActive;
+	const currentCell = mapping ? game.global.lastClearedMapCell + cell : game.global.lastClearedCell + cell;
+	const mapGrid = mapping ? 'mapGridArray' : 'gridArray';
+
+	if (typeof game.global[mapGrid][currentCell] === 'undefined') return game.global[mapGrid][game.global[mapGrid].length - 1];
+
+	return game.global[mapGrid][currentCell];
+}
+
+function noBreedChallenge() {
+	return challengeActive('Trapper') || challengeActive('Trappapalooza');
+}
+
 function canU2OverkillAT(targetZone) {
 	if (!u2Mutations.tree.Overkill1.purchased) return false;
 
 	if (!targetZone) targetZone = game.global.world;
-	var allowed = 0.3;
+	let allowed = 0.3;
 	if (u2Mutations.tree.Overkill2.purchased) allowed += 0.1;
 	if (u2Mutations.tree.Overkill3.purchased) allowed += 0.1;
 	if (u2Mutations.tree.Liq3.purchased) {
@@ -39,47 +59,45 @@ function maxOneShotPower(planToMap, targetZone) {
 }
 
 function getAvailableSpecials(special, skipCaches) {
-	var cacheMods = [];
-	var bestMod;
-	if (special === undefined || special === 'undefined') return '0';
+	if (!special) return '0';
 
-	if (special === 'lsc') cacheMods = ['lsc', 'hc', 'ssc', 'lc'];
-	else if (special === 'lwc') cacheMods = ['lwc', 'hc', 'swc', 'lc'];
-	else if (special === 'lmc') cacheMods = ['lmc', 'hc', 'smc', 'lc'];
-	else if (special === 'lrc') cacheMods = ['lrc', 'hc', 'src', 'lc'];
-	else if (special === 'p') cacheMods = ['p', 'fa'];
-	else cacheMods = [special];
+	const specialToMods = {
+		lsc: ['lsc', 'hc', 'ssc', 'lc'],
+		lwc: ['lwc', 'hc', 'swc', 'lc'],
+		lmc: ['lmc', 'hc', 'smc', 'lc'],
+		lrc: ['lrc', 'src', 'fa'],
+		p: ['p', 'fa']
+	};
 
-	var hze = getHighestLevelCleared() + 1;
-	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
+	const cacheMods = specialToMods[special] || [special];
+	const hze = getHighestLevelCleared() + 1;
+	const unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
 
-	for (var mod of cacheMods) {
+	let bestMod;
+	for (let mod of cacheMods) {
 		if (typeof mapSpecialModifierConfig[mod] === 'undefined') continue;
-		if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + 'wc';
+		if ((mod === 'lmc' || mod === 'smc') && (challengeActive('Metal') || challengeActive('Transmute'))) mod = mod.charAt(0) + 'wc';
 		if (skipCaches && mod === 'hc') continue;
-		var unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
-		if (unlock <= hze) {
+
+		let unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
+		if (unlock && unlock <= hze) {
 			bestMod = mod;
 			break;
 		}
 	}
-	if (bestMod === undefined || (bestMod === 'fa' && trimpStats.hyperspeed2)) bestMod = '0';
+
+	if (!bestMod || (bestMod === 'fa' && trimpStats.hyperspeed2)) bestMod = '0';
 	return bestMod;
 }
 
 //I have no idea where loot > drops, hopefully somebody can tell me one day :)
 function getBiome(mapGoal, resourceGoal) {
-	var biome;
-	var dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220);
-	if (!dropBased && challengeActive('Metal')) {
-		dropBased = true;
-		if (!resourceGoal) resourceGoal = 'Mountain';
-	}
+	const dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220) || challengeActive('Metal');
+	if (dropBased && !resourceGoal && challengeActive('Metal')) resourceGoal = 'Mountain';
 
-	if (resourceGoal && dropBased) {
-		if (game.global.farmlandsUnlocked && getFarmlandsResType() === game.mapConfig.locations[resourceGoal].resourceType) biome = 'Farmlands';
-		else biome = resourceGoal;
-	} else if (mapGoal === 'fragments' || mapGoal === 'gems') biome = 'Depths';
+	let biome;
+	if (resourceGoal && dropBased) biome = game.global.farmlandsUnlocked && getFarmlandsResType() === game.mapConfig.locations[resourceGoal].resourceType ? 'Farmlands' : resourceGoal;
+	else if (mapGoal === 'fragments' || mapGoal === 'gems') biome = 'Depths';
 	else if (mapGoal === 'fragConservation') biome = 'Random';
 	else if (game.global.universe === 2 && game.global.farmlandsUnlocked) biome = 'Farmlands';
 	else if (game.global.decayDone) biome = 'Plentiful';
@@ -88,39 +106,19 @@ function getBiome(mapGoal, resourceGoal) {
 	return biome;
 }
 
-function mapCost(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect = true) {
-	if (!specialModifier) specialModifier = getAvailableSpecials('lmc');
-	if (!plusLevel && plusLevel !== 0) plusLevel = 0;
-	if (!biome) biome = getBiome();
-	var specialModifier = specialModifier;
-	var plusLevel = plusLevel;
-	var baseCost = 0;
-	//All sliders at 9
-	baseCost += sliders[0];
-	baseCost += sliders[1];
-	baseCost += sliders[2];
-	var mapLevel = game.global.world;
-	//Check for negative map levels
-	if (plusLevel < 0) mapLevel = mapLevel + plusLevel;
-	//If map level we're checking is below level 6 (the minimum) then set it to 6
-	if (mapLevel < 6) mapLevel = 6;
-	//Post broken planet check
+function mapCost(plusLevel = 0, specialModifier = getAvailableSpecials('lmc'), biome = getBiome(), sliders = [9, 9, 9], perfect = true) {
+	const mapLevel = Math.max(game.global.world + plusLevel, 6);
+	let baseCost = sliders[0] + sliders[1] + sliders[2];
 	baseCost *= game.global.world >= 60 ? 0.74 : 1;
-	//Perfect checked
-	if (
-		perfect &&
-		sliders.reduce(function (a, b) {
-			return a + b;
-		}, 0) === 27
-	)
-		baseCost += 6;
-	//Adding in plusLevels
+
+	if (perfect && sliders.reduce((a, b) => a + b) === 27) baseCost += 6;
 	if (plusLevel > 0) baseCost += plusLevel * 10;
-	//Special modifier
 	if (specialModifier !== '0') baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
+
 	baseCost += mapLevel;
 	baseCost = Math.floor((baseCost / 150) * Math.pow(1.14, baseCost - 1) * mapLevel * 2 * Math.pow(1.03 + mapLevel / 50000, mapLevel));
 	baseCost *= biome !== 'Random' ? 2 : 1;
+
 	return baseCost;
 }
 
@@ -147,15 +145,21 @@ function getCurrentQuest() {
 
 //AutoLevel information
 function makeAdditionalInfo() {
+	if (!game.global.mapsUnlocked) return (description += `AL: Maps not unlocked!`);
 	const initialInfo = get_best(stats(), true);
 	const u2 = game.global.universe === 2;
 	const extraType = u2 ? 'equality' : 'stance';
 	const showExtraType = (u2 && getPerkLevel('Equality') > 0) || (!u2 && game.upgrades.Formations.done);
-	const loot = `Loot ${initialInfo.loot.mapLevel}${showExtraType ? ' (' + initialInfo.loot[extraType] + ')' : ''}`;
-	const speed = `Speed ${initialInfo.speed.mapLevel}${showExtraType ? ' (' + initialInfo.speed[extraType] + ')' : ''}`;
-	var description = `Auto Level: `;
-	if (!game.global.mapsUnlocked) return (description += `Maps not unlocked!`);
-	return (description += `${loot} ${speed}`);
+
+	const displayOutputs = (type) => {
+		type = initialInfo[type];
+		const plusMinus = type.mapLevel > 0 ? '+' : '';
+
+		if (showExtraType) return `${plusMinus}${type.mapLevel} (${u2 ? type.equality + 'eq' : type.stance})`;
+		return `${plusMinus}${type.mapLevel}`;
+	};
+
+	return `Auto Level: ${displayOutputs('loot')}`;
 }
 
 function makeAdditionalInfoTooltip(mouseover) {
@@ -181,9 +185,9 @@ function makeAdditionalInfoTooltip(mouseover) {
 	}
 }
 
-var autoLevelContainer = document.createElement('DIV');
+const autoLevelContainer = document.createElement('DIV');
 autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);');
-var autoLevelText = document.createElement('SPAN');
+const autoLevelText = document.createElement('SPAN');
 autoLevelContainer.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
 autoLevelContainer.setAttribute('onmouseout', 'tooltip("hide")');
 autoLevelText.id = 'additionalInfo';

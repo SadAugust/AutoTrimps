@@ -3,8 +3,10 @@ function ImportExportTooltip(what, event) {}
 function _displayImportAutoTrimps(tooltipDiv) {
 	const tooltipText = "Import your AutoTrimps setting string to load those settings.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadAutoTrimps();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
+
 	tooltipDiv.style.left = '33.75%';
 	tooltipDiv.style.top = '25%';
+
 	const ondisplay = function () {
 		_verticalCenterTooltip();
 		document.getElementById('importBox').focus();
@@ -54,22 +56,9 @@ function _displayExportAutoTrimps(tooltipDiv) {
 function _displayResetDefaultSettingsProfiles(tooltipDiv) {
 	const tooltipText = `This will restore your current AutoTrimps settings to their original values.<br/><br/>Are you sure you want to do this?`;
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); resetAutoTrimps();'>Reset to Default Profile</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
+
 	const ondisplay = function () {
 		_verticalCenterTooltip();
-	};
-
-	tooltipDiv.style.left = '33.75%';
-	tooltipDiv.style.top = '25%';
-
-	return [tooltipDiv, tooltipText, costText, ondisplay];
-}
-
-function _displaySpireImport(tooltipDiv) {
-	const tooltipText = `Import your Spire string! These are most typically acquired through the <a href="http://swaqvalley.com/td_calc" target="_blank">TD Calc website</a><br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>`;
-	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); tdStringCode2();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
-	const ondisplay = function () {
-		_verticalCenterTooltip();
-		document.getElementById('importBox').focus();
 	};
 
 	tooltipDiv.style.left = '33.75%';
@@ -80,19 +69,7 @@ function _displaySpireImport(tooltipDiv) {
 
 function _displayPriorityOrder(tooltipDiv) {
 	const priority = getPriorityOrder();
-	let tooltipText = '';
-	/* const challengeList = challengesUnlockedObj(1, true, true);
-	const dropdowns = _getPriorityOrderDropdowns();
-
-	let challengeText = `<div id='windowRow' class='row windowRow'>`;
-	challengeText += `<div class='windowDisplay windowDefaultVoidMap'>Universe</div>`;
-	challengeText += `<div class='windowDisplay windowBoneDefault'><select value='${game.global.challengeActive}' id='windowBoneGatherDefault'>${dropdowns.universe}</select></div>`;
-	challengeText += `<div class='windowDisplay windowDefaultVoidMap'>Challenge</div>`;
-	challengeText += `<div class='windowDisplay windowBoneDefault'><select value='${game.global.challengeActive}' id='windowBoneGatherDefault'>${dropdowns.universe}</select></div>`;
-	challengeText += `</div>`; 
-	tooltipText += challengeText;
-	*/
-	tooltipText += Object.keys(priority).length > 18 ? `<div class='litScroll'>` : '';
+	let tooltipText = Object.keys(priority).length > 18 ? `<div class='litScroll'>` : '';
 	tooltipText += `<table class='bdTableSm table table-striped'>
         <tbody>
             <tr>
@@ -136,6 +113,7 @@ function _displayPriorityOrder(tooltipDiv) {
 	const ondisplay = function () {
 		_verticalCenterTooltip(true);
 	};
+
 	tooltipDiv.style.left = '33.75%';
 	tooltipDiv.style.top = '25%';
 
@@ -279,9 +257,11 @@ function _displayC2Table(tooltipDiv) {
 	if (challengeList.C3) tooltipText = `<div class='litScroll'>${tooltipText}`;
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
+
 	const ondisplay = function () {
 		_verticalCenterTooltip();
 	};
+
 	tooltipDiv.style.left = '33.75%';
 	tooltipDiv.style.top = '25%';
 
@@ -308,6 +288,7 @@ function _displayTimeWarp(tooltipDiv) {
 	const tooltipText = `This will time warp for the amount of hours you enter.<br/><br/>
 	<textarea id='importBox' style='width: 100%' rows='1'></textarea>`;
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); testTimeWarp();'>Activate Time Warp</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
+
 	const ondisplay = function () {
 		_verticalCenterTooltip();
 		document.getElementById('importBox').focus();
@@ -319,18 +300,20 @@ function _displayTimeWarp(tooltipDiv) {
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _downloadSave(what) {
+function _downloadSave(what = '') {
 	if (what === 'exportAutoTrimps') {
 		document.getElementById('downloadLink').click();
 		document.getElementById('confirmTooltipBtn').click();
 	}
+
 	tooltip('Export', null, 'update');
 	const saveFile = document.getElementById('exportArea').value.replace(/(\r\n|\n|\r|\s)/gm, '');
 	let saveGame = JSON.parse(LZString.decompressFromBase64(saveFile));
 	document.getElementById('confirmTooltipBtn').click();
+
 	if (what === 'exportAutoTrimps') {
 		saveGame.options.menu.pauseGame.enabled = 1;
-		saveGame.options.menu.timeAtPause = new Date().getTime();
+		saveGame.options.menu.pauseGame.timeAtPause = new Date().getTime();
 		saveGame.options.menu.standardNotation.enabled = 0;
 		saveGame.options.menu.darkTheme.enabled = 2;
 		saveGame.options.menu.disablePause.enabled = 1;
@@ -343,6 +326,7 @@ function _downloadSave(what) {
 			saveGame.global[key] -= reduceBy;
 		});
 	}
+
 	saveGame = LZString.compressToBase64(JSON.stringify(saveGame));
 
 	const u2Affix = game.global.totalRadPortals > 0 ? ` ${game.global.totalRadPortals} U${game.global.universe}` : '';
@@ -368,6 +352,7 @@ function loadAutoTrimps() {
 	if (!autoTrimpsSettings) {
 		return debug(`Error importing AT settings, the string is empty.`, 'profile');
 	}
+
 	debug(`Importing new AT settings file...`, 'profile');
 	resetAutoTrimps(autoTrimpsSettings);
 }
@@ -389,6 +374,7 @@ function resetAutoTrimps(autoTrimpsSettings) {
 		_setButtonsPortal();
 		updateAutoTrimpSettings(true);
 		saveSettings();
+
 		localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
 		localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
 		localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
@@ -507,9 +493,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		tooltipText += `<p><b>Breed Timer (B)</b><br>`;
 		tooltipText += `The breeding time of your trimps, used to identify how long your <b>Anticipation</b> timer will be if you were to send an army to fight.</p>`;
-	}
-	//Tenacity timer when you have tenacity
-	else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
+	} else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
 		tooltipText += `<p><b>Tenacity Timer (T)</b><br>`;
 		tooltipText += `Your current tenacity timer in minutes.</p>`;
 	}
@@ -525,30 +509,21 @@ function makeAdditionalInfoTooltip(mouseover) {
 
 function makeAdditionalInfo() {
 	//Void, AutoLevel, Breed Timer, Tenacity information
-
 	let lineBreak = ` | `;
-
 	let description = ``;
-	//Free void tracker
+
 	if (game.permaBoneBonuses.voidMaps.owned > 0) {
 		let voidValue = game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10;
-		description += `V ${voidValue}/10`;
+		description += `V: ${voidValue}/10`;
 		description += lineBreak;
 	}
-	//Mapping auto level
-	description += `AL: ${hdStats.autoLevel}`;
-	description += lineBreak;
-	description += `AL2 (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
-	//Breed timer when you have an amalgamator
-	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
-		let breedTimer = Math.floor(new Date().getTime());
-		if (game.options.menu.pauseGame.enabled) {
-			let dif = breedTimer - game.options.menu.pauseGame.timeAtPause;
-			breedTimer -= dif;
-		}
-		breedTimer -= game.global.lastSoldierSentAt;
-		breedTimer /= 1000;
 
+	const autoLevel = whichAutoLevel();
+	if (autoLevel === 'original') description += `AL: ${hdStats.autoLevel}`;
+	else description += `AL: (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
+
+	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
+		const breedTimer = Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000);
 		description += lineBreak;
 		description += `B: ${breedTimer.toFixed(0)}s`;
 	}
@@ -584,6 +559,7 @@ function loadAugustSettings() {
 		let setting = game.options.menu[toggles[i]];
 		if (setting.onToggle) setting.onToggle();
 	}
+
 	if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
 }
 
@@ -642,6 +618,7 @@ function pushSpreadsheetData() {
 
 	let dailyMods = ' ';
 	let dailyPercent = 0;
+
 	if (MODULES.portal.currentChallenge === 'Daily' && !challengeActive('Daily')) {
 		dailyMods = MODULES.portal.dailyMods;
 		dailyPercent = MODULES.portal.dailyPercent;
@@ -664,6 +641,7 @@ function pushSpreadsheetData() {
 						{}
 					)
 			: 0;
+
 	const mapTotal =
 		graphData !== undefined
 			? Object.keys(mapCount).reduce(function (m, k) {

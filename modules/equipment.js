@@ -158,6 +158,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 
 		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
 		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
+
 		const equipCap = maybeBuyPrestige.prestigeAvailable ? Math.min(mostEfficient[equipType].equipCap, 9) : mostEfficient[equipType].equipCap;
 		const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
 		const skipPrestiges = ancientTreasurePrestigeSkip || (6 > equipData.level && (prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo)));
@@ -210,10 +211,10 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		skip: true
 	};
 
+	if (!Object.getOwnPropertyNames(MODULES.equipment).includes(equipName)) return prestigeInfo;
+	if (equipName === 'Shield' && getPageSetting('equipNoShields')) return prestigeInfo;
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
-	if (equipName === 'Shield' && getPageSetting('equipNoShields')) return prestigeInfo;
-	if (!Object.getOwnPropertyNames(MODULES.equipment).includes(equipName)) return prestigeInfo;
 
 	const prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
 	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];
@@ -232,6 +233,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	if (scienceCost * Math.pow(scienceMultiplier, equipment.prestige - 1) > game.resources.science.owned) {
 		return prestigeInfo;
 	}
+
 	if (gemsCost * Math.pow(gemsMultiplier, equipment.prestige - 1) > game.resources.gems.owned) {
 		return prestigeInfo;
 	}
@@ -344,7 +346,7 @@ function autoEquip() {
 }
 
 function _autoEquipTimeWarp() {
-	const dontWhileLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || checkIfLiquidZone();
+	const dontWhileLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || liquifiedZone();
 	if (!dontWhileLoop) return false;
 
 	buyEquipsPrestige();
@@ -375,6 +377,7 @@ function buyEquipsAlways2() {
 	const alwaysLvl2 = getPageSetting('equip2');
 	const alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && !mapSettings.pandaEquips && getPageSetting('pandemoniumAE') > 0;
 	if (!alwaysLvl2 && !alwaysPandemonium) return false;
+
 	let equipLeft = false;
 
 	for (let equip in game.equipment) {
@@ -443,7 +446,7 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
 
-	const bestBuys = mostEfficientEquipment(1, false, true);
+	const bestBuys = mostEfficientEquipment(1, undefined, true);
 
 	for (let item in game.equipment) {
 		if (game.equipment[item].locked || item === 'Shield') continue;

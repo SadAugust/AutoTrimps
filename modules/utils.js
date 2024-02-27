@@ -117,11 +117,12 @@ function debug(message, messageType, icon) {
 	if (!atSettings.initialise.loaded) return;
 
 	const settingArray = getPageSetting('spamMessages');
-	const sendMessage = messageType in settingArray ? settingArray[messageType] : true;
+	const canRunTW = ['maps', 'map_Destacking', 'map_Details', 'map_Skip', 'offline'].includes(messageType);
+	const sendMessage = messageType in settingArray ? settingArray[messageType] : false;
 
-	if (sendMessage) {
+	if (sendMessage || messageType === 'offline') {
 		console.log(`${timeStamp()} ${message}`);
-		message_AT(message, messageType, icon);
+		if (!usingRealTimeOffline || canRunTW) message_AT(message, messageType, icon);
 	}
 }
 
@@ -215,17 +216,23 @@ function _getTimeWarpHours(inputHours) {
 		try {
 			timeWarpHours = parseNum(document.getElementById('importBox').value.replace(/[\n\r]/gm, ''));
 			if (!timeWarpHours) {
-				debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'test');
+				debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'offline');
 			}
 		} catch (err) {
-			debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'test');
+			debug(`Time Warp input is invalid. Defaulting to 24 hours.`, 'offline');
 		}
 	}
 
 	return timeWarpHours;
 }
 
-//Will activate a 24 hour timewarp.
+function _adjustGlobalTimers(keys, adjustment) {
+	keys.forEach((key) => {
+		if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[keys] += adjustment;
+		else game.global[key] += adjustment;
+	});
+}
+
 function testTimeWarp(hours) {
 	const timeWarpHours = _getTimeWarpHours(hours);
 	const timeToRun = timeWarpHours * 3600000;
@@ -302,6 +309,7 @@ function testEquipmentMetalSpent() {
 
 	function getTotalPrestigeCost(what, prestigeCount) {
 		let actualCost = 0;
+
 		for (let i = 1; i <= prestigeCount; i++) {
 			const equipment = game.equipment[what];
 			let prestigeMod;
@@ -313,10 +321,8 @@ function testEquipmentMetalSpent() {
 
 			//Calculate cost of current equip levels
 			if (prestigeCount === i && equipment.level > 1) {
-				let finalCost = prestigeCost;
-
-				for (var j = 2; j <= equipment.level; j++) {
-					levelCost += finalCost * Math.pow(1.2, j - 1);
+				for (let j = 2; j <= equipment.level; j++) {
+					levelCost += prestigeCost * Math.pow(1.2, j - 1);
 				}
 			}
 		}
@@ -352,10 +358,11 @@ function testWorldCell() {
 
 function testMapCell() {
 	if (!game.global.mapsActive) return;
+	const mapObject = getCurrentMapObject();
 
-	game.global.lastClearedMapCell = getCurrentMapObject().size - 2;
+	game.global.lastClearedMapCell = mapObject.size - 2;
 	game.global.mapGridArray[game.global.lastClearedMapCell + 1].health = 0;
-	game.global.mapGridArray[getCurrentMapObject().size - 2].health = 0;
+	game.global.mapGridArray[mapObject.size - 2].health = 0;
 }
 
 function testTrimpStats() {
@@ -386,11 +393,13 @@ function decayLootMult(mapCount) {
 	const stackCap = game.challenges[challengeName].maxStacks;
 	let lootMult = 1;
 	let decayStacks = game.challenges[challengeName].stacks;
+
 	for (let x = 0; x < mapCount; x++) {
 		lootMult /= Math.pow(game.challenges[challengeName].decayValue, Math.floor(decayStacks));
 		decayStacks = Math.min(decayStacks + mapClearTime, stackCap);
 		lootMult *= Math.pow(game.challenges[challengeName].decayValue, Math.floor(decayStacks));
 	}
+
 	return lootMult;
 }
 
@@ -398,7 +407,9 @@ function hypothermiaBonfireCost() {
 	if (!challengeActive('Hypothermia')) return 0;
 	let cost = game.challenges.Hypothermia.bonfirePrice();
 	if (cost > game.resources.wood.owned) return 0;
+
 	let bonfiresOwned = game.challenges.Hypothermia.totalBonfires;
+
 	while (game.resources.wood.owned > cost + Math.pow(100, bonfiresOwned + 1) * 1e10) {
 		bonfiresOwned++;
 		cost += Math.pow(100, bonfiresOwned) * 1e10;
@@ -472,7 +483,7 @@ function getPriorityOrder() {
 					else if (settingData[y].challengeOneOff !== 'All' && !challengeActive(settingData[y].challengeOneOff)) continue;
 				} else {
 					if (settingData[y].runType === 'Filler') {
-						var currChallenge = settingData[y].challenge === 'No Challenge' ? '' : settingData[y].challenge;
+						const currChallenge = settingData[y].challenge === 'No Challenge' ? '' : settingData[y].challenge;
 						if (settingData[y].challenge !== 'All' && !challengeActive(currChallenge)) continue;
 					} else continue;
 				}
@@ -525,13 +536,6 @@ function printChangelog(changes) {
 	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
 	if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
 	else verticalCenterTooltip(true);
-}
-
-function _adjustGlobalTimers(keys, adjustment) {
-	keys.forEach((key) => {
-		if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[keys] += adjustment;
-		else game.global[key] += adjustment;
-	});
 }
 
 function setupAddonUser(force) {

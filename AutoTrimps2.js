@@ -7,10 +7,13 @@ const atSettings = {
 	},
 	modules: {
 		path: 'modules/',
+		pathMods: 'mods/',
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
-		installedModules: ['import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirloomCalc', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils', 'mutatorPreset', 'farmCalc'],
+		installedMods: ['gameUpdates', 'spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky'],
+		installedModules: ['import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils'],
 		loadedModules: [],
+		loadedMods: [],
 		loadedExternal: []
 	},
 	updateAvailable: false,
@@ -36,7 +39,7 @@ let currSettingUniverse = 0;
 let settingChangedTimeout = false;
 
 let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
-let hdStats = {};
+let hdStats = { autoLevel: Infinity };
 let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
 
 function loadScript(url, type = 'text/javascript', retries = 3) {
@@ -90,8 +93,12 @@ function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3)
 
 //Loading modules from basepath that are required for the script to run.
 function loadModules(fileName, prefix = '') {
-	if (prefix && atSettings.modules.loadedModules.includes(fileName)) {
-		return;
+	if (prefix) {
+		if (prefix === atSettings.modules.path && atSettings.modules.loadedModules.includes(fileName)) {
+			return;
+		} else if (prefix === atSettings.modules.pathMods && atSettings.modules.loadedMods.includes(fileName)) {
+			return;
+		}
 	}
 
 	const script = document.createElement('script');
@@ -102,8 +109,10 @@ function loadModules(fileName, prefix = '') {
 
 	script.addEventListener('load', () => {
 		if (!atSettings.modules.loadedModules.includes(fileName) && !atSettings.modules.loadedMain.includes(fileName)) {
-			if (prefix) atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
-			else atSettings.modules.loadedMain = [...atSettings.modules.loadedMain, fileName];
+			if (prefix) {
+				if (prefix === atSettings.modules.path) atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
+				else atSettings.modules.loadedMods = [...atSettings.modules.loadedMods, fileName];
+			} else atSettings.modules.loadedMain = [...atSettings.modules.loadedMain, fileName];
 		}
 	});
 
@@ -118,20 +127,29 @@ function loadScriptsAT() {
 	const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
 
 	if (autoTrimpsScript) atSettings.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
-	loadModules('versionNumber');
-
-	atSettings.modules.installedModules.forEach((module) => {
-		loadModules(`${module}`, `${atSettings.modules.path}`);
-	});
-	loadModules('SettingsGUI');
 
 	(async function () {
 		try {
-			await loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js');
-			await loadStylesheet('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
-			await loadStylesheet(`${atSettings.initialise.basepath}css/tabs.css`);
-			await loadScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js');
-			if (typeof formatters !== 'object') await loadScript('https://Quiaaaa.github.io/AutoTrimps/Graphs.js');
+			const modules = ['versionNumber', ...atSettings.modules.installedMods, ...atSettings.modules.installedModules, 'SettingsGUI'];
+
+			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js'];
+
+			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atSettings.initialise.basepath}css/tabs.css`];
+
+			for (const module of modules) {
+				const path = atSettings.modules.installedMods.includes(module) ? atSettings.modules.pathMods : atSettings.modules.installedModules.includes(module) ? atSettings.modules.path : '';
+				await loadModules(module, path);
+			}
+
+			for (const script of scripts) {
+				if (atSettings.modules.loadedExternal.includes(script)) continue;
+				await loadScript(script);
+			}
+
+			for (const stylesheet of stylesheets) {
+				if (atSettings.modules.loadedExternal.includes(stylesheet)) continue;
+				await loadStylesheet(stylesheet);
+			}
 		} catch (error) {
 			console.error('Error loading script or stylesheet:', error);
 		}
@@ -146,12 +164,16 @@ function initialiseScript() {
 	const filesNotLoaded = {
 		main: atSettings.modules.installedMain.length > atSettings.modules.loadedMain.length,
 		modules: atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length,
+		mods: atSettings.modules.installedMods.length > atSettings.modules.loadedMods.length,
 		externalScripts: 5 > atSettings.modules.loadedExternal.length
 	};
 
 	if (Object.values(filesNotLoaded).some(Boolean)) {
 		atSettings.intervals.counter++;
-		if (atSettings.intervals.counter % 500 === 0) return loadScriptsAT();
+		if (atSettings.intervals.counter % 500 === 0) {
+			console.timeEnd();
+			return loadScriptsAT();
+		}
 		return setTimeout(initialiseScript, 1);
 	}
 
@@ -245,14 +267,14 @@ function toggleCatchUpMode() {
 			if (atSettings.intervals.thirtyMinute && getPageSetting('timeWarpSaving')) _timeWarpSave();
 			mainCleanup();
 			if (game.global.mapsActive && getPageSetting('timeWarpDisplay')) _adjustGlobalTimers(['mapStarted'], -100);
-			if (loops % getPageSetting('timeWarpFrequency') === 0 || atSettings.portal.aWholeNewWorld || checkIfLiquidZone()) {
+			if (loops % getPageSetting('timeWarpFrequency') === 0 || atSettings.portal.aWholeNewWorld || liquifiedZone()) {
 				mainLoop();
 			} else if (atSettings.intervals.thirtySecond) {
 				trimpStats = new TrimpStats();
 				hdStats = new HDStats();
 			}
 
-			if (loops % 600 === 0) _timeWarpUpdateUIDisplay();
+			if (shouldUpdate()) _timeWarpUpdateUIDisplay();
 			if (!elementVisible('science')) checkTriggers();
 			_timeWarpATFunctions();
 		};
@@ -319,7 +341,6 @@ function mainLoop() {
 	}
 
 	autoGather();
-	if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && !game.global.trapBuildToggled) toggleAutoTrap();
 	buyBuildings();
 	buyJobs();
 	buyUpgrades();
@@ -367,7 +388,7 @@ function mainLoopU2() {
 }
 
 function guiLoop() {
-	if (getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
+	if (getPageSetting('displayEnhancedGrid') && !usingRealTimeOffline) MODULES.fightinfo.Update();
 	if (MODULES.performance && MODULES.performance.isAFK) MODULES.performance.UpdateAFKOverlay();
 }
 
@@ -418,7 +439,7 @@ function mainCleanup() {
 }
 
 async function atVersionChecker() {
-	if (atSettings.updateAvailable) return;
+	if (atSettings.updateAvailable || usingRealTimeOffline) return;
 
 	const url = `${atSettings.initialise.basepath}versionNumber.js`;
 	const response = await fetch(url);

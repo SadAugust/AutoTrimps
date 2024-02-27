@@ -30,8 +30,8 @@ function autoGiga(targetZone, metalRatio = 0.5, slowDown = 10, customBase) {
 	const base = customBase ? customBase : getPageSetting('firstGigastation');
 	const baseZone = game.global.world;
 	const rawPop = game.resources.trimps.max - game.unlocks.impCount.TauntimpAdded;
-	const gemsPS = getPsString_AT('gems', true);
-	const metalPS = getPsString_AT('metal', true);
+	const gemsPS = trimpStats.resourcesPS['gems'].normal;
+	const metalPS = trimpStats.resourcesPS['metal'].normal;
 	const megabook = game.global.frugalDone ? 1.6 : 1.5;
 
 	//Calculus

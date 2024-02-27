@@ -1,43 +1,11 @@
-function tdStringCode2() {
-	const trapIndexs = ['', 'Fire', 'Frost', 'Poison', 'Lightning', 'Strength', 'Condenser', 'Knowledge'];
-	const inputString = document.getElementById('importBox').value.replace(/\s/g, '');
-	let s = new String(inputString);
-	let index = s.indexOf('+', 0);
-	s = s.slice(0, index);
-	let length = s.length;
-
-	let saveLayout = [];
-	for (let i = 0; i < length; i++) {
-		saveLayout.push(trapIndexs[s.charAt(i)]);
-	}
-	playerSpire['savedLayout' + -1] = saveLayout;
-
-	if (playerSpire.runestones + playerSpire.getCurrentLayoutPrice() < playerSpire.getSavedLayoutPrice(-1)) return false;
-	playerSpire.resetTraps();
-	for (let x = 0; x < saveLayout.length; x++) {
-		if (!saveLayout[x]) continue;
-		playerSpire.buildTrap(x, saveLayout[x]);
-	}
-}
-
-var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
-playerSpire.drawInfo = function (arguments) {
-	let ret = oldPlayerSpireDrawInfo.apply(this, arguments);
-	let elem = document.getElementById('spireTrapsWindow');
-	if (!elem) return arguments;
-	let importBtn = `<div onclick="MAZLookalike('spireImport')" class="spireControlBox">Import</div>`;
-	elem.innerHTML = importBtn + elem.innerHTML;
-	return arguments;
-};
-
 function ABItemSwap(items, ring) {
 	if (items) {
-		for (var item in autoBattle.items) {
+		for (let item in autoBattle.items) {
 			if (autoBattle.items[item].equipped) {
 				autoBattle.items[item].equipped = false;
 			}
 		}
-		for (var item of items) {
+		for (let item of items) {
 			if (!autoBattle.items[item].equipped) {
 				if (autoBattle.items[item].hidden) autoBattle.items[item].hidden = false;
 				autoBattle.items[item].equipped = true;

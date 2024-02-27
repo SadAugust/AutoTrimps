@@ -47,12 +47,6 @@
 
 # Bugs
 
-- Gene Assist
-
-  - Gene Assist has a fun interaction with Void Maps - if you set Gene Assist to keep your breeding timer at 3 seconds, you set HD Farm to farm maps until you can survive one hit in Void Map, and then you jump into Void Gas map, suddenly you can't survive 1 hit anymore because Geneticist were fired to keep up with the breeding timer.
-    - erp.lsf
-      - https://discord.com/channels/371177798305447938/371348913036197899/1119260831289462844
-
 - Gather (during Trapper/Trappa)
   - The script is really bad at swaping to gather science during trapper^2
     it just keeps trying to trap trimps

@@ -115,15 +115,13 @@ function _isTrappingOK(Battle, Coordination) {
 
 function _isTrappingRelevant(trapperTrapUntilFull) {
 	// Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
-	const trappingIsRelevant = breedingPS()
-		.div(10)
-		.lt(_calcTPS() * getPerkLevel('Bait') + 1);
+	const trappingIsRelevant = _breedingPS() / 10 < _calcTPS() * getPerkLevel('Bait') + 1;
 	return trapperTrapUntilFull || trappingIsRelevant;
 }
 
 function isPlayerRelevant(resourceName, hasTurkimp, customRatio = 0.1) {
 	const turkimp = hasTurkimp && resourceName.toLowerCase() !== 'science';
-	return turkimp || getPlayerModifier() >= getPsString_AT(resourceName, true) * customRatio;
+	return turkimp || getPlayerModifier() >= customRatio * trimpStats.resourcesPS[resourceName].normal / 10;
 }
 
 function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
@@ -197,8 +195,9 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 
 function _willTrapsBeWasted() {
 	// There is enough breed time and space remaining to open an entire trap (prevents wasting time and traps during early zones)
-	const gteTime = breedTimeRemaining().gte(1 / _calcTPS());
-	const lteTime = game.global.playerGathering === 'trimps' && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1));
+    const breedTimer = _breedTimeRemaining();
+	const gteTime = breedTimer >= 1 / _calcTPS();
+	const lteTime = game.global.playerGathering === 'trimps' && breedTimer <= 0.1;
 	const excessBait = 1 + game.portal.Bait.modifier * game.portal.Bait.level >= game.resources.trimps.realMax() - game.resources.trimps.owned
 	return excessBait || !(gteTime || lteTime);
 }
@@ -225,7 +224,7 @@ function _lastResort(researchAvailable, trapTrimpsOK, needScience) {
 		}
 	}
 
-	if (researchAvailable && game.global.turkimpTimer < 1 && (needScience || game.resources.science.owned < getPsString_AT('science') * 60)) {
+	if (researchAvailable && game.global.turkimpTimer < 1 && (needScience || game.resources.science.owned < trimpStats.resourcesPS['science'].manual * 60)) {
 		safeSetGather('science');
 	} else if (trapTrimpsOK && game.global.trapBuildToggled) {
 		_handleTrapping('build', 4)

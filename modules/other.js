@@ -4,7 +4,7 @@ function autoRoboTrimp() {
 	if (autoRoboTrimpSetting <= 0) return;
 
 	const shouldShriek = game.global.world >= autoRoboTrimpSetting && (game.global.world - parseInt(autoRoboTrimpSetting)) % 5 === 0;
-	if (shouldShriek && !game.global.useShriek) debug(`Activated Robotrimp MagnetoShriek Ability at zone ${game.global.world}`, 'zone', '*podcast');
+	if (shouldShriek && !game.global.useShriek) debug(`Activated Robotrimp MagnetoShriek Ability at zone ${game.global.world}`, 'other', '*podcast');
 	if (game.global.useShriek !== shouldShriek) magnetoShriek();
 }
 
@@ -74,7 +74,7 @@ function fluffyEvolution() {
 
 	Fluffy.prestige();
 
-	for (let i = 0; i < bonePortalsToUse; i++) {
+	for (let i = 0; i < bpsToUse; i++) {
 		purchaseMisc('helium');
 	}
 	hideBones();
@@ -300,9 +300,8 @@ function _autoHeirloomMods(heirloomType) {
 	const heirlooms = game.heirlooms[heirloomType];
 
 	for (let item in heirlooms) {
-		if (_shouldSkipHeirloom(item, heirlooms, heirloomRarity)) {
-			continue;
-		}
+		if (_shouldSkipHeirloom(item, heirlooms, heirloomRarity)) continue;
+		if (typeof heirloomData[item] === 'undefined') continue;
 
 		heirloomModsArray.push(heirloomData[item].name);
 	}
@@ -455,7 +454,7 @@ function _timeWarpATFunctions() {
 	autoMaps();
 	callBetterAutoFight();
 	autoPortalCheck();
-	if (loops % 10 === 0 || atSettings.portal.aWholeNewWorld) autoMapsStatus();
+	if (loops % 1000 === 0) autoMapsStatus();
 	if (game.global.universe === 1) checkStanceSetting();
 	if (game.global.universe === 2) equalityManagement();
 	guiLoop();
@@ -765,7 +764,7 @@ function updateATVersion() {
 			}
 			changelog.push(
 				"AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
-			You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise."
+				You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise."
 			);
 		}
 

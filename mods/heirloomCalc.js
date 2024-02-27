@@ -33,9 +33,8 @@ if (typeof $$ !== 'function') {
 
 //Lists name of all mods and their step amounts, soft caps, and hard caps.
 function heirloomInfo(type) {
-	var heirloomMods = {};
 	if (type === 'Shield')
-		heirloomMods = {
+		return {
 			breedSpeed: {
 				name: 'Breed Speed',
 				type: 'Shield',
@@ -151,7 +150,7 @@ function heirloomInfo(type) {
 			}
 		};
 	else if (type === 'Staff')
-		heirloomMods = {
+		return {
 			DragimpSpeed: {
 				name: 'Dragimp Efficiency',
 				type: 'Staff',
@@ -246,7 +245,7 @@ function heirloomInfo(type) {
 			}
 		};
 	else if (type === 'Core')
-		heirloomMods = {
+		return {
 			fireTrap: {
 				name: 'Fire',
 				type: 'Core',
@@ -301,8 +300,6 @@ function heirloomInfo(type) {
 				weighable: false
 			}
 		};
-
-	return heirloomMods;
 }
 
 MODULES.autoHeirlooms = {};
@@ -389,7 +386,7 @@ function setupHeirloomUI() {
 		heirloomDiv.setAttribute('onmouseover', 'tooltip("' + inputObj.name + '", "customText", event, "' + inputObj.description + '")');
 		heirloomDiv.setAttribute('onmouseout', 'tooltip("hide")');
 
-		var heirloomText = document.createElement('Label');
+		var heirloomText = document.createElement('span');
 		heirloomText.id = id + 'Text';
 		heirloomText.innerHTML = inputObj.name;
 		heirloomText.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
