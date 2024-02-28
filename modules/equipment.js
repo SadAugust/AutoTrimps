@@ -68,8 +68,8 @@ MODULES.equipment = {
 
 function _shouldSaveResource(resourceName) {
 	const upgrades = resourceName == 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber', 'Potency'];
-	const shouldSave = !challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades);
-	return shouldSave && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
+	const shouldSave = !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'));
+	return shouldSave && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
 
 function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
@@ -141,10 +141,11 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield) {
 	const equipMult = getEquipPriceMult();
 	const prestigePct = prestigeSetting === 2 && !canAncientTreasure ? Math.min(1, getPageSetting('equipPrestigePct') / 100) : 1;
+	const pandemonium = challengeActive('Pandemonium');
 
 	for (const equipName in MODULES.equipment) {
 		const equipData = game.equipment[equipName];
-		if (equipData.locked || (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
+		if (equipData.locked || (pandemonium && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
 		if (equipName === 'Shield') {
 			if (ignoreShield || (game.global.universe === 1 && needGymystic())) continue;
 			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
@@ -157,7 +158,11 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
 
 		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
-		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
+
+		if (forcePrestige) {
+			if (equipName === 'Shield') prestigesAvailable = maybeBuyPrestige.prestigeAvailable;
+			if (prestigesAvailable && !maybeBuyPrestige.prestigeAvailable) continue;
+		}
 
 		const equipCap = maybeBuyPrestige.prestigeAvailable ? Math.min(mostEfficient[equipType].equipCap, 9) : mostEfficient[equipType].equipCap;
 		const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
@@ -216,6 +221,9 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
 
+	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
+	if (_shouldSaveResource(resourceUsed)) return prestigeInfo;
+
 	const prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
 	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];
 
@@ -238,12 +246,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		return prestigeInfo;
 	}
 
-	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
 	const equipStat = equipment.attack !== undefined ? 'attack' : 'health';
-
-	//Saves resources for upgrades
-	if (_shouldSaveResource(resourceUsed))
-		return prestigeInfo;
 
 	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 	const newLevel = Math.max(1, Math.min(maxLevel, 1 + Math.max(0, Math.floor(getMaxAffordable(prestigeCost * 1.2, (game.resources[resourceUsed].owned - prestigeCost) * resourceSpendingPct, 1.2, true)))));
@@ -303,23 +306,16 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 }
 
 function autoEquip() {
-	//Init
-	const { Miners, Efficiency, Coordination, TrainTacular} = game.upgrades;
-
+	const { Miners, Efficiency, Coordination, TrainTacular } = game.upgrades;
 	if (!getPageSetting('equipOn')) return;
 
 	//Saves resources for upgrades
-	if (!challengeActive('Scientist') && (getPageSetting('upgradeType') || game.global.autoUpgrades)) {
-		//Saves metal for Efficiency upgrades
-		if ([Efficiency, Coordination, TrainTacular].some(up => shouldSaveForSpeedUpgrade(up)))
-			return false;
-
-		//Saves resources for Miners
-		if (!challengeActive('Metal') && !Miners.done) return;
+	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
+		if ([Efficiency, Coordination, TrainTacular].some((up) => shouldSaveForSpeedUpgrade(up))) return;
+		if (!Miners.done && !challengeActive('Metal')) return;
 	}
-
-	//If running a wood or metal quest then disable autoEquip
-	if ([2, 3].indexOf(getCurrentQuest()) >= 0) return;
+	//If running a wood or metal quest then disable autoequip
+	if ([2, 3].includes(getCurrentQuest())) return;
 	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
 	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
 		if (mapSettings.ancientTreasure) return;
@@ -378,6 +374,10 @@ function buyEquipsAlways2() {
 	const alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && !mapSettings.pandaEquips && getPageSetting('pandemoniumAE') > 0;
 	if (!alwaysLvl2 && !alwaysPandemonium) return false;
 
+	const saveResources = {
+		metal: _shouldSaveResource('metal'),
+		wood: _shouldSaveResource('wood')
+	};
 	let equipLeft = false;
 
 	for (let equip in game.equipment) {
@@ -385,14 +385,13 @@ function buyEquipsAlways2() {
 			if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
 			if (trimpStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 
-			//Saves resources for upgrades
-			if (_shouldSaveResource(MODULES.equipment[equip].resource))
-				continue;
+			if (saveResources[MODULES.equipment[equip].resource]) continue;
 
 			if (alwaysLvl2 && game.equipment[equip].level < 2) {
 				buyEquipment(equip, true, true, 1);
 				debug(`Upgrading 1 ${equip}`, `equipment`, `*upload3`);
 			}
+
 			if (alwaysPandemonium) {
 				buyEquipment(equip, true, true, 1);
 				equipLeft = true;
@@ -409,6 +408,11 @@ function buyEquips() {
 	const equipTypes = ['attack', 'health'].sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
 	let keepBuying = false;
 
+	const saveResources = {
+		metal: _shouldSaveResource('metal'),
+		wood: _shouldSaveResource('wood')
+	};
+
 	for (let equipType of equipTypes) {
 		let equip = bestBuys[equipType];
 		let resourceUsed = equip.name === 'Shield' ? 'wood' : 'metal';
@@ -417,10 +421,7 @@ function buyEquips() {
 		if (!equip.name || equipData.locked || !(equip.prestige || canAffordBuilding(equip.name, false, false, true, false, 1))) continue;
 		if (equipData.level >= equip.equipCap && !equip.prestige && !equip.zoneGo) continue;
 		if (equip.cost > equip.resourceSpendingPct * game.resources[resourceUsed].owned) continue;
-
-		//Saves resources for upgrades
-		if (_shouldSaveResource(resourceUsed))
-			continue;
+		if (saveResources[resourceUsed]) continue;
 
 		if (equip.prestige) {
 			buyUpgrade(MODULES.equipment[equip.name].upgrade, true, true);
