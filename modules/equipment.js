@@ -72,7 +72,110 @@ function _shouldSaveResource(resourceName) {
 	return shouldSave && upgrades.some(up => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
 
-function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
+var mapresourcetojob = {"food": "Farmer", "wood": "Lumberjack", "metal": "Miner", "science": "Scientist"};
+
+function PrestigeValue(a){
+	var b=game.upgrades[a].prestiges,c=game.equipment[b],d;d=c.blockNow?"block":"undefined"==typeof c.health?"attack":"health";var e=Math.round(c[d]*Math.pow(1.19,c.prestige*game.global.prestige[d]+1));return e
+}
+
+function equipEffect(equip, equipInfo, levelsToBuy = 1) {
+	if (!equipInfo.isBuilding) return equip[equipInfo.stat + 'Calculated'] * levelsToBuy;
+	var c = equip.increase.by * equip.owned,
+		d = game.upgrades.Gymystic.done ? game.upgrades.Gymystic.modifier + 0.01 * (game.upgrades.Gymystic.done - 1) : 1,
+		e = equip.increase.by * (equip.owned + 1) * d;
+	return e - c
+}
+
+function equipCost(a, b, levelsToBuy = 1) {
+	var c = parseFloat(getBuildingItemPrice(a, b.resource, !b.isBuilding, levelsToBuy));
+	return c = !b.isBuilding ? Math.ceil(c * Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)) : Math.ceil(c * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level)), c
+}
+
+//TODO Grab default values from settings
+//TODO Replace this function with some smart usage of the new "mostEfficient" functions in the Equipment module
+function evaluateEquipmentEfficiency(equipName, buyWeaponPrestige = true, buyArmorPrestige = true, alwaysLv2 = false,
+									 gearAmountToBuy = 1, waitUntil60 = false, capDivisor = 10, capEquipArmor = 100, capEquipWeapon = 100) {
+	//Init
+	let gymData = { upgrade: 'Gymystic', stat: 'block', resource: 'wood', isBuilding: true };
+	var equip = (equipName !== 'Gym') ? MODULES.equipment[equipName] : gymData;
+	var gameResource = equip.isBuilding ? game.buildings[equipName] : game.equipment[equipName];
+
+	//Considers Shield Block
+	if (equipName === 'Shield')
+		//TODO This line is interfering with the populateMostEfficientEquipment function in a weird and undesired way, but it work should be fine for now
+		equip.stat = gameResource.blockNow ? 'block' : 'health';
+
+	var effect = equipEffect(gameResource, equip, gearAmountToBuy);
+	var cost = equipCost(gameResource, equip, gearAmountToBuy);
+	var factor = effect / cost;
+	var statusBorder = 'white';
+	var wall = false;
+
+	if (!game.upgrades[equip.upgrade].locked) {
+		let canAfford = canAffordTwoLevel(game.upgrades[equip.upgrade]);
+		if (!equip.isBuilding) {
+			var nextCost;
+			var nextEffect = PrestigeValue(equip.upgrade);
+			if ((challengeActive("Scientist") && getScientistLevel() > 2) || (!buyWeaponPrestige && !buyArmorPrestige))
+				nextCost = Infinity;
+			else
+				nextCost = Math.ceil(getNextPrestigeCost(equip.upgrade) * Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level));
+
+			wall = (nextEffect / nextCost > factor);
+		}
+
+		if (!canAfford) {
+			statusBorder = 'yellow';
+		}
+		else {
+			if (equip.isBuilding) {
+				statusBorder = 'red';
+			} else {
+				var currEffect = gameResource.level * effect / gearAmountToBuy;
+				var needLevel = ceilToNearestMultipleOf(currEffect / nextEffect, gearAmountToBuy, 1);
+				var ratio = gameResource.cost[equip.resource][1];
+				var needResource = nextCost * (Math.pow(ratio, needLevel) - 1) / (ratio - 1);
+				statusBorder = (game.resources[equip.resource].owned > needResource) ? 'red' : 'orange';
+			}
+		}
+	}
+	if (game.jobs[mapresourcetojob[equip.resource]].locked && (!challengeActive('Metal'))) {
+		factor = 0;
+		wall = true;
+	}
+
+	var isLiquified = (game.options.menu.liquification.enabled && game.talents.liquification.purchased && !game.global.mapsActive && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp");
+	var cap = 100;
+	if (equip.stat == 'health') cap = capEquipArmor;
+	if (equip.stat == 'attack') cap = capEquipWeapon;
+	if ((isLiquified) && cap > 0 && gameResource.level >= (cap / capDivisor)) {
+		factor = 0;
+		wall = true;
+	} else if (cap > 0 && gameResource.level >= cap) {
+		factor = 0;
+		wall = true;
+	}
+	if (equipName != 'Gym' && game.global.world < 60 && game.global.world >= 58 && waitUntil60) {
+		wall = true;
+	}
+	if (gameResource.level < 2 && alwaysLv2) {
+		factor = 999 - gameResource.prestige;
+	}
+	if (equipName == 'Shield' && gameResource.blockNow && needGymystic()) {
+		factor = 0;
+		wall = true;
+		statusBorder = 'orange';
+	}
+	return {
+		stat: equip.stat,
+		factor: factor,
+		statusBorder: statusBorder,
+		wall: wall,
+		cost: cost
+	};
+}
+
+function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
 	if (mapSettings.pandaEquips) return pandemoniumEquipmentCheck(mapSettings.cacheGain);
 
 	const canAncientTreasure = game.mapUnlocks.AncientTreasure.canRunOnce;
@@ -91,7 +194,7 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 
 	const getZoneGo = (type) => zoneGo || zoneGoCheck(equipZone, type, currentMap).active;
 	const calculateResourceSpendingPct = (zoneGo, type) => {
-		if (zoneGo || (mapSettings.shouldHealthFarm && type === 'health')) return 1;
+		if (zoneGo || (mapSettings.shouldHealthFarm && type !== 'attack')) return 1;
 		if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return 1;
 		return resourceSpendingPct || (equipPercent <= 0 ? 1 : Math.min(1, equipPercent / 100));
 	};
@@ -113,7 +216,8 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 
 	return {
 		attack: createObject('attack'),
-		health: createObject('health')
+		health: createObject('health'),
+		block: createObject('block')
 	};
 }
 
@@ -157,7 +261,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
 
 		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
-		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
+		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable && equipName !== "Shield") continue; //TODO What if a shield prestige is available?
 
 		const equipCap = maybeBuyPrestige.prestigeAvailable ? Math.min(mostEfficient[equipType].equipCap, 9) : mostEfficient[equipType].equipCap;
 		const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
@@ -182,7 +286,8 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		if (!prestige && equipData.level >= equipCap) continue;
 		if (equipName === 'Shield' && nextLevelCost > game.resources.wood.owned * resourceSpendingPct) continue;
 
-		const isMostEfficient = mostEfficient[equipType].statPerResource > safeRatio || !mostEfficient[equipType].name || (equipName === 'Shield' && mostEfficient[equipType].cost > game.resources.metal.owned * resourceSpendingPct);
+		const shieldEff = (equipName === 'Shield' && equipType === 'health' && mostEfficient[equipType].cost > game.resources.metal.owned * resourceSpendingPct);
+		const isMostEfficient = mostEfficient[equipType].statPerResource > safeRatio || !mostEfficient[equipType].name || shieldEff;
 
 		if (isMostEfficient) {
 			mostEfficient[equipType] = {
@@ -277,7 +382,7 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 		if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 		if (mapSettings.mapName === 'Wither Farm' || mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 	}
-	if (farmType === 'health') {
+	if (farmType === 'health' || farmType === 'block') {
 		if (whichHitsSurvived() < getPageSetting('equipCutOffHS') || mapSettings.shouldHealthFarm) return zoneDetails;
 		if ((mapSettings.mapName === 'Smithless Farm' || mapSettings.mapName === 'Wither Farm') && mapSettings.equality > 0) return zoneDetails;
 		if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && getPerkLevel('Equality') > 0) return zoneDetails;
@@ -406,7 +511,7 @@ function buyEquipsAlways2() {
 
 function buyEquips() {
 	const bestBuys = mostEfficientEquipment();
-	const equipTypes = ['attack', 'health'].sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
+	const equipTypes = ['attack', 'health', 'block'].sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
 	let keepBuying = false;
 
 	for (let equipType of equipTypes) {

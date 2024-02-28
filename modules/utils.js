@@ -595,6 +595,12 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 	}
 }
 
+function ceilToNearestMultipleOf(number, multipleOf, offSet) {
+	var n = number - offSet;
+	var roundedUp = Math.ceil(n / multipleOf) * multipleOf
+	return roundedUp + offSet
+}
+
 function argSort(array, reverseStability = false) {
 	return array
 		.map((value, index) => [value, index])
@@ -610,7 +616,7 @@ function elementExists(element) {
 }
 
 function elementVisible(element) {
-	visible = document.getElementById(element).style.visibility !== 'hidden';
+	let visible = document.getElementById(element).style.visibility !== 'hidden';
 	return elementExists(element) && visible;
 }
 
