@@ -829,7 +829,7 @@ function initialiseAllSettings() {
 				let description = "<p>If your Hits Survived (trimpHealth/enemyDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at armor purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase gear whenever you slow down in world.<br></p>";
 				description += "<p>Your Hits Survived ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
-				description += "<p><b>Recommended:</b> 1.5</p>";
+				description += "<p><b>Recommended:</b> 2.5</p>";
 				return description;
 			}, 'value', 2.5, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
@@ -4274,7 +4274,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Import Export', [0]);
-			
+
 		createSetting('defaultAutoTrimps',
 			function () { return ('Reset To Default') },
 			function () {

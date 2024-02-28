@@ -9,7 +9,7 @@ function allocateSurky(perks) {
 	if (challengeActive('Hypothermia')) return;
 
 	const perk = {};
-	for (var [key, value] of Object.entries(perks)) {
+	for (let [key, value] of Object.entries(perks)) {
 		if (typeof value !== 'object' || !value.hasOwnProperty('optimize')) continue;
 		perk[key] = value.level;
 	}
@@ -202,7 +202,7 @@ function surkyResetPerkLevels(perks, skipLevel = false) {
 	// enable perks (in input fields and perks object) based on locked status from save
 	// DO NOT update perk object levels yet
 	const portal = game.portal;
-	for (var [key, value] of Object.entries(perks)) {
+	for (let [key, value] of Object.entries(perks)) {
 		if (typeof value !== 'object' || !value.hasOwnProperty('optimize')) continue;
 		// iterating over the perks, ignoring aux values
 		if (portal.hasOwnProperty(key)) {
@@ -561,18 +561,18 @@ function getTrinketValues(motivCost, powCost, toughCost, props, perks) {
 //   +2 is useful because free trinkets at even levels are a major growth driver, so +2 levels may actually end up being
 //   more cost efficient than +1 level at times.
 function getObservationGains(levels, props, perks) {
-	var obsLevel = 1 + perks.Observation.level;
+	const obsLevel = 1 + perks.Observation.level;
 	// this gets referred to a lot, shortening the reference
 
 	// Get expected trinket count at end of next run with the old Obs level
-	var currentCollect = shinyCollect(obsLevel, props);
-	var shinies = game.portal.Observation.trinkets + currentCollect;
+	const currentCollect = shinyCollect(obsLevel, props);
+	let shinies = game.portal.Observation.trinkets + currentCollect;
 	shinies = Math.min(shinies, obsLevel * 1000);
 	// still need to re-bound in case we dropped an Obs level and have super-capped trinkets.
 
 	// Get expected trinket count at end of next run with the new Obs level
-	var nextCollect = shinyCollect(obsLevel + levels, props);
-	var shiniesNext = game.portal.Observation.trinkets + nextCollect;
+	const nextCollect = shinyCollect(obsLevel + levels, props);
+	let shiniesNext = game.portal.Observation.trinkets + nextCollect;
 	if (game.portal.Observation.trinkets === 0) shiniesNext += 10;
 	// 10 free trinkets for first Obs level
 	shiniesNext = Math.min(shiniesNext, (obsLevel + levels) * 1000);
@@ -581,11 +581,11 @@ function getObservationGains(levels, props, perks) {
 	//   INCLUDING power immediately gained due to marginal trinket drops. This is because the Rn-like value
 	//   of trinkets is valued as if those trinkets had no effect until the subsequent run (as true Rn
 	//   gains on the next run would not have an effect within the same run).
-	var directGain = (100 + shiniesNext * (obsLevel + levels)) / (100 + shinies * obsLevel);
+	const directGain = (100 + shiniesNext * (obsLevel + levels)) / (100 + shinies * obsLevel);
 	// upper bound on direct gain at re-capped trinkets:
 	//   Obs value WITH droprate included can never exceed this value WITHOUT droprate included, if we're approaching
 	//   our current trinket cap. No limit to droprate value if we are not approaching our cap.
-	var maxDirectGain = Infinity;
+	let maxDirectGain = Infinity;
 	if (shinies >= obsLevel * 1000) {
 		maxDirectGain = (100 + (obsLevel + levels) * (obsLevel + levels) * 1000) / (100 + obsLevel * shinies);
 	}
@@ -595,15 +595,12 @@ function getObservationGains(levels, props, perks) {
 	//   e.g. if you're at 12.5k and obs 12, we should only count the actual trinkets dropped next run at Obs 13,
 	//   not the 500 trinkets that you already have on your save that only become unlocked this run (which is already
 	//   accounted in the direct gain and does NOT represent an increase in drops).
-	var moreTrinkets;
+	let moreTrinkets;
 	if (game.portal.Observation.trinkets >= (obsLevel + levels) * 1000) {
-		// Case 1: we're already capped even at the new obs level. No drop value.
 		moreTrinkets = 0;
 	} else if (game.portal.Observation.trinkets >= obsLevel * 1000) {
-		// Case 2: we're already capped at the old obs level. Drop value is the actual drops gained this run.
 		moreTrinkets = Math.max(0, shiniesNext - game.portal.Observation.trinkets);
 	} else {
-		// Case 3: we're not already capped. Drop value is the actual difference in gains between the two considered Obs levels.
 		moreTrinkets = shiniesNext - shinies;
 	}
 
@@ -638,8 +635,8 @@ function iterateValueFeedback(valueArray, props, perks) {
 	// more resources buy more housing, which feeds back to more resources and population
 	//  -> Don't bother with this small correction below Collectors, especially since Gateways don't scale with F/M/L.
 	//     Frags do scale with "some" resource boosts, but approximating them as non-scaling as a general rule is pretty close to correct.
-	var moreHousing = Math.log((Vf * Vres) / (VfDone * VresDone)) / Math.log(1.12); // Collectors scale with food (no other basic resources needed)
-	var baseHousing = collectors;
+	let moreHousing = Math.log((Vf * Vres) / (VfDone * VresDone)) / Math.log(1.12); // Collectors scale with food (no other basic resources needed)
+	let baseHousing = collectors;
 	// for downsize we make the same adjustments as for hubs, just saying "all housing buildings have the same value"
 	if (props.hubsEnabled || props.specialChallenge === 'downsize') {
 		moreHousing *= props.collectHubs;
@@ -649,13 +646,13 @@ function iterateValueFeedback(valueArray, props, perks) {
 	}
 	// if the user doesn't have collectors yet, don't bother with housing corrections (yes this will exclude O.G. downsize, tough)
 	//   (tauntimp correction uses coefC & termR calculated in readInput(), based on target zone)
-	var tauntCorrectedHousingBase = baseHousing * props.coefC - props.termR;
-	var tauntCorrectedHousingNext = (baseHousing + moreHousing) * props.coefC - props.termR;
-	var housingGain = tauntCorrectedHousingNext / tauntCorrectedHousingBase;
+	const tauntCorrectedHousingBase = baseHousing * props.coefC - props.termR;
+	const tauntCorrectedHousingNext = (baseHousing + moreHousing) * props.coefC - props.termR;
+	let housingGain = tauntCorrectedHousingNext / tauntCorrectedHousingBase;
 	if (!(housingGain > 1) || tauntCorrectedHousingBase <= 0) housingGain = 1;
 	if (props.specialChallenge === 'downsize') {
 		// 2 territory bonuses per zone, each bonus is 5 + trumps level
-		var trumPop = 2 * props.targetZone * (5 + perks.Trumps.level);
+		const trumPop = 2 * props.targetZone * (5 + perks.Trumps.level);
 		// actual gain: (housing * housingGain + trumpop) / (housing + trumpop)
 		housingGain = 1 + ((housingGain - 1) * baseHousing) / (baseHousing + trumPop);
 	}
@@ -663,24 +660,24 @@ function iterateValueFeedback(valueArray, props, perks) {
 	Vp *= props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon' ? 1 : housingGain; // Trappa housing doesn't help buy more coords. Combat respec assumes we're done buying housing.
 	collectors += housingGain;
 
-	// use equip scaling to convert resource value to atk/hp value
-	var VmAdjusted = (Vm * Vres) / (VmDone * VresDone);
 	// combat spec assumes no more equipment buying
-	if (!(props.specialChallenge === 'combat') && !(props.specialChallenge === 'combatRadon')) {
+	if (!['combat', 'combatRadon'].includes(props.specialChallenge)) {
+		// use equip scaling to convert resource value to atk/hp value
+		const VmAdjusted = (Vm * Vres) / (VmDone * VresDone);
 		Va *= Math.pow(props.equipScaling.attack, Math.log(VmAdjusted));
 		Vh *= Math.pow(props.equipScaling.health, Math.log(VmAdjusted));
-	}
 
-	// account for smithies: 1.25x atk/hp per 50x resources (40x with S14)
-	var smithyGain = Math.pow(1.25, Math.log(Vres / VresDone) / Math.log(props.scruffyLevel >= 14 ? 40 : 50));
-	// combat spec assumes no more smithy buying
-	if (!(props.specialChallenge === 'combat') && !(props.specialChallenge === 'combatRadon') && !(props.specialChallenge === 'smithless')) {
-		Va *= smithyGain;
-		Vh *= smithyGain;
+		// combat spec assumes no more smithy buying
+		if (props.specialChallenge !== 'smithless') {
+			// account for smithies: 1.25x atk/hp per 50x resources (40x with S14)
+			const smithyGain = Math.pow(1.25, Math.log(Vres / VresDone) / Math.log(props.scruffyLevel >= 14 ? 40 : 50));
+			Va *= smithyGain;
+			Vh *= smithyGain;
+		}
 	}
 
 	// if coord limited, account for population gain to coords
-	var coordAdjust = props.coordLimited;
+	let coordAdjust = props.coordLimited;
 	if (props.specialChallenge === 'downsize') {
 		// assume coord limited in downsize (allowing the user to weight further toward pop if desired)
 		coordAdjust = Math.max(coordAdjust, 1);
@@ -691,20 +688,20 @@ function iterateValueFeedback(valueArray, props, perks) {
 		// combat respec reads the actual population/coordinations from the save to determine how many levels of Carp are needed
 		coordAdjust = perks.Carpentry.level < props.carpNeeded ? 1 : 0;
 	}
-	var coordGain = Math.pow(1.25, (Math.log(Vp / VpDone) / Math.log(1.25)) * coordAdjust);
+	const coordGain = Math.pow(1.25, (Math.log(Vp / VpDone) / Math.log(1.25)) * coordAdjust);
 	Va *= coordGain;
 	Vh *= coordGain;
 
 	// more food buys more Mets, which have various effects depending on antennas
-	var moreMets = Math.log((Vf * Vres) / (VfDone * VresDone)) / Math.log(5);
-	var metEff = 0.01 + 0.0005 * game.buildings.Antenna.owned;
-	var metRes = 0.5 + 0.25 * (game.buildings.Antenna.owned >= 20 ? Math.floor(game.buildings.Antenna.owned / 5) - 3 : 0);
-	var metProd = mets * metEff;
-	var metProdNext = (mets + moreMets) * metEff;
-	var metRadGain = (1 + metProdNext) / (1 + metProd);
-	var metFoodGain = game.buildings.Antenna.owned >= 5 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
-	var metHPGain = game.buildings.Antenna.owned >= 10 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
-	var metMineGain = game.buildings.Antenna.owned >= 15 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
+	const moreMets = Math.log((Vf * Vres) / (VfDone * VresDone)) / Math.log(5);
+	const metEff = 0.01 + 0.0005 * game.buildings.Antenna.owned;
+	const metRes = 0.5 + 0.25 * (game.buildings.Antenna.owned >= 20 ? Math.floor(game.buildings.Antenna.owned / 5) - 3 : 0);
+	const metProd = mets * metEff;
+	const metProdNext = (mets + moreMets) * metEff;
+	const metRadGain = (1 + metProdNext) / (1 + metProd);
+	const metFoodGain = game.buildings.Antenna.owned >= 5 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
+	const metHPGain = game.buildings.Antenna.owned >= 10 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
+	const metMineGain = game.buildings.Antenna.owned >= 15 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
 	Vrad *= metRadGain;
 	Vf *= metFoodGain;
 	if (!(props.specialChallenge === 'combat') && !(props.specialChallenge === 'combatRadon')) Vh *= metHPGain;
@@ -712,8 +709,8 @@ function iterateValueFeedback(valueArray, props, perks) {
 	mets += moreMets;
 
 	// Feedback from pushing power (final trappa respec: health won't be applied after last army send, so don't count health)
-	var pushPower = (Va * (props.specialChallenge === 'combat' && props.runningTrappa ? 1 : Vh)) / Vpushed;
-	var pushZones = Math.log(pushPower) / props.logEnemyScaling;
+	const pushPower = (Va * (props.specialChallenge === 'combat' && props.runningTrappa ? 1 : Vh)) / Vpushed;
+	const pushZones = Math.log(pushPower) / props.logEnemyScaling;
 	// speedbooks give 25% resources per zone
 	if (props.specialChallenge === 'resplus') {
 		// when collecting resources from +maps, we only get 10% resource gain per map
@@ -732,7 +729,7 @@ function iterateValueFeedback(valueArray, props, perks) {
 
 	// count S3 for Rn weighting if selected by the user, or if at Obs 0 with no clear weight (which would give no value to pushing perks at all without S3/VS1)
 	//   -> or no clear weight and trinkets capped
-	var s3RnFinal = props.scruffyLevel >= 3;
+	const s3RnFinal = props.scruffyLevel >= 3;
 	// Scruffy level 3 gives compounding 3% Rn per additional zone
 	if (s3RnFinal) {
 		Vrad *= Math.pow(1.03, pushZones);
@@ -743,10 +740,10 @@ function iterateValueFeedback(valueArray, props, perks) {
 	// trinket gain: use a fixed drop rate based on target zone, which should be fine assuming the user has entered
 	//   a sensible value and we're only optimizing at the margins of a fractional zone (or maybe 1-2 zones)
 	moreTrinkets = pushZones * trinketRate;
-	var trinketMax = 1000 * obsLevel;
+	const trinketMax = 1000 * obsLevel;
 	if (moreTrinkets + trinkets > trinketMax) moreTrinkets = trinketMax - trinkets;
 	if (moreTrinkets < 0) throw 'Unexpectedly tried to value more trinkets than our trinket max!: ' + trinkets;
-	trinketGain = 1 + (moreTrinkets * obsLevel) / (100 + trinkets * obsLevel);
+	const trinketGain = 1 + (moreTrinkets * obsLevel) / (100 + trinkets * obsLevel);
 	Va *= trinketGain;
 	Vh *= trinketGain;
 	Vres *= trinketGain;
@@ -779,12 +776,12 @@ function iterateValueFeedback(valueArray, props, perks) {
 // Inputs: gain values for atk, hp, equip discount (or metal), radon, equality, pop
 //         moreTrinkets: increased count of trinkets on next run from Obs droprate increase
 function getLogWeightedValue(props, perks, Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrinkets = 0, extraObs = 0) {
-	var iterateValueLoops = 3;
-	var Wa = props.clearWeight; // attack weight
+	const iterateValueLoops = 3;
+	const Wa = props.clearWeight; // attack weight
 	// health is useless in final trappa respec after sending last army, since new perks won't be applied to current army's health
-	var Wh = props.specialChallenge === 'combat' && props.runningTrappa ? 0 : props.clearWeight * props.healthDerate + props.survivalWeight; // health weight
-	var We = Math.max(1e-100, props.survivalWeight); // equality weight: force >0 to use equality as a dump perk if the user sets 0 weight
-	var Wr = props.radonWeight; // radon weight
+	const Wh = props.specialChallenge === 'combat' && props.runningTrappa ? 0 : props.clearWeight * props.healthDerate + props.survivalWeight; // health weight
+	const We = Math.max(1e-100, props.survivalWeight); // equality weight: force >0 to use equality as a dump perk if the user sets 0 weight
+	const Wr = props.radonWeight; // radon weight
 
 	// from iterateValueFeedback:
 	//   [Va,Vh,Vm,Vf,Vres,Vrad,Vp,Ve,
@@ -793,11 +790,11 @@ function getLogWeightedValue(props, perks, Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp
 	//    Vpushed=1,VmDone=1,VfDone=1,VresDone=1,VpDone=1] = valueArray;
 
 	// add Obs levels if we're evaluating Observation
-	var obsLevel = 1 + perks.Observation.level + extraObs;
+	const obsLevel = 1 + perks.Observation.level + extraObs;
 
-	var valueArray = [Va, Vh, Vgear, 1, Vres, Vrad, Vp, Ve, props.tributes, props.housingCount, props.hubsEnabled, props.meteorologists, obsDropRate(obsLevel, props.targetZone, props) / 100, props.baselineTrinketsNext, obsLevel, 1, 1, 1, 1, 1];
+	const valueArray = [Va, Vh, Vgear, 1, Vres, Vrad, Vp, Ve, props.tributes, props.housingCount, props.hubsEnabled, props.meteorologists, obsDropRate(obsLevel, props.targetZone, props) / 100, props.baselineTrinketsNext, obsLevel, 1, 1, 1, 1, 1];
 
-	for (var i = 0; i < iterateValueLoops; i++) iterateValueFeedback(valueArray, props, perks);
+	for (let i = 0; i < iterateValueLoops; i++) iterateValueFeedback(valueArray, props, perks);
 
 	Va = valueArray[0];
 	Vh = valueArray[1];
@@ -811,7 +808,7 @@ function getLogWeightedValue(props, perks, Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp
 	moreTrinkets += Math.max(0, Vtrink - Math.max(props.baselineTrinketsNext, game.portal.Observation.trinkets));
 
 	// calculate unified Rn-like growth gain:
-	var Vgrowth = (Vrad * props.radonPerRun + props.trinketRadonPerRun + props.radonPerTrinket * moreTrinkets) / (props.radonPerRun + props.trinketRadonPerRun);
+	let Vgrowth = (Vrad * props.radonPerRun + props.trinketRadonPerRun + props.radonPerTrinket * moreTrinkets) / (props.radonPerRun + props.trinketRadonPerRun);
 
 	if (props.specialChallenge === 'combat') Vgrowth = 1; // ignore radon weight for combat spec
 
@@ -820,16 +817,18 @@ function getLogWeightedValue(props, perks, Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp
 	// For cost-efficiency between perks with wildly different costs & effects we use the log of this value, which simplifies to:
 	//   Wa*log(A) + Wh*log(H) + We*log(E) + Wr*log(R)
 
-	var res = Wa * Math.log(Va) + Wh * Math.log(Vh) + We * Math.log(Ve) + Wr * Math.log(Vgrowth);
+	let res = Wa * Math.log(Va) + Wh * Math.log(Vh) + We * Math.log(Ve) + Wr * Math.log(Vgrowth);
 	if (props.specialChallenge === 'resplus' || props.specialChallenge === 'resminus') {
 		res = Math.log(Vres) + 1e-100 * Math.log(Ve); // hack to still use equality as a primary dump perk
 	}
 	if (props.specialChallenge === 'equip') {
 		res = Math.log(Vres * Vm) + 1e-100 * Math.log(Ve); // for equip farming, Artisanistry also counts
 	}
+
 	if (isNaN(res)) {
 		console.log('ERROR: NaN result!');
 	}
+
 	return res;
 }
 
@@ -937,18 +936,18 @@ function getPerkEfficiencies(props, perks) {
 
 	// used for combat respec to determine exactly how much carp is needed to afford all coords (given we require an appropriate save for this preset)
 	//   -> max army size before buying final coord is 1/3 of population
-	var moreCoordsNeeded = Math.max(0, props.targetZone - game.upgrades.Coordination.done);
-	var popNeededForCoords = 3 * Math.pow(1.25, moreCoordsNeeded) * game.resources.trimps.maxSoldiers;
-	var tauntBase = 1.003 + 0.0001 * perks.Expansion.level;
-	var tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
+	const moreCoordsNeeded = Math.max(0, props.targetZone - game.upgrades.Coordination.done);
+	const popNeededForCoords = 3 * Math.pow(1.25, moreCoordsNeeded) * game.resources.trimps.maxSoldiers;
+	const tauntBase = 1.003 + 0.0001 * perks.Expansion.level;
+	const tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
 	// expanding tauntimps mean taunt pop is not in maxTrimps, it's a flat multiplier
-	var tauntCorrectedMaxTrimps = tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult) * Math.pow(tauntBase, props.imperzone * (props.targetZone - game.global.world));
+	const tauntCorrectedMaxTrimps = tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult) * Math.pow(tauntBase, props.imperzone * (props.targetZone - game.global.world));
 	props.carpNeeded = Math.log(popNeededForCoords / tauntCorrectedMaxTrimps) / Math.log(1.1);
 
 	// Get various gain factors needed to calculate the value of trinkets (and also used to value their respective perks).
 	//  Motivation
-	var motiv = 1 + perks.Motivation.level * perks.Motivation.effect;
-	var motivGain = (motiv + perks.Motivation.effect) / motiv;
+	const motiv = 1 + perks.Motivation.level * perks.Motivation.effect;
+	const motivGain = (motiv + perks.Motivation.effect) / motiv;
 	// trappa is heavily drop-based prior to 160, and mostly gathering based after 170
 	if (props.specialChallenge === 'trappa') {
 		if (props.targetZone < 162) {
@@ -959,15 +958,15 @@ function getPerkEfficiencies(props, perks) {
 		}
 	}
 
-	var motivCost = getPerkCost('Motivation', 1, false, perks);
+	const motivCost = getPerkCost('Motivation', 1, false, perks);
 	// Power
-	var pow = 1 + perks.Power.level * perks.Power.effect;
-	var powGain = (pow + perks.Power.effect) / pow;
-	var powCost = getPerkCost('Power', 1, false, perks);
+	const pow = 1 + perks.Power.level * perks.Power.effect;
+	const powGain = (pow + perks.Power.effect) / pow;
+	const powCost = getPerkCost('Power', 1, false, perks);
 	// Toughness
-	var tough = 1 + perks.Toughness.level * perks.Toughness.effect;
-	var toughGain = (tough + perks.Toughness.effect) / tough;
-	var toughCost = getPerkCost('Toughness', 1, false, perks);
+	const tough = 1 + perks.Toughness.level * perks.Toughness.effect;
+	const toughGain = (tough + perks.Toughness.effect) / tough;
+	const toughCost = getPerkCost('Toughness', 1, false, perks);
 
 	// Get the absolute Rn values for trinkets expected at baseline Observation and per marginal trinket,
 	//   and the expected count of trinkets at the end of this run at baseline Observation.
@@ -983,22 +982,22 @@ function getPerkEfficiencies(props, perks) {
 	//   population in Trappa, but derate resource gains like for Motivation
 	if (props.specialChallenge === 'trappa' && props.runningTrappa) {
 		// 3600 seconds per hr, 10 ticks per second, 10x base trimps per tick (S0 ability)
-		var baitTime = 3600 * 10 * 10 * props.trapHrs;
-		var totalBaitPopBase = baitTime * (1 + perks.Bait.level);
-		var totalBaitPopNext = baitTime * (2 + perks.Bait.level);
-		var baitPop = (totalBaitPopNext + props.trappaStartPop) / (totalBaitPopBase + props.trappaStartPop);
+		const baitTime = 3600 * 10 * 10 * props.trapHrs;
+		const totalBaitPopBase = baitTime * (1 + perks.Bait.level);
+		const totalBaitPopNext = baitTime * (2 + perks.Bait.level);
+		const baitPop = (totalBaitPopNext + props.trappaStartPop) / (totalBaitPopBase + props.trappaStartPop);
 		perks.Bait.efficiency = getLogWeightedValue(props, perks, 1, 1, 1, Math.pow(baitPop, 0.0001), 1, 1, baitPop) / getPerkCost('Bait', 1, false, perks);
 	}
 
 	// Expansion
 	//   Assume Expanding Tauntimps, so all expected Tauntimps for target zone are applied
-	var expandotaunts = props.targetZone * props.imperzone;
-	var expandobase = 1 + 1 / (10030 + perks.Expansion.level);
-	var expandogain = Math.pow(expandobase, expandotaunts);
+	const expandotaunts = props.targetZone * props.imperzone;
+	const expandobase = 1 + 1 / (10030 + perks.Expansion.level);
+	const expandogain = Math.pow(expandobase, expandotaunts);
 
 	// Carpentry:
 	//   population gain, also gives resources
-	var carpPop = perks.Carpentry.effect;
+	const carpPop = perks.Carpentry.effect;
 	if (props.specialChallenge === 'trappa' || (props.specialChallenge === 'combat' && props.runningTrappa)) {
 		// In Trappa, carp gives more housing which gives more drops, but does not increase available Trimps
 		perks.Carpentry.efficiency = getLogWeightedValue(props, perks, 1, 1, 1, carpPop, 1, 1, 1) / getPerkCost('Carpentry', 1, false, perks);
@@ -1012,19 +1011,19 @@ function getPerkEfficiencies(props, perks) {
 	//   population in downsize
 	if (props.specialChallenge === 'downsize') {
 		// estimate same number of each housing building, should be "good enough"
-		var buildPop = (props.hubsEnabled ? 13 + props.collectHubs : 7) * props.housingCount;
+		const buildPop = (props.hubsEnabled ? 13 + props.collectHubs : 7) * props.housingCount;
 		// 2 territory bonuses per zone, each bonus is 5 + trumps level
-		var baseTrumPop = 2 * props.targetZone * (5 + perks.Trumps.level);
-		var trumPop = (buildPop + baseTrumPop + 2 * props.targetZone) / (buildPop + baseTrumPop);
+		const baseTrumPop = 2 * props.targetZone * (5 + perks.Trumps.level);
+		const trumPop = (buildPop + baseTrumPop + 2 * props.targetZone) / (buildPop + baseTrumPop);
 		perks.Trumps.efficiency = getLogWeightedValue(props, perks, 1, 1, 1, trumPop, 1, 1, trumPop) / getPerkCost('Trumps', 1, false, perks);
 	}
 
 	// Criticality:
 	//   attack gain from crits
-	var CD = 1 + props.shieldCD / 100 + perks.Criticality.level * perks.Criticality.effect;
-	var CC = props.specialChallenge === 'duel' ? 0.5 : 1;
+	const CD = 1 + props.shieldCD / 100 + perks.Criticality.level * perks.Criticality.effect;
+	const CC = props.specialChallenge === 'duel' ? 0.5 : 1;
 	// derate crit chance for duel
-	var critGain = (1 - CC + CC * (CD + perks.Criticality.effect)) / (1 - CC + CC * CD);
+	const critGain = (1 - CC + CC * (CD + perks.Criticality.effect)) / (1 - CC + CC * CD);
 	perks.Criticality.efficiency = getLogWeightedValue(props, perks, critGain, 1, 1, 1, 1, 1) / getPerkCost('Criticality', 1, false, perks);
 
 	// Equality:
@@ -1039,27 +1038,27 @@ function getPerkEfficiencies(props, perks) {
 	//    We presume this is always true if you have any pushing weight.
 	//    With no pushing weight, we presume it's FALSE (optimizing for 300 hits instead) unless a 3-minute zone would yield enough radon/trinket gains to be good, which roughly corresponds to when GB is useful.
 	if (props.specialChallenge !== 'berserk') {
-		var frenzyHits = 300;
-		var isDeathless = props.specialChallenge === 'resplus' || props.specialChallenge === 'resminus' || props.specialChallenge === 'trappa' || (props.specialChallenge === 'combat' && props.runningTrappa);
+		let frenzyHits = 300;
+		const isDeathless = props.specialChallenge === 'resplus' || props.specialChallenge === 'resminus' || props.specialChallenge === 'trappa' || (props.specialChallenge === 'combat' && props.runningTrappa);
 		if (!isDeathless && props.clearWeight > 0) {
 			frenzyHits = 5;
 		}
-		var frenzyAvgAtk = getFrenzyAvgAtk(perks.Frenzy.level, frenzyHits, perks);
-		var frenzyAvgAtkNext = getFrenzyAvgAtk(perks.Frenzy.level + 1, frenzyHits, perks);
-		var frenzyGain = frenzyAvgAtkNext / frenzyAvgAtk;
+		const frenzyAvgAtk = getFrenzyAvgAtk(perks.Frenzy.level, frenzyHits, perks);
+		const frenzyAvgAtkNext = getFrenzyAvgAtk(perks.Frenzy.level + 1, frenzyHits, perks);
+		const frenzyGain = frenzyAvgAtkNext / frenzyAvgAtk;
 		perks.Frenzy.efficiency = getLogWeightedValue(props, perks, frenzyGain, 1, 1, 1, 1, 1) / getPerkCost('Frenzy', 1, false, perks);
 	}
 
 	// Greed:
 	//   all-resource and radon gain
-	var greedGain = getGreedEffect(props.tributes);
+	const greedGain = getGreedEffect(props.tributes);
 	perks.Greed.efficiency = getLogWeightedValue(props, perks, 1, 1, 1, greedGain, greedGain, 1) / getPerkCost('Greed', 1, false, perks);
 
 	// Looting:
 	//   all-resource and radon gain
-	var loot = 1 + perks.Looting.level * perks.Looting.effect;
-	var lootGain = (loot + perks.Looting.effect) / loot;
-	var lootCost = getPerkCost('Looting', 1, false, perks);
+	const loot = 1 + perks.Looting.level * perks.Looting.effect;
+	const lootGain = (loot + perks.Looting.effect) / loot;
+	const lootCost = getPerkCost('Looting', 1, false, perks);
 	perks.Looting.efficiency = getLogWeightedValue(props, perks, 1, 1, 1, lootGain, lootGain, 1) / lootCost;
 
 	// Motivation:
@@ -1071,9 +1070,9 @@ function getPerkEfficiencies(props, perks) {
 	//   all-resource gain from decreased storage costs (no radon)
 	// Note: 0.125 because you only pay taxes on the half of your last storage that you filled before buying it
 	// Note: / 2 because we might guess you spend as many resources as you can store after your last storage building
-	var storeTax = 0.125 / (1 + perks.Packrat.level * perks.Packrat.effect) / 2;
-	var storeTaxNext = 0.125 / (1 + (perks.Packrat.level + 1) * perks.Packrat.effect) / 2;
-	var ratGain = (1 - storeTaxNext) / (1 - storeTax);
+	const storeTax = 0.125 / (1 + perks.Packrat.level * perks.Packrat.effect) / 2;
+	const storeTaxNext = 0.125 / (1 + (perks.Packrat.level + 1) * perks.Packrat.effect) / 2;
+	const ratGain = (1 - storeTaxNext) / (1 - storeTax);
 	perks.Packrat.efficiency = getLogWeightedValue(props, perks, 1, 1, 1, ratGain, 1, 1) / getPerkCost('Packrat', 1, false, perks);
 
 	// Pheromones
@@ -1082,11 +1081,11 @@ function getPerkEfficiencies(props, perks) {
 		// no breeding is the challenge.
 		perks.Pheromones.efficiency = 0;
 	} else {
-		var breedSpeed = 1 + props.potency * (1 + perks.Pheromones.level * perks.Pheromones.effect);
-		var breedUptime = 3 / Math.max(3, Math.log(2) / Math.log(breedSpeed));
-		var breedSpeedNext = 1 + props.potency * (1 + (perks.Pheromones.level + 1) * perks.Pheromones.effect);
-		var breedUptimeNext = 3.001 / Math.max(3, Math.log(2) / Math.log(breedSpeedNext));
-		var breedGain = breedUptimeNext / breedUptime;
+		const breedSpeed = 1 + props.potency * (1 + perks.Pheromones.level * perks.Pheromones.effect);
+		const breedUptime = 3 / Math.max(3, Math.log(2) / Math.log(breedSpeed));
+		const breedSpeedNext = 1 + props.potency * (1 + (perks.Pheromones.level + 1) * perks.Pheromones.effect);
+		const breedUptimeNext = 3.001 / Math.max(3, Math.log(2) / Math.log(breedSpeedNext));
+		const breedGain = breedUptimeNext / breedUptime;
 		perks.Pheromones.efficiency = getLogWeightedValue(props, perks, breedGain, 1, 1, 1, 1, 1) / getPerkCost('Pheromones', 1, false, perks);
 	}
 
@@ -1096,13 +1095,13 @@ function getPerkEfficiencies(props, perks) {
 
 	// Prismal:
 	//   health gain from increased shielding
-	var prismLayers = 1;
-	var basePrismal = props.shieldPrismal + 100;
+	let prismLayers = 1;
+	let basePrismal = props.shieldPrismal + 100;
 	if (props.scruffyLevel >= 1) basePrismal += 25;
 	if (props.scruffyLevel >= 10) prismLayers = 2;
 	if (props.scruffyLevel >= 16) prismLayers = 3;
-	var prismHP = 1 + (basePrismal / 100 + perks.Prismal.level * perks.Prismal.effect) * prismLayers;
-	var prismGain = (prismHP + perks.Prismal.effect * prismLayers) / prismHP;
+	const prismHP = 1 + (basePrismal / 100 + perks.Prismal.level * perks.Prismal.effect) * prismLayers;
+	const prismGain = (prismHP + perks.Prismal.effect * prismLayers) / prismHP;
 	// hack for trappa final respec: prismal DOES matter even though raw health doesn't, so pretend it's attack
 	perks.Prismal.efficiency = getLogWeightedValue(props, perks, props.specialChallenge === 'combat' && props.runningTrappa ? prismGain : 1, prismGain, 1, 1, 1, 1) / getPerkCost('Prismal', 1, false, perks);
 
@@ -1122,13 +1121,13 @@ function getPerkEfficiencies(props, perks) {
 	//  See getObservationGains for more details on valuation.
 	// NOTE we check for +1 and +2 levels, as +2 levels can be more efficient due to the extra free trinket drop.
 	// Max possible gain is what you'd get from instantly trinket-capping the new Obs level, so upper bound by that.
-	var [obsDirectGain, obsMoreTrinkets, obsMaxDirectGain] = getObservationGains(1, props, perks);
+	const [obsDirectGain, obsMoreTrinkets, obsMaxDirectGain] = getObservationGains(1, props, perks);
 	perks.Observation.efficiency = Math.min(getLogWeightedValue(props, perks, obsDirectGain, obsDirectGain, 1, obsDirectGain, 1, 1, 1, obsMoreTrinkets, 1), obsMaxDirectGain < Infinity ? getLogWeightedValue(props, perks, obsMaxDirectGain, obsMaxDirectGain, 1, obsMaxDirectGain, 1, 1, 1, 0, 1) : Infinity) / getPerkCost('Observation', 1, false, perks);
 
 	// No point checking for 2-level efficiency if we can't afford 2 levels.
 	// (And more to the point, it breaks the way we flag the best perk if we give non-zero efficiency for the 2-level version....)
 	if (couldBuyPerk('Observation', false, 2, props, perks)[0]) {
-		var [obsDirectGain2, obsMoreTrinkets2, obsMaxDirectGain2] = getObservationGains(2, props, perks);
+		const [obsDirectGain2, obsMoreTrinkets2, obsMaxDirectGain2] = getObservationGains(2, props, perks);
 		perks.Observation.efficiency2 = Math.min(getLogWeightedValue(props, perks, obsDirectGain2, obsDirectGain2, 1, obsDirectGain2, 1, 1, 1, obsMoreTrinkets2, 2), obsMaxDirectGain2 < Infinity ? getLogWeightedValue(props, perks, obsMaxDirectGain2, obsMaxDirectGain2, 1, obsMaxDirectGain2, 1, 1, 1, 0, 2) : Infinity) / getPerkCost('Observation', 2, false, perks);
 	} else {
 		perks.Observation.efficiency2 = 0;
@@ -1140,8 +1139,8 @@ function getPerkEfficiencies(props, perks) {
 
 	// Smithology
 	//   Grow attack and health based on # of smithies (1.25x base, +0.01 per level in Smithology, raised to the # of smithies)
-	var smithobase = 1 + 1 / (125 + perks.Smithology.level);
-	var smithogain = Math.pow(smithobase, props.smithyCount);
+	const smithobase = 1 + 1 / (125 + perks.Smithology.level);
+	const smithogain = Math.pow(smithobase, props.smithyCount);
 	perks.Smithology.efficiency = getLogWeightedValue(props, perks, smithogain, smithogain, 1, 1, 1) / getPerkCost('Smithology', 1, false, perks);
 
 	// Fuck it.

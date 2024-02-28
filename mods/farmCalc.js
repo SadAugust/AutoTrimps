@@ -11,7 +11,6 @@ function mastery(name) {
 function populateFarmCalcData() {
 	let imps = 0;
 	for (let imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp']) imps += game.unlocks.imps[imp];
-	//Randimp
 	if (game.talents.magimp.purchased) imps++;
 	let exoticChance = 3;
 	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
@@ -112,11 +111,11 @@ function populateFarmCalcData() {
 	else if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) fastEnemy = true;
 	else if (challengeActive('Exterminate')) fastEnemy = false;
 	else if (challengeActive('Glass')) fastEnemy = true;
-	else if (universe === 2 && game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned) fastEnemy = true;
+	else if (universe === 2 && getPerkLevel('Frenzy') > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned) fastEnemy = true;
 
 	const death_stuff = {
 		enemy_cd: 1,
-		breed_timer: breedTotalTime().toNumber(),
+		breed_timer: _breedTotalTime(),
 		weakness: 0,
 		plague: 0,
 		bleed: 0,
@@ -300,6 +299,9 @@ function populateFarmCalcData() {
 		enemyAttack *= 1 + 0.3 * daily('badMapStrength');
 	}
 
+	const uberEmpowerment = getUberEmpowerment();
+	const empowerment = getEmpowerment();
+
 	return {
 		//Base Info
 		universe: universe,
@@ -322,10 +324,10 @@ function populateFarmCalcData() {
 		poison: 0,
 		wind: 0,
 		ice: 0,
-		windCap: getUberEmpowerment() === 'Wind' ? 300 : 200,
-		natureIncrease: 1 * (getUberEmpowerment() === getEmpowerment() && game.global.uberNature !== 'Poison' ? 2 : 1) * plaguebrought,
+		windCap: uberEmpowerment === 'Wind' ? 300 : 200,
+		natureIncrease: 1 * (uberEmpowerment === empowerment && game.global.uberNature !== 'Poison' ? 2 : 1) * plaguebrought,
 		[['poison', 'wind', 'ice'][Math.ceil(zone / 5) % 3]]: nature / 100,
-		uberNature: getUberEmpowerment(),
+		uberNature: uberEmpowerment,
 		transfer: natureTransfer,
 		//Trimp Stats
 		attack: trimpAttack,
@@ -376,28 +378,31 @@ function populateFarmCalcData() {
 function stats(lootFunction = lootDefault) {
 	const saveData = populateFarmCalcData();
 	let stats = [];
-	let extra = 0;
-	if (saveData.reducer) extra = -1;
-	if (saveData.extraMapLevelsAvailable) extra = 10;
+	let extra = saveData.reducer ? -1 : saveData.extraMapLevelsAvailable ? 10 : 0;
 	let mapsCanAffordPerfect = 0;
+	let coords = 1;
+	if (saveData.coordinate) {
+		for (let z = 1; z < saveData.zone + extra + 1; ++z) {
+			coords = Math.ceil(1.25 * coords);
+		}
+	}
+
 	for (let mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
 		if (saveData.coordinate) {
-			let coords = 1;
-			for (let z = 1; z < mapLevel; ++z) coords = Math.ceil(1.25 * coords);
+			coords = Math.ceil(coords / 1.25);
 			saveData.challenge_health = coords;
 			saveData.challenge_attack = coords;
 		}
+
 		let tmp = zone_stats(mapLevel, saveData.stances, saveData, lootFunction);
 		if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 
-		//Check fragment cost of each map and remove them from the check if they can't be afforded.
 		if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-		//Want to guarantee at least 6 results here so that we don't accidentally miss a good map to farm on.
-		//Cap maps at 30 so that we don't have to wait too long for the results. Also running a -19 map isn't gonna be efficient at all.
-		if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 30)) break;
+		if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 25)) break;
 		stats.unshift(tmp);
 		if (tmp.zone === 'z6') break;
 	}
+
 	return [stats, saveData.stances];
 }
 
@@ -411,25 +416,27 @@ function lootDestack(zone, saveData) {
 
 //Return efficiency stats for the given zone
 function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
+	const mapLevel = zone - saveData.zone;
+	const bionic2Multiplier = mastery('bionic2') && zone > saveData.zone ? 1.5 : 1;
+	const loot = lootFunction(zone, saveData);
 	const result = {
-		mapLevel: zone - saveData.zone,
-		zone: 'z' + zone,
+		mapLevel,
+		zone: `z${zone}`,
 		value: 0,
 		killSpeed: 0,
 		stance: 'X',
-		loot: lootFunction(zone, saveData),
-		canAffordPerfect: saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9])
+		loot,
+		canAffordPerfect: saveData.fragments >= mapCost(mapLevel, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9])
 	};
 
 	//Loop through all stances to identify which stance is best for farming
 	for (let stance of stances) {
-		saveData.atk = saveData.attack * (stance === 'D' ? 4 : stance === 'X' ? 1 : 0.5);
-		if (mastery('bionic2') && zone > saveData.zone) saveData.atk *= 1.5;
-		const simulationResults = simulate(saveData, zone);
-		const speed = simulationResults.speed;
-		const value = speed * result.loot * (stance === 'S' ? 2 : 1);
-		const equality = simulationResults.equality;
-		const killSpeed = simulationResults.killSpeed;
+		const attackMultiplier = stance === 'D' ? 4 : stance === 'X' ? 1 : 0.5;
+		const lootMultiplier = stance === 'S' ? 2 : 1;
+		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
+
+		const { speed, equality, killSpeed } = simulate(saveData, zone);
+		const value = speed * loot * lootMultiplier;
 		result[stance] = {
 			speed,
 			value,
@@ -496,7 +503,7 @@ function simulate(saveData, zone) {
 
 	function armyDead() {
 		if (saveData.shieldBreak) return energyShield <= 0;
-		else return trimpHealth <= 0;
+		return trimpHealth <= 0;
 	}
 
 	const biomeImps = saveData.biome;
@@ -510,13 +517,13 @@ function simulate(saveData, zone) {
 
 	//Six hours of simulation inside of TW and a day outside of it.
 	const max_ticks = saveData.maxTicks;
+	const corruptionScale = saveData.magma ? calcCorruptionScale(zone, 10) : 1;
 
 	const calculateEnemyStats = (zone, cell, enemyType, saveData) => {
 		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyType);
 		let enemyAttack = calcEnemyBaseAttack('map', zone, cell + 1, enemyType);
 
 		if (saveData.magma) {
-			const corruptionScale = calcCorruptionScale(zone, 10);
 			enemyHealth *= corruptionScale / 2;
 			enemyAttack *= corruptionScale / 2;
 		}
@@ -566,7 +573,8 @@ function simulate(saveData, zone) {
 			enemyCrit = true;
 		}
 
-		if (saveData.ice > 0) enemyAttack *= 0.366 ** (ice * saveData.ice);
+		const iceValue = saveData.ice;
+		if (iceValue > 0) enemyAttack *= 0.366 ** (ice * iceValue);
 		if (universe === 2 && equality > 0) enemyAttack *= equalityPower;
 
 		if (enemyAttack > 0) reduceTrimpHealth(Math.max(0, enemyAttack));
@@ -606,6 +614,7 @@ function simulate(saveData, zone) {
 			rngRoll = turns > 0 ? rng() : rngRoll;
 			trimpCrit = false;
 			enemyCrit = false;
+
 			//Check if we didn't kill the enemy last turn for Wither & Glass checks
 			if (enemyHealth !== enemy_max_hp) {
 				oneShot = false;
@@ -621,7 +630,9 @@ function simulate(saveData, zone) {
 					glassStacks++;
 					enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 				}
-			} else oneShot = true;
+			} else {
+				oneShot = true;
+			}
 
 			if (saveData.angelic && !saveData.berserk) {
 				trimpHealth += saveData.trimpHealth / 2;
@@ -677,19 +688,14 @@ function simulate(saveData, zone) {
 
 			if (saveData.duel) {
 				// +1 point for crits, +2 points for killing, +5 for oneshots
-				if (enemyCrit) duelPoints--;
-				if (trimpCrit) duelPoints++;
+				duelPoints -= enemyCrit;
+				duelPoints += trimpCrit;
 
-				if (trimpHealth < 1) {
-					if (turns === 1) duelPoints -= 5;
-					else duelPoints -= 2;
-				}
-				if (enemyHealth < 1) {
-					if (oneShot) duelPoints += 5;
-					else duelPoints += 2;
-				}
-				duelPoints = Math.min(duelPoints, 100);
-				duelPoints = Math.max(duelPoints, 0);
+				if (trimpHealth < 1) duelPoints -= turns === 1 ? 5 : 2;
+				if (enemyHealth < 1) duelPoints += oneShot ? 5 : 2;
+
+				duelPoints = duelPoints > 100 ? 100 : duelPoints;
+				duelPoints = duelPoints < 0 ? 0 : duelPoints;
 			}
 
 			if (armyDead()) {

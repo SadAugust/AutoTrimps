@@ -246,7 +246,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		return prestigeInfo;
 	}
 
-	const equipStat = equipment.attack !== undefined ? 'attack' : 'health';
+	const equipStat = equipment.attack !== undefined ? 'attack' : resourceUsed === 'wood' && equipment.blockNow ? 'block' : 'health';
 
 	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 	const newLevel = Math.max(1, Math.min(maxLevel, 1 + Math.max(0, Math.floor(getMaxAffordable(prestigeCost * 1.2, (game.resources[resourceUsed].owned - prestigeCost) * resourceSpendingPct, 1.2, true)))));
