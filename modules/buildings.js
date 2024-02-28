@@ -1,5 +1,5 @@
 MODULES.buildings = {
-	betaHouseEfficiency: true
+	betaHouseEfficiency: false
 };
 
 function safeBuyBuilding(building, amt) {
