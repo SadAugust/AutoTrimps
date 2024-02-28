@@ -16,8 +16,9 @@ function readyToSwitch(stance = 'S') {
 	//Suicide to Scry
 	const essenceLeft = !getPageSetting('scryerEssenceOnly') || countRemainingEssenceDrops() >= 1;
 
-	let die = getPageSetting('scryerDieZone') !== -1 && game.global.world >= getPageSetting('scryerDieZone') && essenceLeft;
-	const willSuicide = getPageSetting('scryerDieZone');
+	const dieZone = getPageSetting('scryerDieZone');
+	let die = dieZone !== -1 && game.global.world >= dieZone && essenceLeft;
+	const willSuicide = dieZone;
 
 	//Check if we are allowed to suicide in our current cell and zone
 	if (die && willSuicide >= 0) {
@@ -30,116 +31,117 @@ function readyToSwitch(stance = 'S') {
 }
 
 function useScryerStance() {
-	const shouldWindStance = game.global.uberNature === 'Wind' && (getEmpowerment() !== 'Wind' || useWindStance());
-	let scry = shouldWindStance ? 5 : 4;
-	let scryF = shouldWindStance ? 'W' : 'S';
+	const AutoStance = getPageSetting('AutoStance');
+	const settingPrefix = trimpStats.isDaily ? 'd' : '';
 
-	let AutoStance = getPageSetting('AutoStance');
+	const uberEmpowerment = getUberEmpowerment();
+	const empowerment = getEmpowerment();
+	const shouldWindStance = uberEmpowerment === 'Wind' && (empowerment !== 'Wind' || useWindStance());
+
+	const scry = shouldWindStance ? 5 : 4;
+	const scryF = shouldWindStance ? 'W' : 'S';
 
 	function autoStanceFunctionScryer() {
-		let settingPrefix = trimpStats.isDaily ? 'd' : '';
-		if (getPageSetting(settingPrefix + 'AutoStanceWind')) autoStanceWind();
+		if (uberEmpowerment === 'Wind' && getPageSetting(settingPrefix + 'AutoStanceWind')) autoStanceWind();
 		else if (AutoStance === 1) autoStance();
 		else if (AutoStance === 2) autoStanceD();
 	}
+
 	//If Scryer stance hasn't been unlocked then don't use this code
-	if (getHighestLevelCleared() < 180) return autoStanceFunctionScryer();
+	if (game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.world <= 60 || getHighestLevelCleared() < 180) return autoStanceFunctionScryer();
 
-	let aboveMaxZone = getPageSetting('scryerMaxZone') > 0 && game.global.world >= getPageSetting('scryerMaxZone');
-	let useScryer = getPageSetting('AutoStanceScryer');
-	let mapsActive = game.global.mapsActive;
-	let mapObject = mapsActive ? getCurrentMapObject() : null;
-	let skipCorrupted = getPageSetting('scryerCorrupted') === 0;
-	let settingPrefix = trimpStats.isDaily ? 'd' : '';
-
+	const scrySettings = Object.entries(autoTrimpSettings)
+		.filter(([key]) => key.startsWith('scryer'))
+		.reduce((obj, [key, { value }]) => {
+			obj[key.replace('scryer', '')] = value;
+			return obj;
+		}, {});
+	const aboveMaxZone = scrySettings.MaxZone > 0 && game.global.world >= scrySettings.MaxZone;
 	//If scryerMinMaxWorld === 1 then we are only allowed to scry in the min/max zone range in world so we need to check if we are in that range.
-	if (aboveMaxZone && getPageSetting('scryerMinMaxWorld') === 1) return autoStanceFunctionScryer();
+	if (aboveMaxZone && scrySettings.MinMaxWorld === 1) return autoStanceFunctionScryer();
 
-	let never_scry = game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.world <= 60 || game.stats.highestLevel.valueTotal() < 180;
+	const useScryer = getPageSetting('AutoStanceScryer');
 
+	const mapsActive = game.global.mapsActive;
+	const isMapActive = useScryer && mapsActive;
+	const isWorldActive = useScryer && !mapsActive;
+	const mapObject = mapsActive ? getCurrentMapObject() : null;
+	const skipCorrupted = scrySettings.Corrupted === 0;
+
+	const currentEnemy = getCurrentEnemy(1);
+	const nextEnemy = getCurrentEnemy(2);
+
+	let never_scry = false;
 	//Never scryer if any of these return true.
-
-	//Maps Skip
-	//Voids, BWs, and plus maps are excluded from this check.
-	never_scry |= useScryer && mapsActive && getPageSetting('scryerMaps') === 0 && mapObject.location !== 'Void' && mapObject.location !== 'Bionic' && mapObject.level <= game.global.world;
-	//Plus Level Skip
-	//BW is excluded from this check.
-	never_scry |= useScryer && mapsActive && getPageSetting('scryerPlusMaps') === 0 && mapObject.level > game.global.world && mapObject.location !== 'Void' && mapObject.location !== 'Bionic';
-	//Void Skip
-	never_scry |= useScryer && mapsActive && mapObject.location === 'Void' && getPageSetting('scryerVoidMaps') === 0;
-	//Bionic Skip
-	never_scry |= useScryer && mapsActive && mapObject.location === 'Bionic' && getPageSetting('scryerBW') === 0;
-	//Spire Skip
-	//Use base game check for spire active to ensure it works as described
-	never_scry |= useScryer && !mapsActive && game.global.spireActive && getPageSetting('scryerSpire') === 0;
-	//Boss Skip
-	never_scry |= useScryer && !mapsActive && getPageSetting('scryerSkipBoss') === 0 && game.global.lastClearedCell + 2 === 100;
-	//Empowerment Skip
-	//Check if we are in one of the empowerment bands and if we are check against the setting for that band.
-	//0 is disabled, -1 is maybe, any value higher than 0 is the zone you would like to not run Scryer in that empowerment band.
-	never_scry |=
-		useScryer &&
-		!mapsActive &&
-		((getEmpowerment() === 'Poison' && (getPageSetting('scryerPoison') === 0 || (getPageSetting('scryerPoison') > 0 && game.global.world >= getPageSetting('scryerPoison')))) || (getEmpowerment() === 'Wind' && (getPageSetting('scryerWind') === 0 || (getPageSetting('scryerWind') > 0 && game.global.world >= getPageSetting('scryerWind')))) || (getEmpowerment() === 'Ice' && (getPageSetting('scryerIce') === 0 || (getPageSetting('scryerIce') > 0 && game.global.world >= getPageSetting('scryerIce')))));
+	if (isMapActive) {
+		never_scry |= scrySettings.Maps === 0 && mapObject.location !== 'Void' && mapObject.location !== 'Bionic' && mapObject.level <= game.global.world;
+		never_scry |= scrySettings.PlusMaps === 0 && mapObject.level > game.global.world && mapObject.location !== 'Void' && mapObject.location !== 'Bionic';
+		never_scry |= mapObject.location === 'Void' && scrySettings.VoidMaps === 0;
+		never_scry |= mapObject.location === 'Bionic' && scrySettings.BW === 0;
+	} else if (isWorldActive) {
+		never_scry |= game.global.spireActive && scrySettings.Spire === 0;
+		never_scry |= scrySettings.SkipBoss === 0 && game.global.lastClearedCell + 2 === 100;
+		//Empowerment Skip
+		//0 is disabled, -1 is maybe, any value higher than 0 is the zone you would like to not run Scryer in that empowerment band.
+		never_scry |= empowerment && (scrySettings[empowerment] === 0 || (scrySettings[empowerment] > 0 && game.global.world >= scrySettings[empowerment]));
+	}
 
 	//Check Corrupted Never
 	//See if current OR next enemy is corrupted.
-	let isCorrupt = getCurrentEnemy(1) && getCurrentEnemy(1).mutation === 'Corruption';
-	let nextIsCorrupt = getCurrentEnemy(2) && getCurrentEnemy(2).mutation === 'Corruption';
+	const isCorrupt = currentEnemy && currentEnemy.mutation === 'Corruption';
+	const nextIsCorrupt = nextEnemy && nextEnemy.mutation === 'Corruption';
 	//If next isn't corrupted AND we need to transition OR we can one shot the next enemy with full overkill, then we can scry next.
-	let scryNext = !nextIsCorrupt && (transitionRequired || oneShotPower('S', 0, true));
-	let skipOnMaxZone = getPageSetting('scryerMinMaxWorld') === 2 && getPageSetting('scryerCorrupted') !== 1 && aboveMaxZone;
+	const scryNext = !nextIsCorrupt && (transitionRequired || oneShotPower('S', 0, true));
+	const skipOnMaxZone = scrySettings.MinMaxWorld === 2 && scrySettings.Corrupted !== 1 && aboveMaxZone;
 
 	//If we are fighting a corrupted cell and we are not allowed to scry corrupted cells, then we can't scry.
-	if (useScryer && !mapsActive && (skipCorrupted || skipOnMaxZone) && isCorrupt) {
+	if (isWorldActive && (skipCorrupted || skipOnMaxZone) && isCorrupt) {
 		transitionRequired = scryNext;
 		never_scry |= !scryNext;
-	} else transitionRequired = false;
+	} else {
+		transitionRequired = false;
+	}
 
 	//check Healthy never -- TODO
-	let curEnemyHealth = getCurrentEnemy(1);
-	let isHealthy = curEnemyHealth && curEnemyHealth.mutation === 'Healthy';
+	const isHealthy = currentEnemy && currentEnemy.mutation === 'Healthy';
 
 	//Override never scry if in voids with scryvoid setting enabled.
-	if (mapsActive && mapObject.location === 'Void' && getPageSetting('scryerVoidMaps') === 0) {
+	if (mapsActive && mapObject.location === 'Void' && scrySettings.VoidMaps === 0) {
 		if (!game.global.runningChallengeSquared && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) never_scry = 0;
 	}
 
-	if (never_scry || (useScryer && !game.global.mapsActive && isHealthy && getPageSetting('scryerHealthy') === 0)) {
+	if (never_scry || (useScryer && !game.global.mapsActive && isHealthy && scrySettings.Healthy === 0)) {
 		autoStanceFunctionScryer();
 		wantToScry = false;
 		return;
 	}
+
+	let force_scry = false;
 	//Force scryer on if any of these return true.
+	if (isMapActive) {
+		force_scry |= scrySettings.Maps === 1 && mapObject.location !== 'Void' && mapObject.location !== 'Bionic' && mapObject.level <= game.global.world;
+		force_scry |= mapObject.level > game.global.world && scrySettings.PlusMaps === 1 && mapObject.location !== 'Bionic';
+		force_scry |= mapObject.location === 'Void' && scrySettings.VoidMaps === 1;
+		force_scry |= mapObject.location === 'Bionic' && scrySettings.BW === 1;
+	} else if (isWorldActive) {
+		//Spire Force
+		force_scry |= game.global.spireActive && scrySettings.Spire === 1;
+		//Empowerment Skip
+		force_scry |= empowerment && scrySettings[empowerment] > 0 && game.global.world <= scrySettings[empowerment];
+	}
 
-	//Maps Force
-	let force_scry = useScryer && mapsActive && getPageSetting('scryerMaps') === 1;
-	//Plus Level Force
-	force_scry |= mapsActive && useScryer && mapObject.level > game.global.world && getPageSetting('scryerPlusMaps') === 1 && mapObject.location !== 'Bionic';
-	//Void Force
-	force_scry |= mapsActive && mapObject.location === 'Void' && (getPageSetting('scryerVoidMaps') === 1 || (!game.global.runningChallengeSquared && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')));
-	//Bionic Force
-	force_scry |= mapsActive && useScryer && mapObject.location === 'Bionic' && getPageSetting('scryerBW') === 1;
-	//Spire Force
-	force_scry |= !mapsActive && useScryer && isDoingSpire() && getPageSetting('scryerSpire') === 1;
-	//Empowerment Force
-	force_scry |= !mapsActive && useScryer && ((getEmpowerment() === 'Poison' && getPageSetting('scryerPoison') > 0 && game.global.world < getPageSetting('scryerPoison')) || (getEmpowerment() === 'Wind' && getPageSetting('scryerWind') > 0 && game.global.world < getPageSetting('scryerWind')) || (getEmpowerment() === 'Ice' && getPageSetting('scryerIce') > 0 && game.global.world < getPageSetting('scryerIce')));
+	if (!force_scry && mapObject && mapObject.location === 'Void' && !game.global.runningChallengeSquared && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) force_scry = true;
 
-	//Farm easy maps on scryer
-	if (mapsActive) {
+	if (mapsActive && mapObject.location !== 'Void') {
+		//Farm easy maps on scryer
 		let overkillSpread = 0.005 * game.portal.Overkill.level;
-		let mapRatio = calcHDRatio(mapObject.level, 'map') <= (maxOneShotPower() > 1 ? Math.pow(overkillSpread, maxOneShotPower() - 1) * 3 : 3);
-		force_scry |= mapObject.location !== 'Void' && mapRatio;
+		const overkillCells = maxOneShotPower();
+		let mapRatio = calcHDRatio(mapObject.level, 'map') <= (overkillCells > 1 ? Math.pow(overkillSpread, overkillCells - 1) * 3 : 3);
+		force_scry |= mapRatio;
 	}
 
-	//check Corrupted Force
-	if ((isCorrupt && getPageSetting('scryerCorrupted') === 1 && useScryer) || force_scry) {
-		safeSetStance(scry);
-		wantToScry = true;
-		return;
-	}
-	//check healthy force
-	if ((isHealthy && getPageSetting('scryerHealthy') === 1 && useScryer) || force_scry) {
+	//check Corrupted/Healthy Force
+	if ((((isHealthy && scrySettings.Healthy === 1) || (isCorrupt && scrySettings.Corrupted === 1)) && useScryer) || force_scry) {
 		safeSetStance(scry);
 		wantToScry = true;
 		return;
@@ -150,51 +152,64 @@ function useScryerStance() {
 
 	//Checks if Overkill is allowed
 	let useOverkill = useScryer && getPageSetting('scryerOverkill');
-	useOverkill &= !(getPageSetting('scryerSpire') === 0 && !mapsActive && isDoingSpire());
-
+	useOverkill &= !(scrySettings.Spire === 0 && !mapsActive && isDoingSpire());
+	let canSwitch;
 	//Overkill
-	if (useOverkill && getCurrentEnemy()) {
+	if (useOverkill && currentEnemy) {
 		//Switches to S/W if it has enough damage to secure an overkill
 		let HS = oneShotPower(scryF);
 		let HSD = oneShotPower('D', 0, true);
 		let HS_next = oneShotPower(scryF, 1);
 		let HSD_next = oneShotPower('D', 1, true);
-		if (readyToSwitch() && HS > 0 && HS >= HSD && (HS > 1 || (HS_next > 0 && HS_next >= HSD_next))) {
+		canSwitch = readyToSwitch(scryF);
+		if (canSwitch && HS > 0 && HS >= HSD && (HS > 1 || (HS_next > 0 && HS_next >= HSD_next))) {
 			safeSetStance(scry);
 			return;
 		}
 	}
 
 	//No Essence
-	if (useScryer && !mapsActive && getPageSetting('scryerEssenceOnly') && countRemainingEssenceDrops() < 1) {
+	if (isWorldActive && getPageSetting('scryerEssenceOnly') && countRemainingEssenceDrops() < 1) {
 		autoStanceFunctionScryer();
 		wantToScry = false;
 		return;
 	}
+
 	//Default
-	let min_zone = getPageSetting('scryerMinZone');
-	let max_zone = getPageSetting('scryerMaxZone');
+	let min_zone = scrySettings.MinZone;
+	let max_zone = scrySettings.MaxZone;
 	let valid_min = game.global.world >= min_zone && game.global.world > 60;
 	let valid_max = max_zone < 1 || (max_zone > 0 && game.global.world < max_zone);
-	if (useScryer && valid_min && valid_max && (!mapsActive || getPageSetting('scryerMinMaxWorld') === 0) && readyToSwitch(scryF)) {
+	if (!canSwitch) canSwitch = readyToSwitch(scryF);
+
+	if (useScryer && valid_min && valid_max && (!mapsActive || scrySettings.MinMaxWorld === 0) && canSwitch) {
 		//Smooth transition to S before killing the target
 		if (transitionRequired) {
-			for (critPower = 2; critPower >= -2; critPower--) {
-				if (survive('D', critPower) && !oneShotPower('D', 0, true)) {
-					safeSetStance(2);
-					return;
-				} else if (survive('XB', critPower) && !oneShotPower('X', 0, true)) {
-					safeSetStance(scry);
-					return;
-				} else if (survive('B', critPower) && !oneShotPower('B', 0, true)) {
-					safeSetStance(3);
-					return;
-				} else if (survive('X', critPower) && !oneShotPower('X', 0, true)) {
-					safeSetStance(scry);
-					return;
-				} else if (survive('H', critPower) && !oneShotPower('H', 0, true)) {
-					safeSetStance(1);
-					return;
+			const stances = [
+				{ stance: 'D', value: 2 },
+				{ stance: 'XB', value: scry },
+				{ stance: 'B', value: 3 },
+				{ stance: 'X', value: scry },
+				{ stance: 'H', value: 1 }
+			];
+			const oneShotPowers = {};
+			const critSources = getCritPower(currentEnemy);
+
+			for (let critPower = 2; critPower >= -2; critPower--) {
+				if (critPower === 2 && (!critSources.regular || !critSources.challenge)) continue;
+				if (critPower === 1 && !critSources.regular && !critSources.challenge) continue;
+				if (critPower === 0 && !critSources.explosive) continue;
+				if (critPower === -1 && !critSources.reflect) continue;
+
+				for (let { stance, value } of stances) {
+					if (!oneShotPowers[stance]) {
+						oneShotPowers[stance] = oneShotPower(stance, 0, true);
+					}
+
+					if (survive(stance, critPower) && !oneShotPowers[stance]) {
+						safeSetStance(value);
+						return;
+					}
 				}
 			}
 		}

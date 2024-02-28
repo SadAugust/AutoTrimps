@@ -24,7 +24,7 @@ function initialiseAllTabs() {
 		['Buildings', 'Building Settings'],
 		['Equipment', 'Equipment Settings'],
 		['Combat', 'Combat & Stance Settings'],
-		['Maps', 'Maps - AutoMaps & VoidMaps Settings'],
+		['Maps', 'Maps - Auto Maps Settings'],
 		['Challenges', 'Challenges - Settings for Specific Challenges'],
 		['C2', 'C2 - Settings for C2s'],
 		['Daily', 'Dailies - Settings for Dailies'],
@@ -829,7 +829,7 @@ function initialiseAllSettings() {
 				let description = "<p>If your Hits Survived (trimpHealth/enemyDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at armor purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase gear whenever you slow down in world.<br></p>";
 				description += "<p>Your Hits Survived ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
-				description += "<p><b>Recommended:</b> 1.5</p>";
+				description += "<p><b>Recommended:</b> 2.5</p>";
 				return description;
 			}, 'value', 2.5, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
@@ -1443,7 +1443,7 @@ function initialiseAllSettings() {
 			function () { return ('New Auto Level') },
 			function () {
 				let description = "<p>Will switch the auto level system that is being used to the new one based off of and adapted from the zfarm code.</p>";
-				description += "<p><b>Recommended:</b> On when active and can test</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
 
@@ -1540,7 +1540,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bone Shrine")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bone Shrine")', 'Maps', [1, 2],
+			function () { return (game.permaBoneBonuses.boosts.owned > 0) });
 
 		//Worshipper Farm 
 		createSetting('worshipperFarmSettings',
@@ -1610,8 +1611,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Raiding")', 'Maps', [1, 2]);
-
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Raiding")', 'Maps', [1, 2],
+			function () { return (currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 50 : game.stats.highestLevel.valueTotal() >= 210) });
 		//Bionic Raiding
 		createSetting('bionicRaidingSettings',
 			function () { return ('BW Raiding Settings') },
@@ -1620,7 +1621,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bionic Raiding")', 'Maps', [1]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bionic Raiding")', 'Maps', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 125) });
 
 		//Tribute Farming
 		createSetting('tributeFarmSettings',
@@ -4116,7 +4118,7 @@ function initialiseAllSettings() {
 				description += "<p>Liquification zones override this and temporarily set it to 1 during them.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
-			}, 'value', 20, null, 'Time Warp', [0],
+			}, 'value', 5, null, 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 
 		createSetting('timeWarpSaving',
@@ -4157,7 +4159,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Enables the display of your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				return description;
-			}, 'boolean', true, null, 'Display', [0]);
+			}, 'boolean', false, null, 'Display', [0]);
 		createSetting('displayHideFightButtons',
 			function () { return ('Hide Fight Buttons') },
 			function () {
@@ -4249,18 +4251,14 @@ function initialiseAllSettings() {
 				let description = "<p>Import a AutoTrimps settings file.</p>";
 				return description;
 			}, 'infoclick', null, 'MAZLookalike("importAutoTrimps")', 'Import Export', [0]);
+
 		createSetting('exportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
 				let description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
 				return description;
 			}, 'infoclick', null, 'MAZLookalike("exportAutoTrimps")', 'Import Export', [0]);
-		createSetting('defaultAutoTrimps',
-			function () { return ('Reset To Default') },
-			function () {
-				let description = "<p>Reset everything to the way it was when you first installed the script.</p>";
-				return description;
-			}, 'infoclick', null, 'MAZLookalike("resetDefaultSettingsProfiles")', 'Import Export', [0]);
+
 		createSetting('downloadForDebug',
 			function () { return ('Download For Debug') },
 			function () {
@@ -4276,6 +4274,13 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Import Export', [0]);
+
+		createSetting('defaultAutoTrimps',
+			function () { return ('Reset To Default') },
+			function () {
+				let description = "<p>Reset everything to the way it was when you first installed the script.</p>";
+				return description;
+			}, 'infoclick', null, 'MAZLookalike("resetDefaultSettingsProfiles")', 'Import Export', [0]);
 
 		createSetting('autoAllocatePresets',
 			function () { return ('Auto Allocate Presets') },

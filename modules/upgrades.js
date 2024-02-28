@@ -90,32 +90,20 @@ function needGymystic() {
 	return game.upgrades['Gymystic'].allowed > game.upgrades['Gymystic'].done;
 }
 
-function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1/4, woodRequired = 1/4, metalRequired = 1/4, scienceRequired = 2/4) {
-	//Init
-	const [foodOwned, woodOwned, metalOwned, scienceOwned] = ['food', 'wood', 'metal', 'science'].map(r => game.resources[r].owned);
+function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1 / 4, woodRequired = 1 / 4, metalRequired = 1 / 4, scienceRequired = 2 / 4) {
+	const resources = ['food', 'wood', 'metal', 'science'];
+	const resourceRequired = [foodRequired, woodRequired, metalRequired, scienceRequired];
+	const resourceOwned = resources.map((r) => game.resources[r].owned);
 
-	//No upgrades available
-	if (upgradeObj.done >= upgradeObj.allowed)
-		return false;
+	if (upgradeObj.done >= upgradeObj.allowed) return false;
+	if (upgradeObj === game.upgrades.Coordination && !canAffordCoordinationTrimps()) return false;
 
-	//Not enough trimps for Coordination
-	if (upgradeObj === game.upgrades.Coordination && !canAffordCoordinationTrimps())
-		return false;
+	for (let i = 0; i < resources.length; i++) {
+		const resourceCost = upgradeObj.cost.resources[resources[i]] ? resolvePow(upgradeObj.cost.resources[resources[i]], upgradeObj) * resourceRequired[i] : 0;
+		if (resourceOwned[i] < resourceCost) return false;
+	}
 
-	//Not enough science to start saving
-	if (scienceOwned < resolvePow(upgradeObj.cost.resources.science, upgradeObj) * scienceRequired)
-		return false;
-
-	//Not enough food to start saving
-	if (foodOwned < (upgradeObj.cost.resources.food ? resolvePow(upgradeObj.cost.resources.food, upgradeObj) * foodRequired : 0))
-		return false;
-
-	//Not enough wood to start saving
-	if (woodOwned < (upgradeObj.cost.resources.wood ? resolvePow(upgradeObj.cost.resources.wood, upgradeObj) * woodRequired : 0))
-		return false;
-
-	//Not enough metal to start saving
-	return metalOwned >= (upgradeObj.cost.resources.metal ? resolvePow(upgradeObj.cost.resources.metal, upgradeObj) * metalRequired : 0);
+	return true;
 }
 
 function sciUpgrades() {
@@ -168,15 +156,16 @@ function populateUpgradeList() {
 }
 
 function buyUpgrades() {
+	const upgradeSetting = getPageSetting('upgradeType');
+	if (upgradeSetting === 0) return;
+
 	const scientistsAreRelevant = !isPlayerRelevant('science', false, 4);
 	const researchIsRelevant = isPlayerRelevant('science', false, 0.25);
-	const upgradeSetting = getPageSetting('upgradeType');
+	const needScientists = game.upgrades.Scientists.done < game.upgrades.Scientists.allowed;
 	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
 	const needMega = game.upgrades.Megascience.done < game.upgrades.Megascience.allowed;
 	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
 	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
-
-	if (upgradeSetting === 0) return;
 
 	const upgradeList = populateUpgradeList();
 
@@ -214,19 +203,16 @@ function buyUpgrades() {
 			if (needScientists && game.resources.science.owned < 160 && game.resources.food.owned < 450) continue;
 			if (needMiner && needScientists && game.resources.science.owned < 220) continue;
 			if (needMiner && game.resources.science.owned < 120) continue;
-		} else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
-		//Prioritise Science/scientist upgrades
+		} else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) {
+			continue;
+		} //Prioritise Science/scientist upgrades
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld) {
-			if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed) continue;
+			if (needScientists) continue;
+			if (needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;
 
-			//Prioritize Efficiency while manual research is still relevant
-			if (needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency')
-				continue;
-
-			//Prioritizes Speedscience if it's relevant
 			if (!needEff || !researchIsRelevant || upgrade !== 'Efficiency') {
 				if (needSpeed && scientistsAreRelevant && upgrade !== 'Speedscience') continue;
-				if (needMega && scientistsAreRelevant && ['Speedscience', 'Megascience'].includes(upgrade)) continue;
+				if (needMega && scientistsAreRelevant && !['Speedscience', 'Megascience'].includes(upgrade)) continue;
 			}
 		}
 
