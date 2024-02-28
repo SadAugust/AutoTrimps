@@ -66,6 +66,12 @@ MODULES.equipment = {
 	}
 };
 
+function _shouldSaveResource(resourceName) {
+	const upgrades = resourceName == 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber', 'Potency'];
+	const shouldSave = !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'));
+	return shouldSave && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
+}
+
 function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
 	if (mapSettings.pandaEquips) return pandemoniumEquipmentCheck(mapSettings.cacheGain);
 
@@ -135,10 +141,11 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield) {
 	const equipMult = getEquipPriceMult();
 	const prestigePct = prestigeSetting === 2 && !canAncientTreasure ? Math.min(1, getPageSetting('equipPrestigePct') / 100) : 1;
+	const pandemonium = challengeActive('Pandemonium');
 
 	for (const equipName in MODULES.equipment) {
 		const equipData = game.equipment[equipName];
-		if (equipData.locked || (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
+		if (equipData.locked || (pandemonium && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
 		if (equipName === 'Shield') {
 			if (ignoreShield || (game.global.universe === 1 && needGymystic())) continue;
 			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
@@ -214,6 +221,9 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
 
+	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
+	if (_shouldSaveResource(resourceUsed)) return prestigeInfo;
+
 	const prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
 	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];
 
@@ -236,7 +246,6 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		return prestigeInfo;
 	}
 
-	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
 	const equipStat = equipment.attack !== undefined ? 'attack' : 'health';
 
 	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
@@ -297,10 +306,16 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 }
 
 function autoEquip() {
+	const { Miners, Efficiency, Coordination, TrainTacular } = game.upgrades;
 	if (!getPageSetting('equipOn')) return;
-	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
+
+	//Saves resources for upgrades
+	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
+		if ([Efficiency, Coordination, TrainTacular].some((up) => shouldSaveForSpeedUpgrade(up))) return;
+		if (!Miners.done && !challengeActive('Metal')) return;
+	}
 	//If running a wood or metal quest then disable autoequip
-	if ([2, 3].indexOf(getCurrentQuest()) >= 0) return;
+	if ([2, 3].includes(getCurrentQuest())) return;
 	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
 	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
 		if (mapSettings.ancientTreasure) return;
@@ -359,6 +374,10 @@ function buyEquipsAlways2() {
 	const alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && !mapSettings.pandaEquips && getPageSetting('pandemoniumAE') > 0;
 	if (!alwaysLvl2 && !alwaysPandemonium) return false;
 
+	const saveResources = {
+		metal: _shouldSaveResource('metal'),
+		wood: _shouldSaveResource('wood')
+	};
 	let equipLeft = false;
 
 	for (let equip in game.equipment) {
@@ -366,10 +385,13 @@ function buyEquipsAlways2() {
 			if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
 			if (trimpStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 
+			if (saveResources[MODULES.equipment[equip].resource]) continue;
+
 			if (alwaysLvl2 && game.equipment[equip].level < 2) {
 				buyEquipment(equip, true, true, 1);
 				debug(`Upgrading 1 ${equip}`, `equipment`, `*upload3`);
 			}
+
 			if (alwaysPandemonium) {
 				buyEquipment(equip, true, true, 1);
 				equipLeft = true;
@@ -386,6 +408,11 @@ function buyEquips() {
 	const equipTypes = ['attack', 'health'].sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
 	let keepBuying = false;
 
+	const saveResources = {
+		metal: _shouldSaveResource('metal'),
+		wood: _shouldSaveResource('wood')
+	};
+
 	for (let equipType of equipTypes) {
 		let equip = bestBuys[equipType];
 		let resourceUsed = equip.name === 'Shield' ? 'wood' : 'metal';
@@ -394,6 +421,7 @@ function buyEquips() {
 		if (!equip.name || equipData.locked || !(equip.prestige || canAffordBuilding(equip.name, false, false, true, false, 1))) continue;
 		if (equipData.level >= equip.equipCap && !equip.prestige && !equip.zoneGo) continue;
 		if (equip.cost > equip.resourceSpendingPct * game.resources[resourceUsed].owned) continue;
+		if (saveResources[resourceUsed]) continue;
 
 		if (equip.prestige) {
 			buyUpgrade(MODULES.equipment[equip.name].upgrade, true, true);
@@ -436,8 +464,8 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 			if (prestigeElement.classList.contains('efficientYes') && (item !== bestBuys[equipType].name || (item === bestBuys[equipType].name && !bestBuys[equipType].prestige))) swapClass('efficient', 'efficientNo', prestigeElement);
 		}
 
-		//If we are looking at the most efficient item and it's not a prestige then add the efficientYes class to it
-		//If the equip already has the efficientYes class swap it to efficientNo
+		//If we are looking at the most efficient item, and it's not a prestige, then add the efficientYes class to it
+		//If the equipment already has the efficientYes class swap it to efficientNo
 		if (item === bestBuys[equipType].name && bestBuys[equipType].prestige && itemElement) {
 			if (itemElement.classList.contains('efficientYes')) swapClass('efficient', 'efficientNo', itemElement);
 			bestBuys[equipType].name = prestigeName;

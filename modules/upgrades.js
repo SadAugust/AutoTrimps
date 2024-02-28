@@ -90,6 +90,22 @@ function needGymystic() {
 	return game.upgrades['Gymystic'].allowed > game.upgrades['Gymystic'].done;
 }
 
+function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1 / 4, woodRequired = 1 / 4, metalRequired = 1 / 4, scienceRequired = 2 / 4) {
+	const resources = ['food', 'wood', 'metal', 'science'];
+	const resourceRequired = [foodRequired, woodRequired, metalRequired, scienceRequired];
+	const resourceOwned = resources.map((r) => game.resources[r].owned);
+
+	if (upgradeObj.done >= upgradeObj.allowed) return false;
+	if (upgradeObj === game.upgrades.Coordination && !canAffordCoordinationTrimps()) return false;
+
+	for (let i = 0; i < resources.length; i++) {
+		const resourceCost = upgradeObj.cost.resources[resources[i]] ? resolvePow(upgradeObj.cost.resources[resources[i]], upgradeObj) * resourceRequired[i] : 0;
+		if (resourceOwned[i] < resourceCost) return false;
+	}
+
+	return true;
+}
+
 function sciUpgrades() {
 	if (!challengeActive('Scientist')) return [];
 	const upgradeList = [];
@@ -126,7 +142,7 @@ function sciUpgrades() {
 function populateUpgradeList() {
 	if (challengeActive('Scientist')) return sciUpgrades();
 
-	const upgradeList = ['Miners', 'Scientists', 'Coordination', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience', 'Speedexplorer', 'Efficiency', 'Explorers', 'Battle', 'Bloodlust', 'Bounty', 'Egg', 'UberHut', 'UberHouse', 'UberMansion', 'UberHotel', 'UberResort', 'Trapstorm', 'Potency'];
+	const upgradeList = ['Miners', 'Scientists', 'Efficiency', 'Coordination', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience', 'Speedexplorer', 'Explorers', 'Battle', 'Bloodlust', 'Bounty', 'Egg', 'UberHut', 'UberHouse', 'UberMansion', 'UberHotel', 'UberResort', 'Trapstorm', 'Potency'];
 
 	if (game.global.universe === 1) {
 		upgradeList.push('Megaminer', 'Megalumber', 'Megafarming', 'Megascience', 'TrainTacular', 'Trainers', 'Blockmaster', 'Anger', 'Formations', 'Dominance', 'Barrier', 'Gymystic', 'Gigastation', 'Shieldblock', 'Magmamancers');
@@ -142,6 +158,14 @@ function populateUpgradeList() {
 function buyUpgrades() {
 	const upgradeSetting = getPageSetting('upgradeType');
 	if (upgradeSetting === 0) return;
+
+	const scientistsAreRelevant = !isPlayerRelevant('science', false, 4);
+	const researchIsRelevant = isPlayerRelevant('science', false, 0.25);
+	const needScientists = game.upgrades.Scientists.done < game.upgrades.Scientists.allowed;
+	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
+	const needMega = game.upgrades.Megascience.done < game.upgrades.Megascience.allowed;
+	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
+	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
 
 	const upgradeList = populateUpgradeList();
 
@@ -179,12 +203,17 @@ function buyUpgrades() {
 			if (needScientists && game.resources.science.owned < 160 && game.resources.food.owned < 450) continue;
 			if (needMiner && needScientists && game.resources.science.owned < 220) continue;
 			if (needMiner && game.resources.science.owned < 120) continue;
-		} else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
-		//Prioritise Science/scientist upgrades
+		} else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) {
+			continue;
+		} //Prioritise Science/scientist upgrades
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld) {
-			if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed) continue;
-			if (game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
-			if (game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience' && upgrade !== 'Speedscience') continue;
+			if (needScientists) continue;
+			if (needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;
+
+			if (!needEff || !researchIsRelevant || upgrade !== 'Efficiency') {
+				if (needSpeed && scientistsAreRelevant && upgrade !== 'Speedscience') continue;
+				if (needMega && scientistsAreRelevant && !['Speedscience', 'Megascience'].includes(upgrade)) continue;
+			}
 		}
 
 		buyUpgrade(upgrade, true, true);

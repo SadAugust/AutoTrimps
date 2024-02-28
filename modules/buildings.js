@@ -1,8 +1,12 @@
+MODULES.buildings = {
+	betaHouseEfficiency: false
+};
+
 function safeBuyBuilding(building, amt) {
 	const queued = isBuildingInQueue(building);
 	const locked = game.buildings[building].locked;
 	const notAfford = !canAffordBuilding(building, false, false, false, false, amt);
-	if (queued | locked | notAfford) return;
+	if (queued || locked || notAfford) return;
 
 	//Cap the amount we purchase to ensure we don't spend forever building
 	if (!bwRewardUnlocked('Foremany') && game.global.world <= 10) amt = 1;
@@ -25,10 +29,10 @@ function advancedNurseries() {
 
 function _housingToCheck() {
 	const housingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
-	return housingTypes.filter(_needHousing);
+	return housingTypes.filter((house) => _needHousing(house, MODULES.buildings.betaHouseEfficiency));
 }
 
-function _needHousing(houseName) {
+function _needHousing(houseName, ignoreAffordability) {
 	/* Returns true if we can afford and need the building. */
 	const buildingSettings = getPageSetting('buildingSettingsArray')[houseName];
 	const buildingStat = game.buildings[houseName];
@@ -54,15 +58,18 @@ function _needHousing(houseName) {
 	if (mapSettings.mapName === 'Smithy Farm' && houseName !== 'Gateway') return false;
 
 	// Can afford the building.
-	const spendingPerc = buildingSettings.percent / 100;
-	const resourcefulMod = Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
-	for (const resource in buildingStat.cost) {
-		if (!_canAffordBuilding(resource, buildingStat, spendingPerc, resourcefulMod)) return false;
+	if (!ignoreAffordability) {
+		const spendingPerc = buildingSettings.percent / 100;
+		const resourcefulMod = Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
+		for (const resource in buildingStat.cost) {
+			if (!_canAffordBuilding(resource, buildingStat, spendingPerc, resourcefulMod)) return false;
+		}
 	}
 
 	if (game.global.universe === 2 && houseName === 'Gateway') {
 		if (_checkSafeGateway(buildingStat)) return false;
 	}
+
 	return true;
 }
 
@@ -224,6 +231,7 @@ function _buyStorage(hypoZone) {
 		//Identifying our max for the resource that's being checked
 		maxRes = maxRes *= 1 + getPerkLevel('Packrat') * getPerkModifier('Packrat');
 		maxRes = calcHeirloomBonus('Shield', 'storageSize', maxRes);
+		maxRes *= 0.9;
 
 		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
 		let exoticValue = 0;
@@ -234,10 +242,11 @@ function _buyStorage(hypoZone) {
 				exoticValue = scaleToCurrentMap(simpleSeconds(resource, seconds));
 			}
 		}
-		const firstZoneCheck = game.global.world === 1 && curRes > maxRes * 0.7;
-		const tenZonesCheck = game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * 0.5;
-		const mapsUnlockedCheck = curRes + exoticValue > maxRes * 0.85;
-		if ((firstZoneCheck | tenZonesCheck | mapsUnlockedCheck) & game.triggers[storage].done) safeBuyBuilding(storage, 1);
+
+		const firstZoneCheck = game.global.world === 1 && curRes > maxRes;
+		const tenZonesCheck = game.global.world >= 2 && game.global.world < 10 && curRes > maxRes;
+		const mapsUnlockedCheck = curRes + exoticValue > maxRes;
+		if ((firstZoneCheck || tenZonesCheck || mapsUnlockedCheck) && game.triggers[storage].done) safeBuyBuilding(storage, 1);
 	}
 }
 
@@ -312,16 +321,21 @@ function _buyNursery(buildingSettings) {
  * Buys gyms if necessary. For the helium universe.
  */
 function _buyGyms(buildingSettings) {
-	if (!game.buildings.Gym.locked && buildingSettings.Gym && buildingSettings.Gym.enabled) {
-		const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
-		const purchased = game.buildings.Gym.purchased;
-		const max = gymAmt - purchased;
-		const gymPct = buildingSettings.Gym.percent / 100;
+	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled) return;
 
-		const gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct);
-		if (gymAmt > purchased && gymCanAfford > 0 && !needGymystic()) {
-			safeBuyBuilding('Gym', gymCanAfford);
-		}
+	//Saves wood for Speed upgrades
+	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
+	const saveWood = upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
+	if (saveWood && !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) return;
+
+	const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
+	const purchased = game.buildings.Gym.purchased;
+	const max = gymAmt - purchased;
+	const gymPct = buildingSettings.Gym.percent / 100;
+
+	const gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct);
+	if (gymAmt > purchased && gymCanAfford > 0 && !needGymystic()) {
+		safeBuyBuilding('Gym', gymCanAfford);
 	}
 }
 
@@ -491,12 +505,16 @@ function _getAffordableMets() {
 
 function _buyHousing(buildingSettings) {
 	let houseName = mostEfficientHousing();
-	// If nothing is optimal the function will return null so we break out of the loop.
-	if (houseName === null) return false;
-	// Skips if the building is already in the purchase queue.
-	if (isBuildingInQueue(houseName)) return false;
-	// Skips if we can't afford the building.
-	if (!canAffordBuilding(houseName)) return false;
+	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName)) return false;
+
+	//Saves resources for upgrades
+	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
+		const skipHouse = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort'].includes(houseName);
+		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
+
+		//Do not save Gems or Fragments TODO Don't save ie metal from Huts
+		if (skipHouse && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up], 2 / 4, 2 / 4, 1 / 4, 3 / 4))) return;
+	}
 
 	// Identify the amount of this type of housing we can afford and stay within our housing cap.
 	const housingAmt = buildingSettings[houseName].buyMax === 0 ? Infinity : buildingSettings[houseName].buyMax;
