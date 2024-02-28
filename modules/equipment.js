@@ -151,7 +151,11 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
 
 		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
-		if (prestigesAvailable && forcePrestige && !maybeBuyPrestige.prestigeAvailable) continue;
+
+		if (forcePrestige) {
+			if (equipName === 'Shield') prestigesAvailable = maybeBuyPrestige.prestigeAvailable;
+			if (prestigesAvailable && !maybeBuyPrestige.prestigeAvailable) continue;
+		}
 
 		const equipCap = maybeBuyPrestige.prestigeAvailable ? Math.min(mostEfficient[equipType].equipCap, 9) : mostEfficient[equipType].equipCap;
 		const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;

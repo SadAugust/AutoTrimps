@@ -72,10 +72,9 @@ function _isTrappingOK(Battle, Coordination) {
 	return true;
 }
 
-function _isTrappingRelevant(trapperTrapUntilFull) {
+function _isTrappingRelevant() {
 	// Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
-	const trappingIsRelevant = _breedingPS() / 10 < _calcTPS() * getPerkLevel('Bait') + 1;
-	return trapperTrapUntilFull || trappingIsRelevant;
+	return _breedingPS() / 10 < _calcTPS() * getPerkLevel('Bait') + 1;
 }
 
 function _getCoordinationUpgrade(Coordination, researchAvailable, hasTurkimp) {
@@ -203,7 +202,8 @@ function autoGather() {
 	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 	const building = game.global.buildingsQueue[0];
 
-	const trappingIsRelevant = trapTrimpsOK && _isTrappingRelevant(trapperTrapUntilFull);
+	const trappingIsRelevant = trapTrimpsOK && (trapperTrapUntilFull || _isTrappingRelevant());
+
 	const trapWontBeWasted = trapperTrapUntilFull || !_willTrapsBeWasted();
 
 	if (game.global.buildingsQueue.length && building === 'Antenna.1') {

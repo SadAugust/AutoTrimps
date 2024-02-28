@@ -7,6 +7,7 @@ function allocateSurky(perks) {
 	if (portalUniverse !== 2) return;
 	//Can't respec perks when running Hypothermia so don't try as it causes errors
 	if (challengeActive('Hypothermia')) return;
+
 	const perk = {};
 	for (var [key, value] of Object.entries(perks)) {
 		if (typeof value !== 'object' || !value.hasOwnProperty('optimize')) continue;
@@ -107,296 +108,86 @@ function fillPresetSurky(specificPreset) {
 function initPerks() {
 	const props = {
 		radonSpent: 0,
-		// radon spent on perks so far
 		radonPerRun: 0,
-		// radon per farming run (needed to value trinket gains)
 		radonPerTrinket: 0,
-		// the Rn-equivalent value of a marginal trinket
 		trinketRadonPerRun: 0,
-		// baseline total radon value of expected trinkets gained per run at current perks
 		baselineTrinketsNext: 0,
 		collectHubs: !autoBattle.oneTimers.Collectology.owned ? 1 : autoBattle.oneTimers.Collectology.getHubs(),
-		// end of next run expected trinket count at current Observation
-		//shieldCC: 0, // TONOTDO: strictly, this matters. sort of. if it's <100% it affects the value of criticality. also in Duel. but we can ignore this for a start.
-		shieldCD: 0,
-		shieldPrismal: 0,
-		healthDerate: 1,
-		// inequality makes raw health boosts less useful, so we derate health weight by this factor (based on inequality from equipped shield)
-		tributes: 0,
-		imperzone: 0,
-		housingCount: 0,
-		meteorologists: 0,
 		tenacityTime: 10,
-		// minutes of tenacity to optimize for (hardcoded to 10mins - this is not relevant for long and the input box added clutter and resulted in a lot of questions)
-		coordLimited: 0,
-		// 0-1 value of "how coord limited" we are
 		trapHrs: 5,
-		// hours of trapping
 		shinyTable: [0],
-		// memoization table for trinket drops
 		clearWeight: Number($$('#clearWeight').value),
 		survivalWeight: Number($$('#survivalWeight').value),
 		radonWeight: Number($$('#radonWeight').value),
-
-		scruffyLevel: 0,
-		weaponLevels: 1,
-		armorLevels: 1,
 		coefC: 0,
-		// tauntimp correction parameter
 		termR: 0,
-		// tauntimp correction parameter
-		gbAfterpush: false,
-		// is GB used in the afterpush?
-		glassRadon: false,
-		// ...and does it get us more radon for more pushing power? (i.e. can we increase our VM zone within the current challenge)
 		specialChallenge: null,
-		// does the dropdown specify a special challenge?
 		runningTrappa: challengeActive('Trappapalooza'),
 		trappaStartPop: 1,
 		scaffMult: autoBattle.bonuses.Scaffolding.getMult(),
 		hubsEnabled: game.global.exterminateDone,
-		// avoid NaNs before calculating perks
 		potency: 0.0085,
-		// breed speed base
 		carpNeeded: 0,
-		// carp levels needed to afford all coords at target zone (based on current save)
 		bestPerk: ''
 	};
 
 	const preset = $$('#preset').value;
+	const definePerk = (effect) => ({ optimize: true, level: 0, ...(effect !== undefined && { effect }) });
 
 	const perks = {
-		Agility: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 4,
-			priceFact: 1.3,
-			max: 20
-		},
-		Artisanistry: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 15,
-			priceFact: 1.3,
-			effect: 1 / 0.95,
-			efficiency: 0
-		},
-		Bait: {
-			optimize: preset === 'trappa',
-			locked: true,
-			level: 0,
-			priceBase: 4,
-			priceFact: 1.3
-		},
-		Carpentry: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 25,
-			priceFact: 1.3,
-			effect: 1.1,
-			efficiency: 0
-		},
-		Criticality: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 100,
-			priceFact: 1.3,
-			effect: 0.1,
-			efficiency: 0
-		},
-		Equality: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 1,
-			priceFact: 1.5,
-			effect: 1 / 0.9,
-			efficiency: 0
-		},
-		Championism: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 1e9,
-			priceFact: 5,
-			effect: 0,
-			// defined on save-load based on SA progress
-			efficiency: 0
-		},
-		Frenzy: {
-			optimize: preset !== 'berserk',
-			locked: true,
-			level: 0,
-			priceBase: 1000000000000000,
-			priceFact: 1.3,
-			effect: 0.5,
-			procEffect: 0.001,
-			timeEffect: 5,
-			efficiency: 0
-		},
-		Greed: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 10000000000,
-			priceFact: 1.3,
-			effect: 0,
-			// based on tributes
-			max: 40,
-			efficiency: 0
-		},
-		Hunger: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 1000000,
-			priceFact: 1.3,
-			max: 30
-		},
-		Looting: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 1,
-			priceFact: 1.3,
-			effect: 0.05,
-			efficiency: 0
-		},
-		Motivation: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 2,
-			priceFact: 1.3,
-			effect: 0.05,
-			efficiency: 0
-		},
-		Observation: {
-			optimize: true,
-			locked: true,
-			canDisable: true,
-			level: 0,
-			priceBase: 5e18,
-			priceFact: 2,
-			max: 50,
-			efficiency: 0,
-			efficiency2: 0
-			// we check for buying 2 obs levels as this may be super-extra-efficient for the extra guaranteed Rt drops
-		},
-		Packrat: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 3,
-			priceFact: 1.3,
-			effect: 0.2,
-			efficiency: 0
-		},
-		Pheromones: {
-			optimize: preset !== 'trappa' && game.stats.highestRadLevel.valueTotal() >= 60,
-			locked: true,
-			level: 0,
-			priceBase: 3,
-			priceFact: 1.3,
-			effect: 0.1,
-			efficiency: 0
-		},
-		Power: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 1,
-			priceFact: 1.3,
-			effect: 0.05,
-			efficiency: 0
-		},
-		Prismal: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 1,
-			priceFact: 1.3,
-			effect: 0.01,
-			max: 100,
-			efficiency: 0
-		},
-		Range: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 1,
-			priceFact: 1.3,
-			max: 10
-		},
-		Resilience: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 100,
-			priceFact: 1.3,
-			effect: 1.1,
-			efficiency: 0
-		},
-		Masterfulness: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 100e21,
-			priceFact: 50,
-			max: 10,
-			effect: 1,
-			efficiency: 0
-		},
-		Tenacity: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 50000000,
-			priceFact: 1.3,
-			effect: 0,
-			// based on tenacityTime
-			max: 40,
-			efficiency: 0
-		},
-		Toughness: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 1,
-			priceFact: 1.3,
-			effect: 0.05,
-			efficiency: 0
-		},
-		Trumps: {
-			optimize: preset === 'downsize',
-			locked: true,
-			level: 0,
-			priceBase: 3,
-			priceFact: 1.3
-		},
-		Smithology: {
-			optimize: preset !== 'smithless',
-			locked: true,
-			level: 0,
-			priceBase: 100e21,
-			priceFact: 4,
-			effect: 1,
-			efficiency: 0
-		},
-		Expansion: {
-			optimize: true,
-			locked: true,
-			level: 0,
-			priceBase: 100e21,
-			priceFact: 3,
-			effect: 1,
-			efficiency: 0
-		}
+		Agility: definePerk(),
+		Artisanistry: definePerk(1 / 0.95),
+		Bait: definePerk(),
+		Carpentry: definePerk(1.1),
+		Championism: definePerk(0),
+		Criticality: definePerk(0.1),
+		Equality: definePerk(1 / 0.9),
+		Expansion: definePerk(1),
+		Frenzy: definePerk(0.5),
+		Greed: definePerk(0),
+		Hunger: definePerk(),
+		Looting: definePerk(0.05),
+		Masterfulness: definePerk(1),
+		Motivation: definePerk(0.05),
+		Observation: definePerk(),
+		Packrat: definePerk(0.2),
+		Pheromones: definePerk(0.1),
+		Power: definePerk(0.05),
+		Prismal: definePerk(0.01),
+		Range: definePerk(),
+		Resilience: definePerk(1.1),
+		Smithology: definePerk(1),
+		Tenacity: definePerk(0),
+		Toughness: definePerk(0.05),
+		Trumps: definePerk()
 	};
+
+	const efficiencyPerks = ['Artisanistry', 'Carpentry', 'Criticality', 'Equality', 'Frenzy', 'Greed', 'Hunger', 'Looting', 'Motivation', 'Observation', 'Packrat', 'Pheromones', 'Power', 'Prismal', 'Resilience', 'Smithology', 'Toughness', 'Trumps'];
+
+	Object.keys(perks).forEach((perkName) => {
+		const perkData = game.portal[perkName];
+		if (perkData) {
+			const perk = perks[perkName];
+			perk.locked = perkData.radLocked;
+			perk.priceBase = perkData.priceBase;
+			perk.priceFact = perkData.specialGrowth ? perkData.specialGrowth : 1.3;
+			if (perkData.max) perk.max = perkData.max;
+			if (efficiencyPerks.includes(perkName)) perk.efficiency = 0;
+
+			if (perkName === 'Observation') perk.efficiency2 = 0;
+			if (perkName === 'Frenzy') {
+				perk.procEffect = 0.001;
+				perk.timeEffect = 5;
+			}
+		}
+	});
+
+	if (preset === 'berserk') perks.Frenzy.optimize = false;
+	if (preset === 'smithless') perks.Smithology.optimize = false;
+	if (preset === 'trappa') perks.Pheromones.optimize = false;
+	perks.Bait.optimize = preset === 'trappa';
+	perks.Pheromones.optimize = preset !== 'trappa' && game.stats.highestRadLevel.valueTotal() >= 60;
+	perks.Trumps.optimize = preset === 'downsize';
 
 	if (props.runningTrappa && (preset === 'combat' || preset === 'combatRadon')) {
 		perks.Bait.optimize = false;
@@ -415,10 +206,9 @@ function surkyResetPerkLevels(perks, skipLevel = false) {
 		if (typeof value !== 'object' || !value.hasOwnProperty('optimize')) continue;
 		// iterating over the perks, ignoring aux values
 		if (portal.hasOwnProperty(key)) {
-			var portalPerk = portal[key];
-			var calcPerk = perks[key];
+			const portalPerk = portal[key];
+			const calcPerk = perks[key];
 			if (!skipLevel) calcPerk.level = portalPerk.radLevel + (portalPerk.levelTemp ? portalPerk.levelTemp : 0);
-			calcPerk.locked = portalPerk.radLocked;
 		} else {
 			perks[key].level = 0;
 		}
@@ -427,18 +217,14 @@ function surkyResetPerkLevels(perks, skipLevel = false) {
 }
 
 function initialLoad(skipLevels = false) {
+	const universe = game.global.universe;
+	const surkyInputs = JSON.parse(localStorage.getItem('surkyInputs'));
 	let [props, perks] = initPerks();
 	perks = surkyResetPerkLevels(perks, skipLevels);
-	const universe = game.global.universe;
-
-	var preset = $$('#preset').value;
-	props.specialChallenge = preset;
-
-	// "red" fields should only be overwritten if loading a U2 save (values will be garbage in U1) -- Surky is gonna break if portal Universe isn't set to 2 here!
-	var surkyInputs = JSON.parse(localStorage.getItem('surkyInputs'));
+	props.specialChallenge = $$('#preset').value;
 
 	// target zone to CLEAR is 1 zone before the portal zone by default
-	var currentZone = Math.max(1, universe === 2 ? game.global.world : surkyInputs.targetZone);
+	const currentZone = Math.max(1, universe === 2 ? game.global.world : surkyInputs.targetZone);
 	$$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
 	props.targetZone = Number($$('#targetZone').value);
 
@@ -449,36 +235,33 @@ function initialLoad(skipLevels = false) {
 	$$('#armorLevels').value = surkyInputs.armorLevels;
 	props.armorLevels = Number($$('#armorLevels').value);
 
-	// get current purchased tributes, mets, etc
-	var tributeCount = universe === 2 ? game.buildings.Tribute.owned : 0;
+	const tributeCount = universe === 2 ? game.buildings.Tribute.owned : 0;
 	$$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
 	props.tributes = Number($$('#tributes').value);
 
-	var metCount = universe === 2 ? game.jobs.Meteorologist.owned : 0;
+	const metCount = universe === 2 ? game.jobs.Meteorologist.owned : 0;
 	$$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
 	props.meteorologists = Number($$('#meteorologists').value);
 
-	var smithyCount = universe === 2 ? game.buildings.Smithy.owned : 0;
+	const smithyCount = universe === 2 ? game.buildings.Smithy.owned : 0;
 	$$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
 	props.smithyCount = Number($$('#smithyCount').value);
 
-	var rnPerRun = game.resources.radon.owned || 0;
+	const rnPerRun = game.resources.radon.owned || 0;
 	props.radonPerRun = Math.max(rnPerRun, Number(surkyInputs.radonPerRun));
 	$$('#radonPerRun').value = props.radonPerRun;
 
-	// get count of best housing building (don't bother optimizing lower than gateways, the 2nd-order adjustments won't matter enough to bother)
-	var housingCount = universe === 2 ? game.buildings.Collector.owned : 0;
+	const housingCount = universe === 2 ? game.buildings.Collector.owned : 0;
 	$$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount);
 	props.housingCount = Number($$('#housingCount').value);
 
-	//Figure out hours trapped for Trappapalooza. Default is 5!
 	$$('#trapHrs').value = surkyInputs.trapHrs;
 	props.trapHrs = Number($$('#trapHrs').value);
 
 	$$('#findPots').value = Math.max(alchObj.potionsOwned[2], surkyInputs.findPots);
 
 	props.vmZone = Math.max(15, props.targetZone - 1);
-	var rawRnRun = game.resources.radon.owned;
+	let rawRnRun = game.resources.radon.owned;
 	props.radonPerRun = Number($$('#radonPerRun').value);
 
 	// if Rn/run is locked, believe it, and force the old history (lets the user manually correct an error)
@@ -487,35 +270,16 @@ function initialLoad(skipLevels = false) {
 		// Quick and dirty hack: estimate about 60% Rn from VMs for VS1.
 		// exponentially weighted moving average parameters for Rn/run
 		const rnTerms = 10;
-		let rnMAWeights = new Array(rnTerms);
-		rnMAWeights[0] = 0.3;
-		let rnMAWeightsum = 0.3;
-		for (var i = 1; i < 10; i++) {
-			rnMAWeights[i] = rnMAWeights[i - 1] * 0.7;
-			rnMAWeightsum += rnMAWeights[i];
-		}
-		// correct weights to sum to 1 with limited # of terms
-		for (var i = 0; i < 10; i++) {
-			rnMAWeights[i] /= rnMAWeightsum;
-		}
-		var history = new Array(rnTerms);
-		// maintain a history of the last 10 farming runs' Rn gain, and evaluate an exponentially weighted moving average over this history
-		if (window.localStorage.getItem('rPrHistory')) {
-			history = JSON.parse(window.localStorage.getItem('rPrHistory'));
-		}
-		for (var i = rnTerms - 1; i >= 0; i--) {
-			// any uninitialised value just gets the current Rn/run (should only happen once per user's localStorage)
-			if (!(history[i] > 0)) history[i] = rawRnRun;
-		}
-		for (var i = rnTerms - 1; i > 0; i--) {
-			history[i] = history[i - 1];
-			// shift all history entries one run older
-		}
-		history[0] = rawRnRun;
-		var ewma = 0;
-		for (var i = 0; i < rnTerms; i++) {
-			ewma += history[i] * rnMAWeights[i];
-		}
+		const rnMAWeights = Array.from({ length: rnTerms }, (_, i) => 0.3 * 0.7 ** i);
+		const rnMAWeightsum = rnMAWeights.reduce((a, b) => a + b, 0);
+		rnMAWeights.forEach((_, index) => (rnMAWeights[index] /= rnMAWeightsum));
+
+		let history = JSON.parse(window.localStorage.getItem('rPrHistory')) || Array(rnTerms).fill(rawRnRun);
+		history.unshift(rawRnRun);
+		history.pop();
+		history = history.map((value) => (value > 0 ? value : rawRnRun));
+
+		const ewma = history.reduce((sum, value, index) => sum + value * rnMAWeights[index], 0);
 		window.localStorage.setItem('rPrHistory', JSON.stringify(history));
 		$$('#radonPerRun').value = ewma;
 		props.radonPerRun = $$('#radonPerRun').value;
@@ -533,47 +297,36 @@ function initialLoad(skipLevels = false) {
 	props.scruffyLevel = Math.floor(Math.log((game.global.fluffyExp2 / 1000) * 3 + 1) / Math.log(4));
 
 	let shield = null;
-	if (game.global.universe === 2 && Object.keys(game.global.ShieldEquipped).length !== 0) shield = game.global.ShieldEquipped;
-	else if (game.global.lastHeirlooms.u2 && game.global.lastHeirlooms.u2.Shield) {
-		if (game.global.lastHeirlooms.u2.Shield === game.global.ShieldEquipped.id) {
+	if (game.global.universe === 2 && Object.keys(game.global.ShieldEquipped).length !== 0) {
+		shield = game.global.ShieldEquipped;
+	} else {
+		const u2Shield = game.global.lastHeirlooms.u2.Shield;
+		if (game.global.ShieldEquipped.id === u2Shield) {
 			shield = game.global.ShieldEquipped;
 		} else {
 			shield = game.global.heirloomsCarried.find(function (s) {
-				return s.id === game.global.lastHeirlooms.u2.Shield;
+				return s.id === u2Shield;
 			});
 		}
 	}
-	if (shield && Object.keys(shield).length !== 1) {
-		var critDamageMod = shield.mods.find(function (el) {
-			return el[0] === 'critDamage';
-		});
-		var prismalMod = shield.mods.find(function (el) {
-			return el[0] === 'prismatic';
-		});
-		var ineqMod = shield.mods.find(function (el) {
-			return el[0] === 'inequality';
-		});
 
-		if (critDamageMod) {
-			props.shieldCD = Math.round(critDamageMod[1] / 10);
-		} else {
-			props.shieldCD = 0;
+	if (shield && Object.keys(shield).length !== 1) {
+		function findMod(modName) {
+			return shield.mods.find((el) => el[0] === modName);
 		}
-		if (prismalMod) {
-			props.shieldPrismal = Math.round(prismalMod[1]);
-		} else {
-			props.shieldPrismal = 0;
-		}
-		if (ineqMod) {
-			props.healthDerate = Math.log(0.9 + ineqMod[1] / 10000) / Math.log(0.9);
-		} else {
-			props.healthDerate = 1;
-		}
+
+		const critDamageMod = findMod('critDamage');
+		props.shieldCD = critDamageMod ? Math.round(critDamageMod[1] / 10) : 0;
+
+		const prismalMod = findMod('prismatic');
+		props.shieldPrismal = prismalMod ? Math.round(prismalMod[1]) : 0;
+
+		const ineqMod = findMod('inequality');
+		props.healthDerate = ineqMod ? Math.log(0.9 + ineqMod[1] / 10000) / Math.log(0.9) : 1;
 	}
 
 	// Suprism gives 3% prismal shield per SA level
-	var haveSuprism = autoBattle.oneTimers.Suprism.owned;
-	if (haveSuprism) props.shieldPrismal += 3 * (autoBattle.maxEnemyLevel - 1);
+	if (autoBattle.oneTimers.Suprism.owned) props.shieldPrismal += 3 * (autoBattle.maxEnemyLevel - 1);
 
 	// reset the memoization results for the shinyTable, in case the target zone changed
 	props.shinyTable = [0];
@@ -582,30 +335,27 @@ function initialLoad(skipLevels = false) {
 	// Accuracy doesn't matter prior to Obs, but 0 will give no value to radon gains so >0 is needed.
 	props.radonPerRun = Math.max(1, props.radonPerRun);
 
-	var logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
-	var logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
+	let logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
+	let logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
 	// final enemy HP/ATK scaling including the sqrt(zone) component:
 	//   (note we don't divide by 2, because we're adding the two log sqrt components together)
 	props.logEnemyScaling = logEnemyHealthScaling + logEnemyAttackScaling + Math.log(1 + 1 / props.targetZone);
 	if (props.targetZone >= 300) props.logEnemyScaling += 2 * Math.log(1.15);
 
 	// calculate equipment resource scaling for atk/hp based on weaponl/armor levels
-	var wLevScaling = Math.pow((props.weaponLevels + 1) / props.weaponLevels, 1 / Math.log(1.2));
-	props.equipScaling = {};
-	props.equipScaling.attack = Math.min(wLevScaling, Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, 57 * 0.85))));
-	var aLevScaling = Math.pow((props.armorLevels + 1) / props.armorLevels, 1 / Math.log(1.2));
-	props.equipScaling.health = Math.min(aLevScaling, Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, 57 * 0.85))));
+	const wLevScaling = Math.pow((props.weaponLevels + 1) / props.weaponLevels, 1 / Math.log(1.2));
+	const aLevScaling = Math.pow((props.armorLevels + 1) / props.armorLevels, 1 / Math.log(1.2));
+	props.equipScaling = {
+		attack: Math.min(wLevScaling, Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, 57 * 0.85)))),
+		health: Math.min(aLevScaling, Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, 57 * 0.85))))
+	};
 
 	// use tenacity time to calculate tenacity effect
 	//   -> for any radon weight we presume we don't have high tenacity time (and radon will dominate for MF regardless)
 	//   -> for no radon weight we presume we're pushing and care about tenacity more
 	if (props.radonWeight > 0) {
-		if (props.vmZone > 200) {
-			props.tenacityTime = 40;
-			// might matter a tiny bit for masterfulness in the post-Hypo meta :shrug:
-		} else {
-			props.tenacityTime = 10;
-		}
+		if (props.vmZone > 200) props.tenacityTime = 40;
+		else props.tenacityTime = 10;
 	} else {
 		props.tenacityTime = 120;
 	}
@@ -623,33 +373,25 @@ function initialLoad(skipLevels = false) {
 
 	perks.Tenacity.effect = getTenacityEffect(props.tenacityTime);
 
-	// triple-checking that coordlimited is not less than 0
 	props.coordLimited = Number($$('#coordLimited').value);
 	if (props.coordLimited < 0) props.coordLimited = 0;
-	// let the user set coordLimited > 1 if they like to give extra population weight, despite saying they can't ;p
-	//if (props.coordLimited > 1) props.coordLimited = 1;
 
 	// approximate number of imp-orts of a given type per zone
-	// FIXME someday: this isn't actually how randimps work.
 	props.imperzone = (props.scruffyLevel >= 9 ? 3.5 : 3) + game.permaBoneBonuses.exotic.owned * 0.05 + 3.0 / 5;
 
 	// get potency mod from target zone (div by 10 to get per-tick potency which is what's actually used in-game)
 	props.potency = 0.00085 * Math.pow(1.1, Math.floor(props.targetZone / 5)) * Math.pow(1.003, props.targetZone * props.imperzone);
-
-	// is our VM zone in the range for Hypo? then Glass can help us get more radon
-	// TODO: expand this to any future radon challenges
-	props.glassRadon = game.global.glassDone && ((props.vmZone > 174 && props.vmZone < 200) || props.vmZone > 200);
-
-	props.specialChallenge = $$('#preset').value;
+	props.glassRadon = game.global.glassDone && props.vmZone > 175;
 
 	// to a good approximation for zones substantially past the last housing unlock, total population (scaled by best housing base pop) is:
 	//   <best housing count> * coefC - termR
 	// So we can use these values to estimate the actual marginal gain in tauntimp-adjusted population.
 
 	// calculate coefficients for tauntimp housing correction
-	var housingTypes = {
+	const housingTypes = {
 		collector: [50, 1.12]
 	};
+
 	if (props.hubsEnabled || props.specialChallenge === 'downsize') {
 		housingTypes.hut = [1, 1.24];
 		housingTypes.house = [1, 1.22];
@@ -658,16 +400,17 @@ function initialLoad(skipLevels = false) {
 		housingTypes.resort = [26, 1.16];
 		housingTypes.gateway = [31, 1.14];
 	}
-	var coefC = 0;
-	var termR = 0;
-	var typeCount = 0;
-	for (var [key, [startZone, scaling]] of Object.entries(housingTypes)) {
-		var tauntRate = Math.pow(1.003, props.imperzone);
-		var scaleZones = props.targetZone - startZone;
-		var houseRate = Math.log(1.25) / Math.log(scaling);
-		var taunTemp = Math.pow(tauntRate, scaleZones);
-		var tauntRm1 = tauntRate - 1;
-		var factor = key === 'collector' ? props.collectHubs : 1;
+
+	let coefC = 0;
+	let termR = 0;
+	let typeCount = 0;
+	const tauntRate = Math.pow(1.003, props.imperzone);
+	for (let [key, [startZone, scaling]] of Object.entries(housingTypes)) {
+		const scaleZones = props.targetZone - startZone;
+		const houseRate = Math.log(1.25) / Math.log(scaling);
+		const taunTemp = Math.pow(tauntRate, scaleZones);
+		const tauntRm1 = tauntRate - 1;
+		const factor = key === 'collector' ? props.collectHubs : 1;
 		coefC += (factor * (taunTemp - 1)) / tauntRm1;
 		termR += (factor * tauntRate * houseRate * (taunTemp * (scaleZones * tauntRm1 - 1) + 1)) / (tauntRm1 * tauntRm1);
 		typeCount++;
@@ -682,10 +425,8 @@ function initialLoad(skipLevels = false) {
 }
 
 function getTotalPerksCost(perks) {
-	var cost = 0;
-	for (var [perkName, perkObj] of Object.entries(perks)) {
-		if (typeof perkObj !== 'object' || !perkObj.hasOwnProperty('optimize')) continue;
-		// iterating over the perks, ignoring aux values
+	let cost = 0;
+	for (let [perkName, perkObj] of Object.entries(perks)) {
 		cost += getPerkCost(perkName, perkObj.level, true, perks);
 	}
 	return cost;
@@ -694,11 +435,11 @@ function getTotalPerksCost(perks) {
 function getPerkCost(whichPerk, numLevels, fromZero = false, perks) {
 	if (numLevels === 0) return 0;
 	const perk = perks[whichPerk];
-	var level = fromZero ? 0 : perk.level;
+	let level = fromZero ? 0 : perk.level;
 	// if the perk can't be leveled, return infinite cost to naturally avoid buying the perk
 	if (perk.locked || (perk.hasOwnProperty('max') && level + numLevels > perk.max)) return Infinity;
-	var cost = 0;
-	for (var i = 0; i < numLevels; i++) {
+	let cost = 0;
+	for (let i = 0; i < numLevels; i++) {
 		cost += Math.ceil(level / 2 + perk.priceBase * Math.pow(perk.priceFact, level));
 		level++;
 	}
@@ -708,16 +449,17 @@ function getPerkCost(whichPerk, numLevels, fromZero = false, perks) {
 //This needs to increment props+perks to the next level, and return the cost of doing so
 //That means we need to return this info to whatever calls it, and then that needs to update the props+perks
 function couldBuyPerk(whichPerk, actuallyBuy = false, numLevels = 1, props, perks) {
-	var perk = perks[whichPerk];
-	if (perk.hasOwnProperty('max') && perk.level + numLevels > perk.max) return [false, props, perks];
-	var cost = getPerkCost(whichPerk, numLevels, false, perks);
-	if (cost + props.radonSpent > props.perksRadon) return [false, props, perks];
-	if (actuallyBuy) {
+	const perk = perks[whichPerk];
+	const canBuy = !perk.hasOwnProperty('max') || perk.level + numLevels <= perk.max;
+	const cost = canBuy ? getPerkCost(whichPerk, numLevels, false, perks) : Infinity;
+	const affordable = cost + props.radonSpent <= props.perksRadon;
+
+	if (canBuy && affordable && actuallyBuy) {
 		props.radonSpent += cost;
 		perks[whichPerk].level += numLevels;
-		return [true, props, perks];
 	}
-	return [true, props, perks];
+
+	return [canBuy && affordable, props, perks];
 }
 
 function buyPerk(whichPerk, numLevels = 1, props, perks) {
@@ -726,28 +468,27 @@ function buyPerk(whichPerk, numLevels = 1, props, perks) {
 }
 
 function getGreedEffect(tribs) {
-	if (tribs > 1250) tribs = 1250;
-	tribs -= 600;
-	var mod = 1.025;
+	tribs = Math.min(tribs, 1250) - 600;
+
+	let mod = 1.025;
 	if (tribs > 0) {
 		mod += 0.00015 * tribs;
-		//+0.015% per tribute above 600
 		mod += Math.floor(tribs / 25) * 0.0035;
-		//+0.35% per 25 tributes above 600
 	}
+
 	return mod;
 }
 
 // get the first-order feedback from Greed of a given boost to resources via more tributes
 function getGreedResourceFeedback(resBoost, tribs, perks) {
 	if (tribs >= 1250) return [1, tribs];
-	var tribsGained = Math.log(resBoost) / Math.log(1.05);
+	let tribsGained = Math.log(resBoost) / Math.log(1.05);
 	if (tribs + tribsGained < 600) return [1, tribs];
 	if (tribs + tribsGained > 1250) tribsGained = 1250 - tribs;
 	if (tribs < 600) tribsGained = tribs + tribsGained - 600;
-	// don't go by specific breakpoints which we'd be foolish to tie to a specific resource gain, just smooth the every-25 bonus out evenly per tribute
-	var baseGreed = getGreedEffect(tribs);
-	var greedGain = (baseGreed + 0.00029 * tribsGained) / baseGreed;
+
+	const baseGreed = getGreedEffect(tribs);
+	const greedGain = (baseGreed + 0.00029 * tribsGained) / baseGreed;
 	return [Math.pow(greedGain, perks.Greed.level), tribs + tribsGained];
 }
 
@@ -768,26 +509,25 @@ function getTrinketValues(motivCost, powCost, toughCost, props, perks) {
 	// trinket gain from pushing power will be 0 when Obs level is 0, so go ahead and calculate
 	//   the value of trinket growth based on 1 Obs level to help evaluate the value of the first Obs
 	//   level itself.
-	var obsLevel = Math.max(1, 1 + perks.Observation.level);
+	const obsLevel = Math.max(1, 1 + perks.Observation.level);
 
 	// Get the expected Rt at the end of the next run with the current Obs level.
-	var shinies = 0;
-	var shinies = game.portal.Observation.trinkets + shinyCollect(perks.Observation.level + 1, props);
+	let shinies = game.portal.Observation.trinkets + shinyCollect(perks.Observation.level + 1, props);
 	if (game.portal.Observation.trinkets === 0) {
 		shinies += 10;
 		// first Obs level gives 10 trinkets
 	}
 	shinies = Math.min(shinies, obsLevel * 1000);
 
-	var cappedBaseTrinkets = Math.min(game.portal.Observation.trinkets, obsLevel * 1000);
+	const cappedBaseTrinkets = Math.min(game.portal.Observation.trinkets, obsLevel * 1000);
 
 	// marginal shine gain per run (for baseline perks)
-	var marginalShinePerRun = (100 + shinies * obsLevel) / (100 + cappedBaseTrinkets * obsLevel);
+	const marginalShinePerRun = (100 + shinies * obsLevel) / (100 + cappedBaseTrinkets * obsLevel);
 	// marginal shine gain of one additional trinket
-	var marginalShinePerTrinket = 1 + obsLevel / (100 + shinies * obsLevel);
+	const marginalShinePerTrinket = 1 + obsLevel / (100 + shinies * obsLevel);
 
-	var res = [];
-	for (var marginalShine of [marginalShinePerRun, marginalShinePerTrinket]) {
+	let res = [];
+	for (let marginalShine of [marginalShinePerRun, marginalShinePerTrinket]) {
 		// For each of Mot/Pow/Tough, presuming those levels are efficient, calculate the Rn cost of getting
 		//   the equivalent boost the marginal shine.
 		// Total cost of N levels for a compounding price factor of F and next level cost of C:
@@ -796,17 +536,17 @@ function getTrinketValues(motivCost, powCost, toughCost, props, perks) {
 		//   G = (100 + (L+N)*5)/(100 + L*5)
 		// So solving for N we get:
 		//   N = (G-1)*(20+L)
-		var motF = perks.Motivation.priceFact;
-		var motN = (marginalShine - 1) * (20 + perks.Motivation.level);
-		var motShineCost = (motivCost / (motF - 1)) * (Math.pow(motF, motN) - 1);
-		var powF = perks.Power.priceFact;
-		var powN = (marginalShine - 1) * (20 + perks.Power.level);
-		var powShineCost = (powCost / (powF - 1)) * (Math.pow(powF, powN) - 1);
-		var touF = perks.Toughness.priceFact;
-		var touN = (marginalShine - 1) * (20 + perks.Toughness.level);
-		var touShineCost = (toughCost / (touF - 1)) * (Math.pow(touF, touN) - 1);
+		const motF = perks.Motivation.priceFact;
+		const motN = (marginalShine - 1) * (20 + perks.Motivation.level);
+		const motShineCost = (motivCost / (motF - 1)) * (Math.pow(motF, motN) - 1);
+		const powF = perks.Power.priceFact;
+		const powN = (marginalShine - 1) * (20 + perks.Power.level);
+		const powShineCost = (powCost / (powF - 1)) * (Math.pow(powF, powN) - 1);
+		const touF = perks.Toughness.priceFact;
+		const touN = (marginalShine - 1) * (20 + perks.Toughness.level);
+		const touShineCost = (toughCost / (touF - 1)) * (Math.pow(touF, touN) - 1);
 		// sum up all the costs of the powerlevel perks
-		var totShineCost = motShineCost + powShineCost + touShineCost;
+		const totShineCost = motShineCost + powShineCost + touShineCost;
 		res.push(totShineCost);
 	}
 	res.push(shinies);
@@ -1096,23 +836,23 @@ function getLogWeightedValue(props, perks, Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp
 function obsDropRate(level, zone, props) {
 	if (zone < 101) return 0;
 	if (zone > 200) zone = 200;
-	var base = (1 + (level - 1) / 2) * Math.pow(1.03, zone - 100);
-	var res;
+	const base = (1 + (level - 1) / 2) * Math.pow(1.03, zone - 100);
+
 	if (props.specialChallenge === 'alchemy' && zone <= 156) {
-		res = 100 - (100 - base) * Math.pow(0.99, +$$('#findPots').value);
-	} else res = base;
-	return res;
+		return 100 - (100 - base) * Math.pow(0.99, +$$('#findPots').value);
+	}
+	return base;
 }
 
 // how many trinkets do we expect to get by clearing the target zone?
 function shinyCollectLoop(level, props) {
-	var shinies = 0;
+	let shinies = 0;
 	// the game checks for the drop after advancing the zone counter, so go to zone+1.
-	for (var i = 101; i <= props.zone + 1; i++) {
+	for (let i = 101; i <= props.zone + 1; i++) {
 		shinies += obsDropRate(level, i, props) / 100;
 		if (i % 25 === 0) {
 			// level-1 since the "level" includes the free +1 obs level, but even levels for guaranteed trinket drops do not include this free +1 level
-			var free = Math.floor((level - 1) / 2);
+			const free = Math.floor((level - 1) / 2);
 			if (free > 0) shinies += free;
 		}
 	}
@@ -1124,41 +864,42 @@ function shinyCollect(level, props) {
 	if (typeof props.shinyTable[level] === 'undefined') {
 		props.shinyTable[level] = shinyCollectLoop(level, props);
 	}
+
 	return props.shinyTable[level];
 }
 
 // Calculate avg atk with frenzy, accounting for uptime.
 //   Optimizing for a given hit count (in practice maybe just 5 and 100, where 100 gives a pretty good approximation of deathless)
 function getFrenzyAvgAtk(level, frenzyHits, perks) {
-	var frenzyDeathTime = 0.4 + 0.258 * frenzyHits;
+	const frenzyDeathTime = 0.4 + 0.258 * frenzyHits;
 	// get off N hits then die, optimizing for Hyperspeed 1
-	var frenzyHitTime = frenzyDeathTime / frenzyHits;
+	const frenzyHitTime = frenzyDeathTime / frenzyHits;
 	// get off N hits then die
-	var frenzyProcChance = perks.Frenzy.procEffect * level;
+	const frenzyProcChance = perks.Frenzy.procEffect * level;
 	// wait time in seconds
-	var frenzyProcWaitTime = frenzyHitTime / frenzyProcChance;
+	const frenzyProcWaitTime = frenzyHitTime / frenzyProcChance;
 	// frenzy uptime for each proc
-	var frenzyUptimePerProc = (frenzyDeathTime * Math.log((perks.Frenzy.timeEffect * level) / frenzyDeathTime + 1)) / Math.log(2);
+	const frenzyUptimePerProc = (frenzyDeathTime * Math.log((perks.Frenzy.timeEffect * level) / frenzyDeathTime + 1)) / Math.log(2);
 	// uptime fraction for weighting the attack bonus
-	var frenzyUptimeFrac = frenzyUptimePerProc / (frenzyProcWaitTime + frenzyUptimePerProc);
+	let frenzyUptimeFrac = frenzyUptimePerProc / (frenzyProcWaitTime + frenzyUptimePerProc);
 	// Mass Hysteria means frenzy is always up
 	if (autoBattle.oneTimers.Mass_Hysteria.owned) {
 		frenzyUptimeFrac = 1;
 	}
 	// average attack per hit accounting for uptime fraction
-	var frenzyAvgAtk = 1 + frenzyUptimeFrac * perks.Frenzy.effect * level;
+	const frenzyAvgAtk = 1 + frenzyUptimeFrac * perks.Frenzy.effect * level;
 	return frenzyAvgAtk;
 }
 
 // flag the most efficient perk
 function efficiencyFlag(props, perks) {
-	var eList = [];
-	var pList = [];
-	var bestEff = 0;
-	var bestAffordableEff = 0;
+	const eList = [];
+	const pList = [];
+	let bestEff = 0;
+	let bestAffordableEff = 0;
 	props.bestPerk = '';
 	// don't flag a perk if we don't find an affordable one!
-	for (var [perkName, perkObj] of Object.entries(perks)) {
+	for (let [perkName, perkObj] of Object.entries(perks)) {
 		if (typeof perkObj !== 'object' || !perkObj.hasOwnProperty('optimize') || !perkObj.optimize) {
 			continue;
 		}
@@ -1300,7 +1041,7 @@ function getPerkEfficiencies(props, perks) {
 	if (props.specialChallenge !== 'berserk') {
 		var frenzyHits = 300;
 		var isDeathless = props.specialChallenge === 'resplus' || props.specialChallenge === 'resminus' || props.specialChallenge === 'trappa' || (props.specialChallenge === 'combat' && props.runningTrappa);
-		if ((!isDeathless && props.clearWeight > 0) || props.gbAfterpush) {
+		if (!isDeathless && props.clearWeight > 0) {
 			frenzyHits = 5;
 		}
 		var frenzyAvgAtk = getFrenzyAvgAtk(perks.Frenzy.level, frenzyHits, perks);
@@ -1416,8 +1157,8 @@ function getPerkEfficiencies(props, perks) {
 
 // zero out perk inputs and autobuy
 function clearAndAutobuyPerks() {
-	var [props, perks] = initialLoad();
-	var continueBuying = true;
+	let [props, perks] = initialLoad();
+	let continueBuying = true;
 	//Run this if we don't have a respec available as we won't be able to clear perks
 	if (!game.global.canRespecPerks) {
 		autobuyPerks(props, perks);
@@ -1425,9 +1166,9 @@ function clearAndAutobuyPerks() {
 	}
 
 	if (props.perksRadon > 0) {
-		var origCarp = game.portal.Carpentry.radLevel;
-		var origExpand = game.portal.Expansion.radLevel;
-		var carpWanted = 0;
+		const origCarp = game.portal.Carpentry.radLevel;
+		const origExpand = game.portal.Expansion.radLevel;
+		let carpWanted = 0;
 
 		if (challengeActive('Downsize') && props.specialChallenge === 'combat') {
 			//Impractical to know actual housing in downsize, just don't reduce Carp or Expansion level
@@ -1436,9 +1177,9 @@ function clearAndAutobuyPerks() {
 		} else if (props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon') {
 			game.unlocks.impCount.Tauntimp = game.unlocks.impCount.Tauntimp;
 			//Must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible radon spent on carp)
-			var wantedArmySize = (props.runningTrappa ? Math.pow(1.25, 10) : 1) * game.resources.trimps.maxSoldiers;
-			var tauntBase = 1.003 + 0.0001 * origExpand;
-			var tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
+			const wantedArmySize = (props.runningTrappa ? Math.pow(1.25, 10) : 1) * game.resources.trimps.maxSoldiers;
+			const tauntBase = 1.003 + 0.0001 * origExpand;
+			const tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
 			carpWanted = Math.max(0, Math.ceil(Math.log((2.4 * wantedArmySize) / (tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult))) / Math.log(1.1)));
 		}
 		//Setting this here since initial load clears variables and perk levels which is important for carp calculations
@@ -1463,12 +1204,13 @@ function autobuyPerks(props, perks) {
 	props = efficiencyFlag(props, perks);
 	props.radonSpent = getTotalPerksCost(perks);
 	[props, perks] = getPerkEfficiencies(props, perks);
-	var continueBuying = true;
+
+	let continueBuying = true;
 	// optimize Bait for Trappa
 	perks.Bait.optimize = props.specialChallenge === 'trappa' || (props.specialChallenge === 'combat' && props.runningTrappa);
 	perks.Pheromones.optimize = game.stats.highestRadLevel.valueTotal() >= 60 && props.specialChallenge !== 'trappa' && !(props.specialChallenge === 'combat' && props.runningTrappa);
 	if (props.specialChallenge === 'trappa' || (props.specialChallenge === 'combat' && props.runningTrappa)) {
-		var maxCarpLevels = Math.log((props.perksRadon / perks.Carpentry.priceBase) * (perks.Carpentry.priceFact - 1) + 1) / Math.log(perks.Carpentry.priceFact);
+		const maxCarpLevels = Math.log((props.perksRadon / perks.Carpentry.priceBase) * (perks.Carpentry.priceFact - 1) + 1) / Math.log(perks.Carpentry.priceFact);
 		props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * props.scaffMult;
 	}
 	// optimize Trumps for Downsize
@@ -1476,9 +1218,9 @@ function autobuyPerks(props, perks) {
 	props = efficiencyFlag(props, perks);
 	while (props.bestPerk !== '') {
 		bestName = props.bestPerk;
-		var bestObj = perks[bestName];
-		var buy2 = bestObj.hasOwnProperty('efficiency2') && bestObj.efficiency2 > bestObj.efficiency;
-		var perkResult = buyPerk(bestName, buy2 ? 2 : 1, props, perks);
+		const bestObj = perks[bestName];
+		const buy2 = bestObj.hasOwnProperty('efficiency2') && bestObj.efficiency2 > bestObj.efficiency;
+		const perkResult = buyPerk(bestName, buy2 ? 2 : 1, props, perks);
 		props = perkResult[1];
 		perks = perkResult[2];
 		props.radonSpent = getTotalPerksCost(perks);

@@ -513,9 +513,40 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 	return avg * ((maxFluct + minFluct) / 2);
 }
 
+function getCritPower(enemy = getCurrentEnemy(), block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
+	const ignoreCrits = typeof atSettings !== 'undefined' ? getPageSetting('IgnoreCrits') : 0;
+	if (ignoreCrits === 2) return 0;
+
+	const outputs = {
+		regular: false,
+		challenge: false,
+		explosive: false,
+		mirrored: false
+	};
+
+	if (enemy.corrupted === 'corruptCrit') outputs.regular = true;
+	else if (enemy.corrupted === 'healthyCrit') outputs.regular = true;
+	else if (game.global.voidBuff === 'getCrit' && ignoreCrits !== 1) outputs.regular = true;
+
+	const daily = challengeActive('Daily');
+	const critDaily = daily && typeof game.global.dailyChallenge.crits !== 'undefined';
+
+	if (critDaily) outputs.challenge = true;
+	else if (challengeActive('Crushed') && health > block) outputs.challenge = true;
+
+	const dailyExplosive = daily && typeof game.global.dailyChallenge.explosive !== 'undefined';
+	if (dailyExplosive) outputs.explosive = true;
+
+	const dailyMirrored = daily && typeof game.global.dailyChallenge.mirrored !== 'undefined';
+	if (dailyMirrored) outputs.mirrored = true;
+
+	return outputs;
+}
+
 function badGuyCritMult(enemy = getCurrentEnemy(), critPower = 2, block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
-	const ignoreCrits = typeof atSettings !== 'undefined' && getPageSetting('IgnoreCrits');
-	if (critPower <= 0 || ignoreCrits === 2) return 1;
+	if (critPower <= 0) return 1;
+	const ignoreCrits = typeof atSettings !== 'undefined' ? getPageSetting('IgnoreCrits') : 0;
+	if (ignoreCrits === 2) return 1;
 
 	let regular = 1;
 	let challenge = 1;
