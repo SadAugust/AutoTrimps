@@ -1,3 +1,7 @@
+MODULES.buildings = {
+	betaHouseEfficiency: false
+}
+
 function safeBuyBuilding(building, amt) {
 	const queued = isBuildingInQueue(building);
 	const locked = game.buildings[building].locked;
@@ -25,7 +29,7 @@ function advancedNurseries() {
 
 function _housingToCheck() {
 	const housingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
-	return housingTypes.filter(_needHousing);
+	return housingTypes.filter(house => _needHousing(house, MODULES.buildings.betaHouseEfficiency));
 }
 
 function _needHousing(houseName, ignoreAffordability) {
