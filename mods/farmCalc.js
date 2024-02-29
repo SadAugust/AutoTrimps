@@ -381,6 +381,7 @@ function stats(lootFunction = lootDefault) {
 	let extra = saveData.reducer ? -1 : saveData.extraMapLevelsAvailable ? 10 : 0;
 	let mapsCanAffordPerfect = 0;
 	let coords = 1;
+
 	if (saveData.coordinate) {
 		for (let z = 1; z < saveData.zone + extra + 1; ++z) {
 			coords = Math.ceil(1.25 * coords);
@@ -794,12 +795,15 @@ function get_best(results, fragmentCheck, mapModifiers) {
 	stats.sort((a, b) => b.mapLevel - a.mapLevel);
 	//Check fragment cost of each map and remove them from the check if they can't be afforded.
 	if (fragmentCheck) {
-		if (!mapModifiers)
+		if (!mapModifiers) {
 			mapModifiers = {
 				special: getAvailableSpecials('lmc'),
 				biome: getBiome()
 			};
+		}
+
 		const fragSetting = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
+
 		for (let i = 0; i <= stats.length - 1; i++) {
 			if (fragSetting) {
 				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
@@ -815,8 +819,10 @@ function get_best(results, fragmentCheck, mapModifiers) {
 	}
 
 	if (stats.length === 0) return best;
+
 	let statsLoot = [...stats];
 	let statsSpeed = [...stats];
+
 	//Find the best speed/loot zone for each stance
 	for (let stance of stances) {
 		statsLoot.sort((a, b) => b[stance].value - a[stance].value);
@@ -927,7 +933,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 	document.head.appendChild(linkStylesheet);
 
 	function injectScript(id, src) {
-		let script = document.createElement('script');
+		const script = document.createElement('script');
 		script.id = id;
 		script.src = src;
 		script.setAttribute('crossorigin', 'anonymous');
@@ -940,13 +946,14 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 
 	function updateAdditionalInfo() {
 		if (!usingRealTimeOffline) {
-			let infoStatus = makeAdditionalInfo();
-			if (document.getElementById('additionalInfo').innerHTML !== infoStatus) document.getElementById('additionalInfo').innerHTML = infoStatus;
-			document.getElementById('additionalInfo').parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
+			const infoElem = document.getElementById('additionalInfo');
+			const infoStatus = makeAdditionalInfo();
+			if (infoElem.innerHTML !== infoStatus) infoElem.innerHTML = infoStatus;
+			infoElem.parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
 		}
 	}
 
 	setInterval(function () {
 		updateAdditionalInfo();
-	}, 5000);
+	}, 15000);
 }

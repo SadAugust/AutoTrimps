@@ -152,7 +152,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 
 			if (equipData.blockNow) {
 				const buildingSettings = getPageSetting('buildingSettingsArray');
-				if (!getPageSetting('buildingsType') || !buildingSettings.Gym || !buildingSettings.Gym.enabled) {
+				if (getPageSetting('buildingsType') && buildingSettings.Gym && buildingSettings.Gym.enabled) {
 					const data = shieldBlockUpgrades();
 					if (data.Gym < data.Shield) continue;
 				}
