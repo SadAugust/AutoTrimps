@@ -326,14 +326,6 @@ function _buyGyms(buildingSettings) {
 	const saveWood = upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 	if (saveWood && !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) return;
 
-	//ShieldBlock cost Effectiveness:
-	if (game.equipment['Shield'].blockNow) {
-		var gymEff = evaluateEquipmentEfficiency('Gym');
-		var shieldEff = evaluateEquipmentEfficiency('Shield');
-		if ((gymEff.wall) || (gymEff.factor <= shieldEff.factor && !gymEff.wall))
-			return;
-	}
-
 	const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
 	const purchased = game.buildings.Gym.purchased;
 	const max = gymAmt - purchased;

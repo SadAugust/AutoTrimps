@@ -441,33 +441,35 @@ function autoGather() {
 	//Efficiency has the highest priority amongst upgrades
 	if (!game.global.mapsActive && _gatherUpgrade('Efficiency', researchAvailable, hasTurkimp)) return;
 
-	//Medium Priority Trapping (soldiers are dead)
-	if (trappingIsRelevant && trapWontBeWasted && game.global.soldierHealth <= 0) {
+	//Medium Priority Trapping (soldiers are dead, not in a map)
+	if (trappingIsRelevant && trapWontBeWasted && game.global.soldierHealth <= 0 && !game.global.mapsActive) {
 		if (_handleTrapping('bait', 1)) return;
 	}
 
-	//Medium Priority Trap Building (if in a map)
-	if (trappingIsRelevant && game.global.mapsActive) {
-		if (_handleTrapping('build', 1)) return;
-	}
-
 	//Gathers resources for some important upgrades
-	let upgradesToGather = ['Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
+	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
 	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming']);
 	upgradesToGather = upgradesToGather.concat(['Coordination', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency', 'Gymystic']);
 
 	//Doesn't focus on Speedscience if manual research is still way too relevant
-	if (isPlayerRelevant('science', hasTurkimp, 2)) upgradesToGather = upgradesToGather.filter((up) => !['Speedscience', 'Megascience'].includes(up));
+	if (isPlayerRelevant('science', hasTurkimp, 2))
+		upgradesToGather = upgradesToGather.filter((up) => !['Speedscience', 'Megascience'].includes(up));
 
 	//Prioritizes upgrades that are pilling up
 	upgradesToGather = upgradesToGather
 		.map((up, idx) => ({ up, idx }))
-		.sort((a, b) => game.upgrades[b.up].allowed - game.upgrades[b.up].done - (game.upgrades[a.up].allowed - game.upgrades[a.up].done) || a.idx - b.idx)
+		.sort((a, b) =>
+			game.upgrades[b.up].allowed - game.upgrades[b.up].done - (game.upgrades[a.up].allowed - game.upgrades[a.up].done) || a.idx - b.idx)
 		.map(({ up }) => up);
 
 	//Upgrade accelerator (available only)
 	for (let upgrade of upgradesToGather.filter((up) => game.upgrades[up].allowed > game.upgrades[up].done)) {
 		if (_gatherUpgrade(upgrade, researchAvailable, hasTurkimp)) return;
+	}
+
+	//Medium Priority Trapping (soldiers are dead)
+	if (trappingIsRelevant && trapWontBeWasted && game.global.soldierHealth <= 0) {
+		if (_handleTrapping('bait', 1)) return;
 	}
 
 	//Medium Priority Trap Building
