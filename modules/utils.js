@@ -595,6 +595,30 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 	}
 }
 
+function getResourcefulMult() {
+	const resourcefulLevel = getPerkLevel('Resourceful');
+	return resourcefulLevel > 0 ? Math.pow(1 - getPerkModifier('Resourceful'), resourcefulLevel) : 1;
+}
+
+function shieldBlockUpgrades() {
+	const upgradeObj = {};
+
+	let itemData = game.buildings.Gym;
+	let increaseBy = itemData.increase.by;
+	let cost = itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.owned) * getResourcefulMult();
+
+	upgradeObj.Gym = cost / increaseBy;
+
+	itemData = game.equipment.Shield;
+	const prestige = buyPrestigeMaybe('Shield', undefined, Math.min(itemData.level, 9));
+	increaseBy = prestige.purchase ? prestige.newStatValue - itemData.blockCalculated * itemData.level : itemData.blockCalculated;
+	cost = prestige.purchase ? prestige.prestigeCost : itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.level) * getEquipPriceMult();
+
+	upgradeObj.Shield = cost / increaseBy;
+
+	return upgradeObj;
+}
+
 function ceilToNearestMultipleOf(number, multipleOf, offSet) {
 	var n = number - offSet;
 	var roundedUp = Math.ceil(n / multipleOf) * multipleOf
