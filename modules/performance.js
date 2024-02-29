@@ -1,12 +1,8 @@
 (function (M, W) {
 	M['performance'] = {};
-	M['performance'].isAFK = false; //start with AFK disabled
-
-	// Save updateLabels Trimps game functions, to restore it after we disable it.
-	M['performance'].updateLabels = W.updateLabels;
-
-	// Game Wrapper to insert DOM elements into
-	M['performance'].$wrapper = document.getElementById('wrapper');
+	M['performance'].isAFK = false; // Start with AFK disabled
+	M['performance'].updateLabels = W.updateLabels; // Save updateLabels Trimps game functions, to restore it after we disable it.
+	M['performance'].$wrapper = document.getElementById('wrapper'); // Game Wrapper to insert DOM elements into
 
 	// AFK OVERLAY CSS Style
 	document.head.appendChild(document.createElement('style')).innerHTML = `
@@ -141,7 +137,11 @@
 	};
 
 	M['performance'].UpdateAFKOverlay = function UpdateAFKOverlay() {
-		M['performance'].AFKOverlayZone.innerHTML = 'Zone: ' + game.global.world + ' Cell: ' + (game.global.lastClearedCell + 2) + (game.global.mapsActive ? '<br> Map: ' + (getCurrentMapObject().level - game.global.world >= 0 ? ' + ' : '') + (getCurrentMapObject().level - game.global.world) + ' ' + (getCurrentMapObject().bonus !== undefined ? getCurrentMapObject().bonus : '') : '');
+		const mapObj = game.global.mapsActive ? getCurrentMapObject() : null;
+		const zoneText = `Zone: ${game.global.world} Cell: ${game.global.lastClearedCell + 2}${game.global.mapsActive ? `<br> Map: ${mapObj.level - game.global.world >= 0 ? ' + ' : ''}${mapObj.level - game.global.world} ${mapObj.bonus !== undefined ? mapObj.bonus : ''}` : ''}`;
+
+		const overlayZone = M['performance'].AFKOverlayZone;
+		if (overlayZone.innerHTML !== zoneText) overlayZone.innerHTML = zoneText;
 
 		const universeResources = {
 			1: { resourceType: 'Helium', resourcePerHour: 'He/hr' },
@@ -150,8 +150,16 @@
 
 		const { resourceType, resourcePerHour } = universeResources[game.global.universe] || {};
 
-		M['performance'].AFKOverlayHelium.innerText = `${resourceType}: ${prettify(Math.floor(game.resources[resourceType.toLowerCase()].owned))}`;
-		M['performance'].AFKOverlayHeliumPerHour.innerText = `${resourcePerHour}: ${prettify(game.stats.heliumHour.value())}`;
-		M['performance'].AFKOverlayStatus.innerHTML = `Status: ${autoMapsStatus(true)[0]}`;
+		const overlayHelium = M['performance'].AFKOverlayHelium;
+		const heliumText = `${resourceType}: ${prettify(Math.floor(game.resources[resourceType.toLowerCase()].owned))}`;
+		if (overlayHelium.innerText !== heliumText) overlayHelium.innerText = heliumText;
+
+		const overlayHeliumPerHour = M['performance'].AFKOverlayHeliumPerHour;
+		const heliumPerHourText = `${resourcePerHour}: ${prettify(game.stats.heliumHour.value())}`;
+		if (overlayHeliumPerHour.innerText !== heliumPerHourText) overlayHeliumPerHour.innerText = heliumPerHourText;
+
+		const overlayStatus = M['performance'].AFKOverlayStatus;
+		const statusText = `Status: ${autoMapsStatus(true)[0]}`;
+		if (overlayStatus.innerText !== statusText) overlayStatus.innerText = statusText;
 	};
 })(MODULES, window);

@@ -62,12 +62,15 @@ function serializeSettings() {
 function dailyModifiersOutput() {
 	const daily = game.global.dailyChallenge;
 	if (Object.keys(daily).length === 0) return '';
+
 	const dailyMods = dailyModifiers;
 	let returnText = '';
+
 	for (let item in daily) {
 		if (item === 'seed') continue;
 		returnText += `${dailyMods[item].description(daily[item].strength)} <br>`;
 	}
+
 	return returnText;
 }
 
@@ -82,12 +85,12 @@ function getPageSetting(setting, universe = game.global.universe) {
 
 	const settingType = autoTrimpSettings[setting].type;
 	if (settingType === 'boolean') return autoTrimpSettings[setting][enabled];
-	else if (settingType === 'multiValue') return Array.from(autoTrimpSettings[setting][value]).map((x) => parseFloat(x));
-	else if (settingType === 'multiTextValue') return Array.from(autoTrimpSettings[setting][value]).map((x) => String(x));
-	else if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray') return autoTrimpSettings[setting][value];
-	else if (settingType === 'value' || settingType === 'valueNegative') return parseFloat(autoTrimpSettings[setting][value]);
-	else if (settingType === 'multitoggle') return parseInt(autoTrimpSettings[setting][value]);
-	else if (settingType === 'dropdown') return autoTrimpSettings[setting][selected];
+	if (settingType === 'multiValue') return Array.from(autoTrimpSettings[setting][value]).map((x) => parseFloat(x));
+	if (settingType === 'multiTextValue') return Array.from(autoTrimpSettings[setting][value]).map((x) => String(x));
+	if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray') return autoTrimpSettings[setting][value];
+	if (settingType === 'value' || settingType === 'valueNegative') return parseFloat(autoTrimpSettings[setting][value]);
+	if (settingType === 'multitoggle') return parseInt(autoTrimpSettings[setting][value]);
+	if (settingType === 'dropdown') return autoTrimpSettings[setting][selected];
 }
 
 //It sets the value of a setting, and then saves the settings.
@@ -201,6 +204,7 @@ function gameUserCheck(skipTest) {
 	const user = autoTrimpSettings.gameUser.value.trim().toLowerCase();
 	const allowedUsers = ['sadaugust', 'kyotie', 'charles'];
 	if (!skipTest) allowedUsers.push('test');
+
 	return allowedUsers.includes(user);
 }
 
@@ -248,6 +252,7 @@ function testSpeedX(interval) {
 		setTimeout(testSpeedX, interval, interval);
 		return;
 	}
+
 	const date = new Date();
 	const now = date.getTime();
 	let tick = 100;
@@ -272,6 +277,7 @@ function testSpeedX(interval) {
 function testChallenge() {
 	//read the name in from tooltip
 	const challengeName = document.getElementById('importBox').value.replace(/[\n\r]/gm, '');
+
 	try {
 		if (challengeName === null || game.challenges[challengeName] === undefined) {
 			debug(`Challenge name didn't match one ingame.`, 'test');
@@ -281,6 +287,7 @@ function testChallenge() {
 		debug(`Challenge name didn't match one ingame.`, 'test');
 		return;
 	}
+
 	debug(`Setting challenge to ${challengeName}`, 'test');
 	game.global.challengeActive = challengeName;
 }
@@ -405,6 +412,7 @@ function decayLootMult(mapCount) {
 
 function hypothermiaBonfireCost() {
 	if (!challengeActive('Hypothermia')) return 0;
+
 	let cost = game.challenges.Hypothermia.bonfirePrice();
 	if (cost > game.resources.wood.owned) return 0;
 
@@ -414,15 +422,19 @@ function hypothermiaBonfireCost() {
 		bonfiresOwned++;
 		cost += Math.pow(100, bonfiresOwned) * 1e10;
 	}
+
 	return cost;
 }
 
 function hypothermiaEndZone() {
 	if (!challengeActive('Hypothermia')) return Infinity;
+
 	const hypoDefaultSettings = getPageSetting('hypothermiaSettings')[0];
 	if (!hypoDefaultSettings) return Infinity;
+
 	const hypoEndZone = hypoDefaultSettings.frozencastle;
 	if (!hypoEndZone) return Infinity;
+
 	return parseInt(hypoEndZone[0]);
 }
 
@@ -435,6 +447,7 @@ function _priorityChallengeCheck(challenge) {
 function _getPriorityOrderDropdowns(universe, challenge) {
 	const dropdowns = {};
 	dropdowns.universe = '';
+
 	for (let i = 1; i <= 2; i++) {
 		dropdowns.universe += `<option value='${i}'${game.global.universe === i ? " selected='selected'" : ''}>${i}</option>`;
 	}
@@ -471,6 +484,7 @@ function getPriorityOrder() {
 		//Skip settings that have a challenge and the challenge isn't active
 		if (setting.challenge && !challengeActive(setting.challenge)) continue;
 		const settingData = getPageSetting(settingName);
+
 		for (let y = 1; y < settingData.length; y++) {
 			if (typeof settingData[y].runType !== 'undefined' && settingData[y].runType !== 'All') {
 				if (trimpStats.isDaily) {
@@ -493,10 +507,12 @@ function getPriorityOrder() {
 			order.push(settingData[y]);
 		}
 	}
+
 	order.sort(function (a, b) {
 		if (a.priority === b.priority) return a.index === b.index ? (a.world === b.world ? (a.cell > b.cell ? 1 : -1) : a.world > b.world ? 1 : -1) : a.index > b.index ? 1 : -1;
 		return a.priority > b.priority ? 1 : -1;
 	});
+
 	return order;
 }
 

@@ -93,6 +93,7 @@ function _createControlTab(icon, action, tooltipText, addtabsUL) {
 function _toggleTab(event, tabName) {
 	const target = event.currentTarget;
 	const tab = document.getElementById(tabName);
+
 	if (target.classList.contains('active')) {
 		tab.style.display = 'none';
 		target.classList.remove('active');
@@ -105,9 +106,11 @@ function _toggleTab(event, tabName) {
 function _minimizeAllTabs() {
 	const tabs = document.getElementsByClassName('tabcontent');
 	const links = document.getElementsByClassName('tablinks');
+
 	for (let tab of tabs) {
 		tab.style.display = 'none';
 	}
+
 	for (let link of links) {
 		link.classList.remove('active');
 	}
@@ -116,10 +119,12 @@ function _minimizeAllTabs() {
 function _maximizeAllTabs() {
 	const tabs = document.getElementsByClassName('tabcontent');
 	const links = document.getElementsByClassName('tablinks');
+
 	for (let tab of tabs) {
 		if (tab.id.toLowerCase() === 'test' || tab.id.toLowerCase() === 'beta') continue;
 		tab.style.display = 'block';
 	}
+
 	for (let link of links) {
 		if (link.id.toLowerCase() === 'test' || link.id.toLowerCase() === 'beta') continue;
 		link.style.display = 'block';
@@ -4688,6 +4693,7 @@ function autoSetValue(id, multiValue, negative) {
 	const valueSuffix = autoTrimpSettings.universeSetting.value === 1 && setting.universe.indexOf(0) === -1 ? 'U2' : '';
 	const numBox = document.getElementById('customNumberBox');
 	if (!numBox) return;
+
 	unlockTooltip();
 	tooltip('hide');
 
@@ -4755,6 +4761,7 @@ function autoSetText(id, multiValue) {
 	const valueSuffix = autoTrimpSettings.universeSetting.value === 1 && setting.universe.indexOf(0) === -1 ? 'U2' : '';
 	const textBox = document.getElementById('customTextBox');
 	if (!textBox) return;
+
 	unlockTooltip();
 	tooltip('hide');
 	const textVal = multiValue ? textBox.value.replace(/, /g, ',').split(',') : textBox.value;
@@ -4770,6 +4777,7 @@ function autoSetText(id, multiValue) {
 		}
 		element.innerHTML = setting.name() + ': ' + displayText;
 	}
+
 	if (id.includes('archaeology')) archaeologyAutomator();
 	saveSettings();
 }
@@ -4892,6 +4900,7 @@ function _toggleElem(elementId, isVisible) {
 	const displayState = isVisible ? '' : 'none';
 	const parentDisplayState = isVisible ? 'inline-block' : 'none';
 	element.style.display = displayState;
+
 	if (element.parentNode) {
 		element.parentNode.style.display = parentDisplayState;
 	}
@@ -4906,6 +4915,7 @@ function _toggleElem(elementId, isVisible) {
 function _setDisplayedSettings(item) {
 	let elem = document.getElementById(item.id);
 	if (!elem) return false;
+
 	const settingUniverse = item.universe;
 	const radonSetting = autoTrimpSettings.universeSetting.value === 1 && settingUniverse.indexOf(0) === -1 ? 'U2' : '';
 
@@ -5005,6 +5015,7 @@ function _setDisplayedTabs() {
 		tabSpire: radonOn || (!displayAllSettings && hze < 190),
 		tabTest: !gameUserCheck()
 	};
+
 	for (let tab in tabList) {
 		const tabElem = document.getElementById(tab);
 		const hideTab = tabList[tab];
@@ -5201,6 +5212,7 @@ function _updateSettingButtons() {
 
 function _createChangelogButton() {
 	if (document.getElementById('atChangelog') !== null) return;
+
 	const newChanges = autoTrimpSettings.ATversionChangelog !== atSettings.initialise.version;
 	const changelog = _createElement(
 		'TD',
@@ -5218,6 +5230,7 @@ function _createChangelogButton() {
 
 function _createAutoTrimpsButton() {
 	if (document.getElementById('atSettingsBtn') !== null) return;
+
 	const atSettings = _createElement(
 		'TD',
 		{
@@ -5234,6 +5247,7 @@ function _createAutoTrimpsButton() {
 
 function _createAutoMapsButton() {
 	if (document.getElementById('autoMapBtn') !== null) return;
+
 	const fightButtonCol = document.getElementById('battleBtnsColumn');
 
 	const autoMapsContainer = _createElement(
@@ -5273,6 +5287,7 @@ function _createAutoMapsButtonTW() {
 
 function _createStatusTextbox() {
 	if (document.getElementById('autoMapStatus') !== null) return;
+
 	const fightButtonCol = document.getElementById('battleBtnsColumn');
 
 	const autoMapsStatusContainer = _createElement('DIV', {
@@ -5287,6 +5302,7 @@ function _createStatusTextbox() {
 
 function _createResourcePerHourContainer() {
 	if (document.getElementById('hiderStatus') !== null) return;
+
 	const fightButtonCol = document.getElementById('battleBtnsColumn');
 
 	const resourcePerHourContainer = _createElement('DIV', {
@@ -5300,6 +5316,7 @@ function _createResourcePerHourContainer() {
 
 function _createAdditionalInfoTextbox() {
 	if (document.getElementById('additionalInfo') !== null) return;
+
 	const additionalInfoContainer = _createElement('DIV', {
 		style: 'display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);',
 		onmouseover: '',
@@ -5326,6 +5343,7 @@ function _createAutoJobsButton() {
 
 function _createAutoStructureButton() {
 	if (document.getElementById('autoStructureLabel') !== null) return;
+
 	const structureButton = _createButton('buildingsType', 'Structure', settingUniverse('buildingsType'), 'autoTrimpSettings.buildingsType.description()');
 	const structureColumn = document.getElementById('buildingsTitleDiv').children[0];
 	structureColumn.replaceChild(structureButton, structureColumn.children[1]);
@@ -5333,60 +5351,62 @@ function _createAutoStructureButton() {
 
 function _createAutoEquipButton() {
 	if (document.getElementById('autoEquipLabel') !== null) return;
+
 	const equipButton = _createButton('equipOn', 'Equip', settingUniverse('equipOn'), '"Toggle the Auto Equip setting."');
 	const equipColumn = document.getElementById('equipmentTitleDiv').children[0];
 	equipColumn.replaceChild(equipButton, equipColumn.children[2]);
 }
 
 function _createMessagesButton() {
-	if (document.getElementById('AutoTrimpsFilter') === null) {
-		let atBtnContainer = _createElement('DIV', {
-			class: 'btn-group',
-			role: 'group',
-			onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, `This will control the visibility of AutoTrimps messages in the log window based on your settings.<br>Note: Only map-related messages will be displayed during Time Warp.`)',
-			onmouseout: 'tooltip("hide")'
-		});
-		const btnDisplay = `btn-${getPageSetting('spamMessages').show ? 'success' : 'danger'}`;
-		let atBtnText = _createElement(
-			'button',
-			{
-				id: 'AutoTrimpsFilter',
-				type: 'button',
-				onClick: 'filterMessage_AT()',
-				class: `btn ${btnDisplay} logFlt`
-			},
-			['AT Messages']
-		);
+	if (document.getElementById('AutoTrimpsFilter') !== null) return;
 
-		atBtnContainer.appendChild(atBtnText);
-		document.getElementById('logBtnGroup').appendChild(atBtnContainer);
-
-		const atBtnSettings = _createElement('button', {
-			id: 'logConfigBtn',
+	let atBtnContainer = _createElement('DIV', {
+		class: 'btn-group',
+		role: 'group',
+		onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, `This will control the visibility of AutoTrimps messages in the log window based on your settings.<br>Note: Only map-related messages will be displayed during Time Warp.`)',
+		onmouseout: 'tooltip("hide")'
+	});
+	const btnDisplay = `btn-${getPageSetting('spamMessages').show ? 'success' : 'danger'}`;
+	let atBtnText = _createElement(
+		'button',
+		{
+			id: 'AutoTrimpsFilter',
 			type: 'button',
-			onclick: 'MAZLookalike("MessageConfig")',
-			class: 'btn btn-default logFlt'
-		});
+			onClick: 'filterMessage_AT()',
+			class: `btn ${btnDisplay} logFlt`
+		},
+		['AT Messages']
+	);
 
-		const atBtnSettingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
-		atBtnSettings.appendChild(atBtnSettingsButton);
+	atBtnContainer.appendChild(atBtnText);
+	document.getElementById('logBtnGroup').appendChild(atBtnContainer);
 
-		const tab = _createElement(
-			'DIV',
-			{
-				id: 'logConfigHolder',
-				class: 'btn-group',
-				role: 'group'
-			},
-			[atBtnSettings]
-		);
+	const atBtnSettings = _createElement('button', {
+		id: 'logConfigBtn',
+		type: 'button',
+		onclick: 'MAZLookalike("MessageConfig")',
+		class: 'btn btn-default logFlt'
+	});
 
-		document.getElementById('logBtnGroup').appendChild(tab);
-	}
+	const atBtnSettingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
+	atBtnSettings.appendChild(atBtnSettingsButton);
+
+	const tab = _createElement(
+		'DIV',
+		{
+			id: 'logConfigHolder',
+			class: 'btn-group',
+			role: 'group'
+		},
+		[atBtnSettings]
+	);
+
+	document.getElementById('logBtnGroup').appendChild(tab);
 }
 
 function _setTimeWarpUI() {
 	if (!usingRealTimeOffline) return;
+
 	const displaySetting = !getPageSetting('timeWarpDisplay') ? 'block' : 'none';
 	document.getElementById('offlineWrapper').style.display = displaySetting;
 	document.getElementById('innerWrapper').style.display = displaySetting === 'block' ? 'none' : 'block';
@@ -5394,6 +5414,7 @@ function _setTimeWarpUI() {
 
 function _createSettingsRowTW() {
 	if (document.getElementById('settingsRowTW') !== null) return;
+
 	let settingBarRow = document.createElement('DIV');
 	settingBarRow.setAttribute('id', 'settingsRowTW');
 	document.getElementById('offlineWrapper').children[0].insertAdjacentHTML('afterend', '<br>');
@@ -5414,12 +5435,14 @@ function _createBtnRowTW() {
 
 function _createAutoJobsButtonTW() {
 	if (document.getElementById('autoJobsLabelTW') !== null) return;
+
 	const atJobInitial = _createButton('jobType', 'Jobs', getPageSetting('jobType'), 'autoTrimpSettings.jobType.description()', 'TW');
 	$('#settingBtnTW').append(atJobInitial);
 }
 
 function _createAutoStructureButtonTW() {
 	if (document.getElementById('autoStructureTWParent') !== null) return;
+
 	const atStructureInitial = _createButton('buildingsType', 'Structure', getPageSetting('buildingsType'), 'autoTrimpSettings.buildingsType.description()', 'TW');
 	$('#settingBtnTW').append(atStructureInitial);
 }

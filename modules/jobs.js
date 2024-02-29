@@ -9,8 +9,10 @@ function safeBuyJob(jobTitle, amount) {
 	game.global.firing = amount < 0;
 	amount = Math.abs(amount);
 	if (!game.global.firing && !percentWorker) amount = Math.min(amount, freeWorkers);
+
 	game.global.buyAmt = amount;
 	let result = game.global.firing || canAffordJobCheck(jobTitle, amount);
+
 	if (!result) {
 		game.global.buyAmt = 'Max';
 		game.global.maxSplit = 1;
@@ -88,6 +90,7 @@ function _calculateFreeWorkers(owned, maxTrimps, employed) {
 	const currentFreeWorkers = _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed);
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const ratioWorkerCount = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
+
 	return currentFreeWorkers + ratioWorkerCount;
 }
 
@@ -102,11 +105,13 @@ function _employableTrimps(owned, maxTrimps, employed) {
 
 function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
 	if (!noBreedChallenge()) return freeWorkers;
+
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const ratioWorkerCount = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 
 	freeWorkers = owned - employed + ratioWorkerCount;
 	if ((!game.global.fighting || game.global.soldierHealth <= 0) && freeWorkers > maxSoldiers) freeWorkers -= maxSoldiers;
+
 	if (getPageSetting('trapper')) {
 		const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
 		let coordTarget = getPageSetting('trapperCoords');
@@ -148,6 +153,7 @@ function _buyRatioJobs(jobSettings) {
 
 function _buyExplorer(jobSettings) {
 	if (game.jobs.Explorer.locked || !jobSettings.Explorer.enabled || mapSettings.mapName === 'Tribute Farm') return;
+
 	const { cost, owned } = game.jobs.Explorer;
 	const affordableExplorers = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * (jobSettings.Explorer.percent / 100), cost.food[1], true);
 
@@ -156,6 +162,7 @@ function _buyExplorer(jobSettings) {
 
 function _buyTrainer(jobSettings) {
 	if (game.jobs.Trainer.locked || !jobSettings.Trainer.enabled) return;
+
 	const { cost, owned } = game.jobs.Trainer;
 	const affordableTrainers = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * (jobSettings.Trainer.percent / 100), cost.food[1], true);
 
@@ -164,6 +171,7 @@ function _buyTrainer(jobSettings) {
 
 function _buyMagmamancer(jobSettings) {
 	if (game.jobs.Magmamancer.locked || !jobSettings.Magmamancer.enabled) return;
+
 	let timeOnZone = Math.floor((Date.now() - game.global.zoneStarted) / 60000);
 	timeOnZone += game.talents.magmamancer.purchased ? 5 : 0;
 	timeOnZone += game.talents.stillMagmamancer.purchased ? game.global.spireRows : 0;
@@ -178,6 +186,7 @@ function _buyMagmamancer(jobSettings) {
 
 function _buyMeteorologist(jobSettings) {
 	if (game.jobs.Meteorologist.locked || (!jobSettings.Meteorologist.enabled && !mapSettings.shouldMeteorologist) || runningAncientTreasure()) return;
+
 	const { cost, owned } = game.jobs.Meteorologist;
 	const costMult = mapSettings.shouldMeteorologist ? 1 : jobSettings.Meteorologist.percent / 100;
 	let affordableMets = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * costMult, cost.food[1], true);
@@ -188,6 +197,7 @@ function _buyMeteorologist(jobSettings) {
 
 function _buyWorshipper(jobSettings) {
 	if (game.jobs.Worshipper.locked || !jobSettings.Worshipper.enabled) return;
+
 	const { owned, getCost } = game.jobs.Worshipper;
 	const costMult = mapSettings.mapName !== 'Worshipper Farm' ? jobSettings.Worshipper.percent / 100 : 1;
 	const affordableShips = Math.min(Math.floor((game.resources.food.owned / getCost()) * costMult), 50 - owned);
@@ -299,6 +309,7 @@ function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps) {
 	}
 
 	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
+
 	if (totalWorkerCost > game.resources.food.owned) {
 		const totalWorkersOwned = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 		const maxWorkersToHire = Math.max(Math.floor(freeWorkers / 10), freeWorkers - totalWorkersOwned);
@@ -322,6 +333,7 @@ function _freeWorkspaces(amount = 1) {
 	const jobs = ['Miner', 'Lumberjack'];
 	const toCheck = jobs.filter((job) => game.jobs[job].owned >= amount);
 	if (toCheck.length === 0) return;
+
 	const selected = toCheck[Math.floor(Math.random() * toCheck.length)];
 	game.jobs[selected].owned -= amount;
 }

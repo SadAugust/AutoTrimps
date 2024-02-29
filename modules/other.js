@@ -28,6 +28,7 @@ function isDoingSpire() {
 
 function exitSpireCell(checkCell) {
 	if (!game.global.spireActive) return;
+
 	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 	const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
 	const isSpireActive = isDoingSpire();
@@ -44,11 +45,14 @@ function exitSpireCell(checkCell) {
 
 function getZoneEmpowerment(zone) {
 	if (!zone) return 'None';
+
 	const natureStartingZone = game.global.universe === 1 ? getNatureStartZone() : 236;
 	if (zone < natureStartingZone) return 'None';
+
 	const activeEmpowerments = ['Poison', 'Wind', 'Ice'];
 	zone = Math.floor((zone - natureStartingZone) / 5);
 	zone = zone % activeEmpowerments.length;
+
 	return activeEmpowerments[zone];
 }
 
@@ -77,6 +81,7 @@ function fluffyEvolution() {
 	for (let i = 0; i < bpsToUse; i++) {
 		purchaseMisc('helium');
 	}
+
 	hideBones();
 
 	if (shouldRespecPerks) {
@@ -278,6 +283,7 @@ function autoPortalChallenges(runType = 'autoPortal', universe = currSettingUniv
 		challenge.push('Custom');
 		challenge.push('One Off Challenges');
 	}
+
 	if (runType === 'autoPortal' || runType === 'heHr') {
 		const hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		if (universe === 2 && hze >= 50) challenge.push('Challenge 3');
@@ -317,18 +323,21 @@ function _shouldSkipHeirloom(item, heirlooms, heirloomRarity) {
 
 function checkLiqZoneCount(universe) {
 	if (game.options.menu.liquification.enabled === 0) return 0;
+
 	if (universe === 2) {
 		if (!u2Mutations.tree.Liq1.purchased) return 0;
 		let amt = 0.1;
 		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
 		return (getHighestLevelCleared(false, true) + 1) * amt;
 	}
+
 	let spireCount = game.global.spiresCompleted;
 	if (game.talents.liquification.purchased) spireCount++;
 	if (game.talents.liquification2.purchased) spireCount++;
 	if (game.talents.liquification3.purchased) spireCount += 2;
 	spireCount += Fluffy.isRewardActive('liquid') * 0.5;
 	const liquidAmount = spireCount / 20;
+
 	return game.stats.highestLevel.valueTotal() * liquidAmount;
 }
 
@@ -378,6 +387,7 @@ Shouldn't impact anybody else that uses AT as they'll never set the gameUser set
 */
 function _raspberryPiSettings() {
 	if (autoTrimpSettings.gameUser.value !== 'SadAugust') return;
+
 	if (navigator.oscpu === 'Linux armv7l') {
 		game.options.menu.hotkeys.enabled = 0;
 		game.options.menu.progressBars.enabled = 0;
@@ -409,29 +419,45 @@ function _timeWarpAutoSaveSetting() {
 
 function _timeWarpUpdateUIDisplay() {
 	if (!usingRealTimeOffline || !getPageSetting('timeWarpDisplay')) return;
+
 	usingRealTimeOffline = false;
 	const enemy = getCurrentEnemy();
 	updateGoodBar();
 	updateBadBar(enemy);
-	document.getElementById('goodGuyHealthMax').innerHTML = prettify(game.global.soldierHealthMax);
-	document.getElementById('badGuyHealthMax').innerHTML = prettify(enemy.maxHealth);
+
+	const goodGuyHealthElem = document.getElementById('goodGuyHealth');
+	const goodGuyHealth = prettify(game.global.soldierHealth);
+	if (goodGuyHealthElem.innerHTML != goodGuyHealth) goodGuyHealthElem.innerHTML = goodGuyHealth;
+
+	const badGuyHealthElem = document.getElementById('badGuyHealth');
+	const badGuyHealth = prettify(enemy.health);
+	if (badGuyHealthElem.innerHTML != badGuyHealth) badGuyHealthElem.innerHTML = badGuyHealth;
 
 	let blockDisplay = prettify(game.global.soldierCurrentBlock);
 	if (game.global.universe === 2) {
 		let esMax = game.global.soldierEnergyShieldMax;
 		let esMult = getEnergyShieldMult();
 		const layers = Fluffy.isRewardActive('shieldlayer');
+
 		if (layers > 0) {
 			let layerFactor = layers + 1;
 			esMax *= layerFactor;
 			esMult *= layerFactor;
 		}
+
 		blockDisplay = `${prettify(esMax)} (${Math.round(esMult * 100)}%)`;
 	}
-	document.getElementById('goodGuyBlock').innerHTML = blockDisplay;
-	document.getElementById('goodGuyAttack').innerHTML = calculateDamage(game.global.soldierCurrentAttack, true, true);
+
+	const goodGuyBlock = document.getElementById('goodGuyBlock');
+	if (goodGuyBlock.innerHTML !== blockDisplay) goodGuyBlock.innerHTML = blockDisplay;
+
+	const goodGuyAttackElem = document.getElementById('goodGuyAttack');
+	const goodGuyAttack = calculateDamage(game.global.soldierCurrentAttack, true, true);
+	if (goodGuyAttackElem.innerHTML !== goodGuyAttack) goodGuyAttackElem.innerHTML = goodGuyAttack;
+
 	const badAttackElem = document.getElementById('badGuyAttack');
-	badAttackElem.innerHTML = calculateDamage(enemy.attack, true, false, false, enemy);
+	const badAttack = calculateDamage(enemy.attack, true, false, false, enemy);
+	if (badAttackElem.innerHTML !== badAttack) badAttackElem.innerHTML = badAttack;
 
 	updateLabels(true);
 	displayMostEfficientEquipment(true);
@@ -474,6 +500,7 @@ function _handleMazWindow() {
 
 function _handleIntervals() {
 	if (atSettings.intervals.tenMinute) atVersionChecker();
+
 	if (atSettings.intervals.oneSecond) {
 		trimpStats = new TrimpStats();
 		hdStats = new HDStats();
@@ -488,11 +515,13 @@ function _handleSlowScumming() {
 			return true;
 		}
 	}
+
 	return false;
 }
 
 function _handlePopupTimer() {
 	if (MODULES.popups.remainingTime !== MODULES.portal.timeout) return;
+
 	MODULES.popups.remainingTime -= 0.0001;
 	MODULES.popups.intervalID = setInterval(function () {
 		if (MODULES.popups.remainingTime === Infinity) clearInterval(MODULES.popups.intervalID);
