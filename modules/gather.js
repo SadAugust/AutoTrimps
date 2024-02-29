@@ -161,6 +161,8 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 	}
 
 	//Calculates the priority
+	//TODO Maybe decrease turkimp priority vs manual research. Maybe based on player efficiency vs scientist efficiency?
+	//TODO Advanced: use buildings.js style resourcePS to determine priority
 	const getPriority = (resourceName) => {
 		//Exception: Science only relies on Turkimp
 		if (resourceName.toLowerCase() === 'science' && game.resources[resourceName].owned < neededResourceAmount(resourceName) && !hasTurkimp) return 2;
