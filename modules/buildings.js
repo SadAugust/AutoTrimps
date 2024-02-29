@@ -96,18 +96,9 @@ function _getResourcePerSecond() {
 	return resourcePerSecond;
 }
 
-function mostEfficientHousing() {
-	const hubbable = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
-	const resourcePerSecond = _getResourcePerSecond();
-	const Collectology = autoBattle.oneTimers.Collectology;
-
-	function collectologyAllowed(houseName) { return houseName === 'Collector' && Collectology.owned; }
-	function calcNumberOfHubs(houseName) { return collectologyAllowed(houseName) ? Collectology.getHubs() : 1; }
-	function hubAllowed(houseName) { return !game.buildings.Hub.locked && hubbable.includes(houseName); }
-	function calcHubIncrease(houseName) { return hubAllowed(houseName) ? calcNumberOfHubs() * game.buildings.Hub.increase.by : 0; }
-	function increaseBy(houseName) { return game.buildings[houseName].increase.by + calcHubIncrease(); }
+function mostEfficientHousing(resourcePerSecond) {
 	function effWrapper(houseName = undefined, eff = 0) { return ({ name: houseName, eff: eff }); }
-	function calcEff(houseName) { return increaseBy(houseName) / _getSlowestResource(resourcePerSecond, houseName); }
+	function calcEff(houseName) { return _getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName); }
 
 	return _housingToCheck()
 		.map(houseName => effWrapper(houseName, calcEff(houseName)))
@@ -130,7 +121,7 @@ function _getHousingBonus(houseName) {
 	if (!game.buildings.Hub.locked) {
 		let hubAmt = 1;
 		if (houseName === 'Collector' && autoBattle.oneTimers.Collectology.owned) hubAmt = autoBattle.oneTimers.Collectology.getHubs();
-		housingBonus += hubAmt * 25000;
+		housingBonus += hubAmt * game.buildings.Hub.increase.by;
 	}
 
 	return housingBonus;
@@ -141,7 +132,6 @@ function _getSlowestResource(resourcePerSecond, houseName) {
 	let avgProduction;
 	let worstTime = -Infinity;
 	const buildingStat = game.buildings[houseName];
-	const housingBonus = _getHousingBonus(houseName);
 	const resourcefulMod = getResourcefulMult();
 	const owned = buildingStat.owned;
 
@@ -154,7 +144,7 @@ function _getSlowestResource(resourcePerSecond, houseName) {
 		else avgProduction = resourcePerSecond[resource];
 		if (avgProduction <= 0) avgProduction = 1;
 
-		worstTime = Math.max(price / (avgProduction * housingBonus), worstTime);
+		worstTime = Math.max(price / avgProduction, worstTime);
 	}
 
 	return worstTime;
@@ -522,7 +512,7 @@ function _getAffordableMets() {
 }
 
 function _buyHousing(buildingSettings) {
-	let houseName = mostEfficientHousing();
+	let houseName = mostEfficientHousing(_getResourcePerSecond());
 	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName)) return false;
 
 	//Saves resources for upgrades
