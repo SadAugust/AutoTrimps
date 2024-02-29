@@ -153,7 +153,12 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 		}[resourceName]);
 
 	//Calculates the required amount of any resource used by the upgrade
-	const neededResourceAmount = (resourceName) => (upgradeObj.cost.resources[resourceName] ? resolvePow(upgradeObj.cost.resources[resourceName], upgradeObj) : 0);
+	const neededResourceAmount = (resourceName) => {
+		const cost = upgradeObj.cost.resources[resourceName];
+		if (!cost) return 0;
+		if (cost[1] === undefined) return cost;
+		return resolvePow(upgradeObj.cost.resources[resourceName], upgradeObj);
+	}
 
 	//Calculates the priority
 	const getPriority = (resourceName) => {

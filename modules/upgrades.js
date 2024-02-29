@@ -99,7 +99,8 @@ function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1 / 4, woodRequire
 	if (upgradeObj === game.upgrades.Coordination && !canAffordCoordinationTrimps()) return false;
 
 	for (let i = 0; i < resources.length; i++) {
-		const resourceCost = upgradeObj.cost.resources[resources[i]] ? resolvePow(upgradeObj.cost.resources[resources[i]], upgradeObj) * resourceRequired[i] : 0;
+		const cost = upgradeObj.cost.resources[resources[i]];
+		let resourceCost = cost ? (cost[1] !== undefined ? resolvePow(cost, upgradeObj) * resourceRequired[i] : cost) : 0;
 		if (resourceOwned[i] < resourceCost) return false;
 	}
 
