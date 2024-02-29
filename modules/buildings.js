@@ -97,23 +97,22 @@ function _getResourcePerSecond() {
 }
 
 function mostEfficientHousing() {
-	let housingTargets = _housingToCheck();
+	const hubbable = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
 	const resourcePerSecond = _getResourcePerSecond();
+	const Collectology = autoBattle.oneTimers.Collectology;
 
-	const mostEfficient = {
-		name: null,
-		time: Infinity
-	};
+	function collectologyAllowed(houseName) { return houseName === 'Collector' && Collectology.owned; }
+	function calcNumberOfHubs(houseName) { return collectologyAllowed(houseName) ? Collectology.getHubs() : 1; }
+	function hubAllowed(houseName) { return !game.buildings.Hub.locked && hubbable.includes(houseName); }
+	function calcHubIncrease(houseName) { return hubAllowed(houseName) ? calcNumberOfHubs() * game.buildings.Hub.increase.by : 0; }
+	function increaseBy(houseName) { return game.buildings[houseName].increase.by + calcHubIncrease(); }
+	function effWrapper(houseName = undefined, eff = 0) { return ({ name: houseName, eff: eff }); }
+	function calcEff(houseName) { return increaseBy(houseName) / _getSlowestResource(resourcePerSecond, houseName); }
 
-	for (const houseName of housingTargets) {
-		const worstTime = _getSlowestResource(resourcePerSecond, houseName);
-
-		if (mostEfficient.time > worstTime) {
-			mostEfficient.name = houseName;
-			mostEfficient.time = worstTime;
-		}
-	}
-	return mostEfficient.name;
+	return _housingToCheck()
+		.map(houseName => effWrapper(houseName, calcEff(houseName)))
+		.reduce((mostEff, current) => current.eff > mostEff.eff ? current : mostEff, effWrapper())
+		.name
 }
 
 function _canAffordBuilding(resourceName, buildingStat, spendingPerc, resourcefulMod) {
