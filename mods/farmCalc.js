@@ -396,10 +396,11 @@ function stats(lootFunction = lootDefault) {
 		}
 
 		let tmp = zone_stats(mapLevel, saveData.stances, saveData, lootFunction);
-		if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
-
-		if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-		if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 25)) break;
+		if (tmp.zone !== 'z6') {
+			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
+			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
+			if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 25)) break;
+		}
 		stats.unshift(tmp);
 		if (tmp.zone === 'z6') break;
 	}
