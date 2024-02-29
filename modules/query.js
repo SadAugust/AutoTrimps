@@ -24,8 +24,8 @@ function getUpgradeCosts() {
 		metal: 0,
 		science: 0
 	};
-	const upgradeList = populateUpgradeList();
 
+	const upgradeList = populateUpgradeList();
 	upgradeList.forEach((upgrade) => {
 		if (upgrade === 'Bloodlust' && game.global.world === 1) return;
 		if (upgrade === 'Blockmaster' && game.global.world < 1) return;
@@ -259,6 +259,7 @@ function checkFastEnemy(enemy) {
 function getGameTime() {
 	const { start: startTime, time: globalTime } = game.global;
 	if (game.options.menu.pauseGame.enabled) return startTime + (game.options.menu.pauseGame.timeAtPause - startTime) + globalTime;
+
 	return startTime + globalTime;
 }
 
@@ -271,8 +272,9 @@ function targetHitsSurvived(skipHDCheck, worldType) {
 
 function whichHitsSurvived() {
 	const worldType = game.global.mapsActive ? getCurrentMapObject().location : { location: 'world' };
+
 	if (worldType.location === 'Void' || (mapSettings.voidHitsSurvived && trimpStats.autoMaps)) return hdStats.hitsSurvivedVoid;
-	else if (worldType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) return hdStats.hitsSurvivedMap;
+	if (worldType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) return hdStats.hitsSurvivedMap;
 	return hdStats.hitsSurvived;
 }
 

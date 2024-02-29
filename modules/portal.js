@@ -15,7 +15,9 @@ MODULES.portal = {
 function autoPortalCheck(specificPortalZone) {
 	decayFinishChallenge();
 	quagmireFinishChallenge();
+
 	if (!game.global.portalActive) return;
+
 	if (game.global.runningChallengeSquared) c2RunnerPortal(specificPortalZone);
 	else autoPortal(specificPortalZone);
 }
@@ -105,6 +107,7 @@ function handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily
 		if (atSettings.portal.aWholeNewWorld) MODULES.portal.zonePostpone = 0;
 	}
 	if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld) OKtoPortal = false;
+
 	if (MODULES.mapFunctions.afterVoids || (OKtoPortal && MODULES.portal.zonePostpone === 0)) {
 		handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily);
 	}
@@ -115,6 +118,7 @@ function _getHeliumPerHour(resourceType) {
 	if (timeThisPortal < 1) return 0;
 	timeThisPortal /= 3.6e6;
 	const resToUse = game.resources[resourceType].owned;
+
 	return resToUse / timeThisPortal;
 }
 
@@ -149,6 +153,7 @@ function _handleHeHrAfterVoids(prefix, universe) {
 		if (notPoisonZone) debug(`Z${game.global.world} - Pushing to next Poison zone then portaling after void maps have been run.`, 'portal');
 		else debug(`Z${game.global.world} - Portaling after void maps have been run.`, 'portal');
 	}
+
 	MODULES.mapFunctions.afterVoids = true;
 }
 
@@ -157,11 +162,13 @@ function _handleHeHrPortalDelay(resourceType, myHeliumHr, bestHeHr, bestHeHrZone
 	MODULES.popups.portal = true;
 	if (MODULES.popups.remainingTime === Infinity) MODULES.popups.remainingTime = 4000;
 	tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone++; MODULES.popups.portal = false', `<b>NOTICE: Auto-Portaling in ${MODULES.popups.remainingTime} seconds....</b>`, 'Delay Portal');
+
 	setTimeout(() => {
 		cancelTooltip();
 		MODULES.popups.portal = false;
 		MODULES.popups.remainingTime = Infinity;
 	}, MODULES.portal.timeout);
+
 	setTimeout(() => {
 		if (MODULES.portal.zonePostpone >= 2) return;
 		const challenge = challengeSelected !== 'None' ? challengeSelected : 0;
@@ -196,6 +203,7 @@ function handlePortalType(portalType, portalZone, specificPortalZone, universe, 
 			return;
 		}
 	}
+
 	if (challenge === 'Off') challenge = 0;
 	if (challenge !== 'None') doPortal(challenge, skipDaily);
 }
@@ -219,7 +227,6 @@ function c2RunnerPortal(portalZone) {
 			autoPortal(portalZone);
 		}
 	}
-	return;
 }
 
 function doPortal(challenge, skipDaily) {
@@ -265,7 +272,6 @@ function doPortal(challenge, skipDaily) {
 	if (!game.global.portalActive) return;
 
 	if (!game.global.selectedChallenge && challenge && !challengeSquaredMode) challenge = _autoPortalRegular(challenge);
-
 	_autoPortalActivate(challenge);
 }
 
@@ -275,6 +281,7 @@ function _autoPortalAbandonChallenge() {
 		MODULES.portal.dailyMods = dailyMods ? dailyMods.replace(/<br>/g, '|').slice(0, -1) : '';
 		MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
 	}
+
 	confirmAbandonChallenge();
 	abandonChallenge();
 	cancelTooltip();
@@ -322,8 +329,10 @@ function _autoPortalUniverseSwap() {
 			break;
 		}
 	}
+
 	if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
 	MODULES.portal.portalForVoid = false;
+
 	if (newUniverse !== portalUniverse) {
 		autoPortal(game.global.world, newUniverse);
 	}
@@ -343,6 +352,7 @@ function _autoPortalC2() {
 	const universePrefix = portalUniverse === 2 ? 'C3' : 'C2';
 	const worldType = portalUniverse === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
 	const c2Setting = getPageSetting('c2RunnerSettings', portalUniverse);
+
 	if (runType === 0) {
 		if (portalUniverse === 1) {
 			let highestZone = game.stats.highestLevel.valueTotal();
@@ -416,7 +426,6 @@ function _autoPortalC2() {
 	}
 
 	if (!challengeSquaredMode) debug(`C${portalUniverse + 1} Runner: All C${portalUniverse + 1}'s above level threshold!`, 'portal');
-	return;
 }
 
 function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
@@ -499,6 +508,7 @@ function _autoPortalActivate(challenge) {
 			u2Mutations.toggleRespec();
 		}
 	}
+
 	//Download save, push graphs data, push to spreadsheet for select users, activate portal, reset vars, and load mutators if necessary.
 	downloadSave();
 	if (typeof pushData === 'function') pushData();
@@ -507,6 +517,7 @@ function _autoPortalActivate(challenge) {
 	activatePortal();
 	resetVarsZone(true);
 	_setButtonsPortal();
+
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 		loadMutations(preset);
 		u2Mutations.closeTree();
@@ -642,7 +653,6 @@ function finishChallengeSquared() {
 	debug(`Finished ${game.global.challengeActive} at zone ${game.global.world}`, 'challenge', 'oil');
 	abandonChallenge();
 	cancelTooltip();
-	return;
 }
 
 function resetVarsZone(loadingSave) {
@@ -697,6 +707,7 @@ function resetVarsZone(loadingSave) {
 		mapName: '',
 		levelCheck: Infinity
 	};
+
 	farmingDecision();
 }
 
@@ -772,6 +783,7 @@ function atlantrimpRespecMessage(cellOverride) {
 	//If setting is enabled, respec into Surky combat respec
 	let respecName = !trimpStats.isC3 && !trimpStats.isOneOff ? 'Radon ' : '' + 'Combat Respec';
 	if (game.global.universe === 1) respecName = 'Spire';
+
 	if (respecSetting === 2) {
 		MODULES.popups.respecAncientTreasure = true;
 		MODULES.popups.remainingTime = MODULES.portal.timeout;

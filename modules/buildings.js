@@ -24,6 +24,7 @@ function advancedNurseries() {
 	// Only build nurseries if: A) Lacking Health & B) Has max health map stacks
 	const lackingHealth = whichHitsSurvived() < targetHitsSurvived();
 	const maxMapBonus = game.global.mapBonus >= getPageSetting('mapBonusHealth');
+
 	return lackingHealth & maxMapBonus;
 }
 
@@ -92,7 +93,10 @@ function _checkSafeGateway(buildingStat) {
 function _getResourcePerSecond() {
 	const resourceTypes = ['food', 'wood', 'metal', 'gems', 'fragments'];
 	const resourcePerSecond = {};
-	for (const resource of resourceTypes) resourcePerSecond[resource] = trimpStats.resourcesPS[resource].manual;
+	for (const resource of resourceTypes) {
+		resourcePerSecond[resource] = trimpStats.resourcesPS[resource].manual;
+	}
+
 	return resourcePerSecond;
 }
 
@@ -113,6 +117,7 @@ function mostEfficientHousing() {
 			mostEfficient.time = worstTime;
 		}
 	}
+
 	return mostEfficient.name;
 }
 
@@ -122,6 +127,7 @@ function _canAffordBuilding(resourceName, buildingStat, spendingPerc, resourcefu
 	const scaling = buildingStat.cost[resourceName][1];
 	const price = Math.max(base * Math.pow(scaling, owned) * resourcefulMod);
 	const maxSpending = game.resources[resourceName].owned * spendingPerc;
+
 	return maxSpending > price;
 }
 
@@ -215,6 +221,7 @@ function _getHypoZone() {
 			}
 		}
 	}
+
 	return hypoZone;
 }
 
@@ -298,25 +305,25 @@ function _checkQuest() {
  */
 function _buyNursery(buildingSettings) {
 	const nurseryInfo = game.buildings.Nursery;
-	if (!nurseryInfo.locked && !challengeActive('Trapper')) {
-		const nurserySetting = buildingSettings.Nursery;
-		const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-		const preSpireSetting = getPageSetting(settingPrefix + 'PreSpireNurseries');
-		const nurseryPreSpire = isDoingSpire() && nurseryInfo.owned < preSpireSetting ? preSpireSetting : 0;
-		const nurseryPct = nurserySetting.percent / 100;
-		const nurseryCanAfford = calculateMaxAfford_AT(nurseryInfo, true, false, false, null, nurseryPct);
-		const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurserySetting.fromZ;
+	if (nurseryInfo.locked || challengeActive('Trapper')) return;
 
-		if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
-			let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
-			if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
-			const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - nurseryInfo.owned);
+	const nurserySetting = buildingSettings.Nursery;
+	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
+	const preSpireSetting = getPageSetting(settingPrefix + 'PreSpireNurseries');
+	const nurseryPreSpire = isDoingSpire() && nurseryInfo.owned < preSpireSetting ? preSpireSetting : 0;
+	const nurseryPct = nurserySetting.percent / 100;
+	const nurseryCanAfford = calculateMaxAfford_AT(nurseryInfo, true, false, false, null, nurseryPct);
+	const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurserySetting.fromZ;
 
-			if (nurseryPreSpire > 0 && nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
-			else if (advancedNurseries()) {
-				safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
-			} else if (nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
-		}
+	if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
+		let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
+		if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
+		const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - nurseryInfo.owned);
+
+		if (nurseryPreSpire > 0 && nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
+		else if (advancedNurseries()) {
+			safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
+		} else if (nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
 	}
 }
 
@@ -343,6 +350,7 @@ function _buyGyms(buildingSettings) {
 	const gymPct = buildingSettings.Gym.percent / 100;
 
 	const gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct);
+
 	if (gymAmt > purchased && gymCanAfford > 0) {
 		const toBuy = !factorShieldBlock ? gymCanAfford : Math.max(1, calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct, game.resources.wood.owned * 0.01));
 		safeBuyBuilding('Gym', toBuy);
@@ -353,16 +361,17 @@ function _buyGyms(buildingSettings) {
  * Buys wormholes if necessary. For the helium universe. Handled separately as it spends helium (danger).
  */
 function _buyWormholes(buildingSettings) {
-	if (!game.buildings.Wormhole.locked && buildingSettings.Wormhole && buildingSettings.Wormhole.enabled) {
-		const wormholeAmt = buildingSettings.Wormhole.buyMax === 0 ? Infinity : buildingSettings.Wormhole.buyMax;
-		const wormholePct = buildingSettings.Wormhole.percent / 100;
-		const purchased = game.buildings.Wormhole.purchased;
-		const max = wormholeAmt - purchased;
+	if (game.buildings.Wormhole.locked || !buildingSettings.Wormhole || !buildingSettings.Wormhole.enabled) return;
 
-		const wormholeCanAfford = calculateMaxAfford_AT(game.buildings.Wormhole, true, false, false, max, wormholePct);
-		if (wormholeAmt > purchased && wormholeCanAfford > 0) {
-			safeBuyBuilding('Wormhole', wormholeCanAfford);
-		}
+	const wormholeAmt = buildingSettings.Wormhole.buyMax === 0 ? Infinity : buildingSettings.Wormhole.buyMax;
+	const wormholePct = buildingSettings.Wormhole.percent / 100;
+	const purchased = game.buildings.Wormhole.purchased;
+	const max = wormholeAmt - purchased;
+
+	const wormholeCanAfford = calculateMaxAfford_AT(game.buildings.Wormhole, true, false, false, max, wormholePct);
+
+	if (wormholeAmt > purchased && wormholeCanAfford > 0) {
+		safeBuyBuilding('Wormhole', wormholeCanAfford);
 	}
 }
 
@@ -370,18 +379,19 @@ function _buyWormholes(buildingSettings) {
  * Buys warpstations if necessary. For the helium universe.
  */
 function _buyWarpstations() {
-	if (!game.buildings.Warpstation.locked && getPageSetting('warpstation')) {
-		let warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation');
-		const warpstationPct = getPageSetting('warpstationPct') / 100;
-		if (game.upgrades.Gigastation.done === 0 && getPageSetting('autoGigas')) warpstationAmt = Infinity;
-		const owned = game.buildings.Warpstation.owned;
-		const max = warpstationAmt - owned;
+	if (game.buildings.Warpstation.locked || !getPageSetting('warpstation')) return;
 
-		const firstGigaOK = game.upgrades.Gigastation.done > 0;
-		const gigaCapped = owned >= warpstationAmt;
-		const warpstationCanAfford = calculateMaxAfford_AT(game.buildings.Warpstation, true, false, false, max, warpstationPct);
-		if (!(firstGigaOK && gigaCapped) && warpstationCanAfford > 0) safeBuyBuilding('Warpstation', warpstationCanAfford);
-	}
+	let warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation');
+	const warpstationPct = getPageSetting('warpstationPct') / 100;
+	if (game.upgrades.Gigastation.done === 0 && getPageSetting('autoGigas')) warpstationAmt = Infinity;
+	const owned = game.buildings.Warpstation.owned;
+	const max = warpstationAmt - owned;
+
+	const firstGigaOK = game.upgrades.Gigastation.done > 0;
+	const gigaCapped = owned >= warpstationAmt;
+	const warpstationCanAfford = calculateMaxAfford_AT(game.buildings.Warpstation, true, false, false, max, warpstationPct);
+
+	if (!(firstGigaOK && gigaCapped) && warpstationCanAfford > 0) safeBuyBuilding('Warpstation', warpstationCanAfford);
 }
 
 /**
@@ -435,13 +445,14 @@ function _calcSmithyDuringQuest() {
  * Buys laboratories if necessary during Nurture. For the radon universe.
  */
 function _buyLaboratory(buildingSettings) {
-	if (challengeActive('Nurture') && !game.buildings.Laboratory.locked && buildingSettings.Laboratory && buildingSettings.Laboratory.enabled) {
-		const labAmt = buildingSettings.Laboratory.buyMax === 0 ? Infinity : buildingSettings.Laboratory.buyMax;
-		const labPct = buildingSettings.Laboratory.percent / 100;
-		const labCanAfford = calculateMaxAfford_AT(game.buildings.Laboratory, true, false, false, labAmt - game.buildings.Laboratory.purchased, labPct);
-		if (labAmt > game.buildings.Laboratory.purchased && labCanAfford > 0) {
-			safeBuyBuilding('Laboratory', labCanAfford);
-		}
+	if (game.buildings.Laboratory.locked || !buildingSettings.Laboratory || !buildingSettings.Laboratory.enabled) return;
+
+	const labAmt = buildingSettings.Laboratory.buyMax === 0 ? Infinity : buildingSettings.Laboratory.buyMax;
+	const labPct = buildingSettings.Laboratory.percent / 100;
+	const labCanAfford = calculateMaxAfford_AT(game.buildings.Laboratory, true, false, false, labAmt - game.buildings.Laboratory.purchased, labPct);
+
+	if (labAmt > game.buildings.Laboratory.purchased && labCanAfford > 0) {
+		safeBuyBuilding('Laboratory', labCanAfford);
 	}
 }
 
@@ -458,13 +469,14 @@ function _buyMicrochip() {
  * Buys antenna if possible. For the radon universe.
  */
 function _buyAntenna(buildingSettings) {
-	if (!game.buildings.Antenna.locked && buildingSettings.Antenna && buildingSettings.Antenna.enabled) {
-		const antennaAmt = buildingSettings.Antenna.buyMax === 0 ? Infinity : buildingSettings.Antenna.buyMax;
-		const antennaPct = buildingSettings.Antenna.percent / 100;
-		const antennaCanAfford = calculateMaxAfford_AT(game.buildings.Antenna, true, false, false, antennaAmt - game.buildings.Antenna.purchased, antennaPct);
-		if (antennaAmt > game.buildings.Antenna.purchased && antennaCanAfford > 0) {
-			safeBuyBuilding('Antenna', antennaCanAfford);
-		}
+	if (!game.buildings.Antenna.locked || !buildingSettings.Antenna || !buildingSettings.Antenna.enabled) return;
+
+	const antennaAmt = buildingSettings.Antenna.buyMax === 0 ? Infinity : buildingSettings.Antenna.buyMax;
+	const antennaPct = buildingSettings.Antenna.percent / 100;
+	const antennaCanAfford = calculateMaxAfford_AT(game.buildings.Antenna, true, false, false, antennaAmt - game.buildings.Antenna.purchased, antennaPct);
+
+	if (antennaAmt > game.buildings.Antenna.purchased && antennaCanAfford > 0) {
+		safeBuyBuilding('Antenna', antennaCanAfford);
 	}
 }
 
@@ -485,8 +497,8 @@ function _keepBuyingHousing(buildingSettings) {
 
 function _buyTribute() {
 	if (game.buildings.Tribute.locked || isBuildingInQueue('Tribute') || (!game.jobs.Meteorologist.locked && !mapSettings.shouldTribute && _getAffordableMets() > 0)) return;
-	const tributeSetting = getPageSetting('buildingSettingsArray').Tribute;
 
+	const tributeSetting = getPageSetting('buildingSettingsArray').Tribute;
 	if ((!tributeSetting.enabled || mapSettings.shouldMeteorologist || mapSettings.mapName === 'Worshipper Farm') && !mapSettings.shouldTribute) return;
 
 	const farmingGems = (mapSettings.mapName === 'Smithy Farm' && mapSettings.gemFarm) || getCurrentQuest() === 4;

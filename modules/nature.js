@@ -35,6 +35,7 @@ function autoNatureTokens() {
 			let targetNature = ['Poison', 'Wind', 'Ice'];
 			targetNature = targetNature.filter((element) => element !== nature);
 			if (setting.slice(11) !== 'Both') targetNature = targetNature.filter((element) => element === nature);
+
 			for (let item in targetNature) {
 				if (!game.empowerments[targetNature[item]]) continue;
 				empowerment.tokens -= 10;
@@ -45,11 +46,13 @@ function autoNatureTokens() {
 			}
 		}
 	}
+
 	if (spentTokens) updateNatureInfoSpans();
 }
 
 function purchaseEnlight(nature) {
 	if (game.global.uberNature !== '' || game.empowerments[nature].getLevel() < 50) return;
+
 	naturePurchase('uberEmpower', nature);
 	cancelTooltip();
 	debug(`Purchased ${nature} englightenment`, 'nature');
@@ -70,6 +73,7 @@ function autoEnlight() {
 			break;
 		}
 	}
+
 	if (natureToActivate !== 'None') {
 		purchaseEnlight(natureToActivate);
 	}

@@ -41,8 +41,6 @@ function debugStance(maxPower, ignoreArmy) {
 			return 'H' + critPower;
 		} else if (maxPower) break;
 	}
-
-	return;
 }
 
 function canU2OverkillAT(targetZone = game.global.world) {
@@ -343,8 +341,6 @@ function autoStance(force) {
 	if (critPower < -2) {
 		safeSetStance(1);
 	}
-
-	return;
 }
 
 function autoStanceD(force) {

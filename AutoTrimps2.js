@@ -331,6 +331,7 @@ function mainLoop() {
 		farmingDecision();
 		mainCleanup();
 	}
+
 	if (_handleSlowScumming()) return;
 
 	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
@@ -366,6 +367,7 @@ function mainLoop() {
 //U1 functions
 function mainLoopU1() {
 	if (game.global.universe !== 1) return;
+
 	geneAssist();
 	autoRoboTrimp();
 	autoEnlight();
@@ -383,6 +385,7 @@ function mainLoopU1() {
 //U2 functions
 function mainLoopU2() {
 	if (game.global.universe !== 2) return;
+
 	if (shouldRunInTimeWarp()) equalityManagement();
 	_alchemyVoidPotions();
 }
@@ -414,12 +417,14 @@ function _handleNewWorld() {
 	autoPortalCheck();
 	archaeologyAutomator();
 	challengeInfo();
+
 	if (atSettings.portal.currentworld === 1) {
 		MODULES.portal.zonePostpone = 0;
 		if (!game.upgrades.Battle.done) {
 			_setButtonsPortal();
 		}
 	}
+
 	resetVarsZone();
 	setTitle();
 	_debugZoneStart();

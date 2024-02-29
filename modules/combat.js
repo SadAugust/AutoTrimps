@@ -2,8 +2,9 @@ function callBetterAutoFight() {
 	_avoidEmpower();
 	_trimpicide();
 	const autoFightSetting = getPageSetting('autoFight');
+
 	if (autoFightSetting === 0) return;
-	else if (autoFightSetting === 1) _betterAutoFight();
+	if (autoFightSetting === 1) _betterAutoFight();
 	else if (autoFightSetting === 2) _betterAutoFightVanilla();
 }
 
@@ -17,6 +18,7 @@ function newArmyRdy() {
 		if (popSetting <= 0) return true;
 		return trimps.owned > trimps.maxSoldiers * popSetting;
 	}
+
 	return trimps.realMax() <= trimps.owned;
 }
 
@@ -180,6 +182,7 @@ function _checkEnemyDamage(enemyDmg, enemyDmgEquality, ourHealth, enemyDamageMul
 	if (enemyDmgEquality > ourHealth && enemyDamageMult !== 0 && !disableDamageAmps) {
 		return { reset: true, disableDamageAmps: true, enemyDmg: enemyDmg / enemyDamageMult };
 	}
+
 	return { reset: false, disableDamageAmps, enemyDmg };
 }
 
@@ -196,13 +199,15 @@ function _checkDesoDestack() {
 		_setEquality(getPerkLevel('Equality'));
 		return true;
 	}
+
 	return false;
 }
 
 function _getGammaMaxStacks(worldType) {
-	let maxStacks = gammaMaxStacks(false, false, worldType);
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	if (gammaDmg === 1) return 0;
+
+	const maxStacks = gammaMaxStacks(false, false, worldType);
 	return maxStacks;
 }
 
@@ -599,6 +604,7 @@ function equalityManagement() {
 
 	const equalitySetting = getPageSetting('equalityManagement');
 	if (equalitySetting === 0) return;
-	else if (equalitySetting === 1) _equalityManagementBasic();
+
+	if (equalitySetting === 1) _equalityManagementBasic();
 	else if (equalitySetting === 2) _equalityManagementAdvanced();
 }

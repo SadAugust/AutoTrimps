@@ -83,6 +83,7 @@ function firstGiga() {
 	if (firstGiga !== base || deltaGiga !== delta) {
 		debug(`Auto Gigastation: Setting pattern to ${base} + ${delta}`, 'buildings', '*rocket');
 	}
+
 	return true;
 }
 
@@ -174,6 +175,7 @@ function buyUpgrades() {
 		const gameUpgrade = game.upgrades[upgrade];
 		const available = gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade);
 		if (!available) continue;
+
 		if (upgrade === 'Coordination') {
 			if (upgradeSetting === 2 || !canAffordCoordinationTrimps()) continue;
 			//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
@@ -205,7 +207,9 @@ function buyUpgrades() {
 			if (needMiner && game.resources.science.owned < 120) continue;
 		} else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) {
 			continue;
-		} //Prioritise Science/scientist upgrades
+		}
+
+		//Prioritise Science/scientist upgrades
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld) {
 			if (needScientists) continue;
 			if (needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;
@@ -265,11 +269,13 @@ function goldenUpgradeRunType(currSetting) {
 			} else return false;
 		}
 	}
+
 	return true;
 }
 
 function autoGoldUpgrades() {
 	if (!goldenUpgradesShown || getAvailableGoldenUpgrades() <= 0) return;
+
 	const selected = getNextGoldenUpgrade();
 	if (selected) buyGoldenUpgrade(selected);
 }

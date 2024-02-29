@@ -80,8 +80,9 @@ function worthOfHeirlooms() {
 }
 
 function autoHeirlooms(portal) {
-	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	if (portal && !portalWindowOpen) return;
+	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
+
 	const maxHeirlooms = getMaxCarriedHeirlooms();
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	let weights = worthOfHeirlooms();
@@ -117,7 +118,6 @@ function heirloomSearch(heirloom) {
 	return game.global.heirloomsCarried.find((loom) => loom.name === heirloomName);
 }
 
-//Loops through heirlooms and checks if they have a specified modifier on them, divides by 10 if in u2.
 function heirloomModSearch(heirloom, modifier) {
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
@@ -280,7 +280,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 	else if (getPageSetting('heirloomInitial') !== 'undefined') return 'heirloomInitial';
 }
 
-function heirloomStaffToEquip(mapType) {
+function heirloomStaffToEquip() {
 	if (!getPageSetting('heirloom') || !getPageSetting('heirloomStaff')) return;
 
 	if (!game.global.mapsActive) {
@@ -329,21 +329,27 @@ function heirloomSwapping() {
 	if (!getPageSetting('heirloom')) return;
 
 	const mapType = game.global.voidBuff ? 'void' : game.global.mapsActive ? 'map' : 'world';
+
 	if (getPageSetting('heirloomShield')) {
 		const shield = heirloomShieldToEquip(mapType, true);
 		if (shield) heirloomEquip(shield, 'Shield');
 	}
 
 	if (getPageSetting('heirloomStaff')) {
-		const staff = heirloomStaffToEquip(mapType, true);
+		const staff = heirloomStaffToEquip();
 		if (staff) heirloomEquip(staff, 'Staff');
 	}
 }
 
 function usingBreedHeirloom() {
 	if (game.global.mapsActive) return false;
+
 	let breedHeirloom = getPageSetting('heirloomBreed');
-	if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') breedHeirloom = getPageSetting('archaeologyBreedShield');
+	if (challengeActive('Archaeology') && getPageSetting('archaeology')) {
+		const archBreedShield = getPageSetting('archaeologyBreedShield');
+		if (archBreed !== 'undefined') breedHeirloom = archBreedShield;
+	}
+
 	if (breedHeirloom === 'undefined') return false;
 
 	return game.global.ShieldEquipped.name === breedHeirloom;
