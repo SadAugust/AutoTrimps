@@ -117,7 +117,7 @@ function _isTrappingRelevant() {
 
 function isPlayerRelevant(resourceName, hasTurkimp, customRatio = 0.1) {
 	const turkimp = hasTurkimp && resourceName.toLowerCase() !== 'science';
-	return turkimp || getPlayerModifier() >= (customRatio * trimpStats.resourcesPS[resourceName].normal) / 10;
+	return turkimp || getPlayerModifier() >= customRatio * trimpStats.resourcesPS[resourceName].normal;
 }
 
 function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
