@@ -293,7 +293,7 @@ function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps) {
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
 
 	//Prevents scientist from being fired very early on
-	if (desiredWorkers[3] === -1 && remainder > 0 && maxTrimps >= 400) {
+	if (desiredWorkers[3] === -1 && maxTrimps < 400 && remainder > 0) {
 		desiredWorkers[whereToIncrement[0]]--;
 		desiredWorkers[3]++;
 	}

@@ -37,8 +37,8 @@ MODULES.trapPools = [
 ];
 
 function _calcTrapsToFullArmy() {
-	let trimpsPerBait = 1 + getPerkLevel('Bait') * game.portal.Bait.modifier;
-	return Math.ceil(game.resources.trimps.maxSoldiers / trimpsPerBait) - 1;
+	let trapSize = 1 + game.portal.Bait.modifier * getPerkLevel('Bait');
+	return Math.ceil(game.resources.trimps.maxSoldiers / trapSize) - 1;
 }
 
 function _calcTPS() {
@@ -54,7 +54,7 @@ function _calcTrapSupplySize() {
 		.filter((houseName) => !game.buildings[houseName].locked)
 		.map((houseName) => _getHousingBonus(houseName))
 		.reduce((max, bonus) => Math.max(max, bonus), 0);
-	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / trapSize);
+	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / trapSize) - 1;
 }
 
 function safeSetGather(resource) {
