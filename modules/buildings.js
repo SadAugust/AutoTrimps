@@ -60,7 +60,7 @@ function _needHousing(houseName, ignoreAffordability) {
 	// Can afford the building.
 	if (!ignoreAffordability) {
 		const spendingPerc = buildingSettings.percent / 100;
-		const resourcefulMod = Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
+		const resourcefulMod = getResourcefulMult();
 		for (const resource in buildingStat.cost) {
 			if (!_canAffordBuilding(resource, buildingStat, spendingPerc, resourcefulMod)) return false;
 		}
@@ -127,11 +127,13 @@ function _canAffordBuilding(resourceName, buildingStat, spendingPerc, resourcefu
 
 function _getHousingBonus(houseName) {
 	let housingBonus = game.buildings[houseName].increase.by;
+
 	if (!game.buildings.Hub.locked) {
 		let hubAmt = 1;
 		if (houseName === 'Collector' && autoBattle.oneTimers.Collectology.owned) hubAmt = autoBattle.oneTimers.Collectology.getHubs();
 		housingBonus += hubAmt * 25000;
 	}
+
 	return housingBonus;
 }
 
@@ -141,7 +143,7 @@ function _getSlowestResource(resourcePerSecond, houseName) {
 	let worstTime = -Infinity;
 	const buildingStat = game.buildings[houseName];
 	const housingBonus = _getHousingBonus(houseName);
-	const resourcefulMod = Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
+	const resourcefulMod = getResourcefulMult();
 	const owned = buildingStat.owned;
 
 	for (const resource in buildingStat.cost) {
@@ -149,12 +151,13 @@ function _getSlowestResource(resourcePerSecond, houseName) {
 		const costScaling = buildingStat.cost[resource][1];
 		const price = baseCost * Math.pow(costScaling, owned - 1) * resourcefulMod;
 
-		if (challengeActive('Transmute') && resource === 'metal') avgProduction = resourcePerSecond['wood'];
+		if (resource === 'metal' && challengeActive('Transmute')) avgProduction = resourcePerSecond['wood'];
 		else avgProduction = resourcePerSecond[resource];
 		if (avgProduction <= 0) avgProduction = 1;
 
 		worstTime = Math.max(price / (avgProduction * housingBonus), worstTime);
 	}
+
 	return worstTime;
 }
 
@@ -321,7 +324,13 @@ function _buyNursery(buildingSettings) {
  * Buys gyms if necessary. For the helium universe.
  */
 function _buyGyms(buildingSettings) {
-	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled) return;
+	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic()) return;
+
+	const factorShieldBlock = game.equipment.Shield.blockNow && getPageSetting('autoEquip');
+	if (factorShieldBlock) {
+		const data = shieldBlockUpgrades();
+		if (data.Gym > data.Shield) return;
+	}
 
 	//Saves wood for Speed upgrades
 	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
@@ -334,8 +343,9 @@ function _buyGyms(buildingSettings) {
 	const gymPct = buildingSettings.Gym.percent / 100;
 
 	const gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct);
-	if (gymAmt > purchased && gymCanAfford > 0 && !needGymystic()) {
-		safeBuyBuilding('Gym', gymCanAfford);
+	if (gymAmt > purchased && gymCanAfford > 0) {
+		const toBuy = !factorShieldBlock ? gymCanAfford : Math.max(1, calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct, game.resources.wood.owned * 0.01));
+		safeBuyBuilding('Gym', toBuy);
 	}
 }
 
@@ -500,6 +510,7 @@ function _getAffordableMets() {
 			return getMaxAffordable(baseCost, maxSpend, foodScale, true);
 		}
 	}
+
 	return 0;
 }
 
