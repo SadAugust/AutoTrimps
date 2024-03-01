@@ -333,7 +333,7 @@ function _buyNursery(buildingSettings) {
 function _buyGyms(buildingSettings) {
 	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic()) return;
 
-	const factorShieldBlock = game.equipment.Shield.blockNow && getPageSetting('autoEquip');
+	const factorShieldBlock = game.equipment.Shield.blockNow && getPageSetting('equipOn');
 	if (factorShieldBlock) {
 		const data = shieldBlockUpgrades();
 		if (data.Gym > data.Shield) return;
