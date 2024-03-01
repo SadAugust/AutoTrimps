@@ -1969,7 +1969,8 @@ function buyBuilding(what, confirmed, fromAuto, forceAmt) {
 
 function craftBuildings(makeUp) {
 	const buildingsBar = document.getElementById('animationDiv');
-	if (!buildingsBar && !usingRealTimeOffline) return;
+	//if (!buildingsBar && !usingRealTimeOffline) return;
+	if (!buildingsBar) return;
 
 	const buildingsQueue = game.global.buildingsQueue;
 	const timeRemaining = document.getElementById('queueTimeRemaining');
@@ -1980,7 +1981,8 @@ function craftBuildings(makeUp) {
 	}
 
 	if ((game.global.autoCraftModifier <= 0 && game.global.playerGathering !== 'buildings') || game.global.crafting === '') {
-		if (!usingRealTimeOffline && speedElem.innerHTML !== '') speedElem.innerHTML = '';
+		//if (!usingRealTimeOffline && speedElem.innerHTML !== '') speedElem.innerHTML = '';
+		if (speedElem.innerHTML !== '') speedElem.innerHTML = '';
 		return;
 	}
 
@@ -1996,7 +1998,8 @@ function craftBuildings(makeUp) {
 		let timeLeft = (game.global.timeLeftOnCraft / modifier).toFixed(1);
 		if (timeLeft < 0.1 || isNumberBad(timeLeft)) timeLeft = 0.1;
 		elemText = ` - ${timeLeft} Seconds`;
-		if (timeRemaining && timeRemaining.textContent !== elemText && !usingRealTimeOffline) timeRemaining.textContent = elemText;
+		if (timeRemaining && timeRemaining.textContent !== elemText) timeRemaining.textContent = elemText;
+		//if (timeRemaining && timeRemaining.textContent !== elemText && !usingRealTimeOffline) timeRemaining.textContent = elemText;
 
 		if (buildingsBar) buildingsBar.style.opacity = game.options.menu.queueAnimation.enabled ? percent : '0';
 		if (game.global.timeLeftOnCraft > 0) return;
@@ -2021,7 +2024,7 @@ function setNewCraftItem() {
 	const queueItem = game.global.buildingsQueue[0].split('.')[0];
 	game.global.crafting = queueItem;
 	game.global.timeLeftOnCraft = getCraftTime(game.buildings[queueItem]);
-	if (usingRealTimeOffline) return;
+	//if (usingRealTimeOffline) return;
 
 	const elem = document.getElementById('queueItemsHere').firstChild;
 	let timeLeft = (game.global.timeLeftOnCraft / (game.global.autoCraftModifier + getPlayerModifier())).toFixed(1);
@@ -2057,9 +2060,11 @@ function removeQueueItem(what, force) {
 			const newQueue = `${item}.${amount}`;
 			const name = `${item} X${amount}`;
 			game.global.buildingsQueue[0] = newQueue;
-			if (!usingRealTimeOffline && elem) elem.firstChild.innerHTML = name;
+			//if (!usingRealTimeOffline && elem)
+			if (elem) elem.firstChild.innerHTML = name;
 		} else {
-			if (!usingRealTimeOffline) queue.removeChild(elem);
+			//if (!usingRealTimeOffline)
+			queue.removeChild(elem);
 			game.global.buildingsQueue.splice(0, 1);
 		}
 
@@ -2143,7 +2148,8 @@ function addQueueItem(what) {
 	document.getElementById('noQueue').style.display = 'none';
 	const [baseName, multiplier] = what.split('.');
 	const name = multiplier > 1 ? `${baseName} X${prettify(multiplier)}` : baseName;
-	if (!usingRealTimeOffline) elem.innerHTML += '<div class="queueItem" id="queueItem' + game.global.nextQueueId + '" onmouseover="tooltip(\'Queue\',null,event)" onmouseout="tooltip(\'hide\')" onClick="removeQueueItem(\'queueItem' + game.global.nextQueueId + '\'); cancelTooltip();"><span class="queueItemName">' + name + '</span><div id="animationDiv"></div></div>';
+	//if (!usingRealTimeOffline)
+	elem.innerHTML += '<div class="queueItem" id="queueItem' + game.global.nextQueueId + '" onmouseover="tooltip(\'Queue\',null,event)" onmouseout="tooltip(\'hide\')" onClick="removeQueueItem(\'queueItem' + game.global.nextQueueId + '\'); cancelTooltip();"><span class="queueItemName">' + name + '</span><div id="animationDiv"></div></div>';
 	if (game.global.nextQueueId === 0) setNewCraftItem();
 	game.global.nextQueueId++;
 }
@@ -4683,4 +4689,162 @@ function giveSingleAchieve(name) {
 	calculateAchievementBonus();
 
 	if (trimpAchievementsOpen) displayAchievements();
+}
+
+function buildMapGrid(mapId) {
+	if (game.global.formation === 4 || game.global.formation === 5) game.global.canScryCache = true;
+	game.global.mapStarted = getGameTime();
+
+	const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
+	const array = new Array(map.size);
+	const imports = Object.keys(game.unlocks.imps).filter((item) => game.unlocks.imps[item] && game.badGuys[item].location == 'Maps' && game.badGuys[item].world <= map.level);
+	const showSnow = map.location === 'Frozen' || (game.badGuys.Presimpt.locked === 0 && game.options.menu.showSnow && game.options.menu.showSnow.enabled);
+	const isVoid = map.location === 'Void';
+
+	let fastTarget = 0;
+	let forceNextFast = false;
+	let fastEvery = -1;
+	let forced = 0;
+
+	if (game.global.universe == 2) {
+		fastTarget = map.size / 6;
+		const roll = Math.floor(Math.random() * 3);
+		if (roll === 0) fastTarget--;
+		else if (roll === 2) fastTarget++;
+
+		const highAdd = map.level - game.global.world;
+		if (highAdd > 0) fastTarget += highAdd * 0.5;
+		if (fastTarget < 1) fastTarget = 1;
+		fastEvery = Math.floor(map.size / fastTarget);
+	}
+
+	for (let i = 0; i < map.size; i++) {
+		const thisFast = fastTarget && (forceNextFast || i % fastEvery === 0);
+		const name = getRandomBadGuy(map.location, i + 1, map.size, map.level, imports, false, false, thisFast);
+		const enemy = game.badGuys[name];
+		const isEnemyFast = enemy.fast;
+
+		const cell = {
+			level: i + 1,
+			maxHealth: -1,
+			health: -1,
+			attack: -1,
+			special: '',
+			text: '',
+			name
+		};
+
+		forceNextFast = thisFast && !isEnemyFast;
+		if (thisFast && isEnemyFast) forced++;
+
+		if (showSnow) {
+			if (isVoid) cell.vm = 'CorruptSnow';
+			else cell.vm = 'TrimpmasSnow';
+		}
+		array[i] = cell;
+	}
+
+	game.global.mapGridArray = array;
+	addSpecials(true);
+	if (game.global.challengeActive == 'Exterminate') game.challenges.Exterminate.startedMap();
+}
+
+function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation, visualMutation, fastOnly) {
+	let selected;
+	let force = false;
+	let enemySeed = mapSuffix ? Math.floor(Math.random() * 10000000) : game.global.enemySeed;
+	let badGuysArray = [];
+	if (mapSuffix == 'Darkness') imports = [];
+
+	const improbCheck = game.global.brokenPlanet || (game.global.universe == 2 && game.global.world >= 20) || game.global.world == 59;
+	const magmaActive = mutations.Magma.active();
+
+	for (let item in game.badGuys) {
+		let badGuy = game.badGuys[item];
+		if (badGuy.locked) continue;
+		if (badGuy.location === 'Maps' && !mapSuffix) continue;
+		let locationMatch = false;
+		if (mapSuffix && badGuy.location2 && badGuy.location2 == mapSuffix) locationMatch = true;
+		if (mapSuffix && badGuy.location == mapSuffix) locationMatch = true;
+		if (level == totalCells && badGuy.last && (locationMatch || (!mapSuffix && badGuy.location == 'World')) && world >= badGuy.world) {
+			if (item == 'Blimp' && world != 5 && world != 10 && world < 15) continue;
+			if (!mapSuffix && improbCheck && item == 'Blimp') {
+				if (magmaActive) item = 'Omnipotrimp';
+				else item = 'Improbability';
+			}
+			selected = item;
+			force = true;
+			break;
+		}
+		if (!mapSuffix && game.global.challengeActive == 'Exterminate') {
+			if (badGuy.location === 'Exterminate') badGuysArray.push(item);
+			continue;
+		}
+		if (!badGuy.last && (!fastOnly || badGuy.fast) && (typeof badGuy.world === 'undefined' || game.global.world >= game.badGuys[item].world) && (badGuy.location == 'All' || (mapSuffix && (badGuy.location == 'Maps' || locationMatch)) || (!mapSuffix && badGuy.location == 'World'))) {
+			badGuysArray.push(item);
+		}
+	}
+
+	if (!mapSuffix && canSkeletimp && !force && getRandomIntSeeded(enemySeed++, 0, 100) < 5) {
+		canSkeletimp = false;
+		game.global.enemySeed = enemySeed;
+		return getRandomIntSeeded(game.global.skeleSeed++, 0, 100) < (game.talents.skeletimp.purchased ? 20 : 10) ? 'Megaskeletimp' : 'Skeletimp';
+	}
+
+	let exoticChance = 3;
+	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
+	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
+
+	if (imports.length && !force && getRandomIntSeeded(enemySeed++, 0, 1000) / 10 < imports.length * exoticChance) {
+		if (!mapSuffix) game.global.enemySeed = enemySeed;
+		return imports[getRandomIntSeeded(enemySeed++, 0, imports.length)];
+	}
+
+	if (!mapSuffix && !force) {
+		let chance = 0.35 * (1 / (100 - 1 - exoticChance * imports.length));
+		chance = Math.round(chance * 100000);
+		if (game.talents.turkimp.purchased) chance *= 1.33;
+		let roll = getRandomIntSeeded(enemySeed++, 0, 100000);
+		if (roll < chance) {
+			if (!mapSuffix) game.global.enemySeed = enemySeed;
+			return 'Turkimp';
+		}
+	}
+
+	if (game.talents.magimp.purchased && mapSuffix != 'Darkness' && !force) {
+		let chance = 2 * (1 / (100 - 1 - exoticChance * imports.length));
+		chance = Math.round(chance * 100000);
+		let roll = getRandomIntSeeded(enemySeed++, 0, 100000);
+		if (roll < chance) {
+			if (!mapSuffix) game.global.enemySeed = enemySeed;
+			return 'Magimp';
+		}
+	}
+
+	//Halloween
+	if (!mapSuffix && !force && visualMutation == 'Pumpkimp') {
+		if (getRandomIntSeeded(enemySeed++, 0, 10) < 5) {
+			game.global.enemySeed = enemySeed;
+			return 'Pumpkimp';
+		}
+	}
+
+	if (game.global.challengeActive == 'Insanity' && mapSuffix && !force) {
+		if (getRandomIntSeeded(enemySeed++, 0, 10000) < game.challenges.Insanity.getHorrimpChance(world) * 100) return 'Horrimp';
+	}
+
+	if (game.global.challengeActive == 'Daily' && typeof game.global.dailyChallenge.mutimps !== 'undefined' && !mapSuffix && !force) {
+		let mutStr = game.global.dailyChallenge.mutimps.strength;
+		if (level <= dailyModifiers.mutimps.getMaxCellNum(mutStr)) {
+			let mobName = mutStr < 6 ? 'Mutimp' : 'Hulking_Mutimp';
+			if (getRandomIntSeeded(enemySeed++, 0, 10) < 4) {
+				game.global.enemySeed = enemySeed;
+				return mobName;
+			}
+		}
+	}
+
+	if (!force) selected = badGuysArray[getRandomIntSeeded(enemySeed++, 0, badGuysArray.length)];
+	if (!mapSuffix) game.global.enemySeed = enemySeed;
+	return selected;
 }
