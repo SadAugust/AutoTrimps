@@ -209,17 +209,19 @@ function _getTargetTimer() {
 	else if (runningHard && getPageSetting('geneAssistTimerHard') > 0) target = getPageSetting('geneAssistTimerHard');
 	//3. Electricity
 	else if (runningElectricity && getPageSetting('geneAssistTimerElectricity') > 0) target = getPageSetting('geneAssistTimerElectricity');
-	//4. Spire Timers
+	//3. Void Bleed
+	else if (game.global.voidBuff === 'bleed' && hdStats.hitsSurvivedVoid !== Infinity && getPageSetting('geneAssistTimerBleedVoids') > 0) target = getPageSetting('geneAssistTimerBleedVoids');
+	//5. Spire Timers
 	else if (getPageSetting('geneAssistTimerSpire' + settingPrefix) > 0 && isDoingSpire()) target = getPageSetting('geneAssistTimerSpire' + settingPrefix);
-	//5. Daily Timers
+	//6. Daily Timers
 	else if (getPageSetting('geneAssistTimerDaily') > 0 && trimpStats.isDaily) target = getPageSetting('geneAssistTimerDaily');
-	//6. C2 Timers
+	//7. C2 Timers
 	else if (trimpStats.isC3 && !runningHard && getPageSetting('geneAssistTimerC2') > 0) target = getPageSetting('geneAssistTimerC2');
-	//7. After Zone Timer
+	//8. After Zone Timer
 	else if (getPageSetting('geneAssistZoneAfter') > 0 && getPageSetting('geneAssistTimerAfter') > 0 && game.global.world >= getPageSetting('geneAssistZoneAfter')) target = getPageSetting('geneAssistTimerAfter');
-	//8. Before Zone Timer
+	//9. Before Zone Timer
 	else if (getPageSetting('geneAssistZoneBefore') > 0 && getPageSetting('geneAssistTimerBefore') > 0 && game.global.world < getPageSetting('geneAssistZoneBefore')) target = getPageSetting('geneAssistTimerBefore');
-	//9. Regular Timer
+	//10. Regular Timer
 	else if (getPageSetting('geneAssistTimer') > 0) target = getPageSetting('geneAssistTimer');
 	//If no timer is set, return.
 	else return false;
