@@ -499,38 +499,38 @@ function autoGather() {
 		}
 	}
 
-	//Upgrade accelerator - Accumulates resources for all the important upgrades of this zone
+	//Upgrade accelerator - Accumulates resources for all the important upgrades of this zone //TODO test delete me
 	// _gatherUpgrades(upgradesToGather, researchAvailable, hasTurkimp);
 
-	// Medium Priority Research - When science is needed and manual research is still relevant
+	//Medium Priority Research - When science is needed and manual research is still relevant
 	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 0.25)) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Low Priority Trapping
+	//Low Priority Trapping
 	if (trappingIsRelevant && trapWontBeWasted && notFullPop) {
 		if (_handleTrapping('bait', 2)) return;
 	}
 
-	// Low Priority Trap Building
+	//Low Priority Trap Building
 	if (trappingIsRelevant) {
 		if (_handleTrapping('build', 2)) return;
 	}
 
-	// Metal if Turkimp is active
+	//Metal if Turkimp is active
 	if (hasTurkimp) {
 		safeSetGather('metal');
 		return;
 	}
 
-	// Low Priority Research
+	//Low Priority Research
 	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp)) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Low Priority Trap Building
+	//Low Priority Trap Building
 	if (trappingIsRelevant) {
 		if (_handleTrapping('build', 3)) return;
 	}
