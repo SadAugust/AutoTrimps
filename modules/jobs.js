@@ -256,6 +256,7 @@ function _getScientistRatio(maxTrimps) {
 		{ condition: () => game.global.world >= 90, ratio: scientistRatios.ratio5 },
 		{ condition: () => game.global.world >= 65, ratio: scientistRatios.ratio4 },
 		{ condition: () => game.global.world >= 50, ratio: scientistRatios.ratio3 },
+		{ condition: () => game.global.turkimpTimer > 0, ratio: 8 },
 		{ condition: () => maxTrimps >= 400, ratio: scientistRatios.ratio2 },
 		{ condition: () => true, ratio: scientistRatios.ratio }
 	];
