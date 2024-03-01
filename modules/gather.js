@@ -36,9 +36,12 @@ MODULES.trapPools = [
 	}
 ];
 
+function _trapSize() {
+	return 1 + getPerkLevel('Bait') * game.portal.Bait.modifier;
+}
+
 function _calcTrapsToFullArmy() {
-	let trapSize = 1 + game.portal.Bait.modifier * getPerkLevel('Bait');
-	return Math.ceil(game.resources.trimps.maxSoldiers / trapSize) - 1;
+	return Math.ceil(game.resources.trimps.maxSoldiers / _trapSize()) - 1;
 }
 
 function _calcTPS() {
@@ -47,14 +50,13 @@ function _calcTPS() {
 }
 
 function _calcTrapSupplySize() {
-	const trapSize = 1 + game.portal.Bait.modifier * getPerkLevel('Bait');
 	const territoryBonus = 5 + game.portal.Trumps.modifier * getPerkLevel('Trumps');
 	const tauntimp = game.unlocks.imps.Tauntimp ? Math.ceil(game.resources.trimps.realMax() * 0.003) : 0;
 	let largestHouseSize = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector', 'Warpstation']
 		.filter((houseName) => !game.buildings[houseName].locked)
 		.map((houseName) => _getHousingBonus(houseName))
 		.reduce((max, bonus) => Math.max(max, bonus), 0);
-	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / trapSize) - 1;
+	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / _trapSize()) - 1;
 }
 
 function safeSetGather(resource) {
@@ -112,7 +114,7 @@ function _isTrappingOK(Battle, Coordination) {
 
 function _isTrappingRelevant() {
 	//Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
-	return _breedingPS() / 10 < _calcTPS() * getPerkLevel('Bait') + 1;
+	return _breedingPS() / 10 < _calcTPS() * _trapSize();
 }
 
 function isPlayerRelevant(resourceName, hasTurkimp, customRatio = 0.1) {
@@ -200,7 +202,7 @@ function _willTrapsBeWasted() {
 	const breedTimer = _breedTimeRemaining();
 	const gteTime = breedTimer >= 1 / _calcTPS();
 	const lteTime = game.global.playerGathering === 'trimps' && breedTimer <= 0.1;
-	const excessBait = 1 + game.portal.Bait.modifier * getPerkLevel('Bait') >= game.resources.trimps.realMax() - game.resources.trimps.owned;
+	const excessBait = _trapSize() >= game.resources.trimps.realMax() - game.resources.trimps.owned;
 	return excessBait || !(gteTime || lteTime);
 }
 
