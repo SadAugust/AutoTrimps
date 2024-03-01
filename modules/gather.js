@@ -445,8 +445,8 @@ function autoGather() {
 	//Efficiency has the highest priority amongst upgrades
 	if (!game.global.mapsActive && _gatherUpgrade('Efficiency', researchAvailable, hasTurkimp)) return;
 
-	//Medium Priority Trapping (soldiers are dead, not in a map)
-	if (trappingIsRelevant && trapWontBeWasted && game.global.soldierHealth <= 0 && !game.global.mapsActive) {
+	//Medium Priority Trapping (soldiers are dead)
+	if (trappingIsRelevant && trapWontBeWasted && game.global.soldierHealth <= 0) {
 		if (_handleTrapping('bait', 1)) return;
 	}
 
@@ -469,11 +469,6 @@ function autoGather() {
 	//Upgrade accelerator (available only)
 	for (let upgrade of upgradesToGather.filter((up) => game.upgrades[up].allowed > game.upgrades[up].done)) {
 		if (_gatherUpgrade(upgrade, researchAvailable, hasTurkimp)) return;
-	}
-
-	//Medium Priority Trapping (soldiers are dead)
-	if (trappingIsRelevant && trapWontBeWasted && game.global.soldierHealth <= 0) {
-		if (_handleTrapping('bait', 1)) return;
 	}
 
 	//Medium Priority Trap Building
