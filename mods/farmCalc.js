@@ -378,7 +378,7 @@ function populateFarmCalcData() {
 function stats(lootFunction = lootDefault) {
 	const saveData = populateFarmCalcData();
 	let stats = [];
-	let extra = saveData.reducer ? -1 : saveData.extraMapLevelsAvailable ? 10 : 0;
+	let extra = saveData.extraMapLevelsAvailable ? 10 : saveData.reducer ? -1 : 0;
 	let mapsCanAffordPerfect = 0;
 	let coords = 1;
 
