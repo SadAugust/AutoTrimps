@@ -121,6 +121,81 @@ function isPlayerRelevant(resourceName, hasTurkimp, customRatio = 0.1) {
 }
 
 function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
+	return _gatherUpgrades([upgradeName], researchAvailable, hasTurkimp)
+}
+
+function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
+	const upgrades = upgradeNames.map(upName => ({ name: upName, obj: game.upgrades[upName] }));
+
+	const upgradeAllowedFuncs = {
+		Efficiency:   (upObj) => upObj.done < Math.floor(game.global.world / 2),
+		Speedfarming: (upObj) => upObj.done < Math.min(game.global.world, 59),
+		Speedlumber:  (upObj) => upObj.done < Math.min(game.global.world, 59),
+		Speedminer:   (upObj) => upObj.done < Math.min(game.global.world, 59) && !challengeActive('Metal'),
+		Speedscience: (upObj) => upObj.done < Math.floor(game.global.world / 2) && !challengeActive('Scientist'),
+		Megafarming:  (upObj) => upObj.done < game.global.world - 59,
+		Megalumber:   (upObj) => upObj.done < game.global.world - 59,
+		Megaminer:    (upObj) => upObj.done < game.global.world - 59 && !challengeActive('Metal'),
+		Megascience:  (upObj) => upObj.done < Math.floor((game.global.world - 59) / 2) && !challengeActive('Scientist'),
+		Gymystic:     (upObj) => upObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5)),
+		Coordination: (upObj) => upObj.done < game.global.world && canAffordCoordinationTrimps(),
+		Trainers:     (upObj) => upObj.done < (game.global.world >= 3 ? 1 : 0),
+		Blockmaster:  (upObj) => upObj.done < (game.global.world >= 4 ? 1 : 0),
+		TrainTacular: (upObj) => upObj.done < Math.floor(game.global.world / 5)
+	};
+
+	const allowedUpgrades = upgrades.filter(up => upgradeAllowedFuncs[up.name])
+			.filter(up => upgradeAllowedFuncs[up.name](up.obj));
+
+	const isResourceAllowed = (resourceName) =>
+		({
+			science: researchAvailable,
+			food: true,
+			wood: game.triggers.wood.done,
+			metal: elementVisible('metal')
+		}[resourceName]);
+
+	//Calculates the required amount of any resource used by the upgrade
+	function neededResourceAmount(resourceName) {
+		return allowedUpgrades
+			.map(up => ({up: up, cost: up.obj.cost.resources[resourceName]}))
+			.filter(upC => upC.cost)
+			.map(upC => (upC.cost[1] === undefined) ? upC.cost : resolvePow(upC.cost, upC.up.obj))
+			.reduce((total, cost) => total + cost, 0);
+	}
+
+	//Calculates the priority
+	//TODO Advanced: use buildings.js style resourcePS to determine priority
+	const getPriority = (resourceName) => {
+		//Exception: Science only relies on Turkimp
+		if (resourceName.toLowerCase() === 'science' && game.resources[resourceName].owned < neededResourceAmount(resourceName) && !hasTurkimp) return 2;
+
+		//The priority equals the % of the resource we still need to gather (-1 would mean "last", not "don't gather")
+		let priority = 1 - Math.min(1, game.resources[resourceName].owned / neededResourceAmount(resourceName));
+
+		//Keeps a higher priority for science, even with turkimp
+		if (resourceName.toLowerCase() === 'science') priority = Math.min(2 * priority, 1);
+
+		//Uses a buffer to avoid flickering between resources
+		return priority + (MODULES.gather.coordBuffering === resourceName && priority > 0 ? 0.1 : 0);
+	};
+
+	//Defines the priority of each resource
+	let priorityList = ['science', 'food', 'wood', 'metal']
+		.filter((resourceName) => isResourceAllowed(resourceName) && isPlayerRelevant(resourceName, hasTurkimp, 0.25))
+		.map((resourceName) => ({ name: resourceName, priority: getPriority(resourceName) }))
+		.filter((resource) => resource.priority)
+		.sort((r1, r2) => r2.priority - r1.priority);
+
+	if (!priorityList.length) return false;
+
+	safeSetGather(priorityList[0].name);
+	MODULES.gather.coordBuffering = priorityList[0].name;
+
+	return true;
+}
+
+function _gatherUpgrade_old(upgradeName, researchAvailable, hasTurkimp) {
 	const upgradeObj = game.upgrades[upgradeName];
 
 	const upgradeAllowedFuncs = {
@@ -499,6 +574,9 @@ function autoGather() {
 			return;
 		}
 	}
+
+	//Upgrade accelerator - Accumulates resources for all the important upgrades of this zone
+	_gatherUpgrades(upgradesToGather, researchAvailable, hasTurkimp);
 
 	// Medium Priority Research - When science is needed and manual research is still relevant
 	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 0.25)) {
