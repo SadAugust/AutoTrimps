@@ -100,6 +100,17 @@ function _getResourcePerSecond() {
 	return resourcePerSecond;
 }
 
+function mostEfficientHousing_beta(resourceName) {
+	function effWrapper(houseName = undefined, eff = Infinity) { return ({ name: houseName, eff: eff }); }
+	function calcCostEff(houseName) { return getBuildingItemPrice(game.buildings[houseName], resourceName, false, 1) / _getHousingBonus(houseName); }
+
+	return _housingToCheck()
+		.filter(houseName => game.buildings[houseName].cost[resourceName])
+		.map(houseName => effWrapper(houseName, calcCostEff(houseName)))
+		.reduce((mostEff, current) => current.eff < mostEff.eff ? current : mostEff, effWrapper())
+		.name
+}
+
 function mostEfficientHousing(resourcePerSecond) {
 	function effWrapper(houseName = undefined, eff = 0) { return ({ name: houseName, eff: eff }); }
 	function calcEff(houseName) { return _getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName); }
@@ -514,8 +525,27 @@ function _getAffordableMets() {
 	return 0;
 }
 
-function _buyHousing(buildingSettings) {
-	let houseName = mostEfficientHousing(_getResourcePerSecond());
+function _buyHousing(buildSettings) {
+	if (MODULES.buildings.betaHouseEfficiency) {
+		let boughtHousing = false;
+		const foodEffHouse = mostEfficientHousing_beta('food');
+		const gemsEffHouse = mostEfficientHousing_beta('gems');
+
+		//Waits for the most food efficient house to be bought for its gem efficiency, except Huts and Houses
+		if (['Hut', 'House'].includes(foodEffHouse))
+			boughtHousing = _buySelectedHouse(foodEffHouse, buildSettings);
+
+		//Gem Efficiency
+		boughtHousing |= _buySelectedHouse(gemsEffHouse, buildSettings);
+
+		return boughtHousing;
+	}
+
+	//Old System
+	return _buySelectedHouse(mostEfficientHousing(_getResourcePerSecond()), buildSettings)
+}
+
+function _buySelectedHouse(houseName, buildingSettings) {
 	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName)) return false;
 
 	//Saves resources for upgrades
