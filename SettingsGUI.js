@@ -555,6 +555,7 @@ function initialiseAllSettings() {
 				let description = "<p>Gene Assist will use the value set here when running void maps with the bleed modifier. </p>";
 				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
 				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p>Ignored if you outblock the void map.</p>";
 				description += "<p><b>Recommended:</b> 8</p>";
 				return description;
 			}, 'value', 8, null, 'Jobs', [1],
