@@ -500,7 +500,7 @@ function autoGather() {
 	}
 
 	//Upgrade accelerator - Accumulates resources for all the important upgrades of this zone
-	_gatherUpgrades(upgradesToGather, researchAvailable, hasTurkimp);
+	// _gatherUpgrades(upgradesToGather, researchAvailable, hasTurkimp);
 
 	// Medium Priority Research - When science is needed and manual research is still relevant
 	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 0.25)) {
