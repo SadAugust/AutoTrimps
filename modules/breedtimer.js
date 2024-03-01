@@ -207,7 +207,7 @@ function _getTargetTimer() {
 	if (getPageSetting('geneAssistTimerDailyHard') > 0 && trimpStats.isDaily && runningHard) target = getPageSetting('geneAssistTimerDailyHard');
 	//2. Hard Challenges and hard void maps.
 	else if (runningHard && getPageSetting('geneAssistTimerHard') > 0) target = getPageSetting('geneAssistTimerHard');
-	else if (game.global.voidBuff == 'bleed' && getPageSetting('geneAssistTimerVoidBleed') > 0) target = getPageSetting('geneAssistTimerVoidBleed');
+	else if (game.global.voidBuff == 'bleed' && getPageSetting('geneAssistTimerVoidBleed') > 0 && hdStats.hitsSurvivedVoid != Infinity) target = getPageSetting('geneAssistTimerVoidBleed');
 	//3. Electricity
 	else if (runningElectricity && getPageSetting('geneAssistTimerElectricity') > 0) target = getPageSetting('geneAssistTimerElectricity');
 	//4. Spire Timers
