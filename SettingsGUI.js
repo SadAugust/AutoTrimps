@@ -549,6 +549,17 @@ function initialiseAllSettings() {
 			}, 'value', 8, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
+		createSetting('geneAssistTimerVoidBleed',
+			function () { return ('GA: Void Bleed Timer') },
+			function () {
+				let description = "<p>Gene Assist will use the value set here when running void maps with the bleed modifier. </p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> 8</p>";
+				return description;
+			}, 'value', 8, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+
 		createSetting('geneAssistTimerElectricity',
 			function () { return ('GA: Electricity Timer') },
 			function () {
