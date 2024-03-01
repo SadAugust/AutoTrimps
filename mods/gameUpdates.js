@@ -698,7 +698,7 @@ function breed() {
     srLastBreedTime = '';
     return;
   }
-  potencyModifiers = {
+  let potencyModifiers = {
     trimps: trimps.potency,
     book: game.upgrades.Potency.done,
     nursery: game.buildings.Nursery.owned,
@@ -720,13 +720,12 @@ function breed() {
 
   let potencyMod;
   let logPotencyMod;
-
   let timeRemaining = breedCache.timeRemaining;
   let totalTime = breedCache.totalTime;
 
   // cache initialized, and inputs identical to cache
   if (Object.keys(potencyModifiers).map((k) => potencyModifiers[k] === breedCache.inputs[k]).every(Boolean)) {
-    console.log("using cache")
+    //console.log("using cache")
     potencyMod = breedCache.potencyModInitial
     breeding = breedCache.potencyModInitial.mul(breeding);
     updatePs(breeding.toNumber(), true);
@@ -763,85 +762,84 @@ function breed() {
     //save values to cache
     breedCache.potencyMod = potencyMod
     breedCache.logPotencyMod = logPotencyMod;
-
-
   }
-  // if breeding, or new potency mod, or breedcache time is not initialized, recalculate all breeding numbers
-  if (missingTrimps.cmp(0) < 0 || !cached || breedCache.totalTime.toNumber() == 0) {
-    console.log("recalculating breed times")
-    timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
-      .div(logPotencyMod)
-      .div(10);
-    //Calculate full breed time
-    let fullBreed = '';
-    const currentSend = trimps.getCurrentSend();
-    totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
-      .div(logPotencyMod)
-      .div(10);
-    //breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
-    game.global.breedTime = currentSend / breeding.toNumber();
+  // recalculate all breeding numbers
+  //if (!cached || breedCache.totalTime.toNumber() == 0 || missingTrimps.cmp(0) < 0) { // temp disabled, buggy
+  //console.log("recalculating breed times")
+  timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
+    .div(logPotencyMod)
+    .div(10);
+  //Calculate full breed time
+  let fullBreed = '';
+  const currentSend = trimps.getCurrentSend();
+  totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
+    .div(logPotencyMod)
+    .div(10);
+  //breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
+  game.global.breedTime = currentSend / breeding.toNumber();
 
-    if (!game.jobs.Geneticist.locked && game.global.Geneticistassist && game.global.GeneticistassistSetting > 0) {
-      const target = new Decimal(game.global.GeneticistassistSetting);
-      //tired of typing Geneticistassist
-      let GAElem = document.getElementById('Geneticistassist');
-      let GAIndicator = document.getElementById('GAIndicator');
-      let canRun = false;
-      const now = new Date().getTime();
-      if (lastGAToggle === -1) canRun = true;
-      else if (now > lastGAToggle + 2000) {
-        lastGAToggle = -1;
-        canRun = true;
-      }
-      if (!GAElem && usingRealTimeOffline) {
-        drawAllJobs(true);
-        GAElem = document.getElementById('Geneticistassist');
-        GAIndicator = document.getElementById('GAIndicator');
-      }
 
-      if (GAElem && canRun) {
-        let thresh = new DecimalBreed(totalTime.mul(0.02));
-        let compareTime;
-        let htmlMessage = '';
-        if (timeRemaining.cmp(1) > 0 && timeRemaining.cmp(target.add(1)) > 0) {
-          compareTime = new DecimalBreed(timeRemaining.add(-1));
-        } else {
-          compareTime = new DecimalBreed(totalTime);
-        }
-        if (!thresh.isFinite()) thresh = new Decimal(0);
-        if (!compareTime.isFinite()) compareTime = new Decimal(999);
-        let genDif = new DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
-
-        if (compareTime.cmp(target) < 0) {
-          swapClass('state', 'stateHiring', GAElem);
-          if (game.resources.food.owned * 0.01 < getNextGeneticistCost()) {
-            htmlMessage = " (<span style='font-size: 0.8em' class='glyphicon glyphicon-apple'></span>)";
-          } else if (timeRemaining.cmp(1) < 0 || target.minus((now - game.global.lastSoldierSentAt) / 1000).cmp(timeRemaining) > 0) {
-            if (genDif.cmp(0) > 0) {
-              if (genDif.cmp(10) > 0) genDif = new Decimal(10);
-              addGeneticist(genDif.toNumber());
-            }
-            htmlMessage = ' (+)';
-          } else htmlMessage = " (<span style='font-size: 0.8em' class='icmoon icon-clock3'></span>)";
-        } else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || potencyMod.cmp(1) === 0) {
-          if (!genDif.isFinite()) genDif = new Decimal(-1);
-          swapClass('state', 'stateFiring', GAElem);
-          htmlMessage = ' (-)';
-          if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled !== 2) {
-            if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
-            removeGeneticist(genDif.abs().toNumber());
-          }
-        } else {
-          swapClass('state', 'stateHappy', GAElem);
-          htmlMessage = '';
-        }
-
-        if (GAIndicator && GAIndicator.innerHTML !== htmlMessage) GAIndicator.innerHTML = htmlMessage;
-      }
+  if (!game.jobs.Geneticist.locked && game.global.Geneticistassist && game.global.GeneticistassistSetting > 0) {
+    const target = new Decimal(game.global.GeneticistassistSetting);
+    //tired of typing Geneticistassist
+    let GAElem = document.getElementById('Geneticistassist');
+    let GAIndicator = document.getElementById('GAIndicator');
+    let canRun = false;
+    const now = new Date().getTime();
+    if (lastGAToggle === -1) canRun = true;
+    else if (now > lastGAToggle + 2000) {
+      lastGAToggle = -1;
+      canRun = true;
     }
-    breedCache.timeRemaining = timeRemaining;
-    breedCache.totalTime = totalTime
+    if (!GAElem && usingRealTimeOffline) {
+      drawAllJobs(true);
+      GAElem = document.getElementById('Geneticistassist');
+      GAIndicator = document.getElementById('GAIndicator');
+    }
+
+    if (GAElem && canRun) {
+      let thresh = new DecimalBreed(totalTime.mul(0.02));
+      let compareTime;
+      let htmlMessage = '';
+      if (timeRemaining.cmp(1) > 0 && timeRemaining.cmp(target.add(1)) > 0) {
+        compareTime = new DecimalBreed(timeRemaining.add(-1));
+      } else {
+        compareTime = new DecimalBreed(totalTime);
+      }
+      if (!thresh.isFinite()) thresh = new Decimal(0);
+      if (!compareTime.isFinite()) compareTime = new Decimal(999);
+      let genDif = new DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
+
+      if (compareTime.cmp(target) < 0) {
+        swapClass('state', 'stateHiring', GAElem);
+        if (game.resources.food.owned * 0.01 < getNextGeneticistCost()) {
+          htmlMessage = " (<span style='font-size: 0.8em' class='glyphicon glyphicon-apple'></span>)";
+        } else if (timeRemaining.cmp(1) < 0 || target.minus((now - game.global.lastSoldierSentAt) / 1000).cmp(timeRemaining) > 0) {
+          if (genDif.cmp(0) > 0) {
+            if (genDif.cmp(10) > 0) genDif = new Decimal(10);
+            addGeneticist(genDif.toNumber());
+          }
+          htmlMessage = ' (+)';
+        } else htmlMessage = " (<span style='font-size: 0.8em' class='icmoon icon-clock3'></span>)";
+      } else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || potencyMod.cmp(1) === 0) {
+        if (!genDif.isFinite()) genDif = new Decimal(-1);
+        swapClass('state', 'stateFiring', GAElem);
+        htmlMessage = ' (-)';
+        if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled !== 2) {
+          if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
+          removeGeneticist(genDif.abs().toNumber());
+        }
+      } else {
+        swapClass('state', 'stateHappy', GAElem);
+        htmlMessage = '';
+      }
+
+      if (GAIndicator && GAIndicator.innerHTML !== htmlMessage) GAIndicator.innerHTML = htmlMessage;
+    }
   }
+  //}
+  breedCache.timeRemaining = timeRemaining;
+  breedCache.totalTime = totalTime
 
   // save inputs
   breedCache.inputs = potencyModifiers;
