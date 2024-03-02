@@ -79,7 +79,7 @@ function buyJobs(forceRatios) {
 	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
 
 	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps);
-	_handleJobRatios(desiredRatios, freeWorkers);
+	_handleJobRatios(desiredRatios, freeWorkers, maxTrimps);
 }
 
 function _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed) {
@@ -254,6 +254,7 @@ function _getScientistRatio(maxTrimps) {
 		{ condition: () => game.global.world >= 90, ratio: 256 },
 		{ condition: () => game.global.world >= 65, ratio: 64 },
 		{ condition: () => game.global.world >= 50, ratio: 16 },
+        { condition: () => game.global.turkimpTimer > 0, ratio: 2 },
 		{ condition: () => maxTrimps >= 400, ratio: 4 },
 		{ condition: () => true, ratio: 5 }
 	];
@@ -279,7 +280,7 @@ function _getAutoJobRatio(maxTrimps) {
 	return conditions.find(({ condition }) => condition()).ratio;
 }
 
-function _handleJobRatios(desiredRatios, freeWorkers) {
+function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const hireWorkers = desiredRatios.map((ratio) => ratio > 0);
 
@@ -292,12 +293,20 @@ function _handleJobRatios(desiredRatios, freeWorkers) {
 	//Calculates how many workers will be left out of the initial distribution
 	const remainder = freeWorkers > 10e6 ? 0 : freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
 
-	//Decides where to put them TODO Don't take trimps OUT of scientists early on
+	//Decides where to put them
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff, true).slice(diff.length - remainder);
-	whereToIncrement.forEach((idx) => (hireWorkers[idx] ? desiredWorkers[idx]++ : null));
-	//Calculates the actual number of workers to buy or fire, and the cost of doing so
+	whereToIncrement.forEach((idx) => (hireWorkers[idx] ? desiredWorkers[idx]++ : null)); //TODO Fix hireWorkers messing with the remainder
+
+	//Calculates the actual number of workers to buy or fire
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
+
+	//Prevents scientist from being fired very early on
+	if (desiredWorkers[3] === -1 && maxTrimps < 400 && remainder > 0) {
+		desiredWorkers[whereToIncrement[0]]--;
+		desiredWorkers[3]++;
+	}
+
 	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
 
 	if (totalWorkerCost > game.resources.food.owned) {

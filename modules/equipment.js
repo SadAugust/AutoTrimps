@@ -72,7 +72,7 @@ function _shouldSaveResource(resourceName) {
 	return shouldSave && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
 
-function mostEfficientEquipment(resourceSpendingPct, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
+function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
 	if (mapSettings.pandaEquips) return pandemoniumEquipmentCheck(mapSettings.cacheGain);
 
 	const canAncientTreasure = game.mapUnlocks.AncientTreasure.canRunOnce;
@@ -91,8 +91,8 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 
 	const getZoneGo = (type) => zoneGo || zoneGoCheck(equipZone, type, currentMap).active;
 	const calculateResourceSpendingPct = (zoneGo, type) => {
-		if (zoneGo || (mapSettings.shouldHealthFarm && type === 'health')) return 1;
-		if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return 1;
+		if (zoneGo || (mapSettings.shouldHealthFarm && type !== 'attack')) return 1;
+		if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return 1; //TODO Please confirm if equality applies to block
 		return resourceSpendingPct || (equipPercent <= 0 ? 1 : Math.min(1, equipPercent / 100));
 	};
 	const calculateEquipCap = (type) => {
@@ -113,7 +113,8 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 
 	return {
 		attack: createObject('attack'),
-		health: createObject('health')
+		health: createObject('health'),
+		block: createObject('block')
 	};
 }
 
@@ -154,7 +155,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 				const buildingSettings = getPageSetting('buildingSettingsArray');
 				if (getPageSetting('buildingsType') && buildingSettings.Gym && buildingSettings.Gym.enabled) {
 					const data = shieldBlockUpgrades();
-					if (data.Gym < data.Shield) continue;
+					if (data.Gym <= data.Shield) continue;
 				}
 			}
 		}
@@ -195,7 +196,8 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		if (!prestige && equipData.level >= equipCap) continue;
 		if (equipName === 'Shield' && nextLevelCost > game.resources.wood.owned * resourceSpendingPct) continue;
 
-		const isMostEfficient = mostEfficient[equipType].statPerResource > safeRatio || !mostEfficient[equipType].name || (equipName === 'Shield' && mostEfficient[equipType].cost > game.resources.metal.owned * resourceSpendingPct);
+		const shieldEff = (equipName === 'Shield' && equipType === 'health' && mostEfficient[equipType].cost > game.resources.metal.owned * resourceSpendingPct);
+		const isMostEfficient = mostEfficient[equipType].statPerResource > safeRatio || !mostEfficient[equipType].name || shieldEff;
 
 		if (isMostEfficient) {
 			mostEfficient[equipType] = {
@@ -288,11 +290,14 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 		if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 		if (mapSettings.mapName === 'Wither Farm' || mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 	}
-	if (farmType === 'health') {
+	if (farmType === 'health' || farmType === 'block') {
 		if (whichHitsSurvived() < getPageSetting('equipCutOffHS') || mapSettings.shouldHealthFarm) return zoneDetails;
+
+		//TODO Please confirm if this U2 stuff applies to block
 		if ((mapSettings.mapName === 'Smithless Farm' || mapSettings.mapName === 'Wither Farm') && mapSettings.equality > 0) return zoneDetails;
 		if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && getPerkLevel('Equality') > 0) return zoneDetails;
 	}
+
 
 	const settingZone = setting;
 	const world = game.global.world.toString();
@@ -413,7 +418,7 @@ function buyEquipsAlways2() {
 
 function buyEquips() {
 	const bestBuys = mostEfficientEquipment();
-	const equipTypes = ['attack', 'health'].sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
+	const equipTypes = ['attack', 'health', 'block'].sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
 	let keepBuying = false;
 
 	const saveResources = {

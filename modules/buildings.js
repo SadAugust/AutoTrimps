@@ -1,5 +1,5 @@
 MODULES.buildings = {
-	betaHouseEfficiency: false
+	betaHouseEfficiency: true
 };
 
 function safeBuyBuilding(building, amt) {
@@ -100,25 +100,25 @@ function _getResourcePerSecond() {
 	return resourcePerSecond;
 }
 
-function mostEfficientHousing() {
-	let housingTargets = _housingToCheck();
-	const resourcePerSecond = _getResourcePerSecond();
+function mostEfficientHousing_beta(resourceName) {
+	function effWrapper(houseName = undefined, eff = Infinity) { return ({ name: houseName, eff: eff }); }
+	function calcCostEff(houseName) { return getBuildingItemPrice(game.buildings[houseName], resourceName, false, 1) / _getHousingBonus(houseName); }
 
-	const mostEfficient = {
-		name: null,
-		time: Infinity
-	};
+	return _housingToCheck()
+		.filter(houseName => game.buildings[houseName].cost[resourceName])
+		.map(houseName => effWrapper(houseName, calcCostEff(houseName)))
+		.reduce((mostEff, current) => current.eff < mostEff.eff ? current : mostEff, effWrapper())
+		.name
+}
 
-	for (const houseName of housingTargets) {
-		const worstTime = _getSlowestResource(resourcePerSecond, houseName);
+function mostEfficientHousing(resourcePerSecond) {
+	function effWrapper(houseName = undefined, eff = 0) { return ({ name: houseName, eff: eff }); }
+	function calcEff(houseName) { return _getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName); }
 
-		if (mostEfficient.time > worstTime) {
-			mostEfficient.name = houseName;
-			mostEfficient.time = worstTime;
-		}
-	}
-
-	return mostEfficient.name;
+	return _housingToCheck()
+		.map(houseName => effWrapper(houseName, calcEff(houseName)))
+		.reduce((mostEff, current) => current.eff > mostEff.eff ? current : mostEff, effWrapper())
+		.name
 }
 
 function _canAffordBuilding(resourceName, buildingStat, spendingPerc, resourcefulMod) {
@@ -137,7 +137,7 @@ function _getHousingBonus(houseName) {
 	if (!game.buildings.Hub.locked) {
 		let hubAmt = 1;
 		if (houseName === 'Collector' && autoBattle.oneTimers.Collectology.owned) hubAmt = autoBattle.oneTimers.Collectology.getHubs();
-		housingBonus += hubAmt * 25000;
+		housingBonus += hubAmt * game.buildings.Hub.increase.by;
 	}
 
 	return housingBonus;
@@ -148,7 +148,6 @@ function _getSlowestResource(resourcePerSecond, houseName) {
 	let avgProduction;
 	let worstTime = -Infinity;
 	const buildingStat = game.buildings[houseName];
-	const housingBonus = _getHousingBonus(houseName);
 	const resourcefulMod = getResourcefulMult();
 	const owned = buildingStat.owned;
 
@@ -161,7 +160,7 @@ function _getSlowestResource(resourcePerSecond, houseName) {
 		else avgProduction = resourcePerSecond[resource];
 		if (avgProduction <= 0) avgProduction = 1;
 
-		worstTime = Math.max(price / (avgProduction * housingBonus), worstTime);
+		worstTime = Math.max(price / avgProduction, worstTime);
 	}
 
 	return worstTime;
@@ -526,8 +525,27 @@ function _getAffordableMets() {
 	return 0;
 }
 
-function _buyHousing(buildingSettings) {
-	let houseName = mostEfficientHousing();
+function _buyHousing(buildSettings) {
+	if (MODULES.buildings.betaHouseEfficiency) {
+		let boughtHousing = false;
+		const foodEffHouse = mostEfficientHousing_beta('food');
+		const gemsEffHouse = mostEfficientHousing_beta('gems');
+
+		//Waits for the most food efficient house to be bought for its gem efficiency, except Huts and Houses
+		if (['Hut', 'House'].includes(foodEffHouse))
+			boughtHousing = _buySelectedHouse(foodEffHouse, buildSettings);
+
+		//Gem Efficiency
+		boughtHousing |= _buySelectedHouse(gemsEffHouse, buildSettings);
+
+		return boughtHousing;
+	}
+
+	//Old System
+	return _buySelectedHouse(mostEfficientHousing(_getResourcePerSecond()), buildSettings)
+}
+
+function _buySelectedHouse(houseName, buildingSettings) {
 	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName)) return false;
 
 	//Saves resources for upgrades

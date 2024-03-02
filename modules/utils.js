@@ -124,7 +124,7 @@ function debug(message, messageType, icon) {
 	const sendMessage = messageType in settingArray ? settingArray[messageType] : false;
 
 	if (sendMessage || messageType === 'offline') {
-		console.log(`${timeStamp()} ${message}`);
+		console.log(`${timeStamp()} ${updatePortalTimer(true)} ${message}`);
 		if (!usingRealTimeOffline || canRunTW) message_AT(message, messageType, icon);
 	}
 }
@@ -635,6 +635,12 @@ function shieldBlockUpgrades() {
 	return upgradeObj;
 }
 
+function ceilToNearestMultipleOf(number, multipleOf, offSet) {
+	var n = number - offSet;
+	var roundedUp = Math.ceil(n / multipleOf) * multipleOf
+	return roundedUp + offSet
+}
+
 function argSort(array, reverseStability = false) {
 	return array
 		.map((value, index) => [value, index])
@@ -650,7 +656,7 @@ function elementExists(element) {
 }
 
 function elementVisible(element) {
-	visible = document.getElementById(element).style.visibility !== 'hidden';
+	let visible = document.getElementById(element).style.visibility !== 'hidden';
 	return elementExists(element) && visible;
 }
 

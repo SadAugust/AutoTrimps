@@ -1,6 +1,4 @@
 MODULES.gather = {
-	trapBuffering: false,
-	maxTrapBuffering: false,
 	coordBuffering: undefined
 };
 
@@ -38,26 +36,27 @@ MODULES.trapPools = [
 	}
 ];
 
-function _calcTrapsToFullArmy() {
-	let trimpsPerBait = 1 + getPerkLevel('Bait') * game.portal.Bait.modifier;
-	return Math.ceil(game.resources.trimps.maxSoldiers / trimpsPerBait) - 1;
+function _trapSize() {
+	return 1 + getPerkLevel('Bait') * game.portal.Bait.modifier;
 }
 
-//Traps per second
+function _calcTrapsToFullArmy() {
+	return Math.ceil(game.resources.trimps.maxSoldiers / _trapSize()) - 1;
+}
+
 function _calcTPS() {
 	const fluffyTrapMult = game.global.universe === 2 && Fluffy.isRewardActive('trapper') ? 10 : 1;
 	return Math.min(10, game.global.playerModifier / 5) * fluffyTrapMult;
 }
 
 function _calcTrapSupplySize() {
-	const trapSize = 1 + game.portal.Bait.modifier * getPerkLevel('Bait');
 	const territoryBonus = 5 + game.portal.Trumps.modifier * getPerkLevel('Trumps');
 	const tauntimp = game.unlocks.imps.Tauntimp ? Math.ceil(game.resources.trimps.realMax() * 0.003) : 0;
 	let largestHouseSize = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector', 'Warpstation']
 		.filter((houseName) => !game.buildings[houseName].locked)
 		.map((houseName) => _getHousingBonus(houseName))
 		.reduce((max, bonus) => Math.max(max, bonus), 0);
-	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / trapSize);
+	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / _trapSize()) - 1;
 }
 
 function safeSetGather(resource) {
@@ -78,11 +77,11 @@ function _isTrappingOK(Battle, Coordination) {
 	const baseCheck = (!Battle.done || getPageSetting('TrapTrimps')) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 	if (!baseCheck) return false;
 
-	// Identify if we should disable trapping when running Trappa/Trapper.
+	//Identify if we should disable trapping when running Trappa/Trapper.
 	const trapChallengeCheck = trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap');
 	if (!trapChallengeCheck) return true;
 
-	// TODO: Need a way to figure out how many coords it will purchase if using trappaCoordToggle === 2 since the goal with that feature is to cap army at X soliders so probably need to increment coordination until we reach that point
+	//TODO: Need a way to figure out how many coords it will purchase if using trappaCoordToggle === 2 since the goal with that feature is to cap army at X soliders so probably need to increment coordination until we reach that point
 	const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
 	const baseArmySize = game.resources.trimps.maxSoldiers;
 	const trapperCoords = getPageSetting('trapperCoords');
@@ -114,38 +113,45 @@ function _isTrappingOK(Battle, Coordination) {
 }
 
 function _isTrappingRelevant() {
-	// Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
-	return _breedingPS() / 10 < _calcTPS() * getPerkLevel('Bait') + 1;
+	//Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
+	return _breedingPS() / 10 < _calcTPS() * _trapSize();
 }
 
 function isPlayerRelevant(resourceName, hasTurkimp, customRatio = 0.1) {
 	const turkimp = hasTurkimp && resourceName.toLowerCase() !== 'science';
-	return turkimp || getPlayerModifier() >= (customRatio * trimpStats.resourcesPS[resourceName].normal) / 10;
+	return turkimp || getPlayerModifier() >= customRatio * trimpStats.resourcesPS[resourceName].normal;
 }
 
 function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
-	const upgradeObj = game.upgrades[upgradeName];
+	return _gatherUpgrades([upgradeName], researchAvailable, hasTurkimp)
+}
+
+function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
+	const upgrades = upgradeNames.map(upName => ({ name: upName, obj: game.upgrades[upName] }));
 
 	const upgradeAllowedFuncs = {
-		Efficiency: () => upgradeObj.done < Math.floor(game.global.world / 2),
-		Speedfarming: () => upgradeObj.done < Math.min(game.global.world, 59),
-		Speedlumber: () => upgradeObj.done < Math.min(game.global.world, 59),
-		Speedminer: () => upgradeObj.done < Math.min(game.global.world, 59) && !challengeActive('Metal'),
-		Speedscience: () => upgradeObj.done < Math.floor(game.global.world / 2) && !challengeActive('Scientist'),
-		Megafarming: () => upgradeObj.done < game.global.world - 59,
-		Megalumber: () => upgradeObj.done < game.global.world - 59,
-		Megaminer: () => upgradeObj.done < game.global.world - 59 && !challengeActive('Metal'),
-		Megascience: () => upgradeObj.done < Math.floor((game.global.world - 59) / 2) && !challengeActive('Scientist'),
-		Gymystic: () => upgradeObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5)),
-		Coordination: () => upgradeObj.done < game.global.world && canAffordCoordinationTrimps(),
-		Trainers: () => upgradeObj.done < (game.global.world >= 3 ? 1 : 0),
-		Blockmaster: () => upgradeObj.done < (game.global.world >= 4 ? 1 : 0),
-		TrainTacular: () => upgradeObj.done < Math.floor(game.global.world / 5)
+		Efficiency:   (upObj) => upObj.done < Math.floor(game.global.world / 2),
+		Speedfarming: (upObj) => upObj.done < Math.min(game.global.world, 59),
+		Speedlumber:  (upObj) => upObj.done < Math.min(game.global.world, 59),
+		Speedminer:   (upObj) => upObj.done < Math.min(game.global.world, 59) && !challengeActive('Metal'),
+		Speedscience: (upObj) => upObj.done < Math.floor(game.global.world / 2) && !challengeActive('Scientist'),
+		Megafarming:  (upObj) => upObj.done < game.global.world - 59,
+		Megalumber:   (upObj) => upObj.done < game.global.world - 59,
+		Megaminer:    (upObj) => upObj.done < game.global.world - 59 && !challengeActive('Metal'),
+		Megascience:  (upObj) => upObj.done < Math.floor((game.global.world - 59) / 2) && !challengeActive('Scientist'),
+		Coordination: (upObj) => upObj.done < game.global.world && canAffordCoordinationTrimps(),
+		Blockmaster:  (upObj) => upObj.done < (game.global.world >= 4 ? 1 : 0),
+		Trainers:     (upObj) => upObj.done < (game.global.world >= 3 ? 1 : 0),
+		TrainTacular: (upObj) => upObj.done < Math.floor(game.global.world / 5),
+		Potency:      (upObj) => upObj.done < Math.floor(game.global.world / 5),
+		Dagadder:     (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
+		Supershield:  (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
+		Bootboost:    (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
+		Gymystic:     (upObj) => upObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5))
 	};
 
-	const upgradeAllowed = upgradeAllowedFuncs[upgradeName] ? upgradeAllowedFuncs[upgradeName]() : false;
-
-	if (!upgradeAllowed) return false;
+	const allowedUpgrades = upgrades.filter(up => upgradeAllowedFuncs[up.name])
+			.filter(up => upgradeAllowedFuncs[up.name](up.obj));
 
 	const isResourceAllowed = (resourceName) =>
 		({
@@ -156,7 +162,13 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 		}[resourceName]);
 
 	//Calculates the required amount of any resource used by the upgrade
-	const neededResourceAmount = (resourceName) => (upgradeObj.cost.resources[resourceName] ? resolvePow(upgradeObj.cost.resources[resourceName], upgradeObj) : 0);
+	function neededResourceAmount(resourceName) {
+		return allowedUpgrades
+			.map(up => ({up: up, cost: up.obj.cost.resources[resourceName]}))
+			.filter(upC => upC.cost)
+			.map(upC => (upC.cost[1] === undefined) ? upC.cost : resolvePow(upC.cost, upC.up.obj))
+			.reduce((total, cost) => total + cost, 0);
+	}
 
 	//Calculates the priority
 	const getPriority = (resourceName) => {
@@ -165,6 +177,9 @@ function _gatherUpgrade(upgradeName, researchAvailable, hasTurkimp) {
 
 		//The priority equals the % of the resource we still need to gather (-1 would mean "last", not "don't gather")
 		let priority = 1 - Math.min(1, game.resources[resourceName].owned / neededResourceAmount(resourceName));
+
+		//Keeps a higher priority for science, even with turkimp
+		if (resourceName.toLowerCase() === 'science') priority = Math.min(2 * priority, 1);
 
 		//Uses a buffer to avoid flickering between resources
 		return priority + (MODULES.gather.coordBuffering === resourceName && priority > 0 ? 0.1 : 0);
@@ -190,7 +205,7 @@ function _willTrapsBeWasted() {
 	const breedTimer = _breedTimeRemaining();
 	const gteTime = breedTimer >= 1 / _calcTPS();
 	const lteTime = game.global.playerGathering === 'trimps' && breedTimer <= 0.1;
-	const excessBait = 1 + game.portal.Bait.modifier * getPerkLevel('Bait') >= game.resources.trimps.realMax() - game.resources.trimps.owned;
+	const excessBait = _trapSize() >= game.resources.trimps.realMax() - game.resources.trimps.owned;
 	return excessBait || !(gteTime || lteTime);
 }
 
@@ -313,7 +328,7 @@ function autoGather() {
 	const minersAvailable = Miners.allowed && !Miners.done;
 	const metalButtonAvailable = elementVisible('metal');
 
-	// Setting it to use mining/building only!
+	//Setting it to use mining/building only!
 	if (!scientistsAvailable && !minersAvailable && manualGather === 2 && elementVisible('metal')) {
 		_autoGatherMetal();
 		return;
@@ -343,85 +358,90 @@ function autoGather() {
 	const trappingIsRelevant = trapTrimpsOK && (trapperTrapUntilFull || _isTrappingRelevant());
 	const trapWontBeWasted = trapperTrapUntilFull || !_willTrapsBeWasted();
 
+	//Toggle Trapstorm
+	if (trapTrimpsOK && game.global.trapBuildAllowed && game.global.trapBuildToggled == false)
+		toggleAutoTrap();
+
+	//Antenna
 	if (game.global.buildingsQueue.length && building === 'Antenna.1') {
 		safeSetGather('buildings');
 		return;
 	}
 
-	// Highest Priority Trapping (doing Trapper or without breeding trimps)
+	//Highest Priority Trapping (doing Trapper or without breeding trimps)
 	if ((game.buildings.Trap.locked || trappingIsRelevant) && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || (trapperTrapUntilFull && !scientistsAvailable && !minersAvailable))) {
 		if (_handleTrapping('both', 0)) return;
 	}
 
-	// Builds if we have storage buildings on top of the queue
+	//Builds if we have storage buildings on top of the queue
 	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || building === 'Shed.1' || building === 'Forge.1') {
 		safeSetGather('buildings');
 		return;
 	}
 
-	// Highest Priority Research if we have less science than needed to buy Battle
+	//Highest Priority Research if we have less science than needed to buy Battle
 	if (researchAvailable && needBattle && isPlayerRelevant('science', hasTurkimp, 0.01)) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Builds if we don't have Foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap (TODO Better condition than pMod > 100)
+	//Builds if we don't have Foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap (TODO Better condition than pMod > 100)
 	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || (building !== 'Trap.1' && (game.global.autoCraftModifier === 0 || getPlayerModifier() > 100)))) {
 		safeSetGather('buildings');
 		return;
 	}
 
-	// High Priority Trapping (refilling after a sudden increase in population)
+	//High Priority Trapping (refilling after a sudden increase in population)
 	if (trappingIsRelevant && trapWontBeWasted && game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize) {
 		if (_handleTrapping('both', 0)) return;
 	}
 
-	// High Priority Research if we have less science than needed to buy Bloodlust
+	//High Priority Research if we have less science than needed to buy Bloodlust
 	if (researchAvailable && !Bloodlust.done && game.global.world >= 2 && isPlayerRelevant('science', hasTurkimp, 0.1)) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Gathers food for Bloodlust
+	//Gathers food for Bloodlust
 	if (!Bloodlust.done && game.global.world >= 2 && isPlayerRelevant('food', hasTurkimp, 0.1)) {
 		safeSetGather('food');
 		return;
 	}
 
-	// High Priority Trap Building (has fewer traps than needed during a sudden increase in population)
+	//High Priority Trap Building (has fewer traps than needed during a sudden increase in population)
 	if (trappingIsRelevant && _handleTrapping('build', 0)) return;
 
-	// High Priority Research if we have less science than needed to buy Miner
+	//High Priority Research if we have less science than needed to buy Miner
 	if (researchAvailable && needMinerScience && isPlayerRelevant('science', hasTurkimp, 0.01)) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Gather metal for Miner
+	//Gather metal for Miner
 	if (needMiner && metalButtonAvailable && game.resources.metal.owned < 100 && isPlayerRelevant('metal', hasTurkimp)) {
 		safeSetGather('metal');
 		return;
 	}
 
-	// Higher Priority Research we already have enough food for Scientists
+	//Higher Priority Research we already have enough food for Scientists
 	if (researchAvailable && needScientistsScience && game.resources.food.owned > 300 && isPlayerRelevant('science', hasTurkimp, 0.01)) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Gathers wood for Miner
+	//Gathers wood for Miner
 	if (needMiner && game.triggers.wood.done && game.resources.wood.owned < 300 && isPlayerRelevant('wood', hasTurkimp)) {
 		safeSetGather('wood');
 		return;
 	}
 
-	// Higher Priority Research if we have less science than needed to buy Scientist
+	//Higher Priority Research if we have less science than needed to buy Scientist
 	if (researchAvailable && needScientistsScience && isPlayerRelevant('science', hasTurkimp, 0.01)) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Gather resources for Scientist
+	//Gather resources for Scientist
 	if (needScientists && game.resources.food.owned < 350 && isPlayerRelevant('food', hasTurkimp, 0.01)) {
 		safeSetGather('food');
 		return;
@@ -435,23 +455,20 @@ function autoGather() {
 		if (_handleTrapping('bait', 1)) return;
 	}
 
-	//Medium Priority Trap Building (if in a map)
-	if (trappingIsRelevant && game.global.mapsActive) {
-		if (_handleTrapping('build', 1)) return;
-	}
-
 	//Gathers resources for some important upgrades
-	let upgradesToGather = ['Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
+	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
 	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming']);
-	upgradesToGather = upgradesToGather.concat(['Coordination', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency', 'Gymystic']);
+	upgradesToGather = upgradesToGather.concat(['Coordination', 'Dagadder', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency', 'Gymystic']);
 
 	//Doesn't focus on Speedscience if manual research is still way too relevant
-	if (isPlayerRelevant('science', hasTurkimp, 4)) upgradesToGather = upgradesToGather.filter((up) => !['Speedscience', 'Megascience'].includes(up));
+	if (isPlayerRelevant('science', hasTurkimp, 2))
+		upgradesToGather = upgradesToGather.filter((up) => !['Speedscience', 'Megascience'].includes(up));
 
 	//Prioritizes upgrades that are pilling up
 	upgradesToGather = upgradesToGather
 		.map((up, idx) => ({ up, idx }))
-		.sort((a, b) => game.upgrades[b.up].allowed - game.upgrades[b.up].done - (game.upgrades[a.up].allowed - game.upgrades[a.up].done) || a.idx - b.idx)
+		.sort((a, b) =>
+			game.upgrades[b.up].allowed - game.upgrades[b.up].done - (game.upgrades[a.up].allowed - game.upgrades[a.up].done) || a.idx - b.idx)
 		.map(({ up }) => up);
 
 	//Upgrade accelerator (available only)
@@ -487,37 +504,46 @@ function autoGather() {
 		}
 	}
 
-	// Medium Priority Research - When science is needed and manual research is still relevant
+	//Medium Priority Research - When science is needed and manual research is still relevant
 	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp, 0.25)) {
 		safeSetGather('science');
 		return;
 	}
 
-	// Low Priority Trapping
+	//Low Priority Trapping
 	if (trappingIsRelevant && trapWontBeWasted && notFullPop) {
 		if (_handleTrapping('bait', 2)) return;
 	}
 
-	// Low Priority Trap Building
+	//Low Priority Trap Building
 	if (trappingIsRelevant) {
 		if (_handleTrapping('build', 2)) return;
 	}
 
-	// Metal if Turkimp is active
+	//Metal if Turkimp is active (in maps)
+	if (hasTurkimp && game.global.mapsActive) {
+		safeSetGather('metal');
+		return;
+	}
+
+	//Metal if Turkimp is active
 	if (hasTurkimp) {
 		safeSetGather('metal');
 		return;
 	}
 
-	// Low Priority Research
+	//Low Priority Trap Building
+	if (trappingIsRelevant) {
+		if (_handleTrapping('build', 3)) return;
+	}
+
+	//Upgrade accelerator - Accumulates resources for all the important upgrades of this zone
+	if (_gatherUpgrades(upgradesToGather, researchAvailable, hasTurkimp)) return;
+
+	//Low Priority Research
 	if (researchAvailable && needScience && isPlayerRelevant('science', hasTurkimp)) {
 		safeSetGather('science');
 		return;
-	}
-
-	// Low Priority Trap Building
-	if (trappingIsRelevant) {
-		if (_handleTrapping('build', 3)) return;
 	}
 
 	_lastResort(researchAvailable, trapTrimpsOK, needScience);
