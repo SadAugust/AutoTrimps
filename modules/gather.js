@@ -144,6 +144,9 @@ function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
 		Trainers:     (upObj) => upObj.done < (game.global.world >= 3 ? 1 : 0),
 		TrainTacular: (upObj) => upObj.done < Math.floor(game.global.world / 5),
 		Potency:      (upObj) => upObj.done < Math.floor(game.global.world / 5),
+		Dagadder:     (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
+		Supershield:  (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
+		Bootboost:    (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
 		Gymystic:     (upObj) => upObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5))
 	};
 
@@ -168,7 +171,6 @@ function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
 	}
 
 	//Calculates the priority
-	//TODO Advanced: use buildings.js style resourcePS to determine priority
 	const getPriority = (resourceName) => {
 		//Exception: Science only relies on Turkimp
 		if (resourceName.toLowerCase() === 'science' && game.resources[resourceName].owned < neededResourceAmount(resourceName) && !hasTurkimp) return 2;
@@ -456,7 +458,7 @@ function autoGather() {
 	//Gathers resources for some important upgrades
 	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
 	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming']);
-	upgradesToGather = upgradesToGather.concat(['Coordination', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency', 'Gymystic']);
+	upgradesToGather = upgradesToGather.concat(['Coordination', 'Dagadder', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency', 'Gymystic']);
 
 	//Doesn't focus on Speedscience if manual research is still way too relevant
 	if (isPlayerRelevant('science', hasTurkimp, 2))
