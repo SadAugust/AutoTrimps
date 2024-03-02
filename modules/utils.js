@@ -124,7 +124,7 @@ function debug(message, messageType, icon) {
 	const sendMessage = messageType in settingArray ? settingArray[messageType] : false;
 
 	if (sendMessage || messageType === 'offline') {
-		console.log(`${timeStamp()} ${message}`);
+		console.log(`${timeStamp()} ${updatePortalTimer(true)} ${message}`);
 		if (!usingRealTimeOffline || canRunTW) message_AT(message, messageType, icon);
 	}
 }
