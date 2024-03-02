@@ -1516,9 +1516,9 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>When using the <b>Map Bonus Health</b>, <b>Map Bonus Stacks</b> and <b>Map Bonus</b> settings this will allow you to decide not to maps for map bonus stacks when the optimal map level is this many levels before your minimum map bonus level.</p>";
 				description += "<p>This is disabled when you have bought all the prestiges available to you and have prestiges available in the minimum map bonus level.</p>";
-				description += "<p><b>Recommended:</b> 1</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
 				return description;
-			}, 'value', 1, null, "Maps", [1, 2]);
+			}, 'value', 2, null, "Maps", [1, 2]);
 
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },

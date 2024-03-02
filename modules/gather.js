@@ -358,7 +358,7 @@ function autoGather() {
 	const trapWontBeWasted = trapperTrapUntilFull || !_willTrapsBeWasted();
 
 	// Toggle Trapstorm
-	if (trapTrimpsOK && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
+	if (trapTrimpsOK && game.global.trapBuildAllowed && !game.global.trapBuildToggled) toggleAutoTrap();
 
 	if (game.global.buildingsQueue.length && building === 'Antenna.1') {
 		safeSetGather('buildings');

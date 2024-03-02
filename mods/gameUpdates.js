@@ -4151,7 +4151,7 @@ function screwThisUniverse(confirmed) {
 }
 
 game.worldUnlocks.Magmamancer.fire = function () {
-	if (challengeActive('Metal') || game.global.challengeActive == 'Transmute') {
+	if (challengeActive('Metal') || game.global.challengeActive === 'Transmute') {
 		const challenge = challengeActive('Metal') ? game.challenges.Metal : game.challenges[game.global.challengeActive];
 		challenge.holdMagma = true;
 		message("This book really doesn't help too much while you're dealing with the minerlessness of this dimension. Better let your scientists hold this one for you for a bit.", 'Notices');
