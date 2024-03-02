@@ -2979,7 +2979,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 
 	const hitsSurvivedCheck = !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world && !_berserkDisableMapping() && !_noMappingChallenges();
 	const hitsSurvivedGoal = targetHitsSurvived(true);
-	const shouldHitsSurvived = hitsSurvivedCheck && hitsSurvivedGoal > 0 && hdStats.hitsSurvived < hitsSurvivedGoal;
+	const shouldHitsSurvived = hitsSurvivedCheck && hitsSurvivedGoal > 0 && (hdStats.hitsSurvived < hitsSurvivedGoal || (mapSettings.mapName === 'Hits Survived' && mapSettings.priority === Infinity));
 
 	if (!voidFarm && !shouldHitsSurvived && (!defaultSettings || !defaultSettings.active)) return farmingDetails;
 
@@ -3508,7 +3508,6 @@ function resetMapVars(setting, settingName) {
 	MODULES.maps.mapRepeatsSmithy = [0, 0, 0];
 
 	if (mapSettings.voidFarm) MODULES.mapFunctions.hasVoidFarmed = `${totalPortals}_${game.global.world}`;
-
 	if (setting && setting.hitsSurvivedFarm) MODULES.mapFunctions.hasHealthFarmed = `${totalPortals}_${game.global.world}`;
 
 	if (setting && settingName && setting.row) {
