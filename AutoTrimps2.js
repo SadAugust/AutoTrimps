@@ -199,6 +199,7 @@ function initialiseScript() {
 	//Setup Perky/Surky UI
 	universeSwapped();
 	loadAugustSettings();
+	if (getPageSetting('gameUser') === 'ray') MODULES.buildings.betaHouseEfficiency = true;
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 	challengeInfo(true);
 	_setupATButtons();

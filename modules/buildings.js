@@ -1,5 +1,5 @@
 MODULES.buildings = {
-	betaHouseEfficiency: true
+	betaHouseEfficiency: false
 };
 
 function safeBuyBuilding(building, amt) {
@@ -8,7 +8,7 @@ function safeBuyBuilding(building, amt) {
 	const notAfford = !canAffordBuilding(building, false, false, false, false, amt);
 	if (queued || locked || notAfford) return;
 
-	//Cap the amount we purchase to ensure we don't spend forever building
+	// Cap the amount we purchase to ensure we don't spend forever building
 	if (!bwRewardUnlocked('Foremany') && game.global.world <= 10) amt = 1;
 
 	buyBuilding(building, true, true, amt);
@@ -101,24 +101,32 @@ function _getResourcePerSecond() {
 }
 
 function mostEfficientHousing_beta(resourceName) {
-	function effWrapper(houseName = undefined, eff = Infinity) { return ({ name: houseName, eff: eff }); }
-	function calcCostEff(houseName) { return getBuildingItemPrice(game.buildings[houseName], resourceName, false, 1) / _getHousingBonus(houseName); }
+	function effWrapper(houseName = undefined, eff = Infinity) {
+		return { name: houseName, eff: eff };
+	}
+
+	function calcCostEff(houseName) {
+		return getBuildingItemPrice(game.buildings[houseName], resourceName, false, 1) / _getHousingBonus(houseName);
+	}
 
 	return _housingToCheck()
-		.filter(houseName => game.buildings[houseName].cost[resourceName])
-		.map(houseName => effWrapper(houseName, calcCostEff(houseName)))
-		.reduce((mostEff, current) => current.eff < mostEff.eff ? current : mostEff, effWrapper())
-		.name
+		.filter((houseName) => game.buildings[houseName].cost[resourceName])
+		.map((houseName) => effWrapper(houseName, calcCostEff(houseName)))
+		.reduce((mostEff, current) => (current.eff < mostEff.eff ? current : mostEff), effWrapper()).name;
 }
 
 function mostEfficientHousing(resourcePerSecond) {
-	function effWrapper(houseName = undefined, eff = 0) { return ({ name: houseName, eff: eff }); }
-	function calcEff(houseName) { return _getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName); }
+	function effWrapper(houseName = undefined, eff = 0) {
+		return { name: houseName, eff: eff };
+	}
+
+	function calcEff(houseName) {
+		return _getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName);
+	}
 
 	return _housingToCheck()
-		.map(houseName => effWrapper(houseName, calcEff(houseName)))
-		.reduce((mostEff, current) => current.eff > mostEff.eff ? current : mostEff, effWrapper())
-		.name
+		.map((houseName) => effWrapper(houseName, calcEff(houseName)))
+		.reduce((mostEff, current) => (current.eff > mostEff.eff ? current : mostEff), effWrapper()).name;
 }
 
 function _canAffordBuilding(resourceName, buildingStat, spendingPerc, resourcefulMod) {
@@ -237,12 +245,12 @@ function _buyStorage(hypoZone) {
 		const curRes = game.resources[resource].owned;
 		let maxRes = game.resources[resource].max;
 
-		//Identifying our max for the resource that's being checked
+		// Identifying our max for the resource that's being checked
 		maxRes = maxRes *= 1 + getPerkLevel('Packrat') * getPerkModifier('Packrat');
 		maxRes = calcHeirloomBonus('Shield', 'storageSize', maxRes);
 		maxRes *= 0.9;
 
-		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
+		// Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
 		let exoticValue = 0;
 		if (game.global.mapsActive) {
 			if (map.name === getAncientTreasureName()) exoticValue = curRes;
@@ -289,7 +297,7 @@ function _checkUniqueMaps() {
  * [WARNING]: has side effect of purchasing tributes if the quest is a gem quest.
  */
 function _checkQuest() {
-	//Checks to see if we are running Quest and above our first Quest zone and the current zones Quest hasn't been completed.
+	// Checks to see if we are running Quest and above our first Quest zone and the current zones Quest hasn't been completed.
 	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
 		const questNumber = getCurrentQuest();
 		// Still allows you to buy tributes during gem quests
@@ -338,7 +346,7 @@ function _buyGyms(buildingSettings) {
 		if (data.Gym > data.Shield) return;
 	}
 
-	//Saves wood for Speed upgrades
+	// Saves wood for Speed upgrades
 	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
 	const saveWood = upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 	if (saveWood && !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) return;
@@ -531,29 +539,28 @@ function _buyHousing(buildSettings) {
 		const foodEffHouse = mostEfficientHousing_beta('food');
 		const gemsEffHouse = mostEfficientHousing_beta('gems');
 
-		//Waits for the most food efficient house to be bought for its gem efficiency, except Huts and Houses
-		if (['Hut', 'House'].includes(foodEffHouse))
-			boughtHousing = _buySelectedHouse(foodEffHouse, buildSettings);
+		// Waits for the most food efficient house to be bought for its gem efficiency, except Huts and Houses
+		if (['Hut', 'House'].includes(foodEffHouse)) boughtHousing = _buySelectedHouse(foodEffHouse, buildSettings);
 
-		//Gem Efficiency
+		// Gem Efficiency
 		boughtHousing |= _buySelectedHouse(gemsEffHouse, buildSettings);
 
 		return boughtHousing;
 	}
 
-	//Old System
-	return _buySelectedHouse(mostEfficientHousing(_getResourcePerSecond()), buildSettings)
+	// Old System
+	return _buySelectedHouse(mostEfficientHousing(_getResourcePerSecond()), buildSettings);
 }
 
 function _buySelectedHouse(houseName, buildingSettings) {
 	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName)) return false;
 
-	//Saves resources for upgrades
+	// Saves resources for upgrades
 	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
 		const skipHouse = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort'].includes(houseName);
 		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
 
-		//Do not save Gems or Fragments TODO Don't save ie metal from Huts
+		// Do not save Gems or Fragments TODO Don't save ie metal from Huts
 		if (skipHouse && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up], 2 / 4, 2 / 4, 1 / 4, 3 / 4))) return;
 	}
 

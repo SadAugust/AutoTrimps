@@ -705,7 +705,7 @@ function initialiseAllSettings() {
 			Collector: { enabled: true, percent: 100, buyMax: 200 },
 			Gym: { enabled: true, percent: 75, buyMax: 0 },
 			Tribute: { enabled: true, percent: 20, buyMax: 0 },
-			Nursery: { enabled: false, percent: 100, buyMax: 0, fromZ: 0 },
+			Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 0 },
 			Smithy: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
 			SafeGateway: { enabled: false, mapCount: 1, zone: 0 }
@@ -791,7 +791,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On. Nurseries set to <b>Up To: 0</b> and <b>From: 230</b></p>";
 				return description;
 			},
-			'boolean', false, null, 'Buildings', [1],
+			'boolean', true, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230) });
 		createSetting('advancedNurseriesAmount',
 			function () { return ('AN: Amount') },
