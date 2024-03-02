@@ -139,11 +139,12 @@ function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
 		Megalumber:   (upObj) => upObj.done < game.global.world - 59,
 		Megaminer:    (upObj) => upObj.done < game.global.world - 59 && !challengeActive('Metal'),
 		Megascience:  (upObj) => upObj.done < Math.floor((game.global.world - 59) / 2) && !challengeActive('Scientist'),
-		Gymystic:     (upObj) => upObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5)),
 		Coordination: (upObj) => upObj.done < game.global.world && canAffordCoordinationTrimps(),
-		Trainers:     (upObj) => upObj.done < (game.global.world >= 3 ? 1 : 0),
 		Blockmaster:  (upObj) => upObj.done < (game.global.world >= 4 ? 1 : 0),
-		TrainTacular: (upObj) => upObj.done < Math.floor(game.global.world / 5)
+		Trainers:     (upObj) => upObj.done < (game.global.world >= 3 ? 1 : 0),
+		TrainTacular: (upObj) => upObj.done < Math.floor(game.global.world / 5),
+		Potency:      (upObj) => upObj.done < Math.floor(game.global.world / 5),
+		Gymystic:     (upObj) => upObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5))
 	};
 
 	const allowedUpgrades = upgrades.filter(up => upgradeAllowedFuncs[up.name])
