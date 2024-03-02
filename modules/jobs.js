@@ -248,17 +248,15 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps) {
 }
 
 function _getScientistRatio(maxTrimps) {
-	const scientistRatios = { earlyTurkimp: 2, early: 5, pop400: 4, z50: 16, z65: 64, z90: 256, z120: 1024, z150: 4098 };
-
 	const conditions = [
-		{ condition: () => game.global.world >= 150, ratio: scientistRatios.z150 },
-		{ condition: () => game.global.world >= 120, ratio: scientistRatios.z120 },
-		{ condition: () => game.global.world >= 90, ratio: scientistRatios.z90 },
-		{ condition: () => game.global.world >= 65, ratio: scientistRatios.z65 },
-		{ condition: () => game.global.world >= 50, ratio: scientistRatios.z50 },
-		{ condition: () => game.global.turkimpTimer > 0, ratio: scientistRatios.earlyTurkimp },
-		{ condition: () => maxTrimps >= 400, ratio: scientistRatios.pop400 },
-		{ condition: () => true, ratio: scientistRatios.early }
+		{ condition: () => game.global.world >= 150, ratio: 4098 },
+		{ condition: () => game.global.world >= 120, ratio: 1024 },
+		{ condition: () => game.global.world >= 90, ratio: 256 },
+		{ condition: () => game.global.world >= 65, ratio: 64 },
+		{ condition: () => game.global.world >= 50, ratio: 16 },
+        { condition: () => game.global.turkimpTimer > 0, ratio: 2 },
+		{ condition: () => maxTrimps >= 400, ratio: 4 },
+		{ condition: () => true, ratio: 5 }
 	];
 
 	return conditions.find(({ condition }) => condition()).ratio;

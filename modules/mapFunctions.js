@@ -3514,6 +3514,7 @@ function resetMapVars(setting, settingName) {
 		const value = game.global.universe === 2 ? 'valueU2' : 'value';
 		game.global.addonUser[settingName][value][setting.row].done = `${totalPortals}_${game.global.world}`;
 	}
+
 	//Tribute Farm
 	delete mapSettings.buyBuildings;
 	//Prestige Farm
