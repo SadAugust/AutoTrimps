@@ -3919,7 +3919,8 @@ function callAutoMapLevel_new(mapName, special) {
 
 function autoLevelOverides(mapName, mapLevel) {
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
-	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapLevel > (getPageSetting('mapBonusMinLevel') > 0 ? -getPageSetting('mapBonusMinLevel') : 0);
+	const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
+	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapLevel >= (mapBonusMinSetting > 0 ? -Math.min(mapLevel, mapBonusMinSetting) : 0);
 	const mapBonusAfford = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
 
 	const mapBonusConditions = [
