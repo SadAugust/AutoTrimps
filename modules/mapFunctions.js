@@ -1315,7 +1315,7 @@ function _runPrestigeRaiding(setting, mapName, settingIndex, defaultSettings) {
 	const mapsToRun = game.global.mapsActive ? prestigesToGet(mapObj.level, targetPrestige)[1] : Infinity;
 	const specialInMap = game.global.mapsActive && game.global.mapGridArray[mapObj.size - 2].special === targetPrestige;
 
-	const repeat = !mapSettings.prestigeMapArray || mapsToRun <= 1 || (specialInMap && mapsToRun === 2);
+	const repeat = !mapSettings.prestigeMapArray || mapsToRun <= 1 || (mapObj && mapObj.bonus === 'p' && mapsToRun <= 2) || (specialInMap && mapsToRun === 2);
 
 	if (mapSettings.prestigeMapArray && mapSettings.prestigeMapArray[0] !== undefined && shouldMap) {
 		const mapIndex = getMapIndex(mapSettings.prestigeMapArray[0]);
@@ -1378,8 +1378,8 @@ function prestigeRaidingMapping() {
 
 function _handlePrestigeMapBuying() {
 	if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
-	const mapsCanRun = challengeActive('Mapology') ? Math.min(5, game.challenges.Mapology.credits) : 5;
 	if (mapSettings.prestigeMapArray[0] === undefined) {
+		const mapsCanRun = challengeActive('Mapology') ? Math.min(5, game.challenges.Mapology.credits) : 5;
 		for (let x = 0; x < mapsCanRun; x++) {
 			if ((!mapSettings.incrementMaps && x > 0) || mapSettings.mapSliders[x] === undefined) break;
 			_buyPrestigeMap(x);
@@ -1398,8 +1398,15 @@ function _handlePrestigeFragMapBought() {
 	}
 }
 
+function prestigeMapHasEquips(number, raidzones, targetPrestige) {
+	return prestigesToGet(raidzones - number, targetPrestige)[0] > 0;
+}
+
 function _buyPrestigeMap(x) {
-	if (prestigeMapHasEquips(x, mapSettings.raidzones, mapSettings.prestigeGoal)) {
+	const sliders = mapSettings.mapSliders[x];
+	const mapLevel = mapSettings.raidzones - (sliders[0] + game.global.world);
+
+	if (prestigeMapHasEquips(mapLevel, mapSettings.raidzones, mapSettings.prestigeGoal)) {
 		setMapSliders(mapSettings.mapSliders[x][0], mapSettings.mapSliders[x][1], mapSettings.mapSliders[x][2], mapSettings.mapSliders[x][3], mapSettings.mapSliders[x][4]);
 		if (updateMapCost(true) <= game.resources.fragments.owned) {
 			buyMap();
@@ -1413,7 +1420,10 @@ function _buyPrestigeMap(x) {
 function _handlePrestigeMapRunning() {
 	for (let x = mapSettings.prestigeMapArray.length - 1; x >= 0; x--) {
 		const mapId = mapSettings.prestigeMapArray[x];
-		if (game.global.preMapsActive && prestigeMapHasEquips(x, mapSettings.raidzones, mapSettings.prestigeGoal)) {
+		const sliders = mapSettings.mapSliders[x];
+
+		if (game.global.preMapsActive && prestigeMapHasEquips(mapSettings.raidzones - (sliders[0] + game.global.world), mapSettings.raidzones, mapSettings.prestigeGoal)) {
+			console.log(mapId, x, mapId[0] + game.global.world, mapSettings.raidzones);
 			if (mapId !== undefined) {
 				_runPurchasedMap(mapId, x);
 			} else {
@@ -3912,13 +3922,14 @@ function callAutoMapLevel_new(mapName, special) {
 }
 
 function autoLevelOverides(mapName, mapLevel) {
-	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
+	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
 	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapLevel > (getPageSetting('mapBonusMinLevel') > 0 ? -getPageSetting('mapBonusMinLevel') : 0);
+	const mapBonusAfford = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
 
 	const mapBonusConditions = [
 		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && !mapBonusMinLevel, level: mapBonusLevel },
-		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && !mapBonusMinLevel, level: mapBonusLevel },
-		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && !mapBonusMinLevel && mapBonusAfford, level: mapBonusLevel },
+		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel && mapBonusAfford, level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
 		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
