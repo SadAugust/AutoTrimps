@@ -637,8 +637,8 @@ function shieldBlockUpgrades() {
 
 function ceilToNearestMultipleOf(number, multipleOf, offSet) {
 	var n = number - offSet;
-	var roundedUp = Math.ceil(n / multipleOf) * multipleOf
-	return roundedUp + offSet
+	var roundedUp = Math.ceil(n / multipleOf) * multipleOf;
+	return roundedUp + offSet;
 }
 
 function argSort(array, reverseStability = false) {

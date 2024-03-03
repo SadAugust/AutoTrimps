@@ -67,7 +67,7 @@ MODULES.equipment = {
 };
 
 function _shouldSaveResource(resourceName) {
-	const upgrades = resourceName == 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber', 'Potency'];
+	const upgrades = resourceName === 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber', 'Potency'];
 	const shouldSave = !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'));
 	return shouldSave && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
@@ -92,7 +92,7 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 	const getZoneGo = (type) => zoneGo || zoneGoCheck(equipZone, type, currentMap).active;
 	const calculateResourceSpendingPct = (zoneGo, type) => {
 		if (zoneGo || (mapSettings.shouldHealthFarm && type !== 'attack')) return 1;
-		if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return 1; //TODO Please confirm if equality applies to block
+		if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return 1;
 		return resourceSpendingPct || (equipPercent <= 0 ? 1 : Math.min(1, equipPercent / 100));
 	};
 	const calculateEquipCap = (type) => {
@@ -196,7 +196,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		if (!prestige && equipData.level >= equipCap) continue;
 		if (equipName === 'Shield' && nextLevelCost > game.resources.wood.owned * resourceSpendingPct) continue;
 
-		const shieldEff = (equipName === 'Shield' && equipType === 'health' && mostEfficient[equipType].cost > game.resources.metal.owned * resourceSpendingPct);
+		const shieldEff = equipName === 'Shield' && equipType === 'health' && mostEfficient[equipType].cost > game.resources.metal.owned * resourceSpendingPct;
 		const isMostEfficient = mostEfficient[equipType].statPerResource > safeRatio || !mostEfficient[equipType].name || shieldEff;
 
 		if (isMostEfficient) {
@@ -292,12 +292,9 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 	}
 	if (farmType === 'health' || farmType === 'block') {
 		if (whichHitsSurvived() < getPageSetting('equipCutOffHS') || mapSettings.shouldHealthFarm) return zoneDetails;
-
-		//TODO Please confirm if this U2 stuff applies to block
 		if ((mapSettings.mapName === 'Smithless Farm' || mapSettings.mapName === 'Wither Farm') && mapSettings.equality > 0) return zoneDetails;
 		if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && getPerkLevel('Equality') > 0) return zoneDetails;
 	}
-
 
 	const settingZone = setting;
 	const world = game.global.world.toString();

@@ -88,7 +88,7 @@ function firstGiga() {
 }
 
 function needGymystic() {
-	return game.upgrades['Gymystic'].allowed > game.upgrades['Gymystic'].done;
+	return shouldSaveForSpeedUpgrade(game.upgrades.Gymystic, 0.5, 0.5, 0.25, 0.75);
 }
 
 function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1 / 4, woodRequired = 1 / 4, metalRequired = 1 / 4, scienceRequired = 2 / 4) {
@@ -101,7 +101,8 @@ function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1 / 4, woodRequire
 
 	for (let i = 0; i < resources.length; i++) {
 		const cost = upgradeObj.cost.resources[resources[i]];
-		let resourceCost = cost ? (cost[1] !== undefined ? resolvePow(cost, upgradeObj) * resourceRequired[i] : cost) : 0;
+		const resourceCost = cost ? (cost[1] !== undefined ? resolvePow(cost, upgradeObj) * resourceRequired[i] : cost) : 0;
+
 		if (resourceOwned[i] < resourceCost) return false;
 	}
 
@@ -165,7 +166,7 @@ function buyUpgrades() {
 	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
 	const needMega = game.upgrades.Megascience.done < game.upgrades.Megascience.allowed;
 	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
-	const effRelevance = game.global.world >= 60 ? (game.global.frugalDone ? 3/2 : 1) : 1/3;
+	const effRelevance = game.global.world >= 60 ? (game.global.frugalDone ? 3 / 2 : 1) : 1 / 3;
 	const scientistsAreRelevant = !isPlayerRelevant('science', false, 2);
 	const researchIsRelevant = isPlayerRelevant('science', false, effRelevance);
 	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
