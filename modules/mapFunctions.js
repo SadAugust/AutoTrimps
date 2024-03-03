@@ -1398,10 +1398,6 @@ function _handlePrestigeFragMapBought() {
 	}
 }
 
-function prestigeMapHasEquips(number, raidzones, targetPrestige) {
-	return prestigesToGet(raidzones - number, targetPrestige)[0] > 0;
-}
-
 function _buyPrestigeMap(x) {
 	const sliders = mapSettings.mapSliders[x];
 	const mapLevel = mapSettings.raidzones - (sliders[0] + game.global.world);
