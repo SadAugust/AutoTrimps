@@ -163,8 +163,12 @@ function _buyExplorer(jobSettings) {
 function _buyTrainer(jobSettings) {
 	if (game.jobs.Trainer.locked || !jobSettings.Trainer.enabled) return;
 
+	//Extra priority to the first few trainers
 	const { cost, owned } = game.jobs.Trainer;
-	const affordableTrainers = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * (jobSettings.Trainer.percent / 100), cost.food[1], true);
+	const firstTrainers = owned < 8 && hdStats.hitsSurvived < Infinity;
+	const percent = (firstTrainers && jobSettings.Trainer.percent > 0) ? 100 : 0;
+
+	const affordableTrainers = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * (percent / 100), cost.food[1], true);
 
 	if (affordableTrainers > 0) safeBuyJob('Trainer', affordableTrainers);
 }
