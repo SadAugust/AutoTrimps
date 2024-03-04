@@ -165,8 +165,8 @@ function _buyTrainer(jobSettings) {
 
 	//Extra priority to the first few trainers
 	const { cost, owned } = game.jobs.Trainer;
-	const firstTrainers = owned < 8 && hdStats.hitsSurvived < Infinity;
-	const percent = (firstTrainers && jobSettings.Trainer.percent > 0) ? 100 : 0;
+	const firstTrainers = owned < 7 && hdStats.hitsSurvived < Infinity;
+	const percent = (firstTrainers && jobSettings.Trainer.percent > 0) ? 100 - ((100 - jobSettings.Trainer.percent) * owned / 7) : jobSettings.Trainer.percent;
 
 	const affordableTrainers = getMaxAffordable(cost.food[0] * Math.pow(cost.food[1], owned), game.resources.food.owned * (percent / 100), cost.food[1], true);
 
