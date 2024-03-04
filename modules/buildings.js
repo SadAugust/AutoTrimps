@@ -552,16 +552,21 @@ function _buyHousing(buildSettings) {
 	return _buySelectedHouse(mostEfficientHousing(_getResourcePerSecond()), buildSettings);
 }
 
+function _shouldSaveFromHouse(houseName, upgradeName) {
+	const houseResources = Object.entries(game.buildings[houseName].cost).map(entry => entry[0]);
+	return houseResources.some(resourceName => game.upgrades[upgradeName].cost.resources[resourceName] !== undefined);
+}
+
 function _buySelectedHouse(houseName, buildingSettings) {
 	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName)) return false;
 
 	// Saves resources for upgrades
 	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
 		const skipHouse = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort'].includes(houseName);
-		const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
+		const upgrades = ['Bounty', 'Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
 
 		// Do not save Gems or Fragments TODO Don't save ie metal from Huts
-		if (skipHouse && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up], 2 / 4, 2 / 4, 1 / 4, 3 / 4))) return;
+		if (skipHouse && upgrades.some((up) => _shouldSaveFromHouse(houseName, up) && shouldSaveForSpeedUpgrade(game.upgrades[up], 0.5, 0.5, 0.25, 0.75))) return;
 	}
 
 	// Identify the amount of this type of housing we can afford and stay within our housing cap.
