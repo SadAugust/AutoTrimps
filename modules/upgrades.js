@@ -91,7 +91,7 @@ function needGymystic() {
 	return shouldSaveForSpeedUpgrade(game.upgrades.Gymystic, 0.5, 0.5, 0.25, 0.75);
 }
 
-function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1 / 4, woodRequired = 1 / 4, metalRequired = 1 / 4, scienceRequired = 2 / 4) {
+function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0.25, woodRequired = 0.25, metalRequired = 0.25, scienceRequired = 0.5) {
 	const resources = ['food', 'wood', 'metal', 'science'];
 	const resourceRequired = [foodRequired, woodRequired, metalRequired, scienceRequired];
 	const resourceOwned = resources.map((r) => game.resources[r].owned);

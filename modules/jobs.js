@@ -163,6 +163,10 @@ function _buyExplorer(jobSettings) {
 function _buyTrainer(jobSettings) {
 	if (game.jobs.Trainer.locked || !jobSettings.Trainer.enabled) return;
 
+	//Save for important upgrades
+	const upgrades = ['Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
+	if (upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]))) return;
+
 	//Extra priority to the first few trainers
 	const { cost, owned } = game.jobs.Trainer;
 	const firstTrainers = owned < 7 && hdStats.hitsSurvived < Infinity;
