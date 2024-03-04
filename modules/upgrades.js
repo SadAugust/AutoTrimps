@@ -115,8 +115,8 @@ function sciUpgrades() {
 	const upgrades = game.upgrades;
 	const sLevel = game.global.sLevel;
 
-	const addUpgrade = (upgrade, condition = true) => {
-		if (condition && upgrades[upgrade].done === 0) {
+	const addUpgrade = (upgrade, condition = true, amt = 0) => {
+		if (condition && upgrades[upgrade].done <= amt) {
 			upgradeList.push(upgrade);
 		}
 	};
@@ -126,14 +126,16 @@ function sciUpgrades() {
 
 	//Scientist I - 11500 Science + Scientist II - 8000 Science
 	if (sLevel <= 1) {
+		const coordLevel = sLevel === 0 ? 8 : 7;
 		addUpgrade('Bloodlust');
-		addUpgrade('Coordination', upgrades.Coordination.done <= (sLevel === 0 ? 8 : 7));
+		addUpgrade('Coordination', upgrades.Coordination.done <= coordLevel, coordLevel);
 		addUpgrade('Bestplate');
 		addUpgrade('Megamace', sLevel === 0);
 	}
 	//Scientist III + V - 1500 Science.
 	else if (sLevel === 2 || sLevel >= 4) {
-		addUpgrade('Coordination', upgrades.Coordination.done <= 2);
+		const coordLevel = 2;
+		addUpgrade('Coordination', upgrades.Coordination.done <= coordLevel, coordLevel);
 		addUpgrade('Speedminer');
 		addUpgrade('Speedlumber');
 		addUpgrade('Egg', sLevel >= 4);
@@ -172,6 +174,7 @@ function buyUpgrades() {
 	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
 
 	const upgradeList = populateUpgradeList();
+	const scientistChallenge = challengeActive('Scientist');
 
 	for (let upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
@@ -185,14 +188,17 @@ function buyUpgrades() {
 			if (challengeActive('Trappapalooza') || (challengeActive('Trapper') && getPageSetting('trapper'))) {
 				const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
 				let coordTarget = getPageSetting('trapperCoords');
+
 				if (trappaCoordToggle === 1) {
 					if (coordTarget > 0) coordTarget--;
 					if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
 					if (coordTarget > 0 && gameUpgrade.done >= coordTarget) continue;
 				}
+
 				if (trappaCoordToggle === 2) {
 					if (game.resources.trimps.maxSoldiers * 1.25 > coordTarget) continue;
 				}
+
 				buyJobs();
 			}
 		} else if (upgrade === 'Gigastation') {
@@ -204,7 +210,7 @@ function buyUpgrades() {
 		} else if (upgrade === 'Bloodlust') {
 			if (game.global.world === 1) continue;
 			const needMiner = !challengeActive('Metal') && !game.upgrades.Miners.done;
-			const needScientists = !challengeActive('Scientist') && !game.upgrades.Scientists.done;
+			const needScientists = !scientistChallenge && !game.upgrades.Scientists.done;
 			if (needScientists && game.resources.science.owned < 160 && game.resources.food.owned < 450) continue;
 			if (needMiner && needScientists && game.resources.science.owned < 220) continue;
 			if (needMiner && game.resources.science.owned < 120) continue;
@@ -213,7 +219,7 @@ function buyUpgrades() {
 		}
 
 		//Prioritise Science/scientist upgrades
-		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld) {
+		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld && !scientistChallenge) {
 			if (needScientists) continue;
 			if (needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;
 
