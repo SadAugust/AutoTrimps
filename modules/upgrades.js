@@ -163,10 +163,11 @@ function buyUpgrades() {
 	if (upgradeSetting === 0) return;
 
 	const needScientists = game.upgrades.Scientists.done < game.upgrades.Scientists.allowed;
+	const needBounty = !game.upgrades.Bounty.done && game.upgrades.Bounty.allowed;
 	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
 	const needMega = game.upgrades.Megascience.done < game.upgrades.Megascience.allowed;
 	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
-	const effRelevance = game.global.world >= 60 ? (game.global.frugalDone ? 3 / 2 : 1) : 1 / 3;
+	const effRelevance = game.global.world >= 60 ? (game.global.frugalDone ? 1.5 : 1) : 1/3;
 	const scientistsAreRelevant = !isPlayerRelevant('science', false, 2);
 	const researchIsRelevant = isPlayerRelevant('science', false, effRelevance);
 	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
@@ -209,6 +210,8 @@ function buyUpgrades() {
 			if (needMiner && needScientists && game.resources.science.owned < 220) continue;
 			if (needMiner && game.resources.science.owned < 120) continue;
 		} else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) {
+			continue;
+		} else if (needBounty && upgrade !== 'Bounty') {
 			continue;
 		}
 

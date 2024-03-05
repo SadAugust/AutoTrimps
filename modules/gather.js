@@ -147,6 +147,7 @@ function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
 		Dagadder: (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
 		Supershield: (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
 		Bootboost: (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
+		Bounty: (upObj) => !upObj.done && upObj.allowed,
 		Gymystic: (upObj) => upObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5))
 	};
 
@@ -453,7 +454,7 @@ function autoGather() {
 	}
 
 	// Gathers resources for some important upgrades
-	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
+	let upgradesToGather = ['Efficiency', 'Bounty', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
 	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming']);
 	upgradesToGather = upgradesToGather.concat(['Coordination', 'Dagadder', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency', 'Gymystic']);
 
