@@ -77,9 +77,9 @@ offlineProgress.start = function () {
 //Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
 offlineProgress.originalFinish = offlineProgress.finish;
 offlineProgress.finish = function () {
-	const offlineTime = arguments[0] ? 0 : offlineProgress.totalOfflineTime / 1000 - 86400;
-	let timeRun = arguments[0] ? 0 : (new Date().getTime() - offlineProgress.startTime) / 1000;
-	timeRun += Math.max(0, offlineTime);
+	const offlineTime = arguments[0] ? 0 : Math.max(0, offlineProgress.totalOfflineTime / 1000 - 86400);
+	let timeRun = arguments[0] ? 0 : Math.max(0, (new Date().getTime() - offlineProgress.startTime) / 1000);
+	timeRun += offlineTime;
 	if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
 	offlineProgress.originalFinish(...arguments);
 	try {
