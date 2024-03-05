@@ -1275,7 +1275,8 @@ function enoughHealth(map) {
 	const block = calcOurBlock(false, false);
 	const totalHealth = health + block;
 
-	const enemyName = name === 'Imploding Star' ? 'Neutrimp' : location === 'Void' ? 'Cthulimp' : 'Snimp';
+	const enemyName = name === 'Imploding Star' ? 'Neutrimp' : location === 'Void' ? 'Voidsnimp' : 'Snimp';
+	const cell = name === 'Imploding Star' ? 100 : 99;
 	const worldType = location === 'Void' ? 'void' : 'map';
 	const mapLevel = name === 'The Black Bog' ? game.global.world : level;
 	const equalityAmt = game.global.universe === 2 ? equalityQuery(enemyName, mapLevel, size, 'map', difficulty, 'gamma') : 0;
