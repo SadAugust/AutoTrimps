@@ -845,7 +845,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 		if (game.global.universe === 2) bestStats.equality = stats[0].equality;
 
 		if (stats[1]) {
-			bestStats[type + 'Second'] = {
+			bestStats[`${type}Second`] = {
 				mapLevel: stats[1].mapLevel,
 				zone: stats[1].zone,
 				value: stats[1][stats[1].stance].value,
@@ -853,10 +853,10 @@ function get_best(results, fragmentCheck, mapModifiers) {
 				killSpeed: stats[1][stats[1].stance].killSpeed
 			};
 
-			if (game.global.universe === 1) bestStats[type + 'Second'].stance = stats[1].stance;
-			if (game.global.universe === 2) bestStats[type + 'Second'].equality = stats[1].equality;
+			if (game.global.universe === 1) bestStats[`${type}Second`].stance = stats[1].stance;
+			if (game.global.universe === 2) bestStats[`${type}Second`].equality = stats[1].equality;
 
-			bestStats[type + 'Ratio'] = stats[0].value / stats[1].value;
+			bestStats.ratio = stats[0].value / stats[1].value;
 		}
 
 		return bestStats;
