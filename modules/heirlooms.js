@@ -347,7 +347,7 @@ function usingBreedHeirloom() {
 	let breedHeirloom = getPageSetting('heirloomBreed');
 	if (challengeActive('Archaeology') && getPageSetting('archaeology')) {
 		const archBreedShield = getPageSetting('archaeologyBreedShield');
-		if (archBreed !== 'undefined') breedHeirloom = archBreedShield;
+		if (archBreedShield !== 'undefined') breedHeirloom = archBreedShield;
 	}
 
 	if (breedHeirloom === 'undefined') return false;
