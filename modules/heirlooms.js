@@ -51,8 +51,9 @@ function evaluateHeirloomMods(loom, location) {
 }
 
 function worthOfHeirlooms() {
-	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 	const heirloomWorth = { Shield: [], Staff: [], Core: [] };
+	if (!game.global.heirloomsExtra.length === 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return heirloomWorth;
+
 	let heirloomEvaluations = game.global.heirloomsExtra.map((_, index) => evaluateHeirloomMods(index, 'heirloomsExtra'));
 
 	const recycle = heirloomEvaluations
@@ -81,7 +82,7 @@ function worthOfHeirlooms() {
 
 function autoHeirlooms(portal) {
 	if (portal && !portalWindowOpen) return;
-	if (!game.global.heirloomsExtra.length > 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
+	if (game.global.heirloomsExtra.length === 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 
 	const maxHeirlooms = getMaxCarriedHeirlooms();
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
@@ -100,7 +101,7 @@ function autoHeirlooms(portal) {
 	while (game.global.heirloomsCarried.length < maxHeirlooms && game.global.heirloomsExtra.length > 0) {
 		for (let x = 0; x < heirloomTypes.length; x++) {
 			weights = worthOfHeirlooms();
-			if (weights[heirloomTypes[x]].length > 0) {
+			if (weights && weights[heirloomTypes[x]].length > 0) {
 				let carriedHeirlooms = weights[heirloomTypes[x]].shift();
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
 				if (heirloomTypeEnabled[heirloomTypes[x]]) carryHeirloom();
