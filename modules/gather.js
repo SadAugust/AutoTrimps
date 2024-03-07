@@ -152,13 +152,14 @@ function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
 	};
 
 	const allowedUpgrades = upgrades.filter((up) => upgradeAllowedFuncs[up.name]).filter((up) => upgradeAllowedFuncs[up.name](up.obj));
+	const upsAvailable = allowedUpgrades.filter((up) => game.upgrades[up]).filter((up) => game.upgrades[up].allowed > game.upgrades[up].done);
 
 	const isResourceAllowed = (resourceName) =>
 		({
 			science: researchAvailable,
 			food: true,
 			wood: game.triggers.wood.done,
-			metal: elementVisible('metal')
+			metal: elementVisible('metal') && (!challengeActive('Metal') || upsAvailable.length)
 		}[resourceName]);
 
 	// Calculates the required amount of any resource used by the upgrade
@@ -495,7 +496,7 @@ function autoGather() {
 			else if (currentBonus.includes('wc')) safeSetGather('wood');
 			else if (currentBonus.includes('mc') || currentBonus.includes('lc')) safeSetGather('metal');
 			else if (currentBonus.includes('rc') && researchAvailable) safeSetGather('science');
-			else safeSetGather('metal');
+			else safeSetGather(challengeActive('Metal') ? 'metal' : 'wood');
 			return;
 		}
 	}
@@ -518,13 +519,13 @@ function autoGather() {
 
 	// Metal if Turkimp is active (in maps)
 	if (hasTurkimp && game.global.mapsActive) {
-		safeSetGather('metal');
+		safeSetGather(challengeActive('Metal') ? 'metal' : 'wood');
 		return;
 	}
 
 	// Metal if Turkimp is active
 	if (hasTurkimp) {
-		safeSetGather('metal');
+		safeSetGather(challengeActive('Metal') ? 'metal' : 'wood');
 		return;
 	}
 
