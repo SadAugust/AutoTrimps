@@ -570,13 +570,10 @@ function mapBonus(lineCheck) {
 
 	const settingIndex = _findSettingsIndexMapBonus(settingName, baseSettings);
 
-	const mapBonusRatio = getPageSetting('mapBonusRatio');
-	const hdCheck = mapBonusRatio > 0 && hdStats.hdRatio > mapBonusRatio && getPageSetting('mapBonusStacks') > game.global.mapBonus;
-	const spireCheck = getPageSetting('MaxStacksForSpire') && isDoingSpire();
-	const hdFarmCheck = (hdCheck || spireCheck) && !_berserkDisableMapping() && !_noMappingChallenges();
-	if (!hdFarmCheck && !defaultSettings.active) return farmingDetails;
+	const spireCheck = isDoingSpire() && getPageSetting('MaxStacksForSpire') && !_berserkDisableMapping() && !_noMappingChallenges();
+	if (!spireCheck && !defaultSettings.active) return farmingDetails;
 
-	const setting = settingIndex ? baseSettings[settingIndex] : hdFarmCheck ? _mapBonusRatioSetting(defaultSettings, hdCheck, spireCheck) : undefined;
+	const setting = spireCheck ? _mapBonusSpireSetting(defaultSettings) : settingIndex ? baseSettings[settingIndex] : undefined;
 	if (lineCheck) return setting;
 
 	if (setting) Object.assign(farmingDetails, _runMapBonus(setting, mapName, settingIndex, spireCheck));
@@ -602,16 +599,15 @@ function _findSettingsIndexMapBonus(settingName, baseSettings) {
 	return settingIndex;
 }
 
-function _mapBonusRatioSetting(defaultSettings, hdCheck, spireCheck) {
+function _mapBonusSpireSetting(defaultSettings) {
 	const isSettingsEmpty = Object.keys(defaultSettings).length === 1;
-	const repeatCount = Math.max(spireCheck ? 10 : 0, hdCheck ? getPageSetting('mapBonusStacks') : 0);
 
 	return {
 		jobratio: isSettingsEmpty ? '1,1,2' : defaultSettings.jobratio,
 		autoLevel: true,
 		level: 0,
 		special: isSettingsEmpty ? 'lmc' : defaultSettings.special,
-		repeat: repeatCount,
+		repeat: 10,
 		priority: Infinity
 	};
 }
@@ -2983,25 +2979,25 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	if (!baseSettings) return farmingDetails;
 	const defaultSettings = baseSettings[0];
 
-	const hitsSurvivedCheck = !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world && !_berserkDisableMapping() && !_noMappingChallenges();
+	const allowMapping = !_berserkDisableMapping() && !_noMappingChallenges();
+	const hitsSurvivedCheck = !skipHealthCheck && allowMapping && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world;
 	const hitsSurvivedGoal = targetHitsSurvived(true);
 	const shouldHitsSurvived = hitsSurvivedCheck && hitsSurvivedGoal > 0 && (hdStats.hitsSurvived < hitsSurvivedGoal || (mapSettings.mapName === 'Hits Survived' && mapSettings.priority === Infinity));
 
-	if (!voidFarm && !shouldHitsSurvived && (!defaultSettings || !defaultSettings.active)) return farmingDetails;
+	const hdRatioSetting = getPageSetting('mapBonusRatio');
+	const hdRatioStacks = getPageSetting('mapBonusStacks');
+	const hdRatioCheck = allowMapping && hdRatioSetting > 0 && hdRatioStacks > 0 && ((hdStats.hdRatio > hdRatioSetting && game.global.mapBonus < hdRatioStacks) || mapSettings.mapBonus);
+
+	if (!voidFarm && !shouldHitsSurvived && !hdRatioCheck && (!defaultSettings || !defaultSettings.active)) return farmingDetails;
 
 	const settingIndex = findSettingsIndex(settingName, baseSettings, mapName, null, skipHealthCheck);
 
-	const setting = voidFarm ? _hdFarmVoidSetting() : shouldHitsSurvived ? _hdFarmHitsSurvivedSetting(hitsSurvivedGoal, defaultSettings) : baseSettings[settingIndex];
+	const setting = voidFarm ? _hdFarmVoidSetting() : shouldHitsSurvived ? _hdFarmHitsSurvivedSetting(hitsSurvivedGoal, defaultSettings) : settingIndex ? baseSettings[settingIndex] : hdRatioCheck ? _hdFarmRatioSetting(hdRatioSetting, hdRatioStacks) : undefined;
 	if (lineCheck) return setting;
 
 	if (setting) Object.assign(farmingDetails, _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings, voidFarm));
 	if (farmingDetails.hasVoidFarmed) return voidMaps();
 	return farmingDetails;
-}
-
-function hdFarmSettingRatio(setting) {
-	const zone = game.global.world - setting.world;
-	return zone === 0 ? setting.hdBase : Math.pow(setting.hdMult, zone) * setting.hdBase;
 }
 
 function _hdFarmVoidSetting() {
@@ -3018,6 +3014,32 @@ function _hdFarmVoidSetting() {
 		hdType: useHitsSurvived ? 'hitsSurvivedVoid' : 'voidFarm',
 		mapCap: typeof voidSetting.mapCap !== 'undefined' ? voidSetting.mapCap : 100,
 		priority: 1
+	};
+}
+
+function hdFarmSettingRatio(setting) {
+	const zone = game.global.world - setting.world;
+	return zone === 0 ? setting.hdBase : Math.pow(setting.hdMult, zone) * setting.hdBase;
+}
+
+function _hdFarmRatioSetting(hdRatioSetting, hdRatioStacks) {
+	const settingName = 'mapBonusSettings';
+	const baseSettings = getPageSetting(settingName);
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	const isSettingsEmpty = Object.keys(defaultSettings).length === 1;
+
+	return {
+		repeat: true,
+		autoLevel: true,
+		hdMult: 1,
+		jobratio: isSettingsEmpty ? '1,1,2' : defaultSettings.jobratio,
+		world: game.global.world,
+		level: 0,
+		special: isSettingsEmpty ? 'lmc' : defaultSettings.special,
+		hdBase: hdRatioSetting,
+		hdType: 'world',
+		mapCap: hdRatioStacks,
+		priority: Infinity
 	};
 }
 
@@ -3038,7 +3060,7 @@ function _hdFarmHitsSurvivedSetting(hitsSurvivedGoal, defaultSettings) {
 function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings, voidFarm) {
 	let mapLevel = setting.level;
 	let farmingDetails = {};
-	const mapSpecial = getAvailableSpecials('lmc');
+	const mapSpecial = setting.special ? setting.special : getAvailableSpecials('lmc');
 	const jobRatio = setting.jobratio;
 	const hdType = setting.hdType;
 	const hitsSurvived = hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived;
@@ -3052,9 +3074,10 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	mapName = hdType.includes('hitsSurvived') ? 'Hits Survived' : 'HD Farm';
 
 	if (setting.autoLevel) {
-		const shouldMapBonus = game.global.mapBonus !== 10 && (hdType === 'world' || (hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
+		const shouldMapBonus = game.global.mapBonus !== 10 && (setting.repeat || hdType === 'world' || (hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
 		const minLevel = shouldMapBonus ? 0 - game.portal.Siphonology.level : null;
 		mapLevel = autoLevelCheck(mapName, mapSpecial, null, minLevel);
+		if (setting.repeat && minLevel > mapLevel) return farmingDetails;
 	}
 
 	const hdTypeMap = {
@@ -3065,18 +3088,18 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		hitsSurvived: 'hitsSurvived',
 		hitsSurvivedVoid: 'hitsSurvivedVoid'
 	};
-
 	const hdRatio = hdStats[hdTypeMap[hdType]] || null;
 
 	//Skipping farm if map repeat value is greater than our max maps value
 	let shouldMap = hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > whichAutoLevel() : hdRatio > settingTarget;
 
 	const shouldSkip = mapSettings.mapName !== mapName && !shouldMap;
+	const mapType = setting.repeat ? game.global.mapBonus : game.global.mapRunCounter;
 
-	if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter > mapsRunCap) shouldMap = false;
+	if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && mapType > mapsRunCap) shouldMap = false;
 	let hasVoidFarmed = false;
 
-	if (shouldSkip || game.global.mapRunCounter === mapsRunCap || (mapSettings.mapName === mapName && !shouldMap)) {
+	if (shouldSkip || mapType === mapsRunCap || (mapSettings.mapName === mapName && !shouldMap)) {
 		if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, settingTarget, hdType);
 		//Messages detailing why we are skipping mapping.
 		if (shouldSkip) {
@@ -3109,8 +3132,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		${setting.hdBase >= 0 ? '+' : ''}${setting.hdBase} Auto Level`
 		}`;
 	}
-	status += `<br> Maps:&nbsp; ${game.global.mapRunCounter}/${mapsRunCap === Infinity ? '∞' : mapsRunCap}`;
-	const repeat = game.global.mapRunCounter + 1 === mapsRunCap;
+	status += `<br> Maps:&nbsp; ${mapType}/${mapsRunCap === Infinity ? '∞' : mapsRunCap}`;
+	const repeat = mapType + 1 === mapsRunCap;
 
 	Object.assign(farmingDetails, {
 		shouldRun: shouldMap,
@@ -3129,7 +3152,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		shouldHealthFarm: hdType.includes('hitsSurvived'),
 		voidHitsSurvived: hdType === 'hitsSurvivedVoid' || hdType === 'void',
 		settingIndex: settingIndex,
-		priority: setting.priority
+		priority: setting.priority,
+		mapBonus: setting.repeat
 	});
 
 	if (voidFarm) {
@@ -3596,6 +3620,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	else if (mapName === 'Smithless Farm') message += ` Finished with enough damage to get ${extra}/3 stacks.`;
 
 	MODULES.maps.mapRepeats = 0;
+	delete mapSettings.mapBonus;
 	debug(message, mapType);
 }
 
@@ -3905,14 +3930,19 @@ function callAutoMapLevel_new(mapName, special) {
 	if (mapLevel === Infinity) {
 		mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
 	} else if (mapName && atSettings.intervals.sixSecond) {
-		const autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+		let autoLevelData = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType];
+		const secondBestMap = autoLevelData[`${mapType}Second`];
+		/* if (mapSettings.mapLevel && mapSettings.mapLevel === secondBestMap.mapLevel && autoLevelData.) {
+		} */
+		const autoLevel = autoLevelData.mapLevel;
 		mapLevel = Math.max(mapLevel, autoLevel);
-		const autoLevelIgnoreFragments = get_best(hdStats.autoLevelInitial)[mapType].mapLevel;
+
+		const autoLevelDataNoFrags = get_best(hdStats.autoLevelInitial)[mapType];
+		const autoLevelIgnoreFragments = autoLevelDataNoFrags.mapLevel;
 		mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
 	}
 
 	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
-
 	mapLevel = autoLevelOverides(mapName, mapLevel);
 	return mapLevel;
 }
@@ -3920,12 +3950,13 @@ function callAutoMapLevel_new(mapName, special) {
 function autoLevelOverides(mapName, mapLevel) {
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
 	const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
-	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapLevel >= (mapBonusMinSetting > 0 ? -Math.min(mapLevel, mapBonusMinSetting) : 0);
+	``;
+	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapLevel > (mapBonusMinSetting > 0 ? -mapBonusMinSetting - Math.abs(mapBonusLevel) : mapLevel - 1);
 	const mapBonusAfford = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
 
 	const mapBonusConditions = [
-		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && !mapBonusMinLevel, level: mapBonusLevel },
-		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && !mapBonusMinLevel && mapBonusAfford, level: mapBonusLevel },
+		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && mapBonusMinLevel, level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapBonusMinLevel && mapBonusAfford, level: mapBonusLevel },
 		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel && mapBonusAfford, level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
 		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
@@ -3937,7 +3968,6 @@ function autoLevelOverides(mapName, mapLevel) {
 
 	const matchingCondition = mapBonusConditions.find(({ condition }) => condition);
 	if (matchingCondition) mapLevel = matchingCondition.level;
-
 	return mapLevel;
 }
 

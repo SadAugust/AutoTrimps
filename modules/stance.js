@@ -268,17 +268,23 @@ function survive(formation = 'S', critPower = 2, ignoreArmy) {
 function checkStanceSetting() {
 	if (!game.upgrades.Formations.done) return;
 
-	/* if (game.global.mapsActive && getPageSetting('autoLevelTest') && getPageSetting('autoMaps')) {
-		const speedSettingsSet = new Set(['Map Bonus', 'Experience', 'Mayhem Destacking']);
-		const checkSpeed = speedSettingsSet.has(mapSettings.mapName);
-		const mapLevel = MODULES.maps.lastMapWeWereIn.level - game.global.world;
-		const autoLevelData = hdStats.autoLevelData[checkSpeed ? 'speed' : 'loot'];
+	if (game.global.mapsActive && getPageSetting('autoLevelTest') && getPageSetting('autoMaps')) {
+		const ignoreSettings = new Set(['Void Maps', 'Prestige Climb', 'Prestige Raiding', 'Bionic Raiding']);
+		if (!ignoreSettings.has(mapSettings.mapName)) {
+			const speedSettingsSet = new Set(['Map Bonus', 'Experience']);
+			const checkSpeed = speedSettingsSet.has(mapSettings.mapName);
+			const autoLevelData = hdStats.autoLevelData[checkSpeed ? 'speed' : 'loot'];
 
-		if (mapLevel === autoLevelData.mapLevel) {
 			safeSetStance(autoLevelData.stance);
 			return;
+
+			/* const mapLevel = MODULES.maps.lastMapWeWereIn.level - game.global.world;
+			if (mapLevel === autoLevelData.mapLevel) {
+			safeSetStance(autoLevelData.stance);
+			return;
+			} */
 		}
-	} */
+	}
 
 	const settingPrefix = trimpStats.isDaily ? 'd' : '';
 	if (game.global.spireActive && getPageSetting((trimpStats.isC3 ? 'c2' : settingPrefix) + 'AutoDStanceSpire')) autoStanceD(true);
@@ -294,13 +300,10 @@ function checkStanceSetting() {
 
 function autoStance(force) {
 	calcBaseDamageInX();
-	const autoStanceSetting = getPageSetting('AutoStance');
-	if (autoStanceSetting !== 1 && !force) return;
+	const autoStanceSetting = force ? 1 : getPageSetting('AutoStance');
+	if (autoStanceSetting !== 1) return;
 	//Invalid Map - Dead Soldiers - Auto Stance Disabled - Formations Unavailable - No Enemy
-	if (game.global.soldierHealth <= 0) return;
-	if (game.global.gridArray.length === 0) return;
-	if (!autoStanceSetting) return;
-	if (!game.upgrades.Formations.done) return;
+	if (game.global.soldierHealth <= 0 || game.global.gridArray.length === 0 || !game.upgrades.Dominance.done) return;
 	const currentEnemy = getCurrentEnemy();
 	if (typeof currentEnemy === 'undefined') return;
 	//Keep on D vs the Domination bosses
@@ -352,8 +355,7 @@ function autoStanceD(force) {
 
 function autoStanceWind() {
 	//Fail safes
-	if (game.global.gridArray.length === 0) return;
-	if (!game.upgrades.Formations.done || game.global.soldierHealth <= 0) return;
+	if (game.global.gridArray.length === 0 || !game.upgrades.Formations.done || game.global.soldierHealth <= 0) return;
 	const currentStance = useWindStance();
 	//If we should use Wind Stance, and the checks in useWindStance don't return false then use it
 	if (currentStance) {
