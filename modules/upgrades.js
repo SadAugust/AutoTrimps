@@ -186,17 +186,18 @@ function buyUpgrades() {
 			if (upgradeSetting === 2 || !canAffordCoordinationTrimps()) continue;
 			//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
 			if (challengeActive('Trappapalooza') || (challengeActive('Trapper') && getPageSetting('trapper'))) {
-				const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
-				let coordTarget = getPageSetting('trapperCoords');
+				const trappaCoordToggle = getPageSetting('trapperCoordStyle');
 
-				if (trappaCoordToggle === 1) {
+				if (trappaCoordToggle === 0) {
+					let coordTarget = getPageSetting('trapperCoords');
 					if (coordTarget > 0) coordTarget--;
 					if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
 					if (coordTarget > 0 && gameUpgrade.done >= coordTarget) continue;
 				}
 
-				if (trappaCoordToggle === 2) {
-					if (game.resources.trimps.maxSoldiers * 1.25 > coordTarget) continue;
+				if (trappaCoordToggle === 1) {
+					const armyTarget = getPageSetting('trapperArmySize');
+					if (game.resources.trimps.maxSoldiers * 1.25 > armyTarget) continue;
 				}
 
 				buyJobs();

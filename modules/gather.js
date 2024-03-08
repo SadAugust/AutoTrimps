@@ -81,16 +81,18 @@ function _isTrappingOK(Battle, Coordination) {
 	const trapChallengeCheck = trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap');
 	if (!trapChallengeCheck) return true;
 
-	// TODO: Need a way to figure out how many coords it will purchase if using trappaCoordToggle === 2 since the goal with that feature is to cap army at X soliders so probably need to increment coordination until we reach that point
-	const trappaCoordToggle = 1; // getPageSetting('trapperCoordsToggle');
-	const baseArmySize = game.resources.trimps.maxSoldiers;
-	const trapperCoords = getPageSetting('trapperCoords');
+	// TODO: Need a way to figure out how many coords it will purchase if using trapperCoordStyle === 2 since the goal with that feature is to cap army at X soliders so probably need to increment coordination until we reach that point
+	const trappaCoordToggle = getPageSetting('trapperCoordStyle');
 	const coordinated = getPerkLevel('Coordinated');
 
-	let targetArmySize = baseArmySize;
+	let targetArmySize = game.resources.trimps.maxSoldiers;
 	const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
 	const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
-	if (trappaCoordToggle === 1) {
+	let trappaCheck;
+	let maxCheck;
+
+	if (trappaCoordToggle === 0) {
+		const trapperCoords = getPageSetting('trapperCoords');
 		let coordTarget = trapperCoords > 0 ? trapperCoords - 1 : 999;
 		if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimpStats.currChallenge === 'Trapper' ? 32 : 49;
 		if (Coordination.done >= coordTarget) {
@@ -99,15 +101,16 @@ function _isTrappingOK(Battle, Coordination) {
 				targetArmySize = Math.ceil(targetArmySize * coordinatedMult);
 			}
 		}
-
-		// Disable trapping if we are fighting with our max coord army (or better)
-		const trappaCheck = challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize;
-
-		// Disable trapping if we have enough trimps to fill our max coord army
-		const maxCheck = remainingTrimps > targetArmySize;
-
-		if (trappaCheck || maxCheck) return false;
 	}
+
+	if (trappaCoordToggle === 1) {
+		const armySize = getPageSetting('trapperArmySize');
+		if (armySize > 0) targetArmySize = armySize;
+	}
+
+	trappaCheck = challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize;
+	maxCheck = remainingTrimps > targetArmySize;
+	if (trappaCheck || maxCheck) return false;
 
 	return true;
 }
