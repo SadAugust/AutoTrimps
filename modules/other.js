@@ -113,9 +113,10 @@ function archaeologyAutomator() {
 	if (string && string !== game.global.archString) game.global.archString = string;
 }
 
-function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, excludeFused) {
+function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, excludeFused, dontPortalBefore = 0) {
 	let obj = {};
-	const hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	let hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	hze = Math.max(hze, dontPortalBefore);
 
 	if (universe === 1) {
 		obj = {
