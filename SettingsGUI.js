@@ -1917,7 +1917,6 @@ function initialiseAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//C2
 	const displayC2 = true;
 	if (displayC2) {
 		createSetting('c2Finish',
@@ -1930,6 +1929,7 @@ function initialiseAllSettings() {
 				description += "<p>Recommended: Zones ending with 0 for most " + _getChallenge2Info() + " runs.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2]);
+
 		createSetting('c2Table',
 			function () { return (_getChallenge2Info() + ' Table') },
 			function () {
@@ -1948,6 +1948,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
+
 		createSetting('c2GoldenMaps',
 			function () { return (_getChallenge2Info() + ' Golden Maps') },
 			function () {
@@ -1955,6 +1956,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
+
 		createSetting('c2disableFinished',
 			function () { return ('Hide Finished Challenges') },
 			function () {
@@ -1988,6 +1990,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
+
 		createSetting('c2RunnerSettings',
 			function () { return (_getChallenge2Info() + ' Runner Settings') },
 			function () {
@@ -1999,6 +2002,7 @@ function initialiseAllSettings() {
 			function () {
 				return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1)
 			});
+
 		createSetting('c2RunnerPortal',
 			function () { return (_getChallenge2Info() + ' Runner End Zone') },
 			function () {
@@ -2008,6 +2012,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
+
 		createSetting('c2RunnerPercent',
 			function () { return (_getChallenge2Info() + ' Runner %') },
 			function () {
@@ -2027,6 +2032,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'multitoggle', 1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
+
 		createSetting('c2Fused',
 			function () { return ('Fused ' + _getChallenge2Info() + 's') },
 			function () {
@@ -2046,6 +2052,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+
 		createSetting('c2ExitSpireCell',
 			function () { return (_getChallenge2Info() + ' Exit Spire After Cell') },
 			function () {
@@ -2057,6 +2064,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+
 		createSetting('c2PreSpireNurseries',
 			function () { return (_getChallenge2Info() + ' Nurseries pre-Spire') },
 			function () {
@@ -2067,6 +2075,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+
 		createSetting('c2AutoDStanceSpire',
 			function () { return (_getChallenge2Info() + ' Stance in Spires') },
 			function () {
@@ -2076,7 +2085,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		//Duel
 		createSetting('duel',
 			function () { return ('Duel') },
 			function () {
@@ -2105,7 +2113,6 @@ function initialiseAllSettings() {
 			}, 'textValue', 'undefined', null, 'C2', [2],
 			function () { return (getPageSetting('duel', currSettingUniverse) && autoTrimpSettings.duel.require()) });
 
-		//Trapper
 		createSetting('trapper',
 			function () { return (currSettingUniverse === 2 ? 'Trappapalooza' : 'Trapper') },
 			function () {
@@ -2114,6 +2121,18 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2],
 			function () { return (currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 60 : game.stats.highestLevel.valueTotal() >= 70) });
+
+		createSetting('trapperCoordStyle',
+			function () { return (['T: Coords Owned', 'T: Army Size']) },
+			function () {
+				let description = "<p>The style you would like purchasing Coordinations to use.</p>";
+				description += "<p><b>T: Coords Owned</b><br>Will stop purchasing coordination levels from a certain zone.</p>";
+				description += "<p><b>T: Army Size</b><br>Will stop purchasing coordination levels after reaching a certain army size.</p>";
+				description += "<p><b>Recommended:</b> T: Coords Owned</p>";
+				return description;
+			}, 'multitoggle', 0, null, 'C2', [1, 2],
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
+
 		createSetting('trapperCoords',
 			function () { return ('T: Coords') },
 			function () {
@@ -2122,7 +2141,17 @@ function initialiseAllSettings() {
 				description += "<p>If set to <b>0 or below</b> and not running the " + _getChallenge2Info() + " version of the challenge it will override this and set it to " + (currSettingUniverse === 2 ? '50' : '33') + ".</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
-			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require() && getPageSetting('trapperCoordStyle', currSettingUniverse) === 0) });
+
+		createSetting('trapperArmySize',
+			function () { return ('T: Army Size') },
+			function () {
+				let description = "<p>The army size you would like to stop buying additional <b>Coordination</b> from.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1, 2],
+			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require() && getPageSetting('trapperCoordStyle', currSettingUniverse) === 1) });
+
 		createSetting('trapperTrap',
 			function () { return ('T: Disable Trapping') },
 			function () {
@@ -2132,6 +2161,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
+
 		createSetting('trapperArmyPct',
 			function () { return ('T: Army Percent') },
 			function () {
@@ -2141,6 +2171,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
+
 		createSetting('trapperShield',
 			function () { return ('T: Shield') },
 			function () {
@@ -2150,6 +2181,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
+
 		createSetting('trapperWorldStaff',
 			function () { return ('T: World Staff') },
 			function () {
@@ -2170,6 +2202,7 @@ function initialiseAllSettings() {
 			},
 			'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 150) });
+
 		createSetting('mapologyPrestige',
 			function () { return ('M: Prestige') },
 			function () {
@@ -2205,6 +2238,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 460) });
+
 		createSetting('frigidSwapZone',
 			function () { return ('F: Heirloom Swap Zone') },
 			function () {
@@ -2215,7 +2249,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (getPageSetting('frigid', currSettingUniverse) && autoTrimpSettings.frigid.require()) });
 
-		//Experience
 		createSetting('experience',
 			function () { return ('Experience') },
 			function () {

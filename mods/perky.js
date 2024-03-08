@@ -575,6 +575,10 @@ function optimize() {
 	weight.agility = (weight.helium + weight.attack) / 2;
 	weight.overkill = 0.25 * weight.attack * (2 - Math.pow(0.9, weight.helium / weight.attack));
 	if (zone > 90 && mod.soldiers <= 1 && Bait.min_level === 0) Bait.max_level = 0;
+	if (game.portal.Carpentry.locked) {
+		Bait.min_level = 1;
+		if ($$('#preset').value !== 'trapper') Pheromones.min_level = 1;
+	}
 	// Fluffy
 	fluffy.attack = [];
 	const potential = Math.log((0.003 * fluffy.xp) / Math.pow(5, fluffy.prestige) + 1) / Math.log(4);

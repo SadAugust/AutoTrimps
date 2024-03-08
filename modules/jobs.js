@@ -113,20 +113,20 @@ function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
 	if ((!game.global.fighting || game.global.soldierHealth <= 0) && freeWorkers > maxSoldiers) freeWorkers -= maxSoldiers;
 
 	if (getPageSetting('trapper')) {
-		const trappaCoordToggle = 1; //getPageSetting('trapperCoordsToggle');
-		let coordTarget = getPageSetting('trapperCoords');
+		const trappaCoordToggle = getPageSetting('trapperCoordStyle');
 		const { done, allowed } = game.upgrades.Coordination;
 		const nextCoordCost = Math.ceil(1.25 * maxSoldiers) - maxSoldiers;
 
-		if (trappaCoordToggle === 1) {
-			coordTarget--;
+		if (trappaCoordToggle === 0) {
+			let coordTarget = getPageSetting('trapperCoords') - 1;
 			if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
 			const canBuyCoordination = done < coordTarget && done !== allowed;
 			if (freeWorkers > nextCoordCost && canBuyCoordination) freeWorkers -= nextCoordCost;
 		}
 
-		if (trappaCoordToggle === 2) {
-			const shouldBuyCoord = coordTarget > game.resources.trimps.maxSoldiers * 1.25;
+		if (trappaCoordToggle === 1) {
+			const armyTarget = getPageSetting('trapperArmySize');
+			const shouldBuyCoord = armyTarget > game.resources.trimps.maxSoldiers * 1.25;
 			if (freeWorkers > nextCoordCost && done !== allowed && shouldBuyCoord) freeWorkers -= nextCoordCost;
 		}
 	}
