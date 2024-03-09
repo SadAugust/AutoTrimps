@@ -48,7 +48,30 @@ function useScryerStance() {
 	}
 
 	//If Scryer stance hasn't been unlocked then don't use this code
-	if (game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.world <= 60 || getHighestLevelCleared() < 180) return autoStanceFunctionScryer();
+	if (game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.world <= 60 || getHighestLevelCleared() < 180) {
+		autoStanceFunctionScryer();
+		return;
+	}
+
+	if (game.global.mapsActive && getPageSetting('autoLevelTest') && getPageSetting('autoMaps')) {
+		const ignoreSettings = new Set(['Void Maps', 'Prestige Climb', 'Prestige Raiding', 'Bionic Raiding']);
+		if (!ignoreSettings.has(mapSettings.mapName)) {
+			const speedSettingsSet = new Set(['Map Bonus', 'Experience']);
+			const checkSpeed = speedSettingsSet.has(mapSettings.mapName);
+			const autoLevelData = hdStats.autoLevelData[checkSpeed ? 'speed' : 'loot'];
+
+			if (autoLevelData.stance !== 'S') {
+				autoStanceFunctionScryer();
+				return;
+			}
+
+			/* const mapLevel = MODULES.maps.lastMapWeWereIn.level - game.global.world;
+			if (mapLevel === autoLevelData.mapLevel) {
+			safeSetStance(autoLevelData.stance);
+			return;
+			} */
+		}
+	}
 
 	const scrySettings = Object.entries(autoTrimpSettings)
 		.filter(([key]) => key.startsWith('scryer'))
