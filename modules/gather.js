@@ -162,7 +162,7 @@ function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
 			science: researchAvailable,
 			food: true,
 			wood: game.triggers.wood.done,
-			metal: elementVisible('metal') && (!challengeActive('Metal') || upsAvailable.length)
+			metal: elementVisible('metal') && (upsAvailable.length || !challengeActive('Metal'))
 		}[resourceName]);
 
 	// Calculates the required amount of any resource used by the upgrade
