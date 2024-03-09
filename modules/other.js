@@ -120,9 +120,9 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 	if (universe === 1) {
 		obj = {
 			Discipline: {
-				unlockZone: 20,
+				unlockZone: 1,
 				unlockCondition: function () {
-					return getTotalPerkResource(true) >= 30;
+					return true;
 				},
 				unlockedIn: ['c2', 'oneOff']
 			},
@@ -212,7 +212,13 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 
 	if (universe === 2) {
 		obj = {
-			Unlucky: { unlockZone: 15, unlockedIn: ['c2', 'oneOff'] },
+			Unlucky: {
+				unlockZone: 1,
+				unlockCondition: function () {
+					return true;
+				},
+				unlockedIn: ['c2', 'oneOff']
+			},
 			Downsize: { unlockZone: 20, unlockedIn: ['c2', 'oneOff'] },
 			Transmute: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
 			Unbalance: { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },

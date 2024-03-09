@@ -275,8 +275,10 @@ function checkStanceSetting() {
 			const checkSpeed = speedSettingsSet.has(mapSettings.mapName);
 			const autoLevelData = hdStats.autoLevelData[checkSpeed ? 'speed' : 'loot'];
 
-			safeSetStance(autoLevelData.stance);
-			return;
+			if (autoLevelData.stance === 'S') {
+				safeSetStance(autoLevelData.stance);
+				return;
+			}
 
 			/* const mapLevel = MODULES.maps.lastMapWeWereIn.level - game.global.world;
 			if (mapLevel === autoLevelData.mapLevel) {
