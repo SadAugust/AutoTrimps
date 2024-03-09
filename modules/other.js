@@ -461,6 +461,7 @@ function _timeWarpUpdateUIDisplay() {
 	if (badAttackElem.innerHTML !== badAttack) badAttackElem.innerHTML = badAttack;
 
 	updateLabels(true);
+	displayMostEfficientBuilding(true);
 	displayMostEfficientEquipment(true);
 	usingRealTimeOffline = true;
 }

@@ -584,3 +584,20 @@ function _buySelectedHouse(houseName, buildingSettings) {
 		return true;
 	}
 }
+
+function displayMostEfficientBuilding(forceUpdate = false) {
+	//Init
+	const foodHousing = ['Hut', 'House'];
+	const gemHousing = ['Mansion', 'Hotel', 'Resort', 'Gateway', 'Collectors', 'Warpstations'];
+
+	// if (!getPageSetting('equipEfficientEquipDisplay')) return; TODO Create a new setting for this
+	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
+
+	//Displays the most efficient gem housing
+	gemHousing.map(name => ({mostEff: name === mostEfficientHousing_beta('gems'), elem: document.getElementById(name)}))
+		.forEach(house => _updateMostEfficientDisplay(house.elem, house.mostEff));
+
+	//Also displays the most efficient food housing if it's a hut or a house
+	foodHousing.map(name => ({mostEff: name === mostEfficientHousing_beta('food'), elem: document.getElementById(name)}))
+		.forEach(house => _updateMostEfficientDisplay(house.elem, house.mostEff));
+}
