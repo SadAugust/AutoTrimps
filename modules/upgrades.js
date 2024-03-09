@@ -218,16 +218,16 @@ function buyUpgrades() {
 			if (needMiner && game.resources.science.owned < 120) continue;
 		} else if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) {
 			continue;
-		} else if (needBounty && upgrade !== 'Bounty') {
-			continue;
 		}
 
+		//TODO Maybe rework this priority system
 		//Prioritise Science/scientist upgrades
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld && !scientistChallenge) {
 			if (needScientists) continue;
-			if (needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;
+			if (needBounty && upgrade !== 'Bounty') continue;
+			if (!needBounty && needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency' !== upgrade) continue;
 
-			if (!needEff || !researchIsRelevant || upgrade !== 'Efficiency') {
+			if ((!needBounty && !needEff) || (!needBounty && !researchIsRelevant) || (upgrade !== 'Efficiency' && upgrade !== 'Bounty')) {
 				if (needSpeed && scientistsAreRelevant && upgrade !== 'Speedscience') continue;
 				if (needMega && scientistsAreRelevant && !['Speedscience', 'Megascience'].includes(upgrade)) continue;
 			}
