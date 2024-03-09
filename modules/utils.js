@@ -677,3 +677,10 @@ function getCurrentQuest() {
 	const otherIndex = otherQuests.findIndex((quest) => questDescription === quest);
 	return otherIndex !== -1 ? otherIndex + 6 : 0;
 }
+
+function _updateMostEfficientDisplay(element, mostEfficient) {
+	if (!element.classList.contains('efficient')) element.classList.add('efficient');
+	if (element.classList.contains('efficientNo') && mostEfficient) return swapClass('efficient', 'efficientYes', element);
+	if (element.classList.contains('efficientYes') && !mostEfficient) return swapClass('efficient', 'efficientNo', element);
+	swapClass('efficient', mostEfficient ? 'efficientYes' : 'efficientNo', element);
+}

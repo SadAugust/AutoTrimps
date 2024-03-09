@@ -91,7 +91,7 @@ function needGymystic() {
 	return shouldSaveForSpeedUpgrade(game.upgrades.Gymystic, 0.5, 0.5, 0.25, 0.75);
 }
 
-function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 1 / 4, woodRequired = 1 / 4, metalRequired = 1 / 4, scienceRequired = 2 / 4) {
+function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0.25, woodRequired = 0.25, metalRequired = 0.25, scienceRequired = 0.5) {
 	const resources = ['food', 'wood', 'metal', 'science'];
 	const resourceRequired = [foodRequired, woodRequired, metalRequired, scienceRequired];
 	const resourceOwned = resources.map((r) => game.resources[r].owned);
@@ -165,10 +165,11 @@ function buyUpgrades() {
 	if (upgradeSetting === 0) return;
 
 	const needScientists = game.upgrades.Scientists.done < game.upgrades.Scientists.allowed;
+	const needBounty = !game.upgrades.Bounty.done && game.upgrades.Bounty.allowed;
 	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
 	const needMega = game.upgrades.Megascience.done < game.upgrades.Megascience.allowed;
 	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
-	const effRelevance = game.global.world >= 60 ? (game.global.frugalDone ? 3 / 2 : 1) : 1 / 3;
+	const effRelevance = game.global.world >= 60 ? (game.global.frugalDone ? 1.5 : 1) : 1/3;
 	const scientistsAreRelevant = !isPlayerRelevant('science', false, 2);
 	const researchIsRelevant = isPlayerRelevant('science', false, effRelevance);
 	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
@@ -219,12 +220,14 @@ function buyUpgrades() {
 			continue;
 		}
 
+		//TODO Maybe rework this priority system
 		//Prioritise Science/scientist upgrades
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld && !scientistChallenge) {
 			if (needScientists) continue;
-			if (needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;
+			if (needBounty && upgrade !== 'Bounty') continue;
+			if (!needBounty && needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency' !== upgrade) continue;
 
-			if (!needEff || !researchIsRelevant || upgrade !== 'Efficiency') {
+			if ((!needBounty && !needEff) || (!needBounty && !researchIsRelevant) || (upgrade !== 'Efficiency' && upgrade !== 'Bounty')) {
 				if (needSpeed && scientistsAreRelevant && upgrade !== 'Speedscience') continue;
 				if (needMega && scientistsAreRelevant && !['Speedscience', 'Megascience'].includes(upgrade)) continue;
 			}

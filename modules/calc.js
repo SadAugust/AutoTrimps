@@ -46,14 +46,7 @@ class HDStats {
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
 		const autoLevel = whichAutoLevel();
 
-		let voidPercent = 4.5;
-		if (world <= 59) {
-			voidPercent -= 2;
-			if (universe === 1) voidPercent /= 2;
-		} else if (universe === 1 && world <= 199) {
-			voidPercent -= 1;
-		}
-
+		const voidPercent = _getVoidPercent(world, universe);
 		const mapDifficulty = game.global.mapsActive && getCurrentMapObject().location === 'Bionic' ? 2.6 : 0.75;
 		if (challengeActive('Mapocalypse')) voidPercent += 3;
 
@@ -98,6 +91,26 @@ class HDStats {
 			}
 		}
 	}
+}
+
+function _getVoidMapsObjects() {
+	return game.global.mapsOwnedArray.filter((map) => map.location === 'Void');
+}
+
+function _getVoidPercent(world = game.global.world, universe = game.global.universe) {
+	const ownedVoidMaps = _getVoidMapsObjects();
+
+	if (ownedVoidMaps.length) return ownedVoidMaps.reduce((worstDiff, currentMap) => Math.max(worstDiff, currentMap.difficulty), 0);
+
+	let voidPercent = 4.5;
+	if (world <= 59) {
+		voidPercent -= 2;
+		if (universe === 1) voidPercent /= 2;
+	} else if (universe === 1 && world <= 199) {
+		voidPercent -= 1;
+	}
+
+	return voidPercent;
 }
 
 function applyMultipliers(multipliers, stat, challenge, postChallengeCheck) {

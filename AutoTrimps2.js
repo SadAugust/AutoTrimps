@@ -354,6 +354,7 @@ function mainLoop() {
 
 	if (runDuringTimeWarp) {
 		autoPortalCheck();
+		displayMostEfficientBuilding();
 		displayMostEfficientEquipment();
 	}
 

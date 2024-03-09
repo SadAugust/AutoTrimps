@@ -150,17 +150,19 @@ function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
 		Dagadder: (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
 		Supershield: (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
 		Bootboost: (upObj) => !upObj.done && upObj.allowed && game.resources.gems.owned >= upObj.cost.resources.gems[0],
+		Bounty: (upObj) => !upObj.done && upObj.allowed,
 		Gymystic: (upObj) => upObj.done < Math.floor((Math.min(game.global.world, 55) - 20) / 5) + Math.max(0, Math.floor((Math.min(game.global.world, 150) - 70) / 5))
 	};
 
 	const allowedUpgrades = upgrades.filter((up) => upgradeAllowedFuncs[up.name]).filter((up) => upgradeAllowedFuncs[up.name](up.obj));
+	const upsAvailable = allowedUpgrades.filter((up) => game.upgrades[up]).filter((up) => game.upgrades[up].allowed > game.upgrades[up].done);
 
 	const isResourceAllowed = (resourceName) =>
 		({
 			science: researchAvailable,
 			food: true,
 			wood: game.triggers.wood.done,
-			metal: elementVisible('metal')
+			metal: elementVisible('metal') && (upsAvailable.length || !challengeActive('Metal'))
 		}[resourceName]);
 
 	// Calculates the required amount of any resource used by the upgrade
@@ -456,7 +458,7 @@ function autoGather() {
 	}
 
 	// Gathers resources for some important upgrades
-	let upgradesToGather = ['Efficiency', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
+	let upgradesToGather = ['Efficiency', 'Bounty', 'Speedscience', 'Speedminer', 'Speedlumber', 'Speedfarming'];
 	upgradesToGather = upgradesToGather.concat(['Megascience', 'Megaminer', 'Megalumber', 'Megafarming']);
 	upgradesToGather = upgradesToGather.concat(['Coordination', 'Dagadder', 'Blockmaster', 'Trainers', 'TrainTacular', 'Potency', 'Gymystic']);
 
@@ -497,7 +499,7 @@ function autoGather() {
 			else if (currentBonus.includes('wc')) safeSetGather('wood');
 			else if (currentBonus.includes('mc') || currentBonus.includes('lc')) safeSetGather('metal');
 			else if (currentBonus.includes('rc') && researchAvailable) safeSetGather('science');
-			else safeSetGather('metal');
+			else safeSetGather(challengeActive('Metal') ? 'metal' : 'wood');
 			return;
 		}
 	}
@@ -520,13 +522,13 @@ function autoGather() {
 
 	// Metal if Turkimp is active (in maps)
 	if (hasTurkimp && game.global.mapsActive) {
-		safeSetGather('metal');
+		safeSetGather(challengeActive('Metal') ? 'metal' : 'wood');
 		return;
 	}
 
 	// Metal if Turkimp is active
 	if (hasTurkimp) {
-		safeSetGather('metal');
+		safeSetGather(challengeActive('Metal') ? 'metal' : 'wood');
 		return;
 	}
 
