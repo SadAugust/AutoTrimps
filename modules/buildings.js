@@ -593,11 +593,16 @@ function displayMostEfficientBuilding(forceUpdate = false) {
 	// if (!getPageSetting('equipEfficientEquipDisplay')) return; TODO Create a new setting for this
 	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
 
+	const bestFoodHousing = mostEfficientHousing_beta('food');
+	const bestGemHousing = mostEfficientHousing_beta('gems');
+
 	//Displays the most efficient gem housing
-	gemHousing.map(name => ({mostEff: name === mostEfficientHousing_beta('gems'), elem: document.getElementById(name)}))
+	gemHousing.map(name => ({mostEff: name === bestGemHousing, elem: document.getElementById(name)}))
+		.filter(house => house.elem)
 		.forEach(house => _updateMostEfficientDisplay(house.elem, house.mostEff));
 
 	//Also displays the most efficient food housing if it's a hut or a house
-	foodHousing.map(name => ({mostEff: name === mostEfficientHousing_beta('food'), elem: document.getElementById(name)}))
+	foodHousing.map(name => ({mostEff: name === bestFoodHousing, elem: document.getElementById(name)}))
+		.filter(house => house.elem)
 		.forEach(house => _updateMostEfficientDisplay(house.elem, house.mostEff));
 }
