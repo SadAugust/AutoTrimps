@@ -343,7 +343,7 @@ function heirloomSwapping() {
 }
 
 function usingBreedHeirloom() {
-	if (game.global.mapsActive) return false;
+	if (game.global.mapsActive || !getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return false;
 
 	let breedHeirloom = getPageSetting('heirloomBreed');
 	if (challengeActive('Archaeology') && getPageSetting('archaeology')) {
