@@ -679,7 +679,6 @@ function initialiseAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Buildings
 	const displayBuildings = true;
 	if (displayBuildings) {
 		createSetting('buildingsType',
@@ -712,7 +711,6 @@ function initialiseAllSettings() {
 		}, null, 'Buildings', [1, 2],
 			function () { return false });
 
-		//Helium
 		createSetting('warpstation',
 			function () { return ('Warpstations') },
 			function () {
@@ -720,7 +718,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Will only function properly with AT AutoStructure enabled.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Buildings', [1]);
+			}, 'boolean', false, null, 'Buildings', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 60) });
 		createSetting('warpstationPct',
 			function () { return ('Warpstation Percent') },
 			function () {
@@ -728,7 +727,8 @@ function initialiseAllSettings() {
 				description += "<p><b>The script will still purchase Gigastations at 100% resources.</b></p>";
 				description += "<p><b>Recommended:</b> 25</p>";
 				return description;
-			}, 'value', 25, null, 'Buildings', [1]);
+			}, 'value', 25, null, 'Buildings', [1],
+			function () { return (autoTrimpSettings.warpstation.enabled) });
 		createSetting('firstGigastation',
 			function () { return ('First Gigastation') },
 			function () {
@@ -814,11 +814,17 @@ function initialiseAllSettings() {
 			},
 			'multitoggle', 0, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230 && autoTrimpSettings.advancedNurseries.enabled) });
+		createSetting('buildingMostEfficientDisplay',
+			function () { return ('Highlight Efficient Buildings') },
+			function () {
+				let description = "<p>Will highlight the most efficient building to buy.</p>";
+				return description;
+			}, 'boolean', false, null, 'Buildings', [1, 2],
+			function () { return (getPageSetting('gameUser') !== 'undefined') });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Equipment
 	const displayEquipment = true;
 	if (displayEquipment) {
 		createSetting('equipOn',
@@ -5048,7 +5054,7 @@ function _setDisplayedTabs() {
 
 	const tabList = {
 		tabBeta: !gameUserCheck(),
-		tabBuildings: !displayAllSettings && (radonOn || (!radonOn && hze < 60)),
+		tabBuildings: !displayAllSettings && radonOn,
 		tabC2: !displayAllSettings && !radonOn && hze < 65,
 		tabChallenges: !displayAllSettings && ((radonOn && highestRadonZone < 35) || (!radonOn && hze < 40)),
 		tabDaily: !displayAllSettings && !radonOn && hze < 99,
@@ -5107,7 +5113,7 @@ function _settingsToLineBreak() {
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
 	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'mapologyPrestige', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
-	const breakAfterBuildings = ['autoGigaDeltaFactor'];
+	const breakAfterBuildings = ['autoGigaDeltaFactor', 'advancedNurseriesIce'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterMagma = ['AutoGenC2'];
