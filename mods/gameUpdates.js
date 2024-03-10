@@ -676,7 +676,6 @@ var breedCache = {
 }
 
 function breed() {
-	let cached = false;
 	const breedElem = document.getElementById('trimpsTimeToFill');
 	const trimps = game.resources.trimps;
 	checkAchieve('trimps', trimps.owned);
@@ -717,53 +716,50 @@ function breed() {
 	}
 
 	let potencyMod;
-	let logPotencyMod;
 
 	// if inputs identical to cache
 	if (Object.keys(potencyModifiers).map((k) => potencyModifiers[k] === breedCache.inputs[k]).every(Boolean)) {
-		//console.log("using cache")
-		potencyMod = breedCache.potencyModInitial
 		breeding = breedCache.potencyModInitial.mul(breeding);
-		updatePs(breeding.toNumber(), true);
-		potencyMod = potencyMod.div(10).add(1);
-		logPotencyMod = breedCache.logPotencyMod
-		cached = true;
+		potencyMod = breedCache.potencyMod
 	}
 
 	else {
-		//console.log("recalculating potency")
-		potencyMod = new DecimalBreed(trimps.potency);
-		if (potencyModifiers.book > 0) potencyMod = potencyMod.mul(Math.pow(1.1, potencyModifiers.book));
-		if (potencyModifiers.nursery > 0) potencyMod = potencyMod.mul(Math.pow(1.01, potencyModifiers.nursery));
-		if (potencyModifiers.venimp) potencyMod = potencyMod.mul(Math.pow(1.003, potencyModifiers.venimp))
-		if (potencyModifiers.brokenPlanet) potencyMod = potencyMod.div(10)
-		if (potencyModifiers.pheromones > 0) potencyMod = potencyMod.mul(1 + potencyModifiers.pheromones * game.portal.Pheromones.modifier);
-		if (potencyModifiers.quickTrimps) potencyMod = potencyMod.mul(2)
-		if (potencyModifiers.dailyDysfunctional > 0) potencyMod = potencyMod.mul(potencyModifiers.dailyDysfunctional)
-		if (potencyModifiers.dailyToxic > 0) potencyMod = potencyMod.mul(potencyModifiers.dailyToxic)
-		if (challengeActive('Toxicity') && potencyModifiers.chalToxic > 0) potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, potencyModifiers.chalToxic))
-		if (challengeActive('Archaeology')) potencyMod = potencyMod.mul(potencyModifiers.chalArchaeology)
-		if (challengeActive('Quagmire')) potencyMod = potencyMod.mul(potencyModifiers.chalQuagmire)
-		if (potencyModifiers.voidBreed) potencyMod = potencyMod.mul(0.2)
-		potencyMod = calcHeirloomBonusDecimal('Shield', 'breedSpeed', potencyMod); // potencymod * ((breed/100) + 1)
-		if (potencyModifiers.genes > 0) potencyMod = potencyMod.mul(Math.pow(0.98, potencyModifiers.genes))
-		if (potencyModifiers.mutGeneAttack) potencyMod = potencyMod.div(50)
-		if (potencyModifiers.mutGeneHealth) potencyMod = potencyMod.div(50)
+		potencyMod = trimps.potency;
+		if (potencyModifiers.book > 0) potencyMod *= Math.pow(1.1, potencyModifiers.book);
+		if (potencyModifiers.nursery > 0) potencyMod *= Math.pow(1.01, potencyModifiers.nursery);
+		if (potencyModifiers.venimp) potencyMod *= Math.pow(1.003, potencyModifiers.venimp);
+		if (potencyModifiers.brokenPlanet) potencyMod /= 10;
+		if (potencyModifiers.pheromones > 0) potencyMod *= 1 + potencyModifiers.pheromones * game.portal.Pheromones.modifier;
+		if (potencyModifiers.quickTrimps) potencyMod *= 2;
+		if (potencyModifiers.dailyDysfunctional > 0) potencyMod *= potencyModifiers.dailyDysfunctional;
+		if (potencyModifiers.dailyToxic > 0) potencyMod *= potencyModifiers.dailyToxic;
+		if (challengeActive('Toxicity') && potencyModifiers.chalToxic > 0) potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, potencyModifiers.chalToxic);
+		if (challengeActive('Archaeology')) potencyMod *= potencyModifiers.chalArchaeology;
+		if (challengeActive('Quagmire')) potencyMod *= potencyModifiers.chalQuagmire;
+		if (potencyModifiers.voidBreed) potencyMod *= 0.2;
+		potencyMod = calcHeirloomBonus('Shield', 'breedSpeed', potencyMod); // potencymod * ((breed/100) + 1)
+		if (potencyModifiers.mutGeneAttack) potencyMod /= 50;
+		if (potencyModifiers.mutGeneHealth) potencyMod /= 50;
+		// Noo says all modifiers except genes are safe to do at normal precision. The log is unsafe even without genes though.
+		if (potencyModifiers.genes > 0) potencyMod = DecimalBreed(potencyMod).mul(Math.pow(0.98, potencyModifiers.genes));
+		potencyMod = DecimalBreed(potencyMod)
 
 		breedCache.potencyModInitial = potencyMod // save this weird intermediary value
 		breeding = potencyMod.mul(breeding);
-		updatePs(breeding.toNumber(), true);
 		potencyMod = potencyMod.div(10).add(1);
-		logPotencyMod = DecimalBreed.log10(potencyMod);
 		//save input and output values to cache
 		breedCache.inputs = potencyModifiers;
 		breedCache.potencyMod = potencyMod
-		breedCache.logPotencyMod = logPotencyMod;
+		breedCache.logPotencyMod = DecimalBreed.log10(potencyMod);
 	}
+
+	updatePs(breeding.toNumber(), true);
+	const logPotencyMod = breedCache.logPotencyMod
 
 	// Attempt to get these two vars at low precision. if it's zero, recalc using Decimal
 	let timeRemaining = DecimalBreed(Math.log10(maxBreedable / (decimalOwned - employedTrimps)) / logPotencyMod / 10)
-	if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) { // this value is allowed to be zero when we're not missing any trimps, otherwise, get higher precision
+	if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) { 
+		// this value is allowed to be zero when we're not missing any trimps, otherwise, get higher precision
 		timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
 			.div(logPotencyMod)
 			.div(10);
