@@ -578,7 +578,7 @@ function badGuyCritMult(enemy = getCurrentEnemy(), critPower = 2, block = game.g
 	return Math.max(regular, challenge);
 }
 
-function calcEnemyBaseAttack(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(worldType), name = _getEnemyName('Chimp'), query = false) {
+function calcEnemyBaseAttack(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), name = _getEnemyName('Chimp'), query = false) {
 	const mapGrid = worldType === 'world' ? 'gridArray' : 'mapGridArray';
 
 	if (!query && zone >= 200 && cell !== 100 && worldType === 'world' && game.global.universe === 2 && game.global[mapGrid][cell].u2Mutation) {
@@ -615,7 +615,7 @@ function calcEnemyBaseAttack(worldType = _getWorldType(), zone = _getZone(worldT
 	return Math.floor(attack);
 }
 
-function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(worldType), name = _getEnemyName('Snimp'), minOrMax = false, customAttack, equality) {
+function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), name = _getEnemyName('Snimp'), minOrMax = false, customAttack, equality) {
 	let attack = calcEnemyBaseAttack(worldType, zone, cell, name);
 	const fluctuation = game.global.universe === 2 ? 0.5 : 0.2;
 	const gridInitialised = game.global.gridArray && game.global.gridArray.length > 0;
@@ -738,7 +738,7 @@ function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth) {
 	return Math.ceil(attack);
 }
 
-function calcEnemyBaseHealth(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(worldType), name = _getEnemyName('Turtlimp'), ignoreMutation) {
+function calcEnemyBaseHealth(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), name = _getEnemyName('Turtlimp'), ignoreMutation) {
 	if (!ignoreMutation && worldType === 'world' && game.global.universe === 2 && game.global.world > 200 && typeof game.global.gridArray[cell - 1].u2Mutation !== 'undefined') {
 		if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && ['CSX', 'CSP'].some((mutation) => game.global.gridArray[cell - 1].u2Mutation.includes(mutation))) {
 			cell = game.global.gridArray[cell - 1].cs;
@@ -771,7 +771,7 @@ function calcEnemyBaseHealth(worldType = _getWorldType(), zone = _getZone(worldT
 	return health;
 }
 
-function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(worldType), name = _getEnemyName('Turtlimp'), customHealth) {
+function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), name = _getEnemyName('Turtlimp'), customHealth) {
 	let health = calcEnemyBaseHealth(worldType, zone, cell, name);
 	const gridInitialised = game.global.gridArray && game.global.gridArray.length > 0;
 
@@ -847,7 +847,7 @@ function calcEnemyHealth(worldType, zone, cell = 99, name = 'Turtlimp', customHe
 	return health;
 }
 
-function calcSpecificEnemyHealth(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(worldType), forcedName) {
+function calcSpecificEnemyHealth(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), forcedName) {
 	const enemy = worldType === 'world' ? game.global.gridArray[cell - 1] : game.global.mapGridArray[cell - 1];
 	if (!enemy) return -1;
 

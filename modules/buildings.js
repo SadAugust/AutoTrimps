@@ -534,7 +534,7 @@ function _getAffordableMets() {
 }
 
 function _buyHousing(buildSettings) {
-	if (MODULES.buildings.betaHouseEfficiency) {
+	if (MODULES.buildings.betaHouseEfficiency && !game.buildings.Hub.locked) {
 		let boughtHousing = false;
 		const foodEffHouse = mostEfficientHousing_beta('food');
 		const gemsEffHouse = mostEfficientHousing_beta('gems');
@@ -553,8 +553,8 @@ function _buyHousing(buildSettings) {
 }
 
 function _shouldSaveFromHouse(houseName, upgradeName) {
-	const houseResources = Object.entries(game.buildings[houseName].cost).map(entry => entry[0]);
-	return houseResources.some(resourceName => game.upgrades[upgradeName].cost.resources[resourceName] !== undefined);
+	const houseResources = Object.entries(game.buildings[houseName].cost).map((entry) => entry[0]);
+	return houseResources.some((resourceName) => game.upgrades[upgradeName].cost.resources[resourceName] !== undefined);
 }
 
 function _buySelectedHouse(houseName, buildingSettings) {
@@ -595,11 +595,13 @@ function displayMostEfficientBuilding(forceUpdate = false) {
 	const bestFoodHousing = mostEfficientHousing_beta('food');
 	const bestGemHousing = mostEfficientHousing_beta('gems');
 
-	gemHousing.map(name => ({mostEff: name === bestGemHousing, elem: document.getElementById(name)}))
-		.filter(house => house.elem)
-		.forEach(house => _updateMostEfficientDisplay(house.elem, house.mostEff));
+	gemHousing
+		.map((name) => ({ mostEff: name === bestGemHousing, elem: document.getElementById(name) }))
+		.filter((house) => house.elem)
+		.forEach((house) => _updateMostEfficientDisplay(house.elem, house.mostEff));
 
-	foodHousing.map(name => ({mostEff: name === bestFoodHousing, elem: document.getElementById(name)}))
-		.filter(house => house.elem)
-		.forEach(house => _updateMostEfficientDisplay(house.elem, house.mostEff));
+	foodHousing
+		.map((name) => ({ mostEff: name === bestFoodHousing, elem: document.getElementById(name) }))
+		.filter((house) => house.elem)
+		.forEach((house) => _updateMostEfficientDisplay(house.elem, house.mostEff));
 }
