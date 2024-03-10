@@ -528,7 +528,7 @@ function autoGather() {
 
 	// Metal if Turkimp is active
 	if (hasTurkimp) {
-		safeSetGather(challengeActive('Metal') ? 'metal' : 'wood');
+		safeSetGather(challengeActive('Metal') ? 'wood' : 'metal');
 		return;
 	}
 
