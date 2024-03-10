@@ -615,7 +615,7 @@ function _mapBonusSpireSetting(defaultSettings) {
 function _runMapBonus(setting, mapName, settingIndex, spireCheck) {
 	const { repeat: repeatCounter, jobratio: jobRatio, special, autoLevel, level, priority } = setting;
 	const mapSpecial = special !== '0' ? getAvailableSpecials(special) : '0';
-	const minLevel = game.global.universe === 1 ? 0 - game.portal.Siphonology.level : 0;
+	const minLevel = game.global.universe === 1 ? 0 - getPerkLevel('Siphonology') : 0;
 	const mapLevel = autoLevel ? autoLevelCheck(mapName, mapSpecial, null, minLevel) : level;
 
 	if (mapLevel < minLevel) return {};
@@ -3075,8 +3075,9 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 
 	if (setting.autoLevel) {
 		const shouldMapBonus = game.global.mapBonus !== 10 && (setting.repeat || hdType === 'world' || (hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
-		const minLevel = shouldMapBonus ? 0 - game.portal.Siphonology.level : null;
+		const minLevel = shouldMapBonus ? 0 - getPerkLevel('Siphonology') : null;
 		mapLevel = autoLevelCheck(mapName, mapSpecial, null, minLevel);
+		console.log(minLevel, mapLevel);
 		if (setting.repeat && minLevel > mapLevel) return farmingDetails;
 	}
 
