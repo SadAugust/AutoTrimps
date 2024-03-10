@@ -208,9 +208,9 @@ function gameUserCheck(skipTest) {
 	return allowedUsers.includes(user);
 }
 
-//DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
+// DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 
-//Will activate timewarp.
+// Will activate timewarp.
 function _getTimeWarpHours(inputHours) {
 	let timeWarpHours = 24; // default value
 
@@ -247,7 +247,7 @@ function testTimeWarp(hours) {
 }
 
 function testSpeedX(interval) {
-	//Game uses 100ms for 1 second, so 5ms is 20x speed;
+	// game uses 100ms for 1 second
 	if (game.options.menu.pauseGame.enabled) {
 		setTimeout(testSpeedX, interval, interval);
 		return;
@@ -255,7 +255,7 @@ function testSpeedX(interval) {
 
 	const date = new Date();
 	const now = date.getTime();
-	let tick = 100;
+	const tick = 100;
 
 	game.global.lastOnline = now;
 	game.global.start = now;
@@ -441,7 +441,7 @@ function hypothermiaEndZone() {
 function _priorityChallengeCheck(challenge) {
 	if (game.global.multiChallenge[what]) return true;
 	else if (game.global.challengeActive === what) return true;
-	else return false;
+	return false;
 }
 
 function _getPriorityOrderDropdowns(universe, challenge) {
@@ -527,6 +527,7 @@ function noBreedChallenge() {
 function downloadSave(portal) {
 	if (!getPageSetting('downloadSaves')) return;
 	if (portal && !portalWindowOpen) return;
+
 	MAZLookalike(null, 'downloadSave');
 }
 
@@ -606,9 +607,9 @@ function setupAddonUser(force) {
 function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 	if (!isCompounding) {
 		return Math.floor((costScaling - 2 * baseCost + Math.sqrt(Math.pow(2 * baseCost - costScaling, 2) + 8 * costScaling * totalResource)) / 2);
-	} else {
-		return Math.floor(Math.log(1 - ((1 - costScaling) * totalResource) / baseCost) / Math.log(costScaling));
 	}
+
+	return Math.floor(Math.log(1 - ((1 - costScaling) * totalResource) / baseCost) / Math.log(costScaling));
 }
 
 function getResourcefulMult() {
@@ -636,8 +637,8 @@ function shieldBlockUpgrades() {
 }
 
 function ceilToNearestMultipleOf(number, multipleOf, offSet) {
-	var n = number - offSet;
-	var roundedUp = Math.ceil(n / multipleOf) * multipleOf;
+	const n = number - offSet;
+	const roundedUp = Math.ceil(n / multipleOf) * multipleOf;
 	return roundedUp + offSet;
 }
 
@@ -665,16 +666,16 @@ function getCurrentQuest() {
 	if (game.global.world < game.challenges.Quest.getQuestStartZone()) return 0;
 
 	const questProgress = game.challenges.Quest.getQuestProgress();
-	const questDescription = game.challenges.Quest.getQuestDescription();
-
 	if (questProgress === 'Failed!' || questProgress === 'Quest Complete!') return 0;
 
+	const questDescription = game.challenges.Quest.getQuestDescription();
 	const resourceMultipliers = ['food', 'wood', 'metal', 'gems', 'science'];
 	const resourceIndex = resourceMultipliers.findIndex((resource) => questDescription.includes(resource));
 	if (resourceIndex !== -1) return resourceIndex + 1;
 
 	const otherQuests = ['Complete 5 Maps at Zone level', 'One-shot 5 world enemies', "Don't let your shield break before Cell 100", "Don't run a map before Cell 100", 'Buy a Smithy'];
 	const otherIndex = otherQuests.findIndex((quest) => questDescription === quest);
+
 	return otherIndex !== -1 ? otherIndex + 6 : 0;
 }
 

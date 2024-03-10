@@ -520,13 +520,6 @@ function autoGather() {
 		if (_handleTrapping('build', 2)) return;
 	}
 
-	// Metal if Turkimp is active (in maps)
-	if (hasTurkimp && game.global.mapsActive) {
-		safeSetGather(challengeActive('Metal') ? 'wood' : 'metal');
-		return;
-	}
-
-	// Metal if Turkimp is active
 	if (hasTurkimp) {
 		safeSetGather(challengeActive('Metal') ? 'wood' : 'metal');
 		return;
