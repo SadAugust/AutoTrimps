@@ -169,7 +169,7 @@ function buyUpgrades() {
 	const needEff = game.upgrades.Efficiency.done < game.upgrades.Efficiency.allowed;
 	const needMega = game.upgrades.Megascience.done < game.upgrades.Megascience.allowed;
 	const needSpeed = game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed;
-	const effRelevance = game.global.world >= 60 ? (game.global.frugalDone ? 1.5 : 1) : 1/3;
+	const effRelevance = game.global.world >= 60 ? (game.global.frugalDone ? 1.5 : 1) : 1 / 3;
 	const scientistsAreRelevant = !isPlayerRelevant('science', false, 2);
 	const researchIsRelevant = isPlayerRelevant('science', false, effRelevance);
 	const saveForEff = shouldSaveForSpeedUpgrade(game.upgrades['Efficiency']);
@@ -225,7 +225,7 @@ function buyUpgrades() {
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld && !scientistChallenge) {
 			if (needScientists) continue;
 			if (needBounty && upgrade !== 'Bounty') continue;
-			if (!needBounty && needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency' !== upgrade) continue;
+			if (!needBounty && needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;
 
 			if ((!needBounty && !needEff) || (!needBounty && !researchIsRelevant) || (upgrade !== 'Efficiency' && upgrade !== 'Bounty')) {
 				if (needSpeed && scientistsAreRelevant && upgrade !== 'Speedscience') continue;

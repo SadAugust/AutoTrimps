@@ -46,7 +46,7 @@ class HDStats {
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
 		const autoLevel = whichAutoLevel();
 
-		const voidPercent = _getVoidPercent(world, universe);
+		let voidPercent = _getVoidPercent(world, universe);
 		const mapDifficulty = game.global.mapsActive && getCurrentMapObject().location === 'Bionic' ? 2.6 : 0.75;
 		if (challengeActive('Mapocalypse')) voidPercent += 3;
 
