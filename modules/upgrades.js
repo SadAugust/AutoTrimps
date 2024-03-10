@@ -225,7 +225,7 @@ function buyUpgrades() {
 		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld && !scientistChallenge) {
 			if (needScientists) continue;
 			if (needBounty && upgrade !== 'Bounty') continue;
-			if (!needBounty && needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency' !== upgrade) continue;
+			if (!needBounty && needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;
 
 			if ((!needBounty && !needEff) || (!needBounty && !researchIsRelevant) || (upgrade !== 'Efficiency' && upgrade !== 'Bounty')) {
 				if (needSpeed && scientistsAreRelevant && upgrade !== 'Speedscience') continue;
