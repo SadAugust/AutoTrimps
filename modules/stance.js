@@ -66,7 +66,7 @@ function maxOneShotPower(planToMap, targetZone = game.global.world) {
 	return power;
 }
 
-function oneShotPower(specificStance, useMax, offset = 0) {
+function oneShotPower(specificStance, offset = 0, useMax) {
 	// Calculates our minimum damage
 	maxOrMin = useMax ? 'max' : 'min';
 	const baseDamage = calcOurDmg(maxOrMin, specificStance, true, false, 'never');
@@ -170,14 +170,18 @@ function _directDamage(block = calcOurBlock(true, true), pierce, currentHealth, 
 	return harm;
 }
 
-function wouldSurvive(formation = 'S', critPower = 2, ignoreArmy) {
+function _formationAvailable(formation) {
 	// Check if the formation is valid
 	if (formation === 'D' && !game.upgrades.Dominance.done) return false;
 	if (formation === 'XB' && !game.upgrades.Barrier.done) return false;
 	if (formation === 'B' && !game.upgrades.Barrier.done) return false;
 	if (formation === 'H' && !game.upgrades.Formations.done) return false;
 	if (formation === 'S' && (game.global.world < 60 || game.stats.highestLevel.valueTotal() < 180)) return false;
+	return true;
+}
 
+function wouldSurvive(formation = 'S', critPower = 2, ignoreArmy) {
+	if (!_formationAvailable(formation)) return false;
 	// Base stats
 	let health = MODULES.stats.baseHealth;
 	let block = MODULES.stats.baseBlock;
