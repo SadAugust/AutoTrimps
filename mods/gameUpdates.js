@@ -747,8 +747,8 @@ function breed() {
 		if (potencyModifiers.voidBreed) potencyMod = potencyMod.mul(0.2)
 		potencyMod = calcHeirloomBonusDecimal('Shield', 'breedSpeed', potencyMod); // potencymod * ((breed/100) + 1)
 		if (potencyModifiers.genes > 0) potencyMod = potencyMod.mul(Math.pow(0.98, potencyModifiers.genes))
-		if (potencyModifiers.mutGeneAttack) potencyMod = potencyMod.mul(50)
-		if (potencyModifiers.mutGeneHealth) potencyMod = potencyMod.mul(50)
+		if (potencyModifiers.mutGeneAttack) potencyMod = potencyMod.div(50)
+		if (potencyModifiers.mutGeneHealth) potencyMod = potencyMod.div(50)
 
 		breedCache.potencyModInitial = potencyMod // save this weird intermediary value
 		breeding = potencyMod.mul(breeding);
