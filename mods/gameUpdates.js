@@ -794,36 +794,38 @@ function breed() {
 		}
 
 		if (GAElem && canRun) {
-			let thresh = new DecimalBreed(totalTime.mul(0.02));
+			let thresh = totalTime.mul(-0.02);
+			if (!thresh.isFinite()) thresh = new Decimal(0);
+
 			let compareTime;
 			let htmlMessage = '';
 			if (timeRemaining.cmp(1) > 0 && timeRemaining.cmp(target.add(1)) > 0) {
-				compareTime = new DecimalBreed(timeRemaining.add(-1));
+				compareTime = timeRemaining.add(-1);
 			} else {
-				compareTime = new DecimalBreed(totalTime);
+				compareTime = totalTime;
 			}
-			if (!thresh.isFinite()) thresh = new Decimal(0);
+
 			if (!compareTime.isFinite()) compareTime = new Decimal(999);
-			let genDif = new DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
 
 			if (compareTime.cmp(target) < 0) {
+				let genDif = Decimal.log10(target.div(compareTime)).div(0.00860017176191756).ceil().toNumber(); // Math.log10(1.02) = 0.00860017176191756
 				swapClass('state', 'stateHiring', GAElem);
 				if (game.resources.food.owned * 0.01 < getNextGeneticistCost()) {
 					htmlMessage = " (<span style='font-size: 0.8em' class='glyphicon glyphicon-apple'></span>)";
 				} else if (timeRemaining.cmp(1) < 0 || target.minus((now - game.global.lastSoldierSentAt) / 1000).cmp(timeRemaining) > 0) {
-					if (genDif.cmp(0) > 0) {
-						if (genDif.cmp(10) > 0) genDif = new Decimal(10);
-						addGeneticist(genDif.toNumber());
+					if (genDif > 0) {
+						if (genDif > 10) genDif = 10;
+						addGeneticist(genDif);
 					}
 					htmlMessage = ' (+)';
 				} else htmlMessage = " (<span style='font-size: 0.8em' class='icmoon icon-clock3'></span>)";
 			} else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || potencyMod.cmp(1) === 0) {
-				if (!genDif.isFinite()) genDif = new Decimal(-1);
+				let genDif = Decimal.log10(target.div(compareTime)).div(0.00860017176191756).ceil().toNumber(); // Math.log10(1.02) = 0.00860017176191756
 				swapClass('state', 'stateFiring', GAElem);
 				htmlMessage = ' (-)';
-				if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled !== 2) {
-					if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
-					removeGeneticist(genDif.abs().toNumber());
+				if (genDif < 0 && game.options.menu.gaFire.enabled !== 2) {
+					if (genDif < -10) genDif = -10;
+					removeGeneticist(Math.abs(genDif));
 				}
 			} else {
 				swapClass('state', 'stateHappy', GAElem);
