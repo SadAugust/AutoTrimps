@@ -13,7 +13,6 @@ function safeSetStance(stance) {
 function updateBaseDamageInX() {
 	MODULES.stats.baseMinDamage = calcOurDmg('min', 'X', false, false, 'never');
 	MODULES.stats.baseMaxDamage = calcOurDmg('max', 'X', false, false, 'force');
-	MODULES.stats.baseDamage = calcOurDmg('avg', 'X');
 	MODULES.stats.baseHealth = calcOurHealth(false, false, true);
 	MODULES.stats.baseBlock = calcOurBlock(false);
 }
@@ -138,9 +137,11 @@ function _challengeDamage(maxHealth = calcOurHealth(), minDamage, maxDamage, mis
 	}
 
 	// Mirrored (Daily) -- Unblockable, unpredictable
-	const minCheck = Math.min(maxDamage - addPoison(true), enemyHealth);
-	const mirrorStrength = dailyModifiers.mirrored.getMult(game.global.dailyChallenge.mirrored.strength);
-	if (dailyMirrored && critPower >= -1) harm += minCheck * mirrorStrength;
+	if (dailyMirrored && critPower >= -1) {
+		const minCheck = Math.min(maxDamage - addPoison(true), enemyHealth);
+		const mirrorStrength = dailyModifiers.mirrored.getMult(game.global.dailyChallenge.mirrored.strength);
+		harm += minCheck * mirrorStrength;
+	}
 
 	return harm;
 }

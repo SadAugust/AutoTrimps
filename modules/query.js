@@ -206,31 +206,21 @@ function getCurrentEnemy(cell = 1) {
 	return game.global[mapGrid][currentCell];
 }
 
-function checkFastEnemy(enemy) {
-	const enemyName = enemy.name;
+function _checkFastEnemyU1(enemy) {
+	const isDoubleAttack = game.global.voidBuff === 'doubleAttack' || enemy.corrupted === 'corruptDbl' || enemy.corrupted === 'healthyDbl';
+	if (isDoubleAttack) return true;
+
+	const slow = challengeActive('Slow');
+	if (slow) return true;
+
+	const enemyFast = (game.badGuys[enemy.name].fast || enemy.mutation === 'Corruption') && !challengeActive('Coordinate') && !challengeActive('Nom');
+	if (enemyFast) return true;
+
+	return false;
+}
+
+function _checkFastEnemyU2(enemy, worldType) {
 	const mapping = game.global.mapsActive;
-	const mapObject = mapping ? getCurrentMapObject() : null;
-	const worldType = !mapping ? 'world' : mapObject.location === 'Void' ? 'void' : 'map';
-
-	const fastImp = MODULES.fightinfo.fastImps.includes(enemyName);
-	if (fastImp) return true;
-
-	const isDaily = challengeActive('Daily');
-	const dailyChallenge = game.global.dailyChallenge;
-	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
-	if (dailyEmpower && !mapping) return true;
-
-	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
-	if (dailyExplosive) {
-		if (worldType === 'map' && !MODULES.maps.slowScumming) return true;
-		if (worldType === 'world') return true;
-	}
-
-	if (game.global.voidBuff === 'doubleAttack') return true;
-
-	if (game.global.universe === 1) return false;
-
-	// U2 specifics
 	if (challengeActive('Archaeology')) return true;
 	if (challengeActive('Trappapalooza')) return true;
 	if (challengeActive('Bublé') || getCurrentQuest() === 8) return true;
@@ -247,11 +237,39 @@ function checkFastEnemy(enemy) {
 	}
 	if (challengeActive('Desolation') && mapping) {
 		// Exotic mapimps in deso are bugged and slow
-		const exoticImp = MODULES.fightinfo.exoticImps.includes(enemyName);
+		const exoticImp = MODULES.fightinfo.exoticImps.includes(enemy.name);
 		return !exoticImp;
 	}
 
 	if (worldType === 'world' && game.global.world > 200 && game.global.gridArray[enemy.level - 1].u2Mutation.length > 0) return true;
+	return false;
+}
+
+function checkFastEnemy(enemy) {
+	const enemyName = enemy.name;
+	const mapping = game.global.mapsActive;
+	const mapObject = mapping ? getCurrentMapObject() : null;
+	const worldType = !mapping ? 'world' : mapObject.location === 'Void' ? 'void' : 'map';
+
+	const fastImp = MODULES.fightinfo.fastImps.includes(enemyName); // TODO: fix the special challenges, u1 + duel and exterminate
+	if (fastImp) return true;
+
+	const isDaily = challengeActive('Daily');
+	const dailyChallenge = game.global.dailyChallenge;
+	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
+	if (dailyEmpower && !mapping) return true;
+
+	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
+	if (dailyExplosive) {
+		if (worldType === 'map' && !MODULES.maps.slowScumming) return true;
+		if (worldType === 'world') return true;
+	}
+
+	if (game.global.voidBuff === 'doubleAttack') return true;
+
+	if (game.global.universe === 1) return _checkFastEnemyU1(enemy);
+
+	if (game.global.universe === 2) return _checkFastEnemyU2(enemy, worldType);
 
 	return false;
 }
