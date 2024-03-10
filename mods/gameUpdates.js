@@ -716,7 +716,6 @@ function breed() {
 	}
 
 	let potencyMod;
-
 	// if inputs identical to cache
 	if (Object.keys(potencyModifiers).map((k) => potencyModifiers[k] === breedCache.inputs[k]).every(Boolean)) {
 		breeding = breedCache.potencyModInitial.mul(breeding);
@@ -750,28 +749,26 @@ function breed() {
 		//save input and output values to cache
 		breedCache.inputs = potencyModifiers;
 		breedCache.potencyMod = potencyMod
-		breedCache.logPotencyMod = DecimalBreed.log10(potencyMod);
+		breedCache.logPotencyMod = DecimalBreed.log10(potencyMod).mul(10);
 	}
 
 	updatePs(breeding.toNumber(), true);
-	const logPotencyMod = breedCache.logPotencyMod
+	const logPotencyMod = breedCache.logPotencyMod;
 
 	// Attempt to get these two vars at low precision. if it's zero, recalc using Decimal
-	let timeRemaining = DecimalBreed(Math.log10(maxBreedable / (decimalOwned - employedTrimps)) / logPotencyMod / 10)
+	let timeRemaining = DecimalBreed(Math.log10(maxBreedable / (decimalOwned - employedTrimps)) / logPotencyMod)
 	if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) { 
 		// this value is allowed to be zero when we're not missing any trimps, otherwise, get higher precision
 		timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
-			.div(logPotencyMod)
-			.div(10);
+			.div(logPotencyMod);
 	}
 	// Calculate full breed time
 	let fullBreed = '';
 	const currentSend = trimps.getCurrentSend();
-	let totalTime = DecimalBreed(Math.log10(maxBreedable / (maxBreedable - currentSend)) / logPotencyMod / 10)
+	let totalTime = DecimalBreed(Math.log10(maxBreedable / (maxBreedable - currentSend)) / logPotencyMod)
 	if (totalTime == 0) {
 		totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
-			.div(logPotencyMod)
-			.div(10);
+			.div(logPotencyMod);
 	}
 	// breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
 	game.global.breedTime = currentSend / breeding;
