@@ -670,9 +670,6 @@ var breedCache = {
     mutGeneAttack: 0,
     mutGeneHealth: 0,
   },
-  breeding: new DecimalBreed(0),
-  totalTime: new DecimalBreed(0),
-  timeRemaining: new DecimalBreed(0),
   potencyMod: 0,
   potencyModInitial: 0,
   logPotencyMod: 0
@@ -698,6 +695,7 @@ function breed() {
     srLastBreedTime = '';
     return;
   }
+  // store the inputs to potency
   let potencyModifiers = {
     trimps: trimps.potency,
     book: game.upgrades.Potency.done,
@@ -720,10 +718,8 @@ function breed() {
 
   let potencyMod;
   let logPotencyMod;
-  let timeRemaining = breedCache.timeRemaining;
-  let totalTime = breedCache.totalTime;
 
-  // cache initialized, and inputs identical to cache
+  // if inputs identical to cache
   if (Object.keys(potencyModifiers).map((k) => potencyModifiers[k] === breedCache.inputs[k]).every(Boolean)) {
     //console.log("using cache")
     potencyMod = breedCache.potencyModInitial
@@ -735,7 +731,7 @@ function breed() {
   }
 
   else {
-    //console.log("recalculating")
+    //console.log("recalculating potency")
     potencyMod = new DecimalBreed(trimps.potency);
     if (potencyModifiers.book > 0) potencyMod = potencyMod.mul(Math.pow(1.1, potencyModifiers.book));
     if (potencyModifiers.nursery > 0) potencyMod = potencyMod.mul(Math.pow(1.01, potencyModifiers.nursery));
@@ -754,34 +750,39 @@ function breed() {
     if (potencyModifiers.mutGeneAttack) potencyMod = potencyMod.mul(50)
     if (potencyModifiers.mutGeneHealth) potencyMod = potencyMod.mul(50)
 
-    breedCache.potencyModInitial = potencyMod // save this weird intermediary value too
+    breedCache.potencyModInitial = potencyMod // save this weird intermediary value
     breeding = potencyMod.mul(breeding);
     updatePs(breeding.toNumber(), true);
     potencyMod = potencyMod.div(10).add(1);
     logPotencyMod = DecimalBreed.log10(potencyMod);
-    //save values to cache
+    //save input and output values to cache
+    breedCache.inputs = potencyModifiers;
     breedCache.potencyMod = potencyMod
     breedCache.logPotencyMod = logPotencyMod;
   }
-  // recalculate all breeding numbers
-  //if (!cached || breedCache.totalTime.toNumber() == 0 || missingTrimps.cmp(0) < 0) { // temp disabled, buggy
-  //console.log("recalculating breed times")
-  timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
-    .div(logPotencyMod)
-    .div(10);
-  //Calculate full breed time
+
+  // Attempt to get these two vars at low precision. if it's zero, recalc using Decimal
+  let timeRemaining = DecimalBreed(Math.log10(maxBreedable / (decimalOwned - employedTrimps)) / logPotencyMod / 10)
+  if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) { // this value is allowed to be zero when we're not missing any trimps, otherwise, get higher precision
+    timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
+      .div(logPotencyMod)
+      .div(10);
+  }
+  // Calculate full breed time
   let fullBreed = '';
   const currentSend = trimps.getCurrentSend();
-  totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
-    .div(logPotencyMod)
-    .div(10);
-  //breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
-  game.global.breedTime = currentSend / breeding.toNumber();
-
+  let totalTime = DecimalBreed(Math.log10(maxBreedable / (maxBreedable - currentSend)) / logPotencyMod / 10)
+  if (totalTime == 0) {
+    totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
+      .div(logPotencyMod)
+      .div(10);
+  }
+  // breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
+  game.global.breedTime = currentSend / breeding;
 
   if (!game.jobs.Geneticist.locked && game.global.Geneticistassist && game.global.GeneticistassistSetting > 0) {
     const target = new Decimal(game.global.GeneticistassistSetting);
-    //tired of typing Geneticistassist
+    // tired of typing Geneticistassist
     let GAElem = document.getElementById('Geneticistassist');
     let GAIndicator = document.getElementById('GAIndicator');
     let canRun = false;
@@ -837,19 +838,13 @@ function breed() {
       if (GAIndicator && GAIndicator.innerHTML !== htmlMessage) GAIndicator.innerHTML = htmlMessage;
     }
   }
-  //}
-  breedCache.timeRemaining = timeRemaining;
-  breedCache.totalTime = totalTime
-
-  // save inputs
-  breedCache.inputs = potencyModifiers;
 
   timeRemaining = timeRemaining.toNumber();
   totalTime = totalTime.toNumber();
   decimalOwned = decimalOwned.add(breeding.div(10));
   timeRemaining = game.options.menu.showFullBreed.enabled > 0 ? timeRemaining.toFixed(1) : Math.ceil(timeRemaining);
   const remainingTime = `${timeRemaining} Secs`;
-  //Display full breed time if desired
+  // Display full breed time if desired
   const totalTimeText = Math.ceil(totalTime * 10) / 10;
   if (game.options.menu.showFullBreed.enabled) {
     fullBreed = `${totalTimeText} Secs`;
