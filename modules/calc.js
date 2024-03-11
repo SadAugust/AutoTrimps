@@ -49,7 +49,6 @@ class HDStats {
 		let voidPercent = _getVoidPercent(world, universe);
 
 		const mapDifficulty = game.global.mapsActive && getCurrentMapObject().location === 'Bionic' ? 2.6 : 0.75;
-		if (challengeActive('Mapocalypse')) voidPercent += 3;
 
 		this.hdRatio = calcHDRatio(world, 'world', false, 1);
 		this.hdRatioMap = calcHDRatio(world, 'map', false, mapDifficulty);
@@ -111,6 +110,8 @@ function _getVoidPercent(world = game.global.world, universe = game.global.unive
 	} else if (universe === 1 && world <= 199) {
 		voidPercent -= 1;
 	}
+
+	if (challengeActive('Mapocalypse')) voidPercent += 3;
 
 	return voidPercent;
 }

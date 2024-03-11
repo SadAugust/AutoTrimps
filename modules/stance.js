@@ -305,7 +305,7 @@ function autoStance(force) {
 	const autoStanceSetting = force ? 1 : getPageSetting('AutoStance');
 	if (autoStanceSetting !== 1) return;
 	//Invalid Map - Dead Soldiers - Auto Stance Disabled - Formations Unavailable - No Enemy
-	if (game.global.soldierHealth <= 0 || game.global.gridArray.length === 0 || !game.upgrades.Dominance.done) return;
+	if (game.global.soldierHealth <= 0 || game.global.gridArray.length === 0 || !game.upgrades.Formations.done) return;
 	const currentEnemy = getCurrentEnemy();
 	if (typeof currentEnemy === 'undefined') return;
 	//Keep on D vs the Domination bosses
