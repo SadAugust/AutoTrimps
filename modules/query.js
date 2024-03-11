@@ -207,13 +207,13 @@ function getCurrentEnemy(cell = 1) {
 }
 
 function _checkFastEnemyU1(enemy) {
-	const isDoubleAttack = game.global.voidBuff === 'doubleAttack' || enemy.corrupted === 'corruptDbl' || enemy.corrupted === 'healthyDbl';
+	const isDoubleAttack = enemy.corrupted === 'corruptDbl' || enemy.corrupted === 'healthyDbl';
 	if (isDoubleAttack) return true;
 
 	const slow = challengeActive('Slow');
 	if (slow) return true;
 
-	const enemyFast = (game.badGuys[enemy.name].fast || enemy.mutation === 'Corruption') && !challengeActive('Coordinate') && !challengeActive('Nom');
+	const enemyFast = enemy.mutation === 'Corruption';
 	if (enemyFast) return true;
 
 	return false;
@@ -221,16 +221,15 @@ function _checkFastEnemyU1(enemy) {
 
 function _checkFastEnemyU2(enemy, worldType) {
 	const mapping = game.global.mapsActive;
-	if (challengeActive('Archaeology')) return true;
-	if (challengeActive('Trappapalooza')) return true;
 	if (challengeActive('Bublé') || getCurrentQuest() === 8) return true;
-	if (challengeActive('Exterminate') && game.challenges.Exterminate.experienced) return false;
-	if (challengeActive('Glass')) return true;
-	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) return true;
 	if (challengeActive('Duel')) {
 		if (!mapping) return true;
-		else if (game.challenges.Duel.enemyStacks < 10) return true;
+		if (game.challenges.Duel.enemyStacks < 10) return true;
 	}
+	if (challengeActive('Archaeology')) return true;
+	if (challengeActive('Trappapalooza')) return true;
+	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) return true;
+	if (challengeActive('Glass')) return true;
 	if (challengeActive('Revenge')) return true;
 	if (challengeActive('Smithless')) {
 		if (!mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith) return true;
@@ -241,17 +240,24 @@ function _checkFastEnemyU2(enemy, worldType) {
 		return !exoticImp;
 	}
 
-	if (worldType === 'world' && game.global.world > 200 && game.global.gridArray[enemy.level - 1].u2Mutation.length > 0) return true;
+	if (worldType === 'world' && game.global.world > 200 && enemy.u2Mutation.length > 0) return true;
 	return false;
 }
 
-function checkFastEnemy(enemy) {
+function checkFastEnemy(enemy = getCurrentEnemy(), equalityCheck = false) {
 	const enemyName = enemy.name;
 	const mapping = game.global.mapsActive;
 	const mapObject = mapping ? getCurrentMapObject() : null;
 	const worldType = !mapping ? 'world' : mapObject.location === 'Void' ? 'void' : 'map';
 
-	const fastImp = MODULES.fightinfo.fastImps.includes(enemyName); // TODO: fix the special challenges, u1 + duel and exterminate
+	if (game.global.universe === 1) {
+		if (challengeActive('Coordinate') || challengeActive('Nom')) return false;
+	} else if (game.global.universe === 2) {
+		if (challengeActive('Duel') && !game.global.runningChallengeSquared && game.challenges.Duel.trimpStacks < 10) return false;
+		if (challengeActive('Exterminate') && game.challenges.Exterminate.experienced) return false;
+	}
+
+	const fastImp = MODULES.fightinfo.fastImps.includes(enemyName);
 	if (fastImp) return true;
 
 	const isDaily = challengeActive('Daily');
@@ -259,10 +265,12 @@ function checkFastEnemy(enemy) {
 	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
 	if (dailyEmpower && !mapping) return true;
 
-	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
-	if (dailyExplosive) {
-		if (worldType === 'map' && !MODULES.maps.slowScumming) return true;
-		if (worldType === 'world') return true;
+	if (equalityCheck) {
+		const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
+		if (dailyExplosive) {
+			if (worldType === 'map' && !MODULES.maps.slowScumming) return true;
+			if (worldType === 'world') return true;
+		}
 	}
 
 	if (game.global.voidBuff === 'doubleAttack') return true;
