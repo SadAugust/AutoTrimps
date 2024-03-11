@@ -206,52 +206,73 @@ function getCurrentEnemy(cell = 1) {
 	return game.global[mapGrid][currentCell];
 }
 
-function checkFastEnemy(enemy) {
-	const enemyName = enemy.name;
+function _checkFastEnemyU1(enemy) {
+	const enemyFast = ['Corruption', 'Healthy'].includes(enemy.mutation);
+	if (enemyFast) return true;
+
+	const slow = challengeActive('Slow');
+	if (slow) return true;
+
+	return false;
+}
+
+function _checkFastEnemyU2(enemy) {
 	const mapping = game.global.mapsActive;
-	const mapObject = mapping ? getCurrentMapObject() : null;
-	const worldType = !mapping ? 'world' : mapObject.location === 'Void' ? 'void' : 'map';
 
-	const fastImp = MODULES.fightinfo.fastImps.includes(enemyName);
-	if (fastImp) return true;
+	if (enemy.u2Mutation && enemy.u2Mutation.length > 0) return true;
 
-	const isDaily = challengeActive('Daily');
-	const dailyChallenge = game.global.dailyChallenge;
-	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
-	if (dailyEmpower && !mapping) return true;
+	if (challengeActive('Bublé') || getCurrentQuest() === 8) return true;
+	if (challengeActive('Duel')) {
+		if (!mapping) return true;
+		if (game.challenges.Duel.enemyStacks < 10) return true;
+	}
+	if (challengeActive('Archaeology')) return true;
+	if (challengeActive('Trappapalooza')) return true;
+	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) return true;
+	if (challengeActive('Glass')) return true;
+	if (challengeActive('Revenge')) return true;
+	if (challengeActive('Smithless') && enemy.ubersmith) return true;
+	if (challengeActive('Desolation') && mapping) {
+		// Exotic mapimps in deso are bugged and slow
+		const exoticImp = MODULES.fightinfo.exoticImps.includes(enemy.name);
+		return !exoticImp;
+	}
 
-	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
-	if (dailyExplosive) {
-		if (worldType === 'map' && !MODULES.maps.slowScumming) return true;
-		if (worldType === 'world') return true;
+	return false;
+}
+
+function checkFastEnemy(enemy = getCurrentEnemy()) {
+	const mapping = game.global.mapsActive;
+	const worldType = !mapping ? 'world' : game.global.voidBuff ? 'void' : 'map';
+
+	if (game.global.universe === 1) {
+		if (challengeActive('Coordinate') || challengeActive('Nom')) return false;
+	} else if (game.global.universe === 2) {
+		if (challengeActive('Duel') && !game.global.runningChallengeSquared && game.challenges.Duel.trimpStacks < 10) return false;
+		if (challengeActive('Exterminate') && game.challenges.Exterminate.experienced) return false;
 	}
 
 	if (game.global.voidBuff === 'doubleAttack') return true;
 
-	if (game.global.universe === 1) return false;
+	const fastImp = MODULES.fightinfo.fastImps.includes(enemy.name);
+	if (fastImp) return true;
 
-	// U2 specifics
-	if (challengeActive('Archaeology')) return true;
-	if (challengeActive('Trappapalooza')) return true;
-	if (challengeActive('Bublé') || getCurrentQuest() === 8) return true;
-	if (challengeActive('Exterminate') && game.challenges.Exterminate.experienced) return false;
-	if (challengeActive('Glass')) return true;
-	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) return true;
-	if (challengeActive('Duel')) {
-		if (!mapping) return true;
-		else if (game.challenges.Duel.enemyStacks < 10) return true;
-	}
-	if (challengeActive('Revenge')) return true;
-	if (challengeActive('Smithless')) {
-		if (!mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith) return true;
-	}
-	if (challengeActive('Desolation') && mapping) {
-		// Exotic mapimps in deso are bugged and slow
-		const exoticImp = MODULES.fightinfo.exoticImps.includes(enemyName);
-		return !exoticImp;
+	if (game.global.universe === 2) {
+		const isDaily = challengeActive('Daily');
+		const dailyChallenge = game.global.dailyChallenge;
+		const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
+		if (dailyEmpower && !mapping) return true;
+
+		const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
+		if (dailyExplosive) {
+			if (worldType === 'map' && !MODULES.maps.slowScumming) return true;
+			if (worldType === 'world') return true;
+		}
 	}
 
-	if (worldType === 'world' && game.global.world > 200 && game.global.gridArray[enemy.level - 1].u2Mutation.length > 0) return true;
+	if (game.global.universe === 1) return _checkFastEnemyU1(enemy);
+
+	if (game.global.universe === 2) return _checkFastEnemyU2(enemy);
 
 	return false;
 }
