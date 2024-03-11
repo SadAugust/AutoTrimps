@@ -4689,6 +4689,7 @@ function settingChanged(id, currUniverse) {
 
 	const booleanActions = {
 		equipEfficientEquipDisplay: displayMostEfficientEquipment,
+		buildingMostEfficientDisplay: displayMostEfficientBuilding,
 		equipOn: _setAutoEquipClasses,
 		buildingsType: _setBuildingClasses,
 		displayHideFightButtons: _setFightButtons,

@@ -499,7 +499,7 @@ function autoGather() {
 			else if (currentBonus.includes('wc')) safeSetGather('wood');
 			else if (currentBonus.includes('mc') || currentBonus.includes('lc')) safeSetGather('metal');
 			else if (currentBonus.includes('rc') && researchAvailable) safeSetGather('science');
-			else safeSetGather(challengeActive('Metal') ? 'metal' : 'wood');
+			else safeSetGather(challengeActive('Metal') ? 'wood' : 'metal');
 			return;
 		}
 	}
@@ -519,8 +519,7 @@ function autoGather() {
 	if (trappingIsRelevant) {
 		if (_handleTrapping('build', 2)) return;
 	}
-
-	// Metal if Turkimp is active
+  
 	if (hasTurkimp) {
 		safeSetGather(challengeActive('Metal') ? 'wood' : 'metal');
 		return;
