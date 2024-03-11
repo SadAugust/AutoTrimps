@@ -67,8 +67,17 @@ function _needHousing(houseName, ignoreAffordability) {
 		}
 	}
 
-	if (game.global.universe === 2 && houseName === 'Gateway') {
-		if (_checkSafeGateway(buildingStat)) return false;
+	if (houseName === 'Gateway') {
+		//Use Safe Gateways for U2
+		if (game.global.universe === 2)
+			return !_checkSafeGateway(buildingStat);
+
+		//Applies the user defined Gateway % to fragments only
+		const spendingPerc = buildingSettings.percent / 100;
+		const resourcefulMod = getResourcefulMult();
+
+		if (!_canAffordBuilding('fragments', buildingStat, spendingPerc, resourcefulMod))
+			return false;
 	}
 
 	return true;
@@ -572,7 +581,7 @@ function _buySelectedHouse(houseName, buildingSettings) {
 	// Identify the amount of this type of housing we can afford and stay within our housing cap.
 	const housingAmt = buildingSettings[houseName].buyMax === 0 ? Infinity : buildingSettings[houseName].buyMax;
 	const max = housingAmt - game.buildings[houseName].purchased;
-	const ratio = buildingSettings[houseName].percent / 100;
+	const ratio = houseName === 'Gateway' ? 1 : buildingSettings[houseName].percent / 100;
 	let maxCanAfford = calculateMaxAfford_AT(game.buildings[houseName], true, false, false, max, ratio);
 
 	// Hard cap collectors to 6000 to avoid hitting infinity.
