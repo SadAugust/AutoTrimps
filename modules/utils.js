@@ -618,12 +618,16 @@ function getResourcefulMult() {
 
 function shieldBlockUpgrades() {
 	const upgradeObj = {};
+	const Gymystic = game.upgrades.Gymystic;
 
 	let itemData = game.buildings.Gym;
 	let increaseBy = itemData.increase.by;
 	let cost = itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.owned) * getResourcefulMult();
 
-	upgradeObj.Gym = cost / increaseBy;
+	const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
+	const gymysticIncrease = (calcOurBlock() + increaseBy) * (gymysticFactor - 1);
+
+	upgradeObj.Gym = cost / (increaseBy + gymysticIncrease);
 
 	itemData = game.equipment.Shield;
 	const prestige = buyPrestigeMaybe('Shield', undefined, Math.min(itemData.level, 9));
