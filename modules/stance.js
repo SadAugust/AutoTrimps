@@ -67,7 +67,7 @@ function maxOneShotPower(planToMap, targetZone = game.global.world) {
 
 function oneShotPower(specificStance, offset = 0, useMax) {
 	// Calculates our minimum damage
-	maxOrMin = useMax ? 'max' : 'min';
+	const maxOrMin = useMax ? 'max' : 'min';
 	const baseDamage = calcOurDmg(maxOrMin, specificStance, true, false, 'never');
 	let damageLeft = baseDamage + addPoison(true);
 
@@ -158,7 +158,7 @@ function _directDamage(block = calcOurBlock(true, true), pierce, currentHealth, 
 	const enemyFast = checkFastEnemy(enemy);
 
 	// Dodge dailies
-	dodgeDaily = false;
+	let dodgeDaily = false;
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.slippery !== 'undefined') {
 		const slipStr = game.global.dailyChallenge.slippery.strength;
 		dodgeDaily = (slipStr > 15 && game.global.world % 2 === 0) || (slipStr <= 15 && game.global.world % 2 === 1);
@@ -233,13 +233,13 @@ function wouldSurvive(formation = 'S', critPower = 2, ignoreArmy) {
 	const notSpire = game.global.mapsActive || !game.global.spireActive;
 
 	// Decides if the trimps can survive in this formation
-	let harm = _directDamage(block, pierce, health - missingHealth, minDamage, critPower) + _challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower);
+	const harm = _directDamage(block, pierce, health - missingHealth, minDamage, critPower) + _challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower);
 
 	// Updated Genes and Block
 	const blockier = calcOurBlock(false, false);
 	const healthier = health * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
 	const maxHealthier = maxHealth * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
-	let harm2 = _directDamage(blockier, pierce, healthier, minDamage, critPower) + _challengeDamage(maxHealthier, minDamage, maxDamage, 0, blockier, pierce, critPower);
+	const harm2 = _directDamage(blockier, pierce, healthier, minDamage, critPower) + _challengeDamage(maxHealthier, minDamage, maxDamage, 0, blockier, pierce, critPower);
 
 	return (newSquadRdy && notSpire && healthier > harm2) || health - missingHealth > harm;
 }
@@ -275,8 +275,6 @@ function checkStanceSetting() {
 }
 
 function autoStance(force) {
-	updateBaseDamageInX();
-
 	const autoStanceSetting = getPageSetting('AutoStance');
 	if (!force && autoStanceSetting !== 1) return;
 
@@ -291,6 +289,8 @@ function autoStance(force) {
 		autoStanceD(true);
 		return;
 	}
+
+	updateBaseDamageInX();
 
 	// If no formation can survive a mega crit, it ignores it, and recalculates for a regular crit, then no crit
 	// If even that is not enough, then it ignore Explosive Daily, and finally it ignores Reflect Daily
