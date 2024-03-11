@@ -905,7 +905,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 		enemyHealth = calcEnemyHealth(worldType, targetZone, 20, 'Turtlimp') * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, worldType, difficulty, 'gamma', true) : 'X';
 	} else if (worldType === 'void') {
-		enemyHealth = calcEnemyHealth(worldType, targetZone, 99, 'Voidsnimp') * difficulty;
+		enemyHealth = calcEnemyHealth(worldType, targetZone, 99, 'Shadimp') * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Voidsnimp', targetZone, 99, worldType, difficulty, 'gamma', false, 1, true) : 'X';
 	}
 
