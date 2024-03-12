@@ -3153,7 +3153,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		voidHitsSurvived: hdType === 'hitsSurvivedVoid' || hdType === 'void',
 		settingIndex: settingIndex,
 		priority: setting.priority,
-		mapBonus: setting.repeat
+		mapBonus: setting.repeat,
+		biome: needGymystic() ? 'Forest' : 'Any'
 	});
 
 	if (voidFarm) {

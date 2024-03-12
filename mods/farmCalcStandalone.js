@@ -168,9 +168,11 @@ function makeAdditionalInfoTooltip(mouseover) {
 	if (mouseover) {
 		tooltipText = 'tooltip(' + "'Additional Info', " + "'customText', " + 'event, ' + "'";
 	}
+	const biome = getBiome();
+	const specialToUse = getAvailableSpecials('lmc');
 
 	tooltipText += `<p><b>Auto Level</b><br>\
-    The level that the script recommends using whilst farming. The map level outputs assume you are running ${getBiome() === 'Plentiful' ? 'Garden' : getBiome()} biome and ${getAvailableSpecials('lmc') !== '0' ? mapSpecialModifierConfig[getAvailableSpecials('lmc')].name : 'no'} special maps with the best map sliders available and are updated every 5 seconds.</p>`;
+    The level that the script recommends using whilst farming. The map level outputs assume you are running ${biome === 'Plentiful' ? 'Garden' : biome} biome and ${specialToUse !== '0' ? mapSpecialModifierConfig[specialToUse].name : 'no'} special maps with the best map sliders available and are updated every 5 seconds.</p>`;
 	if (game.global.universe === 1) tooltipText += `<p>Each map type is affixed with the stance that will give you the best results in the map.</p>`;
 	if (game.global.universe === 2) tooltipText += `<p>Each map type is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the worst enemy in the map.</p>`;
 	tooltipText += `<p>Loot: The ideal map level for resource farming.</p>`;
