@@ -543,7 +543,7 @@ function _getAffordableMets() {
 }
 
 function _buyHousing(buildSettings) {
-	if (MODULES.buildings.betaHouseEfficiency && !game.buildings.Hub.locked) {
+	if (MODULES.buildings.betaHouseEfficiency && game.buildings.Hub.locked) {
 		let boughtHousing = false;
 		const foodEffHouse = mostEfficientHousing_beta('food');
 		const gemsEffHouse = mostEfficientHousing_beta('gems');
