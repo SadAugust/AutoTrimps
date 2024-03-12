@@ -61,7 +61,7 @@ function fluffyEvolution() {
 	if (game.global.world < getPageSetting('fluffyMinZone')) return;
 	if (game.global.world > getPageSetting('fluffyMaxZone')) return;
 	//Only evolve if you can afford all the bone portals that you want to purchase at the start of your next evolution
-	let bpsToUse = getPageSetting('fluffyBP');
+	const bpsToUse = getPageSetting('fluffyBP');
 	if (bpsToUse > 0 && game.global.b % 100 < bpsToUse) return;
 
 	let shouldRespecPerks = false;
@@ -349,7 +349,7 @@ function checkLiqZoneCount(universe) {
 
 function updateChangelogButton() {
 	if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
-	let changeLogBtn = document.getElementById('atChangelog');
+	const changeLogBtn = document.getElementById('atChangelog');
 	if (!changeLogBtn) return;
 
 	const classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';

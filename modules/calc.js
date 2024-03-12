@@ -727,7 +727,7 @@ function calcEnemyAttack(worldType = 'world', zone = game.global.world, cell = 1
 
 function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth) {
 	const enemy = getCurrentEnemy();
-	let attack = calcEnemyAttackCore();
+	let attack = calcEnemyAttackCore(undefined, undefined, undefined, undefined, undefined, enemy.attack);
 	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
 
 	if (challengeActive('Nom') && typeof enemy.nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks);

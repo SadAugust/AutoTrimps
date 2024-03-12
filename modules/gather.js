@@ -519,7 +519,7 @@ function autoGather() {
 	if (trappingIsRelevant) {
 		if (_handleTrapping('build', 2)) return;
 	}
-  
+
 	if (hasTurkimp) {
 		safeSetGather(challengeActive('Metal') ? 'wood' : 'metal');
 		return;
