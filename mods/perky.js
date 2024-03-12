@@ -231,14 +231,15 @@ function calculateDgPopGain() {
 
 function populatePerkyData() {
 	const zone = +$$('#targetZone').value;
+	const hze = game.stats.highestLevel.valueTotal();
 
 	// Income
 	const spires = Math.min(Math.floor((zone - 101) / 100), game.global.spiresCompleted);
 	const turkimpTimer = mastery('turkimp2') ? 1 : mastery('turkimp') ? 0.4 : 0.25;
-	const cache = zone < 60 ? 0 : zone < 85 ? 7 : zone < 160 ? 10 : zone < 185 ? 14 : 20;
+	const cache = hze < 60 ? 0 : hze < 85 ? 7 : hze < 160 ? 10 : hze < 185 ? 14 : 20;
 	let prod = 1 + turkimpTimer;
 	let loot = 1 + 0.333 * turkimpTimer;
-	loot *= zone < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
+	loot *= hze < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
 
 	let chronojest = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp;
 
