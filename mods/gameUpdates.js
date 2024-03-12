@@ -650,6 +650,31 @@ function scaleHeirloomModUniverse(type, modName, value) {
 	return value;
 }
 
+var breedCache = {
+	inputs: {
+		trimps: 0,
+		book: 0,
+		nursery: 0,
+		venimp: 0,
+		brokenPlanet: 0,
+		pheromones: 0,
+		quickTrimps: 0,
+		dailyDysfunctional: 0,
+		dailyToxic: 0,
+		chalToxic: 0,
+		chalArchaeology: 0,
+		chalQuagmire: 0,
+		voidBreed: 0,
+		heirloom: 0,
+		genes: 0,
+		mutGeneAttack: 0,
+		mutGeneHealth: 0,
+	},
+	potencyMod: 0,
+	potencyModInitial: 0,
+	logPotencyMod: 0
+}
+
 function breed() {
 	const breedElem = document.getElementById('trimpsTimeToFill');
 	const trimps = game.resources.trimps;
@@ -669,70 +694,88 @@ function breed() {
 		srLastBreedTime = '';
 		return;
 	}
-	let potencyMod = new DecimalBreed(trimps.potency);
-	//Add potency (book)
-	if (game.upgrades.Potency.done > 0) potencyMod = potencyMod.mul(Math.pow(1.1, game.upgrades.Potency.done));
-	//Add Nurseries
-	if (game.buildings.Nursery.owned > 0) potencyMod = potencyMod.mul(Math.pow(1.01, game.buildings.Nursery.owned));
-	//Add Venimp
-	if (game.unlocks.impCount.Venimp > 0) potencyMod = potencyMod.mul(Math.pow(1.003, game.unlocks.impCount.Venimp));
-	//Broken Planet
-	if (game.global.brokenPlanet) potencyMod = potencyMod.div(10);
-	//Pheromones
-	potencyMod = potencyMod.mul(1 + getPerkLevel('Pheromones') * game.portal.Pheromones.modifier);
+	// store the inputs to potency
+	let potencyModifiers = {
+		trimps: trimps.potency,
+		book: game.upgrades.Potency.done,
+		nursery: game.buildings.Nursery.owned,
+		venimp: game.unlocks.impCount.Venimp,
+		brokenPlanet: game.global.brokenPlanet,
+		pheromones: getPerkLevel('Pheromones'),
+		quickTrimps: game.singleRunBonuses.quickTrimps.owned,
+		dailyDysfunctional: typeof game.global.dailyChallenge.dysfunctional !== 'undefined' ? dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength) : 0,
+		dailyToxic: typeof game.global.dailyChallenge.toxic !== 'undefined' ? dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks) : 0,
+		chalToxic: game.challenges.Toxicity.stacks,
+		chalArchaeology: game.challenges.Archaeology.getStatMult('breed'),
+		chalQuagmire: game.challenges.Quagmire.getExhaustMult(),
+		voidBreed: game.global.voidBuff === 'slowBreed',
+		heirloom: getHeirloomBonus('Shield', 'breedSpeed'),
+		genes: game.jobs.Geneticist.owned,
+		mutGeneAttack: game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased,
+		mutGeneHealth: game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased,
+	}
 
-	//Quick Trimps
-	if (game.singleRunBonuses.quickTrimps.owned) potencyMod = potencyMod.mul(2);
-	//Challenges
-	if (challengeActive('Daily')) {
-		if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined') {
-			potencyMod = potencyMod.mul(dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength));
-		}
-		if (typeof game.global.dailyChallenge.toxic !== 'undefined') {
-			potencyMod = potencyMod.mul(dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks));
-		}
+	let potencyMod;
+	// if inputs identical to cache
+	if (Object.keys(potencyModifiers).map((k) => potencyModifiers[k] === breedCache.inputs[k]).every(Boolean)) {
+		breeding = breedCache.potencyModInitial.mul(breeding);
+		potencyMod = breedCache.potencyMod
 	}
-	if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0) {
-		potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
-	}
-	if (challengeActive('Archaeology')) {
-		potencyMod = potencyMod.mul(game.challenges.Archaeology.getStatMult('breed'));
-	}
-	if (game.global.voidBuff === 'slowBreed') {
-		potencyMod = potencyMod.mul(0.2);
-	}
-	if (challengeActive('Quagmire')) {
-		potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
-	}
-	potencyMod = calcHeirloomBonusDecimal('Shield', 'breedSpeed', potencyMod);
-	//console.log(getDesiredGenes(potencyMod.toNumber()));
 
-	//Geneticist
-	if (game.jobs.Geneticist.owned > 0) potencyMod = potencyMod.mul(Math.pow(0.98, game.jobs.Geneticist.owned));
-	//Mutators
-	//Gene Attack
-	if (game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
-	//Gene Health
-	if (game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
-	breeding = potencyMod.mul(breeding);
+	else {
+		potencyMod = trimps.potency;
+		if (potencyModifiers.book > 0) potencyMod *= Math.pow(1.1, potencyModifiers.book);
+		if (potencyModifiers.nursery > 0) potencyMod *= Math.pow(1.01, potencyModifiers.nursery);
+		if (potencyModifiers.venimp) potencyMod *= Math.pow(1.003, potencyModifiers.venimp);
+		if (potencyModifiers.brokenPlanet) potencyMod /= 10;
+		if (potencyModifiers.pheromones > 0) potencyMod *= 1 + potencyModifiers.pheromones * game.portal.Pheromones.modifier;
+		if (potencyModifiers.quickTrimps) potencyMod *= 2;
+		if (potencyModifiers.dailyDysfunctional > 0) potencyMod *= potencyModifiers.dailyDysfunctional;
+		if (potencyModifiers.dailyToxic > 0) potencyMod *= potencyModifiers.dailyToxic;
+		if (challengeActive('Toxicity') && potencyModifiers.chalToxic > 0) potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, potencyModifiers.chalToxic);
+		if (challengeActive('Archaeology')) potencyMod *= potencyModifiers.chalArchaeology;
+		if (challengeActive('Quagmire')) potencyMod *= potencyModifiers.chalQuagmire;
+		if (potencyModifiers.voidBreed) potencyMod *= 0.2;
+		potencyMod = calcHeirloomBonus('Shield', 'breedSpeed', potencyMod); // potencymod * ((breed/100) + 1)
+		if (potencyModifiers.mutGeneAttack) potencyMod /= 50;
+		if (potencyModifiers.mutGeneHealth) potencyMod /= 50;
+		// Noo says all modifiers except genes are safe to do at normal precision. The log is unsafe even without genes though.
+		if (potencyModifiers.genes > 0) potencyMod = DecimalBreed(potencyMod).mul(Math.pow(0.98, potencyModifiers.genes));
+		potencyMod = DecimalBreed(potencyMod)
+
+		breedCache.potencyModInitial = potencyMod // save this weird intermediary value
+		breeding = potencyMod.mul(breeding);
+		potencyMod = potencyMod.div(10).add(1);
+		//save input and output values to cache
+		breedCache.inputs = potencyModifiers;
+		breedCache.potencyMod = potencyMod
+		breedCache.logPotencyMod = DecimalBreed.log10(potencyMod).mul(10);
+	}
+
 	updatePs(breeding.toNumber(), true);
-	potencyMod = potencyMod.div(10).add(1);
-	const logPotencyMod = DecimalBreed.log10(potencyMod);
-	let timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
-		.div(logPotencyMod)
-		.div(10);
-	//Calculate full breed time
+	const logPotencyMod = breedCache.logPotencyMod;
+
+	// Attempt to get these two vars at low precision. if it's zero, recalc using Decimal
+	let timeRemaining = DecimalBreed(Math.log10(maxBreedable / (decimalOwned - employedTrimps)) / logPotencyMod)
+	if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) { 
+		// this value is allowed to be zero when we're not missing any trimps, otherwise, get higher precision
+		timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
+			.div(logPotencyMod);
+	}
+	// Calculate full breed time
 	let fullBreed = '';
 	const currentSend = trimps.getCurrentSend();
-	let totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
-		.div(logPotencyMod)
-		.div(10);
-	//breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
-	game.global.breedTime = currentSend / breeding.toNumber();
+	let totalTime = DecimalBreed(Math.log10(maxBreedable / (maxBreedable - currentSend)) / logPotencyMod)
+	if (totalTime == 0) {
+		totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
+			.div(logPotencyMod);
+	}
+	// breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
+	game.global.breedTime = currentSend / breeding;
 
 	if (!game.jobs.Geneticist.locked && game.global.Geneticistassist && game.global.GeneticistassistSetting > 0) {
 		const target = new Decimal(game.global.GeneticistassistSetting);
-		//tired of typing Geneticistassist
+		// tired of typing Geneticistassist
 		let GAElem = document.getElementById('Geneticistassist');
 		let GAIndicator = document.getElementById('GAIndicator');
 		let canRun = false;
@@ -794,7 +837,7 @@ function breed() {
 	decimalOwned = decimalOwned.add(breeding.div(10));
 	timeRemaining = game.options.menu.showFullBreed.enabled > 0 ? timeRemaining.toFixed(1) : Math.ceil(timeRemaining);
 	const remainingTime = `${timeRemaining} Secs`;
-	//Display full breed time if desired
+	// Display full breed time if desired
 	const totalTimeText = Math.ceil(totalTime * 10) / 10;
 	if (game.options.menu.showFullBreed.enabled) {
 		fullBreed = `${totalTimeText} Secs`;
@@ -2438,7 +2481,7 @@ function startFight() {
 				cell.health = getSpireStats(cell.level, cell.name, 'health');
 			}
 			/* 	This should likely be above the spire check as it overwrites Spire stats 
-				Potential issue is it multiplies hp/atk so would cause Spire enemies with these modifiers to be significantly tougher
+			  Potential issue is it multiplies hp/atk so would cause Spire enemies with these modifiers to be significantly tougher
 			*/
 			if (cell.empowerment) {
 				if (cell.mutation !== 'Corruption') {
