@@ -101,7 +101,7 @@ function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0.25, woodRequired
 
 	for (let i = 0; i < resources.length; i++) {
 		const cost = upgradeObj.cost.resources[resources[i]];
-		const resourceCost = cost ? (cost[1] !== undefined ? resolvePow(cost, upgradeObj) * resourceRequired[i] : cost) : 0;
+		const resourceCost = cost ? resourceRequired[i] * (cost[1] !== undefined ? resolvePow(cost, upgradeObj) : cost) : 0;
 
 		if (resourceOwned[i] < resourceCost) return false;
 	}
