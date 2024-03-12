@@ -399,7 +399,7 @@ function _checkOwnedMaps() {
 	const runUniques = getPageSetting('autoMaps') === 1 && !_insanityDisableUniqueMaps();
 	const perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
 	const perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
-	const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+	const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 
 	//Looping through all of our maps to find the highest, lowest and optimal map.
 	for (const map of game.global.mapsOwnedArray) {
@@ -454,7 +454,7 @@ function _setSelectedMap(selectedMap, voidMap, optimalMap) {
 		else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = 'bionicRaid';
 		else if (optimalMap) selectedMap = optimalMap.id;
 		else {
-			const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+			const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 			selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
 		}
 		if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
@@ -469,8 +469,8 @@ function _setMapRepeat() {
 	if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding' || (mapSettings.mapName === 'Quagmire Farm' && mapObj.name === 'The Black Bog')) {
 		if (!game.global.repeatMap) repeatClicked();
 
-		//Changing repeat setting to Repeat For Items if Presitge or Bionic Raiding, otherwise set to Repeat Forever
 		if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
+			//Changing repeat setting to Repeat For Items if Presitge or Bionic Raiding, otherwise set to Repeat Forever
 			if (game.options.menu.repeatUntil.enabled !== 2) {
 				game.options.menu.repeatUntil.enabled = 2;
 				toggleSetting('repeatUntil', null, false, true);
@@ -481,6 +481,7 @@ function _setMapRepeat() {
 		}
 
 		if (!mapSettings.shouldRun) repeatClicked();
+		if (game.global.repeatMap && mapSettings.biome && mapSettings.biome === 'Any' && mapObj.location === 'Forest') repeatClicked();
 		if (game.global.repeatMap && MODULES.mapFunctions.runUniqueMap) repeatClicked();
 		if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605) repeatClicked();
 		if (mapSettings.prestigeFragMapBought && game.global.repeatMap) prestigeRaidingMapping();
@@ -518,7 +519,7 @@ function _purchaseMap(lowestMap) {
 
 function _autoMapsCreate(mapObj) {
 	//Recycling maps below world level if 95 or more are owned as the cap is 100.
-	const mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+	const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 	if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
 
 	if (mapObj.selectedMap === 'world') {
@@ -550,7 +551,7 @@ function _abandonMapCheck(selectedMap = null, runUnique) {
 		if (MODULES.maps.lastMapWeWereIn === null) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
 
 		//Ensure the map has the correct biome, if not then recycle it.
-		if (mapSettings.biome && MODULES.maps.lastMapWeWereIn.location !== mapSettings.biome) recycleMap();
+		if (mapSettings.biome && ((mapSettings.biome === 'Any' && MODULES.maps.lastMapWeWereIn.location === 'Forest') || MODULES.maps.lastMapWeWereIn.location !== mapSettings.biome)) recycleMap();
 		//If the selected map is the wrong level then recycle it.
 		if (MODULES.maps.lastMapWeWereIn.level !== mapSettings.mapLevel + game.global.world) recycleMap();
 		//If the selected map is the wrong special then recycle it.

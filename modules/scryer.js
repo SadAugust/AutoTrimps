@@ -27,7 +27,7 @@ function readyToSwitch(stance = 'S') {
 		die = game.global.world >= dieZ && (!dieC || game.global.lastClearedCell + 1 >= dieC);
 	}
 
-	return die || survive(stance, 2);
+	return die || wouldSurvive(stance, 2);
 }
 
 function useScryerStance() {
@@ -43,8 +43,8 @@ function useScryerStance() {
 
 	function autoStanceFunctionScryer() {
 		if (uberEmpowerment === 'Wind' && getPageSetting(settingPrefix + 'AutoStanceWind')) autoStanceWind();
-		else if (AutoStance === 1) autoStance();
-		else if (AutoStance === 2) autoStanceD();
+		else if (AutoStance === 1) autoStance(false);
+		else if (AutoStance === 2) autoStanceD(false);
 	}
 
 	//If Scryer stance hasn't been unlocked then don't use this code
@@ -171,7 +171,7 @@ function useScryerStance() {
 	}
 
 	//Calc Damage
-	if (AutoStance >= 1) calcBaseDamageInX();
+	if (AutoStance >= 1) updateBaseDamageInX();
 
 	//Checks if Overkill is allowed
 	let useOverkill = useScryer && getPageSetting('scryerOverkill');
@@ -229,7 +229,7 @@ function useScryerStance() {
 						oneShotPowers[stance] = oneShotPower(stance, 0, true);
 					}
 
-					if (survive(stance, critPower) && !oneShotPowers[stance]) {
+					if (wouldSurvive(stance, critPower) && !oneShotPowers[stance]) {
 						safeSetStance(value);
 						return;
 					}

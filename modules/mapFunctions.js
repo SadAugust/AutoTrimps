@@ -3153,7 +3153,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		voidHitsSurvived: hdType === 'hitsSurvivedVoid' || hdType === 'void',
 		settingIndex: settingIndex,
 		priority: setting.priority,
-		mapBonus: setting.repeat
+		mapBonus: setting.repeat,
+		biome: needGymystic() ? 'Forest' : 'Any'
 	});
 
 	if (voidFarm) {
@@ -3952,13 +3953,17 @@ function autoLevelOverides(mapName, mapLevel) {
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
 	const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
 	``;
-	const mapBonusMinLevel = (prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0) || mapBonusMinSetting <= 0 || mapLevel > (mapBonusMinSetting > 0 ? -mapBonusMinSetting - Math.abs(mapBonusLevel) : mapLevel - 1);
-	const mapBonusAfford = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
+
+	const needPrestiges = prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0;
+	const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapLevel > (mapBonusMinSetting > 0 ? -mapBonusMinSetting - Math.abs(mapBonusLevel) : mapLevel - 1);
+	const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && getCurrentMapObject().level >= mapBonusLevel;
+	const mapBonusMinLevel = (needPrestiges || aboveMinMapLevel) && !willCapMapBonus;
+	const canAffordMap = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
 
 	const mapBonusConditions = [
 		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && mapBonusMinLevel, level: mapBonusLevel },
-		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapBonusMinLevel && mapBonusAfford, level: mapBonusLevel },
-		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel && mapBonusAfford, level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapBonusMinLevel && canAffordMap, level: mapBonusLevel },
+		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel && canAffordMap, level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
 		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
