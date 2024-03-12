@@ -88,7 +88,7 @@ function firstGiga() {
 }
 
 function needGymystic() {
-	return shouldSaveForSpeedUpgrade(game.upgrades.Gymystic, 0.25, 0.25, 0.25, 0.75);
+	return shouldSaveForSpeedUpgrade(game.upgrades.Gymystic, 0.125, 0.125, 0.125, 0.75);
 }
 
 function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0.25, woodRequired = 0.25, metalRequired = 0.25, scienceRequired = 0.5) {
