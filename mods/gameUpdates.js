@@ -668,12 +668,12 @@ var breedCache = {
 		heirloom: 0,
 		genes: 0,
 		mutGeneAttack: 0,
-		mutGeneHealth: 0,
+		mutGeneHealth: 0
 	},
 	potencyMod: 0,
 	potencyModInitial: 0,
 	logPotencyMod: 0
-}
+};
 
 function breed() {
 	const breedElem = document.getElementById('trimpsTimeToFill');
@@ -712,17 +712,19 @@ function breed() {
 		heirloom: getHeirloomBonus('Shield', 'breedSpeed'),
 		genes: game.jobs.Geneticist.owned,
 		mutGeneAttack: game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased,
-		mutGeneHealth: game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased,
-	}
+		mutGeneHealth: game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased
+	};
 
 	let potencyMod;
 	// if inputs identical to cache
-	if (Object.keys(potencyModifiers).map((k) => potencyModifiers[k] === breedCache.inputs[k]).every(Boolean)) {
+	if (
+		Object.keys(potencyModifiers)
+			.map((k) => potencyModifiers[k] === breedCache.inputs[k])
+			.every(Boolean)
+	) {
 		breeding = breedCache.potencyModInitial.mul(breeding);
-		potencyMod = breedCache.potencyMod
-	}
-
-	else {
+		potencyMod = breedCache.potencyMod;
+	} else {
 		potencyMod = trimps.potency;
 		if (potencyModifiers.book > 0) potencyMod *= Math.pow(1.1, potencyModifiers.book);
 		if (potencyModifiers.nursery > 0) potencyMod *= Math.pow(1.01, potencyModifiers.nursery);
@@ -741,14 +743,14 @@ function breed() {
 		if (potencyModifiers.mutGeneHealth) potencyMod /= 50;
 		// Noo says all modifiers except genes are safe to do at normal precision. The log is unsafe even without genes though.
 		if (potencyModifiers.genes > 0) potencyMod = DecimalBreed(potencyMod).mul(Math.pow(0.98, potencyModifiers.genes));
-		potencyMod = DecimalBreed(potencyMod)
+		potencyMod = DecimalBreed(potencyMod);
 
-		breedCache.potencyModInitial = potencyMod // save this weird intermediary value
+		breedCache.potencyModInitial = potencyMod; // save this weird intermediary value
 		breeding = potencyMod.mul(breeding);
 		potencyMod = potencyMod.div(10).add(1);
 		//save input and output values to cache
 		breedCache.inputs = potencyModifiers;
-		breedCache.potencyMod = potencyMod
+		breedCache.potencyMod = potencyMod;
 		breedCache.logPotencyMod = DecimalBreed.log10(potencyMod).mul(10);
 	}
 
@@ -756,19 +758,17 @@ function breed() {
 	const logPotencyMod = breedCache.logPotencyMod;
 
 	// Attempt to get these two vars at low precision. if it's zero, recalc using Decimal
-	let timeRemaining = DecimalBreed(Math.log10(maxBreedable / (decimalOwned - employedTrimps)) / logPotencyMod)
-	if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) { 
+	let timeRemaining = DecimalBreed(Math.log10(maxBreedable / (decimalOwned - employedTrimps)) / logPotencyMod);
+	if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) {
 		// this value is allowed to be zero when we're not missing any trimps, otherwise, get higher precision
-		timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
-			.div(logPotencyMod);
+		timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps))).div(logPotencyMod);
 	}
 	// Calculate full breed time
 	let fullBreed = '';
 	const currentSend = trimps.getCurrentSend();
-	let totalTime = DecimalBreed(Math.log10(maxBreedable / (maxBreedable - currentSend)) / logPotencyMod)
+	let totalTime = DecimalBreed(Math.log10(maxBreedable / (maxBreedable - currentSend)) / logPotencyMod);
 	if (totalTime == 0) {
-		totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend)))
-			.div(logPotencyMod);
+		totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend))).div(logPotencyMod);
 	}
 	// breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
 	game.global.breedTime = currentSend / breeding;
