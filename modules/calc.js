@@ -725,11 +725,12 @@ function calcEnemyAttack(worldType = 'world', zone = game.global.world, cell = 1
 	return minOrMax ? Math.floor(attack) : Math.ceil(attack);
 }
 
-function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth) {
+function calcSpecificEnemyAttack(critPower = 2, customBlock, customAttack) {
 	const enemy = getCurrentEnemy();
-	let attack = calcEnemyAttackCore(undefined, undefined, undefined, undefined, undefined, enemy.attack);
-	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
+	let attack = calcEnemyAttackCore();
+	attack *= badGuyCritMult(enemy, critPower, customBlock, customAttack);
 
+	if (game.global.mapsActive && !customAttack) attack *= getCurrentMapObject().difficulty;
 	if (challengeActive('Nom') && typeof enemy.nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks);
 	if (challengeActive('Lead')) attack *= 1 + 0.04 * game.challenges.Lead.stacks;
 
