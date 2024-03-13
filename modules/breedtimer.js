@@ -11,16 +11,16 @@ function trimpsEffectivelyEmployed() {
 }
 
 function breedingPS() {
-	let trimps = game.resources.trimps;
-	let breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
+	const trimps = game.resources.trimps;
+	const breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
 
 	// Gets the modifier, then: 1.1x format -> 0.1 format -> 1.0 x breeding
 	return getPotencyMod().minus(1).mul(10).mul(breeding);
 }
 
 function _breedingPS() {
-	let trimps = game.resources.trimps;
-	let breeding = trimps.owned - trimpsEffectivelyEmployed();
+	const trimps = game.resources.trimps;
+	const breeding = trimps.owned - trimpsEffectivelyEmployed();
 
 	// Gets the modifier, then: 1.1x format -> 0.1 format -> 1.0 x breeding
 	return (_getPotencyMod() - 1) * 10 * breeding;
@@ -120,11 +120,11 @@ function _getPotencyMod() {
 }
 
 function breedTotalTime() {
-	let trimps = game.resources.trimps;
-	let trimpsMax = trimps.realMax();
+	const trimps = game.resources.trimps;
+	const trimpsMax = trimps.realMax();
 
-	let maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
-	let breeding = maxBreedable.minus(trimps.getCurrentSend());
+	const maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
+	const breeding = maxBreedable.minus(trimps.getCurrentSend());
 
 	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
 }
@@ -140,28 +140,27 @@ function _breedTotalTime() {
 }
 
 function breedTimeRemaining() {
-	let trimps = game.resources.trimps;
-	let trimpsMax = trimps.realMax();
+	const trimps = game.resources.trimps;
+	const trimpsMax = trimps.realMax();
 	const trimpsEmployed = trimpsEffectivelyEmployed();
 
-	let breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEmployed);
+	const breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEmployed);
 	if (breeding <= 0) return new DecimalBreed(Infinity);
-	let maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEmployed);
+	const maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEmployed);
 	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
 }
 
 /* This version doesn't use decimal.js to calculate breedtimer for trap calculations */
 function _breedTimeRemaining() {
-	let trimps = game.resources.trimps;
-	let trimpsMax = trimps.realMax();
+	const trimps = game.resources.trimps;
+	const trimpsMax = trimps.realMax();
 	const trimpsEmployed = trimpsEffectivelyEmployed();
 
-	let maxBreedable = trimpsMax - trimpsEmployed;
-	let breeding = trimps.owned - trimpsEmployed;
-
+	const maxBreedable = trimpsMax - trimpsEmployed;
+	const breeding = Math.floor(trimps.owned) - trimpsEmployed;
 	if (maxBreedable <= 0 || breeding <= 0) return Infinity;
 
-	let potencyMod = _getPotencyMod();
+	const potencyMod = _getPotencyMod();
 	if (potencyMod === 0) return Infinity;
 
 	return Math.log10(maxBreedable / breeding) / Math.log10(potencyMod) / 10;
@@ -182,7 +181,7 @@ function geneAssist() {
 	const compareTime = _getCompareTime(timeRemaining);
 	const target = _getTargetTimer();
 	if (!target) return;
-	let genDif = _getGenDifference(compareTime, target);
+	const genDif = _getGenDifference(compareTime, target);
 
 	if ((compareTime.cmp(target) < 0) & _geneticistCost() & (genDif.cmp(0) > 0)) _hireGenes(genDif);
 	else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || getPotencyMod().cmp(1) === 0) _fireGenes(genDif);
