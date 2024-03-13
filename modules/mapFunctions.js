@@ -674,6 +674,15 @@ function _runMapFarm(setting, mapName, settingName, settingIndex) {
 	const gather = setting.gather;
 	const mapType = setting.mapType;
 
+	if (setting.mapType === 'Farm Time') {
+		const value = game.global.universe === 2 ? 'valueU2' : 'value';
+		const userSetting = game.global.addonUser.mapFarmSettings[value][setting.row];
+		if (!userSetting.zone || userSetting.zone !== game.global.world) {
+			userSetting.zone = game.global.world;
+			userSetting.timer = getGameTime();
+		}
+	}
+
 	const [repeatCheck, status] = _getMapFarmActions(mapType, setting, repeatNumber);
 
 	if (mapType !== 'Map Count') {
@@ -710,13 +719,16 @@ function _runMapFarm(setting, mapName, settingName, settingIndex) {
 }
 
 function _getMapFarmActions(mapType, setting, repeatNumber) {
-	const timeBasedActions = ['Daily Reset', 'Zone Time', 'Portal Time', 'Skele Spawn'];
+	const timeBasedActions = ['Daily Reset', 'Zone Time', 'Farm Time', 'Portal Time', 'Skele Spawn'];
+	const value = game.global.universe === 2 ? 'valueU2' : 'value';
+	userSetting = game.global.addonUser.mapFarmSettings[value][setting.row];
 	const timeBasedAction = () => {
 		const repeatCheck = {
 			'Daily Reset': updateDailyClock(true)
 				.split(':')
 				.reduce((acc, time) => 60 * acc + +time),
 			'Zone Time': (getGameTime() - game.global.zoneStarted) / 1000,
+			'Farm Time': (getGameTime() - userSetting.timer) / 1000,
 			'Portal Time': (getGameTime() - game.global.portalTime) / 1000,
 			'Skele Spawn': (getGameTime() - game.global.lastSkeletimp) / 1000
 		}[mapType];

@@ -188,6 +188,7 @@ function initialiseScript() {
 	MODULES.heirlooms.gammaBurstPct = gammaBurstPct > 0 ? gammaBurstPct : 1;
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
+	farmingDecision();
 	autoMapsStatus();
 
 	if (usingRealTimeOffline) {
