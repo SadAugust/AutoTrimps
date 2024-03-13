@@ -1150,17 +1150,18 @@ function mapSettingsHelpWindow(titleText) {
 		mazHelp += '<li><b>End Zone</b> - The upper bound zone to run voids maps on.</li>';
 		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the Auto Maps status tooltip.</li>";
 		mazHelp += '<li class="indent">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you\'ve selected one of Hits Survived, Hits Survived Void it will check if the value is lower than it and skip if it is. Disabled just skips checking that input.<br></li>';
-		mazHelp += '<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run.</b></li>';
+		mazHelp += '<li><b>Portal After</b> - Will run Auto Portal immediately after this line has run.</b></li>';
 	}
 
 	if (mapFarm) {
 		mazHelp += '<li><b>Farm Type</b> The different ways that the script can determine how many maps are run.</li>';
+		mazHelp += '<li class="indent">The <b>Zone Time, Farm Time, Portal Time, Daily Reset and Skele Spawn</b> settings use a DD:HH:MM:SS input and will break if that format isn\'t followed.</li>';
 		mazHelp += '<li class="indent"><b>Map Count</b> - Will run maps until it has reached the specified repeat counter.</li>';
-		mazHelp += '<li class="indent"><b>Zone Time</b> - Uses DD:HH:MM:SS format and will run maps until the zone time surpasses the time set in repeat counter.</li>';
-		mazHelp += '<li class="indent"><b>Farm Time</b> - Uses DD:HH:MM:SS format and will track when it starts farming then run maps until it reaches that timer.</li>';
-		mazHelp += '<li class="indent"><b>Portal Time</b> - Uses DD:HH:MM:SS format and will run maps until the portal time surpasses the time set in repeat counter.</li>';
-		mazHelp += '<li class="indent"><b>Daily Reset</b> - Uses DD:HH:MM:SS format and will run maps until the daily reset time is below the time set in repeat counter.</li>';
-		mazHelp += '<li class="indent"><b>Skele Spawn</b> - Uses DD:HH:MM:SS format and will run maps until the time since your last Skeletimp kill was this amount of time or greater.</li>';
+		mazHelp += '<li class="indent"><b>Zone Time</b> - Runs maps until the zone time surpasses the time set in repeat counter.</li>';
+		mazHelp += '<li class="indent"><b>Farm Time</b> - Tracks when it starts farming then run maps until it reaches that timer.</li>';
+		mazHelp += '<li class="indent"><b>Portal Time</b> - Runs maps until the portal time surpasses the time set in repeat counter.</li>';
+		mazHelp += '<li class="indent"><b>Daily Reset</b> - Runs maps until the daily reset time is below the time set in repeat counter.</li>';
+		mazHelp += '<li class="indent"><b>Skele Spawn</b> - Runs maps until the time since your last Skeletimp kill was this amount of time or greater.</li>';
 
 		mazHelp += "<li><b>Map Repeats</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
 		mazHelp += '<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in Auto Maps status tooltip) is above this value (and above 0).<br>';
