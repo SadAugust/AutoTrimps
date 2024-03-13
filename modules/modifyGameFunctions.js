@@ -53,6 +53,18 @@ autoBattle.popup = function () {
 	usingRealTimeOffline = offlineMode;
 };
 
+//Hacky way to allow the SA popup button to work within TW.
+game.options.menu.pauseGame.originalOnToggle = game.options.menu.pauseGame.onToggle;
+game.options.menu.pauseGame.onToggle = function () {
+	if (this.timeAtPause && mapSettings.mapType && mapSettings.mapType === 'Farm Time') {
+		const value = game.global.universe === 2 ? 'valueU2' : 'value';
+		const now = new Date().getTime();
+		const dif = now - this.timeAtPause;
+		game.global.addonUser.mapFarmSettings[value][mapSettings.settingIndex].timer += dif;
+	}
+	game.options.menu.pauseGame.originalOnToggle(...arguments);
+};
+
 //Attach AT related buttons to the main TW UI.
 //Will attach AutoMaps, AutoMaps Status, AutoTrimps Settings, AutoJobs, AutoStructure
 offlineProgress.originalStart = offlineProgress.start;

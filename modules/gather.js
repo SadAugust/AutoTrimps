@@ -259,12 +259,12 @@ function _gatherTrapResources() {
 }
 
 function _handleTrapping(action, priority) {
-	let buyTrap = () => canAffordBuilding('Trap') && (safeBuyBuilding('Trap', 1) || true);
-	let canBuild = () => isBuildingInQueue('Trap') || buyTrap();
-	let bait = () => safeSetGather('trimps') || true;
-	let build = () => (canBuild() && (safeSetGather('buildings') || true)) || _gatherTrapResources();
+	const buyTrap = () => canAffordBuilding('Trap') && (safeBuyBuilding('Trap', 1) || true);
+	const canBuild = () => isBuildingInQueue('Trap') || buyTrap();
+	const bait = () => safeSetGather('trimps') || true;
+	const build = () => (canBuild() && (safeSetGather('buildings') || true)) || _gatherTrapResources();
 
-	let trapsOwned = game.buildings.Trap.owned;
+	const trapsOwned = game.buildings.Trap.owned;
 
 	if (trapsOwned <= MODULES.trapPools[0].size() && action === 'bait') return false;
 	if (trapsOwned < MODULES.trapPools[0].size()) {
@@ -273,9 +273,9 @@ function _handleTrapping(action, priority) {
 	}
 
 	priority = Math.min(priority + 1, MODULES.trapPools.length - 1);
-	let previousSize = MODULES.trapPools.slice(0, priority).reduce((t, pool) => t + pool.size(), 0);
-	let currentSize = MODULES.trapPools[priority].size();
-	let bufferSize = MODULES.trapPools[priority].bufferSize();
+	const previousSize = MODULES.trapPools.slice(0, priority).reduce((t, pool) => t + pool.size(), 0);
+	const currentSize = MODULES.trapPools[priority].size();
+	const bufferSize = MODULES.trapPools[priority].bufferSize();
 
 	// Disable high buffers
 	if (trapsOwned >= previousSize + currentSize + bufferSize)
@@ -292,7 +292,7 @@ function _handleTrapping(action, priority) {
 	if (trapsOwned > previousSize + currentSize + bufferSize) return bait();
 
 	// Inverted buffering zone (TODO Auto toggle enabled)
-	let highBuffering = MODULES.trapPools[priority].highBuffering;
+	const highBuffering = MODULES.trapPools[priority].highBuffering;
 	if (trapsOwned >= previousSize + currentSize && highBuffering && action === 'build') return build();
 	if (trapsOwned > previousSize + currentSize && highBuffering) return bait();
 
@@ -311,7 +311,7 @@ function _handleTrapping(action, priority) {
 	if (trapsOwned > previousSize + bufferSize) return bait();
 
 	// Buffering zone
-	let buffering = MODULES.trapPools[priority].buffering;
+	const buffering = MODULES.trapPools[priority].buffering;
 	if (trapsOwned >= previousSize && buffering && action === 'bait') return false;
 	if (trapsOwned >= previousSize && buffering) return build();
 	if (trapsOwned >= previousSize && action === 'build') return build();
@@ -376,7 +376,7 @@ function autoGather() {
 	}
 
 	// Builds if we have storage buildings on top of the queue
-	if ((!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && building === 'Barn.1') || building === 'Shed.1' || building === 'Forge.1') {
+	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && ['Barn.1', 'Shed.1', 'Forge.1'].includes(building)) {
 		safeSetGather('buildings');
 		return;
 	}
