@@ -67,7 +67,7 @@ MODULES.equipment = {
 };
 
 function _shouldSaveResource(resourceName) {
-	let upgrades = ['Bounty', 'Efficiency', 'Coordination', 'TrainTacular']
+	let upgrades = ['Bounty', 'Efficiency', 'Coordination', 'TrainTacular'];
 	upgrades = upgrades.concat(resourceName === 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber', 'Potency']);
 	const shouldSave = !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'));
 	return shouldSave && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
@@ -328,11 +328,7 @@ function autoEquip() {
 	//If running a wood or metal quest then disable autoequip
 	if ([2, 3].includes(getCurrentQuest())) return;
 	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
-	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
-		if (mapSettings.ancientTreasure) return;
-		if (MODULES.mapFunctions.runUniqueMap === getAncientTreasureName()) return;
-		if (game.global.mapsActive && getCurrentMapObject().name === getAncientTreasureName()) return;
-	}
+	if (runningAncientTreasure()) return;
 
 	if (_autoEquipTimeWarp()) return;
 
@@ -416,7 +412,9 @@ function buyEquipsAlways2() {
 
 function buyEquips() {
 	const bestBuys = mostEfficientEquipment();
-	const equipTypes = ['attack', 'health', 'block'].sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
+	const equipTypeList = ['attack', 'health'];
+	if (game.global.universe === 1) equipTypeList.push('block');
+	const equipTypes = equipTypeList.sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
 	let keepBuying = false;
 
 	const saveResources = {

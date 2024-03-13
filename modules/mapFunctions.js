@@ -316,8 +316,11 @@ function shouldSpeedRun(map, achievement) {
 }
 
 function runningAncientTreasure() {
+	if (!game.mapUnlocks.AncientTreasure.canRunOnce) return false;
 	if (mapSettings.ancientTreasure && getPageSetting('autoMaps') === 1) return true;
-	if (game.global.mapsActive && getCurrentMapObject().location === getAncientTreasureName()) return true;
+	const mapName = getAncientTreasureName();
+	if (MODULES.mapFunctions.runUniqueMap === mapName) return;
+	if (game.global.mapsActive && getCurrentMapObject().location === mapName) return true;
 	return false;
 }
 
