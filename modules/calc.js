@@ -727,16 +727,16 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 	return minOrMax ? Math.floor(attack) : Math.ceil(attack);
 }
 
-function calcSpecificEnemyAttack(critPower = 2, customBlock, customAttack) {
+function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth, customAttack) {
 	const enemy = getCurrentEnemy();
 	let attack = calcEnemyAttackCore();
-	attack *= badGuyCritMult(enemy, critPower, customBlock, customAttack);
+	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
 
 	if (game.global.mapsActive && !customAttack) attack *= getCurrentMapObject().difficulty;
 	if (challengeActive('Nom') && typeof enemy.nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks);
 	if (challengeActive('Lead')) attack *= 1 + 0.04 * game.challenges.Lead.stacks;
 
-	if (game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+	if (game.global.usingShriek && !game.global.mapsActive && enemy.level === 100) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
 	if (getEmpowerment() === 'Ice') attack *= game.empowerments.Ice.getCombatModifier();
 
 	return Math.ceil(attack);
