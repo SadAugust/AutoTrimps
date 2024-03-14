@@ -793,18 +793,20 @@ function breed() {
 
 		if (GAElem && canRun) {
 			let thresh = new DecimalBreed(totalTime.mul(0.02));
+			if (!thresh.isFinite()) thresh = new Decimal(0);
 			let compareTime;
 			let htmlMessage = '';
+
 			if (timeRemaining.cmp(1) > 0 && timeRemaining.cmp(target.add(1)) > 0) {
 				compareTime = new DecimalBreed(timeRemaining.add(-1));
 			} else {
 				compareTime = new DecimalBreed(totalTime);
 			}
-			if (!thresh.isFinite()) thresh = new Decimal(0);
+
 			if (!compareTime.isFinite()) compareTime = new Decimal(999);
-			let genDif = new DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
 
 			if (compareTime.cmp(target) < 0) {
+				let genDif = Decimal.log10(target.div(compareTime)).div(0.00860017176191756).ceil(); // Math.log10(1.02) = 0.00860017176191756
 				swapClass('state', 'stateHiring', GAElem);
 				if (game.resources.food.owned * 0.01 < getNextGeneticistCost()) {
 					htmlMessage = " (<span style='font-size: 0.8em' class='glyphicon glyphicon-apple'></span>)";
@@ -816,6 +818,7 @@ function breed() {
 					htmlMessage = ' (+)';
 				} else htmlMessage = " (<span style='font-size: 0.8em' class='icmoon icon-clock3'></span>)";
 			} else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || potencyMod.cmp(1) === 0) {
+				let genDif = Decimal.log10(target.div(compareTime)).div(0.00860017176191756).ceil(); // Math.log10(1.02) = 0.00860017176191756
 				if (!genDif.isFinite()) genDif = new Decimal(-1);
 				swapClass('state', 'stateFiring', GAElem);
 				htmlMessage = ' (-)';
