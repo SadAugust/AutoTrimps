@@ -79,7 +79,7 @@ function buyJobs(forceRatios) {
 	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
 
 	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps);
-	_handleJobRatios(desiredRatios, freeWorkers, maxTrimps, owned);
+	_handleJobRatios(desiredRatios, freeWorkers, maxTrimps);
 }
 
 function _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed) {
@@ -289,7 +289,7 @@ function _getAutoJobRatio(maxTrimps) {
 	return conditions.find(({ condition }) => condition()).ratio;
 }
 
-function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps, owned) {
+function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps) {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	const hireWorkers = desiredRatios.map((ratio) => ratio > 0);
 
@@ -297,7 +297,8 @@ function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps, owned) {
 
 	//Calculates both the decimal and the floored number of desired workers
 	const fDesiredWorkers = desiredRatios.map((r) => (r * freeWorkers) / totalFraction);
-	desiredWorkers = fDesiredWorkers.map((w) => Math.floor(w));
+	let desiredWorkers = fDesiredWorkers.map((w) => Math.floor(w));
+
 	//Calculates how many workers will be left out of the initial distribution
 	const remainder = freeWorkers > 10e6 ? 0 : freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
 
@@ -305,14 +306,6 @@ function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps, owned) {
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff, true).slice(diff.length - remainder);
 	whereToIncrement.forEach((idx) => (hireWorkers[idx] ? desiredWorkers[idx]++ : null)); //TODO Fix hireWorkers messing with the remainder
-
-	const percWorkers = ['Explorer', 'Trainer', 'Magmamancer', 'Meteorologist', 'Worshipper'];
-	const percWorkersOwned = percWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
-	const totalWorkers = desiredWorkers.reduce((total, num) => total + num, 0) + percWorkersOwned;
-
-	if (maxTrimps > 500 && totalWorkers >= owned * 0.7) {
-		desiredWorkers = desiredWorkers.map((w) => Math.floor(w * 0.7));
-	}
 
 	//Calculates the actual number of workers to buy or fire
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
