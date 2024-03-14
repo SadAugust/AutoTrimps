@@ -78,7 +78,7 @@ function buyJobs(forceRatios) {
 	const flexibleWorkers = _flexibleWorkers();
 	const notNeededBreeding = _workersNotNeededBreeding(owned, maxTrimps, employed);
 
-	let availableWorkers = Math.min(Math.max(flexibleWorkers, notNeededBreeding), flexibleWorkers + freeWorkers);
+	let availableWorkers = Math.min(Math.max(flexibleWorkers, flexibleWorkers + notNeededBreeding), flexibleWorkers + freeWorkers);
 	availableWorkers = _handleNoBreedChallenges(availableWorkers, owned, employed, maxSoldiers);
 
 	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps);
