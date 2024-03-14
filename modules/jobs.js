@@ -108,7 +108,7 @@ function _workersNotNeededBreeding(owned, maxTrimps, employed) {
 	let excess = breeding + multitasking - neededBreeding;
 	excess /= (1 - game.permaBoneBonuses.multitasking.mult());
 
-	return employed + excess;
+	return excess;
 }
 
 function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
