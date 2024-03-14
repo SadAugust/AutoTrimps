@@ -54,8 +54,22 @@ function _displayExportAutoTrimps(tooltipDiv) {
 }
 
 function _displayResetDefaultSettingsProfiles(tooltipDiv) {
-	const tooltipText = `This will restore your current AutoTrimps settings to their original values.<br/><br/>Are you sure you want to do this?`;
+	const tooltipText = `This will restore your current AutoTrimps settings to their original values.<br>It is advised to download a copy of your AutoTrimps settings before doing this.<br/><br/>Are you sure you want to do this?`;
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); resetAutoTrimps();'>Reset to Default Profile</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
+
+	const ondisplay = function () {
+		_verticalCenterTooltip();
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function _displayDisableSettingsProfiles(tooltipDiv) {
+	const tooltipText = `This will adjust the inputs of all of your settings to a disabled state.<br>It is advised to download a copy of your AutoTrimps settings before doing this.<br/><br/>Are you sure you want to do this?`;
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); disableAllSettings();'>Reset to Default Profile</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
 
 	const ondisplay = function () {
 		_verticalCenterTooltip();
@@ -397,6 +411,47 @@ function resetAutoTrimps(autoTrimpsSettings) {
 	document.getElementById('tipCost').children[0].id = 'tipCostID';
 	document.getElementById('tipCostID').focus();
 	atSettings.running = true;
+}
+
+function disableAllSettings() {
+	//Disable all settings
+	for (const setting in autoTrimpSettings) {
+		if (['ATversion', 'ATversionChangelog', 'gameUser'].includes(setting)) continue;
+		const item = autoTrimpSettings[setting];
+		if (item.type === 'mazDefaultArray') continue;
+
+		if (setting === 'spamMessages') {
+			item.value.show = false;
+		} else if (item.type === 'boolean') {
+			if (item.enabled) item.enabled = false;
+			if (item.enabledU2) item.enabledU2 = false;
+		} else if (item.type === 'dropdown') {
+			if (item.dropdown) item.dropdown = 'Off';
+			if (item.dropdownU2) item.dropdownU2 = 'Off';
+		} else if (item.type === 'mazArray') {
+			if (item.value && item.value[0] && item.value[0].active) {
+				item.value[0].active = false;
+			}
+			if (item.valueU2 && item.valueU2[0] && item.valueU2[0].active) {
+				item.valueU2[0].active = false;
+			}
+		} else if (typeof item.value !== 'undefined' || typeof item.valueU2 !== 'undefined') {
+			if (item.value) item.value = 0;
+			if (item.valueU2) item.valueU2 = 0;
+		}
+	}
+
+	saveSettings();
+
+	const title = 'Settings Disabled';
+	const message = 'Successfully disabled all AutoTrimps settings.';
+	const tooltipMessage = 'AutoTrimps settings have been successfully disabled!';
+
+	debug(message, 'profile');
+	tooltip(`${title}`, `customText`, `lock`, `${tooltipMessage}`, false, `center`);
+	_verticalCenterTooltip();
+	document.getElementById('tipCost').children[0].id = 'tipCostID';
+	document.getElementById('tipCostID').focus();
 }
 
 function makeAutoPortalHelpTooltip() {

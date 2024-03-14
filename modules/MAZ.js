@@ -14,6 +14,7 @@ function MAZLookalike(event, titleText) {
 		priorityOrder: _displayPriorityOrder,
 		c2table: _displayC2Table,
 		resetDefaultSettingsProfiles: _displayResetDefaultSettingsProfiles,
+		disableSettingsProfiles: _displayDisableSettingsProfiles,
 		setCustomChallenge: _displaySetCustomChallenge,
 		timeWarp: _displayTimeWarp
 	};
@@ -32,6 +33,7 @@ function MAZLookalike(event, titleText) {
 		priorityOrder: 'Priority Order Table',
 		c2table: _getChallenge2Info() + ' Table',
 		resetDefaultSettingsProfiles: 'Reset Default Settings',
+		disableSettingsProfiles: 'Disable All Settings',
 		setCustomChallenge: 'Set Custom Challenge',
 		timeWarp: 'Time Warp Hours'
 	};

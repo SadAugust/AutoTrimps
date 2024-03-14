@@ -4337,6 +4337,14 @@ function initialiseAllSettings() {
 				return description;
 			}, 'infoclick', null, 'MAZLookalike("resetDefaultSettingsProfiles")', 'Import Export', [0]);
 
+
+		createSetting('disableAutoTrimpsSettings',
+			function () { return ('Disable All Settings') },
+			function () {
+				let description = "<p>Overrides your settings and disables all available features.</p>";
+				return description;
+			}, 'infoclick', null, 'MAZLookalike("disableSettingsProfiles")', 'Import Export', [0]);
+
 		createSetting('autoAllocatePresets',
 			function () { return ('Auto Allocate Presets') },
 			function () { return ('Click to adjust settings.') },
