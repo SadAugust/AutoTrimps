@@ -326,7 +326,7 @@ function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps) {
 
 	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
 
-	if (totalWorkerCost > game.resources.food.owned) {
+	if (desiredRatios[0] === 0 && totalWorkerCost > game.resources.food.owned) {
 		const totalWorkersOwned = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 		const maxWorkersToHire = Math.max(Math.floor(freeWorkers / 10), freeWorkers - totalWorkersOwned);
 		const farmersToHire = Math.max(calculateMaxAfford('Farmer', false, false, true), maxWorkersToHire + 1 - game.jobs.Farmer.owned);
