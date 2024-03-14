@@ -74,33 +74,41 @@ function buyJobs(forceRatios) {
 	const { owned, employed } = game.resources.trimps;
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
 
-	let freeWorkers = _calculateFreeWorkers(owned, maxTrimps, employed);
-	freeWorkers = Math.min(freeWorkers, _employableTrimps(owned, maxTrimps, employed));
-	freeWorkers = _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers);
+	const freeWorkers = _freeWorkers(owned, maxTrimps, employed);
+	const flexibleWorkers = _flexibleWorkers();
+	const notNeededBreeding = _workersNotNeededBreeding(owned, maxTrimps, employed);
+
+	let availableWorkers = Math.min(Math.max(flexibleWorkers, flexibleWorkers + notNeededBreeding), flexibleWorkers + freeWorkers);
+	availableWorkers = _handleNoBreedChallenges(availableWorkers, owned, employed, maxSoldiers);
 
 	const desiredRatios = _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps);
-	_handleJobRatios(desiredRatios, freeWorkers, maxTrimps);
+	_handleJobRatios(desiredRatios, availableWorkers, maxTrimps);
 }
 
-function _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed) {
-	return Math.ceil(Math.min(maxTrimps / 2, owned)) - employed;
+function _employableWorkers(owned, maxTrimps) {
+	return Math.min(Math.ceil(maxTrimps / 2), Math.floor(owned));
 }
 
-function _calculateFreeWorkers(owned, maxTrimps, employed) {
-	const currentFreeWorkers = _calculateCurrentlyFreeWorkers(owned, maxTrimps, employed);
+function _freeWorkers(owned, maxTrimps, employed) {
+	return _employableWorkers(owned, maxTrimps) - employed;
+}
+
+function _flexibleWorkers() {
 	const ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
-	const ratioWorkerCount = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
-
-	return currentFreeWorkers + ratioWorkerCount;
+	return ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 }
 
-function _employableTrimps(owned, maxTrimps, employed) {
-	const breedingTrimps = owned - trimpsEffectivelyEmployed();
-	if (!game.upgrades.Battle.done) return owned;
+function _workersNotNeededBreeding(owned, maxTrimps, employed) {
+	if (!game.upgrades.Battle.done) return maxTrimps;
 
-	let employable = Math.ceil((breedingTrimps - maxTrimps / 3) / (1 - game.permaBoneBonuses.multitasking.mult()));
+	const breeding = owned - employed;
+	const multitasking = employed * game.permaBoneBonuses.multitasking.mult();
+	const neededBreeding = Math.min(maxTrimps/3, breeding + multitasking);
 
-	return employed + Math.max(0, Math.min(employable, owned));
+	let excess = breeding + multitasking - neededBreeding;
+	excess /= (1 - game.permaBoneBonuses.multitasking.mult());
+
+	return excess;
 }
 
 function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
@@ -318,7 +326,7 @@ function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps) {
 
 	let totalWorkerCost = desiredWorkers.reduce((partialSum, w, idx) => partialSum + (w > 0 ? w * game.jobs[ratioWorkers[idx]].cost.food : 0), 0);
 
-	if (totalWorkerCost > game.resources.food.owned) {
+	if (desiredRatios[0] === 0 && totalWorkerCost > game.resources.food.owned) {
 		const totalWorkersOwned = ratioWorkers.reduce((total, worker) => total + game.jobs[worker].owned, 0);
 		const maxWorkersToHire = Math.max(Math.floor(freeWorkers / 10), freeWorkers - totalWorkersOwned);
 		const farmersToHire = Math.max(calculateMaxAfford('Farmer', false, false, true), maxWorkersToHire + 1 - game.jobs.Farmer.owned);
