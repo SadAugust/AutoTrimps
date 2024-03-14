@@ -313,6 +313,7 @@ function _checkQuest() {
 function _buyNursery(buildingSettings) {
 	const nurseryInfo = game.buildings.Nursery;
 	if (nurseryInfo.locked || challengeActive('Trapper')) return;
+	if (runningAncientTreasure()) return;
 
 	const nurserySetting = buildingSettings.Nursery;
 	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
@@ -339,6 +340,7 @@ function _buyNursery(buildingSettings) {
  */
 function _buyGyms(buildingSettings) {
 	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic()) return;
+	if (runningAncientTreasure()) return;
 
 	const factorShieldBlock = game.equipment.Shield.blockNow && getPageSetting('equipOn');
 	if (factorShieldBlock) {

@@ -324,10 +324,10 @@ function calcOurBlock(stance, realBlock) {
 	return block;
 }
 
-function _getAnticipationBonus(stacks = game.global.antiStacks) {
+function _getAnticipationBonus(stacks = game.global.antiStacks, currentBonus = false) {
 	const maxStacks = game.talents.patience.purchased ? 45 : 30;
 	const perkMult = getPerkLevel('Anticipation') * getPerkModifier('Anticipation');
-	const stacks45 = typeof autoTrimpSettings === 'undefined' ? maxStacks : getPageSetting('45stacks');
+	const stacks45 = typeof autoTrimpSettings === 'undefined' ? maxStacks : currentBonus ? false : getPageSetting('45stacks');
 
 	return stacks45 ? 1 + maxStacks * perkMult : 1 + stacks * perkMult;
 }

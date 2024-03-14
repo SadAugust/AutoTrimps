@@ -15,6 +15,15 @@ function updateBaseDamageInX() {
 	MODULES.stats.baseMaxDamage = calcOurDmg('max', 'X', false, false, 'force');
 	MODULES.stats.baseHealth = calcOurHealth(false, false, true);
 	MODULES.stats.baseBlock = calcOurBlock(false);
+
+	const antiBonus = _getAnticipationBonus();
+	const antiBonusCurr = _getAnticipationBonus(undefined, true);
+
+	if (antiBonus !== antiBonusCurr) {
+		const ratio = antiBonusCurr / antiBonus;
+		MODULES.stats.baseMinDamage *= ratio;
+		MODULES.stats.baseMaxDamage *= ratio;
+	}
 }
 
 function canU2OverkillAT(targetZone = game.global.world) {
@@ -41,17 +50,18 @@ function maxOneShotPower(planToMap, targetZone = game.global.world) {
 		if (game.portal.Overkill.level === 0) return 1;
 		if (game.talents.overkill.purchased) power++;
 
-		// Fluffy
 		const overkiller = Fluffy.isRewardActive('overkiller');
 		if (overkiller) power += overkiller;
 
-		// Ice
-		const uberEmpowerment = getUberEmpowerment();
-		if (uberEmpowerment === 'Ice') power += 2;
 		const empowerment = getEmpowerment();
-		const iceLevel = game.empowerments.Ice.getLevel();
-		if (empowerment === 'Ice' && iceLevel >= 50) power++;
-		if (empowerment === 'Ice' && iceLevel >= 100) power++;
+		if (empowerment === 'Ice') {
+			const uberEmpowerment = getUberEmpowerment();
+			if (uberEmpowerment === 'Ice') power += 2;
+
+			const iceLevel = game.empowerments.Ice.getLevel();
+			if (iceLevel >= 50) power++;
+			if (iceLevel >= 100) power++;
+		}
 	} else if (game.global.universe === 2) {
 		const overkill = canU2OverkillAT(targetZone);
 		if (!overkill) {
@@ -110,7 +120,6 @@ function _challengeDamage(maxHealth = calcOurHealth(), minDamage, maxDamage, mis
 	let challengeDamage = 0;
 	let harm = 0;
 
-	// Electricity Lead - Tox/Nom
 	if (electricityChallenge) challengeDamage = game.challenges.Electricity.stacks * 0.1;
 	else if (drainChallenge) challengeDamage = 0.05;
 
@@ -163,7 +172,6 @@ function _directDamage(block = calcOurBlock(true, true), pierce, currentHealth, 
 		const slipStr = game.global.dailyChallenge.slippery.strength;
 		dodgeDaily = (slipStr > 15 && game.global.world % 2 === 0) || (slipStr <= 15 && game.global.world % 2 === 1);
 	}
-
 	// Double attack and one shot situations
 	if (isDoubleAttack && minDamage < enemyHealth) harm *= 2;
 	if (!enemyFast && !dodgeDaily && minDamage > enemyHealth) harm = 0;
@@ -174,8 +182,7 @@ function _directDamage(block = calcOurBlock(true, true), pierce, currentHealth, 
 function _formationAvailable(formation) {
 	// Check if the formation is valid
 	if (formation === 'D' && !game.upgrades.Dominance.done) return false;
-	if (formation === 'XB' && !game.upgrades.Barrier.done) return false;
-	if (formation === 'B' && !game.upgrades.Barrier.done) return false;
+	if (['XB', 'B'].includes(formation) && !game.upgrades.Barrier.done) return false;
 	if (formation === 'H' && !game.upgrades.Formations.done) return false;
 	if (formation === 'S' && (game.global.world < 60 || game.stats.highestLevel.valueTotal() < 180)) return false;
 	return true;
@@ -186,12 +193,12 @@ function wouldSurvive(formation = 'S', critPower = 2, ignoreArmy) {
 	// Base stats
 	let health = MODULES.stats.baseHealth;
 	let block = MODULES.stats.baseBlock;
-	let missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
+	const missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
 
 	// More stats
 	let minDamage = MODULES.stats.baseMinDamage;
 	let maxDamage = MODULES.stats.baseMaxDamage;
-	let newSquadRdy = !ignoreArmy && newArmyRdy();
+	const newSquadRdy = !ignoreArmy && newArmyRdy();
 
 	// Applies the formation modifiers
 	if (formation === 'XB') {
@@ -234,7 +241,6 @@ function wouldSurvive(formation = 'S', critPower = 2, ignoreArmy) {
 
 	// Decides if the trimps can survive in this formation
 	const harm = _directDamage(block, pierce, health - missingHealth, minDamage, critPower) + _challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower);
-
 	// Updated Genes and Block
 	const blockier = calcOurBlock(false, false);
 	const healthier = health * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
@@ -263,18 +269,19 @@ function checkStanceSetting() {
 
 	const settingPrefix = trimpStats.isDaily ? 'd' : '';
 	const c2Prefix = trimpStats.isC3 ? 'c2' : settingPrefix;
+
 	if (game.global.spireActive && getPageSetting(c2Prefix + 'AutoDStanceSpire')) autoStanceD(true);
 	else if (getPageSetting('AutoStanceScryer')) useScryerStance();
 	else if (game.global.mapsActive && game.global.voidBuff && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) useScryerStance();
 	else {
-		const AutoStance = getPageSetting('AutoStance');
+		const autoStanceSetting = getPageSetting('AutoStance');
 		if (getPageSetting(settingPrefix + 'AutoStanceWind')) autoStanceWind();
-		else if (AutoStance === 1) autoStance(false);
-		else if (AutoStance === 2) autoStanceD(false);
+		else if (autoStanceSetting === 1) autoStance(false);
+		else if (autoStanceSetting === 2) autoStanceD(false);
 	}
 }
 
-function autoStance(force) {
+function autoStance(force = false) {
 	const autoStanceSetting = getPageSetting('AutoStance');
 	if (!force && autoStanceSetting !== 1) return;
 
@@ -326,7 +333,7 @@ function autoStance(force) {
 	}
 }
 
-function autoStanceD(force) {
+function autoStanceD(force = false) {
 	if (!game.upgrades.Dominance.done || game.global.soldierHealth <= 0) return;
 	if (!force && getPageSetting('AutoStance') !== 2) return;
 
@@ -334,19 +341,19 @@ function autoStanceD(force) {
 }
 
 function autoStanceWind() {
-	// Fail safes
-	if (game.global.gridArray.length === 0 || !game.upgrades.Formations.done || game.global.soldierHealth <= 0) return;
+	if (game.global.gridArray.length === 0 || !game.upgrades.Formations.done || game.global.soldierHealth <= 0) return false;
+
 	const currentStance = useWindStance();
-	// If we should use Wind Stance, and the checks in useWindStance don't return false then use it
 	if (currentStance) {
 		safeSetStance(5);
-	}
-	// Otherwise use your AutoStance setting.
-	else {
+		return true;
+	} else {
 		const autoStanceSetting = getPageSetting('AutoStance');
 		if (autoStanceSetting === 1) autoStance(true);
 		if (autoStanceSetting === 2) autoStanceD(true);
 	}
+
+	return false;
 }
 
 function useWindStance() {
