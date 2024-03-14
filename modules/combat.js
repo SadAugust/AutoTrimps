@@ -45,7 +45,7 @@ function _trimpicide() {
 
 	const mapsActive = game.global.mapsActive;
 	if (!mapsActive && game.global.spireActive) return;
-	if (mapsActive && !newArmyRdy()) return;
+	if (!newArmyRdy()) return;
 
 	const amalgsOwned = game.jobs.Amalgamator.owned > 0;
 	const lastTimeSent = Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000);
