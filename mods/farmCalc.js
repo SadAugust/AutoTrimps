@@ -3,6 +3,22 @@ if (typeof MODULES === 'undefined') {
 	MODULES = {};
 }
 
+/* 
+Changes to do to optimise for Balance
+
+1) Health mult increase when not in maps. Assume that we are 1 shotting every cell and increase the health mult by 1% for every cell we clear (30s for TW otherwise 5s).
+	- Does overkilling cells give a stack for each enemy killed?
+2) Health mult decrease during maps in simulate section of code so that it accounts for harder initial start to the map but easier time the more that it clears it.
+	- This could be problematic as it simulates 8/24 hours of map time and we're probably only going to be doing 1-20 maps so probably not worth implementing
+3) Implement a enoughHealth check into autoMaps when selecting the appropriate map
+	- Only do this for relevant challenges that have a health multiplier. Balance, Life, Wither, Berserk, maybe Alchemy?
+	- This might be best getting implemented into the callAutoMapLevel function but not sure atm
+	- Should it be min or max enemy dmg for maps?
+	- Could be unnecessary with #1 being setup. Need to test
+4) Have semi started a difficulty check already but if you can't survive the optimal map then it should probably force refresh autolevel2 calcs and try again 
+	- This is super resource intensive so best to avoid if possible
+*/
+
 function mastery(name) {
 	if (!game.talents[name]) throw 'unknown mastery: ' + name;
 	return game.talents[name].purchased;
@@ -11,6 +27,7 @@ function mastery(name) {
 function populateFarmCalcData() {
 	let imps = 0;
 	for (let imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp']) imps += game.unlocks.imps[imp];
+
 	if (game.talents.magimp.purchased) imps++;
 	let exoticChance = 3;
 	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
@@ -138,6 +155,13 @@ function populateFarmCalcData() {
 		Balance: () => {
 			enemyHealth *= 2;
 			enemyAttack *= 2.35;
+
+			/* const balance = game.challenges.Balance;
+			if (balance.balanceStacks < 250) {
+				const healthMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + 50));
+				trimpHealth /= balance.getHealthMult();
+				trimpHealth *= healthMult;
+			} */
 		},
 		Meditate: () => {
 			enemyHealth *= 2;
@@ -505,11 +529,18 @@ function simulate(saveData, zone) {
 	let difficulty = saveData.difficulty;
 	let mapSize = saveData.size;
 
-	const mapOwned = findMap(zone, saveData.special, saveData.biome);
-	if (mapOwned) {
-		const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
-		difficulty = map.difficulty;
-		mapSize = map.size;
+	if (typeof atSettings !== 'undefined') {
+		simulateMap = _simulateSliders(zone, saveData.special, saveData.mapBiome);
+		mapOwned = findMap(zone, saveData.special, saveData.mapBiome);
+		if (!mapOwned) mapOwned = findMap(zone, simulateMap.special, simulateMap.biome, simulateMap.perfect);
+		if (mapOwned) {
+			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+			difficulty = map.difficulty;
+			mapSize = map.size;
+		} else {
+			difficulty = getMapMinMax('difficulty', simulateMap.sliders.difficulty)[1];
+			mapSize = getMapMinMax('size', simulateMap.sliders.size)[1];
+		}
 	}
 
 	function armyDead() {
