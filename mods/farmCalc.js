@@ -519,9 +519,10 @@ function simulate(saveData, zone) {
 	let mapSize = saveData.size;
 
 	if (typeof atSettings !== 'undefined') {
+		const mapLevel = zone - game.global.world;
 		const simulateMap = _simulateSliders(zone, saveData.special, saveData.mapBiome);
-		let mapOwned = findMap(zone, saveData.special, saveData.mapBiome);
-		if (!mapOwned) mapOwned = findMap(zone, simulateMap.special, simulateMap.location, simulateMap.perfect);
+		let mapOwned = findMap(mapLevel, saveData.special, saveData.mapBiome);
+		if (!mapOwned) mapOwned = findMap(mapLevel, simulateMap.special, simulateMap.location, simulateMap.perfect);
 		if (mapOwned) {
 			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
 			difficulty = map.difficulty;
