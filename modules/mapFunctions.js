@@ -1238,7 +1238,7 @@ function prestigeClimb(lineCheck) {
 
 	if (shouldMap && game.global.universe === 1) {
 		const mapOwned = getEnoughHealthMap(mapLevel, mapSpecial, 'Random');
-		shouldMap = enoughHealth(mapOwned);
+		shouldMap = enoughHealth(mapOwned, 'avg');
 	}
 
 	if (lineCheck && shouldMap) return (setting = { priority: getPageSetting('prestigeClimbPriority') });
@@ -4047,7 +4047,7 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 		const minMapLevel = Math.max(mapLevel, mapBonusLevel);
 		const mapOwned = getEnoughHealthMap(minMapLevel, mapModifiers.special, mapModifiers.biome);
 
-		willSurvive = enoughHealth(mapOwned);
+		willSurvive = enoughHealth(mapOwned, 'avg');
 	}
 
 	const needPrestiges = prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0;
