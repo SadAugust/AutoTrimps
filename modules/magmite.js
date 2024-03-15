@@ -203,12 +203,12 @@ function calculateMaxTick() {
 }
 
 function calculateCurrentPop() {
-	var sum = [];
-	var ar1 = 1e10;
-	var ar2 = game.global.spiresCompleted >= 2 ? 1e9 : ar1;
-	var ar3 = game.global.spiresCompleted >= 3 ? 1e8 : ar2;
-	var ar4 = game.global.spiresCompleted >= 4 ? 1e7 : ar3;
-	var ar5 = game.global.spiresCompleted >= 5 ? 1e6 : ar4;
+	const sum = [];
+	const ar1 = 1e10;
+	const ar2 = game.global.spiresCompleted >= 2 ? 1e9 : ar1;
+	const ar3 = game.global.spiresCompleted >= 3 ? 1e8 : ar2;
+	const ar4 = game.global.spiresCompleted >= 4 ? 1e7 : ar3;
+	const ar5 = game.global.spiresCompleted >= 5 ? 1e6 : ar4;
 
 	let uncoords = 0,
 		uncoordsZone = -1,

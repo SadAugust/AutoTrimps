@@ -81,7 +81,6 @@ function _isTrappingOK(Battle, Coordination) {
 	const trapSettingsEnabled = getPageSetting('trapper') && getPageSetting('trapperTrap');
 	if (!trapSettingsEnabled) return true;
 
-	// TODO: Need a way to figure out how many coords it will purchase if using trapperCoordStyle === 2 since the goal with that feature is to cap army at X soliders so probably need to increment coordination until we reach that point
 	const trappaCoordToggle = getPageSetting('trapperCoordStyle');
 	const coordinated = getPerkLevel('Coordinated');
 
