@@ -3157,6 +3157,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	status += `<br> Maps:&nbsp; ${mapType}/${mapsRunCap === Infinity ? '∞' : mapsRunCap}`;
 	const repeat = mapType + 1 === mapsRunCap;
 
+	const mostEffEquip = mostEfficientEquipment();
+
 	Object.assign(farmingDetails, {
 		shouldRun: shouldMap,
 		mapName: mapName,
@@ -3176,7 +3178,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		settingIndex: settingIndex,
 		priority: setting.priority,
 		mapBonus: setting.repeat,
-		biome: needGymystic() ? 'Forest' : 'Any'
+		biome: needGymystic() || (mostEffEquip.attack.name === '' && mostEffEquip.health.name === '') ? 'Forest' : 'Any'
 	});
 
 	if (voidFarm) {
