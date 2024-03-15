@@ -3362,27 +3362,67 @@ function setMapSliders(pluslevel, special = '0', biome = getBiome(), mapSliders 
 }
 
 function _reduceMapSliders(special) {
-	while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) difficultyAdvMapsRange.value -= 1;
-	while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) lootAdvMapsRange.value -= 1;
+	const fragmentsOwned = game.resources.fragments.owned;
+
+	while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) difficultyAdvMapsRange.value -= 1;
+	while (lootAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) lootAdvMapsRange.value -= 1;
 
 	//Set biome to random if we have jestimps/caches we can run since size will be by far the most important that way
-	if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) document.getElementById('biomeAdvMapsSelect').value = 'Random';
-	if (updateMapCost(true) > game.resources.fragments.owned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) document.getElementById('advSpecialSelect').value = 0;
+	if (!trimpStats.mountainPriority && updateMapCost(true) > fragmentsOwned && !challengeActive('Metal')) document.getElementById('biomeAdvMapsSelect').value = 'Random';
+	if (updateMapCost(true) > fragmentsOwned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) document.getElementById('advSpecialSelect').value = 0;
 
-	while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) sizeAdvMapsRange.value -= 1;
-	if (updateMapCost(true) > game.resources.fragments.owned) document.getElementById('advSpecialSelect').value = 0;
-	if (trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
+	while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) sizeAdvMapsRange.value -= 1;
+	if (updateMapCost(true) > fragmentsOwned) document.getElementById('advSpecialSelect').value = 0;
+	if (trimpStats.mountainPriority && updateMapCost(true) > fragmentsOwned && !challengeActive('Metal')) {
 		document.getElementById('biomeAdvMapsSelect').value = 'Random';
 		updateMapCost();
 	}
 }
 
 function _reduceMapSlidersInsanity() {
-	while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) sizeAdvMapsRange.value -= 1;
-	if (!trimpStats.mountainPriority && updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) document.getElementById('biomeAdvMapsSelect').value = 'Random';
-	while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) lootAdvMapsRange.value -= 1;
-	while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) difficultyAdvMapsRange.value -= 1;
-	if (updateMapCost(true) > game.resources.fragments.owned) document.getElementById('advSpecialSelect').value = 0;
+	const fragmentsOwned = game.resources.fragments.owned;
+
+	while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) sizeAdvMapsRange.value -= 1;
+	if (!trimpStats.mountainPriority && updateMapCost(true) > fragmentsOwned && !challengeActive('Metal')) document.getElementById('biomeAdvMapsSelect').value = 'Random';
+	while (lootAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) lootAdvMapsRange.value -= 1;
+	while (difficultyAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) difficultyAdvMapsRange.value -= 1;
+	if (updateMapCost(true) > fragmentsOwned) document.getElementById('advSpecialSelect').value = 0;
+}
+
+function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome = getBiome(), sliders = [9, 9, 9], perfect = true) {
+	mapLevel = mapLevel - game.global.world;
+
+	const fragmentsOwned = game.resources.fragments.owned;
+
+	//Gradually reduce map sliders if not using frag max setting!
+	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) perfect = false;
+	//Reduce map difficulty
+	while (sliders[2] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[2] -= 1;
+	//Reduce map loot
+	while (sliders[0] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[0] -= 1;
+
+	if (!trimpStats.mountainPriority && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) biome = 'Random';
+	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) special = '0';
+
+	//Reduce map size
+	while (sliders[1] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[1] -= 1;
+
+	if (special !== '0' && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) special = '0';
+	if (biome !== 'Random' && trimpStats.mountainPriority && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) {
+		biome = 'Random';
+	}
+
+	return {
+		mapLevel,
+		special,
+		biome,
+		sliders: {
+			loot: sliders[0],
+			size: sliders[1],
+			difficulty: sliders[2]
+		},
+		perfect
+	};
 }
 
 function minMapFrag(level, specialModifier, biome, sliders = [9, 9, 9]) {

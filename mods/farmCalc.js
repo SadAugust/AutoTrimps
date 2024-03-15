@@ -11,6 +11,7 @@ function mastery(name) {
 function populateFarmCalcData() {
 	let imps = 0;
 	for (let imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp']) imps += game.unlocks.imps[imp];
+
 	if (game.talents.magimp.purchased) imps++;
 	let exoticChance = 3;
 	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
@@ -41,11 +42,11 @@ function populateFarmCalcData() {
 
 	//Map Modifiers (for the map we're on)
 	const biome = getBiome();
-	const perfectMapsUnlocked = typeof atSettings !== 'undefined' ? trimpStats.perfectMaps : universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
+	const perfectMaps = typeof atSettings !== 'undefined' ? trimpStats.perfectMaps && getPageSetting('onlyPerfectMaps') : universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
 	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 50 : hze >= 210;
 	const haveMapReducer = game.talents.mapLoot.purchased;
 	// Six hours simulation inside of TW and a day outside of it.
-	const maxTicks = typeof atSettings !== 'undefined' ? (atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400) : 86400;
+	const maxTicks = typeof atSettings !== 'undefined' && atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400;
 
 	//Stance & Equality
 	let stances = 'X';
@@ -138,6 +139,18 @@ function populateFarmCalcData() {
 		Balance: () => {
 			enemyHealth *= 2;
 			enemyAttack *= 2.35;
+
+			if (!game.global.mapsActive && !game.global.preMapsActive && typeof atSettings !== 'undefined') {
+				const balance = game.challenges.Balance;
+				if (balance.balanceStacks < 250) {
+					const timer = atSettings.loops.atTimeLapseFastLoop ? 30 : 5;
+					const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
+
+					const healthMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
+					trimpHealth /= balance.getHealthMult();
+					trimpHealth *= healthMult;
+				}
+			}
 		},
 		Meditate: () => {
 			enemyHealth *= 2;
@@ -311,14 +324,13 @@ function populateFarmCalcData() {
 		//Extra Map Info
 		extraMapLevelsAvailable: extraMapLevelsAvailable,
 		reducer: haveMapReducer,
-		perfectMaps: perfectMapsUnlocked,
 		biome: _getBiomeEnemyStats(biome),
 		fragments: game.resources.fragments.owned,
 		mapSpecial: getAvailableSpecials('lmc'),
 		mapBiome: biome,
 
-		difficulty: ((perfectMapsUnlocked ? 75 : 80) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
-		size: mastery('mapLoot2') ? 20 : perfectMapsUnlocked ? 25 : 27,
+		difficulty: game.resources.fragments.owned < mapCost() && game.jobs.Explorer.locked ? 1.1 : ((perfectMaps ? 75 : 84) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
+		size: mastery('mapLoot2') ? (perfectMaps ? 23 : 20) : perfectMaps ? 25 : 27,
 
 		//Nature
 		poison: 0,
@@ -503,6 +515,23 @@ function simulate(saveData, zone) {
 		return seed * rand_mult;
 	}
 
+	let difficulty = saveData.difficulty;
+	let mapSize = saveData.size;
+
+	if (typeof atSettings !== 'undefined') {
+		simulateMap = _simulateSliders(zone, saveData.special, saveData.mapBiome);
+		mapOwned = findMap(zone, saveData.special, saveData.mapBiome);
+		if (!mapOwned) mapOwned = findMap(zone, simulateMap.special, simulateMap.biome, simulateMap.perfect);
+		if (mapOwned) {
+			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+			difficulty = map.difficulty;
+			mapSize = map.size;
+		} else {
+			difficulty = getMapMinMax('difficulty', simulateMap.sliders.difficulty)[1];
+			mapSize = getMapMinMax('size', simulateMap.sliders.size)[1];
+		}
+	}
+
 	function armyDead() {
 		if (saveData.shieldBreak) return energyShield <= 0;
 		return trimpHealth <= 0;
@@ -513,7 +542,7 @@ function simulate(saveData, zone) {
 	if (universe === 2) {
 		const enemyName = saveData.insanity ? 'Horrimp' : 'Snimp';
 		if (saveData.insanity) biomeImps.push([15, 60, true]);
-		equality = equalityQuery(enemyName, zone, saveData.size, 'map', saveData.difficulty);
+		equality = equalityQuery(enemyName, zone, mapSize, 'map', difficulty);
 	}
 	const equalityPower = Math.pow(0.9, equality);
 
@@ -531,18 +560,18 @@ function simulate(saveData, zone) {
 		}
 
 		if (saveData.domination) {
-			const modifier = cell === saveData.size ? 2.5 : 0.1;
+			const modifier = cell === mapSize ? 2.5 : 0.1;
 			enemyAttack *= modifier;
 			enemyHealth *= modifier;
 		}
 
 		return {
-			attack: saveData.difficulty * saveData.challenge_attack * enemyAttack,
-			health: saveData.difficulty * saveData.challenge_health * enemyHealth
+			attack: difficulty * saveData.challenge_attack * enemyAttack,
+			health: difficulty * saveData.challenge_health * enemyHealth
 		};
 	};
 
-	const mapArray = Array.from({ length: saveData.size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
+	const mapArray = Array.from({ length: mapSize }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
 
 	function reduceTrimpHealth(amt, directHit) {
 		if (saveData.mayhem) mayhemPoison += amt * 0.2;
@@ -769,7 +798,7 @@ function simulate(saveData, zone) {
 		}
 		++cell;
 		++kills;
-		if (cell >= saveData.size) {
+		if (cell >= mapSize) {
 			cell = 0;
 			plague_damage = 0;
 			ok_damage = 0;
