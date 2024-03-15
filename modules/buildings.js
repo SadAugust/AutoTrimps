@@ -248,7 +248,9 @@ function _buyStorage(hypoZone) {
 		Shed: 'wood',
 		Forge: 'metal'
 	};
+
 	const map = getCurrentMapObject();
+
 	for (const [storage, resource] of Object.entries(buildings)) {
 		if (storage === 'Shed' && hypoZone > game.global.world) continue;
 		const curRes = game.resources[resource].owned;
@@ -261,6 +263,7 @@ function _buyStorage(hypoZone) {
 
 		// Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
 		let exoticValue = 0;
+
 		if (game.global.mapsActive) {
 			if (map.name === getAncientTreasureName()) exoticValue = curRes;
 			else {
@@ -272,7 +275,10 @@ function _buyStorage(hypoZone) {
 		const firstZoneCheck = game.global.world === 1 && curRes > maxRes;
 		const tenZonesCheck = game.global.world >= 2 && game.global.world < 10 && curRes > maxRes;
 		const mapsUnlockedCheck = curRes + exoticValue > maxRes;
-		if ((firstZoneCheck || tenZonesCheck || mapsUnlockedCheck) && game.triggers[storage].done) safeBuyBuilding(storage, 1);
+
+		if ((firstZoneCheck || tenZonesCheck || mapsUnlockedCheck) && game.triggers[storage].done) {
+			safeBuyBuilding(storage, 1);
+		}
 	}
 }
 

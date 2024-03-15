@@ -2250,7 +2250,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>The zone you'd like to swap to your afterpush shield during Frigid.</p>";
 				description += "<p>This overrides the " + _getChallenge2Info() + " heirloom swap setting input when set above <b>0</b>.</p>";
-				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (getPageSetting('frigid', currSettingUniverse) && autoTrimpSettings.frigid.require()) });

@@ -2689,7 +2689,7 @@ function _getDesolationMapLevel(trimpHealth, mapName, mapSpecial, sliders) {
 		mapLevel = y;
 		if (game.global.mapsActive && mapSettings.mapName === mapName && (getCurrentMapObject().bonus === undefined ? '0' : getCurrentMapObject().bonus) === mapSpecial && getCurrentMapObject().level - game.global.world === mapLevel) break;
 		if (mapLevel === 0) break;
-		if (game.resources.fragments.owned < minMapFrag(mapLevel, mapSpecial, 'Random', sliders)) continue;
+		if (game.resources.fragments.owned < mapCostMin(mapLevel, mapSpecial, 'Random', sliders)) continue;
 		const enemyDmg = calcEnemyAttackCore('map', game.global.world + y, 1, 'Snimp', false, false, game.portal.Equality.radLevel) * 0.84 * 4;
 		if (enemyDmg > trimpHealth) continue;
 		break;
@@ -3189,7 +3189,6 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 }
 
 function farmingDecision() {
-	//Setting up addon user settings.
 	setupAddonUser();
 	let farmingDetails = {
 		shouldRun: false,
@@ -3281,7 +3280,6 @@ function farmingDecision() {
 	mapSettings = farmingDetails;
 }
 
-//I have no idea where loot > drops, hopefully somebody can tell me one day :)
 function getBiome(mapGoal, resourceGoal) {
 	const dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220) || challengeActive('Metal');
 	if (dropBased && !resourceGoal && challengeActive('Metal')) resourceGoal = 'Mountain';
@@ -3413,30 +3411,16 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 	}
 
 	return {
+		name: 'simulatedMap',
+		level: mapLevel + game.global.world,
 		mapLevel,
 		special,
-		biome,
-		sliders: {
-			loot: sliders[0],
-			size: sliders[1],
-			difficulty: sliders[2]
-		},
+		location: biome,
+		loot: sliders[0],
+		size: sliders[1],
+		difficulty: sliders[2],
 		perfect
 	};
-}
-
-function minMapFrag(level, specialModifier, biome, sliders = [9, 9, 9]) {
-	const perfect = game.resources.fragments.owned >= mapCost(level, specialModifier, biome);
-
-	if (!perfect) {
-		while (sliders[0] > 0 && sliders[2] > 0 && mapCost(level, specialModifier, biome, sliders, perfect) > game.resources.fragments.owned) {
-			sliders[0]--;
-			if (mapCost(level, specialModifier, biome, sliders, perfect) <= game.resources.fragments.owned) break;
-			sliders[2]--;
-		}
-	}
-
-	return mapCost(level, specialModifier, biome, sliders, perfect);
 }
 
 function mapCost(plusLevel = 0, specialModifier = getAvailableSpecials('lmc'), biome = getBiome(), sliders = [9, 9, 9], perfect = true) {
@@ -3453,6 +3437,20 @@ function mapCost(plusLevel = 0, specialModifier = getAvailableSpecials('lmc'), b
 	baseCost *= biome !== 'Random' ? 2 : 1;
 
 	return baseCost;
+}
+
+function mapCostMin(level, specialModifier, biome, sliders = [9, 9, 9]) {
+	const perfect = game.resources.fragments.owned >= mapCost(level, specialModifier, biome);
+
+	if (!perfect) {
+		while (sliders[0] > 0 && sliders[2] > 0 && mapCost(level, specialModifier, biome, sliders, perfect) > game.resources.fragments.owned) {
+			sliders[0]--;
+			if (mapCost(level, specialModifier, biome, sliders, perfect) <= game.resources.fragments.owned) break;
+			sliders[2]--;
+		}
+	}
+
+	return mapCost(level, specialModifier, biome, sliders, perfect);
 }
 
 function shouldSkipSetting(currSetting, world, settingName, dailyAddition) {
@@ -3615,7 +3613,6 @@ function resetMapVars(setting, settingName) {
 	saveSettings();
 }
 
-//Prints out information relating to the mapSettings object to let the user know which setting was run on which zone, cell, how long it took etc
 function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	const mapType = mapName.includes('Destack') ? 'map_Destacking' : 'map_Details';
 	if (!getPageSetting('spamMessages')[mapType]) return;
@@ -3946,8 +3943,14 @@ function slowScum(slowTarget) {
 	debug(msg, 'mapping_Details');
 }
 
+/* Auto Level */
 function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
 	if (getPageSetting('autoLevelTest')) return callAutoMapLevel_new(mapName, special);
+
+	const mapModifiers = {
+		special: special || trimpStats.mapSpecial,
+		biome: mapSettings.biome || trimpStats.mapBiome
+	};
 
 	let mapLevel = mapSettings.levelCheck;
 	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
@@ -3963,7 +3966,7 @@ function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
 
 	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
 
-	mapLevel = autoLevelOverides(mapName, mapLevel);
+	mapLevel = autoLevelOverides(mapName, mapLevel, mapModifiers);
 	return mapLevel;
 }
 
@@ -3977,8 +3980,8 @@ function callAutoMapLevel_new(mapName, special) {
 	};
 
 	if (hdStats.autoLevelZone !== game.global.world) {
-		hdStats.autoLevelZone = game.global.world;
 		hdStats.autoLevelInitial = stats(lootFunction);
+		hdStats.autoLevelZone = game.global.world;
 	}
 
 	let mapLevel = mapSettings.levelCheck;
@@ -4000,19 +4003,41 @@ function callAutoMapLevel_new(mapName, special) {
 	}
 
 	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
-	mapLevel = autoLevelOverides(mapName, mapLevel);
+	mapLevel = autoLevelOverides(mapName, mapLevel, mapModifiers);
 	return mapLevel;
 }
 
-function autoLevelOverides(mapName, mapLevel) {
+function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
 	const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
 	``;
 
+	let willSurvive = true;
+	if (game.global.universe === 1) {
+		const minMapLevel = Math.max(mapLevel, mapBonusLevel) + game.global.world;
+		const simulateMap = _simulateSliders(minMapLevel, mapModifiers.special, mapModifiers.biome);
+		mapOwned = findMap(minMapLevel, mapModifiers.special, mapModifiers.biome);
+		if (!mapOwned) mapOwned = findMap(minMapLevel, simulateMap.special, simulateMap.biome, simulateMap.perfect);
+
+		if (mapOwned) {
+			mapOwned = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+		} else {
+			const perfect = simulateMap.perfect;
+			const difficulty = getMapMinMax('difficulty', simulateMap.difficulty);
+			const size = getMapMinMax('size', simulateMap.size);
+			simulateMap.difficulty = difficulty[perfect ? 0 : 1];
+			simulateMap.mapSize = size[perfect ? 0 : 1];
+
+			mapOwned = simulateMap;
+		}
+
+		willSurvive = enoughHealth(mapOwned);
+	}
+
 	const needPrestiges = prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0;
 	const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapLevel > (mapBonusMinSetting > 0 ? -mapBonusMinSetting - Math.abs(mapBonusLevel) : mapLevel - 1);
 	const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && getCurrentMapObject().level >= mapBonusLevel;
-	const mapBonusMinLevel = (needPrestiges || aboveMinMapLevel) && !willCapMapBonus;
+	const mapBonusMinLevel = (needPrestiges || aboveMinMapLevel) && !willCapMapBonus && willSurvive;
 	const canAffordMap = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
 
 	const mapBonusConditions = [
@@ -4087,7 +4112,7 @@ function autoMapLevel(special = getAvailableSpecials('lmc'), maxLevel, minLevel,
 		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
 		if (runningInsanity && mapLevel > 0) enemyName = 'Horrimp';
 		if (!statCheck && perfectMaps && game.resources.fragments.owned < mapCost(mapLevel, special, biome)) continue;
-		if (!statCheck && !perfectMaps && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome)) continue;
+		if (!statCheck && !perfectMaps && game.resources.fragments.owned < mapCostMin(mapLevel, special, biome)) continue;
 
 		if (game.global.universe === 2) universeSetting = equalityQuery(enemyName, z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
 		let ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, y, 'force');

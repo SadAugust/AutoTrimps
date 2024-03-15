@@ -1273,7 +1273,7 @@ function updateBalanceStacks() {
 
 	const isUnbalanceActive = challengeActive('Unbalance');
 	const challenge = isUnbalanceActive ? game.challenges.Unbalance : game.challenges.Balance;
-	const statFunction = isUnbalanceActive ? challenge.getAttackMult : challenge.getHealthMult;
+	const statFunction = isUnbalanceActive ? challenge.getAttackMult.bind(challenge) : challenge.getHealthMult.bind(challenge);
 	const statMessage = isUnbalanceActive ? 'less attack' : 'less health';
 
 	if (challenge.balanceStacks > 0) {

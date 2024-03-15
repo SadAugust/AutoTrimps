@@ -16,9 +16,8 @@ function boneShrine(lineCheck) {
 	if (boneShrineAncientTreasure) _runUniqueMap(ancientTreasure);
 
 	const map = getCurrentMapObject();
+
 	if (!boneShrineAncientTreasure || (game.global.mapsActive && map.name === ancientTreasure && game.global.lastClearedMapCell >= map.size - 30)) {
-		// Use bone charges
-		// Equip staff for the gather type the user is using
 		const gatherStaff = 'heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1);
 		if (getPageSetting(gatherStaff) !== 'undefined') heirloomEquip(gatherStaff, 'Staff');
 		else heirloomEquip('heirloomStaffMap', 'Staff');
@@ -41,7 +40,7 @@ function boneShrine(lineCheck) {
 
 function _getBoneShrineSetting(baseSettings, defaultSetting) {
 	const boneCharges = game.permaBoneBonuses.boosts.charges;
-	// If we have enough bone charges then spend them automatically to stop from capping
+
 	if (defaultSetting.autoBone && boneCharges >= defaultSetting.bonebelow && game.global.world >= defaultSetting.world) {
 		if (defaultSetting.bonebelow <= 0) defaultSetting.bonebelow = 999;
 		defaultSetting.atlantrimp = false;

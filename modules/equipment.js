@@ -291,6 +291,7 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 		if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 		if (mapSettings.mapName === 'Wither Farm' || mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 	}
+
 	if (farmType === 'health' || farmType === 'block') {
 		if (whichHitsSurvived() < getPageSetting('equipCutOffHS') || mapSettings.shouldHealthFarm) return zoneDetails;
 		if ((mapSettings.mapName === 'Smithless Farm' || mapSettings.mapName === 'Wither Farm') && mapSettings.equality > 0) return zoneDetails;
@@ -317,14 +318,15 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 }
 
 function autoEquip() {
-	const { Miners, Efficiency, Coordination, TrainTacular } = game.upgrades;
 	if (!getPageSetting('equipOn')) return;
+	const { Miners, Efficiency, Coordination, TrainTacular } = game.upgrades;
 
 	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
 		if ([Efficiency, Coordination, TrainTacular].some((up) => shouldSaveForSpeedUpgrade(up))) return;
 		if (!Miners.done && !challengeActive('Metal')) return;
 	}
+
 	//If running a wood or metal quest then disable autoequip
 	if ([2, 3].includes(getCurrentQuest())) return;
 	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
@@ -381,17 +383,16 @@ function buyEquipsAlways2() {
 	const alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && !mapSettings.pandaEquips && getPageSetting('pandemoniumAE') > 0;
 	if (!alwaysLvl2 && !alwaysPandemonium) return false;
 
+	let equipLeft = false;
 	const saveResources = {
 		metal: _shouldSaveResource('metal'),
 		wood: _shouldSaveResource('wood')
 	};
-	let equipLeft = false;
 
 	for (let equip in game.equipment) {
 		if (!game.equipment[equip].locked) {
 			if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
 			if (trimpStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
-
 			if (saveResources[MODULES.equipment[equip].resource]) continue;
 
 			if (alwaysLvl2 && game.equipment[equip].level < 2) {
@@ -401,8 +402,8 @@ function buyEquipsAlways2() {
 
 			if (alwaysPandemonium) {
 				buyEquipment(equip, true, true, 1);
-				equipLeft = true;
 				debug(`Upgrading 1 ${equip}`, `equipment`, `*upload3`);
+				equipLeft = true;
 			}
 		}
 	}
@@ -452,8 +453,8 @@ function buyEquips() {
 }
 
 function displayMostEfficientEquipment(forceUpdate = false) {
-	if (!getPageSetting('equipEfficientEquipDisplay')) return;
 	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
+	if (!getPageSetting('equipEfficientEquipDisplay')) return;
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
 
 	const bestBuys = mostEfficientEquipment(1, undefined, true);
@@ -465,6 +466,7 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 		const equipType = MODULES.equipment[item].stat;
 		const prestigeElement = document.getElementById(prestigeName);
 		let itemElement = document.getElementById(item);
+
 		//Looking at the prestiges for each item to see if it's available and if so then add the efficient class to it
 		if (game.upgrades[prestigeName].locked === 0 && prestigeElement) {
 			//If the prestige doesn't have the efficient class then add it

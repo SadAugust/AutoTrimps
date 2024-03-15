@@ -76,37 +76,28 @@ function getPotencyMod() {
 function _getPotencyMod() {
 	let potencyMod = game.resources.trimps.potency;
 
-	// Potency, Nurseries, Venimp, Broken Planet
 	if (game.upgrades.Potency.done > 0) potencyMod *= Math.pow(1.1, game.upgrades.Potency.done);
 	if (game.buildings.Nursery.owned > 0) potencyMod *= Math.pow(1.01, game.buildings.Nursery.owned);
 	if (game.unlocks.impCount.Venimp > 0) potencyMod *= Math.pow(1.003, game.unlocks.impCount.Venimp);
 	if (game.global.brokenPlanet) potencyMod /= 10;
 
-	// Pheromones
 	potencyMod *= 1 + getPerkLevel('Pheromones') * getPerkModifier('Pheromones');
 
-	// Quick Trimps
 	if (game.singleRunBonuses.quickTrimps.owned) potencyMod *= 2;
 
-	// Dailies
 	if (challengeActive('Daily')) {
-		// Dysfunctional
 		if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined') potencyMod *= dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength);
 
-		// Toxic
 		if (typeof game.global.dailyChallenge.toxic !== 'undefined') potencyMod *= dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks);
 	}
 
-	// Toxicity
 	if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0) potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks);
 
-	// Void Maps (Slow Breed)
 	if (game.global.voidBuff === 'slowBreed') potencyMod *= 0.2;
 
 	// Heirlooms
 	potencyMod = calcHeirloomBonus('Shield', 'breedSpeed', potencyMod);
 
-	// Geneticists
 	if (game.jobs.Geneticist.owned > 0) potencyMod *= Math.pow(0.98, game.jobs.Geneticist.owned);
 
 	if (game.global.universe === 2) {
@@ -146,6 +137,7 @@ function breedTimeRemaining() {
 
 	const breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEmployed);
 	if (breeding <= 0) return new DecimalBreed(Infinity);
+
 	const maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEmployed);
 	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
 }
@@ -188,7 +180,7 @@ function geneAssist() {
 }
 
 function _shouldRunGeneAssist() {
-	if (!getPageSetting('geneAssist') | game.jobs.Geneticist.locked | challengeActive('Trapper') | (getPageSetting('geneAssistTimer') <= 0) | (getPageSetting('geneAssistPercent') <= 0)) return false;
+	if (game.jobs.Geneticist.locked | !getPageSetting('geneAssist') | challengeActive('Trapper') | (getPageSetting('geneAssistTimer') <= 0) | (getPageSetting('geneAssistPercent') <= 0)) return false;
 	return true;
 }
 
@@ -196,7 +188,7 @@ function _getTargetTimer() {
 	const angelic = mastery('angelic');
 	const runningElectricity = challengeActive('Electricity') || challengeActive('Mapocalypse');
 	let runningHard;
-	if (challengeActive('Daily')) runningHard = (!angelic && typeof game.global.dailyChallenge.bogged !== 'undefined') || typeof game.global.dailyChallenge.plague !== 'undefined';
+	if (trimpStats.isDaily) runningHard = (!angelic && typeof game.global.dailyChallenge.bogged !== 'undefined') || typeof game.global.dailyChallenge.plague !== 'undefined';
 	else runningHard = !angelic && (challengeActive('Nom') || challengeActive('Toxicity') || challengeActive('Lead'));
 
 	const settingPrefix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' : trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' : '';

@@ -521,14 +521,16 @@ function simulate(saveData, zone) {
 	if (typeof atSettings !== 'undefined') {
 		simulateMap = _simulateSliders(zone, saveData.special, saveData.mapBiome);
 		mapOwned = findMap(zone, saveData.special, saveData.mapBiome);
-		if (!mapOwned) mapOwned = findMap(zone, simulateMap.special, simulateMap.biome, simulateMap.perfect);
+		if (!mapOwned) mapOwned = findMap(zone, simulateMap.special, simulateMap.location, simulateMap.perfect);
 		if (mapOwned) {
 			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
 			difficulty = map.difficulty;
 			mapSize = map.size;
 		} else {
-			difficulty = getMapMinMax('difficulty', simulateMap.sliders.difficulty)[1];
-			mapSize = getMapMinMax('size', simulateMap.sliders.size)[1];
+			const difficultyValues = getMapMinMax('difficulty', simulateMap.difficulty);
+			const sizeValues = getMapMinMax('size', simulateMap.size);
+			difficulty = difficultyValues[simulateMap.perfect ? 0 : 1];
+			mapSize = sizeValues[simulateMap.perfect ? 0 : 1];
 		}
 	}
 
@@ -841,7 +843,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			}
 			if (!fragSetting) {
 				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
-				if (game.resources.fragments.owned >= minMapFrag(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+				if (game.resources.fragments.owned >= mapCostMin(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
 			stats.splice(i, 1);
 			i--;
