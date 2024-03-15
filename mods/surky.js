@@ -947,7 +947,7 @@ function getPerkEfficiencies(props, perks) {
 	// Get various gain factors needed to calculate the value of trinkets (and also used to value their respective perks).
 	//  Motivation
 	const motiv = 1 + perks.Motivation.level * perks.Motivation.effect;
-	const motivGain = (motiv + perks.Motivation.effect) / motiv;
+	let motivGain = (motiv + perks.Motivation.effect) / motiv;
 	// trappa is heavily drop-based prior to 160, and mostly gathering based after 170
 	if (props.specialChallenge === 'trappa') {
 		if (props.targetZone < 162) {
