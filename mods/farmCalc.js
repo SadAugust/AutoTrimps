@@ -519,18 +519,16 @@ function simulate(saveData, zone) {
 	let mapSize = saveData.size;
 
 	if (typeof atSettings !== 'undefined') {
-		simulateMap = _simulateSliders(zone, saveData.special, saveData.mapBiome);
-		mapOwned = findMap(zone, saveData.special, saveData.mapBiome);
+		const simulateMap = _simulateSliders(zone, saveData.special, saveData.mapBiome);
+		let mapOwned = findMap(zone, saveData.special, saveData.mapBiome);
 		if (!mapOwned) mapOwned = findMap(zone, simulateMap.special, simulateMap.location, simulateMap.perfect);
 		if (mapOwned) {
 			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
 			difficulty = map.difficulty;
 			mapSize = map.size;
 		} else {
-			const difficultyValues = getMapMinMax('difficulty', simulateMap.difficulty);
-			const sizeValues = getMapMinMax('size', simulateMap.size);
-			difficulty = difficultyValues[simulateMap.perfect ? 0 : 1];
-			mapSize = sizeValues[simulateMap.perfect ? 0 : 1];
+			difficulty = simulateMap.difficulty;
+			mapSize = simulateMap.size;
 		}
 	}
 
@@ -836,14 +834,18 @@ function get_best(results, fragmentCheck, mapModifiers) {
 
 		const fragSetting = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
 
+		const fragments = game.resources.fragments.owned;
 		for (let i = 0; i <= stats.length - 1; i++) {
 			if (fragSetting) {
 				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
-				if (game.resources.fragments.owned >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
+
 			if (!fragSetting) {
 				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
-				if (game.resources.fragments.owned >= mapCostMin(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+				const simulatedSliders = _simulateSliders(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome);
+				const { loot, size, difficulty } = simulatedSliders.sliders;
+				if (fragments >= mapCost(simulatedSliders.mapLevel, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;
 			}
 			stats.splice(i, 1);
 			i--;
