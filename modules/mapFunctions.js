@@ -1206,10 +1206,12 @@ function prestigeClimb(lineCheck) {
 	const runningMapology = challengeActive('Mapology') && getPageSetting('mapology');
 	let targetPrestige = runningMapology ? getPageSetting('mapologyPrestige') : getPageSetting('prestigeClimb');
 	if (targetPrestige === 'Off') return farmingDetails;
+
 	if (game.jobs.Explorer.locked) {
 		farmingDetails.biome = 'Random';
 		farmingDetails.mapSliders = [0, 9, 9];
 	}
+
 	//If we're past the zone we want to farm for all prestiges in then set targetPrestige to the highest prestige available.
 	//equipsToGet will automatically change GambesOP to Breastplate if the Slow challenge has not yet been completed.
 	if (!runningMapology && getPageSetting('prestigeClimbZone') >= 0 && game.global.world >= getPageSetting('prestigeClimbZone')) {
@@ -1232,6 +1234,11 @@ function prestigeClimb(lineCheck) {
 	const worldMapCost = mapCost(mapLevel, mapSpecial, null, [0, 0, 0], false);
 	if (worldMapCost > game.resources.fragments.owned && (!game.global.mapsActive || (mapObject && mapObject.level < game.global.world + mapLevel))) {
 		shouldMap = false;
+	}
+
+	if (shouldMap && game.global.universe === 1) {
+		const mapOwned = getEnoughHealthMap(mapLevel, mapSpecial, 'Random');
+		shouldMap = enoughHealth(mapOwned);
 	}
 
 	if (lineCheck && shouldMap) return (setting = { priority: getPageSetting('prestigeClimbPriority') });
@@ -3409,15 +3416,24 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 		biome = 'Random';
 	}
 
+	const lootValues = getMapMinMax('loot', sliders[0])[perfect ? 0 : 1];
+	const sizeValues = getMapMinMax('size', sliders[1])[perfect ? 0 : 1];
+	const difficultyValues = getMapMinMax('difficulty', sliders[2])[perfect ? 0 : 1];
+
 	return {
 		name: 'simulatedMap',
 		level: mapLevel + game.global.world,
 		mapLevel,
 		special,
 		location: biome,
-		loot: sliders[0],
-		size: sliders[1],
-		difficulty: sliders[2],
+		loot: lootValues,
+		size: sizeValues,
+		difficulty: difficultyValues,
+		sliders: {
+			loot: sliders[0],
+			size: sliders[1],
+			difficulty: sliders[2]
+		},
 		perfect
 	};
 }
@@ -4006,6 +4022,21 @@ function callAutoMapLevel_new(mapName, special) {
 	return mapLevel;
 }
 
+function getEnoughHealthMap(mapLevel, special, biome) {
+	const minMapLevel = mapLevel + game.global.world;
+	const simulateMap = _simulateSliders(minMapLevel, special, biome);
+	let mapOwned = findMap(minMapLevel, special, biome);
+	if (!mapOwned) mapOwned = findMap(minMapLevel, simulateMap.special, simulateMap.biome, simulateMap.perfect);
+
+	if (mapOwned) {
+		mapOwned = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+	} else {
+		mapOwned = simulateMap;
+	}
+
+	return mapOwned;
+}
+
 function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
 	const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
@@ -4013,22 +4044,8 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 
 	let willSurvive = true;
 	if (game.global.universe === 1) {
-		const minMapLevel = Math.max(mapLevel, mapBonusLevel) + game.global.world;
-		const simulateMap = _simulateSliders(minMapLevel, mapModifiers.special, mapModifiers.biome);
-		mapOwned = findMap(minMapLevel, mapModifiers.special, mapModifiers.biome);
-		if (!mapOwned) mapOwned = findMap(minMapLevel, simulateMap.special, simulateMap.biome, simulateMap.perfect);
-
-		if (mapOwned) {
-			mapOwned = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
-		} else {
-			const perfect = simulateMap.perfect;
-			const difficulty = getMapMinMax('difficulty', simulateMap.difficulty);
-			const size = getMapMinMax('size', simulateMap.size);
-			simulateMap.difficulty = difficulty[perfect ? 0 : 1];
-			simulateMap.mapSize = size[perfect ? 0 : 1];
-
-			mapOwned = simulateMap;
-		}
+		const minMapLevel = Math.max(mapLevel, mapBonusLevel);
+		const mapOwned = getEnoughHealthMap(minMapLevel, mapModifiers.special, mapModifiers.biome);
 
 		willSurvive = enoughHealth(mapOwned);
 	}
