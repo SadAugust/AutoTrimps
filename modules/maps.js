@@ -151,6 +151,7 @@ function makeResourceTooltip(mouseover) {
 }
 
 function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBiome(), perfect = getPageSetting('onlyPerfectMaps')) {
+	let sendTricky = false;
 	let mapLoot = biome === 'Farmlands' ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
 	if (game.singleRunBonuses.goldMaps.owned) mapLoot += 1;
 
@@ -166,10 +167,11 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 		if (game.global.world + level !== map.level) continue;
 		if (map.bonus !== special && special !== '0') continue;
 		if (map.noRecycle) continue;
-		return map.id;
+		if (map.name === 'Tricky Paradise') sendTricky = map.id;
+		else return map.id;
 	}
 
-	return false;
+	return sendTricky;
 }
 
 //Looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one
