@@ -21,8 +21,8 @@ function isDoingSpire() {
 	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 	const spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
 	if (spireNo <= 0) return true;
-	const spireZone = (1 + spireNo) * 100;
 
+	const spireZone = (1 + spireNo) * 100;
 	return game.global.world >= spireZone;
 }
 
@@ -60,7 +60,7 @@ function fluffyEvolution() {
 	if (game.global.universe !== 1 || Fluffy.currentLevel !== 10 || game.global.fluffyPrestige === 10 || !getPageSetting('fluffyEvolve')) return;
 	if (game.global.world < getPageSetting('fluffyMinZone')) return;
 	if (game.global.world > getPageSetting('fluffyMaxZone')) return;
-	//Only evolve if you can afford all the bone portals that you want to purchase at the start of your next evolution
+
 	const bpsToUse = getPageSetting('fluffyBP');
 	if (bpsToUse > 0 && game.global.b % 100 < bpsToUse) return;
 
@@ -1159,6 +1159,7 @@ function updateATVersion() {
 		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(false, true);
 		else verticalCenterTooltip(false, true);
 	}
+
 	updateAutoTrimpSettings(true);
 	saveSettings();
 }

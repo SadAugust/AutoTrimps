@@ -42,7 +42,6 @@ class HDStats {
 		this.autoLevelSpeed = hdStats.autoLevelSpeed;
 
 		const { world, universe } = game.global;
-
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
 		const autoLevel = whichAutoLevel();
 

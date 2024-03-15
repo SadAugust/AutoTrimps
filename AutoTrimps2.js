@@ -324,15 +324,15 @@ function mainLoop() {
 	universeSwapped();
 
 	if (!atSettings.running || getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
-	atSettings.running = true;
+
 	const runDuringTimeWarp = shouldRunInTimeWarp();
 	if (runDuringTimeWarp) updateInterval();
 
 	_handleIntervals();
 
 	if (runDuringTimeWarp) {
-		farmingDecision();
 		mainCleanup();
+		farmingDecision();
 	}
 
 	if (_handleSlowScumming()) return;

@@ -210,18 +210,19 @@ function _willTrapsBeWasted() {
 	const gteTime = breedTimer >= 1 / _calcTPS();
 	const lteTime = game.global.playerGathering === 'trimps' && breedTimer <= 0.1;
 	const excessBait = _trapSize() >= game.resources.trimps.realMax() - game.resources.trimps.owned;
+
 	return excessBait || !(gteTime || lteTime);
 }
 
 function _lastResort(researchAvailable, trapTrimpsOK, needScience) {
+	let lowestResource = 'food';
+	let lowestResourceRate = -1;
 	const manualResourceList = {
 		food: 'Farmer',
 		wood: 'Lumberjack',
 		metal: 'Miner'
 	};
 
-	let lowestResource = 'food';
-	let lowestResourceRate = -1;
 	for (const resource in manualResourceList) {
 		const job = manualResourceList[resource];
 		let currentRate = game.jobs[job].owned * game.jobs[job].modifier;
