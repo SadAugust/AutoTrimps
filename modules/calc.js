@@ -1285,7 +1285,7 @@ function remainingHealth(shieldBreak = false, angelic = false, worldType = 'worl
 	return shieldHealth + soldierHealth;
 }
 
-function enoughHealth(map) {
+function enoughHealth(map, minAvgMax = 'max') {
 	const { name, location, level, size, difficulty } = map;
 	const health = calcOurHealth(false, 'map', false, true);
 	const block = calcOurBlock(false, false);
@@ -1296,7 +1296,12 @@ function enoughHealth(map) {
 	const worldType = location === 'Void' ? 'void' : 'map';
 	const mapLevel = name === 'The Black Bog' ? game.global.world : level;
 	const equalityAmt = game.global.universe === 2 ? equalityQuery(enemyName, mapLevel, size, 'map', difficulty, 'gamma') : 0;
-	const enemyDmg = calcEnemyAttackCore(worldType, mapLevel, size, enemyName, false, false, equalityAmt) * difficulty;
+	const fluctuation = game.global.universe === 2 ? 1.5 : 1.2;
+
+	let enemyDmg = calcEnemyAttackCore(worldType, mapLevel, size, enemyName, false, false, equalityAmt) * difficulty;
+	if (minAvgMax !== 'max') {
+		enemyDmg /= fluctuation * (minAvgMax === 'min' ? fluctuation : 1);
+	}
 
 	return totalHealth > enemyDmg;
 }

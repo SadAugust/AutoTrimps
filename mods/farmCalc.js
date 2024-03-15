@@ -352,7 +352,7 @@ function populateFarmCalcData() {
 		gammaCharges: gammaCharges,
 		gammaMult: gammaMult,
 		range: maxFluct / minFluct - 1,
-		plaguebringer: (plaguebrought ? 0.5 : 0) + (typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
+		plaguebringer: (plaguebrought === 2 ? 0.5 : 0) + (typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
 		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
 		//Enemy Stats
 		challenge_health: enemyHealth,
