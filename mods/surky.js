@@ -426,9 +426,11 @@ function initialLoad(skipLevels = false) {
 
 function getTotalPerksCost(perks) {
 	let cost = 0;
+
 	for (let [perkName, perkObj] of Object.entries(perks)) {
 		cost += getPerkCost(perkName, perkObj.level, true, perks);
 	}
+
 	return cost;
 }
 
@@ -439,10 +441,12 @@ function getPerkCost(whichPerk, numLevels, fromZero = false, perks) {
 	// if the perk can't be leveled, return infinite cost to naturally avoid buying the perk
 	if (perk.locked || (perk.hasOwnProperty('max') && level + numLevels > perk.max)) return Infinity;
 	let cost = 0;
+
 	for (let i = 0; i < numLevels; i++) {
 		cost += Math.ceil(level / 2 + perk.priceBase * Math.pow(perk.priceFact, level));
 		level++;
 	}
+
 	return cost;
 }
 
@@ -821,6 +825,7 @@ function getLogWeightedValue(props, perks, Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp
 	if (props.specialChallenge === 'resplus' || props.specialChallenge === 'resminus') {
 		res = Math.log(Vres) + 1e-100 * Math.log(Ve); // hack to still use equality as a primary dump perk
 	}
+
 	if (props.specialChallenge === 'equip') {
 		res = Math.log(Vres * Vm) + 1e-100 * Math.log(Ve); // for equip farming, Artisanistry also counts
 	}

@@ -74,14 +74,13 @@ function _isTrappingOK(Battle, Coordination) {
 	const trapChallenge = noBreedChallenge();
 	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
-	const baseCheck = (!Battle.done || getPageSetting('TrapTrimps')) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
-	if (!baseCheck) return false;
+	const baseCheck = (!Battle.done || getPageSetting('TrapTrimps') || _breedTimeRemaining() === Infinity || (game.global.world === 1 && game.global.lastClearedCell === -1)) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
+	if (!trapChallenge) return baseCheck;
 
 	// Identify if we should disable trapping when running Trappa/Trapper.
-	const trapChallengeCheck = trapChallenge && getPageSetting('trapper') && getPageSetting('trapperTrap');
-	if (!trapChallengeCheck) return true;
+	const trapSettingsEnabled = getPageSetting('trapper') && getPageSetting('trapperTrap');
+	if (!trapSettingsEnabled) return true;
 
-	// TODO: Need a way to figure out how many coords it will purchase if using trapperCoordStyle === 2 since the goal with that feature is to cap army at X soliders so probably need to increment coordination until we reach that point
 	const trappaCoordToggle = getPageSetting('trapperCoordStyle');
 	const coordinated = getPerkLevel('Coordinated');
 

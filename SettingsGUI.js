@@ -1483,6 +1483,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will farm until you can survive this amount of attacks.</p>";
 				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>If you have farmed and your Hits Survived value drops below 80% of this setting then it will farm again.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1.5 for earlygame, gradually increase the further you progress</p>";
 				if (currSettingUniverse === 2) description += "<p>Don't set this above 1 when using <b>Auto Equality: Advanced</b> as it can cause you to eternally farm.</p>";

@@ -65,9 +65,11 @@ var Perk = /** @class */ (function () {
 		this.bonus = 1;
 		this.cost = this.base_cost;
 	}
+
 	Perk.prototype.levellable = function (he_left) {
 		return !this.locked && this.level < this.max_level && this.cost * Math.max(1, Math.floor(this.level / 1e12)) <= he_left;
 	};
+
 	Perk.prototype.level_up = function (amount) {
 		this.level += amount;
 		this.bonus = this.scaling(this.level);
@@ -82,6 +84,7 @@ var Perk = /** @class */ (function () {
 
 		return spent;
 	};
+
 	Perk.prototype.spent = function () {
 		if (this.cost_increment) {
 			return (this.level * (this.base_cost + this.cost - this.cost_increment)) / 2;
@@ -94,9 +97,11 @@ var Perk = /** @class */ (function () {
 
 		return total;
 	};
+
 	Perk.prototype.log_ratio = function () {
 		return this.cost_increment ? (this.scaling(1) - this.scaling(0)) / this.bonus : Math.log(this.scaling(this.level + 1) / this.bonus);
 	};
+
 	return Perk;
 })();
 
@@ -109,6 +114,7 @@ function initPresetPerky() {
 
 	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
 	const presets = {};
+
 	for (let item of presetNames) {
 		const value = item.value;
 		if (value.includes('— ')) continue;
@@ -209,15 +215,18 @@ function calculateDgPopGain() {
 		fuel += cells * (0.01 * Math.min(zone, supply) - 2.1);
 		const tickTime = Math.ceil(60 / Math.pow(acceleration, Math.floor((zone - 230) / 3)));
 		time += zone > blacksmithTotal ? 28 : zone > hyperspeed2 ? 20 : 15;
+
 		while (time >= tickTime) {
 			time -= tickTime;
 			housing += efficiency * Math.sqrt(Math.min(capacity, fuel));
 			fuel = Math.max(0, fuel - burnRate);
 		}
+
 		while (fuel > maxFuel) {
 			housing += overclock * efficiency * Math.sqrt(Math.min(capacity, fuel));
 			fuel = Math.max(0, fuel - burnRate);
 		}
+
 		housing *= 1.009;
 	}
 
@@ -282,39 +291,47 @@ function populatePerkyData() {
 			breed_timer: mastery('patience') ? 45 : 30
 		}
 	};
+
 	if (preset === 'nerfed') {
 		result.total_he = 1e8 - 1e4;
 		result.zone = 200;
 		result.mod.dg = 0;
 	}
+
 	if (preset === 'trapper') {
 		result.mod.soldiers = game.resources.trimps.owned;
 		result.mod.prod = 0;
 		result.perks.Pheromones.max_level = 0;
 		result.perks.Anticipation.max_level = 0;
 	}
+
 	if (preset === 'spire') {
 		result.mod.prod = result.mod.loot = 0;
 		result.perks.Overkill.max_level = 0;
 		result.zone = game.global.world;
 	}
+
 	if (preset === 'carp') {
 		result.mod.prod = result.mod.loot = 0;
 		result.weight.trimps = 1e6;
 	}
+
 	if (preset === 'metal') result.mod.prod = 0;
 	if (preset === 'trimp') result.mod.soldiers = 1;
 	if (preset === 'nerfed') result.perks.Overkill.max_level = 1;
 	if (preset === 'scientist') result.perks.Coordinated.max_level = 0;
 	if (preset === 'income') result.weight = { income: 3, trimps: 3, attack: 1, helium: 0, health: 0, xp: 0 };
+
 	if (preset === 'unesscented') {
 		result.total_he = 0;
 		result.zone = 181;
 	}
+
 	if (preset === 'nerfeder') {
 		result.total_he = 1e9 - 1e5;
 		result.zone = 300;
 	}
+
 	return result;
 }
 
@@ -355,6 +372,7 @@ function parse_perks() {
 	};
 
 	const perks = {};
+
 	for (const [name, func] of Object.entries(perkData)) {
 		perks[name] = new Perk(name, func);
 	}
@@ -394,21 +412,26 @@ function optimize() {
 
 	let he_left = total_he;
 	// Number of ticks it takes to one-shot an enemy.
+
 	function ticks() {
 		return 1 + +(Agility.bonus > 0.9) + Math.ceil(10 * Agility.bonus);
 	}
+
 	function moti() {
 		return Motivation.bonus * Motivation_II.bonus * Meditation.bonus;
 	}
+
 	const looting = function () {
 		return Looting.bonus * Looting_II.bonus;
 	};
+
 	function gem_income() {
 		const drag = moti() * mod.whip;
 		const loot = looting() * mod.magn * 0.75 * 0.8;
 		const chronojest = (mod.chronojest * drag * loot) / 30;
 		return drag + loot + chronojest;
 	}
+
 	// Max population
 	const trimps = mod.tent_city
 		? function () {
@@ -422,6 +445,7 @@ function optimize() {
 				const territory = Trumps.bonus * zone;
 				return 10 * (base_housing * bonus + territory) * carp * mod.taunt + mod.dg * carp;
 		  };
+
 	function income(ignore_prod) {
 		const storage = (mod.storage * Resourceful.bonus) / Packrat.bonus;
 		const loot = (looting() * mod.magn) / ticks();
@@ -429,6 +453,7 @@ function optimize() {
 		const chronojest = mod.chronojest * 0.1 * prod * loot;
 		return base_income * (prod + loot * mod.loot + chronojest) * (1 - storage) * trimps();
 	}
+
 	function equip(stat) {
 		const cost = equip_cost[stat] * Artisanistry.bonus;
 		let levels = 1.136;
@@ -439,6 +464,7 @@ function optimize() {
 		}
 		return levels * Math.pow(exponents[stat], tiers);
 	}
+
 	// Number of buildings of a given kind that can be built with the current income.
 	// cost: base cost of the buildings
 	// exp: cost increase for each new level of the building
@@ -446,16 +472,19 @@ function optimize() {
 		cost *= 4 * Resourceful.bonus;
 		return Math.log(1 + (income(true) * (exp - 1)) / cost) / Math.log(exp);
 	}
+
 	// Number of zones spent in the Magma
 	function magma() {
 		return Math.max(zone - 229, 0);
 	}
+
 	// Breed speed
 	function breed() {
 		const nurseries = building(2e6, 1.06) / (1 + 0.1 * Math.min(magma(), 20));
 		const potency = 0.0085 * (zone >= 60 ? 0.1 : 1) * Math.pow(1.1, Math.floor(zone / 5));
 		return potency * Math.pow(1.01, nurseries) * Pheromones.bonus * mod.ven;
 	}
+
 	// Number of Trimps sent at a time, pre-gators
 	const group_size = [];
 	for (let coord = 0; coord <= Math.log(1 + he_left / 5e5) / Math.log(1.3); ++coord) {
@@ -465,6 +494,7 @@ function optimize() {
 		for (let i = 0; i < available_coords; ++i) result = Math.ceil(result * ratio_1);
 		group_size[coord] = result;
 	}
+
 	// Strength multiplier from coordinations
 	function soldiers() {
 		const ratio = 1 + 0.25 * Coordinated.bonus;
@@ -473,12 +503,14 @@ function optimize() {
 		const unbought_coords = Math.max(0, Math.log(group_size[Coordinated.level] / pop) / Math.log(ratio));
 		return group_size[0] * Math.pow(1.25, -unbought_coords);
 	}
+
 	// Fracional number of Amalgamators expected
 	function gators() {
 		if (zone < 230 || mod.soldiers > 1) return 0;
 		const ooms = Math.log(trimps() / group_size[Coordinated.level]) / Math.log(10);
 		return Math.max(0, (ooms - 7 + Math.floor((zone - 215) / 100)) / 3);
 	}
+
 	// Total attack
 	function attack() {
 		let attack = (0.15 + equip('attack')) * Math.pow(0.8, magma());
@@ -488,6 +520,7 @@ function optimize() {
 		attack *= mastery('amalg') ? Math.pow(1.5, gators()) : 1 + 0.5 * gators();
 		return soldiers() * attack;
 	}
+
 	// Total survivability (accounts for health and block)
 	function health() {
 		let health = (0.6 + equip('health')) * Math.pow(0.8, magma());
@@ -516,19 +549,25 @@ function optimize() {
 		else block = Math.min(block, 4 * health);
 		return soldiers() * (block + health);
 	}
+
 	const xp = function () {
 		return Cunning.bonus * Curious.bonus * Classy.bonus;
 	};
+
 	const agility = function () {
 		return 1 / Agility.bonus;
 	};
+
 	const helium = function () {
 		return base_helium * looting() + 45;
 	};
+
 	const overkill = function () {
 		return Overkill.bonus;
 	};
+
 	const stats = { agility: agility, helium: helium, xp: xp, attack: attack, health: health, overkill: overkill, trimps: trimps, income: income };
+
 	function score() {
 		let result = 0;
 		for (let i in weight) {
@@ -539,6 +578,7 @@ function optimize() {
 		}
 		return result;
 	}
+
 	function recompute_marginal_efficiencies() {
 		const baseline = score();
 		for (let name in perks) {
@@ -553,10 +593,12 @@ function optimize() {
 			perks[name + '_II'].gain = (perks[name].gain * perks[name + '_II'].log_ratio()) / perks[name].log_ratio();
 		}
 	}
+
 	function solve_quadratic_equation(a, b, c) {
 		const delta = b * b - 4 * a * c;
 		return (-b + Math.sqrt(delta)) / (2 * a);
 	}
+
 	function spend_he(perk, budget) {
 		perk.gain /= perk.log_ratio();
 		if (perk.cost_increment) {
@@ -571,6 +613,7 @@ function optimize() {
 		}
 		perk.gain *= perk.log_ratio();
 	}
+
 	mod.loot *= 20.8;
 	weight.agility = (weight.helium + weight.attack) / 2;
 	weight.overkill = 0.25 * weight.attack * (2 - Math.pow(0.9, weight.helium / weight.attack));

@@ -3002,8 +3002,14 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	const defaultSettings = baseSettings[0];
 
 	const allowMapping = !_berserkDisableMapping() && !_noMappingChallenges();
-	const hitsSurvivedCheck = !skipHealthCheck && allowMapping && MODULES.mapFunctions.hasHealthFarmed !== getTotalPortals() + '_' + game.global.world;
+	const currentPortal = getTotalPortals() + '_' + game.global.world;
 	const hitsSurvivedGoal = targetHitsSurvived(true);
+
+	if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed === currentPortal) {
+		if (hitsSurvivedGoal > 0 && hitsSurvivedGoal * 0.8 > hdStats.hitsSurvived) MODULES.mapFunctions.hasHealthFarmed = '';
+	}
+
+	const hitsSurvivedCheck = !skipHealthCheck && allowMapping && MODULES.mapFunctions.hasHealthFarmed !== currentPortal;
 	const shouldHitsSurvived = hitsSurvivedCheck && hitsSurvivedGoal > 0 && (hdStats.hitsSurvived < hitsSurvivedGoal || (mapSettings.mapName === 'Hits Survived' && mapSettings.priority === Infinity));
 
 	const hdRatioSetting = getPageSetting('mapBonusRatio');
