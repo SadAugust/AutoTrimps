@@ -1,24 +1,23 @@
 function miRatio() {
 	if (MODULES.magmite && MODULES.magmite.upgradeToPurchase !== '' && MODULES.magmite.upgradeToPurchase !== undefined) return;
 
-	MODULES.magmite = {};
-	MODULES.magmite.carpMod = 0;
-	MODULES.magmite.minTick = 0;
-	MODULES.magmite.maxTick = 0;
-	MODULES.magmite.tickRatio = 0;
-
-	MODULES.magmite.totalPop = 0;
-	MODULES.magmite.finalAmals = 0;
-	MODULES.magmite.maxAmals = 0;
-	MODULES.magmite.finalAmalZone = 0;
-	MODULES.magmite.neededPop = 0;
-	MODULES.magmite.finalArmySize = 0;
-	MODULES.magmite.finalAmalRatio = 0;
-	MODULES.magmite.yourFinalRatio = 0;
-	MODULES.magmite.totalMI = 0;
-	MODULES.magmite.finalResult = [];
-	MODULES.magmite.upgradeToPurchase = '';
-	MODULES.magmiteSettings = {};
+	MODULES.magmite = {
+		carpMod: 0,
+		minTick: 0,
+		maxTick: 0,
+		tickRatio: 0,
+		totalPop: 0,
+		finalAmals: 0,
+		maxAmals: 0,
+		finalAmalZone: 0,
+		neededPop: 0,
+		finalArmySize: 0,
+		finalAmalRatio: 0,
+		yourFinalRatio: 0,
+		totalMI: 0,
+		finalResult: [],
+		upgradeToPurchase: ''
+	};
 
 	const fuelStart = Math.max(230, getPageSetting('fuellater', 1));
 	const fuelEnd = Math.min(810, getPageSetting('fuelend', 1));
@@ -28,29 +27,33 @@ function miRatio() {
 		fuelStart: {
 			value: fuelStart,
 			update: function (value = this.value) {
-				this.value = parseInt(value);
-				if (this.value < 230) this.value = 230;
-				if (this.value > MODULES.magmiteSettings.fuelEnd.value) MODULES.magmiteSettings.fuelEnd.value = this.value;
-				if (this.value > MODULES.magmiteSettings.runEnd.value) MODULES.magmiteSettings.runEnd.value = this.value;
-				MODULES.magmiteSettings.fuelZones.update(MODULES.magmiteSettings.fuelEnd.value - this.value);
+				const { fuelEnd, runEnd, fuelZones } = MODULES.magmiteSettings;
+				this.value = Math.max(230, value);
+				fuelEnd.value = Math.max(fuelEnd.value, this.value);
+				runEnd.value = Math.max(runEnd.value, this.value);
+				fuelZones.update(fuelEnd.value - this.value);
 				calculateCurrentPop();
 			}
 		},
 		fuelEnd: {
 			value: fuelEnd,
 			update: function (value = this.value) {
+				const { fuelStart, runEnd, fuelZones } = MODULES.magmiteSettings;
 				this.value = parseInt(value);
-				if (this.value < MODULES.magmiteSettings.fuelStart.value) MODULES.magmiteSettings.fuelStart.value = this.value;
-				if (this.value > MODULES.magmiteSettings.runEnd.value) MODULES.magmiteSettings.runEnd.value = this.value;
-				if (MODULES.magmiteSettings.fuelZones.value !== this.value - MODULES.magmiteSettings.fuelStart.value) MODULES.magmiteSettings.fuelZones.update(this.value - MODULES.magmiteSettings.fuelStart.value);
+				fuelStart.value = Math.min(fuelStart.value, this.value);
+				runEnd.value = Math.max(runEnd.value, this.value);
+				const newFuelZonesValue = this.value - fuelStart.value;
+				if (fuelZones.value !== newFuelZonesValue) fuelZones.update(newFuelZonesValue);
 				calculateCurrentPop();
 			}
 		},
 		fuelZones: {
 			value: fuelEnd - fuelStart,
 			update: function (value = this.value) {
+				const { fuelStart, fuelEnd } = MODULES.magmiteSettings;
 				this.value = parseInt(value);
-				if (MODULES.magmiteSettings.fuelEnd.value !== MODULES.magmiteSettings.fuelStart.value + this.value) MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.fuelStart.value + this.value);
+				const newFuelEndValue = fuelStart.value + this.value;
+				if (fuelEnd.value !== newFuelEndValue) fuelEnd.update(newFuelEndValue);
 				calculateCurrentPop();
 			}
 		},
@@ -129,7 +132,7 @@ function miRatio() {
 		minimizeZone: {
 			value: 231,
 			update: function (value = this.value) {
-				this.value = value < 231 ? 231 : value;
+				this.value = Math.max(231, value);
 			}
 		}
 	};
@@ -141,18 +144,18 @@ function miRatio() {
 	MODULES.magmite.upgradeToPurchase = checkDGUpgrades();
 }
 
-function calculateMagmaZones() {
+function calculateMagmaZones(refresh = false) {
 	if (game.global.universe !== 1 || !getPageSetting('magmiteAutoFuel')) return;
-	miRatio();
+	if (!refresh) miRatio();
 	const myFuelZones = getPageSetting('magmiteFuelZones', 1);
 	let bestAmals = MODULES.magmite.maxAmals;
-	MODULES.magmiteSettings.fuelStart.update(230, false);
+	MODULES.magmiteSettings.fuelStart.update(230);
 	let bestPop = 0;
 	let myFuelStart = 230;
 
 	for (let f = 230; f <= MODULES.magmiteSettings.runEnd.value - myFuelZones; f++) {
-		MODULES.magmiteSettings.fuelStart.update(f, false);
-		MODULES.magmiteSettings.fuelZones.update(myFuelZones, false);
+		MODULES.magmiteSettings.fuelStart.update(f);
+		MODULES.magmiteSettings.fuelZones.update(myFuelZones);
 		if (MODULES.magmite.totalPop > bestPop && MODULES.magmite.maxAmals >= bestAmals) {
 			bestPop = MODULES.magmite.totalPop;
 			myFuelStart = f;
@@ -166,6 +169,57 @@ function calculateMagmaZones() {
 
 	setPageSetting('fuellater', MODULES.magmiteSettings.fuelStart.value, 1);
 	setPageSetting('fuelend', MODULES.magmiteSettings.fuelEnd.value, 1);
+}
+
+function minimize() {
+	const settings = MODULES.magmiteSettings;
+	const magmite = MODULES.magmite;
+	settings.fuelStart.update(230);
+	settings.fuelEnd.update(settings.runEnd.value);
+	const finalAmals = magmite.finalAmals;
+	const finalAmalZone = magmite.finalAmalZone;
+	const bestAmals = finalAmals;
+	const amalRatio = magmite.amalRatio;
+	let bestJ = settings.fuelZones.value;
+	let maxedAmals = false;
+
+	settings.fuelStart.update(settings.runEnd.value);
+	settings.fuelZones.update(0);
+
+	while (settings.fuelStart.value >= 230) {
+		while (MODULES.magmite.finalAmals > 0 && MODULES.magmite.finalAmals >= bestAmals && settings.fuelZones.value > 0) {
+			// minimize capacity
+			bestJ = settings.fuelZones.value;
+			settings.fuelZones.value -= 1;
+			settings.fuelZones.update(settings.fuelZones.value);
+			maxedAmals = true;
+		}
+
+		settings.fuelZones.update(settings.fuelZones.value);
+		settings.fuelStart.value -= 1;
+
+		if (settings.fuelStart.value >= 230) {
+			settings.fuelStart.update(settings.fuelStart.value);
+		}
+
+		settings.fuelZones.update(Math.min(settings.runEnd.value - settings.fuelStart.value, bestJ));
+		if (maxedAmals && MODULES.magmite.finalAmals < bestAmals) break;
+	}
+
+	// if ratios are dropping per zone, fuel a little extra for safety's sake
+	if (amalRatio[finalAmalZone] > amalRatio[finalAmalZone + 1]) {
+		bestJ += Math.ceil(bestJ * 0.1);
+	}
+
+	// handwaving a less useless value here
+	if (MODULES.magmite.finalAmals === 0) {
+		bestJ = Math.min(10, settings.runEnd.value - 230);
+	}
+
+	setPageSetting('magmiteFuelZones', bestJ, 1);
+	settings.fuelZones.update(bestJ);
+
+	calculateMagmaZones(true);
 }
 
 function calculateCoordIncrease() {
@@ -316,6 +370,7 @@ function calculateCurrentPop() {
 	MODULES.magmite.neededPop = coordPop[MODULES.magmiteSettings.runEnd.value - 230] / 3;
 	MODULES.magmite.finalArmySize = MODULES.magmite.neededPop * Math.pow(1000, MODULES.magmite.finalAmals);
 	MODULES.magmite.yourFinalRatio = MODULES.magmite.totalPop / MODULES.magmite.finalArmySize;
+	MODULES.magmite.amalRatio = amalRatio;
 }
 
 function checkDGUpgrades() {
@@ -386,9 +441,9 @@ function checkDGUpgrades() {
 	MODULES.magmite.finalResult = upgradesNames.map((upgradesNames) => settings[upgradesNames].efficiency);
 
 	const upgradeIndex = MODULES.magmite.finalResult.indexOf(Math.max(...MODULES.magmite.finalResult));
-	settings.runEnd.update(myRunEnd, false);
-	settings.fuelStart.update(myStart, false);
-	settings.fuelEnd.update(myEnd, false);
+	settings.runEnd.update(myRunEnd);
+	settings.fuelStart.update(myStart);
+	settings.fuelEnd.update(myEnd);
 
 	return ['Efficiency', 'Capacity', 'Supply', 'Overclocker'][upgradeIndex];
 }
@@ -400,14 +455,13 @@ function autoMagmiteSpender(portal) {
 
 	const magmiteSetting = getPageSetting('spendmagmite', 1);
 	if (portal && (magmiteSetting !== 1 || !portalWindowOpen)) return;
+
+	let boughtUpgrade = false;
 	if (getPageSetting('ratiospend', 1)) {
-		let boughtUpgrade = false;
 		do {
 			boughtUpgrade = _autoMagmiteCalc();
 		} while (boughtUpgrade);
 	} else {
-		let didSpend = false;
-
 		try {
 			const permanames = ['Slowburn', 'Shielding', 'Storage', 'Hybridization', 'Supervision', 'Simulacrum'];
 
@@ -421,7 +475,7 @@ function autoMagmiteSpender(portal) {
 				if (game.global.magmite >= cost) {
 					buyPermanentGeneratorUpgrade(item);
 					debug(`Auto Spending ${cost} magmite on: ${item}`, 'magmite');
-					didSpend = true;
+					boughtUpgrade = true;
 				}
 			}
 
@@ -474,7 +528,7 @@ function autoMagmiteSpender(portal) {
 				if (game.global.magmite >= upgrade.cost()) {
 					debug(`Auto Spending ${upgrade.cost()} Magmite on: ${item} #${game.generatorUpgrades[item].upgrades + 1}`, 'magmite');
 					buyGeneratorUpgrade(item);
-					didSpend = true;
+					boughtUpgrade = true;
 				} else {
 					repeat = false;
 				}
@@ -482,8 +536,8 @@ function autoMagmiteSpender(portal) {
 		} catch (err) {
 			debug(`AutoSpendMagmite Error encountered: ${err.message}`, 'magmite');
 		}
-		if (didSpend) debug(`Leftover magmite: ${game.global.magmite}`, 'magmite');
 	}
+	if (boughtUpgrade) debug(`Leftover magmite: ${game.global.magmite}`, 'magmite');
 }
 
 function _autoMagmiteCalc() {
@@ -494,7 +548,7 @@ function _autoMagmiteCalc() {
 	const upgrader = game.generatorUpgrades[toSpend];
 	if (upgrader === undefined || game.global.magmite < upgrader.cost()) return false;
 
-	debug(`Auto Spending ${upgrader.cost()} Magmite on: ${toSpend} #${game.generatorUpgrades[toSpend].upgrades + 1}`, 'magmite');
+	debug(`Spending ${upgrader.cost()} Magmite on: ${toSpend} #${game.generatorUpgrades[toSpend].upgrades + 1}`, 'magmite');
 	buyGeneratorUpgrade(toSpend);
 	MODULES.magmite.upgradeToPurchase = '';
 	return true;
