@@ -632,10 +632,12 @@ function shieldBlockUpgrades() {
 
 	itemData = game.equipment.Shield;
 	const prestige = buyPrestigeMaybe('Shield', undefined, Math.min(itemData.level, 9));
+
 	increaseBy = prestige.purchase ? prestige.newStatValue - itemData.blockCalculated * itemData.level : itemData.blockCalculated;
 	cost = prestige.purchase ? prestige.prestigeCost : itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.level) * getEquipPriceMult();
 
-	upgradeObj.Shield = cost / increaseBy;
+	//Shield level cap
+	upgradeObj.Shield = (!prestige.prestigeAvailable && itemData.level >= calculateEquipCap('block')) ? Infinity : cost / increaseBy;
 
 	return upgradeObj;
 }

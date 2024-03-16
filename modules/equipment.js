@@ -80,12 +80,18 @@ function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false,
 	const prestigeSetting = getPageSetting('equipPrestige');
 	const noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal');
 
-	const mostEfficientObj = _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge);
+	const mostEfficientObj = _getMostEfficientObject(resourceSpendingPct, zoneGo);
 	const [highestPrestige, prestigesAvailable] = _getHighestPrestige(mostEfficientObj, prestigeSetting, canAncientTreasure, noPrestigeChallenge);
 	return _populateMostEfficientEquipment(mostEfficientObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield);
 }
 
-function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge) {
+function calculateEquipCap(type, noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal')) {
+	if (noPrestigeChallenge) return Infinity;
+	if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return Infinity;
+	return type === 'attack' ? getPageSetting('equipCapAttack') : getPageSetting('equipCapHealth');
+}
+
+function _getMostEfficientObject(resourceSpendingPct, zoneGo) {
 	const equipZone = getPageSetting('equipZone');
 	const equipPercent = getPageSetting('equipPercent');
 	const currentMap = getCurrentMapObject() || { location: 'world' };
@@ -95,11 +101,6 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 		if (zoneGo || (mapSettings.shouldHealthFarm && type !== 'attack')) return 1;
 		if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return 1;
 		return resourceSpendingPct || (equipPercent <= 0 ? 1 : Math.min(1, equipPercent / 100));
-	};
-	const calculateEquipCap = (type) => {
-		if (noPrestigeChallenge) return Infinity;
-		if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return Infinity;
-		return type === 'attack' ? getPageSetting('equipCapAttack') : getPageSetting('equipCapHealth');
 	};
 
 	const createObject = (type) => ({
