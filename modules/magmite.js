@@ -142,8 +142,7 @@ function miRatio() {
 }
 
 function calculateMagmaZones() {
-	if (game.global.universe !== 1) return;
-	if (!getPageSetting('magmiteAutoFuel')) return;
+	if (game.global.universe !== 1 || !getPageSetting('magmiteAutoFuel')) return;
 	miRatio();
 	const myFuelZones = getPageSetting('magmiteFuelZones', 1);
 	let bestAmals = MODULES.magmite.maxAmals;
@@ -242,11 +241,8 @@ function calculateCurrentPop() {
 	// base CI on end zone
 	const confInterval = 1 - 1.91 / Math.sqrt((MODULES.magmiteSettings.runEnd.value - MODULES.magmiteSettings.fuelStart.value) * tauntimpFrequency);
 
+	//calc fuel gain
 	for (let i = 0; i <= myHze - 200; i++) {
-		//calc an extra 30 zones because why not
-		// i = zone offset from z230
-
-		//calc fuel gain
 		if (i === 0) fuelThisZone[0] = 0.2;
 		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, MODULES.magmiteSettings.supply.maxSupply);
 
@@ -323,159 +319,78 @@ function calculateCurrentPop() {
 }
 
 function checkDGUpgrades() {
-	const myStart = MODULES.magmiteSettings.fuelStart.value;
-	const myEnd = MODULES.magmiteSettings.fuelEnd.value;
-	const myRunEnd = MODULES.magmiteSettings.runEnd.value;
-	const myPop = MODULES.magmite.totalPop;
-	const myMI = MODULES.magmite.totalMI;
-	MODULES.magmiteSettings.fuelStart.update(230);
+	const settings = MODULES.magmiteSettings;
+	const myStart = settings.fuelStart.value;
+	const myEnd = settings.fuelEnd.value;
+	const myRunEnd = settings.runEnd.value;
+	const { totalPop, totalMI } = MODULES.magmite;
 
-	if (MODULES.magmiteSettings.hze.value > 0) {
-		MODULES.magmiteSettings.runEnd.update(MODULES.magmiteSettings.hze.value);
-		MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.hze.value);
-	} else {
-		MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.runEnd.value);
-	}
-
-	MODULES.magmiteSettings.efficiency.update(MODULES.magmiteSettings.efficiency.value + 1);
-
-	let efficiencyEfficiency = MODULES.magmite.totalPop - myPop;
-	MODULES.magmiteSettings.efficiency.update(MODULES.magmiteSettings.efficiency.value - 1);
-	MODULES.magmiteSettings.capacity.update(MODULES.magmiteSettings.capacity.value + 1);
-
-	let capacityEfficiency = MODULES.magmite.totalPop - myPop;
-	MODULES.magmiteSettings.capacity.update(MODULES.magmiteSettings.capacity.value - 1);
-	MODULES.magmiteSettings.supply.update(MODULES.magmiteSettings.supply.value + 1);
-
-	let supplyEfficiency = MODULES.magmite.totalPop - myPop;
-	MODULES.magmiteSettings.supply.update(MODULES.magmiteSettings.supply.value - 1);
-
-	MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value + 1);
-
-	let overclockerEfficiency = MODULES.magmite.totalPop - myPop;
-	MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value - 1);
-
-	let eCost = MODULES.magmiteSettings.efficiency.cost;
-	let cCost = MODULES.magmiteSettings.capacity.cost;
-	let sCost = MODULES.magmiteSettings.supply.cost;
-	let oCost = MODULES.magmiteSettings.overclocker.cost;
-
-	const magmiteDecay = MODULES.magmiteSettings.decay.value;
+	const upgradesNames = ['efficiency', 'capacity', 'supply', 'overclocker'];
 	const totalRuns = 10;
-	let totalMi = myMI;
-	let checkMi = myMI;
+	const baseCost = [8, 32, 64, 32];
+	const hzeValue = settings.hze.value > 0 ? settings.hze.value : settings.runEnd.value;
+	const magmiteDecay = settings.decay.value;
+
+	settings.fuelStart.update(230);
+	if (settings.hze.value > 0) settings.runEnd.update(hzeValue);
+	settings.fuelEnd.update(hzeValue);
+
+	const efficiencyVariables = upgradesNames.map((upgrade) => {
+		settings[upgrade].update(settings[upgrade].value + 1);
+		const efficiency = MODULES.magmite.totalPop - totalPop;
+		settings[upgrade].update(settings[upgrade].value - 1);
+		return efficiency;
+	});
+
+	let totalMi = totalMI;
+	let checkMi = totalMI;
 	let runsNeeded = 2;
 
 	while (totalRuns > runsNeeded) {
 		checkMi *= magmiteDecay;
-		checkMi += myMI;
-
+		checkMi += totalMI;
 		if (checkMi > totalMi) totalMi = checkMi;
-
 		runsNeeded++;
 	}
 
-	/* 
-		Consolidate this into one loop rather than 4 seperate if statement blocks
-	*/
+	upgradesNames.forEach((upgrade, i) => {
+		let cost = settings[upgrade].cost;
 
-	// MI decay calcs
-	if (eCost > myMI * 4.9) MODULES.magmiteSettings.efficiency.cost = -1;
-	else if (eCost * 2 + 8 <= myMI);
-	else if (eCost <= myMI) {
-		MODULES.magmiteSettings.efficiency.cost += (myMI - eCost) * 0.2;
-	} else {
-		let runsNeeded = 1;
-		while (eCost > myMI) {
-			MODULES.magmiteSettings.efficiency.cost += myMI;
-			eCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
-			runsNeeded++;
-			if (runsNeeded > totalRuns) {
-				break;
+		if (cost > totalMI * 4.9) {
+			settings[upgrade].cost = -1;
+		} else if (cost * 2 + baseCost[i] <= totalMI) {
+			return;
+		} else if (cost <= totalMI) {
+			settings[upgrade].cost += (totalMI - cost) * 0.2;
+		} else {
+			let runsNeeded = 1;
+			while (cost > totalMI) {
+				settings[upgrade].cost += totalMI;
+				cost -= totalMI * Math.pow(magmiteDecay, runsNeeded);
+				runsNeeded++;
+				if (runsNeeded > totalRuns) {
+					break;
+				}
 			}
+			settings[upgrade].cost += (totalMI - cost) * 0.2;
 		}
 
-		MODULES.magmiteSettings.efficiency.cost += (myMI - eCost) * 0.2;
-	}
+		efficiencyVariables[i] /= settings[upgrade].cost;
+	});
 
-	if (cCost > myMI * 4.9) MODULES.magmiteSettings.capacity.cost = -1;
-	else if (cCost * 2 + 32 <= myMI);
-	else if (cCost <= myMI) {
-		MODULES.magmiteSettings.capacity.cost += (myMI - cCost) * 0.2;
-	} else {
-		let runsNeeded = 1;
-		while (cCost > myMI) {
-			MODULES.magmiteSettings.capacity.cost += myMI;
-			cCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
-			runsNeeded++;
-			if (runsNeeded > totalRuns) {
-				break;
-			}
-		}
+	upgradesNames.forEach((upgrade, i) => {
+		const cost = settings[upgrade].cost;
+		settings[upgrade].efficiency = totalMi > cost ? efficiencyVariables[i] / efficiencyVariables[0] : 0;
+	});
 
-		MODULES.magmiteSettings.capacity.cost += (myMI - cCost) * 0.2;
-	}
-
-	if (sCost > myMI * 4.9) MODULES.magmiteSettings.supply.cost = -1;
-	else if (sCost * 2 + 64 <= myMI);
-	else if (sCost <= myMI) {
-		MODULES.magmiteSettings.supply.cost += (myMI - sCost) * 0.2;
-	} else {
-		let runsNeeded = 1;
-		while (sCost > myMI) {
-			MODULES.magmiteSettings.supply.cost += myMI;
-			sCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
-			runsNeeded++;
-			if (runsNeeded > totalRuns) {
-				break;
-			}
-		}
-
-		MODULES.magmiteSettings.supply.cost += (myMI - sCost) * 0.2;
-	}
-
-	if (oCost > myMI * 4.9) MODULES.magmiteSettings.overclocker.cost = -1;
-	else if (oCost * 2 + 32 <= myMI);
-	else if (oCost <= myMI) {
-		MODULES.magmiteSettings.overclocker.cost += (myMI - oCost) * 0.2;
-	} else {
-		let runsNeeded = 1;
-		while (oCost > myMI) {
-			MODULES.magmiteSettings.overclocker.cost += myMI;
-			oCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
-			runsNeeded++;
-			if (runsNeeded > totalRuns) {
-				break;
-			}
-		}
-
-		MODULES.magmiteSettings.overclocker.cost += (myMI - oCost) * 0.2;
-	}
-
-	efficiencyEfficiency /= MODULES.magmiteSettings.efficiency.cost;
-	capacityEfficiency /= MODULES.magmiteSettings.capacity.cost;
-	supplyEfficiency /= MODULES.magmiteSettings.supply.cost;
-	overclockerEfficiency /= MODULES.magmiteSettings.overclocker.cost;
-
-	[eCost, cCost, sCost, oCost] = [eCost, cCost, sCost, oCost].map((cost) => (totalMi > cost ? cost : Infinity));
-	MODULES.magmiteSettings.efficiency.efficiency = eCost === Infinity ? 0 : 1;
-	MODULES.magmiteSettings.capacity.efficiency = cCost === Infinity ? 0 : capacityEfficiency / efficiencyEfficiency;
-	MODULES.magmiteSettings.supply.efficiency = sCost === Infinity ? 0 : supplyEfficiency / efficiencyEfficiency;
-	MODULES.magmiteSettings.overclocker.efficiency = oCost === Infinity ? 0 : overclockerEfficiency / efficiencyEfficiency;
-
-	MODULES.magmite.finalResult = [];
-	const upgradeNames = ['Efficiency', 'Capacity', 'Supply', 'Overclocker'];
-
-	for (let i = 0; i < upgradeNames.length; i++) {
-		MODULES.magmite.finalResult.push(+MODULES.magmiteSettings[upgradeNames[i].toLowerCase()].efficiency);
-	}
+	MODULES.magmite.finalResult = upgradesNames.map((upgradesNames) => settings[upgradesNames].efficiency);
 
 	const upgradeIndex = MODULES.magmite.finalResult.indexOf(Math.max(...MODULES.magmite.finalResult));
-	MODULES.magmiteSettings.runEnd.update(myRunEnd, false);
-	MODULES.magmiteSettings.fuelStart.update(myStart, false);
-	MODULES.magmiteSettings.fuelEnd.update(myEnd, false);
+	settings.runEnd.update(myRunEnd, false);
+	settings.fuelStart.update(myStart, false);
+	settings.fuelEnd.update(myEnd, false);
 
-	return upgradeNames[upgradeIndex];
+	return ['Efficiency', 'Capacity', 'Supply', 'Overclocker'][upgradeIndex];
 }
 
 function autoMagmiteSpender(portal) {
