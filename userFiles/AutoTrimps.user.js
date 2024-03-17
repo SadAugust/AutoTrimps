@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name		AutoTrimps-SadAugust
-// @version		1.0-SadAugust
-// @namespace	https://SadAugust.github.io/AutoTrimps
+// @name		AutoTrimps-kawyua
+// @version		1.0-SadAugust - kawyua 3.15.2024
+// @namespace	https://kawyua.github.io/AutoTrimps
 // @description	Automate all the trimps!
 // @author		zininzinin, spindrjr, Ishkaru, genBTC, Zeker0, SadAugust
 // @match		*trimps.github.io*
 // @match		*kongregate.com/games/GreenSatellite/trimps
 // @match		*trimpstest58.netlify.app/*
-// @connect		*SadAugust.github.io/AutoTrimps*
+// @connect		*kawyua.github.io/AutoTrimps*
 // @connect		*trimps.github.io*
 // @connect		self
 // @grant		GM_xmlhttpRequest
@@ -22,4 +22,4 @@ function injectScript(id, src) {
 }
 
 //This can be edited to point to your own Github Repository URL.
-injectScript('AutoTrimps-SadAugust', 'https://sadaugust.github.io/AutoTrimps/AutoTrimps2.js');
+injectScript('AutoTrimps-SadAugust', 'https://kawyua.github.io/AutoTrimps/AutoTrimps2.js');
