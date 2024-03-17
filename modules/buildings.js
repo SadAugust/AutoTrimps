@@ -357,9 +357,9 @@ function _buyGyms(buildingSettings) {
 	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic()) return;
 	if (runningAncientTreasure()) return;
 
-	const factorShieldBlock = game.equipment.Shield.blockNow && getPageSetting('equipOn');
-	if (factorShieldBlock) {
-		const data = shieldBlockUpgrades();
+	//Gym vs Shield Efficiency
+	if (getPageSetting('equipOn')) {
+		const data = shieldGymEfficiency();
 		if (data.Gym > data.Shield) return;
 	}
 
@@ -376,8 +376,7 @@ function _buyGyms(buildingSettings) {
 	const gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct);
 
 	if (gymAmt > purchased && gymCanAfford > 0) {
-		const toBuy = !factorShieldBlock ? gymCanAfford : Math.max(1, calculateMaxAfford_AT(game.buildings.Gym, true, false, false, max, gymPct, game.resources.wood.owned * 0.01));
-		safeBuyBuilding('Gym', toBuy);
+		safeBuyBuilding('Gym', gymCanAfford);
 	}
 }
 

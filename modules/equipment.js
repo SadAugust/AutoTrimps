@@ -153,12 +153,10 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 			if (ignoreShield || (game.global.universe === 1 && needGymystic())) continue;
 			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
 
-			if (equipData.blockNow) {
-				const buildingSettings = getPageSetting('buildingSettingsArray');
-				if (getPageSetting('buildingsType') && buildingSettings.Gym && buildingSettings.Gym.enabled) {
-					const data = shieldBlockUpgrades();
-					if (data.Gym <= data.Shield) continue;
-				}
+			const buildingSettings = getPageSetting('buildingSettingsArray');
+			if (getPageSetting('buildingsType') && buildingSettings.Gym && buildingSettings.Gym.enabled) {
+				const data = shieldGymEfficiency();
+				if (data.Gym <= data.Shield) continue;
 			}
 		}
 

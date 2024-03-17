@@ -933,7 +933,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	return enemyHealth / ourBaseDamage;
 }
 
-function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', difficulty = 1, checkOutputs) {
+function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', difficulty = 1, extraBlock = 0, extraHealth = 0, checkOutputs) {
 	const formationMod = game.upgrades.Dominance.done ? 2 : 1;
 	const ignoreCrits = getPageSetting('IgnoreCrits');
 
@@ -946,8 +946,8 @@ function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', d
 	let hitsToSurvive = targetHitsSurvived(false, worldType);
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 
-	const health = calcOurHealth(false, worldType, false, true) / formationMod;
-	const block = calcOurBlock(false) / formationMod;
+	const health = (extraHealth + calcOurHealth(false, worldType, false, true)) / formationMod;
+	const block = (extraBlock + calcOurBlock(false)) / formationMod;
 	const equality = equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', null, hitsToSurvive);
 	let damageMult = 1;
 
