@@ -1,8 +1,13 @@
-# AutoTrimps - SadAugust Fork
+# AutoTrimps - kawyua Fork
 
 # Current Version - Ongoing Development!
 
-- SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date with patch 5.9.2.
+- kawyua Fork of sadAugust AT. Created for testing more optional feature in AT using sadAugust, AUZorn192/GenBTC as base. Currently up-to-date with patch 5.9.2.
+
+Currently nothing much should be different, so listing all changes here:
+The conditions are upon reaching 10 map stacks, >10 sec breed time, below hitsurvived threshold(default 1.25), but above hitsTopush(default 0.6) threshold. Upon satisfying this, upon running a HD map, or hitsSurvived map, trimps will push to the world and die after doing a farm map. Once the next set of trimps are ready and the currently fighting trimps in world die, starts farming a map again with the new set of trimps. This way, breed time is running while farming a map. This is for pushing harder through zones, particularly for anticipation and early game farming.
+//explanation in comments in code. see video below of it in action
+https://i.imgur.com/wfl5kC1.mp4
 
 # AT Script Installation
 
@@ -14,7 +19,8 @@ https://www.tampermonkey.net/
 
 Step 2:
 
-Click this link: https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/AutoTrimps.user.js
+Mods are still pointing to sadAugust AT
+Click this link: https://github.com/kawyua/AutoTrimps/raw/main/userFiles/AutoTrimps.user.js
 
 If clicking the link does not work, copy the contents of user.js into a new script inside tampermonkey.
 
@@ -29,7 +35,7 @@ function injectScript(id, src) {
 	document.head.appendChild(script);
 }
 
-injectScript('AutoTrimps-SadAugust', 'https://SadAugust.github.io/AutoTrimps/AutoTrimps2.js');
+injectScript('AutoTrimps-SadAugust', 'https://kawyua.github.io/AutoTrimps/AutoTrimps2.js');
 ```
 
 Press F12 inside the game, this opens the console, and paste the text into it and hit enter, this will load the script. You will have to do this everytime you refresh the game though so I recommend getting tampermonkey to do it for you!
