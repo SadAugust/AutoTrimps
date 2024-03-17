@@ -289,7 +289,8 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 	else if (mapType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) hdRatio = hdStats.hdRatioMap;
 
 	if (farmType === 'attack') {
-		if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+		const formation = (game.global.world < 60 || game.global.highestLevelCleared < 180) ? 'X' : 'S';
+		if (hdRatio > getPageSetting('equipCutOffHD') && oneShotZone(mapType.location, formation) < maxOneShotPower()) return zoneDetails;
 		if (mapSettings.mapName === 'Wither Farm' || mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 	}
 

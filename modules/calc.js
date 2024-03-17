@@ -890,11 +890,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	if (worldType === 'world') {
 		let customHealth;
 		let enemyName = 'Turtlimp';
-		//TODO Test
-		// if (targetZone === 5 || targetZone === 10 || (targetZone >= 15 && targetZone <= 58)) enemyName = 'Blimp';
-		// if (targetZone >= 59) enemyName = 'Improbability';
 		if (game.global.universe === 1) {
-			// if (targetZone > 229) enemyName = 'Omnipotrimp';
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedStats(targetZone, 'health');
 		} else if (game.global.universe === 2) {
