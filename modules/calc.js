@@ -958,10 +958,6 @@ function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', d
 		else if (crushed && health > block) damageMult = 3;
 	}
 
-	if (challengeActive('Balance')) {
-
-	}
-
 	const worldDamage = calcEnemyAttack(worldType, targetZone, 99, enemyName, undefined, customAttack, equality) * difficulty;
 	const pierce = (game.global.universe === 1 && game.global.brokenPlanet && worldType === 'world' ? getPierceAmt() : 0) * (game.global.formation === 3 ? 2 : 1);
 	const finalDmg = Math.max(damageMult * worldDamage - block, worldDamage * pierce, 0);
