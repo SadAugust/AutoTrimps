@@ -3235,6 +3235,22 @@ function farmingDecision() {
 	//Skipping map farming if in Decay or Melt and above stack count user input
 	if (decaySkipMaps()) mapTypes = [prestigeClimb, voidMaps, _obtainUniqueMap];
 
+	//pushes current army after farming, after current army dies, next army starts farming again, repeat
+	//conditions for activating, map bonus = 10, Next Trimps army are ready,hitsSurvivedToPush > 0, hitsSurvived > hitsSurvivedToPush
+	//Takes hdfarm out of the mapcheck pool, disables the currently running map so the trimps advance, once trimps are fighting in world add hdFarm back in the check pool.
+	if(game.global.mapBonus===10 && newArmyRdy() && getPageSetting('hitsSurvivedToPush') > 0 && hdStats['hitsSurvived'] > getPageSetting('hitsSurvivedToPush') && (game.global.mapsActive || !game.global.fighting)){
+		mapSettings.repeat = false;
+		mapSettings.shouldRun = false;
+		const index = mapTypes.indexOf(hdFarm);
+		const x = mapTypes.splice(index, 1);
+	}
+	else{
+		if (game.global.fighting && !game.global.mapsactive){
+			mapSettings.repeat = true;
+			mapSettings.shouldRun = true;
+		}
+	}
+
 	const priorityList = [];
 	//If we are currently running a map and it should be continued then continue running it.
 	//Running the entire function again is done to ensure that we update the status message and check if it still wants to run.
