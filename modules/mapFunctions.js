@@ -3239,7 +3239,7 @@ function farmingDecision() {
 	//pushes current army after farming, after current army dies, next army starts farming again, repeat
 	//conditions for activating, map bonus = 10, Next Trimps army are ready,hitsSurvivedToPush > 0, hitsSurvived > hitsSurvivedToPush
 	//Takes hdfarm out of the mapcheck pool, disables the currently running map so the trimps advance, once trimps are fighting in world add hdFarm back in the check pool.
-	if (!game.global.spireActive && mapSettings.hitsSurvivedSetting) {
+	if (!game.global.spireActive) {
 		const hsToPush = getPageSetting('hitsSurvivedToPush');
 		const hsSufficient = hsToPush > 0 && hdStats['hitsSurvived'] > hsToPush;
 		if (hsSufficient && game.global.mapBonus === 10 && (game.global.mapsActive || !game.global.fighting) && newArmyRdy()) {
