@@ -242,12 +242,15 @@ function calculateMagma() {
 	const magmaPerZone = MODULES.magmiteSettings.magmaFlow.value === 18 ? 18 : 16;
 	const voidMagma = 10 * MODULES.magmiteSettings.voids.value * MODULES.magmiteSettings.expertGen.value;
 	MODULES.magmite.totalMI = zonesOfMI * magmaPerZone + voidMagma;
-	//Not sure why this line existed. Leaving it here for now.
-	//if (game.global.magmite > MODULES.magmite.totalMI) MODULES.magmite.totalMI = game.global.magmite;
+	/* Not sure why this line existed. Leaving it here for now. */
+	if (game.global.magmite > MODULES.magmite.totalMI) MODULES.magmite.totalMI = game.global.magmite;
 }
 
 function calculateCarpMod() {
-	MODULES.magmite.carpMod = MODULES.magmite.minTick * Math.pow(1.1, MODULES.magmiteSettings.carp.value) * (1 + MODULES.magmiteSettings.carp2.value * 0.0025) * (MODULES.magmiteSettings.scaffolding.value * Math.pow(1.1, MODULES.magmiteSettings.scaffolding.value - 1));
+	const { carp, carp2, scaffolding } = MODULES.magmiteSettings;
+	const carpMult = Math.pow(1.1, carp.value);
+	const carp2Mult = 1 + carp2.value * 0.0025;
+	MODULES.magmite.carpMod = MODULES.magmite.minTick * carpMult * carp2Mult * scaffolding.value;
 }
 
 function calculateMinTick() {
