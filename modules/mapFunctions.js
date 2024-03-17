@@ -3240,6 +3240,7 @@ function farmingDecision() {
 	//Takes hdfarm out of the mapcheck pool, disables the currently running map so the trimps advance, once trimps are fighting in world add hdFarm back in the check pool.
 	if(game.global.mapBonus===10 && newArmyRdy() && getPageSetting('hitsSurvivedToPush') > 0 && hdStats['hitsSurvived'] > getPageSetting('hitsSurvivedToPush') && (game.global.mapsActive || !game.global.fighting)){
 		mapSettings.repeat = false;
+		mapSettings.shouldRun = false;
 		const hdFarmIndex = mapTypes.indexOf(hdFarm);
 		if (index !== -1) {
 			mapTypes.splice(hdFarmIndex, 1);
