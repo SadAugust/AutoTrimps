@@ -2077,7 +2077,7 @@ function uniqueMapsSave() {
 //AT Messages
 function messageDisplay(elem) {
 	const msgs = getPageSetting('spamMessages');
-	const keys = ['general', 'upgrades', 'equipment', 'maps', 'map_Details', 'map_Destacking', 'map_Skip', 'other', 'buildings', 'jobs', 'zone', 'exotic', 'gather', 'stance', 'run_Stats', 'nature'];
+	const keys = ['general', 'upgrades', 'equipment', 'maps', 'map_Details', 'map_Destacking', 'map_Skip', 'other', 'buildings', 'jobs', 'zone', 'exotic', 'gather', 'stance', 'run_Stats', 'magmite', 'nature'];
 	const settingGroup = keys.reduce((obj, key) => {
 		obj[key] = false;
 		return obj;
@@ -2127,6 +2127,7 @@ function messageConfigHoverAT(what, event) {
 		exotic: { title: 'Exotic', text: 'Log the amount of world exotics you start a zone with.' },
 		gather: { title: 'Gather', text: 'Log the action that AT tries to gather.' },
 		stance: { title: 'Stance', text: 'Logs when AT decides to change stance and what it changes to.' },
+		magma: { title: 'Magma', text: 'Logs when the script spends Magmite.' },
 		nature: { title: 'Nature', text: 'Logs when the script spends nature tokens.' },
 		run_Stats: { title: 'Run Stats', text: "Logs the total trimps you have and how many resources you'd gain from a bone charge when entering a new zone." }
 	};

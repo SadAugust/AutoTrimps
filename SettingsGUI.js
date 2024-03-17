@@ -3829,7 +3829,7 @@ function initialiseAllSettings() {
 		createSetting('UseAutoGen',
 			function () { return ('Auto Generator') },
 			function () {
-				let description = "<p>Master switch for whether the script will do any form of dimensional generator mode switching or Mi purchasing.</p>";
+				let description = "<p>Master switch for whether the script will do any form of dimensional generator mode switching.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -3843,7 +3843,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
 				description += "<p><b>Recommended:</b> Gain Mi</p>";
 				return description;
-			}, 'multitoggle', 1, null, 'Magma', [1]);
+			}, 'multitoggle', 1, null, 'Magma', [1],
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
 		createSetting('fuellater',
 			function () { return ('Start Fuel Z') },
 			function () {
@@ -3853,7 +3854,8 @@ function initialiseAllSettings() {
 				description += "<p>If the <b>Overclocker</b> upgrade has been purchased at least once it will use Hybrid mode if unlocked otherwise it will use the scripts pseudo-hybrid solution.</p>";
 				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
 				return description;
-			}, 'value', 0, null, 'Magma', [1]);
+			}, 'value', 0, null, 'Magma', [1],
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
 		createSetting('fuelend',
 			function () { return ('End Fuel Z') },
 			function () {
@@ -3863,7 +3865,8 @@ function initialiseAllSettings() {
 				description += "<p>If the <b>Overclocker</b> upgrade has been purchased at least once it will use Hybrid mode if unlocked otherwise it will use the scripts pseudo-hybrid solution.</p>";
 				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
 				return description;
-			}, 'value', 0, null, 'Magma', [1]);
+			}, 'value', 0, null, 'Magma', [1],
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
 		createSetting('defaultgen',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
 			function () {
@@ -3873,7 +3876,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
 				description += "<p><b>Recommended:</b> Gain Mi</p>";
 				return description;
-			}, 'multitoggle', 1, null, 'Magma', [1]);
+			}, 'multitoggle', 1, null, 'Magma', [1],
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
 		createSetting('AutoGenDC',
 			function () { return (['Daily: Normal', 'Daily: Fuel', 'Daily: Hybrid']) },
 			function () {
@@ -3883,7 +3887,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Daily Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
 				description += "<p><b>Recommended:</b> Daily Normal</p>";
 				return description;
-			}, 'multitoggle', 1, null, 'Magma', [1]);
+			}, 'multitoggle', 1, null, 'Magma', [1],
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
 		createSetting('AutoGenC2',
 			function () { return (['' + _getChallenge2Info() + ': Normal', '' + _getChallenge2Info() + ': Fuel', '' + _getChallenge2Info() + ': Hybrid']) },
 			function () {
@@ -3893,43 +3898,9 @@ function initialiseAllSettings() {
 				description += "<p><b>" + _getChallenge2Info() + " Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
 				description += "<p><b>Recommended:</b> " + _getChallenge2Info() + " Fuel</p>";
 				return description;
-			}, 'multitoggle', 1, null, 'Magma', [1]);
+			}, 'multitoggle', 1, null, 'Magma', [1],
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
 
-		//Spend Mi
-		createSetting('spendmagmite',
-			function () { return (['Spend Magmite Off', 'Spend Magmite (Portal)', 'Spend Magmite Always']) },
-			function () {
-				let description = "<p>Controls when the script will spend the Magmite that you obtain throughout your runs.</p>";
-				description += "<p><b>Spend Magmite Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Spend Magmite (Portal)</b><br>Auto Spends any unspent Magmite immediately before portaling.</p>";
-				description += "<p><b>Spend Magmite Always</b><br>Will spend any Magmite that you acquire straight away. Typically means you'll purchase the cheapest upgrades possible.</p>";
-				description += "<p><b>Recommended:</b> Spend Magmite (Portal)</p>";
-				return description;
-			}, 'multitoggle', 1, null, 'Magma', [1]);
-		createSetting('ratiospend',
-			function () { return ('Efficient Spending') },
-			function () {
-				let description = "<p>If enabled the script will spend your magmite on the most efficient upgrade available.</p>";
-				description += "<p>Uses the same system as the Gatorcalc website so look there if you want more advanced settings!</p>";
-				description += "<p>Won't purchase any one and done upgrades!</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			},
-			'boolean', false, null, 'Magma', [1]);
-
-		createSetting('SupplyWall',
-			function () { return ('Throttle Supply (or Capacity)') },
-			function () {
-				return ('Positive number NOT 1 e.g. 2.5: Consider Supply when its cost * 2.5 is < Capacity, instead of immediately when < Cap. Effectively throttles supply for when you don\'t need too many.<br><br>Negative number (-1 is ok) e.g. -2.5: Consider Supply if it costs < Capacity * 2.5, buy more supplys! Effectively throttling capacity instead.<br><br><b>Set to 1: DISABLE SUPPLY only spend magmite on Efficiency, Capacity and Overclocker. Always try to get supply close to your HZE. <br>Set to 0: IGNORE SETTING and use old behaviour (will still try to buy overclocker)</b>')
-			}, 'valueNegative', 0.4, null, 'Magma', [1],
-			function () { return (!autoTrimpSettings.ratiospend.enabled) });
-		createSetting('spendmagmitesetting',
-			function () { return (['Normal', 'Normal & No OC', 'OneTime Only', 'OneTime & OC']) },
-			function () {
-				return ('<b>Normal:</b> Spends Magmite Normally as Explained in Magmite spending behaviour. <br><b>Normal & No OC:</b> Same as normal, except skips OC afterbuying 1 OC upgrade. <br><b>OneTime Only:</b> Only Buys the One off upgrades except skips OC afterbuying 1 OC upgrade. <br><b>OneTime & OC:</b> Buys all One off upgrades, then buys OC only.')
-			}, 'multitoggle', 0, null, 'Magma', [1],
-			function () { return (!autoTrimpSettings.ratiospend.enabled) });
-		
 		//Automate Fuel Zones
 		createSetting('magmiteAutoFuel',
 			function () { return ('Automate Fuel Zones') },
@@ -3937,16 +3908,52 @@ function initialiseAllSettings() {
 				let description = "<p>Will change your zones immediately before auto portaling to ensure that they are accurate going into your next run.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Magma', [1]);
+			}, 'boolean', false, null, 'Magma', [1],
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
 		createSetting('magmiteFuelZones',
 			function () { return ('Zones To Fuel') },
 			function () {
 				let description = "<p>When Automate Fuel Zones runs it will use this value for how many zones you should fuel for.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting and assume 20 zones.</p>";
-				description += "<p><b>Recommended:</b> 20</p>";
+				description += "<p>To disable this setting you must disable the <b>Automate Fuel Zones</b> setting.</p>";
 				return description;
 			}, 'value', 20, null, 'Magma', [1],
-			function () { return (autoTrimpSettings.magmiteAutoFuel.enabled) });
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse) && getPageSetting('magmiteAutoFuel', currSettingUniverse)) });
+		createSetting('magmiteMinimize',
+			function () { return ('Minimize Fuel Zones') },
+			function () {
+				let description = "<p>Minimizes fueling zones required to get the maximum amalgamators possible. Fuels for 20 zones if you can't get an amalgamator.</p>";
+				description += "<p>This will override your input for <b>Zones To Fuel</b> if enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Magma', [1],
+			function () { return (getPageSetting('UseAutoGen', currSettingUniverse) && getPageSetting('magmiteAutoFuel', currSettingUniverse) && game.stats.amalgamators.valueTotal > 0) });
+
+		createSetting('magmiteSpending',
+			function () { return (['Spend Magmite Off', 'Spend Magmite On Portal', 'Spend Magmite Always']) },
+			function () {
+				let description = "<p>Controls when the script will spend the Magmite that you obtain throughout your runs.</p>";
+				description += "<p>If enabled the script will spend your magmite on the most efficient upgrade available using the Gatorcalc websites algorithm.</p>";
+				description += "<p><b>Spend Magmite Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Spend Magmite On Portal</b><br>Auto spends any unspent Magmite immediately before portaling.</p>";
+				description += "<p><b>Spend Magmite Always</b><br>Will spend Magmite that you acquire as soon as the most efficient upgrade is purchasable.</p>";
+				description += "<p><b>Recommended:</b> Spend Magmite On Portal</p>";
+				return description;
+			}, 'multitoggle', 0, null, 'Magma', [1]);
+		createSetting('magmiteUpgradeRuns',
+			function () { return ('Runs for Upgrades') },
+			function () {
+				let description = "<p>The maximum number of runs to be spent on the most efficient upgrade.</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'value', 2, null, 'Magma', [1]);	
+		createSetting('magmiteOneTimerRuns',
+			function () { return ('Runs for One and Dones') },
+			function () {
+				let description = "<p>If purchasable in this amount of runs then the algorithm will prioritize one-time upgrades over regular upgrades.</p>";
+				description += "<p><b>Will only purchase <b>Hybridization</b> when <b>Storage</b> has been purchased.</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'value', 2, null, 'Magma', [1]);		
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -4722,7 +4729,7 @@ function settingChanged(id, currUniverse) {
 
 	if (btn.type === 'multitoggle') {
 		const value = `value${valueSuffix}`;
-		if ((id === 'AutoMagmiteSpender2' && btn[value] === 1) || (game.global.universe === 1 && id === 'presetCombatRespec')) _settingTimeout();
+		if ((id === 'magmiteSpending' && btn[value] > 0) || (game.global.universe === 1 && id === 'presetCombatRespec')) _settingTimeout();
 		btn[value]++;
 		if (id === 'autoMaps' && currUniverse && btn[value] === 2) btn[value]++;
 		if (btn[value] > btn.name().length - 1) btn[value] = 0;
@@ -5126,7 +5133,7 @@ function _settingsToLineBreak() {
 	const breakAfterBuildings = ['autoGigaDeltaFactor', 'advancedNurseriesIce'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
-	const breakAfterMagma = ['AutoGenC2'];
+	const breakAfterMagma = ['AutoGenC2', 'magmiteMinimize'];
 	const breakAfterNature = ['AutoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
 	const breakAfterDisplay = ['testTotalEquipmentCost'];
 	const breakAfterTest = ['automateSpireAssault', 'EnableAFK'];

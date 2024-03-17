@@ -232,7 +232,7 @@ function c2RunnerPortal(portalZone) {
 function doPortal(challenge, skipDaily) {
 	if (!game.global.portalActive) return;
 
-	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
+	if (getPageSetting('magmiteSpending') === 1) autoMagmiteSpender();
 	autoHeirlooms();
 	if (!portalWindowOpen) portalClicked();
 
