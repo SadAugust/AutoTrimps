@@ -327,6 +327,7 @@ function runningAncientTreasure() {
 function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
 	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
+	if (game.global.mapsActive && prestigesToGet(getCurrentMapObject().level)[0] !== 0) return;
 
 	const skipChallenges = challengeActive('Mapology') || challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || (challengeActive('Berserk') && !game.challenges.Berserk.weakened !== 20);
 	const isFrenzyStarted = game.portal.Frenzy.frenzyStarted !== -1;
