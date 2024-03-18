@@ -328,9 +328,9 @@ function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
 	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
 
-	const mapObj = getCurrentMapObject();
 	if (game.global.mapsActive) {
-		if ((mapCost(mapObj.level - game.global.world, mapObj.bonus, mapObj.location, [9, 9, 9]) > game.resources.fragments * 0.5, getPageSetting('onlyPerfectMaps'))) return;
+		const mapObj = getCurrentMapObject();
+		if (mapCost(mapObj.level - game.global.world, mapObj.bonus, mapObj.location, [9, 9, 9], getPageSetting('onlyPerfectMaps')) > game.resources.fragments * 0.5) return;
 		if (prestigesToGet(mapObj.level)[0] !== 0) return;
 	}
 
