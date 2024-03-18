@@ -16,7 +16,7 @@ function newArmyRdy() {
 		let popSetting = getPageSetting('trapperArmyPct');
 		popSetting = Math.min(popSetting, 100);
 		if (popSetting <= 0) return true;
-		return trimps.owned > trimps.maxSoldiers * popSetting;
+		return trimps.owned > trimps.maxSoldiers * coordinatedMult * popSetting;
 	}
 
 	return trimps.realMax() <= trimps.owned;

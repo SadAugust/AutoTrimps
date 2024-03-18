@@ -376,7 +376,7 @@ function mainLoopU1() {
 	autoRoboTrimp();
 	autoEnlight();
 	autoNatureTokens();
-	if (getPageSetting('spendmagmite') === 2 && !settingChangedTimeout) autoMagmiteSpender();
+	if (!settingChangedTimeout && getPageSetting('magmiteSpending') === 2) autoMagmiteSpender();
 	autoGenerator();
 	if (shouldRunInTimeWarp()) checkStanceSetting();
 	if (game.global.spireActive) {

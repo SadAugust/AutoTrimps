@@ -43,7 +43,7 @@ function canU2OverkillAT(targetZone = game.global.world) {
 	return targetZone <= hze * allowed;
 }
 
-function maxOneShotPower(planToMap, targetZone = game.global.world) {
+function maxOneShotPower(planToMap = false, targetZone = game.global.world) {
 	let power = 2;
 
 	if (game.global.universe === 1) {
