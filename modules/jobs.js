@@ -103,10 +103,10 @@ function _workersNotNeededBreeding(owned, maxTrimps, employed) {
 
 	const breeding = owned - employed;
 	const multitasking = employed * game.permaBoneBonuses.multitasking.mult();
-	const neededBreeding = Math.min(maxTrimps/3, breeding + multitasking);
+	const neededBreeding = Math.min(maxTrimps / 3, breeding + multitasking);
 
 	let excess = breeding + multitasking - neededBreeding;
-	excess /= (1 - game.permaBoneBonuses.multitasking.mult());
+	excess /= 1 - game.permaBoneBonuses.multitasking.mult();
 
 	return excess;
 }
@@ -134,7 +134,7 @@ function _handleNoBreedChallenges(freeWorkers, owned, employed, maxSoldiers) {
 
 		if (trappaCoordToggle === 1) {
 			const armyTarget = getPageSetting('trapperArmySize');
-			const shouldBuyCoord = armyTarget > game.resources.trimps.maxSoldiers * 1.25;
+			const shouldBuyCoord = armyTarget > game.resources.trimps.getCurrentSend() * 1.25;
 			if (freeWorkers > nextCoordCost && done !== allowed && shouldBuyCoord) freeWorkers -= nextCoordCost;
 		}
 	}

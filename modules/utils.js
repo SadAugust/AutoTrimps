@@ -123,7 +123,7 @@ function debug(message, messageType, icon) {
 	const canRunTW = ['maps', 'map_Destacking', 'map_Details', 'map_Skip', 'offline'].includes(messageType);
 	const sendMessage = messageType in settingArray ? settingArray[messageType] : false;
 
-	if (sendMessage || messageType === 'offline') {
+	if (sendMessage || messageType === 'offline' || !messageType) {
 		console.log(`${timeStamp()} ${updatePortalTimer(true)} ${message}`);
 		if (!usingRealTimeOffline || canRunTW) message_AT(message, messageType, icon);
 	}

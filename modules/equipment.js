@@ -85,8 +85,8 @@ function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false,
 	return _populateMostEfficientEquipment(mostEfficientObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield);
 }
 
-function calculateEquipCap(type, noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal')) {
-	if (noPrestigeChallenge) return Infinity;
+function calculateEquipCap(type, noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal'), zoneGo = false) {
+	if (zoneGo || noPrestigeChallenge) return Infinity;
 	if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return Infinity;
 	return type === 'attack' ? getPageSetting('equipCapAttack') : getPageSetting('equipCapHealth');
 }
@@ -103,15 +103,18 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo) {
 		return resourceSpendingPct || (equipPercent <= 0 ? 1 : Math.min(1, equipPercent / 100));
 	};
 
-	const createObject = (type) => ({
-		name: '',
-		statPerResource: Infinity,
-		prestige: false,
-		cost: 0,
-		resourceSpendingPct: calculateResourceSpendingPct(getZoneGo(type), type),
-		zoneGo: getZoneGo(type),
-		equipCap: calculateEquipCap(type)
-	});
+	const createObject = (type) => {
+		const zoneGo = getZoneGo(type);
+		return {
+			name: '',
+			statPerResource: Infinity,
+			prestige: false,
+			cost: 0,
+			resourceSpendingPct: calculateResourceSpendingPct(zoneGo, type),
+			zoneGo: zoneGo,
+			equipCap: calculateEquipCap(type)
+		};
+	};
 
 	return {
 		attack: createObject('attack'),
@@ -293,7 +296,8 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 	}
 
 	if (farmType === 'health' || farmType === 'block') {
-		if (whichHitsSurvived() < getPageSetting('equipCutOffHS') || mapSettings.shouldHealthFarm) return zoneDetails;
+		const hitsSurvived = whichHitsSurvived();
+		if (hitsSurvived < getPageSetting('equipCutOffHS') || mapSettings.shouldHealthFarm) return zoneDetails;
 		if ((mapSettings.mapName === 'Smithless Farm' || mapSettings.mapName === 'Wither Farm') && mapSettings.equality > 0) return zoneDetails;
 		if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && getPerkLevel('Equality') > 0) return zoneDetails;
 	}
@@ -334,10 +338,10 @@ function autoEquip() {
 
 	if (_autoEquipTimeWarp()) return;
 
-	let prestigeLeft = false;
+	/* let prestigeLeft = false;
 	do {
 		prestigeLeft = buyEquipsPrestige();
-	} while (prestigeLeft);
+	} while (prestigeLeft); */
 
 	let equipLeft = false;
 	do {
@@ -354,7 +358,7 @@ function _autoEquipTimeWarp() {
 	const dontWhileLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || liquifiedZone();
 	if (!dontWhileLoop) return false;
 
-	buyEquipsPrestige();
+	/* buyEquipsPrestige(); */
 	buyEquipsAlways2();
 	buyEquips();
 
@@ -448,6 +452,9 @@ function buyEquips() {
 			}
 		}
 	}
+
+	/* if (keepBuying && mapSettings.mapName === 'HD Ratio') hdStats.hdRatio = calcHDRatio(game.global.world, 'world', false, 1);
+	if (keepBuying && mapSettings.mapName === 'Hits Survived') hdStats.hitsSurvived = calcHitsSurvived(game.global.world, 'world', 1); */
 
 	return keepBuying;
 }

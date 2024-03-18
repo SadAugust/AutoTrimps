@@ -320,13 +320,19 @@ function runningAncientTreasure() {
 	if (mapSettings.ancientTreasure && getPageSetting('autoMaps') === 1) return true;
 	const mapName = getAncientTreasureName();
 	if (MODULES.mapFunctions.runUniqueMap === mapName) return;
-	if (game.global.mapsActive && getCurrentMapObject().location === mapName) return true;
+	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return true;
 	return false;
 }
 
 function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
 	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
+
+	const mapObj = getCurrentMapObject();
+	if (game.global.mapsActive) {
+		if ((mapCost(mapObj.level - game.global.world, mapObj.bonus, mapObj.location, [9, 9, 9]) > game.resources.fragments * 0.5, getPageSetting('onlyPerfectMaps'))) return;
+		if (prestigesToGet(mapObj.level)[0] !== 0) return;
+	}
 
 	const skipChallenges = challengeActive('Mapology') || challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || (challengeActive('Berserk') && !game.challenges.Berserk.weakened !== 20);
 	const isFrenzyStarted = game.portal.Frenzy.frenzyStarted !== -1;

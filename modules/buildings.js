@@ -265,8 +265,9 @@ function _buyStorage(hypoZone) {
 		let exoticValue = 0;
 
 		if (game.global.mapsActive) {
-			if (map.name === getAncientTreasureName()) exoticValue = curRes;
-			else {
+			if (map.name === getAncientTreasureName()) {
+				exoticValue = curRes;
+			} else {
 				const seconds = game.unlocks.imps.Jestimp ? 45 : game.unlocks.imps.Chronoimp ? 5 : 0;
 				exoticValue = scaleToCurrentMap(simpleSeconds(resource, seconds));
 			}

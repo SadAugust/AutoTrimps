@@ -91,13 +91,35 @@ function needGymystic() {
 	return shouldSaveForSpeedUpgrade(game.upgrades.Gymystic, 0.125, 0.125, 0.125, 0.75);
 }
 
+function trapperHoldCoords(jobChange = false) {
+	if (!noBreedChallenge() || !getPageSetting('trapper')) return false;
+
+	const trappaCoordToggle = getPageSetting('trapperCoordStyle');
+	if (trappaCoordToggle === 0) {
+		let coordTarget = getPageSetting('trapperCoords');
+		if (coordTarget > 0) coordTarget--;
+		if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
+		return coordTarget > 0 && gameUpgrade.done >= coordTarget;
+	}
+
+	if (trappaCoordToggle === 1) {
+		const armyTarget = getPageSetting('trapperArmySize');
+		const coordinated = getPerkLevel('Coordinated');
+		const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
+		return game.resources.trimps.getCurrentSend() * 1.25 > armyTarget;
+	}
+
+	if (jobChange) buyJobs();
+	return false;
+}
+
 function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0.25, woodRequired = 0.25, metalRequired = 0.25, scienceRequired = 0.5) {
 	const resources = ['food', 'wood', 'metal', 'science'];
 	const resourceRequired = [foodRequired, woodRequired, metalRequired, scienceRequired];
 	const resourceOwned = resources.map((r) => game.resources[r].owned);
 
-	if (upgradeObj.done >= upgradeObj.allowed) return false;
-	if (upgradeObj === game.upgrades.Coordination && !canAffordCoordinationTrimps()) return false;
+	if (challengeActive('Scientist') || upgradeObj.done >= upgradeObj.allowed) return false;
+	if (upgradeObj === game.upgrades.Coordination && (!canAffordCoordinationTrimps() || trapperHoldCoords())) return false;
 
 	for (let i = 0; i < resources.length; i++) {
 		const cost = upgradeObj.cost.resources[resources[i]];
@@ -184,25 +206,7 @@ function buyUpgrades() {
 		if (!available) continue;
 
 		if (upgrade === 'Coordination') {
-			if (upgradeSetting === 2 || !canAffordCoordinationTrimps()) continue;
-			//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
-			if (challengeActive('Trappapalooza') || (challengeActive('Trapper') && getPageSetting('trapper'))) {
-				const trappaCoordToggle = getPageSetting('trapperCoordStyle');
-
-				if (trappaCoordToggle === 0) {
-					let coordTarget = getPageSetting('trapperCoords');
-					if (coordTarget > 0) coordTarget--;
-					if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
-					if (coordTarget > 0 && gameUpgrade.done >= coordTarget) continue;
-				}
-
-				if (trappaCoordToggle === 1) {
-					const armyTarget = getPageSetting('trapperArmySize');
-					if (game.resources.trimps.maxSoldiers * 1.25 > armyTarget) continue;
-				}
-
-				buyJobs();
-			}
+			if (upgradeSetting === 2 || !canAffordCoordinationTrimps() || trapperHoldCoords(true)) continue;
 		} else if (upgrade === 'Gigastation') {
 			if (!getPageSetting('buildingsType') || !getPageSetting('warpstation')) continue;
 			if (!bwRewardUnlocked('DecaBuild')) {

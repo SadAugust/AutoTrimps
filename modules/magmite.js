@@ -1,24 +1,22 @@
 function miRatio() {
 	if (MODULES.magmite && MODULES.magmite.upgradeToPurchase !== '' && MODULES.magmite.upgradeToPurchase !== undefined) return;
 
-	MODULES.magmite = {};
-	MODULES.magmite.carpMod = 0;
-	MODULES.magmite.minTick = 0;
-	MODULES.magmite.maxTick = 0;
-	MODULES.magmite.tickRatio = 0;
-
-	MODULES.magmite.totalPop = 0;
-	MODULES.magmite.finalAmals = 0;
-	MODULES.magmite.maxAmals = 0;
-	MODULES.magmite.finalAmalZone = 0;
-	MODULES.magmite.neededPop = 0;
-	MODULES.magmite.finalArmySize = 0;
-	MODULES.magmite.finalAmalRatio = 0;
-	MODULES.magmite.yourFinalRatio = 0;
-	MODULES.magmite.totalMI = 0;
-	MODULES.magmite.finalResult = [];
-	MODULES.magmite.upgradeToPurchase = '';
-	MODULES.magmiteSettings = {};
+	MODULES.magmite = {
+		carpMod: 0,
+		minTick: 0,
+		maxTick: 0,
+		tickRatio: 0,
+		totalPop: 0,
+		finalAmals: 0,
+		maxAmals: 0,
+		finalAmalZone: 0,
+		neededPop: 0,
+		finalArmySize: 0,
+		finalAmalRatio: 0,
+		yourFinalRatio: 0,
+		totalMI: 0,
+		upgradeToPurchase: ''
+	};
 
 	const fuelStart = Math.max(230, getPageSetting('fuellater', 1));
 	const fuelEnd = Math.min(810, getPageSetting('fuelend', 1));
@@ -28,29 +26,33 @@ function miRatio() {
 		fuelStart: {
 			value: fuelStart,
 			update: function (value = this.value) {
-				this.value = parseInt(value);
-				if (this.value < 230) this.value = 230;
-				if (this.value > MODULES.magmiteSettings.fuelEnd.value) MODULES.magmiteSettings.fuelEnd.value = this.value;
-				if (this.value > MODULES.magmiteSettings.runEnd.value) MODULES.magmiteSettings.runEnd.value = this.value;
-				MODULES.magmiteSettings.fuelZones.update(MODULES.magmiteSettings.fuelEnd.value - this.value);
+				const { fuelEnd, runEnd, fuelZones } = MODULES.magmiteSettings;
+				this.value = Math.max(230, value);
+				fuelEnd.value = Math.max(fuelEnd.value, this.value);
+				runEnd.value = Math.max(runEnd.value, this.value);
+				fuelZones.update(fuelEnd.value - this.value);
 				calculateCurrentPop();
 			}
 		},
 		fuelEnd: {
 			value: fuelEnd,
 			update: function (value = this.value) {
+				const { fuelStart, runEnd, fuelZones } = MODULES.magmiteSettings;
 				this.value = parseInt(value);
-				if (this.value < MODULES.magmiteSettings.fuelStart.value) MODULES.magmiteSettings.fuelStart.value = this.value;
-				if (this.value > MODULES.magmiteSettings.runEnd.value) MODULES.magmiteSettings.runEnd.value = this.value;
-				if (MODULES.magmiteSettings.fuelZones.value !== this.value - MODULES.magmiteSettings.fuelStart.value) MODULES.magmiteSettings.fuelZones.update(this.value - MODULES.magmiteSettings.fuelStart.value);
+				fuelStart.value = Math.min(fuelStart.value, this.value);
+				runEnd.value = Math.max(runEnd.value, this.value);
+				const newFuelZonesValue = this.value - fuelStart.value;
+				if (fuelZones.value !== newFuelZonesValue) fuelZones.update(newFuelZonesValue);
 				calculateCurrentPop();
 			}
 		},
 		fuelZones: {
 			value: fuelEnd - fuelStart,
 			update: function (value = this.value) {
+				const { fuelStart, fuelEnd } = MODULES.magmiteSettings;
 				this.value = parseInt(value);
-				if (MODULES.magmiteSettings.fuelEnd.value !== MODULES.magmiteSettings.fuelStart.value + this.value) MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.fuelStart.value + this.value);
+				const newFuelEndValue = fuelStart.value + this.value;
+				if (fuelEnd.value !== newFuelEndValue) fuelEnd.update(newFuelEndValue);
 				calculateCurrentPop();
 			}
 		},
@@ -129,7 +131,7 @@ function miRatio() {
 		minimizeZone: {
 			value: 231,
 			update: function (value = this.value) {
-				this.value = value < 231 ? 231 : value;
+				this.value = Math.max(231, value);
 			}
 		}
 	};
@@ -141,19 +143,17 @@ function miRatio() {
 	MODULES.magmite.upgradeToPurchase = checkDGUpgrades();
 }
 
-function calculateMagmaZones() {
-	if (game.global.universe !== 1) return;
-	if (!getPageSetting('magmiteAutoFuel')) return;
-	miRatio();
-	const myFuelZones = getPageSetting('magmiteFuelZones', 1);
+function calculateFuelZones(refresh = false, fuelZones = getPageSetting('magmiteFuelZones', 1)) {
+	if (game.global.universe !== 1 || !getPageSetting('magmiteAutoFuel')) return;
+	if (!refresh) miRatio();
 	let bestAmals = MODULES.magmite.maxAmals;
-	MODULES.magmiteSettings.fuelStart.update(230, false);
+	MODULES.magmiteSettings.fuelStart.update(230);
 	let bestPop = 0;
 	let myFuelStart = 230;
 
-	for (let f = 230; f <= MODULES.magmiteSettings.runEnd.value - myFuelZones; f++) {
-		MODULES.magmiteSettings.fuelStart.update(f, false);
-		MODULES.magmiteSettings.fuelZones.update(myFuelZones, false);
+	for (let f = 230; f <= MODULES.magmiteSettings.runEnd.value - fuelZones; f++) {
+		MODULES.magmiteSettings.fuelStart.update(f);
+		MODULES.magmiteSettings.fuelZones.update(fuelZones);
 		if (MODULES.magmite.totalPop > bestPop && MODULES.magmite.maxAmals >= bestAmals) {
 			bestPop = MODULES.magmite.totalPop;
 			myFuelStart = f;
@@ -162,11 +162,65 @@ function calculateMagmaZones() {
 	}
 
 	MODULES.magmiteSettings.fuelStart.update(myFuelStart);
-	MODULES.magmiteSettings.fuelZones.update(myFuelZones);
+	MODULES.magmiteSettings.fuelZones.update(fuelZones);
 	MODULES.magmiteSettings.fuelEnd.update();
 
 	setPageSetting('fuellater', MODULES.magmiteSettings.fuelStart.value, 1);
 	setPageSetting('fuelend', MODULES.magmiteSettings.fuelEnd.value, 1);
+	miRatio();
+
+	if (!refresh && getPageSetting('magmiteMinimize')) minimizeFuelZones();
+}
+
+function minimizeFuelZones() {
+	const settings = MODULES.magmiteSettings;
+	const magmite = MODULES.magmite;
+	settings.fuelStart.update(230);
+	settings.fuelEnd.update(settings.runEnd.value);
+	const finalAmals = magmite.finalAmals;
+	const finalAmalZone = magmite.finalAmalZone;
+	const bestAmals = finalAmals;
+	const amalRatio = magmite.amalRatio;
+	let bestJ = settings.fuelZones.value;
+	let maxedAmals = false;
+
+	settings.fuelStart.update(settings.runEnd.value);
+	settings.fuelZones.update(0);
+
+	while (settings.fuelStart.value >= 230) {
+		while (MODULES.magmite.finalAmals > 0 && MODULES.magmite.finalAmals >= bestAmals && settings.fuelZones.value > 0) {
+			// minimize capacity
+			bestJ = settings.fuelZones.value;
+			settings.fuelZones.value -= 1;
+			settings.fuelZones.update(settings.fuelZones.value);
+			maxedAmals = true;
+		}
+
+		settings.fuelZones.update(settings.fuelZones.value);
+		settings.fuelStart.value -= 1;
+
+		if (settings.fuelStart.value >= 230) {
+			settings.fuelStart.update(settings.fuelStart.value);
+		}
+
+		settings.fuelZones.update(Math.min(settings.runEnd.value - settings.fuelStart.value, bestJ));
+		if (maxedAmals && MODULES.magmite.finalAmals < bestAmals) break;
+	}
+
+	// if ratios are dropping per zone, fuel a little extra for safety's sake
+	if (amalRatio[finalAmalZone] > amalRatio[finalAmalZone + 1]) {
+		bestJ += Math.ceil(bestJ * 0.1);
+	}
+
+	// handwaving a less useless value here
+	if (MODULES.magmite.finalAmals === 0) {
+		bestJ = Math.min(10, settings.runEnd.value - 230);
+	}
+
+	setPageSetting('magmiteFuelZones', bestJ, 1);
+	settings.fuelZones.update(bestJ);
+
+	calculateFuelZones(true);
 }
 
 function calculateCoordIncrease() {
@@ -189,12 +243,15 @@ function calculateMagma() {
 	const magmaPerZone = MODULES.magmiteSettings.magmaFlow.value === 18 ? 18 : 16;
 	const voidMagma = 10 * MODULES.magmiteSettings.voids.value * MODULES.magmiteSettings.expertGen.value;
 	MODULES.magmite.totalMI = zonesOfMI * magmaPerZone + voidMagma;
-	//Not sure why this line existed. Leaving it here for now.
-	//if (game.global.magmite > MODULES.magmite.totalMI) MODULES.magmite.totalMI = game.global.magmite;
+	/* Not sure why this line existed. Leaving it here for now. */
+	if (game.global.magmite > MODULES.magmite.totalMI) MODULES.magmite.totalMI = game.global.magmite;
 }
 
 function calculateCarpMod() {
-	MODULES.magmite.carpMod = MODULES.magmite.minTick * Math.pow(1.1, MODULES.magmiteSettings.carp.value) * (1 + MODULES.magmiteSettings.carp2.value * 0.0025) * (MODULES.magmiteSettings.scaffolding.value * Math.pow(1.1, MODULES.magmiteSettings.scaffolding.value - 1));
+	let { carp, carp2, scaffolding } = MODULES.magmiteSettings;
+	carpMult = Math.pow(1.1, carp.value);
+	carp2Mult = 1 + carp2.value * 0.0025;
+	MODULES.magmite.carpMod = MODULES.magmite.minTick * carpMult * carp2Mult * scaffolding.value;
 }
 
 function calculateMinTick() {
@@ -242,11 +299,8 @@ function calculateCurrentPop() {
 	// base CI on end zone
 	const confInterval = 1 - 1.91 / Math.sqrt((MODULES.magmiteSettings.runEnd.value - MODULES.magmiteSettings.fuelStart.value) * tauntimpFrequency);
 
+	//calc fuel gain
 	for (let i = 0; i <= myHze - 200; i++) {
-		//calc an extra 30 zones because why not
-		// i = zone offset from z230
-
-		//calc fuel gain
 		if (i === 0) fuelThisZone[0] = 0.2;
 		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, MODULES.magmiteSettings.supply.maxSupply);
 
@@ -320,255 +374,125 @@ function calculateCurrentPop() {
 	MODULES.magmite.neededPop = coordPop[MODULES.magmiteSettings.runEnd.value - 230] / 3;
 	MODULES.magmite.finalArmySize = MODULES.magmite.neededPop * Math.pow(1000, MODULES.magmite.finalAmals);
 	MODULES.magmite.yourFinalRatio = MODULES.magmite.totalPop / MODULES.magmite.finalArmySize;
+	MODULES.magmite.amalRatio = amalRatio;
 }
 
 function checkDGUpgrades() {
-	const myStart = MODULES.magmiteSettings.fuelStart.value;
-	const myEnd = MODULES.magmiteSettings.fuelEnd.value;
-	const myRunEnd = MODULES.magmiteSettings.runEnd.value;
-	const myPop = MODULES.magmite.totalPop;
-	const myMI = MODULES.magmite.totalMI;
-	MODULES.magmiteSettings.fuelStart.update(230);
+	const settings = MODULES.magmiteSettings;
+	const myStart = settings.fuelStart.value;
+	const myEnd = settings.fuelEnd.value;
+	const myRunEnd = settings.runEnd.value;
+	let { totalPop, totalMI } = MODULES.magmite;
 
-	if (MODULES.magmiteSettings.hze.value > 0) {
-		MODULES.magmiteSettings.runEnd.update(MODULES.magmiteSettings.hze.value);
-		MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.hze.value);
-	} else {
-		MODULES.magmiteSettings.fuelEnd.update(MODULES.magmiteSettings.runEnd.value);
-	}
+	const upgradesNames = ['efficiency', 'capacity', 'supply'];
+	const overclockerUnlocked = game.permanentGeneratorUpgrades.Hybridization.owned && game.permanentGeneratorUpgrades.Storage.owned;
+	if (overclockerUnlocked) upgradesNames.push('overclocker');
 
-	MODULES.magmiteSettings.efficiency.update(MODULES.magmiteSettings.efficiency.value + 1);
+	const baseCost = [8, 32, 64, 32];
+	const hzeValue = settings.hze.value > 0 ? settings.hze.value : settings.runEnd.value;
+	const magmiteDecay = settings.decay.value;
 
-	let efficiencyEfficiency = MODULES.magmite.totalPop - myPop;
-	MODULES.magmiteSettings.efficiency.update(MODULES.magmiteSettings.efficiency.value - 1);
-	MODULES.magmiteSettings.capacity.update(MODULES.magmiteSettings.capacity.value + 1);
+	settings.fuelStart.update(230);
+	if (settings.hze.value > 0) settings.runEnd.update(hzeValue);
+	settings.fuelEnd.update(hzeValue);
 
-	let capacityEfficiency = MODULES.magmite.totalPop - myPop;
-	MODULES.magmiteSettings.capacity.update(MODULES.magmiteSettings.capacity.value - 1);
-	MODULES.magmiteSettings.supply.update(MODULES.magmiteSettings.supply.value + 1);
+	const efficiencyVariables = upgradesNames.map((upgrade) => {
+		settings[upgrade].update(settings[upgrade].value + 1);
+		const efficiency = MODULES.magmite.totalPop - totalPop;
+		settings[upgrade].update(settings[upgrade].value - 1);
+		return efficiency;
+	});
 
-	let supplyEfficiency = MODULES.magmite.totalPop - myPop;
-	MODULES.magmiteSettings.supply.update(MODULES.magmiteSettings.supply.value - 1);
-
-	MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value + 1);
-
-	let overclockerEfficiency = MODULES.magmite.totalPop - myPop;
-	MODULES.magmiteSettings.overclocker.update(MODULES.magmiteSettings.overclocker.value - 1);
-
-	let eCost = MODULES.magmiteSettings.efficiency.cost;
-	let cCost = MODULES.magmiteSettings.capacity.cost;
-	let sCost = MODULES.magmiteSettings.supply.cost;
-	let oCost = MODULES.magmiteSettings.overclocker.cost;
-
-	const magmiteDecay = MODULES.magmiteSettings.decay.value;
-	const totalRuns = 10;
-	let totalMi = myMI;
-	let checkMi = myMI;
 	let runsNeeded = 2;
+	let checkMi = totalMI;
 
-	while (totalRuns > runsNeeded) {
-		checkMi *= magmiteDecay;
-		checkMi += myMI;
+	let oneTimersMi = totalMI;
+	const oneTimers = ['Hybridization', 'Storage', 'Shielding', 'Slowburn', 'Simulacrum'];
+	const oneTimerRuns = getPageSetting('magmiteOneTimerRuns', 1);
 
-		if (checkMi > totalMi) totalMi = checkMi;
-
+	while (oneTimerRuns > runsNeeded) {
+		oneTimersMi *= magmiteDecay;
+		oneTimersMi += totalMI;
 		runsNeeded++;
 	}
 
-	/* 
-		Consolidate this into one loop rather than 4 seperate if statement blocks
-	*/
+	const affordableUpgrades = oneTimers.filter((upgrade) => {
+		const upgradeData = game.permanentGeneratorUpgrades[upgrade];
+		if (upgrade === 'Hybridization' && !game.permanentGeneratorUpgrades.Storage.owned) return false;
+		return !upgradeData.owned && upgradeData.cost <= oneTimersMi;
+	});
 
-	// MI decay calcs
-	if (eCost > myMI * 4.9) MODULES.magmiteSettings.efficiency.cost = -1;
-	else if (eCost * 2 + 8 <= myMI);
-	else if (eCost <= myMI) {
-		MODULES.magmiteSettings.efficiency.cost += (myMI - eCost) * 0.2;
-	} else {
-		let runsNeeded = 1;
-		while (eCost > myMI) {
-			MODULES.magmiteSettings.efficiency.cost += myMI;
-			eCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
-			runsNeeded++;
-			if (runsNeeded > totalRuns) {
-				break;
+	if (affordableUpgrades.length > 0) {
+		settings.runEnd.update(myRunEnd);
+		settings.fuelStart.update(myStart);
+		settings.fuelEnd.update(myEnd);
+		return affordableUpgrades[0];
+	}
+
+	const totalMi = totalMI;
+	const totalRuns = getPageSetting('magmiteUpgradeRuns', 1);
+	runsNeeded = 1;
+	while (totalRuns > runsNeeded) {
+		checkMi *= magmiteDecay;
+		checkMi += totalMi;
+		if (checkMi > totalMI) MODULES.magmite.totalMI = checkMi;
+		runsNeeded++;
+	}
+
+	totalMI = MODULES.magmite.totalMI;
+
+	upgradesNames.forEach((upgrade, i) => {
+		let cost = settings[upgrade].cost;
+		if (cost > totalMI * 4.9) {
+			settings[upgrade].cost = -1;
+		} else if (cost * 2 + baseCost[i] <= totalMI) {
+		} else if (cost <= totalMI) {
+			settings[upgrade].cost += (totalMI - cost) * 0.2;
+		} else {
+			let runsNeeded = 1;
+			while (cost > totalMI) {
+				settings[upgrade].cost += totalMI;
+				cost -= totalMI * Math.pow(magmiteDecay, runsNeeded);
+				runsNeeded++;
+				if (runsNeeded > totalRuns) {
+					break;
+				}
 			}
+			settings[upgrade].cost += (totalMI - cost) * 0.2;
 		}
 
-		MODULES.magmiteSettings.efficiency.cost += (myMI - eCost) * 0.2;
-	}
+		efficiencyVariables[i] /= settings[upgrade].cost;
+	});
 
-	if (cCost > myMI * 4.9) MODULES.magmiteSettings.capacity.cost = -1;
-	else if (cCost * 2 + 32 <= myMI);
-	else if (cCost <= myMI) {
-		MODULES.magmiteSettings.capacity.cost += (myMI - cCost) * 0.2;
-	} else {
-		let runsNeeded = 1;
-		while (cCost > myMI) {
-			MODULES.magmiteSettings.capacity.cost += myMI;
-			cCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
-			runsNeeded++;
-			if (runsNeeded > totalRuns) {
-				break;
-			}
-		}
+	upgradesNames.forEach((upgrade, i) => {
+		const cost = settings[upgrade].cost;
+		settings[upgrade].efficiency = totalMI > cost ? efficiencyVariables[i] / efficiencyVariables[0] : 0;
+	});
 
-		MODULES.magmiteSettings.capacity.cost += (myMI - cCost) * 0.2;
-	}
+	const finalResult = upgradesNames.map((upgradesNames) => settings[upgradesNames].efficiency);
 
-	if (sCost > myMI * 4.9) MODULES.magmiteSettings.supply.cost = -1;
-	else if (sCost * 2 + 64 <= myMI);
-	else if (sCost <= myMI) {
-		MODULES.magmiteSettings.supply.cost += (myMI - sCost) * 0.2;
-	} else {
-		let runsNeeded = 1;
-		while (sCost > myMI) {
-			MODULES.magmiteSettings.supply.cost += myMI;
-			sCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
-			runsNeeded++;
-			if (runsNeeded > totalRuns) {
-				break;
-			}
-		}
+	const upgradeIndex = finalResult.indexOf(Math.max(...finalResult));
+	settings.runEnd.update(myRunEnd);
+	settings.fuelStart.update(myStart);
+	settings.fuelEnd.update(myEnd);
 
-		MODULES.magmiteSettings.supply.cost += (myMI - sCost) * 0.2;
-	}
-
-	if (oCost > myMI * 4.9) MODULES.magmiteSettings.overclocker.cost = -1;
-	else if (oCost * 2 + 32 <= myMI);
-	else if (oCost <= myMI) {
-		MODULES.magmiteSettings.overclocker.cost += (myMI - oCost) * 0.2;
-	} else {
-		let runsNeeded = 1;
-		while (oCost > myMI) {
-			MODULES.magmiteSettings.overclocker.cost += myMI;
-			oCost -= myMI * Math.pow(magmiteDecay, runsNeeded);
-			runsNeeded++;
-			if (runsNeeded > totalRuns) {
-				break;
-			}
-		}
-
-		MODULES.magmiteSettings.overclocker.cost += (myMI - oCost) * 0.2;
-	}
-
-	efficiencyEfficiency /= MODULES.magmiteSettings.efficiency.cost;
-	capacityEfficiency /= MODULES.magmiteSettings.capacity.cost;
-	supplyEfficiency /= MODULES.magmiteSettings.supply.cost;
-	overclockerEfficiency /= MODULES.magmiteSettings.overclocker.cost;
-
-	[eCost, cCost, sCost, oCost] = [eCost, cCost, sCost, oCost].map((cost) => (totalMi > cost ? cost : Infinity));
-	MODULES.magmiteSettings.efficiency.efficiency = eCost === Infinity ? 0 : 1;
-	MODULES.magmiteSettings.capacity.efficiency = cCost === Infinity ? 0 : capacityEfficiency / efficiencyEfficiency;
-	MODULES.magmiteSettings.supply.efficiency = sCost === Infinity ? 0 : supplyEfficiency / efficiencyEfficiency;
-	MODULES.magmiteSettings.overclocker.efficiency = oCost === Infinity ? 0 : overclockerEfficiency / efficiencyEfficiency;
-
-	MODULES.magmite.finalResult = [];
-	const upgradeNames = ['Efficiency', 'Capacity', 'Supply', 'Overclocker'];
-
-	for (let i = 0; i < upgradeNames.length; i++) {
-		MODULES.magmite.finalResult.push(+MODULES.magmiteSettings[upgradeNames[i].toLowerCase()].efficiency);
-	}
-
-	const upgradeIndex = MODULES.magmite.finalResult.indexOf(Math.max(...MODULES.magmite.finalResult));
-	MODULES.magmiteSettings.runEnd.update(myRunEnd, false);
-	MODULES.magmiteSettings.fuelStart.update(myStart, false);
-	MODULES.magmiteSettings.fuelEnd.update(myEnd, false);
-
-	return upgradeNames[upgradeIndex];
+	return ['Efficiency', 'Capacity', 'Supply', 'Overclocker'][upgradeIndex];
 }
 
 function autoMagmiteSpender(portal) {
 	if (game.global.universe !== 1) return;
-	//Set Fuel zones when portaling
-	if (portalWindowOpen) calculateMagmaZones();
 
-	const magmiteSetting = getPageSetting('spendmagmite', 1);
+	if (portalWindowOpen) calculateFuelZones(); // set fuel zones when portaling
+
+	const magmiteSetting = getPageSetting('magmiteSpending', 1);
 	if (portal && (magmiteSetting !== 1 || !portalWindowOpen)) return;
-	if (getPageSetting('ratiospend', 1)) {
-		let boughtUpgrade = false;
-		do {
-			boughtUpgrade = _autoMagmiteCalc();
-		} while (boughtUpgrade);
-	} else {
-		let didSpend = false;
 
-		try {
-			const permanames = ['Slowburn', 'Shielding', 'Storage', 'Hybridization', 'Supervision', 'Simulacrum'];
+	let boughtUpgrade = false;
+	do {
+		boughtUpgrade = _autoMagmiteCalc();
+	} while (boughtUpgrade);
 
-			for (let i = 0; i < permanames.length; i++) {
-				const item = permanames[i];
-				const upgrade = game.permanentGeneratorUpgrades[item];
-				if (typeof upgrade === 'undefined') return;
-				if (upgrade.owned) continue;
-				const cost = upgrade.cost;
-
-				if (game.global.magmite >= cost) {
-					buyPermanentGeneratorUpgrade(item);
-					debug(`Auto Spending ${cost} magmite on: ${item}`, 'magmite');
-					didSpend = true;
-				}
-			}
-
-			const hasOv = game.permanentGeneratorUpgrades.Hybridization.owned && game.permanentGeneratorUpgrades.Storage.owned;
-			const ovclock = game.generatorUpgrades.Overclocker;
-
-			if (hasOv && (getPageSetting('spendmagmitesetting', 1) === 0 || getPageSetting('spendmagmitesetting', 1) === 3 || !ovclock.upgrades) && game.global.magmite >= ovclock.cost()) {
-				debug(`Auto Spending ${ovclock.cost()} Magmite on: Overclocker${ovclock.upgrades ? ` #${ovclock.upgrades + 1}` : ''}`, 'magmite');
-				buyGeneratorUpgrade('Overclocker');
-			}
-
-			let repeat = getPageSetting('spendmagmitesetting', 1) === 0 || getPageSetting('spendmagmitesetting', 1) === 1;
-			while (repeat) {
-				const eff = game.generatorUpgrades['Efficiency'];
-				const cap = game.generatorUpgrades['Capacity'];
-				const sup = game.generatorUpgrades['Supply'];
-				if (typeof eff === 'undefined' || typeof cap === 'undefined' || typeof sup === 'undefined') return;
-
-				const EffObj = {};
-				EffObj.name = 'Efficiency';
-				EffObj.lvl = eff.upgrades + 1;
-				EffObj.cost = eff.cost();
-				EffObj.benefit = EffObj.lvl * 0.1;
-				EffObj.effInc = ((1 + EffObj.benefit) / (1 + (EffObj.lvl - 1) * 0.1) - 1) * 100;
-				EffObj.miCostPerPct = EffObj.cost / EffObj.effInc;
-
-				const CapObj = {};
-				CapObj.name = 'Capacity';
-				CapObj.lvl = cap.upgrades + 1;
-				CapObj.cost = cap.cost();
-				CapObj.totalCap = 3 + 0.4 * CapObj.lvl;
-				CapObj.benefit = Math.sqrt(CapObj.totalCap);
-				CapObj.effInc = (CapObj.benefit / Math.sqrt(3 + 0.4 * (CapObj.lvl - 1)) - 1) * 100;
-				CapObj.miCostPerPct = CapObj.cost / CapObj.effInc;
-				let upgrade, item;
-
-				if (EffObj.miCostPerPct <= CapObj.miCostPerPct) {
-					item = EffObj.name;
-				} else {
-					const supCost = sup.cost();
-					const wall = getPageSetting('SupplyWall', 1);
-					if (!wall) item = CapObj.cost <= supCost ? CapObj.name : 'Supply';
-					else if (wall === 1) item = 'Capacity';
-					else if (wall < 0) item = supCost <= CapObj.cost * -wall ? 'Supply' : 'Capacity';
-					else item = CapObj.cost <= supCost * wall ? 'Capacity' : 'Supply';
-				}
-
-				upgrade = game.generatorUpgrades[item];
-
-				if (game.global.magmite >= upgrade.cost()) {
-					debug(`Auto Spending ${upgrade.cost()} Magmite on: ${item} #${game.generatorUpgrades[item].upgrades + 1}`, 'magmite');
-					buyGeneratorUpgrade(item);
-					didSpend = true;
-				} else {
-					repeat = false;
-				}
-			}
-		} catch (err) {
-			debug(`AutoSpendMagmite Error encountered: ${err.message}`, 'magmite');
-		}
-		if (didSpend) debug(`Leftover magmite: ${game.global.magmite}`, 'magmite');
-	}
+	if (boughtUpgrade) debug(`Leftover magmite: ${game.global.magmite}`, 'magmite');
 }
 
 function _autoMagmiteCalc() {
@@ -576,10 +500,19 @@ function _autoMagmiteCalc() {
 	const toSpend = MODULES.magmite.upgradeToPurchase;
 	if (toSpend === '') return false;
 
-	const upgrader = game.generatorUpgrades[toSpend];
-	if (upgrader === undefined || game.global.magmite < upgrader.cost()) return false;
+	const oneTimers = ['Hybridization', 'Storage', 'Shielding', 'Slowburn', 'Simulacrum'];
+	const isOneTimeUpgrade = oneTimers.includes(toSpend);
+	const upgradeLocation = isOneTimeUpgrade ? 'permanentGeneratorUpgrades' : 'generatorUpgrades';
 
-	debug(`Auto Spending ${upgrader.cost()} Magmite on: ${toSpend} #${game.generatorUpgrades[toSpend].upgrades + 1}`, 'magmite');
+	const upgrader = game[upgradeLocation][toSpend];
+	if (!upgrader) return false;
+
+	const cost = typeof upgrader.cost === 'function' ? upgrader.cost() : upgrader.cost;
+	if (game.global.magmite < cost) return false;
+
+	const levelInfo = !isOneTimeUpgrade ? ` #${upgrader.upgrades + 1}` : '';
+	debug(`Spent ${cost} Magmite on: ${toSpend}${levelInfo}`, 'magmite');
+
 	buyGeneratorUpgrade(toSpend);
 	MODULES.magmite.upgradeToPurchase = '';
 	return true;
@@ -607,7 +540,6 @@ function autoGenerator() {
 	let fuelState = 1;
 
 	if (fuelLater < 0 || game.global.world < fuelLater) {
-		//Pseudo-Hybrid. It fuels until full, then goes into Mi mode
 		fuelState = beforeFuelState;
 		if (beforeFuelState === 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
 			fuelState = game.global.generatorMode;
@@ -615,18 +547,15 @@ function autoGenerator() {
 			if (game.global.magmaFuel >= getGeneratorFuelCap(false, true)) fuelState = 0;
 		}
 	}
-	//Fuel
+	// Fuel
 	else if (fuelEnd < 0 || game.global.world < fuelEnd) {
 		if (game.generatorUpgrades.Overclocker.upgrades === 0) {
 			if (game.permanentGeneratorUpgrades.Hybridization.owned) fuelState = 2;
-			else {
-				if (game.global.magmaFuel === getGeneratorFuelCap(false, true)) fuelState = 0;
-			}
+			else if (game.global.magmaFuel === getGeneratorFuelCap(false, true)) fuelState = 0;
 		}
 	}
-	//After Fuel
+	// After Fuel
 	else {
-		//Pseudo-Hybrid. It fuels until full, then goes into Mi mode
 		fuelState = afterFuelState;
 		if (afterFuelState === 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
 			fuelState = game.global.generatorMode;
