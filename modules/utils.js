@@ -617,31 +617,6 @@ function getResourcefulMult() {
 	return resourcefulLevel > 0 ? Math.pow(1 - getPerkModifier('Resourceful'), resourcefulLevel) : 1;
 }
 
-function shieldBlockUpgrades() {
-	const upgradeObj = {};
-	const Gymystic = game.upgrades.Gymystic;
-
-	let itemData = game.buildings.Gym;
-	let increaseBy = itemData.increase.by;
-	let cost = itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.owned) * getResourcefulMult();
-
-	const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
-	const gymysticIncrease = (calcOurBlock() + increaseBy) * (gymysticFactor - 1);
-
-	upgradeObj.Gym = cost / (increaseBy + gymysticIncrease);
-
-	itemData = game.equipment.Shield;
-	const prestige = buyPrestigeMaybe('Shield', undefined, Math.min(itemData.level, 9));
-
-	increaseBy = prestige.purchase ? prestige.newStatValue - itemData.blockCalculated * itemData.level : itemData.blockCalculated;
-	cost = prestige.purchase ? prestige.prestigeCost : itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.level) * getEquipPriceMult();
-
-	//Shield level cap
-	upgradeObj.Shield = (!prestige.prestigeAvailable && itemData.level >= calculateEquipCap('block')) ? Infinity : cost / increaseBy;
-
-	return upgradeObj;
-}
-
 function shieldGymEfficiency() {
 	const shieldBlock = game.equipment.Shield.blockNow;
 	const Gymystic = game.upgrades.Gymystic;
@@ -675,6 +650,7 @@ function shieldGymEfficiency() {
 	}
 
 	//Shield level cap
+	//TODO Send ZoneGo parameter?
 	upgradeObj.Shield = (!prestige.prestigeAvailable && itemData.level >= calculateEquipCap(stat)) ? Infinity : cost / increaseBy;
 
 	return upgradeObj;

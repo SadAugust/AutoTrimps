@@ -85,7 +85,7 @@ function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false,
 	return _populateMostEfficientEquipment(mostEfficientObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield);
 }
 
-function calculateEquipCap(type, noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal'), zoneGo = false) {
+function calculateEquipCap(type, zoneGo = false, noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal')) {
 	if (zoneGo || noPrestigeChallenge) return Infinity;
 	if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return Infinity;
 	return type === 'attack' ? getPageSetting('equipCapAttack') : getPageSetting('equipCapHealth');
@@ -112,7 +112,7 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo) {
 			cost: 0,
 			resourceSpendingPct: calculateResourceSpendingPct(zoneGo, type),
 			zoneGo: zoneGo,
-			equipCap: calculateEquipCap(type)
+			equipCap: calculateEquipCap(type, zoneGo)
 		};
 	};
 
