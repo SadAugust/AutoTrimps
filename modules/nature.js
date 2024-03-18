@@ -21,7 +21,7 @@ function autoNatureTokens() {
 	if (spentTokens) updateNatureInfoSpans();
 }
 
-function _autoNatureEmpowerment(nature, empowerment) {
+function _autoNatureEmpowerment(nature, empowerment, tokenThreshold) {
 	const cost = getNextNatureCost(nature);
 	if (empowerment.tokens < cost + tokenThreshold) return;
 
