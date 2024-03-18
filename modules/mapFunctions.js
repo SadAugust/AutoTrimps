@@ -320,7 +320,7 @@ function runningAncientTreasure() {
 	if (mapSettings.ancientTreasure && getPageSetting('autoMaps') === 1) return true;
 	const mapName = getAncientTreasureName();
 	if (MODULES.mapFunctions.runUniqueMap === mapName) return;
-	if (game.global.mapsActive && getCurrentMapObject().location === mapName) return true;
+	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return true;
 	return false;
 }
 
