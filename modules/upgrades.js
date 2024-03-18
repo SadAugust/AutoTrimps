@@ -198,7 +198,9 @@ function buyUpgrades() {
 
 				if (trappaCoordToggle === 1) {
 					const armyTarget = getPageSetting('trapperArmySize');
-					if (game.resources.trimps.maxSoldiers * 1.25 > armyTarget) continue;
+					const coordinated = getPerkLevel('Coordinated');
+					const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
+					if (game.resources.trimps.getCurrentSend() * 1.25 > armyTarget) continue;
 				}
 
 				buyJobs();

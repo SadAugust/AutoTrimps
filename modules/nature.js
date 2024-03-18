@@ -10,7 +10,7 @@ function autoNatureTokens() {
 		if (!setting || setting === 'Off') continue;
 
 		if (setting === 'Empowerment') {
-			_autoNatureEmpowerment(nature, empowerment);
+			_autoNatureEmpowerment(nature, empowerment, tokenThreshold);
 		} else if (setting === 'Transfer') {
 			spentTokens = _autoNatureTransfer(nature, empowerment, tokenThreshold);
 		} else {
