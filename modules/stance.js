@@ -199,6 +199,15 @@ function wouldSurvive(formation = 'S', critPower = 2, ignoreArmy) {
 	let minDamage = MODULES.stats.baseMinDamage;
 	let maxDamage = MODULES.stats.baseMaxDamage;
 	const newSquadRdy = !ignoreArmy && newArmyRdy();
+	
+	//In support of hitsSurvivedToPush function, to push after farm while a new army is ready
+	//If hitsurvived is less than the hitsSurvived setting, but greater than hitsSurvivedToPush, along with 10 map bonus 
+	//The assumption is that the current trimp army wants to be pushing rather than waiting for the current trimps to die
+	const hsSetting= getPageSetting('hitsSurvived');
+	const hsToPush = getPageSetting('hitsSurvivedToPush');
+	const hitsSurvived = hdStats['hitsSurvived'];
+	const hsBound = hsToPush > 0 && hitsSurvived > hsToPush && hitsSurvived < hsSetting;
+	const wantToPush = hsBound && game.global.mapBonus === 10;
 
 	// Applies the formation modifiers
 	if (formation === 'XB') {
@@ -246,8 +255,8 @@ function wouldSurvive(formation = 'S', critPower = 2, ignoreArmy) {
 	const healthier = health * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
 	const maxHealthier = maxHealth * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
 	const harm2 = _directDamage(blockier, pierce, healthier, minDamage, critPower) + _challengeDamage(maxHealthier, minDamage, maxDamage, 0, blockier, pierce, critPower);
-
-	return (newSquadRdy && notSpire && healthier > harm2) || health - missingHealth > harm;
+	
+	return (!wantToPush && newSquadRdy && notSpire && healthier > harm2) || health - missingHealth > harm;
 }
 
 function checkStanceSetting() {
