@@ -3249,13 +3249,8 @@ function farmingDecision() {
 		const hsToPush = getPageSetting('hitsSurvivedToPush');
 		const hsSufficient = hsToPush > 0 && hdStats['hitsSurvived'] > hsToPush;
 		if (hsSufficient && game.global.mapBonus === 10 && (game.global.mapsActive || !game.global.fighting) && newArmyRdy()) {
-			mapSettings.repeat = false;
-			mapSettings.shouldRun = false;
 			const hdFarmIndex = mapTypes.indexOf(hdFarm);
 			if (hdFarmIndex !== -1) mapTypes.splice(hdFarmIndex, 1);
-		} else if (game.global.fighting && !game.global.mapsActive) {
-			mapSettings.repeat = true;
-			mapSettings.shouldRun = true;
 		}
 	}
 
