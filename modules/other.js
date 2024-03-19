@@ -150,6 +150,7 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 			Nom: { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
 			Mapology: { unlockZone: 150, unlockedIn: ['c2', 'oneOff'] },
 			Toxicity: { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			Devastation: { unlockZone: 170, unlockedIn: ['oneOff'] },
 			Watch: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
 			Lead: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
 			Corrupted: { unlockZone: 190, unlockedIn: ['heHr', 'autoPortal'] },
