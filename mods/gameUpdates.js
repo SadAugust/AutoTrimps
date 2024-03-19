@@ -2162,7 +2162,11 @@ function buildBuilding(what, amt = 1) {
 			else toIncrease[buildingSplit[1]] += parseFloat(building.increase.by) * amt;
 		}
 	}
-	if (typeof building.fire !== 'undefined') building.fire();
+	if (typeof building.fire !== 'undefined') {
+		for (let x = 0; x < amt; x++) {
+			building.fire();
+		}
+	}
 
 	if (what === 'Wormhole') {
 		const [baseCost, costRatio] = building.cost.helium;
