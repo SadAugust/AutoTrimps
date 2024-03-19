@@ -273,7 +273,19 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	let health = getTrimpHealth(realHealth, worldType);
 
 	if (game.global.universe === 1) {
-		if (!stance && game.global.formation !== 0 && game.global.formation !== 5) health /= game.global.formation === 1 ? 4 : 0.5;
+		if (game.global.formation !== 0 && game.global.formation !== 5) health /= game.global.formation === 1 ? 4 : 0.5;
+		if (stance) {
+			const stanceMultipliers = {
+				X: 1,
+				H: 4,
+				B: 0.25,
+				D: 0.5,
+				S: 0.25,
+				W: 1
+			};
+
+			health *= stanceMultipliers[stance] || 1;
+		}
 
 		const geneticist = game.jobs.Geneticist;
 		if (fullGeneticist && geneticist.owned > 0) health *= Math.pow(1.01, geneticist.owned - game.global.lastLowGen);

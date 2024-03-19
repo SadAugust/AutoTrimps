@@ -21,7 +21,7 @@ function autoNatureTokens() {
 	if (spentTokens) updateNatureInfoSpans();
 }
 
-function _autoNatureEmpowerment(nature, empowerment) {
+function _autoNatureEmpowerment(nature, empowerment, tokenThreshold) {
 	const cost = getNextNatureCost(nature);
 	if (empowerment.tokens < cost + tokenThreshold) return;
 
@@ -43,12 +43,12 @@ function _autoNatureTransfer(nature, empowerment, tokenThreshold) {
 }
 
 function _autoNatureConversion(nature, empowerment, tokenThreshold, setting) {
-	if (!setting.startsWith('Convert')) return false;
-	if (empowerment.tokens < 10 + tokenThreshold) return false;
+	if (!setting.startsWith('Convert') || empowerment.tokens < 10 + tokenThreshold) return false;
 
 	let spentTokens = false;
 	let targetNature = ['Poison', 'Wind', 'Ice'];
-	targetNature = targetNature.filter((element) => (setting.endsWith('Both') ? element !== nature : element === nature));
+	const convertToBoth = setting.endsWith('Both');
+	targetNature = targetNature.filter((element) => (convertToBoth ? element !== nature : setting.endsWith(element)));
 
 	for (let item in targetNature) {
 		if (!game.empowerments[targetNature[item]]) continue;
