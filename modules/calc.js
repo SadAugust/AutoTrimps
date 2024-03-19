@@ -305,7 +305,7 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	return health;
 }
 
-function calcOurBlock(stance = false, realBlock = false, mapType = _getWorldType()) {
+function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldType()) {
 	if (game.global.universe === 2) return 0;
 
 	let block = 0;
