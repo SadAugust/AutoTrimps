@@ -274,13 +274,17 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 
 	if (game.global.universe === 1) {
 		if (game.global.formation !== 0 && game.global.formation !== 5) health /= game.global.formation === 1 ? 4 : 0.5;
+
+		const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
+		if (typeof stance === 'number') stance = formationLetter[Math.floor(stance)];
+
 		if (stance) {
 			const stanceMultipliers = {
 				X: 1,
 				H: 4,
-				B: 0.25,
 				D: 0.5,
-				S: 0.25,
+				B: 0.5,
+				S: 0.5,
 				W: 1
 			};
 
@@ -301,7 +305,7 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	return health;
 }
 
-function calcOurBlock(stance, realBlock) {
+function calcOurBlock(stance = false, realBlock = false, mapType = _getWorldType()) {
 	if (game.global.universe === 2) return 0;
 
 	let block = 0;
@@ -327,10 +331,25 @@ function calcOurBlock(stance, realBlock) {
 
 	block *= game.resources.trimps.maxSoldiers;
 
-	if (stance && game.global.formation !== 0) block *= game.global.formation === 3 ? 4 : 0.5;
+	const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
+	if (typeof stance === 'number') stance = formationLetter[Math.floor(stance)];
 
-	const heirloomBonus = calcHeirloomBonus('Shield', 'trimpBlock', 0, true);
-	if (heirloomBonus > 0) block *= heirloomBonus / 100 + 1;
+	if (stance) {
+		const stanceMultipliers = {
+			X: 1,
+			H: 0.5,
+			D: 0.5,
+			B: 4,
+			S: 0.5,
+			W: 1
+		};
+
+		block *= stanceMultipliers[stance] || 1;
+	}
+
+	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
+	const heirloomBonus = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpBlock', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpBlock', 1, false);
+	block *= heirloomBonus;
 
 	return block;
 }
