@@ -186,6 +186,7 @@ function initialiseScript() {
 
 	const gammaBurstPct = getHeirloomBonus('Shield', 'gammaBurst') / 100;
 	MODULES.heirlooms.gammaBurstPct = gammaBurstPct > 0 ? gammaBurstPct : 1;
+	MODULES.heirlooms.breedHeirloom = usingBreedHeirloom();
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
 	farmingDecision();
@@ -323,6 +324,7 @@ function mainLoop() {
 	remakeTooltip();
 	universeSwapped();
 
+	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
 	if (!atSettings.running || getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 
 	const runDuringTimeWarp = shouldRunInTimeWarp();
@@ -336,8 +338,6 @@ function mainLoop() {
 	}
 
 	if (_handleSlowScumming()) return;
-
-	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
 
 	if (runDuringTimeWarp) {
 		autoMaps();

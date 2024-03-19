@@ -2,7 +2,8 @@ MODULES.heirlooms = {
 	plagueSwap: false,
 	compressedCalc: false,
 	gammaBurstPct: 1,
-	shieldEquipped: null
+	shieldEquipped: null,
+	breedHeirloom: false
 };
 
 function evaluateHeirloomMods(loom, location) {
@@ -167,9 +168,10 @@ function heirloomEquip(heirloom, type) {
 function heirloomShieldSwapped() {
 	MODULES.heirlooms.gammaBurstPct = getPageSetting('gammaBurstCalc') && getHeirloomBonus('Shield', 'gammaBurst') / 100 > 0 ? getHeirloomBonus('Shield', 'gammaBurst') / 100 : 1;
 	MODULES.heirlooms.shieldEquipped = game.global.ShieldEquipped.id;
+	MODULES.heirlooms.breedHeirloom = usingBreedHeirloom();
 }
 
-function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
+function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true, sendingArmy = false) {
 	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return;
 
 	const afterpushShield = trimpStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
@@ -179,7 +181,7 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 		else return 'heirloomInitial';
 	}
 
-	if (swapLooms && !game.global.fighting && getPerkLevel('Anticipation') === 0 && _breedTimeRemaining() > 0) {
+	if (swapLooms && !game.global.fighting && !sendingArmy && getPerkLevel('Anticipation') === 0 && _breedTimeRemaining() > 0) {
 		if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') return 'archaeologyBreedShield';
 		if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
 	}
@@ -207,7 +209,10 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 	//If we have the post void heirloom swap setting enabled and have already run void maps run this swap to afterpush shield until the end of the run
 	if (getPageSetting('heirloomPostVoidSwap') && game.stats.totalVoidMaps.value > 0) swapZone = 0;
 	//If we have the daily odd or even setting enabled and the negative daily mod is active then add one to our swap zone
-	if (trimpStats.isDaily && dailyOddOrEven().active && swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
+	if (trimpStats.daily) {
+		const dailyModifiers = dailyOddOrEven();
+		if (dailyModifiers.active && swapZone % 2 === dailyModifiers.remainder) swapZone += 1;
+	}
 	//Challenges where abandoning your current army has the potential to be REALLY bad.
 	const dontSwap = currChallenge === 'trapper' || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20) || currChallenge === 'trappapalooza';
 	if (swapLooms) {
@@ -326,13 +331,13 @@ function getMapBonusHeirloomStaff(mapBonus) {
 	}
 }
 
-function heirloomSwapping() {
+function heirloomSwapping(sendingArmy = false) {
 	if (!getPageSetting('heirloom')) return;
 
 	const mapType = game.global.voidBuff ? 'void' : game.global.mapsActive ? 'map' : 'world';
 
 	if (getPageSetting('heirloomShield')) {
-		const shield = heirloomShieldToEquip(mapType, true);
+		const shield = heirloomShieldToEquip(mapType, true, true, sendingArmy);
 		if (shield) heirloomEquip(shield, 'Shield');
 	}
 
