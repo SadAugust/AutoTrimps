@@ -53,7 +53,8 @@ function populateFarmCalcData() {
 	let universeSetting = universe === 1 ? stances : 0;
 	//Trimps Stats
 	const dmgType = runningUnlucky ? 'max' : 'min';
-	let trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, 'never');
+	//TODO Review this parameters, specially the stance one
+	let trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0);
 	let trimpHealth = calcOurHealth(universe === 2 ? shieldBreak : 'X', 'map');
 	let trimpBlock = universe === 1 ? calcOurBlock('X', false, 'map') : 0;
 	let trimpShield = universe === 2 ? calcOurHealth(true, 'map') : 0;
