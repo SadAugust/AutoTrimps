@@ -99,7 +99,7 @@ function trapperHoldCoords(jobChange = false) {
 		let coordTarget = getPageSetting('trapperCoords');
 		if (coordTarget > 0) coordTarget--;
 		if (!game.global.runningChallengeSquared && coordTarget <= 0) coordTarget = trimps.currChallenge === 'Trapper' ? 32 : 49;
-		return coordTarget > 0 && gameUpgrade.done >= coordTarget;
+		return coordTarget > 0 && game.upgrades.Coordination.done >= coordTarget;
 	}
 
 	if (trappaCoordToggle === 1) {
