@@ -53,20 +53,15 @@ function populateFarmCalcData() {
 	let universeSetting = universe === 1 ? stances : 0;
 	//Trimps Stats
 	const dmgType = runningUnlucky ? 'max' : 'min';
-	let trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, false);
-	let trimpHealth = calcOurHealth(universe === 2 ? shieldBreak : false, 'map', false, true);
-	let trimpBlock = universe === 1 ? calcOurBlock(false, false) : 0;
-	let trimpShield = universe === 2 ? calcOurHealth(false, 'map', false, true) : 0;
+	let trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, 'never');
+	let trimpHealth = calcOurHealth(universe === 2 ? shieldBreak : 'X', 'map');
+	let trimpBlock = universe === 1 ? calcOurBlock('X', false, 'map') : 0;
+	let trimpShield = universe === 2 ? calcOurHealth(true, 'map') : 0;
 	trimpHealth -= trimpShield;
 
 	if (universe === 1) {
 		if (game.upgrades.Dominance.done) stances = 'D';
 		if (hze >= 181 && game.upgrades.Formations.done) stances += 'S';
-		//Both D and S stance (the only ones we'd use in maps for farming) have a 50% health penalty.
-		if (stances !== 'X') {
-			trimpHealth /= 2;
-			trimpBlock /= 2;
-		}
 	}
 
 	const gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;

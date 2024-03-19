@@ -110,7 +110,7 @@ function _calcCurrentStatsDebug() {
 	debug(`Our Stats`);
 	debug(`Our Attack: ${displayedMin.toExponential(2)} - ${displayedMax.toExponential(2)}`);
 	debug(`Our Health: ${calcOurHealth(isUniverse1, worldType).toExponential(2)}`);
-	if (game.global.universe === 1) debug(`Our Block: ${calcOurBlock(true, true).toExponential(2)}`);
+	if (game.global.universe === 1) debug(`Our Block: ${calcOurBlock(game.global.formation, true).toExponential(2)}`);
 	if (game.global.universe === 2) debug(`Our Equality: ${game.portal.Equality.disabledStackCount}`);
 	debug(`Our Crit: ${100 * getPlayerCritChance().toExponential(2)}% for ${getPlayerCritDamageMult().toFixed(2)}x damage. Average of ${getCritMulti('maybe').toFixed(2)}x`);
 

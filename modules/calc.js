@@ -45,8 +45,7 @@ class HDStats {
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
 		const autoLevel = whichAutoLevel();
 
-		let voidPercent = _getVoidPercent(world, universe);
-
+		const voidPercent = _getVoidPercent(world, universe);
 		const mapDifficulty = game.global.mapsActive && getCurrentMapObject().location === 'Bionic' ? 2.6 : 0.75;
 
 		this.hdRatio = calcHDRatio(world, 'world', false, 1);
@@ -93,7 +92,7 @@ class HDStats {
 }
 
 function _getVoidMapsObjects() {
-	return game.global.mapsOwnedArray.filter(map => map.location === 'Void');
+	return game.global.mapsOwnedArray.filter((map) => map.location === 'Void');
 }
 
 function _getVoidPercent(world = game.global.world, universe = game.global.universe) {
@@ -275,7 +274,23 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	let health = getTrimpHealth(realHealth, worldType);
 
 	if (game.global.universe === 1) {
-		if (!stance && game.global.formation !== 0 && game.global.formation !== 5) health /= game.global.formation === 1 ? 4 : 0.5;
+		if (game.global.formation !== 0 && game.global.formation !== 5) health /= game.global.formation === 1 ? 4 : 0.5;
+
+		const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
+		if (typeof stance === 'number') stance = formationLetter[Math.floor(stance)];
+
+		if (stance) {
+			const stanceMultipliers = {
+				X: 1,
+				H: 4,
+				D: 0.5,
+				B: 0.5,
+				S: 0.5,
+				W: 1
+			};
+
+			health *= stanceMultipliers[stance] || 1;
+		}
 
 		const geneticist = game.jobs.Geneticist;
 		if (fullGeneticist && geneticist.owned > 0) health *= Math.pow(1.01, geneticist.owned - game.global.lastLowGen);
@@ -291,7 +306,7 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	return health;
 }
 
-function calcOurBlock(stance, realBlock) {
+function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldType()) {
 	if (game.global.universe === 2) return 0;
 
 	let block = 0;
@@ -317,10 +332,25 @@ function calcOurBlock(stance, realBlock) {
 
 	block *= game.resources.trimps.maxSoldiers;
 
-	if (stance && game.global.formation !== 0) block *= game.global.formation === 3 ? 4 : 0.5;
+	const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
+	if (typeof stance === 'number') stance = formationLetter[Math.floor(stance)];
 
-	const heirloomBonus = calcHeirloomBonus('Shield', 'trimpBlock', 0, true);
-	if (heirloomBonus > 0) block *= heirloomBonus / 100 + 1;
+	if (stance) {
+		const stanceMultipliers = {
+			X: 1,
+			H: 0.5,
+			D: 0.5,
+			B: 4,
+			S: 0.5,
+			W: 1
+		};
+
+		block *= stanceMultipliers[stance] || 1;
+	}
+
+	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
+	const heirloomBonus = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpBlock', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpBlock', 1, false);
+	block *= heirloomBonus;
 
 	return block;
 }

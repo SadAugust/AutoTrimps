@@ -177,7 +177,7 @@ function _challengeDamage(maxHealth = calcOurHealth(), minDamage, maxDamage, mis
 	return harm;
 }
 
-function _directDamage(block = calcOurBlock(true, true), pierce, currentHealth, minDamage, critPower = 2) {
+function _directDamage(block = calcOurBlock(game.global.formation, true), pierce, currentHealth, minDamage, critPower = 2) {
 	const enemy = getCurrentEnemy();
 	const enemyHealth = enemy.health;
 	const enemyDamage = calcSpecificEnemyAttack(critPower, block, currentHealth);
