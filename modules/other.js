@@ -128,10 +128,10 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 			},
 			Metal: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
 			Size: { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
-			Scientist: { unlockZone: 40, unlockedIn: ['oneOff'] },
 			Balance: { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			Decay: { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr', 'oneOff'] },
+			Scientist: { unlockZone: 40, unlockedIn: ['oneOff'] },
 			Meditate: { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
+			Decay: { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr', 'oneOff'] },
 			Trimp: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
 			Trapper: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
 			Electricity: {
@@ -141,12 +141,12 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 				},
 				unlockedIn: ['c2', 'heHr', 'autoPortal']
 			},
-			Life: { unlockZone: 110, unlockedIn: ['autoPortal', 'heHr'] },
-			Crushed: { unlockZone: 125, unlockedIn: ['autoPortal', 'heHr'] },
 			Frugal: { unlockZone: 100, unlockedIn: ['oneOff'] },
-			Coordinate: { unlockZone: 120, unlockedIn: ['c2', 'oneOff'] },
-			Slow: { unlockZone: 130, unlockedIn: ['c2', 'oneOff'] },
+			Life: { unlockZone: 110, unlockedIn: ['autoPortal', 'heHr'] },
 			Mapocalypse: { unlockZone: 115, unlockedIn: ['oneOff'] },
+			Coordinate: { unlockZone: 120, unlockedIn: ['c2', 'oneOff'] },
+			Crushed: { unlockZone: 125, unlockedIn: ['autoPortal', 'heHr'] },
+			Slow: { unlockZone: 130, unlockedIn: ['c2', 'oneOff'] },
 			Nom: { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
 			Mapology: { unlockZone: 150, unlockedIn: ['c2', 'oneOff'] },
 			Toxicity: { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
@@ -157,7 +157,7 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 			Domination: { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal'] },
 			Obliterated: { unlockZone: 425, unlockedIn: ['c2', 'oneOff'] },
 			Eradicated: {
-				unlockZone: 450,
+				unlockZone: 400,
 				unlockCondition: function () {
 					return game.global.totalSquaredReward >= 4500;
 				},
