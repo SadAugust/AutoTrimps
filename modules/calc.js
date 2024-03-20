@@ -969,7 +969,6 @@ function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', d
 	if (worldType !== 'map' && targetZone % 2 === 1 && challengeActive('Lead')) targetZone++;
 
 	const customAttack = _calcHitsSurvivedAttack(worldType, targetZone);
-	//Test
 	const enemyName = worldType === 'void' ? 'Voidsnimp' : 'Snimp';
 
 	let hitsToSurvive = targetHitsSurvived(false, worldType);
