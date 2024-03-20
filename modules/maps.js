@@ -158,7 +158,7 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 
 	for (let mapping in game.global.mapsOwnedArray) {
 		const map = game.global.mapsOwnedArray[mapping];
-		let effectiveBiome = map.name === 'Tricky Paradise' && game.resources.fragments.owned < 100 ? 'Plentiful' : biome;
+		let effectiveBiome = map.name === 'Tricky Paradise' && game.resources.fragments.owned < 600 ? 'Plentiful' : biome;
 		if (map.location !== effectiveBiome && effectiveBiome !== 'Random') continue;
 		if (perfect) {
 			if (map.size > trimpStats.mapSize) continue;

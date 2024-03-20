@@ -88,7 +88,7 @@ function firstGiga() {
 }
 
 function needGymystic() {
-	return shouldSaveForSpeedUpgrade(game.upgrades.Gymystic, 0.5, 0.5, 0.25, 0.75);
+	return shouldSaveForSpeedUpgrade(game.upgrades.Gymystic, 0.125, 0.125, 0.125, 0.75);
 }
 
 function trapperHoldCoords(jobChange = false) {
@@ -123,7 +123,7 @@ function shouldSaveForSpeedUpgrade(upgradeObj, foodRequired = 0.25, woodRequired
 
 	for (let i = 0; i < resources.length; i++) {
 		const cost = upgradeObj.cost.resources[resources[i]];
-		const resourceCost = cost ? (cost[1] !== undefined ? resolvePow(cost, upgradeObj) * resourceRequired[i] : cost) : 0;
+		const resourceCost = cost ? resourceRequired[i] * (cost[1] !== undefined ? resolvePow(cost, upgradeObj) : cost) : 0;
 
 		if (resourceOwned[i] < resourceCost) return false;
 	}

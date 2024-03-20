@@ -75,6 +75,28 @@ function maxOneShotPower(planToMap = false, targetZone = game.global.world) {
 	return power;
 }
 
+function oneShotZone(type, specificStance, zone = _getZone(type), useMax) {
+	//Calculates our minimum damage
+	const maxPower = maxOneShotPower();
+	const maxOrMin = useMax ? 'max' : 'min';
+	var baseDamage = calcOurDmg(maxOrMin, specificStance, false, type != "world");
+	var damageLeft = baseDamage + addPoison(false, (type == "world") ? zone : game.global.world);
+
+	//Calculates how many enemies we can one shot + overkill
+	for (var power=1; power <= maxPower; power++) {
+		//Enemy Health: A C99 Dragimp (worstCase)
+		damageLeft -= calcEnemyHealth(type, zone, 99-maxPower+power, "Dragimp");
+
+		//Check if we can one-shot the next enemy
+		if (damageLeft < 0) return power-1;
+
+		//Calculates our minimum "left over" damage, which will be used by the Overkill
+		damageLeft *= 0.005 * game.portal.Overkill.level;
+	}
+
+	return power-1;
+}
+
 function oneShotPower(specificStance, offset = 0, useMax) {
 	// Calculates our minimum damage
 	const maxOrMin = useMax ? 'max' : 'min';
