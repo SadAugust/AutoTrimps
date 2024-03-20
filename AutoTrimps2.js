@@ -1,7 +1,7 @@
 const atSettings = {
 	initialise: {
 		version: '',
-		basepath: 'https://SadAugust.github.io/AutoTrimps/',
+		basepath: 'https://kawyua.github.io/AutoTrimps/',
 		basepathOriginal: 'https://SadAugust.github.io/AutoTrimps/',
 		loaded: false
 	},
