@@ -734,7 +734,7 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 	return minOrMax ? (1 - fluctuation) * attack : (1 + fluctuation) * attack;
 }
 
-function calcEnemyAttack(worldType = 'world', zone = game.global.world, cell = 100, name = 'Improbability', minOrMax, customAttack, equality) {
+function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), name = _getEnemyName('Snimp'), minOrMax, customAttack, equality) {
 	let attack = calcEnemyAttackCore(worldType, zone, cell, name, minOrMax, customAttack, equality);
 
 	if (challengeActive('Nom') && (worldType === 'world' || game.global.mapsActive)) {
@@ -870,7 +870,7 @@ function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldT
 	return health;
 }
 
-function calcEnemyHealth(worldType, zone, cell = 99, name = 'Turtlimp', customHealth) {
+function calcEnemyHealth(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), name = _getEnemyName('Turtlimp'), customHealth) {
 	let health = calcEnemyHealthCore(worldType, zone, cell, name, customHealth);
 
 	if (challengeActive('Domination')) health *= 7.5;
@@ -919,23 +919,20 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	if (worldType === 'world') {
 		let customHealth;
 		let enemyName = 'Turtlimp';
-		if (targetZone === 5 || targetZone === 10 || (targetZone >= 15 && targetZone <= 58)) enemyName = 'Blimp';
-		if (targetZone >= 59) enemyName = 'Improbability';
 		if (game.global.universe === 1) {
-			if (targetZone > 229) enemyName = 'Omnipotrimp';
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedStats(targetZone, 'health');
 		} else if (game.global.universe === 2) {
 			if (targetZone > 200) customHealth = calcMutationStats(targetZone, 'health');
 		}
-		enemyHealth = calcEnemyHealth(worldType, targetZone, 100, enemyName, customHealth) * difficulty;
-		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, 100, worldType, difficulty, 'gamma', false, 1, true) : 'X';
+		enemyHealth = calcEnemyHealth(worldType, targetZone, 99, enemyName, customHealth) * difficulty;
+		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', false, 1, true) : 'X';
 	} else if (worldType === 'map') {
 		enemyHealth = calcEnemyHealth(worldType, targetZone, 20, 'Turtlimp') * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, worldType, difficulty, 'gamma', true) : 'X';
 	} else if (worldType === 'void') {
-		enemyHealth = calcEnemyHealth(worldType, targetZone, 100, 'Cthulimp') * difficulty;
-		universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, worldType, difficulty, 'gamma', false, 1, true) : 'X';
+		enemyHealth = calcEnemyHealth(worldType, targetZone, 99, 'Shadimp') * difficulty;
+		universeSetting = game.global.universe === 2 ? equalityQuery('Voidsnimp', targetZone, 99, worldType, difficulty, 'gamma', false, 1, true) : 'X';
 	}
 
 	let ourBaseDamage = calcOurDmg(challengeActive('Unlucky') ? 'max' : 'avg', universeSetting, false, worldType, 'maybe', targetZone - game.global.world, null, heirloomToUse);
@@ -965,21 +962,21 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	return enemyHealth / ourBaseDamage;
 }
 
-function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', difficulty = 1, checkOutputs) {
+function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', difficulty = 1, extraBlock = 0, extraHealth = 0, checkOutputs) {
 	const formationMod = game.upgrades.Dominance.done ? 2 : 1;
 	const ignoreCrits = getPageSetting('IgnoreCrits');
 
 	if (worldType !== 'map' && targetZone % 2 === 1 && challengeActive('Lead')) targetZone++;
 
 	const customAttack = _calcHitsSurvivedAttack(worldType, targetZone);
-	const enemyName = worldType === 'void' ? 'Cthulimp' : targetZone >= 59 ? 'Improbability' : 'Snimp';
+	const enemyName = worldType === 'void' ? 'Voidsnimp' : 'Snimp';
 
 	let hitsToSurvive = targetHitsSurvived(false, worldType);
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 
-	const health = calcOurHealth(false, worldType, false, true) / formationMod;
-	const block = calcOurBlock(false) / formationMod;
-	const equality = equalityQuery(enemyName, targetZone, 100, worldType, difficulty, 'gamma', null, hitsToSurvive);
+	const health = (extraHealth + calcOurHealth(false, worldType, false, true)) / formationMod;
+	const block = (extraBlock + calcOurBlock(false)) / formationMod;
+	const equality = equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', null, hitsToSurvive);
 	let damageMult = 1;
 
 	if (game.global.universe === 1 && ((ignoreCrits === 1 && worldType !== 'void') || ignoreCrits === 0)) {
@@ -989,7 +986,7 @@ function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', d
 		else if (crushed && health > block) damageMult = 3;
 	}
 
-	const worldDamage = calcEnemyAttack(worldType, targetZone, 100, enemyName, undefined, customAttack, equality) * difficulty;
+	const worldDamage = calcEnemyAttack(worldType, targetZone, 99, enemyName, undefined, customAttack, equality) * difficulty;
 	const pierce = (game.global.universe === 1 && game.global.brokenPlanet && worldType === 'world' ? getPierceAmt() : 0) * (game.global.formation === 3 ? 2 : 1);
 	const finalDmg = Math.max(damageMult * worldDamage - block, worldDamage * pierce, 0);
 
@@ -1318,7 +1315,8 @@ function enoughHealth(map, minAvgMax = 'max') {
 	const block = calcOurBlock(false, false);
 	const totalHealth = health + block;
 
-	const enemyName = name === 'Imploding Star' ? 'Neutrimp' : location === 'Void' ? 'Cthulimp' : 'Snimp';
+	const enemyName = name === 'Imploding Star' ? 'Neutrimp' : location === 'Void' ? 'Voidsnimp' : 'Snimp';
+	const cell = name === 'Imploding Star' ? 100 : 99;
 	const worldType = location === 'Void' ? 'void' : 'map';
 	const mapLevel = name === 'The Black Bog' ? game.global.world : level;
 	const equalityAmt = game.global.universe === 2 ? equalityQuery(enemyName, mapLevel, size, 'map', difficulty, 'gamma') : 0;
