@@ -55,18 +55,13 @@ function populateFarmCalcData() {
 	const dmgType = runningUnlucky ? 'max' : 'min';
 	let trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0, 'never');
 	let trimpHealth = calcOurHealth(universe === 2 ? shieldBreak : 'X', 'map');
-	let trimpBlock = universe === 1 ? calcOurBlock('X', 'map') : 0;
+	let trimpBlock = universe === 1 ? calcOurBlock('X', false, 'map') : 0;
 	let trimpShield = universe === 2 ? calcOurHealth(true, 'map') : 0;
 	trimpHealth -= trimpShield;
 
 	if (universe === 1) {
 		if (game.upgrades.Dominance.done) stances = 'D';
 		if (hze >= 181 && game.upgrades.Formations.done) stances += 'S';
-		//Both D and S stance (the only ones we'd use in maps for farming) have a 50% health penalty.
-		if (stances !== 'X') {
-			trimpHealth /= 2;
-			trimpBlock /= 2;
-		}
 	}
 
 	const gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
@@ -342,10 +337,10 @@ function populateFarmCalcData() {
 		uberNature: uberEmpowerment,
 		transfer: natureTransfer,
 		//Trimp Stats
-		attack: trimpAttack,
-		trimpHealth: trimpHealth,
-		trimpBlock: trimpBlock,
-		trimpShield: trimpShield,
+		attack: Math.floor(trimpAttack),
+		trimpHealth: Math.floor(trimpHealth),
+		trimpBlock: Math.floor(trimpBlock),
+		trimpShield: Math.floor(trimpShield),
 		//Misc Trimp Stats
 		critChance: critChance % 1,
 		critDamage: 1 + critDamage,
@@ -408,11 +403,13 @@ function stats(lootFunction = lootDefault) {
 		}
 
 		let tmp = zone_stats(mapLevel, saveData.stances, saveData, lootFunction);
+
 		if (tmp.zone !== 'z6') {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
 			if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 25)) break;
 		}
+
 		stats.unshift(tmp);
 		if (tmp.zone === 'z6') break;
 	}
@@ -512,6 +509,7 @@ function simulate(saveData, zone) {
 		seed ^= seed >> 11;
 		seed ^= seed << 8;
 		seed ^= seed >> 19;
+		if (seed === 0) seed = Math.floor(Math.random(40, 50) * 100);
 		return seed * rand_mult;
 	}
 
@@ -525,11 +523,11 @@ function simulate(saveData, zone) {
 		if (!mapOwned) mapOwned = findMap(mapLevel, simulateMap.special, simulateMap.location, simulateMap.perfect);
 		if (mapOwned) {
 			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
-			difficulty = map.difficulty;
-			mapSize = map.size;
+			difficulty = Number(map.difficulty);
+			mapSize = Number(map.size);
 		} else {
-			difficulty = simulateMap.difficulty;
-			mapSize = simulateMap.size;
+			difficulty = Number(simulateMap.difficulty);
+			mapSize = Number(simulateMap.size);
 		}
 	}
 

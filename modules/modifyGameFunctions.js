@@ -65,6 +65,14 @@ game.options.menu.pauseGame.onToggle = function () {
 	game.options.menu.pauseGame.originalOnToggle(...arguments);
 };
 
+originalstartFight = startFight;
+startFight = function () {
+	if (!game.global.fighting && MODULES.heirlooms.breedHeirloom) {
+		heirloomSwapping(true);
+	}
+	originalstartFight(...arguments);
+};
+
 //Attach AT related buttons to the main TW UI.
 //Will attach AutoMaps, AutoMaps Status, AutoTrimps Settings, AutoJobs, AutoStructure
 offlineProgress.originalStart = offlineProgress.start;

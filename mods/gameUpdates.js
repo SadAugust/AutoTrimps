@@ -2162,7 +2162,11 @@ function buildBuilding(what, amt = 1) {
 			else toIncrease[buildingSplit[1]] += parseFloat(building.increase.by) * amt;
 		}
 	}
-	if (typeof building.fire !== 'undefined') building.fire();
+	if (typeof building.fire !== 'undefined') {
+		for (let x = 0; x < amt; x++) {
+			building.fire();
+		}
+	}
 
 	if (what === 'Wormhole') {
 		const [baseCost, costRatio] = building.cost.helium;
@@ -3115,6 +3119,7 @@ function fight(makeUp) {
 
 		return;
 	}
+
 	if (cell.health <= 0 || !isFinite(cell.health)) {
 		game.stats.battlesWon.value++;
 
@@ -3401,6 +3406,7 @@ function fight(makeUp) {
 	const badAttackText = calculateDamage(cell.attack, true, false, false, cell);
 	if (badAttackElem.innerHTML != badAttackText && shouldUpdate()) badAttackElem.innerHTML = badAttackText;
 	let badCrit = false;
+
 	if (challengeActive('Crushed')) {
 		if (checkCrushedCrit()) {
 			cellAttack *= 5;
@@ -3408,6 +3414,7 @@ function fight(makeUp) {
 			if (game.global.world > 5) game.challenges.Crushed.critsTaken++;
 		}
 	}
+
 	if (challengeActive('Duel')) {
 		const critChance = game.challenges.Duel.trimpStacks;
 		const roll = Math.floor(Math.random() * 100);
@@ -3416,12 +3423,14 @@ function fight(makeUp) {
 			badCrit = true;
 		}
 	}
+
 	if (game.global.voidBuff === 'getCrit' || cell.corrupted === 'corruptCrit' || cell.corrupted === 'healthyCrit') {
 		if (Math.floor(Math.random() * 4) === 0) {
 			cellAttack *= cell.corrupted === 'healthyCrit' ? 7 : 5;
 			badCrit = true;
 		}
 	}
+
 	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.crits !== 'undefined') {
 			if (Math.floor(Math.random() * 4) === 0) {
@@ -3430,13 +3439,16 @@ function fight(makeUp) {
 			}
 		}
 	}
+
 	let attackAndBlock = cellAttack - game.global.soldierCurrentBlock;
 	let pierce = 0;
+
 	if (game.global.brokenPlanet && !game.global.mapsActive) {
 		pierce = getPierceAmt();
 		const atkPierce = pierce * cellAttack;
 		if (attackAndBlock < atkPierce) attackAndBlock = atkPierce;
 	}
+
 	if (attackAndBlock < 0) attackAndBlock = 0;
 	if (getPerkLevel('Frenzy') > 0) game.portal.Frenzy.beforeAttack();
 
@@ -3448,6 +3460,7 @@ function fight(makeUp) {
 	updateTitimp();
 	let critTier = 0;
 	let critChance = getPlayerCritChance();
+
 	if (critChance > 0) {
 		critTier = Math.floor(critChance);
 		critChance = critChance % 1;
@@ -3459,24 +3472,29 @@ function fight(makeUp) {
 			if (critTier > 1) trimpAttack *= getMegaCritDamageMult(critTier);
 		}
 	}
+
 	if (critChance < 0) {
 		if (Math.random() < Math.abs(critChance)) {
 			critTier = -1;
 			trimpAttack *= 0.2;
 		}
 	}
+
 	let attacked = false;
 	let wasAttacked = false;
 	let badDodge = false;
+
 	if (cell.corrupted === 'corruptDodge') {
 		if (Math.random() < 0.3) badDodge = true;
 	}
+
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.slippery !== 'undefined') {
 		var slipStr = game.global.dailyChallenge.slippery.strength;
 		if ((slipStr > 15 && game.global.world % 2 === 0) || (slipStr <= 15 && game.global.world % 2 === 1)) {
 			if (Math.random() < dailyModifiers.slippery.getMult(slipStr)) badDodge = true;
 		}
 	}
+
 	let overkill = 0;
 	let plaguebringer = 0;
 	let impOverkill = 0;
@@ -3702,10 +3720,12 @@ function fight(makeUp) {
 				if (game.challenges.Electricity.attacksInARow >= 20) giveSingleAchieve('Grounded');
 			}
 		}
+
 		if ((challengeActive('Electricity') || challengeActive('Mapocalypse')) && wasAttacked) {
 			game.challenges.Electricity.stacks++;
 			updateElectricityStacks();
 		}
+
 		if (challengeActive('Domination')) {
 			let dominating = false;
 			if (game.global.mapsActive && currentMapObj.size === cellNum + 1) dominating = true;
@@ -3724,6 +3744,7 @@ function fight(makeUp) {
 			if (tox.stacks > tox.highestStacks) tox.highestStacks = tox.stacks;
 			updateToxicityStacks();
 		}
+
 		if (!game.global.mapsActive && challengeActive('Life') && attacked) {
 			let life = game.challenges.Life;
 			const oldStacks = life.stacks;
@@ -3742,6 +3763,7 @@ function fight(makeUp) {
 			}
 			updateLivingStacks();
 		}
+
 		if ((challengeActive('Nom') || challengeActive('Toxicity')) && attacked) {
 			game.global.soldierHealth -= game.global.soldierHealthMax * 0.05;
 			if (game.global.soldierHealth < 0) thisKillsTheTrimp();
@@ -3772,6 +3794,7 @@ function fight(makeUp) {
 		if (getPerkLevel('Frenzy') > 0 && attacked && game.global.soldierHealth > 0) {
 			game.portal.Frenzy.trimpAttacked();
 		}
+
 		if (challengeActive('Duel')) {
 			const challenge = game.challenges.Duel;
 			let trimpPoints = 0;
@@ -3798,6 +3821,7 @@ function fight(makeUp) {
 			}
 			challenge.drawStacks();
 		}
+
 		if (challengeActive('Storm') && !game.global.mapsActive) {
 			if (game.global.soldierHealth > 0) {
 				game.challenges.Storm.alpha++;
@@ -3809,16 +3833,20 @@ function fight(makeUp) {
 			}
 			game.challenges.Storm.drawStacks();
 		}
+
 		if (challengeActive('Berserk') && attacked) {
 			game.challenges.Berserk.attacked();
 		}
+
 		if (challengeActive('Glass') && attacked && game.global.soldierHealth > 0) {
 			game.challenges.Glass.checkReflect(cell, trimpAttack);
 			if (game.global.soldierHealth <= 0) thisKillsTheTrimp();
 		}
+
 		if (challengeActive('Smithless') && cell.ubersmith) {
 			game.challenges.Smithless.attackedUber();
 		}
+
 		if (challengeActive('Desolation')) {
 			if (wasAttacked && !game.global.mapsActive) {
 				game.challenges.Desolation.addChilledStacks(1);
@@ -3828,6 +3856,7 @@ function fight(makeUp) {
 				game.challenges.Desolation.mapAttacked(currentMapObj.level);
 			}
 		}
+
 		if (game.global.universe === 2 && attacked && cell.u2Mutation && cell.u2Mutation.length) {
 			if (u2Mutations.types.Nova.hasNova(cell)) u2Mutations.types.Nova.attacked();
 			if (u2Mutations.types.Rage.hasRage(cell)) u2Mutations.types.Rage.attacked();
@@ -3843,11 +3872,14 @@ function fight(makeUp) {
 	const critSpanElem = document.getElementById('critSpan');
 	const critSpanText = getCritText(critTier);
 	if (critSpanElem.innerHTML !== critSpanText && !usingRealTimeOffline) critSpan.innerHTML = critSpanText;
+
 	if (critTier >= 3) redCritCounter++;
 	else redCritCounter = 0;
+
 	if (redCritCounter >= 10) giveSingleAchieve('Critical Luck');
 
 	let badCritText;
+
 	if (badDodge) badCritText = 'Dodge!';
 	else if (badCrit && wasAttacked) badCritText = 'Crit!';
 	else badCritText = '';
@@ -3855,9 +3887,11 @@ function fight(makeUp) {
 	const badCritElem = document.getElementById('badCrit');
 	if (badCritElem.innerHTML !== badCritText && !usingRealTimeOffline) badCritElem.innerHTML = badCritText;
 	if (cell.health <= 0) game.global.battleCounter = 800;
+
 	if (!game.global.mapsActive && getPerkLevel('Hunger')) {
 		game.portal.Hunger.storedDamage += overkill;
 	}
+
 	if (overkill) {
 		const nextCell = game.global.mapsActive ? game.global.mapGridArray[cellNum + 1] : game.global.gridArray[cellNum + 1];
 		if (nextCell && nextCell.health !== 'compressed') {
@@ -3877,6 +3911,7 @@ function fight(makeUp) {
 	if (challengeActive('Devastation') && impOverkill) {
 		game.challenges.Devastation.lastOverkill = impOverkill;
 	}
+
 	if (challengeActive('Revenge') && impOverkill) {
 		game.challenges.Revenge.lastOverkill = impOverkill;
 	}
