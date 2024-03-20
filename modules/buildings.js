@@ -8,20 +8,23 @@ function safeBuyBuilding(building, amt) {
 	const notAfford = !canAffordBuilding(building, false, false, false, false, amt);
 	if (queued || locked || notAfford) return;
 
-	// Cap the amount we purchase to ensure we don't spend forever building
-	if (!bwRewardUnlocked('Foremany') && game.global.world <= 10) amt = 1;
+	if (amt > 1) {
+		const maxAffordable = Math.max(1, calculateMaxAfford_AT(game.buildings[building], true, false, false, amt, 0.01));
+		amt = Math.min(amt, maxAffordable);
+
+		if (amt > 1 && game.global.world <= 10 && !bwRewardUnlocked('Foremany')) amt = 1;
+	}
 
 	buyBuilding(building, true, true, amt);
 	if (building !== 'Trap') debug(`Building ${amt} ${building}${addAnS(amt)}`, 'buildings', '*hammer2');
 }
 
 function advancedNurseries() {
-	if (!getPageSetting('advancedNurseries')) return false;
-	if (game.stats.highestLevel.valueTotal() < 230) return false;
-	if (game.global.universe !== 1) return false;
+	if (game.global.universe !== 1 || game.stats.highestLevel.valueTotal() < 230 || !getPageSetting('advancedNurseries')) return false;
+
 	const disableIce = getPageSetting('advancedNurseriesIce');
 	if (disableIce > 0 && getEmpowerment() === 'Ice' && (disableIce === 1 || (disableIce === 2 && game.global.spireActive))) return false;
-	// Only build nurseries if: A) Lacking Health & B) Has max health map stacks
+	// Only build nurseries if: A) lacking Health & B) have max health map stacks
 	const lackingHealth = whichHitsSurvived() < targetHitsSurvived();
 	const maxMapBonus = game.global.mapBonus >= getPageSetting('mapBonusHealth');
 
@@ -69,15 +72,15 @@ function _needHousing(houseName, ignoreAffordability) {
 
 	if (houseName === 'Gateway') {
 		//Use Safe Gateways for U2
-		if (game.global.universe === 2)
-			return !_checkSafeGateway(buildingStat);
+		if (game.global.universe === 2) return !_checkSafeGateway(buildingStat);
 
-		//Applies the user defined Gateway % to fragments only
-		const spendingPerc = buildingSettings.percent / 100;
-		const resourcefulMod = getResourcefulMult();
+		if (MODULES.buildings.betaHouseEfficiency) {
+			//Applies the user defined Gateway % to fragments only
+			const spendingPerc = buildingSettings.percent / 100;
+			const resourcefulMod = getResourcefulMult();
 
-		if (!_canAffordBuilding('fragments', buildingStat, spendingPerc, resourcefulMod))
-			return false;
+			if (!_canAffordBuilding('fragments', buildingStat, spendingPerc, resourcefulMod)) return false;
+		}
 	}
 
 	return true;
@@ -344,10 +347,13 @@ function _buyNursery(buildingSettings) {
 		if (nurseryAmt === 0 && (!getPageSetting('advancedNurseries') || game.stats.highestLevel.valueTotal() < 230)) nurseryAmt = Infinity;
 		const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - nurseryInfo.owned);
 
-		if (nurseryPreSpire > 0 && nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
-		else if (advancedNurseries()) {
+		if (nurseryPreSpire > 0 && nurseryToBuy > 0) {
+			safeBuyBuilding('Nursery', nurseryToBuy);
+		} else if (advancedNurseries()) {
 			safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
-		} else if (nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
+		} else if (nurseryToBuy > 0) {
+			safeBuyBuilding('Nursery', nurseryToBuy);
+		}
 	}
 }
 
@@ -355,11 +361,10 @@ function _buyNursery(buildingSettings) {
  * Buys gyms if necessary. For the helium universe.
  */
 function _buyGyms(buildingSettings) {
-	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic()) return;
-	if (runningAncientTreasure()) return;
+	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic() || runningAncientTreasure()) return;
 
 	//Gym vs Shield Efficiency
-	if (getPageSetting('equipOn')) {
+	if ((game.equipment.Shield.blockNow || MODULES.buildings.betaHouseEfficiency) && getPageSetting('equipOn')) {
 		const data = shieldGymEfficiency();
 		if (data.Gym > data.Shield) return;
 	}
@@ -415,7 +420,9 @@ function _buyWarpstations() {
 	const gigaCapped = owned >= warpstationAmt;
 	const warpstationCanAfford = calculateMaxAfford_AT(game.buildings.Warpstation, true, false, false, max, warpstationPct);
 
-	if (!(firstGigaOK && gigaCapped) && warpstationCanAfford > 0) safeBuyBuilding('Warpstation', warpstationCanAfford);
+	if (!(firstGigaOK && gigaCapped) && warpstationCanAfford > 0) {
+		safeBuyBuilding('Warpstation', warpstationCanAfford);
+	}
 }
 
 /**
@@ -462,6 +469,7 @@ function _calcSmithyDuringQuest() {
 		// Buying smithies that won't be needed for quests before user entered end goal or for Smithy quests
 		smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : getCurrentQuest() === 10 ? 1 : 0;
 	}
+
 	return smithyCanAfford;
 }
 
@@ -531,7 +539,10 @@ function _buyTribute() {
 
 	const tribute = game.buildings.Tribute;
 	const tributeCanAfford = calculateMaxAfford_AT(tribute, true, false, false, tributeAmt - tribute.purchased, tributePct);
-	if (tributeAmt > tribute.purchased && tributeCanAfford > 0) safeBuyBuilding('Tribute', tributeCanAfford);
+
+	if (tributeAmt > tribute.purchased && tributeCanAfford > 0) {
+		safeBuyBuilding('Tribute', tributeCanAfford);
+	}
 }
 
 function _getAffordableMets() {
