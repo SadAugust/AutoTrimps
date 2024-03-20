@@ -3243,19 +3243,27 @@ function farmingDecision() {
 	if (decaySkipMaps()) mapTypes = [prestigeClimb, voidMaps, _obtainUniqueMap];
 
 	//pushes current army after farming, after current army dies, next army starts farming again, repeat
-	//conditions for activating, map bonus = 10, Next Trimps army are ready,hitsSurvivedToPush > 0, hitsSurvived > hitsSurvivedToPush
+
+	//conditions for activating, map bonus = 10, Next Trimps army are ready,hitsSurvivedToPush > 0, hitsSurvived > hitsSurvivedToPush, < 2 seconds of titimp
+
 	//Takes hdfarm out of the mapcheck pool, disables the currently running map so the trimps advance, once trimps are fighting in world add hdFarm back in the check pool.
 	if (!game.global.spireActive) {
 		const hsToPush = getPageSetting('hitsSurvivedToPush');
 		const hsSufficient = hsToPush > 0 && hdStats['hitsSurvived'] > hsToPush;
-		if (hsSufficient && game.global.mapBonus === 10 && (game.global.mapsActive || !game.global.fighting) && newArmyRdy()) {
-			mapSettings.repeat = false;
-			mapSettings.shouldRun = false;
-			const hdFarmIndex = mapTypes.indexOf(hdFarm);
-			if (hdFarmIndex !== -1) mapTypes.splice(hdFarmIndex, 1);
-		} else if (game.global.fighting && !game.global.mapsActive) {
-			mapSettings.repeat = true;
-			mapSettings.shouldRun = true;
+		const disableOnChallenges = challengeActive('Trapper') || challengeActive('Trappapalooza');
+		const armyConditions = newArmyRdy() && game.global.titimpLeft < 2 && game.global.mapBonus === 10
+		
+		//debug(`Running army conditions ${armyConditions} disableOnChallenges ${disableOnChallenges} hsSufficient ${armyConditions} `, 'maps');
+		if (hsSufficient && armyConditions && !disableOnChallenges) {
+			if (game.global.mapsActive || !game.global.fighting){
+				const hdFarmIndex = mapTypes.indexOf(hdFarm);
+				if (hdFarmIndex !== -1) mapTypes.splice(hdFarmIndex, 1);
+				MODULES.maps.farmToPush = true;
+			}
+		}
+		else {
+			MODULES.maps.farmToPush = false;
+
 		}
 	}
 

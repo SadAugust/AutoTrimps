@@ -1493,12 +1493,13 @@ function initialiseAllSettings() {
 		createSetting('hitsSurvivedToPush',
 			function () { return ('Hits Survived To Push') },
 			function () {
-				let description = "<p>Will only be active if 10 map stacks are already obtained. If the next army is ready and currently farming, push the world instead with the current trimps!</p>";
+				let description = "<p>Will only be active at 10 map stacks, no titimps left. If the next army is ready and currently farming, push the world instead with the current trimps!</p>";
+
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 0.6 for earlygame, gradually increase the further you progress</p>";
 				return description;
-			}, 'value', 0.6, null, "Maps", [1, 2]);
+			}, 'value', 0, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusHealth',
 			function () { return ('Map Bonus Health') },
