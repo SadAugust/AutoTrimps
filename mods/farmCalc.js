@@ -78,15 +78,15 @@ function populateFarmCalcData() {
 	if (Fluffy.isRewardActive('megaCrit')) megaCD += 2;
 	if (mastery('crit')) megaCD += 1;
 	// Handle megacrits
-	critDamage = critChance >= 1 ? megaCD - 1 : critDamage;
+	critDamage = critChance >= 1 ? megaCD : critDamage;
 
 	//Trimp max & min damage ranges
-	let minFluct = 0.8 + 0.02 * game.portal.Range.level;
+	let minFluct = 0.8 + 0.02 * getPerkLevel('Range');
 	let maxFluct = 1.2;
 
 	//Overkill - Accounts for Mad Mapper in U2.
 	const overkillRange = Math.max(0, maxOneShotPower(true) - 1);
-	let overkillDamage = game.portal.Overkill.level * 0.005;
+	let overkillDamage = getPerkLevel('Overkill') * 0.005;
 	if (universe === 2) {
 		if (u2Mutations.tree.MadMap.purchased) overkillDamage = 1;
 		else if (canU2OverkillAT(zone)) overkillDamage = 0.005;
@@ -344,7 +344,7 @@ function populateFarmCalcData() {
 		trimpShield: Math.floor(trimpShield),
 		//Misc Trimp Stats
 		critChance: critChance % 1,
-		critDamage: 1 + critDamage,
+		critDamage: critDamage,
 		gammaCharges: gammaCharges,
 		gammaMult: gammaMult,
 		range: maxFluct / minFluct - 1,
@@ -445,6 +445,8 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 	for (let stance of stances) {
 		const attackMultiplier = stance === 'D' ? 4 : stance === 'X' ? 1 : 0.5;
 		const lootMultiplier = stance === 'S' ? 2 : 1;
+		saveData.block = stance === 'X' ? saveData.trimpBlock : saveData.trimpBlock / 2;
+		saveData.health = stance === 'X' ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 
 		const { speed, equality, killSpeed } = simulate(saveData, zone);
@@ -473,7 +475,8 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 
 //Simulate farming at the given zone for a fixed time, and return the number cells cleared.
 function simulate(saveData, zone) {
-	let trimpHealth = saveData.trimpHealth;
+	let trimpHealth = saveData.health;
+	let trimpBlock = saveData.block;
 	let debuff_stacks = 0;
 	let titimp = 0;
 	let cell = 0;
@@ -494,7 +497,7 @@ function simulate(saveData, zone) {
 	let universe = saveData.universe;
 	let magma = saveData.magma;
 	let hasWithered = false;
-	let equality = 1;
+	let equality = 0;
 	let trimpCrit = false;
 	let enemyCrit = false;
 	let enemyCC = 0.25;
@@ -573,20 +576,18 @@ function simulate(saveData, zone) {
 
 	const mapArray = Array.from({ length: mapSize }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
 
-	function reduceTrimpHealth(amt, directHit) {
+	function reduceTrimpHealth(amt) {
 		if (saveData.mayhem) mayhemPoison += amt * 0.2;
 
-		if (!directHit) {
-			if (universe === 2) {
-				initialShield = energyShield;
-				energyShield = Math.max(0, energyShield - amt);
-				amt = Math.max(0, amt - initialShield);
-			} else if (universe === 1) {
-				amt = Math.max(0, amt - saveData.trimpBlock);
-			}
+		if (universe === 2) {
+			initialShield = energyShield;
+			energyShield = Math.max(0, energyShield - amt);
+			amt = Math.max(0, amt - initialShield);
+		} else if (universe === 1) {
+			amt = Math.max(0, amt - trimpBlock);
 		}
 
-		if (saveData.frigid && amt >= saveData.trimpHealth / 5) amt = saveData.trimpHealth;
+		if (saveData.frigid && amt >= saveData.health / 5) amt = saveData.health;
 
 		trimpHealth = Math.max(0, trimpHealth - amt);
 	}
@@ -617,8 +618,8 @@ function simulate(saveData, zone) {
 		let rngRoll = rng();
 		const imp = rngRoll;
 		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biomeImps[Math.floor(rngRoll * biomeImps.length)];
-		let enemyAttack = imp_stats[0] * mapArray[cell].attack;
-		let enemyHealth = imp_stats[1] * mapArray[cell].health;
+		enemyAttack = imp_stats[0] * mapArray[cell].attack;
+		enemyHealth = imp_stats[1] * mapArray[cell].health;
 		const enemy_max_hp = enemyHealth;
 		const fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
 
@@ -666,8 +667,8 @@ function simulate(saveData, zone) {
 			}
 
 			if (saveData.angelic && !saveData.berserk) {
-				trimpHealth += saveData.trimpHealth / 2;
-				if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
+				trimpHealth += saveData.health / 2;
+				if (trimpHealth > saveData.health) trimpHealth = saveData.health;
 			}
 
 			if (fast) enemy_hit(enemyAttack, rngRoll);
@@ -714,8 +715,8 @@ function simulate(saveData, zone) {
 				}
 			}
 
-			if (saveData.bleed) trimpHealth -= saveData.bleed * saveData.trimpHealth;
-			if (saveData.plague) trimpHealth -= debuff_stacks * saveData.plague * saveData.trimpHealth;
+			if (saveData.bleed) trimpHealth -= saveData.bleed * saveData.health;
+			if (saveData.plague) trimpHealth -= debuff_stacks * saveData.plague * saveData.health;
 
 			if (saveData.duel) {
 				// +1 point for crits, +2 points for killing, +5 for oneshots
@@ -734,7 +735,7 @@ function simulate(saveData, zone) {
 				ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
 				last_group_sent = ticks;
 				trimpOverkill = Math.abs(trimpHealth);
-				trimpHealth = saveData.trimpHealth;
+				trimpHealth = saveData.health;
 				energyShield = energyShieldMax;
 				mayhemPoison = 0;
 
@@ -764,7 +765,7 @@ function simulate(saveData, zone) {
 			if (titimp > 0) titimp -= saveData.titimpReduction;
 		}
 
-		if (saveData.explosion && (saveData.explosion <= 15 || (saveData.trimpBlock >= saveData.trimpHealth && universe !== 2))) trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - saveData.trimpBlock);
+		if (saveData.explosion && (saveData.explosion <= 15 || (trimpBlock >= saveData.health && universe !== 2))) trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - trimpBlock);
 		loot++;
 		if (saveData.ok_spread > 0) ok_damage = -enemyHealth * saveData.overkill;
 		ticks += +(turns > 0) + +(saveData.speed > 9) + Math.ceil(turns * saveData.speed);
@@ -793,8 +794,8 @@ function simulate(saveData, zone) {
 			glassStacks = Math.max(0, glassStacks);
 		}
 		if (saveData.berserk) {
-			trimpHealth += saveData.trimpHealth / 100;
-			if (trimpHealth > saveData.trimpHealth) trimpHealth = saveData.trimpHealth;
+			trimpHealth += saveData.health / 100;
+			if (trimpHealth > saveData.health) trimpHealth = saveData.health;
 		}
 		++cell;
 		++kills;

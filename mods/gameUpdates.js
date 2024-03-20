@@ -2754,6 +2754,7 @@ function startFight() {
 			game.challenges.Electricity.attacksInARow = 0;
 			updateElectricityStacks();
 		}
+
 		if (challengeActive('Daily')) {
 			if (typeof game.global.dailyChallenge.plague !== 'undefined') {
 				game.global.dailyChallenge.plague.stacks = 0;
