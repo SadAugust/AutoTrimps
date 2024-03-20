@@ -91,7 +91,7 @@ function calculateEquipCap(type, zoneGo = false, noPrestigeChallenge = challenge
 	return type === 'attack' ? getPageSetting('equipCapAttack') : getPageSetting('equipCapHealth');
 }
 
-function _getMostEfficientObject(resourceSpendingPct, zoneGo) {
+function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge) {
 	const equipZone = getPageSetting('equipZone');
 	const equipPercent = getPageSetting('equipPercent');
 	const currentMap = getCurrentMapObject() || { location: 'world' };
@@ -112,7 +112,7 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo) {
 			cost: 0,
 			resourceSpendingPct: calculateResourceSpendingPct(zoneGo, type),
 			zoneGo: zoneGo,
-			equipCap: calculateEquipCap(type, zoneGo)
+			equipCap: calculateEquipCap(type, zoneGo, noPrestigeChallenge)
 		};
 	};
 
@@ -153,14 +153,19 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		const equipData = game.equipment[equipName];
 		if (equipData.locked || (pandemonium && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
 		if (equipName === 'Shield') {
-			if (ignoreShield || (game.global.universe === 1 && needGymystic())) continue;
-			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
+			if (ignoreShield) continue;
 
-			const buildingSettings = getPageSetting('buildingSettingsArray');
-			if (getPageSetting('buildingsType') && buildingSettings.Gym && buildingSettings.Gym.enabled) {
-				const data = shieldGymEfficiency();
-				if (data.Gym <= data.Shield) continue;
+			if (game.global.universe === 1) {
+				if (needGymystic()) continue;
+
+				const { Gym } = getPageSetting('buildingSettingsArray');
+				if (Gym && Gym.enabled && Gym.buyMax > game.buildings.Gym.owned && getPageSetting('buildingsType')) {
+					const data = shieldGymEfficiency();
+					if (data.Gym > data.Shield) continue;
+				}
 			}
+
+			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
 		}
 
 		const equipModule = MODULES.equipment[equipName];
@@ -290,8 +295,13 @@ function zoneGoCheck(setting, farmType, mapType = { location: 'world' }) {
 	else if (mapType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) hdRatio = hdStats.hdRatioMap;
 
 	if (farmType === 'attack') {
-		const formation = (game.global.world < 60 || game.global.highestLevelCleared < 180) ? 'X' : 'S';
-		if (hdRatio > getPageSetting('equipCutOffHD') && oneShotZone(mapType.location, formation) < maxOneShotPower()) return zoneDetails;
+		if (MODULES.buildings.betaHouseEfficiency) {
+			const formation = game.global.world < 60 || game.global.highestLevelCleared < 180 ? 'X' : 'S';
+			if (hdRatio > getPageSetting('equipCutOffHD') && oneShotZone(mapType.location, formation) < maxOneShotPower()) return zoneDetails;
+		} else {
+			if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+		}
+
 		if (mapSettings.mapName === 'Wither Farm' || mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 	}
 
