@@ -3258,11 +3258,10 @@ function farmingDecision() {
 				if (hdFarmIndex !== -1) mapTypes.splice(hdFarmIndex, 1);
 				MODULES.maps.farmToPush = true;
 			}
-			else if(!game.global.mapsActive && !game.global.fighting){
-				MODULES.maps.farmToPush = false;
-			}
 		}
-		
+		else {
+			MODULES.maps.farmToPush = false;
+		}
 	}
 
 	const priorityList = [];
