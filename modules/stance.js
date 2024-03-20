@@ -249,7 +249,7 @@ function wouldSurvive(formation = 'S', critPower = 2, ignoreArmy) {
 	
 	
 	//In support of hitsSurvivedToPush function, to push after farm while a new army is ready
-	wantToPush = MODULES.maps.farmToPush
+	wantToPush = MODULES.maps.farmToPush;
 	
 	return (!wantToPush && newSquadRdy && notSpire && healthier > harm2) || health - missingHealth > harm;
 }

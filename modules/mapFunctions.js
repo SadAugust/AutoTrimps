@@ -3249,15 +3249,20 @@ function farmingDecision() {
 		const hsToPush = getPageSetting('hitsSurvivedToPush');
 		const hsSufficient = hsToPush > 0 && hdStats['hitsSurvived'] > hsToPush;
 		const disableOnChallenges = challengeActive('Trapper') || challengeActive('Trappapalooza');
-		const armyConditions = newArmyRdy() && game.global.titimpLeft < 2 && game.global.mapBonus === 10 && !_armyDeath(true)
-		if (hsSufficient && armyConditions && !disableOnChallenges && (game.global.mapsActive || !game.global.fighting)) {
-			const hdFarmIndex = mapTypes.indexOf(hdFarm);
-			if (hdFarmIndex !== -1) mapTypes.splice(hdFarmIndex, 1);
-			MODULES.maps.farmToPush = true;
+		const armyConditions = newArmyRdy() && game.global.titimpLeft < 2 && game.global.mapBonus === 10
+		
+		//debug(`Running army conditions ${armyConditions} disableOnChallenges ${disableOnChallenges} hsSufficient ${armyConditions} `, 'maps');
+		if (hsSufficient && armyConditions && !disableOnChallenges) {
+			if (game.global.mapsActive || !game.global.fighting){
+				const hdFarmIndex = mapTypes.indexOf(hdFarm);
+				if (hdFarmIndex !== -1) mapTypes.splice(hdFarmIndex, 1);
+				MODULES.maps.farmToPush = true;
+			}
+			else if(!game.global.mapsActive && !game.global.fighting){
+				MODULES.maps.farmToPush = false;
+			}
 		}
-		else{
-			MODULES.maps.farmToPush = false;
-		}
+		
 	}
 
 	const priorityList = [];
