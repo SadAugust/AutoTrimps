@@ -75,9 +75,9 @@ function _forceAbandonTrimps() {
 
 // Check if we would die from the next enemy attack - Only used in U1
 function _armyDeath(worldCheck = false) {
-	if (game.global.universe !== 1 || game.global.mapsActive || game.global.soldierHealth <= 0 || !getPageSetting('avoidEmpower')) return false;
+	if (game.global.universe !== 1 || (game.global.mapsActive && !worldCheck) || game.global.soldierHealth <= 0 || !getPageSetting('avoidEmpower')) return false;
 
-	const enemy = worldCheck ? getCurrentEnemy(0,true):getCurrentEnemy();
+	const enemy = worldCheck ? getCurrentEnemy(1, true):getCurrentEnemy();
 	const fluctuation = game.global.universe === 2 ? 1.5 : 1.2;
 	const runningDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;

@@ -194,10 +194,10 @@ function prestigesUnboughtCount() {
 	return numUnbought;
 }
 
-function getCurrentEnemy(cell = 1) {
+function getCurrentEnemy(cell = 1, worldCheck = false) {
 	if (game.global.gridArray.length <= 0) return {};
 
-	const mapping = game.global.mapsActive;
+	const mapping = game.global.mapsActive && !worldCheck;
 	const currentCell = mapping ? game.global.lastClearedMapCell + cell : game.global.lastClearedCell + cell;
 	const mapGrid = mapping ? 'mapGridArray' : 'gridArray';
 
