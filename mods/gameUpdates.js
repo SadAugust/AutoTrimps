@@ -694,6 +694,12 @@ function breed() {
 		srLastBreedTime = '';
 		return;
 	}
+
+	const dailyActive = challengeActive('Daily');
+	const toxicity = challengeActive('Toxicity');
+	const archaeology = challengeActive('Archaeology');
+	const quagmire = challengeActive('Quagmire');
+
 	// store the inputs to potency
 	let potencyModifiers = {
 		trimps: trimps.potency,
@@ -703,11 +709,11 @@ function breed() {
 		brokenPlanet: game.global.brokenPlanet,
 		pheromones: getPerkLevel('Pheromones'),
 		quickTrimps: game.singleRunBonuses.quickTrimps.owned,
-		dailyDysfunctional: typeof game.global.dailyChallenge.dysfunctional !== 'undefined' ? dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength) : 0,
-		dailyToxic: typeof game.global.dailyChallenge.toxic !== 'undefined' ? dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks) : 0,
-		chalToxic: game.challenges.Toxicity.stacks,
-		chalArchaeology: game.challenges.Archaeology.getStatMult('breed'),
-		chalQuagmire: game.challenges.Quagmire.getExhaustMult(),
+		dailyDysfunctional: dailyActive && typeof game.global.dailyChallenge.dysfunctional !== 'undefined' ? dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength) : 0,
+		dailyToxic: dailyActive && typeof game.global.dailyChallenge.toxic !== 'undefined' ? dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks) : 0,
+		chalToxic: toxicity ? game.challenges.Toxicity.stacks : 0,
+		chalArchaeology: archaeology ? game.challenges.Archaeology.getStatMult('breed') : 1,
+		chalQuagmire: quagmire ? game.challenges.Quagmire.getExhaustMult() : 1,
 		voidBreed: game.global.voidBuff === 'slowBreed',
 		heirloom: getHeirloomBonus('Shield', 'breedSpeed'),
 		genes: game.jobs.Geneticist.owned,
@@ -734,9 +740,9 @@ function breed() {
 		if (potencyModifiers.quickTrimps) potencyMod *= 2;
 		if (potencyModifiers.dailyDysfunctional > 0) potencyMod *= potencyModifiers.dailyDysfunctional;
 		if (potencyModifiers.dailyToxic > 0) potencyMod *= potencyModifiers.dailyToxic;
-		if (challengeActive('Toxicity') && potencyModifiers.chalToxic > 0) potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, potencyModifiers.chalToxic);
-		if (challengeActive('Archaeology')) potencyMod *= potencyModifiers.chalArchaeology;
-		if (challengeActive('Quagmire')) potencyMod *= potencyModifiers.chalQuagmire;
+		if (toxicity && potencyModifiers.chalToxic > 0) potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, potencyModifiers.chalToxic);
+		if (archaeology) potencyMod *= potencyModifiers.chalArchaeology;
+		if (quagmire) potencyMod *= potencyModifiers.chalQuagmire;
 		if (potencyModifiers.voidBreed) potencyMod *= 0.2;
 		potencyMod = calcHeirloomBonus('Shield', 'breedSpeed', potencyMod); // potencymod * ((breed/100) + 1)
 		if (potencyModifiers.mutGeneAttack) potencyMod /= 50;
@@ -3768,7 +3774,9 @@ function fight(makeUp) {
 		if ((challengeActive('Nom') || challengeActive('Toxicity')) && attacked) {
 			game.global.soldierHealth -= game.global.soldierHealthMax * 0.05;
 			if (game.global.soldierHealth < 0) thisKillsTheTrimp();
-		} else if (challengeActive('Lead') && attacked && cell.health > 0) {
+		}
+
+		if (challengeActive('Lead') && attacked && cell.health > 0) {
 			game.global.soldierHealth -= game.global.soldierHealthMax * Math.min(game.challenges.Lead.stacks, 200) * 0.0003;
 			if (game.global.soldierHealth < 0) thisKillsTheTrimp();
 		}
