@@ -3169,6 +3169,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	status += `<br> Maps:&nbsp; ${mapType}/${mapsRunCap === Infinity ? '∞' : mapsRunCap}`;
 	const repeat = mapType + 1 === mapsRunCap;
 
+	const mostEffEquip = mostEfficientEquipment();
+
 	Object.assign(farmingDetails, {
 		shouldRun: shouldMap,
 		mapName: mapName,
@@ -3188,7 +3190,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		settingIndex: settingIndex,
 		priority: setting.priority,
 		mapBonus: setting.repeat,
-		biome: needGymystic() ? 'Forest' : 'Any'
+		biome: needGymystic() || (mostEffEquip.attack.name === '' && mostEffEquip.health.name === '') ? 'Forest' : 'Any'
 	});
 
 	if (voidFarm) {
@@ -3309,6 +3311,7 @@ function getBiome(mapGoal, resourceGoal) {
 	else if (mapGoal === 'fragConservation') biome = 'Random';
 	else if (game.global.universe === 2 && game.global.farmlandsUnlocked) biome = 'Farmlands';
 	else if (game.global.decayDone) biome = 'Plentiful';
+	else if (needGymystic() || mostEfficientEquipment().attack.name === '' && mostEfficientEquipment().health.name === '') biome = "Forest";
 	else biome = 'Mountain';
 
 	return biome;

@@ -640,6 +640,47 @@ function shieldBlockUpgrades() {
 	return upgradeObj;
 }
 
+function shieldGymEfficiency() {
+	if (!MODULES.buildings.betaHouseEfficiency) return shieldBlockUpgrades();
+
+	const shieldBlock = game.equipment.Shield.blockNow;
+	const Gymystic = game.upgrades.Gymystic;
+	const upgradeObj = {};
+
+	let itemData = game.buildings.Gym;
+	let increaseBy = itemData.increase.by;
+	let cost = itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.owned) * getResourcefulMult();
+
+	const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
+	const gymysticIncrease = (calcOurBlock() + increaseBy) * (gymysticFactor - 1);
+	let gymIncrease = increaseBy + gymysticIncrease;
+
+	if (!shieldBlock) {
+		gymIncrease = calcHitsSurvived(game.global.world, 'world', 1, gymIncrease, 0, false) - calcHitsSurvived();
+	}
+
+	upgradeObj.Gym = cost / gymIncrease;
+
+	itemData = game.equipment.Shield;
+	const stat = shieldBlock ? 'block' : 'health';
+	const prestige = buyPrestigeMaybe('Shield', undefined, Math.min(itemData.level, 9));
+
+	const statPerLvl = shieldBlock ? itemData.blockCalculated : itemData.healthCalculated;
+	increaseBy = prestige.purchase ? prestige.newStatValue - statPerLvl * itemData.level : statPerLvl;
+	cost = prestige.purchase ? prestige.prestigeCost : itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.level) * getEquipPriceMult();
+
+	//Shield Health vs Gyms
+	if (!shieldBlock) {
+		increaseBy = calcHitsSurvived(game.global.world, 'world', 1, 0, increaseBy, false) - calcHitsSurvived();
+	}
+
+	//Shield level cap
+	//TODO Send ZoneGo parameter?
+	upgradeObj.Shield = !prestige.prestigeAvailable && itemData.level >= calculateEquipCap(stat) ? Infinity : cost / increaseBy;
+
+	return upgradeObj;
+}
+
 function ceilToNearestMultipleOf(number, multipleOf, offSet) {
 	const n = number - offSet;
 	const roundedUp = Math.ceil(n / multipleOf) * multipleOf;
