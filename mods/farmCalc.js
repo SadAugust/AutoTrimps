@@ -71,7 +71,7 @@ function populateFarmCalcData() {
 	//Heirloom + Crit Chance
 	const customShield = typeof atSettings !== 'undefined' ? heirloomShieldToEquip('map') : null;
 	let critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
-	let critDamage = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult() - 1;
+	let critDamage = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult();
 
 	//Base crit multiplier
 	let megaCD = 5;
