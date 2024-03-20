@@ -98,8 +98,7 @@ function _getVoidMapsObjects() {
 function _getVoidPercent(world = game.global.world, universe = game.global.universe) {
 	const ownedVoidMaps = _getVoidMapsObjects();
 
-	if (ownedVoidMaps.length)
-		return ownedVoidMaps.reduce((worstDiff, currentMap) => Math.max(worstDiff, currentMap.difficulty), 0);
+	if (ownedVoidMaps.length) return ownedVoidMaps.reduce((worstDiff, currentMap) => Math.max(worstDiff, currentMap.difficulty), 0);
 
 	let voidPercent = 4.5;
 	if (world <= 59) {
