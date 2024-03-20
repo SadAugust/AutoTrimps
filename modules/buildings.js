@@ -600,7 +600,7 @@ function _buySelectedHouse(houseName, buildingSettings) {
 	// Identify the amount of this type of housing we can afford and stay within our housing cap.
 	const housingAmt = buildingSettings[houseName].buyMax === 0 ? Infinity : buildingSettings[houseName].buyMax;
 	const max = housingAmt - game.buildings[houseName].purchased;
-	const ratio = houseName === 'Gateway' ? 1 : buildingSettings[houseName].percent / 100;
+	const ratio = buildingSettings[houseName].percent / 100;
 	let maxCanAfford = calculateMaxAfford_AT(game.buildings[houseName], true, false, false, max, ratio);
 
 	// Hard cap collectors to 6000 to avoid hitting infinity.
