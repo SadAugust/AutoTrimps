@@ -323,10 +323,11 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 	const shield = game.equipment.Shield;
 	if (shield.blockNow && shield.level > 0) block += shield.level * shield.blockCalculated;
 
+	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 	const trainer = game.jobs.Trainer;
 	if (trainer.owned > 0) {
 		const trainerStrength = trainer.owned * (trainer.modifier / 100);
-		block *= 1 + calcHeirloomBonus('Shield', 'trainerEfficiency', trainerStrength);
+		block *= 1 + (heirloomToCheck) ? calcHeirloomBonus_AT('Shield', 'trainerEfficiency', trainerStrength, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trainerEfficiency', trainerStrength);
 	}
 
 	block *= game.resources.trimps.maxSoldiers;
@@ -347,7 +348,6 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 		block *= stanceMultipliers[stance] || 1;
 	}
 
-	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 	const heirloomBonus = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpBlock', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpBlock', 1, false);
 	block *= heirloomBonus;
 
