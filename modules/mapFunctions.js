@@ -330,7 +330,7 @@ function recycleMap_AT(forceAbandon) {
 
 	if (game.global.mapsActive) {
 		const mapObj = getCurrentMapObject();
-		if (mapCost(mapObj.level - game.global.world, mapObj.bonus, mapObj.location, [9, 9, 9], getPageSetting('onlyPerfectMaps')) > game.resources.fragments * 0.5) return;
+		if (mapCost(mapObj.level - game.global.world, mapObj.bonus, mapObj.location, [9, 9, 9], getPageSetting('onlyPerfectMaps')) > game.resources.fragments * 0.1) return;
 		if (prestigesToGet(mapObj.level)[0] !== 0) return;
 	}
 
