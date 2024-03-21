@@ -205,13 +205,14 @@ function _gatherUpgrades(upgradeNames, researchAvailable, hasTurkimp) {
 function _willTrapsBeWasted() {
 	// There is enough breed time and space remaining to open an entire trap (prevents wasting time and traps during early zones)
 	const breedTimer = _breedTimeRemaining();
-	const gteTime = breedTimer >= 1 / _calcTPS();
-	const gte2Time = breedTimer >= 2 / _calcTPS();
+	const tps = _calcTPS();
+	const gteTime = breedTimer >= 1 / tps;
+	const gte2Time = breedTimer >= 2 / tps;
 	const lteTime = game.global.playerGathering === 'trimps' && breedTimer <= 0.1;
 	const excessBait = _trapSize() >= game.resources.trimps.realMax() - game.resources.trimps.owned;
 	const fighting = game.global.fighting;
 
-	return (!gte2Time || fighting) && excessBait || !(gteTime || lteTime);
+	return ((!gte2Time || fighting) && excessBait) || !(gteTime || lteTime);
 }
 
 function _lastResort(researchAvailable, trapTrimpsOK, needScience) {
