@@ -283,7 +283,7 @@ function updateLabels(force) {
 	updateSideTrimps();
 	//Buildings, trap is the only unique building, needs to be displayed in trimp area as well
 	checkAndDisplayBuildings();
-	//Jobs, check PS here and stuff. Trimps per second is handled by breed() function
+	//Jobs, check PS here and stuff. Trimps per second is handled by breed function
 	checkAndDisplayJobs();
 	//Upgrades, owned will only exist if 'allowed' exists on object
 	checkAndDisplayUpgrades();
@@ -695,10 +695,12 @@ function breed() {
 		return;
 	}
 
-	const dailyActive = challengeActive('Daily');
-	const toxicity = challengeActive('Toxicity');
-	const archaeology = challengeActive('Archaeology');
-	const quagmire = challengeActive('Quagmire');
+	const challenges = {
+		Daily: challengeActive('Daily'),
+		Toxicity: challengeActive('Toxicity'),
+		Archaeology: challengeActive('Archaeology'),
+		Quagmire: challengeActive('Quagmire')
+	};
 
 	// store the inputs to potency
 	let potencyModifiers = {
@@ -709,11 +711,11 @@ function breed() {
 		brokenPlanet: game.global.brokenPlanet,
 		pheromones: getPerkLevel('Pheromones'),
 		quickTrimps: game.singleRunBonuses.quickTrimps.owned,
-		dailyDysfunctional: dailyActive && typeof game.global.dailyChallenge.dysfunctional !== 'undefined' ? dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength) : 0,
-		dailyToxic: dailyActive && typeof game.global.dailyChallenge.toxic !== 'undefined' ? dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks) : 0,
-		chalToxic: toxicity ? game.challenges.Toxicity.stacks : 0,
-		chalArchaeology: archaeology ? game.challenges.Archaeology.getStatMult('breed') : 1,
-		chalQuagmire: quagmire ? game.challenges.Quagmire.getExhaustMult() : 1,
+		dailyDysfunctional: challenges.Daily && typeof game.global.dailyChallenge.dysfunctional !== 'undefined' ? dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength) : 0,
+		dailyToxic: challenges.Daily && typeof game.global.dailyChallenge.toxic !== 'undefined' ? dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks) : 0,
+		chalToxic: challenges.Toxicity ? game.challenges.Toxicity.stacks : 0,
+		chalArchaeology: challenges.Archaeology ? game.challenges.Archaeology.getStatMult('breed') : 1,
+		chalQuagmire: challenges.Quagmire ? game.challenges.Quagmire.getExhaustMult() : 1,
 		voidBreed: game.global.voidBuff === 'slowBreed',
 		heirloom: getHeirloomBonus('Shield', 'breedSpeed'),
 		genes: game.jobs.Geneticist.owned,
@@ -738,11 +740,11 @@ function breed() {
 		if (potencyModifiers.brokenPlanet) potencyMod /= 10;
 		if (potencyModifiers.pheromones > 0) potencyMod *= 1 + potencyModifiers.pheromones * game.portal.Pheromones.modifier;
 		if (potencyModifiers.quickTrimps) potencyMod *= 2;
-		if (potencyModifiers.dailyDysfunctional > 0) potencyMod *= potencyModifiers.dailyDysfunctional;
-		if (potencyModifiers.dailyToxic > 0) potencyMod *= potencyModifiers.dailyToxic;
-		if (toxicity && potencyModifiers.chalToxic > 0) potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, potencyModifiers.chalToxic);
-		if (archaeology) potencyMod *= potencyModifiers.chalArchaeology;
-		if (quagmire) potencyMod *= potencyModifiers.chalQuagmire;
+		if (challenges.Daily && potencyModifiers.dailyDysfunctional > 0) potencyMod *= potencyModifiers.dailyDysfunctional;
+		if (challenges.Daily && potencyModifiers.dailyToxic > 0) potencyMod *= potencyModifiers.dailyToxic;
+		if (challenges.Toxicity && potencyModifiers.chalToxic > 0) potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, potencyModifiers.chalToxic);
+		if (challenges.Archaeology) potencyMod *= potencyModifiers.chalArchaeology;
+		if (challenges.Quagmire) potencyMod *= potencyModifiers.chalQuagmire;
 		if (potencyModifiers.voidBreed) potencyMod *= 0.2;
 		potencyMod = calcHeirloomBonus('Shield', 'breedSpeed', potencyMod); // potencymod * ((breed/100) + 1)
 		if (potencyModifiers.mutGeneAttack) potencyMod /= 50;
@@ -786,11 +788,14 @@ function breed() {
 		let GAIndicator = document.getElementById('GAIndicator');
 		let canRun = false;
 		const now = new Date().getTime();
-		if (lastGAToggle === -1) canRun = true;
-		else if (now > lastGAToggle + 2000) {
+
+		if (lastGAToggle === -1) {
+			canRun = true;
+		} else if (now > lastGAToggle + 2000) {
 			lastGAToggle = -1;
 			canRun = true;
 		}
+
 		if (!GAElem && usingRealTimeOffline) {
 			drawAllJobs(true);
 			GAElem = document.getElementById('Geneticistassist');
@@ -822,7 +827,9 @@ function breed() {
 						addGeneticist(genDif.toNumber());
 					}
 					htmlMessage = ' (+)';
-				} else htmlMessage = " (<span style='font-size: 0.8em' class='icmoon icon-clock3'></span>)";
+				} else {
+					htmlMessage = " (<span style='font-size: 0.8em' class='icmoon icon-clock3'></span>)";
+				}
 			} else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || potencyMod.cmp(1) === 0) {
 				let genDif = Decimal.log10(target.div(compareTime)).div(0.00860017176191756).ceil(); // Math.log10(1.02) = 0.00860017176191756
 				if (!genDif.isFinite()) genDif = new Decimal(-1);
@@ -856,7 +863,7 @@ function breed() {
 	if (decimalOwned.cmp(trimpsMax) >= 0 && trimps.owned >= trimpsMax) {
 		trimps.owned = trimpsMax;
 		missingTrimps = new DecimalBreed(0);
-		var updateGenes = false;
+		let updateGenes = false;
 		if (game.options.menu.geneSend.enabled === 3 && game.global.lastBreedTime / 1000 < game.global.GeneticistassistSetting) {
 			game.global.lastBreedTime += 100;
 			if (remainingTime === 0.0) updateGenes = true;
@@ -2390,7 +2397,7 @@ function startFight() {
 	if (mutations.Living.active()) {
 		badName = "<span id='livingMutationContainer'" + (cell.mutation === 'Living' ? " class='badNameMutation Living'" : '') + "><span id='livingMutationName'>" + (cell.mutation === 'Living' ? 'Living ' : '') + '</span>' + displayedName + '</span>';
 	} else if (cell.vm && visualMutations[cell.vm].highlightMob && displayedName === visualMutations[cell.vm].highlightMob) {
-		var tempName = cell.mutation ? mutations[cell.mutation].namePrefix + ' ' + displayedName : displayedName;
+		const tempName = cell.mutation ? mutations[cell.mutation].namePrefix + ' ' + displayedName : displayedName;
 		badName = "<span class='badNameMutation " + cell.vm + "'>" + tempName + '</span>';
 	} else if (cell.mutation) {
 		badName = "<span class='badNameMutation " + cell.mutation + "'>" + mutations[cell.mutation].namePrefix + ' ' + displayedName + '</span>';
@@ -3496,7 +3503,7 @@ function fight(makeUp) {
 	}
 
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.slippery !== 'undefined') {
-		var slipStr = game.global.dailyChallenge.slippery.strength;
+		const slipStr = game.global.dailyChallenge.slippery.strength;
 		if ((slipStr > 15 && game.global.world % 2 === 0) || (slipStr <= 15 && game.global.world % 2 === 1)) {
 			if (Math.random() < dailyModifiers.slippery.getMult(slipStr)) badDodge = true;
 		}
@@ -4024,7 +4031,7 @@ function nextWorld() {
 	buyAutoJobs(true);
 	let msgText = getWorldText(game.global.world);
 	if (msgText) {
-		var extraClass = null;
+		let extraClass = null;
 		if (Array.isArray(msgText)) {
 			extraClass = msgText[1];
 			msgText = msgText[0];
@@ -4529,7 +4536,7 @@ function runEverySecond(makeUp) {
 
 function checkAchieve(id, evalProperty, doubleChecking, noDisplay) {
 	if (id === 'housing' && !game.achievements.oneOffs.finished[game.achievements.oneOffs.names.indexOf('Realtor')] && checkHousing(false, true) >= 100) giveSingleAchieve('Realtor');
-	var achievement = game.achievements[id];
+	const achievement = game.achievements[id];
 	if (typeof achievement.evaluate !== 'undefined') evalProperty = achievement.evaluate();
 	if (achievement.timed && evalProperty < 0) return;
 	if (typeof achievement.highest !== 'undefined') {

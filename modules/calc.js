@@ -159,8 +159,8 @@ function calcEquipment(equipType = 'attack') {
 
 	for (let i = 0; i < equipmentList.length; i++) {
 		const equip = game.equipment[equipmentList[i]];
-		if (equip.locked) continue;
-		bonus += equip.level * equip[equipType + 'Calculated'];
+		if (equip.locked || equip.blockNow) continue;
+		bonus += equip[equipType + 'Calculated'] * equip.level;
 	}
 
 	return bonus;
@@ -317,20 +317,23 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 		return block * 2;
 	}
 
+	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
+
 	const gym = game.buildings.Gym;
 	if (gym.owned > 0) block += gym.owned * gym.increase.by;
 
 	const shield = game.equipment.Shield;
 	if (shield.blockNow && shield.level > 0) block += shield.level * shield.blockCalculated;
 
-	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 	const trainer = game.jobs.Trainer;
 	if (trainer.owned > 0) {
 		const trainerStrength = trainer.owned * (trainer.modifier / 100);
-		block *= 1 + (heirloomToCheck) ? calcHeirloomBonus_AT('Shield', 'trainerEfficiency', trainerStrength, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trainerEfficiency', trainerStrength);
+		const trainerHeirloom = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trainerEfficiency', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trainerEfficiency', 1, false);
+		block *= 1 + trainerStrength * trainerHeirloom;
 	}
 
-	block *= game.resources.trimps.maxSoldiers;
+	/* GS has this for some reason and it was impacting block calcs a tiny bit */
+	block = Math.floor(block);
 
 	const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
 	if (typeof stance === 'number') stance = formationLetter[Math.floor(stance)];
@@ -350,6 +353,7 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 
 	const heirloomBonus = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpBlock', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpBlock', 1, false);
 	block *= heirloomBonus;
+	block *= game.resources.trimps.maxSoldiers;
 
 	return block;
 }
