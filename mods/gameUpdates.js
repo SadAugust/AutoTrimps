@@ -705,9 +705,9 @@ function breed() {
 		quickTrimps: game.singleRunBonuses.quickTrimps.owned,
 		dailyDysfunctional: typeof game.global.dailyChallenge.dysfunctional !== 'undefined' ? dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength) : 0,
 		dailyToxic: typeof game.global.dailyChallenge.toxic !== 'undefined' ? dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks) : 0,
-		chalToxic: game.challenges.Toxicity.stacks,
-		chalArchaeology: game.challenges.Archaeology.getStatMult('breed'),
-		chalQuagmire: game.challenges.Quagmire.getExhaustMult(),
+		chalToxic: challengeActive("Toxicity") ? game.challenges.Toxicity.stacks : 0,
+		chalArchaeology: challengeActive("Archaeology") ? game.challenges.Archaeology.getStatMult('breed') : 1,
+		chalQuagmire: challengeActive("Quagmire") ? game.challenges.Quagmire.getExhaustMult() : 1,
 		voidBreed: game.global.voidBuff === 'slowBreed',
 		heirloom: getHeirloomBonus('Shield', 'breedSpeed'),
 		genes: game.jobs.Geneticist.owned,
@@ -757,7 +757,7 @@ function breed() {
 
 	// Attempt to get these two vars at low precision. if it's zero, recalc using Decimal
 	let timeRemaining = DecimalBreed(Math.log10(maxBreedable / (decimalOwned - employedTrimps)) / logPotencyMod)
-	if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) { 
+	if (missingTrimps.cmp(0) > 0 && timeRemaining == 0) {
 		// this value is allowed to be zero when we're not missing any trimps, otherwise, get higher precision
 		timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(employedTrimps)))
 			.div(logPotencyMod);
