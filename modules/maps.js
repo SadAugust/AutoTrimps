@@ -553,7 +553,7 @@ function _abandonMapCheck(selectedMap = null, runUnique) {
 	if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
 	if (game.global.currentMapId !== '') {
 		//If we don't have info on the previous map then set it.
-		if (MODULES.maps.lastMapWeWereIn === null) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
+		if (MODULES.maps.lastMapWeWereIn === null || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
 
 		//Ensure the map has the correct biome, if not then recycle it.
 		if (mapSettings.biome && ((mapSettings.biome === 'Any' && MODULES.maps.lastMapWeWereIn.location === 'Forest') || MODULES.maps.lastMapWeWereIn.location !== mapSettings.biome)) recycleMap();

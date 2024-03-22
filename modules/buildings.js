@@ -9,8 +9,7 @@ function safeBuyBuilding(building, amt) {
 	if (queued || locked || notAfford) return;
 
 	if (amt > 1) {
-		const maxAffordable = Math.max(1, calculateMaxAfford_AT(game.buildings[building], true, false, false, amt, 0.01));
-		amt = Math.min(amt, maxAffordable);
+		amt = Math.max(1, calculateMaxAfford_AT(game.buildings[building], true, false, false, amt, 0.01));
 
 		if (amt > 1 && game.global.world <= 10 && !bwRewardUnlocked('Foremany')) amt = 1;
 	}

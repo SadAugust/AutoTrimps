@@ -171,7 +171,7 @@ function heirloomShieldSwapped() {
 	MODULES.heirlooms.breedHeirloom = usingBreedHeirloom();
 }
 
-function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true, sendingArmy = false) {
+function heirloomShieldToEquip(mapType, swapLooms = false, hdCheck = true, sendingArmy = false) {
 	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return;
 
 	const afterpushShield = trimpStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';

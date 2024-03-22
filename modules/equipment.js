@@ -338,7 +338,7 @@ function autoEquip() {
 	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
 		if ([Efficiency, Coordination, TrainTacular].some((up) => shouldSaveForSpeedUpgrade(up))) return;
-		if (!Miners.done && !challengeActive('Metal')) return;
+		if (!Miners.done && !challengeActive('Metal') && !challengeActive('Transmute')) return;
 	}
 
 	//If running a wood or metal quest then disable autoequip
