@@ -186,7 +186,7 @@ function heirloomShieldToEquip(mapType, swapLooms = false, hdCheck = true, sendi
 		if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
 	}
 
-	if (swapLooms && !game.global.fighting && !sendingArmy && newArmyRdy()) {
+	if (swapLooms && !game.global.fighting && !sendingArmy && newArmyRdy() && game.global.universe === 1) {
 		if (getPageSetting('heirloomDefense') !== 'undefined') return 'heirloomDefense';
 	}
 
