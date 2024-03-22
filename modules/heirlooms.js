@@ -187,7 +187,6 @@ function heirloomShieldToEquip(mapType, swapLooms = false, hdCheck = true, sendi
 	}
 
 	if (swapLooms && !game.global.fighting && !sendingArmy && newArmyRdy()) {
-		console.log('heirloom swapping defense', 'other');
 		if (getPageSetting('heirloomDefense') !== 'undefined') return 'heirloomDefense';
 	}
 
