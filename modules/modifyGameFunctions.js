@@ -100,8 +100,10 @@ offlineProgress.finish = function () {
 	const offlineTime = arguments[0] ? 0 : Math.max(0, offlineProgress.totalOfflineTime / 1000 - 86400);
 	let timeRun = arguments[0] ? 0 : Math.max(0, (new Date().getTime() - offlineProgress.startTime) / 1000);
 	timeRun += offlineTime;
+	if (offlineProgress.startTime <= 0 || game.options.menu.pauseGame.enabled) timeRun = 0;
 	if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
 	offlineProgress.originalFinish(...arguments);
+
 	try {
 		if (timeRun > 30) {
 			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.floor(Math.min(timeRun, offlineProgress.maxTicks / 10)))} to catchup on the time you missed whilst running it.`, 'offline');

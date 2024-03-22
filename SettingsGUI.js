@@ -370,6 +370,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will automatically portal once this zone is reached when using the <b>Custom OR One Off Challenges</b> Auto Portal settings.</p>";
 				description += "<p>Setting this to <b>200</b> would portal when you reach <b>zone 200</b>.</p>";
+				description += "<p>If this is set above your highest zone reached then it will allow you to pick not yet unlocked challenges up to this zone.</p>";
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
 			}, 'value', 999, null, 'Core', [1, 2],
@@ -384,6 +385,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> Auto Portal setting.</p>";
 				description += "<p>This is an additional check that prevents drops in " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour from triggering Auto Portal.</p>";
+				description += "<p>If this is set above your highest zone reached then it will allow you to pick not yet unlocked challenges up to this zone.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and assume any zone is okay to portal on.</p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
@@ -813,7 +815,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 0, null, 'Buildings', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 230 && autoTrimpSettings.advancedNurseries.enabled) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 236 && autoTrimpSettings.advancedNurseries.enabled) });
 		createSetting('buildingMostEfficientDisplay',
 			function () { return ('Highlight Efficient Buildings') },
 			function () {
@@ -1494,7 +1496,7 @@ function initialiseAllSettings() {
 			function () { return ('Map Bonus Health') },
 			function () {
 				let description = "<p>Map Bonus stacks will be obtained to this amount when your current <b>Hits Survived</b> is below the threshold set in the <b>Hits Survived</b> setting.</p>";
-				if (currSettingUniverse === 1) description += "<p>This is a very important setting to be used with <b>Advanced Nurseries</b> once you reach magma zones. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.</p>";
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p>This is a very important setting to be used with <b>Advanced Nurseries</b> once you reach magma zones. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 10, null, "Maps", [1, 2]);
@@ -1721,7 +1723,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Challenges', [1, 2],
 			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
 
-		//Bublé - Dummy setting
 		createSetting('buble',
 			function () { return ('Bublé') },
 			function () {
@@ -1733,7 +1734,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 40) });
 
-		//Decay
 		createSetting('decay',
 			function () { return (currSettingUniverse === 2 ? 'Melt' : 'Decay') },
 			function () {

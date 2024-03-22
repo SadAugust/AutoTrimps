@@ -402,25 +402,29 @@ function _autoPortalC2() {
 
 	//Looping through challenge array to figure out if things should be run.
 	for (let x = 0; x < challengeArray.length; x++) {
-		const challenge = game.challenges[challengeArray[x]];
+		const challengeName = challengeArray[x];
+		const challenge = game.challenges[challengeName];
 		let challengeList;
 		let challengeLevel = 0;
 		let check = false;
 
 		if (challenge.multiChallenge) challengeList = challenge.multiChallenge;
-		else challengeList = [challengeArray[x]];
+		else challengeList = [challengeName];
+
 		for (var y = 0; y < challengeList.length; y++) {
 			if (challengeLevel > 0) challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
 			else challengeLevel += game.c2[challengeList[y]];
 		}
+
 		if (runType === 0) check = 100 * (challengeLevel / (game.global[worldType] + 1)) < c2RunnerPercent;
-		else check = challengeLevel < c2Setting[challengeArray[x]].zone;
+		else check = challengeLevel < c2Setting[challengeName].zone;
 
 		if (check) {
-			if (challengeActive(challengeArray[x])) continue;
+			if (challengeActive(challengeName)) continue;
 			if (!challengeSquaredMode) toggleChallengeSquared();
-			selectChallenge(challengeArray[x]);
-			debug(`${universePrefix} Runner: Starting ${challengeArray[x]}`, 'portal');
+			if (!document.getElementById(`challenge${challengeName}`)) continue;
+			selectChallenge(challengeName);
+			debug(`${universePrefix} Runner: Starting ${challengeName}`, 'portal');
 			return;
 		}
 	}
@@ -450,7 +454,9 @@ function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
 			if (dailiesCompleted === 8 - getPageSetting('dailyDontCapAmt', portalUniverse)) lastUndone = 1;
 		}
 
-		if (!getPageSetting('dailyPortalStart', portalUniverse)) lastUndone = 1;
+		if (!getPageSetting('dailyPortalStart', portalUniverse)) {
+			lastUndone = 1;
+		}
 
 		if (lastUndone === 1) {
 			debug(`All dailies have been completed.`, 'portal');
@@ -464,32 +470,30 @@ function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
 			return challenge;
 		}
 
-		if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse)) {
+		if (!dailyAvailable) return challenge;
+
+		if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse) && dailyAvailable) {
 			swapPortalUniverse();
 			universeSwapped();
-			selectChallenge('Daily');
-			checkCompleteDailies();
 		}
 
-		if (dailyAvailable) {
-			selectChallenge('Daily');
-			getDailyChallenge(lastUndone);
-			debug(`Portaling into Daily for: ${getDailyTimeString(lastUndone, true)} now!`, 'portal');
-			challenge = 'Daily';
-		}
+		selectChallenge('Daily');
+		getDailyChallenge(lastUndone);
+		debug(`Portaling into Daily for: ${getDailyTimeString(lastUndone, true)} now!`, 'portal');
+		challenge = 'Daily';
 	}
 
 	return challenge;
 }
 
-function _autoPortalRegular(challenge) {
-	if (challenge.includes('Challenge ')) {
-		challenge = getPageSetting('heliumC2Challenge', portalUniverse) === 'None' ? 0 : getPageSetting('heliumC2Challenge', portalUniverse);
-		if (challenge !== 0 && game.challenges[challenge].allowSquared) toggleChallengeSquared();
+function _autoPortalRegular(challengeName) {
+	if (challengeName.includes('Challenge ')) {
+		challengeName = getPageSetting('heliumC2Challenge', portalUniverse) === 'None' ? 0 : getPageSetting('heliumC2Challenge', portalUniverse);
+		if (challengeName !== 0 && game.challenges[challengeName].allowSquared) toggleChallengeSquared();
 	}
 
-	selectChallenge(challenge);
-	return challenge;
+	if (!document.getElementById(`challenge${challengeName}`)) return;
+	selectChallenge(challengeName);
 }
 
 function _autoPortalActivate(challenge) {

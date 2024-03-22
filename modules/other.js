@@ -115,7 +115,19 @@ function archaeologyAutomator() {
 
 function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, excludeFused) {
 	let obj = {};
-	const hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	let hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	let portalZone = hze;
+
+	const autoPortal = getPageSetting('autoPortal', currSettingUniverse);
+	const zoneSettings = ['Challenge 2', 'Challenge 3', 'Custom', 'One Off Challenges'];
+
+	if (autoPortal.includes('Per Hour')) {
+		portalZone = getPageSetting('heliumHrDontPortalBefore', currSettingUniverse);
+	} else if (zoneSettings.includes(autoPortal)) {
+		portalZone = getPageSetting('autoPortalZone', currSettingUniverse);
+	}
+
+	hze = Math.max(hze, portalZone);
 
 	if (universe === 1) {
 		obj = {
@@ -155,7 +167,7 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 			Lead: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
 			Corrupted: { unlockZone: 190, unlockedIn: ['heHr', 'autoPortal'] },
 			Domination: { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal'] },
-			Obliterated: { unlockZone: 425, unlockedIn: ['c2', 'oneOff'] },
+			Obliterated: { unlockZone: 425, unlockedIn: ['c2'] },
 			Eradicated: {
 				unlockZone: 400,
 				unlockCondition: function () {
@@ -847,12 +859,6 @@ function updateATVersion() {
 		if (versionNumber < '6.3.25') {
 			if (typeof tempSettings['radonsettings'] !== 'undefined') {
 				autoTrimpSettings.universeSetting.value = tempSettings.radonsettings.value;
-			}
-		}
-
-		if (versionNumber < '6.3.26') {
-			if (typeof tempSettings['PrestigeSkip1_2'] !== 'undefined') {
-				autoTrimpSettings.PrestigeSkip.enabled = tempSettings.PrestigeSkip1_2.value > 0;
 			}
 		}
 

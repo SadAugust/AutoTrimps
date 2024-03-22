@@ -40,8 +40,7 @@ function _needHousing(houseName, ignoreAffordability) {
 	const buildingSettings = getPageSetting('buildingSettingsArray')[houseName];
 	const buildingStat = game.buildings[houseName];
 
-	if (buildingStat.locked) return false;
-	if (!buildingSettings.enabled) return false;
+	if (buildingStat.locked || !buildingSettings.enabled) return false;
 
 	const maxHousing = buildingSettings.buyMax === 0 ? Infinity : buildingSettings.buyMax;
 	if (buildingStat.owned >= maxHousing) return false;
@@ -52,6 +51,7 @@ function _needHousing(houseName, ignoreAffordability) {
 		// Fix for Infinity collectors since it doesn't take resourceful into account.
 		if (buildingStat.purchased >= 6000) return false;
 	}
+
 	const safeHousingFood = ['Gateway', 'Collector'];
 
 	// Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
