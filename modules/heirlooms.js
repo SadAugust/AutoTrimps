@@ -186,6 +186,11 @@ function heirloomShieldToEquip(mapType, swapLooms = false, hdCheck = true, sendi
 		if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
 	}
 
+	if (swapLooms && !game.global.fighting && !sendingArmy && newArmyRdy()) {
+		console.log('heirloom swapping defense', 'other');
+		if (getPageSetting('heirloomDefense') !== 'undefined') return 'heirloomDefense';
+	}
+
 	const currChallenge = game.global.challengeActive.toLowerCase();
 
 	//Identify the swap zone for shield swapping.
@@ -216,10 +221,8 @@ function heirloomShieldToEquip(mapType, swapLooms = false, hdCheck = true, sendi
 	//Challenges where abandoning your current army has the potential to be REALLY bad.
 	const dontSwap = currChallenge === 'trapper' || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20) || currChallenge === 'trappapalooza';
 	if (swapLooms) {
-		//Disable Shield swapping if on a dontSwap challenge and our army is still fighting or has health remaining.
-		if (dontSwap && (game.global.fighting || game.global.soldierHealthRemaining > 0)) return;
-		//Disable shield swapping depending on auto abandon setting
-		if (!shouldAbandon(false)) return;
+		//Disable Shield swapping if on a dontSwap challenge
+		if (dontSwap) return;
 		//Disable plagueSwap variable if we are querying a map
 		if (mapType === 'map' && swapLooms) MODULES.heirlooms.plagueSwap = false;
 	}

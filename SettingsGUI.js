@@ -3139,6 +3139,16 @@ function initialiseAllSettings() {
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
+			
+			createSetting('heirloomDefense',
+			function () { return ('Defense') },
+			function () {
+				let description = "<p>Shield to use when your army loads in. Block, Trainer Efficiency mods from heirlooms stays persistent on an army</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
 		createSetting('heirloomVoid',
 			function () { return ('Void') },
 			function () {

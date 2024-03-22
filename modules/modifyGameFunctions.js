@@ -67,7 +67,7 @@ game.options.menu.pauseGame.onToggle = function () {
 
 originalstartFight = startFight;
 startFight = function () {
-	if (!game.global.fighting && MODULES.heirlooms.breedHeirloom) {
+	if (!game.global.fighting && (MODULES.heirlooms.breedHeirloom || MODULES.heirlooms.breedDefense)) {
 		heirloomSwapping(true);
 	}
 	originalstartFight(...arguments);
