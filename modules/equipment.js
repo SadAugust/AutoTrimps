@@ -226,6 +226,8 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 
 function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinity) {
 	const prestigeInfo = {
+		minNewLevel: 0,
+		newStatMinValue: 0,
 		purchase: false,
 		prestigeAvailable: false,
 		newStatValue: 0,
@@ -273,6 +275,8 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	const currentStatValue = equipment.level * equipment[`${equipStat}Calculated`];
 	const statPerResource = prestigeCost / oneLevelStat;
 
+	prestigeInfo.minNewLevel = Math.ceil(currentStatValue / oneLevelStat);
+	prestigeInfo.newStatMinValue = oneLevelStat * prestigeInfo.minNewLevel;
 	prestigeInfo.purchase = newStatValue > currentStatValue;
 	prestigeInfo.newStatValue = newStatValue;
 	prestigeInfo.prestigeCost = prestigeCost;

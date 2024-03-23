@@ -648,41 +648,48 @@ function shieldGymEfficiency() {
 	const upgradeObj = {};
 
 	let itemData = game.buildings.Gym;
-	let increaseBy = itemData.increase.by;
-	let cost = itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.owned) * getResourcefulMult();
-
-	const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
-	const gymysticIncrease = (calcOurBlock() + increaseBy) * (gymysticFactor - 1);
-	let gymIncrease = increaseBy + gymysticIncrease;
+	const gymCost = itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.owned) * getResourcefulMult();
+	let gymIncrease, hitsBefore;
 
 	if (!shieldBlock) {
-		const hitsBefore = calcHitsSurvived();
-		const hitsAfter = calcHitsSurvived(game.global.world, 'world', 1, gymIncrease, 0, false);
+		hitsBefore = calcHitsSurvived(game.global.world, 'world');
+		const hitsAfter = calcHitsSurvived(game.global.world, 'world', 1, 1);
 		gymIncrease = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
 	}
+	else {
+		let increaseBy = itemData.increase.by;
+		const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
+		const gymysticIncrease = (calcOurBlock() + increaseBy) * (gymysticFactor - 1);
+		gymIncrease = increaseBy + gymysticIncrease;
+	}
 
-	upgradeObj.Gym = cost / gymIncrease;
+	upgradeObj.Gym = gymCost / gymIncrease;
 
 	itemData = game.equipment.Shield;
 	const stat = shieldBlock ? 'block' : 'health';
-	const prestige = buyPrestigeMaybe('Shield', undefined, Math.min(itemData.level, 9));
+	const prestige = buyPrestigeMaybe('Shield', undefined, 9); //TODO MaxLevel should come from settings. Maybe resource % too
+	const shouldPrestige = prestige.purchase || prestige.prestigeAvailable && itemData.level >= 9;
+	let shieldIncrease;
 
-	const statPerLvl = shieldBlock ? itemData.blockCalculated : itemData.healthCalculated;
-	increaseBy = prestige.purchase ? prestige.newStatValue - statPerLvl * itemData.level : statPerLvl;
-	cost = prestige.purchase ? prestige.prestigeCost : itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.level) * getEquipPriceMult();
+	//TODO The cost here is wrong, it should be the sum of a geometric progression, or a game function I don't know the name of
+	const shieldCost = shouldPrestige ? prestige.prestigeCost * prestige.minNewLevel : itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.level) * getEquipPriceMult();
 
 	//Shield Health vs Gyms
 	if (!shieldBlock) {
-		const hitsBefore = calcHitsSurvived();
-		const hitsAfter = calcHitsSurvived(game.global.world, 'world', 1, 0, increaseBy, false);
-		increaseBy = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
+		const toBuy = shouldPrestige ? prestige.minNewLevel - 1 : 1;
+		const hitsAfter = calcHitsSurvived(game.global.world, 'world', 1, 0, toBuy, shouldPrestige, false);
+		shieldIncrease = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
+	}
+	else {
+		const statPerLvl = itemData.blockCalculated;
+		shieldIncrease = shouldPrestige ? prestige.newStatMinValue - statPerLvl * itemData.level : statPerLvl;
 	}
 
 	//Shield level cap
 	//TODO Send ZoneGo parameter?
 	const gemsOwned = game.resources.gems.owned;
 	const equipCap = prestige.prestigeAvailable ? 9 : calculateEquipCap(stat);
-	upgradeObj.Shield = (!prestige.prestigeAvailable || !gemsOwned) && itemData.level >= equipCap ? Infinity : cost / increaseBy;
+	upgradeObj.Shield = (!prestige.prestigeAvailable || !gemsOwned) && itemData.level >= equipCap ? Infinity : shieldCost / shieldIncrease;
 
 	return upgradeObj;
 }
