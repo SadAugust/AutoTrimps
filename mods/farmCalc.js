@@ -62,7 +62,7 @@ function populateFarmCalcData() {
 
 	if (universe === 1) {
 		if (game.upgrades.Dominance.done) stances = 'D';
-		if (hze >= 181 && game.upgrades.Formations.done) stances += 'S';
+		if (getPageSetting('autoLevelScryer') && hze >= 181 && game.upgrades.Formations.done) stances += 'S';
 	}
 
 	const gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;

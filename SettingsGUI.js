@@ -1467,10 +1467,19 @@ function initialiseAllSettings() {
 			function () { return ('New Auto Level') },
 			function () {
 				let description = "<p>Will switch the auto level system that is being used to the new one based off of and adapted from the zfarm code.</p>";
-				if (currSettingUniverse === 1) description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when <b>Auto Maps</b> is enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
+
+		createSetting('autoLevelScryer',
+			function () { return ('New Auto Level') },
+			function () {
+				let description = "<p>Allows the Auto Level system to use Scryer stance.</p>";
+				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when <b>Auto Maps</b> is enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Maps', [1],
+			function () { return (getPageSetting('autoLevelTest', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 180) });
 
 		createSetting('uniqueMapEnoughHealth',
 			function () { return ('Unique Map Health Check') },
