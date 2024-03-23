@@ -656,7 +656,9 @@ function shieldGymEfficiency() {
 	let gymIncrease = increaseBy + gymysticIncrease;
 
 	if (!shieldBlock) {
-		gymIncrease = calcHitsSurvived(game.global.world, 'world', 1, gymIncrease, 0, false) - calcHitsSurvived();
+		const hitsBefore = calcHitsSurvived();
+		const hitsAfter = calcHitsSurvived(game.global.world, 'world', 1, gymIncrease, 0, false);
+		gymIncrease = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
 	}
 
 	upgradeObj.Gym = cost / gymIncrease;
@@ -671,7 +673,9 @@ function shieldGymEfficiency() {
 
 	//Shield Health vs Gyms
 	if (!shieldBlock) {
-		increaseBy = calcHitsSurvived(game.global.world, 'world', 1, 0, increaseBy, false) - calcHitsSurvived();
+		const hitsBefore = calcHitsSurvived();
+		const hitsAfter = calcHitsSurvived(game.global.world, 'world', 1, 0, increaseBy, false);
+		increaseBy = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
 	}
 
 	//Shield level cap
