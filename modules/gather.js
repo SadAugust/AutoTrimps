@@ -341,6 +341,7 @@ function autoGather() {
 	}
 
 	const trapChallenge = noBreedChallenge();
+	const fighting = game.global.fighting;
 	const needBattle = !Battle.done && game.resources.science.owned < 10;
 	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
 	const baseArmySize = game.resources.trimps.maxSoldiers;
@@ -387,6 +388,11 @@ function autoGather() {
 	if (researchAvailable && needBattle && isPlayerRelevant('science', hasTurkimp, 0.01)) {
 		safeSetGather('science');
 		return;
+	}
+
+	// High Priority Trapping (refilling after a sudden increase in population and not fighting)
+	if (trappingIsRelevant && trapWontBeWasted && !fighting && game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize) {
+		if (_handleTrapping('both', 0)) return;
 	}
 
 	// Builds if we don't have Foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap (TODO Better condition than pMod > 100)
