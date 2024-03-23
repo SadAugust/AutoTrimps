@@ -1472,7 +1472,7 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'Maps', [1, 2]);
 
 		createSetting('autoLevelScryer',
-			function () { return ('New Auto Level') },
+			function () { return ('Auto Level Scryer') },
 			function () {
 				let description = "<p>Allows the Auto Level system to use Scryer stance.</p>";
 				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when <b>Auto Maps</b> is enabled.</p>";
