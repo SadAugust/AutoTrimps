@@ -45,7 +45,7 @@ function oneShotZone(type, specificStance = 'X', zone = _getZone(type), useMax =
 	const maxPower = maxOneShotPower();
 	const maxOrMin = useMax ? 'max' : 'min';
 	const baseDamage = calcOurDmg(maxOrMin, specificStance, false, type !== 'world');
-	const damageLeft = baseDamage + addPoison(false, type === 'world' ? zone : game.global.world);
+	let damageLeft = baseDamage + addPoison(false, type === 'world' ? zone : game.global.world);
 	const overkillMultiplier = 0.005 * getPerkLevel('Overkill');
 
 	let power;
