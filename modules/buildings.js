@@ -617,7 +617,7 @@ function displayMostEfficientBuilding(forceUpdate = false) {
 	if (!getPageSetting('buildingMostEfficientDisplay')) return;
 
 	const foodHousing = ['Hut', 'House'];
-	const gemHousing = ['Mansion', 'Hotel', 'Resort', 'Gateway', 'Collectors', 'Warpstations'];
+	const gemHousing = ['Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector', 'Warpstation'];
 
 	const bestFoodHousing = mostEfficientHousing_beta('food');
 	const bestGemHousing = mostEfficientHousing_beta('gems');
