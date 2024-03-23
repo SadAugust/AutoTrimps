@@ -28,7 +28,6 @@ const atSettings = {
 let autoTrimpSettings = {};
 const MODULES = {
 	popups: { challenge: false, respecAncientTreasure: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
-	stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0 },
 	graphs: {},
 	u1unlocks: [],
 	u2unlocks: []
@@ -418,6 +417,8 @@ function _handleNewHZE() {
 function _handleNewWorld() {
 	if (!atSettings.portal.aWholeNewWorld) return;
 	if ((usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop) && game.global.world === 60) _timeWarpUpdateEquipment();
+	buyUpgrades();
+	autoEquip();
 	autoPortalCheck();
 	archaeologyAutomator();
 	challengeInfo();

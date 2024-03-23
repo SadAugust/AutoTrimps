@@ -2,7 +2,7 @@
 
 # Current Version - Ongoing Development!
 
-- SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date with patch 5.9.2.
+-   SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date with patch 5.9.2.
 
 # AT Script Installation
 
@@ -22,7 +22,7 @@ If you are unsure how to do that, copy this:
 
 ```js
 function injectScript(id, src) {
-	var script = document.createElement('script');
+	const script = document.createElement('script');
 	script.id = id;
 	script.src = src;
 	script.setAttribute('crossorigin', 'anonymous');
@@ -117,6 +117,6 @@ Step 4:
 
 Restart the game, or if the game is already running, hit F5 to refresh.
 
-- Note for Farm Calculator (zfarm)
+-   Note for Farm Calculator (zfarm)
 
 This works in both universes and shows you the optimal stance/equality level to use for the map shown. The information for it can be found at the bottom of the Trimps breeding/trapping section as can be seen in the image below. ![Farm Calc Position](https://i.imgur.com/siZH8Dh.png)

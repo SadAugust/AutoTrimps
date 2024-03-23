@@ -1,13 +1,12 @@
 function safeSetStance(stance) {
 	const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
 	if (typeof stance === 'string') stance = formationLetter.indexOf(stance);
-	if (game.global.formation === stance) return;
-	const currFormation = game.global.formation;
 
-	if (game.global.formation !== stance) {
-		debug(`Setting stance from ${formationLetter[currFormation]} to ${formationLetter[stance]}.`, 'stance');
-		setFormation(stance.toString());
-	}
+	const currFormation = game.global.formation;
+	if (currFormation === stance) return;
+
+	debug(`Setting stance from ${formationLetter[currFormation]} to ${formationLetter[stance]}.`, 'stance');
+	setFormation(stance.toString());
 }
 
 function maxOneShotPower(planToMap = false, targetZone = game.global.world) {
@@ -89,7 +88,7 @@ function oneShotPower(specificStance = 'X', offset = 0, useMax = false) {
 	return power - 1;
 }
 
-function _challengeDamage(maxHealth = calcOurHealth(), minDamage, maxDamage, missingHealth, block = calcOurBlock(false), pierce, critPower = 2) {
+function _challengeDamage(maxHealth = calcOurHealth('X', _getWorldType(), true), minDamage, maxDamage, missingHealth, block = calcOurBlock(false), pierce, critPower = 2) {
 	const enemy = getCurrentEnemy();
 	const enemyHealth = enemy.health;
 	const enemyDamage = calcSpecificEnemyAttack(critPower);
