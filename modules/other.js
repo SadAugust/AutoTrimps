@@ -501,7 +501,7 @@ function _timeWarpATFunctions() {
 	callBetterAutoFight();
 	autoPortalCheck();
 	if (loops % 1000 === 0) autoMapsStatus();
-	if (game.global.universe === 1) checkStanceSetting();
+	if (game.global.universe === 1) autoStance();
 	if (game.global.universe === 2) equalityManagement();
 	guiLoop();
 }

@@ -11,7 +11,7 @@ const atSettings = {
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
 		installedMods: ['gameUpdates', 'spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky'],
-		installedModules: ['import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'scryer', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils'],
+		installedModules: ['import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils'],
 		loadedModules: [],
 		loadedMods: [],
 		loadedExternal: []
@@ -378,7 +378,7 @@ function mainLoopU1() {
 	autoNatureTokens();
 	if (!settingChangedTimeout && getPageSetting('magmiteSpending') === 2) autoMagmiteSpender();
 	autoGenerator();
-	if (shouldRunInTimeWarp()) checkStanceSetting();
+	if (shouldRunInTimeWarp()) autoStance();
 	if (game.global.spireActive) {
 		exitSpireCell();
 		atlantrimpRespecMessage();

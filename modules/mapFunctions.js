@@ -1211,6 +1211,14 @@ function prestigeClimb(lineCheck) {
 
 	const runningMapology = challengeActive('Mapology') && getPageSetting('mapology');
 	let targetPrestige = runningMapology ? getPageSetting('mapologyPrestige') : getPageSetting('prestigeClimb');
+
+	if (game.global.sciLevel < 2 && challengeActive('Scientist')) {
+		const upgradeList = sciUpgrades();
+		const upgrades = ({ Megamace, Breastplate } = game.upgrades);
+		if (upgradeList.includes('Megamace') && upgrades.Megamace.locked) targetPrestige = 'Megamace';
+		if (upgradeList.includes('Breastplate') && upgrades.Megamace.locked) targetPrestige = 'Breastplate';
+	}
+
 	if (targetPrestige === 'Off') return farmingDetails;
 
 	if (game.jobs.Explorer.locked) {
@@ -3311,7 +3319,7 @@ function getBiome(mapGoal, resourceGoal) {
 	else if (mapGoal === 'fragConservation') biome = 'Random';
 	else if (game.global.universe === 2 && game.global.farmlandsUnlocked) biome = 'Farmlands';
 	else if (game.global.decayDone) biome = 'Plentiful';
-	else if (needGymystic() || mostEfficientEquipment().attack.name === '' && mostEfficientEquipment().health.name === '') biome = "Forest";
+	else if (needGymystic() || (mostEfficientEquipment().attack.name === '' && mostEfficientEquipment().health.name === '')) biome = 'Forest';
 	else biome = 'Mountain';
 
 	return biome;

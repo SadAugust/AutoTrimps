@@ -662,12 +662,6 @@ function finishChallengeSquared() {
 function resetVarsZone(loadingSave) {
 	//Reloading save variables
 	if (loadingSave) {
-		MODULES.stats.baseMinDamage = 0;
-		MODULES.stats.baseMaxDamage = 0;
-		MODULES.stats.baseDamage = 0;
-		MODULES.stats.baseHealth = 0;
-		MODULES.stats.baseBlock = 0;
-
 		atSettings.portal.currentworld = 0;
 		atSettings.portal.lastrunworld = 0;
 		atSettings.portal.aWholeNewWorld = false;

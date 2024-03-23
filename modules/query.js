@@ -194,6 +194,23 @@ function prestigesUnboughtCount() {
 	return numUnbought;
 }
 
+function canU2OverkillAT(targetZone = game.global.world) {
+	if (!u2Mutations.tree.Overkill1.purchased) return false;
+
+	const { Overkill2, Overkill3, Liq3, Liq2 } = u2Mutations.tree;
+
+	let allowed = 0.3;
+	if (Overkill2.purchased) allowed += 0.1;
+	if (Overkill3.purchased) allowed += 0.1;
+	if (Liq3.purchased) {
+		allowed += 0.1;
+		if (Liq2.purchased) allowed += 0.1;
+	}
+
+	const hze = game.stats.highestRadLevel.valueTotal();
+	return targetZone <= hze * allowed;
+}
+
 function getCurrentEnemy(cell = 1) {
 	if (game.global.gridArray.length <= 0) return {};
 

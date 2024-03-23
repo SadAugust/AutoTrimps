@@ -223,7 +223,7 @@ function getTrimpHealth(realHealth, worldType = _getWorldType()) {
 	if (game.global.universe === 1) {
 		const healthMultipliers = {
 			formation: () => (game.global.formation !== 0 && game.global.formation !== 5 ? (game.global.formation === 1 ? 4 : 0.5) : 1),
-			geneticist: () => (game.global.lowestGen >= 0 > 0 ? Math.pow(1.01, game.global.lastLowGen) : 1),
+			geneticist: () => Math.pow(1.01, game.global.lastLowGen),
 			amalgamator: () => game.jobs.Amalgamator.getHealthMult(),
 			toughness_II: () => (getPerkLevel('Toughness_II') > 0 ? 1 + getPerkModifier('Toughness_II') * getPerkLevel('Toughness_II') : 1),
 			magma: () => mutations.Magma.getTrimpDecay(),
@@ -273,7 +273,7 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	let health = getTrimpHealth(realHealth, worldType);
 
 	if (game.global.universe === 1) {
-		if (game.global.formation !== 0 && game.global.formation !== 5) health /= game.global.formation === 1 ? 4 : 0.5;
+		if (![0, 5].includes(game.global.formation)) health /= game.global.formation === 1 ? 4 : 0.5;
 
 		const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
 		if (typeof stance === 'number') stance = formationLetter[Math.floor(stance)];
