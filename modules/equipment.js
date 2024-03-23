@@ -159,9 +159,9 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 				if (needGymystic()) continue;
 
 				const { Gym } = getPageSetting('buildingSettingsArray');
-				if (Gym && Gym.enabled && Gym.buyMax > game.buildings.Gym.owned && getPageSetting('buildingsType')) {
+				if (Gym && Gym.enabled && (Gym.buyMax <= 0 || Gym.buyMax > game.buildings.Gym.owned) && getPageSetting('buildingsType')) {
 					const data = shieldGymEfficiency();
-					if (data.Gym > data.Shield) continue;
+					if (data.Shield >= data.Gym) continue;
 				}
 			}
 
