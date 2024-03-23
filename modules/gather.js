@@ -378,8 +378,8 @@ function autoGather() {
 		if (_handleTrapping('both', 0)) return;
 	}
 
-	// Builds if we have storage buildings on top of the queue
-	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && ['Barn.1', 'Shed.1', 'Forge.1'].includes(building)) {
+	// Builds if we have storage buildings in the queue
+	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.filter(b => ['Barn.1', 'Shed.1', 'Forge.1'].includes(b)).length) {
 		safeSetGather('buildings');
 		return;
 	}
