@@ -30,6 +30,9 @@ function populateFarmCalcData() {
 	const natureTransfer = (zone >= natureStart ? nature.retainLevel + nature.getRetainBonus() : 0) / 100;
 	nature = zone >= natureStart ? nature.level + diplomacy : 0;
 
+	const uberEmpowerment = getUberEmpowerment();
+	const empowerment = getEmpowerment();
+
 	let speed = 10 * 0.95 ** getPerkLevel('Agility');
 	if (mastery('hyperspeed')) --speed;
 	if (mastery('hyperspeed2') && zone <= Math.ceil(hze / 2)) --speed;
@@ -60,9 +63,13 @@ function populateFarmCalcData() {
 	let trimpShield = universe === 2 ? calcOurHealth(true, 'map') : 0;
 	trimpHealth -= trimpShield;
 
-	if (universe === 1) {
+	if (universe === 1 && game.upgrades.Formations.done) {
 		if (game.upgrades.Dominance.done) stances = 'D';
-		if (getPageSetting('autoLevelScryer') && hze >= 181 && game.upgrades.Formations.done) stances += 'S';
+
+		if (getPageSetting('autoLevelScryer')) {
+			if (game.global.uberNature === 'Wind' && empowerment !== 'Wind') stances += 'W';
+			else if (hze >= 181) stances += 'S';
+		}
 	}
 
 	const gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
@@ -308,9 +315,6 @@ function populateFarmCalcData() {
 		enemyAttack *= 1 + 0.3 * daily('badMapStrength');
 	}
 
-	const uberEmpowerment = getUberEmpowerment();
-	const empowerment = getEmpowerment();
-
 	return {
 		//Base Info
 		universe: universe,
@@ -444,9 +448,9 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 	//Loop through all stances to identify which stance is best for farming
 	for (let stance of stances) {
 		const attackMultiplier = stance === 'D' ? 4 : stance === 'X' ? 1 : 0.5;
-		const lootMultiplier = stance === 'S' ? 2 : 1;
-		saveData.block = stance === 'X' ? saveData.trimpBlock : saveData.trimpBlock / 2;
-		saveData.health = stance === 'X' ? saveData.trimpHealth : saveData.trimpHealth / 2;
+		const lootMultiplier = ['S', 'W'].includes(stance) ? 2 : 1;
+		saveData.block = ['X', 'W'].includes(stance) ? saveData.trimpBlock : saveData.trimpBlock / 2;
+		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 
 		const { speed, equality, killSpeed } = simulate(saveData, zone);

@@ -1474,20 +1474,12 @@ function initialiseAllSettings() {
 		createSetting('autoLevelScryer',
 			function () { return ('Auto Level Scryer') },
 			function () {
-				let description = "<p>Allows the Auto Level system to use Scryer stance.</p>";
+				let description = "<p>Allows the Auto Level system to use Scryer and Wind stances.</p>";
 				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when <b>Auto Maps</b> is enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Maps', [1],
+			}, 'boolean', false, null, 'Maps', [1],
 			function () { return (getPageSetting('autoLevelTest', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 180) });
-
-		createSetting('uniqueMapEnoughHealth',
-			function () { return ('Unique Map Health Check') },
-			function () {
-				let description = "<p>Will disable Unique Maps from being run if you don't have enough health to survive the minimum attack of the highest attacking cell in that map.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', true, null, 'Maps', [1, 2]);
 
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
@@ -1543,9 +1535,11 @@ function initialiseAllSettings() {
 			function () { return ('VM Scryer') },
 			function () {
 				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
+				description += "<p><b>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Maps', [1]);
+			}, 'boolean', true, null, 'Maps', [1],
+			function () { return (game.talents.scry2.purchased) });
 
 		//HD Farm
 		createSetting('hdFarmSettings',
@@ -1618,6 +1612,14 @@ function initialiseAllSettings() {
 			"MP Smithy One Off": { enabled: false, value: 100 },
 		}, 'MAZLookalike("UniqueMaps")', 'Maps', [1, 2]);
 
+		createSetting('uniqueMapEnoughHealth',
+			function () { return ('Unique Map Health Check') },
+			function () {
+				let description = "<p>Will disable Unique Maps from being run if you don't have enough health to survive the minimum attack of the highest attacking cell in that map.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Maps', [1, 2]);
+			
 		//Map Bonus
 		createSetting('mapBonusSettings',
 			function () { return ('Map Bonus Settings') },
@@ -5134,7 +5136,7 @@ function _settingsToLineBreak() {
 	const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
 	const breakAfterCore = ['portalVoidIncrement', 'universeSetting'];
-	const breakAfterMaps = ['uniqueMapEnoughHealth', 'scryvoidmaps', 'uniqueMapSettingsArray'];
+	const breakAfterMaps = ['uniqueMapEnoughHealth', 'scryvoidmaps', 'uniqueMapEnoughHealth'];
 	const breakAfterDaily = ['dscryvoidmaps', 'dPreSpireNurseries', 'dWindStackingLiq', 'dailyHeliumHrPortal'];
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields', 'equipShieldBlock'];
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
