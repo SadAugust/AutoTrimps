@@ -1149,37 +1149,6 @@ function manageLeadStacks(remove) {
 	swapClass('icon-hourglass', 'icon-hourglass-' + (3 - Math.floor(challenge.stacks / 67)), document.getElementById('momentumIcon'));
 }
 
-function manageLeadStacks(remove) {
-	if (usingRealTimeOffline) return;
-	const challenge = game.challenges.Lead;
-	const elem = document.getElementById('leadBuff');
-	let determinedBuff = document.getElementById('determinedBuff');
-
-	if (game.global.world % 2 === 1) {
-		if (!determinedBuff) {
-			document.getElementById('goodGuyName').innerHTML += '&nbsp<span class="badge antiBadge" id="determinedBuff" onmouseover="tooltip(\'Determined\', \'customText\', event, \'Your Trimps are determined to succeed. They gain 50% attack and earn double resources from all sources.\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-sun2"></span></span>';
-			determinedBuff = document.getElementById('determinedBuff');
-		}
-		determinedBuff.style.display = 'inline';
-	} else if (determinedBuff) {
-		determinedBuff.style.display = 'none';
-	}
-
-	if (challenge.stacks <= 0) return;
-	if (remove && challenge.stacks) challenge.stacks--;
-
-	if (!elem) {
-		document.getElementById('badGuyName').innerHTML += '&nbsp;<span class="badge badBadge" id="leadBuff" onmouseover="tooltip(\'Momentum\', null, event)" onmouseout="tooltip(\'hide\')"><span id="leadStacks">' + challenge.stacks + '</span><span id="momentumIcon" class="icomoon icon-hourglass"></span></span>';
-	} else {
-		const stacksElem = document.getElementById('leadStacks');
-		if (stacksElem.innerHTML !== challenge.stacks) {
-			stacksElem.innerHTML = challenge.stacks;
-		}
-	}
-
-	swapClass('icon-hourglass', 'icon-hourglass-' + (3 - Math.floor(challenge.stacks / 67)), document.getElementById('momentumIcon'));
-}
-
 function updateToxicityStacks() {
 	if (!shouldUpdate()) return;
 	const elem = document.getElementById('toxicityBuff');
