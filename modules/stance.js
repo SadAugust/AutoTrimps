@@ -292,7 +292,7 @@ function voidMapScryer(availableStances = unlockedStances()) {
 }
 
 function autoLevelStance(availableStances = unlockedStances()) {
-	if (game.global.mapsActive && getPageSetting('autoLevelTest') && getPageSetting('autoLevelScryer') && getPageSetting('autoMaps')) {
+	if (game.global.mapsActive && !game.global.voidBuff && getPageSetting('autoLevelTest') && getPageSetting('autoLevelScryer') && getPageSetting('autoMaps')) {
 		const ignoreSettings = new Set(['Void Maps', 'Prestige Climb', 'Prestige Raiding', 'Bionic Raiding']);
 		if (!ignoreSettings.has(mapSettings.mapName)) {
 			const speedSettingsSet = new Set(['Map Bonus', 'Experience']);
