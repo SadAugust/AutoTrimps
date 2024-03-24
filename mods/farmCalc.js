@@ -9,6 +9,8 @@ function mastery(name) {
 }
 
 function populateFarmCalcData() {
+	const runningAutoTrimps = typeof atSettings !== 'undefined';
+
 	let imps = 0;
 	for (let imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp']) imps += game.unlocks.imps[imp];
 
@@ -45,11 +47,11 @@ function populateFarmCalcData() {
 
 	//Map Modifiers (for the map we're on)
 	const biome = getBiome();
-	const perfectMaps = typeof atSettings !== 'undefined' ? trimpStats.perfectMaps && getPageSetting('onlyPerfectMaps') : universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
+	const perfectMaps = runningAutoTrimps ? trimpStats.perfectMaps && getPageSetting('onlyPerfectMaps') : universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
 	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 50 : hze >= 210;
 	const haveMapReducer = game.talents.mapLoot.purchased;
 	// Six hours simulation inside of TW and a day outside of it.
-	const maxTicks = typeof atSettings !== 'undefined' && atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400;
+	const maxTicks = runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400;
 
 	//Stance & Equality
 	let stances = 'X';
@@ -66,19 +68,19 @@ function populateFarmCalcData() {
 	if (universe === 1 && game.upgrades.Formations.done) {
 		if (game.upgrades.Dominance.done) stances = 'D';
 
-		if (getPageSetting('autoLevelScryer')) {
+		if (runningAutoTrimps ? getPageSetting('autoLevelScryer') : true) {
 			if (game.global.uberNature === 'Wind' && empowerment !== 'Wind') stances += 'W';
 			else if (hze >= 181) stances += 'S';
 		}
 	}
 
-	const gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
+	const gammaMult = runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
 	const gammaCharges = gammaMaxStacks(false, false, 'map');
 
 	//Heirloom + Crit Chance
-	const customShield = typeof atSettings !== 'undefined' ? heirloomShieldToEquip('map') : null;
-	let critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
-	let critDamage = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult();
+	const customShield = runningAutoTrimps ? heirloomShieldToEquip('map') : null;
+	let critChance = runningAutoTrimps ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
+	let critDamage = runningAutoTrimps ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult();
 
 	//Base crit multiplier
 	let megaCD = 5;
@@ -143,7 +145,7 @@ function populateFarmCalcData() {
 			enemyHealth *= 2;
 			enemyAttack *= 2.35;
 
-			if (!game.global.mapsActive && !game.global.preMapsActive && typeof atSettings !== 'undefined') {
+			if (!game.global.mapsActive && !game.global.preMapsActive && runningAutoTrimps) {
 				const balance = game.challenges.Balance;
 				if (balance.balanceStacks < 250) {
 					const timer = atSettings.loops.atTimeLapseFastLoop ? 30 : 5;
@@ -352,8 +354,8 @@ function populateFarmCalcData() {
 		gammaCharges: gammaCharges,
 		gammaMult: gammaMult,
 		range: maxFluct / minFluct - 1,
-		plaguebringer: (plaguebrought === 2 ? 0.5 : 0) + (typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
-		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
+		plaguebringer: (plaguebrought === 2 ? 0.5 : 0) + (runningAutoTrimps ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
+		equalityMult: game.global.universe === 2 ? (runningAutoTrimps ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
 		//Enemy Stats
 		challenge_health: enemyHealth,
 		challenge_attack: enemyAttack,
@@ -837,17 +839,18 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			};
 		}
 
-		const fragSetting = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
+		const runningAutoTrimps = typeof atSettings !== 'undefined';
+		const fragSetting = runningAutoTrimps ? getPageSetting('onlyPerfectMaps') : true;
 
 		const fragments = game.resources.fragments.owned;
 		for (let i = 0; i <= stats.length - 1; i++) {
 			if (fragSetting) {
-				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
+				if (runningAutoTrimps && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
 				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
 
 			if (!fragSetting) {
-				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
+				if (runningAutoTrimps && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
 				const simulatedSliders = _simulateSliders(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome);
 				const { loot, size, difficulty } = simulatedSliders.sliders;
 				if (fragments >= mapCost(simulatedSliders.mapLevel, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;

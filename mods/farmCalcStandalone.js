@@ -148,7 +148,6 @@ function makeAdditionalInfo() {
 	if (!game.global.mapsUnlocked) return (description += `AL: Maps not unlocked!`);
 	const initialInfo = get_best(stats(), true);
 	const u2 = game.global.universe === 2;
-	const extraType = u2 ? 'equality' : 'stance';
 	const showExtraType = (u2 && getPerkLevel('Equality') > 0) || (!u2 && game.upgrades.Formations.done);
 
 	const displayOutputs = (type) => {
@@ -172,11 +171,9 @@ function makeAdditionalInfoTooltip(mouseover) {
 	const specialToUse = getAvailableSpecials('lmc');
 
 	tooltipText += `<p><b>Auto Level</b><br>\
-    The level that the script recommends using whilst farming. The map level outputs assume you are running ${biome === 'Plentiful' ? 'Garden' : biome} biome and ${specialToUse !== '0' ? mapSpecialModifierConfig[specialToUse].name : 'no'} special maps with the best map sliders available and are updated every 5 seconds.</p>`;
-	if (game.global.universe === 1) tooltipText += `<p>Each map type is affixed with the stance that will give you the best results in the map.</p>`;
-	if (game.global.universe === 2) tooltipText += `<p>Each map type is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the worst enemy in the map.</p>`;
-	tooltipText += `<p>Loot: The ideal map level for resource farming.</p>`;
-	tooltipText += `<p>Speed: The ideal map level for a mixture of speed and loot gains. This should be the value you use for actions like map bonus stack farming if the level is high enough.</p>`;
+    The level that the script recommends using whilst farming for best loot income. The map level outputs assume you are running ${biome === 'Plentiful' ? 'Garden' : biome} biome and ${specialToUse !== '0' ? mapSpecialModifierConfig[specialToUse].name : 'no'} special maps with the best map sliders available and are updated every 5 seconds.</p>`;
+	if (game.global.universe === 1) tooltipText += `<p>The map level is affixed with the stance that will give you the best results in the map.</p>`;
+	if (game.global.universe === 2) tooltipText += `<p>The map level is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the worst enemy in the map.</p>`;
 
 	if (mouseover) {
 		tooltipText += "')";
