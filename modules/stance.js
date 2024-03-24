@@ -42,15 +42,16 @@ function maxOneShotPower(planToMap = false, targetZone = game.global.world) {
 }
 
 function oneShotZone(type, specificStance = 'X', zone = _getZone(type), useMax = false, worldType = _getWorldType()) {
-	const maxPower = worldType === 'world' && liquifiedZone() ? 1 : maxOneShotPower();
 	const maxOrMin = useMax ? 'max' : 'min';
-	const baseDamage = calcOurDmg(maxOrMin, specificStance, false, type !== 'world');
-	let damageLeft = baseDamage + addPoison(false, type === 'world' ? zone : game.global.world);
+	const zone = _getZone(worldType);
+	const overkillRange = worldType === 'world' && liquifiedZone() ? 1 : maxOneShotPower();
 	const overkillMultiplier = 0.005 * getPerkLevel('Overkill');
-
+	let damageLeft = calcOurDmg(maxOrMin, specificStance, false, worldType, 'never') + addPoison(false, game.global.world);
 	let power;
-	for (power = 1; power <= maxPower; power++) {
-		damageLeft -= calcEnemyHealth(type, zone, 99 - maxPower + power, 'Dragimp');
+
+	for (power = 1; power <= overkillRange; power++) {
+		const enemyHealth = calcEnemyHealth(type, zone, 99 - overkillRange + power, 'Dragimp');
+		damageLeft -= enemyHealth;
 
 		if (damageLeft < 0) return power - 1;
 
@@ -62,21 +63,20 @@ function oneShotZone(type, specificStance = 'X', zone = _getZone(type), useMax =
 
 function oneShotPower(specificStance = 'X', offset = 0, useMax = false, worldType = _getWorldType()) {
 	const maxOrMin = useMax ? 'max' : 'min';
-	const baseDamage = calcOurDmg(maxOrMin, specificStance, true, false, 'never');
-	let damageLeft = baseDamage + addPoison(true);
-
+	const zone = _getZone(worldType);
 	const overkillRange = worldType === 'world' && liquifiedZone() ? 1 : maxOneShotPower();
 	const overkillMultiplier = 0.005 * getPerkLevel('Overkill');
-
+	let damageLeft = calcOurDmg(maxOrMin, specificStance, true, worldType, 'never') + addPoison(true);
 	let power;
+
 	// Calculates how many enemies we can one shot + overkill
 	for (power = 1; power <= overkillRange; power++) {
 		const currentEnemy = getCurrentEnemy(power + offset);
 		if (!currentEnemy) return power + offset - 1;
 
 		// Enemy Health: current enemy or his neighbours
-		if (power + offset > 1) damageLeft -= calcSpecificEnemyHealth(undefined, undefined, currentEnemy.level);
-		else damageLeft -= getCurrentEnemy().health;
+		const enemyHealth = power + offset > 1 ? calcSpecificEnemyHealth(worldType, zone, currentEnemy.level) : currentEnemy.health;
+		damageLeft -= enemyHealth;
 
 		// Check if we can one shot the next enemy
 		if (damageLeft < 0) return power - 1;
