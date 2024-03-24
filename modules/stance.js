@@ -41,7 +41,7 @@ function maxOneShotPower(planToMap = false, targetZone = game.global.world) {
 	return power;
 }
 
-function oneShotZone(type, specificStance = 'X', zone = _getZone(type), useMax = false, worldType = _getWorldType()) {
+function oneShotZone(type, specificStance = 'X', useMax = false, worldType = _getWorldType()) {
 	const maxOrMin = useMax ? 'max' : 'min';
 	const zone = _getZone(worldType);
 	const overkillRange = worldType === 'world' && liquifiedZone() ? 1 : maxOneShotPower();
