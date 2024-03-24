@@ -326,7 +326,12 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 
 	const gym = game.buildings.Gym;
 	const owned = gym.owned + extraGyms;
-	if (owned > 0) block += owned * gym.increase.by;
+
+	const Gymystic = game.upgrades.Gymystic;
+	const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
+	const increaseBy = gym.increase.by * Math.pow(gymysticFactor, extraGyms);
+
+	if (owned > 0) block += owned * increaseBy;
 
 	const shield = game.equipment.Shield;
 	if (shield.blockNow && shield.level > 0) block += shield.level * shield.blockCalculated;
