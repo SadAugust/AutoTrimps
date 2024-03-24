@@ -524,12 +524,11 @@ function autoStanceAdvanced(baseStats = getBaseStats(), availableStances = unloc
 	if (typeof currentEnemy === 'undefined') return;
 
 	const critSources = getCritPower(currentEnemy);
-	let prefferedStance = 'D';
-	let checkWind = false;
+	const checkWind = availableStances.includes('W') && !getEmpowerment('Wind');
+	let prefferedStance = availableStances.includes('D') ? 'D' : 'X';
 
 	if (availableStances.includes('S')) {
-		const oneShotDomination = oneShotPower('D', 0, false);
-		checkWind = availableStances.includes('W') && !getEmpowerment('Wind');
+		const oneShotDomination = oneShotPower(prefferedStance, 0, false);
 
 		if (oneShotDomination > 0) {
 			if (checkWind && oneShotPower('W', 0, false) >= oneShotDomination) prefferedStance = 'W';
@@ -539,10 +538,10 @@ function autoStanceAdvanced(baseStats = getBaseStats(), availableStances = unloc
 
 	const stances = [{ stance: 'H', value: 1 }];
 
-	if (!checkWind) {
-		stances.unshift({ stance: 'X', value: 0 });
-	} else {
+	if (checkWind && stances[0].stance !== 'W') {
 		stances.unshift({ stance: 'W', value: 5 });
+	} else {
+		stances.unshift({ stance: 'X', value: 0 });
 	}
 
 	if (availableStances.includes('B')) {
@@ -553,7 +552,7 @@ function autoStanceAdvanced(baseStats = getBaseStats(), availableStances = unloc
 		stances.unshift({ stance: 'D', value: 2 });
 	}
 
-	if (prefferedStance !== 'D') {
+	if (!['X', 'D'].includes(prefferedStance) && availableStances.includes(prefferedStance)) {
 		stances.unshift({ stance: prefferedStance, value: prefferedStance });
 	}
 
