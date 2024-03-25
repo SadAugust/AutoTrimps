@@ -1232,7 +1232,7 @@ function updateTitimp() {
 
 	const timer = Math.floor(game.global.titimpLeft);
 	const message = `<span class="badge antiBadge" onmouseover="tooltip('Titimp', 'customText', event, 'Your Trimps are dealing double damage, thanks to the Titimp!');" onmouseout="tooltip('hide')">${timer}<span class="icomoon icon-hammer"></span></span>`;
-	if (elem.innerHTML !== message) elem.innerHTML = message;
+	if (elem && elem.innerHTML !== message) elem.innerHTML = message;
 }
 
 function updateNomStacks(number) {
