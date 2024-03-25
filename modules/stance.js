@@ -515,11 +515,6 @@ function readyToSwitch(stance = 'S', baseStats = getBaseStats()) {
 function autoStanceAdvanced(baseStats = getBaseStats(), availableStances = unlockedStances()) {
 	if (game.global.gridArray.length === 0) return;
 
-	/* if (game.global.soldierHealth <= 0 && availableStances.includes('S')) {
-		safeSetStance(5);
-		return;
-	} */
-
 	const currentEnemy = getCurrentEnemy();
 	if (typeof currentEnemy === 'undefined') return;
 

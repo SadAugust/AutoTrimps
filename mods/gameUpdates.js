@@ -1226,7 +1226,7 @@ function updateAntiStacks() {
 function updateTitimp() {
 	const elem = document.getElementById('titimpBuff');
 	if (game.global.titimpLeft < 1) {
-		if (elem.innerHTML !== '') elem.innerHTML = '';
+		if (elem && elem.innerHTML !== '') elem.innerHTML = '';
 		return;
 	}
 
