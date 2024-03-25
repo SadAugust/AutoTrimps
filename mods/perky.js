@@ -239,7 +239,7 @@ function calculateDgPopGain() {
 }
 
 function populatePerkyData() {
-	const zone = +$$('#targetZone').value;
+	const zone = Math.min(+$$('#targetZone').value, getObsidianStart());
 	const hze = game.stats.highestLevel.valueTotal();
 
 	// Income

@@ -188,6 +188,7 @@ function _getTargetTimer() {
 	const angelic = mastery('angelic');
 	const runningElectricity = challengeActive('Electricity') || challengeActive('Mapocalypse');
 	let runningHard;
+	let target;
 	if (trimpStats.isDaily) runningHard = (!angelic && typeof game.global.dailyChallenge.bogged !== 'undefined') || typeof game.global.dailyChallenge.plague !== 'undefined';
 	else runningHard = !angelic && (challengeActive('Nom') || challengeActive('Toxicity') || challengeActive('Lead'));
 
@@ -227,7 +228,7 @@ function _getCompareTime(timeRemaining) {
 
 	let compareTime;
 	if (timeRemaining.cmp(0.5) > 0) compareTime = timeRemaining.add(breedTime);
-	else compareTime = totalTime;
+	else compareTime = totalTime.cmp(0) === 0 ? new Decimal(Infinity) : totalTime;
 
 	if (!compareTime.isFinite()) return new Decimal(999);
 	return new MODULES.breedtimer.DecimalBreed(compareTime);

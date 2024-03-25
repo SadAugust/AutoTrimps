@@ -672,7 +672,8 @@ var breedCache = {
 	},
 	potencyMod: 0,
 	potencyModInitial: 0,
-	logPotencyMod: 0
+	logPotencyMod: 0,
+	minPotencyMod: new DecimalBreed(1e-15)
 };
 
 function breed() {
@@ -760,6 +761,10 @@ function breed() {
 		breedCache.inputs = potencyModifiers;
 		breedCache.potencyMod = potencyMod;
 		breedCache.logPotencyMod = DecimalBreed.log10(potencyMod).mul(10);
+
+		if (breedCache.logPotencyMod.cmp(0) === 0) {
+			breedCache.logPotencyMod = breedCache.minPotencyMod;
+		}
 	}
 
 	updatePs(breeding.toNumber(), true);
@@ -775,9 +780,11 @@ function breed() {
 	let fullBreed = '';
 	const currentSend = trimps.getCurrentSend();
 	let totalTime = DecimalBreed(Math.log10(maxBreedable / (maxBreedable - currentSend)) / logPotencyMod);
+
 	if (totalTime == 0) {
 		totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend))).div(logPotencyMod);
 	}
+
 	// breeding, potencyMod, timeRemaining, and totalTime are DecimalBreed
 	game.global.breedTime = currentSend / breeding;
 
@@ -852,7 +859,7 @@ function breed() {
 	totalTime = totalTime.toNumber();
 	decimalOwned = decimalOwned.add(breeding.div(10));
 	timeRemaining = game.options.menu.showFullBreed.enabled > 0 ? timeRemaining.toFixed(1) : Math.ceil(timeRemaining);
-	const remainingTime = `${timeRemaining} Secs`;
+	const remainingTime = timeRemaining;
 	// Display full breed time if desired
 	const totalTimeText = Math.ceil(totalTime * 10) / 10;
 	if (game.options.menu.showFullBreed.enabled) {
@@ -866,7 +873,7 @@ function breed() {
 		let updateGenes = false;
 		if (game.options.menu.geneSend.enabled === 3 && game.global.lastBreedTime / 1000 < game.global.GeneticistassistSetting) {
 			game.global.lastBreedTime += 100;
-			if (remainingTime === 0.0) updateGenes = true;
+			if (remainingTime == 0.0) updateGenes = true;
 		}
 		srLastBreedTime = fullBreed ? fullBreed : '';
 		if (breedElem.innerHTML != srLastBreedTime) breedElem.innerHTML = srLastBreedTime;
@@ -1900,19 +1907,11 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 	if (minFluct < 0) minFluct = fluctuation;
 
 	const min = Math.floor(number * (1 - minFluct));
-	if (min < 0 && isTrimp) {
-		message(`bugged min ${number}, ${minFluct}`, 'Notices');
-	}
-
 	if (noFluctuation) return min;
 
 	const max = Math.ceil(number + number * maxFluct);
 	const runningUnlucky = challengeActive('Unlucky');
 	let actuallyLucky = false;
-
-	if (max < 0 && isTrimp) {
-		message(`bugged max ${number}, ${maxFluct}`, 'Notices');
-	}
 
 	if (buildString || runningUnlucky) {
 		let critMin = min;
