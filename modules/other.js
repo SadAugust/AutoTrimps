@@ -143,7 +143,7 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 			Balance: { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
 			Scientist: { unlockZone: 40, unlockedIn: ['oneOff'] },
 			Meditate: { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
-			Decay: { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr', 'oneOff'] },
+			Decay: { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr'] },
 			Trimp: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
 			Trapper: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
 			Electricity: {
