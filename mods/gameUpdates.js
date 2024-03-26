@@ -485,6 +485,7 @@ function updateTurkimpTime() {
 	timeRemaining /= 1000;
 	let mins = Math.floor(timeRemaining / 60);
 	let seconds = Math.ceil(timeRemaining % 60);
+
 	if (seconds === 60) {
 		seconds = 0;
 		mins++;
