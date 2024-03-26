@@ -161,11 +161,15 @@ function calcEquipment(equipType = 'attack', extraShields = 0, extraShieldPresti
 		const equip = game.equipment[name];
 		if (equip.locked || equip.blockNow) continue;
 
-		const extraPrestige = name === 'Shield' && extraShieldPrestige;
-		const level = extraPrestige ? 1 + extraShields : equip.level + (name === 'Shield' ? extraShields : 0);
-		const newStatsPerLevel = Math.round(equip[equipType] * Math.pow(1.19, equip.prestige * game.global.prestige[equipType] + 1));
+		if (name === 'Shield') {
+			const level = extraShields + (extraShieldPrestige ? 1 : equip.level);
+			const prestigeLevel = equip.prestige + (extraShieldPrestige ? 0 : -1);
+			const newStatsPerLevel = Math.round(equip[equipType] * Math.pow(1.19, 1 + prestigeLevel * game.global.prestige[equipType]));
+			bonus += level * newStatsPerLevel;
+			continue;
+		}
 
-		bonus += level * (extraPrestige ? newStatsPerLevel : equip[equipType + 'Calculated']);
+		bonus += equip[equipType + 'Calculated'] * equip.level;
 	}
 
 	return bonus;
@@ -204,7 +208,7 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 	return base;
 }
 
-function getTrimpHealth(realHealth, worldType = _getWorldType(), extraShields = 0, extraShieldPrestige) {
+function getTrimpHealth(realHealth, worldType = _getWorldType(), extraShields = 0, extraShieldPrestige = false) {
 	if (realHealth) return game.global.soldierHealthMax;
 
 	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
