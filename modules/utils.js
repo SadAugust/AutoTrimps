@@ -645,6 +645,7 @@ function shieldGymEfficiency() {
 
 	const upgradeObj = {};
 	let itemData = game.equipment.Shield;
+	const worldType = (mapSettings.voidTrigger || game.global.voidBuff) ? 'void' : 'world';
 	const shieldBlock = game.equipment.Shield.blockNow;
 	const stat = shieldBlock ? 'block' : 'health';
 	const prestige = buyPrestigeMaybe('Shield', undefined, 9); //TODO MaxLevel should come from settings. Maybe resource % too
@@ -656,9 +657,9 @@ function shieldGymEfficiency() {
 
 	//Shield Health vs Gyms
 	if (!shieldBlock) {
-		hitsBefore = calcHitsSurvived(game.global.world, 'world');
+		hitsBefore = calcHitsSurvived(game.global.world, worldType);
 		const toBuy = shouldPrestige ? prestige.minNewLevel - 1 : 1;
-		const hitsAfter = calcHitsSurvived(game.global.world, 'world', 1, 0, toBuy, shouldPrestige, false);
+		const hitsAfter = calcHitsSurvived(game.global.world, worldType, 1, 0, toBuy, shouldPrestige, false);
 		shieldIncrease = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
 	}
 	else {
@@ -682,11 +683,11 @@ function shieldGymEfficiency() {
 	let gymIncrease, gymIncreaseAfterX;
 
 	if (!shieldBlock) {
-		const hitsAfter = calcHitsSurvived(game.global.world, 'world', 1, 1);
+		const hitsAfter = calcHitsSurvived(game.global.world, worldType, 1, 1);
 		gymIncrease = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
 
 		const onlyOneGym = gymAmount <= 1 || hitsAfter == Infinity;
-		const hitsAfterX = onlyOneGym ? hitsAfter : calcHitsSurvived(game.global.world, 'world', 1, gymAmount);
+		const hitsAfterX = onlyOneGym ? hitsAfter : calcHitsSurvived(game.global.world, worldType, 1, gymAmount);
 		gymIncreaseAfterX = hitsAfterX === Infinity ? Infinity : hitsAfterX - hitsBefore;
 	}
 	else {
