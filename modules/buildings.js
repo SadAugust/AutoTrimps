@@ -632,3 +632,36 @@ function displayMostEfficientBuilding(forceUpdate = false) {
 		.filter((house) => house.elem)
 		.forEach((house) => _updateMostEfficientDisplay(house.elem, house.mostEff));
 }
+
+function displayShieldGymEfficiency(forceUpdate = false) {
+	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
+	if (!getPageSetting('buildingMostEfficientDisplay')) return;
+	if (game.equipment.Shield.locked) return;
+
+	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
+
+	const shieldGymResults = shieldGymEfficiency();
+	const shieldOrGym = shieldGymResults.Gym > shieldGymResults.Shield ? 'Shield' : 'Gym';
+
+	const prestigeElement = document.getElementById('Supershield');
+	let shieldElement = document.getElementById('Shield');
+	let gymElement = document.getElementById('Gym');
+
+	//Supershield
+	if (game.upgrades.Supershield.locked === 0 && prestigeElement) {
+		const mostEfficient = shieldOrGym === 'Shield' && shieldGymResults.buyShieldPrestige;
+		_updateMostEfficientDisplay(prestigeElement, mostEfficient);
+	}
+
+	//Shield
+	if (shieldElement) {
+		const mostEfficient = shieldOrGym === 'Shield';
+		_updateMostEfficientDisplay(shieldElement, mostEfficient);
+	}
+
+	//Gym
+	if (!game.buildings.Gym.locked && gymElement) {
+		const mostEfficient = shieldOrGym === 'Gym';
+		_updateMostEfficientDisplay(gymElement, mostEfficient);
+	}
+}

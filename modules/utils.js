@@ -671,6 +671,7 @@ function shieldGymEfficiency() {
 	//TODO Send ZoneGo parameter?
 	const gemsOwned = game.resources.gems.owned;
 	const equipCap = prestige.prestigeAvailable ? 9 : calculateEquipCap(stat);
+	upgradeObj.buyShieldPrestige = shouldPrestige;
 	upgradeObj.Shield = (!prestige.prestigeAvailable || !gemsOwned) && itemData.level >= equipCap ? Infinity : shieldCost / shieldIncrease;
 
 	const Gymystic = game.upgrades.Gymystic;

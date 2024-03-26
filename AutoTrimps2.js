@@ -356,6 +356,7 @@ function mainLoop() {
 		autoMapsStatus();
 		displayMostEfficientBuilding();
 		displayMostEfficientEquipment();
+		displayShieldGymEfficiency();
 	}
 
 	heirloomSwapping();

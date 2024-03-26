@@ -804,8 +804,13 @@ function initialiseAllSettings() {
 		createSetting('buildingMostEfficientDisplay',
 			function () { return ('Highlight Efficient Buildings') },
 			function () {
-				let description = "<p>Will highlight the most efficient building to buy.</p>";
-				return description;
+				return "<p>Will highlight the most efficient building to buy.</p>";
+			}, 'boolean', false, null, 'Buildings', [1, 2],
+			function () { return (getPageSetting('gameUser') !== 'undefined') });
+		createSetting('shieldGymMostEfficientDisplay',
+			function () { return ('Highlight Efficient Buildings') },
+			function () {
+				return "<p>Will highlight what is most efficient atm: Shield or Gym.</p>";
 			}, 'boolean', false, null, 'Buildings', [1, 2],
 			function () { return (getPageSetting('gameUser') !== 'undefined') });
 	}
@@ -4618,6 +4623,7 @@ function settingChanged(id, currUniverse) {
 	const booleanActions = {
 		equipEfficientEquipDisplay: displayMostEfficientEquipment,
 		buildingMostEfficientDisplay: displayMostEfficientBuilding,
+		shieldGymMostEfficientDisplay: displayShieldGymEfficiency,
 		equipOn: _setAutoEquipClasses,
 		buildingsType: _setBuildingClasses,
 		displayHideFightButtons: _setFightButtons,

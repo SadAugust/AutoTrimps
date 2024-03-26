@@ -485,6 +485,7 @@ function _timeWarpUpdateUIDisplay() {
 	updateLabels(true);
 	displayMostEfficientBuilding(true);
 	displayMostEfficientEquipment(true);
+	displayShieldGymEfficiency(true);
 	usingRealTimeOffline = true;
 }
 
