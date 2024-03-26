@@ -171,7 +171,7 @@ function heirloomShieldSwapped() {
 	MODULES.heirlooms.breedHeirloom = usingBreedHeirloom();
 }
 
-function heirloomShieldToEquip(mapType, swapLooms = false, hdCheck = true, sendingArmy = false) {
+function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdCheck = true, sendingArmy = false) {
 	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return;
 
 	const afterpushShield = trimpStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
@@ -334,7 +334,7 @@ function getMapBonusHeirloomStaff(mapBonus) {
 function heirloomSwapping(sendingArmy = false) {
 	if (!getPageSetting('heirloom')) return;
 
-	const mapType = game.global.voidBuff ? 'void' : game.global.mapsActive ? 'map' : 'world';
+	const mapType = _getWorldType();
 
 	if (getPageSetting('heirloomShield')) {
 		const shield = heirloomShieldToEquip(mapType, true, true, sendingArmy);
