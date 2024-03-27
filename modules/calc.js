@@ -765,7 +765,6 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth, customAttack) {
 	const enemy = getCurrentEnemy();
 	const corrupt = enemy.corrupted && enemy.corrupted !== 'none';
-	const healthy = corrupt && enemy.corrupted.startsWith('healthy');
 
 	let attack = calcEnemyAttackCore(undefined, undefined, enemy.level, enemy.name);
 	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
@@ -774,9 +773,7 @@ function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth, custo
 	if (challengeActive('Nom') && typeof enemy.nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks);
 	if (challengeActive('Lead')) attack *= 1 + 0.04 * game.challenges.Lead.stacks;
 
-	if (game.global.mapsActive) {
-		attack *= getCurrentMapObject().difficulty;
-	} else if (corrupt || (mutations.Corruption.active() && enemy.level === 100)) {
+	if (game.global.universe === 1 && !game.global.mapsActive && (corrupt || (enemy.level === 100 && mutations.Corruption.active()))) {
 		if (enemy.level === 100) {
 			if (!game.global.spireActive) attack *= calcCorruptionScale(game.global.world, 3);
 			if (game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
@@ -787,7 +784,8 @@ function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth, custo
 		}
 	}
 
-	if (getEmpowerment() === 'Ice') attack *= game.empowerments.Ice.getCombatModifier();
+	if (game.global.universe === 1 && getEmpowerment() === 'Ice') attack *= game.empowerments.Ice.getCombatModifier();
+	if (game.global.universe === 2) attack *= game.portal.Equality.getMult(false);
 
 	return Math.ceil(attack);
 }
@@ -924,7 +922,7 @@ function calcSpecificEnemyHealth(worldType = _getWorldType(), zone = _getZone(wo
 
 	if (worldType !== 'world') {
 		health *= getCurrentMapObject().difficulty;
-	} else if (corrupt || (mutations.Corruption.active() && cell === 100)) {
+	} else if (game.global.universe === 1 && (corrupt || (cell === 100 && mutations.Corruption.active()))) {
 		if (cell === 100 && !game.global.spireActive) attack *= calcCorruptionScale(game.global.world, 10);
 
 		if (game.global.spireActive) {
