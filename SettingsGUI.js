@@ -968,7 +968,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will allow the purchase of the shield block upgrade.</p>";
 				description += "<p><b>Recommended:</b> On until you can reach zone 40</p>";
 				return description;
-			}, 'boolean', true, null, "Equipment", [1]);
+			}, 'boolean', 55 > game.stats.highestLevel.valueTotal(), null, "Equipment", [1]);
 
 		createSetting('prestigeClimb',
 			function () { return ('Prestige Climb') },

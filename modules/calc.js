@@ -793,7 +793,8 @@ function calcEnemyBaseHealth(worldType = _getWorldType(), zone = _getZone(worldT
 	} else if (zone < 60) {
 		health *= 0.4 * (1 + cell / 110);
 	} else {
-		health *= 0.5 * (1 + 0.8 * (cell / 100)) * Math.pow(1.1, zone - 59);
+		health *= 0.5 + 0.008 * cell;
+		health *= Math.pow(1.1, zone - 59);
 	}
 
 	if (zone < 60) health *= 0.75;
