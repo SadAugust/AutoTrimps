@@ -145,7 +145,7 @@ function _directDamage(block = calcOurBlock(game.global.formation, true), pierce
 
 	// Applies pierce
 	let harm = Math.max(enemyDamage - block, pierce * enemyDamage, 0);
-
+	//console.log(enemyDamage);
 	const isDoubleAttack = game.global.voidBuff === 'doubleAttack' || enemy.corrupted === 'corruptDbl' || enemy.corrupted === 'healthyDbl';
 	const enemyFast = checkFastEnemy(enemy);
 
@@ -204,8 +204,8 @@ function wouldSurvive(formation = 'S', critPower = 2, baseStats = getBaseStats()
 
 	// Decides if the trimps can survive in this formation
 	const harm = _directDamage(block, pierce, health - missingHealth, minDamage, critPower) + _challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower);
+	//console.log('hp', health, 'miss hp', missingHealth, 'remain', health - missingHealth, 'enemyDmg', harm, 'here', critPower);
 	if (health - missingHealth > harm) return true;
-
 	// Updated Genes and Block
 	const newSquadRdy = newArmyRdy();
 	const blockier = calcOurBlock(false, false);
@@ -533,7 +533,7 @@ function autoStanceAdvanced(baseStats = getBaseStats(), availableStances = unloc
 	}
 
 	const stances = [
-		{ stance: 'X', value: checkWind && stances[0].stance !== 'W' ? 5 : 0 },
+		{ stance: 'X', value: checkWind && prefferedStance !== 'W' ? 5 : 0 },
 		{ stance: 'H', value: 1 }
 	];
 
