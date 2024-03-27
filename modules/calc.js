@@ -761,14 +761,18 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 
 function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth, customAttack) {
 	const enemy = getCurrentEnemy();
-	let attack = calcEnemyAttackCore();
+	let attack = calcEnemyAttackCore(undefined, undefined, enemy.level, enemy.name);
 	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
 
 	if (game.global.mapsActive && !customAttack) attack *= getCurrentMapObject().difficulty;
 	if (challengeActive('Nom') && typeof enemy.nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks);
 	if (challengeActive('Lead')) attack *= 1 + 0.04 * game.challenges.Lead.stacks;
 
-	if (game.global.usingShriek && !game.global.mapsActive && enemy.level === 100) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+	if (!game.global.mapsActive && enemy.level === 100) {
+		if (mutations.Corruption.active()) attack *= calcCorruptionScale(game.global.world, 3);
+		if (game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+	}
+
 	if (getEmpowerment() === 'Ice') attack *= game.empowerments.Ice.getCombatModifier();
 
 	return Math.ceil(attack);
