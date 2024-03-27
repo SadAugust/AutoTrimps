@@ -659,10 +659,13 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 		attack = customAttack;
 	} else if (game.global.universe === 1) {
 		if (worldType === 'world') {
+			const enemy = game.global.gridArray[cell - 1];
 			if (game.global.spireActive) {
 				attack = calcSpire('attack', cell, name);
-			} else if (gridInitialised && mutations.Corruption.active() && game.global.gridArray[cell - 1].mutation) {
-				attack = corruptionBaseStats(cell - 1, zone, 'attack');
+			} else if (gridInitialised && mutations.Corruption.active() && enemy.mutation) {
+				if (enemy.mutation !== 'Magma') attack = corruptionBaseStats(cell - 1, zone, 'attack', true);
+				if (enemy.corrupted === 'corruptStrong') attack *= 2;
+				else if (enemy.corrupted === 'healthyStrong') attack *= 2.5;
 			}
 		} else {
 			const corruptionScale = calcCorruptionScale(game.global.world, 3);
@@ -761,6 +764,9 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 
 function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth, customAttack) {
 	const enemy = getCurrentEnemy();
+	const corrupt = enemy.corrupted && enemy.corrupted !== 'none';
+	const healthy = corrupt && enemy.corrupted.startsWith('healthy');
+
 	let attack = calcEnemyAttackCore(undefined, undefined, enemy.level, enemy.name);
 	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
 
@@ -768,9 +774,17 @@ function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth, custo
 	if (challengeActive('Nom') && typeof enemy.nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks);
 	if (challengeActive('Lead')) attack *= 1 + 0.04 * game.challenges.Lead.stacks;
 
-	if (!game.global.mapsActive && enemy.level === 100) {
-		if (mutations.Corruption.active()) attack *= calcCorruptionScale(game.global.world, 3);
-		if (game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+	if (game.global.mapsActive) {
+		attack *= getCurrentMapObject().difficulty;
+	} else if (corrupt || (mutations.Corruption.active() && enemy.level === 100)) {
+		if (enemy.level === 100) {
+			if (!game.global.spireActive) attack *= calcCorruptionScale(game.global.world, 3);
+			if (game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+		}
+		if (game.global.spireActive) {
+			if (enemy.corrupted === 'corruptStrong') attack *= 2;
+			if (enemy.corrupted === 'healthyStrong') attack *= 2.5;
+		}
 	}
 
 	if (getEmpowerment() === 'Ice') attack *= game.empowerments.Ice.getCombatModifier();
@@ -809,7 +823,7 @@ function calcEnemyBaseHealth(worldType = _getWorldType(), zone = _getZone(worldT
 
 	if (name) health *= game.badGuys[name].health;
 
-	return health;
+	return Math.floor(health);
 }
 
 function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), name = _getEnemyName('Turtlimp'), customHealth) {
@@ -820,10 +834,14 @@ function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldT
 		health = customHealth;
 	} else if (game.global.universe === 1) {
 		if (worldType === 'world') {
+			const enemy = game.global.gridArray[cell - 1];
 			if (game.global.spireActive) {
 				health = calcSpire('health', cell, name);
-			} else if (gridInitialised && mutations.Corruption.active() && game.global.gridArray[cell - 1].mutation) {
-				health = corruptionBaseStats(cell - 1, zone, 'health');
+			} else if (gridInitialised && mutations.Corruption.active() && enemy.mutation) {
+				if (enemy.mutation !== 'Magma') health = corruptionBaseStats(cell - 1, zone, 'health', true);
+
+				if (enemy.corrupted === 'corruptTough') health *= 5;
+				else if (enemy.corrupted === 'healthyTough') health *= 7.5;
 			}
 		} else {
 			const corruptionScale = calcCorruptionScale(game.global.world, 10);
@@ -894,7 +912,7 @@ function calcSpecificEnemyHealth(worldType = _getWorldType(), zone = _getZone(wo
 
 	const corrupt = enemy.corrupted && enemy.corrupted !== 'none';
 	const healthy = corrupt && enemy.corrupted.startsWith('healthy');
-	const name = corrupt ? 'Chimp' : forcedName ? forcedName : enemy.name;
+	const name = corrupt && !game.global.spireActive ? 'Chimp' : forcedName ? forcedName : enemy.name;
 	let health = calcEnemyHealthCore(worldType, zone, cell, name);
 
 	if (challengeActive('Lead')) health *= 1 + 0.04 * game.challenges.Lead.stacks;
@@ -906,12 +924,13 @@ function calcSpecificEnemyHealth(worldType = _getWorldType(), zone = _getZone(wo
 
 	if (worldType !== 'world') {
 		health *= getCurrentMapObject().difficulty;
-	} else if (worldType === 'world' && !healthy && (corrupt || (mutations.Corruption.active() && cell === 100))) {
-		health *= calcCorruptionScale(zone, 10);
-		if (enemy.corrupted === 'corruptTough') health *= 5;
-	} else if (worldType === 'world' && healthy) {
-		health *= calcCorruptionScale(zone, 14);
-		if (enemy.corrupted === 'healthyTough') health *= 7.5;
+	} else if (corrupt || (mutations.Corruption.active() && cell === 100)) {
+		if (cell === 100 && !game.global.spireActive) attack *= calcCorruptionScale(game.global.world, 10);
+
+		if (game.global.spireActive) {
+			if (enemy.corrupted === 'corruptTough') health *= 5;
+			if (enemy.corrupted === 'healthyTough') health *= 7.5;
+		}
 	}
 
 	return health;
@@ -1022,18 +1041,22 @@ function _calcHitsSurvivedAttack(worldType, targetZone) {
 	return customAttack;
 }
 
-function corruptionBaseStats(cell = game.global.lastClearedCell + 1, targetZone = game.global.world, type = 'attack') {
+function corruptionBaseStats(cell = game.global.lastClearedCell + 1, targetZone = game.global.world, type = 'attack', ignoreMultiplier = false) {
 	cell = game.global.gridArray[cell];
 	const typeFunction = type === 'attack' ? calcEnemyBaseAttack : calcEnemyBaseHealth;
 	let baseStats = typeFunction('world', targetZone, cell.level, 'Chimp', true);
 
 	if (type === 'attack') {
-		if (cell.corrupted === 'healthyStrong') baseStats *= 2;
-		else if (cell.corrupted === 'corruptStrong') baseStats *= 2.5;
+		if (!ignoreMultiplier) {
+			if (cell.corrupted === 'corruptStrong') baseStats *= 2;
+			else if (cell.corrupted === 'healthyStrong') baseStats *= 2.5;
+		}
 		baseStats *= cell.mutation === 'Healthy' ? calcCorruptionScale(targetZone, 5) : calcCorruptionScale(targetZone, 3);
 	} else if (type === 'health') {
-		if (cell.corrupted === 'corruptTough') baseStats *= 5;
-		else if (cell.corrupted === 'healthyTough') baseStats *= 7.5;
+		if (!ignoreMultiplier) {
+			if (cell.corrupted === 'corruptTough') baseStats *= 5;
+			else if (cell.corrupted === 'healthyTough') baseStats *= 7.5;
+		}
 		baseStats *= cell.mutation === 'Healthy' ? calcCorruptionScale(targetZone, 14) : calcCorruptionScale(targetZone, 10);
 	}
 
