@@ -85,12 +85,12 @@ function buyJobs(forceRatios) {
 	_handleJobRatios(desiredRatios, availableWorkers, maxTrimps);
 }
 
-function _employableWorkers(owned, maxTrimps) {
+function employableWorkers(owned, maxTrimps) {
 	return Math.min(Math.ceil(maxTrimps / 2), Math.floor(owned));
 }
 
 function _freeWorkers(owned, maxTrimps, employed) {
-	return _employableWorkers(owned, maxTrimps) - employed;
+	return employableWorkers(owned, maxTrimps) - employed;
 }
 
 function _flexibleWorkers() {

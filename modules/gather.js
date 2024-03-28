@@ -54,7 +54,7 @@ function _calcTrapSupplySize() {
 	const tauntimp = game.unlocks.imps.Tauntimp ? Math.ceil(game.resources.trimps.realMax() * 0.003) : 0;
 	let largestHouseSize = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector', 'Warpstation']
 		.filter((houseName) => !game.buildings[houseName].locked)
-		.map((houseName) => _getHousingBonus(houseName))
+		.map((houseName) => getHousingBonus(houseName))
 		.reduce((max, bonus) => Math.max(max, bonus), 0);
 	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / _trapSize()) - 1;
 }

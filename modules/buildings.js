@@ -21,13 +21,15 @@ function safeBuyBuilding(building, amt) {
 function advancedNurseries() {
 	if (game.global.universe !== 1 || game.stats.highestLevel.valueTotal() < 230 || !getPageSetting('advancedNurseries')) return false;
 
+	// Save nurseries during Ice zones
 	const disableIce = getPageSetting('advancedNurseriesIce');
 	if (disableIce > 0 && getEmpowerment() === 'Ice' && (disableIce === 1 || (disableIce === 2 && game.global.spireActive))) return false;
+
 	// Only build nurseries if: A) lacking Health & B) have max health map stacks
 	const lackingHealth = whichHitsSurvived() < targetHitsSurvived();
 	const maxMapBonus = game.global.mapBonus >= getPageSetting('mapBonusHealth');
 
-	return lackingHealth & maxMapBonus;
+	return lackingHealth && maxMapBonus;
 }
 
 function _housingToCheck() {
@@ -117,7 +119,7 @@ function mostEfficientHousing_beta(resourceName) {
 	}
 
 	function calcCostEff(houseName) {
-		return getBuildingItemPrice(game.buildings[houseName], resourceName, false, 1) / _getHousingBonus(houseName);
+		return getBuildingItemPrice(game.buildings[houseName], resourceName, false, 1) / getHousingBonus(houseName);
 	}
 
 	return _housingToCheck()
@@ -132,7 +134,7 @@ function mostEfficientHousing(resourcePerSecond) {
 	}
 
 	function calcEff(houseName) {
-		return _getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName);
+		return getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName);
 	}
 
 	return _housingToCheck()
@@ -150,14 +152,27 @@ function _canAffordBuilding(resourceName, buildingStat, spendingPerc, resourcefu
 	return maxSpending > price;
 }
 
-function _getHousingBonus(houseName) {
-	let housingBonus = game.buildings[houseName].increase.by;
+function getHousingBonus(houseName, includeMultipliers = false) {
+	let housingBonus = challengeActive('Downsize') ? 1 : game.buildings[houseName].increase.by;
 
 	if (!game.buildings.Hub.locked) {
 		let hubAmt = 1;
 		if (houseName === 'Collector' && autoBattle.oneTimers.Collectology.owned) hubAmt = autoBattle.oneTimers.Collectology.getHubs();
 		housingBonus += hubAmt * game.buildings.Hub.increase.by;
 	}
+
+	if (!includeMultipliers) return housingBonus;
+
+	//Carpentry I & II
+	housingBonus *= Math.pow(1 + getPerkModifier('Carpentry'), getPerkLevel('Carpentry'));
+	housingBonus *= 1 + getPerkModifier('Carpentry_II') * getPerkLevel('Carpentry_II');
+
+	//Alchemy
+	housingBonus *= alchObj.getPotionEffect('Elixir of Crafting');
+
+	//Expanding Tauntimp
+	if (game.global.expandingTauntimp)
+		housingBonus *= game.badGuys.Tauntimp.expandingMult();
 
 	return housingBonus;
 }
@@ -341,18 +356,19 @@ function _buyNursery(buildingSettings) {
 	const nurseryCanAfford = calculateMaxAfford_AT(nurseryInfo, true, false, false, null, nurseryPct);
 	const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurserySetting.fromZ;
 
-	if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
+	const nurseryEfficiency = !MODULES.buildings.betaHouseEfficiency || nurseryHousingEfficiency().mostEfficient === 'Nursery';
+
+	if (nurseryCanAfford > 0 && nurseryEfficiency && (nurseryZoneOk || nurseryPreSpire > 0)) {
 		let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
 		if (nurseryAmt === 0 && (!getPageSetting('advancedNurseries') || game.stats.highestLevel.valueTotal() < 230)) nurseryAmt = Infinity;
 		const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - nurseryInfo.owned);
 
-		if (nurseryPreSpire > 0 && nurseryToBuy > 0) {
+		if (nurseryPreSpire > 0 && nurseryToBuy > 0)
 			safeBuyBuilding('Nursery', nurseryToBuy);
-		} else if (advancedNurseries()) {
+		else if (advancedNurseries())
 			safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
-		} else if (nurseryToBuy > 0) {
+		else if (nurseryToBuy > 0)
 			safeBuyBuilding('Nursery', nurseryToBuy);
-		}
 	}
 }
 

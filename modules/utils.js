@@ -677,9 +677,9 @@ function shieldGymEfficiency() {
 	const Gymystic = game.upgrades.Gymystic;
 
 	itemData = game.buildings.Gym;
-	const gymCost = itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.owned) * getResourcefulMult();
 	const gymAmount = calculateMaxAfford_AT(itemData, true, false, false, false, false, shieldCost);
-	const gymXCost = getBuildingItemPrice(game.buildings.Gym, 'wood', false, gymAmount);
+	const gymCost = getBuildingItemPrice(game.buildings.Gym, 'wood', false, 1) * getResourcefulMult();
+	const gymXCost = getBuildingItemPrice(game.buildings.Gym, 'wood', false, gymAmount) * getResourcefulMult();
 
 	let gymIncrease, gymIncreaseAfterX;
 
@@ -702,6 +702,51 @@ function shieldGymEfficiency() {
 	if (gymIncreaseAfterX) upgradeObj.Gym = Math.min(upgradeObj.Gym, gymXCost / gymIncreaseAfterX);
 
 	return upgradeObj;
+}
+
+function nurseryHousingEfficiency(pretty = false) {
+	//Housing
+	const trimps = game.resources.trimps;
+	const trimpsMax = trimps.realMax();
+
+	const maxWorkers = (extraTrimps) => employableWorkers(trimpsMax + extraTrimps, trimpsMax + extraTrimps);
+	const maxBreedable = (extraTrimps) => trimpsMax + extraTrimps - trimpsEffectivelyEmployed(maxWorkers(extraTrimps));
+	const maxBreeding = (extraTrimps) => maxBreedable(extraTrimps) - trimps.getCurrentSend();
+	const breedingRatio = (extraTrimps) => maxBreedable(0) / maxBreeding(extraTrimps);
+
+	const name = mostEfficientHousing_beta('gems');
+	const popBonus = name ? getHousingBonus(name, true) : 0;
+	let gemCost = name ? getBuildingItemPrice(game.buildings[name], 'gems', false, 1) : 0;
+	let breedingImpact = (breedingRatio(0) / breedingRatio(popBonus)) - 1;
+	let efficiency = gemCost / breedingImpact;
+
+	const housing = {
+		name: name,
+		gemCost: pretty ? prettify(gemCost) : gemCost,
+		popBonus: pretty ? prettify(popBonus) : pretty,
+		breedingImpact: pretty ? prettify(breedingImpact) : breedingImpact,
+		efficiency: pretty && efficiency !== Infinity ? prettify(efficiency) : efficiency
+	};
+
+	//Nursery
+	const potencyMod = _getPotencyMod();
+	const newPotencyMod = 1 + 1.01 * (potencyMod - 1);
+	gemCost = getBuildingItemPrice(game.buildings.Nursery, 'gems', false, 1);
+	breedingImpact = (Math.log10(newPotencyMod) / Math.log10(potencyMod)) - 1;
+	efficiency = gemCost / breedingImpact;
+
+	const nursery = {
+		name: 'Nursery',
+		gemCost: pretty ? prettify(gemCost) : gemCost,
+		breedingImpact: pretty ? prettify(breedingImpact) : breedingImpact,
+		efficiency: pretty && efficiency !== Infinity ? prettify(efficiency) : efficiency
+	};
+
+	return {
+		mostEfficient: nursery.efficiency < housing.efficiency ? 'nursery' : 'housing',
+		housing: housing,
+		nursery: nursery
+	}
 }
 
 function ceilToNearestMultipleOf(number, multipleOf, offSet) {
