@@ -2419,8 +2419,9 @@ function startFight() {
 	}
 
 	if (shouldUpdate()) {
-		if (cell.mutation) setMutationTooltip(cell.corrupted, cell.mutation);
-		else if (map && map.location === 'Void' && game.global.world >= corruptionStart) {
+		if (cell.mutation) {
+			setMutationTooltip(cell.corrupted, cell.mutation);
+		} else if (map && map.location === 'Void' && game.global.world >= corruptionStart) {
 			setVoidCorruptionIcon();
 		} else if (map && magmaActive) {
 			setVoidCorruptionIcon(true);

@@ -362,7 +362,7 @@ function mainLoop() {
 	mainLoopU1();
 	mainLoopU2();
 	buySingleRunBonuses();
-	automateSpireAssault();
+	/* automateSpireAssault(); */
 	_handlePopupTimer();
 	makeAdditionalInfo();
 }

@@ -34,7 +34,7 @@ function canU2OverkillAT(targetZone) {
 }
 
 function maxOneShotPower(planToMap, targetZone) {
-	var power = 2;
+	let power = 2;
 	if (!targetZone) targetZone = game.global.world;
 
 	if (game.global.universe === 1) {
@@ -162,7 +162,7 @@ function makeAdditionalInfo() {
 }
 
 function makeAdditionalInfoTooltip(mouseover) {
-	var tooltipText = '';
+	let tooltipText = '';
 
 	if (mouseover) {
 		tooltipText = 'tooltip(' + "'Auto Level Information', " + "'customText', " + 'event, ' + "'";

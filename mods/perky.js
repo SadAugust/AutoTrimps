@@ -188,7 +188,7 @@ function savePerkySettings() {
 	}
 
 	localStorage.setItem('perkyInputs', JSON.stringify(settingInputs));
-	if (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+	if (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(settingInputs);
 		saveSettings();
 	}
@@ -732,16 +732,16 @@ MODULES.autoPerks = {
 		const apGUI = MODULES.autoPerks.GUI;
 
 		//Setup Auto Allocate button
-		apGUI.$allocatorBtn1 = document.createElement('DIV');
-		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
-		apGUI.$allocatorBtn1.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
-		apGUI.$allocatorBtn1.setAttribute('onclick', 'run' + universe + '()');
-		apGUI.$allocatorBtn1.setAttribute('onmouseover', 'tooltip("Auto Allocate", "customText", event, "Clears all perks and buy optimal levels in each perk.")');
-		apGUI.$allocatorBtn1.setAttribute('onmouseout', 'tooltip("hide")');
-		apGUI.$allocatorBtn1.textContent = 'Allocate Perks';
+		apGUI.$allocatorBtn = document.createElement('DIV');
+		apGUI.$allocatorBtn.id = 'allocatorBtn';
+		apGUI.$allocatorBtn.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
+		apGUI.$allocatorBtn.setAttribute('onclick', 'run' + universe + '()');
+		apGUI.$allocatorBtn.setAttribute('onmouseover', 'tooltip("Auto Allocate", "customText", event, "Clears all perks and buy optimal levels in each perk.")');
+		apGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
+		apGUI.$allocatorBtn.textContent = 'Allocate Perks';
 		//Distance from Portal/Cancel/Respec buttons
-		let $buttonbar = document.getElementById('portalBtnContainer');
-		if (!document.getElementById(apGUI.$allocatorBtn1.id)) $buttonbar.appendChild(apGUI.$allocatorBtn1);
+		const $buttonbar = document.getElementById('portalBtnContainer');
+		if (!document.getElementById(apGUI.$allocatorBtn.id)) $buttonbar.appendChild(apGUI.$allocatorBtn);
 		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
 		apGUI.$customRatios = document.createElement('DIV');
 		apGUI.$customRatios.id = 'customRatios';

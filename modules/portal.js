@@ -347,7 +347,7 @@ function _autoPortalC2() {
 
 	const runType = getPageSetting('c2RunnerMode', portalUniverse);
 	const c2RunnerPortal = getPageSetting('c2RunnerPortal', portalUniverse);
-	const c2RunnerPercent = getPageSetting('c2RunnerPercent', portalUniverse);
+	const c2RunnerPercent = runType === 0 ? getPageSetting('c2RunnerPercent', portalUniverse) / 100 : 1;
 	if (runType === 0 && (c2RunnerPortal <= 0 || c2RunnerPercent <= 0)) return;
 
 	const challengeArray = [];
@@ -377,22 +377,32 @@ function _autoPortalC2() {
 		}
 	}
 
+	const oneZoneIncrement = ['Obliterated', 'Eradicated'];
+	const threeZoneIncrement = ['Coordinate'];
+
 	//Looping through challenge array to figure out if things should be run.
 	for (let x = 0; x < challengeArray.length; x++) {
 		const challengeName = challengeArray[x];
 		const challenge = game.challenges[challengeName];
 		const challengeList = challenge.multiChallenge ? challenge.multiChallenge : [challengeName];
+		/* const zoneIncrease = oneZoneIncrement.includes(challengeName) ? 1 : threeZoneIncrement.includes(challengeName) ? 3 : 10; */
 
 		let challengeLevel = 0;
 		for (let y = 0; y < challengeList.length; y++) {
-			if (challengeLevel > 0) challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
-			else challengeLevel += game.c2[challengeList[y]];
+			if (challengeLevel > 0) {
+				/* const targetZone = Math.floor(highestZone / zoneIncrease) * zoneIncrease; */
+				challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
+			} else {
+				challengeLevel += game.c2[challengeList[y]];
+			}
 		}
 
 		let shouldRun = false;
-		if (runType === 0) shouldRun = 100 * (challengeLevel / highestZone) < c2RunnerPercent;
-		else shouldRun = challengeLevel < c2Setting[challengeName].zone;
-
+		if (runType === 0) {
+			shouldRun = challengeLevel / highestZone < c2RunnerPercent;
+		} else {
+			shouldRun = challengeLevel < c2Setting[challengeName].zone;
+		}
 		if (!shouldRun || challengeActive(challengeName)) continue;
 		if (!challengeSquaredMode) toggleChallengeSquared();
 		if (!document.getElementById(`challenge${challengeName}`)) continue;
@@ -757,7 +767,7 @@ function atlantrimpRespecMessage(cellOverride) {
 	if (respecSetting === 2) {
 		MODULES.popups.respecAncientTreasure = true;
 		MODULES.popups.remainingTime = MODULES.portal.timeout;
-		var description = '<p>Respeccing into the <b>' + respecName + '</b> preset</p>';
+		let description = '<p>Respeccing into the <b>' + respecName + '</b> preset</p>';
 		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAncientTreasure = false, MODULES.popups.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
 		setTimeout(combatRespec, MODULES.portal.timeout);
 	}

@@ -2056,6 +2056,7 @@ function initialiseAllSettings() {
 			function () { return ('Fused ' + _getChallenge2Info() + 's') },
 			function () {
 				let description = "<p>Will allow " + _getChallenge2Info() + " Runner to do fused versions of " + _getChallenge2Info() + "'s rather than normal versions to reduce time spent running " + _getChallenge2Info() + "s.</p>";
+				/* description += "<p>If using <b>" + _getChallenge2Info() + " Runner %</b> then this will only run Fused " + _getChallenge2Info() + "'s is both challenges are below your target zone.</p>"; */
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
@@ -3358,6 +3359,7 @@ function initialiseAllSettings() {
 			function () { return ('Auto Heirlooms') },
 			function () {
 				let description = "<p>Master switch for whether the script will try to keep any of the heirlooms in your temporary section when portaling.</p>";
+				description += "<p>This setting <b>won't recycle</b> any of your carried heirlooms, it only checks your temporary section.</p>";
 				description += "<p>When run it will check the mods you want the heirloom to have and checks if the heirlooms in your temporary section for the type(s) you have selected to keep have all of the selected mods and if any do they will be stashed otherwise will be recycled.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";

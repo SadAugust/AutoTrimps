@@ -719,7 +719,7 @@ function updateATVersion() {
 	//Setting Conversion!
 	if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] === atSettings.initialise.version) return;
 	if (typeof autoTrimpSettings === 'undefined') return;
-	var changelog = [];
+	let changelog = [];
 
 	//Prints the new user message if it's the first time loading the script.
 	if (autoTrimpSettings['ATversion'] === undefined || !autoTrimpSettings['ATversion'].includes('SadAugust')) {
@@ -735,215 +735,6 @@ function updateATVersion() {
 		if (JSON.parse(localStorage.getItem('atSettings')) === null) saveSettings();
 		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 		const versionNumber = autoTrimpSettings['ATversion'].split('v')[1];
-
-		if (versionNumber < '6.2.5') {
-			if (tempSettings.presetMutations !== undefined) {
-				var mutatorObj = {
-					preset1: {},
-					preset2: {},
-					preset3: {}
-				};
-				if (tempSettings.presetMutations.value.preset1 !== '') mutatorObj.preset1 = JSON.parse(tempSettings.presetMutations.value.preset1);
-				if (tempSettings.presetMutations.value.preset2 !== '') mutatorObj.preset2 = JSON.parse(tempSettings.presetMutations.value.preset2);
-				if (tempSettings.presetMutations.value.preset3 !== '') mutatorObj.preset3 = JSON.parse(tempSettings.presetMutations.value.preset3);
-
-				autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
-				localStorage['mutatorPresets'] = JSON.stringify(mutatorObj);
-			}
-		}
-
-		if (versionNumber < '6.2.95') {
-			var settings_List = ['mapFarmSettings'];
-			var values = ['value', 'valueU2'];
-			for (var x = 0; x < settings_List.length; x++) {
-				for (var z = 0; z < values.length; z++) {
-					if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
-						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-							autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
-						}
-					}
-					saveSettings();
-				}
-			}
-		}
-
-		if (versionNumber < '6.3.001') {
-			var settings_List = ['mapBonusSettings'];
-			var values = ['value', 'valueU2'];
-			for (var x = 0; x < settings_List.length; x++) {
-				for (var z = 0; z < values.length; z++) {
-					if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
-						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-							autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
-						}
-					}
-					saveSettings();
-				}
-			}
-		}
-
-		if (versionNumber < '6.3.14') {
-			var settings_List = ['voidMapSettings'];
-			var values = ['value', 'valueU2'];
-			for (var x = 0; x < settings_List.length; x++) {
-				for (var z = 0; z < values.length; z++) {
-					if (typeof autoTrimpSettings[settings_List[x]][values[z]][0] !== 'undefined') {
-						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-							autoTrimpSettings[settings_List[x]][values[z]][y].hdType = 'world';
-							autoTrimpSettings[settings_List[x]][values[z]][y].hdType2 = 'void';
-						}
-					}
-					saveSettings();
-				}
-			}
-		}
-
-		if (versionNumber < '6.3.17') {
-			if (typeof tempSettings['presetSwap'] !== 'undefined') {
-				autoTrimpSettings.presetSwap.enabled = false;
-			}
-			if (typeof tempSettings['autoCombatRespec'] !== 'undefined') {
-				autoTrimpSettings.presetCombatRespec.value = 0;
-				autoTrimpSettings.presetCombatRespec.valueU2 = autoTrimpSettings['autoCombatRespec'].valueU2;
-			}
-		}
-
-		if (versionNumber < '6.3.18') {
-			if (typeof tempSettings['bloodthirstDestack'] !== 'undefined') {
-				autoTrimpSettings.bloodthirstDestack.enabled = false;
-			}
-			if (typeof tempSettings['bloodthirstVoidMax'] !== 'undefined') {
-				autoTrimpSettings.bloodthirstVoidMax.enabled = false;
-			}
-			changelog.push(
-				"AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
-				You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise."
-			);
-		}
-
-		if (versionNumber < '6.3.21') {
-			if (typeof tempSettings['IgnoreCrits'] !== 'undefined') {
-				autoTrimpSettings.IgnoreCrits.valueU2 = 0;
-			}
-		}
-
-		//Scryer stance changes
-		if (versionNumber < '6.3.24') {
-			if (typeof tempSettings['UseScryerStance'] !== 'undefined') {
-				autoTrimpSettings.AutoStanceScryer.enabled = tempSettings.UseScryerStance.enabled;
-			}
-			if (typeof tempSettings['screwessence'] !== 'undefined') {
-				autoTrimpSettings.scryerEssenceOnly.enabled = tempSettings.screwessence.enabled;
-			}
-			if (typeof tempSettings['ScryerUseWhenOverkill'] !== 'undefined') {
-				autoTrimpSettings.scryerOverkill.enabled = tempSettings.ScryerUseWhenOverkill.enabled;
-			}
-			if (typeof tempSettings['use3daily'] !== 'undefined') {
-				autoTrimpSettings.dAutoStanceWind.enabled = tempSettings.use3daily.enabled;
-			}
-			if (typeof tempSettings['liqstack'] !== 'undefined') {
-				autoTrimpSettings.dWindStackingLiq.enabled = tempSettings.liqstack.enabled;
-			}
-			if (typeof tempSettings['AutoStance'] !== 'undefined') {
-				if (tempSettings.AutoStance.value > 2) {
-					autoTrimpSettings.AutoStance.value = 2;
-					autoTrimpSettings.AutoStanceWind.enabled = true;
-				}
-			}
-
-			const originalSettings = ['ScryerUseinMaps2', 'ScryerUseinVoidMaps2', 'ScryerUseinPMaps', 'ScryerUseinBW', 'ScryerUseinSpire2', 'ScryerSkipBoss2', 'ScryUseinPoison', 'ScryUseinWind', 'ScryUseinIce', 'ScryerSkipCorrupteds2', 'ScryerSkipHealthy', 'ScryerDieZ', 'ScryerMaxZone', 'ScryerMinZone', 'onlyminmaxworld', 'dWindStackingMinHD', 'WindStackingMinHD', 'WindStackingMin', 'dWindStackingMin'];
-			const newSettings = ['scryerMaps', 'scryerVoidMaps', 'scryerPlusMaps', 'scryerBW', 'scryerSpire', 'scryerSkipBoss', 'scryerPoison', 'scryerWind', 'scryerIce', 'scryerCorrupted', 'scryerHealthy', 'scryerDieZone', 'scryerMaxZone', 'scryerMinZone', 'scryerMinMaxWorld', 'dWindStackingRatio', 'WindStackingRatio', 'WindStackingZone', 'dWindStackingZone'];
-			for (var item in originalSettings) {
-				if (typeof tempSettings[originalSettings[item]] !== 'undefined') {
-					autoTrimpSettings[newSettings[item]].value = tempSettings[originalSettings[item]].value;
-				}
-			}
-		}
-
-		if (versionNumber < '6.3.25') {
-			if (typeof tempSettings['radonsettings'] !== 'undefined') {
-				autoTrimpSettings.universeSetting.value = tempSettings.radonsettings.value;
-			}
-		}
-
-		if (versionNumber < '6.3.29') {
-			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
-
-			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
-
-			for (var item in u1Settings) {
-				if (typeof tempSettings[u1Settings[item] + 'DefaultSettings'] !== 'undefined') {
-					autoTrimpSettings[u1Settings[item] + 'Settings'].value.unshift(tempSettings[u1Settings[item] + 'DefaultSettings'].value);
-				}
-			}
-
-			for (var item in u2Settings) {
-				if (typeof tempSettings[u2Settings[item] + 'DefaultSettings'] !== 'undefined') {
-					autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.unshift(tempSettings[u2Settings[item] + 'DefaultSettings'].valueU2);
-				}
-			}
-		}
-
-		if (versionNumber < '6.3.36') {
-			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
-				autoTrimpSettings.uniqueMapSettingsArray.valueU2['Big_Wall'] = {
-					enabled: false,
-					zone: 100,
-					cell: 0
-				};
-			}
-		}
-
-		//Converting addonUser saves variable to object and storing farming settings .done stuff in it
-		if (versionNumber < '6.3.37') {
-			var obj = [];
-			for (var x = 0; x < 30; x++) {
-				obj[x] = {};
-				obj[x].done = '';
-			}
-
-			if (typeof game.global.addonUser !== 'object') game.global.addonUser = {};
-
-			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
-
-			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
-
-			for (var item in u1Settings) {
-				if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u1Settings[item] + 'Settings'] = {};
-
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
-				}
-				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
-
-				if (typeof autoTrimpSettings[u1Settings[item] + 'Settings'].value[0] !== 'undefined') {
-					for (var y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
-						autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
-					}
-				}
-			}
-
-			for (var item in u2Settings) {
-				if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u2Settings[item] + 'Settings'] = {};
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
-				}
-				game.global.addonUser[u2Settings[item] + 'Settings'].value = obj;
-
-				if (typeof autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0] !== 'undefined') {
-					for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
-						autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[y].row = y;
-					}
-				}
-			}
-		}
-		if (versionNumber < '6.3.38') {
-			setupAddonUser();
-		}
 
 		if (versionNumber < '6.4.09') {
 			if (typeof tempSettings['heHrDontPortalBefore'] !== 'undefined') {
@@ -963,7 +754,7 @@ function updateATVersion() {
 
 		if (versionNumber < '6.5.06') {
 			if (typeof autoTrimpSettings.alchemySettings['valueU2'][1] !== 'undefined') {
-				for (var y = 1; y < autoTrimpSettings.alchemySettings['valueU2'].length; y++) {
+				for (let y = 1; y < autoTrimpSettings.alchemySettings['valueU2'].length; y++) {
 					autoTrimpSettings.alchemySettings['valueU2'][y].repeatevery = 0;
 					autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
 				}
@@ -980,7 +771,7 @@ function updateATVersion() {
 
 		if (versionNumber < '6.5.13') {
 			const values = ['value', 'valueU2'];
-			for (var z = 0; z < values.length; z++) {
+			for (let z = 0; z < values.length; z++) {
 				const incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
 				if (typeof tempSettings['raidingSettings'][values[z]][0] !== 'undefined') {
 					for (let y = 1; y < tempSettings['raidingSettings'][values[z]].length; y++) {
@@ -1016,13 +807,13 @@ function updateATVersion() {
 		//Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
 		if (versionNumber < '6.5.22') {
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
-				var obj = {};
-				for (var item in tempSettings.uniqueMapSettingsArray.value) {
+				let obj = {};
+				for (let item in tempSettings.uniqueMapSettingsArray.value) {
 					obj[item.replace(/_/g, ' ')] = tempSettings.uniqueMapSettingsArray.value[item];
 				}
 				autoTrimpSettings.uniqueMapSettingsArray.value = obj;
-				var obj = {};
-				for (var item in tempSettings.uniqueMapSettingsArray.valueU2) {
+				obj = {};
+				for (let item in tempSettings.uniqueMapSettingsArray.valueU2) {
 					obj[item.replace(/_/g, ' ')] = tempSettings.uniqueMapSettingsArray.valueU2[item];
 				}
 				autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
@@ -1084,8 +875,8 @@ function updateATVersion() {
 		if (versionNumber < '6.5.36') {
 			if (typeof game.global.addonUser['archaeologySettings'] === 'undefined') game.global.addonUser['archaeologySettings'] = {};
 			if (typeof game.global.addonUser['archaeologySettings']['valueU2'] === 'undefined') {
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
+				const obj = [];
+				for (let x = 0; x < 30; x++) {
 					obj[x] = {};
 					obj[x].done = '';
 				}
@@ -1120,22 +911,22 @@ function updateATVersion() {
 
 		if (versionNumber < '6.5.50') {
 			if (typeof autoTrimpSettings.voidMapSettings['value'][1] !== 'undefined') {
-				for (var y = 1; y < autoTrimpSettings.voidMapSettings['value'].length; y++) {
+				for (let y = 1; y < autoTrimpSettings.voidMapSettings['value'].length; y++) {
 					autoTrimpSettings.voidMapSettings['value'][y].repeatevery = 1;
 				}
 			}
 			if (typeof autoTrimpSettings.voidMapSettings['valueU2'][1] !== 'undefined') {
-				for (var y = 1; y < autoTrimpSettings.voidMapSettings['valueU2'].length; y++) {
+				for (let y = 1; y < autoTrimpSettings.voidMapSettings['valueU2'].length; y++) {
 					autoTrimpSettings.voidMapSettings['valueU2'][y].repeatevery = 1;
 				}
 			}
 			if (typeof autoTrimpSettings.hdFarmSettings['value'][1] !== 'undefined') {
-				for (var y = 1; y < autoTrimpSettings.hdFarmSettings['value'].length; y++) {
+				for (let y = 1; y < autoTrimpSettings.hdFarmSettings['value'].length; y++) {
 					autoTrimpSettings.hdFarmSettings['value'][y].repeatevery = 1;
 				}
 			}
 			if (typeof autoTrimpSettings.hdFarmSettings['valueU2'][1] !== 'undefined') {
-				for (var y = 1; y < autoTrimpSettings.hdFarmSettings['valueU2'].length; y++) {
+				for (let y = 1; y < autoTrimpSettings.hdFarmSettings['valueU2'].length; y++) {
 					autoTrimpSettings.hdFarmSettings['valueU2'][y].repeatevery = 1;
 				}
 			}
@@ -1147,8 +938,8 @@ function updateATVersion() {
 			const values = ['value', 'valueU2'];
 			for (let z = 0; z < values.length; z++) {
 				if (typeof tempSettings[settingName][values[z]][0] !== 'undefined') {
-					for (var y = 1; y < tempSettings[settingName][values[z]].length; y++) {
-						let currSetting = tempSettings[settingName][values[z]][y];
+					for (let y = 1; y < tempSettings[settingName][values[z]].length; y++) {
+						const currSetting = tempSettings[settingName][values[z]][y];
 						autoTrimpSettings[settingName][values[z]][y].endzone = currSetting.maxvoidzone;
 					}
 				}
@@ -1160,7 +951,7 @@ function updateATVersion() {
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
 	//No other way to access it in TW currently.
 	if (usingRealTimeOffline) {
-		var changelogURL = `${atSettings.initialise.basepath}updates.html`;
+		const changelogURL = `${atSettings.initialise.basepath}updates.html`;
 		changelog.push('There has been an AutoTrimps update. <a href="' + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
 	}
 

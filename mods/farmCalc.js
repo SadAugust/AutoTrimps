@@ -634,6 +634,7 @@ function simulate(saveData, zone) {
 
 		let oneShot = true;
 		let trimpOverkill = 0;
+		let trimpAttack = 0;
 
 		if (ok_spread !== 0) {
 			enemyHealth -= ok_damage;
@@ -682,7 +683,7 @@ function simulate(saveData, zone) {
 			// Trimp attack
 			if (!armyDead()) {
 				ok_spread = saveData.ok_spread;
-				var trimpAttack = saveData.atk;
+				trimpAttack = saveData.atk;
 				if (!saveData.unlucky) trimpAttack *= 1 + saveData.range * rngRoll;
 				if (saveData.duel) {
 					saveData.critChance = 1 - duelPoints / 100;
@@ -709,7 +710,6 @@ function simulate(saveData, zone) {
 
 			if (enemyHealth >= 1) {
 				if (saveData.glass) glassStacks++;
-				// Gamma Burst
 				if (!armyDead() && saveData.gammaMult > 1) {
 					gammaStacks++;
 					if (gammaStacks >= saveData.gammaCharges) {

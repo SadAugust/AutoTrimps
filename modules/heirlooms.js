@@ -243,7 +243,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 				MODULES.heirlooms.plagueSwap = true;
 			} else MODULES.heirlooms.plagueSwap = false;
 		}
-		//Otherwise set plagueSwap global var to false to ensure we don't mess up any code later on.
+		//Otherwise set plagueSwap global variable to false to ensure we don't mess up any code later on.
 		else MODULES.heirlooms.plagueSwap = false;
 	}
 	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage

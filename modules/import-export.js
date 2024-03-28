@@ -391,6 +391,7 @@ function resetAutoTrimps(autoTrimpsSettings) {
 
 		localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
 		localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
+		localStorage.heirloomInputs = autoTrimpSettings.autoHeirloomStorage.value;
 		localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
 		loadAugustSettings();
 		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
@@ -398,6 +399,7 @@ function resetAutoTrimps(autoTrimpsSettings) {
 		//Remove the localStorage entries if they are empty and rebuild the GUI to initialise base settings
 		if (Object.keys(JSON.parse(localStorage.getItem('perkyInputs'))).length === 1) delete localStorage.perkyInputs;
 		if (Object.keys(JSON.parse(localStorage.getItem('surkyInputs'))).length === 1) delete localStorage.surkyInputs;
+		if (Object.keys(JSON.parse(localStorage.getItem('heirloomInputs'))).length === 1) delete localStorage.heirloomInputs;
 		MODULES.autoPerks.displayGUI(game.global.universe);
 	}, 101);
 
