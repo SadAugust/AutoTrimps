@@ -141,8 +141,8 @@ function _displayC2Table(tooltipDiv) {
 	};
 
 	const runnerLists = {
-		c2: ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Mapology'],
-		c3: ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Duel', 'Smithless']
+		c2: c2RunnerChallengeOrder(1),
+		c3: c2RunnerChallengeOrder(2)
 	};
 
 	const challengePercentages = {

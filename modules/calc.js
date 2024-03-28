@@ -764,8 +764,9 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 
 function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth, customAttack) {
 	const enemy = getCurrentEnemy();
-	const corrupt = enemy.corrupted && enemy.corrupted !== 'none';
+	if (!enemy) return -1;
 
+	const corrupt = enemy.corrupted && enemy.corrupted !== 'none';
 	let attack = calcEnemyAttackCore(undefined, undefined, enemy.level, enemy.name);
 	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
 
@@ -909,7 +910,6 @@ function calcSpecificEnemyHealth(worldType = _getWorldType(), zone = _getZone(wo
 	if (!enemy) return -1;
 
 	const corrupt = enemy.corrupted && enemy.corrupted !== 'none';
-	const healthy = corrupt && enemy.corrupted.startsWith('healthy');
 	const name = corrupt && !game.global.spireActive ? 'Chimp' : forcedName ? forcedName : enemy.name;
 	let health = calcEnemyHealthCore(worldType, zone, cell, name);
 
@@ -923,7 +923,7 @@ function calcSpecificEnemyHealth(worldType = _getWorldType(), zone = _getZone(wo
 	if (worldType !== 'world') {
 		health *= getCurrentMapObject().difficulty;
 	} else if (game.global.universe === 1 && (corrupt || (cell === 100 && mutations.Corruption.active()))) {
-		if (cell === 100 && !game.global.spireActive) attack *= calcCorruptionScale(game.global.world, 10);
+		if (cell === 100 && !game.global.spireActive) health *= calcCorruptionScale(game.global.world, 10);
 
 		if (game.global.spireActive) {
 			if (enemy.corrupted === 'corruptTough') health *= 5;

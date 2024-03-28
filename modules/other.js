@@ -136,13 +136,13 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 				unlockCondition: function () {
 					return true;
 				},
-				unlockedIn: ['c2', 'oneOff']
+				unlockedIn: ['c2', 'oneOff', 'c2Runner']
 			},
-			Metal: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
-			Size: { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
-			Balance: { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			Metal: { unlockZone: 25, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
+			Size: { unlockZone: 35, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
+			Balance: { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
 			Scientist: { unlockZone: 40, unlockedIn: ['oneOff'] },
-			Meditate: { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
+			Meditate: { unlockZone: 45, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
 			Decay: { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr'] },
 			Trimp: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
 			Trapper: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
@@ -151,20 +151,20 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 				unlockCondition: function () {
 					return game.global.prisonClear >= 1;
 				},
-				unlockedIn: ['c2', 'heHr', 'autoPortal']
+				unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner']
 			},
 			Frugal: { unlockZone: 100, unlockedIn: ['oneOff'] },
 			Life: { unlockZone: 110, unlockedIn: ['autoPortal', 'heHr'] },
 			Mapocalypse: { unlockZone: 115, unlockedIn: ['oneOff'] },
 			Coordinate: { unlockZone: 120, unlockedIn: ['c2', 'oneOff'] },
 			Crushed: { unlockZone: 125, unlockedIn: ['autoPortal', 'heHr'] },
-			Slow: { unlockZone: 130, unlockedIn: ['c2', 'oneOff'] },
-			Nom: { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			Mapology: { unlockZone: 150, unlockedIn: ['c2', 'oneOff'] },
-			Toxicity: { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			Slow: { unlockZone: 130, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
+			Nom: { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
+			Mapology: { unlockZone: 150, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
+			Toxicity: { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
 			Devastation: { unlockZone: 170, unlockedIn: ['oneOff'] },
-			Watch: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
-			Lead: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			Watch: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
+			Lead: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
 			Corrupted: { unlockZone: 190, unlockedIn: ['heHr', 'autoPortal'] },
 			Domination: { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal'] },
 			Obliterated: { unlockZone: 425, unlockedIn: ['c2'] },
@@ -230,22 +230,22 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 				unlockCondition: function () {
 					return true;
 				},
-				unlockedIn: ['c2', 'oneOff']
+				unlockedIn: ['c2', 'oneOff', 'c2Runner']
 			},
-			Downsize: { unlockZone: 20, unlockedIn: ['c2', 'oneOff'] },
+			Downsize: { unlockZone: 20, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
 			Transmute: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
-			Unbalance: { unlockZone: 35, unlockedIn: ['c2', 'oneOff'] },
+			Unbalance: { unlockZone: 35, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
 			Bublé: { unlockZone: 40, unlockedIn: ['heHr', 'autoPortal'] },
-			Duel: { unlockZone: 45, unlockedIn: ['c2', 'oneOff'] },
+			Duel: { unlockZone: 45, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
 			Melt: { unlockZone: 50, unlockedIn: ['heHr', 'autoPortal'] },
 			Trappapalooza: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
 			Quagmire: { unlockZone: 70, unlockedIn: ['heHr', 'autoPortal'] },
 			Wither: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
 			Revenge: { unlockZone: 80, unlockedIn: ['oneOff'] },
-			Quest: { unlockZone: 85, unlockedIn: ['c2', 'oneOff', 'autoPortal'] },
+			Quest: { unlockZone: 85, unlockedIn: ['c2', 'oneOff', 'autoPortal', 'c2Runner'] },
 			Archaeology: { unlockZone: 90, unlockedIn: ['heHr', 'autoPortal'] },
 			Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'autoPortal'] },
-			Storm: { unlockZone: 105, unlockedIn: ['c2', 'oneOff'] },
+			Storm: { unlockZone: 105, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
 			Insanity: { unlockZone: 110, unlockedIn: ['heHr', 'autoPortal'] },
 			Berserk: { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
 			Exterminate: { unlockZone: 120, unlockedIn: ['oneOff'] },
@@ -255,7 +255,7 @@ function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, e
 			Hypothermia: { unlockZone: 175, unlockedIn: ['heHr', 'autoPortal'] },
 			Glass: { unlockZone: 175, unlockedIn: ['c2', 'oneOff'] },
 			Desolation: { unlockZone: 200, unlockedIn: ['c2', 'autoPortal'] },
-			Smithless: { unlockZone: 201, unlockedIn: ['c2', 'oneOff'] }
+			Smithless: { unlockZone: 201, unlockedIn: ['c2', 'oneOff', 'c2Runner'] }
 		};
 	}
 
@@ -295,7 +295,6 @@ function autoPortalChallenges(runType = 'autoPortal', universe = currSettingUniv
 
 	let obj = challengesUnlockedObj(universe);
 	obj = filterAndSortChallenges(obj, runType);
-	//obj = obj.reverse();
 	challenge = [...challenge, ...obj];
 
 	if (runType === 'autoPortal') {
@@ -310,6 +309,11 @@ function autoPortalChallenges(runType = 'autoPortal', universe = currSettingUniv
 	}
 
 	return challenge;
+}
+
+function c2RunnerChallengeOrder(universe = portalUniverse) {
+	if (universe === 1) return ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Mapology'];
+	if (universe === 2) return ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Duel', 'Smithless'];
 }
 
 function _autoHeirloomMods(heirloomType) {
