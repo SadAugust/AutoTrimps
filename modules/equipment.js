@@ -159,10 +159,8 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 				if (needGymystic()) continue;
 
 				const { Gym } = getPageSetting('buildingSettingsArray');
-				if (Gym && Gym.enabled && (Gym.buyMax <= 0 || Gym.buyMax > game.buildings.Gym.owned) && getPageSetting('buildingsType')) {
-					const data = shieldGymEfficiency();
-					if (data.Shield >= data.Gym) continue;
-				}
+				if (Gym && Gym.enabled && (Gym.buyMax <= 0 || Gym.buyMax > game.buildings.Gym.owned) && getPageSetting('buildingsType'))
+					if (shieldGymEfficiency().mostEfficient !== 'Shield') continue;
 			}
 
 			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
@@ -233,6 +231,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		newStatValue: 0,
 		prestigeCost: 0,
 		statPerResource: 0,
+		shouldPrestige: false,
 		skip: true
 	};
 
@@ -252,6 +251,18 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	prestigeInfo.prestigeAvailable = true;
 
 	const equipment = game.equipment[equipName];
+	const equipStat = equipment.attack !== undefined ? 'attack' : resourceUsed === 'wood' && equipment.blockNow ? 'block' : 'health';
+	const currentStatValue = equipment.level * equipment[`${equipStat}Calculated`];
+	const oneLevelStat = Math.round(equipment[equipStat] * Math.pow(1.19, equipment.prestige * game.global.prestige[equipStat] + 1));
+	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
+
+	prestigeInfo.minNewLevel = Math.ceil(currentStatValue / oneLevelStat);
+	prestigeInfo.newStatMinValue = oneLevelStat * prestigeInfo.minNewLevel;
+
+	// TODO Should consider Maybe Prestige, Force Prestige, etc
+	const minLevelBeforePrestige = getPageSetting('equip2') ? 2 : 1;
+	prestigeInfo.shouldPrestige = prestigeInfo.prestigeAvailable && equipment.level >= minLevelBeforePrestige && game.resources.gems.owned;
+	prestigeInfo.prestigeCost = prestigeCost;
 
 	const {
 		science: [scienceCost, scienceMultiplier],
@@ -266,21 +277,14 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		return prestigeInfo;
 	}
 
-	const equipStat = equipment.attack !== undefined ? 'attack' : resourceUsed === 'wood' && equipment.blockNow ? 'block' : 'health';
-
-	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 	const newLevel = Math.max(1, Math.min(maxLevel, 1 + Math.max(0, Math.floor(getMaxAffordable(prestigeCost * 1.2, (game.resources[resourceUsed].owned - prestigeCost) * resourceSpendingPct, 1.2, true)))));
-	const oneLevelStat = Math.round(equipment[equipStat] * Math.pow(1.19, equipment.prestige * game.global.prestige[equipStat] + 1));
 	const newStatValue = newLevel * oneLevelStat;
-	const currentStatValue = equipment.level * equipment[`${equipStat}Calculated`];
 	const statPerResource = prestigeCost / oneLevelStat;
 
-	prestigeInfo.minNewLevel = Math.ceil(currentStatValue / oneLevelStat);
-	prestigeInfo.newStatMinValue = oneLevelStat * prestigeInfo.minNewLevel;
 	prestigeInfo.purchase = newStatValue > currentStatValue;
 	prestigeInfo.newStatValue = newStatValue;
-	prestigeInfo.prestigeCost = prestigeCost;
 	prestigeInfo.statPerResource = statPerResource;
+	prestigeInfo.shouldPrestige |= prestigeInfo.purchase; //TODO Wth is equipment.level doing here?
 	prestigeInfo.skip = false;
 	prestigeInfo.resource = resourceUsed;
 

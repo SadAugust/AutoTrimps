@@ -189,9 +189,17 @@ function initialiseScript() {
 	_raspberryPiSettings();
 	updateATVersion();
 
+	if (getPageSetting('gameUser') === 'ray') MODULES.buildings.betaHouseEfficiency = true;
 	const gammaBurstPct = getHeirloomBonus('Shield', 'gammaBurst') / 100;
 	MODULES.heirlooms.gammaBurstPct = gammaBurstPct > 0 ? gammaBurstPct : 1;
 	MODULES.heirlooms.breedHeirloom = usingBreedHeirloom();
+
+	if (game.global.voidBuff && !hdStats.hitsSurvivedVoid) {
+		hdStats.hitsSurvivedVoid = calcHitsSurvived(game.global.world, 'void', _getVoidPercent(game.global.world, game.global.universe));
+	} else if (!hdStats.hitsSurvived) {
+		hdStats.hitsSurvived = calcHitsSurvived(game.global.world, 'world', 1);
+	}
+
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
 	farmingDecision();
@@ -206,7 +214,6 @@ function initialiseScript() {
 	universeSwapped();
 	loadAugustSettings();
 	if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
-	if (getPageSetting('gameUser') === 'ray') MODULES.buildings.betaHouseEfficiency = true;
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 	challengeInfo(true);
 	_setupATButtons();

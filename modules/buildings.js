@@ -379,10 +379,8 @@ function _buyGyms(buildingSettings) {
 	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic() || runningAncientTreasure()) return;
 
 	//Gym vs Shield Efficiency
-	if ((game.equipment.Shield.blockNow || MODULES.buildings.betaHouseEfficiency) && getPageSetting('equipOn')) {
-		const data = shieldGymEfficiency();
-		if (data.Gym > data.Shield) return;
-	}
+	if ((game.equipment.Shield.blockNow || MODULES.buildings.betaHouseEfficiency) && getPageSetting('equipOn'))
+		if (shieldGymEfficiency().mostEfficient !== 'Gym') return;
 
 	// Saves wood for Speed upgrades
 	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
@@ -657,27 +655,21 @@ function displayShieldGymEfficiency(forceUpdate = false) {
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
 
 	const shieldGymResults = shieldGymEfficiency();
-	const shieldOrGym = shieldGymResults.Gym > shieldGymResults.Shield ? 'Shield' : 'Gym';
+	const shieldOrGym = shieldGymResults.mostEfficient;
 
 	const prestigeElement = document.getElementById('Supershield');
 	let shieldElement = document.getElementById('Shield');
 	let gymElement = document.getElementById('Gym');
 
 	//Supershield
-	if (game.upgrades.Supershield.locked === 0 && prestigeElement) {
-		const mostEfficient = shieldOrGym === 'Shield' && shieldGymResults.buyShieldPrestige;
-		_updateMostEfficientDisplay(prestigeElement, mostEfficient);
-	}
+	if (game.upgrades.Supershield.locked === 0 && prestigeElement)
+		_updateMostEfficientDisplay(prestigeElement, shieldOrGym === 'Shield' && shieldGymResults.Shield.shouldPrestige);
 
 	//Shield
-	if (shieldElement) {
-		const mostEfficient = shieldOrGym === 'Shield';
-		_updateMostEfficientDisplay(shieldElement, mostEfficient);
-	}
+	if (shieldElement)
+		_updateMostEfficientDisplay(shieldElement, shieldOrGym === 'Shield');
 
 	//Gym
-	if (!game.buildings.Gym.locked && gymElement) {
-		const mostEfficient = shieldOrGym === 'Gym';
-		_updateMostEfficientDisplay(gymElement, mostEfficient);
-	}
+	if (!game.buildings.Gym.locked && gymElement)
+		_updateMostEfficientDisplay(gymElement, shieldOrGym === 'Gym');
 }

@@ -617,6 +617,14 @@ function getResourcefulMult() {
 	return resourcefulLevel > 0 ? Math.pow(1 - getPerkModifier('Resourceful'), resourcefulLevel) : 1;
 }
 
+class ExtraItem {
+	constructor(name, extraLevels, shouldPrestige) {
+		this.name = name;
+		this.extraLevels = extraLevels;
+		this.shouldPrestige = shouldPrestige;
+	}
+}
+
 function shieldBlockUpgrades() {
 	const upgradeObj = {};
 	const Gymystic = game.upgrades.Gymystic;
@@ -640,68 +648,14 @@ function shieldBlockUpgrades() {
 	return upgradeObj;
 }
 
-function shieldGymEfficiency() {
-	if (!MODULES.buildings.betaHouseEfficiency) return shieldBlockUpgrades();
+function _calcHSImpact(equipName, worldType, prestigeInfo, hitsBefore) {
+	const extraAmount = prestigeInfo.shouldPrestige ? prestigeInfo.minNewLevel - 1 : 1;
+	const extraItem = new ExtraItem(equipName, extraAmount, prestigeInfo.shouldPrestige);
+	return hitsBefore === Infinity ? Infinity : calcHitsSurvived(game.global.world, worldType, 1, 0, extraItem, false) - hitsBefore;
+}
 
-	const upgradeObj = {};
-	let itemData = game.equipment.Shield;
-	const worldType = (mapSettings.voidTrigger || game.global.voidBuff) ? 'void' : 'world';
-	const shieldBlock = game.equipment.Shield.blockNow;
-	const stat = shieldBlock ? 'block' : 'health';
-	const prestige = buyPrestigeMaybe('Shield', undefined, 9); //TODO MaxLevel should come from settings. Maybe resource % too
-	const shouldPrestige = prestige.purchase || prestige.prestigeAvailable && itemData.level >= 9;
-	let shieldIncrease, hitsBefore;
-
-	//TODO The cost here is wrong, it should be the sum of a geometric progression, or a game function I don't know the name of
-	const shieldCost = shouldPrestige ? prestige.prestigeCost * prestige.minNewLevel : itemData.cost.wood[0] * Math.pow(itemData.cost.wood[1], itemData.level) * getEquipPriceMult();
-
-	//Shield Health vs Gyms
-	if (!shieldBlock) {
-		hitsBefore = calcHitsSurvived(game.global.world, worldType);
-		const toBuy = shouldPrestige ? prestige.minNewLevel - 1 : 1;
-		const hitsAfter = calcHitsSurvived(game.global.world, worldType, 1, 0, toBuy, shouldPrestige, false);
-		shieldIncrease = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
-	}
-	else {
-		const statPerLvl = itemData.blockCalculated;
-		shieldIncrease = shouldPrestige ? prestige.newStatMinValue - statPerLvl * itemData.level : statPerLvl;
-	}
-
-	//Shield level cap
-	//TODO Send ZoneGo parameter?
-	const gemsOwned = game.resources.gems.owned;
-	const equipCap = prestige.prestigeAvailable ? 9 : calculateEquipCap(stat);
-	upgradeObj.buyShieldPrestige = shouldPrestige;
-	upgradeObj.Shield = (!prestige.prestigeAvailable || !gemsOwned) && itemData.level >= equipCap ? Infinity : shieldCost / shieldIncrease;
-
-	const Gymystic = game.upgrades.Gymystic;
-
-	itemData = game.buildings.Gym;
-	const gymAmount = calculateMaxAfford_AT(itemData, true, false, false, false, false, shieldCost);
-	const gymCost = getBuildingItemPrice(game.buildings.Gym, 'wood', false, 1) * getResourcefulMult();
-	const gymXCost = getBuildingItemPrice(game.buildings.Gym, 'wood', false, gymAmount) * getResourcefulMult();
-
-	let gymIncrease, gymIncreaseAfterX;
-
-	if (!shieldBlock) {
-		const hitsAfter = calcHitsSurvived(game.global.world, worldType, 1, 1);
-		gymIncrease = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
-
-		const onlyOneGym = gymAmount <= 1 || hitsAfter == Infinity;
-		const hitsAfterX = onlyOneGym ? hitsAfter : calcHitsSurvived(game.global.world, worldType, 1, gymAmount);
-		gymIncreaseAfterX = hitsAfterX === Infinity ? Infinity : hitsAfterX - hitsBefore;
-	}
-	else {
-		let increaseBy = itemData.increase.by;
-		const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
-		const gymysticIncrease = (calcOurBlock() + increaseBy) * (gymysticFactor - 1);
-		gymIncrease = increaseBy + gymysticIncrease;
-	}
-
-	upgradeObj.Gym = gymCost / gymIncrease;
-	if (gymIncreaseAfterX) upgradeObj.Gym = Math.min(upgradeObj.Gym, gymXCost / gymIncreaseAfterX);
-
-	return upgradeObj;
+function maybePrettify(value, pretty) {
+	return pretty && value && value !== Infinity ? prettify(value) : value;
 }
 
 function nurseryHousingEfficiency(pretty = false) {
@@ -720,12 +674,14 @@ function nurseryHousingEfficiency(pretty = false) {
 	let breedingImpact = (breedingRatio(0) / breedingRatio(popBonus)) - 1;
 	let efficiency = gemCost / breedingImpact;
 
-	const housing = {
+	const housingEfficiency = efficiency;
+
+	const Housing = {
 		name: name,
-		gemCost: pretty ? prettify(gemCost) : gemCost,
-		popBonus: pretty ? prettify(popBonus) : pretty,
-		breedingImpact: pretty ? prettify(breedingImpact) : breedingImpact,
-		efficiency: pretty && efficiency !== Infinity ? prettify(efficiency) : efficiency
+		efficiency: maybePrettify(efficiency, pretty),
+		gemCost: maybePrettify(gemCost, pretty),
+		breedingImpact: maybePrettify(breedingImpact, pretty),
+		popBonus: maybePrettify(popBonus, pretty)
 	};
 
 	//Nursery
@@ -735,17 +691,186 @@ function nurseryHousingEfficiency(pretty = false) {
 	breedingImpact = (Math.log10(newPotencyMod) / Math.log10(potencyMod)) - 1;
 	efficiency = gemCost / breedingImpact;
 
-	const nursery = {
+	const Nursery = {
 		name: 'Nursery',
-		gemCost: pretty ? prettify(gemCost) : gemCost,
-		breedingImpact: pretty ? prettify(breedingImpact) : breedingImpact,
-		efficiency: pretty && efficiency !== Infinity ? prettify(efficiency) : efficiency
+		efficiency: maybePrettify(efficiency, pretty),
+		gemCost: maybePrettify(gemCost, pretty),
+		breedingImpact: maybePrettify(breedingImpact, pretty)
 	};
 
 	return {
-		mostEfficient: nursery.efficiency < housing.efficiency ? 'nursery' : 'housing',
-		housing: housing,
-		nursery: nursery
+		mostEfficient: efficiency < housingEfficiency ? 'Nursery' : 'Housing',
+		Housing: Housing,
+		Nursery: Nursery
+	}
+}
+
+function shieldGymEfficiency(pretty = false) {
+	if (!MODULES.buildings.betaHouseEfficiency) return shieldBlockUpgrades();
+
+	const shieldBlock = game.equipment.Shield.blockNow;
+	const worldType = (mapSettings.voidTrigger || game.global.voidBuff) ? 'void' : 'world';
+	const hitsBefore = worldType === 'void' ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived;
+	if (!hitsBefore) throw new Error('Undefined HS or HSV');
+
+	let itemData = game.equipment.Shield;
+	const stat = shieldBlock ? 'block' : 'health';
+	const prestige = buyPrestigeMaybe('Shield', undefined, 9); //TODO MaxLevel should come from settings. Maybe resource % too
+	let shieldIncrease;
+
+	const prestigeCost = () => prestige.prestigeCost * (1 - Math.pow(1.2, prestige.minNewLevel)) / (1 - 1.2);
+	const levelCost = () => getBuildingItemPrice(itemData, 'wood', true, 1) * getEquipPriceMult();
+
+	//Shield Health vs Gyms
+	if (!shieldBlock) {
+		shieldIncrease = _calcHSImpact('Shield', worldType, prestige, hitsBefore);
+	}
+	else {
+		const statPerLvl = itemData.blockCalculated;
+		shieldIncrease = prestige.shouldPrestige ? prestige.newStatMinValue - statPerLvl * itemData.level : statPerLvl;
+	}
+
+	//Shield level cap
+	//TODO Send ZoneGo parameter?
+	const cantPrestige = !prestige.prestigeAvailable || !game.resources.gems.owned;
+	const aboveEquipCap = itemData.level >= (prestige.prestigeAvailable ? 9 : calculateEquipCap(stat));
+
+	let cost = prestige.shouldPrestige ? prestigeCost() : levelCost();
+	let block = shieldBlock ? shieldIncrease : undefined;
+	let hsImpact = shieldBlock ? undefined : shieldIncrease;
+	let efficiency = cantPrestige && aboveEquipCap ? Infinity : (cost / shieldIncrease);
+	let hsEfficiency = shieldBlock ? undefined : efficiency;
+
+	const Shield = {
+		name: 'Shield ' + (prestige.shouldPrestige ? 'Prestige' : `Level ${itemData.level + 1}`),
+		efficiency: maybePrettify(efficiency, pretty),
+		cost: maybePrettify(cost, pretty),
+		hsImpact: maybePrettify(hsImpact, pretty),
+		block: maybePrettify(block, pretty),
+		hsEfficiency: maybePrettify(hsEfficiency, pretty),
+		shouldPrestige: prestige.shouldPrestige
+	}
+
+	const shieldEfficiency = efficiency;
+	const Gymystic = game.upgrades.Gymystic;
+
+	itemData = game.buildings.Gym;
+	const gymCost = getBuildingItemPrice(game.buildings.Gym, 'wood', false, 1) * getResourcefulMult();
+	const gymAmount = Math.ceil(cost / gymCost);
+	const gymXCost = getBuildingItemPrice(game.buildings.Gym, 'wood', false, gymAmount) * getResourcefulMult();
+	let onlyOneGym = shieldBlock || gymAmount <= 1;
+
+	let gymIncrease, gymIncreaseAfterX, hitsAfter, hitsAfterX, efficiencyX;
+
+	if (!shieldBlock) {
+		hitsAfter = calcHitsSurvived(game.global.world, worldType, 1, 1);
+		gymIncrease = hitsAfter === Infinity ? Infinity : hitsAfter - hitsBefore;
+		efficiency = gymCost / gymIncrease;
+
+		onlyOneGym |= hitsAfter == Infinity;
+
+		hitsAfterX = onlyOneGym ? hitsAfter : calcHitsSurvived(game.global.world, worldType, 1, gymAmount);
+		gymIncreaseAfterX = hitsAfterX === Infinity ? Infinity : hitsAfterX - hitsBefore;
+		efficiencyX = gymXCost / gymIncreaseAfterX;
+
+		onlyOneGym |= efficiency <= efficiencyX;
+	}
+	else {
+		let increaseBy = itemData.increase.by;
+		const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
+		const gymysticIncrease = (calcOurBlock() + increaseBy) * (gymysticFactor - 1);
+		gymIncrease = increaseBy + gymysticIncrease;
+		efficiency = gymCost / gymIncrease;
+	}
+
+	cost = onlyOneGym ? gymCost : gymXCost;
+	block = shieldBlock ? gymIncrease : undefined;
+	hsImpact = shieldBlock ? undefined : (onlyOneGym ? gymIncrease : gymIncreaseAfterX);
+	efficiency = onlyOneGym ? efficiency : efficiencyX;
+	hsEfficiency = shieldBlock ? undefined : efficiency;
+
+	const Gym = {
+		name: 'Gym x' + (onlyOneGym ? 1 : gymAmount),
+		efficiency: maybePrettify(efficiency, pretty),
+		cost: maybePrettify(cost, pretty),
+		hsImpact: maybePrettify(hsImpact, pretty),
+		block: maybePrettify(block, pretty),
+		hsEfficiency: maybePrettify(hsEfficiency, pretty)
+	}
+
+	return {
+		mostEfficient: shieldEfficiency < efficiency ? 'Shield' : 'Gym',
+		Shield: Shield,
+		Gym: Gym
+	}
+}
+
+function biomeEfficiency(pretty = false, mostEffEquip = mostEfficientEquipment(undefined, undefined, true), shieldGymEff = shieldGymEfficiency()) {
+	//TODO ResourceSpendingPct? ZoneGo?
+	const zone = game.global.world;
+	const worldType = _getTargetWorldType();
+	const hitsBefore = calcHitsSurvived(zone, worldType);
+
+	let name = mostEffEquip.health.name;
+	let cost, hsImpact, efficiency;
+
+	if (name) {
+		const obj = game.equipment[name];
+		const prestige = buyPrestigeMaybe(name, undefined, 9);
+
+		const prestigeCost = prestige.prestigeCost * (1 - Math.pow(1.2, prestige.minNewLevel)) / (1 - 1.2);
+		const levelCost = getBuildingItemPrice(obj, 'metal', true, 1) * getEquipPriceMult();
+
+		cost = prestige.shouldPrestige ? prestigeCost : levelCost;
+		hsImpact = _calcHSImpact(name, worldType, prestige, hitsBefore);
+		efficiency = cost / hsImpact;
+	}
+
+	const metalEquipEfficiency = efficiency;
+
+	const MetalEquip = {
+		name: name,
+		efficiency: maybePrettify(efficiency, pretty),
+		cost: maybePrettify(cost, pretty),
+		hsImpact: maybePrettify(hsImpact, pretty)
+	}
+
+	name = shieldGymEff.mostEfficient;
+	cost = shieldGymEff[name].cost;
+	hsImpact = shieldGymEff[name].hsImpact;
+	efficiency = shieldGymEff[name].hsEfficiency;
+
+	const ShieldGym = {
+		name: name,
+		efficiency: maybePrettify(efficiency, pretty),
+		cost: maybePrettify(cost, pretty),
+		hsImpact: maybePrettify(hsImpact, pretty)
+	}
+
+	const hdToTargetRatio = (worldType === 'void' ? hdStats.hdRatioVoid : hdStats.hdRatio) / getPageSetting('mapBonusRatio');
+	const hsToTargetRatio = hitsBefore / targetHitsSurvived(false, worldType);
+
+	// TODO Maybe this value should consider hsToTargetRatio too, and maybe AE: HS and AE: HD too
+	let metalEffRatio = hdToTargetRatio > 1 ? 2.5: 1;
+
+	// TODO Refactor this after considering the TODOs below
+	if (!MetalEquip.name) {
+		if (!mostEffEquip.attack.name) metalEffRatio = 0;
+		else if (hdToTargetRatio > 1 && hsToTargetRatio < 1) metalEffRatio = Infinity; // Need both - TODO compare ShieldGym hsEfficiency vs MetalEquip hdEfficiency instead
+		else if (hdToTargetRatio > 1) metalEffRatio = Infinity; // Need damage
+		else if (hsToTargetRatio < 1) metalEffRatio = 0; // Need health
+		else metalEffRatio = Infinity; // Need nothing - TODO Maybe compare AE: HS target vs AE: HD target at this point?
+	}
+
+	const mostEfficient = (efficiency * metalEffRatio < metalEquipEfficiency || !metalEffRatio) ? ShieldGym.name : MetalEquip.name || mostEffEquip.attack.name || 'attack';
+	const biome = mostEfficient === ShieldGym.name ? 'Forest' : 'Mountain';
+
+	return {
+		biome: biome,
+		mostEfficient: mostEfficient,
+		MetalEquip: MetalEquip,
+		ShieldGymEff: ShieldGym,
+		metalEffRatio: metalEffRatio
 	}
 }
 

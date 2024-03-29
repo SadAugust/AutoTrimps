@@ -3309,7 +3309,7 @@ function farmingDecision() {
 	mapSettings = farmingDetails;
 }
 
-function getBiome(mapGoal, resourceGoal) {
+function getBiome(mapGoal, resourceGoal, mostEffEquip = mostEfficientEquipment()) {
 	const dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220) || challengeActive('Metal');
 	if (dropBased && !resourceGoal && challengeActive('Metal')) resourceGoal = 'Mountain';
 
@@ -3319,8 +3319,8 @@ function getBiome(mapGoal, resourceGoal) {
 	else if (mapGoal === 'fragConservation') biome = 'Random';
 	else if (game.global.universe === 2 && game.global.farmlandsUnlocked) biome = 'Farmlands';
 	else if (game.global.decayDone) biome = 'Plentiful';
-	else if (needGymystic() || (mostEfficientEquipment().attack.name === '' && mostEfficientEquipment().health.name === '')) biome = 'Forest';
-	else biome = 'Mountain';
+	else if (needGymystic()) biome = 'Forest';
+	else biome = biomeEfficiency().biome;
 
 	return biome;
 }

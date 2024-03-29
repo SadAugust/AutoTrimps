@@ -138,6 +138,10 @@ function _getWorldType() {
 	return !game.global.mapsActive ? 'world' : game.global.voidBuff ? 'void' : 'map';
 }
 
+function _getTargetWorldType() {
+	return mapSettings.voidTrigger || game.global.voidBuff ? 'void' : 'world';
+}
+
 function _getZone(worldType = _getWorldType()) {
 	return ['world', 'void'].includes(worldType) || !game.global.mapsActive ? game.global.world : getCurrentMapObject().level;
 }
@@ -150,7 +154,7 @@ function _getEnemyName(name = 'Chimp') {
 	return getCurrentEnemy().name || { name };
 }
 
-function calcEquipment(equipType = 'attack', extraShields = 0, extraShieldPrestige = false) {
+function calcEquipment(equipType = 'attack', extraItem = new ExtraItem()) {
 	let bonus = 0;
 	let equipmentList;
 
@@ -161,10 +165,10 @@ function calcEquipment(equipType = 'attack', extraShields = 0, extraShieldPresti
 		const equip = game.equipment[name];
 		if (equip.locked || equip.blockNow) continue;
 
-		if (name === 'Shield') {
-			const level = extraShields + (extraShieldPrestige ? 1 : equip.level);
-			const prestigeLevel = equip.prestige + (extraShieldPrestige ? 0 : -1);
-			const newStatsPerLevel = Math.round(equip[equipType] * Math.pow(1.19, 1 + prestigeLevel * game.global.prestige[equipType]));
+		if (name === extraItem.name) {
+			const level = extraItem.extraLevels + (extraItem.shouldPrestige ? 1 : equip.level);
+			const prestigeLevel = equip.prestige + (extraItem.shouldPrestige ? 0 : -1);
+			const newStatsPerLevel = prestigeLevel ? Math.round(equip[equipType] * Math.pow(1.19, prestigeLevel * game.global.prestige[equipType] + 1)) : equip[equipType];
 			bonus += level * newStatsPerLevel;
 			continue;
 		}
@@ -208,12 +212,12 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 	return base;
 }
 
-function getTrimpHealth(realHealth, worldType = _getWorldType(), extraShields = 0, extraShieldPrestige = false) {
+function getTrimpHealth(realHealth, worldType = _getWorldType(), extraItem = new ExtraItem()) {
 	if (realHealth) return game.global.soldierHealthMax;
 
 	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 	const heirloom = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpHealth', 1, false);
-	let health = (50 + calcEquipment('health', extraShields, extraShieldPrestige)) * game.resources.trimps.maxSoldiers;
+	let health = (50 + calcEquipment('health', extraItem)) * game.resources.trimps.maxSoldiers;
 
 	const healthMultipliers = {
 		toughness: () => (getPerkLevel('Toughness') > 0 ? 1 + getPerkLevel('Toughness') * getPerkModifier('Toughness') : 1),
@@ -278,8 +282,8 @@ function getTrimpHealth(realHealth, worldType = _getWorldType(), extraShields = 
 	return health;
 }
 
-function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth = false, fullGeneticist = false, extraShields = 0, extraShieldPrestige = false) {
-	let health = getTrimpHealth(realHealth, worldType, extraShields, extraShieldPrestige);
+function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth = false, fullGeneticist = false, extraItem = new ExtraItem()) {
+	let health = getTrimpHealth(realHealth, worldType, extraItem);
 
 	if (game.global.universe === 1) {
 		if (![0, 5].includes(game.global.formation)) health /= game.global.formation === 1 ? 4 : 0.5;
@@ -1003,7 +1007,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	return enemyHealth / ourBaseDamage;
 }
 
-function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), difficulty = 1, extraGyms = 0, extraShields = 0, extraShieldPrestige = false, checkOutputs) {
+function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), difficulty = 1, extraGyms = 0, extraItem = new ExtraItem(), checkOutputs) {
 	const formationMod = game.upgrades.Dominance.done ? 2 : 1;
 	const ignoreCrits = getPageSetting('IgnoreCrits');
 
@@ -1015,7 +1019,7 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 	let hitsToSurvive = targetHitsSurvived(false, worldType);
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 
-	const health = calcOurHealth(false, worldType, false, true, extraShields, extraShieldPrestige) / formationMod;
+	const health = calcOurHealth(false, worldType, false, true, extraItem) / formationMod;
 	const block = calcOurBlock(false, false, worldType, extraGyms) / formationMod;
 	const equality = equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', null, hitsToSurvive);
 	let damageMult = 1;
