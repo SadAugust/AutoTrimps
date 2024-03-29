@@ -373,7 +373,7 @@ function _autoPortalC2() {
 			if (typeof c2Setting[challenge] === 'undefined') continue;
 			if (!c2Setting[challenge].enabled) continue;
 			if (c2Setting[challenge].zone <= 0) continue;
-			challengeArray.push(x);
+			challengeArray.push(challenge);
 		}
 	}
 
