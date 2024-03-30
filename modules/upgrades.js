@@ -209,9 +209,13 @@ function buyUpgrades() {
 			if (upgradeSetting === 2 || !canAffordCoordinationTrimps() || trapperHoldCoords(true)) continue;
 		} else if (upgrade === 'Gigastation') {
 			if (!getPageSetting('buildingsType') || !getPageSetting('warpstation')) continue;
-			if (!bwRewardUnlocked('DecaBuild')) {
-				if (getPageSetting('autoGigas') && game.upgrades.Gigastation.done === 0 && !firstGiga()) continue;
-				else if (game.global.lastWarp ? game.buildings.Warpstation.owned < Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation') : game.buildings.Warpstation.owned < getPageSetting('firstGigastation')) continue;
+
+			if (getPageSetting('autoGigas') && game.upgrades.Gigastation.done === 0 && !firstGiga()) {
+				continue;
+			} else if (game.global.lastWarp && game.buildings.Warpstation.owned < Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation')) {
+				continue;
+			} else if (game.buildings.Warpstation.owned < getPageSetting('firstGigastation')) {
+				continue;
 			}
 		} else if (upgrade === 'Bloodlust') {
 			if (game.global.world === 1) continue;
