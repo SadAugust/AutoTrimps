@@ -667,7 +667,7 @@ function displayShieldGymEfficiency(forceUpdate = false) {
 
 	//Shield
 	if (shieldElement)
-		_updateMostEfficientDisplay(shieldElement, shieldOrGym === 'Shield');
+		_updateMostEfficientDisplay(shieldElement, shieldOrGym === 'Shield' && !shieldGymResults.Shield.shouldPrestige);
 
 	//Gym
 	if (!game.buildings.Gym.locked && gymElement)
