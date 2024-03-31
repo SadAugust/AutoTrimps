@@ -56,7 +56,7 @@ function _calcTrapSupplySize() {
 		.filter((houseName) => !game.buildings[houseName].locked)
 		.map((houseName) => getHousingBonus(houseName))
 		.reduce((max, bonus) => Math.max(max, bonus), 0);
-	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / _trapSize()) - 1;
+	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / _trapSize());
 }
 
 function safeSetGather(resource) {
