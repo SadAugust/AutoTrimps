@@ -968,7 +968,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will allow the purchase of the shield block upgrade.</p>";
 				description += "<p><b>Recommended:</b> On until you can reach zone 40</p>";
 				return description;
-			}, 'boolean', true, null, "Equipment", [1]);
+			}, 'boolean', 55 > game.stats.highestLevel.valueTotal(), null, "Equipment", [1]);
 
 		createSetting('prestigeClimb',
 			function () { return ('Prestige Climb') },
@@ -1474,20 +1474,12 @@ function initialiseAllSettings() {
 		createSetting('autoLevelScryer',
 			function () { return ('Auto Level Scryer') },
 			function () {
-				let description = "<p>Allows the Auto Level system to use Scryer stance.</p>";
+				let description = "<p>Allows the Auto Level system to use Scryer and Wind stances.</p>";
 				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when <b>Auto Maps</b> is enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Maps', [1],
+			}, 'boolean', false, null, 'Maps', [1],
 			function () { return (getPageSetting('autoLevelTest', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 180) });
-
-		createSetting('uniqueMapEnoughHealth',
-			function () { return ('Unique Map Health Check') },
-			function () {
-				let description = "<p>Will disable Unique Maps from being run if you don't have enough health to survive the minimum attack of the highest attacking cell in that map.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', true, null, 'Maps', [1, 2]);
 
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
@@ -1553,9 +1545,11 @@ function initialiseAllSettings() {
 			function () { return ('VM Scryer') },
 			function () {
 				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
+				description += "<p><b>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Maps', [1]);
+			}, 'boolean', true, null, 'Maps', [1],
+			function () { return (game.talents.scry2.purchased) });
 
 		//HD Farm
 		createSetting('hdFarmSettings',
@@ -1628,6 +1622,14 @@ function initialiseAllSettings() {
 			"MP Smithy One Off": { enabled: false, value: 100 },
 		}, 'MAZLookalike("UniqueMaps")', 'Maps', [1, 2]);
 
+		createSetting('uniqueMapEnoughHealth',
+			function () { return ('Unique Map Health Check') },
+			function () {
+				let description = "<p>Will disable Unique Maps from being run if you don't have enough health to survive the minimum attack of the highest attacking cell in that map.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Maps', [1, 2]);
+			
 		//Map Bonus
 		createSetting('mapBonusSettings',
 			function () { return ('Map Bonus Settings') },
@@ -2064,6 +2066,7 @@ function initialiseAllSettings() {
 			function () { return ('Fused ' + _getChallenge2Info() + 's') },
 			function () {
 				let description = "<p>Will allow " + _getChallenge2Info() + " Runner to do fused versions of " + _getChallenge2Info() + "'s rather than normal versions to reduce time spent running " + _getChallenge2Info() + "s.</p>";
+				/* description += "<p>If using <b>" + _getChallenge2Info() + " Runner %</b> then this will only run Fused " + _getChallenge2Info() + "'s is both challenges are below your target zone.</p>"; */
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
@@ -3366,6 +3369,7 @@ function initialiseAllSettings() {
 			function () { return ('Auto Heirlooms') },
 			function () {
 				let description = "<p>Master switch for whether the script will try to keep any of the heirlooms in your temporary section when portaling.</p>";
+				description += "<p>This setting <b>won't recycle</b> any of your carried heirlooms, it only checks your temporary section.</p>";
 				description += "<p>When run it will check the mods you want the heirloom to have and checks if the heirlooms in your temporary section for the type(s) you have selected to keep have all of the selected mods and if any do they will be stashed otherwise will be recycled.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -5144,7 +5148,7 @@ function _settingsToLineBreak() {
 	const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
 	const breakAfterCore = ['portalVoidIncrement', 'universeSetting'];
-	const breakAfterMaps = ['uniqueMapEnoughHealth', 'scryvoidmaps', 'uniqueMapSettingsArray'];
+	const breakAfterMaps = ['uniqueMapEnoughHealth', 'scryvoidmaps', 'uniqueMapEnoughHealth'];
 	const breakAfterDaily = ['dscryvoidmaps', 'dPreSpireNurseries', 'dWindStackingLiq', 'dailyHeliumHrPortal'];
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields', 'equipShieldBlock'];
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];

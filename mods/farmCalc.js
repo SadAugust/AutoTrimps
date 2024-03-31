@@ -9,6 +9,8 @@ function mastery(name) {
 }
 
 function populateFarmCalcData() {
+	const runningAutoTrimps = typeof atSettings !== 'undefined';
+
 	let imps = 0;
 	for (let imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp']) imps += game.unlocks.imps[imp];
 
@@ -30,6 +32,9 @@ function populateFarmCalcData() {
 	const natureTransfer = (zone >= natureStart ? nature.retainLevel + nature.getRetainBonus() : 0) / 100;
 	nature = zone >= natureStart ? nature.level + diplomacy : 0;
 
+	const uberEmpowerment = getUberEmpowerment();
+	const empowerment = getEmpowerment();
+
 	let speed = 10 * 0.95 ** getPerkLevel('Agility');
 	if (mastery('hyperspeed')) --speed;
 	if (mastery('hyperspeed2') && zone <= Math.ceil(hze / 2)) --speed;
@@ -42,11 +47,11 @@ function populateFarmCalcData() {
 
 	//Map Modifiers (for the map we're on)
 	const biome = getBiome();
-	const perfectMaps = typeof atSettings !== 'undefined' ? trimpStats.perfectMaps && getPageSetting('onlyPerfectMaps') : universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
+	const perfectMaps = runningAutoTrimps ? trimpStats.perfectMaps && getPageSetting('onlyPerfectMaps') : universe === 2 ? game.stats.highestRadLevel.valueTotal() >= 30 : game.stats.highestLevel.valueTotal() >= 110;
 	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 50 : hze >= 210;
 	const haveMapReducer = game.talents.mapLoot.purchased;
 	// Six hours simulation inside of TW and a day outside of it.
-	const maxTicks = typeof atSettings !== 'undefined' && atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400;
+	const maxTicks = runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400;
 
 	//Stance & Equality
 	let stances = 'X';
@@ -60,18 +65,22 @@ function populateFarmCalcData() {
 	let trimpShield = universe === 2 ? calcOurHealth(true, 'map') : 0;
 	trimpHealth -= trimpShield;
 
-	if (universe === 1) {
+	if (universe === 1 && game.upgrades.Formations.done) {
 		if (game.upgrades.Dominance.done) stances = 'D';
-		if (getPageSetting('autoLevelScryer') && hze >= 181 && game.upgrades.Formations.done) stances += 'S';
+
+		if (runningAutoTrimps ? getPageSetting('autoLevelScryer') : true) {
+			if (game.global.uberNature === 'Wind' && empowerment !== 'Wind') stances += 'W';
+			else if (hze >= 181) stances += 'S';
+		}
 	}
 
-	const gammaMult = typeof atSettings !== 'undefined' ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
+	const gammaMult = runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
 	const gammaCharges = gammaMaxStacks(false, false, 'map');
 
 	//Heirloom + Crit Chance
-	const customShield = typeof atSettings !== 'undefined' ? heirloomShieldToEquip('map') : null;
-	let critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
-	let critDamage = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult();
+	const customShield = runningAutoTrimps ? heirloomShieldToEquip('map') : null;
+	let critChance = runningAutoTrimps ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
+	let critDamage = runningAutoTrimps ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult();
 
 	//Base crit multiplier
 	let megaCD = 5;
@@ -136,7 +145,7 @@ function populateFarmCalcData() {
 			enemyHealth *= 2;
 			enemyAttack *= 2.35;
 
-			if (!game.global.mapsActive && !game.global.preMapsActive && typeof atSettings !== 'undefined') {
+			if (!game.global.mapsActive && !game.global.preMapsActive && runningAutoTrimps) {
 				const balance = game.challenges.Balance;
 				if (balance.balanceStacks < 250) {
 					const timer = atSettings.loops.atTimeLapseFastLoop ? 30 : 5;
@@ -308,9 +317,6 @@ function populateFarmCalcData() {
 		enemyAttack *= 1 + 0.3 * daily('badMapStrength');
 	}
 
-	const uberEmpowerment = getUberEmpowerment();
-	const empowerment = getEmpowerment();
-
 	return {
 		//Base Info
 		universe: universe,
@@ -348,8 +354,8 @@ function populateFarmCalcData() {
 		gammaCharges: gammaCharges,
 		gammaMult: gammaMult,
 		range: maxFluct / minFluct - 1,
-		plaguebringer: (plaguebrought === 2 ? 0.5 : 0) + (typeof atSettings !== 'undefined' ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
-		equalityMult: game.global.universe === 2 ? (typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
+		plaguebringer: (plaguebrought === 2 ? 0.5 : 0) + (runningAutoTrimps ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
+		equalityMult: game.global.universe === 2 ? (runningAutoTrimps ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
 		//Enemy Stats
 		challenge_health: enemyHealth,
 		challenge_attack: enemyAttack,
@@ -444,9 +450,9 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 	//Loop through all stances to identify which stance is best for farming
 	for (let stance of stances) {
 		const attackMultiplier = stance === 'D' ? 4 : stance === 'X' ? 1 : 0.5;
-		const lootMultiplier = stance === 'S' ? 2 : 1;
-		saveData.block = stance === 'X' ? saveData.trimpBlock : saveData.trimpBlock / 2;
-		saveData.health = stance === 'X' ? saveData.trimpHealth : saveData.trimpHealth / 2;
+		const lootMultiplier = ['S', 'W'].includes(stance) ? 2 : 1;
+		saveData.block = ['X', 'W'].includes(stance) ? saveData.trimpBlock : saveData.trimpBlock / 2;
+		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 
 		const { speed, equality, killSpeed } = simulate(saveData, zone);
@@ -628,6 +634,7 @@ function simulate(saveData, zone) {
 
 		let oneShot = true;
 		let trimpOverkill = 0;
+		let trimpAttack = 0;
 
 		if (ok_spread !== 0) {
 			enemyHealth -= ok_damage;
@@ -676,7 +683,7 @@ function simulate(saveData, zone) {
 			// Trimp attack
 			if (!armyDead()) {
 				ok_spread = saveData.ok_spread;
-				var trimpAttack = saveData.atk;
+				trimpAttack = saveData.atk;
 				if (!saveData.unlucky) trimpAttack *= 1 + saveData.range * rngRoll;
 				if (saveData.duel) {
 					saveData.critChance = 1 - duelPoints / 100;
@@ -703,7 +710,6 @@ function simulate(saveData, zone) {
 
 			if (enemyHealth >= 1) {
 				if (saveData.glass) glassStacks++;
-				// Gamma Burst
 				if (!armyDead() && saveData.gammaMult > 1) {
 					gammaStacks++;
 					if (gammaStacks >= saveData.gammaCharges) {
@@ -833,17 +839,18 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			};
 		}
 
-		const fragSetting = typeof atSettings !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
+		const runningAutoTrimps = typeof atSettings !== 'undefined';
+		const fragSetting = runningAutoTrimps ? getPageSetting('onlyPerfectMaps') : true;
 
 		const fragments = game.resources.fragments.owned;
 		for (let i = 0; i <= stats.length - 1; i++) {
 			if (fragSetting) {
-				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
+				if (runningAutoTrimps && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
 				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
 
 			if (!fragSetting) {
-				if (typeof atSettings !== 'undefined' && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
+				if (runningAutoTrimps && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
 				const simulatedSliders = _simulateSliders(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome);
 				const { loot, size, difficulty } = simulatedSliders.sliders;
 				if (fragments >= mapCost(simulatedSliders.mapLevel, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;

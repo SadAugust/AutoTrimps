@@ -171,7 +171,7 @@ function heirloomShieldSwapped() {
 	MODULES.heirlooms.breedHeirloom = usingBreedHeirloom();
 }
 
-function heirloomShieldToEquip(mapType, swapLooms = false, hdCheck = true, sendingArmy = false) {
+function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdCheck = true, sendingArmy = false) {
 	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return;
 
 	const afterpushShield = trimpStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
@@ -243,7 +243,7 @@ function heirloomShieldToEquip(mapType, swapLooms = false, hdCheck = true, sendi
 				MODULES.heirlooms.plagueSwap = true;
 			} else MODULES.heirlooms.plagueSwap = false;
 		}
-		//Otherwise set plagueSwap global var to false to ensure we don't mess up any code later on.
+		//Otherwise set plagueSwap global variable to false to ensure we don't mess up any code later on.
 		else MODULES.heirlooms.plagueSwap = false;
 	}
 	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
@@ -334,7 +334,7 @@ function getMapBonusHeirloomStaff(mapBonus) {
 function heirloomSwapping(sendingArmy = false) {
 	if (!getPageSetting('heirloom')) return;
 
-	const mapType = game.global.voidBuff ? 'void' : game.global.mapsActive ? 'map' : 'world';
+	const mapType = _getWorldType();
 
 	if (getPageSetting('heirloomShield')) {
 		const shield = heirloomShieldToEquip(mapType, true, true, sendingArmy);

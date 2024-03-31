@@ -335,23 +335,16 @@ function autoEquip() {
 	if (!getPageSetting('equipOn')) return;
 	const { Miners, Efficiency, Coordination, TrainTacular } = game.upgrades;
 
-	//Saves resources for upgrades
 	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
 		if ([Efficiency, Coordination, TrainTacular].some((up) => shouldSaveForSpeedUpgrade(up))) return;
 		if (!Miners.done && !challengeActive('Metal') && !challengeActive('Transmute')) return;
 	}
 
-	//If running a wood or metal quest then disable autoequip
 	if ([2, 3].includes(getCurrentQuest())) return;
 	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
 	if (runningAncientTreasure()) return;
 
 	if (_autoEquipTimeWarp()) return;
-
-	/* let prestigeLeft = false;
-	do {
-		prestigeLeft = buyEquipsPrestige();
-	} while (prestigeLeft); */
 
 	let equipLeft = false;
 	do {
@@ -368,28 +361,10 @@ function _autoEquipTimeWarp() {
 	const dontWhileLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || liquifiedZone();
 	if (!dontWhileLoop) return false;
 
-	/* buyEquipsPrestige(); */
 	buyEquipsAlways2();
 	buyEquips();
 
 	return true;
-}
-
-function buyEquipsPrestige() {
-	if (getPageSetting('equipPrestige') !== 3) return false;
-	let prestigeLeft = false;
-
-	for (let equipName in game.equipment) {
-		const prestigeInfo = buyPrestigeMaybe(equipName);
-		if (!game.equipment[equipName].locked && !prestigeInfo.skip) {
-			if (game.resources[prestigeInfo.resource].owned < prestigeInfo.prestigeCost) continue;
-			buyUpgrade(MODULES.equipment[equipName].upgrade, true, true);
-			prestigeLeft = true;
-			debug(`Upgrading ${equipName} - Prestige ${game.equipment[equipName].prestige}`, `equipment`, '*upload');
-		}
-	}
-
-	return prestigeLeft;
 }
 
 function buyEquipsAlways2() {

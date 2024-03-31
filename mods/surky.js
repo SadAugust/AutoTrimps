@@ -627,11 +627,12 @@ function getObservationGains(levels, props, perks) {
 //   important mechanic other than equipment, there would need to be a separate gear discount input.
 // NOTE: metal/food are MUTLIPLICATIVE gain over and above the unified F/M/L gain.
 function iterateValueFeedback(valueArray, props, perks) {
-	var [Va, Vh, Vm, Vf, Vres, Vrad, Vp, Ve, tribs, collectors, hubEnabled, mets, trinketRate, trinkets, obsLevel, Vpushed = 1, VmDone = 1, VfDone = 1, VresDone = 1, VpDone = 1] = valueArray;
+	let [Va, Vh, Vm, Vf, Vres, Vrad, Vp, Ve, tribs, collectors, hubEnabled, mets, trinketRate, trinkets, obsLevel, Vpushed = 1, VmDone = 1, VfDone = 1, VresDone = 1, VpDone = 1] = valueArray;
 
 	// when tribute count is < 1250, resource->resource/radon feedback is strong via Greed
 	if (tribs < 1250) {
-		var [greedback, tribs] = getGreedResourceFeedback((Vf * Vres) / (VfDone * VresDone), tribs, perks);
+		const [greedback, tribsIterated] = getGreedResourceFeedback((Vf * Vres) / (VfDone * VresDone), tribs, perks);
+		tribs = tribsIterated;
 		Vres *= greedback;
 		Vrad *= greedback;
 	}

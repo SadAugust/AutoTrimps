@@ -160,54 +160,6 @@ fadeIn = function () {
 	originalFadeIn(...arguments);
 };
 
-//Runs a map WITHOUT resetting the mapRunCounter variable so that we can have an accurate count of how many maps we've run
-//Check and update each patch!
-function runMap_AT() {
-	if (game.options.menu.pauseGame.enabled) return;
-	if (game.global.lookingAtMap === '') return;
-	if (challengeActive('Mapology') && !game.global.currentMapId) {
-		if (game.challenges.Mapology.credits < 1) {
-			message('You are all out of Map Credits! Clear some more Zones to earn some more.', 'Notices');
-			return;
-		}
-		game.challenges.Mapology.credits--;
-		if (game.challenges.Mapology.credits <= 0) game.challenges.Mapology.credits = 0;
-		updateMapCredits();
-		messageMapCredits();
-	}
-	if (game.achievements.mapless.earnable) {
-		game.achievements.mapless.earnable = false;
-		game.achievements.mapless.lastZone = game.global.world;
-	}
-	if (challengeActive('Quest') && game.challenges.Quest.questId === 5 && !game.challenges.Quest.questComplete) {
-		game.challenges.Quest.questProgress++;
-		if (game.challenges.Quest.questProgress === 1) game.challenges.Quest.failQuest();
-	}
-	if (game.global.formation !== 4 && game.global.formation !== 5) game.global.canScryCache = false;
-
-	var mapId = game.global.lookingAtMap;
-	game.global.preMapsActive = false;
-	game.global.mapsActive = true;
-	game.global.currentMapId = mapId;
-	mapsSwitch(true);
-	var mapObj = getCurrentMapObject();
-	if (mapObj.bonus) {
-		game.global.mapExtraBonus = mapObj.bonus;
-	}
-	if (game.global.lastClearedMapCell === -1) {
-		buildMapGrid(mapId);
-		drawGrid(true);
-
-		if (mapObj.location === 'Void') {
-			game.global.voidDeaths = 0;
-			game.global.voidBuff = mapObj.voidBuff;
-			setVoidBuffTooltip();
-		}
-	}
-	if (challengeActive('Insanity')) game.challenges.Insanity.drawStacks();
-	if (challengeActive('Pandemonium')) game.challenges.Pandemonium.drawStacks();
-}
-
 //Check and update each patch!
 function suicideTrimps() {
 	//Throw this in so that if GS updates anything in there it won't cause AT to fuck with it till I can check it out
@@ -248,16 +200,16 @@ function suicideTrimps() {
 function untrustworthyTrimps(noTip, forceTime, negative) {
 	if (!game.global.lastOnline) return;
 	if (!forceTime) return;
-	var dif = forceTime;
+	const dif = forceTime;
 
-	var storageBought = [];
-	var compatible = ['Farmer', 'Lumberjack', 'Miner', 'Dragimp', 'Explorer'];
-	var storages = ['Barn', 'Shed', 'Forge'];
-	for (var x = 0; x < compatible.length; x++) {
-		var job = game.jobs[compatible[x]];
-		var resName = job.increase;
-		var resource = game.resources[resName];
-		var amt = job.owned * job.modifier;
+	const storageBought = [];
+	const compatible = ['Farmer', 'Lumberjack', 'Miner', 'Dragimp', 'Explorer'];
+	const storages = ['Barn', 'Shed', 'Forge'];
+	for (let x = 0; x < compatible.length; x++) {
+		const job = game.jobs[compatible[x]];
+		const resName = job.increase;
+		const resource = game.resources[resName];
+		let amt = job.owned * job.modifier;
 		amt += amt * getPerkLevel('Motivation') * game.portal.Motivation.modifier;
 		if (getPerkLevel('Motivation_II') > 0) amt *= 1 + getPerkLevel('Motivation_II') * game.portal.Motivation_II.modifier;
 		if (resName !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0 && game.resources.trimps.owned >= game.resources.trimps.realMax()) amt *= 1 + game.permaBoneBonuses.multitasking.mult();
@@ -273,22 +225,23 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 			if (autoBattle.oneTimers.Gathermate.owned && game.global.universe === 2) amt *= autoBattle.oneTimers.Gathermate.getMult();
 		}
 		if (Fluffy.isRewardActive('gatherer')) amt *= 2;
+
 		if (getPerkLevel('Meditation') > 0 || (game.jobs.Magmamancer.owned > 0 && resName === 'metal')) {
-			var medLevel = getPerkLevel('Meditation');
-			var toAlter;
-			var originalAmt = amt;
+			const medLevel = getPerkLevel('Meditation');
+			const originalAmt = amt;
 			//Find how many stacks of 10 minutes were already stacked before logging out
-			var timeAtLastOnline = Math.floor((game.global.lastOnline - game.global.zoneStarted) / 600000);
+			const timeAtLastOnline = Math.floor((game.global.lastOnline - game.global.zoneStarted) / 600000);
+			let toAlter;
 			//Figure out what percentage of the total time offline one 10 minute chunk is. This will be used to modify amt to the proper amount in 10 minute chunks in order to mimic stacks
-			var chunkPercent = 60000 / dif;
+			let chunkPercent = 60000 / dif;
 			//Start at 100% untouched
-			var remaining = 100;
+			let remaining = 100;
 			//if a 10 minute chunk is larger than the time offline, no need to scale in chunks, skip to the end.
-			var loops = 6;
+			let loops = 6;
 			if (game.jobs.Magmamancer.owned && resName === 'metal') loops = 12;
 			if (timeAtLastOnline < loops && chunkPercent < 100) {
 				//Start from however many stacks were held before logging out. End at 5 stacks, the 6th will be all time remaining rather than chunks and handled at the end
-				for (var z = timeAtLastOnline; z < loops; z++) {
+				for (let z = timeAtLastOnline; z < loops; z++) {
 					//If no full chunks left, let the final calculation handle it
 					if (remaining < chunkPercent) break;
 					//Remove a chunk from remaining, as it is about to be calculated
@@ -316,7 +269,7 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 			}
 		}
 		if (game.global.challengeActive === 'Decay' || game.global.challengeActive === 'Melt') {
-			var challenge = game.challenges[game.global.challengeActive];
+			const challenge = game.challenges[game.global.challengeActive];
 			amt *= 10;
 			amt *= Math.pow(challenge.decayValue, challenge.stacks);
 		}
@@ -338,15 +291,15 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 		amt = calcHeirloomBonus('Staff', compatible[x] + 'Speed', amt);
 		amt *= dif;
 		if (x < 3) {
-			var newMax = resource.max + resource.max * game.portal.Packrat.modifier * getPerkLevel('Packrat');
+			let newMax = resource.max + resource.max * game.portal.Packrat.modifier * getPerkLevel('Packrat');
 			newMax = calcHeirloomBonus('Shield', 'storageSize', newMax);
-			var allowed = newMax - resource.owned;
+			const allowed = newMax - resource.owned;
 			if (amt > allowed) {
 				if (!game.global.autoStorage) {
 					amt = allowed;
 				} else {
-					var storageBuilding = game.buildings[storages[x]];
-					var count;
+					let storageBuilding = game.buildings[storages[x]];
+					let count;
 					for (count = 1; count < 300; count++) {
 						amt -= storageBuilding.cost[resName]();
 						storageBuilding.owned++;
@@ -368,11 +321,11 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 	}
 
 	if (playerSpire.initialized && playerSpire.lootAvg.average) {
-		var avg = playerSpire.getRsPs();
+		const avg = playerSpire.getRsPs();
 		if (!isNumberBad(avg)) {
-			var rsCap = dif;
+			let rsCap = dif;
 			if (rsCap > 604800) rsCap = 604800;
-			var rsReward = rsCap * 0.75 * avg;
+			let rsReward = rsCap * 0.75 * avg;
 			if (negative) rsReward = -rsReward;
 			playerSpire.runestones += rsReward;
 		}
@@ -381,15 +334,15 @@ function untrustworthyTrimps(noTip, forceTime, negative) {
 
 function removeTrustworthyTrimps() {
 	cancelTooltip();
-	var dif = Math.floor(offlineProgress.totalOfflineTime / 100);
-	var ticks = dif > offlineProgress.maxTicks ? offlineProgress.maxTicks : dif;
-	var unusedTicks = dif - ticks;
+	const dif = Math.floor(offlineProgress.totalOfflineTime / 100);
+	const ticks = dif > offlineProgress.maxTicks ? offlineProgress.maxTicks : dif;
+	const unusedTicks = dif - ticks;
 	if (unusedTicks > 0) untrustworthyTrimps(false, unusedTicks / 10, true);
 }
 
 //Check and update each patch!
 function _verticalCenterTooltip(makeLarge, makeSuperLarge) {
-	var tipElem = document.getElementById('tooltipDiv');
+	const tipElem = document.getElementById('tooltipDiv');
 	if (makeLarge) {
 		swapClass('tooltipExtra', 'tooltipExtraLg', tipElem);
 		tipElem.style.left = '25%';
@@ -398,13 +351,13 @@ function _verticalCenterTooltip(makeLarge, makeSuperLarge) {
 		swapClass('tooltipExtra', 'tooltipExtraSuperLg', tipElem);
 		tipElem.style.left = '17.5%';
 	}
-	var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-	var tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
+	const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+	let tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
 	if (makeLarge && tipHeight / height > 0.95) {
 		document.getElementById('tipText').className = 'tinyTextTip';
 		tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
 	}
-	var dif = height - tipHeight;
+	const dif = height - tipHeight;
 	tipElem.style.top = dif > 0 ? dif / 2 + 'px' : '0';
 }
 
@@ -712,7 +665,6 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	if (!itemObj.cost) return 1;
 	let mostAfford = -1;
 	if (Number.isInteger(forceMax)) forceMax = forceMax;
-	//if (!forceMax) var forceMax = false;
 	forceMax = Number.isInteger(forceMax) ? forceMax : false;
 	let currentOwned = itemObj.purchased ? itemObj.purchased : itemObj.level ? itemObj.level : itemObj.owned;
 	const artMult = getEquipPriceMult();
