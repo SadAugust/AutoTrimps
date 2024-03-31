@@ -788,18 +788,19 @@ function biomeEfficiency(pretty = false, mostEffEquip = mostEfficientEquipment(u
 	const worldType = _getTargetWorldType();
 	const hitsBefore = calcHitsSurvived(zone, worldType);
 
-	let name = mostEffEquip.health.name;
+	let mostEff = mostEffEquip.health.name;
+	let name = mostEff;
 	let cost, hsImpact, efficiency;
 
-	if (name) {
-		const obj = game.equipment[name];
-		const prestige = buyPrestigeMaybe(name, undefined, 9);
+	if (mostEff) {
+		const obj = game.equipment[mostEff];
+		const prestige = buyPrestigeMaybe(mostEff, undefined, 9);
 
 		const prestigeCost = prestige.prestigeCost * (1 - Math.pow(1.2, prestige.minNewLevel)) / (1 - 1.2);
 		const levelCost = getBuildingItemPrice(obj, 'metal', true, 1) * getEquipPriceMult();
 
 		cost = prestige.shouldPrestige ? prestigeCost : levelCost;
-		hsImpact = _calcHSImpact(name, worldType, prestige, hitsBefore);
+		hsImpact = _calcHSImpact(mostEff, worldType, prestige, hitsBefore);
 		efficiency = cost / hsImpact;
 	}
 
@@ -812,10 +813,11 @@ function biomeEfficiency(pretty = false, mostEffEquip = mostEfficientEquipment(u
 		hsImpact: maybePrettify(hsImpact, pretty)
 	}
 
-	name = shieldGymEff.mostEfficient;
-	cost = shieldGymEff[name].cost;
-	hsImpact = shieldGymEff[name].hsImpact;
-	efficiency = shieldGymEff[name].efficiency;
+	mostEff = shieldGymEff.mostEfficient;
+	name = shieldGymEff[mostEff].name;
+	cost = shieldGymEff[mostEff].cost;
+	hsImpact = shieldGymEff[mostEff].hsImpact;
+	efficiency = shieldGymEff[mostEff].efficiency;
 
 	const ShieldGym = {
 		name: name,
