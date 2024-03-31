@@ -318,7 +318,7 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	return health;
 }
 
-function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldType(), extraGyms = 0) {
+function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldType(), extraGyms = 0, extraItem = new ExtraItem()) {
 	if (game.global.universe === 2) return 0;
 
 	let block = 0;
@@ -342,7 +342,16 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 	if (owned > 0) block += owned * increaseBy;
 
 	const shield = game.equipment.Shield;
-	if (shield.blockNow && shield.level > 0) block += shield.level * shield.blockCalculated;
+
+	if (shield.blockNow) {
+		if (extraItem.name === 'Shield') {
+			const level = extraItem.extraLevels + (extraItem.shouldPrestige ? 1 : shield.level);
+			const prestigeLevel = shield.prestige + (extraItem.shouldPrestige ? 0 : -1);
+			const newStatsPerLevel = Math.round(shield.block * Math.pow(1.19, prestigeLevel * game.global.prestige['block'] + 1));
+			block += level * newStatsPerLevel;
+		}
+		else block += shield.level * shield.blockCalculated;
+	}
 
 	const trainer = game.jobs.Trainer;
 	if (trainer.owned > 0) {
@@ -1020,7 +1029,7 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 
 	const health = calcOurHealth(false, worldType, false, true, extraItem) / formationMod;
-	const block = calcOurBlock(false, false, worldType, extraGyms) / formationMod;
+	const block = calcOurBlock(false, false, worldType, extraGyms, extraItem) / formationMod;
 	const equality = equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', null, hitsToSurvive);
 	let damageMult = 1;
 
