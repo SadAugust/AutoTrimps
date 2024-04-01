@@ -4073,7 +4073,15 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 		willSurvive = enoughHealth(mapOwned, 'avg');
 	}
 
-	const needPrestiges = prestigesToGet(game.global.world - Math.max(mapLevel, mapBonusLevel))[0] !== 0 && prestigesUnboughtCount() === 0;
+	const mapBonusActualLevel = game.global.world - Math.max(mapLevel, mapBonusLevel);
+	const prestigesAvailable = prestigesToGet(mapBonusActualLevel);
+	let needPrestiges = prestigesAvailable[0] !== 0 && prestigesUnboughtCount() === 0;
+	if (needPrestiges && game.global.mapsActive) {
+		const mapObj = getCurrentMapObject();
+		const shouldRepeat = mapObj.level >= mapBonusActualLevel && (mapsToRun[1] <= 1 || (mapObj.bonus === 'p' && mapsToRun[1] <= 2));
+		if (!shouldRepeat) needPrestiges = false;
+	}
+
 	const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapLevel > (mapBonusMinSetting > 0 ? -mapBonusMinSetting - Math.abs(mapBonusLevel) : mapLevel - 1);
 	const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && getCurrentMapObject().level >= mapBonusLevel;
 	const mapBonusMinLevel = (needPrestiges || aboveMinMapLevel) && !willCapMapBonus && willSurvive;
