@@ -736,6 +736,85 @@ function updateATVersion() {
 		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 		const versionNumber = autoTrimpSettings['ATversion'].split('v')[1];
 
+		if (versionNumber < '6.3.29') {
+			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+
+			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+
+			for (let item in u1Settings) {
+				if (typeof tempSettings[u1Settings[item] + 'DefaultSettings'] !== 'undefined') {
+					autoTrimpSettings[u1Settings[item] + 'Settings'].value.unshift(tempSettings[u1Settings[item] + 'DefaultSettings'].value);
+				}
+			}
+
+			for (let item in u2Settings) {
+				if (typeof tempSettings[u2Settings[item] + 'DefaultSettings'] !== 'undefined') {
+					autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.unshift(tempSettings[u2Settings[item] + 'DefaultSettings'].valueU2);
+				}
+			}
+		}
+
+		if (versionNumber < '6.3.36') {
+			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
+				autoTrimpSettings.uniqueMapSettingsArray.valueU2['Big_Wall'] = {
+					enabled: false,
+					zone: 100,
+					cell: 0
+				};
+			}
+		}
+
+		//Converting addonUser saves variable to object and storing farming settings .done stuff in it
+		if (versionNumber < '6.3.37') {
+			var obj = [];
+			for (var x = 0; x < 30; x++) {
+				obj[x] = {};
+				obj[x].done = '';
+			}
+
+			if (typeof game.global.addonUser !== 'object') game.global.addonUser = {};
+
+			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
+
+			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
+
+			for (var item in u1Settings) {
+				if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u1Settings[item] + 'Settings'] = {};
+
+				var obj = [];
+				for (var x = 0; x < 30; x++) {
+					obj[x] = {};
+					obj[x].done = '';
+				}
+				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
+
+				if (typeof autoTrimpSettings[u1Settings[item] + 'Settings'].value[0] !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
+						autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
+					}
+				}
+			}
+
+			for (var item in u2Settings) {
+				if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u2Settings[item] + 'Settings'] = {};
+				var obj = [];
+				for (var x = 0; x < 30; x++) {
+					obj[x] = {};
+					obj[x].done = '';
+				}
+				game.global.addonUser[u2Settings[item] + 'Settings'].value = obj;
+
+				if (typeof autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0] !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
+						autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[y].row = y;
+					}
+				}
+			}
+		}
+		if (versionNumber < '6.3.38') {
+			setupAddonUser();
+		}
+
 		if (versionNumber < '6.4.09') {
 			if (typeof tempSettings['heHrDontPortalBefore'] !== 'undefined') {
 				autoTrimpSettings.heliumHrDontPortalBefore.value = tempSettings.heHrDontPortalBefore.value;
@@ -767,6 +846,21 @@ function updateATVersion() {
 				autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 2 : 0;
 				autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 2 : 0;
 			}
+		}
+
+		if (versionNumber < '6.5.13') {
+			const values = ['value', 'valueU2'];
+			for (let z = 0; z < values.length; z++) {
+				const incrementMaps = tempSettings['raidingSettings'][values[z]][0] && tempSettings['raidingSettings'][values[z]][0].incrementMaps;
+				if (typeof tempSettings['raidingSettings'][values[z]][0] !== 'undefined') {
+					for (let y = 1; y < tempSettings['raidingSettings'][values[z]].length; y++) {
+						const currSetting = tempSettings['raidingSettings'][values[z]][y];
+						autoTrimpSettings['raidingSettings'][values[z]][y].incrementMaps = incrementMaps;
+						autoTrimpSettings['raidingSettings'][values[z]][y].raidingzone = (currSetting.raidingzone - currSetting.world).toString();
+					}
+				}
+			}
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.15') {
