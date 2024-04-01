@@ -176,7 +176,17 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 
 //Looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one
 function shouldFarmMapCreation(level, special, biome) {
-	const mapCheck = findMap(level, special, biome);
+	let mapCheck = findMap(level, special, biome);
+
+	if (!mapCheck) {
+		const simulatedPurchase = _simulateSliders(level, special, biome);
+
+		if (simulatedPurchase.biome === biome && simulatedPurchase.special === special && simulatedPurchase.level === level) {
+			return 'create';
+		} else {
+			mapCheck = findMap(level, '0', 'Random');
+		}
+	}
 
 	if (mapCheck) return mapCheck;
 	else return 'create';
