@@ -4737,7 +4737,7 @@ function settingChanged(id, currUniverse) {
 		const enabled = `enabled${valueSuffix}`;
 		btn[enabled] = !btn[enabled];
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
-		if (id === 'displayHeHr') document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
+		if (id === 'displayHeHr') document.getElementById('heHrStatus').style.display = btn[enabled] ? 'block' : 'none';
 		if (booleanActions[id] && updateUI) booleanActions[id]();
 	}
 
@@ -5382,14 +5382,14 @@ function _createStatusTextbox() {
 }
 
 function _createResourcePerHourContainer() {
-	if (document.getElementById('hiderStatus') !== null) return;
+	if (document.getElementById('heHrStatus') !== null) return;
 
 	const fightButtonCol = document.getElementById('battleBtnsColumn');
 
 	const resourcePerHourContainer = _createElement('DIV', {
 		style: 'display: ' + (getPageSetting('displayHeHr') ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);',
 		onmouseout: 'tooltip("hide")',
-		id: 'hiderStatus'
+		id: 'heHrStatus'
 	});
 
 	fightButtonCol.appendChild(resourcePerHourContainer);

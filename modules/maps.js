@@ -50,24 +50,29 @@ function autoMapsStatus(get) {
 		document.getElementById(id).setAttribute('onmouseover', makeAutomapStatusTooltip(true));
 	}
 
+	const timeWarpUpdate = !usingRealTimeOffline || getPageSetting('timeWarpDisplay');
+
 	//Set auto maps status when outside of TW
-	if ((!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('autoMapStatus') !== null) {
-		if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
-		document.getElementById('autoMapStatus').setAttribute('onmouseover', makeAutomapStatusTooltip(true));
-	}
+	if (timeWarpUpdate) {
+		const autoMapsElem = document.getElementById('autoMapStatus');
+		if (autoMapsElem !== null) {
+			if (autoMapsElem.innerHTML !== status) autoMapsElem.innerHTML = status;
+			autoMapsElem.setAttribute('onmouseover', makeAutomapStatusTooltip(true));
+		}
 
-	//Set hider (he/hr) status when outside of TW
-	if (getPageSetting('displayHeHr') && (!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('hiderStatus') !== null) {
-		let hiderStatus = resourceShortened + '/hr: ' + (getPercent > 0 ? getPercent.toFixed(3) : 0) + '%<br>&nbsp;&nbsp;&nbsp;' + resourceShortened + ': ' + (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
-		if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
-		document.getElementById('hiderStatus').setAttribute('onmouseover', makeResourceTooltip(true));
-	}
+		const heHrElem = document.getElementById('heHrStatus');
+		if (getPageSetting('displayHeHr') && heHrElem !== null) {
+			let heHrStatus = resourceShortened + '/hr: ' + (getPercent > 0 ? getPercent.toFixed(3) : 0) + '%<br>&nbsp;&nbsp;&nbsp;' + resourceShortened + ': ' + (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
+			if (heHrElem.innerHTML !== heHrStatus) heHrElem.innerHTML = heHrStatus;
+			heHrElem.setAttribute('onmouseover', makeResourceTooltip(true));
+		}
 
-	//Additional Info tooltip
-	if ((!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('additionalInfo') !== null) {
-		let infoStatus = makeAdditionalInfo();
-		if (document.getElementById('additionalInfo').innerHTML !== infoStatus) document.getElementById('additionalInfo').innerHTML = infoStatus;
-		document.getElementById('additionalInfo').parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
+		const infoElem = document.getElementById('additionalInfo');
+		if (infoElem !== null) {
+			let infoStatus = makeAdditionalInfo();
+			if (infoElem.innerHTML !== infoStatus) infoElem.innerHTML = infoStatus;
+			infoElem.parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
+		}
 	}
 }
 
@@ -84,6 +89,7 @@ function makeAutomapStatusTooltip(mouseover) {
 	if (mouseover) {
 		tooltipText = 'tooltip(' + '"Automaps Status", ' + '"customText", ' + 'event, ' + '"';
 	}
+
 	tooltipText += 'Variables that control the current state and target of Automaps.<br>' + 'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' + 'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>';
 	if (game.global.universe === 2) {
 		if (!game.portal.Equality.radLocked)
@@ -133,6 +139,7 @@ function makeResourceTooltip(mouseover) {
 	if (mouseover) {
 		tooltipText = 'tooltip(' + `\"${resource} per hour Info\",` + '"customText", ' + 'event, ' + '"';
 	}
+
 	tooltipText += `<b>${resource} per hour</b>: ${resourceHrMsg}<br>` + `Current ${resource} per hour % out of Lifetime ${resourceHr} (not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>` + `<b>${resource}</b>: ${lifeTimeMsg}<br>` + `Current run total ${resource} / earned / lifetime ${resourceHr} (not including current)<br>`;
 
 	if (trimpStats.isDaily) {
@@ -179,7 +186,7 @@ function shouldFarmMapCreation(level, special, biome) {
 	let mapCheck = findMap(level, special, biome);
 
 	if (!mapCheck) {
-		const simulatedPurchase = _simulateSliders(level, special, biome);
+		const simulatedPurchase = _simulateSliders(level + game.global.world, special, biome);
 
 		if (simulatedPurchase.biome === biome && simulatedPurchase.special === special && simulatedPurchase.level === level) {
 			return 'create';
@@ -222,7 +229,7 @@ function decaySkipMaps() {
 }
 
 function _leadDisableMapping() {
-	if (!challengeActive('Lead') || !getPageSetting('lead') || game.global.spireActive) return false;
+	if (game.global.spireActive || !challengeActive('Lead') || !getPageSetting('lead')) return false;
 
 	const oddZone = game.global.world % 2 !== 0;
 	const aboveCell90 = game.global.lastClearedCell + 2 > 90 || liquifiedZone();
@@ -481,14 +488,13 @@ function _setMapRepeat() {
 	if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding' || (mapSettings.mapName === 'Quagmire Farm' && mapObj.name === 'The Black Bog')) {
 		if (!game.global.repeatMap) repeatClicked();
 
+		let repeatSetting = 0; /* Repeat Forever */
 		if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
-			//Changing repeat setting to Repeat For Items if Presitge or Bionic Raiding, otherwise set to Repeat Forever
-			if (game.options.menu.repeatUntil.enabled !== 2) {
-				game.options.menu.repeatUntil.enabled = 2;
-				toggleSetting('repeatUntil', null, false, true);
-			}
-		} else if (game.options.menu.repeatUntil.enabled !== 0) {
-			game.options.menu.repeatUntil.enabled = 0;
+			repeatSetting = 2; /* Repeat for Items */
+		}
+
+		if (game.options.menu.repeatUntil.enabled !== repeatSetting) {
+			game.options.menu.repeatUntil.enabled = repeatSetting;
 			toggleSetting('repeatUntil', null, false, true);
 		}
 
@@ -503,10 +509,12 @@ function _setMapRepeat() {
 				if (!mapSettings.repeat) repeatClicked();
 			} else {
 				const mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
-				const mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
+				const mapSpecial = typeof mapSettings.special !== 'undefined' || mapSettings.special === '0' ? mapObj.bonus : mapSettings.special;
 				const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 
-				if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special || mapBiome !== mapSettings.biome) {
+				if (!mapSettings.repeat) {
+					repeatClicked();
+				} else if (mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special || mapBiome !== mapSettings.biome) {
 					const simulatedPurchase = _simulateSliders(mapLevel, mapSpecial, mapBiome);
 					if (simulatedPurchase.biome === mapBiome && simulatedPurchase.special === mapSpecial && simulatedPurchase.level === mapLevel) {
 						repeatClicked();
@@ -537,7 +545,6 @@ function _purchaseMap(lowestMap) {
 }
 
 function _autoMapsCreate(mapObj) {
-	//Recycling maps below world level if 95 or more are owned as the cap is 100.
 	const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 	if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
 
