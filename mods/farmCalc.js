@@ -846,14 +846,14 @@ function get_best(results, fragmentCheck, mapModifiers) {
 		for (let i = 0; i <= stats.length - 1; i++) {
 			if (fragSetting) {
 				if (runningAutoTrimps && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
-				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+				if (fragments >= mapCost(stats[i].level, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			}
 
 			if (!fragSetting) {
 				if (runningAutoTrimps && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
 				const simulatedSliders = _simulateSliders(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome);
 				const { loot, size, difficulty } = simulatedSliders.sliders;
-				if (fragments >= mapCost(simulatedSliders.mapLevel, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;
+				if (fragments >= mapCost(simulatedSliders.level, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;
 			}
 			stats.splice(i, 1);
 			i--;
