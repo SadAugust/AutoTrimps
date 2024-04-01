@@ -169,7 +169,8 @@ function _equalityManagementBasic() {
 	} else {
 		if (game.portal.Equality.scalingActive) {
 			game.portal.Equality.scalingActive = false;
-			_setEquality(0);
+			manageEqualityStacks();
+			updateEqualityScaling();
 		}
 	}
 }
