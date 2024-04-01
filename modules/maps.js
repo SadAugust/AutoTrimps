@@ -504,7 +504,14 @@ function _setMapRepeat() {
 			} else {
 				const mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
 				const mapSpecial = typeof mapSettings.special !== 'undefined' && mapSettings.special !== '0' ? mapObj.bonus : mapSettings.special;
-				if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();
+				const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
+
+				if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special || mapBiome !== mapSettings.biome) {
+					const simulatedPurchase = _simulateSliders(mapLevel, mapSpecial, mapBiome);
+					if (simulatedPurchase.biome === mapBiome && simulatedPurchase.special === mapSpecial && simulatedPurchase.level === mapLevel) {
+						repeatClicked();
+					}
+				}
 			}
 		}
 	} else if (game.global.repeatMap) {
