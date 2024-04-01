@@ -769,21 +769,6 @@ function updateATVersion() {
 			}
 		}
 
-		if (versionNumber < '6.5.13') {
-			const values = ['value', 'valueU2'];
-			for (let z = 0; z < values.length; z++) {
-				const incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
-				if (typeof tempSettings['raidingSettings'][values[z]][0] !== 'undefined') {
-					for (let y = 1; y < tempSettings['raidingSettings'][values[z]].length; y++) {
-						const currSetting = tempSettings['raidingSettings'][values[z]][y];
-						autoTrimpSettings['raidingSettings'][values[z]][y].incrementMaps = incrementMaps;
-						autoTrimpSettings['raidingSettings'][values[z]][y].raidingzone = (currSetting.raidingzone - currSetting.world).toString();
-					}
-				}
-			}
-			saveSettings();
-		}
-
 		if (versionNumber < '6.5.15') {
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				const currTrimple = tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
