@@ -4087,7 +4087,7 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 				const [prestigesToFarm, mapsToRun] = prestigesToGet(game.global.world + mapBonusLevel);
 				let shouldRepeat = mapObj.level >= game.global.world + mapBonusLevel;
 				if (shouldRepeat) {
-					shouldRepeat = mapsToRun <= 1 || (mapObj.bonus === 'p' && mapsToRun <= 2);
+					shouldRepeat = mapsToRun > 1 || (mapObj.bonus === 'p' && mapsToRun > 2);
 					/* if (!shouldRepeat && mapBonusMinLevel !== mapBonusLevel && prestigesAvailable !== prestigesToFarm) {
 						while (mapBonusLevel !== mapBonusMinLevel && prestigesToGet(game.global.world + mapBonusLevel + 1)[0] === prestigesToFarm) {
 							mapBonusLevel++;
