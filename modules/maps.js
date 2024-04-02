@@ -188,7 +188,7 @@ function shouldFarmMapCreation(level, special, biome) {
 	if (!mapCheck) {
 		const simulatedPurchase = _simulateSliders(level + game.global.world, special, biome);
 
-		if (simulatedPurchase.biome === biome && simulatedPurchase.special === special && simulatedPurchase.level === level) {
+		if (simulatedPurchase.location === biome && simulatedPurchase.special === special && simulatedPurchase.mapLevel === level) {
 			return 'create';
 		} else {
 			mapCheck = findMap(level, '0', 'Random');
@@ -510,13 +510,13 @@ function _setMapRepeat() {
 			} else {
 				const mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
 				const mapSpecial = typeof mapSettings.special !== 'undefined' || mapSettings.special === '0' ? mapObj.bonus : mapSettings.special;
-				const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
+				const mapBiome = typeof mapSettings.biome !== 'undefined' || mapSettings.biome === 'Any' ? mapObj.location : getBiome();
 
 				if (!mapSettings.repeat) {
 					repeatClicked();
 				} else if (mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special || mapBiome !== mapSettings.biome) {
-					const simulatedPurchase = _simulateSliders(mapLevel, mapSpecial, mapBiome);
-					if (simulatedPurchase.biome === mapBiome && simulatedPurchase.special === mapSpecial && simulatedPurchase.level === mapLevel) {
+					const simulatedPurchase = _simulateSliders(mapSettings.mapLevel + game.global.world, mapSettings.special, mapSettings.biome);
+					if (simulatedPurchase.special === mapSettings.special && simulatedPurchase.mapLevel === mapSettings.mapLevel && simulatedPurchase.location === mapSettings.biome) {
 						repeatClicked();
 					}
 				}
