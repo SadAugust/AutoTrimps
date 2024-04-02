@@ -119,11 +119,11 @@ function breedTotalTime() {
 	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
 }
 
-function _breedTotalTime(extraTrimps = 0, extraNurseries = 0) {
+function _breedTotalTime() {
 	const trimps = game.resources.trimps;
-	const trimpsMax = trimps.realMax() + extraTrimps;
+	const trimpsMax = trimps.realMax();
 
-	const maxBreedable = trimpsMax - trimpsEffectivelyEmployed(extraTrimps);
+	const maxBreedable = trimpsMax - trimpsEffectivelyEmployed();
 	const breeding = maxBreedable - trimps.getCurrentSend();
 
 	return Math.log10(maxBreedable / breeding) / Math.log10(_getPotencyMod()) / 10;
