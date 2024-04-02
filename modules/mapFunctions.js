@@ -4077,11 +4077,11 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 
 		if (needPrestiges) {
 			/* Reduce map level zone to the value of the last prestige item we need to farm */
-			/* if (mapName !== 'Map Bonus'  && getPageSetting('mapBonusPrestige') ) {
+			if (mapName !== 'Map Bonus'  && getPageSetting('mapBonusPrestige') ) {
 				while (mapLevel !== mapBonusLevel && prestigesToGet(game.global.world + mapBonusLevel - 1)[0] > 0) {
 					mapBonusLevel--;
 				}
-			} */
+			}
 
 			if (game.global.mapsActive) {
 				const [prestigesToFarm, mapsToRun] = prestigesToGet(game.global.world + mapBonusLevel);
@@ -4089,12 +4089,12 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 
 				if (shouldRepeat) {
 					shouldRepeat = mapsToRun > 1 || (mapObj.bonus === 'p' && mapsToRun > 2);
-					/* if (!shouldRepeat && mapBonusMinLevel !== mapBonusLevel && prestigesAvailable !== prestigesToFarm) {
+					if (!shouldRepeat && mapBonusMinLevel !== mapBonusLevel && prestigesAvailable !== prestigesToFarm) {
 						while (mapBonusLevel !== mapBonusMinLevel && prestigesToGet(game.global.world + mapBonusLevel + 1)[0] === prestigesToFarm) {
 							mapBonusLevel++;
 						}
 						shouldRepeat = true;
-					} */
+					}
 					if (!shouldRepeat) needPrestiges = false;
 				}
 			}
