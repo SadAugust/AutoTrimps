@@ -331,37 +331,36 @@ function mainLoop() {
 	if (!atSettings.running || getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 
 	const runDuringTimeWarp = shouldRunInTimeWarp();
-	if (runDuringTimeWarp) updateInterval();
-
-	_handleIntervals();
-
 	if (runDuringTimeWarp) {
+		updateInterval();
 		mainCleanup();
-		farmingDecision();
 	}
 
 	if (_handleSlowScumming()) return;
 
-	if (runDuringTimeWarp) {
-		autoMaps();
-		autoMapsStatus();
-	}
+	boneShrine();
+
+	buyUpgrades();
+	buyBuildings();
+	autoEquip();
+	buyJobs();
+	if (game.global.universe === 1) geneAssist();
+	autoGoldUpgrades();
 
 	autoGather();
-	buyBuildings();
-	buyJobs();
-	buyUpgrades();
-	heirloomSwapping();
-	callBetterAutoFight();
-	boneShrine();
-	autoGoldUpgrades();
-	autoEquip();
+
+	_handleIntervals();
 
 	if (runDuringTimeWarp) {
-		autoPortalCheck();
+		farmingDecision();
+		autoMaps();
+		autoMapsStatus();
 		displayMostEfficientBuilding();
 		displayMostEfficientEquipment();
 	}
+
+	heirloomSwapping();
+	callBetterAutoFight();
 
 	mainLoopU1();
 	mainLoopU2();
@@ -369,13 +368,14 @@ function mainLoop() {
 	/* automateSpireAssault(); */
 	_handlePopupTimer();
 	makeAdditionalInfo();
+
+	if (runDuringTimeWarp) autoPortalCheck();
 }
 
 //U1 functions
 function mainLoopU1() {
 	if (game.global.universe !== 1) return;
 
-	geneAssist();
 	autoRoboTrimp();
 	autoEnlight();
 	autoNatureTokens();

@@ -1236,7 +1236,7 @@ function prestigeClimb(lineCheck) {
 	const [prestigeToFarmFor, mapsToRun] = prestigesToGet(game.global.world, targetPrestige);
 
 	let mapLevel = 0;
-	while (prestigeToFarmFor > 0 && prestigeToFarmFor === prestigesToGet(mapLevel - 1, targetPrestige)[0]) {
+	while (prestigeToFarmFor > 0 && prestigeToFarmFor === prestigesToGet(game.global.world + mapLevel - 1, targetPrestige)[0]) {
 		mapLevel--;
 	}
 
@@ -3936,7 +3936,9 @@ function slowScum(slowTarget) {
 
 	const maxSlowCells = Math.ceil(map.size / 2);
 	let slowCellTarget = Math.ceil(Math.min(slowTarget || maxSlowCells, maxSlowCells));
-	if (challengeActive('Desolation')) slowCellTarget = 9;
+
+	const runningDeso = challengeActive('Desolation');
+	if (runningDeso) slowCellTarget = 9;
 
 	let firstCellSlow = false;
 	let slowCount = 0;
@@ -3946,7 +3948,7 @@ function slowScum(slowTarget) {
 	MODULES.maps.slowScumming = true;
 	console.time();
 
-	const impArray = trimpStats.currChallenge === 'Desolation' ? MODULES.fightinfo.exoticImps : MODULES.fightinfo.fastImps;
+	const impArray = runningDeso ? MODULES.fightinfo.exoticImps : MODULES.fightinfo.fastImps;
 
 	let i = 0;
 	//Repeats the process of exiting and re-entering maps until the first cell is slow and you have desired slow cell count on odd cells!
@@ -4061,36 +4063,55 @@ function getEnoughHealthMap(mapLevel, special, biome) {
 }
 
 function autoLevelOverides(mapName, mapLevel, mapModifiers) {
-	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
-	const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
-	``;
+	let mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
+	const checkMapBonus = mapLevel < mapBonusLevel && (mapName === 'Map Bonus' || (mapName === 'HD Farm' && game.global.mapBonus !== 10) || (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
+	let forceMapBonus = true;
+	let canAffordMap = true;
 
-	let willSurvive = true;
-	if (game.global.universe === 1) {
-		const minMapLevel = Math.max(mapLevel, mapBonusLevel);
-		const mapOwned = getEnoughHealthMap(minMapLevel, mapModifiers.special, mapModifiers.biome);
+	if (checkMapBonus) {
+		const mapObj = game.global.mapsActive ? getCurrentMapObject() : null;
+		const mapBonusMinLevel = mapBonusLevel;
+		const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
+		const [prestigesAvailable] = prestigesToGet(game.global.world + mapBonusLevel);
+		let needPrestiges = prestigesAvailable !== 0 && prestigesUnboughtCount() === 0;
 
-		willSurvive = enoughHealth(mapOwned, 'avg');
+		if (needPrestiges) {
+			/* Reduce map level zone to the value of the last prestige item we need to farm */
+			/* if (mapName !== 'Map Bonus'  && getPageSetting('mapBonusPrestige') ) {
+				while (mapLevel !== mapBonusLevel && prestigesToGet(game.global.world + mapBonusLevel - 1)[0] > 0) {
+					mapBonusLevel--;
+				}
+			} */
+
+			if (game.global.mapsActive) {
+				const [prestigesToFarm, mapsToRun] = prestigesToGet(game.global.world + mapBonusLevel);
+				let shouldRepeat = mapObj.level >= game.global.world + mapBonusLevel;
+				if (shouldRepeat) {
+					shouldRepeat = mapsToRun <= 1 || (mapObj.bonus === 'p' && mapsToRun <= 2);
+					/* if (!shouldRepeat && mapBonusMinLevel !== mapBonusLevel && prestigesAvailable !== prestigesToFarm) {
+						while (mapBonusLevel !== mapBonusMinLevel && prestigesToGet(game.global.world + mapBonusLevel + 1)[0] === prestigesToFarm) {
+							mapBonusLevel++;
+						}
+						shouldRepeat = true;
+					} */
+					if (!shouldRepeat) needPrestiges = false;
+				}
+			}
+		}
+		const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapLevel > -mapBonusMinSetting - Math.abs(mapBonusLevel);
+		const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && mapObj.level >= mapBonusMinLevel;
+		forceMapBonus = (needPrestiges || aboveMinMapLevel) && !willCapMapBonus;
+		canAffordMap = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
+		if (game.global.universe === 1 && forceMapBonus) {
+			const mapOwned = getEnoughHealthMap(mapBonusLevel, mapModifiers.special, mapModifiers.biome);
+			forceMapBonus = enoughHealth(mapOwned, 'avg');
+		}
 	}
-
-	const mapBonusActualLevel = game.global.world - Math.max(mapLevel, mapBonusLevel);
-	const prestigesAvailable = prestigesToGet(mapBonusActualLevel);
-	let needPrestiges = prestigesAvailable[0] !== 0 && prestigesUnboughtCount() === 0;
-	if (needPrestiges && game.global.mapsActive) {
-		const mapObj = getCurrentMapObject();
-		const shouldRepeat = mapObj.level >= mapBonusActualLevel && (mapsToRun[1] <= 1 || (mapObj.bonus === 'p' && mapsToRun[1] <= 2));
-		if (!shouldRepeat) needPrestiges = false;
-	}
-
-	const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapLevel > (mapBonusMinSetting > 0 ? -mapBonusMinSetting - Math.abs(mapBonusLevel) : mapLevel - 1);
-	const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && getCurrentMapObject().level >= mapBonusLevel;
-	const mapBonusMinLevel = (needPrestiges || aboveMinMapLevel) && !willCapMapBonus && willSurvive;
-	const canAffordMap = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
 
 	const mapBonusConditions = [
-		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && mapBonusMinLevel, level: mapBonusLevel },
-		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapBonusMinLevel && canAffordMap, level: mapBonusLevel },
-		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapBonusMinLevel && canAffordMap, level: mapBonusLevel },
+		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && forceMapBonus, level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && forceMapBonus && canAffordMap, level: mapBonusLevel },
+		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && forceMapBonus && canAffordMap, level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
 		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },

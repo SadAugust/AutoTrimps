@@ -164,7 +164,7 @@ function prestigesToGet(targetZone = game.global.world, targetPrestige = 'Gambes
 	let prestigeToFarmFor = 0;
 
 	const hasSciFour = (game.global.universe === 1 && game.global.sLevel >= 4) || (game.global.universe === 2 && game.buildings.Microchip.owned >= 4);
-	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;
+	const prestigeInterval = !hasSciFour || challengeActive('Mapology') ? 5 : 10;
 
 	for (const p of prestigeList) {
 		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
