@@ -522,7 +522,6 @@ function _setMapRepeat() {
 				} else if (level !== mapLevel || (mapSpecial && mapSpecial !== special) || mapBiome !== biome) {
 					simulatedPurchase = _simulateSliders(mapLevel + game.global.world, special, biome);
 					if (simulatedPurchase.special === special && simulatedPurchase.mapLevel === mapLevel && simulatedPurchase.location === biome) {
-						console.log('here');
 						repeatClicked();
 					}
 				}
