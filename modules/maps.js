@@ -157,7 +157,7 @@ function makeResourceTooltip(mouseover) {
 	}
 }
 
-function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBiome(), perfect = getPageSetting('onlyPerfectMaps')) {
+function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBiome(), perfect = getPageSetting('onlyPerfectMaps'), isTricky = false) {
 	let sendTricky = false;
 	let mapLoot = biome === 'Farmlands' ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
 	if (game.singleRunBonuses.goldMaps.owned) mapLoot += 1;
@@ -178,6 +178,7 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 		else return map.id;
 	}
 
+	if (isTricky && sendTricky) return 'Tricky Paradise';
 	return sendTricky;
 }
 
@@ -508,15 +509,20 @@ function _setMapRepeat() {
 			if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
 				if (!mapSettings.repeat) repeatClicked();
 			} else {
-				const mapLevel = typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
-				const mapSpecial = typeof mapSettings.special !== 'undefined' || mapSettings.special === '0' ? mapObj.bonus : mapSettings.special;
-				const mapBiome = typeof mapSettings.biome !== 'undefined' || mapSettings.biome === 'Any' ? mapObj.location : getBiome();
+				let { mapLevel, special, biome } = mapSettings;
+				const level = typeof mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapLevel;
+				const mapSpecial = typeof special !== 'undefined' || special === '0' ? mapObj.bonus : special;
+				let mapBiome = typeof biome !== 'undefined' || biome === 'Any' ? mapObj.location : getBiome();
+				if (game.global.world + mapLevel === 6 && findMap(mapLevel, special, biome, undefined, true) === 'Tricky Paradise') {
+					mapBiome = biome = 'Plentiful';
+				}
 
 				if (!mapSettings.repeat) {
 					repeatClicked();
-				} else if (mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special || mapBiome !== mapSettings.biome) {
-					const simulatedPurchase = _simulateSliders(mapSettings.mapLevel + game.global.world, mapSettings.special, mapSettings.biome);
-					if (simulatedPurchase.special === mapSettings.special && simulatedPurchase.mapLevel === mapSettings.mapLevel && simulatedPurchase.location === mapSettings.biome) {
+				} else if (level !== mapLevel || (mapSpecial && mapSpecial !== special) || mapBiome !== biome) {
+					simulatedPurchase = _simulateSliders(mapLevel + game.global.world, special, biome);
+					if (simulatedPurchase.special === special && simulatedPurchase.mapLevel === mapLevel && simulatedPurchase.location === biome) {
+						console.log('here');
 						repeatClicked();
 					}
 				}
