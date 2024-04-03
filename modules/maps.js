@@ -509,19 +509,17 @@ function _setMapRepeat() {
 			if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
 				if (!mapSettings.repeat) repeatClicked();
 			} else {
-				let { mapLevel, special, biome } = mapSettings;
-				if (!biome) biome = getBiome();
+				const { mapLevel, special, biome = getBiome() } = mapSettings;
+				const runTricky = game.global.world + mapLevel === 6 && findMap(mapLevel, special, biome, undefined, true) === 'Tricky Paradise';
 
-				const level = typeof mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapLevel;
-				const mapSpecial = typeof special !== 'undefined' || special === '0' ? mapObj.bonus : special;
-				let mapBiome = typeof biome !== 'undefined' || biome === 'Any' ? mapObj.location : getBiome();
-				if (game.global.world + mapLevel === 6 && findMap(mapLevel, special, biome, undefined, true) === 'Tricky Paradise') {
-					mapBiome = biome = 'Plentiful';
-				}
+				const level = mapLevel !== undefined ? mapObj.level - game.global.world : mapLevel;
+				const mapSpecial = special !== undefined || special === '0' ? mapObj.bonus : special;
+				const mapBiome = mapObj.location;
+				const isBiomeDifferent = mapBiome !== biome && !runTricky && !['Any', 'Random'].includes(biome);
 
 				if (!mapSettings.repeat) {
 					repeatClicked();
-				} else if (level !== mapLevel || (mapSpecial && mapSpecial !== special) || (mapBiome !== biome && biome !== 'Any')) {
+				} else if (level !== mapLevel || (mapSpecial && mapSpecial !== special) || isBiomeDifferent) {
 					simulatedPurchase = _simulateSliders(mapLevel + game.global.world, special, biome);
 					if (simulatedPurchase.special === special && simulatedPurchase.mapLevel === mapLevel && simulatedPurchase.location === biome) {
 						repeatClicked();

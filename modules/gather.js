@@ -41,7 +41,7 @@ function _trapSize() {
 }
 
 function _calcTrapsToFullArmy() {
-	return Math.ceil(game.resources.trimps.maxSoldiers / _trapSize()) - 1;
+	return Math.ceil(game.resources.trimps.maxSoldiers / _trapSize());
 }
 
 function _calcTPS() {

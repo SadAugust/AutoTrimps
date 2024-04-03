@@ -34,8 +34,8 @@ function _betterAutoFightVanilla() {
 	if (game.global.world === 1 && !game.global.fighting && game.resources.trimps.owned === game.resources.trimps.realMax()) battle(true);
 }
 
-// Suicides trimps if we don't have max anticipation stacks and sending a new army would give us max stacks.
-// Doesn't do this inside of void maps OR spires.
+/* 	Suicides trimps if we don't have max anticipation stacks and sending a new army would give us max stacks.
+	Doesn't do this inside of void maps OR spires. */
 function _trimpicide() {
 	if (game.global.universe !== 1 || game.portal.Anticipation.level === 0) return;
 	if (!game.global.fighting || !getPageSetting('ForceAbandon')) return;
@@ -84,7 +84,6 @@ function _armyDeath() {
 
 	if (!runningDaily || (runningDaily && typeof dailyChallenge.empower === 'undefined')) return false;
 
-	//Trimps Stats
 	let ourHealth = game.global.soldierHealth;
 	let block = game.global.soldierCurrentBlock;
 	if (game.global.formation !== 0) block = game.global.formation === 3 ? (block /= 4) : (block *= 2);
@@ -120,7 +119,6 @@ function _armyDeath() {
 	return ourHealth - enemyAttack <= 0;
 }
 
-// Suicides army to avoid empower stacks if the next enemy attack would kill us.
 function _avoidEmpower() {
 	if (!_armyDeath()) return;
 
@@ -336,7 +334,6 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax) {
 
 	if (runningTrappa || runningArchaeology || runningBerserk) return ourHealth;
 
-	// Suicide army to reset health if it isn't efficient to keep it alive any longer.
 	const armyReady = newArmyRdy() || getPageSetting('heirloomBreed') !== 'undefined';
 	const isDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;

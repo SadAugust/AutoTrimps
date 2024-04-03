@@ -29,16 +29,13 @@ function runPerky() {
 }
 
 function allocatePerky() {
-	//Enable Fluffy xp input when it's not active.
 	const xpDivStyle = document.querySelector('#weight-xpDiv').style;
 	if (game.global.spiresCompleted >= 2 && xpDivStyle.display !== 'inline') xpDivStyle.display = 'inline';
 
-	//Generate perk string
 	const perks = optimize();
 	for (let name in perks) perks[name] = perks[name].level;
 	const perkString = LZString.compressToBase64(JSON.stringify(perks));
 
-	//Bring up import window if it's not already up and import perk string.
 	tooltip('Import Perks', null, 'update');
 	document.getElementById('perkImportBox').value = perkString;
 	importPerks();

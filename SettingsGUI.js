@@ -136,7 +136,6 @@ function _maximizeAllTabs() {
 
 // prettier-ignore
 function initialiseAllSettings() {
-	//Core
 	const displayCore = true;
 	if (displayCore) {
 		createSetting('gatherType',
@@ -303,7 +302,6 @@ function initialiseAllSettings() {
 		$universeSetting.parentNode.style.setProperty('margin-right', '1.1vw');
 		$universeSetting.parentNode.style.setProperty('margin-left', '0');
 
-		//Auto Portal
 		createSetting('autoPortal',
 			function () { return ('Auto Portal') },
 			function () {
@@ -445,7 +443,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Core', [1, 2],
 			function () { return (Fluffy.checkU2Allowed()) });
 
-		//Pause + Switch
 		createSetting('pauseScript',
 			function () { return ('Pause AutoTrimps') },
 			function () {
@@ -472,10 +469,7 @@ function initialiseAllSettings() {
 		$eggSettings.parentNode.style.setProperty('margin-right', '1vw');
 		$eggSettings.parentNode.style.setProperty('margin-left', '0');
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Jobs
+	
 	const displayJobs = true;
 	if (displayJobs) {
 		createSetting('jobType',
@@ -506,10 +500,7 @@ function initialiseAllSettings() {
 			NoLumberjacks: { enabled: false }
 		}, null, 'Jobs', [1, 2],
 			function () { return false });
-
-		//----------------------------------------------------------------------------------------------------------------------
-
-		//ATGA
+			
 		createSetting('geneAssist',
 			function () { return ('Gene Assist') },
 			function () {
@@ -574,7 +565,6 @@ function initialiseAllSettings() {
 			}, 'value', 2.5, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
-		//Spire Timers
 		createSetting('geneAssistTimerSpire',
 			function () { return ('GA: Spire Timer') },
 			function () {
@@ -585,7 +575,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
-		//Zone Timers
 		createSetting('geneAssistZoneBefore',
 			function () { return ('GA: Before Z') },
 			function () {
@@ -623,7 +612,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
-		//Daily Timers
 		createSetting('geneAssistTimerDaily',
 			function () { return ('GA: Daily Timer') },
 			function () {
@@ -656,7 +644,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
-		//C2 Timers
 		createSetting('geneAssistTimerC2',
 			function () { return ('GA: ' + _getChallenge2Info() + ' Timer') },
 			function () {
@@ -678,8 +665,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.geneAssist.enabled) });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
 
 	const displayBuildings = true;
 	if (displayBuildings) {
@@ -824,8 +809,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Buildings', [1, 2],
 			function () { return (getPageSetting('gameUser') !== 'undefined') });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
 
 	const displayEquipment = true;
 	if (displayEquipment) {
@@ -1015,10 +998,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 1, null, "Equipment", [1, 2]);
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Combat
+	
 	const displayCombat = true;
 	if (displayCombat) {
 		createSetting('autoFight',
@@ -1144,7 +1124,6 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'Combat', [2],
 			function () { return (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned) });
 
-		//Scryer settings
 		createSetting('AutoStanceScryer',
 			function () { return ('Enable Scryer Stance') },
 			function () {
@@ -1362,11 +1341,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Combat', [1],
 			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
 
-
-		//---------------------------------------------------------------------------------------------------------------------
-
-		//Windstacking
- 
 		createSetting('AutoStanceWind',
 			function () { return ('Wind Stacking') },
 			function () {
@@ -1409,10 +1383,7 @@ function initialiseAllSettings() {
 			'boolean', false, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStanceWind.enabled) });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Maps
+	
 	const displayMaps = true;
 	if (displayMaps) {
 		createSetting('autoMaps',
@@ -1531,6 +1502,15 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 2, null, "Maps", [1, 2]);
 
+		/* createSetting('mapBonusPrestige',
+			function () { return ('Map Bonus Level Prestiges') },
+			function () {
+				let description = "<p>When using the <b>Map Bonus Min Level</b> setting, if there are any prestige upgrades available between your map level and minimum map bonus level, this will the reduce level that it looks for to the last one with prestiges.</p>";
+				description += "<p>This setting is ignored when obtaining map bonus stacks through the <b>Map Bonus</b> setting.</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'boolean', false, null, "Maps", [1, 2]); */
+
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },
 			function () {
@@ -1541,7 +1521,6 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'Maps', [1],
 			function () { return (game.talents.scry2.purchased) });
 
-		//HD Farm
 		createSetting('hdFarmSettings',
 			function () { return ('HD Farm Settings') },
 			function () {
@@ -1561,7 +1540,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false, hitsSurvived: 1 }], 'MAZLookalike("mapSettings", "Void Map")', 'Maps', [1, 2]);
 
-		//Bone Shrine (bone) 
 		createSetting('boneShrineSettings',
 			function () { return ('Bone Shrine Settings') },
 			function () {
@@ -1572,7 +1550,6 @@ function initialiseAllSettings() {
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bone Shrine")', 'Maps', [1, 2],
 			function () { return (game.permaBoneBonuses.boosts.owned > 0) });
 
-		//Worshipper Farm 
 		createSetting('worshipperFarmSettings',
 			function () { return ('Worshipper Farm Settings') },
 			function () {
@@ -1583,7 +1560,6 @@ function initialiseAllSettings() {
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Worshipper Farm")', 'Maps', [2],
 			function () { return game.stats.highestRadLevel.valueTotal() >= 50 });
 
-		//Unique Maps
 		createSetting('uniqueMapSettingsArray',
 			function () { return ('Unique Map Settings') },
 			function () {
@@ -1620,7 +1596,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
 			
-		//Map Bonus
 		createSetting('mapBonusSettings',
 			function () { return ('Map Bonus Settings') },
 			function () {
@@ -1630,7 +1605,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false, jobratio: '-1', special: '0', }], 'MAZLookalike("mapSettings", "Map Bonus")', 'Maps', [1, 2]);
 
-		//Map Farm
 		createSetting('mapFarmSettings',
 			function () { return ('Map Farm Settings') },
 			function () {
@@ -1640,7 +1614,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Map Farm")', 'Maps', [1, 2]);
 
-		//Prestige Raiding
 		createSetting('raidingSettings',
 			function () { return ('Raiding Settings') },
 			function () {
@@ -1650,7 +1623,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Raiding")', 'Maps', [1, 2],
 			function () { return (currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 50 : game.stats.highestLevel.valueTotal() >= 210) });
-		//Bionic Raiding
+
 		createSetting('bionicRaidingSettings',
 			function () { return ('BW Raiding Settings') },
 			function () {
@@ -1661,7 +1634,6 @@ function initialiseAllSettings() {
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bionic Raiding")', 'Maps', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 125) });
 
-		//Tribute Farming
 		createSetting('tributeFarmSettings',
 			function () { return ('Tribute Farm Settings') },
 			function () {
@@ -1671,7 +1643,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Tribute Farm")', 'Maps', [2]);
 
-		//Smithy Farming
 		createSetting('smithyFarmSettings',
 			function () { return ('Smithy Farm Settings') },
 			function () {
@@ -1681,13 +1652,9 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Smithy Farm")', 'Maps', [2]);
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Challenges
+	
 	const displayChallenges = true;
 	if (displayChallenges) {
-		//Balance
 		createSetting('balance',
 			function () { return (currSettingUniverse === 2 ? 'Unbalance' : 'Balance') },
 			function () {
@@ -1774,7 +1741,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Challenges', [1, 2],
 			function () { return (getPageSetting('decay', currSettingUniverse) && autoTrimpSettings.decay.require()) });
 
-		//Life
 		createSetting('life',
 			function () { return ('Life') },
 			function () {
@@ -1804,7 +1770,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
 
-		//Toxicity
 		createSetting('toxicitySettings',
 			function () { return ('Toxicity Settings') },
 			function () {
@@ -1814,7 +1779,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Toxicity")', 'Challenges', [1]);
 
-		//Archaeology
 		createSetting('archaeology',
 			function () { return ('Archaeology') },
 			function () {
@@ -1860,8 +1824,6 @@ function initialiseAllSettings() {
 			}, 'multiTextValue', ['undefined'], null, 'Challenges', [2],
 			function () { return (getPageSetting('archaeology', currSettingUniverse) && autoTrimpSettings.archaeology.require()) });
 
-
-		//Exterminate
 		createSetting('exterminate',
 			function () { return ('Exterminate') },
 			function () {
@@ -1933,8 +1895,6 @@ function initialiseAllSettings() {
 			'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Hypothermia")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
 
 	const displayC2 = true;
 	if (displayC2) {
@@ -2316,7 +2276,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 
-		//Wither
 		createSetting('wither',
 			function () { return ('Wither') },
 			function () {
@@ -2363,7 +2322,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (getPageSetting('wither', currSettingUniverse) && autoTrimpSettings.wither.require()) }); */
 
-		//Quest
 		createSetting('quest',
 			function () { return ('Quest') },
 			function () {
@@ -2406,7 +2364,6 @@ function initialiseAllSettings() {
 			}, 'value', 100, null, 'C2', [2],
 			function () { return (getPageSetting('quest', currSettingUniverse) && autoTrimpSettings.quest.require()) });
 
-		//Mayhem
 		createSetting('mayhem',
 			function () { return ('Mayhem') },
 			function () {
@@ -2462,7 +2419,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 
-		//Storm
 		createSetting('storm',
 			function () { return ('Storm') },
 			function () {
@@ -2493,7 +2449,6 @@ function initialiseAllSettings() {
 			'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('storm', currSettingUniverse) && autoTrimpSettings.storm.require()) });
 
-		//Berserk
 		createSetting('berserk',
 			function () { return ('Berserk') },
 			function () {
@@ -2514,7 +2469,6 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'C2', [2],
 			function () { return (getPageSetting('berserk', currSettingUniverse) && autoTrimpSettings.berserk.require()) });
 
-		//Pandemonium
 		createSetting('pandemonium',
 			function () { return ('Pandemonium') },
 			function () {
@@ -2604,7 +2558,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
-		//Glass
 		createSetting('glass',
 			function () { return ('Glass') },
 			function () {
@@ -2625,7 +2578,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('glass', currSettingUniverse) && autoTrimpSettings.glass.require()) });
 
-		//Desolation
 		createSetting('desolation',
 			function () { return ('Desolation') },
 			function () {
@@ -2714,7 +2666,6 @@ function initialiseAllSettings() {
 			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Desolation Gear Scumming")', 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
-		//Smithless
 		createSetting('smithless',
 			function () { return ('Smithless') },
 			function () {
@@ -2742,10 +2693,7 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'C2', [2],
 			function () { return (getPageSetting('smithless', currSettingUniverse) && autoTrimpSettings.smithless.require()) });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Daily
+	
 	const displayDaily = true
 	if (displayDaily) {
 		createSetting('buyheliumy',
@@ -2890,7 +2838,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Daily', [1],
 			function () { return (autoTrimpSettings.dAutoStanceWind.enabled) });
 
-		//Daily Portal
 		createSetting('dailyPortalStart',
 			function () { return ('Auto Start Daily') },
 			function () {
@@ -3038,13 +2985,9 @@ function initialiseAllSettings() {
 		}, null, 'Daily', [1, 2],
 			function () { return (false) });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Heirloom
+	
 	const displayHeirlooms = true;
 	if (displayHeirlooms) {
-		//Heirloom Swapping
 		createSetting('heirloom',
 			function () { return ('Heirloom Swapping') },
 			function () {
@@ -3096,7 +3039,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
 
-		//Shield swapping
 		createSetting('heirloomShield',
 			function () { return ('Shields') },
 			function () {
@@ -3259,7 +3201,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomCompressedSwap', currSettingUniverse)) });
 
-		//Staff swapping
 		createSetting('heirloomStaff',
 			function () { return ('Staffs') },
 			function () {
@@ -3354,7 +3295,6 @@ function initialiseAllSettings() {
 			}, 'textValue', 'undefined', null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
-		//Auto Heirlooms
 		createSetting('heirloomAuto',
 			function () { return ('Auto Heirlooms') },
 			function () {
@@ -3404,7 +3344,6 @@ function initialiseAllSettings() {
 			}, 'value', 0, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
-		//Shield Line
 		createSetting('heirloomAutoShield',
 			function () { return ('Shields') },
 			function () {
@@ -3539,7 +3478,6 @@ function initialiseAllSettings() {
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', currSettingUniverse)) >= 11)
 			});
 
-		//Staff Line
 		createSetting('heirloomAutoStaff',
 			function () { return ('Staffs') },
 			function () {
@@ -3674,7 +3612,6 @@ function initialiseAllSettings() {
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', currSettingUniverse)) >= 11)
 			});
 
-		//Core Line
 		createSetting('heirloomAutoCore',
 			function () { return ('Cores') },
 			function () {
@@ -3760,10 +3697,7 @@ function initialiseAllSettings() {
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 5)
 			});
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Golden
+	
 	const displayGolden = true;
 	if (displayGolden) {
 		createSetting('autoGoldenSettings',
@@ -3775,8 +3709,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("mapSettings", "Auto Golden")', 'Golden', [1, 2]);
 	}
-
-	//Spire
+	
 	const displaySpire = true;
 	if (displaySpire) {
 		createSetting('IgnoreSpiresUntil',
@@ -3832,12 +3765,8 @@ function initialiseAllSettings() {
 				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
-
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Magma
+	
 	const displayMagma = true;
 	if (displayMagma) {
 		createSetting('UseAutoGen',
@@ -3915,7 +3844,6 @@ function initialiseAllSettings() {
 			}, 'multitoggle', 1, null, 'Magma', [1],
 			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
 
-		//Automate Fuel Zones
 		createSetting('magmiteAutoFuel',
 			function () { return ('Automate Fuel Zones') },
 			function () {
@@ -3969,13 +3897,9 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 2, null, 'Magma', [1]);		
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Nature
+	
 	const displayNature = true;
 	if (displayNature) {
-		//Tokens
 		createSetting('AutoNatureTokens',
 			function () { return ('Spend Nature Tokens') },
 			function () {
@@ -4029,7 +3953,6 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind', 'Convert to Both']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 
-		//Enlightenments
 		createSetting('autoenlight',
 			function () { return ('Enlight: Auto') },
 			function () {
@@ -4115,10 +4038,7 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Fluffy
+	
 	const displayFluffy = true;
 	if (displayFluffy) {
 		createSetting('fluffyEvolve',
@@ -4171,10 +4091,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Fluffy', [1]);
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Time Warp
+	
 	const displayTimewarp = true;
 	if (displayTimewarp) {
 		createSetting('timeWarpSpeed',
@@ -4219,10 +4136,7 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Display
+	
 	const displayDisplay = true;
 	if (displayDisplay) {
 		createSetting('displayEnhancedGrid',
@@ -4312,14 +4226,9 @@ function initialiseAllSettings() {
 			function () { return false });
 	}
 
-	//----------------------------------------------------------------------------------------------------------------------
-
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Export/Import/Default
+	
 	const displayImport = true;
 	if (displayImport) {
 		createSetting('importAutoTrimps',
@@ -4393,10 +4302,7 @@ function initialiseAllSettings() {
 			}), null, 'Import Export', [2],
 			function () { return false });
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Help Window - For information to help users understand how to use the script!
+	
 	const displayHelp = true;
 	if (displayHelp) {
 		createSetting('helpIntroduction',
@@ -4444,11 +4350,8 @@ function initialiseAllSettings() {
 				return description;
 			}, 'action',null, 'cancelTooltip(); makeFragmentDecisionHelpTooltip(false);', 'Help', [0]); */
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Testing - Hidden Features for testing purposes! Please never seek these out!
-	const displayTesting = true;
+	
+	const displayTesting = true; /* Hidden Features for testing purposes! Please never seek these out! */
 	if (displayTesting) {
 		createSetting('gameUser',
 			function () { return ('User') },
@@ -4553,10 +4456,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'action', null, 'testTrimpStats();', 'Test', [0]);
 	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
-	//Beta - Features that are in beta testing and may not work properly!
+	
 	const displayBeta = true;
 	if (displayBeta) {
 		createSetting('testMapScumming',
@@ -4634,7 +4534,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		id: id
 	};
 
-	// Define the actions for each setting type
 	const settingActions = {
 		boolean: () => {
 			btnAttributes.onclick = `settingChanged("${id}")`;
@@ -4673,7 +4572,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	settingActions['valueNegative'] = settingActions['value'];
 	settingActions['multiValue'] = settingActions['value'];
 
-	// Execute the action for the current setting type
 	if (settingActions[type]) {
 		settingActions[type]();
 	}
@@ -4903,7 +4801,6 @@ function autoToggle(what) {
 		return;
 	}
 
-	//Changing where buttons are placed depending on TW status.
 	const autoTrimpsTabBarMenu = document.getElementById('autoTrimpsTabBarMenu');
 	const autoSettings = document.getElementById('autoSettings');
 
@@ -4946,7 +4843,6 @@ function updateAutoTrimpSettings(forceUpdate) {
 	}
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 
-	//Loops through all the AT settings so we can properly setup the UI.
 	for (let setting in autoTrimpSettings) {
 		if (['ATversion', 'ATversionChangelog'].includes(setting)) continue;
 
@@ -4962,11 +4858,9 @@ function updateAutoTrimpSettings(forceUpdate) {
 		_toggleElem(setting, displaySetting);
 		if (!displaySetting) continue;
 
-		//Looks at all the settings that are from the current universe and sets them up. Will set text, tooltips.
 		if (forceUpdate) if (!_setDisplayedSettings(item)) continue;
 	}
 
-	//Sets up if the tabs will be visible or not.
 	if (forceUpdate) _setDisplayedTabs();
 	_settingsToLineBreak();
 }
@@ -5138,7 +5032,7 @@ function _settingsToLineBreak() {
 	const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
 	const breakAfterCore = ['portalVoidIncrement', 'universeSetting'];
-	const breakAfterMaps = ['uniqueMapEnoughHealth', 'scryvoidmaps', 'uniqueMapEnoughHealth'];
+	const breakAfterMaps = ['autoLevelScryer', 'scryvoidmaps', 'uniqueMapEnoughHealth'];
 	const breakAfterDaily = ['dscryvoidmaps', 'dPreSpireNurseries', 'dWindStackingLiq', 'dailyHeliumHrPortal'];
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields', 'equipShieldBlock'];
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
