@@ -158,6 +158,8 @@ originalFadeIn = fadeIn;
 fadeIn = function () {
 	if (arguments[0] === 'pauseFight' && getPageSetting('displayHideFightButtons')) return;
 	originalFadeIn(...arguments);
+
+	if (arguments[0] === 'metal' && getPageSetting('autoEggs')) easterEggClicked();
 };
 
 //Check and update each patch!

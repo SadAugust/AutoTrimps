@@ -21,7 +21,7 @@ const atSettings = {
 	runInterval: 100,
 	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false },
 	loops: { atTimeLapseFastLoop: false, mainLoopInterval: null, guiLoopInterval: null },
-	intervals: { counter: 0, oneSecond: false, twoSecond: false, fiveSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false },
+	intervals: { counter: 0, tenthSecond: false, halfSecond: false, oneSecond: false, twoSecond: false, fiveSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false },
 	autoSave: game.options.menu.autoSave.enabled
 };
 
@@ -120,6 +120,8 @@ function loadModules(fileName, prefix = '') {
 
 function loadScriptsAT() {
 	console.time();
+	originalGameLoop = gameLoop;
+	gameLoop = function (makeUp, now) {}; /* Disable game from running until script loads to ensure no time is spent without AT running*/
 	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
 	basepath = `${atSettings.initialise.basepathOriginal}css/`;
 	const scripts = Array.from(document.getElementsByTagName('script'));
@@ -193,7 +195,6 @@ function initialiseScript() {
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
 	farmingDecision();
-	autoMapsStatus();
 
 	if (usingRealTimeOffline) {
 		if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
@@ -209,9 +210,8 @@ function initialiseScript() {
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 	challengeInfo(true);
 	_setupATButtons();
+	autoMapsStatus();
 
-	//Copy gameLoop for when we enter toggleCatchUpMode.
-	originalGameLoop = gameLoop;
 	atSettings.initialise.loaded = true;
 	toggleCatchUpMode();
 	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
@@ -220,8 +220,8 @@ function initialiseScript() {
 
 //Displays Perky UI when changing universes.
 function universeSwapped() {
-	//Hard to do an alternative to this. Would have linked it to the swapPortalUniverse() function but the force going back to U1 button in U2 causes issues with that.
-	//Sets up the proper calc UI when switching between portal universes.
+	/* 	Sets up the proper perk calc UI when switching between portal universes.
+		Hard to do an alternative to this. Would link it to swapPortalUniverse() but force going back to U1 button in U2 causes issues with that. */
 	if (currPortalUniverse !== portalUniverse) {
 		if (portalUniverse === -1) portalUniverse = game.global.universe;
 		MODULES.autoPerks.displayGUI(portalUniverse);
@@ -250,11 +250,11 @@ function resetLoops() {
 
 function toggleCatchUpMode() {
 	if (!atSettings.loops.mainLoop && !atSettings.loops.guiLoop && !atSettings.loops.atTimeLapseFastLoop) {
-		['mainLoop', 'guiLoop'].forEach((loop) => startStopLoop(loop, 'start'));
+		resetLoops();
 	}
 
 	if (usingRealTimeOffline) {
-		if (atSettings.running === false || game.options.menu.pauseGame.enabled || getPageSetting('pauseScript', 1) || !getPageSetting('timeWarpSpeed')) {
+		if (!atSettings.running || game.options.menu.pauseGame.enabled || getPageSetting('pauseScript', 1) || !getPageSetting('timeWarpSpeed')) {
 			if (usingRealTimeOffline && atSettings.loops.atTimeLapseFastLoop) {
 				resetLoops();
 				debug(`Disabled Time Warp functionality.`, 'offline');
@@ -296,7 +296,6 @@ function toggleCatchUpMode() {
 	}
 }
 
-//Offline mode check
 function shouldRunInTimeWarp() {
 	return !atSettings.loops.atTimeLapseFastLoop || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 }
@@ -305,6 +304,8 @@ function updateInterval() {
 	atSettings.intervals.counter++;
 
 	const intervals = {
+		tenthSecond: 100,
+		halfSecond: 500,
 		oneSecond: 1000,
 		twoSecond: 2000,
 		fiveSecond: 5000,
@@ -328,7 +329,7 @@ function mainLoop() {
 	universeSwapped();
 
 	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
-	if (!atSettings.running || getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
+	if (!atSettings.running || game.options.menu.pauseGame.enabled || getPageSetting('pauseScript', 1)) return;
 
 	const runDuringTimeWarp = shouldRunInTimeWarp();
 	if (runDuringTimeWarp) {
@@ -339,14 +340,12 @@ function mainLoop() {
 	if (_handleSlowScumming()) return;
 
 	boneShrine();
-
 	buyUpgrades();
 	buyBuildings();
 	autoEquip();
 	buyJobs();
 	if (game.global.universe === 1) geneAssist();
 	autoGoldUpgrades();
-
 	autoGather();
 
 	_handleIntervals();
@@ -365,14 +364,12 @@ function mainLoop() {
 	mainLoopU1();
 	mainLoopU2();
 	buySingleRunBonuses();
-	/* automateSpireAssault(); */
 	_handlePopupTimer();
 	makeAdditionalInfo();
 
 	if (runDuringTimeWarp) autoPortalCheck();
 }
 
-//U1 functions
 function mainLoopU1() {
 	if (game.global.universe !== 1) return;
 
@@ -389,16 +386,16 @@ function mainLoopU1() {
 	fluffyEvolution();
 }
 
-//U2 functions
 function mainLoopU2() {
 	if (game.global.universe !== 2) return;
 
 	if (shouldRunInTimeWarp()) equalityManagement();
+	/* automateSpireAssault(); */
 	_alchemyVoidPotions();
 }
 
 function guiLoop() {
-	if (getPageSetting('displayEnhancedGrid') && !usingRealTimeOffline) MODULES.fightinfo.Update();
+	if (!usingRealTimeOffline && getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
 	if (MODULES.performance && MODULES.performance.isAFK) MODULES.performance.UpdateAFKOverlay();
 }
 
@@ -420,10 +417,10 @@ function _handleNewHZE() {
 
 function _handleNewWorld() {
 	if (!atSettings.portal.aWholeNewWorld) return;
+	if (autoPortalCheck()) return;
 	if ((usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop) && game.global.world === 60) _timeWarpUpdateEquipment();
 	buyUpgrades();
 	autoEquip();
-	autoPortalCheck();
 	archaeologyAutomator();
 	challengeInfo();
 
@@ -441,9 +438,10 @@ function _handleNewWorld() {
 }
 
 function _debugZoneStart() {
+	const { Tauntimp, Magnimp, Whipimp, Venimp } = game.unlocks.impCount;
 	debug(`Starting Zone ${game.global.world}`, 'zone');
-	debug(`Zone #${game.global.world}: Tauntimp (${game.unlocks.impCount.Tauntimp}), Magnimp (${game.unlocks.impCount.Magnimp}), Whipimp (${game.unlocks.impCount.Whipimp}), Venimp (${game.unlocks.impCount.Venimp})`, 'exotic');
-	debug(`Zone # ${game.global.world}: Total pop (${prettify(game.resources.trimps.owned)}). A Bone Charge would give you these resources (${boneShrineOutput(1).slice(0, -1).toLowerCase()})`, 'run_Stats');
+	debug(`Zone #${game.global.world}: Tauntimp (${Tauntimp}), Magnimp (${Magnimp}), Whipimp (${Whipimp}), Venimp (${Venimp})`, 'exotic');
+	debug(`Zone # ${game.global.world}: Total pop (${prettify(game.resources.trimps.owned)}). A Bone Charge would give you ${boneShrineOutput(1).slice(0, -1).toLowerCase()}`, 'run_Stats');
 }
 
 function mainCleanup() {

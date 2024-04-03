@@ -4623,7 +4623,8 @@ function settingChanged(id, currUniverse) {
 		displayHideFightButtons: _setFightButtons,
 		timeWarpDisplay: _setTimeWarpUI,
 		displayEnhancedGrid: MODULES.fightinfo.Update,
-		archaeology: archaeologyAutomator
+		archaeology: archaeologyAutomator,
+		autoEggs: easterEggClicked
 	};
 
 	const multitoggleActions = {

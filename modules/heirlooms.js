@@ -166,9 +166,12 @@ function heirloomEquip(heirloom, type) {
 }
 
 function heirloomShieldSwapped() {
-	MODULES.heirlooms.gammaBurstPct = getPageSetting('gammaBurstCalc') && getHeirloomBonus('Shield', 'gammaBurst') / 100 > 0 ? getHeirloomBonus('Shield', 'gammaBurst') / 100 : 1;
-	MODULES.heirlooms.shieldEquipped = game.global.ShieldEquipped.id;
+	const updateGamma = getPageSetting('gammaBurstCalc');
+	const gammaValue = updateGamma ? getHeirloomBonus('Shield', 'gammaBurst') / 100 : 0;
+	MODULES.heirlooms.gammaBurstPct = gammaValue > 0 ? gammaValue : 1;
+
 	MODULES.heirlooms.breedHeirloom = usingBreedHeirloom();
+	MODULES.heirlooms.shieldEquipped = game.global.ShieldEquipped.id;
 }
 
 function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdCheck = true, sendingArmy = false) {

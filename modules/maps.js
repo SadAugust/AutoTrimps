@@ -11,31 +11,38 @@ MODULES.maps = {
 	fragmentCost: Infinity
 };
 
-function autoMapsStatus(get) {
-	let status = '';
+function autoMapsStatus(get = false) {
 	const mapObj = getCurrentMapObject();
-	//Setting up status
-	if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
-	else if (game.global.mapsActive && mapObj.noRecycle && mapObj.location !== 'Bionic' && mapObj.location !== 'Void' && mapSettings.mapName !== 'Quagmire Farm' && mapObj.location !== 'Darkness') status = mapObj.name;
-	else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
-	else if (mapSettings.mapName !== '') status = mapSettings.status;
-	//Advancing
-	else status = 'Advancing';
+	let status = '';
 
-	if (getPageSetting('autoMaps') === 0) status = '[Auto Maps Off] ' + status;
+	if (!game.global.mapsUnlocked) {
+		status = 'Maps not unlocked!';
+	} else if (game.global.mapsActive && mapObj.noRecycle && !['Bionic', 'Void', 'Darkness'].includes(mapObj.location)) {
+		status = mapObj.name;
+	} else if (mapSettings.mapName !== '') {
+		status = mapSettings.status;
+	} else {
+		status = 'Advancing';
+	}
+
+	if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = `Out of Map Credits ${status}`;
+	if (getPageSetting('autoMaps') === 0) status = `[Auto Maps Off] ${status}`;
 
 	if (usingRealTimeOffline && getPageSetting('timeWarpDisplay')) {
 		const { startTime, ticksProcessed, progressMax } = offlineProgress;
-		const barWidth = ((ticksProcessed / progressMax) * 100).toFixed(1) + '%';
+		const progressPercentage = ((ticksProcessed / progressMax) * 100).toFixed(1);
 		const timeSpent = Math.floor((new Date().getTime() - startTime) / 1000);
 		const speed = ticksProcessed / (timeSpent * 10);
-		status = `Time Warp (${barWidth} ${prettify(speed)}x)<br>${status}`;
+		status = `Time Warp (${progressPercentage}% ${prettify(speed)}x)<br>${status}`;
 	}
 
-	let resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
-	let resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
-	let getPercent = (game.stats.heliumHour.value() / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
-	let lifetime = (game.resources[resourceType.toLowerCase()].owned / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
+	const resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
+	const resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
+	const resourceOwned = game.resources[resourceType.toLowerCase()].owned;
+	const resourceEarned = game.global[`total${resourceType}Earned`];
+
+	const getPercent = (game.stats.heliumHour.value() / (resourceEarned - resourceOwned)) * 100;
+	const lifetime = (resourceOwned / (resourceEarned - resourceOwned)) * 100;
 
 	if (get) {
 		return [status, getPercent, lifetime];
@@ -44,10 +51,11 @@ function autoMapsStatus(get) {
 	//Set auto maps status when inside of TW
 	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay') && document.getElementById('autoMapStatusTW') !== null) {
 		//Add in a header for the status to let the user know what it is
-		let statusMsg = '<h9>Auto Maps Status</h9><br>' + status;
-		let id = game.global.mapsActive ? 'autoMapStatusMapsTW' : 'autoMapStatusTW';
-		if (document.getElementById(id).innerHTML !== status) document.getElementById(id).innerHTML = statusMsg;
-		document.getElementById(id).setAttribute('onmouseover', makeAutomapStatusTooltip(true));
+		const statusMsg = '<h9>Auto Maps Status</h9><br>' + status;
+		const id = game.global.mapsActive ? 'autoMapStatusMapsTW' : 'autoMapStatusTW';
+		const autoMapsElem = document.getElementById(id);
+		if (autoMapsElem && autoMapsElem.innerHTML !== status) autoMapsElem.innerHTML = statusMsg;
+		autoMapsElem.setAttribute('onmouseover', makeAutomapStatusTooltip(true));
 	}
 
 	const timeWarpUpdate = !usingRealTimeOffline || getPageSetting('timeWarpDisplay');
@@ -61,99 +69,18 @@ function autoMapsStatus(get) {
 		}
 
 		const heHrElem = document.getElementById('heHrStatus');
-		if (getPageSetting('displayHeHr') && heHrElem !== null) {
-			let heHrStatus = resourceShortened + '/hr: ' + (getPercent > 0 ? getPercent.toFixed(3) : 0) + '%<br>&nbsp;&nbsp;&nbsp;' + resourceShortened + ': ' + (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
+		if (heHrElem !== null && getPageSetting('displayHeHr')) {
+			const heHrStatus = `${resourceShortened}/hr: ${getPercent > 0 ? getPercent.toFixed(3) : 0}%<br>&nbsp;&nbsp;&nbsp;${resourceShortened}: ${lifetime > 0 ? lifetime.toFixed(3) : 0}%`;
 			if (heHrElem.innerHTML !== heHrStatus) heHrElem.innerHTML = heHrStatus;
 			heHrElem.setAttribute('onmouseover', makeResourceTooltip(true));
 		}
 
 		const infoElem = document.getElementById('additionalInfo');
 		if (infoElem !== null) {
-			let infoStatus = makeAdditionalInfo();
+			const infoStatus = makeAdditionalInfo();
 			if (infoElem.innerHTML !== infoStatus) infoElem.innerHTML = infoStatus;
 			infoElem.parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
 		}
-	}
-}
-
-function makeAutomapStatusTooltip(mouseover) {
-	const mapStacksText = `Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`;
-	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy. The enemy health check is based on the highest health enemy in the map/zone.';
-	let hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against the highest damaging enemy in the map/zone${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
-	const hitsSurvived = prettify(hdStats.hitsSurvived);
-	const hitsSurvivedVoid = prettify(hdStats.hitsSurvivedVoid);
-	const hitsSurvivedSetting = targetHitsSurvived();
-	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
-	let tooltipText = '';
-
-	if (mouseover) {
-		tooltipText = 'tooltip(' + '"Automaps Status", ' + '"customText", ' + 'event, ' + '"';
-	}
-
-	tooltipText += 'Variables that control the current state and target of Automaps.<br>' + 'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' + 'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>';
-	if (game.global.universe === 2) {
-		if (!game.portal.Equality.radLocked)
-			tooltipText += `<br>\
-		If you have the Auto Equality setting set to <b>Auto Equality: Advanced</b> then all calculations will factor expected equality value into them.<br>`;
-	}
-	//Hits Survived
-	tooltipText += `<br>` + `<b> Hits Survived info</b > <br>` + `${hitsSurvivedText}<br>` + `Hits Survived: <b>${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>` + `Void Hits Survived: <b>${hitsSurvivedVoid}</b><br>`;
-
-	//Map Setting Info
-	tooltipText += `<br>` + `<b>Mapping info</b><br>`;
-	if (mapSettings.shouldRun) {
-		tooltipText += `Farming Setting: <b>${mapSettings.mapName}</b><br>`;
-		tooltipText += `Map level: <b>${mapSettings.mapLevel}</b><br>`;
-		tooltipText += `Auto level: <b>${mapSettings.autoLevel}</b><br>`;
-		if (mapSettings.settingIndex) tooltipText += `Line run: <b>${mapSettings.settingIndex}</b>${mapSettings.priority ? ` Priority: <b>${mapSettings.priority}</b>` : ``}<br>`;
-		tooltipText += `Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'}</b > <br>`;
-		tooltipText += `Wants to run: ${mapSettings.shouldRun}<br>`;
-		tooltipText += `Repeat: ${mapSettings.repeat}<br>`;
-	} else {
-		tooltipText += `Not running<br>`;
-	}
-
-	//HD Ratios
-	tooltipText += '<br>' + `<b>HD Ratio Info</b><br>` + `${hdRatioText}<br>` + `World HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatio)}</b><br>` + `Map HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioMap)}</b><br>` + `Void HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioVoid)}</b><br>` + `${mapStacksText}<br>`;
-
-	if (mouseover) {
-		tooltipText += '")';
-		return tooltipText;
-	} else {
-		tooltip('Auto Maps Status', 'customText', 'lock', tooltipText, false, 'center');
-		_verticalCenterTooltip(true);
-	}
-}
-
-function makeResourceTooltip(mouseover) {
-	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
-	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
-
-	let getPercent = (game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - game.resources[resource.toLowerCase()].owned)) * 100;
-	let lifetime = (game.resources[resource.toLowerCase()].owned / (game.global['total' + resource + 'Earned'] - game.resources[resource.toLowerCase()].owned)) * 100;
-	const resourceHrMsg = getPercent > 0 ? getPercent.toFixed(3) : 0;
-	const lifeTimeMsg = (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
-
-	let tooltipText = '';
-
-	if (mouseover) {
-		tooltipText = 'tooltip(' + `\"${resource} per hour Info\",` + '"customText", ' + 'event, ' + '"';
-	}
-
-	tooltipText += `<b>${resource} per hour</b>: ${resourceHrMsg}<br>` + `Current ${resource} per hour % out of Lifetime ${resourceHr} (not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>` + `<b>${resource}</b>: ${lifeTimeMsg}<br>` + `Current run total ${resource} / earned / lifetime ${resourceHr} (not including current)<br>`;
-
-	if (trimpStats.isDaily) {
-		let helium = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
-		helium *= 100 + getDailyHeliumValue(countDailyWeight());
-		tooltipText += `<b>After Daily ${resource} per hour</b>: ${helium.toFixed(3)}%`;
-	}
-
-	if (mouseover) {
-		tooltipText += '")';
-		return tooltipText;
-	} else {
-		tooltip(`${resource} per hour info`, 'customText', 'lock', tooltipText, false, 'center');
-		_verticalCenterTooltip(true);
 	}
 }
 
@@ -550,7 +477,6 @@ function _purchaseMap(lowestMap) {
 }
 
 function _autoMapsCreate(mapObj) {
-	const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 	if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
 
 	if (mapObj.selectedMap === 'world') {
@@ -562,8 +488,10 @@ function _autoMapsCreate(mapObj) {
 	} else if (mapObj.selectedMap === 'create') {
 		_abandonMapCheck(mapObj.selectedMap, mapObj.runUnique);
 		if (mapSettings.shouldRun && mapSettings.mapName !== '') {
+			const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 			setMapSliders(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 		}
+
 		if (updateMapCost(true) > game.resources.fragments.owned) {
 			if (_fragmentCheck(mapObj.highestMap, mapObj.runUnique)) return;
 		} else {

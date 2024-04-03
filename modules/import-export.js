@@ -801,3 +801,93 @@ function pushSpreadsheetData() {
 	});
 	debug(`Spreadsheet upload complete.`);
 }
+
+function makeAutomapStatusTooltip(mouseover = false) {
+	const mapStacksText = `Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`;
+	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy. The enemy health check is based on the highest health enemy in the map/zone.';
+	let hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against the highest damaging enemy in the map/zone${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
+	const hitsSurvived = prettify(hdStats.hitsSurvived);
+	const hitsSurvivedVoid = prettify(hdStats.hitsSurvivedVoid);
+	const hitsSurvivedSetting = targetHitsSurvived();
+	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
+	let tooltipText = '';
+
+	if (mouseover) {
+		tooltipText = 'tooltip(' + '"Automaps Status", ' + '"customText", ' + 'event, ' + '"';
+	}
+
+	tooltipText += 'Variables that control the current state and target of Automaps.<br>' + 'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' + 'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>';
+	if (game.global.universe === 2) {
+		if (!game.portal.Equality.radLocked)
+			tooltipText += `<br>\
+		If you have the Auto Equality setting set to <b>Auto Equality: Advanced</b> then all calculations will factor expected equality value into them.<br>`;
+	}
+
+	tooltipText += `<br><b>Hits Survived info</b><br>${hitsSurvivedText}<br>Hits Survived: <b>${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>Void Hits Survived: <b>${hitsSurvivedVoid}</b><br>`;
+
+	//Map Setting Info
+	tooltipText += `<br><b>Mapping info</b><br>`;
+	if (mapSettings.shouldRun) {
+		tooltipText += `Farming Setting: <b>${mapSettings.mapName}</b><br>`;
+		tooltipText += `Map Level: <b>${mapSettings.mapLevel}</b><br>`;
+		tooltipText += `Auto Level: <b>${mapSettings.autoLevel}</b><br>`;
+		if (mapSettings.settingIndex) tooltipText += `Line Run: <b>${mapSettings.settingIndex}</b>${mapSettings.priority ? ` Priority: <b>${mapSettings.priority}</b>` : ``}<br>`;
+		tooltipText += `Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'}</b><br>`;
+		tooltipText += `Wants To Run: ${mapSettings.shouldRun}<br>`;
+		tooltipText += `Repeat: ${mapSettings.repeat}`;
+	} else {
+		tooltipText += `Not running`;
+	}
+
+	tooltipText += `<br>`;
+
+	const stanceInfo = game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 60 ? `(in X formation) ` : '';
+	tooltipText += `<br><b>HD Ratio Info</b><br>`;
+	tooltipText += `${hdRatioText}<br>`;
+	tooltipText += `World HD Ratio ${stanceInfo}<b>${prettify(hdStats.hdRatio)}</b><br>`;
+	tooltipText += `Map HD Ratio ${stanceInfo}<b>${prettify(hdStats.hdRatioMap)}</b><br>`;
+	tooltipText += `Void HD Ratio ${stanceInfo}<b>${prettify(hdStats.hdRatioVoid)}</b><br>`;
+	tooltipText += `${mapStacksText}<br>`;
+
+	if (mouseover) {
+		return tooltipText + '")';
+	} else {
+		tooltip('Auto Maps Status', 'customText', 'lock', tooltipText, false, 'center');
+		_verticalCenterTooltip(true);
+	}
+}
+
+function makeResourceTooltip(mouseover) {
+	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
+	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
+	const resourceOwned = game.resources[resource.toLowerCase()].owned;
+	const resourceEarned = game.global[`total${resource}Earned`];
+	const resourceLeftover = game.global[resource.toLowerCase() + 'Leftover'];
+	const resourceHrValue = game.stats.heliumHour.value();
+
+	let getPercent = (resourceHrValue / (resourceEarned - resourceOwned)) * 100;
+	let lifetime = (resourceOwned / (resourceEarned - resourceOwned)) * 100;
+	const resourceHrMsg = getPercent > 0 ? getPercent.toFixed(3) : 0;
+	const lifeTimeMsg = (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
+
+	let tooltipText = '';
+
+	if (mouseover) {
+		tooltipText = 'tooltip(' + `\"${resource} per hour Info\",` + '"customText", ' + 'event, ' + '"';
+	}
+
+	tooltipText += `<b>${resource} per hour</b>: ${resourceHrMsg}<br>` + `Current ${resource} per hour % out of Lifetime ${resourceHr} (not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>` + `<b>${resource}</b>: ${lifeTimeMsg}<br>` + `Current run total ${resource} / earned / lifetime ${resourceHr} (not including current)<br>`;
+
+	if (trimpStats.isDaily) {
+		let helium = resourceHrValue / (resourceEarned - (resourceLeftover + resourceOwned));
+		helium *= 100 + getDailyHeliumValue(countDailyWeight());
+		tooltipText += `<b>After Daily ${resource} per hour</b>: ${helium.toFixed(3)}%`;
+	}
+
+	if (mouseover) {
+		return tooltipText + '")';
+	} else {
+		tooltip(`${resource} per hour info`, 'customText', 'lock', tooltipText, false, 'center');
+		_verticalCenterTooltip(true);
+	}
+}
