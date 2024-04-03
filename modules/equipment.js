@@ -241,7 +241,6 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
 
 	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
-	if (_shouldSaveResource(resourceUsed)) return prestigeInfo;
 
 	const prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
 	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];
@@ -256,13 +255,14 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	const oneLevelStat = Math.round(equipment[equipStat] * Math.pow(1.19, equipment.prestige * game.global.prestige[equipStat] + 1));
 	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 
-	prestigeInfo.minNewLevel = Math.ceil(currentStatValue / oneLevelStat);
-	prestigeInfo.newStatMinValue = oneLevelStat * prestigeInfo.minNewLevel;
-
 	// TODO Should consider Maybe Prestige, Force Prestige, etc
 	const minLevelBeforePrestige = getPageSetting('equip2') ? 2 : 1;
-	prestigeInfo.shouldPrestige = prestigeInfo.prestigeAvailable && equipment.level >= minLevelBeforePrestige && game.resources.gems.owned;
+	prestigeInfo.shouldPrestige = prestigeInfo.prestigeAvailable && equipment.level >= minLevelBeforePrestige && game.resources.gems.owned > 0;
+	prestigeInfo.minNewLevel = Math.ceil(0.25 + currentStatValue / oneLevelStat);
+	prestigeInfo.newStatMinValue = oneLevelStat * prestigeInfo.minNewLevel;
 	prestigeInfo.prestigeCost = prestigeCost;
+
+	if (_shouldSaveResource(resourceUsed)) return prestigeInfo;
 
 	const {
 		science: [scienceCost, scienceMultiplier],
@@ -281,10 +281,9 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	const newStatValue = newLevel * oneLevelStat;
 	const statPerResource = prestigeCost / oneLevelStat;
 
-	prestigeInfo.purchase = newStatValue > currentStatValue;
+	prestigeInfo.purchase = prestigeInfo.shouldPrestige && newLevel >= prestigeInfo.minNewLevel;
 	prestigeInfo.newStatValue = newStatValue;
 	prestigeInfo.statPerResource = statPerResource;
-	prestigeInfo.shouldPrestige |= prestigeInfo.purchase; //TODO Wth is equipment.level doing here?
 	prestigeInfo.skip = false;
 	prestigeInfo.resource = resourceUsed;
 

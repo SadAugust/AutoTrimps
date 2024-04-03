@@ -727,16 +727,19 @@ function shieldGymEfficiency(pretty = false) {
 	//TODO Send ZoneGo parameter?
 	const cantPrestige = !prestige.prestigeAvailable || !game.resources.gems.owned;
 	const aboveEquipCap = itemData.level >= (prestige.prestigeAvailable ? 9 : calculateEquipCap(stat));
-	const prestigeNumeral = romanNumeral(itemData.prestige + (prestige.shouldPrestige ? 1 : 0));
 
 	let cost = prestige.shouldPrestige ? prestigeCost() : levelCost();
 	let hsImpact = shieldIncrease;
 	let efficiency = cantPrestige && aboveEquipCap ? Infinity : (cost / shieldIncrease);
 
+	const prestigeNumeral = romanNumeral(itemData.prestige + (prestige.shouldPrestige ? 1 : 0));
+	const prestigeName = `Prestige ${prestigeNumeral} + Level ${prestige.minNewLevel}`;
+	const levelName = `${prestigeNumeral} Level ${itemData.level + 1}`;
+
 	const shieldEfficiency = efficiency;
 
 	const Shield = {
-		name: 'Shield ' + (prestige.shouldPrestige ? `Prestige ${prestigeNumeral}` : `${prestigeNumeral} Level ${itemData.level + 1}`),
+		name: 'Shield ' + (prestige.shouldPrestige ? prestigeName : levelName),
 		efficiency: maybePrettify(efficiency, pretty),
 		cost: maybePrettify(cost, pretty),
 		hsImpact: maybePrettify(hsImpact, pretty),
