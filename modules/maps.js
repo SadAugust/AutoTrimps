@@ -510,6 +510,8 @@ function _setMapRepeat() {
 				if (!mapSettings.repeat) repeatClicked();
 			} else {
 				let { mapLevel, special, biome } = mapSettings;
+				if (!biome) biome = getBiome();
+
 				const level = typeof mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapLevel;
 				const mapSpecial = typeof special !== 'undefined' || special === '0' ? mapObj.bonus : special;
 				let mapBiome = typeof biome !== 'undefined' || biome === 'Any' ? mapObj.location : getBiome();
@@ -519,7 +521,7 @@ function _setMapRepeat() {
 
 				if (!mapSettings.repeat) {
 					repeatClicked();
-				} else if (level !== mapLevel || (mapSpecial && mapSpecial !== special) || mapBiome !== biome) {
+				} else if (level !== mapLevel || (mapSpecial && mapSpecial !== special) || (mapBiome !== biome && biome !== 'Any')) {
 					simulatedPurchase = _simulateSliders(mapLevel + game.global.world, special, biome);
 					if (simulatedPurchase.special === special && simulatedPurchase.mapLevel === mapLevel && simulatedPurchase.location === biome) {
 						repeatClicked();
