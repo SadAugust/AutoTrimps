@@ -82,11 +82,13 @@ offlineProgress.start = function () {
 	offlineProgress.originalStart(...arguments);
 	toggleCatchUpMode();
 	while (game.options.menu.offlineProgress.enabled !== trustWorthy) toggleSetting('offlineProgress');
+
 	try {
-		const offlineTime = offlineProgress.totalOfflineTime / 1000 - 86400;
+		let offlineTime = (offlineProgress.totalOfflineTime / 1000 - 86400) * 1000;
 		if (offlineTime > 0) {
-			game.global.portalTime += offlineTime;
-			if (getZoneSeconds() >= offlineTime) game.global.zoneStarted += offlineTime;
+			offlineTime += 86400000;
+			if (getGameTime() > game.global.portalTime + offlineTime) game.global.portalTime += offlineTime;
+			if (getGameTime() > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
 		}
 		if (typeof _setTimeWarpUI === 'function') _setTimeWarpUI();
 	} catch (e) {
@@ -97,6 +99,10 @@ offlineProgress.start = function () {
 //Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
 offlineProgress.originalFinish = offlineProgress.finish;
 offlineProgress.finish = function () {
+	if (offlineProgress.totalOfflineTime / 1000 > 86400 && Math.abs(offlineProgress.startTime - new Date().getTime()) <= 500) {
+		return;
+	}
+
 	const offlineTime = arguments[0] ? 0 : Math.max(0, offlineProgress.totalOfflineTime / 1000 - 86400);
 	let timeRun = arguments[0] ? 0 : Math.max(0, (new Date().getTime() - offlineProgress.startTime) / 1000);
 	timeRun += offlineTime;

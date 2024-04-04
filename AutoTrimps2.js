@@ -199,6 +199,13 @@ function initialiseScript() {
 	if (usingRealTimeOffline) {
 		if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
 		cancelTooltip();
+
+		let offlineTime = (offlineProgress.totalOfflineTime / 1000 - 86400) * 1000;
+		if (offlineTime > 0) {
+			game.global.portalTime += offlineTime += 86400000;
+			offlineTime -= 86400000;
+			if (getGameTime() > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
+		}
 	}
 
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
@@ -213,6 +220,7 @@ function initialiseScript() {
 	autoMapsStatus();
 
 	atSettings.initialise.loaded = true;
+
 	toggleCatchUpMode();
 	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
 	console.timeEnd();
