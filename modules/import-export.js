@@ -593,13 +593,35 @@ function makeAdditionalInfo() {
 	return description;
 }
 
+/* 
+raspberry pi related setting changes
+Swaps base settings to improve performance & so that I can't accidentally pause.
+Shouldn't impact anybody else that uses AT as they'll never set the gameUser setting to SadAugust. 
+*/
+function _raspberryPiSettings() {
+	if (autoTrimpSettings.gameUser.value !== 'SadAugust') return;
+
+	if (navigator.oscpu === 'Linux armv7l') {
+		game.options.menu.hotkeys.enabled = 0;
+		game.options.menu.progressBars.enabled = 0;
+		game.options.menu.showHeirloomAnimations.enabled = 0;
+	} else {
+		game.options.menu.hotkeys.enabled = 1;
+		game.options.menu.progressBars.enabled = 2;
+		game.options.menu.showHeirloomAnimations.enabled = 1;
+	}
+}
+
 //Loads the base settings that I want to be the same when loading peoples saves as it will save me time.
 function loadAugustSettings() {
+	_raspberryPiSettings();
 	if (atSettings.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') return;
+
 	if (typeof greenworks === 'undefined') autoTrimpSettings.gameUser.value = 'test';
 	autoTrimpSettings.downloadSaves.enabled = 0;
 	autoTrimpSettings.downloadSaves.enabledU2 = 0;
 	saveSettings();
+
 	game.options.menu.showAlerts.enabled = 0;
 	game.options.menu.useAverages.enabled = 1;
 	game.options.menu.showFullBreed.enabled = 1;
@@ -610,6 +632,10 @@ function loadAugustSettings() {
 	game.options.menu.timestamps.enabled = 2;
 	game.options.menu.boneAlerts.enabled = 0;
 	game.options.menu.romanNumerals.enabled = 0;
+
+	game.options.menu.achievementPopups.enabled = 0;
+	game.options.menu.voidPopups.enabled = 0;
+	game.options.menu.confirmhole.enabled = 0;
 
 	let toggles = ['darkTheme', 'standardNotation', 'hotkeys'];
 	for (let i in toggles) {

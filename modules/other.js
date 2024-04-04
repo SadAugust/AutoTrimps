@@ -403,25 +403,6 @@ function remakeTooltip() {
 	}
 }
 
-/* 
-raspberry pi related setting changes
-Swaps base settings to improve performance & so that I can't accidentally pause.
-Shouldn't impact anybody else that uses AT as they'll never set the gameUser setting to SadAugust. 
-*/
-function _raspberryPiSettings() {
-	if (autoTrimpSettings.gameUser.value !== 'SadAugust') return;
-
-	if (navigator.oscpu === 'Linux armv7l') {
-		game.options.menu.hotkeys.enabled = 0;
-		game.options.menu.progressBars.enabled = 0;
-		game.options.menu.showHeirloomAnimations.enabled = 0;
-	} else {
-		game.options.menu.hotkeys.enabled = 1;
-		game.options.menu.progressBars.enabled = 2;
-		game.options.menu.showHeirloomAnimations.enabled = 1;
-	}
-}
-
 function _timeWarpSave() {
 	const timeRun = new Date().getTime() - offlineProgress.startTime;
 	const reduceBy = offlineProgress.totalOfflineTime + timeRun - offlineProgress.ticksProcessed * 100;
@@ -525,7 +506,7 @@ function _handleMazWindow() {
 function _handleIntervals() {
 	if (atSettings.intervals.tenMinute) atVersionChecker();
 
-	if (atSettings.intervals.oneSecond) {
+	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop ? atSettings.intervals.twoSecond : atSettings.intervals.halfSecond) {
 		trimpStats = new TrimpStats();
 		hdStats = new HDStats();
 	}
@@ -1027,8 +1008,8 @@ function updateATVersion() {
 		}
 	}
 
-	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
-	//No other way to access it in TW currently.
+	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
+		No other way to access it in TW currently. */
 	if (usingRealTimeOffline) {
 		const changelogURL = `${atSettings.initialise.basepath}updates.html`;
 		changelog.push('There has been an AutoTrimps update. <a href="' + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");

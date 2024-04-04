@@ -182,45 +182,34 @@ function initialiseScript() {
 		return setTimeout(initialiseScript, 1);
 	}
 
+	if (usingRealTimeOffline) {
+		if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
+		cancelTooltip();
+	}
+
 	_loadAutoTrimpsSettings();
 	automationMenuSettingsInit();
 	initialiseAllTabs();
 	initialiseAllSettings();
-	_raspberryPiSettings();
 	updateATVersion();
+	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
 
-	const gammaBurstPct = getHeirloomBonus('Shield', 'gammaBurst') / 100;
-	MODULES.heirlooms.gammaBurstPct = gammaBurstPct > 0 ? gammaBurstPct : 1;
-	MODULES.heirlooms.breedHeirloom = usingBreedHeirloom();
+	if (getPageSetting('gameUser') === 'ray') MODULES.buildings.betaHouseEfficiency = true;
+	currSettingUniverse = getPageSetting('universeSetting') + 1;
+	universeSwapped();
+	loadAugustSettings();
+	_setupATButtons();
+	challengeInfo(true);
+
+	updateShieldData();
+	if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
 	farmingDecision();
-
-	if (usingRealTimeOffline) {
-		if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
-		cancelTooltip();
-
-		/* let offlineTime = (offlineProgress.totalOfflineTime / 1000 - 86400) * 1000;
-		if (offlineTime > 0) {
-			game.global.portalTime += offlineTime += 86400000;
-			offlineTime -= 86400000;
-			if (getGameTime() > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
-		} */
-	}
-
-	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
-
-	universeSwapped();
-	loadAugustSettings();
-	if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
-	if (getPageSetting('gameUser') === 'ray') MODULES.buildings.betaHouseEfficiency = true;
-	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
-	challengeInfo(true);
-	_setupATButtons();
 	autoMapsStatus();
 
 	atSettings.initialise.loaded = true;
-
 	toggleCatchUpMode();
 	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
 	console.timeEnd();
@@ -336,7 +325,7 @@ function mainLoop() {
 	remakeTooltip();
 	universeSwapped();
 
-	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) heirloomShieldSwapped();
+	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) updateShieldData();
 	if (!atSettings.running || game.options.menu.pauseGame.enabled || getPageSetting('pauseScript', 1)) return;
 
 	const runDuringTimeWarp = shouldRunInTimeWarp();

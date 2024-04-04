@@ -29,11 +29,9 @@ function autoMapsStatus(get = false) {
 	if (getPageSetting('autoMaps') === 0) status = `[Auto Maps Off] ${status}`;
 
 	if (usingRealTimeOffline && getPageSetting('timeWarpDisplay')) {
-		const { startTime, ticksProcessed, progressMax } = offlineProgress;
+		const { ticksProcessed, progressMax } = offlineProgress;
 		const progressPercentage = ((ticksProcessed / progressMax) * 100).toFixed(1);
-		const timeSpent = Math.floor((new Date().getTime() - startTime) / 1000);
-		const speed = ticksProcessed / (timeSpent * 10);
-		status = `Time Warp (${progressPercentage}% ${prettify(speed)}x)<br>${status}`;
+		status = `Time Warp (${progressPercentage}%)<br>${status}`;
 	}
 
 	const resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';

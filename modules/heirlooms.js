@@ -158,14 +158,14 @@ function heirloomEquip(heirloom, type) {
 	if (heirloomDetails && !isHeirloomEquipped) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), 'heirloomsCarried', true);
 		equipHeirloom(true);
-		if (type === 'Shield') heirloomShieldSwapped();
+		if (type === 'Shield') updateShieldData();
 	} else if (!heirloomDetails && !isHeirloomEquipped && atSettings.intervals.tenSecond) {
 		const hdMessage = type === 'Shield' ? `This will be causing at least one of your HD Ratios to be incorrect.` : ``;
 		debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} ${type.toLowerCase()}.${hdMessage}`, `other`);
 	}
 }
 
-function heirloomShieldSwapped() {
+function updateShieldData() {
 	const updateGamma = getPageSetting('gammaBurstCalc');
 	const gammaValue = updateGamma ? getHeirloomBonus('Shield', 'gammaBurst') / 100 : 0;
 	MODULES.heirlooms.gammaBurstPct = gammaValue > 0 ? gammaValue : 1;

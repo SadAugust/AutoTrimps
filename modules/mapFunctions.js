@@ -328,7 +328,7 @@ function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
 	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
 
-	if (game.global.mapsActive) {
+	if (game.global.mapsActive && !mapSettings.equality) {
 		const mapObj = getCurrentMapObject();
 		if (mapCost(mapObj.level - game.global.world, mapObj.bonus, mapObj.location, [9, 9, 9], getPageSetting('onlyPerfectMaps')) > game.resources.fragments * 0.5) return;
 		if (prestigesToGet(mapObj.level)[0] !== 0) return;
@@ -2674,7 +2674,9 @@ function desolation(lineCheck, forceDestack) {
 	let shouldMap = game.challenges.Desolation.chilled >= destackStacks && (hdStats.hdRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone);
 	if ((forceDestack && game.challenges.Desolation.chilled > 0) || ((game.global.mapsActive || game.challenges.Desolation.chilled > 0) && mapSettings.mapName === 'Desolation Destacking')) {
 		shouldMap = game.challenges.Desolation.chilled > 0;
-		if (!shouldMap) recycleMap_AT(true);
+		if (!shouldMap) {
+			recycleMap_AT(true);
+		}
 	}
 
 	if (lineCheck && shouldMap) return (setting = { priority: 0 });
@@ -4077,7 +4079,7 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 
 		if (needPrestiges) {
 			/* Reduce map level zone to the value of the last prestige item we need to farm */
-			/* if (mapName !== 'Map Bonus'  && getPageSetting('mapBonusPrestige') ) {
+			/* if (mapName !== 'Map Bonus' && getPageSetting('mapBonusPrestige')  ) {
 				while (mapLevel !== mapBonusLevel && prestigesToGet(game.global.world + mapBonusLevel - 1)[0] > 0) {
 					mapBonusLevel--;
 				}
