@@ -108,6 +108,7 @@ offlineProgress.finish = function () {
 	timeRun += offlineTime;
 	if (offlineProgress.startTime <= 0 || game.options.menu.pauseGame.enabled) timeRun = 0;
 	if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
+
 	offlineProgress.originalFinish(...arguments);
 
 	try {
@@ -126,7 +127,9 @@ offlineProgress.finish = function () {
 				addQueueItem(game.global.buildingsQueue[item]);
 			}
 			game.global.nextQueueId = game.global.buildingsQueue.length;
-		} else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
+		} else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) {
+			toggleSetting('autoSave');
+		}
 	} catch (e) {
 		console.log('Failed to restart Time Warp to finish it off. ' + e, 'other');
 	}

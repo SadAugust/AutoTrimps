@@ -200,16 +200,16 @@ function initialiseScript() {
 		if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
 		cancelTooltip();
 
-		let offlineTime = (offlineProgress.totalOfflineTime / 1000 - 86400) * 1000;
+		/* let offlineTime = (offlineProgress.totalOfflineTime / 1000 - 86400) * 1000;
 		if (offlineTime > 0) {
 			game.global.portalTime += offlineTime += 86400000;
 			offlineTime -= 86400000;
 			if (getGameTime() > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
-		}
+		} */
 	}
 
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
-	//Setup Perky/Surky UI
+
 	universeSwapped();
 	loadAugustSettings();
 	if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
