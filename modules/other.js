@@ -1,6 +1,6 @@
 function autoRoboTrimp() {
 	if (game.global.roboTrimpLevel === 0 || game.global.roboTrimpCooldown !== 0) return;
-	const autoRoboTrimpSetting = getPageSetting('AutoRoboTrimp');
+	const autoRoboTrimpSetting = getPageSetting('autoRoboTrimp');
 	if (autoRoboTrimpSetting <= 0) return;
 
 	const shouldShriek = game.global.world >= autoRoboTrimpSetting && (game.global.world - parseInt(autoRoboTrimpSetting)) % 5 === 0;
@@ -714,10 +714,10 @@ function updateATVersion() {
 	if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] !== atSettings.initialise.version) {
 		//On the offchance anybody is using a super old version of AT then they need their localStorage setting converted
 		if (JSON.parse(localStorage.getItem('atSettings')) === null) saveSettings();
-		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 		const versionNumber = autoTrimpSettings['ATversion'].split('v')[1];
 
 		if (versionNumber < '6.3.29') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
 
 			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
@@ -733,9 +733,12 @@ function updateATVersion() {
 					autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.unshift(tempSettings[u2Settings[item] + 'DefaultSettings'].valueU2);
 				}
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.3.36') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				autoTrimpSettings.uniqueMapSettingsArray.valueU2['Big_Wall'] = {
 					enabled: false,
@@ -743,73 +746,58 @@ function updateATVersion() {
 					cell: 0
 				};
 			}
+
+			saveSettings();
 		}
 
 		//Converting addonUser saves variable to object and storing farming settings .done stuff in it
 		if (versionNumber < '6.3.37') {
-			var obj = [];
-			for (var x = 0; x < 30; x++) {
-				obj[x] = {};
-				obj[x].done = '';
-			}
-
-			if (typeof game.global.addonUser !== 'object') game.global.addonUser = {};
-
 			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
-
 			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
 
-			for (var item in u1Settings) {
-				if (typeof game.global.addonUser[u1Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u1Settings[item] + 'Settings'] = {};
-
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
-				}
-				game.global.addonUser[u1Settings[item] + 'Settings'].value = obj;
-
+			for (let item in u1Settings) {
 				if (typeof autoTrimpSettings[u1Settings[item] + 'Settings'].value[0] !== 'undefined') {
-					for (var y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
+					for (let y = 0; y < autoTrimpSettings[u1Settings[item] + 'Settings'].value.length; y++) {
 						autoTrimpSettings[u1Settings[item] + 'Settings'].value[y].row = y;
 					}
 				}
 			}
 
-			for (var item in u2Settings) {
-				if (typeof game.global.addonUser[u2Settings[item] + 'Settings'] === 'undefined') game.global.addonUser[u2Settings[item] + 'Settings'] = {};
-				var obj = [];
-				for (var x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
-				}
-				game.global.addonUser[u2Settings[item] + 'Settings'].value = obj;
-
+			for (let item in u2Settings) {
 				if (typeof autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[0] !== 'undefined') {
-					for (var y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
+					for (let y = 0; y < autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2.length; y++) {
 						autoTrimpSettings[u2Settings[item] + 'Settings'].valueU2[y].row = y;
 					}
 				}
 			}
+
+			saveSettings();
 		}
+
 		if (versionNumber < '6.3.38') {
-			setupAddonUser();
+			setupAddonUser(true);
 		}
 
 		if (versionNumber < '6.4.09') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['heHrDontPortalBefore'] !== 'undefined') {
 				autoTrimpSettings.heliumHrDontPortalBefore.value = tempSettings.heHrDontPortalBefore.value;
 				autoTrimpSettings.heliumHrDontPortalBefore.valueU2 = tempSettings.heHrDontPortalBefore.valueU2;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.4.20') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['buildingSettingsArray'] !== 'undefined') {
 				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna = {};
 				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.enabled = false;
 				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.percent = 100;
 				autoTrimpSettings.buildingSettingsArray.valueU2.Antenna.buyMax = 0;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.06') {
@@ -818,18 +806,23 @@ function updateATVersion() {
 					autoTrimpSettings.alchemySettings['valueU2'][y].repeatevery = 0;
 					autoTrimpSettings.alchemySettings['valueU2'][y].endzone = 999;
 				}
-				saveSettings();
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.09') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['autoAbandon'] !== 'undefined') {
 				autoTrimpSettings.autoAbandon.value = tempSettings.autoAbandon.enabled ? 2 : 0;
 				autoTrimpSettings.autoAbandon.valueU2 = tempSettings.autoAbandon.enabledU2 ? 2 : 0;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.13') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			const values = ['value', 'valueU2'];
 			for (let z = 0; z < values.length; z++) {
 				const incrementMaps = tempSettings['raidingSettings'][values[z]][0] && tempSettings['raidingSettings'][values[z]][0].incrementMaps;
@@ -841,10 +834,12 @@ function updateATVersion() {
 					}
 				}
 			}
+
 			saveSettings();
 		}
 
 		if (versionNumber < '6.5.15') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				const currTrimple = tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
 				delete tempSettings['uniqueMapSettingsArray'].value['Trimple_of_Doom'];
@@ -857,15 +852,21 @@ function updateATVersion() {
 						cell: 1
 					};
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.20') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['experienceStaff'] !== 'undefined') {
 				if (autoTrimpSettings.experienceStaff.value === undefined || typeof autoTrimpSettings.experienceStaff.value !== 'string') autoTrimpSettings.experienceStaff.value === 'undefined';
 			}
+
+			saveSettings();
 		}
 		//Rename object names in "uniqueMapSettingsArray" to remove underscores from them.
 		if (versionNumber < '6.5.22') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				let obj = {};
 				for (let item in tempSettings.uniqueMapSettingsArray.value) {
@@ -878,28 +879,40 @@ function updateATVersion() {
 				}
 				autoTrimpSettings.uniqueMapSettingsArray.valueU2 = obj;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.24') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['voidMapSettings'] !== 'undefined') {
 				if (autoTrimpSettings.voidMapSettings.value[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = 1;
 				if (autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived === undefined) autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = 1;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.26') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['portalVoidIncrement'] !== 'undefined') {
 				autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.27') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['autGigaDeltaFactor'] !== 'undefined') {
 				autoTrimpSettings.autoGigaDeltaFactor.value = tempSettings.autGigaDeltaFactor.value;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.28') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['unbalance'] !== 'undefined') autoTrimpSettings.balance.enabledU2 = tempSettings.unbalance.enabledU2;
 			if (typeof tempSettings['unbalanceZone'] !== 'undefined') autoTrimpSettings.balanceZone.valueU2 = tempSettings.unbalanceZone.valueU2;
 			if (typeof tempSettings['unbalanceStacks'] !== 'undefined') autoTrimpSettings.balanceStacks.valueU2 = tempSettings.unbalanceStacks.valueU2;
@@ -913,23 +926,31 @@ function updateATVersion() {
 			autoTrimpSettings.decay.enabledU2 = false;
 			autoTrimpSettings.decayStacksToPush.valueU2 = -1;
 			autoTrimpSettings.decayStacksToAbandon.valueU2 = -1;
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.30') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['uniqueMapSettingsArray'] !== 'undefined') {
 				autoTrimpSettings.uniqueMapSettingsArray.valueU2['MP Smithy One Off'] = {
 					enabled: false,
 					value: 100
 				};
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.33') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['testMapScummingValue'] !== 'undefined') {
 				if (!gameUserCheck()) autoTrimpSettings.testMapScummingValue.value = -1;
 				else if (typeof tempSettings['testMapScummingValue'].value === 'object' && tempSettings['testMapScummingValue'].valueU2) autoTrimpSettings.testMapScummingValue.value = tempSettings['testMapScummingValue'].valueU2;
 				else autoTrimpSettings.testMapScummingValue.value = -1;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.36') {
@@ -945,12 +966,16 @@ function updateATVersion() {
 		}
 
 		if (versionNumber < '6.5.39') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['heirloomStaffResource'] !== 'undefined') {
 				autoTrimpSettings.heirloomStaffScience.valueU2 = tempSettings.heirloomStaffResource.valueU2;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.43') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['Prestige'] !== 'undefined') {
 				autoTrimpSettings.prestigeClimb.selected = tempSettings.Prestige.selected;
 				autoTrimpSettings.prestigeClimb.selectedU2 = tempSettings.Prestige.selectedU2;
@@ -963,10 +988,14 @@ function updateATVersion() {
 				autoTrimpSettings.prestigeClimbZone.value = tempSettings.ForcePresZ.value;
 				autoTrimpSettings.prestigeClimbZone.valueU2 = tempSettings.ForcePresZ.valueU2;
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.49') {
 			autoTrimpSettings.spamMessages.value.show = true;
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.50') {
@@ -990,6 +1019,8 @@ function updateATVersion() {
 					autoTrimpSettings.hdFarmSettings['valueU2'][y].repeatevery = 1;
 				}
 			}
+
+			saveSettings();
 		}
 
 		if (versionNumber < '6.5.55') {
@@ -1004,6 +1035,46 @@ function updateATVersion() {
 					}
 				}
 			}
+
+			saveSettings();
+		}
+
+		if (versionNumber < '6.5.72') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			autoTrimpSettings.c2Fused.value = tempSettings.c2Fused.enabled ? 2 : 0;
+			autoTrimpSettings.trapTrimps.enabled = tempSettings.TrapTrimps.enabled;
+			autoTrimpSettings.trapTrimps.enabledU2 = tempSettings.TrapTrimps.enabledU2;
+
+			autoTrimpSettings.forceAbandon.enabled = tempSettings.ForceAbandon.enabled;
+			autoTrimpSettings.ignoreCrits.value = tempSettings.IgnoreCrits.value;
+			autoTrimpSettings.ignoreCrits.valueU2 = tempSettings.IgnoreCrits.valueU2;
+			autoTrimpSettings.autoRoboTrimp.value = tempSettings.AutoRoboTrimp.value;
+			autoTrimpSettings.addPoison.value = tempSettings.addpoison.value;
+			autoTrimpSettings.fullIce.enabled = tempSettings.fullice.enabled;
+			autoTrimpSettings.autoStanceScryer.enabled = tempSettings.AutoStanceScryer.enabled;
+
+			autoTrimpSettings.heliumyPercent.value = tempSettings.buyheliumy.value;
+			autoTrimpSettings.heliumyPercent.valueU2 = tempSettings.buyheliumy.valueU2;
+
+			autoTrimpSettings.maxMapStacksForSpire.enabled = tempSettings.MaxStacksForSpire.enabled;
+
+			autoTrimpSettings.autoGen.enabled = tempSettings.UseAutoGen.enabled;
+			autoTrimpSettings.autoGenModeBefore.value = tempSettings.beforegen.value;
+			autoTrimpSettings.autoGenModeAfter.value = tempSettings.defaultgen.value;
+			autoTrimpSettings.autoGenModeDaily.value = tempSettings.AutoGenDC.value;
+			autoTrimpSettings.autoGenModeC2.value = tempSettings.AutoGenC2.value;
+			autoTrimpSettings.autoGenFuelStart.value = tempSettings.fuellater.value;
+			autoTrimpSettings.autoGenFuelEnd.value = tempSettings.fuelend.value;
+			autoTrimpSettings.autoGen.enabled = tempSettings.UseAutoGen.enabled;
+
+			autoTrimpSettings.autoNature.enabled = tempSettings.AutoNatureTokens.enabled;
+			autoTrimpSettings.autoNatureThreshold.value = tempSettings.tokenthresh.value;
+
+			autoTrimpSettings.autoPoison.selected = tempSettings.AutoPoison.selected;
+			autoTrimpSettings.autoWind.selected = tempSettings.AutoWind.selected;
+			autoTrimpSettings.autoIce.selected = tempSettings.AutoIce.selected;
+
 			saveSettings();
 		}
 	}
@@ -1016,6 +1087,7 @@ function updateATVersion() {
 	}
 
 	autoTrimpSettings['ATversion'] = atSettings.initialise.version;
+
 	if (changelog.length !== 0) {
 		printChangelog(changelog);
 		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(false, true);

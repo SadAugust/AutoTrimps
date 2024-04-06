@@ -168,7 +168,7 @@ function initialiseAllSettings() {
 				}
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
-		createSetting('TrapTrimps',
+		createSetting('trapTrimps',
 			function () { return ('Trap Trimps') },
 			function () {
 				let description = "<p>Automatically builds traps and traps trimps when needed.</p>";
@@ -1038,7 +1038,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Auto Stance</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Combat', [1]);
-		createSetting('IgnoreCrits',
+		createSetting('ignoreCrits',
 			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
 			function () {
 				let description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
@@ -1048,7 +1048,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Safety First</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Combat', [1, 2]);
-		createSetting('ForceAbandon',
+		createSetting('forceAbandon',
 			function () { return ('Trimpicide') },
 			function () {
 				let description = "<p>If a new army is available to send and anticipation stacks aren't maxed this will suicide your current army and send a new one.</p>";
@@ -1056,7 +1056,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Combat', [1]);
-		createSetting('AutoRoboTrimp',
+		createSetting('autoRoboTrimp',
 			function () { return ('Auto Robotrimp') },
 			function () {
 				let description = "<p>Use the Robotrimp ability starting at this level, and every 5 levels thereafter.</p>";
@@ -1064,7 +1064,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 60</p>";
 				return description;
 			}, 'value', 60, null, 'Combat', [1]);
-		createSetting('addpoison',
+		createSetting('addPoison',
 			function () { return ('Poison Calc') },
 			function () {
 				let description = "<p>Adds poison stack damage to any trimp damage calculations.</p>";
@@ -1072,7 +1072,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Combat', [1]);
-		createSetting('fullice',
+		createSetting('fullIce',
 			function () { return ('Ice Calc') },
 			function () {
 				let description = "<p>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use is to ensure your H:D (enemyHealth:trimpDamage) ratios aren't all over the place.</p>";
@@ -1124,7 +1124,7 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'Combat', [2],
 			function () { return (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned) });
 
-		createSetting('AutoStanceScryer',
+		createSetting('autoStanceScryer',
 			function () { return ('Enable Scryer Stance') },
 			function () {
 				let description = "<p>Master switch for whether the script will use scryer stance.</p>";
@@ -1144,7 +1144,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'boolean', false, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerMinZone',
 			function () { return ('Min Zone') },
 			function () {
@@ -1156,7 +1156,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'value', 60, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerMaxZone',
 			function () { return ('Max Zone') },
 			function () {
@@ -1169,7 +1169,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'value', 999, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerMinMaxWorld',
 			function () { return (['Min & Max: Everywhere', 'Min & Max: World', 'Min & Max: Corrupted Only', 'Min & Max: Healthy Only']) },
 			function () {
@@ -1182,7 +1182,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 1, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerMaps',
 			function () { return (['Maps: Never', 'Maps: Force', 'Maps: Maybe']) },
 			function () {
@@ -1195,7 +1195,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerVoidMaps',
 			function () { return (['Void Maps: Never', 'Void Maps: Force', 'Void Maps: Maybe']) },
 			function () {
@@ -1207,7 +1207,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerPlusMaps',
 			function () { return (['Plus Maps: Never', 'Plus Maps: Force', 'Plus Maps: Maybe']) },
 			function () {
@@ -1219,7 +1219,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerBW',
 			function () { return (['BW: Never', 'BW: Force', 'BW: Maybe']) },
 			function () {
@@ -1231,7 +1231,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerSpire',
 			function () { return (['Spire: Never', 'Spire: Force', 'Spire: Maybe']) },
 			function () {
@@ -1243,7 +1243,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerSkipBoss',
 			function () { return (['Boss: Never', 'Boss: Maybe']) },
 			function () {
@@ -1254,7 +1254,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerCorrupted',
 			function () { return (['Corrupted: Never', 'Corrupted: Force', 'Corrupted: Maybe']) },
 			function () {
@@ -1267,7 +1267,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerHealthy',
 			function () { return (['Healthy: Never', 'Healthy: Force', 'Healthy: Maybe']) },
 			function () {
@@ -1279,7 +1279,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerPoison',
 			function () { return ('Scry in Poison') },
 			function () {
@@ -1292,7 +1292,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerWind',
 			function () { return ('Scry in Wind') },
 			function () {
@@ -1305,7 +1305,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerIce',
 			function () { return ('Scry in Ice') },
 			function () {
@@ -1318,7 +1318,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerDieZone',
 			function () { return ('Die To Use S') },
 			function () {
@@ -1331,7 +1331,7 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 		createSetting('scryerEssenceOnly',
 			function () { return ('Remaining Essence Only') },
 			function () {
@@ -1339,7 +1339,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Combat', [1],
-			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 
 		createSetting('AutoStanceWind',
 			function () { return ('Wind Stacking') },
@@ -1511,6 +1511,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, "Maps", [1, 2]); */
 
+			/* Rename this */
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },
 			function () {
@@ -1959,13 +1960,14 @@ function initialiseAllSettings() {
 		createSetting('c2RunnerMode',
 			function () { return ([_getChallenge2Info() + ' Runner %', _getChallenge2Info() + ' Runner Set Values']) },
 			function () {
-				let description = "<p>Toggles between the two modes that " + _getChallenge2Info() + " Runner can use for selecting which " + _getChallenge2Info() + " to start.</p>";
-				description += "<p><b>" + _getChallenge2Info() + " Runner %</b><br>Will run " + _getChallenge2Info() + "s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see " + _getChallenge2Info() + " Table.</p>";
-				description += "<p><b>" + _getChallenge2Info() + " Runner Set Values</b><br>\
-				Uses the <b>" + _getChallenge2Info() + " Runner Settings</b> popup and will run enabled " + _getChallenge2Info() + "s when they are below the designated end zone.</p>";
-				description += "<p>If using <b>" + _getChallenge2Info() + " Runner Set Values</b> then the " + _getChallenge2Info() + " will only be be finished if the challenge is enabled and a zone above 0 has been set.</p>";
-				description += "<p>I recommend only using <b>" + _getChallenge2Info() + " Runner Set Values</b> if you're actively going to update the inputs as you progress.</p>";
-				description += "<p><b>Recommended:</b> " + _getChallenge2Info() + " Runner %</p>";
+				const c2Name = _getChallenge2Info();
+				let description = "<p>Toggles between the two modes that " + c2Name + " Runner can use for selecting which " + c2Name + " to start.</p>";
+				description += "<p><b>" + c2Name + " Runner %</b><br>Will run " + c2Name + "s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see " + c2Name + " Table.</p>";
+				description += "<p><b>" + c2Name + " Runner Set Values</b><br>\
+				Uses the <b>" + c2Name + " Runner Settings</b> popup and will run enabled " + c2Name + "s when they are below the designated end zone.</p>";
+				description += "<p>If using <b>" + c2Name + " Runner Set Values</b> then the " + c2Name + " will only be be finished if the challenge is enabled and a zone above 0 has been set.</p>";
+				description += "<p>I recommend only using <b>" + c2Name + " Runner Set Values</b> if you're actively going to update the inputs as you progress.</p>";
+				description += "<p><b>Recommended:</b> " + c2Name + " Runner %</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
@@ -2013,14 +2015,16 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 
 		createSetting('c2Fused',
-			function () { return ('Fused ' + _getChallenge2Info() + 's') },
+			function () { return (['Fused ' + _getChallenge2Info() + 's', 'Fused ' + _getChallenge2Info() + 's Below %', 'Fused ' + _getChallenge2Info() + 's Any %']) },
 			function () {
-				let description = "<p>Will allow " + _getChallenge2Info() + " Runner to do fused versions of " + _getChallenge2Info() + "'s rather than normal versions to reduce time spent running " + _getChallenge2Info() + "s.</p>";
-				/* description += "<p>If using <b>" + _getChallenge2Info() + " Runner %</b> then this will only run Fused " + _getChallenge2Info() + "'s is both challenges are below your target zone.</p>"; */
-				description += "<p><b>Recommended:</b> On</p>";
+				const c2Name = _getChallenge2Info();
+				let description = "<p>Will allow " + c2Name + " Runner to do fused versions of " + c2Name + "'s rather than normal versions to reduce time spent running " + c2Name + "s.</p>";
+				description += "<p><b>Fused " + c2Name + "'s Below %</b><br>Will run " + c2Name + "s when both challenges are below your <b>" + c2Name + " Runner % value</b>.</p>";
+				description += "<p><b>Fused " + c2Name + "'s Any %</b><br>Will run " + c2Name + "s when either challenge is  below your <b>" + c2Name + " Runner % value.</b></p>";
+				description += "<p><b>Recommended:</b> Fused " + _getChallenge2Info() + "s Any %</p>";
 				return description;
-			}, 'boolean', false, null, 'C2', [1],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
+			}, 'multitoggle', 0, null, 'C2', [1],
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 
 		createSetting('c2IgnoreSpiresUntil',
 			function () { return (_getChallenge2Info() + ' Ignore Spires Until') },
@@ -2696,7 +2700,7 @@ function initialiseAllSettings() {
 	
 	const displayDaily = true
 	if (displayDaily) {
-		createSetting('buyheliumy',
+		createSetting('heliumyPercent',
 			function () {
 				return ('Buy ' + (currSettingUniverse === 2 ? "Radonculous" : "Heliumy") + ' %')
 			},
@@ -2763,6 +2767,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Daily', [1]);
 
+			/* Rename this */
 		createSetting('dIgnoreSpiresUntil',
 			function () { return ('D: Ignore Spires Until') },
 			function () {
@@ -3721,7 +3726,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
-		createSetting('MaxStacksForSpire',
+		createSetting('maxMapStacksForSpire',
 			function () { return ('Max Map Bonus for Spire') },
 			function () {
 				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
@@ -3769,7 +3774,7 @@ function initialiseAllSettings() {
 	
 	const displayMagma = true;
 	if (displayMagma) {
-		createSetting('UseAutoGen',
+		createSetting('autoGen',
 			function () { return ('Auto Generator') },
 			function () {
 				let description = "<p>Master switch for whether the script will do any form of dimensional generator mode switching.</p>";
@@ -3777,7 +3782,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Magma', [1]);
-		createSetting('beforegen',
+		createSetting('autoGenModeBefore',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
 			function () {
 				let description = "<p>The mode you would like your dimensional generator to be on before your <b>Start Fuel Z</b> zone.</p>";
@@ -3787,8 +3792,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Gain Mi</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
-		createSetting('fuellater',
+			function () { return (getPageSetting('autoGen', currSettingUniverse)) });
+		createSetting('autoGenFuelStart',
 			function () { return ('Start Fuel Z') },
 			function () {
 				let description = "<p>Will automatically set the generator to gather <b>Fuel</b> when this zone is reached.</p>";
@@ -3798,8 +3803,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
 				return description;
 			}, 'value', 0, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
-		createSetting('fuelend',
+			function () { return (getPageSetting('autoGen', currSettingUniverse)) });
+		createSetting('autoGenFuelEnd',
 			function () { return ('End Fuel Z') },
 			function () {
 				let description = "<p>Will automatically set the generator to gather <b>Fuel</b> until this zone is reached.</p>";
@@ -3809,8 +3814,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
 				return description;
 			}, 'value', 0, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
-		createSetting('defaultgen',
+			function () { return (getPageSetting('autoGen', currSettingUniverse)) });
+		createSetting('autoGenModeAfter',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
 			function () {
 				let description = "<p>The mode you would like your dimensional generator to be on after your <b>End Fuel Z</b> zone.</p>";
@@ -3820,8 +3825,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Gain Mi</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
-		createSetting('AutoGenDC',
+			function () { return (getPageSetting('autoGen', currSettingUniverse)) });
+		createSetting('autoGenModeDaily',
 			function () { return (['Daily: Normal', 'Daily: Fuel', 'Daily: Hybrid']) },
 			function () {
 				let description = "<p>The mode that the script will use for the entire daily run.</p>";
@@ -3831,8 +3836,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Daily Normal</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
-		createSetting('AutoGenC2',
+			function () { return (getPageSetting('autoGen', currSettingUniverse)) });
+		createSetting('autoGenModeC2',
 			function () { return (['' + _getChallenge2Info() + ': Normal', '' + _getChallenge2Info() + ': Fuel', '' + _getChallenge2Info() + ': Hybrid']) },
 			function () {
 				let description = "<p>The mode that the script will use for the entire " + _getSpecialChallengeDescription() + " runs.</p>";
@@ -3842,7 +3847,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> " + _getChallenge2Info() + " Fuel</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
+			function () { return (getPageSetting('autoGen', currSettingUniverse)) });
 
 		createSetting('magmiteAutoFuel',
 			function () { return ('Automate Fuel Zones') },
@@ -3851,7 +3856,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse)) });
+			function () { return (getPageSetting('autoGen', currSettingUniverse)) });
 		createSetting('magmiteFuelZones',
 			function () { return ('Zones To Fuel') },
 			function () {
@@ -3859,7 +3864,7 @@ function initialiseAllSettings() {
 				description += "<p>To disable this setting you must disable the <b>Automate Fuel Zones</b> setting.</p>";
 				return description;
 			}, 'value', 20, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse) && getPageSetting('magmiteAutoFuel', currSettingUniverse)) });
+			function () { return (getPageSetting('autoGen', currSettingUniverse) && getPageSetting('magmiteAutoFuel', currSettingUniverse)) });
 		createSetting('magmiteMinimize',
 			function () { return ('Minimize Fuel Zones') },
 			function () {
@@ -3868,7 +3873,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Magma', [1],
-			function () { return (getPageSetting('UseAutoGen', currSettingUniverse) && getPageSetting('magmiteAutoFuel', currSettingUniverse) && game.stats.amalgamators.valueTotal > 0) });
+			function () { return (getPageSetting('autoGen', currSettingUniverse) && getPageSetting('magmiteAutoFuel', currSettingUniverse) && game.stats.amalgamators.valueTotal > 0) });
 
 		createSetting('magmiteSpending',
 			function () { return (['Spend Magmite Off', 'Spend Magmite On Portal', 'Spend Magmite Always']) },
@@ -3900,7 +3905,7 @@ function initialiseAllSettings() {
 	
 	const displayNature = true;
 	if (displayNature) {
-		createSetting('AutoNatureTokens',
+		createSetting('autoNature',
 			function () { return ('Spend Nature Tokens') },
 			function () {
 				let description = "<p>Controls how Nature tokens are handled by the script.</p>";
@@ -3908,15 +3913,15 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Nature', [1]);
-		createSetting('tokenthresh',
+		createSetting('autoNatureThreshold',
 			function () { return ('Token Threshold') },
 			function () {
 				let description = "<p>If tokens would go below this value it will disable token expenditure.</p>";
 				description += "<p>Set to <b>0 or below</b> to completely disable token expenditure.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
-		createSetting('AutoPoison',
+			function () { return (autoTrimpSettings.autoNature.enabled) });
+		createSetting('autoPoison',
 			function () { return ('Poison') },
 			function () {
 				let description = "<p>Decides what to do with Poison tokens.</p>";
@@ -3927,8 +3932,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
 			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice', 'Convert to Both']; }, 'Nature', [1],
-			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
-		createSetting('AutoWind',
+			function () { return (autoTrimpSettings.autoNature.enabled) });
+		createSetting('autoWind',
 			function () { return ('Wind') },
 			function () {
 				let description = "<p>Decides what to do with Wind tokens.</p>";
@@ -3939,8 +3944,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
 			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Ice', 'Convert to Both']; }, 'Nature', [1],
-			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
-		createSetting('AutoIce',
+			function () { return (autoTrimpSettings.autoNature.enabled) });
+		createSetting('autoIce',
 			function () { return ('Ice') },
 			function () {
 				let description = "<p>Decides what to do with Ice tokens.</p>";
@@ -3951,7 +3956,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
 			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind', 'Convert to Both']; }, 'Nature', [1],
-			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
+			function () { return (autoTrimpSettings.autoNature.enabled) });
 
 		createSetting('autoenlight',
 			function () { return ('Enlight: Auto') },
@@ -5042,8 +5047,8 @@ function _settingsToLineBreak() {
 	const breakAfterBuildings = ['autoGigaDeltaFactor', 'advancedNurseriesIce'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
-	const breakAfterMagma = ['AutoGenC2', 'magmiteMinimize'];
-	const breakAfterNature = ['AutoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
+	const breakAfterMagma = ['autoGenModeC2', 'magmiteMinimize'];
+	const breakAfterNature = ['autoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
 	const breakAfterDisplay = ['testTotalEquipmentCost'];
 	const breakAfterTest = ['automateSpireAssault', 'EnableAFK'];
 

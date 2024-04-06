@@ -355,9 +355,10 @@ function _autoPortalC2() {
 	const challengeArray = [];
 	const universePrefix = portalUniverse === 2 ? 'C3' : 'C2';
 	const c2Setting = getPageSetting('c2RunnerSettings', portalUniverse);
+	const runFused = getPageSetting('c2Fused', portalUniverse);
 
 	if (runType === 0) {
-		if (portalUniverse === 1 && getPageSetting('c2Fused', portalUniverse)) {
+		if (portalUniverse === 1 && runFused > 0) {
 			if (highestZone >= 45) challengeArray.push('Enlightened');
 			if (highestZone >= 180) challengeArray.push('Waze');
 			if (highestZone >= 180) challengeArray.push('Toxad');
@@ -379,8 +380,8 @@ function _autoPortalC2() {
 		}
 	}
 
-	const oneZoneIncrement = ['Obliterated', 'Eradicated'];
-	const threeZoneIncrement = ['Coordinate'];
+	/* const oneZoneIncrement = ['Obliterated', 'Eradicated'];
+	const threeZoneIncrement = ['Coordinate']; */
 
 	//Looping through challenge array to figure out if things should be run.
 	for (let x = 0; x < challengeArray.length; x++) {
@@ -392,8 +393,9 @@ function _autoPortalC2() {
 		let challengeLevel = 0;
 		for (let y = 0; y < challengeList.length; y++) {
 			if (challengeLevel > 0) {
-				/* const targetZone = Math.floor(highestZone / zoneIncrease) * zoneIncrease; */
-				challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
+				const secondChallenge = game.c2[challengeList[y]];
+				if (runFused === 1 && Math.max(challengeLevel, secondChallenge) / highestZone < c2RunnerPercent) continue;
+				challengeLevel = Math.min(challengeLevel, secondChallenge);
 			} else {
 				challengeLevel += game.c2[challengeList[y]];
 			}
@@ -405,9 +407,11 @@ function _autoPortalC2() {
 		} else {
 			shouldRun = challengeLevel < c2Setting[challengeName].zone;
 		}
+
 		if (!shouldRun || challengeActive(challengeName)) continue;
 		if (!challengeSquaredMode) toggleChallengeSquared();
 		if (!document.getElementById(`challenge${challengeName}`)) continue;
+
 		selectChallenge(challengeName);
 		debug(`${universePrefix} Runner: Starting ${challengeName}`, 'portal');
 		return;

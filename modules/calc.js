@@ -369,7 +369,7 @@ function _getAnticipationBonus(stacks = game.global.antiStacks, currentBonus = f
 function _getTrimpIceMult(realDamage) {
 	if (getEmpowerment() !== 'Ice') return 1;
 
-	if (realDamage || (typeof atSettings !== 'undefined' && !getPageSetting('fullice'))) {
+	if (realDamage || (typeof atSettings !== 'undefined' && !getPageSetting('fullIce'))) {
 		return 1 + game.empowerments.Ice.getDamageModifier();
 	} else {
 		const afterTransfer = 1 + Math.ceil(game.empowerments.Ice.currentDebuffPower * getRetainModifier('Ice'));
@@ -397,7 +397,7 @@ function addPoison(realDamage, zone = game.global.world) {
 	if (getEmpowerment(zone) !== 'Poison') return 0;
 	if (realDamage) return game.empowerments.Poison.getDamage();
 	//Dynamically determines how much we are benefiting from poison based on Current Amount * Transfer Rate
-	if (typeof atSettings !== 'undefined' && getPageSetting('addpoison')) return game.empowerments.Poison.getDamage() * getRetainModifier('Poison');
+	if (typeof atSettings !== 'undefined' && getPageSetting('addPoison')) return game.empowerments.Poison.getDamage() * getRetainModifier('Poison');
 	return 0;
 }
 
@@ -562,7 +562,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 }
 
 function getCritPower(enemy = getCurrentEnemy(), block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
-	const ignoreCrits = typeof atSettings !== 'undefined' ? getPageSetting('IgnoreCrits') : 0;
+	const ignoreCrits = typeof atSettings !== 'undefined' ? getPageSetting('ignoreCrits') : 0;
 	if (ignoreCrits === 2) return 0;
 
 	const outputs = {
@@ -593,7 +593,7 @@ function getCritPower(enemy = getCurrentEnemy(), block = game.global.soldierCurr
 
 function badGuyCritMult(enemy = getCurrentEnemy(), critPower = 2, block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
 	if (critPower <= 0) return 1;
-	const ignoreCrits = typeof atSettings !== 'undefined' ? getPageSetting('IgnoreCrits') : 0;
+	const ignoreCrits = typeof atSettings !== 'undefined' ? getPageSetting('ignoreCrits') : 0;
 	if (ignoreCrits === 2) return 1;
 
 	let regular = 1;
@@ -754,7 +754,7 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 		if (worldType === 'world' && game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
 	}
 
-	if (typeof atSettings !== 'undefined' && getEmpowerment() === 'Ice' && getPageSetting('fullice')) {
+	if (typeof atSettings !== 'undefined' && getEmpowerment() === 'Ice' && getPageSetting('fullIce')) {
 		const afterTransfer = 1 + Math.ceil(game.empowerments.Ice.currentDebuffPower * getRetainModifier('Ice'));
 		attack *= Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
 	}
@@ -990,7 +990,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 
 function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', difficulty = 1, extraBlock = 0, extraHealth = 0, checkOutputs) {
 	const formationMod = game.upgrades.Dominance.done ? 2 : 1;
-	const ignoreCrits = getPageSetting('IgnoreCrits');
+	const ignoreCrits = getPageSetting('ignoreCrits');
 
 	if (worldType !== 'map' && targetZone % 2 === 1 && challengeActive('Lead')) targetZone++;
 

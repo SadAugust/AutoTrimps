@@ -1,6 +1,6 @@
 function autoNatureTokens() {
-	if (!getPageSetting('AutoNatureTokens') || !mutations.Magma.active()) return;
-	const tokenThreshold = getPageSetting('tokenthresh');
+	if (!getPageSetting('autoNature') || !mutations.Magma.active()) return;
+	const tokenThreshold = getPageSetting('autoNatureThreshold');
 	if (tokenThreshold <= 0) return;
 	let spentTokens = false;
 

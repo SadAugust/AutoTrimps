@@ -12,9 +12,9 @@ function gigaTargetZone() {
 	if (!trimpStats.isC3) targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
 	else targetZone = Math.max(targetZone, c2zone - 1);
 
-	if (trimpStats.isDaily && getPageSetting('AutoGenDC') !== 0) targetZone = Math.min(targetZone, 230);
-	if (trimpStats.isC3 && getPageSetting('AutoGenC2') !== 0) targetZone = Math.min(targetZone, 230);
-	if (getPageSetting('fuellater') >= 1 || getPageSetting('beforegen') !== 0) targetZone = Math.min(targetZone, Math.max(230, getPageSetting('fuellater')));
+	if (trimpStats.isDaily && getPageSetting('autoGenModeDaily') !== 0) targetZone = Math.min(targetZone, 230);
+	if (trimpStats.isC3 && getPageSetting('autoGenModeC2') !== 0) targetZone = Math.min(targetZone, 230);
+	if (getPageSetting('autoGenFuelStart') >= 1 || getPageSetting('autoGenModeBefore') !== 0) targetZone = Math.min(targetZone, Math.max(230, getPageSetting('autoGenFuelStart')));
 
 	if (targetZone < 60) {
 		targetZone = Math.max(65, game.global.highestLevelCleared);

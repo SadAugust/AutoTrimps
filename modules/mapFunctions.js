@@ -579,7 +579,7 @@ function mapBonus(lineCheck) {
 
 	const settingIndex = _findSettingsIndexMapBonus(settingName, baseSettings);
 
-	const spireCheck = isDoingSpire() && getPageSetting('MaxStacksForSpire') && !_berserkDisableMapping() && !_noMappingChallenges();
+	const spireCheck = isDoingSpire() && getPageSetting('maxMapStacksForSpire') && !_berserkDisableMapping() && !_noMappingChallenges();
 	if (!spireCheck && !defaultSettings.active) return farmingDetails;
 
 	const setting = spireCheck ? _mapBonusSpireSetting(defaultSettings) : settingIndex ? baseSettings[settingIndex] : undefined;
@@ -4199,7 +4199,7 @@ function autoMapLevel(special = getAvailableSpecials('lmc'), maxLevel, minLevel,
 		let enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, enemyName, false, false, universeSetting) * difficulty;
 
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
-		if (dailyCrit && getPageSetting('IgnoreCrits') === 0) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		if (dailyCrit && getPageSetting('ignoreCrits') === 0) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 
 		if (challengeActive('Duel')) {
 			enemyDmg *= 10;

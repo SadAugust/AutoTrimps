@@ -18,8 +18,8 @@ function miRatio() {
 		upgradeToPurchase: ''
 	};
 
-	const fuelStart = Math.max(230, getPageSetting('fuellater', 1));
-	const fuelEnd = Math.min(810, getPageSetting('fuelend', 1));
+	const fuelStart = Math.max(230, getPageSetting('autoGenFuelStart', 1));
+	const fuelEnd = Math.min(810, getPageSetting('autoGenFuelEnd', 1));
 
 	MODULES.magmiteSettings = {
 		//runstats
@@ -165,8 +165,8 @@ function calculateFuelZones(refresh = false, fuelZones = getPageSetting('magmite
 	MODULES.magmiteSettings.fuelZones.update(fuelZones);
 	MODULES.magmiteSettings.fuelEnd.update();
 
-	setPageSetting('fuellater', MODULES.magmiteSettings.fuelStart.value, 1);
-	setPageSetting('fuelend', MODULES.magmiteSettings.fuelEnd.value, 1);
+	setPageSetting('autoGenFuelStart', MODULES.magmiteSettings.fuelStart.value, 1);
+	setPageSetting('autoGenFuelEnd', MODULES.magmiteSettings.fuelEnd.value, 1);
 	miRatio();
 
 	if (!refresh && getPageSetting('magmiteMinimize')) minimizeFuelZones();
@@ -519,27 +519,27 @@ function _autoMagmiteCalc() {
 }
 
 function autoGenerator() {
-	if (!getPageSetting('UseAutoGen', 1) || game.global.world < 230) return;
+	if (!getPageSetting('autoGen', 1) || game.global.world < 230) return;
 
-	const dailySetting = getPageSetting('AutoGenDC');
+	const dailySetting = getPageSetting('autoGenModeDaily');
 	if (trimpStats.isDaily && dailySetting !== 0) {
 		if (game.global.generatorMode !== dailySetting) changeGeneratorState(dailySetting);
 		return;
 	}
 
-	const c2Setting = getPageSetting('AutoGenC2');
+	const c2Setting = getPageSetting('autoGenModeC2');
 	if (trimpStats.isC3 && c2Setting !== 0) {
 		if (game.global.generatorMode !== c2Setting) changeGeneratorState(c2Setting);
 		return;
 	}
 
-	const beforeFuelState = getPageSetting('beforegen');
-	const afterFuelState = getPageSetting('defaultgen');
-	const fuelLater = getPageSetting('fuellater');
-	const fuelEnd = getPageSetting('fuelend');
+	const beforeFuelState = getPageSetting('autoGenModeBefore');
+	const afterFuelState = getPageSetting('autoGenModeAfter');
+	const fuelStart = getPageSetting('autoGenFuelStart');
+	const fuelEnd = getPageSetting('autoGenFuelEnd');
 	let fuelState = 1;
 
-	if (fuelLater < 0 || game.global.world < fuelLater) {
+	if (fuelStart < 0 || game.global.world < fuelStart) {
 		fuelState = beforeFuelState;
 		if (beforeFuelState === 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
 			fuelState = game.global.generatorMode;

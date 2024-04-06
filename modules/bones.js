@@ -114,7 +114,7 @@ function buySingleRunBonuses() {
 	}
 
 	if (!trimpStats.isDaily || game.singleRunBonuses.heliumy.owned || game.global.b < 100) return;
-	const heliumySetting = getPageSetting('buyheliumy', game.global.universe);
+	const heliumySetting = getPageSetting('heliumyPercent', game.global.universe);
 	if (heliumySetting <= 0 || getDailyHeliumValue(countDailyWeight()) < heliumySetting) return;
 
 	purchaseSingleRunBonus('heliumy');

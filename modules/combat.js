@@ -38,7 +38,7 @@ function _betterAutoFightVanilla() {
 	Doesn't do this inside of void maps OR spires. */
 function _trimpicide() {
 	if (game.global.universe !== 1 || game.portal.Anticipation.level === 0) return;
-	if (!game.global.fighting || !getPageSetting('ForceAbandon')) return;
+	if (!game.global.fighting || !getPageSetting('forceAbandon')) return;
 
 	const antistacklimit = game.talents.patience.purchased ? 45 : 30;
 	if (game.global.antiStacks >= antistacklimit) return;
@@ -59,7 +59,7 @@ function _trimpicide() {
 
 // Abandons trimps to get max anticipation stacks.
 function _forceAbandonTrimps() {
-	if (!getPageSetting('ForceAbandon') || !getPageSetting('autoMaps')) return;
+	if (!getPageSetting('forceAbandon') || !getPageSetting('autoMaps')) return;
 	if (!game.global.mapsUnlocked || game.global.preMapsActive) return;
 
 	if (game.global.mapsActive) {

@@ -2250,7 +2250,7 @@ function c2RunnerDisplay(elem) {
 	MODULES.popups.mazWindowOpen = true;
 
 	const baseText = `Here you can enable the challenges you would like ${_getChallenge2Info()} runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.`;
-	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(currSettingUniverse) !== -1 ? ` If the 'Fused ${_getChallenge2Info()}s' setting is enabled it will show Fused challenges and prioritise running them over their regular counterparts.` : '';
+	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(currSettingUniverse) !== -1 ? ` Fused challenges are prioritised over their regular counterparts when starting challenges.` : '';
 
 	let tooltipText = `
 		<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div>
@@ -2271,7 +2271,7 @@ function c2RunnerDisplay(elem) {
 	const settingGroup = {};
 	const c2RunnerSettings = getPageSetting('c2RunnerSettings', currSettingUniverse);
 
-	let obj = challengesUnlockedObj(currSettingUniverse, true, !getPageSetting('c2Fused', currSettingUniverse));
+	let obj = challengesUnlockedObj(currSettingUniverse, true, false);
 	obj = filterAndSortChallenges(obj, 'c2');
 
 	obj.forEach((setting) => {

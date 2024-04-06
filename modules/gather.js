@@ -74,7 +74,7 @@ function _isTrappingOK(Battle, Coordination) {
 	const trapChallenge = noBreedChallenge();
 	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
-	const baseCheck = (!Battle.done || getPageSetting('TrapTrimps') || _breedTimeRemaining() === Infinity || (game.global.world === 1 && game.global.lastClearedCell === -1)) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
+	const baseCheck = (!Battle.done || getPageSetting('trapTrimps') || _breedTimeRemaining() === Infinity || (game.global.world === 1 && game.global.lastClearedCell === -1)) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 	if (!trapChallenge) return baseCheck;
 
 	// Identify if we should disable trapping when running Trappa/Trapper.
