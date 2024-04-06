@@ -6,7 +6,7 @@ function autoNatureTokens() {
 
 	for (let nature in game.empowerments) {
 		const empowerment = game.empowerments[nature];
-		let setting = getPageSetting(`Auto${nature}`);
+		let setting = getPageSetting(`auto${nature}`);
 		if (!setting || setting === 'Off') continue;
 
 		if (setting === 'Empowerment') {
