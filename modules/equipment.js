@@ -85,8 +85,8 @@ function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false,
 	return _populateMostEfficientEquipment(mostEfficientObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield);
 }
 
-function calculateEquipCap(type, zoneGo = false, noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal')) {
-	if (zoneGo || noPrestigeChallenge) return Infinity;
+function calculateEquipCap(type, zoneGo = false, noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal'), externalCheck = false) {
+	if ((zoneGo && externalCheck) || noPrestigeChallenge) return Infinity;
 	if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return Infinity;
 	return type === 'attack' ? getPageSetting('equipCapAttack') : getPageSetting('equipCapHealth');
 }
@@ -181,7 +181,10 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 			if (prestigesAvailable && !maybeBuyPrestige.prestigeAvailable) continue;
 		}
 
-		const equipCap = maybeBuyPrestige.prestigeAvailable ? Math.min(mostEfficient[equipType].equipCap, 9) : mostEfficient[equipType].equipCap;
+		let equipCap = mostEfficient[equipType].equipCap;
+		if (equipData.level >= equipCap && mostEfficient[equipType].zoneGo) equipCap = Infinity;
+		if (maybeBuyPrestige.prestigeAvailable) equipCap = Math.min(equipCap, 9);
+
 		const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
 		const skipPrestiges = ancientTreasurePrestigeSkip || (6 > equipData.level && (prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo)));
 
