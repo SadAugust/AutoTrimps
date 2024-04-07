@@ -67,7 +67,7 @@ game.options.menu.pauseGame.onToggle = function () {
 	game.options.menu.pauseGame.originalOnToggle(...arguments);
 };
 
-originalstartFight = startFight;
+var originalstartFight = startFight;
 startFight = function () {
 	if (!game.global.fighting && MODULES.heirlooms.breedHeirloom) {
 		heirloomSwapping(true);
@@ -137,8 +137,14 @@ offlineProgress.finish = function () {
 	}
 };
 
+var originalrunMap = runMap;
+runMap = function () {
+	originalrunMap(...arguments);
+	if (MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+};
+
 //Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
-originalActivateClicked = activateClicked;
+var originalActivateClicked = activateClicked;
 activateClicked = function () {
 	downloadSave(true);
 	if (typeof pushData === 'function') pushData();

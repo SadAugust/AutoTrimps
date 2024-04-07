@@ -540,10 +540,8 @@ function makeAdditionalInfoTooltip(mouseover) {
 		tooltipText += `<p><b>Void</b><br>`;
 		tooltipText += `The progress you have towards the <b>Void Maps</b> permanent bone upgrade counter.</p>`;
 	}
-	tooltipText += `<p><b>AL (Auto Level)</b><br>`;
-	tooltipText += `The level that the script recommends using whilst farming.</p>`;
 
-	tooltipText += `<p><b>AL2 (Auto Level New)</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome === 'Plentiful' ? 'Gardens' : trimpStats.mapBiome} and ${trimpStats.mapSpecial !== '0' ? mapSpecialModifierConfig[trimpStats.mapSpecial].name : 'no special'} maps.<br>`;
+	tooltipText += `<p><b>AL (Auto Level)</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome === 'Plentiful' ? 'Gardens' : trimpStats.mapBiome} and ${trimpStats.mapSpecial !== '0' ? mapSpecialModifierConfig[trimpStats.mapSpecial].name : 'no special'} maps.<br>`;
 	tooltipText += `L: The ideal map level for loot gains.<br>`;
 	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the Map Bonus setting.</p>`;
 
@@ -575,9 +573,7 @@ function makeAdditionalInfo() {
 		description += lineBreak;
 	}
 
-	const autoLevel = whichAutoLevel();
-	if (autoLevel === 'original') description += `AL: ${hdStats.autoLevel}`;
-	else description += `AL: (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
+	description += `AL: (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		const breedTimer = Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000);

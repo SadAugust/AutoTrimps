@@ -1434,14 +1434,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
-		createSetting('autoLevelTest',
-			function () { return ('New Auto Level') },
-			function () {
-				let description = "<p>Will switch the auto level system that is being used to the new one based off of and adapted from the zfarm code.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', true, null, 'Maps', [1, 2]);
-
 		createSetting('autoLevelScryer',
 			function () { return ('Auto Level Scryer') },
 			function () {
@@ -1450,7 +1442,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1],
-			function () { return (getPageSetting('autoLevelTest', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 180) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 180) });
 
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },

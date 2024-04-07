@@ -7,7 +7,7 @@ MODULES.maps = {
 	mapRepeats: 0,
 	mapRepeatsSmithy: [0, 0, 0],
 	mapTimer: 0,
-	lastMapWeWereIn: null,
+	lastMapWeWereIn: { id: 0 },
 	fragmentCost: Infinity
 };
 
@@ -470,7 +470,6 @@ function _purchaseMap(lowestMap) {
 		const mapCost = updateMapCost(true);
 		debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / (game.resources.fragments.owned + mapCost)) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
 		runMap();
-		MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 	}
 }
 
@@ -505,7 +504,7 @@ function _abandonMapCheck(selectedMap = null, runUnique) {
 	if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
 	if (game.global.currentMapId !== '') {
 		//If we don't have info on the previous map then set it.
-		if (MODULES.maps.lastMapWeWereIn === null || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
+		if (MODULES.maps.lastMapWeWereIn.id === 0 || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
 
 		//Ensure the map has the correct biome, if not then recycle it.
 		if (mapSettings.biome && ((mapSettings.biome === 'Any' && MODULES.maps.lastMapWeWereIn.location === 'Forest') || MODULES.maps.lastMapWeWereIn.location !== mapSettings.biome)) recycleMap();
@@ -524,12 +523,7 @@ function _runSelectedMap(mapId, runUnique) {
 	_abandonMapCheck(mapId, runUnique);
 	selectMap(mapId);
 	runMap();
-	const mapObj = game.global.mapsOwnedArray[getMapIndex(mapId)];
-
-	if (MODULES.maps.lastMapWeWereIn !== mapObj) {
-		debug(`Running ${prettifyMap(mapObj)}`, 'maps', 'th-large');
-		MODULES.maps.lastMapWeWereIn = mapObj;
-	}
+	debug(`Running ${prettifyMap(mapObj)}`, 'maps', 'th-large');
 }
 
 //Way to fix an issue with having no maps available to run and no fragments to purchase them
