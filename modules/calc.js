@@ -662,8 +662,10 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 			const enemy = game.global.gridArray[cell - 1];
 			if (game.global.spireActive) {
 				attack = calcSpire('attack', cell, name);
-			} else if (gridInitialised && mutations.Corruption.active() && enemy.mutation) {
+			} else if (gridInitialised && mutations.Corruption.active() && (enemy.mutation || enemy.empowerment)) {
 				if (enemy.mutation !== 'Magma') attack = corruptionBaseStats(cell - 1, zone, 'attack', true);
+
+				if (enemy.empowerment) attack *= 1.2;
 				if (enemy.corrupted === 'corruptStrong') attack *= 2;
 				else if (enemy.corrupted === 'healthyStrong') attack *= 2.5;
 			}
@@ -836,9 +838,10 @@ function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldT
 			const enemy = game.global.gridArray[cell - 1];
 			if (game.global.spireActive) {
 				health = calcSpire('health', cell, name);
-			} else if (gridInitialised && mutations.Corruption.active() && enemy.mutation) {
+			} else if (gridInitialised && mutations.Corruption.active() && (enemy.mutation || enemy.empowerment)) {
 				if (enemy.mutation !== 'Magma') health = corruptionBaseStats(cell - 1, zone, 'health', true);
 
+				if (enemy.empowerment) health *= 4;
 				if (enemy.corrupted === 'corruptTough') health *= 5;
 				else if (enemy.corrupted === 'healthyTough') health *= 7.5;
 			}
