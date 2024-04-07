@@ -27,6 +27,7 @@ load = function () {
 		atlantrimpRespecOverride();
 		resetVarsZone(true);
 		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
+		_setButtonsPortal();
 		updateAutoTrimpSettings(true);
 	} catch (e) {
 		debug(`Load save failed: ${e}`);
@@ -39,6 +40,7 @@ resetGame = function () {
 	originalresetGame(...arguments);
 	try {
 		atlantrimpRespecOverride();
+		_setButtonsPortal();
 	} catch (e) {
 		debug(`Load save failed: ${e}`);
 	}
