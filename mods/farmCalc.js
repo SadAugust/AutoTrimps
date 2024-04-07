@@ -107,6 +107,14 @@ function populateFarmCalcData() {
 		trimpHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
 	}
 
+	const frenzyLevel = getPerkLevel('Frenzy');
+	const permaFrenzy = autoBattle.oneTimers.Mass_Hysteria.owned;
+	const shouldFrenzy = frenzyLevel > 0 && !permaFrenzy && !challengeActive('Berserk');
+	const frenzyMult = 1 + 0.5 * frenzyLevel;
+	const frenzyDuration = permaFrenzy ? Infinity : 5 * frenzyLevel;
+	const frenzyChance = frenzyLevel;
+	if (shouldFrenzy && runningAutoTrimps && getPageSetting('frenzyCalc')) trimpAttack /= frenzyMult;
+
 	//Check if we have a fast enemy
 	//Fast Enemy conditions
 	let fastEnemy = challengeActive('Desolation');
@@ -117,7 +125,7 @@ function populateFarmCalcData() {
 	else if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) fastEnemy = true;
 	else if (challengeActive('Exterminate')) fastEnemy = false;
 	else if (challengeActive('Glass')) fastEnemy = true;
-	else if (universe === 2 && getPerkLevel('Frenzy') > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned) fastEnemy = true;
+	else if (shouldFrenzy) fastEnemy = true;
 
 	const death_stuff = {
 		enemy_cd: 1,
@@ -131,11 +139,9 @@ function populateFarmCalcData() {
 		magma: challengeActive('Eradicated') || (game.global.universe === 1 && zone >= 230)
 	};
 
-	//Enemy Stats
 	let enemyHealth = 1;
 	let enemyAttack = 1;
 
-	//U1 Challenge modifiers
 	const challengeEffects = {
 		Discipline: () => {
 			minFluct = 0.005;
@@ -219,7 +225,6 @@ function populateFarmCalcData() {
 		});
 	}
 
-	//U2 Challenge modifiers
 	const challengeEffectsU2 = {
 		Unlucky: () => {
 			minFluct = 0.005;
@@ -299,7 +304,6 @@ function populateFarmCalcData() {
 		});
 	}
 
-	//Dailies
 	if (challengeActive('Daily')) {
 		const daily = (mod) => (game.global.dailyChallenge[mod] ? game.global.dailyChallenge[mod].strength : 0);
 		minFluct -= daily('minDamage') ? 0.09 + 0.01 * daily('minDamage') : 0;
@@ -319,11 +323,11 @@ function populateFarmCalcData() {
 
 	return {
 		//Base Info
-		universe: universe,
-		speed: speed,
-		zone: zone,
-		maxTicks: maxTicks,
-		//Extra Map Info
+		universe,
+		speed,
+		zone,
+		maxTicks,
+		//Map Info
 		extraMapLevelsAvailable: extraMapLevelsAvailable,
 		reducer: haveMapReducer,
 		biome: _getBiomeEnemyStats(biome),
@@ -343,6 +347,11 @@ function populateFarmCalcData() {
 		[['poison', 'wind', 'ice'][Math.ceil(zone / 5) % 3]]: nature / 100,
 		uberNature: uberEmpowerment,
 		transfer: natureTransfer,
+		//Frenzy
+		shouldFrenzy,
+		frenzyDuration,
+		frenzyMult,
+		frenzyChance,
 		//Trimp Stats
 		attack: Math.floor(trimpAttack),
 		trimpHealth: Math.floor(trimpHealth),
@@ -502,6 +511,11 @@ function simulate(saveData, zone) {
 	let glassStacks = game.challenges.Glass.shards;
 	let universe = saveData.universe;
 	let magma = saveData.magma;
+	let hasFrenzy = false;
+	const checkFrenzy = saveData.shouldFrenzy;
+	let frenzyRefresh = true;
+	let frenzyLeft = 0;
+
 	let hasWithered = false;
 	let equality = 0;
 	let trimpCrit = false;
@@ -511,6 +525,7 @@ function simulate(saveData, zone) {
 	let kills = 0;
 	let deaths = 0;
 	let initialShield;
+	let energyShield = energyShieldMax;
 
 	let seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
@@ -594,7 +609,6 @@ function simulate(saveData, zone) {
 		}
 
 		if (saveData.frigid && amt >= saveData.health / 5) amt = saveData.health;
-
 		trimpHealth = Math.max(0, trimpHealth - amt);
 	}
 
@@ -643,7 +657,7 @@ function simulate(saveData, zone) {
 
 		let plague_damage = 0;
 		enemyHealth = Math.min(enemyHealth, Math.max(enemy_max_hp * 0.05, enemyHealth - plague_damage));
-		let energyShield = energyShieldMax;
+		energyShield = energyShieldMax;
 
 		if (saveData.glass) enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 		if (saveData.duel && duelPoints > 80) enemyHealth *= 10;
@@ -680,11 +694,12 @@ function simulate(saveData, zone) {
 
 			if (fast) enemy_hit(enemyAttack, rngRoll);
 
-			// Trimp attack
+			// trimp attack
 			if (!armyDead()) {
 				ok_spread = saveData.ok_spread;
 				trimpAttack = saveData.atk;
 				if (!saveData.unlucky) trimpAttack *= 1 + saveData.range * rngRoll;
+				if (frenzyLeft > 0) trimpAttack *= saveData.frenzyMult;
 				if (saveData.duel) {
 					saveData.critChance = 1 - duelPoints / 100;
 					if (duelPoints > 50) trimpAttack *= 3;
@@ -702,6 +717,14 @@ function simulate(saveData, zone) {
 				ice += saveData.natureIncrease;
 				if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += trimpAttack * saveData.plaguebringer;
 				pbTurns++;
+
+				if (checkFrenzy && (frenzyLeft < 0 || (frenzyRefresh && frenzyLeft < saveData.frenzyDuration / 2))) {
+					const roll = Math.floor(Math.random() * 1000);
+					if (roll < saveData.frenzyChance) {
+						frenzyLeft = saveData.frenzyDuration;
+						frenzyRefresh = true;
+					}
+				}
 			}
 
 			if (!fast && enemyHealth >= 1 && !armyDead()) enemy_hit(enemyAttack);
@@ -756,6 +779,8 @@ function simulate(saveData, zone) {
 				turns = 1;
 				debuff_stacks = 0;
 				gammaStacks = 0;
+				frenzyLeft /= 2;
+				frenzyRefresh = false;
 				deaths++;
 
 				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = max_ticks;
@@ -769,6 +794,7 @@ function simulate(saveData, zone) {
 			//Safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage
 			if (turns >= 1000) ticks = max_ticks;
 			if (titimp > 0) titimp -= saveData.titimpReduction;
+			frenzyLeft -= saveData.speed / 10;
 		}
 
 		if (saveData.explosion && (saveData.explosion <= 15 || (trimpBlock >= saveData.health && universe !== 2))) trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - trimpBlock);

@@ -36,6 +36,7 @@ const MODULES = {
 let currPortalUniverse = 0;
 let currSettingUniverse = 0;
 let settingChangedTimeout = false;
+var originalGameLoop = gameLoop;
 
 let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
 let hdStats = { autoLevel: Infinity };
@@ -120,7 +121,6 @@ function loadModules(fileName, prefix = '') {
 
 function loadScriptsAT() {
 	console.time();
-	originalGameLoop = gameLoop;
 	gameLoop = function (makeUp, now) {}; /* Disable game from running until script loads to ensure no time is spent without AT running*/
 	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
 	basepath = `${atSettings.initialise.basepathOriginal}css/`;
