@@ -523,7 +523,7 @@ function _runSelectedMap(mapId, runUnique) {
 	_abandonMapCheck(mapId, runUnique);
 	selectMap(mapId);
 	runMap();
-	debug(`Running ${prettifyMap(mapObj)}`, 'maps', 'th-large');
+	debug(`Running ${prettifyMap(MODULES.maps.lastMapWeWereIn)}`, 'maps', 'th-large');
 }
 
 //Way to fix an issue with having no maps available to run and no fragments to purchase them
