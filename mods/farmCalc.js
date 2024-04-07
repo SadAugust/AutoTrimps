@@ -74,13 +74,13 @@ function populateFarmCalcData() {
 		}
 	}
 
-	const gammaMult = runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult;
+	const gammaMult = runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult || 1;
 	const gammaCharges = gammaMaxStacks(false, false, 'map');
 
 	//Heirloom + Crit Chance
 	const customShield = runningAutoTrimps ? heirloomShieldToEquip('map') : null;
 	let critChance = runningAutoTrimps ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
-	let critDamage = runningAutoTrimps ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult();
+	let critDamage = runningAutoTrimps ? getPlayerCritDamageMult_AT(customShield) - 1 : getPlayerCritDamageMult() - 1;
 
 	//Base crit multiplier
 	let megaCD = 5;
@@ -361,7 +361,7 @@ function populateFarmCalcData() {
 		critChance: critChance % 1,
 		critDamage: critDamage,
 		gammaCharges: gammaCharges,
-		gammaMult: gammaMult,
+		gammaMult,
 		range: maxFluct / minFluct - 1,
 		plaguebringer: (plaguebrought === 2 ? 0.5 : 0) + (runningAutoTrimps ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
 		equalityMult: game.global.universe === 2 ? (runningAutoTrimps ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
@@ -866,17 +866,15 @@ function get_best(results, fragmentCheck, mapModifiers) {
 		}
 
 		const runningAutoTrimps = typeof atSettings !== 'undefined';
-		const fragSetting = runningAutoTrimps ? getPageSetting('onlyPerfectMaps') : true;
+		const fragSetting = runningAutoTrimps && getPageSetting('onlyPerfectMaps');
 
 		const fragments = game.resources.fragments.owned;
 		for (let i = 0; i <= stats.length - 1; i++) {
 			if (fragSetting) {
-				if (runningAutoTrimps && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
+				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
 				if (fragments >= mapCost(stats[i].level, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
-			}
-
-			if (!fragSetting) {
-				if (runningAutoTrimps && findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
+			} else {
+				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
 				const simulatedSliders = _simulateSliders(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome);
 				const { loot, size, difficulty } = simulatedSliders.sliders;
 				if (fragments >= mapCost(simulatedSliders.level, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;
@@ -993,6 +991,7 @@ function _getBiomeEnemyStats(biome) {
 //After initial load everything should work perfectly.
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
+	/* let basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
 	//Load CSS so that the UI is visible
 	let linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';
@@ -1008,9 +1007,9 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		document.head.appendChild(script);
 	}
 
-	injectScript('AutoTrimps-SadAugust_breedtimer', 'https://sadaugust.github.io/AutoTrimps/modules/breedtimer.js');
-	injectScript('AutoTrimps-SadAugust_calc', 'https://sadaugust.github.io/AutoTrimps/modules/calc.js');
-	injectScript('AutoTrimps-SadAugust_farmCalcStandalone', 'https://sadaugust.github.io/AutoTrimps/mods/farmCalcStandalone.js');
+	injectScript('AutoTrimps-SadAugust_breedtimer', basepathFarmCalc + 'modules/breedtimer.js');
+	injectScript('AutoTrimps-SadAugust_calc', basepathFarmCalc + 'modules/calc.js');
+	injectScript('AutoTrimps-SadAugust_farmCalcStandalone', basepathFarmCalc + 'mods/farmCalcStandalone.js');
 
 	function updateAdditionalInfo() {
 		if (!usingRealTimeOffline) {
