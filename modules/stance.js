@@ -324,7 +324,7 @@ function shouldWindStance() {
 }
 
 function shouldScryerStance(baseStats = getBaseStats(), availableStances = unlockedStances()) {
-	if (game.global.preMapsActive || !getPageSetting('AutoStanceScryer')) return false;
+	if (game.global.preMapsActive || !getPageSetting('autoStanceScryer')) return false;
 
 	const mapsActive = game.global.mapsActive;
 
