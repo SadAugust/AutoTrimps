@@ -865,20 +865,19 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			};
 		}
 
-		const runningAutoTrimps = typeof atSettings !== 'undefined';
-		const fragSetting = runningAutoTrimps && getPageSetting('onlyPerfectMaps');
-
+		const forcePerfect = typeof atSettings !== 'undefined' && getPageSetting('onlyPerfectMaps');
 		const fragments = game.resources.fragments.owned;
 		for (let i = 0; i <= stats.length - 1; i++) {
-			if (fragSetting) {
-				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, true)) continue;
+			if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, forcePerfect)) continue;
+
+			if (forcePerfect) {
 				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			} else {
-				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome)) continue;
 				const simulatedSliders = _simulateSliders(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome);
 				const { loot, size, difficulty } = simulatedSliders.sliders;
 				if (fragments >= mapCost(simulatedSliders.mapLevel, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;
 			}
+
 			stats.splice(i, 1);
 			i--;
 		}
@@ -897,41 +896,40 @@ function get_best(results, fragmentCheck, mapModifiers) {
 	}
 
 	function getBestStats(stats, type) {
+		const bestMapData = stats[0];
 		const bestStats = {
-			mapLevel: stats[0].mapLevel,
-			zone: stats[0].zone,
-			value: stats[0][stats[0].stance].value,
-			speed: stats[0][stats[0].stance].speed,
-			killSpeed: stats[0][stats[0].stance].killSpeed,
-			stance: stats[0].stance
+			mapLevel: bestMapData.mapLevel,
+			zone: bestMapData.zone,
+			value: bestMapData[bestMapData.stance].value,
+			speed: bestMapData[bestMapData.stance].speed,
+			killSpeed: bestMapData[bestMapData.stance].killSpeed,
+			stance: bestMapData.stance
 		};
 
-		if (game.global.universe === 1) bestStats.stance = stats[0].stance;
-		if (game.global.universe === 2) bestStats.equality = stats[0].equality;
+		if (game.global.universe === 2) bestStats.equality = bestMapData.equality;
 
-		if (stats[1]) {
+		const backupMapData = stats[1];
+		if (backupMapData) {
 			bestStats[`${type}Second`] = {
-				mapLevel: stats[1].mapLevel,
-				zone: stats[1].zone,
-				value: stats[1][stats[1].stance].value,
-				speed: stats[1][stats[1].stance].speed,
-				killSpeed: stats[1][stats[1].stance].killSpeed
+				mapLevel: backupMapData.mapLevel,
+				zone: backupMapData.zone,
+				value: backupMapData[backupMapData.stance].value,
+				speed: backupMapData[backupMapData.stance].speed,
+				killSpeed: backupMapData[backupMapData.stance].killSpeed
 			};
 
-			if (game.global.universe === 1) bestStats[`${type}Second`].stance = stats[1].stance;
-			if (game.global.universe === 2) bestStats[`${type}Second`].equality = stats[1].equality;
+			if (game.global.universe === 1) bestStats[`${type}Second`].stance = backupMapData.stance;
+			if (game.global.universe === 2) bestStats[`${type}Second`].equality = backupMapData.equality;
 
-			bestStats.ratio = stats[0].value / stats[1].value;
+			bestStats.ratio = bestMapData.value / backupMapData.value;
 		}
 
 		return bestStats;
 	}
 
-	//Best zone to farm on for loot
 	statsLoot.sort((a, b) => b.value - a.value);
 	best.loot = getBestStats(statsLoot, 'loot');
 
-	//Best zone to farm on for speed
 	statsSpeed.sort((a, b) => b.killSpeed - a.killSpeed);
 	best.speed = getBestStats(statsSpeed, 'speed');
 
@@ -991,7 +989,7 @@ function _getBiomeEnemyStats(biome) {
 //After initial load everything should work perfectly.
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
-	/* let basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
+	/* basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
 	//Load CSS so that the UI is visible
 	let linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';

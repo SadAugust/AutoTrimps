@@ -1028,16 +1028,6 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Combat', [1, 2]);
-		createSetting('AutoStance',
-			function () { return (['Auto Stance Off', 'Auto Stance', 'D Stance']) },
-			function () {
-				let description = "<p>Enabling this setting will allow the script to swap stances to stop you having to do it manually.</p>";
-				description += "<p><b>Auto Stance Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Auto Stance</b><br>Automatically swap stances to avoid death. Prioritises damage when you have enough health to survive.</p>";
-				description += "<p><b>D stance</b><br>Keeps you in D stance regardless of your armies health.</p>";
-				description += "<p><b>Recommended:</b> Auto Stance</p>";
-				return description;
-			}, 'multitoggle', 1, null, 'Combat', [1]);
 		createSetting('ignoreCrits',
 			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
 			function () {
@@ -1048,6 +1038,17 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Safety First</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Combat', [1, 2]);
+		createSetting('AutoStance',
+			function () { return (['Auto Stance Off', 'Auto Stance', 'D Stance']) },
+			function () {
+				let description = "<p>Enabling this setting will allow the script to swap stances to stop you having to do it manually.</p>";
+				description += "<p><b>Auto Stance Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Auto Stance</b><br>Automatically swap stances to avoid death. Prioritises damage when you have enough health to survive.</p>";
+				description += "<p><b>D stance</b><br>Keeps you in D stance regardless of your armies health.</p>";
+				description += "<p><b>Recommended:</b> Auto Stance</p>";
+				return description;
+			}, 'multitoggle', 1, null, 'Combat', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 60) });
 		createSetting('forceAbandon',
 			function () { return ('Trimpicide') },
 			function () {
@@ -1055,7 +1056,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Will not abandon in Spires.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Combat', [1]);
+			}, 'boolean', true, null, 'Combat', [1],
+			function () { return (!game.portal.Anticipation.locked) });
 		createSetting('autoRoboTrimp',
 			function () { return ('Auto Robotrimp') },
 			function () {
@@ -1063,7 +1065,8 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 60</p>";
 				return description;
-			}, 'value', 60, null, 'Combat', [1]);
+			}, 'value', 60, null, 'Combat', [1],
+			function () { return (game.global.roboTrimpLevel > 0) });
 		createSetting('addPoison',
 			function () { return ('Poison Calc') },
 			function () {
@@ -1071,21 +1074,24 @@ function initialiseAllSettings() {
 				description += "<p>May improve your poison zone speed.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Combat', [1]);
+			}, 'boolean', true, null, 'Combat', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 236) });
 		createSetting('fullIce',
 			function () { return ('Ice Calc') },
 			function () {
 				let description = "<p>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use is to ensure your H:D (enemyHealth:trimpDamage) ratios aren't all over the place.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Combat', [1]);
+			}, 'boolean', true, null, 'Combat', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 236) });
 		createSetting('45stacks',
 			function () { return ('Antistack Calc') },
 			function () {
 				let description = "<p>Will force any damage calculations to assume you have max anticipation stacks.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Combat', [1]);
+			}, 'boolean', true, null, 'Combat', [1],
+			function () { return (!game.portal.Anticipation.locked) });
 		createSetting('AutoDStanceSpire',
 			function () { return ('D Stance in Spires') },
 			function () {
@@ -1133,7 +1139,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			},
-			'boolean', false, null, 'Combat', [1]);
+			'boolean', false, null, 'Combat', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 180) });
 		createSetting('scryerOverkill',
 			function () { return ('Use When Overkill') },
 			function () {
@@ -1423,7 +1430,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Be warned this may greatly decrease the map level that the script believes is efficient.</b></p>";
 				description += "<p><b>Recommended:</b> Off unless at end game</p>";
 				return description;
-			}, 'boolean', false, null, 'Maps', [1, 2]);
+			}, 'boolean', false, null, 'Maps', [1, 2],
+			function () { return (trimpStats.perfectMaps) });
 
 		createSetting('recycleExplorer',
 			function () { return ('Recycle Pre-Explorers') },
@@ -1438,7 +1446,7 @@ function initialiseAllSettings() {
 			function () { return ('Auto Level Scryer') },
 			function () {
 				let description = "<p>Allows the Auto Level system to use Scryer and Wind stances.</p>";
-				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when <b>Auto Maps</b> is enabled.</p>";
+				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when running a map and <b>Auto Maps</b> is enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1],
@@ -1448,7 +1456,7 @@ function initialiseAllSettings() {
 			function () { return ('Hits Survived') },
 			function () {
 				let description = "<p>Will farm until you can survive this amount of attacks.</p>";
-				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
+				description += "<p>Uses the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>If you have farmed and your Hits Survived value drops below 80% of this setting then it will farm again.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
@@ -1494,6 +1502,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 2, null, "Maps", [1, 2]);
 
+		/* Does this work as intended? Must query Ray for info */
 		/* createSetting('mapBonusPrestige',
 			function () { return ('Map Bonus Level Prestiges') },
 			function () {
@@ -1503,7 +1512,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, "Maps", [1, 2]); */
 
-			/* Rename this */
+		/* Rename this */
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },
 			function () {
@@ -3638,7 +3647,7 @@ function initialiseAllSettings() {
 
 				return heirloomTiersAvailable;
 			}, 'Heirloom', [1],
-			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && game.global.spiresCompleted > 0) });
 
 		createSetting('heirloomAutoCoreBlacklist',
 			function () { return ('Blacklist') },
@@ -3648,7 +3657,7 @@ function initialiseAllSettings() {
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
 			}, 'multiTextValue', 'None', null, 'Heirloom', [1],
-			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && game.global.spiresCompleted > 0) });
 
 		createSetting('heirloomAutoCoreMod1',
 			function () { return ('Mod 1') },
@@ -3658,8 +3667,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [1],
 			function () {
-				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse))
-			});
+				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) && game.global.spiresCompleted > 0});
 		createSetting('heirloomAutoCoreMod2',
 			function () { return ('Mod 2') },
 			function () {
@@ -3669,8 +3677,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [1],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
-				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 1)
-			});
+				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 1)});
 		createSetting('heirloomAutoCoreMod3',
 			function () { return ('Mod 3') },
 			function () {
@@ -3680,8 +3687,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [1],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
-				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 2)
-			});
+				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 2)});
 		createSetting('heirloomAutoCoreMod4',
 			function () { return ('Mod 4') },
 			function () {
@@ -3691,8 +3697,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [1],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
-				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 5)
-			});
+				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 5)});
 	}
 	
 	const displayGolden = true;
@@ -4109,7 +4114,7 @@ function initialiseAllSettings() {
 				description += "<p>Liquification zones override this and temporarily set it to 1 during them.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
-			}, 'value', 5, null, 'Time Warp', [0],
+			}, 'value', 1, null, 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 
 		createSetting('timeWarpSaving',
@@ -4983,6 +4988,8 @@ function _setDisplayedTabs() {
 		tabDaily: !displayAllSettings && !radonOn && hze < 99,
 		tabFluffy: radonOn || (!displayAllSettings && game.global.spiresCompleted < 2),
 		tabJobs: radonOn || (!displayAllSettings && hze < 70),
+		tabHeirloom: game.global.totalPortals === 0,
+		tabGolden: getAchievementStrengthLevel() === 0,
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
 		tabSpire: radonOn || (!displayAllSettings && hze < 190),

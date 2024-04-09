@@ -21,8 +21,8 @@ class TrimpStats {
 
 		this.mapSize = talents.mapLoot2.purchased ? 20 : 25;
 		this.mapDifficulty = 0.75;
-		this.perfectMaps = this.hze >= universe === 2 ? 30 : 110;
-		this.plusLevels = this.hze >= universe === 2 ? 50 : 210;
+		this.perfectMaps = this.hze >= (universe === 2 ? 30 : 110);
+		this.plusLevels = this.hze >= (universe === 2 ? 50 : 210);
 		this.mapSpecial = getAvailableSpecials('lmc');
 		this.mapBiome = getBiome();
 
