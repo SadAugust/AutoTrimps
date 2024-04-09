@@ -215,7 +215,7 @@ function getCurrentQuest() {
 
 //AutoLevel information
 function makeAdditionalInfo() {
-	if (!game.global.mapsUnlocked) return (description += `AL: Maps not unlocked!`);
+	if (!game.global.mapsUnlocked) return `AL: Maps not unlocked!`;
 	const initialInfo = get_best(stats(), true);
 	const u2 = game.global.universe === 2;
 	const showExtraType = (u2 && getPerkLevel('Equality') > 0) || (!u2 && game.upgrades.Formations.done);
