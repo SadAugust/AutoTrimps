@@ -2284,6 +2284,58 @@ function numTab(what, p) {
 	}
 }
 
+function prestigeEquipment(what, fromLoad = false, noInc = false) {
+	const equipment = game.equipment[what];
+	if (!fromLoad && !noInc) equipment.prestige++;
+
+	const prestigeMod = equipment.prestige >= 4 ? (equipment.prestige - 3) * 0.85 + 2 : equipment.prestige - 1;
+	const resource = what === 'Shield' ? 'wood' : 'metal';
+	const cost = equipment.cost[resource];
+	cost[0] = Math.round(equipment.oc * Math.pow(1.069, prestigeMod * game.global.prestige.cost + 1));
+
+	const stat = equipment.blockNow ? 'block' : typeof equipment.health !== 'undefined' ? 'health' : 'attack';
+	if (!fromLoad) game.global[stat] -= equipment[stat + 'Calculated'] * equipment.level;
+	if (!fromLoad) game.global.difs[stat] -= equipment[stat + 'Calculated'] * equipment.level;
+	equipment[stat + 'Calculated'] = Math.round(equipment[stat] * Math.pow(1.19, (equipment.prestige - 1) * game.global.prestige[stat] + 1));
+
+	// No need to touch level if it's newNum
+	if (fromLoad) return;
+	equipment.level = 0;
+	if (!noInc) levelEquipment(what, 1);
+	if (game.global[stat] <= 0) game.global[stat] = calcBaseStats(stat);
+
+	const numeral = usingScreenReader ? prettify(equipment.prestige) : romanNumeral(equipment.prestige);
+	const equipElem = document.getElementById(`${what}Numeral`);
+	if (equipElem !== null) equipElem.innerHTML = numeral;
+
+	displayEfficientEquipment();
+}
+
+function calcBaseStats(equipType = 'attack') {
+	const equipmentTypes = {
+		attack: ['Dagger', 'Mace', 'Polearm', 'Battleaxe', 'Greatsword', 'Arbalest'],
+		health: ['Shield', 'Boots', 'Helmet', 'Pants', 'Shoulderguards', 'Breastplate', 'Gambeson'],
+		block: game.equipment.Shield.blockNow ? ['Shield'] : []
+	};
+
+	const bonusValues = {
+		attack: 6,
+		health: 50,
+		block: 0
+	};
+
+	let bonus = bonusValues[equipType] || 0;
+	let equipmentList = equipmentTypes[equipType] || [];
+
+	for (let i = 0; i < equipmentList.length; i++) {
+		const equip = game.equipment[equipmentList[i]];
+		if (equip.locked || (equip.blockNow && equipType === 'health')) continue;
+		bonus += equip[equipType + 'Calculated'] * equip.level;
+	}
+
+	return bonus;
+}
+
 function startFight() {
 	if (game.global.challengeActive && typeof game.challenges[game.global.challengeActive].onStartFight === 'function') {
 		game.challenges[game.global.challengeActive].onStartFight();
