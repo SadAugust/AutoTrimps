@@ -1228,7 +1228,7 @@ function prestigeClimb(lineCheck) {
 
 	//If we're past the zone we want to farm for all prestiges in then set targetPrestige to the highest prestige available.
 	//equipsToGet will automatically change GambesOP to Breastplate if the Slow challenge has not yet been completed.
-	if (!runningMapology && getPageSetting('prestigeClimbZone') >= 0 && game.global.world >= getPageSetting('prestigeClimbZone')) {
+	if (!runningMapology && getPageSetting('prestigeClimbZone') > 0 && game.global.world >= getPageSetting('prestigeClimbZone')) {
 		targetPrestige = 'GambesOP';
 	}
 

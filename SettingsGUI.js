@@ -159,7 +159,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Buy All Upgrades</p>";
 
 				if (currSettingUniverse === 1) {
-					description += "<p>Will purchase the following upgrades when on your next <b>Scientist</b> run: ";
+					description += "<p>Will purchase the following upgrades when on your next <b>Scientist</b> challenge run: ";
 					if (game.global.sLevel === 0) description += "Battle, Miners, Coordination x9, Megamace, Bestplate.</p>";
 					if (game.global.sLevel === 1) description += "Battle, Miners, Coordination x8, Bestplate.</p>";
 					if (game.global.sLevel === 2) description += "Battle, Miners, Coordination x3, Speedminer.</p>";
@@ -819,7 +819,7 @@ function initialiseAllSettings() {
 				description += "<p>There's settings in here to identify when to purchase gear and if it should purchase prestiges.<br></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, "Equipment", [1, 2]);
+			}, 'boolean', true, null, 'Equipment', [1, 2]);
 		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
@@ -828,7 +828,7 @@ function initialiseAllSettings() {
 				description += "<p>Your HD ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', 1, null, "Equipment", [1, 2],
+			}, 'value', 1, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCutOffHS',
 			function () { return ('AE: HS Cut-off') },
@@ -838,7 +838,7 @@ function initialiseAllSettings() {
 				description += "<p>Your Hits Survived ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 2.5</p>";
 				return description;
-			}, 'value', 2.5, null, "Equipment", [1, 2],
+			}, 'value', 2.5, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCapAttack',
 			function () { return ('AE: Weapon Cap') },
@@ -847,7 +847,7 @@ function initialiseAllSettings() {
 				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
 				description += "<p><b>Recommended:</b> 20 during earlygame and gradually raise it to 250 as needed.</p>";
 				return description;
-			}, 'value', 20, null, "Equipment", [1, 2],
+			}, 'value', 20, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCapHealth',
 			function () { return ('AE: Armour Cap') },
@@ -856,7 +856,7 @@ function initialiseAllSettings() {
 				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
 				description += "<p><b>Recommended:</b> 20 during earlygame and gradually raise it to 250 as needed.</p>";
 				return description;
-			}, 'value', 20, null, "Equipment", [1, 2],
+			}, 'value', 20, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipZone',
 			function () { return ('AE: Zone') },
@@ -867,7 +867,7 @@ function initialiseAllSettings() {
 				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>"
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
-			}, 'multiValue', [-1], null, "Equipment", [1, 2],
+			}, 'multiValue', [-1], null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPercent',
 			function () { return ('AE: Percent') },
@@ -876,7 +876,7 @@ function initialiseAllSettings() {
 				description += "<p>If set to <b>0 or below</b> it will overide this and set the equip spending percent to 100%.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, "Equipment", [1, 2],
+			}, 'value', 10, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equip2',
 			function () { return ('AE: 2') },
@@ -884,7 +884,7 @@ function initialiseAllSettings() {
 				let description = "<p>This will make the script always purchase a second level of weapons and armor regardless of efficiency.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, "Equipment", [1, 2],
+			}, 'boolean', true, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPrestige',
 			function () { return (['AE: Prestige Off', 'AE: Maybe Prestige', 'AE: Prestige', 'AE: Always Prestige']) },
@@ -905,7 +905,7 @@ function initialiseAllSettings() {
 
 				description += "<p><b>Recommended:</b> AE: Prestige</p>";
 				return description;
-			}, 'multitoggle', 2, null, "Equipment", [1, 2],
+			}, 'multitoggle', 2, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 
 		createSetting('equipPrestigePct',
@@ -917,7 +917,7 @@ function initialiseAllSettings() {
 
 				description += "<p><b>Recommended:</b> 6</p>";
 				return description;
-			}, 'value', 6, null, "Equipment", [1, 2],
+			}, 'value', 6, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse) && getPageSetting('equipPrestige', currSettingUniverse) === 2) });
 
 		createSetting('equipNoShields',
@@ -927,7 +927,7 @@ function initialiseAllSettings() {
 				description += "<p><b>This is only ever useful in very niche scenarios.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, "Equipment", [1, 2],
+			}, 'boolean', false, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 
 		createSetting('equipPortal',
@@ -936,7 +936,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will ensure Auto Equip is enabled after portalling.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, "Equipment", [1, 2]);
+			}, 'boolean', false, null, 'Equipment', [1, 2]);
 		createSetting('equipEfficientEquipDisplay',
 			function () { return ('AE: Highlight Equips') },
 			function () {
@@ -944,59 +944,14 @@ function initialiseAllSettings() {
 				description += "<p><b>This setting will disable the default game setting.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, "Equipment", [1, 2]);
+			}, 'boolean', false, null, 'Equipment', [1, 2]);
 		createSetting('equipShieldBlock',
 			function () { return ('Buy Shield Block') },
 			function () {
 				let description = "<p>Will allow the purchase of the shield block upgrade.</p>";
 				description += "<p><b>Recommended:</b> On until you can reach zone 40</p>";
 				return description;
-			}, 'boolean', 55 > game.stats.highestLevel.valueTotal(), null, "Equipment", [1]);
-
-		createSetting('prestigeClimb',
-			function () { return ('Prestige Climb') },
-			function () {
-				let description = "<p>Acquire prestiges through the selected item (inclusive) as soon as they are available in maps.</p>";
-				description += "<p>Automatically swaps the games default setting from <b>Tier First</b> to <b>Equip First</b>.</p>";
-				description += "<p><b>Auto Maps must be enabled for this to run.</b></p>";
-				description += "<p><b>Before Explorers have been unlocked when this setting runs it will automatically set all map sliders except size to the minimum they can be and set the biome used to Random.</b></p>";
-				description += "<p>This is important for speed climbing through world zones. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.</p>";
-				description += "<p><b>Recommended:</b> Dagadder</p>";
-				return description;
-			},
-			'dropdown', 'Off', function () {
-				let equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
-				if (game.global.slowDone) {
-					equips.push('Harmbalest', 'GambesOP');
-				}
-				return equips;
-			}, "Equipment", [1, 2]);
-		createSetting('prestigeClimbZone',
-			function () { return ('PC: Force Prestige Z') },
-			function () {
-				let description = "<p>On and after this zone is reached, always try to prestige for everything immediately regardless of your <b>Prestige Climb</b> input unless it is set to <b>Off</b>.</p>";
-				description += "<p>The <b>Prestige Skip</b> setting has the potential to disable this if it's enabled.</p>";
-				description += "<p><b>Disable with -1.</b></p>";
-				description += "<p><b>Recommended:</b> The zone you start heavily slowing down</p>";
-				return description;
-			}, 'value', -1, null, "Equipment", [1, 2]);
-		createSetting('prestigeClimbSkip',
-			function () { return ('PC: Prestige Skip') },
-			function () {
-				let description = "<p>Will stop <b>Prestige Climb</b> from running if you have 2 or more unbought prestiges (besides Supershield) in your upgrades window.</p>";
-				description += "<p><b>Recommended:</b> Off</p>";
-				return description;
-			}, 'boolean', false, null, "Equipment", [1, 2]);
-
-		createSetting('prestigeClimbPriority',
-			function () { return ('PC: Priority') },
-			function () {
-				let description = "<p>The priority value you would like to use when running Prestige Climb.</p>";
-				description += "This only impacts the mapping order when the <b>Auto Maps Priority</b> setting in the Maps tab is enabled.</p>";
-
-				description += "<p><b>Recommended:</b> 1</p>";
-				return description;
-			}, 'value', 1, null, "Equipment", [1, 2]);
+			}, 'boolean', 55 > game.stats.highestLevel.valueTotal(), null, 'Equipment', [1]);
 	}
 	
 	const displayCombat = true;
@@ -1010,14 +965,14 @@ function initialiseAllSettings() {
 				description += "<p><b>Vanilla Auto Fight</b><br>Will make sure the games AutoFight setting is enabled at all times and ensures you start fighting on portal until you get the Bloodlust upgrade.</p>";
 				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
 				return description;
-			}, 'multitoggle', 1, null, "Combat", [1, 2]);
+			}, 'multitoggle', 1, null, 'Combat', [1, 2]);
 		createSetting('autoAbandon',
 			function () { return (['Never Abandon', 'Always Abandon', 'Smart Abandon']) },
 			function () {
 				let description = "<p>Controls whether to force abandon trimps for mapping.</p>";
-				description += "<p><b>Never Abandon</b><br>Never abandon trimps for mapping.</p>";
-				description += "<p><b>Always Abandon</b><br>Always abandon trimps for mapping.</p>";
-				description += "<p><b>Smart Abandon</b><br>Abandon trimps for mapping when the next group of trimps is ready, or when (0 + overkill) cells away from cell 100.</p>";
+				description += "<p><b>Never Abandon</b><br>Never abandon trimps.</p>";
+				description += "<p><b>Always Abandon</b><br>Always abandon trimps.</p>";
+				description += "<p><b>Smart Abandon</b><br>Abandon trimps when the next group of trimps is ready, or when (0 + overkill) cells away from cell 100.</p>";
 				description += "<p><b>Recommended:</b> Smart Abandon</p>";
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1, 2]);
@@ -1037,7 +992,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily mods or void maps.</p>";
 				description += "<p><b>Recommended:</b> Safety First</p>";
 				return description;
-			}, 'multitoggle', 0, null, 'Combat', [1, 2]);
+			}, 'multitoggle', 0, null, 'Combat', [1, 2],
+			function () { return (game.global.totalPortals > 0) });
 		createSetting('AutoStance',
 			function () { return (['Auto Stance Off', 'Auto Stance', 'D Stance']) },
 			function () {
@@ -1405,7 +1361,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Auto Maps On</p>";
 				return description;
 			},
-			'multitoggle', 1, null, "Maps", [1, 2]);
+			'multitoggle', 1, null, 'Maps', [1, 2]);
 		createSetting('autoMapsPortal',
 			function () { return ('Auto Maps Portal') },
 			function () {
@@ -1463,7 +1419,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 1.5 for earlygame, gradually increase the further you progress</p>";
 				if (currSettingUniverse === 2) description += "<p>Don't set this above 1 when using <b>Auto Equality: Advanced</b> as it can cause you to eternally farm.</p>";
 				return description;
-			}, 'value', 1.25, null, "Maps", [1, 2]);
+			}, 'value', 1.25, null, 'Maps', [1, 2]);
 
 		createSetting('mapBonusHealth',
 			function () { return ('Map Bonus Health') },
@@ -1472,7 +1428,7 @@ function initialiseAllSettings() {
 				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p>This is a very important setting to be used with <b>Advanced Nurseries</b> once you reach magma zones. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, "Maps", [1, 2]);
+			}, 'value', 10, null, 'Maps', [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
@@ -1483,7 +1439,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
-			}, 'value', -1, null, "Maps", [1, 2]);
+			}, 'value', -1, null, 'Maps', [1, 2]);
 
 		createSetting('mapBonusStacks',
 			function () { return ('Map Bonus Stacks') },
@@ -1491,7 +1447,7 @@ function initialiseAllSettings() {
 				let description = "<p>Map Bonus stacks will be obtained to this amount when your current <b>World HD Ratio</b> is above the threshold set in the <b>Map Bonus Ratio</b> setting.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, "Maps", [1, 2]);
+			}, 'value', 10, null, 'Maps', [1, 2]);
 
 		createSetting('mapBonusMinLevel',
 			function () { return ('Map Bonus Min Level') },
@@ -1500,7 +1456,7 @@ function initialiseAllSettings() {
 				description += "<p>This is disabled when set to 0 or below OR you have no unbought prestiges and have prestiges available in the minimum map bonus level.</p>";
 				description += "<p><b>Recommended:</b> 2</p>";
 				return description;
-			}, 'value', 2, null, "Maps", [1, 2]);
+			}, 'value', 2, null, 'Maps', [1, 2]);
 
 		/* Does this work as intended? Must query Ray for info */
 		/* createSetting('mapBonusPrestige',
@@ -1510,7 +1466,7 @@ function initialiseAllSettings() {
 				description += "<p>This setting is ignored when obtaining map bonus stacks through the <b>Map Bonus</b> setting.</p>";
 				description += "<p><b>Recommended:</b> 2</p>";
 				return description;
-			}, 'boolean', false, null, "Maps", [1, 2]); */
+			}, 'boolean', false, null, 'Maps', [1, 2]); */
 
 		/* Rename this */
 		createSetting('scryvoidmaps',
@@ -1523,11 +1479,56 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'Maps', [1],
 			function () { return (game.talents.scry2.purchased) });
 
+		createSetting('prestigeClimb',
+			function () { return ('Prestige Climb') },
+			function () {
+				let description = "<p>Acquire prestiges through the selected item (inclusive) as soon as they are available in maps.</p>";
+				description += "<p>Automatically swaps the games default setting from <b>Tier First</b> to <b>Equip First</b>.</p>";
+				description += "<p><b>Auto Maps must be enabled for this to run.</b></p>";
+				description += "<p><b>Before Explorers have been unlocked when this setting runs it will automatically set all map sliders except size to the minimum they can be and set the biome used to Random.</b></p>";
+				description += "<p>This is important for speed climbing through world zones. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.</p>";
+				description += "<p><b>Recommended:</b> Dagadder</p>";
+				return description;
+			},
+			'dropdown', 'Off', function () {
+				let equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
+				if (game.global.slowDone) {
+					equips.push('Harmbalest', 'GambesOP');
+				}
+				return equips;
+			}, 'Maps', [1, 2]);
+		createSetting('prestigeClimbZone',
+			function () { return ('PC: Force Prestige Z') },
+			function () {
+				let description = "<p>On and after this zone is reached, always try to prestige for everything immediately regardless of your <b>Prestige Climb</b> input unless it is set to <b>Off</b>.</p>";
+				description += "<p>The <b>Prestige Skip</b> setting has the potential to disable this if it's enabled.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p><b>Recommended:</b> The zone you start heavily slowing down</p>";
+				return description;
+			}, 'value', -1, null, 'Maps', [1, 2]);
+		createSetting('prestigeClimbSkip',
+			function () { return ('PC: Prestige Skip') },
+			function () {
+				let description = "<p>Will stop <b>Prestige Climb</b> from running if you have 2 or more unbought metal prestiges in your upgrades window.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Maps', [1, 2]);
+
+		createSetting('prestigeClimbPriority',
+			function () { return ('PC: Priority') },
+			function () {
+				let description = "<p>The priority value you would like to use when running Prestige Climb.</p>";
+				description += "This only impacts the mapping order when the <b>Auto Maps Priority</b> setting in the Maps tab is enabled.</p>";
+
+				description += "<p><b>Recommended:</b> 1</p>";
+				return description;
+			}, 'value', 1, null, 'Maps', [1, 2]);
+
 		createSetting('hdFarmSettings',
 			function () { return ('HD Farm Settings') },
 			function () {
 				let description = "<p>Here you can select how and when you would like <b>H:D Ratio</b> or <b>Hits Survived</b> farming to be run.</p>";
-				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your H:D Ratio and Hits Survived values can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -1540,7 +1541,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, hitsSurvived: 1 }], 'MAZLookalike("mapSettings", "Void Map")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, hitsSurvived: 1 }], 'MAZLookalike("mapSettings", "Void Map")', 'Maps', [1, 2],
+			function () { return (game.global.totalPortals > 0) });
 
 		createSetting('boneShrineSettings',
 			function () { return ('Bone Shrine Settings') },
@@ -5037,9 +5039,9 @@ function _settingsToLineBreak() {
 	const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
 	const breakAfterCore = ['portalVoidIncrement', 'universeSetting'];
-	const breakAfterMaps = ['autoLevelScryer', 'scryvoidmaps', 'uniqueMapEnoughHealth'];
+	const breakAfterMaps = ['autoLevelScryer', 'scryvoidmaps', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
 	const breakAfterDaily = ['dscryvoidmaps', 'dPreSpireNurseries', 'dWindStackingLiq', 'dailyHeliumHrPortal'];
-	const breakAfterEquipment = ['equipPercent', 'equipNoShields', 'equipShieldBlock'];
+	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
 	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'mapologyPrestige', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
