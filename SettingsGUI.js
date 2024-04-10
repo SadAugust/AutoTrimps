@@ -949,6 +949,7 @@ function initialiseAllSettings() {
 			function () { return ('Buy Shield Block') },
 			function () {
 				let description = "<p>Will allow the purchase of the shield block upgrade.</p>";
+				description += "<p><b>When this setting is enabled it will cause the script to automatically run <b>The Block</b> unique map when it gets unlocked.</b></p>";
 				description += "<p><b>Recommended:</b> On until you can reach zone 40</p>";
 				return description;
 			}, 'boolean', 55 > game.stats.highestLevel.valueTotal(), null, 'Equipment', [1]);
