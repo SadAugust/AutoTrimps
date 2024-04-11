@@ -506,7 +506,8 @@ function _handleMazWindow() {
 function _handleIntervals() {
 	if (atSettings.intervals.tenMinute) atVersionChecker();
 
-	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop ? atSettings.intervals.twoSecond : atSettings.intervals.halfSecond) {
+	const timeWarp = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop;
+	if (timeWarp ? atSettings.intervals.twoSecond : atSettings.intervals.halfSecond) {
 		trimpStats = new TrimpStats();
 		hdStats = new HDStats();
 	}
@@ -954,14 +955,18 @@ function updateATVersion() {
 		}
 
 		if (versionNumber < '6.5.36') {
-			if (typeof game.global.addonUser['archaeologySettings'] === 'undefined') game.global.addonUser['archaeologySettings'] = {};
-			if (typeof game.global.addonUser['archaeologySettings']['valueU2'] === 'undefined') {
-				const obj = [];
-				for (let x = 0; x < 30; x++) {
-					obj[x] = {};
-					obj[x].done = '';
+			if (typeof game.global.addonUser === 'object') {
+				if (typeof game.global.addonUser['archaeologySettings'] === 'undefined') game.global.addonUser['archaeologySettings'] = {};
+				if (typeof game.global.addonUser['archaeologySettings']['valueU2'] === 'undefined') {
+					const obj = [];
+					for (let x = 0; x < 30; x++) {
+						obj[x] = {};
+						obj[x].done = '';
+					}
+					game.global.addonUser['archaeologySettings'].valueU2 = obj;
 				}
-				game.global.addonUser['archaeologySettings'].valueU2 = obj;
+			} else {
+				setupAddonUser(true);
 			}
 		}
 
