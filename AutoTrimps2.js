@@ -20,7 +20,7 @@ const atSettings = {
 	running: true,
 	runInterval: 100,
 	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false },
-	loops: { atTimeLapseFastLoop: false, mainLoopInterval: null, guiLoopInterval: null },
+	loops: { atTimeLapseFastLoop: false, mainLoop: null, guiLoop: null, gameLoop: null },
 	intervals: { counter: 0, tenthSecond: false, halfSecond: false, oneSecond: false, twoSecond: false, fiveSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false },
 	autoSave: game.options.menu.autoSave.enabled
 };
@@ -268,9 +268,10 @@ function toggleCatchUpMode() {
 			originalGameLoop(makeUp, now);
 
 			updateInterval();
-			if (atSettings.intervals.thirtyMinute && getPageSetting('timeWarpSaving')) _timeWarpSave();
 			mainCleanup();
-			if (game.global.mapsActive && getPageSetting('timeWarpDisplay')) _adjustGlobalTimers(['mapStarted'], -100);
+			if (game.global.mapsActive) _adjustGlobalTimers(['mapStarted'], -100);
+			if (atSettings.intervals.thirtyMinute && getPageSetting('timeWarpSaving')) _timeWarpSave();
+
 			if (loops % getPageSetting('timeWarpFrequency') === 0 || atSettings.portal.aWholeNewWorld || liquifiedZone()) {
 				mainLoop();
 			} else if (atSettings.intervals.thirtySecond) {

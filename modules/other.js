@@ -998,7 +998,10 @@ function updateATVersion() {
 		}
 
 		if (versionNumber < '6.5.49') {
-			autoTrimpSettings.spamMessages.value.show = true;
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['spamMessages'] !== 'undefined') {
+				autoTrimpSettings.spamMessages.value.show = true;
+			}
 
 			saveSettings();
 		}
@@ -1046,39 +1049,85 @@ function updateATVersion() {
 
 		if (versionNumber < '6.5.72') {
 			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['c2Fused'] !== 'undefined') {
+				autoTrimpSettings.c2Fused.value = tempSettings.c2Fused.enabled ? 2 : 0;
+			}
+			if (typeof tempSettings['TrapTrimps'] !== 'undefined') {
+				autoTrimpSettings.trapTrimps.enabled = tempSettings.TrapTrimps.enabled;
+				autoTrimpSettings.trapTrimps.enabledU2 = tempSettings.TrapTrimps.enabledU2;
+			}
 
-			autoTrimpSettings.c2Fused.value = tempSettings.c2Fused.enabled ? 2 : 0;
-			autoTrimpSettings.trapTrimps.enabled = tempSettings.TrapTrimps.enabled;
-			autoTrimpSettings.trapTrimps.enabledU2 = tempSettings.TrapTrimps.enabledU2;
+			if (typeof tempSettings['ForceAbandon'] !== 'undefined') {
+				autoTrimpSettings.forceAbandon.enabled = tempSettings.ForceAbandon.enabled;
+			}
+			if (typeof tempSettings['IgnoreCrits'] !== 'undefined') {
+				autoTrimpSettings.ignoreCrits.value = tempSettings.IgnoreCrits.value;
+				autoTrimpSettings.ignoreCrits.valueU2 = tempSettings.IgnoreCrits.valueU2;
+			}
 
-			autoTrimpSettings.forceAbandon.enabled = tempSettings.ForceAbandon.enabled;
-			autoTrimpSettings.ignoreCrits.value = tempSettings.IgnoreCrits.value;
-			autoTrimpSettings.ignoreCrits.valueU2 = tempSettings.IgnoreCrits.valueU2;
-			autoTrimpSettings.autoRoboTrimp.value = tempSettings.AutoRoboTrimp.value;
-			autoTrimpSettings.addPoison.value = tempSettings.addpoison.value;
-			autoTrimpSettings.fullIce.enabled = tempSettings.fullice.enabled;
-			autoTrimpSettings.autoStanceScryer.enabled = tempSettings.AutoStanceScryer.enabled;
+			if (typeof tempSettings['AutoRoboTrimp'] !== 'undefined') {
+				autoTrimpSettings.autoRoboTrimp.value = tempSettings.AutoRoboTrimp.value;
+			}
+			if (typeof tempSettings['addpoison'] !== 'undefined') {
+				autoTrimpSettings.addPoison.value = tempSettings.addpoison.value;
+			}
+			if (typeof tempSettings['fullice'] !== 'undefined') {
+				autoTrimpSettings.fullIce.enabled = tempSettings.fullice.enabled;
+			}
+			if (typeof tempSettings['AutoStanceScryer'] !== 'undefined') {
+				autoTrimpSettings.autoStanceScryer.enabled = tempSettings.AutoStanceScryer.enabled;
+			}
 
-			autoTrimpSettings.heliumyPercent.value = tempSettings.buyheliumy.value;
-			autoTrimpSettings.heliumyPercent.valueU2 = tempSettings.buyheliumy.valueU2;
+			if (typeof tempSettings['buyheliumy'] !== 'undefined') {
+				autoTrimpSettings.heliumyPercent.value = tempSettings.buyheliumy.value;
+				autoTrimpSettings.heliumyPercent.valueU2 = tempSettings.buyheliumy.valueU2;
+			}
 
-			autoTrimpSettings.maxMapStacksForSpire.enabled = tempSettings.MaxStacksForSpire.enabled;
+			if (typeof tempSettings['MaxStacksForSpire'] !== 'undefined') {
+				autoTrimpSettings.maxMapStacksForSpire.enabled = tempSettings.MaxStacksForSpire.enabled;
+			}
 
-			autoTrimpSettings.autoGen.enabled = tempSettings.UseAutoGen.enabled;
-			autoTrimpSettings.autoGenModeBefore.value = tempSettings.beforegen.value;
-			autoTrimpSettings.autoGenModeAfter.value = tempSettings.defaultgen.value;
-			autoTrimpSettings.autoGenModeDaily.value = tempSettings.AutoGenDC.value;
-			autoTrimpSettings.autoGenModeC2.value = tempSettings.AutoGenC2.value;
-			autoTrimpSettings.autoGenFuelStart.value = tempSettings.fuellater.value;
-			autoTrimpSettings.autoGenFuelEnd.value = tempSettings.fuelend.value;
-			autoTrimpSettings.autoGen.enabled = tempSettings.UseAutoGen.enabled;
+			if (typeof tempSettings['UseAutoGen'] !== 'undefined') {
+				autoTrimpSettings.autoGen.enabled = tempSettings.UseAutoGen.enabled;
+			}
+			if (typeof tempSettings['beforegen'] !== 'undefined') {
+				autoTrimpSettings.autoGenModeBefore.value = tempSettings.beforegen.value;
+			}
+			if (typeof tempSettings['defaultgen'] !== 'undefined') {
+				autoTrimpSettings.autoGenModeAfter.value = tempSettings.defaultgen.value;
+			}
+			if (typeof tempSettings['AutoGenDC'] !== 'undefined') {
+				autoTrimpSettings.autoGenModeDaily.value = tempSettings.AutoGenDC.value;
+			}
+			if (typeof tempSettings['AutoGenC2'] !== 'undefined') {
+				autoTrimpSettings.autoGenModeC2.value = tempSettings.AutoGenC2.value;
+			}
+			if (typeof tempSettings['fuellater'] !== 'undefined') {
+				autoTrimpSettings.autoGenFuelStart.value = tempSettings.fuellater.value;
+			}
+			if (typeof tempSettings['fuelend'] !== 'undefined') {
+				autoTrimpSettings.autoGenFuelEnd.value = tempSettings.fuelend.value;
+			}
+			if (typeof tempSettings['UseAutoGen'] !== 'undefined') {
+				autoTrimpSettings.autoGen.enabled = tempSettings.UseAutoGen.enabled;
+			}
 
-			autoTrimpSettings.autoNature.enabled = tempSettings.AutoNatureTokens.enabled;
-			autoTrimpSettings.autoNatureThreshold.value = tempSettings.tokenthresh.value;
+			if (typeof tempSettings['AutoNatureTokens'] !== 'undefined') {
+				autoTrimpSettings.autoNature.enabled = tempSettings.AutoNatureTokens.enabled;
+			}
+			if (typeof tempSettings['tokenthresh'] !== 'undefined') {
+				autoTrimpSettings.autoNatureThreshold.value = tempSettings.tokenthresh.value;
+			}
 
-			autoTrimpSettings.autoPoison.selected = tempSettings.AutoPoison.selected;
-			autoTrimpSettings.autoWind.selected = tempSettings.AutoWind.selected;
-			autoTrimpSettings.autoIce.selected = tempSettings.AutoIce.selected;
+			if (typeof tempSettings['AutoPoison'] !== 'undefined') {
+				autoTrimpSettings.autoPoison.selected = tempSettings.AutoPoison.selected;
+			}
+			if (typeof tempSettings['AutoWind'] !== 'undefined') {
+				autoTrimpSettings.autoWind.selected = tempSettings.AutoWind.selected;
+			}
+			if (typeof tempSettings['AutoIce'] !== 'undefined') {
+				autoTrimpSettings.autoIce.selected = tempSettings.AutoIce.selected;
+			}
 
 			saveSettings();
 		}

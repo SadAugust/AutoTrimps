@@ -884,24 +884,6 @@ function breed() {
 	updateStoredGenInfo(breeding);
 }
 
-function updateGammaStacks(reset) {
-	const bonus = getHeirloomBonus('Shield', 'gammaBurst');
-	let hide = false;
-
-	if (bonus <= 0 || reset) {
-		game.heirlooms.Shield.gammaBurst.stacks = 0;
-		hide = true;
-	}
-
-	if (usingRealTimeOffline) return;
-
-	let triggerStacks = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
-	if (Fluffy.isRewardActive('scruffBurst')) triggerStacks--;
-
-	const tipText = `Your Trimps are charging up for a Gamma Burst! When Charging reaches ${triggerStacks} stacks, your Trimps will release a burst of energy, dealing ${prettify(bonus)}% of their attack damage.`;
-	manageStacks('Charging', game.heirlooms.Shield.gammaBurst.stacks, true, 'gammaSpan', 'glyphicon glyphicon-flash', tipText, hide);
-}
-
 Fluffy.updateExp = function () {
 	const expElem = document.getElementById('fluffyExp');
 	const lvlElem = document.getElementById('fluffyLevel');
@@ -1149,6 +1131,7 @@ function manageLeadStacks(remove) {
 
 function updateToxicityStacks() {
 	if (!shouldUpdate()) return;
+
 	const elem = document.getElementById('toxicityBuff');
 	const stackCount = game.challenges.Toxicity.stacks;
 
@@ -1178,6 +1161,20 @@ function updateLivingStacks() {
 
 	const stacksElem = document.getElementById('livingStacks');
 	if (stacksElem.innerHTML !== stackCount) stacksElem.innerHTML = stackCount;
+}
+
+function checkCrushedCrit() {
+	let badCrit = false;
+	let elemDisplay = 'none';
+	const canCritElem = document.getElementById('badCanCrit');
+
+	if (game.global.soldierHealth > game.global.soldierCurrentBlock) {
+		elemDisplay = 'inline-block';
+		if (Math.floor(Math.random() * 2) === 0) badCrit = true;
+	}
+
+	if (canCritElem.style.display !== elemDisplay && shouldUpdate()) canCritElem.style.display = elemDisplay;
+	return badCrit;
 }
 
 function updateElectricityStacks(tipOnly) {
@@ -1222,6 +1219,7 @@ function updateAntiStacks() {
 }
 
 function updateTitimp() {
+	if (!shouldUpdate()) return;
 	const elem = document.getElementById('titimpBuff');
 	if (game.global.titimpLeft < 1) {
 		if (elem && elem.innerHTML !== '') elem.innerHTML = '';
@@ -1235,6 +1233,7 @@ function updateTitimp() {
 
 function updateNomStacks(number) {
 	if (!shouldUpdate()) return;
+
 	const elem = document.getElementById('nomStack');
 	if (!elem) {
 		document.getElementById('badGuyName').innerHTML += `<span class="badge badBadge" onmouseover="tooltip('Nom', 'customText', event, 'This Bad Guy is nice and plump from eating Trimps. Increases attack damage by 25% per stack');" onmouseout="tooltip('hide')"><span id="nomStack">${number}</span><span class="glyphicon glyphicon-scale"></span></span>`;
@@ -1268,6 +1267,46 @@ function updateBalanceStacks() {
 	}
 }
 
+function updateGammaStacks(reset) {
+	const bonus = getHeirloomBonus('Shield', 'gammaBurst');
+	let hide = false;
+
+	if (bonus <= 0 || reset) {
+		game.heirlooms.Shield.gammaBurst.stacks = 0;
+		hide = true;
+	}
+
+	if (usingRealTimeOffline) return;
+
+	let triggerStacks = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
+	if (Fluffy.isRewardActive('scruffBurst')) triggerStacks--;
+
+	const tipText = `Your Trimps are charging up for a Gamma Burst! When Charging reaches ${triggerStacks} stacks, your Trimps will release a burst of energy, dealing ${prettify(bonus)}% of their attack damage.`;
+	manageStacks('Charging', game.heirlooms.Shield.gammaBurst.stacks, true, 'gammaSpan', 'glyphicon glyphicon-flash', tipText, hide);
+}
+
+function manageStacks(stackName, stackCount, isTrimps, elemName, icon, tooltipText, forceHide, addSpace, addClass) {
+	const parentName = isTrimps ? 'goodGuyName' : 'badDebuffSpan';
+	const parent = document.getElementById(parentName);
+	let elem = document.getElementById(elemName);
+
+	if (forceHide) {
+		if (elem) parent.removeChild(elem);
+		return;
+	}
+
+	if (!elem) {
+		let className = addClass ? " class='" + addClass + "'" : '';
+		if (parent) parent.innerHTML += `<span id="${elemName}"${className}></span>`;
+		elem = document.getElementById(elemName);
+	}
+
+	if (stackCount === -1) stackCount = '';
+	const space = addSpace ? '&nbsp;' : '';
+	const elemText = ` <span class="badge antiBadge" onmouseover="tooltip('${stackName}', 'customText', event, '${tooltipText}')" onmouseout="tooltip('hide')"><span>${stackCount}</span>${space}<span class="${icon}"></span></span>`;
+	if (elem.innerHTML !== elemText) elem.innerHTML = elemText;
+}
+
 function setMutationTooltip(which, mutation) {
 	if (!shouldUpdate(true)) return;
 
@@ -1278,6 +1317,64 @@ function setMutationTooltip(which, mutation) {
 
 	const elemText = `<span class="badge badBadge ${mutation}" onmouseover="tooltip('${effect.title}', 'customText', event, '${mutations[mutation].tooltip(which)}')" onmouseout="tooltip('hide')"><span class="${effect.icon}"></span></span>&nbsp;`;
 	if (elem && elem.innerHTML !== elemText) elem.innerHTML = elemText;
+}
+
+function setFormation(what) {
+	if (what) {
+		if (game.options.menu.pauseGame.enabled) return;
+		what = parseInt(what, 10);
+		swapClass('formationState', 'formationStateDisabled', document.getElementById('formation' + game.global.formation));
+
+		if ([4, 5].includes(what) && ![4, 5].includes(game.global.formation)) {
+			if (game.global.mapsActive) game.global.waitToScryMaps = true;
+			else game.global.waitToScry = true;
+		}
+
+		if (game.global.mapsActive) {
+			if (![4, 5].includes(what)) game.global.canScryCache = false;
+			else if (game.global.lastClearedMapCell === -1) game.global.canScryCache = true;
+		}
+
+		if (game.global.soldierHealth > 0) {
+			const formations = {
+				1: { health: 0.25, attack: 2, block: 2 },
+				2: { health: 2, attack: 0.25, block: 2 },
+				3: { health: 2, attack: 2, block: 0.25 },
+				4: { health: 2, attack: 2, block: 2 }
+			};
+
+			const whatFormations = {
+				1: { health: 4, attack: 0.5, block: 0.5 },
+				2: { health: 0.5, attack: 4, block: 0.5 },
+				3: { health: 0.5, attack: 0.5, block: 4 },
+				4: { health: 0.5, attack: 0.5, block: 0.5 }
+			};
+
+			let { health, attack, block } = formations[game.global.formation] || { health: 1, attack: 1, block: 1 };
+			let whatFormation = whatFormations[what] || { health: 1, attack: 1, block: 1 };
+
+			health *= whatFormation.health;
+			attack *= whatFormation.attack;
+			block *= whatFormation.block;
+
+			const oldHealth = game.global.soldierHealthMax;
+			game.global.soldierHealthMax *= health;
+			game.global.soldierHealth -= oldHealth - game.global.soldierHealthMax;
+			if (game.global.soldierHealth <= 0) game.global.soldierHealth = 0;
+			game.global.soldierCurrentBlock *= block;
+			game.global.soldierCurrentAttack *= attack;
+			game.global.formation = what;
+			updateAllBattleNumbers(true);
+		}
+
+		game.global.formation = what;
+	} else {
+		swapClass('formationState', 'formationStateDisabled', document.getElementById('formation0'));
+	}
+
+	const toSet = what ? what : game.global.formation;
+	swapClass('formationState', 'formationStateEnabled', document.getElementById('formation' + toSet));
+	if (usingRealTimeOffline) offlineProgress.updateFormations();
 }
 
 function rewardLiquidZone() {
@@ -1303,7 +1400,7 @@ function rewardLiquidZone() {
 	};
 
 	let voidMaps = 0;
-	let unlocks = ['', '']; //[unique, repeated]
+	let unlocks = ['', ''];
 	let text = '';
 	let tokText;
 
@@ -1716,28 +1813,6 @@ function handleWindDebuff() {
 	if (windEmpowermentText && windEmpowermentText.innerHTML != newWindEmpowermentText) {
 		windEmpowermentText.innerHTML = newWindEmpowermentText;
 	}
-}
-
-function manageStacks(stackName, stackCount, isTrimps, elemName, icon, tooltipText, forceHide, addSpace, addClass) {
-	const parentName = isTrimps ? 'goodGuyName' : 'badDebuffSpan';
-	const parent = document.getElementById(parentName);
-	let elem = document.getElementById(elemName);
-
-	if (forceHide) {
-		if (elem) parent.removeChild(elem);
-		return;
-	}
-
-	if (!elem) {
-		let className = addClass ? " class='" + addClass + "'" : '';
-		parent.innerHTML += "<span id='" + elemName + "'" + className + '></span>';
-		elem = document.getElementById(elemName);
-	}
-
-	if (stackCount === -1) stackCount = '';
-	const space = addSpace ? '&nbsp;' : '';
-	const elemText = ` <span class="badge antiBadge" onmouseover="tooltip('${stackName}', 'customText', event, '${tooltipText}')" onmouseout="tooltip('hide')"><span>${stackCount}</span>${space}<span class="${icon}"></span></span>`;
-	if (elem.innerHTML !== elemText) elem.innerHTML = elemText;
 }
 
 function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell, noFluctuation) {

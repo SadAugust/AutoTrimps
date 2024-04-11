@@ -328,7 +328,7 @@ function populateFarmCalcData() {
 		zone,
 		maxTicks,
 		//Map Info
-		extraMapLevelsAvailable: extraMapLevelsAvailable,
+		extraMapLevelsAvailable,
 		reducer: haveMapReducer,
 		biome: _getBiomeEnemyStats(biome),
 		fragments: game.resources.fragments.owned,
@@ -392,7 +392,7 @@ function populateFarmCalcData() {
 		berserk: challengeActive('Berserk'),
 		glass: challengeActive('Glass'),
 		desolation: challengeActive('Desolation'),
-		//Death Info
+
 		...death_stuff
 	};
 }
@@ -511,7 +511,7 @@ function simulate(saveData, zone) {
 	let glassStacks = game.challenges.Glass.shards;
 	let universe = saveData.universe;
 	let magma = saveData.magma;
-	let hasFrenzy = false;
+
 	const checkFrenzy = saveData.shouldFrenzy;
 	let frenzyRefresh = true;
 	let frenzyLeft = 0;
@@ -561,18 +561,27 @@ function simulate(saveData, zone) {
 		return trimpHealth <= 0;
 	}
 
+	const max_ticks = saveData.maxTicks;
+	const corruptionScale = saveData.magma ? calcCorruptionScale(zone, 10) : 1;
 	const biomeImps = saveData.biome;
 
 	if (universe === 2) {
-		const enemyName = saveData.insanity ? 'Horrimp' : 'Snimp';
 		if (saveData.insanity) biomeImps.push([15, 60, true]);
+		const farmlandsType = getFarmlandsResType();
+		let enemyName = 'Penguimp';
+
+		if (saveData.insanity && zone > game.global.world) {
+			enemyName = 'Horrimp';
+		} else if (['Gardens', 'Sea'].includes(saveData.mapBiome) || (saveData.mapBiome === 'Farmlands' && ['Gardens', 'Sea'].includes(farmlandsType))) {
+			enemyName = 'Flowimp';
+		} else if (saveData.mapBiome === 'Depths' || (saveData.mapBiome === 'Farmlands' && farmlandsType === 'Any')) {
+			enemyName = 'Moltimp';
+		}
+
 		equality = equalityQuery(enemyName, zone, mapSize, 'map', difficulty);
 	}
-	const equalityPower = Math.pow(0.9, equality);
 
-	//Six hours of simulation inside of TW and a day outside of it.
-	const max_ticks = saveData.maxTicks;
-	const corruptionScale = saveData.magma ? calcCorruptionScale(zone, 10) : 1;
+	const equalityPower = Math.pow(0.9, equality);
 
 	const calculateEnemyStats = (zone, cell, enemyType, saveData) => {
 		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyType);
@@ -629,18 +638,21 @@ function simulate(saveData, zone) {
 		if (iceValue > 0) enemyAttack *= 0.366 ** (ice * iceValue);
 		if (universe === 2 && equality > 0) enemyAttack *= equalityPower;
 
-		if (enemyAttack > 0) reduceTrimpHealth(Math.max(0, enemyAttack));
+		if (enemyAttack > 0) reduceTrimpHealth(enemyAttack);
 		++debuff_stacks;
 	}
 
+	let enemy_max_hp = 0;
+	let trimpAttack = 0;
 	cell = 0;
+
 	while (ticks < max_ticks) {
 		let rngRoll = rng();
 		const imp = rngRoll;
 		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biomeImps[Math.floor(rngRoll * biomeImps.length)];
 		enemyAttack = imp_stats[0] * mapArray[cell].attack;
 		enemyHealth = imp_stats[1] * mapArray[cell].health;
-		const enemy_max_hp = enemyHealth;
+		enemy_max_hp = enemyHealth;
 		const fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
 
 		let turns = 0;
@@ -648,7 +660,6 @@ function simulate(saveData, zone) {
 
 		let oneShot = true;
 		let trimpOverkill = 0;
-		let trimpAttack = 0;
 
 		if (ok_spread !== 0) {
 			enemyHealth -= ok_damage;
@@ -727,7 +738,7 @@ function simulate(saveData, zone) {
 				}
 			}
 
-			if (!fast && enemyHealth >= 1 && !armyDead()) enemy_hit(enemyAttack);
+			if (!fast && enemyHealth >= 1 && !armyDead()) enemy_hit(enemyAttack, rngRoll);
 
 			if (saveData.mayhem && mayhemPoison >= 1) trimpHealth -= mayhemPoison;
 
