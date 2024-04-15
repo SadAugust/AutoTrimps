@@ -14,7 +14,6 @@ function breedingPS() {
 	const trimps = game.resources.trimps;
 	const breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
 
-	// Gets the modifier, then: 1.1x format -> 0.1 format -> 1.0 x breeding
 	return getPotencyMod().minus(1).mul(10).mul(breeding);
 }
 
@@ -22,7 +21,6 @@ function _breedingPS() {
 	const trimps = game.resources.trimps;
 	const breeding = trimps.owned - trimpsEffectivelyEmployed();
 
-	// Gets the modifier, then: 1.1x format -> 0.1 format -> 1.0 x breeding
 	return (_getPotencyMod() - 1) * 10 * breeding;
 }
 
@@ -161,7 +159,7 @@ function _breedTimeRemaining() {
 function geneAssist() {
 	if (!_shouldRunGeneAssist()) return;
 
-	//Disables ingame setting if using AT setting.
+	// Disables ingame setting if using AT setting.
 	if (game.global.GeneticistassistSetting !== -1) {
 		game.global.GeneticistassistSetting = -1;
 		toggleGeneticistassist(true);

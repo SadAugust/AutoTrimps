@@ -97,6 +97,7 @@ function _findTotal(resourceMap, resource) {
 		total -= nextCost;
 		tempMax *= 2;
 	}
+
 	return total - resource['owned'];
 }
 

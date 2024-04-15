@@ -121,7 +121,7 @@ function loadModules(fileName, prefix = '') {
 
 function loadScriptsAT() {
 	console.time();
-	gameLoop = function (makeUp, now) {}; /* Disable game from running until script loads to ensure no time is spent without AT running*/
+	gameLoop = function (makeUp, now) {}; /* Disable game from running until script loads to ensure no time is spent without AT running */
 	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
 	basepath = `${atSettings.initialise.basepathOriginal}css/`;
 	const scripts = Array.from(document.getElementsByTagName('script'));
@@ -132,9 +132,7 @@ function loadScriptsAT() {
 	(async function () {
 		try {
 			const modules = ['versionNumber', ...atSettings.modules.installedMods, ...atSettings.modules.installedModules, 'SettingsGUI'];
-
 			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js'];
-
 			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atSettings.initialise.basepath}css/tabs.css`];
 
 			if (game.global.stringVersion === '5.9.2') {
@@ -187,6 +185,7 @@ function initialiseScript() {
 		cancelTooltip();
 	}
 
+	atlantrimpRespecOverride();
 	_loadAutoTrimpsSettings();
 	automationMenuSettingsInit();
 	initialiseAllTabs();
@@ -196,7 +195,9 @@ function initialiseScript() {
 
 	if (getPageSetting('gameUser') === 'ray') MODULES.buildings.betaHouseEfficiency = true;
 	currSettingUniverse = getPageSetting('universeSetting') + 1;
-	universeSwapped();
+
+	if (portalUniverse === -1) portalUniverse = game.global.universe;
+	MODULES.autoPerks.displayGUI();
 	loadAugustSettings();
 	_setupATButtons();
 	challengeInfo(true);
@@ -213,17 +214,6 @@ function initialiseScript() {
 	toggleCatchUpMode();
 	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
 	console.timeEnd();
-}
-
-//Displays Perky UI when changing universes.
-function universeSwapped() {
-	/* 	Sets up the proper perk calc UI when switching between portal universes.
-		Hard to do an alternative to this. Would link it to swapPortalUniverse() but force going back to U1 button in U2 causes issues with that. */
-	if (currPortalUniverse !== portalUniverse) {
-		if (portalUniverse === -1) portalUniverse = game.global.universe;
-		MODULES.autoPerks.displayGUI(portalUniverse);
-		currPortalUniverse = portalUniverse;
-	}
 }
 
 function startStopLoop(loopName, action) {
@@ -324,10 +314,9 @@ function mainLoop() {
 	toggleCatchUpMode();
 	if (MODULES.popups.mazWindowOpen) _handleMazWindow();
 	remakeTooltip();
-	universeSwapped();
 
-	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) updateShieldData();
-	if (!atSettings.running || game.options.menu.pauseGame.enabled || getPageSetting('pauseScript', 1)) return;
+	if (!atSettings.running || game.options.menu.pauseGame.enabled || autoTrimpSettings.pauseScript.enabled) return;
+	if (game.global.ShieldEquipped.id !== MODULES.heirlooms.shieldEquipped) updateShieldData();
 
 	const runDuringTimeWarp = shouldRunInTimeWarp();
 	if (runDuringTimeWarp) {

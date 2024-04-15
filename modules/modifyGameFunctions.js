@@ -1,7 +1,6 @@
-//Override for the Atlantrimp fire function to add Surky respec
+/* Add perk calc respec to Trimple/Atlantrimp map completion */
 function atlantrimpRespecOverride() {
 	if (typeof game.mapUnlocks.AncientTreasure.originalFire !== 'undefined') return;
-	//Add Surky respec to Trimple/Atlantrimp map completion
 	game.mapUnlocks.AncientTreasure.originalFire = game.mapUnlocks.AncientTreasure.fire;
 
 	game.mapUnlocks.AncientTreasure.fire = function () {
@@ -14,10 +13,7 @@ function atlantrimpRespecOverride() {
 	};
 }
 
-//Runs when AT initially loads
-atlantrimpRespecOverride();
-
-// On loading save
+/* On loading save */
 var originalLoad = load;
 load = function () {
 	resetLoops();
@@ -29,12 +25,13 @@ load = function () {
 		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
 		_setButtonsPortal();
 		updateAutoTrimpSettings(true);
+		MODULES.autoPerks.displayGUI();
 	} catch (e) {
 		debug(`Load save failed: ${e}`);
 	}
 };
 
-// On portal/game reset
+/* On portal/game reset */
 var originalresetGame = resetGame;
 resetGame = function () {
 	originalresetGame(...arguments);
@@ -46,7 +43,7 @@ resetGame = function () {
 	}
 };
 
-//Hacky way to allow the SA popup button to work within TW.
+/* Hacky way to allow the SA popup button to work within TW. */
 autoBattle.originalpopup = autoBattle.popup;
 autoBattle.popup = function () {
 	const offlineMode = usingRealTimeOffline;
@@ -55,7 +52,6 @@ autoBattle.popup = function () {
 	usingRealTimeOffline = offlineMode;
 };
 
-//Hacky way to allow the SA popup button to work within TW.
 game.options.menu.pauseGame.originalOnToggle = game.options.menu.pauseGame.onToggle;
 game.options.menu.pauseGame.onToggle = function () {
 	if (this.timeAtPause && mapSettings.mapType && mapSettings.mapType === 'Farm Time') {
@@ -170,7 +166,6 @@ checkAchieve = function () {
 	originalCheckAchieve(...arguments);
 };
 
-//Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
 originalFadeIn = fadeIn;
 fadeIn = function () {
 	if (arguments[0] === 'pauseFight' && getPageSetting('displayHideFightButtons')) return;

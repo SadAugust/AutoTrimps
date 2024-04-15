@@ -379,15 +379,17 @@ function updateChangelogButton() {
 
 function remakeTooltip() {
 	if (!MODULES.popups.challenge && !MODULES.popups.respecAncientTreasure && !MODULES.popups.portal) {
-		if (!MODULES.popups.challenge) delete hzeMessage;
 		return;
 	}
 
 	if (game.global.lockTooltip) {
 		if (MODULES.popups.respecAncientTreasure || MODULES.popups.portal) {
+			const titleElem = document.getElementById('tipTitle');
 			const action = MODULES.popups.respecAncientTreasure ? 'Auto-Respeccing' : 'Auto-Portaling';
-			document.getElementById('tipTitle').innerHTML = `<b>NOTICE: ${action} in ${(MODULES.popups.remainingTime / 1000).toFixed(1)} seconds....</b>`;
+			const respecMessage = `<b>NOTICE: ${action} in ${(MODULES.popups.remainingTime / 1000).toFixed(1)} seconds....</b>`;
+			if (titleElem.innerHTML !== respecMessage) titleElem.innerHTML = respecMessage;
 		}
+
 		return;
 	}
 
@@ -397,7 +399,7 @@ function remakeTooltip() {
 		const description = `<p><b>Respeccing into the ${respecName} preset.</b></p>`;
 		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAncientTreasure = false', `<b>NOTICE: Auto-Respeccing in ${MODULES.popups.remainingTime} seconds....</b>`, 'Disable Respec');
 	} else if (MODULES.popups.challenge) {
-		tooltip('confirm', null, 'update', hzeMessage, 'MODULES.popups.challenge = false, delete hzeMessage', 'AutoTrimps New Unlock!');
+		tooltip('confirm', null, 'update', MODULES.popups.message, 'MODULES.popups.challenge = false, delete MODULES.popups.message', 'AutoTrimps New Unlock!');
 	} else {
 		tooltip('confirm', null, 'update', '<b>Auto Portaling Now!</b><p>Hit Delay Portal to delay this by 1 more zone.', 'MODULES.portal.zonePostpone+=1; MODULES.popups.portal = false', `<b>NOTICE: Auto-Portaling in ${MODULES.popups.remainingTime} seconds....</b>`, 'Delay Portal');
 	}
@@ -608,7 +610,7 @@ function _challengeUnlockCheck() {
 			return;
 		}
 
-		MODULES.u1unlocks = unlockedChallengeArray;
+		MODULES.u1unlocks = [...MODULES.u1unlocks, ...unlockedChallengeArray];
 	} else if (game.global.universe === 2) {
 		const hze = game.stats.highestRadLevel.valueTotal();
 
@@ -644,7 +646,7 @@ function _challengeUnlockCheck() {
 			return;
 		}
 
-		MODULES.u2unlocks = unlockedChallengeArray;
+		MODULES.u2unlocks = [...MODULES.u2unlocks, ...unlockedChallengeArray];
 	}
 
 	for (const challenge of unlockedChallenges) {
@@ -675,9 +677,9 @@ function _challengeUnlockCheck() {
 
 	if (message) {
 		message += '<br><br><b>To disable this popup, click confirm!<b>';
-		hzeMessage = message;
+		MODULES.popups.message = message;
 		MODULES.popups.challenge = true;
-		tooltip('confirm', null, 'update', hzeMessage, 'MODULES.popups.challenge = false, delete hzeMessage', 'AutoTrimps New Unlock!');
+		tooltip('confirm', null, 'update', MODULES.popups.message, 'MODULES.popups.challenge = false, delete MODULES.popups.message', 'AutoTrimps New Unlock!');
 	}
 }
 

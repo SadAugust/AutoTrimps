@@ -715,24 +715,27 @@ MODULES.autoPerks = {
 		});
 	},
 
-	displayGUI: function (universe) {
-		universe = universe === 1 ? 'Perky' : universe === 2 ? 'Surky' : universe;
-		const presets = MODULES.autoPerks[`presets${universe}`];
-		const inputBoxes = MODULES.autoPerks[`inputBoxes${universe}`];
-		let settingInputs = JSON.parse(localStorage.getItem(`${universe.toLowerCase()}Inputs`));
+	displayGUI: function (universe = portalUniverse) {
+		const calcNames = { 1: 'Perky', 2: 'Surky' };
+		const calcName = calcNames[universe] || universe;
+		if (MODULES.autoPerks.loaded === calcName) return;
 
+		const presets = MODULES.autoPerks[`presets${calcName}`];
+		const inputBoxes = MODULES.autoPerks[`inputBoxes${calcName}`];
+		let settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
 		//As a safety measure we should remove the GUI if it already exists.
 		if (MODULES.autoPerks.GUI && Object.keys(MODULES.autoPerks.GUI).length !== 0) MODULES.autoPerks.removeGUI();
 
 		MODULES.autoPerks.GUI = {};
 		MODULES.autoPerks.GUI.inputs = [];
+		MODULES.autoPerks.loaded = calcName;
 		const apGUI = MODULES.autoPerks.GUI;
 
 		//Setup Auto Allocate button
 		apGUI.$allocatorBtn = document.createElement('DIV');
 		apGUI.$allocatorBtn.id = 'allocatorBtn';
 		apGUI.$allocatorBtn.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
-		apGUI.$allocatorBtn.setAttribute('onclick', 'run' + universe + '()');
+		apGUI.$allocatorBtn.setAttribute('onclick', 'run' + calcName + '()');
 		apGUI.$allocatorBtn.setAttribute('onmouseover', 'tooltip("Auto Allocate", "customText", event, "Clears all perks and buy optimal levels in each perk.")');
 		apGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
 		apGUI.$allocatorBtn.textContent = 'Allocate Perks';
@@ -751,7 +754,7 @@ MODULES.autoPerks = {
 			apGUI.$ratiosLine[row] = document.createElement('DIV');
 			apGUI.$ratiosLine[row].setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
 			for (let item in inputBoxes[row]) {
-				MODULES.autoPerks.createInput(apGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, universe);
+				MODULES.autoPerks.createInput(apGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, calcName);
 				MODULES.autoPerks.GUI.inputs.push(item);
 			}
 			apGUI.$customRatios.appendChild(apGUI.$ratiosLine[row]);
@@ -769,7 +772,7 @@ MODULES.autoPerks = {
 		apGUI.$presetLabel.style.cssText = 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;';
 
 		//Setup preset list
-		let presetListHtml = `<select id="preset" onchange="fillPreset${universe}()" data-saved>
+		let presetListHtml = `<select id="preset" onchange="fillPreset${calcName}()" data-saved>
    		<option disabled>— Zone Progression —</option>`;
 		for (let item in presets.regular) presetListHtml += `<option value="${item}" title="${presets.regular[item].description}">${presets.regular[item].name}</option>`;
 		presetListHtml += `<option disabled>— Special Purpose Presets —</option>`;
@@ -779,7 +782,7 @@ MODULES.autoPerks = {
 		//Setting up preset dropdown
 		apGUI.$preset = document.createElement('select');
 		apGUI.$preset.id = 'preset';
-		apGUI.$preset.onchange = () => window[`fillPreset${universe}`]();
+		apGUI.$preset.onchange = () => window[`fillPreset${calcName}`]();
 		apGUI.$preset.style.cssText = `text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
 		apGUI.$preset.innerHTML = presetListHtml;
 
@@ -789,7 +792,7 @@ MODULES.autoPerks = {
 		let $portalWrapper = document.getElementById('portalWrapper');
 		$portalWrapper.appendChild(apGUI.$customRatios);
 
-		if (universe === 'Perky') {
+		if (calcName === 'Perky') {
 			if (!settingInputs) {
 				document.querySelector('#targetZone').value = Math.max(20, game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
 				let presetToUse;
@@ -800,14 +803,14 @@ MODULES.autoPerks = {
 				});
 
 				fillPresetPerky(presetToUse);
-				settingInputs = JSON.parse(localStorage.getItem(`${universe.toLowerCase()}Inputs`));
+				settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
 			}
 			document.querySelector('#preset').value = settingInputs.preset;
 			if (game.global.spiresCompleted < 2) document.querySelector('#weight-xpDiv').style.display = 'none';
-		} else if (universe === 'Surky') {
+		} else if (calcName === 'Surky') {
 			if (!settingInputs) {
 				saveSurkySettings(true);
-				settingInputs = JSON.parse(localStorage.getItem(universe.toLowerCase() + 'Inputs'));
+				settingInputs = JSON.parse(localStorage.getItem(calcName.toLowerCase() + 'Inputs'));
 			}
 			const preset = settingInputs.preset || 'ezfarm';
 			document.querySelector('#preset').value = preset;
@@ -1133,23 +1136,27 @@ MODULES.autoPerks = {
 	}
 };
 
-if (typeof autoTrimpSettings === 'undefined') {
-	//On swapping portal universes load either Perky or Surky.
-	var originalswapPortalUniverse = swapPortalUniverse;
-	swapPortalUniverse = function () {
-		originalswapPortalUniverse(...arguments);
-		try {
-			MODULES.autoPerks.displayGUI(portalUniverse);
-		} catch (e) {
-			console.log('Universe Swap - Failed to swap UI: ' + e, 'other');
-		}
-	};
-}
+var originalSwapPortalUniverse = swapPortalUniverse;
+swapPortalUniverse = function () {
+	originalSwapPortalUniverse(...arguments);
+	MODULES.autoPerks.displayGUI();
+};
 
-//If using standalone version then when loading Surky file also load CSS & Perky then load portal UI.
-//After initial load everything should work perfectly.
+var originalViewPortalUpgrades = viewPortalUpgrades;
+viewPortalUpgrades = function () {
+	originalViewPortalUpgrades(...arguments);
+	MODULES.autoPerks.displayGUI();
+};
+
+var originalPortalClicked = portalClicked;
+portalClicked = function () {
+	originalPortalClicked(...arguments);
+	MODULES.autoPerks.displayGUI();
+};
+
+/* If using standalone version then when load Surky and CSS files. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
-	//Load CSS so that the UI is visible
+	/* Load CSS so that the UI is visible */
 	const linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';
 	linkStylesheet.type = 'text/css';
@@ -1166,9 +1173,9 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 
 	injectScript('AutoTrimps-SadAugust_Surky', 'https://sadaugust.github.io/AutoTrimps/mods/surky.js');
 
-	//Load the portal UI
+	/* Load the portal UI */
 	setTimeout(function () {
-		MODULES.autoPerks.displayGUI(portalUniverse);
+		MODULES.autoPerks.displayGUI();
 		console.log('Surky & Perky loaded.');
 	}, 3000);
 }

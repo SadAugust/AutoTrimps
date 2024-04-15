@@ -251,7 +251,6 @@ function doPortal(challenge, skipDaily) {
 	while (MODULES.portal.portalUniverse !== Infinity) {
 		swapPortalUniverse();
 		if (portalUniverse === MODULES.portal.portalUniverse) {
-			universeSwapped();
 			MODULES.portal.portalUniverse = Infinity;
 		}
 	}
@@ -264,7 +263,6 @@ function doPortal(challenge, skipDaily) {
 	if (MODULES.portal.currentChallenge === 'Daily') {
 		if (getPageSetting('dailyPortalPreviousUniverse', portalUniverse + 1)) {
 			swapPortalUniverse();
-			universeSwapped();
 		}
 	}
 
@@ -308,7 +306,6 @@ function _autoPortalVoidTracker() {
 			MODULES.portal.portalUniverse = game.global.universe;
 			while (portalUniverse !== 1) swapPortalUniverse();
 		}
-		universeSwapped();
 	}
 
 	downloadSave();
@@ -462,7 +459,6 @@ function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
 
 		if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse) && dailyAvailable) {
 			swapPortalUniverse();
-			universeSwapped();
 		}
 
 		selectChallenge('Daily');
@@ -488,7 +484,6 @@ function _autoPortalActivate(challenge) {
 	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
 	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
 	debug(`Portaling with void tracker at ${trackerValue}/10.`, 'portal');
-	universeSwapped();
 	portalPerkCalc();
 
 	let preset = 0;
@@ -653,7 +648,6 @@ function resetVarsZone(loadingSave) {
 		atSettings.portal.currentworld = 0;
 		atSettings.portal.lastrunworld = 0;
 		atSettings.portal.aWholeNewWorld = false;
-		universeSwapped();
 
 		atSettings.portal.currentHZE = 0;
 		atSettings.portal.lastHZE = 0;
