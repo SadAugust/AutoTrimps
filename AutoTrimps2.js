@@ -116,6 +116,10 @@ function loadModules(fileName, prefix = '') {
 		}
 	});
 
+	script.addEventListener('error', () => {
+		console.error(`Failed to load module: ${fileName} from path: ${prefix || ''}`);
+	});
+
 	document.head.appendChild(script);
 }
 
@@ -156,9 +160,9 @@ function loadScriptsAT() {
 		} catch (error) {
 			console.error('Error loading script or stylesheet:', error);
 		}
-	})();
 
-	initialiseScript();
+		initialiseScript();
+	})();
 }
 
 loadScriptsAT();
@@ -172,12 +176,8 @@ function initialiseScript() {
 	};
 
 	if (Object.values(filesNotLoaded).some(Boolean)) {
-		atSettings.intervals.counter++;
-		if (atSettings.intervals.counter % 500 === 0) {
-			console.timeEnd();
-			return loadScriptsAT();
-		}
-		return setTimeout(initialiseScript, 1);
+		console.timeEnd();
+		return loadScriptsAT();
 	}
 
 	if (usingRealTimeOffline) {
