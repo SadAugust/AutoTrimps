@@ -197,7 +197,7 @@ function initialiseScript() {
 	currSettingUniverse = getPageSetting('universeSetting') + 1;
 
 	if (portalUniverse === -1) portalUniverse = game.global.universe;
-	MODULES.autoPerks.displayGUI();
+	MODULES.autoPerks.displayGUI(portalUniverse);
 	loadAugustSettings();
 	_setupATButtons();
 	challengeInfo(true);
