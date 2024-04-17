@@ -128,6 +128,7 @@ function mapSettingsDisplay(elem, titleText) {
 	//Looping through each setting and setting up the rows and inputting the data from the setting into the inputs
 	for (let x = 0; x < maxSettings; x++) {
 		const vals = _mapSettingsVals(x, activeSetting);
+		if (activeSetting.archaeology) vals.jobratio += ',1';
 		let style = '';
 
 		//Taking data from the current setting and overriding the info in vals with it.
@@ -1050,15 +1051,28 @@ function mapSettingsHelpWindow(titleText) {
 	}
 
 	//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
-	if (mapBonus) mazHelp += "<br><br><b>Map Bonus</b> works by using the last active line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.";
+	if (mapBonus) {
+		mazHelp += "<br><br><b>Map Bonus</b> works by using the last active line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.";
+	}
+
 	if (voidMap) {
 		mazHelp += '<br><br>Void Map works by using Start Zone</b> as the lower bound zone to run voids on and <b>End Zone</b> as the upper bound.';
 
 		mazHelp += '<li class="indent">Additionally it has dropdown inputs which can give you the ability to add more fine-tuning for when a line should be run.';
 		mazHelp += '<li class="indent">If you reach the <b>End Zone</b> zone input of a line it will run regardless of dropdown inputs.';
 	}
-	if (smithyFarm) mazHelp += '<br><br><b>Smithy Farm</b> will farm resources in the following order <b>Metal > Wood > Gems</b>. This cannot be changed.';
-	if (insanity) mazHelp += "<br><br><b>Insanity Farm</b> will disable unique & lower than world level maps when you don't have a destack zone line setup.";
+
+	if (smithyFarm) {
+		mazHelp += '<br><br><b>Smithy Farm</b> will farm resources in the following order <b>Metal > Wood > Gems</b>. This cannot be changed.';
+	}
+
+	if (archaeology) {
+		mazHelp += '<br><br><b>Archaeology Farm</b> requires you to have a scientist ratio set in the <b>Job Ratio</b> input field for it to run properly.';
+	}
+
+	if (insanity) {
+		mazHelp += "<br><br><b>Insanity Farm</b> will disable unique & lower than world level maps when you don't have a destack zone line setup.";
+	}
 
 	//Top Row Information
 	if (!golden) {
@@ -1360,6 +1374,7 @@ function _mapSettingsRemoveRow(index, s) {
 				swapClass('icon-', `icon-checkbox-${initialVals[val] ? '' : 'un'}checked`, checkBox);
 				checkBox.setAttribute('data-checked', initialVals[val]);
 			} else {
+				if (val === 'jobratio') initialVals[val] += ',1';
 				document.getElementById(id + index).value = initialVals[val];
 			}
 		}
