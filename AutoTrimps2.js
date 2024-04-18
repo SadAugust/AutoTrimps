@@ -28,6 +28,7 @@ const atSettings = {
 let autoTrimpSettings = {};
 const MODULES = {
 	popups: { challenge: false, respecAncientTreasure: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
+	heirlooms: { plagueSwap: false, compressedCalc: false, gammaBurstPct: 1, shieldEquipped: null, breedHeirloom: false },
 	graphs: {},
 	u1unlocks: [],
 	u2unlocks: []

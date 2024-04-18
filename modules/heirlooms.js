@@ -1,11 +1,3 @@
-MODULES.heirlooms = {
-	plagueSwap: false,
-	compressedCalc: false,
-	gammaBurstPct: 1,
-	shieldEquipped: null,
-	breedHeirloom: false
-};
-
 function evaluateHeirloomMods(loom, location) {
 	const heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
 	const heirloomType = heirloomLocation.type;
