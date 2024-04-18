@@ -801,13 +801,6 @@ function initialiseAllSettings() {
 			},
 			'multitoggle', 0, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 236 && autoTrimpSettings.advancedNurseries.enabled) });
-		createSetting('buildingMostEfficientDisplay',
-			function () { return ('Highlight Efficient Buildings') },
-			function () {
-				let description = "<p>Will highlight the most efficient building to buy.</p>";
-				return description;
-			}, 'boolean', false, null, 'Buildings', [1, 2],
-			function () { return (getPageSetting('gameUser') !== 'undefined') });
 	}
 
 	const displayEquipment = true;
@@ -934,14 +927,6 @@ function initialiseAllSettings() {
 			function () { return ('AE: Portal') },
 			function () {
 				let description = "<p>Will ensure Auto Equip is enabled after portalling.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Equipment', [1, 2]);
-		createSetting('equipEfficientEquipDisplay',
-			function () { return ('AE: Highlight Equips') },
-			function () {
-				let description = "<p>Will highlight the most efficient equipment or prestige to buy.</p>";
-				description += "<p><b>This setting will disable the default game setting.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Equipment', [1, 2]);
@@ -4175,13 +4160,29 @@ function initialiseAllSettings() {
 				description += "<p>The blue color means this is not a settable setting, just a button.</p>";
 				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
 				return description;
-			},
-			'action', null, 'MODULES["performance"].EnableAFKMode()', 'Display', [1, 2]);
+			}, 'action', null, 'MODULES["performance"].EnableAFKMode()', 'Display', [1, 2]);
 
-		createSetting('automateSpireAssault',
-			function () { return ('Automate Spire Assault') },
-			function () { return ('Automates Spire Assault gear swaps from level 92 up to level 128. HIGHLY RECOMMENDED THAT YOU DO NOT USE THIS SETTING.') },
-			'boolean', false, null, 'Display', [11]);
+		createSetting('equipEfficientEquipDisplay',
+			function () { return ('AE: Highlight Equips') },
+			function () {
+				let description = "<p>Will highlight the most efficient equipment or prestige to buy.</p>";
+				description += "<p><b>This setting will disable the default game setting.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Display', [1, 2]);
+		createSetting('buildingMostEfficientDisplay',
+			function () { return ('Highlight Efficient Buildings') },
+			function () {
+				let description = "<p>Will highlight the most efficient building to buy.</p>";
+				if (currSettingUniverse === 2) description += "<p>When <b>Hubs</b> are unlocked this setting won't display the best building as the script will automatically purchase the cheapest housing building possible at that point.</p>";
+				return description;
+			}, 'boolean', false, null, 'Display', [1, 2]);
+		createSetting('shieldGymMostEfficientDisplay',
+			function () { return ('Highlight Shields v Gyms') },
+			function () {
+				let description = "<p>Will the most efficient purchase between Shields and Gyms.</p>";
+				return description;
+			}, 'boolean', false, null, 'Display', [1]);
 
 		createSetting('sitInMaps',
 			function () { return ('Sit In maps') },
@@ -4622,6 +4623,7 @@ function settingChanged(id, currUniverse) {
 
 	const booleanActions = {
 		equipEfficientEquipDisplay: displayMostEfficientEquipment,
+		shieldGymMostEfficientDisplay: displayShieldGymEfficiency,
 		buildingMostEfficientDisplay: displayMostEfficientBuilding,
 		equipOn: _setAutoEquipClasses,
 		buildingsType: _setBuildingClasses,
@@ -4985,7 +4987,7 @@ function _setDisplayedTabs() {
 
 	const tabList = {
 		tabBeta: !gameUserCheck(),
-		tabBuildings: !displayAllSettings && radonOn,
+		tabBuildings: !displayAllSettings && (radonOn || (!radonOn && hze < 60)),
 		tabC2: !displayAllSettings && !radonOn && hze < 65,
 		tabChallenges: !displayAllSettings && ((radonOn && highestRadonZone < 35) || (!radonOn && hze < 40)),
 		tabDaily: !displayAllSettings && !radonOn && hze < 99,
@@ -5046,13 +5048,13 @@ function _settingsToLineBreak() {
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
 	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'mapologyPrestige', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
-	const breakAfterBuildings = ['autoGigaDeltaFactor', 'advancedNurseriesIce'];
+	const breakAfterBuildings = ['autoGigaDeltaFactor'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterMagma = ['autoGenModeC2', 'magmiteMinimize'];
 	const breakAfterNature = ['autoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
-	const breakAfterDisplay = ['testTotalEquipmentCost'];
-	const breakAfterTest = ['automateSpireAssault', 'EnableAFK'];
+	const breakAfterDisplay = ['EnableAFK', 'shieldGymMostEfficientDisplay'];
+	const breakAfterTest = ['testTotalEquipmentCost'];
 
 	const breakAfterIDs = [...breakAfterCore, ...breakAfterMaps, ...breakAfterDaily, ...breakAfterEquipment, ...breakAfterCombat, ...breakAfterJobs, ...breakAfterC2, ...breakAfterBuildings, ...breakAfterChallenges, ...breakAfterHeirlooms, ...breakAfterMagma, ...breakAfterNature, ...breakAfterDisplay, ...breakAfterTest];
 

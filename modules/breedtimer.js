@@ -3,8 +3,7 @@ MODULES.breedtimer = {
 	missingTrimps: new this.DecimalBreed(0)
 };
 
-function trimpsEffectivelyEmployed() {
-	let employedTrimps = game.resources.trimps.employed;
+function trimpsEffectivelyEmployed(employedTrimps = game.resources.trimps.employed) {
 	if (game.permaBoneBonuses.multitasking.owned) employedTrimps *= 1 - game.permaBoneBonuses.multitasking.mult();
 
 	return employedTrimps;
@@ -71,11 +70,11 @@ function getPotencyMod() {
 	return potencyMod.div(10).add(1);
 }
 
-function _getPotencyMod() {
+function _getPotencyMod(extraNurseries = 0) {
 	let potencyMod = game.resources.trimps.potency;
 
 	if (game.upgrades.Potency.done > 0) potencyMod *= Math.pow(1.1, game.upgrades.Potency.done);
-	if (game.buildings.Nursery.owned > 0) potencyMod *= Math.pow(1.01, game.buildings.Nursery.owned);
+	if (game.buildings.Nursery.owned > 0) potencyMod *= Math.pow(1.01, game.buildings.Nursery.owned + extraNurseries);
 	if (game.unlocks.impCount.Venimp > 0) potencyMod *= Math.pow(1.003, game.unlocks.impCount.Venimp);
 	if (game.global.brokenPlanet) potencyMod /= 10;
 

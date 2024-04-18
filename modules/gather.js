@@ -54,7 +54,7 @@ function _calcTrapSupplySize() {
 	const tauntimp = game.unlocks.imps.Tauntimp ? Math.ceil(game.resources.trimps.realMax() * 0.003) : 0;
 	let largestHouseSize = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector', 'Warpstation']
 		.filter((houseName) => !game.buildings[houseName].locked)
-		.map((houseName) => _getHousingBonus(houseName))
+		.map((houseName) => getHousingBonus(houseName))
 		.reduce((max, bonus) => Math.max(max, bonus), 0);
 	return Math.ceil(Math.max(territoryBonus, largestHouseSize, tauntimp) / _trapSize()) - 1;
 }
@@ -70,9 +70,8 @@ function safeSetGather(resource) {
 	MODULES.gather.coordBuffering = undefined;
 }
 
-function _isTrappingOK(Battle, Coordination) {
-	const trapChallenge = noBreedChallenge();
-	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
+function _isTrappingOK(Battle, Coordination, maxTrimps = game.resources.trimps.realMax(), trapChallenge = noBreedChallenge()) {
+	const notFullPop = game.resources.trimps.owned < maxTrimps;
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
 	const baseCheck = (!Battle.done || getPageSetting('trapTrimps') || _breedTimeRemaining() === Infinity || (game.global.world === 1 && game.global.lastClearedCell === -1)) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 	if (!trapChallenge) return baseCheck;
@@ -341,12 +340,14 @@ function autoGather() {
 	}
 
 	const trapChallenge = noBreedChallenge();
+	const fighting = game.global.fighting;
 	const needBattle = !Battle.done && game.resources.science.owned < 10;
-	const notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
+	const maxTrimps = game.resources.trimps.realMax();
+	const notFullPop = game.resources.trimps.owned < maxTrimps;
 	const baseArmySize = game.resources.trimps.maxSoldiers;
 	const trapperTrapUntilFull = trapChallenge && notFullPop;
 
-	const trapTrimpsOK = _isTrappingOK(Battle, Coordination);
+	const trapTrimpsOK = _isTrappingOK(Battle, Coordination, maxTrimps, trapChallenge);
 
 	const resourcesNeeded = getUpgradeCosts();
 	const scienceAvailable = elementVisible('science');
@@ -378,7 +379,7 @@ function autoGather() {
 	}
 
 	// Builds if we have storage buildings on top of the queue
-	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && ['Barn.1', 'Shed.1', 'Forge.1'].includes(building)) {
+	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.filter((b) => ['Barn.1', 'Shed.1', 'Forge.1'].includes(b)).length) {
 		safeSetGather('buildings');
 		return;
 	}
@@ -389,6 +390,11 @@ function autoGather() {
 		return;
 	}
 
+	// High Priority Trapping (refilling after a sudden increase in population and not fighting)
+	if (trappingIsRelevant && trapWontBeWasted && !fighting && maxTrimps - game.resources.trimps.owned > baseArmySize) {
+		if (_handleTrapping('both', 0)) return;
+	}
+
 	// Builds if we don't have Foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap (TODO Better condition than pMod > 100)
 	if (!bwRewardUnlocked('Foremany') && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || (building !== 'Trap.1' && (game.global.autoCraftModifier === 0 || getPlayerModifier() > 100)))) {
 		safeSetGather('buildings');
@@ -396,7 +402,7 @@ function autoGather() {
 	}
 
 	// High Priority Trapping (refilling after a sudden increase in population)
-	if (trappingIsRelevant && trapWontBeWasted && game.resources.trimps.realMax() - game.resources.trimps.owned > baseArmySize) {
+	if (trappingIsRelevant && trapWontBeWasted && maxTrimps - game.resources.trimps.owned > baseArmySize) {
 		if (_handleTrapping('both', 0)) return;
 	}
 

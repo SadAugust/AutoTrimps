@@ -41,10 +41,11 @@ class HDStats {
 		this.autoLevelSpeed = hdStats.autoLevelSpeed;
 
 		const { world, universe } = game.global;
-		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
+		const checkAutoLevel = this.autoLevelInitial === undefined || (usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond);
 
-		const voidPercent = _getVoidPercent(world, universe);
 		const mapDifficulty = game.global.mapsActive && MODULES.maps.lastMapWeWereIn.location === 'Bionic' ? 2.6 : 0.75;
+		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
+		const voidPercent = _getVoidPercent(world, universe);
 
 		this.hdRatio = calcHDRatio(world, 'world', false, 1);
 		this.hdRatioMap = calcHDRatio(world, 'map', false, mapDifficulty);
@@ -59,8 +60,11 @@ class HDStats {
 		this.hitsSurvivedMap = calcHitsSurvived(world, 'map', mapDifficulty);
 		this.hitsSurvivedVoid = calcHitsSurvived(world, 'void', voidPercent);
 
-		const checkAutoLevel = this.autoLevelInitial === undefined || (usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond);
-
+		/* U1 specific checks */
+		const worldType = _getTargetWorldType();
+		const hitsBefore = worldType === 'void' ? this.hitsSurvivedVoid : this.hitsSurvived;
+		this.shieldGymEff = shieldGymEfficiency(hitsBefore);
+		this.biomeEff = biomeEfficiency(undefined, hitsBefore, undefined, this.shieldGymEff);
 		if (checkAutoLevel) {
 			this.autoLevelInitial = stats();
 			this.autoLevelZone = world;
@@ -128,6 +132,10 @@ function _getWorldType() {
 	return !game.global.mapsActive ? 'world' : game.global.voidBuff ? 'void' : 'map';
 }
 
+function _getTargetWorldType() {
+	return mapSettings.voidTrigger || game.global.voidBuff ? 'void' : 'world';
+}
+
 function _getZone(worldType = _getWorldType()) {
 	return ['world', 'void'].includes(worldType) || !game.global.mapsActive ? game.global.world : getCurrentMapObject().level;
 }
@@ -140,16 +148,25 @@ function _getEnemyName(name = 'Chimp') {
 	return getCurrentEnemy().name || { name };
 }
 
-function calcEquipment(equipType = 'attack') {
+function calcEquipment(equipType = 'attack', extraItem = new ExtraItem()) {
 	let bonus = 0;
 	let equipmentList;
 
 	if (equipType === 'attack') equipmentList = ['Dagger', 'Mace', 'Polearm', 'Battleaxe', 'Greatsword', 'Arbalest'];
 	else equipmentList = ['Shield', 'Boots', 'Helmet', 'Pants', 'Shoulderguards', 'Breastplate', 'Gambeson'];
 
-	for (let i = 0; i < equipmentList.length; i++) {
-		const equip = game.equipment[equipmentList[i]];
+	for (let name of equipmentList) {
+		const equip = game.equipment[name];
 		if (equip.locked || equip.blockNow) continue;
+
+		if (name === extraItem.name) {
+			const level = extraItem.extraLevels + (extraItem.shouldPrestige ? 1 : equip.level);
+			const prestigeLevel = equip.prestige + (extraItem.shouldPrestige ? 0 : -1);
+			const newStatsPerLevel = prestigeLevel ? Math.round(equip[equipType] * Math.pow(1.19, prestigeLevel * game.global.prestige[equipType] + 1)) : equip[equipType];
+			bonus += level * newStatsPerLevel;
+			continue;
+		}
+
 		bonus += equip[equipType + 'Calculated'] * equip.level;
 	}
 
@@ -189,12 +206,12 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 	return base;
 }
 
-function getTrimpHealth(realHealth, worldType = _getWorldType()) {
+function getTrimpHealth(realHealth, worldType = _getWorldType(), extraItem = new ExtraItem()) {
 	if (realHealth) return game.global.soldierHealthMax;
 
 	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 	const heirloom = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpHealth', 1, false);
-	let health = (50 + calcEquipment('health')) * game.resources.trimps.maxSoldiers;
+	let health = (50 + calcEquipment('health', extraItem)) * game.resources.trimps.maxSoldiers;
 
 	const healthMultipliers = {
 		toughness: () => (getPerkLevel('Toughness') > 0 ? 1 + getPerkLevel('Toughness') * getPerkModifier('Toughness') : 1),
@@ -259,8 +276,8 @@ function getTrimpHealth(realHealth, worldType = _getWorldType()) {
 	return health;
 }
 
-function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth = false, fullGeneticist) {
-	let health = getTrimpHealth(realHealth, worldType);
+function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth = false, fullGeneticist = false, extraItem = new ExtraItem()) {
+	let health = getTrimpHealth(realHealth, worldType, extraItem);
 
 	if (game.global.universe === 1) {
 		if (![0, 5].includes(game.global.formation)) health /= game.global.formation === 1 ? 4 : 0.5;
@@ -295,7 +312,7 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	return health;
 }
 
-function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldType()) {
+function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldType(), extraGyms = 0, extraItem = new ExtraItem()) {
 	if (game.global.universe === 2) return 0;
 
 	let block = 0;
@@ -310,10 +327,24 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 
 	const gym = game.buildings.Gym;
-	if (gym.owned > 0) block += gym.owned * gym.increase.by;
+	const owned = gym.owned + extraGyms;
+
+	const Gymystic = game.upgrades.Gymystic;
+	const gymysticFactor = Gymystic.done ? Gymystic.modifier + 0.01 * (Gymystic.done - 1) : 1;
+	const increaseBy = gym.increase.by * Math.pow(gymysticFactor, extraGyms);
+
+	if (owned > 0) block += owned * increaseBy;
 
 	const shield = game.equipment.Shield;
-	if (shield.blockNow && shield.level > 0) block += shield.level * shield.blockCalculated;
+
+	if (shield.blockNow) {
+		if (extraItem.name === 'Shield') {
+			const level = extraItem.extraLevels + (extraItem.shouldPrestige ? 1 : shield.level);
+			const prestigeLevel = shield.prestige + (extraItem.shouldPrestige ? 0 : -1);
+			const newStatsPerLevel = Math.round(shield.block * Math.pow(1.19, prestigeLevel * game.global.prestige['block'] + 1));
+			block += level * newStatsPerLevel;
+		} else block += shield.level * shield.blockCalculated;
+	}
 
 	const trainer = game.jobs.Trainer;
 	if (trainer.owned > 0) {
@@ -981,7 +1012,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	return enemyHealth / ourBaseDamage;
 }
 
-function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', difficulty = 1, extraBlock = 0, extraHealth = 0, checkOutputs) {
+function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), difficulty = 1, extraGyms = 0, extraItem = new ExtraItem(), checkOutputs) {
 	const formationMod = game.upgrades.Dominance.done ? 2 : 1;
 	const ignoreCrits = getPageSetting('ignoreCrits');
 
@@ -993,8 +1024,8 @@ function calcHitsSurvived(targetZone = game.global.world, worldType = 'world', d
 	let hitsToSurvive = targetHitsSurvived(false, worldType);
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 
-	const health = (extraHealth + calcOurHealth(false, worldType, false, true)) / formationMod;
-	const block = (extraBlock + calcOurBlock(false)) / formationMod;
+	const health = calcOurHealth(false, worldType, false, true, extraItem) / formationMod;
+	const block = calcOurBlock(false, false, worldType, extraGyms, extraItem) / formationMod;
 	const equality = equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', null, hitsToSurvive);
 	let damageMult = 1;
 

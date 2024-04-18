@@ -52,16 +52,19 @@ function loadScript(url, type = 'text/javascript', retries = 3) {
 		const script = document.createElement('script');
 		script.src = url;
 		script.type = type;
+
 		script.onload = () => {
 			atSettings.modules.loadedExternal.push(url);
 			resolve();
 		};
+
 		script.onerror = () => {
 			console.log(`Failed to load script ${url}. Retries left: ${retries - 1}`);
 			loadScript(url, type, retries - 1)
 				.then(resolve)
 				.catch(reject);
 		};
+
 		document.head.appendChild(script);
 	});
 }
@@ -77,55 +80,69 @@ function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3)
 		link.href = url;
 		link.rel = rel;
 		link.type = type;
+
 		link.onload = () => {
 			atSettings.modules.loadedExternal.push(url);
 			resolve();
 		};
+
 		link.onerror = () => {
 			console.log(`Failed to load stylesheet ${url}. Retries left: ${retries - 1}`);
 			loadStylesheet(url, rel, type, retries - 1)
 				.then(resolve)
 				.catch(reject);
 		};
+
 		document.head.appendChild(link);
 	});
 }
 
+function isModuleLoaded(fileName, prefix) {
+	if (prefix === atSettings.modules.path && atSettings.modules.loadedModules.includes(fileName)) {
+		return true;
+	} else if (prefix === atSettings.modules.pathMods && atSettings.modules.loadedMods.includes(fileName)) {
+		return true;
+	}
+	return false;
+}
+
 //Loading modules from basepath that are required for the script to run.
 function loadModules(fileName, prefix = '') {
-	if (prefix) {
-		if (prefix === atSettings.modules.path && atSettings.modules.loadedModules.includes(fileName)) {
-			return;
-		} else if (prefix === atSettings.modules.pathMods && atSettings.modules.loadedMods.includes(fileName)) {
-			return;
+	return new Promise((resolve, reject) => {
+		if (prefix) {
+			if (prefix && isModuleLoaded(fileName, prefix)) {
+				resolve();
+				return;
+			}
 		}
-	}
 
-	const script = document.createElement('script');
-	script.src = `${atSettings.initialise.basepath}${prefix}${fileName}.js`;
-	script.id = `${fileName}_MODULE`;
-	script.async = false;
-	script.defer = true;
+		const script = document.createElement('script');
+		script.src = `${atSettings.initialise.basepath}${prefix}${fileName}.js`;
+		script.id = `${fileName}_MODULE`;
+		script.async = false;
+		script.defer = true;
 
-	script.addEventListener('load', () => {
-		if (!atSettings.modules.loadedModules.includes(fileName) && !atSettings.modules.loadedMain.includes(fileName)) {
-			if (prefix) {
-				if (prefix === atSettings.modules.path) atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
-				else atSettings.modules.loadedMods = [...atSettings.modules.loadedMods, fileName];
-			} else atSettings.modules.loadedMain = [...atSettings.modules.loadedMain, fileName];
-		}
+		script.addEventListener('load', () => {
+			if (!atSettings.modules.loadedModules.includes(fileName) && !atSettings.modules.loadedMain.includes(fileName)) {
+				if (prefix) {
+					if (prefix === atSettings.modules.path) atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
+					else atSettings.modules.loadedMods = [...atSettings.modules.loadedMods, fileName];
+				} else atSettings.modules.loadedMain = [...atSettings.modules.loadedMain, fileName];
+			}
+			resolve();
+		});
+
+		script.addEventListener('error', () => {
+			reject(new Error(`Failed to load module: ${fileName} from path: ${prefix || ''}`));
+		});
+
+		document.head.appendChild(script);
 	});
-
-	script.addEventListener('error', () => {
-		console.error(`Failed to load module: ${fileName} from path: ${prefix || ''}`);
-	});
-
-	document.head.appendChild(script);
 }
 
 function loadScriptsAT() {
 	console.time();
-	gameLoop = function (makeUp, now) {}; /* Disable game from running until script loads to ensure no time is spent without AT running */
+	/* gameLoop = function (makeUp, now) {}; Disable game from running until script loads to ensure no time is spent without AT running */
 	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
 	basepath = `${atSettings.initialise.basepathOriginal}css/`;
 	const scripts = Array.from(document.getElementsByTagName('script'));
@@ -157,11 +174,12 @@ function loadScriptsAT() {
 				if (atSettings.modules.loadedExternal.includes(stylesheet)) continue;
 				await loadStylesheet(stylesheet);
 			}
+
+			initialiseScript();
 		} catch (error) {
 			console.error('Error loading script or stylesheet:', error);
+			initialiseScript();
 		}
-
-		initialiseScript();
 	})();
 }
 
@@ -203,7 +221,14 @@ function initialiseScript() {
 	challengeInfo(true);
 
 	updateShieldData();
+
 	if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+
+	if (_getTargetWorldType() === 'void' && !hdStats.hitsSurvivedVoid) {
+		hdStats.hitsSurvivedVoid = calcHitsSurvived(game.global.world, 'void', _getVoidPercent(game.global.world, game.global.universe));
+	} else if (!hdStats.hitsSurvived) {
+		hdStats.hitsSurvived = calcHitsSurvived(game.global.world, 'world', 1);
+	}
 
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
@@ -343,6 +368,7 @@ function mainLoop() {
 		autoMapsStatus();
 		displayMostEfficientBuilding();
 		displayMostEfficientEquipment();
+		displayShieldGymEfficiency();
 	}
 
 	heirloomSwapping();

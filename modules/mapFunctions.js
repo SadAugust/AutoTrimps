@@ -330,7 +330,7 @@ function recycleMap_AT(forceAbandon) {
 
 	if (game.global.mapsActive && !mapSettings.equality) {
 		const mapObj = getCurrentMapObject();
-		if (mapCost(mapObj.level - game.global.world, mapObj.bonus, mapObj.location, [9, 9, 9], getPageSetting('onlyPerfectMaps')) > game.resources.fragments * 0.5) return;
+		if (mapCost(mapObj.level - game.global.world, mapObj.bonus, mapObj.location, [9, 9, 9], getPageSetting('onlyPerfectMaps')) > game.resources.fragments * 0.1) return;
 		if (prestigesToGet(mapObj.level)[0] !== 0) return;
 	}
 
@@ -3321,8 +3321,8 @@ function getBiome(mapGoal, resourceGoal) {
 	else if (mapGoal === 'fragConservation') biome = 'Random';
 	else if (game.global.universe === 2 && game.global.farmlandsUnlocked) biome = 'Farmlands';
 	else if (game.global.decayDone) biome = 'Plentiful';
-	else if (needGymystic() || (mostEfficientEquipment().attack.name === '' && mostEfficientEquipment().health.name === '')) biome = 'Forest';
-	else biome = 'Mountain';
+	else if (needGymystic()) biome = 'Forest';
+	else biome = hdStats.biomeEff ? hdStats.biomeEff.biome : 'Mountain';
 
 	return biome;
 }

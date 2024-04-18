@@ -23,6 +23,7 @@ function advancedNurseries() {
 
 	const disableIce = getPageSetting('advancedNurseriesIce');
 	if (disableIce > 0 && getEmpowerment() === 'Ice' && (disableIce === 1 || (disableIce === 2 && game.global.spireActive))) return false;
+
 	// Only build nurseries if: A) lacking Health & B) have max health map stacks
 	const lackingHealth = whichHitsSurvived() < targetHitsSurvived();
 	const hasHealthFarmed = MODULES.mapFunctions.hasHealthFarmed === getTotalPortals() + '_' + game.global.world;
@@ -31,12 +32,12 @@ function advancedNurseries() {
 	return lackingHealth & (hasHealthFarmed || maxMapBonus);
 }
 
-function _housingToCheck() {
+function _housingToCheck(displayCheck = false) {
 	const housingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
-	return housingTypes.filter((house) => _needHousing(house, MODULES.buildings.betaHouseEfficiency));
+	return housingTypes.filter((house) => _needHousing(house, game.buildings.Hub.locked, displayCheck));
 }
 
-function _needHousing(houseName, ignoreAffordability) {
+function _needHousing(houseName, ignoreAffordability, displayCheck) {
 	/* Returns true if we can afford and need the building. */
 	const buildingSettings = getPageSetting('buildingSettingsArray')[houseName];
 	const buildingStat = game.buildings[houseName];
@@ -55,13 +56,15 @@ function _needHousing(houseName, ignoreAffordability) {
 
 	const safeHousingFood = ['Gateway', 'Collector'];
 
-	// Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
-	if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && !safeHousingFood.includes(houseName)) return false;
+	if (!displayCheck) {
+		/* Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled. */
+		if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && !safeHousingFood.includes(houseName)) return false;
 
-	// Stops buildings being pushed if Smithy Farming so that we aren't going back and forth between Smithy gem/wood/metal maps constantly while trying to farm resources for them.
-	if (mapSettings.mapName === 'Smithy Farm' && houseName !== 'Gateway') return false;
+		/* Stops buildings being pushed if Smithy Farming so that we aren't going back and forth between Smithy gem/wood/metal maps constantly while trying to farm resources for them. */
+		if (mapSettings.mapName === 'Smithy Farm' && houseName !== 'Gateway') return false;
+	}
 
-	// Can afford the building.
+	/* Can afford the building. */
 	if (!ignoreAffordability) {
 		const spendingPerc = buildingSettings.percent / 100;
 		const resourcefulMod = getResourcefulMult();
@@ -71,11 +74,11 @@ function _needHousing(houseName, ignoreAffordability) {
 	}
 
 	if (houseName === 'Gateway') {
-		//Use Safe Gateways for U2
+		/* Use Safe Gateways for U2 */
 		if (game.global.universe === 2) return !_checkSafeGateway(buildingStat);
 
-		if (MODULES.buildings.betaHouseEfficiency) {
-			//Applies the user defined Gateway % to fragments only
+		if (game.buildings.Hub.locked) {
+			/* Applies the user defined Gateway % to fragments only */
 			const spendingPerc = buildingSettings.percent / 100;
 			const resourcefulMod = getResourcefulMult();
 
@@ -112,16 +115,16 @@ function _getResourcePerSecond() {
 	return resourcePerSecond;
 }
 
-function mostEfficientHousing_beta(resourceName) {
+function mostEfficientHousing_beta(resourceName, displayCheck = false) {
 	function effWrapper(houseName = undefined, eff = Infinity) {
 		return { name: houseName, eff: eff };
 	}
 
 	function calcCostEff(houseName) {
-		return getBuildingItemPrice(game.buildings[houseName], resourceName, false, 1) / _getHousingBonus(houseName);
+		return getBuildingItemPrice(game.buildings[houseName], resourceName, false, 1) / getHousingBonus(houseName);
 	}
 
-	return _housingToCheck()
+	return _housingToCheck(displayCheck)
 		.filter((houseName) => game.buildings[houseName].cost[resourceName])
 		.map((houseName) => effWrapper(houseName, calcCostEff(houseName)))
 		.reduce((mostEff, current) => (current.eff < mostEff.eff ? current : mostEff), effWrapper()).name;
@@ -133,7 +136,7 @@ function mostEfficientHousing(resourcePerSecond) {
 	}
 
 	function calcEff(houseName) {
-		return _getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName);
+		return getHousingBonus(houseName) / _getSlowestResource(resourcePerSecond, houseName);
 	}
 
 	return _housingToCheck()
@@ -151,14 +154,23 @@ function _canAffordBuilding(resourceName, buildingStat, spendingPerc, resourcefu
 	return maxSpending > price;
 }
 
-function _getHousingBonus(houseName) {
-	let housingBonus = game.buildings[houseName].increase.by;
+function getHousingBonus(houseName, includeMultipliers = false) {
+	const runningDownsize = challengeActive('Downsize');
+	let housingBonus = runningDownsize ? 1 : game.buildings[houseName].increase.by;
 
 	if (!game.buildings.Hub.locked) {
 		let hubAmt = 1;
 		if (houseName === 'Collector' && autoBattle.oneTimers.Collectology.owned) hubAmt = autoBattle.oneTimers.Collectology.getHubs();
-		housingBonus += hubAmt * game.buildings.Hub.increase.by;
+		housingBonus += hubAmt * (runningDownsize ? 1 : game.buildings.Hub.increase.by);
 	}
+
+	if (!includeMultipliers) return housingBonus;
+
+	housingBonus *= Math.pow(1 + getPerkModifier('Carpentry'), getPerkLevel('Carpentry'));
+	housingBonus *= 1 + getPerkModifier('Carpentry_II') * getPerkLevel('Carpentry_II');
+	housingBonus *= alchObj.getPotionEffect('Elixir of Crafting');
+	if (game.global.expandingTauntimp) housingBonus *= game.badGuys.Tauntimp.expandingMult();
+	if (autoBattle.bonuses.Scaffolding.level > 0) housingBonus *= autoBattle.bonuses.Scaffolding.getMult();
 
 	return housingBonus;
 }
@@ -343,13 +355,17 @@ function _buyNursery(buildingSettings) {
 	const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurserySetting.fromZ;
 
 	if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
+		const advancedNurseries = advancedNurseries();
+		const nurseryEfficiency = nurseryHousingEfficiency().mostEfficient === 'Nursery';
+		if (!advancedNurseries && !nurseryEfficiency && !nurseryPreSpire) return;
+
 		let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
 		if (nurseryAmt === 0 && (!getPageSetting('advancedNurseries') || game.stats.highestLevel.valueTotal() < 230)) nurseryAmt = Infinity;
 		const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - nurseryInfo.owned);
 
 		if (nurseryPreSpire > 0 && nurseryToBuy > 0) {
 			safeBuyBuilding('Nursery', nurseryToBuy);
-		} else if (advancedNurseries()) {
+		} else if (advancedNurseries) {
 			safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
 		} else if (nurseryToBuy > 0) {
 			safeBuyBuilding('Nursery', nurseryToBuy);
@@ -362,12 +378,7 @@ function _buyNursery(buildingSettings) {
  */
 function _buyGyms(buildingSettings) {
 	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic() || runningAncientTreasure()) return;
-
-	//Gym vs Shield Efficiency
-	if ((game.equipment.Shield.blockNow || MODULES.buildings.betaHouseEfficiency) && getPageSetting('equipOn')) {
-		const data = shieldGymEfficiency();
-		if (data.Gym > data.Shield) return;
-	}
+	if (hdStats.shieldGymEff.mostEfficient !== 'Gym' && getPageSetting('equipOn')) return;
 
 	// Saves wood for Speed upgrades
 	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
@@ -562,7 +573,7 @@ function _getAffordableMets() {
 }
 
 function _buyHousing(buildSettings) {
-	if (MODULES.buildings.betaHouseEfficiency && game.buildings.Hub.locked) {
+	if (game.buildings.Hub.locked) {
 		let boughtHousing = false;
 		const foodEffHouse = mostEfficientHousing_beta('food');
 		const gemsEffHouse = mostEfficientHousing_beta('gems');
@@ -611,25 +622,4 @@ function _buySelectedHouse(houseName, buildingSettings) {
 		safeBuyBuilding(houseName, maxCanAfford);
 		return true;
 	}
-}
-
-function displayMostEfficientBuilding(forceUpdate = false) {
-	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
-	if (!getPageSetting('buildingMostEfficientDisplay')) return;
-
-	const foodHousing = ['Hut', 'House'];
-	const gemHousing = ['Mansion', 'Hotel', 'Resort', 'Gateway', 'Collectors', 'Warpstations'];
-
-	const bestFoodHousing = mostEfficientHousing_beta('food');
-	const bestGemHousing = mostEfficientHousing_beta('gems');
-
-	gemHousing
-		.map((name) => ({ mostEff: name === bestGemHousing, elem: document.getElementById(name) }))
-		.filter((house) => house.elem)
-		.forEach((house) => _updateMostEfficientDisplay(house.elem, house.mostEff));
-
-	foodHousing
-		.map((name) => ({ mostEff: name === bestFoodHousing, elem: document.getElementById(name) }))
-		.filter((house) => house.elem)
-		.forEach((house) => _updateMostEfficientDisplay(house.elem, house.mostEff));
 }

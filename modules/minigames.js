@@ -16,7 +16,6 @@ function ABItemSwap(items, ring) {
 
 function automateSpireAssault() {
 	if (game.global.universe !== 999) return;
-	if (!getPageSetting('automateSpireAssault')) return;
 	if (autoBattle.enemyLevel === 121) {
 		if (autoBattle.rings.level === 49 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
 			autoBattle.levelRing();

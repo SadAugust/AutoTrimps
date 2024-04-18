@@ -4913,7 +4913,7 @@ function buildMapGrid(mapId) {
 
 	const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
 	const array = new Array(map.size);
-	const imports = Object.keys(game.unlocks.imps).filter((item) => game.unlocks.imps[item] && game.badGuys[item].location == 'Maps' && game.badGuys[item].world <= map.level);
+	const imports = Object.keys(game.unlocks.imps).filter((item) => game.unlocks.imps[item] && game.badGuys[item].location === 'Maps' && game.badGuys[item].world <= map.level);
 	const showSnow = map.location === 'Frozen' || (game.badGuys.Presimpt.locked === 0 && game.options.menu.showSnow && game.options.menu.showSnow.enabled);
 	const isVoid = map.location === 'Void';
 
@@ -4922,7 +4922,7 @@ function buildMapGrid(mapId) {
 	let fastEvery = -1;
 	let forced = 0;
 
-	if (game.global.universe == 2) {
+	if (game.global.universe === 2) {
 		fastTarget = map.size / 6;
 		const roll = Math.floor(Math.random() * 3);
 		if (roll === 0) fastTarget--;
@@ -4970,9 +4970,9 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 	let force = false;
 	let enemySeed = mapSuffix ? Math.floor(Math.random() * 10000000) : game.global.enemySeed;
 	let badGuysArray = [];
-	if (mapSuffix == 'Darkness') imports = [];
+	if (mapSuffix === 'Darkness') imports = [];
 
-	const improbCheck = game.global.brokenPlanet || (game.global.universe == 2 && game.global.world >= 20) || game.global.world == 59;
+	const improbCheck = game.global.brokenPlanet || (game.global.universe === 2 && game.global.world >= 20) || game.global.world === 59;
 	const magmaActive = mutations.Magma.active();
 
 	for (let item in game.badGuys) {
@@ -4980,11 +4980,11 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 		if (badGuy.locked) continue;
 		if (badGuy.location === 'Maps' && !mapSuffix) continue;
 		let locationMatch = false;
-		if (mapSuffix && badGuy.location2 && badGuy.location2 == mapSuffix) locationMatch = true;
-		if (mapSuffix && badGuy.location == mapSuffix) locationMatch = true;
-		if (level == totalCells && badGuy.last && (locationMatch || (!mapSuffix && badGuy.location == 'World')) && world >= badGuy.world) {
-			if (item == 'Blimp' && world != 5 && world != 10 && world < 15) continue;
-			if (!mapSuffix && improbCheck && item == 'Blimp') {
+		if (mapSuffix && badGuy.location2 && badGuy.location2 === mapSuffix) locationMatch = true;
+		if (mapSuffix && badGuy.location === mapSuffix) locationMatch = true;
+		if (level === totalCells && badGuy.last && (locationMatch || (!mapSuffix && badGuy.location === 'World')) && world >= badGuy.world) {
+			if (item === 'Blimp' && world != 5 && world !== 10 && world < 15) continue;
+			if (!mapSuffix && improbCheck && item === 'Blimp') {
 				if (magmaActive) item = 'Omnipotrimp';
 				else item = 'Improbability';
 			}
@@ -4996,7 +4996,7 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 			if (badGuy.location === 'Exterminate') badGuysArray.push(item);
 			continue;
 		}
-		if (!badGuy.last && (!fastOnly || badGuy.fast) && (typeof badGuy.world === 'undefined' || game.global.world >= game.badGuys[item].world) && (badGuy.location == 'All' || (mapSuffix && (badGuy.location == 'Maps' || locationMatch)) || (!mapSuffix && badGuy.location == 'World'))) {
+		if (!badGuy.last && (!fastOnly || badGuy.fast) && (typeof badGuy.world === 'undefined' || game.global.world >= game.badGuys[item].world) && (badGuy.location === 'All' || (mapSuffix && (badGuy.location === 'Maps' || locationMatch)) || (!mapSuffix && badGuy.location === 'World'))) {
 			badGuysArray.push(item);
 		}
 	}
