@@ -355,9 +355,9 @@ function _buyNursery(buildingSettings) {
 	const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurserySetting.fromZ;
 
 	if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
-		const advancedNurseries = advancedNurseries();
+		const advNurseries = advancedNurseries();
 		const nurseryEfficiency = nurseryHousingEfficiency().mostEfficient === 'Nursery';
-		if (!advancedNurseries && !nurseryEfficiency && !nurseryPreSpire) return;
+		if (!advNurseries && !nurseryEfficiency && !nurseryPreSpire) return;
 
 		let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
 		if (nurseryAmt === 0 && (!getPageSetting('advancedNurseries') || game.stats.highestLevel.valueTotal() < 230)) nurseryAmt = Infinity;
@@ -365,7 +365,7 @@ function _buyNursery(buildingSettings) {
 
 		if (nurseryPreSpire > 0 && nurseryToBuy > 0) {
 			safeBuyBuilding('Nursery', nurseryToBuy);
-		} else if (advancedNurseries) {
+		} else if (advNurseries) {
 			safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
 		} else if (nurseryToBuy > 0) {
 			safeBuyBuilding('Nursery', nurseryToBuy);
