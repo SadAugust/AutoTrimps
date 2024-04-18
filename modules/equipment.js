@@ -263,9 +263,9 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 
 	// TODO Should consider Maybe Prestige, Force Prestige, etc
-	const minLevelBeforePrestige = getPageSetting('equip2') ? 2 : 1;
-	prestigeInfo.shouldPrestige = equipment.level >= minLevelBeforePrestige && game.resources.gems.owned > 0;
-	prestigeInfo.minNewLevel = Math.ceil(0.25 + currentStatValue / oneLevelStat);
+	const minLevelBeforePrestige = getPageSetting('equip2') && ![2, 3].includes(getPageSetting('equipPrestige')) ? 2 : 1;
+	prestigeInfo.shouldPrestige = (equipment.level === 0 || equipment.level >= minLevelBeforePrestige) && game.resources.gems.owned > 0;
+	prestigeInfo.minNewLevel = Math.min(maxLevel, Math.ceil(0.25 + currentStatValue / oneLevelStat));
 	prestigeInfo.newStatMinValue = oneLevelStat * prestigeInfo.minNewLevel;
 	prestigeInfo.prestigeCost = prestigeCost;
 
@@ -288,8 +288,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	const newStatValue = newLevel * oneLevelStat;
 	const statPerResource = prestigeCost / oneLevelStat;
 
-	prestigeInfo.purchase = newStatValue > currentStatValue;
-	prestigeInfo.purchase = prestigeInfo.shouldPrestige && newLevel >= prestigeInfo.minNewLevel;
+	prestigeInfo.purchase = prestigeInfo.shouldPrestige && (newLevel >= prestigeInfo.minNewLevel || equipment.level === 0);
 	prestigeInfo.newStatValue = newStatValue;
 	prestigeInfo.prestigeCost = prestigeCost;
 	prestigeInfo.statPerResource = statPerResource;
