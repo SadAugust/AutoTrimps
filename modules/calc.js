@@ -190,7 +190,7 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 
 	const spireNum = Math.floor((game.global.world - 100) / 100);
 	const enemy = name ? name : game.global.gridArray[cell - 1].name;
-	let base = what === 'attack' ? calcEnemyBaseAttack('world', game.global.world, 100, enemy) : 2 * calcEnemyBaseHealth('world', game.global.world, 100, enemy);
+	let base = what === 'attack' ? calcEnemyBaseAttack('world', game.global.world, 100, 'Chimp') : 2 * calcEnemyBaseHealth('world', game.global.world, 100, 'Chimp');
 	let mod = what === 'attack' ? 1.17 : 1.14;
 
 	if (spireNum > 1) {
@@ -200,6 +200,7 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 	}
 
 	base *= Math.pow(mod, cell);
+	base *= game.badGuys[enemy][what];
 
 	if (cell !== 100 && challengeActive('Domination')) base /= what === 'attack' ? 25 : 75;
 
