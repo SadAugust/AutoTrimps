@@ -645,9 +645,11 @@ function calcEnemyBaseAttack(worldType = _getWorldType(), zone = _getZone(worldT
 	let attack = attackBase * Math.sqrt(zone) * Math.pow(3.27, zone / 2) - 10;
 
 	if (zone === 1) {
-		attack *= 0.35 * (1 + 0.75 * (cell / 100));
+		attack *= 0.35;
+		attack = attack * 0.2 + attack * 0.75 * (cell / 100);
 	} else if (zone === 2) {
-		attack *= 0.5 * (1 + 0.68 * (cell / 100));
+		attack *= 0.5;
+		attack = attack * 0.32 + attack * 0.68 * (cell / 100);
 	} else if (zone < 60) {
 		attack = 0.375 * attack + 0.7 * attack * (cell / 100);
 	} else {

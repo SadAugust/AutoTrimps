@@ -351,7 +351,7 @@ function shouldScryerStance(baseStats = getBaseStats(), availableStances = unloc
 
 	if (currentEnemy && scryOverkill(scrySettings, mapsActive, scryStance)) return true;
 
-	if (scryTransition(scryStance, scrySettings, baseStats, availableStances, transitionRequired)) return true;
+	if (scryTransition(scryStance, scrySettings, baseStats, availableStances, transitionRequired, currentEnemy)) return true;
 
 	return false;
 }
@@ -445,7 +445,7 @@ function scryOverkill(scrySettings = scrySettings(), mapsActive = game.global.ma
 	return false;
 }
 
-function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseStats = getBaseStats(), availableStances = unlockedStances(), transitionRequired = false) {
+function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseStats = getBaseStats(), availableStances = unlockedStances(), transitionRequired = false, currentEnemy = getCurrentEnemy(1)) {
 	const min_zone = scrySettings.MinZone;
 	const max_zone = scrySettings.MaxZone;
 	const valid_min = game.global.world >= min_zone && game.global.world > 60;

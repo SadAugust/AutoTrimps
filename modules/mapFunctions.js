@@ -207,7 +207,7 @@ function shouldRunUniqueMap(map) {
 	const mapData = MODULES.mapFunctions.uniqueMaps[map.name];
 	if (mapData === undefined || game.global.world < mapData.zone - (trimpStats.plusLevels ? 10 : 0)) return false;
 	if (game.global.universe !== mapData.universe) return false;
-	if (!trimpStats.isC3 && mapData.challenges.includes(trimpStats.currChallenge) && !challengeActive('') && enoughHealth(map)) return true;
+	if (!trimpStats.isC3 && mapData.challenges.includes(trimpStats.currChallenge) && map.clears === 0 && !challengeActive('') && enoughHealth(map)) return true;
 
 	//Remove speed run check for now
 	/* if (mapData.speedrun && shouldSpeedRun(map, game.achievements[mapData.speedrun]) && enoughHealth(map) && enoughDamage(map)) {
@@ -4084,8 +4084,8 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 
 	const mapBonusConditions = [
 		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && forceMapBonus, level: mapBonusLevel },
-		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && forceMapBonus && canAffordMap, level: mapBonusLevel },
-		{ condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && forceMapBonus && canAffordMap, level: mapBonusLevel },
+		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapBonusLevel > mapLevel && forceMapBonus && canAffordMap, level: mapBonusLevel },
+		{ condition: mapName === 'Hits Survived' && mapBonusLevel > mapLevel && game.global.mapBonus < getPageSetting('mapBonusHealth') && forceMapBonus && canAffordMap, level: mapBonusLevel },
 		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
 		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
