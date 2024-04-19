@@ -1484,7 +1484,7 @@ function _restartRaidingProcedure() {
 function findLastBionicWithItems(bionicPool) {
 	if (game.global.world < 115 || !bionicPool) return;
 	const isMapologyActive = challengeActive('Mapology') && getPageSetting('mapology');
-	const targetPrestige = isMapologyActive ? getPageSetting('mapologyPrestige') : 'GambesOP';
+	const targetPrestige = isMapologyActive ? getPageSetting('mapologyPrestige') : mapSettings.mapName === 'Bionic Raiding' && mapSettings.prestigeGoal ? mapSettings.prestigeGoal : 'GambesOP';
 
 	if (bionicPool.length <= 1) return bionicPool[0];
 
