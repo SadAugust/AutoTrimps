@@ -707,12 +707,12 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 		if (typeof price[1] !== 'undefined') {
 			let start = price[0];
 			if (isEquipment) start = Math.ceil(start * artMult);
-			if (isBuilding && getPerkLevel('Resourceful')) start = start * Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful'));
+			if (isBuilding && getPerkLevel('Resourceful')) start = start * getResourcefulMult();
 			toBuy = Math.floor(log10((resourcesAvailable / (start * Math.pow(price[1], currentOwned))) * (price[1] - 1) + 1) / log10(price[1]));
 		} else if (typeof price === 'function') {
 			return 1;
 		} else {
-			if (isBuilding && getPerkLevel('Resourceful')) price = Math.ceil(price * Math.pow(1 - getPerkModifier('Resourceful'), getPerkLevel('Resourceful')));
+			if (isBuilding && getPerkLevel('Resourceful')) price = Math.ceil(price * getResourcefulMult());
 			toBuy = Math.floor(resourcesAvailable / price);
 		}
 		if (mostAfford === -1 || mostAfford > toBuy) mostAfford = toBuy;

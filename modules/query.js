@@ -64,23 +64,23 @@ function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHea
 }
 
 function _calcHDRatioDebug(ourBaseDamage, enemyHealth, universeSetting, worldType) {
-	debug(`ourBaseDamage: ${ourBaseDamage}`, `debug`);
-	debug(`enemyHealth: ${enemyHealth}`, `debug`);
-	debug(`universeSetting: ${universeSetting}`, `debug`);
-	debug(`HD type: ${worldType}`, `debug`);
-	debug(`HD value (H:D): ${enemyHealth / ourBaseDamage}`, `debug`);
+	debug(`ourBaseDamage: ${ourBaseDamage}`, `debugStats`);
+	debug(`enemyHealth: ${enemyHealth}`, `debugStats`);
+	debug(`universeSetting: ${universeSetting}`, `debugStats`);
+	debug(`HD type: ${worldType}`, `debugStats`);
+	debug(`HD value (H:D): ${enemyHealth / ourBaseDamage}`, `debugStats`);
 }
 
 function _calcHitsSurvivedDebug(targetZone, damageMult, worldDamage, equality, block, pierce, health, hitsToSurvive, finalDmg) {
-	debug(`Target Zone: ${targetZone}`, `debug`);
-	debug(`Damage Mult: ${damageMult}`, `debug`);
-	debug(`World Damage: ${worldDamage}`, `debug`);
-	if (game.global.universe === 1) debug(`Block: ${block}`, `debug`);
-	if (game.global.universe === 1) debug(`Pierce: ${pierce}`, `debug`);
-	if (game.global.universe === 2) debug(`Equality: ${equality}`, `debug`);
-	debug(`Health: ${health}`, `debug`);
-	debug(`Hits to Survive: ${hitsToSurvive}`, `debug`);
-	debug(`finalDmg: ${finalDmg}`, `debug`);
+	debug(`Target Zone: ${targetZone}`, `debugStats`);
+	debug(`Damage Mult: ${damageMult}`, `debugStats`);
+	debug(`World Damage: ${worldDamage}`, `debugStats`);
+	if (game.global.universe === 1) debug(`Block: ${block}`, `debugStats`);
+	if (game.global.universe === 1) debug(`Pierce: ${pierce}`, `debugStats`);
+	if (game.global.universe === 2) debug(`Equality: ${equality}`, `debugStats`);
+	debug(`Health: ${health}`, `debugStats`);
+	debug(`Hits to Survive: ${hitsToSurvive}`, `debugStats`);
+	debug(`finalDmg: ${finalDmg}`, `debugStats`);
 }
 
 function _calcCurrentStatsDebug() {

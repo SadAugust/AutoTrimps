@@ -1282,8 +1282,8 @@ function prestigeClimb(lineCheck) {
 }
 
 function _raidingTargetPrestige(setting) {
-	const isMapologyActive = challengeActive('Mapology') && getPageSetting('mapology');
-	const targetPrestige = isMapologyActive ? autoTrimpSettings['mapologyPrestige'].selected : setting.prestigeGoal && setting.prestigeGoal !== 'All' ? MODULES.equipment[setting.prestigeGoal].upgrade : 'GamesOP';
+	const mapologyActive = challengeActive('Mapology') && getPageSetting('mapology');
+	const targetPrestige = mapologyActive ? getPageSetting('mapologyPrestige') : setting.prestigeGoal && setting.prestigeGoal !== 'All' ? MODULES.equipment[setting.prestigeGoal].upgrade : 'GamesOP';
 	return targetPrestige;
 }
 
@@ -1483,8 +1483,8 @@ function _restartRaidingProcedure() {
 
 function findLastBionicWithItems(bionicPool) {
 	if (game.global.world < 115 || !bionicPool) return;
-	const isMapologyActive = challengeActive('Mapology') && getPageSetting('mapology');
-	const targetPrestige = isMapologyActive ? getPageSetting('mapologyPrestige') : mapSettings.mapName === 'Bionic Raiding' && mapSettings.prestigeGoal ? mapSettings.prestigeGoal : 'GambesOP';
+	const mapologyActive = challengeActive('Mapology') && getPageSetting('mapology');
+	const targetPrestige = mapologyActive ? getPageSetting('mapologyPrestige') : mapSettings.mapName === 'Bionic Raiding' && mapSettings.prestigeGoal ? mapSettings.prestigeGoal : 'GambesOP';
 
 	if (bionicPool.length <= 1) return bionicPool[0];
 
@@ -3611,7 +3611,7 @@ function autoLevelCheck(mapName, mapSpecial, maxZone, minZone) {
 	}
 
 	if (challengeActive('Bublé') || getCurrentQuest() === 8) mapLevel = callAutoMapLevel(mapName, mapSpecial);
-	else mapLevel = callAutoMapLevel(mapName, mapSpecial, maxZone, minZone);
+	else mapLevel = callAutoMapLevel(mapName, mapSpecial);
 
 	if (mapLevel !== mapSettings.levelCheck && mapSettings.levelCheck !== Infinity) {
 		repeatCounter = game.global.mapRunCounter + 1;
@@ -3983,7 +3983,7 @@ function slowScum(slowTarget) {
 	debug(msg, 'mapping_Details');
 }
 
-function callAutoMapLevel(mapName, special, maxLevel, minLevel) {
+function callAutoMapLevel(mapName, special) {
 	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking'];
 	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
 	const lootFunction = mapName === 'Desolation Destacking' ? lootDestack : lootDefault;

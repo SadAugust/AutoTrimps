@@ -236,7 +236,13 @@ function doPortal(challenge, skipDaily) {
 
 	if (getPageSetting('magmiteSpending') === 1) autoMagmiteSpender();
 	autoHeirlooms();
-	if (!portalWindowOpen) portalClicked();
+
+	if (!portalWindowOpen) {
+		portalClicked();
+	} else {
+		if (challengeSquaredMode) toggleChallengeSquared();
+		if (game.global.selectedChallenge) selectChallenge(0);
+	}
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 
