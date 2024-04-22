@@ -91,6 +91,8 @@ function _calcCurrentStatsDebug() {
 	const currentCell = mapping ? getCurrentMapCell() : getCurrentWorldCell();
 	const currentEnemy = getCurrentEnemy();
 
+	const dailyRampageMult = _getRampageBonus();
+
 	const worldType = !mapping ? 'world' : mapObject.location === 'Void' ? 'void' : 'map';
 	const zone = mapObject.level;
 	const cell = currentCell ? currentCell.level : 1;
@@ -104,8 +106,8 @@ function _calcCurrentStatsDebug() {
 	const equalityStackCount = game.global.universe === 2 ? game.portal.Equality.disabledStackCount : false;
 	const isUniverse1 = game.global.universe !== 2;
 
-	const displayedMin = calcOurDmg('min', equalityStackCount, true, worldType, 'never', mapLevel, true);
-	const displayedMax = calcOurDmg('max', equalityStackCount, true, worldType, 'never', mapLevel, true);
+	const displayedMin = calcOurDmg('min', equalityStackCount, true, worldType, 'never', mapLevel, true) * dailyRampageMult;
+	const displayedMax = calcOurDmg('max', equalityStackCount, true, worldType, 'never', mapLevel, true) * dailyRampageMult;
 
 	debug(`Our Stats`);
 	debug(`Our Attack: ${displayedMin.toExponential(2)} - ${displayedMax.toExponential(2)}`);

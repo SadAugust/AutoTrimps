@@ -231,8 +231,8 @@ function unlockedStances() {
 
 function getBaseStats() {
 	let stats = {
-		minDamage: calcOurDmg('min', 'X', false, false, 'never'),
-		maxDamage: calcOurDmg('max', 'X', false, false, 'force'),
+		minDamage: calcOurDmg('min', 'X', false, undefined, 'never'),
+		maxDamage: calcOurDmg('max', 'X', false, undefined, 'force'),
 		health: calcOurHealth(false, false, true),
 		block: calcOurBlock(false)
 	};
@@ -244,6 +244,12 @@ function getBaseStats() {
 		const ratio = antiBonusCurr / antiBonus;
 		stats.minDamage *= ratio;
 		stats.maxDamage *= ratio;
+	}
+
+	const dailyRampageMult = _getRampageBonus();
+	if (dailyRampageMult > 1) {
+		stats.minDamage *= dailyRampageMult;
+		stats.maxDamage *= dailyRampageMult;
 	}
 
 	return stats;

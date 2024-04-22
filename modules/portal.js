@@ -11,7 +11,6 @@ MODULES.portal = {
 	disableAutoRespec: 0
 };
 
-//Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
 function autoPortalCheck(specificPortalZone) {
 	decayFinishChallenge();
 	quagmireFinishChallenge();
@@ -224,7 +223,6 @@ function c2RunnerPortal(portalZone) {
 
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared();
-		//Only portal automatically if using C2 Runner Pct input.
 		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
 			autoPortal(portalZone);
 		}
@@ -241,7 +239,7 @@ function doPortal(challenge, skipDaily) {
 		portalClicked();
 	} else {
 		if (challengeSquaredMode) toggleChallengeSquared();
-		if (game.global.selectedChallenge) selectChallenge(0);
+		if (game.global.challengeSelected) selectChallenge(0);
 	}
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
@@ -273,7 +271,6 @@ function doPortal(challenge, skipDaily) {
 	}
 
 	_autoPortalC2();
-
 	challenge = _autoPortalDaily(challenge, portalUniverse, skipDaily);
 	if (!game.global.portalActive) return;
 
@@ -383,15 +380,11 @@ function _autoPortalC2() {
 		}
 	}
 
-	/* const oneZoneIncrement = ['Obliterated', 'Eradicated'];
-	const threeZoneIncrement = ['Coordinate']; */
-
-	//Looping through challenge array to figure out if things should be run.
+	/* 	Looping through challenge array to figure out if things should be run. */
 	for (let x = 0; x < challengeArray.length; x++) {
 		const challengeName = challengeArray[x];
 		const challenge = game.challenges[challengeName];
 		const challengeList = challenge.multiChallenge ? challenge.multiChallenge : [challengeName];
-		/* const zoneIncrease = oneZoneIncrement.includes(challengeName) ? 1 : threeZoneIncrement.includes(challengeName) ? 3 : 10; */
 
 		let challengeLevel = 0;
 		for (let y = 0; y < challengeList.length; y++) {
@@ -461,7 +454,9 @@ function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
 			return challenge;
 		}
 
-		if (!dailyAvailable) return challenge;
+		if (!dailyAvailable) {
+			return challenge;
+		}
 
 		if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse) && dailyAvailable) {
 			swapPortalUniverse();
@@ -519,7 +514,7 @@ function _autoPortalActivate(challenge) {
 
 function portalPerkCalc() {
 	let preset;
-	//Identifying which challenge type we're running to setup for the preset swapping function
+
 	if (getPageSetting('presetSwap', portalUniverse)) {
 		if (portalUniverse === 1) {
 			if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
@@ -539,7 +534,6 @@ function portalPerkCalc() {
 
 		if (portalUniverse === 2) {
 			if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
-			//else if (game.global.selectedChallenge === 'Trappapalooza') preset = 'trappacarp';
 			else if (game.global.selectedChallenge === 'Duel') preset = 'duel';
 			else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
 			else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
@@ -552,7 +546,6 @@ function portalPerkCalc() {
 		}
 	}
 
-	//Run Perky/Surky.
 	if (typeof MODULES.autoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
 		if (portalUniverse === 1) allocatePerky();
 		if (portalUniverse === 2) runSurky();
@@ -649,7 +642,6 @@ function finishChallengeSquared() {
 }
 
 function resetVarsZone(loadingSave) {
-	//Reloading save variables
 	if (loadingSave) {
 		atSettings.portal.currentworld = 0;
 		atSettings.portal.lastrunworld = 0;
@@ -687,7 +679,7 @@ function resetVarsZone(loadingSave) {
 	MODULES.mapFunctions.questRun = false;
 	trimpStats = new TrimpStats();
 	hdStats = new HDStats();
-	//Reset map settings to default
+
 	mapSettings = {
 		shouldRun: false,
 		mapName: '',
@@ -718,17 +710,13 @@ function combatRespec() {
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
 	const currPreset = $$('#preset').value;
 
-	//Swapping to Spire respec in u1
 	if (game.global.universe === 1) fillPresetPerky('spire');
-	//Changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not.
 	else if (trimpStats.isC3 || trimpStats.isOneOff) fillPresetSurky('combat');
 	else fillPresetSurky('combatRadon');
 
-	//Respecing perks
 	if (game.global.universe === 2) runSurky();
 	else allocatePerky();
 
-	//Fire all workers so that we don't run into issues when finishing the respec
 	fireAllWorkers();
 	activateClicked();
 
@@ -736,7 +724,6 @@ function combatRespec() {
 	const respecPresetName = $$('#preset')[$$('#preset').selectedIndex].innerHTML;
 	debug(`${calcName} - Respeccing into the ${respecPresetName} preset.`, 'portal');
 
-	//Reverting back to original preset
 	if (game.global.universe === 2) fillPresetSurky(currPreset);
 	else fillPresetPerky(currPreset);
 }

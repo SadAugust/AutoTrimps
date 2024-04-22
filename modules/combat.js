@@ -253,7 +253,7 @@ function _getOurDmg(worldType, enemy) {
 	const dailyChallenge = game.global.dailyChallenge;
 	const dmgType = runningUnlucky ? 'max' : 'avg';
 
-	let ourDmg = calcOurDmg(dmgType, 0, false, worldType, critType, bionicTalent, true);
+	let ourDmg = calcOurDmg(dmgType, 0, false, worldType, critType, bionicTalent, true) * _getRampageBonus();
 	let unluckyDmg = runningUnlucky ? calcOurDmg('min', 0, false, worldType, 'never', bionicTalent, true) : 2;
 
 	const frenzyCanExpire = getPerkLevel('Frenzy') > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
@@ -268,9 +268,6 @@ function _getOurDmg(worldType, enemy) {
 			if (runningUnlucky) unluckyDmg = _adjustFrenzyDamage(unluckyDmg);
 		}
 	}
-
-	const dailyRampage = runningDaily && worldType !== 'map' && typeof dailyChallenge.rampage !== 'undefined';
-	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(dailyChallenge.rampage.strength, dailyChallenge.rampage.stacks);
 
 	if (frenzyCanExpire && (frenzyActive || enemy.health / ourDmg > 10)) fastEnemy = true;
 
@@ -450,7 +447,9 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy. 
     */
 	const bionicTalent = _getBionicTalent();
-	const maxDmg = calcOurDmg('max', 0, false, worldType, 'force', bionicTalent, true);
+
+	const maxDmg = calcOurDmg('max', 0, false, worldType, 'force', bionicTalent, true) * _getRampageBonus();
+
 	const maxEquality = getPerkLevel('Equality');
 	const shouldPlagueSwap = _shouldPBSwap(mapping, enemy, fastEnemy);
 

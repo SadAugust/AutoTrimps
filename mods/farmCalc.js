@@ -134,10 +134,20 @@ function populateFarmCalcData() {
 		plague: 0,
 		bleed: 0,
 		explosion: 0,
+		rampage: 1,
 		nom: challengeActive('Nom'),
 		fastEnemies: fastEnemy,
 		magma: challengeActive('Eradicated') || (game.global.universe === 1 && zone >= 230)
 	};
+
+	const antiTime = game.jobs.Amalgamator.owned > 0 ? (game.talents.patience.purchased ? 45 : 30) : death_stuff.breed_timer;
+	const antiBonus = _getAnticipationBonus();
+	const antiBonusCurr = _getAnticipationBonus(undefined, false, antiTime);
+
+	if (antiBonus !== antiBonusCurr) {
+		const ratio = antiBonusCurr / antiBonus;
+		trimpAttack *= ratio;
+	}
 
 	let enemyHealth = 1;
 	let enemyAttack = 1;
@@ -319,6 +329,11 @@ function populateFarmCalcData() {
 		enemyHealth *= 1 + 0.3 * daily('badMapHealth');
 		enemyAttack *= 1 + 0.2 * daily('badStrength');
 		enemyAttack *= 1 + 0.3 * daily('badMapStrength');
+
+		if (typeof game.global.dailyChallenge.rampage !== 'undefined' && (game.global.mapsActive || game.global.preMapsActive)) {
+			death_stuff.rampage = _getRampageBonus();
+			trimpAttack *= death_stuff.rampage;
+		}
 	}
 
 	return {
@@ -562,7 +577,8 @@ function simulate(saveData, zone) {
 	}
 
 	const max_ticks = saveData.maxTicks;
-	const corruptionScale = saveData.magma ? calcCorruptionScale(zone, 10) : 1;
+	const corruptionScaleAttack = saveData.magma ? calcCorruptionScale(zone, 3) / 2 : 1;
+	const corruptionScaleHealth = saveData.magma ? calcCorruptionScale(zone, 10) / 2 : 1;
 	const biomeImps = saveData.biome;
 
 	if (universe === 2) {
@@ -583,24 +599,15 @@ function simulate(saveData, zone) {
 
 	const equalityPower = Math.pow(0.9, equality);
 
-	const calculateEnemyStats = (zone, cell, enemyType, saveData) => {
-		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyType);
-		let enemyAttack = calcEnemyBaseAttack('map', zone, cell + 1, enemyType);
+	const calculateEnemyStats = (zone, cell, enemyName, saveData) => {
+		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyName);
+		let enemyAttack = calcEnemyBaseAttack('map', zone, cell + 1, enemyName);
 
-		if (saveData.magma) {
-			enemyHealth *= corruptionScale / 2;
-			enemyAttack *= corruptionScale / 2;
-		}
-
-		if (saveData.domination) {
-			const modifier = cell === mapSize ? 2.5 : 0.1;
-			enemyAttack *= modifier;
-			enemyHealth *= modifier;
-		}
+		const domMod = saveData.domination ? (cell === mapSize ? 2.5 : 0.1) : 1;
 
 		return {
-			attack: difficulty * saveData.challenge_attack * enemyAttack,
-			health: difficulty * saveData.challenge_health * enemyHealth
+			attack: enemyAttack * difficulty * saveData.challenge_attack * domMod * corruptionScaleAttack,
+			health: enemyHealth * difficulty * saveData.challenge_health * domMod * corruptionScaleHealth
 		};
 	};
 
@@ -789,6 +796,7 @@ function simulate(saveData, zone) {
 				ticks += 1;
 				turns = 1;
 				debuff_stacks = 0;
+				if (deaths === 0) saveData.atk /= saveData.rampage;
 				gammaStacks = 0;
 				frenzyLeft /= 2;
 				frenzyRefresh = false;
