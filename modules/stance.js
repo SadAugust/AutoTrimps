@@ -460,7 +460,7 @@ function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseSta
 	if (valid_min && valid_max && (!game.global.mapsActive || scrySettings.MinMaxWorld === 0)) {
 		//Smooth transition to S before killing the target
 		if (transitionRequired) {
-			const xStance = availableStances.includes('W') && !getEmpowerment('Wind') ? 5 : 0;
+			const xStance = availableStances.includes('W') && getEmpowerment() !== 'Wind' ? 5 : 0;
 			const stances = [
 				{ stance: 'X', value: xStance },
 				{ stance: 'H', value: 1 }
@@ -526,7 +526,7 @@ function autoStanceAdvanced(baseStats = getBaseStats(), availableStances = unloc
 	if (typeof currentEnemy === 'undefined') return;
 
 	const critSources = getCritPower(currentEnemy);
-	const checkWind = availableStances.includes('W') && !getEmpowerment('Wind');
+	const checkWind = availableStances.includes('W') && getEmpowerment() !== 'Wind';
 	let prefferedStance = availableStances.includes('D') ? 'D' : 'X';
 
 	if (availableStances.includes('S')) {
