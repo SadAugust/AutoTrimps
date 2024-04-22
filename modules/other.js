@@ -1134,6 +1134,11 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '6.5.74') {
+			game.stats.spentOnWorms.value = Math.max(0, game.stats.spentOnWorms.value);
+			game.stats.spentOnWorms.valueTotal = Math.max(0, game.stats.spentOnWorms.valueTotal);
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

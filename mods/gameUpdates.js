@@ -2230,8 +2230,7 @@ function buildBuilding(what, amt = 1) {
 
 	if (what === 'Wormhole') {
 		const [baseCost, costRatio] = building.cost.helium;
-		let spent = (baseCost * (Math.pow(costRatio, building.owned - originalAmt) - Math.pow(costRatio, building.owned))) / (costRatio - 1);
-		spent = Math.floor(spent);
+		let spent = Math.floor(baseCost * Math.pow(costRatio, building.owned - 1));
 		if (getPerkLevel('Resourceful')) spent = Math.ceil(spent * Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel('Resourceful')));
 
 		game.global.totalHeliumEarned -= parseFloat(spent);
