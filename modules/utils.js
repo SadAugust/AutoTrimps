@@ -759,7 +759,7 @@ function shieldGymEfficiency(hitsBefore = _getTargetWorldType() === 'void' ? hdS
 }
 
 function biomeEfficiency(pretty = false, hitsBefore = _getTargetWorldType() === 'void' ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived, mostEffEquip = mostEfficientEquipment(undefined, undefined, true), shieldGymEff = shieldGymEfficiency()) {
-	if (game.global.universe !== 1 || game.global.decayDone) return { biome: 'Mountain' };
+	if (game.global.universe !== 1 || game.global.decayDone || shieldGymEff.mostEfficient === 'None') return { biome: 'Mountain' };
 
 	const worldType = _getTargetWorldType();
 	let mostEff = mostEffEquip.health.name;
