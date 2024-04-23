@@ -255,14 +255,27 @@ function getBaseStats() {
 	return stats;
 }
 
+function shouldWindOverScryer(baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
+	const currentStacks = game.empowerments.Wind.currentDebuffPower;
+	const stackCap = 300;
+	const stacksPerHit = 2 * Fluffy.isRewardActive('plaguebrought') ? 2 : 1;
+	if (currentStacks + stacksPerHit >= stackCap) return true;
+
+	if (baseStats.maxDamage / 2 < currentEnemy.health) return true;
+
+	return false;
+}
+
 function autoStance() {
 	if (!game.upgrades.Formations.done) return;
 
 	const availableStances = unlockedStances();
+	const baseStats = getBaseStats();
+	const currentEnemy = getCurrentEnemy();
 
 	if (availableStances.includes('S')) {
-		if (voidMapScryer(availableStances)) return;
-		if (autoLevelStance(availableStances)) return;
+		if (voidMapScryer(availableStances, baseStats, currentEnemy)) return;
+		if (autoLevelStance(availableStances, baseStats, currentEnemy)) return;
 	}
 
 	const settingPrefix = trimpStats.isDaily ? 'd' : '';
@@ -277,19 +290,17 @@ function autoStance() {
 		return;
 	}
 
-	const baseStats = getBaseStats();
-
-	if (availableStances.includes('S') && shouldScryerStance(baseStats, availableStances)) return;
+	if (availableStances.includes('S') && shouldScryerStance(availableStances, baseStats, currentEnemy)) return;
 
 	const autoStance = getPageSetting('AutoStance');
-	if (autoStance === 1) autoStanceAdvanced(baseStats, availableStances);
+	if (autoStance === 1) autoStanceAdvanced(availableStances, baseStats, currentEnemy);
 	if (autoStance === 2 && availableStances.includes('D')) safeSetStance(2);
 }
 
-function voidMapScryer(availableStances = unlockedStances()) {
+function voidMapScryer(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	const settingPrefix = trimpStats.isDaily ? 'd' : '';
 	if (game.global.voidBuff && game.talents.scry2.purchased && getPageSetting(`${settingPrefix}scryvoidmaps`)) {
-		const useWindStance = availableStances.includes('W') && getEmpowerment() !== 'Wind';
+		const useWindStance = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy));
 		safeSetStance(useWindStance ? 'W' : 'S');
 		return true;
 	}
@@ -297,7 +308,7 @@ function voidMapScryer(availableStances = unlockedStances()) {
 	return false;
 }
 
-function autoLevelStance(availableStances = unlockedStances()) {
+function autoLevelStance(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	if ((game.global.mapsActive || game.global.preMapsActive) && !game.global.voidBuff && mapSettings.mapName && getPageSetting('autoMaps') && getPageSetting('autoLevelScryer')) {
 		const ignoreSettings = new Set(['Void Map', 'Prestige Climb', 'Prestige Raiding', 'Bionic Raiding']);
 		if (!ignoreSettings.has(mapSettings.mapName)) {
@@ -306,7 +317,7 @@ function autoLevelStance(availableStances = unlockedStances()) {
 			const autoLevelData = hdStats.autoLevelData[checkSpeed ? 'speed' : 'loot'];
 
 			if (['S', 'W'].includes(autoLevelData.stance)) {
-				const stance = autoLevelData.stance === 'W' && availableStances.includes('W') && getEmpowerment() !== 'Wind' ? 'W' : 'S';
+				const stance = availableStances.includes('W') && ((autoLevelData.stance === 'W' && getEmpowerment() !== 'Wind') || shouldWindOverScryer(baseStats, currentEnemy)) ? 'W' : 'S';
 				safeSetStance(stance);
 				return true;
 			}
@@ -329,7 +340,7 @@ function shouldWindStance() {
 	return false;
 }
 
-function shouldScryerStance(baseStats = getBaseStats(), availableStances = unlockedStances()) {
+function shouldScryerStance(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	if (game.global.preMapsActive || !getPageSetting('autoStanceScryer')) return false;
 
 	const mapsActive = game.global.mapsActive;
@@ -345,7 +356,6 @@ function shouldScryerStance(baseStats = getBaseStats(), availableStances = unloc
 	if (aboveMaxZone && scrySettings.MinMaxWorld === 1) return false;
 
 	const mapObject = mapsActive ? getCurrentMapObject() : null;
-	const currentEnemy = getCurrentEnemy(1);
 	const nextEnemy = getCurrentEnemy(2);
 
 	const [transitionRequired, never_scry] = scryNever(scrySettings, mapObject, currentEnemy, nextEnemy, empowerment, aboveMaxZone);
@@ -460,7 +470,7 @@ function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseSta
 	if (valid_min && valid_max && (!game.global.mapsActive || scrySettings.MinMaxWorld === 0)) {
 		//Smooth transition to S before killing the target
 		if (transitionRequired) {
-			const xStance = availableStances.includes('W') && getEmpowerment() !== 'Wind' ? 5 : 0;
+			const xStance = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy)) ? 5 : 0;
 			const stances = [
 				{ stance: 'X', value: xStance },
 				{ stance: 'H', value: 1 }
@@ -519,14 +529,13 @@ function readyToSwitch(stance = 'S', baseStats = getBaseStats()) {
 	return die || wouldSurvive(stance, 2, baseStats);
 }
 
-function autoStanceAdvanced(baseStats = getBaseStats(), availableStances = unlockedStances()) {
+function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	if (game.global.gridArray.length === 0) return;
 
-	const currentEnemy = getCurrentEnemy();
 	if (typeof currentEnemy === 'undefined') return;
 
 	const critSources = getCritPower(currentEnemy);
-	const checkWind = availableStances.includes('W') && getEmpowerment() !== 'Wind';
+	const checkWind = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy));
 	let prefferedStance = availableStances.includes('D') ? 'D' : 'X';
 
 	if (availableStances.includes('S')) {
