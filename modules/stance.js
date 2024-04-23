@@ -61,12 +61,12 @@ function oneShotZone(type, specificStance = 'X', useMax = false, worldType = _ge
 	return power - 1;
 }
 
-function oneShotPower(specificStance = 'X', offset = 0, useMax = false, worldType = _getWorldType()) {
+function oneShotPower(specificStance = 'X', offset = 0, useMax = false, worldType = _getWorldType(), customAttack) {
 	const maxOrMin = useMax ? 'max' : 'min';
 	const zone = _getZone(worldType);
 	const overkillRange = worldType === 'world' && liquifiedZone() ? 1 : maxOneShotPower();
 	const overkillMultiplier = 0.005 * getPerkLevel('Overkill');
-	let damageLeft = calcOurDmg(maxOrMin, specificStance, true, worldType, 'never') + addPoison(true);
+	let damageLeft = (customAttack ? customAttack : calcOurDmg(maxOrMin, specificStance, true, worldType, 'never')) + addPoison(true);
 	let power;
 
 	// Calculates how many enemies we can one shot + overkill
@@ -285,8 +285,9 @@ function autoStance() {
 		return;
 	}
 
-	if (availableStances.includes('W') && shouldWindStance()) {
-		safeSetStance(5);
+	const windStance = shouldWindStance(availableStances, baseStats, currentEnemy);
+	if (windStance) {
+		safeSetStance(windStance);
 		return;
 	}
 
@@ -327,15 +328,31 @@ function autoLevelStance(availableStances = unlockedStances(), baseStats = getBa
 	return false;
 }
 
-function shouldWindStance() {
-	if (game.global.mapsActive || getUberEmpowerment() !== 'Wind' || getEmpowerment() !== 'Wind') return false;
+function shouldWindStance(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
+	if (game.global.mapsActive || !availableStances.includes('W') || getUberEmpowerment() !== 'Wind' || getEmpowerment() !== 'Wind') return false;
 
 	const settingPrefix = trimpStats.isDaily ? 'd' : '';
 	if (!getPageSetting(settingPrefix + 'AutoStanceWind')) return false;
-	if (liquifiedZone() && getPageSetting(settingPrefix + 'WindStackingLiq')) return true;
+	if (liquifiedZone() && getPageSetting(settingPrefix + 'WindStackingLiq')) return 'W';
 
 	const windStackRatio = getPageSetting(settingPrefix + 'WindStackingRatio');
-	if ((hdStats.hdRatio < windStackRatio || windStackRatio <= 0) && game.global.world >= getPageSetting(settingPrefix + 'WindStackingZone')) return true;
+	if ((hdStats.hdRatio < windStackRatio || windStackRatio <= 0) && game.global.world >= getPageSetting(settingPrefix + 'WindStackingZone')) {
+		if (currentEnemy.level !== 100 && (!currentEnemy.mutation || currentEnemy.mutation === 'Magma')) {
+			const overkillCells = oneShotPower('S', 0, true, 'world', baseStats.maxDamage / 2);
+
+			let power;
+			for (power = 1; power <= overkillCells; power++) {
+				const enemy = getCurrentEnemy(power);
+				if (!enemy || enemy.level === 100 || ['Corruption', 'Healthy'].includes(enemy.mutation)) {
+					return 'W';
+				}
+			}
+
+			return 'S';
+		}
+
+		return 'W';
+	}
 
 	return false;
 }
