@@ -22,6 +22,7 @@ const atSettings = {
 	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false },
 	loops: { atTimeLapseFastLoop: false, mainLoop: null, guiLoop: null, gameLoop: null },
 	intervals: { counter: 0, tenthSecond: false, halfSecond: false, oneSecond: false, twoSecond: false, fiveSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false },
+	timeWarp: { loopTicks: 100, updateFreq: 1000, nextUpdate: 1000, loopCount: 0 },
 	autoSave: game.options.menu.autoSave.enabled
 };
 
@@ -143,7 +144,11 @@ function loadModules(fileName, prefix = '') {
 
 function loadScriptsAT() {
 	console.time();
-	if (!usingRealTimeOffline) gameLoop = function (makeUp, now) {}; /* Disable game from running until script loads to ensure no time is spent without AT running */
+	if (usingRealTimeOffline) {
+		clearTimeout(offlineProgress.loop); /* Disable offline progress loop */
+	} else {
+		gameLoop = function () {}; /* Disable game from running until script loads to ensure no time is spent without AT running */
+	}
 	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
 	basepath = `${atSettings.initialise.basepathOriginal}css/`;
 	const scripts = Array.from(document.getElementsByTagName('script'));
@@ -238,6 +243,7 @@ function initialiseScript() {
 
 	atSettings.initialise.loaded = true;
 	toggleCatchUpMode();
+	if (usingRealTimeOffline) offlineProgress.loop = setTimeout(timeWarpLoop, 0, true);
 	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
 	console.timeEnd();
 }
@@ -272,6 +278,7 @@ function toggleCatchUpMode() {
 				resetLoops();
 				debug(`Disabled Time Warp functionality.`, 'offline');
 			}
+
 			return;
 		}
 	}

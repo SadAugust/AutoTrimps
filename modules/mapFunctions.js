@@ -3983,8 +3983,28 @@ function slowScum(slowTarget) {
 	debug(msg, 'mapping_Details');
 }
 
-function callAutoMapLevel(mapName, special) {
+function getEnoughHealthMap(mapLevel, special, biome) {
+	const minMapLevel = mapLevel + game.global.world;
+	const simulateMap = _simulateSliders(minMapLevel, special, biome);
+	let mapOwned = findMap(minMapLevel, special, biome);
+	if (!mapOwned) mapOwned = findMap(minMapLevel, simulateMap.special, simulateMap.biome, simulateMap.perfect);
+
+	if (mapOwned) {
+		mapOwned = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+	} else {
+		mapOwned = simulateMap;
+	}
+
+	return mapOwned;
+}
+
+function callAutoMapLevel(mapName, special, standaloneSetting = false) {
 	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking'];
+	if (['HD Farm', 'Hits Survived'].includes(mapName) && getPageSetting('mapBonusLevelType')) {
+		if (mapName === 'HD Farm' && game.global.mapBonus !== 10) speedSettings.push('HD Farm');
+		else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth')) speedSettings.push('Hits Survived');
+	}
+
 	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
 	const lootFunction = mapName === 'Desolation Destacking' ? lootDestack : lootDefault;
 	const mapModifiers = {
@@ -4018,21 +4038,6 @@ function callAutoMapLevel(mapName, special) {
 	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
 	mapLevel = autoLevelOverides(mapName, mapLevel, mapModifiers);
 	return mapLevel;
-}
-
-function getEnoughHealthMap(mapLevel, special, biome) {
-	const minMapLevel = mapLevel + game.global.world;
-	const simulateMap = _simulateSliders(minMapLevel, special, biome);
-	let mapOwned = findMap(minMapLevel, special, biome);
-	if (!mapOwned) mapOwned = findMap(minMapLevel, simulateMap.special, simulateMap.biome, simulateMap.perfect);
-
-	if (mapOwned) {
-		mapOwned = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
-	} else {
-		mapOwned = simulateMap;
-	}
-
-	return mapOwned;
 }
 
 function autoLevelOverides(mapName, mapLevel, mapModifiers) {

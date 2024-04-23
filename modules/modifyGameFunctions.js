@@ -133,10 +133,51 @@ offlineProgress.finish = function () {
 	}
 };
 
+function timeWarpLoop(firstLoop = false) {
+	if (firstLoop) {
+		atSettings.timeWarp.nextUpdate = Math.floor(offlineProgress.ticksProcessed / 1000) * 1000;
+		atSettings.timeWarp.loopCount = offlineProgress.ticksProcessed;
+		offlineProgress.lastLoop = new Date().getTime();
+	}
+
+	atSettings.timeWarp.loopCount += atSettings.timeWarp.loopTicks;
+
+	if (atSettings.timeWarp.loopCount >= atSettings.timeWarp.nextUpdate) {
+		offlineProgress.updateBar(atSettings.timeWarp.loopCount);
+		atSettings.timeWarp.nextUpdate += 1000;
+	}
+
+	const keys = ['zoneStarted', 'portalTime', 'lastSoldierSentAt', 'lastSkeletimp'];
+	for (let i = 0; i < atSettings.timeWarp.loopTicks; i++) {
+		gameLoop(true);
+		_adjustGlobalTimers(keys, -100);
+		offlineProgress.ticksProcessed++;
+	}
+
+	const now = new Date().getTime();
+	const timeSpent = now - offlineProgress.lastLoop;
+
+	if (timeSpent < 175) {
+		atSettings.timeWarp.loopTicks += 5;
+	} else if (timeSpent > 200 && atSettings.timeWarp.loopTicks > 50) {
+		atSettings.timeWarp.loopTicks -= 5;
+	}
+
+	offlineProgress.loopTicks = atSettings.timeWarp.loopTicks;
+	offlineProgress.lastLoop = now;
+
+	if (typeof steamCanvas !== 'undefined') steamCanvasContext.clearRect(0, 0, steamCanvas.width, steamCanvas.height);
+	if (atSettings.timeWarp.loopCount < offlineProgress.progressMax && usingRealTimeOffline) {
+		offlineProgress.loop = setTimeout(timeWarpLoop, 0);
+	} else {
+		offlineProgress.finish();
+	}
+}
+
 var originalrunMap = runMap;
 runMap = function () {
 	originalrunMap(...arguments);
-	if (MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+	if (!MODULES.maps.lastMapWeWereIn || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 };
 
 //Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
