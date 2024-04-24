@@ -214,7 +214,7 @@ function canU2OverkillAT(targetZone = game.global.world) {
 }
 
 function getCurrentEnemy(cell = 1) {
-	if (game.global.gridArray.length <= 0) return {};
+	if (game.global.gridArray.length <= 0) return { name: 'Snimp' };
 
 	const mapping = game.global.mapsActive;
 	const currentCell = mapping ? game.global.lastClearedMapCell + cell : game.global.lastClearedCell + cell;

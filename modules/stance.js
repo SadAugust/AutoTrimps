@@ -547,9 +547,7 @@ function readyToSwitch(stance = 'S', baseStats = getBaseStats()) {
 }
 
 function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
-	if (game.global.gridArray.length === 0) return;
-
-	if (typeof currentEnemy === 'undefined') return;
+	if (game.global.gridArray.length === 0 || typeof currentEnemy === 'undefined') return;
 
 	const critSources = getCritPower(currentEnemy);
 	const checkWind = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy));

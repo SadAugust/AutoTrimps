@@ -1450,7 +1450,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will swap the auto level type that both Hits Survived & HD Ratio use for map bonus maps from loot maps to speed maps.</p>";
 				return description;
-			}, 'boolean', true, null, 'Maps', [1, 2]);
+			}, 'boolean', false, null, 'Maps', [1, 2]);
 
 		/* Does this work as intended? Must query Ray for info */
 		/* createSetting('mapBonusPrestige',

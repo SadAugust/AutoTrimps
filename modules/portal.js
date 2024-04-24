@@ -239,7 +239,7 @@ function doPortal(challenge, skipDaily) {
 		portalClicked();
 	} else {
 		if (challengeSquaredMode) toggleChallengeSquared();
-		if (game.global.challengeSelected) selectChallenge(0);
+		if (game.global.selectedChallenge) selectChallenge(0);
 	}
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;

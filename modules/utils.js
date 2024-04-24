@@ -683,7 +683,7 @@ function _calcHSImpact(equipName, worldType = _getTargetWorldType(), difficulty 
 }
 
 function shieldGymEfficiency(hitsBefore = _getTargetWorldType() === 'void' ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived, pretty = false) {
-	if (game.global.universe !== 1) return { mostEfficient: 'Shield' };
+	if (game.global.universe !== 1 || game.global.soldierCurrentBlock === null) return { mostEfficient: 'Shield' };
 
 	const shieldBlock = game.equipment.Shield.blockNow;
 	const worldType = _getTargetWorldType();

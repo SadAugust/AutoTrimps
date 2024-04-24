@@ -207,7 +207,9 @@ function shouldRunUniqueMap(map) {
 	const mapData = MODULES.mapFunctions.uniqueMaps[map.name];
 	if (mapData === undefined || game.global.world < mapData.zone - (trimpStats.plusLevels ? 10 : 0)) return false;
 	if (game.global.universe !== mapData.universe) return false;
-	if (!trimpStats.isC3 && mapData.challenges.includes(trimpStats.currChallenge) && map.clears === 0 && !challengeActive('') && enoughHealth(map)) return true;
+	if (!challengeActive('Scientist') || game.global.sLevel < 5) {
+		if (!trimpStats.isC3 && mapData.challenges.includes(trimpStats.currChallenge) && map.clears === 0 && !challengeActive('') && enoughHealth(map)) return true;
+	}
 
 	//Remove speed run check for now
 	/* if (mapData.speedrun && shouldSpeedRun(map, game.achievements[mapData.speedrun]) && enoughHealth(map) && enoughDamage(map)) {
@@ -3598,7 +3600,7 @@ function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
 	return true;
 }
 
-function autoLevelCheck(mapName, mapSpecial, maxZone, minZone) {
+function autoLevelCheck(mapName, mapSpecial) {
 	const isSmithyFarm = mapName === 'Smithy Farm';
 	const mapBonus = isSmithyFarm && game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined' ? getCurrentMapObject().bonus.slice(1) : '0';
 	const index = isSmithyFarm ? ['sc', 'wc', 'mc'].indexOf(mapBonus) : null;
@@ -3998,7 +4000,7 @@ function getEnoughHealthMap(mapLevel, special, biome) {
 	return mapOwned;
 }
 
-function callAutoMapLevel(mapName, special, standaloneSetting = false) {
+function callAutoMapLevel(mapName, special) {
 	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking'];
 	if (['HD Farm', 'Hits Survived'].includes(mapName) && getPageSetting('mapBonusLevelType')) {
 		if (mapName === 'HD Farm' && game.global.mapBonus !== 10) speedSettings.push('HD Farm');

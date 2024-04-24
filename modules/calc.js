@@ -320,6 +320,7 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 
 	if (realBlock) {
 		block = game.global.soldierCurrentBlock;
+		if (block === null) return 0;
 		if (stance || game.global.formation === 0) return block;
 		if (game.global.formation === 3) return block / 4;
 		return block * 2;

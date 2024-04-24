@@ -29,7 +29,7 @@ function advancedNurseries() {
 	const hasHealthFarmed = MODULES.mapFunctions.hasHealthFarmed === getTotalPortals() + '_' + game.global.world;
 	const maxMapBonus = game.global.mapBonus >= getPageSetting('mapBonusHealth');
 
-	return lackingHealth & (hasHealthFarmed || maxMapBonus);
+	return lackingHealth && (hasHealthFarmed || maxMapBonus);
 }
 
 function _housingToCheck(displayCheck = false) {
