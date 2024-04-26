@@ -2142,7 +2142,7 @@ function messageConfigHoverAT(what, event) {
 		exotic: { title: 'Exotic', text: 'Log the amount of world exotics you start a zone with.' },
 		gather: { title: 'Gather', text: 'Log the action that AT tries to gather.' },
 		stance: { title: 'Stance', text: 'Logs when AT decides to change stance and what it changes to.' },
-		magmite: { title: 'Magma', text: 'Logs when the script spends Magmite.' },
+		magmite: { title: 'Magmite', text: 'Logs when the script spends Magmite.' },
 		nature: { title: 'Nature', text: 'Logs when the script spends nature tokens.' },
 		run_Stats: { title: 'Run Stats', text: "Logs the total trimps you have and how many resources you'd gain from a bone charge when entering a new zone." },
 		portal: { title: 'Portal', text: 'Logs the challenge that is portaled into.' }

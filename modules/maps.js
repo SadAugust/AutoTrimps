@@ -438,7 +438,7 @@ function _setMapRepeat() {
 				const runTricky = game.global.world + mapLevel === 6 && findMap(mapLevel, special, biome, undefined, true) === 'Tricky Paradise';
 
 				const level = mapLevel !== undefined ? mapObj.level - game.global.world : mapLevel;
-				const mapSpecial = special !== undefined || special === '0' ? mapObj.bonus : special;
+				const mapSpecial = special === '0' ? '0' : special !== undefined ? mapObj.bonus : special;
 				const mapBiome = mapObj.location;
 				const isBiomeDifferent = mapBiome !== biome && !runTricky && !['Any', 'Random'].includes(biome);
 
