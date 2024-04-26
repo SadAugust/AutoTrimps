@@ -589,6 +589,7 @@ function setupAddonUser(force) {
 
 	const mapFunctionItems = {
 		afterVoids: false,
+		isHealthFarming: '',
 		hasHealthFarmed: '',
 		hasVoidFarmed: '',
 		runUniqueMap: '',

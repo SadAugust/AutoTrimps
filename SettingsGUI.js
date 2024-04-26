@@ -780,6 +780,16 @@ function initialiseAllSettings() {
 			},
 			'boolean', true, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230) });
+		createSetting('advancedNurseriesMapCap',
+			function () { return ('AN: Hits Survived Maps') },
+			function () {
+				let description = "<p>The amount of Hits Survived maps you want to start buying nurseries from.</p>"
+				description += "<p>If your Hits Survived setting is set to run less maps than this then it will use that value instead.</p>";
+				description += "<p><b>Recommended:</b> 3</p>";
+				return description;
+			},
+			'value', -1, null, 'Buildings', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 230 && autoTrimpSettings.advancedNurseries.enabled) });		
 		createSetting('advancedNurseriesAmount',
 			function () { return ('AN: Amount') },
 			function () {
@@ -1132,6 +1142,27 @@ function initialiseAllSettings() {
 			},
 			'multitoggle', 1, null, 'Combat', [1],
 			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerMaxHits',
+			function () { return ('Max Hits') },
+			function () {
+				let description = "<p>Maximum hits that the script will use for settings set to <b>Maybe</b> inputs.</p>";
+				description += "<p>This has a chance to stop you from smoothly transitioning to Scryer stance and missing out on bonuses when settings are set to their <b>Never<b> inputs.</p>";
+				description += "<p>If set above 10 this will switch back to Scryer stance when you can kill the enemy in 3 or less hits.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 100</p>";
+				return description;
+			},
+			'value', -1, null, 'Combat', [1],
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerEssenceOnly',
+			function () { return ('Remaining Essence Only') },
+			function () {
+				let description = "<p>Will disable Scryer stance whilst in the world if there are no remaining enemies that hold dark essence.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1],
+			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
+
 		createSetting('scryerMaps',
 			function () { return (['Maps: Never', 'Maps: Force', 'Maps: Maybe']) },
 			function () {
@@ -1280,14 +1311,6 @@ function initialiseAllSettings() {
 				return description;
 			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
-		createSetting('scryerEssenceOnly',
-			function () { return ('Remaining Essence Only') },
-			function () {
-				let description = "<p>Will disable Scryer stance whilst in the world if there are no remaining enemies that hold dark essence.</p>";
-				description += "<p><b>Recommended:</b> Off</p>";
-				return description;
-			}, 'boolean', false, null, 'Combat', [1],
 			function () { return (getPageSetting('autoStanceScryer', currSettingUniverse)) });
 
 		createSetting('AutoStanceWind',
@@ -5054,7 +5077,7 @@ function _settingsToLineBreak() {
 	const breakAfterMaps = ['autoLevelScryer', 'scryvoidmaps', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
 	const breakAfterDaily = ['dscryvoidmaps', 'dPreSpireNurseries', 'dWindStackingLiq', 'dailyHeliumHrPortal'];
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
-	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
+	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly', 'scryerDieZone'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
 	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'mapologyPrestige', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['autoGigaDeltaFactor'];

@@ -375,14 +375,14 @@ function shouldScryerStance(availableStances = unlockedStances(), baseStats = ge
 	const mapObject = mapsActive ? getCurrentMapObject() : null;
 	const nextEnemy = getCurrentEnemy(2);
 
+	if (currentEnemy && scryOverkill(scrySettings, scryStance)) return true;
+
 	const [transitionRequired, never_scry] = scryNever(scrySettings, mapObject, currentEnemy, nextEnemy, empowerment, aboveMaxZone);
 	if (never_scry) return false;
 
 	if (scryForce(scrySettings, mapObject, currentEnemy, empowerment, scryStance)) return true;
 
 	if (!readyToSwitch(scryStance, baseStats)) return false;
-
-	if (currentEnemy && scryOverkill(scrySettings, mapsActive, scryStance)) return true;
 
 	if (scryTransition(scryStance, scrySettings, baseStats, availableStances, transitionRequired, currentEnemy)) return true;
 
@@ -396,6 +396,24 @@ function _getScrySettings() {
 			obj[key.replace('scryer', '')] = value;
 			return obj;
 		}, {});
+}
+
+function scryOverkill(scrySettings = scrySettings(), scryStance = 'S') {
+	const useOverkill = getPageSetting('scryerOverkill') && !(scrySettings.Spire === 0 && !mapsActive && isDoingSpire());
+
+	if (useOverkill) {
+		//Switches to S/W if it has enough damage to secure an overkill
+		const HS = oneShotPower(scryStance);
+		const HSD = oneShotPower('D', 0, true);
+		const HS_next = oneShotPower(scryStance, 1);
+		const HSD_next = oneShotPower('D', 1, true);
+		if (HS > 0 && HS >= HSD && (HS > 1 || (HS_next > 0 && HS_next >= HSD_next))) {
+			safeSetStance(scryStance);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 function scryNever(scrySettings = scrySettings(), mapObject = getCurrentMapObject(), currentEnemy = getCurrentEnemy(1), nextEnemy = getCurrentEnemy(2), empowerment = getEmpowerment(), aboveMaxZone = false) {
@@ -460,22 +478,21 @@ function scryForce(scrySettings = scrySettings(), mapObject = getCurrentMapObjec
 	}
 }
 
-function scryOverkill(scrySettings = scrySettings(), mapsActive = game.global.mapsActive, scryStance = 'S') {
-	const useOverkill = getPageSetting('scryerOverkill') && !(scrySettings.Spire === 0 && !mapsActive && isDoingSpire());
+function readyToSwitch(stance = 'S', baseStats = getBaseStats()) {
+	const essenceLeft = !game.global.mapsActive && (!getPageSetting('scryerEssenceOnly') || countRemainingEssenceDrops() >= 1);
 
-	if (useOverkill) {
-		//Switches to S/W if it has enough damage to secure an overkill
-		const HS = oneShotPower(scryStance);
-		const HSD = oneShotPower('D', 0, true);
-		const HS_next = oneShotPower(scryStance, 1);
-		const HSD_next = oneShotPower('D', 1, true);
-		if (HS > 0 && HS >= HSD && (HS > 1 || (HS_next > 0 && HS_next >= HSD_next))) {
-			safeSetStance(scryStance);
-			return true;
-		}
+	const dieZone = getPageSetting('scryerDieZone');
+	let die = dieZone !== -1 && game.global.world >= dieZone && essenceLeft;
+	const willSuicide = dieZone;
+
+	//Check if we are allowed to suicide in our current cell and zone
+	if (die && willSuicide >= 0) {
+		let [dieZ, dieC] = willSuicide.toString().split('.');
+		if (dieC && dieC.length === 1) dieC = dieC + '0';
+		die = game.global.world >= dieZ && (!dieC || game.global.lastClearedCell + 1 >= dieC);
 	}
 
-	return false;
+	return die || wouldSurvive(stance, 2, baseStats);
 }
 
 function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseStats = getBaseStats(), availableStances = unlockedStances(), transitionRequired = false, currentEnemy = getCurrentEnemy(1)) {
@@ -527,23 +544,6 @@ function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseSta
 		safeSetStance(scryStance);
 		return true;
 	}
-}
-
-function readyToSwitch(stance = 'S', baseStats = getBaseStats()) {
-	const essenceLeft = !getPageSetting('scryerEssenceOnly') || countRemainingEssenceDrops() >= 1;
-
-	const dieZone = getPageSetting('scryerDieZone');
-	let die = dieZone !== -1 && game.global.world >= dieZone && essenceLeft;
-	const willSuicide = dieZone;
-
-	//Check if we are allowed to suicide in our current cell and zone
-	if (die && willSuicide >= 0) {
-		let [dieZ, dieC] = willSuicide.toString().split('.');
-		if (dieC && dieC.length === 1) dieC = dieC + '0';
-		die = game.global.world >= dieZ && (!dieC || game.global.lastClearedCell + 1 >= dieC);
-	}
-
-	return die || wouldSurvive(stance, 2, baseStats);
 }
 
 function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {

@@ -1139,6 +1139,15 @@ function updateATVersion() {
 			game.stats.spentOnWorms.value = Math.max(0, game.stats.spentOnWorms.value);
 			game.stats.spentOnWorms.valueTotal = Math.max(0, game.stats.spentOnWorms.valueTotal);
 		}
+
+		if (versionNumber < '6.5.77') {
+			if (typeof game.global.addonUser === 'object' && game.global.addonUser.mapFunctions) {
+				game.global.addonUser.mapFunctions.isHealthFarming = '';
+				game.global.addonUser.mapFunctions.hasHealthFarmed = '';
+			} else {
+				setupAddonUser(true);
+			}
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

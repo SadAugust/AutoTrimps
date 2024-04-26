@@ -24,12 +24,15 @@ function advancedNurseries() {
 	const disableIce = getPageSetting('advancedNurseriesIce');
 	if (disableIce > 0 && getEmpowerment() === 'Ice' && (disableIce === 1 || (disableIce === 2 && game.global.spireActive))) return false;
 
-	// Only build nurseries if: A) lacking Health & B) have max health map stacks
 	const lackingHealth = whichHitsSurvived() < targetHitsSurvived();
-	const hasHealthFarmed = game.global.addonUser.mapFunctions.hasHealthFarmed === getTotalPortals() + '_' + game.global.world;
-	const maxMapBonus = game.global.mapBonus >= getPageSetting('mapBonusHealth');
+	if (!lackingHealth) return false;
 
-	return lackingHealth && (hasHealthFarmed || maxMapBonus);
+	const portalZoneCheck = getTotalPortals() + '_' + game.global.world;
+	const { hasHealthFarmed, isHealthFarming } = game.global.addonUser.mapFunctions;
+	if (hasHealthFarmed === portalZoneCheck || isHealthFarming === portalZoneCheck) return true;
+
+	const maxMapBonus = game.global.mapBonus >= getPageSetting('mapBonusHealth');
+	return maxMapBonus;
 }
 
 function _housingToCheck(displayCheck = false) {

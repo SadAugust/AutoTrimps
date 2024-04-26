@@ -3125,6 +3125,13 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		if (setting.repeat && minLevel > mapLevel) return farmingDetails;
 	}
 
+	if (mapSettings.mapName.includes('Hits Survived') && game.global.mapRunCounter >= Math.min(mapsRunCap, getPageSetting('advancedNurseriesMapCap'))) {
+		const portalZoneCheck = getTotalPortals() + '_' + game.global.world;
+		if (game.global.addonUser.mapFunctions.isHealthFarming !== portalZoneCheck) {
+			game.global.addonUser.mapFunctions.isHealthFarming = portalZoneCheck;
+		}
+	}
+
 	const hdTypeMap = {
 		world: 'hdRatio',
 		voidFarm: 'vhdRatioVoid',
