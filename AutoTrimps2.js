@@ -11,7 +11,7 @@ const atSettings = {
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
 		installedMods: ['spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky'],
-		installedModules: ['import-export', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames', 'utils'],
+		installedModules: ['import-export', 'utils', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames'],
 		loadedModules: [],
 		loadedMods: [],
 		loadedExternal: []
@@ -42,7 +42,11 @@ var originalGameLoop = gameLoop;
 
 let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
 let hdStats = { autoLevel: Infinity };
-let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false };
+let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false, fluffyRewards: { universe: 0, level: 0 } };
+
+function shouldUpdate() {
+	return !usingRealTimeOffline || loops % 600 === 0;
+}
 
 function loadScript(url, type = 'text/javascript', retries = 3) {
 	return new Promise((resolve, reject) => {
@@ -204,11 +208,6 @@ function initialiseScript() {
 		return loadScriptsAT();
 	}
 
-	if (usingRealTimeOffline) {
-		if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
-		cancelTooltip();
-	}
-
 	atlantrimpRespecOverride();
 	_loadAutoTrimpsSettings();
 	automationMenuSettingsInit();
@@ -238,6 +237,12 @@ function initialiseScript() {
 
 	trimpStats = new TrimpStats(true);
 	hdStats = new HDStats(true);
+
+	if (usingRealTimeOffline) {
+		if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
+		cancelTooltip();
+	}
+
 	farmingDecision();
 	autoMapsStatus();
 

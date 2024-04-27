@@ -43,7 +43,8 @@ function maxOneShotPower(planToMap, targetZone) {
 		//Mastery
 		if (game.talents.overkill.purchased) power++;
 		//Fluffy
-		if (Fluffy.isRewardActive('overkiller')) power += Fluffy.isRewardActive('overkiller');
+		const overkiller = Fluffy.isRewardActive('overkiller');
+		if (overkiller) power += overkiller;
 		//Ice
 		if (getUberEmpowerment() === 'Ice') power += 2;
 		if (getEmpowerment() === 'Ice' && game.empowerments.Ice.getLevel() >= 50) power++;

@@ -1087,8 +1087,10 @@ function calculate(autoUpgrade) {
 		return Math.round(n * factor) / factor;
 	}
 
+	const heirloopy = Fluffy.isRewardActive('heirloopy');
+
 	function getModValue(mod) {
-		if ((heirloomData[mod[0]].heirloopy && this.fluffyRewards.heirloopy) || heirloomData[mod[0]].immutable || heirloomData[mod[0]].name === 'inequality') return mod[1];
+		if ((heirloomData[mod[0]].heirloopy && heirloopy) || heirloomData[mod[0]].immutable || heirloomData[mod[0]].name === 'inequality') return mod[1];
 		if (game.global.universe === 2) return mod[1] / 10;
 		return mod[1];
 	}

@@ -17,6 +17,8 @@ class TrimpStats {
 		this.hze = universe === 2 ? highestRadLevel.valueTotal() : highestLevel.valueTotal();
 		this.hypPct = liquification3Purchased ? 75 : hyperspeed2Purchased ? 50 : 0;
 		this.hyperspeed2 = global.world <= Math.floor(this.hze * (this.hypPct / 100));
+		this.fluffyRewards = updateFluffyRewards();
+
 		this.autoMaps = getPageSetting('autoMaps') > 0;
 
 		this.mapSize = talents.mapLoot2.purchased ? 20 : 25;

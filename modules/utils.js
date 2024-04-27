@@ -555,6 +555,39 @@ function printChangelog(changes) {
 	else verticalCenterTooltip(true);
 }
 
+function updateFluffyRewards() {
+	let calculatedPrestige = Fluffy.getCurrentPrestige();
+	if (game.talents.fluffyAbility.purchased) calculatedPrestige++;
+
+	const rewardsList = Fluffy.getRewardList();
+	const prestigeRewardsList = Fluffy.getPrestigeRewardList();
+
+	const combinedList = [...rewardsList, ...prestigeRewardsList];
+
+	const fluffyLevelPlusPrestige = Fluffy.currentLevel + calculatedPrestige;
+
+	const fluffyRewards = combinedList.reduce((acc, reward, index) => {
+		if (fluffyLevelPlusPrestige > index) {
+			acc[reward] = (acc[reward] || 0) + 1;
+		} else if (!acc[reward]) {
+			acc[reward] = 0;
+		}
+		return acc;
+	}, {});
+
+	fluffyRewards.universe = game.global.universe;
+	fluffyRewards.level = fluffyLevelPlusPrestige;
+
+	const totalRewards = [...Fluffy.prestigeRewards, ...Fluffy.rewards, ...Fluffy.rewardsU2];
+	totalRewards.forEach((reward) => {
+		fluffyRewards[reward] = fluffyRewards[reward] || 0;
+	});
+
+	fluffyRewards.reincarnate = fluffyRewards.reincarnate || 0;
+
+	return fluffyRewards;
+}
+
 function setupAddonUser(force) {
 	if (typeof game.global.addonUser === 'object' && !force) return;
 
