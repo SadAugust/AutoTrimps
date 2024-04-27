@@ -252,7 +252,7 @@ function getBaseStats() {
 function shouldWindOverScryer(baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	const currentStacks = game.empowerments.Wind.currentDebuffPower;
 	const stackCap = 300;
-	const stacksPerHit = 2 * trimpStats.fluffyRewards.plaguebrought ? 2 : 1;
+	const stacksPerHit = 2 * Fluffy.isRewardActive('plaguebrought') ? 2 : 1;
 	if (currentStacks + stacksPerHit >= stackCap) return true;
 
 	if (baseStats.maxDamage / 2 < currentEnemy.health) return true;
@@ -542,6 +542,7 @@ function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseSta
 		}
 
 		//Set to scry if it won't kill us, or we are willing to die for it
+		if (scryStance === 'S' && availableStances.includes('W') && shouldWindOverScryer(baseStats, currentEnemy)) scryStance = 'W';
 		safeSetStance(scryStance);
 		return true;
 	}
