@@ -399,7 +399,7 @@ function _getScrySettings() {
 }
 
 function scryOverkill(scrySettings = scrySettings(), scryStance = 'S') {
-	const useOverkill = getPageSetting('scryerOverkill') && !(scrySettings.Spire === 0 && !mapsActive && isDoingSpire());
+	const useOverkill = getPageSetting('scryerOverkill') && !(scrySettings.Spire === 0 && !game.global.mapsActive && isDoingSpire());
 
 	if (useOverkill) {
 		//Switches to S/W if it has enough damage to secure an overkill
