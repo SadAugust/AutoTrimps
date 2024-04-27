@@ -230,27 +230,21 @@ function unlockedStances() {
 }
 
 function getBaseStats() {
-	let stats = {
-		minDamage: calcOurDmg('min', 'X', false, undefined, 'never'),
-		maxDamage: calcOurDmg('max', 'X', false, undefined, 'force'),
-		health: calcOurHealth(false, false, true),
-		block: calcOurBlock(false)
-	};
-
+	const bionicTalent = _getBionicTalent();
 	const antiBonus = _getAnticipationBonus();
 	const antiBonusCurr = _getAnticipationBonus(undefined, true);
 
-	if (antiBonus !== antiBonusCurr) {
-		const ratio = antiBonusCurr / antiBonus;
-		stats.minDamage *= ratio;
-		stats.maxDamage *= ratio;
-	}
-
+	const antiRatio = antiBonusCurr / antiBonus;
 	const dailyRampageMult = _getRampageBonus();
-	if (dailyRampageMult > 1) {
-		stats.minDamage *= dailyRampageMult;
-		stats.maxDamage *= dailyRampageMult;
-	}
+	const totalRatio = antiRatio * dailyRampageMult;
+
+	let stats = {
+		minDamage: calcOurDmg('min', 'X', false, undefined, 'never', bionicTalent, true) * totalRatio,
+		avgDamage: calcOurDmg('avg', 'X', false, undefined, 'maybe', bionicTalent, true) * totalRatio,
+		maxDamage: calcOurDmg('max', 'X', false, undefined, 'force', bionicTalent, true) * totalRatio,
+		health: calcOurHealth(false, false, true),
+		block: calcOurBlock(false)
+	};
 
 	return stats;
 }
@@ -258,7 +252,7 @@ function getBaseStats() {
 function shouldWindOverScryer(baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	const currentStacks = game.empowerments.Wind.currentDebuffPower;
 	const stackCap = 300;
-	const stacksPerHit = 2 * Fluffy.isRewardActive('plaguebrought') ? 2 : 1;
+	const stacksPerHit = 2 * trimpStats.fluffyRewards.plaguebrought ? 2 : 1;
 	if (currentStacks + stacksPerHit >= stackCap) return true;
 
 	if (baseStats.maxDamage / 2 < currentEnemy.health) return true;
@@ -399,7 +393,7 @@ function _getScrySettings() {
 }
 
 function scryOverkill(scrySettings = scrySettings(), scryStance = 'S') {
-	const useOverkill = getPageSetting('scryerOverkill') && !(scrySettings.Spire === 0 && !mapsActive && isDoingSpire());
+	const useOverkill = getPageSetting('scryerOverkill') && !(scrySettings.Spire === 0 && !game.global.mapsActive && isDoingSpire());
 
 	if (useOverkill) {
 		//Switches to S/W if it has enough damage to secure an overkill
@@ -456,10 +450,9 @@ function scryNever(scrySettings = scrySettings(), mapObject = getCurrentMapObjec
 }
 
 function scryForce(scrySettings = scrySettings(), mapObject = getCurrentMapObject(), currentEnemy = getCurrentEnemy(1), empowerment = getEmpowerment(), scryStance = 'S') {
-	const mapsActive = game.global.mapsActive;
 	let force_scry = false;
 
-	if (mapsActive) {
+	if (game.global.mapsActive) {
 		force_scry |= scrySettings.Maps === 1 && mapObject.location !== 'Void' && mapObject.location !== 'Bionic' && mapObject.level <= game.global.world;
 		force_scry |= mapObject.level > game.global.world && scrySettings.PlusMaps === 1 && mapObject.location !== 'Bionic';
 		force_scry |= mapObject.location === 'Void' && scrySettings.VoidMaps === 1;
@@ -538,6 +531,14 @@ function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseSta
 					}
 				}
 			}
+		}
+
+		const maxHits = getPageSetting('scryerMaxHits');
+		if (maxHits > 0) {
+			const avgDmg = baseStats.avgDamage / 2 + addPoison(true);
+			const hitsToKill = avgDmg * maxHits < currentEnemy.health;
+			if (avgDmg * hitsToKill < currentEnemy.health) return false;
+			if (maxHits > 10 && hitsToKill < 3) return false;
 		}
 
 		//Set to scry if it won't kill us, or we are willing to die for it
