@@ -536,8 +536,8 @@ function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseSta
 		const maxHits = getPageSetting('scryerMaxHits');
 		if (maxHits > 0) {
 			const avgDmg = baseStats.avgDamage / 2 + addPoison(true);
-			const hitsToKill = avgDmg * maxHits < currentEnemy.health;
-			if (avgDmg * hitsToKill < currentEnemy.health) return false;
+			const hitsToKill = currentEnemy.health / avgDmg;
+			if (currentEnemy.health > hitsToKill) return false;
 			if (maxHits > 10 && hitsToKill < 3) return false;
 		}
 
