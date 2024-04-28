@@ -537,8 +537,8 @@ function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseSta
 		if (maxHits > 0) {
 			const avgDmg = baseStats.avgDamage / 2 + addPoison(true);
 			const hitsToKill = currentEnemy.health / avgDmg;
-			if (currentEnemy.health > hitsToKill) return false;
-			if (maxHits > 10 && hitsToKill < 3) return false;
+			if (maxHits > hitsToKill) return false;
+			if (maxHits > 10 && hitsToKill < 3 && !isScryerBonusActive()) return false;
 		}
 
 		//Set to scry if it won't kill us, or we are willing to die for it
