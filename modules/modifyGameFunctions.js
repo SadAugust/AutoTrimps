@@ -74,15 +74,14 @@ startFight = function () {
 Fluffy.originalisRewardActive = Fluffy.isRewardActive;
 Fluffy.isRewardActive = function () {
 	if (typeof trimpStats !== 'undefined' && typeof trimpStats.fluffyRewards !== 'undefined') {
-		const { fluffyRewards } = trimpStats;
 		const fluffyLevel = Fluffy.getCurrentPrestige() + (game.talents.fluffyAbility.purchased ? 1 : 0) + Fluffy.currentLevel;
 
-		if (fluffyRewards.universe !== game.global.universe || fluffyRewards.level !== fluffyLevel) {
+		if (trimpStats.fluffyRewards.universe !== game.global.universe || trimpStats.fluffyRewards.level !== fluffyLevel) {
 			trimpStats.fluffyRewards = updateFluffyRewards();
 		}
 
 		if (typeof trimpStats.fluffyRewards[arguments[0]] !== 'undefined') {
-			return fluffyRewards[arguments[0]];
+			return trimpStats.fluffyRewards[arguments[0]];
 		}
 	}
 
