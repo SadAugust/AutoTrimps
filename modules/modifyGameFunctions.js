@@ -38,6 +38,7 @@ resetGame = function () {
 	try {
 		atlantrimpRespecOverride();
 		_setButtonsPortal();
+		setupAddonUser(true);
 	} catch (e) {
 		debug(`Load save failed: ${e}`);
 	}

@@ -107,9 +107,12 @@ function handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily
 		OKtoPortal = true;
 		if (atSettings.portal.aWholeNewWorld) MODULES.portal.zonePostpone = 0;
 	}
-	if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld) OKtoPortal = false;
 
-	if (MODULES.mapFunctions.afterVoids || (OKtoPortal && MODULES.portal.zonePostpone === 0)) {
+	if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld) {
+		OKtoPortal = false;
+	}
+
+	if (MODULES.mapFunctions.afterVoids || mapSettings.portalAfterVoids || (OKtoPortal && MODULES.portal.zonePostpone === 0)) {
 		handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily);
 	}
 }
@@ -136,7 +139,7 @@ function handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, 
 		return;
 	}
 
-	if (usingRealTimeOffline || (MODULES.mapFunctions.afterVoids && game.global.totalVoidMaps === 0)) {
+	if (usingRealTimeOffline || ((MODULES.mapFunctions.afterVoids || mapSettings.portalAfterVoids) && game.global.totalVoidMaps === 0)) {
 		const challenge = challengeSelected !== 'None' ? challengeSelected : 0;
 		doPortal(challenge, skipDaily);
 

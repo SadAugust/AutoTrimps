@@ -384,6 +384,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> Auto Portal setting.</p>";
 				description += "<p>This is an additional check that prevents drops in " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour from triggering Auto Portal.</p>";
 				description += "<p>If this is set above your highest zone reached then it will allow you to pick not yet unlocked challenges up to this zone.</p>";
+				description += "<p>The portal after checkbox in <b>Void Map Setting</b> will override this and allow portaling before the zone set here.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and assume any zone is okay to portal on.</p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
@@ -2900,6 +2901,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b> Auto Portal setting.</p>";
 				description += "<p>It is an additional check that prevents drops in " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour from triggering Auto Portal.</p>";
+				description += "<p>The portal after checkbox in <b>Void Map Setting</b> will override this and allow portaling before the zone set here.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and assume any zone is okay to portal on.</p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;

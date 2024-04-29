@@ -447,9 +447,7 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy. 
     */
 	const bionicTalent = _getBionicTalent();
-
 	const maxDmg = calcOurDmg('max', 0, false, worldType, 'force', bionicTalent, true) * _getRampageBonus();
-
 	const maxEquality = getPerkLevel('Equality');
 	const shouldPlagueSwap = _shouldPBSwap(mapping, enemy, fastEnemy);
 
