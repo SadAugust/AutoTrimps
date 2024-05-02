@@ -863,12 +863,14 @@ function makeAutomapStatusTooltip(mouseover = false) {
 
 	tooltipText += `<br>`;
 
+	const availableStances = unlockedStances();
 	const stanceInfo = game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 60 ? `(in X formation) ` : '';
+	const stanceInfoVoids = game.global.universe === 1 ? (availableStances.includes('S') && whichScryVoidMaps() ? `(in S formation) ` : availableStances.includes('D') ? `(in D formation) ` : stanceInfo) : '';
 	tooltipText += `<br><b>HD Ratio Info</b><br>`;
 	tooltipText += `${hdRatioText}<br>`;
 	tooltipText += `World HD Ratio ${stanceInfo}<b>${prettify(hdStats.hdRatio)}</b><br>`;
 	tooltipText += `Map HD Ratio ${stanceInfo}<b>${prettify(hdStats.hdRatioMap)}</b><br>`;
-	tooltipText += `Void HD Ratio ${stanceInfo}<b>${prettify(hdStats.hdRatioVoid)}</b><br>`;
+	tooltipText += `Void HD Ratio ${stanceInfoVoids}<b>${prettify(hdStats.hdRatioVoid)}</b><br>`;
 	tooltipText += `${mapStacksText}<br>`;
 
 	if (mouseover) {

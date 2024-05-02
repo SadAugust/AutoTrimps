@@ -598,7 +598,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 }
 
 function getCritPower(enemy = getCurrentEnemy(), block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
-	const ignoreCrits = typeof atSettings !== 'undefined' ? getPageSetting('ignoreCrits') : 0;
+	const ignoreCrits = typeof atSettings !== 'undefined' && game.global.universe === 1 ? getPageSetting('ignoreCrits') || 0 : 0;
 	if (ignoreCrits === 2) return 0;
 
 	const outputs = {
@@ -629,7 +629,7 @@ function getCritPower(enemy = getCurrentEnemy(), block = game.global.soldierCurr
 
 function badGuyCritMult(enemy = getCurrentEnemy(), critPower = 2, block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
 	if (critPower <= 0) return 1;
-	const ignoreCrits = typeof atSettings !== 'undefined' ? getPageSetting('ignoreCrits') : 0;
+	const ignoreCrits = typeof atSettings !== 'undefined' && game.global.universe === 1 ? getPageSetting('ignoreCrits') || 0 : 0;
 	if (ignoreCrits === 2) return 1;
 
 	let regular = 1;
@@ -1040,9 +1040,10 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 }
 
 function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), difficulty = 1, extraGyms = 0, extraItem = new ExtraItem(), checkOutputs) {
-	const formationMod = game.upgrades.Dominance.done ? 2 : 1;
-	const ignoreCrits = getPageSetting('ignoreCrits');
-
+	const availableStances = unlockedStances();
+	const formationMod = availableStances.includes('D') || (worldType === 'void' && availableStances.includes('S') && whichScryVoidMaps()) ? 2 : 1;
+	const ignoreCrits = game.global.universe !== 1 ? 2 : getPageSetting('ignoreCrits');
+	0;
 	if (worldType !== 'map' && targetZone % 2 === 1 && challengeActive('Lead')) targetZone++;
 
 	const customAttack = _calcHitsSurvivedAttack(worldType, targetZone);
@@ -1056,11 +1057,13 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 	const equality = equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', null, hitsToSurvive);
 	let damageMult = 1;
 
-	if (game.global.universe === 1 && ((ignoreCrits === 1 && worldType !== 'void') || ignoreCrits === 0)) {
+	if (ignoreCrits !== 2) {
 		const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
-		const crushed = challengeActive('Crushed');
+
 		if (dailyCrit) damageMult = dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		else if (crushed && health > block) damageMult = 3;
+		else if (challengeActive('Crushed') && health > block) damageMult = 3;
+
+		if (ignoreCrits !== 1 && worldType === 'void') damageMult *= 4;
 	}
 
 	const worldDamage = calcEnemyAttack(worldType, targetZone, 99, enemyName, undefined, customAttack, equality) * difficulty;

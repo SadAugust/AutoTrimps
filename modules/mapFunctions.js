@@ -443,9 +443,10 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 				if (currSetting[hdTypes[index]] === 'disabled') return false;
 				const obj = hdObject[currSetting[hdTypes[index]]];
 				const hdSetting = obj.hdStatVoid || obj.hdStat;
-				if (currSetting[hdTypes[index]].includes('Hits Survived')) return currSetting[dropdown] > hdSetting;
-				return currSetting[dropdown] < hdSetting;
+				if (currSetting[hdTypes[index]].includes('Hits Survived')) return currSetting[dropdown] < hdSetting;
+				return currSetting[dropdown] > hdSetting;
 			});
+
 			if (shouldSkipLine && endzone !== game.global.world) continue;
 			if (endzone === game.global.world || game.global.world - world >= 0) {
 				settingIndex = y;

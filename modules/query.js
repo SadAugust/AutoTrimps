@@ -321,3 +321,8 @@ function whichHitsSurvived() {
 function whichAutoLevel() {
 	return hdStats.autoLevelLoot;
 }
+
+function whichScryVoidMaps() {
+	if (trimpStats.isDaily) return getPageSetting('dscryvoidmaps');
+	return getPageSetting('scryvoidmaps');
+}

@@ -987,9 +987,9 @@ function initialiseAllSettings() {
 				description += "<p><b>Safety First</b><br>Disables this setting.</p>";
 				description += "<p><b>Ignore Void Strength</b><br>Will ignore crits from enemies in Void maps.</p>";
 				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily mods or void maps.</p>";
-				description += "<p><b>Recommended:</b> Safety First</p>";
+				description += "<p><b>Recommended:</b> Ignore Void Strength</p>";
 				return description;
-			}, 'multitoggle', 0, null, 'Combat', [1, 2],
+			}, 'multitoggle', 1, null, 'Combat', [1],
 			function () { return (game.global.totalPortals > 0) });
 		createSetting('AutoStance',
 			function () { return (['Auto Stance Off', 'Auto Stance', 'D Stance']) },
