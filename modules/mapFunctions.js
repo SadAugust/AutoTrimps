@@ -413,6 +413,7 @@ function _mapVoidMaps(lineCheck) {
 	if (setting) {
 		const details = _runVoidMaps(setting, mapName, settingIndex, defaultSettings, farmingDetails);
 		Object.assign(farmingDetails, details);
+	}
 
 	return farmingDetails;
 }
