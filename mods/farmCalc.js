@@ -892,7 +892,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			if (forcePerfect) {
 				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
 			} else {
-				const simulatedSliders = _simulateSliders(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome);
+				const simulatedSliders = _simulateSliders(stats[i].mapLevel + game.global.world, mapModifiers.special, mapModifiers.biome);
 				const { loot, size, difficulty } = simulatedSliders.sliders;
 				if (fragments >= mapCost(simulatedSliders.mapLevel, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;
 			}

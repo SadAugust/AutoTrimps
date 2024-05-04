@@ -4459,7 +4459,7 @@ function calculateMapCost(plusLevel = 0) {
 	const mapPresets = game.global.universe === 2 ? game.global.mapPresets2 : game.global.mapPresets;
 	const { loot, difficulty, size, biome, perf, specMod } = mapPresets[`p${game.global.selectedMapPreset}`];
 
-	const mapLevel = Math.max(game.global.world + plusLevel, 6);
+	const mapLevel = Math.max(game.global.world, 6);
 	let baseCost = loot + difficulty + size;
 	baseCost *= game.global.world >= 60 ? 0.74 : 1;
 
