@@ -203,6 +203,7 @@ function shouldRunUniqueMap(map) {
 	//Stops unique maps being run when we should be destacking instead as it is likely to be slower overall.
 	const isDestackingMap = ['Desolation Destacking', 'Pandemonium Destacking', 'Mayhem Destacking'].includes(mapSettings.mapName);
 	if (isDestackingMap) return false;
+
 	const mapData = MODULES.mapFunctions.uniqueMaps[map.name];
 	if (mapData === undefined || game.global.world < mapData.zone - (trimpStats.plusLevels ? 10 : 0)) return false;
 	if (game.global.universe !== mapData.universe) return false;
@@ -246,12 +247,10 @@ function _obtainUniqueMap(uniqueMap) {
 	};
 
 	if (!uniqueMap || typeof uniqueMap !== 'string') {
-		uniqueMap = mapSettings.uniqueMap || null;
-		if (!uniqueMap) return farmingDetails;
+		if (!mapSettings.uniqueMap) return farmingDetails;
 	}
 
 	const unlockLevel = MODULES.mapFunctions.uniqueMaps[uniqueMap].zone;
-	const mapLevel = unlockLevel - game.global.world;
 
 	//Only go for this map if we are able to obtain it
 	if (!trimpStats.perfectMaps && unlockLevel > game.global.world) return farmingDetails;
@@ -259,6 +258,7 @@ function _obtainUniqueMap(uniqueMap) {
 
 	const map = game.global.mapsOwnedArray.find((map) => map.name.includes(uniqueMap));
 	const shouldMap = !map;
+	const mapLevel = unlockLevel - game.global.world;
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, mapLevel);
@@ -312,16 +312,19 @@ function shouldSpeedRun(map, achievement) {
 
 	const timeToRun = (Math.ceil(map.size / maxOneShotPower(true)) * speed) / 60;
 	const minutesThisRun = Math.floor((new Date().getTime() - game.global.portalTime) / 1000 / 60);
+	const timeToBeat = achievement.breakpoints[achievement.finished];
 
-	return minutesThisRun - timeToRun < achievement.breakpoints[achievement.finished];
+	return minutesThisRun - timeToRun < timeToBeat;
 }
 
 function runningAncientTreasure() {
 	if (!game.mapUnlocks.AncientTreasure.canRunOnce) return false;
 	if (mapSettings.ancientTreasure && getPageSetting('autoMaps') === 1) return true;
+
 	const mapName = getAncientTreasureName();
-	if (MODULES.mapFunctions.runUniqueMap === mapName) return;
+	if (MODULES.mapFunctions.runUniqueMap === mapName) return false; // Hi August, is it correct that this should be false? I added false.
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return true;
+
 	return false;
 }
 
@@ -381,11 +384,11 @@ function _getVoidMapDifficulty(map) {
 	return score;
 }
 
-function _selectEasierVoidMap(map1, map2) {
+function selectEasierVoidMap(map1, map2) {
 	return _getVoidMapDifficulty(map2) > _getVoidMapDifficulty(map1) ? map1 : map2;
 }
 
-function voidMaps(lineCheck) {
+function _mapVoidMaps(lineCheck) {
 	const mapName = 'Void Map';
 	const farmingDetails = {
 		shouldRun: false,
@@ -401,12 +404,15 @@ function voidMaps(lineCheck) {
 
 	const dailyAddition = dailyOddOrEven();
 	const settingIndex = _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition);
-	const setting = MODULES.mapFunctions.afterVoids ? _getVoidMapsHeHrSetting(defaultSettings, dailyAddition) : mapSettings.voidHDIndex ? baseSettings[mapSettings.voidHDIndex] : settingIndex ? baseSettings[settingIndex] : undefined;
+	const heHrSetting = _getVoidMapsHeHrSetting(defaultSettings, dailyAddition);
+	const setting = MODULES.mapFunctions.afterVoids ? heHrSetting : mapSettings.voidHDIndex ? baseSettings[mapSettings.voidHDIndex] : settingIndex ? baseSettings[settingIndex] : undefined;
 
 	if (setting && setting.dontMap) return farmingDetails;
 	if (lineCheck) return setting;
 
-	if (setting) Object.assign(farmingDetails, _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettings, farmingDetails));
+	if (setting) {
+		const details = _runVoidMaps(setting, mapName, settingIndex, defaultSettings, farmingDetails);
+		Object.assign(farmingDetails, details);
 
 	return farmingDetails;
 }
@@ -511,7 +517,7 @@ function _setVoidMapsInitiator(setting, settingIndex) {
 	mapSettings.voidHDIndex = settingIndex;
 }
 
-function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettings, farmingDetails) {
+function _runVoidMaps(setting, mapName, settingIndex, defaultSettings, farmingDetails) {
 	if (!mapSettings.voidTrigger && getPageSetting('autoMaps')) _setVoidMapsInitiator(setting, settingIndex);
 	mapSettings.portalAfterVoids = mapSettings.portalAfterVoids || setting.portalAfter;
 
@@ -3042,7 +3048,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	if (lineCheck) return setting;
 
 	if (setting) Object.assign(farmingDetails, _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings, voidFarm));
-	if (farmingDetails.hasVoidFarmed) return voidMaps();
+	if (farmingDetails.hasVoidFarmed) return _mapVoidMaps();
 	return farmingDetails;
 }
 
@@ -3240,11 +3246,11 @@ function farmingDecision() {
 	let mapTypes = [];
 	//U1 map settings to check for.
 	if (game.global.universe === 1) {
-		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, hdFarm, voidMaps, experience, mapBonus, toxicity, _obtainUniqueMap];
+		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, hdFarm, _mapVoidMaps, experience, mapBonus, toxicity, _obtainUniqueMap];
 
-		if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
+		if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, _mapVoidMaps, _obtainUniqueMap];
 
-		if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0) mapTypes = [voidMaps];
+		if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0) mapTypes = [_mapVoidMaps];
 
 		if (isDoingSpire() && getPageSetting('skipSpires') && game.global.mapBonus === 10) mapSettings = farmingDetails;
 	}
@@ -3254,13 +3260,13 @@ function farmingDecision() {
 		if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) return (mapSettings = farmingDetails);
 
 		//U2 map settings to check for.
-		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
+		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, _mapVoidMaps, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
 
 	if (usingBreedHeirloom()) return;
 
 	//Skipping map farming if in Decay or Melt and above stack count user input
-	if (decaySkipMaps()) mapTypes = [prestigeClimb, voidMaps, _obtainUniqueMap];
+	if (decaySkipMaps()) mapTypes = [prestigeClimb, _mapVoidMaps, _obtainUniqueMap];
 
 	const priorityList = [];
 	//If we are currently running a map and it should be continued then continue running it.

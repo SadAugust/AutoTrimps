@@ -365,7 +365,7 @@ function _checkOwnedMaps() {
 			}
 			if (map.location === 'Bionic') mapObj.bionicPool.push(map);
 			if (mapSettings.mapName === 'Void Map' && map.location === 'Void' && mapSettings.shouldRun) {
-				mapObj.voidMap = _selectEasierVoidMap(mapObj.voidMap, map);
+				mapObj.voidMap = selectEasierVoidMap(mapObj.voidMap, map);
 			}
 		}
 	}
