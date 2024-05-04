@@ -429,10 +429,10 @@ function _getVoidMapsHDObject() {
 }
 
 function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
-	let settingIndex = null;
+	let settingIndex;
 	if (!baseSettings[0].active) return settingIndex;
 	const voidReduction = trimpStats.isDaily ? dailyModiferReduction() : 0;
-	const zoneAddition = dailyAddition.active ? 1 : 0;
+	const zoneAddition = +dailyAddition.active;
 
 	const dropdowns = ['hdRatio', 'voidHDRatio'];
 	const hdTypes = ['hdType', 'hdType2'];
