@@ -224,10 +224,7 @@ function initialiseScript() {
 	loadAugustSettings();
 	_setupATButtons();
 	challengeInfo(true);
-
 	updateShieldData();
-
-	if (game.global.mapsActive) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 
 	if (_getTargetWorldType() === 'void' && !hdStats.hitsSurvivedVoid) {
 		hdStats.hitsSurvivedVoid = calcHitsSurvived(game.global.world, 'void', _getVoidPercent(game.global.world, game.global.universe));

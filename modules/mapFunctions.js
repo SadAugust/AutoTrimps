@@ -245,10 +245,8 @@ function _obtainUniqueMap(uniqueMap) {
 		mapName
 	};
 
-	if (!uniqueMap || typeof uniqueMap !== 'string') {
-		uniqueMap = mapSettings.uniqueMap || null;
-		if (!uniqueMap) return farmingDetails;
-	}
+	if (!uniqueMap || typeof uniqueMap !== 'string') uniqueMap = mapSettings.uniqueMap;
+	if (!uniqueMap) return farmingDetails;
 
 	const unlockLevel = MODULES.mapFunctions.uniqueMaps[uniqueMap].zone;
 	const mapLevel = unlockLevel - game.global.world;
@@ -600,6 +598,7 @@ function mapBonus(lineCheck) {
 function _findSettingsIndexMapBonus(settingName, baseSettings) {
 	let settingIndex = null;
 	if (!baseSettings[0].active) return settingIndex;
+
 	for (let y = 1; y < baseSettings.length; y++) {
 		let currSetting = baseSettings[y];
 		let world = currSetting.world;
@@ -2709,10 +2708,11 @@ function desolation(lineCheck, forceDestack) {
 
 function _getDesolationMapLevel(trimpHealth, mapName, mapSpecial, sliders) {
 	let mapLevel;
+	const mapObj = getCurrentMapObject();
 
 	for (let y = 10; y >= 0; y--) {
 		mapLevel = y;
-		if (game.global.mapsActive && mapSettings.mapName === mapName && (getCurrentMapObject().bonus === undefined ? '0' : getCurrentMapObject().bonus) === mapSpecial && getCurrentMapObject().level - game.global.world === mapLevel) break;
+		if (game.global.mapsActive && mapSettings.mapName === mapName && (mapObj.bonus === undefined ? '0' : mapObj) === mapSpecial && mapObj.level - game.global.world === mapLevel) break;
 		if (mapLevel === 0) break;
 		if (game.resources.fragments.owned < mapCostMin(mapLevel, mapSpecial, 'Random', sliders)) continue;
 		const enemyDmg = calcEnemyAttackCore('map', game.global.world + y, 1, 'Snimp', false, false, game.portal.Equality.radLevel) * 0.84 * 4;
@@ -2720,7 +2720,7 @@ function _getDesolationMapLevel(trimpHealth, mapName, mapSpecial, sliders) {
 		break;
 	}
 
-	if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + mapLevel) {
+	if (game.global.mapsActive && mapSettings.mapName === mapName && !mapObj.noRecycle && mapObj.level !== game.global.world + mapLevel) {
 		recycleMap_AT();
 	}
 
@@ -2729,7 +2729,6 @@ function _getDesolationMapLevel(trimpHealth, mapName, mapSpecial, sliders) {
 
 function _desolationGearScumSetting(defaultSettings) {
 	return {
-		jobratio,
 		mapLevel: 1,
 		autoLevel: true,
 		level: 1,
@@ -2757,8 +2756,8 @@ function desolationGearScum(lineCheck) {
 	if (!defaultSettings || !defaultSettings.active) return farmingDetails;
 
 	const settingIndex = findSettingsIndex(settingName, baseSettings, mapName);
-	//const setting = MODULES.mapFunctions.desoGearScum ? _desolationGearScumSetting(defaultSettings) : baseSettings[settingIndex];
-	const setting = baseSettings[settingIndex];
+	const setting = MODULES.mapFunctions.desoGearScum ? _desolationGearScumSetting(defaultSettings) : baseSettings[settingIndex];
+
 	if (lineCheck) return setting;
 
 	//if (setting) Object.assign(farmingDetails, _runDesoGearScum(setting, mapName, settingIndex));
@@ -2778,7 +2777,7 @@ function desolationGearScum(lineCheck) {
 		//Check if a max attack+gamma burst can clear the improb.
 		//If it can't continue as normal, if it can then we start the +1 map for prestige scumming.
 		let currCell = game.global.lastClearedCell + 2;
-		let name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1].name : undefined;
+		let name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[currCell - 1].name : undefined;
 		let enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, name);
 		let equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
 		let ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);

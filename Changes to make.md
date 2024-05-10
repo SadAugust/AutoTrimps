@@ -20,7 +20,8 @@
 
 2. Auto Level
 
-    - I saw a lot of switching back and forth between 2 levels in AL2, possibly due to titimps. Considering you lose the remaining titimps bonus when switching maps when calculation AL2 titimps bonus should be ignored or be considered always on
+    - I saw a lot of switching back and forth between 2 levels in AL2
+
     - Have it check the difference between 2 results and if it's within a few % use the current map
         - https://discord.com/channels/371177798305447938/371348913036197899/1187243707594977330
 

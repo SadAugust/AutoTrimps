@@ -7,7 +7,7 @@ MODULES.maps = {
 	mapRepeats: 0,
 	mapRepeatsSmithy: [0, 0, 0],
 	mapTimer: 0,
-	lastMapWeWereIn: { id: 0 },
+	lastMapWeWereIn: getCurrentMapObject() || { id: 0 },
 	fragmentCost: Infinity
 };
 
