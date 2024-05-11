@@ -1927,11 +1927,16 @@ function _runArchaeology(setting, mapName, settingName, settingIndex) {
 
 	for (let item in relicString) {
 		let relicName = game.challenges.Archaeology.getDefs()[relicString[item].slice(-1)];
+
 		if (relicName === undefined) {
-			farmingDetails.undefinedRelic = relicString[item].slice(-1);
-			return farmingDetails;
+			return {
+				shouldRun: false,
+				mapName
+			};
 		}
+
 		let relicToBuy = parseInt(relicString[item]);
+
 		if (relicToBuy > relicObj[relicName]) {
 			relicsToPurchase.push(relicString[item]);
 		}
