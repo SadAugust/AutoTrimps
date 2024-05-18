@@ -525,6 +525,12 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 			continue;
 		}
 
+		const willSurviveForever = ourHealth > enemyDmg * 100;
+		if (willSurviveForever) {
+			equality = i;
+			break;
+		}
+
 		const shouldGamma = gammaToTrigger > 1 && enemy.health > ourDmgEquality * gammaDmg;
 		if (shouldGamma) {
 			equality = maxEquality;

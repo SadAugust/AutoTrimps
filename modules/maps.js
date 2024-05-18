@@ -43,6 +43,7 @@ function autoMapsStatus(get = false) {
 	const lifetime = (resourceOwned / (resourceEarned - resourceOwned)) * 100;
 
 	if (get) {
+		status = status.replace(/<br>/g, '\n').replace(/&nbsp;/g, ' ');
 		return [status, getPercent, lifetime];
 	}
 
