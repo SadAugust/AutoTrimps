@@ -5097,7 +5097,7 @@ function _settingsToLineBreak() {
 	breakAfterIDs.forEach((id) => _setSettingLineBreaks(id, 'show'));
 	breakAfterHeirloomIDs.forEach((id) => _setSettingLineBreaks(id, heirloom));
 
-	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && (getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge') || holidayObj.holiday === 'Eggy')) || Fluffy.checkU2Allowed()) {
+	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && (holidayObj.holiday === 'Eggy' || game.stats.highestLevel.valueTotal() >= 170 || getPageSetting('heliumHourChallenge', currSettingUniverse).includes('Challenge'))) || Fluffy.checkU2Allowed()) {
 		_setSettingLineBreaks('heliumHrDontPortalBefore', 'show');
 	} else {
 		_setSettingLineBreaks('heliumHrDontPortalBefore', 'hide');
