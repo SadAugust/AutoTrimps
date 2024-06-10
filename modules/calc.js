@@ -87,6 +87,14 @@ class HDStats {
 	}
 }
 
+class ExtraItem {
+	constructor(name, extraLevels, shouldPrestige) {
+		this.name = name;
+		this.extraLevels = extraLevels;
+		this.shouldPrestige = shouldPrestige;
+	}
+}
+
 function _getVoidMapsObjects() {
 	return game.global.mapsOwnedArray.filter((map) => map.location === 'Void');
 }

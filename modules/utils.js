@@ -702,14 +702,6 @@ function nurseryHousingEfficiency(pretty = false) {
 	};
 }
 
-class ExtraItem {
-	constructor(name, extraLevels, shouldPrestige) {
-		this.name = name;
-		this.extraLevels = extraLevels;
-		this.shouldPrestige = shouldPrestige;
-	}
-}
-
 function _calcHSImpact(equipName, worldType = _getTargetWorldType(), difficulty = 1, prestigeInfo, hitsBefore) {
 	const extraAmount = prestigeInfo.shouldPrestige ? prestigeInfo.minNewLevel - 1 : 1;
 	const extraItem = new ExtraItem(equipName, extraAmount, prestigeInfo.shouldPrestige);
