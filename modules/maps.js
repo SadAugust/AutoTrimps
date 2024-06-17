@@ -173,7 +173,7 @@ function _berserkDisableMapping() {
 }
 
 function autoMaps() {
-	if (!getPageSetting('autoMaps') || !game.global.mapsUnlocked) return;
+	if (!game.global.mapsUnlocked || !getPageSetting('autoMaps')) return;
 
 	if (_checkSitInMaps()) return;
 
@@ -321,9 +321,8 @@ function _lifeMapping() {
 function _autoMapsDefaults() {
 	while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
 	if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
-	if (game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
+	if (mapSettings.mapName === 'Void Maps' && game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
 
-	//Reset to defaults when on world grid
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
 		MODULES.maps.mapTimer = 0;
