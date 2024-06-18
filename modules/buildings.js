@@ -102,7 +102,7 @@ function _checkSafeGateway(buildingStat) {
 		const base = buildingStat.cost.fragments[0];
 		const scaling = buildingStat.cost.fragments[1];
 		const nextPrice = Math.max(base * Math.pow(scaling, gatewaysOwned));
-		const cost = mapCost(10, getAvailableSpecials('lmc', true)) * safeGateway.mapCount + nextPrice;
+		const cost = mapCost(Number(safeGateway.mapLevel), getAvailableSpecials('lmc', true)) * safeGateway.mapCount + nextPrice;
 
 		return fragsOwned < cost;
 	}

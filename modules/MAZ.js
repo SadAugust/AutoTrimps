@@ -1649,7 +1649,7 @@ function autoStructureDisplay(elem) {
 		"<p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p>";
 	const nursery = "<p><b>Nursery:</b> Acts the same as the other settings but also has a 'From' input which will cause nurseries to only be built from that zone onwards. Spire nursery settings within AT will ignore this start zone if needed for them to work. If 'Advanced Nurseries' is enabled and 'Up To' is set to 0 it will override buying max available and instead respect the input.</p>";
 	const warpstation = '<p><b>Warpstation:</b> Settings for this type of building can be found in the AutoTrimp settings building tab!</p>';
-	const safeGateway = "<p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Till Z:', if that value is 0 it'll assume z999.</p>";
+	const safeGateway = "<p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a perfect LMC map of the level picked would cost up to the zone specified in 'Till Z:', if that value is 0 it'll assume z999.</p>";
 
 	tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip(false, true);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
 	tooltipText += `${baseText}`;
@@ -1678,7 +1678,7 @@ function autoStructureTable(settingGroup, hze) {
 		if (item === 'Laboratory' && hze < 130) continue;
 		if (item === 'Antenna' && game.buildings[item].locked) continue;
 		if (!building.AP && item !== 'Antenna') continue;
-		if (count !== 0 && count % 2 === 0) tooltipText += '</tr><tr>';
+		if (count !== 0 && (count % 2 === 0 || (item === 'Nursery' && hze >= 230))) tooltipText += '</tr><tr>';
 		let setting = settingGroup[item];
 		let checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
 
@@ -1689,28 +1689,51 @@ function autoStructureTable(settingGroup, hze) {
 		tooltipText += '</div></td>';
 		count++;
 	}
-	tooltipText += '</tr><tr>';
 
-	//Nursery Start Zone setting after reaching Magma
 	if (game.global.universe === 1 && hze >= 230) {
 		tooltipText += "<td><div class='row'>";
-		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + '&nbsp;&nbsp;<span>' + 'Nursery (cont)' + '</span></div>';
-		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>From: <input class='structConfigQuantity' id='nurseryFromZ" + "' type='number' value='" + (settingGroup.Nursery && settingGroup.Nursery.fromZ ? settingGroup.Nursery.fromZ : 0) + "' /></div>";
+		tooltipText += "<div class='col-xs-5' style='width: 44%; padding-right: 5px'>From Z: <input class='structConfigQuantity' id='nurseryFromZ" + "' type='number' value='" + (settingGroup.Nursery && settingGroup.Nursery.fromZ ? settingGroup.Nursery.fromZ : 0) + "' /></div>";
 	}
-	//Safe Gateway setting for u2
+
 	if (game.global.universe === 2) {
-		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'>" + buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', typeof settingGroup.SafeGateway === 'undefined' ? false : settingGroup.SafeGateway.enabled) + '&nbsp;&nbsp;<span>' + 'Safe Gateway' + '</span></div>';
-		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number' value='" + (settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount ? settingGroup.SafeGateway.mapCount : 0) + "' /></div>";
-		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigPercent' id='structMax' type='number' value='" + (settingGroup.SafeGateway && settingGroup.SafeGateway.zone ? settingGroup.SafeGateway.zone : 0) + "' /></div>";
+		const setting = settingGroup.SafeGateway;
+		let item = 'Safe Gateway';
+		let checkbox = buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', typeof setting === 'undefined' ? false : setting.enabled);
+
+		tooltipText += '</tr><tr>';
+
+		tooltipText += "<td><div class='row'>";
+		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + '</span></div>';
+		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigPercent' id='structPercent" + "' type='number' value='" + (setting && setting.mapCount ? setting.mapCount : 0) + "' /></div>";
+		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigQuantity' id='structMax' type='number' value='" + (setting && setting.zone ? setting.zone : 0) + "' /></div>";
+		tooltipText += '</div></td>';
+
+		tooltipText += "<td><div class='row'>";
+		tooltipText += "<div class='col-xs-3' style='width: 44%; padding-right: 5px'><span>Map Level:" + "&nbsp;</span><select class='structConfigPercent' id='structPercentSafeGateway'><option value='0'>0</option>";
+
+		if (hze >= 50) {
+			for (let i = 1; i <= 10; i++) {
+				tooltipText += "<option value='" + i + "'" + (setting.mapLevel === i.toString() ? " selected='selected'" : '') + '>' + i + '</option>';
+			}
+		}
+
+		tooltipText += '</select></div>';
 		tooltipText += '</div></td>';
 	}
+
+	tooltipText += '</tr><tr>';
+
 	//Portal Settings
 	const values = ['Off', 'On'];
-	tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style=' padding-right: 5px'> Setting on Portal:" + '</span></div>';
-	tooltipText += "<div class='col-xs-5 style=' width: 33%; padding-left: 5px; text-align: right'><select style='width: 70%' id='autoJobSelfGather'><option value='0'>No change</option>";
+	tooltipText += "<td><div class='row'>";
+	tooltipText += "<div class='col-xs-3' style='width: 32.5%; padding-right: 5px'><span>Setting on Portal" + '</span></div>';
+	tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'><select style='width: 100%' id='autoJobSelfGather'><option value='0'>No change</option>";
 	for (let x = 0; x < values.length; x++) {
 		tooltipText += '<option' + (settingGroup.portalOption && settingGroup.portalOption === values[x].toLowerCase() ? " selected='selected'" : '') + " value='" + values[x].toLowerCase() + "'>" + values[x] + '</option>';
 	}
+
+	tooltipText += '/></div>';
+	tooltipText += '</div></td>';
 
 	tooltipText += '</tr><tr>';
 	tooltipText += '</tr></tbody></table > ';
@@ -1742,6 +1765,8 @@ function autoStructureSave() {
 			if (zone > 999) zone = 999;
 			zone = isNumberBad(zone) ? 3 : zone;
 			setting[name].zone = zone;
+
+			setting[name].mapLevel = document.getElementById('structPercentSafeGateway').value;
 
 			continue;
 		}
@@ -1897,9 +1922,9 @@ function autoJobsTable(settingGroup, ratioJobs, percentJobs) {
 	}
 
 	const portalOptions = ['AutoJobs Off', 'Auto Ratios', 'Manual Ratios'];
-	tooltipText += "<tr><td style='width: 40%'>";
-	tooltipText += "<div class='col-xs-6' style='padding-right: 3px; font-size: 1vw; '>Setting on Portal:</div>";
-	tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'><select style='width: 100%' id='autoJobPortal'><option value='0'>No change</option>";
+	tooltipText += "<tr><td style='width: 40%'><div class='row'>";
+	tooltipText += "<div class='col-xs-6' style='width: 50%; padding-right: 5px'><span>Setting on Portal" + '</span></div>';
+	tooltipText += "<div class='col-xs-6 lowPad' style='width: 45.25%; text-align: right'><select style='width: 100%' id='autoJobPortal'><option value='0'>No change</option>";
 
 	for (let x = 0; x < portalOptions.length; x++) {
 		tooltipText += '<option' + (settingGroup.portalOption && settingGroup.portalOption === portalOptions[x].toLowerCase() ? " selected='selected'" : '') + " value='" + portalOptions[x].toLowerCase() + "'>" + portalOptions[x] + '</option>';

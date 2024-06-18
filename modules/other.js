@@ -1148,6 +1148,16 @@ function updateATVersion() {
 				setupAddonUser(true);
 			}
 		}
+
+		if (versionNumber < '6.5.78') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			if (typeof tempSettings['buildingSettingsArray'] !== 'undefined' && typeof tempSettings['buildingSettingsArray'].valueU2 !== 'undefined' && typeof tempSettings['buildingSettingsArray'].valueU2.SafeGateway !== 'undefined') {
+				autoTrimpSettings.buildingSettingsArray.valueU2.SafeGateway.mapLevel = 10;
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

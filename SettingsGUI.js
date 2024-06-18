@@ -695,7 +695,7 @@ function initialiseAllSettings() {
 			Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 0 },
 			Smithy: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
-			SafeGateway: { enabled: false, mapCount: 1, zone: 0 }
+			SafeGateway: { enabled: false, mapCount: 1, zone: 0, mapLevel: 0 }
 		}, null, 'Buildings', [1, 2],
 			function () { return false });
 

@@ -319,13 +319,12 @@ function _lifeMapping() {
 }
 
 function _autoMapsDefaults() {
-	while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
-	if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
-	if (mapSettings.mapName === 'Void Maps' && game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
-
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
 		MODULES.maps.mapTimer = 0;
+	} else {
+		if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
+		if (mapSettings.mapName === 'Void Maps' && game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
 	}
 }
 
