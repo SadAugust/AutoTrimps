@@ -176,7 +176,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 		else return 'heirloomInitial';
 	}
 
-	if (swapLooms && !game.global.fighting && !sendingArmy && getPerkLevel('Anticipation') === 0 && _breedTimeRemaining() > 0) {
+	if (swapLooms && game.global.soldierHealth <= 0 && !sendingArmy && getPerkLevel('Anticipation') === 0 && _breedTimeRemaining() > 0) {
 		if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') return 'archaeologyBreedShield';
 		if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
 	}
