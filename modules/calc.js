@@ -480,6 +480,7 @@ function getTrimpAttack(realDamage) {
 function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worldType = _getWorldType(), critMode, mapLevel = _getZone(worldType) - game.global.world, useTitimp = false, specificHeirloom = false) {
 	const runningAutoTrimps = typeof atSettings !== 'undefined';
 	const heirloomToCheck = !runningAutoTrimps ? null : !specificHeirloom ? heirloomShieldToEquip(worldType) : specificHeirloom;
+
 	const heirloom = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpAttack', 1, false);
 	const specificStance = game.global.universe === 1 ? universeSetting : false;
 	const fluctChallenge = challengeActive('Discipline') || challengeActive('Unlucky');

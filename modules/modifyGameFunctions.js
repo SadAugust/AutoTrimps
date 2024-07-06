@@ -102,9 +102,10 @@ offlineProgress.start = function () {
 	try {
 		let offlineTime = (offlineProgress.totalOfflineTime / 1000 - 86400) * 1000;
 		if (offlineTime > 0) {
+			const gameTime = getGameTime();
 			offlineTime += 86400000;
-			if (getGameTime() > game.global.portalTime + offlineTime) game.global.portalTime += offlineTime;
-			if (getGameTime() > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
+			if (gameTime > game.global.portalTime + offlineTime) game.global.portalTime += offlineTime;
+			if (gameTime > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
 		}
 		if (typeof _setTimeWarpUI === 'function') _setTimeWarpUI();
 	} catch (e) {

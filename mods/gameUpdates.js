@@ -1849,6 +1849,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 			strengthTowers: () => 1 + playerSpireTraps.Strength.getWorldBonus() / 100,
 			sharpTrimps: () => (game.singleRunBonuses.sharpTrimps.owned ? 1.5 : 1)
 		};
+
 		number = applyMultipliers(multipliers, number);
 
 		if (game.global.universe === 1) {
@@ -1868,6 +1869,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 				scryerBonus: () => (scryerBonusActive ? 2 : 1),
 				iceEmpowerment: () => (getEmpowerment() === 'Ice' ? 1 + game.empowerments.Ice.getDamageModifier() : 1)
 			};
+
 			number = applyMultipliers(multipliers, number);
 
 			const challengeMultipliers = {
@@ -1876,6 +1878,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 				Life: () => game.challenges.Life.getHealthMult(),
 				Lead: () => (game.global.world % 2 === 1 ? 1.5 : 1)
 			};
+
 			number = applyMultipliers(challengeMultipliers, number, true);
 
 			if (game.global.antiStacks > 0) updateAntiStacks();
@@ -1896,6 +1899,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 				novaStacks: () => (!game.global.mapsActive && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1),
 				spireDaily: () => (challengeActive('Daily') && Fluffy.isRewardActive('SADailies') ? Fluffy.rewardConfig.SADailies.attackMod() : 1)
 			};
+
 			number = applyMultipliers(multipliers, number);
 
 			const challengeMultipliers = {
@@ -1915,12 +1919,15 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 			};
 			number = applyMultipliers(challengeMultipliers, number, true);
 		}
+
 		if (challengeActive('Daily')) {
 			if (game.talents.daily.purchased) number *= 1.5;
+
 			if (typeof game.global.dailyChallenge.minDamage !== 'undefined') {
 				if (minFluct === -1) minFluct = fluctuation;
 				minFluct += dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength);
 			}
+
 			if (typeof game.global.dailyChallenge.maxDamage !== 'undefined') {
 				if (maxFluct === -1) maxFluct = fluctuation;
 				maxFluct += dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength);

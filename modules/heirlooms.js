@@ -188,6 +188,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 	//2) If we are in a C2/C3 then use the C3 swap zone.
 	//3) If we are running a daily then use the daily swap zone.
 	//4) Otherwise if in a filler use regular swap zone.
+
 	let swapZone =
 		trimpStats.isC3 && (currChallenge === 'frigid' || currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0
 			? getPageSetting(currChallenge + 'SwapZone')
@@ -200,7 +201,9 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 			: trimpStats.isFiller
 			? getPageSetting('heirloomSwapZone')
 			: 999;
+
 	if (swapZone <= 0) swapZone = 999;
+
 	//If we have the post void heirloom swap setting enabled and have already run void maps run this swap to afterpush shield until the end of the run
 	if (getPageSetting('heirloomPostVoidSwap') && game.stats.totalVoidMaps.value > 0) swapZone = 0;
 	//If we have the daily odd or even setting enabled and the negative daily mod is active then add one to our swap zone
@@ -208,6 +211,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 		const dailyModifiers = dailyOddOrEven();
 		if (dailyModifiers.active && swapZone % 2 === dailyModifiers.remainder) swapZone += 1;
 	}
+
 	//Challenges where abandoning your current army has the potential to be REALLY bad.
 	const dontSwap = currChallenge === 'trapper' || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20) || currChallenge === 'trappapalooza';
 	if (swapLooms) {
@@ -218,6 +222,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 		//Disable plagueSwap variable if we are querying a map
 		if (mapType === 'map' && swapLooms) MODULES.heirlooms.plagueSwap = false;
 	}
+
 	if (mapType === 'world' && !dontSwap) {
 		//Change swap zone to current zone if we're above X HD ratio.
 		if (hdCheck && getPageSetting('heirloomSwapHD') > 0 && hdStats.hdRatioHeirloom >= getPageSetting('heirloomSwapHD') && shouldAbandon(false)) swapZone = game.global.world;
@@ -241,6 +246,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 		//Otherwise set plagueSwap global variable to false to ensure we don't mess up any code later on.
 		else MODULES.heirlooms.plagueSwap = false;
 	}
+
 	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
 	if (mapType === 'world' && !dontSwap && game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
 
@@ -262,10 +268,12 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 			MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
 			game.global.voidBuff !== 'doubleAttack';
 	}
+
 	if (voidActive && (getPageSetting('heirloomVoid') !== 'undefined' || (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== 'undefined'))) {
 		if (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== 'undefined') return 'heirloomVoidPlaguebringer';
 		else return 'heirloomVoid';
 	}
+
 	//Return Duel shield if we are running that challenge with the settings active
 	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== 'undefined') return 'duelShield';
 	else if (noBreedChallenge() && getPageSetting('trapper') && getPageSetting('trapperShield') !== 'undefined') return 'trapperShield';
@@ -343,7 +351,7 @@ function heirloomSwapping(sendingArmy = false) {
 }
 
 function usingBreedHeirloom() {
-	if (game.global.mapsActive || !getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return false;
+	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return false;
 
 	let breedHeirloom = getPageSetting('heirloomBreed');
 	if (challengeActive('Archaeology') && getPageSetting('archaeology')) {

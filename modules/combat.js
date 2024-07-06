@@ -552,20 +552,22 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 		equality = maxEquality;
 	}
 
-	// Check to see if we will kill a slow enemy faster with 0 equality or by gamma bursting it
-	if (!fastEnemy) {
+	enemyDmgEquality = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, equality);
+	ourDmgEquality = _calculateDamageEquality(ourDmg, ourEqualityModifier, equality);
+
+	/* Check to see if we will kill a slow enemy faster with 0 equality or by gamma bursting it */
+	if (!fastEnemy && equality > 0) {
 		const gammaDmgCheck = gammaToTrigger <= 1 && ourDmgEquality * gammaDmg < ourDmg;
 		const wontNeedGamma = enemy.health / ourDmg <= gammaToTrigger;
 
 		if (gammaDmgCheck || wontNeedGamma) {
 			equality = 0;
-		}
 
-		if (runningUnlucky) {
-			while (_isOddValue(unluckyDmg * Math.pow(ourEqualityModifier, equality)) && equality !== maxEquality) equality++;
+			if (runningUnlucky) {
+				while (_isOddValue(unluckyDmg * Math.pow(ourEqualityModifier, equality)) && equality !== maxEquality) equality++;
+			}
 		}
 	}
-
 	_setEquality(equality);
 
 	const debugStats = getPageSetting('debugEqualityStats');

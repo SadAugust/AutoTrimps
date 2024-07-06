@@ -296,9 +296,13 @@ function checkFastEnemy(enemy = getCurrentEnemy()) {
 	return false;
 }
 
+/* Subtracts time paused from game time value */
 function getGameTime() {
 	const { start: startTime, time: globalTime } = game.global;
-	if (game.options.menu.pauseGame.enabled) return startTime + (game.options.menu.pauseGame.timeAtPause - startTime) + globalTime;
+
+	if (game.options.menu.pauseGame.enabled) {
+		return startTime + (game.options.menu.pauseGame.timeAtPause - startTime) + globalTime;
+	}
 
 	return startTime + globalTime;
 }
