@@ -324,14 +324,13 @@ function _checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType) {
 	return false;
 }
 
-function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax) {
+function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, armyReady) {
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningArchaeology = challengeActive('Archaeology');
 	const runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
 
 	if (runningTrappa || runningArchaeology || runningBerserk) return ourHealth;
 
-	const armyReady = newArmyRdy() || getPageSetting('heirloomBreed') !== 'undefined';
 	const isDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;
 	const dailyEmpower = isDaily && !mapping && typeof dailyChallenge.empower !== 'undefined';
@@ -441,7 +440,7 @@ function _getEnemyDmgMultiplier(mapping, worldType, enemy) {
 	return damageMult;
 }
 
-function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, fastEnemy, ourHealth, ourDmg, unluckyDmg) {
+function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, fastEnemy, ourHealth, ourDmg, unluckyDmg, armyReady) {
 	/* 
 	Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
 	Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy. 
@@ -558,16 +557,23 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	/* Check to see if we will kill a slow enemy faster with 0 equality or by gamma bursting it */
 	if (!fastEnemy && equality > 0) {
 		const gammaDmgCheck = gammaToTrigger <= 1 && ourDmgEquality * gammaDmg < ourDmg;
-		const wontNeedGamma = enemy.health / ourDmg <= gammaToTrigger;
+		const hitsToKill = Math.ceil(enemy.health / ourDmg);
+		const wontNeedGamma = hitsToKill <= gammaToTrigger;
 
 		if (gammaDmgCheck || wontNeedGamma) {
-			equality = 0;
+			const breedTime = !armyReady ? _breedTimeRemaining() : 0;
+			const atkSpeed = attackSpeed() / 100;
 
-			if (runningUnlucky) {
-				while (_isOddValue(unluckyDmg * Math.pow(ourEqualityModifier, equality)) && equality !== maxEquality) equality++;
+			if (breedTime < atkSpeed && (hitsToKill <= 2 || atkSpeed > _breedTotalTime())) {
+				equality = 0;
+
+				if (runningUnlucky) {
+					while (_isOddValue(unluckyDmg * Math.pow(ourEqualityModifier, equality)) && equality !== maxEquality) equality++;
+				}
 			}
 		}
 	}
+
 	_setEquality(equality);
 
 	const debugStats = getPageSetting('debugEqualityStats');
@@ -595,11 +601,13 @@ function _equalityManagementAdvanced() {
 	if (_checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType)) return;
 
 	const { enemyDmg, enemyDmgMax, enemyDmgMult } = _getEnemyDmg(mapping, worldType);
-	ourHealth = _checkSuicideArmy(worldType, mapping, ourHealth, enemyDmgMax);
+	const armyReady = newArmyRdy() || getPageSetting('heirloomBreed') !== 'undefined';
+
+	ourHealth = _checkSuicideArmy(worldType, mapping, ourHealth, enemyDmgMax, armyReady);
 
 	if (!ourHealth || enemy.health <= 0) return;
 
-	_calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, fastEnemy, ourHealth, ourDmg, unluckyDmg);
+	_calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, fastEnemy, ourHealth, ourDmg, unluckyDmg, armyReady);
 }
 
 function equalityManagement() {

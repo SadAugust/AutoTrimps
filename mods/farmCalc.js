@@ -8,6 +8,15 @@ function mastery(name) {
 	return game.talents[name].purchased;
 }
 
+function attackSpeed(hze = getHighestLevelCleared() + 1) {
+	let speed = 10 * 0.95 ** getPerkLevel('Agility');
+	if (mastery('hyperspeed')) --speed;
+	if (mastery('hyperspeed2') && game.global.world <= Math.ceil(hze / 2)) --speed;
+	if (challengeActive('Quagmire')) speed += game.challenges.Quagmire.getSpeedPenalty() / 100;
+
+	return speed;
+}
+
 function populateFarmCalcData() {
 	const runningAutoTrimps = typeof atSettings !== 'undefined';
 
@@ -35,10 +44,7 @@ function populateFarmCalcData() {
 	const uberEmpowerment = getUberEmpowerment();
 	const empowerment = getEmpowerment();
 
-	let speed = 10 * 0.95 ** getPerkLevel('Agility');
-	if (mastery('hyperspeed')) --speed;
-	if (mastery('hyperspeed2') && zone <= Math.ceil(hze / 2)) --speed;
-	if (challengeActive('Quagmire')) speed += game.challenges.Quagmire.getSpeedPenalty() / 100;
+	let speed = attackSpeed(hze);
 
 	//Challenge Checks
 	const runningUnlucky = challengeActive('Unlucky');
