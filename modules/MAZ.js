@@ -1709,7 +1709,7 @@ function autoStructureTable(settingGroup, hze) {
 		tooltipText += '</div></td>';
 
 		tooltipText += "<td><div class='row'>";
-		tooltipText += "<div class='col-xs-3' style='width: 44%; padding-right: 5px'><span>Map Level:" + "&nbsp;</span><select class='structConfigPercent' id='structPercentSafeGateway'><option value='0'>0</option>";
+		tooltipText += "<div class='col-xs-3' style='width: 44%; padding-right: 5px'><span>Map Level:" + "&nbsp;</span><select class='structConfigPercent' id='safeGatewayMapLevel'><option value='0'>0</option>";
 
 		if (hze >= 50) {
 			for (let i = 1; i <= 10; i++) {
@@ -1756,17 +1756,17 @@ function autoStructureSave() {
 		};
 
 		if (game.global.universe === 2 && name === 'SafeGateway') {
-			let count = parseInt(quantboxes[x].value, 10);
+			let count = parseInt(percentboxes[x].value, 10);
 			if (count > 10000) count = 10000;
 			count = isNumberBad(count) ? 3 : count;
 			setting[name].mapCount = count;
 
-			let zone = parseInt(percentboxes[x].value, 10);
+			let zone = parseInt(quantboxes[x].value, 10);
 			if (zone > 999) zone = 999;
 			zone = isNumberBad(zone) ? 3 : zone;
 			setting[name].zone = zone;
 
-			setting[name].mapLevel = document.getElementById('structPercentSafeGateway').value;
+			setting[name].mapLevel = document.getElementById('safeGatewayMapLevel').value;
 
 			continue;
 		}
