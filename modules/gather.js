@@ -494,8 +494,8 @@ function autoGather() {
 		if (_gatherUpgrade(upgrade, researchAvailable, hasTurkimp)) return;
 	}
 
-	if (hasTurkimp && game.global.mapsActive && trimpStats.autoMaps) {
-		if (mapSettings.gather !== undefined && mapSettings.gather !== null) {
+	if (hasTurkimp && game.global.mapsActive) {
+		if (mapSettings.gather !== undefined && mapSettings.gather !== null && trimpStats.autoMaps) {
 			safeSetGather(mapSettings.gather);
 			return;
 		}
