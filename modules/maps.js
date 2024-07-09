@@ -501,6 +501,7 @@ function _autoMapsCreate(mapObj) {
 //Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
 function _abandonMapCheck(selectedMap = null, runUnique) {
 	if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
+
 	if (game.global.currentMapId !== '') {
 		//If we don't have info on the previous map then set it.
 		if (MODULES.maps.lastMapWeWereIn.id === 0 || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
