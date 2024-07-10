@@ -337,7 +337,6 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, ar
 	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
 	const gammaMaxStacksCheck = gammaMaxStacks(false, false, worldType);
 	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
-
 	let shouldSuicide = ourHealth === 0 || armyReady || dailyEmpower || shieldBreak;
 
 	if (gammaToTrigger !== gammaMaxStacksCheck) shouldSuicide = false;
@@ -603,7 +602,7 @@ function _equalityManagementAdvanced() {
 	const { enemyDmg, enemyDmgMax, enemyDmgMult } = _getEnemyDmg(mapping, worldType);
 	const armyReady = newArmyRdy() || getPageSetting('heirloomBreed') !== 'undefined';
 
-	ourHealth = _checkSuicideArmy(worldType, mapping, ourHealth, enemyDmgMax, armyReady);
+	ourHealth = _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, armyReady);
 
 	if (!ourHealth || enemy.health <= 0) return;
 
