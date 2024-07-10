@@ -8,7 +8,7 @@ function mastery(name) {
 	return game.talents[name].purchased;
 }
 
-function attackSpeed(hze = getHighestLevelCleared() + 1) {
+function combatSpeed(hze = getHighestLevelCleared() + 1) {
 	let speed = 10 * 0.95 ** getPerkLevel('Agility');
 	if (mastery('hyperspeed')) --speed;
 	if (mastery('hyperspeed2') && game.global.world <= Math.ceil(hze / 2)) --speed;
@@ -44,7 +44,7 @@ function populateFarmCalcData() {
 	const uberEmpowerment = getUberEmpowerment();
 	const empowerment = getEmpowerment();
 
-	let speed = attackSpeed(hze);
+	let speed = combatSpeed(hze);
 
 	//Challenge Checks
 	const runningUnlucky = challengeActive('Unlucky');

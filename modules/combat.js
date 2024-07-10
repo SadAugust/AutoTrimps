@@ -561,7 +561,7 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 
 		if (gammaDmgCheck || wontNeedGamma) {
 			const breedTime = !armyReady ? _breedTimeRemaining() : 0;
-			const atkSpeed = attackSpeed() / 100;
+			const atkSpeed = combatSpeed() / 100;
 
 			if (breedTime < atkSpeed && (hitsToKill <= 2 || atkSpeed > _breedTotalTime())) {
 				equality = 0;
