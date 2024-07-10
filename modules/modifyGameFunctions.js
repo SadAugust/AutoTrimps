@@ -746,6 +746,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	const hypoWoodCost = runningHypo && hypothermiaEndZone() - 1 > game.global.world ? hypothermiaBonfireCost() : 0;
 	if (!currentOwned) currentOwned = 0;
 	if (isJob && game.global.firing && !forceRatio) return Math.floor(currentOwned * game.global.maxSplit);
+
 	for (let item in itemObj.cost) {
 		let price = itemObj.cost[item];
 		let toBuy;
@@ -758,12 +759,14 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 
 		if (item === 'fragments' && game.global.universe === 2) {
 			const buildingSetting = getPageSetting('buildingSettingsArray');
-			resourcesAvailable = buildingSetting.SafeGateway && buildingSetting.SafeGateway.zone !== 0 && game.global.world >= buildingSetting.SafeGateway.zone ? resourcesAvailable : buildingSetting.SafeGateway.enabled && resourcesAvailable > resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount ? resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount : resourcesAvailable;
+			resourcesAvailable = buildingSetting.SafeGateway && buildingSetting.SafeGateway.zone !== 0 && game.global.world >= buildingSetting.SafeGateway.zone ? resourcesAvailable : buildingSetting.SafeGateway.enabled && resourcesAvailable > resource.owned - mapCost(buildingSetting.SafeGateway.mapLevel, 'lmc') * buildingSetting.SafeGateway.mapCount ? resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount : resourcesAvailable;
 		}
+
 		if (!resource || typeof resourcesAvailable === 'undefined') {
 			console.log(`resource ${item} not found`);
 			return 1;
 		}
+
 		if (typeof price[1] !== 'undefined') {
 			let start = price[0];
 			if (isEquipment) start = Math.ceil(start * artMult);
@@ -775,6 +778,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 			if (isBuilding && getPerkLevel('Resourceful')) price = Math.ceil(price * getResourcefulMult());
 			toBuy = Math.floor(resourcesAvailable / price);
 		}
+
 		if (mostAfford === -1 || mostAfford > toBuy) mostAfford = toBuy;
 	}
 
