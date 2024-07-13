@@ -1208,6 +1208,7 @@ function enemyDamageModifiers() {
 			Lead: () => 1 + game.challenges.Lead.stacks * 0.04,
 			Corrupted: () => 3
 		};
+
 		attack = applyMultipliers(challengeMultipliers, attack, true);
 
 		if (game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
@@ -1224,6 +1225,7 @@ function enemyDamageModifiers() {
 			Pandemonium: () => (!game.global.mapsActive && game.global.lastClearedCell + 2 === 100 ? game.challenges.Pandemonium.getBossMult() : game.challenges.Pandemonium.getPandMult()),
 			Glass: () => game.challenges.Glass.attackMult()
 		};
+
 		attack = applyMultipliers(challengeMultipliers, attack, true);
 
 		const cell = game.global.gridArray[game.global.lastClearedCell + 1];
@@ -1231,6 +1233,7 @@ function enemyDamageModifiers() {
 			if (cell.u2Mutation && cell.u2Mutation.length > 0 && (cell.u2Mutation.includes('RGE') || (cell.cc && cell.cc[3] > 0))) {
 				attack *= u2Mutations.types.Rage.enemyAttackMult();
 			}
+
 			attack *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 		}
 	}

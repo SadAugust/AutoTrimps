@@ -759,7 +759,11 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 
 		if (item === 'fragments' && game.global.universe === 2) {
 			const buildingSetting = getPageSetting('buildingSettingsArray');
-			resourcesAvailable = buildingSetting.SafeGateway && buildingSetting.SafeGateway.zone !== 0 && game.global.world >= buildingSetting.SafeGateway.zone ? resourcesAvailable : buildingSetting.SafeGateway.enabled && resourcesAvailable > resource.owned - mapCost(buildingSetting.SafeGateway.mapLevel, 'lmc') * buildingSetting.SafeGateway.mapCount ? resource.owned - mapCost(10, 'lmc') * buildingSetting.SafeGateway.mapCount : resourcesAvailable;
+			if (buildingSetting.SafeGateway) {
+				const { enabled, zone, mapLevel, mapCount } = buildingSetting.SafeGateway;
+
+				resourcesAvailable = zone !== 0 && game.global.world >= zone ? resourcesAvailable : enabled && resourcesAvailable > resource.owned - mapCost(mapLevel, 'lmc') * mapCount ? resource.owned - mapCost(10, 'lmc') * mapCount : resourcesAvailable;
+			}
 		}
 
 		if (!resource || typeof resourcesAvailable === 'undefined') {

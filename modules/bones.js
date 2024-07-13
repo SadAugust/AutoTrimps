@@ -46,6 +46,7 @@ function _getBoneShrineSetting(baseSettings, defaultSetting) {
 		defaultSetting.atlantrimp = false;
 		defaultSetting.boneamount = 1;
 		defaultSetting.priority = 0;
+
 		return defaultSetting;
 	}
 
@@ -53,6 +54,7 @@ function _getBoneShrineSetting(baseSettings, defaultSetting) {
 		const currSetting = baseSettings[i];
 		const world = currSetting.world;
 		if (!settingShouldRun(currSetting, world, 0, 'boneShrineSettings')) continue;
+
 		return baseSettings[i];
 	}
 }
@@ -66,6 +68,7 @@ function _getBoneShrineCharges(setting) {
 	const boneShrineSpendBelow = setting.bonebelow === -1 ? 0 : setting.bonebelow;
 	const boneCharges = game.permaBoneBonuses.boosts.charges;
 	if (!setting.autoBone && setting.boneamount > boneCharges - boneShrineSpendBelow) return boneCharges - boneShrineSpendBelow;
+
 	return setting.boneamount;
 }
 
@@ -74,6 +77,7 @@ function boneShrineOutput(charges) {
 	const resources = Object.keys(resourceMaps).map(_calcResource(charges));
 	let totals = Object.entries(resourceMaps).map((resourceMap, i) => _findTotal(resourceMap, resources[i]));
 	totals = totals.map((x) => prettify(x));
+
 	return `${totals[0]} Food, ${totals[1]} Wood, and ${totals[2]} Metal.`;
 }
 
@@ -115,6 +119,7 @@ function buySingleRunBonuses() {
 	}
 
 	if (!trimpStats.isDaily || game.singleRunBonuses.heliumy.owned || game.global.b < 100) return;
+
 	const heliumySetting = getPageSetting('heliumyPercent', game.global.universe);
 	if (heliumySetting <= 0 || getDailyHeliumValue(countDailyWeight()) < heliumySetting) return;
 

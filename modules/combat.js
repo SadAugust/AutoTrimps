@@ -403,6 +403,7 @@ function _getEnemyDmg(mapping, worldType) {
 function _getEnemyDmgMultiplier(mapping, worldType, enemy) {
 	let damageMult = 1;
 	if (game.global.voidBuff === 'doubleAttack') damageMult += 2;
+	const ignoreCrits = getPageSetting('ignoreCrits');
 
 	const gammaMaxStacksCheck = _getGammaMaxStacks(worldType);
 	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
@@ -410,13 +411,13 @@ function _getEnemyDmgMultiplier(mapping, worldType, enemy) {
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningArch = challengeActive('Archaeology');
 	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
-	if (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArch || shieldBreak)) damageMult += 5;
+	if (game.global.voidBuff === 'getCrit' && ignoreCrits === 0 && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArch || shieldBreak)) damageMult += 5;
 
 	if (challengeActive('Daily')) {
 		const dailyChallenge = game.global.dailyChallenge;
 		const dailyEmpower = typeof dailyChallenge.empower !== 'undefined';
 		const dailyEmpowerCheck = dailyEmpower && getPageSetting('empowerAutoEquality');
-		const dailyCrit = typeof dailyChallenge.crits !== 'undefined';
+		const dailyCrit = typeof dailyChallenge.crits !== 'undefined' && ignoreCrits !== 2;
 		const dailyExplosive = typeof dailyChallenge.explosive !== 'undefined';
 
 		if (dailyCrit && ((dailyEmpowerCheck && !mapping) || MODULES.maps.slowScumming)) {

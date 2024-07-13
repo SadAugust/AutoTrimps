@@ -148,11 +148,13 @@ function loadModules(fileName, prefix = '') {
 
 function loadScriptsAT() {
 	console.time();
+
 	if (usingRealTimeOffline) {
 		clearTimeout(offlineProgress.loop); /* Disable offline progress loop */
 	} else {
 		gameLoop = function () {}; /* Disable game from running until script loads to ensure no time is spent without AT running */
 	}
+
 	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
 	basepath = `${atSettings.initialise.basepathOriginal}css/`;
 	const scripts = Array.from(document.getElementsByTagName('script'));
