@@ -387,7 +387,20 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
 		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
 		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
 
-	//Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
+	if (challengeActive('Scientist') && game.global.world >= 11 && !mapsOwned.includes('The Block') && !uniqueMapsToGet.includes('The Block')) {
+		const theBlockDetails = {
+			name: 'The Block',
+			location: 'Block',
+			level: 11,
+			difficulty: 1.3,
+			size: 100
+		};
+
+		const canFinishBlock = enoughHealth(theBlockDetails);
+		if (canFinishBlock) uniqueMapsToGet.push('The Block');
+	}
+
+	/* Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned. */
 	if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = _obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
 }
 
@@ -426,7 +439,7 @@ function _setMapRepeat() {
 		if (!mapSettings.shouldRun) repeatClicked();
 		if (game.global.repeatMap && mapSettings.biome && mapSettings.biome === 'Any' && mapObj.location === 'Forest') repeatClicked();
 		if (game.global.repeatMap && MODULES.mapFunctions.runUniqueMap) repeatClicked();
-		if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605) repeatClicked();
+		if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605 && getPageSetting('experience')) repeatClicked();
 		if (mapSettings.prestigeFragMapBought && game.global.repeatMap) prestigeRaidingMapping();
 
 		if (game.global.repeatMap && !mapSettings.prestigeFragMapBought) {

@@ -8,7 +8,7 @@ MODULES.mapFunctions = {
 };
 
 MODULES.mapFunctions.uniqueMaps = Object.freeze({
-	//Universe 1 Unique Maps
+	/* Universe 1 Unique Maps */
 	'The Block': {
 		zone: 11,
 		challenges: ['Scientist', 'Trimp'],
@@ -93,7 +93,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 			return false;
 		}
 	},
-	//Universe 2 Unique Maps
+	/* Universe 2 Unique Maps */
 	'Big Wall': {
 		zone: 7,
 		challenges: [''],
@@ -1513,7 +1513,7 @@ function bionicRaiding(lineCheck) {
 
 	const defaultSettings = baseSettings[0];
 	if (!defaultSettings || !defaultSettings.active) return farmingDetails;
-	if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
+	if (challengeActive('Experience') && game.global.world > 600 && getPageSetting('experience')) return farmingDetails;
 
 	const settingIndex = findSettingsIndex(settingName, baseSettings, mapName);
 	const setting = baseSettings[settingIndex];
@@ -1573,7 +1573,7 @@ function bionicRaidingMapping(bionicPool) {
 		}
 	}
 
-	const raidingZone = challengeActive('Experience') && game.global.world > 600 ? getPageSetting('experienceEndBW') : mapSettings.raidingZone;
+	const raidingZone = challengeActive('Experience') && game.global.world > 600 && getPageSetting('experience') ? getPageSetting('experienceEndBW') : mapSettings.raidingZone;
 	const bionicToCheck = findLastBionicWithItems(bionicPool);
 
 	if (game.global.preMapsActive) {
