@@ -11,6 +11,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	/* Universe 1 Unique Maps */
 	'The Block': {
 		zone: 11,
+		difficulty: 1.3,
 		challenges: ['Scientist', 'Trimp'],
 		speedrun: 'blockTimed',
 		universe: 1,
@@ -24,6 +25,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'The Wall': {
 		zone: 15,
+		difficulty: 1.5,
 		challenges: [],
 		speedrun: 'wallTimed',
 		universe: 1,
@@ -37,6 +39,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Dimension of Anger': {
 		zone: 20,
+		difficulty: 2.5,
 		challenges: ['Discipline', 'Metal', 'Size', 'Frugal', 'Coordinate'],
 		speedrun: 'angerTimed',
 		universe: 1,
@@ -50,6 +53,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Trimple Of Doom': {
 		zone: 33,
+		difficulty: 1.8,
 		challenges: ['Meditate', 'Trapper'],
 		speedrun: 'doomTimed',
 		universe: 1,
@@ -62,6 +66,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'The Prison': {
 		zone: 80,
+		difficulty: 2.6,
 		challenges: ['Electricity', 'Mapocalypse'],
 		speedrun: 'prisonTimed',
 		universe: 1,
@@ -74,6 +79,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Bionic Wonderland': {
 		zone: 125,
+		difficulty: 2.6,
 		challenges: ['Crushed'],
 		speedrun: 'bionicTimed',
 		universe: 1,
@@ -84,6 +90,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Imploding Star': {
 		zone: 170,
+		difficulty: 3.2,
 		challenges: ['Devastation'],
 		speedrun: 'starTimed',
 		universe: 1,
@@ -96,6 +103,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	/* Universe 2 Unique Maps */
 	'Big Wall': {
 		zone: 7,
+		difficulty: 3.5,
 		challenges: [''],
 		speedrun: 'bigWallTimed',
 		universe: 2,
@@ -109,6 +117,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Dimension of Rage': {
 		zone: 16,
+		difficulty: 6,
 		challenges: ['Unlucky'],
 		speedrun: '',
 		universe: 2,
@@ -122,6 +131,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Prismatic Palace': {
 		zone: 20,
+		difficulty: 4,
 		challenges: [''],
 		speedrun: 'palaceTimed',
 		universe: 2,
@@ -133,6 +143,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	Atlantrimp: {
 		zone: 33,
+		difficulty: 1.8,
 		challenges: [''],
 		speedrun: 'atlantrimpTimed',
 		universe: 2,
@@ -145,6 +156,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Melting Point': {
 		zone: 50,
+		difficulty: 3.5,
 		challenges: [''],
 		speedrun: 'meltingTimed',
 		universe: 2,
@@ -167,6 +179,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'The Black Bog': {
 		zone: 6,
+		difficulty: 3,
 		challenges: [''],
 		speedrun: '',
 		universe: 2,
@@ -178,6 +191,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 	},
 	'Frozen Castle': {
 		zone: 175,
+		difficulty: 5,
 		challenges: [''],
 		speedrun: '',
 		universe: 2,
@@ -214,8 +228,8 @@ function shouldRunUniqueMap(map) {
 	/* if (mapData.speedrun && shouldSpeedRun(map, game.achievements[mapData.speedrun]) && enoughHealth(map) && enoughDamage(map)) {
 		return true;
 	} */
-	//Disable mapping if we don't have enough health to survive the map and the corresponding setting is enabled.
 
+	//Disable mapping if we don't have enough health to survive the map and the corresponding setting is enabled.
 	if (getPageSetting('uniqueMapEnoughHealth') && !enoughHealth(map)) return false;
 
 	//Check to see if the cell is liquified and if so we can replace the cell condition with it

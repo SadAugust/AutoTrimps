@@ -150,9 +150,10 @@ function decaySkipMaps() {
 
 	const challenge = game.challenges[challengeName];
 	const currentStacks = challenge ? challenge.stacks : 0;
-	const stacksToPush = getPageSetting('decayStacksToPush');
+	const maxStacks = challengeName === 'Melt' ? 500 : 999;
+	const stacksToPush = Math.min(getPageSetting('decayStacksToPush'), maxStacks);
 
-	return stacksToPush > 0 && currentStacks > stacksToPush;
+	return stacksToPush > 0 && currentStacks >= stacksToPush;
 }
 
 function _leadDisableMapping() {
@@ -387,17 +388,22 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
 		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
 		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
 
-	if (challengeActive('Scientist') && game.global.world >= 11 && !mapsOwned.includes('The Block') && !uniqueMapsToGet.includes('The Block')) {
-		const theBlockDetails = {
-			name: 'The Block',
-			location: 'Block',
-			level: 11,
-			difficulty: 1.3,
-			size: 100
-		};
+	let challengeMap = 'none';
+	if (challengeActive('Scientist')) challengeMap = 'The Block';
+	/* else if (challengeActive('Electricity') || challengeActive('Mapocalypse')) challengeMap = 'The Prison'; */
 
-		const canFinishBlock = enoughHealth(theBlockDetails);
-		if (canFinishBlock) uniqueMapsToGet.push('The Block');
+	if (challengeMap !== 'none' && !mapsOwned.includes(challengeMap) && !uniqueMapsToGet.includes(challengeMap)) {
+		const mapDetails = MODULES.mapFunctions.uniqueMaps[challengeMap];
+
+		if (game.global.world >= mapDetails.zone) {
+			mapDetails.name = challengeMap;
+			mapDetails.location = 'map';
+			mapDetails.size = mapDetails.name === 'The Black Bog' ? 150 : 100;
+			mapDetails.level = mapDetails.zone;
+
+			const canFinishChallenge = enoughHealth(mapDetails);
+			if (canFinishChallenge) uniqueMapsToGet.push(challengeMap);
+		}
 	}
 
 	/* Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned. */

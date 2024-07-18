@@ -1746,9 +1746,13 @@ function initialiseAllSettings() {
 		createSetting('decayStacksToPush',
 			function () { return ((currSettingUniverse === 2 ? 'M' : 'D') + ': Stacks to Push') },
 			function () {
-				let description = "<p>Will ignore maps and push to end the zone if we go above this amount of stacks.</p>";
-				description += "<p>Both Prestige Climb and Void Maps will override this and still run when above this stack count.</p>";
+				const challengeName = currSettingUniverse === 2 ? 'Melt' : 'Decay';
+				const maxStacks = challengeName === 'Melt' ? 500 : 999;
+
+				let description = "<p>Will ignore maps and push to end the zone when you are at or above this amount of stacks.</p>";
+				description += "<p>Both Prestige Climb and Void Maps will override this setting and still run.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>Inputs above the max stack value (<b>" + (maxStacks) + "</b>) are treated as max stack inputs.</p>";
 				description += "<p><b>Recommended:</b> 150</p>";
 				return description;
 			}, 'value', -1, null, 'Challenges', [1, 2],
@@ -1756,8 +1760,12 @@ function initialiseAllSettings() {
 		createSetting('decayStacksToAbandon',
 			function () { return ((currSettingUniverse === 2 ? 'M' : 'D') + ': Stacks to Abandon') },
 			function () {
-				let description = "<p>Will abandon the challenge if you go above this amount of stacks.</p>";
+				const challengeName = currSettingUniverse === 2 ? 'Melt' : 'Decay';
+				const maxStacks = challengeName === 'Melt' ? 500 : 999;
+				
+				let description = "<p>Will abandon the challenge when you are at or above this amount of stacks.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>Inputs above the max stack value (<b>" + (maxStacks) + "</b>) are treated as max stack inputs.</p>";
 				description += "<p><b>Recommended:</b> 400</p>";
 				return description;
 			}, 'value', -1, null, 'Challenges', [1, 2],

@@ -561,9 +561,10 @@ function decayFinishChallenge() {
 
 	const challenge = game.challenges[challengeName];
 	const currentStacks = challenge ? challenge.stacks : 0;
-	const stacksToAbandon = getPageSetting('decayStacksToAbandon');
+	const maxStacks = challengeName === 'Melt' ? 500 : 999;
+	const stacksToAbandon = Math.min(getPageSetting('decayStacksToAbandon'), maxStacks);
 
-	if (stacksToAbandon > 0 && currentStacks > stacksToAbandon) {
+	if (stacksToAbandon > 0 && currentStacks >= stacksToAbandon) {
 		abandonChallenge();
 		debug(`Finished ${challengeName} challenge because we had more than ${stacksToAbandon} stacks.`, 'general', 'oil');
 	}
