@@ -3424,12 +3424,12 @@ function _reduceMapSliders(special) {
 	while (lootAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) lootAdvMapsRange.value -= 1;
 
 	//Set biome to random if we have jestimps/caches we can run since size will be by far the most important that way
-	if (!trimpStats.mountainPriority && updateMapCost(true) > fragmentsOwned && !challengeActive('Metal')) document.getElementById('biomeAdvMapsSelect').value = 'Random';
+	if (!trimpStats.mountainPriority && updateMapCost(true) > fragmentsOwned && !challengeActive('Metal') && mapSettings.mapName !== 'Alchemy Farm') document.getElementById('biomeAdvMapsSelect').value = 'Random';
 	if (updateMapCost(true) > fragmentsOwned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) document.getElementById('advSpecialSelect').value = 0;
 
 	while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) sizeAdvMapsRange.value -= 1;
 	if (updateMapCost(true) > fragmentsOwned) document.getElementById('advSpecialSelect').value = 0;
-	if (trimpStats.mountainPriority && updateMapCost(true) > fragmentsOwned && !challengeActive('Metal')) {
+	if (trimpStats.mountainPriority && updateMapCost(true) > fragmentsOwned && !challengeActive('Metal') && mapSettings.mapName !== 'Alchemy Farm') {
 		document.getElementById('biomeAdvMapsSelect').value = 'Random';
 		updateMapCost();
 	}

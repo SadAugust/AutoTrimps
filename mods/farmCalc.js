@@ -559,13 +559,12 @@ function simulate(saveData, zone) {
 		return seed * rand_mult;
 	}
 
-	let difficulty = saveData.difficulty;
-	let mapSize = saveData.size;
+	let { difficulty, mapSize, mapSpecial } = saveData;
 
 	if (typeof atSettings !== 'undefined') {
 		const mapLevel = zone - game.global.world;
-		const simulateMap = _simulateSliders(zone, saveData.special, saveData.mapBiome);
-		let mapOwned = findMap(mapLevel, saveData.special, saveData.mapBiome);
+		const simulateMap = _simulateSliders(zone, mapSpecial, saveData.mapBiome);
+		let mapOwned = findMap(mapLevel, mapSpecial, saveData.mapBiome);
 		if (!mapOwned) mapOwned = findMap(mapLevel, simulateMap.special, simulateMap.location, simulateMap.perfect);
 		if (mapOwned) {
 			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
@@ -574,6 +573,7 @@ function simulate(saveData, zone) {
 		} else {
 			difficulty = Number(simulateMap.difficulty);
 			mapSize = Number(simulateMap.size);
+			mapSpecial = simulateMap.special;
 		}
 	}
 
@@ -830,6 +830,7 @@ function simulate(saveData, zone) {
 			if (titimp < 0) titimp = 0;
 			titimp = Math.max(titimp + 30, 45);
 		}
+
 		//Handles post death Nature effects.
 		if (magma) {
 			const increasedBy = pbTurns * saveData.natureIncrease;
