@@ -266,7 +266,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 }
 
 const autoLevelContainer = document.createElement('DIV');
-autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);');
+autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; padding-bottom: 4px;');
 const autoLevelText = document.createElement('SPAN');
 autoLevelContainer.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
 autoLevelContainer.setAttribute('onmouseout', 'tooltip("hide")');

@@ -2,7 +2,21 @@
 
 #empHide,
 #unempHide {
-	font-size: 1.1em;
+	font-size: 0.9em;
+}
+
+.playerGather {
+	font-size: 1.05vw;
+}
+
+#trapArea {
+	border: 1px solid white;
+	display: inline-block;
+	font-size: 1vw;
+	padding: 2%;
+	margin-bottom: 2%;
+	margin-top: 2%;
+	width: 85%;
 }
 
 .sizeSecReduced {
