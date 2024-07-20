@@ -470,7 +470,8 @@ function lootDestack(zone, saveData) {
 function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 	const mapLevel = zone - saveData.zone;
 	const bionic2Multiplier = mastery('bionic2') && zone > saveData.zone ? 1.5 : 1;
-	const loot = lootFunction(zone, saveData);
+	let loot = lootFunction(zone, saveData);
+
 	const result = {
 		mapLevel,
 		zone: `z${zone}`,
@@ -489,7 +490,9 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 
-		const { speed, equality, killSpeed } = simulate(saveData, zone);
+		const { speed, equality, killSpeed, special } = simulate(saveData, zone);
+		if (special === '0' && saveData.specialTime > 0) loot /= saveData.specialTime;
+
 		const value = speed * loot * lootMultiplier;
 		result[stance] = {
 			speed,
@@ -530,7 +533,6 @@ function simulate(saveData, zone) {
 		ice = 0;
 	let gammaStacks = 0,
 		burstDamage = 0;
-	const energyShieldMax = saveData.trimpShield;
 	let mayhemPoison = 0;
 	let duelPoints = game.challenges.Duel.trimpStacks;
 	let glassStacks = game.challenges.Glass.shards;
@@ -549,6 +551,8 @@ function simulate(saveData, zone) {
 
 	let kills = 0;
 	let deaths = 0;
+
+	const energyShieldMax = saveData.trimpShield;
 	let initialShield;
 	let energyShield = energyShieldMax;
 
@@ -568,8 +572,10 @@ function simulate(saveData, zone) {
 	if (typeof atSettings !== 'undefined') {
 		const mapLevel = zone - game.global.world;
 		const simulateMap = _simulateSliders(zone, special, saveData.mapBiome);
+
 		let mapOwned = findMap(mapLevel, special, saveData.mapBiome);
 		if (!mapOwned) mapOwned = findMap(mapLevel, simulateMap.special, simulateMap.location, simulateMap.perfect);
+
 		if (mapOwned) {
 			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
 			difficulty = Number(map.difficulty);
@@ -855,12 +861,15 @@ function simulate(saveData, zone) {
 			if (zone >= saveData.zone) glassStacks -= 2;
 			glassStacks = Math.max(0, glassStacks);
 		}
+
 		if (saveData.berserk) {
 			trimpHealth += saveData.health / 100;
 			if (trimpHealth > saveData.health) trimpHealth = saveData.health;
 		}
+
 		++cell;
 		++kills;
+
 		if (cell >= size) {
 			cell = 0;
 			plague_damage = 0;
@@ -871,9 +880,10 @@ function simulate(saveData, zone) {
 
 	return {
 		speed: (loot * 10) / max_ticks,
-		equality: equality,
+		equality,
 		killSpeed: kills / (max_ticks / 10),
-		deaths: deaths
+		deaths,
+		special
 	};
 }
 
