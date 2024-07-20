@@ -78,6 +78,8 @@ function _needHousing(houseName, ignoreAffordability, displayCheck) {
 
 	if (houseName === 'Gateway') {
 		/* Use Safe Gateways for U2 */
+
+		if (MODULES.maps.fragmentFarming) return false;
 		if (game.global.universe === 2) return !_checkSafeGateway(buildingStat);
 
 		if (game.buildings.Hub.locked) {

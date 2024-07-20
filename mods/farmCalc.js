@@ -64,7 +64,7 @@ function populateFarmCalcData() {
 	let universeSetting = universe === 1 ? stances : 0;
 	//Trimps Stats
 	const dmgType = runningUnlucky ? 'max' : 'min';
-	//TODO Review this parameters, specially the stance one
+
 	let trimpAttack = calcOurDmg(dmgType, universeSetting, false, 'map', 'never', 0);
 	let trimpHealth = calcOurHealth(universe === 2 ? shieldBreak : 'X', 'map');
 	let trimpBlock = universe === 1 ? calcOurBlock('X', false, 'map') : 0;
@@ -342,6 +342,9 @@ function populateFarmCalcData() {
 		}
 	}
 
+	const special = getAvailableSpecials('lmc');
+	const specialTime = getSpecialTime(special);
+
 	return {
 		//Base Info
 		universe,
@@ -353,7 +356,8 @@ function populateFarmCalcData() {
 		reducer: haveMapReducer,
 		biome: _getBiomeEnemyStats(biome),
 		fragments: game.resources.fragments.owned,
-		mapSpecial: getAvailableSpecials('lmc'),
+		special,
+		specialTime,
 		mapBiome: biome,
 
 		difficulty: game.resources.fragments.owned < mapCost() && game.jobs.Explorer.locked ? 1.1 : ((perfectMaps ? 75 : 84) + (challengeActive('Mapocalypse') ? 300 : 0)) / 100,
@@ -474,7 +478,7 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 		killSpeed: 0,
 		stance: 'X',
 		loot,
-		canAffordPerfect: saveData.fragments >= mapCost(mapLevel, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9])
+		canAffordPerfect: saveData.fragments >= mapCost(mapLevel, saveData.special, saveData.mapBiome, [9, 9, 9])
 	};
 
 	//Loop through all stances to identify which stance is best for farming
@@ -559,21 +563,21 @@ function simulate(saveData, zone) {
 		return seed * rand_mult;
 	}
 
-	let { difficulty, mapSize, mapSpecial } = saveData;
+	let { difficulty, size, special } = saveData;
 
 	if (typeof atSettings !== 'undefined') {
 		const mapLevel = zone - game.global.world;
-		const simulateMap = _simulateSliders(zone, mapSpecial, saveData.mapBiome);
-		let mapOwned = findMap(mapLevel, mapSpecial, saveData.mapBiome);
+		const simulateMap = _simulateSliders(zone, special, saveData.mapBiome);
+		let mapOwned = findMap(mapLevel, special, saveData.mapBiome);
 		if (!mapOwned) mapOwned = findMap(mapLevel, simulateMap.special, simulateMap.location, simulateMap.perfect);
 		if (mapOwned) {
 			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
 			difficulty = Number(map.difficulty);
-			mapSize = Number(map.size);
+			size = Number(map.size);
 		} else {
 			difficulty = Number(simulateMap.difficulty);
-			mapSize = Number(simulateMap.size);
-			mapSpecial = simulateMap.special;
+			size = Number(simulateMap.size);
+			special = simulateMap.special;
 		}
 	}
 
@@ -600,7 +604,7 @@ function simulate(saveData, zone) {
 			enemyName = 'Moltimp';
 		}
 
-		equality = equalityQuery(enemyName, zone, mapSize, 'map', difficulty);
+		equality = equalityQuery(enemyName, zone, size, 'map', difficulty);
 	}
 
 	const equalityPower = Math.pow(0.9, equality);
@@ -609,7 +613,7 @@ function simulate(saveData, zone) {
 		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyName);
 		let enemyAttack = calcEnemyBaseAttack('map', zone, cell + 1, enemyName);
 
-		const domMod = saveData.domination ? (cell === mapSize ? 2.5 : 0.1) : 1;
+		const domMod = saveData.domination ? (cell === size ? 2.5 : 0.1) : 1;
 
 		return {
 			attack: enemyAttack * difficulty * saveData.challenge_attack * domMod * corruptionScaleAttack,
@@ -617,7 +621,7 @@ function simulate(saveData, zone) {
 		};
 	};
 
-	const mapArray = Array.from({ length: mapSize }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
+	const mapArray = Array.from({ length: size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
 
 	function reduceTrimpHealth(amt) {
 		if (saveData.mayhem) mayhemPoison += amt * 0.2;
@@ -857,7 +861,7 @@ function simulate(saveData, zone) {
 		}
 		++cell;
 		++kills;
-		if (cell >= mapSize) {
+		if (cell >= size) {
 			cell = 0;
 			plague_damage = 0;
 			ok_damage = 0;

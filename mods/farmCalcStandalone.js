@@ -91,6 +91,15 @@ function getAvailableSpecials(special, skipCaches) {
 	return bestMod;
 }
 
+function getSpecialTime(special) {
+	if (special === 'lmc') return 20;
+	if (special === 'lc') return 14;
+	if (special === 'smc') return 10;
+	if (special === 'hc') return 7;
+
+	return 0;
+}
+
 //I have no idea where loot > drops, hopefully somebody can tell me one day :)
 function getBiome(mapGoal, resourceGoal) {
 	const dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220) || challengeActive('Metal');

@@ -3386,6 +3386,15 @@ function getAvailableSpecials(special, skipCaches) {
 	return bestMod;
 }
 
+function getSpecialTime(special) {
+	if (special === 'lmc') return 20;
+	if (special === 'lc') return 14;
+	if (special === 'smc') return 10;
+	if (special === 'hc') return 7;
+
+	return 0;
+}
+
 function setMapSliders(pluslevel, special = '0', biome = getBiome(), mapSliders = [9, 9, 9], perfectMaps = true) {
 	let maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
@@ -4110,10 +4119,12 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 				}
 			}
 		}
+
 		const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapLevel > -mapBonusMinSetting - Math.abs(mapBonusLevel);
 		const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && mapObj.level >= mapBonusMinLevel;
 		forceMapBonus = (needPrestiges || aboveMinMapLevel) && !willCapMapBonus;
 		canAffordMap = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
+
 		if (game.global.universe === 1 && forceMapBonus) {
 			const mapOwned = getEnoughHealthMap(mapBonusLevel, mapModifiers.special, mapModifiers.biome);
 			forceMapBonus = enoughHealth(mapOwned, 'avg');
