@@ -733,7 +733,7 @@ MODULES.autoPerks = {
 
 		//Setup Auto Allocate button
 		let allocateText = 'Clears all perks and buy optimal levels in each perk.';
-		if (calcName === 'Surky') allocateText += '<br>Increments your target zone, tribute, meteorologist, collector & smithy values to your current run values if they are higher than your inputs.';
+		if (calcName === 'Surky') allocateText = '<br>Sets your target zone, tribute, meteorologist, collector & smithy values to your current run values if they are higher than your inputs.<br><br>' + allocateText;
 
 		apGUI.$allocatorBtn = document.createElement('DIV');
 		apGUI.$allocatorBtn.id = 'allocatorBtn';
