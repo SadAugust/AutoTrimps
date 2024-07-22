@@ -1034,7 +1034,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 	let linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';
 	linkStylesheet.type = 'text/css';
-	linkStylesheet.href = basepathFarmCalc + 'css/tabsStandalone.css';
+	linkStylesheet.href = basepathFarmCalc + 'css/farmCalc.css';
 	document.head.appendChild(linkStylesheet);
 
 	function injectScript(id, src) {

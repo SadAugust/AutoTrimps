@@ -1,0 +1,29 @@
+/* farmCalc CSS overrides */
+#empHide,
+#unempHide {
+	font-size: 0.9em;
+}
+
+.playerGather {
+	font-size: 1.05vw;
+}
+
+#trapArea {
+	border: 1px solid white;
+	display: inline-block;
+	font-size: 1vw;
+	padding: 2%;
+	margin-bottom: 2%;
+	margin-top: 2%;
+	width: 85%;
+}
+
+.sizeSecReduced {
+	font-size: 1em !important;
+	margin-top: 0.2em;
+}
+
+#titleRow {
+	height: 4.7vw;
+	margin-bottom: 0.5vw;
+}

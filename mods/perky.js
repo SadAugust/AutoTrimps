@@ -732,11 +732,14 @@ MODULES.autoPerks = {
 		const apGUI = MODULES.autoPerks.GUI;
 
 		//Setup Auto Allocate button
+		let allocateText = 'Clears all perks and buy optimal levels in each perk.';
+		if (calcName === 'Surky') allocateText += '<br>Increments your target zone, tribute, meteorologist, collector & smithy values to your current run values if they are higher than your inputs.';
+
 		apGUI.$allocatorBtn = document.createElement('DIV');
 		apGUI.$allocatorBtn.id = 'allocatorBtn';
 		apGUI.$allocatorBtn.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
 		apGUI.$allocatorBtn.setAttribute('onclick', 'run' + calcName + '()');
-		apGUI.$allocatorBtn.setAttribute('onmouseover', 'tooltip("Auto Allocate", "customText", event, "Clears all perks and buy optimal levels in each perk.")');
+		apGUI.$allocatorBtn.setAttribute('onmouseover', `tooltip("Auto Allocate", "customText", event, \`${allocateText}\`)`);
 		apGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
 		apGUI.$allocatorBtn.textContent = 'Allocate Perks';
 		//Distance from Portal/Cancel/Respec buttons
@@ -810,8 +813,10 @@ MODULES.autoPerks = {
 		} else if (calcName === 'Surky') {
 			if (!settingInputs) {
 				saveSurkySettings(true);
+				fillPresetSurky('ezfarm', true);
 				settingInputs = JSON.parse(localStorage.getItem(calcName.toLowerCase() + 'Inputs'));
 			}
+
 			const preset = settingInputs.preset || 'ezfarm';
 			document.querySelector('#preset').value = preset;
 			document.querySelector('#radonPerRunDiv').style.display = 'none';
@@ -1157,10 +1162,12 @@ portalClicked = function () {
 /* If using standalone version then when load Surky and CSS files. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	/* Load CSS so that the UI is visible */
+	let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
+	/* basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
 	const linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';
 	linkStylesheet.type = 'text/css';
-	linkStylesheet.href = 'https://sadaugust.github.io/AutoTrimps/css/tabsStandalone.css';
+	linkStylesheet.href = basepathFarmCalc + 'css/perky.css';
 	document.head.appendChild(linkStylesheet);
 
 	function injectScript(id, src) {
@@ -1171,7 +1178,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		document.head.appendChild(script);
 	}
 
-	injectScript('AutoTrimps-SadAugust_Surky', 'https://sadaugust.github.io/AutoTrimps/mods/surky.js');
+	injectScript('AutoTrimps-SadAugust_Surky', basepathFarmCalc + 'mods/surky.js');
 
 	/* Load the portal UI */
 	setTimeout(function () {

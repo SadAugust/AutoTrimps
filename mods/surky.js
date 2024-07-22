@@ -31,6 +31,7 @@ function initPresetSurky() {
 
 	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
 	const presets = {};
+
 	for (let item of presetNames) {
 		const value = item.value;
 		if (value.includes('— ')) continue;
@@ -53,6 +54,7 @@ function saveSurkySettings() {
 	MODULES.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
 	});
+
 	//Save inputs for all the presets that users can select.
 	//Overrides data for current preset otherwises saves any already saved data for the others.
 	const presetNames = Array.from(document.querySelectorAll('#preset > *'));
@@ -71,7 +73,7 @@ function saveSurkySettings() {
 }
 
 // fill preset weights from the dropdown menu and set special challenge
-function fillPresetSurky(specificPreset) {
+function fillPresetSurky(specificPreset, forceDefault) {
 	if (specificPreset) $$('#preset').value = specificPreset;
 
 	const defaultWeights = {
@@ -91,9 +93,11 @@ function fillPresetSurky(specificPreset) {
 		resplus: [1, 0, 0],
 		trappacarp: [1, 0, 0]
 	};
+
 	const localData = initPresetSurky();
 	const preset = $$('#preset').value;
-	const weights = localData[preset] === null || localData[preset] === undefined ? defaultWeights[preset] : localData[preset];
+	const weights = localData[preset] === null || localData[preset] === undefined || forceDefault ? defaultWeights[preset] : localData[preset];
+
 	$$('#clearWeight').value = weights[0];
 	$$('#survivalWeight').value = weights[1];
 	$$('#radonWeight').value = weights[2];
@@ -1218,6 +1222,7 @@ function autobuyPerks(props, perks) {
 		const maxCarpLevels = Math.log((props.perksRadon / perks.Carpentry.priceBase) * (perks.Carpentry.priceFact - 1) + 1) / Math.log(perks.Carpentry.priceFact);
 		props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * props.scaffMult;
 	}
+
 	// optimize Trumps for Downsize
 	perks.Trumps.optimize = props.specialChallenge === 'downsize';
 	props = efficiencyFlag(props, perks);
