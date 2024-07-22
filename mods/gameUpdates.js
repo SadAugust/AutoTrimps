@@ -299,8 +299,8 @@ function updateSideTrimps() {
 	let elemText = prettify(trimps.employed);
 	if (elem.innerHTML != elemText && shouldUpdate()) elem.innerHTML = elemText;
 
-	const multitaskingMult = game.permaBoneBonuses.multitasking.owned ? game.permaBoneBonuses.multitasking.mult() : 1;
-	const breedEmployed = trimps.employed * multitaskingMult;
+	const multitaskingMult = game.permaBoneBonuses.multitasking.owned ? game.permaBoneBonuses.multitasking.mult() : 0;
+	const breedEmployed = trimps.employed * (1 - multitaskingMult);
 	const breedCount = trimps.owned - breedEmployed > 2 ? prettify(Math.floor(trimps.owned - breedEmployed)) : 0;
 
 	elem = document.getElementById('trimpsUnemployed');
