@@ -22,8 +22,8 @@ function populateFarmCalcData() {
 
 	let imps = 0;
 	for (let imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp']) imps += game.unlocks.imps[imp];
-
 	if (game.talents.magimp.purchased) imps++;
+
 	let exoticChance = 3;
 	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
 	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
@@ -389,7 +389,7 @@ function populateFarmCalcData() {
 		gammaMult,
 		range: maxFluct / minFluct - 1,
 		plaguebringer: (plaguebrought === 2 ? 0.5 : 0) + (runningAutoTrimps ? getHeirloomBonus_AT('Shield', 'plaguebringer', customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
-		equalityMult: game.global.universe === 2 ? (runningAutoTrimps ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getMult(true)) : 1,
+		equalityMult: game.global.universe === 2 ? (runningAutoTrimps ? getPlayerEqualityMult_AT(customShield) : game.portal.Equality.getModifier(true)) : 1,
 		//Enemy Stats
 		challenge_health: enemyHealth,
 		challenge_attack: enemyAttack,
@@ -628,6 +628,9 @@ function simulate(saveData, zone) {
 	};
 
 	const mapArray = Array.from({ length: size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
+	/* if (zone === 85) {
+		mArray = mapArray;
+	} */
 
 	function reduceTrimpHealth(amt) {
 		if (saveData.mayhem) mayhemPoison += amt * 0.2;
@@ -646,7 +649,6 @@ function simulate(saveData, zone) {
 
 	function enemy_hit(enemyAttack, rngRoll) {
 		enemyAttack *= 1 + saveData.fluctuation * (2 * rngRoll - 1);
-
 		if (saveData.duel) {
 			enemyCC = 1 - duelPoints / 100;
 			if (duelPoints < 50) enemyAttack *= 3;
@@ -705,6 +707,7 @@ function simulate(saveData, zone) {
 			//Check if we didn't kill the enemy last turn for Wither & Glass checks
 			if (enemyHealth !== enemy_max_hp) {
 				oneShot = false;
+
 				if (saveData.wither) {
 					enemyHealth = Math.max(enemy_max_hp, enemyHealth + enemy_max_hp * 0.25);
 					if (enemyHealth === enemy_max_hp) {
@@ -712,6 +715,7 @@ function simulate(saveData, zone) {
 						trimpHealth = 0;
 					}
 				}
+
 				if (saveData.glass) {
 					enemyAttack /= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 					glassStacks++;
@@ -754,6 +758,7 @@ function simulate(saveData, zone) {
 
 				if (checkFrenzy && (frenzyLeft < 0 || (frenzyRefresh && frenzyLeft < saveData.frenzyDuration / 2))) {
 					const roll = Math.floor(Math.random() * 1000);
+
 					if (roll < saveData.frenzyChance) {
 						frenzyLeft = saveData.frenzyDuration;
 						frenzyRefresh = true;
@@ -767,8 +772,10 @@ function simulate(saveData, zone) {
 
 			if (enemyHealth >= 1) {
 				if (saveData.glass) glassStacks++;
+
 				if (!armyDead() && saveData.gammaMult > 1) {
 					gammaStacks++;
+
 					if (gammaStacks >= saveData.gammaCharges) {
 						gammaStacks = 0;
 						burstDamage = trimpAttack * saveData.gammaMult;
@@ -832,7 +839,35 @@ function simulate(saveData, zone) {
 			frenzyLeft -= saveData.speed / 10;
 		}
 
-		if (saveData.explosion && (saveData.explosion <= 15 || (trimpBlock >= saveData.health && universe !== 2))) trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - trimpBlock);
+		if (saveData.explosion && (saveData.explosion <= 15 || (trimpBlock >= saveData.health && universe !== 2))) {
+			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - trimpBlock);
+
+			if (armyDead()) {
+				ticks += Math.ceil(turns * saveData.speed);
+				ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
+				last_group_sent = ticks;
+				trimpOverkill = Math.abs(trimpHealth);
+				trimpHealth = saveData.health;
+				energyShield = energyShieldMax;
+
+				ticks += 1;
+				turns = 1;
+				debuff_stacks = 0;
+				if (deaths === 0) saveData.atk /= saveData.rampage;
+				gammaStacks = 0;
+				frenzyLeft /= 2;
+				frenzyRefresh = false;
+				deaths++;
+
+				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = max_ticks;
+				//Amp enemy dmg and health by 25% per stack
+				if (saveData.nom) {
+					enemyAttack *= 1.25;
+					enemyHealth = Math.min(enemyHealth + 0.05 * enemy_max_hp, enemy_max_hp);
+				}
+			}
+		}
+
 		loot++;
 		if (saveData.ok_spread > 0) ok_damage = -enemyHealth * saveData.overkill;
 		ticks += +(turns > 0) + +(saveData.speed > 9) + Math.ceil(turns * saveData.speed);
@@ -1021,6 +1056,7 @@ function _getBiomeEnemyStats(biome) {
 		[1.05, 0.8, true],
 		[0.9, 1.1, true]
 	];
+
 	const enemyBiome = [...baseEnemyBiome, ...biomes[biome]];
 	return enemyBiome;
 }

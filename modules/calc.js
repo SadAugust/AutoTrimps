@@ -580,7 +580,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 
 		const equalityLevel = getPerkLevel('Equality');
 		if (equalityLevel > 0 && universeSetting > 0) {
-			const equalityMult = runningAutoTrimps ? getPlayerEqualityMult_AT(heirloomToCheck) : game.portal.Equality.getMult(true);
+			const equalityMult = runningAutoTrimps ? getPlayerEqualityMult_AT(heirloomToCheck) : game.portal.Equality.getModifier(true);
 			attack *= Math.pow(equalityMult, universeSetting);
 		}
 	}
@@ -1329,7 +1329,7 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 	let ourDmgEquality = 0;
 	let enemyDmgEquality = 0;
 	let unluckyDmgEquality = 0;
-	const ourEqualityModifier = typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(heirloomShieldToEquip(worldType)) : game.portal.Equality.getMult(true);
+	const ourEqualityModifier = typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(heirloomShieldToEquip(worldType)) : game.portal.Equality.getModifier(true);
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
 	//Accounting for enemies hitting multiple times per gamma burst
