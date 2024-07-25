@@ -627,32 +627,33 @@ function makeAdditionalInfoTooltip(mouseover) {
 	}
 }
 
-function makeAdditionalInfo() {
-	//Void, AutoLevel, Breed Timer, Tenacity information
-	let lineBreak = ` | `;
-	let description = ``;
+if (typeof makeAdditionalInfo !== 'function')
+	function makeAdditionalInfo() {
+		//Void, AutoLevel, Breed Timer, Tenacity information
+		let lineBreak = ` | `;
+		let description = ``;
 
-	if (game.permaBoneBonuses.voidMaps.owned > 0) {
-		let voidValue = game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10;
-		description += `V: ${voidValue}/10`;
-		description += lineBreak;
+		if (game.permaBoneBonuses.voidMaps.owned > 0) {
+			let voidValue = game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10;
+			description += `V: ${voidValue}/10`;
+			description += lineBreak;
+		}
+
+		description += `AL: (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
+
+		if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
+			const breedTimer = Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000);
+			description += lineBreak;
+			description += `B: ${breedTimer.toFixed(0)}s`;
+		}
+		//Tenacity timer when you have tenacity
+		else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
+			description += lineBreak;
+			description += `T: ${Math.floor(game.portal.Tenacity.getTime())}m`;
+		}
+
+		return description;
 	}
-
-	description += `AL: (L:${hdStats.autoLevelLoot} S:${hdStats.autoLevelSpeed})`;
-
-	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
-		const breedTimer = Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000);
-		description += lineBreak;
-		description += `B: ${breedTimer.toFixed(0)}s`;
-	}
-	//Tenacity timer when you have tenacity
-	else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
-		description += lineBreak;
-		description += `T: ${Math.floor(game.portal.Tenacity.getTime())}m`;
-	}
-
-	return description;
-}
 
 /* 
 raspberry pi related setting changes
