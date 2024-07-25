@@ -1,4 +1,69 @@
-function ImportExportTooltip(what, event) {}
+function importExportTooltip(event, titleText) {
+	const eventHandlers = {
+		mapSettings: mapSettingsDisplay,
+		AutoStructure: autoStructureDisplay,
+		AutoJobs: autoJobsDisplay,
+		UniqueMaps: uniqueMapsDisplay,
+		MessageConfig: messageDisplay,
+		DailyAutoPortal: dailyPortalModsDisplay,
+		c2Runner: c2RunnerDisplay,
+		/* Import Export Functions */
+		exportAutoTrimps: _displayExportAutoTrimps,
+		importAutoTrimps: _displayImportAutoTrimps,
+		spireImport: _displaySpireImport,
+		priorityOrder: _displayPriorityOrder,
+		c2table: _displayC2Table,
+		resetDefaultSettingsProfiles: _displayResetDefaultSettingsProfiles,
+		disableSettingsProfiles: _displayDisableSettingsProfiles,
+		setCustomChallenge: _displaySetCustomChallenge,
+		timeWarp: _displayTimeWarp,
+		resetPerkPreset: _displayResetPerkPreset
+	};
+
+	const titleTexts = {
+		AutoStructure: 'Configure AutoTrimps AutoStructure',
+		AutoJobs: 'Configure AutoTrimps AutoJobs',
+		UniqueMaps: 'Unique Maps',
+		MessageConfig: 'Message Config',
+		DailyAutoPortal: 'Daily Auto Portal',
+		c2Runner: _getChallenge2Info() + ' Runner',
+		/* Import Export Titles */
+		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
+		importAutoTrimps: 'Import AutoTrimps Settings',
+		spireImport: 'Import Spire Settings',
+		priorityOrder: 'Priority Order Table',
+		c2table: _getChallenge2Info() + ' Table',
+		resetDefaultSettingsProfiles: 'Reset Default Settings',
+		disableSettingsProfiles: 'Disable All Settings',
+		setCustomChallenge: 'Set Custom Challenge',
+		timeWarp: 'Time Warp Hours',
+		resetPerkPreset: 'Reset Perk Preset Weights'
+	};
+
+	cancelTooltip();
+	let tooltipDiv = document.getElementById('tooltipDiv');
+	let tooltipText;
+	let costText = '';
+	let ondisplay = null;
+	if (event !== 'mapSettings') swapClass('tooltipExtra', 'tooltipExtraNone', tooltipDiv);
+
+	if (eventHandlers[event]) {
+		titleText = titleTexts[event] || titleText;
+		[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText);
+	}
+
+	if (event) {
+		game.global.lockTooltip = true;
+		document.getElementById('tipText').className = '';
+		document.getElementById('tipText').innerHTML = tooltipText;
+		document.getElementById('tipTitle').innerHTML = titleText;
+		document.getElementById('tipCost').innerHTML = costText;
+		tooltipDiv.style.display = 'block';
+		if (typeof ondisplay === 'function') ondisplay();
+	}
+
+	if (titleText === 'downloadSave') _downloadSave(event);
+}
 
 function _displayImportAutoTrimps(tooltipDiv) {
 	const tooltipText = "Import your AutoTrimps setting string to load those settings.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
@@ -914,4 +979,19 @@ function makeResourceTooltip(mouseover) {
 		tooltip(`${resource} per hour info`, 'customText', 'lock', tooltipText, false, 'center');
 		_verticalCenterTooltip(true);
 	}
+}
+
+function _displayResetPerkPreset(tooltipDiv) {
+	const tooltipText = `This will restore your selected preset to its original values.<br><br/>Are you sure you want to do this?`;
+	const costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); fillPreset${MODULES.autoPerks.loaded}(perkCalcPreset(), true);'>Reset to Preset Defaults</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>`;
+
+	const ondisplay = function () {
+		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
+		else verticalCenterTooltip(true);
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }

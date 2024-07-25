@@ -528,7 +528,7 @@ function downloadSave(portal) {
 	if (!getPageSetting('downloadSaves')) return;
 	if (portal && !portalWindowOpen) return;
 
-	MAZLookalike(null, 'downloadSave');
+	importExportTooltip(null, 'downloadSave');
 }
 
 function _assembleChangelog(changes) {

@@ -1,5 +1,8 @@
 //Setup for non-AT users
 if (typeof MODULES === 'undefined') MODULES = {};
+if (typeof _displaySpireImport !== 'function') function _displaySpireImport() {}
+if (typeof _getChallenge2Info !== 'function') function _getChallenge2Info() {}
+if (typeof importExportTooltip !== 'function') function importExportTooltip() {}
 
 if (typeof $$ !== 'function') {
 	$$ = function (a) {
@@ -127,7 +130,7 @@ function initPresetPerky() {
 	};
 }
 
-function fillPresetPerky(specificPreset) {
+function fillPresetPerky(specificPreset, forceDefault) {
 	if (specificPreset) $$('#preset').value = specificPreset;
 
 	const defaultWeights = {
@@ -157,12 +160,13 @@ function fillPresetPerky(specificPreset) {
 
 	const localData = initPresetPerky();
 	const preset = $$('#preset').value;
-	const weights = localData[preset] === null || localData[preset] === undefined ? defaultWeights[preset] : localData[preset];
+	const weights = localData[preset] === null || localData[preset] === undefined || forceDefault ? defaultWeights[preset] : localData[preset];
 
 	const ids = ['weight-he', 'weight-atk', 'weight-hp', 'weight-xp'];
 	ids.forEach((id, index) => {
 		document.querySelector(`#${id}`).value = +weights[index];
 	});
+
 	savePerkySettings();
 }
 
@@ -795,6 +799,19 @@ MODULES.autoPerks = {
 		let $portalWrapper = document.getElementById('portalWrapper');
 		$portalWrapper.appendChild(apGUI.$customRatios);
 
+		//Amend reset to default weights below input boxes
+		let resetWeightsText = 'Clears your current input values for this preset and resets them to their default values.';
+
+		apGUI.$resetWeightsBtn = document.createElement('DIV');
+		apGUI.$resetWeightsBtn.id = 'resetWeightsBtn';
+		apGUI.$resetWeightsBtn.setAttribute('class', 'noselect challengeThing thing settingBtnfalse'); /* 
+		apGUI.$resetWeightsBtn.setAttribute('onclick', `fillPreset${calcName}(perkCalcPreset(), true)`); */
+		apGUI.$resetWeightsBtn.setAttribute('onclick', `importExportTooltip("resetPerkPreset", "${calcName}");`);
+		apGUI.$resetWeightsBtn.setAttribute('onmouseover', `tooltip("Reset Preset Weights", "customText", event, \`${resetWeightsText}\`)`);
+		apGUI.$resetWeightsBtn.setAttribute('onmouseout', 'tooltip("hide")');
+		apGUI.$resetWeightsBtn.textContent = 'Reset Preset Weights';
+		if (document.getElementById(apGUI.$resetWeightsBtn.id) === null) apGUI.$customRatios.appendChild(apGUI.$resetWeightsBtn);
+
 		if (calcName === 'Perky') {
 			if (!settingInputs) {
 				document.querySelector('#targetZone').value = Math.max(20, game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
@@ -1141,6 +1158,10 @@ MODULES.autoPerks = {
 	}
 };
 
+function perkCalcPreset() {
+	return document.querySelector('#preset').value;
+}
+
 var originalSwapPortalUniverse = swapPortalUniverse;
 swapPortalUniverse = function () {
 	originalSwapPortalUniverse(...arguments);
@@ -1179,6 +1200,8 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 	}
 
 	injectScript('AutoTrimps-SadAugust_Surky', basepathFarmCalc + 'mods/surky.js');
+	injectScript('AutoTrimps-SadAugust_Import-Export', basepathFarmCalc + 'modules/import-export.js');
+	injectScript('AutoTrimps-SadAugust_MAZ', basepathFarmCalc + 'modules/MAZ.js');
 
 	/* Load the portal UI */
 	setTimeout(function () {

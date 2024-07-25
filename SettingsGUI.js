@@ -1550,7 +1550,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '-1', mapCap: 100 }], 'MAZLookalike("mapSettings", "HD Farm")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '-1', mapCap: 100 }], 'importExportTooltip("mapSettings", "HD Farm")', 'Maps', [1, 2]);
 
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
@@ -1559,7 +1559,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, hitsSurvived: 1 }], 'MAZLookalike("mapSettings", "Void Map")', 'Maps', [1, 2],
+			}, 'mazArray', [{ active: false, hitsSurvived: 1 }], 'importExportTooltip("mapSettings", "Void Map")', 'Maps', [1, 2],
 			function () { return (game.global.totalPortals > 0) });
 
 		createSetting('boneShrineSettings',
@@ -1569,7 +1569,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bone Shrine")', 'Maps', [1, 2],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Bone Shrine")', 'Maps', [1, 2],
 			function () { return (game.permaBoneBonuses.boosts.owned > 0) });
 
 		createSetting('worshipperFarmSettings',
@@ -1579,7 +1579,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Worshipper Farm")', 'Maps', [2],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Worshipper Farm")', 'Maps', [2],
 			function () { return game.stats.highestRadLevel.valueTotal() >= 50 });
 
 		createSetting('uniqueMapSettingsArray',
@@ -1608,7 +1608,7 @@ function initialiseAllSettings() {
 			"MP Smithy Daily": { enabled: false, value: 100 },
 			"MP Smithy C3": { enabled: false, value: 100 },
 			"MP Smithy One Off": { enabled: false, value: 100 },
-		}, 'MAZLookalike("UniqueMaps")', 'Maps', [1, 2]);
+		}, 'importExportTooltip("UniqueMaps")', 'Maps', [1, 2]);
 
 		createSetting('uniqueMapEnoughHealth',
 			function () { return ('Unique Map Health Check') },
@@ -1625,7 +1625,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false, jobratio: '-1', special: '0', }], 'MAZLookalike("mapSettings", "Map Bonus")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false, jobratio: '-1', special: '0', }], 'importExportTooltip("mapSettings", "Map Bonus")', 'Maps', [1, 2]);
 
 		createSetting('mapFarmSettings',
 			function () { return ('Map Farm Settings') },
@@ -1634,7 +1634,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Map Farm")', 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Map Farm")', 'Maps', [1, 2]);
 
 		createSetting('raidingSettings',
 			function () { return ('Raiding Settings') },
@@ -1643,7 +1643,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Raiding")', 'Maps', [1, 2],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Raiding")', 'Maps', [1, 2],
 			function () { return (currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 50 : game.stats.highestLevel.valueTotal() >= 210) });
 
 		createSetting('bionicRaidingSettings',
@@ -1653,7 +1653,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Bionic Raiding")', 'Maps', [1],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Bionic Raiding")', 'Maps', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 125) });
 
 		createSetting('tributeFarmSettings',
@@ -1663,7 +1663,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Tribute Farm")', 'Maps', [2]);
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Tribute Farm")', 'Maps', [2]);
 
 		createSetting('smithyFarmSettings',
 			function () { return ('Smithy Farm Settings') },
@@ -1672,7 +1672,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Smithy Farm")', 'Maps', [2]);
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Smithy Farm")', 'Maps', [2]);
 	}
 	
 	const displayChallenges = true;
@@ -1807,7 +1807,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Toxicity")', 'Challenges', [1]);
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Toxicity")', 'Challenges', [1]);
 
 		createSetting('archaeology',
 			function () { return ('Archaeology') },
@@ -1881,7 +1881,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Quagmire")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Quagmire")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
 
 		createSetting('archaeologySettings',
@@ -1891,7 +1891,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Archaeology")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Archaeology")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 90) });
 			
 		createSetting('insanitySettings',
@@ -1901,7 +1901,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Insanity")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Insanity")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 110) });
 
 		createSetting('alchemySettings',
@@ -1911,7 +1911,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Alchemy")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Alchemy")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 155) });
 
 		createSetting('hypothermiaSettings',
@@ -1922,7 +1922,7 @@ function initialiseAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
 			},
-			'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Hypothermia")', 'Challenges', [2],
+			'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Hypothermia")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
 	}
 
@@ -1948,7 +1948,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>";
 				description += "<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>";
 				return description;
-			}, 'infoclick', null, 'MAZLookalike("c2table")', 'C2', [0]);
+			}, 'infoclick', null, 'importExportTooltip("c2table")', 'C2', [0]);
 
 		createSetting('c2SharpTrimps',
 			function () { return (_getChallenge2Info() + ' Sharp Trimps') },
@@ -2008,7 +2008,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				return description;
 			},
-			'mazArray', {}, 'MAZLookalike("c2Runner")', 'C2', [1, 2],
+			'mazArray', {}, 'importExportTooltip("c2Runner")', 'C2', [1, 2],
 			function () {
 				return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1)
 			});
@@ -2696,7 +2696,7 @@ function initialiseAllSettings() {
 				description += "<p><b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'MAZLookalike("mapSettings", "Desolation Gear Scumming")', 'C2', [2],
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Desolation Gear Scumming")', 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		createSetting('smithless',
@@ -3739,7 +3739,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("mapSettings", "Auto Golden")', 'Golden', [1, 2]);
+			}, 'mazArray', [], 'importExportTooltip("mapSettings", "Auto Golden")', 'Golden', [1, 2]);
 	}
 	
 	const displaySpire = true;
@@ -4284,21 +4284,21 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Import a AutoTrimps settings file.</p>";
 				return description;
-			}, 'infoclick', null, 'MAZLookalike("importAutoTrimps")', 'Import Export', [0]);
+			}, 'infoclick', null, 'importExportTooltip("importAutoTrimps")', 'Import Export', [0]);
 
 		createSetting('exportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
 				let description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
 				return description;
-			}, 'infoclick', null, 'MAZLookalike("exportAutoTrimps")', 'Import Export', [0]);
+			}, 'infoclick', null, 'importExportTooltip("exportAutoTrimps")', 'Import Export', [0]);
 
 		createSetting('downloadForDebug',
 			function () { return ('Download For Debug') },
 			function () {
 				let description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
 				return description;
-			}, 'action', null, 'MAZLookalike("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
+			}, 'action', null, 'importExportTooltip("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
 
 		createSetting('updateReload',
 			function () { return ('Reload For Updates') },
@@ -4314,7 +4314,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Reset everything to the way it was when you first installed the script.</p>";
 				return description;
-			}, 'infoclick', null, 'MAZLookalike("resetDefaultSettingsProfiles")', 'Import Export', [0]);
+			}, 'infoclick', null, 'importExportTooltip("resetDefaultSettingsProfiles")', 'Import Export', [0]);
 
 
 		createSetting('disableAutoTrimpsSettings',
@@ -4322,7 +4322,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Overrides your settings and disables all available features.</p>";
 				return description;
-			}, 'infoclick', null, 'MAZLookalike("disableSettingsProfiles")', 'Import Export', [0]);
+			}, 'infoclick', null, 'importExportTooltip("disableSettingsProfiles")', 'Import Export', [0]);
 
 		createSetting('autoAllocatePresets',
 			function () { return ('Auto Allocate Presets') },
@@ -4390,7 +4390,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
 				return description;
-			}, 'action', null, 'MAZLookalike("priorityOrder")', 'Help', [0]);
+			}, 'action', null, 'importExportTooltip("priorityOrder")', 'Help', [0]);
 		/* createSetting('helpFragments',
 			function () { return ('Fragment Decisions') },
 			function () {
@@ -4423,7 +4423,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will set the challenge that Trimps is running to your input.</p>";
 				return description;
-			}, 'action', null, 'MAZLookalike("setCustomChallenge");', 'Test', [0]);
+			}, 'action', null, 'importExportTooltip("setCustomChallenge");', 'Test', [0]);
 
 		createSetting('testSetC2',
 			function () { return ('Toggle ' + _getChallenge2Info()) },
@@ -4454,7 +4454,7 @@ function initialiseAllSettings() {
 				let description = "<p>Allows you to input how many hours of Time Warp you would like to do.</p>";
 				description += "<p>If you input a value higher than 24 it will increase the max time you can time warp for to the value you have input.</p>";
 				return description;
-			}, 'action', null, 'MAZLookalike("timeWarp");', 'Test', [0]);
+			}, 'action', null, 'importExportTooltip("timeWarp");', 'Test', [0]);
 
 		createSetting('testTotalEquipmentCost',
 			function () { return ('Total Equipment Cost') },
@@ -4640,7 +4640,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	if (id === 'dailyPortal') {
 		const autoPortalSettings = _createElement('DIV', {
 			id: 'autoPortalSettingsBtn',
-			onclick: 'MAZLookalike("DailyAutoPortal")',
+			onclick: 'importExportTooltip("DailyAutoPortal")',
 			class: 'settingsBtnLocalCogwheel',
 			style: 'margin-left:-1px;'
 		});
@@ -5183,7 +5183,7 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 		},
 		[settingInfo.type === 'multitoggle' ? autoTrimpSettings[id].name()[setting] : autoTrimpSettings[id].name()]
 	);
-	const settings = _createElement('DIV', { onclick: `MAZLookalike("Auto${label}")` });
+	const settings = _createElement('DIV', { onclick: `importExportTooltip("Auto${label}")` });
 	const settingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
 
 	container.appendChild(text);
@@ -5411,7 +5411,7 @@ function _createMessagesButton() {
 	const atBtnSettings = _createElement('button', {
 		id: 'logConfigBtn',
 		type: 'button',
-		onclick: 'MAZLookalike("MessageConfig")',
+		onclick: 'importExportTooltip("MessageConfig")',
 		class: 'btn btn-default logFlt'
 	});
 

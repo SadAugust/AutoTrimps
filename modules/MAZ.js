@@ -1,68 +1,3 @@
-function MAZLookalike(event, titleText) {
-	const eventHandlers = {
-		mapSettings: mapSettingsDisplay,
-		AutoStructure: autoStructureDisplay,
-		AutoJobs: autoJobsDisplay,
-		UniqueMaps: uniqueMapsDisplay,
-		MessageConfig: messageDisplay,
-		DailyAutoPortal: dailyPortalModsDisplay,
-		c2Runner: c2RunnerDisplay,
-		/* Import Export Functions */
-		exportAutoTrimps: _displayExportAutoTrimps,
-		importAutoTrimps: _displayImportAutoTrimps,
-		spireImport: _displaySpireImport,
-		priorityOrder: _displayPriorityOrder,
-		c2table: _displayC2Table,
-		resetDefaultSettingsProfiles: _displayResetDefaultSettingsProfiles,
-		disableSettingsProfiles: _displayDisableSettingsProfiles,
-		setCustomChallenge: _displaySetCustomChallenge,
-		timeWarp: _displayTimeWarp
-	};
-
-	const titleTexts = {
-		AutoStructure: 'Configure AutoTrimps AutoStructure',
-		AutoJobs: 'Configure AutoTrimps AutoJobs',
-		UniqueMaps: 'Unique Maps',
-		MessageConfig: 'Message Config',
-		DailyAutoPortal: 'Daily Auto Portal',
-		c2Runner: _getChallenge2Info() + ' Runner',
-		/* Import Export Titles */
-		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
-		importAutoTrimps: 'Import AutoTrimps Settings',
-		spireImport: 'Import Spire Settings',
-		priorityOrder: 'Priority Order Table',
-		c2table: _getChallenge2Info() + ' Table',
-		resetDefaultSettingsProfiles: 'Reset Default Settings',
-		disableSettingsProfiles: 'Disable All Settings',
-		setCustomChallenge: 'Set Custom Challenge',
-		timeWarp: 'Time Warp Hours'
-	};
-
-	cancelTooltip();
-	let tooltipDiv = document.getElementById('tooltipDiv');
-	let tooltipText;
-	let costText = '';
-	let ondisplay = null;
-	if (event !== 'mapSettings') swapClass('tooltipExtra', 'tooltipExtraNone', tooltipDiv);
-
-	if (eventHandlers[event]) {
-		titleText = titleTexts[event] || titleText;
-		[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText);
-	}
-
-	if (event) {
-		game.global.lockTooltip = true;
-		document.getElementById('tipText').className = '';
-		document.getElementById('tipText').innerHTML = tooltipText;
-		document.getElementById('tipTitle').innerHTML = titleText;
-		document.getElementById('tipCost').innerHTML = costText;
-		tooltipDiv.style.display = 'block';
-		if (typeof ondisplay === 'function') ondisplay();
-	}
-
-	if (titleText === 'downloadSave') _downloadSave(event);
-}
-
 function mapSettingsDisplay(elem, titleText) {
 	MODULES.popups.mazWindowOpen = true;
 
@@ -986,7 +921,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	const elem = document.getElementById('tooltipDiv');
 	swapClass(document.getElementById('tooltipDiv').classList[0], 'tooltipExtraNone', elem);
 	cancelTooltip(true);
-	if (reopen) MAZLookalike('mapSettings', titleText);
+	if (reopen) importExportTooltip('mapSettings', titleText);
 
 	//Disable Void Map global variables when saving Void Map settings to ensure we aren't running voids at the wrong zone after updating.
 	if (voidMap) {
