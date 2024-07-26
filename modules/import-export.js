@@ -594,38 +594,39 @@ function makeFragmentDecisionHelpTooltip() {
 	_verticalCenterTooltip(true);
 }
 
-function makeAdditionalInfoTooltip(mouseover) {
-	let tooltipText = '';
+if (typeof makeAdditionalInfoTooltip !== 'function')
+	function makeAdditionalInfoTooltip(mouseover) {
+		let tooltipText = '';
 
-	if (mouseover) {
-		tooltipText = 'tooltip(' + '"Additional Info", ' + '"customText", ' + 'event, ' + '"';
+		if (mouseover) {
+			tooltipText = 'tooltip(' + '"Additional Info", ' + '"customText", ' + 'event, ' + '"';
+		}
+
+		if (game.permaBoneBonuses.voidMaps.owned > 0) {
+			tooltipText += `<p><b>Void</b><br>`;
+			tooltipText += `The progress you have towards the <b>Void Maps</b> permanent bone upgrade counter.</p>`;
+		}
+
+		tooltipText += `<p><b>AL (Auto Level)</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome === 'Plentiful' ? 'Gardens' : trimpStats.mapBiome} and ${trimpStats.mapSpecial !== '0' ? mapSpecialModifierConfig[trimpStats.mapSpecial].name : 'no special'} maps.<br>`;
+		tooltipText += `L: The ideal map level for loot gains.<br>`;
+		tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the Map Bonus setting.</p>`;
+
+		if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
+			tooltipText += `<p><b>Breed Timer (B)</b><br>`;
+			tooltipText += `The breeding time of your trimps, used to identify how long your <b>Anticipation</b> timer will be if you were to send an army to fight.</p>`;
+		} else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
+			tooltipText += `<p><b>Tenacity Timer (T)</b><br>`;
+			tooltipText += `Your current tenacity timer in minutes.</p>`;
+		}
+
+		if (mouseover) {
+			tooltipText += '")';
+			return tooltipText;
+		} else {
+			tooltip('Additional Info Tooltip', 'customText', 'lock', tooltipText, false, 'center');
+			_verticalCenterTooltip(true);
+		}
 	}
-
-	if (game.permaBoneBonuses.voidMaps.owned > 0) {
-		tooltipText += `<p><b>Void</b><br>`;
-		tooltipText += `The progress you have towards the <b>Void Maps</b> permanent bone upgrade counter.</p>`;
-	}
-
-	tooltipText += `<p><b>AL (Auto Level)</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome === 'Plentiful' ? 'Gardens' : trimpStats.mapBiome} and ${trimpStats.mapSpecial !== '0' ? mapSpecialModifierConfig[trimpStats.mapSpecial].name : 'no special'} maps.<br>`;
-	tooltipText += `L: The ideal map level for loot gains.<br>`;
-	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the Map Bonus setting.</p>`;
-
-	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
-		tooltipText += `<p><b>Breed Timer (B)</b><br>`;
-		tooltipText += `The breeding time of your trimps, used to identify how long your <b>Anticipation</b> timer will be if you were to send an army to fight.</p>`;
-	} else if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0) {
-		tooltipText += `<p><b>Tenacity Timer (T)</b><br>`;
-		tooltipText += `Your current tenacity timer in minutes.</p>`;
-	}
-
-	if (mouseover) {
-		tooltipText += '")';
-		return tooltipText;
-	} else {
-		tooltip('Additional Info Tooltip', 'customText', 'lock', tooltipText, false, 'center');
-		_verticalCenterTooltip(true);
-	}
-}
 
 if (typeof makeAdditionalInfo !== 'function')
 	function makeAdditionalInfo() {
