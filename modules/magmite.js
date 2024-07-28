@@ -469,6 +469,11 @@ function checkDGUpgrades() {
 		settings[upgrade].efficiency = totalMI > cost ? efficiencyVariables[i] / efficiencyVariables[0] : 0;
 	});
 
+	if (overclockerUnlocked && game.generatorUpgrades.Overclocker.upgrades === 0) {
+		const cost = settings.overclocker.cost;
+		if (totalMi >= cost) settings.overclocker.efficiency = Infinity;
+	}
+
 	const finalResult = upgradesNames.map((upgradesNames) => settings[upgradesNames].efficiency);
 
 	const upgradeIndex = finalResult.indexOf(Math.max(...finalResult));
