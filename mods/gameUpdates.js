@@ -291,6 +291,54 @@ function updateLabels(force) {
 	checkAndDisplayEquipment();
 }
 
+function updateAllInnerHtmlFrames() {
+	updateGeneratorInfo();
+	updateTurkimpTime(true);
+	updateSideTrimps();
+	gather();
+	breed();
+	updateAllBattleNumbers();
+	setVoidCorruptionIcon();
+	manageLeadStacks();
+	updateToxicityStacks();
+	updateLifeStacks();
+	updateElectricityStacks();
+	updateAntiStacks();
+	updateTitimp();
+	updateNomStacks();
+	updateBalanceStacks();
+	updateGammaStacks();
+	setEmpowerTab();
+	handlePoisonDebuff();
+	handleIceDebuff();
+	handleWindDebuff();
+
+	if (!game.global.preMapsActive && game.global.mapBonus > 0) {
+		let innerText = game.global.mapBonus;
+		if (game.talents.mapBattery.purchased && game.global.mapBonus === 10) innerText = "<span class='mapBonus10'>" + innerText + '</span>';
+		const mapBtnElem = document.getElementById('mapsBtnText');
+		const mapBtnText = `Maps (${innerText})`;
+		if (mapBtnElem.innerHTML !== mapBtnText && shouldUpdate()) mapBtnElem.innerHTML = mapBtnText;
+	}
+
+	let cell, cellNum;
+	if (game.global.mapsActive) {
+		cellNum = game.global.lastClearedMapCell + 1;
+		cell = game.global.mapGridArray[cellNum];
+	} else {
+		cellNum = game.global.lastClearedCell + 1;
+		cell = game.global.gridArray[cellNum];
+	}
+
+	const badAttackElem = document.getElementById('badGuyAttack');
+	const badAttackText = calculateDamage(cell.attack, true, false, false, cell);
+	if (badAttackElem.innerHTML != badAttackText && shouldUpdate()) badAttackElem.innerHTML = badAttackText;
+
+	const goodAttackElem = document.getElementById('goodGuyAttack');
+	const goodAttackText = calculateDamage(game.global.soldierCurrentAttack, true, true);
+	if (goodAttackElem.innerHTML != goodAttackText && shouldUpdate()) goodAttackElem.innerHTML = goodAttackText;
+}
+
 function updateSideTrimps() {
 	const trimps = game.resources.trimps;
 	const realMax = trimps.realMax();
@@ -460,7 +508,7 @@ function updateButtonColor(what, canAfford, isJob) {
 	}
 }
 
-function updateTurkimpTime() {
+function updateTurkimpTime(drawIcon = false) {
 	const elem = document.getElementById('turkimpTime');
 
 	if (game.talents.turkimp2.purchased) {
@@ -471,7 +519,7 @@ function updateTurkimpTime() {
 
 	if (game.global.turkimpTimer <= 0) return;
 
-	game.global.turkimpTimer -= 100;
+	if (!drawIcon) game.global.turkimpTimer -= 100;
 	let timeRemaining = game.global.turkimpTimer;
 
 	if (timeRemaining <= 0) {
@@ -1728,7 +1776,6 @@ function setEmpowerTab() {
 }
 
 function handlePoisonDebuff() {
-	if (!shouldUpdate()) return;
 	let elem = document.getElementById('poisonEmpowermentIcon');
 
 	if (getEmpowerment() !== 'Poison') {
@@ -1738,6 +1785,8 @@ function handlePoisonDebuff() {
 		}
 		return;
 	}
+
+	if (!shouldUpdate()) return;
 
 	if (!elem) {
 		document.getElementById('badDebuffSpan').innerHTML += `<span class="badge badBadge" id="poisonEmpowermentIcon" onmouseover="tooltip('Poisoned', null, event)" onmouseout="tooltip('hide')"><span id="poisonEmpowermentText"></span><span class="icomoon icon-flask"></span></span>`;
@@ -1756,7 +1805,6 @@ function handlePoisonDebuff() {
 }
 
 function handleIceDebuff() {
-	if (!shouldUpdate()) return;
 	let elem = document.getElementById('iceEmpowermentIcon');
 
 	if (getEmpowerment() !== 'Ice') {
@@ -1766,6 +1814,8 @@ function handleIceDebuff() {
 		}
 		return;
 	}
+
+	if (!shouldUpdate()) return;
 
 	if (!elem) {
 		document.getElementById('badDebuffSpan').innerHTML += `<span class="badge badBadge" id="iceEmpowermentIcon" onmouseover="tooltip('Chilled', null, event)" onmouseout="tooltip('hide')"><span id="iceEmpowermentText"></span><span class="glyphicon glyphicon-certificate"></span></span>`;
@@ -1784,7 +1834,6 @@ function handleIceDebuff() {
 }
 
 function handleWindDebuff() {
-	if (!shouldUpdate()) return;
 	let elem = document.getElementById('windEmpowermentIcon');
 	if (getEmpowerment() !== 'Wind') {
 		game.empowerments.Wind.currentDebuffPower = 0;
@@ -1793,6 +1842,8 @@ function handleWindDebuff() {
 		}
 		return;
 	}
+
+	if (!shouldUpdate()) return;
 
 	if (!elem) {
 		document.getElementById('badDebuffSpan').innerHTML += `<span class="badge badBadge" id="windEmpowermentIcon" onmouseover="tooltip('Breezy', null, event)" onmouseout="tooltip('hide')"><span id="windEmpowermentText"></span><span class="icomoon icon-air"></span></span>`;
@@ -3540,6 +3591,7 @@ function fight(makeUp) {
 
 	const empowerment = getEmpowerment();
 	const empowermentUber = getUberEmpowerment();
+
 	let cellAttack = calculateDamage(cell.attack, false, false, false, cell);
 	const badAttackElem = document.getElementById('badGuyAttack');
 	const badAttackText = calculateDamage(cell.attack, true, false, false, cell);

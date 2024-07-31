@@ -1061,40 +1061,72 @@ function _getBiomeEnemyStats(biome) {
 	return enemyBiome;
 }
 
-//If using standalone version then when loading farmCalc file also load CSS & breedtimer+calc+farmCalcStandalone files.
-//After initial load everything should work perfectly.
+/* If using standalone version then when loading farmCalc file also load CSS & breedtimer+calc+farmCalcStandalone files. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
-	let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
-	/* basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
-	//Load CSS so that the UI is visible
-	let linkStylesheet = document.createElement('link');
-	linkStylesheet.rel = 'stylesheet';
-	linkStylesheet.type = 'text/css';
-	linkStylesheet.href = basepathFarmCalc + 'css/farmCalc.css';
-	document.head.appendChild(linkStylesheet);
-
-	function injectScript(id, src) {
-		const script = document.createElement('script');
-		script.id = id;
-		script.src = src;
-		script.setAttribute('crossorigin', 'anonymous');
-		document.head.appendChild(script);
-	}
-
-	injectScript('AutoTrimps-SadAugust_breedtimer', basepathFarmCalc + 'modules/breedtimer.js');
-	injectScript('AutoTrimps-SadAugust_calc', basepathFarmCalc + 'modules/calc.js');
-	injectScript('AutoTrimps-SadAugust_farmCalcStandalone', basepathFarmCalc + 'mods/farmCalcStandalone.js');
-
 	function updateAdditionalInfo() {
 		if (!usingRealTimeOffline) {
 			const infoElem = document.getElementById('additionalInfo');
-			const infoStatus = makeAdditionalInfo();
+			const infoStatus = makeAdditionalInfo_Standalone();
 			if (infoElem.innerHTML !== infoStatus) infoElem.innerHTML = infoStatus;
-			infoElem.parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
+			infoElem.parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip_Standalone(true));
 		}
 	}
 
-	setInterval(function () {
-		updateAdditionalInfo();
-	}, 15000);
+	(async function () {
+		let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
+		/* basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
+		const mods = ['farmCalcStandalone'];
+		const modules = ['breedtimer', 'calc'];
+
+		let linkStylesheet = document.createElement('link');
+		linkStylesheet.rel = 'stylesheet';
+		linkStylesheet.type = 'text/css';
+		linkStylesheet.href = basepathFarmCalc + 'css/farmCalc.css';
+		document.head.appendChild(linkStylesheet);
+
+		function loadModules(basepathFarmCalc, fileName, prefix = '', retries = 3) {
+			return new Promise((resolve, reject) => {
+				const script = document.createElement('script');
+				script.src = `${basepathFarmCalc}${prefix}${fileName}.js`;
+				script.id = `${fileName}_MODULE`;
+				script.async = false;
+				script.defer = true;
+
+				script.addEventListener('load', () => {
+					resolve();
+				});
+
+				script.addEventListener('error', () => {
+					console.log(`Failed to load module: ${fileName} from path: ${prefix || ''}. Retries left: ${retries - 1}`);
+					loadModules(fileName, prefix, retries - 1)
+						.then(resolve)
+						.catch(reject);
+				});
+
+				document.head.appendChild(script);
+			});
+		}
+
+		try {
+			const toLoad = [...mods, ...modules];
+
+			for (const module of toLoad) {
+				const path = mods.includes(module) ? 'mods/' : modules.includes(module) ? 'modules/' : '';
+				await loadModules(basepathFarmCalc, module, path);
+			}
+
+			updateAdditionalInfo();
+			console.log('The farm calculator mod has finished loading.');
+			message('The farm calculator mod has finished loading.', 'Loot');
+
+			setInterval(function () {
+				updateAdditionalInfo();
+			}, 10000);
+		} catch (error) {
+			console.error('Error loading script', error);
+			message('Farm Calc has failed to load. Refresh your page and try again.', 'Loot');
+			tooltip('Failed to load Farm Calc', 'customText', undefined, 'Farm Calc has failed to load. Refresh your page and try again.');
+			verticalCenterTooltip(true);
+		}
+	})();
 }

@@ -1162,50 +1162,92 @@ function perkCalcPreset() {
 	return document.querySelector('#preset').value;
 }
 
-var originalSwapPortalUniverse = swapPortalUniverse;
-swapPortalUniverse = function () {
-	originalSwapPortalUniverse(...arguments);
-	MODULES.autoPerks.displayGUI();
-};
+if (typeof originalSwapPortalUniverse !== 'function') {
+	var originalSwapPortalUniverse = swapPortalUniverse;
+	swapPortalUniverse = function () {
+		originalSwapPortalUniverse(...arguments);
+		MODULES.autoPerks.displayGUI();
+	};
+}
 
-var originalViewPortalUpgrades = viewPortalUpgrades;
-viewPortalUpgrades = function () {
-	originalViewPortalUpgrades(...arguments);
-	MODULES.autoPerks.displayGUI();
-};
+if (typeof originalViewPortalUpgrades !== 'function') {
+	var originalViewPortalUpgrades = viewPortalUpgrades;
+	viewPortalUpgrades = function () {
+		originalViewPortalUpgrades(...arguments);
+		MODULES.autoPerks.displayGUI();
+	};
+}
 
-var originalPortalClicked = portalClicked;
-portalClicked = function () {
-	originalPortalClicked(...arguments);
-	MODULES.autoPerks.displayGUI();
-};
+if (typeof originalPortalClicked !== 'function') {
+	var originalPortalClicked = portalClicked;
+	portalClicked = function () {
+		originalPortalClicked(...arguments);
+		MODULES.autoPerks.displayGUI();
+	};
+}
 
 /* If using standalone version then when load Surky and CSS files. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
-	/* Load CSS so that the UI is visible */
-	let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
-	/* basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
-	const linkStylesheet = document.createElement('link');
-	linkStylesheet.rel = 'stylesheet';
-	linkStylesheet.type = 'text/css';
-	linkStylesheet.href = basepathFarmCalc + 'css/perky.css';
-	document.head.appendChild(linkStylesheet);
-
-	function injectScript(id, src) {
-		const script = document.createElement('script');
-		script.id = id;
-		script.src = src;
-		script.setAttribute('crossorigin', 'anonymous');
-		document.head.appendChild(script);
+	function updateAdditionalInfo() {
+		if (!usingRealTimeOffline) {
+			const infoElem = document.getElementById('additionalInfo');
+			const infoStatus = makeAdditionalInfo_Standalone();
+			if (infoElem.innerHTML !== infoStatus) infoElem.innerHTML = infoStatus;
+			infoElem.parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip_Standalone(true));
+		}
 	}
 
-	injectScript('AutoTrimps-SadAugust_Surky', basepathFarmCalc + 'mods/surky.js');
-	injectScript('AutoTrimps-SadAugust_Import-Export', basepathFarmCalc + 'modules/import-export.js');
-	injectScript('AutoTrimps-SadAugust_MAZ', basepathFarmCalc + 'modules/MAZ.js');
+	(async function () {
+		let basepathPerkCalc = 'https://sadaugust.github.io/AutoTrimps/';
+		/* basepathPerkCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
+		const mods = ['surky'];
+		const modules = ['import-export', 'MAZ'];
 
-	/* Load the portal UI */
-	setTimeout(function () {
-		MODULES.autoPerks.displayGUI();
-		console.log('Surky & Perky loaded.');
-	}, 3000);
+		let linkStylesheet = document.createElement('link');
+		linkStylesheet.rel = 'stylesheet';
+		linkStylesheet.type = 'text/css';
+		linkStylesheet.href = basepathPerkCalc + 'css/perky.css';
+		document.head.appendChild(linkStylesheet);
+
+		function loadModules(fileName, prefix = '', retries = 3) {
+			return new Promise((resolve, reject) => {
+				const script = document.createElement('script');
+				script.src = `${basepathPerkCalc}${prefix}${fileName}.js`;
+				script.id = `${fileName}_MODULE`;
+				script.async = false;
+				script.defer = true;
+
+				script.addEventListener('load', () => {
+					resolve();
+				});
+
+				script.addEventListener('error', () => {
+					console.log(`Failed to load module: ${fileName} from path: ${prefix || ''}. Retries left: ${retries - 1}`);
+					loadModules(fileName, prefix, retries - 1)
+						.then(resolve)
+						.catch(reject);
+				});
+
+				document.head.appendChild(script);
+			});
+		}
+
+		try {
+			const toLoad = [...mods, ...modules];
+
+			for (const module of toLoad) {
+				const path = mods.includes(module) ? 'mods/' : modules.includes(module) ? 'modules/' : '';
+				await loadModules(module, path);
+			}
+
+			MODULES.autoPerks.displayGUI();
+			console.log('The surky & perky mosd have finished loading.');
+			message('The surky & perky mods have finished loading.', 'Loot');
+		} catch (error) {
+			console.error('Error loading script', error);
+			message('Surky & Perky have failed to load. Refresh your page and try again.', 'Loot');
+			tooltip('Failed to load Surky & Perky', 'customText', undefined, 'Surky & Perky have failed to load. Refresh your page and try again.');
+			verticalCenterTooltip(true);
+		}
+	})();
 }

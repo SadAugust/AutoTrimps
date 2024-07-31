@@ -35,17 +35,19 @@ function _getClipboardText(ev) {
 	return ev.clipboardData.getData('text/plain').replace(/\s/g, '');
 }
 
-var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
-playerSpire.drawInfo = function (arguments) {
-	let ret = oldPlayerSpireDrawInfo.apply(this, arguments);
-	const elem = document.getElementById('spireTrapsWindow');
-	const tooltipText = `Click to paste and import your Spire string! These are typically acquired through the Spire TD Calc website`;
-	if (!elem) return arguments;
-	const importBtn = `<input style="width:19%;border:2px solid #dadada;padding:0.5vw;display:inline-block;margin:0.5%;text-align:center;" placeholder="Import" onpaste="tdStringCode(_getClipboardText(event));" title="${tooltipText}">`;
+if (typeof oldPlayerSpireDrawInfo !== 'function') {
+	var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
+	playerSpire.drawInfo = function (arguments) {
+		let ret = oldPlayerSpireDrawInfo.apply(this, arguments);
+		const elem = document.getElementById('spireTrapsWindow');
+		const tooltipText = `Click to paste and import your Spire string! These are typically acquired through the Spire TD Calc website`;
+		if (!elem) return arguments;
+		const importBtn = `<input style="width:19%;border:2px solid #dadada;padding:0.5vw;display:inline-block;margin:0.5%;text-align:center;" placeholder="Import" onpaste="tdStringCode(_getClipboardText(event));" title="${tooltipText}">`;
 
-	elem.innerHTML = importBtn + elem.innerHTML;
-	return arguments;
-};
+		elem.innerHTML = importBtn + elem.innerHTML;
+		return arguments;
+	};
+}
 
 function _displaySpireImport() {
 	const tooltipText = `Click onto and paste to import your Spire string! These are typically acquired through the <a href="http://swaqvalley.com/td_calc" target="_blank">Spire TD Calc website</a><br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>`;

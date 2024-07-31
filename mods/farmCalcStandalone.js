@@ -224,7 +224,7 @@ function getCurrentQuest() {
 }
 
 //AutoLevel information
-function makeAdditionalInfo() {
+function makeAdditionalInfo_Standalone() {
 	if (!game.global.mapsUnlocked) return `AL: Maps not unlocked!`;
 	const initialInfo = get_best(stats(), true);
 	const u2 = game.global.universe === 2;
@@ -241,7 +241,7 @@ function makeAdditionalInfo() {
 	return `Auto Level: ${displayOutputs('loot')}`;
 }
 
-function makeAdditionalInfoTooltip(mouseover) {
+function makeAdditionalInfoTooltip_Standalone(mouseover) {
 	let tooltipText = '';
 
 	if (mouseover) {
@@ -265,12 +265,15 @@ function makeAdditionalInfoTooltip(mouseover) {
 	}
 }
 
-const autoLevelContainer = document.createElement('DIV');
-autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; padding-bottom: 4px;');
-const autoLevelText = document.createElement('SPAN');
-autoLevelContainer.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
-autoLevelContainer.setAttribute('onmouseout', 'tooltip("hide")');
-autoLevelText.id = 'additionalInfo';
-autoLevelContainer.appendChild(autoLevelText);
-document.getElementById('trimps').appendChild(autoLevelContainer);
-if (typeof remainingHealth === 'function') updateAdditionalInfo();
+if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	if (typeof document.getElementById('additionalInfo') === 'undefined') {
+		const autoLevelContainer = document.createElement('DIV');
+		autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; padding-bottom: 4px;');
+		const autoLevelText = document.createElement('SPAN');
+		autoLevelContainer.setAttribute('onmouseover', makeAdditionalInfoTooltip_Standalone(true));
+		autoLevelContainer.setAttribute('onmouseout', 'tooltip("hide")');
+		autoLevelText.id = 'additionalInfo';
+		autoLevelContainer.appendChild(autoLevelText);
+		document.getElementById('trimps').appendChild(autoLevelContainer);
+	}
+}

@@ -275,12 +275,20 @@ function presetMutations() {
 	}
 }
 
-u2Mutations.originalopenTree = u2Mutations.openTree;
-u2Mutations.openTree = function () {
-	u2Mutations.originalopenTree(...arguments);
-	try {
-		presetMutations();
-	} catch (e) {
-		console.log('Loading mutator presets failed ' + e, 'other');
-	}
-};
+if (typeof originalopenTree !== 'function') {
+	u2Mutations.originalopenTree = u2Mutations.openTree;
+	u2Mutations.openTree = function () {
+		u2Mutations.originalopenTree(...arguments);
+		try {
+			presetMutations();
+		} catch (e) {
+			console.log('Loading mutator presets failed ' + e, 'other');
+		}
+	};
+}
+
+/* If using standalone version then inform user it has loaded. */
+if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	console.log('The mutator preset mod has finished loading.');
+	message('The mutator preset mod has finished loading.', 'Loot');
+}

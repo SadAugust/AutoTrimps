@@ -1,5 +1,18 @@
 if (typeof MODULES === 'undefined') MODULES = {};
 
+if (typeof elementExists !== 'function') {
+	function elementExists(element) {
+		return document.getElementById(element).style.display !== 'none';
+	}
+}
+
+if (typeof elementVisible !== 'function') {
+	function elementVisible(element) {
+		let visible = document.getElementById(element).style.visibility !== 'hidden';
+		return elementExists(element) && visible;
+	}
+}
+
 if (typeof $$ !== 'function') {
 	$$ = function (a) {
 		return document.querySelector(a);
@@ -1116,29 +1129,33 @@ function setElemDisplay(id, value, isParent = false) {
 }
 
 // On selecting an heirloom load.
-var originalSelectHeirloom = selectHeirloom;
-selectHeirloom = function (...args) {
-	originalSelectHeirloom(...args);
-	if (!heirloomsShown) return;
+if (typeof originalSelectHeirloom !== 'function') {
+	var originalSelectHeirloom = selectHeirloom;
+	selectHeirloom = function (...args) {
+		originalSelectHeirloom(...args);
+		if (!heirloomsShown) return;
 
-	try {
-		calculate();
-		loadHeirloomSettings();
-	} catch (e) {
-		console.log('Heirloom issue:', e, 'other');
-	}
-};
+		try {
+			calculate();
+			loadHeirloomSettings();
+		} catch (e) {
+			console.log('Heirloom issue:', e, 'other');
+		}
+	};
+}
 
 // On selecting an heirloom mod load.
-var originalselectMod = selectMod;
-selectMod = function () {
-	originalselectMod(...arguments);
-	try {
-		calculate();
-	} catch (e) {
-		console.log('Heirloom issue: ' + e, 'other');
-	}
-};
+if (typeof originalselectMod !== 'function') {
+	var originalselectMod = selectMod;
+	selectMod = function () {
+		originalselectMod(...arguments);
+		try {
+			calculate();
+		} catch (e) {
+			console.log('Heirloom issue: ' + e, 'other');
+		}
+	};
+}
 
 function autoUpgradeHeirlooms() {
 	if (!getPageSetting('autoHeirlooms')) return;
@@ -1163,15 +1180,17 @@ function autoUpgradeHeirlooms() {
 }
 
 //When unselecting any heirlooms hide ratios.
-var originalpopulateHeirloomWindow = populateHeirloomWindow;
-populateHeirloomWindow = function () {
-	originalpopulateHeirloomWindow(...arguments);
-	try {
-		if (elementExists('heirloomRatios')) document.getElementById('heirloomRatios').style.display = 'none';
-	} catch (e) {
-		console.log('Heirloom issue: ' + e, 'other');
-	}
-};
+if (typeof originalpopulateHeirloomWindow !== 'function') {
+	var originalpopulateHeirloomWindow = populateHeirloomWindow;
+	populateHeirloomWindow = function () {
+		originalpopulateHeirloomWindow(...arguments);
+		try {
+			if (elementExists('heirloomRatios')) document.getElementById('heirloomRatios').style.display = 'none';
+		} catch (e) {
+			console.log('Heirloom issue: ' + e, 'other');
+		}
+	};
+}
 
 function runHeirlooms() {
 	const heirlooms = calculate(true);
@@ -1939,3 +1958,9 @@ function lightColMult(cell) {
 }
 
 setupHeirloomUI();
+
+/* If using standalone version then inform user it has loaded. */
+if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	console.log('The heirloom calculator mod has finished loading.');
+	message('The heirloom calculator mod has finished loading.', 'Loot');
+}

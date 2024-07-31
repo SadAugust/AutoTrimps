@@ -14,143 +14,159 @@ function atlantrimpRespecOverride() {
 }
 
 /* On loading save */
-var originalLoad = load;
-load = function () {
-	resetLoops();
-	originalLoad(...arguments);
-	try {
-		loadAugustSettings();
-		atlantrimpRespecOverride();
-		resetVarsZone(true);
-		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
-		_setButtonsPortal();
-		updateAutoTrimpSettings(true);
-		MODULES.autoPerks.displayGUI();
-	} catch (e) {
-		debug(`Load save failed: ${e}`);
-	}
-};
+if (typeof originalLoad !== 'function') {
+	var originalLoad = load;
+	load = function () {
+		resetLoops();
+		originalLoad(...arguments);
+		try {
+			loadAugustSettings();
+			atlantrimpRespecOverride();
+			resetVarsZone(true);
+			if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
+			_setButtonsPortal();
+			updateAutoTrimpSettings(true);
+			MODULES.autoPerks.displayGUI();
+		} catch (e) {
+			debug(`Load save failed: ${e}`);
+		}
+	};
+}
 
 /* On portal/game reset */
-var originalresetGame = resetGame;
-resetGame = function () {
-	originalresetGame(...arguments);
-	try {
-		atlantrimpRespecOverride();
-		_setButtonsPortal();
-		setupAddonUser(true);
-	} catch (e) {
-		debug(`Load save failed: ${e}`);
-	}
-};
+if (typeof originalresetGame !== 'function') {
+	var originalresetGame = resetGame;
+	resetGame = function () {
+		originalresetGame(...arguments);
+		try {
+			atlantrimpRespecOverride();
+			_setButtonsPortal();
+			setupAddonUser(true);
+		} catch (e) {
+			debug(`Load save failed: ${e}`);
+		}
+	};
+}
 
 /* Hacky way to allow the SA popup button to work within TW. */
-autoBattle.originalpopup = autoBattle.popup;
-autoBattle.popup = function () {
-	const offlineMode = usingRealTimeOffline;
-	usingRealTimeOffline = false;
-	autoBattle.originalpopup(...arguments);
-	usingRealTimeOffline = offlineMode;
-};
+if (typeof autoBattle.originalpopup !== 'function') {
+	autoBattle.originalpopup = autoBattle.popup;
+	autoBattle.popup = function () {
+		const offlineMode = usingRealTimeOffline;
+		usingRealTimeOffline = false;
+		autoBattle.originalpopup(...arguments);
+		usingRealTimeOffline = offlineMode;
+	};
+}
 
-game.options.menu.pauseGame.originalOnToggle = game.options.menu.pauseGame.onToggle;
-game.options.menu.pauseGame.onToggle = function () {
-	if (this.timeAtPause && mapSettings.mapType && mapSettings.mapType === 'Farm Time') {
-		const value = game.global.universe === 2 ? 'valueU2' : 'value';
-		const now = new Date().getTime();
-		const dif = now - this.timeAtPause;
-		game.global.addonUser.mapFarmSettings[value][mapSettings.settingIndex].timer += dif;
-	}
-	game.options.menu.pauseGame.originalOnToggle(...arguments);
-};
+if (typeof game.options.menu.pauseGame.originalOnToggle !== 'function') {
+	game.options.menu.pauseGame.originalOnToggle = game.options.menu.pauseGame.onToggle;
+	game.options.menu.pauseGame.onToggle = function () {
+		if (this.timeAtPause && mapSettings.mapType && mapSettings.mapType === 'Farm Time') {
+			const value = game.global.universe === 2 ? 'valueU2' : 'value';
+			const now = new Date().getTime();
+			const dif = now - this.timeAtPause;
+			game.global.addonUser.mapFarmSettings[value][mapSettings.settingIndex].timer += dif;
+		}
+		game.options.menu.pauseGame.originalOnToggle(...arguments);
+	};
+}
 
-var originalstartFight = startFight;
-startFight = function () {
-	if (!game.global.fighting && MODULES.heirlooms.breedHeirloom) {
-		heirloomSwapping(true);
-	}
-	originalstartFight(...arguments);
-};
+if (typeof originalstartFight !== 'function') {
+	var originalstartFight = startFight;
+	startFight = function () {
+		if (!game.global.fighting && MODULES.heirlooms.breedHeirloom) {
+			heirloomSwapping(true);
+		}
+		originalstartFight(...arguments);
+	};
+}
 
-Fluffy.originalisRewardActive = Fluffy.isRewardActive;
-Fluffy.isRewardActive = function () {
-	if (typeof trimpStats !== 'undefined' && typeof trimpStats.fluffyRewards !== 'undefined') {
-		const fluffyLevel = Fluffy.getCurrentPrestige() + (game.talents.fluffyAbility.purchased ? 1 : 0) + Fluffy.currentLevel;
+if (typeof Fluffy.originalisRewardActive !== 'function') {
+	Fluffy.originalisRewardActive = Fluffy.isRewardActive;
+	Fluffy.isRewardActive = function () {
+		if (typeof trimpStats !== 'undefined' && typeof trimpStats.fluffyRewards !== 'undefined') {
+			const fluffyLevel = Fluffy.getCurrentPrestige() + (game.talents.fluffyAbility.purchased ? 1 : 0) + Fluffy.currentLevel;
 
-		if (trimpStats.fluffyRewards.universe !== game.global.universe || trimpStats.fluffyRewards.level !== fluffyLevel) {
-			trimpStats.fluffyRewards = updateFluffyRewards();
+			if (trimpStats.fluffyRewards.universe !== game.global.universe || trimpStats.fluffyRewards.level !== fluffyLevel) {
+				trimpStats.fluffyRewards = updateFluffyRewards();
+			}
+
+			if (typeof trimpStats.fluffyRewards[arguments[0]] !== 'undefined') {
+				return trimpStats.fluffyRewards[arguments[0]];
+			}
 		}
 
-		if (typeof trimpStats.fluffyRewards[arguments[0]] !== 'undefined') {
-			return trimpStats.fluffyRewards[arguments[0]];
-		}
-	}
-
-	Fluffy.originalisRewardActive(...arguments);
-};
+		Fluffy.originalisRewardActive(...arguments);
+	};
+}
 
 //Attach AT related buttons to the main TW UI.
 //Will attach AutoMaps, AutoMaps Status, AutoTrimps Settings, AutoJobs, AutoStructure
-offlineProgress.originalStart = offlineProgress.start;
-offlineProgress.start = function () {
-	const trustWorthy = game.options.menu.offlineProgress.enabled;
-	if (game.options.menu.offlineProgress.enabled === 1) game.options.menu.offlineProgress.enabled = 2;
-	offlineProgress.originalStart(...arguments);
-	toggleCatchUpMode();
-	while (game.options.menu.offlineProgress.enabled !== trustWorthy) toggleSetting('offlineProgress');
+if (typeof offlineProgress.originalStart !== 'function') {
+	offlineProgress.originalStart = offlineProgress.start;
+	offlineProgress.start = function () {
+		const trustWorthy = game.options.menu.offlineProgress.enabled;
+		if (game.options.menu.offlineProgress.enabled === 1) game.options.menu.offlineProgress.enabled = 2;
+		offlineProgress.originalStart(...arguments);
+		toggleCatchUpMode();
+		while (game.options.menu.offlineProgress.enabled !== trustWorthy) toggleSetting('offlineProgress');
 
-	try {
-		let offlineTime = (offlineProgress.totalOfflineTime / 1000 - 86400) * 1000;
-		if (offlineTime > 0) {
-			const gameTime = getGameTime();
-			offlineTime += 86400000;
-			if (gameTime > game.global.portalTime + offlineTime) game.global.portalTime += offlineTime;
-			if (gameTime > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
+		try {
+			let offlineTime = (offlineProgress.totalOfflineTime / 1000 - 86400) * 1000;
+			if (offlineTime > 0) {
+				const gameTime = getGameTime();
+				offlineTime += 86400000;
+				if (gameTime > game.global.portalTime + offlineTime) game.global.portalTime += offlineTime;
+				if (gameTime > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
+			}
+			if (typeof _setTimeWarpUI === 'function') _setTimeWarpUI();
+		} catch (e) {
+			console.log('Loading Time Warp failed ' + e, 'other');
 		}
-		if (typeof _setTimeWarpUI === 'function') _setTimeWarpUI();
-	} catch (e) {
-		console.log('Loading Time Warp failed ' + e, 'other');
-	}
-};
+	};
+}
 
 //Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
-offlineProgress.originalFinish = offlineProgress.finish;
-offlineProgress.finish = function () {
-	if (offlineProgress.totalOfflineTime / 1000 > 86400 && Math.abs(offlineProgress.startTime - new Date().getTime()) <= 500) {
-		return;
-	}
-
-	const offlineTime = arguments[0] ? 0 : Math.max(0, offlineProgress.totalOfflineTime / 1000 - 86400);
-	let timeRun = arguments[0] ? 0 : Math.max(0, (new Date().getTime() - offlineProgress.startTime) / 1000);
-	timeRun += offlineTime;
-	if (offlineProgress.startTime <= 0 || game.options.menu.pauseGame.enabled) timeRun = 0;
-	if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
-
-	offlineProgress.originalFinish(...arguments);
-
-	try {
-		if (timeRun > 30) {
-			debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.floor(Math.min(timeRun, offlineProgress.maxTicks / 10)))} to catchup on the time you missed whilst running it.`, 'offline');
-			timeRun *= 1000;
-
-			const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
-			_adjustGlobalTimers(keys, -timeRun);
-
-			offlineProgress.start();
-			if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
-
-			document.getElementById('queueItemsHere').innerHTML = '';
-			for (let item in game.global.buildingsQueue) {
-				addQueueItem(game.global.buildingsQueue[item]);
-			}
-			game.global.nextQueueId = game.global.buildingsQueue.length;
-		} else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) {
-			toggleSetting('autoSave');
+if (typeof offlineProgress.originalFinish !== 'function') {
+	offlineProgress.originalFinish = offlineProgress.finish;
+	offlineProgress.finish = function () {
+		if (offlineProgress.totalOfflineTime / 1000 > 86400 && Math.abs(offlineProgress.startTime - new Date().getTime()) <= 500) {
+			return;
 		}
-	} catch (e) {
-		console.log('Failed to restart Time Warp to finish it off. ' + e, 'other');
-	}
-};
+
+		const offlineTime = arguments[0] ? 0 : Math.max(0, offlineProgress.totalOfflineTime / 1000 - 86400);
+		let timeRun = arguments[0] ? 0 : Math.max(0, (new Date().getTime() - offlineProgress.startTime) / 1000);
+		timeRun += offlineTime;
+		if (offlineProgress.startTime <= 0 || game.options.menu.pauseGame.enabled) timeRun = 0;
+		if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
+
+		offlineProgress.originalFinish(...arguments);
+
+		try {
+			if (timeRun > 30) {
+				debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.floor(Math.min(timeRun, offlineProgress.maxTicks / 10)))} to catchup on the time you missed whilst running it.`, 'offline');
+				timeRun *= 1000;
+
+				const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
+				_adjustGlobalTimers(keys, -timeRun);
+
+				offlineProgress.start();
+				if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
+
+				document.getElementById('queueItemsHere').innerHTML = '';
+				for (let item in game.global.buildingsQueue) {
+					addQueueItem(game.global.buildingsQueue[item]);
+				}
+				game.global.nextQueueId = game.global.buildingsQueue.length;
+			} else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) {
+				toggleSetting('autoSave');
+			}
+		} catch (e) {
+			console.log('Failed to restart Time Warp to finish it off. ' + e, 'other');
+		}
+	};
+}
 
 function timeWarpLoop(firstLoop = false) {
 	if (firstLoop) {
@@ -193,46 +209,54 @@ function timeWarpLoop(firstLoop = false) {
 	}
 }
 
-var originalrunMap = runMap;
-runMap = function () {
-	originalrunMap(...arguments);
-	if (!MODULES.maps.lastMapWeWereIn || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
-};
+if (typeof originalrunMap !== 'function') {
+	var originalrunMap = runMap;
+	runMap = function () {
+		originalrunMap(...arguments);
+		if (!MODULES.maps.lastMapWeWereIn || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+	};
+}
 
 //Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
-var originalActivateClicked = activateClicked;
-activateClicked = function () {
-	downloadSave(true);
-	if (typeof pushData === 'function') pushData();
-	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
-	autoUpgradeHeirlooms();
-	autoHeirlooms(true);
-	autoMagmiteSpender(true);
-	originalActivateClicked(...arguments);
-	resetVarsZone(true);
-	_setButtonsPortal();
-	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
-		loadMutations(preset);
-		u2Mutations.closeTree();
-	}
-};
+if (typeof originalActivateClicked !== 'function') {
+	var originalActivateClicked = activateClicked;
+	activateClicked = function () {
+		downloadSave(true);
+		if (typeof pushData === 'function') pushData();
+		if (!MODULES.portal.dontPushData) pushSpreadsheetData();
+		autoUpgradeHeirlooms();
+		autoHeirlooms(true);
+		autoMagmiteSpender(true);
+		originalActivateClicked(...arguments);
+		resetVarsZone(true);
+		_setButtonsPortal();
+		if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
+			loadMutations(preset);
+			u2Mutations.closeTree();
+		}
+	};
+}
 
-originalCheckAchieve = checkAchieve;
-checkAchieve = function () {
-	if (arguments && arguments[0] === 'totalMaps') {
-		const mapObj = getCurrentMapObject();
-		mapObj.clears++;
-	}
-	originalCheckAchieve(...arguments);
-};
+if (typeof originalCheckAchieve !== 'function') {
+	originalCheckAchieve = checkAchieve;
+	checkAchieve = function () {
+		if (arguments && arguments[0] === 'totalMaps') {
+			const mapObj = getCurrentMapObject();
+			mapObj.clears++;
+		}
+		originalCheckAchieve(...arguments);
+	};
+}
 
-originalFadeIn = fadeIn;
-fadeIn = function () {
-	if (arguments[0] === 'pauseFight' && getPageSetting('displayHideFightButtons')) return;
-	originalFadeIn(...arguments);
+if (typeof originalFadeIn !== 'function') {
+	originalFadeIn = fadeIn;
+	fadeIn = function () {
+		if (arguments[0] === 'pauseFight' && getPageSetting('displayHideFightButtons')) return;
+		originalFadeIn(...arguments);
 
-	if (arguments[0] === 'metal' && getPageSetting('autoEggs')) easterEggClicked();
-};
+		if (arguments[0] === 'metal' && getPageSetting('autoEggs')) easterEggClicked();
+	};
+}
 
 //Check and update each patch!
 function suicideTrimps() {
