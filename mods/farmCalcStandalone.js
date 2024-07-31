@@ -254,7 +254,7 @@ function makeAdditionalInfoTooltip_Standalone(mouseover) {
 	tooltipText += `<p>The outputs assume you are running ${biome === 'Plentiful' ? 'Garden' : biome} biome and ${specialToUse !== '0' ? mapSpecialModifierConfig[specialToUse].name : 'no'} special maps with the best map sliders available .</p>`;
 	if (game.global.universe === 1) tooltipText += `<p>The map level is affixed with the stance that will give you the best results in the map.</p>`;
 	if (game.global.universe === 2) tooltipText += `<p>The map level is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the worst enemy in the map.</p>`;
-	tooltipText += `<p>The data shown is updated every 5 seconds.</p>`;
+	tooltipText += `<p>The data shown is updated every 10 seconds.</p>`;
 
 	if (mouseover) {
 		tooltipText += "')";
@@ -266,7 +266,7 @@ function makeAdditionalInfoTooltip_Standalone(mouseover) {
 }
 
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
-	if (typeof document.getElementById('additionalInfo') === 'undefined') {
+	if (document.getElementById('additionalInfo') === null) {
 		const autoLevelContainer = document.createElement('DIV');
 		autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; padding-bottom: 4px;');
 		const autoLevelText = document.createElement('SPAN');
