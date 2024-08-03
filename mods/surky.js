@@ -1168,8 +1168,9 @@ function getPerkEfficiencies(props, perks) {
 function clearAndAutobuyPerks() {
 	let [props, perks] = initialLoad();
 	let continueBuying = true;
-	//Run this if we don't have a respec available as we won't be able to clear perks
-	if (!game.global.canRespecPerks) {
+
+	/* Only add perk level if we either can't respec or we don't want to in current run */
+	if (!game.global.canRespecPerks || (game.global.viewingUpgrades && !game.global.respecActive)) {
 		autobuyPerks(props, perks);
 		return;
 	}
@@ -1250,6 +1251,71 @@ function autobuyPerks(props, perks) {
 	// secret setting to dump remaining Rn into bait for feeeeeee
 	while (continueBuying) [continueBuying, props, perks] = buyPerk('Bait', 1, props, perks);
 
+	updateGoldenText(props, perks);
 	allocateSurky(perks);
 	console.log('Surky - Total Radon for perks: ' + prettify(props.perksRadon) + ', Total Radon Spent: ' + prettify(props.radonSpent), 'portal');
+}
+
+function updateGoldenText(props, perks) {
+	const GUavail = Math.floor(props.targetZone / 25) + 16 + Math.floor((Math.min(50000, game.global.achievementBonus) - 10000) / 2000) + Math.floor(Math.max(0, game.global.achievementBonus - 50000) / 10000);
+	// if VM zone is below target zone, don't take GR after VMs
+	// ---> And in fact, optimize as if the last GU before the VM zone is the last GU.
+	//      Past that point, we can trivially take GBs for remaining VMs.
+	const GRavail = props.vmZone < props.targetZone ? GUavail - (Math.floor(props.targetZone / 25) - Math.floor(props.vmZone / 25)) : GUavail;
+	const GVcount = props.hazzie && props.radonWeight > 0 ? 8 : 0;
+
+	let GRcount = 0;
+	let GRgain = GUgain(props, perks, GRavail, GVcount, GRcount, false);
+	let GRgainNext = GUgain(props, perks, GRavail, GVcount, GRcount + 1, false);
+
+	// don't take GR above the VM zone!
+	// while the next GR improves the total weighted value, keep buying GR
+	while (GRcount < GRavail - GVcount && GRgain < GRgainNext) {
+		GRcount++;
+		GRgain = GRgainNext;
+		GRgainNext = GUgain(props, perks, GRavail, GVcount, GRcount + 1, false);
+	}
+
+	// final recommendation
+	let GUtext = 'Suggested GU Strategy:\n\xa0\xa0' + (GVcount > 0 ? GVcount + ' GVs, then ' : '');
+	let GRpct = ((GRcount + GVcount) * (GRcount + GVcount + 1)) / 2 - (GVcount * (GVcount + 1)) / 2;
+	let GBcount = GUavail - GVcount - GRcount;
+	let GBpct = 3 * ((GUavail * (GUavail + 1)) / 2 - ((GRcount + GVcount) * (GRcount + GVcount + 1)) / 2);
+
+	if (GRcount > 0) GUtext += GRcount + ' GRs (' + GRpct + '%), then ';
+	GUtext += GBcount + ' GBs (' + GBpct + '%)';
+
+	if (game.global.canGuString) {
+		const vComma = GRcount > 0 || GBcount > 0 ? ',' : '';
+		const rComma = GBcount > 0 ? ',' : '';
+		GUtext += '\n\xa0\xa0GU String: ' + (GVcount > 0 ? GVcount + 'v' + vComma : '') + (GRcount > 0 ? GRcount + 'r' + rComma : '') + (GBcount > 0 ? GBcount + 'b' : '');
+	} else if (GBcount > 0 && GBcount < Math.floor(props.targetZone / 25)) {
+		/* if there aren't enough GBs to cover all the non-free GUs, present an alternate automate-able strategy */
+		GBcount = 0;
+		let GBgain = GUgain(props, perks, GUavail, GVcount, GBcount, true);
+		let GBgainNext = GUgain(props, perks, GUavail, GVcount, GBcount + 1, true);
+		while (GBcount < GUavail - GVcount && GBgain < GBgainNext) {
+			GBcount++;
+			GBgain = GBgainNext;
+			GBgainNext = GUgain(props, perks, GUavail, GVcount, GBcount + 1, true);
+		}
+		GUtext += '\n\xa0\xa0or ' + (GVcount > 0 ? GVcount + ' GVs, then ' : '');
+		GRcount = GUavail - GVcount - GBcount;
+		GBpct = 3 * (((GBcount + GVcount) * (GBcount + GVcount + 1)) / 2 - (GVcount * (GVcount + 1)) / 2);
+		GRpct = (GUavail * (GUavail + 1)) / 2 - ((GBcount + GVcount) * (GBcount + GVcount + 1)) / 2;
+		GUtext += GBcount + ' GBs (' + GBpct + '%), then ' + GRcount + ' GRs (' + GRpct + '%)';
+	}
+
+	console.log(GUtext);
+}
+
+/* if we have N GUs total and M GUs of the given type (from isGB) bought, what's the total weighted value of our GUs? */
+function GUgain(props, perks, GUavail = 0, GVbought = 0, GUbought = 0, isGB = false) {
+	GUbought += GVbought; // we start buying GUs of the specified type after GVs
+	const GUbonus1 = Math.max(0, (GUbought * (GUbought + 1)) / 2 - (GVbought * (GVbought + 1)) / 2);
+	const GUbonus2 = Math.max(0, (GUavail * (GUavail + 1)) / 2 - (GUbought * (GUbought + 1)) / 2);
+	const GBgain = 1 + (3 * (isGB ? GUbonus1 : GUbonus2)) / 100;
+	const GRgain = 1 + (isGB ? GUbonus2 : GUbonus1) / 100;
+
+	return getLogWeightedValue(props, perks, GBgain, GBgain, 1, 1, GRgain, 1, 1);
 }

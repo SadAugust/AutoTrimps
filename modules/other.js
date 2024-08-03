@@ -86,6 +86,7 @@ function fluffyEvolution() {
 
 	if (shouldRespecPerks) {
 		viewPortalUpgrades();
+		if (game.global.canRespecPerks) respecPerks();
 		fireAllWorkers();
 		runPerky();
 		activateClicked();

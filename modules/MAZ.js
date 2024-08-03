@@ -366,7 +366,7 @@ function _mapSettingsDefaultTitles(varPrefix, s) {
 	if (s.mapBonus) tooltipText += `<div class='windowDisplay windowSpecial${varPrefix}'>Special</div>`;
 	if (s.raiding && !s.bionic) tooltipText += `<div class='windowDisplay windowRecycle'>Recycle<br>Maps</div>`;
 	if (s.alchemy) tooltipText += `<div class='windowDisplay windowStorage'>Void<br>Purchase</div>`;
-	if (s.quagmire) tooltipText += `<div class='windowDisplay windowAbandonZone'>Abandon Challege<br>Zone</div>`;
+	if (s.quagmire) tooltipText += `<div class='windowDisplay windowAbandonZone'>Abandon Challenge<br>Zone</div>`;
 	if (s.voidMap) {
 		tooltipText += `<div class='windowDisplay windowDefaultVoidMap'>Max<br>Map Bonus</div>`;
 		if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += `<div class='windowDisplay windowDefaultVoidMap'>Use Bone<br>Charge</div>`;

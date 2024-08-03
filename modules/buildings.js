@@ -244,9 +244,10 @@ function buyBuildings() {
 }
 
 function _getHypoZone() {
-	// A quick way to identify if we are running Hypothermia and what our very first farm zone is for autostorage manipulation purposes.
-	// Need to have it setup to go through every setting to ensure we don't miss the first one after introducing the priority input.
+	/* 	A quick way to identify if we are running Hypothermia and what our very first farm zone is for autostorage manipulation purposes.
+	Need to have it setup to go through every setting to ensure we don't miss the first one after introducing the priority input. */
 	let hypoZone = 0;
+
 	if (challengeActive('Hypothermia')) {
 		const hypoSettings = getPageSetting('hypothermiaSettings');
 		if (hypoSettings[0].active && hypoSettings[0].autostorage && hypoSettings.length > 0) {
@@ -261,8 +262,7 @@ function _getHypoZone() {
 	return hypoZone;
 }
 
-function _buyStorage(hypoZone) {
-	// hypoZone is only above 0 if Hypothermia is active.
+function _buyStorage(hypoZone = 0) {
 	const buildings = {
 		Barn: 'food',
 		Shed: 'wood',

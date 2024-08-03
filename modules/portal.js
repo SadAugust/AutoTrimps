@@ -712,6 +712,7 @@ function combatRespec() {
 	MODULES.popups.respecAncientTreasure = false;
 	MODULES.popups.remainingTime = Infinity;
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
+	if (game.global.canRespecPerks) respecPerks();
 	const currPreset = $$('#preset').value;
 
 	if (game.global.universe === 1) fillPresetPerky('spire');

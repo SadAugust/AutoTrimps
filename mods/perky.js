@@ -59,7 +59,7 @@ var Perk = /** @class */ (function () {
 		this.cost_exponent = game.portal[perkName].specialGrowth ? game.portal[perkName].specialGrowth : 1.3;
 		this.locked = game.portal[perkName].locked;
 		this.level = 0;
-		this.min_level = !game.global.canRespecPerks ? game.portal[perkName].level : 0;
+		this.min_level = !game.global.canRespecPerks || (game.global.viewingUpgrades && !game.global.respecActive) ? game.portal[perkName].level : 0;
 		this.cost = 0;
 		this.gain = 0;
 		this.bonus = 1;
@@ -196,13 +196,16 @@ function savePerkySettings() {
 }
 
 function calculateDgPopGain() {
+	const { Efficiency, Capacity, Supply, Overclocker } = game.generatorUpgrades;
+	const { Storage, Slowburn } = game.permanentGeneratorUpgrades;
+
 	const maxZone = game.stats.highestLevel.valueTotal() / 2 + 115;
-	const efficiency = 5e8 + 5e7 * game.generatorUpgrades.Efficiency.upgrades;
-	const capacity = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades;
-	const maxFuel = game.permanentGeneratorUpgrades.Storage.owned ? capacity * 1.5 : capacity;
-	const supply = 230 + 2 * game.generatorUpgrades.Supply.upgrades;
-	const overclock = game.generatorUpgrades.Overclocker.upgrades && 1 - 0.5 * Math.pow(0.99, game.generatorUpgrades.Overclocker.upgrades - 1);
-	const burnRate = game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5;
+	const efficiency = 5e8 + 5e7 * Efficiency.upgrades;
+	const capacity = 3 + 0.4 * Capacity.upgrades;
+	const maxFuel = Storage.owned ? capacity * 1.5 : capacity;
+	const supply = 230 + 2 * Supply.upgrades;
+	const overclock = Overclocker.upgrades && 1 - 0.5 * Math.pow(0.99, Overclocker.upgrades - 1);
+	const burnRate = Slowburn.owned ? 0.4 : 0.5;
 	const cells = mastery('magmaFlow') ? 18 : 16;
 	const acceleration = mastery('quickGen') ? 1.03 : 1.02;
 	const hyperspeed2 = mastery('hyperspeed2') ? game.stats.highestLevel.valueTotal() / 2 : 0;
@@ -736,7 +739,9 @@ MODULES.autoPerks = {
 		const apGUI = MODULES.autoPerks.GUI;
 
 		//Setup Auto Allocate button
-		let allocateText = 'Clears all perks and buy optimal levels in each perk.';
+		let allocateText = 'Clears all perks and buys optimal levels in each perk.';
+		allocateText += '<br>';
+		allocateText += 'When in the <b>View Perks</b> window it will only use your respec if you press the <b>Respec</b> button.';
 		if (calcName === 'Surky') allocateText = '<br>Sets your target zone, tribute, meteorologist, collector & smithy values to your current run values if they are higher than your inputs.<br><br>' + allocateText;
 
 		apGUI.$allocatorBtn = document.createElement('DIV');
