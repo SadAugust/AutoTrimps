@@ -2209,7 +2209,8 @@ function initialiseAllSettings() {
 		createSetting('mapology',
 			function () { return ('Mapology') },
 			function () {
-				let description = "<p>Enabling this will disable all farming with the exception of Prestige Climb, Prestige Raiding, BW Raiding & Void Maps. Any Raiding settings will climb until the prestige selected in <b>M: Prestige</b> has been obtained rather than going for the settings targetted prestige.</p>";
+				let description = "<p>Enable this if you want to use automation features when running the <b>Mapology</b> challenge.</p>";
+				description += "<p>When enabled any raiding (and BW raiding) settings will climb until the prestige selected in the <b>M: Prestige</b> setting has been obtained rather than going for the settings targetted prestige.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			},
@@ -2229,6 +2230,16 @@ function initialiseAllSettings() {
 				}
 				return equips;
 			}, 'C2', [1],
+			function () { return (getPageSetting('mapology', currSettingUniverse) && autoTrimpSettings.mapology.require()) });
+
+		createSetting('mapologyMapOverrides',
+			function () { return ('Mapology Map Overrides') },
+			function () {
+				let description = "<p>Enabling this will disable all farming with the exception of Prestige Climb, Prestige Raiding, BW Raiding & Void Maps.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', true, null, 'C2', [1],
 			function () { return (getPageSetting('mapology', currSettingUniverse) && autoTrimpSettings.mapology.require()) });
 
 		createSetting('lead',

@@ -3260,7 +3260,7 @@ function farmingDecision() {
 	if (game.global.universe === 1) {
 		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, hdFarm, voidMaps, experience, mapBonus, toxicity, _obtainUniqueMap];
 
-		if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
+		if (challengeActive('Mapology') && getPageSetting('mapology') && getPageSetting('mapologyMapOverrides')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
 
 		if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0) mapTypes = [voidMaps];
 

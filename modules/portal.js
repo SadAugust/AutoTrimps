@@ -599,7 +599,7 @@ function challengeInfo(force) {
 			debug(`Whilst running this challenge any metal map caches will be set to wooden caches and any miner job ratios will be set to lumberjack ratios. Additionally Pre Void Farm${game.global.universe === 2 ? ' and Smithy Farm' : ''} will be disabled.`, 'challenge');
 		}
 		if (challengeActive('Mapology') && !getPageSetting('mapology')) {
-			debug(`You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.`, 'challenge');
+			debug(`You have the AutoTrimps setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.`, 'challenge');
 		}
 		if (challengeActive('Downsize')) {
 			debug(`Be aware that since your normal farming settings will not properly work due to reduced population and lower expected end zone any mapping lines that aren't specific to this challenge won't run.`, 'challenge');
