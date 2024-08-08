@@ -3038,7 +3038,9 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	const hitsSurvivedGoal = targetHitsSurvived(true);
 
 	if (!skipHealthCheck && game.global.addonUser.mapFunctions.hasHealthFarmed === currentPortal) {
-		if (hitsSurvivedGoal > 0 && hitsSurvivedGoal * 0.8 > hdStats.hitsSurvived) game.global.addonUser.mapFunctions.hasHealthFarmed = '';
+		const resetHasFarmed = hitsSurvivedGoal > 0 && hitsSurvivedGoal * 0.8 > hdStats.hitsSurvived && getPageSetting('hitsSurvivedReset');
+
+		if (resetHasFarmed) game.global.addonUser.mapFunctions.hasHealthFarmed = '';
 	}
 
 	const hitsSurvivedCheck = !skipHealthCheck && allowMapping && game.global.addonUser.mapFunctions.hasHealthFarmed !== currentPortal;

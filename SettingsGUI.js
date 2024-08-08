@@ -1054,6 +1054,18 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Combat', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
+
+		/* Rename this */
+		createSetting('scryvoidmaps',
+			function () { return ('VM Scryer') },
+			function () {
+				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
+				description += "<p><b>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Combat', [1],
+			function () { return (game.talents.scry2.purchased) });
+
 		createSetting('equalityManagement',
 			function () { return (['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced']) },
 			function () {
@@ -1427,7 +1439,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>If you have farmed and your Hits Survived value drops below 80% of this setting then it will farm again.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
-				description += "<p><b>Recommended:</b> 1.5 for earlygame, gradually increase the further you progress</p>";
+				description += "<p><b>Recommended:</b> 1.5</p>";
 				if (currSettingUniverse === 2) description += "<p>Don't set this above 1 when using <b>Auto Equality: Advanced</b> as it can cause you to eternally farm.</p>";
 				return description;
 			}, 'value', 1.25, null, 'Maps', [1, 2]);
@@ -1440,6 +1452,14 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 10, null, 'Maps', [1, 2]);
+		createSetting('hitsSurvivedReset',
+			function () { return ('Hits Survived Reset') },
+			function () {
+				let description = "<p>When <b>Hits Survived</b> farming this will restart farming when you reach your <b>Map Cap</b> value if you're below 80% of the targetted value in the <b>Hits Survived</b> setting.</p>";
+				description += "<p>Will allow you to farm multiple times if enemies scale or your army gets weaker so can be beneficial in certain challenges.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Maps', [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
@@ -1485,17 +1505,6 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 2</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]); */
-
-		/* Rename this */
-		createSetting('scryvoidmaps',
-			function () { return ('VM Scryer') },
-			function () {
-				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
-				description += "<p><b>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', true, null, 'Maps', [1],
-			function () { return (game.talents.scry2.purchased) });
 
 		createSetting('prestigeClimb',
 			function () { return ('Prestige Climb') },
