@@ -198,26 +198,27 @@ function autoMaps() {
 		return;
 	}
 
-	if (_vanillaMAZ()) return;
+	const mapObj = getCurrentMapObject();
+	if (_vanillaMAZ(mapObj)) return;
 
 	_autoMapsDefaults();
 
-	const mapObj = _checkOwnedMaps();
+	const mapsOwned = _checkOwnedMaps();
 
-	_searchForUniqueMaps(mapObj.uniqueMapsOwned, mapObj.runUnique);
+	_searchForUniqueMaps(mapsOwned.uniqueMapsOwned, mapsOwned.runUnique);
 
-	mapObj.selectedMap = _setSelectedMap(mapObj.selectedMap, mapObj.voidMap, mapObj.optimalMap);
+	mapsOwned.selectedMap = _setSelectedMap(mapsOwned.selectedMap, mapsOwned.voidMap, mapsOwned.optimalMap);
 
-	if (game.global.mapsActive) _setMapRepeat();
+	if (game.global.mapsActive) _setMapRepeat(mapObj);
 
-	if (!game.global.preMapsActive && !game.global.mapsActive && mapObj.selectedMap !== 'world') {
+	if (!game.global.preMapsActive && !game.global.mapsActive && mapsOwned.selectedMap !== 'world') {
 		if (!game.global.switchToMaps && shouldAbandon()) mapsClicked();
 		if (game.global.switchToMaps) mapsClicked();
 	}
 
-	if (game.global.preMapsActive) _autoMapsCreate(mapObj);
+	if (game.global.preMapsActive) _autoMapsCreate(mapsOwned);
 
-	_slowScumCheck();
+	_slowScumCheck(mapObj);
 }
 
 function prettifyMap(map) {
@@ -262,7 +263,7 @@ function _fragmentCheck(highestMap, runUnique) {
 	}
 }
 
-function _vanillaMAZ() {
+function _vanillaMAZ(mapObj = getCurrentMapObject()) {
 	if (!game.options.menu.mapAtZone.enabled || !game.global.canMapAtZone) return false;
 
 	const nextCell = game.global.lastClearedCell + 2;
@@ -426,12 +427,9 @@ function _setSelectedMap(selectedMap, voidMap, optimalMap) {
 	return selectedMap;
 }
 
-function _setMapRepeat() {
-	const mapObj = getCurrentMapObject();
-
+function _setMapRepeat(mapObj = getCurrentMapObject()) {
 	if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding' || (mapSettings.mapName === 'Quagmire Farm' && mapObj.name === 'The Black Bog')) {
 		if (!game.global.repeatMap) repeatClicked();
-
 		let repeatSetting = 0; /* Repeat Forever */
 		if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
 			repeatSetting = 2; /* Repeat for Items */
@@ -552,13 +550,12 @@ function _checkWaitForFrags() {
 	MODULES.maps.fragmentCost = Infinity;
 }
 
-function _slowScumCheck() {
+function _slowScumCheck(mapObj = getCurrentMapObject()) {
 	if (MODULES.maps.slowScumming || !game.global.mapsActive || game.global.universe !== 2) return;
 	if (getPageSetting('testMapScummingValue') <= 0 || hdStats.hdRatioMap < getPageSetting('testMapScummingValue')) return;
 	let canSlowScum = ['Map Bonus', 'Prestige Raiding', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Gear Scum'].indexOf(mapSettings.mapName) !== -1;
 	if (!canSlowScum) return;
 
-	const mapObj = getCurrentMapObject();
 	if (mapObj.noRecycle || mapObj.size !== 20) return;
 
 	if (game.global.mapRunCounter !== 0 || !MODULES.maps.slowScumming) slowScum();

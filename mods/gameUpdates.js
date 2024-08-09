@@ -2468,6 +2468,162 @@ function calcBaseStats(equipType = 'attack') {
 	return bonus;
 }
 
+function runMapAtZone(index) {
+	const setting = game.options.menu.mapAtZone.getSetZone()[index];
+
+	const quagCheck = setting.preset === 5 && !challengeActive('Quagmire');
+	const voidCheck = setting.preset === 4 && !getNextVoidId();
+
+	if (setting.check && (quagCheck || voidCheck)) {
+		checkMapAtZoneWorld(true);
+		return;
+	}
+
+	let uniqueMap = false;
+	const runUniqueMap = setting.preset === 3 || setting.preset === 5 || setting.preset >= 8;
+
+	if (runUniqueMap) {
+		const location = setting.preset === 3 ? 'Bionic' : setting.preset === 5 ? 'Darkness' : setting.preset === 8 ? 'Melting' : 'Frozen';
+
+		for (let x = 0; x < game.global.mapsOwnedArray.length; x++) {
+			if (game.global.mapsOwnedArray[x].location === location) {
+				uniqueMap = game.global.mapsOwnedArray[x];
+				break;
+			}
+		}
+	}
+
+	if (runUniqueMap && !uniqueMap) {
+		checkMapAtZoneWorld(true);
+		return;
+	}
+
+	if (setting.cell === 100 && (challengeActive('Mayhem') || challengeActive('Pandemonium'))) {
+		startFight();
+	}
+
+	mapsClicked(true);
+	if (game.global.spireActive && game.global.lastClearedCell !== -1) deadInSpire();
+	toggleSetting('mapAtZone', null, false, true);
+
+	if (!setting || !setting.check) {
+		checkMapAtZoneWorld(true);
+		return;
+	}
+
+	if (challengeActive('Quest') && game.challenges.Quest.questId === 5 && !game.challenges.Quest.questComplete) {
+		if (game.global.lastClearedCell === 98) game.challenges.Quest.checkQuest();
+		else {
+			game.challenges.Quest.questProgress++;
+			if (game.challenges.Quest.questProgress === 1) game.challenges.Quest.failQuest();
+		}
+	}
+
+	//Don't change repeat if the setting is to run void maps, instead change void repeat
+	if (setting.repeat && setting.preset !== 4) {
+		game.global.repeatMap = setting.repeat === 1;
+		if (usingRealTimeOffline) offlineProgress.repeatSetting = game.global.repeatMap;
+		repeatClicked(true);
+	}
+
+	if (setting.exit) {
+		game.options.menu.exitTo.enabled = setting.exit - 1;
+		if (usingRealTimeOffline) offlineProgress.exitTo = game.options.menu.exitTo.enabled;
+		toggleSetting('exitTo', null, false, true);
+	}
+
+	if (setting.until && setting.until !== 5) {
+		if (setting.until >= 6) {
+			game.options.menu.repeatUntil.enabled = 0;
+		} else game.options.menu.repeatUntil.enabled = setting.until - 1;
+		if (usingRealTimeOffline) offlineProgress.repeatUntil = game.options.menu.repeatUntil.enabled;
+		toggleSetting('repeatUntil', null, false, true);
+	}
+
+	if (setting.preset === 3) {
+		const nextBw = getNextBwId();
+
+		if (nextBw) {
+			game.options.menu.climbBw.enabled = setting.until === 5 ? 1 : 0;
+			toggleSetting('climbBw', null, false, true);
+			if (setting.until === 5) {
+				//climbing
+				game.global.mazBw = setting.bwWorld;
+				//if repeating on zones
+				if ((setting.times > 0 || setting.times === -2) && game.global.world > setting.world) {
+					//see how many times this has repeated by zone, increase target climb level by appropriate amount for zones skipped
+					var times = setting.times === -2 ? setting.tx : setting.times;
+					var repeats = Math.round((game.global.world - setting.world) / times);
+					if (repeats > 0) game.global.mazBw += times * repeats;
+				}
+				game.options.menu.repeatUntil.enabled = 2;
+				if (usingRealTimeOffline) offlineProgress.repeatUntil = game.options.menu.repeatUntil.enabled;
+				toggleSetting('repeatUntil', null, false, true);
+			} else if (setting.until === 6) game.global.mapCounterGoal = 25;
+			else if (setting.until === 7) game.global.mapCounterGoal = 50;
+			else if (setting.until === 8) game.global.mapCounterGoal = 100;
+			else if (setting.until === 9) game.global.mapCounterGoal = setting.rx;
+			toggleSetting('repeatUntil', null, false, true);
+			if (game.global.currentMapId) recycleMap();
+			selectMap(nextBw);
+			runMap();
+		}
+
+		return;
+	} else if (setting.preset === 4) {
+		const nextVoid = getNextVoidId();
+
+		if (nextVoid) {
+			if (setting.repeat) {
+				game.options.menu.repeatVoids.enabled = setting.repeat === 1 ? 1 : 0;
+			}
+			if (game.global.currentMapId) recycleMap();
+			selectMap(nextVoid);
+			runMap();
+		}
+
+		return;
+	} else if (runUniqueMap) {
+		if (unqiueMap) {
+			if (game.global.currentMapId) recycleMap();
+			selectMap(unqiueMap.id);
+			runMap();
+		}
+
+		if (setting.until === 6) game.global.mapCounterGoal = 25;
+		if (setting.until === 7) game.global.mapCounterGoal = 50;
+		if (setting.until === 8) game.global.mapCounterGoal = 100;
+		if (setting.until === 9) game.global.mapCounterGoal = setting.rx;
+
+		return;
+	}
+
+	if (game.global.mapsOwnedArray.length >= 50) {
+		recycleBelow(true, game.global.world - 3);
+	}
+
+	let preset = setting.preset;
+	if (preset > 5) preset -= 3;
+
+	selectAdvMapsPreset(preset + 1);
+	const mapStatus = buyMap();
+
+	if (mapStatus === 1) {
+		if (game.global.currentMapId) recycleMap();
+		selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
+		runMap();
+	} else {
+		checkMapAtZoneWorld(true);
+		return;
+	}
+
+	if (setting.until === 6) game.global.mapCounterGoal = 25;
+	if (setting.until === 7) game.global.mapCounterGoal = 50;
+	if (setting.until === 8) game.global.mapCounterGoal = 100;
+	if (setting.until === 9) game.global.mapCounterGoal = setting.rx;
+	toggleSetting('repeatUntil', null, false, true);
+}
+
 function startFight() {
 	if (game.global.challengeActive && typeof game.challenges[game.global.challengeActive].onStartFight === 'function') {
 		game.challenges[game.global.challengeActive].onStartFight();

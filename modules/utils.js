@@ -712,8 +712,10 @@ function shieldGymEfficiency(hitsBefore = _getTargetWorldType() === 'void' ? hdS
 	if (game.global.universe !== 1 || game.global.soldierCurrentBlock === null) return { mostEfficient: 'Shield' };
 
 	const shieldBlock = game.equipment.Shield.blockNow;
-	const worldType = _getTargetWorldType();
-	const difficulty = worldType === 'void' ? _getVoidPercent() : 1;
+	const mapObj = game.global.mapsActive && !game.global.voidBuff ? getCurrentMapObject() : { level: game.global.world, location: undefined };
+	const zone = Math.max(game.global.world, mapObj.level);
+	const worldType = mapObj.location === 'Bionic' ? 'map' : _getTargetWorldType();
+	const difficulty = worldType === 'void' ? _getVoidPercent() : mapObj.location === 'Bionic' ? 2.6 : 1;
 
 	const itemData = game.equipment.Shield;
 	const stat = shieldBlock ? 'block' : 'health';
@@ -753,7 +755,7 @@ function shieldGymEfficiency(hitsBefore = _getTargetWorldType() === 'void' ? hdS
 
 	let gymIncrease, gymIncreaseAfterX, hitsAfter, hitsAfterX, efficiencyX;
 
-	hitsAfter = calcHitsSurvived(game.global.world, worldType, difficulty, 1);
+	hitsAfter = calcHitsSurvived(zone, worldType, difficulty, 1);
 	gymIncrease = hitsAfter === Infinity || hitsAfter === 0 ? Infinity : hitsAfter - hitsBefore;
 	efficiency = gymCost / gymIncrease;
 
