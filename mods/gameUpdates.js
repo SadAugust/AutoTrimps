@@ -2584,9 +2584,9 @@ function runMapAtZone(index) {
 
 		return;
 	} else if (runUniqueMap) {
-		if (unqiueMap) {
+		if (uniqueMap) {
 			if (game.global.currentMapId) recycleMap();
-			selectMap(unqiueMap.id);
+			selectMap(uniqueMap.id);
 			runMap();
 		}
 
