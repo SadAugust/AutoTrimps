@@ -3168,7 +3168,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	let shouldMap = hdType.includes('hitsSurvived') ? hdRatio < settingTarget : hdType === 'maplevel' ? setting.hdBase > whichAutoLevel() : hdRatio > settingTarget;
 
 	const shouldSkip = mapSettings.mapName !== mapName && !shouldMap;
-	const mapType = setting.repeat ? game.global.mapBonus : game.global.mapRunCounter;
+	const mapType = setting.repeat ? game.global.mapBonus : Math.max(0, game.global.mapRunCounter - 1);
 
 	if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && mapType > mapsRunCap) shouldMap = false;
 	let hasVoidFarmed = false;
