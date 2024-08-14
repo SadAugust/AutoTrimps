@@ -3674,7 +3674,7 @@ function initialiseAllSettings() {
 				let description = "<p>Enable to allow you to select the core modifiers you would like to target.</p>";
 				description += "<p>Auto Heirlooms won't keep any cores if this setting is disabled.</p>";
 				return description
-			}, 'boolean', false, null, 'Heirloom', [1],
+			}, 'boolean', false, null, 'Heirloom', [0],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoRareToKeepCore',
@@ -3696,7 +3696,7 @@ function initialiseAllSettings() {
 				if (hze >= 700) heirloomTiersAvailable.push('Ethereal');
 
 				return heirloomTiersAvailable;
-			}, 'Heirloom', [1],
+			}, 'Heirloom', [0],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && game.global.spiresCompleted > 0) });
 
 		createSetting('heirloomAutoCoreBlacklist',
@@ -3706,7 +3706,7 @@ function initialiseAllSettings() {
 				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
-			}, 'multiTextValue', 'None', null, 'Heirloom', [1],
+			}, 'multiTextValue', 'None', null, 'Heirloom', [0],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && game.global.spiresCompleted > 0) });
 
 		createSetting('heirloomAutoCoreMod1',
@@ -3715,7 +3715,7 @@ function initialiseAllSettings() {
 				let description = "<p>Keeps Cores with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [1],
+			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [0],
 			function () {
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) && game.global.spiresCompleted > 0});
 		createSetting('heirloomAutoCoreMod2',
@@ -3724,7 +3724,7 @@ function initialiseAllSettings() {
 				let description = "<p>Keeps Cores with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [1],
+			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [0],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 1)});
@@ -3734,7 +3734,7 @@ function initialiseAllSettings() {
 				let description = "<p>Keeps Cores with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [1],
+			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [0],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 2)});
@@ -3744,7 +3744,7 @@ function initialiseAllSettings() {
 				let description = "<p>Keeps Cores with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [1],
+			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [0],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 5)});
