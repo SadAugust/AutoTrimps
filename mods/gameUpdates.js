@@ -1455,6 +1455,7 @@ function rewardLiquidZone() {
 	messageLock = true;
 	const scryBonus = isScryerBonusActive();
 	const hiddenUpgrades = new Set(['fiveTrimpMax', 'Map', 'fruit', 'groundLumber', 'freeMetals', 'Foreman', 'FirstMap']);
+
 	for (let x = 1; x < 100; x++) {
 		game.global.voidSeed++;
 		game.global.scrySeed++;
@@ -1485,9 +1486,7 @@ function rewardLiquidZone() {
 			}
 		}
 		if (typeof game.badGuys[cell.name].loot !== 'undefined') game.badGuys[cell.name].loot(cell.level);
-		if (typeof trackedImps[cell.name] !== 'undefined') {
-			trackedImps[cell.name]++;
-		}
+		if (typeof trackedImps[cell.name] !== 'undefined') trackedImps[cell.name]++;
 	}
 
 	messageLock = false;
@@ -1509,6 +1508,7 @@ function rewardLiquidZone() {
 	if (messages.enabled && (messages.primary || messages.secondary)) {
 		let resourceText = [];
 		const heCount = game.resources.helium.owned - initialResources.helium;
+
 		if (messages.helium && heCount > 0) {
 			resourceText.push(` Helium - ${prettify(heCount)}`);
 		}
@@ -2468,19 +2468,138 @@ function calcBaseStats(equipType = 'attack') {
 	return bonus;
 }
 
+function abandonChallengeResetEnemy() {
+	const worldCell = game.global.gridArray[game.global.lastClearedCell + 1];
+	let statChallenge = false;
+	let statMaps = false;
+
+	if (challengeActive('Daily')) {
+		if (typeof game.global.dailyChallenge.badHealth !== 'undefined') {
+			statChallenge = true;
+		}
+
+		if (typeof game.global.dailyChallenge.empower !== 'undefined') {
+			statChallenge = true;
+		}
+
+		if (typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && game.global.currentMapId !== '') {
+			statMaps = true;
+		}
+
+		if (typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && game.global.voidBuff === 'Void') {
+			statMaps = true;
+		}
+	}
+
+	if (game.global.universe === 1) {
+		const challenges = ['Meditate', 'Scientist', 'Balance', 'Life', 'Toxicity', 'Coordinate', 'Corrupted', 'Domination', 'Obliterated', 'Eradicated', 'Frigid', 'Experience'];
+		statChallenge = challenges.some((challenge) => challengeActive(challenge));
+
+		if (challengeActive('Lead') && game.challenges.Lead.stacks > 0) {
+			statChallenge = true;
+		}
+
+		statMaps = statChallenge;
+	}
+
+	if (game.global.universe === 2) {
+		const challenges = ['Unbalance', 'Duel', 'Wither', 'Quest', 'Archaeology', 'Mayhem', 'Exterminate', 'Nurture', 'Pandemonium', 'Alchemy', 'Glass', 'Hypothermia', 'Desolation'];
+		statChallenge = challenges.some((challenge) => challengeActive(challenge));
+
+		if (challengeActive('Revenge') && game.global.world % 2 === 0) {
+			statChallenge = true;
+		}
+
+		statMaps = statChallenge;
+
+		if (challengeActive('Storm')) {
+			statChallenge = true;
+		} else if (challengeActive('Exterminate')) {
+			statChallenge = true;
+		} else if (challengeActive('Smithless') && game.global.world % 25 === 0 && worldCell.ubersmith && !worldCell.failedUber) {
+			statChallenge = true;
+		}
+	}
+
+	return [statChallenge, statMaps];
+}
+
+function abandonChallenge(restart) {
+	/* Temp inclusion for graphs to still track this the way Quia intends if this file is loaded after graphs is. */
+	if (typeof pushData === 'function') pushData(true);
+
+	let challengeName = game.global.challengeActive;
+	let challenge = game.challenges[challengeName];
+	const [resetWorld, resetMap] = abandonChallengeResetEnemy();
+	if (game.global.universe === 2 && (game.global.runningChallengeSquared || challengeName === 'Daily')) game.global.u2MutationSeed = game.global.ogU2MutationSeed;
+
+	if (game.global.runningChallengeSquared) {
+		let challengeList;
+		if (challenge.multiChallenge) challengeList = challenge.multiChallenge;
+		else challengeList = [challengeName];
+
+		game.global.challengeActive = '';
+		game.global.multiChallenge = {};
+
+		for (let x = 0; x < challengeList.length; x++) {
+			if (game.global.world > game.c2[challengeList[x]]) game.c2[challengeList[x]] = game.global.world;
+			if (typeof game.challenges[challengeList[x]].abandon !== 'undefined' && game.challenges[challengeList[x]].fireAbandon) game.challenges[challengeList[x]].abandon();
+		}
+
+		if (game.global.capTrimp && game.c2.Trimp > 230) game.c2.Trimp = 230;
+		countChallengeSquaredReward();
+
+		if (!restart) {
+			fadeIn('helium', 10);
+			game.global.runningChallengeSquared = false;
+			if (game.global.universe === 2 && (game.global.world > 30 || (game.global.world === 30 && game.global.lastClearedCell >= 29))) unlockJob('Meteorologist');
+		}
+	} else if (challenge.fireAbandon && typeof challenge.abandon !== 'undefined') {
+		game.global.challengeActive = '';
+		challenge.abandon();
+	}
+
+	game.global.challengeActive = '';
+	cancelPortal();
+
+	if (challengeName === 'Scientist') {
+		document.getElementById('scienceCollectBtn').style.display = 'block';
+	}
+
+	if (game.challenges[challengeName].mustRestart) {
+		if (restart) game.global.selectedChallenge = challengeName;
+		resetGame(true);
+	}
+
+	if (resetWorld || resetMap) {
+		if (resetWorld) {
+			const worldCell = game.global.gridArray[game.global.lastClearedCell + 1];
+			worldCell.maxHealth = -1;
+		}
+
+		if (resetMap && game.global.currentMapId !== '') {
+			const mapCell = game.global.mapGridArray[game.global.lastClearedMapCell + 1];
+			mapCell.maxHealth = -1;
+		}
+
+		if (game.global.fighting) game.global.fighting = false;
+	}
+
+	if (challengeName !== 'Daily') message('Your challenge has been abandoned.', 'Notices');
+	refreshMaps();
+}
+
 function runMapAtZone(index) {
 	const setting = game.options.menu.mapAtZone.getSetZone()[index];
-
 	const quagCheck = setting.preset === 5 && !challengeActive('Quagmire');
 	const voidCheck = setting.preset === 4 && !getNextVoidId();
+	const runUniqueMap = setting.preset === 3 || setting.preset === 5 || setting.preset >= 8;
+	let uniqueMap = false;
 
 	if (setting.check && (quagCheck || voidCheck)) {
 		checkMapAtZoneWorld(true);
 		return;
 	}
-
-	let uniqueMap = false;
-	const runUniqueMap = setting.preset === 3 || setting.preset === 5 || setting.preset >= 8;
 
 	if (runUniqueMap) {
 		const location = setting.preset === 3 ? 'Bionic' : setting.preset === 5 ? 'Darkness' : setting.preset === 8 ? 'Melting' : 'Frozen';
@@ -2552,8 +2671,8 @@ function runMapAtZone(index) {
 				//if repeating on zones
 				if ((setting.times > 0 || setting.times === -2) && game.global.world > setting.world) {
 					//see how many times this has repeated by zone, increase target climb level by appropriate amount for zones skipped
-					var times = setting.times === -2 ? setting.tx : setting.times;
-					var repeats = Math.round((game.global.world - setting.world) / times);
+					const times = setting.times === -2 ? setting.tx : setting.times;
+					const repeats = Math.round((game.global.world - setting.world) / times);
 					if (repeats > 0) game.global.mazBw += times * repeats;
 				}
 				game.options.menu.repeatUntil.enabled = 2;
@@ -2591,9 +2710,9 @@ function runMapAtZone(index) {
 		}
 
 		if (setting.until === 6) game.global.mapCounterGoal = 25;
-		if (setting.until === 7) game.global.mapCounterGoal = 50;
-		if (setting.until === 8) game.global.mapCounterGoal = 100;
-		if (setting.until === 9) game.global.mapCounterGoal = setting.rx;
+		else if (setting.until === 7) game.global.mapCounterGoal = 50;
+		else if (setting.until === 8) game.global.mapCounterGoal = 100;
+		else if (setting.until === 9) game.global.mapCounterGoal = setting.rx;
 
 		return;
 	}
@@ -2665,6 +2784,7 @@ function startFight() {
 				}
 				return;
 			}
+
 			nextWorld();
 			game.stats.zonesCleared.value++;
 			checkAchieve('totalZones');
