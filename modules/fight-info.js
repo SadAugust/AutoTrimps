@@ -40,102 +40,13 @@
 	};
 
 	function updateCell($cell, cell, special, specialIcon, isFast) {
-
-		let innerCell = $cell.innerHTML;
-		let parent = $cell;
-		if ($cell.children.length >= 1){
-			parent = $cell.children[0];
-			if(parent.children.length >= 3){
-				// We already updated this field
-				return;
-			}
-
-			innerCell = parent.innerHTML;
-		}
-
-		// Cell Color
-		if (special) {
-			$cell.style.color = special.color;
-			$cell.style.textShadow = special.shadow;
-		}
-		
-		const emptyField = '<span title="Empty" class="glyphicon glyphicon-heart-empty" style="visibility: hidden;"></span>';
-		if (innerCell.trim() == "&nbsp;") {
-			innerCell = emptyField;
-		}
-
-		if (isFast) {
-			const fastIcon = M['fightinfo'].imp.fast;
-			innerCell += `<span title="Fast" class=${fastIcon.icon} style="text-shadow: ${fastIcon.shadow};color: ${fastIcon.color};"></span>`
-		}else {
-			innerCell += emptyField;
-		}
-		//text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
-
-		if (specialIcon) {
-			innerCell = `<span title="${specialIcon.name}" class=${specialIcon.icon} style="text-shadow: ${special.shadow};color: ${special.color};"></span>` + innerCell;
-		} else {
-			innerCell = emptyField + innerCell;
-		}
-
-		parent.innerHTML = innerCell;
+	
 	}
 
 
 
 	function Update() {
-		const cells = game.global.mapsActive ? game.global.mapGridArray : game.global.gridArray;
-		const rowSource = game.global.mapsActive ? M['fightinfo'].$mapGrid.children : M['fightinfo'].$worldGrid.children;
-		const $rows = Array.prototype.slice.call(rowSource).reverse();
-
-		if (!game.global.mapsActive) {
-			if (M['fightinfo'].lastProcessedWorld === game.global.world || game.global.preMapsActive) return;
-			M['fightinfo'].lastProcessedWorld = game.global.world;
-		}
-
-		const cellArray = $rows.reduce((acc, row) => acc.concat(Array.prototype.slice.call(row.children)), []);
-
-		cellArray.forEach(($cell, i) => {
-			const cell = cells[i];
-			const cellName = cell.name.toLowerCase();
-
-			const isFast = M['fightinfo'].fastImps.includes(cell.name);
-
-			let special = null;
-			let specialIcon = null;
-
-			if (cellName.includes('skele')) {
-				special = M.fightinfo.imp.skel;
-			} else if (cellName in M['fightinfo'].exotics) {
-				special = M.fightinfo.imp.exotic;
-				specialIcon = M.fightinfo.allExoticIcons ? M.fightinfo.exotics[cellName] : null
-			} else if (cellName in M['fightinfo'].powerful) {
-				special = M.fightinfo.imp.powerful;
-				specialIcon = M.fightinfo.allPowerfulIcons ? M.fightinfo.powerful[cellName] : null;
-			} else if (cellName.includes('poison')) {
-				special = M.fightinfo.imp.poison;
-			} else if (cellName.includes('wind')) {
-				special = M.fightinfo.imp.wind;
-			} else if (cellName.includes('ice')) {
-				special = M.fightinfo.imp.ice;
-			}
-
-			if (special && !specialIcon) {
-				specialIcon = {icon: special.icon, name: special.name};
-			}
- 
-			updateCell($cell, cell, special, specialIcon, isFast);
-
-			$cell.title = cell.name;
-			if (cell.corrupted && cell.corrupted.startsWith('corrupt')) $cell.title += ' - ' + mutationEffects[cell.corrupted].title;
-
-			if (cell.u2Mutation !== undefined) {
-				cell.u2Mutation.forEach((mut) => {
-					$cell.title += ' - ' + u2Mutations.getName([mut]);
-					$cell.classList.add(mut);
-				});
-			}
-		});
+		
 	}
 
 	M['fightinfo'].Update = Update;

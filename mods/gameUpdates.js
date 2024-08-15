@@ -963,6 +963,41 @@ u2Mutations.setAlert = function () {
 	}
 };
 
+let mapStyling = {
+	imp: {
+		skel: { name: 'Skeleton', icon: '"glyphicon glyphicon-italic"', shadow: '0px 0px 10px #ffffff', color: '#ffffff' },
+		exotic: { name: 'Exotic', icon: '"glyphicon glyphicon-sunglasses"', shadow: '0px 0px 10px #fb753f', color: '#ff0000' },
+		powerful: { name: 'Powerful', icon: '"glyphicon glyphicon-fire"', shadow: '0px 0px 10px #ff0c55', color: '#ff0c55' },
+		fast: { name: 'Fast', icon: '"glyphicon glyphicon-forward"', shadow: '0px 0px 10px #ffffff', color: '#000000' },
+		poison: { name: 'Poison', icon: '"glyphicon glyphicon-flask"', shadow: '0px 0px 10px #ffffff', color: '#00ff00' },
+		wind: { name: 'Wind', icon: '"icomoon icon-air"', shadow: '0px 0px 10px #ffffff', color: '#99ffff' },
+		ice: { name: 'Ice', icon: '"glyphicon glyphicon-certificate"', shadow: '0px 0px 10px #ffffff', color: '#00ffff' }
+	},
+	powerful: {
+		blimp: { name: 'Blimp', icon: '"glyphicon glyphicon-plane"' },
+		cthulimp: { name: 'Cthulimp', icon: '"icomoon icon-archive"' },
+		improbability: { name: 'Improbability', icon: '"glyphicon glyphicon-question-sign"' },
+		omnipotrimp: { name: 'Omnipotrimp', icon: '"glyphicon glyphicon-fire"' },
+		mutimp: { name: 'Mutimp', icon: '"glyphicon glyphicon-menu-up"' },
+		hulking_mutimp: { name: 'Hulking_Mutimp', icon: '" glyphicon glyphicon-chevron-up"' }
+	},
+	exotics: {
+		chronoimp: { name: 'Chronoimp', icon: '"glyphicon glyphicon-hourglass"' },
+		feyimp: { name: 'Feyimp', icon: '"icomoon icon-diamond"' },
+		flutimp: { name: 'Flutimp', icon: '"glyphicon glyphicon-globe"' },
+		goblimp: { name: 'Goblimp', icon: '"icomoon icon-evil"' },
+		jestimp: { name: 'Jestimp', icon: '"icomoon icon-mask"' },
+		magnimp: { name: 'Magnimp', icon: '"glyphicon glyphicon-magnet"' },
+		tauntimp: { name: 'Tauntimp', icon: '"glyphicon glyphicon-tent"' },
+		titimp: { name: 'Titimp', icon: '"icomoon icon-hammer"' },
+		venimp: { name: 'Venimp', icon: '"glyphicon glyphicon-baby-formula"' },
+		whipimp: { name: 'Whipimp', icon: '"icomoon icon-area-graph"' }
+	},
+	exoticImps: ['Chronoimp', 'Feyimp', 'Flutimp', 'Goblimp', 'Jestimp', 'Magnimp', 'Tauntimp', 'Titimp', 'Venimp', 'Whipimp', 'Randimp'],
+	fastImps: ['Snimp', 'Kittimp', 'Gorillimp', 'Squimp', 'Shrimp', 'Chickimp', 'Frimp', 'Slagimp', 'Lavimp', 'Kangarimp', 'Entimp', 'Fusimp', 'Carbimp', 'Ubersmith', 'Shadimp', 'Voidsnimp', 'Prismimp', 'Sweltimp', 'Indianimp', 'Improbability', 'Neutrimp', 'Cthulimp', 'Omnipotrimp', 'Mutimp', 'Hulking_Mutimp', 'Liquimp', 'Poseidimp', 'Darknimp', 'Horrimp', 'Arachnimp', 'Beetlimp', 'Mantimp', 'Butterflimp', 'Frosnimp'],
+	emptySlot: '<span title="Empty" class="glyphicon glyphicon-heart-empty" style="visibility: hidden;"></span>'
+};
+
 function drawGrid(maps) {
 	const grid = maps ? document.getElementById('mapGrid') : document.getElementById('grid');
 	let map = maps ? getCurrentMapObject() : null;
@@ -1013,14 +1048,51 @@ function drawGrid(maps) {
 			const width = `${100 / cols}%`;
 			const paddingTop = `${100 / cols / 19}vh`;
 			const paddingBottom = `${100 / cols / 19}vh`;
-			const fontSize = `${cols / 14 + 1}vh`;
+			const fontSize = `${15 / cols + 1}vh`;
 
 			let className = ['battleCell', 'cellColorNotBeaten'];
 			let background = '';
 			let backgroundColor = '';
 			let title = '';
 			let role = '';
-			const innerHTML = cell.text === '' ? '&nbsp;' : cell.text;
+			let innerHTML = cell.text === '' ? mapStyling.emptySlot : cell.text;
+			const isFast = mapStyling.fastImps.includes(cell.name);
+
+			if (isFast) {
+				const fastIcon = mapStyling.imp.fast;
+				innerHTML += `<span title="Fast" class=${fastIcon.icon} style="text-shadow: ${fastIcon.shadow};color: ${fastIcon.color};"></span>`
+			}else {
+				innerHTML += mapStyling.emptySlot;
+			}
+			const cellName = cell.name.toLowerCase();
+			let special = null;
+			let specialIcon = null;
+
+			if (cellName.includes('skele')) {
+				special = mapStyling.imp.skel;
+			} else if (cellName in mapStyling.exotics) {
+				special = mapStyling.imp.exotic;
+				specialIcon = mapStyling.exotics[cellName];
+			} else if (cellName in mapStyling.powerful) {
+				special = mapStyling.imp.powerful;
+				specialIcon = mapStyling.powerful[cellName];
+			} else if (cellName.includes('poison')) {
+				special = mapStyling.imp.poison;
+			} else if (cellName.includes('wind')) {
+				special = mapStyling.imp.wind;
+			} else if (cellName.includes('ice')) {
+				special = mapStyling.imp.ice;
+			}
+
+			if (special && !specialIcon) {
+				specialIcon = {icon: special.icon, name: special.name};
+			}
+
+			if (specialIcon) {
+				innerHTML = `<span title="${specialIcon.name}" class=${specialIcon.icon} style="text-shadow: ${special.shadow};color: ${special.color};"></span>` + innerHTML;
+			} else {
+				innerHTML = mapStyling.emptySlot + innerHTML;
+			}
 
 			if (maps) {
 				if (cell.name === 'Pumpkimp') className.push('mapPumpkimp');
