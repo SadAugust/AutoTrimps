@@ -1133,11 +1133,7 @@ function drawGrid(maps) {
 	}
 
 	grid.className = className;
-	grid.innerHTML = rowHTML;
-
-	grid.style.display = "grid";
-	grid.style.gridAutoFlow = "row";
-	grid.style.gridAutoRows = "1fr";
+	grid.innerHTML = `<div style="display: grid; grid-auto-flow: row; grid-auto-rows: 1fr; height: 100%;">${rowHTML}</div>`;
 	grid.style.height = "100%"
 
 	const gridContainer = document.getElementById("gridContainer");
