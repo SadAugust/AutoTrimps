@@ -1048,7 +1048,7 @@ function drawGrid(maps) {
 			const width = `${100 / cols}%`;
 			const paddingTop = `${100 / cols / 19}vh`;
 			const paddingBottom = `${100 / cols / 19}vh`;
-			const fontSize = `${15 / cols + 1}vh`;
+			const fontSize = `${15 / cols}vh`;
 
 			let className = ['battleCell', 'cellColorNotBeaten'];
 			let background = '';
