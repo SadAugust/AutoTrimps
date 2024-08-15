@@ -39,21 +39,42 @@
 		fastImps: ['Snimp', 'Kittimp', 'Gorillimp', 'Squimp', 'Shrimp', 'Chickimp', 'Frimp', 'Slagimp', 'Lavimp', 'Kangarimp', 'Entimp', 'Fusimp', 'Carbimp', 'Ubersmith', 'Shadimp', 'Voidsnimp', 'Prismimp', 'Sweltimp', 'Indianimp', 'Improbability', 'Neutrimp', 'Cthulimp', 'Omnipotrimp', 'Mutimp', 'Hulking_Mutimp', 'Liquimp', 'Poseidimp', 'Darknimp', 'Horrimp', 'Arachnimp', 'Beetlimp', 'Mantimp', 'Butterflimp', 'Frosnimp']
 	};
 
-	function updateCell($cell, cell, pallet, customIcon, overrideSpecial, overrideCoords) {
-		// Cell Color
-		$cell.style.color = M.fightinfo.changeCellColor ? pallet.color : $cell.style.color;
-		$cell.style.textShadow = pallet.shadow;
+	function updateCell($cell, cell, special, specialIcon, isFast) {
 
-		// Glyph Icon
-		const icon = customIcon || pallet.icon;
-		const replaceable = ['fruit', 'Metal', 'gems', 'freeMetals', 'groundLumber', 'Wood', 'Map', 'Any'];
-		if (overrideCoords) replaceable.push('Coordination');
-
-		// Icon Overriding
-		if (!cell.special.length || (overrideSpecial && replaceable.includes(cell.special))) {
-			$cell.innerHTML = `<span class=${icon}></span>`;
+		if ($cell.children.length >= 3){
+			// We already updated this field
+			return;
 		}
+		// Cell Color
+		if (special) {
+			$cell.style.color = special.color;
+			$cell.style.textShadow = special.shadow;
+		}
+		
+		const emptyField = '<span title="Wood" class="glyphicon glyphicon-heart-empty" style="visibility: hidden;"></span>';
+
+		let innerCell = $cell.innerHTML;
+		if (innerCell.trim() == "&nbsp;") {
+			innerCell = '<span title="Wood" class="glyphicon glyphicon-heart-empty" style="visibility: hidden;"></span>'
+		}
+
+		if (isFast) {
+			const fastIcon = M['fightinfo'].imp.fast;
+			innerCell += `<span title="${fastIcon.name}" class="${fastIcon.icon}" style="shadow: ${fastIcon.style};color: ${fastIcon.color};"></span>`
+		}else {
+			innerCell += emptyField;
+		}
+
+		if (specialIcon) {
+			innerCell = `<span title="${specialIcon.name}" class="${specialIcon.icon}" style="shadow: ${special.style};color: ${special.color};"></span>` + innerCell;
+		} else {
+			innerCell = emptyField + innerCell;
+		}
+
+		$cell.innerHTML = innerCell;
 	}
+
+
 
 	function Update() {
 		const cells = game.global.mapsActive ? game.global.mapGridArray : game.global.gridArray;
@@ -71,23 +92,32 @@
 			const cell = cells[i];
 			const cellName = cell.name.toLowerCase();
 
+			const isFast = M['fightinfo'].fastImps.includes(cell.name);
+
+			let special = null;
+			let specialIcon = null;
+
 			if (cellName.includes('skele')) {
-				updateCell($cell, cell, M.fightinfo.imp.skel);
+				special = M.fightinfo.imp.skel;
 			} else if (cellName in M['fightinfo'].exotics) {
-				const icon = M.fightinfo.allExoticIcons ? M.fightinfo.exotics[cellName].icon : undefined;
-				updateCell($cell, cell, M.fightinfo.imp.exotic, icon, true);
+				special = M.fightinfo.imp.exotic;
+				specialIcon = M.fightinfo.allExoticIcons ? M.fightinfo.exotics[cellName] : null
 			} else if (cellName in M['fightinfo'].powerful) {
-				const icon = M.fightinfo.allPowerfulIcons ? M.fightinfo.powerful[cellName].icon : undefined;
-				updateCell($cell, cell, M.fightinfo.imp.powerful, icon, M.fightinfo.allPowerfulIcons, true);
-			} else if ((M['fightinfo'].fastImps.includes(cell.name) && (!cell.corrupted || !cell.corrupted.startsWith('corrupt'))) || (cell.u2Mutation !== undefined && Object.keys(cell.u2Mutation).length !== 0)) {
-				updateCell($cell, cell, M.fightinfo.imp.fast);
+				special = M.fightinfo.imp.powerful;
+				specialIcon = M.fightinfo.allPowerfulIcons ? M.fightinfo.powerful[cellName] : null;
 			} else if (cellName.includes('poison')) {
-				updateCell($cell, cell, M.fightinfo.imp.poison);
+				special = M.fightinfo.imp.poison;
 			} else if (cellName.includes('wind')) {
-				updateCell($cell, cell, M.fightinfo.imp.wind);
+				special = M.fightinfo.imp.wind;
 			} else if (cellName.includes('ice')) {
-				updateCell($cell, cell, M.fightinfo.imp.ice);
+				special = M.fightinfo.imp.ice;
 			}
+
+			if (special && !specialIcon) {
+				specialIcon = {icon: special.icon, name: special.name};
+			}
+ 
+			updateCell($cell, cell, special, specialIcon, isFast);
 
 			$cell.title = cell.name;
 			if (cell.corrupted && cell.corrupted.startsWith('corrupt')) $cell.title += ' - ' + mutationEffects[cell.corrupted].title;
