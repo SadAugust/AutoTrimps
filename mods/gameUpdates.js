@@ -1046,20 +1046,31 @@ function drawGrid(maps) {
 			}
 
 			html += `<li id="${id}" 
-						style="width:${width};padding-top:${paddingTop};padding-bottom:${paddingBottom};font-size:${fontSize};background:${background};background-color:${backgroundColor};" 
+						style="width:${width};height:100%;padding-top:${paddingTop};padding-bottom:${paddingBottom};font-size:${fontSize};background:${background};background-color:${backgroundColor};" 
 						class="${className.join(' ')}" 
 						title="${title}" 
 						role="${role}">
-						${innerHTML}
+						<span style="display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; height: 100%; justify-content: center; align-items: center;">
+							${innerHTML}
+						</span>
 					</li>`;
 			counter++;
 		}
 
-		rowHTML = `<ul id="row${i}" class="battleRow">${html}</ul>` + rowHTML;
+		rowHTML = `<ul id="row${i}" class="battleRow" style="height:100%">${html}</ul>` + rowHTML;
 	}
 
 	grid.className = className;
 	grid.innerHTML = rowHTML;
+
+	grid.style.display = "grid";
+	grid.style.gridAutoFlow = "row";
+	grid.style.gridAutoRows = "1fr";
+	grid.style.height = "100%"
+
+	const gridContainer = document.getElementById("gridContainer");
+	gridContainer.style.height = "100%"
+	gridContainer.style.paddingBottom = "50px"
 
 	const eggCell = document.querySelector('.eggCell');
 	if (eggCell) eggCell.addEventListener('click', easterEggClicked);

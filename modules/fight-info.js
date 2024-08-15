@@ -41,9 +41,16 @@
 
 	function updateCell($cell, cell, special, specialIcon, isFast) {
 
-		if ($cell.children.length >= 1 && $cell.children[0].children.length >= 3){
-			// We already updated this field
-			return;
+		let innerCell = $cell.innerHTML;
+		let parent = $cell;
+		if ($cell.children.length >= 1){
+			parent = $cell.children[0];
+			if(parent.children.length >= 3){
+				// We already updated this field
+				return;
+			}
+
+			innerCell = parent.innerHTML;
 		}
 
 		// Cell Color
@@ -53,8 +60,6 @@
 		}
 		
 		const emptyField = '<span title="Empty" class="glyphicon glyphicon-heart-empty" style="visibility: hidden;"></span>';
-
-		let innerCell = $cell.innerHTML;
 		if (innerCell.trim() == "&nbsp;") {
 			innerCell = emptyField;
 		}
@@ -73,7 +78,7 @@
 			innerCell = emptyField + innerCell;
 		}
 
-		$cell.innerHTML = `<span style="display: grid;grid-auto-flow: column;grid-auto-columns: 1fr;">${innerCell}</span>`;
+		parent.innerHTML = innerCell;
 	}
 
 
