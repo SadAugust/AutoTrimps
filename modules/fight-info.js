@@ -10,7 +10,7 @@
 			skel: { icon: '"glyphicon glyphicon-italic"', shadow: '0px 0px 10px #ffffff', color: '#ffffff' },
 			exotic: { icon: '"glyphicon glyphicon-sunglasses"', shadow: '0px 0px 10px #fb753f', color: '#ff0000' },
 			powerful: { icon: '"glyphicon glyphicon-fire"', shadow: '0px 0px 10px #ff0c55', color: '#ff0c55' },
-			fast: { icon: '"glyphicon glyphicon-forward"', shadow: '0px 0px 10px #ffffff', color: '#666666' },
+			fast: { icon: '"glyphicon glyphicon-forward"', shadow: '0px 0px 10px #ffffff', color: '#000000' },
 			poison: { icon: '"glyphicon glyphicon-flask"', shadow: '0px 0px 10px #ffffff', color: '#00ff00' },
 			wind: { icon: '"icomoon icon-air"', shadow: '0px 0px 10px #ffffff', color: '#99ffff' },
 			ice: { icon: '"glyphicon glyphicon-certificate"', shadow: '0px 0px 10px #ffffff', color: '#00ffff' }
@@ -41,37 +41,39 @@
 
 	function updateCell($cell, cell, special, specialIcon, isFast) {
 
-		if ($cell.children.length >= 3){
+		if ($cell.children.length >= 1 && $cell.children[0].children.length >= 3){
 			// We already updated this field
 			return;
 		}
+
 		// Cell Color
 		if (special) {
 			$cell.style.color = special.color;
 			$cell.style.textShadow = special.shadow;
 		}
 		
-		const emptyField = '<span title="Wood" class="glyphicon glyphicon-heart-empty" style="visibility: hidden;"></span>';
+		const emptyField = '<span title="Empty" class="glyphicon glyphicon-heart-empty" style="visibility: hidden;"></span>';
 
 		let innerCell = $cell.innerHTML;
 		if (innerCell.trim() == "&nbsp;") {
-			innerCell = '<span title="Wood" class="glyphicon glyphicon-heart-empty" style="visibility: hidden;"></span>'
+			innerCell = emptyField;
 		}
 
 		if (isFast) {
 			const fastIcon = M['fightinfo'].imp.fast;
-			innerCell += `<span title="${fastIcon.name}" class="${fastIcon.icon}" style="shadow: ${fastIcon.style};color: ${fastIcon.color};"></span>`
+			innerCell += `<span title="Fast" class=${fastIcon.icon} style="text-shadow: ${fastIcon.shadow};color: ${fastIcon.color};"></span>`
 		}else {
 			innerCell += emptyField;
 		}
+		//text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 
 		if (specialIcon) {
-			innerCell = `<span title="${specialIcon.name}" class="${specialIcon.icon}" style="shadow: ${special.style};color: ${special.color};"></span>` + innerCell;
+			innerCell = `<span title="${specialIcon.name}" class=${specialIcon.icon} style="text-shadow: ${special.shadow};color: ${special.color};"></span>` + innerCell;
 		} else {
 			innerCell = emptyField + innerCell;
 		}
 
-		$cell.innerHTML = innerCell;
+		$cell.innerHTML = `<span style="display: grid;grid-auto-flow: column;grid-auto-columns: 1fr;">${innerCell}</span>`;
 	}
 
 
