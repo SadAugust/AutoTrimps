@@ -1,5 +1,7 @@
 (function (M) {
 	M['fightinfo'] = {
+		$worldGrid: document.getElementById('grid'),
+		$mapGrid: document.getElementById('mapGrid'),
 		changeCellColor: false,
 		allExoticIcons: true,
 		allPowerfulIcons: true,
@@ -150,16 +152,18 @@
 			M['fightinfo'].lastProcessedWorld = game.global.world;
 		}
 
-		const gridElement = game.global.mapsActive ? document.getElementById('mapGrid') : document.getElementById('grid');
-		const $rows = Array.prototype.slice.call(gridElement).reverse();
+		const rowSource = game.global.mapsActive ? M['fightinfo'].$mapGrid.children : M['fightinfo'].$worldGrid.children;
+		const $rows = Array.prototype.slice.call(rowSource).reverse();
 		const cellArray = $rows.reduce((acc, row) => acc.concat(Array.prototype.slice.call(row.children)), []);
 
 		const updates = processCells(cellArray, []);
+
 		const fragment = createFragment(updates, $rows);
 		const reversedFragment = reverseFragment(fragment);
 
-		gridElement.innerHTML = '';
-		gridElement.appendChild(reversedFragment);
+		const parentElement = game.global.mapsActive ? document.getElementById('mapGrid') : document.getElementById('grid');
+		parentElement.innerHTML = '';
+		parentElement.appendChild(reversedFragment);
 	}
 
 	M['fightinfo'].Update = Update;
