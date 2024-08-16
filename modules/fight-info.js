@@ -58,9 +58,10 @@
 		return $cell.innerHTML;
 	}
 
-	function updateCell($cell, special, specialIcon, isFast) {
+	function updateCell($cell, special, specialIcon, isFast, cellStyle) {
 		let innerCell = $cell.innerHTML;
 		let parent = $cell;
+		const { fontSize, width, paddingTop, paddingBottom } = cellStyle;
 
 		if ($cell.children.length >= 1) {
 			parent = $cell.children[0];
@@ -94,19 +95,19 @@
 		}
 
 		innerCell = `
-			<div style="display: flex; align-items: center; justify-content: center;">
-				<div style="width: 40px; text-align: center;">${specialIconHtml}</div>
+			<div style="display: flex; align-items: center; justify-content: center; style="width:${width};padding-top:${paddingTop};padding-bottom:${paddingBottom};">
+				<div style="font-size: ${fontSize}; width: 40px; text-align: center; padding-right: 5px;">${specialIconHtml}</div>
 				<div>${innerCell}</div>
-				<div style="width: 40px; text-align: center;">${fastIconHtml}</div>
+				<div style="font-size: ${fontSize}; width: 40px; text-align: center; padding-left: 5px;">${fastIconHtml}</div>
 			</div>
 		`;
 
 		return innerCell;
 	}
 
-	function updateCellContent($cell, cell) {
+	function updateCellContent($cell, cell, cellStyle) {
 		const cellName = cell.name.toLowerCase();
-		const isFast = (M['fightinfo'].fastImps.includes(cell.name) && (!cell.corrupted || !cell.corrupted.startsWith('corrupt'))) || (cell.u2Mutation !== undefined && Object.keys(cell.u2Mutation).length !== 0);
+		const isFast = (M['fightinfo'].fastImps.includes(cell.name) && (!cell.corrupted || !cell.corrupted.startsWith('corrupt'))) || (cell.u2Mutation !== undefined && Object.keys(cell.u2Mutation).length === 0);
 		let special = null;
 		let specialIcon = null;
 
@@ -126,7 +127,7 @@
 			special = M.fightinfo.imp.ice;
 		}
 
-		return updateCell($cell, special, specialIcon, isFast);
+		return updateCell($cell, special, specialIcon, isFast, cellStyle);
 	}
 
 	function updateCellTitle($cell, cell) {
@@ -148,9 +149,26 @@
 
 	function processCells(cellArray, updates) {
 		const cells = game.global.mapsActive ? game.global.mapGridArray : game.global.gridArray;
+		const mapSize = cells.length + 1;
+		let columns = 10;
+		if (game.global.mapsActive) {
+			if (mapSize === 150) {
+				columns = 15;
+			} else {
+				columns = Math.floor(Math.sqrt(mapSize));
+			}
+		}
+
+		const cellStyle = {
+			fontSize: `${columns / 14 + 0.5}vh`,
+			width: `${100 / columns}%`,
+			paddingTop: `${100 / columns / 19}vh`,
+			paddingBottom: `${100 / columns / 19}vh`
+		};
+
 		cellArray.forEach(($cell, i) => {
 			let cell = cells[i];
-			const innerHTML = updateCellContent($cell, cell);
+			const innerHTML = updateCellContent($cell, cell, cellStyle);
 			cell = updateCellTitle($cell, cell);
 			updates.push({ $cell, innerHTML });
 		});

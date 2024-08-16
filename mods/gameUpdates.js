@@ -984,6 +984,11 @@ function drawGrid(maps) {
 		}
 	}
 
+	const width = `${100 / cols}%`;
+	const paddingTop = `${100 / cols / 19}vh`;
+	const paddingBottom = `${100 / cols / 19}vh`;
+	const fontSize = `${cols / 14 + 1}vh`;
+
 	let className = '';
 	if (game.global.universe === 1 && !maps && game.global.world >= 60 && game.global.world <= 80) {
 		if (game.global.world === 60) className = 'gridOverlayGreenGradient1';
@@ -1010,10 +1015,6 @@ function drawGrid(maps) {
 
 			const cell = game.global[maps ? 'mapGridArray' : 'gridArray'][counter];
 			const id = `${idText}${counter}`;
-			const width = `${100 / cols}%`;
-			const paddingTop = `${100 / cols / 19}vh`;
-			const paddingBottom = `${100 / cols / 19}vh`;
-			const fontSize = `${cols / 14 + 1}vh`;
 
 			let className = ['battleCell', 'cellColorNotBeaten'];
 			let background = '';
