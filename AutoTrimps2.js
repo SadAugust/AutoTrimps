@@ -420,7 +420,7 @@ function mainLoopU2() {
 }
 
 function guiLoop() {
-	if (!usingRealTimeOffline && getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
+	if (getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
 	if (MODULES.performance && MODULES.performance.isAFK) MODULES.performance.UpdateAFKOverlay();
 }
 

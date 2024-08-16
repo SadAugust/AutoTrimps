@@ -189,6 +189,7 @@
 
 	function Update() {
 		if (game.global.preMapsActive) return;
+		if (!(game.global.gridArray && game.global.gridArray[0])) return;
 
 		if (game.global.mapsActive) {
 			if (M['fightinfo'].lastProcessedMap === game.global.mapStarted) return;
