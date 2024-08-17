@@ -22,7 +22,7 @@ const atSettings = {
 	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false },
 	loops: { atTimeLapseFastLoop: false, mainLoop: null, guiLoop: null, gameLoop: null },
 	intervals: { counter: 0, tenthSecond: false, halfSecond: false, oneSecond: false, twoSecond: false, fiveSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false },
-	timeWarp: { loopTicks: 100, updateFreq: 1000, nextUpdate: 1000, loopCount: 0, currentLoops: 0 },
+	timeWarp: { loopTicks: 100, updateFreq: 1000, nextUpdate: 1000, loopCount: 0 },
 	autoSave: game.options.menu.autoSave.enabled
 };
 
@@ -44,17 +44,8 @@ let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
 let hdStats = { autoLevel: Infinity };
 let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false, fluffyRewards: { universe: 0, level: 0 } };
 
-function shouldUpdate(updateEvery = 2000) {
-	if (usingRealTimeOffline && loops === atSettings.timeWarp.currentLoops) return true;
-	if (usingRealTimeOffline && (atSettings.timeWarp.currentLoops === 0 || loops >= atSettings.timeWarp.currentLoops + updateEvery)) {
-		if (updateEvery !== 2000) return true;
-		atSettings.timeWarp.currentLoops = loops;
-		updateAllInnerHtmlFrames();
-
-		return true;
-	}
-
-	return !usingRealTimeOffline;
+function shouldUpdate() {
+	return !usingRealTimeOffline || loops % 600 === 0;
 }
 
 function loadScript(url, type = 'text/javascript', retries = 3) {

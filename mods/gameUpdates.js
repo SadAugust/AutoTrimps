@@ -1,7 +1,5 @@
-if (typeof shouldUpdate !== 'function') {
-	function shouldUpdate() {
-		return !usingRealTimeOffline || loops % 600 === 0;
-	}
+function shouldUpdate() {
+	return !usingRealTimeOffline || loops % 600 === 0;
 }
 
 function liquifiedZone() {
@@ -294,38 +292,33 @@ function updateLabels(force) {
 }
 
 function updateAllInnerHtmlFrames() {
-	if (mutations.Magma.active()) updateGeneratorInfo();
+	updateGeneratorInfo();
 	updateTurkimpTime(true);
-
-	if (challengeActive('Balance') || challengeActive('Unbalance')) updateBalanceStacks();
-	if (challengeActive('Electricity') || challengeActive('Mapocalypse')) updateElectricityStacks();
-	if (challengeActive('Life')) updateLifeStacks();
-	if (challengeActive('Nom')) updateNomStacks();
-	if (challengeActive('Toxicity')) updateToxicityStacks();
-	if (challengeActive('Lead')) manageLeadStacks();
-
-	if (game.global.antiStacks > 0) updateAntiStacks();
+	updateSideTrimps();
+	gather();
+	breed();
+	updateAllBattleNumbers();
+	setVoidCorruptionIcon();
+	manageLeadStacks();
+	updateToxicityStacks();
+	updateLifeStacks();
+	updateElectricityStacks();
+	updateAntiStacks();
 	updateTitimp();
-	if (getHeirloomBonus('Shield', 'gammaBurst') > 0) updateGammaStacks();
+	updateNomStacks();
+	updateBalanceStacks();
+	updateGammaStacks();
 	setEmpowerTab();
 	handlePoisonDebuff();
 	handleIceDebuff();
 	handleWindDebuff();
 
-	if (!usingRealTimeOffline) {
-		updateSideTrimps();
-		gather();
-		breed();
-		updateAllBattleNumbers();
-		setVoidCorruptionIcon();
-
-		if (!game.global.preMapsActive && game.global.mapBonus > 0) {
-			let innerText = game.global.mapBonus;
-			if (game.talents.mapBattery.purchased && game.global.mapBonus === 10) innerText = "<span class='mapBonus10'>" + innerText + '</span>';
-			const mapBtnElem = document.getElementById('mapsBtnText');
-			const mapBtnText = `Maps (${innerText})`;
-			if (mapBtnElem.innerHTML !== mapBtnText) mapBtnElem.innerHTML = mapBtnText;
-		}
+	if (!game.global.preMapsActive && game.global.mapBonus > 0) {
+		let innerText = game.global.mapBonus;
+		if (game.talents.mapBattery.purchased && game.global.mapBonus === 10) innerText = "<span class='mapBonus10'>" + innerText + '</span>';
+		const mapBtnElem = document.getElementById('mapsBtnText');
+		const mapBtnText = `Maps (${innerText})`;
+		if (mapBtnElem.innerHTML !== mapBtnText && shouldUpdate()) mapBtnElem.innerHTML = mapBtnText;
 	}
 
 	let cell, cellNum;
@@ -339,11 +332,11 @@ function updateAllInnerHtmlFrames() {
 
 	const badAttackElem = document.getElementById('badGuyAttack');
 	const badAttackText = calculateDamage(cell.attack, true, false, false, cell);
-	if (badAttackElem.innerHTML != badAttackText) badAttackElem.innerHTML = badAttackText;
+	if (badAttackElem.innerHTML != badAttackText && shouldUpdate()) badAttackElem.innerHTML = badAttackText;
 
 	const goodAttackElem = document.getElementById('goodGuyAttack');
 	const goodAttackText = calculateDamage(game.global.soldierCurrentAttack, true, true);
-	if (goodAttackElem.innerHTML != goodAttackText) goodAttackElem.innerHTML = goodAttackText;
+	if (goodAttackElem.innerHTML != goodAttackText && shouldUpdate()) goodAttackElem.innerHTML = goodAttackText;
 }
 
 function updateSideTrimps() {
@@ -1186,7 +1179,7 @@ function manageLeadStacks(remove) {
 }
 
 function updateToxicityStacks() {
-	if (!shouldUpdate() && challengeActive('Toxicity')) return;
+	if (!shouldUpdate()) return;
 
 	const elem = document.getElementById('toxicityBuff');
 	const stackCount = game.challenges.Toxicity.stacks;
@@ -1234,7 +1227,7 @@ function checkCrushedCrit() {
 }
 
 function updateElectricityStacks(tipOnly) {
-	if (!shouldUpdate() && (challengeActive('Electricity') || challengeActive('Mapocalypse'))) return;
+	if (!shouldUpdate()) return;
 	const elem = document.getElementById('debuffSpan');
 
 	if (game.challenges.Electricity.stacks > 0) {
@@ -1277,7 +1270,6 @@ function updateAntiStacks() {
 function updateTitimp() {
 	if (!shouldUpdate()) return;
 	const elem = document.getElementById('titimpBuff');
-
 	if (game.global.titimpLeft < 1) {
 		if (elem && elem.innerHTML !== '') elem.innerHTML = '';
 		return;
@@ -1289,7 +1281,7 @@ function updateTitimp() {
 }
 
 function updateNomStacks(number) {
-	if (!shouldUpdate() && challengeActive('Nom')) return;
+	if (!shouldUpdate()) return;
 
 	const elem = document.getElementById('nomStack');
 	if (!elem) {
@@ -1300,8 +1292,7 @@ function updateNomStacks(number) {
 }
 
 function updateBalanceStacks() {
-	if (!shouldUpdate() && (challengeActive('Balance') || challengeActive('Unbalance'))) return;
-
+	if (!shouldUpdate()) return;
 	let elem = document.getElementById('balanceSpan');
 	if (!elem) {
 		document.getElementById('goodGuyName').innerHTML += `<span id='balanceSpan'></span>`;
@@ -2874,7 +2865,7 @@ function startFight() {
 	}
 
 	const badGuyName = document.getElementById('badGuyName');
-	if (badGuyName.innerHTML !== badName && shouldUpdate(500)) badGuyName.innerHTML = badName;
+	if (badGuyName.innerHTML !== badName && shouldUpdate()) badGuyName.innerHTML = badName;
 
 	if (challengeActive('Domination')) handleDominationDebuff();
 	const corruptionStart = mutations.Corruption.start(true);
@@ -3814,7 +3805,7 @@ function fight(makeUp) {
 					if (game.talents.mapBattery.purchased && game.global.mapBonus === 10) innerText = "<span class='mapBonus10'>" + innerText + '</span>';
 					const mapBtnElem = document.getElementById('mapsBtnText');
 					const mapBtnText = `Maps (${innerText})`;
-					if (mapBtnElem.innerHTML !== mapBtnText && shouldUpdate(500)) mapBtnElem.innerHTML = mapBtnText;
+					if (mapBtnElem.innerHTML !== mapBtnText && shouldUpdate()) mapBtnElem.innerHTML = mapBtnText;
 				}
 				game.global.lastClearedMapCell = -1;
 				buildMapGrid(game.global.currentMapId);
@@ -3881,7 +3872,7 @@ function fight(makeUp) {
 	let cellAttack = calculateDamage(cell.attack, false, false, false, cell);
 	const badAttackElem = document.getElementById('badGuyAttack');
 	const badAttackText = calculateDamage(cell.attack, true, false, false, cell);
-	if (badAttackElem.innerHTML != badAttackText && shouldUpdate(500)) badAttackElem.innerHTML = badAttackText;
+	if (badAttackElem.innerHTML != badAttackText && shouldUpdate()) badAttackElem.innerHTML = badAttackText;
 	let badCrit = false;
 
 	if (challengeActive('Crushed')) {
@@ -3932,7 +3923,7 @@ function fight(makeUp) {
 	let trimpAttack = calculateDamage(game.global.soldierCurrentAttack, false, true);
 	const goodAttackElem = document.getElementById('goodGuyAttack');
 	const goodAttackText = calculateDamage(game.global.soldierCurrentAttack, true, true);
-	if (goodAttackElem.innerHTML != goodAttackText && shouldUpdate(500)) goodAttackElem.innerHTML = goodAttackText;
+	if (goodAttackElem.innerHTML != goodAttackText && shouldUpdate()) goodAttackElem.innerHTML = goodAttackText;
 
 	updateTitimp();
 	let critTier = 0;
@@ -4982,7 +4973,7 @@ function runEverySecond(makeUp) {
 		game.stats.bestHeliumHourThisRun.evaluate();
 		const newHeliumPhHTML = `${prettify(heHr)}/hr`;
 		const heliumPhElem = document.getElementById('heliumPh');
-		if (heliumPhElem.innerHTML !== newHeliumPhHTML && shouldUpdate(1000)) {
+		if (heliumPhElem.innerHTML !== newHeliumPhHTML && shouldUpdate()) {
 			heliumPhElem.innerHTML = newHeliumPhHTML;
 		}
 		if (game.global.universe === 1) checkAchieve('heliumHour');
