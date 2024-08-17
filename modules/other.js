@@ -424,9 +424,10 @@ function _timeWarpAutoSaveSetting() {
 	if (game.options.menu.autoSave.enabled) toggleSetting('autoSave');
 }
 
-function _timeWarpUpdateUIDisplay() {
+function _timeWarpUpdateUIDisplay(force = false) {
 	if (!usingRealTimeOffline || !getPageSetting('timeWarpDisplay')) return;
 
+	const offlineMode = usingRealTimeOffline;
 	usingRealTimeOffline = false;
 	const enemy = getCurrentEnemy();
 	updateGoodBar();
@@ -470,7 +471,26 @@ function _timeWarpUpdateUIDisplay() {
 	displayMostEfficientBuilding(true);
 	displayMostEfficientEquipment(true);
 	displayShieldGymEfficiency(true);
-	usingRealTimeOffline = true;
+
+	if (mutations.Magma.active()) updateGeneratorInfo();
+	updateTurkimpTime(true);
+
+	if (challengeActive('Balance') || challengeActive('Unbalance')) updateBalanceStacks();
+	if (challengeActive('Electricity') || challengeActive('Mapocalypse')) updateElectricityStacks();
+	if (challengeActive('Life')) updateLifeStacks();
+	if (challengeActive('Nom')) updateNomStacks();
+	if (challengeActive('Toxicity')) updateToxicityStacks();
+	if (challengeActive('Lead')) manageLeadStacks();
+
+	if (game.global.antiStacks > 0) updateAntiStacks();
+	updateTitimp();
+	if (getHeirloomBonus('Shield', 'gammaBurst') > 0) updateGammaStacks();
+	setEmpowerTab();
+	handlePoisonDebuff();
+	handleIceDebuff();
+	handleWindDebuff();
+
+	usingRealTimeOffline = offlineMode;
 }
 
 function _timeWarpUpdateEquipment() {
