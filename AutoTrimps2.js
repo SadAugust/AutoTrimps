@@ -429,7 +429,7 @@ function mainLoopU2() {
 }
 
 function guiLoop() {
-	if (!usingRealTimeOffline && !liquifiedZone() && getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
+	if (!usingRealTimeOffline && (!liquifiedZone() || game.global.mapsActive) && getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
 	if (MODULES.performance && MODULES.performance.isAFK) MODULES.performance.UpdateAFKOverlay();
 }
 
