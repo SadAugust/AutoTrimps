@@ -1256,7 +1256,7 @@ function prestigeClimb(lineCheck) {
 	}
 
 	let shouldMap = prestigeToFarmFor > 0;
-	if (shouldMap && getPageSetting('prestigeClimbSkip')) shouldMap = prestigesUnboughtCount() >= 2;
+	if (shouldMap && getPageSetting('prestigeClimbSkip')) shouldMap = 2 > prestigesUnboughtCount();
 
 	const mapSpecial = getAvailableSpecials('p');
 	const mapObject = getCurrentMapObject();
