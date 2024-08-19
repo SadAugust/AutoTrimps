@@ -221,18 +221,24 @@ if (typeof originalrunMap !== 'function') {
 if (typeof originalActivateClicked !== 'function') {
 	var originalActivateClicked = activateClicked;
 	activateClicked = function () {
-		downloadSave(true);
-		if (typeof pushData === 'function') pushData();
-		if (!MODULES.portal.dontPushData) pushSpreadsheetData();
-		autoUpgradeHeirlooms();
-		autoHeirlooms(true);
-		autoMagmiteSpender(true);
+		if (!game.global.viewingUpgrades) {
+			downloadSave(true);
+			if (typeof pushData === 'function') pushData();
+			if (!MODULES.portal.dontPushData) pushSpreadsheetData();
+			autoUpgradeHeirlooms();
+			autoHeirlooms(true);
+			autoMagmiteSpender(true);
+		}
+
 		originalActivateClicked(...arguments);
-		resetVarsZone(true);
-		_setButtonsPortal();
-		if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
-			loadMutations(preset);
-			u2Mutations.closeTree();
+
+		if (!game.global.viewingUpgrades) {
+			resetVarsZone(true);
+			_setButtonsPortal();
+			if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
+				loadMutations(preset);
+				u2Mutations.closeTree();
+			}
 		}
 	};
 }

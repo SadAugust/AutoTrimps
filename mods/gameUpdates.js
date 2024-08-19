@@ -1071,6 +1071,25 @@ function drawGrid(maps) {
 	if (eggCell) eggCell.addEventListener('click', easterEggClicked);
 }
 
+function clearQueue(specific = false) {
+	if (!specific) game.global.clearingBuildingQueue = true;
+	let existing = 0;
+
+	for (let x = 0; x < game.global.nextQueueId; x++) {
+		const queueItem = document.getElementById(`queueItem${x}`);
+		if (!queueItem) continue;
+
+		existing++;
+
+		if (specific && game.global.buildingsQueue[existing - 1].split('.')[0] !== specific) continue;
+		else existing--;
+
+		removeQueueItem(`queueItem${x}`, true);
+	}
+
+	game.global.clearingBuildingQueue = false;
+}
+
 function updateAllBattleNumbers(skipNum) {
 	if (!shouldUpdate(true)) return;
 
@@ -2107,7 +2126,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 }
 
 function buyBuilding(what, confirmed, fromAuto, forceAmt) {
-	if (game.options.menu.pauseGame.enabled || what === 'Hub') return false;
+	if (game.options.menu.pauseGame.enabled || what === 'Hub' || game.global.clearingBuildingQueue) return false;
 	if (!forceAmt && !confirmed && game.options.menu.lockOnUnlock.enabled === 1 && new Date().getTime() - 1000 <= game.global.lastUnlock) return false;
 
 	const toBuy = game.buildings[what];
