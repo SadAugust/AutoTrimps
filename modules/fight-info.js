@@ -107,9 +107,12 @@
 
 	function updateCellContent($cell, cell, cellStyle) {
 		const cellName = cell.name.toLowerCase();
-		const isFast = M['fightinfo'].fastImps.includes(cell.name) && (!cell.corrupted || !cell.corrupted.startsWith('corrupt') || (cell.u2Mutation !== undefined && Object.keys(cell.u2Mutation).length !== 0));
 		let special = null;
 		let specialIcon = null;
+
+		let isFast = M['fightinfo'].fastImps.includes(cell.name);
+		if (cell.corrupted && cell.corrupted.startsWith('corrupt')) isFast = false;
+		if (cell.u2Mutation && Object.keys(cell.u2Mutation).length !== 0) isFast = false;
 
 		if (cellName.includes('skele')) {
 			special = M.fightinfo.imp.skel;

@@ -4195,6 +4195,8 @@ function initialiseAllSettings() {
 			function () { return ('Enhance Grids') },
 			function () {
 				let description = "<p>Apply slight visual enhancements to world and map grids that highlights with drop shadow all the exotic, powerful, skeletimps and other special imps.</p>";
+				const enemyType = currSettingUniverse === 1 ? 'Corrupt' : 'Mutated';
+				description = `<p>${enemyType} enemies won't have a fast icon as those enemies are always fast.</p>`;
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
 		createSetting('displayHeHr',
