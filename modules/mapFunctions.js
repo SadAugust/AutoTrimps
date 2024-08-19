@@ -593,7 +593,7 @@ function mapBonus(lineCheck) {
 
 	const settingIndex = _findSettingsIndexMapBonus(settingName, baseSettings);
 
-	const spireCheck = isDoingSpire() && getPageSetting('maxMapStacksForSpire') && !_berserkDisableMapping() && !_noMappingChallenges();
+	const spireCheck = isDoingSpire() && getPageSetting('maxMapStacksForSpire') && !_berserkDisableMapping() && !_noMappingChallenges(undefined, true);
 	if (!spireCheck && !defaultSettings.active) return farmingDetails;
 
 	const setting = spireCheck ? _mapBonusSpireSetting(defaultSettings) : settingIndex ? baseSettings[settingIndex] : undefined;
@@ -1222,7 +1222,7 @@ function prestigeClimb(lineCheck) {
 		mapName
 	};
 
-	if (challengeActive('Frugal') || _berserkDisableMapping() || _noMappingChallenges(true)) return farmingDetails;
+	if (challengeActive('Frugal') || _berserkDisableMapping() || _noMappingChallenges(true, true)) return farmingDetails;
 
 	const runningMapology = challengeActive('Mapology') && getPageSetting('mapology');
 	let targetPrestige = runningMapology ? getPageSetting('mapologyPrestige') : getPageSetting('prestigeClimb');
@@ -1241,13 +1241,13 @@ function prestigeClimb(lineCheck) {
 		farmingDetails.mapSliders = [0, 9, 9];
 	}
 
-	//If we're past the zone we want to farm for all prestiges in then set targetPrestige to the highest prestige available.
-	//equipsToGet will automatically change GambesOP to Breastplate if the Slow challenge has not yet been completed.
+	/* If we're past the zone we want to farm for all prestiges in then set targetPrestige to the highest prestige available.
+	equipsToGet will automatically change GambesOP to Breastplate if the Slow challenge has not yet been completed. */
 	if (!runningMapology && getPageSetting('prestigeClimbZone') > 0 && game.global.world >= getPageSetting('prestigeClimbZone')) {
-		targetPrestige = 'GambesOP';
+		targetPrestige = game.global.slowDone ? 'GambesOP' : 'Bestplate';
 	}
 
-	//Figure out how many equips to farm for & maps to run to get to that value
+	/* Figure out which prestige (if any) to farm for and how many equips to farm for & maps to run to get all of them */
 	const [prestigeToFarmFor, mapsToRun] = prestigesToGet(game.global.world, targetPrestige);
 
 	let mapLevel = 0;
@@ -1290,7 +1290,8 @@ function prestigeClimb(lineCheck) {
 		mapLevel,
 		autoLevel: true,
 		special: mapSpecial,
-		mapsToRun
+		mapsToRun,
+		targetPrestige
 	});
 
 	return farmingDetails;
@@ -3033,7 +3034,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	if (!baseSettings) return farmingDetails;
 	const defaultSettings = baseSettings[0];
 
-	const allowMapping = !_berserkDisableMapping() && !_noMappingChallenges();
+	const allowMapping = !_berserkDisableMapping() && !_noMappingChallenges(undefined, true);
 	const currentPortal = getTotalPortals() + '_' + game.global.world;
 	const hitsSurvivedGoal = targetHitsSurvived(true);
 

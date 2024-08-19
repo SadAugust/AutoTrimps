@@ -234,7 +234,6 @@ function initialiseScript() {
 	MODULES.autoPerks.displayGUI(portalUniverse);
 	loadAugustSettings();
 	_setupATButtons();
-	challengeInfo(true);
 	updateShieldData();
 
 	if (_getTargetWorldType() === 'void' && !hdStats.hitsSurvivedVoid) {
@@ -258,6 +257,7 @@ function initialiseScript() {
 	toggleCatchUpMode();
 	if (usingRealTimeOffline) offlineProgress.loop = setTimeout(timeWarpLoop, 0, true);
 	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
+	challengeInfo(true);
 	console.timeEnd();
 }
 

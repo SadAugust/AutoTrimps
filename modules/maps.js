@@ -138,8 +138,8 @@ function shouldAbandon(zoneCheck = true) {
 	return false;
 }
 
-function _noMappingChallenges(ignoreChallenge) {
-	if (noBreedChallenge()) return true;
+function _noMappingChallenges(ignoreChallenge, mapping = false) {
+	if (noBreedChallenge(mapping)) return true;
 	if (!ignoreChallenge && challengeActive('Mapology')) return true;
 	if (challengeActive('Exterminate')) return true;
 }

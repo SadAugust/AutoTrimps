@@ -520,7 +520,8 @@ function getPerkModifier(what) {
 	return game.portal[what].modifier || 0;
 }
 
-function noBreedChallenge() {
+function noBreedChallenge(mapping = false) {
+	if (mapping && (game.global.preMapsActive || game.global.mapsActive || game.global.soldierHealth <= 0)) return false;
 	return challengeActive('Trapper') || challengeActive('Trappapalooza');
 }
 

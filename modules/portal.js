@@ -607,6 +607,7 @@ function challengeInfo(force) {
 
 		if (_noMappingChallenges()) {
 			debug(`Be aware that since the mapping you will do during this challenge is different from other challenges any mapping lines that aren't specific to this challenge won't run.`, 'challenge');
+			if (noBreedChallenge()) debug(`Map Bonus, Prestige Climb, and the standalone HD Farm and Hits Survived settings won't start running unless your army is dead, you're in the map chamber or maps during this challenge.`, 'challenge');
 		}
 		if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
 			const autoStructureSettings = getAutoStructureSetting();
