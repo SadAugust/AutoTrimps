@@ -151,7 +151,7 @@ function fillPresetPerky(specificPreset, forceDefault) {
 		coord: [0, 40, 1, 0],
 		trimp: [0, 99, 1, 0],
 		metal: [0, 7, 1, 0],
-		c2: [0, 7, 1, 0],
+		c2: [0, 7, 1, 1],
 		income: [0, 0, 0, 0],
 		unesscented: [0, 1, 0, 0],
 		nerfeder: [0, 1, 0, 0],

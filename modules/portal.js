@@ -482,6 +482,8 @@ function _autoPortalRegular(challengeName) {
 
 	if (!document.getElementById(`challenge${challengeName}`)) return;
 	selectChallenge(challengeName);
+
+	return challengeName;
 }
 
 function _autoPortalActivate(challenge) {
