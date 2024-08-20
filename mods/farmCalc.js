@@ -425,6 +425,7 @@ function populateFarmCalcData() {
 //Return a list of efficiency stats for all sensible zones
 function stats(lootFunction = lootDefault) {
 	const saveData = populateFarmCalcData();
+	const maxMaps = lootFunction === lootDestack ? 11 : 25;
 	let stats = [];
 	let extra = saveData.extraMapLevelsAvailable ? 10 : saveData.reducer ? -1 : 0;
 	let mapsCanAffordPerfect = 0;
@@ -448,7 +449,7 @@ function stats(lootFunction = lootDefault) {
 		if (tmp.zone !== 'z6') {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-			if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= 25)) break;
+			if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= maxMaps)) break;
 		}
 
 		stats.unshift(tmp);

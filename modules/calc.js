@@ -72,6 +72,9 @@ class HDStats {
 			this.autoLevelZone = world;
 			this.autoLevelData = get_best(this.autoLevelInitial, true);
 
+			this.autoLevelZoneDeso = world;
+			this.autoLevelDesolation = challengeActive('Desolation') ? stats(lootDestack) : this.autoLevelInitial;
+
 			const findResult = Object.entries(this.autoLevelInitial[0]).find(([key, data]) => data.mapLevel === 0);
 			const worldMap = findResult ? findResult[1] : undefined;
 			const { loot, speed } = this.autoLevelData;

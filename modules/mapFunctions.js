@@ -4051,31 +4051,36 @@ function callAutoMapLevel(mapName, special) {
 	}
 
 	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
-	const lootFunction = mapName === 'Desolation Destacking' ? lootDestack : lootDefault;
 	const mapModifiers = {
 		special: special || trimpStats.mapSpecial,
 		biome: mapSettings.biome || trimpStats.mapBiome
 	};
 
 	if (hdStats.autoLevelZone !== game.global.world) {
-		hdStats.autoLevelInitial = stats(lootFunction);
+		hdStats.autoLevelInitial = stats(lootDefault);
 		hdStats.autoLevelZone = game.global.world;
+	}
+
+	if (mapName === 'Desolation Destacking' && challengeActive('Desolation') && hdStats.autoLevelZoneDeso !== game.global.world) {
+		hdStats.autoLevelDesolation = stats(lootDestack);
+		hdStats.autoLevelZoneDeso = game.global.world;
 	}
 
 	let mapLevel = mapSettings.levelCheck;
 	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
+	const autoLevelObj = mapName === 'Desolation Destacking' ? hdStats.autoLevelDesolation : hdStats.autoLevelInitial;
 
 	if (mapLevel === Infinity) {
-		mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+		mapLevel = get_best(autoLevelObj, true, mapModifiers)[mapType].mapLevel;
 	} else if (mapName && atSettings.intervals.sixSecond) {
-		let autoLevelData = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType];
+		let autoLevelData = get_best(autoLevelObj, true, mapModifiers)[mapType];
 		const secondBestMap = autoLevelData[`${mapType}Second`];
 		/* if (mapSettings.mapLevel && mapSettings.mapLevel === secondBestMap.mapLevel && autoLevelData.) {
 		} */
 		const autoLevel = autoLevelData.mapLevel;
 		mapLevel = Math.max(mapLevel, autoLevel);
 
-		const autoLevelDataNoFrags = get_best(hdStats.autoLevelInitial)[mapType];
+		const autoLevelDataNoFrags = get_best(autoLevelObj)[mapType];
 		const autoLevelIgnoreFragments = autoLevelDataNoFrags.mapLevel;
 		mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
 	}
