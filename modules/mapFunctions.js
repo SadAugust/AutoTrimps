@@ -2728,7 +2728,7 @@ function _getDesolationMapLevel(trimpHealth, mapName, mapSpecial, sliders) {
 
 	for (let y = 10; y >= 0; y--) {
 		mapLevel = y;
-		if (game.global.mapsActive && mapSettings.mapName === mapName && (mapObj.bonus === undefined ? '0' : mapObj) === mapSpecial && mapObj.level - game.global.world === mapLevel) break;
+		if (game.global.mapsActive && mapSettings.mapName === mapName && (mapObj.bonus === undefined ? '0' : mapObj.bonus) === mapSpecial && mapObj.level - game.global.world === mapLevel) break;
 		if (mapLevel === 0) break;
 		if (game.resources.fragments.owned < mapCostMin(mapLevel, mapSpecial, 'Random', sliders)) continue;
 		const enemyDmg = calcEnemyAttackCore('map', game.global.world + y, 1, 'Snimp', false, false, game.portal.Equality.radLevel) * 0.84 * 4;
