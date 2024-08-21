@@ -134,7 +134,6 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 			const equipType = MODULES.equipment[equipName].stat;
 			const currentPrestige = game.equipment[equipName].prestige;
 			highestPrestige = Math.max(highestPrestige, currentPrestige);
-
 			if (prestigesAvailable || buyPrestigeMaybe(equipName).skip) continue;
 			if (prestigeSetting === 0 || (prestigeSetting === 1 && mostEfficient[equipType].zoneGo) || (prestigeSetting === 2 && !canAncientTreasure)) continue;
 
@@ -149,6 +148,8 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 	const equipMult = getEquipPriceMult();
 	const prestigePct = prestigeSetting === 2 && !canAncientTreasure ? Math.min(1, getPageSetting('equipPrestigePct') / 100) : 1;
 	const pandemonium = challengeActive('Pandemonium');
+	const healthStats = calcEquipment('attack');
+	const attackStats = calcEquipment('health');
 
 	for (const equipName in MODULES.equipment) {
 		const equipData = game.equipment[equipName];
@@ -174,7 +175,6 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		const zoneGo = mostEfficient[equipType].zoneGo;
 		const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct;
 		const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
-
 		const maybeBuyPrestige = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
 
 		if (forcePrestige) {
@@ -205,7 +205,20 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 			safeRatio = nextLevelCost / nextLevelValue;
 		}
 
-		if (!prestige && equipData.level >= equipCap) continue;
+		if (!prestige) {
+			if (equipData.level >= equipCap) continue;
+
+			if (equipData.prestige <= highestPrestige - 2 && equipData.level >= mostEfficient[equipType].equipCap) {
+				let maxCanAfford = Math.max(1, getMaxAffordable(nextLevelCost, game.resources[equipModule.resource].owned, 1.2, true));
+				maxCanAfford = Math.min(maxCanAfford, equipCap - equipData.level);
+
+				const equipStats = equipType === 'health' ? healthStats : attackStats;
+				const statIncrease = (nextLevelValue * maxCanAfford) / equipStats;
+				if (1e-3 > statIncrease) {
+					continue;
+				}
+			}
+		}
 		if (equipName === 'Shield' && nextLevelCost > game.resources.wood.owned * resourceSpendingPct) continue;
 
 		const shieldEff = equipName === 'Shield' && equipType === 'health' && mostEfficient[equipType].cost > game.resources.metal.owned * resourceSpendingPct;
@@ -270,7 +283,6 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	prestigeInfo.prestigeCost = prestigeCost;
 
 	if (_shouldSaveResource(resourceUsed)) return prestigeInfo;
-
 	const {
 		science: [scienceCost, scienceMultiplier],
 		gems: [gemsCost, gemsMultiplier]
