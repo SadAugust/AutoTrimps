@@ -297,7 +297,7 @@ function updateAllInnerHtmlFrames() {
 
 	if (challengeActive('Balance') || challengeActive('Unbalance')) updateBalanceStacks();
 	if (challengeActive('Electricity') || challengeActive('Mapocalypse')) updateElectricityStacks();
-	if (challengeActive('Life')) updateLifeStacks();
+	if (challengeActive('Life')) updateLivingStacks();
 	if (challengeActive('Nom')) updateNomStacks();
 	if (challengeActive('Toxicity')) updateToxicityStacks();
 	if (challengeActive('Lead')) manageLeadStacks();
