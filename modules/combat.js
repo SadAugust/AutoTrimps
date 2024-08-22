@@ -388,9 +388,9 @@ function _shouldPBSwap(mapping, enemy, fastEnemy) {
 	return checkPlagueSwap && ((mapping && !fastEnemy) || !mapping) && enemy.level !== mapSize - 2 && (typeof plaguebringerDamage === 'undefined' || plaguebringerDamage < enemy.maxHealth) && enemy.maxHealth * 0.05 < enemy.health;
 }
 
-function _getEnemyDmg(mapping, worldType) {
+function _getEnemyDmg(mapping, worldType, fastEnemy) {
 	const enemy = getCurrentEnemy();
-	const damageMult = _getEnemyDmgMultiplier(mapping, worldType, enemy);
+	const damageMult = _getEnemyDmgMultiplier(mapping, worldType, enemy, fastEnemy);
 	const damage = enemy.attack * enemyDamageModifiers() * 1.5 * damageMult;
 
 	const maxEquality = getPerkLevel('Equality');
@@ -400,7 +400,7 @@ function _getEnemyDmg(mapping, worldType) {
 	return { enemyDmg: damage, enemyDmgMax: damageMax, enemyDmgMult: damageMult };
 }
 
-function _getEnemyDmgMultiplier(mapping, worldType, enemy) {
+function _getEnemyDmgMultiplier(mapping, worldType, enemy, fastEnemy) {
 	let damageMult = 1;
 	if (game.global.voidBuff === 'doubleAttack') damageMult += 2;
 	const ignoreCrits = getPageSetting('ignoreCrits');
@@ -411,7 +411,7 @@ function _getEnemyDmgMultiplier(mapping, worldType, enemy) {
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningArch = challengeActive('Archaeology');
 	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
-	if (game.global.voidBuff === 'getCrit' && ignoreCrits === 0 && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArch || shieldBreak)) damageMult += 5;
+	if (game.global.voidBuff === 'getCrit' && ignoreCrits === 0 && (fastEnemy || gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArch || shieldBreak)) damageMult += 5;
 
 	if (challengeActive('Daily')) {
 		const dailyChallenge = game.global.dailyChallenge;
@@ -600,7 +600,7 @@ function _equalityManagementAdvanced() {
 
 	if (_checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType)) return;
 
-	const { enemyDmg, enemyDmgMax, enemyDmgMult } = _getEnemyDmg(mapping, worldType);
+	const { enemyDmg, enemyDmgMax, enemyDmgMult } = _getEnemyDmg(mapping, worldType, fastEnemy);
 	const armyReady = newArmyRdy() || getPageSetting('heirloomBreed') !== 'undefined';
 
 	ourHealth = _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, armyReady);
