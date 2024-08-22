@@ -292,7 +292,8 @@ function populatePerkyData() {
 			chronojest: chronojest,
 			prod: prod,
 			loot: loot,
-			breed_timer: mastery('patience') ? 45 : 30
+			breed_timer: mastery('patience') ? 45 : 30,
+			army_mod: game.resources.trimps.maxMod
 		}
 	};
 
@@ -401,12 +402,14 @@ function optimize() {
 	const base_income = 600 * mod.whip * books;
 	const base_helium = Math.pow(zone - 19, 2);
 	const max_tiers = zone / 5 + +((zone - 1) % 10 < 5);
+
 	const exponents = {
 		cost: Math.pow(1.069, 0.85 * (zone < 60 ? 57 : 53)),
 		attack: Math.pow(1.19, 13),
 		health: Math.pow(1.19, 14),
 		block: Math.pow(1.19, 10)
 	};
+
 	const weightSum = weight.attack + weight.health;
 	const equip_cost = {
 		attack: (211 * weightSum) / weight.attack,
@@ -503,6 +506,7 @@ function optimize() {
 	function soldiers() {
 		const ratio = 1 + 0.25 * Coordinated.bonus;
 		let pop = (mod.soldiers || trimps()) / 3;
+		if (game.global.viewingUpgrades) pop *= mod.army_mod;
 		if (mod.soldiers > 1) pop += 36000 * Bait.bonus;
 		const unbought_coords = Math.max(0, Math.log(group_size[Coordinated.level] / pop) / Math.log(ratio));
 		return group_size[0] * Math.pow(1.25, -unbought_coords);
@@ -517,11 +521,12 @@ function optimize() {
 
 	// Total attack
 	function attack() {
+		const gatorCount = gators();
 		let attack = (0.15 + equip('attack')) * Math.pow(0.8, magma());
 		attack *= Power.bonus * Power_II.bonus * Relentlessness.bonus;
 		attack *= Siphonology.bonus * Range.bonus * Anticipation.bonus;
 		attack *= fluffy.attack[Capable.level];
-		attack *= mastery('amalg') ? Math.pow(1.5, gators()) : 1 + 0.5 * gators();
+		attack *= mastery('amalg') ? Math.pow(1.5, gatorCount) : 1 + 0.5 * gatorCount;
 		return soldiers() * attack;
 	}
 
@@ -535,23 +540,26 @@ function optimize() {
 		let block = 0.04 * gyms * Math.pow(1 + mystic / 100, gyms) * (1 + tacular * trainers);
 		// target number of attacks to survive
 		let attacks = 60;
+		const breedTimer = breed();
+		const soldier = soldiers();
 		if (zone < 70) {
 			// no geneticists
 			// number of ticks needed to repopulate an army
-			const timer = Math.log(1 + (soldiers() * breed()) / Bait.bonus) / Math.log(1 + breed());
+			const timer = Math.log(1 + (soldier * breedTimer) / Bait.bonus) / Math.log(1 + breedTimer);
 			attacks = timer / ticks();
 		} else {
 			// geneticists
 			const fighting = Math.min(group_size[Coordinated.level] / trimps(), 1 / 3);
 			const target_speed = fighting > 1e-9 ? (Math.pow(0.5 / (0.5 - fighting), 0.1 / mod.breed_timer) - 1) * 10 : fighting / mod.breed_timer;
-			const geneticists = Math.log(breed() / target_speed) / -Math.log(0.98);
+			const geneticists = Math.log(breedTimer / target_speed) / -Math.log(0.98);
 			health *= Math.pow(1.01, geneticists);
 			health *= Math.pow(1.332, gators());
 		}
 		health /= attacks;
+
 		if (zone < 60) block += equip('block');
 		else block = Math.min(block, 4 * health);
-		return soldiers() * (block + health);
+		return soldier * (block + health);
 	}
 
 	const xp = function () {
@@ -570,21 +578,24 @@ function optimize() {
 		return Overkill.bonus;
 	};
 
-	const stats = { agility: agility, helium: helium, xp: xp, attack: attack, health: health, overkill: overkill, trimps: trimps, income: income };
+	const stats = { agility, helium, xp, attack, health, overkill, trimps, income };
 
 	function score() {
 		let result = 0;
+
 		for (let i in weight) {
 			if (!weight[i]) continue;
 			const stat = stats[i]();
 			if (!isFinite(stat)) throw Error(i + ' is ' + stat);
 			result += weight[i] * Math.log(stat);
 		}
+
 		return result;
 	}
 
 	function recompute_marginal_efficiencies() {
 		const baseline = score();
+
 		for (let name in perks) {
 			let perk = perks[name];
 			if (perk.cost_increment || !perk.levellable(he_left)) continue;
@@ -592,6 +603,7 @@ function optimize() {
 			perk.gain = score() - baseline;
 			perk.level_up(-1);
 		}
+
 		const perkNames = ['Looting', 'Carpentry', 'Motivation', 'Power', 'Toughness'];
 		for (let name of perkNames) {
 			perks[name + '_II'].gain = (perks[name].gain * perks[name + '_II'].log_ratio()) / perks[name].log_ratio();
@@ -626,6 +638,9 @@ function optimize() {
 		Bait.min_level = 1;
 		if ($$('#preset').value !== 'trapper') Pheromones.min_level = 1;
 	}
+
+	if (game.global.viewingUpgrades) Coordinated.min_level = game.portal.Coordinated.level;
+
 	// Fluffy
 	fluffy.attack = [];
 	const potential = Math.log((0.003 * fluffy.xp) / Math.pow(5, fluffy.prestige) + 1) / Math.log(4);
@@ -634,18 +649,22 @@ function optimize() {
 		const progress = level === cap ? 0 : (Math.pow(4, potential - level) - 1) / 3;
 		fluffy.attack[cap] = 1 + Math.pow(5, fluffy.prestige) * 0.1 * (level / 2 + progress) * (level + 1);
 	}
+
 	// Minimum levels on perks
 	for (let name in perks) {
 		const perk = perks[name];
 		if (perk.cost_increment) he_left -= perk.level_up(perk.min_level);
 		else while (perk.level < perk.min_level) he_left -= perk.level_up(1);
 	}
+
 	let ratio = 0.25;
 	while (Capable.levellable(he_left * ratio)) {
 		he_left -= Capable.level_up(1);
 		ratio = Capable.level <= Math.floor(potential) && zone > 300 && weight.xp > 0 ? 0.25 : 0.01;
 	}
+
 	if (zone <= 300 || potential >= Capable.level) weight.xp = 0;
+
 	// Main loop
 	const sorted_perks = Object.keys(perks)
 		.map(function (name) {
@@ -654,13 +673,16 @@ function optimize() {
 		.filter(function (perk) {
 			return perk.levellable(he_left);
 		});
+
 	const reference_he = he_left;
+
 	for (let x = 0.999; x > 1e-12; x *= x) {
 		const he_target = reference_he * x;
 		recompute_marginal_efficiencies();
 		sorted_perks.sort(function (a, b) {
 			return b.gain / b.cost - a.gain / a.cost;
 		});
+
 		while (he_left > he_target && sorted_perks.length) {
 			const best = sorted_perks.shift();
 			if (!best.levellable(he_left)) continue;
@@ -670,6 +692,7 @@ function optimize() {
 			sorted_perks.splice(i, 0, best);
 		}
 	}
+
 	if (he_left + 1 < total_he / 1e12 && Toughness_II.level > 0) {
 		--Toughness_II.level;
 		he_left += Toughness_II.cost;
