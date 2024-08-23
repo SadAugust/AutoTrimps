@@ -461,9 +461,12 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	const ourEqualityModifier = game.portal.Equality.getModifier(1);
 	const runningUnlucky = challengeActive('Unlucky');
 	const runningMayhem = challengeActive('Mayhem') && game.challenges.Mayhem.poison > 0;
+	const enemyCanPoison = runningMayhem && (mapping || enemy.level === 100);
+
 	const runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith;
 	const smithlessGamma = runningSmithless && 10 - game.challenges.Smithless.uberAttacks > gammaToTrigger;
-	const enemyCanPoison = runningMayhem && (mapping || enemy.level === 100);
+
+	const runningDeso = challengeActive('Desolation') && !game.global.mapsActive;
 
 	let ourDmgMax = 0;
 	const isDaily = challengeActive('Daily');
@@ -471,10 +474,11 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
 	const dailyEmpowerToggle = dailyEmpower && getPageSetting('empowerAutoEquality');
 	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
-	const explosiveMult = dailyExplosive ? 1 + dailyModifiers.explosive.getMult(dailyChallenge.explosive.strength) : 1;
+	const explosiveMult = dailyExplosive ? 1 + dailyModifiers.explosive.getMult(dailyChallenge.explosive.strength) : runningDeso ? 6 : 1;
 
-	if ((dailyEmpowerToggle && !mapping && dailyExplosive) || MODULES.maps.slowScumming) {
-		ourDmgMax = maxDmg * gammaDmg;
+	if ((dailyEmpowerToggle && !mapping && dailyExplosive) || MODULES.maps.slowScumming || (runningDeso && !armyReady)) {
+		const checkGamma = gammaToTrigger <= 1 ? gammaDmg : 1;
+		ourDmgMax = maxDmg * checkGamma;
 	}
 
 	for (let i = 0; i <= maxEquality; i++) {
