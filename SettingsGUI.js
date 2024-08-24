@@ -2026,7 +2026,8 @@ function initialiseAllSettings() {
 			function () { return (_getChallenge2Info() + ' Runner End Zone') },
 			function () {
 				let description = "<p>Automatically abandon " + _getChallenge2Info() + "s when this zone is reached.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting and disable ending your " + _getChallenge2Info() + "s.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>If this setting is disabled it will also stop " + _getChallenge2Info() + " Runner from starting any challenges.</p>";
 				description += "<p><b>Recommended:</b> Desired challenge end goal</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
@@ -2038,6 +2039,7 @@ function initialiseAllSettings() {
 				let description = "<p>The percent threshhold you want " + _getChallenge2Info() + "s to be over.</p>";
 				description += "<p>Will only run " + _getChallenge2Info() + "s with a HZE% below this settings value.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>If this setting is disabled it will also stop " + _getChallenge2Info() + " Runner from starting any challenges.</p>";
 				description += "<p><b>Recommended:</b> 85</p>";
 				return description;
 			}, 'value', 0, null, 'C2', [1, 2],
