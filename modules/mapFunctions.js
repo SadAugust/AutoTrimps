@@ -1190,7 +1190,9 @@ function mapDestacking(lineCheck) {
 		destackValue = game.challenges.Storm.beta;
 	}
 
-	if (game.global.mapsActive && getCurrentMapObject().level === 6 && !shouldMap && destackValue === 0) {
+	const mapObj = game.global.mapsActive ? getCurrentMapObject() : {};
+
+	if (game.global.mapsActive && mapObj.level === 6 && !shouldMap && destackValue === 0) {
 		recycleMap_AT();
 	}
 
@@ -1198,7 +1200,7 @@ function mapDestacking(lineCheck) {
 
 	if (lineCheck && shouldMap) return (setting = { priority: 1 });
 
-	const repeat = game.global.mapsActive && getCurrentMapObject().size - getCurrentMapCell().level + 1 >= destackValue;
+	const repeat = game.global.mapsActive && mapObj.size - mapObj.level + 1 >= destackValue;
 	const status = `Destacking: ${destackValue} stacks remaining`;
 
 	Object.assign(farmingDetails, {
@@ -1280,7 +1282,7 @@ function prestigeClimb(lineCheck) {
 	if (game.options.menu.mapLoot.enabled !== 1) toggleSetting('mapLoot');
 	const status = `Prestige Climb: ${prestigeToFarmFor} items remaining`;
 
-	const repeat = !(game.global.mapsActive && mapsToRun > (getCurrentMapObject().bonus === 'p' && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 ? 2 : 1));
+	const repeat = !(game.global.mapsActive && mapsToRun > (mapObject.bonus === 'p' && game.global.lastClearedMapCell !== mapObject.size - 2 ? 2 : 1));
 
 	Object.assign(farmingDetails, {
 		shouldRun: shouldMap,
