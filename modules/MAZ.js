@@ -2052,7 +2052,8 @@ function uniqueMapsSave() {
 //AT Messages
 function messageDisplay(elem) {
 	const msgs = getPageSetting('spamMessages');
-	const keys = ['general', 'upgrades', 'equipment', 'maps', 'map_Details', 'map_Destacking', 'map_Skip', 'other', 'buildings', 'jobs', 'zone', 'exotic', 'gather', 'stance', 'run_Stats', 'magmite', 'nature', 'portal'];
+	const keys = ['general', 'upgrades', 'equipment', 'maps', 'map_Details', 'map_Destacking', 'map_Skip', 'other', 'buildings', 'jobs', 'zone', 'golden_Upgrades', 'exotic', 'gather', 'stance', 'run_Stats', 'magmite', 'nature', 'portal'];
+
 	const settingGroup = keys.reduce((obj, key) => {
 		obj[key] = false;
 		return obj;
@@ -2060,15 +2061,20 @@ function messageDisplay(elem) {
 
 	let tooltipText = "<div id='messageConfig'>Here you can finely tune your message settings. Mouse over the name of a filter for more info.</div>";
 	tooltipText += "<div class='row'>";
+
 	for (let x = 0; x < 1; x++) {
-		tooltipText += "<div class='col-xs-4'></span><br/>";
+		tooltipText += "<div class='col-xs-6'></span><br/>";
+
 		for (let item in settingGroup) {
 			if (item === 'enabled') continue;
 			const realName = (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
-			tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox(item, 'messageConfigCheckbox', msgs[item])}</span><span onmouseover='messageConfigHoverAT("${item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
+			if (typeof msgs[item] === 'undefined') msgs[item] = false;
+			tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox(item, 'messageConfigCheckbox', msgs && msgs[item])}</span><span onmouseover='messageConfigHoverAT("${item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
 		}
+
 		tooltipText += '</div>';
 	}
+
 	tooltipText += '</div>';
 
 	const ondisplay = () => _verticalCenterTooltip();
@@ -2099,6 +2105,7 @@ function messageConfigHoverAT(what, event) {
 		buildings: { title: 'Buildings', text: 'Log the buildings that AT purchases.' },
 		jobs: { title: 'Jobs', text: 'Log the jobs that AT purchases.' },
 		zone: { title: 'Zone', text: 'Log when you start a new zone.' },
+		golden_Upgrades: { title: 'Golden Upgrades', text: 'Log all the golden upgrades that AT purchases.' },
 		exotic: { title: 'Exotic', text: 'Log the amount of world exotics you start a zone with.' },
 		gather: { title: 'Gather', text: 'Log the action that AT tries to gather.' },
 		stance: { title: 'Stance', text: 'Logs when AT decides to change stance and what it changes to.' },
@@ -2335,4 +2342,113 @@ function c2RunnerSave() {
 
 	setPageSetting('c2RunnerSettings', setting, currSettingUniverse);
 	cancelTooltip();
+}
+
+//Hide Automation Buttons
+function hideAutomationDisplay(elem) {
+	const msgs = getPageSetting('displayHideAutoButtons');
+	const keys = ['fight', 'trap', 'storage', 'structure', 'jobs', 'gold', 'upgrade', 'prestige', 'equip'];
+	const settingGroup = keys.reduce((obj, key) => {
+		obj[key] = false;
+		return obj;
+	}, {});
+
+	let tooltipText = "<div id='messageConfig'>Here you can finely tune the ingame automation buttons you'd prefer to hide. Mouse over the name of a filter for more info.</div>";
+	tooltipText += "<div class='row'>";
+
+	for (let x = 0; x < 1; x++) {
+		tooltipText += "<div class='col-xs-6'></span><br/>";
+
+		for (let item in settingGroup) {
+			if (item === 'enabled') continue;
+			const realName = 'Auto ' + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
+			tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox(item, 'messageConfigCheckbox', msgs[item])}</span><span onmouseover='hideAutomationConfigHover("${item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
+		}
+
+		tooltipText += '</div>';
+	}
+
+	tooltipText += '</div>';
+
+	const ondisplay = () => _verticalCenterTooltip();
+
+	elem.style.top = '25%';
+	elem.style.left = '35%';
+
+	const costText = `
+	<div class='maxCenter'>
+		<div class='btn btn-info' id='confirmTooltipBtn' onclick='cancelTooltip();hideAutomationSave();'>Confirm</div>
+		<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>
+	</div>
+	`;
+
+	return [elem, tooltipText, costText, ondisplay];
+}
+
+function hideAutomationConfigHover(what, event) {
+	const messageConfigMap = {
+		fight: { title: 'Auto Fight', text: 'Hides the games Fight & AutoFight buttons.' },
+		trap: { title: 'Auto Traps', text: 'Hides the games AutoTraps button.' },
+		storage: { title: 'Auto Storage', text: 'Hides the games AutoStorage button.' },
+		structure: { title: 'Auto Structure', text: 'Hides the games AutoStructure button.' },
+		jobs: { title: 'Auto Jobs', text: 'Hides the games AutoJobs button.' },
+		jobs: { title: 'Auto Jobs', text: 'Hides the games AutoJobs button.' },
+		geneticistassist: { title: 'Geneticistassist', text: 'Hides the games Geneticistassist button.' },
+		upgrades: { title: 'Auto Upgrade', text: 'Hides the games AutoUpgrade button.' },
+		prestige: { title: 'Auto Prestige', text: 'Hides the games AutoPrestige button.' },
+		equip: { title: 'Auto Equip', text: 'Hides the games AutoEquip button.' }
+	};
+
+	const config = messageConfigMap[what];
+	if (!config) return;
+
+	document.getElementById('messageConfig').innerHTML = `<b>${config.title}</b><br>${config.text}`;
+	tooltip(config.title, 'customText', event, config.text);
+}
+
+function hideAutomationSave() {
+	const setting = getPageSetting('displayHideAutoButtons', portalUniverse);
+	const checkboxes = Array.from(document.getElementsByClassName('messageConfigCheckbox'));
+
+	checkboxes.forEach((checkbox) => {
+		setting[checkbox.id] = checkbox.dataset.checked === 'true';
+	});
+
+	setPageSetting('displayHideAutoButtons', setting);
+	cancelTooltip();
+
+	hideAutomationButtons();
+}
+
+function hideAutomationButtons() {
+	const setting = getPageSetting('displayHideAutoButtons');
+
+	const automationUnlocked = {
+		fight: game.upgrades.Battle.done,
+		trap: game.upgrades.Trapstorm.done,
+		storage: game.global.autoStorageAvailable,
+		structure: bwRewardUnlocked('AutoStructure'),
+		jobs: bwRewardUnlocked('AutoJobs'),
+		geneticistassist: bwRewardUnlocked('Geneticistassist'),
+		gold: game.stats.goldenUpgrades.valueTotal + game.stats.goldenUpgrades.value >= 77,
+		upgrade: game.global.autoUpgradesAvailable,
+		prestige: game.global.sLevel >= 4,
+		equip: game.global.autoEquipUnlocked
+	};
+
+	for (let item in setting) {
+		if (!automationUnlocked[item]) continue;
+
+		if (item === 'fight') {
+			_setFightButtons(setting[item]);
+			continue;
+		}
+
+		const itemName = `${item.charAt(0).toUpperCase() + item.substr(1)}${item === 'gold' ? 'en' : ''}`;
+		let elemName = `auto${itemName}Btn`;
+
+		const elem = document.getElementById(elemName);
+		const elemDisplay = setting[item] ? 'none' : 'block';
+		if (elem && elem.style.display !== elemDisplay) elem.style.display = elemDisplay;
+	}
 }

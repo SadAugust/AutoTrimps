@@ -4205,13 +4205,27 @@ function initialiseAllSettings() {
 				let description = "<p>Enables the display of your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
-		createSetting('displayHideFightButtons',
+		/* createSetting('displayHideFightButtons',
 			function () { return ('Hide Fight Buttons') },
 			function () {
 				let description = "<p>Will hide both the Fight and AutoFight buttons from the battle container.</p>";
 				return description;
-			}, 'boolean', false, null, 'Display', [0]);
-		createSetting('displayAllSettings',
+			}, 'boolean', false, null, 'Display', [0]); */
+		createSetting('displayHideAutoButtons',
+			function () { return ('Hide Auto Buttons') },
+			function () {
+				let description = "<p>Will allow you to select which of the games automation buttons you'd prefer not to be visible.</p>";
+				return description;
+			}, 'mazDefaultArray', {
+				fight: false,
+				structure:false,
+				jobs: false,
+				gold: false,
+				upgrades: false,
+				prestige: false,
+				equip: false,
+		}, 'importExportTooltip("hideAutomation")', 'Display', [0]);
+			createSetting('displayAllSettings',
 			function () { return ('Display All settings') },
 			function () {
 				let description = "<p>Will display all of the locked settings that have highest zone or other requirements to be displayed.</p>";
@@ -5154,10 +5168,9 @@ function settingUniverse(id) {
 	return setting;
 }
 
-function _setFightButtons() {
-	const showButtons = getPageSetting('displayHideFightButtons');
-	document.getElementById('fightBtn').style.display = !showButtons ? 'block' : 'none';
-	document.getElementById('pauseFight').style.display = !showButtons ? 'block' : 'none';
+function _setFightButtons(settingEnabled = getPageSetting('displayHideAutoButtons').fight) {
+	document.getElementById('fightBtn').style.display = !settingEnabled ? 'block' : 'none';
+	if (game.upgrades.Bloodlust.done) document.getElementById('pauseFight').style.display = !settingEnabled ? 'block' : 'none';
 }
 
 function _setAttributes(element, attributes) {
@@ -5238,7 +5251,7 @@ function _setupATButtons() {
 	_createAutoStructureButton();
 	_createAutoEquipButton();
 
-	_setFightButtons();
+	hideAutomationButtons();
 
 	/* 
 	Setup buttons for Time Warp UI

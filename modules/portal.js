@@ -668,7 +668,7 @@ function resetVarsZone(loadingSave) {
 		MODULES.portal.portalUniverse = Infinity;
 		MODULES.portal.zonePostpone = 0;
 
-		_setFightButtons();
+		hideAutomationButtons();
 	}
 
 	delete mapSettings.voidHDIndex;

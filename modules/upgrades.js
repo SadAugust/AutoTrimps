@@ -298,5 +298,10 @@ function autoGoldUpgrades() {
 	if (!goldenUpgradesShown || getAvailableGoldenUpgrades() <= 0) return;
 
 	const selected = getNextGoldenUpgrade();
-	if (selected) buyGoldenUpgrade(selected);
+	if (selected) {
+		const heName = heliumOrRadon();
+		const guName = selected === 'Helium' ? heName : selected;
+		buyGoldenUpgrade(selected);
+		debug(`Purchased Golden ${guName} #${game.goldenUpgrades[selected].purchasedAt.length}`, 'golden_Upgrades', '*upload2');
+	}
 }

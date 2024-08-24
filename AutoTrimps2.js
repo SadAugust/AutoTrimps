@@ -473,8 +473,10 @@ function _handleNewWorld() {
 
 function _debugZoneStart() {
 	const { Tauntimp, Magnimp, Whipimp, Venimp } = game.unlocks.impCount;
+	const heName = heliumOrRadon();
 	debug(`Starting Zone ${game.global.world}`, 'zone');
 	debug(`Zone #${game.global.world}: Tauntimp (${Tauntimp}), Magnimp (${Magnimp}), Whipimp (${Whipimp}), Venimp (${Venimp})`, 'exotic');
+	/* debug(`Zone #${game.global.world}: ${heName} (${game.goldenUpgrades.Helium.purchasedAt.length}/${Math.round(game.goldenUpgrades.Helium.currentBonus * 100)}%}), Battle (${game.goldenUpgrades.Battle.purchasedAt.length}/${Math.round(game.goldenUpgrades.Battle.currentBonus * 100)}%), Void (${game.goldenUpgrades.Void.purchasedAt.length}/${Math.round(game.goldenUpgrades.Void.currentBonus * 100)}%)`, 'exotic'); */
 	debug(`Zone # ${game.global.world}: Total pop (${prettify(game.resources.trimps.owned)}). A Bone Charge would give you ${boneShrineOutput(1).slice(0, -1).toLowerCase()}`, 'run_Stats');
 }
 

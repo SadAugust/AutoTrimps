@@ -257,7 +257,7 @@ if (typeof originalCheckAchieve !== 'function') {
 if (typeof originalFadeIn !== 'function') {
 	originalFadeIn = fadeIn;
 	fadeIn = function () {
-		if (arguments[0] === 'pauseFight' && getPageSetting('displayHideFightButtons')) return;
+		if (arguments[0] === 'pauseFight' && getPageSetting('displayHideAutoButtons').fight) return;
 		originalFadeIn(...arguments);
 
 		if (arguments[0] === 'metal' && getPageSetting('autoEggs')) easterEggClicked();

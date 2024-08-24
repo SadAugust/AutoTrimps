@@ -1179,6 +1179,17 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '6.5.85') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			if (typeof tempSettings['displayHideFightButtons'] !== 'undefined' && typeof tempSettings['displayHideFightButtons'].enabled !== 'undefined') {
+				autoTrimpSettings.displayHideAutoButtons.value.fight = tempSettings.displayHideFightButtons.enabled;
+			}
+
+			saveSettings();
+			hideAutomationButtons();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

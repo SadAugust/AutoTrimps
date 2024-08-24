@@ -17,7 +17,8 @@ function importExportTooltip(event, titleText) {
 		disableSettingsProfiles: _displayDisableSettingsProfiles,
 		setCustomChallenge: _displaySetCustomChallenge,
 		timeWarp: _displayTimeWarp,
-		resetPerkPreset: _displayResetPerkPreset
+		resetPerkPreset: _displayResetPerkPreset,
+		hideAutomation: hideAutomationDisplay
 	};
 
 	const titleTexts = {
@@ -37,7 +38,8 @@ function importExportTooltip(event, titleText) {
 		disableSettingsProfiles: 'Disable All Settings',
 		setCustomChallenge: 'Set Custom Challenge',
 		timeWarp: 'Time Warp Hours',
-		resetPerkPreset: 'Reset Perk Preset Weights'
+		resetPerkPreset: 'Reset Perk Preset Weights',
+		hideAutomation: 'Hide Automation Buttons'
 	};
 
 	cancelTooltip();
