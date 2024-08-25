@@ -460,6 +460,7 @@ function _handleNewWorld() {
 
 	if (atSettings.portal.currentworld === 1) {
 		MODULES.portal.zonePostpone = 0;
+		hideAutomationButtons();
 		if (!game.upgrades.Battle.done) {
 			_setButtonsPortal();
 		}

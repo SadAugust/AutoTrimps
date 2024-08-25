@@ -1185,6 +1185,22 @@ function updateATVersion() {
 
 			if (typeof tempSettings['displayHideFightButtons'] !== 'undefined' && typeof tempSettings['displayHideFightButtons'].enabled !== 'undefined') {
 				autoTrimpSettings.displayHideAutoButtons.value.fight = tempSettings.displayHideFightButtons.enabled;
+				autoTrimpSettings.displayHideAutoButtons.value.autoFight = tempSettings.displayHideFightButtons.enabled;
+			}
+
+			saveSettings();
+			hideAutomationButtons();
+		}
+
+		if (versionNumber < '6.5.86') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			if (typeof tempSettings['displayHideAutoButtons'] !== 'undefined' && typeof tempSettings['displayHideAutoButtons'].value.fight !== 'undefined') {
+				autoTrimpSettings.displayHideAutoButtons.value.autoFight = tempSettings.displayHideAutoButtons.value.fight;
+			}
+
+			if (typeof tempSettings['displayHeHr'] !== 'undefined' && typeof tempSettings['displayHeHr'].enabled !== 'undefined') {
+				autoTrimpSettings.displayHideAutoButtons.value.ATheHr = !tempSettings.displayHeHr.enabled;
 			}
 
 			saveSettings();

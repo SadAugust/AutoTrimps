@@ -68,7 +68,7 @@ function autoMapsStatus(get = false) {
 		}
 
 		const heHrElem = document.getElementById('heHrStatus');
-		if (heHrElem !== null && getPageSetting('displayHeHr')) {
+		if (heHrElem !== null && getPageSetting('displayHideAutoButtons').ATheHr) {
 			const heHrStatus = `${resourceShortened}/hr: ${getPercent > 0 ? getPercent.toFixed(3) : 0}%<br>&nbsp;&nbsp;&nbsp;${resourceShortened}: ${lifetime > 0 ? lifetime.toFixed(3) : 0}%`;
 			if (heHrElem.innerHTML !== heHrStatus) heHrElem.innerHTML = heHrStatus;
 			heHrElem.setAttribute('onmouseover', makeResourceTooltip(true));

@@ -4201,38 +4201,30 @@ function initialiseAllSettings() {
 				description = `<p>${enemyType} enemies won't have a fast icon as those enemies are always fast.</p>`;
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
-		createSetting('displayHeHr',
+		/* createSetting('displayHeHr',
 			function () { return (_getPrimaryResourceInfo().name + ' Per Hour Status') },
 			function () {
 				let description = "<p>Enables the display of your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				return description;
-			}, 'boolean', false, null, 'Display', [0]);
-		/* createSetting('displayHideFightButtons',
-			function () { return ('Hide Fight Buttons') },
-			function () {
-				let description = "<p>Will hide both the Fight and AutoFight buttons from the battle container.</p>";
-				return description;
 			}, 'boolean', false, null, 'Display', [0]); */
+
+		createSetting('displayAllSettings',
+			function () { return ('Display All settings') },
+			function () {
+				let description = "<p>Will display all of the locked settings that have highest zone or other requirements to be displayed.</p>";
+				return description;
+			}, 'boolean', false, null, 'Display', [0]);
+
 		createSetting('displayHideAutoButtons',
 			function () { return ('Hide Auto Buttons') },
 			function () {
 				let description = "<p>Will allow you to select which of the games automation buttons you'd prefer not to be visible.</p>";
 				return description;
 			}, 'mazDefaultArray', {
-				fight: false,
-				structure:false,
-				jobs: false,
-				gold: false,
-				upgrades: false,
-				prestige: false,
-				equip: false,
+				fight: false, autoFight: false, structure:false, jobs: false, gold: false, upgrades: false, prestige: false, equip: false,
+				ATstructure: false, ATjobs: false, ATequip: false, ATmaps: false, ATstatus: false, ATheHr: false,
 		}, 'importExportTooltip("hideAutomation")', 'Display', [0]);
-			createSetting('displayAllSettings',
-			function () { return ('Display All settings') },
-			function () {
-				let description = "<p>Will display all of the locked settings that have highest zone or other requirements to be displayed.</p>";
-				return description;
-			}, 'boolean', false, null, 'Display', [0]);
+			
 		createSetting('EnableAFK',
 			function () { return ('Go AFK Mode') },
 			function () {
@@ -4707,7 +4699,6 @@ function settingChanged(id, currUniverse) {
 		buildingMostEfficientDisplay: displayMostEfficientBuilding,
 		equipOn: _setAutoEquipClasses,
 		buildingsType: _setBuildingClasses,
-		displayHideFightButtons: _setFightButtons,
 		timeWarpDisplay: _setTimeWarpUI,
 		displayEnhancedGrid: MODULES.fightinfo.Update,
 		archaeology: archaeologyAutomator,
@@ -4723,7 +4714,6 @@ function settingChanged(id, currUniverse) {
 		const enabled = `enabled${valueSuffix}`;
 		btn[enabled] = !btn[enabled];
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
-		if (id === 'displayHeHr') document.getElementById('heHrStatus').style.display = btn[enabled] ? 'block' : 'none';
 		if (booleanActions[id] && updateUI) booleanActions[id]();
 	}
 
@@ -5170,9 +5160,15 @@ function settingUniverse(id) {
 	return setting;
 }
 
-function _setFightButtons(settingEnabled = getPageSetting('displayHideAutoButtons').fight) {
-	document.getElementById('fightBtn').style.display = !settingEnabled ? 'block' : 'none';
-	if (game.upgrades.Bloodlust.done) document.getElementById('pauseFight').style.display = !settingEnabled ? 'block' : 'none';
+function _setFightButtons(setting = getPageSetting('displayHideAutoButtons')) {
+	const fightBtn = document.getElementById('fightBtn');
+	const fightStyle = !setting.fight ? 'block' : 'none';
+	if (game.upgrades.Battle.done && fightBtn.style.display !== fightStyle) fightBtn.style.display = fightStyle;
+
+	const pauseFight = document.getElementById('pauseFight');
+	const pauseStyle = !setting.autoFight ? 'block' : 'none';
+	if (pauseFight.style.display !== pauseStyle) pauseFight.style.display = pauseStyle;
+	if (game.upgrades.Bloodlust.done && pauseFight.style.display !== pauseStyle) pauseFight.style.display = pauseStyle;
 }
 
 function _setAttributes(element, attributes) {
@@ -5370,7 +5366,7 @@ function _createResourcePerHourContainer() {
 	const fightButtonCol = document.getElementById('battleBtnsColumn');
 
 	const resourcePerHourContainer = _createElement('DIV', {
-		style: 'display: ' + (getPageSetting('displayHeHr') ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);',
+		style: 'display: ' + (getPageSetting('displayHideAutoButtons').ATheHr ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);',
 		onmouseout: 'tooltip("hide")',
 		id: 'heHrStatus'
 	});

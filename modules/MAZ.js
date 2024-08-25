@@ -2347,28 +2347,41 @@ function c2RunnerSave() {
 //Hide Automation Buttons
 function hideAutomationDisplay(elem) {
 	const msgs = getPageSetting('displayHideAutoButtons');
-	const keys = ['fight', 'trap', 'storage', 'structure', 'jobs', 'gold', 'upgrade', 'prestige', 'equip'];
+	const keys = ['fight', 'autoFight', 'trap', 'storage', 'structure', 'jobs', 'gold', 'upgrade', 'prestige', 'equip'];
 	const settingGroup = keys.reduce((obj, key) => {
 		obj[key] = false;
 		return obj;
 	}, {});
 
-	let tooltipText = "<div id='messageConfig'>Here you can finely tune the ingame automation buttons you'd prefer to hide. Mouse over the name of a filter for more info.</div>";
+	let tooltipText = "<div id='messageConfig'>Here you can finely tune ingame automation buttons  you'd prefer to hide. Mouse over the name of a filter for more info.</div>";
 	tooltipText += "<div class='row'>";
+	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;&nbsp;Base Game Automation</span></span><br/>`;
+	tooltipText += "<div class='col-xs-6'></span>";
 
-	for (let x = 0; x < 1; x++) {
-		tooltipText += "<div class='col-xs-6'></span><br/>";
+	for (let item in settingGroup) {
+		if (item === 'enabled') continue;
+		const addAuto = item.includes('ight') ? '' : 'Auto ';
+		let realName = addAuto + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
+		if (realName === 'AutoFight') realName = 'Auto Fight';
 
-		for (let item in settingGroup) {
-			if (item === 'enabled') continue;
-			const realName = 'Auto ' + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
-			tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox(item, 'messageConfigCheckbox', msgs[item])}</span><span onmouseover='hideAutomationConfigHover("${item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
-		}
-
-		tooltipText += '</div>';
+		tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox(item, 'messageConfigCheckbox', msgs[item])}</span><span onmouseover='hideAutomationConfigHover("${item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
 	}
 
-	tooltipText += '</div>';
+	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>AutoTrimps Automation</span></span><br/>`;
+	const atKeys = ['structure', 'jobs', 'equip', 'maps', 'status', 'heHr'];
+	const atSettingGroup = atKeys.reduce((obj, key) => {
+		obj[key] = false;
+		return obj;
+	}, {});
+
+	for (let item in atSettingGroup) {
+		if (item === 'enabled') continue;
+		let realName = 'Auto ' + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
+		if (item === 'status') realName = 'Auto Maps Status';
+		if (item === 'heHr') realName = `${heliumOrRadon()} Per Hour Status`;
+
+		tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox('AT' + item, 'messageConfigCheckbox', msgs['AT' + item])}</span><span onmouseover='hideAutomationConfigHover("${'AT' + item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
+	}
 
 	const ondisplay = () => _verticalCenterTooltip();
 
@@ -2387,7 +2400,8 @@ function hideAutomationDisplay(elem) {
 
 function hideAutomationConfigHover(what, event) {
 	const messageConfigMap = {
-		fight: { title: 'Auto Fight', text: 'Hides the games Fight & AutoFight buttons.' },
+		fight: { title: 'Fight', text: 'Hides the games Fight button.' },
+		autoFight: { title: 'Auto Fight', text: 'Hides the games AutoFight button.' },
 		trap: { title: 'Auto Traps', text: 'Hides the games AutoTraps button.' },
 		storage: { title: 'Auto Storage', text: 'Hides the games AutoStorage button.' },
 		structure: { title: 'Auto Structure', text: 'Hides the games AutoStructure button.' },
@@ -2396,7 +2410,13 @@ function hideAutomationConfigHover(what, event) {
 		geneticistassist: { title: 'Geneticistassist', text: 'Hides the games Geneticistassist button.' },
 		upgrades: { title: 'Auto Upgrade', text: 'Hides the games AutoUpgrade button.' },
 		prestige: { title: 'Auto Prestige', text: 'Hides the games AutoPrestige button.' },
-		equip: { title: 'Auto Equip', text: 'Hides the games AutoEquip button.' }
+		equip: { title: 'Auto Equip', text: 'Hides the games AutoEquip button.' },
+		ATstructure: { title: 'AutoTrimps Auto Structure', text: 'Hides the AutoTrimps AutoStructure button.' },
+		ATjobs: { title: 'AutoTrimps Auto Jobs', text: 'Hides the AutoTrimps AutoJobs button.' },
+		ATequip: { title: 'AutoTrimps Auto Equip', text: 'Hides the AutoTrimps AutoEquip button.' },
+		ATmaps: { title: 'AutoTrimps Auto Maps', text: 'Hides the AutoTrimps AutoMaps button.' },
+		ATstatus: { title: 'AutoTrimps Auto Maps Status', text: 'Hides the AutoTrimps Map Status message.' },
+		ATheHr: { title: `AutoTrimps ${heliumOrRadon()} Per Hour Status`, text: `Hides the AutoTrimps ${heliumOrRadon()} Per Hour Status message.` }
 	};
 
 	const config = messageConfigMap[what];
@@ -2407,7 +2427,7 @@ function hideAutomationConfigHover(what, event) {
 }
 
 function hideAutomationSave() {
-	const setting = getPageSetting('displayHideAutoButtons', portalUniverse);
+	const setting = getPageSetting('displayHideAutoButtons');
 	const checkboxes = Array.from(document.getElementsByClassName('messageConfigCheckbox'));
 
 	checkboxes.forEach((checkbox) => {
@@ -2415,6 +2435,7 @@ function hideAutomationSave() {
 	});
 
 	setPageSetting('displayHideAutoButtons', setting);
+	saveSettings();
 	cancelTooltip();
 
 	hideAutomationButtons();
@@ -2433,22 +2454,33 @@ function hideAutomationButtons() {
 		gold: game.stats.goldenUpgrades.valueTotal + game.stats.goldenUpgrades.value >= 77,
 		upgrade: game.global.autoUpgradesAvailable,
 		prestige: game.global.sLevel >= 4,
-		equip: game.global.autoEquipUnlocked
+		equip: game.global.autoEquipUnlocked,
+		ATstructure: true,
+		ATjobs: true,
+		ATequip: true,
+		ATmaps: true,
+		ATstatus: true,
+		ATheHr: true
 	};
 
 	for (let item in setting) {
 		if (!automationUnlocked[item]) continue;
 
 		if (item === 'fight') {
-			_setFightButtons(setting[item]);
+			_setFightButtons(setting);
 			continue;
 		}
 
 		const itemName = `${item.charAt(0).toUpperCase() + item.substr(1)}${item === 'gold' ? 'en' : ''}`;
 		let elemName = `auto${itemName}Btn`;
 
+		if (item === 'ATmaps') elemName = 'autoMapBtn';
+		else if (item === 'ATstatus') elemName = 'autoMapStatus';
+		else if (item === 'ATheHr') elemName = 'heHrStatus';
+		else if (item.includes('AT')) elemName = `auto${item.charAt(2).toUpperCase() + itemName.substr(3)}Parent`;
+
 		const elem = document.getElementById(elemName);
-		const elemDisplay = setting[item] ? 'none' : 'block';
-		if (elem && elem.style.display !== elemDisplay) elem.style.display = elemDisplay;
+		const elemVisible = setting[item] ? 'hidden' : '';
+		if (elem && elem.style.visibility !== elemVisible) elem.style.visibility = elemVisible;
 	}
 }

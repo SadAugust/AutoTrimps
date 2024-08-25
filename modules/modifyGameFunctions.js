@@ -235,6 +235,7 @@ if (typeof originalActivateClicked !== 'function') {
 		if (!game.global.viewingUpgrades) {
 			resetVarsZone(true);
 			_setButtonsPortal();
+			hideAutomationButtons();
 			if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 				loadMutations(preset);
 				u2Mutations.closeTree();

@@ -468,6 +468,7 @@ function resetAutoTrimps(autoTrimpsSettings) {
 		if (Object.keys(JSON.parse(localStorage.getItem('surkyInputs'))).length === 1) delete localStorage.surkyInputs;
 		if (Object.keys(JSON.parse(localStorage.getItem('heirloomInputs'))).length === 1) delete localStorage.heirloomInputs;
 		MODULES.autoPerks.displayGUI(game.global.universe);
+		hideAutomationButtons();
 	}, 101);
 
 	const message = autoTrimpsSettings ? 'Successfully imported new AT settings...' : 'Successfully reset AT settings to Defaults...';
