@@ -455,7 +455,8 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 				if (currSetting[hdTypes[index]] === 'disabled') return false;
 				const obj = hdObject[currSetting[hdTypes[index]]];
 				const hdSetting = obj.hdStatVoid || obj.hdStat;
-				if (currSetting[hdTypes[index]].includes('Hits Survived')) return currSetting[dropdown] < hdSetting;
+				/* This is if it should skip so the inverse of intended action */
+				if (currSetting[hdTypes[index]].includes('hitsSurvived')) return currSetting[dropdown] < hdSetting;
 				return currSetting[dropdown] > hdSetting;
 			});
 
@@ -464,6 +465,7 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 				settingIndex = y;
 				break;
 			}
+
 			world += zoneAddition;
 			endzone += zoneAddition;
 		}

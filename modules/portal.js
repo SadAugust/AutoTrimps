@@ -403,6 +403,7 @@ function _autoPortalC2() {
 		let shouldRun = false;
 		if (runType === 0) {
 			shouldRun = challengeLevel / highestZone < c2RunnerPercent;
+			if (challengeLevel <= c2RunnerPortal) continue;
 		} else {
 			shouldRun = challengeLevel < c2Setting[challengeName].zone;
 		}
