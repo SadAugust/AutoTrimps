@@ -324,12 +324,12 @@ function _checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType) {
 	return false;
 }
 
-function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, armyReady) {
+function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, enemyDmgMult, armyReady) {
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningArchaeology = challengeActive('Archaeology');
 	const runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
 
-	if (runningTrappa || runningArchaeology || runningBerserk) return ourHealth;
+	if (runningTrappa || runningArchaeology || runningBerserk) return { ourHealth, enemyDmgMult };
 
 	const isDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;
@@ -345,14 +345,24 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, ar
 	const ourShieldMax = calcOurHealth(true, worldType);
 	if (ourShield > ourShieldMax * 0.75) shouldSuicide = false;
 
-	const enemyDmgMin = enemyDmgMax / 3;
+	let enemyDmgMin = enemyDmgMax / 3;
+	if (enemyDmgMin >= ourHealth && enemyDmgMult > 1) {
+		const ourHealthMax = calcOurHealth(false, worldType, true);
+
+		if (enemyDmgMin >= ourHealthMax) {
+			enemyDmgMax /= enemyDmgMult;
+			enemyDmgMin = enemyDmgMax / 3;
+			enemyDmgMult = 1;
+		}
+	}
+
 	if (enemyDmgMin >= ourHealth) shouldSuicide = true;
 
 	if ((shieldBreak || dailyEmpower) && enemyDmgMax >= ourHealth) shouldSuicide = true;
-	if (!shouldSuicide) return ourHealth;
+	if (!shouldSuicide) return { ourHealth, enemyDmgMult };
 
 	const mapObject = mapping ? getCurrentMapObject() : null;
-	const poisonDebuff = challengeActive('Mayhem') && game.challenges.Mayhem.poison > 0; // Poison debuff only resets on army death
+	const poisonDebuff = challengeActive('Mayhem') && game.challenges.Mayhem.poison > 0; /* Poison debuff only resets on army death */
 	const notMapping = game.global.mapsUnlocked && !mapping && !poisonDebuff;
 	const mappingButDieAnyway = mapping && enemy.level > 1 && !game.global.voidBuff && mapObject.location !== 'Darkness' && game.global.titimpLeft === 0;
 
@@ -364,7 +374,7 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, ar
 		runMap(false);
 	} else {
 		_setEquality(0);
-		return false;
+		return { useEquality: false, enemyDmgMult };
 	}
 
 	const angelicOwned = game.talents.angelic.purchased;
@@ -373,7 +383,7 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, ar
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || frenzyCanExpire || dailyEmpower);
 	ourHealth = remainingHealth(shieldBreak, angelicDance, worldType);
 
-	return ourHealth;
+	return { ourHealth, enemyDmgMult };
 }
 
 function _shouldPBSwap(mapping, enemy, fastEnemy) {
@@ -604,10 +614,17 @@ function _equalityManagementAdvanced() {
 
 	if (_checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType)) return;
 
-	const { enemyDmg, enemyDmgMax, enemyDmgMult } = _getEnemyDmg(mapping, worldType, fastEnemy);
+	let { enemyDmg, enemyDmgMax, enemyDmgMult } = _getEnemyDmg(mapping, worldType, fastEnemy);
 	const armyReady = newArmyRdy() || getPageSetting('heirloomBreed') !== 'undefined';
 
-	ourHealth = _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, armyReady);
+	let enemyMult = 1;
+	({ ourHealth, enemyMult } = _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, enemyDmgMult, armyReady));
+
+	if (enemyMult === 1) {
+		enemyDmg /= enemyDmgMult;
+		enemyDmgMax /= enemyDmgMult;
+		enemyDmgMult = 1;
+	}
 
 	if (!ourHealth || enemy.health <= 0) return;
 
