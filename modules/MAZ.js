@@ -1101,7 +1101,9 @@ function mapSettingsHelpWindow(titleText) {
 		mazHelp += '<li><b>End Zone</b> - The upper bound zone to run voids maps on.</li>';
 		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the Auto Maps status tooltip.</li>";
 		mazHelp += '<li class="indent">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you\'ve selected one of Hits Survived, Hits Survived Void it will check if the value is lower than it and skip if it is. Disabled just skips checking that input.<br></li>';
-		mazHelp += '<li><b>Portal After</b> - Will run Auto Portal immediately after this line has run.</b></li>';
+		mazHelp += '<li><b>Portal After</b> - Will run Auto Portal immediately after this line has run.';
+		if (!radonSetting) mazHelp += '<br>When enabled and farming for, or running Void Maps this will buy as many nurseries as you can afford based upon your spending percentage in the AT AutoStructure settings.</li>';
+		mazHelp += '</li>';
 	}
 
 	if (mapFarm) {

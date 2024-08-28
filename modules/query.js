@@ -145,6 +145,15 @@ function timeForFormatting(number) {
 	return Math.floor((getGameTime() - number) / 1000);
 }
 
+function _getPortalAfterVoidSetting() {
+	if (!MODULES.mapFunctions.afterVoids) return false;
+
+	const portalSetting = challengeActive('Daily') ? getPageSetting('dailyPortal') : getPageSetting('portal');
+	if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return false;
+
+	return true;
+}
+
 function _getPrimaryResourceInfo() {
 	return currSettingUniverse === 2 ? { name: 'Radon', abv: 'Rn' } : { name: 'Helium', abv: 'He' };
 }

@@ -357,18 +357,21 @@ function _buyNursery(buildingSettings) {
 	const nurseryPreSpire = isDoingSpire() && nurseryInfo.owned < preSpireSetting ? preSpireSetting : 0;
 	const nurseryPct = nurserySetting.percent / 100;
 	const nurseryCanAfford = calculateMaxAfford_AT(nurseryInfo, true, false, false, null, nurseryPct);
-	const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurserySetting.fromZ;
+
+	const portalAfterVoids = mapSettings.portalAfter || _getPortalAfterVoidSetting();
+	const nurseryFromZ = portalAfterVoids ? game.global.world : nurserySetting.fromZ;
+	const nurseryZoneOk = nurserySetting.enabled && game.global.world >= nurseryFromZ;
 
 	if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
 		const advNurseries = advancedNurseries();
 		const nurseryEfficiency = nurseryHousingEfficiency().mostEfficient === 'Nursery';
-		if (!advNurseries && !nurseryEfficiency && !nurseryPreSpire) return;
+		if (!advNurseries && !nurseryEfficiency && !nurseryPreSpire && !portalAfterVoids) return;
 
-		let nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
+		let nurseryAmt = portalAfterVoids ? Infinity : nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, nurserySetting.buyMax);
 		if (nurseryAmt === 0 && (!getPageSetting('advancedNurseries') || game.stats.highestLevel.valueTotal() < 230)) nurseryAmt = Infinity;
 		const nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - nurseryInfo.owned);
 
-		if (nurseryPreSpire > 0 && nurseryToBuy > 0) {
+		if ((portalAfterVoids || nurseryPreSpire > 0) && nurseryToBuy > 0) {
 			safeBuyBuilding('Nursery', nurseryToBuy);
 		} else if (advNurseries) {
 			safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount')));
