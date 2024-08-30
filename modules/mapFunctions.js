@@ -1451,11 +1451,12 @@ function _handlePrestigeFragMapBought() {
 }
 
 function _buyPrestigeMap(x) {
-	const sliders = mapSettings.mapSliders[x];
-	const mapLevel = mapSettings.raidzones - (sliders[0] + game.global.world);
+	const [plusLevel, special, biome, sliders, perfectMaps] = mapSettings.mapSliders[x];
+	const mapLevel = mapSettings.raidzones - (plusLevel + game.global.world);
 
 	if (prestigeMapHasEquips(mapLevel, mapSettings.raidzones, mapSettings.prestigeGoal)) {
-		setMapSliders(mapSettings.mapSliders[x][0], mapSettings.mapSliders[x][1], mapSettings.mapSliders[x][2], mapSettings.mapSliders[x][3], mapSettings.mapSliders[x][4]);
+		setMapSliders(plusLevel, special, biome, sliders, perfectMaps);
+
 		if (updateMapCost(true) <= game.resources.fragments.owned) {
 			buyMap();
 			const purchasedMap = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1];
@@ -3402,20 +3403,23 @@ function getSpecialTime(special) {
 	return 0;
 }
 
-function setMapSliders(pluslevel, special = '0', biome = getBiome(), mapSliders = [9, 9, 9], perfectMaps = true) {
-	let maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
-	if (!pluslevel || pluslevel < 0) pluslevel = 0;
-	if (mapSliders[0] !== 9 || mapSliders[1] !== 9 || mapSliders[2] !== 9) perfectMaps = false;
+function setMapSliders(plusLevel, special = '0', biome = getBiome(), mapSliders = [9, 9, 9], perfectMaps = true) {
+	let maplevel = plusLevel < 0 ? game.global.world + plusLevel : game.global.world;
+	const [loot, size, difficulty] = mapSliders;
+	if (!plusLevel || plusLevel < 0) plusLevel = 0;
+	if (loot !== 9 || size !== 9 || difficulty !== 9) perfectMaps = false;
+	const currentLevel = Number(document.getElementById('mapLevelInput').value);
 
 	document.getElementById('biomeAdvMapsSelect').value = biome;
-	document.getElementById('advExtraLevelSelect').value = pluslevel > 0 ? pluslevel : 0;
+	document.getElementById('advExtraLevelSelect').value = plusLevel > 0 ? plusLevel : 0;
 	document.getElementById('advSpecialSelect').value = special;
-	document.getElementById('lootAdvMapsRange').value = mapSliders[0];
-	document.getElementById('sizeAdvMapsRange').value = mapSliders[1];
-	document.getElementById('difficultyAdvMapsRange').value = mapSliders[2];
+	document.getElementById('lootAdvMapsRange').value = loot;
+	document.getElementById('sizeAdvMapsRange').value = size;
+	document.getElementById('difficultyAdvMapsRange').value = difficulty;
 	document.getElementById('advPerfectCheckbox').dataset.checked = true;
 	document.getElementById('mapLevelInput').value = maplevel;
-	updateMapCost();
+
+	if (plusLevel > 0 && currentLevel < game.global.world && getHighestLevelCleared() >= getUnlockZone('extra')) setAdvExtraZoneText();
 
 	if (!perfectMaps) {
 		if (updateMapCost(true) > game.resources.fragments.owned) {
