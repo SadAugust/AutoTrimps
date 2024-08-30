@@ -1218,6 +1218,7 @@ function mapSettingsHelpWindow(titleText) {
 		mazHelp += '<br>';
 		const heliumType = currSettingUniverse === 2 ? 'Radon' : 'Helium';
 		mazHelp += `You are able to have multiple lines of the same type. For example 8 Void, 12 Battle, 10 ${heliumType}, 8 Battle would end with 8 Golden Voids, 20 Golden Battle, and 10 Golden ${heliumType} upgrades. Requests to buy Golden Void will be skipped if it would put you above 72%.`;
+		mazHelp += `Will skip all ${heliumType} upgrades when running a C2.`;
 	}
 
 	return mazHelp;
