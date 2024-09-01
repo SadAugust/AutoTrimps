@@ -435,7 +435,7 @@ function _getEnemyDmgMultiplier(mapping, worldType, enemy, fastEnemy) {
 		}
 
 		if (worldType === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming) {
-			const explosiveMult = dailyExplosive ? 1 + dailyModifiers.explosive.getMult(dailyChallenge.explosive.strength) : 1;
+			const explosiveMult = dailyExplosive ? dailyModifiers.explosive.getMult(dailyChallenge.explosive.strength) : 1;
 			if (dailyEmpowerCheck && dailyCrit) damageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 			if (dailyExplosive) damageMult += explosiveMult;
 		}
@@ -463,7 +463,6 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	const gammaMaxStacksCheck = _getGammaMaxStacks(worldType);
 	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
-	let equality = 0;
 	let disableDamageAmps = false;
 	let enemyDmgEquality = 0;
 	let ourDmgEquality = 0;
@@ -491,78 +490,98 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 		ourDmgMax = maxDmg * checkGamma;
 	}
 
-	for (let i = 0; i <= maxEquality; i++) {
-		if (i === maxEquality) {
+	function getEquality() {
+		let equality = 0;
+
+		for (let i = 0; i <= maxEquality; i++) {
+			if (i === maxEquality) {
+				enemyDmgEquality = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, i);
+				const { reset, disableDamageAmps: newDisableDamageAmps, enemyDmg: newEnemyDmg } = _checkEnemyDamage(enemyDmg, enemyDmgEquality, ourHealth, enemyDmgMult, disableDamageAmps);
+				if (reset) {
+					enemyDmg = newEnemyDmg;
+					i = 0;
+					disableDamageAmps = newDisableDamageAmps;
+				} else {
+					equality = maxEquality;
+					break;
+				}
+			}
+
+			while (shouldPlagueSwap && maxEquality > i && (maxDmg, ourEqualityModifier, i) > enemy.health) {
+				i++;
+			}
+
+			while (runningUnlucky && maxEquality > i) {
+				const unluckyDmgEquality = _calculateDamageEquality(unluckyDmg, ourEqualityModifier, i);
+				if (!_isOddValue(unluckyDmgEquality)) break;
+				i++;
+			}
+
 			enemyDmgEquality = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, i);
-			const { reset, disableDamageAmps: newDisableDamageAmps, enemyDmg: newEnemyDmg } = _checkEnemyDamage(enemyDmg, enemyDmgEquality, ourHealth, enemyDmgMult, disableDamageAmps);
-			if (reset) {
-				enemyDmg = newEnemyDmg;
-				i = 0;
-				disableDamageAmps = newDisableDamageAmps;
-			} else {
+			ourDmgEquality = _calculateDamageEquality(ourDmg, ourEqualityModifier, i);
+
+			if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
+
+			if (ourDmgMax > 0) {
+				// Check to see if we kill the enemy with max damage on empower dailies with explosive mod. If so mult enemy dmg by explosive to stop gaining empower stacks.
+				const enoughEQ = _calculateDamageEquality(ourDmgMax, ourEqualityModifier, i) > enemy.health;
+				const wouldDie = enemyDmgEquality * explosiveMult > ourHealth;
+				if (!disableDamageAmps && !MODULES.maps.slowScumming && enoughEQ && wouldDie) enemyDmgEquality *= explosiveMult;
+				// Make sure that we don't kill slow enemies to ensure maximum plaguebringer transfer damage.
+				if (MODULES.maps.slowScumming && mapping && (enemy.level - 1) % 2 !== 0 && _calculateDamageEquality(ourDmgMax, ourEqualityModifier, i + 1) > enemy.health) {
+					continue;
+				}
+			}
+
+			const wouldDie = enemyDmgEquality > ourHealth;
+			const wouldDieMayhem = runningMayhem && enemyDmgEquality > game.global.soldierHealth * 6 + game.challenges.Mayhem.poison;
+			if (fastEnemy && (wouldDie || wouldDieMayhem)) {
+				equality = i;
+				continue;
+			}
+
+			const willSurviveForever = ourHealth > enemyDmg * 100;
+			if (willSurviveForever) {
+				equality = i;
+				break;
+			}
+
+			const shouldGamma = gammaToTrigger > 1 && enemy.health > ourDmgEquality * gammaDmg;
+			if (shouldGamma) {
 				equality = maxEquality;
 				break;
 			}
-		}
 
-		while (shouldPlagueSwap && maxEquality > i && (maxDmg, ourEqualityModifier, i) > enemy.health) {
-			i++;
-		}
-
-		while (runningUnlucky && maxEquality > i) {
-			const unluckyDmgEquality = _calculateDamageEquality(unluckyDmg, ourEqualityModifier, i);
-			if (!_isOddValue(unluckyDmgEquality)) break;
-			i++;
-		}
-
-		enemyDmgEquality = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, i);
-		ourDmgEquality = _calculateDamageEquality(ourDmg, ourEqualityModifier, i);
-
-		if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
-
-		if (ourDmgMax > 0) {
-			// Check to see if we kill the enemy with max damage on empower dailies with explosive mod. If so mult enemy dmg by explosive to stop gaining empower stacks.
-			const enoughEQ = _calculateDamageEquality(ourDmgMax, ourEqualityModifier, i) > enemy.health;
-			const wouldDie = enemyDmgEquality * explosiveMult > ourHealth;
-			if (!disableDamageAmps && !MODULES.maps.slowScumming && enoughEQ && wouldDie) enemyDmgEquality *= explosiveMult;
-			// Make sure that we don't kill slow enemies to ensure maximum plaguebringer transfer damage.
-			if (MODULES.maps.slowScumming && mapping && (enemy.level - 1) % 2 !== 0 && _calculateDamageEquality(ourDmgMax, ourEqualityModifier, i + 1) > enemy.health) {
-				continue;
+			const willSurviveOneHit = ourHealth > enemyDmgEquality;
+			if (willSurviveOneHit && (ourDmgEquality > enemy.health || gammaToTrigger <= 1)) {
+				equality = i;
+				break;
 			}
-		}
 
-		const wouldDie = enemyDmgEquality > ourHealth;
-		const wouldDieMayhem = runningMayhem && enemyDmgEquality > game.global.soldierHealth * 6 + game.challenges.Mayhem.poison;
-		if (fastEnemy && (wouldDie || wouldDieMayhem)) {
-			equality = i;
-			continue;
-		}
+			const willSurviveToGamma = ourHealth > enemyDmgEquality * gammaToTrigger;
+			if (!smithlessGamma && !enemyCanPoison && willSurviveToGamma) {
+				equality = i;
+				break;
+			}
 
-		const willSurviveForever = ourHealth > enemyDmg * 100;
-		if (willSurviveForever) {
-			equality = i;
-			break;
-		}
-
-		const shouldGamma = gammaToTrigger > 1 && enemy.health > ourDmgEquality * gammaDmg;
-		if (shouldGamma) {
 			equality = maxEquality;
-			break;
 		}
 
-		const willSurviveOneHit = ourHealth > enemyDmgEquality;
-		if (willSurviveOneHit && (ourDmgEquality > enemy.health || gammaToTrigger <= 1)) {
-			equality = i;
-			break;
-		}
+		return equality;
+	}
 
-		const willSurviveToGamma = ourHealth > enemyDmgEquality * gammaToTrigger;
-		if (!smithlessGamma && !enemyCanPoison && willSurviveToGamma) {
-			equality = i;
-			break;
-		}
+	let equality = getEquality();
 
-		equality = maxEquality;
+	if (explosiveMult > 1) {
+		const explosiveDmg = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, equality) * explosiveMult;
+		const notCheckingExplosive = !(worldType === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming);
+		if (enemyDmgMult > 1) enemyDmg /= enemyDmgMult;
+		if (notCheckingExplosive) enemyDmgMult += explosiveMult - 1;
+		enemyDmg *= enemyDmgMult;
+
+		if (explosiveDmg > ourHealth && (notCheckingExplosive || !disableDamageAmps)) {
+			equality = getEquality();
+		}
 	}
 
 	enemyDmgEquality = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, equality);
