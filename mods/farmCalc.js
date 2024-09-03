@@ -528,7 +528,8 @@ function simulate(saveData, zone) {
 	let last_group_sent = 0;
 	let ticks = 0;
 	let ok_damage = 0,
-		ok_spread = 0;
+		ok_spread = 0,
+		shattered = false;
 	let poison = 0,
 		wind = 0,
 		ice = 0;
@@ -702,6 +703,7 @@ function simulate(saveData, zone) {
 		while (enemyHealth >= 1 && ticks < max_ticks) {
 			++turns;
 			rngRoll = turns > 0 ? rng() : rngRoll;
+			let attacked = false;
 			trimpCrit = false;
 			enemyCrit = false;
 
@@ -735,6 +737,7 @@ function simulate(saveData, zone) {
 
 			// trimp attack
 			if (!armyDead()) {
+				attacked = true;
 				ok_spread = saveData.ok_spread;
 				trimpAttack = saveData.atk;
 				if (!saveData.unlucky) trimpAttack *= 1 + saveData.range * rngRoll;
@@ -753,7 +756,6 @@ function simulate(saveData, zone) {
 				if (universe === 2) trimpAttack *= Math.pow(saveData.equalityMult, equality);
 				enemyHealth -= trimpAttack + poison * saveData.poison;
 				if (saveData.poison) poison += trimpAttack * (saveData.uberNature === 'Poison' ? 2 : 1) * saveData.natureIncrease;
-				ice += saveData.natureIncrease;
 				if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += trimpAttack * saveData.plaguebringer;
 				pbTurns++;
 
@@ -783,6 +785,14 @@ function simulate(saveData, zone) {
 						enemyHealth -= burstDamage;
 						if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += burstDamage * saveData.plaguebringer;
 					}
+				}
+			}
+
+			if (attacked) {
+				ice += saveData.natureIncrease;
+				if (saveData.uberNature === 'Ice' && saveData.ice > 0 && ice > 20 && enemyHealth / enemy_max_hp < 0.5) {
+					shattered = true;
+					enemyHealth = 0;
 				}
 			}
 
@@ -870,7 +880,12 @@ function simulate(saveData, zone) {
 		}
 
 		loot++;
-		if (saveData.ok_spread > 0) ok_damage = -enemyHealth * saveData.overkill;
+		if (saveData.ok_spread > 0) {
+			ok_damage = -enemyHealth * saveData.overkill;
+			if (shattered) ok_damage = Infinity;
+			shattered = false;
+		}
+
 		ticks += +(turns > 0) + +(saveData.speed > 9) + Math.ceil(turns * saveData.speed);
 		if (saveData.titimp && imp < 0.03) {
 			if (titimp < 0) titimp = 0;
