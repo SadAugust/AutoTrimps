@@ -19,8 +19,6 @@ function autoPortalCheck(specificPortalZone) {
 
 	if (game.global.runningChallengeSquared) c2RunnerPortal(specificPortalZone);
 	else autoPortal(specificPortalZone);
-
-	if (!game.global.portalActive) return true;
 }
 
 function autoPortal(specificPortalZone, universe, skipDaily) {

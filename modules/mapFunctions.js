@@ -556,7 +556,12 @@ function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettin
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, null, null, null, null, null);
 		resetMapVars();
-		if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
+		if (mapSettings.portalAfterVoids) {
+			const heHrSettings = ['Helium Per Hour', 'Radon Per Hour', '1'];
+			let portalType = getPageSetting('autoPortal', game.global.universe);
+			if (heHrSettings.includes(portalType)) MODULES.mapFunctions.afterVoids = true;
+			autoPortalCheck(game.global.world);
+		}
 	}
 
 	Object.assign(farmingDetails, {
