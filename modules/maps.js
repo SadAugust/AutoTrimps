@@ -523,6 +523,13 @@ function _abandonMapCheck(selectedMap = null, runUnique) {
 		//If we don't have info on the previous map then set it.
 		if (MODULES.maps.lastMapWeWereIn.id === 0 || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
 
+		if (runUnique && game.global.currentMapId !== selectedMap) recycleMap();
+
+		if (mapSettings.mapName === 'Desolation Destacking' && mapSettings.equality) {
+			if (MODULES.maps.lastMapWeWereIn.level !== mapSettings.mapLevel + game.global.world) recycleMap();
+			return;
+		}
+
 		//Ensure the map has the correct biome, if not then recycle it.
 		if (mapSettings.biome && ((mapSettings.biome === 'Any' && MODULES.maps.lastMapWeWereIn.location === 'Forest') || MODULES.maps.lastMapWeWereIn.location !== mapSettings.biome)) recycleMap();
 		//If the selected map is the wrong level then recycle it.
@@ -532,13 +539,12 @@ function _abandonMapCheck(selectedMap = null, runUnique) {
 		if (MODULES.maps.lastMapWeWereIn.bonus === undefined) {
 			if (mapSettings.special !== '0') recycleMap();
 		} else if (MODULES.maps.lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
-		if (runUnique && game.global.currentMapId !== selectedMap) recycleMap();
 	}
 }
 
 function _runSelectedMap(mapId, runUnique) {
 	_abandonMapCheck(mapId, runUnique);
-	selectMap(mapId);
+	if (game.global.currentMapId !== mapId) selectMap(mapId);
 	runMap();
 	debug(`Running ${prettifyMap(MODULES.maps.lastMapWeWereIn)}`, 'maps', 'th-large');
 }

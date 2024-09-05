@@ -5294,6 +5294,7 @@ function _createChangelogButton() {
 	if (document.getElementById('atChangelog') !== null) return;
 
 	const newChanges = autoTrimpSettings.ATversionChangelog !== atSettings.initialise.version;
+	const versionNumber = atSettings.initialise.version.split('SadAugust ')[1].replace(/[a-z]/gi, '');
 	const changelog = _createElement(
 		'TD',
 		{
@@ -5301,7 +5302,7 @@ function _createChangelogButton() {
 			class: 'btn' + (newChanges ? ' btn-changelogNew' : ' btn-primary'),
 			onclick: "window.open(atSettings.initialise.basepath + 'updates.html', '_blank'); updateChangelogButton();"
 		},
-		['AT ' + atSettings.initialise.version.split('SadAugust ')[1] + (newChanges ? " | What's New" : '')]
+		['AT v' + versionNumber + (newChanges ? " | What's New" : '')]
 	);
 
 	let settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
