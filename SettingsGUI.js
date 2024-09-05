@@ -464,7 +464,7 @@ function initialiseAllSettings() {
 			function () { return ('Force Auto Portal') },
 			function () {
 				let description = "<p>Will force activate Auto Portal when pressed.</p>";
-				description += "<p>There's a confirmation window to ensure not accidental presses!</p>";
+				description += "<p>There's a confirmation window to ensure accidental presses don't ruin your run!</p>";
 				return description;
 			},
 			'infoclick', false,  'cancelTooltip(); autoPortalForce();', 'Core', [0],
