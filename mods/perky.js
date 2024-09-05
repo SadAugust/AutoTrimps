@@ -51,15 +51,17 @@ function mastery(name) {
 }
 
 var Perk = /** @class */ (function () {
-	function Perk(perkName, scaling) {
-		this.base_cost = game.portal[perkName].priceBase;
-		this.cost_increment = game.portal[perkName].additive ? game.portal[perkName].additiveInc : 0;
+	function Perk(perkName, scaling, lockLevel = false) {
+		const { priceBase, additive, additiveInc, max, specialGrowth, locked, level, levelTemp } = game.portal[perkName];
+
+		this.base_cost = priceBase;
+		this.cost_increment = additive ? additiveInc : 0;
 		this.scaling = scaling;
-		this.max_level = game.portal[perkName].max ? game.portal[perkName].max : Infinity;
-		this.cost_exponent = game.portal[perkName].specialGrowth ? game.portal[perkName].specialGrowth : 1.3;
-		this.locked = game.portal[perkName].locked;
+		this.max_level = lockLevel ? level + (levelTemp ? levelTemp : 0) : max ? max : Infinity;
+		this.cost_exponent = specialGrowth ? specialGrowth : 1.3;
+		this.locked = locked;
 		this.level = 0;
-		this.min_level = !game.global.canRespecPerks || (game.global.viewingUpgrades && !game.global.respecActive) ? game.portal[perkName].level : 0;
+		this.min_level = lockLevel ? level + (levelTemp ? levelTemp : 0) : !game.global.canRespecPerks || (game.global.viewingUpgrades && !game.global.respecActive) ? level : 0;
 		this.cost = 0;
 		this.gain = 0;
 		this.bonus = 1;
@@ -378,8 +380,12 @@ function parse_perks() {
 
 	const perks = {};
 
+	const calcNames = { 1: 'Perky', 2: 'Surky' };
+	const calcName = calcNames[portalUniverse];
+	let perkLocks = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
+
 	for (const [name, func] of Object.entries(perkData)) {
-		perks[name] = new Perk(name, func);
+		perks[name] = new Perk(name, func, perkLocks.lockedPerks ? perkLocks.lockedPerks[name] : false);
 	}
 
 	return perks;
@@ -700,6 +706,18 @@ function optimize() {
 	return perks;
 }
 
+function togglePerkLock(id, calcName) {
+	let settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
+	if (!settingInputs) return;
+
+	if (!settingInputs['lockedPerks']) settingInputs['lockedPerks'] = {};
+	if (!settingInputs['lockedPerks'][id]) settingInputs['lockedPerks'][id] = false;
+
+	settingInputs['lockedPerks'][id] = !settingInputs['lockedPerks'][id];
+	localStorage.setItem(`${calcName.toLowerCase()}Inputs`, JSON.stringify(settingInputs));
+	document.getElementById(`lock${id}`).classList = `icomoon ${settingInputs['lockedPerks'][id] ? 'icon-locked' : 'icon-unlocked'}`;
+}
+
 MODULES.autoPerks = {
 	createInput: function (perkLine, id, inputObj, savedValue, settingName) {
 		if (!id || document.getElementById(id + 'Div') !== null) {
@@ -748,6 +766,43 @@ MODULES.autoPerks = {
 	displayGUI: function (universe = portalUniverse) {
 		const calcNames = { 1: 'Perky', 2: 'Surky' };
 		const calcName = calcNames[universe] || universe;
+
+		if (game.global.viewingUpgrades || portalWindowOpen) {
+			let $portalUpgradesHere = document.getElementById('portalUpgradesHere');
+
+			if ($portalUpgradesHere && calcName !== 'Surky') {
+				let lockPerksText = 'When locked the current perk levels are not changed when you allocate perks.';
+				let perkLocks = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
+				let $perkIcons = $portalUpgradesHere.children;
+
+				for (let i = 0; i < $perkIcons.length; i++) {
+					const $perkIcon = $perkIcons[i];
+					if ($perkIcon.id === 'equalityScaling') continue;
+
+					const tempDiv = document.createElement('div');
+					tempDiv.id = `lock${$perkIcon.id}`;
+					if (document.getElementById(tempDiv.id)) continue;
+
+					$perkIcon.style.position = 'relative';
+					tempDiv.style = 'display: block; position: absolute; top: 0px; right: 0px; width: 10%; background: none;';
+					tempDiv.classList = `icomoon ${perkLocks && perkLocks['lockedPerks'] && perkLocks['lockedPerks'][$perkIcon.id] ? 'icon-locked' : 'icon-unlocked'}`;
+
+					tempDiv.addEventListener('click', (event) => {
+						event.stopPropagation();
+						togglePerkLock($perkIcon.id, calcName);
+					});
+
+					tempDiv.addEventListener('mouseover', (event) => {
+						event.stopPropagation();
+						tooltip('Lock Perk', 'customText', event, lockPerksText);
+					});
+					tempDiv.setAttribute('onmouseout', 'tooltip("hide")');
+
+					$perkIcon.insertBefore(tempDiv, $perkIcon.firstChild);
+				}
+			}
+		}
+
 		if (MODULES.autoPerks.loaded === calcName) return;
 
 		const presets = MODULES.autoPerks[`presets${calcName}`];
@@ -832,8 +887,7 @@ MODULES.autoPerks = {
 
 		apGUI.$resetWeightsBtn = document.createElement('DIV');
 		apGUI.$resetWeightsBtn.id = 'resetWeightsBtn';
-		apGUI.$resetWeightsBtn.setAttribute('class', 'noselect challengeThing thing settingBtnfalse'); /* 
-		apGUI.$resetWeightsBtn.setAttribute('onclick', `fillPreset${calcName}(perkCalcPreset(), true)`); */
+		apGUI.$resetWeightsBtn.setAttribute('class', 'noselect challengeThing thing settingBtnfalse');
 		apGUI.$resetWeightsBtn.setAttribute('onclick', `importExportTooltip("resetPerkPreset", "${calcName}");`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseover', `tooltip("Reset Preset Weights", "customText", event, \`${resetWeightsText}\`)`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseout', 'tooltip("hide")');

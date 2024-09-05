@@ -191,6 +191,19 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Core', [1, 2],
 			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount(1) >= 20) });
 
+
+		createSetting('pauseScript',
+			function () { return ('Pause AutoTrimps') },
+			function () {
+				let description = "<p>Pauses the AutoTrimps script.</p>";
+				description += "<p><b>Graphs will continue tracking data while paused.</b></p>";
+				return description;
+			}, 'boolean', null, null, 'Core', [0]);
+		let $pauseScript = document.getElementById('pauseScript');
+		$pauseScript.parentNode.style.setProperty('float', 'right');
+		$pauseScript.parentNode.style.setProperty('margin-right', '1.2vw');
+		$pauseScript.parentNode.style.setProperty('margin-left', '0');
+
 		createSetting('autoHeirlooms',
 			function () { return ('Auto Allocate Heirlooms') },
 			function () { 
@@ -447,17 +460,19 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Core', [1, 2],
 			function () { return (Fluffy.checkU2Allowed()) });
 
-		createSetting('pauseScript',
-			function () { return ('Pause AutoTrimps') },
+		createSetting('autoPortalForce',
+			function () { return ('Force Auto Portal') },
 			function () {
-				let description = "<p>Pauses the AutoTrimps script.</p>";
-				description += "<p><b>Graphs will continue tracking data while paused.</b></p>";
+				let description = "<p>Will force activate Auto Portal when pressed.</p>";
+				description += "<p>There's a confirmation window to ensure not accidental presses!</p>";
 				return description;
-			}, 'boolean', null, null, 'Core', [0]);
-		let $pauseScript = document.getElementById('pauseScript');
-		$pauseScript.parentNode.style.setProperty('float', 'right');
-		$pauseScript.parentNode.style.setProperty('margin-right', '1.2vw');
-		$pauseScript.parentNode.style.setProperty('margin-left', '0');
+			},
+			'infoclick', false,  'cancelTooltip(); autoPortalForce();', 'Core', [0],
+			function () { return (game.global.totalPortals > 0) });
+		let $autoPortalForce = document.getElementById('autoPortalForce');
+		$autoPortalForce.parentNode.style.setProperty('float', 'right');
+		$autoPortalForce.parentNode.style.setProperty('margin-right', '1.2vw');
+		$autoPortalForce.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoEggs',
 			function () { return ('Auto Eggs') },
@@ -2319,7 +2334,7 @@ function initialiseAllSettings() {
 			function () { return ('E: End Zone') },
 			function () {
 				let description = "<p>Will run the Bionic Wonderland map level specified in <b>E: End BW</b> at this zone.</p>";
-				description += "<p>If set below 601 it will disable this setting.</p>";
+				description += "<p>If set below 601 it will automatically set this to 601 so set it above that if necessary.</p>";
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
@@ -2329,6 +2344,8 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
 				description += "<p><b>If the specified BW is not available, it will run the one closest to the setting.</b></p>";
+				description += "<p>When active and above z600 this will disable <b>BW Raiding Settings</b> until the <b>Experience</b> challenge has been completed.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting and use Bionic Raiding settings instead to end the challenge.</p>";
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
@@ -3148,7 +3165,7 @@ function initialiseAllSettings() {
 				let description = "<p>Shield to use when your army is dead and breeding.</p>";
 				description += "<p>This will override all other heirloom swapping features when active!</p>";
 				description += "<p>Should ideally be a shield with the <b>Breedspeed</b> modifier.</p>";
-				description += "<p>Mapping decisions will be disabled (unless (0 + overkill) cells away from c100) when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
+				description += "<p>Mapping decisions will be disabled (unless 0 + overkill cells away from c100) when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
 				if (currSettingUniverse === 1) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
@@ -5114,7 +5131,7 @@ function _setSelect2DropdownsPrefix(dropdownSetting) {
 function _settingsToLineBreak() {
 	const heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
-	const breakAfterCore = ['portalVoidIncrement', 'universeSetting'];
+	const breakAfterCore = ['pauseScript', 'universeSetting'];
 	const breakAfterMaps = ['autoLevelScryer', 'scryvoidmaps', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
 	const breakAfterDaily = ['dscryvoidmaps', 'dAutoDStanceSpire', 'dWindStackingLiq', 'dailyHeliumHrPortal'];
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];

@@ -1516,9 +1516,10 @@ function findLastBionicWithItems(bionicPool) {
 	bionicPool.sort((bionicA, bionicB) => bionicA.level - bionicB.level);
 	const isExperienceActive = challengeActive('Experience') && getPageSetting('experience') && game.global.world > 600;
 	const experienceEndBW = getPageSetting('experienceEndBW');
+	const experienceEndLevel = experienceEndBW <= 0 ? Infinity : experienceEndBW;
 
 	while (bionicPool.length > 1 && prestigesToGet(bionicPool[0].level, targetPrestige)[0] === 0) {
-		if (isExperienceActive && bionicPool[0].level >= experienceEndBW) break;
+		if (isExperienceActive && bionicPool[0].level >= experienceEndLevel) break;
 		bionicPool.shift();
 	}
 
@@ -1598,7 +1599,10 @@ function bionicRaidingMapping(bionicPool) {
 		}
 	}
 
-	const raidingZone = challengeActive('Experience') && game.global.world > 600 && getPageSetting('experience') ? getPageSetting('experienceEndBW') : mapSettings.raidingZone;
+	const checkExperienceZone = challengeActive('Experience') && game.global.world > 600 && getPageSetting('experience') ? getPageSetting('experienceEndBW') : 0;
+	const experienceBW = checkExperienceZone ? getPageSetting('experienceEndBW') : 0;
+
+	const raidingZone = checkExperienceZone && experienceBW > 0 ? experienceBW : mapSettings.raidingZone;
 	const bionicToCheck = findLastBionicWithItems(bionicPool);
 
 	if (game.global.preMapsActive) {
@@ -2702,7 +2706,7 @@ function desolation(lineCheck, forceDestack) {
 	if ((forceDestack && game.challenges.Desolation.chilled > 0) || ((game.global.mapsActive || game.challenges.Desolation.chilled > 0) && mapSettings.mapName === 'Desolation Destacking')) {
 		shouldMap = game.challenges.Desolation.chilled > 0;
 		if (!shouldMap) {
-			recycleMap_AT(true);
+			mapsClicked(true);
 		}
 	}
 

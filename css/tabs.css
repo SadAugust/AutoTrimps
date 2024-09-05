@@ -101,14 +101,6 @@ ul.tab li a:hover {
 	}
 }
 
-#trapArea {
-	border: 1px solid white;
-	display: inline-block;
-	margin-bottom: 2%;
-	margin-top: 0;
-	padding: 0;
-}
-
 #animationDiv {
 	z-index: -1 !important;
 }
@@ -1081,55 +1073,7 @@ li.indent {
 	margin-left: 1vw;
 }
 
-/* Portal Screen CSS overrides */
-#empHide,
-#unempHide {
-	font-size: 1.1em;
-}
-
-.sizeSecReduced {
-	font-size: 1em !important;
-	margin-top: 0.2em;
-}
-
-#titleRow {
-	height: 4.7vw;
-	margin-bottom: 0.5vw;
-}
-
-#portalHelium {
-	font-size: 1.7vw;
-	line-height: 1.8vw;
-}
-
-#portalTotalPortals,
-#portalTotalSpent,
-#portalTotalHelium {
-	font-size: 1.3vw;
-	line-height: 1.4vw;
-}
-
-#portalTitle {
-	width: 100%;
-	font-size: 3vw;
-	text-align: center;
-	margin-top: 0.9vw;
-}
-
-.inPortalBtn {
-	font-size: 1.3vw !important;
-}
-
-.portalThing {
-	width: 19.3%;
-	font-size: 1.231vw;
-}
-
-.portalThing.detailed {
-	font-size: 0.75vw;
-	line-height: 0.85vw;
-}
-
+/* Time Warp */
 #offlineExtraBtnsContainer,
 #offlineMapBtns,
 #offlineZoneBtns {
@@ -1159,7 +1103,7 @@ h9 {
 	text-decoration: underline;
 }
 
-/* New stuff goes here */
+/* Changelog */
 .btn-changelogNew {
 	background: #1e3c75;
 	font-weight: bold;
@@ -1202,6 +1146,7 @@ h9 {
 	background-image: none;
 }
 
+/* select2 dropdowns */
 .select2 {
 	position: relative;
 	font-size: 0.8vw;
@@ -1211,8 +1156,7 @@ h9 {
 	margin-bottom: 0.1vw;
 }
 
-/* Dropdown results.
-Appears when you click the dropdown button! */
+/* Dropdown results. Appears when you click the dropdown button! */
 .select2-container--default .select2-results > .select2-results__options {
 	max-height: 28vw !important;
 	font-size: 0.9vw;

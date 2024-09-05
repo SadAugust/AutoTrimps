@@ -1005,3 +1005,12 @@ function _displayResetPerkPreset(tooltipDiv) {
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
+
+function autoPortalForce() {
+	if (!game.global.portalActive) return;
+
+	const tooltipHeader = `<b>Force Auto Portaling</b>`;
+	const tooltipText = `Are you sure you want to Auto Portal?`;
+
+	tooltip('confirm', null, 'update', `<b>${tooltipText}`, 'mapSettings.portalAfterVoids = true; MODULES.mapFunctions.afterVoids = true; game.global.totalVoidMaps = 0; autoPortalCheck(game.global.world);', `${tooltipHeader}`, 'Force Portal');
+}
