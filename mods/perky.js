@@ -629,7 +629,22 @@ function optimize() {
 
 		const perkNames = ['Looting', 'Carpentry', 'Motivation', 'Power', 'Toughness'];
 		for (let name of perkNames) {
-			perks[name + '_II'].gain = (perks[name].gain * perks[name + '_II'].log_ratio()) / perks[name].log_ratio();
+			let resetGain = false;
+			let perk = perks[name];
+
+			if (perk.gain === 0) {
+				perk.level_up(1);
+				perk.gain = score() - baseline;
+				perk.level_up(-1);
+				resetGain = true;
+			}
+
+			let perkII = perks[`${name}_II`];
+			perkII.gain = (perk.gain * perkII.log_ratio()) / perk.log_ratio();
+
+			if (resetGain) {
+				perk.gain = 0;
+			}
 		}
 	}
 
