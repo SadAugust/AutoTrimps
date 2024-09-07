@@ -831,7 +831,7 @@ MODULES.autoPerks = {
 		if (game.global.viewingUpgrades || portalWindowOpen) {
 			let $portalUpgradesHere = document.getElementById('portalUpgradesHere');
 
-			if ($portalUpgradesHere && calcName !== 'Surky') {
+			if ($portalUpgradesHere) {
 				let lockPerksText = 'When locked the current perk levels are not changed when you allocate perks.';
 				let perkLocks = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
 				let $perkIcons = $portalUpgradesHere.children;

@@ -168,14 +168,24 @@ function initPerks() {
 
 	const efficiencyPerks = ['Artisanistry', 'Carpentry', 'Criticality', 'Equality', 'Frenzy', 'Greed', 'Hunger', 'Looting', 'Motivation', 'Observation', 'Packrat', 'Pheromones', 'Power', 'Prismal', 'Resilience', 'Smithology', 'Toughness', 'Trumps'];
 
+	const calcNames = { 1: 'Perky', 2: 'Surky' };
+	const calcName = calcNames[portalUniverse];
+	let perkLocks = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
+
 	Object.keys(perks).forEach((perkName) => {
 		const perkData = game.portal[perkName];
+		const lockLevel = perkLocks.lockedPerks ? perkLocks.lockedPerks[perkName] : false;
+
 		if (perkData) {
 			const perk = perks[perkName];
-			perk.locked = perkData.radLocked;
-			perk.priceBase = perkData.priceBase;
-			perk.priceFact = perkData.specialGrowth ? perkData.specialGrowth : 1.3;
-			if (perkData.max) perk.max = perkData.max;
+			const { radLocked, priceBase, specialGrowth, max, radLevel, levelTemp } = perkData;
+
+			perk.locked = radLocked;
+			perk.priceBase = priceBase;
+			perk.priceFact = specialGrowth ? specialGrowth : 1.3;
+			if (max || lockLevel) perk.max = lockLevel ? radLevel + (levelTemp ? levelTemp : 0) : max;
+			if (lockLevel) perk.level = radLevel + (levelTemp ? levelTemp : 0);
+
 			if (efficiencyPerks.includes(perkName)) perk.efficiency = 0;
 
 			if (perkName === 'Observation') perk.efficiency2 = 0;
@@ -440,10 +450,11 @@ function getTotalPerksCost(perks) {
 
 function getPerkCost(whichPerk, numLevels, fromZero = false, perks) {
 	if (numLevels === 0) return 0;
+
 	const perk = perks[whichPerk];
 	let level = fromZero ? 0 : perk.level;
 	// if the perk can't be leveled, return infinite cost to naturally avoid buying the perk
-	if (perk.locked || (perk.hasOwnProperty('max') && level + numLevels > perk.max)) return Infinity;
+	if (perk.locked || (perk.hasOwnProperty('max') && level + numLevels > perk.max && game.portal[whichPerk].hasOwnProperty('max'))) return Infinity;
 	let cost = 0;
 
 	for (let i = 0; i < numLevels; i++) {
@@ -1227,6 +1238,7 @@ function autobuyPerks(props, perks) {
 	// optimize Trumps for Downsize
 	perks.Trumps.optimize = props.specialChallenge === 'downsize';
 	props = efficiencyFlag(props, perks);
+
 	while (props.bestPerk !== '') {
 		bestName = props.bestPerk;
 		const bestObj = perks[bestName];
@@ -1238,16 +1250,19 @@ function autobuyPerks(props, perks) {
 		[props, perks] = getPerkEfficiencies(props, perks);
 		props = efficiencyFlag(props, perks);
 	}
+
 	// use trumps as dump perk
 	if (!(props.specialChallenge === 'combat') && !(props.specialChallenge === 'combatRadon')) {
 		while (continueBuying) [continueBuying, props, perks] = buyPerk('Trumps', 1, props, perks);
 	}
 	continueBuying = true;
+
 	// and Pheromones! (but not in Trappa, for minimum confusion, and not before Trappa unlock)
 	if (props.specialChallenge !== 'trappa' && !(props.specialChallenge === 'combat' && props.runningTrappa)) {
 		while (continueBuying) [continueBuying, props, perks] = buyPerk('Pheromones', 1, props, perks);
 	}
 	continueBuying = true;
+
 	// secret setting to dump remaining Rn into bait for feeeeeee
 	while (continueBuying) [continueBuying, props, perks] = buyPerk('Bait', 1, props, perks);
 
