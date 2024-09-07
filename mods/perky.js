@@ -53,26 +53,38 @@ function mastery(name) {
 var Perk = /** @class */ (function () {
 	function Perk(perkName, scaling, lockLevel = false) {
 		const { priceBase, additive, additiveInc, max, specialGrowth, locked, level, levelTemp } = game.portal[perkName];
+		const fixedLevel = level + (levelTemp ? levelTemp : 0);
 
 		this.base_cost = priceBase;
 		this.cost_increment = additive ? additiveInc : 0;
 		this.scaling = scaling;
-		this.max_level = lockLevel ? level + (levelTemp ? levelTemp : 0) : max ? max : Infinity;
+		this.max_level = lockLevel ? fixedLevel : max ? max : Infinity;
 		this.cost_exponent = specialGrowth ? specialGrowth : 1.3;
 		this.locked = locked;
 		this.level = 0;
-		this.min_level = lockLevel ? level + (levelTemp ? levelTemp : 0) : !game.global.canRespecPerks || (game.global.viewingUpgrades && !game.global.respecActive) ? level : 0;
+		this.min_level = lockLevel ? fixedLevel : !game.global.canRespecPerks || (game.global.viewingUpgrades && !game.global.respecActive) ? level : 0;
 		this.cost = 0;
 		this.gain = 0;
 		this.bonus = 1;
 		this.cost = this.base_cost;
+
+		this.fixed = lockLevel;
+		this.fixedLevel = fixedLevel;
+		this.fixedCost = 0;
+
+		if (lockLevel) {
+			const spent = this.level_up(fixedLevel, true);
+			this.fixedCost = spent;
+			this.level_up(-fixedLevel, true);
+			MODULES.autoPerks.fixedCost += spent;
+		}
 	}
 
 	Perk.prototype.levellable = function (he_left) {
 		return !this.locked && this.level < this.max_level && this.cost * Math.max(1, Math.floor(this.level / 1e12)) <= he_left;
 	};
 
-	Perk.prototype.level_up = function (amount) {
+	Perk.prototype.level_up = function (amount, ignoreFixed = false) {
 		this.level += amount;
 		this.bonus = this.scaling(this.level);
 		let spent = this.cost;
@@ -82,6 +94,10 @@ var Perk = /** @class */ (function () {
 			this.cost += amount * this.cost_increment;
 		} else {
 			this.cost = Math.ceil(this.level / 2 + this.base_cost * Math.pow(this.cost_exponent, this.level));
+		}
+
+		if (this.fixed && !ignoreFixed) {
+			MODULES.autoPerks.fixedCost += amount > 0 ? -spent : amount < 0 ? spent : 0;
 		}
 
 		return spent;
@@ -291,9 +307,9 @@ function populatePerkyData() {
 			magn: game.unlocks.imps.Magnimp,
 			taunt: game.unlocks.imps.Tauntimp,
 			ven: game.unlocks.imps.Venimp,
-			chronojest: chronojest,
-			prod: prod,
-			loot: loot,
+			chronojest,
+			prod,
+			loot,
 			breed_timer: mastery('patience') ? 45 : 30,
 			army_mod: game.resources.trimps.maxMod
 		}
@@ -383,6 +399,7 @@ function parse_perks() {
 	const calcNames = { 1: 'Perky', 2: 'Surky' };
 	const calcName = calcNames[portalUniverse];
 	let perkLocks = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
+	MODULES.autoPerks.fixedCost = 0;
 
 	for (const [name, func] of Object.entries(perkData)) {
 		perks[name] = new Perk(name, func, perkLocks.lockedPerks ? perkLocks.lockedPerks[name] : false);
@@ -689,13 +706,41 @@ function optimize() {
 			return b.gain / b.cost - a.gain / a.cost;
 		});
 
+		let brokenLoop = false;
+
 		while (he_left > he_target && sorted_perks.length) {
 			const best = sorted_perks.shift();
 			if (!best.levellable(he_left)) continue;
 			spend_he(best, he_left - he_target);
+
+			/* if (MODULES.autoPerks.fixedCost > he_left) {
+				while (MODULES.autoPerks.fixedCost > he_left) {
+					he_left += best.level_up(-1);
+					brokenLoop = true;
+					break;
+				}
+
+				for (let name in perks) {
+					const perk = perks[name];
+					if (perk.fixed) {
+						perk.min_level = perk.max_level;
+
+						if (perk.cost_increment && perk.level < perk.min_level) he_left -= perk.level_up(perk.min_level - perk.level);
+						else while (perk.level < perk.min_level) he_left -= perk.level_up(1);
+					}
+				}
+
+				MODULES.autoPerks.fixedCost = 0;
+				break;
+			} */
+
 			let i = 0;
 			while (sorted_perks[i] && sorted_perks[i].gain / sorted_perks[i].cost > best.gain / best.cost) i++;
 			sorted_perks.splice(i, 0, best);
+		}
+
+		if (brokenLoop) {
+			continue;
 		}
 	}
 
@@ -703,6 +748,7 @@ function optimize() {
 		--Toughness_II.level;
 		he_left += Toughness_II.cost;
 	}
+
 	return perks;
 }
 
@@ -784,7 +830,10 @@ MODULES.autoPerks = {
 					if (document.getElementById(tempDiv.id)) continue;
 
 					$perkIcon.style.position = 'relative';
-					tempDiv.style = 'display: block; position: absolute; top: 0px; right: 0px; width: 10%; background: none;';
+					const iconOffsetRight = game.options.menu.detailedPerks.enabled ? 5.3 : 7;
+					const iconOffsetBottom = game.options.menu.detailedPerks.enabled ? 11 : 5;
+					const iconScale = game.options.menu.detailedPerks.enabled ? 1.05 : 0.65;
+					tempDiv.style = `display: block; position: absolute; bottom: ${iconOffsetBottom}px; right: ${iconOffsetRight}px; width: 10%; background: none; transform: scale(${iconScale});`;
 					tempDiv.classList = `icomoon ${perkLocks && perkLocks['lockedPerks'] && perkLocks['lockedPerks'][$perkIcon.id] ? 'icon-locked' : 'icon-unlocked'}`;
 
 					tempDiv.addEventListener('click', (event) => {
@@ -1264,6 +1313,14 @@ if (typeof originalPortalClicked !== 'function') {
 	var originalPortalClicked = portalClicked;
 	portalClicked = function () {
 		originalPortalClicked(...arguments);
+		MODULES.autoPerks.displayGUI();
+	};
+}
+
+if (typeof originalDisplayPortalUpgrades !== 'function') {
+	var originalDisplayPortalUpgrades = displayPortalUpgrades;
+	displayPortalUpgrades = function () {
+		originalDisplayPortalUpgrades(...arguments);
 		MODULES.autoPerks.displayGUI();
 	};
 }

@@ -491,8 +491,7 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 
-		const { speed, equality, killSpeed, special } = simulate(saveData, zone);
-		if (special === '0' && saveData.specialTime > 0) loot /= saveData.specialTime;
+		const { speed, equality, killSpeed } = simulate(saveData, zone);
 
 		const value = speed * loot * lootMultiplier;
 		result[stance] = {
@@ -598,6 +597,8 @@ function simulate(saveData, zone) {
 	const corruptionScaleAttack = saveData.magma ? calcCorruptionScale(zone, 3) / 2 : 1;
 	const corruptionScaleHealth = saveData.magma ? calcCorruptionScale(zone, 10) / 2 : 1;
 	const biomeImps = saveData.biome;
+
+	let cacheLoot = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * saveData.specialTime;
 
 	if (universe === 2) {
 		if (saveData.insanity) biomeImps.push([15, 60, true]);
@@ -926,6 +927,8 @@ function simulate(saveData, zone) {
 			plague_damage = 0;
 			ok_damage = 0;
 			energyShield = energyShieldMax;
+			if (wind > 0) loot += wind * saveData.wind * cacheLoot;
+			else loot += cacheLoot;
 		}
 	}
 
