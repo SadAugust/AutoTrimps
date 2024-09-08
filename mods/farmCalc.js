@@ -568,24 +568,25 @@ function simulate(saveData, zone) {
 		return seed * rand_mult;
 	}
 
+	let lootMult = 1;
 	let { difficulty, size, special } = saveData;
 
-	if (typeof atSettings !== 'undefined') {
-		const mapLevel = zone - game.global.world;
-		const simulateMap = _simulateSliders(zone, special, saveData.mapBiome);
+	const mapLevel = zone - game.global.world;
+	const simulateMap = _simulateSliders(zone, special, saveData.mapBiome);
 
-		let mapOwned = findMap(mapLevel, special, saveData.mapBiome);
-		if (!mapOwned) mapOwned = findMap(mapLevel, simulateMap.special, simulateMap.location, simulateMap.perfect);
+	let mapOwned = findMap(mapLevel, special, saveData.mapBiome);
+	if (!mapOwned) mapOwned = findMap(mapLevel, simulateMap.special, simulateMap.location, simulateMap.perfect);
 
-		if (mapOwned) {
-			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
-			difficulty = Number(map.difficulty);
-			size = Number(map.size);
-		} else {
-			difficulty = Number(simulateMap.difficulty);
-			size = Number(simulateMap.size);
-			special = simulateMap.special;
-		}
+	if (mapOwned) {
+		const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+		difficulty = Number(map.difficulty);
+		size = Number(map.size);
+		lootMult = Number(map.loot);
+	} else {
+		difficulty = Number(simulateMap.difficulty);
+		size = Number(simulateMap.size);
+		special = simulateMap.special;
+		lootMult = simulateMap.loot;
 	}
 
 	function armyDead() {
@@ -597,8 +598,9 @@ function simulate(saveData, zone) {
 	const corruptionScaleAttack = saveData.magma ? calcCorruptionScale(zone, 3) / 2 : 1;
 	const corruptionScaleHealth = saveData.magma ? calcCorruptionScale(zone, 10) / 2 : 1;
 	const biomeImps = saveData.biome;
+	const specialTime = special === saveData.special ? saveData.specialTime : getSpecialTime(special);
 
-	let cacheLoot = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * saveData.specialTime;
+	let cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
 
 	if (universe === 2) {
 		if (saveData.insanity) biomeImps.push([15, 60, true]);

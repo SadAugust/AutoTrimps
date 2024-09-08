@@ -3475,9 +3475,8 @@ function _reduceMapSlidersInsanity() {
 }
 
 function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome = getBiome(), sliders = [9, 9, 9], perfect = true) {
-	mapLevel = mapLevel - game.global.world;
-
 	const fragmentsOwned = game.resources.fragments.owned;
+	mapLevel = mapLevel - game.global.world;
 
 	//Gradually reduce map sliders if not using frag max setting!
 	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) perfect = false;
