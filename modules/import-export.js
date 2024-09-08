@@ -1012,5 +1012,5 @@ function autoPortalForce() {
 	const tooltipHeader = `<b>Force Auto Portaling</b>`;
 	const tooltipText = `Are you sure you want to Auto Portal?`;
 
-	tooltip('confirm', null, 'update', `<b>${tooltipText}`, 'mapSettings.portalAfterVoids = true; MODULES.mapFunctions.afterVoids = true; game.global.totalVoidMaps = 0; autoPortalCheck(game.global.world);', `${tooltipHeader}`, 'Force Portal');
+	tooltip('confirm', null, 'update', `<b>${tooltipText}`, 'mapSettings.portalAfterVoids = true; MODULES.mapFunctions.afterVoids = true; game.global.totalVoidMaps = 0; autoPortalCheck(game.global.world); MODULES.mapFunctions.afterVoids = false;', `${tooltipHeader}`, 'Force Portal');
 }
