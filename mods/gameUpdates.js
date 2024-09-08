@@ -2497,6 +2497,8 @@ function calcBaseStats(equipType = 'attack') {
 
 function abandonChallengeResetEnemy() {
 	const worldCell = game.global.gridArray[game.global.lastClearedCell + 1];
+	if (!worldCell) return;
+
 	let statChallenge = false;
 	let statMaps = false;
 
@@ -2601,7 +2603,7 @@ function abandonChallenge(restart) {
 	if (resetWorld || resetMap) {
 		if (resetWorld) {
 			const worldCell = game.global.gridArray[game.global.lastClearedCell + 1];
-			worldCell.maxHealth = -1;
+			if (worldCell) worldCell.maxHealth = -1;
 		}
 
 		if (resetMap && game.global.currentMapId !== '') {
