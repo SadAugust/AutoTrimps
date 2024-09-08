@@ -23,7 +23,7 @@ function autoPortalCheck(specificPortalZone) {
 
 function autoPortal(specificPortalZone, universe, skipDaily) {
 	if (MODULES.portal.portalForVoid && !game.options.menu.liquification.enabled) toggleSetting('liquification');
-	if (!game.global.portalActive || game.global.runningChallengeSquared) return;
+	if (!game.global.portalActive) return;
 
 	universe = universe || (MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe);
 	const runningDaily = challengeActive('Daily');
@@ -214,8 +214,8 @@ function c2RunnerPortal(portalZone) {
 	if (!game.global.runningChallengeSquared) return;
 
 	if (portalZone && game.global.world >= portalZone) {
-		finishChallengeSquared();
-		autoPortal(portalZone);
+		finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
+		autoPortal(game.global.world);
 		return;
 	}
 
@@ -223,9 +223,9 @@ function c2RunnerPortal(portalZone) {
 	if (portalZone <= 0) portalZone = Infinity;
 
 	if (game.global.world >= portalZone) {
-		finishChallengeSquared();
+		finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
 		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
-			autoPortal(portalZone);
+			autoPortal(game.global.world);
 		}
 	}
 }
@@ -245,7 +245,8 @@ function doPortal(challenge, skipDaily) {
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 
-	if (challengeActive('Daily') || game.global.runningChallengeSquared || challengeActive('Bublé')) _autoPortalAbandonChallenge();
+	const abandonC2 = game.global.runningChallengeSquared && !challengeActive('Obliterated') && !challengeActive('Eradicated');
+	if (challengeActive('Daily') || abandonC2 || challengeActive('Bublé')) _autoPortalAbandonChallenge();
 
 	_autoPortalVoidTracker();
 	if (MODULES.portal.portalForVoid) {
@@ -319,7 +320,6 @@ function _autoPortalVoidTracker() {
 
 	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
 	debug(`Portaling to increment void tracker (${trackerValue}/10) with liquification.`, 'portal');
-
 	activatePortal();
 }
 
@@ -395,6 +395,7 @@ function _autoPortalC2() {
 				challengeLevel = Math.min(challengeLevel, secondChallenge);
 			} else {
 				challengeLevel += game.c2[challengeList[y]];
+				if (challengeActive('Obliterated') || challengeActive('Eradicated')) challengeLevel = Math.max(game.global.world, game.c2[challengeList[y]]);
 			}
 		}
 
@@ -466,7 +467,9 @@ function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
 
 		selectChallenge('Daily');
 		getDailyChallenge(lastUndone);
-		debug(`Portaling into Daily for: ${getDailyTimeString(lastUndone, true)} now!`, 'portal');
+		const dailyString = getDailyTimeString(lastUndone, true);
+		const dayName = dayOfWeek(getDailyTimeString(lastUndone, false, true)).slice(0, -1);
+		debug(`Portaling into ${dayName}ily (${dailyString}) now!`, 'portal');
 		challenge = 'Daily';
 	}
 
@@ -641,8 +644,9 @@ function c2FinishZone() {
 	return finishChallenge <= 0 ? Infinity : finishChallenge;
 }
 
-function finishChallengeSquared() {
+function finishChallengeSquared(onlyDebug) {
 	debug(`Finished ${game.global.challengeActive} at zone ${game.global.world}`, 'challenge', 'oil');
+	if (onlyDebug) return;
 	abandonChallenge();
 	cancelTooltip();
 }
