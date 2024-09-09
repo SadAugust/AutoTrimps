@@ -120,3 +120,7 @@ Restart the game, or if the game is already running, hit F5 to refresh.
 -   Note for Farm Calculator (zfarm)
 
 This works in both universes and shows you the optimal stance/equality level to use for the map shown. The information for it can be found at the bottom of the Trimps breeding/trapping section as can be seen in the image below. ![Farm Calc Position](https://i.imgur.com/siZH8Dh.png)
+
+## Donate
+
+If you'd like to donate to AutoTrimps development, you can now do so with PayPal <a href="https://www.paypal.com/donate/?hosted_button_id=QRQLBVYE54XLQ">here.</a>
