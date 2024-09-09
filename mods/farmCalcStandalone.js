@@ -230,8 +230,8 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 		let effectiveBiome = map.name === 'Tricky Paradise' && game.resources.fragments.owned < 600 ? 'Plentiful' : biome;
 		if (map.location !== effectiveBiome && effectiveBiome !== 'Random') continue;
 		if (perfect) {
-			if (map.size > trimpStats.mapSize) continue;
-			if (map.difficulty > trimpStats.mapDifficulty) continue;
+			if (map.size > game.talents.mapLoot2.purchased ? 20 : 25) continue;
+			if (map.difficulty > 0.75) continue;
 			if (map.loot > mapLoot) continue;
 		}
 		if (game.global.world + level !== map.level) continue;
