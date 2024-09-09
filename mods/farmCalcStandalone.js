@@ -87,7 +87,11 @@ function getAvailableSpecials(special, skipCaches) {
 		}
 	}
 
-	if (!bestMod || (bestMod === 'fa' && trimpStats.hyperspeed2)) bestMod = '0';
+	const hyp2Purchased = game.talents.hyperspeed2.purchased;
+	const hypPct = game.talents.liquification3.purchased ? 75 : hyp2Purchased ? 50 : 0;
+	const hyp2 = global.world <= Math.floor(hze * (hypPct / 100));
+
+	if (!bestMod || (bestMod === 'fa' && hyp2)) bestMod = '0';
 	return bestMod;
 }
 
