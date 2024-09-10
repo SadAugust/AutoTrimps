@@ -1175,7 +1175,7 @@ function manageLeadStacks(remove) {
 		if (determinedBuff === null) {
 			const goodGuyElem = document.getElementById('goodGuyName');
 			const htmlMessage = '&nbsp<span class="badge antiBadge" id="determinedBuff" onmouseover="tooltip(\'Determined\', \'customText\', event, \'Your Trimps are determined to succeed. They gain 50% attack and earn double resources from all sources.\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-sun2"></span></span>';
-			if (goodGuyElem.innerHTML !== htmlMessage) goodGuyElem.innerHTML = htmlMessage;
+			if (!goodGuyElem.innerHTML.includes(htmlMessage)) goodGuyElem.innerHTML += htmlMessage;
 			determinedBuff = document.getElementById('determinedBuff');
 		}
 		determinedBuff.style.display = 'inline';
@@ -1228,7 +1228,7 @@ function updateLivingStacks() {
 	if (!elem) {
 		const goodGuyElem = document.getElementById('goodGuyName');
 		const htmlMessage = `&nbsp<span class="badge antiBadge" id="livingBuff" onmouseover="tooltip('Unliving', null, event)" onmouseout="tooltip('hide')"><span id="livingStacks">${stackCount}</span>&nbsp;<span style="margin-top: 2%" class="icomoon icon-shareable"></span></span>`;
-		if (goodGuyElem.innerHTML !== htmlMessage) goodGuyElem.innerHTML += htmlMessage;
+		if (!goodGuyElem.innerHTML.includes(htmlMessage)) goodGuyElem.innerHTML += htmlMessage;
 		return;
 	}
 
