@@ -1229,6 +1229,7 @@ function updateLivingStacks() {
 		const goodGuyElem = document.getElementById('goodGuyName');
 		const htmlMessage = `&nbsp<span class="badge antiBadge" id="livingBuff" onmouseover="tooltip('Unliving', null, event)" onmouseout="tooltip('hide')"><span id="livingStacks">${stackCount}</span>&nbsp;<span style="margin-top: 2%" class="icomoon icon-shareable"></span></span>`;
 		if (!goodGuyElem.innerHTML.includes(htmlMessage)) goodGuyElem.innerHTML += htmlMessage;
+
 		return;
 	}
 

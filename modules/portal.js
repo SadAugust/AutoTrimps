@@ -213,9 +213,16 @@ function handlePortalType(portalType, portalZone, specificPortalZone, universe, 
 function c2RunnerPortal(portalZone) {
 	if (!game.global.runningChallengeSquared) return;
 
+	function forceAutoPortal() {
+		MODULES.mapFunctions.afterVoids = true;
+		game.global.totalVoidMaps = 0;
+		autoPortal(game.global.world);
+		MODULES.mapFunctions.afterVoids = false;
+	}
+
 	if (portalZone && game.global.world >= portalZone) {
 		finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
-		autoPortal(game.global.world);
+		forceAutoPortal();
 		return;
 	}
 
@@ -225,7 +232,7 @@ function c2RunnerPortal(portalZone) {
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
 		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
-			autoPortal(game.global.world);
+			forceAutoPortal();
 		}
 	}
 }
