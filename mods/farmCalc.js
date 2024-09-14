@@ -431,11 +431,11 @@ function stats(lootFunction = lootDefault) {
 	let mapsCanAffordPerfect = 0;
 	let coords = 1;
 	const runningAutoTrimps = typeof atSettings !== 'undefined';
-	let onlyAllowPerfect = runningAutoTrimps && getPageSetting('onlyPerfectMaps');
-	let requiredNumberOfPerfectMaps = onlyAllowPerfect ? 6 : 1;
-	let deltaBetweenCurrentRunAndPriorRunToStopAt = 0.95;
-	let minMapsBelowCurrentZoneToRunFor = 0;
-	let maxMapsToCalcFor = 25;
+	const onlyAllowPerfect = runningAutoTrimps && getPageSetting('onlyPerfectMaps');
+	const requiredNumberOfPerfectMaps = onlyAllowPerfect ? 6 : 1;
+	const deltaBetweenCurrentRunAndPriorRunToStopAt = 0.95;
+	const minMapsBelowCurrentZoneToRunFor = 0;
+	const maxMapsToCalcFor = 25;
 
 	if (saveData.coordinate) {
 		for (let z = 1; z < saveData.zone + extra + 1; ++z) {
@@ -455,10 +455,10 @@ function stats(lootFunction = lootDefault) {
 		if (tmp.zone !== 'z6') {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-			let reachedRequiredCountOfPerfectMaps = mapsCanAffordPerfect >= requiredNumberOfPerfectMaps;
-			let runIsSufficientlyWorseThanPriorRun = tmp.value < deltaBetweenCurrentRunAndPriorRunToStopAt * (stats.length ? status[0].value : tmp.value);
-			let reachedSufficientBelowCurrentZone = mapLevel < saveData.zone - minMapsBelowCurrentZoneToRunFor;
-			let enoughSimulationCompleted = reachedRequiredCountOfPerfectMaps && runIsSufficientlyWorseThanPriorRun && reachedSufficientBelowCurrentZone;
+			const reachedRequiredCountOfPerfectMaps = mapsCanAffordPerfect >= requiredNumberOfPerfectMaps;
+			const runIsSufficientlyWorseThanPriorRun = tmp.value < deltaBetweenCurrentRunAndPriorRunToStopAt * (stats.length ? status[0].value : tmp.value);
+			const reachedSufficientBelowCurrentZone = mapLevel < saveData.zone - minMapsBelowCurrentZoneToRunFor;
+			const enoughSimulationCompleted = reachedRequiredCountOfPerfectMaps && runIsSufficientlyWorseThanPriorRun && reachedSufficientBelowCurrentZone;
 			if (enoughSimulationCompleted || stats.length >= maxMapsToCalcFor)) break;
 		}
 
