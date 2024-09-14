@@ -456,10 +456,10 @@ function stats(lootFunction = lootDefault) {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
 			const reachedRequiredCountOfPerfectMaps = mapsCanAffordPerfect >= requiredNumberOfPerfectMaps;
-			const runIsSufficientlyWorseThanPriorRun = tmp.value < deltaBetweenCurrentRunAndPriorRunToStopAt * (stats.length ? status[0].value : tmp.value);
+			const runIsSufficientlyWorseThanPriorRun = tmp.value < deltaBetweenCurrentRunAndPriorRunToStopAt * (stats.length ? stats[0].value : tmp.value);
 			const reachedSufficientBelowCurrentZone = mapLevel < saveData.zone - minMapsBelowCurrentZoneToRunFor;
 			const enoughSimulationCompleted = reachedRequiredCountOfPerfectMaps && runIsSufficientlyWorseThanPriorRun && reachedSufficientBelowCurrentZone;
-			if (enoughSimulationCompleted || stats.length >= maxMapsToCalcFor)) break;
+			if (enoughSimulationCompleted || stats.length >= maxMapsToCalcFor) break;
 		}
 
 		stats.unshift(tmp);
