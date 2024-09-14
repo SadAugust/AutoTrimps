@@ -455,7 +455,7 @@ function stats(lootFunction = lootDefault) {
 		if (tmp.zone !== 'z6') {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-						if (stats.length && ((mapsCanAffordPerfect >= requiredNumberOfPerfectMaps 
+			if (stats.length && ((mapsCanAffordPerfect >= requiredNumberOfPerfectMaps 
 					&& tmp.value < deltaBetweenCurrentRunAndPriorRunToStopAt * stats[0].value 
 					&& mapLevel < saveData.zone - minMapsBelowCurrentZoneToRunFor) \
 				|| stats.length >= maxMapsToCalcFor)) {
