@@ -430,6 +430,12 @@ function stats(lootFunction = lootDefault) {
 	let extra = saveData.extraMapLevelsAvailable ? 10 : saveData.reducer ? -1 : 0;
 	let mapsCanAffordPerfect = 0;
 	let coords = 1;
+	const runningAutoTrimps = typeof atSettings !== 'undefined';
+	let onlyAllowPerfect = runningAutoTrimps && getPageSetting('onlyPerfectMaps');
+	let requiredNumberOfPerfectMaps = onlyAllowPerfect ? 6 : 1;
+	let deltaBetweenCurrentRunAndPriorRunToStopAt = 0.95;
+	let minMapsBelowCurrentZoneToRunFor = 0;
+	let maxMapsToCalcFor = 25;
 
 	if (saveData.coordinate) {
 		for (let z = 1; z < saveData.zone + extra + 1; ++z) {
@@ -449,7 +455,12 @@ function stats(lootFunction = lootDefault) {
 		if (tmp.zone !== 'z6') {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-			if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= maxMaps)) break;
+						if (stats.length && ((mapsCanAffordPerfect >= requiredNumberOfPerfectMaps 
+					&& tmp.value < deltaBetweenCurrentRunAndPriorRunToStopAt * stats[0].value 
+					&& mapLevel < saveData.zone - minMapsBelowCurrentZoneToRunFor) \
+				|| stats.length >= maxMapsToCalcFor)) {
+					break;
+				}
 		}
 
 		stats.unshift(tmp);
@@ -482,6 +493,12 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 		loot,
 		canAffordPerfect: saveData.fragments >= mapCost(mapLevel, saveData.special, saveData.mapBiome, [9, 9, 9])
 	};
+	
+	let minMapUnaffordable = saveData.fragments < mapCost(mapLevel, saveData.special, saveData.mapBiome, [0, 0, 0], false);
+	if(minMapUnaffordable) {
+		// break early if we can't even afford the map
+		return result;
+	}
 
 	//Loop through all stances to identify which stance is best for farming
 	for (let stance of stances) {
