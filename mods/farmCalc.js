@@ -434,7 +434,11 @@ function stats(lootFunction = lootDefault) {
 	const onlyAllowPerfect = runningAutoTrimps && getPageSetting('onlyPerfectMaps');
 	const requiredNumberOfPerfectMaps = onlyAllowPerfect ? 6 : 1;
 	const deltaBetweenCurrentRunAndPriorRunToStopAt = 0.95;
-	const minMapsBelowCurrentZoneToRunFor = 0;
+	const isDailyRun = challengeActive('Daily');
+	const isUberIce = saveData.uberNature === 'Ice';
+	// There are a lot of complications with how ice works and how stacks with dailies work.  
+	// Do some extra simulations for them to make sure we haven't exlucded the best zone.
+	const minMapsBelowCurrentZoneToRunFor = (isDailyRun || isUberIce) ? 3 : 0;
 	const maxMapsToCalcFor = 25;
 
 	if (saveData.coordinate) {
