@@ -455,12 +455,11 @@ function stats(lootFunction = lootDefault) {
 		if (tmp.zone !== 'z6') {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-			if (stats.length && ((mapsCanAffordPerfect >= requiredNumberOfPerfectMaps 
-					&& tmp.value < deltaBetweenCurrentRunAndPriorRunToStopAt * stats[0].value 
-					&& mapLevel < saveData.zone - minMapsBelowCurrentZoneToRunFor) \
-				|| stats.length >= maxMapsToCalcFor)) {
-					break;
-				}
+			let reachedRequiredCountOfPerfectMaps = mapsCanAffordPerfect >= requiredNumberOfPerfectMaps;
+			let runIsSufficientlyWorseThanPriorRun = tmp.value < deltaBetweenCurrentRunAndPriorRunToStopAt * (stats.length ? status[0].value : tmp.value);
+			let reachedSufficientBelowCurrentZone = mapLevel < saveData.zone - minMapsBelowCurrentZoneToRunFor;
+			let enoughSimulationCompleted = reachedRequiredCountOfPerfectMaps && runIsSufficientlyWorseThanPriorRun && reachedSufficientBelowCurrentZone;
+			if (enoughSimulationCompleted || stats.length >= maxMapsToCalcFor)) break;
 		}
 
 		stats.unshift(tmp);
