@@ -825,6 +825,8 @@ MODULES.autoPerks = {
 	},
 
 	displayGUI: function (universe = portalUniverse) {
+		if (portalUniverse === -1) universe = portalUniverse = game.global.universe;
+
 		const calcNames = { 1: 'Perky', 2: 'Surky' };
 		const calcName = calcNames[universe] || universe;
 

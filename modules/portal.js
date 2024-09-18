@@ -1,8 +1,10 @@
 MODULES.portal = {
 	timeout: 4000,
 	bufferExceedFactor: 5,
+	heHrTimeout: null,
 	portalForVoid: false,
 	portalUniverse: Infinity,
+	forcePortal: false,
 	currentChallenge: 'None',
 	dontPushData: false,
 	dailyMods: '',
@@ -110,7 +112,7 @@ function handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily
 		OKtoPortal = false;
 	}
 
-	if (MODULES.mapFunctions.afterVoids || (OKtoPortal && MODULES.portal.zonePostpone === 0)) {
+	if (MODULES.mapFunctions.afterVoids || MODULES.portal.forcePortal || (OKtoPortal && MODULES.portal.zonePostpone === 0)) {
 		handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily);
 	}
 }
@@ -137,7 +139,7 @@ function handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, 
 		return;
 	}
 
-	if (usingRealTimeOffline || ((MODULES.mapFunctions.afterVoids || mapSettings.portalAfterVoids) && game.global.totalVoidMaps === 0)) {
+	if (usingRealTimeOffline || MODULES.portal.forcePortal || ((MODULES.mapFunctions.afterVoids || mapSettings.portalAfterVoids) && game.global.totalVoidMaps === 0)) {
 		const challenge = challengeSelected !== 'None' ? challengeSelected : 0;
 		doPortal(challenge, skipDaily);
 
@@ -165,7 +167,7 @@ function _handleHeHrPortalDelay(resourceType, myHeliumHr, bestHeHr, bestHeHrZone
 	if (MODULES.popups.remainingTime === Infinity) MODULES.popups.remainingTime = 4000;
 	tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone++; MODULES.popups.portal = false', `<b>NOTICE: Auto-Portaling in ${MODULES.popups.remainingTime} seconds....</b>`, 'Delay Portal');
 
-	setTimeout(() => {
+	MODULES.portal.heHrTimeout = setTimeout(() => {
 		cancelTooltip();
 		MODULES.popups.portal = false;
 		MODULES.popups.remainingTime = Infinity;
@@ -213,16 +215,10 @@ function handlePortalType(portalType, portalZone, specificPortalZone, universe, 
 function c2RunnerPortal(portalZone) {
 	if (!game.global.runningChallengeSquared) return;
 
-	function forceAutoPortal() {
-		MODULES.mapFunctions.afterVoids = true;
-		game.global.totalVoidMaps = 0;
-		autoPortal(game.global.world);
-		MODULES.mapFunctions.afterVoids = false;
-	}
-
 	if (portalZone && game.global.world >= portalZone) {
 		finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
-		forceAutoPortal();
+		MODULES.portal.forcePortal = true;
+		autoPortal(game.global.world);
 		return;
 	}
 
@@ -232,7 +228,8 @@ function c2RunnerPortal(portalZone) {
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
 		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
-			forceAutoPortal();
+			MODULES.portal.forcePortal = true;
+			autoPortal(game.global.world);
 		}
 	}
 }
@@ -344,7 +341,8 @@ function _autoPortalUniverseSwap() {
 	MODULES.portal.portalForVoid = false;
 
 	if (newUniverse !== portalUniverse) {
-		autoPortal(game.global.world, newUniverse);
+		MODULES.portal.forcePortal = true;
+		autoPortal(game.global.world, newUniverse, undefined, true);
 	}
 }
 
@@ -668,7 +666,6 @@ function resetVarsZone(loadingSave) {
 		atSettings.portal.lastHZE = 0;
 
 		MODULES.fightinfo.lastProcessedWorld = 0;
-		MODULES.portal.portalForVoid = false;
 		MODULES.mapFunctions.afterVoids = false;
 
 		MODULES.portal.currentChallenge = 'None';
@@ -677,6 +674,10 @@ function resetVarsZone(loadingSave) {
 		MODULES.portal.dailyPercent = 0;
 		MODULES.portal.portalUniverse = Infinity;
 		MODULES.portal.zonePostpone = 0;
+		MODULES.portal.forcePortal = false;
+		MODULES.portal.portalForVoid = false;
+		clearTimeout(MODULES.portal.heHrTimeout);
+		cancelTooltip();
 
 		hideAutomationButtons();
 	}
