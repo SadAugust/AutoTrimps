@@ -677,7 +677,6 @@ function resetVarsZone(loadingSave) {
 		MODULES.portal.forcePortal = false;
 		MODULES.portal.portalForVoid = false;
 		clearTimeout(MODULES.portal.heHrTimeout);
-		cancelTooltip();
 
 		hideAutomationButtons();
 	}
