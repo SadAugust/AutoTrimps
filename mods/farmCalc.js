@@ -444,16 +444,38 @@ function stats(lootFunction = lootDefault) {
 			saveData.challenge_attack = coords;
 		}
 
+		const simulateMap = _simulateSliders(mapLevel, saveData.special, saveData.mapBiome);
+		let mapOwned = findMap(mapLevel - game.global.world, saveData.special, saveData.mapBiome);
+		if (!mapOwned) mapOwned = findMap(mapLevel - game.global.world, simulateMap.special, simulateMap.location, simulateMap.perfect);
+
+		if (mapOwned) {
+			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+			saveData.difficulty = Number(map.difficulty);
+			saveData.size = Number(map.size);
+			saveData.lootMult = Number(map.loot);
+		} else {
+			saveData.difficulty = Number(simulateMap.difficulty);
+			saveData.size = Number(simulateMap.size);
+			saveData.lootMult = Number(simulateMap.loot);
+			saveData.special = simulateMap.special;
+
+			const { level, special, location, perfect, sliders } = simulateMap;
+			const { difficulty, size, loot } = sliders;
+			const fragCost = mapCost(level - game.global.world, special, location, [loot, size, difficulty], perfect);
+			if (fragCost > game.resources.fragments.owned) continue;
+		}
+
 		let tmp = zone_stats(mapLevel, saveData.stances, saveData, lootFunction);
 
-		if (tmp.zone !== 'z6') {
+		if (mapLevel !== 6) {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-			if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= maxMaps)) break;
+			if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= maxMaps)) {
+				break;
+			}
 		}
 
 		stats.unshift(tmp);
-		if (tmp.zone === 'z6') break;
 	}
 
 	return [stats, saveData.stances];
@@ -568,26 +590,7 @@ function simulate(saveData, zone) {
 		return seed * rand_mult;
 	}
 
-	let lootMult = 1;
-	let { difficulty, size, special } = saveData;
-
-	const mapLevel = zone - game.global.world;
-	const simulateMap = _simulateSliders(zone, special, saveData.mapBiome);
-
-	let mapOwned = findMap(mapLevel, special, saveData.mapBiome);
-	if (!mapOwned) mapOwned = findMap(mapLevel, simulateMap.special, simulateMap.location, simulateMap.perfect);
-
-	if (mapOwned) {
-		const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
-		difficulty = Number(map.difficulty);
-		size = Number(map.size);
-		lootMult = Number(map.loot);
-	} else {
-		difficulty = Number(simulateMap.difficulty);
-		size = Number(simulateMap.size);
-		special = simulateMap.special;
-		lootMult = simulateMap.loot;
-	}
+	const { size, special, lootMult, difficulty } = saveData;
 
 	function armyDead() {
 		if (saveData.shieldBreak) return energyShield <= 0;
