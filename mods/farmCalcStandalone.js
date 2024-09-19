@@ -142,51 +142,7 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 		biome = 'Random';
 	}
 
-	const lootValues = getMapMinMax('loot', sliders[0])[perfect ? 0 : 1];
-	const sizeValues = getMapMinMax('size', sliders[1])[perfect ? 0 : 1];
-	const difficultyValues = getMapMinMax('difficulty', sliders[2])[perfect ? 0 : 1];
-
-	return {
-		name: 'simulatedMap',
-		level: mapLevel + game.global.world,
-		mapLevel,
-		special,
-		location: biome,
-		loot: lootValues,
-		size: sizeValues,
-		difficulty: difficultyValues,
-		sliders: {
-			loot: sliders[0],
-			size: sliders[1],
-			difficulty: sliders[2]
-		},
-		perfect
-	};
-}
-
-function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome = getBiome(), sliders = [9, 9, 9], perfect = true) {
-	const fragmentsOwned = game.resources.fragments.owned;
-	mapLevel = mapLevel - game.global.world;
-
-	//Gradually reduce map sliders if not using frag max setting!
-	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) perfect = false;
-	//Reduce map difficulty
-	while (sliders[2] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[2] -= 1;
-	//Reduce map loot
-	while (sliders[0] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[0] -= 1;
-
-	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) biome = 'Random';
-	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) special = '0';
-
-	//Reduce map size
-	while (sliders[1] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[1] -= 1;
-
-	if (special !== '0' && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) special = '0';
-	if (biome !== 'Random' && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) {
-		biome = 'Random';
-	}
-
-	const lootValues = getMapMinMax('loot', sliders[0])[perfect ? 0 : 1];
+	const lootValues = getMapMinMax('loot', sliders[0])[perfect ? 1 : 0];
 	const sizeValues = getMapMinMax('size', sliders[1])[perfect ? 0 : 1];
 	const difficultyValues = getMapMinMax('difficulty', sliders[2])[perfect ? 0 : 1];
 

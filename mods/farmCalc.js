@@ -454,10 +454,14 @@ function stats(lootFunction = lootDefault) {
 			saveData.size = Number(map.size);
 			saveData.lootMult = Number(map.loot);
 		} else {
+			saveData.special = simulateMap.special;
 			saveData.difficulty = Number(simulateMap.difficulty);
 			saveData.size = Number(simulateMap.size);
 			saveData.lootMult = Number(simulateMap.loot);
-			saveData.special = simulateMap.special;
+
+			if (game.singleRunBonuses.goldMaps.owned) saveData.lootMult += 1;
+			if (simulateMap.location === 'Farmlands' && saveData.universe === 2) saveData.lootMult += 1;
+			if (simulateMap.location === 'Gardens') saveData.lootMult += 0.25;
 
 			const { level, special, location, perfect, sliders } = simulateMap;
 			const { difficulty, size, loot } = sliders;
@@ -522,14 +526,10 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 
 		let enemyAttack = enemyStats.attack * (1 + saveData.fluctuation) * enemyEqualityModifier;
+		enemyAttack -= saveData.universe === 2 ? saveData.trimpShield : saveData.block;
+		if (enemyAttack > saveData.health) continue;
 
-		if (saveData.universe === 2) {
-			enemyAttack = enemyAttack - saveData.trimpShield;
-		} else if (saveData.universe === 1) {
-			enemyAttack = enemyAttack - saveData.block;
-		}
-
-		if (enemyAttack > saveData.health) return result;
+		/* const trimpAttack =  */
 
 		const { speed, equality, killSpeed } = simulate(saveData, zone);
 		const value = speed * loot * lootMultiplier;
