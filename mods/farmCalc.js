@@ -80,7 +80,7 @@ function populateFarmCalcData() {
 		}
 	}
 
-	const gammaMult = runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult || 1;
+	const gammaMult = (runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult) || 1;
 	const gammaCharges = gammaMaxStacks(false, false, 'map');
 
 	//Heirloom + Crit Chance
@@ -422,6 +422,18 @@ function populateFarmCalcData() {
 	};
 }
 
+function cellsPerSecond(saveData) {
+	const cellsKilling = saveData.ok_spread + 1;
+	const ceiledFightingSpeed = Math.ceil(saveData.speed) / 10;
+	const attacksPerMap = Math.ceil(saveData.size / cellsKilling);
+
+	const agility = getPerkLevel('Agility') > 2 ? 0.1 : 0.2;
+	const mapLoadTime = 0.1 + agility + ceiledFightingSpeed;
+
+	const actualFightingSpeed = ceiledFightingSpeed + mapLoadTime / attacksPerMap;
+	return cellsKilling / actualFightingSpeed;
+}
+
 //Return a list of efficiency stats for all sensible zones
 function stats(lootFunction = lootDefault) {
 	const saveData = populateFarmCalcData();
@@ -472,10 +484,18 @@ function stats(lootFunction = lootDefault) {
 		let tmp = zone_stats(mapLevel, saveData, lootFunction);
 
 		if (mapLevel !== 6) {
-			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
+			if (tmp.value === 0) continue;
 			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
-			if (stats.length && ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= maxMaps)) {
-				break;
+
+			if (stats.length) {
+				if ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= maxMaps) {
+					break;
+				}
+
+				/* if (tmp.killSpeed + 0.1 >= cellsPerSecond(saveData)) {
+					console.error('Stopping sim: reached max kill speed', tmp.killSpeed + 0.1, cellsPerSecond(saveData));
+					break;
+				} // This should not require any more fiddling, it's universally correct */
 			}
 		}
 
@@ -501,7 +521,8 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 
 	const result = {
 		mapLevel,
-		zone: `z${zone}`,
+		zone,
+		equality: 0,
 		value: 0,
 		killSpeed: 0,
 		stance: 'X',
@@ -516,9 +537,17 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 	const stances = saveData.stances;
 	const enemyStats = mapGrid[mapGrid.length - 1];
 	const enemyEqualityModifier = equality > 0 ? Math.pow(0.9, equality) : 1;
+	const trimpEqualityModifier = equality > 0 ? Math.pow(saveData.equalityMult, equality) : 1;
 
 	//Loop through all stances to identify which stance is best for farming
 	for (let stance of stances) {
+		result[stance] = {
+			speed: 0,
+			value: 0,
+			equality: 0,
+			killSpeed: 0
+		};
+
 		const attackMultiplier = stance === 'D' ? 4 : ['X', 'W'].includes(stance) ? 1 : 0.5;
 		const lootMultiplier = ['S', 'W'].includes(stance) ? 2 : 1;
 		saveData.block = ['X', 'W'].includes(stance) ? saveData.trimpBlock : saveData.trimpBlock / 2;
@@ -529,17 +558,11 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		enemyAttack -= saveData.universe === 2 ? saveData.trimpShield : saveData.block;
 		if (enemyAttack > saveData.health) continue;
 
-		/* const trimpAttack =  */
+		const trimpAttack = saveData.atk * saveData.gammaMult * trimpEqualityModifier;
+		if (enemyStats.health > trimpAttack * 10) continue;
 
 		const { speed, equality, killSpeed } = simulate(saveData, zone);
 		const value = speed * loot * lootMultiplier;
-
-		result[stance] = {
-			speed,
-			value,
-			equality,
-			killSpeed
-		};
 
 		if (value > result.value) {
 			result.equality = equality;
