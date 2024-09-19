@@ -1269,11 +1269,12 @@ function gammaMaxStacks(specialChall, actualCheck = true, worldType = 'world') {
 function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCell, worldType = 'world', difficulty = 1, farmType = 'gamma', forceOK, hits, hdCheck) {
 	if (Object.keys(game.global.gridArray).length === 0 || getPerkLevel('Equality') === 0) return 0;
 	if (!currentCell) currentCell = worldType === 'world' || worldType === 'void' ? 98 : 20;
+	const runningAT = typeof atSettings !== 'undefined';
 
 	const bionicTalent = zone - game.global.world;
 	const checkMutations = worldType === 'world' && zone > 200;
 	const titimp = worldType !== 'world' && farmType === 'oneShot' ? 'force' : false;
-	const dailyEmpowerToggle = typeof atSettings !== 'undefined' && getPageSetting('empowerAutoEquality');
+	const dailyEmpowerToggle = runningAT && getPageSetting('empowerAutoEquality');
 	const isDaily = challengeActive('Daily');
 	const dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined';
 	const dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined';
@@ -1317,7 +1318,7 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 		if (!runningUnlucky && zone - game.global.world > 0) dmgType = 'min';
 		enemyHealth *= 1 * overkillCount;
 	}
-	if (challengeActive('Duel')) ourDmg *= MODULES.heirlooms.gammaBurstPct;
+	if (challengeActive('Duel') && runningAT) ourDmg *= MODULES.heirlooms.gammaBurstPct;
 
 	if (isDaily) {
 		if (typeof game.global.dailyChallenge.weakness !== 'undefined') {
@@ -1332,7 +1333,7 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 	let ourDmgEquality = 0;
 	let enemyDmgEquality = 0;
 	let unluckyDmgEquality = 0;
-	const ourEqualityModifier = typeof atSettings !== 'undefined' ? getPlayerEqualityMult_AT(heirloomShieldToEquip(worldType)) : game.portal.Equality.getModifier(true);
+	const ourEqualityModifier = runningAT ? getPlayerEqualityMult_AT(heirloomShieldToEquip(worldType)) : game.portal.Equality.getModifier(true);
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
 	//Accounting for enemies hitting multiple times per gamma burst

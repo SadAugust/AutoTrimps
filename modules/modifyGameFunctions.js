@@ -127,25 +127,57 @@ if (typeof offlineProgress.originalStart !== 'function') {
 	};
 }
 
+function buildingsQueueReset() {
+	document.getElementById('queueItemsHere').innerHTML = '';
+	for (let item in game.global.buildingsQueue) {
+		addQueueItem(game.global.buildingsQueue[item]);
+	}
+	game.global.nextQueueId = game.global.buildingsQueue.length;
+}
+
 //Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
 if (typeof offlineProgress.originalFinish !== 'function') {
 	offlineProgress.originalFinish = offlineProgress.finish;
 	offlineProgress.finish = function () {
-		if (offlineProgress.totalOfflineTime / 1000 > 86400 && Math.abs(offlineProgress.startTime - new Date().getTime()) <= 500) {
+		const oneDayInSeconds = 86400;
+		const currentTime = new Date().getTime();
+		const { startTime, maxTicks } = offlineProgress;
+		const totalOfflineTime = offlineProgress.totalOfflineTime / 1000;
+
+		/* Can't remember why this exists. Future me can figure it out. */
+		if (totalOfflineTime / 1000 > oneDayInSeconds && Math.abs(startTime - currentTime) <= 500) {
 			return;
 		}
 
-		const offlineTime = arguments[0] ? 0 : Math.max(0, offlineProgress.totalOfflineTime / 1000 - 86400);
-		let timeRun = arguments[0] ? 0 : Math.max(0, (new Date().getTime() - offlineProgress.startTime) / 1000);
+		/* Identify remaining TimeWarp time */
+		const offlineTime = arguments[0] ? 0 : Math.max(0, totalOfflineTime - oneDayInSeconds);
+		let timeRun = arguments[0] ? 0 : Math.max(0, (currentTime - startTime) / 1000);
 		timeRun += offlineTime;
-		if (offlineProgress.startTime <= 0 || game.options.menu.pauseGame.enabled) timeRun = 0;
-		if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
+		if (startTime <= 0 || game.options.menu.pauseGame.enabled) timeRun = 0;
 
+		if (totalOfflineTime > oneDayInSeconds && timeRun > totalOfflineTime) {
+			const description = `<p>A Time Warp duration issue has occurred. I've hopefully reset it to the correct value but please report this!</p>
+				<p>Offline Time: ${offlineTime} seconds
+				<br>Time Run: ${timeRun} seconds
+				<br>Current Time: ${currentTime}
+				<br>Start Time: ${startTime}</p>`;
+			console.error(description);
+			debug(description, 'offline');
+			tooltip('confirm', null, 'lock', description + '<p>Please report these values to me in the #trimp_tools channel of the <a href="https://discord.gg/trimps" target="_blank">Trimps discord!</a></p>', null, 'center', 'Confirm');
+			_verticalCenterTooltip(true);
+			timeRun = offlineTime;
+		}
+
+		if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
 		offlineProgress.originalFinish(...arguments);
 
 		try {
 			if (timeRun > 30) {
-				debug(`Running Time Warp again for ${offlineProgress.formatTime(Math.floor(Math.min(timeRun, offlineProgress.maxTicks / 10)))} to catchup on the time you missed whilst running it.`, 'offline');
+				const offlineTime = offlineProgress.formatTime(Math.floor(Math.min(timeRun, maxTicks / 10)));
+				const remainingTime = offlineProgress.formatTime(Math.floor(Math.max(0, timeRun)));
+				const remainingText = remainingTime.includes('days') ? `You have ${remainingTime} left to run.` : `This is your last Time Warp loop.`;
+
+				debug(`Running Time Warp again for ${offlineTime} to catchup on the time you missed whilst running it. ${remainingText}`, 'offline');
 				timeRun *= 1000;
 
 				const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
@@ -153,12 +185,7 @@ if (typeof offlineProgress.originalFinish !== 'function') {
 
 				offlineProgress.start();
 				if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
-
-				document.getElementById('queueItemsHere').innerHTML = '';
-				for (let item in game.global.buildingsQueue) {
-					addQueueItem(game.global.buildingsQueue[item]);
-				}
-				game.global.nextQueueId = game.global.buildingsQueue.length;
+				buildingsQueueReset();
 			} else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) {
 				toggleSetting('autoSave');
 			}

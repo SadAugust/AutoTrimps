@@ -115,11 +115,11 @@ function populateFarmCalcData() {
 
 	const frenzyLevel = getPerkLevel('Frenzy');
 	const permaFrenzy = autoBattle.oneTimers.Mass_Hysteria.owned;
-	const shouldFrenzy = frenzyLevel > 0 && !permaFrenzy && !challengeActive('Berserk');
+	const checkFrenzy = frenzyLevel > 0 && !permaFrenzy && !challengeActive('Berserk');
 	const frenzyMult = 1 + 0.5 * frenzyLevel;
 	const frenzyDuration = permaFrenzy ? Infinity : 5 * frenzyLevel;
 	const frenzyChance = frenzyLevel;
-	if (shouldFrenzy && runningAutoTrimps && getPageSetting('frenzyCalc')) trimpAttack /= frenzyMult;
+	if (checkFrenzy && runningAutoTrimps && getPageSetting('frenzyCalc')) trimpAttack /= frenzyMult;
 
 	//Check if we have a fast enemy
 	//Fast Enemy conditions
@@ -131,7 +131,7 @@ function populateFarmCalcData() {
 	else if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) fastEnemy = true;
 	else if (challengeActive('Exterminate')) fastEnemy = false;
 	else if (challengeActive('Glass')) fastEnemy = true;
-	else if (shouldFrenzy) fastEnemy = true;
+	else if (checkFrenzy) fastEnemy = true;
 
 	const death_stuff = {
 		enemy_cd: 1,
@@ -373,7 +373,7 @@ function populateFarmCalcData() {
 		uberNature: uberEmpowerment,
 		transfer: natureTransfer,
 		//Frenzy
-		shouldFrenzy,
+		checkFrenzy,
 		frenzyDuration,
 		frenzyMult,
 		frenzyChance,
@@ -465,7 +465,7 @@ function stats(lootFunction = lootDefault) {
 			if (fragCost > game.resources.fragments.owned) continue;
 		}
 
-		let tmp = zone_stats(mapLevel, saveData.stances, saveData, lootFunction);
+		let tmp = zone_stats(mapLevel, saveData, lootFunction);
 
 		if (mapLevel !== 6) {
 			if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
@@ -490,7 +490,7 @@ function lootDestack(zone, saveData) {
 }
 
 //Return efficiency stats for the given zone
-function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
+function zone_stats(zone, saveData, lootFunction = lootDefault) {
 	const mapLevel = zone - saveData.zone;
 	const bionic2Multiplier = mastery('bionic2') && zone > saveData.zone ? 1.5 : 1;
 	let loot = lootFunction(zone, saveData);
@@ -505,6 +505,11 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 		canAffordPerfect: saveData.fragments >= mapCost(mapLevel, saveData.special, saveData.mapBiome, [9, 9, 9])
 	};
 
+	const [mapGrid, equality] = _simulateMapGrid(saveData, zone);
+	saveData.mapGrid = mapGrid;
+	saveData.equality = equality;
+
+	const stances = saveData.stances;
 	//Loop through all stances to identify which stance is best for farming
 	for (let stance of stances) {
 		const attackMultiplier = stance === 'D' ? 4 : stance === 'X' ? 1 : 0.5;
@@ -538,90 +543,27 @@ function zone_stats(zone, stances = 'X', saveData, lootFunction = lootDefault) {
 	return result;
 }
 
-//Simulate farming at the given zone for a fixed time, and return the number cells cleared.
-function simulate(saveData, zone) {
-	let trimpHealth = saveData.health;
-	let trimpBlock = saveData.block;
-	let debuff_stacks = 0;
-	let titimp = 0;
-	let cell = 0;
-	let loot = 0;
-	let last_group_sent = 0;
-	let ticks = 0;
-	let ok_damage = 0,
-		ok_spread = 0,
-		shattered = false;
-	let poison = 0,
-		wind = 0,
-		ice = 0;
-	let gammaStacks = 0,
-		burstDamage = 0;
-	let mayhemPoison = 0;
-	let duelPoints = game.challenges.Duel.trimpStacks;
-	let glassStacks = game.challenges.Glass.shards;
-	let universe = saveData.universe;
-	let magma = saveData.magma;
-
-	const checkFrenzy = saveData.shouldFrenzy;
-	let frenzyRefresh = true;
-	let frenzyLeft = 0;
-
-	let hasWithered = false;
-	let equality = 0;
-	let trimpCrit = false;
-	let enemyCrit = false;
-	let enemyCC = 0.25;
-
-	let kills = 0;
-	let deaths = 0;
-
-	const energyShieldMax = saveData.trimpShield;
-	let initialShield;
-	let energyShield = energyShieldMax;
-
-	let seed = Math.floor(Math.random(40, 50) * 100);
-	const rand_mult = 4.656612873077393e-10;
-
-	function rng() {
-		seed ^= seed >> 11;
-		seed ^= seed << 8;
-		seed ^= seed >> 19;
-		if (seed === 0) seed = Math.floor(Math.random(40, 50) * 100);
-		return seed * rand_mult;
-	}
-
-	const { size, special, lootMult, difficulty } = saveData;
-
-	function armyDead() {
-		if (saveData.shieldBreak) return energyShield <= 0;
-		return trimpHealth <= 0;
-	}
-
-	const max_ticks = saveData.maxTicks;
+function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.world) {
+	const { size, difficulty, mapBiome } = saveData;
 	const corruptionScaleAttack = saveData.magma ? calcCorruptionScale(zone, 3) / 2 : 1;
 	const corruptionScaleHealth = saveData.magma ? calcCorruptionScale(zone, 10) / 2 : 1;
-	const biomeImps = saveData.biome;
-	const specialTime = special === saveData.special ? saveData.specialTime : getSpecialTime(special);
+	let equalityPower = 1;
+	let equality = 1;
 
-	let cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
-
-	if (universe === 2) {
-		if (saveData.insanity) biomeImps.push([15, 60, true]);
+	if (saveData.universe === 2) {
 		const farmlandsType = getFarmlandsResType();
 		let enemyName = 'Penguimp';
 
 		if (saveData.insanity && zone > game.global.world) {
 			enemyName = 'Horrimp';
-		} else if (['Gardens', 'Sea'].includes(saveData.mapBiome) || (saveData.mapBiome === 'Farmlands' && ['Gardens', 'Sea'].includes(farmlandsType))) {
+		} else if (['Gardens', 'Sea'].includes(mapBiome) || (mapBiome === 'Farmlands' && ['Gardens', 'Sea'].includes(farmlandsType))) {
 			enemyName = 'Flowimp';
-		} else if (saveData.mapBiome === 'Depths' || (saveData.mapBiome === 'Farmlands' && farmlandsType === 'Any')) {
+		} else if (mapBiome === 'Depths' || (mapBiome === 'Farmlands' && farmlandsType === 'Any')) {
 			enemyName = 'Moltimp';
 		}
 
 		equality = equalityQuery(enemyName, zone, size, 'map', difficulty);
 	}
-
-	const equalityPower = Math.pow(0.9, equality);
 
 	const calculateEnemyStats = (zone, cell, enemyName, saveData) => {
 		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyName);
@@ -635,24 +577,66 @@ function simulate(saveData, zone) {
 		};
 	};
 
-	const mapArray = Array.from({ length: size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
-	/* if (zone === 85) {
-		mArray = mapArray;
-	} */
+	return [Array.from({ length: size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData)), equality];
+}
 
-	function reduceTrimpHealth(amt) {
-		if (saveData.mayhem) mayhemPoison += amt * 0.2;
+//Simulate farming at the given zone for a fixed time, and return the number cells cleared.
+function simulate(saveData, zone) {
+	const { maxTicks, universe, mapGrid, biome, block, equality, size, special, lootMult, magma, checkFrenzy } = saveData;
 
-		if (universe === 2) {
-			initialShield = energyShield;
-			energyShield = Math.max(0, energyShield - amt);
-			amt = Math.max(0, amt - initialShield);
-		} else if (universe === 1) {
-			amt = Math.max(0, amt - trimpBlock);
-		}
+	let cell = 0;
+	let loot = 0;
+	let ticks = 0;
 
-		if (saveData.frigid && amt >= saveData.health / 5) amt = saveData.health;
-		trimpHealth = Math.max(0, trimpHealth - amt);
+	let ok_damage = 0,
+		ok_spread = 0,
+		shattered = false;
+
+	let poison = 0,
+		wind = 0,
+		ice = 0;
+
+	/* Challenge Variables */
+	let duelPoints = game.challenges.Duel.trimpStacks;
+	let hasWithered = false;
+	let mayhemPoison = 0;
+	let glassStacks = game.challenges.Glass.shards;
+
+	let gammaStacks = 0;
+	let frenzyRefresh = true;
+	let frenzyLeft = 0;
+
+	let trimpCrit = false;
+	let enemyCrit = false;
+	let enemyCC = 0.25;
+
+	let kills = 0;
+	let deaths = 0;
+	let last_group_sent = 0;
+	let debuff_stacks = 0;
+	let titimp = 0;
+
+	let trimpAttack = 0;
+	let trimpHealth = saveData.health;
+	const energyShieldMax = saveData.trimpShield;
+	let energyShield = energyShieldMax;
+
+	const trimpEqualityMult = Math.pow(saveData.equalityMult, equality);
+	const enemyEqualityMult = Math.pow(0.9, equality);
+
+	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
+	const specialTime = getSpecialTime(special);
+	let cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
+
+	let rngRoll = Math.floor(Math.random(40, 50) * 100);
+	const rand_mult = 4.656612873077393e-10;
+
+	function rng(seed, rand_mult) {
+		seed ^= seed >> 11;
+		seed ^= seed << 8;
+		seed ^= seed >> 19;
+		if (seed === 0) seed = Math.floor(Math.random(40, 50) * 100);
+		return seed * rand_mult;
 	}
 
 	function enemy_hit(enemyAttack, rngRoll) {
@@ -669,24 +653,41 @@ function simulate(saveData, zone) {
 
 		const iceValue = saveData.ice;
 		if (iceValue > 0) enemyAttack *= 0.366 ** (ice * iceValue);
-		if (universe === 2 && equality > 0) enemyAttack *= equalityPower;
+		if (universe === 2 && equality > 0) enemyAttack *= enemyEqualityMult;
 
 		if (enemyAttack > 0) reduceTrimpHealth(enemyAttack);
 		++debuff_stacks;
 	}
 
-	let enemy_max_hp = 0;
-	let trimpAttack = 0;
-	cell = 0;
+	function reduceTrimpHealth(amt) {
+		if (saveData.mayhem) mayhemPoison += amt * 0.2;
 
-	while (ticks < max_ticks) {
-		let rngRoll = rng();
+		if (universe === 2) {
+			const initialShield = energyShield;
+			energyShield = Math.max(0, energyShield - amt);
+			amt = Math.max(0, amt - initialShield);
+		} else if (universe === 1) {
+			amt = Math.max(0, amt - block);
+		}
+
+		if (saveData.frigid && amt >= saveData.health / 5) amt = saveData.health;
+		trimpHealth = Math.max(0, trimpHealth - amt);
+	}
+
+	function armyDead() {
+		if (saveData.shieldBreak) return energyShield <= 0;
+		return trimpHealth <= 0;
+	}
+
+	while (ticks < maxTicks) {
+		rngRoll = rng(rngRoll, rand_mult);
 		const imp = rngRoll;
-		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biomeImps[Math.floor(rngRoll * biomeImps.length)];
-		enemyAttack = imp_stats[0] * mapArray[cell].attack;
-		enemyHealth = imp_stats[1] * mapArray[cell].health;
-		enemy_max_hp = enemyHealth;
+		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biome[Math.floor(rngRoll * biome.length)];
 		const fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
+
+		enemyAttack = imp_stats[0] * mapGrid[cell].attack;
+		enemyHealth = imp_stats[1] * mapGrid[cell].health;
+		let enemy_max_hp = enemyHealth;
 
 		let turns = 0;
 		let pbTurns = 0;
@@ -706,7 +707,7 @@ function simulate(saveData, zone) {
 		if (saveData.glass) enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 		if (saveData.duel && duelPoints > 80) enemyHealth *= 10;
 
-		while (enemyHealth >= 1 && ticks < max_ticks) {
+		while (enemyHealth >= 1 && ticks < maxTicks) {
 			++turns;
 			rngRoll = turns > 0 ? rng() : rngRoll;
 			let attacked = false;
@@ -759,7 +760,7 @@ function simulate(saveData, zone) {
 				trimpAttack *= titimp > ticks ? 2 : 1;
 				if (saveData.ice > 0) trimpAttack *= 2 - 0.366 ** (ice * saveData.ice);
 				if (saveData.weakness) trimpAttack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
-				if (universe === 2) trimpAttack *= Math.pow(saveData.equalityMult, equality);
+				if (universe === 2) trimpAttack *= trimpEqualityMult;
 				enemyHealth -= trimpAttack + poison * saveData.poison;
 				if (saveData.poison) poison += trimpAttack * (saveData.uberNature === 'Poison' ? 2 : 1) * saveData.natureIncrease;
 				if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += trimpAttack * saveData.plaguebringer;
@@ -787,7 +788,7 @@ function simulate(saveData, zone) {
 
 					if (gammaStacks >= saveData.gammaCharges) {
 						gammaStacks = 0;
-						burstDamage = trimpAttack * saveData.gammaMult;
+						const burstDamage = trimpAttack * saveData.gammaMult;
 						enemyHealth -= burstDamage;
 						if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += burstDamage * saveData.plaguebringer;
 					}
@@ -842,7 +843,7 @@ function simulate(saveData, zone) {
 				frenzyRefresh = false;
 				deaths++;
 
-				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = max_ticks;
+				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = maxTicks;
 				//Amp enemy dmg and health by 25% per stack
 				if (saveData.nom) {
 					enemyAttack *= 1.25;
@@ -851,13 +852,13 @@ function simulate(saveData, zone) {
 			}
 
 			//Safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage
-			if (turns >= 1000) ticks = max_ticks;
+			if (turns >= 1000) ticks = maxTicks;
 			if (titimp > 0) titimp -= saveData.titimpReduction;
 			frenzyLeft -= saveData.speed / 10;
 		}
 
-		if (saveData.explosion && (saveData.explosion <= 15 || (trimpBlock >= saveData.health && universe !== 2))) {
-			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - trimpBlock);
+		if (saveData.explosion && (saveData.explosion <= 15 || (block >= saveData.health && universe !== 2))) {
+			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - block);
 
 			if (armyDead()) {
 				ticks += Math.ceil(turns * saveData.speed);
@@ -876,7 +877,7 @@ function simulate(saveData, zone) {
 				frenzyRefresh = false;
 				deaths++;
 
-				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = max_ticks;
+				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = maxTicks;
 				//Amp enemy dmg and health by 25% per stack
 				if (saveData.nom) {
 					enemyAttack *= 1.25;
@@ -938,9 +939,9 @@ function simulate(saveData, zone) {
 	}
 
 	return {
-		speed: (loot * 10) / max_ticks,
+		speed: (loot * 10) / maxTicks,
 		equality,
-		killSpeed: kills / (max_ticks / 10),
+		killSpeed: kills / (maxTicks / 10),
 		deaths,
 		special
 	};
