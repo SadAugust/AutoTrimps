@@ -510,17 +510,30 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 	saveData.equality = equality;
 
 	const stances = saveData.stances;
+	const enemyStats = mapGrid[mapGrid.length - 1];
+	const enemyEqualityModifier = equality > 0 ? Math.pow(0.9, equality) : 1;
+
 	//Loop through all stances to identify which stance is best for farming
 	for (let stance of stances) {
-		const attackMultiplier = stance === 'D' ? 4 : stance === 'X' ? 1 : 0.5;
+		const attackMultiplier = stance === 'D' ? 4 : ['X', 'W'].includes(stance) ? 1 : 0.5;
 		const lootMultiplier = ['S', 'W'].includes(stance) ? 2 : 1;
 		saveData.block = ['X', 'W'].includes(stance) ? saveData.trimpBlock : saveData.trimpBlock / 2;
 		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 
-		const { speed, equality, killSpeed } = simulate(saveData, zone);
+		let enemyAttack = enemyStats.attack * (1 + saveData.fluctuation) * enemyEqualityModifier;
 
+		if (saveData.universe === 2) {
+			enemyAttack = enemyAttack - saveData.trimpShield;
+		} else if (saveData.universe === 1) {
+			enemyAttack = enemyAttack - saveData.block;
+		}
+
+		if (enemyAttack > saveData.health) return result;
+
+		const { speed, equality, killSpeed } = simulate(saveData, zone);
 		const value = speed * loot * lootMultiplier;
+
 		result[stance] = {
 			speed,
 			value,
@@ -547,8 +560,7 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 	const { size, difficulty, mapBiome } = saveData;
 	const corruptionScaleAttack = saveData.magma ? calcCorruptionScale(zone, 3) / 2 : 1;
 	const corruptionScaleHealth = saveData.magma ? calcCorruptionScale(zone, 10) / 2 : 1;
-	let equalityPower = 1;
-	let equality = 1;
+	let equality = 0;
 
 	if (saveData.universe === 2) {
 		const farmlandsType = getFarmlandsResType();
@@ -628,10 +640,10 @@ function simulate(saveData, zone) {
 	const specialTime = getSpecialTime(special);
 	let cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
 
-	let rngRoll = Math.floor(Math.random(40, 50) * 100);
+	let seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
 
-	function rng(seed, rand_mult) {
+	function rng() {
 		seed ^= seed >> 11;
 		seed ^= seed << 8;
 		seed ^= seed >> 19;
@@ -680,7 +692,7 @@ function simulate(saveData, zone) {
 	}
 
 	while (ticks < maxTicks) {
-		rngRoll = rng(rngRoll, rand_mult);
+		rngRoll = rng();
 		const imp = rngRoll;
 		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biome[Math.floor(rngRoll * biome.length)];
 		const fast = saveData.fastEnemies || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
@@ -760,7 +772,7 @@ function simulate(saveData, zone) {
 				trimpAttack *= titimp > ticks ? 2 : 1;
 				if (saveData.ice > 0) trimpAttack *= 2 - 0.366 ** (ice * saveData.ice);
 				if (saveData.weakness) trimpAttack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
-				if (universe === 2) trimpAttack *= trimpEqualityMult;
+				if (universe === 2 && equality > 0) trimpAttack *= trimpEqualityMult;
 				enemyHealth -= trimpAttack + poison * saveData.poison;
 				if (saveData.poison) poison += trimpAttack * (saveData.uberNature === 'Poison' ? 2 : 1) * saveData.natureIncrease;
 				if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += trimpAttack * saveData.plaguebringer;
