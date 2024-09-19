@@ -163,7 +163,7 @@ if (typeof offlineProgress.originalFinish !== 'function') {
 				<br>Start Time: ${startTime}</p>`;
 			console.error(description);
 			debug(description, 'offline');
-			tooltip('confirm', null, 'lock', description + '<p>Please report these values to me in the #trimp_tools channel of the <a href="https://discord.gg/trimps" target="_blank">Trimps discord!</a></p>', null, 'center', 'Confirm');
+			tooltip('confirm', null, 'lock', description + '<p>Please report these values to me in the #trimp_tools channel of the <a href="https://discord.gg/trimps" target="_blank">Trimps discord!</a></p>', 'center', 'Time Warp Issue');
 			_verticalCenterTooltip(true);
 			timeRun = offlineTime;
 		}
