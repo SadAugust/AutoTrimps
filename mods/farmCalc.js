@@ -673,6 +673,7 @@ function simulate(saveData, zone) {
 	let frenzyRefresh = true;
 	let frenzyLeft = 0;
 
+	let enemy_max_hp = 0;
 	let trimpCrit = false;
 	let enemyCrit = false;
 	let enemyCC = 0.25;
