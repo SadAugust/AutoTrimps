@@ -1212,7 +1212,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 
 	(async function () {
 		let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
-		basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/';
+		/* basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
 		const mods = ['farmCalcStandalone'];
 		const modules = ['breedtimer', 'calc'];
 
