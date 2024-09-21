@@ -437,7 +437,7 @@ function stats(lootFunction = lootDefault) {
 	const saveData = populateFarmCalcData();
 	const maxMaps = lootFunction === lootDestack ? 11 : 25;
 	let stats = [];
-	let extra = saveData.extraMapLevelsAvailable ? 10 : saveData.reducer ? -1 : 0;
+	let extra = saveData.extraMapLevelsAvailable ? 10 : saveData.reducer && saveData.zone > 6 ? -1 : 0;
 	let coords = 1;
 
 	if (saveData.coordinate) {
@@ -476,7 +476,9 @@ function stats(lootFunction = lootDefault) {
 			const { level, special, location, perfect, sliders } = simulateMap;
 			const { difficulty, size, loot } = sliders;
 			const fragCost = mapCost(level - game.global.world, special, location, [loot, size, difficulty], perfect);
-			if (mapLevel !== 6 && fragCost > game.resources.fragments.owned) continue;
+			if (mapLevel !== 6 && fragCost > game.resources.fragments.owned) {
+				continue;
+			}
 		}
 
 		let tmp = zone_stats(mapLevel, saveData, lootFunction);
