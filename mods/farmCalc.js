@@ -463,12 +463,13 @@ function stats(lootFunction = lootDefault) {
 			saveData.difficulty = Number(map.difficulty);
 			saveData.size = Number(map.size);
 			saveData.lootMult = Number(map.loot);
+			saveData.specialData = map.bonus;
 		} else {
 			if (game.singleRunBonuses.goldMaps.owned) simulateMap.loot += 1;
 			if (simulateMap.location === 'Farmlands' && saveData.universe === 2) simulateMap.loot += 1;
 			if (simulateMap.location === 'Gardens') simulateMap.loot += 0.25;
 
-			saveData.special = simulateMap.special;
+			saveData.specialData = simulateMap.special;
 			saveData.difficulty = Number(simulateMap.difficulty);
 			saveData.size = Number(simulateMap.size);
 			saveData.lootMult = Number(simulateMap.loot);
@@ -489,7 +490,7 @@ function stats(lootFunction = lootDefault) {
 			id: map ? map.id : undefined,
 			level: mapLevel,
 			plusLevel: mapLevel - game.global.world,
-			special: saveData.special,
+			special: saveData.specialData,
 			biome: map ? map.location : simulateMap.location,
 			difficulty: saveData.difficulty,
 			size: saveData.size,
@@ -639,7 +640,7 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 
 //Simulate farming at the given zone for a fixed time, and return the number cells cleared.
 function simulate(saveData, zone) {
-	const { maxTicks, universe, mapGrid, biome, block, equality, size, special, lootMult, magma, checkFrenzy } = saveData;
+	const { maxTicks, universe, mapGrid, biome, block, equality, size, special, specialData, lootMult, magma, checkFrenzy } = saveData;
 
 	let cell = 0;
 	let loot = 0;
@@ -684,7 +685,7 @@ function simulate(saveData, zone) {
 	const enemyEqualityMult = Math.pow(0.9, equality);
 
 	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
-	const specialTime = getSpecialTime(special);
+	const specialTime = getSpecialTime(specialData);
 	let cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
 
 	let seed = Math.floor(Math.random(40, 50) * 100);
@@ -999,7 +1000,7 @@ function simulate(saveData, zone) {
 		equality,
 		killSpeed: kills / (ticks / 10),
 		deaths,
-		special
+		special: specialData
 	};
 }
 
