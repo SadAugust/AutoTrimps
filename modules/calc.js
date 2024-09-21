@@ -6,13 +6,14 @@ class TrimpStats {
 		const { purchased: liquification3Purchased } = talents.liquification3;
 		const { purchased: hyperspeed2Purchased } = talents.hyperspeed2;
 		const { imps } = unlocks;
+		const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
 
 		this.isDaily = challengeActive('Daily');
 		this.isC3 = runningChallengeSquared || ['Frigid', 'Experience', 'Mayhem', 'Pandemonium', 'Desolation'].some((challenge) => challengeActive(challenge));
 		this.isOneOff = !runningChallengeSquared && autoPortalChallenges('oneOff', universe).slice(1).includes(game.global.challengeActive);
 		this.isFiller = !(this.isDaily || this.isC3 || this.isOneOff);
 		this.currChallenge = game.global.challengeActive;
-		this.shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
+		this.shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge;
 
 		this.hze = universe === 2 ? highestRadLevel.valueTotal() : highestLevel.valueTotal();
 		this.hypPct = liquification3Purchased ? 75 : hyperspeed2Purchased ? 50 : 0;
@@ -274,7 +275,7 @@ function getTrimpHealth(realHealth, worldType = _getWorldType(), extraItem = new
 
 		const challengeMultipliers = {
 			Wither: () => (game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1),
-			Revenge: () => (game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1),
+			/* Revenge: () => (game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1), */
 			Insanity: () => game.challenges.Insanity.getHealthMult(),
 			Berserk: () => game.challenges.Berserk.getHealthMult(game.challenges.Berserk.frenzyStacks <= 0),
 			Nurture: () => game.challenges.Nurture.getStatBoost(),

@@ -259,7 +259,7 @@ function _checkFastEnemyU2(enemy) {
 	if (challengeActive('Trappapalooza')) return true;
 	if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) return true;
 	if (challengeActive('Glass')) return true;
-	if (challengeActive('Revenge')) return true;
+	if (challengeActive('Revenge') && game.challenges.Revenge.stacks === 19) return true;
 	if (challengeActive('Smithless') && enemy.ubersmith) return true;
 	if (challengeActive('Desolation') && mapping) {
 		// Exotic mapimps in deso are bugged and slow

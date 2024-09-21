@@ -211,16 +211,16 @@ function _getGammaMaxStacks(worldType) {
 }
 
 function _getOurHealth(mapping, worldType) {
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
 	const angelicOwned = game.talents.angelic.purchased;
 	const runningTrappa = challengeActive('Trappapalooza');
-	const runningRevenge = challengeActive('Revenge');
+	const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
 	const runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
 	const frenzyCanExpire = getPerkLevel('Frenzy') > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.frenzyActive();
 	const isDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;
 	const dailyEmpower = isDaily && !mapping && typeof dailyChallenge.empower !== 'undefined';
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || frenzyCanExpire || dailyEmpower);
+	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge;
 
 	return remainingHealth(shieldBreak, angelicDance, worldType);
 }
@@ -328,17 +328,18 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningArchaeology = challengeActive('Archaeology');
 	const runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
+	const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
 
 	if (runningTrappa || runningArchaeology || runningBerserk) return { ourHealth, enemyDmgMult };
 
 	const isDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;
 	const dailyEmpower = isDaily && !mapping && typeof dailyChallenge.empower !== 'undefined';
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
-	const gammaMaxStacksCheck = gammaMaxStacks(false, false, worldType);
-	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
+	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge;
 	let shouldSuicide = ourHealth === 0 || armyReady || dailyEmpower || shieldBreak;
 
+	const gammaMaxStacksCheck = gammaMaxStacks(false, false, worldType);
+	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	if (gammaToTrigger !== gammaMaxStacksCheck) shouldSuicide = false;
 
 	const ourShield = remainingHealth(true, false, worldType);
@@ -379,7 +380,6 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 
 	const angelicOwned = game.talents.angelic.purchased;
 	const frenzyCanExpire = getPerkLevel('Frenzy') > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.frenzyActive();
-	const runningRevenge = challengeActive('Revenge');
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || frenzyCanExpire || dailyEmpower);
 	ourHealth = remainingHealth(shieldBreak, angelicDance, worldType);
 
@@ -420,7 +420,8 @@ function _getEnemyDmgMultiplier(mapping, worldType, enemy, fastEnemy) {
 	const runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningArch = challengeActive('Archaeology');
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
+	const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
+	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge;
 	if (game.global.voidBuff === 'getCrit' && ignoreCrits === 0 && (fastEnemy || gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArch || shieldBreak)) damageMult += 5;
 
 	if (challengeActive('Daily')) {
