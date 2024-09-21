@@ -550,7 +550,7 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		equality: 0,
 		value: 0,
 		killSpeed: 0,
-		stance: saveData.stances,
+		stance: saveData.stances[0],
 		loot
 	};
 
@@ -1015,7 +1015,6 @@ function get_best(results, fragmentCheck, mapModifiers) {
 	if (!game.global.mapsUnlocked) return best;
 
 	let [stats, stances] = results;
-
 	stats = [...stats.slice()];
 	//The array can sometimes have maps out of order so got to sort them into the right order at the start
 	stats.sort((a, b) => b.mapLevel - a.mapLevel);
