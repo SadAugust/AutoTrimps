@@ -517,7 +517,6 @@ function stats(lootFunction = lootDefault) {
 				if (cellsPerSize !== saveData.size) {
 					cellsPerSize = saveData.size;
 					cellsPerSec = cellsPerSecond(saveData);
-					console.log(mapLevel, cellsPerSec, cellsPerSize);
 				}
 
 				if (tmp.killSpeed + 0.1 >= cellsPerSec) {
