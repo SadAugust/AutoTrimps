@@ -263,7 +263,6 @@ function _obtainUniqueMap(uniqueMap) {
 	if (!uniqueMap) return farmingDetails;
 
 	const unlockLevel = MODULES.mapFunctions.uniqueMaps[uniqueMap].zone;
-	const mapLevel = unlockLevel - game.global.world;
 
 	//Only go for this map if we are able to obtain it
 	if (!trimpStats.perfectMaps && unlockLevel > game.global.world) return farmingDetails;
@@ -271,6 +270,7 @@ function _obtainUniqueMap(uniqueMap) {
 
 	const map = game.global.mapsOwnedArray.find((map) => map.name.includes(uniqueMap));
 	const shouldMap = !map;
+	const mapLevel = unlockLevel - game.global.world;
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, mapLevel);
@@ -324,15 +324,16 @@ function shouldSpeedRun(map, achievement) {
 
 	const timeToRun = (Math.ceil(map.size / maxOneShotPower(true)) * speed) / 60;
 	const minutesThisRun = Math.floor((new Date().getTime() - game.global.portalTime) / 1000 / 60);
+	const timeToBeat = achievement.breakpoints[achievement.finished];
 
-	return minutesThisRun - timeToRun < achievement.breakpoints[achievement.finished];
+	return minutesThisRun - timeToRun < timeToBeat;
 }
 
 function runningAncientTreasure() {
 	if (!game.mapUnlocks.AncientTreasure.canRunOnce) return false;
 	if (mapSettings.ancientTreasure && getPageSetting('autoMaps') === 1) return true;
 	const mapName = getAncientTreasureName();
-	if (MODULES.mapFunctions.runUniqueMap === mapName) return;
+	if (MODULES.mapFunctions.runUniqueMap === mapName) return true;
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return true;
 	return false;
 }
@@ -413,12 +414,13 @@ function voidMaps(lineCheck) {
 
 	const dailyAddition = dailyOddOrEven();
 	const settingIndex = _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition);
-	const setting = MODULES.mapFunctions.afterVoids ? _getVoidMapsHeHrSetting(defaultSettings, dailyAddition) : mapSettings.voidHDIndex ? baseSettings[mapSettings.voidHDIndex] : settingIndex ? baseSettings[settingIndex] : undefined;
+	const heHrSetting = _getVoidMapsHeHrSetting(defaultSettings, dailyAddition);
+	const setting = MODULES.mapFunctions.afterVoids ? heHrSetting : mapSettings.voidHDIndex ? baseSettings[mapSettings.voidHDIndex] : settingIndex ? baseSettings[settingIndex] : undefined;
 
 	if (setting && setting.dontMap) return farmingDetails;
 	if (lineCheck) return setting;
 
-	if (setting) Object.assign(farmingDetails, _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettings, farmingDetails));
+	if (setting) Object.assign(farmingDetails, _runVoidMaps(setting, mapName, settingIndex, defaultSettings, farmingDetails));
 
 	return farmingDetails;
 }
@@ -437,7 +439,7 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 	let settingIndex = null;
 	if (!baseSettings[0].active) return settingIndex;
 	const voidReduction = trimpStats.isDaily ? dailyModiferReduction() : 0;
-	const zoneAddition = dailyAddition.active ? 1 : 0;
+	const zoneAddition = +dailyAddition.active;
 
 	const dropdowns = ['hdRatio', 'voidHDRatio'];
 	const hdTypes = ['hdType', 'hdType2'];
@@ -525,7 +527,7 @@ function _setVoidMapsInitiator(setting, settingIndex) {
 	mapSettings.voidHDIndex = settingIndex;
 }
 
-function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettings, farmingDetails) {
+function _runVoidMaps(setting, mapName, settingIndex, defaultSettings, farmingDetails) {
 	if (!mapSettings.voidTrigger && getPageSetting('autoMaps')) _setVoidMapsInitiator(setting, settingIndex);
 	mapSettings.portalAfterVoids = mapSettings.portalAfterVoids || setting.portalAfter;
 

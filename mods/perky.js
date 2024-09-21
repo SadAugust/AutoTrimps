@@ -1355,7 +1355,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 
 	(async function () {
 		let basepathPerkCalc = 'https://sadaugust.github.io/AutoTrimps/';
-		/* basepathPerkCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
+		if (typeof localVersion !== 'undefined') basepathPerkCalc = 'https://localhost:8887/AutoTrimps_Local/';
 		const mods = ['surky'];
 		const modules = ['import-export', 'MAZ'];
 
