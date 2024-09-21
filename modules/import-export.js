@@ -609,9 +609,14 @@ function makeAdditionalInfoTooltip(mouseover) {
 		tooltipText += `The progress you have towards the <b>Void Maps</b> permanent bone upgrade counter.</p>`;
 	}
 
-	tooltipText += `<p><b>AL (Auto Level)</b> The level that the script recommends using whilst farming. This map level output assumes you are running ${trimpStats.mapBiome === 'Plentiful' ? 'Gardens' : trimpStats.mapBiome} and ${trimpStats.mapSpecial !== '0' ? mapSpecialModifierConfig[trimpStats.mapSpecial].name : 'no special'} maps.<br>`;
+	tooltipText += `<p><b>AL (Auto Level)</b><br>`;
 	tooltipText += `L: The ideal map level for loot gains.<br>`;
-	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the Map Bonus setting.</p>`;
+	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the Map Bonus setting.`;
+	tooltipText += `<br>${farmCalcGetMapDetails()}</p>`;
+	const refreshTimer = usingRealTimeOffline ? 30 : 5;
+	const remainingTime = Math.ceil(refreshTimer - ((atSettings.intervals.counter / 10) % refreshTimer)) || refreshTimer;
+	tooltipText += `<p>The data shown is updated every ${refreshTimer} seconds. <b>${remainingTime}s</b> until the next update.</p>`;
+	tooltipText += `<p>Click this button while in the map chamber to either select your already purchased map or automatically set the inputs to the desired values.</p>`;
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		tooltipText += `<p><b>Breed Timer (B)</b><br>`;
@@ -908,7 +913,7 @@ function makeAutomapStatusTooltip(mouseover = false) {
 	let tooltipText = '';
 
 	if (mouseover) {
-		tooltipText = 'tooltip(' + '"Automaps Status", ' + '"customText", ' + 'event, ' + '"';
+		tooltipText = 'tooltip(' + '"Auto Maps Status", ' + '"customText", ' + 'event, ' + '"';
 	}
 
 	tooltipText += 'Variables that control the current state and target of Automaps.<br>' + 'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' + 'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>';

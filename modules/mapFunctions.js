@@ -3428,7 +3428,9 @@ function setMapSliders(plusLevel, special = '0', biome = getBiome(), mapSliders 
 	document.getElementById('advPerfectCheckbox').dataset.checked = true;
 	document.getElementById('mapLevelInput').value = maplevel;
 
-	if (plusLevel > 0 && currentLevel < game.global.world && getHighestLevelCleared() >= getUnlockZone('extra')) setAdvExtraZoneText();
+	const hze = getHighestLevelCleared();
+	if (plusLevel > 0 && currentLevel < game.global.world && hze >= getUnlockZone('extra')) setAdvExtraZoneText();
+	if (hze >= getUnlockZone('perfect')) checkSlidersForPerfect();
 
 	if (!perfectMaps) {
 		if (updateMapCost(true) > game.resources.fragments.owned) {

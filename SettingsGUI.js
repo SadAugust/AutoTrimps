@@ -5399,7 +5399,9 @@ function _createAdditionalInfoTextbox() {
 	if (document.getElementById('additionalInfo') !== null) return;
 
 	const additionalInfoContainer = _createElement('DIV', {
-		style: 'display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);',
+		class: 'workBtn pointer noSelect',
+		style: 'display: block; font-size: 0.9vw; text-align: centre; solid black; transform:translateY(-1.5vh); max-width: 95%; margin: 0 auto',
+		onClick: 'farmCalcSetMapSliders()',
 		onmouseover: '',
 		onmouseout: 'tooltip("hide")'
 	});

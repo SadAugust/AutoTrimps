@@ -440,7 +440,6 @@ function stats(lootFunction = lootDefault) {
 	const maxMaps = lootFunction === lootDestack ? 11 : 25;
 	let stats = [];
 	let extra = saveData.extraMapLevelsAvailable ? 10 : saveData.reducer ? -1 : 0;
-	let mapsCanAffordPerfect = 0;
 	let coords = 1;
 
 	if (saveData.coordinate) {
@@ -448,6 +447,9 @@ function stats(lootFunction = lootDefault) {
 			coords = Math.ceil(1.25 * coords);
 		}
 	}
+
+	let cellsPerSec = cellsPerSecond(saveData);
+	let cellsPerSize = saveData.size;
 
 	for (let mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
 		if (saveData.coordinate) {
@@ -457,49 +459,73 @@ function stats(lootFunction = lootDefault) {
 		}
 
 		const simulateMap = _simulateSliders(mapLevel, saveData.special, saveData.mapBiome);
+		let map;
 		let mapOwned = findMap(mapLevel - game.global.world, saveData.special, saveData.mapBiome);
 		if (!mapOwned) mapOwned = findMap(mapLevel - game.global.world, simulateMap.special, simulateMap.location, simulateMap.perfect);
 
 		if (mapOwned) {
-			const map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+			map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
 			saveData.difficulty = Number(map.difficulty);
 			saveData.size = Number(map.size);
 			saveData.lootMult = Number(map.loot);
 		} else {
+			if (game.singleRunBonuses.goldMaps.owned) simulateMap.loot += 1;
+			if (simulateMap.location === 'Farmlands' && saveData.universe === 2) simulateMap.loot += 1;
+			if (simulateMap.location === 'Gardens') simulateMap.loot += 0.25;
+
 			saveData.special = simulateMap.special;
 			saveData.difficulty = Number(simulateMap.difficulty);
 			saveData.size = Number(simulateMap.size);
 			saveData.lootMult = Number(simulateMap.loot);
 
-			if (game.singleRunBonuses.goldMaps.owned) saveData.lootMult += 1;
-			if (simulateMap.location === 'Farmlands' && saveData.universe === 2) saveData.lootMult += 1;
-			if (simulateMap.location === 'Gardens') saveData.lootMult += 0.25;
-
 			const { level, special, location, perfect, sliders } = simulateMap;
 			const { difficulty, size, loot } = sliders;
 			const fragCost = mapCost(level - game.global.world, special, location, [loot, size, difficulty], perfect);
-			if (fragCost > game.resources.fragments.owned) continue;
+			if (mapLevel !== 6 && fragCost > game.resources.fragments.owned) continue;
 		}
 
 		let tmp = zone_stats(mapLevel, saveData, lootFunction);
 
-		if (mapLevel !== 6) {
-			if (tmp.value === 0) continue;
-			if (tmp.canAffordPerfect) mapsCanAffordPerfect++;
+		tmp.mapConfig = {
+			mapOwned: !!mapOwned,
+			name: map ? map.name : undefined,
+			id: map ? map.id : undefined,
+			level: mapLevel,
+			plusLevel: mapLevel - game.global.world,
+			special: saveData.special,
+			biome: map ? map.location : simulateMap.location,
+			difficulty: saveData.difficulty,
+			size: saveData.size,
+			loot: saveData.lootMult,
+			sliders: simulateMap.sliders,
+			perfect: map ? map.perfect : simulateMap.perfect
+		};
 
+		stats.unshift(tmp);
+
+		if (mapLevel !== 6) {
 			if (stats.length) {
-				if ((mapsCanAffordPerfect >= 6 && tmp.value < 0.804 * stats[0].value && mapLevel < saveData.zone - 3) || stats.length >= maxMaps) {
+				let currentBest = get_best([stats, saveData.stances], true);
+				if (tmp.value < 0.6 * currentBest.loot.value) {
 					break;
 				}
 
-				/* if (tmp.killSpeed + 0.1 >= cellsPerSecond(saveData)) {
-					console.error('Stopping sim: reached max kill speed', tmp.killSpeed + 0.1, cellsPerSecond(saveData));
+				if (stats.length >= maxMaps) {
 					break;
-				} // This should not require any more fiddling, it's universally correct */
+				}
+
+				if (cellsPerSize !== saveData.size) {
+					cellsPerSize = saveData.size;
+					cellsPerSec = cellsPerSecond(saveData);
+					console.log(mapLevel, cellsPerSec, cellsPerSize);
+				}
+
+				if (tmp.killSpeed + 0.1 >= cellsPerSec) {
+					/* Only works in U1 atm.  */
+					break;
+				} // This should not require any more fiddling, should be universally correct
 			}
 		}
-
-		stats.unshift(tmp);
 	}
 
 	return [stats, saveData.stances];
@@ -526,8 +552,7 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		value: 0,
 		killSpeed: 0,
 		stance: 'X',
-		loot,
-		canAffordPerfect: saveData.fragments >= mapCost(mapLevel, saveData.special, saveData.mapBiome, [9, 9, 9])
+		loot
 	};
 
 	const [mapGrid, equality] = _simulateMapGrid(saveData, zone);
@@ -563,6 +588,13 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 
 		const { speed, equality, killSpeed } = simulate(saveData, zone);
 		const value = speed * loot * lootMultiplier;
+
+		result[stance] = {
+			speed,
+			value,
+			equality,
+			killSpeed
+		};
 
 		if (value > result.value) {
 			result.equality = equality;
@@ -632,6 +664,7 @@ function simulate(saveData, zone) {
 		ice = 0;
 
 	/* Challenge Variables */
+	let nomStacks = 0;
 	let duelPoints = game.challenges.Duel.trimpStacks;
 	let hasWithered = false;
 	let mayhemPoison = 0;
@@ -709,10 +742,61 @@ function simulate(saveData, zone) {
 		trimpHealth = Math.max(0, trimpHealth - amt);
 	}
 
+	function _handleDuelPoints(duelPoints, enemyCrit, trimpCrit, turns, oneShot, enemyHealth, trimpHealth) {
+		/* +1 point for crits, +2 points for killing, +5 for oneshots */
+		duelPoints -= enemyCrit;
+		duelPoints += trimpCrit;
+
+		if (trimpHealth < 1) duelPoints -= turns === 1 ? 5 : 2;
+		if (enemyHealth < 1) duelPoints += oneShot ? 5 : 2;
+
+		duelPoints = duelPoints > 100 ? 100 : duelPoints;
+		duelPoints = duelPoints < 0 ? 0 : duelPoints;
+
+		return duelPoints;
+	}
+
 	function armyDead() {
 		if (saveData.shieldBreak) return energyShield <= 0;
 		return trimpHealth <= 0;
 	}
+
+	function deathVarsReset() {
+		ticks += Math.ceil(turns * saveData.speed);
+		ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
+		last_group_sent = ticks;
+		trimpOverkill = Math.abs(trimpHealth);
+		trimpHealth = saveData.health;
+		energyShield = energyShieldMax;
+
+		mayhemPoison = 0;
+		if (saveData.devastation) reduceTrimpHealth(trimpOverkill * 7.5);
+		if (saveData.wither && hasWithered) trimpHealth *= 0.5;
+		if (saveData.duel && 100 - duelPoints < 20) {
+			trimpHealth *= 10;
+			energyShield *= 10;
+		}
+
+		ticks += 1;
+		turns = 1;
+		debuff_stacks = 0;
+		if (deaths === 0) saveData.atk /= saveData.rampage;
+		gammaStacks = 0;
+		frenzyLeft /= 2;
+		frenzyRefresh = false;
+		deaths++;
+
+		if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = maxTicks;
+		//Amp enemy dmg and health by 25% per stack
+		if (saveData.nom && nomStacks < 100) {
+			enemyAttack *= 1.25;
+			enemyHealth = Math.min(enemyHealth + 0.05 * enemy_max_hp, enemy_max_hp);
+			nomStacks++;
+		}
+	}
+
+	let turns = 0;
+	let trimpOverkill = 0;
 
 	while (ticks < maxTicks) {
 		rngRoll = rng();
@@ -724,11 +808,11 @@ function simulate(saveData, zone) {
 		enemyHealth = imp_stats[1] * mapGrid[cell].health;
 		let enemy_max_hp = enemyHealth;
 
-		let turns = 0;
+		turns = 0;
+		nomStacks = 0;
 		let pbTurns = 0;
 
 		let oneShot = true;
-		let trimpOverkill = 0;
 
 		if (ok_spread !== 0) {
 			enemyHealth -= ok_damage;
@@ -830,9 +914,9 @@ function simulate(saveData, zone) {
 				}
 			}
 
-			if (attacked) {
+			if (attacked && saveData.ice > 0) {
 				ice += saveData.natureIncrease;
-				if (saveData.uberNature === 'Ice' && saveData.ice > 0 && ice > 20 && enemyHealth / enemy_max_hp < 0.5) {
+				if (saveData.uberNature === 'Ice' && ice > 20 && enemyHealth / enemy_max_hp < 0.5) {
 					shattered = true;
 					enemyHealth = 0;
 				}
@@ -842,48 +926,11 @@ function simulate(saveData, zone) {
 			if (saveData.plague) trimpHealth -= debuff_stacks * saveData.plague * saveData.health;
 
 			if (saveData.duel) {
-				// +1 point for crits, +2 points for killing, +5 for oneshots
-				duelPoints -= enemyCrit;
-				duelPoints += trimpCrit;
-
-				if (trimpHealth < 1) duelPoints -= turns === 1 ? 5 : 2;
-				if (enemyHealth < 1) duelPoints += oneShot ? 5 : 2;
-
-				duelPoints = duelPoints > 100 ? 100 : duelPoints;
-				duelPoints = duelPoints < 0 ? 0 : duelPoints;
+				duelPoints = _handleDuelPoints(duelPoints, enemyCrit, trimpCrit, turns, oneShot, enemyHealth, trimpHealth);
 			}
 
 			if (armyDead()) {
-				ticks += Math.ceil(turns * saveData.speed);
-				ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
-				last_group_sent = ticks;
-				trimpOverkill = Math.abs(trimpHealth);
-				trimpHealth = saveData.health;
-				energyShield = energyShieldMax;
-				mayhemPoison = 0;
-
-				if (saveData.devastation) reduceTrimpHealth(trimpOverkill * 7.5);
-				if (saveData.wither && hasWithered) trimpHealth *= 0.5;
-				if (saveData.duel && 100 - duelPoints < 20) {
-					trimpHealth *= 10;
-					energyShield *= 10;
-				}
-
-				ticks += 1;
-				turns = 1;
-				debuff_stacks = 0;
-				if (deaths === 0) saveData.atk /= saveData.rampage;
-				gammaStacks = 0;
-				frenzyLeft /= 2;
-				frenzyRefresh = false;
-				deaths++;
-
-				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = maxTicks;
-				//Amp enemy dmg and health by 25% per stack
-				if (saveData.nom) {
-					enemyAttack *= 1.25;
-					enemyHealth = Math.min(enemyHealth + 0.05 * enemy_max_hp, enemy_max_hp);
-				}
+				deathVarsReset();
 			}
 
 			//Safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage
@@ -896,58 +943,39 @@ function simulate(saveData, zone) {
 			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - block);
 
 			if (armyDead()) {
-				ticks += Math.ceil(turns * saveData.speed);
-				ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
-				last_group_sent = ticks;
-				trimpOverkill = Math.abs(trimpHealth);
-				trimpHealth = saveData.health;
-				energyShield = energyShieldMax;
-
-				ticks += 1;
-				turns = 1;
-				debuff_stacks = 0;
-				if (deaths === 0) saveData.atk /= saveData.rampage;
-				gammaStacks = 0;
-				frenzyLeft /= 2;
-				frenzyRefresh = false;
-				deaths++;
-
-				if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = maxTicks;
-				//Amp enemy dmg and health by 25% per stack
-				if (saveData.nom) {
-					enemyAttack *= 1.25;
-					enemyHealth = Math.min(enemyHealth + 0.05 * enemy_max_hp, enemy_max_hp);
-				}
+				deathVarsReset();
 			}
 		}
 
 		loot++;
 		if (saveData.ok_spread > 0) {
-			ok_damage = -enemyHealth * saveData.overkill;
-			if (shattered) ok_damage = Infinity;
+			ok_damage = shattered ? Infinity : -enemyHealth * saveData.overkill;
 			shattered = false;
 		}
 
 		ticks += +(turns > 0) + +(saveData.speed > 9) + Math.ceil(turns * saveData.speed);
 		if (saveData.titimp && imp < 0.03) {
-			if (titimp < 0) titimp = 0;
-			titimp = Math.max(titimp + 30, 45);
+			titimp = Math.max(Math.max(titimp, 0) + 30, 45);
 		}
 
 		//Handles post death Nature effects.
 		if (magma) {
 			const increasedBy = pbTurns * saveData.natureIncrease;
-			//Wind stacks
+			/* U1 Nature */
 			if (saveData.wind > 0) {
 				wind = Math.min(wind + increasedBy, saveData.windCap);
 				loot += wind * saveData.wind;
 				wind = Math.ceil(saveData.transfer * wind) + saveData.natureIncrease + Math.ceil((pbTurns - 1) * increasedBy * saveData.plaguebringer);
 				wind = Math.min(wind, saveData.windCap);
 			}
-			//Poison damage
-			if (saveData.poison > 0) poison = Math.ceil(saveData.transfer * poison + plague_damage) + 1;
-			//Ice stacks
-			if (saveData.ice > 0) ice = Math.ceil(saveData.transfer * ice) + increasedBy + Math.ceil((pbTurns - 1) * saveData.plaguebringer);
+
+			if (saveData.poison > 0) {
+				poison = Math.ceil(saveData.transfer * poison + plague_damage) + 1;
+			}
+
+			if (saveData.ice > 0) {
+				ice = Math.ceil(saveData.transfer * ice) + increasedBy + Math.ceil((pbTurns - 1) * saveData.plaguebringer);
+			}
 		}
 
 		if (saveData.glass) {
@@ -1003,22 +1031,17 @@ function get_best(results, fragmentCheck, mapModifiers) {
 		const forcePerfect = typeof atSettings !== 'undefined' && getPageSetting('onlyPerfectMaps');
 		const fragments = game.resources.fragments.owned;
 		for (let i = 0; i <= stats.length - 1; i++) {
-			if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, forcePerfect)) continue;
-
-			if (forcePerfect) {
+			if (forcePerfect && stats[i].zone !== 6) {
+				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, forcePerfect)) continue;
 				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
-			} else {
-				const simulatedSliders = _simulateSliders(stats[i].mapLevel + game.global.world, mapModifiers.special, mapModifiers.biome);
-				const { loot, size, difficulty } = simulatedSliders.sliders;
-				if (fragments >= mapCost(simulatedSliders.mapLevel, simulatedSliders.special, simulatedSliders.location, [loot, size, difficulty], simulatedSliders.perfect)) break;
-			}
 
-			stats.splice(i, 1);
-			i--;
+				if (stats.length > 1) {
+					stats.splice(i, 1);
+					i--;
+				}
+			}
 		}
 	}
-
-	if (stats.length === 0) return best;
 
 	let statsLoot = [...stats];
 	let statsSpeed = [...stats];
@@ -1038,7 +1061,8 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			value: bestMapData[bestMapData.stance].value,
 			speed: bestMapData[bestMapData.stance].speed,
 			killSpeed: bestMapData[bestMapData.stance].killSpeed,
-			stance: bestMapData.stance
+			stance: bestMapData.stance,
+			mapConfig: bestMapData.mapConfig
 		};
 
 		if (game.global.universe === 2) bestStats.equality = bestMapData.equality;
@@ -1050,7 +1074,8 @@ function get_best(results, fragmentCheck, mapModifiers) {
 				zone: backupMapData.zone,
 				value: backupMapData[backupMapData.stance].value,
 				speed: backupMapData[backupMapData.stance].speed,
-				killSpeed: backupMapData[backupMapData.stance].killSpeed
+				killSpeed: backupMapData[backupMapData.stance].killSpeed,
+				mapConfig: bestMapData.mapConfig
 			};
 
 			if (game.global.universe === 1) bestStats[`${type}Second`].stance = backupMapData.stance;
@@ -1121,20 +1146,79 @@ function _getBiomeEnemyStats(biome) {
 	return enemyBiome;
 }
 
+function farmCalcSetMapSliders() {
+	if (!game.global.preMapsActive) return;
+	if (typeof hdStats !== 'object' || typeof hdStats.autoLevelData.loot.mapConfig === 'undefined') return;
+
+	const { mapOwned, id, plusLevel, level, special, biome, sliders, perfect } = hdStats.autoLevelData.loot.mapConfig;
+
+	if (mapOwned) {
+		selectMap(id);
+		return;
+	}
+
+	const currentLevel = Number(document.getElementById('mapLevelInput').value);
+	document.getElementById('biomeAdvMapsSelect').value = biome;
+	document.getElementById('advExtraLevelSelect').value = plusLevel > 0 ? plusLevel : 0;
+	document.getElementById('advSpecialSelect').value = special;
+	document.getElementById('lootAdvMapsRange').value = sliders.loot;
+	document.getElementById('sizeAdvMapsRange').value = sliders.size;
+	document.getElementById('difficultyAdvMapsRange').value = sliders.difficulty;
+	document.getElementById('mapLevelInput').value = Math.min(level, game.global.world);
+
+	if (plusLevel > 0 && currentLevel < game.global.world && getHighestLevelCleared() >= getUnlockZone('extra')) setAdvExtraZoneText();
+
+	if (getHighestLevelCleared() >= getUnlockZone('perfect')) checkSlidersForPerfect();
+	const perfectElem = document.getElementById('advPerfectCheckbox');
+	if (String(perfectElem.dataset.checked) !== String(perfect)) {
+		swapNiceCheckbox(perfectElem, perfect);
+		updateMapNumbers();
+	}
+
+	updateMapCost();
+}
+
+function farmCalcGetMapDetails() {
+	if (typeof hdStats !== 'object' || typeof hdStats.autoLevelData.loot.mapConfig === 'undefined') return;
+
+	const { mapOwned, name, level, plusLevel, special, biome, difficulty, size, loot, sliders, perfect } = hdStats.autoLevelData.loot.mapConfig;
+	const calcName = typeof atSettings !== 'undefined' ? 'Auto Level' : 'Farm Calc';
+	const lootText = typeof atSettings !== 'undefined' ? 'loot' : '';
+
+	let text = `<p>Details of the ${lootText} map you own that ${calcName} recommends you run:`;
+	if (!mapOwned) text = `<p>Details for the ${lootText} map that ${calcName} is recommending you purchase to run:`;
+
+	if (mapOwned) text += `<br><b>Map Name:</b> ${name}`;
+	text += `<br><b>Map Level:</b> ${Math.min(level, game.global.world)}`;
+	if (plusLevel > 0) text += ` (+${plusLevel})`;
+	text += `<br><b>Special:</b> ${special !== '0' ? mapSpecialModifierConfig[special].name : 'None'}`;
+	text += `<br><b>Biome:</b> ${biome === 'Plentiful' ? 'Gardens' : biome}`;
+	text += `<br><b>Difficulty:</b> ${Math.floor(difficulty * 100)}%`;
+	if (!mapOwned) text += ` (slider: ${sliders.difficulty})`;
+	text += `<br><b>Size:</b> ${size}`;
+	if (!mapOwned) text += ` (slider: ${sliders.size})`;
+	text += `<br><b>Loot:</b> ${Math.floor(loot * 100)}%`;
+	if (!mapOwned) text += ` (slider: ${sliders.loot})`;
+	if (!mapOwned) text += `<br><b>Perfect Sliders:</b> ${perfect.toString().charAt(0).toUpperCase() + perfect.toString().slice(1)}`;
+	text += '</p>';
+
+	return text;
+}
+
 /* If using standalone version then when loading farmCalc file also load CSS & breedtimer+calc+farmCalcStandalone files. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	if (typeof hdStats !== 'object') hdStats = {};
 	function updateAdditionalInfo() {
 		if (!usingRealTimeOffline) {
 			const infoElem = document.getElementById('additionalInfo');
 			const infoStatus = makeAdditionalInfo_Standalone();
 			if (infoElem.innerHTML !== infoStatus) infoElem.innerHTML = infoStatus;
-			infoElem.parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip_Standalone(true));
 		}
 	}
 
 	(async function () {
 		let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
-		/* basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/'; */
+		basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/';
 		const mods = ['farmCalcStandalone'];
 		const modules = ['breedtimer', 'calc'];
 
@@ -1175,13 +1259,21 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 				await loadModules(basepathFarmCalc, module, path);
 			}
 
+			hdStats.counter = 0;
 			updateAdditionalInfo();
-			console.log('The farm calculator mod has finished loading.');
-			message('The farm calculator mod has finished loading.', 'Loot');
+			document.getElementById('additionalInfo').parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip_Standalone(true));
 
 			setInterval(function () {
-				updateAdditionalInfo();
-			}, 10000);
+				if (game.options.menu.pauseGame.enabled) return;
+
+				hdStats.counter++;
+				document.getElementById('additionalInfo').parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip_Standalone(true));
+
+				if (hdStats.counter % 10 === 0) updateAdditionalInfo();
+			}, 1000);
+
+			console.log('The farm calculator mod has finished loading.');
+			message('The farm calculator mod has finished loading.', 'Loot');
 		} catch (error) {
 			console.error('Error loading script', error);
 			message('Farm Calc has failed to load. Refresh your page and try again.', 'Loot');
@@ -1190,3 +1282,55 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		}
 	})();
 }
+
+/* function adjustTooltipPosition() {
+	const tooltipDiv = document.getElementById('tooltipDiv');
+
+	if (tooltipDiv.style.display === 'block') {
+		const rect = tooltipDiv.getBoundingClientRect();
+		const tooltipHeight = tooltipDiv.offsetHeight;
+		const tooltipWidth = tooltipDiv.offsetWidth;
+		const windowHeight = window.innerHeight;
+		const windowWidth = window.innerWidth;
+
+		// Get the cursor's position
+		const cursorX = event.clientX;
+		const cursorY = event.clientY;
+
+		let topPosition = rect.top - tooltipHeight - 10;
+		if (topPosition < 0) {
+			topPosition = rect.bottom + 10;
+		}
+
+		let leftPosition = rect.left;
+		if (leftPosition + tooltipWidth > windowWidth) {
+			leftPosition = windowWidth - tooltipWidth - 10;
+		}
+
+		if (leftPosition < 0) {
+			leftPosition = 10;
+		}
+
+		if (topPosition + tooltipHeight > windowHeight) {
+			topPosition = windowHeight - tooltipHeight - 10;
+		}
+
+		if (tooltipDiv.style.top !== `${topPosition}px`) tooltipDiv.style.top = `${topPosition}px`;
+		if (tooltipDiv.style.left !== `${leftPosition}px`) tooltipDiv.style.left = `${leftPosition}px`;
+	}
+}
+
+var originalPositionTooltip = positionTooltip;
+positionTooltip = function () {
+	const tooltipDiv = document.getElementById('tooltipDiv');
+	if (tooltipDiv.style.display === 'block') {
+		const tipTitleDiv = document.getElementById('tipTitle');
+
+		if (tipTitleDiv.innerHTML.includes('Auto Level Information') || tipTitleDiv.innerHTML.includes('Additional Info')) {
+			adjustTooltipPosition();
+			return;
+		}
+	}
+
+	originalPositionTooltip(...arguments);
+}; */

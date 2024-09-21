@@ -229,7 +229,12 @@ function getCurrentQuest() {
 //AutoLevel information
 function makeAdditionalInfo_Standalone() {
 	if (!game.global.mapsUnlocked) return `AL: Maps not unlocked!`;
-	const initialInfo = get_best(stats(), true);
+	if (typeof hdStats !== 'object') hdStats = {};
+	hdStats.autoLevelInitial = stats();
+	hdStats.autoLevelData = get_best(hdStats.autoLevelInitial, true);
+	hdStats.autoLevelLoot = hdStats.autoLevelData.loot.mapLevel;
+
+	const initialInfo = hdStats.autoLevelData;
 	const u2 = game.global.universe === 2;
 	const showExtraType = (u2 && getPerkLevel('Equality') > 0) || (!u2 && game.upgrades.Formations.done);
 
@@ -250,14 +255,16 @@ function makeAdditionalInfoTooltip_Standalone(mouseover) {
 	if (mouseover) {
 		tooltipText = 'tooltip(' + "'Auto Level Information', " + "'customText', " + 'event, ' + "'";
 	}
-	const biome = getBiome();
-	const specialToUse = getAvailableSpecials('lmc');
 
-	tooltipText += `<p>The map level that the script recommends using whilst farming for best loot income.</p>`;
-	tooltipText += `<p>The outputs assume you are running ${biome === 'Plentiful' ? 'Garden' : biome} biome and ${specialToUse !== '0' ? mapSpecialModifierConfig[specialToUse].name : 'no'} special maps with the best map sliders available .</p>`;
-	if (game.global.universe === 1) tooltipText += `<p>The map level is affixed with the stance that will give you the best results in the map.</p>`;
-	if (game.global.universe === 2) tooltipText += `<p>The map level is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the worst enemy in the map.</p>`;
-	tooltipText += `<p>The data shown is updated every 10 seconds.</p>`;
+	if (!game.global.mapsUnlocked || typeof hdStats.autoLevelData === 'undefined' || typeof hdStats.autoLevelData.loot.mapConfig === 'undefined') tooltipText += `<p>When maps have been unlocked you will see data here for which map you should purchase or run.</p>`;
+	else {
+		tooltipText += farmCalcGetMapDetails();
+		if (game.global.universe === 1) tooltipText += `<p>The map level is affixed with the stance that will give you the best results in the map.</p>`;
+		if (game.global.universe === 2 && getPerkLevel('Equality') > 0) tooltipText += `<p>The map level is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the worst enemy in the map.</p>`;
+	}
+	const remainingTime = Math.ceil(10 - (hdStats.counter % 10)) || 10;
+	tooltipText += `<p>The data shown is updated every 10 seconds. <b>${remainingTime}s</b> until the next update.</p>`;
+	tooltipText += `<p>Click this button while in the map chamber to either select your already purchased map or automatically set the inputs to the desired values.</p>`;
 
 	if (mouseover) {
 		tooltipText += "')";
@@ -271,9 +278,11 @@ function makeAdditionalInfoTooltip_Standalone(mouseover) {
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	if (document.getElementById('additionalInfo') === null) {
 		const autoLevelContainer = document.createElement('DIV');
-		autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; padding-bottom: 4px;');
+		autoLevelContainer.setAttribute('style', 'display: block; font-size: 0.9vw; text-align: centre; solid black; transform:translateY(-1.5vh); max-width: 95%; margin: 0 auto');
+		autoLevelContainer.setAttribute('class', 'workBtn pointer noSelect');
 		const autoLevelText = document.createElement('SPAN');
-		autoLevelContainer.setAttribute('onmouseover', makeAdditionalInfoTooltip_Standalone(true));
+		autoLevelContainer.addEventListener('mouseover', () => makeAdditionalInfoTooltip_Standalone(true));
+		autoLevelContainer.addEventListener('click', farmCalcSetMapSliders);
 		autoLevelContainer.setAttribute('onmouseout', 'tooltip("hide")');
 		autoLevelText.id = 'additionalInfo';
 		autoLevelContainer.appendChild(autoLevelText);
