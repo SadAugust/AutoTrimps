@@ -45,7 +45,7 @@ function populateFarmCalcData() {
 	const empowerment = getEmpowerment();
 
 	let speed = combatSpeed(hze);
-
+	const deathPhase = speed <= 9 ? 0 : 0.1;
 	//Challenge Checks
 	const runningUnlucky = challengeActive('Unlucky');
 	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8;
@@ -349,6 +349,7 @@ function populateFarmCalcData() {
 		//Base Info
 		universe,
 		speed,
+		deathPhase,
 		zone,
 		maxTicks,
 		//Map Info
@@ -424,13 +425,10 @@ function populateFarmCalcData() {
 
 function cellsPerSecond(saveData) {
 	const cellsKilling = saveData.ok_spread + 1;
-	const ceiledFightingSpeed = Math.ceil(saveData.speed) / 10;
+	const ceiledFightingSpeed = Math.ceil(1 + saveData.speed);
 	const attacksPerMap = Math.ceil(saveData.size / cellsKilling);
 
-	const agility = getPerkLevel('Agility') > 2 ? 0.1 : 0.2;
-	const mapLoadTime = 0.1 + agility + ceiledFightingSpeed;
-
-	const actualFightingSpeed = ceiledFightingSpeed + mapLoadTime / attacksPerMap;
+	const actualFightingSpeed = ceiledFightingSpeed / attacksPerMap;
 	return cellsKilling / actualFightingSpeed;
 }
 
@@ -447,9 +445,6 @@ function stats(lootFunction = lootDefault) {
 			coords = Math.ceil(1.25 * coords);
 		}
 	}
-
-	let cellsPerSec = cellsPerSecond(saveData);
-	let cellsPerSize = saveData.size;
 
 	for (let mapLevel = saveData.zone + extra; mapLevel >= 6; --mapLevel) {
 		if (saveData.coordinate) {
@@ -514,15 +509,9 @@ function stats(lootFunction = lootDefault) {
 					break;
 				}
 
-				if (cellsPerSize !== saveData.size) {
-					cellsPerSize = saveData.size;
-					cellsPerSec = cellsPerSecond(saveData);
-				}
-
-				if (tmp.killSpeed + 0.1 >= cellsPerSec) {
-					/* Only works in U1 atm.  */
+				if (tmp.killSpeed + 0.1 >= cellsPerSecond(saveData)) {
 					break;
-				} // This should not require any more fiddling, should be universally correct
+				}
 			}
 		}
 	}
@@ -762,7 +751,8 @@ function simulate(saveData, zone) {
 	}
 
 	function deathVarsReset() {
-		ticks += Math.ceil(turns * saveData.speed);
+		/* Trimps death phase. 100ms + fighting phase timer */
+		ticks += 1 + Math.ceil(turns * saveData.speed);
 		ticks = Math.max(ticks, last_group_sent + saveData.breed_timer);
 		last_group_sent = ticks;
 		trimpOverkill = Math.abs(trimpHealth);
@@ -777,8 +767,7 @@ function simulate(saveData, zone) {
 			energyShield *= 10;
 		}
 
-		ticks += 1;
-		turns = 1;
+		turns = 0;
 		debuff_stacks = 0;
 		if (deaths === 0) saveData.atk /= saveData.rampage;
 		gammaStacks = 0;
@@ -953,7 +942,9 @@ function simulate(saveData, zone) {
 			shattered = false;
 		}
 
-		ticks += +(turns > 0) + +(saveData.speed > 9) + Math.ceil(turns * saveData.speed);
+		/* +(turns>0) adds 1 to the counter when not overkilling which accounts for the extra 0.1s from the death phase */
+		/* saveData.deathPhase is +0.1s then adding ticks from each turn */
+		ticks += +(turns > 0) + saveData.deathPhase + Math.ceil(turns * saveData.speed);
 		if (saveData.titimp && imp < 0.03) {
 			titimp = Math.max(Math.max(titimp, 0) + 30, 45);
 		}
@@ -1004,7 +995,7 @@ function simulate(saveData, zone) {
 	return {
 		speed: (loot * 10) / maxTicks,
 		equality,
-		killSpeed: kills / (maxTicks / 10),
+		killSpeed: kills / (ticks / 10),
 		deaths,
 		special
 	};
