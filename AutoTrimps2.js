@@ -49,7 +49,7 @@ function shouldUpdate(updateEvery = 2000) {
 	if (usingRealTimeOffline && (atSettings.timeWarp.currentLoops === 0 || loops >= atSettings.timeWarp.currentLoops + updateEvery)) {
 		if (updateEvery !== 2000) return true;
 		atSettings.timeWarp.currentLoops = loops;
-		updateAllInnerHtmlFrames();
+		if (typeof updateAllInnerHtmlFrames === 'function') updateAllInnerHtmlFrames();
 
 		return true;
 	}
