@@ -4,6 +4,7 @@ MODULES.portal = {
 	heHrTimeout: null,
 	portalForVoid: false,
 	C2afterVoids: false,
+	C2afterPoisonVoids: false,
 	portalUniverse: Infinity,
 	forcePortal: false,
 	currentChallenge: 'None',
@@ -229,8 +230,8 @@ function c2RunnerPortal(portalZone) {
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
 		const endMode = getPageSetting('c2RunnerEndMode');
-		if (getPageSetting('c2RunnerStart') && [1, 2].includes(endMode)) {
-			autoPortalForce(endMode === 2);
+		if (getPageSetting('c2RunnerStart') && [1, 2, 3].includes(endMode)) {
+			autoPortalForce(endMode >= 2, endMode === 3);
 		}
 	}
 }
@@ -669,6 +670,7 @@ function resetVarsZone(loadingSave) {
 		MODULES.fightinfo.lastProcessedWorld = 0;
 		MODULES.mapFunctions.afterVoids = false;
 		MODULES.portal.C2afterVoids = false;
+		MODULES.portal.C2afterPoisonVoids = false;
 
 		MODULES.portal.currentChallenge = 'None';
 		MODULES.portal.dontPushData = false;
@@ -826,11 +828,12 @@ function _setButtonsPortal() {
 	saveSettings();
 }
 
-function autoPortalForce(runVoids = false) {
+function autoPortalForce(runVoids = false, poisonVoids = false) {
 	if (!game.global.portalActive) return;
 
 	if (runVoids) {
 		if (game.global.runningChallengeSquared) finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
+		if (poisonVoids) MODULES.portal.C2afterPoisonVoids = true;
 		MODULES.portal.C2afterVoids = true;
 		MODULES.mapFunctions.afterVoids = true;
 		mapSettings.portalAfterVoids = true;

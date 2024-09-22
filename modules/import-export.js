@@ -1016,8 +1016,9 @@ function _displayResetPerkPreset(tooltipDiv) {
 function _displayPortalForce(tooltipDiv) {
 	if (!game.global.portalActive) return;
 
+	const hze = game.stats.highestLevel.valueTotal();
 	let tooltipText = `<p>Are you sure you want to Auto Portal?</p>`;
-	if (game.global.runningChallengeSquared) tooltipText += `<p>If you select <b>Force Portal After Voids</b> this will abandon your ${_getChallenge2Info()} before running them.</p>`;
+	if (game.global.runningChallengeSquared) tooltipText += `<p>If you select a <b>Force Portal After Voids</b> option this will abandon your ${_getChallenge2Info()} before running them.</p>`;
 
 	tooltipDiv.style.left = '33.75%';
 	tooltipDiv.style.top = '25%';
@@ -1027,7 +1028,13 @@ function _displayPortalForce(tooltipDiv) {
 		else verticalCenterTooltip(true);
 	};
 
-	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); autoPortalForce();'>Force Portal</div><div class='btn btn-success' onclick='cancelTooltip(); autoPortalForce(true);'>Force Portal After Voids</div><div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+	let costText = "<div class='maxCenter'>";
+	costText += "<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); autoPortalForce();'>Force Portal</div>";
+	costText += "<div class='btn btn-success' onclick='cancelTooltip(); autoPortalForce(true);'>Force Portal After Voids</div>";
+	if (currSettingUniverse === 1 && hze >= 230) costText += "<div class='btn btn-warning' onclick='cancelTooltip(); autoPortalForce(true, true);'>Force Portal After Poison Voids</div>";
+	costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
+
+	costText += '</div>';
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }

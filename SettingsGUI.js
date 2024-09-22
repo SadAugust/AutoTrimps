@@ -2064,7 +2064,12 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 
 		createSetting('c2RunnerEndMode',
-			function () { return ([`${_getChallenge2Info()} Runner End Challenge`, `${_getChallenge2Info()} Runner Portal`, `${_getChallenge2Info()} Runner Portal After Voids`]) },
+			function () {
+				const hze = game.stats.highestLevel.valueTotal();
+				const portalOptions = [`${_getChallenge2Info()} Runner End Challenge`, `${_getChallenge2Info()} Runner Portal`, `${_getChallenge2Info()} Runner Portal After Voids`];
+				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push(`${_getChallenge2Info()} Portal After Poison Voids`);
+				return portalOptions;
+			},
 			function () {
 				let description = `<p>This setting will decide the action that <b>${_getChallenge2Info()} Runner</b> does when it finishes your current challenge.</p>`;
 				description += `<p><b>${_getChallenge2Info()} Runner End Challenge</b><br> Will end the challenge and continue your run on as normal.</p>`;
@@ -2974,8 +2979,8 @@ function initialiseAllSettings() {
 
 		createSetting('dailyHeliumHrPortal',
 			function () {
-				let hze =game.stats.highestLevel.valueTotal();
-				let portalOptions =['Auto Portal Immediately', 'Portal After Voids'];
+				const hze = game.stats.highestLevel.valueTotal();
+				const portalOptions = ['Auto Portal Immediately', 'Portal After Voids'];
 				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal After Poison Voids');
 				return portalOptions;
 			},
