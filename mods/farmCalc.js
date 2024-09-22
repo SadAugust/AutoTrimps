@@ -687,6 +687,7 @@ function simulate(saveData, zone) {
 	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
 	const specialTime = getSpecialTime(specialData);
 	let cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
+	/* let cacheLoot = specialTime * lootMult; */
 
 	let seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
@@ -1186,7 +1187,7 @@ function farmCalcGetMapDetails() {
 	if (mapOwned) text += `<br><b>Map Name:</b> ${name}`;
 	text += `<br><b>Map Level:</b> ${Math.min(level, game.global.world)}`;
 	if (plusLevel > 0) text += ` (+${plusLevel})`;
-	text += `<br><b>Special:</b> ${special !== '0' ? mapSpecialModifierConfig[special].name : 'None'}`;
+	text += `<br><b>Special:</b> ${special !== undefined && special !== '0' ? mapSpecialModifierConfig[special].name : 'None'}`;
 	text += `<br><b>Biome:</b> ${biome === 'Plentiful' ? 'Gardens' : biome}`;
 	text += `<br><b>Difficulty:</b> ${Math.floor(difficulty * 100)}%`;
 	if (!mapOwned) text += ` (slider: ${sliders.difficulty})`;
