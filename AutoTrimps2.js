@@ -150,7 +150,7 @@ function loadModules(fileName, prefix = '', retries = 3) {
 		script.onerror = script.addEventListener('error', () => {
 			console.log(`Failed to load script ${fileName}. Retries left: ${retries - 1}`);
 			if (retries > 0) {
-				loadScript(url, type, retries - 1)
+				loadModules(fileName, prefix, retries - 1)
 					.then(resolve)
 					.catch(reject);
 			} else {
