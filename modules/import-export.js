@@ -935,7 +935,7 @@ function makeAutomapStatusTooltip(mouseover = false) {
 		tooltipText += `Auto Level: <b>${mapSettings.autoLevel}</b><br>`;
 		if (mapSettings.settingIndex) tooltipText += `Line Run: <b>${mapSettings.settingIndex}</b>${mapSettings.priority ? ` Priority: <b>${mapSettings.priority}</b>` : ``}<br>`;
 		tooltipText += `Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'}</b><br>`;
-		tooltipText += `Wants To Run: ${mapSettings.shouldRun}<br>`;
+		tooltipText += `Wants To Run: ${mapSettings.shouldRun.toString().charAt(0).toUpperCase() + mapSettings.shouldRun.toString().slice(1)}<br>`;
 		tooltipText += `Repeat: ${mapSettings.repeat}`;
 	} else {
 		tooltipText += `Not running`;
