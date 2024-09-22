@@ -42,7 +42,8 @@ function initPresetSurky() {
 		clearWeight: +$$('#clearWeight').value,
 		survivalWeight: +$$('#survivalWeight').value,
 		radonWeight: +$$('#radonWeight').value,
-		...presets
+		...presets,
+		lockedPerks: settingInputs.lockedPerks || undefined
 	};
 }
 
@@ -50,7 +51,7 @@ function saveSurkySettings() {
 	const saveData = initPresetSurky();
 	//Initial setup and saving preset value
 	const settingInputs = { preset: document.querySelector('#preset').value };
-
+	settingInputs.lockedPerks = saveData.lockedPerks || undefined;
 	MODULES.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
 	});

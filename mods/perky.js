@@ -144,7 +144,8 @@ function initPresetPerky() {
 		attackWeight: +$$('#weight-atk').value,
 		healthWeight: +$$('#weight-hp').value,
 		xpWeight: +$$('#weight-xp').value,
-		...presets
+		...presets,
+		lockedPerks: settingInputs.lockedPerks || undefined
 	};
 }
 
@@ -191,6 +192,7 @@ function fillPresetPerky(specificPreset, forceDefault) {
 function savePerkySettings() {
 	const saveData = initPresetPerky();
 	const settingInputs = { preset: document.querySelector('#preset').value };
+	settingInputs.lockedPerks = saveData.lockedPerks || undefined;
 
 	MODULES.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
