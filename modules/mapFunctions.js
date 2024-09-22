@@ -477,9 +477,11 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 }
 
 function _getVoidMapsHeHrSetting(defaultSettings, dailyAddition) {
-	const portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
-	if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return { dontMap: true };
-	if (dailyAddition.skipZone) return { dontMap: true };
+	if (!MODULES.portal.C2afterVoids) {
+		const portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
+		if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return { dontMap: true };
+		if (dailyAddition.skipZone) return { dontMap: true };
+	}
 
 	return {
 		cell: 1,
@@ -492,6 +494,11 @@ function _getVoidMapsHeHrSetting(defaultSettings, dailyAddition) {
 }
 
 function _setVoidMapsInitiator(setting, settingIndex) {
+	if (MODULES.portal.C2afterVoids) {
+		mapSettings.voidTrigger = `Portal After Voids (${_getChallenge2Info()})`;
+		return;
+	}
+
 	if (setting.heHr) {
 		const portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
 		const portalName = autoTrimpSettings.heliumHrPortal.name()[portalSetting];

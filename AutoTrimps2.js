@@ -60,7 +60,7 @@ function shouldUpdate(updateEvery = 2000) {
 function loadScript(url, type = 'text/javascript', retries = 3) {
 	return new Promise((resolve, reject) => {
 		if (retries < 1) {
-			reject(`Failed to load script ${url} after multiple attempts`);
+			reject(`Failed to load script ${url} after 3 attempts`);
 			return;
 		}
 
@@ -87,7 +87,7 @@ function loadScript(url, type = 'text/javascript', retries = 3) {
 function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3) {
 	return new Promise((resolve, reject) => {
 		if (retries < 1) {
-			reject(`Failed to load stylesheet ${url} after multiple attempts`);
+			reject(`Failed to load stylesheet ${url} after 3 attempts`);
 			return;
 		}
 
@@ -122,7 +122,7 @@ function isModuleLoaded(fileName, prefix) {
 }
 
 //Loading modules from basepath that are required for the script to run.
-function loadModules(fileName, prefix = '') {
+function loadModules(fileName, prefix = '', retries = 3) {
 	return new Promise((resolve, reject) => {
 		if (prefix) {
 			if (prefix && isModuleLoaded(fileName, prefix)) {
@@ -147,8 +147,15 @@ function loadModules(fileName, prefix = '') {
 			resolve();
 		});
 
-		script.addEventListener('error', () => {
-			reject(new Error(`Failed to load module: ${fileName} from path: ${prefix || ''}`));
+		script.onerror = script.addEventListener('error', () => {
+			console.log(`Failed to load script ${fileName}. Retries left: ${retries - 1}`);
+			if (retries > 0) {
+				loadScript(url, type, retries - 1)
+					.then(resolve)
+					.catch(reject);
+			} else {
+				reject(new Error(`Failed to load module: ${fileName} from path: ${prefix || ''} after 3 attempts.`));
+			}
 		});
 
 		document.head.appendChild(script);

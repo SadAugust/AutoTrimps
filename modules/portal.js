@@ -3,6 +3,7 @@ MODULES.portal = {
 	bufferExceedFactor: 5,
 	heHrTimeout: null,
 	portalForVoid: false,
+	C2afterVoids: false,
 	portalUniverse: Infinity,
 	forcePortal: false,
 	currentChallenge: 'None',
@@ -227,9 +228,9 @@ function c2RunnerPortal(portalZone) {
 
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
-		if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerEndMode') === 1) {
-			MODULES.portal.forcePortal = true;
-			autoPortal(game.global.world);
+		const endMode = getPageSetting('c2RunnerEndMode');
+		if (getPageSetting('c2RunnerStart') && [1, 2].includes(endMode)) {
+			autoPortalForce(endMode === 2);
 		}
 	}
 }
@@ -667,6 +668,7 @@ function resetVarsZone(loadingSave) {
 
 		MODULES.fightinfo.lastProcessedWorld = 0;
 		MODULES.mapFunctions.afterVoids = false;
+		MODULES.portal.C2afterVoids = false;
 
 		MODULES.portal.currentChallenge = 'None';
 		MODULES.portal.dontPushData = false;
@@ -822,4 +824,22 @@ function _setButtonsPortal() {
 	_setAutoJobsClasses();
 
 	saveSettings();
+}
+
+function autoPortalForce(runVoids = false) {
+	if (!game.global.portalActive) return;
+
+	if (runVoids) {
+		if (game.global.runningChallengeSquared) finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
+		MODULES.portal.C2afterVoids = true;
+		MODULES.mapFunctions.afterVoids = true;
+		mapSettings.portalAfterVoids = true;
+		return;
+	}
+
+	mapSettings.portalAfterVoids = true;
+	MODULES.mapFunctions.afterVoids = true;
+	MODULES.portal.forcePortal = true;
+	game.global.totalVoidMaps = 0;
+	autoPortalCheck(game.global.world);
 }

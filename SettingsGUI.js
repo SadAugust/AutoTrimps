@@ -467,7 +467,7 @@ function initialiseAllSettings() {
 				description += "<p>There's a confirmation window to ensure accidental presses don't ruin your run!</p>";
 				return description;
 			},
-			'infoclick', false,  'cancelTooltip(); autoPortalForce();', 'Core', [0],
+			'infoclick', false,  'cancelTooltip(); importExportTooltip("forceAutoPortal");', 'Core', [0],
 			function () { return (game.global.totalPortals > 0) });
 		let $autoPortalForce = document.getElementById('autoPortalForce');
 		$autoPortalForce.parentNode.style.setProperty('float', 'right');
@@ -2064,10 +2064,13 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 
 		createSetting('c2RunnerEndMode',
-			function () { return ([_getChallenge2Info() + ' Runner End Challenge', _getChallenge2Info() + ' Runner Portal']) },
+			function () { return ([`${_getChallenge2Info()} Runner End Challenge`, `${_getChallenge2Info()} Runner Portal`, `${_getChallenge2Info()} Runner Portal After Voids`]) },
 			function () {
-				let description = "<p>If set to <b>" + _getChallenge2Info() + " Runner Portal</b> this will automatically portal once you reach your " + _getChallenge2Info() + " end zone otherwise it will  end the challenge and continue your run on as normal.</p>";
-				description += "<p><b>Recommended:</b> " + _getChallenge2Info() + " Runner Portal</p>";
+				let description = `<p>This setting will decide the action that <b>${_getChallenge2Info()} Runner</b> does when it finishes your current challenge.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner End Challenge</b><br> Will end the challenge and continue your run on as normal.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner Portal</b><br> Will automatically portal once you reach your ${_getChallenge2Info()} end zone.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner Portal After Voids</b><br> Once you reach your ${_getChallenge2Info()} end zone this will abandon your challenge, then run voids maps and portal afterwards.</p>`;
+				description += `<p><b>Recommended:</b> ${_getChallenge2Info()} Runner Portal</p>`;
 				return description;
 			}, 'multitoggle', 1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });

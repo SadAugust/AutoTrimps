@@ -10,6 +10,7 @@ function importExportTooltip(event, titleText) {
 		/* Import Export Functions */
 		exportAutoTrimps: _displayExportAutoTrimps,
 		importAutoTrimps: _displayImportAutoTrimps,
+		forceAutoPortal: _displayPortalForce,
 		spireImport: _displaySpireImport,
 		priorityOrder: _displayPriorityOrder,
 		c2table: _displayC2Table,
@@ -31,6 +32,7 @@ function importExportTooltip(event, titleText) {
 		/* Import Export Titles */
 		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
 		importAutoTrimps: 'Import AutoTrimps Settings',
+		forceAutoPortal: 'Force Auto Portal',
 		spireImport: 'Import Spire Settings',
 		priorityOrder: 'Priority Order Table',
 		c2table: _getChallenge2Info() + ' Table',
@@ -1011,11 +1013,21 @@ function _displayResetPerkPreset(tooltipDiv) {
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function autoPortalForce() {
+function _displayPortalForce(tooltipDiv) {
 	if (!game.global.portalActive) return;
 
-	const tooltipHeader = `<b>Force Auto Portaling</b>`;
-	const tooltipText = `Are you sure you want to Auto Portal?`;
+	let tooltipText = `<p>Are you sure you want to Auto Portal?</p>`;
+	if (game.global.runningChallengeSquared) tooltipText += `<p>If you select <b>Force Portal After Voids</b> this will abandon your ${_getChallenge2Info()} before running them.</p>`;
 
-	tooltip('confirm', null, 'update', `<b>${tooltipText}`, 'MODULES.portal.forcePortal = true; autoPortalCheck(game.global.world);', `${tooltipHeader}`, 'Force Portal');
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	const ondisplay = function () {
+		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
+		else verticalCenterTooltip(true);
+	};
+
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); autoPortalForce();'>Force Portal</div><div class='btn btn-success' onclick='cancelTooltip(); autoPortalForce(true);'>Force Portal After Voids</div><div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
