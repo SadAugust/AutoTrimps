@@ -309,9 +309,10 @@ function _displayC2Table(tooltipDiv) {
 					${rows.join('')}
 					<tr>
 						<td>Total</td>
-						<td> </td>
+						<td></td>
 						<td>${game.global.totalSquaredReward.toFixed(2)}%</td>
-						<td> </td>
+						<td></td>
+						<td></td>
 						<td></td>
 					</tr>
 				</tbody>
