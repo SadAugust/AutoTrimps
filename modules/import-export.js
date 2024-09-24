@@ -235,7 +235,12 @@ function _displayC2Table(tooltipDiv) {
 		}
 	};
 
-	let challengeList = {};
+	const COLORS = {
+		default: 'DEEPSKYBLUE',
+		high: 'LIMEGREEN',
+		mid: 'GOLD',
+		low: '#de0000'
+	};
 
 	const populateHeaders = (type) => {
 		challengeList[type] = {
@@ -243,40 +248,31 @@ function _displayC2Table(tooltipDiv) {
 			percent: `${type} %`,
 			zone: `Zone`,
 			percentzone: `%HZE`,
-			c2runner: `${type} Runner`,
-			color: 0
+			c2runner: `${type} Runner`
 		};
 	};
 
+	let challengeList = {};
+	const hze = game.stats.highestLevel.valueTotal();
+	const hzeU2 = game.stats.highestRadLevel.valueTotal();
+
 	const processArray = (type, array, runnerList) => {
-		const radLevel = type === 'c3';
-		runList = array || [];
 		if (array.length > 0) populateHeaders(type.toUpperCase());
+		const radLevel = type === 'c3';
+		const colourPercentages = type === 'c2' ? challengePercentages.c2 : challengePercentages.c3;
 		array.forEach((item, index) => {
+			const challengePercent = 100 * (game.c2[item] / (radLevel ? hzeU2 : hze));
+			const [highPct, midPct] = colourPercentages[item] || colourPercentages['Default'];
+
 			challengeList[item] = {
 				number: index + 1,
-				percent: getIndividualSquaredReward(item) + '%',
+				percent: `${getIndividualSquaredReward(item)}%`,
 				zone: game.c2[item],
-				percentzone: (100 * (game.c2[item] / (radLevel ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal()))).toFixed(2) + '%',
+				percentzone: `${challengePercent.toFixed(2)}%`,
 				c2runner: runnerList.includes(item) ? '✅' : '❌',
-				color: 0
+				color: getChallengeColor(challengePercent, highPct, midPct)
 			};
 		});
-	};
-
-	Object.keys(challengeOrders).forEach((type) => {
-		if (type === 'c3' && !Fluffy.checkU2Allowed()) return;
-		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true, true);
-		challenges = filterAndSortChallenges(challenges, 'c2');
-		const array = challengeOrders[type].filter((item) => challenges.includes(item));
-		processArray(type, array, runnerLists[type]);
-	});
-
-	const COLORS = {
-		default: 'DEEPSKYBLUE',
-		high: 'LIMEGREEN',
-		mid: 'GOLD',
-		low: '#de0000'
 	};
 
 	function getChallengeColor(challengePercent, highPct, midPct) {
@@ -286,24 +282,12 @@ function _displayC2Table(tooltipDiv) {
 		return COLORS.default;
 	}
 
-	function updateChallengeColor(challenge, highPct, midPct, highestLevel) {
-		const challengePercent = 100 * (game.c2[challenge] / highestLevel);
-		const color = getChallengeColor(challengePercent, highPct, midPct);
-		challengeList[challenge].color = color;
-	}
-
-	function updateChallengeListColor(challengePct, highestLevel) {
-		Object.keys(challengeList).forEach((challenge) => {
-			if (game.c2[challenge] !== null) {
-				const [highPct, midPct] = challengePct[challenge] || challengePct['Default'];
-				updateChallengeColor(challenge, highPct, midPct, highestLevel);
-			}
-		});
-	}
-
-	Object.keys(challengePercentages).forEach((type) => {
-		const highestLevel = type === 'c2' ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
-		updateChallengeListColor(challengePercentages[type], highestLevel);
+	Object.keys(challengeOrders).forEach((type) => {
+		if (type === 'c3' && !Fluffy.checkU2Allowed()) return;
+		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true, true);
+		challenges = filterAndSortChallenges(challenges, 'c2');
+		const array = challengeOrders[type].filter((item) => challenges.includes(item));
+		processArray(type, array, runnerLists[type]);
 	});
 
 	const createTableRow = (key, { number, percent, zone, color, percentzone, c2runner }) => `
@@ -312,7 +296,7 @@ function _displayC2Table(tooltipDiv) {
 			<td>${number}</td>
 			<td>${percent}</td>
 			<td>${zone}</td>
-			<td bgcolor='black'><font color=${color}>${percentzone}</td>
+			<td${!['C2', 'C3'].includes(key) ? ` bgcolor='black'><font color=${color}>${percentzone}</font>` : `>${percentzone}`}</td>
 			<td>${c2runner}</td>
 		</tr>
 	`;
@@ -337,7 +321,6 @@ function _displayC2Table(tooltipDiv) {
 	};
 
 	let tooltipText = createTable(challengeList);
-
 	if (challengeList.C3) tooltipText = `<div class='litScroll'>${tooltipText}`;
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";

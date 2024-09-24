@@ -2,6 +2,10 @@
 
 -   Implement Time Warp speed slider/buttons to cap speed
 
+-   Unique Maps - Option to disable auto running them
+    -   Fey
+        -   https://discord.com/channels/371177798305447938/371348913036197899/1285859127477928028
+
 # Mapping
 
 # Challenges
