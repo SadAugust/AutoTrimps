@@ -265,6 +265,7 @@ function _displayC2Table(tooltipDiv) {
 	};
 
 	Object.keys(challengeOrders).forEach((type) => {
+		if (type === 'c3' && !Fluffy.checkU2Allowed()) return;
 		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true, true);
 		challenges = filterAndSortChallenges(challenges, 'c2');
 		const array = challengeOrders[type].filter((item) => challenges.includes(item));
@@ -907,7 +908,7 @@ function makeAutomapStatusTooltip(mouseover = false) {
 
 	const mapStacksText = `Will run maps to get up to <i>${mapStacksValue}</i> Map Bonus stacks when World HD Ratio is greater than <i>${prettify(hdFarmValue)}</i>.`;
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy. The enemy health check is based on the highest health enemy in the map/zone.';
-	let hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against the highest damaging enemy in the map/zone${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
+	const hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against the highest damaging enemy in the map/zone${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
 	const hitsSurvivedVoid = prettify(hdStats.hitsSurvivedVoid);
 	const hitsSurvivedSetting = targetHitsSurvived();
