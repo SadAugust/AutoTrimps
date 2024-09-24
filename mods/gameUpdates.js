@@ -5117,7 +5117,7 @@ function updateTalentNumbers() {
 function manageEqualityStacks() {
 	if (game.global.universe !== 2) return;
 	const equality = getPerkLevel('Equality');
-	if (equality === 0) return;
+
 	if (game.portal.Equality.scalingCount < 0) game.portal.Equality.scalingCount = 0;
 	if (game.portal.Equality.scalingCount > equality) game.portal.Equality.scalingCount = equality;
 	const tabElem = document.getElementById('equalityTab');
