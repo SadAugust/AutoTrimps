@@ -120,8 +120,8 @@ function debug(message, messageType, icon) {
 	if (!atSettings.initialise.loaded) return;
 
 	const settingArray = getPageSetting('spamMessages');
-	const canRunTW = ['maps', 'map_Destacking', 'map_Details', 'map_Skip', 'offline', 'challenge', 'debugStats'].includes(messageType);
-	const sendMessage = messageType in settingArray ? settingArray[messageType] : ['challenge', 'offline', 'debugStats'].includes(messageType);
+	const canRunTW = ['maps', 'map_Destacking', 'map_Details', 'map_Skip', 'offline', 'challenge', 'debugStats', 'test'].includes(messageType);
+	const sendMessage = messageType in settingArray ? settingArray[messageType] : ['challenge', 'offline', 'debugStats', 'test'].includes(messageType);
 
 	if (sendMessage || !messageType) {
 		console.log(`${timeStamp()} ${updatePortalTimer(true)} ${message}`);
