@@ -48,6 +48,7 @@ function populateFarmCalcData() {
 		daily: challengeActive('Daily'),
 		trapper: noBreedChallenge(),
 		coordinate: challengeActive('Coordinate'),
+		crushed: challengeActive('Crushed'),
 		nom: challengeActive('Nom'),
 		devastation: challengeActive('Devastation') || challengeActive('Revenge'),
 		domination: challengeActive('Domination'),
@@ -139,12 +140,6 @@ function populateFarmCalcData() {
 		trimpAttack /= frenzyMult;
 	}
 
-	/* Insanity */
-	if (challengesActive.insanity && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
-		trimpHealth /= game.challenges.Insanity.getHealthMult();
-		trimpHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
-	}
-
 	/* Stances */
 	let stances = 'X';
 	if (basicData.universe === 1 && game.upgrades.Formations.done) {
@@ -183,7 +178,8 @@ function populateFarmCalcData() {
 		explosion: 0,
 		rampage: 1,
 		fastEnemy,
-		magma: challengesActive.eradicated || (basicData.universe === 1 && basicData.zone >= 230)
+		magma: challengesActive.eradicated || (basicData.universe === 1 && basicData.zone >= 230),
+		berserkFrenzy: challengesActive.berserk && game.challenges.Berserk.weakened !== 20
 	};
 
 	/* Overkill - Accounts for Mad Mapper in U2. */
@@ -320,6 +316,12 @@ function populateFarmCalcData() {
 		Mayhem: () => {
 			enemyHealthMult *= game.challenges.Mayhem.getEnemyMult();
 			enemyAttackMult *= game.challenges.Mayhem.getEnemyMult();
+		},
+		Insanity: () => {
+			if (challengesActive.insanity && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
+				trimpHealth /= game.challenges.Insanity.getHealthMult();
+				trimpHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
+			}
 		},
 		Berserk: () => {
 			enemyHealthMult *= 1.5;
@@ -574,6 +576,7 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		saveData.block = ['X', 'W'].includes(stance) ? saveData.trimpBlock : saveData.trimpBlock / 2;
 		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
+		if (saveData.crushed) death_stuff.enemy_cd = saveData.health < saveData.block ? 5 : 0;
 
 		let enemyAttack = enemyStats.attack * (1 + saveData.fluctuation) * enemyEqualityModifier;
 		enemyAttack -= saveData.universe === 2 ? saveData.trimpShield : saveData.block;
@@ -736,7 +739,6 @@ function simulate(saveData, zone) {
 			amt = Math.max(0, amt - block);
 		}
 
-		if (saveData.frigid && amt >= saveData.health / 5) amt = saveData.health;
 		trimpHealth = Math.max(0, trimpHealth - amt);
 	}
 
@@ -784,7 +786,11 @@ function simulate(saveData, zone) {
 		frenzyRefresh = false;
 		deaths++;
 
-		if (saveData.shieldBreak || (saveData.glass && glassStacks >= 10000) || saveData.trapper) ticks = maxTicks;
+		if (saveData.shieldBreak || saveData.berserkFrenzy || (saveData.glass && glassStacks >= 10000) || saveData.trapper) {
+			loot = 0;
+			kills = 0;
+			ticks = maxTicks;
+		}
 		//Amp enemy dmg and health by 25% per stack
 		if (saveData.nom && nomStacks < 100) {
 			enemyAttack *= 1.25;

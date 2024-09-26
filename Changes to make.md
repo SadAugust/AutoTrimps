@@ -13,6 +13,7 @@
 # Calc
 
 -   Fix issue with Ice debuff calculations inside Spires
+
     -   Deregate
         -   https://discord.com/channels/371177798305447938/371348913036197899/1168575519864926319
 
