@@ -206,10 +206,11 @@ function populateFarmCalcData() {
 			enemyHealthMult *= 2;
 			enemyAttackMult *= 2.35;
 
-			if (!game.global.mapsActive && !game.global.preMapsActive && runningAutoTrimps) {
+			/* Unsure this is the best solution. Might be better just removing each stack during the mapping process one by one to a cap of X? */
+			if (!game.global.mapsActive && !game.global.preMapsActive) {
 				const balance = game.challenges.Balance;
 				if (balance.balanceStacks < 250) {
-					const timer = atSettings.loops.atTimeLapseFastLoop ? 30 : 5;
+					const timer = runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
 					const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
 
 					const healthMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
@@ -288,6 +289,19 @@ function populateFarmCalcData() {
 		Unbalance: () => {
 			enemyHealthMult *= 2;
 			enemyAttackMult *= 1.5;
+
+			/* Unsure this is the best solution. Might be better just removing each stack during the mapping process one by one to a cap of X? */
+			if (!game.global.mapsActive && !game.global.preMapsActive) {
+				const balance = game.challenges.Unbalance;
+				if (balance.balanceStacks < 250) {
+					const timer = runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
+					const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
+
+					const attackMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
+					trimpAttack /= balance.getAttackMult();
+					trimpAttack *= attackMult;
+				}
+			}
 		},
 		Duel: () => {
 			death_stuff.enemy_cd = 10;
@@ -498,6 +512,11 @@ function stats(lootFunction = lootDefault) {
 
 		if (mapLevel !== 6) {
 			if (stats.length) {
+				if (tmp.value === 0) {
+					stats.shift();
+					continue;
+				}
+
 				let currentBest = get_best([stats, saveData.stances], true);
 				if (tmp.value < 0.6 * currentBest.loot.value) {
 					break;
@@ -667,6 +686,8 @@ function simulate(saveData, zone) {
 	let duelPoints = game.challenges.Duel.trimpStacks;
 	let hasWithered = false;
 	let mayhemPoison = 0;
+	let berserkStacks = game.challenges.Berserk.frenzyStacks;
+	const canFrenzy = saveData.berserkFrenzy && berserkStacks === 0;
 	let glassStacks = game.challenges.Glass.shards;
 
 	let gammaStacks = 0;
@@ -786,7 +807,7 @@ function simulate(saveData, zone) {
 		frenzyRefresh = false;
 		deaths++;
 
-		if (saveData.shieldBreak || saveData.berserkFrenzy || (saveData.glass && glassStacks >= 10000) || saveData.trapper) {
+		if (saveData.shieldBreak || (saveData.berserkFrenzy && berserkStacks > 0) || (saveData.glass && glassStacks >= 10000) || saveData.trapper) {
 			loot = 0;
 			kills = 0;
 			ticks = maxTicks;
