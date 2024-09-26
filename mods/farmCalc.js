@@ -317,12 +317,7 @@ function populateFarmCalcData() {
 			enemyHealthMult *= game.challenges.Mayhem.getEnemyMult();
 			enemyAttackMult *= game.challenges.Mayhem.getEnemyMult();
 		},
-		Insanity: () => {
-			if (challengesActive.insanity && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
-				trimpHealth /= game.challenges.Insanity.getHealthMult();
-				trimpHealth *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
-			}
-		},
+		Insanity: () => {},
 		Berserk: () => {
 			enemyHealthMult *= 1.5;
 			enemyAttackMult *= 1.5;
@@ -577,6 +572,11 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 		if (saveData.crushed) death_stuff.enemy_cd = saveData.health < saveData.block ? 5 : 0;
+
+		if (zone > game.global.world && saveData.insanity && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
+			saveData.health /= game.challenges.Insanity.getHealthMult();
+			saveData.health *= Math.pow(0.99, Math.min(game.challenges.Insanity.insanity + 70, game.challenges.Insanity.maxInsanity));
+		}
 
 		let enemyAttack = enemyStats.attack * (1 + saveData.fluctuation) * enemyEqualityModifier;
 		enemyAttack -= saveData.universe === 2 ? saveData.trimpShield : saveData.block;
