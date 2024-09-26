@@ -41,7 +41,7 @@ function maxOneShotPower(planToMap, targetZone) {
 		//No overkill perk
 		if (game.portal.Overkill.level === 0) return 1;
 		//Mastery
-		if (game.talents.overkill.purchased) power++;
+		if (masteryPurchased('overkill')) power++;
 		//Fluffy
 		const overkiller = Fluffy.isRewardActive('overkiller');
 		if (overkiller) power += overkiller;
@@ -87,8 +87,8 @@ function getAvailableSpecials(special, skipCaches) {
 		}
 	}
 
-	const hyp2Purchased = game.talents.hyperspeed2.purchased;
-	const hypPct = game.talents.liquification3.purchased ? 75 : hyp2Purchased ? 50 : 0;
+	const hyp2Purchased = masteryPurchased('hyperspeed2');
+	const hypPct = masteryPurchased('liquification3') ? 75 : hyp2Purchased ? 50 : 0;
 	const hyp2 = game.global.world <= Math.floor(hze * (hypPct / 100));
 
 	if (!bestMod || (bestMod === 'fa' && hyp2)) bestMod = '0';
@@ -190,7 +190,7 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 		let effectiveBiome = map.name === 'Tricky Paradise' && game.resources.fragments.owned < 600 ? 'Plentiful' : biome;
 		if (map.location !== effectiveBiome && effectiveBiome !== 'Random') continue;
 		if (perfect) {
-			if (map.size > game.talents.mapLoot2.purchased ? 20 : 25) continue;
+			if (map.size > masteryPurchased('mapLoot2') ? 20 : 25) continue;
 			if (map.difficulty > 0.75) continue;
 			if (map.loot > mapLoot) continue;
 		}

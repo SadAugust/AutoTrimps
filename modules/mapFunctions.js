@@ -32,7 +32,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
-			if (aboveMapLevel && !game.talents.bounty.purchased) return true; //Don't bother before z16
+			if (aboveMapLevel && !masteryPurchased('bounty')) return true; //Don't bother before z16
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -110,7 +110,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
-			if (aboveMapLevel && !game.talents.bounty.purchased) return true; // we need Bounty
+			if (aboveMapLevel && !masteryPurchased('bounty')) return true; // we need Bounty
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -318,7 +318,7 @@ function shouldSpeedRun(map, achievement) {
 	if (achievement.finished === achievement.tiers.length) return false;
 
 	let speed = 10 * 0.95 ** getPerkLevel('Agility');
-	speed -= mastery('hyperspeed') + trimpStats.hyperspeed2;
+	speed -= masteryPurchased('hyperspeed') + trimpStats.hyperspeed2;
 	speed += challengeActive('Quagmire') ? game.challenges.Quagmire.getSpeedPenalty() / 100 : 0;
 	speed /= 10;
 
@@ -3736,7 +3736,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	//Setting special to current maps special if we're in a map.
 	if (game.global.mapsActive) mapSpecial = mapObj.bonus === undefined ? 'no special' : mapObj.bonus;
 	if (mapSpecial === '0') mapSpecial = 'no special';
-	if (mapName === 'Bionic Raiding') mapSpecial = game.talents.bionic2.purchased ? 'fa' : 'no special';
+	if (mapName === 'Bionic Raiding') mapSpecial = masteryPurchased('bionic2') ? 'fa' : 'no special';
 
 	const timeMapping = MODULES.maps.mapTimer > 0 ? getZoneSeconds() - MODULES.maps.mapTimer : 0;
 	const currCell = game.global.lastClearedCell + 2;
@@ -3803,7 +3803,7 @@ function fragmentFarm() {
 	//Purchase fragment farming map if we're in map chamber. If you don't have enough fragments for this map then RIP
 	if (!game.global.preMapsActive) return;
 
-	const mapLevel = game.talents.mapLoot.purchased ? -1 : 0;
+	const mapLevel = masteryPurchased('mapLoot') ? -1 : 0;
 	const special = getAvailableSpecials('fa');
 	const biome = getBiome('fragments');
 	let mapCheck = findMap(mapLevel, special, biome);

@@ -40,7 +40,7 @@ function _trimpicide() {
 	if (game.global.universe !== 1 || game.portal.Anticipation.level === 0) return;
 	if (!game.global.fighting || !getPageSetting('forceAbandon')) return;
 
-	const antistacklimit = game.talents.patience.purchased ? 45 : 30;
+	const antistacklimit = masteryPurchased('patience') ? 45 : 30;
 	if (game.global.antiStacks >= antistacklimit) return;
 
 	const mapsActive = game.global.mapsActive;
@@ -211,7 +211,7 @@ function _getGammaMaxStacks(worldType) {
 }
 
 function _getOurHealth(mapping, worldType) {
-	const angelicOwned = game.talents.angelic.purchased;
+	const angelicOwned = masteryPurchased('angelic');
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
 	const runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
@@ -235,7 +235,7 @@ function _adjustFrenzyDamage(damage) {
 function _getBionicTalent() {
 	if (!game.global.mapsActive) return 0;
 
-	const purchased = game.talents.bionic2.purchased;
+	const purchased = masteryPurchased('bionic2');
 	const mapObject = getCurrentMapObject();
 	const mapLevel = mapObject.level;
 	const bionicTalent = purchased && mapLevel > game.global.world ? mapLevel : 0;
@@ -378,7 +378,7 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 		return { useEquality: false, enemyDmgMult };
 	}
 
-	const angelicOwned = game.talents.angelic.purchased;
+	const angelicOwned = masteryPurchased('angelic');
 	const frenzyCanExpire = getPerkLevel('Frenzy') > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.frenzyActive();
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || frenzyCanExpire || dailyEmpower);
 	ourHealth = remainingHealth(shieldBreak, angelicDance, worldType);

@@ -14,7 +14,7 @@ function maxOneShotPower(planToMap = false, targetZone = game.global.world) {
 
 	if (game.global.universe === 1) {
 		if (game.portal.Overkill.level === 0) return 1;
-		if (game.talents.overkill.purchased) power++;
+		if (masteryPurchased('overkill')) power++;
 
 		const overkiller = Fluffy.isRewardActive('overkiller');
 		if (overkiller) power += overkiller;
@@ -294,7 +294,7 @@ function autoStance() {
 
 function voidMapScryer(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	const settingPrefix = trimpStats.isDaily ? 'd' : '';
-	if (game.global.voidBuff && game.talents.scry2.purchased && getPageSetting(`${settingPrefix}scryvoidmaps`)) {
+	if (game.global.voidBuff && masteryPurchased('scry2') && getPageSetting(`${settingPrefix}scryvoidmaps`)) {
 		const useWindStance = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy));
 		safeSetStance(useWindStance ? 'W' : 'S');
 		return true;

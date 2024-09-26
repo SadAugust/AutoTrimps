@@ -12,7 +12,7 @@ function isCorruptionActive(targetZone) {
 	if (game.global.universe === 2) return 9999;
 	if (challengeActive('Eradicated')) return 1;
 	if (challengeActive('Corrupted')) return 60;
-	return targetZone >= (game.talents.headstart.purchased && !game.global.runningChallengeSquared ? (game.talents.headstart2.purchased ? (game.talents.headstart3.purchased ? 151 : 166) : 176) : 181);
+	return targetZone >= (gmasteryPurchased('headstart') && !game.global.runningChallengeSquared ? (masteryPurchased('headstart2') ? (masteryPurchased('headstart3') ? 151 : 166) : 176) : 181);
 }
 
 function isDoingSpire() {
@@ -356,9 +356,9 @@ function checkLiqZoneCount(universe) {
 	}
 
 	let spireCount = game.global.spiresCompleted;
-	if (game.talents.liquification.purchased) spireCount++;
-	if (game.talents.liquification2.purchased) spireCount++;
-	if (game.talents.liquification3.purchased) spireCount += 2;
+	if (masteryPurchased('liquification')) spireCount++;
+	if (masteryPurchased('liquification2')) spireCount++;
+	if (masteryPurchased('liquification3')) spireCount += 2;
 	spireCount += Fluffy.isRewardActive('liquid') * 0.5;
 	const liquidAmount = spireCount / 20;
 

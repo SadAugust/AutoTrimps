@@ -53,7 +53,7 @@ function _autoNatureConversion(nature, empowerment, tokenThreshold, setting) {
 	for (let item in targetNature) {
 		if (!game.empowerments[targetNature[item]]) continue;
 		empowerment.tokens -= 10;
-		const convertRate = game.talents.nature.purchased ? 8 : 5;
+		const convertRate = masteryPurchased('nature') ? 8 : 5;
 		game.empowerments[targetNature[item]].tokens += convertRate;
 		debug(`Converted ${nature} tokens to ${targetNature[item]}`, 'nature');
 		spentTokens = true;

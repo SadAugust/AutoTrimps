@@ -3,15 +3,15 @@ if (typeof MODULES === 'undefined') {
 	MODULES = {};
 }
 
-function mastery(name) {
-	if (!game.talents[name]) throw 'unknown mastery: ' + name;
+function masteryPurchased(name) {
+	if (!game.talents[name]) throw `unknown mastery: ${name}`;
 	return game.talents[name].purchased;
 }
 
 function combatSpeed(hze = getHighestLevelCleared() + 1) {
 	let speed = 10 * 0.95 ** getPerkLevel('Agility');
-	if (mastery('hyperspeed')) --speed;
-	if (mastery('hyperspeed2') && game.global.world <= Math.ceil(hze / 2)) --speed;
+	if (masteryPurchased('hyperspeed')) --speed;
+	if (masteryPurchased('hyperspeed2') && game.global.world <= Math.ceil(hze / 2)) --speed;
 	if (challengeActive('Quagmire')) speed += game.challenges.Quagmire.getSpeedPenalty() / 100;
 
 	return speed;
@@ -21,7 +21,7 @@ function populateFarmCalcData() {
 	const runningAutoTrimps = typeof atSettings !== 'undefined';
 
 	const exoticNames = ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp'];
-	const imps = exoticNames.reduce((total, imp) => total + game.unlocks.imps[imp], 0) + +game.talents.magimp.purchased;
+	const imps = exoticNames.reduce((total, imp) => total + game.unlocks.imps[imp], 0) + +masteryPurchased('magimp');
 
 	let exoticChance = 3;
 	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
@@ -73,7 +73,7 @@ function populateFarmCalcData() {
 	const empowerment = getEmpowerment();
 	const natureData = game.empowerments[empowerment];
 	const natureStart = basicData.universe !== 1 ? 9999 : challengeActive('Eradicated') ? 1 : 236;
-	const diplomacy = mastery('nature2') ? 5 : 0;
+	const diplomacy = masteryPurchased('nature2') ? 5 : 0;
 	const plaguebrought = Fluffy.isRewardActive('plaguebrought') ? 2 : 1;
 	const natureLevel = basicData.zone >= natureStart ? natureData.level + diplomacy : 0;
 
@@ -99,7 +99,7 @@ function populateFarmCalcData() {
 		fragments: game.resources.fragments.owned,
 		perfectMaps: runningAutoTrimps ? trimpStats.perfectMaps && getPageSetting('onlyPerfectMaps') : basicData.universe === 2 ? hze >= 30 : hze >= 110,
 		extraMapLevelsAvailable: basicData.universe === 2 ? hze >= 50 : hze >= 210,
-		mapReducer: game.talents.mapLoot.purchased,
+		mapReducer: masteryPurchased('mapLoot'),
 		biome: _getBiomeEnemyStats(biome),
 		mapBiome: biome,
 		special,
@@ -118,7 +118,7 @@ function populateFarmCalcData() {
 	trimpHealth -= trimpShield;
 
 	/* Anticipation */
-	const antiTime = game.jobs.Amalgamator.owned > 0 ? (game.talents.patience.purchased ? 45 : 30) : breedTimer;
+	const antiTime = game.jobs.Amalgamator.owned > 0 ? (masteryPurchased('patience') ? 45 : 30) : breedTimer;
 	const antiBonus = _getAnticipationBonus();
 	const antiBonusCurr = _getAnticipationBonus(undefined, false, antiTime);
 
@@ -159,7 +159,7 @@ function populateFarmCalcData() {
 	/* Crit */
 	let megaCD = 5;
 	if (Fluffy.isRewardActive('megaCrit')) megaCD += 2;
-	if (mastery('crit')) megaCD += 1;
+	if (masteryPurchased('crit')) megaCD += 1;
 	const critChance = runningAutoTrimps ? getPlayerCritChance_AT(basicData.customShield) : getPlayerCritChance();
 	const critDamage = critChance >= 1 ? megaCD : runningAutoTrimps ? getPlayerCritDamageMult_AT(basicData.customShield) - 1 : getPlayerCritDamageMult() - 1;
 
@@ -394,7 +394,7 @@ function populateFarmCalcData() {
 		ok_spread: overkillRange,
 		overkill: overkillDamage,
 		plaguebringer: (nature.plaguebrought === 2 ? 0.5 : 0) + (runningAutoTrimps ? getHeirloomBonus_AT('Shield', 'plaguebringer', basicData.customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
-		angelic: mastery('angelic'),
+		angelic: masteryPurchased('angelic'),
 		gammaCharges: gammaMaxStacks(false, false, 'map'),
 		gammaMult: (runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult) || 1,
 		equalityMult: basicData.universe === 2 ? (runningAutoTrimps ? getPlayerEqualityMult_AT(basicData.customShield) : game.portal.Equality.getModifier(true)) : 1,
@@ -538,7 +538,7 @@ function lootDestack(zone, saveData) {
 //Return efficiency stats for the given zone
 function zone_stats(zone, saveData, lootFunction = lootDefault) {
 	const mapLevel = zone - saveData.zone;
-	const bionic2Multiplier = mastery('bionic2') && zone > saveData.zone ? 1.5 : 1;
+	const bionic2Multiplier = masteryPurchased('bionic2') && zone > saveData.zone ? 1.5 : 1;
 	let loot = lootFunction(zone, saveData);
 
 	const result = {

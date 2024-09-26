@@ -248,7 +248,7 @@ function _fragmentCheck(highestMap, runUnique) {
 	const mapSpecialMsg = mapSpecial === '0' ? 'no bonus' : mapSpecial;
 	debug(`Can't afford the designed map (level ${mapLevel} ${mapSpecialMsg})`, 'maps', 'th-large');
 	//Runs fragment farming if Explorers are unlocked and can afford a max loot+size sliders map
-	if (!game.jobs.Explorer.locked && mapCost(game.talents.mapLoot.purchased ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) {
+	if (!game.jobs.Explorer.locked && mapCost(masteryPurchased('mapLoot') ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) {
 		fragmentFarm();
 	} //Disable mapping if we don't have a map and can't afford the one that we want to make.
 	else if (highestMap === null) {
@@ -343,7 +343,7 @@ function _checkOwnedMaps() {
 	};
 
 	const runUniques = getPageSetting('autoMaps') === 1 && !_insanityDisableUniqueMaps();
-	const perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
+	const perfSize = masteryPurchased('mapLoot2') ? 20 : 25;
 	const perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 

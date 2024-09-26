@@ -190,8 +190,8 @@ function _buyMagmamancer(jobSettings) {
 	if (game.jobs.Magmamancer.locked || !jobSettings.Magmamancer.enabled) return;
 
 	let timeOnZone = Math.floor((Date.now() - game.global.zoneStarted) / 60000);
-	timeOnZone += game.talents.magmamancer.purchased ? 5 : 0;
-	timeOnZone += game.talents.stillMagmamancer.purchased ? game.global.spireRows : 0;
+	timeOnZone += masteryPurchased('magmamancer') ? 5 : 0;
+	timeOnZone += masteryPurchased('stillMagmamancer') ? game.global.spireRows : 0;
 
 	if (timeOnZone < 10) return;
 

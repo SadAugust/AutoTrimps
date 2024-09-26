@@ -360,7 +360,7 @@ function autoGather() {
 	const needMiner = !Miners.done && !challengeActive('Metal');
 	const needMinerScience = needMiner && game.resources.science.owned < 60;
 	const breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
-	const hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
+	const hasTurkimp = masteryPurchased('turkimp2') || game.global.turkimpTimer > 0;
 	const building = game.global.buildingsQueue[0];
 	const trappingIsRelevant = trapTrimpsOK && (trapperTrapUntilFull || _isTrappingRelevant());
 	const trapWontBeWasted = trapperTrapUntilFull || !_willTrapsBeWasted();

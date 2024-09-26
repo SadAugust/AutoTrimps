@@ -13,6 +13,11 @@ if (typeof $$ !== 'function') {
 	};
 }
 
+function masteryPurchased(name) {
+	if (!game.talents[name]) throw `unknown mastery: ${name}`;
+	return game.talents[name].purchased;
+}
+
 function legalizeInput(settingID) {
 	if (!settingID) return;
 	const element = document.getElementById(settingID);
@@ -43,11 +48,6 @@ function allocatePerky() {
 	document.getElementById('perkImportBox').value = perkString;
 	importPerks();
 	cancelTooltip();
-}
-
-function mastery(name) {
-	if (!game.talents[name]) throw 'unknown mastery: ' + name;
-	return game.talents[name].purchased;
 }
 
 var Perk = /** @class */ (function () {
@@ -226,10 +226,10 @@ function calculateDgPopGain() {
 	const supply = 230 + 2 * Supply.upgrades;
 	const overclock = Overclocker.upgrades && 1 - 0.5 * Math.pow(0.99, Overclocker.upgrades - 1);
 	const burnRate = Slowburn.owned ? 0.4 : 0.5;
-	const cells = mastery('magmaFlow') ? 18 : 16;
-	const acceleration = mastery('quickGen') ? 1.03 : 1.02;
-	const hyperspeed2 = mastery('hyperspeed2') ? game.stats.highestLevel.valueTotal() / 2 : 0;
-	const blacksmith = 0.5 * mastery('blacksmith') + 0.25 * mastery('blacksmith2') + 0.15 * mastery('blacksmith3');
+	const cells = masteryPurchased('magmaFlow') ? 18 : 16;
+	const acceleration = masteryPurchased('quickGen') ? 1.03 : 1.02;
+	const hyperspeed2 = masteryPurchased('hyperspeed2') ? game.stats.highestLevel.valueTotal() / 2 : 0;
+	const blacksmith = 0.5 * masteryPurchased('blacksmith') + 0.25 * masteryPurchased('blacksmith2') + 0.15 * masteryPurchased('blacksmith3');
 	const blacksmithTotal = blacksmith * game.stats.highestLevel.valueTotal();
 	let housing = 0;
 	let fuel = 0;
@@ -268,11 +268,11 @@ function populatePerkyData() {
 
 	// Income
 	const spires = Math.min(Math.floor((zone - 101) / 100), game.global.spiresCompleted);
-	const turkimpTimer = mastery('turkimp2') ? 1 : mastery('turkimp') ? 0.4 : 0.25;
+	const turkimpTimer = masteryPurchased('turkimp2') ? 1 : masteryPurchased('turkimp') ? 0.4 : 0.25;
 	const cache = hze < 60 ? 0 : hze < 85 ? 7 : hze < 160 ? 10 : hze < 185 ? 14 : 20;
 	let prod = 1 + turkimpTimer;
 	let loot = 1 + 0.333 * turkimpTimer;
-	loot *= hze < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
+	loot *= hze < 100 ? 0.7 : 1 + (masteryPurchased('stillRowing') ? 0.3 : 0.2) * spires;
 
 	let chronojest = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp;
 
@@ -281,7 +281,7 @@ function populatePerkyData() {
 		else if (mod[0] === 'metalDrop') loot *= 1 + 0.01 * mod[1];
 	}
 
-	chronojest += (mastery('mapLoot2') ? 5 : 4) * cache;
+	chronojest += (masteryPurchased('mapLoot2') ? 5 : 4) * cache;
 
 	const preset = $$('#preset').value;
 	const result = {
@@ -312,7 +312,7 @@ function populatePerkyData() {
 			chronojest,
 			prod,
 			loot,
-			breed_timer: mastery('patience') ? 45 : 30,
+			breed_timer: masteryPurchased('patience') ? 45 : 30,
 			army_mod: game.resources.trimps.maxMod
 		}
 	};
@@ -551,7 +551,7 @@ function optimize() {
 		attack *= Power.bonus * Power_II.bonus * Relentlessness.bonus;
 		attack *= Siphonology.bonus * Range.bonus * Anticipation.bonus;
 		attack *= fluffy.attack[Capable.level];
-		attack *= mastery('amalg') ? Math.pow(1.5, gatorCount) : 1 + 0.5 * gatorCount;
+		attack *= masteryPurchased('amalg') ? Math.pow(1.5, gatorCount) : 1 + 0.5 * gatorCount;
 		return soldiers() * attack;
 	}
 

@@ -102,7 +102,7 @@ function _calcCurrentStatsDebug() {
 	const equality = game.global.universe === 2 ? Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount) : 1;
 	const enemyMin = calcEnemyAttackCore(worldType, zone, cell, name, true, false, 0) * difficulty;
 	const enemyMax = calcEnemyAttackCore(worldType, zone, cell, name, false, false, 0) * difficulty;
-	const mapLevel = mapping && game.talents.bionic2.purchased ? zone - game.global.world : 0;
+	const mapLevel = mapping && masteryPurchased('bionic2') ? zone - game.global.world : 0;
 	const equalityStackCount = game.global.universe === 2 ? game.portal.Equality.disabledStackCount : false;
 	const isUniverse1 = game.global.universe !== 2;
 

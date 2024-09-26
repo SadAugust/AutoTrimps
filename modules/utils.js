@@ -558,7 +558,7 @@ function printChangelog(changes) {
 
 function updateFluffyRewards() {
 	let calculatedPrestige = Fluffy.getCurrentPrestige();
-	if (game.talents.fluffyAbility.purchased) calculatedPrestige++;
+	if (masteryPurchased('fluffyAbility')) calculatedPrestige++;
 
 	const rewardsList = Fluffy.getRewardList();
 	const prestigeRewardsList = Fluffy.getPrestigeRewardList();

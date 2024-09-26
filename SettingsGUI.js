@@ -1082,7 +1082,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Combat', [1],
-			function () { return (game.talents.scry2.purchased) });
+			function () { return (masteryPurchased('scry2')) });
 
 		createSetting('equalityManagement',
 			function () { return (['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced']) },

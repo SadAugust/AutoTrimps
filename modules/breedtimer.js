@@ -182,7 +182,7 @@ function _shouldRunGeneAssist() {
 }
 
 function _getTargetTimer() {
-	const angelic = mastery('angelic');
+	const angelic = masteryPurchased('angelic');
 	const runningElectricity = challengeActive('Electricity') || challengeActive('Mapocalypse');
 	let runningHard;
 	let target;

@@ -86,7 +86,7 @@ if (typeof Fluffy.originalisRewardActive !== 'function') {
 	Fluffy.originalisRewardActive = Fluffy.isRewardActive;
 	Fluffy.isRewardActive = function () {
 		if (typeof trimpStats !== 'undefined' && typeof trimpStats.fluffyRewards !== 'undefined') {
-			const fluffyLevel = Fluffy.getCurrentPrestige() + (game.talents.fluffyAbility.purchased ? 1 : 0) + Fluffy.currentLevel;
+			const fluffyLevel = Fluffy.getCurrentPrestige() + (masteryPurchased('fluffyAbility') ? 1 : 0) + Fluffy.currentLevel;
 
 			if (trimpStats.fluffyRewards.universe !== game.global.universe || trimpStats.fluffyRewards.level !== fluffyLevel) {
 				trimpStats.fluffyRewards = updateFluffyRewards();
@@ -615,8 +615,8 @@ function getPsValues() {
 
 		if (['food', 'metal', 'wood', 'science'].includes(resource)) {
 			if (game.global.playerGathering === resource) {
-				if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(resource)) {
-					const turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
+				if ((masteryPurchased('turkimp2') || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(resource)) {
+					const turkimpBonus = masteryPurchased('turkimp2') ? 2 : masteryPurchased('turkimp2') ? 1.75 : 1.5;
 					currentCalc *= turkimpBonus;
 				}
 				currentCalc += playerModifier;
@@ -731,9 +731,9 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 	const calcHeirloomBonusFunc = heirloom ? calcHeirloomBonus_AT : calcHeirloomBonus;
 	amt = calcHeirloomBonusFunc('Staff', `${jobName}Speed`, amt, false, heirloom);
 
-	const turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
+	const turkimpBonus = masteryPurchased('turkimp2') ? 2 : 1.5;
 
-	if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(what)) {
+	if ((masteryPurchased('turkimp2') || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(what)) {
 		amt *= turkimpBonus;
 		amt += getPlayerModifier() * seconds;
 	}
@@ -748,7 +748,7 @@ function scaleToCurrentMap_AT(amt, ignoreBonuses, ignoreScry, map) {
 	if (map > compare) {
 		amt *= Math.pow(1.1, map - compare);
 	} else {
-		if (game.talents.mapLoot.purchased) compare--;
+		if (masteryPurchased('mapLoot')) compare--;
 		if (map < compare) {
 			amt *= Math.pow(0.8, compare - map);
 		}
@@ -884,7 +884,7 @@ function getPlayerCritChance_AT(customShield) {
 	let critChance = 0;
 	critChance += game.portal.Relentlessness.modifier * getPerkLevel('Relentlessness');
 	critChance += heirloomValue / 100;
-	if (game.talents.crit.purchased && heirloomValue) critChance += heirloomValue * 0.005;
+	if (masteryPurchased('crit') && heirloomValue) critChance += heirloomValue * 0.005;
 	if (Fluffy.isRewardActive('critChance')) critChance += 0.5 * Fluffy.isRewardActive('critChance');
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critChance += 0.35;
 	if (game.global.universe === 2 && u2Mutations.tree.CritChance.purchased) critChance += 0.25;

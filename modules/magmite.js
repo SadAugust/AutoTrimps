@@ -72,9 +72,9 @@ function miRatio() {
 		carp2: { value: game.portal.Carpentry_II.level },
 		coord: { value: game.portal.Coordinated.level },
 		//misc upgrades
-		randimp: { value: game.talents.magimp.purchased },
-		magmaFlow: { value: game.talents.magmaFlow.purchased ? 18 : 16 },
-		expertGen: { value: game.talents.quickGen.purchased ? 1 : 0 },
+		randimp: { value: masteryPurchased('magimp') },
+		magmaFlow: { value: masteryPurchased('magmaFlow') ? 18 : 16 },
+		expertGen: { value: masteryPurchased('quickGen') ? 1 : 0 },
 		moreImports: { value: game.permaBoneBonuses.exotic.owned },
 		scaffolding: { value: autoBattle.bonuses.Scaffolding.getMult() },
 		//dg upgrades
