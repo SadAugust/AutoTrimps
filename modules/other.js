@@ -12,7 +12,7 @@ function isCorruptionActive(targetZone) {
 	if (game.global.universe === 2) return 9999;
 	if (challengeActive('Eradicated')) return 1;
 	if (challengeActive('Corrupted')) return 60;
-	return targetZone >= (gmasteryPurchased('headstart') && !game.global.runningChallengeSquared ? (masteryPurchased('headstart2') ? (masteryPurchased('headstart3') ? 151 : 166) : 176) : 181);
+	return targetZone >= (masteryPurchased('headstart') && !game.global.runningChallengeSquared ? (masteryPurchased('headstart2') ? (masteryPurchased('headstart3') ? 151 : 166) : 176) : 181);
 }
 
 function isDoingSpire() {
