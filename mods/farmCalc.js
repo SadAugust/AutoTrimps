@@ -34,7 +34,7 @@ function populateFarmCalcData() {
 	const breedTimer = _breedTotalTime();
 
 	const basicData = {
-		maxTicks: runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 21600 : 86400 /* Six hours simulation inside of TW and a day outside of it. */,
+		maxTicks: runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 21600 : 21600 /* Six hours simulation inside of TW and a day (testing 6 hours in both scenarios for now) outside of it. */,
 		hze,
 		universe: game.global.universe,
 		zone: game.global.world,
