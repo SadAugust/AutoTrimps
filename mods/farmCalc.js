@@ -687,7 +687,7 @@ function simulate(saveData, zone) {
 	let hasWithered = false;
 	let mayhemPoison = 0;
 	let berserkStacks = game.challenges.Berserk.frenzyStacks;
-	const canFrenzy = saveData.berserkFrenzy && berserkStacks === 0;
+	let berserkWeakened = game.challenges.Berserk.weakened;
 	let glassStacks = game.challenges.Glass.shards;
 
 	let gammaStacks = 0;
@@ -716,7 +716,6 @@ function simulate(saveData, zone) {
 	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
 	const specialTime = getSpecialTime(specialData);
 	let cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
-	/* let cacheLoot = specialTime * lootMult; */
 
 	let seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
@@ -744,6 +743,7 @@ function simulate(saveData, zone) {
 		const iceValue = saveData.ice;
 		if (iceValue > 0) enemyAttack *= 0.366 ** (ice * iceValue);
 		if (universe === 2 && equality > 0) enemyAttack *= enemyEqualityMult;
+		if (saveData.glass && glassStacks > 0) enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 
 		if (enemyAttack > 0) reduceTrimpHealth(enemyAttack);
 		++debuff_stacks;
@@ -777,6 +777,18 @@ function simulate(saveData, zone) {
 		return duelPoints;
 	}
 
+	function _glassNotOneShot() {
+		glassStacks++;
+
+		if (glassStacks % 100 === 0) {
+			const startHealth = enemy_max_hp;
+			enemy_max_hp = enemy_max_hp * Math.pow(2, Math.floor(glassStacks / 100));
+			const healthChange = enemy_max_hp - startHealth;
+			if (healthChange > 0) enemyHealth += healthChange;
+			if (enemyHealth > enemy_max_hp) enemyHealth = enemy_max_hp;
+		}
+	}
+
 	function armyDead() {
 		if (saveData.shieldBreak) return energyShield <= 0;
 		return trimpHealth <= 0;
@@ -807,12 +819,12 @@ function simulate(saveData, zone) {
 		frenzyRefresh = false;
 		deaths++;
 
-		if (saveData.shieldBreak || (saveData.berserkFrenzy && berserkStacks > 0) || (saveData.glass && glassStacks >= 10000) || saveData.trapper) {
+		if (saveData.shieldBreak || (saveData.berserkFrenzy && berserkStacks > 0) || (saveData.glass && glassStacks > 0 && glassStacks % 1000 === 0) || hasWithered || saveData.trapper) {
 			loot = 0;
 			kills = 0;
 			ticks = maxTicks;
 		}
-		//Amp enemy dmg and health by 25% per stack
+
 		if (saveData.nom && nomStacks < 100) {
 			enemyAttack *= 1.25;
 			enemyHealth = Math.min(enemyHealth + 0.05 * enemy_max_hp, enemy_max_hp);
@@ -830,7 +842,7 @@ function simulate(saveData, zone) {
 		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biome[Math.floor(rngRoll * biome.length)];
 		const fast = saveData.fastEnemy || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
 
-		enemyAttack = imp_stats[0] * mapGrid[cell].attack;
+		const origEnemyAttack = imp_stats[0] * mapGrid[cell].attack;
 		enemyHealth = imp_stats[1] * mapGrid[cell].health;
 		enemy_max_hp = enemyHealth;
 
@@ -848,7 +860,6 @@ function simulate(saveData, zone) {
 		enemyHealth = Math.min(enemyHealth, Math.max(enemy_max_hp * 0.05, enemyHealth - plague_damage));
 		energyShield = energyShieldMax;
 
-		if (saveData.glass) enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 		if (saveData.duel && duelPoints > 80) enemyHealth *= 10;
 
 		while (enemyHealth >= 1 && ticks < maxTicks) {
@@ -858,7 +869,7 @@ function simulate(saveData, zone) {
 			trimpCrit = false;
 			enemyCrit = false;
 
-			//Check if we didn't kill the enemy last turn for Wither & Glass checks
+			/* check if we didn't kill the enemy last turn for Wither & Glass checks */
 			if (enemyHealth !== enemy_max_hp) {
 				oneShot = false;
 
@@ -869,12 +880,6 @@ function simulate(saveData, zone) {
 						trimpHealth = 0;
 					}
 				}
-
-				if (saveData.glass) {
-					enemyAttack /= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
-					glassStacks++;
-					enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
-				}
 			} else {
 				oneShot = true;
 			}
@@ -884,9 +889,9 @@ function simulate(saveData, zone) {
 				if (trimpHealth > saveData.health) trimpHealth = saveData.health;
 			}
 
-			if (fast) enemy_hit(enemyAttack, rngRoll);
+			if (fast) enemy_hit(origEnemyAttack, rngRoll);
 
-			// trimp attack
+			/* trimp attack */
 			if (!armyDead()) {
 				attacked = true;
 				trimpAttack = saveData.atk;
@@ -908,6 +913,7 @@ function simulate(saveData, zone) {
 				enemyHealth -= trimpAttack + poison * saveData.poison;
 				if (saveData.poison) poison += trimpAttack * (saveData.uberNature === 'Poison' ? 2 : 1) * saveData.natureIncrease;
 				if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += trimpAttack * saveData.plaguebringer;
+				if (enemyHealth > 0) _glassNotOneShot();
 				pbTurns++;
 
 				if (checkFrenzy && (frenzyLeft < 0 || (frenzyRefresh && frenzyLeft < saveData.frenzyDuration / 2))) {
@@ -920,7 +926,7 @@ function simulate(saveData, zone) {
 				}
 			}
 
-			if (!fast && enemyHealth >= 1 && !armyDead()) enemy_hit(enemyAttack, rngRoll);
+			if (!fast && enemyHealth >= 1 && !armyDead()) enemy_hit(origEnemyAttack, rngRoll);
 
 			if (saveData.mayhem && mayhemPoison >= 1) trimpHealth -= mayhemPoison;
 
@@ -958,7 +964,7 @@ function simulate(saveData, zone) {
 				deathVarsReset();
 			}
 
-			/* Safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage */
+			/* safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage */
 			if (enemyHealth < 0) ok_spread = saveData.ok_spread;
 			if (turns >= 1000) ticks = Infinity;
 			if (titimp > 0) titimp -= saveData.titimpReduction;
@@ -1010,17 +1016,38 @@ function simulate(saveData, zone) {
 		}
 
 		if (saveData.glass) {
-			if (zone >= saveData.zone) glassStacks -= 2;
+			if (zone >= saveData.zone) glassStacks -= 2; /* overkill removes multiple stacks */
 			glassStacks = Math.max(0, glassStacks);
-		}
-
-		if (saveData.berserk) {
-			trimpHealth += saveData.health / 100;
-			if (trimpHealth > saveData.health) trimpHealth = saveData.health;
 		}
 
 		++cell;
 		++kills;
+
+		if (saveData.berserkFrenzy && turns !== 0) {
+			if (berserkStacks === 0) {
+				if (rngRoll < 0.05) {
+					berserkStacks++;
+					saveData.atk *= 1.5;
+					const oldBonus = 1 - berserkWeakened * 0.0499;
+					const newBonus = 1 - berserkStacks * 0.02;
+					saveData.health *= newBonus / oldBonus;
+
+					if (trimpHealth > saveData.health) trimpHealth = saveData.health;
+				}
+			} else if (berserkStacks > 0 && berserkStacks < 25) {
+				saveData.atk /= 1 + berserkStacks * 0.5;
+				const oldBonus = 1 - berserkStacks * 0.02;
+				berserkStacks++;
+				saveData.atk *= 1 + berserkStacks * 0.5;
+				const newBonus = 1 - berserkStacks * 0.02;
+				saveData.health *= newBonus / oldBonus;
+			}
+
+			if (berserkStacks > 0) {
+				trimpHealth += saveData.health / 100;
+				if (trimpHealth > saveData.health) trimpHealth = saveData.health;
+			}
+		}
 
 		if (cell >= size) {
 			cell = 0;
