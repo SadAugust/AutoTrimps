@@ -695,6 +695,7 @@ function simulate(saveData, zone) {
 	let frenzyLeft = 0;
 
 	let enemy_max_hp = 0;
+	let enemyAttack = 0;
 	let trimpCrit = false;
 	let enemyCrit = false;
 	let enemyCC = 0.25;
@@ -730,6 +731,7 @@ function simulate(saveData, zone) {
 
 	function enemy_hit(enemyAttack, rngRoll) {
 		enemyAttack *= 1 + saveData.fluctuation * (2 * rngRoll - 1);
+
 		if (saveData.duel) {
 			enemyCC = 1 - duelPoints / 100;
 			if (duelPoints < 50) enemyAttack *= 3;
@@ -747,6 +749,8 @@ function simulate(saveData, zone) {
 
 		if (enemyAttack > 0) reduceTrimpHealth(enemyAttack);
 		++debuff_stacks;
+
+		return enemyAttack;
 	}
 
 	function reduceTrimpHealth(amt) {
@@ -842,7 +846,7 @@ function simulate(saveData, zone) {
 		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biome[Math.floor(rngRoll * biome.length)];
 		const fast = saveData.fastEnemy || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
 
-		const origEnemyAttack = imp_stats[0] * mapGrid[cell].attack;
+		enemyAttack = imp_stats[0] * mapGrid[cell].attack;
 		enemyHealth = imp_stats[1] * mapGrid[cell].health;
 		enemy_max_hp = enemyHealth;
 
@@ -851,6 +855,7 @@ function simulate(saveData, zone) {
 		let pbTurns = 0;
 		let plague_damage = 0;
 		let oneShot = true;
+		let enemyAttackTemp = enemyAttack;
 
 		if (ok_spread !== 0) {
 			enemyHealth -= ok_damage;
@@ -889,7 +894,9 @@ function simulate(saveData, zone) {
 				if (trimpHealth > saveData.health) trimpHealth = saveData.health;
 			}
 
-			if (fast) enemy_hit(origEnemyAttack, rngRoll);
+			if (fast) {
+				enemyAttackTemp = enemy_hit(enemyAttack, rngRoll);
+			}
 
 			/* trimp attack */
 			if (!armyDead()) {
@@ -926,7 +933,9 @@ function simulate(saveData, zone) {
 				}
 			}
 
-			if (!fast && enemyHealth >= 1 && !armyDead()) enemy_hit(origEnemyAttack, rngRoll);
+			if (!fast && enemyHealth >= 1 && !armyDead()) {
+				enemyAttackTemp = enemy_hit(enemyAttack, rngRoll);
+			}
 
 			if (saveData.mayhem && mayhemPoison >= 1) trimpHealth -= mayhemPoison;
 
@@ -972,7 +981,7 @@ function simulate(saveData, zone) {
 		}
 
 		if (saveData.explosion && (saveData.explosion <= 15 || (block >= saveData.health && universe !== 2))) {
-			trimpHealth -= Math.max(0, saveData.explosion * enemyAttack - block);
+			trimpHealth -= Math.max(0, saveData.explosion * Math.max(0, enemyAttackTemp) - block);
 
 			if (armyDead()) {
 				deathVarsReset();
