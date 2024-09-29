@@ -23,7 +23,7 @@ if (typeof originalLoad !== 'function') {
 			loadAugustSettings();
 			atlantrimpRespecOverride();
 			resetVarsZone(true);
-			if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
+			if (typeof MODULES.style.themeChanged === 'function') MODULES.style.themeChanged();
 			_setButtonsPortal();
 			updateAutoTrimpSettings(true);
 			MODULES.autoPerks.displayGUI();
@@ -250,7 +250,7 @@ if (typeof originalActivateClicked !== 'function') {
 	activateClicked = function () {
 		if (!game.global.viewingUpgrades) {
 			downloadSave(true);
-			if (typeof pushData === 'function') pushData();
+			if (typeof Graphs !== 'undefined' && typeof Graphs.Push !== 'undefined' && typeof Graphs.Push.zoneData === 'function') Graphs.Push.zoneData();
 			if (!MODULES.portal.dontPushData) pushSpreadsheetData();
 			autoUpgradeHeirlooms();
 			autoHeirlooms(true);

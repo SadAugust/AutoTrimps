@@ -2556,7 +2556,7 @@ function abandonChallengeResetEnemy() {
 
 function abandonChallenge(restart) {
 	/* Temp inclusion for graphs to still track this the way Quia intends if this file is loaded after graphs is. */
-	if (typeof pushData === 'function') pushData(true);
+	if (typeof Graphs !== 'undefined' && typeof Graphs.Push !== 'undefined' && typeof Graphs.Push.zoneData === 'function') Graphs.Push.zoneData();
 
 	let challengeName = game.global.challengeActive;
 	let challenge = game.challenges[challengeName];

@@ -452,7 +452,7 @@ function resetAutoTrimps(autoTrimpsSettings) {
 		localStorage.heirloomInputs = autoTrimpSettings.autoHeirloomStorage.value;
 		localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
 		loadAugustSettings();
-		if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
+		if (typeof MODULES.style.themeChanged === 'function') MODULES.style.themeChanged();
 
 		//Remove the localStorage entries if they are empty and rebuild the GUI to initialise base settings
 		if (Object.keys(JSON.parse(localStorage.getItem('perkyInputs'))).length === 1) delete localStorage.perkyInputs;
@@ -703,7 +703,7 @@ function loadAugustSettings() {
 		if (setting.onToggle) setting.onToggle();
 	}
 
-	if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
+	if (typeof MODULES.style.themeChanged === 'function') MODULES.style.themeChanged();
 }
 
 //Process data to google forms to update stats spreadsheet

@@ -320,7 +320,7 @@ function _autoPortalVoidTracker() {
 	}
 
 	downloadSave();
-	if (typeof pushData === 'function') pushData();
+	if (typeof Graphs !== 'undefined' && typeof Graphs.Push !== 'undefined' && typeof Graphs.Push.zoneData === 'function') Graphs.Push.zoneData();
 	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
 	autoUpgradeHeirlooms();
 
@@ -513,7 +513,7 @@ function _autoPortalActivate(challenge) {
 
 	//Download save, push graphs data, push to spreadsheet for select users, activate portal, reset vars, and load mutators if necessary.
 	downloadSave();
-	if (typeof pushData === 'function') pushData();
+	if (typeof Graphs !== 'undefined' && typeof Graphs.Push !== 'undefined' && typeof Graphs.Push.zoneData === 'function') Graphs.Push.zoneData();
 	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
 	autoUpgradeHeirlooms();
 	activatePortal();
