@@ -709,7 +709,7 @@ function loadAugustSettings() {
 //Process data to google forms to update stats spreadsheet
 function pushSpreadsheetData() {
 	if (!portalWindowOpen || !gameUserCheck(true)) return;
-	const graphData = JSON.parse(localStorage.getItem('portalDataCurrent'))[getportalID()];
+	const graphData = JSON.parse(localStorage.getItem('portalDataCurrent'))[Graphs.getportalID()];
 
 	const fluffy_EvoLevel = {
 		cap: game.portal.Capable.level,

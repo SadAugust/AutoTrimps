@@ -591,7 +591,7 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		saveData.block = ['X', 'W'].includes(stance) ? saveData.trimpBlock : saveData.trimpBlock / 2;
 		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
-		if (saveData.crushed) death_stuff.enemy_cd = saveData.health < saveData.block ? 5 : 0;
+		if (saveData.crushed) saveData.enemy_cd = saveData.health < saveData.block ? 5 : 0;
 
 		if (zone > game.global.world && saveData.insanity && game.challenges.Insanity.insanity !== game.challenges.Insanity.maxInsanity) {
 			saveData.health /= game.challenges.Insanity.getHealthMult();
