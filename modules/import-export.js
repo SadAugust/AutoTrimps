@@ -57,11 +57,15 @@ function importExportTooltip(event, titleText) {
 	}
 
 	if (event) {
+		const tipText = document.getElementById('tipText');
+		const tipTitle = document.getElementById('tipTitle');
+		const tipCost = document.getElementById('tipCost');
+
 		game.global.lockTooltip = true;
-		document.getElementById('tipText').className = '';
-		document.getElementById('tipText').innerHTML = tooltipText;
-		document.getElementById('tipTitle').innerHTML = titleText;
-		document.getElementById('tipCost').innerHTML = costText;
+		if (tipText.className !== '') tipText.className = '';
+		if (tipText.innerHTML !== tooltipText) tipText.innerHTML = tooltipText;
+		if (tipTitle.innerHTML !== titleText) tipTitle.innerHTML = titleText;
+		if (tipCost.innerHTML !== costText) tipCost.innerHTML = costText;
 		tooltipDiv.style.display = 'block';
 		if (typeof ondisplay === 'function') ondisplay();
 	}
