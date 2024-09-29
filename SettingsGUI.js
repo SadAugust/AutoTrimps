@@ -4428,7 +4428,7 @@ function initialiseAllSettings() {
 			function () { return (_getPrimaryResourceInfo().name + ' Per Hour') },
 			function () {
 				let description = "<p>Will display the " + _getPrimaryResourceInfo().name + "/Hr tooltip message.</p>";
-				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + _getPrimaryResourceInfo().name + " Per Hour Status</b> option inside the <b>Hide Auto Buttons</b> in the <b>Display</b> tab is enabled.</p>";
+				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + _getPrimaryResourceInfo().name + " Per Hour Status</b> option inside the <b>Hide Auto Buttons</b> setting in the <b>Display</b> tab is enabled.</p>";
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeResourceTooltip();', 'Help', [0]);
 		createSetting('helpAutoPortal',
@@ -4940,13 +4940,14 @@ function autoToggle(what) {
 
 function updateAutoTrimpSettings(forceUpdate) {
 	const isGraphModuleDefined = typeof MODULES.graphs !== 'undefined';
-	const isLastThemeDefined = typeof lastTheme !== 'undefined';
-	const hasThemeChanged = isLastThemeDefined && game.options.menu.darkTheme.enabled !== lastTheme;
+	const isLastThemeDefined = isGraphModuleDefined && typeof MODULES.graphs._lastTheme !== 'undefined';
+	const hasThemeChanged = isLastThemeDefined && game.options.menu.darkTheme.enabled !== MODULES.graphs._lastTheme;
 
 	if (isGraphModuleDefined && hasThemeChanged) {
-		MODULES['graphs'].themeChanged();
-		lastTheme = game.options.menu.darkTheme.enabled;
+		MODULES.graphs.themeChanged();
+		MODULES.graphs._lastTheme = game.options.menu.darkTheme.enabled;
 	}
+
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 
 	for (let setting in autoTrimpSettings) {
