@@ -309,7 +309,7 @@ function populateFarmCalcData() {
 		},
 		Wither: () => {
 			enemyHealthMult *= game.challenges.Wither.getTrimpHealthMult();
-			enemyAttackMult *= game.challenges.Wither.getenemyAttackMultMult();
+			enemyAttackMult *= game.challenges.Wither.getenemyAttackMult();
 		},
 		Quest: () => {
 			enemyHealthMult *= game.challenges.Quest.getHealthMult();
