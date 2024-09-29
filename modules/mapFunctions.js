@@ -3483,26 +3483,28 @@ function _reduceMapSlidersInsanity() {
 	if (updateMapCost(true) > fragmentsOwned) document.getElementById('advSpecialSelect').value = 0;
 }
 
-function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome = getBiome(), sliders = [9, 9, 9], perfect = true) {
+function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome = getBiome(), sliders = [9, 9, 9], perfect = true, keepPerfect = false) {
 	const fragmentsOwned = game.resources.fragments.owned;
 	mapLevel = mapLevel - game.global.world;
 
-	//Gradually reduce map sliders if not using frag max setting!
-	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) perfect = false;
-	//Reduce map difficulty
-	while (sliders[2] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[2] -= 1;
-	//Reduce map loot
-	while (sliders[0] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[0] -= 1;
+	if (!keepPerfect) {
+		//Gradually reduce map sliders if not using frag max setting!
+		if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) perfect = false;
+		//Reduce map difficulty
+		while (sliders[2] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[2] -= 1;
+		//Reduce map loot
+		while (sliders[0] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[0] -= 1;
 
-	if (!trimpStats.mountainPriority && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) biome = 'Random';
-	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) special = '0';
+		if (!trimpStats.mountainPriority && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) biome = 'Random';
+		if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) special = '0';
 
-	//Reduce map size
-	while (sliders[1] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[1] -= 1;
+		//Reduce map size
+		while (sliders[1] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[1] -= 1;
 
-	if (special !== '0' && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) special = '0';
-	if (biome !== 'Random' && trimpStats.mountainPriority && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) {
-		biome = 'Random';
+		if (special !== '0' && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) special = '0';
+		if (biome !== 'Random' && trimpStats.mountainPriority && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) {
+			biome = 'Random';
+		}
 	}
 
 	const lootValues = getMapMinMax('loot', sliders[0])[perfect ? 1 : 0];

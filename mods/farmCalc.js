@@ -309,7 +309,7 @@ function populateFarmCalcData() {
 		},
 		Wither: () => {
 			enemyHealthMult *= game.challenges.Wither.getTrimpHealthMult();
-			enemyAttackMult *= game.challenges.Wither.getenemyAttackMult();
+			enemyAttackMult *= game.challenges.Wither.getEnemyAttackMult();
 		},
 		Quest: () => {
 			enemyHealthMult *= game.challenges.Quest.getHealthMult();
@@ -448,6 +448,7 @@ function stats(lootFunction = lootDefault) {
 	let extra = saveData.extraMapLevelsAvailable ? 10 : saveData.mapReducer && saveData.zone > 6 ? -1 : 0;
 	let coords = 1;
 	const stances = saveData.stances;
+	const alwaysPerfect = typeof atSettings !== 'undefined' && getPageSetting('onlyPerfectMaps');
 
 	if (saveData.coordinate) {
 		for (let z = 1; z < saveData.zone + extra + 1; ++z) {
@@ -462,7 +463,7 @@ function stats(lootFunction = lootDefault) {
 			saveData.enemyHealthMult = coords;
 		}
 
-		const simulateMap = _simulateSliders(mapLevel, saveData.special, saveData.mapBiome);
+		const simulateMap = _simulateSliders(mapLevel, saveData.special, saveData.mapBiome, [9, 9, 9], saveData.perfectMaps, alwaysPerfect);
 		let map;
 		let mapOwned = findMap(mapLevel - game.global.world, saveData.special, saveData.mapBiome);
 		if (!mapOwned) mapOwned = findMap(mapLevel - game.global.world, simulateMap.special, simulateMap.location, simulateMap.perfect);
