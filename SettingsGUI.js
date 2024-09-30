@@ -4939,13 +4939,6 @@ function autoToggle(what) {
 }
 
 function updateAutoTrimpSettings(forceUpdate) {
-	const isStyleDefined = typeof MODULES.style !== 'undefined';
-	const hasThemeChanged = game.options.menu.darkTheme.enabled !== MODULES.style.lastTheme;
-
-	if (isStyleDefined && hasThemeChanged) {
-		MODULES.style.themeChanged();
-	}
-
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 
 	for (let setting in autoTrimpSettings) {
@@ -5615,20 +5608,3 @@ function _setAutoJobsClasses() {
 		}
 	});
 }
-
-MODULES.style.themeChanged = function () {
-	if (!game || MODULES.style.lastTheme === game.options.menu.darkTheme.enabled) {
-		return;
-	}
-
-	const isDarkThemeEnabled = game.options.menu.darkTheme.enabled === 2;
-
-	function setColor(elem) {
-		elem.style.color = isDarkThemeEnabled ? '' : 'black';
-	}
-
-	const elements = [...document.getElementsByTagName('input'), ...document.getElementsByTagName('select')];
-
-	elements.forEach(setColor);
-	MODULES.style.lastTheme = game.options.menu.darkTheme.enabled;
-};
