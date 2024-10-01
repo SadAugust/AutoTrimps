@@ -444,6 +444,7 @@ function resetAutoTrimps(autoTrimpsSettings) {
 		saveSettings();
 		updateATVersion();
 		_setButtonsPortal();
+		setupAddonUser(true);
 		updateAutoTrimpSettings(true);
 		saveSettings();
 

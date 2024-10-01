@@ -25,6 +25,7 @@ if (typeof originalLoad !== 'function') {
 			resetVarsZone(true);
 			if (typeof MODULES.style.themeChanged === 'function') MODULES.style.themeChanged();
 			_setButtonsPortal();
+			setupAddonUser();
 			updateAutoTrimpSettings(true);
 			MODULES.autoPerks.displayGUI();
 		} catch (e) {
@@ -125,14 +126,6 @@ if (typeof offlineProgress.originalStart !== 'function') {
 			console.log('Loading Time Warp failed ' + e, 'other');
 		}
 	};
-}
-
-function buildingsQueueReset() {
-	document.getElementById('queueItemsHere').innerHTML = '';
-	for (let item in game.global.buildingsQueue) {
-		addQueueItem(game.global.buildingsQueue[item]);
-	}
-	game.global.nextQueueId = game.global.buildingsQueue.length;
 }
 
 //Try to restart TW once it finishes to ensure we don't miss out on time spent running TW.
@@ -236,6 +229,14 @@ function timeWarpLoop(firstLoop = false) {
 	}
 }
 
+function buildingsQueueReset() {
+	document.getElementById('queueItemsHere').innerHTML = '';
+	for (let item in game.global.buildingsQueue) {
+		addQueueItem(game.global.buildingsQueue[item]);
+	}
+	game.global.nextQueueId = game.global.buildingsQueue.length;
+}
+
 if (typeof originalrunMap !== 'function') {
 	var originalrunMap = runMap;
 	runMap = function () {
@@ -262,6 +263,7 @@ if (typeof originalActivateClicked !== 'function') {
 		if (!game.global.viewingUpgrades) {
 			resetVarsZone(true);
 			_setButtonsPortal();
+			setupAddonUser(true);
 			hideAutomationButtons();
 			if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 				loadMutations(preset);

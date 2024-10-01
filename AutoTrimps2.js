@@ -241,6 +241,7 @@ function initialiseScript() {
 	MODULES.autoPerks.displayGUI(portalUniverse);
 	loadAugustSettings();
 	_setupATButtons();
+	setupAddonUser();
 	updateShieldData();
 
 	if (_getTargetWorldType() === 'void' && !hdStats.hitsSurvivedVoid) {
@@ -470,6 +471,7 @@ function _handleNewWorld() {
 		hideAutomationButtons();
 		if (!game.upgrades.Battle.done) {
 			_setButtonsPortal();
+			setupAddonUser();
 		}
 	}
 

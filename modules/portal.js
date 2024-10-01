@@ -519,6 +519,7 @@ function _autoPortalActivate(challenge) {
 	activatePortal();
 	resetVarsZone(true);
 	_setButtonsPortal();
+	setupAddonUser(true);
 
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 		loadMutations(preset);

@@ -1027,9 +1027,16 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 			ourBaseDamage *= masteryPurchased('mapBattery') ? 5 : 3;
 		}
 
-		if (game.global.universe === 2 && getPerkLevel('Tenacity') > 0 && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness')))) {
-			ourBaseDamage /= game.portal.Tenacity.getMult();
-			ourBaseDamage *= Math.pow(1.4000000000000001, getPerkLevel('Tenacity') + getPerkLevel('Masterfulness'));
+		const tenacityLevel = getPerkLevel('Tenacity');
+
+		if (game.global.universe === 2 && tenacityLevel > 0) {
+			const tenacityMult = game.portal.Tenacity.getMult();
+			const tenacityMaxMult = Math.pow(1.4000000000000001, tenacityLevel + getPerkLevel('Masterfulness'));
+
+			if (tenacityMult !== tenacityMaxMult) {
+				ourBaseDamage /= tenacityMult;
+				ourBaseDamage *= tenacityMaxMult;
+			}
 		}
 	}
 
@@ -1265,6 +1272,21 @@ function gammaMaxStacks(specialChall, actualCheck = true, worldType = 'world') {
 	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
 	if (Fluffy.isRewardActive('scruffBurst')) gammaMaxStacks--;
 	return gammaMaxStacks;
+}
+
+function coordinateCanOneShot() {
+	const enemy = getCurrentEnemy();
+	if (!enemy) return false;
+
+	const enemyHealth = enemy.health;
+	const worldType = _getWorldType();
+	const targetZone = _getZone(worldType);
+	const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
+	const formation = formationLetter[game.global.formation];
+	let ourBaseDamage = calcOurDmg('min', formation, true, worldType, 'never', targetZone - game.global.world, game.global.titimpLeft > 0);
+	if (getEmpowerment() === 'Poison') ourBaseDamage += game.empowerments.Poison.getDamage();
+
+	return ourBaseDamage >= enemyHealth;
 }
 
 function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCell, worldType = 'world', difficulty = 1, farmType = 'gamma', forceOK, hits, hdCheck) {
