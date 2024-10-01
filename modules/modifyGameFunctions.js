@@ -132,33 +132,24 @@ if (typeof offlineProgress.originalStart !== 'function') {
 if (typeof offlineProgress.originalFinish !== 'function') {
 	offlineProgress.originalFinish = offlineProgress.finish;
 	offlineProgress.finish = function () {
-		const oneDayInSeconds = 86400;
-		const currentTime = new Date().getTime();
-		const { startTime, maxTicks } = offlineProgress;
-		const totalOfflineTime = offlineProgress.totalOfflineTime / 1000;
+		const { startTime, totalOfflineTime, maxTicks } = offlineProgress;
+		let timeRun = 0;
 
-		/* Can't remember why this exists. Future me can figure it out. */
-		if (totalOfflineTime / 1000 > oneDayInSeconds && Math.abs(startTime - currentTime) <= 500) {
-			return;
-		}
+		/* arguments[0] force ends the loop when loading saves */
+		if (startTime > 0 && !arguments[0] && !game.options.menu.pauseGame.enabled) {
+			const currentTime = new Date().getTime();
+			const totalOfflineTime = offlineProgress.totalOfflineTime / 1000;
+			const oneDayInSeconds = 86400;
 
-		/* Identify remaining TimeWarp time */
-		const offlineTime = arguments[0] ? 0 : Math.max(0, totalOfflineTime - oneDayInSeconds);
-		let timeRun = arguments[0] ? 0 : Math.max(0, (currentTime - startTime) / 1000);
-		timeRun += offlineTime;
-		if (startTime <= 0 || game.options.menu.pauseGame.enabled) timeRun = 0;
+			/* Do not end Time Warp if it's been under 1s since you last pressed the finish button. */
+			if (totalOfflineTime > oneDayInSeconds && Math.abs(startTime - currentTime) <= 1000) {
+				return;
+			}
 
-		if (totalOfflineTime > oneDayInSeconds && timeRun > totalOfflineTime) {
-			const description = `<p>A Time Warp duration issue has occurred. I've hopefully reset it to the correct value but please report this!</p>
-				<p>Offline Time: ${offlineTime} seconds
-				<br>Time Run: ${timeRun} seconds
-				<br>Current Time: ${currentTime}
-				<br>Start Time: ${startTime}</p>`;
-			console.error(description);
-			debug(description, 'offline');
-			tooltip('confirm', null, 'lock', description + '<p>Please report these values to me in the #trimp_tools channel of the <a href="https://discord.gg/trimps" target="_blank">Trimps discord!</a></p>', 'center', 'Time Warp Issue');
-			_verticalCenterTooltip(true);
-			timeRun = offlineTime;
+			/* Identify remaining Time Warp time */
+			const offlineTime = Math.max(0, totalOfflineTime - oneDayInSeconds);
+			timeRun = offlineTime + Math.max(0, (currentTime - startTime) / 1000);
+			timeRun = Math.min(timeRun, oneDayInSeconds * 365); /* Cap Time Warp time at 1 year */
 		}
 
 		if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
@@ -189,10 +180,12 @@ if (typeof offlineProgress.originalFinish !== 'function') {
 }
 
 function timeWarpLoop(firstLoop = false) {
+	const now = new Date().getTime();
+
 	if (firstLoop) {
 		atSettings.timeWarp.nextUpdate = Math.floor(offlineProgress.ticksProcessed / 1000) * 1000;
 		atSettings.timeWarp.loopCount = offlineProgress.ticksProcessed;
-		offlineProgress.lastLoop = new Date().getTime();
+		offlineProgress.lastLoop = now;
 	}
 
 	atSettings.timeWarp.loopCount += atSettings.timeWarp.loopTicks;
@@ -209,7 +202,6 @@ function timeWarpLoop(firstLoop = false) {
 		offlineProgress.ticksProcessed++;
 	}
 
-	const now = new Date().getTime();
 	const timeSpent = now - offlineProgress.lastLoop;
 
 	if (timeSpent < 175) {
@@ -231,9 +223,11 @@ function timeWarpLoop(firstLoop = false) {
 
 function buildingsQueueReset() {
 	document.getElementById('queueItemsHere').innerHTML = '';
+
 	for (let item in game.global.buildingsQueue) {
 		addQueueItem(game.global.buildingsQueue[item]);
 	}
+
 	game.global.nextQueueId = game.global.buildingsQueue.length;
 }
 
