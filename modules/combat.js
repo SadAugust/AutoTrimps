@@ -360,6 +360,7 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 	if (enemyDmgMin >= ourHealth) shouldSuicide = true;
 
 	if ((shieldBreak || dailyEmpower) && enemyDmgMax >= ourHealth) shouldSuicide = true;
+	if (game.global.armyAttackCount === 0) shouldSuicide = false;
 	if (!shouldSuicide) return { ourHealth, enemyDmgMult };
 
 	const mapObject = mapping ? getCurrentMapObject() : null;
@@ -373,17 +374,10 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 	} else if (mappingButDieAnyway) {
 		suicideTrimps(true);
 		runMap(false);
-	} else {
-		_setEquality(0);
-		return { useEquality: false, enemyDmgMult };
 	}
 
-	const angelicOwned = masteryPurchased('angelic');
-	const frenzyCanExpire = getPerkLevel('Frenzy') > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.frenzyActive();
-	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || frenzyCanExpire || dailyEmpower);
-	ourHealth = remainingHealth(shieldBreak, angelicDance, worldType);
-
-	return { ourHealth, enemyDmgMult };
+	_setEquality(0);
+	return { useEquality: false, enemyDmgMult };
 }
 
 function _shouldPBSwap(mapping, enemy, fastEnemy) {
