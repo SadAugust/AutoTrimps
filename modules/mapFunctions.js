@@ -565,7 +565,7 @@ function _runVoidMaps(setting, mapName, settingIndex, defaultSettings, farmingDe
 		resetMapVars();
 		if (mapSettings.portalAfterVoids) {
 			const heHrSettings = ['Helium Per Hour', 'Radon Per Hour', '1'];
-			let portalType = getPageSetting('autoPortal', game.global.universe);
+			const portalType = getPageSetting('autoPortal', game.global.universe);
 			if (heHrSettings.includes(portalType)) MODULES.mapFunctions.afterVoids = true;
 			autoPortalCheck(game.global.world);
 		}
@@ -628,8 +628,8 @@ function _findSettingsIndexMapBonus(settingName, baseSettings) {
 	if (!baseSettings[0].active) return settingIndex;
 
 	for (let y = 1; y < baseSettings.length; y++) {
-		let currSetting = baseSettings[y];
-		let world = currSetting.world;
+		const currSetting = baseSettings[y];
+		const world = currSetting.world;
 		if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
 		if (shouldSkipSetting(currSetting, world, settingName)) continue;
 		settingIndex = y;
@@ -1322,10 +1322,12 @@ function _raidingTargetPrestige(setting) {
 function _raidingRaidZone(setting, mapName) {
 	let raidZones = Number(setting.raidingzone);
 	raidZones += mapName !== 'Bionic Raiding' ? setting.world : 0;
+
 	if (setting.repeatevery !== 0 && game.global.world > setting.world) {
 		const repeats = Math.floor((game.global.world - setting.world) / setting.repeatevery);
 		raidZones += repeats > 0 ? setting.repeatevery * repeats : 0;
 	}
+
 	return raidZones;
 }
 
@@ -1825,7 +1827,7 @@ function _runQuagmire(setting, mapName, settingName, settingIndex, baseSettings)
 	let bogsToRun = 100;
 
 	for (let i = 1; i < baseSettings.length; i++) {
-		let currSetting = baseSettings[i];
+		const currSetting = baseSettings[i];
 		if (!currSetting.active || currSetting.world > game.global.world || (currSetting.world === game.global.world && currSetting.cell > game.global.lastClearedCell + 2)) continue;
 		bogsToRun -= parseInt(currSetting.bogs);
 	}
@@ -1960,7 +1962,7 @@ function _runArchaeology(setting, mapName, settingName, settingIndex) {
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial) : setting.level;
 
 	for (let item in relicString) {
-		let relicName = game.challenges.Archaeology.getDefs()[relicString[item].slice(-1)];
+		const relicName = game.challenges.Archaeology.getDefs()[relicString[item].slice(-1)];
 
 		if (relicName === undefined) {
 			return {
@@ -1969,7 +1971,7 @@ function _runArchaeology(setting, mapName, settingName, settingIndex) {
 			};
 		}
 
-		let relicToBuy = parseInt(relicString[item]);
+		const relicToBuy = parseInt(relicString[item]);
 
 		if (relicToBuy > relicObj[relicName]) {
 			relicsToPurchase.push(relicString[item]);
@@ -1978,8 +1980,8 @@ function _runArchaeology(setting, mapName, settingName, settingIndex) {
 
 	if (!game.options.menu.pauseGame.enabled && getPageSetting('autoMaps')) {
 		while (relicsToPurchase.length > 0 && game.resources.science.owned > game.challenges.Archaeology.getNextCost()) {
-			let relicName = game.challenges.Archaeology.getDefs()[relicsToPurchase[0].slice(-1)];
-			let relicToBuy = parseInt(relicsToPurchase[0]);
+			const relicName = game.challenges.Archaeology.getDefs()[relicsToPurchase[0].slice(-1)];
+			const relicToBuy = parseInt(relicsToPurchase[0]);
 			game.challenges.Archaeology.buyRelic(relicName + 'Relic', true);
 			if (game.challenges.Archaeology.points[relicName] >= relicToBuy) relicsToPurchase.shift();
 		}
@@ -2251,12 +2253,12 @@ function pandemoniumEquipmentCheck(cacheGain) {
 
 	for (let equipName in game.equipment) {
 		if (game.challenges.Pandemonium.isEquipBlocked(equipName) || equipArray[equipName].resource === 'wood') continue;
-		let prestigeUpgrade = game.upgrades[equipArray[equipName].upgrade];
+		const prestigeUpgrade = game.upgrades[equipArray[equipName].upgrade];
 
-		let equip = game.equipment[equipName];
+		const equip = game.equipment[equipName];
 		if (equip.locked) continue;
-		let equipCost = equip.cost[equipArray[equipName].resource][0] * Math.pow(equip.cost[equipArray[equipName].resource][1], equip.level) * getEquipPriceMult();
-		let prestigeCost = getNextPrestigeCost(equipArray[equipName].upgrade) * getEquipPriceMult();
+		const equipCost = equip.cost[equipArray[equipName].resource][0] * Math.pow(equip.cost[equipArray[equipName].resource][1], equip.level) * getEquipPriceMult();
+		const prestigeCost = getNextPrestigeCost(equipArray[equipName].upgrade) * getEquipPriceMult();
 		if (prestigeUpgrade.locked || prestigeUpgrade.allowed === prestigeUpgrade.done) prestigeCost = Infinity;
 		if (cacheGain > prestigeCost) {
 			equipArray[equipName].upgradeCost = prestigeCost;
@@ -2328,6 +2330,7 @@ function pandemoniumEquipFarm(lineCheck) {
 	const equipsToPurchase = pandemoniumEquipmentCheck(cacheGain);
 
 	if (!equipsToPurchase.attack.name && !equipsToPurchase.health.name) return equipsToPurchase;
+
 	let nextEquipmentCost = Infinity;
 	for (let equip in equipsToPurchase) {
 		if (equipsToPurchase[equip].cost < nextEquipmentCost) nextEquipmentCost = equipsToPurchase[equip].cost;
@@ -2802,7 +2805,7 @@ function desolationGearScum(lineCheck) {
 		let special;
 		let jobRatio;
 		let gather;
-		let mapLevel = game.global.lastClearedCell < 80 ? 0 : 1;
+		const mapLevel = game.global.lastClearedCell < 80 ? 0 : 1;
 		if (settingIndex) {
 			special = getAvailableSpecials(setting.special);
 			jobRatio = setting.jobratio;
@@ -2813,13 +2816,13 @@ function desolationGearScum(lineCheck) {
 
 		//Check if a max attack+gamma burst can clear the improb.
 		//If it can't continue as normal, if it can then we start the +1 map for prestige scumming.
-		let currCell = game.global.lastClearedCell + 2;
+		const currCell = game.global.lastClearedCell + 2;
 		let name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[currCell - 1].name : undefined;
 		let enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, name);
-		let equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
-		let ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
-		let gammaDmg = MODULES.heirlooms.gammaBurstPct;
-		let ourDmgTotal = ourDmg * gammaDmg * 5;
+		const equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
+		const ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
+		const gammaDmg = MODULES.heirlooms.gammaBurstPct;
+		const ourDmgTotal = ourDmg * gammaDmg * 5;
 
 		//Check if we will overshoot the improb with our regular hit/gamma burst.
 		//Add together the health of the cells between our current cell and the improb that we are able to overkill.
@@ -2884,7 +2887,7 @@ function _runDesoGearScum(setting, mapName, settingIndex) {
 	let special;
 	let jobRatio;
 	let gather;
-	let mapLevel = game.global.lastClearedCell < 80 ? 0 : 1;
+	const mapLevel = game.global.lastClearedCell < 80 ? 0 : 1;
 	if (settingIndex) {
 		special = getAvailableSpecials(setting.special);
 		jobRatio = setting.jobratio;
@@ -2980,7 +2983,7 @@ function smithless(lineCheck) {
 	const regularHits = 10 - gammas * gammaMaxStacks();
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	const equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma');
-	let ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
+	const ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 	let ourDmgTenacity = ourDmg;
 
 	if (game.global.mapBonus > 0 && game.global.mapBonus !== 10) {
@@ -3143,7 +3146,7 @@ function _hdFarmHitsSurvivedSetting(hitsSurvivedGoal, defaultSettings) {
 
 function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings, voidFarm) {
 	let mapLevel = setting.level;
-	let farmingDetails = {};
+	const farmingDetails = {};
 	const mapSpecial = setting.special ? setting.special : getAvailableSpecials('lmc');
 	const jobRatio = setting.jobratio;
 	const hdType = setting.hdType;
@@ -3308,7 +3311,7 @@ function farmingDecision() {
 	//If we are currently running a map and it should be continued then continue running it.
 	//Running the entire function again is done to ensure that we update the status message and check if it still wants to run.
 	if (mapSettings.mapName !== '' && mapTypes.includes(mapSettings.settingName)) {
-		let mapCheck = mapSettings.settingName();
+		const mapCheck = mapSettings.settingName();
 		if (mapCheck.shouldRun) {
 			farmingDetails = mapCheck;
 			farmingDetails.settingName = mapSettings.settingName;
@@ -3319,7 +3322,7 @@ function farmingDecision() {
 	//This should only run if we aren't already running a setting.
 	if (farmingDetails.mapName === '') {
 		for (const map of mapTypes) {
-			let mapCheck = map(true);
+			const mapCheck = map(true);
 			if (mapCheck && mapCheck.mapName === undefined) {
 				mapCheck.settingName = map;
 				priorityList.push(mapCheck);
@@ -3335,7 +3338,7 @@ function farmingDecision() {
 		}
 		//Loops through each item in the priority list and checks if it should be run.
 		for (const item in priorityList) {
-			let mapCheck = priorityList[item].settingName();
+			const mapCheck = priorityList[item].settingName();
 			if (mapCheck.shouldRun) {
 				farmingDetails = mapCheck;
 				farmingDetails.settingName = priorityList[item].settingName;
@@ -3399,7 +3402,7 @@ function getAvailableSpecials(special, skipCaches) {
 		if ((mod === 'lmc' || mod === 'smc') && (challengeActive('Metal') || challengeActive('Transmute'))) mod = mod.charAt(0) + 'wc';
 		if (skipCaches && mod === 'hc') continue;
 
-		let unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
+		const unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
 		if (unlock && unlock <= hze) {
 			bestMod = mod;
 			break;
@@ -3420,7 +3423,7 @@ function getSpecialTime(special) {
 }
 
 function setMapSliders(plusLevel, special = '0', biome = getBiome(), mapSliders = [9, 9, 9], perfectMaps = true) {
-	let maplevel = plusLevel < 0 ? game.global.world + plusLevel : game.global.world;
+	const maplevel = plusLevel < 0 ? game.global.world + plusLevel : game.global.world;
 	const [loot, size, difficulty] = mapSliders;
 	if (!plusLevel || plusLevel < 0) plusLevel = 0;
 	if (loot !== 9 || size !== 9 || difficulty !== 9) perfectMaps = false;
@@ -3487,18 +3490,16 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 	const fragmentsOwned = game.resources.fragments.owned;
 	mapLevel = mapLevel - game.global.world;
 
+	/* sliders is [loot,size, difficulty] */
 	if (!keepPerfect) {
-		//Gradually reduce map sliders if not using frag max setting!
 		if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) perfect = false;
-		//Reduce map difficulty
+
 		while (sliders[2] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[2] -= 1;
-		//Reduce map loot
 		while (sliders[0] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[0] -= 1;
 
 		if (!trimpStats.mountainPriority && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) biome = 'Random';
 		if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) special = '0';
 
-		//Reduce map size
 		while (sliders[1] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[1] -= 1;
 
 		if (special !== '0' && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) special = '0';
@@ -3581,8 +3582,8 @@ function shouldSkipSettingPrestigeGoal(currSetting, mapName) {
 
 function findSettingsIndex(settingName, baseSettings, mapName, dailyAddition, skipHealthCheck) {
 	for (let y = 1; y < baseSettings.length; y++) {
-		let currSetting = baseSettings[y];
-		let world = currSetting.world;
+		const currSetting = baseSettings[y];
+		const world = currSetting.world;
 		if (currSetting.atlantrimp && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
 		if (currSetting.hdRatio && currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
 		if (currSetting.hdType) {
@@ -3676,15 +3677,12 @@ function autoLevelCheck(mapName, mapSpecial, biome = undefined) {
 	const incorrectBiome = isHDFarm && game.global.mapsActive && ((biome === 'Any' && mapObj.location === 'Forest') || biome !== mapObj.location);
 
 	let repeatCounter = isSmithyFarm ? MODULES.maps.mapRepeatsSmithy[index] : MODULES.maps.mapRepeats;
-	let mapLevel = 0;
+	const mapLevel = callAutoMapLevel(mapName, mapSpecial);
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive) {
 		if (repeatCounter !== 0 && isFinite(repeatCounter)) game.global.mapRunCounter = repeatCounter;
 		repeatCounter = 0;
 	}
-
-	if (challengeActive('Bublé') || getCurrentQuest() === 8) mapLevel = callAutoMapLevel(mapName, mapSpecial);
-	else mapLevel = callAutoMapLevel(mapName, mapSpecial);
 
 	if ((mapLevel !== mapSettings.levelCheck && mapSettings.levelCheck !== Infinity) || incorrectBiome) {
 		repeatCounter = game.global.mapRunCounter + 1;
@@ -3885,8 +3883,8 @@ function prestigeRaidingSliderCost(raidZone, special = getAvailableSpecials('p')
 //Identify total cost of prestige raiding maps
 function prestigeTotalFragCost() {
 	const fragmentPercentage = mapSettings.incrementMaps ? calcFragmentPercentage(mapSettings.raidzones) : 1;
+	const sliders = new Array(5);
 	let cost = 0;
-	let sliders = new Array(5);
 
 	if (prestigesToGet(mapSettings.raidzones, mapSettings.prestigeGoal)[0]) {
 		sliders[0] = prestigeRaidingSliderCost(mapSettings.raidzones, mapSettings.special, cost, fragmentPercentage);
@@ -3915,7 +3913,7 @@ function dailyModiferReduction() {
 	let dailyMods = dailyModifiersOutput().split('<br>');
 	dailyMods.length = dailyMods.length - 1;
 	let dailyReduction = 0;
-	let settingsArray = getPageSetting('dailyPortalSettingsArray');
+	const settingsArray = getPageSetting('dailyPortalSettingsArray');
 
 	for (let item in settingsArray) {
 		if (!settingsArray[item].enabled) continue;
@@ -4026,7 +4024,7 @@ function slowScum(slowTarget) {
 	let i = 0;
 	//Repeats the process of exiting and re-entering maps until the first cell is slow and you have desired slow cell count on odd cells!
 	while (slowCount < slowCellTarget || !firstCellSlow) {
-		let mapGrid = game.global.mapGridArray;
+		const mapGrid = game.global.mapGridArray;
 		firstCellSlow = false;
 		slowCount = 0;
 

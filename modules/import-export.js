@@ -475,6 +475,79 @@ function resetAutoTrimps(autoTrimpsSettings) {
 	atSettings.running = true;
 }
 
+function confirmedSwitchNow() {
+	if ($settingsProfiles == null) return;
+	var index = $settingsProfiles.selectedIndex;
+	var profname = $settingsProfiles.options[index].text;
+	//load the stored profiles from browser
+	var loadLastProfiles = JSON.parse(localStorage.getItem('ATSelectedSettingsProfile'));
+	if (loadLastProfiles != null) {
+		var results = loadLastProfiles.filter(function (elem, i) {
+			return elem.name == profname;
+		});
+		if (results.length > 0) {
+			resetAutoTrimps(results[0].data, profname);
+			debug('Successfully loaded existing profile: ' + profname, 'profile');
+		}
+	}
+}
+
+//called by ImportExportTooltip('NameSettingsProfiles')
+function nameAndSaveNewProfile() {
+	//read the name in from tooltip
+	try {
+		var profname = document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, '');
+		if (profname == null) {
+			debug('Error in naming, the string is empty.', 'profile');
+			return;
+		}
+	} catch (err) {
+		debug('Error in naming, the string is bad.' + err.message, 'profile');
+		return;
+	}
+	var profile = {
+		name: profname,
+		data: JSON.parse(serializeSettings())
+	};
+	//load the old data in,
+	var loadLastProfiles = localStorage.getItem('ATSelectedSettingsProfile');
+	var oldpresets = loadLastProfiles ? JSON.parse(loadLastProfiles) : new Array(); //load the import.
+	//rewrite the updated array in
+	var presetlists = [profile];
+	//add the two arrays together, string them, and store them.
+	safeSetItems('ATSelectedSettingsProfile', JSON.stringify(oldpresets.concat(presetlists)));
+	debug('Successfully created new profile: ' + profile.name, 'profile');
+	ImportExportTooltip('message', 'Successfully created new profile: ' + profile.name);
+	//Update dropdown menu to reflect new name:
+	let optionElementReference = new Option(profile.name);
+	optionElementReference.id = 'customProfileRead';
+	if ($settingsProfiles == null) return;
+	$settingsProfiles.add(optionElementReference);
+	$settingsProfiles.selectedIndex = $settingsProfiles.length - 1;
+}
+
+//event handler for profile delete button - confirmation check tooltip
+function onDeleteProfileHandler() {
+	ImportExportTooltip('DeleteSettingsProfiles'); //calls a tooltip then onDeleteProfile() below
+}
+//Delete Profile runs after.
+function onDeleteProfile() {
+	if ($settingsProfiles == null) return;
+	var index = $settingsProfiles.selectedIndex;
+	//Remove the option
+	$settingsProfiles.options.remove(index);
+	//Stay on the same index (becomes next item) - so we dont have to Toggle into a new profile again and can keep chain deleting.
+	$settingsProfiles.selectedIndex = index > $settingsProfiles.length - 1 ? $settingsProfiles.length - 1 : index;
+	//load the old data in:
+	var loadLastProfiles = localStorage.getItem('ATSelectedSettingsProfile');
+	var oldpresets = loadLastProfiles ? JSON.parse(loadLastProfiles) : new Array(); //load the import.
+	//rewrite the updated array in. string them, and store them.
+	var target = index - 3; //subtract the 3 default choices out
+	oldpresets.splice(target, 1);
+	safeSetItems('ATSelectedSettingsProfile', JSON.stringify(oldpresets));
+	debug('Successfully deleted profile #: ' + target, 'profile');
+}
+
 function disableAllSettings() {
 	//Disable all settings
 	for (const setting in autoTrimpSettings) {

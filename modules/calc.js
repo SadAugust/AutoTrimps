@@ -999,7 +999,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 
 	if (worldType === 'world') {
 		let customHealth;
-		let enemyName = 'Turtlimp';
+		const enemyName = 'Turtlimp';
 		if (game.global.universe === 1) {
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedStats(targetZone, 'health');
@@ -1325,6 +1325,8 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 	}
 
 	let dmgType = runningUnlucky ? 'max' : 'avg';
+	if (forceOK && runningUnlucky && zone - game.global.world > 0) dmgType = 'min';
+
 	let ourHealth = calcOurHealth(shieldBreak, worldType);
 	let ourDmg = calcOurDmg(dmgType, 0, false, worldType, critType, bionicTalent, titimp);
 	const unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, worldType, 'never', bionicTalent, titimp)) : 2;
@@ -1334,13 +1336,10 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 		enemyDmg = calcEnemyAttack(worldType, zone, currentCell, enemyName, false, calcMutationStats(zone, 'attack'), 0);
 		enemyHealth = calcEnemyHealth(worldType, zone, currentCell, enemyName, calcMutationStats(zone, 'health'));
 	}
+
+	if (forceOK) enemyHealth *= 1 * overkillCount;
 	if (!hits) hits = 1;
 	enemyDmg *= hits;
-
-	if (forceOK) {
-		if (!runningUnlucky && zone - game.global.world > 0) dmgType = 'min';
-		enemyHealth *= 1 * overkillCount;
-	}
 	if (challengeActive('Duel') && runningAT) ourDmg *= MODULES.heirlooms.gammaBurstPct;
 
 	if (isDaily) {

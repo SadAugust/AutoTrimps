@@ -342,10 +342,10 @@ function zoneGoCheck(setting = getPageSetting('equipZone'), farmType = 'attack',
 	const settingZone = setting;
 	const world = game.global.world.toString();
 
-	let p = settingZone.findIndex((zone) => {
+	const p = settingZone.findIndex((zone) => {
 		zone = zone.toString();
 		if (zone.indexOf('.') >= 0) {
-			let [start, end] = zone.split('.');
+			const [start, end] = zone.split('.');
 			return game.global.world >= start && game.global.world <= end;
 		}
 		return world === zone;
@@ -440,9 +440,9 @@ function buyEquips() {
 	};
 
 	for (let equipType of equipTypes) {
-		let equip = bestBuys[equipType];
-		let resourceUsed = equip.name === 'Shield' ? 'wood' : 'metal';
-		let equipData = game.equipment[equip.name];
+		const equip = bestBuys[equipType];
+		const resourceUsed = equip.name === 'Shield' ? 'wood' : 'metal';
+		const equipData = game.equipment[equip.name];
 
 		if (!equip.name || equipData.locked || !(equip.prestige || canAffordBuilding(equip.name, false, false, true, false, 1))) continue;
 		if (equipData.level >= equip.equipCap && !equip.prestige && !equip.zoneGo) continue;

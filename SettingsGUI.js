@@ -1455,7 +1455,6 @@ function initialiseAllSettings() {
 				let description = "<p>Will farm until you can survive this amount of attacks.</p>";
 				description += "<p>Uses the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
-				description += "<p>If you have farmed and your Hits Survived value drops below 80% of this setting then it will farm again.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1.5</p>";
 				if (currSettingUniverse === 2) description += "<p>Don't set this above 1 when using <b>Auto Equality: Advanced</b> as it can cause you to eternally farm.</p>";
@@ -1473,8 +1472,9 @@ function initialiseAllSettings() {
 		createSetting('hitsSurvivedReset',
 			function () { return ('Hits Survived Reset') },
 			function () {
-				let description = "<p>When <b>Hits Survived</b> farming this will restart farming when you reach your <b>Map Cap</b> value if you're below 80% of the targetted value in the <b>Hits Survived</b> setting.</p>";
-				description += "<p>Will allow you to farm multiple times if enemies scale or your army gets weaker so can be beneficial in certain challenges.</p>";
+				let description = "<p>When using the standalone <b>Hits Survived</b> setting and you reach your <b>Map Cap</b> value this will restart farming if you're below 80% of the targetted value.</p>";
+				description += "<p>Will allow you to farm multiple times if enemies damage increase or your army gets weaker through challenge buffs or debuffs.</p>";
+				description += "<p>Enabling this setting makes the Map Cap input in the <b>HD Farm</b> setting almost irrelevant as it will continually restart the farm.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
@@ -4986,7 +4986,7 @@ function _toggleElem(elementId, isVisible) {
 }
 
 function _setDisplayedSettings(item) {
-	let elem = document.getElementById(item.id);
+	const elem = document.getElementById(item.id);
 	if (!elem) return false;
 
 	const settingUniverse = item.universe;
@@ -5028,8 +5028,8 @@ function _setDisplayedSettings(item) {
 		const itemSelected = item['selected' + radonSetting];
 		elem.innerHTML = '';
 		const listItems = item.list();
-		for (let dropdown in listItems) {
-			let option = document.createElement('option');
+		for (const dropdown in listItems) {
+			const option = document.createElement('option');
 			option.value = listItems[dropdown];
 			option.text = listItems[dropdown];
 			elem.appendChild(option);
@@ -5091,7 +5091,7 @@ function _setDisplayedTabs() {
 		tabTest: !gameUserCheck()
 	};
 
-	for (let tab in tabList) {
+	for (const tab in tabList) {
 		const tabElem = document.getElementById(tab);
 		const hideTab = tabList[tab];
 		if (tabElem !== null) {
@@ -5192,7 +5192,7 @@ function _setFightButtons(setting = getPageSetting('displayHideAutoButtons')) {
 }
 
 function _setAttributes(element, attributes) {
-	for (let attr in attributes) {
+	for (const attr in attributes) {
 		element.setAttribute(attr, attributes[attr]);
 	}
 }
