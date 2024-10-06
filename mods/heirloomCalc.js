@@ -435,7 +435,10 @@ function setupHeirloomUI() {
 	heirloomGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
 	heirloomGUI.$allocatorBtn.style.cssText = `background-color: #3b0076; border: 0.1vw solid #777; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; margin-right: 13.88vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
 	heirloomGUI.$allocatorBtn.textContent = 'Allocate Nullifium';
-
+	heirloomGUI.$allocatorBtn.onmouseover = function () {
+		this.style.color = game.options.menu.darkTheme.enabled !== 2 ? 'black' : 'white';
+		tooltip('Auto Allocate', 'customText', undefined, 'Buys the shown optimal levels in each modifier when pressed.');
+	};
 	heirloomGUI.$ratiosLine.row1.insertBefore(heirloomGUI.$allocatorBtn, document.getElementById('XPWeightDiv'));
 
 	heirloomGUI.$customRatioBtn = document.createElement('DIV');
