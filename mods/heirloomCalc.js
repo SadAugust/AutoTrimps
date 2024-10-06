@@ -1206,6 +1206,13 @@ function runHeirlooms() {
 	//Disable if we don't have an heirloom selected.
 	if (selectedLoom.length === 0) return;
 
+	if (game.global.universe === 2 && !Fluffy.isRewardActive('heirloopy')) {
+		const description = '<p>The Allocate Nullifium button is disabled in this universe until you unlock the Scruffy (level 2) heirloom ability.</p>';
+		const title = '<b>Heirloom Calc</b>';
+		tooltip('confirm', null, 'update', description, undefined, title, 'Confirm', 'center');
+		return;
+	}
+
 	if (selectedLoom[1].includes('Equipped')) startingHeirloom = game.global[selectedLoom[1]];
 	else startingHeirloom = game.global[selectedLoom[1]][selectedLoom[0]];
 	startingHeirloom.mods = heirlooms.newLoom.mods;
