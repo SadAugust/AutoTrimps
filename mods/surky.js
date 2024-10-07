@@ -67,7 +67,7 @@ function saveSurkySettings() {
 	}
 
 	localStorage.setItem('surkyInputs', JSON.stringify(settingInputs));
-	if (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+	if (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(settingInputs);
 		saveSettings();
 	}

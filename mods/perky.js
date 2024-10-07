@@ -826,7 +826,7 @@ MODULES.autoPerks = {
 		});
 	},
 
-	displayGUI: function (universe = portalUniverse) {
+	displayGUI: function (universe = portalUniverse, forceRefresh = false) {
 		if (portalUniverse === -1) universe = portalUniverse = game.global.universe;
 
 		const calcNames = { 1: 'Perky', 2: 'Surky' };
@@ -871,7 +871,7 @@ MODULES.autoPerks = {
 			}
 		}
 
-		if (MODULES.autoPerks.loaded === calcName) return;
+		if (!forceRefresh && MODULES.autoPerks.loaded === calcName) return;
 
 		const presets = MODULES.autoPerks[`presets${calcName}`];
 		const inputBoxes = MODULES.autoPerks[`inputBoxes${calcName}`];

@@ -493,10 +493,6 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 		saveSettings();
 		loadAugustSettings();
 
-		localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
-		localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
-		localStorage.heirloomInputs = autoTrimpSettings.autoHeirloomStorage.value;
-		localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
 		const keys = ['perkyInputs', 'surkyInputs', 'heirloomInputs'];
 
 		keys.forEach((key) => {
@@ -505,6 +501,12 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 				localStorage.removeItem(key);
 			}
 		});
+
+		localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
+		localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
+		localStorage.heirloomInputs = autoTrimpSettings.autoHeirloomStorage.value;
+		localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
+		MODULES.autoPerks.displayGUI(game.global.universe, true);
 		hideAutomationButtons();
 	}, 101);
 

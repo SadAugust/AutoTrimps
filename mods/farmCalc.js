@@ -315,8 +315,8 @@ function populateFarmCalcData() {
 			enemyHealthMult *= game.challenges.Quest.getHealthMult();
 		},
 		Quagmire: () => {
-			let exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
-			let mod = 0.05;
+			const exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
+			const mod = 0.05;
 			if (exhaustedStacks === 0) enemyAttackMult *= 1;
 			else if (exhaustedStacks < 0) enemyAttackMult *= Math.pow(1 + mod, Math.abs(exhaustedStacks));
 			else enemyAttackMult *= Math.pow(1 - mod, exhaustedStacks);
@@ -444,8 +444,8 @@ function cellsPerSecond(saveData) {
 function stats(lootFunction = lootDefault) {
 	const saveData = populateFarmCalcData();
 	const maxMaps = lootFunction === lootDestack ? 11 : 25;
-	let stats = [];
-	let extra = saveData.extraMapLevelsAvailable ? 10 : saveData.mapReducer && saveData.zone > 6 ? -1 : 0;
+	const stats = [];
+	const extra = saveData.extraMapLevelsAvailable ? 10 : saveData.mapReducer && saveData.zone > 6 ? -1 : 0;
 	let coords = 1;
 	const stances = saveData.stances;
 	const alwaysPerfect = typeof atSettings !== 'undefined' && getPageSetting('onlyPerfectMaps');
@@ -492,7 +492,7 @@ function stats(lootFunction = lootDefault) {
 			}
 		}
 
-		let tmp = zone_stats(mapLevel, saveData, lootFunction);
+		const tmp = zone_stats(mapLevel, saveData, lootFunction);
 
 		tmp.mapConfig = {
 			mapOwned: !!mapOwned,
@@ -518,7 +518,7 @@ function stats(lootFunction = lootDefault) {
 					continue;
 				}
 
-				let currentBest = get_best([stats, saveData.stances], true);
+				const currentBest = get_best([stats, saveData.stances], true);
 				if (tmp.value < 0.6 * currentBest.loot.value) {
 					break;
 				}
@@ -528,7 +528,7 @@ function stats(lootFunction = lootDefault) {
 				}
 
 				const cPS = cellsPerSecond(saveData);
-				for (let stance of saveData.stances) {
+				for (const stance of saveData.stances) {
 					if (tmp[stance] && tmp[stance].killSpeed + 0.1 >= cPS) {
 						saveData.stances = saveData.stances.split(stance).join('');
 					}
@@ -556,7 +556,7 @@ function lootDestack(zone, saveData) {
 function zone_stats(zone, saveData, lootFunction = lootDefault) {
 	const mapLevel = zone - saveData.zone;
 	const bionic2Multiplier = masteryPurchased('bionic2') && zone > saveData.zone ? 1.5 : 1;
-	let loot = lootFunction(zone, saveData);
+	const loot = lootFunction(zone, saveData);
 
 	const result = {
 		mapLevel,
@@ -578,7 +578,7 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 	const trimpEqualityModifier = equality > 0 ? Math.pow(saveData.equalityMult, equality) : 1;
 
 	//Loop through all stances to identify which stance is best for farming
-	for (let stance of stances) {
+	for (const stance of stances) {
 		result[stance] = {
 			speed: 0,
 			value: 0,
@@ -652,8 +652,8 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 	}
 
 	const calculateEnemyStats = (zone, cell, enemyName, saveData) => {
-		let enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyName);
-		let enemyAttack = calcEnemyBaseAttack('map', zone, cell + 1, enemyName);
+		const enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyName);
+		const enemyAttack = calcEnemyBaseAttack('map', zone, cell + 1, enemyName);
 
 		const domMod = saveData.domination ? (cell === size ? 2.5 : 0.1) : 1;
 
@@ -717,7 +717,7 @@ function simulate(saveData, zone) {
 
 	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
 	const specialTime = getSpecialTime(specialData);
-	let cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
+	const cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp + 1 * specialTime) * lootMult;
 
 	let seed = Math.floor(Math.random(40, 50) * 100);
 	const rand_mult = 4.656612873077393e-10;
@@ -1082,7 +1082,7 @@ function simulate(saveData, zone) {
 
 //Return info about the best zone for each stance
 function get_best(results, fragmentCheck, mapModifiers) {
-	let best = { loot: { mapLevel: 0 }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 }, lootRatio: 0, speedRatio: 0 };
+	const best = { loot: { mapLevel: 0 }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 }, lootRatio: 0, speedRatio: 0 };
 	if (!game.global.mapsUnlocked) return best;
 
 	let [stats, stances] = results;
@@ -1113,11 +1113,11 @@ function get_best(results, fragmentCheck, mapModifiers) {
 		}
 	}
 
-	let statsLoot = [...stats];
-	let statsSpeed = [...stats];
+	const statsLoot = [...stats];
+	const statsSpeed = [...stats];
 
 	//Find the best speed/loot zone for each stance
-	for (let stance of stances) {
+	for (const stance of stances) {
 		statsLoot.sort((a, b) => {
 			if (a[stance] && b[stance]) {
 				return b[stance].value - a[stance].value;
@@ -1305,7 +1305,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		const mods = ['farmCalcStandalone'];
 		const modules = ['breedtimer', 'calc'];
 
-		let linkStylesheet = document.createElement('link');
+		const linkStylesheet = document.createElement('link');
 		linkStylesheet.rel = 'stylesheet';
 		linkStylesheet.type = 'text/css';
 		linkStylesheet.href = basepathFarmCalc + 'css/farmCalc.css';
@@ -1365,55 +1365,3 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		}
 	})();
 }
-
-/* function adjustTooltipPosition() {
-	const tooltipDiv = document.getElementById('tooltipDiv');
-
-	if (tooltipDiv.style.display === 'block') {
-		const rect = tooltipDiv.getBoundingClientRect();
-		const tooltipHeight = tooltipDiv.offsetHeight;
-		const tooltipWidth = tooltipDiv.offsetWidth;
-		const windowHeight = window.innerHeight;
-		const windowWidth = window.innerWidth;
-
-		// Get the cursor's position
-		const cursorX = event.clientX;
-		const cursorY = event.clientY;
-
-		let topPosition = rect.top - tooltipHeight - 10;
-		if (topPosition < 0) {
-			topPosition = rect.bottom + 10;
-		}
-
-		let leftPosition = rect.left;
-		if (leftPosition + tooltipWidth > windowWidth) {
-			leftPosition = windowWidth - tooltipWidth - 10;
-		}
-
-		if (leftPosition < 0) {
-			leftPosition = 10;
-		}
-
-		if (topPosition + tooltipHeight > windowHeight) {
-			topPosition = windowHeight - tooltipHeight - 10;
-		}
-
-		if (tooltipDiv.style.top !== `${topPosition}px`) tooltipDiv.style.top = `${topPosition}px`;
-		if (tooltipDiv.style.left !== `${leftPosition}px`) tooltipDiv.style.left = `${leftPosition}px`;
-	}
-}
-
-var originalPositionTooltip = positionTooltip;
-positionTooltip = function () {
-	const tooltipDiv = document.getElementById('tooltipDiv');
-	if (tooltipDiv.style.display === 'block') {
-		const tipTitleDiv = document.getElementById('tipTitle');
-
-		if (tipTitleDiv.innerHTML.includes('Auto Level Information') || tipTitleDiv.innerHTML.includes('Additional Info')) {
-			adjustTooltipPosition();
-			return;
-		}
-	}
-
-	originalPositionTooltip(...arguments);
-}; */

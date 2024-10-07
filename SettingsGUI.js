@@ -106,11 +106,11 @@ function _minimizeAllTabs() {
 	const tabs = document.getElementsByClassName('tabcontent');
 	const links = document.getElementsByClassName('tablinks');
 
-	for (let tab of tabs) {
+	for (const tab of tabs) {
 		tab.style.display = 'none';
 	}
 
-	for (let link of links) {
+	for (const link of links) {
 		link.classList.remove('active');
 	}
 }
@@ -119,12 +119,12 @@ function _maximizeAllTabs() {
 	const tabs = document.getElementsByClassName('tabcontent');
 	const links = document.getElementsByClassName('tablinks');
 
-	for (let tab of tabs) {
+	for (const tab of tabs) {
 		if (tab.id.toLowerCase() === 'test' || tab.id.toLowerCase() === 'beta') continue;
 		tab.style.display = 'block';
 	}
 
-	for (let link of links) {
+	for (const link of links) {
 		if (link.id.toLowerCase() === 'test' || link.id.toLowerCase() === 'beta') continue;
 		link.style.display = 'block';
 		if (!link.classList.contains('active')) {
@@ -4957,7 +4957,7 @@ function autoToggle(what) {
 function updateAutoTrimpSettings(forceUpdate) {
 	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 
-	for (let setting in autoTrimpSettings) {
+	for (const setting in autoTrimpSettings) {
 		if (['ATversion', 'ATversionChangelog'].includes(setting)) continue;
 
 		const item = autoTrimpSettings[setting];
@@ -5321,7 +5321,7 @@ function _createChangelogButton() {
 		['AT v' + versionNumber + (newChanges ? " | What's New" : '')]
 	);
 
-	let settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
+	const settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(changelog, settingbarRow.childNodes[settingbarRow.childNodes.length - 4]);
 }
 
@@ -5338,7 +5338,7 @@ function _createAutoTrimpsButton() {
 		['AutoTrimps']
 	);
 
-	let settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
+	const settingbarRow = document.getElementById('settingsTable').firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(atSettings, settingbarRow.childNodes[10]);
 }
 
@@ -5459,14 +5459,14 @@ function _createAutoEquipButton() {
 function _createMessagesButton() {
 	if (document.getElementById('AutoTrimpsFilter') !== null) return;
 
-	let atBtnContainer = _createElement('DIV', {
+	const atBtnContainer = _createElement('DIV', {
 		class: 'btn-group',
 		role: 'group',
 		onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, `This will control the visibility of AutoTrimps messages in the log window based on your settings.<br>Note: Only map-related messages will be displayed during Time Warp.`)',
 		onmouseout: 'tooltip("hide")'
 	});
 	const btnDisplay = `btn-${getPageSetting('spamMessages').show ? 'success' : 'danger'}`;
-	let atBtnText = _createElement(
+	const atBtnText = _createElement(
 		'button',
 		{
 			id: 'AutoTrimpsFilter',
@@ -5514,10 +5514,10 @@ function _setTimeWarpUI() {
 function _createSettingsRowTW() {
 	if (document.getElementById('settingsRowTW') !== null) return;
 
-	let settingBarRow = document.createElement('DIV');
+	const settingBarRow = document.createElement('DIV');
 	settingBarRow.setAttribute('id', 'settingsRowTW');
 	document.getElementById('offlineWrapper').children[0].insertAdjacentHTML('afterend', '<br>');
-	let offlineWrapperParent = document.getElementById('offlineInnerWrapper').parentNode;
+	const offlineWrapperParent = document.getElementById('offlineInnerWrapper').parentNode;
 	offlineWrapperParent.replaceChild(settingBarRow, document.getElementById('offlineInnerWrapper').parentNode.children[1]);
 }
 
@@ -5528,7 +5528,7 @@ function _createBtnRowTW() {
 	settingsRow.setAttribute('style', 'display: block');
 
 	document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
-	let offlineProgressParent = document.getElementById('offlineProgressWrapper').parentNode;
+	const offlineProgressParent = document.getElementById('offlineProgressWrapper').parentNode;
 	offlineProgressParent.replaceChild(settingsRow, document.getElementById('offlineProgressWrapper').parentNode.children[4]);
 }
 
@@ -5613,7 +5613,7 @@ function _setAutoJobsClasses() {
 	const btnVal = getPageSetting('jobType');
 	const btnName = autoTrimpSettings['jobType'].name()[btnVal];
 	['jobType', 'autoJobsLabel', 'autoJobsLabelTW'].forEach(function (elemId) {
-		let elem = document.getElementById(elemId);
+		const elem = document.getElementById(elemId);
 		if (elem !== null) {
 			elem.parentNode.setAttribute('class', `toggleConfigBtn noselect pointer settingBtn${btnVal === 2 ? 3 : btnVal}`);
 			if (elemId === 'jobType') {

@@ -356,7 +356,7 @@ function updateInterval() {
 		thirtyMinute: 1800000
 	};
 
-	for (let key in intervals) {
+	for (const key in intervals) {
 		atSettings.intervals[key] = atSettings.intervals.counter % (intervals[key] / atSettings.runInterval) === 0;
 	}
 }
