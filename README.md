@@ -123,4 +123,4 @@ This works in both universes and shows you the optimal stance/equality level to 
 
 ## Donate
 
-If you'd like to donate to AutoTrimps development, you can now do so with PayPal <a href="https://www.paypal.com/donate/?hosted_button_id=QRQLBVYE54XLQ">here.</a>
+If you'd like to donate to AutoTrimps development, you can now do so with Buy me a coffee <a href="https://www.buymeacoffee.com/augustAutoTrimps">here.</a>

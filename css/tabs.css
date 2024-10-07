@@ -45,7 +45,7 @@ ul.tab li a:hover {
 .tabcontent {
 	display: none;
 	border: 1px solid #ccc;
-	border-top: none;
+	border-bottom: none;
 	-webkit-animation: fadeEffect 1s;
 	animation: fadeEffect 1s;
 	/* Fading effect takes 1 second */
@@ -987,6 +987,24 @@ ul.tab li a:hover {
 .windowChallenge3OffAutoGolden .windowChallenge3AutoGolden,
 .windowChallengeOneOffOffAutoGolden .windowChallengeOneOffAutoGolden {
 	display: none;
+}
+
+/* Profiles */
+.windowNameProfiles {
+	width: 20%;
+}
+
+.windowOverwriteProfiles {
+	width: 10%;
+}
+
+.windowLoadProfiles {
+	width: 10%;
+}
+
+.windowSettingStringProfiles {
+	margin-left: 1.81vh;
+	width: 57%;
 }
 
 /* Other inputs that are repeated */

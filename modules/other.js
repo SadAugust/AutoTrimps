@@ -520,10 +520,10 @@ function _timeWarpATFunctions() {
 }
 
 function _handleMazWindow() {
-	const mazSettings = ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Balance Destack', 'Toxicity', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner'];
+	const mazTitles = mazSettingNames(true);
 	const tooltipDiv = document.getElementById('tooltipDiv');
 
-	if (mazSettings.indexOf(tooltipDiv.children.tipTitle.innerText) === -1) {
+	if (mazTitles.indexOf(tooltipDiv.children.tipTitle.innerText) === -1) {
 		tooltipDiv.style.overflowY = '';
 		tooltipDiv.style.maxHeight = '';
 		tooltipDiv.style.width = '';

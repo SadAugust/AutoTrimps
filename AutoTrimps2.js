@@ -31,8 +31,7 @@ const MODULES = {
 	popups: { challenge: false, respecAncientTreasure: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
 	heirlooms: { plagueSwap: false, compressedCalc: false, gammaBurstPct: 1, shieldEquipped: null, breedHeirloom: false },
 	u1unlocks: [],
-	u2unlocks: [],
-	style: { lastTheme: -1 }
+	u2unlocks: []
 };
 
 let currPortalUniverse = 0;
@@ -171,8 +170,6 @@ function loadScriptsAT() {
 		gameLoop = function () {}; /* Disable game from running until script loads to ensure no time is spent without AT running */
 	}
 
-	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
-	basepath = `${atSettings.initialise.basepathOriginal}css/`;
 	const scripts = Array.from(document.getElementsByTagName('script'));
 	const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
 

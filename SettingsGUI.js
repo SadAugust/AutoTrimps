@@ -6,7 +6,7 @@ function automationMenuSettingsInit() {
 	autoSettings.style.maxHeight = '92.5vh';
 	autoSettings.style.overflow = 'auto';
 	autoSettings.classList.add('niceScroll');
-	settingsRow.appendChild(autoSettings);
+	settingsRow.insertBefore(autoSettings, settingsRow.childNodes[1]);
 }
 
 function initialiseAllTabs() {
@@ -29,7 +29,6 @@ function initialiseAllTabs() {
 		['C2', 'C2 - Settings for C2s'],
 		['Daily', 'Dailies - Settings for Dailies'],
 		['Heirloom', 'Heirloom Settings'],
-		['Golden', 'Golden Upgrade Settings'],
 		['Spire', 'Spire - Settings for Spires'],
 		['Magma', 'Dimensional Generator & Magmite Settings'],
 		['Nature', 'Nature Settings'],
@@ -168,6 +167,7 @@ function initialiseAllSettings() {
 				}
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
+
 		createSetting('trapTrimps',
 			function () { return ('Trap Trimps') },
 			function () {
@@ -175,11 +175,23 @@ function initialiseAllSettings() {
 				description += "<p>The upgrades setting must be set to <b>Buy All Upgrades</b> for this to work.</p>";
 				description += "<p><b>Recommended:</b> On whilst highest zone is below 30</p>";
 				return description;
+
 			}, 'boolean', true, null, 'Core', [1, 2]);
 		createSetting('downloadSaves',
 			function () { return ('Download Saves') },
 			function () { return ('Will automatically download saves when the script portals.') },
 			'boolean', false, null, 'Core', [1, 2]);
+
+		createSetting('autoGoldenSettings',
+			function () { return ('Golden Upgrade Settings') },
+			function () {
+				let description = "<p>Here you can select the golden upgrades you would like to have purchased during your runs.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
+				return description;
+			}, 'mazArray', [], 'importExportTooltip("mapSettings", "Auto Golden")', 'Core', [1, 2],
+			function () { return (getAchievementStrengthLevel() > 0) });
+			
 		createSetting('portalVoidIncrement',
 			function () { return ('Void Map Liquification') },
 			function () {
@@ -190,7 +202,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2],
 			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount(1) >= 20) });
-
 
 		createSetting('pauseScript',
 			function () { return ('Pause AutoTrimps') },
@@ -3780,18 +3791,6 @@ function initialiseAllSettings() {
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 5)});
 	}
 	
-	const displayGolden = true;
-	if (displayGolden) {
-		createSetting('autoGoldenSettings',
-			function () { return ('Auto Gold Settings') },
-			function () {
-				let description = "<p>Here you can select the golden upgrades you would like to have purchased during your runs.</p>";
-				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
-				return description;
-			}, 'mazArray', [], 'importExportTooltip("mapSettings", "Auto Golden")', 'Golden', [1, 2]);
-	}
-	
 	const displaySpire = true;
 	if (displaySpire) {
 		createSetting('IgnoreSpiresUntil',
@@ -4407,6 +4406,15 @@ function initialiseAllSettings() {
 				preset3: {},
 			}), null, 'Import Export', [2],
 			function () { return false });
+
+		createSetting('profilesSettings',
+			function () { return ('Profile Settings') },
+			function () {
+				let description = "<p>Here you can save and load different AutoTrimps setting profiles.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
+				return description;
+			}, 'mazArray', [], 'importExportTooltip("mapSettings", "Profiles")', 'Import Export', [0]);
 	}
 	
 	const displayHelp = true;
@@ -4449,6 +4457,14 @@ function initialiseAllSettings() {
 				let description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
 				return description;
 			}, 'action', null, 'importExportTooltip("priorityOrder")', 'Help', [0]);
+
+		createSetting('helpDonate',
+			function () { return ('Donate') },
+			function () {
+				let description = "<p>If you'd like to donate to AutoTrimps development, you can by clicking this button and following the buymeacoffee link.</p>";
+				description += "<p>If you want to contribute but can't afford a donation, you can still give back by joining the community and sharing your feedback or helping others. Thank you either way, you're awesome!</p>";
+				return description;
+			}, 'action', null, 'importExportTooltip("donate")', 'Help', [0]);
 		/* createSetting('helpFragments',
 			function () { return ('Fragment Decisions') },
 			function () {
@@ -5084,7 +5100,6 @@ function _setDisplayedTabs() {
 		tabFluffy: radonOn || (!displayAllSettings && game.global.spiresCompleted < 2),
 		tabJobs: radonOn || (!displayAllSettings && hze < 70),
 		tabHeirloom: game.global.totalPortals === 0,
-		tabGolden: getAchievementStrengthLevel() === 0,
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
 		tabSpire: radonOn || (!displayAllSettings && hze < 190),
@@ -5144,9 +5159,10 @@ function _settingsToLineBreak() {
 	const breakAfterMagma = ['autoGenModeC2', 'magmiteMinimize'];
 	const breakAfterNature = ['autoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
 	const breakAfterDisplay = ['EnableAFK', 'shieldGymMostEfficientDisplay'];
+	const breakAfterImportExport = ['mutatorPresets'];
 	const breakAfterTest = ['testTotalEquipmentCost'];
 
-	const breakAfterIDs = [...breakAfterCore, ...breakAfterMaps, ...breakAfterDaily, ...breakAfterEquipment, ...breakAfterCombat, ...breakAfterJobs, ...breakAfterC2, ...breakAfterBuildings, ...breakAfterChallenges, ...breakAfterHeirlooms, ...breakAfterMagma, ...breakAfterNature, ...breakAfterDisplay, ...breakAfterTest];
+	const breakAfterIDs = [...breakAfterCore, ...breakAfterMaps, ...breakAfterDaily, ...breakAfterEquipment, ...breakAfterCombat, ...breakAfterJobs, ...breakAfterC2, ...breakAfterBuildings, ...breakAfterChallenges, ...breakAfterHeirlooms, ...breakAfterMagma, ...breakAfterNature, ...breakAfterDisplay, ...breakAfterImportExport, ...breakAfterTest];
 
 	const breakAfterHeirloomIDs = ['heirloomAutoModTarget', 'heirloomAutoShieldMod7', 'heirloomAutoStaffMod7'];
 

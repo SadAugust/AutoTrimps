@@ -23,7 +23,6 @@ if (typeof originalLoad !== 'function') {
 			loadAugustSettings();
 			atlantrimpRespecOverride();
 			resetVarsZone(true);
-			if (typeof MODULES.style.themeChanged === 'function') MODULES.style.themeChanged();
 			_setButtonsPortal();
 			setupAddonUser();
 			updateAutoTrimpSettings(true);

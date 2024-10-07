@@ -11,6 +11,7 @@ function importExportTooltip(event, titleText) {
 		exportAutoTrimps: _displayExportAutoTrimps,
 		importAutoTrimps: _displayImportAutoTrimps,
 		forceAutoPortal: _displayPortalForce,
+		donate: _displayDonate,
 		spireImport: _displaySpireImport,
 		priorityOrder: _displayPriorityOrder,
 		c2table: _displayC2Table,
@@ -33,6 +34,7 @@ function importExportTooltip(event, titleText) {
 		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
 		importAutoTrimps: 'Import AutoTrimps Settings',
 		forceAutoPortal: 'Force Auto Portal',
+		donate: 'Donate',
 		spireImport: 'Import Spire Settings',
 		priorityOrder: 'Priority Order Table',
 		c2table: _getChallenge2Info() + ' Table',
@@ -86,6 +88,36 @@ function _displayImportAutoTrimps(tooltipDiv) {
 	};
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+/* need to integrate this into importExportTooltip in the future */
+function _displayImportAutoTrimpsProfile(profileSettings, profileName) {
+	cancelTooltip();
+	const tooltipDiv = document.getElementById('tooltipDiv');
+	swapClass('tooltipExtra', 'tooltipExtraNone', tooltipDiv);
+
+	const tooltipText = `Are you sure you wish to import the settings from the profile named: ${profileName}?`;
+
+	let costText = "<div class='maxCenter'>";
+	costText += `<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); resetAutoTrimps("${profileSettings}", "${profileName}");'>Switch Profile</div>`;
+	costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
+	costText += '</div>';
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	const tipText = document.getElementById('tipText');
+	const tipTitle = document.getElementById('tipTitle');
+	const tipCost = document.getElementById('tipCost');
+	const titleText = 'Import Settings';
+
+	game.global.lockTooltip = true;
+	if (tipText.className !== '') tipText.className = '';
+	if (tipText.innerHTML !== tooltipText) tipText.innerHTML = tooltipText;
+	if (tipTitle.innerHTML !== titleText) tipTitle.innerHTML = titleText;
+	if (tipCost.innerHTML !== costText) tipCost.innerHTML = costText;
+	tooltipDiv.style.display = 'block';
+	_verticalCenterTooltip();
 }
 
 function _displayExportAutoTrimps(tooltipDiv) {
@@ -430,13 +462,25 @@ function loadAutoTrimps() {
 }
 
 //Either sets the AT settings to default or to the ones imported in loadAutoTrimps()
-function resetAutoTrimps(autoTrimpsSettings) {
+function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 	atSettings.running = false;
+
 	setTimeout(() => {
+		if (switchProfile) autoTrimpsSettings = JSON.parse(LZString.decompressFromBase64(autoTrimpsSettings));
+		const profileSettings = switchProfile ? autoTrimpSettings.profilesSettings : undefined;
 		localStorage.removeItem('atSettings');
 		autoTrimpSettings = autoTrimpsSettings || {};
+		if (switchProfile) autoTrimpSettings.profilesSettings = profileSettings;
+
 		const settingsRow = document.getElementById('settingsRow');
-		['autoSettings', 'autoTrimpsTabBarMenu'].forEach((id) => settingsRow.removeChild(document.getElementById(id)));
+		['autoSettings', 'autoTrimpsTabBarMenu'].forEach((id) => {
+			const element = document.getElementById(id);
+			if (element) {
+				const clonedElement = element.cloneNode(true);
+				settingsRow.replaceChild(clonedElement, element);
+				settingsRow.removeChild(clonedElement);
+			}
+		});
 
 		automationMenuSettingsInit();
 		initialiseAllTabs();
@@ -447,25 +491,43 @@ function resetAutoTrimps(autoTrimpsSettings) {
 		setupAddonUser(true);
 		updateAutoTrimpSettings(true);
 		saveSettings();
+		loadAugustSettings();
 
 		localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
 		localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
 		localStorage.heirloomInputs = autoTrimpSettings.autoHeirloomStorage.value;
 		localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
-		loadAugustSettings();
-		if (typeof MODULES.style.themeChanged === 'function') MODULES.style.themeChanged();
+		const keys = ['perkyInputs', 'surkyInputs', 'heirloomInputs'];
 
-		//Remove the localStorage entries if they are empty and rebuild the GUI to initialise base settings
-		if (Object.keys(JSON.parse(localStorage.getItem('perkyInputs'))).length === 1) delete localStorage.perkyInputs;
-		if (Object.keys(JSON.parse(localStorage.getItem('surkyInputs'))).length === 1) delete localStorage.surkyInputs;
-		if (Object.keys(JSON.parse(localStorage.getItem('heirloomInputs'))).length === 1) delete localStorage.heirloomInputs;
-		MODULES.autoPerks.displayGUI(game.global.universe);
+		keys.forEach((key) => {
+			const item = localStorage.getItem(key);
+			if (item && Object.keys(JSON.parse(item)).length === 1) {
+				localStorage.removeItem(key);
+			}
+		});
 		hideAutomationButtons();
 	}, 101);
 
-	const message = autoTrimpsSettings ? 'Successfully imported new AT settings...' : 'Successfully reset AT settings to Defaults...';
-	const tooltipMessage = autoTrimpsSettings ? 'Successfully imported Autotrimps settings file.' : 'Autotrimps has been successfully reset to its default settings!';
-	const title = autoTrimpsSettings ? 'Settings Imported' : 'Settings Reset';
+	const displayedMessage = {
+		switchProfile: {
+			message: `Successfully loaded existing profile: ${switchProfile}`,
+			tooltipMessage: `Successfully loaded existing profile: ${switchProfile}`,
+			title: 'Profile Loaded'
+		},
+		defaultSettings: {
+			message: 'Successfully reset AutoTrimps settings to Defaults...',
+			tooltipMessage: 'Autotrimps has been successfully reset to its default settings!',
+			title: 'Settings Reset'
+		},
+		importSettings: {
+			message: 'Successfully imported new AutoTrimps settings...',
+			tooltipMessage: 'Successfully imported Autotrimps settings file.',
+			title: 'Settings Imported'
+		}
+	};
+
+	const profileType = switchProfile ? 'switchProfile' : autoTrimpsSettings ? 'importSettings' : 'defaultSettings';
+	const { message, tooltipMessage, title } = displayedMessage[profileType];
 
 	debug(message, 'profile');
 	tooltip(`${title}`, `customText`, `lock`, `${tooltipMessage}`, false, `center`);
@@ -473,79 +535,6 @@ function resetAutoTrimps(autoTrimpsSettings) {
 	document.getElementById('tipCost').children[0].id = 'tipCostID';
 	document.getElementById('tipCostID').focus();
 	atSettings.running = true;
-}
-
-function confirmedSwitchNow() {
-	if ($settingsProfiles == null) return;
-	var index = $settingsProfiles.selectedIndex;
-	var profname = $settingsProfiles.options[index].text;
-	//load the stored profiles from browser
-	var loadLastProfiles = JSON.parse(localStorage.getItem('ATSelectedSettingsProfile'));
-	if (loadLastProfiles != null) {
-		var results = loadLastProfiles.filter(function (elem, i) {
-			return elem.name == profname;
-		});
-		if (results.length > 0) {
-			resetAutoTrimps(results[0].data, profname);
-			debug('Successfully loaded existing profile: ' + profname, 'profile');
-		}
-	}
-}
-
-//called by ImportExportTooltip('NameSettingsProfiles')
-function nameAndSaveNewProfile() {
-	//read the name in from tooltip
-	try {
-		var profname = document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, '');
-		if (profname == null) {
-			debug('Error in naming, the string is empty.', 'profile');
-			return;
-		}
-	} catch (err) {
-		debug('Error in naming, the string is bad.' + err.message, 'profile');
-		return;
-	}
-	var profile = {
-		name: profname,
-		data: JSON.parse(serializeSettings())
-	};
-	//load the old data in,
-	var loadLastProfiles = localStorage.getItem('ATSelectedSettingsProfile');
-	var oldpresets = loadLastProfiles ? JSON.parse(loadLastProfiles) : new Array(); //load the import.
-	//rewrite the updated array in
-	var presetlists = [profile];
-	//add the two arrays together, string them, and store them.
-	safeSetItems('ATSelectedSettingsProfile', JSON.stringify(oldpresets.concat(presetlists)));
-	debug('Successfully created new profile: ' + profile.name, 'profile');
-	ImportExportTooltip('message', 'Successfully created new profile: ' + profile.name);
-	//Update dropdown menu to reflect new name:
-	let optionElementReference = new Option(profile.name);
-	optionElementReference.id = 'customProfileRead';
-	if ($settingsProfiles == null) return;
-	$settingsProfiles.add(optionElementReference);
-	$settingsProfiles.selectedIndex = $settingsProfiles.length - 1;
-}
-
-//event handler for profile delete button - confirmation check tooltip
-function onDeleteProfileHandler() {
-	ImportExportTooltip('DeleteSettingsProfiles'); //calls a tooltip then onDeleteProfile() below
-}
-//Delete Profile runs after.
-function onDeleteProfile() {
-	if ($settingsProfiles == null) return;
-	var index = $settingsProfiles.selectedIndex;
-	//Remove the option
-	$settingsProfiles.options.remove(index);
-	//Stay on the same index (becomes next item) - so we dont have to Toggle into a new profile again and can keep chain deleting.
-	$settingsProfiles.selectedIndex = index > $settingsProfiles.length - 1 ? $settingsProfiles.length - 1 : index;
-	//load the old data in:
-	var loadLastProfiles = localStorage.getItem('ATSelectedSettingsProfile');
-	var oldpresets = loadLastProfiles ? JSON.parse(loadLastProfiles) : new Array(); //load the import.
-	//rewrite the updated array in. string them, and store them.
-	var target = index - 3; //subtract the 3 default choices out
-	oldpresets.splice(target, 1);
-	safeSetItems('ATSelectedSettingsProfile', JSON.stringify(oldpresets));
-	debug('Successfully deleted profile #: ' + target, 'profile');
 }
 
 function disableAllSettings() {
@@ -776,8 +765,6 @@ function loadAugustSettings() {
 		let setting = game.options.menu[toggles[i]];
 		if (setting.onToggle) setting.onToggle();
 	}
-
-	if (typeof MODULES.style.themeChanged === 'function') MODULES.style.themeChanged();
 }
 
 //Process data to google forms to update stats spreadsheet
@@ -1097,6 +1084,35 @@ function _displayPortalForce(tooltipDiv) {
 	if (currSettingUniverse === 1 && hze >= 230) costText += "<div class='btn btn-warning' onclick='cancelTooltip(); autoPortalForce(true, true);'>Force Portal After Poison Voids</div>";
 	costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
 
+	costText += '</div>';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function _displayDonate(tooltipDiv) {
+	let tooltipText = "<p>If you'd like to donate to AutoTrimps development, you can now do so with Buy me a coffee.</p>";
+	tooltipText += "<p>If you want to contribute but can't afford a donation, you can still give back by joining the community and sharing your feedback or helping others. Thank you either way, you're awesome!</p>";
+
+	/* buymeacoffee button */
+	const buttonHTML = `
+        <div class="bmc-button-container">
+            <a href="https://www.buymeacoffee.com/augustAutoTrimps" target="_blank">
+                <img src="https://cdn.buymeacoffee.com/buttons/v2/default-pink.png" alt="Buy Me a Coffee" style="height: 60px; width: 217px;">
+            </a>
+        </div>
+    `;
+	tooltipText += buttonHTML;
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	const ondisplay = function () {
+		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
+		else verticalCenterTooltip(true);
+	};
+
+	let costText = "<div class='maxCenter'>";
+	costText += "<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Confirm</div>";
 	costText += '</div>';
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
