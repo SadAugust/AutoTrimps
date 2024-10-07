@@ -1210,6 +1210,7 @@ function runHeirlooms() {
 	if (selectedLoom.length === 0) return;
 
 	if (game.global.universe === 2 && !Fluffy.isRewardActive('heirloopy')) {
+		if (portalWindowOpen) return;
 		const description = '<p>The Allocate Nullifium button is disabled in this universe until you unlock the Scruffy (level 2) heirloom ability.</p>';
 		const title = '<b>Heirloom Calc</b>';
 		tooltip('confirm', null, 'update', description, undefined, title, 'Confirm', 'center');
