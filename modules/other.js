@@ -39,7 +39,7 @@ function exitSpireCell(checkCell) {
 
 	if (isSpireActive && game.global.lastClearedCell + 1 > cell) {
 		endSpire();
-		debug(`Exiting Spire ${game.global.spiresCompleted + 1} at cell ${exitCell}`);
+		debug(`Exiting Spire ${game.global.spiresCompleted + 1} at cell ${exitCell}`, 'maps');
 	}
 }
 

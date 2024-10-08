@@ -254,7 +254,7 @@ function _fragmentCheck(highestMap, runUnique) {
 	else if (highestMap === null) {
 		MODULES.maps.fragmentCost = updateMapCost(true);
 		mapsClicked();
-		debug(`Disabling mapping until we reach ${prettify(MODULES.maps.fragmentCost)} fragments as we don't have any maps to run.`);
+		debug(`Disabling mapping until we reach ${prettify(MODULES.maps.fragmentCost)} fragments as we don't have any maps to run.`, 'maps');
 		return true;
 	}
 	//Runs highest map we have available to farm fragments with
@@ -293,7 +293,7 @@ function _checkSitInMaps() {
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
 		if (!game.global.preMapsActive) {
 			mapsClicked(true);
-			debug(`AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.`, 'other');
+			debug(`AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.`, 'offline');
 		}
 		return true;
 	}

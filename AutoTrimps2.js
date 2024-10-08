@@ -352,6 +352,7 @@ function updateInterval() {
 		tenSecond: 10000,
 		thirtySecond: 30000,
 		oneMinute: 60000,
+		fiveMinute: 300000,
 		tenMinute: 600000,
 		thirtyMinute: 1800000
 	};

@@ -16,7 +16,7 @@ function safeSetItems(storageName, storageSetting) {
 	try {
 		localStorage.setItem(storageName, storageSetting);
 	} catch (error) {
-		if (error.code === 22) debug(`Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.`);
+		if (error.code === 22) debug(`Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.`, 'error');
 	}
 }
 
@@ -118,10 +118,11 @@ function setPageSetting(setting, newValue, universe = game.global.universe) {
 //Looks at the spamMessages setting and if the message is enabled, it will print it to the message log & console.
 function debug(message, messageType, icon) {
 	if (!atSettings.initialise.loaded) return;
+	const alwaysAllow = ['offline', 'debugStats', 'test', 'heirlooms', 'profile', 'error', 'mazSettings'];
 
 	const settingArray = getPageSetting('spamMessages');
-	const canRunTW = ['maps', 'map_Destacking', 'map_Details', 'map_Skip', 'offline', 'challenge', 'debugStats', 'test'].includes(messageType);
-	const sendMessage = messageType in settingArray ? settingArray[messageType] : ['challenge', 'offline', 'debugStats', 'test'].includes(messageType);
+	const canRunTW = [...alwaysAllow, 'maps', 'map_Destacking', 'map_Details', 'map_Skip', 'challenge'].includes(messageType);
+	const sendMessage = messageType in settingArray ? settingArray[messageType] : [...alwaysAllow, 'challenge'].includes(messageType);
 
 	if (sendMessage || !messageType) {
 		console.log(`${timeStamp()} ${updatePortalTimer(true)} ${message}`);

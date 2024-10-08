@@ -1708,7 +1708,7 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 }
 
 function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) {
-	if (!vals) return debug(`Issue with establishing values for dropdowns`);
+	if (!vals) return debug(`Issue with establishing values for dropdowns`, 'mazSettings');
 
 	let dropdown = { hdType: '', hdType2: '', gather: '', mapType: '', mapLevel: '', special: '', prestigeGoal: '', challenge: '' };
 	const highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();

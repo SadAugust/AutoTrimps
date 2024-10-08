@@ -29,7 +29,7 @@ function boneShrine(lineCheck) {
 			game.permaBoneBonuses.boosts.consume();
 		}
 
-		debug(`Consumed ${shrineCharges} bone shrine charge${shrineCharges === 1 ? '' : 's'} on zone ${game.global.world} and gained ${boneShrineOutput(shrineCharges)}`);
+		debug(`Consumed ${shrineCharges} bone shrine charge${shrineCharges === 1 ? '' : 's'} on zone ${game.global.world} and gained ${boneShrineOutput(shrineCharges)}`, 'bones');
 
 		if (setting && settingName && setting.row) {
 			const value = game.global.universe === 2 ? 'valueU2' : 'value';

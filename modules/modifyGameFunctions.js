@@ -28,7 +28,7 @@ if (typeof originalLoad !== 'function') {
 			updateAutoTrimpSettings(true);
 			MODULES.autoPerks.displayGUI();
 		} catch (e) {
-			debug(`Load save failed: ${e}`);
+			debug(`Load save failed: ${e}`, 'error');
 		}
 	};
 }
@@ -43,7 +43,7 @@ if (typeof originalresetGame !== 'function') {
 			_setButtonsPortal();
 			setupAddonUser(true);
 		} catch (e) {
-			debug(`Load save failed: ${e}`);
+			debug(`Load save failed: ${e}`, 'error');
 		}
 	};
 }

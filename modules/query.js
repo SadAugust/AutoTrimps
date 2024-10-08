@@ -109,16 +109,16 @@ function _calcCurrentStatsDebug() {
 	const displayedMin = calcOurDmg('min', equalityStackCount, true, worldType, 'never', mapLevel, true) * dailyRampageMult;
 	const displayedMax = calcOurDmg('max', equalityStackCount, true, worldType, 'never', mapLevel, true) * dailyRampageMult;
 
-	debug(`Our Stats`);
-	debug(`Our Attack: ${displayedMin.toExponential(2)} - ${displayedMax.toExponential(2)}`);
-	debug(`Our Health: ${calcOurHealth(isUniverse1, worldType).toExponential(2)}`);
-	if (game.global.universe === 1) debug(`Our Block: ${calcOurBlock(game.global.formation, true).toExponential(2)}`);
-	if (game.global.universe === 2) debug(`Our Equality: ${game.portal.Equality.disabledStackCount}`);
-	debug(`Our Crit: ${100 * getPlayerCritChance().toExponential(2)}% for ${getPlayerCritDamageMult().toFixed(2)}x damage. Average of ${getCritMulti('maybe').toFixed(2)}x`);
+	debug(`Our Stats`, 'debugStats');
+	debug(`Our Attack: ${displayedMin.toExponential(2)} - ${displayedMax.toExponential(2)}`, 'debugStats');
+	debug(`Our Health: ${calcOurHealth(isUniverse1, worldType).toExponential(2)}`, 'debugStats');
+	if (game.global.universe === 1) debug(`Our Block: ${calcOurBlock(game.global.formation, true).toExponential(2)}`, 'debugStats');
+	if (game.global.universe === 2) debug(`Our Equality: ${game.portal.Equality.disabledStackCount}`, 'debugStats');
+	debug(`Our Crit: ${100 * getPlayerCritChance().toExponential(2)}% for ${getPlayerCritDamageMult().toFixed(2)}x damage. Average of ${getCritMulti('maybe').toFixed(2)}x`, 'debugStats');
 
-	debug(`Enemy Stats`);
-	debug(`Enemy Attack: ${(enemyMin * equality).toExponential(2)} - ${(enemyMax * equality).toExponential(2)}`);
-	debug(`Enemy Health: ${(calcEnemyHealthCore(worldType, zone, cell, name) * difficulty).toExponential(2)}`);
+	debug(`Enemy Stats`, 'debugStats');
+	debug(`Enemy Attack: ${(enemyMin * equality).toExponential(2)} - ${(enemyMax * equality).toExponential(2)}`, 'debugStats');
+	debug(`Enemy Health: ${(calcEnemyHealthCore(worldType, zone, cell, name) * difficulty).toExponential(2)}`, 'debugStats');
 }
 
 function formatTimeForDescriptions(number) {

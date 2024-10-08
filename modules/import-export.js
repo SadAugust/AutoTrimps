@@ -948,7 +948,7 @@ function pushSpreadsheetData() {
 		data: data,
 		dataType: 'jsonp'
 	});
-	debug(`Spreadsheet upload complete.`);
+	debug(`Spreadsheet upload complete.`, 'profile');
 }
 
 function makeAutomapStatusTooltip(mouseover = false) {

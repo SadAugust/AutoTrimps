@@ -1389,7 +1389,7 @@ function _runPrestigeRaiding(setting, mapName, settingIndex, defaultSettings) {
 		const prestigesToGetZero = game.global.mapsActive && prestigesToGet(mapObj.level)[0] === 0;
 
 		if (mapOwned || prestigesToGetZero) {
-			debug(`There was an error with your purchased map(s). Restarting the raiding procedure.`);
+			debug(`There was an error with your purchased map(s). Restarting the raiding procedure.`, 'map_Details');
 			resetMapVars();
 		}
 	}
@@ -1498,7 +1498,7 @@ function _handlePrestigeMapRunning() {
 function _runPurchasedMap(mapId, x) {
 	const purchasedMap = game.global.mapsOwnedArray[getMapIndex(mapId)];
 	if (purchasedMap === undefined) {
-		debug(`Prestige Raiding - Error with finding the purchased map. Skipping this map and moving on to the next one.`);
+		debug(`Prestige Raiding - Error with finding the purchased map. Skipping this map and moving on to the next one.`, 'map_Details');
 		mapSettings.prestigeMapArray[x] = undefined;
 	} else {
 		debug(`Prestige Raiding (z${game.global.world}) running a level ${purchasedMap.level} map. Map #${mapSettings.prestigeMapArray.length - x}`, 'map_Details');
@@ -1512,7 +1512,7 @@ function _restartRaidingProcedure() {
 	delete mapSettings.totalMapCost;
 	delete mapSettings.mapSliders;
 	delete mapSettings.prestigeFragMapBought;
-	debug(`Prestige Raiding - Error with finding the purchased map. Restarting the raiding procedure.`);
+	debug(`Prestige Raiding - Error with finding the purchased map. Restarting the raiding procedure.`, 'map_Details');
 }
 
 function findLastBionicWithItems(bionicPool) {
@@ -3295,16 +3295,21 @@ function farmingDecision() {
 	}
 
 	if (game.global.universe === 2) {
-		//Disable mapping if we have Withered as it's more beneficial to just push through the zone(s).
+		/* disable mapping if we have Withered as it's more beneficial to just push through the zone(s). */
 		if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) return (mapSettings = farmingDetails);
 
-		//U2 map settings to check for.
 		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
 
-	if (usingBreedHeirloom()) return;
+	if (usingBreedHeirloom()) {
+		if (atSettings.intervals.oneMinute) {
+			debug(`Your breed heirloom is equipped and mapping is disabled due to it. If this is not intentional then swap the heirloom you're using for breeding with another.`, `heirlooms`);
+		}
 
-	//Skipping map farming if in Decay or Melt and above stack count user input
+		return;
+	}
+
+	/* skipping map farming if in Decay or Melt and above stack count user input */
 	if (decaySkipMaps()) mapTypes = [prestigeClimb, voidMaps, _obtainUniqueMap];
 
 	const priorityList = [];
@@ -3795,7 +3800,7 @@ function fragmentFarm() {
 	//Check to see if we can afford a perfect map with the maplevel & special selected. If we can then ignore this function otherwise farm fragments until we reach that goal.
 
 	if (canAffordMap) {
-		if (!mapSettings.shouldRun && !MODULES.maps.fragmentFarming) debug(`Fragment farming successful`);
+		if (!mapSettings.shouldRun && !MODULES.maps.fragmentFarming) debug(`Fragment farming successful`, 'map_Details');
 		delete mapSettings.prestigeFragMapBought;
 		MODULES.maps.fragmentFarming = false;
 		return;
@@ -3821,7 +3826,7 @@ function fragmentFarm() {
 	}
 
 	selectMap(mapCheck.id);
-	debug(`Fragment farming for ${prettify(fragmentsNeeded)} fragments.`);
+	debug(`Fragment farming for ${prettify(fragmentsNeeded)} fragments.`, 'map_Details');
 	runMap();
 
 	if (!game.global.repeatMap) repeatClicked();
@@ -4051,7 +4056,7 @@ function slowScum(slowTarget) {
 	if (slowCount < slowCellTarget || !firstCellSlow) msg = 'Failed. ' + msg;
 	console.timeEnd();
 	atSettings.running = true;
-	debug(msg, 'mapping_Details');
+	debug(msg, 'map_Details');
 }
 
 function getEnoughHealthMap(mapLevel, special, biome) {
