@@ -1133,13 +1133,13 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 
 		if (!s.golden && !s.profiles) {
 			checkSettingsErrors(isNaN(thisSetting.world) || thisSetting.world < 6, "needs a value for Start Zone that's greater than 5.");
-			checkSettingsErrors(thisSetting.world > 1000, "needs a value for Start Zone that's less than 1000.");
-			checkSettingsErrors(thisSetting.world + thisSetting.level < 6 && !thisSetting.autoLevel, "can't have a zone and map combination below zone 6.");
+			checkSettingsErrors(+thisSetting.world > 1000, "needs a value for Start Zone that's less than 1000.");
+			checkSettingsErrors(+thisSetting.world + +thisSetting.level < 6 && !thisSetting.autoLevel, "can't have a zone and map combination below zone 6.");
 		}
 
 		if (s.mapBonus) {
 			const repeat = Number(thisSetting.repeat);
-			checkSettingsErrors(!thisSetting.autoLevel && thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0), "can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.");
+			checkSettingsErrors(!thisSetting.autoLevel && +thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0), "can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.");
 			checkSettingsErrors(repeat < 1, "can't have a map bonus value lower than 1 as you won't be able to get any map stacks.");
 		}
 
@@ -1149,19 +1149,20 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 		}
 
 		if (s.insanity) {
-			checkSettingsErrors(thisSetting.level === 0 && !thisSetting.autoLevel && !thisSetting.destack, "can't have a map level of 0 as you won't gain any Insanity stacks running this map.");
-			checkSettingsErrors(thisSetting.level < 0 && !thisSetting.destack && !thisSetting.autoLevel, "can't have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.");
-			checkSettingsErrors(thisSetting.level >= 0 && thisSetting.destack && !thisSetting.autoLevel, "can't have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.");
-			checkSettingsErrors(thisSetting.insanity < 0, "can't have a insanity value below 0.");
+			const level = Number(thisSetting.level);
+			checkSettingsErrors(level === 0 && !thisSetting.autoLevel && !thisSetting.destack, "can't have a map level of 0 as you won't gain any Insanity stacks running this map.");
+			checkSettingsErrors(level < 0 && !thisSetting.destack && !thisSetting.autoLevel, "can't have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.");
+			checkSettingsErrors(level >= 0 && thisSetting.destack && !thisSetting.autoLevel, "can't have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.");
+			checkSettingsErrors(+thisSetting.insanity < 0, "can't have a insanity value below 0.");
 		}
 
-		if (thisSetting.endzone < thisSetting.world) thisSetting.endzone = thisSetting.world;
-		if (thisSetting.worshipper > game.jobs.Worshipper.max) worshipper = game.jobs.Worshipper.max;
-		if (thisSetting.hdRatio < 0) thisSetting.hdRatio = 0;
-		if (thisSetting.voidHDRatio < 0) thisSetting.voidHDRatio = 0;
-		if (thisSetting.hdRatio < 0) thisSetting.hdRatio = 0;
+		if (+thisSetting.endzone < +thisSetting.world) thisSetting.endzone = thisSetting.world;
+		if (+thisSetting.worshipper > game.jobs.Worshipper.max) worshipper = game.jobs.Worshipper.max;
+		if (+thisSetting.hdRatio < 0) thisSetting.hdRatio = 0;
+		if (+thisSetting.voidHDRatio < 0) thisSetting.voidHDRatio = 0;
+		if (+thisSetting.hdRatio < 0) thisSetting.hdRatio = 0;
 
-		if (thisSetting.repeat < 0 && thisSetting.repeat !== -1) thisSetting.repeat = 0;
+		if (+thisSetting.repeat < 0 && +thisSetting.repeat !== -1) thisSetting.repeat = 0;
 		setting.push(thisSetting);
 	}
 
