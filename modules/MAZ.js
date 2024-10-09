@@ -1138,12 +1138,14 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 		}
 
 		if (s.mapBonus) {
+			const repeat = Number(thisSetting.repeat);
 			checkSettingsErrors(!thisSetting.autoLevel && thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0), "can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.");
-			checkSettingsErrors(thisSetting.repeat < 1, "can't have a map bonus value lower than 1 as you won't be able to get any map stacks.");
+			checkSettingsErrors(repeat < 1, "can't have a map bonus value lower than 1 as you won't be able to get any map stacks.");
 		}
 
 		if (s.mapFarm) {
-			checkSettingsErrors(thisSetting.repeat < 1 && thisSetting.repeat !== -1, "can't have a repeat value lower than 1 as you won't run any maps when this line runs.");
+			const repeat = Number(thisSetting.repeat);
+			checkSettingsErrors(repeat < 1 && repeat !== -1, "can't have a repeat value lower than 1 as you won't run any maps when this line runs.");
 		}
 
 		if (s.insanity) {
