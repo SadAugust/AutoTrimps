@@ -518,8 +518,10 @@ function stats(lootFunction = lootDefault) {
 					continue;
 				}
 
+				/* this is sometimes causing issues where the value results are super low but still break out of the loop 
+				need to come up with a better solution than currentBest being above 1. Will need more saves to test with */
 				const currentBest = get_best([stats, saveData.stances], true);
-				if (tmp.value < 0.6 * currentBest.loot.value) {
+				if (currentBest > 1 && tmp.value < 0.6 * currentBest.loot.value) {
 					break;
 				}
 
