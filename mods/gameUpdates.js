@@ -5115,7 +5115,7 @@ function updateTalentNumbers() {
 }
 
 function manageEqualityStacks() {
-	if (game.global.universe !== 2) return;
+	if (game.global.universe !== 2 || game.portal.Equality.radLocked) return;
 	const equality = getPerkLevel('Equality');
 
 	if (game.portal.Equality.scalingCount < 0) game.portal.Equality.scalingCount = 0;
@@ -5402,7 +5402,6 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 		}
 	}
 
-	//Halloween
 	if (!mapSuffix && !force && visualMutation === 'Pumpkimp') {
 		if (getRandomIntSeeded(enemySeed++, 0, 10) < 5) {
 			game.global.enemySeed = enemySeed;

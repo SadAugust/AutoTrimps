@@ -521,7 +521,7 @@ function stats(lootFunction = lootDefault) {
 				/* this is sometimes causing issues where the value results are super low but still break out of the loop 
 				need to come up with a better solution than currentBest being above 1. Will need more saves to test with */
 				const currentBest = get_best([stats, saveData.stances], true);
-				if (currentBest > 1 && tmp.value < 0.6 * currentBest.loot.value) {
+				if (tmp.value < 0.6 * currentBest.loot.value) {
 					break;
 				}
 
@@ -1071,6 +1071,11 @@ function simulate(saveData, zone) {
 			if (wind > 0) loot += wind * saveData.wind * cacheLoot;
 			else loot += cacheLoot;
 		}
+	}
+
+	if (mapClears === 0) {
+		loot = 0;
+		kills = 0;
 	}
 
 	return {
