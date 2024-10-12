@@ -4228,6 +4228,14 @@ function initialiseAllSettings() {
 				description = `<p>${enemyType} enemies won't have a fast icon as those enemies are always fast.</p>`;
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
+
+		createSetting('displayPercentHealth',
+			function () { return ('Percent Health') },
+			function () {
+				let description = "<p>Modifies the trimp and enemy health bars to display health as a percentage instead of their health values.</p>";
+				return description;
+			}, 'boolean', false, null, 'Display', [0]);
+
 		/* createSetting('displayHeHr',
 			function () { return (_getPrimaryResourceInfo().name + ' Per Hour Status') },
 			function () {
@@ -4746,7 +4754,8 @@ function settingChanged(id, currUniverse) {
 		timeWarpDisplay: _setTimeWarpUI,
 		displayEnhancedGrid: MODULES.fightinfo.Update,
 		archaeology: archaeologyAutomator,
-		autoEggs: easterEggClicked
+		autoEggs: easterEggClicked,
+		displayPercentHealth: togglePercentHealth
 	};
 
 	const multitoggleActions = {

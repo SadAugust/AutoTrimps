@@ -10,7 +10,7 @@ const atSettings = {
 		pathMods: 'mods/',
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
-		installedMods: ['spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky'],
+		installedMods: ['spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky', 'percentHealth'],
 		installedModules: ['import-export', 'utils', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames'],
 		loadedModules: [],
 		loadedMods: [],
@@ -239,6 +239,7 @@ function initialiseScript() {
 	loadAugustSettings();
 	_setupATButtons();
 	setupAddonUser();
+	togglePercentHealth();
 	updateShieldData();
 
 	if (_getTargetWorldType() === 'void' && !hdStats.hitsSurvivedVoid) {

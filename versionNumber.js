@@ -1,1 +1,1 @@
-atSettings.initialise.version = 'SadAugust v6.5.93';
+atSettings.initialise.version = 'SadAugust v6.5.94';

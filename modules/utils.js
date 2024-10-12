@@ -949,3 +949,39 @@ function _updateMostEfficientDisplay(element, mostEfficient) {
 	if (element.classList.contains('efficientYes') && !mostEfficient) return swapClass('efficient', 'efficientNo', element);
 	swapClass('efficient', mostEfficient ? 'efficientYes' : 'efficientNo', element);
 }
+
+function togglePercentHealth() {
+	const setting = getPageSetting('displayPercentHealth');
+
+	const goodGuyHealth = document.getElementById('goodGuyHealth');
+	const goodGuyHealthMax = document.getElementById('goodGuyHealthMax');
+	const badGuyHealth = document.getElementById('badGuyHealth');
+	const badGuyHealthMax = document.getElementById('badGuyHealthMax');
+
+	const healthDisplay = setting ? 'block' : '';
+	const healthMaxDisplay = setting ? 'hidden' : '';
+
+	goodGuyHealth.style.display = healthDisplay;
+	badGuyHealth.style.display = healthDisplay;
+	goodGuyHealthMax.style.display = healthMaxDisplay;
+	badGuyHealthMax.style.display = healthMaxDisplay;
+
+	if (setting) {
+		if (goodGuyHealthMax.parentNode.childNodes[2].data === '/') {
+			goodGuyHealthMax.parentNode.removeChild(goodGuyHealthMax.parentNode.childNodes[2]);
+		}
+
+		if (badGuyHealthMax.parentNode.childNodes[2].data === '/') {
+			badGuyHealthMax.parentNode.removeChild(badGuyHealthMax.parentNode.childNodes[2]);
+		}
+	} else {
+		if (goodGuyHealthMax.parentNode.childNodes[2].data !== '/') {
+			goodGuyHealthMax.parentNode.insertBefore(document.createTextNode('/'), goodGuyHealthMax.parentNode.childNodes[2]);
+		}
+		if (badGuyHealthMax.parentNode.childNodes[2].data !== '/') {
+			badGuyHealthMax.parentNode.insertBefore(document.createTextNode('/'), badGuyHealthMax.parentNode.childNodes[2]);
+		}
+	}
+
+	updateAllBattleNumbers(true);
+}
