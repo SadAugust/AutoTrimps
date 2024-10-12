@@ -26,6 +26,7 @@ if (typeof originalLoad !== 'function') {
 			_setButtonsPortal();
 			setupAddonUser();
 			updateAutoTrimpSettings(true);
+			RTC_populateRunetrinketCounterInfo();
 			MODULES.autoPerks.displayGUI();
 		} catch (e) {
 			debug(`Load save failed: ${e}`, 'error');
