@@ -1,3 +1,13 @@
+function verifyLayout(layout) {
+	for (const trap of layout) {
+		if (playerSpireTraps[trap].locked) {
+			tooltip('confirm', null, 'update', 'Illegal trap layout. Try using <a href="http://swaqvalley.com/td_calc/">swaqs spire build calculator</a> instead.', 'cancelTooltip()', `Invalid Import`, 'Confirm');
+			return false;
+		}
+	}
+	return true;
+}
+
 function tdStringCode(inputString) {
 	const trapIndexs = ['', 'Fire', 'Frost', 'Poison', 'Lightning', 'Strength', 'Condenser', 'Knowledge'];
 	let s = new String(inputString.replace(/\s/g, ''));
@@ -9,9 +19,11 @@ function tdStringCode(inputString) {
 	for (let i = 0; i < length; i++) {
 		saveLayout.push(trapIndexs[s.charAt(i)]);
 	}
-	playerSpire['savedLayout' + -1] = saveLayout;
+	if (!verifyLayout(saveLayout)) return false;
 
+	playerSpire['savedLayout' + -1] = saveLayout;
 	if (playerSpire.runestones + playerSpire.getCurrentLayoutPrice() < playerSpire.getSavedLayoutPrice(-1)) return false;
+
 	playerSpire.resetTraps();
 	for (let x = 0; x < saveLayout.length; x++) {
 		if (!saveLayout[x]) continue;
@@ -38,7 +50,6 @@ function _getClipboardText(ev) {
 if (typeof oldPlayerSpireDrawInfo !== 'function') {
 	var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
 	playerSpire.drawInfo = function (arguments) {
-		let ret = oldPlayerSpireDrawInfo.apply(this, arguments);
 		const elem = document.getElementById('spireTrapsWindow');
 		const tooltipText = `Click to paste and import your Spire string! These are typically acquired through the Spire TD Calc website`;
 		if (!elem) return arguments;
