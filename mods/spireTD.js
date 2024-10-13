@@ -50,6 +50,7 @@ function _getClipboardText(ev) {
 if (typeof oldPlayerSpireDrawInfo !== 'function') {
 	var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
 	playerSpire.drawInfo = function (arguments) {
+		oldPlayerSpireDrawInfo.apply(this, arguments);
 		const elem = document.getElementById('spireTrapsWindow');
 		const tooltipText = `Click to paste and import your Spire string! These are typically acquired through the Spire TD Calc website`;
 		if (!elem) return arguments;
