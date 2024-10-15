@@ -3441,6 +3441,15 @@ function initialiseAllSettings() {
 			}, 'value', 0, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
+
+		createSetting('heirloomAutoForceRun',
+			function () { return ('Run Auto Heirlooms') },
+			function () {
+				let description = "<p>Run Auto Heirlooms and sort heirlooms without needing to portal.</p>";
+				return description;
+			}, 'action', null, 'autoHeirlooms()', 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
+
 		createSetting('heirloomAutoShield',
 			function () { return ('Shields') },
 			function () {
@@ -5173,7 +5182,7 @@ function _settingsToLineBreak() {
 
 	const breakAfterIDs = [...breakAfterCore, ...breakAfterMaps, ...breakAfterDaily, ...breakAfterEquipment, ...breakAfterCombat, ...breakAfterJobs, ...breakAfterC2, ...breakAfterBuildings, ...breakAfterChallenges, ...breakAfterHeirlooms, ...breakAfterMagma, ...breakAfterNature, ...breakAfterDisplay, ...breakAfterImportExport, ...breakAfterTest];
 
-	const breakAfterHeirloomIDs = ['heirloomAutoModTarget', 'heirloomAutoShieldMod7', 'heirloomAutoStaffMod7'];
+	const breakAfterHeirloomIDs = ['heirloomAutoForceRun', 'heirloomAutoShieldMod7', 'heirloomAutoStaffMod7'];
 
 	breakAfterIDs.forEach((id) => _setSettingLineBreaks(id, 'show'));
 	breakAfterHeirloomIDs.forEach((id) => _setSettingLineBreaks(id, heirloom));
