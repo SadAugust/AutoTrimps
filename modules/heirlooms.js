@@ -151,7 +151,7 @@ function heirloomEquip(heirloom, type) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), 'heirloomsCarried', true);
 		equipHeirloom(true);
 		if (type === 'Shield') updateShieldData();
-	} else if (!heirloomDetails && !isHeirloomEquipped && atSettings.intervals.tenSecond) {
+	} else if (!heirloomDetails && !isHeirloomEquipped && atConfig.intervals.tenSecond) {
 		const hdMessage = type === 'Shield' ? `This will be causing at least one of your HD Ratios to be incorrect.` : ``;
 		debug(`The heirloom named ${heirloomName} doesn't exist. Rename an heirloom or adjust the input for your ${autoTrimpSettings[heirloom].name()} ${type.toLowerCase()}.${hdMessage}`, `error`);
 	}
@@ -264,8 +264,8 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 			!challengeActive('Quest') &&
 			getCurrentQuest() !== 8 &&
 			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
-			!MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
-			MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
+			!atData.fightInfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
+			atData.fightInfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
 			game.global.voidBuff !== 'doubleAttack';
 	}
 

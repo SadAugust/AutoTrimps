@@ -1,4 +1,4 @@
-MODULES.equipment = {
+atData.equipment = {
 	Dagger: {
 		upgrade: 'Dagadder',
 		stat: 'attack',
@@ -129,9 +129,9 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 	let prestigesAvailable = false;
 
 	if (!noPrestigeChallenge) {
-		for (let equipName in MODULES.equipment) {
+		for (let equipName in atData.equipment) {
 			if (equipName === 'Shield') continue;
-			const equipType = MODULES.equipment[equipName].stat;
+			const equipType = atData.equipment[equipName].stat;
 			const currentPrestige = game.equipment[equipName].prestige;
 			highestPrestige = Math.max(highestPrestige, currentPrestige);
 			if (prestigesAvailable || buyPrestigeMaybe(equipName).skip) continue;
@@ -151,7 +151,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 	const healthStats = calcEquipment('attack');
 	const attackStats = calcEquipment('health');
 
-	for (const equipName in MODULES.equipment) {
+	for (const equipName in atData.equipment) {
 		const equipData = game.equipment[equipName];
 		if (equipData.locked || (pandemonium && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
 		if (equipName === 'Shield') {
@@ -170,7 +170,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
 		}
 
-		const equipModule = MODULES.equipment[equipName];
+		const equipModule = atData.equipment[equipName];
 		const equipType = equipModule.stat;
 		const zoneGo = mostEfficient[equipType].zoneGo;
 		const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct;
@@ -254,7 +254,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		skip: true
 	};
 
-	if (!Object.getOwnPropertyNames(MODULES.equipment).includes(equipName)) return prestigeInfo;
+	if (!Object.getOwnPropertyNames(atData.equipment).includes(equipName)) return prestigeInfo;
 	if (equipName === 'Shield' && getPageSetting('equipNoShields')) return prestigeInfo;
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
@@ -262,7 +262,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
 	if (_shouldSaveResource(resourceUsed)) return prestigeInfo;
 
-	const prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
+	const prestigeUpgradeName = atData.equipment[equipName].upgrade;
 	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];
 
 	if (prestigeUpgrade.locked || prestigeUpgrade.allowed === prestigeUpgrade.done) return prestigeInfo;
@@ -385,7 +385,7 @@ function autoEquip() {
 }
 
 function _autoEquipTimeWarp() {
-	const dontWhileLoop = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || liquifiedZone();
+	const dontWhileLoop = usingRealTimeOffline || atConfig.loops.atTimeLapseFastLoop || liquifiedZone();
 	if (!dontWhileLoop) return false;
 
 	buyEquipsAlways2();
@@ -409,7 +409,7 @@ function buyEquipsAlways2() {
 		if (!game.equipment[equip].locked) {
 			if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
 			if (trimpStats.currChallenge === 'Pandemonium' && game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
-			if (saveResources[MODULES.equipment[equip].resource]) continue;
+			if (saveResources[atData.equipment[equip].resource]) continue;
 
 			if (alwaysLvl2 && game.equipment[equip].level < 2) {
 				buyEquipment(equip, true, true, 1);
@@ -450,7 +450,7 @@ function buyEquips() {
 		if (saveResources[resourceUsed]) continue;
 
 		if (equip.prestige) {
-			buyUpgrade(MODULES.equipment[equip.name].upgrade, true, true);
+			buyUpgrade(atData.equipment[equip.name].upgrade, true, true);
 			debug(`Upgrading ${equip.name} - Prestige ${equipData.prestige}`, `equipment`, '*upload');
 			keepBuying = true;
 		} else {
@@ -472,7 +472,7 @@ function buyEquips() {
 }
 
 function displayMostEfficientEquipment(forceUpdate = false) {
-	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
+	if (!atConfig.intervals.oneSecond && !forceUpdate) return;
 	if (!getPageSetting('equipEfficientEquipDisplay')) return;
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
 
@@ -481,8 +481,8 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 	for (let item in game.equipment) {
 		if (game.equipment[item].locked || item === 'Shield') continue;
 
-		const prestigeName = MODULES.equipment[item].upgrade;
-		const equipType = MODULES.equipment[item].stat;
+		const prestigeName = atData.equipment[item].upgrade;
+		const equipType = atData.equipment[item].stat;
 		const prestigeElement = document.getElementById(prestigeName);
 		let itemElement = document.getElementById(item);
 

@@ -1,4 +1,4 @@
-const atSettings = {
+const atConfig = {
 	initialise: {
 		version: '',
 		basepath: 'https://SadAugust.github.io/AutoTrimps/',
@@ -26,28 +26,23 @@ const atSettings = {
 	autoSave: game.options.menu.autoSave.enabled
 };
 
-let autoTrimpSettings = {};
-const MODULES = {
-	popups: { challenge: false, respecAncientTreasure: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false },
-	heirlooms: { plagueSwap: false, compressedCalc: false, gammaBurstPct: 1, shieldEquipped: null, breedHeirloom: false },
-	u1unlocks: [],
-	u2unlocks: []
-};
-
 let currPortalUniverse = 0;
 let currSettingUniverse = 0;
 let settingChangedTimeout = false;
 var originalGameLoop = gameLoop;
 
+const atData = {};
+let autoTrimpSettings = {};
+let MODULES = {};
 let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
 let hdStats = { autoLevel: Infinity };
 let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false, fluffyRewards: { universe: 0, level: 0 } };
 
 function shouldUpdate(updateEvery = 2000) {
-	if (usingRealTimeOffline && loops === atSettings.timeWarp.currentLoops) return true;
-	if (usingRealTimeOffline && (atSettings.timeWarp.currentLoops === 0 || loops >= atSettings.timeWarp.currentLoops + updateEvery)) {
+	if (usingRealTimeOffline && loops === atConfig.timeWarp.currentLoops) return true;
+	if (usingRealTimeOffline && (atConfig.timeWarp.currentLoops === 0 || loops >= atConfig.timeWarp.currentLoops + updateEvery)) {
 		if (updateEvery !== 2000) return true;
-		atSettings.timeWarp.currentLoops = loops;
+		atConfig.timeWarp.currentLoops = loops;
 		if (typeof updateAllInnerHtmlFrames === 'function') updateAllInnerHtmlFrames();
 
 		return true;
@@ -68,7 +63,7 @@ function loadScript(url, type = 'text/javascript', retries = 3) {
 		script.type = type;
 
 		script.onload = () => {
-			atSettings.modules.loadedExternal.push(url);
+			atConfig.modules.loadedExternal.push(url);
 			resolve();
 		};
 
@@ -96,7 +91,7 @@ function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3)
 		link.type = type;
 
 		link.onload = () => {
-			atSettings.modules.loadedExternal.push(url);
+			atConfig.modules.loadedExternal.push(url);
 			resolve();
 		};
 
@@ -112,9 +107,9 @@ function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3)
 }
 
 function isModuleLoaded(fileName, prefix) {
-	if (prefix === atSettings.modules.path && atSettings.modules.loadedModules.includes(fileName)) {
+	if (prefix === atConfig.modules.path && atConfig.modules.loadedModules.includes(fileName)) {
 		return true;
-	} else if (prefix === atSettings.modules.pathMods && atSettings.modules.loadedMods.includes(fileName)) {
+	} else if (prefix === atConfig.modules.pathMods && atConfig.modules.loadedMods.includes(fileName)) {
 		return true;
 	}
 	return false;
@@ -131,17 +126,17 @@ function loadModules(fileName, prefix = '', retries = 3) {
 		}
 
 		const script = document.createElement('script');
-		script.src = `${atSettings.initialise.basepath}${prefix}${fileName}.js`;
+		script.src = `${atConfig.initialise.basepath}${prefix}${fileName}.js`;
 		script.id = `${fileName}_MODULE`;
 		script.async = false;
 		script.defer = true;
 
 		script.addEventListener('load', () => {
-			if (!atSettings.modules.loadedModules.includes(fileName) && !atSettings.modules.loadedMain.includes(fileName)) {
+			if (!atConfig.modules.loadedModules.includes(fileName) && !atConfig.modules.loadedMain.includes(fileName)) {
 				if (prefix) {
-					if (prefix === atSettings.modules.path) atSettings.modules.loadedModules = [...atSettings.modules.loadedModules, fileName];
-					else atSettings.modules.loadedMods = [...atSettings.modules.loadedMods, fileName];
-				} else atSettings.modules.loadedMain = [...atSettings.modules.loadedMain, fileName];
+					if (prefix === atConfig.modules.path) atConfig.modules.loadedModules = [...atConfig.modules.loadedModules, fileName];
+					else atConfig.modules.loadedMods = [...atConfig.modules.loadedMods, fileName];
+				} else atConfig.modules.loadedMain = [...atConfig.modules.loadedMain, fileName];
 			}
 			resolve();
 		});
@@ -173,30 +168,30 @@ function loadScriptsAT() {
 	const scripts = Array.from(document.getElementsByTagName('script'));
 	const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
 
-	if (autoTrimpsScript) atSettings.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
+	if (autoTrimpsScript) atConfig.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
 
 	(async function () {
 		try {
-			const modules = ['versionNumber', ...atSettings.modules.installedMods, ...atSettings.modules.installedModules, 'SettingsGUI'];
+			const modules = ['versionNumber', ...atConfig.modules.installedMods, ...atConfig.modules.installedModules, 'SettingsGUI'];
 			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-QWUI/qwUI.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
-			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atSettings.initialise.basepath}css/tabs.css`, `${atSettings.initialise.basepath}css/farmCalc.css`, `${atSettings.initialise.basepath}css/perky.css`];
+			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`];
 
 			if (game.global.stringVersion === '5.9.2') {
-				await loadModules('gameUpdates', atSettings.modules.pathMods);
+				await loadModules('gameUpdates', atConfig.modules.pathMods);
 			}
 
 			for (const module of modules) {
-				const path = atSettings.modules.installedMods.includes(module) ? atSettings.modules.pathMods : atSettings.modules.installedModules.includes(module) ? atSettings.modules.path : '';
+				const path = atConfig.modules.installedMods.includes(module) ? atConfig.modules.pathMods : atConfig.modules.installedModules.includes(module) ? atConfig.modules.path : '';
 				await loadModules(module, path);
 			}
 
 			for (const script of scripts) {
-				if (atSettings.modules.loadedExternal.includes(script)) continue;
+				if (atConfig.modules.loadedExternal.includes(script)) continue;
 				await loadScript(script);
 			}
 
 			for (const stylesheet of stylesheets) {
-				if (atSettings.modules.loadedExternal.includes(stylesheet)) continue;
+				if (atConfig.modules.loadedExternal.includes(stylesheet)) continue;
 				await loadStylesheet(stylesheet);
 			}
 
@@ -212,15 +207,33 @@ loadScriptsAT();
 
 function initialiseScript() {
 	const filesNotLoaded = {
-		main: atSettings.modules.installedMain.length > atSettings.modules.loadedMain.length,
-		modules: atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length,
-		mods: atSettings.modules.installedMods.length > atSettings.modules.loadedMods.length,
-		externalScripts: 5 > atSettings.modules.loadedExternal.length
+		main: atConfig.modules.installedMain.length > atConfig.modules.loadedMain.length,
+		modules: atConfig.modules.installedModules.length > atConfig.modules.loadedModules.length,
+		mods: atConfig.modules.installedMods.length > atConfig.modules.loadedMods.length,
+		externalScripts: 5 > atConfig.modules.loadedExternal.length
 	};
 
 	if (Object.values(filesNotLoaded).some(Boolean)) {
 		console.timeEnd();
 		return loadScriptsAT();
+	}
+
+	setupAddonUser();
+	Object.assign(MODULES, game.global.addonUser);
+	MODULES = new Proxy(MODULES, {
+		set(target, property, value) {
+			target[property] = value;
+			if (game.global.addonUser) {
+				game.global.addonUser[property] = value;
+			}
+			return true;
+		}
+	});
+
+	/* temp solution. Will remove when I setup mapSettings saving on refresh */
+	if (MODULES.maps) {
+		MODULES.maps.fragmentFarming = false;
+		MODULES.maps.fragmentCost = Infinity;
 	}
 
 	atlantrimpRespecOverride();
@@ -235,11 +248,10 @@ function initialiseScript() {
 	currSettingUniverse = getPageSetting('universeSetting') + 1;
 
 	if (portalUniverse === -1) portalUniverse = game.global.universe;
-	MODULES.autoPerks.displayGUI(portalUniverse);
+	atData.autoPerks.displayGUI(portalUniverse);
 	loadAugustSettings();
 	_setupATButtons();
 	loadRuneTrinketCounter();
-	setupAddonUser();
 	togglePercentHealth();
 	updateShieldData();
 
@@ -260,41 +272,41 @@ function initialiseScript() {
 	farmingDecision();
 	autoMapsStatus();
 
-	atSettings.initialise.loaded = true;
+	atConfig.initialise.loaded = true;
 	toggleCatchUpMode();
 	if (usingRealTimeOffline) offlineProgress.loop = setTimeout(timeWarpLoop, 0, true);
-	debug(`AutoTrimps (${atSettings.initialise.version.split(' ')[0]} ${atSettings.initialise.version.split(' ')[1]}) has finished loading.`);
+	debug(`AutoTrimps (${atConfig.initialise.version.split(' ')[0]} ${atConfig.initialise.version.split(' ')[1]}) has finished loading.`);
 	challengeInfo(true);
 	console.timeEnd();
 }
 
 function startStopLoop(loopName, action) {
-	if (atSettings.loops[loopName]) {
-		clearInterval(atSettings.loops[loopName]);
-		atSettings.loops[loopName] = null;
+	if (atConfig.loops[loopName]) {
+		clearInterval(atConfig.loops[loopName]);
+		atConfig.loops[loopName] = null;
 	}
 
 	if (action !== 'start') return;
 
-	const interval = atSettings.runInterval * (loopName === 'guiLoop' ? 10 : 1);
-	atSettings.loops[loopName] = setInterval(window[loopName], interval);
+	const interval = atConfig.runInterval * (loopName === 'guiLoop' ? 10 : 1);
+	atConfig.loops[loopName] = setInterval(window[loopName], interval);
 }
 
 function resetLoops() {
 	['mainLoop', 'guiLoop'].forEach((loop) => startStopLoop(loop, 'stop'));
-	atSettings.loops.atTimeLapseFastLoop = false;
+	atConfig.loops.atTimeLapseFastLoop = false;
 	gameLoop = originalGameLoop;
 	['mainLoop', 'guiLoop'].forEach((loop) => startStopLoop(loop, 'start'));
 }
 
 function toggleCatchUpMode() {
-	if (!atSettings.loops.mainLoop && !atSettings.loops.guiLoop && !atSettings.loops.atTimeLapseFastLoop) {
+	if (!atConfig.loops.mainLoop && !atConfig.loops.guiLoop && !atConfig.loops.atTimeLapseFastLoop) {
 		resetLoops();
 	}
 
 	if (usingRealTimeOffline) {
-		if (!atSettings.running || game.options.menu.pauseGame.enabled || getPageSetting('pauseScript', 1) || !getPageSetting('timeWarpSpeed')) {
-			if (usingRealTimeOffline && atSettings.loops.atTimeLapseFastLoop) {
+		if (!atConfig.running || game.options.menu.pauseGame.enabled || getPageSetting('pauseScript', 1) || !getPageSetting('timeWarpSpeed')) {
+			if (usingRealTimeOffline && atConfig.loops.atTimeLapseFastLoop) {
 				resetLoops();
 				debug(`Disabled Time Warp functionality.`, 'offline');
 			}
@@ -303,9 +315,9 @@ function toggleCatchUpMode() {
 		}
 	}
 
-	if (!usingRealTimeOffline && atSettings.loops.atTimeLapseFastLoop) {
+	if (!usingRealTimeOffline && atConfig.loops.atTimeLapseFastLoop) {
 		resetLoops();
-	} else if (usingRealTimeOffline && !atSettings.loops.atTimeLapseFastLoop) {
+	} else if (usingRealTimeOffline && !atConfig.loops.atTimeLapseFastLoop) {
 		['mainLoop', 'guiLoop'].forEach((loop) => startStopLoop(loop, 'stop'));
 		gameLoop = function (makeUp, now) {
 			originalGameLoop(makeUp, now);
@@ -313,11 +325,11 @@ function toggleCatchUpMode() {
 			updateInterval();
 			mainCleanup();
 			if (game.global.mapsActive) _adjustGlobalTimers(['mapStarted'], -100);
-			if (atSettings.intervals.thirtyMinute && getPageSetting('timeWarpSaving')) _timeWarpSave();
+			if (atConfig.intervals.thirtyMinute && getPageSetting('timeWarpSaving')) _timeWarpSave();
 
-			if (loops % getPageSetting('timeWarpFrequency') === 0 || atSettings.portal.aWholeNewWorld || liquifiedZone()) {
+			if (loops % getPageSetting('timeWarpFrequency') === 0 || atConfig.portal.aWholeNewWorld || liquifiedZone()) {
 				mainLoop();
-			} else if (atSettings.intervals.thirtySecond) {
+			} else if (atConfig.intervals.thirtySecond) {
 				trimpStats = new TrimpStats();
 				hdStats = new HDStats();
 			}
@@ -338,11 +350,11 @@ function toggleCatchUpMode() {
 }
 
 function shouldRunInTimeWarp() {
-	return !atSettings.loops.atTimeLapseFastLoop || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
+	return !atConfig.loops.atTimeLapseFastLoop || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 }
 
 function updateInterval() {
-	atSettings.intervals.counter++;
+	atConfig.intervals.counter++;
 
 	const intervals = {
 		tenthSecond: 100,
@@ -360,7 +372,7 @@ function updateInterval() {
 	};
 
 	for (const key in intervals) {
-		atSettings.intervals[key] = atSettings.intervals.counter % (intervals[key] / atSettings.runInterval) === 0;
+		atConfig.intervals[key] = atConfig.intervals.counter % (intervals[key] / atConfig.runInterval) === 0;
 	}
 }
 
@@ -369,7 +381,7 @@ function mainLoop() {
 	if (MODULES.popups.mazWindowOpen) _handleMazWindow();
 	remakeTooltip();
 
-	if (!atSettings.running || game.options.menu.pauseGame.enabled || autoTrimpSettings.pauseScript.enabled) return;
+	if (!atConfig.running || game.options.menu.pauseGame.enabled || autoTrimpSettings.pauseScript.enabled) return;
 	if (game.global.ShieldEquipped.id !== MODULES.heirlooms.shieldEquipped) updateShieldData();
 
 	const runDuringTimeWarp = shouldRunInTimeWarp();
@@ -437,14 +449,14 @@ function mainLoopU2() {
 }
 
 function guiLoop() {
-	if (!usingRealTimeOffline && (!liquifiedZone() || game.global.mapsActive) && getPageSetting('displayEnhancedGrid')) MODULES.fightinfo.Update();
-	if (MODULES.performance && MODULES.performance.isAFK) MODULES.performance.UpdateAFKOverlay();
+	if (!usingRealTimeOffline && (!liquifiedZone() || game.global.mapsActive) && getPageSetting('displayEnhancedGrid')) atData.fightInfo.Update();
+	if (atData.performance && atData.performance.isAFK) atData.performance.UpdateAFKOverlay();
 }
 
 function updatePortalSettingVars(setting, currentValue) {
-	atSettings.portal[setting + 'Last'] = atSettings.portal[setting + 'Current'];
-	atSettings.portal[setting + 'Current'] = currentValue;
-	atSettings.portal['aWholeNew' + setting] = atSettings.portal[setting + 'Last'] !== atSettings.portal[setting + 'Current'];
+	atConfig.portal[setting + 'Last'] = atConfig.portal[setting + 'Current'];
+	atConfig.portal[setting + 'Current'] = currentValue;
+	atConfig.portal['aWholeNew' + setting] = atConfig.portal[setting + 'Last'] !== atConfig.portal[setting + 'Current'];
 }
 
 function updatePortalSettings() {
@@ -453,21 +465,21 @@ function updatePortalSettings() {
 }
 
 function _handleNewHZE() {
-	if (!atSettings.portal.aWholeNewHZE) return;
+	if (!atConfig.portal.aWholeNewHZE) return;
 	_challengeUnlockCheck();
 }
 
 function _handleNewWorld() {
-	if (!atSettings.portal.aWholeNewWorld) return;
+	if (!atConfig.portal.aWholeNewWorld) return;
 	if (autoPortalCheck()) return;
-	if ((usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop) && game.global.world === 60) _timeWarpUpdateEquipment();
+	if ((usingRealTimeOffline || atConfig.loops.atTimeLapseFastLoop) && game.global.world === 60) _timeWarpUpdateEquipment();
 	buyUpgrades();
 	autoEquip();
 	archaeologyAutomator();
 	challengeInfo();
 	RTC_populateRunetrinketCounterInfo();
 
-	if (atSettings.portal.currentworld === 1) {
+	if (atConfig.portal.currentworld === 1) {
 		MODULES.portal.zonePostpone = 0;
 		hideAutomationButtons();
 		if (!game.upgrades.Battle.done) {
@@ -498,22 +510,22 @@ function mainCleanup() {
 }
 
 async function atVersionChecker() {
-	if (atSettings.updateAvailable || usingRealTimeOffline) return;
+	if (atConfig.updateAvailable || usingRealTimeOffline) return;
 
-	const url = `${atSettings.initialise.basepath}versionNumber.js`;
+	const url = `${atConfig.initialise.basepath}versionNumber.js`;
 	const response = await fetch(url);
 
 	if (response.ok) {
 		const text = await response.text();
 		const version = text.split("'")[1];
 
-		if (version !== atSettings.initialise.version) {
+		if (version !== atConfig.initialise.version) {
 			if (getPageSetting('updateReload')) {
 				save(false, true);
 				location.reload();
 			}
 
-			atSettings.updateAvailable = true;
+			atConfig.updateAvailable = true;
 			const changeLogBtn = document.getElementById('atChangelog');
 
 			if (changeLogBtn) {

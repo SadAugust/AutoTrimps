@@ -1,5 +1,5 @@
 //Setup for non-AT users
-if (typeof MODULES === 'undefined') MODULES = {};
+if (typeof atData === 'undefined') atData = {};
 if (typeof _displaySpireImport !== 'function') function _displaySpireImport() {}
 if (typeof _getChallenge2Info !== 'function') function _getChallenge2Info() {}
 if (typeof importExportTooltip !== 'function') function importExportTooltip() {}
@@ -76,7 +76,7 @@ var Perk = /** @class */ (function () {
 			const spent = this.level_up(fixedLevel, true);
 			this.fixedCost = spent;
 			this.level_up(-fixedLevel, true);
-			MODULES.autoPerks.fixedCost += spent;
+			atData.autoPerks.fixedCost += spent;
 		}
 	}
 
@@ -97,7 +97,7 @@ var Perk = /** @class */ (function () {
 		}
 
 		if (this.fixed && !ignoreFixed) {
-			MODULES.autoPerks.fixedCost += amount > 0 ? -spent : amount < 0 ? spent : 0;
+			atData.autoPerks.fixedCost += amount > 0 ? -spent : amount < 0 ? spent : 0;
 		}
 
 		return spent;
@@ -194,7 +194,7 @@ function savePerkySettings() {
 	const settingInputs = { preset: document.querySelector('#preset').value };
 	settingInputs.lockedPerks = saveData.lockedPerks || undefined;
 
-	MODULES.autoPerks.GUI.inputs.forEach((item) => {
+	atData.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
 	});
 
@@ -401,7 +401,7 @@ function parse_perks() {
 	const calcNames = { 1: 'Perky', 2: 'Surky' };
 	const calcName = calcNames[portalUniverse];
 	let perkLocks = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
-	MODULES.autoPerks.fixedCost = 0;
+	atData.autoPerks.fixedCost = 0;
 
 	for (const [name, func] of Object.entries(perkData)) {
 		perks[name] = new Perk(name, func, perkLocks.lockedPerks ? perkLocks.lockedPerks[name] : false);
@@ -730,27 +730,6 @@ function optimize() {
 			if (!best.levellable(he_left)) continue;
 			spend_he(best, he_left - he_target);
 
-			/* if (MODULES.autoPerks.fixedCost > he_left) {
-				while (MODULES.autoPerks.fixedCost > he_left) {
-					he_left += best.level_up(-1);
-					brokenLoop = true;
-					break;
-				}
-
-				for (let name in perks) {
-					const perk = perks[name];
-					if (perk.fixed) {
-						perk.min_level = perk.max_level;
-
-						if (perk.cost_increment && perk.level < perk.min_level) he_left -= perk.level_up(perk.min_level - perk.level);
-						else while (perk.level < perk.min_level) he_left -= perk.level_up(1);
-					}
-				}
-
-				MODULES.autoPerks.fixedCost = 0;
-				break;
-			} */
-
 			let i = 0;
 			while (sorted_perks[i] && sorted_perks[i].gain / sorted_perks[i].cost > best.gain / best.cost) i++;
 			sorted_perks.splice(i, 0, best);
@@ -781,7 +760,7 @@ function togglePerkLock(id, calcName) {
 	document.getElementById(`lock${id}`).classList = `icomoon ${settingInputs['lockedPerks'][id] ? 'icon-locked' : 'icon-unlocked'}`;
 }
 
-MODULES.autoPerks = {
+atData.autoPerks = {
 	createInput: function (perkLine, id, inputObj, savedValue, settingName) {
 		if (!id || document.getElementById(id + 'Div') !== null) {
 			console.log("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.");
@@ -817,11 +796,11 @@ MODULES.autoPerks = {
 	},
 
 	removeGUI: function () {
-		Object.keys(MODULES.autoPerks.GUI).forEach((key) => {
-			const elem = MODULES.autoPerks.GUI[key];
+		Object.keys(atData.autoPerks.GUI).forEach((key) => {
+			const elem = atData.autoPerks.GUI[key];
 			if (elem && elem.parentNode) {
 				elem.parentNode.removeChild(elem);
-				delete MODULES.autoPerks.GUI[key];
+				delete atData.autoPerks.GUI[key];
 			}
 		});
 	},
@@ -871,18 +850,18 @@ MODULES.autoPerks = {
 			}
 		}
 
-		if (!forceRefresh && MODULES.autoPerks.loaded === calcName) return;
+		if (!forceRefresh && atData.autoPerks.loaded === calcName) return;
 
-		const presets = MODULES.autoPerks[`presets${calcName}`];
-		const inputBoxes = MODULES.autoPerks[`inputBoxes${calcName}`];
+		const presets = atData.autoPerks[`presets${calcName}`];
+		const inputBoxes = atData.autoPerks[`inputBoxes${calcName}`];
 		let settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
 		//As a safety measure we should remove the GUI if it already exists.
-		if (MODULES.autoPerks.GUI && Object.keys(MODULES.autoPerks.GUI).length !== 0) MODULES.autoPerks.removeGUI();
+		if (atData.autoPerks.GUI && Object.keys(atData.autoPerks.GUI).length !== 0) atData.autoPerks.removeGUI();
 
-		MODULES.autoPerks.GUI = {};
-		MODULES.autoPerks.GUI.inputs = [];
-		MODULES.autoPerks.loaded = calcName;
-		const apGUI = MODULES.autoPerks.GUI;
+		atData.autoPerks.GUI = {};
+		atData.autoPerks.GUI.inputs = [];
+		atData.autoPerks.loaded = calcName;
+		const apGUI = atData.autoPerks.GUI;
 
 		//Setup Auto Allocate button
 		let allocateText = 'Clears all perks and buys optimal levels in each perk.';
@@ -912,8 +891,8 @@ MODULES.autoPerks = {
 			apGUI.$ratiosLine[row] = document.createElement('DIV');
 			apGUI.$ratiosLine[row].setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
 			for (let item in inputBoxes[row]) {
-				MODULES.autoPerks.createInput(apGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, calcName);
-				MODULES.autoPerks.GUI.inputs.push(item);
+				atData.autoPerks.createInput(apGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, calcName);
+				atData.autoPerks.GUI.inputs.push(item);
 			}
 			apGUI.$customRatios.appendChild(apGUI.$ratiosLine[row]);
 		}
@@ -1316,7 +1295,7 @@ if (typeof originalSwapPortalUniverse !== 'function') {
 	var originalSwapPortalUniverse = swapPortalUniverse;
 	swapPortalUniverse = function () {
 		originalSwapPortalUniverse(...arguments);
-		MODULES.autoPerks.displayGUI();
+		atData.autoPerks.displayGUI();
 	};
 }
 
@@ -1324,7 +1303,7 @@ if (typeof originalViewPortalUpgrades !== 'function') {
 	var originalViewPortalUpgrades = viewPortalUpgrades;
 	viewPortalUpgrades = function () {
 		originalViewPortalUpgrades(...arguments);
-		MODULES.autoPerks.displayGUI();
+		atData.autoPerks.displayGUI();
 	};
 }
 
@@ -1332,7 +1311,7 @@ if (typeof originalPortalClicked !== 'function') {
 	var originalPortalClicked = portalClicked;
 	portalClicked = function () {
 		originalPortalClicked(...arguments);
-		MODULES.autoPerks.displayGUI();
+		atData.autoPerks.displayGUI();
 	};
 }
 
@@ -1340,7 +1319,7 @@ if (typeof originalDisplayPortalUpgrades !== 'function') {
 	var originalDisplayPortalUpgrades = displayPortalUpgrades;
 	displayPortalUpgrades = function () {
 		originalDisplayPortalUpgrades(...arguments);
-		MODULES.autoPerks.displayGUI();
+		atData.autoPerks.displayGUI();
 	};
 }
 
@@ -1398,7 +1377,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 				await loadModules(module, path);
 			}
 
-			MODULES.autoPerks.displayGUI();
+			atData.autoPerks.displayGUI();
 			console.log('The surky & perky mosd have finished loading.');
 			message('The surky & perky mods have finished loading.', 'Loot');
 		} catch (error) {

@@ -162,4 +162,4 @@
 		const statusText = `Status: ${autoMapsStatus(true)[0]}`;
 		if (overlayStatus.innerText !== statusText) overlayStatus.innerText = statusText;
 	};
-})(MODULES, window);
+})(atData, window);

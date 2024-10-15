@@ -366,7 +366,7 @@ function checkLiqZoneCount(universe) {
 }
 
 function updateChangelogButton() {
-	if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
+	if (autoTrimpSettings.ATversionChangelog === atConfig.initialise.version) return;
 	const changeLogBtn = document.getElementById('atChangelog');
 	if (!changeLogBtn) return;
 
@@ -374,7 +374,7 @@ function updateChangelogButton() {
 	swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
 
 	changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", '');
-	autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
+	autoTrimpSettings.ATversionChangelog = atConfig.initialise.version;
 	saveSettings();
 }
 
@@ -423,8 +423,8 @@ function _timeWarpSave() {
 }
 
 function _timeWarpAutoSaveSetting() {
-	atSettings.autoSave = game.options.menu.autoSave.enabled;
-	atSettings.loops.atTimeLapseFastLoop = true;
+	atConfig.autoSave = game.options.menu.autoSave.enabled;
+	atConfig.loops.atTimeLapseFastLoop = true;
 	if (game.options.menu.autoSave.enabled) toggleSetting('autoSave');
 }
 
@@ -499,7 +499,7 @@ function _timeWarpUpdateUIDisplay(force = false) {
 
 function _timeWarpUpdateEquipment() {
 	for (let equipName in game.equipment) {
-		const upgradeName = MODULES.equipment[equipName].upgrade;
+		const upgradeName = atData.equipment[equipName].upgrade;
 		if (game.upgrades[upgradeName].locked === 1) continue;
 		if (document.getElementById(upgradeName) === null) {
 			drawUpgrade(upgradeName, document.getElementById('upgradesHere'));
@@ -532,10 +532,10 @@ function _handleMazWindow() {
 }
 
 function _handleIntervals() {
-	if (atSettings.intervals.tenMinute) atVersionChecker();
+	if (atConfig.intervals.tenMinute) atVersionChecker();
 
-	const timeWarp = usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop;
-	if (timeWarp ? atSettings.intervals.twoSecond : atSettings.intervals.halfSecond) {
+	const timeWarp = usingRealTimeOffline || atConfig.loops.atTimeLapseFastLoop;
+	if (timeWarp ? atConfig.intervals.twoSecond : atConfig.intervals.halfSecond) {
 		trimpStats = new TrimpStats();
 		hdStats = new HDStats();
 	}
@@ -564,7 +564,7 @@ function _handlePopupTimer() {
 }
 
 function _challengeUnlockCheck() {
-	if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+	if (atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
 
 	function isChallengeUnlocked(challenge) {
 		return (MODULES.u1unlocks && MODULES.u1unlocks.includes(challenge)) || (MODULES.u2unlocks && MODULES.u2unlocks.includes(challenge));
@@ -727,20 +727,20 @@ function introMessage() {
 
 function updateATVersion() {
 	//Setting Conversion!
-	if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] === atSettings.initialise.version) return;
+	if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] === atConfig.initialise.version) return;
 	if (typeof autoTrimpSettings === 'undefined') return;
 	let changelog = [];
 
 	//Prints the new user message if it's the first time loading the script.
 	if (autoTrimpSettings['ATversion'] === undefined || !autoTrimpSettings['ATversion'].includes('SadAugust')) {
-		autoTrimpSettings['ATversion'] = atSettings.initialise.version;
+		autoTrimpSettings['ATversion'] = atConfig.initialise.version;
 		saveSettings();
-		if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+		if (atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
 		introMessage();
 		return;
 	}
 
-	if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] !== atSettings.initialise.version) {
+	if (autoTrimpSettings['ATversion'] !== undefined && autoTrimpSettings['ATversion'].includes('SadAugust') && autoTrimpSettings['ATversion'] !== atConfig.initialise.version) {
 		//On the offchance anybody is using a super old version of AT then they need their localStorage setting converted
 		if (JSON.parse(localStorage.getItem('atSettings')) === null) saveSettings();
 		const versionNumber = autoTrimpSettings['ATversion'].split('v')[1];
@@ -1210,16 +1210,20 @@ function updateATVersion() {
 			saveSettings();
 			hideAutomationButtons();
 		}
+
+		if (versionNumber < '6.5.96') {
+			setupAddonUser(true);
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
 		No other way to access it in TW currently. */
 	if (usingRealTimeOffline) {
-		const changelogURL = `${atSettings.initialise.basepath}updates.html`;
+		const changelogURL = `${atConfig.initialise.basepath}updates.html`;
 		changelog.push('There has been an AutoTrimps update. <a href="' + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
 	}
 
-	autoTrimpSettings['ATversion'] = atSettings.initialise.version;
+	autoTrimpSettings['ATversion'] = atConfig.initialise.version;
 
 	if (changelog.length !== 0) {
 		printChangelog(changelog);

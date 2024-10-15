@@ -52,7 +52,7 @@ function saveSurkySettings() {
 	//Initial setup and saving preset value
 	const settingInputs = { preset: document.querySelector('#preset').value };
 	settingInputs.lockedPerks = saveData.lockedPerks || undefined;
-	MODULES.autoPerks.GUI.inputs.forEach((item) => {
+	atData.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
 	});
 

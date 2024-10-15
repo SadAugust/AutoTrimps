@@ -153,7 +153,7 @@ function _equalityManagementBasic() {
 	}
 
 	const experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
-	const fastEnemy = MODULES.fightinfo.fastImps.includes(getCurrentEnemy().name) || experienced;
+	const fastEnemy = atData.fightInfo.fastImps.includes(getCurrentEnemy().name) || experienced;
 	const voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === 'Void' && getCurrentMapObject().voidBuff === 'doubleAttack';
 	const noFrenzy = game.portal.Frenzy.radLevel > 0 && game.portal.Frenzy.frenzyStarted === -1 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 	const runningGlass = challengeActive('Glass');

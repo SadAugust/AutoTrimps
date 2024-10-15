@@ -27,7 +27,7 @@ if (typeof originalLoad !== 'function') {
 			setupAddonUser();
 			updateAutoTrimpSettings(true);
 			RTC_populateRunetrinketCounterInfo();
-			MODULES.autoPerks.displayGUI();
+			atData.autoPerks.displayGUI();
 		} catch (e) {
 			debug(`Load save failed: ${e}`, 'error');
 		}
@@ -38,11 +38,12 @@ if (typeof originalLoad !== 'function') {
 if (typeof originalresetGame !== 'function') {
 	var originalresetGame = resetGame;
 	resetGame = function () {
+		const addonUser = game.global.addonUser;
 		originalresetGame(...arguments);
 		try {
+			game.global.addonUser = addonUser;
 			atlantrimpRespecOverride();
 			_setButtonsPortal();
-			setupAddonUser(true);
 		} catch (e) {
 			debug(`Load save failed: ${e}`, 'error');
 		}
@@ -67,7 +68,7 @@ if (typeof game.options.menu.pauseGame.originalOnToggle !== 'function') {
 			const value = game.global.universe === 2 ? 'valueU2' : 'value';
 			const now = new Date().getTime();
 			const dif = now - this.timeAtPause;
-			game.global.addonUser.mapFarmSettings[value][mapSettings.settingIndex].timer += dif;
+			game.global.addonUser.mapData.mapFarmSettings[value][mapSettings.settingIndex].timer += dif;
 		}
 		game.options.menu.pauseGame.originalOnToggle(...arguments);
 	};
@@ -152,7 +153,7 @@ if (typeof offlineProgress.originalFinish !== 'function') {
 			timeRun = Math.min(timeRun, oneDayInSeconds * 365); /* Cap Time Warp time at 1 year */
 		}
 
-		if (game.options.menu.autoSave.enabled !== atSettings.autoSave) toggleSetting('autoSave');
+		if (game.options.menu.autoSave.enabled !== atConfig.autoSave) toggleSetting('autoSave');
 		offlineProgress.originalFinish(...arguments);
 
 		try {
@@ -170,7 +171,7 @@ if (typeof offlineProgress.originalFinish !== 'function') {
 				offlineProgress.start();
 				if (typeof _setupTimeWarpAT === 'function') _setupTimeWarpAT();
 				buildingsQueueReset();
-			} else if (game.options.menu.autoSave.enabled !== atSettings.autoSave) {
+			} else if (game.options.menu.autoSave.enabled !== atConfig.autoSave) {
 				toggleSetting('autoSave');
 			}
 		} catch (e) {
@@ -183,20 +184,20 @@ function timeWarpLoop(firstLoop = false) {
 	const now = new Date().getTime();
 
 	if (firstLoop) {
-		atSettings.timeWarp.nextUpdate = Math.floor(offlineProgress.ticksProcessed / 1000) * 1000;
-		atSettings.timeWarp.loopCount = offlineProgress.ticksProcessed;
+		atConfig.timeWarp.nextUpdate = Math.floor(offlineProgress.ticksProcessed / 1000) * 1000;
+		atConfig.timeWarp.loopCount = offlineProgress.ticksProcessed;
 		offlineProgress.lastLoop = now;
 	}
 
-	atSettings.timeWarp.loopCount += atSettings.timeWarp.loopTicks;
+	atConfig.timeWarp.loopCount += atConfig.timeWarp.loopTicks;
 
-	if (atSettings.timeWarp.loopCount >= atSettings.timeWarp.nextUpdate) {
-		offlineProgress.updateBar(atSettings.timeWarp.loopCount);
-		atSettings.timeWarp.nextUpdate += 1000;
+	if (atConfig.timeWarp.loopCount >= atConfig.timeWarp.nextUpdate) {
+		offlineProgress.updateBar(atConfig.timeWarp.loopCount);
+		atConfig.timeWarp.nextUpdate += 1000;
 	}
 
 	const keys = ['zoneStarted', 'portalTime', 'lastSoldierSentAt', 'lastSkeletimp'];
-	for (let i = 0; i < atSettings.timeWarp.loopTicks; i++) {
+	for (let i = 0; i < atConfig.timeWarp.loopTicks; i++) {
 		gameLoop(true);
 		_adjustGlobalTimers(keys, -100);
 		offlineProgress.ticksProcessed++;
@@ -205,16 +206,16 @@ function timeWarpLoop(firstLoop = false) {
 	const timeSpent = now - offlineProgress.lastLoop;
 
 	if (timeSpent < 175) {
-		atSettings.timeWarp.loopTicks += 5;
-	} else if (timeSpent > 200 && atSettings.timeWarp.loopTicks > 50) {
-		atSettings.timeWarp.loopTicks -= 5;
+		atConfig.timeWarp.loopTicks += 5;
+	} else if (timeSpent > 200 && atConfig.timeWarp.loopTicks > 50) {
+		atConfig.timeWarp.loopTicks -= 5;
 	}
 
-	offlineProgress.loopTicks = atSettings.timeWarp.loopTicks;
+	offlineProgress.loopTicks = atConfig.timeWarp.loopTicks;
 	offlineProgress.lastLoop = now;
 
 	if (typeof steamCanvas !== 'undefined') steamCanvasContext.clearRect(0, 0, steamCanvas.width, steamCanvas.height);
-	if (atSettings.timeWarp.loopCount < offlineProgress.progressMax && usingRealTimeOffline) {
+	if (atConfig.timeWarp.loopCount < offlineProgress.progressMax && usingRealTimeOffline) {
 		offlineProgress.loop = setTimeout(timeWarpLoop, 0);
 	} else {
 		offlineProgress.finish();

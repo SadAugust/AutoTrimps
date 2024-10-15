@@ -1,6 +1,6 @@
 //Setup for non-AT users
-if (typeof MODULES === 'undefined') {
-	MODULES = {};
+if (typeof atData === 'undefined') {
+	atData = {};
 }
 
 function masteryPurchased(name) {
@@ -18,7 +18,7 @@ function combatSpeed(hze = getHighestLevelCleared() + 1) {
 }
 
 function populateFarmCalcData() {
-	const runningAutoTrimps = typeof atSettings !== 'undefined';
+	const runningAutoTrimps = typeof atConfig !== 'undefined';
 
 	const exoticNames = ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp'];
 	const imps = exoticNames.reduce((total, imp) => total + game.unlocks.imps[imp], 0) + +masteryPurchased('magimp');
@@ -34,7 +34,7 @@ function populateFarmCalcData() {
 	const breedTimer = _breedTotalTime();
 
 	const basicData = {
-		maxTicks: runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 21600 : 21600 /* Six hours simulation inside of TW and a day (testing 6 hours in both scenarios for now) outside of it. */,
+		maxTicks: runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 21600 : 21600 /* Six hours simulation inside of TW and a day (testing 6 hours in both scenarios for now) outside of it. */,
 		hze,
 		universe: game.global.universe,
 		zone: game.global.world,
@@ -210,7 +210,7 @@ function populateFarmCalcData() {
 			if (!game.global.mapsActive && !game.global.preMapsActive) {
 				const balance = game.challenges.Balance;
 				if (balance.balanceStacks < 250) {
-					const timer = runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
+					const timer = runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
 					const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
 
 					const healthMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
@@ -294,7 +294,7 @@ function populateFarmCalcData() {
 			if (!game.global.mapsActive && !game.global.preMapsActive) {
 				const balance = game.challenges.Unbalance;
 				if (balance.balanceStacks < 250) {
-					const timer = runningAutoTrimps && atSettings.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
+					const timer = runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
 					const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
 
 					const attackMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
@@ -448,7 +448,7 @@ function stats(lootFunction = lootDefault) {
 	const extra = saveData.extraMapLevelsAvailable ? 10 : saveData.mapReducer && saveData.zone > 6 ? -1 : 0;
 	let coords = 1;
 	const stances = saveData.stances;
-	const alwaysPerfect = typeof atSettings !== 'undefined' && getPageSetting('onlyPerfectMaps');
+	const alwaysPerfect = typeof atConfig !== 'undefined' && getPageSetting('onlyPerfectMaps');
 
 	if (saveData.coordinate) {
 		for (let z = 1; z < saveData.zone + extra + 1; ++z) {
@@ -1105,7 +1105,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			};
 		}
 
-		const forcePerfect = typeof atSettings !== 'undefined' && getPageSetting('onlyPerfectMaps');
+		const forcePerfect = typeof atConfig !== 'undefined' && getPageSetting('onlyPerfectMaps');
 		const fragments = game.resources.fragments.owned;
 		for (let i = 0; i <= stats.length - 1; i++) {
 			if (forcePerfect && stats[i].zone !== 6) {
@@ -1272,8 +1272,8 @@ function farmCalcGetMapDetails() {
 	if (typeof hdStats !== 'object' || typeof hdStats.autoLevelData.loot.mapConfig === 'undefined') return;
 
 	const { mapOwned, name, level, plusLevel, special, biome, difficulty, size, loot, sliders, perfect } = hdStats.autoLevelData.loot.mapConfig;
-	const calcName = typeof atSettings !== 'undefined' ? 'Auto Level' : 'Farm Calc';
-	const lootText = typeof atSettings !== 'undefined' ? 'loot' : '';
+	const calcName = typeof atConfig !== 'undefined' ? 'Auto Level' : 'Farm Calc';
+	const lootText = typeof atConfig !== 'undefined' ? 'loot' : '';
 
 	let text = `<p>Details of the ${lootText} map you own that ${calcName} recommends you run:`;
 	if (!mapOwned) text = `<p>Details for the ${lootText} map that ${calcName} is recommending you purchase to run:`;

@@ -1,5 +1,5 @@
 function updateBadBar(cell) {
-	const showPercentage = typeof atSettings === 'undefined' || getPageSetting('displayPercentHealth');
+	const showPercentage = typeof atConfig === 'undefined' || getPageSetting('displayPercentHealth');
 	const badGuyHealth = document.getElementById('badGuyHealth');
 	const enemyHealth = prettify(cell.health);
 
@@ -22,7 +22,7 @@ function updateBadBar(cell) {
 }
 
 function updateGoodBar() {
-	const showPercentage = typeof atSettings === 'undefined' || getPageSetting('displayPercentHealth');
+	const showPercentage = typeof atConfig === 'undefined' || getPageSetting('displayPercentHealth');
 	const goodGuyHealth = document.getElementById('goodGuyHealth');
 
 	if (!showPercentage) {
@@ -75,7 +75,7 @@ function updateGoodBar() {
 	swapClass('percentColor', getBarColorClass(percent), barElem);
 }
 
-if (typeof atSettings === 'undefined') {
+if (typeof atConfig === 'undefined') {
 	if (document.getElementById('goodGuyHealthMax').parentNode.childNodes[2].data === '/') {
 		document.getElementById('goodGuyHealth').style.display = 'block';
 		document.getElementById('goodGuyHealthMax').parentNode.removeChild(document.getElementById('goodGuyHealthMax').parentNode.childNodes[2]);

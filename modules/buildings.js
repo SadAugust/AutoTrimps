@@ -1,7 +1,3 @@
-MODULES.buildings = {
-	betaHouseEfficiency: false
-};
-
 function safeBuyBuilding(building, amt) {
 	const queued = isBuildingInQueue(building);
 	const locked = game.buildings[building].locked;
@@ -28,7 +24,7 @@ function advancedNurseries() {
 	if (!lackingHealth) return false;
 
 	const portalZoneCheck = getTotalPortals() + '_' + game.global.world;
-	const { hasHealthFarmed, isHealthFarming } = game.global.addonUser.mapFunctions;
+	const { hasHealthFarmed, isHealthFarming } = MODULES.mapFunctions;
 	if (hasHealthFarmed === portalZoneCheck || isHealthFarming === portalZoneCheck) return true;
 
 	const maxMapBonus = game.global.mapBonus >= getPageSetting('mapBonusHealth');
@@ -480,7 +476,7 @@ function _buySmithy(buildingSettings) {
  */
 function _calcSmithyDuringQuest() {
 	let smithyCanAfford = 0;
-	if ((atSettings.portal.aWholeNewWorld || getCurrentQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
+	if ((atConfig.portal.aWholeNewWorld || getCurrentQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
 		const smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
 		const questEndZone = !game.global.runningChallengeSquared ? 85 : getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone');
 		let questZones = Math.floor((questEndZone - game.global.world) / 2 - 1);
@@ -536,7 +532,7 @@ function _buyAntenna(buildingSettings) {
  */
 function _keepBuyingHousing(buildingSettings) {
 	// If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
-	if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || liquifiedZone()) {
+	if (usingRealTimeOffline || atConfig.loops.atTimeLapseFastLoop || liquifiedZone()) {
 		_buyHousing(buildingSettings);
 	} else {
 		let boughtHousing = false;

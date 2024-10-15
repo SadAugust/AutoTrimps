@@ -230,7 +230,7 @@ function buyUpgrades() {
 
 		//TODO Maybe rework this priority system
 		//Prioritise Science/scientist upgrades
-		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atSettings.portal.aWholeNewWorld && !scientistChallenge) {
+		if (upgrade !== 'Bloodlust' && upgrade !== 'Miners' && upgrade !== 'Scientists' && !atConfig.portal.aWholeNewWorld && !scientistChallenge) {
 			if (needScientists) continue;
 			if (needBounty && upgrade !== 'Bounty') continue;
 			if (!needBounty && needEff && researchIsRelevant && saveForEff && upgrade !== 'Efficiency') continue;

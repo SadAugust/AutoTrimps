@@ -1,6 +1,10 @@
-if (typeof MODULES !== 'object') MODULES = {};
-MODULES.mutatorPreset = {};
-MODULES.mutatorPreset.selected = 0;
+if (typeof MODULES !== 'object') {
+	MODULES = {};
+}
+
+if (typeof atConfig === 'undefined') {
+	MODULES.mutatorPreset.selected = 0;
+}
 
 function presetMutTab(tabNum) {
 	if (MODULES.mutatorPreset.selected === tabNum) return;

@@ -1,13 +1,4 @@
-MODULES.mapFunctions = {
-	afterVoids: false,
-	hasVoidFarmed: '',
-	runUniqueMap: '',
-	questRun: false,
-	hypoPackrat: false,
-	desoGearScum: false
-};
-
-MODULES.mapFunctions.uniqueMaps = Object.freeze({
+atData.uniqueMaps = Object.freeze({
 	/* Universe 1 Unique Maps */
 	'The Block': {
 		zone: 11,
@@ -217,7 +208,7 @@ function shouldRunUniqueMap(map) {
 	//Stops unique maps being run when we should be destacking instead as it is likely to be slower overall.
 	const isDestackingMap = ['Desolation Destacking', 'Pandemonium Destacking', 'Mayhem Destacking'].includes(mapSettings.mapName);
 	if (isDestackingMap) return false;
-	const mapData = MODULES.mapFunctions.uniqueMaps[map.name];
+	const mapData = atData.uniqueMaps[map.name];
 	if (mapData === undefined || game.global.world < mapData.zone - (trimpStats.plusLevels ? 10 : 0)) return false;
 	if (game.global.universe !== mapData.universe) return false;
 	if (!challengeActive('Scientist') || game.global.sLevel < 5) {
@@ -262,7 +253,7 @@ function _obtainUniqueMap(uniqueMap) {
 	if (!uniqueMap || typeof uniqueMap !== 'string') uniqueMap = mapSettings.uniqueMap;
 	if (!uniqueMap) return farmingDetails;
 
-	const unlockLevel = MODULES.mapFunctions.uniqueMaps[uniqueMap].zone;
+	const unlockLevel = atData.uniqueMaps[uniqueMap].zone;
 
 	//Only go for this map if we are able to obtain it
 	if (!trimpStats.perfectMaps && unlockLevel > game.global.world) return farmingDetails;
@@ -359,14 +350,14 @@ function recycleMap_AT(forceAbandon) {
 }
 
 //Void Maps
-MODULES.mapFunctions.voidPrefixes = Object.freeze({
+atData.voidPrefixes = Object.freeze({
 	Poisonous: 10,
 	Destructive: 11,
 	Heinous: 20,
 	Deadly: 30
 });
 
-MODULES.mapFunctions.voidSuffixes = Object.freeze({
+atData.voidSuffixes = Object.freeze({
 	Descent: 7.077,
 	Void: 8.822,
 	Nightmare: 9.436,
@@ -378,14 +369,14 @@ function _getVoidMapDifficulty(map) {
 
 	let score = 0;
 	const mapName = map.name;
-	for (const [prefix, weight] of Object.entries(MODULES.mapFunctions.voidPrefixes)) {
+	for (const [prefix, weight] of Object.entries(atData.voidPrefixes)) {
 		if (mapName.includes(prefix)) {
 			score += weight;
 			if (trimpStats.shieldBreak) score = 100;
 			break;
 		}
 	}
-	for (const [suffix, weight] of Object.entries(MODULES.mapFunctions.voidSuffixes)) {
+	for (const [suffix, weight] of Object.entries(atData.voidSuffixes)) {
 		if (mapName.includes(suffix)) {
 			score += weight;
 			break;
@@ -714,7 +705,7 @@ function _runMapFarm(setting, mapName, settingName, settingIndex) {
 
 	if (setting.mapType === 'Farm Time') {
 		const value = game.global.universe === 2 ? 'valueU2' : 'value';
-		const userSetting = game.global.addonUser.mapFarmSettings[value][setting.row];
+		const userSetting = game.global.addonUser.mapData.mapFarmSettings[value][setting.row];
 		if (!userSetting.zone || userSetting.zone !== game.global.world) {
 			userSetting.zone = game.global.world;
 			userSetting.timer = getGameTime();
@@ -759,7 +750,7 @@ function _runMapFarm(setting, mapName, settingName, settingIndex) {
 function _getMapFarmActions(mapType, setting, repeatNumber) {
 	const timeBasedActions = ['Daily Reset', 'Zone Time', 'Farm Time', 'Portal Time', 'Skele Spawn'];
 	const value = game.global.universe === 2 ? 'valueU2' : 'value';
-	userSetting = game.global.addonUser.mapFarmSettings[value][setting.row];
+	userSetting = game.global.addonUser.mapData.mapFarmSettings[value][setting.row];
 	const timeBasedAction = () => {
 		const repeatCheck = {
 			'Daily Reset': updateDailyClock(true)
@@ -1315,7 +1306,7 @@ function prestigeClimb(lineCheck) {
 
 function _raidingTargetPrestige(setting) {
 	const mapologyActive = challengeActive('Mapology') && getPageSetting('mapology');
-	const targetPrestige = mapologyActive ? getPageSetting('mapologyPrestige') : setting.prestigeGoal && setting.prestigeGoal !== 'All' ? MODULES.equipment[setting.prestigeGoal].upgrade : 'GamesOP';
+	const targetPrestige = mapologyActive ? getPageSetting('mapologyPrestige') : setting.prestigeGoal && setting.prestigeGoal !== 'All' ? atData.equipment[setting.prestigeGoal].upgrade : 'GamesOP';
 	return targetPrestige;
 }
 
@@ -1565,7 +1556,7 @@ function bionicRaiding(lineCheck) {
 }
 
 function _runBionicRaiding(setting, mapName, settingIndex) {
-	const unlockLevel = MODULES.mapFunctions.uniqueMaps['Bionic Wonderland'].zone;
+	const unlockLevel = atData.uniqueMaps['Bionic Wonderland'].zone;
 	if (!trimpStats.plusLevels && unlockLevel > game.global.world) return {};
 	else if (trimpStats.plusLevels && unlockLevel > game.global.world + 10) return {};
 
@@ -2229,7 +2220,7 @@ function pandemoniumDestack(lineCheck) {
 }
 
 function pandemoniumEquipmentCheck(cacheGain) {
-	const equipArray = { ...MODULES.equipment };
+	const equipArray = { ...atData.equipment };
 
 	const equipsToPurchaseBaseline = {
 		attack: {
@@ -3062,13 +3053,13 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	const currentPortal = getTotalPortals() + '_' + game.global.world;
 	const hitsSurvivedGoal = targetHitsSurvived(true);
 
-	if (!skipHealthCheck && game.global.addonUser.mapFunctions.hasHealthFarmed === currentPortal) {
+	if (!skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed === currentPortal) {
 		const resetHasFarmed = hitsSurvivedGoal > 0 && hitsSurvivedGoal * 0.8 > hdStats.hitsSurvived && getPageSetting('hitsSurvivedReset');
 
-		if (resetHasFarmed) game.global.addonUser.mapFunctions.hasHealthFarmed = '';
+		if (resetHasFarmed) MODULES.mapFunctions.hasHealthFarmed = '';
 	}
 
-	const hitsSurvivedCheck = !skipHealthCheck && allowMapping && game.global.addonUser.mapFunctions.hasHealthFarmed !== currentPortal;
+	const hitsSurvivedCheck = !skipHealthCheck && allowMapping && MODULES.mapFunctions.hasHealthFarmed !== currentPortal;
 	const shouldHitsSurvived = hitsSurvivedCheck && hitsSurvivedGoal > 0 && (hdStats.hitsSurvived < hitsSurvivedGoal || (mapSettings.mapName === 'Hits Survived' && mapSettings.priority === Infinity));
 
 	const hdRatioSetting = getPageSetting('mapBonusRatio');
@@ -3173,8 +3164,8 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 
 	if (mapSettings.mapName.includes('Hits Survived') && game.global.mapRunCounter >= Math.min(mapsRunCap, getPageSetting('advancedNurseriesMapCap'))) {
 		const portalZoneCheck = getTotalPortals() + '_' + game.global.world;
-		if (game.global.addonUser.mapFunctions.isHealthFarming !== portalZoneCheck) {
-			game.global.addonUser.mapFunctions.isHealthFarming = portalZoneCheck;
+		if (MODULES.mapFunctions.isHealthFarming !== portalZoneCheck) {
+			MODULES.mapFunctions.isHealthFarming = portalZoneCheck;
 		}
 	}
 
@@ -3302,7 +3293,7 @@ function farmingDecision() {
 	}
 
 	if (usingBreedHeirloom()) {
-		if (atSettings.intervals.oneMinute) {
+		if (atConfig.intervals.oneMinute) {
 			debug(`Your breed heirloom is equipped and mapping is disabled due to it. If this is not intentional then swap the heirloom you're using for breeding with another.`, `heirlooms`);
 		}
 
@@ -3626,7 +3617,7 @@ function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
 	const totalPortals = getTotalPortals();
 	const value = game.global.universe === 2 ? 'valueU2' : 'value';
 	if (settingName && currSetting.row) {
-		const settingDone = game.global.addonUser[settingName][value][currSetting.row].done;
+		const settingDone = game.global.addonUser.mapData[settingName][value][currSetting.row].done;
 		if (settingDone === `${totalPortals}_${game.global.world}`) return false;
 		//Ensure we don't eternally farm if daily reset timer is low enough that it will start again next zone
 		if (currSetting.mapType && currSetting.mapType === 'Daily Reset' && settingDone && settingDone.split('_')[0] === totalPortals.toString()) return false;
@@ -3709,11 +3700,11 @@ function resetMapVars(setting, settingName) {
 	MODULES.maps.mapRepeatsSmithy = [0, 0, 0];
 
 	if (mapSettings.voidFarm) MODULES.mapFunctions.hasVoidFarmed = `${totalPortals}_${game.global.world}`;
-	if (setting && setting.hitsSurvivedFarm) game.global.addonUser.mapFunctions.hasHealthFarmed = `${totalPortals}_${game.global.world}`;
+	if (setting && setting.hitsSurvivedFarm) MODULES.mapFunctions.hasHealthFarmed = `${totalPortals}_${game.global.world}`;
 
 	if (setting && settingName && setting.row) {
 		const value = game.global.universe === 2 ? 'valueU2' : 'value';
-		game.global.addonUser[settingName][value][setting.row].done = `${totalPortals}_${game.global.world}`;
+		game.global.addonUser.mapData[settingName][value][setting.row].done = `${totalPortals}_${game.global.world}`;
 	}
 
 	//Tribute Farm
@@ -4004,8 +3995,8 @@ function dailyOddOrEven() {
 
 //I hope I never use this again. Scumming for slow map enemies!
 function slowScum(slowTarget) {
-	if (!game.global.mapsActive || game.global.lastClearedMapCell > -1 || !atSettings.running) return;
-	atSettings.running = false;
+	if (!game.global.mapsActive || game.global.lastClearedMapCell > -1 || !atConfig.running) return;
+	atConfig.running = false;
 
 	const map = getCurrentMapObject();
 	if (map.size > 36) return;
@@ -4024,7 +4015,7 @@ function slowScum(slowTarget) {
 	MODULES.maps.slowScumming = true;
 	console.time();
 
-	const impArray = runningDeso ? MODULES.fightinfo.exoticImps : MODULES.fightinfo.fastImps;
+	const impArray = runningDeso ? atData.fightInfo.exoticImps : atData.fightInfo.fastImps;
 
 	let i = 0;
 	//Repeats the process of exiting and re-entering maps until the first cell is slow and you have desired slow cell count on odd cells!
@@ -4055,7 +4046,7 @@ function slowScum(slowTarget) {
 	let msg = `${i} Rerolls. Current roll = ${slowCount} odd slow enemies.`;
 	if (slowCount < slowCellTarget || !firstCellSlow) msg = 'Failed. ' + msg;
 	console.timeEnd();
-	atSettings.running = true;
+	atConfig.running = true;
 	debug(msg, 'map_Details');
 }
 
@@ -4103,7 +4094,7 @@ function callAutoMapLevel(mapName, special) {
 
 	if (mapLevel === Infinity) {
 		mapLevel = get_best(autoLevelObj, true, mapModifiers)[mapType].mapLevel;
-	} else if (mapName && atSettings.intervals.sixSecond) {
+	} else if (mapName && atConfig.intervals.sixSecond) {
 		let autoLevelData = get_best(autoLevelObj, true, mapModifiers)[mapType];
 		const secondBestMap = autoLevelData[`${mapType}Second`];
 		/* if (mapSettings.mapLevel && mapSettings.mapLevel === secondBestMap.mapLevel && autoLevelData.) {

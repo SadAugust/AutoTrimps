@@ -422,8 +422,8 @@ function _downloadSave(what = '') {
 		saveGame.options.menu.darkTheme.enabled = 2;
 		saveGame.options.menu.disablePause.enabled = 1;
 	} else if (usingRealTimeOffline) {
-		if (game.options.menu.autoSave.enabled !== atSettings.autoSave) {
-			saveGame.options.menu.autoSave.enabled = atSettings.autoSave;
+		if (game.options.menu.autoSave.enabled !== atConfig.autoSave) {
+			saveGame.options.menu.autoSave.enabled = atConfig.autoSave;
 		}
 		const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
 		['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp'].forEach((key) => {
@@ -463,7 +463,7 @@ function loadAutoTrimps() {
 
 //Either sets the AT settings to default or to the ones imported in loadAutoTrimps()
 function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
-	atSettings.running = false;
+	atConfig.running = false;
 
 	setTimeout(() => {
 		if (switchProfile) autoTrimpsSettings = JSON.parse(LZString.decompressFromBase64(autoTrimpsSettings));
@@ -506,7 +506,7 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 		localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
 		localStorage.heirloomInputs = autoTrimpSettings.autoHeirloomStorage.value;
 		localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
-		MODULES.autoPerks.displayGUI(game.global.universe, true);
+		atData.autoPerks.displayGUI(game.global.universe, true);
 		hideAutomationButtons();
 	}, 101);
 
@@ -536,7 +536,7 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 	_verticalCenterTooltip();
 	document.getElementById('tipCost').children[0].id = 'tipCostID';
 	document.getElementById('tipCostID').focus();
-	atSettings.running = true;
+	atConfig.running = true;
 }
 
 function disableAllSettings() {
@@ -670,7 +670,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the Map Bonus setting.`;
 	tooltipText += `<br>${farmCalcGetMapDetails()}</p>`;
 	const refreshTimer = usingRealTimeOffline ? 30 : 5;
-	const remainingTime = Math.ceil(refreshTimer - ((atSettings.intervals.counter / 10) % refreshTimer)) || refreshTimer;
+	const remainingTime = Math.ceil(refreshTimer - ((atConfig.intervals.counter / 10) % refreshTimer)) || refreshTimer;
 	tooltipText += `<p>The data shown is updated every ${refreshTimer} seconds. <b>${remainingTime}s</b> until the next update.</p>`;
 	tooltipText += `<p>Click this button while in the map chamber to either select your already purchased map or automatically set the inputs to the desired values.</p>`;
 
@@ -740,7 +740,7 @@ function _raspberryPiSettings() {
 //Loads the base settings that I want to be the same when loading peoples saves as it will save me time.
 function loadAugustSettings() {
 	_raspberryPiSettings();
-	if (atSettings.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') return;
+	if (atConfig.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') return;
 
 	if (typeof greenworks === 'undefined') autoTrimpSettings.gameUser.value = 'test';
 	autoTrimpSettings.downloadSaves.enabled = 0;
@@ -1052,7 +1052,7 @@ function makeResourceTooltip(mouseover) {
 
 function _displayResetPerkPreset(tooltipDiv) {
 	const tooltipText = `This will restore your selected preset to its original values.<br><br/>Are you sure you want to do this?`;
-	const costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); fillPreset${MODULES.autoPerks.loaded}(perkCalcPreset(), true);'>Reset to Preset Defaults</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>`;
+	const costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); fillPreset${atData.autoPerks.loaded}(perkCalcPreset(), true);'>Reset to Preset Defaults</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>`;
 
 	const ondisplay = function () {
 		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);

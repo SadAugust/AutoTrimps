@@ -1,8 +1,4 @@
-MODULES.gather = {
-	coordBuffering: undefined
-};
-
-MODULES.trapPools = [
+atData.trapPools = [
 	{
 		size: () => Math.floor(_calcTPS()),
 		bufferSize: () => 0,
@@ -260,40 +256,41 @@ function _gatherTrapResources() {
 }
 
 function _handleTrapping(action, priority) {
-	const buyTrap = () => canAffordBuilding('Trap') && (safeBuyBuilding('Trap', 1) || true);
+	const trapsToBuy = bwRewardUnlocked('DecaBuild') ? 10 : bwRewardUnlocked('DoubleBuild') ? 2 : 1;
+	const buyTrap = () => canAffordBuilding('Trap') && (safeBuyBuilding('Trap', trapsToBuy) || true);
 	const canBuild = () => isBuildingInQueue('Trap') || buyTrap();
 	const bait = () => safeSetGather('trimps') || true;
 	const build = () => (canBuild() && (safeSetGather('buildings') || true)) || _gatherTrapResources();
 
 	const trapsOwned = game.buildings.Trap.owned;
 
-	if (trapsOwned <= MODULES.trapPools[0].size() && action === 'bait') return false;
-	if (trapsOwned < MODULES.trapPools[0].size()) {
+	if (trapsOwned <= atData.trapPools[0].size() && action === 'bait') return false;
+	if (trapsOwned < atData.trapPools[0].size()) {
 		build();
 		return true;
 	}
 
-	priority = Math.min(priority + 1, MODULES.trapPools.length - 1);
-	const previousSize = MODULES.trapPools.slice(0, priority).reduce((t, pool) => t + pool.size(), 0);
-	const currentSize = MODULES.trapPools[priority].size();
-	const bufferSize = MODULES.trapPools[priority].bufferSize();
+	priority = Math.min(priority + 1, atData.trapPools.length - 1);
+	const previousSize = atData.trapPools.slice(0, priority).reduce((t, pool) => t + pool.size(), 0);
+	const currentSize = atData.trapPools[priority].size();
+	const bufferSize = atData.trapPools[priority].bufferSize();
 
 	// Disable high buffers
 	if (trapsOwned >= previousSize + currentSize + bufferSize)
-		MODULES.trapPools
+		atData.trapPools
 			.slice(0, priority + 1)
 			.filter((pool) => pool.highBuffering)
 			.map((pool) => (pool.highBuffering = false));
 
 	// Disable buffers
-	if (trapsOwned >= previousSize + bufferSize) MODULES.trapPools.slice(0, priority + 1).map((pool) => (pool.buffering = false));
+	if (trapsOwned >= previousSize + bufferSize) atData.trapPools.slice(0, priority + 1).map((pool) => (pool.buffering = false));
 
 	// Above the inverted buffer zone
 	if (trapsOwned >= previousSize + currentSize + bufferSize && action === 'build') return false;
 	if (trapsOwned > previousSize + currentSize + bufferSize) return bait();
 
 	// Inverted buffering zone (TODO Auto toggle enabled)
-	const highBuffering = MODULES.trapPools[priority].highBuffering;
+	const highBuffering = atData.trapPools[priority].highBuffering;
 	if (trapsOwned >= previousSize + currentSize && highBuffering && action === 'build') return build();
 	if (trapsOwned > previousSize + currentSize && highBuffering) return bait();
 
@@ -302,7 +299,7 @@ function _handleTrapping(action, priority) {
 	if (trapsOwned > previousSize + currentSize) return bait();
 
 	// Activates high buffers
-	MODULES.trapPools
+	atData.trapPools
 		.slice(priority)
 		.filter((pool) => pool.highBuffering !== undefined)
 		.map((pool) => (pool.highBuffering = true));
@@ -312,14 +309,14 @@ function _handleTrapping(action, priority) {
 	if (trapsOwned > previousSize + bufferSize) return bait();
 
 	// Buffering zone
-	const buffering = MODULES.trapPools[priority].buffering;
+	const buffering = atData.trapPools[priority].buffering;
 	if (trapsOwned >= previousSize && buffering && action === 'bait') return false;
 	if (trapsOwned >= previousSize && buffering) return build();
 	if (trapsOwned >= previousSize && action === 'build') return build();
 	if (trapsOwned > previousSize) return bait();
 
 	// Below pool limits
-	MODULES.trapPools.slice(priority).map((pool) => (pool.buffering = true));
+	atData.trapPools.slice(priority).map((pool) => (pool.buffering = true));
 	return action !== 'bait' && build();
 }
 

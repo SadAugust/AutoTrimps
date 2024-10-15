@@ -1,7 +1,7 @@
 function miRatio() {
-	if (MODULES.magmite && MODULES.magmite.upgradeToPurchase !== '' && MODULES.magmite.upgradeToPurchase !== undefined) return;
+	if (atData.magmite && atData.magmite.upgradeToPurchase !== '' && atData.magmite.upgradeToPurchase !== undefined) return;
 
-	MODULES.magmite = {
+	atData.magmite = {
 		carpMod: 0,
 		minTick: 0,
 		maxTick: 0,
@@ -21,12 +21,12 @@ function miRatio() {
 	const fuelStart = Math.max(230, getPageSetting('autoGenFuelStart', 1));
 	const fuelEnd = Math.min(810, getPageSetting('autoGenFuelEnd', 1));
 
-	MODULES.magmiteSettings = {
+	atData.magmiteSettings = {
 		//runstats
 		fuelStart: {
 			value: fuelStart,
 			update: function (value = this.value) {
-				const { fuelEnd, runEnd, fuelZones } = MODULES.magmiteSettings;
+				const { fuelEnd, runEnd, fuelZones } = atData.magmiteSettings;
 				this.value = Math.max(230, value);
 				fuelEnd.value = Math.max(fuelEnd.value, this.value);
 				runEnd.value = Math.max(runEnd.value, this.value);
@@ -37,7 +37,7 @@ function miRatio() {
 		fuelEnd: {
 			value: fuelEnd,
 			update: function (value = this.value) {
-				const { fuelStart, runEnd, fuelZones } = MODULES.magmiteSettings;
+				const { fuelStart, runEnd, fuelZones } = atData.magmiteSettings;
 				this.value = parseInt(value);
 				fuelStart.value = Math.min(fuelStart.value, this.value);
 				runEnd.value = Math.max(runEnd.value, this.value);
@@ -49,7 +49,7 @@ function miRatio() {
 		fuelZones: {
 			value: fuelEnd - fuelStart,
 			update: function (value = this.value) {
-				const { fuelStart, fuelEnd } = MODULES.magmiteSettings;
+				const { fuelStart, fuelEnd } = atData.magmiteSettings;
 				this.value = parseInt(value);
 				const newFuelEndValue = fuelStart.value + this.value;
 				if (fuelEnd.value !== newFuelEndValue) fuelEnd.update(newFuelEndValue);
@@ -140,41 +140,41 @@ function miRatio() {
 	calculateMaxTick();
 	calculateMinTick();
 	calculateCurrentPop();
-	MODULES.magmite.upgradeToPurchase = checkDGUpgrades();
+	atData.magmite.upgradeToPurchase = checkDGUpgrades();
 }
 
 function calculateFuelZones(refresh = false, fuelZones = getPageSetting('magmiteFuelZones', 1)) {
 	if (game.global.universe !== 1 || !getPageSetting('magmiteAutoFuel')) return;
 	if (!refresh) miRatio();
-	let bestAmals = MODULES.magmite.maxAmals;
-	MODULES.magmiteSettings.fuelStart.update(230);
+	let bestAmals = atData.magmite.maxAmals;
+	atData.magmiteSettings.fuelStart.update(230);
 	let bestPop = 0;
 	let myFuelStart = 230;
 
-	for (let f = 230; f <= MODULES.magmiteSettings.runEnd.value - fuelZones; f++) {
-		MODULES.magmiteSettings.fuelStart.update(f);
-		MODULES.magmiteSettings.fuelZones.update(fuelZones);
-		if (MODULES.magmite.totalPop > bestPop && MODULES.magmite.maxAmals >= bestAmals) {
-			bestPop = MODULES.magmite.totalPop;
+	for (let f = 230; f <= atData.magmiteSettings.runEnd.value - fuelZones; f++) {
+		atData.magmiteSettings.fuelStart.update(f);
+		atData.magmiteSettings.fuelZones.update(fuelZones);
+		if (atData.magmite.totalPop > bestPop && atData.magmite.maxAmals >= bestAmals) {
+			bestPop = atData.magmite.totalPop;
 			myFuelStart = f;
-			bestAmals = Math.max(MODULES.magmite.maxAmals, bestAmals); // max pop is not always max gators
+			bestAmals = Math.max(atData.magmite.maxAmals, bestAmals); // max pop is not always max gators
 		}
 	}
 
-	MODULES.magmiteSettings.fuelStart.update(myFuelStart);
-	MODULES.magmiteSettings.fuelZones.update(fuelZones);
-	MODULES.magmiteSettings.fuelEnd.update();
+	atData.magmiteSettings.fuelStart.update(myFuelStart);
+	atData.magmiteSettings.fuelZones.update(fuelZones);
+	atData.magmiteSettings.fuelEnd.update();
 
-	setPageSetting('autoGenFuelStart', MODULES.magmiteSettings.fuelStart.value, 1);
-	setPageSetting('autoGenFuelEnd', MODULES.magmiteSettings.fuelEnd.value, 1);
+	setPageSetting('autoGenFuelStart', atData.magmiteSettings.fuelStart.value, 1);
+	setPageSetting('autoGenFuelEnd', atData.magmiteSettings.fuelEnd.value, 1);
 	miRatio();
 
 	if (!refresh && getPageSetting('magmiteMinimize')) minimizeFuelZones();
 }
 
 function minimizeFuelZones() {
-	const settings = MODULES.magmiteSettings;
-	const magmite = MODULES.magmite;
+	const settings = atData.magmiteSettings;
+	const magmite = atData.magmite;
 	settings.fuelStart.update(230);
 	settings.fuelEnd.update(settings.runEnd.value);
 	const finalAmals = magmite.finalAmals;
@@ -188,7 +188,7 @@ function minimizeFuelZones() {
 	settings.fuelZones.update(0);
 
 	while (settings.fuelStart.value >= 230) {
-		while (MODULES.magmite.finalAmals > 0 && MODULES.magmite.finalAmals >= bestAmals && settings.fuelZones.value > 0) {
+		while (atData.magmite.finalAmals > 0 && atData.magmite.finalAmals >= bestAmals && settings.fuelZones.value > 0) {
 			// minimize capacity
 			bestJ = settings.fuelZones.value;
 			settings.fuelZones.value -= 1;
@@ -204,7 +204,7 @@ function minimizeFuelZones() {
 		}
 
 		settings.fuelZones.update(Math.min(settings.runEnd.value - settings.fuelStart.value, bestJ));
-		if (maxedAmals && MODULES.magmite.finalAmals < bestAmals) break;
+		if (maxedAmals && atData.magmite.finalAmals < bestAmals) break;
 	}
 
 	// if ratios are dropping per zone, fuel a little extra for safety's sake
@@ -213,7 +213,7 @@ function minimizeFuelZones() {
 	}
 
 	// handwaving a less useless value here
-	if (MODULES.magmite.finalAmals === 0) {
+	if (atData.magmite.finalAmals === 0) {
 		bestJ = Math.min(10, settings.runEnd.value - 230);
 	}
 
@@ -224,7 +224,7 @@ function minimizeFuelZones() {
 }
 
 function calculateCoordIncrease() {
-	const coordIncrease = 25 * Math.pow(0.98, MODULES.magmiteSettings.coord.value);
+	const coordIncrease = 25 * Math.pow(0.98, atData.magmiteSettings.coord.value);
 	const coordinations = [];
 	coordinations[0] = 3;
 
@@ -238,31 +238,31 @@ function calculateCoordIncrease() {
 }
 
 function calculateMagma() {
-	const zonesOfMI = MODULES.magmiteSettings.runEnd.value - 230 - MODULES.magmiteSettings.fuelZones.value;
+	const zonesOfMI = atData.magmiteSettings.runEnd.value - 230 - atData.magmiteSettings.fuelZones.value;
 
-	const magmaPerZone = MODULES.magmiteSettings.magmaFlow.value === 18 ? 18 : 16;
-	const voidMagma = 10 * MODULES.magmiteSettings.voids.value * MODULES.magmiteSettings.expertGen.value;
-	MODULES.magmite.totalMI = zonesOfMI * magmaPerZone + voidMagma;
+	const magmaPerZone = atData.magmiteSettings.magmaFlow.value === 18 ? 18 : 16;
+	const voidMagma = 10 * atData.magmiteSettings.voids.value * atData.magmiteSettings.expertGen.value;
+	atData.magmite.totalMI = zonesOfMI * magmaPerZone + voidMagma;
 	/* Not sure why this line existed. Leaving it here for now. */
-	if (game.global.magmite > MODULES.magmite.totalMI) MODULES.magmite.totalMI = game.global.magmite;
+	if (game.global.magmite > atData.magmite.totalMI) atData.magmite.totalMI = game.global.magmite;
 }
 
 function calculateCarpMod() {
-	let { carp, carp2, scaffolding } = MODULES.magmiteSettings;
+	let { carp, carp2, scaffolding } = atData.magmiteSettings;
 	carpMult = Math.pow(1.1, carp.value);
 	carp2Mult = 1 + carp2.value * 0.0025;
-	MODULES.magmite.carpMod = MODULES.magmite.minTick * carpMult * carp2Mult * scaffolding.value;
+	atData.magmite.carpMod = atData.magmite.minTick * carpMult * carp2Mult * scaffolding.value;
 }
 
 function calculateMinTick() {
-	MODULES.magmite.minTick = Math.sqrt(MODULES.magmiteSettings.slowburn.value) * 5e8 * (1 + 0.1 * MODULES.magmiteSettings.efficiency.value);
-	MODULES.magmite.tickRatio = MODULES.magmite.maxTick / MODULES.magmite.minTick;
+	atData.magmite.minTick = Math.sqrt(atData.magmiteSettings.slowburn.value) * 5e8 * (1 + 0.1 * atData.magmiteSettings.efficiency.value);
+	atData.magmite.tickRatio = atData.magmite.maxTick / atData.magmite.minTick;
 	calculateCarpMod();
 }
 
 function calculateMaxTick() {
-	MODULES.magmite.maxTick = Math.sqrt(MODULES.magmiteSettings.capacity.maxCapacity) * 5e8 * (1 + 0.1 * MODULES.magmiteSettings.efficiency.value);
-	if (MODULES.magmite.minTick > 0) MODULES.magmite.tickRatio = MODULES.magmite.maxTick / MODULES.magmite.minTick;
+	atData.magmite.maxTick = Math.sqrt(atData.magmiteSettings.capacity.maxCapacity) * 5e8 * (1 + 0.1 * atData.magmiteSettings.efficiency.value);
+	if (atData.magmite.minTick > 0) atData.magmite.tickRatio = atData.magmite.maxTick / atData.magmite.minTick;
 }
 
 function calculateCurrentPop() {
@@ -289,31 +289,31 @@ function calculateCurrentPop() {
 		currentAmals = [];
 	const [coordIncrease, coordinations] = calculateCoordIncrease();
 
-	let myHze = MODULES.magmiteSettings.runEnd.value;
-	if (MODULES.magmiteSettings.hze.value > myHze) myHze = MODULES.magmiteSettings.hze.value;
+	let myHze = atData.magmiteSettings.runEnd.value;
+	if (atData.magmiteSettings.hze.value > myHze) myHze = atData.magmiteSettings.hze.value;
 
 	let tauntimpFrequency = 2.97;
-	if (MODULES.magmiteSettings.randimp.value) tauntimpFrequency += 0.396;
-	if (MODULES.magmiteSettings.moreImports.value) tauntimpFrequency += (MODULES.magmiteSettings.moreImports.value * 0.05 * 99) / 100; // inc chance * possible import cells / world cells
+	if (atData.magmiteSettings.randimp.value) tauntimpFrequency += 0.396;
+	if (atData.magmiteSettings.moreImports.value) tauntimpFrequency += (atData.magmiteSettings.moreImports.value * 0.05 * 99) / 100; // inc chance * possible import cells / world cells
 
 	// base CI on end zone
-	const confInterval = 1 - 1.91 / Math.sqrt((MODULES.magmiteSettings.runEnd.value - MODULES.magmiteSettings.fuelStart.value) * tauntimpFrequency);
+	const confInterval = 1 - 1.91 / Math.sqrt((atData.magmiteSettings.runEnd.value - atData.magmiteSettings.fuelStart.value) * tauntimpFrequency);
 
 	//calc fuel gain
 	for (let i = 0; i <= myHze - 200; i++) {
 		if (i === 0) fuelThisZone[0] = 0.2;
-		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, MODULES.magmiteSettings.supply.maxSupply);
+		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, atData.magmiteSettings.supply.maxSupply);
 
-		if (i + 230 >= MODULES.magmiteSettings.fuelStart.value && i + 230 <= MODULES.magmiteSettings.fuelEnd.value) {
+		if (i + 230 >= atData.magmiteSettings.fuelStart.value && i + 230 <= atData.magmiteSettings.fuelEnd.value) {
 			if (i === 0) totalFuel[0] = 0.2;
-			else totalFuel[i] = MODULES.magmiteSettings.magmaFlow.value * fuelThisZone[i] + totalFuel[i - 1];
+			else totalFuel[i] = atData.magmiteSettings.magmaFlow.value * fuelThisZone[i] + totalFuel[i - 1];
 		} else {
 			totalFuel[i] = 0;
 		}
 
 		//calc generated pop
-		overclockTicks[i] = Math.max((totalFuel[i] - MODULES.magmiteSettings.storage.value * MODULES.magmiteSettings.capacity.maxCapacity) / MODULES.magmiteSettings.slowburn.value, 0);
-		overclockPop[i] = Math.floor(overclockTicks[i]) * (MODULES.magmite.carpMod * MODULES.magmite.tickRatio) * MODULES.magmiteSettings.overclocker.bonus;
+		overclockTicks[i] = Math.max((totalFuel[i] - atData.magmiteSettings.storage.value * atData.magmiteSettings.capacity.maxCapacity) / atData.magmiteSettings.slowburn.value, 0);
+		overclockPop[i] = Math.floor(overclockTicks[i]) * (atData.magmite.carpMod * atData.magmite.tickRatio) * atData.magmiteSettings.overclocker.bonus;
 		if (i === 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
 		else overclockPopThisZone[i] = Math.max(overclockPop[i] - overclockPop[i - 1], 0);
 
@@ -345,7 +345,7 @@ function calculateCurrentPop() {
 			currentAmals[i] = currentAmals[i - 1];
 		} else {
 			const arIndex = Math.min(Math.floor((i - 1) / 100), arValues.length - 1);
-			const ar = Math.max(arValues[arIndex], MODULES.magmite.finalAmalRatio);
+			const ar = Math.max(arValues[arIndex], atData.magmite.finalAmalRatio);
 
 			if (adjustedRatio[i - 1] > ar) {
 				currentAmals[i] = currentAmals[i - 1] + 1;
@@ -360,29 +360,29 @@ function calculateCurrentPop() {
 		adjustedRatio[i] = amalRatio[i] / Math.pow(1000, currentAmals[i]);
 	}
 
-	MODULES.magmite.totalPop = popWithTauntimp[MODULES.magmiteSettings.runEnd.value - 230];
-	MODULES.magmite.finalAmals = currentAmals[MODULES.magmiteSettings.runEnd.value - 230];
-	MODULES.magmite.maxAmals = 0;
+	atData.magmite.totalPop = popWithTauntimp[atData.magmiteSettings.runEnd.value - 230];
+	atData.magmite.finalAmals = currentAmals[atData.magmiteSettings.runEnd.value - 230];
+	atData.magmite.maxAmals = 0;
 
-	for (let i = 0; i <= MODULES.magmiteSettings.runEnd.value - 230; i++) {
-		if (currentAmals[i] > MODULES.magmite.maxAmals) {
-			MODULES.magmite.maxAmals = currentAmals[i];
-			MODULES.magmite.finalAmalZone = i + 230;
+	for (let i = 0; i <= atData.magmiteSettings.runEnd.value - 230; i++) {
+		if (currentAmals[i] > atData.magmite.maxAmals) {
+			atData.magmite.maxAmals = currentAmals[i];
+			atData.magmite.finalAmalZone = i + 230;
 		}
 	}
 
-	MODULES.magmite.neededPop = coordPop[MODULES.magmiteSettings.runEnd.value - 230] / 3;
-	MODULES.magmite.finalArmySize = MODULES.magmite.neededPop * Math.pow(1000, MODULES.magmite.finalAmals);
-	MODULES.magmite.yourFinalRatio = MODULES.magmite.totalPop / MODULES.magmite.finalArmySize;
-	MODULES.magmite.amalRatio = amalRatio;
+	atData.magmite.neededPop = coordPop[atData.magmiteSettings.runEnd.value - 230] / 3;
+	atData.magmite.finalArmySize = atData.magmite.neededPop * Math.pow(1000, atData.magmite.finalAmals);
+	atData.magmite.yourFinalRatio = atData.magmite.totalPop / atData.magmite.finalArmySize;
+	atData.magmite.amalRatio = amalRatio;
 }
 
 function checkDGUpgrades() {
-	const settings = MODULES.magmiteSettings;
+	const settings = atData.magmiteSettings;
 	const myStart = settings.fuelStart.value;
 	const myEnd = settings.fuelEnd.value;
 	const myRunEnd = settings.runEnd.value;
-	let { totalPop, totalMI } = MODULES.magmite;
+	let { totalPop, totalMI } = atData.magmite;
 
 	const upgradesNames = ['efficiency', 'capacity', 'supply'];
 	const overclockerUnlocked = game.permanentGeneratorUpgrades.Hybridization.owned && game.permanentGeneratorUpgrades.Storage.owned;
@@ -398,7 +398,7 @@ function checkDGUpgrades() {
 
 	const efficiencyVariables = upgradesNames.map((upgrade) => {
 		settings[upgrade].update(settings[upgrade].value + 1);
-		const efficiency = MODULES.magmite.totalPop - totalPop;
+		const efficiency = atData.magmite.totalPop - totalPop;
 		settings[upgrade].update(settings[upgrade].value - 1);
 		return efficiency;
 	});
@@ -435,11 +435,11 @@ function checkDGUpgrades() {
 	while (totalRuns > runsNeeded) {
 		checkMi *= magmiteDecay;
 		checkMi += totalMi;
-		if (checkMi > totalMI) MODULES.magmite.totalMI = checkMi;
+		if (checkMi > totalMI) atData.magmite.totalMI = checkMi;
 		runsNeeded++;
 	}
 
-	totalMI = MODULES.magmite.totalMI;
+	totalMI = atData.magmite.totalMI;
 
 	upgradesNames.forEach((upgrade, i) => {
 		let cost = settings[upgrade].cost;
@@ -502,7 +502,7 @@ function autoMagmiteSpender(portal) {
 
 function _autoMagmiteCalc() {
 	miRatio();
-	const toSpend = MODULES.magmite.upgradeToPurchase;
+	const toSpend = atData.magmite.upgradeToPurchase;
 	if (toSpend === '') return false;
 
 	const oneTimers = ['Hybridization', 'Storage', 'Shielding', 'Slowburn', 'Simulacrum'];
@@ -519,7 +519,7 @@ function _autoMagmiteCalc() {
 	debug(`Spent ${cost} Magmite on: ${toSpend}${levelInfo}`, 'magmite');
 
 	buyGeneratorUpgrade(toSpend);
-	MODULES.magmite.upgradeToPurchase = '';
+	atData.magmite.upgradeToPurchase = '';
 	return true;
 }
 

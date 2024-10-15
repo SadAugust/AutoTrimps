@@ -1195,7 +1195,7 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 
 	if (!s.golden && !s.profiles) {
 		const value = currSettingUniverse === 2 ? 'valueU2' : 'value';
-		game.global.addonUser[varPrefix + 'Settings'][value] = Array.from({ length: 31 }, () => ({ done: '' }));
+		game.global.addonUser.mapData[varPrefix + 'Settings'][value] = Array.from({ length: 31 }, () => ({ done: '' }));
 
 		if (!defaultSetting.active) debug(`${titleText} has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.`, 'mazSettings');
 	}
@@ -1768,8 +1768,8 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 
 	/* prestige goal */
 	dropdown.prestigeGoal = "<option value='All'" + (vals.prestigeGoal === 'All' ? " selected='selected'" : '') + '>All</option>';
-	for (let item in Object.keys(MODULES.equipment)) {
-		let key = Object.keys(MODULES.equipment)[item];
+	for (let item in Object.keys(atData.equipment)) {
+		let key = Object.keys(atData.equipment)[item];
 		if (!game.global.slowDone && (key === 'Arbalest' || key === 'Gambeson')) continue;
 		dropdown.prestigeGoal += "<option value='" + key + "'" + (vals.prestigeGoal === key ? " selected='selected'" : '') + '>' + key + '</option>';
 	}
@@ -2219,8 +2219,8 @@ function uniqueMapsDisplay(elem) {
 	const smithy = "<p>The right side of this window is dedicated to running Melting Point when you've reached a certain Smithy value. As each runtype of vastly different there's different inputs for each type of run that you can do! Certain challenges have overrides for this, once unlocked they can be found in the C3 tab.</p>";
 	const smithyDisplay = currSettingUniverse === 2 && hze >= 50;
 
-	const mapUnlocks = Object.keys(MODULES.mapFunctions.uniqueMaps).filter((mapName) => {
-		const { universe, zone } = MODULES.mapFunctions.uniqueMaps[mapName];
+	const mapUnlocks = Object.keys(atData.uniqueMaps).filter((mapName) => {
+		const { universe, zone } = atData.uniqueMaps[mapName];
 		return !['Bionic Wonderland', 'The Black Bog'].includes(mapName) && universe === currSettingUniverse && zone <= hze;
 	});
 	const smithySettings = smithyDisplay ? ['MP Smithy', 'MP Smithy Daily', 'MP Smithy C3', 'MP Smithy One Off'] : [];

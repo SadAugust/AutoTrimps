@@ -1,16 +1,3 @@
-//Mapping Variables
-MODULES.maps = {
-	fragmentFarming: false,
-	lifeActive: false,
-	lifeCell: 0,
-	slowScumming: false,
-	mapRepeats: 0,
-	mapRepeatsSmithy: [0, 0, 0],
-	mapTimer: 0,
-	lastMapWeWereIn: getCurrentMapObject() || { id: 0 },
-	fragmentCost: Infinity
-};
-
 function autoMapsStatus(get = false) {
 	const mapObj = getCurrentMapObject();
 	let status = '';
@@ -385,16 +372,16 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
 		.filter((mapName) => uniqueMapSetting[mapName].zone <= game.global.world)
 		.filter((mapName) => liquified || uniqueMapSetting[mapName].cell <= game.global.lastClearedCell + 2)
 		.filter((mapName) => !mapsOwned.includes(mapName))
-		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].universe === game.global.universe)
-		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].mapUnlock)
-		.filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
+		.filter((mapName) => atData.uniqueMaps[mapName].universe === game.global.universe)
+		.filter((mapName) => atData.uniqueMaps[mapName].mapUnlock)
+		.filter((mapName) => atData.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
 
 	let challengeMap = 'none';
 	if (challengeActive('Scientist')) challengeMap = 'The Block';
 	/* else if (challengeActive('Electricity') || challengeActive('Mapocalypse')) challengeMap = 'The Prison'; */
 
 	if (challengeMap !== 'none' && !mapsOwned.includes(challengeMap) && !uniqueMapsToGet.includes(challengeMap)) {
-		const mapDetails = MODULES.mapFunctions.uniqueMaps[challengeMap];
+		const mapDetails = atData.uniqueMaps[challengeMap];
 
 		if (game.global.world >= mapDetails.zone) {
 			mapDetails.name = challengeMap;
@@ -408,7 +395,7 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
 	}
 
 	/* Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned. */
-	if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = _obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
+	if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = _obtainUniqueMap(uniqueMapsToGet.sort((a, b) => atData.uniqueMaps[b].zone - atData.uniqueMaps[a].zone)[0]);
 }
 
 function _setSelectedMap(selectedMap, voidMap, optimalMap) {

@@ -212,7 +212,7 @@ function initialiseAllSettings() {
 			}, 'boolean', null, null, 'Core', [0]);
 		let $pauseScript = document.getElementById('pauseScript');
 		$pauseScript.parentNode.style.setProperty('float', 'right');
-		$pauseScript.parentNode.style.setProperty('margin-right', '1.2vw');
+		$pauseScript.parentNode.style.setProperty('margin-right', '0.5vw');
 		$pauseScript.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoHeirlooms',
@@ -323,7 +323,7 @@ function initialiseAllSettings() {
 			'multitoggle', 0, null, 'Core', [0]);
 		let $universeSetting = document.getElementById('universeSetting');
 		$universeSetting.parentNode.style.setProperty('float', 'right');
-		$universeSetting.parentNode.style.setProperty('margin-right', '1.1vw');
+		$universeSetting.parentNode.style.setProperty('margin-right', '0.5vw');
 		$universeSetting.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoPortal',
@@ -482,7 +482,7 @@ function initialiseAllSettings() {
 			function () { return (game.global.totalPortals > 0) });
 		let $autoPortalForce = document.getElementById('autoPortalForce');
 		$autoPortalForce.parentNode.style.setProperty('float', 'right');
-		$autoPortalForce.parentNode.style.setProperty('margin-right', '1.2vw');
+		$autoPortalForce.parentNode.style.setProperty('margin-right', '0.5vw');
 		$autoPortalForce.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoEggs',
@@ -496,7 +496,7 @@ function initialiseAllSettings() {
 			function () { return (!game.worldUnlocks.easterEgg.locked) });
 			let $eggSettings = document.getElementById('autoEggs');
 		$eggSettings.parentNode.style.setProperty('float', 'right');
-		$eggSettings.parentNode.style.setProperty('margin-right', '1vw');
+		$eggSettings.parentNode.style.setProperty('margin-right', '1.3vw');
 		$eggSettings.parentNode.style.setProperty('margin-left', '0');
 	}
 	
@@ -4653,7 +4653,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 	const parentAttributes = {
 		style: 'display: inline-block; vertical-align: top; margin-left: 0.6vw; margin-bottom: 1vw; width: 13.50vw;',
-		id: id + 'Parent'
+		id: `${id}Parent`
 	};
 
 	const btnAttributes = {
@@ -4752,7 +4752,7 @@ function settingChanged(id, currUniverse) {
 		equipOn: _setAutoEquipClasses,
 		buildingsType: _setBuildingClasses,
 		timeWarpDisplay: _setTimeWarpUI,
-		displayEnhancedGrid: MODULES.fightinfo.Update,
+		displayEnhancedGrid: atData.fightInfo.Update,
 		archaeology: archaeologyAutomator,
 		autoEggs: easterEggClicked,
 		displayPercentHealth: togglePercentHealth
@@ -4973,7 +4973,7 @@ function updateAutoTrimpSettings(forceUpdate) {
 		const settingUniverse = item.universe;
 
 		if (item === null || typeof item.id === 'undefined' || !Array.isArray(settingUniverse)) {
-			if (atSettings.initialise.loaded) delete autoTrimpSettings[setting];
+			if (atConfig.initialise.loaded) delete autoTrimpSettings[setting];
 			continue;
 		}
 
@@ -5318,14 +5318,14 @@ function _updateSettingButtons() {
 function _createChangelogButton() {
 	if (document.getElementById('atChangelog') !== null) return;
 
-	const newChanges = autoTrimpSettings.ATversionChangelog !== atSettings.initialise.version;
-	const versionNumber = atSettings.initialise.version.split('SadAugust ')[1].replace(/[a-z]/gi, '');
+	const newChanges = autoTrimpSettings.ATversionChangelog !== atConfig.initialise.version;
+	const versionNumber = atConfig.initialise.version.split('SadAugust ')[1].replace(/[a-z]/gi, '');
 	const changelog = _createElement(
 		'TD',
 		{
 			id: 'atChangelog',
 			class: 'btn' + (newChanges ? ' btn-changelogNew' : ' btn-primary'),
-			onclick: "window.open(atSettings.initialise.basepath + 'updates.html', '_blank'); updateChangelogButton();"
+			onclick: "window.open(atConfig.initialise.basepath + 'updates.html', '_blank'); updateChangelogButton();"
 		},
 		['AT v' + versionNumber + (newChanges ? " | What's New" : '')]
 	);

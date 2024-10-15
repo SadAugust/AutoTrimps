@@ -263,7 +263,7 @@ function _checkFastEnemyU2(enemy) {
 	if (challengeActive('Smithless') && enemy.ubersmith) return true;
 	if (challengeActive('Desolation') && mapping) {
 		// Exotic mapimps in deso are bugged and slow
-		const exoticImp = MODULES.fightinfo.exoticImps.includes(enemy.name);
+		const exoticImp = atData.fightInfo.exoticImps.includes(enemy.name);
 		return !exoticImp;
 	}
 
@@ -283,7 +283,7 @@ function checkFastEnemy(enemy = getCurrentEnemy()) {
 
 	if (game.global.voidBuff === 'doubleAttack') return true;
 
-	const fastImp = MODULES.fightinfo.fastImps.includes(enemy.name);
+	const fastImp = atData.fightInfo.fastImps.includes(enemy.name);
 	if (fastImp) return true;
 
 	if (game.global.universe === 2) {

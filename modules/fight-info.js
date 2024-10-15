@@ -1,5 +1,5 @@
 (function (M) {
-	M['fightinfo'] = {
+	M['fightInfo'] = {
 		$worldGrid: document.getElementById('grid'),
 		$mapGrid: document.getElementById('mapGrid'),
 		changeCellColor: false,
@@ -42,7 +42,7 @@
 
 	function updateCell($cell, cell, pallet, customIcon, overrideSpecial, overrideCoords) {
 		/* Cell Color */
-		$cell.style.color = M.fightinfo.changeCellColor ? pallet.color : $cell.style.color;
+		$cell.style.color = M.fightInfo.changeCellColor ? pallet.color : $cell.style.color;
 		$cell.style.textShadow = pallet.shadow;
 
 		/* Glyph Icon */
@@ -81,7 +81,7 @@
 
 		let fastIconHtml = '';
 		if (isFast) {
-			const fastIcon = M['fightinfo'].imp.fast;
+			const fastIcon = M['fightInfo'].imp.fast;
 			fastIconHtml = `<span title="Fast" class=${fastIcon.icon} style="text-shadow: ${fastIcon.shadow};color: ${fastIcon.color};"></span>`;
 		} else {
 			fastIconHtml = emptyField;
@@ -110,24 +110,24 @@
 		let special = null;
 		let specialIcon = null;
 
-		let isFast = M['fightinfo'].fastImps.includes(cell.name);
+		let isFast = M['fightInfo'].fastImps.includes(cell.name);
 		if (cell.corrupted && cell.corrupted.startsWith('corrupt')) isFast = false;
 		if (cell.u2Mutation && Object.keys(cell.u2Mutation).length !== 0) isFast = false;
 
 		if (cellName.includes('skele')) {
-			special = M.fightinfo.imp.skel;
-		} else if (cellName in M['fightinfo'].exotics) {
-			special = M.fightinfo.imp.exotic;
-			specialIcon = M.fightinfo.allExoticIcons ? M.fightinfo.exotics[cellName] : null;
-		} else if (cellName in M['fightinfo'].powerful) {
-			special = M.fightinfo.imp.powerful;
-			specialIcon = M.fightinfo.allPowerfulIcons ? M.fightinfo.powerful[cellName] : null;
+			special = M.fightInfo.imp.skel;
+		} else if (cellName in M['fightInfo'].exotics) {
+			special = M.fightInfo.imp.exotic;
+			specialIcon = M.fightInfo.allExoticIcons ? M.fightInfo.exotics[cellName] : null;
+		} else if (cellName in M['fightInfo'].powerful) {
+			special = M.fightInfo.imp.powerful;
+			specialIcon = M.fightInfo.allPowerfulIcons ? M.fightInfo.powerful[cellName] : null;
 		} else if (cellName.includes('poison')) {
-			special = M.fightinfo.imp.poison;
+			special = M.fightInfo.imp.poison;
 		} else if (cellName.includes('wind')) {
-			special = M.fightinfo.imp.wind;
+			special = M.fightInfo.imp.wind;
 		} else if (cellName.includes('ice')) {
-			special = M.fightinfo.imp.ice;
+			special = M.fightInfo.imp.ice;
 		}
 
 		return updateCell($cell, special, specialIcon, isFast, cellStyle);
@@ -213,15 +213,15 @@
 		if (!(game.global.gridArray && game.global.gridArray[0])) return;
 
 		if (game.global.mapsActive) {
-			if (M['fightinfo'].lastProcessedMap === game.global.mapStarted) return;
-			M['fightinfo'].lastProcessedMap = game.global.mapStarted;
+			if (M['fightInfo'].lastProcessedMap === game.global.mapStarted) return;
+			M['fightInfo'].lastProcessedMap = game.global.mapStarted;
 		} else {
-			if (M['fightinfo'].lastProcessedWorld === game.global.world) return;
-			M['fightinfo'].lastProcessedWorld = game.global.world;
+			if (M['fightInfo'].lastProcessedWorld === game.global.world) return;
+			M['fightInfo'].lastProcessedWorld = game.global.world;
 		}
 
 		const gridElement = game.global.mapsActive ? document.getElementById('mapGrid') : document.getElementById('grid');
-		const rowSource = game.global.mapsActive ? M['fightinfo'].$mapGrid.children : M['fightinfo'].$worldGrid.children;
+		const rowSource = game.global.mapsActive ? M['fightInfo'].$mapGrid.children : M['fightInfo'].$worldGrid.children;
 		const $rows = Array.prototype.slice.call(rowSource).reverse();
 		const cellArray = $rows.reduce((acc, row) => acc.concat(Array.prototype.slice.call(row.children)), []);
 
@@ -233,5 +233,5 @@
 		gridElement.appendChild(reversedFragment);
 	}
 
-	M['fightinfo'].Update = Update;
-})(MODULES);
+	M['fightInfo'].Update = Update;
+})(atData);

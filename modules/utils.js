@@ -117,7 +117,7 @@ function setPageSetting(setting, newValue, universe = game.global.universe) {
 
 //Looks at the spamMessages setting and if the message is enabled, it will print it to the message log & console.
 function debug(message, messageType, icon) {
-	if (!atSettings.initialise.loaded) return;
+	if (!atConfig.initialise.loaded) return;
 	const alwaysAllow = ['offline', 'debugStats', 'test', 'heirlooms', 'profile', 'error', 'mazSettings'];
 
 	const settingArray = getPageSetting('spamMessages');
@@ -338,7 +338,7 @@ function testEquipmentMetalSpent() {
 		return actualCost;
 	}
 
-	for (let i in MODULES.equipment) {
+	for (let i in atData.equipment) {
 		if (game.equipment[i].locked) continue;
 		prestigeCost += getTotalPrestigeCost(i, game.equipment[i].prestige - 1);
 	}
@@ -548,7 +548,7 @@ function printChangelog(changes) {
 	const body = _assembleChangelog(changes);
 	const footer = _assembleChangelogFooter();
 	const action = 'cancelTooltip()';
-	const title = `Script Update Notice<br>${atSettings.initialise.version}`;
+	const title = `Script Update Notice<br>${atConfig.initialise.version}`;
 	const acceptBtnText = 'Thank you for playing with AutoTrimps.';
 	const hideCancel = true;
 
@@ -591,9 +591,9 @@ function updateFluffyRewards() {
 }
 
 function setupAddonUser(force) {
-	if (typeof game.global.addonUser === 'object' && !force) return;
+	if (typeof game.global.addonUser === 'object' && !force) return false;
 
-	game.global.addonUser = {};
+	game.global.addonUser = { mapData: {} };
 
 	const settings = {
 		value: ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'],
@@ -606,8 +606,8 @@ function setupAddonUser(force) {
 	Object.entries(settings).forEach(([valueKey, settingNames]) => {
 		settingNames.forEach((item) => {
 			const settingKey = `${item}Settings`;
-			game.global.addonUser[settingKey] = game.global.addonUser[settingKey] || {};
-			game.global.addonUser[settingKey][valueKey] = game.global.addonUser[settingKey][valueKey] || createObjArray();
+			game.global.addonUser.mapData[settingKey] = game.global.addonUser.mapData[settingKey] || {};
+			game.global.addonUser.mapData[settingKey][valueKey] = game.global.addonUser.mapData[settingKey][valueKey] || createObjArray();
 		});
 	});
 
@@ -619,7 +619,7 @@ function setupAddonUser(force) {
 		mapRepeats: 0,
 		mapRepeatsSmithy: [0, 0, 0],
 		mapTimer: 0,
-		lastMapWeWereIn: null,
+		lastMapWeWereIn: { id: 0 },
 		fragmentCost: Infinity
 	};
 
@@ -634,11 +634,67 @@ function setupAddonUser(force) {
 		desoGearScum: false
 	};
 
-	game.global.addonUser = {
-		...game.global.addonUser,
-		maps: { ...mapItems },
-		mapFunctions: { ...mapFunctionItems }
+	const portal = {
+		timeout: 4000,
+		bufferExceedFactor: 5,
+		heHrTimeout: null,
+		portalForVoid: false,
+		C2afterVoids: false,
+		C2afterPoisonVoids: false,
+		portalUniverse: Infinity,
+		forcePortal: false,
+		currentChallenge: 'None',
+		dontPushData: false,
+		dailyMods: '',
+		dailyPercent: 0,
+		zonePostpone: 0,
+		disableAutoRespec: 0
 	};
+
+	const popups = {
+		challenge: false,
+		respecAncientTreasure: false,
+		remainingTime: Infinity,
+		intervalID: null,
+		portal: false,
+		mazWindowOpen: false
+	};
+
+	const updateGamma = getPageSetting('gammaBurstCalc');
+	const gammaValue = updateGamma ? getHeirloomBonus('Shield', 'gammaBurst') / 100 : 0;
+
+	const heirlooms = {
+		plagueSwap: false,
+		compressedCalc: false,
+		gammaBurstPct: gammaValue > 0 ? gammaValue : 1,
+		shieldEquipped: game.global.ShieldEquipped.id,
+		breedHeirloom: usingBreedHeirloom()
+	};
+
+	game.global.addonUser = {
+		buildings: { betaHouseEfficiency: false },
+		gather: { coordBuffering: false },
+		heirlooms: { ...heirlooms },
+		...game.global.addonUser,
+		mapFunctions: { ...mapFunctionItems },
+		maps: { ...mapItems },
+		mutatorPreset: { selected: 0 },
+		popups: { ...popups },
+		portal: { ...portal },
+		u1unlocks: [],
+		u2unlocks: []
+	};
+
+	MODULES = game.global.addonUser;
+	MODULES = new Proxy(MODULES, {
+		set(target, property, value) {
+			target[property] = value;
+			if (game.global.addonUser) {
+				game.global.addonUser[property] = value;
+			}
+			return true;
+		}
+	});
 }
 
 function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
@@ -906,7 +962,7 @@ function getCurrentQuest() {
 }
 
 function displayMostEfficientBuilding(forceUpdate = false) {
-	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
+	if (!atConfig.intervals.oneSecond && !forceUpdate) return;
 	if (!game.buildings.Hub.locked || !getPageSetting('buildingMostEfficientDisplay')) return;
 
 	const foodHousing = ['Hut', 'House'];
@@ -927,7 +983,7 @@ function displayMostEfficientBuilding(forceUpdate = false) {
 }
 
 function displayShieldGymEfficiency(forceUpdate = false) {
-	if (!atSettings.intervals.oneSecond && !forceUpdate) return;
+	if (!atConfig.intervals.oneSecond && !forceUpdate) return;
 	if (game.equipment.Shield.locked) return;
 	if (!getPageSetting('shieldGymMostEfficientDisplay')) return;
 

@@ -1,4 +1,6 @@
-if (typeof MODULES === 'undefined') MODULES = {};
+if (typeof atData === 'undefined') {
+	atData = {};
+}
 
 if (typeof elementExists !== 'function') {
 	function elementExists(element) {
@@ -311,7 +313,7 @@ function heirloomInfo(type) {
 		};
 }
 
-MODULES.autoHeirlooms = {};
+atData.autoHeirlooms = {};
 
 function setupHeirloomUI() {
 	// Setting up data of id, names, and descriptions for each input.
@@ -539,7 +541,7 @@ class Heirloom {
 			const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000];
 			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
 			const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
-			const runningAT = typeof atSettings !== 'undefined';
+			const runningAT = typeof atConfig !== 'undefined';
 			this.inputs = settings[this.id] ? settings[this.id] : settings;
 			this.isCore = this.type === 'Core';
 			this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
@@ -1232,21 +1234,21 @@ function runHeirlooms() {
 function startTDCalc() {
 	if (playerSpire.layout === null) return;
 
-	MODULES.autoHeirlooms.strengthLocations = [];
-	MODULES.autoHeirlooms.lightColStacks = [0, 0, 0, 0, 0];
-	MODULES.autoHeirlooms.selectedTrap = null;
-	MODULES.autoHeirlooms.finalToxicity = 0;
+	atData.autoHeirlooms.strengthLocations = [];
+	atData.autoHeirlooms.lightColStacks = [0, 0, 0, 0, 0];
+	atData.autoHeirlooms.selectedTrap = null;
+	atData.autoHeirlooms.finalToxicity = 0;
 
-	MODULES.autoHeirlooms.detailed = [{}];
+	atData.autoHeirlooms.detailed = [{}];
 	for (let x = 0; x < 5 * playerSpire.rowsAllowed; x++) {
-		if (MODULES.autoHeirlooms.detailed[x] === undefined) {
-			MODULES.autoHeirlooms.detailed[x] = {};
+		if (atData.autoHeirlooms.detailed[x] === undefined) {
+			atData.autoHeirlooms.detailed[x] = {};
 		}
 	}
 
 	const index = playerSpire.layout.length;
 	for (let x = 0; index > x; x++) {
-		MODULES.autoHeirlooms.selectedTrap = playerSpire.layout[x].trap.name;
+		atData.autoHeirlooms.selectedTrap = playerSpire.layout[x].trap.name;
 		setTrap(x);
 	}
 	for (const trap in playerSpireTraps) {
@@ -1364,14 +1366,14 @@ function loadCore(core, overwrite, overwriteValue) {
 function insertSelection(loc) {
 	if (loc >= playerSpire.layout.length || loc < 0) return;
 
-	const insertType = MODULES.autoHeirlooms.selectedTrap;
-	MODULES.autoHeirlooms.selectedTrap = 'Empty';
+	const insertType = atData.autoHeirlooms.selectedTrap;
+	atData.autoHeirlooms.selectedTrap = 'Empty';
 	let first = 0;
 	let last = -1;
 	const newTraps = [];
 
 	for (let i = 0; i < playerSpire.layout.length; i++) {
-		if (MODULES.autoHeirlooms.detailed[i].selected === undefined || MODULES.autoHeirlooms.detailed[i].selected === false) {
+		if (atData.autoHeirlooms.detailed[i].selected === undefined || atData.autoHeirlooms.detailed[i].selected === false) {
 			if (first > last) {
 				first++;
 			} else {
@@ -1379,7 +1381,7 @@ function insertSelection(loc) {
 			}
 		} else {
 			last = i;
-			newTraps[newTraps.length] = MODULES.autoHeirlooms.detailed[i].type;
+			newTraps[newTraps.length] = atData.autoHeirlooms.detailed[i].type;
 
 			if (insertType === 'Move') {
 				setTrap(i);
@@ -1398,7 +1400,7 @@ function insertSelection(loc) {
 		imAnEnemy();
 
 		for (let n = 0; n < newTraps.length && n + loc < playerSpire.layout.length && n <= last - first; n++) {
-			MODULES.autoHeirlooms.selectedTrap = newTraps[n];
+			atData.autoHeirlooms.selectedTrap = newTraps[n];
 			setTrap(n + loc);
 		}
 	}
@@ -1407,46 +1409,46 @@ function insertSelection(loc) {
 }
 
 function setTrap(number) {
-	if (MODULES.autoHeirlooms.selectedTrap === null || MODULES.autoHeirlooms.selectedTrap === MODULES.autoHeirlooms.detailed[number].type) return false;
+	if (atData.autoHeirlooms.selectedTrap === null || atData.autoHeirlooms.selectedTrap === atData.autoHeirlooms.detailed[number].type) return false;
 
 	const row = Math.floor(number / 5);
-	if (MODULES.autoHeirlooms.strengthLocations[row] === true && MODULES.autoHeirlooms.selectedTrap === 'Strength') {
+	if (atData.autoHeirlooms.strengthLocations[row] === true && atData.autoHeirlooms.selectedTrap === 'Strength') {
 		for (s = row * 5; s < (row + 1) * 5; s++) {
-			if (MODULES.autoHeirlooms.detailed[s].type === 'Strength') {
-				MODULES.autoHeirlooms.selectedTrap = 'Empty';
+			if (atData.autoHeirlooms.detailed[s].type === 'Strength') {
+				atData.autoHeirlooms.selectedTrap = 'Empty';
 				setTrap(s);
-				MODULES.autoHeirlooms.selectedTrap = 'Strength';
+				atData.autoHeirlooms.selectedTrap = 'Strength';
 				break;
 			}
 		}
 	}
 
-	switch (MODULES.autoHeirlooms.selectedTrap) {
+	switch (atData.autoHeirlooms.selectedTrap) {
 		case 'Strength':
-			MODULES.autoHeirlooms.strengthLocations[row] = true;
+			atData.autoHeirlooms.strengthLocations[row] = true;
 			break;
 		case 'Lightning':
-			MODULES.autoHeirlooms.lightColStacks[number % 5]++;
+			atData.autoHeirlooms.lightColStacks[number % 5]++;
 		// fall through to default
 		default:
-			if (MODULES.autoHeirlooms.detailed[number].type === 'Strength') {
-				MODULES.autoHeirlooms.strengthLocations[row] = false;
+			if (atData.autoHeirlooms.detailed[number].type === 'Strength') {
+				atData.autoHeirlooms.strengthLocations[row] = false;
 			}
 			break;
 	}
 
-	if (MODULES.autoHeirlooms.detailed[number].type === 'Lightning' && MODULES.autoHeirlooms.lightColStacks[number % 5] > 0) {
-		MODULES.autoHeirlooms.lightColStacks[number % 5]--;
+	if (atData.autoHeirlooms.detailed[number].type === 'Lightning' && atData.autoHeirlooms.lightColStacks[number % 5] > 0) {
+		atData.autoHeirlooms.lightColStacks[number % 5]--;
 	}
 
-	MODULES.autoHeirlooms.detailed[number].selected = false;
-	MODULES.autoHeirlooms.detailed[number].type = MODULES.autoHeirlooms.selectedTrap;
+	atData.autoHeirlooms.detailed[number].selected = false;
+	atData.autoHeirlooms.detailed[number].type = atData.autoHeirlooms.selectedTrap;
 	return true;
 }
 
 function imAnEnemy(health = 0) {
 	// hey you're an enemy cool
-	MODULES.autoHeirlooms.ticks = 0;
+	atData.autoHeirlooms.ticks = 0;
 
 	// damage you've taken
 	let damageTaken = 0;
@@ -1465,35 +1467,35 @@ function imAnEnemy(health = 0) {
 	let condensed;
 
 	for (let p = 0; p < playerSpire.layout.length; p++) {
-		MODULES.autoHeirlooms.detailed[p].row = Math.floor(p / 5);
-		MODULES.autoHeirlooms.detailed[p].killCount = 0;
-		if (MODULES.autoHeirlooms.detailed[p].type === undefined) {
-			MODULES.autoHeirlooms.detailed[p].type = playerSpire.layout[p].trap.name;
+		atData.autoHeirlooms.detailed[p].row = Math.floor(p / 5);
+		atData.autoHeirlooms.detailed[p].killCount = 0;
+		if (atData.autoHeirlooms.detailed[p].type === undefined) {
+			atData.autoHeirlooms.detailed[p].type = playerSpire.layout[p].trap.name;
 		}
 		if (chilledFor > 0 && frozenFor === 0) {
-			MODULES.autoHeirlooms.detailed[p].chilled = true;
+			atData.autoHeirlooms.detailed[p].chilled = true;
 			chilledFor -= 1;
 		} else {
-			MODULES.autoHeirlooms.detailed[p].chilled = false;
+			atData.autoHeirlooms.detailed[p].chilled = false;
 		}
 		if (frozenFor > 0 && chilledFor === 0) {
-			MODULES.autoHeirlooms.detailed[p].frozen = true;
+			atData.autoHeirlooms.detailed[p].frozen = true;
 			frozenFor -= 1;
 		} else {
-			MODULES.autoHeirlooms.detailed[p].frozen = false;
+			atData.autoHeirlooms.detailed[p].frozen = false;
 		}
-		if (MODULES.autoHeirlooms.strengthLocations[MODULES.autoHeirlooms.detailed[p].row]) {
-			MODULES.autoHeirlooms.detailed[p].strengthed = true;
+		if (atData.autoHeirlooms.strengthLocations[atData.autoHeirlooms.detailed[p].row]) {
+			atData.autoHeirlooms.detailed[p].strengthed = true;
 		} else {
-			MODULES.autoHeirlooms.detailed[p].strengthed = false;
+			atData.autoHeirlooms.detailed[p].strengthed = false;
 		}
 		if (shockedFor > 0) {
-			MODULES.autoHeirlooms.detailed[p].shocked = true;
+			atData.autoHeirlooms.detailed[p].shocked = true;
 		} else {
-			MODULES.autoHeirlooms.detailed[p].shocked = false;
+			atData.autoHeirlooms.detailed[p].shocked = false;
 		}
 
-		switch (MODULES.autoHeirlooms.detailed[p].type) {
+		switch (atData.autoHeirlooms.detailed[p].type) {
 			case 'Empty':
 				break;
 			case 'Fire':
@@ -1502,10 +1504,10 @@ function imAnEnemy(health = 0) {
 			case 'Frost':
 				addDamage = calcFrost(p);
 				chilledFor = traps.frost.slow;
-				if (MODULES.autoHeirlooms.detailed[p].shocked) chilledFor *= traps.lightning.effect;
-				if (MODULES.autoHeirlooms.detailed[p].frozen) {
+				if (atData.autoHeirlooms.detailed[p].shocked) chilledFor *= traps.lightning.effect;
+				if (atData.autoHeirlooms.detailed[p].frozen) {
 					frozenFor = 0;
-					MODULES.autoHeirlooms.detailed[p].frozen = false;
+					atData.autoHeirlooms.detailed[p].frozen = false;
 				}
 				break;
 			case 'Poison':
@@ -1518,7 +1520,7 @@ function imAnEnemy(health = 0) {
 				addDamage = calcLightning(p);
 				break;
 			case 'Strength':
-				MODULES.autoHeirlooms.strengthLocations[MODULES.autoHeirlooms.detailed[p].row] = true;
+				atData.autoHeirlooms.strengthLocations[atData.autoHeirlooms.detailed[p].row] = true;
 				addDamage = calcStrength(p, shockedFor);
 				break;
 			case 'Condenser':
@@ -1527,34 +1529,34 @@ function imAnEnemy(health = 0) {
 				poisonStack *= condensed.poisonMult;
 				break;
 			case 'Knowledge':
-				if (MODULES.autoHeirlooms.detailed[p].chilled) {
+				if (atData.autoHeirlooms.detailed[p].chilled) {
 					chilledFor = 0;
 					frozenFor = traps.knowledge.slow;
-					if (MODULES.autoHeirlooms.detailed[p].shocked) frozenFor *= traps.lightning.effect;
+					if (atData.autoHeirlooms.detailed[p].shocked) frozenFor *= traps.lightning.effect;
 				}
 				break;
 		}
 
-		if (health !== 0 && MODULES.autoHeirlooms.detailed[p].type === 'Fire' && traps.fire.level >= 4 && damageTaken + addDamage > health * 0.8 && !instaKill) {
+		if (health !== 0 && atData.autoHeirlooms.detailed[p].type === 'Fire' && traps.fire.level >= 4 && damageTaken + addDamage > health * 0.8 && !instaKill) {
 			addDamage += health * 0.2;
 			instaKill = true;
-		} else if (MODULES.autoHeirlooms.detailed[p].type !== 'Condenser') {
+		} else if (atData.autoHeirlooms.detailed[p].type !== 'Condenser') {
 			// condenser poison stack damage is complicated and is handled in the case statement above
-			addDamage += poisonStack * multipleDamage(MODULES.autoHeirlooms.detailed[p], 'poisonDamage');
+			addDamage += poisonStack * multipleDamage(atData.autoHeirlooms.detailed[p], 'poisonDamage');
 		}
 
-		MODULES.autoHeirlooms.detailed[p].addedPoison = addStack;
-		MODULES.autoHeirlooms.detailed[p].poisonStacks = poisonStack;
-		MODULES.autoHeirlooms.detailed[p].damageTaken = addDamage;
-		MODULES.autoHeirlooms.detailed[p].allDamageTaken = damageTaken + addDamage;
+		atData.autoHeirlooms.detailed[p].addedPoison = addStack;
+		atData.autoHeirlooms.detailed[p].poisonStacks = poisonStack;
+		atData.autoHeirlooms.detailed[p].damageTaken = addDamage;
+		atData.autoHeirlooms.detailed[p].allDamageTaken = damageTaken + addDamage;
 		// turn new stacks into old stacks
 		poisonStack += addStack;
 		addStack = 0;
-		MODULES.autoHeirlooms.ticks += 1;
+		atData.autoHeirlooms.ticks += 1;
 
 		//Add additional ticks if needed to account for runestone buffs
-		if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type !== 'Knowledge' && MODULES.autoHeirlooms.detailed[p].type !== 'Frost') MODULES.autoHeirlooms.ticks += 1;
-		if (MODULES.autoHeirlooms.detailed[p].frozen && MODULES.autoHeirlooms.detailed[p].type !== 'Frost') MODULES.autoHeirlooms.ticks += 2;
+		if (atData.autoHeirlooms.detailed[p].chilled && atData.autoHeirlooms.detailed[p].type !== 'Knowledge' && atData.autoHeirlooms.detailed[p].type !== 'Frost') atData.autoHeirlooms.ticks += 1;
+		if (atData.autoHeirlooms.detailed[p].frozen && atData.autoHeirlooms.detailed[p].type !== 'Frost') atData.autoHeirlooms.ticks += 2;
 
 		// damage
 		damageTaken += addDamage;
@@ -1563,7 +1565,7 @@ function imAnEnemy(health = 0) {
 		shockedFor -= subtractShocks(p, shockedFor);
 	}
 
-	MODULES.autoHeirlooms.finalToxicity = poisonStack;
+	atData.autoHeirlooms.finalToxicity = poisonStack;
 
 	if (health !== 0) {
 		estimatedMaxDifficulty(health);
@@ -1617,7 +1619,7 @@ function damageByHealth(hp, tally = false) {
 
 	for (let p = 0; p < playerSpire.layout.length; p++) {
 		if (!tally) {
-			MODULES.autoHeirlooms.detailed[p].killCount = 0;
+			atData.autoHeirlooms.detailed[p].killCount = 0;
 		}
 		if (chilledFor > 0 && frozenFor === 0) {
 			chilledFor -= 1;
@@ -1626,15 +1628,15 @@ function damageByHealth(hp, tally = false) {
 			frozenFor -= 1;
 		}
 
-		switch (MODULES.autoHeirlooms.detailed[p].type) {
+		switch (atData.autoHeirlooms.detailed[p].type) {
 			case 'Fire':
 				addDamage = calcFire(p, shockedFor);
 				break;
 			case 'Frost':
 				addDamage = calcFrost(p);
 				chilledFor = traps.frost.slow;
-				if (MODULES.autoHeirlooms.detailed[p].shocked) chilledFor = traps.frost.slow * traps.lightning.effect;
-				if (MODULES.autoHeirlooms.detailed[p].frozen) {
+				if (atData.autoHeirlooms.detailed[p].shocked) chilledFor = traps.frost.slow * traps.lightning.effect;
+				if (atData.autoHeirlooms.detailed[p].frozen) {
 					frozenFor = 0;
 				}
 				break;
@@ -1656,19 +1658,19 @@ function damageByHealth(hp, tally = false) {
 				poisonStack *= condensed.poisonMult;
 				break;
 			case 'Knowledge':
-				if (MODULES.autoHeirlooms.detailed[p].chilled) {
+				if (atData.autoHeirlooms.detailed[p].chilled) {
 					chilledFor = 0;
 					frozenFor = traps.knowledge.slow;
-					if (MODULES.autoHeirlooms.detailed[p].shocked) frozenFor *= traps.lightning.effect;
+					if (atData.autoHeirlooms.detailed[p].shocked) frozenFor *= traps.lightning.effect;
 				}
 				break;
 		}
 
-		if (hp !== 0 && MODULES.autoHeirlooms.detailed[p].type === 'Fire' && traps.fire.level >= 4 && damageDealt + addDamage > hp * 0.8) {
+		if (hp !== 0 && atData.autoHeirlooms.detailed[p].type === 'Fire' && traps.fire.level >= 4 && damageDealt + addDamage > hp * 0.8) {
 			addDamage += hp * 0.2;
-		} else if (MODULES.autoHeirlooms.detailed[p].type !== 'Condenser') {
+		} else if (atData.autoHeirlooms.detailed[p].type !== 'Condenser') {
 			// condenser poison stack damage is complicated and is handled in the case statement above
-			addDamage += poisonStack * multipleDamage(MODULES.autoHeirlooms.detailed[p], 'poisonDamage');
+			addDamage += poisonStack * multipleDamage(atData.autoHeirlooms.detailed[p], 'poisonDamage');
 		}
 
 		shockedFor -= subtractShocks(p, shockedFor);
@@ -1683,17 +1685,17 @@ function damageByHealth(hp, tally = false) {
 
 		if (tally) {
 			if (hp > damageDealt) {
-				if (MODULES.autoHeirlooms.detailed[p].type !== 'Frost') {
-					if (MODULES.autoHeirlooms.detailed[p].chilled && MODULES.autoHeirlooms.detailed[p].type !== 'Knowledge') {
+				if (atData.autoHeirlooms.detailed[p].type !== 'Frost') {
+					if (atData.autoHeirlooms.detailed[p].chilled && atData.autoHeirlooms.detailed[p].type !== 'Knowledge') {
 						slowsOnKill++;
-					} else if (MODULES.autoHeirlooms.detailed[p].frozen) {
+					} else if (atData.autoHeirlooms.detailed[p].frozen) {
 						slowsOnKill += 2;
 					}
 				}
 			} else if (!deadEnemy) {
 				deadEnemy = true;
-				MODULES.autoHeirlooms.detailed[p].killCount++;
-				if (MODULES.autoHeirlooms.detailed[p].type === 'Fire') {
+				atData.autoHeirlooms.detailed[p].killCount++;
+				if (atData.autoHeirlooms.detailed[p].type === 'Fire') {
 					fireKill = true;
 				}
 			}
@@ -1706,16 +1708,16 @@ function damageByHealth(hp, tally = false) {
 function calcFire(c, shocked) {
 	const thisFireDamage = traps.fire.damage * traps.fire.coreMult * lightColMult(c);
 	let thisAddDamage = thisFireDamage;
-	if (MODULES.autoHeirlooms.detailed[c].shocked) thisAddDamage = thisFireDamage * traps.lightning.damageBuff * traps.lightning.coreMult;
-	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += thisFireDamage * getLightningMultiplier(shocked, 1);
-	if (MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += thisFireDamage * getLightningMultiplier(shocked, 2);
-	if (MODULES.autoHeirlooms.strengthLocations[MODULES.autoHeirlooms.detailed[c].row]) thisAddDamage *= traps.strength.effect * traps.strength.coreMult;
-	if (MODULES.autoHeirlooms.detailed[c].chilled && traps.frost.level >= 3) thisAddDamage *= traps.frost.fireIncrease;
+	if (atData.autoHeirlooms.detailed[c].shocked) thisAddDamage = thisFireDamage * traps.lightning.damageBuff * traps.lightning.coreMult;
+	if (atData.autoHeirlooms.detailed[c].chilled || atData.autoHeirlooms.detailed[c].frozen) thisAddDamage += thisFireDamage * getLightningMultiplier(shocked, 1);
+	if (atData.autoHeirlooms.detailed[c].frozen) thisAddDamage += thisFireDamage * getLightningMultiplier(shocked, 2);
+	if (atData.autoHeirlooms.strengthLocations[atData.autoHeirlooms.detailed[c].row]) thisAddDamage *= traps.strength.effect * traps.strength.coreMult;
+	if (atData.autoHeirlooms.detailed[c].chilled && traps.frost.level >= 3) thisAddDamage *= traps.frost.fireIncrease;
 	return thisAddDamage;
 }
 
 function calcFrost(c) {
-	return MODULES.autoHeirlooms.detailed[c].shocked ? traps.frost.damage * traps.lightning.damageBuff * traps.lightning.coreMult : traps.frost.damage;
+	return atData.autoHeirlooms.detailed[c].shocked ? traps.frost.damage * traps.lightning.damageBuff * traps.lightning.coreMult : traps.frost.damage;
 }
 
 function calcPoison(c, shocked, hp, dmg) {
@@ -1725,12 +1727,12 @@ function calcPoison(c, shocked, hp, dmg) {
 
 	if (traps.poison.level >= 3) {
 		if (c > 0) {
-			if (MODULES.autoHeirlooms.detailed[c - 1].type === 'Poison') {
+			if (atData.autoHeirlooms.detailed[c - 1].type === 'Poison') {
 				baseStack *= 3;
 			}
 		}
 		if (!lastCell) {
-			if (MODULES.autoHeirlooms.detailed[c + 1].type === 'Poison') {
+			if (atData.autoHeirlooms.detailed[c + 1].type === 'Poison') {
 				baseStack *= 3;
 			}
 		}
@@ -1739,21 +1741,21 @@ function calcPoison(c, shocked, hp, dmg) {
 		}
 	}
 	if (!lastCell) {
-		if (traps.frost.level >= 4 && MODULES.autoHeirlooms.detailed[c + 1].type === 'Frost') {
+		if (traps.frost.level >= 4 && atData.autoHeirlooms.detailed[c + 1].type === 'Frost') {
 			baseStack *= 4;
 		}
 	}
 
 	output.stack = baseStack;
-	if (MODULES.autoHeirlooms.detailed[c].shocked) {
+	if (atData.autoHeirlooms.detailed[c].shocked) {
 		output.stack *= traps.lightning.damageBuff * traps.lightning.coreMult;
 	}
 	output.damage = output.stack;
-	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) {
+	if (atData.autoHeirlooms.detailed[c].chilled || atData.autoHeirlooms.detailed[c].frozen) {
 		output.stack += baseStack * getLightningMultiplier(shocked, 1);
 		output.damage += output.stack;
 	}
-	if (MODULES.autoHeirlooms.detailed[c].frozen) {
+	if (atData.autoHeirlooms.detailed[c].frozen) {
 		output.stack += baseStack * getLightningMultiplier(shocked, 2);
 		output.damage += output.stack;
 	}
@@ -1765,18 +1767,18 @@ function calcLightning(c) {
 	const baseDamage = traps.lightning.damage * traps.lightning.coreMult;
 	const shockMult = traps.lightning.damageBuff * traps.lightning.coreMult;
 	let thisAddDamage = baseDamage;
-	if (MODULES.autoHeirlooms.detailed[c].shocked) thisAddDamage *= shockMult;
-	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += baseDamage * shockMult;
-	if (MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += baseDamage * shockMult;
+	if (atData.autoHeirlooms.detailed[c].shocked) thisAddDamage *= shockMult;
+	if (atData.autoHeirlooms.detailed[c].chilled || atData.autoHeirlooms.detailed[c].frozen) thisAddDamage += baseDamage * shockMult;
+	if (atData.autoHeirlooms.detailed[c].frozen) thisAddDamage += baseDamage * shockMult;
 	return thisAddDamage;
 }
 
 function calcStrength(c, shocked) {
-	const strengthDamage = getStrengthDamage(MODULES.autoHeirlooms.detailed[c]);
+	const strengthDamage = getStrengthDamage(atData.autoHeirlooms.detailed[c]);
 	let thisAddDamage = strengthDamage;
-	if (MODULES.autoHeirlooms.detailed[c].shocked) thisAddDamage = strengthDamage * traps.lightning.damageBuff * traps.lightning.coreMult;
-	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += strengthDamage * getLightningMultiplier(shocked, 1);
-	if (MODULES.autoHeirlooms.detailed[c].frozen) thisAddDamage += strengthDamage * getLightningMultiplier(shocked, 2);
+	if (atData.autoHeirlooms.detailed[c].shocked) thisAddDamage = strengthDamage * traps.lightning.damageBuff * traps.lightning.coreMult;
+	if (atData.autoHeirlooms.detailed[c].chilled || atData.autoHeirlooms.detailed[c].frozen) thisAddDamage += strengthDamage * getLightningMultiplier(shocked, 1);
+	if (atData.autoHeirlooms.detailed[c].frozen) thisAddDamage += strengthDamage * getLightningMultiplier(shocked, 2);
 	return thisAddDamage;
 }
 
@@ -1784,17 +1786,17 @@ function calcCondenser(c, shocked) {
 	const output = {};
 	const thisBaseEffect = traps.condenser.effect * traps.condenser.coreMult;
 	output.poisonMult = 1;
-	if (MODULES.autoHeirlooms.detailed[c].shocked) {
+	if (atData.autoHeirlooms.detailed[c].shocked) {
 		output.poisonMult *= traps.lightning.effect * thisBaseEffect + 1;
 	} else {
 		output.poisonMult *= thisBaseEffect + 1;
 	}
 	output.damageFactor = output.poisonMult;
-	if (MODULES.autoHeirlooms.detailed[c].chilled || MODULES.autoHeirlooms.detailed[c].frozen) {
+	if (atData.autoHeirlooms.detailed[c].chilled || atData.autoHeirlooms.detailed[c].frozen) {
 		output.poisonMult *= thisBaseEffect * getLightningMultiplier(shocked, 1, 'condenser') + 1;
 		output.damageFactor += output.poisonMult;
 	}
-	if (MODULES.autoHeirlooms.detailed[c].frozen) {
+	if (atData.autoHeirlooms.detailed[c].frozen) {
 		output.poisonMult *= thisBaseEffect * getLightningMultiplier(shocked, 2, 'condenser') + 1;
 		output.damageFactor += output.poisonMult;
 	}
@@ -1803,11 +1805,11 @@ function calcCondenser(c, shocked) {
 
 function subtractShocks(c, shocked) {
 	let adjust = shocked < 0 ? shocked : 0;
-	if (shocked > 0 && MODULES.autoHeirlooms.detailed[c].type !== 'Lightning') {
-		if (MODULES.autoHeirlooms.detailed[c].type !== 'Frost') {
-			if (MODULES.autoHeirlooms.detailed[c].chilled && MODULES.autoHeirlooms.detailed[c].type !== 'Knowledge') {
+	if (shocked > 0 && atData.autoHeirlooms.detailed[c].type !== 'Lightning') {
+		if (atData.autoHeirlooms.detailed[c].type !== 'Frost') {
+			if (atData.autoHeirlooms.detailed[c].chilled && atData.autoHeirlooms.detailed[c].type !== 'Knowledge') {
 				adjust = 2;
-			} else if (MODULES.autoHeirlooms.detailed[c].frozen) {
+			} else if (atData.autoHeirlooms.detailed[c].frozen) {
 				adjust = 3;
 			} else {
 				adjust = 1;
@@ -1907,7 +1909,7 @@ function estimatedMaxDifficulty(maxHealth) {
 			avgReward += getRsReward(getHealthWith(difficulty, h / steps), difficulty);
 		} else if (traps.poison.level >= 6) {
 			// poison leaking bonus for escaped enemies
-			avgReward += MODULES.autoHeirlooms.finalToxicity * 0.1;
+			avgReward += atData.autoHeirlooms.finalToxicity * 0.1;
 		}
 	}
 	avgReward /= steps;
@@ -1920,11 +1922,11 @@ function getRsReward(health, threat) {
 	let reward = Math.ceil(health / 600);
 	reward += threat / 20;
 	reward *= Math.pow(1.00116, threat);
-	if (MODULES.autoHeirlooms.detailed[playerSpire.layout.length - 1].type === 'Fire' && traps.fire.level >= 7) {
+	if (atData.autoHeirlooms.detailed[playerSpire.layout.length - 1].type === 'Fire' && traps.fire.level >= 7) {
 		if (traps.fire.level >= 9) reward *= 1.5;
 		else reward *= 1.2;
 	}
-	if (traps.frost.level >= 5) reward *= 1 + (MODULES.autoHeirlooms.ticks - playerSpire.layout.length) * traps.frost.runestones[traps.frost.level];
+	if (traps.frost.level >= 5) reward *= 1 + (atData.autoHeirlooms.ticks - playerSpire.layout.length) * traps.frost.runestones[traps.frost.level];
 	return reward;
 }
 
@@ -1971,7 +1973,7 @@ function getLightningMultiplier(length, times, type) {
 }
 
 function lightColMult(cell) {
-	return traps.lightning.level >= 4 ? 1 + (traps.lightning.level >= 7 ? 0.2 : 0.1) * MODULES.autoHeirlooms.lightColStacks[cell % 5] * traps.lightning.coreMult : 1;
+	return traps.lightning.level >= 4 ? 1 + (traps.lightning.level >= 7 ? 0.2 : 0.1) * atData.autoHeirlooms.lightColStacks[cell % 5] * traps.lightning.coreMult : 1;
 }
 
 setupHeirloomUI();

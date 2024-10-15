@@ -44,7 +44,7 @@ class HDStats {
 		this.autoLevelSpeed = hdStats.autoLevelSpeed;
 
 		const { world, universe } = game.global;
-		const checkAutoLevel = this.autoLevelInitial === undefined || (usingRealTimeOffline ? atSettings.intervals.thirtySecond : atSettings.intervals.fiveSecond);
+		const checkAutoLevel = this.autoLevelInitial === undefined || (usingRealTimeOffline ? atConfig.intervals.thirtySecond : atConfig.intervals.fiveSecond);
 
 		const mapDifficulty = game.global.mapsActive && MODULES.maps.lastMapWeWereIn.location === 'Bionic' ? 2.6 : 0.75;
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
@@ -196,7 +196,7 @@ function calcCorruptionScale(zone = game.global.world, base = 10) {
 function calcSpire(what = 'attack', cell, name, checkCell) {
 	if (!cell) {
 		const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-		const exitCell = typeof atSettings !== 'undefined' ? getPageSetting(settingPrefix + 'ExitSpireCell') : 100;
+		const exitCell = typeof atConfig !== 'undefined' ? getPageSetting(settingPrefix + 'ExitSpireCell') : 100;
 		cell = isDoingSpire() && exitCell > 0 && exitCell <= 100 ? exitCell : 100;
 	}
 
@@ -224,7 +224,7 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 function getTrimpHealth(realHealth, worldType = _getWorldType(), extraItem = new ExtraItem()) {
 	if (realHealth) return game.global.soldierHealthMax;
 
-	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
+	const heirloomToCheck = typeof atConfig !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 	const heirloom = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpHealth', 1, false);
 	let health = (50 + calcEquipment('health', extraItem)) * game.resources.trimps.maxSoldiers;
 
@@ -318,7 +318,7 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 	}
 
 	if (game.global.universe === 2) {
-		let shield = typeof atSettings !== 'undefined' ? getEnergyShieldMult_AT(worldType) : getEnergyShieldMult();
+		let shield = typeof atConfig !== 'undefined' ? getEnergyShieldMult_AT(worldType) : getEnergyShieldMult();
 		shield = health * (1 + shield * (1 + Fluffy.isRewardActive('shieldlayer'))) - health;
 		if (stance) return shield;
 		else health += shield;
@@ -340,7 +340,7 @@ function calcOurBlock(stance = false, realBlock = false, worldType = _getWorldTy
 		return block * 2;
 	}
 
-	const heirloomToCheck = typeof atSettings !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
+	const heirloomToCheck = typeof atConfig !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 
 	const gym = game.buildings.Gym;
 	const owned = gym.owned + extraGyms;
@@ -419,7 +419,7 @@ function _getRampageBonus(maxStacks = false) {
 function _getTrimpIceMult(realDamage) {
 	if (getEmpowerment() !== 'Ice') return 1;
 
-	if (realDamage || (typeof atSettings !== 'undefined' && !getPageSetting('fullIce'))) {
+	if (realDamage || (typeof atConfig !== 'undefined' && !getPageSetting('fullIce'))) {
 		return 1 + game.empowerments.Ice.getDamageModifier();
 	} else {
 		const afterTransfer = 1 + Math.ceil(game.empowerments.Ice.currentDebuffPower * getRetainModifier('Ice'));
@@ -447,13 +447,13 @@ function addPoison(realDamage, zone = game.global.world) {
 	if (getEmpowerment(zone) !== 'Poison') return 0;
 	if (realDamage) return game.empowerments.Poison.getDamage();
 	//Dynamically determines how much we are benefiting from poison based on Current Amount * Transfer Rate
-	if (typeof atSettings !== 'undefined' && getPageSetting('addPoison')) return game.empowerments.Poison.getDamage() * getRetainModifier('Poison');
+	if (typeof atConfig !== 'undefined' && getPageSetting('addPoison')) return game.empowerments.Poison.getDamage() * getRetainModifier('Poison');
 	return 0;
 }
 
 function getCritMulti(crit, customShield) {
-	const critD = typeof atSettings !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) : getPlayerCritDamageMult();
-	let critChance = typeof atSettings !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
+	const critD = typeof atConfig !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) : getPlayerCritDamageMult();
+	let critChance = typeof atConfig !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
 	if (crit === 'never') critChance = Math.floor(critChance);
 	else if (crit === 'force') critChance = Math.ceil(critChance);
 
@@ -482,7 +482,7 @@ function getTrimpAttack(realDamage) {
 }
 
 function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worldType = _getWorldType(), critMode, mapLevel = _getZone(worldType) - game.global.world, useTitimp = false, specificHeirloom = false) {
-	const runningAutoTrimps = typeof atSettings !== 'undefined';
+	const runningAutoTrimps = typeof atConfig !== 'undefined';
 	const heirloomToCheck = !runningAutoTrimps ? null : !specificHeirloom ? heirloomShieldToEquip(worldType) : specificHeirloom;
 
 	const heirloom = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpAttack', 1, false);
@@ -611,7 +611,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 }
 
 function getCritPower(enemy = getCurrentEnemy(), block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
-	const ignoreCrits = typeof atSettings !== 'undefined' && game.global.universe === 1 ? getPageSetting('ignoreCrits') || 0 : 0;
+	const ignoreCrits = typeof atConfig !== 'undefined' && game.global.universe === 1 ? getPageSetting('ignoreCrits') || 0 : 0;
 	if (ignoreCrits === 2) return 0;
 
 	const outputs = {
@@ -642,7 +642,7 @@ function getCritPower(enemy = getCurrentEnemy(), block = game.global.soldierCurr
 
 function badGuyCritMult(enemy = getCurrentEnemy(), critPower = 2, block = game.global.soldierCurrentBlock, health = game.global.soldierHealth) {
 	if (critPower <= 0) return 1;
-	const ignoreCrits = typeof atSettings !== 'undefined' && game.global.universe === 1 ? getPageSetting('ignoreCrits') || 0 : 0;
+	const ignoreCrits = typeof atConfig !== 'undefined' && game.global.universe === 1 ? getPageSetting('ignoreCrits') || 0 : 0;
 	if (ignoreCrits === 2) return 1;
 
 	let regular = 1;
@@ -780,7 +780,7 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 		if (worldType === 'void') attack *= applyDailyMultipliers('empoweredVoid', 1);
 
 		const dailyChallenge = game.global.dailyChallenge;
-		if (typeof dailyChallenge.bloodthirst !== 'undefined' && typeof atSettings !== 'undefined') {
+		if (typeof dailyChallenge.bloodthirst !== 'undefined' && typeof atConfig !== 'undefined') {
 			const bloodThirstStrength = dailyChallenge.bloodthirst.strength;
 
 			if (worldType === 'void' && getPageSetting('bloodthirstVoidMax')) {
@@ -807,7 +807,7 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 		if (worldType === 'world' && game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
 	}
 
-	if (typeof atSettings !== 'undefined' && getEmpowerment() === 'Ice' && getPageSetting('fullIce')) {
+	if (typeof atConfig !== 'undefined' && getEmpowerment() === 'Ice' && getPageSetting('fullIce')) {
 		const afterTransfer = 1 + Math.ceil(game.empowerments.Ice.currentDebuffPower * getRetainModifier('Ice'));
 		attack *= Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
 	}
@@ -1262,7 +1262,7 @@ function enemyDamageModifiers() {
 }
 
 function gammaMaxStacks(specialChall, actualCheck = true, worldType = 'world') {
-	if (typeof atSettings !== 'undefined') {
+	if (typeof atConfig !== 'undefined') {
 		if (heirloomShieldToEquip(worldType) && getHeirloomBonus_AT('Shield', 'gammaBurst', heirloomShieldToEquip(worldType)) <= 1) return Infinity;
 		if (actualCheck && MODULES.heirlooms.gammaBurstPct === 1) return 1;
 		if (specialChall && game.global.mapsActive) return Infinity;
@@ -1292,7 +1292,7 @@ function coordinateCanOneShot() {
 function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCell, worldType = 'world', difficulty = 1, farmType = 'gamma', forceOK, hits, hdCheck) {
 	if (Object.keys(game.global.gridArray).length === 0 || getPerkLevel('Equality') === 0) return 0;
 	if (!currentCell) currentCell = worldType === 'world' || worldType === 'void' ? 98 : 20;
-	const runningAT = typeof atSettings !== 'undefined';
+	const runningAT = typeof atConfig !== 'undefined';
 
 	const bionicTalent = zone - game.global.world;
 	const checkMutations = worldType === 'world' && zone > 200;

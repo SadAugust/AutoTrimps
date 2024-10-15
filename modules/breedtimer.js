@@ -1,4 +1,4 @@
-MODULES.breedtimer = {
+atData.breedtimer = {
 	DecimalBreed: Decimal.clone({ precision: 30, rounding: 4 }),
 	missingTrimps: new this.DecimalBreed(0)
 };
@@ -11,7 +11,7 @@ function trimpsEffectivelyEmployed(employedTrimps = game.resources.trimps.employ
 
 function breedingPS() {
 	const trimps = game.resources.trimps;
-	const breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
+	const breeding = new atData.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
 
 	return getPotencyMod().minus(1).mul(10).mul(breeding);
 }
@@ -25,7 +25,7 @@ function _breedingPS() {
 
 function getPotencyMod() {
 	const potency = game.resources.trimps.potency;
-	let potencyMod = new MODULES.breedtimer.DecimalBreed(potency);
+	let potencyMod = new atData.breedtimer.DecimalBreed(potency);
 
 	// Potency, Nurseries, Venimp, Broken Planet
 	if (game.upgrades.Potency.done > 0) potencyMod = potencyMod.mul(Math.pow(1.1, game.upgrades.Potency.done));
@@ -111,10 +111,10 @@ function breedTotalTime() {
 	const trimps = game.resources.trimps;
 	const trimpsMax = trimps.realMax();
 
-	const maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
+	const maxBreedable = new atData.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
 	const breeding = maxBreedable.minus(trimps.getCurrentSend());
 
-	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
+	return atData.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(atData.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
 }
 
 function _breedTotalTime() {
@@ -132,11 +132,11 @@ function breedTimeRemaining() {
 	const trimpsMax = trimps.realMax();
 	const trimpsEmployed = trimpsEffectivelyEmployed();
 
-	const breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEmployed);
+	const breeding = new atData.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEmployed);
 	if (breeding <= 0) return new DecimalBreed(Infinity);
 
-	const maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEmployed);
-	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
+	const maxBreedable = new atData.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEmployed);
+	return atData.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(atData.breedtimer.DecimalBreed.log10(getPotencyMod())).div(10);
 }
 
 /* This version doesn't use decimal.js to calculate breedtimer for trap calculations */
@@ -228,12 +228,12 @@ function _getCompareTime(timeRemaining) {
 	else compareTime = totalTime.cmp(0) === 0 ? new Decimal(Infinity) : totalTime;
 
 	if (!compareTime.isFinite()) return new Decimal(999);
-	return new MODULES.breedtimer.DecimalBreed(compareTime);
+	return new atData.breedtimer.DecimalBreed(compareTime);
 }
 
 function _getGenDifference(compareTime, target) {
 	const breed = Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02));
-	return new MODULES.breedtimer.DecimalBreed(breed).ceil();
+	return new atData.breedtimer.DecimalBreed(breed).ceil();
 }
 
 function _geneticistCost(amount = 1) {
