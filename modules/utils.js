@@ -590,6 +590,19 @@ function updateFluffyRewards() {
 	return fluffyRewards;
 }
 
+function setupMODULES() {
+	Object.assign(MODULES, game.global.addonUser);
+	MODULES = new Proxy(MODULES, {
+		set(target, property, value) {
+			target[property] = value;
+			if (game.global.addonUser) {
+				game.global.addonUser[property] = value;
+			}
+			return true;
+		}
+	});
+}
+
 function setupAddonUser(force) {
 	if (typeof game.global.addonUser === 'object' && !force) return false;
 

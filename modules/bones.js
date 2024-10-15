@@ -33,7 +33,7 @@ function boneShrine(lineCheck) {
 
 		if (setting && settingName && setting.row) {
 			const value = game.global.universe === 2 ? 'valueU2' : 'value';
-			game.global.addonUser[settingName][value][setting.row].done = getTotalPortals() + '_' + game.global.world;
+			game.global.addonUser.mapData[settingName][value][setting.row].done = getTotalPortals() + '_' + game.global.world;
 		}
 	}
 }

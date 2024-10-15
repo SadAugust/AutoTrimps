@@ -219,16 +219,12 @@ function initialiseScript() {
 	}
 
 	setupAddonUser();
-	Object.assign(MODULES, game.global.addonUser);
-	MODULES = new Proxy(MODULES, {
-		set(target, property, value) {
-			target[property] = value;
-			if (game.global.addonUser) {
-				game.global.addonUser[property] = value;
-			}
-			return true;
-		}
-	});
+	setupMODULES();
+
+	if (typeof MODULES.mapData === 'undefined') {
+		setupAddonUser(true);
+		setupMODULES();
+	}
 
 	/* temp solution. Will remove when I setup mapSettings saving on refresh */
 	if (MODULES.maps) {
