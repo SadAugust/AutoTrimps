@@ -12,6 +12,7 @@ function autoPortal(specificPortalZone, universe, skipDaily) {
 	if (MODULES.portal.portalForVoid && !game.options.menu.liquification.enabled) toggleSetting('liquification');
 	if (!game.global.portalActive) return;
 
+	if (MODULES.portal.portalUniverse === null || isNaN(MODULES.portal.portalUniverse)) MODULES.portal.portalUniverse = game.global.universe;
 	universe = universe || (MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe);
 	const runningDaily = challengeActive('Daily');
 	if (!shouldPortal(runningDaily, universe)) return;
@@ -244,7 +245,7 @@ function doPortal(challenge, skipDaily) {
 	}
 
 	while (MODULES.portal.portalUniverse !== Infinity) {
-		if (MODULES.portal.portalUniverse === null) MODULES.portal.portalUniverse = game.global.universe;
+		if (MODULES.portal.portalUniverse === null || isNaN(MODULES.portal.portalUniverse)) MODULES.portal.portalUniverse = game.global.universe;
 		swapPortalUniverse();
 		if (portalUniverse === MODULES.portal.portalUniverse) {
 			MODULES.portal.portalUniverse = Infinity;
