@@ -28,6 +28,7 @@ function evaluateHeirloomMods(loom, location) {
 			emptyMods++;
 			continue;
 		}
+
 		if (blacklist.includes(game.heirlooms[heirloomType][modName].name)) return 0;
 		modName = heirloomData[modName].name;
 		if (blacklist.includes(modName)) return 0;
@@ -99,6 +100,7 @@ function autoHeirlooms(portal) {
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
 				if (heirloomTypeEnabled[heirloomTypes[x]]) carryHeirloom();
 				else recycleHeirloom(true);
+				x--;
 			}
 		}
 		break;
