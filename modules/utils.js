@@ -698,16 +698,7 @@ function setupAddonUser(force) {
 		u2unlocks: []
 	};
 
-	MODULES = game.global.addonUser;
-	MODULES = new Proxy(MODULES, {
-		set(target, property, value) {
-			target[property] = value;
-			if (game.global.addonUser) {
-				game.global.addonUser[property] = value;
-			}
-			return true;
-		}
-	});
+	setupMODULES();
 }
 
 function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {

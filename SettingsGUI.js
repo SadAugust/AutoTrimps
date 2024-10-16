@@ -4276,7 +4276,7 @@ function initialiseAllSettings() {
 				description += "<p>The blue color means this is not a settable setting, just a button.</p>";
 				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
 				return description;
-			}, 'action', null, 'MODULES["performance"].EnableAFKMode()', 'Display', [1, 2]);
+			}, 'action', null, 'atData["performance"].EnableAFKMode()', 'Display', [1, 2]);
 
 		createSetting('equipEfficientEquipDisplay',
 			function () { return ('AE: Highlight Equips') },
@@ -4348,7 +4348,7 @@ function initialiseAllSettings() {
 			function () { return false });
 	}
 
-	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
+	document.getElementById('battleSideTitle').setAttribute('onclick', 'atData["performance"].EnableAFKMode()');
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 	
 	const displayImport = true;
