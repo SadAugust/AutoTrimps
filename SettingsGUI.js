@@ -4269,14 +4269,14 @@ function initialiseAllSettings() {
 				ATstructure: false, ATjobs: false, ATequip: false, ATmaps: false, ATstatus: false, ATheHr: false,
 		}, 'importExportTooltip("hideAutomation")', 'Display', [0]);
 			
-		createSetting('EnableAFK',
+		createSetting('enableAFK',
 			function () { return ('Go AFK Mode') },
 			function () {
 				let description = "<p>AFK Mode uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU saving mode.</p>";
 				description += "<p>The blue color means this is not a settable setting, just a button.</p>";
 				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
 				return description;
-			}, 'action', null, 'atData["performance"].EnableAFKMode()', 'Display', [1, 2]);
+			}, 'action', null, 'atData["performance"].enableAFKMode()', 'Display', [1, 2]);
 
 		createSetting('equipEfficientEquipDisplay',
 			function () { return ('AE: Highlight Equips') },
@@ -4348,7 +4348,7 @@ function initialiseAllSettings() {
 			function () { return false });
 	}
 
-	document.getElementById('battleSideTitle').setAttribute('onclick', 'atData["performance"].EnableAFKMode()');
+	document.getElementById('battleSideTitle').setAttribute('onclick', 'atData["performance"].enableAFKMode()');
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 	
 	const displayImport = true;
@@ -5176,7 +5176,7 @@ function _settingsToLineBreak() {
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterMagma = ['autoGenModeC2', 'magmiteMinimize'];
 	const breakAfterNature = ['autoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
-	const breakAfterDisplay = ['EnableAFK', 'shieldGymMostEfficientDisplay'];
+	const breakAfterDisplay = ['enableAFK', 'shieldGymMostEfficientDisplay'];
 	const breakAfterImportExport = ['mutatorPresets'];
 	const breakAfterTest = ['testTotalEquipmentCost'];
 

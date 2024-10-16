@@ -121,7 +121,7 @@
 	// Insert the afk page, at the top level <body> tag
 	document.body.appendChild(M['performance'].AFKOverlay);
 
-	M['performance'].EnableAFKMode = function EnableAFKMode() {
+	M['performance'].enableAFKMode = function enableAFKMode() {
 		M['performance'].isAFK = true;
 		M['performance'].AFKOverlay.classList.remove('at-afk-overlay-disabled');
 		M['performance'].$wrapper.style.display = 'none';
