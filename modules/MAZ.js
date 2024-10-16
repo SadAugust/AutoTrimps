@@ -1639,10 +1639,10 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
 		if (index !== '') {
 			function updateClass(runType, type, row, varPrefix) {
-				const onClass = `windowChallenge${type}On${varPrefix}`;
-				const offClass = `windowChallenge${type}Off${varPrefix}`;
-				const newClass = `windowChallenge${type}${runType === type ? 'On' : 'Off'}${varPrefix}`;
-				const newClass2 = `windowChallenge${type}${runType !== type ? 'On' : 'Off'}${varPrefix}`;
+				const onClass = `windowChallengeOn${varPrefix}`;
+				const offClass = `windowChallengeOff${varPrefix}`;
+				const newClass = `windowChallenge${runType === type ? 'On' : 'Off'}${varPrefix}`;
+				const newClass2 = `windowChallenge${runType !== type ? 'On' : 'Off'}${varPrefix}`;
 
 				if ((runType !== type && row.classList.contains(onClass)) || (runType === type && row.classList.contains(offClass))) {
 					swapClass(newClass2, newClass, row);
