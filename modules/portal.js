@@ -244,6 +244,7 @@ function doPortal(challenge, skipDaily) {
 	}
 
 	while (MODULES.portal.portalUniverse !== Infinity) {
+		if (MODULES.portal.portalUniverse === null) MODULES.portal.portalUniverse = game.global.universe;
 		swapPortalUniverse();
 		if (portalUniverse === MODULES.portal.portalUniverse) {
 			MODULES.portal.portalUniverse = Infinity;
