@@ -9,7 +9,7 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Shieldblock.allowed) return false;
-			if (aboveMapLevel && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
+			if (map.unlocks && aboveMapLevel && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -23,7 +23,7 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
-			if (aboveMapLevel && !masteryPurchased('bounty')) return true; //Don't bother before z16
+			if (map.unlocks && aboveMapLevel && !masteryPurchased('bounty')) return true; //Don't bother before z16
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -37,7 +37,7 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified) {
 			if (elementExists('portalBtn')) return false;
-			if (game.global.world - 1 > map.level) return true; //Don't bother before z22
+			if (map.unlocks && game.global.world - 1 > map.level) return true; //Don't bother before z22
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -50,7 +50,7 @@ atData.uniqueMaps = Object.freeze({
 		universe: 1,
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (aboveMapLevel && game.portal.Relentlessness.locked) return true; //Unlock the Relentlessness perk
+			if (map.unlocks && aboveMapLevel && game.portal.Relentlessness.locked) return true; //Unlock the Relentlessness perk
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -63,7 +63,7 @@ atData.uniqueMaps = Object.freeze({
 		universe: 1,
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) return true; //Unlock the Electricity challenge
+			if (map.unlocks && aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) return true; //Unlock the Electricity challenge
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -101,7 +101,7 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
-			if (aboveMapLevel && !masteryPurchased('bounty')) return true; // we need Bounty
+			if (map.unlocks && aboveMapLevel && !masteryPurchased('bounty')) return true; // we need Bounty
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -115,7 +115,7 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified) {
 			if (elementExists('portalBtn')) return false;
-			if (game.global.world - 1 > map.level && game.global.totalRadPortals === 0) return true; //Don't bother before z17
+			if (map.unlocks && game.global.world - 1 > map.level && game.global.totalRadPortals === 0) return true; //Don't bother before z17
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -227,6 +227,7 @@ function shouldRunUniqueMap(map) {
 	const liquified = liquifiedZone();
 	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
 	const mapSetting = uniqueMapSetting[map.name];
+	mapSetting.unlocks = getPageSetting('uniqueMapUnlocks');
 	const aboveMapLevel = game.global.world > map.level;
 	//Check to see if the map should be run based on the user's settings.
 	if (MODULES.mapFunctions.runUniqueMap === map.name || mapData.runConditions(map, mapSetting, liquified, aboveMapLevel)) {
