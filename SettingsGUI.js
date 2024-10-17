@@ -1648,6 +1648,17 @@ function initialiseAllSettings() {
 			"MP Smithy One Off": { enabled: false, value: 100 },
 		}, 'importExportTooltip("UniqueMaps")', 'Maps', [1, 2]);
 
+		createSetting('uniqueMapUnlocks',
+			function () { return ('Unique Map Unlocks') },
+			function () {
+				const portalMap = currSettingUniverse === 1 ? "Dimension of Anger" : "Dimension of Rage";
+				let description = "<p>Will force run unique maps that have unlocks if you're a zone above the level they are unlocked.</p>";
+				description += "<p>This setting takes <b>Unique Map Health Check</b> into account if enabled and won't run unique maps unless you have enough health to survive them.</p>";
+				description += `<p>If you have this disabled then you will need to either setup <b>${portalMap}</b> in <b>Unique Map Settings</b> or manually run it to unlock the ability to portal.</p>`;
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Maps', [1, 2]);
+
 		createSetting('uniqueMapEnoughHealth',
 			function () { return ('Unique Map Health Check') },
 			function () {
@@ -1655,7 +1666,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
-			
+		
 		createSetting('mapBonusSettings',
 			function () { return ('Map Bonus Settings') },
 			function () {
