@@ -94,15 +94,23 @@ function autoHeirlooms(portal) {
 
 	while (game.global.heirloomsCarried.length < maxHeirlooms && game.global.heirloomsExtra.length > 0) {
 		for (let x = 0; x < heirloomTypes.length; x++) {
+			if (game.global.heirloomsCarried.length < maxHeirlooms) break;
 			weights = worthOfHeirlooms();
+
 			if (weights && weights[heirloomTypes[x]].length > 0) {
 				let carriedHeirlooms = weights[heirloomTypes[x]].shift();
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
-				if (heirloomTypeEnabled[heirloomTypes[x]]) carryHeirloom();
-				else recycleHeirloom(true);
+
+				if (heirloomTypeEnabled[heirloomTypes[x]]) {
+					carryHeirloom();
+				} else {
+					recycleHeirloom(true);
+				}
+
 				x--;
 			}
 		}
+
 		break;
 	}
 }
