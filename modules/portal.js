@@ -782,7 +782,7 @@ function atlantrimpRespecMessage(cellOverride) {
 	//Stop it running if we aren't above the necessary cell for u1.
 	if (!cellOverride) {
 		//If we have just toggled the setting, wait 5 seconds before running this.
-		if (settingChangedTimeout) return;
+		if (atConfig.settingChangedTimeout) return;
 		//Disable this from running if we have already disabled it this portal.
 		//This variable is reset when changing the "presetCombatRespecCell" settings input.
 		if (MODULES.portal.disableAutoRespec === getTotalPortals()) return;

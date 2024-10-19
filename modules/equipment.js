@@ -368,7 +368,7 @@ function autoEquip() {
 	}
 
 	if ([2, 3].includes(getCurrentQuest())) return;
-	if (mapSettings.mapName === 'Smithy Farm' || settingChangedTimeout) return;
+	if (mapSettings.mapName === 'Smithy Farm' || atConfig.settingChangedTimeout) return;
 	if (runningAncientTreasure()) return;
 
 	if (_autoEquipTimeWarp()) return;

@@ -8,7 +8,7 @@ function mapSettingsDisplay(elem, titleText) {
 	let settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
 	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
 
-	const originalSetting = getPageSetting(`${settingName}Settings`, currSettingUniverse);
+	const originalSetting = getPageSetting(`${settingName}Settings`, atConfig.settingUniverse);
 	const activeSetting = _getActiveSetting(settingName, settingNames);
 	const activeSettingObj = JSON.stringify(activeSetting);
 	const settingObj = _mapSettingsInputObj();
@@ -471,7 +471,7 @@ function _mapSettingsDefaultTitles(varPrefix, activeSettings, settingOrder) {
 
 function _mapSettingsDefaultPopulateInputs(defaultVals, varPrefix, activeSettings) {
 	const s = activeSettings;
-	const defaultDropdowns = mapSettingsDropdowns(currSettingUniverse, defaultVals, varPrefix);
+	const defaultDropdowns = mapSettingsDropdowns(atConfig.settingUniverse, defaultVals, varPrefix);
 	const className = defaultVals.special === 'hc' || defaultVals.special === 'lc' ? ' windowGatherOn' : ' windowGatherOff';
 
 	let tooltipText = `<div id='windowRow' class='row windowRow ${className}'>`;
@@ -661,7 +661,7 @@ function _mapSettingsRowTitles(varPrefix, activeSettings, settingOrder) {
 		elements.push({ name: 'runType', class: `windowRunType${varPrefix}`, title: 'Run&nbsp;Type' });
 	}
 
-	const trimpleName = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
+	const trimpleName = atConfig.settingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 	if (s.atlantrimp) {
 		elements.push({ name: 'atlantrimp', class: `windowAtlantrimp`, title: `Run<br/>${trimpleName}` });
 	}
@@ -691,10 +691,10 @@ function _mapSettingsRowTitles(varPrefix, activeSettings, settingOrder) {
 
 function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style, currSettingLength, settingOrder) {
 	const s = activeSettings;
-	const dropdowns = mapSettingsDropdowns(currSettingUniverse, vals, varPrefix);
+	const dropdowns = mapSettingsDropdowns(atConfig.settingUniverse, vals, varPrefix);
 
 	let backgroundStyle = '';
-	if (currSettingUniverse === 1 && !s.golden && !s.profiles) {
+	if (atConfig.settingUniverse === 1 && !s.golden && !s.profiles) {
 		const natureStyles = {
 			None: 'unset',
 			Poison: 'rgba(50, 150, 50, 0.75)',
@@ -864,7 +864,7 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style
 	if (s.runType) {
 		elements.push({ name: 'runType', class: `windowRunType${varPrefix}`, title: `<select value='${vals.runType}' id='windowRunType${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.runType}</select>` });
 		elements.push({ name: 'challenge', class: `windowChallenge${varPrefix}`, title: `<div style='text-align: center; font-size: 0.6vw;'>Challenge</div><select value='${vals.challenge}' id='windowChallenge${x}'>${dropdowns.challenge}</select>` });
-		elements.push({ name: 'challenge3', class: `windowChallenge3${varPrefix}`, title: `<div style='text-align: center; font-size: 0.6vw;'>Challenge${currSettingUniverse + 1}</div><select value='${vals.challenge3}' id='windowChallenge3${x}'>${dropdowns.c2}</select>` });
+		elements.push({ name: 'challenge3', class: `windowChallenge3${varPrefix}`, title: `<div style='text-align: center; font-size: 0.6vw;'>Challenge${atConfig.settingUniverse + 1}</div><select value='${vals.challenge3}' id='windowChallenge3${x}'>${dropdowns.c2}</select>` });
 		elements.push({ name: 'challengeOneOff', class: `windowChallengeOneOff${varPrefix}`, title: `<div style='text-align: center; font-size: 0.6vw;'>One Offs</div><select value='${vals.windowChallengeOneOff}' id='windowChallengeOneOff${x}'>${dropdowns.oneOff}</select>` });
 	}
 
@@ -1139,7 +1139,7 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 
 		if (s.mapBonus) {
 			const repeat = Number(thisSetting.repeat);
-			checkSettingsErrors(!thisSetting.autoLevel && +thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0), "can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.");
+			checkSettingsErrors(!thisSetting.autoLevel && +thisSetting.level < (atConfig.settingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0), "can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.");
 			checkSettingsErrors(repeat < 1, "can't have a map bonus value lower than 1 as you won't be able to get any map stacks.");
 		}
 
@@ -1191,10 +1191,10 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 	if (profileData && Object.keys(profileData).length > 0) {
 		localStorage.setItem('atSettingsProfiles', JSON.stringify(profileData));
 	}
-	setPageSetting(varPrefix + 'Settings', setting, currSettingUniverse);
+	setPageSetting(varPrefix + 'Settings', setting, atConfig.settingUniverse);
 
 	if (!s.golden && !s.profiles) {
-		const value = currSettingUniverse === 2 ? 'valueU2' : 'value';
+		const value = atConfig.settingUniverse === 2 ? 'valueU2' : 'value';
 		game.global.addonUser.mapData[varPrefix + 'Settings'][value] = Array.from({ length: 31 }, () => ({ done: '' }));
 
 		if (!defaultSetting.active) debug(`${titleText} has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.`, 'mazSettings');
@@ -1233,8 +1233,8 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 
 function mapSettingsHelpWindow(titleText, activeSettings) {
 	const s = JSON.parse(activeSettings);
-	const radonSetting = currSettingUniverse === 2;
-	const trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
+	const radonSetting = atConfig.settingUniverse === 2;
+	const trimple = atConfig.settingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 	let mazHelp = 'Welcome to <b>' + titleText + '</b> settings!';
 
 	if (!s.golden && !s.profiles) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
@@ -1489,7 +1489,7 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 		mazHelp += "<li><b>Golden Type</b> - The type of Golden upgrade that you'd like to get during this line.</li>";
 
 		mazHelp += '<br>';
-		const heliumType = currSettingUniverse === 2 ? 'Radon' : 'Helium';
+		const heliumType = atConfig.settingUniverse === 2 ? 'Radon' : 'Helium';
 		mazHelp += `You are able to have multiple lines of the same type. For example 8 Void, 12 Battle, 10 ${heliumType}, 8 Battle would end with 8 Golden Voids, 20 Golden Battle, and 10 Golden ${heliumType} upgrades. Requests to buy Golden Void will be skipped if it would put you above 72%.`;
 		mazHelp += `Will skip all ${heliumType} upgrades when running a C2.`;
 	}
@@ -1552,7 +1552,7 @@ function _mapSettingsAddRow(varPrefix) {
 		swapClass('disabled', 'active', firstHiddenRow);
 
 		const world = document.getElementById(`windowWorld${firstHiddenRow.id.slice(-1)}`);
-		if (currSettingUniverse === 1 && world) {
+		if (atConfig.settingUniverse === 1 && world) {
 			const natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
 			const natureList = ['None', 'Poison', 'Wind', 'Ice'];
 			const natureIndex = natureList.indexOf(getZoneEmpowerment(world.value));
@@ -1701,7 +1701,7 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 	}
 
 	//Changing rows to use the colour of the Nature type that the world input will be run on.
-	if (currSettingUniverse === 1 && index !== '' && !profiles) {
+	if (atConfig.settingUniverse === 1 && index !== '' && !profiles) {
 		const world = document.getElementById('windowWorld' + index);
 		const natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
 		const natureList = ['None', 'Poison', 'Wind', 'Ice'];
@@ -1779,7 +1779,7 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	dropdown.raidingTypes += "<option value='1'" + (vals.raidingDropdown === '1' ? " selected='selected'" : '') + '>Frag Min</option>';
 	dropdown.raidingTypes += "<option value='2'" + (vals.raidingDropdown === '2' ? " selected='selected'" : '') + '>Frag Max</option>';
 
-	const challengeObj = challengesUnlockedObj(currSettingUniverse);
+	const challengeObj = challengesUnlockedObj(atConfig.settingUniverse);
 
 	const fillerObj = Object.entries(challengeObj).reduce((newObj, [key, val]) => {
 		if (val.unlockedIn.indexOf('heHr') !== -1) newObj[key] = val;
@@ -2214,17 +2214,17 @@ function autoJobsSave() {
 
 //Unique Maps
 function uniqueMapsDisplay(elem) {
-	const hze = currSettingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	const hze = atConfig.settingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	const baseText = "<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input. If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it.</p>";
 	const smithy = "<p>The right side of this window is dedicated to running Melting Point when you've reached a certain Smithy value. As each runtype of vastly different there's different inputs for each type of run that you can do! Certain challenges have overrides for this, once unlocked they can be found in the C3 tab.</p>";
-	const smithyDisplay = currSettingUniverse === 2 && hze >= 50;
+	const smithyDisplay = atConfig.settingUniverse === 2 && hze >= 50;
 
 	const mapUnlocks = Object.keys(atData.uniqueMaps).filter((mapName) => {
 		const { universe, zone } = atData.uniqueMaps[mapName];
-		return !['Bionic Wonderland', 'The Black Bog'].includes(mapName) && universe === currSettingUniverse && zone <= hze;
+		return !['Bionic Wonderland', 'The Black Bog'].includes(mapName) && universe === atConfig.settingUniverse && zone <= hze;
 	});
 	const smithySettings = smithyDisplay ? ['MP Smithy', 'MP Smithy Daily', 'MP Smithy C3', 'MP Smithy One Off'] : [];
-	const settingGroup = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
+	const settingGroup = getPageSetting('uniqueMapSettingsArray', atConfig.settingUniverse);
 
 	let tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp();  _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
 	tooltipText += `${baseText}${smithyDisplay ? smithy : ''}`;
@@ -2274,7 +2274,7 @@ function uniqueMapsTable(settingGroup, mapUnlocks, smithySettings) {
 }
 
 function uniqueMapsSave() {
-	const setting = getPageSetting('uniqueMapSettingsArray', currSettingUniverse);
+	const setting = getPageSetting('uniqueMapSettingsArray', atConfig.settingUniverse);
 	const checkboxes = Array.from(document.getElementsByClassName('autoCheckbox'));
 	const zoneBoxes = Array.from(document.getElementsByClassName('structConfigZone'));
 	const cellBoxes = Array.from(document.getElementsByClassName('structConfigCell'));
@@ -2306,7 +2306,7 @@ function uniqueMapsSave() {
 		y++;
 	}
 
-	setPageSetting('uniqueMapSettingsArray', setting, currSettingUniverse);
+	setPageSetting('uniqueMapSettingsArray', setting, atConfig.settingUniverse);
 	cancelTooltip();
 }
 
@@ -2418,10 +2418,10 @@ function dailyPortalModsDisplay(elem) {
 	};
 
 	let tooltipText = `<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip(true);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>${baseText}`;
-	tooltipText += universeTooltips[currSettingUniverse].map((key) => tooltips[key]).join('');
+	tooltipText += universeTooltips[atConfig.settingUniverse].map((key) => tooltips[key]).join('');
 	tooltipText += "</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
-	const settingArray = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
+	const settingArray = getPageSetting('dailyPortalSettingsArray', atConfig.settingUniverse);
 	const settings = ['Reflect', 'Empower', 'Mutimp', 'Bloodthirst', 'Famine', 'Large', 'Weakness', 'Empowered_Void', 'Heirlost'];
 	const settingGroup = {};
 
@@ -2436,8 +2436,8 @@ function dailyPortalModsDisplay(elem) {
 	let count = 0;
 
 	for (let item in settingGroup) {
-		if (currSettingUniverse === 1 && (item === 'Empowered_Void' || item === 'Heirlost')) continue;
-		if (currSettingUniverse === 2 && item === 'Reflect') continue;
+		if (atConfig.settingUniverse === 1 && (item === 'Empowered_Void' || item === 'Heirlost')) continue;
+		if (atConfig.settingUniverse === 2 && item === 'Reflect') continue;
 		if (count !== 0 && count % 2 === 0) tooltipText += '</tr><tr>';
 		const setting = settingArray[item];
 		const checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
@@ -2469,7 +2469,7 @@ function dailyPortalModsDisplay(elem) {
 }
 
 function dailyPortalModsSave() {
-	const setting = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
+	const setting = getPageSetting('dailyPortalSettingsArray', atConfig.settingUniverse);
 	const checkboxes = Array.from(document.getElementsByClassName('autoCheckbox'));
 	const percentboxes = Array.from(document.getElementsByClassName('structConfigPercent'));
 
@@ -2484,7 +2484,7 @@ function dailyPortalModsSave() {
 		setting[name].zone = zone;
 	});
 
-	setPageSetting('dailyPortalSettingsArray', setting, currSettingUniverse);
+	setPageSetting('dailyPortalSettingsArray', setting, atConfig.settingUniverse);
 	cancelTooltip();
 }
 
@@ -2493,7 +2493,7 @@ function c2RunnerDisplay(elem) {
 	MODULES.popups.mazWindowOpen = true;
 
 	const baseText = `Here you can enable the challenges you would like ${_getChallenge2Info()} runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.`;
-	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(currSettingUniverse) !== -1 ? ` Fused challenges are prioritised over their regular counterparts when starting challenges.` : '';
+	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(atConfig.settingUniverse) !== -1 ? ` Fused challenges are prioritised over their regular counterparts when starting challenges.` : '';
 
 	let tooltipText = `
 		<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div>
@@ -2512,9 +2512,9 @@ function c2RunnerDisplay(elem) {
 	let addedFusedHeader = false;
 	const fusedC2s = ['Enlightened', 'Paralysis', 'Nometal', 'Topology', 'Waze', 'Toxad'];
 	const settingGroup = {};
-	const c2RunnerSettings = getPageSetting('c2RunnerSettings', currSettingUniverse);
+	const c2RunnerSettings = getPageSetting('c2RunnerSettings', atConfig.settingUniverse);
 
-	let obj = challengesUnlockedObj(currSettingUniverse, true, false);
+	let obj = challengesUnlockedObj(atConfig.settingUniverse, true, false);
 	obj = filterAndSortChallenges(obj, 'c2');
 
 	obj.forEach((setting) => {
@@ -2585,7 +2585,7 @@ function c2RunnerDisplay(elem) {
 }
 
 function c2RunnerSave() {
-	const setting = getPageSetting('c2RunnerSettings', currSettingUniverse);
+	const setting = getPageSetting('c2RunnerSettings', atConfig.settingUniverse);
 	const checkboxes = Array.from(document.getElementsByClassName('autoCheckbox'));
 	const percentboxes = Array.from(document.getElementsByClassName('structConfigPercent'));
 
@@ -2601,7 +2601,7 @@ function c2RunnerSave() {
 		setting[name].zone = zone;
 	});
 
-	setPageSetting('c2RunnerSettings', setting, currSettingUniverse);
+	setPageSetting('c2RunnerSettings', setting, atConfig.settingUniverse);
 	cancelTooltip();
 }
 

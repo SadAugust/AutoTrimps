@@ -2,19 +2,21 @@ const atConfig = {
 	initialise: {
 		version: '',
 		basepath: 'https://SadAugust.github.io/AutoTrimps/',
-		basepathOriginal: 'https://SadAugust.github.io/AutoTrimps/',
 		loaded: false
 	},
 	modules: {
 		path: 'modules/',
 		pathMods: 'mods/',
+		pathTesting: 'testing/',
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
 		installedMods: ['spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky', 'percentHealth'],
 		installedModules: ['import-export', 'utils', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames'],
+		installedTesting: ['testChallenges', 'testProfile', 'testSave'],
+		loadedExternal: [],
 		loadedModules: [],
 		loadedMods: [],
-		loadedExternal: []
+		loadedTesting: []
 	},
 	updateAvailable: false,
 	running: true,
@@ -23,13 +25,11 @@ const atConfig = {
 	loops: { atTimeLapseFastLoop: false, mainLoop: null, guiLoop: null, gameLoop: null },
 	intervals: { counter: 0, tenthSecond: false, halfSecond: false, oneSecond: false, twoSecond: false, fiveSecond: false, sixSecond: false, tenSecond: false, thirtySecond: false, oneMinute: false, tenMinute: false },
 	timeWarp: { loopTicks: 100, updateFreq: 1000, nextUpdate: 1000, loopCount: 0, currentLoops: 0 },
-	autoSave: game.options.menu.autoSave.enabled
+	testing: {},
+	autoSave: game.options.menu.autoSave.enabled,
+	settingChangedTimeout: false,
+	settingUniverse: 0
 };
-
-let currPortalUniverse = 0;
-let currSettingUniverse = 0;
-let settingChangedTimeout = false;
-var originalGameLoop = gameLoop;
 
 const atData = {};
 let autoTrimpSettings = {};
@@ -37,6 +37,7 @@ let MODULES = {};
 let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
 let hdStats = { autoLevel: Infinity };
 let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false, fluffyRewards: { universe: 0, level: 0 } };
+var originalGameLoop = gameLoop;
 
 function shouldUpdate(updateEvery = 2000) {
 	if (usingRealTimeOffline && loops === atConfig.timeWarp.currentLoops) return true;
@@ -111,7 +112,10 @@ function isModuleLoaded(fileName, prefix) {
 		return true;
 	} else if (prefix === atConfig.modules.pathMods && atConfig.modules.loadedMods.includes(fileName)) {
 		return true;
+	} else if (prefix === atConfig.modules.pathTesting && atConfig.modules.loadedTesting.includes(fileName)) {
+		return true;
 	}
+
 	return false;
 }
 
@@ -135,7 +139,8 @@ function loadModules(fileName, prefix = '', retries = 3) {
 			if (!atConfig.modules.loadedModules.includes(fileName) && !atConfig.modules.loadedMain.includes(fileName)) {
 				if (prefix) {
 					if (prefix === atConfig.modules.path) atConfig.modules.loadedModules = [...atConfig.modules.loadedModules, fileName];
-					else atConfig.modules.loadedMods = [...atConfig.modules.loadedMods, fileName];
+					else if (prefix === atConfig.modules.pathMods) atConfig.modules.loadedMods = [...atConfig.modules.loadedMods, fileName];
+					else atConfig.modules.loadedTesting = [...atConfig.modules.loadedTesting, fileName];
 				} else atConfig.modules.loadedMain = [...atConfig.modules.loadedMain, fileName];
 			}
 			resolve();
@@ -172,7 +177,10 @@ function loadScriptsAT() {
 
 	(async function () {
 		try {
-			const modules = ['versionNumber', ...atConfig.modules.installedMods, ...atConfig.modules.installedModules, 'SettingsGUI'];
+			const { pathMods, pathTesting, installedMods, installedModules, installedTesting } = atConfig.modules;
+			const testing = atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/' ? installedTesting : [];
+
+			const modules = ['versionNumber', ...installedMods, ...installedModules, ...testing, 'SettingsGUI'];
 			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-QWUI/qwUI.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
 			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`];
 
@@ -181,7 +189,7 @@ function loadScriptsAT() {
 			}
 
 			for (const module of modules) {
-				const path = atConfig.modules.installedMods.includes(module) ? atConfig.modules.pathMods : atConfig.modules.installedModules.includes(module) ? atConfig.modules.path : '';
+				const path = installedTesting.includes(module) ? pathTesting : installedMods.includes(module) ? pathMods : installedModules.includes(module) ? atConfig.modules.path : '';
 				await loadModules(module, path);
 			}
 
@@ -241,7 +249,7 @@ function initialiseScript() {
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
 
 	if (getPageSetting('gameUser') === 'ray') MODULES.buildings.betaHouseEfficiency = true;
-	currSettingUniverse = getPageSetting('universeSetting') + 1;
+	atConfig.settingUniverse = getPageSetting('universeSetting') + 1;
 
 	if (portalUniverse === -1) portalUniverse = game.global.universe;
 	atData.autoPerks.displayGUI(portalUniverse);
@@ -426,7 +434,7 @@ function mainLoopU1() {
 	autoRoboTrimp();
 	autoEnlight();
 	autoNatureTokens();
-	if (!settingChangedTimeout && getPageSetting('magmiteSpending') === 2) autoMagmiteSpender();
+	if (!atConfig.settingChangedTimeout && getPageSetting('magmiteSpending') === 2) autoMagmiteSpender();
 	autoGenerator();
 	if (shouldRunInTimeWarp()) autoStance();
 	if (game.global.spireActive) {

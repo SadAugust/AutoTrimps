@@ -1083,7 +1083,7 @@ function _displayPortalForce(tooltipDiv) {
 	let costText = "<div class='maxCenter'>";
 	costText += "<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); autoPortalForce();'>Force Portal</div>";
 	costText += "<div class='btn btn-success' onclick='cancelTooltip(); autoPortalForce(true);'>Force Portal After Voids</div>";
-	if (currSettingUniverse === 1 && hze >= 230) costText += "<div class='btn btn-warning' onclick='cancelTooltip(); autoPortalForce(true, true);'>Force Portal After Poison Voids</div>";
+	if (atConfig.settingUniverse === 1 && hze >= 230) costText += "<div class='btn btn-warning' onclick='cancelTooltip(); autoPortalForce(true, true);'>Force Portal After Poison Voids</div>";
 	costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
 
 	costText += '</div>';

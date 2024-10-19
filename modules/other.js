@@ -114,18 +114,18 @@ function archaeologyAutomator() {
 	if (string && string !== game.global.archString) game.global.archString = string;
 }
 
-function challengesUnlockedObj(universe = currSettingUniverse, excludeSpecial, excludeFused) {
+function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpecial, excludeFused) {
 	let obj = {};
 	let hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	let portalZone = hze;
 
-	const autoPortal = getPageSetting('autoPortal', currSettingUniverse);
+	const autoPortal = getPageSetting('autoPortal', atConfig.settingUniverse);
 	const zoneSettings = ['Challenge 2', 'Challenge 3', 'Custom', 'One Off Challenges'];
 
 	if (autoPortal.includes('Per Hour')) {
-		portalZone = getPageSetting('heliumHrDontPortalBefore', currSettingUniverse);
+		portalZone = getPageSetting('heliumHrDontPortalBefore', atConfig.settingUniverse);
 	} else if (zoneSettings.includes(autoPortal)) {
-		portalZone = getPageSetting('autoPortalZone', currSettingUniverse);
+		portalZone = getPageSetting('autoPortalZone', atConfig.settingUniverse);
 	}
 
 	hze = Math.max(hze, portalZone);
@@ -288,7 +288,7 @@ function filterAndSortChallenges(obj, runType) {
 		.reverse();
 }
 
-function autoPortalChallenges(runType = 'autoPortal', universe = currSettingUniverse) {
+function autoPortalChallenges(runType = 'autoPortal', universe = atConfig.settingUniverse) {
 	let challenge = ['None'];
 	if (universe === 0) universe = autoTrimpSettings.universeSetting.value + 1;
 	if (universe === 1 && runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
@@ -319,7 +319,7 @@ function c2RunnerChallengeOrder(universe = portalUniverse) {
 
 function _autoHeirloomMods(heirloomType) {
 	const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	const heirloomRarity = rarities.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse));
+	const heirloomRarity = rarities.indexOf(getPageSetting('heirloomAutoRareToKeep', atConfig.settingUniverse));
 	const heirloomModsArray = ['Any'];
 
 	if (typeof heirloomInfo !== 'function') {

@@ -155,15 +155,15 @@ function _getPortalAfterVoidSetting() {
 }
 
 function _getPrimaryResourceInfo() {
-	return currSettingUniverse === 2 ? { name: 'Radon', abv: 'Rn' } : { name: 'Helium', abv: 'He' };
+	return atConfig.settingUniverse === 2 ? { name: 'Radon', abv: 'Rn' } : { name: 'Helium', abv: 'He' };
 }
 
 function _getChallenge2Info() {
-	return currSettingUniverse === 2 ? 'C3' : 'C2';
+	return atConfig.settingUniverse === 2 ? 'C3' : 'C2';
 }
 
 function _getSpecialChallengeDescription() {
-	return `${_getChallenge2Info()}'s or special challenge (${currSettingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience'})`;
+	return `${_getChallenge2Info()}'s or special challenge (${atConfig.settingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience'})`;
 }
 
 function prestigesToGet(targetZone = game.global.world, targetPrestige = 'GambesOP') {
