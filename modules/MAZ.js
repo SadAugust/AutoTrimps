@@ -1638,11 +1638,11 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
 		if (index !== '') {
-			function updateClass(runType, type, row, varPrefix) {
-				const onClass = `windowChallengeOn${varPrefix}`;
-				const offClass = `windowChallengeOff${varPrefix}`;
-				const newClass = `windowChallenge${runType === type ? 'On' : 'Off'}${varPrefix}`;
-				const newClass2 = `windowChallenge${runType !== type ? 'On' : 'Off'}${varPrefix}`;
+			function updateClass(runType, type, row, varPrefix, cssName) {
+				const onClass = `windowChallenge${cssName}On${varPrefix}`;
+				const offClass = `windowChallenge${cssName}Off${varPrefix}`;
+				const newClass = `windowChallenge${cssName}${runType === type ? 'On' : 'Off'}${varPrefix}`;
+				const newClass2 = `windowChallenge${cssName}${runType !== type ? 'On' : 'Off'}${varPrefix}`;
 
 				if ((runType !== type && row.classList.contains(onClass)) || (runType === type && row.classList.contains(offClass))) {
 					swapClass(newClass2, newClass, row);
@@ -1650,9 +1650,9 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 			}
 
 			const runType = document.getElementById('windowRunType' + index).value;
-			updateClass(runType, 'Filler', row, varPrefix);
-			updateClass(runType, 'C3', row, varPrefix);
-			updateClass(runType, 'One Off', row, varPrefix);
+			updateClass(runType, 'Filler', row, varPrefix, '');
+			updateClass(runType, 'C3', row, varPrefix, '3');
+			updateClass(runType, 'One Off', row, varPrefix, 'OneOff');
 		}
 	}
 
