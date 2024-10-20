@@ -1258,7 +1258,6 @@ function prestigeClimb(lineCheck) {
 	}
 
 	/* Figure out which prestige (if any) to farm for and how many equips to farm for & maps to run to get all of them */
-	const [prestigeToFarmFor, mapsToRun] = prestigesToGet(game.global.world, targetPrestige);
 
 	const onlyPerfect = getPageSetting('onlyPerfectMaps');
 	let mapLevel = 0;
@@ -1271,6 +1270,8 @@ function prestigeClimb(lineCheck) {
 		simulateMap = _simulateSliders(game.global.world + mapLevel, mapSpecial, null, [9, 9, 9], trimpStats.perfectMaps, onlyPerfect);
 		fragCost = mapCost(simulateMap.level - game.global.world, simulateMap.special, simulateMap.location, [simulateMap.sliders.loot, simulateMap.sliders.size, simulateMap.sliders.difficulty], simulateMap.perfect);
 	}
+
+	const [prestigeToFarmFor, mapsToRun] = prestigesToGet(mapLevel, targetPrestige);
 
 	while (prestigeToFarmFor > 0 && prestigeToFarmFor === prestigesToGet(game.global.world + mapLevel - 1, targetPrestige)[0]) {
 		mapLevel--;

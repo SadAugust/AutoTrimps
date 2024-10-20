@@ -199,7 +199,7 @@ function autoMaps() {
 	if (game.global.mapsActive) _setMapRepeat(mapObj);
 
 	if (!game.global.preMapsActive && !game.global.mapsActive && mapsOwned.selectedMap !== 'world') {
-		if (!game.global.switchToMaps && shouldAbandon()) mapsClicked();
+		if (!game.global.switchToMaps && shouldAbandon(true)) mapsClicked();
 		if (game.global.switchToMaps) mapsClicked();
 	}
 
