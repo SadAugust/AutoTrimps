@@ -1260,15 +1260,27 @@ function prestigeClimb(lineCheck) {
 	/* Figure out which prestige (if any) to farm for and how many equips to farm for & maps to run to get all of them */
 	const [prestigeToFarmFor, mapsToRun] = prestigesToGet(game.global.world, targetPrestige);
 
+	const onlyPerfect = getPageSetting('onlyPerfectMaps');
 	let mapLevel = 0;
+	let mapSpecial = getAvailableSpecials('p');
+	let simulateMap = _simulateSliders(game.global.world + mapLevel, mapSpecial, null, [9, 9, 9], trimpStats.perfectMaps, onlyPerfect);
+	let fragCost = mapCost(simulateMap.level - game.global.world, simulateMap.special, simulateMap.location, [simulateMap.sliders.loot, simulateMap.sliders.size, simulateMap.sliders.difficulty], simulateMap.perfect);
+
+	while ((fragCost > game.resources.fragments.owned || !enoughHealth(simulateMap, 'avg')) && mapLevel > -(game.global.world - 6)) {
+		mapLevel--;
+		simulateMap = _simulateSliders(game.global.world + mapLevel, mapSpecial, null, [9, 9, 9], trimpStats.perfectMaps, onlyPerfect);
+		fragCost = mapCost(simulateMap.level - game.global.world, simulateMap.special, simulateMap.location, [simulateMap.sliders.loot, simulateMap.sliders.size, simulateMap.sliders.difficulty], simulateMap.perfect);
+	}
+
 	while (prestigeToFarmFor > 0 && prestigeToFarmFor === prestigesToGet(game.global.world + mapLevel - 1, targetPrestige)[0]) {
 		mapLevel--;
 	}
 
+	mapSpecial = simulateMap.special;
+
 	let shouldMap = prestigeToFarmFor > 0;
 	if (shouldMap && getPageSetting('prestigeClimbSkip')) shouldMap = 2 > prestigesUnboughtCount();
 
-	const mapSpecial = getAvailableSpecials('p');
 	const mapObject = getCurrentMapObject();
 	const worldMapCost = mapCost(mapLevel, mapSpecial, null, [0, 0, 0], false);
 	if (worldMapCost > game.resources.fragments.owned && (!game.global.mapsActive || (mapObject && mapObject.level < game.global.world + mapLevel))) {
@@ -1276,8 +1288,7 @@ function prestigeClimb(lineCheck) {
 	}
 
 	if (shouldMap && game.global.universe === 1) {
-		const mapOwned = getEnoughHealthMap(mapLevel, mapSpecial, 'Random');
-		shouldMap = enoughHealth(mapOwned, 'avg');
+		shouldMap = enoughHealth(simulateMap, 'avg');
 	}
 
 	if (lineCheck && shouldMap) return (setting = { priority: getPageSetting('prestigeClimbPriority') });
