@@ -337,6 +337,7 @@ function whichAutoLevel() {
 }
 
 function whichScryVoidMaps() {
+	if (!game.talents.scry2.purchased) return false;
 	if (trimpStats.isDaily) return getPageSetting('dscryvoidmaps');
 	return getPageSetting('scryvoidmaps');
 }
