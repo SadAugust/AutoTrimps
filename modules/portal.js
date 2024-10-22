@@ -692,27 +692,13 @@ function resetVarsZone(loadingSave) {
 		hideAutomationButtons();
 	}
 
-	const mapItems = {};
-
 	/* maps */
 	MODULES.maps.mapRepeats = 0;
 	MODULES.maps.mapRepeatsSmithy = [0, 0, 0];
 	MODULES.maps.fragmentCost = Infinity;
 
-	/* mapFunctions */
-	const mapFunctionItems = {};
-
 	MODULES.mapFunctions.runUniqueMap = '';
 	MODULES.mapFunctions.questRun = false;
-
-	const popups = {
-		challenge: false,
-		respecAncientTreasure: false,
-		remainingTime: Infinity,
-		intervalID: null,
-		portal: false,
-		mazWindowOpen: false
-	};
 
 	delete mapSettings.voidHDIndex;
 	MODULES.heirlooms.plagueSwap = false;

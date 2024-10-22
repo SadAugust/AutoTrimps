@@ -1063,7 +1063,7 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 	const availableStances = unlockedStances();
 	const formationMod = availableStances.includes('D') || (worldType === 'void' && availableStances.includes('S') && whichScryVoidMaps()) ? 2 : 1;
 	const ignoreCrits = game.global.universe !== 1 ? 2 : getPageSetting('ignoreCrits');
-	0;
+
 	if (worldType !== 'map' && targetZone % 2 === 1 && challengeActive('Lead')) targetZone++;
 
 	const customAttack = _calcHitsSurvivedAttack(worldType, targetZone);

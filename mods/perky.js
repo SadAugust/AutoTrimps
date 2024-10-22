@@ -50,7 +50,7 @@ function allocatePerky() {
 	cancelTooltip();
 }
 
-var Perk = /** @class */ (function () {
+const Perk = /** @class */ (function () {
 	function Perk(perkName, scaling, lockLevel = false) {
 		const { priceBase, additive, additiveInc, max, specialGrowth, locked, level, levelTemp } = game.portal[perkName];
 		const fixedLevel = level + (levelTemp ? levelTemp : 0);

@@ -1,9 +1,9 @@
 function autoRoboTrimp() {
 	if (game.global.roboTrimpLevel === 0 || game.global.roboTrimpCooldown !== 0) return;
-	const autoRoboTrimpSetting = getPageSetting('autoRoboTrimp');
-	if (autoRoboTrimpSetting <= 0) return;
+	const autoRoboTrimpSetting = parseInt(getPageSetting('autoRoboTrimp'));
+	if (autoRoboTrimpSetting <= 59) return;
 
-	const shouldShriek = game.global.world >= autoRoboTrimpSetting && (game.global.world - parseInt(autoRoboTrimpSetting)) % 5 === 0;
+	const shouldShriek = game.global.world >= autoRoboTrimpSetting && (game.global.world - autoRoboTrimpSetting) % 5 === 0;
 	if (shouldShriek && !game.global.useShriek) debug(`Activated Robotrimp MagnetoShriek Ability at zone ${game.global.world}`, 'other', '*podcast');
 	if (game.global.useShriek !== shouldShriek) magnetoShriek();
 }
