@@ -157,7 +157,7 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 		if (equipName === 'Shield') {
 			if (ignoreShield) continue;
 
-			if (game.global.universe === 1) {
+			if (game.global.universe === 1 && !game.buildings.Gym.locked) {
 				if (needGymystic()) continue;
 
 				const { Gym } = getPageSetting('buildingSettingsArray');
@@ -364,7 +364,6 @@ function autoEquip() {
 
 	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
 		if ([Efficiency, Coordination, TrainTacular].some((up) => shouldSaveForSpeedUpgrade(up))) return;
-		if (!Miners.done && !challengeActive('Metal') && !challengeActive('Transmute')) return;
 	}
 
 	if ([2, 3].includes(getCurrentQuest())) return;
@@ -405,6 +404,8 @@ function buyEquipsAlways2() {
 		wood: _shouldSaveResource('wood')
 	};
 
+	if (!game.upgrades.Miners.done && !challengeActive('Metal') && !challengeActive('Transmute')) saveResources.metal = true;
+
 	for (let equip in game.equipment) {
 		if (!game.equipment[equip].locked) {
 			if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
@@ -438,6 +439,8 @@ function buyEquips() {
 		metal: _shouldSaveResource('metal'),
 		wood: _shouldSaveResource('wood')
 	};
+
+	if (!game.upgrades.Miners.done && !challengeActive('Metal') && !challengeActive('Transmute')) saveResources.metal = true;
 
 	for (let equipType of equipTypes) {
 		const equip = bestBuys[equipType];
