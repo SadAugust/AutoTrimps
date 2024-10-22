@@ -1271,7 +1271,7 @@ function prestigeClimb(lineCheck) {
 		fragCost = mapCost(simulateMap.level - game.global.world, simulateMap.special, simulateMap.location, [simulateMap.sliders.loot, simulateMap.sliders.size, simulateMap.sliders.difficulty], simulateMap.perfect);
 	}
 
-	const [prestigeToFarmFor, mapsToRun] = prestigesToGet(mapLevel, targetPrestige);
+	const [prestigeToFarmFor, mapsToRun] = prestigesToGet(game.global.world + mapLevel, targetPrestige);
 
 	while (prestigeToFarmFor > 0 && prestigeToFarmFor === prestigesToGet(game.global.world + mapLevel - 1, targetPrestige)[0]) {
 		mapLevel--;
