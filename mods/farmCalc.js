@@ -314,13 +314,6 @@ function populateFarmCalcData() {
 		Quest: () => {
 			enemyHealthMult *= game.challenges.Quest.getHealthMult();
 		},
-		Quagmire: () => {
-			const exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
-			const mod = 0.05;
-			if (exhaustedStacks === 0) enemyAttackMult *= 1;
-			else if (exhaustedStacks < 0) enemyAttackMult *= Math.pow(1 + mod, Math.abs(exhaustedStacks));
-			else enemyAttackMult *= Math.pow(1 - mod, exhaustedStacks);
-		},
 		Revenge: () => {
 			if (game.global.world % 2 === 0) enemyHealthMult *= 10;
 		},
@@ -399,7 +392,7 @@ function populateFarmCalcData() {
 	const miscCombatStats = {
 		fluctuation: basicData.universe === 2 ? 0.5 : 0.2,
 		range: maxFluct / minFluct - 1,
-		critChance,
+		critChance: critChance / 100,
 		critDamage,
 		stances,
 		ok_spread: overkillRange,
@@ -840,6 +833,7 @@ function simulate(saveData, zone) {
 	}
 
 	let turns = 0;
+	let plague_damage = 0;
 	let trimpOverkill = 0;
 	let mapClears = 0;
 
@@ -856,7 +850,6 @@ function simulate(saveData, zone) {
 		turns = 0;
 		nomStacks = 0;
 		let pbTurns = 0;
-		let plague_damage = 0;
 		let oneShot = true;
 		let enemyAttackTemp = enemyAttack;
 
@@ -866,6 +859,7 @@ function simulate(saveData, zone) {
 		}
 
 		enemyHealth = Math.min(enemyHealth, Math.max(enemy_max_hp * 0.05, enemyHealth - plague_damage));
+		plague_damage = 0;
 		energyShield = energyShieldMax;
 
 		if (saveData.duel && duelPoints > 80) enemyHealth *= 10;
@@ -911,6 +905,7 @@ function simulate(saveData, zone) {
 					saveData.critChance = 1 - duelPoints / 100;
 					if (duelPoints > 50) trimpAttack *= 3;
 				}
+
 				if (rngRoll < saveData.critChance) {
 					trimpAttack *= saveData.critDamage;
 					trimpCrit = true;
