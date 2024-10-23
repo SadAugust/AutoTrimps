@@ -5428,3 +5428,719 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 	if (!mapSuffix) game.global.enemySeed = enemySeed;
 	return selected;
 }
+
+// fixes attack breakdown going infinite
+// only modification is moving where Magma is calculated
+function getBattleStatBd(what) {
+	var equipment = {};
+	var name = what.charAt(0).toUpperCase() + what.substr(1, what.length);
+	if ((what == "block" || what == "shield") && game.global.universe == 2) {
+		what = "shield"
+		name = "Prismatic Shield";
+	}
+	var textString = "<div id='breakdownScrollWrapper' class='niceScroll'><table class='bdTableSm table table-striped'><tbody><tr><td></td><td>Base</td><td>Level</td><td>Item " + name + "</td><td>Total</td>" + ((what == "attack") ? "<td>Min</td><td>Max</td>" : "") + "</tr>";
+	var currentCalc = 0;
+	var maxFluct = 0.2;
+	var minFluct = 0.2;
+	var percent = 0;
+	if (what == "health" || what == "attack") {
+		currentCalc += (what == "health") ? 50 : 6;
+		textString += "<tr><td class='bdTitle'>Base</td><td class='bdPercentSm'>" + prettify(currentCalc) + "</td><td></td><td></td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? "<td>-20%</td><td>+20%</td>" : "") + "</tr>";
+		if (what == "attack") {
+			//Discipline
+			if (challengeActive("Discipline") || game.global.challengeActive == "Unlucky") {
+				minFluct = 0.995;
+				maxFluct = 0.995;
+				var title = (challengeActive("Discipline")) ? "Lack Discipline" : "Unharnessed Luck";
+				textString += "<tr><td class='bdTitle'>" + title + "</td><td class='bdPercentSm'></td><td></td><td></td><td class='bdNumberSm'></td><td>-99.5%</td><td>+99.5%</td></tr>";
+			}
+			else {
+				//Range
+				if (getPerkLevel("Range") > 0) {
+					minFluct -= (0.02 * getPerkLevel("Range"));
+					textString += "<tr><td class='bdTitle'>Range</td><td class='bdPercentSm'>+2% Min</td><td>" + getPerkLevel("Range") + "</td><td>+" + prettify(2 * getPerkLevel("Range")) + "% Min</td><td class='bdNumberSm'></td><td>-" + prettify(minFluct * 100) + "%</td><td>+" + prettify(maxFluct * 100) + "%</td></tr>";
+				}
+				//MinDamageDaily
+				if (typeof game.global.dailyChallenge.minDamage !== 'undefined') {
+					var addMin = dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength);
+					minFluct += addMin;
+					if (minFluct > 1) minFluct = 1;
+					textString += "<tr style='color: red'><td class='bdTitle'>Minimalist (Daily)</td><td class='bdPercentSm'>-" + prettify(addMin * 100) + "% Min</td><td></td><td></td><td class='bdNumberSm'></td><td>-" + prettify(minFluct * 100) + "%</td><td>+" + prettify(maxFluct * 100) + "%</td></tr>";
+				}
+				//MaxDamageDaily
+				if (typeof game.global.dailyChallenge.maxDamage !== 'undefined') {
+					var addMax = dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength);
+					maxFluct += addMax;
+					textString += "<tr><td class='bdTitle'>Prodigal (Daily)</td><td class='bdPercentSm'>+" + prettify(addMax * 100) + "% Max</td><td></td><td></td><td class='bdNumberSm'></td><td>-" + prettify(minFluct * 100) + "%</td><td>+" + prettify(maxFluct * 100) + "%</td></tr>";
+				}
+			}
+		}
+		for (var equip in game.equipment) {
+			var temp = game.equipment[equip];
+			if (typeof temp[what] === 'undefined' || temp.level <= 0 || temp.blockNow) continue;
+			var equipStrength = temp[what + "Calculated"] * temp.level;
+			currentCalc += equipStrength;
+			percent = ((equipStrength / game.global[what]) * 100).toFixed(1) + "%";
+			textString += "<tr><td class='bdTitle'>" + equip + "</td><td>" + prettify(temp[what + "Calculated"]) + "</td><td>" + temp.level + "</td><td>" + prettify(equipStrength) + " (" + percent + ")</td><td>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+		}
+	}
+	else if (what == "block") {
+		//Add Gym
+		var gym = game.buildings.Gym;
+		if (gym.owned > 0) {
+			var gymStrength = gym.owned * gym.increase.by;
+			percent = ((gymStrength / game.global.block) * 100).toFixed(1) + "%";
+			currentCalc += gymStrength;
+			textString += "<tr><td class='bdTitle'>Gym</td><td>" + prettify(gym.increase.by) + "</td><td>" + prettify(gym.owned) + "</td><td>" + prettify(gymStrength) + " (" + percent + ")</td><td>" + prettify(currentCalc) + "</td></tr>";
+		}
+		var shield = game.equipment.Shield;
+		if (shield.blockNow && shield.level > 0) {
+			var shieldStrength = shield.level * shield.blockCalculated;
+			percent = ((shieldStrength / game.global.block) * 100).toFixed(1) + "%";
+			currentCalc += shieldStrength;
+			textString += "<tr><td class='bdTitle'>Shield</td><td>" + prettify(shield.blockCalculated) + "</td><td>" + prettify(shield.level) + "</td><td>" + prettify(shieldStrength) + " (" + percent + ")</td><td>" + prettify(currentCalc) + "</td></tr>";
+		}
+		var trainer = game.jobs.Trainer;
+		if (trainer.owned > 0) {
+			var trainerStrength = trainer.owned * (trainer.modifier / 100);
+			trainerStrength = calcHeirloomBonus("Shield", "trainerEfficiency", trainerStrength);
+			currentCalc = Math.floor(currentCalc * (trainerStrength + 1));
+			trainerStrength = prettify(trainerStrength * 100) + "%";
+			textString += "<tr><td class='bdTitle'>Trainers</td><td>" + prettify(calcHeirloomBonus("Shield", "trainerEfficiency", trainer.modifier)) + "%</td><td>" + prettify(trainer.owned) + "</td><td>+ " + trainerStrength + "</td><td>" + prettify(currentCalc) + "</td></tr>";
+		}
+	}
+	else if (what == "shield") {
+		if (game.upgrades.Prismatic.done) {
+			currentCalc += 0.5;
+			textString += "<tr><td class='bdTitle'>Prismatic (Z2)</td><td>50%</td><td>1</td><td>50%</td><td>" + Math.round(currentCalc * 100) + "%</td></tr>";
+		}
+		if (game.upgrades.Prismalicious.done) {
+			currentCalc += 0.5;
+			textString += "<tr><td class='bdTitle'>Prismalicious (Z20)</td><td>50%</td><td>1</td><td>50%</td><td>" + Math.round(currentCalc * 100) + "%</td></tr>";
+		}
+		if (Fluffy.isRewardActive("prism")) {
+			var thisAmt = Fluffy.isRewardActive("prism") * 0.25;
+			currentCalc += thisAmt;
+			textString += "<tr><td class='bdTitle'>Prisms (Scruffy)</td><td>25%</td><td>" + Fluffy.isRewardActive("prism") + "</td><td>" + prettify(thisAmt * 100) + "%</td><td>" + Math.round(currentCalc * 100) + "%</td></tr>";
+		}
+		if (getPerkLevel("Prismal") > 0) {
+			var thisAmt = (getPerkLevel("Prismal") * game.portal.Prismal.modifier);
+			currentCalc += thisAmt;
+			textString += "<tr><td class='bdTitle'>Prismal (Perk)</td><td>" + prettify(game.portal.Prismal.modifier * 100) + "%</td><td>" + getPerkLevel("Prismal") + "</td><td>" + prettify(thisAmt * 100) + "%</td><td>" + Math.round(currentCalc * 100) + "%</td></tr>";
+		}
+		if (game.global.challengeActive == "Bublé") {
+			currentCalc += 2.5;
+			textString += "<tr><td class='bdTitle'>Bublé (Challenge)</td><td>100%</td><td>&nbsp;</td><td>250%</td><td>" + Math.round(currentCalc * 100) + "%</td></tr>";
+
+		}
+		if (getHeirloomBonus("Shield", "prismatic") > 0) {
+			var bonus = getHeirloomBonus("Shield", "prismatic");
+			currentCalc += (bonus / 100);
+			textString += "<tr><td class='bdTitle'>Heirloom</td><td>&nbsp;</td><td>&nbsp;</td><td>" + prettify(bonus) + "%</td><td>" + Math.round(currentCalc * 100) + "%</td></tr>";
+		}
+		if (autoBattle.oneTimers.Suprism.owned) {
+			var bonus = autoBattle.oneTimers.Suprism.getMult();
+			currentCalc += bonus;
+			textString += "<tr><td class='bdTitle'>Suprism</td><td>3%</td><td>" + (autoBattle.maxEnemyLevel - 1) + "</td><td>" + prettify(bonus * 100) + "%</td><td>" + Math.round(currentCalc * 100) + "%</td></tr>";
+		}
+		if (Fluffy.isRewardActive('shieldlayer')) {
+			var layers = (Fluffy.isRewardActive('shieldlayer') + 1);
+			currentCalc *= layers
+			textString += "<tr class='shieldLayerCalcRow'><td class='bdTitle'>Shield Layer</td><td>&nbsp;</td><td>&nbsp;</td><td>x " + layers + "</td><td>" + Math.round(currentCalc * 100) + "%</td></tr>";
+		}
+		textString += "<tr><td colspan='5' style='font-weight: bold'>Your Prismatic Shield is equal to " + Math.round(currentCalc * 100) + "% of your Trimps' maximum Health. All enemy damage hits your Prismatic Shield before Health, and Prismatic Shield always regenerates to full after an enemy is killed.</td></tr>";
+	}
+	//Add coordination
+	if (what != "shield") {
+		currentCalc *= game.resources.trimps.maxSoldiers;
+		textString += "<tr><td class='bdTitle'>Soldiers</td><td class='bdPercentSm'></td><td></td><td>x " + prettify(game.resources.trimps.maxSoldiers) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	//Add smithy
+	if ((what == "attack" || what == "health") && game.global.universe == 2 && game.buildings.Smithy.owned > 0) {
+		currentCalc *= game.buildings.Smithy.getMult();
+		textString += "<tr><td class='bdTitle'>Smithy</td><td>x " + prettify(game.buildings.Smithy.getBaseMult()) + "</td><td>" + game.buildings.Smithy.owned + "</td><td>+ " + prettify((game.buildings.Smithy.getMult() - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if ((what == "attack" || what == "health") && game.global.challengeActive == "Smithless") {
+		currentCalc *= game.challenges.Smithless.getTrimpMult();
+		textString += "<tr><td class='bdTitle'>Enhanced Armor (Smithless)</td><td>x 1.25</td><td>" + game.challenges.Smithless.fakeSmithies + "</td><td>+ " + prettify((game.challenges.Smithless.getTrimpMult() - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	//Add antenna
+	if (what == "health" && game.buildings.Antenna.owned >= 10 && game.global.universe == 2) {
+		amt = game.jobs.Meteorologist.getExtraMult();
+		var pct = (amt - 1) * 100;
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Antenna Array</td><td>" + prettify(pct) + "%</td><td></td><td>+ " + prettify(pct) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	//Add achievements
+	if (what == "attack" && game.global.achievementBonus > 0) {
+		currentCalc *= 1 + (game.global.achievementBonus / 100);
+		textString += "<tr><td class='bdTitle'>Achievements</td><td class='bdPercentSm'></td><td></td><td>+ " + game.global.achievementBonus + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	//Magma
+	if (mutations.Magma.active() && (what == "attack" || what == "health")) {
+		mult = mutations.Magma.getTrimpDecay();
+		var lvls = game.global.world - mutations.Magma.start() + 1;
+		currentCalc *= mult;
+		var display = (mult > 0.0001) ? mult.toFixed(4) : mult.toExponential(3);
+		textString += "<tr style='color: red'><td class='bdTitle'>Overheating (Magma)</td><td>x 0.8</td><td>" + lvls + "</td><td class='bdPercent'>x " + display + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	//Add perk
+	var perk = "";
+	if (what == "health") perk = "Toughness";
+	if (what == "attack") perk = "Power";
+	if (perk && getPerkLevel(perk) > 0) {
+		var PerkStrength = (getPerkLevel(perk) * game.portal[perk].modifier);
+		currentCalc *= (PerkStrength + 1);
+		PerkStrength = prettify(PerkStrength * 100) + "%";
+		textString += "<tr><td class='bdTitle'>" + perk + "</td><td>" + (game.portal[perk].modifier * 100) + "%</td><td>" + getPerkLevel(perk) + "</td><td>+ " + PerkStrength + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	perk = perk + "_II";
+	if (game.portal[perk] && getPerkLevel(perk) > 0) {
+		var PerkStrength = (getPerkLevel(perk) * game.portal[perk].modifier);
+		currentCalc *= (PerkStrength + 1);
+		PerkStrength = prettify(PerkStrength * 100) + "%";
+		textString += "<tr><td class='bdTitle'>" + perk.replace('_', ' ') + "</td><td>" + (game.portal[perk].modifier * 100) + "%</td><td>" + prettify(getPerkLevel(perk)) + "</td><td>+ " + PerkStrength + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if (what == "attack" && getPerkLevel("Tenacity")) {
+		amt = game.portal.Tenacity.getMult();
+		currentCalc *= amt;
+		var mins = Math.floor(game.portal.Tenacity.getTime());
+		textString += "<tr><td class='bdTitle'>Tenacity</td><td>x " + prettify(game.portal.Tenacity.getBonusAmt()) + "</td><td>" + (getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")) + " (" + mins + " min" + needAnS(mins) + ")</td><td>+ " + prettify((amt - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "attack" && getPerkLevel("Hunger")) {
+		amt = game.portal.Hunger.getMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Hunger</td><td></td><td>" + getPerkLevel("Hunger") + "</td><td>+ " + prettify((amt - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+
+	}
+	//Add resilience
+	if (what == "health" && getPerkLevel("Resilience") > 0) {
+		var resStrength = Math.pow(game.portal.Resilience.modifier + 1, getPerkLevel("Resilience"));
+		currentCalc *= resStrength;
+		resStrength = prettify((resStrength - 1) * 100) + "%";
+		textString += "<tr><td class='bdTitle'>Resilience</td><td>" + (game.portal.Resilience.modifier * 100) + "%</td><td>" + getPerkLevel("Resilience") + "</td><td>+ " + resStrength + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	//Add fluffy u2 healthy
+	if (what == "health" && Fluffy.isRewardActive("healthy")) {
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + " is Life</td><td>+ 50%</td><td>&nbsp;</td><td>+ 50%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	//Add Geneticist
+	var geneticist = game.jobs.Geneticist;
+	if (game.global.lastLowGen > 0 && what == "health") {
+		var calcedGenes = game.global.lastLowGen;
+		var geneticistStrength = Math.pow(1.01, calcedGenes);
+		currentCalc *= geneticistStrength;
+		geneticistStrength = prettify((geneticistStrength * 100) - 100) + "%";
+		textString += "<tr><td class='bdTitle'>Geneticists</td><td>1%</td><td>" + prettify(calcedGenes) + "</td><td>+ " + geneticistStrength + "</td><td>" + prettify(currentCalc) + "</td></tr>";
+	}
+	//Add Anticipation
+	var anticipation = game.portal.Anticipation;
+	if (getPerkLevel("Anticipation") > 0 && what == "attack") {
+		var antiStrength = ((getPerkLevel("Anticipation") * anticipation.modifier * game.global.antiStacks) + 1);
+		currentCalc *= antiStrength;
+		antiStrength = prettify((antiStrength - 1) * 100) + "%";
+		textString += "<tr><td class='bdTitle'>Anticipation</td><td>2% (x" + game.global.antiStacks + ")</td><td>" + prettify(getPerkLevel("Anticipation")) + "</td><td>+ " + antiStrength + "</td><td>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+
+	}
+	if (!game.portal.Observation.radLocked && game.global.universe == 2 && game.portal.Observation.trinkets > 0 && (what == "attack" || what == "health")) {
+		var obsMult = game.portal.Observation.getMult();
+		currentCalc *= obsMult;
+		textString += "<tr><td class='bdTitle'>Observation</td><td>" + (game.portal.Observation.radLevel + 1) + "%</td><td>" + prettify(game.portal.Observation.trinkets) + "</td><td>" + formatMultAsPercent(obsMult) + "</td><td>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+
+	}
+	//Add formations
+	if (game.global.formation > 0 && game.global.formation != 5) {
+		var formStrength = 0.5;
+		if ((game.global.formation == 1 && what == "health") || (game.global.formation == 2 && what == "attack") || (game.global.formation == 3 && what == "block")) formStrength = 4;
+		currentCalc *= formStrength;
+		textString += "<tr><td class='bdTitle'>Formation</td><td></td><td></td><td>x " + formStrength + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+
+	}
+	//Add Titimp
+	if (game.global.titimpLeft > 1 && game.global.mapsActive && what == "attack") {
+		currentCalc *= 2;
+		textString += "<tr><td class='bdTitle'>Titimp</td><td></td><td></td><td>x 2</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	//Add map bonus
+	if (!game.global.mapsActive && game.global.mapBonus > 0 && what == "attack") {
+		var base = 0.2;
+		var displayBase = "20%";
+		if (game.talents.mapBattery.purchased && game.global.mapBonus == 10) {
+			base = 0.4;
+			displayBase = "40%";
+		}
+		var mapBonusMult = base * game.global.mapBonus;
+		currentCalc *= (1 + mapBonusMult);
+		mapBonusMult *= 100;
+		textString += "<tr><td class='bdTitle'>Map Bonus</td><td>" + displayBase + "</td><td>" + game.global.mapBonus + "</td><td>+ " + prettify(mapBonusMult) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	//Add RoboTrimp
+	if (what == "attack" && game.global.roboTrimpLevel > 0) {
+		var roboTrimpMod = 0.2 * game.global.roboTrimpLevel;
+		currentCalc *= (1 + roboTrimpMod);
+		roboTrimpMod *= 100;
+		textString += "<tr><td class='bdTitle'><span class='icomoon icon-chain'></span> RoboTrimp <span class='icomoon icon-chain'></span></td><td>20%</td><td>" + game.global.roboTrimpLevel + "</td><td>+ " + prettify(roboTrimpMod) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if ((what == "attack" || what == "health") && game.global.frigidCompletions && game.global.universe == 1) {
+		var mult = game.challenges.Frigid.getTrimpMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Frigid Completions</td><td>+ 2.5N%</td><td>" + game.global.frigidCompletions + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if ((what == "attack" || what == "health") && game.global.mayhemCompletions) {
+		var mult = game.challenges.Mayhem.getTrimpMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Mayhem Completions</td><td>+ 10N%</td><td>" + game.global.mayhemCompletions + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if ((what == "attack" || what == "health") && game.global.pandCompletions) {
+		var mult = game.challenges.Pandemonium.getTrimpMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Pandemonium Completions</td><td>+ 10N%</td><td>" + game.global.pandCompletions + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if ((what == "attack" || what == "health") && game.global.desoCompletions) {
+		var mult = game.challenges.Desolation.getTrimpMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Desolation Completions</td><td>+ 10N%</td><td>" + game.global.desoCompletions + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if ((what == "attack" || what == "health") && autoBattle.bonuses.Stats.level > 0 && game.global.universe == 2) {
+		var mult = autoBattle.bonuses.Stats.getMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Spire Assault Stats</td><td>+ 10%</td><td>" + autoBattle.bonuses.Stats.level + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	//Add challenges
+	if (what == "health" && game.global.challengeActive == "Life") {
+		currentCalc *= game.challenges.Life.getHealthMult();
+		textString += "<tr><td class='bdTitle'>Unliving (Life)</td><td>10%</td><td>" + game.challenges.Life.stacks + "</td><td>+ " + game.challenges.Life.getHealthMult(true) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (what == "attack" && game.global.challengeActive == "Life") {
+		currentCalc *= game.challenges.Life.getHealthMult();
+		textString += "<tr><td class='bdTitle'>Unliving (Life)</td><td></td><td></td><td>+ " + game.challenges.Life.getHealthMult(true) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "health" && game.global.challengeActive == "Duel" && game.challenges.Duel.trimpStacks < 20) {
+		currentCalc *= 10;
+		textString += "<tr><td class='bdTitle'>Rallying Cry (Duel)</td><td>x 10</td><td></td><td>x 10</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (what == "attack" && game.global.challengeActive == "Duel" && game.challenges.Duel.trimpStacks > 50) {
+		currentCalc *= 3;
+		textString += "<tr><td class='bdTitle'>Winning (Duel)</td><td>x 3</td><td></td><td>x 3</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "health" && challengeActive("Balance")) {
+		var mult = game.challenges.Balance.getHealthMult();
+		currentCalc *= mult;
+		var display = (mult > 0.0001) ? mult.toFixed(4) : mult.toExponential(3);
+		textString += "<tr style='color: red'><td class='bdTitle'>Weakness (Balance)</td><td>1%</td><td>" + game.challenges.Balance.balanceStacks + "</td><td>x " + display + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (what == "attack" && challengeActive("Lead") && ((game.global.world % 2) == 1)) {
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Determined (Lead)</td><td></td><td></td><td>+ 50%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "attack" && game.global.challengeActive == "Quagmire" && game.challenges.Quagmire.exhaustedStacks != 0) {
+		var mult = game.challenges.Quagmire.getExhaustMult();
+		currentCalc *= mult;
+		var dispPercent = "";
+		var dispTotal = "";
+		if (mult < 1) {
+			textString += "<tr style='color: red'>";
+			dispPercent = (game.global.mapsActive) ? "-5%" : "-10%";
+			dispTotal = "x " + prettify(mult);
+		}
+		else {
+			textString += "<tr>";
+			dispPercent = (game.global.mapsActive) ? "5%" : "10%";
+			dispTotal = "+ " + prettify((mult - 1) * 100) + "%";
+		}
+		textString += "<td class='bdTitle'>Exhausted (Quagmire)</td><td>" + dispPercent + "</td><td>" + game.challenges.Quagmire.exhaustedStacks + "</td><td>" + dispTotal + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what != "shield") {
+		var heirloomBonus = calcHeirloomBonus("Shield", "trimp" + capitalizeFirstLetter(what), 0, true);
+		if (heirloomBonus > 0) {
+			currentCalc *= ((heirloomBonus / 100) + 1);
+			heirloomBonus = prettify(heirloomBonus) + '%';
+			textString += "<tr><td class='bdTitle'>Heirloom (Shield)</td><td></td><td></td><td>+ " + heirloomBonus + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+		}
+	}
+	if (game.global.challengeActive == "Decay" && what == "attack") {
+		currentCalc *= 5;
+		textString += "<tr><td class='bdTitle'>Sanity (Decay)</td><td></td><td></td><td class='bdPercent'>x 5</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+		var stackStr = Math.pow(game.challenges.Decay.decayValue, game.challenges.Decay.stacks);
+		currentCalc *= stackStr;
+		textString += "<tr style='color: red'><td class='bdTitle'>Decay</td><td>x 0.995</td><td>" + game.challenges.Decay.stacks + "</td><td class='bdPercent'>x " + stackStr.toFixed(3) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (game.global.challengeActive == "Melt" && what == "attack") {
+		currentCalc *= 5;
+		textString += "<tr><td class='bdTitle'>Sanity (Melt)</td><td></td><td></td><td class='bdPercent'>x 5</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+		var stackStr = Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
+		currentCalc *= stackStr;
+		textString += "<tr style='color: red'><td class='bdTitle'>Melt</td><td>x 0.995</td><td>" + game.challenges.Melt.stacks + "</td><td class='bdPercent'>x " + stackStr.toFixed(3) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (game.global.challengeActive == "Quest" && game.challenges.Quest.finishedQuests > 0 && what == "attack") {
+		amt = game.challenges.Quest.getAttackMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Finished Quests!</td><td>x 1.1</td><td>" + game.challenges.Quest.finishedQuests + "</td><td class='bdPercent'>+ " + prettify((amt - 1) * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (game.global.challengeActive == "Revenge" && game.challenges.Revenge.stacks > 0 && (what == "attack" || what == "health")) {
+		amt = game.challenges.Revenge.getMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Revenge</td><td>+ 20%</td><td>" + game.challenges.Revenge.stacks + "</td><td class='bdPercent'>+ " + prettify((amt - 1) * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if ((challengeActive("Electricity") || game.global.challengeActive == "Mapocalypse") && what == "attack") {
+		var mult = (1 - (game.challenges.Electricity.stacks * 0.1));
+		currentCalc *= mult;
+
+		textString += "<tr style='color: red'><td class='bdTitle'>" + game.global.challengeActive + "</td><td>-10%</td><td>" + game.challenges.Electricity.stacks.toString() + "</td><td class='bdPercent'>x " + mult.toFixed(1) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (game.global.challengeActive == "Archaeology" && what == "attack") {
+		var mult = game.challenges.Archaeology.getStatMult(what);
+		var count = game.challenges.Archaeology.getPoints(what);
+		var style = (count < 0) ? " style='color: red'" : "";
+		currentCalc *= mult;
+		textString += "<tr><td" + style + " class='bdTitle'>Relic Strength</td><td>x1.05</td><td>" + count + "</td><td class='bdPercent'>x " + prettify(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if (what == "attack" && game.global.challengeActive == "Storm" && game.global.mapsActive) {
+		var mult = game.challenges.Storm.getMapMult();
+		currentCalc *= mult;
+		textString += "<tr style='color: red'><td class='bdTitle'>Beta Trimps</td><td>-0.05%</td><td>" + game.challenges.Storm.beta + "</td><td>x " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "health" && game.global.challengeActive == "Insanity") {
+		var mult = game.challenges.Insanity.getHealthMult();
+		currentCalc *= mult;
+		textString += "<tr style='color: red'><td class='bdTitle'>Insanity</td><td>x 0.99</td><td>" + game.challenges.Insanity.insanity + "</td><td>x " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (what == "attack" && game.global.challengeActive == "Berserk" && game.challenges.Berserk.frenzyStacks > 0) {
+		var mult = game.challenges.Berserk.getAttackMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Frenzied</td><td>+50%</td><td>" + game.challenges.Berserk.frenzyStacks + "</td><td>x " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "health" && game.global.challengeActive == "Berserk" && game.challenges.Berserk.frenzyStacks > 0) {
+		var mult = game.challenges.Berserk.getHealthMult();
+		currentCalc *= mult;
+		textString += "<tr style='color: red'><td class='bdTitle'>Frenzied</td><td>-2%</td><td>" + game.challenges.Berserk.frenzyStacks + "</td><td>x " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	else if (what == "health" && game.global.challengeActive == "Berserk" && game.challenges.Berserk.weakened > 0) {
+		var mult = game.challenges.Berserk.getHealthMult();
+		currentCalc *= mult;
+		textString += "<tr style='color: red'><td class='bdTitle'>Weakened</td><td>-4.99%</td><td>" + game.challenges.Berserk.weakened + "</td><td>x " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+
+	}
+	if (what == "attack" && game.portal.Frenzy.frenzyActive()) {
+		var mult = game.portal.Frenzy.getAttackMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Frenzied</td><td>+50%</td><td>" + getPerkLevel("Frenzy") + "</td><td>x " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if ((what == "attack" || what == "health") && getPerkLevel("Championism")) {
+		var mult = game.portal.Championism.getMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Championism</td><td>" + (1 + (0.5 * (autoBattle.maxEnemyLevel - 1))) + "%</td><td>" + getPerkLevel("Championism") + "</td><td>" + formatMultAsPercent(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if (what == "attack" && Fluffy.isRewardActive('SADailies') && game.global.challengeActive == "Daily") {
+		var mult = Fluffy.rewardConfig.SADailies.attackMod();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Scruffy Dailies</td><td>+ 4%</td><td>" + (autoBattle.maxEnemyLevel - 1) + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	if ((what == "attack" || what == "health") && game.global.challengeActive == "Alchemy" && game.global.universe == 2) {
+		var mult = alchObj.getPotionEffect("Potion of Strength");
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Potion of Strength</td><td>+ 15%</td><td>" + alchObj.getPotionCount("Potion of Strength") + "</td><td>" + formatMultAsPercent(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if (game.global.challengeActive == "Daily") {
+		var mult = 0;
+		if (typeof game.global.dailyChallenge.weakness !== 'undefined' && what == "attack") {
+			mult = dailyModifiers.weakness.getMult(game.global.dailyChallenge.weakness.strength, game.global.dailyChallenge.weakness.stacks);
+			currentCalc *= mult;
+			textString += "<tr style='color: red'><td class='bdTitle'>Weakness (Daily)</td><td>" + formatMultAsPercent(dailyModifiers.weakness.getMult(game.global.dailyChallenge.weakness.strength, 1)) + "</td><td>" + game.global.dailyChallenge.weakness.stacks + "</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+		}
+		if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && what == "attack" && (game.global.world % 2 == 1)) {
+			mult = dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+			currentCalc *= mult;
+			textString += "<tr style='color: red'><td class='bdTitle'>Oddly Weak (Daily)</td><td>" + formatMultAsPercent(mult) + "</td><td></td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+		}
+		if (typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined' && what == "attack" && (game.global.world % 2 == 0)) {
+			mult = dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
+			currentCalc *= mult;
+			textString += "<tr><td class='bdTitle'>Even Stronger (Daily)</td><td>" + formatMultAsPercent(mult) + "</td><td></td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+		}
+		if (typeof game.global.dailyChallenge.rampage !== 'undefined' && what == "attack") {
+			mult = dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
+			currentCalc *= mult;
+			textString += "<tr><td class='bdTitle'>Rampage (Daily)</td><td>" + formatMultAsPercent(dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, 1)) + "</td><td>" + game.global.dailyChallenge.rampage.stacks + "</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+		}
+		if (typeof game.global.dailyChallenge.pressure !== 'undefined' && what == "health") {
+			mult = dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks);
+			currentCalc *= mult;
+			textString += "<tr style='color: red'><td class='bdTitle'>Pressure (Daily)</td><td>" + formatMultAsPercent(mult) + "</td><td></td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>";
+		}
+	}
+	if (game.global.challengeActive == "Wither" && what == "health") {
+		mult = game.challenges.Wither.getTrimpHealthMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Hardness (Wither)</td><td>+ 0.1%</td><td>" + game.challenges.Wither.trimpStacks + "</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (game.global.challengeActive == "Desolation" && what == "attack") {
+		mult = game.challenges.Desolation.trimpAttackMult(true);
+		currentCalc *= mult;
+		textString += "<tr style='color: red'><td class='bdTitle'>Chilled (Desolation)</td><td>x 0.998</td><td>" + prettify(game.challenges.Desolation.chilled) + "</td><td class='bdPercent'>x " + prettify(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+
+	}
+	if (game.global.challengeActive == "Desolation" && what == "health") {
+		mult = game.challenges.Desolation.trimpHealthMult(true);
+		currentCalc *= mult;
+		textString += "<tr style='color: red'><td class='bdTitle'>Chilled (Desolation)</td><td>x 0.999</td><td>" + prettify(game.challenges.Desolation.chilled) + "</td><td class='bdPercent'>x " + prettify(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (game.global.challengeActive == "Desolation") {
+		mult = game.challenges.Desolation.desolationMult();
+		currentCalc *= mult;
+		textString += "<tr style='color: red'><td class='bdTitle'>Desolation</td><td>x " + (1 - game.challenges.Desolation.getReducePercent()).toFixed(3) + "</td><td>" + (game.global.world - 1) + "</td><td class='bdPercent'>x " + prettify(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>";
+		if (what == "attack") textString += getFluctuation(currentCalc, minFluct, maxFluct);
+		textString += "</tr>";
+	}
+	//Add golden battle
+	if (what != "block" && what != "shield" && game.goldenUpgrades.Battle.currentBonus > 0) {
+		amt = game.goldenUpgrades.Battle.currentBonus;
+		currentCalc *= 1 + amt;
+		textString += "<tr><td class='bdTitle'>Golden Battle</td><td></td><td></td><td>+ " + prettify(amt * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	//Masteries
+	if (what == "attack" && game.talents.herbalist.purchased) {
+		amt = game.talents.herbalist.getBonus();
+		currentCalc *= amt;
+		amt = (amt - 1) * 100;
+		textString += "<tr><td class='bdTitle'>Herbalist</td><td></td><td></td><td>+ " + prettify(amt) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what != "block" && what != "shield" && game.talents.voidPower.purchased && game.global.voidBuff) {
+		amt = (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 65 : 35) : 15;
+		currentCalc *= (1 + (amt / 100));
+		textString += "<tr><td class='bdTitle'>Void Power</td><td></td><td>" + ((game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? "III" : "II") : "I") + "</td><td>+ " + amt + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	if (what == "attack" && isScryerBonusActive() && game.talents.scry.purchased && !game.global.mapsActive && (getCurrentWorldCell().mutation == "Corruption" || getCurrentWorldCell().mutation == "Healthy")) {
+		currentCalc *= 2;
+		textString += "<tr><td class='bdTitle'>Scryhard I</td><td>+100%</td><td></td><td>+ 100%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "attack" && game.talents.daily.purchased && game.global.challengeActive == "Daily") {
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Legs for Days</td><td>+50%</td><td></td><td>+ 50%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (game.talents.magmamancer.purchased && what == "attack" && game.jobs.Magmamancer.getBonusPercent() > 1) {
+		amt = game.jobs.Magmamancer.getBonusPercent();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Magmamancermancy</td><td></td><td></td><td>+ " + prettify((amt - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (game.talents.stillRowing2.purchased && what == "attack" && game.global.spireRows >= 1) {
+		amt = game.global.spireRows * 0.06;
+		currentCalc *= (amt + 1);
+		textString += "<tr><td class='bdTitle'>Still Rowing II</td><td>6%</td><td>" + game.global.spireRows + "</td><td>+ " + prettify(amt * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (game.talents.healthStrength.purchased && what == "attack" && mutations.Healthy.active()) {
+		var cellCount = mutations.Healthy.cellCount();
+		amt = (0.15 * cellCount);
+		currentCalc *= (amt + 1);
+		textString += "<tr><td class='bdTitle'>Strength in Health</td><td>15%</td><td>" + cellCount + "</td><td>+ " + prettify(amt * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "attack" && game.global.mapsActive && game.talents.bionic2.purchased && getCurrentMapObject().level > game.global.world) {
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Bionic Magnet II</td><td>+50%</td><td></td><td>+ 50%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "attack" && game.global.voidBuff && game.talents.voidMastery.purchased) {
+		currentCalc *= 5;
+		textString += "<tr><td class='bdTitle'>Master of the Void</td><td>x5</td><td></td><td>x 5</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+
+	}
+	if (what == "health" && game.talents.mapHealth.purchased && game.global.mapsActive) {
+		currentCalc *= 2;
+		textString += "<tr><td class='bdTitle'>Safe Mapping</td><td>x 2</td><td class='bdNumberSm'>&nbsp;</td><td class='bdNumberSm'>x 2</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	//Pumpkimp buff
+	if (game.global.sugarRush > 0 && what == "attack") {
+		currentCalc *= sugarRush.getAttackStrength();
+		textString += "<tr class='pumpkimpRow'><td class='bdTitle'>Sugar Rush</td><td>&nbsp;</td><td>&nbsp;</td><td>x " + sugarRush.getAttackStrength() + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+
+	//Challenge^2 bonus
+	if (game.global.totalSquaredReward > 0 && (what == "attack" || what == "health")) {
+		amt = game.global.totalSquaredReward;
+		currentCalc *= (1 + (amt / 100));
+		var c2Name = (game.global.highestRadonLevelCleared < 49) ? "2" : "<span class='icomoon icon-infinity'></span>";
+		textString += "<tr><td class='bdTitle'>Challenge<sup>" + c2Name + "</sup> Rewards</td><td></td><td></td><td>+ " + prettify(amt) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>"
+	}
+
+	//Ice
+	if (what == "attack" && (getEmpowerment() == "Ice")) {
+		amt = game.empowerments.Ice.getDamageModifier();
+		currentCalc *= (1 + amt);
+		textString += "<tr><td class='bdTitle'>Chilled Enemy</td><td></td><td></td><td>+ " + prettify(amt * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+
+	}
+	//Fluffy/Scruffy
+	if (what == "attack" && Fluffy.isActive()) {
+		amt = Fluffy.getDamageModifier();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + "</td><td></td><td></td><td>+ " + prettify((amt - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	//Fluffy E8
+	if (what == "attack" && Fluffy.isRewardActive('voidSiphon') && game.stats.totalVoidMaps.value) {
+		var voids = game.stats.totalVoidMaps.value;
+		var voidWeight = 0.05;
+		amt = voidWeight * voids;
+		currentCalc *= (1 + amt);
+		var voidE = ((game.talents.fluffyAbility.purchased) ? "8" : "9");
+		textString += "<tr><td class='bdTitle'>Void Siphon (" + Fluffy.getName() + " E" + voidE + ")</td><td>+ " + (voidWeight * 100) + "%</td><td>" + voids + "</td><td>+ " + prettify(amt * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	if (what == "attack" && game.global.universe == 1 && Fluffy.isActive() && game.talents.kerfluffle.purchased) {
+		amt = game.talents.kerfluffle.mult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Kerfluffle</td><td>x 1.1</td><td>" + (Fluffy.getCurrentPrestige() + 1) + "</td><td>+ " + prettify((amt - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	//Cruffys
+	if (game.challenges.Nurture.boostsActive() && (what == "attack" || what == "health")) {
+		mult = game.challenges.Nurture.getStatBoost();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Cruffys</td><td></td><td>" + game.challenges.Nurture.getLevel() + "</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	//Amalgamator health
+	if (what == "health" && game.jobs.Amalgamator.owned > 0) {
+		amt = game.jobs.Amalgamator.getHealthMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Amalgamator</td><td>x " + prettify(game.jobs.Amalgamator.healthModifier) + "</td><td class='bdNumberSm'>" + prettify(game.jobs.Amalgamator.owned) + "</td><td class='bdNumberSm'>x " + prettify(amt) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	//Gator attack
+	if (what == "attack" && game.jobs.Amalgamator.owned > 0) {
+		amt = game.jobs.Amalgamator.getDamageMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Amalgamator</td><td>+ " + prettify(game.jobs.Amalgamator.damageModifier * 100) + "%</td><td>" + game.jobs.Amalgamator.owned + "</td><td>+ " + prettify((amt - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+
+	}
+	//Strength Towers - TD
+	if (what == "attack" && playerSpireTraps.Strength.owned) {
+		amt = playerSpireTraps.Strength.getWorldBonus();
+		currentCalc *= (1 + (amt / 100));
+		textString += "<tr><td class='bdTitle'>Strength Tower" + needAnS(playerSpireTraps.Strength.owned) + "</td><td>+ " + prettify(playerSpireTraps.Strength.getWorldBonus(true)) + "%</td><td>" + playerSpireTraps.Strength.owned + "</td><td>+ " + prettify(amt) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+
+	}
+	if (what == "attack" && getUberEmpowerment() == "Poison") {
+		currentCalc *= 3;
+		textString += "<tr><td class='bdTitle'>Enlightened Poison</td><td>x 3</td><td></td><td>x 3</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	//Sharp Trimps - bones
+	if (what == "attack" && game.singleRunBonuses.sharpTrimps.owned) {
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Sharp Trimps</td><td></td><td></td><td>+ 50%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+
+	}
+	if (what == "health" && game.global.universe == 2 && u2Mutations.tree.Health.purchased) {
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Healthy Mutator</td><td>x 1.5</td><td class='bdNumberSm'></td><td class='bdNumberSm'>x 1.5</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (what == "attack" && game.global.universe == 2 && u2Mutations.tree.Attack.purchased) {
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Attack Mutator</td><td>x 1.5</td><td></td><td>x 1.5</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	if (what == "health" && game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased) {
+		currentCalc *= 10;
+		textString += "<tr><td class='bdTitle'>Gene Health Mutator</td><td>x 10</td><td class='bdNumberSm'></td><td class='bdNumberSm'>x 10</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (what == "attack" && game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased) {
+		currentCalc *= 10;
+		textString += "<tr><td class='bdTitle'>Gene Attack Mutator</td><td>x 10</td><td></td><td>x 10</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	if (what == "attack" && game.global.universe == 2 && u2Mutations.tree.Brains.purchased) {
+		mult = u2Mutations.tree.Brains.getBonus();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Brains to Brawn</td><td>x " + prettify(mult) + "</td><td></td><td>x " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}
+	if (game.global.universe == 2 && game.global.novaMutStacks > 0 && what == "attack") {
+		amt = u2Mutations.types.Nova.trimpAttackMult();
+		currentCalc *= amt;
+		textString += "<tr style='color: red'><td class='bdTitle'>Blinded (Nova)</td><td>x 0.99</td><td>" + game.global.novaMutStacks + "</td><td class='bdPercent'>x " + prettify(amt) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "attack" && game.global.challengeActive == "Unbalance") {
+		var mult = game.challenges.Unbalance.getAttackMult()
+		currentCalc *= mult;
+		var display = (mult > 0.0001) ? mult.toFixed(4) : mult.toExponential(3);
+		textString += "<tr style='color: red'><td class='bdTitle'>Weakness (Unbalance)</td><td>x 0.99</td><td>" + game.challenges.Unbalance.balanceStacks + "</td><td>x " + display + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+	if (what == "attack" && getPerkLevel("Equality") > 0) {
+		mult = game.portal.Equality.getMult(true);
+		currentCalc *= mult;
+		var display = prettifyTiny(mult);
+		var modifier = game.portal.Equality.getModifier(true);
+		var modDisplay = (modifier > 0.0001) ? modifier.toFixed(4) : modifier.toExponential(3);
+		textString += "<tr style='color: red'><td class='bdTitle'>Equality</td><td>x " + modDisplay + "</td><td>" + game.portal.Equality.getActiveLevels() + "</td><td class='bdPercent'>x " + display + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>";
+	}
+
+
+	//Crit
+	if (what == "attack") {
+		var critChance = getPlayerCritChance();
+		var thisCritChance = 0;
+		var critCalc = 0;
+		var critMult = 0;
+		var baseCritMult = getPlayerCritDamageMult();
+		if (critChance < 0) {
+			//From reduced crit chance daily or maybe other stuff later
+			critMult = 1;
+			critCalc = currentCalc;
+			textString += "<tr class='critRow'><td class='bdTitle'><span style='color: yellow;'>Crit!</span> Chance</td><td>0% (" + (critChance * 100).toFixed(1) + "% Total)</td><td class='bdTitle'><span style='color: yellow;'>Crit!</span> Damage</td><td>+ " + prettify((critMult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(critCalc) + "</td>" + getFluctuation(critCalc, minFluct, maxFluct) + "</tr>";
+			textString += "<tr class='critRow'><td class='bdTitle'><span style='color: cyan;'>Weak!</span> Chance</td><td>" + (Math.abs(critChance) * 100).toFixed(1) + "%</td><td class='bdTitle'><span style='color: cyan;'>Weak!</span> Damage</td><td>x 0.2</td><td class='bdNumberSm'>" + prettify(currentCalc * 0.2) + "</td>" + getFluctuation((currentCalc * 0.2), minFluct, maxFluct) + "</tr>";
+		}
+		else {
+			if (critChance > 0) {
+				critMult = baseCritMult;
+				if (critChance >= 2) thisCritChance = 0;
+				else if (critChance >= 1) thisCritChance = 1 - (critChance % 1);
+				else thisCritChance = critChance;
+				critCalc = currentCalc * critMult;
+				textString += "<tr class='critRow'><td class='bdTitle'><span style='color: yellow;'>Crit!</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%";
+				if (critChance > 1) textString += " (" + (critChance * 100).toFixed(1) + "% Total)";
+				textString += "</td><td class='bdTitle'><span style='color: yellow;'>Crit!</span> Damage</td><td>+ " + prettify((critMult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(critCalc) + "</td>" + getFluctuation(critCalc, minFluct, maxFluct) + "</tr>";
+			}
+			if (critChance > 1 && critChance < 3) {
+				if (critChance >= 2) thisCritChance = 1 - (critChance % 1);
+				else thisCritChance = critChance - 1;
+				critMult = getMegaCritDamageMult(2);
+				critCalc = currentCalc * critMult * baseCritMult;
+				textString += "<tr class='critRow'><td class='bdTitle'><span style='color: orange;'>CRIT!</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span style='color: orange;'>CRIT!</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + "</td>" + getFluctuation(critCalc, minFluct, maxFluct) + "</tr>";
+			}
+			if (critChance > 2 && critChance < 4) {
+				if (critChance >= 3) thisCritChance = 1 - (critChance % 1);
+				else thisCritChance = critChance - 2;
+				critMult = getMegaCritDamageMult(3);
+				critCalc = currentCalc * critMult * baseCritMult;
+				textString += "<tr class='critRow'><td class='bdTitle'><span style='color: red;'>CRIT!!</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span style='color: red;'>CRIT!!</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + "</td>" + getFluctuation(critCalc, minFluct, maxFluct) + "</tr>";
+			}
+			if (critChance > 3 && critChance < 5) {
+				if (critChance >= 4) thisCritChance = 1 - (critChance % 1);
+				else thisCritChance = critChance - 3;
+				critMult = getMegaCritDamageMult(4);
+				critCalc = currentCalc * critMult * baseCritMult;
+				textString += "<tr class='critRow'><td class='bdTitle'><span class='critTier4'>CRIT<span class='icomoon icon-atom'></span></span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span class='critTier4'>CRIT<span class='icomoon icon-atom'></span></span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + "</td>" + getFluctuation(critCalc, minFluct, maxFluct) + "</tr>";
+			}
+			if (critChance > 4 && critChance < 6) {
+				if (critChance >= 5) thisCritChance = 1 - (critChance % 1);
+				else thisCritChance = critChance - 4;
+				critMult = getMegaCritDamageMult(5);
+				critCalc = currentCalc * critMult * baseCritMult;
+				textString += "<tr class='critRow'><td class='bdTitle'><span class='critTier5'><span class='icomoon icon-bomb'></span> CRIT</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span class='critTier5'><span class='icomoon icon-bomb'></span> CRIT</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + "</td>" + getFluctuation(critCalc, minFluct, maxFluct) + "</tr>";
+			}
+			if (critChance > 5 && critChance < 7) {
+				if (critChance >= 6) thisCritChance = 1 - (critChance % 1);
+				else thisCritChance = critChance - 5;
+				critMult = getMegaCritDamageMult(6);
+				critCalc = currentCalc * critMult * baseCritMult;
+				textString += "<tr class='critRow'><td class='bdTitle'><span class='critTier6'><span class='icomoon icon-diamond'></span> CRIT!</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span class='critTier6'><span class='icomoon icon-diamond'></span> CRIT!</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + "</td>" + getFluctuation(critCalc, minFluct, maxFluct) + "</tr>";
+			}
+			if (critChance > 6 && critChance < 8) {
+				if (critChance >= 7) thisCritChance = 1;
+				else thisCritChance = critChance - 6;
+				critMult = getMegaCritDamageMult(7);
+				critCalc = currentCalc * critMult * baseCritMult;
+				textString += "<tr class='critRow'><td class='bdTitle'><span class='critTier7'><span class='icomoon icon-bolt'></span> CRIT!</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span class='critTier7'><span class='icomoon icon-bolt'></span> CRIT!</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + "</td>" + getFluctuation(critCalc, minFluct, maxFluct) + "</tr>";
+			}
+		}
+	}
+	textString += "</tbody></table></div>";
+	game.global.lockTooltip = false;
+	document.getElementById('tipText').className = "";
+	tooltip('confirm', null, 'update', textString, "getBattleStatBd('" + what + "')", name, "Refresh", true);
+	if (what == "attack" || what == "health") {
+		verticalCenterTooltip(true);
+	}
+}
