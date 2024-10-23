@@ -31,13 +31,15 @@ const atConfig = {
 	settingUniverse: 0
 };
 
-const atData = {};
+const atData = {
+	gameLoop: gameLoop
+};
+
 let autoTrimpSettings = {};
 let MODULES = {};
 let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
 let hdStats = { autoLevel: Infinity };
 let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false, fluffyRewards: { universe: 0, level: 0 } };
-var originalGameLoop = gameLoop;
 
 function shouldUpdate(updateEvery = 2000) {
 	if (usingRealTimeOffline && loops === atConfig.timeWarp.currentLoops) return true;
@@ -299,7 +301,7 @@ function startStopLoop(loopName, action) {
 function resetLoops() {
 	['mainLoop', 'guiLoop'].forEach((loop) => startStopLoop(loop, 'stop'));
 	atConfig.loops.atTimeLapseFastLoop = false;
-	gameLoop = originalGameLoop;
+	gameLoop = atData.gameLoop;
 	['mainLoop', 'guiLoop'].forEach((loop) => startStopLoop(loop, 'start'));
 }
 
@@ -324,7 +326,7 @@ function toggleCatchUpMode() {
 	} else if (usingRealTimeOffline && !atConfig.loops.atTimeLapseFastLoop) {
 		['mainLoop', 'guiLoop'].forEach((loop) => startStopLoop(loop, 'stop'));
 		gameLoop = function (makeUp, now) {
-			originalGameLoop(makeUp, now);
+			atData.gameLoop(makeUp, now);
 
 			updateInterval();
 			mainCleanup();

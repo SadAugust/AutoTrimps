@@ -257,7 +257,7 @@ function _gatherTrapResources() {
 
 function _handleTrapping(action, priority) {
 	const trapsToBuy = bwRewardUnlocked('DecaBuild') ? 10 : bwRewardUnlocked('DoubleBuild') ? 2 : 1;
-	const buyTrap = () => canAffordBuilding('Trap') && (safeBuyBuilding('Trap', trapsToBuy) || true);
+	const buyTrap = () => canAffordBuilding('Trap', false, false, false, false, 1) && (safeBuyBuilding('Trap', trapsToBuy) || true);
 	const canBuild = () => isBuildingInQueue('Trap') || buyTrap();
 	const bait = () => safeSetGather('trimps') || true;
 	const build = () => (canBuild() && (safeSetGather('buildings') || true)) || _gatherTrapResources();

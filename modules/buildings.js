@@ -601,7 +601,7 @@ function _shouldSaveFromHouse(houseName, upgradeName) {
 }
 
 function _buySelectedHouse(houseName, buildingSettings) {
-	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName)) return false;
+	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName, false, false, false, false, 1)) return false;
 
 	// Saves resources for upgrades
 	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
