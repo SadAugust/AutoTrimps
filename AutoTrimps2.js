@@ -456,7 +456,7 @@ function mainLoopU2() {
 
 function guiLoop() {
 	if (!usingRealTimeOffline && (!liquifiedZone() || game.global.mapsActive) && getPageSetting('displayEnhancedGrid')) atData.fightInfo.Update();
-	if (atData.performance && atData.performance.isAFK) atData.performance.UpdateAFKOverlay();
+	if (atData.performance && atData.performance.isAFK) atData.performance.updateAFKOverlay();
 }
 
 function updatePortalSettingVars(setting, currentValue) {

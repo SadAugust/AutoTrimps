@@ -251,12 +251,13 @@ function getNextGoldenUpgrade() {
 	if (setting.length === 0) return false;
 
 	const defs = archoGolden.getDefs();
+	const fillerC2 = getPageSetting('c2Filler');
 	let done = {};
 
 	for (let x = 0; x < setting.length; x++) {
 		const currSetting = setting[x];
 		if (!currSetting.active || currSetting.golden === undefined) continue;
-		if (!goldenUpgradeRunType(currSetting)) continue;
+		if (!goldenUpgradeRunType(currSetting, fillerC2)) continue;
 
 		let rule = currSetting.golden;
 		let name = defs[rule.slice(0, 1)];
@@ -276,11 +277,11 @@ function getNextGoldenUpgrade() {
 	return false;
 }
 
-function goldenUpgradeRunType(currSetting) {
+function goldenUpgradeRunType(currSetting, fillerC2) {
 	if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
 		if (trimpStats.isDaily) {
 			if (currSetting.runType !== 'Daily') return false;
-		} else if (trimpStats.isC3) {
+		} else if (trimpStats.isC3 && !fillerC2) {
 			if (currSetting.runType !== 'C3' || (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3))) return false;
 		} else if (trimpStats.isOneOff) {
 			if (currSetting.runType !== 'One Off' || (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff))) return false;
@@ -288,7 +289,9 @@ function goldenUpgradeRunType(currSetting) {
 			if (currSetting.runType === 'Filler') {
 				let currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
 				if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) return false;
-			} else return false;
+			} else {
+				return false;
+			}
 		}
 	}
 

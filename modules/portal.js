@@ -513,6 +513,7 @@ function _autoPortalActivate(challenge) {
 }
 
 function portalPerkCalc() {
+	const fillerC2 = getPageSetting('c2Filler');
 	let preset;
 
 	if (getPageSetting('presetSwap', portalUniverse)) {
@@ -522,13 +523,14 @@ function portalPerkCalc() {
 			else if (game.global.selectedChallenge === 'Trimp') preset = 'trimp';
 			else if (game.global.selectedChallenge === 'Coord') preset = 'coord';
 			else if (game.global.selectedChallenge === 'Experience') preset = 'experience';
-			else if (game.global.selectedChallenge === 'Frigid' || challengeSquaredMode) preset = 'c2';
+			else if (!fillerC2 && (game.global.selectedChallenge === 'Frigid' || challengeSquaredMode)) preset = 'c2';
 			else {
 				//If a specific challenge isn't selected then we'll use the highest zone cleared to determine which preset to use.
 				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
 					if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared) preset = option.value;
 				});
 			}
+
 			fillPresetPerky(preset);
 		}
 
@@ -538,10 +540,11 @@ function portalPerkCalc() {
 			else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
 			else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
 			else if (game.global.selectedChallenge === 'Smithless') preset = 'smithless';
-			else if (['Mayhem', 'Pandemonium', 'Desolation'].indexOf(game.global.selectedChallenge) >= 0 || challengeSquaredMode) preset = 'push';
+			else if (!fillerC2 && (['Mayhem', 'Pandemonium', 'Desolation'].indexOf(game.global.selectedChallenge) >= 0 || challengeSquaredMode)) preset = 'push';
 			else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
-			else if (autoPortalChallenges('oneOff').slice(1).indexOf(game.global.selectedChallenge) > 0) preset = 'push';
+			else if (autoPortalChallenges('oneOff').slice(1).indexOf(game.global.selectedChallenge) > 0 && !challengeSquaredMode) preset = 'push';
 			else preset = 'ezfarm';
+
 			fillPresetSurky(preset);
 		}
 	}

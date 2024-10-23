@@ -143,8 +143,8 @@ function initialiseAllSettings() {
 				let description = "<p>Controls what you gather/build.</p>";
 				description += "<p><b>Manual Gather</b><br>Disables this setting.</p>";
 				description += "<p><b>Auto Gather</b><br>Automatically switch your gathering between different resources and the building queue depending on what it deems necessary.</p>";
-				description += "<p><b>Mining Only</b><br>Sets gather to Mining.<br>If buildings are in the queue then they will override this.<br>Only use this if you are past the early stages of the game and have Foremany unlocked.</p>";
-				description += "<p><b>Science Research Off</b><br>Works the same as <b>Auto Gather</b> but stops Science from being gathered.</p>";
+				description += "<p><b>Mining Only</b><br>Sets gather to <b>Mining</b>.<br>If buildings are in the queue then they will override this.<br>Only use this if you are past the early stages of the game and have <b>Foremany</b> unlocked.</p>";
+				description += "<p><b>Science Research Off</b><br>Works the same as <b>Auto Gather</b> but stops <b>Science</b> from being gathered.</p>";
 				description += "<p><b>Recommended:</b> Auto Gather</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
@@ -179,7 +179,7 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'Core', [1, 2]);
 		createSetting('downloadSaves',
 			function () { return ('Download Saves') },
-			function () { return ('Will automatically download saves when the script portals.') },
+			function () { return ('Will automatically download a copy of your save when portaling.') },
 			'boolean', false, null, 'Core', [1, 2]);
 
 		createSetting('autoGoldenSettings',
@@ -224,15 +224,16 @@ function initialiseAllSettings() {
 				description += "<p>Will <b>only</b> allocate nullifium on heirlooms that you have bought an upgrade or swapped modifiers on.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 			return description;
-			}, 'boolean', false, null, 'Core', [1, 2]);
+			}, 'boolean', false, null, 'Core', [1, 2],
+			function () { return (game.global.totalPortals > 0) });
 
 		createSetting('autoPerks',
 			function () { return ('Auto Allocate Perks') },
 			function () {
 				const calcName = atConfig.settingUniverse === 2 ? "Surky" : "Perky";
 				let description = "<p>Uses a modified version of <b>" + calcName + "</b> to identify the most optimal perk distribution when auto portaling.</p>";
-				description += "<p>There are inputs you can adjust in the <b>Portal</b> window to allow you to adjust how it distributes perks.</p>";
-				description += "<p>If you want more advanced settings import your save into <b>" + calcName + "</b>.</p>";
+				description += "<p>There are inputs you can adjust in the <b>Portal</b> or <b>View Perks</b> windows to allow you to adjust how it distributes perks.</p>";
+				description += "<p>If you want more advanced settings import your save into the <b>" + calcName + "</b> website.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2]);
@@ -878,7 +879,8 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>The value you want weapon equipment to stop being purchased at.</p>";
 				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
-				description += "<p><b>Recommended:</b> 20 during earlygame and gradually raise it to 250 as needed.</p>";
+				description += `<p>If your <b>HD Ratio</b> is above your <b>AE: HD Cut-off</b> setting this cap is ignored and you will purchase as many attack equips as it takes to reach your target.</p>`;
+				description += "<p><b>Recommended:</b> 20/p>";
 				return description;
 			}, 'value', 20, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
@@ -887,7 +889,9 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>The value you want armor equipment to stop being purchased at.</p>";
 				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
-				description += "<p><b>Recommended:</b> 20 during earlygame and gradually raise it to 250 as needed.</p>";
+				description += `<p>When your Hits Survived is below your <b>AE: HS Cut-off</b> setting OR <b>Hits Survived</b> farming this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
+				if (atConfig.settingUniverse ===2) description += `<p>If your <b>HD Ratio</b> is above your <b>AE: HD Cut-off</b> setting this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
+				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
 			}, 'value', 20, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
@@ -897,7 +901,7 @@ function initialiseAllSettings() {
 				let description = "<p>What zone to stop caring about what percentage of resources you're spending and buy as many prestiges and equipment as possible.</p>";
 				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing gear and prestiges on each zone input.</p>";
 				description += "<p>You are able to enter a zone range, this can be done by using a decimal point between number ranges e.g. <b>23.120</b> which will cause the zone check to set your purchasing percentage to 100% between zones 23 and 120. <b>This can be used in conjunction with other zones too, just seperate inputs with commas!</b></p>";
-				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>"
+				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available. It will also sets your health & attack equip caps to Infinity.</p>"
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
 			}, 'multiValue', [-1], null, 'Equipment', [1, 2],
@@ -945,8 +949,8 @@ function initialiseAllSettings() {
 			function () { return ('AE: Prestige Pct') },
 			function () {
 				const trimple = atConfig.settingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
-				let description = "<p>What percent of resources you'd like to spend on equipment before prestiges will be priorities over them.</p>";
-				description += "Only impacts prestige purchasing when <b>AE: Prestige</b> is selected and " + trimple + " has been run.</p>";
+				let description = `Once you have run <b>${trimple}</b> prestiges will only be purchased if they cost less than this percentage of your metal or wood.</p>`;
+				description += "This is only active when <b>AE: Prestige</b> is selected.</p>";
 
 				description += "<p><b>Recommended:</b> 6</p>";
 				return description;
@@ -987,7 +991,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Controls how combat is handled by the script.</p>";
 				description += "<p><b>Better Auto Fight Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if your current army is dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds.</p>";
+				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if the current army is dead and your trimps have fully bred.</p>";
 				description += "<p><b>Vanilla Auto Fight</b><br>Will make sure the games AutoFight setting is enabled at all times and ensures you start fighting on portal until you get the Bloodlust upgrade.</p>";
 				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
 				return description;
@@ -2013,6 +2017,17 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
+
+		createSetting('c2Filler',
+			function () { return (`Run ${_getChallenge2Info()}'s as Fillers`) },
+			function () {
+				const presetName = atConfig.settingUniverse === 2 ? "Easy Radon Challenge" : "the most appropriate zone progression";
+				let description = `<p>Adjusts how the <b>Golden Upgrade</b> and <b>Preset Swapping</b> settings work when running ${_getChallenge2Info()}'s.</p>`;
+				description += `<p><b>Golden Upgrade</b><br>Will stop <b>${_getChallenge2Info()}</b> run types from being used and instead only allow <b>All</b> or <b>Filler</b> run types.</p>`;
+				description += `<p><b>Preset Swapping</b><br>Selects the ${presetName} preset when auto portaling into ${_getChallenge2Info()} challenges.<br>This will <b>not</b> override it for challenges that have a dedicated preset and those challenges will still load the appropriate preset for the challenge so update them accordingly.</p>`;
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [1,2]);
 
 		createSetting('c2disableFinished',
 			function () { return ('Hide Finished Challenges') },
@@ -4197,8 +4212,7 @@ function initialiseAllSettings() {
 		createSetting('timeWarpSpeed',
 			function () { return ('Time Warp Support') },
 			function () {
-				let description = "<p>Will allow the script to run more frequently during time warp so instead of running once every 100ms it will run based off of when the game runs its code.</p>";
-				description += "<p>When enabled auto maps, auto fight, auto portal, auto stance, and auto equality will be run every time the game runs its code.</p>";
+				let description = "<p>Will allow the script to run more frequently during time warp so instead of running once every 100ms it will run when the game runs its code.</p>";
 				description += "<p>This will be a significant slow down when running time warp but should allow you to use the script during it.</p>";
 				return description;
 			}, 'boolean', true, null, 'Time Warp', [0]);
@@ -4206,10 +4220,11 @@ function initialiseAllSettings() {
 		createSetting('timeWarpFrequency',
 			function () { return ('Time Warp Frequency') },
 			function () {
-				let description = "<p>How often the scripts code will run during time warp.</p>";
-				description += "<p>If set to 20 it will run once every 20 times the games code runs.</p>";
-				description += "<p>The lower you set this value the longer time warp will take.</p>";
-				description += "<p>Liquification zones override this and temporarily set it to 1 during them.</p>";
+				const universeSetting = atConfig.settingUniverse === 1 ? 'Stance' : 'Equality';
+				let description = "<p>The frequency that the scripts code will run during time warp.</p>";
+				description += "<p>If set to 20 it will run once every 20 times the games code runs. The lower you set this value the longer time warp will take.</p>";
+				description += `<p>Auto maps, Auto Fight, Auto Portal, and Auto ${universeSetting} will run every time the game runs its code regardless of this input.</p>`;
+				description += "<p>Liquification zones override this and temporarily set it to 1.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
 			}, 'value', 1, null, 'Time Warp', [0],
@@ -4218,8 +4233,10 @@ function initialiseAllSettings() {
 		createSetting('timeWarpSaving',
 			function () { return ('Time Warp Saving') },
 			function () {
-				let description = "<p>Will cause the script to save your game during Time Warp so that you don't lose any time if you refresh.</p>";
-				description += "<p>Will automatically save every 30 minutes of game time.</p>";
+				let description = "<p>Will cause the script to save your game during Time Warp so that you can maintain your current .</p>";
+				description += "<p>Automatically saves every 30 minutes of game time and maintains current time warp.</p>";
+				description += "<p>.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
@@ -4244,35 +4261,30 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Apply slight visual enhancements to world and map grids that highlights with drop shadow all the exotic, powerful, skeletimps and other special imps.</p>";
 				const enemyType = atConfig.settingUniverse === 1 ? 'Corrupt' : 'Mutated';
-				description = `<p>${enemyType} enemies won't have a fast icon as those enemies are always fast.</p>`;
+				description += `<p>${enemyType} enemies won't have a fast icon as those enemies are always fast.</p>`;
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
 
 		createSetting('displayPercentHealth',
 			function () { return ('Percent Health') },
 			function () {
-				let description = "<p>Modifies the trimp and enemy health bars to display health as a percentage instead of their health values.</p>";
+				let description = "<p>Modifies the trimp and enemy health bars to display health as a percentage instead of as a value.</p>";
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
-
-		/* createSetting('displayHeHr',
-			function () { return (_getPrimaryResourceInfo().name + ' Per Hour Status') },
-			function () {
-				let description = "<p>Enables the display of your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
-				return description;
-			}, 'boolean', false, null, 'Display', [0]); */
 
 		createSetting('displayAllSettings',
 			function () { return ('Display All settings') },
 			function () {
-				let description = "<p>Will display all of the locked settings that have highest zone or other requirements to be displayed.</p>";
+				let description = "<p>Will display all of the locked settings that have certain zone or other requirements to be displayed.</p>";
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
 
 		createSetting('displayHideAutoButtons',
 			function () { return ('Hide Auto Buttons') },
 			function () {
-				let description = "<p>Will allow you to select which of the games automation buttons you'd prefer not to be visible.</p>";
+				const resourcePerHour = atConfig.settingUniverse === 1 ? 'Helium' : 'Radon';
+				let description = "<p>Will allow you to select which of the scripts and the games automation buttons you'd prefer not to be visible.</p>";
+				description += `<p>Auto Maps Status and ${resourcePerHour} Per Hour Status can also be hidden in this menu.</p>`;
 				return description;
 			}, 'mazDefaultArray', {
 				fight: false, autoFight: false, structure:false, jobs: false, gold: false, upgrades: false, prestige: false, equip: false,
@@ -4282,7 +4294,7 @@ function initialiseAllSettings() {
 		createSetting('enableAFK',
 			function () { return ('Go AFK Mode') },
 			function () {
-				let description = "<p>AFK Mode uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU saving mode.</p>";
+				let description = "<p>AFK Mode uses a Black Screen, and suspends all of the Trimps GUI visual update functions to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU saving mode.</p>";
 				description += "<p>The blue color means this is not a settable setting, just a button.</p>";
 				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
 				return description;
@@ -4306,7 +4318,7 @@ function initialiseAllSettings() {
 		createSetting('shieldGymMostEfficientDisplay',
 			function () { return ('Highlight Shields v Gyms') },
 			function () {
-				let description = "<p>Will the most efficient purchase between Shields and Gyms.</p>";
+				let description = "<p>Will highlight the most efficient purchase between Shields and Gyms.</p>";
 				return description;
 			}, 'boolean', false, null, 'Display', [1]);
 
@@ -5213,9 +5225,17 @@ function _setSettingLineBreaks(id, style = 'show') {
 	const elemSibling = elem.nextElementSibling;
 	const nextElemSibling = elemSibling.nextElementSibling;
 
-	if (style === 'show' && !isBreak(elemSibling) && elemSibling.style.display !== 'none') elem.insertAdjacentHTML('afterend', '<br>');
-	if (style === 'hide' && isBreak(elemSibling)) elemSibling.remove();
-	if (isBreak(elemSibling) && nextElemSibling.style.display === 'none') elemSibling.remove();
+	if (style === 'show' && !isBreak(elemSibling) && (elemSibling.style.display !== 'none' || id === 'pauseScript')) {
+		elem.insertAdjacentHTML('afterend', '<br>');
+	}
+
+	if (style === 'hide' && isBreak(elemSibling)) {
+		elemSibling.remove();
+	}
+
+	if (isBreak(elemSibling) && nextElemSibling.style.display === 'none' && id !== 'pauseScript') {
+		elemSibling.remove();
+	}
 }
 
 function settingUniverse(id) {

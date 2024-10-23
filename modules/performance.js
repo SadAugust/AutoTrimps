@@ -107,7 +107,7 @@
 	M['performance'].AFKOverlayDisable.className = 'at-afk-overlay-disable-btn';
 
 	M['performance'].AFKOverlayDisable.addEventListener('click', function () {
-		M['performance'].DisableAFKMode();
+		M['performance'].disableAFKMode();
 	});
 
 	// Bundle them together
@@ -129,14 +129,14 @@
 		W.updateLabels = function () {};
 	};
 
-	M['performance'].DisableAFKMode = function DisableAFKMode() {
+	M['performance'].disableAFKMode = function disableAFKMode() {
 		M['performance'].isAFK = false;
 		M['performance'].$wrapper.style.display = 'block';
 		M['performance'].AFKOverlay.classList.add('at-afk-overlay-disabled');
 		W.updateLabels = M['performance'].updateLabels;
 	};
 
-	M['performance'].UpdateAFKOverlay = function UpdateAFKOverlay() {
+	M['performance'].updateAFKOverlay = function updateAFKOverlay() {
 		const mapObj = game.global.mapsActive ? getCurrentMapObject() : null;
 		const zoneText = `Zone: ${game.global.world} Cell: ${game.global.lastClearedCell + 2}${game.global.mapsActive ? `<br> Map: ${mapObj.level - game.global.world >= 0 ? ' + ' : ''}${mapObj.level - game.global.world} ${mapObj.bonus !== undefined ? mapObj.bonus : ''}` : ''}`;
 
