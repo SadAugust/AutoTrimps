@@ -516,11 +516,11 @@ function loadHeirloomSettings() {
 	} else {
 		document.getElementById('heirloomCustomRatioBtn').setAttribute('class', 'btn settingsBtn settingBtnfalse');
 	}
-	$$('#VMWeight').value = heirloomInputs.VMWeight;
-	$$('#XPWeight').value = heirloomInputs.XPWeight;
-	$$('#HPWeight').value = heirloomInputs.HPWeight;
-	$$('#equipLevels').value = heirloomInputs.equipLevels;
-	$$('#equalityTarget').value = heirloomInputs.equalityTarget;
+	$$('#VMWeight').value = heirloomInputs.VMWeight || 12;
+	$$('#XPWeight').value = heirloomInputs.XPWeight || 11.25;
+	$$('#HPWeight').value = heirloomInputs.HPWeight || 1;
+	$$('#equipLevels').value = heirloomInputs.equipLevels || 90;
+	$$('#equalityTarget').value = heirloomInputs.equalityTarget || Math.min(game.portal.Equality.radLevel, 100);
 }
 
 function isNumeric(n) {
