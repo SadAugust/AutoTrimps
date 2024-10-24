@@ -1,5 +1,12 @@
 function automationMenuSettingsInit() {
 	const settingsRow = document.getElementById('settingsRow');
+	const settingsHere = document.getElementById('settingsHere');
+	const settingsTable = document.getElementById('settingsTable');
+
+	if (settingsHere && settingsTable) {
+		settingsRow.insertBefore(settingsHere, settingsTable);
+	}
+
 	const autoSettings = document.createElement('DIV');
 	autoSettings.id = 'autoSettings';
 	autoSettings.style.display = 'none';
@@ -4964,7 +4971,7 @@ function autoToggle(what) {
 	if (what === 'trimpSettings') {
 		items.forEach((id) => {
 			const element = document.getElementById(id);
-			if (element && element.style.display === 'block') {
+			if (element && ['block', 'grid'].includes(element.style.display)) {
 				element.style.display = 'none';
 			}
 		});
@@ -4994,7 +5001,7 @@ function autoToggle(what) {
 	items.forEach((item) => {
 		const element = document.getElementById(item);
 		if (element !== null) {
-			if (element.style.display === 'block') {
+			if (['block', 'grid'].includes(element.style.display)) {
 				element.style.display = 'none';
 			} else {
 				if (item !== 'graphParent') element.style.display = 'block';
