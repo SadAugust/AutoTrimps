@@ -276,7 +276,7 @@ function initialiseAllSettings() {
 					description += "<p>Will only run during the highest Spire you have reached and will respec into the Perky <b>Spire</b> preset to maximise your combat stats during it.</p>";
 				}
 				if (atConfig.settingUniverse === 2) {
-					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + _getSpecialChallengeDescription() + " <b>OR</b> you have more golden battle than golden radon upgrades. Otherwise it will assume it's a radon run and respec into the <b>Radon Combat Respec</b> preset.</p>";
+					description += `<p>Will respec into the <b>${respecName}</b> preset when running ${_getSpecialChallengeDescription()} <b>OR</b> you have more golden battle than golden radon upgrades. Otherwise it will assume it's a radon run and respec into the <b>Radon Combat Respec</b> preset.</p>`;
 				}
 
 				description += "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
@@ -3466,6 +3466,16 @@ function initialiseAllSettings() {
 			}, 'value', 0, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse)) });
 
+		createSetting('heirloomAutoCoreModTarget',
+			function () { return ('Core Mod Target Count') },
+			function () {
+				let description = "<p>Allows you to make it so that auto heirlooms will keep Cores if they have <b>X</b> amount of the mods you have setup in the different heirloom type options.</p>";
+				description += "<p>When using this I recommend not setting any of the mod inputs to <b>Any</b> as it can cause you to keep heirlooms with more suboptimal mods than you desire.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and have the script assume you want to only keep perfect heirlooms.</p>";
+				description += "<p><b>Recommended:</b> 0</p>";
+				return description;
+			}, 'value', 0, null, 'Heirloom', [1],
+			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAutoForceRun',
 			function () { return ('Run Auto Heirlooms') },

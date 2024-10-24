@@ -35,7 +35,8 @@ function evaluateHeirloomMods(loom, location) {
 		targetMods = targetMods.filter((e) => e !== modName);
 	}
 
-	const modGoal = Math.max(0, Math.min(getPageSetting('heirloomAutoModTarget'), heirloomLocation.mods.length));
+	const modTarget = heirloomType === 'Core' ? getPageSetting('heirloomAutoCoreModTarget') : getPageSetting('heirloomAutoModTarget');
+	const modGoal = Math.max(0, Math.min(modTarget, heirloomLocation.mods.length));
 	const remainingMods = targetMods.length - emptyMods;
 
 	if (remainingMods <= 0) return Infinity;

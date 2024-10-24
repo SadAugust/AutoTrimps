@@ -104,12 +104,14 @@ function trapperHoldCoords(jobChange = false) {
 
 	if (trappaCoordToggle === 1) {
 		const armyTarget = getPageSetting('trapperArmySize');
-		const coordinated = getPerkLevel('Coordinated');
-		const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
+
 		return game.resources.trimps.getCurrentSend() * 1.25 > armyTarget;
 	}
 
-	if (jobChange) buyJobs();
+	if (jobChange) {
+		buyJobs();
+	}
+
 	return false;
 }
 
