@@ -6138,3 +6138,158 @@ function getBattleStatBd(what) {
 		verticalCenterTooltip(true);
 	}
 }
+
+/* still needs rewritten */
+function displaySelectedHeirloom(modSelected, selectedIndex, fromTooltip, locationOvr, indexOvr, fromPopup, fromSelect) {
+	if (fromPopup && !game.options.menu.voidPopups.enabled) return;
+	var heirloom = getSelectedHeirloom(locationOvr, indexOvr);
+	var icon = getHeirloomIcon(heirloom);
+	var animated = game.options.menu.showHeirloomAnimations.enabled ? 'animated ' : '';
+	var html = '<div class="selectedHeirloomItem ' + animated + 'heirloomRare' + heirloom.rarity + '"><div class="row selectedHeirloomRow"><div onclick="tooltip(\'Change Heirloom Icon\', null, \'update\')" class="col-xs-2 selectedHeirloomIcon" id="' + (fromTooltip ? 'tooltipHeirloomIcon' : 'selectedHeirloomIcon') + '"><span class="' + icon + '"></span></div><div class="col-xs-10"><h5 aria-label="Rename Heirloom" onclick="renameHeirloom(';
+	if (fromPopup) html += 'false, true';
+	html += ')" id="selectedHeirloomTitle" style="margin: 10px 0">' + heirloom.name + '</h5> ';
+	if (!fromTooltip) html += '<span id="renameContainer"></span>';
+	html += '</div></div>';
+	var isEquipped = game.global.selectedHeirloom[1] == 'StaffEquipped' || game.global.selectedHeirloom[1] == 'ShieldEquipped' || game.global.selectedHeirloom[1] == 'CoreEquipped';
+	var addBr = false;
+	if (!fromPopup && !fromTooltip && isEquipped) {
+		html += '<span class="heirloomEquipped">Equipped</span>&nbsp;';
+		addBr = true;
+	}
+	var spent = getTotalHeirloomRefundValue(heirloom, true);
+	var res = heirloom.type == 'Core' ? 'Ss' : 'Nu';
+	if (spent <= 0) spent = 0;
+	html += "<span class='heirloomSpent'>" + prettify(spent);
+	var allowed;
+	if (heirloom.type == 'Core') {
+		allowed = playerSpire.spirestones;
+	} else {
+		allowed = Math.floor(game.global.nullifium * getNuSpendMult());
+	}
+	html += ' / ' + prettify(allowed);
+	html += ' ' + res + ' Allocated';
+	html += ' - ' + prettify(Math.max(allowed - spent, 0)) + ' Available';
+	html += '</span>';
+	html += '<br/>';
+	var srText = 'Selected ' + heirloom.name + ', ' + (isEquipped ? 'your equipped ' + heirloom.type : 'unequipped ' + heirloom.type) + '. Has the following mods: ';
+	var noneEmpty = true;
+	var opacity = modSelected ? 'style="opacity: 0.5" ' : '';
+	for (var x = 0; x < heirloom.mods.length; x++) {
+		srText += heirloom.mods[x][0] + ' - ' + prettify(scaleHeirloomModUniverse(heirloom.type, heirloom.mods[x][0], heirloom.mods[x][1])) + '%. ';
+		if (heirloom.mods[x][0] == 'empty') {
+			html += '- <span role="button" class="heirloomMod heirloomModEmpty" ';
+			if (modSelected && selectedIndex != x) html += opacity;
+			html += 'onclick="selectMod(' + x;
+			if (fromPopup) html += ', true';
+			html += ')">Empty</span><br/>';
+		} else {
+			var nextCost = getModUpgradeCost(heirloom, x, 1);
+			var icon2;
+			if (heirloom.type == 'Core') icon2 = allowed - spent >= nextCost ? '!' : '&bull;';
+			else icon2 = allowed - spent >= nextCost ? '!' : '&bull;';
+			html += icon2 + ' <span role="button" class="heirloomMod" ';
+			if (modSelected && selectedIndex != x) html += opacity;
+			html += 'onclick="selectMod(' + x;
+			if (fromPopup) html += ', true';
+			html += ')">' + prettify(scaleHeirloomModUniverse(heirloom.type, heirloom.mods[x][0], heirloom.mods[x][1])) + '% ' + game.heirlooms[heirloom.type][heirloom.mods[x][0]].name + (heirloom.mods[x][0] == 'voidMaps' && heirloom.rarity >= 10 ? '*' : '') + '</span><br/>';
+		}
+	}
+	if (heirloom.type == 'Shield' && heirloom.rarity >= 10) {
+		var innerHtml = prettify(scaleHeirloomModUniverse('Shield', 'gammaBurst', getHazardGammaBonus(heirloom))) + '% Gamma Burst (Innate)';
+		html += "<span data-set='FEED ME' data-og='" + innerHtml + "' onmouseover='htmlTextReplace(this, true)' onmouseout='htmlTextReplace(this,false)' role='button' class='heirloomMod innate'>";
+		html += innerHtml + '</span>';
+	}
+	if (heirloom.type == 'Staff' && heirloom.rarity >= 10) {
+		var innerHtml = prettify((getHazardParityMult(heirloom) - 1) * 100) + '% Parity (Innate)';
+		html += "<span data-set='FEED ME' data-og='" + innerHtml + "' onmouseover='htmlTextReplace(this, true)' onmouseout='htmlTextReplace(this,false)' role='button' class='heirloomMod innate'>";
+		html += innerHtml + '</span><span class="heirloomMod innate" style="font-size: 1vw">Gain a gathering bonus based on worker distribution equality</span>';
+	}
+	if (fromTooltip) return html;
+	if (usingScreenReader) {
+		document.getElementById('screenReaderTooltip').innerHTML = srText + '<br/><br/>Press 5 or shift 5 then B to view this Heirloom and its mods.';
+	}
+	if (fromPopup) {
+		document.getElementById('heirloomsPopupHere').innerHTML = html;
+		document.getElementById('heirloomsPopup').style.display = 'inline-block';
+		return;
+	}
+	if (fromSelect) html += "<span class='heirloomRenameTip'>Tip: You can click on this Heirloom's name or icon in this window to change them!</span>";
+	document.getElementById('selectedHeirloom').innerHTML = html;
+	if (heirloom.rarity == 8 && animated) document.getElementById('selectedHeirloomIcon').style.animationDelay = '-' + ((new Date().getTime() / 1000) % 30).toFixed(1) + 's';
+}
+
+function createHeirloom(zone, fromBones, spireCore, forceBest) {
+	var slots = game.heirlooms.slots;
+	var rarityNames = game.heirlooms.rarityNames;
+	//Determine Type
+	var seed = fromBones ? game.global.heirloomBoneSeed : game.global.heirloomSeed;
+	if (forceBest) seed = game.global.bestHeirloomSeed;
+	var type;
+	var rarity;
+	if (spireCore) {
+		type = 'Core';
+		rarity = Math.round((zone - 200) / 100);
+		if (rarity > 6) rarity = 6;
+		if (rarity < 0) rarity = 0;
+		game.stats.coresFound.value++;
+		seed = game.global.coreSeed;
+	} else {
+		type = getRandomIntSeeded(seed++, 0, 2) == 0 ? 'Shield' : 'Staff';
+		//Determine type rarity
+		rarity = getHeirloomRarity(zone, seed++, fromBones, forceBest);
+	}
+	//Sort through modifiers and build a list of eligible items. Check filters if applicable
+	var eligible = [];
+	for (var item in game.heirlooms[type]) {
+		var heirloom = game.heirlooms[type][item];
+		if (item == 'empty' && (rarity == 0 || rarity == 1)) continue;
+		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
+		if (heirloom.steps && heirloom.steps[rarity] === -1) continue;
+		eligible.push(item);
+	}
+
+	slots = slots[rarity];
+	var name = rarityNames[rarity] + ' ' + type;
+	//Heirloom configuration
+	//{name: "", type: "", rarity: #, mods: [[ModName, value, createdStepsFromCap, upgradesPurchased, seed]]}
+	var buildHeirloom = { id: game.stats.totalHeirlooms.valueTotal + game.stats.totalHeirlooms.value, nuMod: 1, name: name, type: type, repSeed: getRandomIntSeeded(seed++, 1, 10e6), rarity: rarity, mods: [] };
+	buildHeirloom.icon = type == 'Core' ? 'adjust' : type == 'Shield' ? '*shield3' : 'grain';
+	var x = 0;
+	if (!game.heirlooms.canReplaceMods[rarity]) {
+		x++;
+		buildHeirloom.mods.push(['empty', 0, 0, 0, getRandomIntSeeded(seed++, 0, 1000)]);
+	}
+	for (x; x < slots; x++) {
+		var roll = getRandomIntSeeded(seed++, 0, eligible.length);
+		var thisMod = eligible[roll];
+		eligible.splice(roll, 1);
+		var steps = typeof game.heirlooms[type][thisMod].steps !== 'undefined' ? game.heirlooms[type][thisMod].steps : game.heirlooms.defaultSteps;
+		steps = getRandomBySteps(steps[rarity], null, seed++);
+		buildHeirloom.mods.push([thisMod, steps[0], steps[1], 0, getRandomIntSeeded(seed++, 0, 1000)]);
+	}
+	seed += 6 - x * 2;
+	buildHeirloom.mods.sort(function (a, b) {
+		a = a[0].toLowerCase();
+		b = b[0].toLowerCase();
+		if (a == 'empty') return 1;
+		if (b == 'empty' || b > a) return -1;
+		return a > b;
+	});
+	if (game.global.challengeActive == 'Daily' && !fromBones) {
+		buildHeirloom.nuMod *= 1 + getDailyHeliumValue(countDailyWeight()) / 100;
+	}
+	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
+	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
+	game.global.heirloomsExtra.push(buildHeirloom);
+	if (game.options.menu.voidPopups.enabled != 2 || type == 'Core' || getHeirloomRarityRanges(zone, fromBones).length == rarity + 1) {
+		displaySelectedHeirloom(false, 0, false, 'heirloomsExtra', game.global.heirloomsExtra.length - 1, true);
+	}
+	if (game.stats.totalHeirlooms.value + game.stats.totalHeirlooms.valueTotal == 0) document.getElementById('heirloomBtnContainer').style.display = 'block';
+	game.stats.totalHeirlooms.value++;
+	checkAchieve('totalHeirlooms');
+	if (heirloomsShown) displayExtraHeirlooms();
+	if (spireCore) game.global.coreSeed = seed;
+	else if (fromBones) game.global.heirloomBoneSeed = seed;
+	else if (forceBest) game.global.bestHeirloomSeed = seed;
+	else game.global.heirloomSeed = seed;
+}
