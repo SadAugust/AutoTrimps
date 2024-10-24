@@ -5272,6 +5272,113 @@ function giveSingleAchieve(name) {
 	if (trimpAchievementsOpen) displayAchievements();
 }
 
+function mapsSwitch(updateOnly, fromRecycle) {
+	game.global.titimpLeft = 0;
+	updateGammaStacks(true);
+	updateTitimp();
+	if (game.global.challengeActive == 'Quagmire') game.challenges.Quagmire.drawStacks();
+	if (!updateOnly) {
+		//Coming out of maps or world (not necessarily to map chamber)
+		game.global.fighting = false;
+		game.global.switchToMaps = false;
+		game.global.switchToWorld = false;
+		game.global.voidBuff = '';
+		if (game.global.preMapsActive) {
+			game.global.mapsActive = false;
+			game.global.preMapsActive = false;
+		} else game.global.preMapsActive = true;
+	}
+	if (!updateOnly) game.global.mapExtraBonus = '';
+
+	let currentMapObj;
+	if (game.global.spireActive) handleExitSpireBtn();
+	handleFinishDailyBtn();
+	if (game.global.currentMapId !== '') currentMapObj = getCurrentMapObject();
+	var mapsBtnText = document.getElementById('mapsBtnText');
+	var recycleBtn = document.getElementById('recycleMapBtn');
+	recycleBtn.innerHTML = 'Recycle Map';
+	document.getElementById('mapsBtn').className = 'btn btn-warning fightBtn';
+	document.getElementById('togglemapAtZone2').style.display = game.global.canMapAtZone ? 'block' : 'none';
+	if (game.global.preMapsActive) {
+		//Switching to Map Chamber
+		refreshMaps();
+		game.global.mazBw = -1;
+		if (currentMapObj && (currentMapObj.location == 'Void' || currentMapObj.location == 'Darkness')) {
+			recycleMap(-1, true, true);
+			currentMapObj = false;
+		}
+		if (game.global.mapCounterGoal > 0) {
+			game.global.mapCounterGoal = 0;
+			toggleSetting('repeatUntil', null, false, true);
+		}
+		game.global.mapsActive = false;
+		setNonMapBox();
+		document.getElementById('battleHeadContainer').style.display = 'none';
+		document.getElementById('mapsCreateRow').style.display = 'block';
+		if (!fromRecycle) resetAdvMaps();
+		document.getElementById('grid').style.display = 'none';
+		document.getElementById('preMaps').style.display = 'block';
+		toggleMapGridHtml();
+		mapsBtnText.innerHTML = 'World';
+		if (game.global.lookingAtMap && !game.global.currentMapId) selectMap(game.global.lookingAtMap, true);
+		else if (game.global.currentMapId === '') {
+			clearMapDescription();
+		} else {
+			selectMap(game.global.currentMapId, true);
+			document.getElementById('selectMapBtn').innerHTML = 'Continue';
+			document.getElementById('selectMapBtn').style.visibility = 'visible';
+			recycleBtn.style.visibility = 'visible';
+			if (currentMapObj.noRecycle) recycleBtn.innerHTML = 'Abandon Map';
+		}
+	} else if (game.global.mapsActive) {
+		//Switching to maps
+		if (!updateOnly) resetEmpowerStacks();
+		if (game.global.formation != 4 && game.global.formation != 5) game.global.waitToScryMaps = true;
+		if (game.global.usingShriek) {
+			disableShriek();
+			game.global.useShriek = true;
+		}
+		if (currentMapObj.location == 'Void') {
+			currentMapObj.level = game.global.world;
+			document.getElementById('repeatVoidsContainer').style.display = 'block';
+		} else document.getElementById('repeatVoidsContainer').style.display = 'none';
+		if (currentMapObj.location == 'Darkness') {
+			currentMapObj.level = game.global.world;
+		}
+		if (currentMapObj.location == 'Bionic') {
+			document.getElementById('climbBwContainer').style.display = 'block';
+			toggleSetting('climbBw', null, false, true);
+		} else document.getElementById('climbBwContainer').style.display = 'none';
+		document.getElementById('mapsCreateRow').style.display = 'none';
+		document.getElementById('grid').style.display = 'none';
+		document.getElementById('preMaps').style.display = 'none';
+		u2Mutations.types.Nova.clearStacks();
+		u2Mutations.types.Rage.clearStacks();
+		toggleMapGridHtml(true, currentMapObj);
+	} else {
+		//Switching to world
+		if (!updateOnly) resetEmpowerStacks();
+		game.global.mazBw = -1;
+		if (game.global.mapCounterGoal > 0) {
+			game.global.mapCounterGoal = 0;
+			toggleSetting('repeatUntil', null, false, true);
+		}
+		if (game.global.formation != 4 && game.global.formation != 5) game.global.waitToScry = true;
+		if (game.global.lastClearedCell == 98 && game.global.useShriek && !game.global.usingShriek) activateShriek();
+		document.getElementById('battleHeadContainer').style.display = 'block';
+		document.getElementById('mapsCreateRow').style.display = 'none';
+		document.getElementById('grid').style.display = 'block';
+		document.getElementById('preMaps').style.display = 'none';
+		toggleMapGridHtml();
+		setNonMapBox();
+		if (game.global.novaMutStacks > 0) u2Mutations.types.Nova.drawStacks();
+	}
+
+	if (game.global.tutorialActive) tutorial.setWinSize();
+	if (game.global.challengeActive == 'Smithless') game.challenges.Smithless.drawStacks();
+	toggleVoidMaps(true);
+}
+
 function buildMapGrid(mapId) {
 	if (game.global.formation === 4 || game.global.formation === 5) game.global.canScryCache = true;
 	game.global.mapStarted = getGameTime();
