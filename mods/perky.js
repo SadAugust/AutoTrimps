@@ -921,7 +921,7 @@ atData.autoPerks = {
 		presetListHtml += `</select>`;
 
 		//Setting up preset dropdown
-		apGUI.$preset = document.createElement('select');
+		apGUI.$preset = document.createElement('span');
 		apGUI.$preset.id = 'preset';
 		apGUI.$preset.onchange = () => window[`fillPreset${calcName}`]();
 		apGUI.$preset.style.cssText = `text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
