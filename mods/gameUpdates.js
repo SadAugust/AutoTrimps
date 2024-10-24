@@ -6247,7 +6247,8 @@ function getBattleStatBd(what) {
 }
 
 /* still needs rewritten */
-function displaySelectedHeirloom(modSelected, selectedIndex, fromTooltip, locationOvr, indexOvr, fromPopup, fromSelect) {
+/* i broke this somehow. breaks auto allocate heirlooms T_T */
+/* function displaySelectedHeirloom(modSelected, selectedIndex, fromTooltip, locationOvr, indexOvr, fromPopup, fromSelect) {
 	if (fromPopup && !game.options.menu.voidPopups.enabled) return;
 
 	const heirloom = getSelectedHeirloom(locationOvr, indexOvr);
@@ -6336,7 +6337,7 @@ function displaySelectedHeirloom(modSelected, selectedIndex, fromTooltip, locati
 	if (heirloom.rarity === 8 && animated) {
 		document.getElementById('selectedHeirloomIcon').style.animationDelay = '-' + ((new Date().getTime() / 1000) % 30).toFixed(1) + 's';
 	}
-}
+} */
 
 function createHeirloom(zone, fromBones, spireCore, forceBest) {
 	const rarityNames = game.heirlooms.rarityNames;

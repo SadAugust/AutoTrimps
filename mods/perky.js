@@ -911,9 +911,13 @@ atData.autoPerks = {
 		//Setup preset list
 		let presetListHtml = `<select id="preset" onchange="fillPreset${calcName}()" data-saved>
    		<option disabled>— Zone Progression —</option>`;
-		for (let item in presets.regular) presetListHtml += `<option value="${item}" title="${presets.regular[item].description}">${presets.regular[item].name}</option>`;
+		for (let item in presets.regular) {
+			presetListHtml += `<option value="${item}" title="${presets.regular[item].description}">${presets.regular[item].name}</option>`;
+		}
 		presetListHtml += `<option disabled>— Special Purpose Presets —</option>`;
-		for (let item in presets.special) presetListHtml += `<option value="${item}" title="${presets.special[item].description}">${presets.special[item].name}</option>`;
+		for (let item in presets.special) {
+			presetListHtml += `<option value="${item}" title="${presets.special[item].description}">${presets.special[item].name}</option>`;
+		}
 		presetListHtml += `</select>`;
 
 		//Setting up preset dropdown
