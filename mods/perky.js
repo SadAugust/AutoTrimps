@@ -908,24 +908,33 @@ atData.autoPerks = {
 		apGUI.$presetLabel.innerHTML = '&nbsp;&nbsp;&nbsp;Preset:';
 		apGUI.$presetLabel.style.cssText = 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;';
 
-		//Setup preset list
-		let presetListHtml = `<select id="preset" onchange="fillPreset${calcName}()" data-saved>
-   		<option disabled>— Zone Progression —</option>`;
-		for (let item in presets.regular) {
-			presetListHtml += `<option value="${item}" title="${presets.regular[item].description}">${presets.regular[item].name}</option>`;
+		/* setup preset list */
+		function createOption(value, text, title, disabled = false) {
+			const option = document.createElement('option');
+			option.value = value;
+			option.textContent = text;
+			option.title = title;
+			option.disabled = disabled;
+			return option;
 		}
-		presetListHtml += `<option disabled>— Special Purpose Presets —</option>`;
-		for (let item in presets.special) {
-			presetListHtml += `<option value="${item}" title="${presets.special[item].description}">${presets.special[item].name}</option>`;
-		}
-		presetListHtml += `</select>`;
 
-		//Setting up preset dropdown
-		apGUI.$preset = document.createElement('span');
-		apGUI.$preset.id = 'preset';
-		apGUI.$preset.onchange = () => window[`fillPreset${calcName}`]();
-		apGUI.$preset.style.cssText = `text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
-		apGUI.$preset.innerHTML = presetListHtml;
+		function addSection(selectElement, sectionTitle, presets) {
+			selectElement.appendChild(createOption('', sectionTitle, '', true));
+
+			for (let item in presets) {
+				const preset = presets[item];
+				selectElement.appendChild(createOption(item, preset.name, preset.description));
+			}
+		}
+
+		const selectElement = document.createElement('select');
+		selectElement.id = 'preset';
+		selectElement.onchange = () => window[`fillPreset${calcName}`]();
+		selectElement.style.cssText = `text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+
+		addSection(selectElement, '— Zone Progression —', presets.regular);
+		addSection(selectElement, '— Special Purpose Presets —', presets.special);
+		apGUI.$preset = selectElement;
 
 		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
 		apGUI.$presetDiv.appendChild(apGUI.$preset);
