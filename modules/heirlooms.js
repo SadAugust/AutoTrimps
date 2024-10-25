@@ -95,7 +95,7 @@ function autoHeirlooms(portal) {
 
 	while (game.global.heirloomsCarried.length < maxHeirlooms && game.global.heirloomsExtra.length > 0) {
 		for (let x = 0; x < heirloomTypes.length; x++) {
-			if (game.global.heirloomsCarried.length < maxHeirlooms) break;
+			if (game.global.heirloomsCarried.length >= maxHeirlooms) break;
 			weights = worthOfHeirlooms();
 
 			if (weights && weights[heirloomTypes[x]].length > 0) {
