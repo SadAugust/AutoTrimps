@@ -487,7 +487,7 @@ function checkDGUpgrades() {
 function autoMagmiteSpender(portal) {
 	if (game.global.universe !== 1) return;
 
-	if (portalWindowOpen) calculateFuelZones(); // set fuel zones when portaling
+	if (portalWindowOpen || portal) calculateFuelZones(); /* set fuel zones when portaling */
 
 	const magmiteSetting = getPageSetting('magmiteSpending', 1);
 	if (portal && (magmiteSetting !== 1 || !portalWindowOpen)) return;

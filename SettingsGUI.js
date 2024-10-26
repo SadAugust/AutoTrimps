@@ -3999,7 +3999,17 @@ function initialiseAllSettings() {
 				description += "<p>This will override your input for <b>Zones To Fuel</b> if enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
+				
 			}, 'boolean', false, null, 'Magma', [1],
+			function () { return (getPageSetting('autoGen', atConfig.settingUniverse) && getPageSetting('magmiteAutoFuel', atConfig.settingUniverse) && game.stats.amalgamators.valueTotal > 0) });
+
+		createSetting('magmiteAutoFuelForceRun',
+			function () { return ('Force Automate Fuel Zones') },
+			function () {
+				let description = "<p>Run Automate Fuel Zones and set your fueling zones without needing to portal.</p>";
+				description += "<p>Uses your highest zone reached to determine the best fueling zones.</p>";
+				return description;
+			}, 'action', null, 'autoMagmiteSpender(true)', 'Magma', [1],
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse) && getPageSetting('magmiteAutoFuel', atConfig.settingUniverse) && game.stats.amalgamators.valueTotal > 0) });
 
 		createSetting('magmiteSpending',
@@ -4013,6 +4023,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Spend Magmite On Portal</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Magma', [1]);
+
 		createSetting('magmiteUpgradeRuns',
 			function () { return ('Runs for Upgrades') },
 			function () {
@@ -5213,7 +5224,7 @@ function _settingsToLineBreak() {
 	const breakAfterBuildings = ['autoGigaDeltaFactor'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
-	const breakAfterMagma = ['autoGenModeC2', 'magmiteMinimize'];
+	const breakAfterMagma = ['autoGenModeC2', 'magmiteAutoFuelForceRun'];
 	const breakAfterNature = ['autoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
 	const breakAfterDisplay = ['enableAFK', 'shieldGymMostEfficientDisplay'];
 	const breakAfterImportExport = ['mutatorPresets'];
