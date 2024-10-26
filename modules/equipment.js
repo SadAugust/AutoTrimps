@@ -67,9 +67,13 @@ atData.equipment = {
 };
 
 function _shouldSaveResource(resourceName) {
-	let upgrades = ['Bounty', 'Efficiency', 'Coordination', 'TrainTacular'];
+	const upgradeType = getPageSetting('upgradeType');
+
+	let upgrades = ['Bounty', 'Efficiency', 'TrainTacular'];
+	if (upgradeType !== 2) upgrades = upgrades.concat(['Coordination']);
 	upgrades = upgrades.concat(resourceName === 'metal' ? ['Speedminer', 'Megaminer', 'Blockmaster'] : ['Speedlumber', 'Megalumber', 'Potency']);
-	const shouldSave = !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'));
+
+	const shouldSave = !challengeActive('Scientist') && (game.global.autoUpgrades || upgradeType);
 	return shouldSave && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
 
@@ -360,10 +364,15 @@ function zoneGoCheck(setting = getPageSetting('equipZone'), farmType = 'attack',
 
 function autoEquip() {
 	if (!getPageSetting('equipOn')) return;
-	const { Miners, Efficiency, Coordination, TrainTacular } = game.upgrades;
 
-	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
-		if ([Efficiency, Coordination, TrainTacular].some((up) => shouldSaveForSpeedUpgrade(up))) return;
+	const upgradeType = getPageSetting('upgradeType');
+	if (!challengeActive('Scientist') && (game.global.autoUpgrades || upgradeType)) {
+		const upgradeList = ['Efficiency', 'TrainTacular'];
+		if (upgradeType !== 2) upgradeList.push('Coordination');
+
+		if (upgradeList.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]))) {
+			return;
+		}
 	}
 
 	if ([2, 3].includes(getCurrentQuest())) return;

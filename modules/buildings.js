@@ -384,10 +384,12 @@ function _buyGyms(buildingSettings) {
 	if (game.buildings.Gym.locked || !buildingSettings.Gym || !buildingSettings.Gym.enabled || needGymystic() || runningAncientTreasure()) return;
 	if (hdStats.shieldGymEff.mostEfficient !== 'Gym' && getPageSetting('equipOn')) return;
 
-	// Saves wood for Speed upgrades
-	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
+	/* saves wood for Speed upgrades */
+	const upgradeType = getPageSetting('upgradeType');
+	const upgrades = ['Efficiency', 'Speedlumber', 'Megalumber', 'Blockmaster', 'TrainTacular', 'Potency'];
+	if (upgradeType !== 2) upgrades.push('Coordination');
 	const saveWood = upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
-	if (saveWood && !challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) return;
+	if (saveWood && !challengeActive('Scientist') && (game.global.autoUpgrades || upgradeType)) return;
 
 	const gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
 	const purchased = game.buildings.Gym.purchased;
@@ -604,9 +606,11 @@ function _buySelectedHouse(houseName, buildingSettings) {
 	if (!houseName || isBuildingInQueue(houseName) || !canAffordBuilding(houseName, false, false, false, false, 1)) return false;
 
 	// Saves resources for upgrades
-	if (!challengeActive('Scientist') && (game.global.autoUpgrades || getPageSetting('upgradeType'))) {
+	const upgradeType = getPageSetting('upgradeType');
+	if (!challengeActive('Scientist') && (game.global.autoUpgrades || upgradeType)) {
 		const skipHouse = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort'].includes(houseName);
-		const upgrades = ['Bounty', 'Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Coordination', 'Blockmaster', 'TrainTacular', 'Potency'];
+		const upgrades = ['Bounty', 'Efficiency', 'Speedfarming', 'Speedlumber', 'Megafarming', 'Megalumber', 'Blockmaster', 'TrainTacular', 'Potency'];
+		if (upgradeType !== 2) upgrades.push('Coordination');
 
 		// Do not save Gems or Fragments TODO Don't save ie metal from Huts
 		if (skipHouse && upgrades.some((up) => _shouldSaveFromHouse(houseName, up) && shouldSaveForSpeedUpgrade(game.upgrades[up], 0.5, 0.5, 0.25, 0.75))) return;
