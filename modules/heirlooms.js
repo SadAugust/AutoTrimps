@@ -1,6 +1,7 @@
 function evaluateHeirloomMods(loom, location) {
 	const heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
 	const heirloomType = heirloomLocation.type;
+	const totalMods = heirloomLocation.mods.length;
 	const heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 	const rareToKeep = heirloomRarity.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`));
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
@@ -17,7 +18,7 @@ function evaluateHeirloomMods(loom, location) {
 	let targetMods = [];
 	let emptyMods = 0;
 
-	for (let x = 1; x < heirloomLocation.mods.length + 1; x++) {
+	for (let x = 1; x < totalMods + 1; x++) {
 		const modSetting = getPageSetting(varAffix + x);
 		if (modSetting !== 'Any') targetMods.push(modSetting);
 	}
@@ -36,11 +37,13 @@ function evaluateHeirloomMods(loom, location) {
 	}
 
 	const modTarget = heirloomType === 'Core' ? getPageSetting('heirloomAutoCoreModTarget') : getPageSetting('heirloomAutoModTarget');
-	const modGoal = Math.max(0, Math.min(modTarget, heirloomLocation.mods.length));
+	const modGoal = Math.max(0, Math.min(modTarget, totalMods));
 	const remainingMods = targetMods.length - emptyMods;
 
+	const modsLeft = totalMods - remainingMods;
+	if (modGoal > modsLeft) return 0;
 	if (remainingMods <= 0) return Infinity;
-	if (remainingMods >= heirloomLocation.mods.length - modGoal) return heirloomLocation.mods.length - remainingMods;
+	if (remainingMods >= totalMods - modGoal) return totalMods - remainingMods;
 
 	return 0;
 }
