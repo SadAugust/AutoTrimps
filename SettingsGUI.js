@@ -519,6 +519,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Manual Ratios</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>";
 				description += "<p>Automatically swaps the games default hiring setting <b>Not Firing For Jobs</b> to <b>Firing For Jobs</b>.</p>";
 				description += "<p>Map setting job ratios always override both <b>Auto Ratios</b> & <b>Manual Ratios</b> when AutoMaps is enabled.</p>";
+				description += "<p><br><i>Set to <b>Don't Buy Jobs</b> by holding <b>control</b> and clicking.</i></p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Jobs', [1, 2],
 			function () { return (false) });
@@ -4740,10 +4741,8 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			btnAttributes.class = 'select2';
 			parentAttributes.onmouseover = `tooltip("${name()}", "customText", event, "${description()}")`;
 			parentAttributes.onmouseout = 'tooltip("hide")';
-			parentAttributes.onchange = `settingChanged("${id}")`;
 		},
 		multitoggle: () => {
-			btnAttributes.onclick = `settingChanged("${id}")`;
 			btnAttributes.onmouseover = `tooltip("${name().join(' / ')}", "customText", event, "${description()}")`;
 			btnAttributes.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]['value']];
 		},
@@ -4788,6 +4787,16 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		const autoPortalSettingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
 		btnParent.appendChild(autoPortalSettings);
 		autoPortalSettings.appendChild(autoPortalSettingsButton);
+	}
+
+	if (type === 'multitoggle') {
+		btn.addEventListener('click', (event) => {
+			if (event.ctrlKey) {
+				_resetMultiToggleSetting(id);
+			} else {
+				settingChanged(id);
+			}
+		});
 	}
 }
 
@@ -5146,7 +5155,9 @@ function _setDisplayedSettings(item) {
 	};
 
 	if (item.type === 'multitoggle') {
-		setTooltip(elem, item.name().join(' / '), item.description());
+		let description = item.description();
+		if (item.id !== 'jobType' && item.name().length > 1) description += `<p><br><i>Set to<b> ${item.name()[0]}</b> by holding <b>control</b> and clicking.</i></p>`;
+		setTooltip(elem, item.name().join(' / '), description);
 	} else {
 		setTooltip(elem, item.name(), item.description());
 		setOnClick(elem, item);
@@ -5308,11 +5319,13 @@ function _createElement(type, attributes, children) {
 function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 	const settingInfo = autoTrimpSettings[id];
 	const initialStyle = timeWarp ? 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;' : '';
+
 	const initial = _createElement('DIV', {
 		style: initialStyle,
 		class: 'col-xs-3 lowPad',
 		id: `auto${label}${timeWarp}Parent`
 	});
+
 	const containerStyle = timeWarp ? 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;' : 'display: block; font-size: 0.9vw; border-color: #5D5D5D;';
 	const container = _createElement('DIV', {
 		style: containerStyle,
@@ -5320,6 +5333,7 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 		onmouseover: `tooltip("Toggle Auto${label}", "customText", event, ${tooltipText})`,
 		onmouseout: 'tooltip("hide")'
 	});
+
 	const text = _createElement(
 		'DIV',
 		{
@@ -5511,9 +5525,17 @@ function _createAutoJobsButton() {
 	document.getElementById('fireBtn').parentElement.style.width = '14.2%';
 	document.getElementById('fireBtn').parentElement.style.paddingRight = '2px';
 	document.getElementById('jobsTitleSpan').parentElement.style.width = '10%';
+
 	const jobButton = _createButton('jobType', 'Jobs', getPageSetting('jobType'), 'autoTrimpSettings.jobType.description()');
 	const jobColumn = document.getElementById('jobsTitleDiv').children[0];
 	jobColumn.insertBefore(jobButton, jobColumn.children[2]);
+
+	jobButton.addEventListener('click', (event) => {
+		if (event.ctrlKey) {
+			_resetMultiToggleSetting('jobType', game.global.universe);
+			_setAutoJobsClasses();
+		}
+	});
 }
 
 function _createAutoStructureButton() {
@@ -5699,4 +5721,14 @@ function _setAutoJobsClasses() {
 			elem.textContent = btnName;
 		}
 	});
+}
+
+function _resetMultiToggleSetting(id, universe = atConfig.settingUniverse) {
+	const elem = document.getElementById(id);
+
+	if (elem !== null) {
+		setPageSetting(id, 0, universe);
+		elem.textContent = autoTrimpSettings[id].name()[0];
+		elem.setAttribute('class', `toggleConfigBtn noselect settingsBtn settingBtn${0}`);
+	}
 }
