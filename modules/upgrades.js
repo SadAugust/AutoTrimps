@@ -60,7 +60,12 @@ function autoGiga(targetZone, metalRatio = 0.5, slowDown = 10, customBase) {
 }
 
 function firstGiga() {
-	//Build our first giga if: A) Has more than 2 Warps & B) Can't afford more Coords & C)* Lacking Health or Damage & D)* Has run at least 1 map stack or if forced to
+	/* build our first giga if: 
+		a) Has more than 2 Warps 
+		b) Can't afford more Coords 
+		c) Lacking Health or Damage 
+		d) Has run at least 1 map stack or if forced to
+	*/
 	const s = !(getPageSetting('autoGigaDeltaFactor') > 20);
 	const a = game.buildings.Warpstation.owned >= 2;
 	const b = !canAffordCoordinationTrimps() || game.global.spireActive || (game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination));
@@ -68,18 +73,17 @@ function firstGiga() {
 	const d = s || game.global.mapBonus >= 1;
 	if (!(a && b && c && d)) return false;
 
-	//Define Base and Delta for this run
+	/* define Base and Delta for this run */
 	const base = game.buildings.Warpstation.owned;
 	const deltaZ = getPageSetting('autoGigaTargetZone') >= 60 ? getPageSetting('autoGigaTargetZone') : undefined;
 	const deltaS = getPageSetting('autoGigaDeltaFactor') >= 1 ? getPageSetting('autoGigaDeltaFactor') : undefined;
-	const delta = autoGiga(deltaZ, 0.5, deltaS);
+	const delta = Math.max(autoGiga(deltaZ, 0.5, deltaS), 0.01);
 
 	const firstGiga = getPageSetting('firstGigastation');
 	const deltaGiga = getPageSetting('deltaGigastation');
 	if (firstGiga !== base) setPageSetting('firstGigastation', base);
 	if (deltaGiga !== delta) setPageSetting('deltaGigastation', delta);
 
-	//Log
 	if (firstGiga !== base || deltaGiga !== delta) {
 		debug(`Auto Gigastation: Setting pattern to ${base} + ${delta}`, 'buildings', '*rocket');
 	}

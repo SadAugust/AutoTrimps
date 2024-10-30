@@ -776,7 +776,7 @@ function initialiseAllSettings() {
 			function () { return (autoTrimpSettings.warpstation.enabled) }
 		);
 		createSetting('autoGigas',
-			function () { return ('Auto Gigas') },
+			function () { return ('Auto Gigastations') },
 			function () {
 				let description = "<p>If enabled, the script will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can\'t afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack.</p>";
 				description += "<p>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or " + _getChallenge2Info() + " zone, or Custom AutoGiga Zone.</p>";
@@ -809,6 +809,15 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.autoGigas.enabled) });
 
+		createSetting('autoGigaForceUpdate',
+			function () { return ('Update Auto Gigastations') },
+			function () {
+				let description = "<p>Run Auto Gigas and update your <b>First Gigastation</b> and <b>Delta Gigastation</b> settings without needing to portal.</p>";
+				description += "<p>Will only run if you have <b>two or more</b> Warpstations.</p>";
+				return description;
+			}, 'action', null, 'firstGiga()', 'Buildings', [1],
+			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.autoGigas.enabled) });
+			
 		createSetting('advancedNurseries',
 			function () { return ('Advanced Nurseries') },
 			function () {
@@ -5233,7 +5242,7 @@ function _settingsToLineBreak() {
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly', 'scryerDieZone'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
 	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
-	const breakAfterBuildings = ['autoGigaDeltaFactor'];
+	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterMagma = ['autoGenModeC2', 'magmiteAutoFuelForceRun'];
