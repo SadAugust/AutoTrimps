@@ -9,8 +9,11 @@ function gigaTargetZone() {
 	if (autoTrimpSettings.autoPortal.selected === 'Helium Per Hour') portalZone = trimpStats.isDaily ? getPageSetting('dailyDontPortalBefore', 1) : getPageSetting('heHrDontPortalBefore', 1);
 	else if (autoTrimpSettings.autoPortal.selected === 'Custom') portalZone = trimpStats.isDaily ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
 
-	if (!trimpStats.isC3) targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
-	else targetZone = Math.max(targetZone, c2zone - 1);
+	if (trimpStats.isC3) {
+		targetZone = Math.max(targetZone, c2zone - 1);
+	} else {
+		targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
+	}
 
 	if (trimpStats.isDaily && getPageSetting('autoGenModeDaily') !== 0) targetZone = Math.min(targetZone, 230);
 	if (trimpStats.isC3 && getPageSetting('autoGenModeC2') !== 0) targetZone = Math.min(targetZone, 230);
@@ -61,12 +64,12 @@ function autoGiga(targetZone, metalRatio = 0.5, slowDown = 10, customBase) {
 
 function firstGiga() {
 	/* build our first giga if: 
-		a) Has more than 2 Warps 
-		b) Can't afford more Coords 
-		c) Lacking Health or Damage 
-		d) Has run at least 1 map stack or if forced to
+		a) has 2 or more Warpstations 
+		b) can't afford more Coords 
+		c) lacking Health or Damage 
+		d) has run at least 1 map stack or if forced to
 	*/
-	const s = !(getPageSetting('autoGigaDeltaFactor') > 20);
+	const s = getPageSetting('autoGigaDeltaFactor') <= 20;
 	const a = game.buildings.Warpstation.owned >= 2;
 	const b = !canAffordCoordinationTrimps() || game.global.spireActive || (game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination));
 	const c = s || ['HD Farm', 'Hits Survived'].includes(mapSettings.mapName);
@@ -77,7 +80,7 @@ function firstGiga() {
 	const base = game.buildings.Warpstation.owned;
 	const deltaZ = getPageSetting('autoGigaTargetZone') >= 60 ? getPageSetting('autoGigaTargetZone') : undefined;
 	const deltaS = getPageSetting('autoGigaDeltaFactor') >= 1 ? getPageSetting('autoGigaDeltaFactor') : undefined;
-	const delta = Math.max(autoGiga(deltaZ, 0.5, deltaS), 0.01);
+	const delta = Math.min(Math.max(autoGiga(deltaZ, 0.5, deltaS), 0.01), 100);
 
 	const firstGiga = getPageSetting('firstGigastation');
 	const deltaGiga = getPageSetting('deltaGigastation');
