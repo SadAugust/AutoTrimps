@@ -888,7 +888,7 @@ function initialiseAllSettings() {
 				let description = "<p>The value you want weapon equipment to stop being purchased at.</p>";
 				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
 				description += `<p>If your <b>HD Ratio</b> is above your <b>AE: HD Cut-off</b> setting this cap is ignored and you will purchase as many attack equips as it takes to reach your target.</p>`;
-				description += "<p><b>Recommended:</b> 20/p>";
+				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
 			}, 'value', 20, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
@@ -4741,6 +4741,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			btnAttributes.class = 'select2';
 			parentAttributes.onmouseover = `tooltip("${name()}", "customText", event, "${description()}")`;
 			parentAttributes.onmouseout = 'tooltip("hide")';
+			parentAttributes.onchange = `settingChanged("${id}")`;
 		},
 		multitoggle: () => {
 			btnAttributes.onmouseover = `tooltip("${name().join(' / ')}", "customText", event, "${description()}")`;
