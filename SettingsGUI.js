@@ -4792,7 +4792,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 	if (type === 'multitoggle') {
 		btn.addEventListener('click', (event) => {
-			if (event.ctrlKey) {
+			if (event.ctrlKey || event.metaKey) {
 				_resetMultiToggleSetting(id);
 			} else {
 				settingChanged(id);
@@ -5532,7 +5532,7 @@ function _createAutoJobsButton() {
 	jobColumn.insertBefore(jobButton, jobColumn.children[2]);
 
 	jobButton.addEventListener('click', (event) => {
-		if (event.ctrlKey) {
+		if (event.ctrlKey || event.metaKey) {
 			_resetMultiToggleSetting('jobType', game.global.universe);
 			_setAutoJobsClasses();
 		}
