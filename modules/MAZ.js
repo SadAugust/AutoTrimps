@@ -1768,8 +1768,13 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 
 	/* prestige goal */
 	dropdown.prestigeGoal = "<option value='All'" + (vals.prestigeGoal === 'All' ? " selected='selected'" : '') + '>All</option>';
-	for (let item in Object.keys(atData.equipment)) {
-		let key = Object.keys(atData.equipment)[item];
+	let equips = ['Shield', 'Dagger', 'Boots', 'Mace', 'Helmet', 'Polearm', 'Pants', 'Battleaxe', 'Shoulderguards', 'Greatsword', 'Breastplate'];
+	if (game.global.slowDone) {
+		equips.push('Arbalest', 'Gambeson');
+	}
+
+	for (let item in equips) {
+		let key = equips[item];
 		if (!game.global.slowDone && (key === 'Arbalest' || key === 'Gambeson')) continue;
 		dropdown.prestigeGoal += "<option value='" + key + "'" + (vals.prestigeGoal === key ? " selected='selected'" : '') + '>' + key + '</option>';
 	}

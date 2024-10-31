@@ -316,7 +316,7 @@ function initialiseAllSettings() {
 		createSetting('presetSwapMutators',
 			function () { return ('Preset Swap Mutators') },
 			function () {
-				let description = "<p>Will automatically load the preset that corresponds to your run type after auto portaling.</p>";
+				let description = "<p>Will automatically load the preset that corresponds to your run type when Auto Portaling.</p>";
 				description += "<p>For info on which preset is loaded and when, mouseover the presets in the games <b>Mutators</b> window.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -1023,7 +1023,7 @@ function initialiseAllSettings() {
 		createSetting('equipPortal',
 			function () { return ('AE: Portal') },
 			function () {
-				let description = "<p>Will ensure Auto Equip is enabled after portalling.</p>";
+				let description = "<p>Will ensure Auto Equip is enabled after portaling.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Equipment', [1, 2]);
@@ -1055,9 +1055,9 @@ function initialiseAllSettings() {
 			function () { return (['Never Abandon', 'Always Abandon', 'Smart Abandon']) },
 			function () {
 				let description = "<p>Controls whether to force abandon trimps for mapping.</p>";
-				description += "<p><b>Never Abandon</b><br>Never abandon trimps.</p>";
-				description += "<p><b>Always Abandon</b><br>Always abandon trimps.</p>";
-				description += "<p><b>Smart Abandon</b><br>Abandon trimps when the next group of trimps is ready, or when (0 + overkill) cells away from cell 100.</p>";
+				description += "<p><b>Never Abandon</b><br>Never abandons trimps.</p>";
+				description += "<p><b>Always Abandon</b><br>Always abandons trimps.</p>";
+				description += "<p><b>Smart Abandon</b><br>Abandons trimps when the next group of trimps is ready, or when (0 + overkill) cells away from cell 100.</p>";
 				description += "<p><b>Recommended:</b> Smart Abandon</p>";
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1, 2]);
@@ -1075,8 +1075,8 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
 				description += "<p><b>Safety First</b><br>Disables this setting.</p>";
-				description += "<p><b>Ignore Void Strength</b><br>Will ignore crits from enemies in Void maps.</p>";
-				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily mods or void maps.</p>";
+				description += "<p><b>Ignore Void Strength</b><br>Will ignore the crit buff from enemies in Heinous Void maps.</p>";
+				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily modifiers or void maps.</p>";
 				description += "<p><b>Recommended:</b> Ignore Void Strength</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Combat', [1, 2],
@@ -1168,7 +1168,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Controls how the script handles interactions with the Equality perk.</p>";
 				description += "<p><b>Auto Equality Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Auto Equality: Basic</b><br>Sets equality to 0 on slow enemies, and autoscaling on for fast enemies.<br><b>If using this you must setup the scaling & reversing settings in the equality menu!</b></p>";
+				description += "<p><b>Auto Equality: Basic</b><br>Disables scaling and sets equality to 0 on slow enemies, otherwise scaling is enabled.<br><b>If using this you must setup the scaling & reversing settings in the equality menu!</b></p>";
 				description += "<p><b>Auto Equality: Advanced</b><br>Will disable equality scaling and use the equality stack slider to set your equality to the ideal amount to kill the current enemy in the least amount of hits necessary.</p>";
 				description += "<p><b>Recommended:</b> Auto Equality: Advanced</p>";
 				return description;
@@ -1472,11 +1472,10 @@ function initialiseAllSettings() {
 		createSetting('autoMaps',
 			function () { return (["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"]) },
 			function (noUnique) {
-				let description = "<p>Master switch for whether the script will do any form of mapping.</p>";
-				description += "<p><b>The mapping that is done is decided by how you setup any mapping related settings.</b><br></p>";
-				description += "<p><b>Auto Maps Off</b><br>Disables this setting.</p>";
+				let description = "<p>Master switch for whether the script will do any form of mapping. You will have to setup the mapping you would like to do but all the settings for it can be found in this tab.</p>";
+				description += "<p><b>Auto Maps Off</b><br>Disables mapping.</p>";
 				description += "<p><b>Auto Maps On</b><br>Enables mapping and will run all types of maps.</p>";
-				if (!noUnique) description += "<p><b>Auto Maps No Unique</b><br>The same as <b>Auto Maps On</b> but won't run unique maps such as <b>" + (atConfig.settingUniverse === 1 ? "The Block" : "Big Wall") + "</b> or <b>Dimension of " + (atConfig.settingUniverse === 1 ? "Anger" : "Rage") + "</b>.</p>";
+				if (!noUnique) description += "<p><b>Auto Maps No Unique</b><br>The same as <b>Auto Maps On</b> but won't run any unique maps such as <b>" + (atConfig.settingUniverse === 1 ? "The Block" : "Big Wall") + "</b> or <b>Dimension of " + (atConfig.settingUniverse === 1 ? "Anger" : "Rage") + "</b>.</p>";
 				description += "<p>Automatically adjusts the games repeat and exit to settings to ensure that you don't waste time in maps or time having to breed another army.</p>";
 				description += "<p><b>Recommended:</b> Auto Maps On</p>";
 				return description;
@@ -1485,7 +1484,7 @@ function initialiseAllSettings() {
 		createSetting('autoMapsPortal',
 			function () { return ('Auto Maps Portal') },
 			function () {
-				let description = "<p>Will ensure Auto Maps is enabled after portalling.</p>";
+				let description = "<p>Will ensure Auto Maps is enabled after portaling.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
@@ -1505,8 +1504,8 @@ function initialiseAllSettings() {
 			function () { return ('Perfect Maps') },
 			function () {
 				let description = "<p>When trying to map this will cause the script to create only perfect maps.</p>";
-				description += "<p><b>Be warned this may greatly decrease the map level that the script believes is efficient.</b></p>";
-				description += "<p><b>Recommended:</b> Off unless at end game</p>";
+				description += "<p><b>This may greatly decrease the map level that the script believes is efficient.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2],
 			function () { return (trimpStats.perfectMaps) });
@@ -1515,7 +1514,7 @@ function initialiseAllSettings() {
 			function () { return ('Recycle Pre-Explorers') },
 			function () {
 				let description = "<p>Will allow the script to abandon and recycle maps before Explorers have been unlocked.</p>";
-				description += "<p><b>Be warned this may cause issues with fragments in the early game or on select challenges.</b></p>";
+				description += "<p><b>This may cause issues with fragments in the early game or on select challenges.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
@@ -1545,8 +1544,8 @@ function initialiseAllSettings() {
 		createSetting('mapBonusHealth',
 			function () { return ('Map Bonus Health') },
 			function () {
-				let description = "<p>Map Bonus stacks will be obtained to this amount when your current <b>Hits Survived</b> is below the threshold set in the <b>Hits Survived</b> setting.</p>";
-				if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p>This is a very important setting to be used with <b>Advanced Nurseries</b> once you reach magma zones. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.</p>";
+				let description = "<p>Map Bonus stacks will be obtained to this amount when your current <b>Hits Survived</b> is below the value set in the <b>Hits Survived</b> setting.</p>";
+				if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p>This is a very important setting to be used with <b>Advanced Nurseries</b> once you reach magma zones. If you are running out of nurseries too soon, increase this value.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 10, null, 'Maps', [1, 2]);
@@ -1556,7 +1555,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>When using the standalone <b>Hits Survived</b> setting and you reach your <b>Map Cap</b> value this will restart farming if you're below 80% of the targetted value.</p>";
 				description += "<p>Will allow you to farm multiple times if enemies damage increase or your army gets weaker through challenge buffs or debuffs.</p>";
-				description += "<p>Enabling this setting makes the Map Cap input in the <b>HD Farm</b> setting almost irrelevant as it will continually restart the farm.</p>";
+				description += "<p>Enabling this setting makes the Map Cap input in the <b>HD Farm</b> setting irrelevant as it will continually restart your <b>Hits Survived</b> farm.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
@@ -1575,7 +1574,7 @@ function initialiseAllSettings() {
 		createSetting('mapBonusStacks',
 			function () { return ('Map Bonus Stacks') },
 			function () {
-				let description = "<p>Map Bonus stacks will be obtained to this amount when your current <b>World HD Ratio</b> is above the threshold set in the <b>Map Bonus Ratio</b> setting.</p>";
+				let description = "<p>Map Bonus stacks will be obtained to this value when your current <b>World HD Ratio</b> is above the value set in the <b>Map Bonus Ratio</b> setting.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 10, null, 'Maps', [1, 2]);
@@ -1584,7 +1583,7 @@ function initialiseAllSettings() {
 			function () { return ('Map Bonus Min Level') },
 			function () {
 				let description = "<p>When using the <b>Map Bonus Health</b>, <b>Map Bonus Stacks</b> and <b>Map Bonus</b> settings this will allow you to decide not to maps for map bonus stacks when the optimal map level is this many or more levels below your minimum map bonus level.</p>";
-				description += "<p>This is disabled when set to 0 or below OR you have no unbought prestiges and have prestiges available in the minimum map bonus level.</p>";
+				description += "<p>This is disabled when set to 0 or below <b>OR</b> you have no unbought prestiges and have prestiges available in the minimum map bonus level.</p>";
 				description += "<p><b>Recommended:</b> 2</p>";
 				return description;
 			}, 'value', 2, null, 'Maps', [1, 2]);
@@ -1612,7 +1611,7 @@ function initialiseAllSettings() {
 				let description = "<p>Acquire prestiges through the selected item (inclusive) as soon as they are available in maps.</p>";
 				description += "<p>Automatically swaps the games default setting from <b>Tier First</b> to <b>Equip First</b>.</p>";
 				description += "<p><b>Auto Maps must be enabled for this to run.</b></p>";
-				description += "<p><b>Before Explorers have been unlocked when this setting runs it will automatically set all map sliders except size to the minimum they can be and set the biome used to Random.</b></p>";
+				description += "<p><b>Before Explorers have been unlocked when this setting runs it will automatically set all map sliders except size to the minimum they can be and the biome used to Random.</b></p>";
 				description += "<p>This is important for speed climbing through world zones. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.</p>";
 				description += "<p><b>Recommended:</b> Dagadder</p>";
 				return description;
@@ -1666,7 +1665,7 @@ function initialiseAllSettings() {
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like Void Maps to be run.</p>";
+				let description = "<p>Here you can select how and when you would like <b>Void Maps</b> to be run.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -1676,7 +1675,7 @@ function initialiseAllSettings() {
 		createSetting('boneShrineSettings',
 			function () { return ('Bone Shrine Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like Bone Shrine charges to be used.</p>";
+				let description = "<p>Here you can select how and when you would like <b>Bone Shrine</b> charges to be used.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -1686,7 +1685,7 @@ function initialiseAllSettings() {
 		createSetting('worshipperFarmSettings',
 			function () { return ('Worshipper Farm Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like Worshippers to be farmed.</p>";
+				let description = "<p>Here you can select how and when you would like <b>Worshippers</b> to be farmed.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -1696,7 +1695,7 @@ function initialiseAllSettings() {
 		createSetting('uniqueMapSettingsArray',
 			function () { return ('Unique Map Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like Unique Maps to be run.</p>";
+				let description = "<p>Here you can select how and when you would like <b>Unique Maps</b> to be run.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -5650,6 +5649,12 @@ function _createAdditionalInfoTextbox() {
 
 	const trimpsButtonCol = document.getElementById('trimps');
 	trimpsButtonCol.appendChild(additionalInfoContainer);
+
+	trimpsButtonCol.addEventListener('click', (event) => {
+		if (event.ctrlKey || event.metaKey) {
+			importExportTooltip('display');
+		}
+	});
 }
 
 function _createAutoJobsButton() {

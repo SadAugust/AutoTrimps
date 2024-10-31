@@ -266,6 +266,7 @@ function makeAdditionalInfoTooltip_Standalone(mouseover) {
 	const remainingTime = Math.ceil(10 - (hdStats.counter % 10)) || 10;
 	tooltipText += `<p>The data shown is updated every 10 seconds. <b>${remainingTime}s</b> until the next update.</p>`;
 	tooltipText += `<p>Click this button while in the map chamber to either select your already purchased map or automatically set the inputs to the desired values.</p>`;
+	tooltipText += `<p>Control click this button to display a table of the calculators simulation results.</p>`;
 
 	if (mouseover) {
 		tooltipText += "')";
@@ -283,7 +284,13 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		autoLevelContainer.setAttribute('class', 'workBtn pointer noSelect');
 		const autoLevelText = document.createElement('SPAN');
 		autoLevelContainer.addEventListener('mouseover', () => makeAdditionalInfoTooltip_Standalone(true));
-		autoLevelContainer.addEventListener('click', farmCalcSetMapSliders);
+		autoLevelContainer.addEventListener('click', (event) => {
+			if (event.ctrlKey || event.metaKey) {
+				importExportTooltip('display');
+			} else {
+				farmCalcSetMapSliders();
+			}
+		});
 		autoLevelContainer.setAttribute('onmouseout', 'tooltip("hide")');
 		autoLevelText.id = 'additionalInfo';
 		autoLevelContainer.appendChild(autoLevelText);

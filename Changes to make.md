@@ -1,5 +1,28 @@
 # General
 
+-   Improve setting tooltips
+    -   Tabs Completed
+        -   Core - Still need to do Auto Portal sub settings
+        -   Buildings
+        -   Combat (done U2)
+        -   Maps
+    -   Tabs Left
+        -   Jobs
+        -   Equipment
+        -   Challenges
+        -   C2
+        -   Daily
+        -   Heirloom
+        -   Spire
+        -   Magma
+        -   Nature
+        -   Time Warp
+        -   Display
+        -   Import Export
+        -   Help
+        -   Test
+        -   Beta
+
 # Mapping
 
 # Challenges

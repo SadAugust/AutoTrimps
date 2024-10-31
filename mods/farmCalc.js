@@ -2,6 +2,17 @@
 if (typeof atData === 'undefined') {
 	atData = {};
 }
+if (typeof _displaySpireImport !== 'function') function _displaySpireImport() {}
+if (typeof _getChallenge2Info !== 'function') function _getChallenge2Info() {}
+if (typeof importExportTooltip !== 'function') function importExportTooltip() {}
+if (typeof mapSettingsDisplay !== 'function') function mapSettingsDisplay() {}
+if (typeof autoStructureDisplay !== 'function') function autoStructureDisplay() {}
+if (typeof autoJobsDisplay !== 'function') function autoJobsDisplay() {}
+if (typeof uniqueMapsDisplay !== 'function') function uniqueMapsDisplay() {}
+if (typeof messageDisplay !== 'function') function messageDisplay() {}
+if (typeof dailyPortalModsDisplay !== 'function') function dailyPortalModsDisplay() {}
+if (typeof c2RunnerDisplay !== 'function') function c2RunnerDisplay() {}
+if (typeof hideAutomationDisplay !== 'function') function hideAutomationDisplay() {}
 
 function masteryPurchased(name) {
 	if (!game.talents[name]) throw `unknown mastery: ${name}`;
@@ -511,8 +522,6 @@ function stats(lootFunction = lootDefault) {
 					continue;
 				}
 
-				/* this is sometimes causing issues where the value results are super low but still break out of the loop 
-				need to come up with a better solution than currentBest being above 1. Will need more saves to test with */
 				const currentBest = get_best([stats, saveData.stances], true);
 				if (tmp.value < 0.6 * currentBest.loot.value) {
 					break;
@@ -1084,7 +1093,7 @@ function simulate(saveData, zone) {
 
 //Return info about the best zone for each stance
 function get_best(results, fragmentCheck, mapModifiers) {
-	const best = { loot: { mapLevel: 0 }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 }, lootRatio: 0, speedRatio: 0 };
+	const best = { loot: { mapLevel: 0 }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 } };
 	if (!game.global.mapsUnlocked) return best;
 
 	let [stats, stances] = results;
@@ -1127,6 +1136,7 @@ function get_best(results, fragmentCheck, mapModifiers) {
 
 			return 0;
 		});
+		best.loot[stance] = statsLoot[0].zone;
 
 		statsSpeed.sort((a, b) => {
 			if (a[stance] && b[stance]) {
@@ -1135,12 +1145,14 @@ function get_best(results, fragmentCheck, mapModifiers) {
 
 			return 0;
 		});
+		best.speed[stance] = statsSpeed[0].zone;
 	}
 
 	function getBestStats(stats, type) {
 		const bestMapData = stats[0];
 
 		const bestStats = {
+			...best[type],
 			mapLevel: bestMapData.mapLevel,
 			zone: bestMapData.zone,
 			value: bestMapData[bestMapData.stance].value,
@@ -1167,6 +1179,8 @@ function get_best(results, fragmentCheck, mapModifiers) {
 			if (game.global.universe === 2) bestStats[`${type}Second`].equality = backupMapData.equality;
 
 			bestStats.ratio = bestMapData.value / backupMapData.value;
+		} else {
+			bestStats.ratio = 100;
 		}
 
 		return bestStats;
@@ -1305,7 +1319,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
 		if (typeof localVersion !== 'undefined') basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/';
 		const mods = ['farmCalcStandalone'];
-		const modules = ['breedtimer', 'calc'];
+		const modules = ['breedtimer', 'calc', 'import-export'];
 
 		const linkStylesheet = document.createElement('link');
 		linkStylesheet.rel = 'stylesheet';

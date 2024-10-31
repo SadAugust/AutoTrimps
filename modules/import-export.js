@@ -20,7 +20,8 @@ function importExportTooltip(event, titleText) {
 		setCustomChallenge: _displaySetCustomChallenge,
 		timeWarp: _displayTimeWarp,
 		resetPerkPreset: _displayResetPerkPreset,
-		hideAutomation: hideAutomationDisplay
+		hideAutomation: hideAutomationDisplay,
+		display: _displayFarmCalcTable
 	};
 
 	const titleTexts = {
@@ -43,7 +44,8 @@ function importExportTooltip(event, titleText) {
 		setCustomChallenge: 'Set Custom Challenge',
 		timeWarp: 'Time Warp Hours',
 		resetPerkPreset: 'Reset Perk Preset Weights',
-		hideAutomation: 'Hide Automation Buttons'
+		hideAutomation: 'Hide Automation Buttons',
+		display: 'Farm Calc Table'
 	};
 
 	cancelTooltip();
@@ -358,7 +360,7 @@ function _displayC2Table(tooltipDiv) {
 	};
 
 	let tooltipText = createTable(challengeList);
-	if (challengeList.C3) tooltipText = `<div class='litScroll'>${tooltipText}`;
+	if (challengeList.C3) tooltipText = `<div class='litScroll'>${tooltipText}</div>`;
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
 
@@ -673,6 +675,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 	const remainingTime = Math.ceil(refreshTimer - ((atConfig.intervals.counter / 10) % refreshTimer)) || refreshTimer;
 	tooltipText += `<p>The data shown is updated every ${refreshTimer} seconds. <b>${remainingTime}s</b> until the next update.</p>`;
 	tooltipText += `<p>Click this button while in the map chamber to either select your already purchased map or automatically set the inputs to the desired values.</p>`;
+	tooltipText += `<p>Control click this button to display a table of the calculators simulation results.</p>`;
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		tooltipText += `<p><b>Breed Timer (B)</b><br>`;
@@ -1116,6 +1119,111 @@ function _displayDonate(tooltipDiv) {
 	let costText = "<div class='maxCenter'>";
 	costText += "<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Confirm</div>";
 	costText += '</div>';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function _displayFarmCalcTable(tooltipDiv) {
+	const results = stats();
+	const [mapData, stances] = results;
+	const best = get_best(results);
+
+	let show_stance = game.global.world >= 60;
+	let tooltipText = '';
+
+	if (show_stance && stances.length > 1) {
+		tooltipText += '<tr><th colspan=2 style="text-align:center; border: 1px solid black;"></th>';
+		for (const stance of stances) {
+			tooltipText += `<th colspan=2 style="text-align:center; border: 1px solid black;">${stance}</th>`;
+		}
+		tooltipText += '</tr>';
+	}
+
+	tooltipText += '<tr><th style="text-align:center; border: 1px solid black;">Level</th><th style="text-align:center; border: 1px solid black;">Base loot</th>';
+	for (const _ of stances) {
+		tooltipText += '<th style="text-align:center; border: 1px solid black;">Cells/s</th><th style="text-align:center; border: 1px solid black;">Total</th>';
+	}
+	if (game.global.universe === 2) {
+		tooltipText += '<th style="text-align:center; border: 1px solid black;">Equality</th>';
+	}
+	tooltipText += '</tr>';
+
+	for (let zone_stats of mapData) {
+		const zone = zone_stats.zone;
+		tooltipText += '</tr><tr><td class=align-right>';
+
+		if (game.global.universe === 1) {
+			for (let stance of stances) {
+				if (zone === best.loot[stance] && show_stance) {
+					tooltipText += `<b style="text-align:right;">${stance}</b> `;
+				}
+			}
+		}
+
+		tooltipText += zone === best.loot.zone ? `<b style="text-align:right;">${zone}</b>` : `<span style="text-align:right;">${zone}</span>`;
+		tooltipText += '<td>' + prettify(zone_stats.loot) + '%';
+
+		for (let stance of stances) {
+			let value = prettify(zone_stats[stance].value);
+			tooltipText += '<td>' + zone_stats[stance].killSpeed.toFixed(3).replace(/\.?0+$/, '') + '<td>';
+			tooltipText += zone === best.loot[stance] ? `<b style="text-align:right;">${value}</b>` : `<span style="text-align:right;">${value}</span>`;
+		}
+
+		if (game.global.universe === 2) {
+			const equality = zone_stats.equality;
+			tooltipText += '<td>' + equality;
+		}
+	}
+
+	tooltipText += '</tr>';
+
+	if (show_stance) {
+		if (game.global.universe === 1) {
+			best.loot.zone += ' in ' + best.loot.stance;
+			if (best.loot.lootSecond) best.loot.lootSecond.zone += ' in ' + best.loot.lootSecond.stance;
+		} else if (game.global.universe === 2) {
+			best.loot.zone += ` with ${best.loot.equality} equality`;
+			if (best.loot.lootSecond) best.loot.lootSecond.zone += ` with ${best.loot.lootSecond.equality} equality`;
+		}
+	}
+
+	const percentage = (best.loot.ratio - 1) * 100;
+	const adverbValue = Math.max(Math.min(Math.floor(percentage / 2), 4), 0);
+	const adverbs = ['', 'probably', '', 'really', 'definitely'];
+
+	let bestFarm = `You should ${adverbs[[adverbValue]]} farm on <b>${best.loot.zone}</b>`;
+
+	if (mapData.length > 1) {
+		if (percentage < 2) bestFarm += ` or <b>${best.loot.lootSecond.zone}</b>.`;
+		bestFarm += ' ';
+		bestFarm += percentage < 2 ? `They’re equally efficient.` : percentage < 4 ? `But <b>${best.loot.lootSecond.zone}</b> is almost as good.` : `It’s <b>${percentage.toFixed(1)}%</b> more efficient than <b>${best.loot.lootSecond.zone}</b>.`;
+	} else {
+		bestFarm += '.';
+	}
+
+	if (game.global.spireActive) bestFarm += '<br>Good luck with the Spire!';
+
+	const extraNote = 'Note: the displayed loot values don’t account for looting perks and staffs. As such, your actual loot will be much higher. However, these factors affect all maps in the same way, and don’t affect the choice of map.';
+
+	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
+
+	const ondisplay = function () {
+		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip();
+		else verticalCenterTooltip();
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	let initialText = `${bestFarm}<br>`;
+	let endText = `<br>${extraNote}`;
+	let tableContent = `<table class='bdTableSm table table-striped'>${tooltipText}</table>`;
+
+	if (mapData.length > 19) {
+		tooltipText = `${initialText}<div class='litScroll'>${tableContent}</div>${endText}`;
+	} else {
+		tooltipText = `${initialText}${tableContent}${endText}`;
+	}
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }

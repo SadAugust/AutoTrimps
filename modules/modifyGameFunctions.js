@@ -77,7 +77,7 @@ if (typeof game.options.menu.pauseGame.originalOnToggle !== 'function') {
 if (typeof originalstartFight !== 'function') {
 	var originalstartFight = startFight;
 	startFight = function () {
-		if (!game.global.fighting && MODULES.heirlooms.breedHeirloom) {
+		if (!game.global.fighting && MODULES && MODULES.heirlooms && MODULES.heirlooms.breedHeirloom) {
 			heirloomSwapping(true);
 		}
 		originalstartFight(...arguments);
