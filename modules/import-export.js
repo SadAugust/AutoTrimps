@@ -1139,34 +1139,52 @@ function _displayFarmCalcTable(tooltipDiv) {
 		tooltipText += '</tr>';
 	}
 
-	tooltipText += '<tr><th style="text-align:center; border: 1px solid black;">Level</th><th style="text-align:center; border: 1px solid black;">Base loot</th>';
+	tooltipText += '<tr>';
+	tooltipText += '<th style="text-align:center; border: 1px solid black;">Level</th>';
+	tooltipText += '<th style="text-align:center; border: 1px solid black;">Base loot</th>';
+
 	for (const _ of stances) {
-		tooltipText += '<th style="text-align:center; border: 1px solid black;">Cells/s</th><th style="text-align:center; border: 1px solid black;">Total</th>';
+		tooltipText += `<th style="text-align:center; border: 1px solid black;">Cells/s</th>`;
+		tooltipText += `<th style="text-align:center; border: 1px solid black;">Total</th>`;
 	}
+
 	if (game.global.universe === 2) {
 		tooltipText += '<th style="text-align:center; border: 1px solid black;">Equality</th>';
 	}
+
 	tooltipText += '</tr>';
 
 	for (let zone_stats of mapData) {
 		const zone = zone_stats.zone;
-		tooltipText += '</tr><tr><td class=align-right>';
+		let stance_data = '';
+		tooltipText += '</tr><tr>';
 
-		if (game.global.universe === 1) {
-			for (let stance of stances) {
-				if (zone === best.loot[stance] && show_stance) {
-					tooltipText += `<b style="text-align:right;">${stance}</b> `;
-				}
+		for (let stance of stances) {
+			if (zone === best.loot[stance] && show_stance) {
+				stance_data += `<b>${stance}</b> `;
 			}
 		}
 
-		tooltipText += zone === best.loot.zone ? `<b style="text-align:right;">${zone}</b>` : `<span style="text-align:right;">${zone}</span>`;
+		if (stance_data !== '') {
+			tooltipText += `<th style="text-align:right; border: 1px solid black;">`;
+			tooltipText += `${stance_data}`;
+		} else {
+			tooltipText += `<th style="text-align:center; border: 1px solid black;">`;
+		}
+
+		tooltipText += zone === best.loot.zone ? `<b>${zone}</b>` : `${zone}`;
+		tooltipText += `</th>`;
+
 		tooltipText += '<td>' + prettify(zone_stats.loot) + '%';
 
 		for (let stance of stances) {
-			let value = prettify(zone_stats[stance].value);
-			tooltipText += '<td>' + zone_stats[stance].killSpeed.toFixed(3).replace(/\.?0+$/, '') + '<td>';
-			tooltipText += zone === best.loot[stance] ? `<b style="text-align:right;">${value}</b>` : `<span style="text-align:right;">${value}</span>`;
+			if (!zone_stats[stance]) {
+				tooltipText += '<td><td>';
+			} else {
+				let value = prettify(zone_stats[stance].value);
+				tooltipText += '<td>' + zone_stats[stance].killSpeed.toFixed(3).replace(/\.?0+$/, '') + '<td>';
+				tooltipText += zone === best.loot[stance] ? `<b>${value}</b>` : `${value}`;
+			}
 		}
 
 		if (game.global.universe === 2) {
