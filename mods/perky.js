@@ -143,6 +143,7 @@ function initPresetPerky() {
 		heliumWeight: +$$('#weight-he').value,
 		attackWeight: +$$('#weight-atk').value,
 		healthWeight: +$$('#weight-hp').value,
+		trimpsWeight: +$$('#weight-trimps').value,
 		xpWeight: +$$('#weight-xp').value,
 		...presets,
 		lockedPerks: settingInputs.lockedPerks || undefined
@@ -181,7 +182,7 @@ function fillPresetPerky(specificPreset, forceDefault) {
 	const preset = $$('#preset').value;
 	const weights = localData[preset] === null || localData[preset] === undefined || forceDefault ? defaultWeights[preset] : localData[preset];
 
-	const ids = ['weight-he', 'weight-atk', 'weight-hp', 'weight-xp'];
+	const ids = ['weight-he', 'weight-atk', 'weight-hp', 'weight-trimps', 'weight-xp'];
 	ids.forEach((id, index) => {
 		document.querySelector(`#${id}`).value = +weights[index];
 	});
@@ -203,7 +204,7 @@ function savePerkySettings() {
 		for (let item of presetNames) {
 			const value = item.value;
 			if (value.includes('— ')) continue;
-			if (settingInputs.preset === value) settingInputs[value] = [settingInputs['weight-he'], settingInputs['weight-atk'], settingInputs['weight-hp'], settingInputs['weight-xp']];
+			if (settingInputs.preset === value) settingInputs[value] = [settingInputs['weight-he'], settingInputs['weight-atk'], settingInputs['weight-hp'], settingInputs['weight-trimps'], settingInputs['weight-xp']];
 			else settingInputs[value] = saveData[value];
 		}
 	}
@@ -292,8 +293,8 @@ function populatePerkyData() {
 			helium: +$$('#weight-he').value,
 			attack: +$$('#weight-atk').value,
 			health: +$$('#weight-hp').value,
+			trimps: +$$('#weight-trimps').value,
 			xp: +$$('#weight-xp').value,
-			trimps: 0,
 			income: 0
 		},
 		fluffy: {
@@ -1112,6 +1113,13 @@ atData.autoPerks = {
 				minValue: 1,
 				maxValue: null,
 				defaultValue: game.global.highestLevelCleared || 1
+			},
+			'weight-trimps': {
+				name: 'Weight: Population',
+				description: 'How much you value +1% population.<br><b>WARNING</b>: the effects of population on attack/health are already counted.',
+				minValue: 1,
+				maxValue: null,
+				defaultValue: 0
 			},
 			'weight-xp': {
 				name: 'Weight: Fluffy',

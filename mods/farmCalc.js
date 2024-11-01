@@ -403,7 +403,7 @@ function populateFarmCalcData() {
 	const miscCombatStats = {
 		fluctuation: basicData.universe === 2 ? 0.5 : 0.2,
 		range: maxFluct / minFluct - 1,
-		critChance: critChance / 100,
+		critChance: critChance,
 		critDamage,
 		stances,
 		ok_spread: overkillRange,
@@ -522,12 +522,12 @@ function stats(lootFunction = lootDefault) {
 					continue;
 				}
 
-				const currentBest = get_best([stats, saveData.stances], true);
-				if (tmp.value < 0.6 * currentBest.loot.value) {
+				if (stats.length >= maxMaps) {
 					break;
 				}
 
-				if (stats.length >= maxMaps) {
+				const currentBest = get_best([stats, saveData.stances], true);
+				if (tmp.value < 0.6 * currentBest.loot.value) {
 					break;
 				}
 
@@ -604,12 +604,16 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 
 		let enemyAttack = enemyStats.attack * (1 + saveData.fluctuation) * enemyEqualityModifier;
 		enemyAttack -= saveData.universe === 2 ? saveData.trimpShield : saveData.block;
-		if (enemyAttack > saveData.health) continue;
+		if (enemyAttack > saveData.health) {
+			continue;
+		}
 
-		const trimpAttack = saveData.atk * saveData.gammaMult * trimpEqualityModifier;
-		if (enemyStats.health > trimpAttack * 10) continue;
+		const trimpAttack = saveData.atk * saveData.gammaMult * trimpEqualityModifier * saveData.critDamage;
+		if (enemyStats.health > trimpAttack * 10) {
+			continue;
+		}
 
-		const { speed, equality, killSpeed } = simulate(saveData, zone);
+		const { speed, equality, killSpeed } = simulate(saveData, zone, stance);
 		const value = speed * loot * lootMultiplier;
 
 		result[stance] = {
@@ -623,9 +627,6 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 			result.equality = equality;
 			result.stance = stance;
 			result.value = value;
-		}
-
-		if (killSpeed > result.killSpeed) {
 			result.killSpeed = killSpeed;
 			result.stanceSpeed = stance;
 		}
@@ -671,7 +672,7 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 }
 
 //Simulate farming at the given zone for a fixed time, and return the number cells cleared.
-function simulate(saveData, zone) {
+function simulate(saveData, zone, stance) {
 	const { maxTicks, universe, mapGrid, biome, block, equality, size, specialData, lootMult, magma, checkFrenzy } = saveData;
 
 	let cell = 0;
@@ -927,7 +928,7 @@ function simulate(saveData, zone) {
 				enemyHealth -= trimpAttack + poison * saveData.poison;
 				if (saveData.poison) poison += trimpAttack * (saveData.uberNature === 'Poison' ? 2 : 1) * saveData.natureIncrease;
 				if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += trimpAttack * saveData.plaguebringer;
-				if (enemyHealth > 0) _glassNotOneShot();
+				if (enemyHealth > 0 && saveData.glass) _glassNotOneShot();
 				pbTurns++;
 
 				if (checkFrenzy && (frenzyLeft < 0 || (frenzyRefresh && frenzyLeft < saveData.frenzyDuration / 2))) {
@@ -982,7 +983,9 @@ function simulate(saveData, zone) {
 
 			/* safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage */
 			if (enemyHealth < 0) ok_spread = saveData.ok_spread;
-			if (turns >= 1000) ticks = Infinity;
+			if (turns >= 1000) {
+				ticks = Infinity;
+			}
 			if (titimp > 0) titimp -= saveData.titimpReduction;
 			frenzyLeft -= saveData.speed / 10;
 		}
@@ -1077,7 +1080,7 @@ function simulate(saveData, zone) {
 		}
 	}
 
-	if (mapClears === 0) {
+	if (mapClears === 0 || ticks === Infinity) {
 		loot = 0;
 		kills = 0;
 	}
@@ -1150,14 +1153,14 @@ function get_best(results, fragmentCheck, mapModifiers) {
 
 	function getBestStats(stats, type) {
 		const bestMapData = stats[0];
-
+		const stanceData = bestMapData[bestMapData.stance];
 		const bestStats = {
 			...best[type],
 			mapLevel: bestMapData.mapLevel,
 			zone: bestMapData.zone,
-			value: bestMapData[bestMapData.stance].value,
-			speed: bestMapData[bestMapData.stance].speed,
-			killSpeed: bestMapData[bestMapData.stance].killSpeed,
+			value: stanceData.value,
+			speed: stanceData.speed,
+			killSpeed: stanceData.killSpeed,
 			stance: bestMapData.stance,
 			mapConfig: bestMapData.mapConfig
 		};
@@ -1166,12 +1169,13 @@ function get_best(results, fragmentCheck, mapModifiers) {
 
 		const backupMapData = stats[1];
 		if (backupMapData) {
+			const stanceData = backupMapData[backupMapData.stance];
 			bestStats[`${type}Second`] = {
 				mapLevel: backupMapData.mapLevel,
 				zone: backupMapData.zone,
-				value: backupMapData[backupMapData.stance].value,
-				speed: backupMapData[backupMapData.stance].speed,
-				killSpeed: backupMapData[backupMapData.stance].killSpeed,
+				value: stanceData.value,
+				speed: stanceData.speed,
+				killSpeed: stanceData.killSpeed,
 				mapConfig: bestMapData.mapConfig
 			};
 

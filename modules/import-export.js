@@ -1178,11 +1178,12 @@ function _displayFarmCalcTable(tooltipDiv) {
 		tooltipText += '<td>' + prettify(zone_stats.loot) + '%';
 
 		for (let stance of stances) {
-			if (!zone_stats[stance]) {
+			const stanceData = zone_stats[stance];
+			if (!stanceData || stanceData.value < 1) {
 				tooltipText += '<td><td>';
 			} else {
-				let value = prettify(zone_stats[stance].value);
-				tooltipText += '<td>' + zone_stats[stance].killSpeed.toFixed(3).replace(/\.?0+$/, '') + '<td>';
+				let value = prettify(stanceData.value);
+				tooltipText += '<td>' + stanceData.killSpeed.toFixed(3).replace(/\.?0+$/, '') + '<td>';
 				tooltipText += zone === best.loot[stance] ? `<b>${value}</b>` : `${value}`;
 			}
 		}
