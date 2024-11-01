@@ -842,7 +842,6 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	}
 
 	if (forceRatio && (mostAfford <= 0 || isNaN(mostAfford))) return 0;
-	if (isBuilding && mostAfford > 1000000000) return 1000000000;
 	if (mostAfford <= 0) return 1;
 	if (forceMax !== false && mostAfford > forceMax) return forceMax;
 	if (isJob && itemObj.max && itemObj.owned + mostAfford > itemObj.max) return itemObj.max - itemObj.owned;
