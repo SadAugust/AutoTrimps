@@ -751,7 +751,8 @@ function simulate(saveData, zone, stance) {
 			if (duelPoints < 50) enemyAttack *= 3;
 		}
 
-		if (rngRoll < enemyCC) {
+		rngCrit = enemyCC < 0.25 ? rng() : rngRoll;
+		if (rngCrit < enemyCC) {
 			enemyAttack *= saveData.enemy_cd;
 			enemyCrit = true;
 			enemyCrits++;
@@ -855,9 +856,11 @@ function simulate(saveData, zone, stance) {
 	let plague_damage = 0;
 	let trimpOverkill = 0;
 	let mapClears = 0;
+	let rngCrit = rng();
 
 	while (ticks < maxTicks) {
 		rngRoll = rng();
+
 		const imp = rngRoll;
 		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biome[Math.floor(rngRoll * biome.length)];
 		const fast = saveData.fastEnemy || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
@@ -885,7 +888,8 @@ function simulate(saveData, zone, stance) {
 
 		while (enemyHealth >= 1 && ticks < maxTicks) {
 			++turns;
-			rngRoll = turns > 0 ? rng() : rngRoll;
+			rngRoll = rng();
+
 			let attacked = false;
 			trimpCrit = false;
 			enemyCrit = false;
@@ -926,7 +930,8 @@ function simulate(saveData, zone, stance) {
 					if (duelPoints > 50) trimpAttack *= 3;
 				}
 
-				if (rngRoll < saveData.critChance) {
+				rngCrit = saveData.critChance < 0.25 ? rng() : rngRoll;
+				if (rngCrit < saveData.critChance) {
 					trimpAttack *= saveData.critDamage;
 					trimpCrit = true;
 					trimpCrits++;
@@ -1098,22 +1103,30 @@ function simulate(saveData, zone, stance) {
 		kills = 0;
 	}
 
-	function simulationDebug() {
-		console.log(`Ticks: ${ticks}`);
-		console.log(`Loot: ${prettify(loot)} (value: ${prettify((loot * 10) / maxTicks)})`);
-		console.log(`Kills ${kills} (${(kills / (ticks / 10)).toFixed(3)} cps)`);
-		console.log(`Deaths: ${deaths} (${(deaths / (ticks / 10)).toFixed(3)} dps)`);
-		console.log(`Enemy Attacks: ${enemyAttacks}`);
-		console.log(`Enemy Max HP: ${prettify(enemy_max_hp)} Enemy Health: ${prettify(enemyHealth)}`);
-		console.log(`Enemy Crits: ${enemyCrits} (${((enemyCrits / enemyAttacks) * 100).toFixed(2)}% - Expected Crit Chance ${enemyCC * 100}%)`);
-		console.log(`Trimp Attacks: ${trimpAttacks}`);
-		console.log(`Trimp Crits: ${trimpCrits} (${(trimpCrits / trimpAttacks) * 100}% - Expected Crit Chance ${saveData.critChance * 100}%))`);
-		console.log(`Trimp Health: ${prettify(trimpHealth)}`);
-		console.log(`Trimp Attack: ${prettify(trimpAttack)} - ${prettify(saveData.atk)}`);
-		console.log(`Stance: ${stance}; Equality: ${equality}`);
-		console.log(`rngRoll: ${rngRoll}`);
-	}
-	/* if (zone === 92) simulationDebug(); */
+	const debugResults = {
+		ticks,
+		loot,
+		maxTicks,
+		kills,
+		deaths,
+		enemyAttacks,
+		enemy_max_hp,
+		enemyHealth,
+		enemyCrits,
+		enemyCC,
+		trimpAttack,
+		trimpAttackOrig: saveData.atk,
+		trimpAttacks,
+		trimpCrits,
+		trimpHealth,
+		trimpAttack,
+		trimpCC: saveData.critChance,
+		stance,
+		equality,
+		rngRoll
+	};
+
+	/* if (zone === 93) simulationDebug(debugResults); */
 
 	return {
 		speed: (loot * 10) / maxTicks,
@@ -1122,6 +1135,26 @@ function simulate(saveData, zone, stance) {
 		deaths,
 		special: specialData
 	};
+}
+
+function simulationDebug(debugResults) {
+	const { ticks, loot, maxTicks, kills, deaths, enemyAttacks, enemy_max_hp, enemyHealth, enemyCrits, enemyCC, trimpAttacks, trimpCrits, trimpHealth, trimpAttack, trimpAttackOrig, trimpCC, stance, equality, rngRoll } = debugResults;
+
+	console.log(`
+		Ticks: ${ticks}
+		Loot: ${prettify(loot)} (value: ${prettify((loot * 10) / maxTicks)})
+		Kills: ${kills} (${(kills / (ticks / 10)).toFixed(3)} cps)
+		Deaths: ${deaths} (${(deaths / (ticks / 10)).toFixed(3)} dps)
+		Enemy Attacks: ${enemyAttacks}
+		Enemy Max HP: ${prettify(enemy_max_hp)} Enemy Health: ${prettify(enemyHealth)}
+		Enemy Crits: ${enemyCrits} (${((enemyCrits / enemyAttacks) * 100).toFixed(2)}% - Expected Crit Chance ${(enemyCC * 100).toFixed(2)}%)
+		Trimp Attacks: ${trimpAttacks}
+		Trimp Crits: ${trimpCrits} (${((trimpCrits / trimpAttacks) * 100).toFixed(2)}% - Expected Crit Chance ${(trimpCC * 100).toFixed(2)}%)
+		Trimp Health: ${prettify(trimpHealth)}
+		Trimp Attack: ${prettify(trimpAttack)} - (orig ${prettify(trimpAttackOrig)})
+		Stance: ${stance}; Equality: ${equality}
+		rngRoll: ${rngRoll}
+	`);
 }
 
 //Return info about the best zone for each stance
