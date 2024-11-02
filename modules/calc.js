@@ -555,7 +555,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 			tenacity: () => game.portal.Tenacity.getMult(),
 			spireStats: () => autoBattle.bonuses.Stats.getMult(),
 			championism: () => game.portal.Championism.getMult(),
-			frenzy: () => (getPerkLevel('Frenzy') > 0 && !challengeActive('Berserk') && (autoBattle.oneTimers.Mass_Hysteria.owned || (runningAutoTrimps && getPageSetting('frenzyCalc'))) ? 1 + 0.5 * getPerkLevel('Frenzy') : 1),
+			frenzy: () => (getPerkLevel('Frenzy') > 0 && !challengeActive('Berserk') && (autoBattle.oneTimers.Mass_Hysteria.owned || !runningAutoTrimps || getPageSetting('frenzyCalc')) ? 1 + 0.5 * getPerkLevel('Frenzy') : 1),
 			observation: () => game.portal.Observation.getMult(),
 			mutatorAttack: () => (u2Mutations.tree.Attack.purchased ? 1.5 : 1),
 			geneAttack: () => (u2Mutations.tree.GeneAttack.purchased ? 10 : 1),

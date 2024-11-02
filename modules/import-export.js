@@ -1126,7 +1126,7 @@ function _displayDonate(tooltipDiv) {
 function _displayFarmCalcTable(tooltipDiv) {
 	const results = stats();
 	const [mapData, stances] = results;
-	const best = get_best(results);
+	const best = get_best(results, undefined, undefined, true);
 
 	let show_stance = game.global.world >= 60;
 	let tooltipText = '';
@@ -1166,15 +1166,14 @@ function _displayFarmCalcTable(tooltipDiv) {
 		}
 
 		if (stance_data !== '') {
-			tooltipText += `<th style="text-align:right; border: 1px solid black;">`;
-			tooltipText += `${stance_data}`;
+			tooltipText += `<td style="text-align:right">`;
+			if (game.global.universe === 1) tooltipText += `${stance_data}`;
 		} else {
-			tooltipText += `<th style="text-align:center; border: 1px solid black;">`;
+			tooltipText += `<td style="text-align:center">`;
 		}
-
+		if (zone === best.loot.zone) console.log(zone);
 		tooltipText += zone === best.loot.zone ? `<b>${zone}</b>` : `${zone}`;
-		tooltipText += `</th>`;
-
+		tooltipText += `</td>`;
 		tooltipText += '<td>' + prettify(zone_stats.loot) + '%';
 
 		for (let stance of stances) {
@@ -1221,6 +1220,7 @@ function _displayFarmCalcTable(tooltipDiv) {
 	}
 
 	if (game.global.spireActive) bestFarm += '<br>Good luck with the Spire!';
+	if (game.unlocks.imps.Jestimp && challengeActive('Unlucky')) bestFarm += `<br>The displayed equality values account for jestimp buff for lucky damage.`;
 
 	const extraNote = 'Note: the displayed loot values don’t account for looting perks and staffs. As such, your actual loot will be much higher. However, these factors affect all maps in the same way, and don’t affect the choice of map.';
 
