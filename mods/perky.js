@@ -182,9 +182,9 @@ function fillPresetPerky(specificPreset, forceDefault) {
 	const preset = $$('#preset').value;
 	const weights = localData[preset] === null || localData[preset] === undefined || forceDefault ? defaultWeights[preset] : localData[preset];
 
-	const ids = ['weight-he', 'weight-atk', 'weight-hp', 'weight-trimps', 'weight-xp'];
+	const ids = ['weight-he', 'weight-atk', 'weight-hp', 'weight-xp', 'weight-trimps'];
 	ids.forEach((id, index) => {
-		document.querySelector(`#${id}`).value = +weights[index];
+		document.querySelector(`#${id}`).value = +weights[index] || 0;
 	});
 
 	savePerkySettings();
