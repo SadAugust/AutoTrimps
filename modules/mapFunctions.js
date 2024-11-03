@@ -188,16 +188,19 @@ atData.uniqueMaps = Object.freeze({
 		universe: 2,
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified) {
-			const runningHypo = challengeActive('Hypothermia');
+			const hypoSettings = getPageSetting('hypothermiaSettings')[0];
+			const runningHypo = challengeActive('Hypothermia') && hypoSettings.active;
 			const regularRun = !runningHypo && mapSetting.enabled && game.global.world >= mapSetting.zone && game.global.lastClearedCell + 2 >= mapSetting.cell;
+
 			if (regularRun) return true;
 			if (!runningHypo || mapSettings.mapName === 'Void Maps') return false;
-			const hypoDefaultSettings = getPageSetting('hypothermiaSettings')[0];
-			const frozenCastleSettings = hypoDefaultSettings.frozencastle;
+
+			const frozenCastleSettings = hypoSettings.frozencastle;
 			const world = frozenCastleSettings && frozenCastleSettings[0] !== undefined ? parseInt(frozenCastleSettings[0]) : 200;
 			const cell = frozenCastleSettings && frozenCastleSettings[1] !== undefined ? parseInt(frozenCastleSettings[1]) : 99;
-			const hypothermiaRun = hypoDefaultSettings.active && game.global.world >= world && (game.global.lastClearedCell + 2 >= cell || liquified);
+			const hypothermiaRun = hypoSettings.active && game.global.world >= world && (game.global.lastClearedCell + 2 >= cell || liquified);
 			if (hypothermiaRun) return true;
+
 			return false;
 		}
 	}
