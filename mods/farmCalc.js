@@ -1096,7 +1096,7 @@ function simulate(saveData, zone, stance) {
 		}
 	}
 
-	if (mapClears > 0) loot *= mapClears * specialTime;
+	if (mapClears > 0 && specialTime > 0) loot *= mapClears * specialTime;
 
 	if (mapClears === 0 || ticks === Infinity) {
 		loot = 0;
@@ -1104,9 +1104,11 @@ function simulate(saveData, zone, stance) {
 	}
 
 	const debugResults = {
+		zone,
 		ticks,
 		loot,
 		maxTicks,
+		mapClears,
 		kills,
 		deaths,
 		enemyAttacks,
@@ -1126,7 +1128,7 @@ function simulate(saveData, zone, stance) {
 		rngRoll
 	};
 
-	/* if (zone === 93) simulationDebug(debugResults); */
+	/* simulationDebug(debugResults); */
 
 	return {
 		speed: (loot * 10) / maxTicks,
@@ -1138,11 +1140,12 @@ function simulate(saveData, zone, stance) {
 }
 
 function simulationDebug(debugResults) {
-	const { ticks, loot, maxTicks, kills, deaths, enemyAttacks, enemy_max_hp, enemyHealth, enemyCrits, enemyCC, trimpAttacks, trimpCrits, trimpHealth, trimpAttack, trimpAttackOrig, trimpCC, stance, equality, rngRoll } = debugResults;
+	const { zone, ticks, loot, maxTicks, mapClears, kills, deaths, enemyAttacks, enemy_max_hp, enemyHealth, enemyCrits, enemyCC, trimpAttacks, trimpCrits, trimpHealth, trimpAttack, trimpAttackOrig, trimpCC, stance, equality, rngRoll } = debugResults;
 
-	console.log(`
+	console.log(`Zone: ${zone}
 		Ticks: ${ticks}
 		Loot: ${prettify(loot)} (value: ${prettify((loot * 10) / maxTicks)})
+		Map Clears: ${mapClears}
 		Kills: ${kills} (${(kills / (ticks / 10)).toFixed(3)} cps)
 		Deaths: ${deaths} (${(deaths / (ticks / 10)).toFixed(3)} dps)
 		Enemy Attacks: ${enemyAttacks}

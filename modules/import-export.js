@@ -1171,7 +1171,7 @@ function _displayFarmCalcTable(tooltipDiv) {
 		} else {
 			tooltipText += `<td style="text-align:center">`;
 		}
-		if (zone === best.loot.zone) console.log(zone);
+
 		tooltipText += zone === best.loot.zone ? `<b>${zone}</b>` : `${zone}`;
 		tooltipText += `</td>`;
 		tooltipText += '<td>' + prettify(zone_stats.loot) + '%';
