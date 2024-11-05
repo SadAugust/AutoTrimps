@@ -850,7 +850,7 @@ function shieldGymEfficiency(hitsBefore = _getTargetWorldType() === 'void' ? hdS
 }
 
 function biomeEfficiency(pretty = false, hitsBefore = _getTargetWorldType() === 'void' ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived, mostEffEquip = mostEfficientEquipment(undefined, undefined, true), shieldGymEff = shieldGymEfficiency()) {
-	if (game.global.universe !== 1 || game.global.decayDone || shieldGymEff.mostEfficient === 'None') return { biome: 'Mountain' };
+	if (game.global.universe !== 1 || game.global.decayDone || shieldGymEff.mostEfficient === 'None' || mapSettings.mapName === 'HD Farm') return { biome: 'Mountain' };
 
 	const worldType = _getTargetWorldType();
 	let mostEff = mostEffEquip.health.name;
@@ -895,7 +895,14 @@ function biomeEfficiency(pretty = false, hitsBefore = _getTargetWorldType() === 
 		hsImpact: maybePrettify(hsImpact, pretty)
 	};
 
-	const hdToTargetRatio = (worldType === 'void' ? hdStats.hdRatioVoid : hdStats.hdRatio) / getPageSetting('mapBonusRatio');
+	let hdCurrent = worldType === 'void' ? hdStats.hdRatioVoid : hdStats.hdRatio;
+	if (!hdCurrent) {
+		const difficulty = worldType === 'void' ? _getVoidPercent(game.global.world, game.global.universe) : 1;
+		hdCurrent = calcHDRatio(game.global.world, worldType, false, difficulty);
+	}
+
+	const hdTargetRatio = mapSettings.mapName === 'HD Farm' ? mapSettings.hdRatio : getPageSetting('mapBonusRatio');
+	const hdToTargetRatio = hdCurrent / hdTargetRatio;
 	const hsToTargetRatio = hitsBefore / targetHitsSurvived(false, worldType);
 
 	// TODO Maybe this value should consider hsToTargetRatio too, and maybe AE: HS and AE: HD too
