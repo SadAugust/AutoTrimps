@@ -143,8 +143,8 @@ function initPresetPerky() {
 		heliumWeight: +$$('#weight-he').value,
 		attackWeight: +$$('#weight-atk').value,
 		healthWeight: +$$('#weight-hp').value,
-		trimpsWeight: +$$('#weight-trimps').value,
 		xpWeight: +$$('#weight-xp').value,
+		trimpsWeight: +$$('#weight-trimps').value,
 		...presets,
 		lockedPerks: settingInputs.lockedPerks || undefined
 	};
@@ -204,7 +204,7 @@ function savePerkySettings() {
 		for (let item of presetNames) {
 			const value = item.value;
 			if (value.includes('— ')) continue;
-			if (settingInputs.preset === value) settingInputs[value] = [settingInputs['weight-he'], settingInputs['weight-atk'], settingInputs['weight-hp'], settingInputs['weight-trimps'], settingInputs['weight-xp']];
+			if (settingInputs.preset === value) settingInputs[value] = [settingInputs['weight-he'], settingInputs['weight-atk'], settingInputs['weight-hp'], settingInputs['weight-xp'], settingInputs['weight-trimps']];
 			else settingInputs[value] = saveData[value];
 		}
 	}
@@ -293,8 +293,8 @@ function populatePerkyData() {
 			helium: +$$('#weight-he').value,
 			attack: +$$('#weight-atk').value,
 			health: +$$('#weight-hp').value,
-			trimps: +$$('#weight-trimps').value,
 			xp: +$$('#weight-xp').value,
+			trimps: +$$('#weight-trimps').value,
 			income: 0
 		},
 		fluffy: {
@@ -1114,19 +1114,19 @@ atData.autoPerks = {
 				maxValue: null,
 				defaultValue: game.global.highestLevelCleared || 1
 			},
-			'weight-trimps': {
-				name: 'Weight: Population',
-				description: 'How much you value +1% population.<br><b>WARNING</b>: the effects of population on attack/health are already counted.<br>Default value is <b>0</b>.',
-				minValue: 1,
-				maxValue: null,
-				defaultValue: 0
-			},
 			'weight-xp': {
 				name: 'Weight: Fluffy',
 				description: 'Weight for how much you value 1% more Fluffy xp.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
+			},
+			'weight-trimps': {
+				name: 'Weight: Population',
+				description: 'How much you value +1% population.<br><b>WARNING</b>: the effects of population on attack/health are already counted.<br>Default value is <b>0</b>.',
+				minValue: 1,
+				maxValue: null,
+				defaultValue: 0
 			}
 		}
 	},
