@@ -903,14 +903,16 @@ function biomeEfficiency(pretty = false, hitsBefore = _getTargetWorldType() === 
 
 	const hdTargetRatio = mapSettings.mapName === 'HD Farm' ? mapSettings.hdRatio : getPageSetting('mapBonusRatio');
 	const hdToTargetRatio = hdCurrent / hdTargetRatio;
-	const hsToTargetRatio = hitsBefore / targetHitsSurvived(false, worldType);
+	const hsTargetRatio = targetHitsSurvived(false, worldType);
+	const hsToTargetRatio = hitsBefore / hsTargetRatio;
 
 	// TODO Maybe this value should consider hsToTargetRatio too, and maybe AE: HS and AE: HD too
 	let metalEffRatio = hdToTargetRatio > 1 ? 2.5 : 1;
 
 	// TODO Refactor this after considering the TODOs below
 	if (!metalEquip.name) {
-		if (!mostEffEquip.attack.name) metalEffRatio = 0;
+		if (hsToTargetRatio === Infinity) metalEffRatio = 1; /* don't need health */
+		else if (!mostEffEquip.attack.name) metalEffRatio = 0;
 		else if (hdToTargetRatio > 1 && hsToTargetRatio < 1) metalEffRatio = Infinity; /* Need both - TODO compare ShieldGym hsEfficiency vs metalEquip hdEfficiency instead */
 		else if (hdToTargetRatio > 1) metalEffRatio = Infinity; /* Need damage */
 		else if (hsToTargetRatio < 1) metalEffRatio = 0; /* Need health */

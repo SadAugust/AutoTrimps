@@ -3170,7 +3170,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	if (hdType.includes('hitsSurvived')) mapName = 'Hits Survived';
 
 	const mostEffEquip = mostEfficientEquipment();
-	const biome = needGymystic() || (mostEffEquip.attack.name === '' && mostEffEquip.health.name === '') ? 'Forest' : 'Any';
+	const biome = !hdType.includes('hdRatio') && hdStats.biomeEff && hdStats.biomeEff === 'Forest' ? 'Forest' : 'Any';
 
 	if (setting.autoLevel) {
 		const shouldMapBonus = game.global.mapBonus !== 10 && (setting.repeat || hdType === 'world' || (hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
