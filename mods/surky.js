@@ -6,7 +6,7 @@ function runSurky() {
 function allocateSurky(perks) {
 	if (portalUniverse !== 2) return;
 	//Can't respec perks when running Hypothermia so don't try as it causes errors
-	if (challengeActive('Hypothermia')) return;
+	if (!portalWindowOpen && challengeActive('Hypothermia')) return;
 
 	const perk = {};
 	for (let [key, value] of Object.entries(perks)) {
