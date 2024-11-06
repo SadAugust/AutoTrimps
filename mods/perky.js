@@ -1124,7 +1124,7 @@ atData.autoPerks = {
 			'weight-trimps': {
 				name: 'Weight: Population',
 				description: 'How much you value +1% population.<br><b>WARNING</b>: the effects of population on attack/health are already counted.<br>Default value is <b>0</b>.',
-				minValue: 1,
+				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			}
