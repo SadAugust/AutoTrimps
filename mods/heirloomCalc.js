@@ -510,12 +510,14 @@ function saveHeirloomSettings() {
 
 function loadHeirloomSettings() {
 	let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+
 	if (heirloomInputs[_getSelectedHeirloom().id]) {
 		heirloomInputs = heirloomInputs[_getSelectedHeirloom().id];
 		document.getElementById('heirloomCustomRatioBtn').setAttribute('class', 'btn settingsBtn settingBtntrue');
 	} else {
 		document.getElementById('heirloomCustomRatioBtn').setAttribute('class', 'btn settingsBtn settingBtnfalse');
 	}
+
 	$$('#VMWeight').value = heirloomInputs.VMWeight || 12;
 	$$('#XPWeight').value = heirloomInputs.XPWeight || 11.25;
 	$$('#HPWeight').value = heirloomInputs.HPWeight || 1;

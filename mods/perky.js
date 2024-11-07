@@ -749,6 +749,17 @@ function optimize() {
 	return perks;
 }
 
+function toggleShowGoldenUpgrades() {
+	const ratioBtn = document.getElementById('showGoldenUpgradesBtn');
+	const className = ['settingBtnfalse', 'settingBtntrue'];
+	className.splice(className.indexOf(ratioBtn.className.split(' ')[2]), 1);
+	ratioBtn.setAttribute('class', 'btn settingsBtn ' + className[0]);
+
+	let surkyInputs = JSON.parse(localStorage.getItem('surkyInputs'));
+	surkyInputs.showGU = !surkyInputs.showGU;
+	localStorage.setItem('surkyInputs', JSON.stringify(surkyInputs));
+}
+
 function togglePerkLock(id, calcName) {
 	let settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
 	if (!settingInputs) return;
@@ -892,6 +903,7 @@ atData.autoPerks = {
 			let row = Object.keys(inputBoxes)[x];
 			apGUI.$ratiosLine[row] = document.createElement('DIV');
 			apGUI.$ratiosLine[row].setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+			apGUI.$ratiosLine[row].setAttribute('id', `customRatios${x}`);
 			for (let item in inputBoxes[row]) {
 				atData.autoPerks.createInput(apGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, calcName);
 				atData.autoPerks.GUI.inputs.push(item);
@@ -945,6 +957,10 @@ atData.autoPerks = {
 		$portalWrapper.appendChild(apGUI.$customRatios);
 
 		//Amend reset to default weights below input boxes
+		apGUI.$ratiosLine[3] = document.createElement('DIV');
+		apGUI.$ratiosLine[3].setAttribute('style', 'margin-bottom: 0.1vw;');
+		apGUI.$ratiosLine[3].setAttribute('id', `customRatios${3}`);
+		apGUI.$customRatios.appendChild(apGUI.$ratiosLine[3]);
 		let resetWeightsText = 'Clears your current input values for this preset and resets them to their default values.';
 
 		apGUI.$resetWeightsBtn = document.createElement('DIV');
@@ -953,8 +969,9 @@ atData.autoPerks = {
 		apGUI.$resetWeightsBtn.setAttribute('onclick', `importExportTooltip("resetPerkPreset", "${calcName}");`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseover', `tooltip("Reset Preset Weights", "customText", event, \`${resetWeightsText}\`)`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseout', 'tooltip("hide")');
+		apGUI.$resetWeightsBtn.style.cssText = 'font-size: 0.9vw; font-weight: lighter; width: 13.9vw; border: 1px solid black !important; margin-right: 0.5vw; padding: 6px 12px; vertical-align: middle;';
 		apGUI.$resetWeightsBtn.textContent = 'Reset Preset Weights';
-		if (document.getElementById(apGUI.$resetWeightsBtn.id) === null) apGUI.$customRatios.appendChild(apGUI.$resetWeightsBtn);
+		if (document.getElementById(apGUI.$resetWeightsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$resetWeightsBtn);
 
 		if (calcName === 'Perky') {
 			if (!settingInputs) {
@@ -983,6 +1000,18 @@ atData.autoPerks = {
 			document.querySelector('#radonPerRunDiv').style.display = 'none';
 			document.querySelector('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
 			document.querySelector('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
+
+			apGUI.$goldenUpgradeBtn = document.createElement('DIV');
+			apGUI.$goldenUpgradeBtn.id = 'showGoldenUpgradesBtn';
+			const settingBtnClass = settingInputs.showGU ? 'settingBtntrue' : 'settingBtnfalse';
+			apGUI.$goldenUpgradeBtn.setAttribute('class', `btn settingsBtn ${settingBtnClass}`);
+			apGUI.$goldenUpgradeBtn.setAttribute('onclick', 'toggleShowGoldenUpgrades()');
+			apGUI.$goldenUpgradeBtn.setAttribute('onmouseover', 'tooltip("Show Golden Upgrades", "customText", event, "When enabled will display the recommended golden upgrade path to take on your run when you allocate perks.")');
+			apGUI.$goldenUpgradeBtn.setAttribute('onmouseout', 'tooltip("hide")');
+			apGUI.$goldenUpgradeBtn.style.cssText = `height: 1.8vw; border: 0.1vw solid #777; border-radius: 0px; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}  margin-left: 0.5vw;`;
+			apGUI.$goldenUpgradeBtn.textContent = 'Show Golden Upgrades';
+			if (document.getElementById(apGUI.$goldenUpgradeBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$goldenUpgradeBtn);
+
 			initialLoad();
 		}
 	},

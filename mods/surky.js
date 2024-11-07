@@ -55,6 +55,7 @@ function saveSurkySettings() {
 	atData.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
 	});
+	settingInputs.showGU = document.querySelector('#showGoldenUpgradesBtn').classList.value.includes('settingBtntrue');
 
 	//Save inputs for all the presets that users can select.
 	//Overrides data for current preset otherwises saves any already saved data for the others.
@@ -1270,8 +1271,8 @@ function autobuyPerks(props, perks) {
 	// secret setting to dump remaining Rn into bait for feeeeeee
 	while (continueBuying) [continueBuying, props, perks] = buyPerk('Bait', 1, props, perks);
 
-	updateGoldenText(props, perks);
 	allocateSurky(perks);
+	updateGoldenText(props, perks);
 	console.log('Surky - Total Radon for perks: ' + prettify(props.perksRadon) + ', Total Radon Spent: ' + prettify(props.radonSpent), 'portal');
 }
 
@@ -1325,7 +1326,12 @@ function updateGoldenText(props, perks) {
 		GUtext += GBcount + ' GBs (' + GBpct + '%), then ' + GRcount + ' GRs (' + GRpct + '%)';
 	}
 
-	console.log(GUtext);
+	if (document.querySelector('#showGoldenUpgradesBtn').classList.value.includes('settingBtntrue')) {
+		console.log(GUtext);
+		GUtext = GUtext.replace(/\n/g, '<br>');
+		tooltip('Recommended Golden Upgrades', 'customText', 'lock', GUtext, false, 'center');
+		verticalCenterTooltip();
+	}
 }
 
 /* if we have N GUs total and M GUs of the given type (from isGB) bought, what's the total weighted value of our GUs? */
