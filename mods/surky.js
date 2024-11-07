@@ -126,6 +126,7 @@ function initPerks() {
 		radonWeight: Number($$('#radonWeight').value),
 		coefC: 0,
 		termR: 0,
+		hazzie: false,
 		specialChallenge: null,
 		runningTrappa: challengeActive('Trappapalooza'),
 		trappaStartPop: 1,
@@ -338,9 +339,11 @@ function initialLoad(skipLevels = false) {
 
 		const ineqMod = findMod('inequality');
 		props.healthDerate = ineqMod ? Math.log(0.9 + ineqMod[1] / 10000) / Math.log(0.9) : 1;
+
+		props.hazzie = shield.rarity >= 10;
 	}
 
-	// Suprism gives 3% prismal shield per SA level
+	// suprism gives 3% prismal shield per SA level
 	if (autoBattle.oneTimers.Suprism.owned) props.shieldPrismal += 3 * (autoBattle.maxEnemyLevel - 1);
 
 	// reset the memoization results for the shinyTable, in case the target zone changed

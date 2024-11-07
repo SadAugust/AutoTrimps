@@ -763,10 +763,11 @@ function togglePerkLock(id, calcName) {
 
 atData.autoPerks = {
 	createInput: function (perkLine, id, inputObj, savedValue, settingName) {
-		if (!id || document.getElementById(id + 'Div') !== null) {
+		if (!id || document.getElementById(`${id}Div`) !== null) {
 			console.log("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.");
 			return;
 		}
+
 		const onchange = `legalizeInput(this.id); save${settingName}Settings();`;
 		//Creating container for both the label and the input.
 		const perkDiv = document.createElement('DIV');
