@@ -1006,10 +1006,10 @@ atData.autoPerks = {
 			const settingBtnClass = settingInputs.showGU ? 'settingBtntrue' : 'settingBtnfalse';
 			apGUI.$goldenUpgradeBtn.setAttribute('class', `btn settingsBtn ${settingBtnClass}`);
 			apGUI.$goldenUpgradeBtn.setAttribute('onclick', 'toggleShowGoldenUpgrades()');
-			apGUI.$goldenUpgradeBtn.setAttribute('onmouseover', 'tooltip("Show Golden Upgrades", "customText", event, "When enabled will display the recommended golden upgrade path to take on your run when you allocate perks.")');
+			apGUI.$goldenUpgradeBtn.setAttribute('onmouseover', 'tooltip("Recommend Golden Upgrades", "customText", event, "When enabled will display the recommended golden upgrade path to take on your run when you allocate perks.")');
 			apGUI.$goldenUpgradeBtn.setAttribute('onmouseout', 'tooltip("hide")');
 			apGUI.$goldenUpgradeBtn.style.cssText = `height: 1.8vw; border: 0.1vw solid #777; border-radius: 0px; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}  margin-left: 0.5vw;`;
-			apGUI.$goldenUpgradeBtn.textContent = 'Show Golden Upgrades';
+			apGUI.$goldenUpgradeBtn.textContent = 'Recommend Golden Upgrades';
 			if (document.getElementById(apGUI.$goldenUpgradeBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$goldenUpgradeBtn);
 
 			initialLoad();
