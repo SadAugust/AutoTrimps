@@ -3636,7 +3636,13 @@ function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
 	const value = game.global.universe === 2 ? 'valueU2' : 'value';
 	if (settingName && currSetting.row) {
 		const settingDone = game.global.addonUser.mapData[settingName][value][currSetting.row].done;
-		if (settingDone === `${totalPortals}_${game.global.world}`) return false;
+		if (settingDone === `${totalPortals}_${game.global.world}`) {
+			if (currSetting.hdType === 'hitsSurvived' && hdFarmSettingRatio(currSetting) * 0.8 > hdStats.hitsSurvived && getPageSetting('hitsSurvivedReset') === 2) {
+				game.global.addonUser.mapData[settingName][value][currSetting.row].done = '';
+			} else {
+				return false;
+			}
+		}
 		//Ensure we don't eternally farm if daily reset timer is low enough that it will start again next zone
 		if (currSetting.mapType && currSetting.mapType === 'Daily Reset' && settingDone && settingDone.split('_')[0] === totalPortals.toString()) return false;
 	}

@@ -1214,6 +1214,16 @@ function updateATVersion() {
 		if (versionNumber < '6.5.96') {
 			setupAddonUser(true);
 		}
+
+		if (versionNumber < '6.5.991') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['hitsSurvivedReset'] !== 'undefined') {
+				autoTrimpSettings.hitsSurvivedReset.value = tempSettings.hitsSurvivedReset.enabled ? 1 : 0;
+				autoTrimpSettings.hitsSurvivedReset.valueU2 = tempSettings.hitsSurvivedReset.enabledU2 ? 1 : 0;
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

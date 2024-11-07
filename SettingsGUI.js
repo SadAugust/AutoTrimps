@@ -1551,14 +1551,17 @@ function initialiseAllSettings() {
 			}, 'value', 10, null, 'Maps', [1, 2]);
 
 		createSetting('hitsSurvivedReset',
-			function () { return ('Hits Survived Reset') },
+			function () { return (['Hits Survived Reset Off', 'Hits Survived Reset (S)', 'Hits Survived Reset']) },
 			function () {
-				let description = "<p>When using the standalone <b>Hits Survived</b> setting and you reach your <b>Map Cap</b> value this will restart farming if you're below 80% of the targetted value.</p>";
-				description += "<p>Will allow you to farm multiple times if enemies damage increase or your army gets weaker through challenge buffs or debuffs.</p>";
+				let description = "<p>Setting to allow <b>Hits Survived</b> setting(s) to refarm if below 80% of the targetted value.</p>";
+				description += "<p><b>Hits Survived Reset Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Hits Survived Reset (S)</b><br>Allows the standalone version of <b>Hits Survived</b> to reset and farm again when you're below 80% of the targetted value.</p>";
+				description += "<p><b>Hits Survived Reset</b><br>Will make both the standalone version of <b>Hits Survived</b> and any <b>Hits Survived</b> lines in the <b>HD Farm</b> setting to reset and farm again when you're below 80% of the targetted value.</p>";
+				description += "<p>Having this setting enabled will allow you to farm multiple times if enemies damage increase or your army gets weaker through challenge buffs or debuffs.</p>";
 				description += "<p>Enabling this setting makes the Map Cap input in the <b>HD Farm</b> setting irrelevant as it will continually restart your <b>Hits Survived</b> farm.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
+				description += "<p><b>Recommended:</b> Hits Survived Reset (S)</p>";
 				return description;
-			}, 'boolean', true, null, 'Maps', [1, 2]);
+			}, 'multitoggle', 1, null, 'Maps', [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
