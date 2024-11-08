@@ -528,7 +528,7 @@ function stats(lootFunction = lootDefault) {
 
 				const currentBest = get_best([stats, saveData.stances], true);
 				if (tmp.mapConfig.special === saveData.specialData || (currentBest.loot.value / saveData.specialTime) * getSpecialTime(currentBest.mapConfig.special) > tmp.value) {
-					if (tmp.value < 0.6 * currentBest.loot.value) {
+					if (tmp.value < 0.6 * currentBest.loot.value && tmp.deathsPerSec < 0.1) {
 						break;
 					}
 
@@ -698,6 +698,7 @@ function simulate(saveData, zone, stance) {
 	let berserkWeakened = game.challenges.Berserk.weakened;
 	let glassStacks = game.challenges.Glass.shards;
 
+	let gammaBursts = 0;
 	let gammaStacks = 0;
 	let frenzyRefresh = true;
 	let frenzyLeft = 0;
@@ -970,6 +971,7 @@ function simulate(saveData, zone, stance) {
 					gammaStacks++;
 
 					if (gammaStacks >= saveData.gammaCharges) {
+						gammaBursts++;
 						gammaStacks = 0;
 						const burstDamage = trimpAttack * saveData.gammaMult;
 						enemyHealth -= burstDamage;
@@ -1124,6 +1126,7 @@ function simulate(saveData, zone, stance) {
 		trimpAttack,
 		trimpCC: saveData.critChance,
 		stance,
+		gammaBursts,
 		equality,
 		rngRoll
 	};
@@ -1135,12 +1138,13 @@ function simulate(saveData, zone, stance) {
 		equality,
 		killSpeed: kills / (ticks / 10),
 		deaths,
+		deathsPerSec: deaths / (ticks / 10),
 		special: specialData
 	};
 }
 
 function simulationDebug(debugResults) {
-	const { zone, ticks, loot, maxTicks, mapClears, kills, deaths, enemyAttacks, enemy_max_hp, enemyHealth, enemyCrits, enemyCC, trimpAttacks, trimpCrits, trimpHealth, trimpAttack, trimpAttackOrig, trimpCC, stance, equality, rngRoll } = debugResults;
+	const { zone, ticks, loot, maxTicks, mapClears, kills, deaths, enemyAttacks, enemy_max_hp, enemyHealth, enemyCrits, enemyCC, trimpAttacks, trimpCrits, trimpHealth, trimpAttack, trimpAttackOrig, trimpCC, stance, gammaBursts, equality, rngRoll } = debugResults;
 
 	console.log(`Zone: ${zone}
 		Ticks: ${ticks}
@@ -1155,6 +1159,7 @@ function simulationDebug(debugResults) {
 		Trimp Crits: ${trimpCrits} (${((trimpCrits / trimpAttacks) * 100).toFixed(2)}% - Expected Crit Chance ${(trimpCC * 100).toFixed(2)}%)
 		Trimp Health: ${prettify(trimpHealth)}
 		Trimp Attack: ${prettify(trimpAttack)} - (orig ${prettify(trimpAttackOrig)})
+		Gamma Bursts: ${gammaBursts}
 		Stance: ${stance}; Equality: ${equality}
 		rngRoll: ${rngRoll}
 	`);
