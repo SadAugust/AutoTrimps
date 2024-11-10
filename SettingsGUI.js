@@ -4622,14 +4622,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'action', null, 'cancelTooltip(); introMessage();', 'Help', [0]);
 
-		createSetting('helpStatus',
-			function () { return ('Auto Maps Status') },
-			function () {
-				let description = "<p>Will display the Auto Maps status window.</p>";
-				description += "<p>This can also be accessed by mousing over the text that tells you what Auto Maps is currently trying to do just beneath the Auto Maps button.</p>";
-				return description;
-			}, 'action', null, 'cancelTooltip(); makeAutomapStatusTooltip(false);', 'Help', [0]);
-
 		createSetting('helpResourceHour',
 			function () { return (_getPrimaryResourceInfo().name + ' Per Hour') },
 			function () {
@@ -4645,6 +4637,21 @@ function initialiseAllSettings() {
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeAutoPortalHelpTooltip(false);', 'Help', [0]);
 
+		createSetting('helpShieldGym',
+			function () { return ('Shield & Gym Issues') },
+			function () {
+				let description = "<p>Will display information regarding why Shields or Gyms aren't instantly being purchased.</p>";
+				return description;
+			}, 'action', null, 'cancelTooltip(); makeShieldGymHelpTooltip()', 'Help', [1]);
+
+		createSetting('helpStatus',
+			function () { return ('Auto Maps Status') },
+			function () {
+				let description = "<p>Will display the Auto Maps status window.</p>";
+				description += "<p>This can also be accessed by mousing over the text that tells you what Auto Maps is currently trying to do just beneath the Auto Maps button.</p>";
+				return description;
+			}, 'action', null, 'cancelTooltip(); makeAutomapStatusTooltip(false);', 'Help', [0]);
+
 		createSetting('helpAutoMapsPriority',
 			function () { return ('Auto Maps Priority') },
 			function () {
@@ -4658,6 +4665,12 @@ function initialiseAllSettings() {
 				let description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
 				return description;
 			}, 'action', null, 'importExportTooltip("priorityOrder")', 'Help', [0]);
+		createSetting('helpFragments',
+			function () { return ('Fragment Decisions') },
+			function () {
+				let description = "<p>Will display the decision for map creation slider/setting adjustments.</p>";
+				return description;
+			}, 'action',null, 'cancelTooltip(); makeFragmentDecisionHelpTooltip(false);', 'Help', [0]);
 
 		createSetting('helpDonate',
 			function () { return ('Donate') },
@@ -4666,12 +4679,6 @@ function initialiseAllSettings() {
 				description += "<p>If you want to contribute but can't afford a donation, you can still give back by joining the community and sharing your feedback or helping others. Thank you either way, you're awesome!</p>";
 				return description;
 			}, 'action', null, 'importExportTooltip("donate")', 'Help', [0]);
-		/* createSetting('helpFragments',
-			function () { return ('Fragment Decisions') },
-			function () {
-				let description = "<p>Will display the decision for map creation slider/setting adjustments.</p>";
-				return description;
-			}, 'action',null, 'cancelTooltip(); makeFragmentDecisionHelpTooltip(false);', 'Help', [0]); */
 	}
 	
 	const displayTesting = true; /* Hidden Features for testing purposes! Please never seek these out! */
@@ -5374,9 +5381,10 @@ function _settingsToLineBreak() {
 	const breakAfterNature = ['autoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
 	const breakAfterDisplay = ['enableAFK', 'shieldGymMostEfficientDisplay'];
 	const breakAfterImportExport = ['mutatorPresets'];
+	const breakAfterHelp = ['helpShieldGym', 'helpFragments'];
 	const breakAfterTest = ['testTotalEquipmentCost'];
 
-	const breakAfterIDs = [...breakAfterCore, ...breakAfterMaps, ...breakAfterDaily, ...breakAfterEquipment, ...breakAfterCombat, ...breakAfterJobs, ...breakAfterC2, ...breakAfterBuildings, ...breakAfterChallenges, ...breakAfterHeirlooms, ...breakAfterMagma, ...breakAfterNature, ...breakAfterDisplay, ...breakAfterImportExport, ...breakAfterTest];
+	const breakAfterIDs = [...breakAfterCore, ...breakAfterMaps, ...breakAfterDaily, ...breakAfterEquipment, ...breakAfterCombat, ...breakAfterJobs, ...breakAfterC2, ...breakAfterBuildings, ...breakAfterChallenges, ...breakAfterHeirlooms, ...breakAfterMagma, ...breakAfterNature, ...breakAfterDisplay, ...breakAfterImportExport, ...breakAfterHelp, ...breakAfterTest];
 
 	const breakAfterHeirloomIDs = ['heirloomAutoForceRun', 'heirloomAutoShieldMod7', 'heirloomAutoStaffMod7'];
 

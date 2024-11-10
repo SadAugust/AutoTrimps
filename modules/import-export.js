@@ -542,7 +542,6 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 }
 
 function disableAllSettings() {
-	//Disable all settings
 	for (const setting in autoTrimpSettings) {
 		if (['ATversion', 'ATversionChangelog', 'gameUser'].includes(setting)) continue;
 		const item = autoTrimpSettings[setting];
@@ -594,7 +593,18 @@ function makeAutoPortalHelpTooltip() {
 	tooltipText += `<p>If neither of the options above are run then it will portal into the challenge that you have selected in the <b>Auto Portal</b> setting. If that is disabled then it will portal into a challengeless run.</p>`;
 
 	tooltip('Auto Portal Info', 'customText', 'lock', tooltipText, false, 'center');
-	_verticalCenterTooltip(true);
+	_verticalCenterTooltip();
+}
+
+function makeShieldGymHelpTooltip() {
+	let tooltipText = '';
+
+	tooltipText += `<p>When both the scripts <b>Auto Equip</b> and <b>Auto Structure</b> settings are enabled the script does multiple checks to identify the most efficient purchase between Shields and Gyms.</p>`;
+	tooltipText += `<p>It calculates the cost of each and which one will provide the best hits survived impact for your current zone (or map if you're mapping) and uses those values to identify the best one to purchase.</p>`;
+	tooltipText += `<p>The calculations do take Shield prestiges and the Gymystic upgrade multiplication bonus into account.</p>`;
+
+	tooltip('Shield and Gym Info', 'customText', 'lock', tooltipText, false, 'center');
+	_verticalCenterTooltip();
 }
 
 function makeFarmingDecisionHelpTooltip() {
@@ -635,7 +645,7 @@ function makeFarmingDecisionHelpTooltip() {
 		if (challengeActive('Insanity')) tooltipText += `<p>Insanity Farm</p>`;
 		if (challengeActive('Alchemy')) tooltipText += `<p>Alchemy Farm</p>`;
 		if (challengeActive('Hypothermia')) tooltipText += `<p>Hypothermia Farm</p>`;
-		tooltipText += `<p>HD Farm (and Hit Survived)</p>`;
+		tooltipText += `<p>HD Farm (and Hits Survived)</p>`;
 		tooltipText += `<p>Void Maps</p>`;
 		tooltipText += `<p>Map Bonus</p>`;
 		if (challengeActive('Wither')) tooltipText += `<p><b><i>Wither Farm</b></i></p>`;
@@ -645,14 +655,23 @@ function makeFarmingDecisionHelpTooltip() {
 	}
 
 	tooltip('Auto Maps Priority', 'customText', 'lock', tooltipText, false, 'center');
-	_verticalCenterTooltip(true);
+	_verticalCenterTooltip();
 }
 
 function makeFragmentDecisionHelpTooltip() {
 	let tooltipText = '';
 
+	tooltipText += `<p>When you can't afford a map with perfect sliders and the desired map special & biome the script will make adjustments to the map properties in the following order until the map can be afforded:</p>`;
+	if (trimpStats.plusLevels) tooltipText += `<p>Disables perfect maps.</p>`;
+	tooltipText += `<p>Reduces the <b>Difficulty</b> slider until it either reaches 0 or you can afford the map.</p>`;
+	tooltipText += `<p>Reduces the <b>Loot</b> slider until it either reaches 0 or you can afford the map.</p>`;
+	tooltipText += `<p>Sets the <b>Biome</b> to <b>Random</b>.</p>`;
+	tooltipText += `<p>Removes the <b>Special Modifier</b> if it's not set to a <b>Cache</b> special.</p>`;
+	tooltipText += `<p>Reduces the <b>Size</b> slider until it either reaches 0 or you can afford the map.</p>`;
+	tooltipText += `<p>Removes the <b>Special Modifier</b> if still set.</p>`;
+
 	tooltip('Fragment Decision Info', 'customText', 'lock', tooltipText, false, 'center');
-	_verticalCenterTooltip(true);
+	_verticalCenterTooltip();
 }
 
 function makeAdditionalInfoTooltip(mouseover) {

@@ -673,7 +673,7 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 	return [Array.from({ length: size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData)), equality];
 }
 
-//Simulate farming at the given zone for a fixed time, and return the number cells cleared.
+/* simulate farming at the given zone for a fixed time, and return the number cells cleared. */
 function simulate(saveData, zone, stance) {
 	const { maxTicks, universe, mapGrid, biome, block, equality, size, specialData, lootMult, magma, checkFrenzy } = saveData;
 
@@ -689,7 +689,7 @@ function simulate(saveData, zone, stance) {
 		wind = 0,
 		ice = 0;
 
-	/* Challenge Variables */
+	/* challenge variables */
 	let nomStacks = 0;
 	let duelPoints = game.challenges.Duel.trimpStacks;
 	let hasWithered = false;
@@ -727,6 +727,8 @@ function simulate(saveData, zone, stance) {
 
 	const trimpEqualityMult = Math.pow(saveData.equalityMult, equality);
 	const enemyEqualityMult = Math.pow(0.9, equality);
+	const autoEquality = typeof atConfig !== 'undefined' && getPageSetting('equalityManagement') === 2;
+	const enemyEqualityMultMax = Math.pow(0.9, game.portal.Equality.radLevel);
 
 	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
 	const specialTime = getSpecialTime(specialData);
@@ -743,7 +745,7 @@ function simulate(saveData, zone, stance) {
 		return seed * rand_mult;
 	}
 
-	function enemy_hit(enemyAttack, rngRoll) {
+	function enemy_hit(enemyAttack, rngRoll, dmgCheck = false) {
 		enemyAttack *= 1 + saveData.fluctuation * (2 * rngRoll - 1);
 		enemyAttacks++;
 
@@ -764,10 +766,12 @@ function simulate(saveData, zone, stance) {
 		if (universe === 2 && equality > 0) enemyAttack *= enemyEqualityMult;
 		if (saveData.glass && glassStacks > 0) enemyAttack *= Math.pow(2, Math.floor(glassStacks / 100)) * (100 + glassStacks);
 
-		if (enemyAttack > 0) reduceTrimpHealth(enemyAttack);
-		++debuff_stacks;
+		if (!dmgCheck) {
+			if (enemyAttack > 0) reduceTrimpHealth(enemyAttack);
+			++debuff_stacks;
 
-		return enemyAttack;
+			return enemyAttack;
+		}
 	}
 
 	function reduceTrimpHealth(amt) {
@@ -816,7 +820,7 @@ function simulate(saveData, zone, stance) {
 	}
 
 	function deathVarsReset() {
-		/* Trimps death phase. 100ms + fighting phase timer */
+		/* trimps death phase. 100ms + fighting phase timer */
 		ticks += 1 + Math.ceil(turns * saveData.speed);
 		ticks = Math.max(ticks, last_group_sent + saveData.breedTimer);
 		last_group_sent = ticks;
@@ -874,7 +878,7 @@ function simulate(saveData, zone, stance) {
 		nomStacks = 0;
 		let pbTurns = 0;
 		let oneShot = true;
-		let enemyAttackTemp = enemyAttack;
+		let enemyAttackTemp = 0;
 
 		if (ok_spread !== 0) {
 			enemyHealth -= ok_damage;
@@ -891,7 +895,9 @@ function simulate(saveData, zone, stance) {
 			++turns;
 			rngRoll = rng();
 
+			enemyAttackTemp = 0;
 			let attacked = false;
+			trimpAttack = 0;
 			trimpCrit = false;
 			enemyCrit = false;
 
