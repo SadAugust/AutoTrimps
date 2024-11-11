@@ -197,7 +197,7 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 	if (!cell) {
 		const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 		const exitCell = typeof atConfig !== 'undefined' ? getPageSetting(settingPrefix + 'ExitSpireCell') : 100;
-		cell = isDoingSpire() && exitCell > 0 && exitCell <= 100 ? exitCell : 100;
+		cell = isDoingSpire() && exitCell >= 0 && exitCell <= 100 ? exitCell : 100;
 	}
 
 	if (checkCell) return cell;
@@ -1364,21 +1364,21 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 		ourHealth -= enemyDmgMaxEq * (gammaToTrigger - 1);
 	}
 
-	if (enemyHealth !== 0) {
-		for (let i = 0; i <= maxEquality; i++) {
-			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i);
-			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
-			if (runningUnlucky) {
-				unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
-				if (unluckyDmgEquality.toString()[0] % 2 === 1 && i !== maxEquality) continue;
-			}
-			if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
-				return i;
-			} else if (farmType === 'oneShot' && ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
-				return i;
-			} else if (i === maxEquality) {
-				return i;
-			}
+	for (let i = 0; i <= maxEquality; i++) {
+		enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i);
+		ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
+
+		if (runningUnlucky) {
+			unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
+			if (unluckyDmgEquality.toString()[0] % 2 === 1 && i !== maxEquality) continue;
+		}
+
+		if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
+			return i;
+		} else if (farmType === 'oneShot' && ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
+			return i;
+		} else if (i === maxEquality) {
+			return i;
 		}
 	}
 }

@@ -32,7 +32,7 @@ function exitSpireCell(checkCell) {
 	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 	const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
 	const isSpireActive = isDoingSpire();
-	const cell = isSpireActive && exitCell > 0 && exitCell <= 100 ? exitCell : 100;
+	const cell = isSpireActive && exitCell >= 0 && exitCell <= 100 ? exitCell : 100;
 
 	if (checkCell) return cell;
 	if (cell <= 0) return;
@@ -1220,6 +1220,17 @@ function updateATVersion() {
 			if (typeof tempSettings['hitsSurvivedReset'] !== 'undefined') {
 				autoTrimpSettings.hitsSurvivedReset.value = tempSettings.hitsSurvivedReset.enabled ? 1 : 0;
 				autoTrimpSettings.hitsSurvivedReset.valueU2 = tempSettings.hitsSurvivedReset.enabledU2 ? 1 : 0;
+			}
+
+			saveSettings();
+		}
+
+		if (versionNumber < '6.5.993') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['ExitSpireCell'] !== 'undefined') {
+				if (tempSettings.ExitSpireCell.value === 0) autoTrimpSettings.ExitSpireCell.value = -1;
+				if (tempSettings.dExitSpireCell.value === 0) autoTrimpSettings.dExitSpireCell.value = -1;
+				if (tempSettings.c2ExitSpireCell.value === 0) autoTrimpSettings.c2ExitSpireCell.value = -1;
 			}
 
 			saveSettings();
