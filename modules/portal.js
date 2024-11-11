@@ -605,7 +605,7 @@ function challengeInfo(force) {
 		}
 
 		if (challengeActive('Experience')) {
-			debug(`Be aware that the script classes this challenge as a C2 for all setting so you will need to use any C2 related settings when running this.`, 'challenge');
+			debug(`Be aware that the script classes this challenge as a C2 for all settings so you will need to use any C2 related settings when running this.`, 'challenge');
 		}
 
 		if (challengeActive('Downsize')) {
