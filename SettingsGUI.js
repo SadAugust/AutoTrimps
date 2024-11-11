@@ -2220,7 +2220,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
 				description += "<p>Any health or damage calculations for the Spire will be based off this cell if set.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
@@ -3007,7 +3007,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
 				description += "<p>Any health or damage calculations for the Spire will be based off this cell if set.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
 			}, 'value', -1, null, 'Daily', [1],
@@ -3969,7 +3969,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
 				description += "<p>Any health or damage calculations for the Spire will be based off this cell if set.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
+				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
