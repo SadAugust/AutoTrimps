@@ -420,9 +420,6 @@ function _downloadSave(what = '') {
 	if (what === 'exportAutoTrimps') {
 		saveGame.options.menu.pauseGame.enabled = 1;
 		saveGame.options.menu.pauseGame.timeAtPause = new Date().getTime();
-		saveGame.options.menu.standardNotation.enabled = 0;
-		saveGame.options.menu.darkTheme.enabled = 2;
-		saveGame.options.menu.disablePause.enabled = 1;
 	} else if (usingRealTimeOffline) {
 		if (game.options.menu.autoSave.enabled !== atConfig.autoSave) {
 			saveGame.options.menu.autoSave.enabled = atConfig.autoSave;
