@@ -203,7 +203,7 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 	if (checkCell) return cell;
 
 	const spireNum = Math.floor((game.global.world - 100) / 100);
-	const enemy = name ? name : game.global.gridArray[cell - 1].name;
+	const enemy = name ? name : game.global.gridArray[Math.max(cell - 1, 0)].name;
 	let base = what === 'attack' ? calcEnemyBaseAttack('world', game.global.world, 100, 'Chimp') : 2 * calcEnemyBaseHealth('world', game.global.world, 100, 'Chimp');
 	let mod = what === 'attack' ? 1.17 : 1.14;
 

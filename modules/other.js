@@ -35,7 +35,7 @@ function exitSpireCell(checkCell) {
 	const cell = isSpireActive && exitCell >= 0 && exitCell <= 100 ? exitCell : 100;
 
 	if (checkCell) return cell;
-	if (cell <= 0) return;
+	if (cell < 0) return;
 
 	if (isSpireActive && game.global.lastClearedCell + 1 > cell) {
 		endSpire();
