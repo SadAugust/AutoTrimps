@@ -5147,13 +5147,13 @@ function autoToggle(what) {
 
 	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) {
 		if (autoTrimpsTabBarMenu.parentNode.id === 'settingsRow') {
-			document.getElementById('settingsRowTW').append(autoTrimpsTabBarMenu, autoSettings);
+			document.getElementById('settingsRowTW').append(autoSettings, autoTrimpsTabBarMenu);
 			autoTrimpsTabBarMenu.style.display = 'none';
 			autoSettings.style.display = 'none';
 		}
 	} else {
 		if (autoTrimpsTabBarMenu.parentNode.id === 'settingsRowTW') {
-			document.getElementById('settingsRow').append(autoTrimpsTabBarMenu, autoSettings);
+			document.getElementById('settingsRow').prepend(autoSettings, autoTrimpsTabBarMenu);
 			autoTrimpsTabBarMenu.style.display = 'none';
 			autoSettings.style.display = 'none';
 		}
