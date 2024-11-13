@@ -151,7 +151,7 @@ function populateFarmCalcData() {
 		trimpAttack /= frenzyMult;
 	}
 
-	/* Stances */
+	/* stances */
 	let stances = 'X';
 	if (basicData.universe === 1 && game.upgrades.Formations.done) {
 		if (game.upgrades.Dominance.done) stances = 'D';
