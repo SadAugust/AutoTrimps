@@ -1063,7 +1063,7 @@ function loadRuneTrinketCounter() {
 	const darkmode_colours = ' color: rgb(0,0,0); background-color: rgb(93,93,93);';
 
 	let chosen_colours = standard_colours;
-	if (game.options.menu.darkTheme.enabled == 2) {
+	if (game.options.menu.darkTheme.enabled === 2) {
 		chosen_colours = darkmode_colours;
 	}
 

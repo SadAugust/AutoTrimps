@@ -345,11 +345,12 @@ function _shouldSkipHeirloom(item, heirlooms, heirloomRarity) {
 	return item === 'empty' || (heirloom.filter && !heirloom.filter()) || (heirloom.steps && heirloom.steps[heirloomRarity] === -1);
 }
 
-function checkLiqZoneCount(universe) {
-	if (game.options.menu.liquification.enabled === 0) return 0;
+function checkLiqZoneCount(universe = game.global.universe) {
+	if (game.options.menu.liquification.enabled === 0 && universe === 1) return 0;
 
 	if (universe === 2) {
 		if (!u2Mutations.tree.Liq1.purchased) return 0;
+
 		let amt = 0.1;
 		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
 		return (getHighestLevelCleared(false, true) + 1) * amt;

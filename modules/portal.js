@@ -591,7 +591,12 @@ function challengeInfo(force) {
 		}
 	}
 
-	if (force || game.global.world === 1 || (game.global.world % 3 === 0 && game.global.world < checkLiqZoneCount(game.global.universe) + 10)) {
+	const liqZoneActive = liquifiedZone();
+	const liqZones = checkLiqZoneCount();
+	const liqFreq = Math.floor((liqZones - 1) / 5) || 3;
+	const displayMsg = (liqZoneActive && game.global.world % liqFreq === 0) || (!liqZoneActive && game.global.world % 4 === 0 && game.global.world < liqZones + 10);
+
+	if (force || game.global.world === 1 || displayMsg) {
 		if (challengeActive('Daily') && getPageSetting('mapOddEvenIncrement') && dailyOddOrEven().active) {
 			debug(`Be aware that with the Odd/Even Increment setting enabled mapping can be delayed by a zone since your daily has either a positive or negative zone modifier.`, 'challenge');
 		}
