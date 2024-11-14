@@ -1,6 +1,7 @@
 # General
 
 -   Improve setting tooltips
+
     -   Tabs Completed
         -   Core - Still need to do Auto Portal sub settings
         -   Buildings
@@ -44,8 +45,7 @@
 
 # Help Window
 
-1. Fragment decision making
-2. Auto Gather decision making
+1. Auto Gather decision making
     - Change Auto Gather description to mention this
 
 # Bugs
