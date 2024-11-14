@@ -320,7 +320,10 @@ function getGameTime() {
 function targetHitsSurvived(skipHDCheck, worldType) {
 	if (!skipHDCheck && mapSettings.mapName === 'Hits Survived') return mapSettings.hdRatio;
 	if (worldType === 'void') return Number(getPageSetting('voidMapSettings')[0].hitsSurvived);
-	if (isDoingSpire()) return getPageSetting('hitsSurvivedSpire');
+	if (isDoingSpire()) {
+		const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+		return getPageSetting('hitsSurvivedSpire' + settingAffix);
+	}
 	return getPageSetting('hitsSurvived');
 }
 

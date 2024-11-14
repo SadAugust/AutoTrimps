@@ -1236,6 +1236,16 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '6.5.994') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['maxMapStacksForSpire'] !== 'undefined') {
+				autoTrimpSettings.maxMapStacksForSpireDaily = tempSettings.maxMapStacksForSpire.enabled;
+				autoTrimpSettings.maxMapStacksForSpireC2 = tempSettings.maxMapStacksForSpire.enabled;
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
