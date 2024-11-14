@@ -1,6 +1,7 @@
 function autoPortalCheck(specificPortalZone) {
 	decayFinishChallenge();
 	quagmireFinishChallenge();
+	dailyFinishChallenge();
 
 	if (!game.global.portalActive) return;
 
@@ -271,7 +272,7 @@ function doPortal(challenge, skipDaily) {
 	_autoPortalActivate(challenge);
 }
 
-function _autoPortalAbandonChallenge() {
+function _autoPortalAbandonChallenge(portal = true) {
 	if (challengeActive('Daily') && (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0'))) {
 		const dailyMods = dailyModifiersOutput();
 		MODULES.portal.dailyMods = dailyMods ? dailyMods.replace(/<br>/g, '|').slice(0, -1) : '';
@@ -281,7 +282,7 @@ function _autoPortalAbandonChallenge() {
 	confirmAbandonChallenge();
 	abandonChallenge();
 	cancelTooltip();
-	portalClicked();
+	if (portal) portalClicked();
 }
 
 function _autoPortalVoidTracker() {
@@ -567,6 +568,16 @@ function decayFinishChallenge() {
 	if (stacksToAbandon > 0 && currentStacks >= stacksToAbandon) {
 		abandonChallenge();
 		debug(`Finished ${challengeName} challenge because we had more than ${stacksToAbandon} stacks.`, 'general', 'oil');
+	}
+}
+
+function dailyFinishChallenge() {
+	if (!challengeActive('Daily') || getPageSetting('dailyPortal') !== 3) return;
+
+	const endZone = getPageSetting('dailyAbandonZone');
+	if (endZone > 0 && game.global.world >= endZone) {
+		_autoPortalAbandonChallenge(false);
+		debug(`Finished ${'Daily'} challenge because we reached zone ${endZone}.`, 'general', 'oil');
 	}
 }
 

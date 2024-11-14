@@ -3081,7 +3081,7 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Daily', [1, 2]);
 
 		createSetting('dailyPortal',
-			function () { return (['Daily Portal: Off', 'Daily Portal: ' + _getPrimaryResourceInfo().abv + '/Hr', 'Daily Portal: Custom']) },
+			function () { return (['Daily Portal: Off', 'Daily Portal: ' + _getPrimaryResourceInfo().abv + '/Hr', 'Daily Portal: Custom', 'Daily Portal: Abandon']) },
 			function () {
 				let description = "<p>Will automatically portal into different challenges depending on the way you setup the Daily Auto Portal related settings. The challenge that it portals into can be setup through the <b>Auto Portal</b> settings in the <b>Core</b> tab.</p>";
 				description += "<p>Additional settings appear when <b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b> or <b>Daily Portal: Custom</b> are selected.</p>";
@@ -3090,6 +3090,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b><br>Portals into new runs when your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour goes below your current runs best " + _getPrimaryResourceInfo().abv.toLowerCase() + "/hr.</p>";
 				description += "<p>There is a <b>Buffer</b> setting, which lowers the check from best " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour to (best - buffer setting) " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				description += "<p><b>Daily Portal: Custom</b><br>Will portal into your Auto Portal challenge at the zone specified in the <b>Daily Portal Zone</b> setting.</p>";
+				description += "<p><b>Daily Portal: Abandon</b><br>Will finish your daily run at the zone specified in the <b>Daily Abandon Zone</b> setting. You will need to use the regular AutoPortal to portal when using this and the <b>Filler Run</b> setting will be disabled.</p>";
 				description += "<p><b>Recommended:</b> " + (atConfig.settingUniverse === 2 ? "Daily Portal: Custom with a specified endzone to make use of the Scruffy level 3 ability" : ("Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr")) + "</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Daily', [1, 2]);
@@ -3102,7 +3103,17 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
 			}, 'value', 999, null, 'Daily', [1, 2],
-			function () { return (getPageSetting('dailyPortal', atConfig.settingUniverse) >= 2) });
+			function () { return (getPageSetting('dailyPortal', atConfig.settingUniverse) === 2) });
+
+		createSetting('dailyAbandonZone',
+			function () { return ('Daily Abandon Zone') },
+			function () {
+				let description = "<p>Will automatically abandon your daily once this zone is reached when using the <b>Daily Portal: Abandon</b> Auto Portal setting.</p>";
+				description += "<p>Setting this to <b>200</b> would abandon when you <b>reach</b> zone 200.</p>";
+				description += "<p><b>Recommended:</b> The zone you would like your daily to end</p>";
+				return description;
+			}, 'value', 999, null, 'Daily', [1, 2],
+			function () { return (getPageSetting('dailyPortal', atConfig.settingUniverse) === 3) });
 
 		createSetting('dailyDontPortalBefore',
 			function () { return ("D: Don't Portal Before") },
@@ -3162,7 +3173,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [1, 2],
-			function () { return (getPageSetting('dailyPortal', atConfig.settingUniverse) > 0) });
+			function () { return ([1, 2].includes(getPageSetting('dailyPortal', atConfig.settingUniverse))) });
 
 		createSetting('dailyPortalPreviousUniverse',
 			function () { return ('Daily Previous Universe') },
@@ -4926,7 +4937,11 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			class: 'settingsBtnLocalCogwheel',
 			style: 'margin-left:-1px;'
 		});
-		const autoPortalSettingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
+		const autoPortalSettingsButton = _createElement('SPAN', {
+			class: 'glyphicon glyphicon-cog',
+			style: 'transform: scale(0.7); justify-content: center; font-size: inherit;'
+		});
+
 		btnParent.appendChild(autoPortalSettings);
 		autoPortalSettings.appendChild(autoPortalSettingsButton);
 	}
