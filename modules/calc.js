@@ -1069,14 +1069,20 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 	if (worldType !== 'map' && targetZone % 2 === 1 && challengeActive('Lead')) targetZone++;
 
 	const customAttack = _calcHitsSurvivedAttack(worldType, targetZone);
-	const enemyName = worldType === 'void' ? 'Voidsnimp' : 'Snimp';
+	let enemyName = worldType === 'void' ? 'Voidsnimp' : 'Snimp';
+
+	if (worldType === 'world') {
+		if (game.global.universe === 1 && targetZone > 229) enemyName = 'Omnipotrimp';
+		else if ((game.global.universe === 2 && targetZone >= 20) || targetZone >= 59) enemyName = 'Improbability';
+		else if (targetZone === 5 || targetZone === 10 || (targetZone >= 15 && targetZone <= 58)) enemyName = 'Blimp';
+	}
 
 	let hitsToSurvive = targetHitsSurvived(false, worldType);
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 
 	const health = calcOurHealth(false, worldType, false, true, extraItem) / formationMod;
 	const block = calcOurBlock(false, false, worldType, extraGyms, extraItem) / formationMod;
-	const equality = equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', null, hitsToSurvive);
+	const equality = equalityQuery(enemyName, targetZone, 100, worldType, difficulty, 'gamma', null, hitsToSurvive);
 	let damageMult = 1;
 
 	if (ignoreCrits !== 2) {
@@ -1088,7 +1094,7 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 		if (ignoreCrits !== 1 && worldType === 'void') damageMult *= 4;
 	}
 
-	const worldDamage = calcEnemyAttack(worldType, targetZone, 99, enemyName, undefined, customAttack, equality) * difficulty;
+	const worldDamage = calcEnemyAttack(worldType, targetZone, 100, enemyName, undefined, customAttack, equality) * difficulty;
 	const pierce = (game.global.universe === 1 && game.global.brokenPlanet && worldType === 'world' ? getPierceAmt() : 0) * (game.global.formation === 3 ? 2 : 1);
 	const finalDmg = Math.max(damageMult * worldDamage - block, worldDamage * pierce, 0);
 
