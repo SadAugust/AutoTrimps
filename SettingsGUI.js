@@ -1149,7 +1149,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
 				description += "<p>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
-				description += `<p><i>When running a <b>Daily</b> that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'boolean', true, null, 'Combat', [1],
 			function () { return (masteryPurchased('scry2')) });
@@ -1421,7 +1421,7 @@ function initialiseAllSettings() {
 				let description = "<p>Enabling this will give you settings to allow you to wind stack in your runs.</p>";
 				description += "<p>Will use your regular <b>Auto Stance</b> setting when outside of zones you're wind stacking in.</p>";
 				description += "<p>The script evaluates the use of wind stance based on these settings. It examines the cells from the current one up to the maximum overkill range in scryer stance. If none of these cells contain enemies that drop helium, the script switches to scryer stance instead</p>";
-				description += `<p><i>When running a <b>Daily</b> that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Combat', [1],
@@ -1432,7 +1432,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Enables wind stacking in zones above and inclusive of the zone set.</p>";
 				description += "<p><b>Recommended:</b> 100 zones below portal zone</p>";
-				description += `<p><i>When running a <b>Daily</b> that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'value', 999, null, 'Combat', [1],
 			function () {
@@ -1445,7 +1445,7 @@ function initialiseAllSettings() {
 				let description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
 				description += "<p>If set to <b>0 or below</b> it will always use wind stance when past your wind stacking zone input.</p>";
 				description += "<p><b>Recommended:</b> 1000</p>";
-				description += `<p><i>When running a <b>Daily</b> that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'value', -1, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStanceWind.enabled) });
@@ -1455,7 +1455,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will wind stack during liquification regardless of your <b>Wind Stack H:D</b> or <b>Windstack Zone</b> inputs.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
-				description += `<p><i>When running a <b>Daily</b> that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'boolean', false, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStanceWind.enabled) });
@@ -3869,7 +3869,6 @@ function initialiseAllSettings() {
 				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
-				description += `<p><i>When running a <b>Daily</b> or <b>${_getChallenge2Info()}</b> those tabs version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
 
@@ -3881,7 +3880,6 @@ function initialiseAllSettings() {
 				description += "<p>Any health or damage calculations for the Spire will be based off this cell if set.</p>";
 				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
-				description += `<p><i>When running a <b>Daily</b> or <b>${_getChallenge2Info()}</b> those tabs version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
 
@@ -3892,7 +3890,6 @@ function initialiseAllSettings() {
 				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
-				description += `<p><i>When running a <b>Daily</b> or <b>${_getChallenge2Info()}</b> those tabs version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
 		
