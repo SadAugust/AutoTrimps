@@ -703,7 +703,8 @@ function mapFarm(lineCheck) {
 function _runMapFarm(setting, mapName, settingName, settingIndex) {
 	const mapSpecial = getAvailableSpecials(setting.special);
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial) : setting.level;
-	let repeatCounter = setting.repeat === -1 ? Infinity : setting.repeat;
+	let repeatCounter = Number(setting.repeat) === -1 ? Infinity : Number(setting.repeat);
+	if (isNaN(repeatCounter)) repeatCounter = setting.repeat;
 	const repeatNumber = repeatCounter === Infinity ? '∞' : repeatCounter;
 	const jobRatio = setting.jobratio;
 	const shouldAtlantrimp = setting.atlantrimp && game.mapUnlocks.AncientTreasure.canRunOnce;
