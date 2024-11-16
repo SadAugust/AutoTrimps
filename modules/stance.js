@@ -560,8 +560,9 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 		const oneShotDomination = oneShotPower(prefferedStance, 0, false);
 
 		if (oneShotDomination > 0) {
-			if (checkWind && oneShotPower('W', 0, false) >= oneShotDomination) prefferedStance = 'W';
-			else if (oneShotPower('S', 0, false) >= oneShotDomination) prefferedStance = 'S';
+			const stanceToCheck = checkWind ? 'W' : 'S';
+			const overkillRange = !game.global.mapsActive && liquifiedZone() ? 1 : maxOneShotPower();
+			if (oneShotPower(stanceToCheck, 0, false) >= overkillRange) prefferedStance = stanceToCheck;
 		}
 	}
 
