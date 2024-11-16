@@ -3293,6 +3293,7 @@ function farmingDecision() {
 	};
 
 	if (!game.global.mapsUnlocked || _leadDisableMapping()) return (mapSettings = farmingDetails);
+
 	let mapTypes = [];
 	//U1 map settings to check for.
 	if (game.global.universe === 1) {
@@ -3314,7 +3315,7 @@ function farmingDecision() {
 	}
 
 	if (usingBreedHeirloom()) {
-		if (atConfig.intervals.oneMinute) {
+		if (atConfig.intervals.oneMinute && getPageSetting('autoMaps')) {
 			debug(`Your breed heirloom is equipped and mapping is disabled due to it. If this is not intentional then swap the heirloom you're using for breeding with another.`, `heirlooms`);
 		}
 
