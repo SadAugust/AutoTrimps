@@ -256,7 +256,9 @@ function _gatherTrapResources() {
 }
 
 function _handleTrapping(action, priority) {
-	const trapsToBuy = bwRewardUnlocked('DecaBuild') ? 10 : bwRewardUnlocked('DoubleBuild') ? 2 : 1;
+	let trapsToBuy = bwRewardUnlocked('DecaBuild') ? 10 : bwRewardUnlocked('DoubleBuild') ? 2 : 1;
+	trapsToBuy = Math.max(1, calculateMaxAfford_AT(game.buildings.Trap, true, false, false, trapsToBuy, 0.01));
+
 	const buyTrap = () => canAffordBuilding('Trap', false, false, false, false, 1) && (safeBuyBuilding('Trap', trapsToBuy) || true);
 	const canBuild = () => isBuildingInQueue('Trap') || buyTrap();
 	const bait = () => safeSetGather('trimps') || true;
