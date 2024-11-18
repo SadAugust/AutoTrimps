@@ -319,7 +319,7 @@ function c2RunnerChallengeOrder(universe = portalUniverse) {
 
 function _autoHeirloomMods(heirloomType) {
 	const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	const heirloomRarity = rarities.indexOf(getPageSetting('heirloomAutoRareToKeep', atConfig.settingUniverse));
+	const heirloomRarity = rarities.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`, atConfig.settingUniverse));
 	const heirloomModsArray = ['Any'];
 
 	if (typeof heirloomInfo !== 'function') {
