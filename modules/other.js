@@ -1240,8 +1240,8 @@ function updateATVersion() {
 		if (versionNumber < '6.5.994') {
 			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['maxMapStacksForSpire'] !== 'undefined') {
-				autoTrimpSettings.maxMapStacksForSpireDaily.enabled = tempSettings.maxMapStacksForSpire.enabled;
-				autoTrimpSettings.maxMapStacksForSpireC2.enabled = tempSettings.maxMapStacksForSpire.enabled;
+				autoTrimpSettings.spireMapBonusC2.enabled = tempSettings.maxMapStacksForSpire.enabled;
+				autoTrimpSettings.spireMapBonusDaily.enabled = tempSettings.maxMapStacksForSpire.enabled;
 			}
 
 			saveSettings();
@@ -1331,13 +1331,25 @@ function updateATVersion() {
 
 			if (typeof tempSettings['hitsSurvivedSpire'] !== 'undefined') {
 				autoTrimpSettings.spireHitsSurvived.value = tempSettings.hitsSurvivedSpire.value;
+			}
+
+			if (typeof tempSettings['hitsSurvivedSpireC2'] !== 'undefined') {
 				autoTrimpSettings.spireHitsSurvivedC2.value = tempSettings.hitsSurvivedSpireC2.value;
+			}
+
+			if (typeof tempSettings['hitsSurvivedSpireDaily'] !== 'undefined') {
 				autoTrimpSettings.spireHitsSurvivedDaily.value = tempSettings.hitsSurvivedSpireDaily.value;
 			}
 
 			if (typeof tempSettings['skipSpires'] !== 'undefined') {
 				autoTrimpSettings.spireSkipMapping.enabled = tempSettings.skipSpires.enabled;
+			}
+
+			if (typeof tempSettings['skipSpiresC2'] !== 'undefined') {
 				autoTrimpSettings.spireSkipMappingC2.enabled = tempSettings.skipSpiresC2.enabled;
+			}
+
+			if (typeof tempSettings['skipSpiresDaily'] !== 'undefined') {
 				autoTrimpSettings.spireSkipMappingDaily.enabled = tempSettings.skipSpiresDaily.enabled;
 			}
 
