@@ -1319,7 +1319,13 @@ function updateATVersion() {
 
 			if (typeof tempSettings['maxMapStacksForSpire'] !== 'undefined') {
 				autoTrimpSettings.spireMapBonus.enabled = tempSettings.maxMapStacksForSpire.enabled;
+			}
+
+			if (typeof tempSettings['maxMapStacksForSpireC2'] !== 'undefined') {
 				autoTrimpSettings.spireMapBonusC2.enabled = tempSettings.maxMapStacksForSpireC2.enabled;
+			}
+
+			if (typeof tempSettings['maxMapStacksForSpireDaily'] !== 'undefined') {
 				autoTrimpSettings.spireMapBonusDaily.enabled = tempSettings.maxMapStacksForSpireDaily.enabled;
 			}
 
