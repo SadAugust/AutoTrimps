@@ -5665,7 +5665,7 @@ function _createResourcePerHourContainer() {
 
 	const resourcePerHourContainer = _createElement('DIV', {
 		id: 'heHrStatus',
-		style: 'display: ' + (getPageSetting('displayHideAutoButtons').ATheHr ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);',
+		style: 'display: ' + (!getPageSetting('displayHideAutoButtons').ATheHr ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);',
 		onmouseout: 'tooltip("hide")'
 	});
 
