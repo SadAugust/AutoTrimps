@@ -322,7 +322,7 @@ function targetHitsSurvived(skipHDCheck, worldType) {
 	if (worldType === 'void') return Number(getPageSetting('voidMapSettings')[0].hitsSurvived);
 	if (isDoingSpire()) {
 		const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
-		return getPageSetting('hitsSurvivedSpire' + settingAffix);
+		return getPageSetting('spireHitsSurvived' + settingAffix);
 	}
 	return getPageSetting('hitsSurvived');
 }
@@ -341,6 +341,6 @@ function whichAutoLevel() {
 
 function whichScryVoidMaps() {
 	if (!game.talents.scry2.purchased) return false;
-	if (trimpStats.isDaily) return getPageSetting('dscryvoidmaps');
-	return getPageSetting('scryvoidmaps');
+	if (trimpStats.isDaily) return getPageSetting('scryerVoidMapsDaily');
+	return getPageSetting('scryerVoidMaps');
 }

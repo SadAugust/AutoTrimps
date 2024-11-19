@@ -145,25 +145,25 @@ function initialiseAllSettings() {
 	const displayCore = true;
 	if (displayCore) {
 		createSetting('gatherType',
-			function () { return (['Manual Gather', 'Auto Gather', 'Mining Only', 'Science Research Off']) },
+			function () { return (['Auto Gather: Off', 'Auto Gather: On', 'Auto Gather: Mining Only', 'Auto Gather: No Science']) },
 			function () {
 				let description = "<p>Lets the script control what you gather and build.</p>";
-				description += "<p><b>Manual Gather</b><br>Disables this setting.</p>";
-				description += "<p><b>Auto Gather</b><br>Automatically switch your gathering between resources and the building queue depending on what the script deems necessary.</p>";
-				description += "<p><b>Mining Only</b><br>Sets gather to <b>Mining</b> unless buildings are in the queue then it will prioritise building them.<br>Only use this if you are past the early stages of the game and have <b>Foremany</b> unlocked.</p>";
-				description += "<p><b>Science Research Off</b><br>Works the same as <b>Auto Gather</b> but stops <b>Science</b> from being gathered.</p>";
-				description += "<p><b>Recommended:</b> Auto Gather</p>";
+				description += "<p><b>Auto Gather: Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Auto Gather: On</b><br>Automatically switch your gathering between resources and the building queue depending on what the script deems necessary.</p>";
+				description += "<p><b>Auto Gather: Mining Only</b><br>Sets gather to <b>Mining</b> unless buildings are in the queue then it will prioritise building them.<br>Only use this if you are past the early stages of the game and have <b>Foremany</b> unlocked.</p>";
+				description += "<p><b>Auto Gather: No Science</b><br>Works the same as <b>Auto Gather: On</b> but stops <b>Science</b> from being gathered.</p>";
+				description += "<p><b>Recommended:</b> Auto Gather: On</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
 
 		createSetting('upgradeType',
-			function () { return (['Manual Upgrades', 'Buy All Upgrades', 'Upgrades No Coords']) },
+			function () { return (['Buy Upgrades: Off', 'Buy Upgrades: On', 'Buy Upgrades: No Coords']) },
 			function () {
 				let description = "<p>Lets the script control what upgrades are purchased. Equipment upgrades are controlled by settings in the <b>Equipment</b> tab</p>";
-				description += "<p><b>Manual Upgrades</b><br>Disables this setting.</p>";
-				description += "<p><b>Buy All Upgrades</b><br>Purchases upgrades depending on what the script deems necessary. Certain upgrades such as speedbooks can take priority and delay other upgrades from being purchased.</p>";
-				description += "<p><b>Upgrades no Coords</b><br>Works the same as <b>Buy All Upgrades</b> but stops <b>Coordination</b> upgrades from being purchased.</p>";
-				description += "<p><b>Recommended:</b> Buy All Upgrades</p>";
+				description += "<p><b>Buy Upgrades: Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Buy Upgrades: On</b><br>Purchases upgrades depending on what the script deems necessary. Certain upgrades such as speedbooks can take priority and delay other upgrades from being purchased.</p>";
+				description += "<p><b>Buy Upgrades: No Coords</b><br>Works the same as <b>Buy Upgrades: On</b> but stops <b>Coordination</b> upgrades from being purchased.</p>";
+				description += "<p><b>Recommended:</b> Buy Upgrades: On</p>";
 
 				if (atConfig.settingUniverse === 1) {
 					description += "<p>When running the <b>Scientist</b> challenge the following upgrades will be purchased: ";
@@ -219,6 +219,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Graphs will continue tracking data while paused.</b></p>";
 				return description;
 			}, 'boolean', null, null, 'Core', [0]);
+
 		let $pauseScript = document.getElementById('pauseScript');
 		$pauseScript.parentNode.style.setProperty('float', 'right');
 		$pauseScript.parentNode.style.setProperty('margin-right', '0.5vw');
@@ -269,7 +270,7 @@ function initialiseAllSettings() {
 		createSetting('presetCombatRespec',
 			function () {
 				const trimple = atConfig.settingUniverse === 1 ? "Trimple" : "Atlantrimp";
-				return ([trimple + ' Respec Off', trimple + ' Respec Popup', trimple + ' Respec Force'])
+				return ([`${trimple} Respec: Off`, `${trimple} Respec: Popup`, `${trimple} Respec: Force`])
 			},
 			function () {
 				const calcName = atConfig.settingUniverse === 2 ? "Surky" : "Perky";
@@ -287,15 +288,17 @@ function initialiseAllSettings() {
 					description += `<p>Will respec into the <b>${respecName}</b> preset when running ${_getSpecialChallengeDescription()} <b>OR</b> you have more golden battle than golden radon upgrades. Otherwise it will assume it's a radon run and respec into the <b>Radon Combat Respec</b> preset.</p>`;
 				}
 
-				description += "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
-				description += "<p><b>" + trimpleShortened + " Respec Popup</b><br>Will display a popup after completing " + trimple + " asking whether you would like to respec into the preset listed above.</p>";
-				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>4 seconds after completing " + trimple + " the script will respec you into the <b>" + calcName + "</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec.</p>";
-				description += "<p>I'd recommend only using this with both the <b>Auto Allocate Perks</b> and <b>Void Map Liquification</b> settings enabled. Without these you will go into your next run in a suboptimal perk setup.</p>";
-
-				if (atConfig.settingUniverse === 1) description += "<p>Has an additional setting (<b>Spire Respec Cell</b>) which has a <b>5</b> second delay after toggling this setting before it will function.</p>";
-
-				description += "<p><b>Recommended:</b> " + trimpleShortened + " Respec Off</p>";
-				return description
+				description += `<p><b>${trimpleShortened} Respec: Off</b><br>Disables this setting.</p>`;
+				description += `<p><b>${trimpleShortened} Respec: Popup</b><br>Will display a popup after completing ${trimple} asking whether you would like to respec into the preset listed above.</p>`;
+				description += `<p><b>${trimpleShortened} Respec: Force</b><br>4 seconds after completing ${trimple} the script will respec you into the <b>${calcName}</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec.</p>`;
+				description += `<p>I'd recommend only using this with both the <b>Auto Allocate Perks</b> and <b>Void Map Liquification</b> settings enabled. Without these you will go into your next run in a suboptimal perk setup.</p>`;
+				
+				if (atConfig.settingUniverse === 1) {
+					description += `<p>Has an additional setting (<b>Spire Respec Cell</b>) which has a <b>5</b> second delay after toggling this setting before it will function.</p>`;
+				}
+				
+				description += `<p><b>Recommended:</b> ${trimpleShortened} Respec: Off</p>`;
+				return description;
 			},
 			'multitoggle', [0], null, 'Core', [1, 2],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170 || atConfig.settingUniverse === 2) });
@@ -325,12 +328,13 @@ function initialiseAllSettings() {
 
 		createSetting('universeSetting',
 			function () {
-				let portalOptions = ['Helium Settings'];
-				if (Fluffy.checkU2Allowed()) portalOptions.push('Radon Settings');
+				let portalOptions = ['Universe Settings: 1'];
+				if (Fluffy.checkU2Allowed()) portalOptions.push('Universe Settings: 2');
 				return portalOptions;
 			},
 			function () { return ('Switch between settings for universes you have unlocked.') },
 			'multitoggle', 0, null, 'Core', [0]);
+
 		let $universeSetting = document.getElementById('universeSetting');
 		$universeSetting.parentNode.style.setProperty('float', 'right');
 		$universeSetting.parentNode.style.setProperty('margin-right', '0.5vw');
@@ -454,19 +458,19 @@ function initialiseAllSettings() {
 		createSetting('heliumHrPortal',
 			function () {
 				let hze =game.stats.highestLevel.valueTotal();
-				let portalOptions =['Auto Portal Immediately', 'Portal After Voids'];
-				if (atConfig.settingUniverse === 1 && hze >= 230) portalOptions.push('Portal After Poison Voids');
+				let portalOptions =['Portal: Immediately', 'Portal: After Voids'];
+				if (atConfig.settingUniverse === 1 && hze >= 230) portalOptions.push('Portal: After Poison Voids');
 				return portalOptions;
 			},
 			function () {
 				let description = "<p>How you would like to portal when below your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour threshold.</p>";
-				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
-				description += "<p><b>Portal After Voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
+				description += "<p><b>Portal: Immediately</b><br>Will auto portal straight away.</p>";
+				description += "<p><b>Portal: After Voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
 				if (atConfig.settingUniverse === 1 ) {
-					if (game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal After Poison Voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
-					description += "<p>When farming for, or running Void Maps due to this setting it will buy as many nurseries as you can afford based upon your spending percentage in the AT AutoStructure settings.</p>";
+					if (game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal: After Poison Voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
+					description += "<p>When farming for, or running Void Maps due to this setting it will buy as many nurseries as you can afford based upon your spending percentage in the scripts Auto Structure settings.</p>";
 				}
-				description += "<p><b>Recommended:</b> Portal After Voids</p>";
+				description += "<p><b>Recommended:</b> Portal: After Voids</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Core', [1, 2],
 			function () {
@@ -502,10 +506,10 @@ function initialiseAllSettings() {
 			}, 'infoclick', false,  'cancelTooltip(); importExportTooltip("forceAutoPortal");', 'Core', [0],
 			function () { return (game.global.totalPortals > 0) });
 
-			let $autoPortalForce = document.getElementById('autoPortalForce');
-			$autoPortalForce.parentNode.style.setProperty('float', 'right');
-			$autoPortalForce.parentNode.style.setProperty('margin-right', '0.5vw');
-			$autoPortalForce.parentNode.style.setProperty('margin-left', '0');
+		let $autoPortalForce = document.getElementById('autoPortalForce');
+		$autoPortalForce.parentNode.style.setProperty('float', 'right');
+		$autoPortalForce.parentNode.style.setProperty('margin-right', '0.5vw');
+		$autoPortalForce.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoEggs',
 			function () { return ('Auto Eggs') },
@@ -516,24 +520,24 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Core', [0],
 			function () { return (!game.worldUnlocks.easterEgg.locked) });
 
-			let $eggSettings = document.getElementById('autoEggs');
-			$eggSettings.parentNode.style.setProperty('float', 'right');
-			$eggSettings.parentNode.style.setProperty('margin-right', '1.3vw');
-			$eggSettings.parentNode.style.setProperty('margin-left', '0');
+		let $eggSettings = document.getElementById('autoEggs');
+		$eggSettings.parentNode.style.setProperty('float', 'right');
+		$eggSettings.parentNode.style.setProperty('margin-right', '1.3vw');
+		$eggSettings.parentNode.style.setProperty('margin-left', '0');
 	}
 	
 	const displayJobs = true;
 	if (displayJobs) {
 		createSetting('jobType',
-			function () { return (["Don't Buy Jobs", 'Auto Ratios', 'Manual Ratios']) },
+			function () { return (["AT Auto Jobs: Off", 'AT Auto Jobs: On', 'AT Auto Jobs: Manual']) },
 			function () {
 				let description = "<p>Click the left side of the button to toggle between the AutoJobs settings. Each of them will adjust the 3 primary resource jobs but you'll have to manually set the rest by clicking the cogwheel on the right side of this button.</p>";
-				description += "<p><b>Don't Buy Jobs</b><br>Will disable the script from purchasing any jobs.</p>";
-				description += "<p><b>Auto Ratios</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out the Help section for this setting by clicking on the cogwheel.</p>";
-				description += "<p><b>Manual Ratios</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>";
+				description += "<p><b>AT Auto Jobs: Off</b><br>Will disable the script from purchasing any jobs.</p>";
+				description += "<p><b>AT Auto Jobs: On</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out the Help section for this setting by clicking on the cogwheel.</p>";
+				description += "<p><b>AT Auto Jobs: Manual</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>";
 				description += "<p>Automatically swaps the games default hiring setting <b>Not Firing For Jobs</b> to <b>Firing For Jobs</b>.</p>";
-				description += "<p>Map setting job ratios always override both <b>Auto Ratios</b> & <b>Manual Ratios</b> when AutoMaps is enabled.</p>";
-				description += "<p><br><i>Set to <b>Don't Buy Jobs</b> by holding <b>control</b> and clicking.</i></p>";
+				description += "<p>Map setting job ratios always override both <b>AT Auto Jobs: On</b> & <b>AT Auto Jobs: Manual</b> when AutoMaps is enabled.</p>";
+				description += "<p><br><i>Set to <b>AT Auto Jobs: Off</b> by holding <b>control</b> and clicking.</i></p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Jobs', [1, 2],
 			function () { return (false) });
@@ -542,17 +546,17 @@ function initialiseAllSettings() {
 			function () { return ('Job Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
-			Farmer: { enabled: true, ratio: 1 },
-			Lumberjack: { enabled: true, ratio: 1 },
-			Miner: { enabled: true, ratio: 1 },
-			Explorer: { enabled: true, percent: 10 },
-			Trainer: { enabled: true, percent: 25 },
-			Magmamancer: { enabled: true, percent: 100 },
-			Meteorologist: { enabled: true, percent: 100 },
-			Worshipper: { enabled: true, percent: 5 },
-			FarmersUntil: { enabled: false, zone: 999 },
-			NoLumberjacks: { enabled: false }
-		}, null, 'Jobs', [1, 2],
+				Farmer: { enabled: true, ratio: 1 },
+				Lumberjack: { enabled: true, ratio: 1 },
+				Miner: { enabled: true, ratio: 1 },
+				Explorer: { enabled: true, percent: 10 },
+				Trainer: { enabled: true, percent: 25 },
+				Magmamancer: { enabled: true, percent: 100 },
+				Meteorologist: { enabled: true, percent: 100 },
+				Worshipper: { enabled: true, percent: 5 },
+				FarmersUntil: { enabled: false, zone: 999 },
+				NoLumberjacks: { enabled: false }
+			}, null, 'Jobs', [1, 2],
 			function () { return false });
 			
 		createSetting('geneAssist',
@@ -731,7 +735,7 @@ function initialiseAllSettings() {
 	const displayBuildings = true;
 	if (displayBuildings) {
 		createSetting('buildingsType',
-			function () { return ('AT AutoStructure') },
+			function () { return ('Auto Structure') },
 			function () {
 				let description = "Click the left side of the button to toggle this on or off.</p>";
 				description += "<p>Click the cog icon on the right side of this button to tell your Foremen what you want and when you want it.</p>";
@@ -742,30 +746,30 @@ function initialiseAllSettings() {
 
 		createSetting('buildingSettingsArray',
 			function () { return ('Building Settings') },
-			function () { return ('Click to adjust <b>AT AutoStructure</b> settings.') },
+			function () { return ('Click to adjust <b>Auto Structure</b> settings.') },
 			'mazDefaultArray', {
-			Hut: { enabled: true, percent: 80, buyMax: 200 },
-			House: { enabled: true, percent: 80, buyMax: 200 },
-			Mansion: { enabled: true, percent: 80, buyMax: 200 },
-			Hotel: { enabled: true, percent: 80, buyMax: 200 },
-			Wormhole: { enabled: false, percent: 1, buyMax: 1 },
-			Resort: { enabled: true, percent: 100, buyMax: 200 },
-			Gateway: { enabled: true, percent: 10, buyMax: 200 },
-			Collector: { enabled: true, percent: 100, buyMax: 200 },
-			Gym: { enabled: true, percent: 75, buyMax: 0 },
-			Tribute: { enabled: true, percent: 20, buyMax: 0 },
-			Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 0 },
-			Smithy: { enabled: true, percent: 100, buyMax: 0 },
-			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
-			SafeGateway: { enabled: false, mapCount: 1, zone: 0, mapLevel: 0 }
-		}, 'importExportTooltip("AutoStructure")', 'Buildings', [1, 2],
+				Hut: { enabled: true, percent: 80, buyMax: 200 },
+				House: { enabled: true, percent: 80, buyMax: 200 },
+				Mansion: { enabled: true, percent: 80, buyMax: 200 },
+				Hotel: { enabled: true, percent: 80, buyMax: 200 },
+				Wormhole: { enabled: false, percent: 1, buyMax: 1 },
+				Resort: { enabled: true, percent: 100, buyMax: 200 },
+				Gateway: { enabled: true, percent: 10, buyMax: 200 },
+				Collector: { enabled: true, percent: 100, buyMax: 200 },
+				Gym: { enabled: true, percent: 75, buyMax: 0 },
+				Tribute: { enabled: true, percent: 20, buyMax: 0 },
+				Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 0 },
+				Smithy: { enabled: true, percent: 100, buyMax: 0 },
+				Laboratory: { enabled: true, percent: 100, buyMax: 0 },
+				SafeGateway: { enabled: false, mapCount: 1, zone: 0, mapLevel: 0 }
+			}, 'importExportTooltip("AutoStructure")', 'Buildings', [1, 2],
 			function () { return false });
 
 		createSetting('warpstation',
 			function () { return ('Warpstations') },
 			function () {
 				let description = "<p>Enable this to allow Warpstation purchasing.</p>";
-				description += "<p><b>Will only function with AT AutoStructure enabled.</b></p>";
+				description += "<p><b>Will only function with AT Auto Structure enabled.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Buildings', [1],
@@ -852,7 +856,7 @@ function initialiseAllSettings() {
 			function () { return ('Advanced Nurseries') },
 			function () {
 				let description = "<p>Will only buy nurseries if you need more health and you have already <b>Hits Survived</b> farmed on your current zone <b>OR</b> have equal to or more map bonus stacks than the <b>Map Bonus Health</b> setting.</p>"
-				description += "<p>Requires Nurseries to be setup in the <b>AT AutoStructure</b> setting and will only buy Nurseries if past the <b>From</b> input. Overrides the <b>Up To</b> input and allows you to set 0 without it buying as many as possible.</p>"
+				description += "<p>Requires Nurseries to be setup in the <b>AT Auto Structure</b> setting and will only buy Nurseries if past the <b>From</b> input. Overrides the <b>Up To</b> input and allows you to set 0 without it buying as many as possible.</p>"
 				description += "<p><b>Recommended:</b> On. Nurseries set to <b>Up To: 0</b> and <b>From: 230</b></p>";
 				return description;
 			}, 'boolean', true, null, 'Buildings', [1],
@@ -861,8 +865,9 @@ function initialiseAllSettings() {
 		createSetting('advancedNurseriesMapCap',
 			function () { return ('AN: Hits Survived Maps') },
 			function () {
-				let description = "<p>The amount of <b>Hits Survived</b> maps you want to start buying nurseries from.</p>"
-				description += "<p>If your <b>Hits Survived</b> setting is set to run less maps than this value then it will use that value instead.</p>";
+				let description = "<p>The amount of <b>Hits Survived</b> maps to complete before starting to buy nurseries.</p>"
+				description += "<p>If your <b>Hits Survived</b> map cap value is lower than this settings input it will use that value instead.</p>";
+				description += "<p>This setting is useful to ensure you don't farm for an excessive amount of time to reach your <b>Hits Survived</b> target.</p>";
 				description += "<p><b>Recommended:</b> 3</p>";
 				return description;
 			}, 'value', -1, null, 'Buildings', [1],
@@ -882,7 +887,7 @@ function initialiseAllSettings() {
 				let description = "<p>How you would like Nursery purchasing to be handled during Ice empowerment zones.</p>";
 				description += "<p><b>AN: Buy In Ice</b><br>Will purchase Nurseries regardless of if you're in an Ice empowerment zone.</p>";
 				description += "<p><b>AN: Disable In Ice</b><br>Will stop <b>Advanced Nurseries</b> from purchasing nurseries during Ice empowerment zones.</p>";
-				description += "<p><b>AN: Disable Ice (Spire)</b><br>Works the same as <b>AN: Disable In Ice</b> except this setting will still purchase nurseries when inside of Spires.</p>";
+				description += "<p><b>AN: Disable In Ice (Spire)</b><br>Works the same as <b>AN: Disable In Ice</b> except this setting will still purchase nurseries when inside of Spires.</p>";
 				description += "<p><b>Recommended:</b> AN: Buy In Ice</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Buildings', [1],
@@ -938,7 +943,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>The value you want armor equipment to stop being purchased at.</p>";
 				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
-				description += `<p>When your Hits Survived is below your <b>AE: HS Cut-off</b> setting OR <b>Hits Survived</b> farming this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
+				description += `<p>When your Hits Survived is below your <b>AE: HS Cut-off</b> setting OR when <b>Hits Survived</b> farming this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
 				if (atConfig.settingUniverse ===2) description += `<p>If your <b>HD Ratio</b> is above your <b>AE: HD Cut-off</b> setting this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
@@ -951,7 +956,7 @@ function initialiseAllSettings() {
 				let description = "<p>What zone to stop caring about what percentage of resources you're spending and buy as many prestiges and equipment as possible.</p>";
 				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing gear and prestiges on each zone input.</p>";
 				description += "<p>You are able to enter a zone range, this can be done by using a decimal point between number ranges e.g. <b>23.120</b> which will cause the zone check to set your purchasing percentage to 100% between zones 23 and 120. <b>This can be used in conjunction with other zones too, just seperate inputs with commas!</b></p>";
-				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available. It will also sets your health & attack equip caps to Infinity.</p>"
+				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available. It will also set your health & attack equipment caps to Infinity.</p>"
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
 			}, 'multiValue', [-1], null, 'Equipment', [1, 2],
@@ -977,23 +982,21 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
 
 		createSetting('equipPrestige',
-			function () { return (['AE: Prestige Off', 'AE: Maybe Prestige', 'AE: Prestige', 'AE: Always Prestige']) },
+			function () { 
+				const trimpleShortened = atConfig.settingUniverse === 1 ? "Trimple" : "Atlantrimp";
+				return [`AE: Prestige: Maybe`, `AE: Prestige: On`, `AE: Prestige: ${trimpleShortened}`, `AE: Prestige: Always`];
+			},
 			function () {
 				const trimple = atConfig.settingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
-				let description = "<p>Will control how equipment levels & prestiges are purchased.</p>";
-				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
-
-				description += "<p><b>AE: Prestige Off</b><br>Will only purchase prestiges for equipment when you have 6 or more levels in it.</p>";
-
-				description += "<p><b>AE: Maybe Prestige</b><br>Will only purchase prestiges when they are more efficient than leveling the piece of equipment further.</p>";
-
-				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run " + trimple + ".";
-
-				description += "<br>If <b>" + trimple + "</b> has been run it will buy any prestiges that cost less than what you have input in the <b>AE: Prestige Pct</b> setting then spend your remaining resources on equipment levels.</p>";
-
-				description += "<p><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override the <b>AE: Zone</b> setting for an equip if it has a prestige available.</p>";
-
-				description += "<p><b>Recommended:</b> AE: Prestige</p>";
+				const trimpleShortened = atConfig.settingUniverse === 1 ? "Trimple" : "Atlantrimp";
+				let description = `<p>Will control how equipment levels & prestiges are purchased.</p>`;
+				description += `<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>`;
+				description += `<p><b>AE: Prestige: Maybe</b><br>Will only purchase prestiges for equipment when you have 6 or more levels in it.</p>`;
+				description += `<p><b>AE: Prestige: On</b><br>Will only purchase prestiges when they are more efficient than leveling the piece of equipment further.</p>`;
+				description += `<p><b>AE: Prestige: ${trimpleShortened}</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run ${trimple}.`;
+				description += `<br>If <b>${trimple}</b> has been run it will buy any prestiges that cost less than what you have input in the <b>AE: Prestige Pct</b> setting then spend your remaining resources on equipment levels.</p>`;
+				description += `<p><b>AE: Prestige: Always</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override the <b>AE: Zone</b> setting for an equip if it has a prestige available.</p>`;
+				description += `<p><b>Recommended:</b> AE: Prestige: ${trimpleShortened}</p>`;
 				return description;
 			}, 'multitoggle', 2, null, 'Equipment', [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
@@ -1002,8 +1005,9 @@ function initialiseAllSettings() {
 			function () { return ('AE: Prestige Pct') },
 			function () {
 				const trimple = atConfig.settingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
+				const trimpleShortened = atConfig.settingUniverse === 1 ? "Trimple" : "Atlantrimp";
 				let description = `Once you have run <b>${trimple}</b> prestiges will only be purchased if they cost less than this percentage of your metal or wood.</p>`;
-				description += "This is only active when <b>AE: Prestige</b> is selected.</p>";
+				description += `This is only active when <b>AE: Prestige: ${trimpleShortened}</b> is selected.</p>`;
 
 				description += "<p><b>Recommended:</b> 6</p>";
 				return description;
@@ -1029,9 +1033,9 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Equipment', [1, 2]);
 
 		createSetting('equipShieldBlock',
-			function () { return ('Buy Shield Block') },
+			function () { return ('Buy Shieldblock') },
 			function () {
-				let description = "<p>Will allow the purchase of the shield block upgrade.</p>";
+				let description = "<p>Will allow the purchase of the <b>Shieldblock</b> upgrade through the <b>Buy Upgrades</b> setting.</p>";
 				description += "<p><b>When this setting is enabled it will cause the script to automatically run <b>The Block</b> unique map when it gets unlocked.</b></p>";
 				description += "<p><b>Recommended:</b> On until you can reach zone 40</p>";
 				return description;
@@ -1041,68 +1045,38 @@ function initialiseAllSettings() {
 	const displayCombat = true;
 	if (displayCombat) {
 		createSetting('autoFight',
-			function () { return (['Better Auto Fight Off', 'Better Auto Fight', 'Vanilla Auto Fight']) },
+			function () { return (['Better Auto Fight: Off', 'Better Auto Fight: On', 'Better Auto Fight: Vanilla']) },
 			function () {
 				let description = "<p>Controls how combat is handled by the script.</p>";
-				description += "<p><b>Better Auto Fight Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if the current army is dead and your trimps have fully bred.</p>";
-				description += "<p><b>Vanilla Auto Fight</b><br>Will make sure the games AutoFight setting is enabled at all times and ensures you start fighting on portal until you get the Bloodlust upgrade.</p>";
-				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
+				description += "<p><b>Better Auto Fight: Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Better Auto Fight: On</b><br>Sends a new army to fight if the current army is dead and your trimps have fully bred.</p>";
+				description += "<p><b>Better Auto Fight: Vanilla</b><br>Will make sure the games AutoFight setting is enabled at all times and ensures you start fighting on portal until you get the Bloodlust upgrade.</p>";
+				description += "<p><b>Recommended:</b> Better Auto Fight: On</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Combat', [1, 2]);
 
 		createSetting('autoAbandon',
-			function () { return (['Never Abandon', 'Always Abandon', 'Smart Abandon']) },
+			function () { return (['Auto Abandon: Never', 'Auto Abandon: Always', 'Auto Abandon: Smart']) },
 			function () {
 				let description = "<p>Controls whether to force abandon trimps for mapping.</p>";
-				description += "<p><b>Never Abandon</b><br>Never abandons trimps.</p>";
-				description += "<p><b>Always Abandon</b><br>Always abandons trimps.</p>";
-				description += "<p><b>Smart Abandon</b><br>Abandons trimps when the next group of trimps is ready, or when (0 + overkill) cells away from cell 100.</p>";
-				description += "<p><b>Recommended:</b> Smart Abandon</p>";
+				description += "<p><b>Auto Abandon: Never</b><br>Never abandons trimps.</p>";
+				description += "<p><b>Auto Abandon: Always</b><br>Always abandons trimps.</p>";
+				description += "<p><b>Auto Abandon: Smart</b><br>Abandons trimps when the next group of trimps is ready, or when (0 + overkill) cells away from cell 100.</p>";
+				description += "<p><b>Recommended:</b> Auto Abandon: Smart</p>";
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1, 2]);
 
-		createSetting('floorCritCalc',
-			function () { return ('Never Crit Calc') },
-			function () {
-				let description = "<p>When doing trimp damage calculations this will floor your crit chance to make the script assume you will never crit.</p>";
-				description += "<p><b>Recommended:</b> Off</p>";
-				return description;
-			}, 'boolean', false, null, 'Combat', [1, 2]);
-
 		createSetting('ignoreCrits',
-			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
+			function () { return (['Ignore Crits: None', 'Ignore Crits: Void Strength', 'Ignore Crits: All']) },
 			function () {
 				let description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
-				description += "<p><b>Safety First</b><br>Disables this setting.</p>";
-				description += "<p><b>Ignore Void Strength</b><br>Will ignore the crit buff from enemies in Heinous Void maps.</p>";
-				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily modifiers or void maps.</p>";
-				description += "<p><b>Recommended:</b> Ignore Void Strength</p>";
+				description += "<p><b>Ignore Crits: None</b><br>Disables this setting.</p>";
+				description += "<p><b>Ignore Crits: Void Strength</b><br>Will ignore the crit chance buff from enemies in Heinous Void maps.</p>";
+				description += "<p><b>Ignore Crits: All</b><br>Will ignore crits from enemies in challenges, daily modifiers or void maps.</p>";
+				description += "<p><b>Recommended:</b> Ignore Crits: Void Strength</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Combat', [1, 2],
 			function () { return (game.global.totalPortals > 0) });
-
-		createSetting('AutoStance',
-			function () { return (['Auto Stance Off', 'Auto Stance', 'D Stance']) },
-			function () {
-				let description = "<p>Enabling this setting will allow the script to swap stances to stop you having to do it manually.</p>";
-				description += "<p><b>Auto Stance Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Auto Stance</b><br>Automatically swap stances to avoid death. Prioritises damage when you have enough health to survive.</p>";
-				description += "<p><b>D stance</b><br>Keeps you in D stance regardless of your armies health.</p>";
-				description += "<p><b>Recommended:</b> Auto Stance</p>";
-				return description;
-			}, 'multitoggle', 1, null, 'Combat', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 60) });
-
-		createSetting('forceAbandon',
-			function () { return ('Trimpicide') },
-			function () {
-				let description = "<p>If a new army is available to send and anticipation stacks aren't maxed this will suicide your current army and send a new one.</p>";
-				description += "<p><b>Will not abandon in Spires.</b></p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', true, null, 'Combat', [1],
-			function () { return (!game.portal.Anticipation.locked) });
 
 		createSetting('autoRoboTrimp',
 			function () { return ('Auto Robotrimp') },
@@ -1113,6 +1087,34 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 60, null, 'Combat', [1],
 			function () { return (game.global.roboTrimpLevel > 0) });
+
+		createSetting('forceAbandon',
+			function () { return ('Trimpicide') },
+			function () {
+				let description = "<p>If a new army is available to send and anticipation stacks aren't maxed this will suicide your current army and send a new one.</p>";
+				description += "<p><b>Will not abandon in Spires.</b></p>";
+				description += "<p>This setting will abandon your army regardless of what your <b>Auto Abandon</b> setting is set to.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Combat', [1],
+			function () { return (!game.portal.Anticipation.locked) });
+
+		createSetting('floorCritCalc',
+			function () { return ('Never Crit Calc') },
+			function () {
+				let description = "<p>When doing trimp damage calculations this will floor your crit chance to make the script assume you will never crit.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1, 2]);
+			
+			createSetting('45stacks',
+			function () { return ('Antistack Calc') },
+			function () {
+				let description = "<p>Will force any damage calculations to assume you have max anticipation stacks.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Combat', [1],
+			function () { return (!game.portal.Anticipation.locked) });
 
 		createSetting('addPoison',
 			function () { return ('Poison Calc') },
@@ -1133,38 +1135,6 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'Combat', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 236) });
 
-		createSetting('45stacks',
-			function () { return ('Antistack Calc') },
-			function () {
-				let description = "<p>Will force any damage calculations to assume you have max anticipation stacks.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', true, null, 'Combat', [1],
-			function () { return (!game.portal.Anticipation.locked) });
-
-		/* Rename this */
-		createSetting('scryvoidmaps',
-			function () { return ('VM Scryer') },
-			function () {
-				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
-				description += "<p>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
-				return description;
-			}, 'boolean', true, null, 'Combat', [1],
-			function () { return (masteryPurchased('scry2')) });
-
-		createSetting('equalityManagement',
-			function () { return (['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced']) },
-			function () {
-				let description = "<p>Controls how the script handles interactions with the Equality perk.</p>";
-				description += "<p><b>Auto Equality Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Auto Equality: Basic</b><br>Disables scaling and sets equality to 0 on slow enemies, otherwise scaling is enabled.<br><b>If using this you must setup the scaling & reversing settings in the equality menu!</b></p>";
-				description += "<p><b>Auto Equality: Advanced</b><br>Will disable equality scaling and use the equality stack slider to set your equality to the ideal amount to kill the current enemy in the least amount of hits necessary.</p>";
-				description += "<p><b>Recommended:</b> Auto Equality: Advanced</p>";
-				return description;
-			}, 'multitoggle', 2, null, 'Combat', [2]);
-
 		createSetting('gammaBurstCalc',
 			function () { return ('Gamma Burst Calc') },
 			function () {
@@ -1184,35 +1154,66 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', true, null, 'Combat', [2],
 			function () { return (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned) });
-
-		createSetting('autoStanceScryer',
-			function () { return ('Enable Scryer Stance') },
+		
+		createSetting('autoStance',
+			function () { return (['Auto Stance: Off', 'Auto Stance: On', 'Auto Stance: Dominance']) },
 			function () {
-				let description = "<p>Master switch for whether the script will use scryer stance.</p>";
-				description += "<p>Overrides your <b>Auto Stance</b> setting when scryer conditions are met.</p>";
-				description += "<p>Leave regular Auto Stance setting on while this is active.</p>";
+				let description = "<p>Enabling this setting will allow the script to swap stances to stop you having to do it manually.</p>";
+				description += "<p><b>Auto Stance: Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Auto Stance: On</b><br>Automatically swap stances to avoid death. Prioritises damage when you have enough health to survive.</p>";
+				description += "<p><b>Auto Stance: Dominance</b><br>Keeps you in Dominance stance regardless of your armies health.</p>";
+				description += "<p><b>Recommended:</b> Auto Stance</p>";
+				return description;
+			}, 'multitoggle', 1, null, 'Combat', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 60) });
+		
+		createSetting('autoLevelScryer',
+			function () { return ('Auto Level Scryer') },
+			function () {
+				let description = "<p>Allows the Auto Level system to use Scryer and Wind stances.</p>";
+				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when mapping with <b>Auto Maps</b> enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Combat', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 180) });
 
-		createSetting('scryerOverkill',
-			function () { return ('Use When Overkill') },
+		createSetting('scryerVoidMaps',
+			function () { return ('Auto Stance: Void Scryer') },
 			function () {
-				let description = "<p>Overrides everything!";
-				description += "<p>Switches to scryer stance when we can guaranteed overkill, giving us double loot with no speed penalty (minimum one overkill, if you have more than 1, it has the potential to lose speed)";
-				description += "<p>This being on, and being able to overkill in scryer stance will override ALL other settings except the Spire setting when set to <b>Never</b>.</p>";
-				description += "<p><b>Recommended:</b> Off</p>";
+				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
+				description += "<p>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				description += `<p><i>When running a <b>Daily</b>, the <b>D: Auto Stance: Void Scryer</b> setting will be used instead of this one.</i></p>`;
+				return description;
+			}, 'boolean', true, null, 'Combat', [1],
+			function () { return (masteryPurchased('scry2')) });
+		
+		createSetting('scryerVoidMapsDaily',
+			function () { return ('Daily: Auto Stance: Void Scryer') },
+			function () {
+				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
+				description += "<p>This version of the setting will be used when running a <b>Daily</b> challenge. Outside of that, the <b>Auto Stance: Void Scryer</b> setting will be used.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
+			function () { return (masteryPurchased('scry2')) });
+
+		createSetting('autoStanceScryer',
+			function () { return ('Enable Scryer Stance') },
+			function () {
+				let description = "<p>Master switch for whether the script will use Scryer stance.</p>";
+				description += "<p>Overrides your <b>Auto Stance</b> setting when scryer conditions are met.</p>";
+				description += "<p>The normal <b>Auto Stance</b> setting will still use Scryer stance when it can survive and kill the enemy in one hit.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 180) });
 
 		createSetting('scryerMinZone',
 			function () { return ('Min Zone') },
 			function () {
 				let description = "<p>Minimum zone (inclusive of the zone set) to start using scryer stance in.</p>";
-				description += "<p>This needs to be on <b>AND</b> valid for the <b>MAYBE</b> option on all other Scryer settings to do anything if the <b>Use When Overkill</b> setting is disabled.</p>";
-				description += "<p><b>Use When Overkill</b> ignores this input and will use scryer stance regardless of what this is set to if you can overkill the cell(s).</p>";
+				description += "<p>This needs to be on <b>AND</b> valid for the <b>MAYBE</b> option on all other Scryer settings to do anything.</p>";
 				description += "<p>Use 9999 to disable all Non-Overkill, Non-Force, scryer usage.</p>";
 				description += "<p><b>Recommended:</b> 60 or 181</p>";
 				return description;
@@ -1224,7 +1225,6 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Maximum zone (not inclusive of the zone set) to stop using scryer stance in.</p>";
 				description += "<p>Turning this on with a positive number stops <b>MAYBE</b> use of all other Scryer settings.</p>";
-				description += "<p><b>Use When Overkill</b> ignores this input and will use scryer stance regardless of what this is set to if you can overkill the cell(s).</p>";
 				description += "<p>Use 9999 to disable all Non-Overkill, Non-Force, scryer usage.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 9999</p>";
@@ -1244,7 +1244,20 @@ function initialiseAllSettings() {
 				return description;
 			}, 'multitoggle', 1, null, 'Combat', [1],
 			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
-
+		
+		createSetting('scryerDieZone',
+			function () { return ('Die To Use Scryer') },
+			function () {
+				let description = "<p>Enabling this will switch you back to scryer stance even when doing so would kill you.</p>";
+				description += "<p>This has potential to happen in scenarios such as when skipping corrupted enemies switches you into regular X/H stance through Auto Stance, you've killed the corrupted and reached a non-corrupted enemy that you wish to use scryer stance on, but you havent bred yet and you are too low on health to just switch back to scryer stance.</p>";
+				description += "<p>So use this if you'd rather die, wait to breed, then use scryer stance for the full non-corrupted enemy, to maximize dark essence gain.</p>";
+				description += "<p>Use this input to set the minimum zone that scryer activates in. You can use decimal values to specify what cell this setting starts from.</p>";
+				description += "<p><b>Set to -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			}, 'value', -1, null, 'Combat', [1],
+			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
+			
 		createSetting('scryerMaxHits',
 			function () { return ('Max Hits') },
 			function () {
@@ -1267,211 +1280,171 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
 
 		createSetting('scryerMaps',
-			function () { return (['Maps: Never', 'Maps: Force', 'Maps: Maybe']) },
+			function () { return (['Scry Maps: Never', 'Scry Maps: Force', 'Scry Maps: Maybe']) },
 			function () {
 				const useType = "maps";
-				let description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.</p>";
-				description += "<p>The <b>Void Map</b>, <b>Plus Level</b>, and <b>Bionic Wonderland</b> settings all override this.</p>";
-				description += "<p><b>Recommended:</b> Maps: Maybe</p>";
-				return description;
-			}, 'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
-
-		createSetting('scryerVoidMaps',
-			function () { return (['Void Maps: Never', 'Void Maps: Force', 'Void Maps: Maybe']) },
-			function () {
-				const useType = "void maps";
-				let description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the void map is.</p>";
-				description += "<p><b>Recommended:</b> Void Maps: Maybe</p>";
-				return description;
-			}, 'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
-
-		createSetting('scryerPlusMaps',
-			function () { return (['Plus Maps: Never', 'Plus Maps: Force', 'Plus Maps: Maybe']) },
-			function () {
-				const useType = "plus level maps";
-				let description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.</p>";
-				description += "<p><b>Recommended:</b> Plus Maps: Maybe</p>";
-				return description;
-			}, 'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
-
-		createSetting('scryerBW',
-			function () { return (['BW: Never', 'BW: Force', 'BW: Maybe']) },
-			function () {
-				const useType = "Bionic Wonderland maps";
-				let description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.</p>";
-				description += "<p><b>Recommended:</b> BW: Maybe</p>";
+				let description = `<p><b>Scry Maps: Never</b><br>Will force the script to never use scryer stance in ${useType}.</p>`;
+				description += `<p><b>Scry Maps: Force</b><br>Will force the script to always use scryer stance in ${useType}.</p>`;
+				description += `<p><b>Scry Maps: Maybe</b><br>Will maybe run scryer stance in ${useType} depending on how difficult the map is.</p>`;
+				description += `<p>This setting won't impact the use of Scryer stance when running <b>Void Map</b> or <b>Bionic Wonderland</b> maps.</p>`;
+				description += `<p><b>Recommended:</b> Scry Maps: Maybe</p>`;
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
 
 		createSetting('scryerSpire',
-			function () { return (['Spire: Never', 'Spire: Force', 'Spire: Maybe']) },
+			function () { return (['Scry Spire: Never', 'Scry Spire: Force', 'Scry Spire: Maybe']) },
 			function () {
 				const useType = "active Spires";
-				let description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the Spire is.</p>";
-				description += "<p><b>Recommended:</b> Spire: Maybe</p>";
+				let description = `<p><b>Scry Spire: Never</b><br>Will force the script to never use scryer stance in ${useType}.</p>`;
+				description += `<p><b>Scry Spire: Force</b><br>Will force the script to always use scryer stance in ${useType}.</p>`;
+				description += `<p><b>Scry Spire: Maybe</b><br>Will maybe run scryer stance in ${useType} depending on how difficult the Spire is.</p>`;
+				description += `<p><b>Recommended:</b> Scry Spire: Maybe</p>`;
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
 
-		createSetting('scryerSkipBoss',
-			function () { return (['Boss: Never', 'Boss: Maybe']) },
+		createSetting('scryerWorld',
+			function () { return (['Scry World: Never', 'Scry World: Force', 'Scry World: Maybe']) },
 			function () {
-				const useType = "when at cell 100 in the world";
-				let description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
-				description += "<p><b>Recommended:</b> Boss: Never</p>";
+				const useType = "when fighting non-corrupted enemies";
+				let description = `<p><b>Scry World: Never</b><br>Will force the script to never use scryer stance ${useType}.</p>`;
+				description += `<p><b>Scry World: Force</b><br>Will force the script to always use scryer stance ${useType}.</p>`;
+				description += `<p><b>Scry World: Maybe</b><br>Will maybe run scryer stance ${useType} depending on how difficult the enemy is.</p>`;
+				description += `<p><b>Recommended:</b> Scry World: Maybe</p>`;
 				return description;
-			}, 'multitoggle', 0, null, 'Combat', [1],
+			}, 'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
 
 		createSetting('scryerCorrupted',
-			function () { return (['Corrupted: Never', 'Corrupted: Force', 'Corrupted: Maybe']) },
+			function () { return (['Scry Corrupted: Never', 'Scry Corrupted: Force', 'Scry Corrupted: Maybe']) },
 			function () {
 				const useType = "when fighting corrupted enemies";
-				let description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
-				description += "<p>Magma maps and Corrupted Void Maps are currently classified as corrupted</b> and selecting <b>Never</b> here will override maps and Void Maps use of scryer stance.</p>";
-				description += "<p><b>Recommended:</b> Maps: Maybe</p>";
+				let description = `<p><b>Scry Corrupted: Never</b><br>Will force the script to never use scryer stance ${useType}.</p>`;
+				description += `<p><b>Scry Corrupted: Force</b><br>Will force the script to always use scryer stance ${useType}.</p>`;
+				description += `<p><b>Scry Corrupted: Maybe</b><br>Will maybe run scryer stance ${useType} depending on how difficult the enemy is.</p>`;
+				description += `<p><b>Recommended:</b> Scry Corrupted: Maybe</p>`;
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
 
 		createSetting('scryerHealthy',
-			function () { return (['Healthy: Never', 'Healthy: Force', 'Healthy: Maybe']) },
+			function () { return (['Scry Healthy: Never', 'Scry Healthy: Force', 'Scry Healthy: Maybe']) },
 			function () {
 				const useType = "when fighting healthy enemies";
-				let description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
-				description += "<p><b>Recommended:</b> Healthy: Maybe</p>";
+				let description = `<p><b>Scry Healthy: Never</b><br>Will force the script to never use scryer stance ${useType}.</p>`;
+				description += `<p><b>Scry Healthy: Force</b><br>Will force the script to always use scryer stance ${useType}.</p>`;
+				description += `<p><b>Scry Healthy: Maybe</b><br>Will maybe run scryer stance ${useType} depending on how difficult the enemy is.</p>`;
+				description += `<p><b>Recommended:</b> Scry Healthy: Maybe</p>`;
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse && game.global.spiresCompleted >= 2)) });
 
-		createSetting('scryerPoison',
-			function () { return ('Scry in Poison') },
-			function () {
-				const useType = "in poison zones";
-				let description = "<p>Override for what to do within Poison empowerment zones.</p>";
-				description += "<p><b>0 = Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
-				description += "<p><b>-1 = Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is to kill.</p>";
-				description += "<p><b>Above 0</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
-				description += "<p><b>Recommended:</b> -1</p>";
-				return description;
-			}, 'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
-
-		createSetting('scryerWind',
-			function () { return ('Scry in Wind') },
-			function () {
-				const useType = "in wind zones";
-				let description = "<p>Override for what to do within Wind empowerment zones.</p>";
-				description += "<p><b>0 = Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
-				description += "<p><b>-1 = Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is to kill.</p>";
-				description += "<p><b>Above 0</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
-				description += "<p><b>Recommended:</b> -1</p>";
-				return description;
-			}, 'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
-
-		createSetting('scryerIce',
-			function () { return ('Scry in Ice') },
-			function () {
-				const useType = "in ice zones";
-				let description = "<p>Override for what to do within Ice empowerment zones.</p>";
-				description += "<p><b>0 = Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
-				description += "<p><b>-1 = Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is to kill.</p>";
-				description += "<p><b>Above 0</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
-				description += "<p><b>Recommended:</b> -1</p>";
-				return description;
-			}, 'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
-
-		createSetting('scryerDieZone',
-			function () { return ('Die To Use S') },
-			function () {
-				let description = "<p>Enabling this will switch you back to scryer stance even when doing so would kill you.</p>";
-				description += "<p>This has potential to happen in scenarios such as when skipping corrupted enemies switches you into regular X/H stance through Auto Stance, you've killed the corrupted and reached a non-corrupted enemy that you wish to use scryer stance on, but you havent bred yet and you are too low on health to just switch back to scryer stance.</p>";
-				description += "<p>So use this if you'd rather die, wait to breed, then use scryer stance for the full non-corrupted enemy, to maximize dark essence gain.</p>";
-				description += "<p>Use this input to set the minimum zone that scryer activates in. You can use decimal values to specify what cell this setting starts from.</p>";
-				description += "<p><b>Set to -1 to disable this setting.</b></p>";
-				description += "<p><b>Recommended:</b> -1</p>";
-				return description;
-			}, 'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
-
-		createSetting('AutoStanceWind',
+		createSetting('autoStanceWind',
 			function () { return ('Wind Stacking') },
 			function () {
 				let description = "<p>Enabling this will give you settings to allow you to wind stack in your runs.</p>";
 				description += "<p>Will use your regular <b>Auto Stance</b> setting when outside of zones you're wind stacking in.</p>";
-				description += "<p>The script evaluates the use of wind stance based on these settings. It examines the cells from the current one up to the maximum overkill range in scryer stance. If none of these cells contain enemies that drop helium, the script switches to scryer stance instead</p>";
-				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += "<p>The script evaluates the use of wind stance based on these settings. It examines the cells from the current one up to the maximum overkill range in scryer stance. If none of these cells contain enemies that drop helium, the script switches to scryer stance instead to kill them faster.</p>";
+				description += `<p><i>When running a <b>Daily</b>, the <b>Daily Wind Stacking</b> version of this setting will be used instead of this one.</i></p>`;
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Combat', [1],
-			function () { return (game.empowerments.Wind.retainLevel >= 50) });
+			function () { return (game.empowerments.Wind.getLevel() >= 50) });
 
-		createSetting('WindStackingZone',
-			function () { return ('Wind Stack Min Zone') },
+		createSetting('windStackingZone',  
+			function () { return ('Wind Stack Zone') },
 			function () {
 				let description = "<p>Enables wind stacking in zones above and inclusive of the zone set.</p>";
 				description += "<p><b>Recommended:</b> 100 zones below portal zone</p>";
-				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += `<p><i>When running a <b>Daily</b>, the <b>Daily: Wind Stack Zone</b> version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'value', 999, null, 'Combat', [1],
-			function () {
-				return (autoTrimpSettings.AutoStanceWind.enabled)
-			});
+			function () { return (autoTrimpSettings.autoStanceWind.enabled) });
 
-		createSetting('WindStackingRatio',
+		createSetting('windStackingRatio',
 			function () { return ('Wind Stack H:D') },
 			function () {
 				let description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
 				description += "<p>If set to <b>0 or below</b> it will always use wind stance when past your wind stacking zone input.</p>";
 				description += "<p><b>Recommended:</b> 1000</p>";
-				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += `<p><i>When running a <b>Daily</b>, the <b>Daily: Wind Stack H:D</b> version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'value', -1, null, 'Combat', [1],
-			function () { return (autoTrimpSettings.AutoStanceWind.enabled) });
+			function () { return (autoTrimpSettings.autoStanceWind.enabled) });
 
-		createSetting('WindStackingLiq',
+		createSetting('windStackingLiq',
 			function () { return ('Wind Stack Liquification') },
 			function () {
 				let description = "<p>Will wind stack during liquification regardless of your <b>Wind Stack H:D</b> or <b>Windstack Zone</b> inputs.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
-				description += `<p><i>When running a <b>Daily</b>, that tabs version of this setting will be used instead of this one.</i></p>`;
+				description += `<p><i>When running a <b>Daily</b>, the <b>Daily: Wind Stack Liquification</b> version of this setting will be used instead of this one.</i></p>`;
 				return description;
 			}, 'boolean', false, null, 'Combat', [1],
-			function () { return (autoTrimpSettings.AutoStanceWind.enabled) });
+			function () { return (autoTrimpSettings.autoStanceWind.enabled) });
+
+		createSetting('autoStanceWindDaily',
+			function () { return ('Daily Wind Stacking') },
+			function () {
+				let description = "<p>Enabling this will give you settings to allow you to wind stack in your Daily challenge runs.</p>";
+				description += "<p>Will use your regular <b>Auto Stance</b> setting when outside of zones you're wind stacking in.</p>";
+				description += "<p>The script evaluates the use of wind stance based on these settings. It examines the cells from the current one up to the maximum overkill range in scryer stance. If none of these cells contain enemies that drop helium, the script switches to scryer stance instead to kill them faster.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1],
+			function () { return (game.empowerments.Wind.getLevel() >= 50) });
+
+		createSetting('windStackingZoneDaily',
+			function () { return ('Daily: Wind Stack Zone') },
+			function () {
+				let description = "<p>Enables wind stacking in zones above and inclusive of the zone set.</p>";
+				description += "<p><b>Recommended:</b> 100 zones below portal zone</p>";
+				return description;
+			}, 'value', -1, null, 'Combat', [1],
+			function () { return (autoTrimpSettings.autoStanceWindDaily.enabled) });
+
+		createSetting('windStackingRatioDaily',
+			function () { return ('Daily: Wind Stack H:D') },
+			function () {
+				let description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
+				description += "<p>If set to <b>0 or below</b> it will always use wind stance when at or above your wind stack zone input.</p>";
+				description += "<p><b>Recommended:</b> 1000</p>";
+				return description;
+			}, 'value', -1, null, 'Combat', [1],
+			function () { return (autoTrimpSettings.autoStanceWindDaily.enabled) });
+
+		createSetting('windStackingLiqDaily',
+			function () { return ('Daily: Wind Stack Liquification') },
+			function () {
+				let description = "<p>Will wind stack during liquification regardless of your <b>D: Wind Stack H:D</b> or <b>D: Wind Stack Zone</b> inputs.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1],
+			function () { return (autoTrimpSettings.autoStanceWindDaily.enabled) });
+
+		createSetting('equalityManagement',
+			function () { return (['Auto Equality: Off', 'Auto Equality: Basic', 'Auto Equality: Advanced']) },
+			function () {
+				let description = "<p>Controls how the script handles interactions with the Equality perk.</p>";
+				description += "<p><b>Auto Equality: Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Auto Equality: Basic</b><br>Disables scaling and sets equality to 0 on slow enemies, otherwise scaling is enabled.<br><b>If using this you must setup the scaling & reversing settings in the equality menu!</b></p>";
+				description += "<p><b>Auto Equality: Advanced</b><br>Will disable equality scaling and use the equality stack slider to set your equality to the ideal amount to kill the current enemy in the least amount of hits necessary.</p>";
+				description += "<p><b>Recommended:</b> Auto Equality: Advanced</p>";
+				return description;
+			}, 'multitoggle', 2, null, 'Combat', [2]);
 	}
 	
 	const displayMaps = true;
 	if (displayMaps) {
 		createSetting('autoMaps',
-			function () { return (["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"]) },
+			function () { return (["Auto Maps: Off", "Auto Maps: On", "Auto Maps: No Unique"]) },
 			function (noUnique) {
 				let description = "<p>Master switch for whether the script will do any form of mapping. You will have to setup the mapping you would like to do but all the settings for it can be found in this tab.</p>";
-				description += "<p><b>Auto Maps Off</b><br>Disables mapping.</p>";
-				description += "<p><b>Auto Maps On</b><br>Enables mapping and will run all types of maps.</p>";
-				if (!noUnique) description += "<p><b>Auto Maps No Unique</b><br>The same as <b>Auto Maps On</b> but won't run any unique maps such as <b>" + (atConfig.settingUniverse === 1 ? "The Block" : "Big Wall") + "</b> or <b>Dimension of " + (atConfig.settingUniverse === 1 ? "Anger" : "Rage") + "</b>.</p>";
-				description += "<p>Automatically adjusts the games repeat and exit to settings to ensure that you don't waste time in maps or time having to breed another army.</p>";
-				description += "<p><b>Recommended:</b> Auto Maps On</p>";
+				description += "<p><b>Auto Maps: Off</b><br>Disables mapping.</p>";
+				description += "<p><b>Auto Maps: On</b><br>Enables mapping and will run all types of maps.</p>";
+				if (!noUnique) description += "<p><b>Auto Maps: No Unique</b><br>The same as <b>Auto Maps: On</b> but won't run any unique maps such as <b>" + (atConfig.settingUniverse === 1 ? "The Block" : "Big Wall") + "</b> or <b>Dimension of " + (atConfig.settingUniverse === 1 ? "Anger" : "Rage") + "</b>.</p>";
+				description += "<p>When enabled this setting will automatically adjust the games repeat and exit to settings.</p>";
+				description += "<p><b>Recommended:</b> Auto Maps: On</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Maps', [1, 2]);
 
@@ -1513,16 +1486,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
-		createSetting('autoLevelScryer',
-			function () { return ('Auto Level Scryer') },
-			function () {
-				let description = "<p>Allows the Auto Level system to use Scryer and Wind stances.</p>";
-				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when running a map and <b>Auto Maps</b> is enabled.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Maps', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 180) });
-
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
@@ -1545,15 +1508,15 @@ function initialiseAllSettings() {
 			}, 'value', 10, null, 'Maps', [1, 2]);
 
 		createSetting('hitsSurvivedReset',
-			function () { return (['Hits Survived Reset Off', 'Hits Survived Reset (S)', 'Hits Survived Reset']) },
+			function () { return (['Hits Survived Reset: Off', 'Hits Survived Reset: S', 'Hits Survived Reset: On']) },
 			function () {
 				let description = "<p>Setting to allow <b>Hits Survived</b> setting(s) to refarm if below 80% of the targetted value.</p>";
-				description += "<p><b>Hits Survived Reset Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Hits Survived Reset (S)</b><br>Allows the standalone version of <b>Hits Survived</b> to reset and farm again when you're below 80% of the targetted value.</p>";
-				description += "<p><b>Hits Survived Reset</b><br>Will make both the standalone version of <b>Hits Survived</b> and any <b>Hits Survived</b> lines in the <b>HD Farm</b> setting to reset and farm again when you're below 80% of the targetted value.</p>";
+				description += "<p><b>Hits Survived Reset: Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Hits Survived Reset: S</b><br>Allows the standalone version of <b>Hits Survived</b> to reset and farm again when you're below 80% of the targetted value.</p>";
+				description += "<p><b>Hits Survived Reset: On</b><br>Will make both the standalone version of <b>Hits Survived</b> and any <b>Hits Survived</b> lines in the <b>HD Farm</b> setting reset and farm again when you're below 80% of the targetted value.</p>";
 				description += "<p>Having this setting enabled will allow you to farm multiple times if enemies damage increase or your army gets weaker through challenge buffs or debuffs.</p>";
 				description += "<p>Enabling this setting makes the Map Cap input in the <b>HD Farm</b> setting irrelevant as it will continually restart your <b>Hits Survived</b> farm.</p>";
-				description += "<p><b>Recommended:</b> Hits Survived Reset (S)</p>";
+				description += "<p><b>Recommended:</b> Hits Survived Reset: S</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Maps', [1, 2]);
 
@@ -1592,7 +1555,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
-		/* Does this work as intended? Must query Ray for info */
+		/* does this work as intended? query Ray for info */
 		/* createSetting('mapBonusPrestige',
 			function () { return ('Map Bonus Level Prestiges') },
 			function () {
@@ -1644,7 +1607,6 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>The priority value you would like to use when running Prestige Climb.</p>";
 				description += "This only impacts the mapping order when the <b>Auto Maps Priority</b> setting in the Maps tab is enabled.</p>";
-
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
 			}, 'value', 1, null, 'Maps', [1, 2]);
@@ -1697,25 +1659,25 @@ function initialiseAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', {
-			"The Wall": { enabled: false, zone: 100, cell: 0 },
-			"The Block": { enabled: false, zone: 100, cell: 0 },
-			"Dimension of Anger": { enabled: false, zone: 100, cell: 0 },
-			"Trimple Of Doom": { enabled: false, zone: 100, cell: 0 },
-			"The Prison": { enabled: false, zone: 100, cell: 0 },
-			"Imploding Star": { enabled: false, zone: 100, cell: 0 },
+				"The Wall": { enabled: false, zone: 100, cell: 0 },
+				"The Block": { enabled: false, zone: 100, cell: 0 },
+				"Dimension of Anger": { enabled: false, zone: 100, cell: 0 },
+				"Trimple Of Doom": { enabled: false, zone: 100, cell: 0 },
+				"The Prison": { enabled: false, zone: 100, cell: 0 },
+				"Imploding Star": { enabled: false, zone: 100, cell: 0 },
 
-			"Big Wall": { enabled: false, zone: 100, cell: 0 },
-			"Dimension of Rage": { enabled: false, zone: 100, cell: 0 },
-			"Prismatic Palace": { enabled: false, zone: 100, cell: 0 },
-			"Atlantrimp": { enabled: false, zone: 100, cell: 0 },
-			"Melting Point": { enabled: false, zone: 100, cell: 0 },
-			"Frozen Castle": { enabled: false, zone: 100, cell: 0 },
+				"Big Wall": { enabled: false, zone: 100, cell: 0 },
+				"Dimension of Rage": { enabled: false, zone: 100, cell: 0 },
+				"Prismatic Palace": { enabled: false, zone: 100, cell: 0 },
+				"Atlantrimp": { enabled: false, zone: 100, cell: 0 },
+				"Melting Point": { enabled: false, zone: 100, cell: 0 },
+				"Frozen Castle": { enabled: false, zone: 100, cell: 0 },
 
-			"MP Smithy": { enabled: false, value: 100 },
-			"MP Smithy Daily": { enabled: false, value: 100 },
-			"MP Smithy C3": { enabled: false, value: 100 },
-			"MP Smithy One Off": { enabled: false, value: 100 },
-		}, 'importExportTooltip("UniqueMaps")', 'Maps', [1, 2]);
+				"MP Smithy": { enabled: false, value: 100 },
+				"MP Smithy Daily": { enabled: false, value: 100 },
+				"MP Smithy C3": { enabled: false, value: 100 },
+				"MP Smithy One Off": { enabled: false, value: 100 },
+			}, 'importExportTooltip("UniqueMaps")', 'Maps', [1, 2]);
 
 		createSetting('uniqueMapUnlocks',
 			function () { return ('Unique Map Unlocks') },
@@ -1805,15 +1767,15 @@ function initialiseAllSettings() {
 			function () { return (atConfig.settingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() >= 35 : game.stats.highestLevel.valueTotal() >= 40) });
 
 		createSetting('balanceDestack',
-		function () { return `${atConfig.settingUniverse === 2 ? 'U' : 'B'}: HD Ratio` },
-		function () {
-			let description = `<p>What HD ratio cut-off to use for deciding when to destack.</p>`;
-			description += `<p>Only destacks once above the stack amount set in the <b>${atConfig.settingUniverse === 2 ? 'U' : 'B'}: Stacks</b> setting.</p>`;
-			description += `<p>If set to <b>0 or below</b> it will disable this setting.</p>`;
-			description += `<p><b>Recommended:</b> 5</p>`;
-			return description;
-		}, 'value', 5, null, 'Challenges', [1, 2],
-		function () { return (getPageSetting('balance', atConfig.settingUniverse) && autoTrimpSettings.balance.require()) });
+			function () { return `${atConfig.settingUniverse === 2 ? 'U' : 'B'}: HD Ratio` },
+			function () {
+				let description = `<p>What HD ratio cut-off to use for deciding when to destack.</p>`;
+				description += `<p>Only destacks once above the stack amount set in the <b>${atConfig.settingUniverse === 2 ? 'U' : 'B'}: Stacks</b> setting.</p>`;
+				description += `<p>If set to <b>0 or below</b> it will disable this setting.</p>`;
+				description += `<p><b>Recommended:</b> 5</p>`;
+				return description;
+			}, 'value', 5, null, 'Challenges', [1, 2],
+			function () { return (getPageSetting('balance', atConfig.settingUniverse) && autoTrimpSettings.balance.require()) });
 
 		createSetting('balanceZone',
 			function () { return `${atConfig.settingUniverse === 2 ? 'U' : 'B'}: Zone` },
@@ -2101,7 +2063,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
 
-		createSetting('c2disableFinished',
+		createSetting('c2DisableFinished',
 			function () { return 'Hide Finished Challenges' },
 			function () {
 				let description = `<p>Hides challenges that have a maximum completion count when they've been finished.</p>`;
@@ -2121,15 +2083,15 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'C2', [1, 2]);
 
 		createSetting('c2RunnerMode',
-			function () { return [`${_getChallenge2Info()} Runner %`, `${_getChallenge2Info()} Runner Set Values`] },
+			function () { return [`${_getChallenge2Info()} Runner: Percent`, `${_getChallenge2Info()} Runner: Set Values`] },
 			function () {
 				const c2Name = _getChallenge2Info();
 				let description = `<p>Toggles between the two modes that ${c2Name} Runner can use for selecting which ${c2Name} to start.</p>`;
-				description += `<p><b>${c2Name} Runner %</b><br>Will run ${c2Name}s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see ${c2Name} Table.</p>`;
+				description += `<p><b>${c2Name} Runner: Percent</b><br>Will run ${c2Name}s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see ${c2Name} Table.</p>`;
 				description += `<p><b>${c2Name} Runner Set Values</b><br>Uses the <b>${c2Name} Runner Settings</b> popup and will run enabled ${c2Name}s when they are below the designated end zone.</p>`;
 				description += `<p>If using <b>${c2Name} Runner Set Values</b> then the ${c2Name} will only be finished if the challenge is enabled and a zone above 0 has been set.</p>`;
 				description += `<p>I recommend only using <b>${c2Name} Runner Set Values</b> if you're actively going to update the inputs as you progress.</p>`;
-				description += `<p><b>Recommended:</b> ${c2Name} Runner %</p>`;
+				description += `<p><b>Recommended:</b> ${c2Name} Runner: Percent</p>`;
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse)) });
@@ -2146,7 +2108,7 @@ function initialiseAllSettings() {
 			});
 
 		createSetting('c2RunnerPortal',
-			function () { return (_getChallenge2Info() + ' Runner End Zone') },
+			function () { return (_getChallenge2Info() + ' Runner: End Zone') },
 			function () {
 				let description = `<p>Automatically abandon ${_getChallenge2Info()}s when this zone is reached.</p>`;
 				description += `<p>Set to <b>0 or below</b> to disable this setting.</p>`;
@@ -2157,7 +2119,7 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0) });
 
 		createSetting('c2RunnerPercent',
-			function () { return (`${_getChallenge2Info()} Runner %`) },
+			function () { return (`${_getChallenge2Info()} Runner: %`) },
 			function () {
 				let description = `<p>The percent threshold you want ${_getChallenge2Info()}s to be over.</p>`;
 				description += `<p>Will only run ${_getChallenge2Info()}s with a HZE% below this setting's value.</p>`;
@@ -2171,28 +2133,29 @@ function initialiseAllSettings() {
 		createSetting('c2RunnerEndMode',
 			function () {
 				const hze = game.stats.highestLevel.valueTotal();
-				const portalOptions = [`${_getChallenge2Info()} Runner End Challenge`, `${_getChallenge2Info()} Runner Portal`, `${_getChallenge2Info()} Runner Portal After Voids`];
+				const portalOptions = [`${_getChallenge2Info()} Runner: End Challenge`, `${_getChallenge2Info()} Runner: Portal`, `${_getChallenge2Info()} Runner: Portal After Voids`];
 				if (atConfig.settingUniverse === 1 && hze >= 230) portalOptions.push(`${_getChallenge2Info()} Portal After Poison Voids`);
 				return portalOptions;
 			},
 			function () {
 				let description = `<p>This setting will decide the action that <b>${_getChallenge2Info()} Runner</b> does when it finishes your current challenge.</p>`;
-				description += `<p><b>${_getChallenge2Info()} Runner End Challenge</b><br> Will end the challenge and continue your run on as normal.</p>`;
-				description += `<p><b>${_getChallenge2Info()} Runner Portal</b><br> Will automatically portal once you reach your ${_getChallenge2Info()} end zone.</p>`;
-				description += `<p><b>${_getChallenge2Info()} Runner Portal After Voids</b><br> Once you reach your ${_getChallenge2Info()} end zone this will abandon your challenge, then run voids maps and portal afterwards.</p>`;
-				description += `<p><b>Recommended:</b> ${_getChallenge2Info()} Runner Portal</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner: End Challenge</b><br> Will end the challenge and continue your run on as normal.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner: Portal</b><br> Will automatically portal once you reach your ${_getChallenge2Info()} end zone.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner: Portal After Voids</b><br> Once you reach your ${_getChallenge2Info()} end zone this will abandon your challenge, then run voids maps and portal afterwards.</p>`;
+				description += `<p><b>Recommended:</b> ${_getChallenge2Info()} Runner: Portal</p>`;
 				return description;
 			}, 'multitoggle', 1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse)) });
 
 		createSetting('c2Fused',
-			function () { return ([`Fused ${_getChallenge2Info()}s`, `Fused ${_getChallenge2Info()}s Below %`, `Fused ${_getChallenge2Info()}s Any %`]) },
+			function () { return ([`Fused ${_getChallenge2Info()}s: Off`, `Fused ${_getChallenge2Info()}s: Below %`, `Fused ${_getChallenge2Info()}s: Any %`]) },
 			function () {
 				const c2Name = _getChallenge2Info();
 				let description = `<p>Will allow ${c2Name} Runner to do fused versions of ${c2Name}'s rather than normal versions to reduce time spent running ${c2Name}s.</p>`;
-				description += `<p><b>Fused ${c2Name}'s Below %</b><br>Will run ${c2Name}s when both challenges are below your <b>${c2Name} Runner % value</b>.</p>`;
-				description += `<p><b>Fused ${c2Name}'s Any %</b><br>Will run ${c2Name}s when either challenge is below your <b>${c2Name} Runner % value.</b></p>`;
-				description += `<p><b>Recommended:</b> Fused ${_getChallenge2Info()}s Any %</p>`;
+				description += `<p><b>Fused ${c2Name}'s: Off</b><br>Stops ${c2Name} Runner from starting any Fused ${c2Name} runs.</p>`;
+				description += `<p><b>Fused ${c2Name}'s: Below %</b><br>Will run ${c2Name}s when both challenges are below your <b>${c2Name} Runner: % value</b>.</p>`;
+				description += `<p><b>Fused ${c2Name}'s: Any %</b><br>Will run ${c2Name}s when either challenge is below your <b>${c2Name} Runner: % value.</b></p>`;
+				description += `<p><b>Recommended:</b> Fused ${_getChallenge2Info()}s: Any %</p>`;
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [1],
 			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0) });
@@ -2416,7 +2379,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
 				description += "<p><b>If the specified BW is not available, it will run the one closest to the setting.</b></p>";
-				description += "<p>When active and above z600 this will disable <b>BW Raiding Settings</b> until the <b>Experience</b> challenge has been completed.</p>";
+				description += "<p>When active and above zone 600 this will disable <b>BW Raiding Settings</b> until the <b>Experience</b> challenge has been completed.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting and use Bionic Raiding settings instead to end the challenge.</p>";
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
 				return description;
@@ -2463,6 +2426,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [2],
 			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
+
 		/* createSetting('witherMutatorPreset',
 			function () { return ('W: Muatator Preset') },
 			function () {
@@ -2500,7 +2464,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will calculate the smithies required for quests based on this settings input and purchase spare ones if possible.</p>";
 				description += "<p><b>Will assume zone 85 when running the regular version of Quest.</b></p>";
 				description += "<p><b>Will disable the Smithy Farm setting whilst your world zone is below this value.</b></p>";
-				description += "<p>This setting requires <b>AT AutoStructure</b> to be enabled to work.</p>";
+				description += "<p>This setting requires <b>AT Auto Structure</b> to be enabled to work.</p>";
 				description += "<p><b>Recommended:</b> Your desired end zone for Quest</p>";
 				return description;
 			}, 'value', 999, null, 'C2', [2],
@@ -2511,7 +2475,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>The maximum amount of maps you'd like to run to do a Smithy quest.</p>";
 				description += "<p><b>Will potentially skip Smithy quests if this value is too low!</b></p>";
-				description += "<p>This setting requires <b>AT AutoStructure</b> to be enabled to work.</p>";
+				description += "<p>This setting requires <b>AT Auto Structure</b> to be enabled to work.</p>";
 				description += "<p><b>Recommended:</b> 100</p>";
 				return description;
 			}, 'value', 100, null, 'C2', [2],
@@ -2525,7 +2489,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () {
-				return (((!getPageSetting('c2disableFinished') || game.global.mayhemCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 100) || challengeActive('Mayhem'))
+				return (((!getPageSetting('c2DisableFinished') || game.global.mayhemCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 100) || challengeActive('Mayhem'))
 			});
 
 		createSetting('mayhemDestack',
@@ -2636,7 +2600,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";;
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (((!getPageSetting('c2disableFinished') || game.global.pandCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 150) || challengeActive('Pandemonium')) });
+			function () { return (((!getPageSetting('c2DisableFinished') || game.global.pandCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 150) || challengeActive('Pandemonium')) });
 
 		createSetting('pandemoniumDestack',
 			function () { return ('P: HD Ratio') },
@@ -2659,17 +2623,17 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('pandemonium', atConfig.settingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		createSetting('pandemoniumAE',
-			function () { return (['P: Auto Equip Off', 'P: Auto Equip', 'P AE: LMC', 'P AE: Huge Cache']) },
+			function () { return (['P: Auto Equip: Off', 'P: Auto Equip: On', 'P: Auto Equip: LMC', 'P: Auto Equip: Huge Cache']) },
 			function () {
-				let description = "<p>This setting provides some equipment farming possibilites to help speedup runs.</p>";
+				let description = "<p>This setting provides some equipment farming possibilites to help speed your runs up.</p>";
 				description += "<p><b>Will override equipment purchasing settings when enabled.</b></p>";
 				description += "<p>When farming it calculates the equips you'll be able to prestige and farms levels in the other items first then prestiges and upgrades them one at a time to ensure minimal power loss.</p>";
-				description += "<p><b>P: Auto Equip Off</b><br>Disables this setting.</p>";
-				description += "<p><b>P: Auto Equip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.</p>";
-				description += "<p><b>P AE: LMC</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache. Overrides worker settings to ensure that you farm as much metal as possible.</p>";
-				description += "<p><b>P AE: Huge Cache</b><br>Uses the same settings as <b>P: AE LMC</b> but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure a fast farming speed</p>";
+				description += "<p><b>P: Auto Equip: Off</b><br>Disables this setting.</p>";
+				description += "<p><b>P: Auto Equip: On</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.</p>";
+				description += "<p><b>P: Auto Equip: LMC</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache. Overrides worker settings to ensure that you farm as much metal as possible.</p>";
+				description += "<p><b>P: Auto Equip: Huge Cache</b><br>Uses the same settings as <b>P: Auto Equip: LMC</b> but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure a fast farming speed</p>";
 
-				description += "<p><b>Recommended:</b> P AE: LMC</p>";
+				description += "<p><b>Recommended:</b> P: Auto Equip: LMC</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', atConfig.settingUniverse) && autoTrimpSettings.pandemonium.require()) });
@@ -2749,7 +2713,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (((!getPageSetting('c2disableFinished') || game.global.desoCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 200) || challengeActive('Desolation')) });
+			function () { return (((!getPageSetting('c2DisableFinished') || game.global.desoCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 200) || challengeActive('Desolation')) });
 
 		createSetting('desolationDestack',
 			function () { return ('D: HD Ratio') },
@@ -2874,14 +2838,14 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Buys the " + (atConfig.settingUniverse === 2 ? "Radonculous" : "Heliumy") + " bonus for <b>100 bones</b> when the daily bonus is above this value.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
-				description += "<p><b>Recommended:</b> Anything above 475.</p>";
+				description += "<p><b>Recommended:</b> -1.</p>";
 				return description;
 			}, 'value', -1, null, 'Daily', [1, 2]);
 
 		createSetting('bloodthirstDestack',
 			function () { return ('Bloodthirst Destack') },
 			function () {
-				let description = "<p>Will automatically run a level 6 map when you are one bloodthirst stack (death) away from the enemy healing and gaining additional attack.</p>";
+				let description = "<p>Will automatically run a level 6 map when you are one bloodthirst stack (death) away from the enemy fully healing and gaining additional attack.</p>";
 				description += "<p><b>Won't function without Auto Maps enabled.</b></p>"
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -2917,7 +2881,7 @@ function initialiseAllSettings() {
 			function () { return ('Odd/Even Increment') },
 			function () {
 				let description = "<p>Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods it will try to identify which one is worse and skip farming on that zone type.</b></p>";
-				description += "<p>Will only impact the following settings: Heirloom swap zone, Void Maps, Map Farm" + (atConfig.settingUniverse === 2 ? ", Tribute Farm, Worshipper Farm, Smithy Farm." : ".") + "</p>";
+				description += "<p>Will only impact the following settings: Heirloom Swap Zone, Void Maps, Map Farm" + (atConfig.settingUniverse === 2 ? ", Tribute Farm, Worshipper Farm, Smithy Farm." : ".") + "</p>";
 				description += "<p>Prints a message in your message log everytime you start a zone with negative mods telling you it will skip the farming settings mentioned above.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -2932,53 +2896,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', true, null, 'Daily', [1]);
 
-		createSetting('dscryvoidmaps',
-			function () { return ('D: VM Scryer') },
-			function () {
-				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Daily', [1]);
-
-		createSetting('dAutoStanceWind',
-			function () { return ('D: Wind Stacking') },
-			function () {
-				let description = "<p>Enabling this will give you settings to allow you to wind stack in your runs.</p>";
-				description += "<p>Will use your regular <b>Auto Stance</b> setting when outside of zones you're wind stacking in.</p>";
-				description += "<p>The script evaluates the use of wind stance based on these settings. It examines the cells from the current one up to the maximum overkill range in scryer stance. If none of these cells contain enemies that drop helium, the script switches to scryer stance instead</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Daily', [1],
-			function () { return (game.empowerments.Wind.retainLevel >= 50) });
-
-		createSetting('dWindStackingZone',
-			function () { return ('D: Wind Stack Zone') },
-			function () {
-				let description = "<p>Enables wind stacking in zones above and inclusive of the zone set.</p>";
-				description += "<p><b>Recommended:</b> 100 zones below portal zone</p>";
-				return description;
-			}, 'value', -1, null, 'Daily', [1],
-			function () { return (autoTrimpSettings.dAutoStanceWind.enabled) });
-
-		createSetting('dWindStackingRatio',
-			function () { return ('D: Wind Stack H:D') },
-			function () {
-				let description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
-				description += "<p>If set to <b>0 or below</b> it will always use wind stance when at or above your wind stack zone input.</p>";
-				description += "<p><b>Recommended:</b> 1000</p>";
-				return description;
-			}, 'value', -1, null, 'Daily', [1],
-			function () { return (autoTrimpSettings.dAutoStanceWind.enabled) });
-
-		createSetting('dWindStackingLiq',
-			function () { return ('Wind Stack Liquification') },
-			function () {
-				let description = "<p>Will wind stack during liquification regardless of your <b>Daily Wind Stack H:D</b> or <b>Daily Wind Stack Zone</b> inputs.</p>";
-				description += "<p><b>Recommended:</b> Off</p>";
-				return description;
-			}, 'boolean', false, null, 'Daily', [1],
-			function () { return (autoTrimpSettings.dAutoStanceWind.enabled) });
-
 		createSetting('dailyPortalStart',
 			function () { return ('Auto Start Daily') },
 			function () {
@@ -2988,17 +2905,16 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Daily', [1, 2]);
 
 		createSetting('dailyPortal',
-			function () { return (['Daily Portal: Off', 'Daily Portal: ' + _getPrimaryResourceInfo().abv + '/Hr', 'Daily Portal: Custom', 'Daily Portal: Abandon']) },
+			function () { return [`Daily Portal: Off`, `Daily Portal: ${_getPrimaryResourceInfo().abv}/Hr`, `Daily Portal: Custom`, `Daily Portal: Abandon`] },
 			function () {
-				let description = "<p>Will automatically portal into different challenges depending on the way you setup the Daily Auto Portal related settings. The challenge that it portals into can be setup through the <b>Auto Portal</b> settings in the <b>Core</b> tab.</p>";
-				description += "<p>Additional settings appear when <b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b> or <b>Daily Portal: Custom</b> are selected.</p>";
-				description += "<p><b>Daily Portal Off</b><br>Disables this setting. Be warned it will never end your dailies unless you use the Portal After option in Void Map settings!</p>";
-
-				description += "<p><b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b><br>Portals into new runs when your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour goes below your current runs best " + _getPrimaryResourceInfo().abv.toLowerCase() + "/hr.</p>";
-				description += "<p>There is a <b>Buffer</b> setting, which lowers the check from best " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour to (best - buffer setting) " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
-				description += "<p><b>Daily Portal: Custom</b><br>Will portal into your Auto Portal challenge at the zone specified in the <b>Daily Portal Zone</b> setting.</p>";
-				description += "<p><b>Daily Portal: Abandon</b><br>Will finish your daily run at the zone specified in the <b>Daily Abandon Zone</b> setting. You will need to use the regular AutoPortal to portal when using this and the <b>Filler Run</b> setting will be disabled.</p>";
-				description += "<p><b>Recommended:</b> " + (atConfig.settingUniverse === 2 ? "Daily Portal: Custom with a specified endzone to make use of the Scruffy level 3 ability" : ("Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr")) + "</p>";
+				let description = `<p>Will automatically portal into different challenges depending on the way you setup the Daily Auto Portal related settings. The challenge that it portals into can be setup through the <b>Auto Portal</b> setting in the <b>Core</b> tab.</p>`;
+				description += `<p>Additional settings appear when <b>Daily Portal: ${_getPrimaryResourceInfo().abv}/Hr</b> or <b>Daily Portal: Custom</b> are selected.</p>`;
+				description += `<p><b>Daily Portal: Off</b><br>Disables this setting. Be warned it will never end your dailies unless you use the <b>Portal After</b> option in <b>Void Map Settings!</b></p>`;
+				description += `<p><b>Daily Portal: ${_getPrimaryResourceInfo().abv}/Hr</b><br>Portals into new runs when your ${_getPrimaryResourceInfo().name.toLowerCase()} per hour goes below your current runs best ${_getPrimaryResourceInfo().name.toLowerCase()} per hour.</p>`;
+				description += `<p>There is a <b>Buffer</b> setting, which lowers the check from best ${_getPrimaryResourceInfo().name.toLowerCase()} per hour to (best - buffer setting) ${_getPrimaryResourceInfo().name.toLowerCase()} per hour.</p>`;
+				description += `<p><b>Daily Portal: Custom</b><br>Will portal into your Auto Portal challenge at the zone specified in the <b>Daily Portal Zone</b> setting.</p>`;
+				description += `<p><b>Daily Portal: Abandon</b><br>Will finish your daily run at the zone specified in the <b>Daily Abandon Zone</b> setting. You will need to use the regular Auto Portal to portal when using this and the <b>Filler Run</b> setting will be disabled.</p>`;
+				description += `<p><b>Recommended:</b> ${atConfig.settingUniverse === 2 ? "Daily Portal: Custom with a specified endzone to make use of Scruffy's level 3 ability" : `Daily Portal: ${_getPrimaryResourceInfo().abv}/Hr`}</p>`;
 				return description;
 			}, 'multitoggle', 0, null, 'Daily', [1, 2]);
 
@@ -3023,19 +2939,19 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('dailyPortal', atConfig.settingUniverse) === 3) });
 
 		createSetting('dailyDontPortalBefore',
-			function () { return ("D: Don't Portal Before") },
+			function () { return ("Daily: Don't Portal Before") },
 			function () {
 				let description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b> Auto Portal setting.</p>";
 				description += "<p>It is an additional check that prevents drops in " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour from triggering Auto Portal.</p>";
 				description += "<p>The portal after checkbox in <b>Void Map Setting</b> will override this and allow portaling before the zone set here.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting and assume any zone is okay to portal on.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and allow portaling on any zone.</p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
 			}, 'value', 999, null, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', atConfig.settingUniverse) === 1) });
 
 		createSetting('dailyHeliumHrBuffer',
-			function () { return ('D: ' + _getPrimaryResourceInfo().abv + '/Hr Buffer %') },
+			function () { return ('Daily: ' + _getPrimaryResourceInfo().abv + '/Hr Buffer %') },
 			function () {
 				let description = "<p>When using the <b>Daily Portal: " + _getPrimaryResourceInfo().abv + "/Hr</b> Auto Portal setting, it will portal if your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour drops by this settings % input lower than your best for current run.</p>";
 				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer).</p>";
@@ -3048,21 +2964,19 @@ function initialiseAllSettings() {
 		createSetting('dailyHeliumHrPortal',
 			function () {
 				const hze = game.stats.highestLevel.valueTotal();
-				const portalOptions = ['Auto Portal Immediately', 'Portal After Voids'];
-				if (atConfig.settingUniverse === 1 && hze >= 230) portalOptions.push('Portal After Poison Voids');
+				const portalOptions = ['Portal: Immediately', 'Portal: After Voids'];
+				if (atConfig.settingUniverse === 1 && hze >= 230) portalOptions.push('Portal: After Poison Voids');
 				return portalOptions;
 			},
 			function () {
 				let description = "<p>How you would like to portal when below your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour threshold.</p>";
-				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
-				description += "<p><b>Portal After Voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
-				if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal After Poison Voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
-				description += "<p><b>Recommended:</b> Portal After Voids</p>";
+				description += "<p><b>Portal: Immediately</b><br>Will auto portal straight away.</p>";
+				description += "<p><b>Portal: After Voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
+				if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal: After Poison Voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
+				description += "<p><b>Recommended:</b> Portal: After Voids</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Daily', [1, 2],
-			function () {
-				return (getPageSetting('dailyPortal', atConfig.settingUniverse) === 1)
-			});
+			function () { return (getPageSetting('dailyPortal', atConfig.settingUniverse) === 1) });
 
 		createSetting('dailyHeliumHrExitSpire',
 			function () { return ('Exit Spires for Voids') },
@@ -3122,16 +3036,16 @@ function initialiseAllSettings() {
 			function () { return ('Daily Portal Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
-			Reflect: { enabled: false, zone: 0 },
-			Empower: { enabled: false, zone: 0 },
-			Mutimp: { enabled: false, zone: 0 },
-			Bloodthirst: { enabled: false, zone: 0 },
-			Famine: { enabled: false, zone: 0 },
-			Large: { enabled: false, zone: 0 },
-			Weakness: { enabled: false, zone: 0 },
-			Empowered_Void: { enabled: false, zone: 0 },
-			Heirlost: { enabled: false, zone: 0 },
-		}, null, 'Daily', [1, 2],
+				Reflect: { enabled: false, zone: 0 },
+				Empower: { enabled: false, zone: 0 },
+				Mutimp: { enabled: false, zone: 0 },
+				Bloodthirst: { enabled: false, zone: 0 },
+				Famine: { enabled: false, zone: 0 },
+				Large: { enabled: false, zone: 0 },
+				Weakness: { enabled: false, zone: 0 },
+				Empowered_Void: { enabled: false, zone: 0 },
+				Heirlost: { enabled: false, zone: 0 },
+			}, null, 'Daily', [1, 2],
 			function () { return (false) });
 	}
 	
@@ -3264,28 +3178,28 @@ function initialiseAllSettings() {
 			}, 'textValue', 'undefined', null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomVoidSwap', atConfig.settingUniverse)) });
 
-			createSetting('heirloomSpire',
-				function () { return ('Spire') },
-				function () {
-					let description = "<p>Shield to use during active Spires.</p>";
-					description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
-					description += "<p>The Map Swap setting will override this whilst in maps.</p>";
-					description += "<p>Set to <b>undefined</b> to disable.</p>";
-					description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
-					return description;
-				}, 'textValue', 'undefined', null, 'Heirloom', [1],
-				function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.stats.highestLevel.valueTotal() >= 170) });
+		createSetting('heirloomSpire',
+			function () { return ('Spire') },
+			function () {
+				let description = "<p>Shield to use during active Spires.</p>";
+				description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
+				description += "<p>The Map Swap setting will override this whilst in maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [1],
+			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.stats.highestLevel.valueTotal() >= 170) });
 
-			createSetting('heirloomWindStack',
-				function () { return ('Wind Stacking') },
-				function () {
-					let description = "<p>Shield to use when Wind stance is being used.</p>";
-					description += "<p>The Map Swap setting will override this whilst in maps.</p>";
-					description += "<p>Set to <b>undefined</b> to disable.</p>";
-					description += "<p><b>Recommended:</b> Plaguebringer heirloom</p>";
-					return description;
-				}, 'textValue', 'undefined', null, 'Heirloom', [1],
-				function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.empowerments.Wind.retainLevel >= 50) });
+		createSetting('heirloomWindStack',
+			function () { return ('Wind Stacking') },
+			function () {
+				let description = "<p>Shield to use when Wind stance is being used.</p>";
+				description += "<p>The Map Swap setting will override this whilst in maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Plaguebringer heirloom</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [1],
+			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.empowerments.Wind.getLevel() >= 50) });
 
 		createSetting('heirloomSwapZone',
 			function () { return ('Swap Zone') },
@@ -3454,16 +3368,16 @@ function initialiseAllSettings() {
 
 		createSetting('heirloomAutoTypeToKeep',
 			function () {
-				let heirloomOptions = ['None', 'Shields', 'Staffs', 'All'];
-				if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 200) heirloomOptions.push('Cores');
+				let heirloomOptions = ['Type To Keep: None', 'Type To Keep: Shields', 'Type To Keep: Staffs', 'Type To Keep: All'];
+				if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 200) heirloomOptions.push('Type To Keep: Cores');
 				return (heirloomOptions)
 			},
 			function () {
 				let description = "<p>Controls the heirloom types that the script will try to keep.</p>";
-				description += "<p><b>Shields</b><br>Will check to see if any <b>Shield</b> heirlooms should be kept when portaling.</p>";
-				description += "<p><b>Staffs</b><br>Will check to see if any <b>Staff</b> heirlooms should be kept when portaling.</p>";
-				description += "<p><b>All</b><br>Will check to see if <b>ANY</b> heirlooms should be kept when portaling.</p>";
-				if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 200) description += "<p><b>Cores</b><br>Will check to see if any <b>Core</b> heirlooms should be kept when portaling.</p>";
+				description += "<p><b>Type To Keep: Shields</b><br>Will check to see if any <b>Shield</b> heirlooms should be kept when portaling.</p>";
+				description += "<p><b>Type To Keep: Staffs</b><br>Will check to see if any <b>Staff</b> heirlooms should be kept when portaling.</p>";
+				description += "<p><b>Type To Keep: All</b><br>Will check to see if <b>ANY</b> heirlooms should be kept when portaling.</p>";
+				if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 200) description += "<p><b>Type To Keep: Cores</b><br>Will check to see if any <b>Core</b> heirlooms should be kept when portaling.</p>";
 				description += "<p><b>Recommended:</b> The type of heirlooms you need</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Heirloom', [1, 2],
@@ -3863,7 +3777,7 @@ function initialiseAllSettings() {
 	
 	const displaySpire = true;
 	if (displaySpire) {
-		createSetting('IgnoreSpiresUntil',
+		createSetting('spireIgnoreUntil',
 			function () { return ('Ignore Spires Until') },
 			function () {
 				let description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
@@ -3873,8 +3787,8 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
 
-		createSetting('ExitSpireCell',
-			function () { return ('Exit Spire After Cell') },
+		createSetting('spireExitCell',
+			function () { return ('Exit After Cell') },
 			function () {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
@@ -3884,34 +3798,34 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
 
-		createSetting('PreSpireNurseries',
-			function () { return ('Nurseries pre-Spire') },
+		createSetting('spireNurseries',
+			function () { return ('Nurseries') },
 			function () {
 				let description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
-				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>";
+				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT Auto Structure</b> setting.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
 		
-		createSetting('AutoDStanceSpire',
-			function () { return ('D Stance in Spires') },
+		createSetting('spireDominanceStance',
+			function () { return ('Force Dominance Stance') },
 			function () {
-				let description = "<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>";
+				let description = "<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		createSetting('maxMapStacksForSpire',
-			function () { return ('Spire Max Map Bonus') },
+		createSetting('spireMapBonus',
+			function () { return ('Max Map Bonus') },
 			function () {
 				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
 			
-		createSetting('hitsSurvivedSpire',
+		createSetting('spireHitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
 				let description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
@@ -3923,7 +3837,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 10, null, 'Spire', [1]);
 			
-		createSetting('skipSpires',
+		createSetting('spireSkipMapping',
 			function () { return ('Skip Spires') },
 			function () {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
@@ -3931,7 +3845,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
 
-		createSetting('c2IgnoreSpiresUntil',
+		createSetting('spireIgnoreUntilC2',
 			function () { return (`${_getChallenge2Info()}: Ignore Spires Until`) },
 			function () {
 				let description = `<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>`;
@@ -3942,8 +3856,8 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		createSetting('c2ExitSpireCell',
-			function () { return (`${_getChallenge2Info()}: Exit Spire After Cell`) },
+		createSetting('spireExitCellC2',
+			function () { return (`${_getChallenge2Info()}: Exit After Cell`) },
 			function () {
 				let description = `<p>Will exit out of active Spires upon clearing this cell.</p>`;
 				description += `<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>`;
@@ -3954,35 +3868,35 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		createSetting('c2PreSpireNurseries',
-			function () { return (`${_getChallenge2Info()}: Nurseries pre-Spire`) },
+		createSetting('spireNurseriesC2',
+			function () { return (`${_getChallenge2Info()}: Nurseries`) },
 			function () {
 				let description = `<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>`;
-				description += `<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>`;
+				description += `<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT Auto Structure</b> setting.</b></p>`;
 				description += `<p>Set to <b>0 or below</b> to disable this setting.</p>`;
 				description += `<p><b>Recommended:</b> -1</p>`;
 				return description;
 			}, 'value', -1, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		createSetting('c2AutoDStanceSpire',
-			function () { return (`${_getChallenge2Info()}: D Stance in Spires`) },
+		createSetting('spireDominanceStanceC2',
+			function () { return (`${_getChallenge2Info()}: Force Dominance Stance`) },
 			function () {
-				let description = `<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>`;
+				let description = `<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>`;
 				description += `<p><b>Recommended:</b> Off</p>`;
 				return description;
 			}, 'boolean', false, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 			
-		createSetting('maxMapStacksForSpireC2',
-			function () { return (`${_getChallenge2Info()}: Spire Max Map Bonus`) },
+		createSetting('spireMapBonusC2',
+			function () { return (`${_getChallenge2Info()}: Max Map Bonus`) },
 			function () {
 				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
 			
-		createSetting('hitsSurvivedSpireC2',
+		createSetting('spireHitsSurvivedC2',
 			function () { return (`${_getChallenge2Info()}: Hits Survived`) },
 			function () {
 				let description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
@@ -3994,7 +3908,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 10, null, 'Spire', [1]);
 			
-		createSetting('skipSpiresC2',
+		createSetting('spireSkipMappingC2',
 			function () { return (`${_getChallenge2Info()}: Skip Spires`) },
 			function () {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
@@ -4002,8 +3916,8 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
 		
-		createSetting('dIgnoreSpiresUntil',
-			function () { return ('D: Ignore Spires Until') },
+		createSetting('spireIgnoreUntilDaily',
+			function () { return ('Daily: Ignore Spires Until') },
 			function () {
 				let description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
 				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
@@ -4013,8 +3927,8 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		createSetting('dExitSpireCell',
-			function () { return ('D: Exit Spire After Cell') },
+		createSetting('spireExitCellDaily',
+			function () { return ('Daily: Exit After Cell') },
 			function () {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
@@ -4025,36 +3939,36 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		createSetting('dPreSpireNurseries',
-			function () { return ('D: Nurseries pre-Spire') },
+		createSetting('spireNurseriesDaily',
+			function () { return ('Daily: Nurseries') },
 			function () {
 				let description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
-				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>";
+				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT Auto Structure</b> setting.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 
-		createSetting('dAutoDStanceSpire',
-			function () { return ('D: D Stance in Spires') },
+		createSetting('spireDominanceStanceDaily',
+			function () { return ('Daily: Force Dominance Stance') },
 			function () {
-				let description = "<p>Enabling this setting will force the script to only use Domination stance during Spires and not inside maps.</p>";
+				let description = "<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 			
-		createSetting('maxMapStacksForSpireDaily',
-			function () { return ('D: Spire Max Map Bonus') },
+		createSetting('spireMapBonusDaily',
+			function () { return ('Daily: Max Map Bonus') },
 			function () {
 				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
 			
-		createSetting('hitsSurvivedSpireDaily',
-			function () { return ('D: Hits Survived') },
+		createSetting('spireHitsSurvivedDaily',
+			function () { return ('Daily: Hits Survived') },
 			function () {
 				let description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
 				description += "<p><b>Your Hits Survived can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
@@ -4065,8 +3979,8 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 10, null, 'Spire', [1]);
 			
-		createSetting('skipSpiresDaily',
-			function () { return ('D: Skip Spires') },
+		createSetting('spireSkipMappingDaily',
+			function () { return ('Daily: Skip Spires') },
 			function () {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
@@ -4086,19 +4000,19 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Magma', [1]);
 
 		createSetting('autoGenModeBefore',
-			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
+			function () { return (['Start Gen Mode: Gain Mi', 'Start Gen Mode: Gain Fuel', 'Start Gen Mode: Hybrid']) },
 			function () {
 				let description = "<p>The mode you would like your dimensional generator to be on before your <b>Start Fuel Z</b> zone.</p>";
-				description += "<p><b>Gain Mi</b><br>Will set the generator to collect Mi.</p>";
-				description += "<p><b>Gain Fuel</b><br>Will set the generator to collect fuel.</p>";
-				description += "<p><b>Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
-				description += "<p><b>Recommended:</b> Gain Mi</p>";
+				description += "<p><b>Start Gen Mode: Gain Mi</b><br>Will set the generator to collect Mi.</p>";
+				description += "<p><b>Start Gen Mode: Gain Fuel</b><br>Will set the generator to collect fuel.</p>";
+				description += "<p><b>Start Gen Mode: Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
+				description += "<p><b>Recommended:</b> Start Gen Mode: Gain Mi</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1],
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse)) });
 
 		createSetting('autoGenFuelStart',
-			function () { return ('Start Fuel Z') },
+			function () { return ('Start Fuel Zone') },
 			function () {
 				let description = "<p>Will automatically set the generator to gather <b>Fuel</b> when this zone is reached.</p>";
 				description += "<p>Set to <b>0</b> to disable this setting.</p>";
@@ -4110,7 +4024,7 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse)) });
 
 		createSetting('autoGenFuelEnd',
-			function () { return ('End Fuel Z') },
+			function () { return ('End Fuel Zone') },
 			function () {
 				let description = "<p>Will automatically set the generator to gather <b>Fuel</b> until this zone is reached.</p>";
 				description += "<p>Set to <b>0</b> to disable this setting.</p>";
@@ -4122,19 +4036,19 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse)) });
 
 		createSetting('autoGenModeAfter',
-			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
+			function () { return (['End Gen Mode: Gain Mi', 'End Gen Mode: Gain Fuel', 'End Gen Mode: Hybrid']) },
 			function () {
 				let description = "<p>The mode you would like your dimensional generator to be on after your <b>End Fuel Z</b> zone.</p>";
-				description += "<p><b>Gain Mi</b><br>Will set the generator to collect Mi.</p>";
-				description += "<p><b>Gain Fuel</b><br>Will set the generator to collect fuel.</p>";
-				description += "<p><b>Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
-				description += "<p><b>Recommended:</b> Gain Mi</p>";
+				description += "<p><b>End Gen Mode: Gain Mi</b><br>Will set the generator to collect Mi.</p>";
+				description += "<p><b>End Gen Mode: Gain Fuel</b><br>Will set the generator to collect fuel.</p>";
+				description += "<p><b>End Gen Mode: Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
+				description += "<p><b>Recommended:</b> End Gen Mode: Gain Mi</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1],
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse)) });
 
 		createSetting('autoGenModeDaily',
-			function () { return (['Daily: Normal', 'Daily: Fuel', 'Daily: Hybrid']) },
+			function () { return (['Daily Gen Mode: Normal', 'Daily Gen Mode: Fuel', 'Daily Gen Mode: Hybrid']) },
 			function () {
 				let description = "<p>The mode that the script will use for the entire daily run.</p>";
 				description += "<p><b>Daily Normal</b><br>Disables this setting and uses the normal script auto generator settings.</p>";
@@ -4146,13 +4060,13 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse)) });
 
 		createSetting('autoGenModeC2',
-			function () { return (['' + _getChallenge2Info() + ': Normal', '' + _getChallenge2Info() + ': Fuel', '' + _getChallenge2Info() + ': Hybrid']) },
+			function () { return [`${_getChallenge2Info()} Gen Mode: Normal`, `${_getChallenge2Info()} Gen Mode: Fuel`, `${_getChallenge2Info()} Gen Mode: Hybrid`] },
 			function () {
-				let description = "<p>The mode that the script will use for the entire " + _getSpecialChallengeDescription() + " runs.</p>";
-				description += "<p><b>" + _getChallenge2Info() + " Normal</b><br>Disables this setting and uses the normal script auto generator settings.</p>";
-				description += "<p><b>" + _getChallenge2Info() + " Fuel</b><br>Will set the generator to collect fuel.</p>";
-				description += "<p><b>" + _getChallenge2Info() + " Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
-				description += "<p><b>Recommended:</b> " + _getChallenge2Info() + " Fuel</p>";
+				let description = `<p>The mode that the script will use for the entire ${_getSpecialChallengeDescription()} runs.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Normal</b><br>Disables this setting and uses the normal script auto generator settings.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Fuel</b><br>Will set the generator to collect fuel.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>`;
+				description += `<p><b>Recommended:</b> ${_getChallenge2Info()} Fuel</p>`;
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1],
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse)) });
@@ -4160,7 +4074,7 @@ function initialiseAllSettings() {
 		createSetting('magmiteAutoFuel',
 			function () { return ('Automate Fuel Zones') },
 			function () {
-				let description = "<p>Will change your zones immediately before auto portaling to ensure that they are accurate going into your next run.</p>";
+				let description = "<p>Will change your Start & End Fuel Zone inputs immediately before auto portaling to ensure that they are accurate going into your next run.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Magma', [1],
@@ -4170,7 +4084,6 @@ function initialiseAllSettings() {
 			function () { return ('Zones To Fuel') },
 			function () {
 				let description = "<p>When Automate Fuel Zones runs it will use this value for how many zones you should fuel for.</p>";
-				description += "<p>To disable this setting you must disable the <b>Automate Fuel Zones</b> setting.</p>";
 				return description;
 			}, 'value', 20, null, 'Magma', [1],
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse) && getPageSetting('magmiteAutoFuel', atConfig.settingUniverse)) });
@@ -4196,14 +4109,14 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse) && getPageSetting('magmiteAutoFuel', atConfig.settingUniverse) && game.stats.amalgamators.valueTotal > 0) });
 
 		createSetting('magmiteSpending',
-			function () { return (['Spend Magmite Off', 'Spend Magmite On Portal', 'Spend Magmite Always']) },
+			function () { return (['Spend Magmite: Off', 'Spend Magmite: Portal', 'Spend Magmite: On']) },
 			function () {
 				let description = "<p>Controls when the script will spend the Magmite that you obtain throughout your runs.</p>";
 				description += "<p>If enabled the script will spend your magmite on the most efficient upgrade available using the Gatorcalc websites algorithm.</p>";
-				description += "<p><b>Spend Magmite Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Spend Magmite On Portal</b><br>Auto spends any unspent Magmite immediately before portaling.</p>";
-				description += "<p><b>Spend Magmite Always</b><br>Will spend Magmite that you acquire as soon as the most efficient upgrade is purchasable.</p>";
-				description += "<p><b>Recommended:</b> Spend Magmite On Portal</p>";
+				description += "<p><b>Spend Magmite: Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Spend Magmite: Portal</b><br>Auto spends any unspent Magmite immediately before portaling.</p>";
+				description += "<p><b>Spend Magmite: On</b><br>Will spend Magmite that you acquire as soon as the most efficient upgrade is purchasable.</p>";
+				description += "<p><b>Recommended:</b> Spend Magmite: Portal</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Magma', [1]);
 
@@ -4227,10 +4140,10 @@ function initialiseAllSettings() {
 	const displayNature = true;
 	if (displayNature) {
 		createSetting('autoNature',
-			function () { return ('Spend Nature Tokens') },
+			function () { return ('Transfer Nature Tokens') },
 			function () {
-				let description = "<p>Controls how Nature tokens are handled by the script.</p>";
-				description += "<p>Additional settings appear when enabled for token transfer & automatically spending tokens on enlightenments.</p>";
+				let description = "<p>Controls how nature token transfering is handled by the script.</p>";
+				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Nature', [1]);
@@ -4283,97 +4196,98 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind', 'Convert to Both']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoNature.enabled) });
 
-		createSetting('autoenlight',
-			function () { return ('Enlight: Auto') },
+		createSetting('autoEnlightenment',
+			function () { return ('Enlightenment Automation') },
 			function () {
 				let description = "<p>Controls when the script will purchase nature enlightenments.</p>";
 				description += "<p>Priority system for the purchases is <b>Poison > Wind > Ice</b>.</p>";
 				description += "<p>Will only purchase an enlightenment when <b>Magma</b> is active.</p>";
-				description += "<p>Englightenment purchases ignore the <b>Token Threshold</b> setting value.</p>";
+				description += "<p>Enlightenment purchases ignore the <b>Token Threshold</b> setting value.</p>";
 				return description;
-			}, 'boolean', false, null, 'Nature', [1]);
+			}, 'boolean', false, null, 'Nature', [1],
+			function () { return (game.empowerments.Poison.getLevel() >= 50 || game.empowerments.Wind.getLevel() >= 50 || game.empowerments.Ice.getLevel() >= 50) });
 
 		createSetting('poisonEnlight',
-			function () { return ('E: F: Poison') },
+			function () { return ('E: Poison (Filler)') },
 			function () {
 				let description = "<p>Will activate Poison enlightenment when below this token threshold when running fillers (non daily/" + _getChallenge2Info() + " runs).</p>";
 				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 
 		createSetting('windEnlight',
-			function () { return ('E: F: Wind') },
+			function () { return ('E: Wind (Filler)') },
 			function () {
 				let description = "<p>Will activate Wind enlightenment when below this token threshold when running fillers (non daily/" + _getChallenge2Info() + " runs).</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 
 		createSetting('iceEnlight',
-			function () { return ('E: F: Ice') },
+			function () { return ('E: Ice (Filler)') },
 			function () {
 				let description = "<p>Will activate Ice enlightenment when below this token threshold when running fillers (non daily/" + _getChallenge2Info() + " runs).</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 
 		createSetting('poisonEnlightDaily',
-			function () { return ('E: D: Poison') },
+			function () { return ('E: Poison (Daily)') },
 			function () {
-				let description = "<p>Will activate Poison enlightenment when below this token threshold when running dailies.</p>";
+				let description = "<p>Will activate Poison enlightenment when below this token threshold and running a daily.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 
 		createSetting('windEnlightDaily',
-			function () { return ('E: D: Wind') },
+			function () { return ('E: Wind (Daily)') },
 			function () {
-				let description = "<p>Will activate Wind enlightenment when below this token threshold when running dailies.</p>";
+				let description = "<p>Will activate Wind enlightenment when below this token threshold and running a daily.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 
 		createSetting('iceEnlightDaily',
-			function () { return ('E: D: Ice') },
+			function () { return ('E: Ice (Daily)') },
 			function () {
-				let description = "<p>Will activate Ice enlightenment when below this token threshold when running dailies.</p>";
+				let description = "<p>Will activate Ice enlightenment when below this token threshold and running a daily.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 
 		createSetting('poisonEnlightC2',
-			function () { return ('E: C: Poison') },
+			function () { return (`E: Poison (${_getChallenge2Info()})`) },
 			function () {
-				let description = "<p>Will activate Poison enlightenment when below token threshold when doing " + _getSpecialChallengeDescription() + " runs.</p>";
+				let description = "<p>Will activate Poison enlightenment when below token threshold and doing " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 
 		createSetting('windEnlightC2',
-			function () { return ('E: C: Wind') },
+			function () { return (`E: Wind (${_getChallenge2Info()})`) },
 			function () {
-				let description = "<p>Will activate Wind enlightenment when below this token threshold when doing " + _getSpecialChallengeDescription() + " runs.</p>";
+				let description = "<p>Will activate Wind enlightenment when below this token threshold and doing " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 
 		createSetting('iceEnlightC2',
-			function () { return ('E: C: Ice') },
+			function () { return (`E: Ice (${_getChallenge2Info()})`) },
 			function () {
-				let description = "<p>Will activate Ice enlightenment when below this token threshold when doing " + _getSpecialChallengeDescription() + " runs.</p>";
+				let description = "<p>Will activate Ice enlightenment when below this token threshold and doing " + _getSpecialChallengeDescription() + " runs.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
-			function () { return (autoTrimpSettings.autoenlight.enabled) });
+			function () { return (autoTrimpSettings.autoEnlightenment.enabled) });
 	}
 	
 	const displayFluffy = true;
@@ -4422,11 +4336,12 @@ function initialiseAllSettings() {
 			function () { return ('Fluffy: Respec on Evo') },
 			function () {
 				let description = "<p>Will respec your perks after evolving.</p>";
-				description += "<p>Will only evolve Fluffy when a perk respec is available OR you have points in the Fluffy xp gain perks.</p>";
+				description += "<p>Will only evolve Fluffy when a perk respec is available <b>OR</b> you have points in the Fluffy xp gain perks.</p>";
 				description += "<p>This setting won't do anything if the <b>Auto Allocate Perks</b> setting is disabled. Uses your current preset and weights to respec to.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Fluffy', [1]);
+			}, 'boolean', false, null, 'Fluffy', [1],
+			function () { return (getPageSetting('fluffyEvolve', atConfig.settingUniverse)) });
 	}
 	
 	const displayTimewarp = true;
@@ -4445,7 +4360,7 @@ function initialiseAllSettings() {
 				const universeSetting = atConfig.settingUniverse === 1 ? 'Stance' : 'Equality';
 				let description = "<p>The frequency that the scripts code will run during time warp.</p>";
 				description += "<p>If set to 20 it will run once every 20 times the games code runs. The lower you set this value the longer time warp will take.</p>";
-				description += `<p>Auto maps, Auto Fight, Auto Portal, and Auto ${universeSetting} will run every time the game runs its code regardless of this input.</p>`;
+				description += `<p>Auto Maps, Auto Fight, Auto Portal, and Auto ${universeSetting} will run every time the game runs its code regardless of this input.</p>`;
 				description += "<p>Liquification zones override this and temporarily set it to 1.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
@@ -4455,9 +4370,8 @@ function initialiseAllSettings() {
 		createSetting('timeWarpSaving',
 			function () { return ('Time Warp Saving') },
 			function () {
-				let description = "<p>Will cause the script to save your game during Time Warp so that you can maintain your current .</p>";
-				description += "<p>Automatically saves every 30 minutes of game time and maintains current time warp.</p>";
-				description += "<p>.</p>";
+				let description = "<p>Will cause the script to save your game during Time Warp so that you can maintain your time warp progress through refreshes.</p>";
+				description += "<p>Automatically saves every 30 minutes of game time and maintains current time warp progress.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Time Warp', [0],
@@ -4470,7 +4384,7 @@ function initialiseAllSettings() {
 				description += "<p>Updates the display every 600 ingame ticks so every minute of ingame time.</p>";
 				description += "<p>This will cause your time warp to take longer as it has to render additional frames.</p>";
 				description += "<p>When first loading Time Warp you will have a tooltip to inform you of your Time Warp duration as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the start of the Auto Maps status at the bottom of the battle container.</p>";
-				description += "<p><b>Recommended:</b> Enabled</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
@@ -4511,13 +4425,12 @@ function initialiseAllSettings() {
 			}, 'mazDefaultArray', {
 				fight: false, autoFight: false, structure:false, jobs: false, gold: false, upgrades: false, prestige: false, equip: false,
 				ATstructure: false, ATjobs: false, ATequip: false, ATmaps: false, ATstatus: false, ATheHr: false,
-		}, 'importExportTooltip("hideAutomation")', 'Display', [0]);
+			}, 'importExportTooltip("hideAutomation")', 'Display', [0]);
 			
 		createSetting('enableAFK',
 			function () { return ('Go AFK Mode') },
 			function () {
 				let description = "<p>AFK Mode uses a Black Screen, and suspends all of the Trimps GUI visual update functions to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU saving mode.</p>";
-				description += "<p>The blue color means this is not a settable setting, just a button.</p>";
 				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
 				return description;
 			}, 'action', null, 'atData["performance"].enableAFKMode()', 'Display', [1, 2]);
@@ -4575,24 +4488,24 @@ function initialiseAllSettings() {
 			function () { return ('Spam Message Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
-			general: false,
-			upgrades: false,
-			fragment: false,
-			equipment: false,
-			maps: false,
-			map_Details: true,
-			map_Destacking: false,
-			map_Skip: false,
-			other: false,
-			buildings: false,
-			jobs: false,
-			zone: true,
-			exotic: false,
-			gather: false,
-			stance: false,
-			run_Stats: false,
-			nature: false,
-		}, null, 'Display', [0],
+				general: false,
+				upgrades: false,
+				fragment: false,
+				equipment: false,
+				maps: false,
+				map_Details: true,
+				map_Destacking: false,
+				map_Skip: false,
+				other: false,
+				buildings: false,
+				jobs: false,
+				zone: true,
+				exotic: false,
+				gather: false,
+				stance: false,
+				run_Stats: false,
+				nature: false,
+			}, null, 'Display', [0],
 			function () { return false });
 	}
 
@@ -4604,21 +4517,21 @@ function initialiseAllSettings() {
 		createSetting('importAutoTrimps',
 			function () { return ('Import AutoTrimps') },
 			function () {
-				let description = "<p>Import a AutoTrimps settings file.</p>";
+				let description = "<p>Import an AutoTrimps settings file.</p>";
 				return description;
 			}, 'infoclick', null, 'importExportTooltip("importAutoTrimps")', 'Import Export', [0]);
 
 		createSetting('exportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
-				let description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
+				let description = "<p>Export your AutoTrimps Settings as an output string text formatted in JSON.</p>";
 				return description;
 			}, 'infoclick', null, 'importExportTooltip("exportAutoTrimps")', 'Import Export', [0]);
 
 		createSetting('downloadForDebug',
 			function () { return ('Download For Debug') },
 			function () {
-				let description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
+				let description = "<p>Will download both your save (paused) and the scripts settings so that they can be debugged easier.</p>";
 				return description;
 			}, 'action', null, 'importExportTooltip("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
 
@@ -4626,7 +4539,7 @@ function initialiseAllSettings() {
 			function () { return ('Reload For Updates') },
 			function () {
 				let description = "<p>Will reload your Trimps window when an AutoTrimps update is available.</p>";
-				description += "<p><b>Updates have the potential to have errors that would break the script so be aware this might not be wise to enable.</b></p>";
+				description += "<p><b>Updates can sometimes have errors that would break the script so be aware this might not be wise to enable.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Import Export', [0]);
@@ -4923,15 +4836,17 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 	const parentAttributes = {
 		id: `${id}Parent`,
-		style: 'display: inline-block; vertical-align: top; margin-left: 0.6vw; margin-bottom: 1vw; width: 13.50vw;'
+		style: 'display: inline-block; vertical-align: top; margin-left: 0.6vw; margin-bottom: 1vw; width: 13.50vw; min-height: 1.51vw;'
 	};
+
+	const btnName = name();
 
 	const btnAttributes = {
 		id: id,
-		style: `position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;`,
-		onmouseover: `tooltip("${name()}", "customText", event, "${description()}")`,
+		style: `position: relative; padding-left: 5px; font-size: 1vw; height: auto; min-height: 1.51vw;`,
+		onmouseover: `tooltip("${btnName}", "customText", event, "${description()}")`,
 		onmouseout: 'tooltip("hide")',
-		innerHTML: name()
+		innerHTML: btnName
 	};
 
 	const settingActions = {
@@ -5054,15 +4969,24 @@ function settingChanged(id, currUniverse) {
 	}
 
 	if (btn.type === 'multitoggle') {
+		const element = document.getElementById(id);
 		const value = `value${valueSuffix}`;
 		if ((id === 'magmiteSpending' && btn[value] > 0) || (game.global.universe === 1 && id === 'presetCombatRespec')) _settingTimeout();
 		btn[value]++;
 		if (id === 'autoMaps' && currUniverse && btn[value] === 2) btn[value]++;
 		if (btn[value] > btn.name().length - 1) btn[value] = 0;
-		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
-		document.getElementById(id).innerHTML = btn.name()[btn[value]];
+		element.setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
+		element.innerHTML = btn.name()[btn[value]];
 		if (multitoggleActions[id] && updateUI) multitoggleActions[id]();
 		if (id === 'dailyPortal') document.getElementById(btn.id).classList.add('toggleConfigBtn');
+
+		const elemText = element.innerHTML.replace(/<span class="icomoon icon-infinity"><\/span>/g, '∞');
+		if (elemText.length > 26) {
+			const reduceBy = 1 - (elemText.length - 25) * 0.03;
+			element.style.fontSize = `${reduceBy}vw`;
+		} else {
+			element.style.fontSize = '1vw';
+		}
 	}
 
 	if (btn.type === 'dropdown') {
@@ -5097,7 +5021,16 @@ function autoSetValue(id, multiValue, negative) {
 
 	setting[`value${valueSuffix}`] = num;
 	const displayNum = Array.isArray(num) ? `${num[0]}+` : num > -1 || negative ? prettify(num) : "<span class='icomoon icon-infinity'></span>";
-	document.getElementById(id).innerHTML = `${setting.name()}: ${displayNum}`;
+	const element = document.getElementById(id);
+	element.innerHTML = `${setting.name()}: ${displayNum}`;
+
+	const elemText = element.innerHTML.replace(/<span class="icomoon icon-infinity"><\/span>/g, '∞');
+	if (elemText.length > 26) {
+		const reduceBy = 1 - (elemText.length - 25) * 0.03;
+		element.style.fontSize = `${reduceBy}vw`;
+	} else {
+		element.style.fontSize = '1vw';
+	}
 
 	if (id === 'presetCombatRespecCell') {
 		MODULES.portal.disableAutoRespec = 0;
@@ -5166,9 +5099,17 @@ function autoSetText(id, multiValue) {
 		if (Array.isArray(textVal)) {
 			displayText = textVal.length === 1 && textVal[0] === -1 ? "<span class='icomoon icon-infinity'></span>" : textVal[0] + '+';
 		} else {
-			displayText = textVal.length > 18 ? textVal.substring(0, 21) + '...' : textVal;
+			displayText = textVal.length > 18 ? textVal.substring(0, 18) + '...' : textVal;
 		}
 		element.innerHTML = setting.name() + ': ' + displayText;
+
+		const elemText = element.innerHTML.replace(/<span class="icomoon icon-infinity"><\/span>/g, '∞');
+		if (elemText.length > 26) {
+			const reduceBy = 1 - (elemText.length - 25) * 0.03;
+			element.style.fontSize = `${reduceBy}vw`;
+		} else {
+			element.style.fontSize = '1vw';
+		}
 	}
 
 	if (id.includes('archaeology')) archaeologyAutomator();
@@ -5355,6 +5296,14 @@ function _setDisplayedSettings(item) {
 		elem.innerHTML = item.name();
 	}
 
+	const elemText = elem.innerHTML.replace(/<span class="icomoon icon-infinity"><\/span>/g, '∞');
+	if (item.type !== 'dropdown' && (elemText.length > 26 || ['spireDominanceStanceC2', 'windStackingRatioDaily'].includes(item.id))) {
+		const reduceBy = 1 - (elemText.length - 25) * 0.03;
+		elem.style.fontSize = `${reduceBy}vw`;
+	} else {
+		elem.style.fontSize = '1vw';
+	}
+
 	const setTooltip = (elem, name, description) => {
 		if (item.type === 'dropdown') elem = elem.parentNode;
 		elem.setAttribute('onmouseover', `tooltip("${name}", "customText", event, "${description}")`);
@@ -5370,9 +5319,10 @@ function _setDisplayedSettings(item) {
 	};
 
 	if (item.type === 'multitoggle') {
+		const name = item.name();
 		let description = item.description();
-		if (item.id !== 'jobType' && item.name().length > 1) description += `<p><br><i>Set to<b> ${item.name()[0]}</b> by holding <b>control</b> and clicking.</i></p>`;
-		setTooltip(elem, item.name().join(' / '), description);
+		if (item.id !== 'jobType' && name.length > 1) description += `<p><br><i>Set to<b> ${name[0]}</b> by holding <b>control</b> and clicking.</i></p>`;
+		setTooltip(elem, name.join(' / '), description);
 	} else {
 		setTooltip(elem, item.name(), item.description());
 		setOnClick(elem, item);
@@ -5396,7 +5346,7 @@ function _setDisplayedTabs() {
 		tabHeirloom: game.global.totalPortals === 0,
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
-		tabSpire: radonOn || (!displayAllSettings && hze < 190),
+		tabSpire: radonOn || (!displayAllSettings && hze < 170),
 		tabTest: !gameUserCheck()
 	};
 
@@ -5441,18 +5391,18 @@ function _settingsToLineBreak() {
 	const heirloom = getPageSetting('heirloomAuto', atConfig.settingUniverse) ? 'show' : 'hide';
 
 	const breakAfterCore = ['pauseScript', 'universeSetting'];
-	const breakAfterMaps = ['autoLevelScryer', 'scryvoidmaps', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
-	const breakAfterDaily = ['dscryvoidmaps', 'dWindStackingLiq', 'dailyHeliumHrPortal'];
+	const breakAfterMaps = ['recycleExplorer', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
+	const breakAfterDaily = ['avoidEmpower', 'dailyHeliumHrPortal'];
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
-	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly', 'scryerDieZone'];
+	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
-	const breakAfterSpire = ['skipSpires', 'skipSpiresC2'];
+	const breakAfterSpire = ['spireSkipMapping', 'spireSkipMappingC2'];
 	const breakAfterMagma = ['autoGenModeC2', 'magmiteAutoFuelForceRun'];
-	const breakAfterNature = ['autoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
+	const breakAfterNature = ['autoIce', 'autoEnlightenment', 'iceEnlight', 'iceEnlightDaily'];
 	const breakAfterDisplay = ['enableAFK', 'shieldGymMostEfficientDisplay'];
 	const breakAfterImportExport = ['mutatorPresets'];
 	const breakAfterHelp = ['helpShieldGym', 'helpFragments'];
@@ -5538,35 +5488,39 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 	const initialStyle = timeWarp ? 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;' : '';
 
 	const initial = _createElement('DIV', {
+		id: `auto${label}${timeWarp}Parent`,
 		style: initialStyle,
-		class: 'col-xs-3 lowPad',
-		id: `auto${label}${timeWarp}Parent`
+		class: 'col-xs-3 lowPad'
 	});
 
 	const containerStyle = timeWarp ? 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;' : 'display: block; font-size: 0.9vw; border-color: #5D5D5D;';
 	const container = _createElement('DIV', {
 		style: containerStyle,
-		class: 'toggleConfigBtn pointer noselect settingsBtn settingBtn' + (setting === 2 ? 3 : setting),
+		class: `toggleConfigBtn pointer noselect ${id !== 'jobType' ? 'settingsBtn ' : ''}settingBtn${setting === 2 ? 3 : setting}`,
 		onmouseover: `tooltip("Toggle Auto${label}", "customText", event, ${tooltipText})`,
 		onmouseout: 'tooltip("hide")'
 	});
 
+	const settingName = settingInfo.type === 'multitoggle' ? autoTrimpSettings[id].name()[setting] : autoTrimpSettings[id].name();
+	const elemText = settingName.startsWith('AT ') ? settingName : `AT ${settingName}`;
 	const text = _createElement(
 		'DIV',
 		{
 			id: `auto${label}Label${timeWarp}`,
 			onClick: `settingChanged('${id}', true)`
 		},
-		[settingInfo.type === 'multitoggle' ? autoTrimpSettings[id].name()[setting] : autoTrimpSettings[id].name()]
+		[elemText]
 	);
 	const settings = _createElement('DIV', { onclick: `importExportTooltip("Auto${label}")` });
 	const settingsButton = _createElement('SPAN', { class: 'glyphicon glyphicon-cog' });
 
 	container.appendChild(text);
+
 	if (label !== 'Equip') {
 		container.appendChild(settings);
 		settings.appendChild(settingsButton);
 	}
+
 	initial.appendChild(container);
 
 	return initial;
@@ -5657,8 +5611,8 @@ function _createAutoMapsButton() {
 	const autoMapsContainer = _createElement(
 		'DIV',
 		{
-			style: 'margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px',
 			id: 'autoMapBtn',
+			style: 'margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px',
 			class: 'noselect settingsBtn settingBtn' + settingUniverse('autoMaps'),
 			onClick: "settingChanged('autoMaps', true);",
 			onmouseover: 'tooltip("Toggle Auto Maps", "customText", event, autoTrimpSettings.autoMaps.description(true))',
@@ -5695,10 +5649,10 @@ function _createStatusTextbox() {
 	const fightButtonCol = document.getElementById('battleBtnsColumn');
 
 	const autoMapsStatusContainer = _createElement('DIV', {
+		id: 'autoMapStatus',
 		class: 'noselect',
 		style: 'display: block; font-size: 1vw; text-align: center; background-color: rgba(0,0,0,0.3);',
-		onmouseout: 'tooltip("hide")',
-		id: 'autoMapStatus'
+		onmouseout: 'tooltip("hide")'
 	});
 
 	fightButtonCol.appendChild(autoMapsStatusContainer);
@@ -5710,9 +5664,9 @@ function _createResourcePerHourContainer() {
 	const fightButtonCol = document.getElementById('battleBtnsColumn');
 
 	const resourcePerHourContainer = _createElement('DIV', {
+		id: 'heHrStatus',
 		style: 'display: ' + (getPageSetting('displayHideAutoButtons').ATheHr ? 'block' : 'none') + '; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);',
-		onmouseout: 'tooltip("hide")',
-		id: 'heHrStatus'
+		onmouseout: 'tooltip("hide")'
 	});
 
 	fightButtonCol.appendChild(resourcePerHourContainer);
@@ -5722,6 +5676,7 @@ function _createAdditionalInfoTextbox() {
 	if (document.getElementById('additionalInfo') !== null) return;
 
 	const additionalInfoContainer = _createElement('DIV', {
+		id: 'additionalInfoParent',
 		class: 'workBtn pointer noSelect',
 		style: 'display: block; font-size: 0.9vw; text-align: centre; solid black; transform:translateY(-1.5vh); max-width: 95%; margin: 0 auto',
 		onClick: 'farmCalcSetMapSliders()',
@@ -5745,11 +5700,14 @@ function _createAdditionalInfoTextbox() {
 function _createAutoJobsButton() {
 	if (document.getElementById('autoJobsLabel') !== null) return;
 
-	document.getElementById('fireBtn').parentElement.style.width = '14.2%';
-	document.getElementById('fireBtn').parentElement.style.paddingRight = '2px';
+	document.getElementById('fireBtn').parentElement.style.width = '11.2%';
+	document.getElementById('fireBtn').parentElement.style.paddingRight = '7px';
 	document.getElementById('jobsTitleSpan').parentElement.style.width = '10%';
 
 	const jobButton = _createButton('jobType', 'Jobs', getPageSetting('jobType'), 'autoTrimpSettings.jobType.description()');
+	jobButton.style = 'width: 28%;';
+	jobButton.children[0].children[0].style = 'width: 87%;';
+	jobButton.children[0].children[1].style = 'width: 13%;';
 	const jobColumn = document.getElementById('jobsTitleDiv').children[0];
 	jobColumn.insertBefore(jobButton, jobColumn.children[2]);
 
@@ -5781,6 +5739,7 @@ function _createMessagesButton() {
 	if (document.getElementById('AutoTrimpsFilter') !== null) return;
 
 	const atBtnContainer = _createElement('DIV', {
+		id: 'AutoTrimpsFilterParent',
 		class: 'btn-group',
 		role: 'group',
 		onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, `This will control the visibility of AutoTrimps messages in the log window based on your settings.<br>Note: Only map-related messages will be displayed during Time Warp.`)',
@@ -5857,6 +5816,7 @@ function _createAutoJobsButtonTW() {
 	if (document.getElementById('autoJobsLabelTW') !== null) return;
 
 	const atJobInitial = _createButton('jobType', 'Jobs', getPageSetting('jobType'), 'autoTrimpSettings.jobType.description()', 'TW');
+	atJobInitial.style = 'width: 29%';
 	$('#settingBtnTW').append(atJobInitial);
 }
 
@@ -5941,6 +5901,7 @@ function _setAutoJobsClasses() {
 				elem.parentNode.classList.remove('toggleConfigBtn');
 				elem.innerHTML = btnName;
 			}
+
 			elem.textContent = btnName;
 		}
 	});

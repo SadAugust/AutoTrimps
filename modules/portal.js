@@ -850,17 +850,17 @@ function _setButtonsPortal() {
 	const autoJobsSettings = getPageSetting('jobSettingsArray');
 	if (typeof autoJobsSettings.portalOption !== 'undefined' && autoJobsSettings.portalOption !== '0') {
 		const portalOptionMapping = {
-			'autojobs off': 0,
-			'auto ratios': 1,
-			'manual ratios': 2
+			'Auto Jobs: Off': 0,
+			'Auto Jobs: On': 1,
+			'Auto Jobs: Manual': 2
 		};
 
 		if (portalOptionMapping.hasOwnProperty(autoJobsSettings.portalOption)) {
 			setPageSetting('jobType', portalOptionMapping[autoJobsSettings.portalOption], game.global.universe);
 		}
 	}
-	_setAutoJobsClasses();
 
+	_setAutoJobsClasses();
 	saveSettings();
 }
 

@@ -605,7 +605,7 @@ function mapBonus(lineCheck) {
 	const settingIndex = _findSettingsIndexMapBonus(settingName, baseSettings);
 
 	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
-	const spireCheck = isDoingSpire() && getPageSetting('maxMapStacksForSpire' + settingAffix) && !_berserkDisableMapping() && !_noMappingChallenges(undefined, true);
+	const spireCheck = isDoingSpire() && getPageSetting('spireMapBonus' + settingAffix) && !_berserkDisableMapping() && !_noMappingChallenges(undefined, true);
 	if (!spireCheck && !defaultSettings.active) return farmingDetails;
 
 	const setting = spireCheck ? _mapBonusSpireSetting(defaultSettings) : settingIndex ? baseSettings[settingIndex] : undefined;
@@ -3304,7 +3304,7 @@ function farmingDecision() {
 		if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0) mapTypes = [voidMaps];
 
 		const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
-		if (isDoingSpire() && getPageSetting('skipSpires' + settingAffix) && game.global.mapBonus === 10) mapSettings = farmingDetails;
+		if (isDoingSpire() && getPageSetting('spireSkipMapping' + settingAffix) && game.global.mapBonus === 10) mapSettings = farmingDetails;
 	}
 
 	if (game.global.universe === 2) {

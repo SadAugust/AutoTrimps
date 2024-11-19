@@ -2122,13 +2122,13 @@ function autoJobsTable(settingGroup, ratioJobs, percentJobs) {
 		tooltipText += '</td></tr>';
 	}
 
-	const portalOptions = ['AutoJobs Off', 'Auto Ratios', 'Manual Ratios'];
+	const portalOptions = ['AutoJobs: Off', 'Auto Jobs: On', 'Auto Jobs: Manual'];
 	tooltipText += "<tr><td style='width: 40%'><div class='row'>";
 	tooltipText += "<div class='col-xs-6' style='width: 50%; padding-right: 5px'><span>Setting on Portal" + '</span></div>';
 	tooltipText += "<div class='col-xs-6 lowPad' style='width: 45.25%; text-align: right'><select style='width: 100%' id='autoJobPortal'><option value='0'>No change</option>";
 
 	for (let x = 0; x < portalOptions.length; x++) {
-		tooltipText += '<option' + (settingGroup.portalOption && settingGroup.portalOption === portalOptions[x].toLowerCase() ? " selected='selected'" : '') + " value='" + portalOptions[x].toLowerCase() + "'>" + portalOptions[x] + '</option>';
+		tooltipText += '<option' + (settingGroup.portalOption && settingGroup.portalOption === portalOptions[x] ? " selected='selected'" : '') + " value='" + portalOptions[x] + "'>" + portalOptions[x] + '</option>';
 	}
 
 	tooltipText += '</div></td></tr>';
@@ -2746,7 +2746,13 @@ function hideAutomationButtons() {
 		else if (item.includes('AT')) elemName = `auto${item.charAt(2).toUpperCase() + itemName.substr(3)}Parent`;
 
 		const elem = document.getElementById(elemName);
-		const elemVisible = setting[item] ? 'hidden' : '';
-		if (elem && elem.style.visibility !== elemVisible) elem.style.visibility = elemVisible;
+		let elemVisible = setting[item] ? 'hidden' : '';
+
+		if (['autoMapStatus', 'heHrStatus'].includes(elemName)) {
+			elemVisible = !setting[item] ? 'block' : 'none';
+			if (elem && elem.style.display !== elemVisible) elem.style.display = elemVisible;
+		} else {
+			if (elem && elem.style.visibility !== elemVisible) elem.style.visibility = elemVisible;
+		}
 	}
 }

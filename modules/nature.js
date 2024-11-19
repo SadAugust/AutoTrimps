@@ -71,7 +71,7 @@ function purchaseEnlight(nature) {
 }
 
 function autoEnlight() {
-	if (!getPageSetting('autoenlight') || !mutations.Magma.active() || game.global.uberNature) return;
+	if (!getPageSetting('autoEnlightenment') || !mutations.Magma.active() || game.global.uberNature) return;
 	let natureToActivate = 'None';
 
 	const affix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';

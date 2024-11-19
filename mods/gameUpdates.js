@@ -163,6 +163,102 @@ function drawUpgrade(what) {
 	return html;
 }
 
+function buyUpgrade(what, confirmed, noTip, heldCtrl) {
+	if (game.options.menu.pauseGame.enabled) return;
+	if (!confirmed && !noTip && !usingRealTimeOffline && game.options.menu.lockOnUnlock.enabled === 1 && new Date().getTime() - 1000 <= game.global.lastUnlock) return;
+
+	if (what === 'Coordination') {
+		if (!canAffordCoordinationTrimps()) {
+			return false;
+		}
+	}
+
+	const upgrade = game.upgrades[what];
+	if (upgrade.locked == 1) {
+		return;
+	}
+	var usingCtrl = typeof heldCtrl !== 'undefined' ? heldCtrl : game.options.menu.ctrlGigas.enabled && what === 'Gigastation' ? true : ctrlPressed;
+	if (upgrade.isRelic && usingCtrl && !noTip) {
+		tooltip('Archaeology Automator', null, 'update');
+		return;
+	}
+	if (upgrade.isRelic && game.challenges.Archaeology.getPoints(game.upgrades[what].relic) >= 50) {
+		return;
+	}
+
+	let canAfford = canAffordTwoLevel(upgrade);
+	if (!canAfford) {
+		return false;
+	}
+
+	if (what === 'Gigastation' && !confirmed && !noTip && game.options.menu.confirmhole.enabled) {
+		tooltip('Confirm Purchase', null, 'update', 'You are about to purchase a Gigastation, <b>which is not a renewable upgrade</b>. Make sure you have purchased all of the Warpstations you can afford first!', "buyUpgrade('Gigastation', true, false, " + usingCtrl + ')');
+		return;
+	}
+
+	if (what === 'Shieldblock' && !confirmed && game.options.menu.confirmhole.enabled && getHighestLevelCleared() >= 30) {
+		tooltip('Confirm Purchase', null, 'update', 'You are about to modify your Shield, causing it to block instead of grant health until your next portal. Are you sure?', "buyUpgrade('Shieldblock', true)");
+		return;
+	}
+	canAfford = canAffordTwoLevel(upgrade, true);
+	if (upgrade.isRelic) {
+		game.challenges.Archaeology.buyRelic(what, noTip);
+		return;
+	}
+
+	upgrade.fire(usingCtrl, noTip);
+	upgrade.done++;
+
+	if (upgrade.prestiges) {
+		const resName = what === 'Supershield' ? 'wood' : 'metal';
+		upgrade.cost.resources[resName] = getNextPrestigeCost(what);
+	}
+
+	if (upgrade.allowed - upgrade.done <= 0) {
+		upgrade.locked = 1;
+	}
+
+	let dif = upgrade.allowed - upgrade.done;
+	const ownedElem = document.getElementById(what + 'Owned');
+
+	if (dif > 1) {
+		dif -= 1;
+		if (ownedElem) {
+			ownedElem.innerHTML = upgrade.done + '(+' + dif + ')';
+		}
+		if (!noTip) {
+			tooltip(what, 'upgrades', 'update');
+		}
+		return true;
+	} else if (dif === 1) {
+		if (!noTip) {
+			tooltip(what, 'upgrades', 'update');
+		}
+		if (ownedElem) {
+			ownedElem.innerHTML = upgrade.done;
+		}
+		return true;
+	}
+
+	const upgradesHereElem = document.getElementById('upgradesHere');
+	const removeElem = document.getElementById(what);
+
+	if (removeElem) {
+		upgradesHereElem.removeChild(removeElem);
+	}
+
+	if (usingScreenReader) {
+		const tooltipElem = document.getElementById('srTooltip' + what);
+		if (tooltipElem) upgradesHereElem.removeChild(tooltipElem);
+	}
+
+	if (!noTip) {
+		tooltip('hide');
+	}
+
+	return true;
+}
+
 function drawAllEquipment(force) {
 	if (usingRealTimeOffline && !force) return;
 
@@ -6415,4 +6511,25 @@ function positionTooltip(elem, event, extraInf) {
 
 	elem.style.left = Math.floor(setLeft) + 'px';
 	elem.style.top = Math.floor(setTop) + 'px';
+}
+
+function getScientistInfo(number, reward) {
+	switch (number) {
+		case 1: {
+			const foreman = game.global.universe === 1 || !bwRewardUnlocked('Foremany') ? `, and 1 Foreman` : ``;
+			return reward ? `start with 5000 Science, 100 Food, 100 Wood, 10 Traps${foreman}` : 11500;
+		}
+		case 2: {
+			return reward ? 'start with 5 Barns, 5 Sheds, 5 Forges, and T2 Equipment unlocked' : 8000;
+		}
+		case 3: {
+			return reward ? 'start with full Trimps and 200% player efficiency' : 1500;
+		}
+		case 4: {
+			return reward ? 'earn two levels of each prestige upgrade per map' + (game.global.universe == 1 ? ', unlock AutoPrestiges, and your Warpstations will build instantly, skipping the queue' : '') + '. This bonus will apply' : 70;
+		}
+		case 5: {
+			return reward ? 'permanently increase all ' + heliumOrRadon() + " found by 0.5% per zone (compounding). You'll also start with 1000% player efficiency and 50 Barns, Sheds, and Forges" : 1500;
+		}
+	}
 }

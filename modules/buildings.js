@@ -348,8 +348,8 @@ function _buyNursery(buildingSettings) {
 	if (runningAncientTreasure()) return;
 
 	const nurserySetting = buildingSettings.Nursery;
-	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-	const preSpireSetting = getPageSetting(settingPrefix + 'PreSpireNurseries');
+	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const preSpireSetting = getPageSetting('spireNurseries' + settingAffix);
 	const nurseryPreSpire = isDoingSpire() && nurseryInfo.owned < preSpireSetting ? preSpireSetting : 0;
 	const nurseryPct = nurserySetting.percent / 100;
 	const nurseryCanAfford = calculateMaxAfford_AT(nurseryInfo, true, false, false, null, nurseryPct);

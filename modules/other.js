@@ -18,8 +18,8 @@ function isCorruptionActive(targetZone) {
 function isDoingSpire() {
 	if (!game.global.spireActive) return false;
 
-	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-	const spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
+	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const spireNo = getPageSetting('spireIgnoreUntil' + settingAffix);
 	if (spireNo <= 0) return true;
 
 	const spireZone = (1 + spireNo) * 100;
@@ -29,8 +29,8 @@ function isDoingSpire() {
 function exitSpireCell(checkCell) {
 	if (!game.global.spireActive) return;
 
-	const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
-	const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell');
+	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const exitCell = getPageSetting('spireExitCell' + settingAffix);
 	const isSpireActive = isDoingSpire();
 	const cell = isSpireActive && exitCell >= 0 && exitCell <= 100 ? exitCell : 100;
 
@@ -1240,8 +1240,108 @@ function updateATVersion() {
 		if (versionNumber < '6.5.994') {
 			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['maxMapStacksForSpire'] !== 'undefined') {
-				autoTrimpSettings.maxMapStacksForSpireDaily = tempSettings.maxMapStacksForSpire.enabled;
-				autoTrimpSettings.maxMapStacksForSpireC2 = tempSettings.maxMapStacksForSpire.enabled;
+				autoTrimpSettings.maxMapStacksForSpireDaily.enabled = tempSettings.maxMapStacksForSpire.enabled;
+				autoTrimpSettings.maxMapStacksForSpireC2.enabled = tempSettings.maxMapStacksForSpire.enabled;
+			}
+
+			saveSettings();
+		}
+
+		if (versionNumber < '6.6.00') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['jobSettingsArray'] !== 'undefined') {
+				const portalOptionMapping = {
+					'autojobs off': 'Auto Jobs: Off',
+					'auto ratios': 'Auto Jobs: On',
+					'manual ratios': 'Auto Jobs: Manual'
+				};
+
+				if (portalOptionMapping.hasOwnProperty(tempSettings.jobSettingsArray.value.portalOption)) {
+					autoTrimpSettings.jobSettingsArray.value.portalOption = portalOptionMapping[tempSettings.jobSettingsArray.value.portalOption];
+				}
+
+				if (portalOptionMapping.hasOwnProperty(tempSettings.jobSettingsArray.valueU2.portalOption)) {
+					autoTrimpSettings.jobSettingsArray.valueU2.portalOption = portalOptionMapping[tempSettings.jobSettingsArray.valueU2.portalOption];
+				}
+			}
+			if (typeof tempSettings['AutoStance'] !== 'undefined') {
+				autoTrimpSettings.autoStance.value = tempSettings.AutoStance.value;
+			}
+
+			if (typeof tempSettings['scryvoidmaps'] !== 'undefined') {
+				autoTrimpSettings.scryerVoidMaps.enabled = tempSettings.scryvoidmaps.enabled;
+				autoTrimpSettings.scryerVoidMapsDaily.enabled = tempSettings.dscryvoidmaps.enabled;
+			}
+
+			if (typeof tempSettings['AutoStanceWind'] !== 'undefined') {
+				autoTrimpSettings.autoStanceWind.enabled = tempSettings.AutoStanceWind.enabled;
+				autoTrimpSettings.autoStanceWindDaily.enabled = tempSettings.dAutoStanceWind.enabled;
+			}
+
+			if (typeof tempSettings['WindStackingZone'] !== 'undefined') {
+				autoTrimpSettings.windStackingZone.value = tempSettings.WindStackingZone.value;
+				autoTrimpSettings.windStackingZoneDaily.value = tempSettings.dWindStackingZone.value;
+			}
+
+			if (typeof tempSettings['WindStackingRatio'] !== 'undefined') {
+				autoTrimpSettings.windStackingRatio.value = tempSettings.WindStackingRatio.value;
+				autoTrimpSettings.windStackingRatioDaily.value = tempSettings.dWindStackingRatio.value;
+			}
+
+			if (typeof tempSettings['WindStackingLiq'] !== 'undefined') {
+				autoTrimpSettings.windStackingLiq.enabled = tempSettings.WindStackingLiq.enabled;
+				autoTrimpSettings.windStackingLiqDaily.enabled = tempSettings.dWindStackingLiq.enabled;
+			}
+
+			if (typeof tempSettings['IgnoreSpiresUntil'] !== 'undefined') {
+				autoTrimpSettings.spireIgnoreUntil.value = tempSettings.IgnoreSpiresUntil.value;
+				autoTrimpSettings.spireIgnoreUntilC2.value = tempSettings.c2IgnoreSpiresUntil.value;
+				autoTrimpSettings.spireIgnoreUntilDaily.value = tempSettings.dIgnoreSpiresUntil.value;
+			}
+
+			if (typeof tempSettings['ExitSpireCell'] !== 'undefined') {
+				autoTrimpSettings.spireExitCell.value = tempSettings.ExitSpireCell.value;
+				autoTrimpSettings.spireExitCellC2.value = tempSettings.c2ExitSpireCell.value;
+				autoTrimpSettings.spireExitCellDaily.value = tempSettings.dExitSpireCell.value;
+			}
+
+			if (typeof tempSettings['PreSpireNurseries'] !== 'undefined') {
+				autoTrimpSettings.spireNurseries.value = tempSettings.PreSpireNurseries.value;
+				autoTrimpSettings.spireNurseriesC2.value = tempSettings.c2PreSpireNurseries.value;
+				autoTrimpSettings.spireNurseriesDaily.value = tempSettings.dPreSpireNurseries.value;
+			}
+
+			if (typeof tempSettings['AutoDStanceSpire'] !== 'undefined') {
+				autoTrimpSettings.spireDominanceStance.enabled = tempSettings.AutoDStanceSpire.enabled;
+				autoTrimpSettings.spireDominanceStanceC2.enabled = tempSettings.c2AutoDStanceSpire.enabled;
+				autoTrimpSettings.spireDominanceStanceDaily.enabled = tempSettings.dAutoDStanceSpire.enabled;
+			}
+
+			if (typeof tempSettings['maxMapStacksForSpire'] !== 'undefined') {
+				autoTrimpSettings.spireMapBonus.enabled = tempSettings.maxMapStacksForSpire.enabled;
+				autoTrimpSettings.spireMapBonusC2.enabled = tempSettings.maxMapStacksForSpireC2.enabled;
+				autoTrimpSettings.spireMapBonusDaily.enabled = tempSettings.maxMapStacksForSpireDaily.enabled;
+			}
+
+			if (typeof tempSettings['hitsSurvivedSpire'] !== 'undefined') {
+				autoTrimpSettings.spireHitsSurvived.value = tempSettings.hitsSurvivedSpire.value;
+				autoTrimpSettings.spireHitsSurvivedC2.value = tempSettings.hitsSurvivedSpireC2.value;
+				autoTrimpSettings.spireHitsSurvivedDaily.value = tempSettings.hitsSurvivedSpireDaily.value;
+			}
+
+			if (typeof tempSettings['skipSpires'] !== 'undefined') {
+				autoTrimpSettings.spireSkipMapping.enabled = tempSettings.skipSpires.enabled;
+				autoTrimpSettings.spireSkipMappingC2.enabled = tempSettings.skipSpiresC2.enabled;
+				autoTrimpSettings.spireSkipMappingDaily.enabled = tempSettings.skipSpiresDaily.enabled;
+			}
+
+			if (typeof tempSettings['autoenlight'] !== 'undefined') {
+				autoTrimpSettings.autoEnlightenment.enabled = tempSettings.autoenlight.enabled;
+			}
+
+			if (typeof tempSettings['c2disableFinished'] !== 'undefined') {
+				autoTrimpSettings.c2DisableFinished.enabled = tempSettings.c2disableFinished.enabled;
+				autoTrimpSettings.c2DisableFinished.enabledU2 = tempSettings.c2disableFinished.enabledU2;
 			}
 
 			saveSettings();

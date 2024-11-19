@@ -189,7 +189,7 @@ function _getTargetTimer() {
 	if (trimpStats.isDaily) runningHard = (!angelic && typeof game.global.dailyChallenge.bogged !== 'undefined') || typeof game.global.dailyChallenge.plague !== 'undefined';
 	else runningHard = !angelic && (challengeActive('Nom') || challengeActive('Toxicity') || challengeActive('Lead'));
 
-	const settingPrefix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' : trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' : '';
+	const settingAffix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' : trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' : '';
 
 	//Priority system for which timer to use.
 	//1. Hard Dailies
@@ -201,7 +201,7 @@ function _getTargetTimer() {
 	//3. Void Bleed
 	else if (game.global.voidBuff === 'bleed' && hdStats.hitsSurvivedVoid !== Infinity && getPageSetting('geneAssistTimerBleedVoids') > 0) target = getPageSetting('geneAssistTimerBleedVoids');
 	//5. Spire Timers
-	else if (getPageSetting('geneAssistTimerSpire' + settingPrefix) > 0 && isDoingSpire()) target = getPageSetting('geneAssistTimerSpire' + settingPrefix);
+	else if (getPageSetting('geneAssistTimerSpire' + settingAffix) > 0 && isDoingSpire()) target = getPageSetting('geneAssistTimerSpire' + settingAffix);
 	//6. Daily Timers
 	else if (getPageSetting('geneAssistTimerDaily') > 0 && trimpStats.isDaily) target = getPageSetting('geneAssistTimerDaily');
 	//7. C2 Timers

@@ -272,9 +272,8 @@ function autoStance() {
 		if (autoLevelStance(availableStances, baseStats, currentEnemy)) return;
 	}
 
-	const settingPrefix = trimpStats.isDaily ? 'd' : '';
-	const c2Prefix = trimpStats.isC3 ? 'c2' : settingPrefix;
-	if (game.global.spireActive && !game.global.mapsActive && availableStances.includes('D') && getPageSetting(`${c2Prefix}AutoDStanceSpire`)) {
+	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	if (game.global.spireActive && !game.global.mapsActive && availableStances.includes('D') && getPageSetting(`spireDominanceStance${settingAffix}`)) {
 		safeSetStance(2);
 		return;
 	}
@@ -287,14 +286,14 @@ function autoStance() {
 
 	if (availableStances.includes('S') && shouldScryerStance(availableStances, baseStats, currentEnemy)) return;
 
-	const autoStance = getPageSetting('AutoStance');
+	const autoStance = getPageSetting('autoStance');
 	if (autoStance === 1) autoStanceAdvanced(availableStances, baseStats, currentEnemy);
 	if (autoStance === 2 && availableStances.includes('D')) safeSetStance(2);
 }
 
 function voidMapScryer(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
-	const settingPrefix = trimpStats.isDaily ? 'd' : '';
-	if (game.global.voidBuff && masteryPurchased('scry2') && getPageSetting(`${settingPrefix}scryvoidmaps`)) {
+	const settingAffix = trimpStats.isDaily ? 'Daily' : '';
+	if (game.global.voidBuff && masteryPurchased('scry2') && getPageSetting(`scryerVoidMaps${settingAffix}`)) {
 		const useWindStance = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy));
 		safeSetStance(useWindStance ? 'W' : 'S');
 		return true;
@@ -325,12 +324,12 @@ function autoLevelStance(availableStances = unlockedStances(), baseStats = getBa
 function shouldWindStance(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	if (game.global.mapsActive || !availableStances.includes('W') || getUberEmpowerment() !== 'Wind' || getEmpowerment() !== 'Wind') return false;
 
-	const settingPrefix = trimpStats.isDaily ? 'd' : '';
-	if (!getPageSetting(settingPrefix + 'AutoStanceWind')) return false;
-	if (liquifiedZone() && getPageSetting(settingPrefix + 'WindStackingLiq')) return 'W';
+	const settingAffix = trimpStats.isDaily ? 'Daily' : '';
+	if (!getPageSetting('autoStanceWind' + settingAffix)) return false;
+	if (liquifiedZone() && getPageSetting('windStackingLiq' + settingAffix)) return 'W';
 
-	const windStackRatio = getPageSetting(settingPrefix + 'WindStackingRatio');
-	if ((hdStats.hdRatio < windStackRatio || windStackRatio <= 0) && game.global.world >= getPageSetting(settingPrefix + 'WindStackingZone')) {
+	const windStackRatio = getPageSetting('windStackingRatio' + settingAffix);
+	if ((hdStats.hdRatio < windStackRatio || windStackRatio <= 0) && game.global.world >= getPageSetting('windStackingZone' + settingAffix)) {
 		if (currentEnemy.level !== 100 && (!currentEnemy.mutation || currentEnemy.mutation === 'Magma')) {
 			const overkillCells = oneShotPower('S', 0, true, 'world', baseStats.maxDamage / 2);
 
@@ -368,16 +367,11 @@ function shouldScryerStance(availableStances = unlockedStances(), baseStats = ge
 
 	const mapObject = mapsActive ? getCurrentMapObject() : null;
 	const nextEnemy = getCurrentEnemy(2);
+	const [transitionRequired, never_scry] = scryNever(scrySettings, mapObject, currentEnemy, nextEnemy, aboveMaxZone);
 
-	if (currentEnemy && scryOverkill(scrySettings, scryStance)) return true;
-
-	const [transitionRequired, never_scry] = scryNever(scrySettings, mapObject, currentEnemy, nextEnemy, empowerment, aboveMaxZone);
 	if (never_scry) return false;
-
-	if (scryForce(scrySettings, mapObject, currentEnemy, empowerment, scryStance)) return true;
-
+	if (scryForce(scrySettings, mapObject, currentEnemy, scryStance)) return true;
 	if (!readyToSwitch(scryStance, baseStats)) return false;
-
 	if (scryTransition(scryStance, scrySettings, baseStats, availableStances, transitionRequired, currentEnemy)) return true;
 
 	return false;
@@ -392,83 +386,85 @@ function _getScrySettings() {
 		}, {});
 }
 
-function scryOverkill(scrySettings = scrySettings(), scryStance = 'S') {
-	const useOverkill = getPageSetting('scryerOverkill') && !(scrySettings.Spire === 0 && !game.global.mapsActive && isDoingSpire());
-
-	if (useOverkill) {
-		//Switches to S/W if it has enough damage to secure an overkill
-		const HS = oneShotPower(scryStance);
-		const HSD = oneShotPower('D', 0, true);
-		const HS_next = oneShotPower(scryStance, 1);
-		const HSD_next = oneShotPower('D', 1, true);
-		if (HS > 0 && HS >= HSD && (HS > 1 || (HS_next > 0 && HS_next >= HSD_next))) {
-			safeSetStance(scryStance);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-function scryNever(scrySettings = scrySettings(), mapObject = getCurrentMapObject(), currentEnemy = getCurrentEnemy(1), nextEnemy = getCurrentEnemy(2), empowerment = getEmpowerment(), aboveMaxZone = false) {
+function scryNever(scrySettings = _getScrySettings(), mapObject = getCurrentMapObject(), currentEnemy = getCurrentEnemy(1), nextEnemy = getCurrentEnemy(2), aboveMaxZone = false) {
 	const mapsActive = game.global.mapsActive;
 	let never_scry = false;
 	let transitionRequired = false;
 
 	if (mapsActive) {
-		never_scry |= scrySettings.Maps === 0 && mapObject.location !== 'Void' && mapObject.location !== 'Bionic' && mapObject.level <= game.global.world;
-		never_scry |= scrySettings.PlusMaps === 0 && mapObject.level > game.global.world && mapObject.location !== 'Void' && mapObject.location !== 'Bionic';
-		never_scry |= mapObject.location === 'Void' && scrySettings.VoidMaps === 0;
-		never_scry |= mapObject.location === 'Bionic' && scrySettings.BW === 0;
+		never_scry |= scrySettings.Maps === 0 && mapObject.location !== 'Void' && mapObject.location !== 'Bionic';
 	} else {
 		never_scry |= game.global.spireActive && scrySettings.Spire === 0;
-		never_scry |= scrySettings.SkipBoss === 0 && game.global.lastClearedCell + 2 === 100;
-		//0 is disabled, -1 is maybe, any value higher than 0 is the zone you would like to not run Scryer in that empowerment band.
-		never_scry |= empowerment && (scrySettings[empowerment] === 0 || (scrySettings[empowerment] > 0 && game.global.world >= scrySettings[empowerment]));
 	}
 
 	//See if current OR next enemy is corrupted.
-	const isCorrupt = currentEnemy && currentEnemy.mutation === 'Corruption';
-	const nextIsCorrupt = nextEnemy && nextEnemy.mutation === 'Corruption';
-	//If next isn't corrupted AND we need to transition OR we can one shot the next enemy with full overkill, then we can scry next.
-	const scryNext = !nextIsCorrupt && oneShotPower('S', 0, true);
-	const skipOnMaxZone = scrySettings.MinMaxWorld === 2 && scrySettings.Corrupted !== 1 && aboveMaxZone;
+	/* corrupt enemy checks */
+	const willOverkill = !game.global.mapsActive ? oneShotPower('S', 0, true) : false;
 
-	const skipCorrupted = scrySettings.Corrupted === 0;
-	//If we are fighting a corrupted cell and we are not allowed to scry corrupted cells, then we can't scry.
-	if (!mapsActive && (skipCorrupted || skipOnMaxZone) && isCorrupt) {
-		transitionRequired = true;
-		never_scry |= !scryNext;
+	if (!mapsActive) {
+		const isntCorrupt = currentEnemy && currentEnemy.mutation !== 'Corruption' && currentEnemy.mutation !== 'Healthy';
+		const nextIsntCorrupt = nextEnemy && nextEnemy.mutation !== 'Corruption' && nextEnemy.mutation !== 'Healthy';
+		//If current isn't corrupted AND we need to transition OR we can one shot the current enemy with full overkill, then we can scry current.
+		const scryNext = nextIsntCorrupt && willOverkill;
+		const skipOnMaxZone = scrySettings.MinMaxWorld === 1 && scrySettings.World !== 1 && aboveMaxZone;
+		const skipWorld = scrySettings.World === 0;
+
+		if ((skipWorld || skipOnMaxZone) && isntCorrupt) {
+			transitionRequired = true;
+			never_scry |= !scryNext;
+		}
+
+		const isCorrupt = currentEnemy && currentEnemy.mutation === 'Corruption';
+		const nextIsCorrupt = nextEnemy && nextEnemy.mutation === 'Corruption';
+		//If next isn't corrupted AND we need to transition OR we can one shot the next enemy with full overkill, then we can scry next.
+		const scryNextCorrupt = !nextIsCorrupt && willOverkill;
+		const skipOnMaxZoneCorrupt = scrySettings.MinMaxWorld === 2 && scrySettings.Corrupted !== 1 && aboveMaxZone;
+
+		const skipCorrupted = scrySettings.Corrupted === 0;
+		//If we are fighting a corrupted cell and we are not allowed to scry corrupted cells, then we can't scry.
+		if ((skipCorrupted || skipOnMaxZoneCorrupt) && isCorrupt) {
+			transitionRequired = true;
+			never_scry |= !scryNextCorrupt;
+		}
 	}
 
 	//check Healthy never -- TODO
 	const isHealthy = currentEnemy && currentEnemy.mutation === 'Healthy';
+	const nextIsHealthy = nextEnemy && nextEnemy.mutation === 'Healthy';
+	const scryNextHealthy = !nextIsHealthy && willOverkill;
+	const skipOnMaxZoneHealthy = scrySettings.MinMaxWorld === 3 && scrySettings.Healthy !== 1 && aboveMaxZone;
+	const skipHealthy = scrySettings.Healthy === 0;
+	if ((skipHealthy || skipOnMaxZoneHealthy) && isHealthy) {
+		transitionRequired = true;
+		never_scry |= !scryNextHealthy;
+	}
 
-	if (never_scry || (isHealthy && scrySettings.Healthy === 0)) return [transitionRequired, true];
+	if (never_scry) {
+		return [transitionRequired, true];
+	}
 
 	return [transitionRequired, false];
 }
 
-function scryForce(scrySettings = scrySettings(), mapObject = getCurrentMapObject(), currentEnemy = getCurrentEnemy(1), empowerment = getEmpowerment(), scryStance = 'S') {
+function scryForce(scrySettings = _getScrySettings(), mapObject = getCurrentMapObject(), currentEnemy = getCurrentEnemy(1), scryStance = 'S') {
 	let force_scry = false;
 
 	if (game.global.mapsActive) {
-		force_scry |= scrySettings.Maps === 1 && mapObject.location !== 'Void' && mapObject.location !== 'Bionic' && mapObject.level <= game.global.world;
-		force_scry |= mapObject.level > game.global.world && scrySettings.PlusMaps === 1 && mapObject.location !== 'Bionic';
-		force_scry |= mapObject.location === 'Void' && scrySettings.VoidMaps === 1;
-		force_scry |= mapObject.location === 'Bionic' && scrySettings.BW === 1;
+		force_scry |= scrySettings.Maps === 1 && mapObject.location !== 'Bionic' && mapObject.location !== 'Void';
 	} else {
 		force_scry |= game.global.spireActive && scrySettings.Spire === 1;
-		force_scry |= empowerment && scrySettings[empowerment] > 0 && game.global.world <= scrySettings[empowerment];
 	}
 
+	const isntMutated = currentEnemy && currentEnemy.mutation !== 'Corruption' && currentEnemy.mutation !== 'Healthy' && scrySettings.World === 1;
 	const isCorrupt = currentEnemy && currentEnemy.mutation === 'Corruption' && scrySettings.Corrupted === 1;
 	const isHealthy = currentEnemy && currentEnemy.mutation === 'Healthy' && scrySettings.Healthy === 1;
 
-	if (force_scry || isHealthy || isCorrupt) {
+	if (force_scry || (!game.global.mapsActive && (isntMutated || isHealthy || isCorrupt))) {
 		safeSetStance(scryStance);
 		return true;
 	}
+
+	return false;
 }
 
 function readyToSwitch(stance = 'S', baseStats = getBaseStats()) {
@@ -481,20 +477,23 @@ function readyToSwitch(stance = 'S', baseStats = getBaseStats()) {
 	//Check if we are allowed to suicide in our current cell and zone
 	if (die && willSuicide >= 0) {
 		let [dieZ, dieC] = willSuicide.toString().split('.');
-		if (dieC && dieC.length === 1) dieC = dieC + '0';
+		if (dieC && dieC.length === 1) {
+			dieC = dieC + '0';
+		}
 		die = game.global.world >= dieZ && (!dieC || game.global.lastClearedCell + 1 >= dieC);
 	}
 
 	return die || wouldSurvive(stance, 2, baseStats);
 }
 
-function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseStats = getBaseStats(), availableStances = unlockedStances(), transitionRequired = false, currentEnemy = getCurrentEnemy(1)) {
+function scryTransition(scryStance = 'S', scrySettings = _getScrySettings(), baseStats = getBaseStats(), availableStances = unlockedStances(), transitionRequired = false, currentEnemy = getCurrentEnemy(1)) {
 	const min_zone = scrySettings.MinZone;
 	const max_zone = scrySettings.MaxZone;
 	const valid_min = game.global.world >= min_zone && game.global.world > 60;
 	const valid_max = max_zone < 1 || (max_zone > 0 && game.global.world < max_zone);
+	const validMinMax = valid_min && valid_max && (!game.global.mapsActive || scrySettings.MinMaxWorld === 0);
 
-	if (valid_min && valid_max && (!game.global.mapsActive || scrySettings.MinMaxWorld === 0)) {
+	if (validMinMax) {
 		//Smooth transition to S before killing the target
 		if (transitionRequired) {
 			const xStance = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy)) ? 5 : 0;
@@ -539,11 +538,15 @@ function scryTransition(scryStance = 'S', scrySettings = scrySettings(), baseSta
 			const hitsToKill = currentEnemy.maxHealth / avgDmg;
 			const hitsToKillCurrent = currentEnemy.health / avgDmg;
 
-			if (maxHits > hitsToKill && hitsToKillCurrent > 1) return false;
+			if (maxHits > hitsToKill && hitsToKillCurrent > 1) {
+				return false;
+			}
 		}
 
 		//Set to scry if it won't kill us, or we are willing to die for it
-		if (scryStance === 'S' && availableStances.includes('W') && shouldWindOverScryer(baseStats, currentEnemy)) scryStance = 'W';
+		if (scryStance === 'S' && availableStances.includes('W') && shouldWindOverScryer(baseStats, currentEnemy)) {
+			scryStance = 'W';
+		}
 		safeSetStance(scryStance);
 		return true;
 	}
@@ -562,7 +565,9 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 		if (oneShotDomination > 0) {
 			const stanceToCheck = checkWind ? 'W' : 'S';
 			const overkillRange = !game.global.mapsActive && liquifiedZone() ? 1 : maxOneShotPower();
-			if (oneShotPower(stanceToCheck, 0, false) >= overkillRange) prefferedStance = stanceToCheck;
+			if (oneShotPower(stanceToCheck, 0, false) >= overkillRange) {
+				prefferedStance = stanceToCheck;
+			}
 		}
 	}
 
