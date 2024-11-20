@@ -41,6 +41,7 @@ if (typeof originalresetGame !== 'function') {
 		const addonUser = game.global.addonUser;
 		originalresetGame(...arguments);
 		try {
+			game.global.lastOnline = new Date().getTime();
 			game.global.addonUser = addonUser;
 			atlantrimpRespecOverride();
 			_setButtonsPortal();
@@ -142,12 +143,12 @@ if (typeof offlineProgress.originalFinish !== 'function') {
 			const totalOfflineTime = offlineProgress.totalOfflineTime / 1000;
 			const oneDayInSeconds = 86400;
 
-			/* Do not end Time Warp if it's been under 1s since you last pressed the finish button. */
+			/* do not end Time Warp if it's been under 1s since you last pressed the finish button. */
 			if (totalOfflineTime > oneDayInSeconds && Math.abs(startTime - currentTime) <= 1000) {
 				return;
 			}
 
-			/* Identify remaining Time Warp time */
+			/* identify remaining Time Warp time */
 			const offlineTime = Math.max(0, totalOfflineTime - oneDayInSeconds);
 			timeRun = offlineTime + Math.max(0, (currentTime - startTime) / 1000);
 			timeRun = Math.min(timeRun, oneDayInSeconds * 365); /* Cap Time Warp time at 1 year */
