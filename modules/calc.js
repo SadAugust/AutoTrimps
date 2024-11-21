@@ -741,7 +741,7 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 			Lead: () => (zone % 2 === 0 ? 5.08 : 1 + 0.04 * game.challenges.Lead.stacks),
 			Watch: () => 1.25,
 			Corrupted: () => 3,
-			Domination: () => 2.5,
+			Domination: () => ((worldType === 'world' && cell === 100) || worldType !== 'world' ? 2.5 : 1),
 			Scientist: () => (getScientistLevel() === 5 ? 10 : 1),
 			Frigid: () => game.challenges.Frigid.getEnemyMult(),
 			Experience: () => game.challenges.Experience.getEnemyMult(),
@@ -804,8 +804,12 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 	}
 
 	if (challengeActive('Domination')) {
-		attack *= 2.5;
-		if (worldType === 'world' && game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+		if (cell === 100 || worldType !== 'world') {
+			attack *= 2.5;
+			if (worldType === 'world' && game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+		} else {
+			attack /= 10;
+		}
 	}
 
 	if (typeof atConfig !== 'undefined' && getEmpowerment() === 'Ice' && getPageSetting('fullIce')) {
@@ -956,7 +960,10 @@ function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldT
 function calcEnemyHealth(worldType = _getWorldType(), zone = _getZone(worldType), cell = _getCell(), name = _getEnemyName('Turtlimp'), customHealth) {
 	let health = calcEnemyHealthCore(worldType, zone, cell, name, customHealth);
 
-	if (challengeActive('Domination')) health *= 7.5;
+	if (challengeActive('Domination')) {
+		if (cell === 100 || worldType !== 'world') health *= 7.5;
+		else health /= 10;
+	}
 	if (challengeActive('Lead')) health *= zone % 2 === 0 ? 5 : 1 + 0.04 * game.challenges.Lead.stacks;
 
 	return health;
@@ -1001,15 +1008,23 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 
 	if (worldType === 'world') {
 		let customHealth;
-		const enemyName = 'Turtlimp';
+		let enemyName = 'Turtlimp';
+
+		if (liquifiedZone()) enemyName = 'Liquimp';
+		else if (game.global.universe === 1 && targetZone > 229) enemyName = 'Omnipotrimp';
+		else if ((game.global.universe === 2 && targetZone >= 20) || targetZone >= 59) enemyName = 'Improbability';
+		else if (targetZone === 5 || targetZone === 10 || (targetZone >= 15 && targetZone <= 58)) enemyName = 'Blimp';
+
+		let cell = enemyName === 'Liquimp' ? 1 : 100;
+
 		if (game.global.universe === 1) {
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedStats(targetZone, 'health');
 		} else if (game.global.universe === 2) {
 			if (targetZone > 200) customHealth = calcMutationStats(targetZone, 'health');
 		}
-		enemyHealth = calcEnemyHealth(worldType, targetZone, 99, enemyName, customHealth) * difficulty;
-		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, 99, worldType, difficulty, 'gamma', false, 1, true) : 'X';
+		enemyHealth = calcEnemyHealth(worldType, targetZone, cell, enemyName, customHealth) * difficulty;
+		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, cell, worldType, difficulty, 'gamma', false, 1, true) : 'X';
 	} else if (worldType === 'map') {
 		enemyHealth = calcEnemyHealth(worldType, targetZone, 20, 'Turtlimp') * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, worldType, difficulty, 'gamma', true) : 'X';
@@ -1072,17 +1087,19 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 	let enemyName = worldType === 'void' ? 'Voidsnimp' : 'Snimp';
 
 	if (worldType === 'world') {
-		if (game.global.universe === 1 && targetZone > 229) enemyName = 'Omnipotrimp';
+		if (liquifiedZone()) enemyName = 'Liquimp';
+		else if (game.global.universe === 1 && targetZone > 229) enemyName = 'Omnipotrimp';
 		else if ((game.global.universe === 2 && targetZone >= 20) || targetZone >= 59) enemyName = 'Improbability';
 		else if (targetZone === 5 || targetZone === 10 || (targetZone >= 15 && targetZone <= 58)) enemyName = 'Blimp';
 	}
 
+	let cell = enemyName === 'Liquimp' ? 1 : 100;
 	let hitsToSurvive = targetHitsSurvived(false, worldType);
 	if (hitsToSurvive === 0) hitsToSurvive = 1;
 
 	const health = calcOurHealth(false, worldType, false, true, extraItem) / formationMod;
 	const block = calcOurBlock(false, false, worldType, extraGyms, extraItem) / formationMod;
-	const equality = equalityQuery(enemyName, targetZone, 100, worldType, difficulty, 'gamma', null, hitsToSurvive);
+	const equality = equalityQuery(enemyName, targetZone, cell, worldType, difficulty, 'gamma', null, hitsToSurvive);
 	let damageMult = 1;
 
 	if (ignoreCrits !== 2) {
@@ -1094,7 +1111,7 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 		if (ignoreCrits !== 1 && worldType === 'void') damageMult *= 4;
 	}
 
-	const worldDamage = calcEnemyAttack(worldType, targetZone, 100, enemyName, undefined, customAttack, equality) * difficulty;
+	const worldDamage = calcEnemyAttack(worldType, targetZone, cell, enemyName, undefined, customAttack, equality) * difficulty;
 	const pierce = (game.global.universe === 1 && game.global.brokenPlanet && worldType === 'world' ? getPierceAmt() : 0) * (game.global.formation === 3 ? 2 : 1);
 	const finalDmg = Math.max(damageMult * worldDamage - block, worldDamage * pierce, 0);
 

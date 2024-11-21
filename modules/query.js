@@ -64,11 +64,11 @@ function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHea
 }
 
 function _calcHDRatioDebug(ourBaseDamage, enemyHealth, universeSetting, worldType) {
-	debug(`ourBaseDamage: ${ourBaseDamage}`, `debugStats`);
-	debug(`enemyHealth: ${enemyHealth}`, `debugStats`);
+	debug(`ourBaseDamage: ${prettify(ourBaseDamage)}`, `debugStats`);
+	debug(`enemyHealth: ${prettify(enemyHealth)}`, `debugStats`);
 	debug(`universeSetting: ${universeSetting}`, `debugStats`);
 	debug(`HD type: ${worldType}`, `debugStats`);
-	debug(`HD value (H:D): ${enemyHealth / ourBaseDamage}`, `debugStats`);
+	debug(`HD value (H:D): ${prettify(enemyHealth / ourBaseDamage)}`, `debugStats`);
 }
 
 function _calcHitsSurvivedDebug(targetZone, damageMult, worldDamage, equality, block, pierce, health, hitsToSurvive, finalDmg) {
