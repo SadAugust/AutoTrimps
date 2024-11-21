@@ -130,7 +130,13 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 
 function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure, noPrestigeChallenge) {
 	let highestPrestige = 0;
-	let prestigesAvailable = false;
+	const prestigesObj = {
+		prestigesAvailable: false,
+		prestigeTypes: {
+			attack: false,
+			health: false
+		}
+	};
 
 	if (!noPrestigeChallenge) {
 		for (let equipName in atData.equipment) {
@@ -138,14 +144,15 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 			const equipType = atData.equipment[equipName].stat;
 			const currentPrestige = game.equipment[equipName].prestige;
 			highestPrestige = Math.max(highestPrestige, currentPrestige);
-			if (prestigesAvailable || buyPrestigeMaybe(equipName).skip) continue;
+			if (prestigesObj.prestigesAvailable || buyPrestigeMaybe(equipName).skip) continue;
 			if (prestigeSetting === 0 || (prestigeSetting === 1 && mostEfficient[equipType].zoneGo) || (prestigeSetting === 2 && !canAncientTreasure)) continue;
 
-			prestigesAvailable = true;
+			prestigesObj.prestigesAvailable = true;
+			prestigesObj.prestigeTypes[equipType] = true;
 		}
 	}
 
-	return [highestPrestige, prestigesAvailable];
+	return [highestPrestige, prestigesObj];
 }
 
 function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailable, ignoreShield) {
@@ -154,6 +161,8 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 	const pandemonium = challengeActive('Pandemonium');
 	const healthStats = calcEquipment('attack');
 	const attackStats = calcEquipment('health');
+	const prestigeTypes = prestigesAvailable.prestigeTypes;
+	prestigesAvailable = prestigesAvailable.prestigesAvailable;
 
 	for (const equipName in atData.equipment) {
 		const equipData = game.equipment[equipName];
@@ -183,7 +192,13 @@ function _populateMostEfficientEquipment(mostEfficient, canAncientTreasure, pres
 
 		if (forcePrestige) {
 			if (equipName === 'Shield') prestigesAvailable = maybeBuyPrestige.prestigeAvailable;
-			if (prestigesAvailable && !maybeBuyPrestige.prestigeAvailable) continue;
+
+			if (prestigesAvailable && !maybeBuyPrestige.prestigeAvailable) {
+				const otherEquipType = equipType === 'attack' ? 'health' : 'attack';
+				if (!zoneGo || (!prestigeTypes[equipType] && mostEfficient[otherEquipType].zoneGo)) {
+					continue;
+				}
+			}
 		}
 
 		let equipCap = mostEfficient[equipType].equipCap;
