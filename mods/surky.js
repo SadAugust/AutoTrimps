@@ -55,7 +55,7 @@ function saveSurkySettings() {
 	atData.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
 	});
-	settingInputs.showGU = document.querySelector('#showGoldenUpgradesBtn').classList.value.includes('settingBtntrue');
+	settingInputs.showGU = document.querySelector('#showGoldenUpgradesBtn') && document.querySelector('#showGoldenUpgradesBtn').classList.value.includes('settingBtntrue');
 
 	//Save inputs for all the presets that users can select.
 	//Overrides data for current preset otherwises saves any already saved data for the others.
