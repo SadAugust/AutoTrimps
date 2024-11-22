@@ -6,6 +6,30 @@ if (typeof atConfig === 'undefined') {
 	MODULES.mutatorPreset = {
 		selected: 0
 	};
+
+	function checkLiqZoneCount(universe = game.global.universe, getAmount = false) {
+		if (game.options.menu.liquification.enabled === 0 && universe === 1) return 0;
+
+		if (universe === 2) {
+			if (!u2Mutations.tree.Liq1.purchased) return 0;
+
+			let amt = 0.1;
+			if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
+
+			if (getAmount) return amt;
+			return (getHighestLevelCleared(false, true) + 1) * amt;
+		}
+
+		let spireCount = game.global.spiresCompleted;
+		if (masteryPurchased('liquification')) spireCount++;
+		if (masteryPurchased('liquification2')) spireCount++;
+		if (masteryPurchased('liquification3')) spireCount += 2;
+		spireCount += Fluffy.isRewardActive('liquid') * 0.5;
+		const liquidAmount = spireCount / 20;
+
+		if (getAmount) return liquidAmount;
+		return game.stats.highestLevel.valueTotal() * liquidAmount;
+	}
 }
 
 function presetMutTab(tabNum) {
@@ -33,7 +57,7 @@ function tooltipAT(what, event, textString, headingName) {
 	let ondisplay = null;
 	let tooltipText = '';
 	let costText = '';
-	let titleText = '';
+	let titleText = what;
 
 	if (what === 'Mutator Preset') {
 		if (headingName === 'Save') {
@@ -114,9 +138,28 @@ function tooltipAT(what, event, textString, headingName) {
 			}
 			box.focus();
 		};
-	}
+	} else if (what === 'Mastery Info') {
+		let text = `<p><b>Mastery Data for Universe ${game.global.universe}</b></p>`;
 
-	titleText = titleText ? titleText : what;
+		const bsOwned = game.talents.blacksmith3.purchased ? 'blacksmith3' : game.talents.blacksmith2.purchaseCount ? 'blacksmith2' : game.talents.blacksmith.purchaseCount ? 'blacksmith' : false;
+		if (bsOwned) {
+			text += `<p><b>${game.talents[bsOwned].name}</b>`;
+			text += `<br>${game.talents[bsOwned].description}</p>`;
+		}
+
+		const hyperspeedOwned = game.talents.hyperspeed2.purchased ? 'hyperspeed2' : game.talents.hyperspeed.purchased ? 'hyperspeed' : false;
+
+		if (hyperspeedOwned) {
+			text += `<p><b>${game.talents[hyperspeedOwned].name}</b>`;
+			text += `<br>${game.talents[hyperspeedOwned].description}</p>`;
+		}
+
+		/* const liqOwned = game.talents.liquification3.purchased ? 'liquification3' : game.talents.liquification2.purchaseCount ? 'liquification2' : game.talents.liquification.purchaseCount ? 'liquification' : false; */
+		text += `<p><b>${'Liquification Amount'}</b>`;
+		text += `<br>Each cleared Zone through Z${Math.floor(checkLiqZoneCount())} (${checkLiqZoneCount(undefined, true) * 100}% of your highest Zone reached) will be liquified.</p>`;
+
+		tooltipText = text;
+	}
 
 	document.getElementById('tipTitle').innerHTML = titleText;
 	document.getElementById('tipText').innerHTML = tooltipText;
@@ -281,12 +324,35 @@ function presetMutations() {
 	}
 }
 
+function presetMasteryIcon() {
+	if (!u2Mutations.open) return;
+	if (document.getElementById('mutMasteryIcon') !== null) return;
+
+	//insert break to replace later
+	document.getElementById('mutZoomOut').insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('mutZoomButtons').style.left = '89vw';
+	const u2IconContainer = document.createElement('DIV');
+	u2IconContainer.setAttribute('id', 'mutMasteryIcon');
+	u2IconContainer.setAttribute('onmouseover', 'tooltipAT("Mastery Info", event)');
+	u2IconContainer.setAttribute('onmouseout', 'tooltip("hide")');
+	u2IconContainer.setAttribute('style', 'margin-right: 1vw;');
+
+	const u2Icon = document.createElement('SPAN');
+	u2Icon.setAttribute('class', 'icomoon icon-cloud3');
+
+	u2IconContainer.appendChild(u2Icon);
+
+	const u2MutColumn = document.getElementById('mutZoomOut').parentNode;
+	u2MutColumn.insertBefore(u2IconContainer, u2MutColumn.firstChild);
+}
+
 if (typeof originalopenTree !== 'function') {
 	u2Mutations.originalopenTree = u2Mutations.openTree;
 	u2Mutations.openTree = function () {
 		u2Mutations.originalopenTree(...arguments);
 		try {
 			presetMutations();
+			presetMasteryIcon();
 		} catch (e) {
 			console.log('Loading mutator presets failed ' + e, 'other');
 		}
