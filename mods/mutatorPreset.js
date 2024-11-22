@@ -3,7 +3,9 @@ if (typeof MODULES !== 'object') {
 }
 
 if (typeof atConfig === 'undefined') {
-	MODULES.mutatorPreset.selected = 0;
+	MODULES.mutatorPreset = {
+		selected: 0
+	};
 }
 
 function presetMutTab(tabNum) {
