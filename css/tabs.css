@@ -1007,6 +1007,50 @@ ul.tab li a:hover {
 	width: 57%;
 }
 
+/* Gene Assist */
+.windowAutoLevelGeneAssist {
+	width: 5%;
+}
+
+.windowActiveGeneAssist,
+.windowPriorityGeneAssist {
+	width: 6%;
+}
+
+.windowWorldGeneAssist,
+.windowGeneSpentPct,
+.windowGeneBleedVoids {
+	width: 10%;
+}
+
+.windowJobRatioGeneAssist {
+	width: 9%;
+}
+
+.windowRunTypeGeneAssist {
+	width: 25%;
+}
+
+.windowChallengeOnGeneAssist .windowChallengeGeneAssist,
+.windowChallengeOneOffOnGeneAssist .windowChallengeOneOffGeneAssist,
+.windowChallenge3OnGeneAssist .windowChallenge3GeneAssist {
+	display: inline-block;
+	width: 12%;
+}
+
+.windowChallenge3OnGeneAssist .windowRunTypeGeneAssist,
+.windowChallengeOneOffOnGeneAssist .windowRunTypeGeneAssist,
+.windowChallengeOnGeneAssist .windowRunTypeGeneAssist {
+	display: inline-block;
+	width: 13%;
+}
+
+.windowChallengeOffGeneAssist .windowChallengeGeneAssist,
+.windowChallenge3OffGeneAssist .windowChallenge3GeneAssist,
+.windowChallengeOneOffOffGeneAssist .windowChallengeOneOffGeneAssist {
+	display: none;
+}
+
 /* Other inputs that are repeated */
 .windowGather {
 	display: inline-block;

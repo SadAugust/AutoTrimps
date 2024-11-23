@@ -1429,7 +1429,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 			}
 
 			atData.autoPerks.displayGUI();
-			console.log('The surky & perky mosd have finished loading.');
+			console.log('The surky & perky mods have finished loading.');
 			message('The surky & perky mods have finished loading.', 'Loot');
 		} catch (error) {
 			console.error('Error loading script', error);

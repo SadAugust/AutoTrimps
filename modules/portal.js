@@ -10,7 +10,7 @@ function autoPortalCheck(specificPortalZone) {
 }
 
 function autoPortal(specificPortalZone, universe, skipDaily) {
-	if (MODULES.portal.portalForVoid && !game.options.menu.liquification.enabled) toggleSetting('liquification');
+	if ((MODULES.portal.portalForVoid || MODULES.portal.portalForRespec) && !game.options.menu.liquification.enabled) toggleSetting('liquification');
 	if (!game.global.portalActive) return;
 
 	if (MODULES.portal.portalUniverse === null || isNaN(MODULES.portal.portalUniverse)) MODULES.portal.portalUniverse = game.global.universe;
@@ -18,8 +18,8 @@ function autoPortal(specificPortalZone, universe, skipDaily) {
 	const runningDaily = challengeActive('Daily');
 	if (!shouldPortal(runningDaily, universe)) return;
 
-	const portalZone = MODULES.portal.portalForVoid ? _getPortalZoneVoid() : _getPortalZone(runningDaily, universe, specificPortalZone, skipDaily);
-	if (MODULES.portal.portalForVoid && portalZone <= 0) return;
+	const portalZone = MODULES.portal.portalForVoid || MODULES.portal.portalForRespec ? _getPortalZoneVoid() : _getPortalZone(runningDaily, universe, specificPortalZone, skipDaily);
+	if ((MODULES.portal.portalForVoid || MODULES.portal.portalForRespec) && portalZone <= 0) return;
 
 	const heHrSettings = ['Helium Per Hour', 'Radon Per Hour', '1'];
 	let portalType = getPageSetting('autoPortal', universe);
@@ -44,10 +44,12 @@ function shouldPortal(runningDaily, universe) {
 	const portalSetting = runningDaily ? getPageSetting('dailyPortal', universe) : getPageSetting('autoPortal', universe);
 	const portalOff = runningDaily ? '0' : 'Off';
 
-	return !(MODULES.portal.portalForVoid && portalSetting === portalOff);
+	return !((MODULES.portal.portalForVoid || MODULES.portal.portalForRespec) && portalSetting === portalOff);
 }
 
 function _getPortalZoneVoid() {
+	if (MODULES.portal.portalForRespec) return game.global.world;
+
 	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
 	const maxTracker = 100 - owned;
 	if (tracker >= maxTracker) return game.global.world;
@@ -189,7 +191,7 @@ function handlePortalType(portalType, portalZone, specificPortalZone, universe, 
 			else challenge = 0;
 		}
 	} else {
-		if ((!game.global.challengeActive && !MODULES.portal.portalForVoid) || (atPortalZone && specificPortalZone)) {
+		if ((!game.global.challengeActive && !MODULES.portal.portalForVoid && !MODULES.portal.portalForRespec) || (atPortalZone && specificPortalZone)) {
 			doPortal(challengeSelected, skipDaily);
 			return;
 		}
@@ -240,7 +242,7 @@ function doPortal(challenge, skipDaily) {
 	if (challengeActive('Daily') || abandonC2 || challengeActive('Bublé')) _autoPortalAbandonChallenge();
 
 	_autoPortalVoidTracker();
-	if (MODULES.portal.portalForVoid) {
+	if (MODULES.portal.portalForVoid || MODULES.portal.portalForRespec) {
 		MODULES.portal.dontPushData = true;
 		return;
 	}
@@ -286,17 +288,31 @@ function _autoPortalAbandonChallenge(portal = true) {
 }
 
 function _autoPortalVoidTracker() {
-	MODULES.portal.portalForVoid = true;
+	let forcePortal = false;
+	MODULES.portal.portalForVoid = false;
+	MODULES.portal.portalForRespec = false;
+
 	const universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
 
-	if (!getPageSetting('portalVoidIncrement', universe) || game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
-	if (owned < 5 || (tracker >= 100 - owned && game.global.canRespecPerks)) MODULES.portal.portalForVoid = false;
-	if (checkLiqZoneCount(1) < 20) MODULES.portal.portalForVoid = false;
+	const portalRespec = getPageSetting('portalRespec', universe);
+	if (!portalRespec || checkLiqZoneCount(1) < 20) {
+		return;
+	}
 
-	if (!MODULES.portal.portalForVoid) return;
+	if (portalRespec === 2 && tracker < 100 - owned) forcePortal = true;
+	if (!game.global.canRespecPerks) forcePortal = true;
 
-	if (!game.global.canRespecPerks) debug(`Portaling to refresh respec.`, 'portal');
+	if (!forcePortal) return;
+	if (!game.options.menu.liquification.enabled) toggleSetting('liquification');
+
+	if (portalRespec === 1) {
+		MODULES.portal.portalForRespec = true;
+		debug(`Portaling to refresh respec.`, 'portal');
+	} else {
+		MODULES.portal.portalForVoid = true;
+		debug(`Portaling for free void map counter.`, 'portal');
+	}
 
 	if (MODULES.portal.portalUniverse === Infinity || (game.global.universe !== 1 && game.global.universe === MODULES.portal.portalUniverse)) {
 		if (portalUniverse !== 1) {
@@ -327,6 +343,7 @@ function _autoPortalUniverseSwap() {
 
 	if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
 	MODULES.portal.portalForVoid = false;
+	MODULES.portal.portalForRespec = false;
 
 	if (newUniverse !== portalUniverse) {
 		MODULES.portal.forcePortal = true;
@@ -708,6 +725,7 @@ function resetVarsZone(loadingSave) {
 		MODULES.portal.zonePostpone = 0;
 		MODULES.portal.forcePortal = false;
 		MODULES.portal.portalForVoid = false;
+		MODULES.portal.portalForRespec = false;
 
 		MODULES.popups.challenge = false;
 		MODULES.popups.respecAncientTreasure = false;

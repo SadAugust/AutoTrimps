@@ -104,10 +104,10 @@ function mapSettingsDisplay(elem, titleText) {
 
 function mazSettingNames(titleName) {
 	if (titleName) {
-		return ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Toxicity', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner', 'Profiles'];
+		return ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Toxicity', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner', 'Profiles', 'Gene Assist'];
 	}
 
-	return ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'autoGolden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation', 'profiles'];
+	return ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'autoGolden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation', 'profiles', 'geneAssist'];
 }
 
 function _getActiveSetting(settingName = '', settingNames = []) {
@@ -239,6 +239,11 @@ function _mapSettingsInputObj() {
 			settingInputs: ['profileName', 'row', 'load', 'settingString', 'overwrite'],
 			settingInputsDefault: [],
 			windowWidth: '60%'
+		},
+		'Gene Assist': {
+			settingInputs: ['active', 'priority', 'row', 'world', 'endzone', 'cell', 'autoLevel', 'level', 'hdRatio', 'jobratio', 'repeatevery', 'special', 'gather', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+			settingInputsDefault: ['geneAssistSpendingPct', 'geneAssistBleedVoids'],
+			windowWidth: '70%'
 		}
 	};
 }
@@ -268,7 +273,9 @@ function _mapSettingsDefaultVals() {
 		autostorage: false,
 		packrat: false,
 		recycle: false,
-		abandonZone: 0
+		abandonZone: 0,
+		geneSpendingPct: 1,
+		geneBleedVoids: 6
 	};
 }
 
@@ -382,7 +389,9 @@ function _mapSettingsValsKeys(s) {
 		windowNameProfiles: 'profileName',
 		windowLoadProfiles: 'load',
 		windowOverwriteProfiles: 'overwrite',
-		windowSettingStringProfiles: 'settingString'
+		windowSettingStringProfiles: 'settingString',
+		windowGeneSpentPct: 'geneAssistSpendingPct',
+		windowGeneBleedVoids: 'geneAssistBleedVoids'
 	};
 }
 
@@ -443,6 +452,11 @@ function _mapSettingsDefaultTitles(varPrefix, activeSettings, settingOrder) {
 
 	if (s.hdFarm) {
 		elements.push({ name: 'mapCap', class: `windowCell${varPrefix}`, title: 'Map<br>Cap' });
+	}
+
+	if (s.geneAssist) {
+		elements.push({ name: 'geneAssistSpendingPct', class: `windowGeneSpentPct`, title: 'Spending<br/>Pct' });
+		elements.push({ name: 'geneAssistBleedVoids', class: `windowGeneBleedVoids`, title: 'Bleed Voids<br/>Timer' });
 	}
 
 	const sortedElements = new Array(settingOrder.length).fill(null);
@@ -511,6 +525,11 @@ function _mapSettingsDefaultPopulateInputs(defaultVals, varPrefix, activeSetting
 		tooltipText += `<div class='windowDisplay windowDefaultVoidMap'><input value='${defaultVals.mapCap}' type='text' id='windowMapCap'/></div>`;
 	}
 	if (s.hdFarm) tooltipText += `<div class='windowDisplay windowCell${varPrefix}'><input value='${defaultVals.mapCap}' type='number' id='mapCap'/></div>`;
+
+	if (s.geneAssist) {
+		tooltipText += `<div class='windowDisplay windowGeneSpentPct'><input value='${defaultVals.geneSpendingPct}' type='number' id='geneAssistSpendingPct'/></div>`;
+		tooltipText += `<div class='windowDisplay windowGeneBleedVoids'><input value='${defaultVals.geneBleedVoids}' type='number' id='geneAssistBleedVoids'/></div>`;
+	}
 
 	tooltipText += `</div>`;
 

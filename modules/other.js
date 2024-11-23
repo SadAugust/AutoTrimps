@@ -345,7 +345,7 @@ function _shouldSkipHeirloom(item, heirlooms, heirloomRarity) {
 	return item === 'empty' || (heirloom.filter && !heirloom.filter()) || (heirloom.steps && heirloom.steps[heirloomRarity] === -1);
 }
 
-function checkLiqZoneCount(universe = game.global.universe) {
+function checkLiqZoneCount(universe = game.global.universe, getAmount = false) {
 	if (game.options.menu.liquification.enabled === 0 && universe === 1) return 0;
 
 	if (universe === 2) {
@@ -353,6 +353,8 @@ function checkLiqZoneCount(universe = game.global.universe) {
 
 		let amt = 0.1;
 		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
+
+		if (getAmount) return amt;
 		return (getHighestLevelCleared(false, true) + 1) * amt;
 	}
 
@@ -363,6 +365,7 @@ function checkLiqZoneCount(universe = game.global.universe) {
 	spireCount += Fluffy.isRewardActive('liquid') * 0.5;
 	const liquidAmount = spireCount / 20;
 
+	if (getAmount) return liquidAmount;
 	return game.stats.highestLevel.valueTotal() * liquidAmount;
 }
 
@@ -923,15 +926,6 @@ function updateATVersion() {
 			saveSettings();
 		}
 
-		if (versionNumber < '6.5.26') {
-			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
-			if (typeof tempSettings['portalVoidIncrement'] !== 'undefined') {
-				autoTrimpSettings.portalVoidIncrement.enabledU2 = tempSettings.portalVoidIncrement.enabled;
-			}
-
-			saveSettings();
-		}
-
 		if (versionNumber < '6.5.27') {
 			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['autGigaDeltaFactor'] !== 'undefined') {
@@ -1360,6 +1354,16 @@ function updateATVersion() {
 			if (typeof tempSettings['c2disableFinished'] !== 'undefined') {
 				autoTrimpSettings.c2DisableFinished.enabled = tempSettings.c2disableFinished.enabled;
 				autoTrimpSettings.c2DisableFinished.enabledU2 = tempSettings.c2disableFinished.enabledU2;
+			}
+
+			saveSettings();
+		}
+
+		if (versionNumber < '6.6.001') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['portalVoidIncrement'] !== 'undefined') {
+				autoTrimpSettings.portalRespec.value = tempSettings.portalVoidIncrement.enabled ? 2 : 0;
+				autoTrimpSettings.portalRespec.valueU2 = tempSettings.portalVoidIncrement.enabledU2 ? 2 : 0;
 			}
 
 			saveSettings();

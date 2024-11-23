@@ -200,18 +200,31 @@ function initialiseAllSettings() {
 				return description;
 			}, 'mazArray', [], 'importExportTooltip("mapSettings", "Auto Golden")', 'Core', [1, 2],
 			function () { return (getAchievementStrengthLevel() > 0) });
-			
-		createSetting('portalVoidIncrement',
-			function () { return ('Void Map Liquification') },
-			function () {
-				let description = "<p>Delays portaling into your Auto Portal challenge and instead " + (atConfig.settingUniverse === 2 ? "switches to universe 1 and" : "") + " repeatedly portals until your bone void map counter is 1 drop away from a guaranteed extra void map.</p>";
-				description += "<p>If you have not reached the void map counter target by either zone 99 or the end of your liquification zone count then it will portal and repeat this process until you have.</p>";
-				description += "<p>Additionally if you finish your run without a perk respec available this setting will portal to obtain a respec.</p>";
-				description += "<p><b>Recommended:</b> " + (atConfig.settingUniverse !== 1 ? "On" : "Off") + "</p>";
-				return description;
-			}, 'boolean', false, null, 'Core', [1, 2],
-			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount(1) >= 20) });
 
+		createSetting('portalRespec',
+			function () { 
+				let portalOptions = ['Portal: Respec Off', 'Portal: Respec On'];
+				if (game.permaBoneBonuses.voidMaps.owned >= 5) portalOptions.push('Portal: Void Map Liquification');
+				return portalOptions;
+			},
+			function () {
+				let description = "<p>When enabled this will use liquification to obtain a fast free respec <p>";
+				description += "<p><b>Portal: Respec Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Portal: Respec On</b><br>When your free respec in a run has been used this will delay portaling into your Auto Portal challenge, instead making use of liquification to get a fast portal unlock and portaling into your normal run from there.</p>";
+
+				if (game.permaBoneBonuses.voidMaps.owned >= 5) {
+					description += "<p><b>Portal: Void Map Liquification</b><br>Works the same as <b>Portal: Respec On</b> but in addition to portaling for a respec it will repeatedly portal until your bone void map counter is 1 drop away from a guaranteed extra void map.";
+					description += "<br>If you have not reached the void map counter target by either zone 99 or the end of your liquification zones then it will portal and repeat this process until have.</p>";
+				}
+				
+				description += "<p><b>Recommended:</b> Portal: Respec On </p>";
+				if (atConfig.settingUniverse > 1) {
+					description +="<p><i>This will swap to universe 1 and put you back in the universe you originally portaled from.</i></p>";
+				}
+				return description;
+			}, 'multitoggle', false, null, 'Core', [1, 2],
+			function () { return (checkLiqZoneCount(1) >= 20) });
+		
 		createSetting('pauseScript',
 			function () { return ('Pause AutoTrimps') },
 			function () {
@@ -568,6 +581,15 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Jobs', [1]);
+
+		createSetting('geneAssistSettings',
+			function () { return ('Gene Assist Settings') },
+			function () {
+				let description = "<p>Here you can select how and when you would like the script to hire Geneticists.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
+				return description;
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Gene Assist")', 'Beta', [1, 2]);
 
 		createSetting('geneAssistPercent',
 			function () { return ('GA: Gene Assist %') },
@@ -1384,7 +1406,7 @@ function initialiseAllSettings() {
 			function () { return (autoTrimpSettings.autoStanceWind.enabled) });
 
 		createSetting('autoStanceWindDaily',
-			function () { return ('Daily Wind Stacking') },
+			function () { return ('Daily: Wind Stacking') },
 			function () {
 				let description = "<p>Enabling this will give you settings to allow you to wind stack in your Daily challenge runs.</p>";
 				description += "<p>Will use your regular <b>Auto Stance</b> setting when outside of zones you're wind stacking in.</p>";
