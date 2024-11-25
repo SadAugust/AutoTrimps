@@ -303,18 +303,31 @@ function voidMapScryer(availableStances = unlockedStances(), baseStats = getBase
 }
 
 function autoLevelStance(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
-	if ((game.global.mapsActive || game.global.preMapsActive) && !game.global.voidBuff && mapSettings.mapName && getPageSetting('autoMaps') && getPageSetting('autoLevelScryer')) {
+	if (['S', 'W'].includes(autoLevelData.stance) && (game.global.mapsActive || game.global.preMapsActive) && !game.global.voidBuff && mapSettings.mapName && getPageSetting('autoMaps') && getPageSetting('autoLevelScryer')) {
+		const mapName = mapSettings.mapName;
 		const ignoreSettings = new Set(['Void Map', 'Prestige Climb', 'Prestige Raiding', 'Bionic Raiding']);
-		if (!ignoreSettings.has(mapSettings.mapName)) {
-			const speedSettingsSet = new Set(['Map Bonus', 'Experience']);
-			const checkSpeed = speedSettingsSet.has(mapSettings.mapName);
+		if (!ignoreSettings.has(mapName)) {
+			const speedSettings = ['Map Bonus', 'Experience'];
+
+			if (['HD Farm', 'Hits Survived'].includes(mapName) && game.global.mapBonus !== 10 && getPageSetting('mapBonusLevelType')) {
+				const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
+				const mapObj = game.global.mapsActive ? getCurrentMapObject() : { level: mapSettings.mapLevel };
+				const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
+				const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapObj.level - game.global.world > -mapBonusMinSetting - Math.abs(mapBonusLevel);
+
+				if (aboveMinMapLevel && hdStats.autoLevelLoot < mapObj.level - game.global.world) {
+					if (mapName === 'HD Farm') speedSettings.push('HD Farm');
+					else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth')) speedSettings.push('Hits Survived');
+				}
+			}
+
+			const speedSettingsSet = new Set(speedSettings);
+			const checkSpeed = speedSettingsSet.has(mapName);
 			const autoLevelData = hdStats.autoLevelData[checkSpeed ? 'speed' : 'loot'];
 
-			if (['S', 'W'].includes(autoLevelData.stance)) {
-				const stance = availableStances.includes('W') && ((autoLevelData.stance === 'W' && getEmpowerment() !== 'Wind') || shouldWindOverScryer(baseStats, currentEnemy)) ? 'W' : 'S';
-				safeSetStance(stance);
-				return true;
-			}
+			const stance = availableStances.includes('W') && ((autoLevelData.stance === 'W' && getEmpowerment() !== 'Wind') || shouldWindOverScryer(baseStats, currentEnemy)) ? 'W' : 'S';
+			safeSetStance(stance);
+			return true;
 		}
 	}
 

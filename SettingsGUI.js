@@ -36,7 +36,7 @@ function initialiseAllTabs() {
 		['C2', 'C2 - Settings for C2s'],
 		['Daily', 'Dailies - Settings for Dailies'],
 		['Heirloom', 'Heirloom Settings'],
-		['Spire', 'Spire - Settings for Spires'],
+		['Spire', 'Spire - Settings for Spires. Health and damage calculations for the Spire will be based off your Exit After Cell if set.'],
 		['Magma', 'Dimensional Generator & Magmite Settings'],
 		['Nature', 'Nature Settings'],
 		['Fluffy', 'Fluffy Evolution Settings'],
@@ -1516,7 +1516,6 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1.5</p>";
-				if (atConfig.settingUniverse === 2) description += "<p>Don't set this above 1 when using <b>Auto Equality: Advanced</b> as it can cause you to eternally farm.</p>";
 				return description;
 			}, 'value', 1.25, null, 'Maps', [1, 2]);
 

@@ -2250,13 +2250,18 @@ function uniqueMapsDisplay(elem) {
 	const smithySettings = smithyDisplay ? ['MP Smithy', 'MP Smithy Daily', 'MP Smithy C3', 'MP Smithy One Off'] : [];
 	const settingGroup = getPageSetting('uniqueMapSettingsArray', atConfig.settingUniverse);
 
-	let tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp();  _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+	let tooltipText = `
+    <div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div>
+    <p>Welcome to AT's Unique Map Settings! 
+    <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip(${smithySettings && smithySettings.length > 0 ? false : true}, ${smithySettings.length > 0 ? true : false});'>Help</span></p>
+    <div id='autoTooltipHelpDiv' style='display: none'>
+`;
 	tooltipText += `${baseText}${smithyDisplay ? smithy : ''}`;
 	tooltipText += uniqueMapsTable(settingGroup, mapUnlocks, smithySettings);
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='uniqueMapsSave()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 
-	const ondisplay = () => _verticalCenterTooltip(smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);
+	const ondisplay = () => _verticalCenterTooltip(smithySettings && smithySettings.length > 0 ? false : true, smithySettings.length > 0 ? true : false);
 	return [elem, tooltipText, costText, ondisplay];
 }
 
@@ -2278,7 +2283,7 @@ function uniqueMapsTable(settingGroup, mapUnlocks, smithySettings) {
 		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Cell: <input class='structConfigCell' id='structMax" + item + "' type='number'  value='" + (setting && setting.cell ? setting.cell : 0) + "'/></div>";
 		tooltipText += '</div></td>';
 
-		if (smithySettings.length > x) {
+		if (smithySettings && smithySettings.length > x) {
 			item = smithySettings[x];
 			setting = settingGroup[item];
 			checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);

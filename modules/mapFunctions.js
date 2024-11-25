@@ -4144,45 +4144,18 @@ function callAutoMapLevel(mapName, special) {
 }
 
 function autoLevelOverides(mapName, mapLevel, mapModifiers) {
-	let mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
-	const checkMapBonus = mapLevel < mapBonusLevel && (mapName === 'Map Bonus' || (mapName === 'HD Farm' && game.global.mapBonus !== 10) || (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
+	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
+	const checkMapBonus = game.global.mapBonus !== 10 && mapLevel < mapBonusLevel && (mapName === 'Map Bonus' || mapName === 'HD Farm' || (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
 	let forceMapBonus = true;
 	let canAffordMap = true;
 
 	if (checkMapBonus) {
 		const mapObj = game.global.mapsActive ? getCurrentMapObject() : null;
-		const mapBonusMinLevel = mapBonusLevel;
 		const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
-		const [prestigesAvailable] = prestigesToGet(game.global.world + mapBonusLevel);
-		let needPrestiges = prestigesAvailable !== 0 && prestigesUnboughtCount() === 0;
-
-		if (needPrestiges) {
-			/* Reduce map level zone to the value of the last prestige item we need to farm */
-			/* if (mapName !== 'Map Bonus' && getPageSetting('mapBonusPrestige')  ) {
-				while (mapLevel !== mapBonusLevel && prestigesToGet(game.global.world + mapBonusLevel - 1)[0] > 0) {
-					mapBonusLevel--;
-				}
-			} */
-
-			if (game.global.mapsActive) {
-				const [prestigesToFarm, mapsToRun] = prestigesToGet(game.global.world + mapBonusLevel);
-				let shouldRepeat = mapObj.level >= game.global.world + mapBonusLevel;
-
-				if (shouldRepeat) {
-					shouldRepeat = mapsToRun > 1 || (mapObj.bonus === 'p' && mapsToRun > 2);
-					/* if (!shouldRepeat && mapBonusMinLevel !== mapBonusLevel && prestigesAvailable !== prestigesToFarm) {
-						while (mapBonusLevel !== mapBonusMinLevel && prestigesToGet(game.global.world + mapBonusLevel + 1)[0] === prestigesToFarm) {
-							mapBonusLevel++;
-						}
-						shouldRepeat = true;
-					} */
-					if (!shouldRepeat) needPrestiges = false;
-				}
-			}
-		}
+		const needPrestiges = autoLevelPrestiges(mapObj, mapBonusLevel);
 
 		const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapLevel > -mapBonusMinSetting - Math.abs(mapBonusLevel);
-		const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && mapObj.level >= mapBonusMinLevel;
+		const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && mapObj.level >= game.global.world + mapBonusLevel;
 		forceMapBonus = (needPrestiges || aboveMinMapLevel) && !willCapMapBonus;
 		canAffordMap = game.resources.fragments.owned > mapCost(mapBonusLevel, undefined, undefined, [0, 0, 0]);
 
@@ -4207,4 +4180,36 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 	const matchingCondition = mapBonusConditions.find(({ condition }) => condition);
 	if (matchingCondition) mapLevel = matchingCondition.level;
 	return mapLevel;
+}
+
+function autoLevelPrestiges(mapObj, mapBonusLevel) {
+	const [prestigesAvailable] = prestigesToGet(game.global.world + mapBonusLevel);
+	let needPrestiges = prestigesAvailable !== 0 && prestigesUnboughtCount() === 0;
+
+	if (needPrestiges) {
+		/* Reduce map level zone to the value of the last prestige item we need to farm */
+		/* if (mapName !== 'Map Bonus' && getPageSetting('mapBonusPrestige')  ) {
+			while (mapLevel !== mapBonusLevel && prestigesToGet(game.global.world + mapBonusLevel - 1)[0] > 0) {
+				mapBonusLevel--;
+			}
+		} */
+
+		if (game.global.mapsActive) {
+			const [prestigesToFarm, mapsToRun] = prestigesToGet(game.global.world + mapBonusLevel);
+			let shouldRepeat = mapObj.level >= game.global.world + mapBonusLevel;
+
+			if (shouldRepeat) {
+				shouldRepeat = mapsToRun > 1 || (mapObj.bonus === 'p' && mapsToRun > 2);
+				/* if (!shouldRepeat && mapBonusMinLevel !== mapBonusLevel && prestigesAvailable !== prestigesToFarm) {
+					while (mapBonusLevel !== mapBonusMinLevel && prestigesToGet(game.global.world + mapBonusLevel + 1)[0] === prestigesToFarm) {
+						mapBonusLevel++;
+					}
+					shouldRepeat = true;
+				} */
+				if (!shouldRepeat) needPrestiges = false;
+			}
+		}
+	}
+
+	return needPrestiges;
 }
