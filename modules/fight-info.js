@@ -35,7 +35,7 @@
 			titimp: { name: 'Titimp', icon: '"icomoon icon-hammer"' },
 			venimp: { name: 'Venimp', icon: '"glyphicon glyphicon-baby-formula"' },
 			whipimp: { name: 'Whipimp', icon: '"icomoon icon-area-graph"' },
-			turkimp: { name: 'Turkimp', icon: '"icomoon icon-back-in-time"' }
+			turkimp: { name: 'Turkimp', icon: '"icomoon icon-spoon-knife"' }
 		},
 		exoticImps: ['Chronoimp', 'Feyimp', 'Flutimp', 'Goblimp', 'Jestimp', 'Magnimp', 'Tauntimp', 'Titimp', 'Venimp', 'Whipimp', 'Randimp'],
 		fastImps: ['Snimp', 'Kittimp', 'Gorillimp', 'Squimp', 'Shrimp', 'Chickimp', 'Frimp', 'Slagimp', 'Lavimp', 'Kangarimp', 'Entimp', 'Fusimp', 'Carbimp', 'Ubersmith', 'Shadimp', 'Voidsnimp', 'Prismimp', 'Sweltimp', 'Indianimp', 'Improbability', 'Neutrimp', 'Cthulimp', 'Omnipotrimp', 'Mutimp', 'Hulking_Mutimp', 'Liquimp', 'Poseidimp', 'Darknimp', 'Horrimp', 'Arachnimp', 'Beetlimp', 'Mantimp', 'Butterflimp', 'Frosnimp']
