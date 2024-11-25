@@ -284,6 +284,7 @@ function initialiseScript() {
 	debug(`AutoTrimps (${atConfig.initialise.version.split(' ')[0]} ${atConfig.initialise.version.split(' ')[1]}) has finished loading.`);
 	challengeInfo(true);
 	console.timeEnd();
+	/* if (atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') importExportTooltip('mapSettings', 'Gene Assist'); */
 }
 
 function startStopLoop(loopName, action) {
@@ -479,6 +480,7 @@ function _handleNewWorld() {
 	if (!atConfig.portal.aWholeNewWorld) return;
 	if (autoPortalCheck()) return;
 	if ((usingRealTimeOffline || atConfig.loops.atTimeLapseFastLoop) && game.global.world === 60) _timeWarpUpdateEquipment();
+
 	buyUpgrades();
 	autoEquip();
 	archaeologyAutomator();

@@ -3,16 +3,11 @@
 -   Improve setting tooltips
 
     -   Tabs Completed
-        -   Core - Still need to do Auto Portal sub settings
         -   Buildings
-        -   Combat (done U2)
-        -   Maps
-    -   Tabs Left
-        -   Jobs
         -   Equipment
+        -   Combat
+        -   Maps
         -   Challenges
-        -   C2
-        -   Daily
         -   Heirloom
         -   Spire
         -   Magma
@@ -23,6 +18,16 @@
         -   Help
         -   Test
         -   Beta
+    -   Tabs Left
+        -   Core
+            -   Still need to do Auto Portal settings
+        -   Daily
+            -   Still need to do Auto Portal settings
+        -   Jobs
+            -   Gene settings
+                -   Do I just make it into a popup style setting??
+        -   C2
+            -   Haven't looked at all yet but there's millions of settings here
 
 # Mapping
 

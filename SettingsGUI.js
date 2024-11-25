@@ -36,7 +36,7 @@ function initialiseAllTabs() {
 		['C2', 'C2 - Settings for C2s'],
 		['Daily', 'Dailies - Settings for Dailies'],
 		['Heirloom', 'Heirloom Settings'],
-		['Spire', 'Spire - Settings for Spires. Health and damage calculations for the Spire will be based off your Exit After Cell if set.'],
+		['Spire', 'Spire - Settings for Spires. HD Ratio and Hits Survived calculations for the Spire will be based off your Exit After Cell if set.'],
 		['Magma', 'Dimensional Generator & Magmite Settings'],
 		['Nature', 'Nature Settings'],
 		['Fluffy', 'Fluffy Evolution Settings'],
@@ -922,7 +922,7 @@ function initialiseAllSettings() {
 			function () { return ('Auto Equip') },
 			function () {
 				let description = "<p>Master switch for whether the script will do any form of equipment purchasing.</p>";
-				description += "<p>There's settings in here to identify when to purchase gear and if it should purchase prestiges.<br></p>";
+				description += "<p>There's settings in here to identify when to purchase equipment and when it should purchase prestiges.<br></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Equipment', [1, 2]);
@@ -930,8 +930,8 @@ function initialiseAllSettings() {
 		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
-				let description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (atConfig.settingUniverse !== 2 ? "weapon purchases " : "") + "and set your spending percentage to 100% of resources available.</p>";
-				description += "<p>Goal with this setting is to have it purchase gear when you slow down in world.<br></p>";
+				let description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (atConfig.settingUniverse !== 2 ? "weapon" : "equipment") + " purchases and set your spending percentage to 100% of resources available.</p>";
+				description += "<p>Goal with this setting is to have it purchase equipment when you slow down in world.<br></p>";
 				description += "<p>Your HD ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
@@ -942,7 +942,7 @@ function initialiseAllSettings() {
 			function () { return ('AE: HS Cut-off') },
 			function () {
 				let description = "<p>If your Hits Survived (trimpHealth/enemyDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at armor purchases and set your spending percentage to 100% of resources available.</p>";
-				description += "<p>Goal with this setting is to have it purchase gear when you slow down in world.<br></p>";
+				description += "<p>Goal with this setting is to have it purchase equipment when you slow down in world.<br></p>";
 				description += "<p>Your Hits Survived ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 2.5</p>";
 				return description;
@@ -965,8 +965,8 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>The value you want armor equipment to stop being purchased at.</p>";
 				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
-				description += `<p>When your Hits Survived is below your <b>AE: HS Cut-off</b> setting OR when <b>Hits Survived</b> farming this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
-				if (atConfig.settingUniverse ===2) description += `<p>If your <b>HD Ratio</b> is above your <b>AE: HD Cut-off</b> setting this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
+				description += `<p>When your Hits Survived is below your <b>AE: HS Cut-off</b> setting <b>OR</b> when <b>Hits Survived</b> farming this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
+				if (atConfig.settingUniverse ===2) description += `<p>If your <b>HD Ratio</b> is above your <b>AE: HD Cut-off</b> setting this cap is ignored and the script will purchase as many health equips as it takes to reach your target.</p>`;
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
 			}, 'value', 20, null, 'Equipment', [1, 2],
@@ -976,9 +976,9 @@ function initialiseAllSettings() {
 			function () { return ('AE: Zone') },
 			function () {
 				let description = "<p>What zone to stop caring about what percentage of resources you're spending and buy as many prestiges and equipment as possible.</p>";
-				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing gear and prestiges on each zone input.</p>";
+				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing equipment and prestiges on each zone input.</p>";
 				description += "<p>You are able to enter a zone range, this can be done by using a decimal point between number ranges e.g. <b>23.120</b> which will cause the zone check to set your purchasing percentage to 100% between zones 23 and 120. <b>This can be used in conjunction with other zones too, just seperate inputs with commas!</b></p>";
-				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available. It will also set your health & attack equipment caps to Infinity.</p>"
+				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available. It will also set your health and attack equipment caps to Infinity.</p>"
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
 			}, 'multiValue', [-1], null, 'Equipment', [1, 2],
@@ -988,7 +988,7 @@ function initialiseAllSettings() {
 			function () { return ('AE: Percent') },
 			function () {
 				let description = "<p>What percent of resources you'd like to spend on equipment.</p>";
-				description += "<p>If set to <b>0 or below</b> it will overide this and set the equip spending percent to 100%.</p>";
+				description += "<p>If set to <b>0 or below</b> the equip spending percentage will be set to 100%.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 10, null, 'Equipment', [1, 2],
@@ -1011,13 +1011,13 @@ function initialiseAllSettings() {
 			function () {
 				const trimple = atConfig.settingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
 				const trimpleShortened = atConfig.settingUniverse === 1 ? "Trimple" : "Atlantrimp";
-				let description = `<p>Will control how equipment levels & prestiges are purchased.</p>`;
+				let description = `<p>Will control how equipment levels and prestiges are purchased.</p>`;
 				description += `<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>`;
 				description += `<p><b>AE: Prestige: Maybe</b><br>Will only purchase prestiges for equipment when you have 6 or more levels in it.</p>`;
 				description += `<p><b>AE: Prestige: On</b><br>Will only purchase prestiges when they are more efficient than leveling the piece of equipment further.</p>`;
-				description += `<p><b>AE: Prestige: ${trimpleShortened}</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run ${trimple}.`;
+				description += `<p><b>AE: Prestige: ${trimpleShortened}</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase equipment levels again when you have run ${trimple}.`;
 				description += `<br>If <b>${trimple}</b> has been run it will buy any prestiges that cost less than what you have input in the <b>AE: Prestige Pct</b> setting then spend your remaining resources on equipment levels.</p>`;
-				description += `<p><b>AE: Prestige: Always</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override the <b>AE: Zone</b> setting for an equip if it has a prestige available.</p>`;
+				description += `<p><b>AE: Prestige: Always</b><br>Always buys weapons and armor prestiges regardless of efficiency when they're available.</p>`;
 				description += `<p><b>Recommended:</b> AE: Prestige: ${trimpleShortened}</p>`;
 				return description;
 			}, 'multitoggle', 2, null, 'Equipment', [1, 2],
@@ -1039,7 +1039,7 @@ function initialiseAllSettings() {
 		createSetting('equipNoShields',
 			function () { return ('AE: No Shields') },
 			function () {
-				let description = "<p>Will stop the purchase of Shield equipment levels & prestiges.</p>";
+				let description = "<p>Will stop the purchase of Shield equipment levels and prestiges.</p>";
 				description += "<p><b>This is only ever useful in very niche scenarios.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
@@ -1514,7 +1514,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will farm until you can survive this amount of attacks.</p>";
 				description += "<p>Uses the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
-				description += "<p>Your Hits Survived can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your current Hits Survived value can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1.5</p>";
 				return description;
 			}, 'value', 1.25, null, 'Maps', [1, 2]);
@@ -1546,7 +1546,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Map Bonus stacks will be obtained when above this World HD Ratio value.</p>";
 				description += "<p>Will use the <b>Special</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>Map Bonus</b> setting. If they haven't been setup then it will default to a job ratio of <b>0/1/3</b> and the best <b>Metal</b> cache available.</p>";
-				description += "<p>Your HD Ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your current HD Ratio value can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
@@ -1572,7 +1572,9 @@ function initialiseAllSettings() {
 		createSetting('mapBonusLevelType',
 			function () { return ('HS/HD Map Bonus Type') },
 			function () {
-				let description = "<p>Will swap the auto level type that both Hits Survived & HD Ratio use for map bonus maps from loot maps to speed maps.</p>";
+				let description = "<p>Will swap the auto level type that both Hits Survived and HD Ratio use for map bonus maps from loot maps to speed maps.</p>";
+				description += "<p>This will cause it to target maps where you have the fastest kill speed rather than loot gains for if you're just trying to get map bonus stacks quickly.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
@@ -1636,7 +1638,7 @@ function initialiseAllSettings() {
 			function () { return ('HD Farm Settings') },
 			function () {
 				let description = "<p>Here you can select how and when you would like <b>H:D Ratio</b> or <b>Hits Survived</b> farming to be run.</p>";
-				description += "<p>Your H:D Ratio and Hits Survived values can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your current HD Ratio and Hits Survived values can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -1675,7 +1677,7 @@ function initialiseAllSettings() {
 		createSetting('uniqueMapSettingsArray',
 			function () { return ('Unique Map Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like <b>Unique Maps</b> to be run.</p>";
+				let description = "<p>Here you can select when you would like <b>Unique Maps</b> to be run.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -1910,7 +1912,7 @@ function initialiseAllSettings() {
 		createSetting('toxicitySettings',
 			function () { return ('Toxicity Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like to farm a specific amount of Toxicity stacks for increased " + _getPrimaryResourceInfo().name.toLowerCase() + " and resources gain.</p>";
+				let description = "<p>Here you can select how and when you would like to farm a specific amount of Toxicity stacks for increased " + _getPrimaryResourceInfo().name.toLowerCase() + " and resources gain during the <b>Toxicity</b> challenge..</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				description += "<p><b>Recommended:</b> Setup to farm 1500 stacks on the last zone of the challenge.</p>";
@@ -1985,7 +1987,7 @@ function initialiseAllSettings() {
 		createSetting('quagmireSettings',
 			function () { return ('Quagmire Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like Black Bog farming to be done during <b>Quagmire</b>.</p>";
+				let description = "<p>Here you can select how and when you would like Black Bog farming to be done during the <b>Quagmire</b> challenge.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -1995,7 +1997,7 @@ function initialiseAllSettings() {
 		createSetting('archaeologySettings',
 			function () { return ('Archaeology Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like farm for specific relic strings during <b>Archaeology</b>.</p>";
+				let description = "<p>Here you can select how and when you would like farm for specific relic strings during the <b>Archaeology</b> challenge.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -2005,7 +2007,7 @@ function initialiseAllSettings() {
 		createSetting('insanitySettings',
 			function () { return ('Insanity Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like Insanity stack farming to be done during Insanity.</p>";
+				let description = "<p>Here you can select how and when you would like Insanity stack farming to be done during the <b>Insanity</b> challenge.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -2015,7 +2017,7 @@ function initialiseAllSettings() {
 		createSetting('alchemySettings',
 			function () { return ('Alchemy Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like potion farming to be done during Alchemy.</p>";
+				let description = "<p>Here you can select how and when you would like potion and brew farming to be done during the <b>Alchemy</b> challenge.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -2025,7 +2027,7 @@ function initialiseAllSettings() {
 		createSetting('hypothermiaSettings',
 			function () { return ('Hypothermia Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like bonfire farming to be done during Hypothermia.</p>";
+				let description = "<p>Here you can select how and when you would like bonfire farming to be done during the <b>Hypothermia</b> challenge.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -2772,7 +2774,7 @@ function initialiseAllSettings() {
 		createSetting('desolationOnlyDestackZone',
 			function () { return ('D: Only Destack Z') },
 			function () {
-				let description = "<p>From which zone only destacking should be considered. This will stop it caring about farming for metal to improve gear.</p>";
+				let description = "<p>From which zone only destacking should be considered. This will stop it caring about farming for metal to improve equipment levels.</p>";
 				description += "<p>Purchases the highest level of map that you can afford and survive to reduce chilled stacks faster.</p>";
 				description += "<p>Disables perfect maps and sets sliders to minimum for all options to reduce fragment spending.</p>";
 				description += "<p>If using <b>Auto Equality: Advanced</b> will set your equality level to the max it can be whilst destacking."
@@ -2812,7 +2814,7 @@ function initialiseAllSettings() {
 		createSetting('desolationSettings',
 			function () { return ('Desolation Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like to prestige scum gear whilst running <b>Desolation</b>.</p>";
+				let description = "<p>Here you can select how and when you would like to prestige scum equipment whilst running <b>Desolation</b>.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p><b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
@@ -2857,7 +2859,7 @@ function initialiseAllSettings() {
 				return ('Buy ' + (atConfig.settingUniverse === 2 ? "Radonculous" : "Heliumy") + ' %')
 			},
 			function () {
-				let description = "<p>Buys the " + (atConfig.settingUniverse === 2 ? "Radonculous" : "Heliumy") + " bonus for <b>100 bones</b> when the daily bonus is above this value.</p>";
+				let description = "<p>Buys the <b>" + (atConfig.settingUniverse === 2 ? "Radonculous" : "Heliumy") + "</b> bonus for <b>100 bones</b> when the daily bonus is above this value.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1.</p>";
 				return description;
@@ -3021,7 +3023,7 @@ function initialiseAllSettings() {
 			function () { return ('Daily Previous Universe') },
 			function () {
 				let description = "<p>Will start your dailies in the previous universe. Takes you back to this universe after it has finished running.</p>";
-				description += "<p>Ensure you setup daily settings for the <b>previous universe</b>.<br>";
+				description += "<p>Ensure you setup daily settings for the <b>previous universe</b> if using this setting.<br>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [2]);
@@ -3103,9 +3105,9 @@ function initialiseAllSettings() {
 		createSetting('heirloomVoidSwap',
 			function () { return ('Void PB Swap') },
 			function () {
-				let description = "<p>When inside Void Maps and your current enemy is slow with your next enemy being fast this will automatically swap to your <b>Void PB</b> shield so that you can maximise PlagueBringer damage going into the next enemy.</p>";
+				let description = "<p>When inside Void Maps and your current enemy is slow with your next enemy being fast this will automatically swap to your <b>Void PB</b> shield so that you can maximise Plaguebringer damage going into the next enemy.</p>";
 				description += "<p><b>Won't do anything during double attack voids.</b></p>";
-				description += "<p>Will only work if your <b>Void</b> Shield doesn't have <b>PlagueBringer</b> and your <b>Void PB</b> shield has <b>PlagueBringer</b>.</p>";
+				description += "<p>Will only work if your <b>Void</b> Shield doesn't have <b>Plaguebringer</b> and your <b>Void PB</b> shield has <b>Plaguebringer</b>.</p>";
 				description += "<p><b>Recommended:</b> Off unless you know what you're doing</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [2],
@@ -3116,7 +3118,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>When the cell after next is compressed and you are past your heirloom swap zone this will equip your <b>Initial</b> shield so that the next enemy spawns with max health to maximise plaguebringer damage on it.</p>";
 				description += "<p>Will ensure you start the compressed cell at the lowest health it can be from plaguebringer which reduces initial rage stack if the enemy has it and the clear time.</p>";
-				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>PlagueBringer</b> and your <b>Afterpush</b> shield has <b>PlagueBringer</b>.</p>";
+				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>Plaguebringer</b> and your <b>Afterpush</b> shield has <b>Plaguebringer</b>.</p>";
 				description += "<p>Displays an additional setting when enabled where you can force swap to your <b>Afterpush</b> shield when above X <b>World HD Ratio</b> and the next cell is compressed.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -3813,7 +3815,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
-				description += "<p>Any health or damage calculations for the Spire will be based off this cell if set.</p>";
+				description += "<p>HD Ratio and Hits Survived calculations for the Spire will be based off this cell if set.</p>";
 				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
@@ -3882,7 +3884,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = `<p>Will exit out of active Spires upon clearing this cell.</p>`;
 				description += `<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>`;
-				description += `<p>Any health or damage calculations for the Spire will be based off this cell if set.</p>`;
+				description += `<p>HD Ratio and Hits Survived calculations for the Spire will be based off this cell if set.</p>`;
 				description += `<p>Set to <b>below 0</b> to disable this setting.</p>`;
 				description += `<p><b>Recommended:</b> -1</p>`;
 				return description;
@@ -3953,7 +3955,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
-				description += "<p>Any health or damage calculations for the Spire will be based off this cell if set.</p>";
+				description += "<p>HD Ratio and Hits Survived calculations for the Spire will be based off this cell if set.</p>";
 				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
@@ -4095,7 +4097,7 @@ function initialiseAllSettings() {
 		createSetting('magmiteAutoFuel',
 			function () { return ('Automate Fuel Zones') },
 			function () {
-				let description = "<p>Will change your Start & End Fuel Zone inputs immediately before auto portaling to ensure that they are accurate going into your next run.</p>";
+				let description = "<p>Will change your Start and End Fuel Zone inputs immediately before portaling to ensure that they are accurate going into your next run.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Magma', [1],
@@ -4104,7 +4106,7 @@ function initialiseAllSettings() {
 		createSetting('magmiteFuelZones',
 			function () { return ('Zones To Fuel') },
 			function () {
-				let description = "<p>When Automate Fuel Zones runs it will use this value for how many zones you should fuel for.</p>";
+				let description = "<p>When <b>Automate Fuel Zones</b> runs it will use this value for how many zones you should fuel for.</p>";
 				return description;
 			}, 'value', 20, null, 'Magma', [1],
 			function () { return (getPageSetting('autoGen', atConfig.settingUniverse) && getPageSetting('magmiteAutoFuel', atConfig.settingUniverse)) });
@@ -4123,7 +4125,7 @@ function initialiseAllSettings() {
 		createSetting('magmiteAutoFuelForceRun',
 			function () { return ('Force Automate Fuel Zones') },
 			function () {
-				let description = "<p>Run Automate Fuel Zones and set your fueling zones without needing to portal.</p>";
+				let description = "<p>Run <b>Automate Fuel Zones</b> and set your fueling zones without needing to portal.</p>";
 				description += "<p>Uses your highest zone reached to determine the best fueling zones.</p>";
 				return description;
 			}, 'action', null, 'autoMagmiteSpender(true)', 'Magma', [1],
@@ -4814,7 +4816,7 @@ function initialiseAllSettings() {
 			function () { return ('Debug Equality Stats') },
 			function () {
 				let description = "<p>Will display details of trimp/enemy stats when you gamma burst.</p>";
-				description += "<p>Requires your auto equality setting to be set to <b>Auto Equality: Advanced</b></p>";
+				description += "<p>Requires the auto equality setting in the <b>Combat</b> tab to be set to <b>Auto Equality: Advanced</b></p>";
 				return description;
 			}, 'boolean', false, null, 'Beta', [2],
 			function () { return (false) });
