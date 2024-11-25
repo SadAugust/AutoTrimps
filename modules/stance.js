@@ -303,7 +303,7 @@ function voidMapScryer(availableStances = unlockedStances(), baseStats = getBase
 }
 
 function autoLevelStance(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
-	if (['S', 'W'].includes(autoLevelData.stance) && (game.global.mapsActive || game.global.preMapsActive) && !game.global.voidBuff && mapSettings.mapName && getPageSetting('autoMaps') && getPageSetting('autoLevelScryer')) {
+	if ((game.global.mapsActive || game.global.preMapsActive) && !game.global.voidBuff && mapSettings.mapName && getPageSetting('autoMaps') && getPageSetting('autoLevelScryer')) {
 		const mapName = mapSettings.mapName;
 		const ignoreSettings = new Set(['Void Map', 'Prestige Climb', 'Prestige Raiding', 'Bionic Raiding']);
 		if (!ignoreSettings.has(mapName)) {
@@ -325,9 +325,11 @@ function autoLevelStance(availableStances = unlockedStances(), baseStats = getBa
 			const checkSpeed = speedSettingsSet.has(mapName);
 			const autoLevelData = hdStats.autoLevelData[checkSpeed ? 'speed' : 'loot'];
 
-			const stance = availableStances.includes('W') && ((autoLevelData.stance === 'W' && getEmpowerment() !== 'Wind') || shouldWindOverScryer(baseStats, currentEnemy)) ? 'W' : 'S';
-			safeSetStance(stance);
-			return true;
+			if (['S', 'W'].includes(autoLevelData.stance)) {
+				const stance = availableStances.includes('W') && ((autoLevelData.stance === 'W' && getEmpowerment() !== 'Wind') || shouldWindOverScryer(baseStats, currentEnemy)) ? 'W' : 'S';
+				safeSetStance(stance);
+				return true;
+			}
 		}
 	}
 
