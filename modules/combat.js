@@ -429,10 +429,8 @@ function _getEnemyDmgMultiplier(mapping, worldType, enemy, fastEnemy) {
 			damageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 		}
 
-		if (worldType === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming) {
-			const explosiveMult = dailyExplosive ? dailyModifiers.explosive.getMult(dailyChallenge.explosive.strength) : 1;
-			if (dailyEmpowerCheck && dailyCrit) damageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
-			if (dailyExplosive) damageMult += explosiveMult;
+		if (worldType === 'map' && dailyEmpowerCheck && dailyCrit && !MODULES.maps.slowScumming) {
+			damageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 		}
 
 		if (dailyCrit && !dailyEmpower && (worldType === 'world' || worldType === 'void') && gammaToTrigger > 1) damageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
@@ -568,14 +566,15 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	let equality = getEquality();
 
 	if (explosiveMult > 1) {
-		const explosiveDmg = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, equality) * explosiveMult;
-		const notCheckingExplosive = !(worldType === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming);
-		if (enemyDmgMult > 1) enemyDmg /= enemyDmgMult;
-		if (notCheckingExplosive) enemyDmgMult += explosiveMult - 1;
-		enemyDmg *= enemyDmgMult;
-
-		if (explosiveDmg > ourHealth && (notCheckingExplosive || !disableDamageAmps)) {
-			equality = getEquality();
+		const trimpDmgCheck = _calculateDamageEquality(ourDmg, ourEqualityModifier, equality) * (gammaToTrigger <= 1 ? gammaDmg : 1);
+		if (trimpDmgCheck > enemy.health) {
+			const explosiveDmg = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, equality) * explosiveMult;
+			if (enemyDmgMult > 1) enemyDmg /= enemyDmgMult;
+			enemyDmgMult += explosiveMult - 1;
+			enemyDmg *= enemyDmgMult;
+			if (explosiveDmg > ourHealth && !disableDamageAmps) {
+				equality = getEquality();
+			}
 		}
 	}
 
