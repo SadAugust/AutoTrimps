@@ -478,7 +478,7 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
 	const explosiveMult = dailyExplosive ? 1 + dailyModifiers.explosive.getMult(dailyChallenge.explosive.strength) : runningDeso ? 6 : 1;
 
-	if ((dailyEmpowerToggle && !mapping && dailyExplosive) || MODULES.maps.slowScumming || (runningDeso && !armyReady)) {
+	if ((dailyEmpowerToggle && dailyExplosive) || MODULES.maps.slowScumming || (runningDeso && !armyReady)) {
 		const checkGamma = gammaToTrigger <= 1 ? gammaDmg : 1;
 		ourDmgMax = maxDmg * checkGamma;
 	}
@@ -566,8 +566,9 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	let equality = getEquality();
 
 	if (explosiveMult > 1) {
-		const trimpDmgCheck = _calculateDamageEquality(ourDmg, ourEqualityModifier, equality) * (gammaToTrigger <= 1 ? gammaDmg : 1);
-		if (trimpDmgCheck >= enemy.health) {
+		let maxTrimpDmg = maxDmg * (gammaToTrigger <= 1 ? gammaDmg : 1);
+		maxTrimpDmg = _calculateDamageEquality(maxTrimpDmg, ourEqualityModifier, equality);
+		if (maxTrimpDmg >= enemy.health) {
 			const explosiveDmg = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, equality) * explosiveMult;
 			if (enemyDmgMult > 1) enemyDmg /= enemyDmgMult;
 			enemyDmgMult += explosiveMult - 1;
