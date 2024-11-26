@@ -567,7 +567,7 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 
 	if (explosiveMult > 1) {
 		const trimpDmgCheck = _calculateDamageEquality(ourDmg, ourEqualityModifier, equality) * (gammaToTrigger <= 1 ? gammaDmg : 1);
-		if (trimpDmgCheck > enemy.health) {
+		if (trimpDmgCheck >= enemy.health) {
 			const explosiveDmg = _calculateDamageEquality(enemyDmg, enemyEqualityModifier, equality) * explosiveMult;
 			if (enemyDmgMult > 1) enemyDmg /= enemyDmgMult;
 			enemyDmgMult += explosiveMult - 1;
