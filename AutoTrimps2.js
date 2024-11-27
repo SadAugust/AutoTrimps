@@ -260,6 +260,7 @@ function initialiseScript() {
 	loadRuneTrinketCounter();
 	togglePercentHealth();
 	updateShieldData();
+	alterHeirloomWindow();
 
 	if (_getTargetWorldType() === 'void' && !hdStats.hitsSurvivedVoid) {
 		hdStats.hitsSurvivedVoid = calcHitsSurvived(game.global.world, 'void', _getVoidPercent(game.global.world, game.global.universe));

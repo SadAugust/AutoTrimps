@@ -27,6 +27,7 @@ if (typeof originalLoad !== 'function') {
 			setupAddonUser();
 			updateAutoTrimpSettings(true);
 			RTC_populateRunetrinketCounterInfo();
+			alterAutoHeirloomElem();
 			atData.autoPerks.displayGUI();
 		} catch (e) {
 			debug(`Load save failed: ${e}`, 'error');
@@ -252,6 +253,7 @@ if (typeof originalActivateClicked !== 'function') {
 			autoUpgradeHeirlooms();
 			autoHeirlooms(true);
 			autoMagmiteSpender(true);
+			alterAutoHeirloomElem();
 		}
 
 		originalActivateClicked(...arguments);

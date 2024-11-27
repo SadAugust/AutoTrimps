@@ -1388,3 +1388,40 @@ function updateATVersion() {
 	updateAutoTrimpSettings(true);
 	saveSettings();
 }
+
+function alterHeirloomWindow() {
+	const elem = document.getElementById('heirloomTitleBar');
+	if (!elem) return;
+
+	elem.childNodes[0].style.width = '33%';
+	elem.childNodes[0].style.fontSize = '1.4vw';
+	elem.childNodes[1].style.width = '41%';
+	elem.childNodes[1].style.fontSize = '1.4vw';
+	elem.childNodes[2].style.width = '26%';
+
+	if (!document.getElementById('autoHeirloomsBtn')) {
+		const description = autoTrimpSettings.heirloomAuto.description();
+		const initial = _createElement('DIV', {
+			id: `autoHeirloomsBtn`,
+			style: '',
+			class: 'pointer noselect colorInfo heirBtn heirInfo settingBtntrue',
+			onclick: 'settingChanged("heirloomAuto", true)',
+			onmouseover: `tooltip("Toggle Auto Heirlooms", "customText", event, '${description}')`,
+			onmouseout: 'tooltip("hide")'
+		});
+
+		initial.innerHTML = 'Auto Heirlooms';
+		const column = elem.children[2];
+		column.insertBefore(initial, column.firstChild);
+		alterAutoHeirloomElem();
+	}
+}
+
+function alterAutoHeirloomElem() {
+	const elem = document.getElementById('autoHeirloomsBtn');
+	if (!elem) return;
+
+	elem.classList.remove('settingBtnfalse');
+	elem.classList.remove('settingBtntrue');
+	elem.classList += getPageSetting('heirloomAuto') ? ' settingBtntrue' : ' settingBtnfalse';
+}
