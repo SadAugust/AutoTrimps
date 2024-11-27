@@ -1414,7 +1414,7 @@ function alterHeirloomWindow() {
 		const initial = _createElement('DIV', {
 			id: `heirloomSwappingBtn`,
 			style: '',
-			class: 'pointer noselect colorInfo heirBtn heirInfo settingBtntrue',
+			class: 'pointer noselect heirBtn heirInfo settingBtntrue',
 			onclick: 'settingChanged("heirloom", true)',
 			onmouseover: `tooltip("Toggle Auto Heirlooms", "customText", event, '${description}')`,
 			onmouseout: 'tooltip("hide")'
