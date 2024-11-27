@@ -77,9 +77,6 @@ function _needHousing(houseName, ignoreAffordability, displayCheck) {
 		/* Use Safe Gateways for U2 */
 
 		if (MODULES.maps.fragmentFarming) return false;
-		if (game.global.universe === 2 && buildingsArray.SafeGateway.enabled && (buildingsArray.SafeGateway.zone === 0 || buildingsArray.SafeGateway.zone > game.global.world)) {
-			return !_checkSafeGateway(buildingStat);
-		}
 
 		if (game.buildings.Hub.locked) {
 			/* Applies the user defined Gateway % to fragments only */
@@ -87,6 +84,10 @@ function _needHousing(houseName, ignoreAffordability, displayCheck) {
 			const resourcefulMod = getResourcefulMult();
 
 			if (!_canAffordBuilding('fragments', buildingStat, spendingPerc, resourcefulMod)) return false;
+		}
+
+		if (game.global.universe === 2 && buildingsArray.SafeGateway.enabled && (buildingsArray.SafeGateway.zone === 0 || buildingsArray.SafeGateway.zone > game.global.world)) {
+			return !_checkSafeGateway(buildingStat);
 		}
 	}
 
