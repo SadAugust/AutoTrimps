@@ -2272,7 +2272,7 @@ function pandemoniumEquipmentCheck(cacheGain) {
 		const equip = game.equipment[equipName];
 		if (equip.locked) continue;
 		const equipCost = equip.cost[equipArray[equipName].resource][0] * Math.pow(equip.cost[equipArray[equipName].resource][1], equip.level) * getEquipPriceMult();
-		const prestigeCost = getNextPrestigeCost(equipArray[equipName].upgrade) * getEquipPriceMult();
+		let prestigeCost = getNextPrestigeCost(equipArray[equipName].upgrade) * getEquipPriceMult();
 		if (prestigeUpgrade.locked || prestigeUpgrade.allowed === prestigeUpgrade.done) prestigeCost = Infinity;
 		if (cacheGain > prestigeCost) {
 			equipArray[equipName].upgradeCost = prestigeCost;
