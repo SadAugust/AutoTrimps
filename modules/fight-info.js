@@ -14,7 +14,8 @@
 			fast: { icon: '"glyphicon glyphicon-forward"', shadow: '0px 0px 10px #ffffff', color: '#000000' },
 			poison: { icon: '"glyphicon glyphicon-flask"', shadow: '0px 0px 10px #ffffff', color: '#00ff00' },
 			wind: { icon: '"icomoon icon-air"', shadow: '0px 0px 10px #ffffff', color: '#99ffff' },
-			ice: { icon: '"glyphicon glyphicon-certificate"', shadow: '0px 0px 10px #ffffff', color: '#00ffff' }
+			ice: { icon: '"glyphicon glyphicon-certificate"', shadow: '0px 0px 10px #ffffff', color: '#00ffff' },
+			turkimp: { name: 'Turkimp', icon: '"icomoon icon-spoon-knife"' }
 		},
 		powerful: {
 			blimp: { name: 'Blimp', icon: '"glyphicon glyphicon-plane"' },
@@ -34,8 +35,7 @@
 			tauntimp: { name: 'Tauntimp', icon: '"glyphicon glyphicon-tent"' },
 			titimp: { name: 'Titimp', icon: '"icomoon icon-hammer"' },
 			venimp: { name: 'Venimp', icon: '"glyphicon glyphicon-baby-formula"' },
-			whipimp: { name: 'Whipimp', icon: '"icomoon icon-area-graph"' },
-			turkimp: { name: 'Turkimp', icon: '"icomoon icon-spoon-knife"' }
+			whipimp: { name: 'Whipimp', icon: '"icomoon icon-area-graph"' }
 		},
 		exoticImps: ['Chronoimp', 'Feyimp', 'Flutimp', 'Goblimp', 'Jestimp', 'Magnimp', 'Tauntimp', 'Titimp', 'Venimp', 'Whipimp', 'Randimp'],
 		fastImps: ['Snimp', 'Kittimp', 'Gorillimp', 'Squimp', 'Shrimp', 'Chickimp', 'Frimp', 'Slagimp', 'Lavimp', 'Kangarimp', 'Entimp', 'Fusimp', 'Carbimp', 'Ubersmith', 'Shadimp', 'Voidsnimp', 'Prismimp', 'Sweltimp', 'Indianimp', 'Improbability', 'Neutrimp', 'Cthulimp', 'Omnipotrimp', 'Mutimp', 'Hulking_Mutimp', 'Liquimp', 'Poseidimp', 'Darknimp', 'Horrimp', 'Arachnimp', 'Beetlimp', 'Mantimp', 'Butterflimp', 'Frosnimp']
@@ -120,7 +120,7 @@
 			specialIcon = M.fightInfo.imp.skel;
 		} else if (cellName.includes('turkimp') && !game.talents.turkimp2.purchased) {
 			special = M.fightInfo.imp.exotic;
-			specialIcon = M.fightInfo.exotics[cellName];
+			specialIcon = M.fightInfo.imp[cellName];
 		} else if (cellName in M['fightInfo'].exotics) {
 			special = M.fightInfo.imp.exotic;
 			specialIcon = M.fightInfo.allExoticIcons ? M.fightInfo.exotics[cellName] : null;

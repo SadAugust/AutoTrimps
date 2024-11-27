@@ -163,7 +163,7 @@ function heirloomEquip(heirloom, type) {
 
 	if (heirloomDetails && !isHeirloomEquipped) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), 'heirloomsCarried', true);
-		equipHeirloom(true);
+		equipHeirloom(!heirloomsShown);
 		if (type === 'Shield') updateShieldData();
 	} else if (!heirloomDetails && !isHeirloomEquipped && atConfig.intervals.tenSecond) {
 		const hdMessage = type === 'Shield' ? `This will be causing at least one of your HD Ratios to be incorrect.` : ``;
