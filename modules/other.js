@@ -1369,7 +1369,7 @@ function updateATVersion() {
 			saveSettings();
 		}
 
-		if (versionNumber < '6.6.003') {
+		if (versionNumber < '6.6.03') {
 			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['autoHeirlooms'] !== 'undefined') {
 				autoTrimpSettings.autoHeirlooms.enabled = false;
