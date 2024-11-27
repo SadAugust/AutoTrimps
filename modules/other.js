@@ -1433,5 +1433,5 @@ function alterAutoHeirloomElem() {
 
 	elem.classList.remove('settingBtnfalse');
 	elem.classList.remove('settingBtntrue');
-	elem.classList += getPageSetting('heirloom') ? ' settingBtntrue' : ' settingBtnfalse';
+	elem.classList.add(getPageSetting('heirloom') ? 'settingBtntrue' : 'settingBtnfalse');
 }
