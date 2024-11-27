@@ -38,7 +38,8 @@ function _housingToCheck(displayCheck = false) {
 
 function _needHousing(houseName, ignoreAffordability, displayCheck) {
 	/* Returns true if we can afford and need the building. */
-	const buildingSettings = getPageSetting('buildingSettingsArray')[houseName];
+	const buildingsArray = getPageSetting('buildingSettingsArray');
+	const buildingSettings = buildingsArray[houseName];
 	const buildingStat = game.buildings[houseName];
 
 	if (buildingStat.locked || !buildingSettings.enabled) return false;
@@ -76,7 +77,9 @@ function _needHousing(houseName, ignoreAffordability, displayCheck) {
 		/* Use Safe Gateways for U2 */
 
 		if (MODULES.maps.fragmentFarming) return false;
-		if (game.global.universe === 2) return !_checkSafeGateway(buildingStat);
+		if (game.global.universe === 2 && buildingsArray.SafeGateway.enabled && (buildingsArray.SafeGateway.zone === 0 || buildingsArray.SafeGateway.zone > game.global.world)) {
+			return !_checkSafeGateway(buildingStat);
+		}
 
 		if (game.buildings.Hub.locked) {
 			/* Applies the user defined Gateway % to fragments only */
