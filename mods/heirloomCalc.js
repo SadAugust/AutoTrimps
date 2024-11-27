@@ -377,8 +377,14 @@ function setupHeirloomUI() {
 
 		const firstInputObj = inputBoxes[row][Object.keys(inputBoxes[row])[0]] === inputObj;
 		const lastInputObj = inputBoxes[row][Object.keys(inputBoxes[row]).slice(-1)[0]] === inputObj;
-		if (id === 'equalityTarget' || (lastInputObj && !firstInputObj)) btnDiv.style.float = 'right';
-		else if (firstInputObj) btnDiv.style.float = 'left';
+		if (id === 'equalityTarget') {
+			btnDiv.style.float = 'right';
+			btnDiv.style.marginLeft = '-2vw';
+		} else if (lastInputObj && !firstInputObj) {
+			btnDiv.style.float = 'right';
+		} else if (firstInputObj) {
+			btnDiv.style.float = 'left';
+		}
 
 		//Creating input box for users to enter their own ratios/stats.
 		const btnInput = document.createElement('Input');
@@ -397,7 +403,10 @@ function setupHeirloomUI() {
 		const btnText = document.createElement('span');
 		btnText.id = `${id}Text`;
 		btnText.innerHTML = inputObj.name;
-		btnText.style.cssText = 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw;';
+
+		let cssText = 'width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-right: 0.7vw;';
+		if (id !== 'equalityTarget') cssText += ' margin-left: 0.3vw;';
+		btnText.style.cssText = cssText;
 
 		btnDiv.appendChild(btnText);
 		btnDiv.appendChild(btnInput);
@@ -446,12 +455,26 @@ function setupHeirloomUI() {
 	heirloomGUI.$customRatioBtn = document.createElement('DIV');
 	heirloomGUI.$customRatioBtn.id = 'heirloomCustomRatioBtn';
 	heirloomGUI.$customRatioBtn.setAttribute('class', 'btn settingsBtn settingBtnfalse ');
-	heirloomGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio()');
+	heirloomGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio(heirloomGUI.$customRatioBtn.id, "Ratio")');
 	heirloomGUI.$customRatioBtn.setAttribute('onmouseover', 'tooltip("Custom Ratio", "customText", event, "Enabling this allows you to set custom ratios for this heirloom.")');
 	heirloomGUI.$customRatioBtn.setAttribute('onmouseout', 'tooltip("hide")');
 	heirloomGUI.$customRatioBtn.style.cssText = `float:left; border: 0.1vw solid #777; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; margin-right: 13.88vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
 	heirloomGUI.$customRatioBtn.textContent = 'Use Custom Ratios';
 	heirloomGUI.$ratiosLine.row2.insertBefore(heirloomGUI.$customRatioBtn, document.getElementById('equalityTargetDiv'));
+
+	['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity'].forEach((button) => {
+		const btn = document.createElement('DIV');
+		btn.id = `heirloomCustom${button}Btn`;
+		const efficiency = `${button} ${button !== 'Parity' ? 'Efficiency' : 'Power'}`;
+		btn.setAttribute('class', `btn settingsBtn settingBtn${['Miner', 'Parity'].includes(button) ? 'true' : 'false'}`);
+		btn.setAttribute('onclick', `toggleCustomRatio('${btn.id}', '${button}')`);
+		btn.setAttribute('onmouseover', `tooltip("Enable ${efficiency}", "customText", event, "Enabling this will allow the script to assign nullifium to ${efficiency} on this heirloom.")`);
+		btn.setAttribute('onmouseout', 'tooltip("hide")');
+		btn.style.cssText = `border: 0.1vw solid #777; text-align: center; width: 2vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		if (button === 'Farmer') btn.style.marginLeft = '-26.2vw';
+		btn.textContent = button[0].toUpperCase();
+		heirloomGUI.$ratiosLine.row2.insertBefore(btn, document.getElementById('equalityTargetDiv'));
+	});
 
 	if (!settingInputs) {
 		saveHeirloomSettings();
@@ -461,18 +484,30 @@ function setupHeirloomUI() {
 	document.getElementById('XPWeightDiv').style.float = 'right';
 }
 
-function toggleCustomRatio() {
-	const ratioBtn = document.getElementById('heirloomCustomRatioBtn');
+function toggleCustomRatio(elemName, btnType = 'Ratio') {
+	const ratioBtn = document.getElementById(elemName);
 	const className = ['settingBtnfalse', 'settingBtntrue'];
 	className.splice(className.indexOf(ratioBtn.className.split(' ')[2]), 1);
 	ratioBtn.setAttribute('class', 'btn settingsBtn ' + className[0]);
 
+	let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+	if (!heirloomInputs[_getSelectedHeirloom().id]) heirloomInputs[_getSelectedHeirloom().id] = {};
+	const heirloomSettings = heirloomInputs[_getSelectedHeirloom().id];
+
 	if (className[0] === 'settingBtntrue') {
+		if (btnType !== 'Ratio') {
+			heirloomInputs[_getSelectedHeirloom().id][btnType] = true;
+			localStorage.setItem('heirloomInputs', JSON.stringify(heirloomInputs));
+		}
+
 		saveHeirloomSettings();
 	} else {
-		let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
-		delete heirloomInputs[_getSelectedHeirloom().id];
-		localStorage.setItem('heirloomInputs', JSON.stringify(heirloomInputs));
+		if (heirloomSettings) {
+			if (btnType === 'Ratio' && heirloomSettings[btnType]) delete heirloomInputs[_getSelectedHeirloom().id][btnType];
+			else heirloomInputs[_getSelectedHeirloom().id][btnType] = false;
+			localStorage.setItem('heirloomInputs', JSON.stringify(heirloomInputs));
+		}
+
 		loadHeirloomSettings();
 	}
 
@@ -480,7 +515,7 @@ function toggleCustomRatio() {
 }
 
 function _getSelectedHeirloom() {
-	if (game.global.selectedHeirloom[1] === 'heirloomsCarried') return game.global.heirloomsCarried[game.global.selectedHeirloom[0]];
+	if (['heirloomsCarried', 'heirloomsExtra'].includes(game.global.selectedHeirloom[1])) return game.global[game.global.selectedHeirloom[1]][game.global.selectedHeirloom[0]];
 	return game.global[game.global.selectedHeirloom[1]];
 }
 
@@ -491,8 +526,9 @@ function saveHeirloomSettings() {
 
 	const customRatio = JSON.parse(document.getElementById('heirloomCustomRatioBtn').className.split(' ')[2].slice(10));
 	if (customRatio) {
-		heirloomInputs[_getSelectedHeirloom().id] = {};
-		update = heirloomInputs[_getSelectedHeirloom().id];
+		if (!heirloomInputs[_getSelectedHeirloom().id]) heirloomInputs[_getSelectedHeirloom().id] = {};
+		if (!heirloomInputs[_getSelectedHeirloom().id].Ratio) heirloomInputs[_getSelectedHeirloom().id].Ratio = {};
+		update = heirloomInputs[_getSelectedHeirloom().id].Ratio;
 	}
 
 	update.VMWeight = $$('#VMWeight').value;
@@ -510,11 +546,18 @@ function saveHeirloomSettings() {
 
 function loadHeirloomSettings() {
 	let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+	const heirloomSettings = heirloomInputs[_getSelectedHeirloom().id];
+	if (heirloomSettings) {
+		if (heirloomSettings.Ratio) heirloomInputs = heirloomInputs[_getSelectedHeirloom().id].Ratio;
 
-	if (heirloomInputs[_getSelectedHeirloom().id]) {
-		heirloomInputs = heirloomInputs[_getSelectedHeirloom().id];
 		document.getElementById('heirloomCustomRatioBtn').setAttribute('class', 'btn settingsBtn settingBtntrue');
+		['Ratio', 'Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity'].forEach(function (setting) {
+			document.getElementById(`heirloomCustom${setting}Btn`).setAttribute('class', `btn settingsBtn settingBtn${heirloomSettings[setting] || (typeof heirloomSettings[setting] === 'undefined' && ['Miner', 'Parity'].includes(setting)) ? 'true' : 'false'}`);
+		});
 	} else {
+		['Ratio', 'Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity'].forEach(function (setting) {
+			document.getElementById(`heirloomCustom${setting}Btn`).setAttribute('class', `btn settingsBtn settingBtn${['Miner', 'Parity'].includes(setting) ? 'true' : 'false'}`);
+		});
 		document.getElementById('heirloomCustomRatioBtn').setAttribute('class', 'btn settingsBtn settingBtnfalse');
 	}
 
@@ -543,16 +586,17 @@ class Heirloom {
 			const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000];
 			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
 			const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
-			const runningAT = typeof atConfig !== 'undefined';
-			this.inputs = settings[this.id] ? settings[this.id] : settings;
+			const heirloomSettings = settings && settings[this.id] ? settings[this.id] : settings;
+			this.inputs = heirloomSettings.Ratio ? heirloomSettings.Ratio : settings;
 			this.isCore = this.type === 'Core';
 			this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
 			this.priceIncrease = priceIncreases[this.rarity];
 
-			this.foodHeirloom = runningAT && this.type === 'Staff' && this.name === getPageSetting('heirloomStaffFood');
-			this.woodHeirloom = runningAT && this.type === 'Staff' && this.name === getPageSetting('heirloomStaffWood');
-			this.scienceHeirloom = runningAT && this.type === 'Staff' && this.name === getPageSetting('heirloomStaffScience');
-			this.metalHeirloom = !this.foodHeirloom && !this.woodHeirloom && !this.scienceHeirloom;
+			this.foodHeirloom = heirloomSettings.Farmer;
+			this.woodHeirloom = heirloomSettings.Lumberjack;
+			this.scienceHeirloom = heirloomSettings.Scientist;
+			this.parityHeirloom = typeof heirloomSettings.Parity === 'undefined' || heirloomSettings.Parity;
+			this.metalHeirloom = typeof heirloomSettings.Miner === 'undefined' || heirloomSettings.Miner;
 			this.fluffyRewards = {
 				critChance: Fluffy.isRewardActive('critChance'),
 				megaCrit: Fluffy.isRewardActive('megaCrit'),
@@ -716,43 +760,56 @@ class Heirloom {
 
 			return critDmgNormalizedAfter / critDmgNormalizedBefore;
 		}
+
 		if (type === 'voidMaps') {
 			if (game.global.universe === 2) return (value + stepAmount * (this.inputs.VMWeight / 10)) / value;
 			return (value + stepAmount * this.inputs.VMWeight) / value;
 		}
+
 		if (type === 'gammaBurst') {
 			return ((value + stepAmount) / 100 + 1) / 5 / ((value / 100 + 1) / 5);
 		}
+
 		if (type === 'FluffyExp') {
 			return (value + 100 + stepAmount * this.inputs.XPWeight) / (value + 100);
 		}
+
 		if (type === 'plaguebringer') {
 			return (value + 100 + stepAmount) / (value + 100);
 		}
+
 		if (type === 'DragimpSpeed') {
 			return (100 * Math.pow(value + stepAmount * 1, 0.0006)) / (100 * Math.pow(value, 0.0006));
 		}
+
 		if (type === 'ExplorerSpeed') {
 			return (100 * Math.pow(value + stepAmount * 1, 0.0006)) / (100 * Math.pow(value, 0.0006));
 		}
+
 		if (type === 'FarmerSpeed' && this.foodHeirloom) {
 			return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
 		}
+
 		if (type === 'LumberjackSpeed' && this.woodHeirloom) {
 			return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
 		}
+
 		if (type === 'MinerSpeed' && this.metalHeirloom) {
 			return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
 		}
+
 		if (type === 'ScientistSpeed' && this.scienceHeirloom) {
 			return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
 		}
-		if (type === 'ParityPower' && !this.scienceHeirloom) {
+
+		if (type === 'ParityPower' && this.parityHeirloom) {
 			return Math.log(((value + 1 + stepAmount) / (value + 1)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
 		}
+
 		if (type === 'inequality') {
 			return Math.pow((1 - 0.1 * (1 - (value + stepAmount) / 100)) / 0.9, this.inputs.equalityTarget) / Math.pow((1 - 0.1 * (1 - value / 100)) / 0.9, this.inputs.equalityTarget);
 		}
+
 		if (this.isCore) {
 			loadCore(this);
 			const before = getMaxEnemyHP();
@@ -1079,7 +1136,8 @@ function calculate(autoUpgrade) {
 	if (startingHeirloom.type.includes('Shield')) {
 		setElemDisplay('VMWeight', 'inline-block', true);
 		setElemDisplay('HPWeight', 'inline-block', true);
-		setElemDisplay('equalityTarget', game.global.universe === 2 ? 'inline' : 'none', true);
+		setElemDisplay('equalityTarget', game.global.universe === 2 ? 'visible' : 'hidden', true, 'visibility');
+		setElemDisplay('equalityTarget', 'inline', true);
 		setElemDisplay('equipLevels', 'none', true);
 		setElemDisplay('XPWeight', 'none', true);
 	}
@@ -1093,9 +1151,18 @@ function calculate(autoUpgrade) {
 	}
 	// When looking at Cores show no settings.
 	else if (startingHeirloom.type.includes('Core')) {
-		['equalityTarget', 'VMWeight', 'HPWeight', 'equipLevels', 'XPWeight'].forEach((id) => setElemDisplay(id, 'none', true));
+		setElemDisplay('equalityTarget', 'none', true);
+		['VMWeight', 'HPWeight', 'equipLevels', 'XPWeight'].forEach((id) => setElemDisplay(id, 'none', true));
 		startTDCalc();
 	}
+
+	['heirloomCustomFarmerBtn', 'heirloomCustomLumberjackBtn', 'heirloomCustomMinerBtn', 'heirloomCustomScientistBtn', 'heirloomCustomParityBtn'].forEach((id) => setElemDisplay(id, startingHeirloom.type.includes('Core') || startingHeirloom.type.includes('Shield') ? 'none' : 'inline', false));
+
+	setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity < 11 ? 'hidden' : 'visible', false, 'visibility');
+	const farmerMarginLeft = startingHeirloom.rarity < 11 ? '-24.2vw' : '-26.2vw';
+	document.getElementById('heirloomCustomFarmerBtn').style.marginLeft = farmerMarginLeft;
+
+	setElemDisplay('heirloomCustomRatioBtn', startingHeirloom.type.includes('Core') ? 'none' : 'inline', false);
 
 	const heirloomData = heirloomInfo(startingHeirloom.type);
 	startingHeirloom.heirloomInfo = heirloomData;
@@ -1123,8 +1190,15 @@ function calculate(autoUpgrade) {
 
 	if (newHeirloom) {
 		for (let y = 0; y < newHeirloom.mods.length; y++) {
-			if (newHeirloom.purchases[y] === 0) continue;
+			const modName = document.getElementsByClassName('heirloomMod')[y].innerHTML;
 			let modDetails = document.getElementsByClassName('heirloomMod')[y].innerHTML.split('(')[0];
+			if (modName.includes('Pet')) modDetails = `${modDetails} (${document.getElementsByClassName('heirloomMod')[y].innerHTML.split('(')[1]}`;
+
+			if (newHeirloom.purchases[y] === 0) {
+				if (document.getElementsByClassName('heirloomMod')[y].innerHTML !== `${modDetails}`) document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails}`;
+				continue;
+			}
+
 			const modValue = precisionRoundMod(getModValue(newHeirloom.mods[y]), 3);
 			document.getElementsByClassName('heirloomMod')[y].innerHTML = `${modDetails} (${modValue}% +${newHeirloom.purchases[y]})`;
 		}
@@ -1134,10 +1208,10 @@ function calculate(autoUpgrade) {
 	updateModContainer('heirloomHelpBtn', startingHeirloom);
 }
 
-function setElemDisplay(id, value, isParent = false) {
+function setElemDisplay(id, value, isParent = false, type = 'display') {
 	const element = document.getElementById(id);
-	if (element && (isParent ? element.parentNode.style.display : element.style.display) !== value) {
-		(isParent ? element.parentNode.style : element.style).display = value;
+	if (element && (isParent ? element.parentNode.style[type] : element.style[type]) !== value) {
+		(isParent ? element.parentNode.style : element.style)[type] = value;
 	}
 }
 

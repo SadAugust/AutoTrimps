@@ -4986,7 +4986,7 @@ function settingChanged(id, currUniverse) {
 		btn[enabled] = !btn[enabled];
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (booleanActions[id] && updateUI) booleanActions[id]();
-		if (id === 'heirloomAuto') alterAutoHeirloomElem();
+		if (id === 'heirloom') alterAutoHeirloomElem();
 	}
 
 	if (btn.type === 'multitoggle') {

@@ -1368,6 +1368,16 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '6.6.003') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['autoHeirlooms'] !== 'undefined') {
+				autoTrimpSettings.autoHeirlooms.enabled = false;
+				autoTrimpSettings.autoHeirlooms.enabledU2 = false;
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
@@ -1394,23 +1404,23 @@ function alterHeirloomWindow() {
 	if (!elem) return;
 
 	elem.childNodes[0].style.width = '33%';
-	elem.childNodes[0].style.fontSize = '1.4vw';
-	elem.childNodes[1].style.width = '41%';
-	elem.childNodes[1].style.fontSize = '1.4vw';
-	elem.childNodes[2].style.width = '26%';
+	elem.childNodes[0].style.fontSize = '1.3vw';
+	elem.childNodes[1].style.width = '40%';
+	elem.childNodes[1].style.fontSize = '1.3vw';
+	elem.childNodes[2].style.width = '27%';
 
-	if (!document.getElementById('autoHeirloomsBtn')) {
+	if (!document.getElementById('heirloomSwappingBtn')) {
 		const description = autoTrimpSettings.heirloomAuto.description();
 		const initial = _createElement('DIV', {
-			id: `autoHeirloomsBtn`,
+			id: `heirloomSwappingBtn`,
 			style: '',
 			class: 'pointer noselect colorInfo heirBtn heirInfo settingBtntrue',
-			onclick: 'settingChanged("heirloomAuto", true)',
+			onclick: 'settingChanged("heirloom", true)',
 			onmouseover: `tooltip("Toggle Auto Heirlooms", "customText", event, '${description}')`,
 			onmouseout: 'tooltip("hide")'
 		});
 
-		initial.innerHTML = 'Auto Heirlooms';
+		initial.innerHTML = 'Heirloom Swapping';
 		const column = elem.children[2];
 		column.insertBefore(initial, column.firstChild);
 		alterAutoHeirloomElem();
@@ -1418,10 +1428,10 @@ function alterHeirloomWindow() {
 }
 
 function alterAutoHeirloomElem() {
-	const elem = document.getElementById('autoHeirloomsBtn');
+	const elem = document.getElementById('heirloomSwappingBtn');
 	if (!elem) return;
 
 	elem.classList.remove('settingBtnfalse');
 	elem.classList.remove('settingBtntrue');
-	elem.classList += getPageSetting('heirloomAuto') ? ' settingBtntrue' : ' settingBtnfalse';
+	elem.classList += getPageSetting('heirloom') ? ' settingBtntrue' : ' settingBtnfalse';
 }
