@@ -2251,14 +2251,16 @@ function pandemoniumEquipmentCheck(cacheGain) {
 			cost: Infinity,
 			resourceSpendingPct: 1,
 			stat: 'attack',
-			zoneGo: true
+			zoneGo: true,
+			equipCap: Infinity
 		},
 		health: {
 			name: '',
 			cost: Infinity,
 			resourceSpendingPct: 1,
 			stat: 'health',
-			zoneGo: true
+			zoneGo: true,
+			equipCap: Infinity
 		}
 	};
 
