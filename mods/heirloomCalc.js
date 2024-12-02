@@ -372,9 +372,9 @@ function saveHeirloomSettings() {
 	if (heirloomInputs === null) heirloomInputs = {};
 	let update = heirloomInputs;
 
-	const selectedHeirloom = _getSelectedHeirloom().id;
+	const selectedHeirloom = _getSelectedHeirloom() && _getSelectedHeirloom().id;
 	const customRatio = JSON.parse(document.getElementById('heirloomCustomRatioBtn').className.split(' ')[2].slice(10));
-	if (customRatio) {
+	if (customRatio && selectedHeirloom) {
 		if (!heirloomInputs[selectedHeirloom]) heirloomInputs[selectedHeirloom] = {};
 		if (!heirloomInputs[selectedHeirloom].Ratio) heirloomInputs[selectedHeirloom].Ratio = {};
 		update = heirloomInputs[selectedHeirloom].Ratio;
@@ -436,25 +436,25 @@ class Heirloom {
 			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
 			const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
 			const heirloomSettings = settings && settings[this.id] ? settings[this.id] : settings;
-			this.inputs = heirloomSettings.Ratio ? heirloomSettings.Ratio : settings;
+			this.inputs = heirloomSettings && heirloomSettings.Ratio ? heirloomSettings.Ratio : settings;
 			this.isCore = this.type === 'Core';
 			this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
 			this.priceIncrease = priceIncreases[this.rarity];
 
-			this.foodHeirloom = heirloom.type === 'Staff' && heirloomSettings.Farmer && heirloomSettings.Farmer.enabled;
-			this.foodPercentage = this.foodHeirloom && heirloomSettings.Farmer && typeof heirloomSettings.Farmer.weight !== 'undefined' ? heirloomSettings.Farmer.weight / 100 : 1;
+			this.foodHeirloom = heirloom.type === 'Staff' && heirloomSettings && heirloomSettings.Farmer && heirloomSettings.Farmer.enabled;
+			this.foodPercentage = this.foodHeirloom && heirloomSettings && heirloomSettings.Farmer && typeof heirloomSettings.Farmer.weight !== 'undefined' ? heirloomSettings.Farmer.weight / 100 : 1;
 
-			this.woodHeirloom = heirloom.type === 'Staff' && heirloomSettings.Lumberjack && heirloomSettings.Lumberjack.enabled;
-			this.woodPercentage = this.woodHeirloom && heirloomSettings.Lumberjack && typeof heirloomSettings.Lumberjack.weight !== 'undefined' ? heirloomSettings.Lumberjack.weight / 100 : 1;
+			this.woodHeirloom = heirloom.type === 'Staff' && heirloomSettings && heirloomSettings.Lumberjack && heirloomSettings.Lumberjack.enabled;
+			this.woodPercentage = this.woodHeirloom && heirloomSettings && heirloomSettings.Lumberjack && typeof heirloomSettings.Lumberjack.weight !== 'undefined' ? heirloomSettings.Lumberjack.weight / 100 : 1;
 
-			this.scienceHeirloom = heirloom.type === 'Staff' && heirloomSettings.Scientist && heirloomSettings.Scientist.enabled;
-			this.sciencePercentage = this.scienceHeirloom && heirloomSettings.Scientist && typeof heirloomSettings.Scientist.weight !== 'undefined' ? heirloomSettings.Scientist.weight / 100 : 1;
+			this.scienceHeirloom = heirloom.type === 'Staff' && heirloomSettings && heirloomSettings.Scientist && heirloomSettings.Scientist.enabled;
+			this.sciencePercentage = this.scienceHeirloom && heirloomSettings && heirloomSettings.Scientist && typeof heirloomSettings.Scientist.weight !== 'undefined' ? heirloomSettings.Scientist.weight / 100 : 1;
 
-			this.parityHeirloom = (heirloom.type === 'Staff' && typeof heirloomSettings.Parity === 'undefined') || (heirloomSettings.Parity && heirloomSettings.Parity.enabled);
+			this.parityHeirloom = (heirloom.type === 'Staff' && heirloomSettings && typeof heirloomSettings.Parity === 'undefined') || (heirloomSettings.Parity && heirloomSettings.Parity.enabled);
 			this.parityPercentage = this.parityHeirloom && typeof heirloomSettings.Parity !== 'undefined' ? heirloomSettings.Parity.weight / 100 : 1;
 
-			this.metalHeirloom = (heirloom.type === 'Staff' && typeof heirloomSettings.Miner === 'undefined') || (heirloomSettings.Miner && heirloomSettings.Miner.enabled);
-			this.metalPercentage = this.metalHeirloom && typeof heirloomSettings.Miner !== 'undefined' ? heirloomSettings.Miner.weight / 100 : 1;
+			this.metalHeirloom = (heirloom.type === 'Staff' && heirloomSettings && typeof heirloomSettings.Miner === 'undefined') || (heirloomSettings.Miner && heirloomSettings.Miner.enabled);
+			this.metalPercentage = this.metalHeirloom && heirloomSettings && typeof heirloomSettings.Miner !== 'undefined' ? heirloomSettings.Miner.weight / 100 : 1;
 
 			this.fluffyRewards = {
 				critChance: Fluffy.isRewardActive('critChance'),

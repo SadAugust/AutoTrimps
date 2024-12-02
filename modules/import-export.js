@@ -495,7 +495,7 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 		updateAutoTrimpSettings(true);
 		saveSettings();
 		loadAugustSettings();
-		alterHeirloomWindowElem();
+		alterHeirloomWindow();
 
 		const keys = ['perkyInputs', 'surkyInputs', 'heirloomInputs'];
 
