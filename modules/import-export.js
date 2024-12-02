@@ -125,6 +125,15 @@ function _displayImportAutoTrimpsProfile(profileSettings, profileName) {
 	tooltipDiv.style.display = 'block';
 	_verticalCenterTooltip();
 }
+function autoTrimpsProfileSave(profileName = autoTrimpSettings.ATprofile) {
+	const settingProfiles = localStorage.getItem('atSettingsProfiles');
+	if (!settingProfiles) return void debug('No setting profiles found.', 'profile');
+
+	const profileData = JSON.parse(settingProfiles);
+	profileData[profileName] = serializeSettings();
+	localStorage.setItem('atSettingsProfiles', JSON.stringify(profileData));
+	debug(`Profile: ${profileName} has been saved.`, 'profile');
+}
 
 function _displayExportAutoTrimps(tooltipDiv) {
 	const tooltipText = `This is your AutoTrimp settings save string. There are many like it but this one is yours. 
@@ -470,10 +479,14 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 
 	setTimeout(() => {
 		if (switchProfile) autoTrimpsSettings = JSON.parse(LZString.decompressFromBase64(autoTrimpsSettings));
-		const profileSettings = switchProfile ? autoTrimpSettings.profilesSettings : undefined;
+		const profileSettings = switchProfile ? autoTrimpSettings.profileSettings.value : undefined;
 		localStorage.removeItem('atSettings');
 		autoTrimpSettings = autoTrimpsSettings || {};
-		if (switchProfile) autoTrimpSettings.profilesSettings = profileSettings;
+
+		if (switchProfile) {
+			autoTrimpSettings.ATprofile = switchProfile;
+			autoTrimpSettings.profileSettings.value = profileSettings;
+		}
 
 		const settingsRow = document.getElementById('settingsRow');
 		['autoSettings', 'autoTrimpsTabBarMenu'].forEach((id) => {
@@ -545,7 +558,7 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 
 function disableAllSettings() {
 	for (const setting in autoTrimpSettings) {
-		if (['ATversion', 'ATversionChangelog', 'gameUser'].includes(setting)) continue;
+		if (['ATversion', 'ATversionChangelog', 'ATprofile', 'gameUser'].includes(setting)) continue;
 		const item = autoTrimpSettings[setting];
 		if (item.type === 'mazDefaultArray') continue;
 

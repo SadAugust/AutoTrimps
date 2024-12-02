@@ -4571,7 +4571,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'infoclick', null, 'importExportTooltip("resetDefaultSettingsProfiles")', 'Import Export', [0]);
 
-
 		createSetting('disableAutoTrimpsSettings',
 			function () { return ('Disable All Settings') },
 			function () {
@@ -4605,14 +4604,22 @@ function initialiseAllSettings() {
 			}), null, 'Import Export', [2],
 			function () { return false });
 
-		createSetting('profilesSettings',
+		createSetting('profileSettings',
 			function () { return ('Profile Settings') },
 			function () {
 				let description = "<p>Here you can save and load different AutoTrimps setting profiles.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'importExportTooltip("mapSettings", "Profiles")', 'Import Export', [0]);
+			}, 'mazArray', [], 'importExportTooltip("mapSettings", "Profile")', 'Import Export', [0]);
+
+		createSetting('profileLastLoaded',
+			function () { return (autoTrimpSettings.ATprofile ? `Loaded Profile: ${autoTrimpSettings.ATprofile}` : `Load a Profile To Use`) },
+			function () {
+				let description = "<p>Will save your current settings to the last preset you loaded through the <b>Profile Settings</b> window.</p>";
+				return description;
+			}, 'infoclick', null, 'autoTrimpsProfileSave()', 'Import Export', [0],
+			function () { return autoTrimpSettings.ATprofile && autoTrimpSettings.ATprofile !== '' });
 	}
 	
 	const displayHelp = true;
@@ -4893,7 +4900,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			btnAttributes.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]['value']];
 		},
 		action: () => {
-			btnAttributes.style = 'color: black; background-color: #6495ed; font-size: 1vw;';
+			btnAttributes.style += 'color: black; background-color: #6495ed;';
 			btnAttributes.class = 'noselect settingsBtn settingBtn3';
 			btnAttributes.onclick = list;
 		}
@@ -5212,7 +5219,7 @@ function updateAutoTrimpSettings(forceUpdate) {
 	atConfig.settingUniverse = autoTrimpSettings.universeSetting.value + 1;
 
 	for (const setting in autoTrimpSettings) {
-		if (['ATversion', 'ATversionChangelog'].includes(setting)) continue;
+		if (['ATversion', 'ATversionChangelog', 'ATprofile'].includes(setting)) continue;
 
 		const item = autoTrimpSettings[setting];
 		const settingUniverse = item.universe;
