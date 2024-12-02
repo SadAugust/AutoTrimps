@@ -1,8 +1,5 @@
 //Setup for non-AT users
 if (typeof atData === 'undefined') atData = {};
-if (typeof _displaySpireImport !== 'function') function _displaySpireImport() {}
-if (typeof _getChallenge2Info !== 'function') function _getChallenge2Info() {}
-if (typeof importExportTooltip !== 'function') function importExportTooltip() {}
 
 if (typeof $$ !== 'function') {
 	$$ = function (a) {
@@ -868,15 +865,16 @@ atData.autoPerks = {
 		const presets = atData.autoPerks[`presets${calcName}`];
 		const inputBoxes = atData.autoPerks[`inputBoxes${calcName}`];
 		let settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
-		//As a safety measure we should remove the GUI if it already exists.
+		/* as a safety measure we should remove the GUI if it already exists. */
 		if (atData.autoPerks.GUI && Object.keys(atData.autoPerks.GUI).length !== 0) atData.autoPerks.removeGUI();
 
 		atData.autoPerks.GUI = {};
 		atData.autoPerks.GUI.inputs = [];
 		atData.autoPerks.loaded = calcName;
 		const apGUI = atData.autoPerks.GUI;
+		apGUI.$ratiosLine = {};
 
-		//Setup Auto Allocate button
+		/* auto Allocate button */
 		let allocateText = 'Clears all perks and buys optimal levels in each perk.';
 		allocateText += '<br>';
 		allocateText += 'When in the <b>View Perks</b> window it will only use your respec if you press the <b>Respec</b> button.';
@@ -889,16 +887,13 @@ atData.autoPerks = {
 		apGUI.$allocatorBtn.setAttribute('onmouseover', `tooltip("Auto Allocate", "customText", event, \`${allocateText}\`)`);
 		apGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
 		apGUI.$allocatorBtn.textContent = 'Allocate Perks';
-		//Distance from Portal/Cancel/Respec buttons
+
 		const $buttonbar = document.getElementById('portalBtnContainer');
 		if (!document.getElementById(apGUI.$allocatorBtn.id)) $buttonbar.appendChild(apGUI.$allocatorBtn);
 		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
 		apGUI.$customRatios = document.createElement('DIV');
 		apGUI.$customRatios.id = 'customRatios';
 
-		apGUI.$ratiosLine = {};
-
-		//Setup inputs boxes for the UI.
 		for (let x = 0; x < Object.keys(inputBoxes).length; x++) {
 			let row = Object.keys(inputBoxes)[x];
 			apGUI.$ratiosLine[row] = document.createElement('DIV');
@@ -911,12 +906,9 @@ atData.autoPerks = {
 			apGUI.$customRatios.appendChild(apGUI.$ratiosLine[row]);
 		}
 
-		//Creating container for both the label and the input.
 		apGUI.$presetDiv = document.createElement('DIV');
 		apGUI.$presetDiv.id = 'Preset Div';
 		apGUI.$presetDiv.style.cssText = 'display: inline; width: calc(100vw/34);';
-
-		//Setting up preset label
 		apGUI.$presetLabel = document.createElement('span');
 		apGUI.$presetLabel.id = 'PresetText';
 		apGUI.$presetLabel.innerHTML = '&nbsp;&nbsp;&nbsp;Preset:';

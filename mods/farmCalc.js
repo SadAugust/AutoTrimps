@@ -1,18 +1,5 @@
 //Setup for non-AT users
-if (typeof atData === 'undefined') {
-	atData = {};
-}
-if (typeof _displaySpireImport !== 'function') function _displaySpireImport() {}
-if (typeof _getChallenge2Info !== 'function') function _getChallenge2Info() {}
-if (typeof importExportTooltip !== 'function') function importExportTooltip() {}
-if (typeof mapSettingsDisplay !== 'function') function mapSettingsDisplay() {}
-if (typeof autoStructureDisplay !== 'function') function autoStructureDisplay() {}
-if (typeof autoJobsDisplay !== 'function') function autoJobsDisplay() {}
-if (typeof uniqueMapsDisplay !== 'function') function uniqueMapsDisplay() {}
-if (typeof messageDisplay !== 'function') function messageDisplay() {}
-if (typeof dailyPortalModsDisplay !== 'function') function dailyPortalModsDisplay() {}
-if (typeof c2RunnerDisplay !== 'function') function c2RunnerDisplay() {}
-if (typeof hideAutomationDisplay !== 'function') function hideAutomationDisplay() {}
+if (typeof atData === 'undefined') atData = {};
 
 function masteryPurchased(name) {
 	if (!game.talents[name]) throw `unknown mastery: ${name}`;

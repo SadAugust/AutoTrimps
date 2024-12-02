@@ -1,28 +1,30 @@
 function importExportTooltip(event, titleText) {
 	const eventHandlers = {
-		mapSettings: mapSettingsDisplay,
-		AutoStructure: autoStructureDisplay,
-		AutoJobs: autoJobsDisplay,
-		UniqueMaps: uniqueMapsDisplay,
-		MessageConfig: messageDisplay,
-		DailyAutoPortal: dailyPortalModsDisplay,
-		c2Runner: c2RunnerDisplay,
+		mapSettings: typeof mapSettingsDisplay === 'function' ? mapSettingsDisplay : null,
+		AutoStructure: typeof autoStructureDisplay === 'function' ? autoStructureDisplay : null,
+		AutoJobs: typeof autoJobsDisplay === 'function' ? autoJobsDisplay : null,
+		UniqueMaps: typeof uniqueMapsDisplay === 'function' ? uniqueMapsDisplay : null,
+		MessageConfig: typeof messageDisplay === 'function' ? messageDisplay : null,
+		DailyAutoPortal: typeof dailyPortalModsDisplay === 'function' ? dailyPortalModsDisplay : null,
+		c2Runner: typeof c2RunnerDisplay === 'function' ? c2RunnerDisplay : null,
 		/* Import Export Functions */
-		exportAutoTrimps: _displayExportAutoTrimps,
-		importAutoTrimps: _displayImportAutoTrimps,
-		forceAutoPortal: _displayPortalForce,
-		donate: _displayDonate,
-		spireImport: _displaySpireImport,
-		priorityOrder: _displayPriorityOrder,
-		c2table: _displayC2Table,
-		resetDefaultSettingsProfiles: _displayResetDefaultSettingsProfiles,
-		disableSettingsProfiles: _displayDisableSettingsProfiles,
-		setCustomChallenge: _displaySetCustomChallenge,
-		timeWarp: _displayTimeWarp,
-		resetPerkPreset: _displayResetPerkPreset,
-		hideAutomation: hideAutomationDisplay,
-		display: _displayFarmCalcTable
+		exportAutoTrimps: typeof _displayExportAutoTrimps === 'function' ? _displayExportAutoTrimps : null,
+		importAutoTrimps: typeof _displayImportAutoTrimps === 'function' ? _displayImportAutoTrimps : null,
+		forceAutoPortal: typeof _displayPortalForce === 'function' ? _displayPortalForce : null,
+		donate: typeof _displayDonate === 'function' ? _displayDonate : null,
+		spireImport: typeof _displaySpireImport === 'function' ? _displaySpireImport : null,
+		priorityOrder: typeof _displayPriorityOrder === 'function' ? _displayPriorityOrder : null,
+		c2table: typeof _displayC2Table === 'function' ? _displayC2Table : null,
+		resetDefaultSettingsProfiles: typeof _displayResetDefaultSettingsProfiles === 'function' ? _displayResetDefaultSettingsProfiles : null,
+		disableSettingsProfiles: typeof _displayDisableSettingsProfiles === 'function' ? _displayDisableSettingsProfiles : null,
+		setCustomChallenge: typeof _displaySetCustomChallenge === 'function' ? _displaySetCustomChallenge : null,
+		timeWarp: typeof _displayTimeWarp === 'function' ? _displayTimeWarp : null,
+		resetPerkPreset: typeof _displayResetPerkPreset === 'function' ? _displayResetPerkPreset : null,
+		hideAutomation: typeof hideAutomationDisplay === 'function' ? hideAutomationDisplay : null,
+		display: typeof _displayFarmCalcTable === 'function' ? _displayFarmCalcTable : null
 	};
+
+	const c2Info = typeof _getChallenge2Info === 'function' ? _getChallenge2Info() : '';
 
 	const titleTexts = {
 		AutoStructure: 'Configure AutoTrimps AutoStructure',
@@ -30,7 +32,7 @@ function importExportTooltip(event, titleText) {
 		UniqueMaps: 'Unique Maps',
 		MessageConfig: 'Message Config',
 		DailyAutoPortal: 'Daily Auto Portal',
-		c2Runner: _getChallenge2Info() + ' Runner',
+		c2Runner: c2Info + ' Runner',
 		/* Import Export Titles */
 		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
 		importAutoTrimps: 'Import AutoTrimps Settings',
@@ -38,7 +40,7 @@ function importExportTooltip(event, titleText) {
 		donate: 'Donate',
 		spireImport: 'Import Spire Settings',
 		priorityOrder: 'Priority Order Table',
-		c2table: _getChallenge2Info() + ' Table',
+		c2table: c2Info + ' Table',
 		resetDefaultSettingsProfiles: 'Reset Default Settings',
 		disableSettingsProfiles: 'Disable All Settings',
 		setCustomChallenge: 'Set Custom Challenge',
@@ -57,7 +59,9 @@ function importExportTooltip(event, titleText) {
 
 	if (eventHandlers[event]) {
 		titleText = titleTexts[event] || titleText;
-		[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText);
+		if (typeof eventHandlers[event] === 'function') {
+			[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText);
+		}
 	}
 
 	if (event) {
@@ -761,8 +765,8 @@ function _raspberryPiSettings() {
 function loadAugustSettings() {
 	_raspberryPiSettings();
 	if (atConfig.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') return;
-
 	if (typeof greenworks === 'undefined') autoTrimpSettings.gameUser.value = 'test';
+
 	autoTrimpSettings.downloadSaves.enabled = 0;
 	autoTrimpSettings.downloadSaves.enabledU2 = 0;
 	saveSettings();
@@ -782,7 +786,7 @@ function loadAugustSettings() {
 	game.options.menu.voidPopups.enabled = 0;
 	game.options.menu.confirmhole.enabled = 0;
 
-	let toggles = ['darkTheme', 'standardNotation', 'hotkeys'];
+	const toggles = ['darkTheme', 'standardNotation', 'hotkeys'];
 	for (let i in toggles) {
 		let setting = game.options.menu[toggles[i]];
 		if (setting.onToggle) setting.onToggle();
