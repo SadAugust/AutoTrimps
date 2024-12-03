@@ -44,7 +44,6 @@ if (typeof elementVisible !== 'function') {
 
 function runHeirlooms() {
 	const selectedLoom = game.global.selectedHeirloom;
-	/* disable if we don't have an heirloom selected. */
 	if (selectedLoom.length === 0) return;
 
 	if (game.global.universe === 2 && !Fluffy.isRewardActive('heirloopy')) {
@@ -60,8 +59,8 @@ function runHeirlooms() {
 	if (selectedLoom[1].includes('Equipped')) startingHeirloom = game.global[selectedLoom[1]];
 	else startingHeirloom = game.global[selectedLoom[1]][selectedLoom[0]];
 	startingHeirloom.mods = heirlooms.newLoom.mods;
-	displaySelectedHeirloom(true);
 
+	displaySelectedHeirloom(true);
 	setupHeirloomHelpBtn();
 	updateModContainer('heirloomHelpBtn', heirlooms.newLoom);
 	recalculateHeirloomBonuses();
@@ -236,7 +235,7 @@ function setupHeirloomUI() {
 				name: 'Weight: Equality',
 				description: `<p><b>Weight: Equality</b> is a multiplier for the <b>Inequality</b> modifier, the calculation uses an exponential function. The value of the <b>Inequality</b> modifier is raised to the power of the target Equality. For example, if your next Inequality upgrade were to increase your <b>Inequality</b> value by 1%, the default weight (100) will increase its value to 270%.</p>
 				<p>Ideally your input should be the amount of equality used for the hardest zones in your runs.</p>`,
-				minValue: 1,
+				minValue: 0,
 				maxValue: null,
 				defaultValue: 100,
 				get weighable() {
