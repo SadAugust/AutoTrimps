@@ -294,7 +294,7 @@ function toggleCustomRatio(elemName, btnType = 'Ratio') {
 
 		newClass === 'settingBtntrue' ? saveHeirloomSettings() : loadHeirloomSettings();
 	} else {
-		heirloomSettings[btnType].enabled = newClass !== 'settingBtntrue';
+		heirloomSettings[btnType].enabled = newClass === 'settingBtntrue';
 		localStorage.setItem('heirloomInputs', JSON.stringify(heirloomInputs));
 	}
 
