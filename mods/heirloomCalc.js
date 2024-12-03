@@ -436,10 +436,15 @@ class Heirloom {
 			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
 			const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
 			const heirloomSettings = settings && settings[this.id] ? settings[this.id] : settings;
-			this.inputs = heirloomSettings && heirloomSettings.Ratio ? heirloomSettings.Ratio : settings;
-			this.inputs = Object.fromEntries(Object.entries(this.inputs).map(([key, value]) => [key, Number(value)]));
+			this.inputs = {};
+			const source = heirloomSettings && heirloomSettings.Ratio ? heirloomSettings.Ratio : settings;
+
+			for (const [key, value] of Object.entries(source)) {
+				this.inputs[key] = Number(value);
+			}
 
 			this.isCore = this.type === 'Core';
+
 			this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
 			this.priceIncrease = priceIncreases[this.rarity];
 
