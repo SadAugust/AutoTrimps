@@ -165,7 +165,7 @@ function setupHeirloomUI() {
 		hcGUI.$customRatioBtn = document.createElement('DIV');
 		hcGUI.$customRatioBtn.id = 'heirloomCustomRatioBtn';
 		hcGUI.$customRatioBtn.setAttribute('class', 'btn settingsBtn settingBtnfalse ');
-		hcGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio(hcGUI.$customRatioBtn.id, "Ratio")');
+		hcGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio(atData.heirloomCalc.GUI.$customRatioBtn.id, "Ratio")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseover', 'tooltip("Custom Ratio", "customText", event, "Enabling this allows you to set custom weight inputs for this specific heirloom that won\'t impact the global weight inputs that heirlooms would normally use.")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseout', 'tooltip("hide")');
 		hcGUI.$customRatioBtn.style.cssText = `float:left; border: 0.1vw solid #777; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; margin-right: 13.88vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
@@ -200,8 +200,9 @@ function setupHeirloomUI() {
 		row1: {
 			equipLevels: {
 				name: 'Weight: Efficiency Mods',
-				description: '<p>The weight you want to use for efficiency modifiers, the lower you put this value the higher the script will weight the efficiency modifiers.</p><p><b>Explorer & Dragimp Efficiency</b> modifiers will be calculated using roughly 1% of the cost of other efficiencies.</p><p>You can modify the percentage spent on other efficiency mods by holding <b>control</b> and clicking on the buttons below the <b>Allocate Nullifium</b> button.</p>',
-				minValue: 1,
+				description:
+					"<p>The weight you want to use for efficiency modifiers, the lower you put this value the higher the script will weight the efficiency modifiers.</p><p><b>Explorer & Dragimp Efficiency</b> modifiers will be calculated using roughly 1% of the cost of other efficiencies.</p><p>You can modify the percentage spent on other efficiency mods by holding <b>control</b> and clicking on the buttons below the <b>Allocate Nullifium</b> button.</p><br><p>If you set this to 0, the script won't spend any nullifium on Efficiency modifiers.</p>",
+				minValue: 0,
 				maxValue: null,
 				defaultValue: 90
 			},
@@ -437,6 +438,8 @@ class Heirloom {
 			const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
 			const heirloomSettings = settings && settings[this.id] ? settings[this.id] : settings;
 			this.inputs = heirloomSettings && heirloomSettings.Ratio ? heirloomSettings.Ratio : settings;
+			this.inputs = Object.fromEntries(Object.entries(this.inputs).map(([key, value]) => [key, Number(value)]));
+
 			this.isCore = this.type === 'Core';
 			this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
 			this.priceIncrease = priceIncreases[this.rarity];
@@ -982,7 +985,7 @@ class Heirloom {
 	}
 
 	getInnateGain(type) {
-		if (this.rarity < 10) {
+		if (this.rarity < 10 || this.inputs.equipLevels === 0) {
 			return 1;
 		}
 

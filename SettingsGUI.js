@@ -1749,7 +1749,7 @@ function initialiseAllSettings() {
 			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Raiding")', 'Maps', [1, 2]);
 
 		createSetting('bionicRaidingSettings',
-			function () { return ('BW Raiding Settings') },
+			function () { return ('Bionic Raiding Settings') },
 			function () {
 				let description = "<p>Here you can select how and when you would like to raid Bionic Wonderland maps for prestiges.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
@@ -2711,7 +2711,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Enable this if you want to automate destacking and farming when running the <b>Glass</b> challenge.</p>";
 				description += "<p>Will farm for damage if you can't clear stacks in a world level or above map.</p>";
-				description += "<p>When at c100 of a zone it checks if you can clear world level maps on the next zone and if you can't it will farm damage until you are able to.</p>";
+				description += "<p>When at cell 100 of a zone it checks if you can clear world level maps on the next zone and if you can't it will farm damage until you are able to.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
