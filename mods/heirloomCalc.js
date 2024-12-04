@@ -283,7 +283,7 @@ function toggleCustomRatio(elemName, btnType = 'Ratio') {
 
 	const heirloomSettings = heirloomInputs[selectedHeirloom];
 	if (typeof heirloomSettings[btnType] === 'boolean') {
-		heirloomSettings[btnType] = { enabled: heirloomSettings[btnType], weight: 100 };
+		heirloomSettings[btnType] = { enabled: newClass !== 'settingBtntrue', weight: 100 };
 	}
 
 	if (btnType === 'Ratio') {
