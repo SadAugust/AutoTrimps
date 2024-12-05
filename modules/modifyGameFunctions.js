@@ -23,7 +23,7 @@ if (typeof originalLoad !== 'function') {
 			loadAugustSettings();
 			atlantrimpRespecOverride();
 			resetVarsZone(true);
-			_setButtonsPortal();
+			_setButtonsPortal(false);
 			setupAddonUser();
 			updateAutoTrimpSettings(true);
 			RTC_populateRunetrinketCounterInfo();

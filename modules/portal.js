@@ -848,25 +848,25 @@ function atlantrimpRespecMessage(cellOverride) {
 	}
 }
 
-function _setButtonsPortal() {
-	if (getPageSetting('autoMapsPortal') && !getPageSetting('autoMaps')) {
+function _setButtonsPortal(onPortal = true) {
+	if (onPortal && getPageSetting('autoMapsPortal') && !getPageSetting('autoMaps')) {
 		setPageSetting('autoMaps', 1, game.global.universe);
 	}
 	_setAutoMapsClasses();
 
-	if (getPageSetting('equipPortal') && !getPageSetting('equipOn')) {
+	if (onPortal && getPageSetting('equipPortal') && !getPageSetting('equipOn')) {
 		setPageSetting('equipOn', true, game.global.universe);
 	}
 	_setAutoEquipClasses();
 
 	const autoStructureSettings = getPageSetting('buildingSettingsArray');
-	if (typeof autoStructureSettings.portalOption !== 'undefined' && autoStructureSettings.portalOption !== '0') {
+	if (onPortal && typeof autoStructureSettings.portalOption !== 'undefined' && autoStructureSettings.portalOption !== '0') {
 		setPageSetting('buildingsType', autoStructureSettings.portalOption === 'on', game.global.universe);
 	}
 	_setBuildingClasses();
 
 	const autoJobsSettings = getPageSetting('jobSettingsArray');
-	if (typeof autoJobsSettings.portalOption !== 'undefined' && autoJobsSettings.portalOption !== '0') {
+	if (onPortal && typeof autoJobsSettings.portalOption !== 'undefined' && autoJobsSettings.portalOption !== '0') {
 		const portalOptionMapping = {
 			'Auto Jobs: Off': 0,
 			'Auto Jobs: On': 1,
