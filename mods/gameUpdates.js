@@ -4837,6 +4837,22 @@ game.worldUnlocks.Magmamancer.fire = function () {
 	unlockUpgrade('Magmamancers');
 };
 
+game.challenges.Hypothermia.bonfireTooltip = function () {
+	let text = '';
+
+	if (this.bonfires === 0) {
+		text = 'You have no active Bonfires. Your Trimps are sad and cold. Next Bonfire will be constructed at ' + prettify(this.bonfirePrice()) + ' Wood.';
+	} else {
+		const bonfireLength = this.getBonfireLength();
+		text = 'You have ' + this.bonfires + ' active Bonfire' + needAnS(this.bonfires) + '. Your Trimps will automatically construct another Bonfire once you start a Zone with ' + prettify(this.bonfirePrice()) + ' total Wood. Your next Bonfire will expire at the start of Zone ' + (this.lastBurn + bonfireLength) + '.';
+	}
+
+	const bonfireTotal = this.totalBonfires + this.bonfires;
+	text += `<br><br>You have constructed ${bonfireTotal} Bonfire${needAnS(bonfireTotal)} so far this run.`;
+
+	return text;
+};
+
 offlineProgress.fluff = function () {
 	const fluffs = [
 		`Your Trimps really missed you`,
@@ -4853,6 +4869,7 @@ offlineProgress.fluff = function () {
 		`Your Trimps dinged your ship while out on a joyride`,
 		`One of your Trimps got a tattoo while you were gone`
 	];
+
 	if (game.global.fluffyExp > 0) {
 		const name = Fluffy.getName();
 		fluffs.push(`${name} reminds you that he's not a babysitter`);
@@ -5750,7 +5767,7 @@ function getBattleStatBd(what) {
 		textString += "<tr><td colspan='5' style='font-weight: bold'>Your Prismatic Shield is equal to " + Math.round(currentCalc * 100) + "% of your Trimps' maximum Health. All enemy damage hits your Prismatic Shield before Health, and Prismatic Shield always regenerates to full after an enemy is killed.</td></tr>";
 	}
 	//Add coordination
-	if (what != 'shield') {
+	if (what !== 'shield') {
 		currentCalc *= game.resources.trimps.maxSoldiers;
 		textString += "<tr><td class='bdTitle'>Soldiers</td><td class='bdPercentSm'></td><td></td><td>x " + prettify(game.resources.trimps.maxSoldiers) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td>' + (what === 'attack' ? getFluctuation(currentCalc, minFluct, maxFluct) : '') + '</tr>';
 	}
@@ -5945,7 +5962,7 @@ function getBattleStatBd(what) {
 		}
 		textString += "<td class='bdTitle'>Exhausted (Quagmire)</td><td>" + dispPercent + '</td><td>' + game.challenges.Quagmire.exhaustedStacks + '</td><td>' + dispTotal + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td>' + getFluctuation(currentCalc, minFluct, maxFluct) + '</tr>';
 	}
-	if (what != 'shield') {
+	if (what !== 'shield') {
 		var heirloomBonus = calcHeirloomBonus('Shield', 'trimp' + capitalizeFirstLetter(what), 0, true);
 		if (heirloomBonus > 0) {
 			currentCalc *= heirloomBonus / 100 + 1;
@@ -6085,7 +6102,7 @@ function getBattleStatBd(what) {
 		textString += '</tr>';
 	}
 	//Add golden battle
-	if (what != 'block' && what != 'shield' && game.goldenUpgrades.Battle.currentBonus > 0) {
+	if (what !== 'block' && what !== 'shield' && game.goldenUpgrades.Battle.currentBonus > 0) {
 		amt = game.goldenUpgrades.Battle.currentBonus;
 		currentCalc *= 1 + amt;
 		textString += "<tr><td class='bdTitle'>Golden Battle</td><td></td><td></td><td>+ " + prettify(amt * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td>' + (what === 'attack' ? getFluctuation(currentCalc, minFluct, maxFluct) : '') + '</tr>';
@@ -6097,7 +6114,7 @@ function getBattleStatBd(what) {
 		amt = (amt - 1) * 100;
 		textString += "<tr><td class='bdTitle'>Herbalist</td><td></td><td></td><td>+ " + prettify(amt) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td>' + getFluctuation(currentCalc, minFluct, maxFluct) + '</tr>';
 	}
-	if (what != 'block' && what != 'shield' && game.talents.voidPower.purchased && game.global.voidBuff) {
+	if (what !== 'block' && what !== 'shield' && game.talents.voidPower.purchased && game.global.voidBuff) {
 		amt = game.talents.voidPower2.purchased ? (game.talents.voidPower3.purchased ? 65 : 35) : 15;
 		currentCalc *= 1 + amt / 100;
 		textString += "<tr><td class='bdTitle'>Void Power</td><td></td><td>" + (game.talents.voidPower2.purchased ? (game.talents.voidPower3.purchased ? 'III' : 'II') : 'I') + '</td><td>+ ' + amt + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td>' + (what === 'attack' ? getFluctuation(currentCalc, minFluct, maxFluct) : '') + '</tr>';
@@ -6549,14 +6566,14 @@ function updatePs(jobObj, trimps, jobName) {
 		//portal Motivation
 		if (getPerkLevel('Motivation')) psText *= 1 + getPerkLevel('Motivation') * game.portal.Motivation.modifier;
 		if (getPerkLevel('Motivation_II')) psText *= 1 + getPerkLevel('Motivation_II') * game.portal.Motivation_II.modifier;
-		if (increase != 'gems' && game.permaBoneBonuses.multitasking.owned > 0 && game.resources.trimps.owned >= game.resources.trimps.realMax()) psText *= 1 + game.permaBoneBonuses.multitasking.mult();
-		if (increase != 'fragments' && increase != 'science') {
+		if (increase !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0 && game.resources.trimps.owned >= game.resources.trimps.realMax()) psText *= 1 + game.permaBoneBonuses.multitasking.mult();
+		if (increase !== 'fragments' && increase !== 'science') {
 			if (challengeActive('Alchemy')) psText *= alchObj.getPotionEffect('Potion of Finding');
 			psText *= alchObj.getPotionEffect('Elixir of Finding');
 		}
 		if (challengeActive('Frigid')) psText *= game.challenges.Frigid.getShatteredMult();
-		if (game.global.pandCompletions && increase != 'fragments') psText *= game.challenges.Pandemonium.getTrimpMult();
-		if (game.global.desoCompletions && increase != 'fragments') psText *= game.challenges.Desolation.getTrimpMult();
+		if (game.global.pandCompletions && increase !== 'fragments') psText *= game.challenges.Pandemonium.getTrimpMult();
+		if (game.global.desoCompletions && increase !== 'fragments') psText *= game.challenges.Desolation.getTrimpMult();
 		if (!game.portal.Observation.radLocked && game.global.universe == 2 && game.portal.Observation.trinkets > 0) psText *= game.portal.Observation.getMult();
 		if (increase == 'food' || increase == 'wood' || increase == 'metal') {
 			psText *= getParityBonus();
@@ -6583,27 +6600,27 @@ function updatePs(jobObj, trimps, jobName) {
 			psText *= 10 * Math.pow(challenge.decayValue, challenge.stacks);
 		}
 		if (challengeActive('Daily')) {
-			if (typeof game.global.dailyChallenge.famine !== 'undefined' && increase != 'fragments' && increase != 'science') {
+			if (typeof game.global.dailyChallenge.famine !== 'undefined' && increase !== 'fragments' && increase !== 'science') {
 				psText *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 			}
 			if (typeof game.global.dailyChallenge.dedication !== 'undefined') {
 				psText *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
 			}
 		}
-		if (challengeActive('Archaeology') && increase != 'fragments') psText *= game.challenges.Archaeology.getStatMult('science');
-		if (challengeActive('Insanity') && increase != 'fragments') psText *= game.challenges.Insanity.getLootMult();
+		if (challengeActive('Archaeology') && increase !== 'fragments') psText *= game.challenges.Archaeology.getStatMult('science');
+		if (challengeActive('Insanity') && increase !== 'fragments') psText *= game.challenges.Insanity.getLootMult();
 		if (challengeActive('Desolation')) psText *= game.challenges.Desolation.trimpResourceMult();
-		if (game.challenges.Nurture.boostsActive() && increase != 'fragments') psText *= game.challenges.Nurture.getResourceBoost();
+		if (game.challenges.Nurture.boostsActive() && increase !== 'fragments') psText *= game.challenges.Nurture.getResourceBoost();
 		if (challengeActive('Hypothermia') && increase == 'wood') psText *= game.challenges.Hypothermia.getWoodMult(true);
 		if (challengeActive('Watch')) psText /= 2;
 		if (challengeActive('Lead') && game.global.world % 2 == 1) psText *= 2;
-		if (jobName != 'Explorer' && getEmpowerment() == 'Wind') {
+		if (jobName !== 'Explorer' && getEmpowerment() == 'Wind') {
 			psText *= 1 + game.empowerments.Wind.getCombatModifier();
 		}
 		psText = calcHeirloomBonus('Staff', jobName + 'Speed', psText);
 		if (game.global.playerGathering == increase) {
-			if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && increase != 'science') {
-				var tBonus = 1.5;
+			if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && increase !== 'science') {
+				let tBonus = 1.5;
 				if (game.talents.turkimp2.purchased) tBonus = 2;
 				else if (game.talents.turkimp2.purchased) tBonus = 1.75;
 				psText *= tBonus;
@@ -6628,7 +6645,7 @@ function updatePs(jobObj, trimps, jobName) {
 }
 
 function getPsString(what, rawNum) {
-	if (what == 'helium') return;
+	if (what === 'helium') return;
 	let resOrder = ['food', 'wood', 'metal', 'science', 'gems', 'fragments'];
 	const books = ['farming', 'lumber', 'miner', 'science'];
 	const jobs = ['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Dragimp', 'Explorer'];
@@ -6636,7 +6653,7 @@ function getPsString(what, rawNum) {
 	const job = game.jobs[jobs[index]];
 	const book = game.upgrades['Speed' + books[index]];
 	const mBook = game.upgrades['Mega' + books[index]];
-	const base = what == 'fragments' ? 0.4 : 0.5;
+	const base = what === 'fragments' ? 0.4 : 0.5;
 	let textString = "<table class='bdTableSm table table-striped'><tbody>";
 	//Add base
 	textString += "<tr><td class='bdTitle'>Base</td><td class='bdPercent'></td><td class='bdNumber'>" + prettify(base) + '</td></tr>';
@@ -6646,7 +6663,7 @@ function getPsString(what, rawNum) {
 	textString += "<tr><td class='bdTitle'>" + jobs[index] + s + "</td><td class='bdPercent'>" + prettify(job.owned) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 
 	//Add books
-	if (what != 'gems' && game.permaBoneBonuses.multitasking.owned > 0) {
+	if (what !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0) {
 		const str = game.resources.trimps.owned >= game.resources.trimps.realMax() ? game.permaBoneBonuses.multitasking.mult() : 0;
 		currentCalc *= 1 + str;
 		textString += "<tr><td class='bdTitle'>Multitasking (Bones)</td><td class='bdPercent'>+ " + prettify(str * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
@@ -6670,13 +6687,13 @@ function getPsString(what, rawNum) {
 	}
 
 	//Add bounty
-	if (what != 'gems' && game.upgrades.Bounty.done > 0) {
+	if (what !== 'gems' && game.upgrades.Bounty.done > 0) {
 		currentCalc *= 2;
 		textString += "<tr><td class='bdTitle'>Bounty</td><td class='bdPercent'>+ 100%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
 	//Add Tribute
-	if (what == 'gems' && game.buildings.Tribute.owned > 0) {
+	if (what === 'gems' && game.buildings.Tribute.owned > 0) {
 		let tributeStrength = Math.pow(game.buildings.Tribute.increase.by, game.buildings.Tribute.owned);
 		currentCalc *= tributeStrength;
 		tributeStrength = prettify((tributeStrength - 1) * 100) + '%';
@@ -6730,20 +6747,20 @@ function getPsString(what, rawNum) {
 
 	let potionFinding;
 	if (challengeActive('Alchemy')) potionFinding = alchObj.getPotionEffect('Potion of Finding');
-	if (potionFinding > 1 && what != 'fragments' && what != 'science') {
+	if (potionFinding > 1 && what !== 'fragments' && what !== 'science') {
 		currentCalc *= potionFinding;
 		textString += "<tr><td class='bdTitle'>Potion of Finding</td><td class='bdPercent'>+ " + prettify((potionFinding - 1) * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
 	potionFinding = alchObj.getPotionEffect('Elixir of Finding');
 
-	if (potionFinding > 1 && what != 'fragments' && what != 'science') {
+	if (potionFinding > 1 && what !== 'fragments' && what !== 'science') {
 		currentCalc *= potionFinding;
 		textString += "<tr><td class='bdTitle'>Elixir of Finding</td><td class='bdPercent'>+ " + prettify((potionFinding - 1) * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
 	//Add Magmamancer
-	if (game.jobs.Magmamancer.owned > 0 && what == 'metal') {
+	if (game.jobs.Magmamancer.owned > 0 && what === 'metal') {
 		let manceStrength = game.jobs.Magmamancer.getBonusPercent();
 		if (manceStrength > 1) {
 			currentCalc *= manceStrength;
@@ -6752,14 +6769,14 @@ function getPsString(what, rawNum) {
 		}
 	}
 
-	if (game.upgrades.Speedexplorer.done > 0 && what == 'fragments') {
+	if (game.upgrades.Speedexplorer.done > 0 && what === 'fragments') {
 		const bonus = Math.pow(4, game.upgrades.Speedexplorer.done);
 		currentCalc *= bonus;
 		textString += "<tr><td class='bdTitle'>Speedexplorer</td><td class='bdPercent'>+ " + prettify((bonus - 1) * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
 	//Add Size (challenge)
-	if (challengeActive('Size') && (what == 'food' || what == 'metal' || what == 'wood')) {
+	if (challengeActive('Size') && (what === 'food' || what === 'metal' || what === 'wood')) {
 		currentCalc *= 1.5;
 		textString += "<tr><td class='bdTitle'>Huge (Size)</td><td class='bdPercent'>+ 50%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
@@ -6820,7 +6837,7 @@ function getPsString(what, rawNum) {
 		textString += "<tr><td class='bdTitle'>Determined (Lead)</td><td class='bdPercent'>+ 100%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
-	if (challengeActive('Archaeology') && what != 'fragments') {
+	if (challengeActive('Archaeology') && what !== 'fragments') {
 		const mult = game.challenges.Archaeology.getStatMult('science');
 		const count = game.challenges.Archaeology.getPoints('science');
 		const style = count < 0 ? " style='color: red'" : '';
@@ -6834,19 +6851,19 @@ function getPsString(what, rawNum) {
 		textString += "<tr><td class='bdTitle'>Insane (Insanity)</td><td class='bdPercent'>+ " + (100 * (mult - 1)).toFixed(4) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
-	if (game.challenges.Nurture.boostsActive() && what != 'fragments') {
+	if (game.challenges.Nurture.boostsActive() && what !== 'fragments') {
 		const mult = game.challenges.Nurture.getResourceBoost();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Cruffys</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
-	if (game.global.pandCompletions && what != 'fragments') {
+	if (game.global.pandCompletions && what !== 'fragments') {
 		const mult = game.challenges.Pandemonium.getTrimpMult();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Pandemonium</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
-	if (game.global.desoCompletions && what != 'fragments') {
+	if (game.global.desoCompletions && what !== 'fragments') {
 		const mult = game.challenges.Desolation.getTrimpMult();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Desolation Completions</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
@@ -6861,14 +6878,14 @@ function getPsString(what, rawNum) {
 			textString += "<tr><td class='bdTitle'>Dedicated (Daily)</td><td class='bdPercent'>+ " + prettify(mult * 100 - 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 		}
 
-		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != 'fragments' && what != 'science') {
+		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what !== 'fragments' && what !== 'science') {
 			mult = dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 			currentCalc *= mult;
 			textString += "<tr style='color: red'><td class='bdTitle'>Famine (Daily)</td><td class='bdPercent'>" + prettify(mult * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 		}
 	}
 
-	if (challengeActive('Hypothermia') && what == 'wood') {
+	if (challengeActive('Hypothermia') && what === 'wood') {
 		const mult = game.challenges.Hypothermia.getWoodMult(true);
 		currentCalc *= mult;
 		textString += "<tr style='color: red'><td class='bdTitle'>Hypothermia</td><td class='bdPercent'>x " + prettify(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
@@ -6880,25 +6897,25 @@ function getPsString(what, rawNum) {
 		textString += "<tr style='color: red'><td class='bdTitle'>Desolation</td><td class='bdPercent'>x " + prettify(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
-	if (((what == 'food' || what == 'wood') && game.buildings.Antenna.owned >= 5) || (what == 'metal' && game.buildings.Antenna.owned >= 15)) {
+	if (((what === 'food' || what === 'wood') && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) {
 		const mult = game.jobs.Meteorologist.getExtraMult();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Antenna Network</td><td class='bdPercent'>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
-	if ((what == 'food' || what == 'metal' || what == 'wood') && getParityBonus() > 1) {
+	if ((what === 'food' || what === 'metal' || what === 'wood') && getParityBonus() > 1) {
 		const mult = getParityBonus();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Parity (Staff)</td><td class='bdPercent'>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
-	if ((what == 'food' || what == 'metal' || what == 'wood') && autoBattle.oneTimers.Gathermate.owned && game.global.universe == 2) {
+	if ((what === 'food' || what === 'metal' || what === 'wood') && autoBattle.oneTimers.Gathermate.owned && game.global.universe == 2) {
 		const mult = autoBattle.oneTimers.Gathermate.getMult();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Gathermate</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 	}
 
-	if (what != 'fragments' && getEmpowerment() == 'Wind') {
+	if (what !== 'fragments' && getEmpowerment() == 'Wind') {
 		const windMod = game.empowerments.Wind.getCombatModifier();
 		currentCalc *= 1 + windMod;
 		textString += "<tr><td class='bdTitle'>Swiftness (Wind)</td><td class='bdPercent'>+ " + prettify(windMod * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
@@ -6913,7 +6930,7 @@ function getPsString(what, rawNum) {
 
 	//Add player
 	if (game.global.playerGathering == what) {
-		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == 'food' || what == 'wood' || what == 'metal')) {
+		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === 'food' || what === 'wood' || what === 'metal')) {
 			let tBonus = 50;
 			if (game.talents.turkimp2.purchased) tBonus = 100;
 			else if (game.talents.turkimp2.purchased) tBonus = 75;
@@ -6938,4 +6955,532 @@ function getPsString(what, rawNum) {
 	textString += '</tbody></table>';
 	game.global.lockTooltip = false;
 	tooltip('confirm', null, 'update', textString, "getPsString('" + what + "')", what.charAt(0).toUpperCase() + what.substr(1, what.length) + ' Per Second', 'Refresh', true);
+}
+
+function getLootBd(what) {
+	let map;
+	let world;
+	let level = '';
+	let cell;
+
+	if (game.global.mapsActive) {
+		map = getCurrentMapObject();
+		cell = game.global.lastClearedMapCell + 1;
+		level = scaleLootLevel(cell, map.level);
+		world = map.level;
+	} else {
+		cell = game.global.lastClearedCell + 1;
+		level = scaleLootLevel(cell);
+		world = game.global.world;
+	}
+
+	let textString = '	<div><ul id="lootBdTabs" class="nav nav-tabs nav-justified"><li role="presentation" onclick="getLootBd(\'Food/Wood/Metal\')"><a href="#">Food/Wood/Metal</a></li>';
+	if (game.global.mapsUnlocked) textString += '<li role="presentation" onclick="getLootBd(\'Fragments\')"><a href="#">Fragments</a></li><li role="presentation" onclick="getLootBd(\'Gems\')"><a href="#">Gems</a></li>';
+	if ((game.global.universe == 1 && game.global.world >= 20) || (game.global.universe == 2 && game.global.world > 15)) textString += '<li role="presentation" onclick="getLootBd(\'Helium\')"><a href="#">' + heliumOrRadon() + '</a></li>';
+	textString += '</ul></div>';
+
+	const name = what === 'Helium' ? heliumOrRadon() : what;
+	textString += "<table class='bdTableSm table table-striped'><tbody><tr><td style='font-weight: bold; font-size: 1.1em'>" + name + '</td><td>Base</td><td>Amount</td><td>Line Total</td><td>Total</td></tr>';
+	let currentCalc = 0;
+	let amt = 0;
+
+	switch (what) {
+		case 'Food/Wood/Metal':
+			let tempModifier = 0.5 * Math.pow(1.25, game.global.world >= 59 && game.global.universe == 1 ? 59 : game.global.world);
+			//Mega books
+			if (game.global.world >= 60 && game.global.universe == 1) {
+				if (game.global.frugalDone) tempModifier *= Math.pow(1.6, game.global.world - 59);
+				else tempModifier *= Math.pow(1.5, game.global.world - 59);
+			}
+			//Bounty
+			if (game.global.world >= 15) tempModifier *= 2;
+			//Whipimp
+			if (game.unlocks.impCount.Whipimp) tempModifier *= Math.pow(1.003, game.unlocks.impCount.Whipimp);
+			let avgSec = tempModifier;
+			if (game.global.world < 100) amt = avgSec * 3.5;
+			else amt = avgSec * 5;
+			amt = amt * 0.8 + amt * 0.002 * (cell + 1);
+			currentCalc = amt;
+			textString += "<tr><td class='bdTitle'>Base</td><td></td><td></td><td>" + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+
+			if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (game.global.playerGathering == 'food' || game.global.playerGathering == 'metal' || game.global.playerGathering == 'wood')) {
+				//Average the bonus out amongst all 3 resources. I can't remember why turkimp2 is 1.249 instead of 1.25 but at this point I'm too scared to change it
+				tBonus = 1.166;
+				if (game.talents.turkimp2.purchased) tBonus = 1.333;
+				else if (game.talents.turkimp2.purchased) tBonus = 1.249;
+				currentCalc *= tBonus;
+				textString += "<tr><td class='bdTitle'>Turkimp</td><td></td><td></td><td>+ " + prettify((tBonus - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+
+			amt = game.resources.trimps.realMax() * 0.16;
+			currentCalc *= amt;
+			textString += "<tr><td class='bdTitle'>Trimps</td><td>0.16</td><td>" + prettify(game.resources.trimps.realMax()) + '</td><td>x ' + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			break;
+		case 'Gems':
+			level = (level - 400) * 1.35;
+			if (level < 0) {
+				level = 0;
+			}
+			amt = Math.round(0.5 * Math.pow(1.23, Math.sqrt(level)));
+			amt += Math.round(0.5 * level);
+			amt = amt * 0.8 + amt * 0.002 * (cell + 1);
+			currentCalc = amt;
+			textString += "<tr><td class='bdTitle'>Base</td><td></td><td></td><td>" + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			if (game.jobs.Dragimp.owned >= 1) {
+				amt = 1.5 * game.jobs.Dragimp.modifier;
+				amt = amt * 0.8 + amt * 0.002 * (cell + 1);
+				currentCalc += amt;
+				textString += "<tr><td class='bdTitle'>Dragimp Scouting</td><td></td><td></td><td>+ " + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+			break;
+		case 'Fragments':
+			amt = Math.floor(Math.pow(1.15, game.global.world) * game.global.world * game.global.world * 0.02);
+			currentCalc = amt;
+			textString += "<tr><td class='bdTitle'>Base</td><td></td><td></td><td>" + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			break;
+		case 'Helium':
+			level = scaleLootLevel(99);
+			level = Math.round((level - 1900) / 100);
+			level *= 1.35;
+			if (level < 0) level = 0;
+			let baseAmt = 0;
+			if (game.global.universe == 2 || game.global.world < 59 || (game.global.world == 59 && game.global.mapsActive)) baseAmt = 1;
+			else if (game.global.world < mutations.Corruption.start(true)) baseAmt = 5;
+			else baseAmt = 10;
+			amt = baseAmt * Math.pow(1.23, Math.sqrt(level));
+			amt += baseAmt * level;
+			amt /= baseAmt;
+			currentCalc = amt;
+			textString += "<tr><td class='bdTitle'>Base</td><td></td><td></td><td>" + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			if (baseAmt >= 5) {
+				if (mutations.Magma.active()) {
+					currentCalc *= 15;
+					textString += "<tr><td class='bdTitle'>Omnipotrimp Bonus</td><td></td><td></td><td>x 15</td><td>" + prettify(currentCalc) + '</td></tr>';
+				} else {
+					currentCalc *= 5;
+					textString += "<tr><td class='bdTitle'>Improbability Bonus</td><td></td><td></td><td>x 5</td><td>" + prettify(currentCalc) + '</td></tr>';
+				}
+			}
+
+			if (baseAmt >= 10) {
+				currentCalc *= 2;
+				textString += "<tr><td class='bdTitle'>Corruption Bonus</td><td></td><td></td><td>x 2</td><td>" + prettify(currentCalc) + '</td></tr>';
+			}
+			if (getSLevel() >= 5) {
+				amt = Math.pow(1.005, game.global.world);
+				currentCalc *= amt;
+				textString += "<tr><td class='bdTitle'>Scientist V</td><td></td><td></td><td>x " + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+			if (game.goldenUpgrades.Helium.currentBonus > 0) {
+				amt = game.goldenUpgrades.Helium.currentBonus;
+				currentCalc *= 1 + amt;
+				textString += "<tr><td class='bdTitle'>Golden " + heliumOrRadon() + '</td><td></td><td></td><td>+ ' + prettify(amt * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+			if (game.talents.scry2.purchased && game.global.voidBuff && game.global.canScryCache) {
+				currentCalc *= 1.5;
+				textString += "<tr><td class='bdTitle'>Scryhard II</td><td></td><td></td><td>+ 50%</td><td>" + prettify(currentCalc) + '</td></tr>';
+			}
+			if (game.global.voidBuff) {
+				currentCalc *= 2;
+				textString += "<tr><td class='bdTitle'>Void Map</td><td></td><td></td><td>x 2</td><td>" + prettify(currentCalc) + '</td></tr>';
+			}
+			const fluffyBonus = Fluffy.isRewardActive('helium');
+			if (fluffyBonus > 0) {
+				currentCalc += currentCalc * (0.25 * fluffyBonus);
+				textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + ' ' + heliumOrRadon() + '</td><td>25%</td><td>' + fluffyBonus + '</td><td>+ ' + 25 * fluffyBonus + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+			if (Fluffy.isRewardActive('radortle')) {
+				amt = Fluffy.getRadortleMult();
+				currentCalc *= amt;
+				textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + ' ' + heliumOrRadon() + '</td><td>x 1.03</td><td>' + game.global.lastRadonPortal + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+			if (game.jobs.Meteorologist.vestedHires > 0) {
+				amt = game.jobs.Meteorologist.getMult();
+				const pct = 1 + 0.05 * game.buildings.Antenna.owned;
+				currentCalc *= amt;
+				textString += "<tr><td class='bdTitle'>Meteorologists</td><td>" + prettify(pct) + '%</td><td>' + game.jobs.Meteorologist.vestedHires + '</td><td>+ ' + prettify(pct * game.jobs.Meteorologist.vestedHires) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+			if (challengeActive('Quest') && game.challenges.Quest.questComplete) {
+				currentCalc *= 2;
+				textString += "<tr><td class='bdTitle'>Completed Quest!</td><td>+ 100%</td><td>&nbsp;</td><td>+ 100%</td><td>" + prettify(currentCalc) + '</td></tr>';
+			}
+			if (challengeActive('Archaeology')) {
+				const points = game.challenges.Archaeology.getPoints('radon');
+				const mult = game.challenges.Archaeology.getStatMult('radon');
+				currentCalc *= mult;
+				textString += "<tr><td class='bdTitle'>Radon Relic</td><td>x 1.05</td><td>" + points + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+			if (game.global.universe == 2 && game.global.glassDone && game.global.world > 175) {
+				const mult = Math.pow(1.1, game.global.world - 175);
+				currentCalc *= mult;
+				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>x 1.1</td><td>" + (game.global.world - 175) + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+			if (game.global.universe == 2 && game.global.world >= 201) {
+				const mult = 400;
+				if (u2Mutations.tree.AllRadon.purchased) mult *= 1.5;
+				currentCalc *= mult;
+				textString += "<tr><td class='bdTitle'>Mutated Zone</td><td>x " + mult + '</td><td></td><td>x ' + mult + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+	}
+
+	if (game.global.mapsActive && what !== 'Helium') {
+		let compareLv = game.global.world;
+		if (world > compareLv && map.location !== 'Bionic') {
+			amt = Math.pow(1.1, world - compareLv);
+			currentCalc *= amt;
+			textString += "<tr><td class='bdTitle'>Extra Map Zones</td><td>+10%</td><td>x " + (world - compareLv) + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+		} else {
+			if (game.talents.mapLoot.purchased) compareLv--;
+			if (world < compareLv) {
+				//-20% loot compounding for each level below world
+				amt = Math.pow(0.8, compareLv - world);
+				currentCalc *= amt;
+				textString += "<tr style='color: red'><td class='bdTitle'>Low Map Level</td><td>-20%</td><td>" + (compareLv - world) + '</td><td>x ' + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+			}
+		}
+		//Add map loot bonus
+		currentCalc = Math.round(currentCalc * map.loot);
+		textString += "<tr><td class='bdTitle'>Map Loot</td><td></td><td></td><td>+ " + Math.round((map.loot - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Insanity')) {
+		const mult = game.challenges.Insanity.getLootMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Insane (Insanity)</td><td>+ 13.13%</td><td>" + game.challenges.Insanity.insanity + '</td><td>x ' + mult.toFixed(4) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.challenges.Nurture.boostsActive() && what !== 'Helium') {
+		const mult = game.challenges.Nurture.getResourceBoost();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Cruffys</td><td>Lv " + game.challenges.Nurture.getLevel() + '</td><td></td><td>' + formatMultAsPercent(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (getPerkLevel('Looting')) {
+		amt = 1 + getPerkLevel('Looting') * game.portal.Looting.modifier;
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Looting (perk)</td><td>+ 5%</td><td>" + getPerkLevel('Looting') + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (getPerkLevel('Looting_II')) {
+		amt = 1 + getPerkLevel('Looting_II') * game.portal.Looting_II.modifier;
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Looting II (perk)</td><td>+ " + prettify(game.portal.Looting_II.modifier * 100) + '%</td><td>' + prettify(getPerkLevel('Looting_II')) + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (getPerkLevel('Greed')) {
+		amt = game.portal.Greed.getMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Greed (perk)</td><td>x" + ' ' + prettify(game.portal.Greed.getBonusAmt()) + '</td><td>' + (getPerkLevel('Greed') + getPerkLevel('Masterfulness')) + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	let potionFinding = challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Finding') : '';
+	if (what !== 'Helium' && what !== 'Fragments' && potionFinding > 1) {
+		currentCalc *= potionFinding;
+		textString += "<tr><td class='bdTitle'>Potion of Finding</td><td>+ 25%</td><td>" + alchObj.getPotionCount('Potion of Finding') + '</td><td>+ ' + prettify((potionFinding - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	potionFinding = alchObj.getPotionEffect('Elixir of Finding');
+	if (what !== 'Helium' && what !== 'Fragments' && potionFinding > 1) {
+		currentCalc *= potionFinding;
+		textString += "<tr><td class='bdTitle'>Elixir of Finding</td><td>x 1.05</td><td>" + alchObj.getPotionCount('Elixir of Finding') + '</td><td>+ ' + prettify((potionFinding - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	const gaseousPotion = alchObj.getRadonMult();
+	if (what === 'Helium' && gaseousPotion > 1) {
+		currentCalc *= gaseousPotion;
+		textString += "<tr><td class='bdTitle'>Gaseous Brew</td><td>+ 10%</td><td>" + alchObj.getPotionCount('Gaseous Brew') + '</td><td>+ ' + prettify((gaseousPotion - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Quagmire')) {
+		amt = game.challenges.Quagmire.getLootMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Motivated (Quagmire)</td><td>+ 40%</td><td>" + game.challenges.Quagmire.motivatedStacks + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (Fluffy.isRewardActive('wealthy') && what !== 'Helium') {
+		currentCalc *= 2;
+		textString += "<tr><td class='bdTitle'>Wealthy (" + Fluffy.getName() + ')</td><td>+ 100%</td><td>&nbsp;</td><td>+ 100%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.unlocks.impCount.Magnimp && what !== 'Helium') {
+		amt = Math.pow(1.003, game.unlocks.impCount.Magnimp);
+		currentCalc = Math.floor(currentCalc * amt);
+		textString += "<tr><td class='bdTitle'>Magnimp</td><td>+ 0.3%</td><td>" + game.unlocks.impCount.Magnimp + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Toxicity')) {
+		let toxMult = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
+		currentCalc *= 1 + toxMult;
+		toxMult = (toxMult * 100).toFixed(1) + '%';
+		textString += "<tr><td class='bdTitle'>Tweaky (Toxicity)</td><td>+" + game.challenges.Toxicity.lootMult + '%</td><td>' + game.challenges.Toxicity.stacks + '</td><td>+ ' + toxMult + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Decay') && what !== 'Helium') {
+		currentCalc *= 10;
+		textString += "<tr><td class='bdTitle'>Sanity (Decay)</td><td></td><td></td><td class='bdPercent'>x 10</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+		const stackStr = Math.pow(game.challenges.Decay.decayValue, game.challenges.Decay.stacks);
+		currentCalc *= stackStr;
+		textString += "<tr style='color: red'><td class='bdTitle'>Decay</td><td>x 0.995</td><td>" + game.challenges.Decay.stacks + "</td><td class='bdPercent'>x " + stackStr.toFixed(3) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Melt') && what !== 'Helium') {
+		currentCalc *= 10;
+		textString += "<tr><td class='bdTitle'>Sanity (Melt)</td><td></td><td></td><td class='bdPercent'>x 10</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+		const stackStr = Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
+		currentCalc *= stackStr;
+		textString += "<tr style='color: red'><td class='bdTitle'>Melt</td><td>x 0.99</td><td>" + game.challenges.Melt.stacks + "</td><td class='bdPercent'>x " + stackStr.toFixed(3) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Watch') && what !== 'Helium') {
+		currentCalc /= 2;
+		textString += "<tr style='color: red'><td class='bdTitle'>Sleepy (Watch)</td><td></td><td></td><td class='bdPercent'>50%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Lead') && game.global.world % 2 === 1) {
+		currentCalc *= 2;
+		textString += "<tr><td class='bdTitle'>Determined (Lead)</td><td></td><td></td><td class='bdPercent'>+ 100%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Daily')) {
+		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what !== 'Fragments' && what !== 'Helium') {
+			mult = dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
+			currentCalc *= mult;
+			textString += "<tr style='color: red'><td class='bdTitle'>Famine (Daily)</td><td class='bdPercent'>" + prettify(mult * 100) + '%</td><td></td><td>' + prettify(mult * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+		}
+		if (typeof game.global.dailyChallenge.karma !== 'undefined' && what !== 'Helium') {
+			mult = dailyModifiers.karma.getMult(game.global.dailyChallenge.karma.strength, game.global.dailyChallenge.karma.stacks);
+			currentCalc *= mult;
+			textString += "<tr><td class='bdTitle'>Karma (Daily)</td><td class='bdPercent'>x  " + mult.toFixed(3) + '</td><td></td><td>x  ' + mult.toFixed(3) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+		}
+	}
+
+	if (challengeActive('Archaeology') && what !== 'Helium' && what !== 'Fragments') {
+		const points = game.challenges.Archaeology.getPoints('science');
+		const mult = game.challenges.Archaeology.getStatMult('science');
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Resource Relic</td><td>x 1.05</td><td>" + points + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.spireRows > 0) {
+		const spireRowBonus = game.talents.stillRowing.purchased ? 0.03 : 0.02;
+		amt = game.global.spireRows * spireRowBonus;
+		currentCalc *= 1 + amt;
+		textString += "<tr><td class='bdTitle'>Spire Rows</td><td>+ " + Math.round(spireRowBonus * 100) + '%</td><td>' + game.global.spireRows + '</td><td>+ ' + prettify(amt * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.voidBuff && what === 'Helium' && game.talents.voidSpecial.purchased) {
+		amt = getLastPortal() * 0.0025;
+		currentCalc *= 1 + amt;
+		textString += "<tr><td class='bdTitle'>Void Special</td><td></td><td></td><td>+ " + prettify(amt * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (what !== 'Fragments' && getEmpowerment() == 'Wind' && (what !== 'Helium' || !game.global.mapsActive)) {
+		let windMod;
+		let baseMod = 0;
+		if (what === 'Helium') {
+			windMod = game.empowerments.Wind.getCombatModifier(true);
+			baseMod = game.empowerments.Wind.getModifier(0, true);
+		} else {
+			windMod = game.empowerments.Wind.getCombatModifier();
+			baseMod *= game.empowerments.Wind.getModifier();
+		}
+		baseMod *= 100;
+		currentCalc *= 1 + windMod;
+		textString += "<tr><td class='bdTitle'>Swiftness (Wind)</td><td>" + prettify(baseMod) + '%</td><td>' + prettify(game.empowerments.Wind.currentDebuffPower) + "</td><td class='bdPercent'>+ " + prettify(windMod * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (what !== 'Helium' && isScryerBonusActive()) {
+		currentCalc *= 2;
+		textString += "<tr><td class='bdTitle'>Formation</td><td></td><td></td><td>x 2</td><td>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (getUberEmpowerment() == 'Wind' && what !== 'Helium' && what !== 'Fragments') {
+		currentCalc *= 10;
+		textString += "<tr><td class='bdTitle'>Enlightened Wind</td><td></td><td></td><td>x 10</td><td>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.totalSquaredReward > 0 && what === 'Helium') {
+		amt = game.global.totalSquaredReward / 1000;
+		currentCalc *= amt + 1;
+		const c2Name = game.global.highestRadonLevelCleared < 49 ? '2' : "<span class='icomoon icon-infinity'></span>";
+		textString += "<tr><td class='bdTitle'>Challenge<sup>" + c2Name + '</sup> Reward</td><td></td><td></td><td>+ ' + prettify(amt * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (what === 'Helium' && playerSpireTraps.Condenser.owned) {
+		amt = playerSpireTraps.Condenser.getWorldBonus();
+		currentCalc *= 1 + amt / 100;
+		textString += "<tr><td class='bdTitle'>Condenser Tower" + needAnS(playerSpireTraps.Condenser.owned) + '</td><td>+ ' + prettify(playerSpireTraps.Condenser.getWorldBonus(true)) + '%</td><td>' + playerSpireTraps.Condenser.owned + '</td><td>+' + prettify(amt) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.singleRunBonuses.heliumy.owned && what === 'Helium') {
+		currentCalc *= 1.25;
+		textString += "<tr><td class='bdTitle'>" + game.singleRunBonuses.heliumy.name + '</td><td>25%</td><td></td><td>+ 25%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.frigidCompletions > 0 && game.global.universe == 1 && what === 'Helium') {
+		amt = game.challenges.Frigid.getTrimpMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Frigid Completions</td><td>+ 2.5N%</td><td>" + game.global.frigidCompletions + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.mayhemCompletions > 0 && what === 'Helium') {
+		amt = game.challenges.Mayhem.getTrimpMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Mayhem Completions</td><td>+ 10N%</td><td>" + game.global.mayhemCompletions + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.pandCompletions > 0 && what === 'Helium') {
+		amt = game.challenges.Pandemonium.getTrimpMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Pandemonium Completions</td><td>+ 10N%</td><td>" + game.global.pandCompletions + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.desoCompletions > 0 && what === 'Helium') {
+		amt = game.challenges.Desolation.getTrimpMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Desolation Completions</td><td>+ 10N%</td><td>" + game.global.desoCompletions + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (autoBattle.bonuses.Radon.level > 0 && game.global.universe == 2 && what === 'Helium') {
+		amt = autoBattle.bonuses.Radon.getMult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Spire Assault Radon</td><td>+ 10%</td><td>" + autoBattle.bonuses.Radon.level + '</td><td>+ ' + prettify((amt - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Hypothermia') && what === 'Food/Wood/Metal') {
+		const mult = game.challenges.Hypothermia.getWoodMult();
+		if (mult != 1) {
+			currentCalc *= mult;
+			textString += "<tr style='color: red'><td class='bdTitle'>Hypothermia (Wood only)</td><td class='bdPercent'>x0.95</td><td>" + game.challenges.Hypothermia.embers + '</td><td>x ' + prettify(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+		}
+	}
+
+	if (challengeActive('Desolation') && what !== 'Helium') {
+		const mult = game.challenges.Desolation.trimpResourceMult();
+		currentCalc *= mult;
+		textString += "<tr style='color: red'><td class='bdTitle'>Desolation</td><td>-" + game.challenges.Desolation.getReducePercent() * 100 + '%</td><td>' + (game.global.world - 1) + "</td><td class='bdPercent'>x " + prettify(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased && what !== 'Helium') {
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Loot Mutator</td><td>+ 50%</td><td></td><td>+ 50%</td><td>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (challengeActive('Hypothermia') && what === 'Helium') {
+		const mult = game.challenges.Hypothermia.getRadonMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Hypothermia</td><td class='bdPercent'>+300%</td><td>" + game.challenges.Hypothermia.embers + '</td><td>+ ' + prettify((mult - 1) * 100) + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
+	}
+
+	//Cruffys
+	if (challengeActive('Nurture') && what === 'Helium') {
+		const mult = game.challenges.Nurture.getRadonMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Cruffys</td><td>Lv " + game.challenges.Nurture.getLevel() + '</td><td></td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	//Bonus from Domination challenge, keep right above Corruption/Healthy stuff, as regular boss bonus does not affect it
+	if (challengeActive('Domination') && what === 'Helium') {
+		textString += "<tr><td class='bdTitle'>Domination (Boss Only)</td><td>x 3</td><td></td><td>x 3</td><td>" + prettify(currentCalc * 3) + '</td></tr>';
+		if (game.global.voidBuff) currentCalc *= 3;
+	}
+
+	//Corruption - World
+	let fullCorVal = currentCalc;
+	if (what === 'Helium' && !game.global.voidBuff && game.global.world >= mutations.Corruption.start()) {
+		const corrVal = challengeActive('Corrupted') ? 7.5 : 15;
+		let corrCount = mutations.Corruption.cellCount();
+		if (mutations.Healthy.active()) corrCount -= mutations.Healthy.cellCount();
+		const corrCalc = (corrVal / 100) * currentCalc;
+		fullCorVal = currentCalc + corrCalc * corrCount;
+		textString += "<tr class='corruptedCalcRow'><td class='bdTitle' style='vertical-align: middle'>Corruption Value</td><td>" + corrVal + '%<br/>' + corrCount + ' Cells</td><td>Per Cell:<br/>' + prettify(corrCalc) + '</td><td>Per Zone:<br/>' + prettify(Math.round(corrCalc * corrCount)) + "</td><td style='vertical-align: middle'>" + prettify(fullCorVal) + '</td></tr>';
+		//<tr><td class='bdTitle'>Total Per Zone</td><td></td><td></td><td></td><td>" + prettify(currentCalc + (corrCalc * corrVal)) + "</td></tr>
+	}
+
+	//Healthy - World
+	if (what === 'Helium' && mutations.Healthy.active() && !game.global.voidBuff) {
+		const healthyCount = mutations.Healthy.cellCount();
+		let healthyVal = 45;
+		if (game.talents.healthStrength2.purchased) healthyVal = 65;
+		const healthyCalc = (healthyVal / 100) * currentCalc;
+		textString += "<tr class='healthyCalcRow'><td class='bdTitle' style='vertical-align: middle'>Healthy Value</td><td>" + healthyVal + '%<br/>' + healthyCount + ' Cells</td><td>Per Cell:<br/>' + prettify(healthyCalc) + '</td><td>Per Zone:<br/>' + prettify(Math.round(healthyCalc * healthyCount)) + "</td><td style='vertical-align: middle'>" + prettify(fullCorVal + healthyCalc * healthyCount) + '</td></tr>';
+	}
+
+	//Healthy - Void Maps
+	if (what === 'Helium' && game.global.voidBuff && mutations.Corruption.active()) {
+		let corruptedCells = mutations.Corruption.cellCount();
+		if (mutations.Healthy.active()) corruptedCells -= mutations.Healthy.cellCount();
+		const corrVal = challengeActive('Corrupted') ? 7.5 : 15;
+		let percent = (corrVal / 100) * corruptedCells;
+
+		if (mutations.Healthy.active()) {
+			textString += "<tr class='corruptedCalcRow mutationSumRow'><td class='bdTitle'>Corruption Value</td><td>" + corrVal + '%</td><td>' + corruptedCells + '</td><td>+ ' + prettify(Math.round(percent * 100)) + '%</td><td></td></tr>';
+			const healthyCells = mutations.Healthy.cellCount();
+			let healthyVal = 45;
+			if (game.talents.healthStrength2.purchased) healthyVal = 65;
+			const healthyPercent = (healthyVal / 100) * healthyCells;
+			textString += "<tr class='healthyCalcRow mutationSumRow'><td class='bdTitle'>Healthy Value</td><td>" + healthyVal + '%</td><td>' + healthyCells + '</td><td>+ ' + prettify(Math.round(healthyPercent * 100)) + '%</td><td></td></tr>';
+			const mutationPercent = percent + healthyPercent;
+			currentCalc *= mutationPercent + 1;
+			textString += "<tr class='mutationSumRow mutationTotalRow'><td class='bdTitle'>Mutation Total</td><td></td><td>" + (healthyCells + corruptedCells) + '</td><td>+ ' + prettify(Math.round(mutationPercent * 100)) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
+		} else {
+			percent++;
+			currentCalc *= percent;
+			textString += "<tr class='corruptedCalcRow'><td class='bdTitle'>Corruption Value</td><td>" + corrVal + '%</td><td>' + corruptedCells + '</td><td>x ' + prettify(percent) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+		}
+	}
+
+	if (what === 'Helium' && game.global.mapsActive && game.global.voidBuff && map.stacked >= 1) {
+		const stacks = map.stacked;
+		const maxStacks = Fluffy.getVoidStackCount() - 1;
+		const countedStacks = stacks > maxStacks ? maxStacks : stacks;
+		let bonusMod = 1 + 0.5 * countedStacks;
+		if (game.talents.voidMastery.purchased) bonusMod = Math.pow(1.5, countedStacks);
+		const flatBonus = currentCalc * bonusMod * stacks;
+		currentCalc += flatBonus;
+		textString += "<tr class='fluffyCalcRow'><td class='bdTitle'>Stacked Map" + needAnS(stacks) + ' (Fluffy)</td><td>+ ' + prettify((bonusMod - 1) * 100) + '%</td><td>' + stacks + ' extra</td><td>+ ' + prettify(flatBonus) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.runningChallengeSquared && what === 'Helium') {
+		currentCalc = 0;
+		const cMode = game.global.universe == 1 ? 2 : 3;
+		textString += "<tr class='colorSquared'><td class='bdTitle'>Challenge<sup>" + cMode + '</sup></td><td></td><td></td><td>0%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	//Heirloom bonuses last, since food/wood/metal mults can be different
+	let heirloomBonus = 0;
+	if (what === 'Food/Wood/Metal') {
+		heirloomBonus = calcHeirloomBonus('Staff', 'foodDrop', 0, true);
+		if (heirloomBonus > 0) {
+			textString += "<tr><td class='bdTitle'>Heirloom - Food (Staff)</td><td></td><td></td><td>+ " + prettify(heirloomBonus) + '%</td><td>' + prettify(currentCalc * (heirloomBonus / 100 + 1)) + '</td></tr>';
+			heirloomBonus = 0;
+		}
+		heirloomBonus = calcHeirloomBonus('Staff', 'woodDrop', 0, true);
+		if (heirloomBonus > 0) {
+			textString += "<tr><td class='bdTitle'>Heirloom - Wood (Staff)</td><td></td><td></td><td>+ " + prettify(heirloomBonus) + '%</td><td>' + prettify(currentCalc * (heirloomBonus / 100 + 1)) + '</td></tr>';
+			heirloomBonus = 0;
+		}
+		heirloomBonus = calcHeirloomBonus('Staff', 'metalDrop', 0, true);
+		if (heirloomBonus > 0) {
+			textString += "<tr><td class='bdTitle'>Heirloom - Metal (Staff)</td><td></td><td></td><td>+ " + prettify(heirloomBonus) + '%</td><td>' + prettify(currentCalc * (heirloomBonus / 100 + 1)) + '</td></tr>';
+			heirloomBonus = 0;
+		}
+	} else if (what === 'Fragments') {
+		heirloomBonus = calcHeirloomBonus('Staff', 'fragmentsDrop', 0, true);
+		if (heirloomBonus > 0) {
+			textString += "<tr><td class='bdTitle'>Heirloom (Staff)</td><td></td><td></td><td>+ " + prettify(heirloomBonus) + '%</td><td>' + prettify(currentCalc * (heirloomBonus / 100 + 1)) + '</td></tr>';
+			heirloomBonus = 0;
+		}
+	} else if (what === 'Gems') {
+		heirloomBonus = calcHeirloomBonus('Staff', 'gemsDrop', 0, true);
+		if (heirloomBonus > 0) {
+			textString += "<tr><td class='bdTitle'>Heirloom (Staff)</td><td></td><td></td><td>+ " + prettify(heirloomBonus) + '%</td><td>' + prettify(currentCalc * (heirloomBonus / 100 + 1)) + '</td></tr>';
+			heirloomBonus = 0;
+		}
+	}
+
+	textString += '</tbody></table>';
+	game.global.lockTooltip = false;
+	tooltip('confirm', null, 'update', textString, "getLootBd('" + what + "')", name + ' Loot Breakdown', 'Refresh', true);
+	verticalCenterTooltip();
 }
