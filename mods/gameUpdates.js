@@ -4847,8 +4847,7 @@ game.challenges.Hypothermia.bonfireTooltip = function () {
 		text = 'You have ' + this.bonfires + ' active Bonfire' + needAnS(this.bonfires) + '. Your Trimps will automatically construct another Bonfire once you start a Zone with ' + prettify(this.bonfirePrice()) + ' total Wood. Your next Bonfire will expire at the start of Zone ' + (this.lastBurn + bonfireLength) + '.';
 	}
 
-	const bonfireTotal = this.totalBonfires + this.bonfires;
-	text += `<br><br>You have constructed ${bonfireTotal} Bonfire${needAnS(bonfireTotal)} so far this run.`;
+	text += `<br><br>You have constructed ${this.totalBonfires} Bonfire${needAnS(this.totalBonfires)} so far this run.`;
 
 	return text;
 };
