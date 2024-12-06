@@ -636,7 +636,7 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 
 		if (saveData.insanity && zone > game.global.world) {
 			enemyName = 'Horrimp';
-		} else if (['Gardens', 'Sea'].includes(mapBiome) || (mapBiome === 'Farmlands' && ['Gardens', 'Sea'].includes(farmlandsType))) {
+		} else if (['Plentiful', 'Sea'].includes(mapBiome) || (mapBiome === 'Farmlands' && ['Plentiful', 'Sea'].includes(farmlandsType))) {
 			enemyName = 'Flowimp';
 		} else if (mapBiome === 'Depths' || (mapBiome === 'Farmlands' && farmlandsType === 'Any')) {
 			enemyName = 'Moltimp';
