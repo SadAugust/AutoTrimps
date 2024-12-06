@@ -468,7 +468,7 @@ function stats(lootFunction = lootDefault) {
 		} else {
 			if (game.singleRunBonuses.goldMaps.owned) simulateMap.loot += 1;
 			if (simulateMap.location === 'Farmlands' && saveData.universe === 2) simulateMap.loot += 1;
-			if (simulateMap.location === 'Gardens') simulateMap.loot += 0.25;
+			if (simulateMap.location === 'Plentiful') simulateMap.loot += 0.25;
 
 			saveData.specialData = simulateMap.special;
 			saveData.difficulty = Number(simulateMap.difficulty);
