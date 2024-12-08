@@ -436,9 +436,10 @@ class Heirloom {
 			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
 			const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
 			const heirloomSettings = settings && settings[this.id] ? settings[this.id] : settings;
-			this.inputs = {};
+			const runningAT = typeof atConfig !== 'undefined';
 			const source = heirloomSettings && heirloomSettings.Ratio ? heirloomSettings.Ratio : settings;
 
+			this.inputs = {};
 			for (const [key, value] of Object.entries(source)) {
 				this.inputs[key] = Number(value);
 			}
@@ -447,6 +448,8 @@ class Heirloom {
 
 			this.basePrice = this.isCore ? coreBasePrices[this.rarity] : basePrices[this.rarity];
 			this.priceIncrease = priceIncreases[this.rarity];
+
+			this.breedHeirloom = runningAT && this.type === 'Shield' && this.name === getPageSetting('heirloomBreed');
 
 			this.foodHeirloom = heirloom.type === 'Staff' && heirloomSettings && heirloomSettings.Farmer && heirloomSettings.Farmer.enabled;
 			this.foodPercentage = this.foodHeirloom && heirloomSettings && heirloomSettings.Farmer && typeof heirloomSettings.Farmer.weight !== 'undefined' ? heirloomSettings.Farmer.weight / 100 : 1;
@@ -574,6 +577,7 @@ class Heirloom {
 		}
 
 		if (type === 'breedSpeed') {
+			if (this.breedHeirloom) return 1e300;
 			/* magic number is log(1.01) / log(1 / 0.98) */
 			const baseValue = (100 * Math.pow(value + stepAmount * this.inputs.HPWeight, 0.492524625)) / (100 * Math.pow(value, 0.492524625));
 			const universeMult = game.global.universe === 2 ? 0.1 : 1;
@@ -735,7 +739,7 @@ class Heirloom {
 
 		if (this.heirloomInfo[type].weighable) {
 			const modCost = this.getModCost(type);
-			if (modCost >= 1e100) {
+			if (modCost >= 1e150) {
 				return 0;
 			}
 

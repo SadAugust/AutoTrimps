@@ -715,13 +715,12 @@ function _challengeUnlockCheck() {
 
 function introMessage() {
 	const description = `
-		<p>Welcome to the SadAugust fork of AutoTrimps!</p>
-		<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>
-		<p>One of the most important things is where the settings are stored. The vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p><br>
+		<p>Welcome to the SadAugust fork of AutoTrimps! For those who are new to this fork here's some useful information on how to set it up.</p><br>
+		<p>One of the most important things is where the settings are stored, the vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p>
 		<p>There are some setting that aren't located in the <b>AutoTrimps settings menu</b>, 2 of which are in the Trimps buy container (<b>AT AutoStructure & AutoJobs</b>), I recommend mousing over their tooltips and looking at what they do.</p>
-		<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. This will enabling this will allow the script to output messages into the message log window. You can control what gets printed to it by pressing the cogwheel to the right of it.</p>
-		<br><p>By default everything should be disabled but every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>
-		<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>
+		<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. Enabling this will allow the script to output messages into the message log window. You can control the types of messages that get printed to it by pressing the cogwheel to the right of it.</p>
+		<p>Every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>
+		<p>If you've used another version of AutoTrimps you'll need to set everything up again as this one isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>
 	`;
 
 	tooltip('Introduction Message', 'customText', 'lock', description, false, 'center');

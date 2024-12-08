@@ -1092,7 +1092,7 @@ function makeResourceTooltip(mouseover) {
 		return tooltipText + '")';
 	} else {
 		tooltip(`${resource} per hour info`, 'customText', 'lock', tooltipText, false, 'center');
-		_verticalCenterTooltip(true);
+		_verticalCenterTooltip();
 	}
 }
 

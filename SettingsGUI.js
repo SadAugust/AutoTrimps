@@ -3177,7 +3177,8 @@ function initialiseAllSettings() {
 				description += "<p>This will override all other heirloom swapping features when active!</p>";
 				description += "<p>Should ideally be a shield with the <b>Breedspeed</b> modifier.</p>";
 				description += "<p>Mapping decisions will be disabled (unless 0 + overkill cells away from c100) when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
-				if (atConfig.settingUniverse === 1) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use.</p>";
+				if (atConfig.settingUniverse === 1) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use.</p>";				
+				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Breed Speed as better over everything else.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
