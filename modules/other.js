@@ -170,7 +170,7 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 			Domination: { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal'] },
 			Obliterated: { unlockZone: 425, unlockedIn: ['c2'] },
 			Eradicated: {
-				unlockZone: 400,
+				unlockZone: 1,
 				unlockCondition: function () {
 					return game.global.totalSquaredReward >= 4500;
 				},

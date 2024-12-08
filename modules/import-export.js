@@ -265,6 +265,11 @@ function _displayC2Table(tooltipDiv) {
 		c3: c2RunnerChallengeOrder(2)
 	};
 
+	const challengesToRun = {
+		c2: _c2RunnerCheck(false, 1),
+		c3: _c2RunnerCheck(false, 2)
+	};
+
 	const challengePercentages = {
 		c2: {
 			Coordinate: [45, 38],
@@ -298,8 +303,9 @@ function _displayC2Table(tooltipDiv) {
 			number: `Difficulty`,
 			percent: `${type} %`,
 			zone: `Zone`,
-			percentzone: `%HZE`,
-			c2runner: `${type} Runner`
+			percentzone: `HZE%`,
+			c2runner: `${type} Runner`,
+			runChallenge: `Auto Portal`
 		};
 	};
 
@@ -307,7 +313,7 @@ function _displayC2Table(tooltipDiv) {
 	const hze = game.stats.highestLevel.valueTotal();
 	const hzeU2 = game.stats.highestRadLevel.valueTotal();
 
-	const processArray = (type, array, runnerList) => {
+	const processArray = (type, array, runnerList, challengesToRun) => {
 		if (array.length > 0) populateHeaders(type.toUpperCase());
 		const radLevel = type === 'c3';
 		const colourPercentages = type === 'c2' ? challengePercentages.c2 : challengePercentages.c3;
@@ -321,6 +327,7 @@ function _displayC2Table(tooltipDiv) {
 				zone: game.c2[item],
 				percentzone: `${challengePercent.toFixed(2)}%`,
 				c2runner: runnerList.includes(item) ? '✅' : '❌',
+				runChallenge: challengesToRun && challengesToRun.includes(item) ? '✅' : '❌',
 				color: getChallengeColor(challengePercent, highPct, midPct)
 			};
 		});
@@ -338,10 +345,10 @@ function _displayC2Table(tooltipDiv) {
 		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true, true);
 		challenges = filterAndSortChallenges(challenges, 'c2');
 		const array = challengeOrders[type].filter((item) => challenges.includes(item));
-		processArray(type, array, runnerLists[type]);
+		processArray(type, array, runnerLists[type], challengesToRun[type]);
 	});
 
-	const createTableRow = (key, { number, percent, zone, color, percentzone, c2runner }) => `
+	const createTableRow = (key, { number, percent, zone, color, percentzone, c2runner, runChallenge }) => `
 		<tr>
 			<td>${key}</td>
 			<td>${number}</td>
@@ -349,6 +356,7 @@ function _displayC2Table(tooltipDiv) {
 			<td>${zone}</td>
 			<td${!['C2', 'C3'].includes(key) ? ` bgcolor='black'><font color=${color}>${percentzone}</font>` : `>${percentzone}`}</td>
 			<td>${c2runner}</td>
+			<td>${runChallenge}</td>
 		</tr>
 	`;
 
@@ -361,7 +369,8 @@ function _displayC2Table(tooltipDiv) {
 					<tr>
 						<td>Total</td>
 						<td></td>
-						<td>${game.global.totalSquaredReward.toFixed(2)}%</td>
+						<td>${prettify(game.global.totalSquaredReward.toFixed(2))}%</td>
+						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>

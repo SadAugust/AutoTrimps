@@ -1923,6 +1923,7 @@ function initialiseAllSettings() {
 			function () { return ('Archaeology') },
 			function () {
 				let description = "<p>Enable this if you want to use automation features when running the <b>Archaeology</b> challenge.</p>";
+				description += "<p>When enabled, <b>AT Auto Jobs</b> will fire all workers to speed up breeding when not fighting.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Challenges', [2],
@@ -2056,6 +2057,8 @@ function initialiseAllSettings() {
 				description += `<p><b>Yellow</b><br>You should consider updating yellow challenges.</p>`;
 				description += `<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>`;
 				description += `<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>`;
+				description += `<p>The <b>${_getChallenge2Info()} Runner</b> heading indicates which challenges will be run when using the <b>${_getChallenge2Info()} Runner: Percent</b> setting.</p>`;
+				description += `<p>The <b>Auto Portal</b> heading indicates which challenges will be started when Auto Portaling. They run in order of difficulty.</p>`;
 				return description;
 			}, 'infoclick', null, 'importExportTooltip("c2table")', 'C2', [0]);
 
@@ -2135,7 +2138,8 @@ function initialiseAllSettings() {
 			function () {
 				let description = `<p>Automatically abandon ${_getChallenge2Info()}s when this zone is reached.</p>`;
 				description += `<p>Set to <b>0 or below</b> to disable this setting.</p>`;
-				description += `<p>If this setting is disabled it will also stop ${_getChallenge2Info()} Runner from starting any challenges.</p>`;
+				description += `<p>Disabling this setting stops ${_getChallenge2Info()} Runner from starting challenges.</p>`;
+				description += `<p>${_getChallenge2Info()} Runner won't run challenges that are already at or below this value.</p>`;
 				description += `<p><b>Recommended:</b> Desired challenge end goal</p>`;
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
@@ -4673,7 +4677,15 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
 				return description;
-			}, 'action', null, 'importExportTooltip("priorityOrder")', 'Help', [0]);
+			}, 'action', null, 'cancelTooltip(); importExportTooltip("priorityOrder")', 'Help', [0]);
+			
+		createSetting('helpAutoLevel',
+			function () { return ('Auto Level Table') },
+			function () {
+				let description = "<p>Will display a table of the calculators simulation results.</p>";
+				return description;
+			}, 'action',null, 'cancelTooltip(); importExportTooltip("display");', 'Help', [0]);
+	
 		createSetting('helpFragments',
 			function () { return ('Fragment Decisions') },
 			function () {

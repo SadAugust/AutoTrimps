@@ -351,25 +351,23 @@ function _autoPortalUniverseSwap() {
 	}
 }
 
-function _autoPortalC2() {
-	if (!game.global.portalActive || !portalWindowOpen) return;
+function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
+	const highestZone = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	if ((universe === 1 && highestZone < 65) || (universe === 2 && highestZone < 50)) return;
+	if (!getPageSetting('c2RunnerStart', universe)) return;
 
-	const highestZone = portalUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-	if ((portalUniverse === 1 && highestZone < 65) || (portalUniverse === 2 && highestZone < 50)) return;
-	if (!getPageSetting('c2RunnerStart', portalUniverse)) return;
-
-	const runType = getPageSetting('c2RunnerMode', portalUniverse);
-	const c2RunnerPortal = getPageSetting('c2RunnerPortal', portalUniverse);
-	const c2RunnerPercent = runType === 0 ? getPageSetting('c2RunnerPercent', portalUniverse) / 100 : 1;
+	const runType = getPageSetting('c2RunnerMode', universe);
+	const c2RunnerPortal = getPageSetting('c2RunnerPortal', universe);
+	const c2RunnerPercent = runType === 0 ? getPageSetting('c2RunnerPercent', universe) / 100 : 1;
 	if (runType === 0 && (c2RunnerPortal <= 0 || c2RunnerPercent <= 0)) return;
 
 	const challengeArray = [];
-	const universePrefix = portalUniverse === 2 ? 'C3' : 'C2';
-	const c2Setting = getPageSetting('c2RunnerSettings', portalUniverse);
-	const runFused = getPageSetting('c2Fused', portalUniverse);
+	const unlockedC2s = filterAndSortChallenges(challengesUnlockedObj(universe, false, false), 'c2');
+	const c2Setting = getPageSetting('c2RunnerSettings', universe);
+	const runFused = getPageSetting('c2Fused', universe);
 
 	if (runType === 0) {
-		if (portalUniverse === 1 && runFused > 0) {
+		if (universe === 1 && runFused > 0) {
 			if (highestZone >= 45) challengeArray.push('Enlightened');
 			if (highestZone >= 180) challengeArray.push('Waze');
 			if (highestZone >= 180) challengeArray.push('Toxad');
@@ -378,8 +376,8 @@ function _autoPortalC2() {
 			if (highestZone >= 150) challengeArray.push('Topology');
 		}
 
-		const runOrder = c2RunnerChallengeOrder(portalUniverse);
-		const unlockedChallenges = filterAndSortChallenges(challengesUnlockedObj(portalUniverse), 'c2Runner');
+		const runOrder = c2RunnerChallengeOrder(universe);
+		const unlockedChallenges = filterAndSortChallenges(challengesUnlockedObj(universe), 'c2Runner');
 		const orderedChallenges = runOrder.filter((challenge) => unlockedChallenges.includes(challenge));
 		challengeArray.push(...orderedChallenges);
 	} else if (runType === 1) {
@@ -391,9 +389,12 @@ function _autoPortalC2() {
 		}
 	}
 
+	const toRunList = [];
 	/* 	Looping through challenge array to figure out if things should be run. */
 	for (let x = 0; x < challengeArray.length; x++) {
 		const challengeName = challengeArray[x];
+		if (!unlockedC2s.includes(challengeName)) continue;
+
 		const challenge = game.challenges[challengeName];
 		const challengeList = challenge.multiChallenge ? challenge.multiChallenge : [challengeName];
 
@@ -409,24 +410,35 @@ function _autoPortalC2() {
 			}
 		}
 
+		if (challengeLevel >= c2RunnerPortal) continue;
+
 		let shouldRun = false;
 		if (runType === 0) {
 			shouldRun = challengeLevel / highestZone < c2RunnerPercent;
-			if (challengeLevel >= c2RunnerPortal) continue;
 		} else {
 			shouldRun = challengeLevel < c2Setting[challengeName].zone;
 		}
 
 		if (!shouldRun || challengeActive(challengeName)) continue;
-		if (!challengeSquaredMode) toggleChallengeSquared();
-		if (!document.getElementById(`challenge${challengeName}`)) continue;
-
-		selectChallenge(challengeName);
-		debug(`${universePrefix} Runner: Starting ${challengeName}`, 'portal');
-		return;
+		if (portalCheck) return challengeName;
+		toRunList.push(challengeName);
 	}
 
-	if (!challengeSquaredMode) debug(`${universePrefix} Runner: All ${universePrefix}'s above level threshold!`, 'portal');
+	return toRunList;
+}
+
+function _autoPortalC2() {
+	if (!game.global.portalActive || !portalWindowOpen) return;
+
+	const challenge = _c2RunnerCheck(true);
+	if (!challenge) return;
+
+	const universePrefix = portalUniverse === 2 ? 'C3' : 'C2';
+	if (Array.isArray(challenge)) return debug(`${universePrefix} Runner: All ${universePrefix}'s above level threshold!`, 'portal');
+
+	if (!challengeSquaredMode) toggleChallengeSquared();
+	selectChallenge(challenge);
+	debug(`${universePrefix} Runner: Starting ${challenge}`, 'portal');
 }
 
 function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {

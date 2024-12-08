@@ -575,7 +575,10 @@ class Heirloom {
 
 		if (type === 'breedSpeed') {
 			/* magic number is log(1.01) / log(1 / 0.98) */
-			return (100 * Math.pow(value + stepAmount * this.inputs.HPWeight, 0.492524625)) / (100 * Math.pow(value, 0.492524625));
+			const baseValue = (100 * Math.pow(value + stepAmount * this.inputs.HPWeight, 0.492524625)) / (100 * Math.pow(value, 0.492524625));
+			const universeMult = game.global.universe === 2 ? 0.1 : 1;
+			const adjustedValue = (baseValue - 1) * universeMult + 1;
+			return adjustedValue;
 		}
 
 		if (type === 'prismatic') {
@@ -1926,7 +1929,7 @@ function heirloomInfo(type) {
 				name: 'Breed Speed',
 				type: 'Shield',
 				get weighable() {
-					return game.global.universe !== 2;
+					return game.global.universe !== 3;
 				},
 				stepAmounts: [1, 1, 1, 1, 3, 3, 3, 3, 3, 5, 10, 10],
 				softCaps: [10, 10, 10, 20, 100, 130, 160, 190, 220, 280, 360, 400]
