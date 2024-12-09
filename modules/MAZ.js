@@ -720,6 +720,7 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style
 			Wind: 'rgba(60, 75, 130, 0.75)',
 			Ice: 'rgba(50, 50, 200, 0.75)'
 		};
+
 		const empowerment = getZoneEmpowerment(vals.world);
 		backgroundStyle = ` background:${natureStyles[empowerment]}`;
 	}
@@ -846,7 +847,7 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style
 	}
 
 	if (!s.golden && !s.profile) {
-		elements.push({ name: 'world', class: `windowWorld${varPrefix}`, title: `<input value='${vals.world}' type='number' id='windowWorld${x}'/>`, style: backgroundStyle, oninput: `_mapSettingsUpdatePreset("${x}", "${varPrefix}")` });
+		elements.push({ name: 'world', class: `windowWorld${varPrefix}`, title: `<input value='${vals.world}' type='number' id='windowWorld${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'/>`, style: backgroundStyle });
 		if (!s.desolation) elements.push({ name: 'cell', class: `windowCell${varPrefix}`, title: `<input value='${vals.cell}' type='number' id='windowCell${x}'/>` });
 	}
 
