@@ -390,7 +390,7 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 	}
 
 	const toRunList = [];
-	/* 	Looping through challenge array to figure out if things should be run. */
+	/* 	looping through challenge array to figure out if things should be run. */
 	for (let x = 0; x < challengeArray.length; x++) {
 		const challengeName = challengeArray[x];
 		if (!unlockedC2s.includes(challengeName)) continue;
@@ -410,10 +410,9 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 			}
 		}
 
-		if (challengeLevel >= c2RunnerPortal) continue;
-
 		let shouldRun = false;
 		if (runType === 0) {
+			if (challengeLevel >= c2RunnerPortal) continue;
 			shouldRun = challengeLevel / highestZone < c2RunnerPercent;
 		} else {
 			shouldRun = challengeLevel < c2Setting[challengeName].zone;
