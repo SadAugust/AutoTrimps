@@ -316,7 +316,7 @@ function populateFarmCalcData() {
 			if (game.global.world % 2 === 0) enemyHealthMult *= 10;
 		},
 		Archaeology: () => {
-			enemyAttackMult *= game.challenges.Archaeology.getStatMult('enemyAttackMult');
+			enemyAttackMult *= game.challenges.Archaeology.getStatMult('enemyAttack');
 		},
 		Mayhem: () => {
 			enemyHealthMult *= game.challenges.Mayhem.getEnemyMult();
