@@ -3319,7 +3319,7 @@ function farmingDecision() {
 		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
 
-	if (usingBreedHeirloom()) {
+	if (usingBreedHeirloom(true)) {
 		if (atConfig.intervals.oneMinute && getPageSetting('autoMaps')) {
 			debug(`Your breed heirloom is equipped and mapping is disabled due to it. If this is not intentional then swap the heirloom you're using for breeding with another.`, `heirlooms`);
 		}

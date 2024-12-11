@@ -364,11 +364,12 @@ function heirloomSwapping(sendingArmy = false) {
 	}
 }
 
-function usingBreedHeirloom() {
+function usingBreedHeirloom(mapCheck = false) {
 	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return false;
 
-	const liquified = liquifiedZone();
-	if (liquified || getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100) return false;
+	if (mapCheck) {
+		if (liquifiedZone() || getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100) return false;
+	}
 
 	let breedHeirloom = getPageSetting('heirloomBreed');
 	if (challengeActive('Archaeology') && getPageSetting('archaeology')) {

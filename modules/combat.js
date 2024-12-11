@@ -330,7 +330,10 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 	const runningBerserk = challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20;
 	const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
 
-	if (runningTrappa || runningArchaeology || runningBerserk) return { ourHealth, enemyDmgMult };
+	if (runningTrappa || runningArchaeology || runningBerserk) {
+		if (!game.global.fighting) ourHealth = _getOurHealth(mapping, worldType, true);
+		return { ourHealth, enemyDmgMult };
+	}
 
 	const isDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;
