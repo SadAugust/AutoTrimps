@@ -1408,14 +1408,14 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 	}
 }
 
-function remainingHealth(shieldBreak = false, angelic = false, worldType = 'world') {
+function remainingHealth(shieldBreak = false, angelic = false, worldType = 'world', forceMax = false) {
 	const heirloomToCheck = heirloomShieldToEquip(worldType);
 	const correctHeirloom = heirloomToCheck !== undefined ? getPageSetting(heirloomToCheck) === game.global.ShieldEquipped.name : true;
 	const currentShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true) / 100;
 	const newShield = calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomToCheck) / 100;
 
 	let soldierHealthMax = game.global.soldierHealthMax;
-	let soldierHealth = game.global.soldierHealth;
+	let soldierHealth = forceMax ? soldierHealthMax : game.global.soldierHealth;
 	let shieldHealth = 0;
 
 	if (!correctHeirloom) {
@@ -1427,7 +1427,7 @@ function remainingHealth(shieldBreak = false, angelic = false, worldType = 'worl
 		const maxLayers = Fluffy.isRewardActive('shieldlayer');
 		const layers = maxLayers - game.global.shieldLayersUsed;
 		let shieldMax = game.global.soldierEnergyShieldMax;
-		let shieldCurr = game.global.soldierEnergyShield;
+		let shieldCurr = forceMax ? shieldMax : game.global.soldierEnergyShield;
 
 		if (!correctHeirloom) {
 			const energyShieldMult = getEnergyShieldMult_AT(worldType, true);

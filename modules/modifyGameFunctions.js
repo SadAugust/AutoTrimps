@@ -242,7 +242,7 @@ if (typeof originalrunMap !== 'function') {
 	};
 }
 
-//Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
+/* add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features. */
 if (typeof originalActivateClicked !== 'function') {
 	var originalActivateClicked = activateClicked;
 	activateClicked = function () {

@@ -210,7 +210,7 @@ function _getGammaMaxStacks(worldType) {
 	return maxStacks;
 }
 
-function _getOurHealth(mapping, worldType) {
+function _getOurHealth(mapping, worldType, forceMax = false) {
 	const angelicOwned = masteryPurchased('angelic');
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
@@ -222,7 +222,7 @@ function _getOurHealth(mapping, worldType) {
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || frenzyCanExpire || dailyEmpower);
 	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge;
 
-	return remainingHealth(shieldBreak, angelicDance, worldType);
+	return remainingHealth(shieldBreak, angelicDance, worldType, forceMax);
 }
 
 function _adjustFrenzyDamage(damage) {
@@ -368,12 +368,16 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 	const notMapping = game.global.mapsUnlocked && !mapping && !poisonDebuff;
 	const mappingButDieAnyway = mapping && enemy.level > 1 && !game.global.voidBuff && mapObject.location !== 'Darkness' && game.global.titimpLeft === 0;
 
-	if (notMapping) {
+	if (notMapping || mappingButDieAnyway) {
 		suicideTrimps(true);
-		suicideTrimps(true);
-	} else if (mappingButDieAnyway) {
-		suicideTrimps(true);
-		runMap(false);
+		mappingButDieAnyway ? runMap(false) : suicideTrimps(true);
+
+		ourHealth = _getOurHealth(mapping, worldType, true);
+		return { ourHealth, enemyDmgMult };
+	}
+
+	if (shieldBreak) {
+		return { ourHealth, enemyDmgMult };
 	}
 
 	_setEquality(0);
@@ -445,9 +449,10 @@ function _getEnemyDmgMultiplier(mapping, worldType, enemy, fastEnemy) {
 
 function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, fastEnemy, ourHealth, ourDmg, unluckyDmg, armyReady) {
 	/* 
-	Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
-	Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy. 
+	setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
+	checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy. 
     */
+
 	const bionicTalent = _getBionicTalent();
 	const maxDmg = calcOurDmg('max', 0, false, worldType, 'force', bionicTalent, true) * _getRampageBonus();
 	const maxEquality = getPerkLevel('Equality');
