@@ -52,6 +52,7 @@ const Perk = /** @class */ (function () {
 		const { priceBase, additive, additiveInc, max, specialGrowth, locked, level, levelTemp } = game.portal[perkName];
 		const fixedLevel = level + (levelTemp ? levelTemp : 0);
 
+		this.name = perkName;
 		this.base_cost = priceBase;
 		this.cost_increment = additive ? additiveInc : 0;
 		this.scaling = scaling;
@@ -114,7 +115,8 @@ const Perk = /** @class */ (function () {
 	};
 
 	Perk.prototype.log_ratio = function () {
-		return this.cost_increment ? (this.scaling(1) - this.scaling(0)) / this.bonus : Math.log(this.scaling(this.level + 1) / this.bonus);
+		if (this.cost_increment) return (this.scaling(1) - this.scaling(0)) / this.bonus;
+		return Math.log(this.scaling(this.level + 1) / this.bonus);
 	};
 
 	return Perk;
@@ -257,7 +259,7 @@ function calculateDgPopGain() {
 		fuel = Math.max(0, fuel - burnRate);
 	}
 
-	return housing;
+	return Math.floor(housing);
 }
 
 function populatePerkyData() {
@@ -629,8 +631,8 @@ function optimize() {
 
 		const perkNames = ['Looting', 'Carpentry', 'Motivation', 'Power', 'Toughness'];
 		for (let name of perkNames) {
+			const perk = perks[name];
 			let resetGain = false;
-			let perk = perks[name];
 
 			if (perk.gain === 0) {
 				perk.level_up(1);
@@ -639,7 +641,7 @@ function optimize() {
 				resetGain = true;
 			}
 
-			let perkII = perks[`${name}_II`];
+			const perkII = perks[`${name}_II`];
 			perkII.gain = (perk.gain * perkII.log_ratio()) / perk.log_ratio();
 
 			if (resetGain) {
@@ -655,29 +657,38 @@ function optimize() {
 
 	function spend_he(perk, budget) {
 		perk.gain /= perk.log_ratio();
+
 		if (perk.cost_increment) {
 			const ratio_2 = (1 + perk.level) / (1000 + Looting_II.level + Carpentry_II.level + Motivation_II.level + Power_II.level + Toughness_II.level);
 			budget *= 0.5 * Math.pow(ratio_2, 2);
 			const x = solve_quadratic_equation(perk.cost_increment / 2, perk.cost - perk.cost_increment / 2, -budget);
-			he_left -= perk.level_up(Math.floor(Math.max(Math.min(x, perk.max_level - perk.level), 1, perk.level / 1e12)));
+			const levelsToBuy = Math.floor(Math.max(Math.min(x, perk.max_level - perk.level), 1, perk.level / 1e12));
+			he_left -= perk.level_up(levelsToBuy);
 		} else {
 			budget = Math.pow(budget, 0.5);
 			do he_left -= perk.level_up(1);
 			while (perk.cost < budget && perk.level < perk.max_level);
 		}
+
 		perk.gain *= perk.log_ratio();
 	}
 
 	mod.loot *= 20.8;
 	weight.agility = (weight.helium + weight.attack) / 2;
 	weight.overkill = 0.25 * weight.attack * (2 - Math.pow(0.9, weight.helium / weight.attack));
-	if (zone > 90 && mod.soldiers <= 1 && Bait.min_level === 0) Bait.max_level = 0;
+
+	if (zone > 90 && mod.soldiers <= 1 && Bait.min_level === 0) {
+		Bait.max_level = 0;
+	}
+
 	if (game.portal.Carpentry.locked) {
 		Bait.min_level = 1;
 		if ($$('#preset').value !== 'trapper') Pheromones.min_level = 1;
 	}
 
-	if (game.global.viewingUpgrades) Coordinated.min_level = game.portal.Coordinated.level;
+	if (game.global.viewingUpgrades) {
+		Coordinated.min_level = game.portal.Coordinated.level;
+	}
 
 	// Fluffy
 	fluffy.attack = [];
@@ -713,7 +724,6 @@ function optimize() {
 		});
 
 	const reference_he = he_left;
-
 	for (let x = 0.999; x > 1e-12; x *= x) {
 		const he_target = reference_he * x;
 		recompute_marginal_efficiencies();
@@ -722,14 +732,16 @@ function optimize() {
 		});
 
 		let brokenLoop = false;
-
 		while (he_left > he_target && sorted_perks.length) {
 			const best = sorted_perks.shift();
 			if (!best.levellable(he_left)) continue;
 			spend_he(best, he_left - he_target);
 
 			let i = 0;
-			while (sorted_perks[i] && sorted_perks[i].gain / sorted_perks[i].cost > best.gain / best.cost) i++;
+			while (sorted_perks[i] && sorted_perks[i].gain / sorted_perks[i].cost > best.gain / best.cost) {
+				i++;
+			}
+
 			sorted_perks.splice(i, 0, best);
 		}
 

@@ -73,11 +73,10 @@ function _isTrappingOK(Battle, Coordination, maxTrimps = game.resources.trimps.r
 	if (!trapChallenge) return baseCheck;
 
 	// Identify if we should disable trapping when running Trappa/Trapper.
-	const trapSettingsEnabled = getPageSetting('trapper') && !getPageSetting('trapperTrap');
+	const trapSettingsEnabled = getPageSetting('trapper') && getPageSetting('trapperTrap');
 	if (!trapSettingsEnabled) return true;
 
 	const trappaCoordToggle = getPageSetting('trapperCoordStyle');
-	const coordinated = getPerkLevel('Coordinated');
 
 	let targetArmySize = game.resources.trimps.getCurrentSend();
 	const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
@@ -85,6 +84,7 @@ function _isTrappingOK(Battle, Coordination, maxTrimps = game.resources.trimps.r
 	let maxCheck;
 	if (trappaCoordToggle === 0) {
 		const trapperCoords = getPageSetting('trapperCoords');
+		const coordinated = getPerkLevel('Coordinated');
 		const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
 		let coordTarget = trapperCoords > 0 ? trapperCoords - 1 : 999;
 		if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimpStats.currChallenge === 'Trapper' ? 32 : 49;
@@ -101,7 +101,7 @@ function _isTrappingOK(Battle, Coordination, maxTrimps = game.resources.trimps.r
 		if (armySize > 0) targetArmySize = armySize;
 	}
 
-	trappaCheck = challengeActive('Trappapalooza') && game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize;
+	trappaCheck = game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize;
 	maxCheck = remainingTrimps > targetArmySize;
 	if (trappaCheck || maxCheck) return false;
 
