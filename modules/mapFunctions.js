@@ -2159,6 +2159,7 @@ function _insanityDisableUniqueMaps() {
 			if (destackZone === 0 || destackZone > setting.world) destackZone = setting.world;
 		}
 	}
+
 	return destackZone === 0 || game.global.world <= destackZone;
 }
 

@@ -563,7 +563,7 @@ function _mapSettingsRowTitles(varPrefix, activeSettings, settingOrder) {
 	if (s.boneShrine) {
 		elements.push({ name: 'world', class: `windowWorld${varPrefix}`, title: 'Zone' });
 		elements.push({ name: 'boneamount', class: `windowBoneAmount`, title: 'To use' });
-		elements.push({ name: 'bonebelow', class: `windowBoneBelow`, title: 'Use below' });
+		elements.push({ name: 'bonebelow', class: `windowBoneBelow`, title: 'Use above' });
 		elements.push({ name: 'gather', class: `windowBoneGather`, title: 'Gather' });
 	}
 
@@ -1445,7 +1445,7 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 
 	if (s.boneShrine) {
 		mazHelp += '<li><b>To use</b> - How many bone charges to use on this line.</li>';
-		mazHelp += "<li><b>Use below</b> - This value will stop bone charges being spent when you're at or below this value.</li>";
+		mazHelp += "<li><b>Use above</b> - This value will stop bone charges being spent when you're at or below this value.</li>";
 		mazHelp += '<li><b>Run ' + trimple + '</b> - Will run ' + trimple + ' during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until ' + trimple + ' has been run so that there is no wasted resources. <b>Will run ' + trimple + ' and use the charges after cell 95.</b></li>';
 		mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
 	}
