@@ -98,7 +98,12 @@ function _isTrappingOK(Battle, Coordination, maxTrimps = game.resources.trimps.r
 
 	if (trappaCoordToggle === 1) {
 		const armySize = getPageSetting('trapperArmySize');
-		if (armySize > 0) targetArmySize = armySize;
+		if (armySize > 0) {
+			targetArmySize = armySize;
+		} else {
+			targetArmySize = Math.ceil(1.25 * targetArmySize);
+			targetArmySize = Math.ceil(targetArmySize * coordinatedMult);
+		}
 	}
 
 	trappaCheck = game.global.fighting && game.resources.trimps.maxSoldiers + remainingTrimps >= targetArmySize;

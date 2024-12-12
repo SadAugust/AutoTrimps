@@ -2251,7 +2251,7 @@ function initialiseAllSettings() {
 			function () { return ('T: Army Size') },
 			function () {
 				let description = "<p>The army size you would like to stop buying additional <b>Coordination</b> from.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and not have a cap on <b>Coordination</b> purchases. This will cause it to use your current army size plus one coord purchase for trapping calculations.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', atConfig.settingUniverse) && autoTrimpSettings.trapper.require() && getPageSetting('trapperCoordStyle', atConfig.settingUniverse) === 1) });
