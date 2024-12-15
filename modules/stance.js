@@ -293,8 +293,9 @@ function autoStance() {
 
 function voidMapScryer(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {
 	const settingAffix = trimpStats.isDaily ? 'Daily' : '';
+	const plague = trimpStats.isDaily && typeof game.global.dailyChallenge.plague !== 'undefined';
 	if (game.global.voidBuff && masteryPurchased('scry2') && getPageSetting(`scryerVoidMaps${settingAffix}`)) {
-		const useWindStance = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy));
+		const useWindStance = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || (shouldWindOverScryer(baseStats, currentEnemy) && game.global.voidBuff !== 'bleed' && !plague));
 		safeSetStance(useWindStance ? 'W' : 'S');
 		return true;
 	}
