@@ -333,6 +333,7 @@ function toggleCatchUpMode() {
 			updateInterval();
 			mainCleanup();
 			if (game.global.mapsActive) _adjustGlobalTimers(['mapStarted'], -100);
+			game.global.lastBonePresimpt -= 100;
 			if (atConfig.intervals.thirtyMinute && getPageSetting('timeWarpSaving')) _timeWarpSave();
 
 			if (loops % getPageSetting('timeWarpFrequency') === 0 || atConfig.portal.aWholeNewWorld || liquifiedZone()) {
