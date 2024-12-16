@@ -855,7 +855,7 @@ atData.autoPerks = {
 		inputBoxSpan.className = 'textbox';
 		inputBoxSpan.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
 		inputBoxSpan.onmouseout = () => tooltip('hide');
-		inputBoxSpan.style.cssText = `text-align: left; height: 1.5vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		inputBoxSpan.style.cssText = `text-align: left; height: 1.5vw;`;
 
 		const prefixText = document.createElement('span');
 		prefixText.id = `${id}Prefix`;
@@ -1019,7 +1019,7 @@ atData.autoPerks = {
 		selectElement.id = 'preset';
 		selectElement.onchange = () => window[`fillPreset${calcName}`]();
 		selectElement.classList.add('select2Perky');
-		selectElement.style.cssText = `text-align: center; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		selectElement.style.cssText = `text-align: center; font-weight: lighter;`;
 
 		addSection(selectElement, 'Zone Progression', presets.regular);
 		addSection(selectElement, 'Challenge Presets', presets.challenges);
