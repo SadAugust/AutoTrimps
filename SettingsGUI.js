@@ -5411,7 +5411,7 @@ function _setDisplayedTabs() {
 
 function _setSelect2Dropdowns() {
 	$(document).ready(function () {
-		$('.select2').select2({
+		$('select.select2').select2({
 			templateSelection: _setSelect2DropdownsPrefix,
 			escapeMarkup: function (m) {
 				return m;
