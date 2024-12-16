@@ -416,7 +416,7 @@ function _timeWarpSave() {
 	if (startTime > 0 && !game.options.menu.pauseGame.enabled) {
 		const timeRun = new Date().getTime() - startTime;
 		const reduceBy = totalOfflineTime + timeRun - ticksProcessed * 100;
-		const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp'];
+		const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastBonePresimpt'];
 
 		_adjustGlobalTimers(keys, -reduceBy);
 		save(false, true);

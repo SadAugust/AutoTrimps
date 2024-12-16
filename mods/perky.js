@@ -1,4 +1,4 @@
-//Setup for non-AT users
+/* setup for non-AT users */
 if (typeof atData === 'undefined') atData = {};
 
 if (typeof $$ !== 'function') {
@@ -33,9 +33,21 @@ function runPerky() {
 	allocatePerky();
 }
 
-function allocatePerky() {
+function allocatePerky(showTooltips = true) {
 	const xpDivStyle = document.querySelector('#weight-xpDiv').style;
 	if (game.global.spiresCompleted >= 2 && xpDivStyle.display !== 'inline') xpDivStyle.display = 'inline';
+
+	if (showTooltips) {
+		const preset = $$('#preset').value;
+		if (preset === 'trapper' && game.global.selectedChallenge !== 'Trapper' && !challengeActive('Trapper')) {
+			tooltip('Trapper²', 'customText', 'lock', 'This preset is designed for the Trapper² challenge. Start a new run using “Trapper² (initial)” and try again.', false, `center`);
+			return;
+		}
+
+		if (preset === 'spire') {
+			tooltip('Spire Respec', 'customText', 'lock', 'This preset is meant to be used mid-run, when you’re done farming for the Spire.', false, `center`);
+		}
+	}
 
 	const perks = optimize();
 	for (let name in perks) perks[name] = perks[name].level;
@@ -172,7 +184,7 @@ function fillPresetPerky(specificPreset, forceDefault) {
 		metal: [0, 7, 1, 0],
 		c2: [0, 7, 1, 1],
 		income: [0, 0, 0, 0],
-		unesscented: [0, 1, 0, 0],
+		unessenceted: [0, 1, 0, 0],
 		nerfeder: [0, 1, 0, 0],
 		experience: [1, 50, 1, 500]
 	};
@@ -266,7 +278,6 @@ function populatePerkyData() {
 	const zone = Math.min(+$$('#targetZone').value, getObsidianStart());
 	const hze = game.stats.highestLevel.valueTotal();
 
-	// Income
 	const spires = Math.min(Math.floor((zone - 101) / 100), game.global.spiresCompleted);
 	const turkimpTimer = masteryPurchased('turkimp2') ? 1 : masteryPurchased('turkimp') ? 0.4 : 0.25;
 	const cache = hze < 60 ? 0 : hze < 85 ? 7 : hze < 160 ? 10 : hze < 185 ? 14 : 20;
@@ -331,13 +342,15 @@ function populatePerkyData() {
 	}
 
 	if (preset === 'spire') {
-		result.mod.prod = result.mod.loot = 0;
+		result.mod.prod = 0;
+		result.mod.loot = 0;
 		result.perks.Overkill.max_level = 0;
 		result.zone = game.global.world;
 	}
 
 	if (preset === 'carp') {
-		result.mod.prod = result.mod.loot = 0;
+		result.mod.prod = 0;
+		result.mod.loot = 0;
 		result.weight.trimps = 1e6;
 	}
 
@@ -347,7 +360,7 @@ function populatePerkyData() {
 	if (preset === 'scientist') result.perks.Coordinated.max_level = 0;
 	if (preset === 'income') result.weight = { income: 3, trimps: 3, attack: 1, helium: 0, health: 0, xp: 0 };
 
-	if (preset === 'unesscented') {
+	if (preset === 'unessenceted') {
 		result.total_he = 0;
 		result.zone = 181;
 	}
@@ -443,7 +456,6 @@ function optimize() {
 	};
 
 	let he_left = total_he;
-	// Number of ticks it takes to one-shot an enemy.
 
 	function ticks() {
 		return 1 + +(Agility.bonus > 0.9) + Math.ceil(10 * Agility.bonus);
@@ -464,7 +476,6 @@ function optimize() {
 		return drag + loot + chronojest;
 	}
 
-	// Max population
 	const trimps = mod.tent_city
 		? function () {
 				const carp = Carpentry.bonus * Carpentry_II.bonus;
@@ -497,27 +508,25 @@ function optimize() {
 		return levels * Math.pow(exponents[stat], tiers);
 	}
 
-	// Number of buildings of a given kind that can be built with the current income.
-	// cost: base cost of the buildings
-	// exp: cost increase for each new level of the building
+	/* Number of buildings of a given kind that can be built with the current income.
+		cost: base cost of the buildings
+		exp: cost increase for each new level of the building 
+	*/
 	function building(cost, exp) {
 		cost *= 4 * Resourceful.bonus;
 		return Math.log(1 + (income(true) * (exp - 1)) / cost) / Math.log(exp);
 	}
 
-	// Number of zones spent in the Magma
 	function magma() {
 		return Math.max(zone - 229, 0);
 	}
 
-	// Breed speed
 	function breed() {
 		const nurseries = building(2e6, 1.06) / (1 + 0.1 * Math.min(magma(), 20));
 		const potency = 0.0085 * (zone >= 60 ? 0.1 : 1) * Math.pow(1.1, Math.floor(zone / 5));
 		return potency * Math.pow(1.01, nurseries) * Pheromones.bonus * mod.ven;
 	}
 
-	// Number of Trimps sent at a time, pre-gators
 	const group_size = [];
 	for (let coord = 0; coord <= Math.log(1 + he_left / 5e5) / Math.log(1.3); ++coord) {
 		const ratio_1 = 1 + 0.25 * Math.pow(0.98, coord);
@@ -527,7 +536,6 @@ function optimize() {
 		group_size[coord] = result;
 	}
 
-	// Strength multiplier from coordinations
 	function soldiers() {
 		const ratio = 1 + 0.25 * Coordinated.bonus;
 		let pop = (mod.soldiers || trimps()) / 3;
@@ -537,14 +545,12 @@ function optimize() {
 		return group_size[0] * Math.pow(1.25, -unbought_coords);
 	}
 
-	// Fracional number of Amalgamators expected
 	function gators() {
 		if (zone < 230 || mod.soldiers > 1) return 0;
 		const ooms = Math.log(trimps() / group_size[Coordinated.level]) / Math.log(10);
 		return Math.max(0, (ooms - 7 + Math.floor((zone - 215) / 100)) / 3);
 	}
 
-	// Total attack
 	function attack() {
 		const gatorCount = gators();
 		let attack = (0.15 + equip('attack')) * Math.pow(0.8, magma());
@@ -555,25 +561,25 @@ function optimize() {
 		return soldiers() * attack;
 	}
 
-	// Total survivability (accounts for health and block)
+	/* total survivability (accounts for health and block) */
 	function health() {
 		let health = (0.6 + equip('health')) * Math.pow(0.8, magma());
 		health *= Toughness.bonus * Toughness_II.bonus * Resilience.bonus;
-		// block
+		/* block */
 		const gyms = building(400, 1.185);
 		const trainers = (gyms * Math.log(1.185) - Math.log(1 + gyms)) / Math.log(1.1) + 25 - mystic;
 		let block = 0.04 * gyms * Math.pow(1 + mystic / 100, gyms) * (1 + tacular * trainers);
-		// target number of attacks to survive
+		/* target number of attacks to survive */
 		let attacks = 60;
 		const breedTimer = breed();
 		const soldier = soldiers();
 		if (zone < 70) {
-			// no geneticists
-			// number of ticks needed to repopulate an army
+			/* no geneticists */
+			/* number of ticks needed to repopulate an army */
 			const timer = Math.log(1 + (soldier * breedTimer) / Bait.bonus) / Math.log(1 + breedTimer);
 			attacks = timer / ticks();
 		} else {
-			// geneticists
+			/* geneticists */
 			const fighting = Math.min(group_size[Coordinated.level] / trimps(), 1 / 3);
 			const target_speed = fighting > 1e-9 ? (Math.pow(0.5 / (0.5 - fighting), 0.1 / mod.breed_timer) - 1) * 10 : fighting / mod.breed_timer;
 			const geneticists = Math.log(breedTimer / target_speed) / -Math.log(0.98);
@@ -690,7 +696,6 @@ function optimize() {
 		Coordinated.min_level = game.portal.Coordinated.level;
 	}
 
-	// Fluffy
 	fluffy.attack = [];
 	const potential = Math.log((0.003 * fluffy.xp) / Math.pow(5, fluffy.prestige) + 1) / Math.log(4);
 	for (let cap = 0; cap <= 10; ++cap) {
@@ -699,7 +704,6 @@ function optimize() {
 		fluffy.attack[cap] = 1 + Math.pow(5, fluffy.prestige) * 0.1 * (level / 2 + progress) * (level + 1);
 	}
 
-	// Minimum levels on perks
 	for (let name in perks) {
 		const perk = perks[name];
 		if (perk.cost_increment) he_left -= perk.level_up(perk.min_level);
@@ -714,7 +718,7 @@ function optimize() {
 
 	if (zone <= 300 || potential >= Capable.level) weight.xp = 0;
 
-	// Main loop
+	/* main loop */
 	const sorted_perks = Object.keys(perks)
 		.map(function (name) {
 			return perks[name];
@@ -781,6 +785,58 @@ function togglePerkLock(id, calcName) {
 	document.getElementById(`lock${id}`).classList = `icomoon ${settingInputs['lockedPerks'][id] ? 'icon-locked' : 'icon-unlocked'}`;
 }
 
+function _setSelect2PerkyDropdowns() {
+	if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+		setTimeout(_setSelect2PerkyDropdowns, 100);
+		return;
+	}
+
+	$(document).ready(function () {
+		$('.select2Perky').select2({
+			templateSelection: _setSelect2PerkyPrefix,
+			escapeMarkup: function (m) {
+				return m;
+			},
+			templateResult: function (data) {
+				if ($(data.element).data('hidden')) {
+					return null;
+				}
+				if ($(data.element).data('visible')) {
+					const $result = $('<span>').text(data.text).css({
+						'text-align': 'left',
+						display: 'block'
+					});
+					return $result;
+				}
+
+				return data.text;
+			}
+		});
+
+		$('.select2Perky').each(function () {
+			const $select = $(this);
+			const $container = $select.next('.select2-container');
+			$container.css({
+				'margin-bottom': '0vw',
+				'min-height': '1.5vw'
+			});
+		});
+	});
+
+	const presetElem = document.getElementById('preset');
+	if (!presetElem || !presetElem.classList.contains('select2-hidden-accessible')) {
+		setTimeout(_setSelect2PerkyDropdowns, 100);
+		return;
+	}
+}
+
+function _setSelect2PerkyPrefix(dropdownSetting) {
+	const prefixName = 'Preset:';
+	const text = dropdownSetting.text;
+
+	return `<font color='#888'>${prefixName}</font> <float='right'>${text}</float>`;
+}
+
 atData.autoPerks = {
 	createInput: function (perkLine, id, inputObj, savedValue, settingName) {
 		if (!id || document.getElementById(`${id}Div`) !== null) {
@@ -789,32 +845,47 @@ atData.autoPerks = {
 		}
 
 		const onchange = `legalizeInput(this.id); save${settingName}Settings();`;
-		//Creating container for both the label and the input.
+
 		const perkDiv = document.createElement('DIV');
 		perkDiv.id = `${id}Div`;
-		perkDiv.style.display = 'inline';
+		perkDiv.style.display = 'flex';
+		perkDiv.style.alignItems = 'center';
 
-		//Creating input box for users to enter their own ratios/stats.
-		const perkInput = document.createElement('Input');
+		const inputBoxSpan = document.createElement('span');
+		inputBoxSpan.className = 'textbox';
+		inputBoxSpan.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
+		inputBoxSpan.onmouseout = () => tooltip('hide');
+		inputBoxSpan.style.cssText = `text-align: left; height: 1.5vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+
+		const prefixText = document.createElement('span');
+		prefixText.id = `${id}Prefix`;
+		prefixText.textContent = `${inputObj.name}: `;
+
+		const perkInput = document.createElement('input');
 		perkInput.type = 'number';
 		perkInput.id = id;
-		perkInput.style.cssText = `text-align: center; width: calc(100vw/22); font-size: 1vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
 		perkInput.value = savedValue || inputObj.defaultValue;
 		perkInput.min = inputObj.minValue;
 		perkInput.max = inputObj.maxValue;
 		perkInput.placeholder = inputObj.defaultValue;
 		perkInput.setAttribute('onchange', onchange);
-		perkInput.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
-		perkInput.onmouseout = () => tooltip('hide');
 
-		const perkText = document.createElement('span');
-		perkText.id = `${id}Text`;
-		perkText.innerHTML = inputObj.name;
-		perkText.style.cssText = 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw;';
+		inputBoxSpan.addEventListener('click', () => {
+			perkInput.focus();
+		});
 
-		perkDiv.appendChild(perkText);
-		perkDiv.appendChild(perkInput);
+		inputBoxSpan.appendChild(prefixText);
+		inputBoxSpan.appendChild(perkInput);
+		perkDiv.appendChild(inputBoxSpan);
 		perkLine.appendChild(perkDiv);
+
+		requestAnimationFrame(() => {
+			const prefixWidth = prefixText.offsetWidth;
+			const perkDivWidth = perkDiv.offsetWidth;
+			const prefixPercentage = (prefixWidth / perkDivWidth) * 100;
+			const inputPercentage = 100 - prefixPercentage - 6.5;
+			perkInput.style.width = `${inputPercentage}%`;
+		});
 	},
 
 	removeGUI: function () {
@@ -837,9 +908,9 @@ atData.autoPerks = {
 			let $portalUpgradesHere = document.getElementById('portalUpgradesHere');
 
 			if ($portalUpgradesHere) {
-				let lockPerksText = 'When locked the current perk levels are not changed when you allocate perks.';
-				let perkLocks = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
-				let $perkIcons = $portalUpgradesHere.children;
+				const lockPerksText = 'When locked the current perk levels are not changed when you allocate perks.';
+				const perkLocks = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
+				const $perkIcons = $portalUpgradesHere.children;
 
 				for (let i = 0; i < $perkIcons.length; i++) {
 					const $perkIcon = $perkIcons[i];
@@ -872,6 +943,17 @@ atData.autoPerks = {
 			}
 		}
 
+		const customRatioElem = document.getElementById('customRatios0');
+		if (atData.autoPerks.loaded === calcName && customRatioElem) {
+			const firstChild = customRatioElem.childNodes[0];
+			if (firstChild) {
+				const grandChild = firstChild.childNodes[0];
+				if (grandChild && grandChild.style.width === '') {
+					forceRefresh = true;
+				}
+			}
+		}
+
 		if (!forceRefresh && atData.autoPerks.loaded === calcName) return;
 
 		const presets = atData.autoPerks[`presets${calcName}`];
@@ -900,69 +982,83 @@ atData.autoPerks = {
 		apGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
 		apGUI.$allocatorBtn.textContent = 'Allocate Perks';
 
+		/* preset dropdown */
+		apGUI.$presetDiv = document.createElement('DIV');
+		apGUI.$presetDiv.id = 'presetDiv';
+		apGUI.$presetDiv.style.cssText = 'display: flex; width: align-items: center; calc(100vw/34);';
+
+		/* setup preset list */
+		function createOption(value, text, title, disabled = false, require = false, visible = false) {
+			const option = document.createElement('option');
+			option.value = value;
+			option.textContent = text;
+			option.title = title;
+			if (!visible && !disabled) option.setAttribute('data-hidden', 'true');
+			if (visible && !require) option.setAttribute('data-visible', 'true');
+			option.disabled = disabled || (visible && !require);
+			return option;
+		}
+
+		function addSection(selectElement, sectionTitle, presets) {
+			const sectionTitleOption = createOption('', sectionTitle, '', true, false, false);
+			selectElement.appendChild(sectionTitleOption);
+
+			let x = 0;
+			for (let item in presets) {
+				const preset = presets[item];
+				const visible = typeof preset.visible === 'function' ? preset.visible() : true;
+				const require = typeof preset.require === 'function' ? preset.require() : true;
+				selectElement.appendChild(createOption(item, preset.name, preset.description, false, require, visible));
+				if (visible) x++;
+			}
+
+			if (x === 0) selectElement.removeChild(sectionTitleOption);
+		}
+
+		const selectElement = document.createElement('select');
+		selectElement.id = 'preset';
+		selectElement.onchange = () => window[`fillPreset${calcName}`]();
+		selectElement.classList.add('select2Perky');
+		selectElement.style.cssText = `text-align: center; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+
+		addSection(selectElement, 'Zone Progression', presets.regular);
+		addSection(selectElement, 'Challenge Presets', presets.challenges);
+		addSection(selectElement, 'Special Purpose Presets', presets.special);
+		if (calcName === 'Perky') addSection(selectElement, 'Feat Presets', presets.feats);
+		apGUI.$preset = selectElement;
+
+		apGUI.$presetDiv.appendChild(apGUI.$preset);
+
 		const $buttonbar = document.getElementById('portalBtnContainer');
 		if (!document.getElementById(apGUI.$allocatorBtn.id)) $buttonbar.appendChild(apGUI.$allocatorBtn);
-		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
+		$buttonbar.setAttribute('style', 'margin-bottom: 0.3vw;');
 		apGUI.$customRatios = document.createElement('DIV');
 		apGUI.$customRatios.id = 'customRatios';
 
 		for (let x = 0; x < Object.keys(inputBoxes).length; x++) {
 			let row = Object.keys(inputBoxes)[x];
 			apGUI.$ratiosLine[row] = document.createElement('DIV');
-			apGUI.$ratiosLine[row].setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
 			apGUI.$ratiosLine[row].setAttribute('id', `customRatios${x}`);
+			apGUI.$ratiosLine[row].classList.add('customRatios');
+			if (x !== 0) apGUI.$ratiosLine[row].style.marginLeft = '0.35vw';
+			apGUI.$ratiosLine[row].style.marginLeft = x !== 0 ? '0.35vw' : '0vw';
+			const inputContainer = document.createElement('div');
+			inputContainer.classList.add('customRatiosContainer');
+
 			for (let item in inputBoxes[row]) {
-				atData.autoPerks.createInput(apGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, calcName);
+				atData.autoPerks.createInput(inputContainer, item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : 1, calcName);
 				atData.autoPerks.GUI.inputs.push(item);
 			}
+
+			if (x === 0) inputContainer.appendChild(apGUI.$presetDiv);
+			apGUI.$ratiosLine[row].appendChild(inputContainer);
 			apGUI.$customRatios.appendChild(apGUI.$ratiosLine[row]);
 		}
 
-		apGUI.$presetDiv = document.createElement('DIV');
-		apGUI.$presetDiv.id = 'Preset Div';
-		apGUI.$presetDiv.style.cssText = 'display: inline; width: calc(100vw/34);';
-		apGUI.$presetLabel = document.createElement('span');
-		apGUI.$presetLabel.id = 'PresetText';
-		apGUI.$presetLabel.innerHTML = '&nbsp;&nbsp;&nbsp;Preset:';
-		apGUI.$presetLabel.style.cssText = 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;';
-
-		/* setup preset list */
-		function createOption(value, text, title, disabled = false) {
-			const option = document.createElement('option');
-			option.value = value;
-			option.textContent = text;
-			option.title = title;
-			option.disabled = disabled;
-			return option;
-		}
-
-		function addSection(selectElement, sectionTitle, presets) {
-			selectElement.appendChild(createOption('', sectionTitle, '', true));
-
-			for (let item in presets) {
-				const preset = presets[item];
-				selectElement.appendChild(createOption(item, preset.name, preset.description));
-			}
-		}
-
-		const selectElement = document.createElement('select');
-		selectElement.id = 'preset';
-		selectElement.onchange = () => window[`fillPreset${calcName}`]();
-		selectElement.style.cssText = `text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
-
-		addSection(selectElement, '— Zone Progression —', presets.regular);
-		addSection(selectElement, '— Special Purpose Presets —', presets.special);
-		apGUI.$preset = selectElement;
-
-		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
-		apGUI.$presetDiv.appendChild(apGUI.$preset);
-		if (document.getElementById(apGUI.$presetDiv.id) === null) apGUI.$ratiosLine.row1.appendChild(apGUI.$presetDiv);
-		let $portalWrapper = document.getElementById('portalWrapper');
-		$portalWrapper.appendChild(apGUI.$customRatios);
-
-		//Amend reset to default weights below input boxes
 		apGUI.$ratiosLine[3] = document.createElement('DIV');
-		apGUI.$ratiosLine[3].setAttribute('style', 'margin-bottom: 0.1vw;');
+		apGUI.$ratiosLine[3].id = 'customRatios3';
+		apGUI.$ratiosLine[3].classList.add('customRatios');
+		apGUI.$ratiosLine[3].setAttribute('style', 'margin-left: 0vw; line-height: 1.5vw;');
 		apGUI.$ratiosLine[3].setAttribute('id', `customRatios${3}`);
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine[3]);
 		let resetWeightsText = 'Clears your current input values for this preset and resets them to their default values.';
@@ -973,9 +1069,12 @@ atData.autoPerks = {
 		apGUI.$resetWeightsBtn.setAttribute('onclick', `importExportTooltip("resetPerkPreset", "${calcName}");`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseover', `tooltip("Reset Preset Weights", "customText", event, \`${resetWeightsText}\`)`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		apGUI.$resetWeightsBtn.style.cssText = 'font-size: 0.9vw; font-weight: lighter; width: 13.9vw; border: 1px solid black !important; margin-right: 0.5vw; padding: 6px 12px; vertical-align: middle;';
+		apGUI.$resetWeightsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}  vertical-align: middle; line-height: 1.3vw;`;
 		apGUI.$resetWeightsBtn.textContent = 'Reset Preset Weights';
 		if (document.getElementById(apGUI.$resetWeightsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$resetWeightsBtn);
+
+		let $portalWrapper = document.getElementById('portalWrapper');
+		$portalWrapper.appendChild(apGUI.$customRatios);
 
 		if (calcName === 'Perky') {
 			if (!settingInputs) {
@@ -1012,11 +1111,12 @@ atData.autoPerks = {
 			apGUI.$goldenUpgradeBtn.setAttribute('onclick', 'toggleShowGoldenUpgrades()');
 			apGUI.$goldenUpgradeBtn.setAttribute('onmouseover', 'tooltip("Recommend Golden Upgrades", "customText", event, "When enabled will display the recommended golden upgrade path to take on your run when you allocate perks.")');
 			apGUI.$goldenUpgradeBtn.setAttribute('onmouseout', 'tooltip("hide")');
-			apGUI.$goldenUpgradeBtn.style.cssText = `height: 1.8vw; border: 0.1vw solid #777; border-radius: 0px; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}  margin-left: 0.5vw;`;
+			apGUI.$goldenUpgradeBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 0.1vw solid #777; border-radius: 0px; padding: 0px`;
 			apGUI.$goldenUpgradeBtn.textContent = 'Recommend Golden Upgrades';
 			if (document.getElementById(apGUI.$goldenUpgradeBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$goldenUpgradeBtn);
 
 			initialLoad();
+			_setSelect2PerkyDropdowns();
 		}
 	},
 
@@ -1024,122 +1124,168 @@ atData.autoPerks = {
 		regular: {
 			early: {
 				name: 'Z1-59',
-				description: "Use this setting for the when you're progressing through the first 60 zones."
+				description: "Use this setting for the when you're progressing through the first 60 zones.",
+				require: () => true,
+				visible: () => true
 			},
 			broken: {
 				name: 'Z60-99',
-				description: 'Use this setting for zones 60-99.'
+				description: 'Use this setting for zones 60-99.',
+				require: () => getHighestLevelCleared(true) >= 59,
+				visible: () => true
 			},
 			mid: {
 				name: 'Z100-180',
-				description: 'Use this setting for zones 100-180.'
+				description: 'Use this setting for zones 100-180.',
+				require: () => getHighestLevelCleared(true) >= 99,
+				visible: () => getHighestLevelCleared(true) >= 59
 			},
 			corruption: {
 				name: 'Z181-229',
-				description: 'Use this setting for zones 181-229.'
+				description: 'Use this setting for zones 181-229.',
+				require: () => getHighestLevelCleared(true) >= 179,
+				visible: () => getHighestLevelCleared(true) >= 99
 			},
 			magma: {
 				name: 'Z230-280',
-				description: 'Use this setting for zones 230-280.'
+				description: 'Use this setting for zones 230-280.',
+				require: () => getHighestLevelCleared(true) >= 229,
+				visible: () => getHighestLevelCleared(true) >= 179
 			},
 			z280: {
 				name: 'Z280-400',
-				description: 'Use this setting for zones 280-400.'
+				description: 'Use this setting for zones 280-400.',
+				require: () => getHighestLevelCleared(true) >= 279,
+				visible: () => getHighestLevelCleared(true) >= 229
 			},
 			z400: {
 				name: 'Z400-450',
-				description: 'Use this setting for zones 400-450.'
+				description: 'Use this setting for zones 400-450.',
+				require: () => getHighestLevelCleared(true) >= 399,
+				visible: () => getHighestLevelCleared(true) >= 279
 			},
 			z450: {
 				name: 'Z450+',
-				description: 'Use this setting for zones 450+.'
+				description: 'Use this setting for zones 450+.',
+				require: () => getHighestLevelCleared(true) >= 449,
+				visible: () => getHighestLevelCleared(true) >= 399
+			}
+		},
+		challenges: {
+			metal: {
+				name: 'Metal²',
+				description: 'Use this setting to respec for the Metal² challenge.',
+				require: () => getHighestLevelCleared(true) >= 24,
+				visible: () => true
+			},
+			scientist: {
+				name: 'Scientist',
+				description: 'Use this setting to respec for the Scientist challenge.',
+				require: () => getHighestLevelCleared(true) >= 39,
+				visible: () => getHighestLevelCleared(true) >= 34
+			},
+			trimp: {
+				name: 'Trimp²',
+				description: 'Use this setting to respec for the Trimp² challenge.',
+				require: () => getHighestLevelCleared(true) >= 59,
+				visible: () => getHighestLevelCleared(true) >= 54
+			},
+			carp: {
+				name: 'Trapper² (initial)',
+				description: 'Use this setting to respec for the Trapper² challenge.',
+				require: () => getHighestLevelCleared(true) >= 69,
+				visible: () => getHighestLevelCleared(true) >= 59
+			},
+			trapper: {
+				name: 'Trapper² (respec)',
+				description: 'Use this setting to respec for the Trapper² challenge.',
+				require: () => getHighestLevelCleared(true) >= 69,
+				visible: () => getHighestLevelCleared(true) >= 59
+			},
+			coord: {
+				name: 'Coordinate²',
+				description: 'Use this setting to respec for the Coordinate² challenge.',
+				require: () => getHighestLevelCleared(true) >= 119,
+				visible: () => getHighestLevelCleared(true) >= 114
+			},
+			experience: {
+				name: 'Experience',
+				description: 'Use this setting to respec for the Experience challenge.',
+				require: () => getHighestLevelCleared(true) >= 599,
+				visible: () => getHighestLevelCleared(true) >= 459
+			},
+			c2: {
+				name: 'Other c²',
+				description: 'Use this setting to respec for the other c² challenges.',
+				require: () => getHighestLevelCleared(true) >= 64,
+				visible: () => getHighestLevelCleared(true) >= 59
 			}
 		},
 		special: {
 			spire: {
 				name: 'Spire respec',
-				description: 'Use this setting to respec for the Spire.'
-			},
-			nerfed: {
-				name: 'Nerfed feat',
-				description: 'Use this setting to respec for the Nerfed feat.'
-			},
-			tent: {
-				name: 'Tent City feat',
-				description: 'Use this setting to respec for the Tent City feat.'
-			},
-			scientist: {
-				name: 'Scientist challenge',
-				description: 'Use this setting to respec for the Scientist challenge.'
-			},
-			carp: {
-				name: 'Trapper² (initial)',
-				description: 'Use this setting to respec for the Trapper² challenge.'
-			},
-			trapper: {
-				name: 'Trapper² (respec)',
-				description: 'Use this setting to respec for the Trapper² challenge.'
-			},
-			coord: {
-				name: 'Coordinate²',
-				description: 'Use this setting to respec for the Coordinate² challenge.'
-			},
-			trimp: {
-				name: 'Trimp²',
-				description: 'Use this setting to respec for the Trimp² challenge.'
-			},
-			metal: {
-				name: 'Metal²',
-				description: 'Use this setting to respec for the Metal² challenge.'
-			},
-			c2: {
-				name: 'Other c²',
-				description: 'Use this setting to respec for the other c² challenges.'
+				description: 'Use this setting to respec for the Spire.',
+				require: () => getHighestLevelCleared(true) >= 199,
+				visible: () => getHighestLevelCleared(true) >= 169
 			},
 			income: {
 				name: 'Income',
-				description: 'Use this setting to respec for the Income feat.'
+				description: 'Use this setting to respec for Income.',
+				require: () => getHighestLevelCleared(true) >= 199,
+				visible: () => getHighestLevelCleared(true) >= 169
+			}
+		},
+		feats: {
+			tent: {
+				name: 'Tent City',
+				description: 'Use this setting to respec for the Tent City feat.',
+				require: () => getHighestLevelCleared(true) >= 74,
+				visible: () => getHighestLevelCleared(true) >= 74
 			},
-			unesscented: {
-				name: 'Unesscented',
-				description: 'Use this setting to respec for the Unesscented feat.'
+			nerfed: {
+				name: 'Nerfed',
+				description: 'Use this setting to respec for the Nerfed feat.',
+				require: () => getHighestLevelCleared(true) >= 199,
+				visible: () => getHighestLevelCleared(true) >= 199
 			},
 			nerfeder: {
 				name: 'Nerfeder',
-				description: 'Use this setting to respec for the Nerfeder feat.'
+				description: 'Use this setting to respec for the Nerfeder feat.',
+				require: () => getHighestLevelCleared(true) >= 299,
+				visible: () => getHighestLevelCleared(true) >= 299
 			},
-			experience: {
-				name: 'Experience',
-				description: 'Use this setting to respec for the Experience challenge.'
+			unessenceted: {
+				name: 'Unessenceted',
+				description: 'Use this setting to respec for the Unessenceted feat.',
+				require: () => getHighestLevelCleared(true) >= 179,
+				visible: () => getHighestLevelCleared(true) >= 179
 			}
 		}
 	},
 	inputBoxesPerky: {
-		//Top Row
 		row1: {
 			'weight-he': {
-				name: 'Weight: Helium',
+				name: 'Helium Weight',
 				description: 'Weight for how much you value 1% more helium .',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
 			},
 			'weight-atk': {
-				name: 'Weight: Attack',
+				name: 'Attack Weight',
 				description: 'Weight for how much you value 1% more attack.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
 			},
 			'weight-hp': {
-				name: 'Weight: Health',
+				name: 'Health Weight',
 				description: 'Weight for how much you value 1% more health.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
 			}
 		},
-		//Second Row
 		row2: {
 			targetZone: {
 				name: 'Target Zone',
@@ -1149,14 +1295,14 @@ atData.autoPerks = {
 				defaultValue: game.global.highestLevelCleared || 1
 			},
 			'weight-xp': {
-				name: 'Weight: Fluffy',
+				name: 'Fluffy Weight',
 				description: 'Weight for how much you value 1% more Fluffy xp.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
 			},
 			'weight-trimps': {
-				name: 'Weight: Population',
+				name: 'Population Weight',
 				description: 'How much you value +1% population.<br><b>WARNING</b>: the effects of population on attack/health are already counted.<br>Default value is <b>0</b>.',
 				minValue: 0,
 				maxValue: null,
@@ -1168,46 +1314,64 @@ atData.autoPerks = {
 		regular: {
 			ezfarm: {
 				name: 'Easy Radon Challenge',
-				description: 'Use if you can easily complete your radon challenge quickly at the minimum requirements with no golden battle. Pushing perks will still be valued for gains to scruffy level 3 and other growth mechanisms.'
+				description: 'Use if you can easily complete your radon challenge quickly at the minimum requirements with no golden battle. Pushing perks will still be valued for gains to scruffy level 3 and other growth mechanisms.',
+				require: () => true,
+				visible: () => true
 			},
 			tufarm: {
 				name: 'Difficult Radon Challenge',
 				description: 'Use if you need some extra pushing power to complete your radon challenge, especially if you still want golden battle. This will almost always be the right setting when you first start a new radon challenge.'
 			},
 			push: {
-				name: 'Push/C^3/Mayhem',
+				name: 'Push/C³/Mayhem',
 				description: 'Use when doing any pushing runs. Aim is to maximise pushing power so should almost always be used with golden battle upgrades.'
 			}
 		},
-		special: {
-			alchemy: {
-				name: 'Alchemy',
-				description: "Use this setting to optimize for trinket drop rate with finding potions. If you won't buy finding potions or don't care about trinket drops you can use a basic preset instead.\nIf it has been set then this will use your Easy Radon Challenge preset weights when selected."
-			},
-			trappa: {
-				name: 'Trappa/^3',
-				description: "Be sure to enter an 'Hours of trapping' value below to help value Bait! Use this setting either when portalling into Trappa, or after portalling with the Max Carpentry setting. coordLimited=1 is assumed."
-			},
+		challenges: {
 			downsize: {
-				name: 'Downsize/^3',
-				description: 'This setting optimizes for each housing building giving only 1 Trimp. coordLimited=1 is assumed as the minimum (but a larger value to overweight population will be respected).\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.'
-			},
-			berserk: {
-				name: 'Berserk/^3',
-				description: 'This setting will stop Frenzy being purchased.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.'
-			},
-			smithless: {
-				name: 'Smithless/^3',
-				description: 'This setting will stop Smithology being purchased and make Smithies hold no value.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.'
+				name: 'Downsize³',
+				description: 'This setting optimizes for each housing building giving only 1 Trimp. coordLimited=1 is assumed as the minimum (but a larger value to overweight population will be respected).\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.',
+				require: () => getHighestLevelCleared(true) >= 19,
+				visible: () => getHighestLevelCleared(true) >= true
 			},
 			duel: {
-				name: 'Duel/^3',
-				description: "This setting optimizes for less than 100% CC in Duel. It's a very minor effect that only matters for Criticality so feel free to skip this setting if you like.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected."
+				name: 'Duel³',
+				description: "This setting optimizes for less than 100% CC in Duel. It's a very minor effect that only matters for Criticality so feel free to skip this setting if you like.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+				require: () => getHighestLevelCleared(true) >= 44,
+				visible: () => getHighestLevelCleared(true) >= 39
 			},
-			equip: {
-				name: 'Equipment farming',
-				description: 'Optimize purely for equipment purchasing power, including zone progression to get more speedbooks. Useful as an initial spec to maximize prestiges that can be afforded before respeccing to Combat spec. All entered weights are ignored, but the Coord-limited setting is respected.'
+			trappacarp: {
+				name: 'Trappa Carp',
+				description: 'Use this setting to max Carpentry when portalling into Trappa, if you can get enough starting population this way to be significant compared to how much you can trap.',
+				require: () => getHighestLevelCleared(true) >= 49,
+				visible: () => getHighestLevelCleared(true) >= 44
 			},
+			trappa: {
+				name: 'Trappa³',
+				description: "Be sure to enter an 'Hours of trapping' value below to help value Bait! Use this setting either when portalling into Trappa, or after portalling with the Max Carpentry setting. coordLimited=1 is assumed.",
+				require: () => getHighestLevelCleared(true) >= 49,
+				visible: () => getHighestLevelCleared(true) >= 44
+			},
+			berserk: {
+				name: 'Berserk³',
+				description: 'This setting will stop Frenzy being purchased.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.',
+				require: () => getHighestLevelCleared(true) >= 114,
+				visible: () => getHighestLevelCleared(true) >= 109
+			},
+			alchemy: {
+				name: 'Alchemy',
+				description: "Use this setting to optimize for trinket drop rate with finding potions. If you won't buy finding potions or don't care about trinket drops you can use a basic preset instead.\nIf it has been set then this will use your Easy Radon Challenge preset weights when selected.",
+				require: () => getHighestLevelCleared(true) >= 154,
+				visible: () => getHighestLevelCleared(true) >= 134
+			},
+			smithless: {
+				name: 'Smithless³',
+				description: 'This setting will stop Smithology being purchased and make Smithies hold no value.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.',
+				require: () => getHighestLevelCleared(true) >= 199,
+				visible: () => getHighestLevelCleared(true) >= 174
+			}
+		},
+		special: {
 			combat: {
 				name: 'Combat Respec',
 				description:
@@ -1217,6 +1381,11 @@ atData.autoPerks = {
 				name: 'Radon Combat Respec',
 				description: "As a respec ONLY, optimize for maximum combat stats given current equipment and population. Coord Limited value is ignored and instead uses your save to determine how much housing perk levels are needed to buy your current coord amount. If you are in Trappa, the optimization assumes you have sent your last army so that health perks won't be applied - DO NOT USE in Trappa until after you send your last army."
 			},
+			equip: {
+				name: 'Equipment farming',
+				description: 'Optimize purely for equipment purchasing power, including zone progression to get more speedbooks. Useful as an initial spec to maximize prestiges that can be afforded before respeccing to Combat spec. All entered weights are ignored, but the Coord-limited setting is respected.'
+			},
+
 			resminus: {
 				name: 'Resources (-maps)',
 				description: 'Optimize for max resource gains from below world level maps. Only use this if you are farming maps below your current zone and care ONLY about total resource gains. All user entered weights are ignored in favor of resource gains. Pushing perks are still valued for increasing the level of map you can farm.'
@@ -1224,35 +1393,34 @@ atData.autoPerks = {
 			resplus: {
 				name: 'Resources (+maps)',
 				description: 'Optimize for max resource gains from +maps. Only use this if you are farming maps above your current zone and care ONLY about total resource gains. All user entered weights are ignored in favor of resource gains. Pushing perks are still valued for increasing the level of map you can farm.'
-			},
-			trappacarp: {
-				name: 'Trappa Carp',
-				description: 'Use this setting to max Carpentry when portalling into Trappa, if you can get enough starting population this way to be significant compared to how much you can trap.'
 			}
 		}
 	},
 	inputBoxesSurky: {
-		//Top Row
 		row1: {
 			clearWeight: {
-				name: 'Weight: Attack',
-				description:
-					"If you are farming and it's trivial to complete your radon challenge, set this to 0! It will still be valued for the effect of pushing power on radon gains (from Scruffy level 3, for example). Set >0 if you need more pushing power to complete your current challenge in a reasonable amount of time. This is the weight for how much you value attack * health, which determines clear speed at less than max equality. If you are used to Attack Weight and Health Weight, this is equivalent to Attack weight. This weight is not used for Equality at all.",
+				name: 'Attack Weight',
+				description: `<p>If you are farming and it's trivial to complete your radon challenge, set this to 0! It will still be valued for the effect of pushing power on radon gains (from Scruffy level 3, for example).</p>
+				<p>Set above 0 if you need more pushing power to complete your current challenge in a reasonable amount of time.</p>
+				<p>This is the weight for how much you value attack * health, which determines clear speed at less than max equality.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			},
 			survivalWeight: {
-				name: 'Weight: Health',
-				description:
-					"Weight placed on equality (and additional weight placed on health), for maximum survivability against high enemy attack at max equality. This helps determine how far you can push (perhaps very slowly) before you get stuck on fast enemies that can one-shot you every hit. This can be set to 0 and equality will still be used as a dump perk. If you need a little more equality than that small weights like 0.001 will still give a meaningful boost to Equality levels. If you're used to separate attack & health weights, set this to your old Health Weight minus Attack Weight.",
+				name: 'Health Weight',
+				description: `<p>Weight placed on equality (and additional weight placed on health), for maximum survivability against high enemy attack at max equality.</p>
+				<p>This helps determine how far you can push (perhaps very slowly) before you get stuck on fast enemies that can one-shot you every hit.</p>
+				<p>This can be set to 0 and equality will still be used as a dump perk.</p>
+				<p>If you need a little more equality than that, then small weights like 0.001 will still give a meaningful boost to Equality levels.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			},
 			radonWeight: {
-				name: 'Weight: Radon',
-				description: 'Weight for how much you value growth from radon (and trinkets). If you are purely farming and can easily complete your radon challenge, this is the only weight you need, other than a tiny bit of additional health/equality weight (like 0.0001) to get some equality.',
+				name: 'Radon Weight',
+				description: `<p>Weight for how much you value growth from radon (and trinkets).</p>
+				<p>If you are purely farming and can easily complete your radon challenge, this is the only weight you need, other than a tiny bit of additional health/equality weight (like 0.0001) to get some equality.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
@@ -1261,28 +1429,32 @@ atData.autoPerks = {
 		row2: {
 			targetZone: {
 				name: 'Target Zone',
-				description: 'Target last zone to clear. Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, 100 for Mayhem, etc).',
+				description: `<p>Target last zone to clear.</p>
+				<p>Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, 100 for Mayhem, etc).</p>`,
 				minValue: 1,
 				maxValue: null,
 				defaultValue: game.global.highestRadonLevelCleared || 20
 			},
 			coordLimited: {
 				name: 'Coord Limited',
-				description: "Enter '0' if you can easily buy all coords with your population. Enter '1' if you definitely can't buy all coords. Enter something in between if you only need a bit more population to buy all coords. You can also increase this value (even above 1) if you just want to weight population gain more highly for some reason.",
+				description: `Enter '0' if you can easily buy all coords with your population.</p>
+				<p>Enter '1' if you definitely can't buy all coords.</p>
+				<p>Enter something in between if you only need a bit more population to buy all coords.</p>
+				<p>You can also increase this value (even above 1) if you just want to weight population gain more highly for some reason.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			},
 			weaponLevels: {
 				name: 'Weapon Levels',
-				description: 'Dagger levels purchased at target zone.',
+				description: '<p>Dagger levels purchased at target zone.</p>',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
 			},
 			armorLevels: {
 				name: 'Armor Levels',
-				description: 'Boots levels purchased at target zone.',
+				description: '<p>Boots levels purchased at target zone.</p>',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
@@ -1291,49 +1463,56 @@ atData.autoPerks = {
 		row3: {
 			tributes: {
 				name: 'Tributes',
-				description: 'Number of purchased tributes to consider for Greed.',
+				description: '<p>Number of purchased tributes to consider for Greed.</p>',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			},
 			meteorologists: {
 				name: 'Meteorologists',
-				description: 'Number of meteorologists to optimize for. Affects the value of food gains.',
+				description: '<p>Number of meteorologists to optimize for. Affects the value of food gains.</p>',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			},
 			housingCount: {
 				name: 'Collector count',
-				description: "How many collectors do you get in your runs? Affects the value of more resources for increasing population. If you don't have collectors unlocked you can enter 0.",
+				description: `<p>How many collectors do you get in your runs? Affects the value of more resources for increasing population.</p>
+				<p>If you don't have collectors unlocked you can enter 0.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			},
 			smithyCount: {
 				name: 'Smithies',
-				description: 'How many Smithies do you get in your runs? Affects the value of Smithology.',
+				description: '<p>How many Smithies do you get in your runs? Affects the value of Smithology.</p>',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			},
 			radonPerRun: {
 				name: 'Radon per run',
-				description: "Typical Radon gains in a farming run. Needed for Observation (until your trinkets are capped). Can be extracted from your save if you paste a save from the end of a U2 farming run. Doesn't need to be exact but a pretty good estimate is recommended. Only used when Rn weight > 0.",
+				description: `<p>Typical Radon gains in a farming run.</p>
+				<p>Needed for Observation (until your trinkets are capped).</p>
+				<p>Can be extracted from your save if you paste a save from the end of a U2 farming run.</p>
+				<p>Doesn't need to be exact but a pretty good estimate is recommended.</p>
+				<p>Only used when Radon Weight is above 0.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
 			},
 			trapHrs: {
 				name: 'Hours of trapping',
-				description: "Roughly how many hours of trapping do you plan to do in this run? Affects the value of Bait. Decimal values like '0.5' and '3.7' are allowed. Entering '0' will place no value on Bait.",
+				description: `<p>Roughly how many hours of trapping do you plan to do in this run? Affects the value of Bait.</p>
+				<p>Decimal values like '0.5' and '3.7' are allowed.</p>
+				<p>Entering '0' will place no value on Bait.`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 5
 			},
 			findPots: {
 				name: 'Finding potions',
-				description: 'How many finding potions will you buy? For simplicity we assume these are all purchased by z100.',
+				description: `<p>How many finding potions will you buy? For simplicity we assume these are all purchased by zone 100.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
@@ -1351,6 +1530,7 @@ if (typeof originalSwapPortalUniverse !== 'function') {
 	swapPortalUniverse = function () {
 		originalSwapPortalUniverse(...arguments);
 		atData.autoPerks.displayGUI();
+		_setSelect2PerkyDropdowns();
 	};
 }
 
@@ -1359,6 +1539,7 @@ if (typeof originalViewPortalUpgrades !== 'function') {
 	viewPortalUpgrades = function () {
 		originalViewPortalUpgrades(...arguments);
 		atData.autoPerks.displayGUI();
+		_setSelect2PerkyDropdowns();
 	};
 }
 
@@ -1367,6 +1548,7 @@ if (typeof originalPortalClicked !== 'function') {
 	portalClicked = function () {
 		originalPortalClicked(...arguments);
 		atData.autoPerks.displayGUI();
+		_setSelect2PerkyDropdowns();
 	};
 }
 
@@ -1375,6 +1557,7 @@ if (typeof originalDisplayPortalUpgrades !== 'function') {
 	displayPortalUpgrades = function () {
 		originalDisplayPortalUpgrades(...arguments);
 		atData.autoPerks.displayGUI();
+		_setSelect2PerkyDropdowns();
 	};
 }
 
@@ -1394,12 +1577,8 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		if (typeof localVersion !== 'undefined') basepathPerkCalc = 'https://localhost:8887/AutoTrimps_Local/';
 		const mods = ['surky'];
 		const modules = ['import-export', 'MAZ'];
-
-		let linkStylesheet = document.createElement('link');
-		linkStylesheet.rel = 'stylesheet';
-		linkStylesheet.type = 'text/css';
-		linkStylesheet.href = basepathPerkCalc + 'css/perky.css';
-		document.head.appendChild(linkStylesheet);
+		const css = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${basepathPerkCalc}css/perky.css`];
+		const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js'];
 
 		function loadModules(fileName, prefix = '', retries = 3) {
 			return new Promise((resolve, reject) => {
@@ -1424,12 +1603,73 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 			});
 		}
 
+		function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3) {
+			return new Promise((resolve, reject) => {
+				if (retries < 1) {
+					reject(`Failed to load stylesheet ${url} after 3 attempts`);
+					return;
+				}
+
+				const link = document.createElement('link');
+				link.href = url;
+				link.rel = rel;
+				link.type = type;
+
+				link.onload = () => {
+					resolve();
+				};
+
+				link.onerror = () => {
+					console.log(`Failed to load stylesheet ${url}. Retries left: ${retries - 1}`);
+					loadStylesheet(url, rel, type, retries - 1)
+						.then(resolve)
+						.catch(reject);
+				};
+
+				document.head.appendChild(link);
+			});
+		}
+
+		function loadScript(url, type = 'text/javascript', retries = 3) {
+			return new Promise((resolve, reject) => {
+				if (retries < 1) {
+					reject(`Failed to load script ${url} after 3 attempts`);
+					return;
+				}
+
+				const script = document.createElement('script');
+				script.src = url;
+				script.type = type;
+
+				script.onload = () => {
+					resolve();
+				};
+
+				script.onerror = () => {
+					console.log(`Failed to load script ${url}. Retries left: ${retries - 1}`);
+					loadScript(url, type, retries - 1)
+						.then(resolve)
+						.catch(reject);
+				};
+
+				document.head.appendChild(script);
+			});
+		}
+
 		try {
 			const toLoad = [...mods, ...modules];
 
 			for (const module of toLoad) {
 				const path = mods.includes(module) ? 'mods/' : modules.includes(module) ? 'modules/' : '';
 				await loadModules(module, path);
+			}
+
+			for (const script of css) {
+				await loadStylesheet(script);
+			}
+
+			for (const script of scripts) {
+				await loadScript(script);
 			}
 
 			atData.autoPerks.displayGUI();

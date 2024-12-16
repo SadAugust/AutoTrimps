@@ -1236,6 +1236,10 @@ h9 {
 	padding-left: 0.25vw;
 }
 
+.select2-container--default .select2-results__option[aria-disabled='true'] {
+	text-align: center !important;
+}
+
 .select2-container .select2-selection--single {
 	display: contents;
 }

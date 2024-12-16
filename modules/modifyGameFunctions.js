@@ -167,7 +167,7 @@ if (typeof offlineProgress.originalFinish !== 'function') {
 				debug(`Running Time Warp again for ${offlineTime} to catchup on the time you missed whilst running it. ${remainingText}`, 'offline');
 				timeRun *= 1000;
 
-				const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
+				const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastBonePresimpt', 'lastChargeAt'];
 				_adjustGlobalTimers(keys, -timeRun);
 
 				offlineProgress.start();

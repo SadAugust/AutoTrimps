@@ -579,7 +579,7 @@ function portalPerkCalc() {
 	}
 
 	if (typeof atData.autoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
-		if (portalUniverse === 1) allocatePerky();
+		if (portalUniverse === 1) allocatePerky(false);
 		if (portalUniverse === 2) runSurky();
 	}
 }

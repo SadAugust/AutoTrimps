@@ -242,7 +242,7 @@ function testTimeWarp(hours) {
 	const timeWarpHours = _getTimeWarpHours(hours);
 	const timeToRun = timeWarpHours * 3600000;
 
-	const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
+	const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastBonePresimpt', 'lastChargeAt'];
 	_adjustGlobalTimers(keys, -timeToRun);
 	offlineProgress.start();
 }
