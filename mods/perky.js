@@ -869,6 +869,7 @@ atData.autoPerks = {
 		perkInput.max = inputObj.maxValue;
 		perkInput.placeholder = inputObj.defaultValue;
 		perkInput.setAttribute('onchange', onchange);
+		perkInput.style.cssText = `color: white;`;
 
 		inputBoxSpan.addEventListener('click', () => {
 			perkInput.focus();
@@ -1019,7 +1020,7 @@ atData.autoPerks = {
 		selectElement.id = 'preset';
 		selectElement.onchange = () => window[`fillPreset${calcName}`]();
 		selectElement.classList.add('select2Perky');
-		selectElement.style.cssText = `text-align: center; font-weight: lighter;`;
+		selectElement.style.cssText = `text-align: center; font-weight: lighter; color: white;`;
 
 		addSection(selectElement, 'Zone Progression', presets.regular);
 		addSection(selectElement, 'Challenge Presets', presets.challenges);
