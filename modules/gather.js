@@ -80,13 +80,15 @@ function _isTrappingOK(Battle, Coordination, maxTrimps = game.resources.trimps.r
 
 	let targetArmySize = game.resources.trimps.getCurrentSend();
 	const remainingTrimps = game.resources.trimps.owned - game.resources.trimps.employed;
+	const coordinated = getPerkLevel('Coordinated');
+	const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
+
 	let trappaCheck;
 	let maxCheck;
 	if (trappaCoordToggle === 0) {
 		const trapperCoords = getPageSetting('trapperCoords');
-		const coordinated = getPerkLevel('Coordinated');
-		const coordinatedMult = coordinated > 0 ? 0.25 * Math.pow(game.portal.Coordinated.modifier, coordinated) + 1 : 1;
 		let coordTarget = trapperCoords > 0 ? trapperCoords - 1 : 999;
+
 		if (!game.global.runningChallengeSquared && coordTarget === 999) coordTarget = trimpStats.currChallenge === 'Trapper' ? 32 : 49;
 		if (Coordination.done >= coordTarget) {
 			for (let z = Coordination.done; z < coordTarget; ++z) {
