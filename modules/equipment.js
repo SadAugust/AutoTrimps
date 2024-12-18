@@ -341,11 +341,12 @@ function zoneGoCheck(setting = getPageSetting('equipZone'), farmType = 'attack',
 	else if (mapType.location === 'Bionic' || (mapSettings.mapName === 'Bionic Raiding' && trimpStats.autoMaps)) hdRatio = hdStats.hdRatioMap;
 
 	if (farmType === 'attack') {
+		const cutOffHD = getPageSetting('equipCutOffHD');
 		if (MODULES.buildings.betaHouseEfficiency) {
 			const formation = game.global.world < 60 || game.global.highestLevelCleared < 180 ? 'X' : 'S';
-			if (hdRatio > getPageSetting('equipCutOffHD') && oneShotZone(mapType.location, formation) < maxOneShotPower()) return zoneDetails;
+			if (cutOffHD > 0 && hdRatio > cutOffHD && oneShotZone(mapType.location, formation) < maxOneShotPower()) return zoneDetails;
 		} else {
-			if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+			if (cutOffHD > 0 && hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 		}
 
 		if (mapSettings.mapName === 'Wither Farm' || mapSettings.mapName === 'Smithless Farm') return zoneDetails;
@@ -353,9 +354,13 @@ function zoneGoCheck(setting = getPageSetting('equipZone'), farmType = 'attack',
 
 	if (farmType === 'health' || farmType === 'block') {
 		const hitsSurvived = whichHitsSurvived();
-		if (hitsSurvived < getPageSetting('equipCutOffHS') || mapSettings.shouldHealthFarm) return zoneDetails;
+		const cutOffHS = getPageSetting('equipCutOffHS');
+		if ((cutOffHS > 0 && hitsSurvived < cutOffHS) || mapSettings.shouldHealthFarm) return zoneDetails;
 		if ((mapSettings.mapName === 'Smithless Farm' || mapSettings.mapName === 'Wither Farm') && mapSettings.equality > 0) return zoneDetails;
-		if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD') && getPerkLevel('Equality') > 0) return zoneDetails;
+		if (game.global.universe === 2) {
+			const cutOffHD = getPageSetting('equipCutOffHD');
+			if (cutOffHD > 0 && hdRatio > cutOffHD && getPerkLevel('Equality') > 0) return zoneDetails;
+		}
 	}
 
 	const settingZone = setting;

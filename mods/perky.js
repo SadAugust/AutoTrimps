@@ -762,15 +762,59 @@ function optimize() {
 	return perks;
 }
 
-function toggleShowGoldenUpgrades() {
-	const ratioBtn = document.getElementById('showGoldenUpgradesBtn');
+function toggleSettingInputProperty(propertyName, elemName) {
+	const ratioBtn = document.getElementById(elemName);
 	const className = ['settingBtnfalse', 'settingBtntrue'];
 	className.splice(className.indexOf(ratioBtn.className.split(' ')[2]), 1);
 	ratioBtn.setAttribute('class', 'btn settingsBtn ' + className[0]);
 
-	let surkyInputs = JSON.parse(localStorage.getItem('surkyInputs'));
-	surkyInputs.showGU = !surkyInputs.showGU;
-	localStorage.setItem('surkyInputs', JSON.stringify(surkyInputs));
+	const settingName = portalUniverse === 1 ? 'perky' : 'surky';
+	const settingInputs = JSON.parse(localStorage.getItem(`${settingName}Inputs`));
+
+	settingInputs[propertyName] = !settingInputs[propertyName];
+	localStorage.setItem(`${settingName}Inputs`, JSON.stringify(settingInputs));
+}
+
+function updateInputFields() {
+	const settingName = portalUniverse === 1 ? 'perky' : 'surky';
+	const settingInputs = JSON.parse(localStorage.getItem(`${settingName}Inputs`));
+	if (settingInputs && !settingInputs.updateInputs) return;
+	const universe = game.global.universe;
+
+	if (portalUniverse === 1) {
+		const currentZone = Math.max(1, universe === 1 ? game.global.world : settingInputs.targetZone);
+		settingInputs.targetZone = currentZone;
+		$$('#targetZone').value = settingInputs.targetZone;
+	}
+
+	if (portalUniverse === 2) {
+		const currentZone = Math.max(1, universe === 2 ? game.global.world : settingInputs.targetZone);
+		settingInputs.targetZone = Math.max(currentZone, settingInputs.targetZone);
+		$$('#targetZone').value = settingInputs.targetZone;
+
+		const tributeCount = universe === 2 ? game.buildings.Tribute.owned : 0;
+		settingInputs.tributes = Math.max(tributeCount, settingInputs.tributes);
+		$$('#tributes').value = settingInputs.tributes;
+
+		const metCount = universe === 2 ? game.jobs.Meteorologist.owned : 0;
+		settingInputs.meteorologists = Math.max(metCount, settingInputs.meteorologists);
+		$$('#meteorologists').value = settingInputs.meteorologists;
+
+		const smithyCount = universe === 2 ? game.buildings.Smithy.owned : 0;
+		settingInputs.smithyCount = Math.max(smithyCount, settingInputs.smithyCount);
+		$$('#smithyCount').value = settingInputs.smithyCount;
+
+		const rnPerRun = game.resources.radon.owned || 0;
+		settingInputs.radonPerRun = Math.max(rnPerRun, settingInputs.radonPerRun);
+		$$('#radonPerRun').value = settingInputs.radonPerRun;
+
+		const housingCount = universe === 2 ? game.buildings.Collector.owned : 0;
+		settingInputs.housingCount = Math.max(housingCount, settingInputs.housingCount);
+		$$('#housingCount').value = settingInputs.housingCount;
+
+		settingInputs.findPots = Math.max(game.resources.trimps.owned, settingInputs.findPots);
+		$$('#findPots').value = settingInputs.findPots;
+	}
 }
 
 function togglePerkLock(id, calcName) {
@@ -904,6 +948,15 @@ atData.autoPerks = {
 
 		const calcNames = { 1: 'Perky', 2: 'Surky' };
 		const calcName = calcNames[universe] || universe;
+		const presets = atData.autoPerks[`presets${calcName}`];
+
+		const targetZoneElem = document.getElementById('targetZone');
+		if (atData.autoPerks.loaded === calcName && targetZoneElem) {
+			const widthValue = parseFloat(targetZoneElem.style.width);
+			if (isNaN(widthValue) || widthValue > 85) {
+				forceRefresh = true;
+			}
+		}
 
 		if (game.global.viewingUpgrades || portalWindowOpen) {
 			let $portalUpgradesHere = document.getElementById('portalUpgradesHere');
@@ -944,20 +997,81 @@ atData.autoPerks = {
 			}
 		}
 
-		const customRatioElem = document.getElementById('customRatios0');
-		if (atData.autoPerks.loaded === calcName && customRatioElem) {
-			const firstChild = customRatioElem.childNodes[0];
-			if (firstChild) {
-				const grandChild = firstChild.childNodes[0];
-				if (grandChild && grandChild.style.width === '') {
-					forceRefresh = true;
-				}
+		function createOption(value, text, title, disabled = false, require = false, visible = false) {
+			const option = document.createElement('option');
+			option.value = value;
+			option.textContent = text;
+			option.title = title;
+			if (!visible && !disabled) option.setAttribute('data-hidden', 'true');
+			if (visible && !require) option.setAttribute('data-visible', 'true');
+			option.disabled = disabled || (visible && !require);
+			return option;
+		}
+
+		function addSection(selectElement, sectionTitle, presets) {
+			const sectionTitleOption = createOption('', sectionTitle, '', true, false, false);
+			selectElement.appendChild(sectionTitleOption);
+
+			let x = 0;
+			for (let item in presets) {
+				const preset = presets[item];
+				const visible = typeof preset.visible === 'function' ? preset.visible() : true;
+				const require = typeof preset.require === 'function' ? preset.require() : true;
+				selectElement.appendChild(createOption(item, preset.name, preset.description, false, require, visible));
+				if (visible) x++;
 			}
+
+			if (x === 0) selectElement.removeChild(sectionTitleOption);
+		}
+
+		function compareAttributes(attributes1, attributes2) {
+			const filterAttributes = (attributes) =>
+				Array.from(attributes)
+					.filter((attr) => attr.name !== 'data-select2-id')
+					.reduce((acc, attr) => {
+						acc[attr.name] = attr.value;
+						return acc;
+					}, {});
+
+			const attrs1 = filterAttributes(attributes1);
+			const attrs2 = filterAttributes(attributes2);
+
+			const keys1 = Object.keys(attrs1);
+			const keys2 = Object.keys(attrs2);
+
+			if (keys1.length !== keys2.length) {
+				return false;
+			}
+
+			return keys1.every((key) => attrs1[key] === attrs2[key]);
+		}
+
+		function compareSelectOptions(select1, select2) {
+			return Array.from(select1.options).every((option1, index) => {
+				const option2 = select2.options[index];
+				return option1.value === option2.value && option1.text === option2.text && compareAttributes(option1.attributes, option2.attributes);
+			});
+		}
+
+		const selectElement = document.createElement('select');
+		selectElement.id = 'preset';
+		selectElement.onchange = () => window[`fillPreset${calcName}`]();
+		selectElement.classList.add('select2Perky');
+		selectElement.style.cssText = `text-align: center; font-weight: lighter; color: white;`;
+
+		addSection(selectElement, 'Zone Progression', presets.regular);
+		addSection(selectElement, 'Challenge Presets', presets.challenges);
+		addSection(selectElement, 'Special Purpose Presets', presets.special);
+		if (calcName === 'Perky') addSection(selectElement, 'Feat Presets', presets.feats);
+
+		/* compare current state of the preset dropdown and refresh UI if it doesn't match */
+		/* used to update challenges that are now visible or clickable */
+		if (!forceRefresh && atData.autoPerks.GUI && atData.autoPerks.GUI && atData.autoPerks.GUI.$preset && !compareSelectOptions(selectElement, atData.autoPerks.GUI.$preset)) {
+			forceRefresh = true;
 		}
 
 		if (!forceRefresh && atData.autoPerks.loaded === calcName) return;
 
-		const presets = atData.autoPerks[`presets${calcName}`];
 		const inputBoxes = atData.autoPerks[`inputBoxes${calcName}`];
 		let settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
 		/* as a safety measure we should remove the GUI if it already exists. */
@@ -987,47 +1101,7 @@ atData.autoPerks = {
 		apGUI.$presetDiv = document.createElement('DIV');
 		apGUI.$presetDiv.id = 'presetDiv';
 		apGUI.$presetDiv.style.cssText = 'display: flex; width: align-items: center; calc(100vw/34);';
-
-		/* setup preset list */
-		function createOption(value, text, title, disabled = false, require = false, visible = false) {
-			const option = document.createElement('option');
-			option.value = value;
-			option.textContent = text;
-			option.title = title;
-			if (!visible && !disabled) option.setAttribute('data-hidden', 'true');
-			if (visible && !require) option.setAttribute('data-visible', 'true');
-			option.disabled = disabled || (visible && !require);
-			return option;
-		}
-
-		function addSection(selectElement, sectionTitle, presets) {
-			const sectionTitleOption = createOption('', sectionTitle, '', true, false, false);
-			selectElement.appendChild(sectionTitleOption);
-
-			let x = 0;
-			for (let item in presets) {
-				const preset = presets[item];
-				const visible = typeof preset.visible === 'function' ? preset.visible() : true;
-				const require = typeof preset.require === 'function' ? preset.require() : true;
-				selectElement.appendChild(createOption(item, preset.name, preset.description, false, require, visible));
-				if (visible) x++;
-			}
-
-			if (x === 0) selectElement.removeChild(sectionTitleOption);
-		}
-
-		const selectElement = document.createElement('select');
-		selectElement.id = 'preset';
-		selectElement.onchange = () => window[`fillPreset${calcName}`]();
-		selectElement.classList.add('select2Perky');
-		selectElement.style.cssText = `text-align: center; font-weight: lighter; color: white;`;
-
-		addSection(selectElement, 'Zone Progression', presets.regular);
-		addSection(selectElement, 'Challenge Presets', presets.challenges);
-		addSection(selectElement, 'Special Purpose Presets', presets.special);
-		if (calcName === 'Perky') addSection(selectElement, 'Feat Presets', presets.feats);
 		apGUI.$preset = selectElement;
-
 		apGUI.$presetDiv.appendChild(apGUI.$preset);
 
 		const $buttonbar = document.getElementById('portalBtnContainer');
@@ -1109,16 +1183,27 @@ atData.autoPerks = {
 			apGUI.$goldenUpgradeBtn.id = 'showGoldenUpgradesBtn';
 			const settingBtnClass = settingInputs.showGU ? 'settingBtntrue' : 'settingBtnfalse';
 			apGUI.$goldenUpgradeBtn.setAttribute('class', `btn settingsBtn ${settingBtnClass}`);
-			apGUI.$goldenUpgradeBtn.setAttribute('onclick', 'toggleShowGoldenUpgrades()');
+			apGUI.$goldenUpgradeBtn.setAttribute('onclick', 'toggleSettingInputProperty("showGU", "showGoldenUpgradesBtn")');
 			apGUI.$goldenUpgradeBtn.setAttribute('onmouseover', 'tooltip("Recommend Golden Upgrades", "customText", event, "When enabled will display the recommended golden upgrade path to take on your run when you allocate perks.")');
 			apGUI.$goldenUpgradeBtn.setAttribute('onmouseout', 'tooltip("hide")');
 			apGUI.$goldenUpgradeBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 0.1vw solid #777; border-radius: 0px; padding: 0px`;
 			apGUI.$goldenUpgradeBtn.textContent = 'Recommend Golden Upgrades';
 			if (document.getElementById(apGUI.$goldenUpgradeBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$goldenUpgradeBtn);
-
 			initialLoad();
-			_setSelect2PerkyDropdowns();
 		}
+
+		apGUI.$updateInputsBtn = document.createElement('DIV');
+		apGUI.$updateInputsBtn.id = 'updateInputsBtn';
+		const settingBtnClass = settingInputs.updateInputs ? 'settingBtntrue' : 'settingBtnfalse';
+		apGUI.$updateInputsBtn.setAttribute('class', `btn settingsBtn ${settingBtnClass}`);
+		apGUI.$updateInputsBtn.setAttribute('onclick', 'toggleSettingInputProperty("updateInputs", "updateInputsBtn")');
+		apGUI.$updateInputsBtn.setAttribute('onmouseover', 'tooltip("Update Input Fields", "customText", event, "When enabled will update input fields with your current runs data when you open the perks or portal window.")');
+		apGUI.$updateInputsBtn.setAttribute('onmouseout', 'tooltip("hide")');
+		apGUI.$updateInputsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 0.1vw solid #777; border-radius: 0px; padding: 0px`;
+		apGUI.$updateInputsBtn.textContent = 'Update Input Fields';
+		if (document.getElementById(apGUI.$updateInputsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$updateInputsBtn);
+
+		_setSelect2PerkyDropdowns();
 	},
 
 	presetsPerky: {
@@ -1531,6 +1616,7 @@ if (typeof originalSwapPortalUniverse !== 'function') {
 	swapPortalUniverse = function () {
 		originalSwapPortalUniverse(...arguments);
 		atData.autoPerks.displayGUI();
+		updateInputFields();
 		_setSelect2PerkyDropdowns();
 	};
 }
@@ -1540,6 +1626,7 @@ if (typeof originalViewPortalUpgrades !== 'function') {
 	viewPortalUpgrades = function () {
 		originalViewPortalUpgrades(...arguments);
 		atData.autoPerks.displayGUI();
+		updateInputFields();
 		_setSelect2PerkyDropdowns();
 	};
 }
@@ -1549,6 +1636,7 @@ if (typeof originalPortalClicked !== 'function') {
 	portalClicked = function () {
 		originalPortalClicked(...arguments);
 		atData.autoPerks.displayGUI();
+		updateInputFields();
 		_setSelect2PerkyDropdowns();
 	};
 }
@@ -1558,7 +1646,6 @@ if (typeof originalDisplayPortalUpgrades !== 'function') {
 	displayPortalUpgrades = function () {
 		originalDisplayPortalUpgrades(...arguments);
 		atData.autoPerks.displayGUI();
-		_setSelect2PerkyDropdowns();
 	};
 }
 

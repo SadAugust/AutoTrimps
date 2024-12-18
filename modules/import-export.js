@@ -447,7 +447,7 @@ function _downloadSave(what = '') {
 			saveGame.options.menu.autoSave.enabled = atConfig.autoSave;
 		}
 		const reduceBy = offlineProgress.totalOfflineTime - offlineProgress.ticksProcessed * 100;
-		['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp'].forEach((key) => {
+		['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastBonePresimpt', 'lastSkeletimp'].forEach((key) => {
 			saveGame.global[key] -= reduceBy;
 		});
 	}
@@ -712,8 +712,11 @@ function makeAdditionalInfoTooltip(mouseover) {
 
 	tooltipText += `<p><b>AL (Auto Level)</b><br>`;
 	tooltipText += `L: The ideal map level for loot gains.<br>`;
-	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the Map Bonus setting.`;
-	tooltipText += `<br>${farmCalcGetMapDetails()}</p>`;
+	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the <b>Map Bonus</b> setting.`;
+
+	const farmCalcDetails = farmCalcGetMapDetails();
+	if (farmCalcDetails) tooltipText += `<br>${farmCalcDetails}`;
+	tooltipText += `</p>`;
 	const refreshTimer = usingRealTimeOffline ? 30 : 5;
 	const remainingTime = Math.ceil(refreshTimer - ((atConfig.intervals.counter / 10) % refreshTimer)) || refreshTimer;
 	tooltipText += `<p>The data shown is updated every ${refreshTimer} seconds. <b>${remainingTime}s</b> until the next update.</p>`;

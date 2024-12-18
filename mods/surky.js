@@ -234,48 +234,23 @@ function surkyResetPerkLevels(perks, skipLevel = false) {
 }
 
 function initialLoad(skipLevels = false) {
-	const universe = game.global.universe;
 	const surkyInputs = JSON.parse(localStorage.getItem('surkyInputs'));
 	let [props, perks] = initPerks();
 	perks = surkyResetPerkLevels(perks, skipLevels);
+
 	props.specialChallenge = $$('#preset').value;
-
-	// target zone to CLEAR is 1 zone before the portal zone by default
-	const currentZone = Math.max(1, universe === 2 ? game.global.world : surkyInputs.targetZone);
-	$$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
 	props.targetZone = Number($$('#targetZone').value);
-
-	// weapon/armor levels taken from dagger/boots (most likely to be leveled highest)
-	$$('#weaponLevels').value = surkyInputs.weaponLevels;
 	props.weaponLevels = Number($$('#weaponLevels').value);
-
-	$$('#armorLevels').value = surkyInputs.armorLevels;
 	props.armorLevels = Number($$('#armorLevels').value);
 
-	const tributeCount = universe === 2 ? game.buildings.Tribute.owned : 0;
-	$$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
 	props.tributes = Number($$('#tributes').value);
-
-	const metCount = universe === 2 ? game.jobs.Meteorologist.owned : 0;
-	$$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
 	props.meteorologists = Number($$('#meteorologists').value);
-
-	const smithyCount = universe === 2 ? game.buildings.Smithy.owned : 0;
-	$$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
 	props.smithyCount = Number($$('#smithyCount').value);
 
-	const rnPerRun = game.resources.radon.owned || 0;
-	props.radonPerRun = Math.max(rnPerRun, Number(surkyInputs.radonPerRun));
-	$$('#radonPerRun').value = props.radonPerRun;
-
-	const housingCount = universe === 2 ? game.buildings.Collector.owned : 0;
-	$$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount);
+	props.radonPerRun = Number(surkyInputs.radonPerRun);
 	props.housingCount = Number($$('#housingCount').value);
-
-	$$('#trapHrs').value = surkyInputs.trapHrs;
 	props.trapHrs = Number($$('#trapHrs').value);
-
-	$$('#findPots').value = Math.max(alchObj.potionsOwned[2], surkyInputs.findPots);
+	$$('#findPots').value = surkyInputs.findPots;
 
 	props.vmZone = Math.max(15, props.targetZone - 1);
 	let rawRnRun = game.resources.radon.owned;
