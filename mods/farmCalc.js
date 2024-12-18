@@ -43,6 +43,7 @@ function populateFarmCalcData() {
 
 	/* Active Challenge Checks */
 	const challengesActive = {
+		discipline: challengeActive('Discipline'),
 		daily: challengeActive('Daily'),
 		trapper: noBreedChallenge(),
 		coordinate: challengeActive('Coordinate'),
@@ -569,6 +570,8 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 	const enemyStats = mapGrid[mapGrid.length - 1];
 	const enemyEqualityModifier = equality > 0 ? Math.pow(0.9, equality) : 1;
 	const trimpEqualityModifier = equality > 0 ? Math.pow(saveData.equalityMult, equality) : 1;
+	const minDmgChallenge = saveData.discipline || saveData.unlucky;
+	const attackMult = minDmgChallenge ? 1000 : 10;
 
 	//Loop through all stances to identify which stance is best for farming
 	for (const stance of stances) {
@@ -598,7 +601,7 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		}
 
 		const trimpAttack = saveData.atk * saveData.gammaMult * trimpEqualityModifier * saveData.critDamage;
-		if (enemyStats.health > trimpAttack * 10) {
+		if (enemyStats.health > trimpAttack * attackMult) {
 			continue;
 		}
 
