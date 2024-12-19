@@ -152,7 +152,7 @@ if (typeof offlineProgress.originalFinish !== 'function') {
 			/* identify remaining Time Warp time */
 			const offlineTime = Math.max(0, totalOfflineTime - oneDayInSeconds);
 			timeRun = offlineTime + Math.max(0, (currentTime - startTime) / 1000);
-			timeRun = Math.min(timeRun, oneDayInSeconds * 365); /* Cap Time Warp time at 1 year */
+			timeRun = Math.min(timeRun, oneDayInSeconds * 365); /* cap Time Warp time at 1 year */
 		}
 
 		if (game.options.menu.autoSave.enabled !== atConfig.autoSave) toggleSetting('autoSave');

@@ -928,7 +928,7 @@ atData.autoPerks = {
 			const prefixWidth = prefixText.offsetWidth;
 			const perkDivWidth = perkDiv.offsetWidth;
 			const prefixPercentage = (prefixWidth / perkDivWidth) * 100;
-			const inputPercentage = 100 - prefixPercentage - 6.5;
+			const inputPercentage = 100 - prefixPercentage - 8;
 			perkInput.style.width = `${inputPercentage}%`;
 		});
 	},
