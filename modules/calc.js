@@ -2,7 +2,7 @@ class TrimpStats {
 	constructor() {
 		const { global, stats, talents, unlocks } = game;
 		const { highestRadLevel, highestLevel } = stats;
-		const { universe, runningChallengeSquared } = global;
+		const { world, universe, runningChallengeSquared } = global;
 		const { purchased: liquification3Purchased } = talents.liquification3;
 		const { purchased: hyperspeed2Purchased } = talents.hyperspeed2;
 		const { imps } = unlocks;
@@ -19,6 +19,7 @@ class TrimpStats {
 		this.hypPct = liquification3Purchased ? 75 : hyperspeed2Purchased ? 50 : 0;
 		this.hyperspeed2 = global.world <= Math.floor(this.hze * (this.hypPct / 100));
 		this.fluffyRewards = updateFluffyRewards();
+		this.resourcesPS = getPsValues();
 
 		this.autoMaps = getPageSetting('autoMaps') > 0;
 
@@ -28,9 +29,7 @@ class TrimpStats {
 		this.plusLevels = this.hze >= (universe === 2 ? 50 : 210);
 		this.mapSpecial = getAvailableSpecials('lmc');
 		this.mapBiome = getBiome();
-
-		this.resourcesPS = getPsValues();
-
+		this.voidMapData = _getVoidPercent(world, universe);
 		this.mountainPriority = !(imps.Chronoimp || imps.Jestimp || ['lmc', 'smc'].includes(getAvailableSpecials('lmc', true)));
 	}
 }
@@ -43,16 +42,14 @@ class HDStats {
 		this.autoLevelLoot = hdStats.autoLevelLoot;
 		this.autoLevelSpeed = hdStats.autoLevelSpeed;
 
-		const { world, universe } = game.global;
+		const world = game.global.world;
 		const checkAutoLevel = this.autoLevelInitial === undefined || (usingRealTimeOffline ? atConfig.intervals.thirtySecond : atConfig.intervals.fiveSecond);
-
 		const mapDifficulty = game.global.mapsActive && MODULES.maps.lastMapWeWereIn.location === 'Bionic' ? 2.6 : 0.75;
 		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
-		const voidPercent = _getVoidPercent(world, universe);
 
 		this.hdRatio = calcHDRatio(world, 'world', false, 1);
 		this.hdRatioMap = calcHDRatio(world, 'map', false, mapDifficulty);
-		this.hdRatioVoid = calcHDRatio(world, 'void', false, voidPercent);
+		this.hdRatioVoid = calcHDRatio(world, 'void', false, trimpStats.voidMapData.difficulty);
 
 		this.vhdRatio = voidMaxTenacity ? calcHDRatio(world, 'world', voidMaxTenacity, 1) : this.hdRatio;
 		this.vhdRatioVoid = voidMaxTenacity ? calcHDRatio(world, 'void', voidMaxTenacity, voidPercent) : this.hdRatioVoid;
@@ -61,7 +58,7 @@ class HDStats {
 
 		this.hitsSurvived = calcHitsSurvived(world, 'world', 1);
 		this.hitsSurvivedMap = calcHitsSurvived(world, 'map', mapDifficulty);
-		this.hitsSurvivedVoid = calcHitsSurvived(world, 'void', voidPercent);
+		this.hitsSurvivedVoid = calcHitsSurvived(world, 'void', trimpStats.voidMapData.difficulty);
 
 		/* U1 specific checks */
 		const worldType = _getTargetWorldType();
@@ -105,20 +102,29 @@ function _getVoidMapsObjects() {
 
 function _getVoidPercent(world = game.global.world, universe = game.global.universe) {
 	const ownedVoidMaps = _getVoidMapsObjects();
+	const voidDetails = {
+		difficulty: 1,
+		critMap: true
+	};
 
-	if (ownedVoidMaps.length) return ownedVoidMaps.reduce((worstDiff, currentMap) => Math.max(worstDiff, currentMap.difficulty), 0);
+	if (ownedVoidMaps.length) {
+		voidDetails.difficulty = ownedVoidMaps.reduce((worstDiff, currentMap) => Math.max(worstDiff, currentMap.difficulty), 0);
+		voidDetails.critMap = ownedVoidMaps.some((map) => map.voidBuff === 'getCrit');
+	} else {
+		let voidPercent = 4.5;
+		if (world <= 59) {
+			voidPercent -= 2;
+			if (universe === 1) voidPercent /= 2;
+		} else if (universe === 1 && world <= 199) {
+			voidPercent -= 1;
+		}
 
-	let voidPercent = 4.5;
-	if (world <= 59) {
-		voidPercent -= 2;
-		if (universe === 1) voidPercent /= 2;
-	} else if (universe === 1 && world <= 199) {
-		voidPercent -= 1;
+		if (challengeActive('Mapocalypse')) voidPercent += 3;
+
+		voidDetails.difficulty = voidPercent;
 	}
 
-	if (challengeActive('Mapocalypse')) voidPercent += 3;
-
-	return voidPercent;
+	return voidDetails;
 }
 
 function applyMultipliers(multipliers, stat, challenge, postChallengeCheck) {
@@ -1108,7 +1114,7 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 		if (dailyCrit) damageMult = dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 		else if (challengeActive('Crushed') && health > block) damageMult = 3;
 
-		if (ignoreCrits !== 1 && worldType === 'void') damageMult *= 4;
+		if (ignoreCrits !== 1 && worldType === 'void' && trimpStats.voidMapData.critMap) damageMult *= 4;
 	}
 
 	const worldDamage = calcEnemyAttack(worldType, targetZone, cell, enemyName, undefined, customAttack, equality) * difficulty;

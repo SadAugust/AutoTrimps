@@ -778,7 +778,7 @@ function shieldGymEfficiency(hitsBefore = _getTargetWorldType() === 'void' ? hdS
 	const mapObj = game.global.mapsActive && !game.global.voidBuff ? getCurrentMapObject() : { level: game.global.world, location: undefined };
 	const zone = Math.max(game.global.world, mapObj.level);
 	const worldType = mapObj.location === 'Bionic' ? 'map' : _getTargetWorldType();
-	const difficulty = worldType === 'void' ? _getVoidPercent() : mapObj.location === 'Bionic' ? 2.6 : 1;
+	const difficulty = worldType === 'void' ? _getVoidPercent().difficulty : mapObj.location === 'Bionic' ? 2.6 : 1;
 
 	const itemData = game.equipment.Shield;
 	const stat = shieldBlock ? 'block' : 'health';
@@ -858,7 +858,7 @@ function biomeEfficiency(pretty = false, hitsBefore = _getTargetWorldType() === 
 	let cost, hsImpact, efficiency;
 
 	if (mostEff) {
-		const difficulty = worldType === 'void' ? _getVoidPercent() : 1;
+		const difficulty = worldType === 'void' ? _getVoidPercent().difficulty : 1;
 		const zoneGo = zoneGoCheck(undefined, 'health', { location: worldType }).active;
 		const resourceSpendingPct = calculateResourceSpendingPct(zoneGo, 'health');
 
@@ -897,7 +897,7 @@ function biomeEfficiency(pretty = false, hitsBefore = _getTargetWorldType() === 
 
 	let hdCurrent = worldType === 'void' ? hdStats.hdRatioVoid : hdStats.hdRatio;
 	if (!hdCurrent) {
-		const difficulty = worldType === 'void' ? _getVoidPercent(game.global.world, game.global.universe) : 1;
+		const difficulty = worldType === 'void' ? _getVoidPercent(game.global.world, game.global.universe).difficulty : 1;
 		hdCurrent = calcHDRatio(game.global.world, worldType, false, difficulty);
 	}
 

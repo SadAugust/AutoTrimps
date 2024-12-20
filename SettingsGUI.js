@@ -1093,13 +1093,14 @@ function initialiseAllSettings() {
 		createSetting('ignoreCrits',
 			function () { return (['Ignore Crits: None', 'Ignore Crits: Void Strength', 'Ignore Crits: All']) },
 			function () {
-				let description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
+				const universeSetting = atConfig.settingUniverse === 1 ? 'Stance' : 'Equality'
+				let description = `<p>Enabling this setting will cause <b>Hits Survived</b> and <b>Auto ${universeSetting}</b> to ignore enemy crits.</p>`;
 				description += "<p><b>Ignore Crits: None</b><br>Disables this setting.</p>";
-				description += "<p><b>Ignore Crits: Void Strength</b><br>Will ignore the crit chance buff from enemies in Heinous Void maps.</p>";
+				description += "<p><b>Ignore Crits: Void Strength</b><br>Will ignore the crit chance buff from enemies in Heinous void maps.</p>";
 				description += "<p><b>Ignore Crits: All</b><br>Will ignore crits from enemies in challenges, daily modifiers or void maps.</p>";
 				description += "<p><b>Recommended:</b> Ignore Crits: Void Strength</p>";
 				return description;
-			}, 'multitoggle', 0, null, 'Combat', [1, 2],
+			}, 'multitoggle', 1, null, 'Combat', [1, 2],
 			function () { return (game.global.totalPortals > 0) });
 
 		createSetting('autoRoboTrimp',
