@@ -3177,8 +3177,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 	//Needs to be done before auto level code is run
 	if (hdType.includes('hitsSurvived')) mapName = 'Hits Survived';
 
-	const mostEffEquip = mostEfficientEquipment();
-	const biome = !hdType.includes('hdRatio') && hdStats.biomeEff && hdStats.biomeEff === 'Forest' ? 'Forest' : 'Any';
+	const biome = !hdType.includes('hdRatio') && hdStats.biomeEff && hdStats.biomeEff.biome === 'Forest' ? 'Forest' : 'Any';
 
 	if (setting.autoLevel) {
 		const shouldMapBonus = game.global.mapBonus !== 10 && (setting.repeat || hdType === 'world' || (hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
@@ -4163,7 +4162,7 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 	if (checkMapBonus) {
 		const mapObj = game.global.mapsActive ? getCurrentMapObject() : null;
 		const mapBonusMinSetting = getPageSetting('mapBonusMinLevel');
-		const needPrestiges = autoLevelPrestiges(mapObj, mapBonusLevel);
+		const needPrestiges = autoLevelPrestiges(mapName, mapObj, mapLevel, mapBonusLevel);
 
 		const aboveMinMapLevel = mapBonusMinSetting <= 0 || mapLevel > -mapBonusMinSetting - Math.abs(mapBonusLevel);
 		const willCapMapBonus = game.global.mapBonus === 9 && game.global.mapsActive && mapObj.level >= game.global.world + mapBonusLevel;
@@ -4193,17 +4192,17 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 	return mapLevel;
 }
 
-function autoLevelPrestiges(mapObj, mapBonusLevel) {
+function autoLevelPrestiges(mapName, mapObj, mapLevel, mapBonusLevel) {
 	const [prestigesAvailable] = prestigesToGet(game.global.world + mapBonusLevel);
 	let needPrestiges = prestigesAvailable !== 0 && prestigesUnboughtCount() === 0;
 
 	if (needPrestiges) {
 		/* Reduce map level zone to the value of the last prestige item we need to farm */
-		/* if (mapName !== 'Map Bonus' && getPageSetting('mapBonusPrestige')  ) {
+		if (mapName !== 'Map Bonus' && getPageSetting('mapBonusPrestige')) {
 			while (mapLevel !== mapBonusLevel && prestigesToGet(game.global.world + mapBonusLevel - 1)[0] > 0) {
 				mapBonusLevel--;
 			}
-		} */
+		}
 
 		if (game.global.mapsActive) {
 			const [prestigesToFarm, mapsToRun] = prestigesToGet(game.global.world + mapBonusLevel);

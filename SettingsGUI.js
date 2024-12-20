@@ -1510,6 +1510,16 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
+		createSetting('mapBonusPrestige',
+			function () { return ('Map Bonus Level Prestiges') },
+			function () {
+				let description = "<p>When using the <b>Map Bonus Min Level</b> setting, if there are any prestige upgrades available between your map level and minimum map bonus level, this will the reduce level that it looks for to the last one with prestiges.</p>";
+				description += "<p>This setting is ignored when obtaining map bonus stacks through the <b>Map Bonus</b> setting.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Maps', [1, 2],
+			function () { return (trimpStats.plusLevels || (game.global.universe === 1 && !game.portal.Siphonology.locked)) });
+
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
@@ -1579,16 +1589,6 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
-
-		/* does this work as intended? query Ray for info */
-		/* createSetting('mapBonusPrestige',
-			function () { return ('Map Bonus Level Prestiges') },
-			function () {
-				let description = "<p>When using the <b>Map Bonus Min Level</b> setting, if there are any prestige upgrades available between your map level and minimum map bonus level, this will the reduce level that it looks for to the last one with prestiges.</p>";
-				description += "<p>This setting is ignored when obtaining map bonus stacks through the <b>Map Bonus</b> setting.</p>";
-				description += "<p><b>Recommended:</b> 2</p>";
-				return description;
-			}, 'boolean', false, null, 'Maps', [1, 2]); */
 
 		createSetting('prestigeClimb',
 			function () { return ('Prestige Climb') },
@@ -5434,7 +5434,7 @@ function _settingsToLineBreak() {
 	const heirloom = getPageSetting('heirloomAuto', atConfig.settingUniverse) ? 'show' : 'hide';
 
 	const breakAfterCore = ['pauseScript', 'universeSetting'];
-	const breakAfterMaps = ['recycleExplorer', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
+	const breakAfterMaps = ['mapBonusPrestige', 'mapBonusLevelType', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
 	const breakAfterDaily = ['avoidEmpower', 'dailyHeliumHrPortal'];
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
