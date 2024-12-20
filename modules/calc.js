@@ -52,7 +52,7 @@ class HDStats {
 		this.hdRatioVoid = calcHDRatio(world, 'void', false, trimpStats.voidMapData.difficulty);
 
 		this.vhdRatio = voidMaxTenacity ? calcHDRatio(world, 'world', voidMaxTenacity, 1) : this.hdRatio;
-		this.vhdRatioVoid = voidMaxTenacity ? calcHDRatio(world, 'void', voidMaxTenacity, voidPercent) : this.hdRatioVoid;
+		this.vhdRatioVoid = voidMaxTenacity ? calcHDRatio(world, 'void', voidMaxTenacity, trimpStats.voidMapData.difficulty) : this.hdRatioVoid;
 
 		this.hdRatioHeirloom = calcHDRatio(world, 'world', false, 1, false);
 
