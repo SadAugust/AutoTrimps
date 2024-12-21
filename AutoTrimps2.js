@@ -263,7 +263,7 @@ function initialiseScript() {
 	alterHeirloomWindow();
 
 	if (_getTargetWorldType() === 'void' && !hdStats.hitsSurvivedVoid) {
-		hdStats.hitsSurvivedVoid = calcHitsSurvived(game.global.world, 'void', _getVoidPercent(game.global.world, game.global.universe));
+		hdStats.hitsSurvivedVoid = calcHitsSurvived(game.global.world, 'void', _getVoidPercent(game.global.world, game.global.universe).difficulty);
 	} else if (!hdStats.hitsSurvived) {
 		hdStats.hitsSurvived = calcHitsSurvived(game.global.world, 'world', 1);
 	}

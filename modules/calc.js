@@ -1114,7 +1114,7 @@ function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), 
 		if (dailyCrit) damageMult = dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 		else if (challengeActive('Crushed') && health > block) damageMult = 3;
 
-		if (ignoreCrits !== 1 && worldType === 'void' && trimpStats.voidMapData.critMap) damageMult *= 4;
+		if (atConfig.initialise.loaded && ignoreCrits !== 1 && worldType === 'void') damageMult *= 4;
 	}
 
 	const worldDamage = calcEnemyAttack(worldType, targetZone, cell, enemyName, undefined, customAttack, equality) * difficulty;
