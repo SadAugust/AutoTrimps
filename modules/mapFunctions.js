@@ -723,10 +723,18 @@ function _runMapFarm(setting, mapName, settingName, settingIndex) {
 	const [repeatCheck, status] = _getMapFarmActions(mapType, setting, repeatNumber);
 
 	if (mapType !== 'Map Count') {
-		repeatCounter = repeatCounter.split(':').reduce((acc, time) => 60 * acc + +time);
+		if (typeof repeatCounter === 'string' && repeatCounter.includes(':')) {
+			repeatCounter = repeatCounter.split(':').reduce((acc, time) => 60 * acc + +time);
+		} else {
+			repeatCounter = -Infinity;
+		}
 	}
 
-	const shouldMap = mapType === 'Daily Reset' ? repeatCounter < repeatCheck : repeatCounter > repeatCheck;
+	const shouldMap = (() => {
+		if (repeatCounter === -Infinity) return false;
+		if (mapType === 'Daily Reset') return repeatCounter < repeatCheck;
+		return repeatCounter > repeatCheck;
+	})();
 
 	//Marking setting as complete if we've run enough maps.
 	if (mapSettings.mapName === mapName && (mapType === 'Daily Reset' ? repeatCheck <= repeatCounter : repeatCheck >= repeatCounter)) {
