@@ -2098,8 +2098,8 @@ function initialiseAllSettings() {
 				let description = `<p>Hides challenges that have a maximum completion count when they've been finished.</p>`;
 				description += `<p><b>If you're running one of the challenges the settings will appear for the duration of that run.</b></p>`;
 				return description;
-			}, 'boolean', true, null, 'C2', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 100) });
+			}, 'boolean', true, null, 'C2', [1, 2],
+			function () { return (( atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 460) || (atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 100)) });
 
 		createSetting('c2RunnerStart',
 			function () { return `${_getChallenge2Info()} Runner` },
@@ -2352,7 +2352,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 460) });
+			function () { return (((!getPageSetting('c2DisableFinished', atConfig.settingUniverse) || game.global.frigidCompletions < 15) && game.stats.highestLevel.valueTotal() >= 460) || challengeActive('Frigid')) });
+
 
 		createSetting('frigidSwapZone',
 			function () { return ('F: Heirloom Swap Zone') },
@@ -2372,7 +2373,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 600) });
+			function () { return ((/* !getPageSetting('c2DisableFinished', atConfig.settingUniverse) && */ game.stats.highestLevel.valueTotal() >= 600) || challengeActive('Experience')) });
 
 		createSetting('experienceStartZone',
 			function () { return ('E: Start Zone') },
@@ -2382,7 +2383,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 500 to start and lower over time</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
-			function () { return (autoTrimpSettings.experience.enabled) });
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
 
 		createSetting('experienceStaff',
 			function () { return ('E: Wonder Staff') },
@@ -2392,7 +2393,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Dedicated pet xp staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [1],
-			function () { return (autoTrimpSettings.experience.enabled) });
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
 
 		createSetting('experienceEndZone',
 			function () { return ('E: End Zone') },
@@ -2402,7 +2403,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
-			function () { return (autoTrimpSettings.experience.enabled) });
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
 
 		createSetting('experienceEndBW',
 			function () { return ('E: End BW') },
@@ -2414,7 +2415,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
-			function () { return (autoTrimpSettings.experience.enabled) });
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
 
 		createSetting('wither',
 			function () { return ('Wither') },
@@ -2519,7 +2520,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () {
-				return (((!getPageSetting('c2DisableFinished') || game.global.mayhemCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 100) || challengeActive('Mayhem'))
+				return (((!getPageSetting('c2DisableFinished', atConfig.settingUniverse) || game.global.mayhemCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 100) || challengeActive('Mayhem'))
 			});
 
 		createSetting('mayhemDestack',
@@ -2630,7 +2631,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";;
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (((!getPageSetting('c2DisableFinished') || game.global.pandCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 150) || challengeActive('Pandemonium')) });
+			function () { return (((!getPageSetting('c2DisableFinished', atConfig.settingUniverse) || game.global.pandCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 150) || challengeActive('Pandemonium')) });
 
 		createSetting('pandemoniumDestack',
 			function () { return ('P: HD Ratio') },
@@ -2743,7 +2744,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (((!getPageSetting('c2DisableFinished') || game.global.desoCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 200) || challengeActive('Desolation')) });
+			function () { return (((!getPageSetting('c2DisableFinished', atConfig.settingUniverse) || game.global.desoCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 200) || challengeActive('Desolation')) });
 
 		createSetting('desolationDestack',
 			function () { return ('D: HD Ratio') },
