@@ -3336,7 +3336,9 @@ function farmingDecision() {
 	}
 
 	/* skipping map farming if in Decay or Melt and above stack count user input */
-	if (decaySkipMaps()) mapTypes = [prestigeClimb, voidMaps, _obtainUniqueMap];
+	if (decaySkipMaps()) {
+		mapTypes = [prestigeClimb, voidMaps, _obtainUniqueMap];
+	}
 
 	const priorityList = [];
 	//If we are currently running a map and it should be continued then continue running it.
@@ -3359,15 +3361,14 @@ function farmingDecision() {
 				priorityList.push(mapCheck);
 			}
 		}
-		//Sort priority list by priority > mapTypes index(settingName) if the priority sorting toggle is on
+		/* sort priority list by priority > mapTypes index(settingName) if the priority sorting toggle is on */
 		if (getPageSetting('autoMapsPriority')) {
-			//mapTypes.unshift(boneShrine);
 			priorityList.sort(function (a, b) {
 				if (a.priority === b.priority) return mapTypes.indexOf(a.settingName) > mapTypes.indexOf(b.settingName) ? 1 : -1;
 				return a.priority > b.priority ? 1 : -1;
 			});
 		}
-		//Loops through each item in the priority list and checks if it should be run.
+		//loops through each item in the priority list and checks if it should be run.
 		for (const item in priorityList) {
 			const mapCheck = priorityList[item].settingName();
 			if (mapCheck.shouldRun) {

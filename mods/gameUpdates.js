@@ -7115,7 +7115,7 @@ function getLootBd(what) {
 				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>x 1.1</td><td>" + (game.global.world - 175) + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
 			}
 			if (game.global.universe == 2 && game.global.world >= 201) {
-				const mult = 400;
+				let mult = 400;
 				if (u2Mutations.tree.AllRadon.purchased) mult *= 1.5;
 				currentCalc *= mult;
 				textString += "<tr><td class='bdTitle'>Mutated Zone</td><td>x " + mult + '</td><td></td><td>x ' + mult + '</td><td>' + prettify(currentCalc) + '</td></tr>';
