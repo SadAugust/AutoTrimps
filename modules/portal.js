@@ -225,7 +225,6 @@ function c2RunnerPortal(portalZone) {
 
 function doPortal(challenge, skipDaily) {
 	if (!game.global.portalActive) return;
-	autoHeirlooms();
 
 	if (!portalWindowOpen) {
 		portalClicked();
@@ -234,8 +233,8 @@ function doPortal(challenge, skipDaily) {
 		if (game.global.selectedChallenge) selectChallenge(0);
 	}
 
-	let magmiteText;
-	if (getPageSetting('magmiteSpending') === 1) magmiteText = autoMagmiteSpender(true);
+	let heirloomText = autoHeirlooms(true);
+	let magmiteText = getPageSetting('magmiteSpending') === 1 ? autoMagmiteSpender(true) : undefined;
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 
@@ -284,9 +283,11 @@ function doPortal(challenge, skipDaily) {
 	if (!game.global.selectedChallenge && challenge && !challengeSquaredMode) challenge = _autoPortalRegular(challenge);
 	_autoPortalActivate(challenge);
 
+	if (heirloomText) debug(heirloomText, 'heirlooms');
 	if (magmiteText) debug(magmiteText, 'magmite');
 	if (c2Text) debug(c2Text, 'portal');
 	if (dailyText) debug(dailyText, 'portal');
+	if (!game.global.runningChallengeSquared && !challengeActive('Daily')) debug(`Portaling into ${game.global.challengeActive}`, 'portal');
 }
 
 function _autoPortalAbandonChallenge(portal = true) {
@@ -506,7 +507,7 @@ function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
 	getDailyChallenge(lastUndone);
 	const dailyString = getDailyTimeString(lastUndone, true);
 	const dayName = dayOfWeek(getDailyTimeString(lastUndone, false, true)).slice(0, -1);
-	return [`Portaling into ${dayName}ily (${dailyString}) now!`, 'Daily'];
+	return [`Portaling into ${dayName}ily (${dailyString})`, 'Daily'];
 }
 
 function _autoPortalRegular(challengeName) {

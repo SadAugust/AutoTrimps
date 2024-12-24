@@ -3328,7 +3328,7 @@ function farmingDecision() {
 	}
 
 	if (usingBreedHeirloom(true)) {
-		if (atConfig.intervals.oneMinute && getPageSetting('autoMaps')) {
+		if (atConfig.intervals.oneMinute && (game.global.fighting || newArmyRdy()) && getPageSetting('autoMaps')) {
 			debug(`Your breed heirloom is equipped and mapping is disabled due to it. If this is not intentional then swap the heirloom you're using for breeding with another.`, `heirlooms`);
 		}
 

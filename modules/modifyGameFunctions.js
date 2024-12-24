@@ -246,13 +246,15 @@ if (typeof originalrunMap !== 'function') {
 if (typeof originalActivateClicked !== 'function') {
 	var originalActivateClicked = activateClicked;
 	activateClicked = function () {
+		let magmiteText;
 		if (!game.global.viewingUpgrades) {
 			downloadSave(true);
 			if (typeof Graphs !== 'undefined' && typeof Graphs.Push !== 'undefined' && typeof Graphs.Push.zoneData === 'function') Graphs.Push.zoneData();
 			if (!MODULES.portal.dontPushData) pushSpreadsheetData();
 			autoUpgradeHeirlooms();
 			autoHeirlooms(true);
-			autoMagmiteSpender(true);
+
+			magmiteText = autoMagmiteSpender(true);
 			alterAutoHeirloomElem();
 		}
 
@@ -268,6 +270,8 @@ if (typeof originalActivateClicked !== 'function') {
 				u2Mutations.closeTree();
 			}
 		}
+
+		if (magmiteText) debug(magmiteText, 'magmite');
 	};
 }
 

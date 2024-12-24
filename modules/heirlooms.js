@@ -78,7 +78,7 @@ function worthOfHeirlooms() {
 	return heirloomWorth;
 }
 
-function autoHeirlooms(portal) {
+function autoHeirlooms(portal = false) {
 	if (portal && !portalWindowOpen) return;
 	if (game.global.heirloomsExtra.length === 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return;
 
@@ -96,6 +96,7 @@ function autoHeirlooms(portal) {
 	let types = Object.keys(weights).filter((key) => heirloomTypeEnabled[key]).length;
 	if (types === 0) return;
 
+	let heirloomText;
 	while (game.global.heirloomsCarried.length < maxHeirlooms && game.global.heirloomsExtra.length > 0) {
 		for (let x = 0; x < heirloomTypes.length; x++) {
 			if (game.global.heirloomsCarried.length >= maxHeirlooms) break;
@@ -117,6 +118,9 @@ function autoHeirlooms(portal) {
 
 		break;
 	}
+
+	/* if (portal) return heirloomText;
+	else debug(`AutoHeirlooms: ${heirloomText}`, 'heirlooms'); */
 }
 
 //Heirloom Swapping
