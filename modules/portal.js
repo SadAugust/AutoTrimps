@@ -225,8 +225,6 @@ function c2RunnerPortal(portalZone) {
 
 function doPortal(challenge, skipDaily) {
 	if (!game.global.portalActive) return;
-
-	if (getPageSetting('magmiteSpending') === 1) autoMagmiteSpender();
 	autoHeirlooms();
 
 	if (!portalWindowOpen) {
@@ -235,6 +233,9 @@ function doPortal(challenge, skipDaily) {
 		if (challengeSquaredMode) toggleChallengeSquared();
 		if (game.global.selectedChallenge) selectChallenge(0);
 	}
+
+	let magmiteText;
+	if (getPageSetting('magmiteSpending') === 1) magmiteText = autoMagmiteSpender(true);
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 
@@ -266,12 +267,26 @@ function doPortal(challenge, skipDaily) {
 		}
 	}
 
-	_autoPortalC2();
-	challenge = _autoPortalDaily(challenge, portalUniverse, skipDaily);
+	let c2Text = _autoPortalC2();
+	let dailyText;
+	if (!skipDaily && !challengeSquaredMode && (MODULES.portal.currentChallenge === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse))) {
+		const dailyPortal = _autoPortalDaily(challenge, portalUniverse, skipDaily);
+
+		if (Array.isArray(dailyPortal)) {
+			[dailyText, challenge] = dailyPortal;
+		} else {
+			challenge = dailyPortal;
+		}
+	}
+
 	if (!game.global.portalActive) return;
 
 	if (!game.global.selectedChallenge && challenge && !challengeSquaredMode) challenge = _autoPortalRegular(challenge);
 	_autoPortalActivate(challenge);
+
+	if (magmiteText) debug(magmiteText, 'magmite');
+	if (c2Text) debug(c2Text, 'portal');
+	if (dailyText) debug(dailyText, 'portal');
 }
 
 function _autoPortalAbandonChallenge(portal = true) {
@@ -306,14 +321,6 @@ function _autoPortalVoidTracker() {
 	if (!forcePortal) return;
 	if (!game.options.menu.liquification.enabled) toggleSetting('liquification');
 
-	if (portalRespec === 1) {
-		MODULES.portal.portalForRespec = true;
-		debug(`Portaling to refresh respec.`, 'portal');
-	} else {
-		MODULES.portal.portalForVoid = true;
-		debug(`Portaling for free void map counter.`, 'portal');
-	}
-
 	if (MODULES.portal.portalUniverse === Infinity || (game.global.universe !== 1 && game.global.universe === MODULES.portal.portalUniverse)) {
 		if (portalUniverse !== 1) {
 			MODULES.portal.portalUniverse = game.global.universe;
@@ -327,8 +334,19 @@ function _autoPortalVoidTracker() {
 	autoUpgradeHeirlooms();
 
 	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
-	debug(`Portaling to increment void tracker (${trackerValue}/10) with liquification.`, 'portal');
 	activatePortal();
+
+	let portalText = 'Portaling ';
+
+	if (portalRespec === 1) {
+		portalText += 'to refresh respec.';
+		MODULES.portal.portalForRespec = true;
+	} else {
+		MODULES.portal.portalForVoid = true;
+		portalText += `to increment void tracker (currently ${trackerValue}/10) with liquification.`;
+	}
+
+	debug(portalText, 'portal');
 }
 
 function _autoPortalUniverseSwap() {
@@ -433,68 +451,62 @@ function _autoPortalC2() {
 	if (!challenge) return;
 
 	const universePrefix = portalUniverse === 2 ? 'C3' : 'C2';
-	if (Array.isArray(challenge)) return debug(`${universePrefix} Runner: All ${universePrefix}'s above level threshold!`, 'portal');
+	if (Array.isArray(challenge)) return `${universePrefix} Runner: All ${universePrefix}'s above level threshold!`;
 
 	if (!challengeSquaredMode) toggleChallengeSquared();
 	selectChallenge(challenge);
-	debug(`${universePrefix} Runner: Starting ${challenge}`, 'portal');
+	return `${universePrefix} Runner: Starting ${challenge}`;
 }
 
 function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
-	if (!skipDaily && (MODULES.portal.currentChallenge === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
-		const dailyAvailable = document.getElementById('challengeDaily') !== null;
-		checkCompleteDailies();
-		const dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map((item) => item.replace(/-/g, ''));
-		let lastUndone;
+	const dailyAvailable = document.getElementById('challengeDaily') !== null;
+	checkCompleteDailies();
+	const dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map((item) => item.replace(/-/g, ''));
+	let lastUndone;
 
-		for (lastUndone = -6; lastUndone <= 0; lastUndone++) {
-			const dailyTime = getDailyTimeString(lastUndone);
-			if (dailiesToSkip.includes(dailyTime.toString())) continue;
-			if (game.global.recentDailies.indexOf(dailyTime) === -1) break;
-		}
-
-		if (getPageSetting('dailyDontCap', portalUniverse)) {
-			let dailiesCompleted = 0;
-
-			for (let x = -6; x <= 1 - getPageSetting('dailyDontCapAmt', portalUniverse); x++) {
-				if (game.global.recentDailies.indexOf(getDailyTimeString(x)) !== -1) dailiesCompleted++;
-			}
-			if (dailiesCompleted === 8 - getPageSetting('dailyDontCapAmt', portalUniverse)) lastUndone = 1;
-		}
-
-		if (!getPageSetting('dailyPortalStart', portalUniverse)) {
-			lastUndone = 1;
-		}
-
-		if (lastUndone === 1) {
-			debug(`All dailies have been completed.`, 'portal');
-			return challenge;
-		}
-
-		if ((MODULES.portal.currentChallenge === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse))) || lastUndone === 1) {
-			MODULES.portal.currentChallenge = 'None';
-			MODULES.portal.portalUniverse = portalUniverse;
-			autoPortal(game.global.world, portalUniverse, true);
-			return challenge;
-		}
-
-		if (!dailyAvailable) {
-			return challenge;
-		}
-
-		if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse) && dailyAvailable) {
-			swapPortalUniverse();
-		}
-
-		selectChallenge('Daily');
-		getDailyChallenge(lastUndone);
-		const dailyString = getDailyTimeString(lastUndone, true);
-		const dayName = dayOfWeek(getDailyTimeString(lastUndone, false, true)).slice(0, -1);
-		debug(`Portaling into ${dayName}ily (${dailyString}) now!`, 'portal');
-		challenge = 'Daily';
+	for (lastUndone = -6; lastUndone <= 0; lastUndone++) {
+		const dailyTime = getDailyTimeString(lastUndone);
+		if (dailiesToSkip.includes(dailyTime.toString())) continue;
+		if (game.global.recentDailies.indexOf(dailyTime) === -1) break;
 	}
 
-	return challenge;
+	if (getPageSetting('dailyDontCap', portalUniverse)) {
+		let dailiesCompleted = 0;
+
+		for (let x = -6; x <= 1 - getPageSetting('dailyDontCapAmt', portalUniverse); x++) {
+			if (game.global.recentDailies.indexOf(getDailyTimeString(x)) !== -1) dailiesCompleted++;
+		}
+		if (dailiesCompleted === 8 - getPageSetting('dailyDontCapAmt', portalUniverse)) lastUndone = 1;
+	}
+
+	if (!getPageSetting('dailyPortalStart', portalUniverse)) {
+		lastUndone = 1;
+	}
+
+	if (lastUndone === 1) {
+		return [`All dailies have been completed.`, challenge];
+	}
+
+	if ((MODULES.portal.currentChallenge === 'Daily' && (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse))) || lastUndone === 1) {
+		MODULES.portal.currentChallenge = 'None';
+		MODULES.portal.portalUniverse = portalUniverse;
+		autoPortal(game.global.world, portalUniverse, true);
+		return challenge;
+	}
+
+	if (!dailyAvailable) {
+		return challenge;
+	}
+
+	if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse) && dailyAvailable) {
+		swapPortalUniverse();
+	}
+
+	selectChallenge('Daily');
+	getDailyChallenge(lastUndone);
+	const dailyString = getDailyTimeString(lastUndone, true);
+	const dayName = dayOfWeek(getDailyTimeString(lastUndone, false, true)).slice(0, -1);
+	return [`Portaling into ${dayName}ily (${dailyString}) now!`, 'Daily'];
 }
 
 function _autoPortalRegular(challengeName) {
@@ -510,9 +522,6 @@ function _autoPortalRegular(challengeName) {
 }
 
 function _autoPortalActivate(challenge) {
-	const { owned, tracker } = game.permaBoneBonuses.voidMaps;
-	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
-	debug(`Portaling with void tracker at ${trackerValue}/10.`, 'portal');
 	portalPerkCalc();
 
 	let preset = 0;
@@ -550,11 +559,11 @@ function portalPerkCalc() {
 			if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
 			else if (game.global.selectedChallenge === 'Scientist') preset = 'scientist';
 			else if (game.global.selectedChallenge === 'Trimp') preset = 'trimp';
-			else if (game.global.selectedChallenge === 'Coord') preset = 'coord';
+			else if (game.global.selectedChallenge === 'Coordinate') preset = 'coord';
 			else if (game.global.selectedChallenge === 'Experience') preset = 'experience';
 			else if (!fillerC2 && (game.global.selectedChallenge === 'Frigid' || challengeSquaredMode)) preset = 'c2';
 			else {
-				//If a specific challenge isn't selected then we'll use the highest zone cleared to determine which preset to use.
+				/* if a specific challenge isn't selected then we'll use the highest zone cleared to determine which preset to use. */
 				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
 					if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared) preset = option.value;
 				});

@@ -114,6 +114,7 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 
 	const createObject = (type) => {
 		const zoneGo = getZoneGo(type);
+
 		return {
 			name: '',
 			statPerResource: Infinity,
@@ -308,7 +309,8 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		prestigeCost: 0,
 		statPerResource: 0,
 		shouldPrestige: false,
-		skip: true
+		skip: true,
+		resourceSpendingPct
 	};
 
 	if (!Object.getOwnPropertyNames(atData.equipment).includes(equipName)) return prestigeInfo;

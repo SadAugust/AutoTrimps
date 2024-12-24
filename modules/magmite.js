@@ -484,6 +484,28 @@ function checkDGUpgrades() {
 	return ['Efficiency', 'Capacity', 'Supply', 'Overclocker'][upgradeIndex];
 }
 
+function _getMagmiteData() {
+	const oneTimers = ['Hybridization', 'Storage', 'Shielding', 'Slowburn', 'Simulacrum'];
+	const upgrades = ['Efficiency', 'Capacity', 'Supply', 'Overclocker'];
+	const upgradeLocation = 'generatorUpgrades';
+	const oneTimerLocation = 'permanentGeneratorUpgrades';
+
+	const upgradeData = {
+		oneTimers: {},
+		upgrades: {}
+	};
+
+	oneTimers.forEach((item) => {
+		upgradeData.oneTimers[item] = game[oneTimerLocation][item].owned;
+	});
+
+	upgrades.forEach((item) => {
+		upgradeData.upgrades[item] = game[upgradeLocation][item].upgrades;
+	});
+
+	return upgradeData;
+}
+
 function autoMagmiteSpender(portal) {
 	if (game.global.universe !== 1) return;
 
@@ -492,12 +514,42 @@ function autoMagmiteSpender(portal) {
 	const magmiteSetting = getPageSetting('magmiteSpending', 1);
 	if (portal && (magmiteSetting !== 1 || !portalWindowOpen)) return;
 
+	const initialMagmite = game.global.magmite;
+	const oneTimers = ['Hybridization', 'Storage', 'Shielding', 'Slowburn', 'Simulacrum'];
+	const upgrades = ['Efficiency', 'Capacity', 'Supply', 'Overclocker'];
+	const initiaUpgrades = _getMagmiteData();
+
 	let boughtUpgrade = false;
 	do {
 		boughtUpgrade = _autoMagmiteCalc();
 	} while (boughtUpgrade);
 
-	if (boughtUpgrade) debug(`Leftover magmite: ${game.global.magmite}`, 'magmite');
+	if (initialMagmite !== game.global.magmite) {
+		const newUpgrades = _getMagmiteData();
+
+		const oneTimersChanged = oneTimers.some((item) => initiaUpgrades.oneTimers[item] !== newUpgrades.oneTimers[item]);
+		const upgradesChanged = upgrades.some((item) => initiaUpgrades.upgrades[item] !== newUpgrades.upgrades[item]);
+
+		if (oneTimersChanged || upgradesChanged) {
+			const spentMagmite = initialMagmite - game.global.magmite;
+			let purchasedText = `Spent ${spentMagmite} Magmite on `;
+			if (oneTimersChanged) {
+				const purchasedOneTimers = oneTimers.filter((item) => initiaUpgrades.oneTimers[item] !== newUpgrades.oneTimers[item]);
+				purchasedText += `${purchasedOneTimers.join(', ')}`;
+			}
+
+			if (upgradesChanged) {
+				const purchasedUpgrades = upgrades.filter((item) => initiaUpgrades.upgrades[item] !== newUpgrades.upgrades[item]).map((item) => `${item} (+${newUpgrades.upgrades[item] - initiaUpgrades.upgrades[item]})`);
+				if (oneTimersChanged) purchasedText += ' and ';
+				purchasedText += `${purchasedUpgrades.join(', ')}`;
+			}
+
+			purchasedText += '.';
+
+			if (portal) return purchasedText;
+			else debug(purchasedText, 'magmite');
+		}
+	}
 }
 
 function _autoMagmiteCalc() {
@@ -514,9 +566,6 @@ function _autoMagmiteCalc() {
 
 	const cost = typeof upgrader.cost === 'function' ? upgrader.cost() : upgrader.cost;
 	if (game.global.magmite < cost) return false;
-
-	const levelInfo = !isOneTimeUpgrade ? ` #${upgrader.upgrades + 1}` : '';
-	debug(`Spent ${cost} Magmite on: ${toSpend}${levelInfo}`, 'magmite');
 
 	buyGeneratorUpgrade(toSpend);
 	atData.magmite.upgradeToPurchase = '';
