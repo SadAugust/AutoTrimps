@@ -233,6 +233,7 @@ function getTrimpHealth(realHealth, worldType = _getWorldType(), extraItem = new
 	const heirloomToCheck = typeof atConfig !== 'undefined' ? heirloomShieldToEquip(worldType) : null;
 	const heirloom = heirloomToCheck ? calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, false, heirloomToCheck) : calcHeirloomBonus('Shield', 'trimpHealth', 1, false);
 	let health = (50 + calcEquipment('health', extraItem)) * game.resources.trimps.maxSoldiers;
+	if (game.global.universe === 1) health *= mutations.Magma.getTrimpDecay();
 
 	const healthMultipliers = {
 		toughness: () => (getPerkLevel('Toughness') > 0 ? 1 + getPerkLevel('Toughness') * getPerkModifier('Toughness') : 1),
@@ -254,7 +255,6 @@ function getTrimpHealth(realHealth, worldType = _getWorldType(), extraItem = new
 			geneticist: () => Math.pow(1.01, game.global.lastLowGen),
 			amalgamator: () => game.jobs.Amalgamator.getHealthMult(),
 			toughness_II: () => (getPerkLevel('Toughness_II') > 0 ? 1 + getPerkModifier('Toughness_II') * getPerkLevel('Toughness_II') : 1),
-			magma: () => mutations.Magma.getTrimpDecay(),
 			frigid: () => game.challenges.Frigid.getTrimpMult()
 		};
 		health = applyMultipliers(healthMultipliers, health);
