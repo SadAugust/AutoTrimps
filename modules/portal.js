@@ -4,13 +4,15 @@ function autoPortalCheck(specificPortalZone) {
 	dailyFinishChallenge();
 
 	if (!game.global.portalActive) return;
+	if (atConfig.timeouts.autoPortal) return;
 
 	if (game.global.runningChallengeSquared) c2RunnerPortal(specificPortalZone);
 	else autoPortal(specificPortalZone);
 }
 
 function autoPortal(specificPortalZone, universe, skipDaily) {
-	if ((MODULES.portal.portalForVoid || MODULES.portal.portalForRespec) && !game.options.menu.liquification.enabled) toggleSetting('liquification');
+	const respecSetting = MODULES.portal.portalForVoid || MODULES.portal.portalForRespec;
+	if (respecSetting && !game.options.menu.liquification.enabled) toggleSetting('liquification');
 	if (!game.global.portalActive) return;
 
 	if (MODULES.portal.portalUniverse === null || isNaN(MODULES.portal.portalUniverse)) MODULES.portal.portalUniverse = game.global.universe;
@@ -18,8 +20,11 @@ function autoPortal(specificPortalZone, universe, skipDaily) {
 	const runningDaily = challengeActive('Daily');
 	if (!shouldPortal(runningDaily, universe)) return;
 
-	const portalZone = MODULES.portal.portalForVoid || MODULES.portal.portalForRespec ? _getPortalZoneVoid() : _getPortalZone(runningDaily, universe, specificPortalZone, skipDaily);
-	if ((MODULES.portal.portalForVoid || MODULES.portal.portalForRespec) && portalZone <= 0) return;
+	const portalZone = respecSetting ? _getPortalZoneVoid() : _getPortalZone(runningDaily, universe, specificPortalZone, skipDaily);
+	if (respecSetting) {
+		if (portalZone <= 0) return;
+		else specificPortalZone = portalZone;
+	}
 
 	const heHrSettings = ['Helium Per Hour', 'Radon Per Hour', '1'];
 	let portalType = getPageSetting('autoPortal', universe);
@@ -29,9 +34,13 @@ function autoPortal(specificPortalZone, universe, skipDaily) {
 		challengeSelected = getPageSetting('heliumHourChallenge', universe);
 	} else if (portalType.includes('One Off Challenges')) {
 		challengeSelected = getPageSetting('heliumOneOffChallenge', universe);
+	} else if (portalType.includes(`${_getPrimaryResourceInfo(universe).name} Challenges`)) {
+		challengeSelected = getPageSetting('heliumChallenge', universe);
 	}
 
-	if (runningDaily) portalType = getPageSetting('dailyPortal', universe).toString();
+	if (runningDaily) {
+		portalType = getPageSetting('dailyPortal', universe).toString();
+	}
 
 	if (heHrSettings.includes(portalType)) {
 		handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily);
@@ -176,28 +185,30 @@ function _handleHeHrPortalDelay(resourceType, myHeliumHr, bestHeHr, bestHeHrZone
 function handlePortalType(portalType, portalZone, specificPortalZone, universe, challengeSelected, skipDaily) {
 	const challenge2Settings = ['Challenge 2', 'Challenge 3'];
 	const atPortalZone = game.global.world >= portalZone;
+	const respecPortal = atPortalZone && specificPortalZone;
 	let challenge = 'None';
 
 	if (portalType === '0') {
+		/* daily portal */
 		if (atPortalZone && (specificPortalZone || game.global.universe !== universe)) {
 			if (challengeSelected !== 'None') challenge = challengeSelected;
 			else challenge = 0;
 		}
-	} else if (portalType === 'Off') {
-		if (atPortalZone && specificPortalZone) challenge = 0;
-	} else if (portalType === 'Custom' || portalType === '2' || portalType === 'One Off Challenges' || challenge2Settings.includes(portalType)) {
+	} else if (portalType === '2' || portalType === 'Custom' || portalType === 'One Off Challenges' || challenge2Settings.includes(portalType)) {
 		if (atPortalZone) {
 			if (challengeSelected !== 'None') challenge = challengeSelected;
 			else challenge = 0;
 		}
-	} else {
-		if ((!game.global.challengeActive && !MODULES.portal.portalForVoid && !MODULES.portal.portalForRespec) || (atPortalZone && specificPortalZone)) {
-			doPortal(challengeSelected, skipDaily);
-			return;
+	} else if (portalType === `${_getPrimaryResourceInfo(universe).name} Challenges`) {
+		if (respecPortal || (!game.global.challengeActive && !MODULES.portal.portalForVoid && !MODULES.portal.portalForRespec)) {
+			challenge = challengeSelected;
 		}
+	} else if (respecPortal) {
+		doPortal(challengeSelected, skipDaily);
+		return;
 	}
 
-	if (challenge === 'Off') challenge = 0;
+	if (challenge === 'Off' || (portalType === 'Off' && respecPortal)) challenge = 0;
 	if (challenge !== 'None') doPortal(challenge, skipDaily);
 }
 
@@ -287,7 +298,7 @@ function doPortal(challenge, skipDaily) {
 	if (magmiteText) debug(magmiteText, 'magmite');
 	if (c2Text) debug(c2Text, 'portal');
 	if (dailyText) debug(dailyText, 'portal');
-	if (!game.global.runningChallengeSquared && !challengeActive('Daily')) debug(`Portaling into ${game.global.challengeActive}`, 'portal');
+	if (!game.global.runningChallengeSquared && !challengeActive('Daily')) debug(`Portaling into ${game.global.challengeActive || 'a no challenge run'}.`, 'portal');
 }
 
 function _autoPortalAbandonChallenge(portal = true) {
@@ -335,7 +346,10 @@ function _autoPortalVoidTracker() {
 	autoUpgradeHeirlooms();
 
 	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
+	if (challengeSquaredMode) toggleChallengeSquared();
+	if (game.global.selectedChallenge !== '') selectChallenge(0);
 	activatePortal();
+	resetVarsZone(true, false);
 
 	let portalText = 'Portaling ';
 
@@ -710,7 +724,7 @@ function finishChallengeSquared(onlyDebug) {
 	cancelTooltip();
 }
 
-function resetVarsZone(loadingSave) {
+function resetVarsZone(loadingSave, notRespec = true) {
 	if (loadingSave) {
 		/* maps */
 		MODULES.maps.lastMapWeWereIn = { id: 0 };
@@ -730,23 +744,13 @@ function resetVarsZone(loadingSave) {
 		atConfig.portal.currentworld = 0;
 		atConfig.portal.lastrunworld = 0;
 		atConfig.portal.aWholeNewWorld = false;
-
 		atConfig.portal.currentHZE = 0;
 		atConfig.portal.lastHZE = 0;
 
 		atData.fightInfo.lastProcessedWorld = 0;
 		MODULES.portal.C2afterVoids = false;
 		MODULES.portal.C2afterPoisonVoids = false;
-
-		MODULES.portal.currentChallenge = 'None';
-		MODULES.portal.dontPushData = false;
-		MODULES.portal.dailyMods = '';
-		MODULES.portal.dailyPercent = 0;
-		MODULES.portal.portalUniverse = Infinity;
 		MODULES.portal.zonePostpone = 0;
-		MODULES.portal.forcePortal = false;
-		MODULES.portal.portalForVoid = false;
-		MODULES.portal.portalForRespec = false;
 
 		MODULES.popups.challenge = false;
 		MODULES.popups.respecAncientTreasure = false;
@@ -757,6 +761,18 @@ function resetVarsZone(loadingSave) {
 		clearTimeout(MODULES.portal.heHrTimeout);
 
 		hideAutomationButtons();
+
+		if (notRespec) {
+			MODULES.portal.forcePortal = false;
+			MODULES.portal.portalForRespec = false;
+			MODULES.portal.portalForVoid = false;
+			MODULES.portal.portalUniverse = Infinity;
+
+			MODULES.portal.currentChallenge = 'None';
+			MODULES.portal.dontPushData = false;
+			MODULES.portal.dailyMods = '';
+			MODULES.portal.dailyPercent = 0;
+		}
 	}
 
 	/* maps */
@@ -835,7 +851,7 @@ function atlantrimpRespecMessage(cellOverride) {
 	//Stop it running if we aren't above the necessary cell for u1.
 	if (!cellOverride) {
 		//If we have just toggled the setting, wait 5 seconds before running this.
-		if (atConfig.settingChangedTimeout) return;
+		if (atConfig.timeouts.respec) return;
 		//Disable this from running if we have already disabled it this portal.
 		//This variable is reset when changing the "presetCombatRespecCell" settings input.
 		if (MODULES.portal.disableAutoRespec === getTotalPortals()) return;

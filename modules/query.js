@@ -154,8 +154,8 @@ function _getPortalAfterVoidSetting() {
 	return true;
 }
 
-function _getPrimaryResourceInfo() {
-	return atConfig.settingUniverse === 2 ? { name: 'Radon', abv: 'Rn' } : { name: 'Helium', abv: 'He' };
+function _getPrimaryResourceInfo(universe = atConfig.settingUniverse) {
+	return universe === 2 ? { name: 'Radon', abv: 'Rn' } : { name: 'Helium', abv: 'He' };
 }
 
 function _getChallenge2Info() {

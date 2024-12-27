@@ -119,11 +119,14 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 	let hze = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	let portalZone = hze;
 
+	const resourceName = _getPrimaryResourceInfo().name;
 	const autoPortal = getPageSetting('autoPortal', atConfig.settingUniverse);
-	const zoneSettings = ['Challenge 2', 'Challenge 3', 'Custom', 'One Off Challenges'];
+	const zoneSettings = ['Challenge 2', 'Challenge 3', `${resourceName} Challenges`, 'Custom', 'One Off Challenges'];
 
 	if (autoPortal.includes('Per Hour')) {
 		portalZone = getPageSetting('heliumHrDontPortalBefore', atConfig.settingUniverse);
+	} else if (autoPortal.includes(`${resourceName} Challenges`)) {
+		portalZone = getHighestLevelCleared() + 1;
 	} else if (zoneSettings.includes(autoPortal)) {
 		portalZone = getPageSetting('autoPortalZone', atConfig.settingUniverse);
 	}
@@ -141,10 +144,10 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 			},
 			Metal: { unlockZone: 25, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
 			Size: { unlockZone: 35, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
-			Balance: { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
+			Balance: { unlockZone: 40, unlockedIn: ['c2', 'heHr', 'helium', 'c2Runner'] },
 			Scientist: { unlockZone: 40, unlockedIn: ['oneOff'] },
 			Meditate: { unlockZone: 45, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
-			Decay: { unlockZone: 55, unlockedIn: ['autoPortal', 'heHr'] },
+			Decay: { unlockZone: 55, unlockedIn: ['helium', 'heHr'] },
 			Trimp: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
 			Trapper: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
 			Electricity: {
@@ -152,22 +155,22 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 				unlockCondition: function () {
 					return game.global.prisonClear >= 1;
 				},
-				unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner']
+				unlockedIn: ['c2', 'heHr', 'helium', 'c2Runner']
 			},
 			Frugal: { unlockZone: 100, unlockedIn: ['oneOff'] },
-			Life: { unlockZone: 110, unlockedIn: ['autoPortal', 'heHr'] },
+			Life: { unlockZone: 110, unlockedIn: ['helium', 'heHr'] },
 			Mapocalypse: { unlockZone: 115, unlockedIn: ['oneOff'] },
 			Coordinate: { unlockZone: 120, unlockedIn: ['c2', 'oneOff'] },
-			Crushed: { unlockZone: 125, unlockedIn: ['autoPortal', 'heHr'] },
+			Crushed: { unlockZone: 125, unlockedIn: ['helium', 'heHr'] },
 			Slow: { unlockZone: 130, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
-			Nom: { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
+			Nom: { unlockZone: 145, unlockedIn: ['c2', 'heHr', 'helium', 'c2Runner'] },
 			Mapology: { unlockZone: 150, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
-			Toxicity: { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
+			Toxicity: { unlockZone: 165, unlockedIn: ['c2', 'heHr', 'helium', 'c2Runner'] },
 			Devastation: { unlockZone: 170, unlockedIn: ['oneOff'] },
-			Watch: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
-			Lead: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'autoPortal', 'c2Runner'] },
-			Corrupted: { unlockZone: 190, unlockedIn: ['heHr', 'autoPortal'] },
-			Domination: { unlockZone: 215, unlockedIn: ['heHr', 'autoPortal'] },
+			Watch: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'helium', 'c2Runner'] },
+			Lead: { unlockZone: 180, unlockedIn: ['c2', 'heHr', 'helium', 'c2Runner'] },
+			Corrupted: { unlockZone: 190, unlockedIn: ['heHr', 'helium'] },
+			Domination: { unlockZone: 215, unlockedIn: ['heHr', 'helium'] },
 			Obliterated: { unlockZone: 425, unlockedIn: ['c2'] },
 			Eradicated: {
 				unlockZone: 1,
@@ -176,8 +179,8 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 				},
 				unlockedIn: ['c2']
 			},
-			Frigid: { unlockZone: 460, unlockedIn: ['c2', 'autoPortal'] },
-			Experience: { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'autoPortal'] },
+			Frigid: { unlockZone: 460, unlockedIn: ['c2', 'helium'] },
+			Experience: { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'helium'] },
 			//Fused Challenges - These need to go in reverse order of when they unlock.
 			Toxad: {
 				unlockZone: game.stats.highestLevel.valueTotal(),
@@ -236,26 +239,26 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 			Downsize: { unlockZone: 20, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
 			Transmute: { unlockZone: 25, unlockedIn: ['c2', 'oneOff'] },
 			Unbalance: { unlockZone: 35, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
-			Bublé: { unlockZone: 40, unlockedIn: ['heHr', 'autoPortal'] },
+			Bublé: { unlockZone: 40, unlockedIn: ['heHr', 'helium'] },
 			Duel: { unlockZone: 45, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
-			Melt: { unlockZone: 50, unlockedIn: ['heHr', 'autoPortal'] },
+			Melt: { unlockZone: 50, unlockedIn: ['heHr', 'helium'] },
 			Trappapalooza: { unlockZone: 60, unlockedIn: ['c2', 'oneOff'] },
-			Quagmire: { unlockZone: 70, unlockedIn: ['heHr', 'autoPortal'] },
+			Quagmire: { unlockZone: 70, unlockedIn: ['heHr', 'helium'] },
 			Wither: { unlockZone: 70, unlockedIn: ['c2', 'oneOff'] },
 			Revenge: { unlockZone: 80, unlockedIn: ['oneOff'] },
-			Quest: { unlockZone: 85, unlockedIn: ['c2', 'oneOff', 'autoPortal', 'c2Runner'] },
-			Archaeology: { unlockZone: 90, unlockedIn: ['heHr', 'autoPortal'] },
-			Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'autoPortal'] },
+			Quest: { unlockZone: 85, unlockedIn: ['c2', 'oneOff', 'helium', 'c2Runner'] },
+			Archaeology: { unlockZone: 90, unlockedIn: ['heHr', 'helium'] },
+			Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'helium'] },
 			Storm: { unlockZone: 105, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
-			Insanity: { unlockZone: 110, unlockedIn: ['heHr', 'autoPortal'] },
+			Insanity: { unlockZone: 110, unlockedIn: ['heHr', 'helium'] },
 			Berserk: { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
 			Exterminate: { unlockZone: 120, unlockedIn: ['oneOff'] },
-			Nurture: { unlockZone: 130, unlockedIn: ['heHr', 'autoPortal'] },
-			Pandemonium: { unlockZone: 150, unlockedIn: ['c2', 'autoPortal'] },
-			Alchemy: { unlockZone: 155, unlockedIn: ['heHr', 'autoPortal'] },
-			Hypothermia: { unlockZone: 175, unlockedIn: ['heHr', 'autoPortal'] },
+			Nurture: { unlockZone: 130, unlockedIn: ['heHr', 'helium'] },
+			Pandemonium: { unlockZone: 150, unlockedIn: ['c2', 'helium'] },
+			Alchemy: { unlockZone: 155, unlockedIn: ['heHr', 'helium'] },
+			Hypothermia: { unlockZone: 175, unlockedIn: ['heHr', 'helium'] },
 			Glass: { unlockZone: 175, unlockedIn: ['c2', 'oneOff'] },
-			Desolation: { unlockZone: 200, unlockedIn: ['c2', 'autoPortal'] },
+			Desolation: { unlockZone: 200, unlockedIn: ['c2', 'helium'] },
 			Smithless: { unlockZone: 201, unlockedIn: ['c2', 'oneOff', 'c2Runner'] }
 		};
 	}
@@ -290,15 +293,16 @@ function filterAndSortChallenges(obj, runType) {
 
 function autoPortalChallenges(runType = 'autoPortal', universe = atConfig.settingUniverse) {
 	let challenge = ['None'];
+	const resourceName = _getPrimaryResourceInfo().name;
 	if (universe === 0) universe = autoTrimpSettings.universeSetting.value + 1;
-	if (universe === 1 && runType === 'autoPortal') challenge = ['Off', 'Helium Per Hour'];
-	if (universe === 2 && runType === 'autoPortal') challenge = ['Off', 'Radon Per Hour'];
+	if (runType === 'autoPortal') challenge = ['Off', `${resourceName} Per Hour`];
 
 	let obj = challengesUnlockedObj(universe);
 	obj = filterAndSortChallenges(obj, runType);
 	challenge = [...challenge, ...obj];
 
 	if (runType === 'autoPortal') {
+		challenge.push(`${resourceName} Challenges`);
 		challenge.push('Custom');
 		challenge.push('One Off Challenges');
 	}
@@ -1373,6 +1377,25 @@ function updateATVersion() {
 			if (typeof tempSettings['autoHeirlooms'] !== 'undefined') {
 				autoTrimpSettings.autoHeirlooms.enabled = false;
 				autoTrimpSettings.autoHeirlooms.enabledU2 = false;
+			}
+
+			saveSettings();
+		}
+
+		if (versionNumber < '6.6.10') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['autoPortal'] !== 'undefined') {
+				const heliumChallenges = autoPortalChallenges('helium', 1);
+				if (heliumChallenges.indexOf(autoTrimpSettings.autoPortal.selected) !== -1) {
+					autoTrimpSettings.heliumChallenge.selected = autoTrimpSettings.autoPortal.selected;
+					autoTrimpSettings.autoPortal.selected = 'Helium Challenges';
+				}
+
+				const radonChallenges = autoPortalChallenges('helium', 2);
+				if (radonChallenges.indexOf(autoTrimpSettings.autoPortal.selectedU2) !== -1) {
+					autoTrimpSettings.heliumChallenge.selectedU2 = autoTrimpSettings.autoPortal.selectedU2;
+					autoTrimpSettings.autoPortal.selectedU2 = 'Radon Challenges';
+				}
 			}
 
 			saveSettings();

@@ -1562,7 +1562,7 @@ atData.autoPerks = {
 				defaultValue: 0
 			},
 			housingCount: {
-				name: 'Collector count',
+				name: 'Collector Count',
 				description: `<p>How many collectors do you get in your runs? Affects the value of more resources for increasing population.</p>
 				<p>If you don't have collectors unlocked you can enter 0.</p>`,
 				minValue: 0,

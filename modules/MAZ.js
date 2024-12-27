@@ -1248,7 +1248,7 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 
 	/* disables Atlantrimp for 0.5 seconds and recalculates mapSettings variable. */
 	//This is to prevent the issue of Atlantrimp being run when you're saving settings.
-	_settingTimeout(500);
+	_settingTimeout('mapSettings', 500);
 	farmingDecision();
 }
 
@@ -2634,6 +2634,10 @@ function c2RunnerSave() {
 
 	setPageSetting('c2RunnerSettings', setting, atConfig.settingUniverse);
 	cancelTooltip();
+
+	if (getPageSetting('autoPortalTimeout')) {
+		_settingTimeout('autoPortal');
+	}
 }
 
 //Hide Automation Buttons

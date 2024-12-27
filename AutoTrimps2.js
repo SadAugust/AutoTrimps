@@ -27,7 +27,7 @@ const atConfig = {
 	timeWarp: { loopTicks: 100, updateFreq: 1000, nextUpdate: 1000, loopCount: 0, currentLoops: 0 },
 	testing: {},
 	autoSave: game.options.menu.autoSave.enabled,
-	settingChangedTimeout: false,
+	timeouts: { autoPortal: false, magma: false, mapSettings: false, respec: false },
 	settingUniverse: 0
 };
 
@@ -440,7 +440,7 @@ function mainLoopU1() {
 	autoRoboTrimp();
 	autoEnlight();
 	autoNatureTokens();
-	if (!atConfig.settingChangedTimeout && getPageSetting('magmiteSpending') === 2) autoMagmiteSpender();
+	if (!atConfig.timeouts.magma && getPageSetting('magmiteSpending') === 2) autoMagmiteSpender();
 	autoGenerator();
 	if (shouldRunInTimeWarp()) autoStance();
 	if (game.global.spireActive) {

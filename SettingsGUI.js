@@ -362,15 +362,14 @@ function initialiseAllSettings() {
 
 				const specialChall = `Special challenges (${(atConfig.settingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience")}) can be run with this but they will ignore the ${c2abv} portal settings and use the <b>Portal Zone</b> input for when to finish the run and portal.`;
 				const u2recommendation = `Custom with a specified endzone to make use of Scruffy's level 3 ability`;
-				const u1recommendation = `Specific challenges until you reach zone 230 then ${resourceName} Per Hour`;
+				const u1recommendation = `${resourceName} Challenges until you reach zone 230 then ${resourceName} Per Hour`;
 
 				let description = `<p>Will automatically portal into different challenges depending on the way you setup the Auto Portal related settings.</p>`;
-				description += `<p><b>${resourceName} Challenges will appear here when they've been unlocked in the game.</b></p>`;
-				description += `<p>Additional settings appear when <b>${resourceName} Per Hour</b>, <b>Custom</b> or <b>One Off Challenges</b> are selected.</p>`;
+				description += `<p>Additional settings appear when any of the inputs are selected.</p>`;
 				description += `<p><b>Off</b><br>Disables this setting.</p>`;
 				description += `<p><b>${resourceName} Per Hour</b><br>Portals into new runs when your ${resourceName.toLowerCase()} per hour goes below your current runs best ${resourceName.toLowerCase()} per hour.</p>`;
 				description += `<p>There is a <b>Buffer</b> setting, which lowers the check from best ${resourceName.toLowerCase()} per hour to (best - buffer setting) ${resourceName.toLowerCase()} per hour.</p>`;
-				description += `<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>`;
+				description += `<p><b>${resourceName} Challenges</b><br>When a challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>`;
 				description += `<p><b>Custom</b>/<b>One Off Challenges</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>`;
 				if (game.stats.highestLevel.valueTotal() >= 65) {
 					description += `<p><b>${c2setting}</b><br>Will portal into the challenge selected in the <b>${c2abv}</b> setting. If not inside of a ${c2abv} then it will use the zone specified in the <b>Portal Zone</b> setting. When inside of ${c2abv}s it will use <b>${c2abv} Runner Portal</b> for your portal zone. If <b>${c2abv} Runner</b> is enabled otherwise will use the zone specified in the <b>Finish ${c2abv}</b> setting in the ${c2abv} settings tab.</p>`
@@ -380,11 +379,27 @@ function initialiseAllSettings() {
 				return description;
 			}, 'dropdown', 'Off', function () { return autoPortalChallenges('autoPortal') }, 'Core', [1, 2]);
 
+		createSetting('heliumChallenge',
+			function () { return ('Challenge') },
+			function () {
+				let description = "<p>Automatically portal into this challenge when no challenge is active and you are using the <b>" + _getPrimaryResourceInfo().name + " Challenges</b> Auto Portal setting.</p>";
+				description += "<p><b>" + _getPrimaryResourceInfo().name + " challenges</b> will appear here when they've been unlocked in the game.</p>";
+				description += "<p>If this setting is set to <b>None</b> the script won't Auto Portal at all.</b></p>";
+				description += "<p><b>Recommended:</b> Last challenge available</p>";
+				return description;
+			}, 'dropdown', 'None', function () { return autoPortalChallenges('helium') }, 'Core', [1, 2],
+			function () {
+				const resourceName = _getPrimaryResourceInfo().name;
+				const namesToCheck = [`${resourceName} Challenges`];
+				return (
+					namesToCheck.indexOf(getPageSetting('autoPortal', atConfig.settingUniverse)) !== -1);
+			});
+		
 		createSetting('heliumHourChallenge',
 			function () { return ('Challenge') },
 			function () {
 				let description = "<p>Automatically portal into this challenge when using the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> or <b>Custom</b> Auto Portal settings.</p>";
-				description += "<p><b>" + _getPrimaryResourceInfo().name + " challenges will appear here when they've been unlocked in the game.</b></p>";
+				description += "<p>" + _getPrimaryResourceInfo().name + " challenges will appear here when they've been unlocked in the game.</p>";
 				description += "<p><b>Recommended:</b> Last challenge available</p>";
 				return description;
 			}, 'dropdown', 'None', function () { return autoPortalChallenges('heHr') }, 'Core', [1, 2],
@@ -498,6 +513,13 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Core', [1],
 			function () { return (getPageSetting('autoPortal', atConfig.settingUniverse).includes('Hour') && game.stats.highestLevel.valueTotal() >= 170) });
+
+		createSetting('autoPortalTimeout',
+			function () { return ('Auto Portal Timeout') },
+			function () {
+				let description = "<p>When enabled this will add a 5 second delay to <b>Auto Portal</b> being run when you change any <b>Auto Portal</b> related settings.</p>";
+				return description;
+			}, 'boolean', false, null, 'Core', [1, 2]);
 
 		createSetting('autoPortalUniverseSwap',
 			function () { return ('Swap To Next Universe') },
@@ -4465,7 +4487,7 @@ function initialiseAllSettings() {
 			}, 'action', null, 'atData["performance"].enableAFKMode()', 'Display', [1, 2]);
 
 		createSetting('equipEfficientEquipDisplay',
-			function () { return ('AE: Highlight Equips') },
+			function () { return ('Highlight Efficient Equipment') },
 			function () {
 				let description = "<p>Will highlight the most efficient equipment or prestige to buy.</p>";
 				description += "<p><b>This setting will disable the default game setting.</b></p>";
@@ -4477,6 +4499,7 @@ function initialiseAllSettings() {
 			function () { return ('Highlight Efficient Buildings') },
 			function () {
 				let description = "<p>Will highlight the most efficient building to buy.</p>";
+				if (atConfig.settingUniverse === 1) description += "<p>This setting ignores <b>Warpstations</b> and <b>Gigastations</b> as they are handled seperately from the rest of the buildings.</p>";
 				if (atConfig.settingUniverse === 2) description += "<p>When <b>Hubs</b> are unlocked this setting won't display the best building as the script will automatically purchase the cheapest housing building possible at that point.</p>";
 				return description;
 			}, 'boolean', false, null, 'Display', [1, 2]);
@@ -4974,10 +4997,10 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	}
 }
 
-function _settingTimeout(milliseconds = MODULES.portal.timeout) {
-	atConfig.settingChangedTimeout = true;
+function _settingTimeout(settingName, milliseconds = MODULES.portal.timeout) {
+	atConfig.timeouts[settingName] = true;
 	setTimeout(function () {
-		atConfig.settingChangedTimeout = false;
+		atConfig.timeouts[settingName] = false;
 	}, milliseconds);
 }
 
@@ -5016,7 +5039,19 @@ function settingChanged(id, currUniverse) {
 	if (btn.type === 'multitoggle') {
 		const element = document.getElementById(id);
 		const value = `value${valueSuffix}`;
-		if ((id === 'magmiteSpending' && btn[value] > 0) || (game.global.universe === 1 && id === 'presetCombatRespec')) _settingTimeout();
+		if (id === 'magmiteSpending' && btn[value] > 0) _settingTimeout('magma');
+		if (id === 'presetCombatRespec' && game.global.universe === 1) _settingTimeout('respec');
+
+		if (getPageSetting('autoPortalTimeout')) {
+			const portalSettings = ['autoPortal', 'heliumHourChallenge', 'heliumOneOffChallenge', 'heliumC2Challenge', 'autoPortalZone', 'heliumDontPortalBefore', 'heliumHrBuffer', 'heliumHrPortal', 'heliumHrExitSpire', 'autoPortalUniverseSwap'];
+			const dailyPortalSettings = ['dailyPortalStart', 'dailyPortal', 'dailyPortalZone', 'dailyAbandonZone', 'dailyDontPortalBefore', 'dailyHeliumHrBuffer', 'dailyHeliumHrPortal', 'dailyHeliumHrExitSpire', 'dailyPortalFiller', 'dailyPortalPreviousUniverse'];
+			const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerPercent', 'c2RunnerEndMode', 'c2Fused'];
+
+			if (portalSettings.includes(id) || dailyPortalSettings.includes(id) || c2PortalSettings.includes(id)) {
+				_settingTimeout('autoPortal');
+			}
+		}
+
 		btn[value]++;
 		if (id === 'autoMaps' && currUniverse && btn[value] === 2) btn[value]++;
 		if (btn[value] > btn.name().length - 1) btn[value] = 0;
