@@ -6,6 +6,7 @@ function liquifiedZone() {
 	return game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
 }
 
+/* cleaner way to code multipliers in the actual functions */
 function applyMultipliers(multipliers, stat, challenge, postChallengeCheck) {
 	Object.keys(multipliers).forEach((key) => {
 		if (challenge && postChallengeCheck && key === 'Nurture' && game.challenges.Nurture.boostsActive()) stat *= multipliers[key]();
@@ -16,12 +17,16 @@ function applyMultipliers(multipliers, stat, challenge, postChallengeCheck) {
 	return stat;
 }
 
+/* cleaner way to code daily multipliers in the actual functions */
 function applyDailyMultipliers(modifier, value = 1) {
 	const dailyChallenge = game.global.dailyChallenge;
 	if (typeof dailyChallenge[modifier] === 'undefined') return value;
 	return dailyModifiers[modifier].getMult(dailyChallenge[modifier].strength, dailyChallenge[modifier].stacks);
 }
 
+/* 	no longer draws during TW.
+	solves the innerHTML being redrawn every time this is called instead of only when there's changes 
+	the force parameter is just used for AT to dispalay UI inside of TW */
 function drawAllBuildings(force) {
 	if (usingRealTimeOffline && !force) return;
 
@@ -46,6 +51,8 @@ function drawAllBuildings(force) {
 	updateGeneratorInfo();
 }
 
+/* 	stops this being called in TW. Runs up to displaying the UI then doesn't allow the timer code to run
+	removes innerHTML updates happening every tick outside of TW */
 function updateGeneratorInfo() {
 	if (!mutations.Magma.active()) return;
 
@@ -80,6 +87,7 @@ function updateGeneratorInfo() {
 	if (totalMi.innerHTML !== totalMiText) totalMi.innerHTML = totalMiText;
 }
 
+/* inserts alter icon into this function instead of the drawAllBuildings one so that an innerHTML update is removed from every building */
 function drawBuilding(what) {
 	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
 	if (usingScreenReader) {
@@ -92,6 +100,7 @@ function drawBuilding(what) {
 				<span class="affordSR">, Can Buy</span>
 			</button>`;
 	}
+
 	return `<div onmouseover="tooltip('${what}','buildings',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer buildingThing" id="${what}" onclick="buyBuilding('${what}')">
 			<span class="thingName">
 			<span id="${what}Alert" class="alert badge">${alertMessage}</span>${what}</span><br/>
@@ -99,12 +108,16 @@ function drawBuilding(what) {
 		</div>`;
 }
 
+/* 	reduce innerHTML updates
+	removes the game from randomly displaying 30 of each golden upgrade
+	displayGoldenUpgrades function also needs to be used. */
 function drawAllUpgrades(force) {
 	if (usingRealTimeOffline && !force) {
 		goldenUpgradesShown = true;
 		displayGoldenUpgrades();
 		return;
 	}
+
 	const upgrades = game.upgrades;
 	const elem = document.getElementById('upgradesHere');
 	let innerHTML = '';
@@ -126,6 +139,7 @@ function drawAllUpgrades(force) {
 	displayGoldenUpgrades();
 }
 
+/* same as drawBuilding, reduce innerHTML updates and integreate alert icon into a buildings html check */
 function drawUpgrade(what) {
 	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
 	const upgrade = game.upgrades[what];
@@ -163,6 +177,8 @@ function drawUpgrade(what) {
 	return html;
 }
 
+/* 	stops lockOnUnlock from running during TW as a 1s delay is harmful
+	cant remember if I done anything else */
 function buyUpgrade(what, confirmed, noTip, heldCtrl) {
 	if (game.options.menu.pauseGame.enabled) return;
 	if (!confirmed && !noTip && !usingRealTimeOffline && game.options.menu.lockOnUnlock.enabled === 1 && new Date().getTime() - 1000 <= game.global.lastUnlock) return;
@@ -177,11 +193,13 @@ function buyUpgrade(what, confirmed, noTip, heldCtrl) {
 	if (upgrade.locked == 1) {
 		return;
 	}
-	var usingCtrl = typeof heldCtrl !== 'undefined' ? heldCtrl : game.options.menu.ctrlGigas.enabled && what === 'Gigastation' ? true : ctrlPressed;
+
+	const usingCtrl = typeof heldCtrl !== 'undefined' ? heldCtrl : game.options.menu.ctrlGigas.enabled && what === 'Gigastation' ? true : ctrlPressed;
 	if (upgrade.isRelic && usingCtrl && !noTip) {
 		tooltip('Archaeology Automator', null, 'update');
 		return;
 	}
+
 	if (upgrade.isRelic && game.challenges.Archaeology.getPoints(game.upgrades[what].relic) >= 50) {
 		return;
 	}
@@ -200,6 +218,7 @@ function buyUpgrade(what, confirmed, noTip, heldCtrl) {
 		tooltip('Confirm Purchase', null, 'update', 'You are about to modify your Shield, causing it to block instead of grant health until your next portal. Are you sure?', "buyUpgrade('Shieldblock', true)");
 		return;
 	}
+
 	canAfford = canAffordTwoLevel(upgrade, true);
 	if (upgrade.isRelic) {
 		game.challenges.Archaeology.buyRelic(what, noTip);
@@ -259,6 +278,8 @@ function buyUpgrade(what, confirmed, noTip, heldCtrl) {
 	return true;
 }
 
+/* 	stops this from running during TW
+	improves innerHTML calls outside of TW by only updating if anything has changed */
 function drawAllEquipment(force) {
 	if (usingRealTimeOffline && !force) return;
 
@@ -276,6 +297,7 @@ function drawAllEquipment(force) {
 	displayEfficientEquipment();
 }
 
+/* returns new innerHTML to drawAllEquipment so it can all be updated at once */
 function drawEquipment(what) {
 	let numeral = '';
 	let equipment = game.equipment[what];
@@ -298,6 +320,8 @@ function drawEquipment(what) {
 			</div>`;
 }
 
+/* 	only updated jobAlert icon once, at the end
+	update all job innerHTMLs once instead 1 update per job */
 function drawAllJobs(force) {
 	if (usingRealTimeOffline && !force) return;
 
@@ -326,8 +350,10 @@ function drawAllJobs(force) {
 	if (geneticist) toggleGeneticistassist(true);
 }
 
+/* returns new innerHTML to drawAllJobs so it can all be updated at once */
 function drawJob(what) {
 	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
+
 	if (usingScreenReader) {
 		return `
 			<button class="thing noSelect pointer jobThing" onclick="tooltip('${what}','jobs','screenRead')">${what} Info</button>
@@ -344,11 +370,13 @@ function drawJob(what) {
 			</div>`;
 }
 
+/* returns new innerHTML to drawAllJobs so it can all be updated at once */
 function drawGeneticistassist(what) {
 	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
 	if (usingScreenReader) {
 		return `<button class="thing noSelect pointer jobThing" onclick="tooltip('Geneticist','jobs','screenRead')">Geneticist Info</button><button onmouseover="tooltip('Geneticist','jobs',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer jobThing" id="Geneticist" onclick="buyJob('Geneticist')"><span class="thingName"><span id="GeneticistAlert" class="alert badge">${alertMessage}</span>Geneticist</span><br/><span class="thingOwned" id="GeneticistOwned">0</span></button><button class="thing noSelect pointer jobThing"  onclick="tooltip('Geneticistassist',null,'screenRead')">Geneticistassist Info</button><button onmouseover="tooltip('Geneticistassist',null,event)" onmouseout="tooltip('hide')" class="thing thingColorNone noselect stateHappy pointer jobThing" id="Geneticistassist" onclick="toggleGeneticistassist()">Geneticistassist<span id="GAIndicator"></span><br/><span id="GeneticistassistSetting">&nbsp;</span></button>`;
 	}
+
 	return `<div id="GeneticistassistContainer" class="thing"><div onmouseover="tooltip('Geneticist','jobs',event)" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer jobThing" id="Geneticist" onclick="buyJob('Geneticist')"><span class="thingName"><span id="GeneticistAlert" class="alert badge">${alertMessage}</span>Geneticist</span><br/>
 	<span class="thingOwned" id="GeneticistOwned">0</span></div><div onmouseover="tooltip('Geneticistassist',null,event)" onmouseout="tooltip('hide')" class="thing thingColorNone noselect stateHappy pointer jobThing" id="Geneticistassist" onclick="toggleGeneticistassist()">Geneticistassist<span id="GAIndicator"></span><br/><span id="GeneticistassistSetting">&nbsp;</span></div></div>`;
 }
@@ -732,7 +760,7 @@ function gather() {
 
 		if (what && increase === what) {
 			if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === 'food' || what === 'wood' || what === 'metal')) {
-				const tBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
+				const tBonus = game.talents.turkimp2.purchased ? 2 : 1.5;
 				perSec *= tBonus;
 			}
 			perSec += getPlayerModifier();
@@ -2383,7 +2411,6 @@ function removeQueueItem(what, force) {
 function buildBuilding(what, amt = 1) {
 	const building = game.buildings[what];
 	if (building.owned === 0 && typeof building.first !== 'undefined') building.first();
-	const originalAmt = building.owned;
 	building.owned += amt;
 	let toIncrease;
 	checkAchieve('housing', what);
@@ -3817,7 +3844,7 @@ function fight(makeUp) {
 			if (game.global.mapsActive) {
 				if (typeof game.mapUnlocks[cell.special].last !== 'undefined') {
 					game.mapUnlocks[cell.special].last += 5;
-					if (typeof game.upgrades[cell.special].prestige && getSLevel() >= 4 && !challengeActive('Mapology') && Math.ceil(game.mapUnlocks[cell.special].last / 5) % 2 === 1) {
+					if (typeof game.upgrades[cell.special].prestige !== 'undefined' && getSLevel() >= 4 && !challengeActive('Mapology') && Math.ceil(game.mapUnlocks[cell.special].last / 5) % 2 === 1) {
 						unlock.fire(cell.level);
 						game.mapUnlocks[cell.special].last += 5;
 						message(unlock.message.replace('a book', 'two books'), 'Unlocks', null, null, 'repeated', cell.text);
@@ -5651,7 +5678,6 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 // fixes attack breakdown going infinite
 // only modification is moving where Magma is calculated
 function getBattleStatBd(what) {
-	var equipment = {};
 	var name = what.charAt(0).toUpperCase() + what.substr(1, what.length);
 	if ((what === 'block' || what === 'shield') && game.global.universe === 2) {
 		what = 'shield';
@@ -5735,12 +5761,12 @@ function getBattleStatBd(what) {
 			textString += "<tr><td class='bdTitle'>Prismalicious (Z20)</td><td>50%</td><td>1</td><td>50%</td><td>" + Math.round(currentCalc * 100) + '%</td></tr>';
 		}
 		if (Fluffy.isRewardActive('prism')) {
-			var thisAmt = Fluffy.isRewardActive('prism') * 0.25;
+			let thisAmt = Fluffy.isRewardActive('prism') * 0.25;
 			currentCalc += thisAmt;
 			textString += "<tr><td class='bdTitle'>Prisms (Scruffy)</td><td>25%</td><td>" + Fluffy.isRewardActive('prism') + '</td><td>' + prettify(thisAmt * 100) + '%</td><td>' + Math.round(currentCalc * 100) + '%</td></tr>';
 		}
 		if (getPerkLevel('Prismal') > 0) {
-			var thisAmt = getPerkLevel('Prismal') * game.portal.Prismal.modifier;
+			let thisAmt = getPerkLevel('Prismal') * game.portal.Prismal.modifier;
 			currentCalc += thisAmt;
 			textString += "<tr><td class='bdTitle'>Prismal (Perk)</td><td>" + prettify(game.portal.Prismal.modifier * 100) + '%</td><td>' + getPerkLevel('Prismal') + '</td><td>' + prettify(thisAmt * 100) + '%</td><td>' + Math.round(currentCalc * 100) + '%</td></tr>';
 		}
@@ -6617,15 +6643,14 @@ function updatePs(jobObj, trimps, jobName) {
 			psText *= 1 + game.empowerments.Wind.getCombatModifier();
 		}
 		psText = calcHeirloomBonus('Staff', jobName + 'Speed', psText);
-		if (game.global.playerGathering == increase) {
+		if (game.global.playerGathering === increase) {
 			if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && increase !== 'science') {
-				let tBonus = 1.5;
-				if (game.talents.turkimp2.purchased) tBonus = 2;
-				else if (game.talents.turkimp2.purchased) tBonus = 1.75;
+				let tBonus = game.talents.turkimp2.purchased ? 2 : 1.5;
 				psText *= tBonus;
 			}
 			psText += getPlayerModifier();
 		}
+
 		elem = document.getElementById(increase + 'Ps');
 		//Portal Packrat
 		increase = game.resources[increase];
@@ -6634,8 +6659,8 @@ function updatePs(jobObj, trimps, jobName) {
 			newMax = calcHeirloomBonus('Shield', 'storageSize', newMax);
 			if (increase.owned >= newMax) psText = 0;
 		}
-		psText = psText;
 	}
+
 	if (game.options.menu.useAverages.enabled) psText = parseFloat(psText) + getAvgLootSecond(jobObj.increase);
 	psText = prettify(psText);
 	psText = '+' + psText + '/sec';
@@ -6932,7 +6957,6 @@ function getPsString(what, rawNum) {
 		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === 'food' || what === 'wood' || what === 'metal')) {
 			let tBonus = 50;
 			if (game.talents.turkimp2.purchased) tBonus = 100;
-			else if (game.talents.turkimp2.purchased) tBonus = 75;
 			currentCalc *= 1 + tBonus / 100;
 			textString += "<tr><td class='bdTitle'>Sharing Food</td><td class='bdPercent'>+ " + tBonus + "%</td><td class='bdNumber'>" + prettify(currentCalc) + '</td></tr>';
 		}
@@ -7006,7 +7030,6 @@ function getLootBd(what) {
 				//Average the bonus out amongst all 3 resources. I can't remember why turkimp2 is 1.249 instead of 1.25 but at this point I'm too scared to change it
 				tBonus = 1.166;
 				if (game.talents.turkimp2.purchased) tBonus = 1.333;
-				else if (game.talents.turkimp2.purchased) tBonus = 1.249;
 				currentCalc *= tBonus;
 				textString += "<tr><td class='bdTitle'>Turkimp</td><td></td><td></td><td>+ " + prettify((tBonus - 1) * 100) + '%</td><td>' + prettify(currentCalc) + '</td></tr>';
 			}
@@ -7042,7 +7065,7 @@ function getLootBd(what) {
 			level = Math.round((level - 1900) / 100);
 			level *= 1.35;
 			if (level < 0) level = 0;
-			let baseAmt = 0;
+			let baseAmt;
 			if (game.global.universe == 2 || game.global.world < 59 || (game.global.world == 59 && game.global.mapsActive)) baseAmt = 1;
 			else if (game.global.world < mutations.Corruption.start(true)) baseAmt = 5;
 			else baseAmt = 10;
