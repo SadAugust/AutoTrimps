@@ -417,9 +417,9 @@ function _setSelectedMap(selectedMap, voidMap, optimalMap) {
 function _setMapRepeat(mapObj = getCurrentMapObject()) {
 	if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding' || (mapSettings.mapName === 'Quagmire Farm' && mapObj.name === 'The Black Bog')) {
 		if (!game.global.repeatMap) repeatClicked();
-		let repeatSetting = 0; /* Repeat Forever */
+		let repeatSetting = 0; /* repeat forever */
 		if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
-			repeatSetting = 2; /* Repeat for Items */
+			repeatSetting = 2; /* repeat for items */
 		}
 
 		if (game.options.menu.repeatUntil.enabled !== repeatSetting) {

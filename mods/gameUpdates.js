@@ -7008,7 +7008,7 @@ function getLootBd(what) {
 	let amt = 0;
 
 	switch (what) {
-		case 'Food/Wood/Metal':
+		case 'Food/Wood/Metal': {
 			let tempModifier = 0.5 * Math.pow(1.25, game.global.world >= 59 && game.global.universe == 1 ? 59 : game.global.world);
 			//Mega books
 			if (game.global.world >= 60 && game.global.universe == 1) {
@@ -7019,9 +7019,9 @@ function getLootBd(what) {
 			if (game.global.world >= 15) tempModifier *= 2;
 			//Whipimp
 			if (game.unlocks.impCount.Whipimp) tempModifier *= Math.pow(1.003, game.unlocks.impCount.Whipimp);
-			let avgSec = tempModifier;
-			if (game.global.world < 100) amt = avgSec * 3.5;
-			else amt = avgSec * 5;
+
+			if (game.global.world < 100) amt = tempModifier * 3.5;
+			else amt = tempModifier * 5;
 			amt = amt * 0.8 + amt * 0.002 * (cell + 1);
 			currentCalc = amt;
 			textString += "<tr><td class='bdTitle'>Base</td><td></td><td></td><td>" + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
@@ -7038,7 +7038,8 @@ function getLootBd(what) {
 			currentCalc *= amt;
 			textString += "<tr><td class='bdTitle'>Trimps</td><td>0.16</td><td>" + prettify(game.resources.trimps.realMax()) + '</td><td>x ' + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
 			break;
-		case 'Gems':
+		}
+		case 'Gems': {
 			level = (level - 400) * 1.35;
 			if (level < 0) {
 				level = 0;
@@ -7055,12 +7056,14 @@ function getLootBd(what) {
 				textString += "<tr><td class='bdTitle'>Dragimp Scouting</td><td></td><td></td><td>+ " + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
 			}
 			break;
-		case 'Fragments':
+		}
+		case 'Fragments': {
 			amt = Math.floor(Math.pow(1.15, game.global.world) * game.global.world * game.global.world * 0.02);
 			currentCalc = amt;
 			textString += "<tr><td class='bdTitle'>Base</td><td></td><td></td><td>" + prettify(amt) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
 			break;
-		case 'Helium':
+		}
+		case 'Helium': {
 			level = scaleLootLevel(99);
 			level = Math.round((level - 1900) / 100);
 			level *= 1.35;
@@ -7143,6 +7146,7 @@ function getLootBd(what) {
 				currentCalc *= mult;
 				textString += "<tr><td class='bdTitle'>Mutated Zone</td><td>x " + mult + '</td><td></td><td>x ' + mult + '</td><td>' + prettify(currentCalc) + '</td></tr>';
 			}
+		}
 	}
 
 	if (game.global.mapsActive && what !== 'Helium') {
