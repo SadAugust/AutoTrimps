@@ -1308,9 +1308,8 @@ function initialiseAllSettings() {
 		createSetting('scryerMaxHits',
 			function () { return ('Max Hits') },
 			function () {
-				let description = "<p>Maximum hits that the script will use for settings set to <b>Maybe</b> inputs.</p>";
+				let description = "<p>Maximum hits that it would take for you to kill an enemy from full health. The script will use this for settings set to <b>Maybe</b> inputs.</p>";
 				description += "<p>This has a chance to stop you from smoothly transitioning to Scryer stance and missing out on bonuses when settings are set to their <b>Never<b> inputs.</p>";
-				description += "<p>If set above 10 this will switch back to Scryer stance when you can kill the enemy in 3 or less hits.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 100</p>";
 				return description;

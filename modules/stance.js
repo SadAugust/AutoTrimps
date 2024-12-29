@@ -145,7 +145,6 @@ function _directDamage(block = calcOurBlock(game.global.formation, true), pierce
 
 	// Applies pierce
 	let harm = Math.max(enemyDamage - block, pierce * enemyDamage, 0);
-	//console.log(enemyDamage);
 	const isDoubleAttack = game.global.voidBuff === 'doubleAttack' || enemy.corrupted === 'corruptDbl' || enemy.corrupted === 'healthyDbl';
 	const enemyFast = checkFastEnemy(enemy);
 
@@ -554,15 +553,16 @@ function scryTransition(scryStance = 'S', scrySettings = _getScrySettings(), bas
 			const hitsToKill = currentEnemy.maxHealth / avgDmg;
 			const hitsToKillCurrent = currentEnemy.health / avgDmg;
 
-			if (maxHits > hitsToKill && hitsToKillCurrent > 1) {
+			if (hitsToKill > maxHits && hitsToKillCurrent > 1) {
 				return false;
 			}
 		}
 
-		//Set to scry if it won't kill us, or we are willing to die for it
+		/* set to scry if it won't kill us, or we are willing to die for it */
 		if (scryStance === 'S' && availableStances.includes('W') && shouldWindOverScryer(baseStats, currentEnemy)) {
 			scryStance = 'W';
 		}
+
 		safeSetStance(scryStance);
 		return true;
 	}
