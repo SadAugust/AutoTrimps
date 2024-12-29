@@ -511,8 +511,8 @@ function initialiseAllSettings() {
 				let description = "<p>Will automatically exit Spires to run your voids earlier when the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Core', [1],
-			function () { return (getPageSetting('autoPortal', atConfig.settingUniverse).includes('Hour') && game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'boolean', false, null, 'Core', [1, 2],
+			function () { return (getPageSetting('autoPortal', atConfig.settingUniverse).includes('Hour') && (atConfig.settingUniverse === 1 ? game.stats.highestLevel.valueTotal() >= 170 : game.global.stringVersion === '5.10.0' && game.stats.highestRadLevel.valueTotal() >= 270)) });
 
 		createSetting('autoPortalTimeout',
 			function () { return ('Auto Portal Timeout') },
@@ -3037,8 +3037,8 @@ function initialiseAllSettings() {
 				let description = "<p>Will automatically exit Spires to run your voids earlier when the <b>" + _getPrimaryResourceInfo().name + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Daily', [1],
-			function () { return (getPageSetting('dailyPortal', atConfig.settingUniverse) === 1 && game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'boolean', false, null, 'Daily', [1, 2],
+			function () { return ((getPageSetting('dailyPortal', atConfig.settingUniverse) === 1 && game.stats.highestLevel.valueTotal() >= 170) || (game.global.stringVersion === '5.10.0' && getPageSetting('dailyPortal', atConfig.settingUniverse) === 2 && game.stats.highestLevel.valueTotal() >= 270)) });
 
 		createSetting('dailyPortalFiller',
 			function () { return ('Filler Run') },
@@ -3241,8 +3241,8 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirloom', [1],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && ((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 170) || (game.global.stringVersion === '5.10.0' && atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 270))) });
 
 		createSetting('heirloomWindStack',
 			function () { return ('Wind Stacking') },
@@ -3498,6 +3498,7 @@ function initialiseAllSettings() {
 					heirloomTiersAvailable = ['Plagued', 'Radiating'];
 					if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
 					if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
+					if (game.global.stringVersion === '5.10.0' && hze >= 300) heirloomTiersAvailable.push('Mutated');
 				}
 				else {
 					hze = game.stats.highestLevel.valueTotal();
@@ -3532,6 +3533,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 0)
 			});
 
@@ -3544,6 +3546,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 1)
 			});
 
@@ -3556,6 +3559,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 2)
 			});
 
@@ -3568,6 +3572,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 5)
 			});
 
@@ -3580,6 +3585,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 7)
 			});
 
@@ -3592,6 +3598,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 9)
 			});
 
@@ -3604,6 +3611,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 11)
 			});
 
@@ -3632,6 +3640,7 @@ function initialiseAllSettings() {
 					heirloomTiersAvailable = ['Plagued', 'Radiating'];
 					if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
 					if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
+					if (game.global.stringVersion === '5.10.0' && hze >= 300) heirloomTiersAvailable.push('Mutated');
 				}
 				else {
 					hze = game.stats.highestLevel.valueTotal();
@@ -3666,6 +3675,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 0)
 			});
 
@@ -3678,6 +3688,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 1)
 			});
 
@@ -3690,6 +3701,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 2)
 			});
 
@@ -3702,6 +3714,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 5)
 			});
 
@@ -3714,6 +3727,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 7)
 			});
 
@@ -3726,6 +3740,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 9)
 			});
 
@@ -3738,6 +3753,7 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
 				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 11)
 			});
 
@@ -3836,7 +3852,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
 				return description;
-			}, 'value', -1, null, 'Spire', [1]);
+			}, 'value', -1, null, 'Spire', [1,2 ]);
 
 		createSetting('spireExitCell',
 			function () { return ('Exit After Cell') },
@@ -3847,7 +3863,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', -1, null, 'Spire', [1]);
+			}, 'value', -1, null, 'Spire', [1,2]);
 
 		createSetting('spireNurseries',
 			function () { return ('Nurseries') },
@@ -3865,8 +3881,7 @@ function initialiseAllSettings() {
 				let description = "<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'boolean', false, null, 'Spire', [1]);
 
 		createSetting('spireMapBonus',
 			function () { return ('Max Map Bonus') },
@@ -3874,7 +3889,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Spire', [1]);
+			}, 'boolean', false, null, 'Spire', [1, 2]);
 			
 		createSetting('spireHitsSurvived',
 			function () { return ('Hits Survived') },
@@ -3886,7 +3901,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, 'Spire', [1]);
+			}, 'value', 10, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMapping',
 			function () { return ('Skip Spires') },
@@ -3894,7 +3909,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, 'Spire', [1]);
+			}, 'boolean', false, null, 'Spire', [1, 2]);
 
 		createSetting('spireIgnoreUntilC2',
 			function () { return (`${_getChallenge2Info()}: Ignore Spires Until`) },
@@ -3904,8 +3919,7 @@ function initialiseAllSettings() {
 				description += `<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>`;
 				description += `<p><b>Recommended:</b> Second to last Spire you reach on your runs</p>`;
 				return description;
-			}, 'value', -1, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'value', -1, null, 'Spire', [1, 2]);
 
 		createSetting('spireExitCellC2',
 			function () { return (`${_getChallenge2Info()}: Exit After Cell`) },
@@ -3916,8 +3930,7 @@ function initialiseAllSettings() {
 				description += `<p>Set to <b>below 0</b> to disable this setting.</p>`;
 				description += `<p><b>Recommended:</b> -1</p>`;
 				return description;
-			}, 'value', -1, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'value', -1, null, 'Spire', [1, 2]);
 
 		createSetting('spireNurseriesC2',
 			function () { return (`${_getChallenge2Info()}: Nurseries`) },
@@ -3927,8 +3940,7 @@ function initialiseAllSettings() {
 				description += `<p>Set to <b>0 or below</b> to disable this setting.</p>`;
 				description += `<p><b>Recommended:</b> -1</p>`;
 				return description;
-			}, 'value', -1, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'value', -1, null, 'Spire', [1]);
 
 		createSetting('spireDominanceStanceC2',
 			function () { return (`${_getChallenge2Info()}: Force Dominance Stance`) },
@@ -3936,8 +3948,7 @@ function initialiseAllSettings() {
 				let description = `<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>`;
 				description += `<p><b>Recommended:</b> Off</p>`;
 				return description;
-			}, 'boolean', false, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'boolean', false, null, 'Spire', [1]);
 			
 		createSetting('spireMapBonusC2',
 			function () { return (`${_getChallenge2Info()}: Max Map Bonus`) },
@@ -3945,7 +3956,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Spire', [1]);
+			}, 'boolean', false, null, 'Spire', [1, 2]);
 			
 		createSetting('spireHitsSurvivedC2',
 			function () { return (`${_getChallenge2Info()}: Hits Survived`) },
@@ -3957,7 +3968,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, 'Spire', [1]);
+			}, 'value', 10, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMappingC2',
 			function () { return (`${_getChallenge2Info()}: Skip Spires`) },
@@ -3965,7 +3976,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, 'Spire', [1]);
+			}, 'boolean', false, null, 'Spire', [1, 2]);
 		
 		createSetting('spireIgnoreUntilDaily',
 			function () { return ('Daily: Ignore Spires Until') },
@@ -3975,8 +3986,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs</p>";
 				return description;
-			}, 'value', -1, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'value', -1, null, 'Spire', [1, 2]);
 
 		createSetting('spireExitCellDaily',
 			function () { return ('Daily: Exit After Cell') },
@@ -3987,8 +3997,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', -1, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'value', -1, null, 'Spire', [1, 2]);
 
 		createSetting('spireNurseriesDaily',
 			function () { return ('Daily: Nurseries') },
@@ -3998,8 +4007,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', -1, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'value', -1, null, 'Spire', [1]);
 
 		createSetting('spireDominanceStanceDaily',
 			function () { return ('Daily: Force Dominance Stance') },
@@ -4007,8 +4015,7 @@ function initialiseAllSettings() {
 				let description = "<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, 'Spire', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			}, 'boolean', false, null, 'Spire', [1]);
 			
 		createSetting('spireMapBonusDaily',
 			function () { return ('Daily: Max Map Bonus') },
@@ -4016,7 +4023,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Spire', [1]);
+			}, 'boolean', false, null, 'Spire', [1, 2]);
 			
 		createSetting('spireHitsSurvivedDaily',
 			function () { return ('Daily: Hits Survived') },
@@ -4028,7 +4035,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, 'Spire', [1]);
+			}, 'value', 10, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMappingDaily',
 			function () { return ('Daily: Skip Spires') },
@@ -4036,7 +4043,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'boolean', false, null, 'Spire', [1]);
+			}, 'boolean', false, null, 'Spire', [1, 2]);
 	}
 	
 	const displayMagma = true;
@@ -5426,7 +5433,7 @@ function _setDisplayedTabs() {
 		tabHeirloom: game.global.totalPortals === 0,
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
-		tabSpire: radonOn || (!displayAllSettings && hze < 170),
+		tabSpire: !displayAllSettings && (game.global.stringVersion !== '5.10.0' || (radonOn && highestRadonZone < 270) || (!radonOn && hze < 170)),
 		tabTest: !gameUserCheck()
 	};
 

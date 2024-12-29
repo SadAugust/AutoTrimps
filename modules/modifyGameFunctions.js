@@ -896,7 +896,9 @@ function getPlayerCritChance_AT(customShield) {
 		if (typeof game.global.dailyChallenge.trimpCritChanceDown !== 'undefined') critChance -= dailyModifiers.trimpCritChanceDown.getMult(game.global.dailyChallenge.trimpCritChanceDown.strength);
 		if (Fluffy.isRewardActive('SADailies')) critChance += Fluffy.rewardConfig.SADailies.critChance();
 	}
-	if (critChance > 7) critChance = 7;
+
+	if (game.global.stringVersion === '5.10.0') critChance += u2SpireBonuses.critChance();
+	if (critChance > 9) critChance = 9;
 	return critChance;
 }
 

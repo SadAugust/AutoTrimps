@@ -208,9 +208,12 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 
 	if (checkCell) return cell;
 
-	const spireNum = Math.floor((game.global.world - 100) / 100);
-	const enemy = name ? name : game.global.gridArray[Math.max(cell - 1, 0)].name;
+	const spireStart = game.global.universe === 2 ? 300 : 200;
+	const spireNum = Math.floor((game.global.world - (spireStart - 100)) / 100);
+	const gridCell = game.global.gridArray[Math.max(cell - 1, 0)];
+	const enemy = name ? name : gridCell.name;
 	let base = what === 'attack' ? calcEnemyBaseAttack('world', game.global.world, 100, 'Chimp') : 2 * calcEnemyBaseHealth('world', game.global.world, 100, 'Chimp');
+	if (gridCell && gridCell.u2Mutation && gridCell.u2Mutation.length) base = what === 'attack' ? u2Mutations.getAttack(gridCell) : u2Mutations.getHealth(gridCell);
 	let mod = what === 'attack' ? 1.17 : 1.14;
 
 	if (spireNum > 1) {
@@ -219,8 +222,8 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 		mod += modRaiser;
 	}
 
-	base *= Math.pow(mod, cell);
-	base *= game.badGuys[enemy][what];
+	base *= game.global.universe === 2 ? Math.pow(100, game.global.spireLevel + 1) : Math.pow(mod, cell);
+	base *= game.global.universe === 2 ? 1 : game.badGuys[enemy][what];
 
 	if (cell !== 100 && challengeActive('Domination')) base /= what === 'attack' ? 25 : 75;
 
@@ -275,7 +278,8 @@ function getTrimpHealth(realHealth, worldType = _getWorldType(), extraItem = new
 			antenna: () => (game.buildings.Antenna.owned >= 10 ? game.jobs.Meteorologist.getExtraMult() : 1),
 			observation: () => game.portal.Observation.getMult(),
 			mutatorHealth: () => (u2Mutations.tree.Health.purchased ? 1.5 : 1),
-			geneHealth: () => (u2Mutations.tree.GeneHealth.purchased ? 10 : 1)
+			geneHealth: () => (u2Mutations.tree.GeneHealth.purchased ? 10 : 1),
+			spireBasics: () => (game.global.stringVersion === '5.10.0' ? u2SpireBonuses.basics() : 1)
 		};
 		health = applyMultipliers(healthMultipliers, health);
 
@@ -567,8 +571,11 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 			geneAttack: () => (u2Mutations.tree.GeneAttack.purchased ? 10 : 1),
 			brainsToBrawn: () => (u2Mutations.tree.Brains.purchased ? u2Mutations.tree.Brains.getBonus() : 1),
 			novaStacks: () => (worldType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1),
-			spireDaily: () => (Fluffy.isRewardActive('SADailies') && challengeActive('Daily') ? Fluffy.rewardConfig.SADailies.attackMod() : 1)
+			spireDaily: () => (Fluffy.isRewardActive('SADailies') && challengeActive('Daily') ? Fluffy.rewardConfig.SADailies.attackMod() : 1),
+			spireBasics: () => (game.global.stringVersion === '5.10.0' ? u2SpireBonuses.basics() : 1),
+			spireAttackMult: () => (game.global.stringVersion === '5.10.0' && game.global.spireActive && game.global.spireMutStacks > 0 && !game.global.mapsActive ? u2Mutations.types.Spire1.trimpAttackMult() : 1)
 		};
+
 		attack = applyMultipliers(damageModifiers, attack);
 
 		const challengeMultipliers = {
@@ -732,7 +739,9 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 			else if (worldType === 'void' && mutations.Corruption.active()) attack *= corruptionScale / 2;
 		}
 	} else if (game.global.universe === 2) {
-		if (gridInitialised && worldType === 'world' && game.global.world > 200 && game.global.gridArray[cell - 1].u2Mutation.length > 0) {
+		if (game.global.spireActive) {
+			attack = calcSpire('attack', cell, name);
+		} else if (gridInitialised && worldType === 'world' && game.global.world > 200 && game.global.gridArray[cell - 1].u2Mutation.length > 0) {
 			attack = mutationBaseStats(cell - 1, zone, 'attack');
 		}
 	}
@@ -777,6 +786,7 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 		attack = applyMultipliers(challengeMultipliers, attack, true);
 
 		if (worldType === 'world' && game.global.novaMutStacks > 0) attack *= u2Mutations.types.Nova.enemyAttackMult();
+		if (game.global.stringVersion === '5.10.0' && worldType === 'world' && game.global.spireActive && game.global.spireMutStacks > 0) attack *= u2Mutations.types.Spire1.enemyAttackMult();
 		if (equality && equality > 0) attack *= Math.pow(game.portal.Equality.getModifier(), equality);
 	}
 
@@ -914,7 +924,9 @@ function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldT
 			else if (worldType === 'void' && mutations.Corruption.active()) health *= corruptionScale / 2;
 		}
 	} else if (game.global.universe === 2) {
-		if (gridInitialised && worldType === 'world' && game.global.world > 200 && game.global.gridArray[cell - 1].u2Mutation.length > 0) {
+		if (game.global.spireActive) {
+			attack = calcSpire('attack', cell, name);
+		} else if (gridInitialised && worldType === 'world' && game.global.world > 200 && game.global.gridArray[cell - 1].u2Mutation.length > 0) {
 			health = mutationBaseStats(cell - 1, zone, 'health');
 		}
 	}
@@ -1027,7 +1039,8 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (isCorruptionActive(targetZone)) customHealth = calcCorruptedStats(targetZone, 'health');
 		} else if (game.global.universe === 2) {
-			if (targetZone > 200) customHealth = calcMutationStats(targetZone, 'health');
+			if (game.global.spireActive) customHealth = calcSpire('health');
+			else if (targetZone > 200) customHealth = calcMutationStats(targetZone, 'health');
 		}
 		enemyHealth = calcEnemyHealth(worldType, targetZone, cell, enemyName, customHealth) * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, cell, worldType, difficulty, 'gamma', false, 1, true) : 'X';
@@ -1137,8 +1150,9 @@ function _calcHitsSurvivedAttack(worldType, targetZone) {
 			customAttack = calcSpire('attack');
 			if (exitSpireCell(true) === 100 && usingShriek) customAttack *= game.mapUnlocks.roboTrimp.getShriekValue();
 		} else if (isCorruptionActive(targetZone)) customAttack = calcCorruptedStats(targetZone, 'attack');
-	} else if (universe === 2 && targetZone > 200) {
-		customAttack = calcMutationStats(targetZone, 'attack');
+	} else if (universe === 2) {
+		if (spireActive) customAttack = calcSpire('attack');
+		else if (targetZone > 200) customAttack = calcMutationStats(targetZone, 'attack');
 	}
 
 	return customAttack;
@@ -1277,6 +1291,7 @@ function enemyDamageModifiers() {
 			}
 
 			attack *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
+			if (game.global.stringVersion === '5.10.0' && game.global.spireActive && game.global.spireMutStacks > 0) attack *= u2Mutations.types.Spire1.enemyAttackMult();
 		}
 	}
 

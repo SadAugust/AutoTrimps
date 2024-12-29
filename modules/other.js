@@ -323,6 +323,8 @@ function c2RunnerChallengeOrder(universe = portalUniverse) {
 
 function _autoHeirloomMods(heirloomType) {
 	const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+	if (game.global.stringVersion === '5.10.0') rarities.push('Mutated');
+
 	const heirloomRarity = rarities.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`, atConfig.settingUniverse));
 	const heirloomModsArray = ['Any'];
 

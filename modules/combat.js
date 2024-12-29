@@ -220,7 +220,7 @@ function _getOurHealth(mapping, worldType, forceMax = false) {
 	const dailyChallenge = game.global.dailyChallenge;
 	const dailyEmpower = isDaily && !mapping && typeof dailyChallenge.empower !== 'undefined';
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningBerserk || frenzyCanExpire || dailyEmpower);
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge;
+	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge || game.global.spireActive;
 
 	return remainingHealth(shieldBreak, angelicDance, worldType, forceMax);
 }
@@ -338,7 +338,7 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 	const isDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;
 	const dailyEmpower = isDaily && !mapping && typeof dailyChallenge.empower !== 'undefined';
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge;
+	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge || game.global.spireActive;
 	let shouldSuicide = ourHealth === 0 || armyReady || dailyEmpower || shieldBreak;
 
 	const gammaMaxStacksCheck = gammaMaxStacks(false, false, worldType);
@@ -368,7 +368,7 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 
 	const mapObject = mapping ? getCurrentMapObject() : null;
 	const poisonDebuff = challengeActive('Mayhem') && game.challenges.Mayhem.poison > 0; /* Poison debuff only resets on army death */
-	const notMapping = game.global.mapsUnlocked && !mapping && !poisonDebuff;
+	const notMapping = game.global.mapsUnlocked && !mapping && !game.global.spireActive && !poisonDebuff;
 	const mappingButDieAnyway = mapping && enemy.level > 1 && !game.global.voidBuff && mapObject.location !== 'Darkness' && game.global.titimpLeft === 0;
 
 	if (notMapping || mappingButDieAnyway) {
@@ -422,7 +422,7 @@ function _getEnemyDmgMultiplier(mapping, worldType, enemy, fastEnemy) {
 	const runningTrappa = challengeActive('Trappapalooza');
 	const runningArch = challengeActive('Archaeology');
 	const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge;
+	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge || game.global.spireActive;
 	if (game.global.voidBuff === 'getCrit' && ignoreCrits === 0 && (fastEnemy || gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArch || shieldBreak)) damageMult += 5;
 
 	if (challengeActive('Daily')) {
