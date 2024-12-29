@@ -191,6 +191,10 @@ function loadScriptsAT() {
 				await loadModules('gameUpdates', atConfig.modules.pathMods);
 			}
 
+			if (game.global.stringVersion === '5.10.0') {
+				await loadModules('gameUpdatesTest', atConfig.modules.pathMods);
+			}
+
 			for (const module of modules) {
 				const path = installedTesting.includes(module) ? pathTesting : installedMods.includes(module) ? pathMods : installedModules.includes(module) ? atConfig.modules.path : '';
 				await loadModules(module, path);
