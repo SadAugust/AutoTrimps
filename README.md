@@ -72,9 +72,9 @@ Step 2:
 
 Click the relevant link below
 
-<a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/farmCalc.user.js">Heirloom Calculator</a>
+<a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/farmCalc.user.js">Farm Calculator (zfarm)</a>
 
-<a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/heirloomCalc.user.js">Farm Calculator (zfarm)</a>
+<a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/heirloomCalc.user.js">Heirloom Calculator</a>
 
 <a href="https://github.com/SadAugust/AutoTrimps/raw/main/userFiles/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
 
@@ -90,9 +90,9 @@ Step 1:
 
 Download the file below (click the link and when on that page right click the button that says "Raw" and Save Link As...), and save it as mods.js.
 
-<a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/farmCalc.user.js">Heirloom Calculator</a>
+<a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/farmCalc.user.js">Farm Calculator (zfarm)</a>
 
-<a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/heirloomCalc.user.js">Farm Calculator (zfarm)</a>
+<a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/heirloomCalc.user.js">Heirloom Calculator</a>
 
 <a href="https://github.com/SadAugust/AutoTrimps/blob/main/userFiles/autoPerks.user.js">Auto Perks (Perky+Surky)</a>
 

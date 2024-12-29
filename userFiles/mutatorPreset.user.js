@@ -2,13 +2,13 @@
 // @name		AutoTrimps-SadAugust_MutatorPreset
 // @version		1.0-SadAugust
 // @namespace	https://SadAugust.github.io/AutoTrimps
-// @description	Automate all the trimps!
-// @author		zininzinin, spindrjr, Ishkaru, genBTC, Zeker0, SadAugust
-// @match		*trimps.github.io*
-// @match		*kongregate.com/games/GreenSatellite/trimps
-// @match		*trimpstest58.netlify.app/*
-// @connect		*SadAugust.github.io/AutoTrimps*
-// @connect		*trimps.github.io*
+// @description	Add mutator presets for U2!
+// @author		SadAugust
+// @match		*://trimps.github.io/*
+// @match		*://kongregate.com/games/GreenSatellite/trimps/*
+// @match		*://trimpstest510.netlify.app/*
+// @connect		*://SadAugust.github.io/AutoTrimps/*
+// @connect		*://trimps.github.io/*
 // @connect		self
 // @grant		GM_xmlhttpRequest
 // ==/UserScript==
