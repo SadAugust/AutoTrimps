@@ -2100,7 +2100,9 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 				geneAttack: () => (u2Mutations.tree.GeneAttack.purchased ? 10 : 1),
 				brainsToBrawn: () => (u2Mutations.tree.Brains.purchased ? u2Mutations.tree.Brains.getBonus() : 1),
 				novaStacks: () => (!game.global.mapsActive && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1),
-				spireDaily: () => (challengeActive('Daily') && Fluffy.isRewardActive('SADailies') ? Fluffy.rewardConfig.SADailies.attackMod() : 1)
+				spireDaily: () => (challengeActive('Daily') && Fluffy.isRewardActive('SADailies') ? Fluffy.rewardConfig.SADailies.attackMod() : 1),
+				spireStats: () => (game.global.u2SpireCellsBest > 0 ? u2SpireBonuses.basics() : 1),
+				spireAttack: () => (!game.global.mapsActive && game.global.spireActive && game.global.spireMutStacks > 0 ? u2Mutations.types.Spire1.trimpAttackMult() : 1)
 			};
 
 			number = applyMultipliers(multipliers, number);
@@ -2171,6 +2173,7 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 			number = applyMultipliers(challengeMultipliers, number, true, false);
 
 			if (!game.global.mapsActive && game.global.novaMutStacks > 0) number *= u2Mutations.types.Nova.enemyAttackMult();
+			if (!game.global.mapsActive && game.global.spireActive && game.global.spireMutStacks > 0) number *= u2Mutations.types.Spire1.enemyAttackMult();
 			if (cell.u2Mutation && cell.u2Mutation.length && u2Mutations.types.Rage.hasRage(cell)) number *= u2Mutations.types.Rage.enemyAttackMult();
 		}
 
@@ -2953,6 +2956,7 @@ function startFight() {
 
 	if (cell.name === 'Improbability' && game.global.spireActive) {
 		displayedName = 'Druopitee';
+		if (game.global.universe === 2) displayedName = game.global.spireLevel === 10 ? 'Stuffy' : 'Echo of Stuffy';
 		if (badCoord) displayedName = 'Druopitee and Pals';
 	} else if (cell.name === 'Omnipotrimp' && game.global.spireActive) {
 		displayedName = 'Echo of Druopitee';
@@ -3009,8 +3013,7 @@ function startFight() {
 		badName += " <span class=\"badge badBadge\" onmouseover=\"tooltip('Pierce', 'customText', event, '" + prettify(getPierceAmt() * 100) + '% of the damage from this Bad Guy pierces through block\')" onmouseout="tooltip(\'hide\')"><span class="glyphicon glyphicon-tint"></span></span>';
 	}
 
-	if (challengeActive('Glass') || challengeActive('Slow') || (challengeActive('Desolation') && game.global.mapsActive) || (cell.u2Mutation && cell.u2Mutation.length) || ((game.badGuys[cell.name].fast || cell.mutation === 'Corruption') && !challengeActive('Coordinate') && !challengeActive('Nom')))
-		badName += ' <span class="badge badBadge" onmouseover="tooltip(\'Fast\', \'customText\', event, \'This Bad Guy is fast and attacks first\')" onmouseout="tooltip(\'hide\')"><span class="glyphicon glyphicon-forward"></span></span>';
+	if (challengeActive('Glass') || challengeActive('Slow') || (cell.u2Mutation && cell.u2Mutation.length) || ((game.badGuys[cell.name].fast || cell.mutation === 'Corruption') && !challengeActive('Coordinate') && !challengeActive('Nom'))) badName += ' <span class="badge badBadge" onmouseover="tooltip(\'Fast\', \'customText\', event, \'This Bad Guy is fast and attacks first\')" onmouseout="tooltip(\'hide\')"><span class="glyphicon glyphicon-forward"></span></span>';
 
 	if (challengeActive('Electricity') || challengeActive('Mapocalypse')) {
 		badName += ' <span class="badge badBadge" onmouseover="tooltip(\'Electric\', \'customText\', event, \'This Bad Guy is electric and stacks a debuff on your Trimps\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-power-cord"></span></span>';
@@ -3092,8 +3095,8 @@ function startFight() {
 			if (game.global.spireActive && checkIfSpireWorld() && !game.global.mapsActive) {
 				cell.origAttack = cell.attack;
 				cell.origHealth = cell.health;
-				cell.attack = getSpireStats(cell.level, cell.name, 'attack');
-				cell.health = getSpireStats(cell.level, cell.name, 'health');
+				cell.attack = getSpireStats(cell.level, cell.name, 'attack', cell.origAttack);
+				cell.health = getSpireStats(cell.level, cell.name, 'health', cell.origHealth);
 			}
 
 			if (cell.empowerment) {
@@ -3470,6 +3473,7 @@ function startFight() {
 			if (autoBattle.bonuses.Stats.level > 0) game.global.soldierHealthMax *= autoBattle.bonuses.Stats.getMult();
 			if (game.portal.Observation.trinkets > 0) game.global.soldierHealthMax *= game.portal.Observation.getMult();
 			if (getPerkLevel('Championism') > 0) game.global.soldierHealthMax *= game.portal.Championism.getMult();
+			if (game.global.u2SpireCellsBest > 0) game.global.soldierHealthMax *= u2SpireBonuses.basics();
 			if (u2Mutations.tree.Health.purchased) game.global.soldierHealthMax *= 1.5;
 			if (u2Mutations.tree.GeneHealth.purchased) game.global.soldierHealthMax *= 10;
 
@@ -3600,6 +3604,7 @@ function startFight() {
 			if (game.global.universe === 2) {
 				if (game.buildings.Smithy.owned > 0) healthTemp *= game.buildings.Smithy.getMult();
 				if (game.buildings.Antenna.owned >= 10) healthTemp *= game.jobs.Meteorologist.getExtraMult();
+				if (game.global.u2SpireCellsBest > 0) healthTemp *= u2SpireBonuses.basics();
 				if (Fluffy.isRewardActive('healthy')) healthTemp *= 1.5;
 				if (autoBattle.bonuses.Stats.level > 0) healthTemp *= autoBattle.bonuses.Stats.getMult();
 				if (u2Mutations.tree.Health.purchased) healthTemp *= 1.5;
@@ -4080,6 +4085,7 @@ function fight(makeUp) {
 	updateTitimp();
 	let critTier = 0;
 	let critChance = getPlayerCritChance();
+	let doubleCritChance = getPlayerDoubleCritChance();
 
 	if (critChance > 0) {
 		critTier = Math.floor(critChance);
@@ -4087,6 +4093,11 @@ function fight(makeUp) {
 		if (Math.random() < critChance) {
 			critTier++;
 		}
+
+		if (doubleCritChance > 0 && Math.random() < doubleCritChance) {
+			critTier++;
+		}
+
 		if (critTier > 0) {
 			trimpAttack *= getPlayerCritDamageMult();
 			if (critTier > 1) trimpAttack *= getMegaCritDamageMult(critTier);
@@ -4482,6 +4493,7 @@ function fight(makeUp) {
 		if (game.global.universe === 2 && attacked && cell.u2Mutation && cell.u2Mutation.length) {
 			if (u2Mutations.types.Nova.hasNova(cell)) u2Mutations.types.Nova.attacked();
 			if (u2Mutations.types.Rage.hasRage(cell)) u2Mutations.types.Rage.attacked();
+			if (game.global.spireActive && u2Mutations.types.Spire1.hasMut(cell)) u2Mutations.types.Spire1.attacked(cell);
 		}
 	}
 
@@ -4594,6 +4606,11 @@ function fight(makeUp) {
 }
 
 function nextWorld() {
+	if (game.global.spireActive && game.global.universe === 2) {
+		nextU2SpireFloor();
+		return;
+	}
+
 	if (game.global.world > getHighestLevelCleared()) {
 		if (game.global.universe === 2) {
 			game.global.highestRadonLevelCleared = game.global.world;
@@ -5491,8 +5508,7 @@ function mapsSwitch(updateOnly, fromRecycle) {
 		document.getElementById('mapsCreateRow').style.display = 'none';
 		document.getElementById('grid').style.display = 'none';
 		document.getElementById('preMaps').style.display = 'none';
-		u2Mutations.types.Nova.clearStacks();
-		u2Mutations.types.Rage.clearStacks();
+		u2Mutations.clearStacks();
 		toggleMapGridHtml(true, currentMapObj);
 	} else {
 		//Switching to world
@@ -5510,7 +5526,7 @@ function mapsSwitch(updateOnly, fromRecycle) {
 		document.getElementById('preMaps').style.display = 'none';
 		toggleMapGridHtml();
 		setNonMapBox();
-		if (game.global.novaMutStacks > 0) u2Mutations.types.Nova.drawStacks();
+		u2Mutations.checkStacks();
 	}
 
 	if (game.global.tutorialActive) tutorial.setWinSize();
@@ -5603,7 +5619,7 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 			force = true;
 			break;
 		}
-		if (!mapSuffix && challengeActive('Exterminate')) {
+		if (!mapSuffix && challengeActive('Exterminate') && game.global.world <= game.challenges.Exterminate.completeAfterZone) {
 			if (badGuy.location === 'Exterminate') badGuysArray.push(item);
 			continue;
 		}
@@ -5621,6 +5637,7 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 	let exoticChance = 3;
 	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
 	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
+	if (game.global.universe === 2 && game.global.spireActive && !mapSuffix) exoticChance = 0;
 
 	if (imports.length && !force && getRandomIntSeeded(enemySeed++, 0, 1000) / 10 < imports.length * exoticChance) {
 		if (!mapSuffix) game.global.enemySeed = enemySeed;
@@ -6279,6 +6296,11 @@ function getBattleStatBd(what) {
 		currentCalc *= amt;
 		textString += "<tr style='color: red'><td class='bdTitle'>Blinded (Nova)</td><td>x 0.99</td><td>" + game.global.novaMutStacks + "</td><td class='bdPercent'>x " + prettify(amt) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td>' + getFluctuation(currentCalc, minFluct, maxFluct) + '</tr>';
 	}
+	if (game.global.universe === 2 && game.global.spireActive && !game.global.mapsActive && game.global.spireMutStacks > 0 && what === 'attack') {
+		amt = u2Mutations.types.Spire1.trimpAttackMult();
+		currentCalc *= amt;
+		textString += "<tr style='color: red'><td class='bdTitle'>Spore Cloud (Spire)</td><td>x 0.99</td><td>" + game.global.spireMutStacks.toFixed(1) + "</td><td class='bdPercent'>x " + prettify(amt) + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td>' + getFluctuation(currentCalc, minFluct, maxFluct) + '</tr>';
+	}
 	if (what === 'attack' && challengeActive('Unbalance')) {
 		var mult = game.challenges.Unbalance.getAttackMult();
 		currentCalc *= mult;
@@ -6292,6 +6314,14 @@ function getBattleStatBd(what) {
 		var modifier = game.portal.Equality.getModifier(true);
 		var modDisplay = modifier > 0.0001 ? modifier.toFixed(4) : modifier.toExponential(3);
 		textString += "<tr style='color: red'><td class='bdTitle'>Equality</td><td>x " + modDisplay + '</td><td>' + game.portal.Equality.getActiveLevels() + "</td><td class='bdPercent'>x " + display + "</td><td class='bdNumber'>" + prettify(currentCalc) + '</td>' + getFluctuation(currentCalc, minFluct, maxFluct) + '</tr>';
+	}
+	if (game.global.universe === 2 && what !== 'shield') {
+		var cellCredit = u2SpireBonuses.cellCredit();
+		if (cellCredit > 0) {
+			amt = u2SpireBonuses.basics();
+			currentCalc *= amt;
+			textString += "<tr><td class='bdTitle'>Stuffy's Spire</td><td></td><td>" + cellCredit + '</td><td>x ' + prettify(amt) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td>' + (what == 'attack' ? getFluctuation(currentCalc, minFluct, maxFluct) : '') + '</tr>';
+		}
 	}
 
 	//Crit
@@ -6318,62 +6348,37 @@ function getBattleStatBd(what) {
 				if (critChance > 1) textString += ' (' + (critChance * 100).toFixed(1) + '% Total)';
 				textString += "</td><td class='bdTitle'><span style='color: yellow;'>Crit!</span> Damage</td><td>+ " + prettify((critMult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(critCalc) + '</td>' + getFluctuation(critCalc, minFluct, maxFluct) + '</tr>';
 			}
-			if (critChance > 1 && critChance < 3) {
-				if (critChance >= 2) thisCritChance = 1 - (critChance % 1);
-				else thisCritChance = critChance - 1;
-				critMult = getMegaCritDamageMult(2);
-				critCalc = currentCalc * critMult * baseCritMult;
-				textString += "<tr class='critRow'><td class='bdTitle'><span style='color: orange;'>CRIT!</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span style='color: orange;'>CRIT!</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + '</td>' + getFluctuation(critCalc, minFluct, maxFluct) + '</tr>';
-			}
-			if (critChance > 2 && critChance < 4) {
-				if (critChance >= 3) thisCritChance = 1 - (critChance % 1);
-				else thisCritChance = critChance - 2;
-				critMult = getMegaCritDamageMult(3);
-				critCalc = currentCalc * critMult * baseCritMult;
-				textString += "<tr class='critRow'><td class='bdTitle'><span style='color: red;'>CRIT!!</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span style='color: red;'>CRIT!!</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + '</td>' + getFluctuation(critCalc, minFluct, maxFluct) + '</tr>';
-			}
-			if (critChance > 3 && critChance < 5) {
-				if (critChance >= 4) thisCritChance = 1 - (critChance % 1);
-				else thisCritChance = critChance - 3;
-				critMult = getMegaCritDamageMult(4);
-				critCalc = currentCalc * critMult * baseCritMult;
-				textString +=
-					"<tr class='critRow'><td class='bdTitle'><span class='critTier4'>CRIT<span class='icomoon icon-atom'></span></span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span class='critTier4'>CRIT<span class='icomoon icon-atom'></span></span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + '</td>' + getFluctuation(critCalc, minFluct, maxFluct) + '</tr>';
-			}
-			if (critChance > 4 && critChance < 6) {
-				if (critChance >= 5) thisCritChance = 1 - (critChance % 1);
-				else thisCritChance = critChance - 4;
-				critMult = getMegaCritDamageMult(5);
-				critCalc = currentCalc * critMult * baseCritMult;
-				textString +=
-					"<tr class='critRow'><td class='bdTitle'><span class='critTier5'><span class='icomoon icon-bomb'></span> CRIT</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span class='critTier5'><span class='icomoon icon-bomb'></span> CRIT</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + '</td>' + getFluctuation(critCalc, minFluct, maxFluct) + '</tr>';
-			}
-			if (critChance > 5 && critChance < 7) {
-				if (critChance >= 6) thisCritChance = 1 - (critChance % 1);
-				else thisCritChance = critChance - 5;
-				critMult = getMegaCritDamageMult(6);
-				critCalc = currentCalc * critMult * baseCritMult;
-				textString +=
-					"<tr class='critRow'><td class='bdTitle'><span class='critTier6'><span class='icomoon icon-diamond'></span> CRIT!</span> Chance</td><td>" +
-					(thisCritChance * 100).toFixed(1) +
-					"%</td><td class='bdTitle'><span class='critTier6'><span class='icomoon icon-diamond'></span> CRIT!</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " +
-					prettify(critMult) +
-					"</td><td class='bdNumberSm'>" +
-					prettify(critCalc) +
-					'</td>' +
-					getFluctuation(critCalc, minFluct, maxFluct) +
-					'</tr>';
-			}
-			if (critChance > 6 && critChance < 8) {
-				if (critChance >= 7) thisCritChance = 1;
-				else thisCritChance = critChance - 6;
-				critMult = getMegaCritDamageMult(7);
-				critCalc = currentCalc * critMult * baseCritMult;
-				textString +=
-					"<tr class='critRow'><td class='bdTitle'><span class='critTier7'><span class='icomoon icon-bolt'></span> CRIT!</span> Chance</td><td>" + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'><span class='critTier7'><span class='icomoon icon-bolt'></span> CRIT!</span> Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + '</td>' + getFluctuation(critCalc, minFluct, maxFluct) + '</tr>';
+			if (critChance > 1) {
+				var max = 9;
+				var doubleChance = getPlayerDoubleCritChance();
+				var checkAdd = doubleChance > 0 ? 1 : 0;
+				var doubleAdd = 0;
+				for (var check = 1; check < max; check++) {
+					if (critChance + checkAdd > check && critChance < check + 2) {
+						var finalTier = check == max - 1;
+						if (!finalTier && critChance >= check + 1) thisCritChance = 1 - (critChance % 1);
+						else if (finalTier && critChance >= check + 1) thisCritChance = 1;
+						else thisCritChance = critChance - check;
+						if (doubleChance > 0) {
+							if (finalTier && critChance > check) thisCritChance += doubleAdd;
+							else if (critChance <= check) thisCritChance = doubleAdd;
+							else {
+								var oldAdd = doubleAdd;
+								var doubleChange = thisCritChance * (1 - doubleChance);
+								doubleAdd = thisCritChance - doubleChange;
+								thisCritChance = doubleChange;
+								thisCritChance += oldAdd;
+							}
+						}
+						critMult = getMegaCritDamageMult(check + 1);
+						critCalc = currentCalc * critMult * baseCritMult;
+						textString += "<tr class='critRow'><td class='bdTitle'>" + getCritText(check + 1) + ' Chance</td><td>' + (thisCritChance * 100).toFixed(1) + "%</td><td class='bdTitle'>" + getCritText(check + 1) + " Damage</td><td><span style='color: yellow;'>Crit!</span> x " + prettify(critMult) + "</td><td class='bdNumberSm'>" + prettify(critCalc) + '</td>' + getFluctuation(critCalc, minFluct, maxFluct) + '</tr>';
+					}
+				}
 			}
 		}
 	}
+
 	textString += '</tbody></table></div>';
 	game.global.lockTooltip = false;
 	document.getElementById('tipText').className = '';
@@ -6422,7 +6427,9 @@ function createHeirloom(zone, fromBones, spireCore, forceBest) {
 	//{name: "", type: "", rarity: #, mods: [[ModName, value, createdStepsFromCap, upgradesPurchased, seed]]}
 
 	const buildHeirloom = { id: game.stats.totalHeirlooms.valueTotal + game.stats.totalHeirlooms.value, nuMod: 1, name, type, repSeed: getRandomIntSeeded(seed++, 1, 10e6), rarity, mods: [] };
-	buildHeirloom.icon = type === 'Core' ? 'adjust' : type === 'Shield' ? '*shield3' : 'grain';
+
+	if (buildHeirloom.rarity === 12) buildHeirloom.icon = type === 'Shield' ? '*qrcode2' : '*i-cursor';
+	else buildHeirloom.icon = type === 'Core' ? 'adjust' : type === 'Shield' ? '*shield3' : 'grain';
 
 	let x = 0;
 	if (!game.heirlooms.canReplaceMods[rarity]) {
@@ -6454,6 +6461,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest) {
 
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe === 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (game.global.universe === 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
+	buildHeirloom.nuMod *= u2SpireBonuses.nullifium();
 	game.global.heirloomsExtra.push(buildHeirloom);
 
 	const displayCores = type === 'Core' && rarity >= game.global.spiresCompleted - 1;
@@ -7471,6 +7479,15 @@ function getLootBd(what) {
 		currentCalc = 0;
 		const cMode = game.global.universe == 1 ? 2 : 3;
 		textString += "<tr class='colorSquared'><td class='bdTitle'>Challenge<sup>" + cMode + '</sup></td><td></td><td></td><td>0%</td><td>' + prettify(currentCalc) + '</td></tr>';
+	}
+
+	if (game.global.universe === 2 && what === 'Helium') {
+		const cellCredit = u2SpireBonuses.cellCredit();
+		if (cellCredit > 0) {
+			amt = u2SpireBonuses.basics();
+			currentCalc *= amt;
+			textString += "<tr><td class='bdTitle'>Stuffy's Spire</td><td></td><td>" + cellCredit + '</td><td>x ' + prettify(amt) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td></tr>';
+		}
 	}
 
 	//Heirloom bonuses last, since food/wood/metal mults can be different
