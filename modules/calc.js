@@ -739,10 +739,12 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 			else if (worldType === 'void' && mutations.Corruption.active()) attack *= corruptionScale / 2;
 		}
 	} else if (game.global.universe === 2) {
-		if (game.global.spireActive) {
-			attack = calcSpire('attack', cell, name);
-		} else if (gridInitialised && worldType === 'world' && game.global.world > 200 && game.global.gridArray[cell - 1].u2Mutation.length > 0) {
-			attack = mutationBaseStats(cell - 1, zone, 'attack');
+		if (worldType === 'world') {
+			if (game.global.spireActive) {
+				attack = calcSpire('attack', cell, name);
+			} else if (gridInitialised && game.global.world > 200 && game.global.gridArray[cell - 1].u2Mutation.length > 0) {
+				attack = mutationBaseStats(cell - 1, zone, 'attack');
+			}
 		}
 	}
 
@@ -924,10 +926,12 @@ function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldT
 			else if (worldType === 'void' && mutations.Corruption.active()) health *= corruptionScale / 2;
 		}
 	} else if (game.global.universe === 2) {
-		if (game.global.spireActive) {
-			attack = calcSpire('attack', cell, name);
-		} else if (gridInitialised && worldType === 'world' && game.global.world > 200 && game.global.gridArray[cell - 1].u2Mutation.length > 0) {
-			health = mutationBaseStats(cell - 1, zone, 'health');
+		if (worldType === 'world') {
+			if (game.global.spireActive) {
+				attack = calcSpire('attack', cell, name);
+			} else if (gridInitialised && game.global.world > 200 && game.global.gridArray[cell - 1].u2Mutation.length > 0) {
+				health = mutationBaseStats(cell - 1, zone, 'health');
+			}
 		}
 	}
 

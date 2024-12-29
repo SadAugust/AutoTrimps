@@ -3936,6 +3936,7 @@ function prestigeTotalFragCost() {
 		sliders[0] = prestigeRaidingSliderCost(mapSettings.raidzones, mapSettings.special, cost, fragmentPercentage);
 		cost += mapCost(sliders[0][0], sliders[0][1], sliders[0][2], sliders[0][3], sliders[0][4]);
 	}
+
 	if (mapSettings.incrementMaps) {
 		for (let i = 1; i < 5; i += 1) {
 			if (prestigesToGet(mapSettings.raidzones - i, mapSettings.prestigeGoal)[0]) {
