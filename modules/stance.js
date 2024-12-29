@@ -547,9 +547,16 @@ function scryTransition(scryStance = 'S', scrySettings = _getScrySettings(), bas
 			}
 		}
 
+		const poisonDmg = addPoison(true);
+		const avgDominanceDmg = baseStats.maxDamage * 4 + poisonDmg;
+		const hitsToKillCurrent = currentEnemy.health / avgDominanceDmg;
+		if (hitsToKillCurrent > 1 && (game.global.mapsActive ? !game.global.canScryCache : !game.global.waitToScry)) {
+			return false;
+		}
+
 		const maxHits = getPageSetting('scryerMaxHits');
 		if (maxHits > 0) {
-			const avgDmg = baseStats.avgDamage / 2 + addPoison(true);
+			const avgDmg = baseStats.avgDamage / 2 + poisonDmg;
 			const hitsToKill = currentEnemy.maxHealth / avgDmg;
 			const hitsToKillCurrent = currentEnemy.health / avgDmg;
 
