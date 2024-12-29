@@ -3844,7 +3844,7 @@ function fight(makeUp) {
 			if (game.global.mapsActive) {
 				if (typeof game.mapUnlocks[cell.special].last !== 'undefined') {
 					game.mapUnlocks[cell.special].last += 5;
-					if (typeof game.upgrades[cell.special].prestige !== 'undefined' && getSLevel() >= 4 && !challengeActive('Mapology') && Math.ceil(game.mapUnlocks[cell.special].last / 5) % 2 === 1) {
+					if (typeof game.upgrades[cell.special].prestige && getSLevel() >= 4 && !challengeActive('Mapology') && Math.ceil(game.mapUnlocks[cell.special].last / 5) % 2 === 1) {
 						unlock.fire(cell.level);
 						game.mapUnlocks[cell.special].last += 5;
 						message(unlock.message.replace('a book', 'two books'), 'Unlocks', null, null, 'repeated', cell.text);
