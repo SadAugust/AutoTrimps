@@ -21,7 +21,7 @@ If clicking the link does not work, copy the contents of user.js into a new scri
 If you are unsure how to do that, copy this:
 
 ```js
-function injectScript(id, src) {
+function loadScript(id, src) {
 	const script = document.createElement('script');
 	script.id = id;
 	script.src = src;
@@ -29,7 +29,7 @@ function injectScript(id, src) {
 	document.head.appendChild(script);
 }
 
-injectScript('AutoTrimps-SadAugust', 'https://SadAugust.github.io/AutoTrimps/AutoTrimps2.js');
+loadScript('AutoTrimps-SadAugust', 'https://SadAugust.github.io/AutoTrimps/AutoTrimps2.js');
 ```
 
 Press F12 inside the game, this opens the console, and paste the text into it and hit enter, this will load the script. You will have to do this everytime you refresh the game though so I recommend getting tampermonkey to do it for you!

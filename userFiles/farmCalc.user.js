@@ -13,7 +13,7 @@
 // @grant		GM_xmlhttpRequest
 // ==/UserScript==
 
-function injectScript(id, src) {
+function loadScript(id, src) {
 	const script = document.createElement('script');
 	script.id = id;
 	script.src = src;
@@ -22,4 +22,4 @@ function injectScript(id, src) {
 }
 
 //This can be edited to point to your own Github Repository URL.
-injectScript('AutoTrimps-SadAugust-FarmCalc', 'https://sadaugust.github.io/AutoTrimps/mods/farmCalc.js');
+loadScript('AutoTrimps-SadAugust-FarmCalc', 'https://sadaugust.github.io/AutoTrimps/mods/farmCalc.js');

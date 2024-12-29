@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name		AutoTrimps-SadAugust
+// @name		AutoTrimps-SadAugust_gameUpdatesTest
 // @version		1.0-SadAugust
 // @namespace	https://SadAugust.github.io/AutoTrimps
-// @description	Automate all the trimps!
-// @author		zininzinin, spindrjr, Ishkaru, genBTC, Zeker0, SadAugust
+// @description	Fix minor game bugs & significantly speedup Time Warp!
+// @author		SadAugust, NooNoo, Quia
 // @match		*://trimps.github.io/*
 // @match		*://kongregate.com/games/GreenSatellite/trimps/*
 // @match		*://trimpstest510.netlify.app/*
@@ -22,4 +22,4 @@ function loadScript(id, src) {
 }
 
 //This can be edited to point to your own Github Repository URL.
-loadScript('AutoTrimps-SadAugust', 'https://sadaugust.github.io/AutoTrimps/AutoTrimps2.js');
+loadScript('AutoTrimps-SadAugust-gameUpdatesTest', 'https://sadaugust.github.io/AutoTrimps/mods/gameUpdatesTest.js');
