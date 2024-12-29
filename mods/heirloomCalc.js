@@ -241,6 +241,16 @@ function setupHeirloomUI() {
 				get weighable() {
 					return !game.global.universe === 2;
 				}
+			},
+			seedDrop: {
+				name: 'Seed Drop Weight',
+				description: '<p><b>Seed Drop Weight</b> is a multiplier to the value of Seed Drop Rate. So if your next Seed Drop Rate upgrade were to increase your value by 0.5%, the default weight (2) will multiply it by 2 so it will be calculated as if it were to increase your value by 1%.</p><p>The default weight (2) is used to provide a good balance between damage, survivability and helium gain.',
+				minValue: 2,
+				maxValue: null,
+				defaultValue: 100,
+				get weighable() {
+					return !game.global.universe === 2;
+				}
 			}
 		}
 	};
@@ -385,6 +395,7 @@ function saveHeirloomSettings() {
 	update.HPWeight = $$('#HPWeight').value;
 	update.equipLevels = $$('#equipLevels').value;
 	update.equalityTarget = $$('#equalityTarget').value;
+	update.seedDrop = $$('#seedDrop').value;
 
 	localStorage.setItem('heirloomInputs', JSON.stringify(heirloomInputs));
 	if (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
@@ -416,6 +427,7 @@ function loadHeirloomSettings() {
 	$$('#HPWeight').value = heirloomInputs.HPWeight || 1;
 	$$('#equipLevels').value = heirloomInputs.equipLevels || 90;
 	$$('#equalityTarget').value = heirloomInputs.equalityTarget || Math.min(game.portal.Equality.radLevel, 100);
+	$$('#seedDrop').value = heirloomInputs.seedDrop || 2;
 }
 
 function isNumeric(n) {
@@ -431,9 +443,9 @@ class Heirloom {
 		Object.assign(this, heirloom);
 		/* add custom info we need */
 		if (!this.isEmpty()) {
-			const basePrices = [5, 10, 15, 25, 75, 150, 400, 1000, 2500, 7500, 50000, 375000];
-			const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000];
-			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015];
+			const basePrices = [5, 10, 15, 25, 75, 150, 400, 1000, 2500, 7500, 50000, 375000, 2.75e6];
+			const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000, 2000000000000];
+			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015, 1.01];
 			const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
 			const heirloomSettings = settings && settings[this.id] ? settings[this.id] : settings;
 			const runningAT = typeof atConfig !== 'undefined';
@@ -443,6 +455,7 @@ class Heirloom {
 			for (const [key, value] of Object.entries(source)) {
 				this.inputs[key] = Number(value);
 			}
+			if (!this.inputs.seedDrop) this.inputs.seedDrop = 2;
 
 			this.isCore = this.type === 'Core';
 
@@ -491,19 +504,19 @@ class Heirloom {
 	}
 
 	getStepAmount(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].stepAmounts[rarity];
+		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality' || type === 'doubleCrit') return this.heirloomInfo[type].stepAmounts[rarity];
 		if (game.global.universe === 2) return this.heirloomInfo[type].stepAmounts[rarity] / 10;
 		return this.heirloomInfo[type].stepAmounts[rarity];
 	}
 
 	getSoftCap(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].softCaps[rarity];
+		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality' || type === 'doubleCrit') return this.heirloomInfo[type].softCaps[rarity];
 		if (game.global.universe === 2) return this.heirloomInfo[type].softCaps[rarity] / 10;
 		return this.heirloomInfo[type].softCaps[rarity];
 	}
 
 	getHardCap(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].hardCaps[rarity];
+		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality' || type === 'doubleCrit') return this.heirloomInfo[type].hardCaps[rarity];
 		if (game.global.universe === 2) return this.heirloomInfo[type].hardCaps[rarity] / 10;
 		return this.heirloomInfo[type].hardCaps[rarity];
 	}
@@ -541,7 +554,7 @@ class Heirloom {
 	getModValue(type) {
 		for (const mod of this.mods) {
 			if (mod[0] === type) {
-				if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return mod[1];
+				if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality' || type === 'doubleCrit') return mod[1];
 				if (game.global.universe === 2) return mod[1] / 10;
 				return mod[1];
 			}
@@ -659,6 +672,27 @@ class Heirloom {
 			return critDmgNormalizedAfter / critDmgNormalizedBefore;
 		}
 
+		if (type === 'doubleCrit') {
+			const relentlessness = game.global.universe === 2 ? 0 : game.portal.Relentlessness.level;
+			const criticality = game.global.universe === 2 ? game.portal.Criticality.radLevel : 0;
+			let critChance = 1 + relentlessness * 5;
+			let megaCritMult = 5;
+
+			critChance += this.getModValue('critChance') * (masteryPurchased('crit') ? 1.5 : 1);
+			if (this.fluffyRewards.critChance) critChance += 50 * this.fluffyRewards.critChance;
+			if (critChance === 0) return 1;
+			if (this.fluffyRewards.megaCrit) megaCritMult += 2;
+			if (masteryPurchased('crit')) megaCritMult += 1;
+
+			const megaCrits = Math.floor(critChance / 100);
+			critChance = Math.min(critChance - megaCrits * 100, 100) / 100;
+			const critDamage = value + 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
+			const critDmgNormalizedBefore = this.normalizedCrit(critChance, critDamage, megaCrits, megaCritMult);
+			const critDmgNormalizedAfter = this.normalizedCrit(critChance, critDamage + stepAmount, megaCrits, megaCritMult);
+
+			return critDmgNormalizedAfter / critDmgNormalizedBefore;
+		}
+
 		if (type === 'voidMaps') {
 			const divider = game.global.universe === 2 ? 10 : 1;
 			return (value + stepAmount * (this.inputs.VMWeight / divider)) / value;
@@ -670,6 +704,10 @@ class Heirloom {
 
 		if (type === 'FluffyExp') {
 			return (value + 100 + stepAmount * this.inputs.XPWeight) / (value + 100);
+		}
+
+		if (type === 'SeedDrop') {
+			return (value + 100 + stepAmount * this.inputs.seedDrop) / (value + 100);
 		}
 
 		if (type === 'plaguebringer') {
@@ -891,6 +929,7 @@ class Heirloom {
 
 			if (currency >= cost) {
 				heirloom.mods[index][1] += this.heirloomInfo[name].stepAmounts[heirloom.rarity];
+				heirloom.mods[index][1] = roundFloatingPointErrors(heirloom.mods[index][1]);
 				heirloom.mods[index][3] += 1;
 				purchases[index] += 1;
 				currency -= cost;
@@ -1093,7 +1132,7 @@ function calculate(autoUpgrade) {
 	const allocatorButton = document.getElementById('heirloomAllocatorBtn');
 	if (allocatorButton.innerHTML !== allocateName) allocatorButton.innerHTML = allocateName;
 
-	const elemList = ['heirloomRatios0', 'VMWeight', 'HPWeight', 'equalityTarget', 'equipLevels', 'XPWeight', 'heirloomCustomRatioBtn'];
+	const elemList = ['heirloomRatios0', 'VMWeight', 'HPWeight', 'equalityTarget', 'equipLevels', 'XPWeight', 'seedDrop', 'heirloomCustomRatioBtn'];
 	const resourceList = ['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity'];
 	const resourceListDisplay = startingHeirloom.type.includes('Staff');
 	const displayList = ['heirloomRatios0']; /* heirloomRatios0 is needed to display the UI */
@@ -1103,6 +1142,7 @@ function calculate(autoUpgrade) {
 	} else if (startingHeirloom.type.includes('Staff')) {
 		displayList.push('equipLevels', 'XPWeight', 'heirloomCustomRatioBtn');
 		if (game.global.spiresCompleted >= 2) displayList.push('XPWeight');
+		if (startingHeirloom.rarity >= 11) displayList.push('seedDrop');
 	} else if (startingHeirloom.type.includes('Core')) {
 		startTDCalc();
 	}
@@ -1112,8 +1152,10 @@ function calculate(autoUpgrade) {
 
 	if (resourceListDisplay) {
 		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity < 11 ? 'hidden' : 'visible', false, 'visibility');
+		let baseValue = -20.8;
+		if (startingHeirloom.rarity >= 12) baseValue = -7.8;
 		const farmerElem = document.getElementById('heirloomCustomFarmerBtn');
-		const farmerMarginLeft = startingHeirloom.rarity < 11 ? '-20.8vw' : '-22.7vw';
+		const farmerMarginLeft = startingHeirloom.rarity < 11 ? `${baseValue}vw` : `${baseValue - 1.9}vw`;
 		if (farmerElem.style.marginLeft !== farmerMarginLeft) farmerElem.style.marginLeft = farmerMarginLeft;
 	}
 
@@ -1929,89 +1971,89 @@ function lightColMult(cell) {
 function heirloomInfo(type) {
 	if (type === 'Shield')
 		return {
+			playerEfficiency: {
+				name: 'Player Efficiency',
+				type: 'Shield',
+				weighable: false,
+				stepAmounts: [1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024],
+				softCaps: [16, 16, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384]
+			},
+			trainerEfficiency: {
+				name: 'Trainer Efficiency',
+				type: 'Shield',
+				weighable: false,
+				stepAmounts: [1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0],
+				softCaps: [20, 20, 20, 40, 60, 80, 100, 120, 140, 0, 0, 0, 0]
+			},
+			storageSize: {
+				name: 'Storage Size',
+				type: 'Shield',
+				weighable: false,
+				stepAmounts: [4, 4, 4, 4, 8, 16, 16, 16, 16, 0, 0, 0, 0],
+				softCaps: [64, 64, 64, 128, 256, 512, 768, 1024, 1280, 0, 0, 0, 0]
+			},
 			breedSpeed: {
 				name: 'Breed Speed',
 				type: 'Shield',
 				get weighable() {
 					return game.global.universe !== 3;
 				},
-				stepAmounts: [1, 1, 1, 1, 3, 3, 3, 3, 3, 5, 10, 10],
-				softCaps: [10, 10, 10, 20, 100, 130, 160, 190, 220, 280, 360, 400]
-			},
-			critChance: {
-				name: 'Crit Chance',
-				type: 'Shield',
-				weighable: true,
-				stepAmounts: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.3, 0.5, 0.5, 0.25, 0.3],
-				softCaps: [2.6, 2.6, 2.6, 5, 7.4, 9.8, 12.2, 15.9, 30, 50, 80, 95],
-				hardCaps: [30, 30, 30, 30, 30, 30, 30, 30, 100, 125, 200, 260],
-				heirloopy: true
-			},
-			critDamage: {
-				name: 'Crit Damage',
-				type: 'Shield',
-				weighable: true,
-				stepAmounts: [5, 5, 5, 5, 10, 10, 10, 10, 15, 20, 25, 50],
-				softCaps: [60, 60, 60, 100, 200, 300, 400, 500, 650, 850, 1100, 1700]
-			},
-			plaguebringer: {
-				name: 'Plaguebringer',
-				type: 'Shield',
-				weighable: true,
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0.5, 0.5],
-				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 15, 30, 45, 50],
-				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 75, 100, 125, 150],
-				heirloopy: true
-			},
-			playerEfficiency: {
-				name: 'Player Efficiency',
-				type: 'Shield',
-				weighable: false,
-				stepAmounts: [1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
-				softCaps: [16, 16, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
-			},
-			storageSize: {
-				name: 'Storage Size',
-				type: 'Shield',
-				weighable: false,
-				stepAmounts: [4, 4, 4, 4, 8, 16, 16, 16, 16, 0, 0, 0],
-				softCaps: [64, 64, 64, 128, 256, 512, 768, 1024, 1280, 0, 0, 0]
-			},
-			trainerEfficiency: {
-				name: 'Trainer Efficiency',
-				type: 'Shield',
-				weighable: false,
-				stepAmounts: [1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0, 0],
-				softCaps: [20, 20, 20, 40, 60, 80, 100, 120, 140, 0, 0, 0]
-			},
-			trimpAttack: {
-				name: 'Trimp Attack',
-				type: 'Shield',
-				weighable: true,
-				stepAmounts: [2, 2, 2, 2, 5, 5, 5, 6, 8, 10, 10, 20],
-				softCaps: [20, 20, 20, 40, 100, 150, 200, 260, 356, 460, 750, 1100]
-			},
-			trimpBlock: {
-				name: 'Trimp Block',
-				type: 'Shield',
-				weighable: false,
-				stepAmounts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-				softCaps: [7, 7, 7, 10, 40, 60, 80, 100, 120, 0, 0, 0]
+				stepAmounts: [1, 1, 1, 1, 3, 3, 3, 3, 3, 5, 10, 10, 15],
+				softCaps: [10, 10, 10, 20, 100, 130, 160, 190, 220, 280, 360, 400, 550]
 			},
 			trimpHealth: {
 				name: 'Trimp Health',
 				type: 'Shield',
 				weighable: true,
-				stepAmounts: [2, 2, 2, 2, 5, 5, 5, 6, 8, 10, 10, 20],
-				softCaps: [20, 20, 20, 40, 100, 150, 200, 260, 356, 460, 750, 1100]
+				stepAmounts: [2, 2, 2, 2, 5, 5, 5, 6, 8, 10, 10, 20, 25],
+				softCaps: [20, 20, 20, 40, 100, 150, 200, 260, 356, 460, 750, 1100, 1600]
+			},
+			trimpAttack: {
+				name: 'Trimp Attack',
+				type: 'Shield',
+				weighable: true,
+				stepAmounts: [2, 2, 2, 2, 5, 5, 5, 6, 8, 10, 10, 20, 25],
+				softCaps: [20, 20, 20, 40, 100, 150, 200, 260, 356, 460, 750, 1100, 1600]
+			},
+			trimpBlock: {
+				name: 'Trimp Block',
+				type: 'Shield',
+				weighable: false,
+				stepAmounts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+				softCaps: [7, 7, 7, 10, 40, 60, 80, 100, 120, 0, 0, 0, 0]
+			},
+			critDamage: {
+				name: 'Crit Damage',
+				type: 'Shield',
+				weighable: true,
+				stepAmounts: [5, 5, 5, 5, 10, 10, 10, 10, 15, 20, 25, 50, 75],
+				softCaps: [60, 60, 60, 100, 200, 300, 400, 500, 650, 850, 1100, 1700, 2450]
+			},
+			critChance: {
+				name: 'Crit Chance',
+				type: 'Shield',
+				weighable: true,
+				stepAmounts: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.3, 0.5, 0.5, 0.25, 0.3, 0.4],
+				softCaps: [2.6, 2.6, 2.6, 5, 7.4, 9.8, 12.2, 15.9, 30, 50, 80, 95, 115],
+				hardCaps: [30, 30, 30, 30, 30, 30, 30, 30, 100, 125, 200, 260, 335],
+				heirloopy: true
 			},
 			voidMaps: {
 				name: 'Void Map Drop Chance',
 				type: 'Shield',
 				weighable: true,
-				stepAmounts: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.1, 0.1],
-				softCaps: [7, 7, 7, 11, 16, 22, 30, 38, 50, 60, 7, 12],
-				hardCaps: [50, 50, 50, 50, 50, 50, 50, 50, 80, 99, 40, 50],
+				stepAmounts: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.1, 0.1, 0.1],
+				softCaps: [7, 7, 7, 11, 16, 22, 30, 38, 50, 60, 7, 12, 17],
+				hardCaps: [50, 50, 50, 50, 50, 50, 50, 50, 80, 99, 40, 50, 60],
+				heirloopy: true
+			},
+			plaguebringer: {
+				name: 'Plaguebringer',
+				type: 'Shield',
+				weighable: true,
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0.5, 0.5, 0.5],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 15, 30, 45, 50, 55],
+				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 75, 100, 125, 150, 175],
 				heirloopy: true
 			},
 			prismatic: {
@@ -2020,17 +2062,17 @@ function heirloomInfo(type) {
 				get weighable() {
 					return game.global.universe === 2;
 				},
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2],
-				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 40, 60],
-				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 250, 500, 750],
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 40, 60, 90],
+				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 250, 500, 750, 1000],
 				immutable: true
 			},
 			gammaBurst: {
 				name: 'Gamma Burst',
 				type: 'Shield',
 				weighable: true,
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0],
-				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 2000, 0, 0]
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 2000, 0, 0, 0]
 			},
 			inequality: {
 				name: 'Inequality',
@@ -2038,9 +2080,17 @@ function heirloomInfo(type) {
 				get weighable() {
 					return game.global.universe === 2;
 				},
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.25],
-				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200],
-				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 400]
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.25, 0.4],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200, 300],
+				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 400, 600]
+			},
+			doubleCrit: {
+				name: 'Double Crit',
+				type: 'Shield',
+				weighable: true,
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5],
+				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150]
 			}
 		};
 	else if (type === 'Staff')
@@ -2049,93 +2099,102 @@ function heirloomInfo(type) {
 				name: 'Dragimp Efficiency',
 				type: 'Staff',
 				weighable: true,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			ExplorerSpeed: {
 				name: 'Explorer Efficiency',
 				type: 'Staff',
 				weighable: true,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			FarmerSpeed: {
 				name: 'Farmer Efficiency',
 				type: 'Staff',
 				weighable: true,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
-			},
-			FluffyExp: {
-				name: 'Pet Exp',
-				type: 'Staff',
-				weighable: true,
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1.2],
-				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 50, 100, 200, 400],
-				heirloopy: true
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			LumberjackSpeed: {
 				name: 'Lumberjack Efficiency',
 				type: 'Staff',
 				weighable: true,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			MinerSpeed: {
 				name: 'Miner Efficiency',
 				type: 'Staff',
 				weighable: true,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			ScientistSpeed: {
 				name: 'Scientist Efficiency',
 				type: 'Staff',
 				weighable: true,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			foodDrop: {
 				name: 'Food Drop Rate',
 				type: 'Staff',
 				weighable: false,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			fragmentsDrop: {
 				name: 'Fragment Drop Rate',
 				type: 'Staff',
 				weighable: false,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			gemsDrop: {
 				name: 'Gem Drop Rate',
 				type: 'Staff',
 				weighable: false,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			metalDrop: {
 				name: 'Metal Drop Rate',
 				type: 'Staff',
 				weighable: false,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
 			},
 			woodDrop: {
 				name: 'Wood Drop Rate',
 				type: 'Staff',
 				weighable: false,
-				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256],
-				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120]
+				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
+			},
+			FluffyExp: {
+				name: 'Pet Exp',
+				type: 'Staff',
+				weighable: true,
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1.2, 1.5],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 50, 100, 200, 400, 600],
+				heirloopy: true
 			},
 			ParityPower: {
 				name: 'Parity Power',
 				type: 'Staff',
 				weighable: true,
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10],
-				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500]
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 15],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 700]
+			},
+			SeedDrop: {
+				name: 'Seed Drop Rate',
+				type: 'Staff',
+				get weighable() {
+					return game.global.universe === 2;
+				},
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2000]
 			}
 		};
 	else if (type === 'Core')
