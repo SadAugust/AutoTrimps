@@ -1978,8 +1978,8 @@ function heirloomInfo(type) {
 				name: 'Player Efficiency',
 				type: 'Shield',
 				weighable: false,
-				stepAmounts: [1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024],
-				softCaps: [16, 16, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384]
+				stepAmounts: [1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 0],
+				softCaps: [16, 16, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 0]
 			},
 			trainerEfficiency: {
 				name: 'Trainer Efficiency',
