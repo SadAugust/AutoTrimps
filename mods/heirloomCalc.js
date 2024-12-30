@@ -1182,7 +1182,7 @@ function calculate(autoUpgrade) {
 	} else if (startingHeirloom.type.includes('Staff')) {
 		displayList.push('equipLevels', 'XPWeight', 'heirloomCustomRatioBtn');
 		if (game.global.spiresCompleted >= 2) displayList.push('XPWeight');
-		if (startingHeirloom.rarity >= 11) displayList.push('seedDrop');
+		if (startingHeirloom.rarity >= 12) displayList.push('seedDrop');
 	} else if (startingHeirloom.type.includes('Core')) {
 		startTDCalc();
 	}
@@ -1192,10 +1192,22 @@ function calculate(autoUpgrade) {
 
 	if (resourceListDisplay) {
 		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity < 11 ? 'hidden' : 'visible', false, 'visibility');
-		let baseValue = -8.3;
-		const farmerElem = document.getElementById('heirloomCustomFarmerBtn');
-		const farmerMarginLeft = startingHeirloom.rarity < 11 ? `${baseValue}vw` : `${baseValue - 1.9}vw`;
-		if (farmerElem.style.marginLeft !== farmerMarginLeft) farmerElem.style.marginLeft = farmerMarginLeft;
+		const parityElem = document.getElementById('heirloomCustomParityBtn');
+		const scienceElem = document.getElementById('heirloomCustomScientistBtn');
+
+		let defaultMargin = '0.5px';
+		if (startingHeirloom.rarity < 11) {
+			let baseValue = 16.2;
+			if (scienceElem.style.marginRight !== `${baseValue}vw`) scienceElem.style.marginRight = `${baseValue}vw`;
+			if (parityElem.style.marginRight !== defaultMargin) parityElem.style.marginRight = defaultMargin;
+		} else if (startingHeirloom.rarity === 11) {
+			let baseValue = 17.2;
+			if (scienceElem.style.marginRight !== `${defaultMargin}`) scienceElem.style.marginRight = `${defaultMargin}`;
+			if (parityElem.style.marginRight !== `${baseValue}vw`) parityElem.style.marginRight = `${baseValue}vw`;
+		} else if (startingHeirloom.rarity === 12) {
+			if (parityElem.style.marginRight !== defaultMargin) parityElem.style.marginRight = defaultMargin;
+			if (scienceElem.style.marginRight !== defaultMargin) scienceElem.style.marginRight = defaultMargin;
+		}
 	}
 
 	const heirloomData = heirloomInfo(startingHeirloom.type);
