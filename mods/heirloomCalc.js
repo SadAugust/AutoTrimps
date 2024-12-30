@@ -504,20 +504,20 @@ class Heirloom {
 	}
 
 	getStepAmount(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality' || type === 'doubleCrit') return this.heirloomInfo[type].stepAmounts[rarity];
-		if (game.global.universe === 2) return this.heirloomInfo[type].stepAmounts[rarity] / 10;
+		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].stepAmounts[rarity];
+		if (game.global.universe === 2 && !this.heirloomInfo[type].noScaleU2) return this.heirloomInfo[type].stepAmounts[rarity] / 10;
 		return this.heirloomInfo[type].stepAmounts[rarity];
 	}
 
 	getSoftCap(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality' || type === 'doubleCrit') return this.heirloomInfo[type].softCaps[rarity];
-		if (game.global.universe === 2) return this.heirloomInfo[type].softCaps[rarity] / 10;
+		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].softCaps[rarity];
+		if (game.global.universe === 2 && !this.heirloomInfo[type].noScaleU2) return this.heirloomInfo[type].softCaps[rarity] / 10;
 		return this.heirloomInfo[type].softCaps[rarity];
 	}
 
 	getHardCap(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality' || type === 'doubleCrit') return this.heirloomInfo[type].hardCaps[rarity];
-		if (game.global.universe === 2) return this.heirloomInfo[type].hardCaps[rarity] / 10;
+		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].hardCaps[rarity];
+		if (game.global.universe === 2 && !this.heirloomInfo[type].noScaleU2) return this.heirloomInfo[type].hardCaps[rarity] / 10;
 		return this.heirloomInfo[type].hardCaps[rarity];
 	}
 
@@ -554,8 +554,8 @@ class Heirloom {
 	getModValue(type) {
 		for (const mod of this.mods) {
 			if (mod[0] === type) {
-				if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality' || type === 'doubleCrit') return mod[1];
-				if (game.global.universe === 2) return mod[1] / 10;
+				if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return mod[1];
+				if (game.global.universe === 2 && !this.heirloomInfo[type].noScaleU2) return mod[1] / 10;
 				return mod[1];
 			}
 		}
@@ -720,9 +720,9 @@ class Heirloom {
 			return adjustedValue;
 		}
 
-		const isFarmerSpeed = type === 'FarmerSpeed' && this.foodHeirloom;
-		const isLumberjackSpeed = type === 'LumberjackSpeed' && this.woodHeirloom;
-		const isMinerSpeed = type === 'MinerSpeed' && this.metalHeirloom;
+		const isFarmerSpeed = (type === 'FarmerSpeed' || type === 'allFood') && this.foodHeirloom;
+		const isLumberjackSpeed = (type === 'LumberjackSpeed' || type === 'allWood') && this.woodHeirloom;
+		const isMinerSpeed = (type === 'MinerSpeed' || type === 'allMetal') && this.metalHeirloom;
 		const isScientistSpeed = type === 'ScientistSpeed' && this.scienceHeirloom;
 		const isParityPower = type === 'ParityPower' && this.parityHeirloom;
 
@@ -731,7 +731,10 @@ class Heirloom {
 				FarmerSpeed: this.foodPercentage,
 				LumberjackSpeed: this.woodPercentage,
 				MinerSpeed: this.metalPercentage,
-				ScientistSpeed: this.sciencePercentage
+				ScientistSpeed: this.sciencePercentage,
+				allFood: this.foodPercentage,
+				allWood: this.woodPercentage,
+				allMetal: this.metalPercentage
 			};
 
 			const baseValue = Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
@@ -1183,7 +1186,7 @@ function calculate(autoUpgrade) {
 
 		function getModValue(mod) {
 			if ((heirloomData[mod[0]].heirloopy && heirloopy) || heirloomData[mod[0]].immutable || heirloomData[mod[0]].name === 'inequality') return mod[1];
-			if (game.global.universe === 2) return mod[1] / 10;
+			if (game.global.universe === 2 && !heirloomData[mod[0]].noScaleU2) return mod[1] / 10;
 			return mod[1];
 		}
 
@@ -2062,6 +2065,7 @@ function heirloomInfo(type) {
 				get weighable() {
 					return game.global.universe === 2;
 				},
+				noScaleU2: true,
 				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2],
 				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 40, 60, 90],
 				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 250, 500, 750, 1000],
@@ -2088,9 +2092,10 @@ function heirloomInfo(type) {
 				name: 'Double Crit',
 				type: 'Shield',
 				weighable: true,
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1],
-				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5],
-				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150]
+				noScaleU2: true,
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5],
+				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15]
 			}
 		};
 	else if (type === 'Staff')
@@ -2136,6 +2141,27 @@ function heirloomInfo(type) {
 				weighable: true,
 				stepAmounts: [1, 1, 1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
 				softCaps: [6, 6, 6, 12, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240]
+			},
+			allMetal: {
+				name: 'Metal Drop and Efficiency',
+				type: 'Staff',
+				weighable: true,
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 512],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10240]
+			},
+			allFood: {
+				name: 'Food Drop and Efficiency',
+				type: 'Staff',
+				weighable: true,
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 512],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10240]
+			},
+			allWood: {
+				name: 'Wood Drop and Efficiency',
+				type: 'Staff',
+				weighable: true,
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 512],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10240]
 			},
 			foodDrop: {
 				name: 'Food Drop Rate',
