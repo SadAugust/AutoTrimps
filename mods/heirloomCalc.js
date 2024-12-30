@@ -204,7 +204,7 @@ function setupHeirloomUI() {
 		hcGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio(atData.heirloomCalc.GUI.$customRatioBtn.id, "Ratio")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseover', 'tooltip("Custom Ratio", "customText", event, "Enabling this allows you to set custom weight inputs for this specific heirloom that won\'t impact the global weight inputs that heirlooms would normally use.")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 0.1vw solid #777; text-align: center; justify-content: center; width: 13.5vw; font-size: 0.8vw; font-weight: lighter; line-height: 0.8vw; margin-right: 13.88vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 0.1vw solid #777; text-align: center; justify-content: center; width: 13.5vw; font-size: 0.8vw; font-weight: lighter; line-height: 0.8vw; margin-right: auto; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
 		hcGUI.$customRatioBtn.textContent = 'Use Custom Ratios';
 		hcGUI.$ratiosLine.row2.insertBefore(hcGUI.$customRatioBtn, document.getElementById('equalityTargetDiv'));
 
