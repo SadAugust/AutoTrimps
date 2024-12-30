@@ -5416,23 +5416,22 @@ function _setDisplayedSettings(item) {
 }
 
 function _setDisplayedTabs() {
-	const hze = game.stats.highestLevel.valueTotal();
-	const highestRadonZone = game.stats.highestRadLevel.valueTotal();
 	const displayAllSettings = getPageSetting('displayAllSettings');
 	const radonOn = autoTrimpSettings.universeSetting.value === 1;
+	const hze = radonOn ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 
 	const tabList = {
 		tabBeta: !gameUserCheck(),
 		tabBuildings: !displayAllSettings && (radonOn || (!radonOn && hze < 60)),
 		tabC2: !displayAllSettings && !radonOn && hze < 65,
-		tabChallenges: !displayAllSettings && ((radonOn && highestRadonZone < 35) || (!radonOn && hze < 40)),
+		tabChallenges: !displayAllSettings && hze < radonOn ? 35 : 40,
 		tabDaily: !displayAllSettings && !radonOn && hze < 99,
 		tabFluffy: radonOn || (!displayAllSettings && game.global.spiresCompleted < 2),
 		tabJobs: radonOn || (!displayAllSettings && hze < 70),
 		tabHeirloom: game.global.totalPortals === 0,
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
-		tabSpire: !displayAllSettings && (game.global.stringVersion !== '5.10.0' || (radonOn && highestRadonZone < 270) || (!radonOn && hze < 170)),
+		tabSpire: !displayAllSettings && hze < (radonOn && game.global.stringVersion === '5.9.2' ? 999 : radonOn ? 270 : 170),
 		tabTest: !gameUserCheck()
 	};
 
