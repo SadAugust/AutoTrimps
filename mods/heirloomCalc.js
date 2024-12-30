@@ -67,6 +67,22 @@ function runHeirlooms() {
 	return;
 }
 
+function updateHeirloomBtnWidths() {
+	const btnInputs = document.querySelectorAll('.heirloomCalcInput');
+	btnInputs.forEach((btnInput) => {
+		const prefixText = btnInput.previousElementSibling;
+		const btnDiv = btnInput.parentElement;
+
+		if (prefixText && btnDiv) {
+			const prefixWidth = prefixText.offsetWidth;
+			const btnDivWidth = btnDiv.offsetWidth;
+			const prefixPercentage = (prefixWidth / btnDivWidth) * 100;
+			const inputPercentage = 100 - prefixPercentage - 8;
+			btnInput.style.width = `${inputPercentage}%`;
+		}
+	});
+}
+
 function setupHeirloomUI() {
 	createInput = function (btnLine, id, inputObj, savedValue, row) {
 		if (!id || document.getElementById(`${id}Div`) !== null) {
@@ -74,39 +90,52 @@ function setupHeirloomUI() {
 			return;
 		}
 
+		const onchange = `legalizeInput(this.id); saveHeirloomSettings(); calculate();`;
+
 		const btnDiv = document.createElement('DIV');
 		btnDiv.id = `${id}Div`;
-		btnDiv.style.display = 'inline';
+		btnDiv.style.display = 'flex';
+		btnDiv.style.alignItems = 'center';
 
 		const firstInputObj = inputBoxes[row][Object.keys(inputBoxes[row])[0]] === inputObj;
 		const lastInputObj = inputBoxes[row][Object.keys(inputBoxes[row]).slice(-1)[0]] === inputObj;
 		if (id === 'VMWeight') {
-			btnDiv.style.float = 'left';
+			btnDiv.style.marginRight = 'auto';
 		} else if ((lastInputObj && !firstInputObj) || id === 'XPWeight' || id === 'equalityTarget') {
-			btnDiv.style.float = 'right';
+			btnDiv.style.marginLeft = 'auto';
 		} else if (firstInputObj) {
-			btnDiv.style.float = 'left';
+			btnDiv.style.marginRight = 'auto';
 		}
 
-		const btnInput = document.createElement('Input');
+		const inputBoxSpan = document.createElement('span');
+		inputBoxSpan.className = 'textbox';
+		inputBoxSpan.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
+		inputBoxSpan.onmouseout = () => tooltip('hide');
+		inputBoxSpan.style.cssText = `text-align: left; height: 1.5vw;`;
+
+		const prefixText = document.createElement('span');
+		prefixText.id = `${id}Prefix`;
+		prefixText.textContent = `${inputObj.name}: `;
+
+		const btnInput = document.createElement('input');
 		btnInput.id = id;
 		btnInput.type = 'number';
 		btnInput.value = savedValue || inputObj.defaultValue;
 		btnInput.min = inputObj.minValue;
 		btnInput.max = inputObj.maxValue;
 		btnInput.placeholder = inputObj.defaultValue;
-		btnInput.style.cssText = `text-align: center; width: calc(100vw/22); font-size: 1vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
-		btnInput.setAttribute('onchange', `legalizeInput(this.id); saveHeirloomSettings(); calculate();`);
-		btnInput.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
-		btnInput.onmouseout = () => tooltip('hide');
+		btnInput.setAttribute('onchange', onchange);
+		btnInput.style.cssText = `color: white;`;
+		btnInput.classList = 'heirloomCalcInput';
+		btnInput.style.width = '1vw';
 
-		const btnText = document.createElement('span');
-		btnText.id = `${id}Text`;
-		btnText.innerHTML = inputObj.name;
-		btnText.style.cssText = 'width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-right: 0.7vw; margin-left: 0.3vw;';
+		inputBoxSpan.addEventListener('click', () => {
+			btnInput.focus();
+		});
 
-		btnDiv.appendChild(btnText);
-		btnDiv.appendChild(btnInput);
+		inputBoxSpan.appendChild(prefixText);
+		inputBoxSpan.appendChild(btnInput);
+		btnDiv.appendChild(inputBoxSpan);
 		btnLine.appendChild(btnDiv);
 	};
 
@@ -131,13 +160,14 @@ function setupHeirloomUI() {
 
 		hcGUI.$heirloomRatios = document.createElement('DIV');
 		hcGUI.$heirloomRatios.id = 'heirloomRatios';
-		hcGUI.$heirloomRatios.setAttribute('style', 'display: none; width: 100%');
+		hcGUI.$heirloomRatios.setAttribute('style', 'width: 100%; display: none;');
 
 		for (let x = 0; x < Object.keys(inputBoxes).length; x++) {
 			let row = Object.keys(inputBoxes)[x];
 			hcGUI.$ratiosLine[row] = document.createElement('DIV');
-			hcGUI.$ratiosLine[row].setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+			hcGUI.$ratiosLine[row].classList.add('customRatios');
 			hcGUI.$ratiosLine[row].setAttribute('id', `heirloomRatios${x}`);
+			if (x === 0) hcGUI.$ratiosLine[row].style.marginTop = '0.2vw';
 			for (let item in inputBoxes[row]) {
 				createInput(hcGUI.$ratiosLine[row], item, inputBoxes[row][item], settingInputs && settingInputs[item] !== null ? settingInputs[item] : undefined, row);
 				hcGUI.inputs.push(item);
@@ -148,18 +178,25 @@ function setupHeirloomUI() {
 		const $portalWrapper = document.getElementById('selectedHeirloom').parentNode;
 		$portalWrapper.appendChild(hcGUI.$heirloomRatios);
 
+		hcGUI.$allocatorBtnParent = document.createElement('DIV');
+		hcGUI.$allocatorBtnParent.id = 'heirloomAllocatorBtnParent';
+		hcGUI.$allocatorBtnParent.style.display = 'flex';
+		hcGUI.$allocatorBtnParent.style.alignItems = 'center';
+
 		hcGUI.$allocatorBtn = document.createElement('DIV');
 		hcGUI.$allocatorBtn.id = 'heirloomAllocatorBtn';
-		hcGUI.$allocatorBtn.setAttribute('class', 'btn ');
+		hcGUI.$allocatorBtn.setAttribute('class', 'btn');
 		hcGUI.$allocatorBtn.setAttribute('onclick', 'runHeirlooms()');
 		hcGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$allocatorBtn.style.cssText = `background-color: #3b0076; border: 0.1vw solid #777; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		hcGUI.$allocatorBtn.style.cssText = `height: 1.5vw; background-color: #3b0076; border: 0.1vw solid #777; text-align: center; width: 13.5vw; font-size: 0.8vw; font-weight: lighter; line-height: 0.8vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
 		hcGUI.$allocatorBtn.textContent = 'Allocate Nullifium';
 		hcGUI.$allocatorBtn.onmouseover = function () {
 			this.style.color = game.options.menu.darkTheme.enabled !== 2 ? 'black' : 'white';
 			tooltip('Auto Allocate', 'customText', undefined, 'Buys the shown optimal levels in each modifier when pressed.');
 		};
-		hcGUI.$ratiosLine.row1.insertBefore(hcGUI.$allocatorBtn, document.getElementById('XPWeightDiv'));
+
+		hcGUI.$allocatorBtnParent.appendChild(hcGUI.$allocatorBtn);
+		hcGUI.$ratiosLine.row1.insertBefore(hcGUI.$allocatorBtnParent, document.getElementById('XPWeightDiv'));
 
 		hcGUI.$customRatioBtn = document.createElement('DIV');
 		hcGUI.$customRatioBtn.id = 'heirloomCustomRatioBtn';
@@ -167,7 +204,7 @@ function setupHeirloomUI() {
 		hcGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio(atData.heirloomCalc.GUI.$customRatioBtn.id, "Ratio")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseover', 'tooltip("Custom Ratio", "customText", event, "Enabling this allows you to set custom weight inputs for this specific heirloom that won\'t impact the global weight inputs that heirlooms would normally use.")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$customRatioBtn.style.cssText = `float:left; border: 0.1vw solid #777; text-align: center; width: 13.9vw; font-size: 0.9vw; font-weight: lighter; margin-right: 13.88vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 0.1vw solid #777; text-align: center; justify-content: center; width: 13.5vw; font-size: 0.8vw; font-weight: lighter; line-height: 0.8vw; margin-right: 13.88vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
 		hcGUI.$customRatioBtn.textContent = 'Use Custom Ratios';
 		hcGUI.$ratiosLine.row2.insertBefore(hcGUI.$customRatioBtn, document.getElementById('equalityTargetDiv'));
 
@@ -185,7 +222,7 @@ function setupHeirloomUI() {
 			});
 			btn.setAttribute('onmouseover', `tooltip("Enable ${efficiencyName}", "customText", event, '<p>Enabling this will allow the script to assign nullifium to ${efficiencyName} on this heirloom.</p><p><i>Set <b>custom spending percentages</b> by holding <b>control</b> and clicking.</i></p>')`);
 			btn.setAttribute('onmouseout', 'tooltip("hide")');
-			btn.style.cssText = `border: 0.1vw solid #777; text-align: center; width: 2vw; font-size: 0.9vw; font-weight: lighter; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} margin: 0.5px;`;
+			btn.style.cssText = `height: 1.5vw; border: 0.1vw solid #777; justify-content: center; width: 2vw; font-size: 0.8vw; font-weight: lighter; line-height: 0.8vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} margin: 0.5px;`;
 			btn.textContent = button[0].toUpperCase();
 			hcGUI.$ratiosLine.row2.insertBefore(btn, document.getElementById('equalityTargetDiv'));
 		});
@@ -198,7 +235,7 @@ function setupHeirloomUI() {
 	const inputBoxes = {
 		row1: {
 			equipLevels: {
-				name: 'Weight: Efficiency Mods',
+				name: 'Efficiency Mods Weight',
 				description:
 					"<p>The weight you want to use for efficiency modifiers, the lower you put this value the higher the script will weight the efficiency modifiers.</p><p><b>Explorer & Dragimp Efficiency</b> modifiers will be calculated using roughly 1% of the cost of other efficiencies.</p><p>You can modify the percentage spent on other efficiency mods by holding <b>control</b> and clicking on the buttons below the <b>Allocate Nullifium</b> button.</p><br><p>If you set this to 0, the script won't spend any nullifium on Efficiency modifiers.</p>",
 				minValue: 0,
@@ -206,14 +243,14 @@ function setupHeirloomUI() {
 				defaultValue: 90
 			},
 			VMWeight: {
-				name: 'Weight: Void Maps',
+				name: 'Void Maps Weight',
 				description: '<p><b>Weight: Void Maps</b> is a multiplier to the value of Void Map Drop Chance. So if your next Void Map Drop Chance upgrade were to increase your value by 0.5%, the default weight (12) will multiply it by 12 so it will be calculated as if it were to increase your value by 6%.</p><p>The default weight (12) is used to provide a good balance between damage, survivability and helium gain.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 12
 			},
 			XPWeight: {
-				name: 'Weight: XP',
+				name: 'Pet Exp Weight',
 				description: `<p><b>Weight: XP</b> is a multiplier to the value of Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp. 
 				So if your next Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp upgrade were to increase your value by 0.5%, the default weight (12) will multiply it by 12 so it will be calculated as if it were to increase your value by 6%.</p><p>The default weight (12) is used to provide a good balance between efficiency modifiers and Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp gain.</p>`,
 				minValue: 0,
@@ -221,7 +258,7 @@ function setupHeirloomUI() {
 				defaultValue: 12
 			},
 			HPWeight: {
-				name: 'Weight: HP',
+				name: 'Health Weight',
 				description: `<p><b>Weight: HP</b> is a multiplier to the value of <b>Trimp Health</b>${
 					game.global.universe === 2 ? ', <b>Prismatic Shield</b>, ' : ' '
 				}and <b>Breed Speed</b> modifiers. So if your next Trimp Health upgrade were to increase your value by 0.5%, the default weight (1) will multiply it by 1 so it will be calculated as if it were to increase your value by 0.5%.</p><p>The default weight (1) is used to provide a good balance between damage, survivability and helium gain.`,
@@ -232,7 +269,7 @@ function setupHeirloomUI() {
 		},
 		row2: {
 			equalityTarget: {
-				name: 'Weight: Equality',
+				name: 'Equality Weight',
 				description: `<p><b>Weight: Equality</b> is a multiplier for the <b>Inequality</b> modifier, the calculation uses an exponential function. The value of the <b>Inequality</b> modifier is raised to the power of the target Equality. For example, if your next Inequality upgrade were to increase your <b>Inequality</b> value by 1%, the default weight (100) will increase its value to 270%.</p>
 				<p>Ideally your input should be the amount of equality used for the hardest zones in your runs.</p>`,
 				minValue: 0,
@@ -1150,13 +1187,12 @@ function calculate(autoUpgrade) {
 		startTDCalc();
 	}
 
-	elemList.forEach((id) => setElemDisplay(id, displayList.includes(id) ? 'inline-block' : 'none', true));
-	resourceList.forEach((id) => setElemDisplay(`heirloomCustom${id}Btn`, resourceListDisplay ? 'inline' : 'none', false));
+	elemList.forEach((id) => setElemDisplay(id, displayList.includes(id) ? (id === 'heirloomRatios0' ? 'inline-block' : 'flex') : 'none', true));
+	resourceList.forEach((id) => setElemDisplay(`heirloomCustom${id}Btn`, resourceListDisplay ? 'flex' : 'none', false));
 
 	if (resourceListDisplay) {
 		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity < 11 ? 'hidden' : 'visible', false, 'visibility');
-		let baseValue = -20.8;
-		if (startingHeirloom.rarity >= 12) baseValue = -7.8;
+		let baseValue = -8.3;
 		const farmerElem = document.getElementById('heirloomCustomFarmerBtn');
 		const farmerMarginLeft = startingHeirloom.rarity < 11 ? `${baseValue}vw` : `${baseValue - 1.9}vw`;
 		if (farmerElem.style.marginLeft !== farmerMarginLeft) farmerElem.style.marginLeft = farmerMarginLeft;
@@ -1215,9 +1251,15 @@ function calculate(autoUpgrade) {
 }
 
 function setElemDisplay(id, value, isParent = false, type = 'display') {
-	const element = document.getElementById(id);
-	if (element && (isParent ? element.parentNode.style[type] : element.style[type]) !== value) {
-		(isParent ? element.parentNode.style : element.style)[type] = value;
+	let element = document.getElementById(id);
+
+	if (isParent) {
+		element = element.parentNode;
+		if (id !== 'heirloomCustomRatioBtn' && id !== 'heirloomRatios0') element = element.parentNode;
+	}
+
+	if (element && element.style[type] !== value) {
+		element.style[type] = value;
 	}
 }
 
@@ -2359,6 +2401,7 @@ if (typeof originalSelectHeirloom !== 'function') {
 		try {
 			loadHeirloomSettings();
 			calculate();
+			updateHeirloomBtnWidths();
 		} catch (e) {
 			console.log('Heirloom issue:', e, 'other');
 		}

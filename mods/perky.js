@@ -906,8 +906,8 @@ atData.autoPerks = {
 		prefixText.textContent = `${inputObj.name}: `;
 
 		const perkInput = document.createElement('input');
-		perkInput.type = 'number';
 		perkInput.id = id;
+		perkInput.type = 'number';
 		perkInput.value = savedValue || inputObj.defaultValue;
 		perkInput.min = inputObj.minValue;
 		perkInput.max = inputObj.maxValue;
