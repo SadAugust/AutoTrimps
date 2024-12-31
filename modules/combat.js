@@ -593,7 +593,7 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	ourDmgEquality = _calculateDamageEquality(ourDmg, ourEqualityModifier, equality);
 
 	/* Check to see if we will kill a slow enemy faster with 0 equality or by gamma bursting it */
-	if (!fastEnemy && equality > 0) {
+	if (!fastEnemy && equality > 0 && !(game.global.spireActive && !game.global.mapsActive)) {
 		const gammaDmgCheck = gammaToTrigger <= 1 && ourDmgEquality * gammaDmg < ourDmg;
 		const hitsToKill = Math.ceil(enemy.health / ourDmg);
 		const wontNeedGamma = hitsToKill <= gammaToTrigger;
