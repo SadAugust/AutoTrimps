@@ -5289,7 +5289,7 @@ function manageEqualityStacks() {
 		text += ' and Enemies by ' + prettifyTiny(enemyMult);
 	}
 
-	if (game.portal.Equality.scalingActive) {
+	if (game.portal.Equality.getSetting('scalingActive')) {
 		swapClass('equalityTabScaling', 'equalityTabScalingOn', tabElem);
 		elemText += 'On)';
 		text += '. Scaling is on.';

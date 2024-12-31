@@ -134,9 +134,11 @@ function _avoidEmpower() {
 }
 
 function _setEquality(equality) {
-	if (game.portal.Equality.disabledStackCount === equality) return;
+	let eqSetting = game.portal.Equality;
+	if (game.global.stringVersion === '5.10.0') eqSetting = game.portal.Equality.settings[game.global.spireActive ? 'spire' : 'reg'];
+	if (eqSetting.disabledStackCount === equality) return;
 
-	game.portal.Equality.disabledStackCount = equality;
+	eqSetting.disabledStackCount = equality;
 	manageEqualityStacks();
 	updateEqualityScaling();
 }

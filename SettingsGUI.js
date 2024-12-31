@@ -2358,9 +2358,9 @@ function initialiseAllSettings() {
 		createSetting('lead',
 			function () { return ('Lead') },
 			function () {
-				let description = "<p>Enabling this will disable mapping on even zones and will only map when you're at or past cell 90 on odd zones to ensure the enemies Momentum buff is providing as small a benefit as possible.</p>";
+				let description = "<p>Enabling this will disable mapping when on an even zone or below cell 90 to ensure the enemies Momentum buff is as weak as possible.</p>";
 				description += "<p>If you are in a Spire or the final zone of a nature band then it will map on that zone even if it is an even zone.</p>";
-				description += "<p>Be careful with how you setup your mapping when this is enabled as it will skip mapping lines that are set to run on odd zones!</p>";
+				description += "<p>Be careful with how you setup your mapping when this is enabled as it will skip mapping lines that are set to run on even zones!</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
