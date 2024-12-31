@@ -5424,7 +5424,7 @@ function _setDisplayedTabs() {
 		tabBeta: !gameUserCheck(),
 		tabBuildings: !displayAllSettings && (radonOn || (!radonOn && hze < 60)),
 		tabC2: !displayAllSettings && !radonOn && hze < 65,
-		tabChallenges: !displayAllSettings && hze < radonOn ? 35 : 40,
+		tabChallenges: !displayAllSettings && hze < (radonOn ? 35 : 40),
 		tabDaily: !displayAllSettings && !radonOn && hze < 99,
 		tabFluffy: radonOn || (!displayAllSettings && game.global.spiresCompleted < 2),
 		tabJobs: radonOn || (!displayAllSettings && hze < 70),

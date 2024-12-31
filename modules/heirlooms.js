@@ -23,6 +23,8 @@ function evaluateHeirloomMods(loom, location) {
 		if (modSetting !== 'Any') targetMods.push(modSetting);
 	}
 
+	const targetModsTotal = targetMods.length;
+
 	for (const mod of heirloomLocation.mods) {
 		let modName = [mod][0][0];
 		if (modName === 'empty') {
@@ -40,7 +42,9 @@ function evaluateHeirloomMods(loom, location) {
 	const modGoal = Math.max(0, Math.min(modTarget, totalMods));
 	const remainingMods = targetMods.length - emptyMods;
 
-	const modsLeft = totalMods - remainingMods;
+	/* const remainingMods = totalMods - targetMods.length + emptyMods; */
+	const modsLeft = totalMods - remainingMods - emptyMods;
+	if (modTarget > 0 && remainingMods > 0 && modGoal >= targetModsTotal - modsLeft + emptyMods) return totalMods - remainingMods;
 	if (modGoal > modsLeft) return 0;
 	if (remainingMods <= 0) return Infinity;
 	if (remainingMods >= totalMods - modGoal) return totalMods - remainingMods;
