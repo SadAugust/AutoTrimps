@@ -111,7 +111,7 @@ function setupHeirloomUI() {
 		inputBoxSpan.className = 'textbox';
 		inputBoxSpan.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
 		inputBoxSpan.onmouseout = () => tooltip('hide');
-		inputBoxSpan.style.cssText = `text-align: left; height: 1.5vw;`;
+		inputBoxSpan.style.cssText = `text-align: left; height: 1.5vw; border: 0.1vw solid #777;`;
 
 		const prefixText = document.createElement('span');
 		prefixText.id = `${id}Prefix`;
@@ -188,7 +188,7 @@ function setupHeirloomUI() {
 		hcGUI.$allocatorBtn.setAttribute('class', 'btn');
 		hcGUI.$allocatorBtn.setAttribute('onclick', 'runHeirlooms()');
 		hcGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$allocatorBtn.style.cssText = `height: 1.5vw; background-color: #3b0076; border: 0.1vw solid #777; text-align: center; width: 13.5vw; font-size: 0.8vw; font-weight: lighter; line-height: 0.8vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		hcGUI.$allocatorBtn.style.cssText = `height: 1.5vw; background-color: #3b0076; border: 0.1vw solid #777; border-radius: 1px;padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw;`;
 		hcGUI.$allocatorBtn.textContent = 'Allocate Nullifium';
 		hcGUI.$allocatorBtn.onmouseover = function () {
 			this.style.color = game.options.menu.darkTheme.enabled !== 2 ? 'black' : 'white';
@@ -204,7 +204,7 @@ function setupHeirloomUI() {
 		hcGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio(atData.heirloomCalc.GUI.$customRatioBtn.id, "Ratio")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseover', 'tooltip("Custom Ratio", "customText", event, "Enabling this allows you to set custom weight inputs for this specific heirloom that won\'t impact the global weight inputs that heirlooms would normally use.")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 0.1vw solid #777; text-align: center; justify-content: center; width: 13.5vw; font-size: 0.8vw; font-weight: lighter; line-height: 0.8vw; margin-right: auto; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}`;
+		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 0.1vw solid #777;  border-radius: 1px;padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw; margin-right: auto;}`;
 		hcGUI.$customRatioBtn.textContent = 'Use Custom Ratios';
 		hcGUI.$ratiosLine.row2.insertBefore(hcGUI.$customRatioBtn, document.getElementById('equalityTargetDiv'));
 
@@ -222,7 +222,7 @@ function setupHeirloomUI() {
 			});
 			btn.setAttribute('onmouseover', `tooltip("Enable ${efficiencyName}", "customText", event, '<p>Enabling this will allow the script to assign nullifium to ${efficiencyName} on this heirloom.</p><p><i>Set <b>custom spending percentages</b> by holding <b>control</b> and clicking.</i></p>')`);
 			btn.setAttribute('onmouseout', 'tooltip("hide")');
-			btn.style.cssText = `height: 1.5vw; border: 0.1vw solid #777; justify-content: center; width: 2vw; font-size: 0.8vw; font-weight: lighter; line-height: 0.8vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} margin: 0.5px;`;
+			btn.style.cssText = `height: 1.5vw; border: 0.1vw solid #777; border-radius: 1px; padding: 0; justify-content: center; width: 2vw; font-size: 0.8vw; line-height: 1.3vw; margin: 0.5px;`;
 			btn.textContent = button[0].toUpperCase();
 			hcGUI.$ratiosLine.row2.insertBefore(btn, document.getElementById('equalityTargetDiv'));
 		});
@@ -1194,19 +1194,24 @@ function calculate(autoUpgrade) {
 		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity < 11 ? 'hidden' : 'visible', false, 'visibility');
 		const parityElem = document.getElementById('heirloomCustomParityBtn');
 		const scienceElem = document.getElementById('heirloomCustomScientistBtn');
+		const heirloomRatiosElem = document.getElementById('heirloomRatios1');
 
-		let defaultMargin = '0.5px';
-		if (startingHeirloom.rarity < 11) {
-			let baseValue = 16.2;
-			if (scienceElem.style.marginRight !== `${baseValue}vw`) scienceElem.style.marginRight = `${baseValue}vw`;
-			if (parityElem.style.marginRight !== defaultMargin) parityElem.style.marginRight = defaultMargin;
-		} else if (startingHeirloom.rarity === 11) {
-			let baseValue = 17.2;
-			if (scienceElem.style.marginRight !== `${defaultMargin}`) scienceElem.style.marginRight = `${defaultMargin}`;
-			if (parityElem.style.marginRight !== `${baseValue}vw`) parityElem.style.marginRight = `${baseValue}vw`;
-		} else if (startingHeirloom.rarity === 12) {
-			if (parityElem.style.marginRight !== defaultMargin) parityElem.style.marginRight = defaultMargin;
-			if (scienceElem.style.marginRight !== defaultMargin) scienceElem.style.marginRight = defaultMargin;
+		if (heirloomRatiosElem) {
+			const heirloomRatiosWidth = heirloomRatiosElem.offsetWidth;
+			let defaultMargin = '0.5px';
+			let baseValue;
+			if (startingHeirloom.rarity < 11) {
+				baseValue = heirloomRatiosWidth * 0.36;
+				scienceElem.style.marginRight = `${baseValue}px`;
+				parityElem.style.marginRight = defaultMargin;
+			} else if (startingHeirloom.rarity === 11) {
+				baseValue = heirloomRatiosWidth * 0.384;
+				scienceElem.style.marginRight = defaultMargin;
+				parityElem.style.marginRight = `${baseValue}px`;
+			} else if (startingHeirloom.rarity === 12) {
+				scienceElem.style.marginRight = defaultMargin;
+				parityElem.style.marginRight = defaultMargin;
+			}
 		}
 	}
 
