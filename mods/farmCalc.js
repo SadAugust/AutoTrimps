@@ -229,12 +229,12 @@ function populateFarmCalcData() {
 			if (trimpHealth < trimpBlock) death_stuff.enemy_cd = 5;
 		},
 		Nom: () => {
-			death_stuff.bleed = 0.05;
+			death_stuff.bleed += 0.05;
 		},
 		Toxicity: () => {
 			enemyHealthMult *= 2;
 			enemyAttackMult *= 5;
-			death_stuff.bleed = 0.05;
+			death_stuff.bleed += 0.05;
 		},
 		Watch: () => {
 			enemyAttackMult *= 1.25;
@@ -242,7 +242,7 @@ function populateFarmCalcData() {
 		Lead: () => {
 			enemyHealthMult *= 1 + 0.04 * game.challenges.Lead.stacks;
 			enemyAttackMult *= 1 + 0.04 * game.challenges.Lead.stacks;
-			death_stuff.bleed = Math.min(game.challenges.Lead.stacks, 200) * 0.0003;
+			death_stuff.bleed += Math.min(game.challenges.Lead.stacks, 200) * 0.0003;
 		},
 		Corrupted: () => {
 			enemyAttackMult *= 3;
@@ -364,11 +364,11 @@ function populateFarmCalcData() {
 		minFluct -= daily('minDamage') ? 0.09 + 0.01 * daily('minDamage') : 0;
 		maxFluct += daily('maxDamage');
 
-		death_stuff.plague = 0.01 * daily('plague');
-		death_stuff.bleed = 0.01 * daily('bogged');
-		death_stuff.weakness = 0.01 * daily('weakness');
+		death_stuff.plague += 0.01 * daily('plague');
+		death_stuff.bleed += 0.01 * daily('bogged');
+		death_stuff.weakness += 0.01 * daily('weakness');
 		death_stuff.enemy_cd = 1 + 0.5 * daily('crits');
-		death_stuff.explosion = daily('explosive');
+		death_stuff.explosion += daily('explosive');
 
 		enemyHealthMult *= 1 + 0.2 * daily('badHealth');
 		enemyHealthMult *= 1 + 0.3 * daily('badMapHealth');
@@ -594,14 +594,15 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 			continue;
 		}
 
-		const { speed, equality, killSpeed } = simulate(saveData, zone, stance);
+		const { speed, equality, killSpeed, debugResults } = simulate(saveData, zone, stance);
 		const value = speed * loot * lootMultiplier;
 
 		result[stance] = {
 			speed,
 			value,
 			equality,
-			killSpeed
+			killSpeed,
+			debugResults
 		};
 
 		if (value > result.value) {
@@ -610,6 +611,7 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 			result.value = value;
 			result.killSpeed = killSpeed;
 			result.stanceSpeed = stance;
+			result.debugResults = debugResults;
 		}
 	}
 
@@ -1116,7 +1118,7 @@ function simulate(saveData, zone, stance) {
 		rngRoll
 	};
 
-	/* simulationDebug(debugResults); */
+	simulationDebug(debugResults); */
 
 	return {
 		speed: (loot * 10) / maxTicks,
@@ -1124,7 +1126,8 @@ function simulate(saveData, zone, stance) {
 		killSpeed: kills / (ticks / 10),
 		deaths,
 		deathsPerSec: deaths / (ticks / 10),
-		special: specialData
+		special: specialData,
+		debugResults
 	};
 }
 
