@@ -1118,7 +1118,7 @@ function simulate(saveData, zone, stance) {
 		rngRoll
 	};
 
-	simulationDebug(debugResults); */
+	/* simulationDebug(debugResults); */
 
 	return {
 		speed: (loot * 10) / maxTicks,
