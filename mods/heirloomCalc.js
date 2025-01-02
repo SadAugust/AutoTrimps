@@ -1216,7 +1216,7 @@ function calculate(autoUpgrade) {
 
 	if (resourceListDisplay) {
 		setElemDisplay('XPWeightDiv', game.global.spiresCompleted < 2 ? 'hidden' : 'visible', false, 'visibility');
-		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity < 11 ? 'flex' : 'none', false);
+		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity >= 11 ? 'flex' : 'none', false);
 		setElemDisplay('seedDropDiv', startingHeirloom.rarity < 12 ? 'hidden' : 'visible', false, 'visibility');
 	}
 
