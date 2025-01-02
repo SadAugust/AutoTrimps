@@ -786,6 +786,12 @@ function getHeirloomBonus(type, mod) {
 		console.log('oh noes', type, mod);
 	}
 
+	if (game.global.StaffEquipped.rarity >= 12) {
+		if (mod == 'metalDrop' || mod == 'MinerSpeed') mod = 'allMetal';
+		if (mod == 'woodDrop' || mod == 'LumberjackSpeed') mod = 'allWood';
+		if (mod == 'foodDrop' || mod == 'FarmerSpeed') mod = 'allFood';
+	}
+
 	let bonus = game.heirlooms[type][mod].currentBonus;
 	if (mod === 'gammaBurst' && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
 		bonus = game.global.gammaMult;
@@ -6417,6 +6423,8 @@ function createHeirloom(zone, fromBones, spireCore, forceBest) {
 		if (item === 'empty' && (rarity === 0 || rarity === 1)) continue;
 		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 		if (heirloom.steps && heirloom.steps[rarity] === -1) continue;
+		if (heirloom.minTier && rarity < heirloom.minTier) continue;
+		if (heirloom.maxTier && rarity > heirloom.maxTier) continue;
 
 		eligible.push(item);
 	}
