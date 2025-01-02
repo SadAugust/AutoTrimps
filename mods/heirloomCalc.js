@@ -1180,9 +1180,7 @@ function calculate(autoUpgrade) {
 	if (startingHeirloom.type.includes('Shield')) {
 		displayList.push('VMWeight', 'HPWeight', 'equalityTarget', 'heirloomCustomRatioBtn');
 	} else if (startingHeirloom.type.includes('Staff')) {
-		displayList.push('equipLevels', 'XPWeight', 'heirloomCustomRatioBtn');
-		if (game.global.spiresCompleted >= 2) displayList.push('XPWeight');
-		if (startingHeirloom.rarity >= 12) displayList.push('seedDrop');
+		displayList.push('equipLevels', 'XPWeight', 'heirloomCustomRatioBtn', 'seedDrop');
 	} else if (startingHeirloom.type.includes('Core')) {
 		startTDCalc();
 	}
@@ -1191,28 +1189,9 @@ function calculate(autoUpgrade) {
 	resourceList.forEach((id) => setElemDisplay(`heirloomCustom${id}Btn`, resourceListDisplay ? 'flex' : 'none', false));
 
 	if (resourceListDisplay) {
-		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity < 11 ? 'hidden' : 'visible', false, 'visibility');
-		const parityElem = document.getElementById('heirloomCustomParityBtn');
-		const scienceElem = document.getElementById('heirloomCustomScientistBtn');
-		const heirloomRatiosElem = document.getElementById('heirloomRatios1');
-
-		if (heirloomRatiosElem) {
-			const heirloomRatiosWidth = heirloomRatiosElem.offsetWidth;
-			let defaultMargin = '0.5px';
-			let baseValue;
-			if (startingHeirloom.rarity < 11) {
-				baseValue = heirloomRatiosWidth * 0.36;
-				scienceElem.style.marginRight = `${baseValue}px`;
-				parityElem.style.marginRight = defaultMargin;
-			} else if (startingHeirloom.rarity === 11) {
-				baseValue = heirloomRatiosWidth * 0.384;
-				scienceElem.style.marginRight = defaultMargin;
-				parityElem.style.marginRight = `${baseValue}px`;
-			} else if (startingHeirloom.rarity === 12) {
-				scienceElem.style.marginRight = defaultMargin;
-				parityElem.style.marginRight = defaultMargin;
-			}
-		}
+		setElemDisplay('XPWeightDiv', game.global.spiresCompleted < 2 ? 'hidden' : 'visible', false, 'visibility');
+		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity < 11 ? 'flex' : 'none', false);
+		setElemDisplay('seedDropDiv', startingHeirloom.rarity < 12 ? 'hidden' : 'visible', false, 'visibility');
 	}
 
 	const heirloomData = heirloomInfo(startingHeirloom.type);
