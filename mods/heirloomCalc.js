@@ -482,7 +482,7 @@ class Heirloom {
 		if (!this.isEmpty()) {
 			const basePrices = [5, 10, 15, 25, 75, 150, 400, 1000, 2500, 7500, 50000, 375000, 2.75e6];
 			const coreBasePrices = [20, 200, 2000, 20000, 200000, 2000000, 20000000, 200000000, 2000000000, 20000000000, 200000000000, 2000000000000, 2000000000000];
-			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015, 1.01];
+			const priceIncreases = [1.5, 1.5, 1.25, 1.19, 1.15, 1.12, 1.1, 1.06, 1.04, 1.03, 1.02, 1.015, 1.013];
 			const settings = JSON.parse(localStorage.getItem('heirloomInputs'));
 			const heirloomSettings = settings && settings[this.id] ? settings[this.id] : settings;
 			const runningAT = typeof atConfig !== 'undefined';
@@ -712,20 +712,46 @@ class Heirloom {
 		if (type === 'doubleCrit') {
 			const relentlessness = game.global.universe === 2 ? 0 : game.portal.Relentlessness.level;
 			const criticality = game.global.universe === 2 ? game.portal.Criticality.radLevel : 0;
-			let critChance = 1 + relentlessness * 5;
+			const critMastery = masteryPurchased('crit');
+			const critChanceMod = this.getModValue('critChance');
+			const doubleCritValue = this.getModValue('doubleCrit') / 100;
+			let critChanceBefore = relentlessness * 5;
+			let critChanceAfter = relentlessness * 5;
+			let critDamage = 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
 			let megaCritMult = 5;
 
-			critChance += this.getModValue('critChance') * (masteryPurchased('crit') ? 1.5 : 1);
-			if (this.fluffyRewards.critChance) critChance += 50 * this.fluffyRewards.critChance;
-			if (critChance === 0) return 1;
-			if (this.fluffyRewards.megaCrit) megaCritMult += 2;
-			if (masteryPurchased('crit')) megaCritMult += 1;
+			if (isNumeric(this.getModValue('critDamage'))) {
+				critDamage += this.getModValue('critDamage');
+			}
 
-			const megaCrits = Math.floor(critChance / 100);
-			critChance = Math.min(critChance - megaCrits * 100, 100) / 100;
-			const critDamage = value + 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
-			const critDmgNormalizedBefore = this.normalizedCrit(critChance, critDamage, megaCrits, megaCritMult);
-			const critDmgNormalizedAfter = this.normalizedCrit(critChance, critDamage + stepAmount, megaCrits, megaCritMult);
+			if (critDamage === 0) {
+				return 1;
+			}
+
+			if (critMastery) {
+				critChanceBefore += critChanceMod * 1.5;
+				critChanceAfter += critChanceMod * 1.5;
+				megaCritMult += 1;
+			} else {
+				critChanceBefore += critChanceMod;
+				critChanceAfter += critChanceMod;
+			}
+
+			if (this.fluffyRewards.critChance) {
+				critChanceBefore += 50 * this.fluffyRewards.critChance;
+			}
+
+			if (this.fluffyRewards.megaCrit) {
+				megaCritMult += 2;
+			}
+
+			const megaCritsBefore = Math.floor(critChanceBefore / 100);
+			const megaCritsAfter = Math.floor((critChanceBefore + stepAmount) / 100);
+			critChanceBefore = 1 + doubleCritValue / 100;
+			critChanceAfter = 1 + (doubleCritValue + stepAmount) / 100;
+
+			const critDmgNormalizedBefore = this.normalizedCrit(critChanceBefore, critDamage, megaCritsBefore, megaCritMult);
+			const critDmgNormalizedAfter = this.normalizedCrit(critChanceAfter, critDamage, megaCritsAfter, megaCritMult);
 
 			return critDmgNormalizedAfter / critDmgNormalizedBefore;
 		}
@@ -2434,6 +2460,15 @@ setupHeirloomUI();
 
 /* If using standalone version then inform user it has loaded. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	let basepathFarmCalc = 'https://sadaugust.github.io/AutoTrimps/';
+	if (typeof localVersion !== 'undefined') basepathFarmCalc = 'https://localhost:8887/AutoTrimps_Local/';
+
+	const linkStylesheet = document.createElement('link');
+	linkStylesheet.rel = 'stylesheet';
+	linkStylesheet.type = 'text/css';
+	linkStylesheet.href = basepathFarmCalc + 'css/heirloomCalc.css';
+	document.head.appendChild(linkStylesheet);
+
 	console.log('The heirloom calculator mod has finished loading.');
 	message('The heirloom calculator mod has finished loading.', 'Loot');
 }
