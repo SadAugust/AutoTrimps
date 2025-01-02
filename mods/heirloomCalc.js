@@ -1214,6 +1214,9 @@ function calculate(autoUpgrade) {
 	elemList.forEach((id) => setElemDisplay(id, displayList.includes(id) ? (id === 'heirloomRatios0' ? 'inline-block' : 'flex') : 'none', true));
 	resourceList.forEach((id) => setElemDisplay(`heirloomCustom${id}Btn`, resourceListDisplay ? 'flex' : 'none', false));
 
+	if (startingHeirloom.type.includes('Shield')) {
+		setElemDisplay('equalityTargetDiv', startingHeirloom.rarity < 11 ? 'hidden' : 'visible', false, 'visibility');
+	}
 	if (resourceListDisplay) {
 		setElemDisplay('XPWeightDiv', game.global.spiresCompleted < 2 ? 'hidden' : 'visible', false, 'visibility');
 		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity >= 11 ? 'flex' : 'none', false);

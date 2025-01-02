@@ -352,7 +352,7 @@ if (typeof originalopenTree !== 'function') {
 		u2Mutations.originalopenTree(...arguments);
 		try {
 			presetMutations();
-			presetMasteryIcon();
+			if (game.global.stringVersion === '5.9.2') presetMasteryIcon();
 		} catch (e) {
 			console.log('Loading mutator presets failed ' + e, 'other');
 		}

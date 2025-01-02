@@ -5661,7 +5661,8 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 		}
 	}
 
-	if (game.talents.magimp.purchased && mapSuffix !== 'Darkness' && !force) {
+	const u2Spire = game.global.universe === 2 && game.global.spireActive && !game.global.mapsActive;
+	if (!u2Spire && game.talents.magimp.purchased && mapSuffix !== 'Darkness' && !force) {
 		let chance = 2 * (1 / (100 - 1 - exoticChance * imports.length));
 		chance = Math.round(chance * 100000);
 		let roll = getRandomIntSeeded(enemySeed++, 0, 100000);
