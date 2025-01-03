@@ -7566,15 +7566,16 @@ function getLootBd(what) {
 
 function rewardU2Spire(level) {
 	const totalCells = 100 * (game.global.spireLevel - 1) + level;
+	let increase = u2SpireBonuses.basics();
+
 	if (game.global.u2SpireCells < totalCells) {
 		game.global.u2SpireCells = totalCells;
 	}
 
-	if (game.global.u2SpireCellsBest < totalCells) {
-		let increase = u2SpireBonuses.basics();
+	if (game.global.u2SpireCellsBest < totalCells || totalCells === 1000) {
 		game.global.u2SpireCellsBest = totalCells;
-		increase = u2SpireBonuses.basics() / increase - 1;
-		addSoldierHealth(increase);
+		increase = u2SpireBonuses.basics() / increase;
+		addSoldierHealth(increase - 1);
 	}
 
 	const text = getSpireStory('U21', totalCells);
