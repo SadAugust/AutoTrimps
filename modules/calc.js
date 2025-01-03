@@ -222,7 +222,7 @@ function calcSpire(what = 'attack', cell, name, checkCell) {
 		mod += modRaiser;
 	}
 
-	base *= game.global.universe === 2 ? Math.pow(100, game.global.spireLevel + 1) : Math.pow(mod, cell);
+	base *= game.global.universe === 2 ? Math.pow(200, game.global.spireLevel + 1) : Math.pow(mod, cell);
 	base *= game.global.universe === 2 ? 1 : game.badGuys[enemy][what];
 
 	if (cell !== 100 && challengeActive('Domination')) base /= what === 'attack' ? 25 : 75;

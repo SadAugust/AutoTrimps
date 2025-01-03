@@ -2905,6 +2905,26 @@ function runMapAtZone(index) {
 	toggleSetting('repeatUntil', null, false, true);
 }
 
+function getOverkillerCount(getNumber) {
+	let overkillerCount = 0;
+
+	if (game.global.universe === 1) {
+		overkillerCount = Fluffy.isRewardActive('overkiller');
+		if (game.talents.overkill.purchased) overkillerCount++;
+		if (getEmpowerment() === 'Ice') {
+			const iceLevel = game.empowerments.Ice.getLevel();
+			if (iceLevel >= 50) overkillerCount++;
+			if (iceLevel >= 100) overkillerCount++;
+		}
+		if (getUberEmpowerment() === 'Ice') overkillerCount += 2;
+	} else {
+		if (!canU2Overkill() && !getNumber) return 0;
+		if (u2Mutations.tree.MaxOverkill.purchased) overkillerCount++;
+	}
+
+	return overkillerCount;
+}
+
 function startFight() {
 	if (game.global.challengeActive && typeof game.challenges[game.global.challengeActive].onStartFight === 'function') {
 		game.challenges[game.global.challengeActive].onStartFight();
@@ -3269,20 +3289,7 @@ function startFight() {
 		const empowerment = getEmpowerment();
 		const empowermentUber = getUberEmpowerment();
 		if (cell.health < 1) {
-			let overkillerCount = 0;
-			if (game.global.universe === 1) {
-				overkillerCount = Fluffy.isRewardActive('overkiller');
-				if (game.talents.overkill.purchased) overkillerCount++;
-				if (empowerment === 'Ice') {
-					const iceLevel = game.empowerments.Ice.getLevel();
-					if (iceLevel >= 50) overkillerCount++;
-					if (iceLevel >= 100) overkillerCount++;
-				}
-				if (empowermentUber === 'Ice') overkillerCount += 2;
-			} else {
-				if (u2Mutations.tree.MaxOverkill.purchased && canU2Overkill()) overkillerCount++;
-			}
-
+			const overkillerCount = getOverkillerCount();
 			if (cell.OKcount <= overkillerCount) {
 				const nextCell = game.global.mapsActive ? game.global.mapGridArray[cellNum + 1] : game.global.gridArray[cellNum + 1];
 				if (nextCell) {

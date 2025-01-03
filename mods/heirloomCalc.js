@@ -2151,7 +2151,7 @@ function heirloomInfo(type) {
 				get weighable() {
 					return game.global.universe === 2;
 				},
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.25, 0.4],
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.25, 0.3],
 				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200, 300],
 				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 400, 600]
 			},
@@ -2160,9 +2160,9 @@ function heirloomInfo(type) {
 				type: 'Shield',
 				weighable: true,
 				noScaleU2: true,
-				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01],
-				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5],
-				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15]
+				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.02],
+				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.3],
+				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20]
 			}
 		};
 	else if (type === 'Staff')
