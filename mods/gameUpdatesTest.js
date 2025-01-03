@@ -3471,9 +3471,11 @@ function startFight() {
 			if (challengeActive('Balance')) {
 				game.global.soldierHealthMax *= game.challenges.Balance.getHealthMult();
 			}
+
 			if (challengeActive('Life')) {
 				game.global.soldierHealthMax *= game.challenges.Life.getHealthMult();
 			}
+
 			if (challengeActive('Revenge')) {
 				game.global.soldierHealthMax *= game.challenges.Revenge.getMult();
 			}
@@ -3486,31 +3488,38 @@ function startFight() {
 			if (autoBattle.bonuses.Stats.level > 0) game.global.soldierHealthMax *= autoBattle.bonuses.Stats.getMult();
 			if (game.portal.Observation.trinkets > 0) game.global.soldierHealthMax *= game.portal.Observation.getMult();
 			if (getPerkLevel('Championism') > 0) game.global.soldierHealthMax *= game.portal.Championism.getMult();
-			if (game.global.u2SpireCellsBest > 0) game.global.soldierHealthMax *= u2SpireBonuses.basics();
 			if (u2Mutations.tree.Health.purchased) game.global.soldierHealthMax *= 1.5;
 			if (u2Mutations.tree.GeneHealth.purchased) game.global.soldierHealthMax *= 10;
+			if (game.global.u2SpireCellsBest > 0) game.global.soldierHealthMax *= u2SpireBonuses.basics();
 
 			if (challengeActive('Duel') && game.challenges.Duel.trimpStacks < 20) {
 				game.global.soldierHealthMax *= game.challenges.Duel.healthMult;
 			}
+
 			if (challengeActive('Wither')) {
 				game.global.soldierHealthMax *= game.challenges.Wither.getTrimpHealthMult();
 			}
+
 			if (challengeActive('Insanity') && game.challenges.Insanity.insanity > 0) {
 				game.global.soldierHealthMax *= game.challenges.Insanity.getHealthMult();
 			}
+
 			if (challengeActive('Berserk')) {
 				game.global.soldierHealthMax *= game.challenges.Berserk.getHealthMult();
 			}
+
 			if (game.challenges.Nurture.boostsActive()) {
 				game.global.soldierHealthMax *= game.challenges.Nurture.getStatBoost();
 			}
+
 			if (challengeActive('Alchemy')) {
 				game.global.soldierHealthMax *= alchObj.getPotionEffect('Potion of Strength');
 			}
+
 			if (challengeActive('Desolation')) {
 				game.global.soldierHealthMax *= game.challenges.Desolation.trimpHealthMult();
 			}
+
 			if (challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0) {
 				game.global.soldierHealthMax *= game.challenges.Smithless.getTrimpMult();
 			}
@@ -3584,12 +3593,16 @@ function startFight() {
 		//Check differences in equipment, apply perks, bonuses, and formation
 		if (game.global.difs.health !== 0) {
 			let healthTemp = trimpsFighting * game.global.difs.health * (game.portal.Toughness.modifier * getPerkLevel('Toughness') + 1);
-			if (magmaActive) healthTemp *= mutations.Magma.getTrimpDecay();
 
+			if (game.jobs.Amalgamator.owned > 0) healthTemp *= game.jobs.Amalgamator.getHealthMult();
+			if (magmaActive) healthTemp *= mutations.Magma.getTrimpDecay();
+			if (game.talents.mapHealth.purchased && game.global.mapsActive) healthTemp *= 2;
+			if (game.jobs.Geneticist.owned > 0) healthTemp *= Math.pow(1.01, game.global.lastLowGen);
+
+			if (getPerkLevel('Resilience') > 0) healthTemp *= Math.pow(game.portal.Resilience.modifier + 1, getPerkLevel('Resilience'));
 			if (game.goldenUpgrades.Battle.currentBonus > 0) healthTemp *= game.goldenUpgrades.Battle.currentBonus + 1;
 			if (game.global.totalSquaredReward > 0) healthTemp *= game.global.totalSquaredReward / 100 + 1;
-			if (getPerkLevel('Resilience') > 0) healthTemp *= Math.pow(game.portal.Resilience.modifier + 1, getPerkLevel('Resilience'));
-			if (game.talents.mapHealth.purchased && game.global.mapsActive) healthTemp *= 2;
+
 			if (game.global.mayhemCompletions) healthTemp *= game.challenges.Mayhem.getTrimpMult();
 			if (game.global.pandCompletions) healthTemp *= game.challenges.Pandemonium.getTrimpMult();
 			if (game.global.desoCompletions) healthTemp *= game.challenges.Desolation.getTrimpMult();
@@ -3598,17 +3611,17 @@ function startFight() {
 				if (game.global.formation !== 0 && game.global.formation !== 5) {
 					healthTemp *= game.global.formation === 1 ? 4 : 0.5;
 				}
-				if (game.jobs.Geneticist.owned > 0) healthTemp *= Math.pow(1.01, game.global.lastLowGen);
 				if (getPerkLevel('Toughness_II')) healthTemp *= 1 + game.portal.Toughness_II.modifier * getPerkLevel('Toughness_II');
-				if (game.jobs.Amalgamator.owned > 0) healthTemp *= game.jobs.Amalgamator.getHealthMult();
 				if (game.global.frigidCompletions > 0) healthTemp *= game.challenges.Frigid.getTrimpMult();
 
 				if (challengeActive('Balance')) {
 					healthTemp *= game.challenges.Balance.getHealthMult();
 				}
+
 				if (challengeActive('Life')) {
 					healthTemp *= game.challenges.Life.getHealthMult();
 				}
+
 				if (challengeActive('Revenge')) {
 					healthTemp *= game.challenges.Revenge.getMult();
 				}
@@ -3616,36 +3629,43 @@ function startFight() {
 
 			if (game.global.universe === 2) {
 				if (game.buildings.Smithy.owned > 0) healthTemp *= game.buildings.Smithy.getMult();
-				if (game.buildings.Antenna.owned >= 10) healthTemp *= game.jobs.Meteorologist.getExtraMult();
-				if (game.global.u2SpireCellsBest > 0) healthTemp *= u2SpireBonuses.basics();
 				if (Fluffy.isRewardActive('healthy')) healthTemp *= 1.5;
+				if (game.buildings.Antenna.owned >= 10) healthTemp *= game.jobs.Meteorologist.getExtraMult();
 				if (autoBattle.bonuses.Stats.level > 0) healthTemp *= autoBattle.bonuses.Stats.getMult();
-				if (u2Mutations.tree.Health.purchased) healthTemp *= 1.5;
-				if (u2Mutations.tree.GeneHealth.purchased) healthTemp *= 10;
 				if (game.portal.Observation.trinkets > 0) healthTemp *= game.portal.Observation.getMult();
 				if (getPerkLevel('Championism')) healthTemp *= game.portal.Championism.getMult();
+				if (u2Mutations.tree.Health.purchased) healthTemp *= 1.5;
+				if (u2Mutations.tree.GeneHealth.purchased) healthTemp *= 10;
+				if (game.global.u2SpireCellsBest > 0) healthTemp *= u2SpireBonuses.basics();
 
 				if (challengeActive('Duel') && game.challenges.Duel.trimpStacks < 20) {
 					healthTemp *= game.challenges.Duel.healthMult;
 				}
+
 				if (challengeActive('Wither')) {
 					healthTemp *= game.challenges.Wither.getTrimpHealthMult();
 				}
+
 				if (challengeActive('Insanity')) {
 					healthTemp *= game.challenges.Insanity.getHealthMult();
 				}
+
 				if (challengeActive('Berserk')) {
 					healthTemp *= game.challenges.Berserk.getHealthMult();
 				}
+
 				if (game.challenges.Nurture.boostsActive()) {
 					healthTemp *= game.challenges.Nurture.getStatBoost();
 				}
+
 				if (challengeActive('Alchemy')) {
 					healthTemp *= alchObj.getPotionEffect('Potion of Strength');
 				}
+
 				if (challengeActive('Desolation')) {
 					healthTemp *= game.challenges.Desolation.trimpHealthMult();
 				}
+
 				if (challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0) {
 					healthTemp *= game.challenges.Smithless.getTrimpMult();
 				}
@@ -7542,4 +7562,29 @@ function getLootBd(what) {
 	game.global.lockTooltip = false;
 	tooltip('confirm', null, 'update', textString, "getLootBd('" + what + "')", name + ' Loot Breakdown', 'Refresh', true);
 	verticalCenterTooltip();
+}
+
+function rewardU2Spire(level) {
+	const totalCells = 100 * (game.global.spireLevel - 1) + level;
+	if (game.global.u2SpireCells < totalCells) {
+		game.global.u2SpireCells = totalCells;
+	}
+
+	if (game.global.u2SpireCellsBest < totalCells) {
+		let increase = u2SpireBonuses.basics();
+		game.global.u2SpireCellsBest = totalCells;
+		increase = u2SpireBonuses.basics() / increase - 1;
+		addSoldierHealth(increase);
+	}
+
+	const text = getSpireStory('U21', totalCells);
+	if (text === '') return;
+
+	if (totalCells === 100) {
+		for (let x = 0; x < 4; x++) {
+			createHeirloom(300, false, false, true);
+		}
+	}
+
+	message(text, 'Story');
 }
