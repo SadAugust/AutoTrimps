@@ -2764,7 +2764,8 @@ function runMapAtZone(index) {
 	}
 
 	if (runUniqueMap) {
-		const location = setting.preset === 3 ? 'Bionic' : setting.preset === 5 ? 'Darkness' : setting.preset === 8 ? 'Melting' : 'Frozen';
+		const mapLocations = ['Melting', 'Frozen', 'Atlantis'];
+		const location = setting.preset === 3 ? 'Bionic' : setting.preset === 5 ? 'Darkness' : mapLocations[setting.preset - 8];
 
 		for (let x = 0; x < game.global.mapsOwnedArray.length; x++) {
 			if (game.global.mapsOwnedArray[x].location === location) {

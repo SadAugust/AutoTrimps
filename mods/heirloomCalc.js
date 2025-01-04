@@ -2162,7 +2162,7 @@ function heirloomInfo(type) {
 				noScaleU2: true,
 				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.02],
 				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.3],
-				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20]
+				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25]
 			}
 		};
 	else if (type === 'Staff')
