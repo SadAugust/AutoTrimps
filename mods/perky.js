@@ -812,7 +812,7 @@ function updateInputFields() {
 		settingInputs.housingCount = Math.max(housingCount, settingInputs.housingCount);
 		$$('#housingCount').value = settingInputs.housingCount;
 
-		settingInputs.findPots = Math.max(game.resources.trimps.owned, settingInputs.findPots);
+		settingInputs.findPots = Math.max(challengeActive('Alchemy') ? alchObj.potionsOwned[alchObj.potionNames.indexOf('Potion of Finding')] : 1, settingInputs.findPots);
 		$$('#findPots').value = settingInputs.findPots;
 	}
 }

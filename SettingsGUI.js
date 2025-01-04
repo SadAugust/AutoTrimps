@@ -1333,6 +1333,7 @@ function initialiseAllSettings() {
 				description += `<p><b>Scry Maps: Force</b><br>Will force the script to always use scryer stance in ${useType}.</p>`;
 				description += `<p><b>Scry Maps: Maybe</b><br>Will maybe run scryer stance in ${useType} depending on how difficult the map is.</p>`;
 				description += `<p>This setting won't impact the use of Scryer stance when running <b>Void Map</b> or <b>Bionic Wonderland</b> maps.</p>`;
+				description += `<p>When <b>Auto Level Scryer</b> is enabled it will take priority over this setting for if Scryer stance should be used.</p>`;
 				description += `<p><b>Recommended:</b> Scry Maps: Maybe</p>`;
 				return description;
 			}, 'multitoggle', 2, null, 'Combat', [1],

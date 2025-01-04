@@ -1111,10 +1111,6 @@ function updateATVersion() {
 				autoTrimpSettings.heliumyPercent.valueU2 = tempSettings.buyheliumy.valueU2;
 			}
 
-			if (typeof tempSettings['MaxStacksForSpire'] !== 'undefined') {
-				autoTrimpSettings.maxMapStacksForSpire.enabled = tempSettings.MaxStacksForSpire.enabled;
-			}
-
 			if (typeof tempSettings['UseAutoGen'] !== 'undefined') {
 				autoTrimpSettings.autoGen.enabled = tempSettings.UseAutoGen.enabled;
 			}
@@ -1314,18 +1310,6 @@ function updateATVersion() {
 				autoTrimpSettings.spireDominanceStance.enabled = tempSettings.AutoDStanceSpire.enabled;
 				autoTrimpSettings.spireDominanceStanceC2.enabled = tempSettings.c2AutoDStanceSpire.enabled;
 				autoTrimpSettings.spireDominanceStanceDaily.enabled = tempSettings.dAutoDStanceSpire.enabled;
-			}
-
-			if (typeof tempSettings['maxMapStacksForSpire'] !== 'undefined') {
-				autoTrimpSettings.spireMapBonus.enabled = tempSettings.maxMapStacksForSpire.enabled;
-			}
-
-			if (typeof tempSettings['maxMapStacksForSpireC2'] !== 'undefined') {
-				autoTrimpSettings.spireMapBonusC2.enabled = tempSettings.maxMapStacksForSpireC2.enabled;
-			}
-
-			if (typeof tempSettings['maxMapStacksForSpireDaily'] !== 'undefined') {
-				autoTrimpSettings.spireMapBonusDaily.enabled = tempSettings.maxMapStacksForSpireDaily.enabled;
 			}
 
 			if (typeof tempSettings['hitsSurvivedSpire'] !== 'undefined') {
