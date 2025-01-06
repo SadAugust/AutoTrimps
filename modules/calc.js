@@ -37,6 +37,7 @@ class TrimpStats {
 class HDStats {
 	constructor() {
 		this.autoLevelInitial = hdStats.autoLevelInitial;
+		this.autoLevelMaxFragments = hdStats.autoLevelMaxFragments;
 		this.autoLevelZone = hdStats.autoLevelZone;
 		this.autoLevelData = hdStats.autoLevelData;
 		this.autoLevelLoot = hdStats.autoLevelLoot;
@@ -67,6 +68,7 @@ class HDStats {
 		this.biomeEff = biomeEfficiency(undefined, hitsBefore, undefined, this.shieldGymEff);
 		if (checkAutoLevel) {
 			this.autoLevelInitial = stats();
+			this.autoLevelMaxFragments = /* getPageSetting('autoLevelMapCheck') ? stats(undefined, false) : */ undefined;
 			this.autoLevelZone = world;
 			this.autoLevelData = get_best(this.autoLevelInitial, true);
 

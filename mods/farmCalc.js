@@ -423,7 +423,7 @@ function cellsPerSecond(saveData) {
 	return (saveData.size / (attacksPerMap * ceiledKillingSpeed)) * 10;
 }
 
-function stats(lootFunction = lootDefault) {
+function stats(lootFunction = lootDefault, checkFragments = true) {
 	const saveData = populateFarmCalcData();
 	const maxMaps = lootFunction === lootDestack ? 11 : 25;
 	const stats = [];
@@ -445,38 +445,51 @@ function stats(lootFunction = lootDefault) {
 			saveData.enemyHealthMult = coords;
 		}
 
+		let biomeLoot = saveData.mapBiome === 'Farmlands' && saveData.universe === 2 ? 1 : saveData.mapBiome === 'Plentiful' ? 0.25 : 0;
+		if (game.singleRunBonuses.goldMaps.owned) biomeLoot += 1;
+
 		const simulateMap = _simulateSliders(mapLevel, saveData.special, saveData.mapBiome, [9, 9, 9], saveData.perfectMaps, alwaysPerfect);
 		let map;
 		let mapOwned = findMap(mapLevel - game.global.world, saveData.special, saveData.mapBiome);
 		if (!mapOwned) mapOwned = findMap(mapLevel - game.global.world, simulateMap.special, simulateMap.location, simulateMap.perfect);
 
-		if (mapOwned) {
-			map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
-			saveData.difficulty = Number(map.difficulty);
-			saveData.size = Number(map.size);
-			saveData.lootMult = Number(map.loot);
-			saveData.specialData = map.bonus;
-		} else {
-			if (game.singleRunBonuses.goldMaps.owned) simulateMap.loot += 1;
-			if (simulateMap.location === 'Farmlands' && saveData.universe === 2) simulateMap.loot += 1;
-			if (simulateMap.location === 'Plentiful') simulateMap.loot += 0.25;
+		if (checkFragments) {
+			if (mapOwned) {
+				map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
+				saveData.difficulty = Number(map.difficulty);
+				saveData.size = Number(map.size);
+				saveData.lootMult = Number(map.loot);
+				saveData.specialData = map.bonus;
+			} else {
+				if (game.singleRunBonuses.goldMaps.owned) simulateMap.loot += 1;
+				if (simulateMap.location === 'Farmlands' && saveData.universe === 2) simulateMap.loot += 1;
+				if (simulateMap.location === 'Plentiful') simulateMap.loot += 0.25;
 
-			saveData.specialData = simulateMap.special;
-			saveData.difficulty = Number(simulateMap.difficulty);
-			saveData.size = Number(simulateMap.size);
-			saveData.lootMult = Number(simulateMap.loot);
+				saveData.specialData = simulateMap.special;
+				saveData.difficulty = Number(simulateMap.difficulty);
+				saveData.size = Number(simulateMap.size);
+				saveData.lootMult = Number(simulateMap.loot);
 
-			const { level, special, location, perfect, sliders } = simulateMap;
-			const { difficulty, size, loot } = sliders;
-			const fragCost = mapCost(level - game.global.world, special, location, [loot, size, difficulty], perfect);
-			if (mapLevel !== 6 && fragCost > game.resources.fragments.owned) {
-				continue;
+				const { level, special, location, perfect, sliders } = simulateMap;
+				const { difficulty, size, loot } = sliders;
+				const fragCost = mapCost(level - game.global.world, special, location, [loot, size, difficulty], perfect);
+				if (mapLevel !== 6 && fragCost > game.resources.fragments.owned) {
+					continue;
+				}
 			}
+		} else {
+			saveData.specialData = saveData.special;
+			saveData.difficulty = 0.75;
+			saveData.size = saveData.mapReducer ? 20 : 25;
+			saveData.lootMult = saveData.mapBiome === 'Farmlands' && saveData.universe === 2 ? 2.6 : saveData.mapBiome === 'Plentiful' ? 1.85 : 1.6;
+			if (game.singleRunBonuses.goldMaps.owned) simulateMap.loot += 1;
+			simulateMap.sliders = { loot: 9, size: 9, difficulty: 9 };
+			simulateMap.location = saveData.mapBiome;
+			simulateMap.perfect = true;
 		}
 
-		const tmp = zone_stats(mapLevel, saveData, lootFunction);
-
-		tmp.mapConfig = {
+		const { difficulty, size, lootMult } = saveData;
+		const mapConfig = {
 			mapOwned: !!mapOwned,
 			name: map ? map.name : undefined,
 			id: map ? map.id : undefined,
@@ -484,12 +497,35 @@ function stats(lootFunction = lootDefault) {
 			plusLevel: mapLevel - game.global.world,
 			special: saveData.specialData,
 			biome: map ? map.location : simulateMap.location,
-			difficulty: saveData.difficulty,
-			size: saveData.size,
-			loot: saveData.lootMult,
+			difficulty,
+			size,
+			loot: lootMult,
 			sliders: simulateMap.sliders,
-			perfect: map ? map.perfect : simulateMap.perfect
+			perfect: map ? difficulty === 0.75 && size === (saveData.reducer ? 20 : 25) && loot === 1.6 + biomeLoot : simulateMap.perfect
 		};
+
+		let tmp;
+		if (!checkFragments && hdStats.autoLevelInitial) {
+			const originalSimulations = hdStats.autoLevelInitial[0];
+			const matchingMapLevel = originalSimulations.find((item) => item.mapLevel === mapLevel - game.global.world);
+			if (matchingMapLevel) {
+				function removeIgnoredProperties(obj) {
+					const { mapOwned, name, id, ...rest } = obj;
+					return rest;
+				}
+
+				const filteredMatchingMapConfig = removeIgnoredProperties(matchingMapLevel.mapConfig);
+				const filteredMapConfig = removeIgnoredProperties(mapConfig);
+				if (JSON.stringify(filteredMatchingMapConfig) === JSON.stringify(filteredMapConfig)) {
+					tmp = matchingMapLevel;
+				}
+			}
+		}
+
+		if (!tmp) {
+			tmp = zone_stats(mapLevel, saveData, lootFunction);
+			tmp.mapConfig = mapConfig;
+		}
 
 		stats.unshift(tmp);
 

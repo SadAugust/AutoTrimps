@@ -415,8 +415,9 @@ function _setSelectedMap(selectedMap, voidMap, optimalMap) {
 }
 
 function _setMapRepeat(mapObj = getCurrentMapObject()) {
+	let repeatState = game.global.repeatMap;
+
 	if ((!mapObj.noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding' || (mapSettings.mapName === 'Quagmire Farm' && mapObj.name === 'The Black Bog')) {
-		if (!game.global.repeatMap) repeatClicked();
 		let repeatSetting = 0; /* repeat forever */
 		if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
 			repeatSetting = 2; /* repeat for items */
@@ -427,15 +428,16 @@ function _setMapRepeat(mapObj = getCurrentMapObject()) {
 			toggleSetting('repeatUntil', null, false, true);
 		}
 
-		if (!mapSettings.shouldRun) repeatClicked();
-		if (game.global.repeatMap && mapSettings.biome && mapSettings.biome === 'Any' && mapObj.location === 'Forest') repeatClicked();
-		if (game.global.repeatMap && MODULES.mapFunctions.runUniqueMap) repeatClicked();
-		if (game.global.repeatMap && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605 && getPageSetting('experience')) repeatClicked();
-		if (mapSettings.prestigeFragMapBought && game.global.repeatMap) prestigeRaidingMapping();
+		repeatState = true; /* repeat map */
+		if (!mapSettings.shouldRun) repeatState = false;
+		if (repeatState && mapSettings.biome && mapSettings.biome === 'Any' && mapObj.location === 'Forest') repeatState = false;
+		if (repeatState && MODULES.mapFunctions.runUniqueMap) repeatState = false;
+		if (repeatState && challengeActive('Experience') && mapObj.location === 'Bionic' && game.global.world > 600 && mapObj.level >= 605 && getPageSetting('experience')) repeatState = false;
+		if (repeatState && mapSettings.prestigeFragMapBought) prestigeRaidingMapping();
 
-		if (game.global.repeatMap && !mapSettings.prestigeFragMapBought) {
+		if (repeatState && !mapSettings.prestigeFragMapBought) {
 			if (mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Bionic Raiding') {
-				if (!mapSettings.repeat) repeatClicked();
+				if (!mapSettings.repeat) repeatState = false;
 			} else {
 				const { mapLevel, special, biome = getBiome() } = mapSettings;
 				const runTricky = game.global.world + mapLevel === 6 && findMap(mapLevel, special, biome, undefined, true) === 'Tricky Paradise';
@@ -446,16 +448,30 @@ function _setMapRepeat(mapObj = getCurrentMapObject()) {
 				const isBiomeDifferent = mapBiome !== biome && !runTricky && !['Any', 'Random'].includes(biome);
 
 				if (!mapSettings.repeat) {
-					repeatClicked();
+					repeatState = false;
 				} else if (level !== mapLevel || (mapSpecial && mapSpecial !== special) || isBiomeDifferent) {
 					simulatedPurchase = _simulateSliders(mapLevel + game.global.world, special, biome);
 					if (simulatedPurchase.special === special && simulatedPurchase.mapLevel === mapLevel && simulatedPurchase.location === biome) {
-						repeatClicked();
+						repeatState = false;
+					}
+					/* if running optimal map level and we can get better slider rolls then recreate the map */
+				} else if (hdStats.autoLevelMaxFragments) {
+					const autoLevelObj = mapSettings.mapname === 'Desolation Destacking' ? hdStats.autoLevelDesolation : hdStats.autoLevelMaxFragments;
+					const mapModifiers = {
+						special: trimpStats.mapSpecial,
+						biome: trimpStats.mapBiome
+					};
+
+					if (mapLevel === get_best(autoLevelObj, false, mapModifiers)[autoLevelType()].mapLevel) {
 					}
 				}
 			}
 		}
-	} else if (game.global.repeatMap) {
+	} else if (repeatState) {
+		repeatState = false;
+	}
+
+	if (game.global.repeatMap !== repeatState) {
 		repeatClicked();
 	}
 }
