@@ -3315,9 +3315,6 @@ function farmingDecision() {
 		if (challengeActive('Mapology') && getPageSetting('mapology') && getPageSetting('mapologyMapOverrides')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
 
 		if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0) mapTypes = [voidMaps];
-
-		const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
-		if (isDoingSpire() && getPageSetting('spireSkipMapping' + settingAffix) && game.global.mapBonus === 10) mapSettings = farmingDetails;
 	}
 
 	if (game.global.universe === 2) {
@@ -3326,6 +3323,9 @@ function farmingDecision() {
 
 		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
+
+	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	if (isDoingSpire() && getPageSetting('spireSkipMapping' + settingAffix) && game.global.mapBonus === 10) mapSettings = farmingDetails;
 
 	if (usingBreedHeirloom(true)) {
 		if (atConfig.intervals.oneMinute && (game.global.fighting || newArmyRdy()) && getPageSetting('autoMaps')) {
@@ -3572,7 +3572,7 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 }
 
 function mapCost(plusLevel = 0, specialModifier = getAvailableSpecials('lmc'), biome = getBiome(), sliders = [9, 9, 9], perfect = true) {
-	const mapLevel = Math.max(game.global.world, 6);
+	const mapLevel = Math.max(game.global.world, 6) + (plusLevel < 0 ? plusLevel : 0);
 	let baseCost = sliders[0] + sliders[1] + sliders[2];
 	baseCost *= game.global.world >= 60 ? 0.74 : 1;
 
@@ -4115,14 +4115,19 @@ function getEnoughHealthMap(mapLevel, special, biome) {
 	return mapOwned;
 }
 
-function callAutoMapLevel(mapName, special) {
+function autoLevelType(mapName = mapSettings.mapname) {
 	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking'];
-	if (['HD Farm', 'Hits Survived'].includes(mapName) && getPageSetting('mapBonusLevelType')) {
-		if (mapName === 'HD Farm' && game.global.mapBonus !== 10) speedSettings.push('HD Farm');
+
+	if (['HD Farm', 'Hits Survived'].includes(mapName) && game.global.mapBonus !== 10 && getPageSetting('mapBonusLevelType')) {
+		if (mapName === 'HD Farm') speedSettings.push('HD Farm');
 		else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth')) speedSettings.push('Hits Survived');
 	}
 
-	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
+	return speedSettings.includes(mapName) ? 'speed' : 'loot';
+}
+
+function callAutoMapLevel(mapName, special) {
+	const mapType = autoLevelType(mapName);
 	const mapModifiers = {
 		special: special || trimpStats.mapSpecial,
 		biome: mapSettings.biome || trimpStats.mapBiome

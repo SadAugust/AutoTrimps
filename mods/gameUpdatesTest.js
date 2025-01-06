@@ -3104,14 +3104,17 @@ function startFight() {
 			if (typeof game.global.dailyChallenge.badHealth !== 'undefined') {
 				healthMult *= dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength);
 			}
+
 			if (typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && game.global.mapsActive) {
 				healthMult *= dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength);
 			}
+
 			if (typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && game.global.mapsActive && map.location === 'Void') {
 				const empVoidStr = dailyModifiers.empoweredVoid.getMult(game.global.dailyChallenge.empoweredVoid.strength);
 				healthMult *= empVoidStr;
 				attackMult *= empVoidStr;
 			}
+
 			if (typeof game.global.dailyChallenge.empower !== 'undefined') {
 				if (!game.global.mapsActive) healthMult *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 				updateDailyStacks('empower');
@@ -3131,6 +3134,7 @@ function startFight() {
 					cell.health = mutations.Corruption.health(cell.level, cell.name);
 					cell.attack = mutations.Corruption.attack(cell.level, cell.name);
 				}
+
 				healthMult *= 4;
 				attackMult *= 1.2;
 			}
@@ -3238,9 +3242,9 @@ function startFight() {
 			} else if (challengeActive('Alchemy')) {
 				const alchMap = Boolean(map);
 				const alchVoid = alchMap && map.location === 'Void';
-				const statMult = alchObj.getEnemyStats(alchMap, alchVoid) + 1;
-				attackMult *= statMult;
-				healthMult *= statMult;
+				const alchMult = alchObj.getEnemyStats(alchMap, alchVoid) + 1;
+				attackMult *= alchMult;
+				healthMult *= alchMult;
 			} else if (challengeActive('Glass')) {
 				game.challenges.Glass.cellStartHealth = cell.health * healthMult;
 				healthMult *= game.challenges.Glass.healthMult();
@@ -3315,22 +3319,14 @@ function startFight() {
 					if (empowerment === 'Poison') {
 						/* stackPoison handles the poison debuff and plaguebrought scaling */
 						stackPoison(cell.plaguebringer);
-					}
-
-					if (empowerment === 'Wind') {
+					} else {
 						let hits = cell.plagueHits;
-						if (empowermentUber === 'Wind') hits *= 2;
+						if (empowermentUber === empowerment) hits *= 2;
 						if (Fluffy.isRewardActive('plaguebrought')) hits *= 2;
 						game.empowerments[empowerment].currentDebuffPower += Math.ceil(hits);
-						handleWindDebuff();
-					}
 
-					if (empowerment === 'Ice') {
-						let hits = cell.plagueHits;
-						if (empowermentUber === 'Ice') hits *= 2;
-						if (Fluffy.isRewardActive('plaguebrought')) hits *= 2;
-						game.empowerments[empowerment].currentDebuffPower += Math.ceil(hits);
-						handleIceDebuff();
+						if (empowerment === 'Wind') handleWindDebuff();
+						if (empowerment === 'Ice') handleIceDebuff();
 					}
 				}
 			}
@@ -7193,7 +7189,7 @@ function getLootBd(what) {
 				var useGlassWorld = game.global.world > 400 ? 400 : game.global.world;
 				var mult = Math.pow(1.1, useGlassWorld - 175);
 				currentCalc *= mult;
-				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>x 1.1</td><td>" + (useGlassWorld  - 175) + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>x 1.1</td><td>" + (useGlassWorld - 175) + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
 			}
 			if (game.global.universe == 2 && game.global.world >= 201) {
 				let mult = 400;

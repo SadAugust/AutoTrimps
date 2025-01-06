@@ -3907,7 +3907,7 @@ function initialiseAllSettings() {
 			function () { return ('Skip Spires') },
 			function () {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
-				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);
 
@@ -3974,7 +3974,7 @@ function initialiseAllSettings() {
 			function () { return (`${_getChallenge2Info()}: Skip Spires`) },
 			function () {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
-				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);
 		
@@ -4041,7 +4041,7 @@ function initialiseAllSettings() {
 			function () { return ('Daily: Skip Spires') },
 			function () {
 				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
-				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);
 	}
