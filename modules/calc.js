@@ -68,7 +68,7 @@ class HDStats {
 		this.biomeEff = biomeEfficiency(undefined, hitsBefore, undefined, this.shieldGymEff);
 		if (checkAutoLevel) {
 			this.autoLevelInitial = stats();
-			this.autoLevelMaxFragments = /* getPageSetting('autoLevelMapCheck') ? stats(undefined, false) : */ undefined;
+			this.autoLevelMaxFragments = getPageSetting('autoMapsReroll') ? stats(undefined, false) : undefined;
 			this.autoLevelZone = world;
 			this.autoLevelData = get_best(this.autoLevelInitial, true);
 

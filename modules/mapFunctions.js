@@ -3548,9 +3548,9 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 		}
 	}
 
-	const lootValues = getMapMinMax('loot', sliders[0])[perfect ? 1 : 0];
+	const lootValues = Math.floor(getMapMinMax('loot', sliders[0])[perfect ? 1 : 0] * 100) / 100;
 	const sizeValues = getMapMinMax('size', sliders[1])[perfect ? 0 : 1];
-	let difficultyValues = getMapMinMax('difficulty', sliders[2])[perfect ? 0 : 1];
+	let difficultyValues = Math.floor(getMapMinMax('difficulty', sliders[2])[perfect ? 0 : 1] * 100) / 100;
 	if (challengeActive('Mapocalypse')) difficultyValues += 3;
 
 	return {

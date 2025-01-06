@@ -70,9 +70,9 @@ function autoMapsStatus(get = false) {
 	}
 }
 
-function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBiome(), perfect = getPageSetting('onlyPerfectMaps'), isTricky = false) {
+function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBiome(), perfect = getPageSetting('onlyPerfectMaps'), isTricky = false, getObj = false) {
 	let sendTricky = false;
-	let mapLoot = biome === 'Farmlands' ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
+	let mapLoot = biome === 'Farmlands' && game.global.universe === 2 ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
 	if (game.singleRunBonuses.goldMaps.owned) mapLoot += 1;
 
 	for (let mapping in game.global.mapsOwnedArray) {
@@ -87,8 +87,12 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 		if (game.global.world + level !== map.level) continue;
 		if (map.bonus !== special && special !== '0') continue;
 		if (map.noRecycle) continue;
-		if (map.name === 'Tricky Paradise') sendTricky = map.id;
-		else return map.id;
+
+		if (map.name === 'Tricky Paradise') {
+			sendTricky = getObj ? map : map.id;
+		} else {
+			return getObj ? map : map.id;
+		}
 	}
 
 	if (isTricky && sendTricky) return 'Tricky Paradise';
@@ -97,7 +101,7 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 
 //Looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one
 function shouldFarmMapCreation(level, special, biome) {
-	let mapCheck = findMap(level, special, biome);
+	let mapCheck = findMap(level, special, biome, undefined, undefined, true);
 
 	if (!mapCheck) {
 		const simulatedPurchase = _simulateSliders(level + game.global.world, special, biome);
@@ -105,12 +109,15 @@ function shouldFarmMapCreation(level, special, biome) {
 		if (simulatedPurchase.location === biome && simulatedPurchase.special === special && simulatedPurchase.mapLevel === level) {
 			return 'create';
 		} else {
-			mapCheck = findMap(level, '0', 'Random');
+			mapCheck = findMap(level, '0', 'Random', undefined, undefined, true);
 		}
 	}
 
-	if (mapCheck) return mapCheck;
-	else return 'create';
+	if (mapCheck && !_rerollMapCreation(mapCheck)) {
+		return mapCheck.id;
+	}
+
+	return 'create';
 }
 
 //Decide whether or not to abandon trimps for mapping
@@ -398,6 +405,32 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
 	if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = _obtainUniqueMap(uniqueMapsToGet.sort((a, b) => atData.uniqueMaps[b].zone - atData.uniqueMaps[a].zone)[0]);
 }
 
+function _rerollMapCreation(mapObj = getCurrentMapObject()) {
+	if (!mapObj || typeof mapObj !== 'object' || !getPageSetting('autoMapsReroll')) return false;
+
+	const autoLevelObj = mapSettings.mapname === 'Desolation Destacking' ? hdStats.autoLevelDesolation : hdStats.autoLevelMaxFragments;
+	const mapModifiers = {
+		special: trimpStats.mapSpecial,
+		biome: trimpStats.mapBiome
+	};
+	const runningOptimalMap = mapObj && mapObj.level - game.global.world === get_best(autoLevelObj, false, mapModifiers)[autoLevelType()].mapLevel;
+
+	if (runningOptimalMap) {
+		const { special, biome = getBiome() } = mapSettings;
+		const simulatedMap = _simulateSliders(mapObj.level, special, biome);
+
+		let biomeLoot = biome === 'Farmlands' && game.global.universe === 2 ? 1 : biome === 'Plentiful' ? 0.25 : 0;
+		if (game.singleRunBonuses.goldMaps.owned) biomeLoot += 1;
+		simulatedMap.loot += biomeLoot;
+
+		if (simulatedMap.loot > mapObj.loot || simulatedMap.size < mapObj.size || simulatedMap.difficulty < mapObj.difficulty) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function _setSelectedMap(selectedMap, voidMap, optimalMap) {
 	if (selectedMap === 'world' && mapSettings.mapName !== '' && mapSettings.shouldRun) {
 		if (voidMap) selectedMap = voidMap.id;
@@ -456,14 +489,7 @@ function _setMapRepeat(mapObj = getCurrentMapObject()) {
 					}
 					/* if running optimal map level and we can get better slider rolls then recreate the map */
 				} else if (hdStats.autoLevelMaxFragments) {
-					const autoLevelObj = mapSettings.mapname === 'Desolation Destacking' ? hdStats.autoLevelDesolation : hdStats.autoLevelMaxFragments;
-					const mapModifiers = {
-						special: trimpStats.mapSpecial,
-						biome: trimpStats.mapBiome
-					};
-
-					if (mapLevel === get_best(autoLevelObj, false, mapModifiers)[autoLevelType()].mapLevel) {
-					}
+					repeatState = !_rerollMapCreation(mapObj);
 				}
 			}
 		}

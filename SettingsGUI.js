@@ -1524,6 +1524,15 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Maps', [1, 2],
 			function () { return (trimpStats.perfectMaps) });
 
+		createSetting('autoMapsReroll',
+			function () { return ('Auto Maps Reroll') },
+			function () {
+				let description = "<p>Will reroll your map if you're at the optimal farming level (assuming Infinity fragments) and the best map you can currently purchase is guaranteed to be better than your current map.</p>";
+				description += "<p>This setting will increase the amount of simulations that Auto Level runs so only enable this if you don't have any performance issues.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Maps', [1, 2]);
+
 		createSetting('recycleExplorer',
 			function () { return ('Recycle Pre-Explorers') },
 			function () {
@@ -5041,6 +5050,7 @@ function settingChanged(id, currUniverse) {
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (booleanActions[id] && updateUI) booleanActions[id]();
 		if (id === 'heirloom') alterAutoHeirloomElem();
+		if (id === 'autoMapsReroll') hdStats.autoLevelMaxFragments = btn[enabled] && hdStats.autoLevelInitial ? stats(undefined, false) : undefined;
 	}
 
 	if (btn.type === 'multitoggle') {
