@@ -3485,6 +3485,7 @@ function startFight() {
 		if (game.global.universe === 2) {
 			if (game.buildings.Smithy.owned > 0) game.global.soldierHealthMax *= game.buildings.Smithy.getMult();
 			if (Fluffy.isRewardActive('healthy')) game.global.soldierHealthMax *= 1.5;
+			if (Fluffy.isRewardActive('scaledHealth')) game.global.soldierHealthMax *= Fluffy.rewardConfig.scaledHealth.mult();
 			if (game.buildings.Antenna.owned >= 10) game.global.soldierHealthMax *= game.jobs.Meteorologist.getExtraMult();
 			if (autoBattle.bonuses.Stats.level > 0) game.global.soldierHealthMax *= autoBattle.bonuses.Stats.getMult();
 			if (game.portal.Observation.trinkets > 0) game.global.soldierHealthMax *= game.portal.Observation.getMult();
@@ -3631,6 +3632,7 @@ function startFight() {
 			if (game.global.universe === 2) {
 				if (game.buildings.Smithy.owned > 0) healthTemp *= game.buildings.Smithy.getMult();
 				if (Fluffy.isRewardActive('healthy')) healthTemp *= 1.5;
+				if (Fluffy.isRewardActive('scaledHealth')) healthTemp *= Fluffy.rewardConfig.scaledHealth.mult();
 				if (game.buildings.Antenna.owned >= 10) healthTemp *= game.jobs.Meteorologist.getExtraMult();
 				if (autoBattle.bonuses.Stats.level > 0) healthTemp *= autoBattle.bonuses.Stats.getMult();
 				if (game.portal.Observation.trinkets > 0) healthTemp *= game.portal.Observation.getMult();
@@ -4885,6 +4887,8 @@ function nextWorld() {
 			}
 		}
 	}
+
+	u2Mutations.tree.Tauntimps.check();
 }
 
 function screwThisUniverse(confirmed) {
@@ -5668,9 +5672,7 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 		return getRandomIntSeeded(game.global.skeleSeed++, 0, 100) < (game.talents.skeletimp.purchased ? 20 : 10) ? 'Megaskeletimp' : 'Skeletimp';
 	}
 
-	let exoticChance = 3;
-	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
-	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
+	let exoticChance = getExoticChance();
 	if (game.global.universe === 2 && game.global.spireActive && !mapSuffix) exoticChance = 0;
 
 	if (imports.length && !force && getRandomIntSeeded(enemySeed++, 0, 1000) / 10 < imports.length * exoticChance) {
@@ -5917,6 +5919,13 @@ function getBattleStatBd(what) {
 		currentCalc *= 1.5;
 		textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + " is Life</td><td>+ 50%</td><td>&nbsp;</td><td>+ 50%</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td></tr>';
 	}
+
+	if (what == 'health' && Fluffy.isRewardActive('scaledHealth')) {
+		var amt = Fluffy.rewardConfig.scaledHealth.mult();
+		currentCalc *= amt;
+		textString += "<tr><td class='bdTitle'>Scruffy Scaling Health</td><td>+ 50%</td><td>" + Fluffy.getLevel() + '</td><td>+ ' + prettify((amt - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + '</td></tr>';
+	}
+
 	//Add Geneticist
 	var geneticist = game.jobs.Geneticist;
 	if (game.global.lastLowGen > 0 && what === 'health') {
@@ -7181,9 +7190,10 @@ function getLootBd(what) {
 				textString += "<tr><td class='bdTitle'>Radon Relic</td><td>x 1.05</td><td>" + points + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
 			}
 			if (game.global.universe == 2 && game.global.glassDone && game.global.world > 175) {
-				const mult = Math.pow(1.1, game.global.world - 175);
+				var useGlassWorld = game.global.world > 400 ? 400 : game.global.world;
+				var mult = Math.pow(1.1, useGlassWorld - 175);
 				currentCalc *= mult;
-				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>x 1.1</td><td>" + (game.global.world - 175) + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
+				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>x 1.1</td><td>" + (useGlassWorld  - 175) + '</td><td>x ' + prettify(mult) + '</td><td>' + prettify(currentCalc) + '</td></tr>';
 			}
 			if (game.global.universe == 2 && game.global.world >= 201) {
 				let mult = 400;
