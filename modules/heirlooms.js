@@ -2,7 +2,7 @@ function evaluateHeirloomMods(loom, location) {
 	const heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
 	const heirloomType = heirloomLocation.type;
 	const totalMods = heirloomLocation.mods.length;
-	const heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+	const heirloomRarity = game.heirlooms.rarityNames;
 	const rareToKeep = heirloomRarity.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`));
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomEquipType = ['Shield', 'Staff', 'All', 'Core'][typeToKeep - 1];
@@ -42,7 +42,6 @@ function evaluateHeirloomMods(loom, location) {
 	const modGoal = Math.max(0, Math.min(modTarget, totalMods));
 	const remainingMods = targetMods.length - emptyMods;
 
-	/* const remainingMods = totalMods - targetMods.length + emptyMods; */
 	const modsLeft = totalMods - remainingMods - emptyMods;
 	if (modTarget > 0 && remainingMods > 0 && modGoal >= targetModsTotal - modsLeft + emptyMods) return totalMods - remainingMods;
 	if (modGoal > modsLeft) return 0;
@@ -58,7 +57,7 @@ function worthOfHeirlooms() {
 
 	let heirloomEvaluations = game.global.heirloomsExtra.map((_, index) => evaluateHeirloomMods(index, 'heirloomsExtra'));
 
-	const recycle = heirloomEvaluations
+	/* const recycle = heirloomEvaluations
 		.map((value, index) => ({ value, index }))
 		.filter(({ value }) => value === 0)
 		.map(({ index }) => index)
@@ -68,7 +67,7 @@ function worthOfHeirlooms() {
 		selectHeirloom(index, 'heirloomsExtra');
 		recycleHeirloom(true);
 		heirloomEvaluations.splice(index, 1);
-	}
+	} */
 
 	for (const [index, theLoom] of game.global.heirloomsExtra.entries()) {
 		const data = { location: 'heirloomsExtra', index, rarity: theLoom.rarity, eff: heirloomEvaluations[index] };
@@ -110,10 +109,11 @@ function autoHeirlooms(portal = false) {
 				let carriedHeirlooms = weights[heirloomTypes[x]].shift();
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
 
-				if (heirloomTypeEnabled[heirloomTypes[x]]) {
+				if (heirloomTypeEnabled[heirloomTypes[x]] && carriedHeirlooms.eff > 0) {
 					carryHeirloom();
 				} else {
-					recycleHeirloom(true);
+					/* recycleHeirloom(true); */
+					continue;
 				}
 
 				x--;

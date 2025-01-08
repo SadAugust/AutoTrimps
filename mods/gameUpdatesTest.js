@@ -7574,29 +7574,3 @@ function getLootBd(what) {
 	tooltip('confirm', null, 'update', textString, "getLootBd('" + what + "')", name + ' Loot Breakdown', 'Refresh', true);
 	verticalCenterTooltip();
 }
-
-function rewardU2Spire(level) {
-	const totalCells = 100 * (game.global.spireLevel - 1) + level;
-	let increase = u2SpireBonuses.basics();
-
-	if (game.global.u2SpireCells < totalCells) {
-		game.global.u2SpireCells = totalCells;
-	}
-
-	if (game.global.u2SpireCellsBest < totalCells || totalCells === 1000) {
-		game.global.u2SpireCellsBest = totalCells;
-		increase = u2SpireBonuses.basics() / increase;
-		addSoldierHealth(increase - 1);
-	}
-
-	const text = getSpireStory('U21', totalCells);
-	if (text === '') return;
-
-	if (totalCells === 100) {
-		for (let x = 0; x < 4; x++) {
-			createHeirloom(300, false, false, true);
-		}
-	}
-
-	message(text, 'Story');
-}
