@@ -11,6 +11,7 @@ function importExportTooltip(event, titleText) {
 		exportAutoTrimps: typeof _displayExportAutoTrimps === 'function' ? _displayExportAutoTrimps : null,
 		importAutoTrimps: typeof _displayImportAutoTrimps === 'function' ? _displayImportAutoTrimps : null,
 		forceAutoPortal: typeof _displayPortalForce === 'function' ? _displayPortalForce : null,
+		forceAutoHeirlooms: typeof _displayAutoHeirloomsForce === 'function' ? _displayAutoHeirloomsForce : null,
 		donate: typeof _displayDonate === 'function' ? _displayDonate : null,
 		spireImport: typeof _displaySpireImport === 'function' ? _displaySpireImport : null,
 		priorityOrder: typeof _displayPriorityOrder === 'function' ? _displayPriorityOrder : null,
@@ -37,6 +38,7 @@ function importExportTooltip(event, titleText) {
 		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
 		importAutoTrimps: 'Import AutoTrimps Settings',
 		forceAutoPortal: 'Force Auto Portal',
+		forceAutoHeirlooms: 'Force Auto Heirlooms',
 		donate: 'Donate',
 		spireImport: 'Import Spire Settings',
 		priorityOrder: 'Priority Order Table',
@@ -1136,6 +1138,33 @@ function _displayPortalForce(tooltipDiv) {
 	costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
 
 	costText += '</div>';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function _displayAutoHeirloomsForce(tooltipDiv) {
+	let tooltipText;
+	let costText = "<div class='maxCenter'>";
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	if (!getPageSetting('heirloomAuto')) {
+		tooltipText = `<p>You must enable <b>Auto Heirlooms</b> in the AutoTrimps settings window to use this feature.</p>`;
+		costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
+	} else if (game.global.heirloomsExtra.length === 0) {
+		tooltipText = `<p>You don't have any heirlooms in your temporary storage to run <b>Auto Heirlooms</b> on.</p>`;
+		costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
+	} else {
+		tooltipText = `<p>Are you sure you want to run <b>Auto Heirlooms</b>? This will recycle any heirlooms that don't meet the criteria of mods you selected.</p>`;
+		costText += "<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); autoHeirlooms();'>Force Auto Heirlooms</div>";
+		costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
+		costText += '</div>';
+	}
+
+	const ondisplay = function () {
+		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip();
+		else verticalCenterTooltip();
+	};
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }

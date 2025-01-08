@@ -27,7 +27,7 @@ if (typeof originalLoad !== 'function') {
 			setupAddonUser();
 			updateAutoTrimpSettings(true);
 			RTC_populateRunetrinketCounterInfo();
-			alterAutoHeirloomElem();
+			updateHeirloomSwapElem();
 			atData.autoPerks.displayGUI();
 		} catch (e) {
 			debug(`Load save failed: ${e}`, 'error');
@@ -255,7 +255,7 @@ if (typeof originalActivateClicked !== 'function') {
 			autoHeirlooms(true);
 
 			magmiteText = autoMagmiteSpender(true);
-			alterAutoHeirloomElem();
+			updateHeirloomSwapElem();
 		}
 
 		originalActivateClicked(...arguments);
@@ -487,6 +487,7 @@ function _verticalCenterTooltip(makeLarge, makeSuperLarge) {
 		swapClass('tooltipExtra', 'tooltipExtraSuperLg', tipElem);
 		tipElem.style.left = '17.5%';
 	}
+
 	const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 	let tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
 	if (makeLarge && tipHeight / height > 0.95) {

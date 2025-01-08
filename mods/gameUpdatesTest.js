@@ -4181,7 +4181,11 @@ function fight(makeUp) {
 		cell.health = 0;
 	};
 
-	//Angelic Heal
+	/* angelic heal */
+	const spireNo = Math.floor((game.global.world - (game.global.universe === 2 ? 200 : 100)) / 100);
+	const spireClearedU1 = spireNo <= game.global.spiresCompleted;
+	const spireClearedU2 = spireNo <= game.global.u2SpireCellsBest / 1000;
+	const spireAngelic = game.universe === 2 ? spireClearedU2 : spireClearedU1; /* GS hasn't setup angelic not working in U2 Spires. Unsure if intentional but Angelic tooltip says it should be disabled. */
 	if (game.talents.angelic.purchased && !challengeActive('Berserk') && (!game.global.spireActive || game.global.mapsActive || Math.floor((game.global.world - 100) / 100) <= game.global.spiresCompleted)) {
 		game.global.soldierHealth += game.global.soldierHealth / 2;
 		if (game.global.soldierHealth > game.global.soldierHealthMax) game.global.soldierHealth = game.global.soldierHealthMax;

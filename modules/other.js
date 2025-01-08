@@ -1411,11 +1411,11 @@ function alterHeirloomWindow() {
 	const elem = document.getElementById('heirloomTitleBar');
 	if (!elem) return;
 
-	elem.childNodes[0].style.width = '33%';
-	elem.childNodes[0].style.fontSize = '1.3vw';
-	elem.childNodes[1].style.width = '40%';
-	elem.childNodes[1].style.fontSize = '1.3vw';
-	elem.childNodes[2].style.width = '27%';
+	elem.childNodes[0].style.width = '28%';
+	elem.childNodes[0].style.fontSize = '1.2vw';
+	elem.childNodes[1].style.width = '34%';
+	elem.childNodes[1].style.fontSize = '1.2vw';
+	elem.childNodes[2].style.width = '38%';
 
 	if (!document.getElementById('heirloomSwappingBtn')) {
 		const description = autoTrimpSettings.heirloomAuto.description();
@@ -1431,11 +1431,28 @@ function alterHeirloomWindow() {
 		initial.innerHTML = 'Heirloom Swapping';
 		const column = elem.children[2];
 		column.insertBefore(initial, column.firstChild);
-		alterAutoHeirloomElem();
+		updateHeirloomSwapElem();
+	}
+
+	if (!document.getElementById('heirloomAutoBtn')) {
+		const description = autoTrimpSettings.heirloomAutoForceRun.description();
+		const initial = _createElement('DIV', {
+			id: `heirloomAutoBtn`,
+			style: '',
+			class: 'pointer noselect heirBtn heirInfo settingsBtn settingBtn3',
+			onclick: 'cancelTooltip(); importExportTooltip("forceAutoHeirlooms");',
+			onmouseover: `tooltip("Run Auto Heirlooms", "customText", event, '${description}')`,
+			onmouseout: 'tooltip("hide")'
+		});
+
+		initial.innerHTML = 'Run Auto Heirlooms';
+		const column = elem.children[2];
+		column.insertBefore(initial, column.firstChild);
+		updateHeirloomSwapElem();
 	}
 }
 
-function alterAutoHeirloomElem() {
+function updateHeirloomSwapElem() {
 	const elem = document.getElementById('heirloomSwappingBtn');
 	if (!elem) return;
 

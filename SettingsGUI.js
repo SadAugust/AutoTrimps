@@ -3419,7 +3419,7 @@ function initialiseAllSettings() {
 			function () { return ('Auto Heirlooms') },
 			function () {
 				let description = "<p>Master switch for whether the script will try to keep any of the heirlooms in your temporary section when portaling.</p>";
-				description += "<p>This setting <b>will not recycle</b> any of your carried heirlooms, it only checks your temporary section.</p>";
+				description += "<p>This setting <b>will not recycle</b> any of your carried heirlooms, it only checks your temporary heirlooms section.</p>";
 				description += "<p>When run it will check the mods you want the heirloom to have and checks if the heirlooms in your temporary section for the type(s) you have selected to keep have all of the selected mods and if any do they will be stashed otherwise will be recycled.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -3479,7 +3479,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Run Auto Heirlooms and sort heirlooms without needing to portal.</p>";
 				return description;
-			}, 'action', null, 'autoHeirlooms()', 'Heirloom', [1, 2],
+			}, 'action', null, 'cancelTooltip(); importExportTooltip("forceAutoHeirlooms");', 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAutoShield',
@@ -5049,7 +5049,7 @@ function settingChanged(id, currUniverse) {
 		btn[enabled] = !btn[enabled];
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (booleanActions[id] && updateUI) booleanActions[id]();
-		if (id === 'heirloom') alterAutoHeirloomElem();
+		if (id === 'heirloom') updateHeirloomSwapElem();
 		if (id === 'autoMapsReroll') hdStats.autoLevelMaxFragments = btn[enabled] && hdStats.autoLevelInitial ? stats(undefined, false) : undefined;
 	}
 
