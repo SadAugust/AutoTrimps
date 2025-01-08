@@ -6,7 +6,11 @@ function runSurky() {
 function allocateSurky(perks) {
 	if (portalUniverse !== 2) return;
 	//Can't respec perks when running Hypothermia so don't try as it causes errors
-	if (/* !portalWindowOpen &&  */ challengeActive('Hypothermia')) return;
+	if (/* !portalWindowOpen &&  */ challengeActive('Hypothermia')) {
+		const portalStoryElem = document.getElementById('portalStory');
+		if (portalStoryElem) portalStoryElem.innerHTML = "<span style='color: red'>You cannot change your perks while on the Hypothermia Challenge!</span>";
+		return;
+	}
 
 	const perk = {};
 	for (let [key, value] of Object.entries(perks)) {

@@ -37,6 +37,13 @@ function allocatePerky(showTooltips = true) {
 	const xpDivStyle = document.querySelector('#weight-xpDiv').style;
 	if (game.global.spiresCompleted >= 2 && xpDivStyle.display !== 'inline') xpDivStyle.display = 'inline';
 
+	//Can't respec perks when running Hypothermia so don't try as it causes errors
+	if (/* !portalWindowOpen &&  */ challengeActive('Hypothermia')) {
+		const portalStoryElem = document.getElementById('portalStory');
+		if (portalStoryElem) portalStoryElem.innerHTML = "<span style='color: red'>You cannot change your perks while on the Hypothermia Challenge!</span>";
+		return;
+	}
+
 	if (showTooltips) {
 		const preset = $$('#preset').value;
 		if (preset === 'trapper' && game.global.selectedChallenge !== 'Trapper' && !challengeActive('Trapper')) {
