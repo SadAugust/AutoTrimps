@@ -3507,7 +3507,7 @@ function initialiseAllSettings() {
 					heirloomTiersAvailable = ['Plagued', 'Radiating'];
 					if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
 					if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
-					if (game.global.stringVersion === '5.10.0' && hze >= 300) heirloomTiersAvailable.push('Mutated');
+					if ((game.global.stringVersion === '5.10.0' || ['SadAugust', 'test'].includes(getPageSetting('gameUser'))) && hze >= 300) heirloomTiersAvailable.push('Mutated');
 				}
 				else {
 					hze = game.stats.highestLevel.valueTotal();

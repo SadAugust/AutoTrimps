@@ -107,9 +107,9 @@ function autoHeirlooms(portal = false) {
 
 			if (weights && weights[heirloomTypes[x]].length > 0) {
 				let carriedHeirlooms = weights[heirloomTypes[x]].shift();
-				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
 
 				if (heirloomTypeEnabled[heirloomTypes[x]] && carriedHeirlooms.eff > 0) {
+					selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
 					carryHeirloom();
 				} else {
 					/* recycleHeirloom(true); */

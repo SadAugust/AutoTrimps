@@ -322,9 +322,7 @@ function c2RunnerChallengeOrder(universe = portalUniverse) {
 }
 
 function _autoHeirloomMods(heirloomType) {
-	const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	if (game.global.stringVersion === '5.10.0') rarities.push('Mutated');
-
+	const rarities = game.heirlooms.rarityNames;
 	const heirloomRarity = rarities.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`, atConfig.settingUniverse));
 	const heirloomModsArray = ['Any'];
 
@@ -336,7 +334,7 @@ function _autoHeirloomMods(heirloomType) {
 	const heirlooms = game.heirlooms[heirloomType];
 
 	for (let item in heirlooms) {
-		if (_shouldSkipHeirloom(item, heirlooms, heirloomRarity)) continue;
+		if (_shouldSkipHeirloomMod(item, heirlooms, heirloomRarity)) continue;
 		if (typeof heirloomData[item] === 'undefined') continue;
 
 		heirloomModsArray.push(heirloomData[item].name);
@@ -345,10 +343,17 @@ function _autoHeirloomMods(heirloomType) {
 	return heirloomModsArray;
 }
 
-function _shouldSkipHeirloom(item, heirlooms, heirloomRarity) {
+function _shouldSkipHeirloomMod(item, heirlooms, heirloomRarity) {
 	const heirloom = heirlooms[item];
 
-	return item === 'empty' || (heirloom.filter && !heirloom.filter()) || (heirloom.steps && heirloom.steps[heirloomRarity] === -1);
+	let skipMod = false;
+	if (item === 'empty') skipMod = true;
+	if (heirloom.filter && !heirloom.filter()) skipMod = true;
+	if (heirloom.steps && heirloom.steps[heirloomRarity] === -1) skipMod = true;
+	if (heirloom.minTier && heirloomRarity < heirloom.minTier) skipMod = true;
+	if (heirloom.maxTier && heirloomRarity > heirloom.maxTier) skipMod = true;
+
+	return skipMod;
 }
 
 function checkLiqZoneCount(universe = game.global.universe, getAmount = false) {
