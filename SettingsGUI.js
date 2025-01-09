@@ -2668,6 +2668,7 @@ function initialiseAllSettings() {
 			function () { return ('P: HD Ratio') },
 			function () {
 				let description = "<p>What HD ratio cut-off to use when farming for the Improbability. If this setting is 100, the script will destack until you can kill the Improbability in 100 average hits or there are no Pandemonium stacks remaining to clear.</p>";
+				description += "<p>Destacking will use Fast Attack maps when you don't have <b>Hyperspeed 2</b> for your current zone otherwise it will use Large Metal Cache maps.</p>"
 				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
@@ -2678,6 +2679,7 @@ function initialiseAllSettings() {
 			function () { return ('P: Destack Zone') },
 			function () {
 				let description = "<p>The zone you'd like to start destacking from, can be used in conjunction with <b>P: HD Ratio</b> but when you're at or above this zone it will clear stacks until 0 are remaining regardless of the value set in <b>P: HD Ratio</b>.</p>";
+				description += "<p>Destacking will use Fast Attack maps when you don't have <b>Hyperspeed 2</b> for your current zone otherwise it will use Large Metal Cache maps.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
@@ -2685,17 +2687,17 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('pandemonium', atConfig.settingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		createSetting('pandemoniumAE',
-			function () { return (['P: Auto Equip: Off', 'P: Auto Equip: On', 'P: Auto Equip: LMC', 'P: Auto Equip: Huge Cache']) },
+			function () { return (['P Auto Equip: Off', 'P Auto Equip: On', 'P Auto Equip: Large Metal Cache', 'P Auto Equip: Huge Cache']) },
 			function () {
 				let description = "<p>This setting provides some equipment farming possibilites to help speed your runs up.</p>";
 				description += "<p><b>Will override equipment purchasing settings when enabled.</b></p>";
 				description += "<p>When farming it calculates the equips you'll be able to prestige and farms levels in the other items first then prestiges and upgrades them one at a time to ensure minimal power loss.</p>";
 				description += "<p><b>P: Auto Equip: Off</b><br>Disables this setting.</p>";
 				description += "<p><b>P: Auto Equip: On</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.</p>";
-				description += "<p><b>P: Auto Equip: LMC</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache. Overrides worker settings to ensure that you farm as much metal as possible.</p>";
-				description += "<p><b>P: Auto Equip: Huge Cache</b><br>Uses the same settings as <b>P: Auto Equip: LMC</b> but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure a fast farming speed</p>";
-
-				description += "<p><b>Recommended:</b> P: Auto Equip: LMC</p>";
+				description += "<p><b>P: Auto Equip: Large Metal Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache. Overrides worker settings to ensure that you farm as much metal as possible.</p>";
+				description += "<p><b>P: Auto Equip: Huge Cache</b><br>Works the same as <b>P Auto Equip: Large Metal Cache</b> but switches to <b>Huge Cache</b> maps for extra resources when a <b>Large Metal Cache</b> can no longer guarantee any equipment levels. Automatically switches between caches depending on the cost of equipment to ensure a fast farming speed.</p>";
+				description += "<p>When using either of the cache farming options it will only farm when above cell 91 and below zone 150.</p>";
+				description += "<p><b>Recommended:</b> P Auto Equip: Large Metal Cache</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', atConfig.settingUniverse) && autoTrimpSettings.pandemonium.require()) });
@@ -2704,6 +2706,8 @@ function initialiseAllSettings() {
 			function () { return ('P AE: Zone') },
 			function () {
 				let description = "<p>The zone you would like to start equipment farming from.</p>";
+				description += "<p>Will only farm for equipment levels when above cell 91 and below zone 150.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting and always farm if equips are attainable through farming.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', atConfig.settingUniverse) && autoTrimpSettings.pandemonium.require() && getPageSetting('pandemoniumAE', atConfig.settingUniverse) > 1) });
@@ -2712,7 +2716,8 @@ function initialiseAllSettings() {
 			function () { return ('P AE: HD Ratio') },
 			function () {
 				let description = "<p>Only farm for equipment when your <b>World HD Ratio</b> is above this value.</p>";
-				description += "<p>If set to <b>0 or below</b> it will disable this setting and always farm if equips are available to farm.</p>";
+				description += "<p>Will only farm for equipment levels when above cell 91 and below zone 150.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting and always farm if equips are attainable through farming.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', atConfig.settingUniverse) && autoTrimpSettings.pandemonium.require() && getPageSetting('pandemoniumAE', atConfig.settingUniverse) > 1) });
@@ -3420,7 +3425,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Master switch for whether the script will try to keep any of the heirlooms in your temporary section when portaling.</p>";
 				description += "<p>This setting <b>will not recycle</b> any of your carried heirlooms, it only checks your temporary heirlooms section.</p>";
-				description += "<p>When run it will check the mods you want the heirloom to have and checks if the heirlooms in your temporary section for the type(s) you have selected to keep have all of the selected mods and if any do they will be stashed otherwise will be recycled.</p>";
+				description += "<p>When run, this will check the mods you've selected against each heirloom in your temporary section and if have the correct mods they'll be moved to your carried section.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -3526,7 +3531,7 @@ function initialiseAllSettings() {
 		createSetting('heirloomAutoShieldBlacklist',
 			function () { return ('Blacklist') },
 			function () {
-				let description = "<p>Will automatically recycle Shield heirlooms with the mods you input into this setting.</p>";
+				let description = "<p>Will ignore Shield heirlooms with the mods you input into this setting.</p>";
 				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
@@ -3636,7 +3641,7 @@ function initialiseAllSettings() {
 		createSetting('heirloomAutoRareToKeepStaff',
 			function () { return ('Rarity to Keep') },
 			function () {
-				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and recycle others.</p>";
+				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and ignore others.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
 				description += "<p>Only display the mods available for your selected heirloom tier.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
@@ -3668,7 +3673,7 @@ function initialiseAllSettings() {
 		createSetting('heirloomAutoStaffBlacklist',
 			function () { return ('Blacklist') },
 			function () {
-				let description = "<p>Will automatically recycle Staff heirlooms with the mods you input into this setting.</p>";
+				let description = "<p>Will ignore Staff heirlooms with the mods you input into this setting.</p>";
 				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;
@@ -3778,7 +3783,7 @@ function initialiseAllSettings() {
 		createSetting('heirloomAutoRareToKeepCore',
 			function () { return ('Rarity to Keep') },
 			function () {
-				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom, recycles all others.</p>";
+				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and ignore others.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
@@ -3800,7 +3805,7 @@ function initialiseAllSettings() {
 		createSetting('heirloomAutoCoreBlacklist',
 			function () { return ('Blacklist') },
 			function () {
-				let description = "<p>Will automatically recycle Core heirlooms with the mods you input into this setting.</p>";
+				let description = "<p>Will ignore Core heirlooms with the mods you input into this setting.</p>";
 				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
 				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
 				return description;

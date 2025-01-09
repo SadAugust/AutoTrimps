@@ -2222,7 +2222,6 @@ function pandemoniumDestack(lineCheck) {
 
 	const mapSpecial = trimpStats.hyperspeed2 ? 'lmc' : 'fa';
 	const mapLevel = autoLevelCheck(mapName, mapSpecial);
-	const jobRatio = '0.001,1,1';
 
 	const shouldMap = pandemonium > 0 && (hdStats.hdRatio > destackHits || game.global.world >= destackZone);
 
@@ -3846,6 +3845,7 @@ function fragmentFarm() {
 		MODULES.maps.fragmentFarming = false;
 		return;
 	}
+
 	MODULES.maps.fragmentFarming = true;
 	//Purchase fragment farming map if we're in map chamber. If you don't have enough fragments for this map then RIP
 	if (!game.global.preMapsActive) return;
