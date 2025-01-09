@@ -501,7 +501,7 @@ function stats(lootFunction = lootDefault, checkFragments = true) {
 			size,
 			loot: lootMult,
 			sliders: simulateMap.sliders,
-			perfect: map ? difficulty === 0.75 && size === (saveData.reducer ? 20 : 25) && lootMult === 1.6 + biomeLoot : simulateMap.perfect
+			perfect: map ? difficulty === 0.75 && size === (saveData.mapReducer ? 20 : 25) && lootMult === 1.6 + biomeLoot : simulateMap.perfect
 		};
 
 		let tmp;

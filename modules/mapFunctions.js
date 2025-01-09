@@ -2241,7 +2241,6 @@ function pandemoniumDestack(lineCheck) {
 		mapLevel,
 		autoLevel: true,
 		special: mapSpecial,
-		jobRatio,
 		pandemonium,
 		repeat: !repeat,
 		status
