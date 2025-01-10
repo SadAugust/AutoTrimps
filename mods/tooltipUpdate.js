@@ -74,7 +74,7 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 
 	const tooltipObj = { what, isItIn, event, textString, attachFunction, numCheck, renameBtn, noHide, hideCancel, ignoreShift, tooltipText, costText, ondisplay, toTip, titleText, tip2, noExtraCheck };
 
-	const whatFunctions = tooltipWhatFunctionsObj();
+	const whatFunctions = tooltipWhatFunctionsObj(tooltipObj);
 	if (whatFunctions[what]) {
 		if (typeof whatFunctions[what] === 'function') {
 			const result = whatFunctions[what](tooltipObj, elem);
@@ -85,7 +85,7 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		}
 	}
 
-	const isItInFunctions = tooltipIsItInFunctionsObj();
+	const isItInFunctions = tooltipIsItInFunctionsObj(tooltipObj);
 	if (isItInFunctions[tooltipObj.isItIn]) {
 		if (typeof isItInFunctions[tooltipObj.isItIn] === 'function') {
 			const result = isItInFunctions[tooltipObj.isItIn](tooltipObj, elem);
@@ -141,7 +141,7 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 	if (tooltipObj.event !== 'update') positionTooltip(elem, tooltipObj.event, tooltipObj.renameBtn);
 }
 
-function tooltipWhatFunctionsObj() {
+function tooltipWhatFunctionsObj(tooltipObj) {
 	return {
 		'Confirm Purchase': tooltipConfirmPurchase,
 		'Trimps Info': tooltipTrimpsInfo,
@@ -170,7 +170,7 @@ function tooltipWhatFunctionsObj() {
 		'Configure Generator State': tooltipConfigureGeneratorState,
 		'Rename SA Preset': tooltipRenameSAPreset,
 		'Configure AutoJobs': tooltipConfigureAutoJobs,
-		'Archaeology Automator': !isItIn ? tooltipArchaeologyAutomator : null,
+		'Archaeology Automator': !tooltipObj.isItIn ? tooltipArchaeologyAutomator : null,
 		AutoJobs: tooltipAutoJobs,
 		AutoGold: tooltipAutoGold,
 		Unliving: tooltipUnliving,
@@ -214,7 +214,7 @@ function tooltipWhatFunctionsObj() {
 		'New Achievements': tooltipNewAchievements,
 		'Upgrade Generator': tooltipUpgradeGenerator,
 		Queue: tooltipQueue,
-		Toxic: isItIn !== 'dailyStack' ? tooltipToxic : null,
+		Toxic: tooltipObj.isItIn !== 'dailyStack' ? tooltipToxic : null,
 		Momentum: tooltipMomentum,
 		Custom: tooltipCustom,
 		Max: tooltipMax,
@@ -239,7 +239,7 @@ function tooltipWhatFunctionsObj() {
 	};
 }
 
-function tooltipIsItInFunctionsObj() {
+function tooltipIsItInFunctionsObj(tooltipObj) {
 	return {
 		advMaps: tooltipAdvMaps,
 		dailyStack: tooltipDailyStack,
@@ -612,7 +612,7 @@ function tooltipConfigureAutoStructure(tooltipObj, elem) {
 	tooltipObj.tooltipText += '</tr><tr>';
 	if (game.global.universe === 1) {
 		tooltipObj.tooltipText += '<tr>';
-		//stupid gigas making this all spaghetti
+		/* stupid gigas making this all spaghetti */
 		setting = settingGroup.Gigastation;
 		selectedPerc = setting ? setting.value : 0.1;
 		checkbox = buildNiceCheckbox('structConfigGigastation', 'autoCheckbox', setting && setting.enabled);
