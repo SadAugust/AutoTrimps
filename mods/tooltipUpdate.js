@@ -1289,7 +1289,7 @@ function tooltipSetMapAtZone(tooltipObj, elem) {
 			'>Run Void</option>';
 
 		if (game.global.universe === 2) {
-			if (game.global.highestRadonLevelCleared >= 32) presetDropdown += "<option value='10'" + (vals.preset === 10 ? " selected='selected'" : '') + '>Atlantrimp</option>';
+			if (game.global.highestRadonLevelCleared >= 32 && game.global.stringVersion !== '5.9.2') presetDropdown += "<option value='10'" + (vals.preset === 10 ? " selected='selected'" : '') + '>Atlantrimp</option>';
 			if (game.global.highestRadonLevelCleared >= 49) presetDropdown += "<option value='8'" + (vals.preset === 8 ? " selected='selected'" : '') + '>Melting Point</option>';
 			if (game.global.highestRadonLevelCleared >= 69) presetDropdown += "<option value='5'" + (vals.preset === 5 ? " selected='selected'" : '') + '>Black Bog</option>';
 			if (game.global.highestRadonLevelCleared >= 174) presetDropdown += "<option value='9'" + (vals.preset === 9 ? " selected='selected'" : '') + '>Frozen Castle</option>';
@@ -2102,7 +2102,9 @@ function tooltipError(tooltipObj, elem) {
 }
 
 function tooltipScaleEqualitySettings(tooltipObj, elem) {
-	const state = game.portal.Equality.scalingActive ? 'On' : 'Off';
+	let state = game.portal.Equality.getSetting('scalingActive', equalitySlidersTip) ? 'On' : 'Off';
+	if (game.global.stringVersion === '5.9.2') state = game.portal.Equality.scalingActive ? 'On' : 'Off';
+
 	if (tooltipObj.textString) {
 		if (tooltipObj.textString) tooltipText = '<div style="font-size: 1.7vh"><div class="maxCenter"><div style="width: 50%; margin-left: 25%" role="button" class="noselect pointer portalThing thing perkColorOff changingOff equalityColor' + state + '" id="equalityScaling2" onclick="toggleEqualityScale(true)"><span class="thingName">Scale Equality</span><br><span class="thingOwned"><span id="equalityScalingState2">' + state + '</span></span></div></div><br/>';
 	} else {
@@ -2117,7 +2119,7 @@ function tooltipScaleEqualitySettings(tooltipObj, elem) {
 	swapClass('tooltipExtra', 'tooltipExtraEquality', elem);
 
 	let spireBtn = '';
-	if (game.global.highestRadonLevelCleared >= 299) {
+	if (game.global.highestRadonLevelCleared >= 299 && game.global.stringVersion !== '5.9.2') {
 		spireBtn = "<span id='spireEqualityToggle' onclick='toggleSpireEquality(" + tooltipObj.textString + ")' class='btn btn-primary'>" + (equalitySlidersTip == 'reg' ? 'Show Spire Settings' : 'Show Regular Settings') + '</span>';
 		tooltipObj.what += equalitySlidersTip == 'reg' ? ' (Regular Settings)' : ' (Spire Settings)';
 	}
@@ -2132,7 +2134,10 @@ function tooltipScaleEqualitySettings(tooltipObj, elem) {
 
 function tooltipEqualityScaling(tooltipObj, elem) {
 	const activeLevels = game.portal.Equality.getActiveLevels();
-	tooltipObj.tooltipText = '<p>You can enable or disable Equality Scaling at any time.</p><p>With Equality Scaling On, each Portal starts with 0 levels of Equality active. If a group of Trimps dies after attacking <b>' + game.portal.Equality.getSetting('scalingSetting') + '</b> or fewer time' + needAnS(game.portal.Equality.getSetting('scalingSetting')) + ', one level of Equality will activate, up to your purchased level of Equality.';
+	let scalingSetting = game.portal.Equality.getSetting('scalingSetting');
+	if (game.global.stringVersion === '5.9.2') scalingSetting = game.portal.Equality.scalingSetting;
+
+	tooltipObj.tooltipText = '<p>You can enable or disable Equality Scaling at any time.</p><p>With Equality Scaling On, each Portal starts with 0 levels of Equality active. If a group of Trimps dies after attacking <b>' + scalingSetting + '</b> or fewer time' + needAnS(scalingSetting) + ', one level of Equality will activate, up to your purchased level of Equality.';
 	tooltipObj.tooltipText += '</p><p><b>You currently have ' + activeLevels + ' stack' + needAnS(activeLevels) + ' of Equality active.</b></p>';
 	if (!tooltipObj.textString) tooltipObj.tooltipText += '<p><b>Ctrl Click this button to customize your Equality settings.</b></p>';
 	else tooltipObj.tooltipText += '<p>(Hotkey: E)</p>';

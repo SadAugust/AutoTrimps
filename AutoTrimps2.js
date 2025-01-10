@@ -189,6 +189,7 @@ function loadScriptsAT() {
 
 			if (game.global.stringVersion === '5.9.2') {
 				await loadModules('gameUpdates', atConfig.modules.pathMods);
+				await loadModules('tooltipUpdate', atConfig.modules.pathMods);
 			}
 
 			if (game.global.stringVersion === '5.10.0' && game.global.betaV === 5) {
