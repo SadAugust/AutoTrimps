@@ -192,6 +192,8 @@ function _populateMostEfficientEquipment(mostEfficient, buyPrestigesObj, canAnci
 
 		for (const equipName in atData.equipment) {
 			const equipData = game.equipment[equipName];
+			const maybeBuyPrestige = buyPrestigesObj[equipName];
+
 			if (equipData.locked || (pandemonium && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
 			if (equipName === 'Shield') {
 				if (ignoreShield) continue;
@@ -202,7 +204,9 @@ function _populateMostEfficientEquipment(mostEfficient, buyPrestigesObj, canAnci
 					const { Gym } = getPageSetting('buildingSettingsArray');
 
 					if (Gym && Gym.enabled && (Gym.buyMax <= 0 || Gym.buyMax > game.buildings.Gym.owned) && getPageSetting('buildingsType')) {
-						if (hdStats.shieldGymEff.mostEfficient !== 'Shield') continue;
+						if (!maybeBuyPrestige.prestigeAvailable || game.resources.wood.owned * 0.001 < maybeBuyPrestige.prestigeCost) {
+							if (hdStats.shieldGymEff.mostEfficient !== 'Shield') continue;
+						}
 					}
 				}
 
@@ -214,8 +218,6 @@ function _populateMostEfficientEquipment(mostEfficient, buyPrestigesObj, canAnci
 			const zoneGo = mostEfficient[equipType].zoneGo;
 			const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct;
 			const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
-			const maybeBuyPrestige = buyPrestigesObj[equipName];
-
 			if (forcePrestige && equipName !== 'Shield') {
 				if (prestigesAvailable && allowPrestigeSkip && !maybeBuyPrestige.prestigeAvailable) {
 					const otherEquipType = equipType === 'attack' ? 'health' : 'attack';
