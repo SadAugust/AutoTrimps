@@ -72,25 +72,7 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		}
 	}
 
-	const tooltipObj = {
-		what,
-		isItIn,
-		event,
-		textString,
-		attachFunction,
-		numCheck,
-		renameBtn,
-		noHide,
-		hideCancel,
-		ignoreShift,
-		tooltipText,
-		costText,
-		ondisplay,
-		toTip,
-		titleText,
-		tip2,
-		noExtraCheck
-	};
+	const tooltipObj = { what, isItIn, event, textString, attachFunction, numCheck, renameBtn, noHide, hideCancel, ignoreShift, tooltipText, costText, ondisplay, toTip, titleText, tip2, noExtraCheck };
 
 	const whatFunctions = tooltipWhatFunctionsObj();
 	if (whatFunctions[what]) {
