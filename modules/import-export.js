@@ -1155,7 +1155,7 @@ function _displayAutoHeirloomsForce(tooltipDiv) {
 		tooltipText = `<p>You don't have any heirlooms in your temporary storage to run <b>Auto Heirlooms</b> on.</p>`;
 		costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
 	} else {
-		tooltipText = `<p>Are you sure you want to run <b>Auto Heirlooms</b>? This will recycle any heirlooms that don't meet the criteria of mods you selected.</p>`;
+		tooltipText = `<p>Are you sure you want to run <b>Auto Heirlooms</b>? This will move  any heirlooms meet the criteria of mods you selected in the <b>AutoTrimps settings</b> into your carried heirlooms section.</p>`;
 		costText += "<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); autoHeirlooms();'>Force Auto Heirlooms</div>";
 		costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
 		costText += '</div>';
