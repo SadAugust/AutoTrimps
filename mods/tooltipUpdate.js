@@ -2102,8 +2102,7 @@ function tooltipError(tooltipObj, elem) {
 }
 
 function tooltipScaleEqualitySettings(tooltipObj, elem) {
-	let state = game.portal.Equality.getSetting('scalingActive', equalitySlidersTip) ? 'On' : 'Off';
-	if (game.global.stringVersion === '5.9.2') state = game.portal.Equality.scalingActive ? 'On' : 'Off';
+	const state = (game.portal.Equality.getSetting ? game.portal.Equality.getSetting('scalingActive', equalitySlidersTip) : game.portal.Equality.scalingActive) ? 'On' : 'Off';
 
 	if (tooltipObj.textString) {
 		if (tooltipObj.textString) tooltipText = '<div style="font-size: 1.7vh"><div class="maxCenter"><div style="width: 50%; margin-left: 25%" role="button" class="noselect pointer portalThing thing perkColorOff changingOff equalityColor' + state + '" id="equalityScaling2" onclick="toggleEqualityScale(true)"><span class="thingName">Scale Equality</span><br><span class="thingOwned"><span id="equalityScalingState2">' + state + '</span></span></div></div><br/>';
@@ -2134,8 +2133,7 @@ function tooltipScaleEqualitySettings(tooltipObj, elem) {
 
 function tooltipEqualityScaling(tooltipObj, elem) {
 	const activeLevels = game.portal.Equality.getActiveLevels();
-	let scalingSetting = game.portal.Equality.getSetting('scalingSetting');
-	if (game.global.stringVersion === '5.9.2') scalingSetting = game.portal.Equality.scalingSetting;
+	let scalingSetting = game.portal.Equality.getSetting ? game.portal.Equality.getSetting('scalingSetting') : game.portal.Equality.scalingSetting;
 
 	tooltipObj.tooltipText = '<p>You can enable or disable Equality Scaling at any time.</p><p>With Equality Scaling On, each Portal starts with 0 levels of Equality active. If a group of Trimps dies after attacking <b>' + scalingSetting + '</b> or fewer time' + needAnS(scalingSetting) + ', one level of Equality will activate, up to your purchased level of Equality.';
 	tooltipObj.tooltipText += '</p><p><b>You currently have ' + activeLevels + ' stack' + needAnS(activeLevels) + ' of Equality active.</b></p>';

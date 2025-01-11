@@ -1417,9 +1417,9 @@ function alterHeirloomWindow() {
 	if (!elem) return;
 
 	elem.childNodes[0].style.width = '28%';
-	elem.childNodes[0].style.fontSize = '1.2vw';
+	elem.childNodes[0].style.fontSize = '1.15vw';
 	elem.childNodes[1].style.width = '34%';
-	elem.childNodes[1].style.fontSize = '1.2vw';
+	elem.childNodes[1].style.fontSize = '1.15vw';
 	elem.childNodes[2].style.width = '38%';
 
 	if (!document.getElementById('heirloomSwappingBtn')) {
