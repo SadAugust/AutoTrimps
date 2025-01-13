@@ -306,6 +306,24 @@ function checkFastEnemy(enemy = getCurrentEnemy()) {
 	return false;
 }
 
+function checkMapForPerfect(mapObj = getCurrentMapObject(), biome = false, special = false) {
+	if (mapObj.location === 'void') return true;
+
+	const size = masteryPurchased('mapLoot') ? 20 : 25;
+	const difficulty = 0.75;
+
+	let loot = 1.6;
+	if (mapObj.location === 'Plentiful') loot += 0.25;
+	if (mapObj.location === 'Farmlands' && game.global.universe === 2) loot += 1;
+	if (game.singleRunBonuses.goldMaps.owned) loot += 1;
+
+	if (size !== mapObj.size || difficulty !== mapObj.difficulty || loot !== mapObj.loot) return false;
+	if (biome && biome !== mapObj.location) return false;
+	if (special && special !== mapObj.special) return false;
+
+	return true;
+}
+
 /* Subtracts time paused from game time value */
 function getGameTime() {
 	const { start: startTime, time: globalTime } = game.global;

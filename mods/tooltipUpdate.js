@@ -566,7 +566,7 @@ function tooltipConfigureAutoStructure(tooltipObj, elem) {
 	var count = 0;
 	var setting, selectedPerc, checkbox, options;
 	var settingGroup = getAutoStructureSetting();
-	for (var item in game.buildings) {
+	for (let item in game.buildings) {
 		var building = game.buildings[item];
 		if (building.blockU2 && game.global.universe === 2) continue;
 		if (building.blockU1 && game.global.universe === 1) continue;
@@ -574,7 +574,7 @@ function tooltipConfigureAutoStructure(tooltipObj, elem) {
 		if (!building.AP) continue;
 		if (count !== 0 && count % 2 === 0) tooltipObj.tooltipText += '</tr><tr>';
 		setting = settingGroup[item];
-		selectedPerc = setting ? setting.value : 0.1;
+		selectedPerc = setting ? Number(setting.value) : 0.1;
 		checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
 		options =
 			"<option value='0.1'" +
@@ -592,6 +592,7 @@ function tooltipConfigureAutoStructure(tooltipObj, elem) {
 			">50%</option><option value='99'" +
 			(selectedPerc === 99 ? ' selected' : '') +
 			'>99%</option>';
+
 		var id = 'structSelect' + item;
 		tooltipObj.tooltipText +=
 			"<td><div class='row'><div class='col-xs-5' style='padding-right: 5px'>" +
@@ -607,14 +608,17 @@ function tooltipConfigureAutoStructure(tooltipObj, elem) {
 			"' type='number'  value='" +
 			(setting && setting.buyMax ? setting.buyMax : 0) +
 			"'/></div></div></td>";
+
 		count++;
 	}
+
 	tooltipObj.tooltipText += '</tr><tr>';
+
 	if (game.global.universe === 1) {
 		tooltipObj.tooltipText += '<tr>';
 		/* stupid gigas making this all spaghetti */
 		setting = settingGroup.Gigastation;
-		selectedPerc = setting ? setting.value : 0.1;
+		selectedPerc = setting ? Number(setting.value) : 0.1;
 		checkbox = buildNiceCheckbox('structConfigGigastation', 'autoCheckbox', setting && setting.enabled);
 		options =
 			"<option value='0.1'" +
@@ -646,6 +650,7 @@ function tooltipConfigureAutoStructure(tooltipObj, elem) {
 		}
 		tooltipObj.tooltipText += '</tr>';
 	}
+
 	options = "<option value='0'>Apply Percent to All</option><option value='0.1'>0.1%</option><option value='1'>1%</option><option value='5'>5%</option><option value='10'>10%</option><option value='25'>25%</option><option value='50'>50%</option><option value='99'>99%</option>";
 	tooltipObj.tooltipText += "<tr style='text-align: center'>";
 	tooltipObj.tooltipText += "<td><span data-nexton='true' onclick='toggleAllAutoStructures(this)' class='btn colorPrimary btn-md toggleAllBtn'>Toggle All Structures On</span></td>";
@@ -679,7 +684,7 @@ function tooltipConfigureAutoEquip(tooltipObj, elem) {
 		var equipment = game.equipment[item];
 		if (count !== 0 && count % 2 === 0) tooltipObj.tooltipText += '</tr><tr>';
 		setting = settingGroup[item];
-		selectedPerc = setting ? setting.value : 0.1;
+		selectedPerc = setting ? Number(setting.value) : 0.1;
 		type = equipment.health ? 'Armor' : 'Wep';
 		checkbox = buildNiceCheckbox('equipConfig' + item, 'autoCheckbox checkbox' + type, setting && setting.enabled);
 		options =
@@ -787,7 +792,7 @@ function tooltipConfigureAutoJobs(tooltipObj, elem) {
 		tooltipObj.tooltipText += '<tr>';
 		var item = ratioJobs[x];
 		var setting = settingGroup[item];
-		var selectedPerc = setting ? setting.value : 0.1;
+		var selectedPerc = setting ? Number(setting.value) : 0.1;
 		var max;
 		var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
 		tooltipObj.tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number'  value='" + (setting && setting.ratio ? setting.ratio : 1) + "'/></div></div>";
@@ -800,7 +805,7 @@ function tooltipConfigureAutoJobs(tooltipObj, elem) {
 		if (percentJobs.length > x) {
 			item = percentJobs[x];
 			setting = settingGroup[item];
-			selectedPerc = setting ? setting.value : 0.1;
+			selectedPerc = setting ? Number(setting.value) : 0.1;
 			max = setting && setting.buyMax ? setting.buyMax : 0;
 			if (max > 1e4) max = max.toExponential().replace('+', '');
 			checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
@@ -1427,7 +1432,7 @@ function tooltipChangePortalColor(tooltipObj, elem) {
 }
 
 function tooltipMessageConfig(tooltipObj, elem) {
-	tooltipObj.tooltipText = "<div id='messageConfigMessage'>Here you can finely tune your message settings, to see only tooltipObj.what you want from each category. Mouse over the name of a filter for more info.</div>";
+	tooltipObj.tooltipText = "<div id='messageConfigMessage'>Here you can finely tune your message settings, to see only what you want from each category. Mouse over the name of a filter for more info.</div>";
 	const msgs = game.global.messages;
 	const toCheck = ['Loot', 'Unlocks', 'Combat'];
 	tooltipObj.tooltipText += "<div class='row'>";
