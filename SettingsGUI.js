@@ -1669,7 +1669,7 @@ function initialiseAllSettings() {
 			}, 'value', 1, null, 'Maps', [1, 2]);
 
 		createSetting('hdFarmSettings',
-			function () { return ('HD Farm Settings') },
+			function () { return ('HS & HD Farm Settings') },
 			function () {
 				let description = "<p>Here you can select how and when you would like <b>H:D Ratio</b> or <b>Hits Survived</b> farming to be run.</p>";
 				description += "<p>Your current HD Ratio and Hits Survived values can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";

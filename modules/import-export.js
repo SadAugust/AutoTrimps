@@ -70,6 +70,7 @@ function importExportTooltip(event, titleText) {
 		const tipText = document.getElementById('tipText');
 		const tipTitle = document.getElementById('tipTitle');
 		const tipCost = document.getElementById('tipCost');
+		if (event === 'mapSettings' && titleText === 'HD Farm') titleText = 'Hits Survived & HD Farm';
 
 		game.global.lockTooltip = true;
 		if (tipText.className !== '') tipText.className = '';

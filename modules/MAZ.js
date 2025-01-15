@@ -104,7 +104,7 @@ function mapSettingsDisplay(elem, titleText) {
 
 function mazSettingNames(titleName) {
 	if (titleName) {
-		return ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Toxicity', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner', 'Profile', 'Gene Assist'];
+		return ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Toxicity', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner', 'Profile', 'Gene Assist', 'Hits Survived & HD Farm'];
 	}
 
 	return ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'autoGolden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation', 'profile', 'geneAssist'];
@@ -151,7 +151,7 @@ function _mapSettingsInputObj() {
 			windowWidth: '40%'
 		},
 		'HD Farm': {
-			settingInputs: ['active', 'priority', 'row', 'world', 'endzone', 'cell', 'autoLevel', 'level', 'hdBase', 'hdMult', 'hdType', 'mapCap', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
+			settingInputs: ['active', 'priority', 'row', 'world', 'endzone', 'cell', 'autoLevel', 'level', 'hdType', 'hdBase', 'hdMult', 'mapCap', 'jobratio', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
 			settingInputsDefault: ['jobratio', 'mapCap'],
 			windowWidth: '70%'
 		},
@@ -429,7 +429,7 @@ function _mapSettingsDefaultTitles(varPrefix, activeSettings, settingOrder) {
 	}
 
 	if (s.quagmire) {
-		elements.push({ name: 'abandonZone', class: `windowAbandonZone`, title: 'Abandon Challenge<br>Zone' });
+		elements.push({ name: 'abandonZone', class: `windowAbandonZone`, title: 'Abandon Challenge Zone' });
 	}
 
 	if (s.voidMap) {
@@ -472,6 +472,7 @@ function _mapSettingsDefaultTitles(varPrefix, activeSettings, settingOrder) {
 			<div id='windowError'></div>
 			<div class='row windowRow titles' style='border: 0px; margin-top: -0.5vw;'>
 			<div class='windowDisplay windowActive${varPrefix}'>Enabled</div>`;
+	/* <div class='windowDisplay windowAdvanced${varPrefix}'>Advanced</div> */
 
 	sortedElements.forEach((item) => {
 		if (item === null) return;
@@ -490,6 +491,9 @@ function _mapSettingsDefaultPopulateInputs(defaultVals, varPrefix, activeSetting
 
 	let tooltipText = `<div id='windowRow' class='row windowRow ${className}'>`;
 	tooltipText += `<div class='windowDisplay windowActive${varPrefix}' style='text-align: center;'>${buildNiceCheckbox('windowActiveDefault', null, defaultVals.active)}</div>`;
+
+	/* tooltipText += `<div class='windowDisplay windowAdvanced${varPrefix}' style='text-align: center;'>${buildNiceCheckbox('windowActiveDefault', null, defaultVals.active)}</div>`; */
+
 	if (s.worshipperFarm) {
 		tooltipText += `<div class='windowDisplay windowWorshipperSkip' style='text-align: center;'>${buildNiceCheckbox('windowSkipShipEnabled', null, defaultVals.shipSkipEnabled)}</div>`;
 		tooltipText += `<div class='windowDisplay windowWorshipper'><input value='${defaultVals.shipskip}' type='number' id='windowRepeatDefault'/></div>`;
@@ -546,9 +550,9 @@ function _mapSettingsRowTitles(varPrefix, activeSettings, settingOrder) {
 	}
 
 	if (s.hdFarm) {
+		elements.push({ name: 'hdType', class: `windowHDType`, title: 'Farming<br/>Type' });
 		elements.push({ name: 'hdBase', class: `windowHDBase`, title: 'HD Base' });
 		elements.push({ name: 'hdMult', class: `windowHDMult`, title: 'HD Mult' });
-		elements.push({ name: 'hdType', class: `windowHDType`, title: 'HD<br/>Type' });
 		elements.push({ name: 'mapCap', class: `windowMapCap`, title: 'Map<br/>Cap' });
 	}
 
@@ -1434,10 +1438,10 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 	}
 
 	if (s.hdFarm) {
+		mazHelp += "<li><b>Farming Type</b> - The type of Hits Survived or HD Ratio you'd like to farm towards.</li>";
 		mazHelp += "<li><b>HD Base</b> - What H:D you'd like to reach.</li>";
 		mazHelp += "<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
 
-		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target.</li>";
 		mazHelp += '<li class="indent">If <b>Map Level</b> has been selected it will farm until auto level reaches that level.</li>';
 		mazHelp += '<li class="indent">Will only run Void Map lines if you have void maps in your map chamber.</li>';
 		mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
