@@ -35,7 +35,7 @@ function runPerky() {
 
 function allocatePerky(showTooltips = true) {
 	const xpDivStyle = document.querySelector('#weight-xpDiv').style;
-	if (game.global.spiresCompleted >= 2 && xpDivStyle.display !== 'inline') xpDivStyle.display = 'inline';
+	if (game.global.spiresCompleted >= 2 && xpDivStyle.display !== 'flex') xpDivStyle.display = 'flex';
 
 	//Can't respec perks when running Hypothermia so don't try as it causes errors
 	if (/* !portalWindowOpen &&  */ challengeActive('Hypothermia')) {
@@ -1177,7 +1177,7 @@ atData.autoPerks = {
 			if (!settingInputs) {
 				saveSurkySettings(true);
 				fillPresetSurky('ezfarm', true);
-				settingInputs = JSON.parse(localStorage.getItem(calcName.toLowerCase() + 'Inputs'));
+				settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
 			}
 
 			const preset = settingInputs.preset || 'ezfarm';
