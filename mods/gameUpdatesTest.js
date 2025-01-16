@@ -713,7 +713,6 @@ function gather() {
 		if (challengeActive('Downsize')) baseValue *= 5;
 		if (challengeActive('Unbalance')) baseValue *= game.challenges.Unbalance.getGatherMult();
 		if (game.challenges.Nurture.boostsActive()) baseValue *= game.challenges.Nurture.getResourceBoost();
-		if (challengeActive('Desolation')) baseValue *= game.challenges.Desolation.trimpResourceMult();
 	}
 
 	if (challengeActive('Decay') || challengeActive('Melt')) {
@@ -722,6 +721,7 @@ function gather() {
 		baseValue *= Math.pow(challenge.decayValue, challenge.stacks);
 	}
 
+	/* this variable gets used when game.jobs[job].increase !== 'fragments' */
 	let noFragments = baseValue;
 	if (game.global.pandCompletions) noFragments *= game.challenges.Pandemonium.getTrimpMult();
 	if (game.global.desoCompletions) noFragments *= game.challenges.Desolation.getTrimpMult();
@@ -734,9 +734,12 @@ function gather() {
 		if (challengeActive('Archaeology')) noFragments *= game.challenges.Archaeology.getStatMult('science');
 		if (challengeActive('Insanity')) noFragments *= game.challenges.Insanity.getLootMult();
 		if (challengeActive('Desolation')) noFragments *= game.challenges.Desolation.trimpResourceMult();
+		/* duplicate line here, is it intentional? */
+		if (challengeActive('Desolation')) noFragments *= game.challenges.Desolation.trimpResourceMult();
 	}
 
 	const multiTaskingMult = game.permaBoneBonuses.multitasking.owned > 0 && game.resources.trimps.owned >= game.resources.trimps.realMax() ? game.permaBoneBonuses.multitasking.mult() : 0;
+	const parityBonus = getParityBonus();
 
 	for (let job in game.jobs) {
 		let perSec = 0;
@@ -746,7 +749,7 @@ function gather() {
 			perSec = increase !== 'fragments' ? noFragments : baseValue;
 			perSec *= game.jobs[job].owned * game.jobs[job].modifier;
 			if (increase !== 'gems') perSec *= 1 + multiTaskingMult;
-			if (increase === 'food' || increase === 'metal' || increase === 'wood') perSec *= getParityBonus();
+			if (increase === 'food' || increase === 'metal' || increase === 'wood') perSec *= parityBonus;
 
 			if (game.global.universe === 1) {
 				if (game.jobs.Magmamancer.owned > 0 && increase === 'metal') perSec *= game.jobs.Magmamancer.getBonusPercent();
@@ -1114,6 +1117,19 @@ game.badGuys.Omnipotrimp.loot = function () {
 		updateGoodBar();
 	}
 };
+
+/* Bug: Elixir of Accuracy always returns 1 + (0.25 * amount owned) so it's been adding 100% extra crit damage since alchemy patch */
+function getPlayerCritDamageMult() {
+	const relentLevel = getPerkLevel('Relentlessness');
+	const eoaEffect = alchObj.getPotionEffect('Elixir of Accuracy');
+
+	let critMult = game.portal.Relentlessness.otherModifier * relentLevel + getHeirloomBonus('Shield', 'critDamage') / 100 + 1;
+	critMult += getPerkLevel('Criticality') * game.portal.Criticality.modifier;
+	if (relentLevel > 0) critMult += 1;
+	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
+	if (eoaEffect > 1) critMult += eoaEffect;
+	return critMult;
+}
 
 /* 	update innerHTML 1 time instead of upwards of 200 times
 	massive liquification performance improvement */
