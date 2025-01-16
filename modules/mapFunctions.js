@@ -1350,6 +1350,7 @@ function _raidingRaidZone(setting, mapName) {
 		raidZones += repeats > 0 ? setting.repeatevery * repeats : 0;
 	}
 
+	raidZones = Math.min(raidZones, 905);
 	return raidZones;
 }
 

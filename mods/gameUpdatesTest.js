@@ -3558,6 +3558,8 @@ function startFight() {
 			}
 			game.global.soldierCurrentAttack += attackTemp;
 			game.global.difs.attack = 0;
+
+			if (game.global.soldierCurrentAttack <= 0) game.global.soldierHealth = 0;
 		}
 
 		if (game.global.difs.block !== 0) {
