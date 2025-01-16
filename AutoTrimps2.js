@@ -392,7 +392,7 @@ function updateInterval() {
 
 function mainLoop() {
 	toggleCatchUpMode();
-	if (MODULES.popups.mazWindowOpen) _handleMazWindow();
+	if (MODULES.popups && MODULES.popups.mazWindowOpen) _handleMazWindow();
 	remakeTooltip();
 
 	if (!atConfig.running || game.options.menu.pauseGame.enabled || autoTrimpSettings.pauseScript.enabled) return;

@@ -1093,6 +1093,28 @@ u2Mutations.setAlert = function () {
 	}
 };
 
+/* Fix for infinite breed speed issue post Spire completion that was caused by the Omnipotrimp explosion not occuring */
+game.badGuys.Omnipotrimp.loot = function () {
+	if (!game.global.spireActive) {
+		if (challengeActive('Eradicated') && game.global.world >= 59 && !game.global.brokenPlanet) planetBreaker();
+		if (!game.global.runningChallengeSquared) {
+			let amt = 30;
+			amt = rewardResource('helium', amt, level);
+			message('You managed to steal ' + prettify(amt) + ' ' + heliumOrRadon(true) + " from that Omnipotrimp. That'll teach it.", 'Loot', heliumIcon(true), 'helium', 'helium');
+		}
+	}
+
+	if (game.global.world % 5 === 0) {
+		const enemyName = game.global.spireActive ? 'Echo of Druopitee' : 'Omnipotrimp';
+		message(`The ${enemyName} explodes, killing all of your soldiers!`, 'Combat', null, null, 'trimp');
+		game.stats.trimpsKilled.value += game.resources.trimps.soldiers;
+		game.global.soldierHealth = 0;
+		game.global.fighting = false;
+		game.resources.trimps.soldiers = 0;
+		updateGoodBar();
+	}
+};
+
 /* 	update innerHTML 1 time instead of upwards of 200 times
 	massive liquification performance improvement */
 function drawGrid(maps) {
