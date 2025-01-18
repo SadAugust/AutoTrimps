@@ -1118,7 +1118,7 @@ game.badGuys.Omnipotrimp.loot = function () {
 	}
 };
 
-/* Bug: Elixir of Accuracy always returns 1 + (0.25 * amount owned) so it's been adding 100% extra crit damage since alchemy patch */
+/* Bug: Elixir of Accuracy always returns 1 + (0.25 * amount owned) so it's been adding 100% extra crit damage since alchemy patch. Uncomment the eoaEffect > 1 line to implement fix */
 function getPlayerCritDamageMult() {
 	const relentLevel = getPerkLevel('Relentlessness');
 	const eoaEffect = alchObj.getPotionEffect('Elixir of Accuracy');
@@ -1127,7 +1127,7 @@ function getPlayerCritDamageMult() {
 	critMult += getPerkLevel('Criticality') * game.portal.Criticality.modifier;
 	if (relentLevel > 0) critMult += 1;
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
-	if (eoaEffect > 1) critMult += eoaEffect;
+	/* if (eoaEffect > 1) */ critMult += eoaEffect;
 	return critMult;
 }
 
@@ -2134,8 +2134,8 @@ function calculateDamage(number = 1, buildString, isTrimp, noCheckAchieve, cell,
 
 			const multipliers = {
 				anticipation: () => (game.global.antiStacks > 0 ? game.global.antiStacks * getPerkLevel('Anticipation') * game.portal.Anticipation.modifier + 1 : 1),
-				magmamancer: () => (game.talents.magmamancer.purchased ? game.jobs.Magmamancer.getBonusPercent() : 1),
 				stillRowing: () => (game.talents.stillRowing2.purchased ? game.global.spireRows * 0.06 + 1 : 1),
+				magmamancer: () => (game.talents.magmamancer.purchased ? game.jobs.Magmamancer.getBonusPercent() : 1),
 				kerfluffle: () => (Fluffy.isActive() && game.talents.kerfluffle.purchased ? game.talents.kerfluffle.mult() : 1),
 				strengthInHealth: () => (game.talents.healthStrength.purchased && mutations.Healthy.active() ? 0.15 * mutations.Healthy.cellCount() + 1 : 1),
 				voidSipon: () => (game.stats.totalVoidMaps.value && Fluffy.isRewardActive('voidSiphon') ? 1 + game.stats.totalVoidMaps.value * 0.05 : 1),
