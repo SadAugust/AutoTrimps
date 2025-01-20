@@ -32,15 +32,20 @@ function drawAllBuildings(force) {
 	const elem = document.getElementById('buildingsHere');
 	let innerHTML = '';
 	let alert = false;
-
+	let updateTooltips = []
 	for (const item in buildings) {
 		const building = buildings[item];
 		if (building.locked) continue;
 		if (building.alert) alert = true;
 		innerHTML += drawBuilding(item);
+		updateTooltips.push(item)
 	}
 
-	if (elem.innerHTML !== innerHTML) elem.innerHTML = innerHTML;
+	if (elem.innerHTML !== innerHTML) {
+		elem.innerHTML = innerHTML;
+		updateTooltips.forEach((item) => { makeAccessibleTooltip(item, [item, "buildings"]) });
+	}
+	
 	if (alert && elem.innerHTML !== '' && game.options.menu.showAlerts.enabled) {
 		const alertElem = document.getElementById('buildingsAlert');
 		if (alertElem.innerHTML !== '!') alertElem.innerHTML = '!';
@@ -90,8 +95,7 @@ function drawBuilding(what) {
 	const alertMessage = what.alert && game.options.menu.showAlerts.enabled ? '!' : '';
 	if (usingScreenReader) {
 		return `
-			<button class="thing noSelect pointer buildingThing" onclick="tooltip('${what}','buildings','screenRead')">${what} Info</button>
-			<button title="" onmouseout="tooltip('hide')" class="thingColorCanNotAfford thing noselect pointer buildingThing" id="${what}" onclick="buyBuilding('${what}')">
+			<button class="thingColorCanNotAfford thing noselect pointer buildingThing" id="${what}" onclick="buyBuilding('${what}')">
 				<span class="thingName"><span id="${what}Alert" class="alert badge">${alertMessage}</span>${what}</span>, 
 				<span class="thingOwned" id="${what}Owned">${game.buildings[what].owned}</span>
 				<span class="cantAffordSR">, Not Affordable</span>
