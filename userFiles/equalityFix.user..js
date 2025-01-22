@@ -20,4 +20,4 @@ function loadScript(id, src) {
 }
 
 //This can be edited to point to your own Github Repository URL.
-loadScript('AutoTrimps-SadAugust-equalityFixTest', 'https://sadaugust.github.io/AutoTrimps/mods/equalityFix.js');
+loadScript('AutoTrimps-SadAugust-equalityFixTest', 'https://sadaugust.github.io/AutoTrimps/mods/equalityBugfix.js');
