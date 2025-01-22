@@ -1,92 +1,126 @@
-function ABItemSwap(items, ring) {
+function autoBattleItemSwap(items) {
 	if (items) {
 		for (let item in autoBattle.items) {
 			const itemDetails = autoBattle.items[item];
+			/* replace any underscores ("_") with spaces. If there's 2 spaces in a row then replace it with a hyphen ("-") instead */
+			item = item.replace(/_/g, ' ').replace(/  /g, '-');
 			const shouldEquip = items.includes(item);
 
 			if (shouldEquip && itemDetails.hidden) itemDetails.hidden = false;
-			itemDetails.equipped = shouldEquip;
+			if (shouldEquip || itemDetails.equipped) itemDetails.equipped = shouldEquip;
 		}
-	}
-
-	if (ring) {
-		autoBattle.rings.mods = ring;
 	}
 }
 
+function autoBattleRingSwap(ring) {
+	if (!autoBattle.oneTimers.The_Ring.owned) return;
+
+	const allowedMods = autoBattle.getRingSlots();
+	if (!Array.isArray(ring) || ring.length !== allowedMods) return;
+
+	autoBattle.rings.mods = ring;
+}
+
 function automateSpireAssault() {
-	if (game.global.universe !== 999) return;
-	if (autoBattle.enemyLevel === 121) {
-		if (autoBattle.rings.level === 49 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
-			autoBattle.levelRing();
-		}
+	if (!gameUserCheck() || game.global.stringVersion === '5.9.2') return;
+
+	if (autoBattle.rings.level !== 60 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
+		autoBattle.levelRing();
 	}
 
-	if (autoBattle.rings.level === 50 && (autoBattle.items.Basket_of_Souls.level === 10 || autoBattle.items.Snimp__Fanged_Blade.level === 11)) {
-		if (autoBattle.items.Basket_of_Souls.level === 10 && autoBattle.shards >= autoBattle.upgradeCost('Basket_of_Souls')) autoBattle.upgrade('Basket_of_Souls');
-		if (autoBattle.items.Snimp__Fanged_Blade.level === 11 && autoBattle.shards >= autoBattle.upgradeCost('Snimp__Fanged_Blade')) autoBattle.upgrade('Snimp__Fanged_Blade');
+	if (autoBattle.bonuses.Extra_Limbs.level !== 14 && autoBattle.dust >= autoBattle.getBonusCost('Extra_Limbs')) {
+		autoBattle.buyBonus('Extra_Limbs');
+		autoBattle.equip('Snimp__Fanged_Blade');
+	}
+	//Turning off autoLevel
+	if (autoBattle.maxEnemyLevel >= 151 && autoBattle.rings.level < 60) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		if (autoBattle.enemyLevel === 148) return;
+
+		autoBattle.enemyLevel = 148;
+		autoBattle.resetCombat(true);
+		autoBattle.updatePopupBtns();
+	} else if (!autoBattle.autoLevel) {
+		autoBattle.toggleAutoLevel();
 	}
 
-	const equip = {
-		130: {
-			items: ['Battery_Stick', 'Lifegiving_Gem', 'Spiked_Gloves', 'Tame_Snimp', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'lifesteal']
+	if (autoBattle.sessionEnemiesKilled !== 0 || autoBattle.enemy.baseHealth !== autoBattle.enemy.health || autoBattle.maxEnemyLevel !== autoBattle.enemyLevel) return;
+
+	/* 	shards is per second
+		clearTime is hours */
+	const levels = {
+		144: {
+			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
+			ring: ['health', 'lifesteal', 'dustMult'],
+			shards: 4.27e12,
+			clearTime: 36
 		},
-		131: {
-			items: ['Battery_Stick', 'Lifegiving_Gem', 'Spiked_Gloves', 'Tame_Snimp', 'Grounded_Crown', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'lifesteal']
+		145: {
+			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
+			ring: ['health', 'lifesteal', 'dustMult'],
+			shards: 6.34e12,
+			clearTime: 33
 		},
-		132: {
-			items: ['Battery_Stick', 'Lifegiving_Gem', 'Spiked_Gloves', 'Tame_Snimp', 'Bloodstained_Gloves', 'Big_Cleaver', 'Sacrificial_Shank', 'Grounded_Crown', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'lifesteal']
+		146: {
+			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
+			ring: ['health', 'lifesteal', 'dustMult'],
+			shards: 8.87e12,
+			clearTime: 31
 		},
-		133: {
-			items: ['Battery_Stick', 'Lifegiving_Gem', 'Spiked_Gloves', 'Tame_Snimp', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'lifesteal']
+		147: {
+			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Nullifium Armor', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
+			ring: ['health', 'lifesteal', 'dustMult'],
+			shards: 8.18e12,
+			clearTime: 46
 		},
-		134: {
-			items: ['Menacing_Mask', 'Battery_Stick', 'Lifegiving_Gem', 'Spiked_Gloves', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Grounded_Crown', 'Fearsome_Piercer', 'Bag_of_Nails', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'lifesteal']
+		148: {
+			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
+			ring: ['health', 'lifesteal', 'dustMult'],
+			shards: 1.54e13,
+			clearTime: 32
 		},
-		135: {
-			items: ['Menacing_Mask', 'Battery_Stick', 'Lifegiving_Gem', 'Spiked_Gloves', 'Wired_Wristguards', 'Bloodstained_Gloves', 'Eelimp_in_a_Bottle', 'Big_Cleaver', 'Sacrificial_Shank', 'Grounded_Crown', 'Fearsome_Piercer', 'Doppelganger_Signet', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'lifesteal']
+		149: {
+			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Nullifium Armor', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
+			ring: ['health', 'lifesteal', 'dustMult'],
+			shards: 8.95e12,
+			clearTime: 75
 		},
-		136: {
-			items: ['Menacing_Mask', 'Battery_Stick', 'Spiked_Gloves', 'Tame_Snimp', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'health']
+		150: {
+			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Nullifium Armor', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
+			ring: ['health', 'lifesteal', 'dustMult'],
+			shards: 1.31e13,
+			clearTime: 68
 		},
-		137: {
-			items: ['Menacing_Mask', 'Battery_Stick', 'Spiked_Gloves', 'Tame_Snimp', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'health']
+		/* after 150 r60 was only a 27 hour farm on 148 */
+		151: {
+			items: ['Shock and Awl', 'Spiked Gloves', 'Bloodstained Gloves', 'Eelimp in a Bottle', 'Big Cleaver', 'Sacrificial Shank', 'Grounded Crown', 'Fearsome Piercer', 'Bag of Nails', 'Snimp-Fanged Blade', 'Doppelganger Signet', 'Basket of Souls', 'Omni Enhancer', 'Stormbringer', 'Nullifium Armor', 'Haunted Harpoon', 'Doppelganger Diadem', 'The Fibrillator'],
+			ring: ['attack', 'health', 'lifesteal'],
+			shards: 7.94e9,
+			clearTime: 13
 		},
-		138: {
-			items: ['Menacing_Mask', 'Battery_Stick', 'Spiked_Gloves', 'Tame_Snimp', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'health']
+		152: {
+			/* 	no idea atm
+				think poison but can only get it down to 6d20h with the usual items */
 		},
-		139: {
-			items: ['Menacing_Mask', 'Battery_Stick', 'Spiked_Gloves', 'Tame_Snimp', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'health']
-		},
-		140: {
-			items: ['Menacing_Mask', 'Battery_Stick', 'Spiked_Gloves', 'Tame_Snimp', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon'],
-			ring: ['attack', 'health']
+		153: {
+			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Nullifium Armor', 'Myco Mitts', 'Doppelganger Diadem', 'Gaseous Greataxe', 'The Fibrillator'],
+			ring: ['health', 'lifesteal', 'dustMult'],
+			shards: 2e14 /* ish */,
+			clearTime: 33
 		}
 	};
 
-	const { items, ring } = equip[autoBattle.enemyLevel];
-	if (autoBattle.sessionEnemiesKilled === 0 && autoBattle.enemy.baseHealth === autoBattle.enemy.health && autoBattle.maxEnemyLevel === autoBattle.enemyLevel) {
-		ABItemSwap(items, ring);
-		autoBattle.popup(true, false, true);
+	const levelData = levels[autoBattle.enemyLevel];
+	if (!levelData) return;
+
+	const { items, ring } = levelData;
+	if (autoBattle.bonuses.Extra_Limbs.level === 14) {
+		items.push('Snimp-Fanged Blade');
 	}
 
-	//Turning off autoLevel
-	if (autoBattle.maxEnemyLevel >= 129 && autoBattle.rings.level < 50) {
-		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-		return;
-	}
-
-	if (!autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+	if (items) autoBattleItemSwap(items);
+	if (ring) autoBattleRingSwap(ring);
+	autoBattle.popup(true, false, true);
 }
 
 function totalSAResources() {

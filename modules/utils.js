@@ -1192,6 +1192,8 @@ function updateAllInnerHtmlFrames() {
 		cell = game.global.gridArray[cellNum];
 	}
 
+	if (!cell) return;
+
 	const badAttackElem = document.getElementById('badGuyAttack');
 	const badAttackText = calculateDamage(cell.attack, true, false, false, cell);
 	if (badAttackElem.innerHTML != badAttackText) badAttackElem.innerHTML = badAttackText;

@@ -191,10 +191,6 @@ function loadScriptsAT() {
 				await loadModules('gameUpdates', atConfig.modules.pathMods);
 			}
 
-			if (game.global.stringVersion === '5.10.0' && game.global.betaV === 5) {
-				await loadModules('gameUpdatesTest', atConfig.modules.pathMods);
-			}
-
 			for (const module of modules) {
 				const path = installedTesting.includes(module) ? pathTesting : installedMods.includes(module) ? pathMods : installedModules.includes(module) ? atConfig.modules.path : '';
 				await loadModules(module, path);
@@ -458,7 +454,7 @@ function mainLoopU2() {
 	if (game.global.universe !== 2) return;
 
 	if (shouldRunInTimeWarp()) equalityManagement();
-	/* automateSpireAssault(); */
+	automateSpireAssault();
 	_alchemyVoidPotions();
 }
 
