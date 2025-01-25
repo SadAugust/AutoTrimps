@@ -513,7 +513,7 @@ function _buyLaboratory(buildingSettings) {
  * Buys microchip if possible. No settings for the user to disable. For the radon universe.
  */
 function _buyMicrochip() {
-	if (!game.buildings.Microchip.locked && canAffordBuilding('Microchip', null, null, false, false, 1)) {
+	if (game.buildings.Microchip.locked && canAffordBuilding('Microchip', null, null, false, false, 1)) {
 		safeBuyBuilding('Microchip', 1);
 	}
 }
@@ -522,14 +522,14 @@ function _buyMicrochip() {
  * Buys antenna if possible. For the radon universe.
  */
 function _buyAntenna(buildingSettings) {
-	if (!game.buildings.Antenna.locked || !buildingSettings.Antenna || !buildingSettings.Antenna.enabled) return;
+	if (game.buildings.Antenna.locked || !buildingSettings.Antenna || !buildingSettings.Antenna.enabled) return;
 
 	const antennaAmt = buildingSettings.Antenna.buyMax === 0 ? Infinity : buildingSettings.Antenna.buyMax;
 	const antennaPct = buildingSettings.Antenna.percent / 100;
 	const antennaCanAfford = calculateMaxAfford_AT(game.buildings.Antenna, true, false, false, antennaAmt - game.buildings.Antenna.purchased, antennaPct);
 
 	if (antennaAmt > game.buildings.Antenna.purchased && antennaCanAfford > 0) {
-		safeBuyBuilding('Antenna', antennaCanAfford);
+		safeBuyBuilding('Antenna', 1);
 	}
 }
 
