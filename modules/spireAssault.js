@@ -1,24 +1,176 @@
-function autoBattleItemSwap(items) {
-	if (items) {
-		for (let item in autoBattle.items) {
-			const itemDetails = autoBattle.items[item];
-			/* replace any underscores ("_") with spaces. If there's 2 spaces in a row then replace it with a hyphen ("-") instead */
-			item = item.replace(/_/g, ' ').replace(/  /g, '-');
-			const shouldEquip = items.includes(item);
+function spireAssaultAcceptContract() {
+	if (!game.global.voidBuff || game.global.universe !== 2 || !getPageSetting('spireAssaultContracts')) return;
+	const contractsLeft = autoBattle.getContracts();
+	if (contractsLeft.length === 0) return;
 
-			if (shouldEquip && itemDetails.hidden) itemDetails.hidden = false;
-			if (shouldEquip || itemDetails.equipped) itemDetails.equipped = shouldEquip;
-		}
+	const contract = contractsLeft[0];
+	if (autoBattle.items[contract].zone <= MODULES.maps.lastMapWeWereIn.level) {
+		autoBattle.acceptContract(contract);
 	}
 }
 
-function autoBattleRingSwap(ring) {
-	if (!autoBattle.oneTimers.The_Ring.owned) return;
+function spireAssaultItemList(showHidden = false, cleanNames = false) {
+	const items = autoBattle.items;
+	const itemList = autoBattle.getItemOrder();
+	const hiddenItems = showHidden ? [] : JSON.parse(getPageSetting('spireAssaultPresets'))['Hidden Items'].items;
+	let unlockedItems = [];
+
+	for (let item in itemList) {
+		item = itemList[item].name;
+		const itemDetails = items[item];
+		if (!itemDetails.owned) continue;
+		5;
+
+		const cleanName = autoBattle.cleanName(item);
+		if (!showHidden && hiddenItems.includes(cleanName)) continue;
+
+		unlockedItems.push(cleanNames ? cleanName : item);
+	}
+
+	return unlockedItems;
+}
+
+function spireAssaultShouldRun(setting) {
+	if (!setting || !setting.active || autoBattle.maxEnemyLevel < setting.world) return false;
+
+	if (setting.settingType === 'Clear Level') {
+		if (autoBattle.maxEnemyLevel > setting.world) return false;
+	} else {
+		const itemLevel = Number(setting.levelSA);
+		let item = autoBattle.items[setting.item];
+		if (setting.settingType === 'Level Ring') item = autoBattle.rings;
+		if (setting.settingType === 'Buy Limb') item = autoBattle.bonuses.Extra_Limbs;
+		if (item.level >= itemLevel) return false;
+	}
+
+	return true;
+}
+
+function spireAssaultSettingsIndex(baseSettings) {
+	for (let y = 1; y < baseSettings.length; y++) {
+		const currSetting = baseSettings[y];
+		if (!spireAssaultShouldRun(currSetting)) continue;
+
+		return y;
+	}
+
+	return null;
+}
+
+function spireAssault() {
+	if (game.stats.highestRadLevel.valueTotal() < 75) return;
+
+	const settingName = 'spireAssaultSettings';
+	const baseSettings = getPageSetting(settingName);
+	if (!baseSettings) return;
+
+	const defaultSettings = baseSettings[0];
+	if (!defaultSettings || !defaultSettings.active) return;
+
+	const settingIndex = spireAssaultSettingsIndex(baseSettings);
+	const setting = baseSettings[settingIndex];
+	if (setting) _runSpireAssault(setting);
+}
+
+function _runSpireAssault(setting) {
+	const { settingType, world, levelSA, preset } = setting;
+
+	if (settingType !== 'Clear Level') {
+		const itemObj = {
+			'Level Equipment': {
+				item: autoBattle.items[setting.item],
+				itemName: setting.item,
+				cost: autoBattle.upgradeCost,
+				upgradeFunction: autoBattle.upgrade
+			},
+			'Level Ring': {
+				item: autoBattle.rings,
+				itemName: 'The_Ring',
+				cost: autoBattle.getRingLevelCost,
+				upgradeFunction: autoBattle.levelRing
+			},
+			'Buy Limb': {
+				item: autoBattle.bonuses.Extra_Limbs,
+				itemName: 'Extra_Limbs',
+				cost: autoBattle.getBonusCost,
+				upgradeFunction: autoBattle.buyBonus
+			}
+		};
+
+		const { item, itemName, cost, upgradeFunction } = itemObj[settingType];
+		autoBattle.upgradeFunction = upgradeFunction;
+		autoBattle.costFunction = cost;
+
+		let resourceType = settingType === 'Level Ring' || item.dustType === 'shard' ? 'shards' : 'dust';
+		let resources = autoBattle[resourceType];
+		let levelCost = autoBattle.costFunction(itemName);
+
+		while (item.level < Number(levelSA) && resources >= levelCost) {
+			autoBattle.upgradeFunction(itemName);
+			levelCost = autoBattle.costFunction(itemName);
+			resources = autoBattle[resourceType];
+		}
+
+		if (item.level === Number(levelSA)) {
+			return false;
+		}
+	}
+
+	let reset = false;
+	if (autoBattle.enemyLevel !== world) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		autoBattle.enemyLevel = world;
+		reset = true;
+	}
+
+	const presetSetting = JSON.parse(getPageSetting('spireAssaultPresets'));
+	const itemPreset = preset === 'No Change' ? undefined : presetSetting[`Preset ${preset}`];
+	if (itemPreset) {
+		reset |= spireAssaultItemSwap(itemPreset.items);
+		reset |= spireAssaultRingSwap(itemPreset.ringMods);
+	}
+
+	if (reset) {
+		autoBattle.resetCombat(true);
+		autoBattle.popup(true, false, true);
+	}
+}
+
+function spireAssaultItemSwap(itemList) {
+	if (!itemList) return false;
+
+	let reset = false;
+	for (let item in autoBattle.items) {
+		const itemDetails = autoBattle.items[item];
+		const shouldEquip = itemList.includes(item);
+
+		if (shouldEquip && itemDetails.hidden) itemDetails.hidden = false;
+		if (shouldEquip !== itemDetails.equipped) {
+			itemDetails.equipped = shouldEquip;
+			reset = true;
+		}
+	}
+
+	return reset;
+}
+
+function spireAssaultRingSwap(ringMods) {
+	if (!autoBattle.oneTimers.The_Ring.owned) {
+		return false;
+	}
 
 	const allowedMods = autoBattle.getRingSlots();
-	if (!Array.isArray(ring) || ring.length !== allowedMods) return;
+	if (!Array.isArray(ringMods) || ringMods.length !== allowedMods) {
+		return false;
+	}
 
-	autoBattle.rings.mods = ring;
+	if (autoBattle.rings.mods.length === ringMods.length) {
+		const allMatch = autoBattle.rings.mods.every((mod) => ringMods.includes(mod));
+		if (allMatch) return false;
+	}
+
+	autoBattle.rings.mods = ringMods;
+	return true;
 }
 
 function automateSpireAssault() {
@@ -32,7 +184,7 @@ function automateSpireAssault() {
 		autoBattle.buyBonus('Extra_Limbs');
 		autoBattle.equip('Snimp__Fanged_Blade');
 	}
-	//Turning off autoLevel
+
 	if (autoBattle.maxEnemyLevel >= 151 && autoBattle.rings.level < 60) {
 		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 		if (autoBattle.enemyLevel === 148) return;
@@ -118,8 +270,8 @@ function automateSpireAssault() {
 		items.push('Snimp-Fanged Blade');
 	}
 
-	if (items) autoBattleItemSwap(items);
-	if (ring) autoBattleRingSwap(ring);
+	if (items) spireAssaultItemSwap(items);
+	if (ring) spireAssaultRingSwap(ring);
 	autoBattle.popup(true, false, true);
 }
 

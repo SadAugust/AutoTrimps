@@ -11,7 +11,7 @@ const atConfig = {
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
 		installedMods: ['spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky', 'percentHealth'],
-		installedModules: ['import-export', 'utils', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'minigames'],
+		installedModules: ['import-export', 'utils', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'spireAssault'],
 		installedTesting: ['testChallenges', 'testProfile', 'testSave'],
 		loadedExternal: [],
 		loadedModules: [],
@@ -286,7 +286,6 @@ function initialiseScript() {
 	debug(`AutoTrimps (${atConfig.initialise.version.split(' ')[0]} ${atConfig.initialise.version.split(' ')[1]}) has finished loading.`);
 	challengeInfo(true);
 	console.timeEnd();
-	/* if (atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') importExportTooltip('mapSettings', 'Gene Assist'); */
 }
 
 function startStopLoop(loopName, action) {
@@ -430,6 +429,7 @@ function mainLoop() {
 	buySingleRunBonuses();
 	_handlePopupTimer();
 	makeAdditionalInfo();
+	spireAssault();
 
 	if (runDuringTimeWarp) autoPortalCheck();
 }
@@ -454,7 +454,6 @@ function mainLoopU2() {
 	if (game.global.universe !== 2) return;
 
 	if (shouldRunInTimeWarp()) equalityManagement();
-	automateSpireAssault();
 	_alchemyVoidPotions();
 }
 

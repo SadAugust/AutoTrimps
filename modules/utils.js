@@ -36,7 +36,8 @@ function serializeSettings() {
 		multitoggle: ['value', 'valueU2'],
 		mazArray: ['value', 'valueU2'],
 		mazDefaultArray: ['value', 'valueU2'],
-		dropdown: ['selected', 'selectedU2']
+		dropdown: ['selected', 'selectedU2'],
+		dropdownMulti: ['selected', 'selectedU2']
 	};
 
 	const settingString = JSON.stringify(
@@ -90,7 +91,7 @@ function getPageSetting(setting, universe = game.global.universe) {
 	if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray') return autoTrimpSettings[setting][value];
 	if (settingType === 'value' || settingType === 'valueNegative') return parseFloat(autoTrimpSettings[setting][value]);
 	if (settingType === 'multitoggle') return parseInt(autoTrimpSettings[setting][value]);
-	if (settingType === 'dropdown') return autoTrimpSettings[setting][selected];
+	if (settingType.includes('dropdown')) return autoTrimpSettings[setting][selected];
 }
 
 //It sets the value of a setting, and then saves the settings.
@@ -103,7 +104,7 @@ function setPageSetting(setting, newValue, universe = game.global.universe) {
 
 	const enabledIndex = ['boolean'];
 	const valueIndex = ['value', 'valueNegative', 'textValue', 'multiTextValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
-	const selectedIndex = ['dropdown'];
+	const selectedIndex = ['dropdown', 'dropdownMulti'];
 
 	const settingType = autoTrimpSettings[setting].type;
 	if (enabledIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][enabled] = newValue;
@@ -443,15 +444,6 @@ function _priorityChallengeCheck(challenge) {
 	if (game.global.multiChallenge[what]) return true;
 	else if (game.global.challengeActive === what) return true;
 	return false;
-}
-
-function _getPriorityOrderDropdowns(universe, challenge) {
-	const dropdowns = {};
-	dropdowns.universe = '';
-
-	for (let i = 1; i <= 2; i++) {
-		dropdowns.universe += `<option value='${i}'${game.global.universe === i ? " selected='selected'" : ''}>${i}</option>`;
-	}
 }
 
 function getPriorityOrder() {

@@ -15,6 +15,7 @@ function importExportTooltip(event, titleText) {
 		donate: typeof _displayDonate === 'function' ? _displayDonate : null,
 		spireImport: typeof _displaySpireImport === 'function' ? _displaySpireImport : null,
 		priorityOrder: typeof _displayPriorityOrder === 'function' ? _displayPriorityOrder : null,
+		spireAssault: typeof _displaySpireAssaultPresets === 'function' ? _displaySpireAssaultPresets : null,
 		c2table: typeof _displayC2Table === 'function' ? _displayC2Table : null,
 		resetDefaultSettingsProfiles: typeof _displayResetDefaultSettingsProfiles === 'function' ? _displayResetDefaultSettingsProfiles : null,
 		disableSettingsProfiles: typeof _displayDisableSettingsProfiles === 'function' ? _displayDisableSettingsProfiles : null,
@@ -42,6 +43,7 @@ function importExportTooltip(event, titleText) {
 		donate: 'Donate',
 		spireImport: 'Import Spire Settings',
 		priorityOrder: 'Priority Order Table',
+		spireAssault: 'Spire Assault Presets',
 		c2table: c2Info + ' Table',
 		resetDefaultSettingsProfiles: 'Reset Default Settings',
 		disableSettingsProfiles: 'Disable All Settings',
@@ -57,6 +59,7 @@ function importExportTooltip(event, titleText) {
 	let tooltipText;
 	let costText = '';
 	let ondisplay = null;
+	lastTooltipTitle = null;
 	if (event !== 'mapSettings') swapClass('tooltipExtra', 'tooltipExtraNone', tooltipDiv);
 
 	if (eventHandlers[event]) {
@@ -70,7 +73,10 @@ function importExportTooltip(event, titleText) {
 		const tipText = document.getElementById('tipText');
 		const tipTitle = document.getElementById('tipTitle');
 		const tipCost = document.getElementById('tipCost');
-		if (event === 'mapSettings' && titleText === 'HD Farm') titleText = 'Hits Survived & HD Farm';
+		if (event === 'mapSettings') {
+			if (titleText === 'HD Farm') titleText = 'Hits Survived & HD Farm';
+			if (titleText === 'Spire Assault') titleText = 'Spire Assault Settings';
+		}
 
 		game.global.lockTooltip = true;
 		if (tipText.className !== '') tipText.className = '';
@@ -128,7 +134,7 @@ function _displayImportAutoTrimpsProfile(profileSettings, profileName) {
 	tooltipDiv.style.display = 'block';
 	_verticalCenterTooltip();
 }
-function autoTrimpsProfileSave(profileName = autoTrimpSettings.ATprofile) {
+function atProfileSave(profileName = autoTrimpSettings.ATprofile) {
 	const settingProfiles = localStorage.getItem('atSettingsProfiles');
 	if (!settingProfiles) return void debug('No setting profiles found.', 'profile');
 
@@ -247,6 +253,165 @@ function _displayPriorityOrder(tooltipDiv) {
     </div> `;
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
+	const ondisplay = function () {
+		_verticalCenterTooltip(true);
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function spireAssaultPresetSave() {
+	function getEquippedItems(selector) {
+		return $(selector)
+			.map((index, item) => $(item).data('hidden-text'))
+			.get();
+	}
+
+	const equippedItems = getEquippedItems('.spireItemsEquipped');
+	const equippedRingMods = getEquippedItems('.spireRingEquipped');
+
+	const spireAssaultSettings = JSON.parse(getPageSetting('spireAssaultPresets'));
+	const preset = spireAssaultSettings.selectedPreset;
+	spireAssaultSettings[preset] = {
+		name: spireAssaultSettings[preset].name,
+		items: equippedItems,
+		ringMods: equippedRingMods
+	};
+
+	setPageSetting('spireAssaultPresets', JSON.stringify(spireAssaultSettings));
+}
+
+function spireAssaultPresetSwap(preset) {
+	const setting = JSON.parse(getPageSetting('spireAssaultPresets'));
+	setting.selectedPreset = preset;
+	setPageSetting('spireAssaultPresets', JSON.stringify(setting));
+	cancelTooltip();
+	importExportTooltip('spireAssault');
+}
+
+function spireAssaultPresetRename() {
+	const selectedPreset = $('.spireHeaderSelected')[0].innerText;
+	const newName = prompt(`Enter a new name for preset ${selectedPreset}:`, selectedPreset);
+	if (newName) {
+		const setting = JSON.parse(getPageSetting('spireAssaultPresets'));
+		setting[setting.selectedPreset].name = newName;
+		setting.titles[setting.titles.indexOf(selectedPreset)] = newName;
+		setPageSetting('spireAssaultPresets', JSON.stringify(setting));
+		$('.spireHeaderSelected')[0].innerText = newName;
+	}
+}
+
+function spireAssaultToggleElem(element, type) {
+	const elemPrefix = `spire${type}`;
+
+	const equippedElem = document.getElementById(`spireAssault${type}Equipped`);
+	if (equippedElem) {
+		const equippedItems = Number(equippedElem.innerText);
+		const maxItems = type === 'Ring' ? autoBattle.getRingSlots() : autoBattle.getMaxItems();
+		const errorElem = document.getElementById(`spireAssault${type}Error`);
+		let removeItem = element.classList.contains(`${elemPrefix}Equipped`);
+
+		if (!removeItem && equippedItems >= maxItems) {
+			if (type === 'Ring') type = 'Ring Mods';
+			if (errorElem.innerText !== `Max ${type} equipped!`) errorElem.innerText = `Max ${type} equipped!`;
+			return;
+		} else if (errorElem.innerText !== '') {
+			errorElem.innerText = '';
+		}
+		equippedElem.innerHTML = removeItem ? equippedItems - 1 : equippedItems + 1;
+	}
+
+	element.classList.toggle(`${elemPrefix}Equipped`);
+	element.classList.toggle(`${elemPrefix}NotEquipped`);
+}
+
+function _displaySpireAssaultPresets(tooltipDiv) {
+	const itemList = spireAssaultItemList(true);
+	const setting = JSON.parse(getPageSetting('spireAssaultPresets'));
+	const selectedPreset = setting.selectedPreset;
+	const preset = setting[selectedPreset] || { items: [], ringMods: [] };
+	const hiddenItems = setting['Hidden Items'].items || [];
+
+	let rowData = '';
+	let rows = 0;
+	let total = 0;
+	let tooltipText = '';
+
+	function escapeHtmlAttribute(str) {
+		return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	}
+
+	const headerList = ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5', 'Hidden Items'];
+	tooltipText += `<div id='spireAssaultPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
+	for (const header of headerList) {
+		const titleName = setting[header].name || header;
+		const headerClass = header === selectedPreset ? 'Selected' : 'NotSelected';
+		const escapedTitleName = escapeHtmlAttribute(titleName);
+		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='spireAssaultHeader spireHeader${headerClass}' onclick='spireAssaultPresetSwap("${header}")'><b>${escapedTitleName}</b></div>`;
+	}
+	tooltipText += `</div>`;
+
+	const itemsEquipped = preset.items;
+	tooltipText += `<div id='spireAssaultItems'>`;
+	if (selectedPreset !== 'Hidden Items') {
+		tooltipText += `<div style="white-space: nowrap;">
+		<span>Items (</span><span id='spireAssaultItemsEquipped'>${itemsEquipped.length}</span><span>/</span><span id='spireAssaultItemsMax'>${autoBattle.getMaxItems()}</span><span>) </span><span id='spireAssaultItemsError' style='color: red;'></span>
+		</div>`;
+	} else {
+		tooltipText += `<div>&nbsp;</div>`;
+	}
+
+	for (let x = 0; x < itemList.length; x++) {
+		let item = itemList[x];
+		const itemObj = autoBattle.items[item];
+		if (!itemObj.owned) continue;
+		if (selectedPreset !== 'Hidden Items' && hiddenItems.includes(item) && !itemsEquipped.includes(item)) continue;
+		if (total > 0 && total % 5 === 0) {
+			tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+			rowData = '';
+			rows++;
+		}
+
+		let equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
+		rowData += `<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items")' data-hidden-text="${item}">${autoBattle.cleanName(item)}</div>`;
+		total++;
+	}
+
+	rows++;
+	tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+	tooltipText += `</div>`;
+
+	if (autoBattle.oneTimers.The_Ring.owned && selectedPreset !== 'Hidden Items') {
+		const ringSlots = autoBattle.getRingSlots();
+		const ringModsEquipped = preset.ringMods;
+		tooltipText += `<div style="white-space: nowrap;">
+			<span>The Ring (</span><span id='spireAssaultRingEquipped'>${ringModsEquipped.length}</span><span>/</span><span id='spireAssaultRingMax'>${ringSlots}</span><span>) </span><span id='spireAssaultRingError' style='color: red;'></span>
+		</div>`;
+
+		const ringMods = Object.keys(autoBattle.ringStats);
+		for (let item in ringMods) {
+			const name = ringMods[item];
+			const modName = autoBattle.ringStats[name].name;
+			const ringModClass = ringModsEquipped.includes(name) ? 'Equipped' : 'NotEquipped';
+			tooltipText += `<div class='spireAssaultRing spireRing${ringModClass}' onclick='spireAssaultToggleElem(this, "Ring")' data-hidden-text="${name}">${modName}</div>`;
+		}
+	}
+
+	let costText = `
+		<div class='maxCenter'>
+			<span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='spireAssaultPresetSave(); cancelTooltip()'>Save and Close</span>
+			<span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Close</span>
+			<span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='spireAssaultPresetSave(); importExportTooltip("spireAssault")'>Save</span>
+		`;
+
+	if (selectedPreset !== 'Hidden Items') {
+		costText += `<span class='btn btn-info btn-md' onclick='spireAssaultPresetRename(this);'>Rename Preset</span>`;
+	}
+	costText += `</div> `;
+
 	const ondisplay = function () {
 		_verticalCenterTooltip(true);
 	};

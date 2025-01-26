@@ -27,7 +27,7 @@ ul.tab li a {
 	display: inline-block;
 	color: black;
 	text-align: center;
-	padding: 0.5vh 0.85vw;
+	padding: 0.5vh 0.8vw;
 	text-decoration: none;
 	transition: 0.3s;
 	font-size: 0.85vw;
@@ -232,6 +232,11 @@ ul.tab li a:hover {
 	width: 3%;
 }
 
+.windowEnabledMapFarm,
+.windowAdvanceMapFarm {
+	width: 10%;
+}
+
 .windowActiveMapFarm,
 .windowEndZoneMapFarm {
 	width: 4%;
@@ -290,6 +295,12 @@ ul.tab li a:hover {
 }
 
 /* Tribute Farm */
+
+.windowEnabledTributeFarm,
+.windowAdvanceTributeFarm {
+	width: 8%;
+}
+
 .windowActiveTributeFarm,
 .windowPriorityTributeFarm,
 .windowWorldTributeFarm,
@@ -357,6 +368,11 @@ ul.tab li a:hover {
 	width: 5%;
 }
 
+.windowEnabledSmithyFarm,
+.windowAdvanceSmithyFarm {
+	width: 7%;
+}
+
 .windowActiveSmithyFarm,
 .windowPrioritySmithyFarm,
 .windowCellSmithyFarm,
@@ -405,6 +421,12 @@ ul.tab li a:hover {
 }
 
 /* Map Bonus */
+
+.windowEnabledMapBonus,
+.windowAdvancedMapBonus {
+	width: 6%;
+}
+
 .windowActiveMapBonus,
 .windowCellMapBonus,
 .windowAutoLevelMapBonus,
@@ -457,6 +479,12 @@ ul.tab li a:hover {
 }
 
 /* Raiding */
+
+.windowEnabledRaiding,
+.windowAdvancedRaiding {
+	width: 7%;
+}
+
 .windowActiveRaiding,
 .windowPriorityRaiding,
 .windowWorldRaiding,
@@ -505,6 +533,12 @@ ul.tab li a:hover {
 }
 
 /* Bionic Raiding */
+
+.windowEnabledBionicRaiding,
+.windowAdvancedBionicRaiding {
+	width: 9%;
+}
+
 .windowActiveBionicRaiding,
 .windowPriorityBionicRaiding,
 .windowWorldBionicRaiding,
@@ -546,6 +580,11 @@ ul.tab li a:hover {
 /* HD Farm */
 .windowAutoLevelHDFarm {
 	width: 5%;
+}
+
+.windowEnabledHDFarm,
+.windowAdvancedHDFarm {
+	width: 8%;
 }
 
 .windowActiveHDFarm,
@@ -601,6 +640,12 @@ ul.tab li a:hover {
 }
 
 /* Toxicity */
+
+.windowEnabledToxicity,
+.windowAdvancedToxicity {
+	width: 8%;
+}
+
 .windowActiveToxicity,
 .windowAutoLevelToxicity {
 	width: 6%;
@@ -631,6 +676,11 @@ ul.tab li a:hover {
 /* Worshipper Farm */
 .windowAutoLevelWorshipperFarm {
 	width: 5%;
+}
+
+.windowEnabledWorshipperFarm,
+.windowAdvancedWorshipperFarm {
+	width: 9%;
 }
 
 .windowActiveWorshipperFarm,
@@ -677,6 +727,12 @@ ul.tab li a:hover {
 }
 
 /* Bone Shrine */
+
+.windowEnabledBoneShrine,
+.windowAdvancedBoneShrine {
+	width: 8%;
+}
+
 .windowActiveBoneShrine {
 	width: 6%;
 }
@@ -734,6 +790,12 @@ ul.tab li a:hover {
 }
 
 /* Quagmire */
+
+.windowEnabledQuagmire,
+.windowAdvancedQuagmire {
+	width: 15%;
+}
+
 .windowActiveQuagmire,
 .windowPriorityQuagmire,
 .windowWorldQuagmire,
@@ -747,10 +809,16 @@ ul.tab li a:hover {
 }
 
 .windowAbandonZone {
-	width: 25%;
+	width: 40%;
 }
 
 /* Archaeology */
+
+.windowEnabledArchaeology,
+.windowAdvancedArchaeology {
+	width: 9%;
+}
+
 .windowAutoLevelArchaeology {
 	width: 6%;
 }
@@ -777,6 +845,12 @@ ul.tab li a:hover {
 }
 
 /* Insanity */
+
+.windowEnabledInsanity,
+.windowAdvancedInsanity {
+	width: 10%;
+}
+
 .windowAutoLevelInsanity {
 	width: 5%;
 }
@@ -799,6 +873,12 @@ ul.tab li a:hover {
 }
 
 /* Alchemy */
+
+.windowEnabledAlchemy,
+.windowAdvancedAlchemy {
+	width: 7%;
+}
+
 .windowActiveAlchemy,
 .windowPriorityAlchemy,
 .windowWorldAlchemy,
@@ -836,6 +916,11 @@ ul.tab li a:hover {
 	width: 9%;
 }
 
+.windowEnabledHypothermia,
+.windowAdvancedHyptothermia {
+	width: 15%;
+}
+
 .windowActiveHypothermia,
 .windowPriorityHypothermia,
 .windowWorldHypothermia,
@@ -859,6 +944,12 @@ ul.tab li a:hover {
 }
 
 /* Desolation */
+
+.windowEnabledDesolation,
+.windowAdvancedDesolation {
+	width: 12%;
+}
+
 .windowActiveDesolation {
 	width: 8%;
 }
@@ -886,6 +977,12 @@ ul.tab li a:hover {
 }
 
 /* Void Map */
+
+.windowEnabledVoidMap,
+.windowAdvancedVoidMap {
+	width: 10%;
+}
+
 .windowActiveVoidMap,
 .windowPortalAfter {
 	width: 5%;
@@ -1297,4 +1394,167 @@ h9 {
 			color: #00a7e1;
 		}
 	}
+}
+
+.select2-selection .select2-selection--multiple {
+	background-color: #000;
+	border: 1px white solid;
+	color: white;
+	text-align: left;
+	min-height: 1.5vw;
+	max-height: 1.5vw;
+	padding-left: 0.25vw;
+
+	&[data-prefix] {
+		&:before {
+			content: attr(data-prefix);
+			display: flex;
+			align-items: center;
+			background-color: #000;
+			vertical-align: center;
+			position: absolute;
+			z-index: 0;
+			font-size: 0.8vw;
+			left: 1px;
+			bottom: 0.2vw;
+			padding: 0 5px 0 4px;
+			color: white;
+			color: #00a7e1;
+		}
+	}
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+	color: white;
+	background-color: #000;
+	font-size: 0.8vw;
+	border: none; /* Remove border */
+	box-shadow: none; /* Remove box shadow */
+	padding-left: 0.25vw;
+	display: flex; /* Use flexbox to ensure the background covers the entire element */
+}
+
+.select2-container--default .select2-selection--multiple {
+	background-color: #000;
+	border: 1px white solid;
+	color: white;
+	text-align: left;
+	min-height: 1.5vw;
+	max-height: 1.5vw;
+}
+
+/* Spire Assault */
+.windowEnabledSpireAssault,
+.windowSpireAssaultLimbs,
+.windowSpireAssaultRing,
+.windowSpireAssaultBonuses,
+.windowAdvancedSpireAssault {
+	width: 20%;
+}
+
+.windowActiveSpireAssault {
+	width: 10%;
+}
+
+.windowPrioritySpireAssault,
+.windowWorldSpireAssault,
+.windowPresetSpireAssault,
+.windowSettingTypeSpireAssault {
+	width: 10%;
+}
+
+.windowPresetSpireAssault {
+	width: 15%;
+}
+
+.windowSettingTypeSpireAssault {
+	width: 20%;
+}
+
+.windowItemSpireAssault {
+	width: 25%;
+}
+
+.windowItemLevelSpireAssault {
+	width: 10%;
+}
+
+.windowSpecialSpireAssault,
+.windowPrestigeGoalSpireAssault {
+	width: 20%;
+}
+
+.windowClear {
+	display: inline-block;
+	padding-left: 1%;
+}
+
+.windowClearOff .windowItemSpireAssault {
+	opacity: 1;
+	padding-left: 1%;
+}
+
+.windowClearOn .windowItemSpireAssault {
+	opacity: 0.3;
+	cursor: not-allowed;
+	pointer-events: none;
+	padding-left: 1%;
+}
+
+.spireAssaultHeader {
+	display: inline-block;
+	width: calc((100% - 1.4em - 6px) / 6);
+	text-align: center;
+	cursor: pointer;
+	padding: 0.3em;
+	color: white;
+	margin-right: 0.1em;
+	margin-left: 0.1em;
+	margin-top: 0.1em;
+	margin-bottom: 0.2em;
+}
+
+.spireAssaultItem,
+.spireAssaultRing {
+	display: inline-block;
+	width: calc((100% - 1.4em - 2px) / 5);
+	text-align: center;
+	cursor: pointer;
+	padding: 0.2em;
+	color: white;
+	margin-right: 0.1em;
+	margin-left: 0.1em;
+	margin-top: 0.1em;
+	margin-bottom: 0.2em;
+	font-size: 0.85vw;
+}
+
+.spireItemsEquipped,
+.spireRingEquipped,
+.spireHeaderSelected {
+	border: 1px solid #6b6a6a;
+	background-color: #097740;
+	color: white;
+}
+
+.spireItemsEquipped:hover,
+.spireRingEquipped:hover,
+.spireHeaderSelected:hover {
+	border: 1px solid #4b4a4a;
+	background-color: #054e2a;
+	color: white;
+}
+
+.spireItemsNotEquipped,
+.spireRingNotEquipped,
+.spireHeaderNotSelected {
+	border: 1px solid #6b6a6a;
+	background-color: black;
+}
+
+.spireItemsNotEquipped:hover,
+.spireRingNotEquipped:hover,
+.spireHeaderNotSelected:hover {
+	border: 1px solid #4b4a4a;
+	background-color: #202020;
 }

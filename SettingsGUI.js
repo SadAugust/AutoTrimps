@@ -40,6 +40,7 @@ function initialiseAllTabs() {
 		['Magma', 'Dimensional Generator & Magmite Settings'],
 		['Nature', 'Nature Settings'],
 		['Fluffy', 'Fluffy Evolution Settings'],
+		['Spire Assault', `Spire Assault - Settings to automate clearing Spire Assault levels and farming equipment levels.`],
 		['Time Warp', 'Time Warp Settings'],
 		['Display', 'Display & Spam Settings'],
 		['Import Export', 'Import & Export Settings'],
@@ -235,7 +236,7 @@ function initialiseAllSettings() {
 
 		let $pauseScript = document.getElementById('pauseScript');
 		$pauseScript.parentNode.style.setProperty('float', 'right');
-		$pauseScript.parentNode.style.setProperty('margin-right', '0.5vw');
+		$pauseScript.parentNode.style.setProperty('margin-right', '0.25vw');
 		$pauseScript.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoHeirlooms',
@@ -350,7 +351,7 @@ function initialiseAllSettings() {
 
 		let $universeSetting = document.getElementById('universeSetting');
 		$universeSetting.parentNode.style.setProperty('float', 'right');
-		$universeSetting.parentNode.style.setProperty('margin-right', '0.5vw');
+		$universeSetting.parentNode.style.setProperty('margin-right', '0.25vw');
 		$universeSetting.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoPortal',
@@ -543,7 +544,7 @@ function initialiseAllSettings() {
 
 		let $autoPortalForce = document.getElementById('autoPortalForce');
 		$autoPortalForce.parentNode.style.setProperty('float', 'right');
-		$autoPortalForce.parentNode.style.setProperty('margin-right', '0.5vw');
+		$autoPortalForce.parentNode.style.setProperty('margin-right', '0.25vw');
 		$autoPortalForce.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoEggs',
@@ -4415,6 +4416,45 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Fluffy', [1],
 			function () { return (getPageSetting('fluffyEvolve', atConfig.settingUniverse)) });
 	}
+
+	const displaySpireAssault = true;
+	if (displaySpireAssault) {
+
+		createSetting('spireAssaultContracts',
+			function () { return ('Auto Start Contracts') },
+			function () {
+				let description = "<p>When running Void Maps this will automatically start any contracts that can be completed by finishing the map.</p>";
+				description += "<p>Purchase order is based on contract unlock order.</p>";
+				return description;
+			}, 'boolean', false, null, 'Spire Assault', [0]);
+			
+		createSetting('spireAssaultPresets',
+			function () { return ('Presets') },
+			function () {
+				let description = "<p>Not linked to anything yet.</p>";
+				return description;
+			}, 'mazDefaultArray', JSON.stringify({
+				'Preset 1': {name: 'Preset 1', items: [], ringMods: []},
+				'Preset 2': {name: 'Preset 2', items: [], ringMods: []},
+				'Preset 3': {name: 'Preset 3', items: [], ringMods: []},
+				'Preset 4': {name: 'Preset 4', items: [], ringMods: []},
+				'Preset 5': {name: 'Preset 5', items: [], ringMods: []},
+				'Hidden Items': {name: 'Hidden Items', items: [], ringMods: []},
+				'selectedPreset': 'Preset 1',
+				'titles': ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5', 'Hidden Items']
+			}), 'importExportTooltip("spireAssault")', 'Spire Assault', [0]); 
+
+		createSetting('spireAssaultSettings',
+			function () { return ('Spire Assault Settings') },
+			function () {
+				let description = "<p>Here you can set goals for the script to achieve in the Spire Assault minigame.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
+				return description;
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Spire Assault")', 'Spire Assault', [0]);
+
+
+	}
 	
 	const displayTimewarp = true;
 	if (displayTimewarp) {
@@ -4671,7 +4711,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will save your current settings to the last preset you loaded through the <b>Profile Settings</b> window.</p>";
 				return description;
-			}, 'infoclick', null, 'autoTrimpsProfileSave()', 'Import Export', [0],
+			}, 'infoclick', null, 'atProfileSave()', 'Import Export', [0],
 			function () { return autoTrimpSettings.ATprofile && autoTrimpSettings.ATprofile !== '' });
 	}
 	
@@ -4909,7 +4949,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 	const enabled = ['boolean'];
 	const valueTypes = ['value', 'valueNegative', 'multiValue', 'textValue', 'multiTextValue', 'multitoggle', 'mazArray', 'mazDefaultArray'];
-	const selected = ['dropdown'];
+	const selected = ['dropdown', 'dropdownMulti'];
 
 	if (valueTypes.includes(type)) {
 		if (u1Setting) autoTrimpSettings[id].value = getSettingValue(loaded, 'value', defaultValue);
@@ -4956,6 +4996,13 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			parentAttributes.onmouseout = 'tooltip("hide")';
 			parentAttributes.onchange = `settingChanged("${id}")`;
 		},
+		dropdownMulti: () => {
+			btnAttributes.onmouseout = 'tooltip("hide")';
+			btnAttributes.class = 'select2 select2-multi';
+			parentAttributes.onmouseover = `tooltip("${name()}", "customText", event, "${description()}")`;
+			parentAttributes.onmouseout = 'tooltip("hide")';
+			parentAttributes.onchange = `settingChanged("${id}")`;
+		},
 		multitoggle: () => {
 			btnAttributes.onmouseover = `tooltip("${name().join(' / ')}", "customText", event, "${description()}")`;
 			btnAttributes.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]['value']];
@@ -4984,7 +5031,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	}
 
 	const btnParent = _createElement('DIV', parentAttributes);
-	const btn = _createElement(type === 'dropdown' ? 'select' : 'DIV', btnAttributes);
+	const btn = _createElement(type.includes('dropdown') ? 'select' : 'DIV', btnAttributes);
 
 	btn.id = id;
 	btnParent.appendChild(btn);
@@ -5091,9 +5138,21 @@ function settingChanged(id, currUniverse) {
 		}
 	}
 
-	if (btn.type === 'dropdown') {
+	if (btn.type.includes('dropdown')) {
 		const selected = `selected${valueSuffix}`;
-		btn[selected] = document.getElementById(id).value;
+
+		let result;
+		if (btn.type === 'dropdown') {
+			result = document.getElementById(id).value;
+		} else {
+			const select2Container = document.querySelector(`#${id}`).nextElementSibling;
+			const selectedElements = select2Container.querySelectorAll('.select2-selection__choice');
+			const selectedTitles = Array.from(selectedElements).map((element) => element.getAttribute('title'));
+			result = selectedTitles;
+			/* _setSelect2Dropdowns(); */
+		}
+
+		btn[selected] = result;
 	}
 
 	saveSettings();
@@ -5329,7 +5388,7 @@ function _toggleElem(elementId, isVisible) {
 		element.parentNode.style.display = parentDisplayState;
 	}
 
-	if (setting && setting.type === 'dropdown') {
+	if (setting && setting.type.includes('dropdown')) {
 		let selected = 'selected';
 		if (atConfig.settingUniverse === 2 && !setting.universe.includes(0)) selected += 'U2';
 		element.value = setting[selected];
@@ -5383,16 +5442,20 @@ function _setDisplayedSettings(item) {
 			const option = document.createElement('option');
 			option.value = listItems[dropdown];
 			option.text = listItems[dropdown];
+			if (Array.isArray(itemSelected) && itemSelected.includes(option.value)) {
+				option.selected = true;
+			}
 			elem.appendChild(option);
 		}
-		elem.value = itemSelected;
+
+		if (item.type === 'dropdown') elem.value = itemSelected;
 	};
 
 	if (item.type === 'boolean') {
 		handleBooleanType(item, elem);
 	} else if (['value', 'valueNegative', 'multitoggle', 'multiValue', 'textValue', 'multiTextValue'].includes(item.type)) {
 		handleValueType(item, elem);
-	} else if (item.type === 'dropdown') {
+	} else if (item.type.includes('dropdown')) {
 		handleDropdownType(item, elem);
 	} else {
 		elem.innerHTML = item.name();
@@ -5407,7 +5470,7 @@ function _setDisplayedSettings(item) {
 	}
 
 	const setTooltip = (elem, name, description) => {
-		if (item.type === 'dropdown') elem = elem.parentNode;
+		if (item.type.includes('dropdown')) elem = elem.parentNode;
 		elem.setAttribute('onmouseover', `tooltip("${name}", "customText", event, "${description}")`);
 	};
 
@@ -5448,6 +5511,7 @@ function _setDisplayedTabs() {
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
 		tabSpire: !displayAllSettings && hze < (radonOn && game.global.stringVersion === '5.9.2' ? 999 : radonOn ? 270 : 170),
+		tabSpireAssault: !displayAllSettings && game.stats.highestRadLevel.valueTotal() < 75,
 		tabTest: !gameUserCheck()
 	};
 
@@ -5471,19 +5535,42 @@ function _setDisplayedTabs() {
 
 function _setSelect2Dropdowns() {
 	$(document).ready(function () {
-		$('select.select2').select2({
-			templateSelection: _setSelect2DropdownsPrefix,
-			escapeMarkup: function (m) {
-				return m;
-			}
+		$('select.select2').each(function () {
+			const multi = $(this).hasClass('select2-multi');
+			$(this).select2({
+				closeOnSelect: !multi,
+				multiple: multi,
+				templateSelection: function (dropdownSetting) {
+					return _setSelect2DropdownsPrefix(dropdownSetting, multi);
+				},
+				escapeMarkup: function (m) {
+					return m;
+				},
+				tokenSeparators: [','],
+				maximumSelectionLength: multi ? 17 : undefined
+			});
 		});
 	});
 }
 
-function _setSelect2DropdownsPrefix(dropdownSetting) {
+function _setSelect2DropdownsPrefix(dropdownSetting, multi) {
 	const prefix = dropdownSetting._resultId.split('-');
-	const prefixName = prefix ? `${autoTrimpSettings[prefix[1]].name()}: ` : '';
+	const setting = autoTrimpSettings[prefix[1]];
+	const prefixName = prefix ? `${setting.name()}: ` : '';
 	const text = dropdownSetting.text;
+
+	if (multi) {
+		const selectedItems = setting.selected;
+		let itemsText;
+
+		if (Array.isArray(selectedItems) && selectedItems.length > 0) {
+			itemsText = selectedItems.join(', ');
+		} else {
+			itemsText = 'None';
+		}
+
+		return `<font color='#00A7E1'>${prefixName}</font> ${itemsText}`;
+	}
 
 	return `<font color='#00A7E1'>${prefixName}</font> <float='right'>${text}</float>`;
 }

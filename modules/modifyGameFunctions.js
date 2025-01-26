@@ -239,6 +239,7 @@ if (typeof originalrunMap !== 'function') {
 	runMap = function () {
 		originalrunMap(...arguments);
 		if (!MODULES.maps.lastMapWeWereIn || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+		spireAssaultAcceptContract();
 	};
 }
 

@@ -51,13 +51,18 @@ function presetMutTab(tabNum) {
 }
 
 function tooltipAT(what, event, textString, headingName) {
-	let elem = document.getElementById('tooltipDiv');
+	let elem = document.getElementById('tooltipDiv2');
 	swapClass('tooltipExtra', 'tooltipExtraNone', elem);
 	document.getElementById('tipText').className = '';
 	let ondisplay = null;
 	let tooltipText = '';
 	let costText = '';
 	let titleText = what;
+
+	if (what === 'hide') {
+		elem.style.display = 'none';
+		return;
+	}
 
 	if (what === 'Mutator Preset') {
 		if (headingName === 'Save') {
@@ -154,16 +159,15 @@ function tooltipAT(what, event, textString, headingName) {
 			text += `<br>${game.talents[hyperspeedOwned].description}</p>`;
 		}
 
-		/* const liqOwned = game.talents.liquification3.purchased ? 'liquification3' : game.talents.liquification2.purchaseCount ? 'liquification2' : game.talents.liquification.purchaseCount ? 'liquification' : false; */
 		text += `<p><b>${'Liquification Amount'}</b>`;
 		text += `<br>Each cleared Zone through Z${Math.floor(checkLiqZoneCount())} (${checkLiqZoneCount(undefined, true) * 100}% of your highest Zone reached) will be liquified.</p>`;
 
 		tooltipText = text;
 	}
 
-	document.getElementById('tipTitle').innerHTML = titleText;
-	document.getElementById('tipText').innerHTML = tooltipText;
-	document.getElementById('tipCost').innerHTML = costText;
+	document.getElementById('tipTitle2').innerHTML = titleText;
+	document.getElementById('tipText2').innerHTML = tooltipText;
+	document.getElementById('tipCost2').innerHTML = costText;
 	elem.style.display = 'block';
 	if (ondisplay !== null) ondisplay();
 	if (event !== 'update') positionTooltip(elem, event);
@@ -313,7 +317,7 @@ function presetMutations() {
 		else u2MutContainer.setAttribute('class', 'btn btn-lg btn-info');
 		const presetText = x <= 3 ? 'Preset: ' : '';
 		u2MutContainer.setAttribute('onmouseover', 'tooltipAT("Mutator Preset", event, ' + x + ', "' + presetText + containerText[x - 1] + '")');
-		u2MutContainer.setAttribute('onmouseout', 'tooltip("hide")');
+		u2MutContainer.setAttribute('onmouseout', 'tooltipAT("hide")');
 		u2MutContainer.innerHTML = presetText + containerText[x - 1];
 		u2MutContainer.setAttribute('onClick', onClick[x - 1]);
 
@@ -334,7 +338,7 @@ function presetMasteryIcon() {
 	const u2IconContainer = document.createElement('DIV');
 	u2IconContainer.setAttribute('id', 'mutMasteryIcon');
 	u2IconContainer.setAttribute('onmouseover', 'tooltipAT("Mastery Info", event)');
-	u2IconContainer.setAttribute('onmouseout', 'tooltip("hide")');
+	u2IconContainer.setAttribute('onmouseout', 'tooltipAT("hide")');
 	u2IconContainer.setAttribute('style', 'margin-right: 1vw;');
 
 	const u2Icon = document.createElement('SPAN');

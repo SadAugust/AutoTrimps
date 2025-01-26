@@ -104,10 +104,10 @@ function mapSettingsDisplay(elem, titleText) {
 
 function mazSettingNames(titleName) {
 	if (titleName) {
-		return ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Toxicity', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner', 'Profile', 'Gene Assist', 'Hits Survived & HD Farm'];
+		return ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Toxicity', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'Desolation Gear Scumming', 'C2 Runner', 'C3 Runner', 'Profile', 'Gene Assist', 'Hits Survived & HD Farm', 'Spire Assault Settings'];
 	}
 
-	return ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'autoGolden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation', 'profile', 'geneAssist'];
+	return ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'autoGolden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation', 'profile', 'geneAssist', 'spireAssault'];
 }
 
 function _getActiveSetting(settingName = '', settingNames = []) {
@@ -127,7 +127,7 @@ function _getActiveSetting(settingName = '', settingNames = []) {
 
 	activeSetting.mapType = s.mapFarm || s.tributeFarm || s.smithyFarm || s.alchemy;
 
-	activeSetting.jobRatio = !s.golden && !s.raiding && !s.bionic && !s.smithyFarm && !s.profile;
+	activeSetting.jobRatio = !s.golden && !s.raiding && !s.bionic && !s.smithyFarm && !s.profile && !s.spireAssault;
 
 	activeSetting.repeatEvery = s.mapFarm || s.raiding || s.bionic || s.worshipperFarm || s.tributeFarm || s.smithyFarm || s.toxicity || s.archaeology || s.alchemy || s.desolation;
 
@@ -244,6 +244,11 @@ function _mapSettingsInputObj() {
 			settingInputs: ['active', 'priority', 'row', 'world', 'endzone', 'cell', 'autoLevel', 'level', 'hdRatio', 'jobratio', 'repeatevery', 'special', 'gather', 'runType', 'challenge', 'challenge3', 'challengeOneOff'],
 			settingInputsDefault: ['geneAssistSpendingPct', 'geneAssistBleedVoids'],
 			windowWidth: '70%'
+		},
+		'Spire Assault': {
+			settingInputs: ['active', 'priority', 'row', 'world', 'preset', 'settingType', 'item', 'levelSA'],
+			settingInputsDefault: [],
+			windowWidth: '55%'
 		}
 	};
 }
@@ -284,7 +289,7 @@ function _mapSettingsVals(lineNo, activeSetting) {
 		active: true,
 		priority: parseInt(lineNo) + 1,
 		check: true,
-		world: game.global.world,
+		world: activeSetting.spireAssault ? autoBattle.enemyLevel : game.global.world,
 		cell: 1,
 		level: -1,
 		special: '0',
@@ -335,7 +340,11 @@ function _mapSettingsVals(lineNo, activeSetting) {
 		profileName: 'None',
 		load: false,
 		overwrite: false,
-		settingString: serializeSettings()
+		settingString: serializeSettings(),
+		preset: '0',
+		settingType: 'Clear Level',
+		item: 'Menacing_Mask',
+		levelSA: '0'
 	};
 }
 
@@ -391,7 +400,10 @@ function _mapSettingsValsKeys(s) {
 		windowOverwriteProfiles: 'overwrite',
 		windowSettingStringProfiles: 'settingString',
 		windowGeneSpentPct: 'geneAssistSpendingPct',
-		windowGeneBleedVoids: 'geneAssistBleedVoids'
+		windowGeneBleedVoids: 'geneAssistBleedVoids',
+		windowSettingType: 'settingType',
+		windowItem: 'item',
+		windowItemLevel: 'levelSA'
 	};
 }
 
@@ -646,7 +658,7 @@ function _mapSettingsRowTitles(varPrefix, activeSettings, settingOrder) {
 		elements.push({ name: 'priority', class: `windowPriority${varPrefix}`, title: 'Priority' });
 	}
 
-	if (!s.golden && !s.profile) {
+	if (!s.golden && !s.profile && !s.spireAssault) {
 		if (!s.boneShrine) elements.push({ name: 'world', class: `windowWorld${varPrefix}`, title: 'Start<br/>Zone' });
 		if (!s.desolation) elements.push({ name: 'cell', class: `windowCell${varPrefix}`, title: 'Cell' });
 	}
@@ -687,6 +699,14 @@ function _mapSettingsRowTitles(varPrefix, activeSettings, settingOrder) {
 	const trimpleName = atConfig.settingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 	if (s.atlantrimp) {
 		elements.push({ name: 'atlantrimp', class: `windowAtlantrimp`, title: `Run<br/>${trimpleName}` });
+	}
+
+	if (s.spireAssault) {
+		elements.push({ name: 'world', class: `windowWorld${varPrefix}`, title: 'Level' });
+		elements.push({ name: 'preset', class: `windowPreset${varPrefix}`, title: 'Preset' });
+		elements.push({ name: 'settingType', class: `windowSettingType${varPrefix}`, title: `Setting&nbsp;Type` });
+		elements.push({ name: 'item', class: `windowClear windowItem${varPrefix}`, title: `Item` });
+		elements.push({ name: 'levelSA', class: `windowLevel windowItemLevel${varPrefix}`, title: `Item&nbsp;Level` });
 	}
 
 	const sortedElements = new Array(settingOrder.length).fill(null);
@@ -730,7 +750,16 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style
 	}
 
 	const elements = [];
-	const classNames = [vals.special === 'hc' || vals.special === 'lc' ? 'windowGatherOn' : 'windowGatherOff', !vals.autoLevel ? 'windowLevelOn' : 'windowLevelOff', x <= currSettingLength - 1 ? 'active' : 'disabled'];
+	const classNames = [vals.special === 'hc' || vals.special === 'lc' ? 'windowGatherOn' : 'windowGatherOff', x <= currSettingLength - 1 ? 'active' : 'disabled'];
+
+	if (!s.spireAssault) {
+		classNames.push(!vals.autoLevel ? 'windowLevelOn' : 'windowLevelOff');
+	}
+
+	if (s.spireAssault) {
+		classNames.push(['Clear Level', 'Buy Limb', 'Level Ring'].includes(vals.settingType) ? `windowClearOn` : `windowClearOff`);
+		classNames.push(['Buy Limb', 'Level Equipment', 'Level Ring'].includes(vals.settingType) ? `windowLevelOn` : `windowLevelOff`);
+	}
 
 	if (s.hdFarm) {
 		classNames.push(vals.hdType === 'maplevel' ? 'windowMapLevelOff' : 'windowMapLevelOn');
@@ -850,7 +879,7 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style
 		elements.push({ name: 'priority', class: `windowPriority${varPrefix}`, title: `<input value='${vals.priority}' type='number' id='windowPriority${x}'/>` });
 	}
 
-	if (!s.golden && !s.profile) {
+	if (!s.golden && !s.profile && !s.spireAssault) {
 		elements.push({ name: 'world', class: `windowWorld${varPrefix}`, title: `<input value='${vals.world}' type='number' id='windowWorld${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'/>`, style: backgroundStyle });
 		if (!s.desolation) elements.push({ name: 'cell', class: `windowCell${varPrefix}`, title: `<input value='${vals.cell}' type='number' id='windowCell${x}'/>` });
 	}
@@ -894,6 +923,14 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style
 
 	if (s.atlantrimp) {
 		elements.push({ name: 'atlantrimp', class: `windowAtlantrimp`, title: `${buildNiceCheckbox('windowAtlantrimp' + x, null, vals.atlantrimp)}`, style: 'text-align: center;' });
+	}
+
+	if (s.spireAssault) {
+		elements.push({ name: 'world', class: `windowWorld${varPrefix}`, title: `<input value='${vals.world}' type='number' id='windowWorld${x}'/>` });
+		elements.push({ name: 'preset', class: `windowPreset${varPrefix}`, title: `<select value='${vals.preset}' id='windowPreset${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.spireAssaultPresets}</select>` });
+		elements.push({ name: 'settingType', class: `windowSettingType${varPrefix}`, title: `<select value='${vals.settingType}' id='windowSettingType${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.spireAssaultItemTypes}</select>` });
+		elements.push({ name: 'item', class: `windowClear windowItem${varPrefix}`, title: `<select value='${vals.item}' id='windowItem${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.spireAssaultItems}</select>` });
+		elements.push({ name: 'levelSA', class: `windowLevel windowItemLevel${varPrefix}`, title: `<input value='${vals.levelSA}' type='number' id='windowLevel${x}'/>` });
 	}
 
 	const sortedElements = new Array(settingOrder.length).fill(null);
@@ -945,10 +982,12 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 	/* default settings */
 	if (!s.golden && !s.profile) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
+
 		if (s.worshipperFarm) {
 			defaultSetting.shipSkipEnabled = readNiceCheckbox(document.getElementById('windowSkipShipEnabled'));
 			defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
 		}
+
 		if (s.mapBonus) {
 			defaultSetting.special = document.getElementById('windowSpecial').value;
 
@@ -963,9 +1002,18 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 			defaultSetting.world = parseInt(document.getElementById('windowBoneWorld').value, 10);
 		}
 
-		if (s.mapBonus || s.voidMap || s.boneShrine || s.hdFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
-		if (s.alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
-		if (s.quagmire) defaultSetting.abandonZone = parseInt(document.getElementById('abandonZone').value);
+		if (s.mapBonus || s.voidMap || s.boneShrine || s.hdFarm) {
+			defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
+		}
+
+		if (s.alchemy) {
+			defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
+		}
+
+		if (s.quagmire) {
+			defaultSetting.abandonZone = parseInt(document.getElementById('abandonZone').value);
+		}
+
 		if (s.voidMap) {
 			defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
 			if (game.permaBoneBonuses.boosts.owned > 0) defaultSetting.boneCharge = readNiceCheckbox(document.getElementById('windowBoneCharge'));
@@ -974,15 +1022,20 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 			defaultSetting.hdRatio = document.getElementById('windowHDRatio').value;
 			defaultSetting.mapCap = parseFloat(document.getElementById('windowMapCap').value, 10);
 		}
+
 		if (s.hypothermia) {
 			defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
 			defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
 			defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
 		}
+
 		if (s.raiding) {
 			defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
 		}
-		if (s.hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
+
+		if (s.hdFarm) {
+			defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
+		}
 	}
 
 	/* row settings */
@@ -1096,7 +1149,7 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 			thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
 		}
 
-		if (!s.golden && !s.profile) {
+		if (!s.golden && !s.profile && !s.spireAssault) {
 			thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
 			if (!s.desolation) {
 				thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
@@ -1149,13 +1202,21 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 			thisSetting.atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		}
 
+		if (s.spireAssault) {
+			thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
+			thisSetting.preset = document.getElementById('windowPreset' + x).value;
+			thisSetting.settingType = document.getElementById('windowSettingType' + x).value;
+			thisSetting.item = document.getElementById('windowItem' + x).value;
+			thisSetting.levelSA = document.getElementById('windowLevel' + x).value;
+		}
+
 		const checkSettingsErrors = (condition, errorMessage) => {
 			if (condition) {
 				error += ` Line #${x + 1} ${errorMessage}<br>`;
 			}
 		};
 
-		if (!s.golden && !s.profile) {
+		if (!s.golden && !s.profile && !s.spireAssault) {
 			checkSettingsErrors(isNaN(thisSetting.world) || thisSetting.world < 6, "needs a value for Start Zone that's greater than 5.");
 			checkSettingsErrors(+thisSetting.world > 1000, "needs a value for Start Zone that's less than 1000.");
 			checkSettingsErrors(+thisSetting.world + +thisSetting.level < 6 && !thisSetting.autoLevel, "can't have a zone and map combination below zone 6.");
@@ -1218,7 +1279,7 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 
 	setPageSetting(varPrefix + 'Settings', setting, atConfig.settingUniverse);
 
-	if (!s.golden && !s.profile) {
+	if (!s.golden && !s.profile && !s.spireAssault) {
 		const value = atConfig.settingUniverse === 2 ? 'valueU2' : 'value';
 		game.global.addonUser.mapData[varPrefix + 'Settings'][value] = Array.from({ length: 31 }, () => ({ done: '' }));
 
@@ -1262,7 +1323,7 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 	const trimple = atConfig.settingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 	let mazHelp = 'Welcome to <b>' + titleText + '</b> settings!';
 
-	if (!s.golden && !s.profile) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
+	if (!s.golden && !s.profile && !s.spireAssault) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
 	else if (s.golden) {
 		mazHelp += " This is a powerful automation tool that allows you to set the order of golden upgrade purchases and how many of each type you'd like to have. Here's a quick overview of what everything does:";
 	} else {
@@ -1304,8 +1365,8 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 
 	//Top Row Information
 	if (!s.golden && !s.profile) {
-		mazHelp += '<br><br>The top row section consists of toggles/inputs which add extra functions to the setting itself:<br></br><ul>';
-		mazHelp += '<li><b>Enabled</b> - A toggle to disable/enable the entire setting.</li>';
+		mazHelp += '<br><br>The top row section consists of toggles and inputs which add extra functions to the setting itself:<br></br><ul>';
+		mazHelp += '<li><b>Enabled</b> - A toggle to enable or disable the entire setting.</li>';
 		if (s.raiding && !s.bionic) {
 			mazHelp += '<li><b>Recycle Maps</b> - A toggle to recycle maps after raiding has finished.</li>';
 			mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>";
@@ -1368,11 +1429,13 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 
 	mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this line completely</li>";
 	if (!s.profile) {
+		const includeCell = !s.golden && !s.spireAssault;
 		mazHelp += '<li><b>Active</b> - A toggle to disable/enable this line.</li>';
-		mazHelp += '<li><b>Priority</b> - If this setting has two or more lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>';
+		mazHelp += `<li><b>Priority</b> - If this setting has two or more lines set to trigger ${includeCell ? 'at the same cell ' : ''}on the same zone, the line with the lowest priority will run first.</li>`;
+		mazHelp += '<li class="indent">This also determines sort order of lines in the UI.</li>';
 	}
-	if (!s.voidMap && !s.golden && !s.profile) mazHelp += '<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>';
-	if (!s.golden && !s.desolation && !s.profile) {
+	if (!s.voidMap && !s.golden && !s.profile && !s.spireAssault) mazHelp += '<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>';
+	if (!s.golden && !s.desolation && !s.profile && !s.spireAssault) {
 		mazHelp += '<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell.</li>';
 		mazHelp += '<li class="indent"><b>Runs on the cell you have input or after if you have already gone past that cell on your zone.</b></li>';
 		mazHelp += '<li class="indent"><b>Doesn\'t take overkill into account so for example if you overkill past c100 with a c100 line it will be skipped.</b></li>';
@@ -1526,6 +1589,20 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 		mazHelp += '<li><b>Overwrite Profile</b> - Allows you to overwrite the profile with your current settings.</li>';
 	}
 
+	if (s.spireAssault) {
+		mazHelp += '<li><b>Level</b> - The Spire Assault level you would like to run during this line.</li>';
+		mazHelp += `<li class="indent">When switching levels <b>Auto Level</b> will be turned off.</li>`;
+		mazHelp += '<li><b>Preset</b> - The preset you would like to switch to when this line runs.</li>';
+		mazHelp += `<li class="indent">Item presets can be setup in the <b>Presets</b> setting in the <b>Spire Assault</b> tab.</li>`;
+		mazHelp += `<li class="indent">Ring mods will only be switched if you have selected the maximum amount of mods available.</li>`;
+		mazHelp += '<li><b>Setting Type</b> - This provides the option to either clear a level or farm for limbs, equipment, or ring levels.</li>';
+		mazHelp += '<li><b>Item</b> - The item you would like to farm levels in.</li>';
+		mazHelp += '<li class="indent">This input is only accessible when <b>Setting Type</b> is set to <b>Level Equipment</b>.</li>';
+		mazHelp += `<li class="indent">Items saved in the <b>Hidden Items</b> tab of the <b>Presets</b> setting won't be visible in this list.</li>`;
+		mazHelp += '<li><b>Item Level</b> - The limb, equipment or ring level you would like to farm for.</li>';
+		mazHelp += `<li class="indent">This input is only accessible when <b>Setting Type</b> isn't set to <b>Clear Level</b>.</li>`;
+	}
+
 	return mazHelp;
 }
 
@@ -1545,7 +1622,7 @@ function windowToggleHelp(windowWidth) {
 	parentWindow.style.height = 'auto';
 	parentWindow.style.maxHeight = window.innerHeight * 0.85 + 'px';
 
-	if (document.querySelectorAll('#mazHelpContainer li').length > 13) parentWindow.style.overflowY = 'scroll';
+	if (helpContainer.style.display === 'block' && document.querySelectorAll('#mazHelpContainer li').length > 16) parentWindow.style.overflowY = 'scroll';
 }
 
 function _mapSettingsGetRowIDs(elem, index) {
@@ -1660,6 +1737,7 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 	const smithyFarm = varPrefix.includes('Smithy');
 	const worshipperFarm = varPrefix.includes('Worshipper');
 	const profile = varPrefix.includes('Profile');
+	const spireAssault = varPrefix.includes('SpireAssault');
 
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
 		if (index !== '') {
@@ -1689,11 +1767,23 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 		}
 	}
 
+	if (spireAssault) {
+		if (index !== '') {
+			const settingType = document.getElementById('windowSettingType' + index).value;
+			let newClass = ['Clear Level', 'Buy Limb', 'Level Ring'].includes(settingType) ? 'windowClearOn' : 'windowClearOff';
+			swapClass('windowClear', newClass, row);
+
+			newClass = ['Buy Limb', 'Level Equipment', 'Level Ring'].includes(settingType) ? 'windowLevelOn' : 'windowLevelOff';
+			swapClass('windowLevel', newClass, row);
+		}
+	}
+
 	if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) {
 		if (index !== '' || mapBonus) {
 			const special = document.getElementById('windowSpecial' + index).value;
 			const newClass = special === 'hc' || special === 'lc' ? 'windowGatherOn' : 'windowGatherOff';
 			swapClass('windowGather', newClass, row);
+			console.log(special, newClass);
 		}
 	}
 
@@ -1862,6 +1952,36 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 	dropdown.potionTypes += "<option value='f'" + (vals.potionstype === 'f' ? " selected='selected'" : '') + '>Potion of Finding</option>';
 	dropdown.potionTypes += "<option value='v'" + (vals.potionstype === 'v' ? " selected='selected'" : '') + '>Potion of the Void</option>';
 	dropdown.potionTypes += "<option value='s'" + (vals.potionstype === 's' ? " selected='selected'" : '') + '>Potion of Strength</option>';
+
+	/* spire assault presets */
+	const spireAssaultPresets = JSON.parse(getPageSetting('spireAssaultPresets')).titles;
+	dropdown.spireAssaultPresets = "<option value='0'" + (vals.preset === '0' ? " selected='selected'" : '') + '>No Change</option>';
+
+	let x = 1;
+	for (let item in spireAssaultPresets) {
+		if (spireAssaultPresets[item] === 'Hidden Items') continue;
+		let key = x++;
+		dropdown.spireAssaultPresets += "<option value='" + key + "'" + (Number(vals.preset) === key ? " selected='selected'" : '') + '>' + spireAssaultPresets[item] + '</option>';
+	}
+
+	/* spire assault farm types */
+	dropdown.spireAssaultItemTypes = "<option value='Clear Level'" + (vals.settingType === 'Clear Level' ? " selected='selected'" : '') + '>Clear Level</option>';
+	const spireAssaultDropdowns = ['Buy Limb', 'Level Equipment'];
+	if (autoBattle.oneTimers.The_Ring.owned) spireAssaultDropdowns.push('Level Ring');
+
+	for (let item in spireAssaultDropdowns) {
+		let key = spireAssaultDropdowns[item];
+		dropdown.spireAssaultItemTypes += "<option value='" + key + "'" + (vals.settingType === key ? " selected='selected'" : '') + '>' + key + '</option>';
+	}
+
+	/* spire assault items */
+	const spireAssaultItems = spireAssaultItemList();
+	dropdown.spireAssaultItems = '';
+	for (let item in spireAssaultItems) {
+		let key = spireAssaultItems[item];
+		if (key.includes('Doppelganger')) continue;
+		dropdown.spireAssaultItems += "<option value='" + key + "'" + (vals.item === key ? " selected='selected'" : '') + '>' + autoBattle.cleanName(key) + '</option>';
+	}
 
 	return dropdown;
 }
