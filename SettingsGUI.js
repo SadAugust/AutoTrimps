@@ -4427,11 +4427,12 @@ function initialiseAllSettings() {
 				description += "<p>Purchase order is based on contract unlock order.</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire Assault', [0]);
-			
+
 		createSetting('spireAssaultPresets',
 			function () { return ('Presets') },
 			function () {
-				let description = "<p>Not linked to anything yet.</p>";
+				let description = "<p>To be written.</p>";
+				description += "<p>Just lets you setup items to use for each preset.</p>";
 				return description;
 			}, 'mazDefaultArray', JSON.stringify({
 				'Preset 1': {name: 'Preset 1', items: [], ringMods: []},

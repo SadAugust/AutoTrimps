@@ -1453,18 +1453,16 @@ h9 {
 }
 
 .windowActiveSpireAssault {
-	width: 10%;
+	width: 8%;
 }
 
 .windowPrioritySpireAssault,
-.windowWorldSpireAssault,
-.windowPresetSpireAssault,
-.windowSettingTypeSpireAssault {
-	width: 10%;
+.windowWorldSpireAssault {
+	width: 8%;
 }
 
 .windowPresetSpireAssault {
-	width: 15%;
+	width: 23%;
 }
 
 .windowSettingTypeSpireAssault {
@@ -1476,12 +1474,7 @@ h9 {
 }
 
 .windowItemLevelSpireAssault {
-	width: 10%;
-}
-
-.windowSpecialSpireAssault,
-.windowPrestigeGoalSpireAssault {
-	width: 20%;
+	width: 8%;
 }
 
 .windowClear {
