@@ -236,7 +236,7 @@ function initialiseAllSettings() {
 
 		let $pauseScript = document.getElementById('pauseScript');
 		$pauseScript.parentNode.style.setProperty('float', 'right');
-		$pauseScript.parentNode.style.setProperty('margin-right', '0.25vw');
+		$pauseScript.parentNode.style.setProperty('margin-right', '1vw');
 		$pauseScript.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoHeirlooms',
@@ -351,7 +351,7 @@ function initialiseAllSettings() {
 
 		let $universeSetting = document.getElementById('universeSetting');
 		$universeSetting.parentNode.style.setProperty('float', 'right');
-		$universeSetting.parentNode.style.setProperty('margin-right', '0.25vw');
+		$universeSetting.parentNode.style.setProperty('margin-right', '1vw');
 		$universeSetting.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoPortal',
@@ -544,7 +544,7 @@ function initialiseAllSettings() {
 
 		let $autoPortalForce = document.getElementById('autoPortalForce');
 		$autoPortalForce.parentNode.style.setProperty('float', 'right');
-		$autoPortalForce.parentNode.style.setProperty('margin-right', '0.25vw');
+		$autoPortalForce.parentNode.style.setProperty('margin-right', '1vw');
 		$autoPortalForce.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoEggs',
@@ -558,7 +558,7 @@ function initialiseAllSettings() {
 
 		let $eggSettings = document.getElementById('autoEggs');
 		$eggSettings.parentNode.style.setProperty('float', 'right');
-		$eggSettings.parentNode.style.setProperty('margin-right', '1.3vw');
+		$eggSettings.parentNode.style.setProperty('margin-right', '1vw');
 		$eggSettings.parentNode.style.setProperty('margin-left', '0');
 	}
 	
