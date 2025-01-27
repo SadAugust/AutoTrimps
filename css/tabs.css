@@ -1496,7 +1496,7 @@ h9 {
 
 .spireAssaultHeader {
 	display: inline-block;
-	width: calc((100% - 1.4em - 6px) / 6);
+	width: calc((100% - 1.4em - 6px) / 5.95);
 	text-align: center;
 	cursor: pointer;
 	padding: 0.3em;
@@ -1505,9 +1505,9 @@ h9 {
 	margin-left: 0.1em;
 	margin-top: 0.1em;
 	margin-bottom: 0.2em;
+	font-size: 0.85vw;
 }
 
-.spireAssaultItem,
 .spireAssaultRing {
 	display: inline-block;
 	width: calc((100% - 1.4em - 2px) / 5);
@@ -1519,7 +1519,21 @@ h9 {
 	margin-left: 0.1em;
 	margin-top: 0.1em;
 	margin-bottom: 0.2em;
-	font-size: 0.85vw;
+	font-size: 0.8vw;
+}
+
+.spireAssaultItem {
+	display: inline-block;
+	width: calc((100% - 1.4em - 2px) / 5.1);
+	text-align: center;
+	cursor: pointer;
+	padding: 0.2em;
+	color: white;
+	margin-right: 0.1em;
+	margin-left: 0.1em;
+	margin-top: 0.1em;
+	margin-bottom: 0.2em;
+	font-size: 0.7vw;
 }
 
 .spireItemsEquipped,

@@ -136,6 +136,37 @@ function _runSpireAssault(setting) {
 	}
 }
 
+function spireAssaultExport(preset) {
+	const equippedItems = [];
+	for (let item in autoBattle.items) {
+		if (autoBattle.items[item].equipped) equippedItems.push(item);
+	}
+
+	const ringMods = autoBattle.rings.mods;
+
+	const settings = JSON.parse(getPageSetting('spireAssaultPresets'));
+	settings[preset].items = equippedItems;
+	settings[preset].ringMods = ringMods;
+	setPageSetting('spireAssaultPresets', JSON.stringify(settings));
+
+	cancelTooltip();
+	importExportTooltip('spireAssault');
+}
+
+function spireAssaultImport(preset) {
+	const settings = JSON.parse(getPageSetting('spireAssaultPresets'));
+	const { items, ringMods } = settings[preset];
+
+	let reset = false;
+	reset |= spireAssaultItemSwap(items);
+	reset |= spireAssaultRingSwap(ringMods);
+
+	if (reset) {
+		autoBattle.resetCombat(true);
+		autoBattle.popup(true, false, true);
+	}
+}
+
 function spireAssaultItemSwap(itemList) {
 	if (!itemList) return false;
 

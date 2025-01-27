@@ -376,7 +376,12 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 		}
 
 		let equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
-		rowData += `<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items")' data-hidden-text="${item}">${autoBattle.cleanName(item)}</div>`;
+		const itemLevel = item.includes('Doppelganger') ? '' : ` Lv ${itemObj.level}`;
+		rowData += `
+			<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items")' data-hidden-text="${item}">
+				<span style="float: left;">${autoBattle.cleanName(item)}</span>
+				<span style="float: right;">${itemLevel}</span>
+			</div>`;
 		total++;
 	}
 
@@ -388,7 +393,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 		const ringSlots = autoBattle.getRingSlots();
 		const ringModsEquipped = preset.ringMods;
 		tooltipText += `<div style="white-space: nowrap;">
-			<span>The Ring (</span><span id='spireAssaultRingEquipped'>${ringModsEquipped.length}</span><span>/</span><span id='spireAssaultRingMax'>${ringSlots}</span><span>) </span><span id='spireAssaultRingError' style='color: red;'></span>
+			<span>The Ring - Level ${autoBattle.rings.level} (</span><span id='spireAssaultRingEquipped'>${ringModsEquipped.length}</span><span>/</span><span id='spireAssaultRingMax'>${ringSlots}</span><span>) </span><span id='spireAssaultRingError' style='color: red;'></span>
 		</div>`;
 
 		const ringMods = Object.keys(autoBattle.ringStats);
@@ -408,8 +413,11 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 		`;
 
 	if (selectedPreset !== 'Hidden Items') {
-		costText += `<span class='btn btn-info btn-md' onclick='spireAssaultPresetRename(this);'>Rename Preset</span>`;
+		costText += ` <span class='btn btn-info btn-md' onclick='spireAssaultPresetRename(this)'>Rename Preset</span>`;
+		costText += ` <span class='btn btn-success btn-md' onclick='tooltipAT("Spire Assault Import", event, "${escapeHtmlAttribute(setting[selectedPreset].name)}", "${selectedPreset}")'>Import to Spire Assault</span>`;
+		costText += ` <span class='btn btn-warning btn-md' onclick='tooltipAT("Spire Assault Export", event, "${escapeHtmlAttribute(setting[selectedPreset].name)}", "${selectedPreset}")'>Export from Spire Assault</span>`;
 	}
+
 	costText += `</div> `;
 
 	const ondisplay = function () {

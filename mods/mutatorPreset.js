@@ -127,7 +127,7 @@ function tooltipAT(what, event, textString, headingName) {
 		<br/><br/><input id='renamePresetBox' maxlength='25' style='width: 50%' value='${oldName}' />`;
 		costText = `<div class='maxCenter'>
 		<div id='confirmTooltipBtn' class='btn btn-info' onclick='renameMutations()'>Apply</div>
-		<div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div>
+		<div class='btn btn-info' onclick='cancelTooltipAT(true); unlockTooltip();'>Cancel </div>
 		</div>`;
 
 		game.global.lockTooltip = true;
@@ -163,6 +163,27 @@ function tooltipAT(what, event, textString, headingName) {
 		text += `<br>Each cleared Zone through Z${Math.floor(checkLiqZoneCount())} (${checkLiqZoneCount(undefined, true) * 100}% of your highest Zone reached) will be liquified.</p>`;
 
 		tooltipText = text;
+	} else if (what === 'Spire Assault Import') {
+		const ringMods = autoBattle.oneTimers.The_Ring.owned ? ' and ring modifiers' : '';
+		tooltipText = `Are you sure you want to import your current items${ringMods} the <b>${textString}</b> preset into Spire Assault?`;
+		if (autoBattle.oneTimers.The_Ring.owned) tooltipText += `<br>Ring Modifiers will only be imported if you have selected enough for the max slots available.`;
+		tooltipText += `<br><br><b>Warning:</b> This will use your saved version of this preset. If you have made changes to your items since saving, they will be overwritten.`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultImport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+
+		document.getElementById('tooltipDiv2').style.zIndex = 9;
+		ondisplay = function () {
+			_verticalCenterTooltip(true, undefined, '2');
+		};
+	} else if (what === 'Spire Assault Export') {
+		const ringMods = autoBattle.oneTimers.The_Ring.owned ? ' and ring modifiers' : '';
+		tooltipText = `Are you sure you want to import your current items${ringMods} from Spire Assault into the <b>${textString}</b> preset?`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultExport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+
+		document.getElementById('tooltipDiv2').style.zIndex = 9;
+		ondisplay = function () {
+			_verticalCenterTooltip(true, undefined, '2');
+		};
 	}
 
 	document.getElementById('tipTitle2').innerHTML = titleText;
@@ -170,7 +191,19 @@ function tooltipAT(what, event, textString, headingName) {
 	document.getElementById('tipCost2').innerHTML = costText;
 	elem.style.display = 'block';
 	if (ondisplay !== null) ondisplay();
-	if (event !== 'update') positionTooltip(elem, event);
+	if (event !== 'update' && !what.includes('Spire Assault')) positionTooltip(elem, event);
+}
+
+// Correct function to call to cancel the current tooltip
+function cancelTooltip2(ignore1) {
+	tooltipAT('hide');
+
+	if (!ignore1) {
+		document.getElementById('tooltipDiv').style.display = 'none';
+	}
+
+	document.getElementById('tipCost2').innerHTML = '';
+	document.getElementById('tipText2').className = '';
 }
 
 function saveMutations() {
