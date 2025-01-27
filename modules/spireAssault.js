@@ -35,10 +35,13 @@ function spireAssaultShouldRun(setting) {
 
 	if (setting.settingType === 'Clear Level') {
 		if (autoBattle.maxEnemyLevel > setting.world) return false;
+	} else if (setting.settingType === 'Buy One-Timer') {
+		if (autoBattle.oneTimers[setting.oneTimerItem].owned) return false;
 	} else {
 		const itemLevel = Number(setting.levelSA);
 		let item = autoBattle.items[setting.item];
 		if (setting.settingType === 'Level Ring') item = autoBattle.rings;
+		if (setting.settingType === 'Buy Bonus') item = autoBattle.bonuses[setting.bonusItem];
 		if (setting.settingType === 'Buy Limb') item = autoBattle.bonuses.Extra_Limbs;
 		if (item.level >= itemLevel) return false;
 	}
@@ -94,6 +97,18 @@ function _runSpireAssault(setting) {
 				itemName: 'Extra_Limbs',
 				cost: autoBattle.getBonusCost,
 				upgradeFunction: autoBattle.buyBonus
+			},
+			'Buy Bonus': {
+				item: autoBattle.bonuses[setting.item],
+				itemName: setting.bonusItem,
+				cost: autoBattle.getBonusCost,
+				upgradeFunction: autoBattle.buyBonus
+			},
+			'Buy One-Timer': {
+				item: autoBattle.oneTimers[setting.item],
+				itemName: setting.oneTimerItem,
+				cost: autoBattle.oneTimerPrice,
+				upgradeFunction: autoBattle.buyOneTimer
 			}
 		};
 
@@ -105,14 +120,21 @@ function _runSpireAssault(setting) {
 		let resources = autoBattle[resourceType];
 		let levelCost = autoBattle.costFunction(itemName);
 
-		while (item.level < Number(levelSA) && resources >= levelCost) {
-			autoBattle.upgradeFunction(itemName);
-			levelCost = autoBattle.costFunction(itemName);
-			resources = autoBattle[resourceType];
-		}
+		if (settingType === 'Buy One-Timer') {
+			if (resources >= levelCost) {
+				autoBattle.buyOneTimer(itemName);
+				return;
+			}
+		} else {
+			while (item.level < Number(levelSA) && resources >= levelCost) {
+				autoBattle.upgradeFunction(itemName);
+				levelCost = autoBattle.costFunction(itemName);
+				resources = autoBattle[resourceType];
+			}
 
-		if (item.level === Number(levelSA)) {
-			return false;
+			if (item.level === Number(levelSA)) {
+				return;
+			}
 		}
 	}
 
