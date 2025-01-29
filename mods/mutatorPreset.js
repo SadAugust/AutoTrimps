@@ -171,7 +171,7 @@ function tooltipAT(what, event, textString, headingName) {
 
 		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultImport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
-		document.getElementById('tooltipDiv2').style.zIndex = 9;
+		elem.style.zIndex = 9;
 		ondisplay = function () {
 			_verticalCenterTooltip(true, undefined, '2');
 		};
@@ -180,9 +180,22 @@ function tooltipAT(what, event, textString, headingName) {
 		tooltipText = `Are you sure you want to import your current items${ringMods} from Spire Assault into the <b>${textString}</b> preset?`;
 		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultExport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
-		document.getElementById('tooltipDiv2').style.zIndex = 9;
+		elem.style.zIndex = 9;
 		ondisplay = function () {
 			_verticalCenterTooltip(true, undefined, '2');
+		};
+	} else if (what === 'Spire Assault Spreadsheet') {
+		const ringMods = autoBattle.oneTimers.The_Ring.owned ? ' and ring modifiers' : '';
+		const spireAssaultLink = `<a href="https://docs.google.com/spreadsheets/d/17Z3dwnkeAmY2La-LWreybTs4Sm7BAck79EzVF_gkZzs" target="_blank">Spire Assault community sheet</a>`;
+		tooltipText = `Import your Spire Assault build string to load those items${ringMods} into the <b>${textString}</b> preset.<br/>Builds can be found by copying the <b>Share Build</b> cell in the ${spireAssaultLink}<br/><textarea id='importBox' style='width: 100%' rows='3'></textarea>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='spireAssaultImportSpreadsheet("${headingName}");'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6; '>Cancel</div></div>`;
+
+		elem.style.left = '33.75%';
+		elem.style.top = '25%';
+		elem.style.zIndex = 9;
+		ondisplay = function () {
+			_verticalCenterTooltip();
+			document.getElementById('importBox').focus();
 		};
 	}
 

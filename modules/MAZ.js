@@ -246,7 +246,7 @@ function _mapSettingsInputObj() {
 			windowWidth: '70%'
 		},
 		'Spire Assault': {
-			settingInputs: ['active', 'priority', 'row', 'world', 'preset', 'settingType', 'item', 'levelSA'],
+			settingInputs: ['active', 'priority', 'row', 'world', 'preset', 'settingType', 'item', 'bonusItem', 'oneTimerItem', 'levelSA'],
 			settingInputsDefault: [],
 			windowWidth: '55%'
 		}
@@ -344,6 +344,8 @@ function _mapSettingsVals(lineNo, activeSetting) {
 		preset: '0',
 		settingType: 'Clear Level',
 		item: 'Menacing_Mask',
+		bonusItem: 'Stats',
+		oneTimerItem: 'Gathermate',
 		levelSA: '0'
 	};
 }
@@ -403,6 +405,8 @@ function _mapSettingsValsKeys(s) {
 		windowGeneBleedVoids: 'geneAssistBleedVoids',
 		windowSettingType: 'settingType',
 		windowItem: 'item',
+		windowBonusItem: 'bonusItem',
+		windowOneTimerItem: 'oneTimerItem',
 		windowItemLevel: 'levelSA'
 	};
 }
@@ -757,8 +761,12 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style
 	}
 
 	if (s.spireAssault) {
-		classNames.push(['Clear Level', 'Buy Limb', 'Level Ring'].includes(vals.settingType) ? `windowClearOn` : `windowClearOff`);
-		classNames.push(['Buy Limb', 'Level Equipment', 'Level Ring'].includes(vals.settingType) ? `windowLevelOn` : `windowLevelOff`);
+		classNames.push(['Clear Level', 'Level Ring'].includes(vals.settingType) ? `windowClearOn` : `windowClearOff`);
+		classNames.push(['Level Equipment', 'Level Ring', 'Level Bonus'].includes(vals.settingType) ? `windowLevelOn` : `windowLevelOff`);
+
+		classNames.push(['Clear Level', 'Level Equipment', 'Level Ring'].includes(vals.settingType) ? `windowItemOn` : `windowItemOff`);
+		classNames.push(vals.settingType === 'Level Bonus' ? `windowBonusItemOn` : `windowBonusItemOff`);
+		classNames.push(vals.settingType === 'Buy One Timer' ? `windowOneTimerItemOn` : `windowOneTimerItemOff`);
 	}
 
 	if (s.hdFarm) {
@@ -929,7 +937,11 @@ function _mapSettingsRowPopulateInputs(vals, varPrefix, activeSettings, x, style
 		elements.push({ name: 'world', class: `windowWorld${varPrefix}`, title: `<input value='${vals.world}' type='number' id='windowWorld${x}'/>` });
 		elements.push({ name: 'preset', class: `windowPreset${varPrefix}`, title: `<select value='${vals.preset}' id='windowPreset${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.spireAssaultPresets}</select>` });
 		elements.push({ name: 'settingType', class: `windowSettingType${varPrefix}`, title: `<select value='${vals.settingType}' id='windowSettingType${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.spireAssaultItemTypes}</select>` });
+
 		elements.push({ name: 'item', class: `windowClear windowItem${varPrefix}`, title: `<select value='${vals.item}' id='windowItem${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.spireAssaultItems}</select>` });
+		elements.push({ name: 'bonusItem', class: `windowClear windowBonusItem${varPrefix}`, title: `<select value='${vals.bonusItem}' id='windowBonusItem${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.spireAssaultBonuses}</select>` });
+		elements.push({ name: 'oneTimerItem', class: `windowClear windowOneTimerItem${varPrefix}`, title: `<select value='${vals.oneTimerItem}' id='windowOneTimerItem${x}' onchange='_mapSettingsUpdatePreset("${x}","${varPrefix}")'>${dropdowns.spireAssaultOneTimers}</select>` });
+
 		elements.push({ name: 'levelSA', class: `windowLevel windowItemLevel${varPrefix}`, title: `<input value='${vals.levelSA}' type='number' id='windowLevel${x}'/>` });
 	}
 
@@ -1207,6 +1219,8 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 			thisSetting.preset = document.getElementById('windowPreset' + x).value;
 			thisSetting.settingType = document.getElementById('windowSettingType' + x).value;
 			thisSetting.item = document.getElementById('windowItem' + x).value;
+			thisSetting.bonusItem = document.getElementById('windowBonusItem' + x).value;
+			thisSetting.oneTimerItem = document.getElementById('windowOneTimerItem' + x).value;
 			thisSetting.levelSA = document.getElementById('windowLevel' + x).value;
 		}
 
@@ -1770,11 +1784,26 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 	if (spireAssault) {
 		if (index !== '') {
 			const settingType = document.getElementById('windowSettingType' + index).value;
-			let newClass = ['Clear Level', 'Buy Limb', 'Level Ring'].includes(settingType) ? 'windowClearOn' : 'windowClearOff';
+			let newClass = ['Clear Level', 'Level Ring'].includes(settingType) ? 'windowClearOn' : 'windowClearOff';
 			swapClass('windowClear', newClass, row);
 
-			newClass = ['Buy Limb', 'Level Equipment', 'Level Ring'].includes(settingType) ? 'windowLevelOn' : 'windowLevelOff';
+			newClass = ['Level Equipment', 'Level Ring', 'Level Bonus'].includes(settingType) ? 'windowLevelOn' : 'windowLevelOff';
 			swapClass('windowLevel', newClass, row);
+
+			function updateClass(settingType, type, row, cssName) {
+				const onClass = `window${cssName}ItemOn`;
+				const offClass = `window${cssName}ItemOff`;
+				const newClass = `window${cssName}Item${type.includes(settingType) ? 'On' : 'Off'}`;
+				const newClass2 = `window${cssName}Item${!type.includes(settingType) ? 'On' : 'Off'}`;
+
+				if ((!type.includes(settingType) && row.classList.contains(onClass)) || (type.includes(settingType) && row.classList.contains(offClass))) {
+					swapClass(newClass2, newClass, row);
+				}
+			}
+
+			updateClass(settingType, ['Clear Level', 'Level Equipment', 'Level Ring'], row, '');
+			updateClass(settingType, ['Level Bonus'], row, 'Bonus');
+			updateClass(settingType, ['Buy One Timer'], row, 'OneTimer');
 		}
 	}
 
@@ -1783,7 +1812,6 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 			const special = document.getElementById('windowSpecial' + index).value;
 			const newClass = special === 'hc' || special === 'lc' ? 'windowGatherOn' : 'windowGatherOff';
 			swapClass('windowGather', newClass, row);
-			console.log(special, newClass);
 		}
 	}
 
@@ -1966,7 +1994,7 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 
 	/* spire assault farm types */
 	dropdown.spireAssaultItemTypes = "<option value='Clear Level'" + (vals.settingType === 'Clear Level' ? " selected='selected'" : '') + '>Clear Level</option>';
-	const spireAssaultDropdowns = ['Buy Limb', 'Level Equipment'];
+	const spireAssaultDropdowns = ['Level Equipment', 'Level Bonus', 'Buy One Timer'];
 	if (autoBattle.oneTimers.The_Ring.owned) spireAssaultDropdowns.push('Level Ring');
 
 	for (let item in spireAssaultDropdowns) {
@@ -1983,10 +2011,41 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 		dropdown.spireAssaultItems += "<option value='" + key + "'" + (vals.item === key ? " selected='selected'" : '') + '>' + autoBattle.cleanName(key) + '</option>';
 	}
 
+	const spireAssaultBonuses = ['Extra_Limb', 'Radon', 'Stats'];
+	if (autoBattle.maxEnemyLevel >= 51) spireAssaultBonuses.push('Scaffolding');
+	dropdown.spireAssaultBonuses = '';
+	for (let item in spireAssaultBonuses) {
+		let key = spireAssaultBonuses[item];
+		dropdown.spireAssaultBonuses += "<option value='" + key + "'" + (vals.bonusItem === key ? " selected='selected'" : '') + '>' + autoBattle.cleanName(key) + '</option>';
+	}
+
+	const spireAssaultOneTimers = [];
+	let oneCount = 0;
+	const ownedItems = autoBattle.countOwnedItems();
+	for (let item in autoBattle.oneTimers) {
+		let key = autoBattle.oneTimers[item];
+		if (key.owned) continue;
+		if (autoBattle.maxEnemyLevel >= 51 && oneCount >= 3) break;
+		if (oneCount >= 4) break;
+		if (ownedItems < key.requiredItems) continue;
+
+		spireAssaultOneTimers.push(item);
+	}
+
+	dropdown.spireAssaultOneTimers = '';
+	if (spireAssaultOneTimers.length === 0) {
+		dropdown.spireAssaultOneTimers = "<option value='0'>None Available</option>";
+	} else {
+		for (let item in spireAssaultOneTimers) {
+			let key = spireAssaultOneTimers[item];
+			dropdown.spireAssaultOneTimers += "<option value='" + key + "'" + (vals.oneTimerItem === key ? " selected='selected'" : '') + '>' + autoBattle.cleanName(key) + '</option>';
+		}
+	}
+
 	return dropdown;
 }
 
-//Auto Structure
+//Auto Stcture
 function autoStructureDisplay(elem) {
 	let tooltipText;
 

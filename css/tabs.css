@@ -1469,7 +1469,9 @@ h9 {
 	width: 20%;
 }
 
-.windowItemSpireAssault {
+.windowItemSpireAssault,
+.windowBonusItemSpireAssault,
+.windowOneTimerItemSpireAssault {
 	width: 25%;
 }
 
@@ -1492,6 +1494,18 @@ h9 {
 	cursor: not-allowed;
 	pointer-events: none;
 	padding-left: 1%;
+}
+
+.windowItemOn .windowItemSpireAssault,
+.windowBonusItemOn .windowBonusItemSpireAssault,
+.windowOneTimerItemOn .windowOneTimerItemSpireAssault {
+	display: inline-block;
+}
+
+.windowItemOff .windowItemSpireAssault,
+.windowBonusItemOff .windowBonusItemSpireAssault,
+.windowOneTimerItemOff .windowOneTimerItemSpireAssault {
+	display: none;
 }
 
 .spireAssaultHeader {

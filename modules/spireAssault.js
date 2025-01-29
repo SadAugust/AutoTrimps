@@ -36,13 +36,13 @@ function spireAssaultShouldRun(setting) {
 	if (setting.settingType === 'Clear Level') {
 		if (autoBattle.maxEnemyLevel > setting.world) return false;
 	} else if (setting.settingType === 'Buy One-Timer') {
-		if (autoBattle.oneTimers[setting.oneTimerItem].owned) return false;
+		const oneTimer = autoBattle.oneTimers[setting.oneTimerItem];
+		if (!oneTimer || oneTimer.owned) return false;
 	} else {
 		const itemLevel = Number(setting.levelSA);
 		let item = autoBattle.items[setting.item];
 		if (setting.settingType === 'Level Ring') item = autoBattle.rings;
 		if (setting.settingType === 'Buy Bonus') item = autoBattle.bonuses[setting.bonusItem];
-		if (setting.settingType === 'Buy Limb') item = autoBattle.bonuses.Extra_Limbs;
 		if (item.level >= itemLevel) return false;
 	}
 
@@ -92,12 +92,6 @@ function _runSpireAssault(setting) {
 				cost: autoBattle.getRingLevelCost,
 				upgradeFunction: autoBattle.levelRing
 			},
-			'Buy Limb': {
-				item: autoBattle.bonuses.Extra_Limbs,
-				itemName: 'Extra_Limbs',
-				cost: autoBattle.getBonusCost,
-				upgradeFunction: autoBattle.buyBonus
-			},
 			'Buy Bonus': {
 				item: autoBattle.bonuses[setting.item],
 				itemName: setting.bonusItem,
@@ -116,7 +110,7 @@ function _runSpireAssault(setting) {
 		autoBattle.upgradeFunction = upgradeFunction;
 		autoBattle.costFunction = cost;
 
-		let resourceType = settingType === 'Level Ring' || item.dustType === 'shard' ? 'shards' : 'dust';
+		let resourceType = settingType === 'Level Ring' || item.dustType === 'shard' || item.useShards ? 'shards' : 'dust';
 		let resources = autoBattle[resourceType];
 		let levelCost = autoBattle.costFunction(itemName);
 
@@ -189,14 +183,79 @@ function spireAssaultImport(preset) {
 	}
 }
 
+function spireAssaultImportSpreadsheet(preset) {
+	const importBox = document.getElementById('importBox');
+	const importString = importBox.value
+		.replace(/[\n\r]/gm, '')
+		.split('||')[1]
+		.split(', Ring');
+	let errorMsg = '';
+
+	const itemString = importString[0].split(', ').map((item) => {
+		item = item.replace(/-/g, '__');
+		item = item.replace(/ /g, '_');
+		item = item.replace(/(\d+)/g, ' $1');
+		return item;
+	});
+
+	const itemArray = [];
+	for (let item of itemString) {
+		const itemSplit = item.split(' ');
+		const itemData = autoBattle.items[itemSplit[0]];
+
+		if (!itemData.owned) {
+			errorMsg += `You do not own the ${autoBattle.cleanName(item)} item so it won't be imported.<br>`;
+			continue;
+		}
+
+		itemArray.push(itemSplit[0]);
+		if (itemData.level < Number(itemSplit[1])) {
+			errorMsg += `<span style="color: red;">Your ${autoBattle.cleanName(itemSplit[0])} is level ${itemData.level} but the imported level is ${Number(itemSplit[1])}.</span><br>`;
+		}
+	}
+
+	const ringString = importString[1].split(' ');
+	const ringData = {
+		level: (ringString && Number(ringString[0])) || 0,
+		mods: {
+			health: ringString && ringString[1].includes('HP'),
+			attack: ringString && ringString[1].includes('Atk'),
+			lifesteal: ringString && ringString[1].includes('LS'),
+			dustMult: ringString && ringString[1].includes('Dust')
+		}
+	};
+
+	const ringMods = Object.keys(ringData.mods).filter((mod) => ringData.mods[mod]);
+	if (ringData.level > autoBattle.rings.level) {
+		errorMsg += `<span style="color: red;">Your Ring is level ${autoBattle.rings.level} but the imported level is ${ringData.level}.</span><br>`;
+	}
+
+	if (errorMsg !== '' && importBox.style.display !== 'none') {
+		errorMsg += '<br>If you would still like to import the item build, please click the Import button again.<br>';
+		errorMsg += `<textarea id='importBox' style='width: 100%; display: none;' rows='3'>${importBox.value}</textarea>`;
+		document.getElementById('tipText2').innerHTML = errorMsg;
+		return;
+	}
+
+	const settings = JSON.parse(getPageSetting('spireAssaultPresets'));
+	settings[preset].items = itemArray;
+	settings[preset].ringMods = ringMods;
+	setPageSetting('spireAssaultPresets', JSON.stringify(settings));
+
+	cancelTooltip2();
+	importExportTooltip('spireAssault');
+	document.getElementById('tooltipDiv2').style.zIndex = 6;
+}
+
 function spireAssaultItemSwap(itemList) {
 	if (!itemList) return false;
 
 	let reset = false;
 	for (let item in autoBattle.items) {
 		const itemDetails = autoBattle.items[item];
-		const shouldEquip = itemList.includes(item);
+		if (!itemDetails.owned) continue;
 
+		const shouldEquip = itemList.includes(item);
 		if (shouldEquip && itemDetails.hidden) itemDetails.hidden = false;
 		if (shouldEquip !== itemDetails.equipped) {
 			itemDetails.equipped = shouldEquip;

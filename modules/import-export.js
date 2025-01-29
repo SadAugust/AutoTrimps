@@ -414,8 +414,9 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 
 	if (selectedPreset !== 'Hidden Items') {
 		costText += ` <span class='btn btn-info btn-md' onclick='spireAssaultPresetRename(this)'>Rename Preset</span>`;
-		costText += ` <span class='btn btn-success btn-md' onclick='tooltipAT("Spire Assault Import", event, "${escapeHtmlAttribute(setting[selectedPreset].name)}", "${selectedPreset}")'>Import to Spire Assault</span>`;
-		costText += ` <span class='btn btn-warning btn-md' onclick='tooltipAT("Spire Assault Export", event, "${escapeHtmlAttribute(setting[selectedPreset].name)}", "${selectedPreset}")'>Export from Spire Assault</span>`;
+		costText += ` <span class='btn btn-success btn-md' onclick='tooltipAT("Spire Assault Import", event, "${escapeHtmlAttribute(setting[selectedPreset].name)}", "${selectedPreset}")'>Import to SA</span>`;
+		costText += ` <span class='btn btn-warning btn-md' onclick='tooltipAT("Spire Assault Export", event, "${escapeHtmlAttribute(setting[selectedPreset].name)}", "${selectedPreset}")'>Export from SA</span>`;
+		costText += ` <span class='btn btn-primary btn-md' onclick='tooltipAT("Spire Assault Spreadsheet", event, "${escapeHtmlAttribute(setting[selectedPreset].name)}", "${selectedPreset}")'>Import from Spreadsheet</span>`;
 	}
 
 	costText += `</div> `;

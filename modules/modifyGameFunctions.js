@@ -480,7 +480,6 @@ function removeTrustworthyTrimps() {
 //Check and update each patch!
 function _verticalCenterTooltip(makeLarge, makeSuperLarge, isTwo = '') {
 	const tipElem = document.getElementById(`tooltipDiv${isTwo}`);
-	console.log(tipElem);
 	if (makeLarge) {
 		swapClass('tooltipExtra', 'tooltipExtraLg', tipElem);
 	}

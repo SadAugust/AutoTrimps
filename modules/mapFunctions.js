@@ -947,7 +947,7 @@ function smithyFarm(lineCheck) {
 		mapName
 	};
 
-	if (game.buildings.Smithy.locked || challengeActive('Transmute') || challengeActive('Pandemonium')) return farmingDetails;
+	if (game.buildings.Smithy.locked || challengeActive('Transmute') || challengeActive('Pandemonium') || challengeActive('Smithless')) return farmingDetails;
 
 	const settingName = 'smithyFarmSettings';
 	const baseSettings = getPageSetting(settingName);
@@ -995,8 +995,8 @@ function _smithyFarmCalculateGoal(setting, mapLevel, smithyGoal) {
 	const woodEarned = woodBase * mapTime * lootMult;
 	const metalEarned = metalBase * mapTime * lootMult;
 
-	const woodSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow(costMult, game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], game.resources.wood.owned + woodEarned, costMult, true);
-	const metalSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow(costMult, game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], game.resources.metal.owned + metalEarned, costMult, true);
+	const woodSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow(costMult, game.buildings.Smithy.purchased) * game.buildings.Smithy.cost.wood[0], game.resources.wood.owned + woodEarned, costMult, true);
+	const metalSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow(costMult, game.buildings.Smithy.purchased) * game.buildings.Smithy.cost.metal[0], game.resources.metal.owned + metalEarned, costMult, true);
 
 	if (woodSmithies > 0 && metalSmithies > 0) {
 		const smithyCount = Math.min(woodSmithies, metalSmithies);
