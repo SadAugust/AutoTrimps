@@ -191,12 +191,7 @@ function spireAssaultImportSpreadsheet(preset) {
 		.split(', Ring');
 	let errorMsg = '';
 
-	const itemString = importString[0].split(', ').map((item) => {
-		item = item.replace(/-/g, '__');
-		item = item.replace(/ /g, '_');
-		item = item.replace(/(\d+)/g, ' $1');
-		return item;
-	});
+	const itemString = importString[0].split(', ').map((item) => item.replace(/-/g, '__').replace(/ /g, '_').replace(/(\d+)/g, ' $1'));
 
 	const itemArray = [];
 	for (let item of itemString) {

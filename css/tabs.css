@@ -1510,7 +1510,7 @@ h9 {
 
 .spireAssaultHeader {
 	display: inline-block;
-	width: calc((100% - 1.4em - 6px) / 5.95);
+	width: calc((100% - 1.4em - 6px) / 6);
 	text-align: center;
 	cursor: pointer;
 	padding: 0.3em;
