@@ -110,7 +110,7 @@ function _runSpireAssault(setting) {
 		autoBattle.upgradeFunction = upgradeFunction;
 		autoBattle.costFunction = cost;
 
-		let resourceType = settingType === 'Level Ring' || (item.dustType && item.dustType === 'shard') || item.useShards ? 'shards' : 'dust';
+		let resourceType = settingType === 'Level Ring' || (item.dustType && item.dustType === 'shards') || item.useShards ? 'shards' : 'dust';
 		let resources = autoBattle[resourceType];
 		let levelCost = autoBattle.costFunction(itemName);
 
