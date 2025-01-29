@@ -2011,7 +2011,7 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix) 
 		dropdown.spireAssaultItems += "<option value='" + key + "'" + (vals.item === key ? " selected='selected'" : '') + '>' + autoBattle.cleanName(key) + '</option>';
 	}
 
-	const spireAssaultBonuses = ['Extra_Limb', 'Radon', 'Stats'];
+	const spireAssaultBonuses = ['Extra_Limbs', 'Radon', 'Stats'];
 	if (autoBattle.maxEnemyLevel >= 51) spireAssaultBonuses.push('Scaffolding');
 	dropdown.spireAssaultBonuses = '';
 	for (let item in spireAssaultBonuses) {
