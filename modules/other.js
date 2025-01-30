@@ -1429,7 +1429,7 @@ function alterHeirloomWindow() {
 			style: '',
 			class: 'pointer noselect heirBtn heirInfo settingBtntrue',
 			onclick: 'settingChanged("heirloom", true)',
-			onmouseover: `tooltip("Toggle Auto Heirlooms", "customText", event, '${description}')`,
+			onmouseover: `tooltip("Toggle Auto Heirlooms", "customText", event, "${description}")`,
 			onmouseout: 'tooltip("hide")'
 		});
 
