@@ -1666,8 +1666,9 @@ function _mapSettingsAddRow(varPrefix) {
 	if (firstHiddenRow) {
 		firstHiddenRow.style.display = '';
 		swapClass('disabled', 'active', firstHiddenRow);
+		const row = firstHiddenRow.id.slice(-1);
 
-		const world = document.getElementById(`windowWorld${firstHiddenRow.id.slice(-1)}`);
+		const world = document.getElementById(`windowWorld${row}`);
 		if (atConfig.settingUniverse === 1 && world) {
 			const natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
 			const natureList = ['None', 'Poison', 'Wind', 'Ice'];
@@ -1675,7 +1676,12 @@ function _mapSettingsAddRow(varPrefix) {
 			world.parentNode.style.background = natureStyle[natureIndex];
 		}
 
-		_mapSettingsUpdatePreset(firstHiddenRow.id.slice(-1), varPrefix);
+		_mapSettingsUpdatePreset(row, varPrefix);
+
+		const rows = Array.from({ length: maxRows }, (_, x) => document.getElementById(`windowRow${x}`));
+		const priorities = rows.map((row) => parseInt(document.getElementById(`windowPriority${row.id.slice(-1)}`).value, 10));
+		const highestPriority = Math.max(...priorities);
+		document.getElementById(`windowPriority${row}`).value = highestPriority + 1;
 	}
 
 	const tooltipDiv = document.getElementById('tooltipDiv');
