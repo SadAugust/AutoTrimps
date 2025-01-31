@@ -1636,7 +1636,7 @@ function windowToggleHelp(windowWidth) {
 	parentWindow.style.height = 'auto';
 	parentWindow.style.maxHeight = window.innerHeight * 0.85 + 'px';
 
-	if (helpContainer.style.display === 'block' && document.querySelectorAll('#mazHelpContainer li').length > 16) parentWindow.style.overflowY = 'scroll';
+	if (helpContainer.style.display === 'block' && document.querySelectorAll('#mazHelpContainer li').length > 15) parentWindow.style.overflowY = 'scroll';
 }
 
 function _mapSettingsGetRowIDs(elem, index) {
