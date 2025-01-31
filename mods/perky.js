@@ -1098,7 +1098,7 @@ atData.autoPerks = {
 
 		apGUI.$allocatorBtn = document.createElement('DIV');
 		apGUI.$allocatorBtn.id = 'allocatorBtn';
-		apGUI.$allocatorBtn.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
+		apGUI.$allocatorBtn.setAttribute('class', 'btn inPortalBtn settingBtntrue');
 		apGUI.$allocatorBtn.setAttribute('onclick', 'run' + calcName + '()');
 		apGUI.$allocatorBtn.setAttribute('onmouseover', `tooltip("Auto Allocate", "customText", event, \`${allocateText}\`)`);
 		apGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
