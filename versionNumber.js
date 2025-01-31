@@ -1,1 +1,1 @@
-atConfig.initialise.version = 'SadAugust v6.7.02';
+atConfig.initialise.version = 'SadAugust v6.7.03';

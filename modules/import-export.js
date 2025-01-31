@@ -273,10 +273,10 @@ function spireAssaultPresetSave() {
 	const equippedItems = getEquippedItems('.spireItemsEquipped');
 	const equippedRingMods = getEquippedItems('.spireRingEquipped');
 
+	const activePreset = document.getElementsByClassName('spireHeaderSelected')[0].dataset.hiddenName;
 	const spireAssaultSettings = JSON.parse(getPageSetting('spireAssaultPresets'));
-	const preset = spireAssaultSettings.selectedPreset;
-	spireAssaultSettings[preset] = {
-		name: spireAssaultSettings[preset].name,
+	spireAssaultSettings[activePreset] = {
+		name: spireAssaultSettings[activePreset].name,
 		items: equippedItems,
 		ringMods: equippedRingMods
 	};
@@ -295,10 +295,14 @@ function spireAssaultPresetSwap(preset) {
 function spireAssaultPresetRename() {
 	const selectedPreset = $('.spireHeaderSelected')[0].innerText;
 	const newName = prompt(`Enter a new name for preset ${selectedPreset}:`, selectedPreset);
+
 	if (newName) {
+		const activePreset = document.getElementsByClassName('spireHeaderSelected')[0].dataset.hiddenName;
 		const setting = JSON.parse(getPageSetting('spireAssaultPresets'));
-		setting[setting.selectedPreset].name = newName;
-		setting.titles[setting.titles.indexOf(selectedPreset)] = newName;
+		setting[activePreset].name = newName;
+
+		const presetNumber = parseInt(activePreset.replace(/[^\d]/g, ''), 10) - 1 || 1;
+		setting.titles[presetNumber] = newName;
 		setPageSetting('spireAssaultPresets', JSON.stringify(setting));
 		$('.spireHeaderSelected')[0].innerText = newName;
 	}
@@ -332,7 +336,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 	const itemList = spireAssaultItemList(true);
 	const setting = JSON.parse(getPageSetting('spireAssaultPresets'));
 	const selectedPreset = setting.selectedPreset;
-	const presetName = selectedPreset.named || 'Preset 1';
+	const presetName = setting[selectedPreset].name || 'Preset 1';
 	const preset = setting[selectedPreset] || { items: [], ringMods: [] };
 	const hiddenItems = setting['Hidden Items'].items || [];
 
@@ -351,7 +355,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 		const titleName = setting[header].name || header;
 		const headerClass = header === selectedPreset ? 'Selected' : 'NotSelected';
 		const escapedTitleName = escapeHtmlAttribute(titleName);
-		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='spireAssaultHeader spireHeader${headerClass}' onclick='spireAssaultPresetSwap("${header}")'><b>${escapedTitleName}</b></div>`;
+		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='spireAssaultHeader spireHeader${headerClass}' onclick='spireAssaultPresetSwap("${header}")'  data-hidden-name="${header}"><b>${escapedTitleName}</b></div>`;
 	}
 	tooltipText += `</div>`;
 
