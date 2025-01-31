@@ -5156,8 +5156,11 @@ function settingChanged(id, currUniverse) {
 		btn[selected] = result;
 	}
 
+	const updateSettings = ['universeSetting'];
+	if (id.includes('heirloomAutoRareToKeep')) updateSettings.push(id);
+
 	saveSettings();
-	updateAutoTrimpSettings(id === 'universeSetting');
+	updateAutoTrimpSettings(updateSettings.includes(id));
 }
 
 function onKeyPressSetting(event, id, multi, negative) {
