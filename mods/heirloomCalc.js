@@ -120,6 +120,7 @@ function setupHeirloomUI() {
 		const btnInput = document.createElement('input');
 		btnInput.id = id;
 		btnInput.type = 'number';
+		btnInput.step = '0.0001';
 		btnInput.value = savedValue || inputObj.defaultValue;
 		btnInput.min = inputObj.minValue;
 		btnInput.max = inputObj.maxValue;

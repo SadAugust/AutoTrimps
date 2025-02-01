@@ -915,6 +915,7 @@ atData.autoPerks = {
 		const perkInput = document.createElement('input');
 		perkInput.id = id;
 		perkInput.type = 'number';
+		perkInput.step = '0.0001';
 		perkInput.value = savedValue || inputObj.defaultValue;
 		perkInput.min = inputObj.minValue;
 		perkInput.max = inputObj.maxValue;
@@ -1094,7 +1095,7 @@ atData.autoPerks = {
 		let allocateText = 'Clears all perks and buys optimal levels in each perk.';
 		allocateText += '<br>';
 		allocateText += 'When in the <b>View Perks</b> window it will only use your respec if you press the <b>Respec</b> button.';
-		if (calcName === 'Surky') allocateText = '<br>Sets your target zone, tribute, meteorologist, collector & smithy values to your current run values if they are higher than your inputs.<br><br>' + allocateText;
+		if (calcName === 'Surky') allocateText = 'Sets your target zone, tribute, meteorologist, collector & smithy values to your current run values if they are higher than your inputs.<br><br>' + allocateText;
 
 		apGUI.$allocatorBtn = document.createElement('DIV');
 		apGUI.$allocatorBtn.id = 'allocatorBtn';
@@ -1183,8 +1184,8 @@ atData.autoPerks = {
 			const preset = settingInputs.preset || 'ezfarm';
 			document.querySelector('#preset').value = preset;
 			document.querySelector('#radonPerRunDiv').style.display = 'none';
-			document.querySelector('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
-			document.querySelector('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
+			document.querySelector('#findPotsDiv').style.display = preset === 'alchemy' ? 'flex' : 'none';
+			document.querySelector('#trapHrsDiv').style.display = preset === 'trappa' ? 'flex' : 'none';
 
 			apGUI.$goldenUpgradeBtn = document.createElement('DIV');
 			apGUI.$goldenUpgradeBtn.id = 'showGoldenUpgradesBtn';
