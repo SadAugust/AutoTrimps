@@ -31,7 +31,7 @@ function populateFarmCalcData() {
 	const breedTimer = _breedTotalTime();
 
 	const basicData = {
-		maxTicks: runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 21600 : 21600 /* Six hours simulation inside of TW and a day (testing 6 hours in both scenarios for now) outside of it. */,
+		maxTicks: runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 21600 : 43200 /* Six hours simulation inside of TW and a day (testing 6 hours in both scenarios for now) outside of it. */,
 		hze,
 		universe: game.global.universe,
 		zone: game.global.world,
@@ -430,7 +430,7 @@ function stats(lootFunction = lootDefault, checkFragments = true) {
 	const extra = saveData.extraMapLevelsAvailable ? 10 : saveData.mapReducer && saveData.zone > 6 ? -1 : 0;
 	let coords = 1;
 	const stances = saveData.stances;
-	const alwaysPerfect = typeof atConfig !== 'undefined' && getPageSetting('onlyPerfectMaps');
+	const alwaysPerfect = typeof atConfig !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
 
 	if (saveData.coordinate) {
 		for (let z = 1; z < saveData.zone + extra + 1; ++z) {
@@ -1121,7 +1121,8 @@ function simulate(saveData, zone, stance) {
 		}
 	}
 
-	if (mapClears > 0 && specialTime > 0) loot *= mapClears * specialTime;
+	if (mapClears > 10) loot *= 10;
+	if (specialTime > 0) loot *= specialTime;
 
 	if (mapClears === 0 || ticks === Infinity) {
 		loot = 0;
@@ -1288,7 +1289,6 @@ function get_best(results, fragmentCheck, mapModifiers, popup = false) {
 
 	statsSpeed.sort((a, b) => b.killSpeed - a.killSpeed);
 	best.speed = getBestStats(statsSpeed, 'speed');
-
 	return best;
 }
 

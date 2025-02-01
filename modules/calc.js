@@ -518,7 +518,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 		bionic2: () => (worldType === 'map' && masteryPurchased('bionic2') && mapLevel > 0 ? 1.5 : 1),
 		voidPower: () => (worldType === 'void' && masteryPurchased('voidPower') ? 1 + game.talents.voidPower.getTotalVP() / 100 : 1),
 		voidMastery: () => (worldType === 'void' && masteryPurchased('voidMastery') ? 5 : 1),
-		fluffy: () => Fluffy.getDamageModifier(),
+		fluffy: () => (game.global.spiresCompleted >= 2 ? Fluffy.getDamageModifier() : 1),
 		mayhem: () => game.challenges.Mayhem.getTrimpMult(),
 		pandemonium: () => game.challenges.Pandemonium.getTrimpMult(),
 		desolation: () => game.challenges.Desolation.getTrimpMult(),
