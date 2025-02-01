@@ -1389,13 +1389,13 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 	let tooltipText = '';
 
 	const headerList = ['Current Fragments', 'Infinite Fragments'];
-	tooltipText += `<div id='farmCalcHeaders' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
+	let headerText = `<div id='farmCalcHeaders' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
 	for (const header of headerList) {
 		const titleName = header;
 		const headerClass = header === currFragments ? 'Selected' : 'NotSelected';
-		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='farmCalcHeader farmCalcHeader${headerClass}' onclick='importExportTooltip("display", undefined, "${header}")'  data-hidden-name="${header}"><b>${titleName}</b></div>`;
+		headerText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='farmCalcHeader farmCalcHeader${headerClass}' onclick='importExportTooltip("display", undefined, "${header}")'  data-hidden-name="${header}"><b>${titleName}</b></div>`;
 	}
-	tooltipText += `</div>`;
+	headerText += `</div>`;
 
 	if (show_stance && stances.length > 1) {
 		tooltipText += '<tr><th colspan=2 style="text-align:center; border: 1px solid black;"></th>';
@@ -1479,8 +1479,7 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 
 	if (mapData.length > 1) {
 		if (percentage < 2) bestFarm += ` or <b>${best.loot.lootSecond.zone}</b>.`;
-		bestFarm += ' ';
-		bestFarm += percentage < 2 ? `They’re equally efficient.` : percentage < 4 ? `But <b>${best.loot.lootSecond.zone}</b> is almost as good.` : `It’s <b>${percentage.toFixed(1)}%</b> more efficient than <b>${best.loot.lootSecond.zone}</b>.`;
+		bestFarm += percentage < 2 ? ` They’re equally efficient.` : percentage < 4 ? `. But <b>${best.loot.lootSecond.zone}</b> is almost as good.` : `. It’s <b>${percentage.toFixed(1)}%</b> more efficient than <b>${best.loot.lootSecond.zone}</b>.`;
 	} else {
 		bestFarm += '.';
 	}
@@ -1500,14 +1499,15 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 	tooltipDiv.style.left = '33.75%';
 	tooltipDiv.style.top = '25%';
 
-	let initialText = `${bestFarm}<br>`;
-	let endText = `<br>${extraNote}`;
-	let tableContent = `<table class='bdTableSm table table-striped'>${tooltipText}</table>`;
+	const initialText = `${bestFarm}<br>`;
+	const endText = `<br>${extraNote}`;
+	const tableContent = `<table class='bdTableSm table table-striped'>${tooltipText}</table>`;
 
+	tooltipText = headerText;
 	if (mapData.length > 19) {
-		tooltipText = `${initialText}<div class='litScroll'>${tableContent}</div>${endText}`;
+		tooltipText += `${initialText}<div class='litScroll'>${tableContent}</div>${endText}`;
 	} else {
-		tooltipText = `${initialText}${tableContent}${endText}`;
+		tooltipText += `${initialText}${tableContent}${endText}`;
 	}
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
