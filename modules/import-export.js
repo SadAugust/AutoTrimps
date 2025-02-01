@@ -1,4 +1,4 @@
-function importExportTooltip(event, titleText) {
+function importExportTooltip(event, titleText, extraParam) {
 	const eventHandlers = {
 		mapSettings: typeof mapSettingsDisplay === 'function' ? mapSettingsDisplay : null,
 		AutoStructure: typeof autoStructureDisplay === 'function' ? autoStructureDisplay : null,
@@ -65,7 +65,7 @@ function importExportTooltip(event, titleText) {
 	if (eventHandlers[event]) {
 		titleText = titleTexts[event] || titleText;
 		if (typeof eventHandlers[event] === 'function') {
-			[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText);
+			[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText, extraParam);
 		}
 	}
 
@@ -1378,13 +1378,24 @@ function _displayDonate(tooltipDiv) {
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayFarmCalcTable(tooltipDiv) {
-	const results = stats();
+function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current Fragments') {
+	if (!currFragments) currFragments = 'Current Fragments';
+	const fragSetting = currFragments === 'Current Fragments';
+	const results = stats(undefined, fragSetting);
 	const [mapData, stances] = results;
 	const best = get_best(results, undefined, undefined, true);
 
 	let show_stance = game.global.world >= 60;
 	let tooltipText = '';
+
+	const headerList = ['Current Fragments', 'Infinite Fragments'];
+	tooltipText += `<div id='farmCalcHeaders' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
+	for (const header of headerList) {
+		const titleName = header;
+		const headerClass = header === currFragments ? 'Selected' : 'NotSelected';
+		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='farmCalcHeader farmCalcHeader${headerClass}' onclick='importExportTooltip("display", undefined, "${header}")'  data-hidden-name="${header}"><b>${titleName}</b></div>`;
+	}
+	tooltipText += `</div>`;
 
 	if (show_stance && stances.length > 1) {
 		tooltipText += '<tr><th colspan=2 style="text-align:center; border: 1px solid black;"></th>';

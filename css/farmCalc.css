@@ -23,3 +23,39 @@
 	height: 4.7vw;
 	margin-bottom: 0.5vw;
 }
+
+.farmCalcHeader {
+	display: inline-block;
+	width: calc((100% - 6px) / 2);
+	text-align: center;
+	cursor: pointer;
+	padding: 0.3em;
+	color: white;
+	margin-right: 0.1em;
+	margin-left: 0.1em;
+	margin-top: 0.1em;
+	margin-bottom: 0.2em;
+	font-size: 0.85vw;
+}
+
+.farmCalcHeaderSelected {
+	border: 1px solid #6b6a6a;
+	background-color: #097740;
+	color: white;
+}
+
+.farmCalcHeaderSelected:hover {
+	border: 1px solid #4b4a4a;
+	background-color: #054e2a;
+	color: white;
+}
+
+.farmCalcHeaderNotSelected {
+	border: 1px solid #6b6a6a;
+	background-color: black;
+}
+
+.farmCalcHeaderNotSelected:hover {
+	border: 1px solid #4b4a4a;
+	background-color: #202020;
+}
