@@ -76,11 +76,11 @@ function autoHeirlooms(portal = false) {
 		return obj;
 	}, {});
 
+	let weights = worthOfHeirlooms();
 	let types = Object.keys(weights).filter((key) => heirloomTypeEnabled[key]).length;
 	if (types === 0) return;
 
 	let heirloomText;
-	let weights = worthOfHeirlooms();
 	while (game.global.heirloomsCarried.length < maxHeirlooms && game.global.heirloomsExtra.length > 0) {
 		for (let x = 0; x < heirloomTypes.length; x++) {
 			if (game.global.heirloomsCarried.length >= maxHeirlooms) break;
