@@ -68,9 +68,8 @@ function autoHeirlooms(portal = false) {
 
 	const maxHeirlooms = getMaxCarriedHeirlooms();
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
-	let weights = worthOfHeirlooms();
-	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
 
+	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
 	const heirloomTypes = heirloomType === 'All' ? ['Shield', 'Staff', 'Core'] : [heirloomType];
 	const heirloomTypeEnabled = heirloomTypes.reduce((obj, type) => {
 		obj[type] = getPageSetting(`heirloomAuto${type}`);
@@ -81,6 +80,7 @@ function autoHeirlooms(portal = false) {
 	if (types === 0) return;
 
 	let heirloomText;
+	let weights = worthOfHeirlooms();
 	while (game.global.heirloomsCarried.length < maxHeirlooms && game.global.heirloomsExtra.length > 0) {
 		for (let x = 0; x < heirloomTypes.length; x++) {
 			if (game.global.heirloomsCarried.length >= maxHeirlooms) break;

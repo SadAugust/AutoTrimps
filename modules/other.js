@@ -1382,7 +1382,7 @@ function alterHeirloomWindow() {
 		const initial = _createElement('DIV', {
 			id: `heirloomAutoBtn`,
 			style: '',
-			class: 'pointer noselect heirBtn heirInfo settingsBtn settingBtn3',
+			class: 'pointer noselect heirBtn heirInfo settingBtn3',
 			onclick: 'cancelTooltip(); importExportTooltip("forceAutoHeirlooms");',
 			onmouseover: `tooltip("Run Auto Heirlooms", "customText", event, '${description}')`,
 			onmouseout: 'tooltip("hide")'
