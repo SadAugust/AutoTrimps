@@ -71,7 +71,7 @@ function autoHeirlooms(portal = false) {
 	let weights = worthOfHeirlooms();
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
 
-	const heirloomTypes = heirloomType === 'All' ? (game.global.universe === 1 ? ['Shield', 'Staff', 'Core'] : ['Shield', 'Staff']) : [heirloomType];
+	const heirloomTypes = heirloomType === 'All' ? ['Shield', 'Staff', 'Core'] : [heirloomType];
 	const heirloomTypeEnabled = heirloomTypes.reduce((obj, type) => {
 		obj[type] = getPageSetting(`heirloomAuto${type}`);
 		return obj;
