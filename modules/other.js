@@ -322,11 +322,10 @@ function c2RunnerChallengeOrder(universe = portalUniverse) {
 	if (universe === 2) return ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Duel', 'Smithless'];
 }
 
-function _autoHeirloomMods(heirloomType, heirloomRarity, addAny = true) {
+function _autoHeirloomMods(heirloomType, heirloomRarity) {
 	const rarities = game.heirlooms.rarityNames;
 	heirloomRarity = rarities.indexOf(heirloomRarity || getPageSetting(`heirloomAutoRareToKeep${heirloomType}`, atConfig.settingUniverse));
 	const heirloomModsArray = [];
-	if (addAny) heirloomModsArray.push('Any');
 
 	if (typeof heirloomInfo !== 'function') {
 		return heirloomModsArray;

@@ -3634,10 +3634,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
 			}, 'dropdown', 'None', function () {
-				let hze =game.stats.highestLevel.valueTotal();
+				const hze = game.stats.highestLevel.valueTotal();
 				let heirloomTiersAvailable = ['Common'];
-
-				if (hze >= 200) heirloomTiersAvailable.push('Common');
 				if (hze >= 300) heirloomTiersAvailable.push('Rare');
 				if (hze >= 400) heirloomTiersAvailable.push('Epic');
 				if (hze >= 500) heirloomTiersAvailable.push('Legendary');

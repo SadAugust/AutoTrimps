@@ -464,7 +464,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 	const rarityNames = game.heirlooms.rarityNames;
 	const rareToKeep = heirloomRarity || getPageSetting(`heirloomAutoRareToKeep${heirloomType}`);
 	const preset = setting[rareToKeep] || [];
-	const modList = _autoHeirloomMods(heirloomType, rareToKeep, false);
+	const modList = _autoHeirloomMods(heirloomType, rareToKeep);
 	const modSlots = game.heirlooms.slots[rarityNames.indexOf(rareToKeep)];
 
 	let rowData = '';
