@@ -20,7 +20,7 @@ function evaluateHeirloomMods(loom, location) {
 	let emptyMods = 0;
 
 	for (const mod of heirloomLocation.mods) {
-		const baseName = mod[0][0];
+		const baseName = mod[0];
 		if (baseName === 'empty') {
 			emptyMods++;
 			continue;

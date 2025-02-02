@@ -2294,7 +2294,7 @@ function heirloomInfo(type) {
 	else if (type === 'Core')
 		return {
 			fireTrap: {
-				name: 'Fire',
+				name: 'Fire Trap Damage',
 				type: 'Core',
 				weighable: true,
 				stepAmounts: [1, 1, 1, 1, 2, 3, 4],
@@ -2302,7 +2302,7 @@ function heirloomInfo(type) {
 				immutable: true
 			},
 			poisonTrap: {
-				name: 'Poison',
+				name: 'Poison Trap Damage',
 				type: 'Core',
 				weighable: true,
 				stepAmounts: [1, 1, 1, 1, 2, 3, 4],
@@ -2310,7 +2310,7 @@ function heirloomInfo(type) {
 				immutable: true
 			},
 			lightningTrap: {
-				name: 'Lightning',
+				name: 'Lightning Trap Power',
 				type: 'Core',
 				weighable: true,
 				stepAmounts: [0, 0, 1, 1, 2, 2, 3],
@@ -2318,7 +2318,7 @@ function heirloomInfo(type) {
 				immutable: true
 			},
 			strengthEffect: {
-				name: 'Strength',
+				name: 'Strength Tower Effect',
 				type: 'Core',
 				weighable: true,
 				stepAmounts: [1, 1, 1, 1, 2, 2, 3],
@@ -2326,7 +2326,7 @@ function heirloomInfo(type) {
 				immutable: true
 			},
 			condenserEffect: {
-				name: 'Condenser',
+				name: 'Condenser Effect',
 				type: 'Core',
 				weighable: true,
 				stepAmounts: [0, 0.25, 0.25, 0.25, 0.5, 0.5, 0.5],
@@ -2335,7 +2335,7 @@ function heirloomInfo(type) {
 				immutable: true
 			},
 			runestones: {
-				name: 'Runestones',
+				name: 'Runestone Drop Rate',
 				type: 'Core',
 				weighable: true,
 				stepAmounts: [1, 1, 1, 1, 2, 3, 4],

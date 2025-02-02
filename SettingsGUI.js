@@ -3477,7 +3477,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting and have the script assume you want to only keep perfect heirlooms.</p>";
 				description += "<p><b>Recommended:</b> 0</p>";
 				return description;
-			}, 'value', 0, null, 'Heirloom', [1],
+			}, 'value', 0, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAutoForceRun',
