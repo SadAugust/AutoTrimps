@@ -1229,9 +1229,9 @@ function updateATVersion() {
 		if (versionNumber < '6.5.993') {
 			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (typeof tempSettings['ExitSpireCell'] !== 'undefined') {
-				if (tempSettings.ExitSpireCell.value === 0) autoTrimpSettings.ExitSpireCell.value = -1;
-				if (tempSettings.dExitSpireCell.value === 0) autoTrimpSettings.dExitSpireCell.value = -1;
-				if (tempSettings.c2ExitSpireCell.value === 0) autoTrimpSettings.c2ExitSpireCell.value = -1;
+				if (tempSettings.ExitSpireCell && tempSettings.ExitSpireCell.value === 0) autoTrimpSettings.ExitSpireCell.value = -1;
+				if (tempSettings.dExitSpireCell && tempSettings.dExitSpireCell.value === 0) autoTrimpSettings.dExitSpireCell.value = -1;
+				if (tempSettings.c2ExitSpireCell && tempSettings.c2ExitSpireCell.value === 0) autoTrimpSettings.c2ExitSpireCell.value = -1;
 			}
 
 			saveSettings();
