@@ -30,8 +30,10 @@ function populateFarmCalcData() {
 	const speed = combatSpeed(hze);
 	const breedTimer = _breedTotalTime();
 
+	let maxTicks = runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 21600 : 43200;
+	if (challengeActive('Desolation')) maxTicks /= 2;
 	const basicData = {
-		maxTicks: runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 21600 : 43200 /* Six hours simulation inside of TW and a day (testing 6 hours in both scenarios for now) outside of it. */,
+		maxTicks,
 		hze,
 		universe: game.global.universe,
 		zone: game.global.world,

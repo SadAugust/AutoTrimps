@@ -39,6 +39,8 @@ class HDStats {
 		this.autoLevelInitial = hdStats.autoLevelInitial;
 		this.autoLevelMaxFragments = hdStats.autoLevelMaxFragments;
 		this.autoLevelZone = hdStats.autoLevelZone;
+		this.autoLevelZoneDeso = hdStats.autoLevelZoneDeso;
+		this.autoLevelDesolation = hdStats.autoLevelDesolation;
 		this.autoLevelData = hdStats.autoLevelData;
 		this.autoLevelLoot = hdStats.autoLevelLoot;
 		this.autoLevelSpeed = hdStats.autoLevelSpeed;
