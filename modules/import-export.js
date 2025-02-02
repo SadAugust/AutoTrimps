@@ -1,4 +1,4 @@
-function importExportTooltip(event, titleText, extraParam) {
+function importExportTooltip(event, titleText, extraParam, extraParam2) {
 	const eventHandlers = {
 		mapSettings: typeof mapSettingsDisplay === 'function' ? mapSettingsDisplay : null,
 		AutoStructure: typeof autoStructureDisplay === 'function' ? autoStructureDisplay : null,
@@ -15,6 +15,7 @@ function importExportTooltip(event, titleText, extraParam) {
 		donate: typeof _displayDonate === 'function' ? _displayDonate : null,
 		spireImport: typeof _displaySpireImport === 'function' ? _displaySpireImport : null,
 		priorityOrder: typeof _displayPriorityOrder === 'function' ? _displayPriorityOrder : null,
+		autoHeirloomMods: typeof _displayAutoHeirloomMods === 'function' ? _displayAutoHeirloomMods : null,
 		spireAssault: typeof _displaySpireAssaultPresets === 'function' ? _displaySpireAssaultPresets : null,
 		c2table: typeof _displayC2Table === 'function' ? _displayC2Table : null,
 		resetDefaultSettingsProfiles: typeof _displayResetDefaultSettingsProfiles === 'function' ? _displayResetDefaultSettingsProfiles : null,
@@ -43,6 +44,7 @@ function importExportTooltip(event, titleText, extraParam) {
 		donate: 'Donate',
 		spireImport: 'Import Spire Settings',
 		priorityOrder: 'Priority Order Table',
+		autoHeirloomMods: 'Auto Heirloom Mods',
 		spireAssault: 'Spire Assault Presets',
 		c2table: c2Info + ' Table',
 		resetDefaultSettingsProfiles: 'Reset Default Settings',
@@ -63,10 +65,11 @@ function importExportTooltip(event, titleText, extraParam) {
 	if (event !== 'mapSettings') swapClass('tooltipExtra', 'tooltipExtraNone', tooltipDiv);
 
 	if (eventHandlers[event]) {
-		titleText = titleTexts[event] || titleText;
 		if (typeof eventHandlers[event] === 'function') {
-			[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText, extraParam);
+			[tooltipDiv, tooltipText, costText, ondisplay] = eventHandlers[event](tooltipDiv, titleText, extraParam, extraParam2);
 		}
+
+		titleText = titleTexts[event] || titleText;
 	}
 
 	if (event) {
@@ -308,19 +311,20 @@ function spireAssaultPresetRename() {
 	}
 }
 
-function spireAssaultToggleElem(element, type) {
+function spireAssaultToggleElem(element, type, maxItems = Infinity, heirloom = false) {
 	const elemPrefix = `spire${type}`;
 
 	const equippedElem = document.getElementById(`spireAssault${type}Equipped`);
 	if (equippedElem) {
 		const equippedItems = Number(equippedElem.innerText);
-		const maxItems = type === 'Ring' ? autoBattle.getRingSlots() : autoBattle.getMaxItems();
 		const errorElem = document.getElementById(`spireAssault${type}Error`);
 		let removeItem = element.classList.contains(`${elemPrefix}Equipped`);
 
 		if (!removeItem && equippedItems >= maxItems) {
-			if (type === 'Ring') type = 'Ring Mods';
-			if (errorElem.innerText !== `Max ${type} equipped!`) errorElem.innerText = `Max ${type} equipped!`;
+			if (heirloom) type = 'mods';
+			if (type === 'Ring') type = 'Ring mods';
+			const errorText = `Max ${type} ${heirloom ? 'selected' : 'equipped'}!`;
+			if (errorElem.innerText !== errorText) errorElem.innerText = errorText;
 			return;
 		} else if (errorElem.innerText !== '') {
 			errorElem.innerText = '';
@@ -339,6 +343,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 	const presetName = setting[selectedPreset].name || 'Preset 1';
 	const preset = setting[selectedPreset] || { items: [], ringMods: [] };
 	const hiddenItems = setting['Hidden Items'].items || [];
+	const maxItems = autoBattle.getMaxItems();
 
 	let rowData = '';
 	let rows = 0;
@@ -363,7 +368,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 	tooltipText += `<div id='spireAssaultItems'>`;
 	if (selectedPreset !== 'Hidden Items') {
 		tooltipText += `<div style="white-space: nowrap;">
-		<span>Items (</span><span id='spireAssaultItemsEquipped'>${itemsEquipped.length}</span><span>/</span><span id='spireAssaultItemsMax'>${autoBattle.getMaxItems()}</span><span>) </span><span id='spireAssaultItemsError' style='color: red;'></span>
+		<span>Items (</span><span id='spireAssaultItemsEquipped'>${itemsEquipped.length}</span><span>/</span><span id='spireAssaultItemsMax'>${maxItems}</span><span>) </span><span id='spireAssaultItemsError' style='color: red;'></span>
 		</div>`;
 	} else {
 		tooltipText += `<div>&nbsp;</div>`;
@@ -383,7 +388,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 		let equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
 		const itemLevel = item.includes('Doppelganger') ? '' : ` Lv ${itemObj.level}`;
 		rowData += `
-			<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items")' data-hidden-text="${item}">
+			<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items", ${maxItems})' data-hidden-text="${item}">
 				<span style="float: left;">${autoBattle.cleanName(item)}</span>
 				<span style="float: right;">${itemLevel}</span>
 			</div>`;
@@ -406,7 +411,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 			const name = ringMods[item];
 			const modName = autoBattle.ringStats[name].name;
 			const ringModClass = ringModsEquipped.includes(name) ? 'Equipped' : 'NotEquipped';
-			tooltipText += `<div class='spireAssaultRing spireRing${ringModClass}' onclick='spireAssaultToggleElem(this, "Ring")' data-hidden-text="${name}">${modName}</div>`;
+			tooltipText += `<div class='spireAssaultRing spireRing${ringModClass}' onclick='spireAssaultToggleElem(this, "Ring", ${ringSlots})' data-hidden-text="${name}">${modName}</div>`;
 		}
 	}
 
@@ -423,6 +428,136 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 		costText += ` <span class='btn btn-warning btn-md' onclick='tooltipAT("Spire Assault Export", event, "${escapeHtmlAttribute(presetName)}", "${selectedPreset}")'>Export from SA</span>`;
 		costText += ` <span class='btn btn-primary btn-md' onclick='tooltipAT("Spire Assault Spreadsheet", event, "${escapeHtmlAttribute(presetName)}", "${selectedPreset}")'>Import from Spreadsheet</span>`;
 	}
+
+	costText += `</div> `;
+
+	const ondisplay = function () {
+		_verticalCenterTooltip(true);
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function autoHeirloomsPresetSave(heirloomType = 'Shield', blacklist = false) {
+	function getSelectedMods(selector) {
+		return $(selector)
+			.map((index, item) => $(item).data('hidden-text'))
+			.get();
+	}
+
+	const equippedItems = getSelectedMods('.spireItemsEquipped');
+
+	const heirloomRarity = document.getElementsByClassName('spireHeaderSelected')[0].dataset.hiddenName;
+	const settingName = blacklist ? `heirloomAutoBlacklist${heirloomType}` : `heirloomAutoMods${heirloomType}`;
+	const autoHeirloomSettings = getPageSetting(settingName);
+	autoHeirloomSettings[heirloomRarity] = equippedItems;
+
+	setPageSetting(settingName, autoHeirloomSettings);
+}
+
+function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Shield', blacklist = false) {
+	const settingName = blacklist ? `heirloomAutoBlacklist${heirloomType}` : `heirloomAutoMods${heirloomType}`;
+	const setting = getPageSetting(settingName);
+	const rarityNames = game.heirlooms.rarityNames;
+	const rareToKeep = heirloomRarity || getPageSetting(`heirloomAutoRareToKeep${heirloomType}`);
+	const preset = setting[rareToKeep] || [];
+	const modList = _autoHeirloomMods(heirloomType, rareToKeep, false);
+	const modSlots = game.heirlooms.slots[rarityNames.indexOf(rareToKeep)];
+
+	let rowData = '';
+	let rows = 0;
+	let total = 0;
+	let tooltipText = '';
+
+	let hze = game.stats.highestLevel.valueTotal();
+	const headerList = [];
+
+	if (heirloomType !== 'Core') {
+		headerList.push('Common');
+		headerList.push('Rare');
+		if (hze >= 60) headerList.push('Epic');
+		if (hze >= 100) headerList.push('Legendary');
+		if (hze >= 125) headerList.push('Magnificent');
+		if (hze >= 146) headerList.push('Ethereal');
+		if (hze >= 230) headerList.push('Magmatic');
+		if (hze >= 500) headerList.push('Plagued');
+
+		if (Fluffy.checkU2Allowed()) {
+			hze = game.stats.highestRadLevel.valueTotal();
+			headerList.push('Radiating');
+			if (hze >= 100) headerList.push('Hazardous');
+			if (hze >= 200) headerList.push('Enigmatic');
+			if (game.global.stringVersion !== '5.9.2' && hze >= 300) headerList.push('Mutated');
+		}
+	} else {
+		headerList.push('Basic');
+		if (hze >= 200) headerList.push('Common');
+		if (hze >= 300) headerList.push('Rare');
+		if (hze >= 400) headerList.push('Epic');
+		if (hze >= 500) headerList.push('Legendary');
+		if (hze >= 600) headerList.push('Magnificent');
+		if (hze >= 700) headerList.push('Ethereal');
+	}
+
+	tooltipText += `<div id='spireAssaultPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
+	let itemCount = 0;
+	const maxItemsInRow = 6;
+
+	tooltipText += `<div id='spireAssaultPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
+
+	while (itemCount < headerList.length) {
+		const itemsInRow = Math.min(maxItemsInRow, headerList.length - itemCount);
+		const widthStyle = `width: calc((100% - ${0.2 + 0.2 * itemsInRow}em - 6px) / ${itemsInRow});`;
+
+		for (let i = 0; i < itemsInRow; i++) {
+			const header = headerList[itemCount];
+			const titleName = header;
+			const headerClass = header === rareToKeep ? 'Selected' : 'NotSelected';
+			tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; ${widthStyle}" class='spireAssaultHeader spireHeader${headerClass}' onclick='importExportTooltip("autoHeirloomMods", "${header}", "${heirloomType}", ${blacklist})' data-hidden-name="${header}"><b>${titleName}</b></div>`;
+			itemCount++;
+		}
+
+		tooltipText += `<br>`;
+	}
+
+	tooltipText += `</div>`;
+
+	const itemsEquipped = preset;
+	tooltipText += `<div id='spireAssaultItems'>`;
+	if (!blacklist) {
+		tooltipText += `<div style="white-space: nowrap;">
+		<span>Mods  (</span><span id='spireAssaultItemsEquipped'>${itemsEquipped.length}</span><span>/</span><span id='spireAssaultItemsMax'>${modSlots}</span><span>) </span><span id='spireAssaultItemsError' style='color: red;'></span>
+		</div>`;
+	} else {
+		tooltipText += `<div>&nbsp;</div>`;
+	}
+
+	for (let x = 0; x < modList.length; x++) {
+		let item = modList[x];
+		if (total > 0 && total % 5 === 0) {
+			tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+			rowData = '';
+			rows++;
+		}
+
+		let equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
+		rowData += `<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items", ${modSlots}, true)' data-hidden-text="${item}">${item}</div>`;
+		total++;
+	}
+
+	rows++;
+	tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+	tooltipText += `</div>`;
+
+	let costText = `
+		<div class='maxCenter'>
+			<span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='autoHeirloomsPresetSave("${heirloomType}", ${blacklist}); cancelTooltip()'>Save and Close</span>
+			<span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Close</span>
+			<span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='autoHeirloomsPresetSave("${heirloomType}", ${blacklist}); importExportTooltip("autoHeirloomMods", "${rareToKeep}", "${heirloomType}", ${blacklist})'>Save</span>
+		`;
 
 	costText += `</div> `;
 

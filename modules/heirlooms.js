@@ -3,37 +3,30 @@ function evaluateHeirloomMods(loom, location) {
 	const heirloomType = heirloomLocation.type;
 	const totalMods = heirloomLocation.mods.length;
 	const heirloomRarity = game.heirlooms.rarityNames;
-	const rareToKeep = heirloomRarity.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`));
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomEquipType = ['Shield', 'Staff', 'All', 'Core'][typeToKeep - 1];
 
 	if (heirloomType !== heirloomEquipType && heirloomEquipType !== 'All') return 0;
 	const heirloomRaritySetting = getPageSetting('heirloomAutoRarityPlus');
 	const rarity = heirloomLocation.rarity;
+
+	const rareToKeep = heirloomRarity.indexOf(getPageSetting(`heirloomAutoRareToKeep${heirloomType}`));
 	if ((heirloomRaritySetting && rarity < rareToKeep) || (!heirloomRaritySetting && rarity !== rareToKeep)) return 0;
 
-	const varAffix = { Staff: 'heirloomAutoStaffMod', Shield: 'heirloomAutoShieldMod', Core: 'heirloomAutoCoreMod' }[heirloomType] || null;
-	const blacklist = getPageSetting(`heirloomAuto${heirloomType}Blacklist`);
+	const blacklist = getPageSetting(`heirloomAutoBlacklist${heirloomType}`)[heirloomRarity[rarity]] || [];
 	const heirloomData = heirloomInfo(heirloomType);
-	let targetMods = [];
+	let targetMods = getPageSetting(`heirloomAutoMods${heirloomType}`)[heirloomRarity[rarity]] || [];
+	const targetModsTotal = targetMods.length;
 	let emptyMods = 0;
 
-	for (let x = 1; x < totalMods + 1; x++) {
-		const modSetting = getPageSetting(varAffix + x);
-		if (modSetting !== 'Any') targetMods.push(modSetting);
-	}
-
-	const targetModsTotal = targetMods.length;
-
 	for (const mod of heirloomLocation.mods) {
-		let modName = [mod][0][0];
-		if (modName === 'empty') {
+		const baseName = mod[0][0];
+		if (baseName === 'empty') {
 			emptyMods++;
 			continue;
 		}
 
-		if (blacklist.includes(game.heirlooms[heirloomType][modName].name)) return 0;
-		modName = heirloomData[modName].name;
+		const modName = heirloomData[baseName].name;
 		if (blacklist.includes(modName)) return 0;
 		targetMods = targetMods.filter((e) => e !== modName);
 	}
@@ -56,18 +49,6 @@ function worthOfHeirlooms() {
 	if (!game.global.heirloomsExtra.length === 0 || !getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 0) return heirloomWorth;
 
 	let heirloomEvaluations = game.global.heirloomsExtra.map((_, index) => evaluateHeirloomMods(index, 'heirloomsExtra'));
-
-	/* const recycle = heirloomEvaluations
-		.map((value, index) => ({ value, index }))
-		.filter(({ value }) => value === 0)
-		.map(({ index }) => index)
-		.reverse();
-
-	for (const index of recycle) {
-		selectHeirloom(index, 'heirloomsExtra');
-		recycleHeirloom(true);
-		heirloomEvaluations.splice(index, 1);
-	} */
 
 	for (const [index, theLoom] of game.global.heirloomsExtra.entries()) {
 		const data = { location: 'heirloomsExtra', index, rarity: theLoom.rarity, eff: heirloomEvaluations[index] };

@@ -3502,7 +3502,6 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and recycle others.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
-				description += "<p>Only display the mods available for your selected heirloom tier.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
 			}, 'dropdown', 'None', function () {
@@ -3529,106 +3528,30 @@ function initialiseAllSettings() {
 			}, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse)) });
 
-		createSetting('heirloomAutoShieldBlacklist',
-			function () { return ('Blacklist') },
+
+		createSetting('heirloomAutoModsShield',
+			function () { return ('Shield Modifiers') },
 			function () {
-				let description = "<p>Will ignore Shield heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
-				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
+				let description = "<p>When Auto Heirlooms runs it will keep Shield heirlooms that have the mods selected in this setting.</p>";
+				description += "<p>Each heirloom rarity has its own mod selection so when using the <b>Rarity+</b> setting you will need to select mods for every tier available above the one selected in the <b>Rarity To Keep</b> setting.</p>";
 				return description;
-			}, 'multiTextValue', 'None', null, 'Heirloom', [1, 2],
+			}, 'mazDefaultArray', ({
+				'Common': [],
+				'Rare':  [],
+			}), `importExportTooltip('autoHeirloomMods', undefined, 'Shield')`, 'Heirloom', [0],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse)) });
 
-		createSetting('heirloomAutoShieldMod1',
-			function () { return ('Mod 1') },
+		createSetting('heirloomAutoBlacklistShield',
+			function () { return ('Blacklist Shield Modifiers') },
 			function () {
-				let description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
+				let description = "<p>When Auto Heirlooms runs it will ignore Shield heirlooms with the mods you select in this setting.</p>";
+				description += "<p>Each heirloom rarity has its own mod selection so you will need to setup mods for each tier that you want mods to be blacklisted on.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 0)
-			});
-
-		createSetting('heirloomAutoShieldMod2',
-			function () { return ('Mod 2') },
-			function () {
-				let description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 1)
-			});
-
-		createSetting('heirloomAutoShieldMod3',
-			function () { return ('Mod 3') },
-			function () {
-				let description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 2)
-			});
-
-		createSetting('heirloomAutoShieldMod4',
-			function () { return ('Mod 4') },
-			function () {
-				let description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 5)
-			});
-
-		createSetting('heirloomAutoShieldMod5',
-			function () { return ('Mod 5') },
-			function () {
-				let description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 7)
-			});
-
-		createSetting('heirloomAutoShieldMod6',
-			function () { return ('Mod 6') },
-			function () {
-				let description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 9)
-			});
-
-		createSetting('heirloomAutoShieldMod7',
-			function () { return ('Mod 7') },
-			function () {
-				let description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Shield'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', atConfig.settingUniverse)) >= 11)
-			});
+			}, 'mazDefaultArray', ({
+				'Common': [],
+				'Rare':  [],
+			}), `importExportTooltip('autoHeirloomMods', undefined, 'Shield', true)`, 'Heirloom', [0],
+			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAutoStaff',
 			function () { return ('Staffs') },
@@ -3644,7 +3567,6 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and ignore others.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
-				description += "<p>Only display the mods available for your selected heirloom tier.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
 			}, 'dropdown', 'None', function () {
@@ -3671,106 +3593,29 @@ function initialiseAllSettings() {
 			}, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse)) });
 
-		createSetting('heirloomAutoStaffBlacklist',
-			function () { return ('Blacklist') },
+		createSetting('heirloomAutoModsStaff',
+			function () { return ('Staff Modifiers') },
 			function () {
-				let description = "<p>Will ignore Staff heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
-				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
+				let description = "<p>When Auto Heirlooms runs it will keep Staff heirlooms that have the mods selected in this setting.</p>";
+				description += "<p>Each heirloom rarity has its own mod selection so when using the <b>Rarity+</b> setting you will need to select mods for every tier available above the one selected in the <b>Rarity To Keep</b> setting.</p>";
 				return description;
-			}, 'multiTextValue', 'None', null, 'Heirloom', [1, 2],
+			}, 'mazDefaultArray', ({
+				'Common': [],
+				'Rare':  [],
+			}), `importExportTooltip('autoHeirloomMods', undefined, 'Staff')`, 'Heirloom', [0],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse)) });
 
-		createSetting('heirloomAutoStaffMod1',
-			function () { return ('Mod 1') },
+		createSetting('heirloomAutoBlacklistStaff',
+			function () { return ('Blacklist Staff Modifiers') },
 			function () {
-				let description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
+				let description = "<p>When Auto Heirlooms runs it will ignore Staff heirlooms with the mods you select in this setting.</p>";
+				description += "<p>Each heirloom rarity has its own mod selection so you will need to setup mods for each tier that you want mods to be blacklisted on.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 0)
-			});
-
-		createSetting('heirloomAutoStaffMod2',
-			function () { return ('Mod 2') },
-			function () {
-				let description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 1)
-			});
-
-		createSetting('heirloomAutoStaffMod3',
-			function () { return ('Mod 3') },
-			function () {
-				let description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 2)
-			});
-
-		createSetting('heirloomAutoStaffMod4',
-			function () { return ('Mod 4') },
-			function () {
-				let description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 5)
-			});
-
-		createSetting('heirloomAutoStaffMod5',
-			function () { return ('Mod 5') },
-			function () {
-				let description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 7)
-			});
-
-		createSetting('heirloomAutoStaffMod6',
-			function () { return ('Mod 6') },
-			function () {
-				let description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 9)
-			});
-
-		createSetting('heirloomAutoStaffMod7',
-			function () { return ('Mod 7') },
-			function () {
-				let description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Staff'); }, 'Heirloom', [1, 2],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				if (game.global.stringVersion === '5.10.0') heirloomType.push('Mutated');
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', atConfig.settingUniverse)) >= 11)
-			});
+			}, 'mazDefaultArray', ({
+				'Common': [],
+				'Rare':  [],
+			}), `importExportTooltip('autoHeirloomMods', undefined, 'Staff', true)`, 'Heirloom', [0],
+			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAutoCore',
 			function () { return ('Cores') },
@@ -3792,7 +3637,7 @@ function initialiseAllSettings() {
 				let hze =game.stats.highestLevel.valueTotal();
 				let heirloomTiersAvailable = ['Common'];
 
-				if (hze >= 200) heirloomTiersAvailable.push('Uncommon');
+				if (hze >= 200) heirloomTiersAvailable.push('Common');
 				if (hze >= 300) heirloomTiersAvailable.push('Rare');
 				if (hze >= 400) heirloomTiersAvailable.push('Epic');
 				if (hze >= 500) heirloomTiersAvailable.push('Legendary');
@@ -3803,58 +3648,27 @@ function initialiseAllSettings() {
 			}, 'Heirloom', [0],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoCore', atConfig.settingUniverse) && game.global.spiresCompleted > 0) });
 
-		createSetting('heirloomAutoCoreBlacklist',
-			function () { return ('Blacklist') },
+		createSetting('heirloomAutoModsCore',
+			function () { return ('Core Modifiers') },
 			function () {
-				let description = "<p>Will ignore Core heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Mod names must be entered exactly the same as they appear in the mod dropdown settings.</p>";
-				description += "<p>You can input multiple modifier names but they need to be seperated by commas.</p>";
+				let description = "<p>When Auto Heirlooms runs it will keep Core heirlooms that have the mods selected in this setting.</p>";
+				description += "<p>Each heirloom rarity has its own mod selection so when using the <b>Rarity+</b> setting you will need to select mods for every tier available above the one selected in the <b>Rarity To Keep</b> setting.</p>";
 				return description;
-			}, 'multiTextValue', 'None', null, 'Heirloom', [0],
+			}, 'mazDefaultArray', ({
+				'Basic': [],
+			}), `importExportTooltip('autoHeirloomMods', undefined, 'Core')`, 'Heirloom', [0],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoCore', atConfig.settingUniverse) && game.global.spiresCompleted > 0) });
 
-		createSetting('heirloomAutoCoreMod1',
-			function () { return ('Mod 1') },
+		createSetting('heirloomAutoBlacklistCore',
+			function () { return ('Blacklist Core Modifiers') },
 			function () {
-				let description = "<p>Keeps Cores with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
+				let description = "<p>When Auto Heirlooms runs it will ignore Core heirlooms with the mods you select in this setting.</p>";
+				description += "<p>Each heirloom rarity has its own mod selection so you will need to select mods for each tier that you want mods to be blacklisted on.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [0],
-			function () {
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoCore', atConfig.settingUniverse)) && game.global.spiresCompleted > 0});
-
-		createSetting('heirloomAutoCoreMod2',
-			function () { return ('Mod 2') },
-			function () {
-				let description = "<p>Keeps Cores with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [0],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoCore', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', atConfig.settingUniverse)) >= 1)});
-
-		createSetting('heirloomAutoCoreMod3',
-			function () { return ('Mod 3') },
-			function () {
-				let description = "<p>Keeps Cores with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [0],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoCore', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', atConfig.settingUniverse)) >= 2)});
-
-		createSetting('heirloomAutoCoreMod4',
-			function () { return ('Mod 4') },
-			function () {
-				let description = "<p>Keeps Cores with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
-				return description;
-			}, 'dropdown', 'Any', function () { return _autoHeirloomMods('Core'); }, 'Heirloom', [0],
-			function () {
-				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
-				return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoCore', atConfig.settingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', atConfig.settingUniverse)) >= 5)});
+			}, 'mazDefaultArray', ({
+				'Basic': [],
+			}), `importExportTooltip('autoHeirloomMods', undefined, 'Core', true)`, 'Heirloom', [0],
+			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoCore', atConfig.settingUniverse) && game.global.spiresCompleted > 0) });
 	}
 	
 	const displaySpire = true;
@@ -3915,8 +3729,9 @@ function initialiseAllSettings() {
 				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during active Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
+				else description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', 10, null, 'Spire', [1, 2]);
+			}, 'value', -1, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMapping',
 			function () { return ('Skip Spires') },
@@ -3982,8 +3797,9 @@ function initialiseAllSettings() {
 				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during active Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
+				else description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', 10, null, 'Spire', [1, 2]);
+			}, 'value', -1, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMappingC2',
 			function () { return (`${_getChallenge2Info()}: Skip Spires`) },
@@ -4049,8 +3865,9 @@ function initialiseAllSettings() {
 				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during active Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
+				else description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', 10, null, 'Spire', [1, 2]);
+			}, 'value', -1, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMappingDaily',
 			function () { return ('Daily: Skip Spires') },
@@ -5602,7 +5419,7 @@ function _settingsToLineBreak() {
 
 	const breakAfterIDs = [...breakAfterCore, ...breakAfterMaps, ...breakAfterDaily, ...breakAfterEquipment, ...breakAfterCombat, ...breakAfterJobs, ...breakAfterC2, ...breakAfterBuildings, ...breakAfterChallenges, ...breakAfterHeirlooms, ...breakAfterSpire, ...breakAfterMagma, ...breakAfterNature, ...breakAfterDisplay, ...breakAfterImportExport, ...breakAfterHelp, ...breakAfterTest];
 
-	const breakAfterHeirloomIDs = ['heirloomAutoForceRun', 'heirloomAutoShieldMod7', 'heirloomAutoStaffMod7'];
+	const breakAfterHeirloomIDs = ['heirloomAutoForceRun', 'heirloomAutoBlacklistShield', 'heirloomAutoBlacklistStaff'];
 
 	breakAfterIDs.forEach((id) => _setSettingLineBreaks(id, 'show'));
 	breakAfterHeirloomIDs.forEach((id) => _setSettingLineBreaks(id, heirloom));
