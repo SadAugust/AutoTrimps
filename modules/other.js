@@ -1270,50 +1270,89 @@ function updateATVersion() {
 
 			if (typeof tempSettings['scryvoidmaps'] !== 'undefined') {
 				autoTrimpSettings.scryerVoidMaps.enabled = tempSettings.scryvoidmaps.enabled;
+			}
+
+			if (typeof tempSettings['dscryvoidmaps'] !== 'undefined') {
 				autoTrimpSettings.scryerVoidMapsDaily.enabled = tempSettings.dscryvoidmaps.enabled;
 			}
 
 			if (typeof tempSettings['AutoStanceWind'] !== 'undefined') {
 				autoTrimpSettings.autoStanceWind.enabled = tempSettings.AutoStanceWind.enabled;
+			}
+
+			if (typeof tempSettings['dAutoStanceWind'] !== 'undefined') {
 				autoTrimpSettings.autoStanceWindDaily.enabled = tempSettings.dAutoStanceWind.enabled;
 			}
 
 			if (typeof tempSettings['WindStackingZone'] !== 'undefined') {
 				autoTrimpSettings.windStackingZone.value = tempSettings.WindStackingZone.value;
+			}
+
+			if (typeof tempSettings['dWindStackingZone'] !== 'undefined') {
 				autoTrimpSettings.windStackingZoneDaily.value = tempSettings.dWindStackingZone.value;
 			}
 
 			if (typeof tempSettings['WindStackingRatio'] !== 'undefined') {
 				autoTrimpSettings.windStackingRatio.value = tempSettings.WindStackingRatio.value;
+			}
+
+			if (typeof tempSettings['dWindStackingRatio'] !== 'undefined') {
 				autoTrimpSettings.windStackingRatioDaily.value = tempSettings.dWindStackingRatio.value;
 			}
 
 			if (typeof tempSettings['WindStackingLiq'] !== 'undefined') {
 				autoTrimpSettings.windStackingLiq.enabled = tempSettings.WindStackingLiq.enabled;
+			}
+
+			if (typeof tempSettings['dWindStackingLiq'] !== 'undefined') {
 				autoTrimpSettings.windStackingLiqDaily.enabled = tempSettings.dWindStackingLiq.enabled;
 			}
 
 			if (typeof tempSettings['IgnoreSpiresUntil'] !== 'undefined') {
 				autoTrimpSettings.spireIgnoreUntil.value = tempSettings.IgnoreSpiresUntil.value;
+			}
+
+			if (typeof tempSettings['c2IgnoreSpiresUntil'] !== 'undefined') {
 				autoTrimpSettings.spireIgnoreUntilC2.value = tempSettings.c2IgnoreSpiresUntil.value;
+			}
+
+			if (typeof tempSettings['dIgnoreSpiresUntil'] !== 'undefined') {
 				autoTrimpSettings.spireIgnoreUntilDaily.value = tempSettings.dIgnoreSpiresUntil.value;
 			}
 
 			if (typeof tempSettings['ExitSpireCell'] !== 'undefined') {
 				autoTrimpSettings.spireExitCell.value = tempSettings.ExitSpireCell.value;
+			}
+
+			if (typeof tempSettings['c2ExitSpireCell'] !== 'undefined') {
 				autoTrimpSettings.spireExitCellC2.value = tempSettings.c2ExitSpireCell.value;
+			}
+
+			if (typeof tempSettings['dExitSpireCell'] !== 'undefined') {
 				autoTrimpSettings.spireExitCellDaily.value = tempSettings.dExitSpireCell.value;
 			}
 
 			if (typeof tempSettings['PreSpireNurseries'] !== 'undefined') {
 				autoTrimpSettings.spireNurseries.value = tempSettings.PreSpireNurseries.value;
+			}
+
+			if (typeof tempSettings['c2PreSpireNurseries'] !== 'undefined') {
 				autoTrimpSettings.spireNurseriesC2.value = tempSettings.c2PreSpireNurseries.value;
+			}
+
+			if (typeof tempSettings['dPreSpireNurseries'] !== 'undefined') {
 				autoTrimpSettings.spireNurseriesDaily.value = tempSettings.dPreSpireNurseries.value;
 			}
 
 			if (typeof tempSettings['AutoDStanceSpire'] !== 'undefined') {
 				autoTrimpSettings.spireDominanceStance.enabled = tempSettings.AutoDStanceSpire.enabled;
+			}
+
+			if (typeof tempSettings['c2AutoDStanceSpire'] !== 'undefined') {
 				autoTrimpSettings.spireDominanceStanceC2.enabled = tempSettings.c2AutoDStanceSpire.enabled;
+			}
+
+			if (typeof tempSettings['dAutoDStanceSpire'] !== 'undefined') {
 				autoTrimpSettings.spireDominanceStanceDaily.enabled = tempSettings.dAutoDStanceSpire.enabled;
 			}
 
