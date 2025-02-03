@@ -730,7 +730,7 @@ function iterateValueFeedback(valueArray, props, perks) {
 
 	// Glass reward gives 10% radon per extra completion if we can increase our VM zone
 	if (props.clearWeight >= 0 && props.glassRadon) {
-		Vrad *= Math.pow(1.1, pushZones);
+		Vrad *= Math.pow(1.1, Math.min(pushZones, 400));
 	}
 
 	// count S3 for Rn weighting if selected by the user, or if at Obs 0 with no clear weight (which would give no value to pushing perks at all without S3/VS1)

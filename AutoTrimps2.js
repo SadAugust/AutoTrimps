@@ -168,9 +168,9 @@ function loadScriptsAT() {
 	console.time();
 
 	if (usingRealTimeOffline) {
-		clearTimeout(offlineProgress.loop); /* Disable offline progress loop */
+		clearTimeout(offlineProgress.loop); /* disable offline progress loop */
 	} else {
-		gameLoop = function () {}; /* Disable game from running until script loads to ensure no time is spent without AT running */
+		gameLoop = function () {}; /* disable game from running until script loads to ensure no time is spent without AT running */
 	}
 
 	const scripts = Array.from(document.getElementsByTagName('script'));
@@ -184,7 +184,7 @@ function loadScriptsAT() {
 			const testing = atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/' ? installedTesting : [];
 
 			const modules = ['versionNumber', ...installedMods, ...installedModules, ...testing, 'SettingsGUI'];
-			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-QWUI/qwUI.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
+			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
 			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`];
 
 			if (game.global.stringVersion === '5.9.2') {

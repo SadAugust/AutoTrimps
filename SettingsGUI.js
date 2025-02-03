@@ -3624,7 +3624,7 @@ function initialiseAllSettings() {
 				description += "<p>Auto Heirlooms won't keep any cores if this setting is disabled.</p>";
 				return description
 			}, 'boolean', false, null, 'Heirloom', [0],
-			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && game.global.spiresCompleted > 0) });
 
 		createSetting('heirloomAutoRareToKeepCore',
 			function () { return ('Rarity to Keep') },
