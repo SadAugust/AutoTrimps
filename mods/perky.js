@@ -1210,6 +1210,7 @@ atData.autoPerks = {
 		apGUI.$updateInputsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 0.1vw solid #777; border-radius: 0px; padding: 0px`;
 		apGUI.$updateInputsBtn.textContent = 'Update Input Fields';
 		if (document.getElementById(apGUI.$updateInputsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$updateInputsBtn);
+		document.getElementById('portalWrapper').style.setProperty('overflow-y', 'auto');
 
 		_setSelect2PerkyDropdowns();
 	},
