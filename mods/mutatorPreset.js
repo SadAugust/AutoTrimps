@@ -50,10 +50,10 @@ function presetMutTab(tabNum) {
 	MODULES.mutatorPreset.selected = tabNum;
 }
 
-function tooltipAT(what, event, textString, headingName) {
-	let elem = document.getElementById('tooltipDiv2');
+function tooltipAT(what, event, textString, headingName, use2 = '2') {
+	let elem = document.getElementById(`tooltipDiv${use2}`);
 	swapClass('tooltipExtra', 'tooltipExtraNone', elem);
-	document.getElementById('tipText').className = '';
+	document.getElementById(`tipText${use2}`).className = '';
 	let ondisplay = null;
 	let tooltipText = '';
 	let costText = '';
@@ -127,7 +127,7 @@ function tooltipAT(what, event, textString, headingName) {
 		<br/><br/><input id='renamePresetBox' maxlength='25' style='width: 50%' value='${oldName}' />`;
 		costText = `<div class='maxCenter'>
 		<div id='confirmTooltipBtn' class='btn btn-info' onclick='renameMutations()'>Apply</div>
-		<div class='btn btn-info' onclick='cancelTooltipAT(true); unlockTooltip();'>Cancel </div>
+		<div class='btn btn-info' onclick='cancelTooltip(true); unlockTooltip();'>Cancel </div>
 		</div>`;
 
 		game.global.lockTooltip = true;
@@ -199,9 +199,9 @@ function tooltipAT(what, event, textString, headingName) {
 		};
 	}
 
-	document.getElementById('tipTitle2').innerHTML = titleText;
-	document.getElementById('tipText2').innerHTML = tooltipText;
-	document.getElementById('tipCost2').innerHTML = costText;
+	document.getElementById(`tipTitle${use2}`).innerHTML = titleText;
+	document.getElementById(`tipText${use2}`).innerHTML = tooltipText;
+	document.getElementById(`tipCost${use2}`).innerHTML = costText;
 	elem.style.display = 'block';
 	if (ondisplay !== null) ondisplay();
 	if (event !== 'update' && !what.includes('Spire Assault')) positionTooltip(elem, event);
@@ -280,7 +280,7 @@ function renameMutations(needTooltip) {
 	let presetGroup = mutatorObj['preset' + MODULES.mutatorPreset.selected];
 
 	if (needTooltip) {
-		tooltipAT('Rename Preset', 'update');
+		tooltipAT('Rename Preset', 'update', undefined, undefined, '');
 		return;
 	}
 
