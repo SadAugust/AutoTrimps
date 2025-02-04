@@ -1329,6 +1329,16 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '6.7.11') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['heirloom'] !== 'undefined' && autoTrimpSettings.heirloomSwapping !== 'undefined') {
+				autoTrimpSettings.heirloomSwapping.enabled = tempSettings.heirloom.enabled;
+				autoTrimpSettings.heirloomSwapping.enabledU2 = tempSettings.heirloom.enabledU2;
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
@@ -1401,5 +1411,5 @@ function updateHeirloomSwapElem() {
 
 	elem.classList.remove('settingBtnfalse');
 	elem.classList.remove('settingBtntrue');
-	elem.classList.add(getPageSetting('heirloom') ? 'settingBtntrue' : 'settingBtnfalse');
+	elem.classList.add(getPageSetting('heirloomSwapping') ? 'settingBtntrue' : 'settingBtnfalse');
 }

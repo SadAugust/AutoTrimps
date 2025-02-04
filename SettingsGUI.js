@@ -3119,7 +3119,7 @@ function initialiseAllSettings() {
 	
 	const displayHeirlooms = true;
 	if (displayHeirlooms) {
-		createSetting('heirloom',
+		createSetting('heirloomSwapping',
 			function () { return ('Heirloom Swapping') },
 			function () {
 				let description = "<p>Master switch for whether the script will do any form of heirloom swapping.</p>";
@@ -3136,7 +3136,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomPostVoidSwap',
 			function () { return ('Post Void Swap') },
@@ -3145,7 +3145,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomVoidSwap',
 			function () { return ('Void PB Swap') },
@@ -3156,7 +3156,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Off unless you know what you're doing</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomCompressedSwap',
 			function () { return ('Compressed Swap') },
@@ -3168,7 +3168,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
 
 		createSetting('heirloomShield',
 			function () { return ('Shields') },
@@ -3179,7 +3179,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse)) });
 
 		createSetting('heirloomInitial',
 			function () { return ('Initial') },
@@ -3189,7 +3189,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> a shield with void map drop chance</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAfterpush',
 			function () { return ('Afterpush') },
@@ -3199,7 +3199,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomC3',
 			function () { return (_getChallenge2Info()) },
@@ -3209,7 +3209,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 			
 		createSetting('heirloomBreed',
 			function () { return ('Breed') },
@@ -3223,7 +3223,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomVoid',
 			function () { return ('Void') },
@@ -3233,7 +3233,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> damage heirloom</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomVoidPlaguebringer',
 			function () { return ('Void PB') },
@@ -3245,7 +3245,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> <b>Plaguebringer</b> heirloom</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomVoidSwap', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomVoidSwap', atConfig.settingUniverse)) });
 
 		createSetting('heirloomSpire',
 			function () { return ('Spire') },
@@ -3257,7 +3257,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && ((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 170) || (game.global.stringVersion === '5.10.0' && atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 270))) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && ((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 170) || (game.global.stringVersion === '5.10.0' && atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 270))) });
 
 		createSetting('heirloomWindStack',
 			function () { return ('Wind Stacking') },
@@ -3268,7 +3268,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Plaguebringer heirloom</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.empowerments.Wind.getLevel() >= 50) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.empowerments.Wind.getLevel() >= 50) });
 
 		createSetting('heirloomSwapZone',
 			function () { return ('Swap Zone') },
@@ -3278,7 +3278,7 @@ function initialiseAllSettings() {
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomSwapZoneDaily',
 			function () { return ('Daily Swap Zone') },
@@ -3288,7 +3288,7 @@ function initialiseAllSettings() {
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomSwapZoneC3',
 			function () { return (_getChallenge2Info() + ' Swap Zone') },
@@ -3299,7 +3299,7 @@ function initialiseAllSettings() {
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 			createSetting('heirloomSwapZoneOneOff',
 			function () { return ('One Off Swap Zone') },
@@ -3310,7 +3310,7 @@ function initialiseAllSettings() {
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomSwapHD',
 			function () { return ('HD Ratio Swap') },
@@ -3319,7 +3319,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomSwapHDCompressed',
 			function () { return ('Comp Swap HD') },
@@ -3328,7 +3328,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomCompressedSwap', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomCompressedSwap', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaff',
 			function () { return ('Staffs') },
@@ -3338,7 +3338,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaffWorld',
 			function () { return ('World') },
@@ -3348,7 +3348,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> High pet XP staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaffMap',
 			function () { return ('Map') },
@@ -3359,7 +3359,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Resource efficiency heavy staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaffVoid',
 			function () { return ('Void') },
@@ -3369,7 +3369,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaffFragment',
 			function () { return ('Fragment') },
@@ -3379,7 +3379,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaffFood',
 			function () { return ('Savory Cache') },
@@ -3389,7 +3389,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Dedicated food efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaffWood',
 			function () { return ('Wooden Cache') },
@@ -3399,7 +3399,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Dedicated wood efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaffMetal',
 			function () { return ('Metal Cache') },
@@ -3409,7 +3409,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomStaffScience',
 			function () { return ('Research Cache') },
@@ -3419,7 +3419,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloom', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAuto',
 			function () { return ('Auto Heirlooms') },
@@ -4917,7 +4917,7 @@ function settingChanged(id, currUniverse) {
 		btn[enabled] = !btn[enabled];
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (booleanActions[id] && updateUI) booleanActions[id]();
-		if (id === 'heirloom') updateHeirloomSwapElem();
+		if (id === 'heirloomSwapping') updateHeirloomSwapElem();
 		if (id === 'autoMapsReroll') hdStats.autoLevelMaxFragments = btn[enabled] && hdStats.autoLevelInitial ? stats(undefined, false) : undefined;
 	}
 

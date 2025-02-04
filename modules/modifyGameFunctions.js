@@ -722,7 +722,7 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 		if (game.portal.Observation.trinkets > 0) amt *= game.portal.Observation.getMult();
 		if (what !== 'science' && what !== 'fragments' && challengeActive('Alchemy')) amt *= alchObj.getPotionEffect('Potion of Finding');
 		if (what === 'wood' && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0) amt *= game.challenges.Hypothermia.getWoodMult();
-		if (challengeActive('Desolation')) amt *= game.challenges.Desolation.trimpResourceMult();
+		if (challengeActive('Desolation') && what !== 'fragments') amt *= game.challenges.Desolation.trimpResourceMult();
 	}
 
 	if (['food', 'metal', 'wood'].includes(what)) {
@@ -867,7 +867,21 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 function getHeirloomBonus_AT(type, modName, customShield) {
 	if (!customShield && (!game.heirlooms[type] || !game.heirlooms[type][modName])) return 0;
 	let bonus;
-	//Override bonus if needed with gammaBurst otherwise check customShield and lastly use the game heirloom bonus.
+
+	const modMapping = {
+		metalDrop: 'allMetal',
+		MinerSpeed: 'allMetal',
+		woodDrop: 'allWood',
+		LumberjackSpeed: 'allWood',
+		foodDrop: 'allFood',
+		FarmerSpeed: 'allFood'
+	};
+
+	if (customShield && modMapping.hasOwnProperty(modName) && heirloomSearch(customShield, type).rarity >= 12) {
+		modName = modMapping[modName];
+	}
+
+	/* override bonus if needed with gammaBurst otherwise check customShield and lastly use the game heirloom bonus. */
 	if (customShield) bonus = heirloomModSearch(customShield, modName);
 	else if (modName === 'gammaBurst') bonus = game.global.gammaMult / 100;
 	else bonus = game.heirlooms[type][modName].currentBonus;

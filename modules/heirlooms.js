@@ -110,8 +110,11 @@ function autoHeirlooms(portal = false) {
 
 //Heirloom Swapping
 //Checks to see if we own the heirloom we are trying to equip
-function heirloomSearch(heirloom) {
+function heirloomSearch(heirloom, type) {
 	const heirloomName = getPageSetting(heirloom);
+
+	if (type && game.global[`${type}Equipped`].name === heirloomName) return game.global[`${type}Equipped`];
+
 	return game.global.heirloomsCarried.find((loom) => loom.name === heirloomName);
 }
 
@@ -144,7 +147,7 @@ function heirloomModSearch(heirloom, modifier) {
 }
 
 function heirloomEquip(heirloom, type) {
-	if (!getPageSetting('heirloom') || !getPageSetting(`heirloom${type}`)) return;
+	if (!getPageSetting('heirloomSwapping') || !getPageSetting(`heirloom${type}`)) return;
 
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
@@ -170,7 +173,7 @@ function updateShieldData() {
 }
 
 function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdCheck = true, sendingArmy = false) {
-	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return;
+	if (!getPageSetting('heirloomSwapping') || !getPageSetting('heirloomShield')) return;
 
 	const afterpushShield = trimpStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	//If we are slow scumming and we are on an ODD cell then equip afterpush shield otherwise equip initial shield
@@ -293,7 +296,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 }
 
 function heirloomStaffToEquip() {
-	if (!getPageSetting('heirloom') || !getPageSetting('heirloomStaff')) return;
+	if (!getPageSetting('heirloomSwapping') || !getPageSetting('heirloomStaff')) return;
 
 	if (!game.global.mapsActive) {
 		return getWorldHeirloomStaff();
@@ -338,7 +341,7 @@ function getMapBonusHeirloomStaff(mapBonus) {
 }
 
 function heirloomSwapping(sendingArmy = false) {
-	if (!getPageSetting('heirloom')) return;
+	if (!getPageSetting('heirloomSwapping')) return;
 
 	const mapType = _getWorldType();
 
@@ -354,7 +357,7 @@ function heirloomSwapping(sendingArmy = false) {
 }
 
 function usingBreedHeirloom(mapCheck = false) {
-	if (!getPageSetting('heirloom') || !getPageSetting('heirloomShield')) return false;
+	if (!getPageSetting('heirloomSwapping') || !getPageSetting('heirloomShield')) return false;
 
 	if (mapCheck) {
 		if (liquifiedZone() || getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100) return false;

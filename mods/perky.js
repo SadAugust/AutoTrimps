@@ -295,7 +295,7 @@ function populatePerkyData() {
 	let chronojest = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp;
 
 	for (let mod of game.global.StaffEquipped.mods || []) {
-		if (mod[0] === 'MinerSpeed') prod *= 1 + 0.01 * mod[1];
+		if (['MinerSpeed', 'allMetal'].includes(mod[0])) prod *= 1 + 0.01 * mod[1];
 		else if (mod[0] === 'metalDrop') loot *= 1 + 0.01 * mod[1];
 	}
 
