@@ -138,7 +138,7 @@ function initPerks() {
 		runningTrappa: challengeActive('Trappapalooza'),
 		trappaStartPop: 1,
 		scaffMult: autoBattle.bonuses.Scaffolding.getMult(),
-		mutationMult: u2Mutations.tree.Trimps.purchased ? 1.5 : 1,
+		mutationMult: game.global.stringVersion !== '5.9.2' && u2Mutations.tree.Trimps.purchased ? 1.5 : 1,
 		expandingTauntimp: game.global.expandingTauntimp,
 		hubsEnabled: game.global.exterminateDone,
 		potency: 0.0085,
