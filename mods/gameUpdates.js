@@ -1023,6 +1023,8 @@ function breed() {
 	if (game.options.menu.showFullBreed.enabled) {
 		fullBreed = `${totalTimeText} Secs`;
 		timeRemaining = `${timeRemaining} / ${fullBreed}`;
+	} else {
+		timeRemaining += ` Secs`;
 	}
 
 	if (decimalOwned.cmp(trimpsMax) >= 0 && trimps.owned >= trimpsMax) {

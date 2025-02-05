@@ -2305,7 +2305,7 @@ function autoJobsTable(settingGroup, ratioJobs, percentJobs) {
 		let checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
 
 		tooltipText += "<td style='width: 40%'><div class='row'>";
-		tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + '</span></div>';
+		tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '<span>' + item + '</span></div>';
 		tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + (setting && setting.ratio >= 0 ? setting.ratio : 0) + "' /></div>";
 		tooltipText += '</div></td>';
 		if (percentJobs.length > x) {
@@ -2315,7 +2315,7 @@ function autoJobsTable(settingGroup, ratioJobs, percentJobs) {
 			if (max > 1e4) max = max.toExponential().replace('+', '');
 			checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', setting && setting.enabled);
 			tooltipText += "<td style='width: 60%'><div class='row'>";
-			tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + '</span></div>';
+			tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + checkbox + '<span>' + item + '</span></div>';
 			tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'>Percent: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + (setting && setting.percent ? setting.percent : 100) + "' />";
 			tooltipText += '</div></div>';
 		}
@@ -2323,19 +2323,19 @@ function autoJobsTable(settingGroup, ratioJobs, percentJobs) {
 
 	if (game.global.universe === 2) {
 		tooltipText += "<tr><td style='width: 40%'><div class='row'>";
-		tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', settingGroup.FarmersUntil.enabled) + '&nbsp;&nbsp;<span>' + 'Farmers Until</span></div>';
+		tooltipText += "<div class='col-xs-6' style='padding-right: 5px'>" + buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', settingGroup.FarmersUntil.enabled) + '<span>' + 'Farmers Until</span></div>';
 		tooltipText += "<div class='col-xs-6 lowPad' style='text-align: right'>Zone: <input class='jobConfigQuantity' id='FarmersUntilZone' type='number' value='" + (settingGroup.FarmersUntil.zone ? settingGroup.FarmersUntil.zone : 999) + "' /></div>";
 		tooltipText += '</div></td>';
 
 		tooltipText += "<td style='width: 60%'><div class='row'>";
-		tooltipText += "<div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', settingGroup.NoLumberjacks.enabled) + '&nbsp;&nbsp;<span>' + 'No Lumberjacks Post MP</span></div>';
+		tooltipText += "<div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', settingGroup.NoLumberjacks.enabled) + '<span>' + 'No Lumberjacks Post MP</span></div>';
 		tooltipText += '</td></tr>';
 	}
 
 	const portalOptions = ['AutoJobs: Off', 'Auto Jobs: On', 'Auto Jobs: Manual'];
 	tooltipText += "<tr><td style='width: 40%'><div class='row'>";
 	tooltipText += "<div class='col-xs-6' style='width: 50%; padding-right: 5px'><span>Setting on Portal" + '</span></div>';
-	tooltipText += "<div class='col-xs-6 lowPad' style='width: 45.25%; text-align: right'><select style='width: 100%' id='autoJobPortal'><option value='0'>No change</option>";
+	tooltipText += "<div class='col-xs-6 lowPad' style='width: 45.25%; text-align: right'><select style='width: 100%; font-size: 0.9vw;' id='autoJobPortal'><option value='0'>No change</option>";
 
 	for (let x = 0; x < portalOptions.length; x++) {
 		tooltipText += '<option' + (settingGroup.portalOption && settingGroup.portalOption === portalOptions[x] ? " selected='selected'" : '') + " value='" + portalOptions[x] + "'>" + portalOptions[x] + '</option>';

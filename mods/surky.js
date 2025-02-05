@@ -138,6 +138,8 @@ function initPerks() {
 		runningTrappa: challengeActive('Trappapalooza'),
 		trappaStartPop: 1,
 		scaffMult: autoBattle.bonuses.Scaffolding.getMult(),
+		mutationMult: u2Mutations.tree.Trimps.purchased ? 1.5 : 1,
+		expandingTauntimp: game.global.expandingTauntimp,
 		hubsEnabled: game.global.exterminateDone,
 		potency: 0.0085,
 		carpNeeded: 0,
@@ -948,7 +950,7 @@ function getPerkEfficiencies(props, perks) {
 	const tauntBase = 1.003 + 0.0001 * perks.Expansion.level;
 	const tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
 	// expanding tauntimps mean taunt pop is not in maxTrimps, it's a flat multiplier
-	const tauntCorrectedMaxTrimps = tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult) * Math.pow(tauntBase, props.imperzone * (props.targetZone - game.global.world));
+	const tauntCorrectedMaxTrimps = tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult * props.mutationMult) * Math.pow(tauntBase, props.imperzone * (props.targetZone - game.global.world));
 	props.carpNeeded = Math.log(popNeededForCoords / tauntCorrectedMaxTrimps) / Math.log(1.1);
 
 	// Get various gain factors needed to calculate the value of trinkets (and also used to value their respective perks).
@@ -1178,20 +1180,22 @@ function clearAndAutobuyPerks() {
 		let carpWanted = 0;
 
 		if (challengeActive('Downsize') && props.specialChallenge === 'combat') {
-			//Impractical to know actual housing in downsize, just don't reduce Carp or Expansion level
+			/* impractical to know actual housing in downsize, just don't reduce Carp or Expansion level */
 			perks.Carpentry.level = origCarp;
 			perks.Expansion.level = origExpand;
 		} else if (props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon') {
 			game.unlocks.impCount.Tauntimp = game.unlocks.impCount.Tauntimp;
-			//Must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible radon spent on carp)
+			/* must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible radon spent on carp) */
 			const wantedArmySize = (props.runningTrappa ? Math.pow(1.25, 10) : 1) * game.resources.trimps.maxSoldiers;
 			const tauntBase = 1.003 + 0.0001 * origExpand;
 			const tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
-			carpWanted = Math.max(0, Math.ceil(Math.log((2.4 * wantedArmySize) / (tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult))) / Math.log(1.1)));
+
+			carpWanted = Math.max(0, Math.ceil(Math.log((2.4 * wantedArmySize) / (tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult * props.mutationMult))) / Math.log(1.1)));
 		}
-		//Setting this here since initial load clears variables and perk levels which is important for carp calculations
+		/* setting this here since initial load clears variables and perk levels which is important for carp calculations */
 		[props, perks] = initialLoad(true);
 		perks.Carpentry.level = carpWanted;
+		perks.Expansion.level = origExpand;
 		// get correct available radon for cleared perks
 		// for max carp, just max out carp!
 		if (props.specialChallenge === 'trappacarp') {
@@ -1218,7 +1222,7 @@ function autobuyPerks(props, perks) {
 	perks.Pheromones.optimize = game.stats.highestRadLevel.valueTotal() >= 60 && props.specialChallenge !== 'trappa' && !(props.specialChallenge === 'combat' && props.runningTrappa);
 	if (props.specialChallenge === 'trappa' || (props.specialChallenge === 'combat' && props.runningTrappa)) {
 		const maxCarpLevels = Math.log((props.perksRadon / perks.Carpentry.priceBase) * (perks.Carpentry.priceFact - 1) + 1) / Math.log(perks.Carpentry.priceFact);
-		props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * props.scaffMult;
+		props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * props.scaffMult * props.mutationMult;
 	}
 
 	// optimize Trumps for Downsize

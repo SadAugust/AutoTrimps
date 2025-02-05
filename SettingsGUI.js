@@ -204,21 +204,21 @@ function initialiseAllSettings() {
 
 		createSetting('portalRespec',
 			function () { 
-				let portalOptions = ['Portal: Respec Off', 'Portal: Respec On'];
+				let portalOptions = ['Portal: Refresh Respec Off', 'Portal: Refresh Respec On'];
 				if (game.permaBoneBonuses.voidMaps.owned >= 5) portalOptions.push('Portal: Void Map Liquification');
 				return portalOptions;
 			},
 			function () {
 				let description = "<p>When enabled this will use liquification to obtain a fast free respec <p>";
-				description += "<p><b>Portal: Respec Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Portal: Respec On</b><br>When your free respec in a run has been used this will delay portaling into your Auto Portal challenge, instead making use of liquification to get a fast portal unlock and portaling into your normal run from there.</p>";
+				description += "<p><b>Portal: Refresh Respec Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Portal: Refresh Respec On</b><br>When your free respec in a run has been used this will delay portaling into your Auto Portal challenge, instead making use of liquification to get a fast portal unlock and portaling into your normal run from there.</p>";
 
 				if (game.permaBoneBonuses.voidMaps.owned >= 5) {
-					description += "<p><b>Portal: Void Map Liquification</b><br>Works the same as <b>Portal: Respec On</b> but in addition to portaling for a respec it will repeatedly portal until your bone void map counter is 1 drop away from a guaranteed extra void map.";
+					description += "<p><b>Portal: Void Map Liquification</b><br>Works the same as <b>Portal: Refresh Respec On</b> but in addition to portaling for a respec it will repeatedly portal until your bone void map counter is 1 drop away from a guaranteed extra void map.";
 					description += "<br>If you have not reached the void map counter target by either zone 99 or the end of your liquification zones then it will portal and repeat this process until have.</p>";
 				}
 				
-				description += "<p><b>Recommended:</b> Portal: Respec On </p>";
+				description += "<p><b>Recommended:</b> Portal: Refresh Respec On </p>";
 				if (atConfig.settingUniverse > 1) {
 					description +="<p><i>This will swap to universe 1 and put you back in the universe you originally portaled from.</i></p>";
 				}
@@ -304,7 +304,7 @@ function initialiseAllSettings() {
 
 				description += `<p><b>${trimpleShortened} Respec: Off</b><br>Disables this setting.</p>`;
 				description += `<p><b>${trimpleShortened} Respec: Popup</b><br>Will display a popup after completing ${trimple} asking whether you would like to respec into the preset listed above.</p>`;
-				description += `<p><b>${trimpleShortened} Respec: Force</b><br>4 seconds after completing ${trimple} the script will respec you into the <b>${calcName}</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec.</p>`;
+				description += `<p><b>${trimpleShortened} Respec: Force</b><br>4 seconds after completing ${trimple} the script will respec you into the <b>${calcName}</b> preset listed above to maximise combat stats. This has a popup that allows you to disable the respec.</p>`;
 				description += `<p>I'd recommend only using this with both the <b>Auto Allocate Perks</b> and <b>Void Map Liquification</b> settings enabled. Without these you will go into your next run in a suboptimal perk setup.</p>`;
 				
 				if (atConfig.settingUniverse === 1) {
