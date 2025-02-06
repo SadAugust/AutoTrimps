@@ -86,6 +86,18 @@ if (typeof originalstartFight !== 'function') {
 	};
 }
 
+if (typeof originalNextWorld !== 'function') {
+	var originalNextWorld = nextWorld;
+	nextWorld = function () {
+		originalNextWorld(...arguments);
+
+		if (game.global.spireActive && !game.global.mapsActive && !game.global.preMapsActive) {
+			farmingDecision();
+			if (mapSettings.mapName !== '' && mapSettings.shouldRun && getPageSetting('autoMaps')) mapsClicked(true);
+		}
+	};
+}
+
 if (typeof Fluffy.originalisRewardActive !== 'function') {
 	Fluffy.originalisRewardActive = Fluffy.isRewardActive;
 	Fluffy.isRewardActive = function () {
