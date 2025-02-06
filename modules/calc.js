@@ -443,8 +443,8 @@ function _getTrimpIceMult(realDamage) {
 	}
 }
 
-function _getQuagmireAttackMult(worldType = _getWorldType()) {
-	const exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
+function _getQuagmireStatMult(worldType = _getWorldType(), stacks = game.challenges.Quagmire.stacks) {
+	const exhaustedStacks = stacks;
 	const mod = worldType !== 'world' ? 0.05 : 0.1;
 	if (exhaustedStacks === 0) return 1;
 	if (exhaustedStacks < 0) return Math.pow(1 + mod, Math.abs(exhaustedStacks));
@@ -586,7 +586,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 			Unbalance: () => game.challenges.Unbalance.getAttackMult(),
 			Duel: () => (game.challenges.Duel.trimpStacks > 50 ? 3 : 1),
 			Melt: () => 5 * Math.pow(0.99, game.challenges.Melt.stacks),
-			Quagmire: () => _getQuagmireAttackMult(worldType),
+			Quagmire: () => _getQuagmireStatMult(worldType),
 			Revenge: () => game.challenges.Revenge.getMult(),
 			Quest: () => game.challenges.Quest.getAttackMult(),
 			Archaeology: () => game.challenges.Archaeology.getStatMult('attack'),

@@ -88,11 +88,13 @@ function fillPresetSurky(specificPreset, forceDefault) {
 		ezfarm: [0, 0, 1],
 		tufarm: [1, 0.5, 15],
 		push: [1, 1, 0],
-		alchemy: [1, 0.01, 10],
-		trappa: [1, 1.5, 0],
 		downsize: [1, 1, 0],
 		duel: [1, 0.2, 0],
+		trappa: [1, 1.5, 0],
+		quagmire: [1, 0.01, 10],
+		archaeology: [1, 0.01, 10],
 		berserk: [1, 0.5, 0],
+		alchemy: [1, 0.01, 10],
 		smithless: [1, 0.5, 0],
 		combat: [1, 0.1, 0],
 		combatRadon: [1, 0.5, 15],
@@ -111,9 +113,13 @@ function fillPresetSurky(specificPreset, forceDefault) {
 	$$('#radonWeight').value = weights[2];
 	saveSurkySettings();
 
-	$$('#radonPerRunDiv').style.display = 'none';
-	$$('#findPotsDiv').style.display = preset === 'alchemy' ? 'inline' : 'none';
-	$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'inline' : 'none';
+	$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'flex' : 'none';
+	$$('#exhaustedStacksDiv').style.display = preset === 'quagmire' ? 'flex' : 'none';
+	$$('#breedRelicsDiv').style.display = preset === 'archaeology' ? 'flex' : 'none';
+	$$('#findPotsDiv').style.display = preset === 'alchemy' ? 'flex' : 'none';
+
+	const elem = preset === 'trappa' ? $$('#trapHrs') : preset === 'quagmire' ? $$('#exhaustedStacks') : preset === 'archaeology' ? $$('#breedRelics') : preset === 'alchemy' ? $$('#findPots') : null;
+	if (elem && elem.style.width === '') atData.autoPerks.displayGUI(2, true);
 }
 
 // initialise perks object to default values
@@ -210,6 +216,7 @@ function initPerks() {
 	if (preset === 'berserk') perks.Frenzy.optimize = false;
 	if (preset === 'smithless') perks.Smithology.optimize = false;
 	if (preset === 'trappa') perks.Pheromones.optimize = false;
+
 	perks.Bait.optimize = preset === 'trappa';
 	perks.Pheromones.optimize = preset !== 'trappa' && game.stats.highestRadLevel.valueTotal() >= 60;
 	perks.Trumps.optimize = preset === 'downsize';
@@ -239,6 +246,13 @@ function surkyResetPerkLevels(perks, skipLevel = false) {
 		}
 	}
 	return perks;
+}
+
+function getExoticChance() {
+	let exoticChance = 3;
+	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
+	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
+	return exoticChance;
 }
 
 function initialLoad(skipLevels = false) {
@@ -378,11 +392,28 @@ function initialLoad(skipLevels = false) {
 	props.coordLimited = Number($$('#coordLimited').value);
 	if (props.coordLimited < 0) props.coordLimited = 0;
 
-	// approximate number of imp-orts of a given type per zone
-	props.imperzone = (props.scruffyLevel >= 9 ? 3.5 : 3) + game.permaBoneBonuses.exotic.owned * 0.05 + 3.0 / 5;
+	/* approximate number of imp-orts of a given type per zone */
+	const exoticChance = getExoticChance();
+	const cells = (props.targetZone - 1) * 100;
+	let randimpAmt = 1; /* game.badGuys.Magimp.lootCount() */
+	if (u2Mutations.tree.Randimp1 && u2Mutations.tree.Randimp1.purchased) randimpAmt++;
+	if (u2Mutations.tree.Randimp2 && u2Mutations.tree.Randimp2.purchased) randimpAmt++;
 
+	let expectedExotics = cells * (exoticChance / 100);
+	expectedExotics += (cells * 0.02) / (5 / randimpAmt);
+	if (u2Mutations.tree.Tauntimps && u2Mutations.tree.Tauntimps.purchased) expectedExotics += Math.floor(game.global.world / 10) * 2;
+	expectedExotics = Math.floor(expectedExotics);
+
+	props.impsExpected = expectedExotics;
+	props.imperzone = exoticChance + 3.0 / (5 / randimpAmt);
+
+	let breedSpeedMult = 1;
+	if (props.specialChallenge === 'quagmire') breedSpeedMult *= _getQuagmireStatMult('world', Number($$('#exhaustedStacks').value));
+	if (props.specialChallenge === 'archaeology') breedSpeedMult *= game.challenges.Archaeology.getStatMult('breed', Number($$('#breedRelics').value));
+	if (u2Mutations.tree.GeneHealth.purchased) breedSpeedMult /= 50;
+	if (u2Mutations.tree.GeneAttack.purchased) breedSpeedMult /= 50;
 	// get potency mod from target zone (div by 10 to get per-tick potency which is what's actually used in-game)
-	props.potency = 0.00085 * Math.pow(1.1, Math.floor(props.targetZone / 5)) * Math.pow(1.003, props.targetZone * props.imperzone);
+	props.potency = 0.00085 * Math.pow(1.1, Math.floor(props.targetZone / 5)) * Math.pow(1.003, props.impsExpected) * breedSpeedMult;
 	props.glassRadon = game.global.glassDone && props.vmZone > 175;
 
 	// to a good approximation for zones substantially past the last housing unlock, total population (scaled by best housing base pop) is:
@@ -789,7 +820,7 @@ function getLogWeightedValue(props, perks, Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp
 	// health is useless in final trappa respec after sending last army, since new perks won't be applied to current army's health
 	const Wh = props.specialChallenge === 'combat' && props.runningTrappa ? 0 : props.clearWeight * props.healthDerate + props.survivalWeight; // health weight
 	const We = Math.max(1e-100, props.survivalWeight); // equality weight: force >0 to use equality as a dump perk if the user sets 0 weight
-	const Wr = props.radonWeight; // radon weight
+	const Wr = props.radonWeight;
 
 	// from iterateValueFeedback:
 	//   [Va,Vh,Vm,Vf,Vres,Vrad,Vp,Ve,
@@ -950,7 +981,7 @@ function getPerkEfficiencies(props, perks) {
 	const tauntBase = 1.003 + 0.0001 * perks.Expansion.level;
 	const tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
 	// expanding tauntimps mean taunt pop is not in maxTrimps, it's a flat multiplier
-	const tauntCorrectedMaxTrimps = tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult * props.mutationMult) * Math.pow(tauntBase, props.imperzone * (props.targetZone - game.global.world));
+	const tauntCorrectedMaxTrimps = tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult * props.mutationMult) * Math.pow(tauntBase, Math.max(props.impsExpected, game.unlocks.impCount.Tauntimp));
 	props.carpNeeded = Math.log(popNeededForCoords / tauntCorrectedMaxTrimps) / Math.log(1.1);
 
 	// Get various gain factors needed to calculate the value of trinkets (and also used to value their respective perks).
@@ -998,11 +1029,11 @@ function getPerkEfficiencies(props, perks) {
 		perks.Bait.efficiency = getLogWeightedValue(props, perks, 1, 1, 1, Math.pow(baitPop, 0.0001), 1, 1, baitPop) / getPerkCost('Bait', 1, false, perks);
 	}
 
-	// Expansion
-	//   Assume Expanding Tauntimps, so all expected Tauntimps for target zone are applied
-	const expandotaunts = props.targetZone * props.imperzone;
+	/*  Expansion
+	   	Assume Expanding Tauntimps, so all expected Tauntimps for target zone are applied 
+	*/
 	const expandobase = 1 + 1 / (10030 + perks.Expansion.level);
-	const expandogain = Math.pow(expandobase, expandotaunts);
+	const expandogain = Math.pow(expandobase, props.impsExpected);
 
 	// Carpentry:
 	//   population gain, also gives resources
@@ -1084,14 +1115,16 @@ function getPerkEfficiencies(props, perks) {
 	const ratGain = (1 - storeTaxNext) / (1 - storeTax);
 	perks.Packrat.efficiency = getLogWeightedValue(props, perks, 1, 1, 1, ratGain, 1, 1) / getPerkCost('Packrat', 1, false, perks);
 
-	// Pheromones
-	//   Count 3-tick breeding as 100% uptime, and weight for comparative uptime at target zone
+	/* 	Pheromones
+		Count 3-tick breeding as 100% uptime, and weight for comparative uptime at target zone 
+	*/
 	if (props.specialChallenge === 'trappa' || (props.specialChallenge === 'combat' && props.runningTrappa)) {
 		// no breeding is the challenge.
 		perks.Pheromones.efficiency = 0;
 	} else {
 		const breedSpeed = 1 + props.potency * (1 + perks.Pheromones.level * perks.Pheromones.effect);
 		const breedUptime = 3 / Math.max(3, Math.log(2) / Math.log(breedSpeed));
+
 		const breedSpeedNext = 1 + props.potency * (1 + (perks.Pheromones.level + 1) * perks.Pheromones.effect);
 		const breedUptimeNext = 3.001 / Math.max(3, Math.log(2) / Math.log(breedSpeedNext));
 		const breedGain = breedUptimeNext / breedUptime;
@@ -1184,7 +1217,6 @@ function clearAndAutobuyPerks() {
 			perks.Carpentry.level = origCarp;
 			perks.Expansion.level = origExpand;
 		} else if (props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon') {
-			game.unlocks.impCount.Tauntimp = game.unlocks.impCount.Tauntimp;
 			/* must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible radon spent on carp) */
 			const wantedArmySize = (props.runningTrappa ? Math.pow(1.25, 10) : 1) * game.resources.trimps.maxSoldiers;
 			const tauntBase = 1.003 + 0.0001 * origExpand;

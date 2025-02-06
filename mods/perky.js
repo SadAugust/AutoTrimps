@@ -322,6 +322,7 @@ function populatePerkyData() {
 			storage: 0.125,
 			soldiers: 0,
 			dg: +calculateDgPopGain(),
+			scaff: autoBattle.bonuses.Scaffolding.getMult(),
 			tent_city: preset === 'tent',
 			whip: game.unlocks.imps.Whipimp,
 			magn: game.unlocks.imps.Magnimp,
@@ -493,7 +494,7 @@ function optimize() {
 				const carp = Carpentry.bonus * Carpentry_II.bonus;
 				const bonus = 3 + Math.log((base_housing * gem_income()) / Resourceful.bonus) / Math.log(1.4);
 				const territory = Trumps.bonus * zone;
-				return 10 * (base_housing * bonus + territory) * carp * mod.taunt + mod.dg * carp;
+				return 10 * (base_housing * bonus + territory) * carp * mod.taunt + mod.dg * mod.scaff * carp;
 		  };
 
 	function income(ignore_prod) {
@@ -1184,8 +1185,10 @@ atData.autoPerks = {
 			const preset = settingInputs.preset || 'ezfarm';
 			document.querySelector('#preset').value = preset;
 			document.querySelector('#radonPerRunDiv').style.display = 'none';
-			document.querySelector('#findPotsDiv').style.display = preset === 'alchemy' ? 'flex' : 'none';
 			document.querySelector('#trapHrsDiv').style.display = preset === 'trappa' ? 'flex' : 'none';
+			document.querySelector('#exhaustedStacksDiv').style.display = preset === 'quagmire' ? 'flex' : 'none';
+			document.querySelector('#breedRelicsDiv').style.display = preset === 'archaeology' ? 'flex' : 'none';
+			document.querySelector('#findPotsDiv').style.display = preset === 'alchemy' ? 'flex' : 'none';
 
 			apGUI.$goldenUpgradeBtn = document.createElement('DIV');
 			apGUI.$goldenUpgradeBtn.id = 'showGoldenUpgradesBtn';
@@ -1443,10 +1446,22 @@ atData.autoPerks = {
 			},
 			trappa: {
 				name: 'Trappa³',
-				description: "Be sure to enter an 'Hours of trapping' value below to help value Bait! Use this setting either when portalling into Trappa, or after portalling with the Max Carpentry setting. coordLimited=1 is assumed.",
+				description: "Be sure to enter an 'Hours of trapping' value below to help value Bait! Use this setting either when portalling into Trappa, or after portalling with the Max Carpentry setting. <b>Coord Limited: 1</b> is assumed.",
 				require: () => getHighestLevelCleared(true) >= 49,
 				visible: () => getHighestLevelCleared(true) >= 44
 			},
+			/* quagmire: {
+				name: 'Quagmire',
+				description: `Use this setting to optimize for the breed speed reduction caused by the Exhausted debuff. If you don't care about the breed speed reduction you can use a Zone Progression preset instead.`,
+				require: () => getHighestLevelCleared(true) >= 49,
+				visible: () => getHighestLevelCleared(true) >= 69
+			},
+			archaeology: {
+				name: 'Archaeology',
+				description: `Use this setting to optimize for the breed speed reduction caused by Breed Relics. If you don't care about the breed speed reduction you can use a Zone Progression preset instead.`,
+				require: () => getHighestLevelCleared(true) >= 89,
+				visible: () => getHighestLevelCleared(true) >= 84
+			}, */
 			berserk: {
 				name: 'Berserk³',
 				description: 'This setting will stop Frenzy being purchased.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.',
@@ -1455,7 +1470,7 @@ atData.autoPerks = {
 			},
 			alchemy: {
 				name: 'Alchemy',
-				description: "Use this setting to optimize for trinket drop rate with finding potions. If you won't buy finding potions or don't care about trinket drops you can use a basic preset instead.\nIf it has been set then this will use your Easy Radon Challenge preset weights when selected.",
+				description: `Use this setting to optimize for trinket drop rate with finding potions. If you won't buy finding potions or don't care about trinket drops you can use a Zone Progression preset instead.`,
 				require: () => getHighestLevelCleared(true) >= 154,
 				visible: () => getHighestLevelCleared(true) >= 134
 			},
@@ -1600,16 +1615,34 @@ atData.autoPerks = {
 				name: 'Hours of trapping',
 				description: `<p>Roughly how many hours of trapping do you plan to do in this run? Affects the value of Bait.</p>
 				<p>Decimal values like '0.5' and '3.7' are allowed.</p>
-				<p>Entering '0' will place no value on Bait.`,
+				<p>Entering '0' will place no value on Bait.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 5
 			},
+			exhaustedStacks: {
+				name: 'Exhausted Stacks',
+				description: `<p>How many stacks of Exhausted do you intend to end the challenge with?</p>
+				<p>If you don't purchase any then you'd have <b>69</b> when completing zone 69.</p>
+				<p>Negative values <b>are</b> allowed.</p>`,
+				minValue: -100,
+				maxValue: 69,
+				defaultValue: 0
+			},
+			breedRelics: {
+				name: 'Breed Relics',
+				description: `<p>How many breed relics do you intend to end the challenge with?</p>
+				<p>If you don't purchase any then you'd have <b>-89</b> when completing zone 90.</p>
+				<p>Negative values <b>are</b> allowed.</p>`,
+				minValue: -89,
+				maxValue: 100,
+				defaultValue: 0
+			},
 			findPots: {
-				name: 'Finding potions',
+				name: 'Finding Potions',
 				description: `<p>How many finding potions will you buy? For simplicity we assume these are all purchased by zone 100.</p>`,
 				minValue: 0,
-				maxValue: null,
+				maxValue: 100,
 				defaultValue: 0
 			}
 		}
