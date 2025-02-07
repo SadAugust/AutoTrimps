@@ -409,6 +409,8 @@ function _rerollMapCreation(mapObj = getCurrentMapObject()) {
 	if (!mapObj || typeof mapObj !== 'object' || !getPageSetting('autoMapsReroll')) return false;
 
 	const autoLevelObj = mapSettings.mapname === 'Desolation Destacking' ? hdStats.autoLevelDesolation : hdStats.autoLevelMaxFragments;
+	if (!autoLevelObj) return false;
+
 	const mapModifiers = {
 		special: trimpStats.mapSpecial,
 		biome: trimpStats.mapBiome
