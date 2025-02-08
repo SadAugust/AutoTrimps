@@ -312,7 +312,16 @@ function spireAssaultCheckChanges() {
 	return false;
 }
 
-function spireAssaultPresetSwap(preset) {
+function spireAssaultPresetSwap(preset, force = false) {
+	if (!force) {
+		const unappliedChanges = spireAssaultCheckChanges();
+
+		if (unappliedChanges) {
+			tooltipAT('Spire Assault Changes', event, undefined, preset);
+			return;
+		}
+	}
+
 	const setting = JSON.parse(getPageSetting('spireAssaultPresets'));
 	setting.selectedPreset = preset;
 	setPageSetting('spireAssaultPresets', JSON.stringify(setting));
@@ -487,6 +496,20 @@ function autoHeirloomsPresetSave(heirloomType = 'Shield', blacklist = false) {
 	setPageSetting(settingName, autoHeirloomSettings);
 }
 
+function autoHeirloomsPresetSwap(preset, force = false, heirloomType = 'Shield', blacklist = false) {
+	if (!force) {
+		const unappliedChanges = autoHeirloomCheckChanges(heirloomType, blacklist);
+
+		if (unappliedChanges) {
+			tooltipAT('Auto Heirloom Changes', event, [heirloomType, blacklist], preset);
+			return;
+		}
+	}
+
+	cancelTooltip();
+	importExportTooltip('autoHeirloomMods', `${preset}`, `${heirloomType}`, blacklist);
+}
+
 function autoHeirloomCheckChanges(heirloomType = 'Shield', blacklist = false) {
 	const { items, preset } = spireAssaultGetLoadout();
 	const settingName = blacklist ? `heirloomAutoBlacklist${heirloomType}` : `heirloomAutoMods${heirloomType}`;
@@ -494,6 +517,10 @@ function autoHeirloomCheckChanges(heirloomType = 'Shield', blacklist = false) {
 
 	const presetData = autoHeirloomSettings[preset];
 
+	if (!presetData) {
+		if (items.length > 0) return true;
+		return false;
+	}
 	if (presetData.length !== items.length) return true;
 	if (presetData.some((item, index) => item !== items[index])) return true;
 
@@ -504,7 +531,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 	const settingName = blacklist ? `heirloomAutoBlacklist${heirloomType}` : `heirloomAutoMods${heirloomType}`;
 	const setting = getPageSetting(settingName);
 	const rarityNames = game.heirlooms.rarityNames;
-	const rareToKeep = heirloomRarity || getPageSetting(`heirloomAutoRareToKeep${heirloomType}`);
+	const rareToKeep = heirloomRarity || getPageSetting(`heirloomAutoRareToKeep${heirloomType}`) || 'Common';
 	const preset = setting[rareToKeep] || [];
 	const modList = _autoHeirloomMods(heirloomType, rareToKeep);
 	const modSlots = game.heirlooms.slots[rarityNames.indexOf(rareToKeep)];
@@ -558,7 +585,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 			const header = headerList[itemCount];
 			const titleName = header;
 			const headerClass = header === rareToKeep ? 'Selected' : 'NotSelected';
-			tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; ${widthStyle}" class='spireAssaultHeader spireHeader${headerClass}' onclick='importExportTooltip("autoHeirloomMods", "${header}", "${heirloomType}", ${blacklist})' data-hidden-name="${header}"><b>${titleName}</b></div>`;
+			tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; ${widthStyle}" class='spireAssaultHeader spireHeader${headerClass}' onclick='autoHeirloomsPresetSwap("${header}", false, "${heirloomType}", ${blacklist})' data-hidden-name="${header}"><b>${titleName}</b></div>`;
 			itemCount++;
 		}
 

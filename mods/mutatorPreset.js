@@ -163,6 +163,31 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		text += `<br>Each cleared Zone through Z${Math.floor(checkLiqZoneCount())} (${checkLiqZoneCount(undefined, true) * 100}% of your highest Zone reached) will be liquified.</p>`;
 
 		tooltipText = text;
+	} else if (what === 'Auto Heirloom Changes') {
+		const [heirloomType, blacklist] = textString;
+		titleText = 'Hold On!!';
+		tooltipText = `You have unapplied changed to your current loadout. Do you wish to apply these changes?`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-success' onclick='cancelTooltip2(true); autoHeirloomsPresetSave("${heirloomType}", ${blacklist}); autoHeirloomsPresetSwap("${headingName}", true, "${heirloomType}", ${blacklist}); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Yes, apply!</div> `;
+		costText += `<div class='btn btn-danger' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6; autoHeirloomsPresetSwap("${headingName}", true, "${heirloomType}", ${blacklist})'>No thanks, I'm good.</div> `;
+		costText += `<div class='btn btn-warning' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Go back.</div></div>`;
+
+		elem.style.zIndex = 9;
+		ondisplay = function () {
+			_verticalCenterTooltip(true, undefined, '2');
+		};
+	} else if (what === 'Spire Assault Changes') {
+		titleText = 'Hold On!!';
+		tooltipText = `You have unapplied changed to your current loadout. Do you wish to apply these changes?`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-success' onclick='cancelTooltip2(true); spireAssaultPresetSave(); spireAssaultPresetSwap("${headingName}", true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Yes, apply!</div> `;
+		costText += `<div class='btn btn-danger' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6; spireAssaultPresetSwap("${headingName}", true)'>No thanks, I'm good.</div> `;
+		costText += `<div class='btn btn-warning' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Go back.</div></div>`;
+
+		elem.style.zIndex = 9;
+		ondisplay = function () {
+			_verticalCenterTooltip(true, undefined, '2');
+		};
 	} else if (what === 'Spire Assault Import') {
 		const ringMods = autoBattle.oneTimers.The_Ring.owned ? ' and ring modifiers' : '';
 		tooltipText = `Are you sure you want to import your current items${ringMods} the <b>${textString}</b> preset into Spire Assault?`;
@@ -204,7 +229,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	document.getElementById(`tipCost${use2}`).innerHTML = costText;
 	elem.style.display = 'block';
 	if (ondisplay !== null) ondisplay();
-	if (event !== 'update' && !what.includes('Spire Assault')) positionTooltip(elem, event);
+	if (event !== 'update' && !what.includes('Spire Assault') && !what.includes('Auto Heirloom')) positionTooltip(elem, event);
 }
 
 // Correct function to call to cancel the current tooltip

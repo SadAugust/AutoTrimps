@@ -3504,7 +3504,7 @@ function initialiseAllSettings() {
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
-			}, 'dropdown', 'None', function () {
+			}, 'dropdown', 'Common', function () {
 				let hze;
 				let heirloomTiersAvailable;
 				if (atConfig.settingUniverse === 2) {
@@ -3569,7 +3569,7 @@ function initialiseAllSettings() {
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
-			}, 'dropdown', 'None', function () {
+			}, 'dropdown', 'Common', function () {
 				let hze;
 				let heirloomTiersAvailable;
 				if (atConfig.settingUniverse === 2) {
@@ -3633,7 +3633,7 @@ function initialiseAllSettings() {
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
-			}, 'dropdown', 'None', function () {
+			}, 'dropdown', 'Common', function () {
 				const hze = game.stats.highestLevel.valueTotal();
 				let heirloomTiersAvailable = ['Common'];
 				if (hze >= 300) heirloomTiersAvailable.push('Rare');
