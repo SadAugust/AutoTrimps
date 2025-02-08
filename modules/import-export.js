@@ -292,7 +292,8 @@ function spireAssaultPresetSave() {
 	spireAssaultSettings[preset] = {
 		name: spireAssaultSettings[preset].name,
 		items,
-		ringMods
+		ringMods,
+		extraLimb: document.getElementById('spireAssaultExtraLimb').classList.contains('spireItemsEquipped')
 	};
 
 	setPageSetting('spireAssaultPresets', JSON.stringify(spireAssaultSettings));
@@ -345,11 +346,12 @@ function spireAssaultPresetRename() {
 	}
 }
 
-function spireAssaultToggleElem(element, type, maxItems = Infinity, heirloom = false, blacklist = false) {
+function spireAssaultToggleElem(element, type, heirloom = false, blacklist = false) {
 	const elemPrefix = `spire${type}`;
 
 	const equippedElem = document.getElementById(`spireAssault${type}Equipped`);
 	if (equippedElem) {
+		const maxItems = Number(document.getElementById(`spireAssault${type}Max`).innerText);
 		const equippedItems = Number(equippedElem.innerText);
 		const errorElem = document.getElementById(`spireAssault${type}Error`);
 		let removeItem = element.classList.contains(`${elemPrefix}Equipped`);
@@ -372,7 +374,21 @@ function spireAssaultToggleElem(element, type, maxItems = Infinity, heirloom = f
 	const changesMsg = document.getElementById('spireAssaultChangesContainer');
 	const changesFunction = heirloom ? autoHeirloomCheckChanges : spireAssaultCheckChanges;
 	const unappliedChanges = changesFunction(heirloom, blacklist);
-	changesMsg.style.display = unappliedChanges ? '' : 'none';
+	changesMsg.style.visibility = unappliedChanges ? 'visible' : 'hidden';
+}
+
+function spireAssaultToggleLimb() {
+	const equippedElem = document.getElementById(`spireAssaultItemsEquipped`);
+	if (!equippedElem) return;
+
+	const elemPrefix = `spireItems`;
+	const element = document.getElementById(`spireAssaultExtraLimb`);
+	const maxItems = Number(document.getElementById(`spireAssaultItemsMax`).innerText);
+	const remove = element.classList.contains(`${elemPrefix}Equipped`);
+	document.getElementById(`spireAssaultItemsMax`).innerText = maxItems + (remove ? -1 : 1);
+
+	element.classList.toggle(`${elemPrefix}Equipped`);
+	element.classList.toggle(`${elemPrefix}NotEquipped`);
 }
 
 function _displaySpireAssaultPresets(tooltipDiv) {
@@ -381,8 +397,9 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 	const selectedPreset = setting.selectedPreset;
 	const presetName = setting[selectedPreset].name || 'Preset 1';
 	const preset = setting[selectedPreset] || { items: [], ringMods: [] };
+	if (typeof preset.extraLimb === 'undefined') preset.extraLimb = false;
 	const hiddenItems = setting['Hidden Items'].items || [];
-	const maxItems = autoBattle.getMaxItems();
+	const maxItems = autoBattle.getMaxItems() + +preset.extraLimb;
 
 	let rowData = '';
 	let rows = 0;
@@ -406,8 +423,8 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 	const itemsEquipped = preset.items;
 	tooltipText += `<div id='spireAssaultItems'>`;
 
-	tooltipText += `<div id='spireAssaultItemCounter' style="display: flex; white-space: nowrap; width: 100%;">`;
-	tooltipText += `<div style='flex: 1;'>`;
+	tooltipText += `<div id='spireAssaultErrorRow' style="display: flex; justify-content: space-between; align-items: center; width: 100%;">`;
+	tooltipText += `<div id='spireAssaultItemCounter' style='display: flex;'>`;
 	if (selectedPreset !== 'Hidden Items') {
 		tooltipText += `<span>Items (</span><span id='spireAssaultItemsEquipped'>${itemsEquipped.length}</span><span>/</span><span id='spireAssaultItemsMax'>${maxItems}</span><span>) </span><span id='spireAssaultItemsError' style='color: red;'></span>`;
 	} else {
@@ -415,11 +432,14 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 	}
 	tooltipText += `</div>`;
 
-	tooltipText += `<div id='spireAssaultChangesContainer' style='color: red; display: flex; justify-content: flex-end; align-items: center; display: none;'>`;
+	if (selectedPreset !== 'Hidden Items') {
+		tooltipText += `<div id="spireAssaultExtraLimb" class="spireAssaultItem spireItems${preset.extraLimb ? 'Equipped' : 'NotEquipped'}" style='display: flex; justify-content: center; margin-left: 4.5vw;' onclick='spireAssaultToggleLimb()' title="Enable this to increase your item cap by 1 to prepare builds for Extra Limb purchases.\n\nIf you try to import a build that has more items than you can equip then the build won't be imported."><span>Extra Limb</span></div>`;
+	}
+
+	tooltipText += `<div id='spireAssaultChangesContainer' style='color: red; display: flex; justify-content: flex-end; align-items: center; display: flex; visibility: hidden;'>`;
 	tooltipText += `<span style='margin-right: 0.3em;' class='glyphicon glyphicon-floppy-disk'></span><span style='padding-right: 1em;'>Unapplied Changes</span>`;
 	tooltipText += `</div>`;
 	tooltipText += `</div>`;
-
 	for (let x = 0; x < itemList.length; x++) {
 		let item = itemList[x];
 		const itemObj = autoBattle.items[item];
@@ -434,7 +454,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 		let equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
 		const itemLevel = item.includes('Doppelganger') ? '' : ` Lv ${itemObj.level}`;
 		rowData += `
-			<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items", ${maxItems})' data-hidden-text="${item}">
+			<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items")' data-hidden-text="${item}">
 				<span style="float: left;">${autoBattle.cleanName(item)}</span>
 				<span style="float: right;">${itemLevel}</span>
 			</div>`;
@@ -457,7 +477,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 			const name = ringMods[item];
 			const modName = autoBattle.ringStats[name].name;
 			const ringModClass = ringModsEquipped.includes(name) ? 'Equipped' : 'NotEquipped';
-			tooltipText += `<div class='spireAssaultRing spireRing${ringModClass}' onclick='spireAssaultToggleElem(this, "Ring", ${ringSlots})' data-hidden-text="${name}">${modName}</div>`;
+			tooltipText += `<div class='spireAssaultRing spireRing${ringModClass}' onclick='spireAssaultToggleElem(this, "Ring")' data-hidden-text="${name}">${modName}</div>`;
 		}
 	}
 
@@ -604,7 +624,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 	}
 	tooltipText += `</div>`;
 
-	tooltipText += `<div id='spireAssaultChangesContainer' style='color: red; display: flex; justify-content: flex-end; align-items: center; display: none;'>`;
+	tooltipText += `<div id='spireAssaultChangesContainer' style='color: red; display: flex; justify-content: flex-end; align-items: center; display: flex; visibility: hidden;'>`;
 	tooltipText += `<span style='margin-right: 0.3em;' class='glyphicon glyphicon-floppy-disk'></span><span style='padding-right: 1em;'>Unapplied Changes</span>`;
 	tooltipText += `</div>`;
 	tooltipText += `</div>`;
@@ -618,7 +638,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 		}
 
 		let equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
-		rowData += `<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items", ${modSlots}, "${heirloomType}", ${blacklist})' data-hidden-text="${item}">${item}</div>`;
+		rowData += `<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items", "${heirloomType}", ${blacklist})' data-hidden-text="${item}">${item}</div>`;
 		total++;
 	}
 
