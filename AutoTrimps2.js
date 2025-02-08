@@ -191,6 +191,8 @@ function loadScriptsAT() {
 				await loadModules('gameUpdates', atConfig.modules.pathMods);
 			}
 
+			await loadModules('utils', atConfig.modules.path);
+
 			for (const module of modules) {
 				const path = installedTesting.includes(module) ? pathTesting : installedMods.includes(module) ? pathMods : installedModules.includes(module) ? atConfig.modules.path : '';
 				await loadModules(module, path);

@@ -304,8 +304,8 @@ function spireAssaultPresetRename() {
 		const setting = JSON.parse(getPageSetting('spireAssaultPresets'));
 		setting[activePreset].name = newName;
 
-		const presetNumber = parseInt(activePreset.replace(/[^\d]/g, ''), 10) - 1 || 1;
-		setting.titles[presetNumber] = newName;
+		const presetNumber = parseInt(activePreset.replace(/[^\d]/g, ''), 10) - 1;
+		setting.titles[isNaN(presetNumber) ? 1 : presetNumber] = newName;
 		setPageSetting('spireAssaultPresets', JSON.stringify(setting));
 		$('.spireHeaderSelected')[0].innerText = newName;
 	}
