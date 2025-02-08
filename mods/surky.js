@@ -1226,19 +1226,20 @@ function clearAndAutobuyPerks() {
 		}
 		/* setting this here since initial load clears variables and perk levels which is important for carp calculations */
 		[props, perks] = initialLoad(true);
-		perks.Carpentry.level = carpWanted;
-		perks.Expansion.level = origExpand;
-		// get correct available radon for cleared perks
-		// for max carp, just max out carp!
+
+		if (!portalWindowOpen) {
+			perks.Carpentry.level = carpWanted;
+			perks.Expansion.level = origExpand;
+		}
+
 		if (props.specialChallenge === 'trappacarp') {
 			perks.Carpentry.level = 0;
 			while (continueBuying) [continueBuying, props, perks] = buyPerk('Carpentry', 1, props, perks);
 			props.radonSpent = getTotalPerksCost(perks);
 			[props, perks] = getPerkEfficiencies(props, perks);
-			allocateSurky(perks);
-		} else {
-			autobuyPerks(props, perks);
 		}
+
+		autobuyPerks(props, perks);
 	}
 }
 
