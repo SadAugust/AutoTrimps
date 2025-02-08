@@ -243,7 +243,7 @@ function spireAssaultImportSpreadsheet(preset) {
 }
 
 function spireAssaultItemSwap(itemList) {
-	if (!itemList) return false;
+	if (!itemList || itemList.length > autoBattle.getMaxItems()) return false;
 
 	let reset = false;
 	for (let item in autoBattle.items) {

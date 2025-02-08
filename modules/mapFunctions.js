@@ -475,8 +475,10 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 
 function _getVoidMapsHeHrSetting(defaultSettings, dailyAddition) {
 	const portalSetting = MODULES.portal.C2afterPoisonVoids ? 2 : challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
-	if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return { dontMap: true };
-	if (dailyAddition.skipZone && !MODULES.portal.C2afterVoids) return { dontMap: true };
+	if (game.global.world < getObsidianStart()) {
+		if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return { dontMap: true };
+		if (dailyAddition.skipZone && !MODULES.portal.C2afterVoids) return { dontMap: true };
+	}
 
 	return {
 		cell: 1,

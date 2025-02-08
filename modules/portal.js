@@ -110,7 +110,7 @@ function handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily
 		OKtoPortal = false;
 	}
 
-	if (MODULES.mapFunctions.afterVoids || MODULES.portal.forcePortal || (OKtoPortal && MODULES.portal.zonePostpone === 0)) {
+	if (MODULES.mapFunctions.afterVoids || MODULES.portal.forcePortal || (OKtoPortal && MODULES.portal.zonePostpone === 0) || game.global.world >= getObsidianStart()) {
 		handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, bestHeHrZone, challengeSelected, skipDaily);
 	}
 }
@@ -152,7 +152,7 @@ function handleHeHrPortal(prefix, universe, resourceType, myHeliumHr, bestHeHr, 
 function _handleHeHrAfterVoids(prefix, universe) {
 	if (!MODULES.mapFunctions.afterVoids) {
 		const notPoisonZone = getPageSetting(prefix + 'HrPortal', universe) === 2 && getZoneEmpowerment(game.global.world) !== 'Poison';
-		if (notPoisonZone) debug(`Z${game.global.world} - Pushing to next Poison zone then portaling after void maps have been run.`, 'portal');
+		if (notPoisonZone && game.global.world < getObsidianStart()) debug(`Z${game.global.world} - Pushing to next Poison zone then portaling after void maps have been run.`, 'portal');
 		else debug(`Z${game.global.world} - Portaling after void maps have been run.`, 'portal');
 	}
 
