@@ -176,9 +176,9 @@ function loadScriptsAT() {
 	if (typeof offlineTimeSpeed !== 'undefined') {
 		game.global.timeWarpLimit = offlineTimeSpeed;
 		delete offlineTimeSpeed;
-
-		if (game.global.timeWarpLimit === 0) game.global.timeWarpLimit = -1;
 	}
+
+	if (game.global.timeWarpLimit === 0) game.global.timeWarpLimit = -1;
 
 	const scripts = Array.from(document.getElementsByTagName('script'));
 	const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
