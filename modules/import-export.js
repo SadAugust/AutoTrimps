@@ -288,12 +288,13 @@ function spireAssaultGetLoadout() {
 function spireAssaultPresetSave() {
 	const { preset, items, ringMods } = spireAssaultGetLoadout();
 
+	const extraLimbElem = document.getElementById('spireAssaultExtraLimb');
 	const spireAssaultSettings = JSON.parse(getPageSetting('spireAssaultPresets'));
 	spireAssaultSettings[preset] = {
 		name: spireAssaultSettings[preset].name,
 		items,
 		ringMods,
-		extraLimb: document.getElementById('spireAssaultExtraLimb').classList.contains('spireItemsEquipped')
+		extraLimb: extraLimbElem ? extraLimbElem.classList.contains('spireItemsEquipped') : false
 	};
 
 	setPageSetting('spireAssaultPresets', JSON.stringify(spireAssaultSettings));

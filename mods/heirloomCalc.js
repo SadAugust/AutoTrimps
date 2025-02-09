@@ -283,7 +283,7 @@ function setupHeirloomUI() {
 			seedDrop: {
 				name: 'Seed Drop Weight',
 				description: '<p><b>Seed Drop Weight</b> is a multiplier to the value of Seed Drop Rate. So if your next Seed Drop Rate upgrade were to increase your value by 0.5%, the default weight (2) will multiply it by 2 so it will be calculated as if it were to increase your value by 1%.</p><p>The default weight (2) is used to provide a good balance between damage, survivability and helium gain.',
-				minValue: 2,
+				minValue: 0,
 				maxValue: null,
 				defaultValue: 100,
 				get weighable() {
@@ -493,7 +493,8 @@ class Heirloom {
 			for (const [key, value] of Object.entries(source)) {
 				this.inputs[key] = Number(value);
 			}
-			if (!this.inputs.seedDrop) this.inputs.seedDrop = 2;
+
+			if (typeof this.inputs.seedDrop === 'undefined') this.inputs.seedDrop = 2;
 
 			this.isCore = this.type === 'Core';
 
