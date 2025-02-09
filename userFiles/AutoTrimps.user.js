@@ -21,5 +21,6 @@ function loadScript(id, src) {
 	document.head.appendChild(script);
 }
 
-//This can be edited to point to your own Github Repository URL.
+offlineTimeSpeed = game.global.timeWarpLimit;
+game.global.timeWarpLimit = 0;
 loadScript('AutoTrimps-SadAugust', 'https://sadaugust.github.io/AutoTrimps/AutoTrimps2.js');
