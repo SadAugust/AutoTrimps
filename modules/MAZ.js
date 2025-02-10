@@ -1666,7 +1666,7 @@ function _mapSettingsAddRow(varPrefix) {
 	if (firstHiddenRow) {
 		firstHiddenRow.style.display = '';
 		swapClass('disabled', 'active', firstHiddenRow);
-		const row = firstHiddenRow.id.slice(-1);
+		const row = firstHiddenRow.id.replace(/[a-zA-Z]/g, '');
 
 		const world = document.getElementById(`windowWorld${row}`);
 		if (atConfig.settingUniverse === 1 && world) {
@@ -1678,8 +1678,8 @@ function _mapSettingsAddRow(varPrefix) {
 
 		_mapSettingsUpdatePreset(row, varPrefix);
 
-		const rows = Array.from({ length: maxRows }, (_, x) => document.getElementById(`windowRow${x}`));
-		const priorities = rows.map((row) => parseInt(document.getElementById(`windowPriority${row.id.slice(-1)}`).value, 10));
+		const rows = Array.from({ length: Number(row) }, (_, x) => document.getElementById(`windowRow${x}`));
+		const priorities = rows.map((row) => parseInt(document.getElementById(`windowPriority${row.id.replace(/[a-zA-Z]/g, '')}`).value, 10));
 		const highestPriority = Math.max(...priorities);
 		document.getElementById(`windowPriority${row}`).value = highestPriority + 1;
 	}
