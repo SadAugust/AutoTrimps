@@ -1222,6 +1222,8 @@ function loadAugustSettings() {
 	game.options.menu.achievementPopups.enabled = 0;
 	game.options.menu.voidPopups.enabled = 0;
 	game.options.menu.confirmhole.enabled = 0;
+	u2Mutations.curTransform = `translate(0px, 0px) scale(0.7000000000000001)`;
+	u2Mutations.scale = 0.7000000000000001;
 
 	const toggles = ['darkTheme', 'standardNotation', 'hotkeys'];
 	for (let i in toggles) {

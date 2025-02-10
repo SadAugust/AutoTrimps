@@ -1382,6 +1382,8 @@ function farmCalcGetMapDetails() {
 	const { mapOwned, name, level, plusLevel, special, biome, difficulty, size, loot, sliders, perfect } = hdStats.autoLevelData.loot.mapConfig;
 	const calcName = typeof atConfig !== 'undefined' ? 'Auto Level' : 'Farm Calc';
 	const lootText = typeof atConfig !== 'undefined' ? 'loot' : '';
+	const perfectMapsZone = game.global.universe === 1 ? 110 : 30;
+	const perfectUnlocked = typeof trimpStats !== 'undefined' ? trimpStats.perfectUnlocked : getHighestLevelCleared() + 1 >= perfectMapsZone;
 
 	let text = `<p>Details of the ${lootText} map you own that ${calcName} recommends you run:`;
 	if (!mapOwned) text = `<p>Details for the ${lootText} map that ${calcName} is recommending you purchase to run:`;
@@ -1397,7 +1399,7 @@ function farmCalcGetMapDetails() {
 	if (!mapOwned) text += ` (slider: ${sliders.size})`;
 	text += `<br><b>Loot:</b> ${Math.floor(loot * 100)}%`;
 	if (!mapOwned) text += ` (slider: ${sliders.loot})`;
-	if (!mapOwned) text += `<br><b>Perfect Sliders:</b> ${perfect.toString().charAt(0).toUpperCase() + perfect.toString().slice(1)}`;
+	if (!mapOwned && perfectUnlocked) text += `<br><b>Perfect Sliders:</b> ${perfect.toString().charAt(0).toUpperCase() + perfect.toString().slice(1)}`;
 	text += '</p>';
 
 	return text;

@@ -26,7 +26,7 @@
 
 .farmCalcHeader {
 	display: inline-block;
-	width: calc((100% - 6px) / 2);
+	width: calc((100% - 20px) / 2);
 	text-align: center;
 	cursor: pointer;
 	padding: 0.3em;

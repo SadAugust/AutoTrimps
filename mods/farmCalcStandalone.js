@@ -260,8 +260,8 @@ function makeAdditionalInfoTooltip_Standalone(mouseover) {
 	if (!game.global.mapsUnlocked || typeof hdStats.autoLevelData === 'undefined' || typeof hdStats.autoLevelData.loot.mapConfig === 'undefined') tooltipText += `<p>When maps have been unlocked you will see data here for which map you should purchase or run.</p>`;
 	else {
 		tooltipText += farmCalcGetMapDetails();
-		if (game.global.universe === 1) tooltipText += `<p>The map level is affixed with the stance that will give you the best results in the map.</p>`;
-		if (game.global.universe === 2 && getPerkLevel('Equality') > 0) tooltipText += `<p>The map level is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the worst enemy in the map.</p>`;
+		if (game.global.universe === 1 && getHighestLevelCleared() + 1 >= 60) tooltipText += `<p>The map level is affixed with the stance that will give you the best results in the map.</p>`;
+		if (game.global.universe === 2 && getPerkLevel('Equality') > 0) tooltipText += `<p>The map level is affixed with the equality level that you should use for that map level as it is one that allows you to survive against the highest attack enemy in the map.</p>`;
 	}
 	const remainingTime = Math.ceil(10 - (hdStats.counter % 10)) || 10;
 	tooltipText += `<p>The data shown is updated every 10 seconds. <b>${remainingTime}s</b> until the next update.</p>`;
