@@ -5330,7 +5330,7 @@ function _setDisplayedTabs() {
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
 		tabSpire: !displayAllSettings && hze < (radonOn && game.global.stringVersion === '5.9.2' ? 999 : radonOn ? 270 : 170),
-		tabSpireAssault: !displayAllSettings && game.stats.highestRadLevel.valueTotal() < 75,
+		'tabSpire Assault': !displayAllSettings && game.stats.highestRadLevel.valueTotal() < 75,
 		tabTest: !gameUserCheck()
 	};
 
@@ -5342,6 +5342,7 @@ function _setDisplayedTabs() {
 				document.getElementById('C2').children[0].children[0].innerHTML = _getChallenge2Info() + ' - Settings for ' + _getSpecialChallengeDescription();
 				document.getElementById('tabC2').children[0].innerHTML = _getChallenge2Info();
 			}
+
 			tabElem.style.display = hideTab ? 'none' : '';
 			const tabDisplay = document.getElementById(tab.substring(3));
 			if (hideTab && tabDisplay.style.display === 'block') tabDisplay.style.display = 'none';
