@@ -235,8 +235,8 @@ function initialiseAllSettings() {
 			}, 'boolean', null, null, 'Core', [0]);
 
 		let $pauseScript = document.getElementById('pauseScript');
-		$pauseScript.parentNode.style.setProperty('float', 'right');
-		$pauseScript.parentNode.style.setProperty('margin-right', '1vw');
+		$pauseScript.parentNode.style.setProperty('position', 'fixed');
+		$pauseScript.parentNode.style.setProperty('right', '1vw');
 		$pauseScript.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoHeirlooms',
@@ -350,8 +350,8 @@ function initialiseAllSettings() {
 			'multitoggle', 0, null, 'Core', [0]);
 
 		let $universeSetting = document.getElementById('universeSetting');
-		$universeSetting.parentNode.style.setProperty('float', 'right');
-		$universeSetting.parentNode.style.setProperty('margin-right', '1vw');
+		$universeSetting.parentNode.style.setProperty('position', 'fixed');
+		$universeSetting.parentNode.style.setProperty('right', '1vw');
 		$universeSetting.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoPortal',
@@ -543,8 +543,8 @@ function initialiseAllSettings() {
 			function () { return (game.global.totalPortals > 0) });
 
 		let $autoPortalForce = document.getElementById('autoPortalForce');
-		$autoPortalForce.parentNode.style.setProperty('float', 'right');
-		$autoPortalForce.parentNode.style.setProperty('margin-right', '1vw');
+		$autoPortalForce.parentNode.style.setProperty('position', 'fixed');
+		$autoPortalForce.parentNode.style.setProperty('right', '1vw');
 		$autoPortalForce.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoEggs',
