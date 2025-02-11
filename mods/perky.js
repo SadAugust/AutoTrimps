@@ -1153,7 +1153,7 @@ atData.autoPerks = {
 		apGUI.$resetWeightsBtn.setAttribute('onclick', `importExportTooltip("resetPerkPreset", "${calcName}");`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseover', `tooltip("Reset Preset Weights", "customText", event, \`${resetWeightsText}\`)`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		apGUI.$resetWeightsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''}  vertical-align: middle; line-height: 1.3vw;`;
+		apGUI.$resetWeightsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; vertical-align: middle; line-height: 1.3vw;`;
 		apGUI.$resetWeightsBtn.textContent = 'Reset Preset Weights';
 		if (document.getElementById(apGUI.$resetWeightsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$resetWeightsBtn);
 
@@ -1197,7 +1197,7 @@ atData.autoPerks = {
 			apGUI.$goldenUpgradeBtn.setAttribute('onclick', 'toggleSettingInputProperty("showGU", "showGoldenUpgradesBtn")');
 			apGUI.$goldenUpgradeBtn.setAttribute('onmouseover', 'tooltip("Recommend Golden Upgrades", "customText", event, "When enabled will display the recommended golden upgrade path to take on your run when you allocate perks.")');
 			apGUI.$goldenUpgradeBtn.setAttribute('onmouseout', 'tooltip("hide")');
-			apGUI.$goldenUpgradeBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 0.1vw solid #777; border-radius: 0px; padding: 0px`;
+			apGUI.$goldenUpgradeBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 0.1vw solid #777; border-radius: 0px; padding: 0px`;
 			apGUI.$goldenUpgradeBtn.textContent = 'Recommend Golden Upgrades';
 			if (document.getElementById(apGUI.$goldenUpgradeBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$goldenUpgradeBtn);
 			initialLoad();
@@ -1210,7 +1210,7 @@ atData.autoPerks = {
 		apGUI.$updateInputsBtn.setAttribute('onclick', 'toggleSettingInputProperty("updateInputs", "updateInputsBtn")');
 		apGUI.$updateInputsBtn.setAttribute('onmouseover', 'tooltip("Update Input Fields", "customText", event, "When enabled will update input fields with your current runs data when you open the perks or portal window.")');
 		apGUI.$updateInputsBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		apGUI.$updateInputsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; ${game.options.menu.darkTheme.enabled !== 2 ? 'color: black;' : ''} vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 0.1vw solid #777; border-radius: 0px; padding: 0px`;
+		apGUI.$updateInputsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 0.1vw solid #777; border-radius: 0px; padding: 0px`;
 		apGUI.$updateInputsBtn.textContent = 'Update Input Fields';
 		if (document.getElementById(apGUI.$updateInputsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$updateInputsBtn);
 		document.getElementById('portalWrapper').style.setProperty('overflow-y', 'auto');
