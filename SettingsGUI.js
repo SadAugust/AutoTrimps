@@ -558,7 +558,7 @@ function initialiseAllSettings() {
 
 		let $eggSettings = document.getElementById('autoEggs');
 		$eggSettings.parentNode.style.setProperty('float', 'right');
-		$eggSettings.parentNode.style.setProperty('margin-right', '1vw');
+		$eggSettings.parentNode.style.setProperty('margin-right', '15.3vw');
 		$eggSettings.parentNode.style.setProperty('margin-left', '0');
 	}
 	
@@ -1148,7 +1148,7 @@ function initialiseAllSettings() {
 			function () { return (!game.portal.Anticipation.locked) });
 
 		createSetting('floorCritCalc',
-			function () { return ('Never Crit Calc') },
+			function () { return ('Calc: Never Crit') },
 			function () {
 				let description = "<p>When doing trimp damage calculations this will floor your crit chance to make the script assume you will never crit.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
@@ -1156,7 +1156,7 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Combat', [1, 2]);
 			
 			createSetting('45stacks',
-			function () { return ('Antistack Calc') },
+			function () { return ('Calc: Anticipation Stacks') },
 			function () {
 				let description = "<p>Will force any damage calculations to assume you have max anticipation stacks.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -1165,7 +1165,7 @@ function initialiseAllSettings() {
 			function () { return (!game.portal.Anticipation.locked) });
 
 		createSetting('addPoison',
-			function () { return ('Poison Calc') },
+			function () { return ('Calc: Poison Debuff') },
 			function () {
 				let description = "<p>Adds poison stack damage to any trimp damage calculations.</p>";
 				description += "<p>May improve your poison zone speed.</p>";
@@ -1175,7 +1175,7 @@ function initialiseAllSettings() {
 			function () { return (game.stats.highestLevel.valueTotal() >= 236) });
 
 		createSetting('fullIce',
-			function () { return ('Ice Calc') },
+			function () { return ('Calc: Ice Debuff') },
 			function () {
 				let description = "<p>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use is to ensure your H:D (enemyHealth:trimpDamage) ratios aren't all over the place.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -1184,7 +1184,7 @@ function initialiseAllSettings() {
 			function () { return (game.stats.highestLevel.valueTotal() >= 236) });
 
 		createSetting('gammaBurstCalc',
-			function () { return ('Gamma Burst Calc') },
+			function () { return ('Calc: Gamma Burst') },
 			function () {
 				let description = "<p>Factors Gamma Burst damage into your H:D (enemyHealth:trimpDamage) Ratio.</p>";
 				description += "<p>Be warned, the script will assume that you have a gamma burst ready to trigger for every attack if enabled so your H:D Ratio might be 1 but you'd need to multiply that value by your gamma burst proc count to get the actual value.</p>";
@@ -1194,7 +1194,7 @@ function initialiseAllSettings() {
 			function () { return (game.stats.highestRadLevel.valueTotal() > 10) });
 
 		createSetting('frenzyCalc',
-			function () { return ('Frenzy Calc') },
+			function () { return ('Calc: Frenzy Uptime') },
 			function () {
 				let description = "<p>Adds the Frenzy perk to trimp damage calculations.</p>";
 				description += "<p>Be warned, the script will not farm as much with this on as it assumes 100% frenzy uptime.</p>";
@@ -1610,9 +1610,9 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>When using the <b>Map Bonus Health</b>, <b>Map Bonus Stacks</b> and <b>Map Bonus</b> settings this will allow you to decide not to maps for map bonus stacks when the optimal map level is this many or more levels below your minimum map bonus level.</p>";
 				description += "<p>This is disabled when set to 0 or below <b>OR</b> you have no unbought prestiges and have prestiges available in the minimum map bonus level.</p>";
-				description += "<p><b>Recommended:</b> 2</p>";
+				description += "<p><b>Recommended:</b> 2 (when highest zone reached is below 100) otherwise <b>0</b></p>";
 				return description;
-			}, 'value', 2, null, 'Maps', [1, 2]);
+			}, 'value', 0, null, 'Maps', [1, 2]);
 			
 		createSetting('mapBonusLevelType',
 			function () { return ('HS/HD Map Bonus Type') },
@@ -2831,7 +2831,7 @@ function initialiseAllSettings() {
 		createSetting('desolationSpecial',
 			function () { return ('D: Hyperspeed 2 LMC') },
 			function () {
-				let description = "<p>If enabled this will use the Large Metal Cache special rather than not using a special modifier when destacking on zones that you have the hyperspeed 2 talent active.</p>";
+				let description = "<p>If enabled this will use the Large Metal Cache special rather than not using a special modifier when destacking on zones that you have the <b>Hyperspeed 2</b> talent active.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'C2', [2],
