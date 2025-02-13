@@ -11,6 +11,26 @@ function atlantrimpRespecOverride() {
 			console.log('Loading respec function failed! ' + e, 'other');
 		}
 	};
+
+	function setupChallengeAutoPortal(challengeName) {
+		if (typeof game.challenges[challengeName].originalOnComplete !== 'function') {
+			game.challenges[challengeName].originalOnComplete = game.challenges[challengeName].onComplete;
+			game.challenges[challengeName].onComplete = function () {
+				game.challenges[challengeName].originalOnComplete(...arguments);
+
+				const portalSetting = getPageSetting(`${challengeName.toLowerCase()}AutoPortal`);
+				if (!portalSetting) return;
+
+				if (portalSetting === 1) autoPortalForce();
+				if (portalSetting === 2) autoPortalForce(true);
+			};
+		}
+	}
+
+	setupChallengeAutoPortal('Frigid');
+	setupChallengeAutoPortal('Mayhem');
+	setupChallengeAutoPortal('Pandemonium');
+	setupChallengeAutoPortal('Desolation');
 }
 
 /* On loading save */

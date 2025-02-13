@@ -2386,7 +2386,6 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (((!getPageSetting('c2DisableFinished', atConfig.settingUniverse) || game.global.frigidCompletions < 15) && game.stats.highestLevel.valueTotal() >= 460) || challengeActive('Frigid')) });
 
-
 		createSetting('frigidSwapZone',
 			function () { return ('F: Heirloom Swap Zone') },
 			function () {
@@ -2395,6 +2394,17 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [1],
+			function () { return (getPageSetting('frigid', atConfig.settingUniverse) && autoTrimpSettings.frigid.require()) });
+
+		createSetting('frigidAutoPortal',
+			function () { return ([`F: Portal On Finish: Off`, `F: Portal On Finish: On`, `F: Portal On Finish: After Voids`]) },
+			function () {
+				let description = "<p>Will allow you to force Auto Portal to run when the Frigd challenge is finished.</p>";
+				description += `<p><b>M: Portal On Finish: Off</b><br>Disables this setting entirely.</p>`;
+				description += `<p><b>M: Portal On Finish: On</b><br>Auto Portal upon finishing the challenge.</p>`;
+				description += `<p><b>M: Portal On Finish: After Voids</b><br>When you finish the challenge, this will run void maps then Auto Portal.</p>`;
+				return description;
+			}, 'multitoggle', 0, null, 'C2', [1],
 			function () { return (getPageSetting('frigid', atConfig.settingUniverse) && autoTrimpSettings.frigid.require()) });
 
 		createSetting('experience',
@@ -2604,6 +2614,17 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', atConfig.settingUniverse) && autoTrimpSettings.mayhem.require()) });
 
+		createSetting('mayhemAutoPortal',
+			function () { return ([`M: Portal On Finish: Off`, `M: Portal On Finish: On`, `M: Portal On Finish: After Voids`]) },
+			function () {
+				let description = "<p>Will allow you to force Auto Portal to run when the Mayhem challenge is finished.</p>";
+				description += `<p><b>M: Portal On Finish: Off</b><br>Disables this setting entirely.</p>`;
+				description += `<p><b>M: Portal On Finish: On</b><br>Auto Portal upon finishing the challenge.</p>`;
+				description += `<p><b>M: Portal On Finish: After Voids</b><br>When you finish the challenge, this will run void maps then Auto Portal.</p>`;
+				return description;
+			}, 'multitoggle', 0, null, 'C2', [2],
+			function () { return (getPageSetting('mayhem', atConfig.settingUniverse) && autoTrimpSettings.mayhem.require()) });
+
 		createSetting('storm',
 			function () { return ('Storm') },
 			function () {
@@ -2751,6 +2772,17 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', atConfig.settingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
+		createSetting('pandemoniumAutoPortal',
+			function () { return ([`P: Portal On Finish: Off`, `P: Portal On Finish: On`, `P: Portal On Finish: After Voids`]) },
+			function () {
+				let description = "<p>Will allow you to force Auto Portal to run when the Pandemonium challenge is finished.</p>";
+				description += `<p><b>M: Portal On Finish: Off</b><br>Disables this setting entirely.</p>`;
+				description += `<p><b>M: Portal On Finish: On</b><br>Auto Portal upon finishing the challenge.</p>`;
+				description += `<p><b>M: Portal On Finish: After Voids</b><br>When you finish the challenge, this will run void maps then Auto Portal.</p>`;
+				return description;
+			}, 'multitoggle', 0, null, 'C2', [2],
+			function () { return (getPageSetting('pandemonium', atConfig.settingUniverse) && autoTrimpSettings.pandemonium.require()) });
+
 		createSetting('glass',
 			function () { return ('Glass') },
 			function () {
@@ -2854,6 +2886,17 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
+			function () { return (getPageSetting('desolation', atConfig.settingUniverse) && autoTrimpSettings.desolation.require()) });
+
+		createSetting('desolationAutoPortal',
+			function () { return ([`D: Portal On Finish: Off`, `D: Portal On Finish: On`, `D: Portal On Finish: After Voids`]) },
+			function () {
+				let description = "<p>Will allow you to force Auto Portal to run when the Desolation challenge is finished.</p>";
+				description += `<p><b>M: Portal On Finish: Off</b><br>Disables this setting entirely.</p>`;
+				description += `<p><b>M: Portal On Finish: On</b><br>Auto Portal upon finishing the challenge.</p>`;
+				description += `<p><b>M: Portal On Finish: After Voids</b><br>When you finish the challenge, this will run void maps then Auto Portal.</p>`;
+				return description;
+			}, 'multitoggle', 0, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', atConfig.settingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		createSetting('desolationSettings',
@@ -5404,7 +5447,7 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemAutoPortal', 'stormStacks', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
