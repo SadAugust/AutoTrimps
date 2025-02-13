@@ -134,8 +134,7 @@ function _avoidEmpower() {
 }
 
 function _setEquality(equality) {
-	let eqSetting = game.portal.Equality;
-	if (game.global.stringVersion === '5.10.0') eqSetting = game.portal.Equality.settings[game.global.spireActive ? 'spire' : 'reg'];
+	const eqSetting = game.portal.Equality.settings[game.global.spireActive ? 'spire' : 'reg'];
 	if (eqSetting.disabledStackCount === equality) return;
 
 	eqSetting.disabledStackCount = equality;
@@ -145,11 +144,12 @@ function _setEquality(equality) {
 
 function _equalityManagementBasic() {
 	if (game.global.preMapsActive || game.global.gridArray.length <= 0) return;
+	const eqSetting = game.portal.Equality.settings[game.global.spireActive ? 'spire' : 'reg'];
 
 	const runningDesolation = challengeActive('Desolation');
 
 	if (runningDesolation && mapSettings.equality && getPageSetting('autoMaps')) {
-		game.portal.Equality.scalingActive = false;
+		eqSetting.scalingActive = false;
 		_setEquality(game.portal.Equality.radLevel);
 		return;
 	}
@@ -161,14 +161,14 @@ function _equalityManagementBasic() {
 	const runningGlass = challengeActive('Glass');
 
 	if (fastEnemy || voidDoubleAttack || noFrenzy || runningGlass || runningDesolation) {
-		if (!game.portal.Equality.scalingActive) {
-			game.portal.Equality.scalingActive = true;
+		if (!eqSetting.scalingActive) {
+			eqSetting.scalingActive = true;
 			manageEqualityStacks();
 			updateEqualityScaling();
 		}
 	} else {
-		if (game.portal.Equality.scalingActive) {
-			game.portal.Equality.scalingActive = false;
+		if (eqSetting.scalingActive) {
+			eqSetting.scalingActive = false;
 			manageEqualityStacks();
 			updateEqualityScaling();
 		}
@@ -621,7 +621,8 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 function _equalityManagementAdvanced() {
 	if (game.global.preMapsActive || game.global.gridArray.length <= 0) return;
 
-	game.portal.Equality.scalingActive = false;
+	const eqSetting = game.portal.Equality.settings[game.global.spireActive ? 'spire' : 'reg'];
+	eqSetting.scalingActive = false;
 	game.options.menu.alwaysAbandon.enabled = 1;
 
 	if (_checkDesoDestack()) return;
@@ -651,7 +652,6 @@ function _equalityManagementAdvanced() {
 	}
 
 	if (!ourHealth || enemy.health <= 0) return;
-
 	_calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, fastEnemy, ourHealth, ourDmg, unluckyDmg, armyReady);
 }
 

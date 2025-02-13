@@ -228,38 +228,35 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 	if (swapLooms) {
 		//Disable Shield swapping if on a dontSwap challenge and our army is still fighting or has health remaining.
 		if (dontSwap && (game.global.fighting || game.global.soldierHealthRemaining > 0)) return;
-		//Disable shield swapping depending on auto abandon setting
 		if (!shouldAbandon(false)) return;
-		//Disable plagueSwap variable if we are querying a map
 		if (mapType === 'map' && swapLooms) MODULES.heirlooms.plagueSwap = false;
 	}
 
 	if (mapType === 'world' && !dontSwap) {
-		//Change swap zone to current zone if we're above X HD ratio.
-		if (hdCheck && getPageSetting('heirloomSwapHD') > 0 && hdStats.hdRatioHeirloom >= getPageSetting('heirloomSwapHD') && shouldAbandon(false)) swapZone = game.global.world;
-		//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
-		//Only relevant if in U2 and we're above zone 200.
-		if (
-			game.global.universe === 2 &&
-			game.global.world >= 201 &&
-			//If we have the compressedSwap setting enabled AND the value is greater than 0 (<= 0 means disabled)
-			getPageSetting('heirloomCompressedSwap') &&
-			getPageSetting('heirloomSwapHDCompressed') > 0 &&
-			//If current cell is less than 96 (95 is the last cell that a cell could possibly be compressed as that would be cell 97 and minimum length is primary+2 which would take it to 100)
-			game.global.lastClearedCell < 96 &&
-			game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1
-		) {
-			if (hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') || MODULES.heirlooms.plagueSwap) {
-				swapZone = game.global.world;
-				MODULES.heirlooms.plagueSwap = true;
-			} else MODULES.heirlooms.plagueSwap = false;
-		}
-		//Otherwise set plagueSwap global variable to false to ensure we don't mess up any code later on.
-		else MODULES.heirlooms.plagueSwap = false;
-	}
+		const swapHD = getPageSetting('heirloomSwapHD');
+		if (hdCheck && swapHD > 0 && hdStats.hdRatioHeirloom >= swapHD && shouldAbandon(false)) swapZone = game.global.world;
 
-	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
-	if (mapType === 'world' && !dontSwap && game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
+		const compressedSwap = getPageSetting('heirloomCompressedSwap');
+		if (game.global.universe === 2 && compressedSwap && game.global.world >= 201 && game.global.lastClearedCell < 96) {
+			if (getPageSetting('heirloomSwapHDCompressed') > 0 && game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1) {
+				//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
+				if (hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') || MODULES.heirlooms.plagueSwap) {
+					swapZone = game.global.world;
+					MODULES.heirlooms.plagueSwap = true;
+				} else {
+					MODULES.heirlooms.plagueSwap = false;
+				}
+			} else {
+				MODULES.heirlooms.plagueSwap = false;
+			}
+			//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
+			if (game.global.world >= swapZone && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) {
+				swapZone = 999;
+			}
+		} else {
+			MODULES.heirlooms.plagueSwap = false;
+		}
+	}
 
 	let voidActive = mapType === 'void';
 	if (voidActive && swapLooms) {
@@ -291,6 +288,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 	else if (getPageSetting(afterpushShield) !== 'undefined' && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap')) return afterpushShield;
 	else if (getPageSetting('heirloomSpire') !== 'undefined' && isDoingSpire()) return 'heirloomSpire';
 	else if (game.global.formation === 5 && getPageSetting('heirloomWindStack') !== 'undefined') return 'heirloomWindStack';
+	else if (game.global.universe === 2 && mapType === 'world' && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomCompressed') !== 'undefined' && heirloomModSearch('heirloomCompressed', 'plaguebringer') > 0) return 'heirloomCompressed';
 	else if (getPageSetting(afterpushShield) !== 'undefined' && game.global.world >= swapZone) return afterpushShield;
 	else if (getPageSetting('heirloomInitial') !== 'undefined') return 'heirloomInitial';
 }

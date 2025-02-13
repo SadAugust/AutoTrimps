@@ -950,7 +950,7 @@ function getPlayerCritChance_AT(customShield) {
 		if (Fluffy.isRewardActive('SADailies')) critChance += Fluffy.rewardConfig.SADailies.critChance();
 	}
 
-	if (game.global.stringVersion === '5.10.0') critChance += u2SpireBonuses.critChance();
+	critChance += u2SpireBonuses.critChance();
 	if (critChance > 9) critChance = 9;
 	return critChance;
 }

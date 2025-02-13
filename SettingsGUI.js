@@ -513,7 +513,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2],
-			function () { return (getPageSetting('autoPortal', atConfig.settingUniverse).includes('Hour') && (atConfig.settingUniverse === 1 ? game.stats.highestLevel.valueTotal() >= 170 : game.global.stringVersion === '5.10.0' && game.stats.highestRadLevel.valueTotal() >= 270)) });
+			function () { return (getPageSetting('autoPortal', atConfig.settingUniverse).includes('Hour') && (atConfig.settingUniverse === 1 ? game.stats.highestLevel.valueTotal() >= 170 : game.stats.highestRadLevel.valueTotal() >= 270)) });
 
 		createSetting('autoPortalTimeout',
 			function () { return ('Auto Portal Timeout') },
@@ -2554,6 +2554,17 @@ function initialiseAllSettings() {
 			}, 'value', 100, null, 'C2', [2],
 			function () { return (getPageSetting('quest', atConfig.settingUniverse) && autoTrimpSettings.quest.require()) });
 
+		createSetting('questSmithySpire',
+			function () { return ('Q: Spire Smithys') },
+			function () {
+				let description = "<p>The amount of Smithies you'd like to buy up to when inside of a Spire.</p>";
+				description += "<p>This setting requires <b>AT Auto Structure</b> to be enabled to work.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 20</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [0],
+			function () { return (getPageSetting('quest', atConfig.settingUniverse) && autoTrimpSettings.quest.require() && game.stats.highestRadLevel.valueTotal() >= 270) });
+
 		createSetting('mayhem',
 			function () { return ('Mayhem') },
 			function () {
@@ -3096,7 +3107,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [1, 2],
-			function () { return ((getPageSetting('dailyPortal', atConfig.settingUniverse) === 1 && game.stats.highestLevel.valueTotal() >= 170) || (game.global.stringVersion === '5.10.0' && getPageSetting('dailyPortal', atConfig.settingUniverse) === 2 && game.stats.highestLevel.valueTotal() >= 270)) });
+			function () { return ((getPageSetting('dailyPortal', atConfig.settingUniverse) === 1 && game.stats.highestLevel.valueTotal() >= 170) || (getPageSetting('dailyPortal', atConfig.settingUniverse) === 2 && game.stats.highestLevel.valueTotal() >= 270)) });
 
 		createSetting('dailyPortalFiller',
 			function () { return ('Filler Run') },
@@ -3204,14 +3215,25 @@ function initialiseAllSettings() {
 		createSetting('heirloomCompressedSwap',
 			function () { return ('Compressed Swap') },
 			function () {
-				let description = "<p>When the cell after next is compressed and you are past your heirloom swap zone this will equip your <b>Initial</b> shield so that the next enemy spawns with max health to maximise plaguebringer damage on it.</p>";
+				let description = "<p>When 2 cells away from a compressed enemy and past your heirloom swap zone this will equip your <b>Initial</b> shield so that the next enemy spawns with max health to maximise plaguebringer damage on it.</p>";
 				description += "<p>Will ensure you start the compressed cell at the lowest health it can be from plaguebringer which reduces initial rage stack if the enemy has it and the clear time.</p>";
-				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>Plaguebringer</b> and your <b>Afterpush</b> shield has <b>Plaguebringer</b>.</p>";
-				description += "<p>Displays an additional setting when enabled where you can force swap to your <b>Afterpush</b> shield when above X <b>World HD Ratio</b> and the next cell is compressed.</p>";
+				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>Plaguebringer</b> and your (<b>Compressed Heirloom</b> shield if set otherwise <b>Afterpush</b>) shield has <b>Plaguebringer</b>.</p>";
+				description += "<p>Displays an additional setting when enabled where you can force swap to your (<b>Compressed Heirloom</b> shield if set otherwise <b>Afterpush</b>) shield when above X <b>World HD Ratio</b> and the next cell is compressed.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
+
+		createSetting('heirloomCompressed',
+			function () { return ('Compressed Heirloom') },
+			function () {
+				let description = "<p>Shield to use when the next enemy has the compressed mutation.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>This shield will only be used if it has the Plaguebringer modifier on it.</p>";
+				description += "<p><b>Recommended:</b> a shield with Plaguebringer</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [2],
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomCompressedSwap', atConfig.settingUniverse)) });
 
 		createSetting('heirloomShield',
 			function () { return ('Shields') },
@@ -3300,7 +3322,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && ((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 170) || (game.global.stringVersion === '5.10.0' && atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 270))) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && ((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 170) || (atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 270))) });
 
 		createSetting('heirloomWindStack',
 			function () { return ('Wind Stacking') },
@@ -3358,16 +3380,16 @@ function initialiseAllSettings() {
 		createSetting('heirloomSwapHD',
 			function () { return ('HD Ratio Swap') },
 			function () {
-				let description = "<p>Will swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield when your <b>World HD Ratio</b> is above this value.</p>";
+				let description = "<p>Will swap from your <b>Initial</b> shield to your (<b>Compressed Heirloom</b> shield if set otherwise <b>Afterpush</b>) shield when your <b>World HD Ratio</b> is above this value.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomSwapHDCompressed',
-			function () { return ('Comp Swap HD') },
+			function () { return ('Compressed Swap HD') },
 			function () {
-				let description = "<p>Will swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield when the next cell is compressed and your <b>World HD Ratio</b> is above this value.</p>";
+				let description = "<p>Will swap from your <b>Initial</b> heirloom to your <b>Compressed Swap Shield</b> heirloom when the next cell is compressed and your <b>World HD Ratio</b> is above this value.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [2],
@@ -3555,7 +3577,7 @@ function initialiseAllSettings() {
 					heirloomTiersAvailable = ['Plagued', 'Radiating'];
 					if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
 					if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
-					if ((game.global.stringVersion === '5.10.0' || ['SadAugust', 'test'].includes(getPageSetting('gameUser'))) && hze >= 300) heirloomTiersAvailable.push('Mutated');
+					if (hze >= 300) heirloomTiersAvailable.push('Mutated');
 				}
 				else {
 					hze = game.stats.highestLevel.valueTotal();
@@ -3620,7 +3642,7 @@ function initialiseAllSettings() {
 					heirloomTiersAvailable = ['Plagued', 'Radiating'];
 					if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
 					if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
-					if (game.global.stringVersion === '5.10.0' && hze >= 300) heirloomTiersAvailable.push('Mutated');
+					if (hze >= 300) heirloomTiersAvailable.push('Mutated');
 				}
 				else {
 					hze = game.stats.highestLevel.valueTotal();
@@ -5455,10 +5477,10 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemAutoPortal', 'stormStacks', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherShield', 'questSmithySpire', 'mayhemAutoPortal', 'stormStacks', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
-	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
+	const breakAfterHeirlooms = ['heirloomCompressed', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterSpire = ['spireSkipMapping', 'spireSkipMappingC2'];
 	const breakAfterMagma = ['autoGenModeC2', 'magmiteAutoFuelForceRun'];
 	const breakAfterNature = ['autoIce', 'autoEnlightenment', 'iceEnlight', 'iceEnlightDaily'];

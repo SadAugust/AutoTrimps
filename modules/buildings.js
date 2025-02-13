@@ -491,6 +491,15 @@ function _calcSmithyDuringQuest() {
 		smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : getCurrentQuest() === 10 ? 1 : 0;
 	}
 
+	if (game.global.spireActive) {
+		const smithyToPurchase = getPageSetting('questSmithySpire');
+
+		if (smithyToPurchase > 0 && game.buildings.Smithy.purchased < smithyToPurchase) {
+			const smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
+			smithyCanAfford = Math.max(Math.min(smithycanBuy, smithyToPurchase - game.buildings.Smithy.purchased), smithyCanAfford);
+		}
+	}
+
 	return smithyCanAfford;
 }
 
