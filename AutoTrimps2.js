@@ -194,10 +194,7 @@ function loadScriptsAT() {
 			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
 			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`];
 
-			if (game.global.stringVersion === '5.9.2') {
-				await loadModules('gameUpdates', atConfig.modules.pathMods);
-			}
-
+			await loadModules('gameUpdates', atConfig.modules.pathMods);
 			await loadModules('utils', atConfig.modules.path);
 
 			for (const module of modules) {

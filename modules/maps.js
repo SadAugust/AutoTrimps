@@ -51,21 +51,30 @@ function autoMapsStatus(get = false) {
 		const autoMapsElem = document.getElementById('autoMapStatus');
 		if (autoMapsElem !== null) {
 			if (autoMapsElem.innerHTML !== status) autoMapsElem.innerHTML = status;
-			autoMapsElem.setAttribute('onmouseover', makeAutomapStatusTooltip(true));
+
+			const currentOnMouseOver = autoMapsElem.getAttribute('onmouseover');
+			const newOnMouseOver = makeAutomapStatusTooltip(true);
+			if (currentOnMouseOver !== newOnMouseOver) autoMapsElem.setAttribute('onmouseover', newOnMouseOver);
 		}
 
 		const heHrElem = document.getElementById('heHrStatus');
 		if (heHrElem !== null && !getPageSetting('displayHideAutoButtons').ATheHr) {
 			const heHrStatus = `${resourceShortened}/hr: ${getPercent > 0 ? getPercent.toFixed(3) : 0}%<br>&nbsp;&nbsp;&nbsp;${resourceShortened}: ${lifetime > 0 ? lifetime.toFixed(3) : 0}%`;
 			if (heHrElem.innerHTML !== heHrStatus) heHrElem.innerHTML = heHrStatus;
-			heHrElem.setAttribute('onmouseover', makeResourceTooltip(true));
+
+			const currentOnMouseOver = heHrElem.getAttribute('onmouseover');
+			const newOnMouseOver = makeResourceTooltip(true);
+			if (currentOnMouseOver !== newOnMouseOver) heHrElem.setAttribute('onmouseover', newOnMouseOver);
 		}
 
 		const infoElem = document.getElementById('additionalInfo');
 		if (infoElem !== null) {
 			const infoStatus = makeAdditionalInfo();
 			if (infoElem.innerHTML !== infoStatus) infoElem.innerHTML = infoStatus;
-			infoElem.parentNode.setAttribute('onmouseover', makeAdditionalInfoTooltip(true));
+
+			const currentOnMouseOver = infoElem.parentNode.getAttribute('onmouseover');
+			const newOnMouseOver = makeAdditionalInfoTooltip(true);
+			if (currentOnMouseOver !== newOnMouseOver) infoElem.parentNode.setAttribute('onmouseover', newOnMouseOver);
 		}
 	}
 }

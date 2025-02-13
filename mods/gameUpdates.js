@@ -35,10 +35,31 @@ function startSpire(confirmed) {
 
 		if (spireNum === 1) {
 			cancelTooltip();
-			var uSpire = game.global.universe == 2 ? "Stuffy's Spire" : 'The Spire';
+			const uSpire = game.global.universe === 2 ? "Stuffy's Spire" : 'The Spire';
 			tooltip(uSpire, null, 'update');
 		}
+
 		return;
 	}
+
 	cancelTooltip();
+}
+
+function autoTrap() {
+	const buildingsPerSecond = bwRewardUnlocked('DecaBuild') ? 10 : bwRewardUnlocked('DoubleBuild') ? 2 : 1;
+	const trapsCanAfford = Math.min(Math.floor(game.resources.food.owned / 10), Math.floor(game.resources.wood.owned / 10));
+	const trapsToBuy = Math.min(trapsCanAfford, buildingsPerSecond);
+
+	if (game.resources.food.owned >= 10 * trapsToBuy && game.resources.wood.owned >= 10 * trapsToBuy) {
+		game.resources.food.owned -= 10 * trapsToBuy;
+		game.resources.wood.owned -= 10 * trapsToBuy;
+		game.buildings.Trap.purchased += trapsToBuy;
+
+		const trapPurchase = game.global.buildingsQueue[0] && game.global.buildingsQueue[0].split('.');
+		if (trapPurchase && trapPurchase[0] === `Trap` && Number(trapPurchase[1]) <= buildingsPerSecond) {
+			setNewCraftItem();
+			return;
+		}
+		startQueue('Trap', trapsToBuy);
+	}
 }
