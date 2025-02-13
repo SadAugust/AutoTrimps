@@ -4325,6 +4325,18 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', true, null, 'Time Warp', [0]);
 
+		createSetting('timeWarpDisplay',
+			function () { return ('Time Warp Display') },
+			function () {
+				let description = "<p>Will display the Trimps user interface during time warp.</p>";
+				description += "<p>Updates the display every 600 ingame ticks so every minute of ingame time.</p>";
+				description += "<p>This will cause your time warp to take longer as it has to render additional frames.</p>";
+				description += "<p>When first loading Time Warp you will have a tooltip to inform you of your Time Warp duration as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the start of the Auto Maps status at the bottom of the battle container.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Time Warp', [0],
+			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
+
 		createSetting('timeWarpFrequency',
 			function () { return ('Time Warp Frequency') },
 			function () {
@@ -4348,16 +4360,12 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 
-		createSetting('timeWarpDisplay',
-			function () { return ('Time Warp Display') },
+		createSetting('timeWarpForceSave',
+			function () { return ('Force Time Warp Save') },
 			function () {
-				let description = "<p>Will display the Trimps user interface during time warp.</p>";
-				description += "<p>Updates the display every 600 ingame ticks so every minute of ingame time.</p>";
-				description += "<p>This will cause your time warp to take longer as it has to render additional frames.</p>";
-				description += "<p>When first loading Time Warp you will have a tooltip to inform you of your Time Warp duration as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the start of the Auto Maps status at the bottom of the battle container.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
+				let description = "<p>Will save your game in its current state and retain your remaining Time Warp time.</p>";
 				return description;
-			}, 'boolean', false, null, 'Time Warp', [0],
+			}, 'action', null, '_timeWarpSave()', 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 	}
 	

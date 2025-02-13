@@ -434,7 +434,7 @@ function _timeWarpSave() {
 		save(false, true);
 		_adjustGlobalTimers(keys, reduceBy);
 
-		debug(`Game Saved! ${formatTimeForDescriptions(reduceBy / 1000)} of offline progress left to process.`, `offline`);
+		debug(`Game Saved! ${formatTimeForDescriptions(reduceBy / 1000)} of Time Warp left to process.`, `offline`);
 	}
 }
 
