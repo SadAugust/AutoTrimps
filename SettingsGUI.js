@@ -333,8 +333,12 @@ function initialiseAllSettings() {
 		createSetting('presetSwapMutators',
 			function () { return ('Preset Swap Mutators') },
 			function () {
+				const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'))
+				const titles = [mutatorObj['Preset 1'].name, mutatorObj['Preset 2'].name, mutatorObj['Preset 3'].name]
 				let description = "<p>Will automatically load the preset that corresponds to your run type when Auto Portaling.</p>";
-				description += "<p>For info on which preset is loaded and when, mouseover the presets in the games <b>Mutators</b> window.</p>";
+				description += `<p>Preset 1 ${titles[0] !== 'Preset 1' ? "("+mutatorObj['Preset 1'].name +")" : ''} will be loaded when portaling into Filler challenges.</p>`;
+				description += `<p>Preset 2 ${titles[1] !== 'Preset 2' ? "("+mutatorObj['Preset 2'].name +")" : ''} will be loaded when portaling into Daily challenges.</p>`;
+				description += `<p>Preset 3 ${titles[2] !== 'Preset 3' ? "("+mutatorObj['Preset 3'].name +")" : ''} will be loaded when portaling into " + _getSpecialChallengeDescription() + " challenges.</p>`;
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [2],
