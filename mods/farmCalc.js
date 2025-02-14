@@ -394,7 +394,7 @@ function populateFarmCalcData() {
 		plaguebringer: (nature.plaguebrought === 2 ? 0.5 : 0) + (runningAutoTrimps ? getHeirloomBonus_AT('Shield', 'plaguebringer', basicData.customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
 		angelic: masteryPurchased('angelic'),
 		gammaCharges: gammaMaxStacks(false, false, 'map'),
-		gammaMult: (runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult / 100) || 1,
+		gammaMult: (runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : game.global.gammaMult / 1000) || 1,
 		equalityMult: basicData.universe === 2 ? (runningAutoTrimps ? getPlayerEqualityMult_AT(basicData.customShield) : game.portal.Equality.getModifier(true)) : 1,
 		checkFrenzy,
 		frenzyDuration,
