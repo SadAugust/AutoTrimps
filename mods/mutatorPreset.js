@@ -293,6 +293,8 @@ function _mutatorPopulateTree(firstLoad = false) {
 		const bgColor = !_mutatorCheckRequirements(item, mutatorList) ? 'requirement' : mutatorList.includes(item) ? 'purchased' : 'available';
 		if (bgColor === 'purchased') mutatorListActive.push(item);
 		const displayName = itemObj.dn ? itemObj.dn : item;
+		let description = itemObj.description;
+		if (description.includes(', <b>')) description = description.split(', <b>')[0] + '.';
 
 		let tooltip = `onmouseover="tooltip('${item}', 'Mutator', event)" onmouseout="tooltip('hide')"`;
 		text += `<button aria-labelledby="${item}Name" 
@@ -305,7 +307,7 @@ function _mutatorPopulateTree(firstLoad = false) {
 				left: ${coords[0] * scale}px; top: ${coords[1] * scale}px; 
 				font-size: ${scale * 1.5}px"  
 				data-hidden-text="${item}" 
-				title="${itemObj.description}">`;
+				title="${description}">`;
 		text += '<span class="mutTreeName">' + displayName + '</span>';
 		text += '<span class="icomoon icon-star"></span></button>';
 
@@ -465,7 +467,7 @@ function _displayMutatorPresets(tooltipDiv) {
 	const setting = mutatorObj;
 	const selectedPreset = setting.selectedPreset || 'Preset 1';
 	const presetName = setting[selectedPreset] ? setting[selectedPreset].name || 'Preset 1' : 'Preset 1';
-	const runningAT = typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'));
+	const runningAT = !(typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')));
 	const headerTitles = {
 		1: 'This preset will be loaded when portaling into Filler challenges with the Preset Swap Mutators setting enabled.',
 		2: 'This preset will be loaded when portaling into Daily challenges with the Preset Swap Mutators setting enabled.',
@@ -490,7 +492,8 @@ function _displayMutatorPresets(tooltipDiv) {
 		const titleName = setting[header] ? setting[header].name || header : header;
 		const headerClass = header === selectedPreset ? 'Selected' : 'NotSelected';
 		const escapedTitleName = escapeHtmlAttribute(titleName);
-		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='mutatorHeader mutatorHeader${headerClass}' onclick='_mutatorSwapPreset("${header}")'  data-hidden-name="${header}" title="${runningAT ? headerTitles[Number(header.replace(/\D/g, ''))] : ''}"><b>${escapedTitleName}</b></div>`;
+		const titleText = runningAT ? headerTitles[Number(header.replace(/\D/g, ''))] : '';
+		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='mutatorHeader mutatorHeader${headerClass}' onclick='_mutatorSwapPreset("${header}")'  data-hidden-name="${header}" title="${titleText}"><b>${escapedTitleName}</b></div>`;
 	}
 
 	tooltipText += `</div>`;
