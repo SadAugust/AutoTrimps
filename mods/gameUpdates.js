@@ -26,6 +26,7 @@ function startSpire(confirmed) {
 			if (spireSetting === 1 || (spireSetting === 2 && spireNum >= highestSpire - 1) || (spireSetting === 3 && spireNum >= highestSpire)) {
 				game.global.fighting = false;
 				mapsSwitch();
+				if (challengeActive('Berserk')) game.challenges.Berserk.trimpDied();
 			} else {
 				handleExitSpireBtn();
 			}
