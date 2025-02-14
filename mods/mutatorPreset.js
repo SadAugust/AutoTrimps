@@ -6,48 +6,6 @@ if (typeof atConfig === 'undefined') {
 	MODULES.mutatorPreset = {
 		selected: 0
 	};
-
-	function checkLiqZoneCount(universe = game.global.universe, getAmount = false) {
-		if (game.options.menu.liquification.enabled === 0 && universe === 1) return 0;
-
-		if (universe === 2) {
-			if (!u2Mutations.tree.Liq1.purchased) return 0;
-
-			let amt = 0.1;
-			if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
-
-			if (getAmount) return amt;
-			return (getHighestLevelCleared(false, true) + 1) * amt;
-		}
-
-		let spireCount = game.global.spiresCompleted;
-		if (masteryPurchased('liquification')) spireCount++;
-		if (masteryPurchased('liquification2')) spireCount++;
-		if (masteryPurchased('liquification3')) spireCount += 2;
-		spireCount += Fluffy.isRewardActive('liquid') * 0.5;
-		const liquidAmount = spireCount / 20;
-
-		if (getAmount) return liquidAmount;
-		return game.stats.highestLevel.valueTotal() * liquidAmount;
-	}
-}
-
-function presetMutTab(tabNum) {
-	if (MODULES.mutatorPreset.selected === tabNum) return;
-
-	const buttons = ['u2MutSave', 'u2MutLoad', 'u2MutRename', 'u2MutReset'];
-	buttons.forEach((button) => {
-		swapClass('btn btn-lg btn-', 'btn btn-lg btn-info', document.getElementById(button));
-		if (MODULES.mutatorPreset.selected === 0) {
-			swapClass('disabled', 'active', document.getElementById(button));
-		}
-	});
-
-	swapClass('btn btn-lg btn-', 'btn btn-lg btn-success', document.getElementById('u2MutPresetBtn' + tabNum));
-	if (MODULES.mutatorPreset.selected > 0) {
-		swapClass('btn btn-lg btn-', 'btn btn-lg btn-info', document.getElementById('u2MutPresetBtn' + MODULES.mutatorPreset.selected));
-	}
-	MODULES.mutatorPreset.selected = tabNum;
 }
 
 function tooltipAT(what, event, textString, headingName, use2 = '2') {
@@ -62,109 +20,6 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	if (what === 'hide') {
 		elem.style.display = 'none';
 		return;
-	}
-
-	if (what === 'Mutator Preset') {
-		if (headingName === 'Save') {
-			what = 'Save Mutation Preset';
-			tooltipText = 'Click to save your current mutation loadout to the selected preset';
-		} else if (headingName === 'Rename') {
-			what = 'Rename Mutator Preset';
-			tooltipText = 'Click to set a name for your currently selected mutator preset';
-		} else if (headingName === 'Load') {
-			what = 'Load Mutation Preset';
-			tooltipText = "Click to load your currently selected mutation preset. Be warned if you have any mutators purchased that differ from your loadout then it won't be 100% accurate.";
-		} else if (headingName === 'Reset') {
-			what = 'Reset Mutation Preset';
-			tooltipText = 'Click to reset your currently selected mutation preset. This will remove all mutators from the preset and set it to empty so when portaling you could end up with no mutators active.';
-		} else if (textString > 0 && textString <= 3) {
-			what = `Mutator ${headingName}`;
-			const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
-			const preset = mutatorObj['preset' + textString];
-
-			if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
-				const presetMessages = {
-					1: 'This preset will be loaded when portaling into <b>Filler</b> challenges with the <b>Preset Swap Mutators</b> setting enabled.',
-					2: 'This preset will be loaded when portaling into <b>Daily</b> challenges with the <b>Preset Swap Mutators</b> setting enabled.',
-					3: 'This preset will be loaded when portaling into <b>C3 or special challenges (Mayhem, Pandemonium, Desolation)</b> with the <b>Preset Swap Mutators</b> setting enabled.'
-				};
-
-				tooltipText += `<p>${presetMessages[textString] || ''}</p>`;
-			}
-
-			if (isObjectEmpty(preset) || Object.keys(preset).length <= 1) {
-				tooltipText += "<span class='red'>This preset slot is empty!</span> Select this slot and then click 'Save' to save your current Mutator configuration to this slot.";
-			} else {
-				tooltipText += "<p style='font-weight: bold'>This preset holds " + preset.purchaseCount + ' mutators:</p>';
-				let count = 0;
-				const colorMapping = {
-					Scruffy: 'Yellow',
-					Overkill: 'Green',
-					Health: 'Purple',
-					Mazzy: 'Blue'
-				};
-
-				for (let item in preset) {
-					if (['name', 'purchaseCount'].includes(item) || !preset[item]) continue;
-					const mutName = u2Mutations.tree[item].dn ? u2Mutations.tree[item].dn : item;
-
-					if (colorMapping[mutName]) {
-						if (count > 0) tooltipText += '<br><br>';
-						tooltipText += `<b>${colorMapping[mutName]}</b><br>`;
-					} else {
-						tooltipText += count > 0 ? ', ' : '';
-					}
-					tooltipText += mutName;
-					count++;
-				}
-			}
-		}
-
-		titleText = what;
-	} else if (what === 'Rename Preset') {
-		const presetGroup = JSON.parse(localStorage.getItem('mutatorPresets'));
-		const preset = presetGroup['preset' + MODULES.mutatorPreset.selected];
-		const oldName = preset && preset.name ? preset.name : '';
-		tooltipText = `Type a name below for your Mutator Preset! This name will show up on the Preset bar and make it easy to identify which Preset is which.
-		<br/><br/><input id='renamePresetBox' maxlength='25' style='width: 50%' value='${oldName}' />`;
-		costText = `<div class='maxCenter'>
-		<div id='confirmTooltipBtn' class='btn btn-info' onclick='renameMutations()'>Apply</div>
-		<div class='btn btn-info' onclick='cancelTooltip2(true); unlockTooltip();'>Cancel </div>
-		</div>`;
-
-		game.global.lockTooltip = true;
-		elem.style.left = '33.75%';
-		elem.style.top = '25%';
-
-		ondisplay = function () {
-			const box = document.getElementById('renamePresetBox');
-			try {
-				box.setSelectionRange(0, box.value.length);
-			} catch (e) {
-				box.select();
-			}
-			box.focus();
-		};
-	} else if (what === 'Mastery Info') {
-		let text = `<p><b>Mastery Data for Universe ${game.global.universe}</b></p>`;
-
-		const bsOwned = game.talents.blacksmith3.purchased ? 'blacksmith3' : game.talents.blacksmith2.purchaseCount ? 'blacksmith2' : game.talents.blacksmith.purchaseCount ? 'blacksmith' : false;
-		if (bsOwned) {
-			text += `<p><b>${game.talents[bsOwned].name}</b>`;
-			text += `<br>${game.talents[bsOwned].description}</p>`;
-		}
-
-		const hyperspeedOwned = game.talents.hyperspeed2.purchased ? 'hyperspeed2' : game.talents.hyperspeed.purchased ? 'hyperspeed' : false;
-
-		if (hyperspeedOwned) {
-			text += `<p><b>${game.talents[hyperspeedOwned].name}</b>`;
-			text += `<br>${game.talents[hyperspeedOwned].description}</p>`;
-		}
-
-		text += `<p><b>${'Liquification Amount'}</b>`;
-		text += `<br>Each cleared Zone through Z${Math.floor(checkLiqZoneCount())} (${checkLiqZoneCount(undefined, true) * 100}% of your highest Zone reached) will be liquified.</p>`;
-
-		tooltipText = text;
 	} else if (what === 'Auto Heirloom Changes') {
 		const [heirloomType, blacklist] = textString;
 		titleText = 'Hold On!!';
@@ -192,9 +47,9 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		};
 	} else if (what === 'Spire Assault Import') {
 		const ringMods = autoBattle.oneTimers.The_Ring.owned ? ' and ring modifiers' : '';
-		tooltipText = `Are you sure you want to import your current items${ringMods} the <b>${textString}</b> preset into Spire Assault?`;
+		tooltipText = `Are you sure you want to import your current items${ringMods} from the <b>${textString}</b> preset into Spire Assault?`;
 		if (autoBattle.oneTimers.The_Ring.owned) tooltipText += `<br>Ring Modifiers will only be imported if you have selected enough for the max slots available.`;
-		tooltipText += `<br><br><b>Warning:</b> This will use your saved version of this preset. If you have made changes to your items since saving, they will be overwritten.`;
+		tooltipText += `<br><br><b>Warning:</b> This will use your saved version of this preset. If you have made changes to your items since saving, they won't be applied.`;
 
 		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultImport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
@@ -204,7 +59,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		};
 	} else if (what === 'Spire Assault Export') {
 		const ringMods = autoBattle.oneTimers.The_Ring.owned ? ' and ring modifiers' : '';
-		tooltipText = `Are you sure you want to import your current items${ringMods} from Spire Assault into the <b>${textString}</b> preset?`;
+		tooltipText = `Are you sure you want to import your current items${ringMods} from from Spire Assault into the <b>${textString}</b> preset?`;
 		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultExport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
 		elem.style.zIndex = 9;
@@ -224,6 +79,38 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 			_verticalCenterTooltip();
 			document.getElementById('importBox').focus();
 		};
+	} else if (what === 'Mutator Changes') {
+		titleText = 'Hold On!!';
+		tooltipText = `You have unapplied changed to your current loadout. Do you wish to apply these changes?`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-success' onclick='cancelTooltip2(true); _mutatorSavePreset(); _mutatorSwapPreset("${headingName}", true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Yes, apply!</div> `;
+		costText += `<div class='btn btn-danger' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6; _mutatorSwapPreset("${headingName}", true)'>No thanks, I'm good.</div> `;
+		costText += `<div class='btn btn-warning' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Go back.</div></div>`;
+
+		elem.style.zIndex = 9;
+		ondisplay = function () {
+			_verticalCenterTooltip(true, undefined, '2');
+		};
+	} else if (what === 'Mutator Import') {
+		tooltipText = `Are you sure you want to load your current mutators from the <b>${textString}</b> preset?`;
+		tooltipText += `<br><br><b>Warning:</b> This will use your saved version of this preset. If you have made changes to your loadout since saving, they won't be applied.`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _mutatorLoadPreset("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+
+		elem.style.zIndex = 9;
+		ondisplay = function () {
+			_verticalCenterTooltip(true, undefined, '2');
+		};
+	} else if (what === 'Mutator Clear Preset') {
+		tooltipText = `Are you sure you want to clear the <b>${textString}</b> preset?`;
+		tooltipText += `<br><br><b>Warning:</b> This will also set the name back to ${headingName}.`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _mutatorClearPreset("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+
+		elem.style.zIndex = 9;
+		ondisplay = function () {
+			_verticalCenterTooltip(true, undefined, '2');
+		};
 	}
 
 	document.getElementById(`tipTitle${use2}`).innerHTML = titleText;
@@ -231,7 +118,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	document.getElementById(`tipCost${use2}`).innerHTML = costText;
 	elem.style.display = 'block';
 	if (ondisplay !== null) ondisplay();
-	if (event !== 'update' && !what.includes('Spire Assault') && !what.includes('Auto Heirloom')) positionTooltip(elem, event);
+	if (event !== 'update' && !what.includes('Spire Assault') && !what.includes('Auto Heirloom') && !what.includes('Mutator')) positionTooltip(elem, event);
 }
 
 // Correct function to call to cancel the current tooltip
@@ -246,20 +133,15 @@ function cancelTooltip2(ignore1) {
 	document.getElementById('tipText2').className = '';
 }
 
-function saveMutations() {
-	if (MODULES.mutatorPreset.selected === 0) return;
-
-	u2Mutations.save();
-	u2Mutations.load();
+function _mutatorSavePreset() {
+	const { preset, mutators } = _mutatorGetActiveList();
 
 	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
-	const saveData = {
-		...game.global.u2MutationData,
-		purchaseCount: u2Mutations.purchaseCount,
-		name: document.getElementById('u2MutPresetBtn' + MODULES.mutatorPreset.selected).innerHTML.split('Preset: ')[1]
+	mutatorObj[preset] = {
+		mutators,
+		purchaseCount: mutators.length,
+		name: mutatorObj[preset].name
 	};
-
-	mutatorObj['preset' + MODULES.mutatorPreset.selected] = saveData;
 
 	if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
@@ -269,20 +151,39 @@ function saveMutations() {
 	localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
 }
 
-function loadMutations(preset = MODULES.mutatorPreset.selected) {
-	if (preset === 0) return;
+function _mutatorRenamePreset() {
+	const selectedPreset = $('.mutatorHeaderSelected')[0].innerText;
+	const newName = prompt(`Enter a new name for preset ${selectedPreset}:`, selectedPreset);
+
+	if (newName) {
+		const activePreset = document.getElementsByClassName('mutatorHeaderSelected')[0].dataset.hiddenName;
+		const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+		mutatorObj[activePreset].name = newName;
+
+		const presetNumber = parseInt(activePreset.replace(/[^\d]/g, ''), 10) - 1;
+		mutatorObj.titles[isNaN(presetNumber) ? 1 : presetNumber] = newName;
+
+		if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
+			autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
+			saveSettings();
+		}
+
+		localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
+		$('.mutatorHeaderSelected')[0].innerText = newName;
+	}
+}
+
+function _mutatorLoadPreset(preset) {
 	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	if (!preset) preset = mutatorObj.selectedPreset;
 
-	const saveData = mutatorObj['preset' + preset];
-	delete saveData.name;
-	delete saveData.purchaseCount;
-
-	if (Object.keys(saveData).length === 0) return;
+	const mutatorList = mutatorObj[preset] ? mutatorObj[preset].mutators : [];
 	const outerRing = [];
+	if (mutatorList.length === 0) return;
 
 	for (let item in u2Mutations.tree) {
 		if (item.purchased) continue;
-		if (saveData[item] === true) {
+		if (mutatorList.includes(item)) {
 			if (!u2Mutations.checkRequirements(item)) outerRing.push(item);
 			else u2Mutations.purchase(item);
 		}
@@ -301,127 +202,338 @@ function loadMutations(preset = MODULES.mutatorPreset.selected) {
 	u2Mutations.load();
 }
 
-function renameMutations(needTooltip) {
-	if (MODULES.mutatorPreset.selected === 0) return;
-	let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
-	let presetGroup = mutatorObj['preset' + MODULES.mutatorPreset.selected];
+function _mutatorClearPreset(preset) {
+	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	if (!preset) preset = mutatorObj.selectedPreset;
 
-	if (needTooltip) {
-		tooltipAT('Rename Preset', 'update', undefined, undefined, '');
-		return;
-	}
-
-	const elem = document.getElementById('renamePresetBox');
-	if (!elem || !elem.value) return;
-	presetGroup.name = htmlEncode(elem.value.substring(0, 25));
-	cancelTooltip();
-
-	mutatorObj['preset' + MODULES.mutatorPreset.selected] = presetGroup;
+	mutatorObj[preset] = _mutatorDefaultObj()[preset];
 	if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
 		saveSettings();
 	}
 
 	localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
-	u2Mutations.openTree();
+	importExportTooltip('mutatorPresets');
 }
 
-function resetMutations() {
-	if (MODULES.mutatorPreset.selected === 0) return;
+function _mutatorSwapPreset(preset, force = false) {
+	if (!force) {
+		const unappliedChanges = _mutatorCheckChanges();
 
-	let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
-	let mutatorObjPreset = mutatorObj['preset' + MODULES.mutatorPreset.selected];
-	let presetName = mutatorObjPreset.name ? mutatorObjPreset.name : MODULES.mutatorPreset.selected;
-	mutatorObj['preset' + MODULES.mutatorPreset.selected] = {
-		name: presetName
-	};
-
-	if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
-		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
-		saveSettings();
-	}
-
-	localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
-}
-
-function presetMutations() {
-	if (!u2Mutations.open) return;
-	if (document.getElementById('u2MutPresetBtn1') !== null) return;
-
-	//Initial setup of localStorage if it doesn't exist
-	if (typeof localStorage['mutatorPresets'] === 'undefined') {
-		let mutatorObj = {
-			preset1: { name: 1 },
-			preset2: { name: 2 },
-			preset3: { name: 3 }
-		};
-		if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
-			mutatorObj = JSON.parse(autoTrimpSettings['mutatorPresets'].valueU2);
-			saveSettings();
+		if (unappliedChanges) {
+			tooltipAT('Mutator Changes', event, undefined, preset);
+			return;
 		}
+	}
+
+	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	mutatorObj.selectedPreset = preset;
+
+	if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
+		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
+		saveSettings();
+	}
+
+	localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
+	cancelTooltip();
+	importExportTooltip('mutatorPresets');
+}
+
+function _mutatorSetupPresetBtn() {
+	if (!u2Mutations.open || document.getElementById('u2MutPresetBtn1') !== null) return;
+
+	if (typeof localStorage['mutatorPresets'] === 'undefined') {
+		const runningAT = typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust');
+		let mutatorObj = runningAT ? JSON.parse(autoTrimpSettings['mutatorPresets'].valueU2) : _mutatorDefaultObj();
 		localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
 	}
 
-	//Setting up initial variables that will be called later during for loop
-	const containerID = ['u2MutPresetBtn1', 'u2MutPresetBtn2', 'u2MutPresetBtn3', 'u2MutSave', 'u2MutLoad', 'u2MutRename', 'u2MutReset'];
-	const containerText = ['1', '2', '3', 'Save', 'Load', 'Rename', 'Reset'];
-	const onClick = ['presetMutTab(1)', 'presetMutTab(2)', 'presetMutTab(3)', 'saveMutations()', 'loadMutations(MODULES.mutatorPreset.selected)', 'renameMutations(true)', 'resetMutations()'];
+	document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
 
-	//If there are presets saved, then we will use those names instead of the default ones
-	//This will also allow for the user to change the names of the presets
-	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	const u2MutContainer = document.createElement('SPAN');
+	u2MutContainer.setAttribute('id', 'mutatorPresetsBtn');
+	u2MutContainer.setAttribute('class', 'btn btn-lg btn-info');
+	u2MutContainer.setAttribute('style', 'font-size: 1.1em; margin-top: 0.25em;');
+	u2MutContainer.setAttribute('onClick', "importExportTooltip('mutatorPresets')");
+	u2MutContainer.innerHTML = 'Presets';
 
-	for (let x = 1; x <= 3; x++) {
-		if (mutatorObj['preset' + x].name) containerText[x - 1] = mutatorObj['preset' + x].name;
+	const u2MutColumn = document.getElementById('swapToMasteryBtn').parentNode;
+	u2MutColumn.replaceChild(u2MutContainer, document.getElementById('swapToMasteryBtn').parentNode.children[3]);
+	document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
+}
+
+function _mutatorPopulateTree(firstLoad = false) {
+	const scale = Math.min(window.innerWidth, window.innerHeight) / 32;
+	const mutLineWidth = 0.125;
+	const arrowLength = 0.5;
+	const arrowSize = 0.1;
+	const boxScale = 2 * scale;
+
+	const mutatorsContainer = document.getElementById('mutatorsContainer');
+	let text = `<div id='mutatorPresetsTree' style='position: relative; transform: translate(0px, 0px) scale(0.5); top:${-10}px'>`;
+	text += `<div id='mutatorPresetsRing1' style='position: absolute; width: ${40.8 * scale}px; height: ${33.0 * scale}px; top: ${-16.5 * scale}px; left: ${-20.4 * scale}px;'></div>`;
+
+	const mutatorList = [];
+	const mutatorListActive = [];
+	if (firstLoad) {
+		const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+		const presetData = mutatorObj.selectedPreset ? mutatorObj[mutatorObj.selectedPreset] : { mutators: [] };
+		const mutators = presetData && presetData.mutators ? presetData.mutators : [];
+		mutators.forEach((mutator) => mutatorList.push(mutator));
+	} else {
+		const { mutators } = _mutatorGetActiveList();
+		mutators.forEach((mutator) => mutatorList.push(mutator));
 	}
 
-	document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
-	for (let x = containerID.length; x > 0; x--) {
-		//Insert break to replace later
-		document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
+	let leftMost = 0;
+	let rightMost = 0;
+	for (let item in u2Mutations.tree) {
+		const coords = u2Mutations.tree[item].pos;
+		const itemObj = u2Mutations.tree[item];
+		const bgColor = !_mutatorCheckRequirements(item, mutatorList) ? 'requirement' : mutatorList.includes(item) ? 'purchased' : 'available';
+		if (bgColor === 'purchased') mutatorListActive.push(item);
+		const displayName = itemObj.dn ? itemObj.dn : item;
 
-		const u2MutContainer = document.createElement('SPAN');
-		u2MutContainer.setAttribute('id', containerID[x - 1]);
-		//Disable save/load buttons if no preset is selected
-		if (x > 3 && MODULES.mutatorPreset.selected === 0) u2MutContainer.setAttribute('class', 'btn btn-lg btn-default disabled');
-		//Set button class based on selected preset
-		else if (x === MODULES.mutatorPreset.selected) u2MutContainer.setAttribute('class', 'btn btn-lg btn-success');
-		else u2MutContainer.setAttribute('class', 'btn btn-lg btn-info');
+		let tooltip = `onmouseover="tooltip('${item}', 'Mutator', event)" onmouseout="tooltip('hide')"`;
+		text += `<button aria-labelledby="${item}Name" 
+				id="${item}MutatorPreset" 
+				class="mutatorBox mutatorBox${bgColor}" 
+				onclick="_mutatorToggleElem(this)" 
+				${tooltip} 
+				style="position: absolute; color: ${itemObj.color}; 
+				width: ${boxScale}px; height: ${boxScale}px; 
+				left: ${coords[0] * scale}px; top: ${coords[1] * scale}px; 
+				font-size: ${scale * 1.5}px"  
+				data-hidden-text="${item}" 
+				title="${itemObj.description}">`;
+		text += '<span class="mutTreeName">' + displayName + '</span>';
+		text += '<span class="icomoon icon-star"></span></button>';
 
-		u2MutContainer.setAttribute('style', 'font-size: 1.1em; margin-top: 0.25em;');
-		const presetText = x <= 3 ? 'Preset: ' : '';
-		u2MutContainer.setAttribute('onmouseover', 'tooltipAT("Mutator Preset", event, ' + x + ', "' + presetText + containerText[x - 1] + '")');
-		u2MutContainer.setAttribute('onmouseout', 'tooltipAT("hide")');
-		u2MutContainer.innerHTML = presetText + containerText[x - 1];
-		u2MutContainer.setAttribute('onClick', onClick[x - 1]);
+		if (!itemObj.require) continue;
+		const connect = itemObj.require;
 
-		const u2MutColumn = document.getElementById('swapToMasteryBtn').parentNode;
-		//Replace earlier line break with setup element & then inserting another one
-		u2MutColumn.replaceChild(u2MutContainer, document.getElementById('swapToMasteryBtn').parentNode.children[3]);
-		document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
+		for (let x = 0; x < connect.length; x++) {
+			const thisConnect = u2Mutations.tree[connect[x]].pos;
+			const distanceX = thisConnect[0] - coords[0];
+			const distanceY = thisConnect[1] - coords[1];
+			const length = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+			const angle = (Math.atan2(distanceY, distanceX) * 180) / Math.PI;
+			const left = coords[0] * scale + boxScale / 2 - (length * scale) / 2 + (distanceX / 2) * scale;
+			if (left < leftMost) leftMost = left;
+			if (left > rightMost) rightMost = left;
+			const top = (coords[1] - mutLineWidth / 2) * scale + boxScale / 2 + (distanceY / 2) * scale;
+			const width = length * scale;
+			const color = itemObj.singleRequire ? 'grey' : 'white';
+			const line = `<div class="mutLine mutLine${color}" 
+							style="position: absolute; left: ${left}px; top: ${top}px; 
+							height: ${mutLineWidth * scale}px; width: ${width}px; 
+							transform: rotate(${angle}deg);">&nbsp;</div>`;
+			text += line;
+
+			const arrowMidpointX = (thisConnect[0] - distanceX / 2) * scale + boxScale / 2 - (arrowLength * scale) / 2;
+			const arrowMidpointY = (thisConnect[1] - distanceY / 2) * scale + boxScale / 2 - (arrowLength * scale) / 2;
+			text += `<div class="mutArrow mutArrow${color}" 
+					style="position: absolute; border-left-width: ${arrowSize * scale}px; 
+					border-top-width: ${arrowSize * scale}px; 
+					width: ${arrowLength * scale}px; height: ${arrowLength * scale}px; 
+					top: ${arrowMidpointY}px; left: ${arrowMidpointX}px; 
+					transform: rotate(${angle - 45}deg);"></div>`;
+		}
+	}
+
+	text += '</div>';
+
+	mutatorsContainer.innerHTML = text;
+	const mutTree = document.getElementById('mutatorPresetsTree');
+	mutatorsContainer.style.height = `${mutTree.scrollHeight}px`;
+
+	const totalWidth = boxScale + Math.max(Math.abs(leftMost), Math.abs(rightMost));
+	const screenWidthPercent = (totalWidth / window.innerWidth) * 100;
+	const roundedPercent = Math.max(40, Math.ceil(screenWidthPercent / 5) * 5);
+	_verticalCenterTooltip(false, false, '', roundedPercent);
+
+	if (mutatorListActive.length > 0) {
+		const equippedElem = document.getElementById(`mutatorsPurchased`);
+		equippedElem.innerHTML = mutatorListActive.length;
+
+		if (mutatorListActive.length !== mutatorList.length) {
+			_mutatorPopulateTree();
+		} else if (mutatorListActive.some((item, index) => item !== mutatorList[index])) {
+			_mutatorPopulateTree();
+		} else {
+			const changesMsg = document.getElementById('mutatorsChangesContainer');
+			const unappliedChanges = _mutatorCheckChanges();
+			changesMsg.style.visibility = unappliedChanges ? 'visible' : 'hidden';
+		}
 	}
 }
 
-function presetMasteryIcon() {
-	if (!u2Mutations.open) return;
-	if (document.getElementById('mutMasteryIcon') !== null) return;
+function _mutatorCheckRequirements(what, mutatorList) {
+	const itemObj = u2Mutations.tree[what];
+	if (itemObj.ring && itemObj.ring > 0 && Number(document.getElementById('mutatorsPurchased').innerText) < u2Mutations.rings[itemObj.ring]) return false;
+	if (!itemObj.require) return true;
 
-	//insert break to replace later
-	document.getElementById('mutZoomOut').insertAdjacentHTML('afterend', '<br>');
-	document.getElementById('mutZoomButtons').style.left = '89vw';
-	const u2IconContainer = document.createElement('DIV');
-	u2IconContainer.setAttribute('id', 'mutMasteryIcon');
-	u2IconContainer.setAttribute('onmouseover', 'tooltipAT("Mastery Info", event)');
-	u2IconContainer.setAttribute('onmouseout', 'tooltipAT("hide")');
-	u2IconContainer.setAttribute('style', 'margin-right: 1vw;');
+	for (let y = 0; y < itemObj.require.length; y++) {
+		if (!mutatorList.includes(itemObj.require[y])) {
+			if (!itemObj.singleRequire) {
+				return false;
+			}
+		} else if (itemObj.singleRequire) {
+			return true;
+		}
+	}
 
-	const u2Icon = document.createElement('SPAN');
-	u2Icon.setAttribute('class', 'icomoon icon-cloud3');
+	return itemObj.singleRequire ? false : true;
+}
 
-	u2IconContainer.appendChild(u2Icon);
+function _mutatorGetActiveList() {
+	function getEquippedItems(selector) {
+		return $(selector)
+			.map((index, item) => $(item).data('hidden-text'))
+			.get();
+	}
 
-	const u2MutColumn = document.getElementById('mutZoomOut').parentNode;
-	u2MutColumn.insertBefore(u2IconContainer, u2MutColumn.firstChild);
+	const purchasedMutators = getEquippedItems('.mutatorBoxpurchased');
+	const activePreset = document.getElementsByClassName('mutatorHeaderSelected')[0].dataset.hiddenName;
+
+	return {
+		preset: activePreset,
+		mutators: purchasedMutators
+	};
+}
+
+function _mutatorCheckChanges() {
+	const { preset, mutators } = _mutatorGetActiveList();
+
+	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	const presetData = mutatorObj[preset];
+	const mutatorData = presetData && presetData.mutators ? presetData.mutators : [];
+	if (!mutatorData && mutators.length > 0) return true;
+	if (mutatorData.length !== mutators.length) return true;
+	if (mutatorData.some((item, index) => item !== mutators[index])) return true;
+
+	return false;
+}
+
+function _mutatorToggleElem(element) {
+	if (element.classList.contains('mutatorBoxrequirement')) return;
+
+	const equippedElem = document.getElementById(`mutatorsPurchased`);
+	if (equippedElem) {
+		const maxMutators = Number(document.getElementById(`mutatorsMax`).innerText);
+		const equippedMutators = Number(equippedElem.innerText);
+		const errorElem = document.getElementById(`mutatorsError`);
+		let removeItem = element.classList.contains(`mutatorBoxpurchased`);
+
+		if (!removeItem && equippedMutators >= maxMutators) {
+			const errorText = `Max Mutators selected`;
+			if (errorElem.innerText !== errorText) errorElem.innerText = errorText;
+			return;
+		} else if (errorElem.innerText !== '') {
+			errorElem.innerText = '';
+		}
+		equippedElem.innerHTML = removeItem ? equippedMutators - 1 : equippedMutators + 1;
+	}
+
+	element.classList.toggle(`mutatorBoxpurchased`);
+	element.classList.toggle(`mutatorBoxavailable`);
+	_mutatorPopulateTree();
+}
+
+function _mutatorDefaultObj() {
+	const mutatorObj = {
+		'Preset 1': { mutators: [], purchaseCount: 0, name: 'Preset 1' },
+		'Preset 2': { mutators: [], purchaseCount: 0, name: 'Preset 2' },
+		'Preset 3': { mutators: [], purchaseCount: 0, name: 'Preset 3' },
+		'Preset 4': { mutators: [], purchaseCount: 0, name: 'Preset 4' },
+		'Preset 5': { mutators: [], purchaseCount: 0, name: 'Preset 5' },
+		selectedPreset: 'Preset 1',
+		titles: ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5']
+	};
+
+	return mutatorObj;
+}
+
+function _displayMutatorPresets(tooltipDiv) {
+	if (typeof localStorage['mutatorPresets'] === 'undefined') {
+		const runningAT = typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust');
+		let mutatorObj = runningAT ? JSON.parse(autoTrimpSettings['mutatorPresets'].valueU2) : _mutatorDefaultObj();
+		localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
+	}
+
+	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	const setting = mutatorObj;
+	const selectedPreset = setting.selectedPreset || 'Preset 1';
+	const presetName = setting[selectedPreset] ? setting[selectedPreset].name || 'Preset 1' : 'Preset 1';
+	const runningAT = typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'));
+	const headerTitles = {
+		1: 'This preset will be loaded when portaling into Filler challenges with the Preset Swap Mutators setting enabled.',
+		2: 'This preset will be loaded when portaling into Daily challenges with the Preset Swap Mutators setting enabled.',
+		3: 'This preset will be loaded when portaling into C3 or special challenges (Mayhem, Pandemonium, Desolation) with the Preset Swap Mutators setting enabled.',
+		4: '',
+		5: ''
+	};
+
+	const preset = setting[selectedPreset] || { mutators: {}, purchaseCount: 0, name: presetName };
+	const headerList = ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5'];
+
+	const availableSeeds = game.global.mutatedSeeds + game.global.mutatedSeedsSpent;
+	const maxMutators = Math.floor(Math.log2(availableSeeds / 300 + 1));
+
+	function escapeHtmlAttribute(str) {
+		return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	}
+
+	let tooltipText = '';
+	tooltipText += `<div id='mutatorPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
+	for (const header of headerList) {
+		const titleName = setting[header] ? setting[header].name || header : header;
+		const headerClass = header === selectedPreset ? 'Selected' : 'NotSelected';
+		const escapedTitleName = escapeHtmlAttribute(titleName);
+		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='mutatorHeader mutatorHeader${headerClass}' onclick='_mutatorSwapPreset("${header}")'  data-hidden-name="${header}" title="${runningAT ? headerTitles[Number(header.replace(/\D/g, ''))] : ''}"><b>${escapedTitleName}</b></div>`;
+	}
+
+	tooltipText += `</div>`;
+
+	const mutatorsPurchased = preset.mutators || {};
+	tooltipText += `<div id='mutatorItems'>`;
+
+	tooltipText += `<div id='mutatorErrorRow' style="display: flex; justify-content: space-between; align-items: center; width: 100%;">`;
+
+	tooltipText += `<div id='mutatorItemCounter' style='display: flex;'>`;
+	tooltipText += `<span>&nbsp;Mutators (</span><span id='mutatorsPurchased'>${Object.keys(mutatorsPurchased).length}</span><span>/</span><span id='mutatorsMax'>${maxMutators}</span><span>)&nbsp;</span><span id='mutatorsError' style='color: red;'></span>`;
+	tooltipText += `</div>`;
+
+	tooltipText += `<div id='mutatorsChangesContainer' style='color: red; display: flex; justify-content: flex-end; align-items: center; display: flex; visibility: hidden;'>`;
+	tooltipText += `<span style='margin-right: 0.3em;' class='glyphicon glyphicon-floppy-disk'></span><span style='padding-right: 1em;'>Unapplied Changes</span>`;
+	tooltipText += `</div>`;
+
+	tooltipText += `</div>`;
+
+	tooltipText += `<div id='mutatorsContainer' style='display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; width: 100%;'></div>`;
+
+	let costText = `
+		<div class='maxCenter'>
+			<span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='_mutatorSavePreset(); cancelTooltip()'>Save and Close</span>
+			<span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Close</span>
+			<span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='_mutatorSavePreset(); importExportTooltip("mutatorPresets")'>Save</span>
+			<span class='btn btn-info btn-md' onclick='_mutatorRenamePreset(this)'>Rename Preset</span>
+			<span class='btn btn-warning btn-md' onclick='tooltipAT("Mutator Import", event, "${escapeHtmlAttribute(presetName)}", "${selectedPreset}")'>Load Preset</span>
+			<span class='btn btn-default btn-md' onclick='tooltipAT("Mutator Clear Preset", event, "${escapeHtmlAttribute(presetName)}", "${selectedPreset}")'>Clear Preset</span>
+		`;
+
+	costText += `</div> `;
+
+	const ondisplay = function () {
+		_mutatorPopulateTree(true);
+		_verticalCenterTooltip(true);
+		_mutatorPopulateTree();
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
 if (typeof originalopenTree !== 'function') {
@@ -429,8 +541,7 @@ if (typeof originalopenTree !== 'function') {
 	u2Mutations.openTree = function () {
 		u2Mutations.originalopenTree(...arguments);
 		try {
-			presetMutations();
-			if (game.global.stringVersion === '5.9.2') presetMasteryIcon();
+			_mutatorSetupPresetBtn();
 		} catch (e) {
 			console.log('Loading mutator presets failed ' + e, 'other');
 		}
@@ -441,4 +552,124 @@ if (typeof originalopenTree !== 'function') {
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	console.log('The mutator preset mod has finished loading.');
 	message('The mutator preset mod has finished loading.', 'Loot');
+
+	(async function () {
+		let basepathMutator = 'https://sadaugust.github.io/AutoTrimps/';
+		if (typeof localVersion !== 'undefined') basepathMutator = 'https://localhost:8887/AutoTrimps_Local/';
+		const modules = ['import-export'];
+		const css = [`${basepathMutator}css/mutatorPreset.css`];
+		const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js'];
+
+		function loadModules(fileName, prefix = '', retries = 3) {
+			return new Promise((resolve, reject) => {
+				const script = document.createElement('script');
+				script.src = `${basepathMutator}${prefix}${fileName}.js`;
+				script.id = `${fileName}_MODULE`;
+				script.async = false;
+				script.defer = true;
+
+				script.addEventListener('load', () => {
+					resolve();
+				});
+
+				script.addEventListener('error', () => {
+					console.log(`Failed to load module: ${fileName} from path: ${prefix || ''}. Retries left: ${retries - 1}`);
+					loadModules(fileName, prefix, retries - 1)
+						.then(resolve)
+						.catch(reject);
+				});
+
+				document.head.appendChild(script);
+			});
+		}
+
+		function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3) {
+			return new Promise((resolve, reject) => {
+				if (retries < 1) {
+					reject(`Failed to load stylesheet ${url} after 3 attempts`);
+					return;
+				}
+
+				const link = document.createElement('link');
+				link.href = url;
+				link.rel = rel;
+				link.type = type;
+
+				link.onload = () => {
+					resolve();
+				};
+
+				link.onerror = () => {
+					console.log(`Failed to load stylesheet ${url}. Retries left: ${retries - 1}`);
+					loadStylesheet(url, rel, type, retries - 1)
+						.then(resolve)
+						.catch(reject);
+				};
+
+				document.head.appendChild(link);
+			});
+		}
+
+		function loadScript(url, type = 'text/javascript', retries = 3) {
+			return new Promise((resolve, reject) => {
+				if (retries < 1) {
+					reject(`Failed to load script ${url} after 3 attempts`);
+					return;
+				}
+
+				const script = document.createElement('script');
+				script.src = url;
+				script.type = type;
+
+				script.onload = () => {
+					resolve();
+				};
+
+				script.onerror = () => {
+					console.log(`Failed to load script ${url}. Retries left: ${retries - 1}`);
+					loadScript(url, type, retries - 1)
+						.then(resolve)
+						.catch(reject);
+				};
+
+				document.head.appendChild(script);
+			});
+		}
+
+		try {
+			for (const module of modules) {
+				const path = modules.includes(module) ? 'modules/' : '';
+				await loadModules(module, path);
+			}
+
+			for (const script of css) {
+				await loadStylesheet(script);
+			}
+
+			for (const script of scripts) {
+				await loadScript(script);
+			}
+
+			console.log('The Mutator Presets mod has finished loading.');
+			message('The Mutator Presets mod has finished loading.', 'Loot');
+			if (u2Mutations && u2Mutations.open) u2Mutations.openTree();
+
+			const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+			if (!mutatorObj || !mutatorObj.titles) {
+				const mutatorObj = _mutatorDefaultObj();
+				localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
+			}
+		} catch (error) {
+			console.error('Error loading script', error);
+			message('The Mutator Presets mod failed to load. Refresh your page and try again.', 'Loot');
+			tooltip('Failed to load the Mutator Presets mod', 'customText', undefined, 'The Mutator Presets mod failed to load. Refresh your page and try again.');
+			verticalCenterTooltip(true);
+		}
+	})();
 }
+
+function handleResize() {
+	if (document.getElementById('tipTitle').innerHTML === 'Mutator Presets') _mutatorPopulateTree();
+}
+
+window.addEventListener('resize', handleResize);

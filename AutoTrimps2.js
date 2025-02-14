@@ -192,7 +192,7 @@ function loadScriptsAT() {
 
 			const modules = ['versionNumber', ...installedMods, ...installedModules, ...testing, 'SettingsGUI'];
 			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
-			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`];
+			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`, `${atConfig.initialise.basepath}css/mutatorPreset.css`];
 
 			await loadModules('gameUpdates', atConfig.modules.pathMods);
 			await loadModules('utils', atConfig.modules.path);
@@ -289,6 +289,7 @@ function initialiseScript() {
 	atConfig.initialise.loaded = true;
 	toggleCatchUpMode();
 	if (usingRealTimeOffline) offlineProgress.loop = setTimeout(timeWarpLoop, 0, true);
+	if (u2Mutations && u2Mutations.open) u2Mutations.openTree();
 	debug(`AutoTrimps (${atConfig.initialise.version.split(' ')[0]} ${atConfig.initialise.version.split(' ')[1]}) has finished loading.`);
 	challengeInfo(true);
 	console.timeEnd();
@@ -405,6 +406,7 @@ function mainLoop() {
 		mainCleanup();
 	}
 
+	if (game.global.spireActive) exitSpireCell();
 	if (_handleSlowScumming()) return;
 
 	boneShrine();
@@ -449,11 +451,8 @@ function mainLoopU1() {
 	if (!atConfig.timeouts.magma && getPageSetting('magmiteSpending') === 2) autoMagmiteSpender();
 	autoGenerator();
 	if (shouldRunInTimeWarp()) autoStance();
-	if (game.global.spireActive) {
-		exitSpireCell();
-		atlantrimpRespecMessage();
-	}
 	fluffyEvolution();
+	if (game.global.spireActive) atlantrimpRespecMessage();
 }
 
 function mainLoopU2() {

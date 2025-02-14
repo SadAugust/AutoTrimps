@@ -2094,7 +2094,7 @@ function autoStructureTable(settingGroup, hze) {
 		let checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
 
 		tooltipText += "<td><div class='row'>";
-		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + '</span></div>';
+		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + '<span>' + item + '</span></div>';
 		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Perc: <input class='structConfigPercent' id='structPercent" + item + "' type='number' value='" + (setting && setting.percent ? setting.percent : 100) + "' /></div>";
 		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Up to: <input class='structConfigQuantity' id='structMax" + item + "' type='number' value='" + (setting && setting.buyMax ? setting.buyMax : 0) + "' /></div>";
 		tooltipText += '</div></td>';
@@ -2114,7 +2114,7 @@ function autoStructureTable(settingGroup, hze) {
 		tooltipText += '</tr><tr>';
 
 		tooltipText += "<td><div class='row'>";
-		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + '&nbsp;&nbsp;<span>' + item + '</span></div>';
+		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + '<span>' + item + '</span></div>';
 		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigPercent' id='structPercent" + "' type='number' value='" + (setting && setting.mapCount ? setting.mapCount : 0) + "' /></div>";
 		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigQuantity' id='structMax' type='number' value='" + (setting && setting.zone ? setting.zone : 0) + "' /></div>";
 		tooltipText += '</div></td>';

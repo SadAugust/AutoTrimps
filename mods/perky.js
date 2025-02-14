@@ -184,7 +184,7 @@ function fillPresetPerky(specificPreset, forceDefault) {
 		nerfed: [0, 4, 3, 0],
 		tent: [5, 4, 3, 0],
 		scientist: [0, 1, 3, 0],
-		carp: [0, 0, 0, 0],
+		trappercarp: [0, 0, 0, 0],
 		trapper: [0, 7, 1, 0],
 		coord: [0, 40, 1, 0],
 		trimp: [0, 99, 1, 0],
@@ -356,7 +356,7 @@ function populatePerkyData() {
 		result.zone = game.global.world;
 	}
 
-	if (preset === 'carp') {
+	if (preset === 'trappercarp') {
 		result.mod.prod = 0;
 		result.mod.loot = 0;
 		result.weight.trimps = 1e6;
@@ -1288,7 +1288,7 @@ atData.autoPerks = {
 				require: () => getHighestLevelCleared(true) >= 59,
 				visible: () => getHighestLevelCleared(true) >= 54
 			},
-			carp: {
+			trappercarp: {
 				name: 'Trapper² (initial)',
 				description: 'Use this setting to respec for the Trapper² challenge.',
 				require: () => getHighestLevelCleared(true) >= 69,

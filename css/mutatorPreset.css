@@ -1,0 +1,103 @@
+.mutatorHeader {
+	display: inline-block;
+	width: calc((100% - 1.4em - 6px) / 5);
+	text-align: center;
+	cursor: pointer;
+	padding: 0.3em;
+	color: white;
+	margin-right: 0.1em;
+	margin-left: 0.1em;
+	margin-top: 0.1em;
+	margin-bottom: 0.2em;
+	font-size: 0.85vw;
+}
+
+.mutatorHeaderSelected {
+	border: 1px solid #6b6a6a;
+	background-color: #097740;
+	color: white;
+}
+
+.mutatorHeaderSelected:hover {
+	border: 1px solid #4b4a4a;
+	background-color: #054e2a;
+	color: white;
+}
+
+.mutatorHeaderNotSelected {
+	border: 1px solid #6b6a6a;
+	background-color: black;
+}
+
+.mutatorHeaderNotSelected:hover {
+	border: 1px solid #4b4a4a;
+	background-color: #202020;
+}
+
+#mutatorPresetsTree {
+	left: 50%;
+	top: 50%;
+	position: fixed;
+}
+
+#mutatorPresetsRing1 {
+	border-radius: 50%;
+	border: 2px solid white;
+	position: absolute;
+}
+
+#tooltipDiv.tooltipExtraLg {
+	width: 50%;
+}
+
+#tooltipDiv.tooltipExtraCustom40 {
+	width: 40%;
+}
+
+#tooltipDiv.tooltipExtraCustom45 {
+	width: 45%;
+}
+
+#tooltipDiv.tooltipExtraCustom50 {
+	width: 50%;
+}
+
+#tooltipDiv.tooltipExtraCustom55 {
+	width: 55%;
+}
+
+#tooltipDiv.tooltipExtraCustom60 {
+	width: 60%;
+}
+
+#tooltipDiv.tooltipExtraCustom65 {
+	width: 65%;
+}
+
+#tooltipDiv.tooltipExtraCustom70 {
+	width: 70%;
+}
+
+#tooltipDiv.tooltipExtraCustom75 {
+	width: 75%;
+}
+
+#tooltipDiv.tooltipExtraCustom80 {
+	width: 80%;
+}
+
+#tooltipDiv.tooltipExtraCustom85 {
+	width: 85%;
+}
+
+#tooltipDiv.tooltipExtraCustom90 {
+	width: 90%;
+}
+
+#tooltipDiv.tooltipExtraCustom95 {
+	width: 95%;
+}
+
+#tooltipDiv.tooltipExtraCustom100 {
+	width: 100%;
+}

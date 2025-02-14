@@ -298,10 +298,6 @@ if (typeof originalActivateClicked !== 'function') {
 			_setButtonsPortal();
 			setupAddonUser(true);
 			hideAutomationButtons();
-			if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
-				loadMutations(preset);
-				u2Mutations.closeTree();
-			}
 		}
 
 		if (magmiteText) debug(magmiteText, 'magmite');
@@ -507,33 +503,6 @@ function removeTrustworthyTrimps() {
 	const ticks = dif > offlineProgress.maxTicks ? offlineProgress.maxTicks : dif;
 	const unusedTicks = dif - ticks;
 	if (unusedTicks > 0) untrustworthyTrimps(false, unusedTicks / 10, true);
-}
-
-//Check and update each patch!
-function _verticalCenterTooltip(makeLarge, makeSuperLarge, isTwo = '') {
-	const tipElem = document.getElementById(`tooltipDiv${isTwo}`);
-	if (makeLarge) {
-		swapClass('tooltipExtra', 'tooltipExtraLg', tipElem);
-	}
-	if (makeSuperLarge) {
-		swapClass('tooltipExtra', 'tooltipExtraSuperLg', tipElem);
-	}
-
-	const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-	const width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-	let tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
-	let tipWidth = Math.max(tipElem.clientWidth, tipElem.innerWidth || 0);
-
-	if (makeLarge && tipHeight / height > 0.95) {
-		document.getElementById(`tipText${isTwo}`).className = 'tinyTextTip';
-		tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
-	}
-
-	const topDif = height - tipHeight;
-	const leftDif = width - tipWidth;
-
-	tipElem.style.top = topDif > 0 ? topDif / 2 + 'px' : '0';
-	tipElem.style.left = leftDif > 0 ? leftDif / 2 + 'px' : '0';
 }
 
 function saveToSteam(saveData) {

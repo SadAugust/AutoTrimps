@@ -237,7 +237,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 		if (hdCheck && swapHD > 0 && hdStats.hdRatioHeirloom >= swapHD && shouldAbandon(false)) swapZone = game.global.world;
 
 		const compressedSwap = getPageSetting('heirloomCompressedSwap');
-		if (game.global.universe === 2 && compressedSwap && game.global.world >= 201 && game.global.lastClearedCell < 96) {
+		if (game.global.universe === 2 && compressedSwap && game.global.world >= 201 && game.global.lastClearedCell < 96 && !challengeActive('Wither')) {
 			if (getPageSetting('heirloomSwapHDCompressed') > 0 && game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1) {
 				//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
 				if (hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') || MODULES.heirlooms.plagueSwap) {

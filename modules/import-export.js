@@ -17,6 +17,7 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		priorityOrder: typeof _displayPriorityOrder === 'function' ? _displayPriorityOrder : null,
 		autoHeirloomMods: typeof _displayAutoHeirloomMods === 'function' ? _displayAutoHeirloomMods : null,
 		spireAssault: typeof _displaySpireAssaultPresets === 'function' ? _displaySpireAssaultPresets : null,
+		mutatorPresets: typeof _displayMutatorPresets === 'function' ? _displayMutatorPresets : null,
 		c2table: typeof _displayC2Table === 'function' ? _displayC2Table : null,
 		resetDefaultSettingsProfiles: typeof _displayResetDefaultSettingsProfiles === 'function' ? _displayResetDefaultSettingsProfiles : null,
 		disableSettingsProfiles: typeof _displayDisableSettingsProfiles === 'function' ? _displayDisableSettingsProfiles : null,
@@ -46,6 +47,7 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		priorityOrder: 'Priority Order Table',
 		autoHeirloomMods: 'Auto Heirloom Mods',
 		spireAssault: 'Spire Assault Presets',
+		mutatorPresets: 'Mutator Presets',
 		c2table: c2Info + ' Table',
 		resetDefaultSettingsProfiles: 'Reset Default Settings',
 		disableSettingsProfiles: 'Disable All Settings',
@@ -1420,7 +1422,12 @@ function makeAutomapStatusTooltip(mouseover = false) {
 	const hdFarmSetting = getPageSetting('mapBonusRatio');
 	const hdFarmValue = hdFarmSetting > 0 ? hdFarmSetting : '∞';
 
-	const mapStacksText = `Will run maps to get up to <i>${mapStacksValue}</i> Map Bonus stacks when World HD Ratio is greater than <i>${prettify(hdFarmValue)}</i>.`;
+	const autoLevelType = getPageSetting('mapBonusLevelType') ? 'speed' : 'loot';
+	const mapBonusMinLevel = getPageSetting('mapBonusMinLevel');
+	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
+	const minLevelText = mapBonusMinLevel > 0 ? ` and your recommended ${autoLevelType} Auto Level map is above <i>${-mapBonusMinLevel - Math.abs(mapBonusLevel)}</i>` : '';
+
+	const mapStacksText = `Will run maps to get up to <i>${mapStacksValue}</i> Map Bonus stacks when World HD Ratio is greater than <i>${prettify(hdFarmValue)}</i>${minLevelText}.`;
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy. The enemy health check is based on the highest health enemy in the map/zone.';
 	const hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against the highest damaging enemy in the map/zone${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
@@ -1743,4 +1750,29 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 	}
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+//Check and update each patch!
+function _verticalCenterTooltip(makeLarge, makeSuperLarge, isTwo = '', customWidth) {
+	const tipElem = document.getElementById(`tooltipDiv${isTwo}`);
+
+	if (makeLarge) swapClass('tooltipExtra', 'tooltipExtraLg', tipElem);
+	if (makeSuperLarge) swapClass('tooltipExtra', 'tooltipExtraSuperLg', tipElem);
+	if (customWidth) swapClass('tooltipExtra', `tooltipExtraCustom${customWidth}`, tipElem);
+
+	const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+	const width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+	let tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
+	let tipWidth = Math.max(tipElem.clientWidth, tipElem.innerWidth || 0);
+
+	if (makeLarge && tipHeight / height > 0.95) {
+		document.getElementById(`tipText${isTwo}`).className = 'tinyTextTip';
+		tipHeight = Math.max(tipElem.clientHeight, tipElem.innerHeight || 0);
+	}
+
+	const topDif = height - tipHeight;
+	const leftDif = width - tipWidth;
+
+	tipElem.style.top = topDif > 0 ? topDif / 2 + 'px' : '0';
+	tipElem.style.left = leftDif > 0 ? leftDif / 2 + 'px' : '0';
 }

@@ -2065,7 +2065,7 @@ function mayhem(lineCheck) {
 
 	const destackHits = getPageSetting('mayhemDestack') > 0 ? getPageSetting('mayhemDestack') : Infinity;
 	const destackZone = getPageSetting('mayhemZone') > 0 ? getPageSetting('mayhemZone') : Infinity;
-	const mapSpecial = trimpStats.hyperspeed2 ? 'lmc' : 'fa';
+	const mapSpecial = getAvailableSpecials(trimpStats.hyperspeed2 ? 'lmc' : 'fa');
 
 	const shouldMap = game.challenges.Mayhem.stacks > 0 && (hdStats.hdRatio > destackHits || game.global.world >= destackZone);
 	if (lineCheck && shouldMap) return (setting = { priority: 1 });
@@ -2117,7 +2117,7 @@ function insanity(lineCheck) {
 }
 
 function _runInsanity(setting, mapName, settingName, settingIndex) {
-	const mapSpecial = setting.special;
+	const mapSpecial = getAvailableSpecials(setting.special);
 	const insanityGoal = Math.min(setting.insanity, game.challenges.Insanity.maxInsanity);
 	let mapLevel = setting.level;
 
@@ -2223,7 +2223,7 @@ function pandemoniumDestack(lineCheck) {
 
 	if (destackHits === Infinity && destackZone === Infinity) return farmingDetails;
 
-	const mapSpecial = trimpStats.hyperspeed2 ? 'lmc' : 'fa';
+	const mapSpecial = getAvailableSpecials(trimpStats.hyperspeed2 ? 'lmc' : 'fa');
 	const mapLevel = autoLevelCheck(mapName, mapSpecial);
 
 	const shouldMap = pandemonium > 0 && (hdStats.hdRatio > destackHits || game.global.world >= destackZone);
@@ -2362,7 +2362,7 @@ function pandemoniumEquipFarm(lineCheck) {
 		if (equipsToPurchase[equip].cost < nextEquipmentCost) nextEquipmentCost = equipsToPurchase[equip].cost;
 	}
 
-	if (cacheGain / 2 > nextEquipmentCost) mapSpecial = 'lmc';
+	if (cacheGain / 2 > nextEquipmentCost) mapSpecial = getAvailableSpecials('lmc');
 
 	const shouldMap = cacheGain >= nextEquipmentCost;
 
@@ -2419,7 +2419,7 @@ function alchemy(lineCheck) {
 }
 
 function _runAlchemy(setting, mapName, settingName, settingIndex) {
-	const mapSpecial = setting.special;
+	const mapSpecial = getAvailableSpecials(setting.special);
 	const jobRatio = setting.jobratio;
 	const potionGoal = setting.potion;
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial) : setting.level;
@@ -3173,7 +3173,7 @@ function _hdFarmHitsSurvivedSetting(hitsSurvivedGoal, defaultSettings) {
 function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings, voidFarm) {
 	let mapLevel = setting.level;
 	const farmingDetails = {};
-	const mapSpecial = setting.special ? setting.special : getAvailableSpecials('lmc');
+	const mapSpecial = setting.special ? getAvailableSpecials(setting.special) : getAvailableSpecials('lmc');
 	const jobRatio = setting.jobratio;
 	const hdType = setting.hdType;
 	const hitsSurvived = hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived;

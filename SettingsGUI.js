@@ -2332,6 +2332,16 @@ function initialiseAllSettings() {
 			}, 'textValue', 'undefined', null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', atConfig.settingUniverse) && autoTrimpSettings.trapper.require()) });
 
+		createSetting('trapperRespec',
+			function () { return ('T: Carp Respec') },
+			function () {
+				let description = `<p>If enabled, then when Auto Portaling into the <b>${(atConfig.settingUniverse === 2 ? 'Trappapalooza' : 'Trapper')}</b> challenge this will use the ${(atConfig.settingUniverse === 2 ? 'Trappa Carp' :'Trapper² (initial)')} preset then immediately respec into the  ${(atConfig.settingUniverse === 2 ? 'Trappa³' : 'Trapper² (respec)')} preset.</p>`;
+				description += "<p>To work, the<b>Auto Allocate Perks</b> setting must be enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [1, 2],
+			function () { return (getPageSetting('trapper', atConfig.settingUniverse) && autoTrimpSettings.trapper.require()) });
+
 		createSetting('mapology',
 			function () { return ('Mapology') },
 			function () {
@@ -5477,7 +5487,7 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherShield', 'questSmithySpire', 'mayhemAutoPortal', 'stormStacks', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperRespec', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherShield', 'questSmithySpire', 'mayhemAutoPortal', 'stormStacks', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressed', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];

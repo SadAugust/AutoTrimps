@@ -19,7 +19,7 @@ function noBreedChallenge() {
 }
 
 function canU2OverkillAT(targetZone) {
-	if (!u2Mutations.tree.Overkill1.purchased) return false;
+	if (!u2Mutations.tree.Overkill1.purchased || challengeActive('Wither')) return false;
 
 	if (!targetZone) targetZone = game.global.world;
 	let allowed = 0.3;

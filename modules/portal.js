@@ -537,14 +537,14 @@ function _autoPortalRegular(challengeName) {
 }
 
 function _autoPortalActivate(challenge) {
-	portalPerkCalc();
+	const postPortalRespec = portalPerkCalc();
 
 	let preset = 0;
 	if (portalUniverse === 2) {
 		hypoPackratReset(challenge);
 
 		preset = challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation' ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
-		if (getPageSetting('presetSwapMutators', 2) && JSON.parse(localStorage.getItem('mutatorPresets'))['preset' + preset] !== '') {
+		if (getPageSetting('presetSwapMutators', 2) && JSON.parse(localStorage.getItem('mutatorPresets'))[`Preset ${preset}`] !== '') {
 			u2Mutations.toggleRespec();
 		}
 	}
@@ -555,23 +555,38 @@ function _autoPortalActivate(challenge) {
 	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
 	autoUpgradeHeirlooms();
 	activatePortal();
+
 	resetVarsZone(true);
 	_setButtonsPortal();
 	setupAddonUser(true);
 
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
-		loadMutations(preset);
+		_mutatorLoadPreset(`Preset ${preset}`);
 		u2Mutations.closeTree();
+	}
+
+	if (postPortalRespec && (challengeActive('Trapper') || challengeActive('Trappapalooza'))) {
+		viewPortalUpgrades();
+		respecPerks();
+		const presetFunction = game.global.universe === 1 ? fillPresetPerky : fillPresetSurky;
+		presetFunction(postPortalRespec);
+		const allocateFunction = game.global.universe === 1 ? allocatePerky : runSurky;
+		allocateFunction(false);
+		activateClicked();
 	}
 }
 
 function portalPerkCalc() {
 	const fillerC2 = getPageSetting('c2Filler');
 	let preset;
+	let trapperRespec = false;
 
 	if (getPageSetting('presetSwap', portalUniverse)) {
 		if (portalUniverse === 1) {
-			if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
+			if (game.global.selectedChallenge === 'Trappapalooza' && game.global.canRespecPerks) {
+				trapperRespec = 'trapper';
+				preset = 'carp';
+			} else if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
 			else if (game.global.selectedChallenge === 'Scientist') preset = 'scientist';
 			else if (game.global.selectedChallenge === 'Trimp') preset = 'trimp';
 			else if (game.global.selectedChallenge === 'Coordinate') preset = 'coord';
@@ -588,7 +603,10 @@ function portalPerkCalc() {
 		}
 
 		if (portalUniverse === 2) {
-			if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
+			if (game.global.selectedChallenge === 'Trappapalooza' && game.global.canRespecPerks && getPageSetting('trapperRespec')) {
+				trapperRespec = 'trappa';
+				preset = 'trappacarp';
+			} else if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
 			else if (game.global.selectedChallenge === 'Duel') preset = 'duel';
 			else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
 			else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
@@ -605,6 +623,7 @@ function portalPerkCalc() {
 	if (typeof atData.autoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
 		if (portalUniverse === 1) allocatePerky(false);
 		if (portalUniverse === 2) runSurky();
+		return trapperRespec;
 	}
 }
 

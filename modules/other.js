@@ -1339,6 +1339,18 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '6.7.20') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['presetSwapMutators'] !== 'undefined' && autoTrimpSettings.presetSwapMutators !== 'undefined') {
+				autoTrimpSettings.presetSwapMutators.enabledU2 = false;
+			}
+
+			const mutatorObj = _mutatorDefaultObj();
+			localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
+			autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
