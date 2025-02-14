@@ -513,7 +513,7 @@ function _displayMutatorPresets(tooltipDiv) {
 
 	tooltipText += `</div>`;
 
-	tooltipText += `<div id='mutatorsContainer' style='display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; width: 100%;'></div>`;
+	tooltipText += `<div id='mutatorsContainer' style='display: flex; background-color: black; flex-wrap: wrap; justify-content: space-between; align-items: center; width: 100%;'></div>`;
 
 	let costText = `
 		<div class='maxCenter'>
