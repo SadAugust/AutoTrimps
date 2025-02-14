@@ -333,8 +333,10 @@ function initialiseAllSettings() {
 		createSetting('presetSwapMutators',
 			function () { return ('Preset Swap Mutators') },
 			function () {
-				const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'))
-				const titles = !mutatorObj ? ['Preset 1', 'Preset 2', 'Preset 3'] : [mutatorObj['Preset 1'].name, mutatorObj['Preset 2'].name, mutatorObj['Preset 3'].name]
+				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
+				const titles = [mutatorObj['Preset 1'].name, mutatorObj['Preset 2'].name, mutatorObj['Preset 3'].name]
+
 				let description = "<p>Will automatically load the preset that corresponds to your run type when Auto Portaling.</p>";
 				description += `<p>Preset 1 ${titles[0] !== 'Preset 1' ? "("+mutatorObj['Preset 1'].name +")" : ''} will be loaded when portaling into Filler challenges.</p>`;
 				description += `<p>Preset 2 ${titles[1] !== 'Preset 2' ? "("+mutatorObj['Preset 2'].name +")" : ''} will be loaded when portaling into Daily challenges.</p>`;
@@ -4593,11 +4595,7 @@ function initialiseAllSettings() {
 		createSetting('mutatorPresets',
 			function () { return ('Mutator Presets') },
 			function () { return ('Click to adjust settings.') },
-			'mazDefaultArray', JSON.stringify({
-				preset1: {},
-				preset2: {},
-				preset3: {},
-			}), null, 'Import Export', [2],
+			'mazDefaultArray', JSON.stringify(_mutatorDefaultObj()), null, 'Import Export', [2],
 			function () { return false });
 
 		createSetting('profileSettings',
