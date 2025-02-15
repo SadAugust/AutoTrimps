@@ -551,6 +551,24 @@ if (typeof originalopenTree !== 'function') {
 	};
 }
 
+if (typeof originalcloseTree !== 'function') {
+	u2Mutations.originalcloseTree = u2Mutations.closeTree;
+	u2Mutations.closeTree = function () {
+		u2Mutations.originalcloseTree(...arguments);
+		try {
+			if (document.getElementById('tipTitle').innerHTML === 'Mutator Presets') cancelTooltip();
+		} catch (e) {
+			console.log('Loading mutator presets failed ' + e, 'other');
+		}
+	};
+}
+
+function handleResize() {
+	if (u2Mutations.open && document.getElementById('tipTitle').innerHTML === 'Mutator Presets') _mutatorPopulateTree();
+}
+
+window.addEventListener('resize', handleResize);
+
 /* If using standalone version then inform user it has loaded. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	console.log('The mutator preset mod has finished loading.');
@@ -670,9 +688,3 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		}
 	})();
 }
-
-function handleResize() {
-	if (document.getElementById('tipTitle').innerHTML === 'Mutator Presets') _mutatorPopulateTree();
-}
-
-window.addEventListener('resize', handleResize);

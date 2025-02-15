@@ -234,7 +234,7 @@ function _getTimeWarpHours(inputHours) {
 
 function _adjustGlobalTimers(keys, adjustment) {
 	keys.forEach((key) => {
-		if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[keys] += adjustment;
+		if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[key] += adjustment;
 		else game.global[key] += adjustment;
 	});
 }

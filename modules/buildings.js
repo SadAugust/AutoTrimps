@@ -626,7 +626,7 @@ function _buySelectedHouse(houseName, buildingSettings) {
 		if (upgradeType !== 2) upgrades.push('Coordination');
 
 		// Do not save Gems or Fragments TODO Don't save ie metal from Huts
-		if (skipHouse && upgrades.some((up) => _shouldSaveFromHouse(houseName, up) && shouldSaveForSpeedUpgrade(game.upgrades[up], 0.5, 0.5, 0.25, 0.75))) return;
+		if (skipHouse && upgrades.some((up) => _shouldSaveFromHouse(houseName, up) && shouldSaveForSpeedUpgrade(game.upgrades[up], 0.5, 0.5, 0.25, 0.75))) return false;
 	}
 
 	// Identify the amount of this type of housing we can afford and stay within our housing cap.
