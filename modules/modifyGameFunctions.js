@@ -970,3 +970,53 @@ function getHazardGammaBonus_AT(heirloom) {
 	const bonus = log10(spent) * mult;
 	return bonus;
 }
+
+function recycleMap(map, fromMass, killVoid, noRefund) {
+	if (typeof map === 'undefined' || map == -1) {
+		if (game.global.lookingAtMap === '') return;
+		map = getMapIndex(game.global.lookingAtMap);
+	}
+	if (map === null) return;
+	var mapObj = game.global.mapsOwnedArray[map];
+	if (game.global.tutorialActive && game.global.tutorialStep < 7 && mapObj && mapObj.name == 'Tricky Paradise') {
+		message("ADVISOR suggests not recycling this map until you've completed it at least three times. Press V or click ADVISOR's gold star for more info.", 'Notices');
+		return;
+	}
+	var loc = 'mapsHere';
+	if (killVoid) {
+		game.global.voidBuff = '';
+		document.getElementById('voidBuff').innerHTML = '';
+	}
+	if (mapObj.location == 'Void') loc = 'voidMapsHere';
+	if (mapObj.noRecycle) {
+		game.global.currentMapId = '';
+		game.global.lastClearedMapCell = -1;
+		game.global.mapGridArray = [];
+		mapsSwitch(true);
+		return;
+	}
+	document.getElementById(loc).removeChild(document.getElementById(mapObj.id));
+	if (game.global.currentMapId == mapObj.id) {
+		game.global.lookingAtMap = '';
+		game.global.currentMapId = '';
+		game.global.lastClearedMapCell = -1;
+	} else if (game.global.lookingAtMap == mapObj.id) game.global.lookingAtMap = '';
+	game.global.mapsOwned--;
+	var refund;
+	if (!killVoid && !noRefund) {
+		refund = getRecycleValue(mapObj.level);
+		game.resources.fragments.owned += refund;
+		const displaySetting = getPageSetting('displayHideAutoButtons');
+		const hideRecycle = displaySetting ? displaySetting.recycleMaps : false;
+		if (!fromMass && !hideRecycle) message('Recycled ' + mapObj.name + ' for ' + prettify(refund) + ' fragments.', 'Notices');
+	}
+	game.global.mapsOwnedArray.splice(map, 1);
+	if (killVoid) {
+		game.global.totalVoidMaps -= mapObj.stacked ? mapObj.stacked + 1 : 1;
+		return;
+	}
+	if (!noRefund) {
+		mapsSwitch(true, true);
+	}
+	return refund;
+}
