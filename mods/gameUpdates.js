@@ -124,6 +124,7 @@ u2Mutations.rewardMutation = function (cell) {
 	if (game.global.desoCompletions > 0) reward *= game.challenges.Desolation.getTrimpMult();
 	if (game.global.challengeActive == 'Daily') reward *= 1 + getDailyHeliumValue(countDailyWeight()) / 100;
 	if (Fluffy.isRewardActive('bigSeeds')) reward *= 10;
+	reward *= u2SpireBonuses.seedDrop();
 	reward = calcHeirloomBonus('Staff', 'SeedDrop', reward);
 	game.global.mutatedSeeds += reward;
 	if (typeof game.global.messages.Loot.seeds === 'undefined') game.global.messages.Loot.seeds = true;
