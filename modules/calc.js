@@ -483,6 +483,37 @@ function getCritMulti(crit, customShield) {
 	return (critChance - 2) * Math.pow(getMegaCritDamageMult(critChance), 2) * critD + (3 - critChance) * getMegaCritDamageMult(critChance) * critD;
 }
 
+function getTenacityTime(worldType = _getWorldType()) {
+	if (game.global.spireActive && worldType === 'world') return 60;
+	let minutes = getZoneMinutes();
+	let lastZone = game.portal.Tenacity.timeLastZone;
+
+	if (lastZone == -1) lastZone = 0;
+	if (lastZone > 120) lastZone = 120;
+	minutes += lastZone * game.portal.Tenacity.getCarryoverMult();
+	if (minutes > 120) minutes = 120;
+
+	return minutes;
+}
+
+function getTenacityBonus(worldType = _getWorldType()) {
+	let time = getTenacityTime(worldType);
+	if (time <= 60) {
+		time *= 10 / 6;
+	} else {
+		time -= 60;
+		time *= 2 / 6;
+		time += 100;
+	}
+
+	return 1.1 + Math.floor(time / 4) * 0.01;
+}
+
+function getTenacityMult(worldType = _getWorldType()) {
+	const bonusAmount = getTenacityBonus(worldType);
+	return Math.pow(Math.max(1.1, bonusAmount), getPerkLevel('Tenacity') + getPerkLevel('Masterfulness'));
+}
+
 function getTrimpAttack(realDamage) {
 	if (realDamage) return game.global.soldierCurrentAttack;
 
@@ -566,7 +597,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 		const damageModifiers = {
 			smithy: () => game.buildings.Smithy.getMult(),
 			hunger: () => game.portal.Hunger.getMult(),
-			tenacity: () => game.portal.Tenacity.getMult(),
+			tenacity: () => getTenacityMult(worldType),
 			spireStats: () => autoBattle.bonuses.Stats.getMult(),
 			championism: () => game.portal.Championism.getMult(),
 			frenzy: () => (getPerkLevel('Frenzy') > 0 && !challengeActive('Berserk') && (autoBattle.oneTimers.Mass_Hysteria.owned || !runningAutoTrimps || getPageSetting('frenzyCalc')) ? 1 + 0.5 * getPerkLevel('Frenzy') : 1),
