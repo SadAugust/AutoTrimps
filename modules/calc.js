@@ -283,7 +283,8 @@ function getTrimpHealth(realHealth, worldType = _getWorldType(), extraItem = new
 			observation: () => game.portal.Observation.getMult(),
 			mutatorHealth: () => (u2Mutations.tree.Health.purchased ? 1.5 : 1),
 			geneHealth: () => (u2Mutations.tree.GeneHealth.purchased ? 10 : 1),
-			spireBasics: () => u2SpireBonuses.basics()
+			spireBasics: () => u2SpireBonuses.basics(),
+			fluffyHealth: () => (Fluffy.isRewardActive('scaledHealth') ? Fluffy.rewardConfig.scaledHealth.mult() : 1)
 		};
 		health = applyMultipliers(healthMultipliers, health);
 
