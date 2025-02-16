@@ -536,6 +536,21 @@ function _autoPortalRegular(challengeName) {
 	return challengeName;
 }
 
+function _checkForPlaguedDaily() {
+	const dailyElem = document.getElementById('specificChallengeDescription');
+	if (!dailyElem || !dailyElem.childNodes[2]) return false;
+
+	const description = dailyElem.childNodes[2];
+	for (item in description.childNodes) {
+		const modifier = description.childNodes[item].innerHTML;
+		if (modifier && modifier.includes('Enemies stack a debuff with each attack, damaging Trimps for')) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function _autoPortalActivate(challenge) {
 	const postPortalRespec = portalPerkCalc();
 
@@ -543,7 +558,13 @@ function _autoPortalActivate(challenge) {
 	if (portalUniverse === 2) {
 		hypoPackratReset(challenge);
 
-		preset = challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation' ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
+		if (game.global.selectedChallenge === 'Daily' && getPageSetting('dailyMutatorPreset') && _checkForPlaguedDaily()) preset = 6;
+		else if (challenge === 'Desolation' && getPageSetting('desolationMutatorPreset')) preset = 5;
+		else if (challenge === 'Wither' && getPageSetting('witherMutatorPreset')) preset = 4;
+		else if (challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation') preset = 3;
+		else if (game.global.selectedChallenge === 'Daily') preset = 2;
+		else preset = 1;
+
 		if (getPageSetting('presetSwapMutators', 2) && JSON.parse(localStorage.getItem('mutatorPresets'))[`Preset ${preset}`] !== '') {
 			u2Mutations.toggleRespec();
 		}

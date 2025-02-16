@@ -176,6 +176,7 @@ function _mutatorRenamePreset() {
 function _mutatorLoadPreset(preset) {
 	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
 	if (!preset) preset = mutatorObj.selectedPreset;
+	if (!mutatorObj[preset]) mutatorObj[preset] = _mutatorDefaultObj()[preset];
 
 	const mutatorList = mutatorObj[preset] ? mutatorObj[preset].mutators : [];
 	const outerRing = [];
@@ -227,6 +228,7 @@ function _mutatorSwapPreset(preset, force = false) {
 	}
 
 	const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+	if (!mutatorObj[preset]) mutatorObj[preset] = _mutatorDefaultObj()[preset];
 	mutatorObj.selectedPreset = preset;
 
 	if (typeof autoTrimpSettings !== 'undefined' && autoTrimpSettings.ATversion.includes('SadAugust')) {
@@ -449,8 +451,9 @@ function _mutatorDefaultObj() {
 		'Preset 3': { mutators: [], purchaseCount: 0, name: 'Preset 3' },
 		'Preset 4': { mutators: [], purchaseCount: 0, name: 'Preset 4' },
 		'Preset 5': { mutators: [], purchaseCount: 0, name: 'Preset 5' },
+		'Preset 6': { mutators: [], purchaseCount: 0, name: 'Preset 6' },
 		selectedPreset: 'Preset 1',
-		titles: ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5']
+		titles: ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5', 'Preset 6']
 	};
 
 	return mutatorObj;
@@ -469,15 +472,18 @@ function _displayMutatorPresets(tooltipDiv) {
 	const presetName = setting[selectedPreset] ? setting[selectedPreset].name || 'Preset 1' : 'Preset 1';
 	const runningAT = !(typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')));
 	const headerTitles = {
-		1: 'This preset will be loaded when portaling into Filler challenges with the Preset Swap Mutators setting enabled.',
-		2: 'This preset will be loaded when portaling into Daily challenges with the Preset Swap Mutators setting enabled.',
-		3: 'This preset will be loaded when portaling into C3 or special challenges (Mayhem, Pandemonium, Desolation) with the Preset Swap Mutators setting enabled.',
-		4: '',
-		5: ''
+		1: 'This preset will be loaded when portaling into Filler challenges if the Preset Swap Mutators setting is enabled.',
+		2: 'This preset will be loaded when portaling into Daily challenges if the Preset Swap Mutators setting is enabled.',
+		3: 'This preset will be loaded when portaling into C3 or special challenges (Mayhem, Pandemonium, Desolation) if the Preset Swap Mutators setting is enabled.',
+		4: 'This preset will be loaded when portaling into the Wither challenge if the Preset Swap Mutators and W: Mutator Preset settings are enabled.',
+		5: 'This preset will be loaded when portaling into the Desolation challenge if both the Preset Swap Mutators and D: Mutator Preset settings are enabled.',
+		6: 'This preset will be loaded when portaling into Daily challenges that have the Plagued modifier if both the Preset Swap Mutators and D: Plagued Mutator Preset settings are enabled.'
 	};
 
 	const preset = setting[selectedPreset] || { mutators: {}, purchaseCount: 0, name: presetName };
-	const headerList = ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5'];
+	const headerList = ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5', 'Preset 6'];
+	let itemCount = 0;
+	const maxItemsInRow = 3;
 
 	const availableSeeds = game.global.mutatedSeeds + game.global.mutatedSeedsSpent;
 	const maxMutators = Math.floor(Math.log2(availableSeeds / 300 + 1));
@@ -488,12 +494,22 @@ function _displayMutatorPresets(tooltipDiv) {
 
 	let tooltipText = '';
 	tooltipText += `<div id='mutatorPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
-	for (const header of headerList) {
-		const titleName = setting[header] ? setting[header].name || header : header;
-		const headerClass = header === selectedPreset ? 'Selected' : 'NotSelected';
-		const escapedTitleName = escapeHtmlAttribute(titleName);
-		const titleText = runningAT ? headerTitles[Number(header.replace(/\D/g, ''))] : '';
-		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='mutatorHeader mutatorHeader${headerClass}' onclick='_mutatorSwapPreset("${header}")'  data-hidden-name="${header}" title="${titleText}"><b>${escapedTitleName}</b></div>`;
+
+	while (itemCount < headerList.length) {
+		const itemsInRow = Math.min(maxItemsInRow, headerList.length - itemCount);
+		const widthStyle = `width: calc((100% - ${0.2 + 0.2 * itemsInRow}em - 6px) / ${itemsInRow});`;
+
+		for (let i = 0; i < itemsInRow; i++) {
+			const header = headerList[itemCount];
+			const titleName = setting[header] ? setting[header].name || header : header;
+			const headerClass = header === selectedPreset ? 'Selected' : 'NotSelected';
+			const escapedTitleName = escapeHtmlAttribute(titleName);
+			const titleText = runningAT ? headerTitles[Number(header.replace(/\D/g, ''))] : '';
+			tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" class='mutatorHeader mutatorHeader${headerClass}' onclick='_mutatorSwapPreset("${header}")'  data-hidden-name="${header}" title="${titleText}"><b>${escapedTitleName}</b></div>`;
+			itemCount++;
+		}
+
+		tooltipText += `<br>`;
 	}
 
 	tooltipText += `</div>`;

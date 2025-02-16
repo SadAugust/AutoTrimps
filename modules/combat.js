@@ -314,7 +314,8 @@ function _checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType) {
 	const mapObject = mapping ? getCurrentMapObject() : { level: game.global.world, difficulty: 1 };
 	const ourEqualityModifier = game.portal.Equality.getModifier(1);
 	const currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
-	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
+	const stormMultiplier = !mapping && challengeActive('Storm') && game.challenges.Storm.mutations > 0 ? game.challenges.Storm.getGammaMult() : 1;
+	const gammaDmg = MODULES.heirlooms.gammaBurstPct * stormMultiplier;
 	const avgTrimpAttack = ourDmg * Math.pow(ourEqualityModifier, equalityQuery(enemy.name, mapObject.level, currentCell, worldType, mapObject.difficulty, 'gamma')) * gammaDmg;
 	const timeToKill = enemy.health / avgTrimpAttack;
 
@@ -463,7 +464,8 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	const maxEquality = getPerkLevel('Equality');
 	const shouldPlagueSwap = _shouldPBSwap(mapping, enemy, fastEnemy);
 
-	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
+	const stormMultiplier = !mapping && challengeActive('Storm') && game.challenges.Storm.mutations > 0 ? game.challenges.Storm.getGammaMult() : 1;
+	const gammaDmg = MODULES.heirlooms.gammaBurstPct * stormMultiplier;
 	const gammaMaxStacksCheck = _getGammaMaxStacks(worldType);
 	const gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	let disableDamageAmps = false;

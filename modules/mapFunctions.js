@@ -3980,6 +3980,7 @@ function dailyModiferReduction() {
 			if (dailyReduction > dailyReductionTemp) dailyReduction = dailyReductionTemp;
 		}
 	}
+
 	return dailyReduction;
 }
 

@@ -335,12 +335,15 @@ function initialiseAllSettings() {
 			function () {
 				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
 				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
-				const titles = [mutatorObj['Preset 1'].name, mutatorObj['Preset 2'].name, mutatorObj['Preset 3'].name]
+				const titles = mutatorObj.titles;
 
 				let description = "<p>Will automatically load the preset that corresponds to your run type when Auto Portaling.</p>";
-				description += `<p>Preset 1 ${titles[0] !== 'Preset 1' ? "("+mutatorObj['Preset 1'].name +")" : ''} will be loaded when portaling into Filler challenges.</p>`;
-				description += `<p>Preset 2 ${titles[1] !== 'Preset 2' ? "("+mutatorObj['Preset 2'].name +")" : ''} will be loaded when portaling into Daily challenges.</p>`;
-				description += `<p>Preset 3 ${titles[2] !== 'Preset 3' ? "("+mutatorObj['Preset 3'].name +")" : ''} will be loaded when portaling into " + _getSpecialChallengeDescription() + " challenges.</p>`;
+				description += `<p>Preset 1${titles[0] !== 'Preset 1' ? " (" + titles[0] + ")" : ''} will be loaded when portaling into <b>Filler</b> challenges.</p>`;
+				description += `<p>Preset 2${titles[1] !== 'Preset 2' ? " (" + titles[1] + ")" : ''} will be loaded when portaling into <b>Daily</b> challenges.</p>`;
+				description += `<p>Preset 3${titles[2] !== 'Preset 3' ? " (" + titles[2] + ")" : ''} will be loaded when portaling into <b>${_getSpecialChallengeDescription()}</b> challenges.</p>`;
+				description += `<p>Preset 4${titles[3] !== 'Preset 4' ? " (" + titles[3] + ")" : ''} will be loaded when portaling into <b>Wither</b> if the <b>W: Mutator Preset</b> setting is enabled.</p>`;
+				description += `<p>Preset 5${titles[4] !== 'Preset 5' ? " (" + titles[4] + ")" : ''} will be loaded when portaling into <b>Desolation</b> if the <b>D: Mutator Preset</b> setting is enabled.</p>`;
+				description += `<p>Preset 6${titles[5] && titles[5] !== 'Preset 6' ? " (" + titles[5] + ")" : ''} will be loaded when portaling into <b>Daily</b> challenges that have the <b>Plagued</b> modifier if the <b>D: Plagued Mutator Preset</b> setting is enabled.</p>`;
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [2],
@@ -532,8 +535,8 @@ function initialiseAllSettings() {
 			function () { return ('Swap To Next Universe') },
 			function () {
 				let description = "<p>Will automatically swap to the next available universe when auto portaling.</p>";
-				description += "<p><b>You <b>must</b> have Auto Portal setup in both the current <b>and</b> following universe or Auto Portal will contiunue to portal into your current universe.</p>";
-				description += "<p><b>If enabled in all available universes it will portal into universe 1.</p>";
+				description += "<p>You <b>must</b> have Auto Portal setup in both the current <b>and</b> following universe or Auto Portal will contiunue to portal into your current universe.</p>";
+				description += "<p><b>If enabled in all available universes it will portal into Universe 1</b>.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2],
@@ -2516,14 +2519,17 @@ function initialiseAllSettings() {
 			}, 'textValue', 'undefined', null, 'C2', [2],
 			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
 
-		/* createSetting('witherMutatorPreset',
-			function () { return ('W: Muatator Preset') },
+		createSetting('witherMutatorPreset',
+			function () { return ('W: Mutator Preset') },
 			function () {
-				let description = "<p>Will display an additional mutator preset when enabled.</p>";
-				description += "<p>This will override <b>Preset Swap Mutators</b> selecting other mutator presets when in the <b>Wither</b> challenge!</p>"
+				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
+
+				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when Auto Portaling into <b>Wither</b> it will load Preset 4${mutatorObj['Preset 4'].name !== 'Preset 4' ? " (" + mutatorObj['Preset 4'].name + ")" : ''}.</p>`;
+				description += "<p>Due to Overkill being disabled in this challenge it's wise to go for minimal overkill mutations during it.</p>"
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) }); */
+			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
 
 		createSetting('quest',
 			function () { return ('Quest') },
@@ -2905,8 +2911,17 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', atConfig.settingUniverse) && autoTrimpSettings.desolation.require()) });
 
+		createSetting('desolationStaff',
+			function () { return ('D: World Staff') },
+			function () {
+				let description = "<p>The name of the staff you would like to equip while not mapping during Desolation.</p>";
+				description += "<p><b>Should ideally be a full efficiency and fragment drop staff.</b></p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'C2', [2],
+			function () { return (getPageSetting('desolation', atConfig.settingUniverse) && autoTrimpSettings.desolation.require()) });
+
 		createSetting('desolationSwapZone',
-			function () { return ('D: Heirloom Swap') },
+			function () { return ('D: Heirloom Swap Zone') },
 			function () {
 				let description = "<p>The zone you'd like to swap to your afterpush shield on Desolation.</p>";
 				description += "<p>This overrides the " + _getChallenge2Info() + " heirloom swap setting input when set above <b>0</b>.</p>";
@@ -2924,6 +2939,18 @@ function initialiseAllSettings() {
 				description += `<p><b>M: Portal On Finish: After Voids</b><br>When you finish the challenge, this will run void maps then Auto Portal.</p>`;
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [2],
+			function () { return (getPageSetting('desolation', atConfig.settingUniverse) && autoTrimpSettings.desolation.require()) });
+
+		createSetting('desolationMutatorPreset',
+			function () { return ('D: Mutator Preset') },
+			function () {
+				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
+
+				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when Auto Portaling into <b>Desolation</b> it will load Preset 5${mutatorObj['Preset 5'].name !== 'Preset 5' ? " (" + mutatorObj['Preset 5'].name + ")" : ''}.</p>`;
+				description += "<p>Due to liquification being important for the start of this challenge to reach Explorers faster it can be wise to go for full liquification mutations during it.</p>"
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', atConfig.settingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		createSetting('desolationSettings',
@@ -3015,6 +3042,18 @@ function initialiseAllSettings() {
 			}, 'boolean', true, null, 'Daily', [2],
 			function () { return (getPageSetting('equalityManagement') === 2) });
 
+		createSetting('dailyMutatorPreset',
+			function () { return ('D: Plagued Mutator Preset') },
+			function () {
+				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
+
+				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when Auto Portaling into <b>Daily</b> challenges that have the <b>Plagued</b> modifier it will load Preset 6${mutatorObj['Preset 6'] && mutatorObj['Preset 6'].name !== 'Preset 6' ? " (" + mutatorObj['Preset 6'].name + ")" : ''}.</p>`;
+				description += "<p>Due to overkill (when it can reach z300) being important to clearing the Spire faster than the Plagued debuff kills you it can be beneficial to go for full overkill and liquification mutations during them.</p>"
+				return description;
+			}, 'boolean', false, null, 'Daily', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 270) });
+			
 		createSetting('mapOddEvenIncrement',
 			function () { return ('Odd/Even Increment') },
 			function () {
@@ -5489,7 +5528,7 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperRespec', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherShield', 'questSmithySpire', 'mayhemAutoPortal', 'stormStacks', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperRespec', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherMutatorPreset', 'questSmithySpire', 'mayhemAutoPortal', 'stormStacks', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressed', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
