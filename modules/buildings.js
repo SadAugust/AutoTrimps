@@ -531,7 +531,7 @@ function _buyMicrochip() {
  * Buys antenna if possible. For the radon universe.
  */
 function _buyAntenna(buildingSettings) {
-	if (game.buildings.Antenna.locked || !buildingSettings.Antenna || !buildingSettings.Antenna.enabled) return;
+	if (game.buildings.Antenna.locked || !buildingSettings.Antenna || !buildingSettings.Antenna.enabled || mapSettings.ancientTreasure) return;
 
 	const antennaAmt = buildingSettings.Antenna.buyMax === 0 ? Infinity : buildingSettings.Antenna.buyMax;
 	const antennaPct = buildingSettings.Antenna.percent / 100;
