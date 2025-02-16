@@ -622,7 +622,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 			Revenge: () => game.challenges.Revenge.getMult(),
 			Quest: () => game.challenges.Quest.getAttackMult(),
 			Archaeology: () => game.challenges.Archaeology.getStatMult('attack'),
-			Storm: () => (worldType === 'world' ? Math.pow(0.9995, game.challenges.Storm.beta) : 1),
+			Storm: () => (worldType !== 'world' ? Math.pow(0.9995, game.challenges.Storm.beta) : 1),
 			Berserk: () => game.challenges.Berserk.getAttackMult(),
 			Nurture: () => game.challenges.Nurture.getStatBoost(),
 			Alchemy: () => alchObj.getPotionEffect('Potion of Strength'),
