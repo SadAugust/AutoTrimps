@@ -48,6 +48,11 @@
     - Have it check the difference between 2 results and if it's within a few % use the current map
         - https://discord.com/channels/371177798305447938/371348913036197899/1187243707594977330
 
+2. Misc Requests
+
+    - feature addon request: I saw that "ignore recycled maps" messages got added, which is nice. (it's under "hide automation buttons" though, but I did read patch notes). Maybe also hide challenge specific book ignores? Like speedmining in a lot of challenges, breed in trap, etc
+        - https://discord.com/channels/371177798305447938/371348913036197899/1340780167408390155
+
 # Help Window
 
 1. Auto Gather decision making

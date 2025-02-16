@@ -850,6 +850,8 @@ function _runTributeFarm(setting, mapName, settingName, settingIndex) {
 		mappingDetails(mapName, mapLevel, mapSpecial, tributeGoal, meteorologistGoal);
 		resetMapVars(setting, settingName);
 		if (game.global.mapsActive) recycleMap_AT();
+	} else if (!shouldMap && setting.mapType === 'Absolute') {
+		resetMapVars(setting, settingName);
 	}
 
 	const status = tributeGoal > game.buildings.Tribute.owned ? `Tribute Farm: ${game.buildings.Tribute.owned}/${tributeGoal}` : `Meteorologist Farm: ${game.jobs.Meteorologist.owned}/${meteorologistGoal}`;
