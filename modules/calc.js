@@ -621,7 +621,7 @@ function calcOurDmg(minMaxAvg = 'avg', universeSetting, realDamage = false, worl
 			Revenge: () => game.challenges.Revenge.getMult(),
 			Quest: () => game.challenges.Quest.getAttackMult(),
 			Archaeology: () => game.challenges.Archaeology.getStatMult('attack'),
-			Storm: () => (game.global.mapsActive ? Math.pow(0.9995, game.challenges.Storm.beta) : 1),
+			Storm: () => (worldType === 'world' ? Math.pow(0.9995, game.challenges.Storm.beta) : 1),
 			Berserk: () => game.challenges.Berserk.getAttackMult(),
 			Nurture: () => game.challenges.Nurture.getStatBoost(),
 			Alchemy: () => alchObj.getPotionEffect('Potion of Strength'),
@@ -810,7 +810,7 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 			Wither: () => game.challenges.Wither.getEnemyAttackMult(),
 			Archaeology: () => game.challenges.Archaeology.getStatMult('enemyAttack'),
 			Mayhem: () => game.challenges.Mayhem.getEnemyMult() * (worldType === 'world' ? game.challenges.Mayhem.getBossMult() : 1),
-			Storm: () => (!game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1),
+			Storm: () => (worldType === 'world' ? game.challenges.Storm.getAttackMult() : 1),
 			Berserk: () => 1.5,
 			Exterminate: () => game.challenges.Exterminate.getSwarmMult(),
 			Nurture: () => 2 * game.buildings.Laboratory.getEnemyMult(),
@@ -1128,6 +1128,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	}
 
 	if ((worldType !== 'map' && game.global.universe === 2 && universeSetting < getPerkLevel('Equality') - 14) || game.global.universe === 1) ourBaseDamage *= MODULES.heirlooms.gammaBurstPct;
+	if (worldType !== 'map' && challengeActive('Storm') && game.challenges.Storm.mutations > 0) ourBaseDamage *= game.challenges.Storm.getGammaMult();
 
 	if (checkOutputs) _calcHDRatioDebug(ourBaseDamage, enemyHealth, universeSetting, worldType);
 
