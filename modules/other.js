@@ -1388,7 +1388,7 @@ function alterHeirloomWindow() {
 			id: `heirloomSwappingBtn`,
 			style: '',
 			class: 'pointer noselect heirBtn heirInfo settingBtntrue',
-			onclick: 'settingChanged("heirloom", true)',
+			onclick: 'settingChanged("heirloomSwapping", true)',
 			onmouseover: `tooltip("Toggle Auto Heirlooms", "customText", event, "${description}")`,
 			onmouseout: 'tooltip("hide")'
 		});
