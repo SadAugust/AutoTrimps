@@ -337,7 +337,7 @@ function initialiseAllSettings() {
 				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
 				const titles = mutatorObj.titles;
 
-				let description = "<p>Will automatically load the preset that corresponds to your run type when Auto Portaling.</p>";
+				let description = "<p>Will automatically load the preset that corresponds to your run type when portaling.</p>";
 				description += `<p>Preset 1${titles[0] !== 'Preset 1' ? " (" + titles[0] + ")" : ''} will be loaded when portaling into <b>Filler</b> challenges.</p>`;
 				description += `<p>Preset 2${titles[1] !== 'Preset 2' ? " (" + titles[1] + ")" : ''} will be loaded when portaling into <b>Daily</b> challenges.</p>`;
 				description += `<p>Preset 3${titles[2] !== 'Preset 3' ? " (" + titles[2] + ")" : ''} will be loaded when portaling into <b>${_getSpecialChallengeDescription()}</b> challenges.</p>`;
@@ -2525,7 +2525,7 @@ function initialiseAllSettings() {
 				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
 				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
 
-				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when Auto Portaling into <b>Wither</b> it will load Preset 4${mutatorObj['Preset 4'].name !== 'Preset 4' ? " (" + mutatorObj['Preset 4'].name + ")" : ''}.</p>`;
+				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when portaling into <b>Wither</b> it will load Preset 4${mutatorObj['Preset 4'].name !== 'Preset 4' ? " (" + mutatorObj['Preset 4'].name + ")" : ''}.</p>`;
 				description += "<p>Due to Overkill being disabled in this challenge it's wise to go for minimal overkill mutations during it.</p>"
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
@@ -2947,7 +2947,7 @@ function initialiseAllSettings() {
 				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
 				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
 
-				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when Auto Portaling into <b>Desolation</b> it will load Preset 5${mutatorObj['Preset 5'].name !== 'Preset 5' ? " (" + mutatorObj['Preset 5'].name + ")" : ''}.</p>`;
+				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when portaling into <b>Desolation</b> it will load Preset 5${mutatorObj['Preset 5'].name !== 'Preset 5' ? " (" + mutatorObj['Preset 5'].name + ")" : ''}.</p>`;
 				description += "<p>Due to liquification being important for the start of this challenge to reach Explorers faster it can be wise to go for full liquification mutations during it.</p>"
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
@@ -3048,7 +3048,7 @@ function initialiseAllSettings() {
 				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
 				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
 
-				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when Auto Portaling into <b>Daily</b> challenges that have the <b>Plagued</b> modifier it will load Preset 6${mutatorObj['Preset 6'] && mutatorObj['Preset 6'].name !== 'Preset 6' ? " (" + mutatorObj['Preset 6'].name + ")" : ''}.</p>`;
+				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when portaling into <b>Daily</b> challenges that have the <b>Plagued</b> modifier it will load Preset 6${mutatorObj['Preset 6'] && mutatorObj['Preset 6'].name !== 'Preset 6' ? " (" + mutatorObj['Preset 6'].name + ")" : ''}.</p>`;
 				description += "<p>Due to overkill (when it can reach z300) being important to clearing the Spire faster than the Plagued debuff kills you it can be beneficial to go for full overkill and liquification mutations during them.</p>"
 				return description;
 			}, 'boolean', false, null, 'Daily', [2],

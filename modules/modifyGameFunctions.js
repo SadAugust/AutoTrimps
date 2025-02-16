@@ -304,6 +304,39 @@ if (typeof originalActivateClicked !== 'function') {
 	};
 }
 
+if (typeof originalActivatePortal !== 'function') {
+	var originalActivatePortal = activatePortal;
+	activatePortal = function () {
+		const mutatorSetting = getPageSetting('presetSwapMutators', 2);
+		let preset = 0;
+		if (portalUniverse === 2) {
+			const challenge = game.global.selectedChallenge;
+
+			if (challenge === 'Daily' && getPageSetting('dailyMutatorPreset') && _checkForPlaguedDaily()) preset = 6;
+			else if (challenge === 'Desolation' && getPageSetting('desolationMutatorPreset')) preset = 5;
+			else if (challenge === 'Wither' && getPageSetting('witherMutatorPreset')) preset = 4;
+			else if (challengeSquaredMode || ['Mayhem', 'Pandemonium', 'Desolation'].includes(challenge)) preset = 3;
+			else if (challenge === 'Daily') preset = 2;
+			else preset = 1;
+
+			if (!u2Mutations.respecOnPortal && mutatorSetting) {
+				const mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
+
+				if (mutatorObj[`Preset ${preset}`] && mutatorObj[`Preset ${preset}`].mutators.length > 0) {
+					u2Mutations.toggleRespec();
+				}
+			}
+		}
+
+		originalActivatePortal(...arguments);
+
+		if (u2Mutations.open && mutatorSetting) {
+			_mutatorLoadPreset(`Preset ${preset}`);
+			u2Mutations.closeTree();
+		}
+	};
+}
+
 if (typeof originalCheckAchieve !== 'function') {
 	originalCheckAchieve = checkAchieve;
 	checkAchieve = function () {

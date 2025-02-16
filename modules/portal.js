@@ -558,13 +558,6 @@ function _autoPortalActivate(challenge) {
 	if (portalUniverse === 2) {
 		hypoPackratReset(challenge);
 
-		if (game.global.selectedChallenge === 'Daily' && getPageSetting('dailyMutatorPreset') && _checkForPlaguedDaily()) preset = 6;
-		else if (challenge === 'Desolation' && getPageSetting('desolationMutatorPreset')) preset = 5;
-		else if (challenge === 'Wither' && getPageSetting('witherMutatorPreset')) preset = 4;
-		else if (challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation') preset = 3;
-		else if (game.global.selectedChallenge === 'Daily') preset = 2;
-		else preset = 1;
-
 		if (getPageSetting('presetSwapMutators', 2) && JSON.parse(localStorage.getItem('mutatorPresets'))[`Preset ${preset}`] !== '') {
 			u2Mutations.toggleRespec();
 		}
@@ -580,11 +573,6 @@ function _autoPortalActivate(challenge) {
 	resetVarsZone(true);
 	_setButtonsPortal();
 	setupAddonUser(true);
-
-	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
-		_mutatorLoadPreset(`Preset ${preset}`);
-		u2Mutations.closeTree();
-	}
 
 	if (postPortalRespec && (challengeActive('Trapper') || challengeActive('Trappapalooza'))) {
 		viewPortalUpgrades();
