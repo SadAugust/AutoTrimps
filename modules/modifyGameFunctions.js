@@ -362,7 +362,7 @@ if (typeof originalFadeIn !== 'function') {
 function suicideTrimps() {
 	//Throw this in so that if GS updates anything in there it won't cause AT to fuck with it till I can check it out
 	//Check out mapsClicked(confirmed) && mapsSwitch(updateOnly, fromRecycle) patch notes for any changes to this section!
-	if (game.global.stringVersion > '5.9.5') {
+	if (game.global.stringVersion > '5.10.5') {
 		mapsClicked();
 		return;
 	}
@@ -384,7 +384,6 @@ function suicideTrimps() {
 	if (game.global.novaMutStacks > 0) u2Mutations.types.Nova.drawStacks();
 	if (challengeActive('Smithless')) game.challenges.Smithless.drawStacks();
 
-	game.global.mapCounterGoal = 0;
 	game.global.titimpLeft = 0;
 	game.global.fighting = false;
 	game.global.switchToMaps = false;
