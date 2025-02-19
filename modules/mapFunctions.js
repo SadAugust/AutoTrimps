@@ -3850,6 +3850,7 @@ function fragmentFarm() {
 		return;
 	}
 
+	const debugMessage = MODULES.maps.fragmentFarming;
 	MODULES.maps.fragmentFarming = true;
 	//Purchase fragment farming map if we're in map chamber. If you don't have enough fragments for this map then RIP
 	if (!game.global.preMapsActive) return;
@@ -3865,13 +3866,13 @@ function fragmentFarm() {
 			buyMap();
 			mapCheck = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1];
 		} else {
-			debug(`Not enough fragments to purchase fragment farming map. Waiting for fragments. If you don't have explorers then you will have to manually disable auto maps and continue.`, 'maps');
+			if (!debugMessage) debug(`Not enough fragments to purchase fragment farming map. Waiting for fragments. If you don't have explorers then you will have to manually disable auto maps and continue.`, 'maps');
 			return;
 		}
 	}
 
 	selectMap(mapCheck.id);
-	debug(`Fragment farming for ${prettify(fragmentsNeeded)} fragments.`, 'map_Details');
+	if (!debugMessage) debug(`Fragment farming for ${prettify(fragmentsNeeded)} fragments. Currently at ${prettify(game.resources.fragments.owned)}.`, 'map_Details');
 	runMap();
 
 	if (!game.global.repeatMap) repeatClicked();

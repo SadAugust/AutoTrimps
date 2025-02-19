@@ -312,9 +312,9 @@ if (typeof originalActivatePortal !== 'function') {
 		if (portalUniverse === 2) {
 			const challenge = game.global.selectedChallenge;
 
-			if (challenge === 'Daily' && getPageSetting('dailyMutatorPreset') && _checkForPlaguedDaily()) preset = 6;
-			else if (challenge === 'Desolation' && getPageSetting('desolationMutatorPreset')) preset = 5;
-			else if (challenge === 'Wither' && getPageSetting('witherMutatorPreset')) preset = 4;
+			if (challenge === 'Daily' && getPageSetting('dailyMutatorPreset', portalUniverse) && _checkForPlaguedDaily()) preset = 6;
+			else if (challenge === 'Desolation' && getPageSetting('desolationMutatorPreset', portalUniverse)) preset = 5;
+			else if (challenge === 'Wither' && getPageSetting('witherMutatorPreset', portalUniverse)) preset = 4;
 			else if (challengeSquaredMode || ['Mayhem', 'Pandemonium', 'Desolation'].includes(challenge)) preset = 3;
 			else if (challenge === 'Daily') preset = 2;
 			else preset = 1;

@@ -343,7 +343,6 @@ function _autoPortalVoidTracker() {
 	downloadSave();
 	if (typeof Graphs !== 'undefined' && typeof Graphs.Push !== 'undefined' && typeof Graphs.Push.zoneData === 'function') Graphs.Push.zoneData();
 	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
-	autoUpgradeHeirlooms();
 
 	const trackerValue = owned === 10 ? Math.floor(tracker / 10) : tracker / 10;
 	if (challengeSquaredMode) toggleChallengeSquared();
@@ -567,8 +566,8 @@ function _autoPortalActivate(challenge) {
 	downloadSave();
 	if (typeof Graphs !== 'undefined' && typeof Graphs.Push !== 'undefined' && typeof Graphs.Push.zoneData === 'function') Graphs.Push.zoneData();
 	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
-	autoUpgradeHeirlooms();
 	activatePortal();
+	autoUpgradeHeirlooms();
 
 	resetVarsZone(true);
 	_setButtonsPortal();

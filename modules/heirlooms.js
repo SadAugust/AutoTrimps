@@ -175,122 +175,114 @@ function updateShieldData() {
 function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdCheck = true, sendingArmy = false) {
 	if (!getPageSetting('heirloomSwapping') || !getPageSetting('heirloomShield')) return;
 
-	const afterpushShield = trimpStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
-	//If we are slow scumming and we are on an ODD cell then equip afterpush shield otherwise equip initial shield
+	const currChallenge = game.global.challengeActive.toLowerCase();
+	const dontSwapChallenges = ['trapper', 'trappapalooza'].includes(currChallenge) || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20);
+	const afterpushShield = trimpStats.isC3 && getPageSetting('heirloomC3') !== 'undefined' ? 'heirloomC3' : 'heirloomAfterpush';
+	/* if slow scumming and on an odd cell then equip Afterpush shield otherwise equip Initial shield */
 	if (MODULES.maps.slowScumming && mapType === 'map') {
-		if ((game.global.lastClearedMapCell + 1) % 2 === 0 || game.global.lastClearedMapCell === getCurrentMapObject().size - 2) return afterpushShield;
+		if ((game.global.lastClearedMapCell + 1) % 2 === 0 || game.global.lastClearedMapCell === MODULES.maps.lastMapWeWereIn.size - 2) return afterpushShield;
 		else return 'heirloomInitial';
 	}
 
-	/* challenge shields */
-	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== 'undefined') return 'duelShield';
-	else if (noBreedChallenge() && getPageSetting('trapper') && getPageSetting('trapperShield') !== 'undefined') return 'trapperShield';
+	/* challenge shields. */
+	if (noBreedChallenge() && getPageSetting('trapper') && getPageSetting('trapperShield') !== 'undefined') return 'trapperShield';
 	else if (challengeActive('Wither') && getPageSetting('wither') && getPageSetting('witherShield') !== 'undefined') return 'witherShield';
 
+	/* breed shield */
 	if (swapLooms && game.global.soldierHealth <= 0 && !sendingArmy && getPerkLevel('Anticipation') === 0 && !noBreedChallenge() && _breedTimeRemaining() > 0) {
 		if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') return 'archaeologyBreedShield';
 		if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
 	}
 
-	const currChallenge = game.global.challengeActive.toLowerCase();
-
-	//Identify the swap zone for shield swapping.
-	//1) If we are running frigid/mayhem/panda/deso and the challenge is active then use the challenges swap zone.
-	//2) If we are in a C2/C3 then use the C3 swap zone.
-	//3) If we are running a daily then use the daily swap zone.
-	//4) Otherwise if in a filler use regular swap zone.
-
-	let swapZone =
-		trimpStats.isC3 && (currChallenge === 'frigid' || currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0
-			? getPageSetting(currChallenge + 'SwapZone')
-			: trimpStats.isC3
-			? getPageSetting('heirloomSwapZoneC3')
-			: trimpStats.isDaily
-			? getPageSetting('heirloomSwapZoneDaily')
-			: trimpStats.isOneOff
-			? getPageSetting('heirloomSwapZoneOneOff')
-			: trimpStats.isFiller
-			? getPageSetting('heirloomSwapZone')
-			: 999;
-
-	if (swapZone <= 0) swapZone = 999;
-
-	//If we have the post void heirloom swap setting enabled and have already run void maps run this swap to afterpush shield until the end of the run
-	if (getPageSetting('heirloomPostVoidSwap') && game.stats.totalVoidMaps.value > 0) swapZone = 0;
-	//If we have the daily odd or even setting enabled and the negative daily mod is active then add one to our swap zone
-	if (trimpStats.daily) {
-		const dailyModifiers = dailyOddOrEven();
-		if (dailyModifiers.active && swapZone % 2 === dailyModifiers.remainder) swapZone += 1;
-	}
-
-	//Challenges where abandoning your current army has the potential to be REALLY bad.
-	const dontSwap = currChallenge === 'trapper' || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20) || currChallenge === 'trappapalooza';
 	if (swapLooms) {
-		//Disable Shield swapping if on a dontSwap challenge and our army is still fighting or has health remaining.
-		if (dontSwap && (game.global.fighting || game.global.soldierHealthRemaining > 0)) return;
+		if (dontSwapChallenges && (game.global.fighting || game.global.soldierHealthRemaining > 0)) return;
 		if (!shouldAbandon(false)) return;
 		if (mapType === 'map' && swapLooms) MODULES.heirlooms.plagueSwap = false;
 	}
 
-	if (mapType === 'world' && !dontSwap) {
-		const swapHD = getPageSetting('heirloomSwapHD');
-		if (hdCheck && swapHD > 0 && hdStats.hdRatioHeirloom >= swapHD && shouldAbandon(false)) swapZone = game.global.world;
+	let swapZone = 999;
+	const hdSwapCheck = mapType === 'world' && !dontSwapChallenges && hdCheck && getPageSetting('heirloomSwapHD') > 0;
+	if (hdSwapCheck && hdStats.hdRatioHeirloom >= getPageSetting('heirloomSwapHD') && shouldAbandon(false)) swapZone = 1;
+	else if (game.stats.totalVoidMaps.value > 0 && getPageSetting('heirloomPostVoidSwap')) swapZone = 1;
+	else if (trimpStats.isC3 && ['frigid', 'mayhem', 'pandemonium', 'desolation'].includes(currChallenge) && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0) swapZone = getPageSetting(currChallenge + 'SwapZone');
+	else if (trimpStats.isC3) swapZone = getPageSetting('heirloomSwapZoneC3');
+	else if (trimpStats.isOneOff) swapZone = getPageSetting('heirloomSwapZoneOneOff');
+	else if (trimpStats.isFiller) swapZone = getPageSetting('heirloomSwapZone');
+	else if (trimpStats.isDaily) {
+		swapZone = getPageSetting('heirloomSwapZoneDaily');
+		const dailyModifiers = dailyOddOrEven();
+		if (swapZone > 0 && dailyModifiers.active && swapZone % 2 === dailyModifiers.remainder) swapZone += 1;
+	}
 
-		const compressedSwap = getPageSetting('heirloomCompressedSwap');
-		if (game.global.universe === 2 && compressedSwap && game.global.world >= 201 && game.global.lastClearedCell < 96 && !challengeActive('Wither')) {
-			if (getPageSetting('heirloomSwapHDCompressed') > 0 && game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1) {
-				//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
-				if (hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') || MODULES.heirlooms.plagueSwap) {
-					swapZone = game.global.world;
-					MODULES.heirlooms.plagueSwap = true;
-				} else {
-					MODULES.heirlooms.plagueSwap = false;
-				}
+	if (swapZone <= 0) swapZone = 999;
+	const aboveSwapZone = game.global.world >= swapZone;
+	let plagueSwapInitialEnemy = false;
+
+	if (mapType === 'world' && !dontSwapChallenges) {
+		const compressedCheck = game.global.universe === 2 && game.global.world >= 201 && game.global.lastClearedCell < 96 && getPageSetting('heirloomCompressedSwap');
+		if (compressedCheck) {
+			const compressedHD = getPageSetting('heirloomSwapHDCompressed');
+			if ((compressedHD > 0 || aboveSwapZone) && game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1) {
+				MODULES.heirlooms.plagueSwap = hdStats.hdRatio >= compressedHD || aboveSwapZone || MODULES.heirlooms.plagueSwap;
 			} else {
 				MODULES.heirlooms.plagueSwap = false;
 			}
-			//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
-			if (game.global.world >= swapZone && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) {
-				swapZone = 999;
+
+			if (aboveSwapZone && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) {
+				plagueSwapInitialEnemy = true;
 			}
 		} else {
 			MODULES.heirlooms.plagueSwap = false;
 		}
 	}
 
-	let voidActive = mapType === 'void';
+	const voidActive = mapType === 'void';
 	if (voidActive && swapLooms) {
-		//const fastChallenges = !challengeActive('Glass') && !challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20 && !challengeActive('Archaeology') && !challengeActive('Quest') && getCurrentQuest() !== 8;
-		MODULES.heirlooms.plagueSwap =
-			game.global.universe === 2 &&
-			game.global.voidBuff &&
-			getPageSetting('heirloomVoidSwap') &&
-			!challengeActive('Glass') &&
-			!challengeActive('Berserk') &&
-			!game.challenges.Berserk.weakened !== 20 &&
-			!challengeActive('Archaeology') &&
-			!challengeActive('Quest') &&
-			getCurrentQuest() !== 8 &&
-			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
-			!atData.fightInfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
-			atData.fightInfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
-			game.global.voidBuff !== 'doubleAttack';
+		MODULES.heirlooms.plagueSwap = game.global.universe === 2 && game.global.voidBuff && game.global.voidBuff !== 'doubleAttack' && getPageSetting('heirloomVoidSwap');
+		MODULES.heirlooms.plagueSwap = MODULES.heirlooms.plagueSwap && game.global.mapsActive && game.global.lastClearedMapCell !== MODULES.maps.lastMapWeWereIn.size - 2;
+
+		if (MODULES.heirlooms.plagueSwap) {
+			const fastImps = atData.fightInfo.fastImps;
+			const currentCell = game.global.mapGridArray[game.global.lastClearedMapCell + 1];
+			const nextCell = game.global.mapGridArray[game.global.lastClearedMapCell + 2];
+			const thirdCell = game.global.mapGridArray[game.global.lastClearedMapCell + 3];
+
+			MODULES.heirlooms.plagueSwap = !fastImps.includes(currentCell.name) && fastImps.includes(nextCell.name);
+			plagueSwapInitialEnemy = thirdCell && !fastImps.includes(nextCell.name) && fastImps.includes(thirdCell.name);
+		}
 	}
 
-	if (voidActive && (getPageSetting('heirloomVoid') !== 'undefined' || (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== 'undefined'))) {
-		if (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== 'undefined') return 'heirloomVoidPlaguebringer';
-		else return 'heirloomVoid';
+	if (MODULES.heirlooms.plagueSwap || plagueSwapInitialEnemy) {
+		if (dontSwapChallenges || challengeActive('Glass') || challengeActive('Archaeology') || challengeActive('Wither')) MODULES.heirlooms.plagueSwap = plagueSwapInitialEnemy = false;
+		else if (challengeActive('Berserk') && game.challenges.Berserk.weakened !== 20) MODULES.heirlooms.plagueSwap = plagueSwapInitialEnemy = false;
+		else if (challengeActive('Quest') && getCurrentQuest() === 8) MODULES.heirlooms.plagueSwap = plagueSwapInitialEnemy = false;
 	}
-	//Return initial shield if we are in a void map and are going to plaguebringer scum the cell after next
-	//This is a backup for if the void shield setting have not been properly setup.
-	if (voidActive && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomInitial') !== 'undefined') return 'heirloomInitial';
-	//Run afterpush (c3 if running one) shield if we are in a map or a void.
-	else if (getPageSetting(afterpushShield) !== 'undefined' && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap')) return afterpushShield;
-	else if (getPageSetting('heirloomSpire') !== 'undefined' && isDoingSpire()) return 'heirloomSpire';
-	else if (game.global.formation === 5 && getPageSetting('heirloomWindStack') !== 'undefined') return 'heirloomWindStack';
-	else if (game.global.universe === 2 && mapType === 'world' && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomCompressed') !== 'undefined' && heirloomModSearch('heirloomCompressed', 'plaguebringer') > 0) return 'heirloomCompressed';
-	else if (getPageSetting(afterpushShield) !== 'undefined' && game.global.world >= swapZone) return afterpushShield;
-	else if (getPageSetting('heirloomInitial') !== 'undefined') return 'heirloomInitial';
+
+	if (MODULES.heirlooms.plagueSwap || plagueSwapInitialEnemy) {
+		// prettier-ignore
+		const initialLoom = 	voidActive && getPageSetting('heirloomVoid') !== 'undefined' && heirloomModSearch('heirloomVoid', 'plaguebringer') === undefined ? 'heirloomVoid' : 
+					aboveSwapZone && getPageSetting(afterpushShield) !== 'undefined' && heirloomModSearch(afterpushShield, 'plaguebringer') === undefined ? afterpushShield : 
+					getPageSetting('heirloomInitial') !== 'undefined' && heirloomModSearch('heirloomInitial', 'plaguebringer') === undefined ? 'heirloomInitial' : 
+					false;
+
+		// prettier-ignore
+		const afterLoom = 	getPageSetting('heirloomPlaguebringer') !== 'undefined' && heirloomModSearch('heirloomPlaguebringer', 'plaguebringer') > 0 ? 'heirloomPlaguebringer' : 
+					getPageSetting(afterpushShield) !== 'undefined' && heirloomModSearch(afterpushShield, 'plaguebringer') > 0 ? afterpushShield : 
+					false;
+
+		if (initialLoom && afterLoom) {
+			if (plagueSwapInitialEnemy) return initialLoom;
+			return afterLoom;
+		}
+	}
+
+	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== 'undefined') return 'duelShield';
+	if (voidActive && getPageSetting('heirloomVoid') !== 'undefined') return 'heirloomVoid';
+	if ((mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap') && getPageSetting(afterpushShield) !== 'undefined') return afterpushShield;
+	if (getPageSetting('heirloomSpire') !== 'undefined' && isDoingSpire()) return 'heirloomSpire';
+	if (game.global.formation === 5 && getPageSetting('heirloomWindStack') !== 'undefined') return 'heirloomWindStack';
+	if (getPageSetting(afterpushShield) !== 'undefined' && aboveSwapZone) return afterpushShield;
+	if (getPageSetting('heirloomInitial') !== 'undefined') return 'heirloomInitial';
 }
 
 function heirloomStaffToEquip() {

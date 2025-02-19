@@ -1961,7 +1961,8 @@ function initialiseAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				description += "<p><b>Recommended:</b> Setup to farm 1500 stacks on the last zone of the challenge.</p>";
 				return description;
-			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Toxicity")', 'Challenges', [1]);
+			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Toxicity")', 'Challenges', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 165) });
 
 		createSetting('archaeology',
 			function () { return ('Archaeology') },
@@ -3257,39 +3258,39 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomVoidSwap',
-			function () { return ('Void PB Swap') },
+			function () { return ('Void Plaguebringer Swap') },
 			function () {
-				let description = "<p>When inside Void Maps and your current enemy is slow with your next enemy being fast this will automatically swap to your <b>Void PB</b> shield so that you can maximise Plaguebringer damage going into the next enemy.</p>";
-				description += "<p><b>Won't do anything during double attack voids.</b></p>";
-				description += "<p>Will only work if your <b>Void</b> Shield doesn't have <b>Plaguebringer</b> and your <b>Void PB</b> shield has <b>Plaguebringer</b>.</p>";
-				description += "<p><b>Recommended:</b> Off unless you know what you're doing</p>";
+				let description = "<p>This setting handles swapping your shield to a <b>Plaguebringer</b> shield when inside of void maps and fighting slow enemies to maximise Plaguebringer damage on fast enemies.</p>";
+				description += "<p>When 2 cells away from a fast enemy that comes after a slow enemy, this will equip your non-plaguebringer shield and then on the next cell it will equip your plaguebringer shield.</p>";
+				description += "<p>Will only run if either your <b>Void</b> or <b>Initial</b> shields don't have <b>Plaguebringer</b> and your <b>Plaguebringer</b> or <b>Afterpush</b> shield has the <b>Plaguebringer</b> modifier on it.</p>";
+				description += "<p><b>Disabled during double attack void maps.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
 		createSetting('heirloomCompressedSwap',
-			function () { return ('Compressed Swap') },
+			function () { return ('Compressed Plaguebringer Swap') },
 			function () {
-				let description = "<p>When 2 cells away from a compressed enemy and past your heirloom swap zone this will equip your <b>Initial</b> shield so that the next enemy spawns with max health to maximise plaguebringer damage on it.</p>";
-				description += "<p>Will ensure you start the compressed cell at the lowest health it can be from plaguebringer which reduces initial rage stack if the enemy has it and the clear time.</p>";
-				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>Plaguebringer</b> and your (<b>Compressed Heirloom</b> shield if set otherwise <b>Afterpush</b>) shield has <b>Plaguebringer</b>.</p>";
-				description += "<p>Displays an additional setting when enabled where you can force swap to your (<b>Compressed Heirloom</b> shield if set otherwise <b>Afterpush</b>) shield when above X <b>World HD Ratio</b> and the next cell is compressed.</p>";
+				let description = "<p>When 2 cells away from a compressed cell and past your heirloom swap zone, this will equip your non-plaguebringer shield so that the next enemy spawns with full health, then it equips your plaguebringer shield to maximise damage on the compressed enemy.</p>";
+				description += "<p>Will only run if either your <b>Initial</b> or <b>Afterpush</b> shield doesn't have <b>Plaguebringer</b> and your <b>Plaguebringer</b> or <b>Afterpush</b> shield has the <b>Plaguebringer</b> modifier on it.</p>";
+				description += "<p>Displays an additional setting when enabled to allow this setting to run if above a certain <b>World HD Ratio</b> value for if you have yet to reach your heirloom swap zone.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
 
-		createSetting('heirloomCompressed',
-			function () { return ('Compressed Heirloom') },
+		createSetting('heirloomPlaguebringer',
+			function () { return ('Plaguebringer') },
 			function () {
-				let description = "<p>Shield to use when the next enemy has the compressed mutation.</p>";
+				let description = "<p>Shield to use when the script wants to maximise plaguebringer damage on the next enemy.</p>";
+				description += "<p>A shield with the <b>Plaguebringer</b> modifier <b>must</b> be used or this shield will never get equipped.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
-				description += "<p>This shield will only be used if it has the Plaguebringer modifier on it.</p>";
-				description += "<p><b>Recommended:</b> a shield with Plaguebringer</p>";
+				description += "<p><b>Recommended:</b> <b>Plaguebringer</b> heirloom</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomCompressedSwap', atConfig.settingUniverse)) });
-
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && (getPageSetting('heirloomVoidSwap', atConfig.settingUniverse) || getPageSetting('heirloomCompressedSwap', atConfig.settingUniverse))) });
+		
 		createSetting('heirloomShield',
 			function () { return ('Shields') },
 			function () {
@@ -3330,6 +3331,16 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
+
+		createSetting('heirloomVoid',
+			function () { return ('Void') },
+			function () {
+				let description = "<p>Shield to use inside of Void Maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> damage heirloom</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 			
 		createSetting('heirloomBreed',
 			function () { return ('Breed') },
@@ -3344,28 +3355,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
-
-		createSetting('heirloomVoid',
-			function () { return ('Void') },
-			function () {
-				let description = "<p>Shield to use inside of Void Maps.</p>";
-				description += "<p>Set to <b>undefined</b> to disable.</p>";
-				description += "<p><b>Recommended:</b> damage heirloom</p>";
-				return description;
-			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
-
-		createSetting('heirloomVoidPlaguebringer',
-			function () { return ('Void PB') },
-			function () {
-				let description = "<p>Shield to use inside of Void Maps when fighting a slow enemy and the next enemy is fast.</p>";
-				description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
-				description += "<p>A shield with <b>Plaguebringer MUST</b> be used.</p>";
-				description += "<p>Set to <b>undefined</b> to disable.</p>";
-				description += "<p><b>Recommended:</b> <b>Plaguebringer</b> heirloom</p>";
-				return description;
-			}, 'textValue', 'undefined', null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomVoidSwap', atConfig.settingUniverse)) });
 
 		createSetting('heirloomSpire',
 			function () { return ('Spire') },
@@ -5071,7 +5060,7 @@ function settingChanged(id, currUniverse) {
 
 		const elemText = element.innerHTML.replace(/<span class="icomoon icon-infinity"><\/span>/g, '∞');
 		if (elemText.length > 26) {
-			const reduceBy = 1 - (elemText.length - 25) * 0.03;
+			const reduceBy = 1 - (elemText.length - 24) * 0.03;
 			element.style.fontSize = `${reduceBy}vw`;
 		} else {
 			element.style.fontSize = '1vw';
@@ -5130,7 +5119,7 @@ function autoSetValue(id, multiValue, negative) {
 
 	const elemText = element.innerHTML.replace(/<span class="icomoon icon-infinity"><\/span>/g, '∞');
 	if (elemText.length > 26) {
-		const reduceBy = 1 - (elemText.length - 25) * 0.03;
+		const reduceBy = 1 - (elemText.length - 24) * 0.03;
 		element.style.fontSize = `${reduceBy}vw`;
 	} else {
 		element.style.fontSize = '1vw';
@@ -5209,7 +5198,7 @@ function autoSetText(id, multiValue) {
 
 		const elemText = element.innerHTML.replace(/<span class="icomoon icon-infinity"><\/span>/g, '∞');
 		if (elemText.length > 26) {
-			const reduceBy = 1 - (elemText.length - 25) * 0.03;
+			const reduceBy = 1 - (elemText.length - 24) * 0.03;
 			element.style.fontSize = `${reduceBy}vw`;
 		} else {
 			element.style.fontSize = '1vw';
@@ -5406,7 +5395,7 @@ function _setDisplayedSettings(item) {
 
 	const elemText = elem.innerHTML.replace(/<span class="icomoon icon-infinity"><\/span>/g, '∞');
 	if (item.type !== 'dropdown' && (elemText.length > 26 || ['spireDominanceStanceC2', 'windStackingRatioDaily'].includes(item.id))) {
-		const reduceBy = 1 - (elemText.length - 25) * 0.03;
+		const reduceBy = 1 - (elemText.length - 24) * 0.03;
 		elem.style.fontSize = `${reduceBy}vw`;
 	} else {
 		elem.style.fontSize = '1vw';
@@ -5531,7 +5520,7 @@ function _settingsToLineBreak() {
 	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperRespec', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherMutatorPreset', 'questSmithySpire', 'mayhemAutoPortal', 'stormStacks', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
-	const breakAfterHeirlooms = ['heirloomCompressed', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
+	const breakAfterHeirlooms = ['heirloomPlaguebringer', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterSpire = ['spireSkipMapping', 'spireSkipMappingC2'];
 	const breakAfterMagma = ['autoGenModeC2', 'magmiteAutoFuelForceRun'];
 	const breakAfterNature = ['autoIce', 'autoEnlightenment', 'iceEnlight', 'iceEnlightDaily'];

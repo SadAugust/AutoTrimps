@@ -374,7 +374,7 @@ function _checkSuicideArmy(worldType, mapping, ourHealth, enemy, enemyDmgMax, en
 	const notMapping = game.global.mapsUnlocked && !mapping && !game.global.spireActive && !poisonDebuff;
 	const mappingButDieAnyway = mapping && enemy.level > 1 && !game.global.voidBuff && mapObject.location !== 'Darkness' && game.global.titimpLeft === 0;
 
-	if (notMapping || mappingButDieAnyway) {
+	if (game.global.mapCounterGoal === 0 && (notMapping || mappingButDieAnyway)) {
 		suicideTrimps(true);
 		mappingButDieAnyway ? runMap(false) : suicideTrimps(true);
 
@@ -512,7 +512,7 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 				}
 			}
 
-			while (shouldPlagueSwap && maxEquality > i && (maxDmg, ourEqualityModifier, i) > enemy.health) {
+			while (shouldPlagueSwap && maxEquality > i && _calculateDamageEquality(maxDmg, ourEqualityModifier, i) * (gammaToTrigger <= 1 ? gammaDmg : 1) > enemy.health) {
 				i++;
 			}
 
@@ -528,11 +528,11 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 			if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
 
 			if (ourDmgMax > 0) {
-				// Check to see if we kill the enemy with max damage on empower dailies with explosive mod. If so mult enemy dmg by explosive to stop gaining empower stacks.
+				/* check to see if we kill the enemy with max damage on empower dailies with explosive mod. If so mult enemy dmg by explosive to stop gaining empower stacks. */
 				const enoughEQ = _calculateDamageEquality(ourDmgMax, ourEqualityModifier, i) > enemy.health;
 				const wouldDie = enemyDmgEquality * explosiveMult > ourHealth;
 				if (!disableDamageAmps && !MODULES.maps.slowScumming && enoughEQ && wouldDie) enemyDmgEquality *= explosiveMult;
-				// Make sure that we don't kill slow enemies to ensure maximum plaguebringer transfer damage.
+				/* make sure that we don't kill slow enemies to ensure maximum plaguebringer transfer damage. */
 				if (MODULES.maps.slowScumming && mapping && (enemy.level - 1) % 2 !== 0 && _calculateDamageEquality(ourDmgMax, ourEqualityModifier, i + 1) > enemy.health) {
 					continue;
 				}
@@ -595,7 +595,7 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	ourDmgEquality = _calculateDamageEquality(ourDmg, ourEqualityModifier, equality);
 
 	/* Check to see if we will kill a slow enemy faster with 0 equality or by gamma bursting it */
-	if (!fastEnemy && equality > 0 && !(game.global.spireActive && !game.global.mapsActive)) {
+	if (!fastEnemy && equality > 0 && !shouldPlagueSwap && !(game.global.spireActive && !game.global.mapsActive)) {
 		const gammaDmgCheck = gammaToTrigger <= 1 && ourDmgEquality * gammaDmg < ourDmg;
 		const hitsToKill = Math.ceil(enemy.health / ourDmg);
 		const wontNeedGamma = hitsToKill <= gammaToTrigger;

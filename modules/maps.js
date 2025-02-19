@@ -108,7 +108,7 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 	return sendTricky;
 }
 
-//Looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one
+/* looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one */
 function shouldFarmMapCreation(level, special, biome) {
 	let mapCheck = findMap(level, special, biome, undefined, undefined, true);
 
@@ -129,16 +129,13 @@ function shouldFarmMapCreation(level, special, biome) {
 	return 'create';
 }
 
-//Decide whether or not to abandon trimps for mapping
 function shouldAbandon(zoneCheck = true) {
 	const setting = getPageSetting('autoAbandon');
-	//If set to smart abandon then only abandon when
-	//A) Not fighting OR B) army is dead OR C) you have a new army ready to send out OR D) you can potentially overkill to/past cell 100 (assuming infinity attack)
+	/*	if set to smart abandon then only abandon when
+		a) Not fighting OR b) army is dead OR c) you have a new army ready to send out OR d) you can potentially overkill to/past cell 100 (assuming infinity attack) */
 	if (setting === 2 && (!game.global.fighting || game.global.soldierHealth <= 0 || newArmyRdy() || (zoneCheck && mapSettings.mapName !== 'Map Bonus' && getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100))) return true;
-	//If set to always abandon or never abandon and either not fighting or army is dead then abandon and send to maps
-	if (setting === 1 || !game.global.fighting || game.global.soldierHealth <= 0) return true;
-	//Otherwise don't abandon and keep pushing in world
-	return false;
+	if (setting === 1 || !game.global.fighting || game.global.soldierHealth <= 0) return true; /* if set to always abandon or never abandon and either not fighting or army is dead then abandon and send to maps */
+	return false; /* otherwise don't abandon and keep pushing in world */
 }
 
 function _noMappingChallenges(ignoreChallenge, mapping = false) {
@@ -188,7 +185,6 @@ function autoMaps() {
 		return;
 	}
 
-	//Stop maps from running if frag farming
 	if (MODULES.maps.fragmentFarming) {
 		fragmentFarm();
 		return;
@@ -201,8 +197,7 @@ function autoMaps() {
 		return;
 	}
 
-	const mapObj = getCurrentMapObject();
-	if (_vanillaMAZ(mapObj)) return;
+	if (_vanillaMAZ()) return;
 
 	_autoMapsDefaults();
 
@@ -212,6 +207,7 @@ function autoMaps() {
 
 	mapsOwned.selectedMap = _setSelectedMap(mapsOwned.selectedMap, mapsOwned.voidMap, mapsOwned.optimalMap);
 
+	const mapObj = getCurrentMapObject();
 	if (game.global.mapsActive) _setMapRepeat(mapObj);
 
 	if (!game.global.preMapsActive && !game.global.mapsActive && mapsOwned.selectedMap !== 'world') {
@@ -250,23 +246,21 @@ function _fragmentCheck(highestMap, runUnique) {
 
 	const mapSpecialMsg = mapSpecial === '0' ? 'no bonus' : mapSpecial;
 	debug(`Can't afford the designed map (level ${mapLevel} ${mapSpecialMsg})`, 'maps', 'th-large');
-	//Runs fragment farming if Explorers are unlocked and can afford a max loot+size sliders map
+	/* runs fragment farming if Explorers are unlocked and can afford a max loot+size sliders map */
 	if (!game.jobs.Explorer.locked && mapCost(masteryPurchased('mapLoot') ? -1 : 0, getAvailableSpecials('fa'), 'Depths', [9, 9, 0], false) <= game.resources.fragments.owned) {
 		fragmentFarm();
-	} //Disable mapping if we don't have a map and can't afford the one that we want to make.
-	else if (highestMap === null) {
+	} /* disable mapping if we don't have a map and can't afford the one that we want to make. */ else if (highestMap === null) {
 		MODULES.maps.fragmentCost = updateMapCost(true);
 		mapsClicked();
 		debug(`Disabling mapping until we reach ${prettify(MODULES.maps.fragmentCost)} fragments as we don't have any maps to run.`, 'maps');
 		return true;
-	}
-	//Runs highest map we have available to farm fragments with
-	else {
+	} else {
+		/* runs highest map we have available to farm fragments with */
 		_runSelectedMap(highestMap.id, runUnique);
 	}
 }
 
-function _vanillaMAZ(mapObj = getCurrentMapObject()) {
+function _vanillaMAZ() {
 	if (!game.options.menu.mapAtZone.enabled || !game.global.canMapAtZone) return false;
 
 	const nextCell = game.global.lastClearedCell + 2;
@@ -302,8 +296,8 @@ function _checkSitInMaps() {
 	}
 }
 
-//When running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
-//Has a time override as there's a certain cell that will always be unliving so can bypass it this way
+/* 	when running Life will go to map chamber to suicide army then go back into the world without fighting until the cell we're on is Living.
+	has a time override as there's a certain cell that will always be unliving so can bypass it this way */
 function _lifeMapping() {
 	if (game.global.mapsActive || !challengeActive('Life') || !getPageSetting('life')) return;
 
@@ -350,7 +344,7 @@ function _checkOwnedMaps() {
 	const perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	const mapBiome = mapSettings.biome !== undefined && mapSettings.biome !== 'Any' ? mapSettings.biome : getBiome();
 
-	//Looping through all of our maps to find the highest, lowest and optimal map.
+	/* looping through all of our maps to find the highest, lowest and optimal map. */
 	for (const map of game.global.mapsOwnedArray) {
 		if (!map.noRecycle) {
 			if (!mapObj.highestMap || map.level > mapObj.highestMap.level) mapObj.highestMap = map;
@@ -381,7 +375,7 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
 	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
 	const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === 'Liquimp';
 
-	//Filter unique maps that we want to run and aren't available to be run.
+	/* filter unique maps that we want to run and aren't available to be run. */
 	let uniqueMapsToGet = Object.keys(uniqueMapSetting)
 		.filter((mapName) => !mapName.includes('MP Smithy'))
 		.filter((mapName) => uniqueMapSetting[mapName].enabled)
@@ -410,7 +404,7 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
 		}
 	}
 
-	/* Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned. */
+	/* loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned. */
 	if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = _obtainUniqueMap(uniqueMapsToGet.sort((a, b) => atData.uniqueMaps[b].zone - atData.uniqueMaps[a].zone)[0]);
 }
 
