@@ -2,7 +2,7 @@
 
 # Current Version - Ongoing Development!
 
--   SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date with patch 5.9.2.
+-   SadAugust Fork. All changes made by SadAugust using Zorn192/GenBTC as base. Currently up-to-date with patch 5.10.1.
 
 # AT Script Installation
 

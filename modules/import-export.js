@@ -582,7 +582,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 			headerList.push('Radiating');
 			if (hze >= 100) headerList.push('Hazardous');
 			if (hze >= 200) headerList.push('Enigmatic');
-			if (game.global.stringVersion !== '5.9.2' && hze >= 300) headerList.push('Mutated');
+			if (hze >= 300) headerList.push('Mutated');
 		}
 	} else {
 		headerList.push('Basic');

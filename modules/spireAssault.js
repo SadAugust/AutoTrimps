@@ -280,124 +280,7 @@ function spireAssaultRingSwap(ringMods) {
 	return true;
 }
 
-function automateSpireAssault() {
-	if (!gameUserCheck() || game.global.stringVersion === '5.9.2') return;
-
-	if (autoBattle.rings.level !== 60 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
-		autoBattle.levelRing();
-	}
-
-	if (autoBattle.bonuses.Extra_Limbs.level !== 14 && autoBattle.dust >= autoBattle.getBonusCost('Extra_Limbs')) {
-		autoBattle.buyBonus('Extra_Limbs');
-		autoBattle.equip('Snimp__Fanged_Blade');
-	}
-
-	if (autoBattle.maxEnemyLevel >= 151 && autoBattle.rings.level < 60) {
-		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-		if (autoBattle.enemyLevel === 148) return;
-
-		autoBattle.enemyLevel = 148;
-		autoBattle.resetCombat(true);
-		autoBattle.updatePopupBtns();
-	} else if (!autoBattle.autoLevel) {
-		autoBattle.toggleAutoLevel();
-	}
-
-	if (autoBattle.sessionEnemiesKilled !== 0 || autoBattle.enemy.baseHealth !== autoBattle.enemy.health || autoBattle.maxEnemyLevel !== autoBattle.enemyLevel) return;
-
-	/* 	shards is per second
-		clearTime is hours */
-
-	const levels = {
-		144: {
-			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
-			ring: ['health', 'lifesteal', 'dustMult'],
-			shards: 4.27e12,
-			clearTime: 36,
-			clearTimeBleed: 17.5,
-			killSpeedBleed: 30.6
-		},
-		145: {
-			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
-			ring: ['health', 'lifesteal', 'dustMult'],
-			shards: 6.34e12,
-			clearTime: 33,
-			clearTimeBleed: 15.75,
-			killSpeedBleed: 27.3
-		},
-		146: {
-			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
-			ring: ['health', 'lifesteal', 'dustMult'],
-			shards: 8.87e12,
-			clearTime: 31,
-			clearTimeBleed: 14.9,
-			killSpeedBleed: 25.5
-		},
-		147: {
-			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Nullifium Armor', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
-			ring: ['health', 'lifesteal', 'dustMult'],
-			shards: 8.18e12,
-			clearTime: 46,
-			clearTimeBleed: 23.2,
-			killSpeedBleed: 39.6
-		},
-		148: {
-			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
-			ring: ['health', 'lifesteal', 'dustMult'],
-			shards: 1.54e13,
-			clearTime: 32,
-			clearTimeBleed: 15.2,
-			killSpeedBleed: 25.9
-		},
-		149: {
-			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Nullifium Armor', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
-			ring: ['health', 'lifesteal', 'dustMult'],
-			shards: 8.95e12,
-			clearTime: 75,
-			clearTimeBleed: 17.5,
-			killSpeedBleed: 30.6
-		},
-		150: {
-			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Wired Wristguards', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Nullifium Armor', 'Myco Mitts', 'Gaseous Greataxe', 'The Fibrillator'],
-			ring: ['health', 'lifesteal', 'dustMult'],
-			shards: 1.31e13,
-			clearTime: 68,
-			clearTimeBleed: 17.5,
-			killSpeedBleed: 30.6
-		},
-		/* after 150 r60 was only a 27 hour farm on 148 */
-		151: {
-			items: ['Shock and Awl', 'Spiked Gloves', 'Bloodstained Gloves', 'Eelimp in a Bottle', 'Big Cleaver', 'Sacrificial Shank', 'Grounded Crown', 'Fearsome Piercer', 'Bag of Nails', 'Snimp-Fanged Blade', 'Doppelganger Signet', 'Basket of Souls', 'Omni Enhancer', 'Stormbringer', 'Nullifium Armor', 'Haunted Harpoon', 'Doppelganger Diadem', 'The Fibrillator'],
-			ring: ['attack', 'health', 'lifesteal'],
-			shards: 7.94e9,
-			clearTime: 13
-		},
-		152: {
-			/* 	no idea atm
-				think poison but can only get it down to 6d20h with the usual items */
-		},
-		153: {
-			items: ['Lifegiving Gem', 'Hungering Mold', 'Shock and Awl', 'Sacrificial Shank', 'Plague Bringer', 'Very Large Slime', 'Grounded Crown', 'Doppelganger Signet', 'Basket of Souls', 'Goo Golem', 'Omni Enhancer', 'Stormbringer', 'Box of Spores', 'Nullifium Armor', 'Myco Mitts', 'Doppelganger Diadem', 'Gaseous Greataxe', 'The Fibrillator'],
-			ring: ['health', 'lifesteal', 'dustMult'],
-			shards: 2e14 /* ish */,
-			clearTime: 33
-		}
-	};
-
-	const levelData = levels[autoBattle.enemyLevel];
-	if (!levelData) return;
-
-	const { items, ring } = levelData;
-	if (autoBattle.bonuses.Extra_Limbs.level === 14) {
-		items.push('Snimp-Fanged Blade');
-	}
-
-	if (items) spireAssaultItemSwap(items);
-	if (ring) spireAssaultRingSwap(ring);
-	autoBattle.popup(true, false, true);
-}
-
-function totalSAResources() {
+function spireAssaultTotalResourcesSpent() {
 	let dustContracts = 0;
 	let shardContracts = 0;
 	const itemsToSkip = ['Sword', 'Menacing_Mask', 'Armor', 'Rusty_Dagger', 'Fists_of_Goo', 'Battery_Stick', 'Pants'];
@@ -444,5 +327,5 @@ function totalSAResources() {
 	const dust = [dustContracts, dustItems, dustBonuses, dustOneTimers].reduce((a, b) => a + b, 0);
 	const shards = [shardContracts, shardItems, shardBonuses, shardOneTimers, ringCost].reduce((a, b) => a + b, 0);
 
-	return [dust, shards];
+	return `Total Dust Spent ${prettify(dust)}. Total Shards Spent ${prettify(shards)}`;
 }

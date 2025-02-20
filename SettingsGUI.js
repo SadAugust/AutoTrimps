@@ -5442,7 +5442,7 @@ function _setDisplayedTabs() {
 		tabHeirloom: game.global.totalPortals === 0,
 		tabMagma: radonOn || (!displayAllSettings && hze < 230),
 		tabNature: radonOn || (!displayAllSettings && hze < 236),
-		tabSpire: !displayAllSettings && hze < (radonOn && game.global.stringVersion === '5.9.2' ? 999 : radonOn ? 270 : 170),
+		tabSpire: !displayAllSettings && hze < (radonOn ? 270 : 170),
 		'tabSpire Assault': !displayAllSettings && game.stats.highestRadLevel.valueTotal() < 75,
 		tabTest: !gameUserCheck()
 	};
