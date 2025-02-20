@@ -467,21 +467,57 @@ function addPoison(realDamage, zone = game.global.world) {
 }
 
 function getCritMulti(crit, customShield) {
+	const doubleCrit = typeof atConfig !== 'undefined' ? getPlayerDoubleCritChance_AT(customShield) : getPlayerDoubleCritChance();
 	const critD = typeof atConfig !== 'undefined' ? getPlayerCritDamageMult_AT(customShield) : getPlayerCritDamageMult();
 	let critChance = typeof atConfig !== 'undefined' ? getPlayerCritChance_AT(customShield) : getPlayerCritChance();
+
 	if (crit === 'never') critChance = Math.floor(critChance);
-	else if (crit === 'force') critChance = Math.ceil(critChance);
+	if (crit === 'force') critChance = Math.ceil(critChance + (doubleCrit > 0 ? 1 : 0));
 
-	const lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
-	const highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
-	const highTierChance = critChance - Math.floor(critChance);
+	let critMult = 1;
+	if (critChance < 0) {
+		critMult = 1 + critChance - critChance / 5;
+	} else if (critChance < 1) {
+		if (doubleCrit > 0 && !['never', 'force'].includes(crit)) {
+			const noCritNoDouble = (1 - critChance) * (1 - doubleCrit);
+			const critNoDouble = critChance * (1 - doubleCrit) * critD;
+			const noCritDouble = (1 - critChance) * doubleCrit * critD;
+			const critDouble = critChance * doubleCrit * critD * critD;
+			critMult = noCritNoDouble + critNoDouble + noCritDouble + critDouble;
+		} else {
+			critMult = 1 - critChance + critChance * critD;
+		}
+	} else if (critChance < 2) {
+		const megaCritDmg = getMegaCritDamageMult(2);
+		if (doubleCrit > 0 && !['never', 'force'].includes(crit)) {
+			const noCritNoDouble = (2 - critChance) * (1 - doubleCrit) * critD;
+			const critNoDouble = (critChance - 1) * (1 - doubleCrit) * megaCritDmg * critD;
+			const noCritDouble = (2 - critChance) * doubleCrit * megaCritDmg * critD;
+			const critDouble = (critChance - 1) * doubleCrit * getMegaCritDamageMult(3) * critD;
+			critMult = noCritNoDouble + critNoDouble + noCritDouble + critDouble;
+		} else {
+			critMult = (critChance - 1) * megaCritDmg * critD + (2 - critChance) * critD;
+		}
+	} else if (critChance >= 2 && ['never', 'force'].includes(crit)) {
+		critMult = getMegaCritDamageMult(Math.floor(critChance)) * critD;
+	} else if (critChance >= 2) {
+		let highTierChance = critChance - Math.floor(critChance);
+		const lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
+		const highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
 
-	if (critChance < 0) return 1 + critChance - critChance / 5;
-	if (critChance < 1) return 1 - critChance + critChance * critD;
-	if (critChance < 2) return (critChance - 1) * getMegaCritDamageMult(2) * critD + (2 - critChance) * critD;
-	if (critChance >= 2 && ['never', 'force'].includes(crit)) return lowTierMulti * critD;
-	if (critChance >= 2) return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD;
-	return (critChance - 2) * Math.pow(getMegaCritDamageMult(critChance), 2) * critD + (3 - critChance) * getMegaCritDamageMult(critChance) * critD;
+		if (doubleCrit > 0) {
+			const doubleTierMulti = getMegaCritDamageMult(Math.ceil(critChance) + 1);
+			const noCritNoDouble = (1 - highTierChance) * (1 - doubleCrit) * lowTierMulti;
+			const critNoDouble = highTierChance * (1 - doubleCrit) * highTierMulti;
+			const noCritDouble = (1 - highTierChance) * doubleCrit * highTierMulti;
+			const critDouble = highTierChance * doubleCrit * doubleTierMulti;
+			critMult = (noCritNoDouble + critNoDouble + noCritDouble + critDouble) * critD;
+		} else {
+			critMult = ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD;
+		}
+	}
+
+	return critMult;
 }
 
 function getTenacityTime(worldType = _getWorldType()) {

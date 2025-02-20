@@ -934,6 +934,13 @@ function calcHeirloomBonus_AT(type, modName, number, getValueOnly, customShield)
 	return number * (mod / 100 + 1);
 }
 
+function getPlayerDoubleCritChance_AT(customShield) {
+	const heirloomValue = getHeirloomBonus_AT('Shield', 'doubleCrit', customShield);
+	let amt = heirloomValue / 100;
+	if (Fluffy.isRewardActive('doubleCrit')) amt += 0.2;
+	return amt;
+}
+
 function getPlayerCritChance_AT(customShield) {
 	//returns decimal: 1 = 100%
 	if (challengeActive('Frigid') && game.challenges.Frigid.warmth <= 0) return 0;

@@ -105,7 +105,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		tooltipText = `Are you sure you want to clear the <b>${textString}</b> preset?`;
 		tooltipText += `<br><br><b>Warning:</b> This will also set the name back to ${headingName}.`;
 
-		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _mutatorClearPreset("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _mutatorClearPreset("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
 		elem.style.zIndex = 9;
 		ondisplay = function () {

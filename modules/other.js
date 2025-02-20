@@ -395,7 +395,7 @@ function updateChangelogButton() {
 }
 
 function remakeTooltip() {
-	if (!MODULES.popups.challenge && !MODULES.popups.respecAncientTreasure && !MODULES.popups.portal) {
+	if (MODULES.popups && !MODULES.popups.challenge && !MODULES.popups.respecAncientTreasure && !MODULES.popups.portal) {
 		return;
 	}
 
