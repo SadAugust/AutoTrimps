@@ -254,10 +254,10 @@ function _mutatorSetupPresetBtn() {
 
 	const u2MutContainer = document.createElement('SPAN');
 	u2MutContainer.setAttribute('id', 'mutatorPresetsBtn');
-	u2MutContainer.setAttribute('class', 'btn btn-lg btn-info');
+	u2MutContainer.setAttribute('class', 'btn btn-lg btn-primary btn-md');
 	u2MutContainer.setAttribute('style', 'font-size: 1.1em; margin-top: 0.25em;');
 	u2MutContainer.setAttribute('onClick', "importExportTooltip('mutatorPresets')");
-	u2MutContainer.innerHTML = 'Presets';
+	u2MutContainer.innerHTML = 'Show Presets';
 
 	const u2MutColumn = document.getElementById('swapToMasteryBtn').parentNode;
 	u2MutColumn.replaceChild(u2MutContainer, document.getElementById('swapToMasteryBtn').parentNode.children[3]);
