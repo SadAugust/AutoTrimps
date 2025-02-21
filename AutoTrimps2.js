@@ -54,7 +54,7 @@ function shouldUpdate(updateEvery = 2000) {
 	return !usingRealTimeOffline;
 }
 
-function loadScript(url, type = 'text/javascript', retries = 3) {
+function loadScript(url, type = 'text/javascript', retries = 3, timeStamp = Date.now()) {
 	return new Promise((resolve, reject) => {
 		if (retries < 1) {
 			reject(`Failed to load script ${url} after 3 attempts`);
@@ -62,7 +62,7 @@ function loadScript(url, type = 'text/javascript', retries = 3) {
 		}
 
 		const script = document.createElement('script');
-		script.src = url;
+		script.src = `${url}?${timeStamp}`;
 		script.type = type;
 
 		script.onload = () => {
@@ -72,7 +72,7 @@ function loadScript(url, type = 'text/javascript', retries = 3) {
 
 		script.onerror = () => {
 			console.log(`Failed to load script ${url}. Retries left: ${retries - 1}`);
-			loadScript(url, type, retries - 1)
+			loadScript(url, type, retries - 1, timeStamp)
 				.then(resolve)
 				.catch(reject);
 		};
@@ -81,7 +81,7 @@ function loadScript(url, type = 'text/javascript', retries = 3) {
 	});
 }
 
-function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3) {
+function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3, timeStamp = Date.now()) {
 	return new Promise((resolve, reject) => {
 		if (retries < 1) {
 			reject(`Failed to load stylesheet ${url} after 3 attempts`);
@@ -89,7 +89,7 @@ function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3)
 		}
 
 		const link = document.createElement('link');
-		link.href = url;
+		link.href = `${url}?${timeStamp}`;
 		link.rel = rel;
 		link.type = type;
 
@@ -100,7 +100,7 @@ function loadStylesheet(url, rel = 'stylesheet', type = 'text/css', retries = 3)
 
 		link.onerror = () => {
 			console.log(`Failed to load stylesheet ${url}. Retries left: ${retries - 1}`);
-			loadStylesheet(url, rel, type, retries - 1)
+			loadStylesheet(url, rel, type, retries - 1, timeStamp)
 				.then(resolve)
 				.catch(reject);
 		};
@@ -122,7 +122,7 @@ function isModuleLoaded(fileName, prefix) {
 }
 
 //Loading modules from basepath that are required for the script to run.
-function loadModules(fileName, prefix = '', retries = 10) {
+function loadModules(fileName, prefix = '', retries = 10, timeStamp = Date.now()) {
 	return new Promise((resolve, reject) => {
 		if (prefix && isModuleLoaded(fileName, prefix)) {
 			resolve();
@@ -130,7 +130,7 @@ function loadModules(fileName, prefix = '', retries = 10) {
 		}
 
 		const script = document.createElement('script');
-		script.src = `${atConfig.initialise.basepath}${prefix}${fileName}.js`;
+		script.src = `${atConfig.initialise.basepath}${prefix}${fileName}.js?${timeStamp}`;
 		script.id = `${fileName}_MODULE`;
 		script.async = false;
 		script.defer = true;
@@ -152,7 +152,7 @@ function loadModules(fileName, prefix = '', retries = 10) {
 		script.onerror = script.addEventListener('error', () => {
 			console.log(`Failed to load script ${fileName}. Retries left: ${retries - 1}`);
 			if (retries > 0) {
-				loadModules(fileName, prefix, retries - 1)
+				loadModules(fileName, prefix, retries - 1, timeStamp)
 					.then(resolve)
 					.catch(reject);
 			} else {
@@ -189,6 +189,7 @@ function loadScriptsAT() {
 		try {
 			const { pathMods, pathTesting, installedMods, installedModules, installedTesting } = atConfig.modules;
 			const testing = atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/' ? installedTesting : [];
+			const timeStamp = Math.floor(Date.now() / 60000) * 60000;
 
 			const modules = ['versionNumber', ...installedMods, ...installedModules, ...testing, 'SettingsGUI'];
 			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
@@ -199,17 +200,17 @@ function loadScriptsAT() {
 
 			for (const module of modules) {
 				const path = installedTesting.includes(module) ? pathTesting : installedMods.includes(module) ? pathMods : installedModules.includes(module) ? atConfig.modules.path : '';
-				await loadModules(module, path);
+				await loadModules(module, path, undefined, timeStamp);
 			}
 
 			for (const script of scripts) {
 				if (atConfig.modules.loadedExternal.includes(script)) continue;
-				await loadScript(script);
+				await loadScript(script, undefined, undefined, timeStamp);
 			}
 
 			for (const stylesheet of stylesheets) {
 				if (atConfig.modules.loadedExternal.includes(stylesheet)) continue;
-				await loadStylesheet(stylesheet);
+				await loadStylesheet(stylesheet, undefined, undefined, undefined, timeStamp);
 			}
 
 			initialiseScript();

@@ -600,7 +600,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		function loadModules(fileName, prefix = '', retries = 3) {
 			return new Promise((resolve, reject) => {
 				const script = document.createElement('script');
-				script.src = `${basepathMutator}${prefix}${fileName}.js`;
+				script.src = `${basepathMutator}${prefix}${fileName}.js?${Date.now()}`;
 				script.id = `${fileName}_MODULE`;
 				script.async = false;
 				script.defer = true;
@@ -628,7 +628,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 				}
 
 				const link = document.createElement('link');
-				link.href = url;
+				link.href = `${url}?${Date.now()}`;
 				link.rel = rel;
 				link.type = type;
 
@@ -655,7 +655,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 				}
 
 				const script = document.createElement('script');
-				script.src = url;
+				script.src = `${url}?${Date.now()}`;
 				script.type = type;
 
 				script.onload = () => {

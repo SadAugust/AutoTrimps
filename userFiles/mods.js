@@ -1,7 +1,7 @@
 function loadScript(id, src) {
 	const script = document.createElement('script');
 	script.id = id;
-	script.src = src;
+	script.src = `${src}?${Date.now()}`;
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
 }

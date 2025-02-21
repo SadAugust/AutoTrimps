@@ -2471,7 +2471,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 	const linkStylesheet = document.createElement('link');
 	linkStylesheet.rel = 'stylesheet';
 	linkStylesheet.type = 'text/css';
-	linkStylesheet.href = basepathFarmCalc + 'css/heirloomCalc.css';
+	linkStylesheet.href = `${basepathFarmCalc}css/heirloomCalc.css?${Date.now()}`;
 	document.head.appendChild(linkStylesheet);
 
 	console.log('The heirloom calculator mod has finished loading.');

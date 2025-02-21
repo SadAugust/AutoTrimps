@@ -1,5 +1,5 @@
 function updateBadBar(cell) {
-	const showPercentage = typeof atConfig === 'undefined' || getPageSetting('displayPercentHealth');
+	const showPercentage = typeof atConfig === 'undefined' || (typeof getPageSetting === 'function' && getPageSetting('displayPercentHealth'));
 	const badGuyHealth = document.getElementById('badGuyHealth');
 	const enemyHealth = prettify(cell.health);
 

@@ -1425,13 +1425,13 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		const linkStylesheet = document.createElement('link');
 		linkStylesheet.rel = 'stylesheet';
 		linkStylesheet.type = 'text/css';
-		linkStylesheet.href = basepathFarmCalc + 'css/farmCalc.css';
+		linkStylesheet.href = `${basepathFarmCalc}css/farmCalc.css?${Date.now()}`;
 		document.head.appendChild(linkStylesheet);
 
 		function loadModules(basepathFarmCalc, fileName, prefix = '', retries = 3) {
 			return new Promise((resolve, reject) => {
 				const script = document.createElement('script');
-				script.src = `${basepathFarmCalc}${prefix}${fileName}.js`;
+				script.src = `${basepathFarmCalc}${prefix}${fileName}.js?${Date.now()}`;
 				script.id = `${fileName}_MODULE`;
 				script.async = false;
 				script.defer = true;

@@ -24,7 +24,7 @@ If you are unsure how to do that, copy this:
 function loadScript(id, src) {
 	const script = document.createElement('script');
 	script.id = id;
-	script.src = src;
+	script.src = `${src}?${Date.now()}`;
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
 }
