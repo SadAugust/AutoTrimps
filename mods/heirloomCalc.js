@@ -189,7 +189,7 @@ function setupHeirloomUI() {
 		hcGUI.$allocatorBtn.setAttribute('class', 'btn');
 		hcGUI.$allocatorBtn.setAttribute('onclick', 'runHeirlooms()');
 		hcGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$allocatorBtn.style.cssText = `height: 1.5vw; background-color: #3b0076; border: 0.1vw solid #777; border-radius: 1px;padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw;`;
+		hcGUI.$allocatorBtn.style.cssText = `height: 1.5vw; background-color: #3b0076; border: 0.1vw solid #777; border-radius: 1px; padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw;`;
 		hcGUI.$allocatorBtn.textContent = 'Allocate Nullifium';
 		hcGUI.$allocatorBtn.onmouseover = function () {
 			this.style.color = game.options.menu.darkTheme.enabled !== 2 ? 'black' : 'white';
@@ -201,11 +201,11 @@ function setupHeirloomUI() {
 
 		hcGUI.$customRatioBtn = document.createElement('DIV');
 		hcGUI.$customRatioBtn.id = 'heirloomCustomRatioBtn';
-		hcGUI.$customRatioBtn.setAttribute('class', 'btn settingsBtn settingBtnfalse ');
+		hcGUI.$customRatioBtn.setAttribute('class', 'btn settingBtnfalse');
 		hcGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio(atData.heirloomCalc.GUI.$customRatioBtn.id, "Ratio")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseover', 'tooltip("Custom Ratio", "customText", event, "Enabling this allows you to set custom weight inputs for this specific heirloom that won\'t impact the global weight inputs that heirlooms would normally use.")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 0.1vw solid #777;  border-radius: 1px;padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw; margin-right: auto;}`;
+		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 0.1vw solid #777; border-radius: 1px; padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw; margin-right: auto;`;
 		hcGUI.$customRatioBtn.textContent = 'Use Custom Ratios';
 		hcGUI.$ratiosLine.row2.insertBefore(hcGUI.$customRatioBtn, document.getElementById('equalityTargetDiv'));
 
@@ -213,7 +213,7 @@ function setupHeirloomUI() {
 			const efficiencyName = `${button} ${button !== 'Parity' ? 'Efficiency' : 'Power'}`;
 			const btn = document.createElement('DIV');
 			btn.id = `heirloomCustom${button}Btn`;
-			btn.setAttribute('class', `btn settingsBtn settingBtn${['Miner', 'Parity'].includes(button) ? 'true' : 'false'}`);
+			btn.setAttribute('class', `btn settingBtn${['Miner', 'Parity'].includes(button) ? 'true' : 'false'}`);
 			btn.addEventListener('click', (event) => {
 				if (event.ctrlKey) {
 					heirloomResourceSettingTooltip(button);
@@ -223,7 +223,7 @@ function setupHeirloomUI() {
 			});
 			btn.setAttribute('onmouseover', `tooltip("Enable ${efficiencyName}", "customText", event, '<p>Enabling this will allow the script to assign nullifium to ${efficiencyName} on this heirloom.</p><p><i>Set <b>custom spending percentages</b> by holding <b>control</b> and clicking.</i></p>')`);
 			btn.setAttribute('onmouseout', 'tooltip("hide")');
-			btn.style.cssText = `height: 1.5vw; border: 0.1vw solid #777; border-radius: 1px; padding: 0; justify-content: center; width: 2vw; font-size: 0.8vw; line-height: 1.3vw; margin: 0.5px;`;
+			btn.style.cssText = `height: 1.5vw; padding: 0; justify-content: center; width: 2vw; font-size: 0.8vw; line-height: 1.3vw; margin: 0.5px; border: 1px solid #777; border-radius: 1px; margin-left: 0.1vw; margin-right: 0.1vw;`;
 			btn.textContent = button[0].toUpperCase();
 			hcGUI.$ratiosLine.row2.insertBefore(btn, document.getElementById('equalityTargetDiv'));
 		});
@@ -321,9 +321,9 @@ function toggleCustomRatio(elemName, btnType = 'Ratio') {
 	const heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
 	const selectedHeirloom = _getSelectedHeirloom().id;
 	const ratioBtn = document.getElementById(elemName);
-	const currentClass = ratioBtn.className.split(' ')[2];
+	const currentClass = ratioBtn.className.split(' ')[1];
 	const newClass = currentClass === 'settingBtntrue' ? 'settingBtnfalse' : 'settingBtntrue';
-	ratioBtn.setAttribute('class', `btn settingsBtn ${newClass}`);
+	ratioBtn.setAttribute('class', `btn ${newClass}`);
 
 	if (!heirloomInputs[selectedHeirloom] || typeof heirloomInputs[selectedHeirloom][btnType] === 'undefined') {
 		heirloomInputs[selectedHeirloom] = setupSelectedHeirloom(heirloomInputs, selectedHeirloom);
@@ -421,7 +421,7 @@ function saveHeirloomSettings() {
 	let update = heirloomInputs;
 
 	const selectedHeirloom = _getSelectedHeirloom() && _getSelectedHeirloom().id;
-	const customRatio = JSON.parse(document.getElementById('heirloomCustomRatioBtn').className.split(' ')[2].slice(10));
+	const customRatio = JSON.parse(document.getElementById('heirloomCustomRatioBtn').className.split(' ')[1].slice(10));
 	if (customRatio && selectedHeirloom) {
 		if (!heirloomInputs[selectedHeirloom]) heirloomInputs[selectedHeirloom] = {};
 		if (!heirloomInputs[selectedHeirloom].Ratio) heirloomInputs[selectedHeirloom].Ratio = {};
@@ -455,10 +455,10 @@ function loadHeirloomSettings() {
 			isEnabled = (heirloomSettings[setting] && heirloomSettings[setting].enabled) || (typeof heirloomSettings[setting] === 'undefined' && ['Miner', 'Parity'].includes(setting));
 		}
 
-		document.getElementById(`heirloomCustom${setting}Btn`).setAttribute('class', `btn settingsBtn settingBtn${isEnabled ? 'true' : 'false'}`);
+		document.getElementById(`heirloomCustom${setting}Btn`).setAttribute('class', `btn settingBtn${isEnabled ? 'true' : 'false'}`);
 	});
 
-	document.getElementById('heirloomCustomRatioBtn').setAttribute('class', `btn settingsBtn settingBtn${heirloomSettings && heirloomSettings.Ratio ? 'true' : 'false'}`);
+	document.getElementById('heirloomCustomRatioBtn').setAttribute('class', `btn settingBtn${heirloomSettings && heirloomSettings.Ratio ? 'true' : 'false'}`);
 
 	$$('#VMWeight').value = heirloomInputs.VMWeight || 12;
 	$$('#XPWeight').value = heirloomInputs.XPWeight || 11.25;

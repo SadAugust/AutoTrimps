@@ -1522,11 +1522,11 @@ function makeResourceTooltip(mouseover) {
 
 function _displayResetPerkPreset(tooltipDiv) {
 	const tooltipText = `This will restore your selected preset to its original values.<br><br/>Are you sure you want to do this?`;
-	const costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); fillPreset${atData.autoPerks.loaded}(perkCalcPreset(), true);'>Reset to Preset Defaults</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>`;
+	const costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 13vw' onclick='cancelTooltip(); fillPreset${atData.autoPerks.loaded}(perkCalcPreset(), true);'>Reset to Preset Defaults</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw'onclick='cancelTooltip();'>Cancel</div></div>`;
 
 	const ondisplay = function () {
-		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip(true);
-		else verticalCenterTooltip(true);
+		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip();
+		else verticalCenterTooltip();
 	};
 
 	tooltipDiv.style.left = '33.75%';
