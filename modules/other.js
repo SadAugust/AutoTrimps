@@ -542,7 +542,6 @@ function _handleMazWindow() {
 	if (mazTitles.indexOf(tooltipDiv.children.tipTitle.innerText) === -1) {
 		tooltipDiv.style.overflowY = '';
 		tooltipDiv.style.maxHeight = '';
-		tooltipDiv.style.width = '';
 		MODULES.popups.mazWindowOpen = false;
 	}
 }

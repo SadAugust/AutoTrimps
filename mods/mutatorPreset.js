@@ -190,7 +190,7 @@ function _mutatorLoadPreset(preset) {
 		}
 	}
 
-	while (outerRing.length > 0 && game.global.mutatedSeeds > u2Mutations.nextCost()) {
+	while (u2Mutations.purchaseCount >= u2Mutations.rings[1] && outerRing.length > 0 && game.global.mutatedSeeds > u2Mutations.nextCost()) {
 		if (!u2Mutations.checkRequirements(outerRing[0])) outerRing.push(outerRing.shift());
 		const mutName = outerRing[0];
 		if (u2Mutations.checkRequirements(mutName)) {
@@ -287,12 +287,23 @@ function _mutatorPopulateTree(firstLoad = false) {
 		mutators.forEach((mutator) => mutatorList.push(mutator));
 	}
 
+	let mutatorRingCount = { 0: 0 };
+	for (let item in u2Mutations.tree) {
+		const itemObj = u2Mutations.tree[item];
+		if (itemObj.ring && !mutatorRingCount[itemObj.ring]) mutatorRingCount[itemObj.ring] = 0;
+		if (mutatorList.includes(item)) {
+			if (itemObj.ring && itemObj.ring > 0) mutatorRingCount[itemObj.ring]++;
+			else mutatorRingCount[0]++;
+		}
+	}
+	mutatorRingCount = JSON.stringify(mutatorRingCount);
+
 	let leftMost = 0;
 	let rightMost = 0;
 	for (let item in u2Mutations.tree) {
 		const coords = u2Mutations.tree[item].pos;
 		const itemObj = u2Mutations.tree[item];
-		const bgColor = !_mutatorCheckRequirements(item, mutatorList) ? 'requirement' : mutatorList.includes(item) ? 'purchased' : 'available';
+		const bgColor = !_mutatorCheckRequirements(item, mutatorList, mutatorRingCount) ? 'requirement' : mutatorList.includes(item) ? 'purchased' : 'available';
 		if (bgColor === 'purchased') mutatorListActive.push(item);
 		const displayName = itemObj.dn ? itemObj.dn : item;
 		let description = itemObj.description;
@@ -372,9 +383,10 @@ function _mutatorPopulateTree(firstLoad = false) {
 	}
 }
 
-function _mutatorCheckRequirements(what, mutatorList) {
+function _mutatorCheckRequirements(what, mutatorList, mutatorRingCount) {
 	const itemObj = u2Mutations.tree[what];
-	if (itemObj.ring && itemObj.ring > 0 && Number(document.getElementById('mutatorsPurchased').innerText) < u2Mutations.rings[itemObj.ring]) return false;
+	mutatorRingCount = JSON.parse(mutatorRingCount);
+	if (itemObj.ring && itemObj.ring > 0 && mutatorRingCount[[itemObj.ring - 1]] < u2Mutations.rings[itemObj.ring]) return false;
 	if (!itemObj.require) return true;
 
 	for (let y = 0; y < itemObj.require.length; y++) {
