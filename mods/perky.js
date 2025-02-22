@@ -1707,7 +1707,7 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 		if (typeof localVersion !== 'undefined') basepathPerkCalc = 'https://localhost:8887/AutoTrimps_Local/';
 		const mods = ['surky'];
 		const modules = ['import-export', 'MAZ'];
-		const css = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${basepathPerkCalc}css/perky.css`];
+		const css = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${basepathPerkCalc}css/select2.css`, `${basepathPerkCalc}css/perky.css`];
 		const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js'];
 
 		function loadModules(fileName, prefix = '', retries = 3) {

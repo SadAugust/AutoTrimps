@@ -46,10 +46,6 @@
 	position: absolute;
 }
 
-#tooltipDiv.tooltipExtraLg {
-	width: 50%;
-}
-
 #tooltipDiv.tooltipExtraCustom40 {
 	width: 40%;
 }

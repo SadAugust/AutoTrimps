@@ -96,8 +96,8 @@ function mapSettingsDisplay(elem, titleText) {
 	elem.style.left = '1%';
 	elem.style.height = 'auto';
 	elem.style.maxHeight = `${window.innerHeight * 0.85}px`;
-	elem.style.width = windowWidth;
 	elem.style.overflowY = overflow ? 'scroll' : '';
+	elem.classList = `tooltipExtraCustom${windowWidth.replace(/\D/g, '')}`;
 
 	return [elem, tooltipText, costText, null];
 }
@@ -1620,7 +1620,7 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 	return mazHelp;
 }
 
-function windowToggleHelp(windowWidth) {
+function windowToggleHelp() {
 	const mazContainer = document.getElementById('windowContainer');
 	const helpContainer = document.getElementById('mazHelpContainer');
 	const parentWindow = document.getElementById('tooltipDiv');
@@ -1632,7 +1632,6 @@ function windowToggleHelp(windowWidth) {
 	_verticalCenterTooltip();
 	parentWindow.style.top = '10%';
 	parentWindow.style.left = '1%';
-	parentWindow.style.width = windowWidth;
 	parentWindow.style.height = 'auto';
 	parentWindow.style.maxHeight = window.innerHeight * 0.85 + 'px';
 
