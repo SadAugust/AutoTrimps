@@ -638,7 +638,6 @@ function _equalityManagementAdvanced() {
 	const { ourDmg, unluckyDmg, fastEnemy } = _getOurDmg(worldType, enemy);
 
 	if (_checkDuelSuicide(worldType, fastEnemy, ourHealth)) return;
-
 	if (_checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType)) return;
 
 	let { enemyDmg, enemyDmgMax, enemyDmgMult } = _getEnemyDmg(mapping, worldType, fastEnemy);

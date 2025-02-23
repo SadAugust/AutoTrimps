@@ -1607,12 +1607,12 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 		mazHelp += '<li><b>Level</b> - The Spire Assault level you would like to run during this line.</li>';
 		mazHelp += `<li class="indent">When switching levels <b>Auto Level</b> will be turned off.</li>`;
 		mazHelp += '<li><b>Preset</b> - The preset you would like to switch to when this line runs.</li>';
-		mazHelp += `<li class="indent">Item presets can be setup in the <b>Presets</b> setting in the <b>Spire Assault</b> tab.</li>`;
+		mazHelp += `<li class="indent">Item presets can be setup in the <b>Item Presets</b> setting in the <b>Spire Assault</b> tab.</li>`;
 		mazHelp += `<li class="indent">Ring mods will only be switched if you have selected the maximum amount of mods available.</li>`;
 		mazHelp += '<li><b>Setting Type</b> - This provides the option to either clear a level or farm for limbs, equipment, or ring levels.</li>';
 		mazHelp += '<li><b>Item</b> - The item you would like to farm levels in.</li>';
 		mazHelp += '<li class="indent">This input is only accessible when <b>Setting Type</b> is set to <b>Level Equipment</b>.</li>';
-		mazHelp += `<li class="indent">Items saved in the <b>Hidden Items</b> tab of the <b>Presets</b> setting won't be visible in this list.</li>`;
+		mazHelp += `<li class="indent">Items saved in the <b>Hidden Items</b> tab of the <b>Item Presets</b> setting won't be visible in this list.</li>`;
 		mazHelp += '<li><b>Item Level</b> - The limb, equipment or ring level you would like to farm for.</li>';
 		mazHelp += `<li class="indent">This input is only accessible when <b>Setting Type</b> isn't set to <b>Clear Level</b>.</li>`;
 	}
@@ -2711,7 +2711,7 @@ function dailyPortalModsSave() {
 function c2RunnerDisplay(elem) {
 	MODULES.popups.mazWindowOpen = true;
 
-	const baseText = `Here you can enable the challenges you would like ${_getChallenge2Info()} runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.`;
+	const baseText = `Here you can enable the challenges you would like ${_getChallenge2Info()} runner to complete and the zone you'd like the respective challenge to finish at.`;
 	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(atConfig.settingUniverse) !== -1 ? ` Fused challenges are prioritised over their regular counterparts when starting challenges.` : '';
 
 	let tooltipText = `
@@ -2795,9 +2795,9 @@ function c2RunnerDisplay(elem) {
 	tooltipText += '</tbody></table>';
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='c2RunnerSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
-	elem.style.width = '45%';
 	elem.style.left = '30.5%';
 	elem.style.top = '25%';
+	elem.classList = `tooltipExtraCustom45`;
 	const ondisplay = () => _verticalCenterTooltip();
 
 	return [elem, tooltipText, costText, ondisplay];

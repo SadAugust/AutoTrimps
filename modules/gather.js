@@ -241,7 +241,7 @@ function _lastResort(researchAvailable, trapTrimpsOK, needScience) {
 
 	if (researchAvailable && game.global.turkimpTimer < 1 && (needScience || game.resources.science.owned < trimpStats.resourcesPS['science'].manual * 60)) {
 		safeSetGather('science');
-	} else if (trapTrimpsOK && game.global.trapBuildToggled) {
+	} else if (trapTrimpsOK && game.global.trapBuildAllowed && game.global.trapBuildToggled) {
 		_handleTrapping('build', 4);
 	} else {
 		safeSetGather(lowestResource);

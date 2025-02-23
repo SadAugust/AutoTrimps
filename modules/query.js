@@ -162,8 +162,10 @@ function _getChallenge2Info() {
 	return atConfig.settingUniverse === 2 ? 'C3' : 'C2';
 }
 
-function _getSpecialChallengeDescription() {
-	return `${_getChallenge2Info()}'s or special challenge (${atConfig.settingUniverse === 2 ? 'Mayhem, Pandemonium, Desolation' : 'Frigid, Experience'})`;
+function _getSpecialChallengeDescription(addAnS = true, includeExperience = true) {
+	let challengeText = `${_getChallenge2Info()}'s`;
+	if (includeExperience && atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 600) challengeText += `, Experience`;
+	return `${challengeText} or max completion challenge${addAnS ? 's' : ''}`;
 }
 
 function prestigesToGet(targetZone = game.global.world, targetPrestige = 'GambesOP') {
