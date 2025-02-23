@@ -179,23 +179,34 @@ function _mutatorLoadPreset(preset) {
 	if (!mutatorObj[preset]) mutatorObj[preset] = _mutatorDefaultObj()[preset];
 
 	const mutatorList = mutatorObj[preset] ? mutatorObj[preset].mutators : [];
-	const outerRing = [];
 	if (mutatorList.length === 0) return;
 
+	const mutatorRingsList = { 0: [] };
+	const missingRingOneItems = ['Liq1', 'Smashing', 'Liq2', 'Smashing2', 'Liq3'];
+
 	for (let item in u2Mutations.tree) {
-		if (item.purchased) continue;
+		const itemObj = u2Mutations.tree[item];
+		if (itemObj.purchased) continue;
+		if (itemObj.ring && !mutatorRingsList[itemObj.ring]) mutatorRingsList[itemObj.ring] = [];
 		if (mutatorList.includes(item)) {
-			if (!u2Mutations.checkRequirements(item)) outerRing.push(item);
-			else u2Mutations.purchase(item);
+			if (missingRingOneItems.includes(item)) mutatorRingsList[1].push(item);
+			else if (itemObj.ring && itemObj.ring > 0) mutatorRingsList[itemObj.ring].push(item);
+			else mutatorRingsList[0].push(item);
 		}
 	}
 
-	while (u2Mutations.purchaseCount >= u2Mutations.rings[1] && outerRing.length > 0 && game.global.mutatedSeeds > u2Mutations.nextCost()) {
-		if (!u2Mutations.checkRequirements(outerRing[0])) outerRing.push(outerRing.shift());
-		const mutName = outerRing[0];
-		if (u2Mutations.checkRequirements(mutName)) {
-			u2Mutations.purchase(mutName);
-			outerRing.shift();
+	for (let item in mutatorRingsList) {
+		if (u2Mutations.purchaseCount >= u2Mutations.rings[item]) {
+			const itemObj = mutatorRingsList[item];
+			while (itemObj.length > 0 && game.global.mutatedSeeds > u2Mutations.nextCost()) {
+				console.log(itemObj[0]);
+				if (!u2Mutations.checkRequirements(itemObj[0])) itemObj.push(itemObj.shift());
+				const mutName = itemObj[0];
+				if (u2Mutations.checkRequirements(mutName)) {
+					u2Mutations.purchase(mutName);
+					itemObj.shift();
+				}
+			}
 		}
 	}
 
