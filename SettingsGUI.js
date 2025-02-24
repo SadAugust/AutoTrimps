@@ -3623,7 +3623,8 @@ function initialiseAllSettings() {
 		createSetting('heirloomAutoRareToKeepShield',
 			function () { return ('Rarity to Keep') },
 			function () {
-				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and recycle others.</p>";
+				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and ignore others.</p>";
+				description += "<p>If you would like the script to consider heirlooms of a higher rarity then enable the <b>Rarity To Keep: Higher Tiers</b> setting.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
@@ -3689,6 +3690,7 @@ function initialiseAllSettings() {
 			function () { return ('Rarity to Keep') },
 			function () {
 				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and ignore others.</p>";
+				description += "<p>If you would like the script to consider heirlooms of a higher rarity then enable the <b>Rarity To Keep: Higher Tiers</b> setting.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
@@ -3753,6 +3755,7 @@ function initialiseAllSettings() {
 			function () { return ('Rarity to Keep') },
 			function () {
 				let description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom and ignore others.</p>";
+				description += "<p>If you would like the script to consider heirlooms of a higher rarity then enable the <b>Rarity To Keep: Higher Tiers</b> setting.</p>";
 				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
