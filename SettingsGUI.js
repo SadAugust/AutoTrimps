@@ -3573,9 +3573,9 @@ function initialiseAllSettings() {
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAutoRarityPlus',
-			function () { return ('Rarity+') },
+			function () { return ('Rarity To Keep: Higher Tiers') },
 			function () {
-				let description = "<p>Overrides <b>Rarity to Keep</b> recycling heirlooms of a higher quality and instead allows the script to look at if they'd be worth keeping.</p>";
+				let description = "<p>Overrides <b>Rarity to Keep</b> ignoring heirlooms of a higher tier and instead allows the script to look at if they'd be worth keeping.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2],
@@ -3797,8 +3797,8 @@ function initialiseAllSettings() {
 		createSetting('spireIgnoreUntil',
 			function () { return ('Ignore Spires Until') },
 			function () {
-				let description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
-				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
+				let description = "<p>Will disable all of the Spire features in this tab unless the Spire you're in is at or above this value.</p>";
+				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at zone 300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
 				return description;
@@ -3808,8 +3808,9 @@ function initialiseAllSettings() {
 			function () { return ('Exit After Cell') },
 			function () {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
-				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
+				description += "<p>This setting works based off cell number so if you want it to exit at cell 1 then set it to <b>0</b>, or if you want to exit after row #4 then set to <b>40</b>.</p>";
 				description += "<p>HD Ratio and Hits Survived calculations for the Spire will be based off this cell if set.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
@@ -3818,8 +3819,9 @@ function initialiseAllSettings() {
 		createSetting('spireNurseries',
 			function () { return ('Nurseries') },
 			function () {
-				let description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
+				let description = "<p>Set the number of <b>Nurseries</b> to build during Spires.</p>";
 				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT Auto Structure</b> setting.</b></p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
@@ -3828,7 +3830,8 @@ function initialiseAllSettings() {
 		createSetting('spireDominanceStance',
 			function () { return ('Force Dominance Stance') },
 			function () {
-				let description = "<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>";
+				let description = "<p>Enabling this setting will force the script to only use Domination stance when fighting world enemies inside Spires.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
@@ -3836,28 +3839,30 @@ function initialiseAllSettings() {
 		createSetting('spireMapBonus',
 			function () { return ('Max Map Bonus') },
 			function () {
-				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
+				let description = "<p>Will force run Map Bonus to obtain max (10) map bonus stacks as the first mapping that you do in Spires.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);
 			
 		createSetting('spireHitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
-				let description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
-				description += "<p><b>Your Hits Survived can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
+				let description = "<p>Will farm until your <b>Hits Survived</b> ratio is at or above this value while in Spires.</p>";
 				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
-				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during active Spires.</b></p>";
+				description += "<p><b>This setting will only work in active Spires and will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				else description += "<p><b>Recommended:</b> -1</p>";
+				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMapping',
 			function () { return ('Skip Spires') },
 			function () {
-				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
+				let description = "<p>Will disable all of the scripts mapping if you have max (10) map bonus stacks while in a Spire.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);
@@ -3876,8 +3881,9 @@ function initialiseAllSettings() {
 			function () { return (`${_getChallenge2Info()}: Exit After Cell`) },
 			function () {
 				let description = `<p>Will exit out of active Spires upon clearing this cell.</p>`;
-				description += `<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>`;
+				description += "<p>This setting works based off cell number so if you want it to exit at cell 1 then set it to <b>0</b>, or if you want to exit after row #4 then set to <b>40</b>.</p>";
 				description += `<p>HD Ratio and Hits Survived calculations for the Spire will be based off this cell if set.</p>`;
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += `<p>Set to <b>below 0</b> to disable this setting.</p>`;
 				description += `<p><b>Recommended:</b> -1</p>`;
 				return description;
@@ -3886,8 +3892,9 @@ function initialiseAllSettings() {
 		createSetting('spireNurseriesC2',
 			function () { return (`${_getChallenge2Info()}: Nurseries`) },
 			function () {
-				let description = `<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>`;
-				description += `<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT Auto Structure</b> setting.</b></p>`;
+				let description = `<p>Set the number of <b>Nurseries</b> to build during Spires.</p>`;
+				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT Auto Structure</b> setting.</b></p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += `<p>Set to <b>0 or below</b> to disable this setting.</p>`;
 				description += `<p><b>Recommended:</b> -1</p>`;
 				return description;
@@ -3896,7 +3903,8 @@ function initialiseAllSettings() {
 		createSetting('spireDominanceStanceC2',
 			function () { return (`${_getChallenge2Info()}: Force Dominance Stance`) },
 			function () {
-				let description = `<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>`;
+				let description = "<p>Enabling this setting will force the script to only use Domination stance when fighting world enemies inside Spires.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";;
 				description += `<p><b>Recommended:</b> Off</p>`;
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
@@ -3904,28 +3912,30 @@ function initialiseAllSettings() {
 		createSetting('spireMapBonusC2',
 			function () { return (`${_getChallenge2Info()}: Max Map Bonus`) },
 			function () {
-				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
+				let description = "<p>Will force run Map Bonus to obtain max (10) map bonus stacks as the first mapping that you do in Spires.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);
 			
 		createSetting('spireHitsSurvivedC2',
 			function () { return (`${_getChallenge2Info()}: Hits Survived`) },
 			function () {
-				let description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
-				description += "<p><b>Your Hits Survived can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
+				let description = "<p>Will farm until your <b>Hits Survived</b> ratio is at or above this value while in Spires.</p>";
 				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
-				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during active Spires.</b></p>";
+				description += "<p><b>This setting will only work in active Spires and will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				else description += "<p><b>Recommended:</b> -1</p>";
+				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMappingC2',
 			function () { return (`${_getChallenge2Info()}: Skip Spires`) },
 			function () {
-				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
+				let description = "<p>Will disable all of the scripts mapping if you have max (10) map bonus stacks while in a Spire.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);
@@ -3944,8 +3954,9 @@ function initialiseAllSettings() {
 			function () { return ('Daily: Exit After Cell') },
 			function () {
 				let description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
-				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
+				description += "<p>This setting works based off cell number so if you want it to exit at cell 1 then set it to <b>0</b>, or if you want to exit after row #4 then set to <b>40</b>.</p>";
 				description += "<p>HD Ratio and Hits Survived calculations for the Spire will be based off this cell if set.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p>Set to <b>below 0</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
@@ -3954,8 +3965,9 @@ function initialiseAllSettings() {
 		createSetting('spireNurseriesDaily',
 			function () { return ('Daily: Nurseries') },
 			function () {
-				let description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
+				let description = "<p>Set the number of <b>Nurseries</b> to build during Spires.</p>";
 				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT Auto Structure</b> setting.</b></p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
@@ -3964,7 +3976,8 @@ function initialiseAllSettings() {
 		createSetting('spireDominanceStanceDaily',
 			function () { return ('Daily: Force Dominance Stance') },
 			function () {
-				let description = "<p>Enabling this setting will force the script to only use Domination stance during Spires when not inside maps.</p>";
+				let description = "<p>Enabling this setting will force the script to only use Domination stance when fighting world enemies inside Spires.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";;
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
@@ -3972,28 +3985,30 @@ function initialiseAllSettings() {
 		createSetting('spireMapBonusDaily',
 			function () { return ('Daily: Max Map Bonus') },
 			function () {
-				let description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
+				let description = "<p>Will force run Map Bonus to obtain max (10) map bonus stacks as the first mapping that you do in Spires.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);
 			
 		createSetting('spireHitsSurvivedDaily',
 			function () { return ('Daily: Hits Survived') },
 			function () {
-				let description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
-				description += "<p><b>Your Hits Survived can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
+				let description = "<p>Will farm until your <b>Hits Survived</b> ratio is at or above this value while in Spires.</p>";
 				description += "<p>Will use the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
-				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during active Spires.</b></p>";
+				description += "<p><b>This setting will only work in active Spires and will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all during Spires.</b></p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				else description += "<p><b>Recommended:</b> -1</p>";
+				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1, 2]);
 			
 		createSetting('spireSkipMappingDaily',
 			function () { return ('Daily: Skip Spires') },
 			function () {
-				let description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks inside active Spires.</p>";
+				let description = "<p>Will disable all of the scripts mapping if you have max (10) map bonus stacks while in a Spire.</p>";
+				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1, 2]);

@@ -699,8 +699,8 @@ function challengeInfo(force) {
 			debug(`You have the AutoTrimps setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.`, 'challenge');
 		}
 
-		if (challengeActive('Experience')) {
-			debug(`Be aware that the script classes this challenge as a C2 for all settings so you will need to use any C2 related settings when running this.`, 'challenge');
+		if (challengeActive('Experience') || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Desolation')) {
+			debug(`Be aware that the script classes this challenge as a C2 for all settings.`, 'challenge');
 		}
 
 		if (challengeActive('Downsize')) {
@@ -723,7 +723,7 @@ function challengeInfo(force) {
 		}
 
 		if (challengeActive('Pandemonium')) {
-			debug(`Be aware that your usual farming settings will not work properly due to the map resource shred mechanic so you might want to amend or disable them. Additionally Smithy Farm is disabled when running this challenge.`, 'challenge');
+			debug(`Be aware that the script classes this challenge as a C2 for all settings when and your usual farming settings might not work properly due to the map resource shred mechanic so you might want to amend or disable them. Additionally Smithy Farm is disabled when running this challenge.`, 'challenge');
 		}
 	}
 }

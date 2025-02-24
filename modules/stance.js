@@ -272,7 +272,7 @@ function autoStance() {
 	}
 
 	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
-	if (game.global.spireActive && !game.global.mapsActive && availableStances.includes('D') && getPageSetting(`spireDominanceStance${settingAffix}`)) {
+	if (isDoingSpire() && !game.global.mapsActive && availableStances.includes('D') && getPageSetting(`spireDominanceStance${settingAffix}`)) {
 		safeSetStance(2);
 		return;
 	}

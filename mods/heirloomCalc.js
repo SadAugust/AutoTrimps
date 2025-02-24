@@ -111,7 +111,7 @@ function setupHeirloomUI() {
 		inputBoxSpan.className = 'textbox';
 		inputBoxSpan.onmouseover = () => tooltip(inputObj.name, 'customText', event, inputObj.description);
 		inputBoxSpan.onmouseout = () => tooltip('hide');
-		inputBoxSpan.style.cssText = `text-align: left; height: 1.5vw; border: 0.1vw solid #777;`;
+		inputBoxSpan.style.cssText = `text-align: left; height: 1.5vw; border: 1px solid #777;`;
 
 		const prefixText = document.createElement('span');
 		prefixText.id = `${id}Prefix`;
@@ -189,7 +189,7 @@ function setupHeirloomUI() {
 		hcGUI.$allocatorBtn.setAttribute('class', 'btn');
 		hcGUI.$allocatorBtn.setAttribute('onclick', 'runHeirlooms()');
 		hcGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$allocatorBtn.style.cssText = `height: 1.5vw; background-color: #3b0076; border: 0.1vw solid #777; border-radius: 1px; padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw;`;
+		hcGUI.$allocatorBtn.style.cssText = `height: 1.5vw; background-color: #3b0076; border: 1px solid #777; border-radius: 1px; padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw;`;
 		hcGUI.$allocatorBtn.textContent = 'Allocate Nullifium';
 		hcGUI.$allocatorBtn.onmouseover = function () {
 			this.style.color = game.options.menu.darkTheme.enabled !== 2 ? 'black' : 'white';
@@ -205,7 +205,7 @@ function setupHeirloomUI() {
 		hcGUI.$customRatioBtn.setAttribute('onclick', 'toggleCustomRatio(atData.heirloomCalc.GUI.$customRatioBtn.id, "Ratio")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseover', 'tooltip("Custom Ratio", "customText", event, "Enabling this allows you to set custom weight inputs for this specific heirloom that won\'t impact the global weight inputs that heirlooms would normally use.")');
 		hcGUI.$customRatioBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 0.1vw solid #777; border-radius: 1px; padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw; margin-right: auto;`;
+		hcGUI.$customRatioBtn.style.cssText = `height: 1.5vw; float:left; border: 1px solid #777; border-radius: 1px; padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw; margin-right: auto;`;
 		hcGUI.$customRatioBtn.textContent = 'Use Custom Ratios';
 		hcGUI.$ratiosLine.row2.insertBefore(hcGUI.$customRatioBtn, document.getElementById('equalityTargetDiv'));
 

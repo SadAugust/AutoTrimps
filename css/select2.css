@@ -5,7 +5,6 @@
 	color: white;
 	min-width: 13.5vw;
 	max-width: 13.5vw;
-	margin-bottom: 0.1vw;
 }
 
 /* dropdown results. Appears when you click the dropdown button! */
@@ -18,7 +17,7 @@
 /* dropdown text button */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
 	background-color: #000;
-	border: 1px white solid;
+	border: 1px solid rgb(119, 119, 119);
 	color: white;
 	text-align: left;
 	min-height: 1.5vw;

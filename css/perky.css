@@ -65,7 +65,7 @@ span.textbox {
 	font-size: 0.8vw;
 	color: #888;
 	height: 1vw;
-	border: white 1px solid;
+	border: 1px solid rgb(119, 119, 119);
 	background-color: #000000;
 	align-items: center;
 }

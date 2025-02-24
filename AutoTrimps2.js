@@ -196,16 +196,17 @@ function loadScriptsAT() {
 			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/select2.css`, `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`, `${atConfig.initialise.basepath}css/mutatorPreset.css`];
 
 			await loadModules('gameUpdates', atConfig.modules.pathMods);
+
+			for (const script of scripts) {
+				if (atConfig.modules.loadedExternal.includes(script)) continue;
+				await loadScript(script, undefined, undefined, timeStamp);
+			}
+
 			await loadModules('utils', atConfig.modules.path);
 
 			for (const module of modules) {
 				const path = installedTesting.includes(module) ? pathTesting : installedMods.includes(module) ? pathMods : installedModules.includes(module) ? atConfig.modules.path : '';
 				await loadModules(module, path, undefined, timeStamp);
-			}
-
-			for (const script of scripts) {
-				if (atConfig.modules.loadedExternal.includes(script)) continue;
-				await loadScript(script, undefined, undefined, timeStamp);
 			}
 
 			for (const stylesheet of stylesheets) {

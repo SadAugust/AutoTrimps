@@ -3313,7 +3313,7 @@ function farmingDecision() {
 	let mapTypes = [];
 
 	if (game.global.universe === 1) {
-		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, hdFarm, voidMaps, experience, mapBonus, toxicity, _obtainUniqueMap];
+		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, voidMaps, hdFarm, experience, mapBonus, toxicity, _obtainUniqueMap];
 
 		if (challengeActive('Mapology') && getPageSetting('mapology') && getPageSetting('mapologyMapOverrides')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
 
@@ -3324,11 +3324,14 @@ function farmingDecision() {
 		/* disable mapping if we have Withered as it's more beneficial to just push through the zone(s). */
 		if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) return (mapSettings = farmingDetails);
 
-		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, hdFarm, voidMaps, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
+		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, voidMaps, hdFarm, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
 
 	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
-	if (isDoingSpire() && getPageSetting('spireSkipMapping' + settingAffix) && game.global.mapBonus === 10) mapSettings = farmingDetails;
+	if (isDoingSpire() && getPageSetting('spireSkipMapping' + settingAffix)) {
+		if (game.global.mapBonus === 10) mapSettings = farmingDetails;
+		if (game.global.mapBonus !== 10 && getPageSetting(`spireMapBonus${setting}`)) mapTypes = [mapBonus];
+	}
 
 	if (usingBreedHeirloom(true)) {
 		if (atConfig.intervals.oneMinute && (game.global.fighting || newArmyRdy()) && getPageSetting('autoMaps')) {

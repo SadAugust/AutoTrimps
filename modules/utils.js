@@ -450,15 +450,15 @@ function getPriorityOrder() {
 	let order = [];
 	let settingsList = [];
 
-	if (game.global.universe === 1) settingsList = ['Prestige Raiding', 'Bionic Raiding', 'Map Farm', 'HD Farm', 'Void Maps', 'Map Bonus', 'Toxicity'];
-	if (game.global.universe === 2) settingsList = ['Desolation Gear Scum', 'Prestige Raiding', 'Smithy Farm', 'Map Farm', 'Tribute Farm', 'Worshipper Farm', 'Quagmire', 'Insanity', 'Alchemy', 'Hypothermia', 'HD Farm', 'Void Maps', 'Map Bonus'];
+	if (game.global.universe === 1) settingsList = ['Prestige Raiding', 'Bionic Raiding', 'Map Farm', 'Void Maps', 'HD Farm', 'Map Bonus', 'Toxicity'];
+	if (game.global.universe === 2) settingsList = ['Desolation Gear Scum', 'Prestige Raiding', 'Smithy Farm', 'Map Farm', 'Tribute Farm', 'Worshipper Farm', 'Quagmire', 'Insanity', 'Alchemy', 'Hypothermia', 'Void Maps', 'HD Farm', 'Map Bonus'];
 
 	const settingNames = {
 		'Prestige Raiding': { settingName: 'raiding' },
 		'Bionic Raiding': { settingName: 'bionicRaiding' },
 		'Map Farm': { settingName: 'mapFarm' },
-		'HD Farm': { settingName: 'hdFarm' },
 		'Void Maps': { settingName: 'voidMap' },
+		'HD Farm': { settingName: 'hdFarm' },
 		'Map Bonus': { settingName: 'mapBonus' },
 		Toxicity: { settingName: 'toxicity', challenge: 'Toxicity' },
 		'Desolation Gear Scum': { settingName: 'desolation', challenge: 'Desolation' },
@@ -1138,6 +1138,28 @@ function RTC_populateRunetrinketCounterInfo() {
 
 	if (target_element.innerHTML !== the_information) target_element.innerHTML = the_information;
 	if (the_information !== '') target_element.parentNode.setAttribute('onmouseover', RTC_populateRunetrinketCounterTooltip());
+}
+
+function VMC_makeStringForDisplay() {
+	if (game.global.totalPortals < 1) {
+		// we have never yet portalled
+		return '???';
+	}
+	if (game.global.universe == 2 && game.global.totalRadPortals < 1) {
+		// we have reached u2, but haven't portalled there
+		return 'N/A';
+	}
+
+	if (game.stats.totalVoidMaps.valueTotal + game.stats.totalVoidMaps.value < 1) {
+		// have not cleared any void maps
+		if (game.global.lastVoidMap >= 100 * game.global.world) {
+			// AND we haven't seen a map drop yet this run
+			return `${game.global.lastVoidMap}<span style="display: block; border-bottom: 1px solid black; margin: 5px;"></span>${'???'}`; // then we should have no idea how long they take to drop
+		}
+	}
+
+	const voidmapstring = `${game.global.lastVoidMap}<span style="display: block; border-bottom: 1px solid black; margin: 5px;"></span>${VMC_getCurrentExpectedVMWait()}`;
+	return voidmapstring;
 }
 
 function updateAllInnerHtmlFrames() {
