@@ -1,13 +1,3 @@
-if (typeof MODULES !== 'object') {
-	MODULES = {};
-}
-
-if (typeof atConfig === 'undefined') {
-	MODULES.mutatorPreset = {
-		selected: 0
-	};
-}
-
 function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	let elem = document.getElementById(`tooltipDiv${use2}`);
 	swapClass('tooltipExtra', 'tooltipExtraNone', elem);
