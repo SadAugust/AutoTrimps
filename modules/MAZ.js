@@ -1355,8 +1355,8 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 
 	if (s.voidMap) {
 		mazHelp += `<b>Void Map Settings</b> works by using <b>Start Zone</b> as the lower bound zone to run voids on and <b>End Zone</b> as the upper bound.`;
-		mazHelp += `<li class="indent">It has dropdown inputs which can give you the ability to add fine-tuning for when a line should be run.`;
-		mazHelp += `<li class="indent">If you reach the <b>End Zone</b> zone input of a line it will run regardless of dropdown inputs.`;
+		mazHelp += `<li class="indent">It has dropdown options to allow fine-tuning for when a line should be run.</li>`;
+		mazHelp += `<li class="indent">If you reach the <b>End Zone</b> input of a line it will run regardless of dropdown inputs.</li>`;
 	}
 
 	if (s.smithyFarm) {
@@ -1394,16 +1394,25 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 		}
 
 		if (s.voidMap) {
-			mazHelp += `<li><b>Max Map Bonus</b> - Will assume you have 10 map bonus stacks${radonSetting && !game.portal.Tenacity.radLocked ? ' and max tenacity' : ''} when void maps HD Ratio calcs are being set.</li>`;
+			mazHelp += `<li><b>Max Map Bonus</b> - Makes your <b>Void HD Ratio</b> assume you have 10 map bonus stacks${radonSetting && !game.portal.Tenacity.radLocked ? ' and max Tenacity multiplier' : ''}.</li>`;
 
 			if (game.permaBoneBonuses.boosts.owned > 0) mazHelp += `<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>`;
 
 			mazHelp += `<li><b>Void Farm</b> - Will farm before running void maps if your void hits survived is below the input in <b>Void Farm Hits Survived</b> or your void hd ratio is below the input in <b>Void Farm Void HD Ratio</b>. Farms until you have reached the map cap set in the <b>HD Farm</b> settings.</li>`;
-			mazHelp += `<li><b>Void Farm Hits Survived</b> - Will farm to this void hits survived value before running void maps. Must be set above 0 to be used otherwise will be ignored.</li>`;
-			mazHelp += `<li><b>Void Farm HD Ratio</b> - Will farm to this void HD ratio survived value before running void maps. Must be set above 0 to be used otherwise will be ignored.</li>`;
-			mazHelp += `<li><b>Void Farm Job Ratio</b> - The job ratio to use when farming stats before running void maps.</li>`;
-			mazHelp += `<li class="indent">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>`;
-			mazHelp += `<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If using <b>Map Count</b> and you set to <b>-1</b> it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>`;
+			mazHelp += `<li><b>Void Farm Hits Survived</b> - Will farm to this <b>Void Hits Survived</b> value before running void maps.</li>`;
+			mazHelp += `<li class="indent">Will only farm <b>Void Hits Survived</b> to this value when set <b>above 0</b>.</li>`;
+			mazHelp += `<li class="indent">Your current <b>Void Hits Survived</b> value can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</li>`;
+			mazHelp += `<li><b>Void Farm HD Ratio</b> - Will farm to this <b>Void HD Ratio</b> value before running void maps.</li>`;
+			mazHelp += `<li class="indent">Will only farm <b>Void HD Ratio</b> to this value when set <b>above 0</b>.</li>`;
+			mazHelp += `<li class="indent">Your current <b>Void HD Ratio</b> value can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</li>`;
+
+			mazHelp += `<li><b>Void Farm Job Ratio</b> - The job ratio you want to use when farming stats before you run your Void Maps.</li>`;
+			mazHelp += `<li class="indent">Input should look like this: <b>1,1,1,1</b> with the order being the games unlock order (farmers, lumberjacks, miners, scientists).</li>`;
+			mazHelp += `<li class="indent">If set to <b>-1</b> it will use your current AT Auto Jobs ratio.</li>`;
+			mazHelp += `<li class="indent">Your job ratio will only be used when the <b>AT Auto Jobs</b> setting is enabled.</li>`;
+
+			mazHelp += `<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm.</li>`;
+			mazHelp += `<li class="indent">If set to <b>-1</b> it will repeat an Infinite amount of times.</li>`;
 		}
 		if (s.boneShrine) {
 			mazHelp += '<li><b>Auto Spend Charges</b> - Enables the ability to automatically spend bone charges when above a certain value.</li>';
@@ -1449,9 +1458,15 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 		mazHelp += `<li class="indent">This also determines sort order of rows in the UI.</li>`;
 	}
 	if (!s.voidMap && !s.golden && !s.profile && !s.spireAssault) mazHelp += `<li><b>Start Zone</b> - The zone where this line starts running.</li>`;
-	if (s.endZone) {
+
+	if (s.endZone && !s.voidMap) {
 		mazHelp += `<li><b>End Zone</b> - The zone where this line should stop running.</li>`;
 		if (s.repeatEvery) mazHelp += `<li class="indent">This input is only used when your <b>Repeat Every</b> input is <b>above 0</b>.</li>`;
+	}
+
+	if (s.voidMap) {
+		mazHelp += `<li><b>Start Zone</b> - The lower bound zone to run voids maps on.</li>`;
+		mazHelp += `<li><b>End Zone</b> - The upper bound zone to run voids maps on.</li>`;
 	}
 
 	if (!s.golden && !s.desolation && !s.profile && !s.spireAssault) {
@@ -1467,7 +1482,7 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 		if (s.mapBonus) mazHelp += `<li class="indent">Only accepts inputs for map levels you can gain map bonus stacks on.</li>`;
 		else mazHelp += `<li class="indent">Inputs can be positive or negative, so you could do <b>-5</b>, or <b>0</b>, or <b>3</b>.</li>`;
 		mazHelp += `<li class="indent">This input is disabled when the <b>Auto Level</b> checkbox is enabled.</li>`;
-		if (radonSetting && !(s.insanity || s.alchemy || s.hypothermia)) mazHelp += `<li class="indent">Will override inputs above <b>-1</b> during the Wither challenge.</li>`;
+		if (radonSetting && !(s.mapBonus || s.insanity || s.alchemy || s.hypothermia)) mazHelp += `<li class="indent">Will override inputs above <b>-1</b> during the <b>Wither</b> challenge.</li>`;
 	}
 
 	if (s.jobRatio) {
@@ -1491,8 +1506,6 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 	if (!s.profile) mazHelp += '</ul></br>These inputs are <b>specific to this setting</b> and can be quite important for how you try to set this up:<ul><br>';
 
 	if (s.voidMap) {
-		mazHelp += '<li><b>Start Zone</b> - The lower bound zone to run voids maps on.</li>';
-		mazHelp += '<li><b>End Zone</b> - The upper bound zone to run voids maps on.</li>';
 		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met <b>OR</b> you are at the <b>End Zone</b> input for that line.</li>";
 		mazHelp += '<li class="indent"><b>HD Ratio</b> dropdowns will check to see if the input value is higher than your selected <b>HD Ratio</b> value.</li>';
 		mazHelp += '<li class="indent"><b>Hits Survived</b> dropdowns will check to see if the input value is lower than your selected <b>Hits Survived</b> value.</li>';
