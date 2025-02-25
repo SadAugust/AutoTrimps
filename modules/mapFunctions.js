@@ -451,7 +451,7 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 		for (let x = 0; x < zoneAddition + 1; x++) {
 			const shouldSkipLine = dropdowns.every((dropdown, index) => {
 				if (currSetting[dropdowns[0]] === 0 && currSetting[dropdowns[1]] === 0) return false;
-				if (currSetting[hdTypes[index]] === 'disabled') return false;
+				if (currSetting[hdTypes[index]] === 'disabled') return true;
 				const obj = hdObject[currSetting[hdTypes[index]]];
 				const hdSetting = obj.hdStatVoid || obj.hdStat;
 				/* This is if it should skip so the inverse of intended action */
