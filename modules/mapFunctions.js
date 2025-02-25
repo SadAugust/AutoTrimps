@@ -3330,7 +3330,7 @@ function farmingDecision() {
 	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	if (isDoingSpire() && getPageSetting('spireSkipMapping' + settingAffix)) {
 		if (game.global.mapBonus === 10) mapSettings = farmingDetails;
-		if (game.global.mapBonus !== 10 && getPageSetting(`spireMapBonus${setting}`)) mapTypes = [mapBonus];
+		if (game.global.mapBonus !== 10 && getPageSetting(`spireMapBonus${settingAffix}`)) mapTypes = [mapBonus];
 	}
 
 	if (usingBreedHeirloom(true)) {

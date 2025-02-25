@@ -195,14 +195,14 @@ function loadScriptsAT() {
 			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
 			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/select2.css`, `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`, `${atConfig.initialise.basepath}css/mutatorPreset.css`];
 
-			await loadModules('gameUpdates', atConfig.modules.pathMods);
+			await loadModules('gameUpdates', atConfig.modules.pathMods, undefined, timeStamp);
 
 			for (const script of scripts) {
 				if (atConfig.modules.loadedExternal.includes(script)) continue;
 				await loadScript(script, undefined, undefined, timeStamp);
 			}
 
-			await loadModules('utils', atConfig.modules.path);
+			await loadModules('utils', atConfig.modules.path, undefined, timeStamp);
 
 			for (const module of modules) {
 				const path = installedTesting.includes(module) ? pathTesting : installedMods.includes(module) ? pathMods : installedModules.includes(module) ? atConfig.modules.path : '';
