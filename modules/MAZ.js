@@ -1335,77 +1335,75 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 	const s = JSON.parse(activeSettings);
 	const radonSetting = atConfig.settingUniverse === 2;
 	const trimple = atConfig.settingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
-	let mazHelp = 'Welcome to <b>' + titleText + '</b> settings!';
+	const hze = game.stats.highestLevel.valueTotal();
+	const hzeU2 = game.stats.highestRadLevel.valueTotal();
+	let mazHelp = '';
 
-	if (!s.golden && !s.profile && !s.spireAssault) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
-	else if (s.golden) {
-		mazHelp += " This is a powerful automation tool that allows you to set the order of golden upgrade purchases and how many of each type you'd like to have. Here's a quick overview of what everything does:";
-	} else {
-		mazHelp += " This is a tool that allows you to save and load different settings profiles. Here's a quick overview of what everything does:";
-	}
-
-	//Brief overview of what the setting does as it's kinda different from other settings.
+	/* brief overview of what the setting does as it's kinda different from other settings. */
 	if (s.desolation) {
-		mazHelp += "<p>This setting is sligtly different from others. It abuses a bug in the game where you can scum prestiges through a <b>Blacksmithery 3</b> bug. <b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
-		mazHelp += '<li class="indent">By exploiting this bug we get the prestiges from <b>Blacksmithery 3</b> when entering the zone and then the prestiges from the equivalent of doing a +10 map to get those prestiges significantly easier than we should be able to.</li>';
-		mazHelp += "<li class=\"indent\">For a more detailed explanation of how this setting works please see the <a href='https://discord.com/channels/371177798305447938/1075840564534202398/1087668293797679194' target='_blank'>guide in the <b>[Guide] Desolation</b> channel on the Trimps Discord.</a></li>";
-		mazHelp += '<li class="indent">It will create a +1 map on cell 100 of the zone <b>PRIOR</b> to the start zone you set when the improbability is less than 5 gamma bursts from death.</li>';
-		mazHelp += '<li class="indent">It then clears 3 cells before going back into the world and finishing off the improbability and clearing the map on the next zone to take advantage of the bug.</li>';
+		mazHelp += `<p>This setting is sligtly different from others. It abuses a bug in the game where you can scum prestiges through a <b>Blacksmithery 3</b> bug. <b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>`;
+		mazHelp += `<li class="indent">By exploiting this bug we get the prestiges from <b>Blacksmithery 3</b> when entering the zone and then the prestiges from the equivalent of doing a +10 map to get those prestiges significantly easier than we should be able to.</li>`;
+		mazHelp += `<li class="indent">For a more detailed explanation of how this setting works please see the <a href='https://discord.com/channels/371177798305447938/1075840564534202398/1087668293797679194' target='_blank'>guide in the <b>[Guide] Desolation</b> channel on the Trimps Discord.</a></li>`;
+		mazHelp += `<li class="indent">It will create a +1 map on cell 100 of the zone <b>PRIOR</b> to the start zone you set when the improbability is less than 5 gamma bursts from death.</li>`;
+		mazHelp += `<li class="indent">It then clears 3 cells before going back into the world and finishing off the improbability and clearing the map on the next zone to take advantage of the bug.</li>`;
 	}
 
-	//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
 	if (s.mapBonus) {
-		mazHelp += "<br><br><b>Map Bonus</b> works by using the last active line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.";
+		mazHelp += `<b>Map Bonus Settings</b> works by slightly differently from other mapping settings. It finds the highest priority value line that's equal to or greater than your current world zone, and uses that lines settings when it runs.`;
+		mazHelp += `<li class="indent">Lines repeat every zone from when they start until they reach their <b>End Zone</b> input.</li>`;
 	}
 
 	if (s.voidMap) {
-		mazHelp += '<br><br>Void Map works by using Start Zone</b> as the lower bound zone to run voids on and <b>End Zone</b> as the upper bound.';
-
-		mazHelp += '<li class="indent">Additionally it has dropdown inputs which can give you the ability to add more fine-tuning for when a line should be run.';
-		mazHelp += '<li class="indent">If you reach the <b>End Zone</b> zone input of a line it will run regardless of dropdown inputs.';
+		mazHelp += `<b>Void Map Settings</b> works by using <b>Start Zone</b> as the lower bound zone to run voids on and <b>End Zone</b> as the upper bound.`;
+		mazHelp += `<li class="indent">It has dropdown inputs which can give you the ability to add fine-tuning for when a line should be run.`;
+		mazHelp += `<li class="indent">If you reach the <b>End Zone</b> zone input of a line it will run regardless of dropdown inputs.`;
 	}
 
 	if (s.smithyFarm) {
-		mazHelp += '<br><br><b>Smithy Farm</b> will farm resources in the following order <b>Metal > Wood > Gems</b>. This cannot be changed.';
+		mazHelp += `<b>Smithy Farm</b> will farm resources in the following order <b>Metal > Wood > Gems</b>. This cannot be changed.`;
 	}
 
 	if (s.archaeology) {
-		mazHelp += '<br><br><b>Archaeology Farm</b> requires you to have a scientist ratio set in the <b>Job Ratio</b> input field for it to run properly.';
+		mazHelp += `<b>Archaeology Farm</b> requires you to have a scientist ratio set in the <b>Job Ratio</b> input field for it to run properly.`;
 	}
 
 	if (s.insanity) {
-		mazHelp += "<br><br><b>Insanity Farm</b> will disable unique & lower than world level maps when you don't have a destack zone line setup.";
+		mazHelp += `<b>Insanity Farm</b> will disable unique & lower than world level maps when you don't have a destack zone line setup.`;
 	}
 
 	//Top Row Information
 	if (!s.golden && !s.profile) {
-		mazHelp += '<br><br>The top row section consists of toggles and inputs which add extra functions to the setting itself:<br></br><ul>';
-		mazHelp += '<li><b>Enabled</b> - A toggle to enable or disable the entire setting.</li>';
+		if (s.desolation || s.mapBonus || s.voidMap || s.smithyFarm || s.archaeology || s.insanity) mazHelp += `<br>`;
+		mazHelp += `The top row of this settings window consists of toggles and inputs which add extra functions to the setting itself:<br></br><ul>`;
+		mazHelp += `<li><b>Enabled</b> - A toggle to allow this setting to run.</li>`;
+
 		if (s.raiding && !s.bionic) {
-			mazHelp += '<li><b>Recycle Maps</b> - A toggle to recycle maps after raiding has finished.</li>';
-			mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>";
+			mazHelp += `<li><b>Recycle Maps</b> - A toggle to recycle maps after raiding has finished.</li>`;
+			mazHelp += `<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>`;
 		}
+
 		if (s.mapBonus) {
-			mazHelp += '<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings. If set to <b>-1</b> it will use your world job ratios.</li>';
-			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
-			mazHelp += "<li><b>Special</b> - The type of cache you'd like to run when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings.</li>";
+			const showSpire = (!radonSetting && hze >= 170) || (radonSetting && hzeU2 >= 270);
+			const settingText = showSpire ? `either the <b>Map Bonus Ratio</b> or <b>Max Map Bonus</b> Spire` : `the <b>Map Bonus Ratio</b>`;
+			mazHelp += `<li><b>Job Ratio</b> - The job ratio to use when Map Bonus stacks are obtained from ${settingText} setting.</li>`;
+			mazHelp += `<li class="indent">Input should look like this: <b>1,1,1,1</b> with the order being the games unlock order (farmers, lumberjacks, miners, scientists).</li>`;
+			mazHelp += `<li class="indent">If set to <b>-1</b> it will use your current AT Auto Jobs ratio.</li>`;
+			mazHelp += `<li class="indent">Your job ratio will only be used when the <b>AT Auto Jobs</b> setting is enabled.</li>`;
+
+			mazHelp += `<li><b>Special</b> - The map cache (special modifier) you'd like to run when Map Bonus is run from ${settingText} setting.</li>`;
 		}
+
 		if (s.voidMap) {
-			mazHelp += '<li><b>Max Map Bonus</b> - Will assume you have 10 map bonus stacks';
-			if (radonSetting && !game.portal.Tenacity.radLocked) mazHelp += ' and max tenacity';
-			mazHelp += ' when void maps HD Ratio calcs are being set.</li>';
+			mazHelp += `<li><b>Max Map Bonus</b> - Will assume you have 10 map bonus stacks${radonSetting && !game.portal.Tenacity.radLocked ? ' and max tenacity' : ''} when void maps HD Ratio calcs are being set.</li>`;
 
-			if (game.permaBoneBonuses.boosts.owned > 0) mazHelp += '<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>';
+			if (game.permaBoneBonuses.boosts.owned > 0) mazHelp += `<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>`;
 
-			mazHelp += '<li><b>Void Farm</b> - Will farm before running void maps if your void hits survived is below the input in <b>Void Farm Hits Survived</b> or your void hd ratio is below the input in <b>Void Farm Void HD Ratio</b>. Farms until you have reached the map cap set in the <b>HD Farm</b> settings.</li>';
-
-			mazHelp += '<li><b>Void Farm Hits Survived</b> - Will farm to this void hits survived value before running void maps. Must be set above 0 to be used otherwise will be ignored.</li>';
-
-			mazHelp += '<li><b>Void Farm HD Ratio</b> - Will farm to this void HD ratio survived value before running void maps. Must be set above 0 to be used otherwise will be ignored.</li>';
-
-			mazHelp += '<li><b>Void Farm Job Ratio</b> - The job ratio to use when farming stats before running void maps.</li>';
-			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
-			mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If using <b>Map Count</b> and you set to <b>-1</b> it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
+			mazHelp += `<li><b>Void Farm</b> - Will farm before running void maps if your void hits survived is below the input in <b>Void Farm Hits Survived</b> or your void hd ratio is below the input in <b>Void Farm Void HD Ratio</b>. Farms until you have reached the map cap set in the <b>HD Farm</b> settings.</li>`;
+			mazHelp += `<li><b>Void Farm Hits Survived</b> - Will farm to this void hits survived value before running void maps. Must be set above 0 to be used otherwise will be ignored.</li>`;
+			mazHelp += `<li><b>Void Farm HD Ratio</b> - Will farm to this void HD ratio survived value before running void maps. Must be set above 0 to be used otherwise will be ignored.</li>`;
+			mazHelp += `<li><b>Void Farm Job Ratio</b> - The job ratio to use when farming stats before running void maps.</li>`;
+			mazHelp += `<li class="indent">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>`;
+			mazHelp += `<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If using <b>Map Count</b> and you set to <b>-1</b> it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>`;
 		}
 		if (s.boneShrine) {
 			mazHelp += '<li><b>Auto Spend Charges</b> - Enables the ability to automatically spend bone charges when above a certain value.</li>';
@@ -1416,7 +1414,7 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 		}
 		if (s.hdFarm) {
-			mazHelp += '<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from the <b>Hits Survived</b> setting. If set to <b>-1</b> it will use your world job ratios.</li>';
+			mazHelp += '<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from the <b>Hits Survived</b> setting. If set to <b>-1</b> it will use your world job ratio.</li>';
 			mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
 		}
 		if (s.worshipperFarm) {
@@ -1438,42 +1436,68 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 
 	if (s.golden || s.profile) mazHelp += '<br>';
 
-	//Row Settings
-	mazHelp += '</ul></br> The settings for each row that is added:<ul>';
+	/* 
+		general settings
+	*/
+	mazHelp += `</ul></br> Here's a description of settings for each added row:<ul>`;
 
-	mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this line completely</li>";
+	mazHelp += `<li><span style='padding-left: 0.3%; margin-right: -0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Removes this line from the settings window.</li>`;
 	if (!s.profile) {
 		const includeCell = !s.golden && !s.spireAssault;
-		mazHelp += '<li><b>Active</b> - A toggle to disable/enable this line.</li>';
-		mazHelp += `<li><b>Priority</b> - If this setting has two or more lines set to trigger ${includeCell ? 'at the same cell ' : ''}on the same zone, the line with the lowest priority will run first.</li>`;
-		mazHelp += '<li class="indent">This also determines sort order of lines in the UI.</li>';
+		mazHelp += `<li><b>Active</b> - A toggle to allow this row to be run.</li>`;
+		mazHelp += `<li><b>Priority</b> - If multiple rows trigger ${includeCell ? 'at the same cell and ' : 'on the same '} zone, the ${s.mapBonus ? 'higher' : 'lower'} priority line runs first.</li>`;
+		mazHelp += `<li class="indent">This also determines sort order of rows in the UI.</li>`;
 	}
-	if (!s.voidMap && !s.golden && !s.profile && !s.spireAssault) mazHelp += '<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>';
+	if (!s.voidMap && !s.golden && !s.profile && !s.spireAssault) mazHelp += `<li><b>Start Zone</b> - The zone where this line starts running.</li>`;
+	if (s.endZone) {
+		mazHelp += `<li><b>End Zone</b> - The zone where this line should stop running.</li>`;
+		if (s.repeatEvery) mazHelp += `<li class="indent">This input is only used when your <b>Repeat Every</b> input is <b>above 0</b>.</li>`;
+	}
+
 	if (!s.golden && !s.desolation && !s.profile && !s.spireAssault) {
-		mazHelp += '<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell.</li>';
-		mazHelp += '<li class="indent"><b>Runs on the cell you have input or after if you have already gone past that cell on your zone.</b></li>';
-		mazHelp += '<li class="indent"><b>Doesn\'t take overkill into account so for example if you overkill past c100 with a c100 line it will be skipped.</b></li>';
+		mazHelp += `<li><b>Cell</b> - The cell number where this line should trigger.</li>`;
+		mazHelp += `<li class="indent">The line will still trigger if you have passed the rows cell input.</li>`;
+		if (!game.portal.Overkill.locked) mazHelp += `<li class="indent">Your line can be skipped if you overkill past it and onto the next zone in a single attack.</li>`;
 	}
+
 	if (s.mapLevel) {
-		mazHelp += '<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. ' + (radonSetting ? "Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount." : '') + '</li>';
-		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'. " + (radonSetting && !(s.insanity || s.alchemy || s.hypothermia) ? 'Will override inputs above -1 during the Wither challenge.' : '') + '</li>';
+		mazHelp += `<li><b>Auto Level</b> - Uses the recommendation from Auto Level to determine the optimal map level to run.</li>`;
+		mazHelp += `<li class="indent">Your <b>Auto Level</b> recommendation can be seen in the games breeding section.</li>`;
+		mazHelp += `<li><b>Map Level</b> - The map level you'd like this line to run.</li>`;
+		if (s.mapBonus) mazHelp += `<li class="indent">Only accepts inputs for map levels you can gain map bonus stacks on.</li>`;
+		else mazHelp += `<li class="indent">Inputs can be positive or negative, so you could do <b>-5</b>, or <b>0</b>, or <b>3</b>.</li>`;
+		mazHelp += `<li class="indent">This input is disabled when the <b>Auto Level</b> checkbox is enabled.</li>`;
+		if (radonSetting && !(s.insanity || s.alchemy || s.hypothermia)) mazHelp += `<li class="indent">Will override inputs above <b>-1</b> during the Wither challenge.</li>`;
 	}
-	if (s.mapBonus) mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
 	if (s.jobRatio) {
-		mazHelp += '<li><b>Job Ratio</b> - The job ratio you want to use for this line. If set to <b>-1</b> it will use your world job ratios.</li>';
-		mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
+		mazHelp += `<li><b>Job Ratio</b> - The job ratio you want to use when this line is run.</li>`;
+		mazHelp += `<li class="indent">Input should look like this: <b>1,1,1,1</b> with the order being the games unlock order (farmers, lumberjacks, miners, scientists).</li>`;
+		mazHelp += `<li class="indent">If set to <b>-1</b> it will use your current AT Auto Jobs ratio.</li>`;
+		mazHelp += `<li class="indent">Your job ratio will only be used when the <b>AT Auto Jobs</b> setting is enabled.</li>`;
 	}
-	if (s.special) mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with wooden caches during the Transmute challenge.</li>";
 
-	//Row Settings
-	if (!s.profile) mazHelp += '</ul></br><b>These inputs are specific to this setting and can be quite important for how you try to set this up:</b><ul><br>';
+	if (s.special) mazHelp += "<li><b>Special</b> - The map cache (special modifier) you'd like to use when this line runs.</li>";
+
+	if (s.runType) {
+		mazHelp += `<li><b>Run Type</b> - The type of run you would like this challenge to run on.</li>`;
+		mazHelp += `<li class="indent">You can choose between Filler, One Offs, Daily, and ${_getChallenge2Info()} challenge runs and select if you'd rather have it run on every run of that type or on a specific challenge.</li>`;
+		mazHelp += `<li class="indent">The Filler, One Offs, and ${_getChallenge2Info()} options provide the ability to run this line on all challenges of that run type or a specific challenge.</li>`;
+	}
+
+	/* 
+		row Settings 
+	*/
+	if (!s.profile) mazHelp += '</ul></br>These inputs are <b>specific to this setting</b> and can be quite important for how you try to set this up:<ul><br>';
 
 	if (s.voidMap) {
 		mazHelp += '<li><b>Start Zone</b> - The lower bound zone to run voids maps on.</li>';
 		mazHelp += '<li><b>End Zone</b> - The upper bound zone to run voids maps on.</li>';
-		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the Auto Maps status tooltip.</li>";
-		mazHelp += '<li class="indent">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you\'ve selected one of Hits Survived, Hits Survived Void it will check if the value is lower than it and skip if it is. Disabled just skips checking that input.<br></li>';
+		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met <b>OR</b> you are at the <b>End Zone</b> input for that line.</li>";
+		mazHelp += '<li class="indent"><b>HD Ratio</b> dropdowns will check to see if the input value is higher than your selected <b>HD Ratio</b> value.</li>';
+		mazHelp += '<li class="indent"><b>Hits Survived</b> dropdowns will check to see if the input value is lower than your selected <b>Hits Survived</b> value.</li>';
+		mazHelp += '<li class="indent"><b>Disabled</b> this dropdown is used to disable checking this dropdown. Can be used to only check against one <b>HD Ratio</b> or <b>Hits Survived</b> condition.</li>';
+		mazHelp += '<li class="indent">Your current values for each of the dropdown options can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</li>';
 		mazHelp += '<li><b>Portal After</b> - Will run Auto Portal immediately after this line has run.';
 		if (!radonSetting) mazHelp += '<br>When enabled and farming for, or running Void Maps this will buy as many nurseries as you can afford based upon your spending percentage in the AT AutoStructure settings.</li>';
 		mazHelp += '</li>';
@@ -1490,15 +1514,17 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 		mazHelp += '<li class="indent"><b>Skele Spawn</b> - Runs maps until the time since your last Skeletimp kill was this amount of time or greater.</li>';
 
 		mazHelp += "<li><b>Map Repeats</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
-		mazHelp += '<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in Auto Maps status tooltip) is above this value (and above 0).<br>';
+		mazHelp += '<li><b>Above X HD Ratio</b> - Will only run this line when your <b>World HD Ratio</b> is above this value (and above 0).<br>';
+		mazHelp += '<li class="indent">Your current <b>World HD Ratio</b> can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</li>';
 		mazHelp += '<li><b>Run ' + trimple + '</b> - Will run ' + trimple + ' once this line has been completed.</li>';
 		mazHelp += '<li class="indent">Whilst farming for this line the script will stop purchasing equips until ' + trimple + ' has been run so that there are no wasted resources.</li>';
 		mazHelp += '<li class="indent">If ' + trimple + " has been run then any line with this enabled won't be run." + '</li>';
 	}
 
 	if (s.mapBonus) {
-		mazHelp += '<li><b>Map Stacks</b> - How many stacks the script should aim for when running this line.</li>';
-		mazHelp += '<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in Auto Maps status tooltip) is above this value (and above 0).<br>';
+		mazHelp += '<li><b>Map Stacks</b> - The amount of map bonus stacks to obtain when this line runs.</li>';
+		mazHelp += '<li><b>Above X HD Ratio</b> - This line will only run when your <b>World HD Ratio</b> is both above this value and 0.<br>';
+		mazHelp += '<li class="indent">Your current <b>World HD Ratio</b> can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</li>';
 	}
 
 	if (s.raiding || s.bionic) {
@@ -1516,8 +1542,8 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 
 	if (s.hdFarm) {
 		mazHelp += "<li><b>Farming Type</b> - The type of Hits Survived or HD Ratio you'd like to farm towards.</li>";
-		mazHelp += "<li><b>HD Base</b> - What H:D you'd like to reach.</li>";
-		mazHelp += "<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
+		mazHelp += "<li><b>HD Base</b> - The Hits Survived or HD Ratio value you'd like to reach.</li>";
+		mazHelp += '<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your target would be 12, then at z102 it would be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low HD Ratio.</li>';
 
 		mazHelp += '<li class="indent">If <b>Map Level</b> has been selected it will farm until auto level reaches that level.</li>';
 		mazHelp += '<li class="indent">Will only run Void Map lines if you have void maps in your map chamber.</li>';
@@ -1582,8 +1608,6 @@ function mapSettingsHelpWindow(titleText, activeSettings) {
 	}
 
 	if (s.repeatEvery) mazHelp += '<li><b>Repeat Every</b> - Line can be repeated every zone, or set to a custom number depending on need.</li>';
-	if (s.endZone) mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this line repeat. If so, the line will stop repeating at this zone. Must be between 6 and 1000.</li>";
-	if (s.runType) mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
 
 	if (s.golden) {
 		mazHelp += '<li><b>Amount</b> - The amount of golden upgrades to purchase before moving onto the next line.</li>';

@@ -978,7 +978,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (atConfig.settingUniverse !== 2 ? "weapon" : "equipment") + " purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase equipment when you slow down in world.<br></p>";
-				description += "<p>Your HD ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your HD ratio can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting and only override your <b>AE: Percent</b> input when running <b>HD Farm</b>.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
@@ -990,7 +990,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>If your Hits Survived (trimpHealth/enemyDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at armor purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase equipment when you slow down in world.<br></p>";
-				description += "<p>Your Hits Survived ratio can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your Hits Survived ratio can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting and only override your <b>AE: Percent</b> input when <b>Hits Survived</b> farming.</p>";
 				description += "<p><b>Recommended:</b> 2.5</p>";
 				return description;
@@ -1582,7 +1582,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will farm until you can survive this amount of attacks.</p>";
 				description += "<p>Uses the <b>Map Cap</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>HD Farm</b> setting. If they haven't been setup then it will default to a job ratio of <b>1/1/2</b> and a map cap of <b>100</b>.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
-				description += "<p>Your current Hits Survived value can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your current Hits Survived value can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Recommended:</b> 1.5</p>";
 				return description;
 			}, 'value', 1.25, null, 'Maps', [1, 2]);
@@ -1614,7 +1614,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Map Bonus stacks will be obtained when above this World HD Ratio value.</p>";
 				description += "<p>Will use the <b>Special</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>Map Bonus</b> setting. If they haven't been setup then it will default to a job ratio of <b>0/1/3</b> and the best <b>Metal</b> cache available.</p>";
-				description += "<p>Your current HD Ratio value can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your current HD Ratio value can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
@@ -1696,7 +1696,7 @@ function initialiseAllSettings() {
 			function () { return ('HS & HD Farm Settings') },
 			function () {
 				let description = "<p>Here you can select how and when you would like <b>H:D Ratio</b> or <b>Hits Survived</b> farming to be run.</p>";
-				description += "<p>Your current HD Ratio and Hits Survived values can be seen in either the <b>Auto Maps status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
+				description += "<p>Your current HD Ratio and Hits Survived values can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				return description;
@@ -3857,7 +3857,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				else description += "<p><b>Recommended:</b> -1</p>";
-				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
+				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps Status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1, 2]);
 			
@@ -3930,7 +3930,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				else description += "<p><b>Recommended:</b> -1</p>";
-				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
+				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps Status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1, 2]);
 			
@@ -4003,7 +4003,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				if (atConfig.settingUniverse === 1) description += "<p><b>Recommended:</b> 10</p>";
 				else description += "<p><b>Recommended:</b> -1</p>";
-				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps status tooltip or the AutoTrimp settings Help tab.</b></p>";
+				description += "<br><p><b>Your Hits Survived ratio can be seen in either the Auto Maps Status tooltip or the AutoTrimp settings Help tab.</b></p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1, 2]);
 			
@@ -4426,7 +4426,7 @@ function initialiseAllSettings() {
 				let description = "<p>Will display the Trimps user interface during time warp.</p>";
 				description += "<p>Updates the display every minute of game time.</p>";
 				description += "<p>This will cause your time warp to take longer as it has to render additional frames.</p>";
-				description += "<p>When first loading Time Warp you will have a tooltip to inform you of your Time Warp duration as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the start of the Auto Maps status at the bottom of the battle container.</p>";
+				description += "<p>When first loading Time Warp you will have a tooltip to inform you of your Time Warp duration as you won't be able to see it ingame. Additionally adds your current Time Warp progress percentage to the start of the Auto Maps Status at the bottom of the battle container.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Time Warp', [0],
@@ -4686,7 +4686,7 @@ function initialiseAllSettings() {
 			function () { return (_getPrimaryResourceInfo().name + ' Per Hour') },
 			function () {
 				let description = "<p>Will display the " + _getPrimaryResourceInfo().name + "/Hr tooltip message.</p>";
-				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + _getPrimaryResourceInfo().name + " Per Hour Status</b> option inside the <b>Hide Auto Buttons</b> setting in the <b>Display</b> tab is unchecked.</p>";
+				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps Status when the <b>" + _getPrimaryResourceInfo().name + " Per Hour Status</b> option inside the <b>Hide Auto Buttons</b> setting in the <b>Display</b> tab is unchecked.</p>";
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeResourceTooltip();', 'Help', [0]);
 
@@ -4707,7 +4707,7 @@ function initialiseAllSettings() {
 		createSetting('helpStatus',
 			function () { return ('Auto Maps Status') },
 			function () {
-				let description = "<p>Will display the Auto Maps status window.</p>";
+				let description = "<p>Will display the Auto Maps Status window.</p>";
 				description += "<p>This can also be accessed by mousing over the text that tells you what Auto Maps is currently trying to do just beneath the Auto Maps button.</p>";
 				return description;
 			}, 'action', null, 'cancelTooltip(); makeAutomapStatusTooltip(false);', 'Help', [0]);

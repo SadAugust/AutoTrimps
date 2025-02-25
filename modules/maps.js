@@ -34,7 +34,7 @@ function autoMapsStatus(get = false) {
 		return [status, getPercent, lifetime];
 	}
 
-	//Set auto maps status when inside of TW
+	//Set Auto Maps Status when inside of TW
 	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay') && document.getElementById('autoMapStatusTW') !== null) {
 		//Add in a header for the status to let the user know what it is
 		const statusMsg = '<h9>Auto Maps Status</h9><br>' + status;
@@ -46,7 +46,7 @@ function autoMapsStatus(get = false) {
 
 	const timeWarpUpdate = !usingRealTimeOffline || getPageSetting('timeWarpDisplay');
 
-	//Set auto maps status when outside of TW
+	//Set Auto Maps Status when outside of TW
 	if (timeWarpUpdate) {
 		const autoMapsElem = document.getElementById('autoMapStatus');
 		if (autoMapsElem !== null) {
