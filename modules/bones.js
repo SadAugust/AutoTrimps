@@ -17,7 +17,7 @@ function boneShrine(lineCheck) {
 
 	const map = getCurrentMapObject();
 
-	if (!boneShrineAncientTreasure || (game.global.mapsActive && map.name === ancientTreasure && game.global.lastClearedMapCell >= map.size - 30)) {
+	if (!boneShrineAncientTreasure || (game.global.mapsActive && map.name === ancientTreasure && game.global.lastClearedMapCell >= map.size - 32)) {
 		const gatherStaff = 'heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1);
 		if (getPageSetting(gatherStaff) !== 'undefined') heirloomEquip(gatherStaff, 'Staff');
 		else heirloomEquip('heirloomStaffMap', 'Staff');
