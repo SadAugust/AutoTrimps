@@ -668,7 +668,8 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayC2Table(tooltipDiv) {
+function _displayC2Table(tooltipDiv, undefined, universe = atConfig.settingUniverse) {
+	universe += 1;
 	const challengeOrders = {
 		c2: ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Coordinate', 'Trimp', 'Obliterated', 'Eradicated', 'Mapology', 'Trapper'],
 		c3: ['Unlucky', 'Storm', 'Unbalance', 'Quest', 'Downsize', 'Transmute', 'Duel', 'Wither', 'Glass', 'Smithless', 'Berserk', 'Trappapalooza']
@@ -705,6 +706,11 @@ function _displayC2Table(tooltipDiv) {
 		}
 	};
 
+	const universeCaps = {
+		c2: 6e4,
+		c3: Infinity
+	};
+
 	const COLORS = {
 		default: 'DEEPSKYBLUE',
 		high: 'LIMEGREEN',
@@ -724,8 +730,22 @@ function _displayC2Table(tooltipDiv) {
 	};
 
 	let challengeList = {};
+	let challengeTotal = 0;
 	const hze = game.stats.highestLevel.valueTotal();
 	const hzeU2 = game.stats.highestRadLevel.valueTotal();
+
+	let tooltipText = '';
+	const headerList = ['C2'];
+	if (hzeU2 >= 50) {
+		headerList.push('C3');
+		tooltipText += `<div id='spireAssaultPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
+		for (const header of headerList) {
+			const widthStyle = `width: calc((100% - ${0.2 + 0.2 * headerList.length}em - 6px) / ${headerList.length});`;
+			const headerClass = Number(header.charAt(1)) === universe ? 'Selected' : 'NotSelected';
+			tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; ${widthStyle}" class='spireAssaultHeader spireHeader${headerClass}' onclick='importExportTooltip("c2table", undefined, ${Number(header.charAt(1)) - 1})'  data-hidden-name="${header}"><b>${header}</b></div>`;
+		}
+		tooltipText += `</div>`;
+	}
 
 	const processArray = (type, array, runnerList, challengesToRun) => {
 		if (array.length > 0) populateHeaders(type.toUpperCase());
@@ -734,10 +754,12 @@ function _displayC2Table(tooltipDiv) {
 		array.forEach((item, index) => {
 			const challengePercent = 100 * (game.c2[item] / (radLevel ? hzeU2 : hze));
 			const [highPct, midPct] = colourPercentages[item] || colourPercentages['Default'];
+			const bonusPercent = getIndividualSquaredReward(item);
+			challengeTotal += bonusPercent;
 
 			challengeList[item] = {
 				number: index + 1,
-				percent: `${getIndividualSquaredReward(item)}%`,
+				percent: bonusPercent,
 				zone: game.c2[item],
 				percentzone: `${challengePercent.toFixed(2)}%`,
 				c2runner: runnerList.includes(item) ? '✅' : '❌',
@@ -755,7 +777,8 @@ function _displayC2Table(tooltipDiv) {
 	}
 
 	Object.keys(challengeOrders).forEach((type) => {
-		if (type === 'c3' && !Fluffy.checkU2Allowed()) return;
+		if (type !== `c${universe}`) return;
+		if (type === 'c3' && hze < 50) return;
 		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true, true);
 		challenges = filterAndSortChallenges(challenges, 'c2');
 		const array = challengeOrders[type].filter((item) => challenges.includes(item));
@@ -774,29 +797,34 @@ function _displayC2Table(tooltipDiv) {
 		</tr>
 	`;
 
+	const createTotalRow = (type, value) => `
+		<tr>
+			<td>Total ${type}</td>
+			<td></td>
+			<td>${prettify(value)}%</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	`;
+
 	const createTable = (challengeList) => {
 		const rows = Object.keys(challengeList).map((key) => createTableRow(key, challengeList[key]));
+		const cInfScore = hzeU2 >= 50 ? `${createTotalRow('C∞', game.global.totalSquaredReward.toFixed(2))}` : '';
 		return `
 			<table class='bdTableSm table table-striped'>
 				<tbody>
 					${rows.join('')}
-					<tr>
-						<td>Total</td>
-						<td></td>
-						<td>${prettify(game.global.totalSquaredReward.toFixed(2))}%</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
+					${createTotalRow(`C${universe}`, Math.min(universeCaps[`c${universe}`], challengeTotal.toFixed(2)))}
+					${cInfScore}
 				</tbody>
 			</table>
 			</div>
 		`;
 	};
 
-	let tooltipText = createTable(challengeList);
-	if (challengeList.C3) tooltipText = `<div class='litScroll'>${tooltipText}</div>`;
+	tooltipText += createTable(challengeList);
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
 
