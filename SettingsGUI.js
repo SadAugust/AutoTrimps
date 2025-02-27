@@ -5313,7 +5313,7 @@ function updateAutoTrimpSettings(forceUpdate) {
 	atConfig.settingUniverse = autoTrimpSettings.universeSetting.value + 1;
 
 	for (const setting in autoTrimpSettings) {
-		if (['ATversion', 'ATversionChangelog', 'ATprofile'].includes(setting)) continue;
+		if (['ATversion', 'ATversionChangelog', 'versionChangelog', 'ATprofile'].includes(setting)) continue;
 
 		const item = autoTrimpSettings[setting];
 		const settingUniverse = item.universe;

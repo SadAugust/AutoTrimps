@@ -981,7 +981,7 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 
 function disableAllSettings() {
 	for (const setting in autoTrimpSettings) {
-		if (['ATversion', 'ATversionChangelog', 'ATprofile', 'gameUser'].includes(setting)) continue;
+		if (['ATversion', 'ATversionChangelog', 'versionChangelog', 'ATprofile', 'gameUser'].includes(setting)) continue;
 		const item = autoTrimpSettings[setting];
 		if (item.type === 'mazDefaultArray') continue;
 

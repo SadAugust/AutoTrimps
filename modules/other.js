@@ -394,6 +394,29 @@ function updateChangelogButton() {
 	saveSettings();
 }
 
+function updateVanillaChangelogButton(firstLoad = false) {
+	const changeLogMatches = autoTrimpSettings.versionChangelog === game.global.stringVersion;
+	if (changeLogMatches && !firstLoad) return;
+
+	const changeLogBtn = document.getElementById('versionNumber');
+	if (!changeLogBtn) return;
+
+	if (firstLoad) {
+		const parentOnClick = changeLogBtn.parentNode.onclick;
+		changeLogBtn.parentNode.onclick = function () {
+			if (typeof parentOnClick === 'function') parentOnClick();
+			updateVanillaChangelogButton();
+		};
+
+		if (!changeLogMatches) return;
+	}
+
+	const whatsNewBtn = changeLogBtn.nextSibling;
+	whatsNewBtn.textContent = whatsNewBtn.textContent.replace(" | What's New", '');
+	autoTrimpSettings.versionChangelog = game.global.stringVersion;
+	saveSettings();
+}
+
 function remakeTooltip() {
 	if (MODULES.popups && !MODULES.popups.challenge && !MODULES.popups.respecAncientTreasure && !MODULES.popups.portal) {
 		return;

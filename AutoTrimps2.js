@@ -292,6 +292,8 @@ function initialiseScript() {
 	toggleCatchUpMode();
 	if (usingRealTimeOffline) offlineProgress.loop = setTimeout(timeWarpLoop, 0, true);
 	if (u2Mutations && u2Mutations.open) u2Mutations.openTree();
+
+	updateVanillaChangelogButton(true);
 	debug(`AutoTrimps (${atConfig.initialise.version.split(' ')[0]} ${atConfig.initialise.version.split(' ')[1]}) has finished loading.`);
 	challengeInfo(true);
 	console.timeEnd();
