@@ -593,7 +593,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Click the left side of the button to toggle between the AutoJobs settings. Each of them will adjust the 3 primary resource jobs but you'll have to manually set the rest by clicking the cogwheel on the right side of this button.</p>";
 				description += "<p><b>AT Auto Jobs: Off</b><br>Will disable the script from purchasing any jobs.</p>";
-				description += "<p><b>AT Auto Jobs: On</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out the Help section for this setting by clicking on the cogwheel.</p>";
+				description += "<p><b>AT Auto Jobs: On</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on the ratios that this uses and when it switches, check out the Help section by clicking on the cogwheel and looking at the Auto Ratios portion of text.</p>";
 				description += "<p><b>AT Auto Jobs: Manual</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>";
 				description += "<p>Automatically swaps the games default hiring setting <b>Not Firing For Jobs</b> to <b>Firing For Jobs</b>.</p>";
 				description += "<p>Map setting job ratios always override both <b>AT Auto Jobs: On</b> & <b>AT Auto Jobs: Manual</b> when AutoMaps is enabled.</p>";

@@ -2361,21 +2361,33 @@ function autoStructureSave() {
 
 //Auto Jobs
 function autoJobsDisplay(elem) {
-	const ratio = "<p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. Any number that's 0 or below will stop AT hiring any workers for that job. Scientists will be hired based on a ratio that is determined by how far you are into the game, the further you get the less Scientists will be hired.</p>";
+	const ratio =
+		"<p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. Any number that's 0 or below will stop the script hiring any workers for that job. Scientists will be hired based on a ratio that is determined by how far you are into the game, the further you get, the less Scientists will be hired.</p>";
 	const percent = "<p>The right side of this window is dedicated to jobs limited more by resources than workspaces. Set the percentage of resources that you'd like to be spent on each job.</p>";
 	const magmamancer = "<p><b>Magmamancers:</b> These will only be hired when they'll do something! So once the time spent on the zone is enough to activate the first metal boost.</p>";
 	const farmersUntil = '<p><b>Farmers Until:</b> Stops buying Farmers from this zone. Map setting job ratios override this setting.</p>';
 	const lumberjackMP = '<p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p>';
 
-	let autoRatios = '<p><b>AutoRatios</b> - Running <b>' + (portalUniverse === 2 ? 'Transmute' : 'Metal') + '</b> will override these values and use <b>4/5/0.</b>';
-	autoRatios += '<br><b>1/1/1</b> Up until 300k trimps.';
-	autoRatios += '<br><b>3/3/5</b> Up until 3 million trimps.';
-	autoRatios += '<br><b>3/1/4</b> When above 3 million trimps.';
-	autoRatios += '<br><b>1/1/10</b> When above 1000 tributes.';
-	autoRatios += '<br><b>1/2/22</b> When above 1500 tributes.';
-	autoRatios += '<br><b>1/7/12</b> When above 3000 tributes and at or above z230.';
-	autoRatios += '<br><b>1/1/100</b> When at or above z300.';
-	if (game.global.universe === 2) autoRatios += '<br><b>1/1/1</b> When using a Hazardous or better heirloom.';
+	let autoRatios = '<p><b>Auto Ratios</b> - Using ratios from top to bottom based on the following criteria:';
+	autoRatios += '<br></b><b>4/5/0</b> - When running the <b>' + (portalUniverse === 2 ? 'Transmute' : 'Metal') + '</b> challenge.';
+
+	if (game.global.universe === 1) {
+		autoRatios += '<br><b>1/1/100</b> - When at or above z300 or running the <b>Eradicated</b> challenge.';
+		autoRatios += '<br><b>1/7/12</b> - When at or above z230.';
+		autoRatios += '<br><b>1/2/22</b> - When above 1500 tributes.';
+		autoRatios += '<br><b>1/1/10</b> - When above 1000 tributes.';
+	}
+
+	if (game.global.universe === 2) {
+		autoRatios += '<br><b>1/1/1</b> - When using a <b>Hazardous</b> or higher rarity heirloom.';
+		autoRatios += '<br><b>1/2/4</b> - When above 1250 tributes.';
+		autoRatios += '<br><b>2/1/4</b> - When at or above z110.';
+	}
+
+	autoRatios += `<br><b>3/1/4</b> - When above ${prettify(3e6)} trimps.`;
+	autoRatios += `<br><b>3/3/5</b> - When above ${prettify(3e5)} trimps.`;
+	autoRatios += `<br><b>1/1/2</b> - Used running a map until you reach ${prettify(3e6)} trimps.`;
+	autoRatios += `<br><b>1/1/1</b> - Base ratio.`;
 	autoRatios += '</p>';
 
 	let tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip(true);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'> ";

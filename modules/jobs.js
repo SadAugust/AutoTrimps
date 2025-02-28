@@ -280,21 +280,34 @@ function _getScientistRatio(maxTrimps) {
 }
 
 function _getAutoJobRatio(maxTrimps) {
-	const conditions = [
-		{ condition: () => game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10 && game.global.universe !== 1, ratio: [1, 1, 1, 0] },
-		{ condition: () => game.global.world >= 300, ratio: [1, 1, 100, 0] },
-		{ condition: () => game.buildings.Tribute.owned > 3000 && mutations.Magma.active(), ratio: [1, 7, 12, 0] },
-		{ condition: () => game.buildings.Tribute.owned > 1500, ratio: [1, 2, 22, 0] },
-		{ condition: () => game.buildings.Tribute.owned > 1000, ratio: [1, 1, 10, 0] },
-		{ condition: () => maxTrimps > 3000000, ratio: [3, 1, 4, 0] },
-		{ condition: () => maxTrimps > 300000, ratio: [3, 3, 5, 0] },
-		{ condition: () => game.global.mapsActive && !game.mapUnlocks.Shieldblock.canRunOnce, ratio: [1, 1.5, 2, 0] },
-		{ condition: () => game.global.mapsActive, ratio: [1, 1, 2, 0] },
-		{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
-		{ condition: () => true, ratio: [1, 1, 1, 0] }
-	];
+	const jobRatioObj = {
+		1: [
+			{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
+			{ condition: () => game.global.world >= 300 || challengeActive('Eradicated'), ratio: [1, 1, 100, 0] },
+			{ condition: () => game.global.world >= 230, ratio: [1, 7, 12, 0] },
+			{ condition: () => game.buildings.Tribute.owned > 1500, ratio: [1, 2, 22, 0] },
+			{ condition: () => game.buildings.Tribute.owned > 1000, ratio: [1, 1, 10, 0] },
+			{ condition: () => maxTrimps > 3000000, ratio: [3, 1, 4, 0] },
+			{ condition: () => maxTrimps > 300000, ratio: [3, 3, 5, 0] },
+			{ condition: () => game.global.mapsActive && !game.mapUnlocks.Shieldblock.canRunOnce, ratio: [1, 1.5, 2, 0] },
+			{ condition: () => game.global.mapsActive, ratio: [1, 1, 2, 0] },
+			{ condition: () => true, ratio: [1, 1, 1, 0] }
+		],
+		2: [
+			{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
+			{ condition: () => game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10, ratio: [1, 1, 1, 0] },
+			{ condition: () => game.buildings.Tribute.owned > 1250, ratio: [1, 2, 4, 0] },
+			{ condition: () => game.global.world >= 110, ratio: [2, 1, 4, 0] },
+			{ condition: () => maxTrimps > 3000000, ratio: [3, 1, 4, 0] },
+			{ condition: () => maxTrimps > 300000, ratio: [3, 3, 5, 0] },
+			{ condition: () => game.global.mapsActive, ratio: [1, 1, 2, 0] },
+			{ condition: () => true, ratio: [1, 1, 1, 0] }
+		]
+	};
 
-	return conditions.find(({ condition }) => condition()).ratio;
+	const ratioConditions = jobRatioObj[game.global.universe];
+
+	return ratioConditions.find(({ condition }) => condition()).ratio;
 }
 
 function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps) {

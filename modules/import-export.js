@@ -733,10 +733,11 @@ function _displayC2Table(tooltipDiv, undefined, universe = atConfig.settingUnive
 	let challengeTotal = 0;
 	const hze = game.stats.highestLevel.valueTotal();
 	const hzeU2 = game.stats.highestRadLevel.valueTotal();
+	const allowC3 = Fluffy.checkU2Allowed();
 
 	let tooltipText = '';
 	const headerList = ['C2'];
-	if (hzeU2 >= 50) {
+	if (allowC3) {
 		headerList.push('C3');
 		tooltipText += `<div id='spireAssaultPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
 		for (const header of headerList) {

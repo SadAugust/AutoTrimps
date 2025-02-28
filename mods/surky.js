@@ -147,6 +147,7 @@ function initPerks() {
 		mutationMult: u2Mutations.tree.Trimps.purchased ? 1.5 : 1,
 		expandingTauntimp: game.global.expandingTauntimp,
 		hubsEnabled: game.global.exterminateDone,
+		glassCap: 400,
 		potency: 0.0085,
 		carpNeeded: 0,
 		bestPerk: ''
@@ -763,7 +764,7 @@ function iterateValueFeedback(valueArray, props, perks) {
 
 	// Glass reward gives 10% radon per extra completion if we can increase our VM zone
 	if (props.clearWeight >= 0 && props.glassRadon) {
-		Vrad *= Math.pow(1.1, Math.min(pushZones, 400));
+		Vrad *= Math.pow(1.1, Math.min(pushZones, props.glassCap));
 	}
 
 	// count S3 for Rn weighting if selected by the user, or if at Obs 0 with no clear weight (which would give no value to pushing perks at all without S3/VS1)
@@ -774,7 +775,7 @@ function iterateValueFeedback(valueArray, props, perks) {
 		Vrad *= Math.pow(1.03, pushZones);
 		// VS1 gives additive 0.25% VM Rn per additional zone
 		// TODO: vmRadFrac is a hacky constant for now, should probably be a user input after we clean up the volume of user inputs
-		Vrad *= 1 + (0.6 * pushZones) / (400 + props.targetZone);
+		Vrad *= 1 + (0.6 * pushZones) / (props.glassCap + props.targetZone);
 	}
 	// trinket gain: use a fixed drop rate based on target zone, which should be fine assuming the user has entered
 	//   a sensible value and we're only optimizing at the margins of a fractional zone (or maybe 1-2 zones)

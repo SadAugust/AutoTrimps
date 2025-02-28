@@ -232,7 +232,7 @@ function _getTimeWarpHours(inputHours) {
 	return timeWarpHours;
 }
 
-function _adjustGlobalTimers(keys, adjustment) {
+function _adjustGlobalTimers(keys, adjustment, testing = false) {
 	keys.forEach((key) => {
 		if (key === 'lastChargeAt') game.permaBoneBonuses.boosts[key] += adjustment;
 		else game.global[key] += adjustment;
@@ -244,7 +244,7 @@ function testTimeWarp(hours) {
 	const timeToRun = timeWarpHours * 3600000;
 
 	const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastBonePresimpt', 'lastChargeAt'];
-	_adjustGlobalTimers(keys, -timeToRun);
+	_adjustGlobalTimers(keys, -timeToRun, true);
 	offlineProgress.start();
 }
 
