@@ -4490,10 +4490,10 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Display', [0]);
 
 		createSetting('displayHideAutoButtons',
-			function () { return ('Hide Auto Buttons') },
+			function () { return ('Hide Buttons and Info') },
 			function () {
 				const resourcePerHour = atConfig.settingUniverse === 1 ? 'Helium' : 'Radon';
-				let description = "<p>Will allow you to select which of the scripts and the games automation buttons you'd prefer not to be visible.</p>";
+				let description = "<p>Will allow buttons or miscellaneous info from the game or script you'd prefer not to be visible.</p>";
 				description += `<p>Auto Maps Status and ${resourcePerHour} Per Hour Status can also be hidden in this menu.</p>`;
 				return description;
 			}, 'mazDefaultArray', {

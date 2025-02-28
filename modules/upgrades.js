@@ -19,10 +19,7 @@ function gigaTargetZone() {
 	if (trimpStats.isC3 && getPageSetting('autoGenModeC2') !== 0) targetZone = Math.min(targetZone, 230);
 	if (getPageSetting('autoGenFuelStart') >= 1 || getPageSetting('autoGenModeBefore') !== 0) targetZone = Math.min(targetZone, Math.max(230, getPageSetting('autoGenFuelStart')));
 
-	if (targetZone < 60) {
-		targetZone = Math.max(65, game.global.highestLevelCleared);
-		debug(`Auto Gigastation: Warning! Unable to find a proper targetZone. Using your HZE instead`, 'general', '*rocket');
-	}
+	if (targetZone < 60) targetZone = Math.max(65, game.global.highestLevelCleared);
 
 	return targetZone;
 }

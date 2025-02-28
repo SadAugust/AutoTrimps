@@ -2659,32 +2659,43 @@ function uniqueMapsSave() {
 //AT Messages
 function messageDisplay(elem) {
 	const msgs = getPageSetting('spamMessages');
-	const keys = ['general', 'upgrades', 'equipment', 'maps', 'map_Details', 'map_Destacking', 'map_Skip', 'other', 'buildings', 'jobs', 'zone', 'golden_Upgrades', 'exotic', 'gather', 'stance', 'run_Stats', 'magmite', 'nature', 'portal'];
+	const keys = ['gather', 'buildings', 'jobs', 'equipment', 'upgrades', 'maps', 'map_Details', 'map_Destacking', 'map_Skip', 'golden_Upgrades', 'other', 'stance', 'magmite', 'nature', 'zone', 'run_Stats', 'exotic', 'challenge_Abandon', 'portal'];
 
 	const settingGroup = keys.reduce((obj, key) => {
 		obj[key] = false;
 		return obj;
 	}, {});
 
-	let tooltipText = "<div id='messageConfig'>Here you can finely tune your message settings. Mouse over the name of a filter for more info.</div>";
-	tooltipText += "<div class='row'>";
+	let tooltipText = "<div id='messageConfig'>Here you can select the messages that the script will print into the message log.<br>Mouse over the name of a filter for more info.<br></div>";
+	tooltipText += `<div id='baseGameItems'>`;
 
-	for (let x = 0; x < 1; x++) {
-		tooltipText += "<div class='col-xs-6'></span><br/>";
+	let rowData = '';
+	let rows = 0;
+	let total = 0;
+	for (let item in settingGroup) {
+		if (item === 'enabled') continue;
+		const realName = (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
+		if (typeof msgs[item] === 'undefined') msgs[item] = false;
 
-		for (let item in settingGroup) {
-			if (item === 'enabled') continue;
-			const realName = (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
-			if (typeof msgs[item] === 'undefined') msgs[item] = false;
-			tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox(item, 'messageConfigCheckbox', msgs && msgs[item])}</span><span onmouseover='messageConfigHoverAT("${item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
+		if ((total > 0 && total % 5 === 0) || item === 'zone') {
+			tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+			rowData = '';
+			rows++;
+			if (item === 'zone') total++;
 		}
 
-		tooltipText += '</div>';
+		let equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
+
+		rowData += `
+			<div class='spireAssaultItem spireItems${equipClass}' onclick='hideAutomationToggleElem(this)' data-hidden-text="${item}" <span onmouseover='messageConfigHoverAT("${item}", event)' onmouseout='messageConfigHoverAT("hide", event)'>
+				<span>${realName}</span>
+			</div>`;
+		total++;
 	}
-
-	tooltipText += '</div>';
-
-	const ondisplay = () => _verticalCenterTooltip();
+	rows++;
+	tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+	tooltipText += `</div>`;
+	const ondisplay = () => _verticalCenterTooltip(true);
 
 	elem.style.top = '25%';
 	elem.style.left = '35%';
@@ -2701,40 +2712,45 @@ function messageDisplay(elem) {
 
 function messageConfigHoverAT(what, event) {
 	const messageConfigMap = {
+		hide: { title: 'Hide', text: 'Here you can finely tune the messages that the script will print into the message log.<br>Mouse over the name of a filter for more info.' },
 		general: { title: 'General', text: 'Notification Messages, Auto He/Hr.' },
-		upgrades: { title: 'Upgrades', text: 'Log all the upgrades that AT has purchased.' },
-		equipment: { title: 'Equipment', text: 'Log the equipment & prestiges that AT buys.' },
-		maps: { title: 'Maps', text: 'Log the maps that AT decides to pick, buy, run, or recycle.' },
-		map_Details: { title: 'Map Details', text: 'Logs run time & map count when AT decides to farm.' },
-		map_Destacking: { title: 'Map Destacking', text: 'Logs run time & map count when AT does any map based destacking.' },
-		map_Skip: { title: 'Map Skip', text: 'Logs when AT skips Worshipper Farm, HD Farm & Hits Survived.' },
-		other: { title: 'Other', text: 'Log Better Auto Fight, Trimpicide & AutoBreed/Gene Timer changes, etc - a catch all.' },
-		buildings: { title: 'Buildings', text: 'Log the buildings that AT purchases.' },
-		jobs: { title: 'Jobs', text: 'Log the jobs that AT purchases.' },
+		buildings: { title: 'Buildings', text: 'Log buildings purchased.' },
+		jobs: { title: 'Jobs', text: 'Log workers hired.' },
+		equipment: { title: 'Equipment', text: 'Log equipment and prestiges purchases.' },
+		upgrades: { title: 'Upgrades', text: 'Log upgrades purchased.' },
+		golden_Upgrades: { title: 'Golden Upgrades', text: 'Log golden upgrades purchases.' },
+		/*  */
+		maps: { title: 'Maps', text: 'Log maps purchases and maps run.' },
+		map_Details: { title: 'Map Details', text: 'Log the time and amount of maps it takes to finish mapping.' },
+		map_Destacking: { title: 'Map Destacking', text: 'Log the time and amount of maps it takes to finish destacking through maps.' },
+		map_Skip: { title: 'Map Skip', text: 'Log when the script skips any mapping settings.' },
+		other: { title: 'Other', text: 'Log Trimpicide army suicides and Robotrimp activations.' },
+		gather: { title: 'Gather', text: 'Log gather changes.' },
+		stance: { title: 'Stance', text: 'Log stance changes.' },
+		magmite: { title: 'Magmite', text: 'Log magmite spending.' },
+		nature: { title: 'Nature', text: 'Log when the script spends nature tokens.' },
+		/*  */
 		zone: { title: 'Zone', text: 'Log when you start a new zone.' },
-		golden_Upgrades: { title: 'Golden Upgrades', text: 'Log all the golden upgrades that AT purchases.' },
-		exotic: { title: 'Exotic', text: 'Log the amount of world exotics you start a zone with.' },
-		gather: { title: 'Gather', text: 'Log the action that AT tries to gather.' },
-		stance: { title: 'Stance', text: 'Logs when AT decides to change stance and what it changes to.' },
-		magmite: { title: 'Magmite', text: 'Logs when the script spends Magmite.' },
-		nature: { title: 'Nature', text: 'Logs when the script spends nature tokens.' },
-		run_Stats: { title: 'Run Stats', text: "Logs the total trimps you have and how many resources you'd gain from a bone charge when entering a new zone." },
-		portal: { title: 'Portal', text: 'Logs the challenge that is portaled into.' }
+		run_Stats: { title: 'Run Stats', text: "Log your total trimps and how many resources you'd gain from a bone charge when starting a new zone." },
+		exotic: { title: 'Exotic', text: 'Log your current world exotics when starting a new zone.' },
+		challenge_Abandon: { title: 'Challenge Abandon', text: 'Log when challenges are abandoned through the scripts settings.' },
+		portal: { title: 'Portal', text: 'Log challenges started by Auto Portal.' }
 	};
 
 	const config = messageConfigMap[what];
 	if (!config) return;
 
-	document.getElementById('messageConfig').innerHTML = `<b>${config.title}</b><br>${config.text}`;
+	if (what === 'hide') document.getElementById('messageConfig').innerHTML = `${config.text}`;
+	else document.getElementById('messageConfig').innerHTML = `<b>${config.title}</b><br>${config.text}`;
 	tooltip(config.title, 'customText', event, config.text);
 }
 
 function messageSave() {
 	const setting = getPageSetting('spamMessages', portalUniverse);
-	const checkboxes = Array.from(document.getElementsByClassName('messageConfigCheckbox'));
+	const items = Array.from(document.getElementsByClassName('spireAssaultItem'));
 
-	checkboxes.forEach((checkbox) => {
-		setting[checkbox.id] = checkbox.dataset.checked === 'true';
+	items.forEach((item) => {
+		setting[item.dataset.hiddenText] = item.classList.contains('spireItemsEquipped');
 	});
 
 	setPageSetting('spamMessages', setting);
@@ -2955,7 +2971,13 @@ function c2RunnerSave() {
 	}
 }
 
-//Hide Automation Buttons
+function hideAutomationToggleElem(element) {
+	const elemPrefix = `spireItems`;
+
+	element.classList.toggle(`${elemPrefix}Equipped`);
+	element.classList.toggle(`${elemPrefix}NotEquipped`);
+}
+
 function hideAutomationDisplay(elem) {
 	const msgs = getPageSetting('displayHideAutoButtons');
 	const keys = ['fight', 'autoFight', 'trap', 'storage', 'structure', 'jobs', 'gold', 'upgrade', 'prestige', 'equip', 'recycleMaps'];
@@ -2964,41 +2986,82 @@ function hideAutomationDisplay(elem) {
 		return obj;
 	}, {});
 
-	let tooltipText = "<div id='messageConfig'>Here you can finely tune ingame automation buttons  you'd prefer to hide. Mouse over the name of a filter for more info.</div>";
-	tooltipText += "<div class='row'>";
-	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;&nbsp;Base Game Automation</span></span><br/>`;
-	tooltipText += "<div class='col-xs-6'></span>";
+	let tooltipText = "<div id='messageConfig'>Here you can select certain ingame (and AutoTrimps) buttons and messages you'd prefer to hide.<br>Mouse over the name of a filter for more info.</div>";
 
+	tooltipText += `<div id='baseGameItems'>`;
+	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Base Game Features</span></span><br/>`;
+
+	let rowData = '';
+	let rows = 0;
+	let total = 0;
 	for (let item in settingGroup) {
 		if (item === 'enabled') continue;
+		if (total > 0 && total % 5 === 0) {
+			tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+			rowData = '';
+			rows++;
+		}
+
+		let equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
+
 		const addAuto = item.includes('ight') || item.includes('recycle') ? '' : 'Auto ';
 		let realName = addAuto + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
 		if (realName === 'AutoFight') realName = 'Auto Fight';
 		if (realName === 'RecycleMaps') realName = 'Recycle Maps';
 
-		tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox(item, 'messageConfigCheckbox', msgs[item])}</span><span onmouseover='hideAutomationConfigHover("${item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
+		rowData += `
+			<div class='spireAssaultItem spireItems${equipClass}' onclick='hideAutomationToggleElem(this)' data-hidden-text="${item}" <span onmouseover='hideAutomationConfigHover("${item}", event)' onmouseout='hideAutomationConfigHover("hide", event)'>
+				<span>${realName}</span>
+			</div>`;
+		total++;
 	}
+	rows++;
+	tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+	tooltipText += `</div>`;
+	tooltipText += `</div>`;
 
-	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>AutoTrimps Automation</span></span><br/>`;
+	tooltipText += `<div id='autoTrimpsItems'>`;
+	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;AutoTrimps Features</span></span><br/>`;
 	const atKeys = ['structure', 'jobs', 'equip', 'maps', 'status', 'heHr'];
 	const atSettingGroup = atKeys.reduce((obj, key) => {
 		obj[key] = false;
 		return obj;
 	}, {});
 
+	rowData = '';
+	rows = 0;
+	total = 0;
 	for (let item in atSettingGroup) {
 		if (item === 'enabled') continue;
+		if (total > 0 && total % 5 === 0) {
+			tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+			rowData = '';
+			rows++;
+		}
+
+		let equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
+
 		let realName = 'Auto ' + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
 		if (item === 'status') realName = 'Auto Maps Status';
 		if (item === 'heHr') realName = `${heliumOrRadon()} Per Hour Status`;
 
-		tooltipText += `<span class='messageConfigContainer'><span class='messageCheckboxHolder'>${buildNiceCheckbox('AT' + item, 'messageConfigCheckbox', msgs['AT' + item])}</span><span onmouseover='hideAutomationConfigHover("${'AT' + item}", event)' onmouseout='tooltip("hide")' class='messageNameHolderAT'> - ${realName}</span></span><br/>`;
+		rowData += `
+			<div class='spireAssaultItem spireItems${equipClass}' onclick='hideAutomationToggleElem(this)' data-hidden-text="${item}" <span onmouseover='hideAutomationConfigHover("AT${item}", event)' onmouseout='hideAutomationConfigHover("hide", event)'>
+				<span>${realName}</span>
+			</div>`;
+		total++;
 	}
+	rows++;
+	tooltipText += `<div id='row${rows}'>${rowData}</div>`;
+	tooltipText += `</div>`;
+	tooltipText += `</div>`;
 
-	const ondisplay = () => _verticalCenterTooltip();
+	const ondisplay = function () {
+		_verticalCenterTooltip(true);
+	};
 
-	elem.style.top = '25%';
-	elem.style.left = '35%';
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
 
 	const costText = `
 	<div class='maxCenter'>
@@ -3010,41 +3073,43 @@ function hideAutomationDisplay(elem) {
 	return [elem, tooltipText, costText, ondisplay];
 }
 
-function hideAutomationConfigHover(what, event) {
+function hideAutomationConfigHover(what, event, hide = false) {
 	const messageConfigMap = {
+		hide: { title: 'Hide', text: "Here you can finely tune ingame automation buttons  you'd prefer to hide. Mouse over the name of a filter for more info." },
 		fight: { title: 'Fight', text: 'Hides the games Fight button.' },
 		autoFight: { title: 'Auto Fight', text: 'Hides the games AutoFight button.' },
 		trap: { title: 'Auto Traps', text: 'Hides the games AutoTraps button.' },
 		storage: { title: 'Auto Storage', text: 'Hides the games AutoStorage button.' },
 		structure: { title: 'Auto Structure', text: 'Hides the games AutoStructure button.' },
 		jobs: { title: 'Auto Jobs', text: 'Hides the games AutoJobs button.' },
-		jobs: { title: 'Auto Jobs', text: 'Hides the games AutoJobs button.' },
+		gold: { title: 'Auto Gold', text: 'Hides the games AutoGold button.' },
 		geneticistassist: { title: 'Geneticistassist', text: 'Hides the games Geneticistassist button.' },
-		upgrades: { title: 'Auto Upgrade', text: 'Hides the games AutoUpgrade button.' },
+		upgrade: { title: 'Auto Upgrade', text: 'Hides the games AutoUpgrade button.' },
 		prestige: { title: 'Auto Prestige', text: 'Hides the games AutoPrestige button.' },
 		equip: { title: 'Auto Equip', text: 'Hides the games AutoEquip button.' },
 		recycleMaps: { title: 'Recycle Maps', text: 'Hides Recycle Maps messages in the message log.' },
-		ATstructure: { title: 'AutoTrimps Auto Structure', text: 'Hides the AutoTrimps AutoStructure button.' },
-		ATjobs: { title: 'AutoTrimps Auto Jobs', text: 'Hides the AutoTrimps AutoJobs button.' },
-		ATequip: { title: 'AutoTrimps Auto Equip', text: 'Hides the AutoTrimps AutoEquip button.' },
-		ATmaps: { title: 'AutoTrimps Auto Maps', text: 'Hides the AutoTrimps AutoMaps button.' },
-		ATstatus: { title: 'AutoTrimps Auto Maps Status', text: 'Hides the AutoTrimps Map Status message.' },
-		ATheHr: { title: `AutoTrimps ${heliumOrRadon()} Per Hour Status`, text: `Hides the AutoTrimps ${heliumOrRadon()} Per Hour Status message.` }
+		ATstructure: { title: 'Auto Structure', text: 'Hides the AT Auto Structure button.' },
+		ATjobs: { title: 'Auto Jobs', text: 'Hides the AT Auto Jobs button.' },
+		ATequip: { title: 'Auto Equip', text: 'Hides the AT Auto Equip button.' },
+		ATmaps: { title: 'Auto Maps', text: 'Hides the Auto Maps button.' },
+		ATstatus: { title: 'Auto Maps Status', text: 'Hides the AutoTrimps Map Status message.' },
+		ATheHr: { title: `${heliumOrRadon()} Per Hour Status`, text: `Hides the ${heliumOrRadon()} Per Hour Status message.` }
 	};
 
 	const config = messageConfigMap[what];
 	if (!config) return;
 
-	document.getElementById('messageConfig').innerHTML = `<b>${config.title}</b><br>${config.text}`;
+	if (what === 'hide') document.getElementById('messageConfig').innerHTML = `${config.text}`;
+	else document.getElementById('messageConfig').innerHTML = `<b>${config.title}</b><br>${config.text}`;
 	tooltip(config.title, 'customText', event, config.text);
 }
 
 function hideAutomationSave() {
 	const setting = getPageSetting('displayHideAutoButtons');
-	const checkboxes = Array.from(document.getElementsByClassName('messageConfigCheckbox'));
+	const items = Array.from(document.getElementsByClassName('spireAssaultItem'));
 
-	checkboxes.forEach((checkbox) => {
-		setting[checkbox.id] = checkbox.dataset.checked === 'true';
+	items.forEach((item) => {
+		setting[item.dataset.hiddenText] = item.classList.contains('spireItemsEquipped');
 	});
 
 	setPageSetting('displayHideAutoButtons', setting);
