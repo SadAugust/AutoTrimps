@@ -2684,12 +2684,13 @@ function messageDisplay(elem) {
 			if (item === 'zone') total++;
 		}
 
-		let equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
+		const equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
 
 		rowData += `
 			<div class='spireAssaultItem spireItems${equipClass}' onclick='hideAutomationToggleElem(this)' data-hidden-text="${item}" <span onmouseover='messageConfigHoverAT("${item}", event)' onmouseout='messageConfigHoverAT("hide", event)'>
 				<span>${realName}</span>
 			</div>`;
+
 		total++;
 	}
 	rows++;
@@ -2759,29 +2760,25 @@ function messageSave() {
 
 //Daily Portal Mods
 function dailyPortalModsDisplay(elem) {
-	const baseText =
-		"<p>This setting allows you to adjust the portal zones based on the modifiers of the daily challenge you're running. For instance, if your Daily has a resource empower modifier and you input '-3', both your void map zone and daily portal zone will be set to 3 zones lower than your current settings. Please note that the lowest value will always be used. Therefore, if a daily challenge has both Empower and Famine modifiers, inputting '-3' in each box will not result in a combined adjustment of -6 zones.</p>";
+	const baseText = `<p>This setting allows you to adjust the portal zones based on the modifiers of the daily challenge you're running.<br>
+	For instance, if your daily has a resource empower modifier and you input '-3', both your void map zone and daily portal zone will be set to 3 zones lower than your current settings.<br>
+	Please note that the lowest value will always be used. Therefore, if a daily challenge has both Empower and Famine modifiers, inputting '-3' in each box will not result in a combined adjustment of -6 zones.</p>`;
 
 	const tooltips = {
-		reflect: '<p><b>Reflect:</b> % damage reflect damage modifier</p>',
-		empower: '<p><b>Empower:</b> Empower modifier</p>',
-		mutimp: '<p><b>Mutimp:</b> % chance to turn enemies into Mutimps</p>',
-		bloodthirst: '<p><b>Bloodthirst:</b> Enemies gaining the bloodthirst buff on kills</p>',
-		famine: '<p><b>Famine:</b> Gives % less resources</p>',
-		large: '<p><b>Large:</b> Gives % less housing</p>',
-		weakness: '<p><b>Weakness:</b> Gives % less attack when trimps attack</p>',
-		empoweredVoid: '<p><b>Empowered Void:</b> Enemies gain a % health & damage increase inside void maps</p>',
-		heirlost: '<p><b>Heirlost:</b> % bonus reduction on your heirlooms</p>'
+		Reflect: `Enemies have a x% chance to reflect an attack, dealing y% of damage taken back to your Trimps (will not reflect damage done above the Enemy's max health).`,
+		Empower: 'All enemies gain x stacks of Empower whenever your Trimps die in the World. Empower increases the attack and health of Bad Guys in the World by 0.2% per stack, can stack to 9999, and never resets.',
+		Mutimp: '40% of Bad Guys in the first x rows of the World will be mutated into (Hulking) Mutimps.',
+		Bloodthirst: 'Enemies gain a stack of Bloodthirst whenever Trimps die. Every x stacks, enemies will heal to full and gain an additive 50% attack. Stacks cap at y and reset after killing an enemy.',
+		Famine: 'Gain x% less Metal, Food, Wood, and Gems from all sources.',
+		Large: 'All housing can store x% fewer Trimps.',
+		Weakness: 'Enemies stack a debuff with each attack, reducing Trimp attack by x% per stack. Stacks cap at 9 and reset on Trimp death.',
+		Empowered_Void: 'Enemies in Void Maps have x% increased Attack and Health.',
+		Heirlost: 'Heirloom combat and resource bonuses are reduced by x%.'
 	};
 
-	const universeTooltips = {
-		1: ['empower', 'mutimp', 'bloodthirst', 'famine', 'large', 'weakness', 'reflect'],
-		2: ['empower', 'mutimp', 'bloodthirst', 'famine', 'large', 'weakness', 'empoweredVoid', 'heirlost']
-	};
-
-	let tooltipText = `<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip(true);'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>${baseText}`;
-	tooltipText += universeTooltips[atConfig.settingUniverse].map((key) => tooltips[key]).join('');
-	tooltipText += "</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+	let tooltipText = `<p>Welcome to AT's Daily Auto Portal Settings! 
+	<span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip();'>Help</span></p>`;
+	tooltipText += `<div id='autoTooltipHelpDiv' style='display: none'>${baseText}</p></div>`;
 
 	const settingArray = getPageSetting('dailyPortalSettingsArray', atConfig.settingUniverse);
 	const settings = ['Reflect', 'Empower', 'Mutimp', 'Bloodthirst', 'Famine', 'Large', 'Weakness', 'Empowered_Void', 'Heirlost'];
@@ -2791,58 +2788,68 @@ function dailyPortalModsDisplay(elem) {
 		settingGroup[setting] = {};
 	});
 
-	//Skip Lines to seperate
-	tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 100%; padding-right: 5px'>" + '' + '&nbsp;&nbsp;<span>' + '<u>Modifier ± Zones</u>' + '</span></div></div>';
-	tooltipText += '</td></tr><tr>';
+	tooltipText += `<div id='baseChallenges'>`;
+	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Daily Modifiers</span><br>`;
 
-	let count = 0;
+	let rowData = '';
+	let rows = 0;
+	let total = 0;
+	const elemWidth = 'calc((100% - 1.4em - 2px) / 6.1)';
 
 	for (let item in settingGroup) {
 		if (atConfig.settingUniverse === 1 && (item === 'Empowered_Void' || item === 'Heirlost')) continue;
 		if (atConfig.settingUniverse === 2 && item === 'Reflect') continue;
-		if (count !== 0 && count % 2 === 0) tooltipText += '</tr><tr>';
-		const setting = settingArray[item];
-		const checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
+
+		if (total > 0 && total % 3 === 0) {
+			tooltipText += `<div id='row${rows}' style= 'display: flex;'>${rowData}</div>`;
+			rowData = '';
+			rows++;
+		}
+
+		const setting = settingArray[item] !== 'undefined' ? settingArray[item] : (setting = item = { enabled: false, zone: 0 });
+		const equipClass = setting && setting.enabled ? 'Equipped' : 'NotEquipped';
 		const itemName = (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
-		tooltipText += `
-        <td>
-            <div class='row'>
-                <div class='col-xs-6' style='width: 52%; padding-right: 5px'>
-                    ${checkbox}&nbsp;&nbsp;<span>${itemName}</span>
-                </div>
-                <div class='col-xs-6' style='width: 48%; text-align: right'>
-                    ± Zone: <input class='structConfigPercent' id='structZone${item}' type='number'  value='${setting && setting.zone ? setting.zone : 0}'/>
-                </div>
-            </div>
-        </td>`;
-		count++;
+
+		rowData += `
+			<div id='${itemName}Btn' class='spireAssaultItem spireItems${equipClass}' style='height: 1.5vw; max-width: ${elemWidth}; min-width: ${elemWidth}; margin-right: 0.1em; margin-left: 0.1em; margin-top: 0.1em; margin-bottom: 0.2em;' onclick='hideAutomationToggleElem(this)' data-hidden-text="${item}" title='${tooltips[item]}'>
+				<span>${itemName}</span>
+			</div>&nbsp;`;
+
+		rowData += `
+		<div id ='${itemName}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
+			<span id='${itemName}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>± Zone:
+			<input id='${item}Zone' type='number' step='1' value='${setting && setting.zone ? setting.zone : 0}' min='0' max='${810}' placeholder='0' style='color: white;' onfocus='this.select()'>
+			</span>
+		</div>`;
+
+		total++;
 	}
 
-	tooltipText += '</tr>';
-	tooltipText += '</div></td></tr>';
-	tooltipText += '</tbody></table>';
+	rows++;
+	tooltipText += `<div id='row${rows}' style= 'display: flex;'>${rowData}</div>`;
+	tooltipText += `</div>`;
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='dailyPortalModsSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 
-	elem.style.left = '33.75%';
+	elem.style.left = '33.5%';
 	elem.style.top = '25%';
-	const ondisplay = () => _verticalCenterTooltip(true);
+	elem.classList = `tooltipExtraCustom60`;
+	const ondisplay = () => _verticalCenterTooltip();
 
 	return [elem, tooltipText, costText, ondisplay];
 }
 
 function dailyPortalModsSave() {
-	const setting = getPageSetting('dailyPortalSettingsArray', atConfig.settingUniverse);
-	const checkboxes = Array.from(document.getElementsByClassName('autoCheckbox'));
-	const percentboxes = Array.from(document.getElementsByClassName('structConfigPercent'));
+	const setting = getPageSetting('c2RunnerSettings', atConfig.settingUniverse);
+	const items = Array.from(document.getElementsByClassName('spireAssaultItem'));
 
-	checkboxes.forEach((checkbox, index) => {
-		const name = checkbox.id.split('structConfig')[1];
-		const checked = checkbox.dataset.checked === 'true';
+	items.forEach((item) => {
+		const name = item.dataset.hiddenText;
 		setting[name] = setting[name] || {};
-		setting[name].enabled = checked;
+		setting[name].enabled = item.classList.contains('spireItemsEquipped');
 
-		let zone = parseInt(percentboxes[index].value, 10);
-		zone = zone > 100 ? 100 : Number.isInteger(zone) ? zone : 0;
+		const zoneElem = document.getElementById(name + 'Zone');
+		let zone = parseInt(zoneElem.value, 10);
+		zone = Number.isInteger(zone) ? zone : 0;
 		setting[name].zone = zone;
 	});
 
@@ -2854,65 +2861,65 @@ function dailyPortalModsSave() {
 function c2RunnerDisplay(elem) {
 	MODULES.popups.mazWindowOpen = true;
 
-	const baseText = `Here you can enable the challenges you would like ${_getChallenge2Info()} runner to complete and the zone you'd like the respective challenge to finish at.`;
-	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(atConfig.settingUniverse) !== -1 ? ` Fused challenges are prioritised over their regular counterparts when starting challenges.` : '';
+	const baseText = `Here you can select the challenges you would like ${_getChallenge2Info()} Runner to complete and the zone you'd like the challenge to finish at.`;
+	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(atConfig.settingUniverse) !== -1 ? `<br>Fused challenges are prioritised over their regular counterparts when starting challenges.` : '';
 
 	let tooltipText = `
-		<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div>
 		<p>Welcome to ${_getChallenge2Info()} Runner Settings! 
-		<span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); document.getElementById("tooltipDiv").style.top = "25%"; _verticalCenterTooltip();'>Help</span></p>
+		<span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip();'>Help</span></p>
 		<div id='autoTooltipHelpDiv' style='display: none'>
 		<p>${baseText}${fusedText}</p>
 		</div>
-		<table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>
 	`;
 
-	//Skip Lines to seperate
-	tooltipText += '</td></tr><tr>';
-	//Setup challenges that will be displayed
-	let count = 0;
 	let addedFusedHeader = false;
 	const fusedC2s = ['Enlightened', 'Paralysis', 'Nometal', 'Topology', 'Waze', 'Toxad'];
 	const settingGroup = {};
 	const c2RunnerSettings = getPageSetting('c2RunnerSettings', atConfig.settingUniverse);
+	const obsidianZone = getObsidianStart();
 
 	let obj = challengesUnlockedObj(atConfig.settingUniverse, true, false);
 	obj = filterAndSortChallenges(obj, 'c2');
+
+	if (obj[0] === 'Eradicated') {
+		const obliteratedIndex = obj.indexOf('Obliterated');
+		if (obliteratedIndex !== -1) {
+			obj.splice(0, 1);
+			obj.splice(obliteratedIndex, 0, 'Eradicated');
+		}
+	}
 
 	obj.forEach((setting) => {
 		settingGroup[setting] = {};
 	});
 
-	const headers = [
-		{ name: 'Challenge', style: 'width: 33%; padding-right: 5px; white-space: nowrap' },
-		{ name: 'Current Zone', style: 'width: 33%; padding-right: 5px; text-align: center; white-space: nowrap' },
-		{ name: 'End Zone', style: 'width: 32%; padding-left: 5px; text-align: right; white-space: nowrap' }
-	];
+	tooltipText += `<div id='baseChallenges'>`;
+	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Challenges</span><br>`;
+	const elemWidth = 'calc((100% - 1.4em - 2px) / 6.1)';
 
-	const headerHTML = headers.map(({ name, style }) => `<div class='col-xs-3' style='${style}'><span><u>${name}</u></span></div>`).join('');
-
-	tooltipText += `<td><div class='row'>${headerHTML}</div></td>`.repeat(2);
-
-	tooltipText += '</tr><tr>';
+	let rowData = '';
+	let rows = 0;
+	let total = 0;
 	for (let item in settingGroup) {
 		if (fusedC2s.includes(item) && !addedFusedHeader) {
 			count = 0;
-			tooltipText += `
-				<tr>
-					<td>
-						<div class='row'>
-							<div class='col-xs-5' style='width: 100%; padding-right: 5px'>
-								&nbsp;&nbsp;<span><u>Fused ${_getChallenge2Info()}s</u></span>
-							</div>
-						</div>
-					</td>
-				</tr>`;
+			tooltipText += `<div id='row${rows}' style= 'display: flex;'>${rowData}</div>`;
+			tooltipText += `</div>`;
+			tooltipText += `<div id='fusedChallenges'>`;
+			tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Fused Challenges</span></span><br/>`;
 			addedFusedHeader = true;
+			total = 0;
+			rows = 0;
+			rowData = '';
 		}
-		if (count !== 0 && count % 2 === 0) tooltipText += '</tr><tr>';
-		const setting = c2RunnerSettings[item] !== 'undefined' ? c2RunnerSettings[item] : (setting = item = { enabled: false, zone: 0 });
-		const checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', setting && setting.enabled);
 
+		if (total > 0 && total % 3 === 0) {
+			tooltipText += `<div id='row${rows}' style= 'display: flex;'>${rowData}</div>`;
+			rowData = '';
+			rows++;
+		}
+
+		const setting = c2RunnerSettings[item] !== 'undefined' ? c2RunnerSettings[item] : (setting = item = { enabled: false, zone: 0 });
 		const challenge = game.challenges[item];
 		const challengeList = challenge.multiChallenge || [item];
 		let challengeLevel = 0;
@@ -2922,25 +2929,32 @@ function c2RunnerDisplay(elem) {
 			else challengeLevel += game.c2[challengeList[y]];
 		}
 
-		tooltipText += `
-			<td>
-				<div class='row'>
-					<div class='col-xs-3' style='width: 33%; padding-right: 5px; white-space: nowrap'>${checkbox}&nbsp;&nbsp;<span>${item}</span></div>
-					<div class='col-xs-3' style='width: 33%; padding-right: 5px;text-align: center;  white-space: nowrap'>${challengeLevel}</span></div>
-					<div class='col-xs-5' style='width: 34%; padding-left: 5px; text-align: right; white-space: nowrap'><input class='structConfigPercent' id='structZone${item}' type='number'  value='${setting && setting.zone ? setting.zone : 0}'/></div>
-				</div>
-			</td>`;
-		count++;
-	}
-	tooltipText += '</tr>';
+		const equipClass = setting && setting.enabled ? 'Equipped' : 'NotEquipped';
 
-	tooltipText += '</div></td></tr>';
-	tooltipText += '</tbody></table>';
+		rowData += `
+			<div id='${item}Btn' class='spireAssaultItem spireItems${equipClass}' style='height: 1.5vw; max-width: ${elemWidth}; min-width: ${elemWidth}; margin-right: 0.1em; margin-left: 0.1em; margin-top: 0.1em; margin-bottom: 0.2em;' onclick='hideAutomationToggleElem(this)' data-hidden-text="${item}">
+				<span style="float: left;">${item}</span>
+				<span style="float: right;">z${challengeLevel}</span>
+			</div>&nbsp;`;
+
+		rowData += `
+		<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
+			<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>Finish Zone:
+			<input id='${item}Zone' type='number' step='1' value='${setting && setting.zone ? setting.zone : 0}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
+			</span>
+		</div>`;
+
+		total++;
+	}
+
+	rows++;
+	tooltipText += `<div id='row${rows}' style= 'display: flex;'>${rowData}</div>`;
+	tooltipText += `</div>`;
 
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='c2RunnerSave()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 	elem.style.left = '30.5%';
 	elem.style.top = '25%';
-	elem.classList = `tooltipExtraCustom45`;
+	elem.classList = `tooltipExtraCustom60`;
 	const ondisplay = () => _verticalCenterTooltip();
 
 	return [elem, tooltipText, costText, ondisplay];
@@ -2948,16 +2962,15 @@ function c2RunnerDisplay(elem) {
 
 function c2RunnerSave() {
 	const setting = getPageSetting('c2RunnerSettings', atConfig.settingUniverse);
-	const checkboxes = Array.from(document.getElementsByClassName('autoCheckbox'));
-	const percentboxes = Array.from(document.getElementsByClassName('structConfigPercent'));
+	const items = Array.from(document.getElementsByClassName('spireAssaultItem'));
 
-	checkboxes.forEach((checkbox, index) => {
-		const name = checkbox.id.split('structConfig')[1];
-		const checked = checkbox.dataset.checked === 'true';
+	items.forEach((item) => {
+		const name = item.dataset.hiddenText;
 		setting[name] = setting[name] || {};
-		setting[name].enabled = checked;
+		setting[name].enabled = item.classList.contains('spireItemsEquipped');
 
-		let zone = parseInt(percentboxes[index].value, 10);
+		const zoneElem = document.getElementById(name + 'Zone');
+		let zone = parseInt(zoneElem.value, 10);
 		if (zone > 810) zone = 810;
 		zone = Number.isInteger(zone) ? zone : 0;
 		setting[name].zone = zone;
@@ -3002,8 +3015,7 @@ function hideAutomationDisplay(elem) {
 			rows++;
 		}
 
-		let equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
-
+		const equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
 		const addAuto = item.includes('ight') || item.includes('recycle') ? '' : 'Auto ';
 		let realName = addAuto + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
 		if (realName === 'AutoFight') realName = 'Auto Fight';
@@ -3039,8 +3051,7 @@ function hideAutomationDisplay(elem) {
 			rows++;
 		}
 
-		let equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
-
+		const equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
 		let realName = 'Auto ' + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
 		if (item === 'status') realName = 'Auto Maps Status';
 		if (item === 'heHr') realName = `${heliumOrRadon()} Per Hour Status`;
@@ -3065,7 +3076,7 @@ function hideAutomationDisplay(elem) {
 
 	const costText = `
 	<div class='maxCenter'>
-		<div class='btn btn-info' id='confirmTooltipBtn' onclick='cancelTooltip();hideAutomationSave();'>Confirm</div>
+		<div class='btn btn-info' id='confirmTooltipBtn' onclick='cancelTooltip(); hideAutomationSave();'>Confirm</div>
 		<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>
 	</div>
 	`;
@@ -3074,6 +3085,14 @@ function hideAutomationDisplay(elem) {
 }
 
 function hideAutomationConfigHover(what, event, hide = false) {
+	const tipTitle = document.getElementById('tipTitle');
+	if (tipTitle.innerHTML !== 'Message Config') return;
+
+	if (tipTitle === 'Hide') {
+		cancelTooltip();
+		return;
+	}
+
 	const messageConfigMap = {
 		hide: { title: 'Hide', text: "Here you can finely tune ingame automation buttons  you'd prefer to hide. Mouse over the name of a filter for more info." },
 		fight: { title: 'Fight', text: 'Hides the games Fight button.' },

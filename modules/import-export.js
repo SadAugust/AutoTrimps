@@ -35,7 +35,7 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		AutoJobs: 'Configure AutoTrimps AutoJobs',
 		UniqueMaps: 'Unique Maps',
 		MessageConfig: 'Message Config',
-		DailyAutoPortal: 'Daily Auto Portal',
+		DailyAutoPortal: 'Daily Auto Portal Modifiers',
 		c2Runner: c2Info + ' Runner',
 		/* Import Export Titles */
 		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
@@ -48,7 +48,7 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		autoHeirloomMods: 'Auto Heirloom Mods',
 		spireAssault: 'Spire Assault Presets',
 		mutatorPresets: 'Mutator Presets',
-		c2table: c2Info + ' Table',
+		c2table: (extraParam ? `C${extraParam + 1}` : c2Info) + ' Table',
 		resetDefaultSettingsProfiles: 'Reset Default Settings',
 		disableSettingsProfiles: 'Disable All Settings',
 		setCustomChallenge: 'Set Custom Challenge',
@@ -454,7 +454,7 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 			rows++;
 		}
 
-		let equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
+		const equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
 		const itemLevel = item.includes('Doppelganger') ? '' : ` Lv ${itemObj.level}`;
 		rowData += `
 			<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items")' data-hidden-text="${item}">
@@ -640,7 +640,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 			rows++;
 		}
 
-		let equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
+		const equipClass = itemsEquipped.includes(item) ? 'Equipped' : 'NotEquipped';
 		rowData += `<div class='spireAssaultItem spireItems${equipClass}' onclick='spireAssaultToggleElem(this, "Items", "${heirloomType}", ${blacklist})' data-hidden-text="${item}">${item}</div>`;
 		total++;
 	}
