@@ -3800,8 +3800,9 @@ function initialiseAllSettings() {
 		createSetting('spireIgnoreUntil',
 			function () { return ('Ignore Spires Until') },
 			function () {
+				const ignoreSpires = atConfig.settingUniverse === 1 ? 'Spires until Spire II at zone 300 then enter 2, Spire III at z400 would be 3 etc.' : 'Spire I at zone 300 then enter 1.';
 				let description = "<p>Will disable all of the Spire features in this tab unless the Spire you're in is at or above this value.</p>";
-				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at zone 300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
+				description += `<p><b>This works based off Spire number rather than zone. So if you want to ignore ${ignoreSpires}</b></p>`;
 				description += "<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
 				return description;
@@ -3873,8 +3874,9 @@ function initialiseAllSettings() {
 		createSetting('spireIgnoreUntilC2',
 			function () { return (`${_getChallenge2Info()}: Ignore Spires Until`) },
 			function () {
-				let description = `<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>`;
-				description += `<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>`;
+				const ignoreSpires = atConfig.settingUniverse === 1 ? 'Spires until Spire II at zone 300 then enter 2, Spire III at z400 would be 3 etc.' : 'Spire I at zone 300 then enter 1.';
+				let description = "<p>Will disable all of the Spire features in this tab unless the Spire you're in is at or above this value.</p>";
+				description += `<p><b>This works based off Spire number rather than zone. So if you want to ignore ${ignoreSpires}</b></p>`;
 				description += `<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>`;
 				description += `<p><b>Recommended:</b> Second to last Spire you reach on your runs</p>`;
 				return description;
@@ -3946,8 +3948,9 @@ function initialiseAllSettings() {
 		createSetting('spireIgnoreUntilDaily',
 			function () { return ('Daily: Ignore Spires Until') },
 			function () {
-				let description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
-				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
+				const ignoreSpires = atConfig.settingUniverse === 1 ? 'Spires until Spire II at zone 300 then enter 2, Spire III at z400 would be 3 etc.' : 'Spire I at zone 300 then enter 1.';
+				let description = "<p>Will disable all of the Spire features in this tab unless the Spire you're in is at or above this value.</p>";
+				description += `<p><b>This works based off Spire number rather than zone. So if you want to ignore ${ignoreSpires}</b></p>`;
 				description += "<p>Set to <b>0 or below</b> to disable this setting and make the script assume every Spire is an active Spire.</p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs</p>";
 				return description;
