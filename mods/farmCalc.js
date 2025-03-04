@@ -1196,6 +1196,7 @@ function simulationDebug(debugResults) {
 function get_best(results, fragmentCheck, mapModifiers, popup = false) {
 	const best = { loot: { mapLevel: 0 }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 } };
 	if (!popup && !game.global.mapsUnlocked) return best;
+	if (results[0].length === 0) return best;
 
 	let [stats, stances] = results;
 	stats = [...stats.slice()];
@@ -1235,6 +1236,7 @@ function get_best(results, fragmentCheck, mapModifiers, popup = false) {
 
 			return 0;
 		});
+
 		best.loot[stance] = statsLoot[0].zone;
 
 		statsSpeed.sort((a, b) => {
@@ -1244,6 +1246,7 @@ function get_best(results, fragmentCheck, mapModifiers, popup = false) {
 
 			return 0;
 		});
+
 		best.speed[stance] = statsSpeed[0].zone;
 	}
 

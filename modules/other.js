@@ -40,7 +40,10 @@ function exitSpireCell(checkCell) {
 
 	if (isSpireActive && (game.global.lastClearedCell + 1 > cell || cell === 0)) {
 		endSpire();
-		debug(`Exiting Spire ${game.global.spiresCompleted + 1} at cell ${exitCell}`, 'maps');
+
+		const baseWorld = game.global.universe === 2 ? 2 : 1;
+		const spireNo = game.global.world / 100 - baseWorld;
+		debug(`Exiting Spire ${spireNo} at cell ${exitCell}`, 'maps');
 	}
 }
 

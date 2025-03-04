@@ -1758,7 +1758,7 @@ function initialiseAllSettings() {
 				"MP Smithy Daily": { enabled: false, value: 100 },
 				"MP Smithy C3": { enabled: false, value: 100 },
 				"MP Smithy One Off": { enabled: false, value: 100 },
-			}, 'importExportTooltip("UniqueMaps")', 'Maps', [1, 2]);
+			}, 'importExportTooltip("uniqueMaps")', 'Maps', [1, 2]);
 
 		createSetting('uniqueMapUnlocks',
 			function () { return ('Unique Map Unlocks') },
@@ -1995,6 +1995,7 @@ function initialiseAllSettings() {
 				description += "<p>This will override all other heirloom swapping features when active!</p>";
 				description += "<p>Should ideally be a shield with the <b>Breed Speed</b> modifier.</p>";
 				description += "<p>Mapping decisions will be disabled when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Challenges', [2],
@@ -2039,6 +2040,7 @@ function initialiseAllSettings() {
 				let description = "<p>Staff to use during <b>Exterminate</b> when you're not mapping.</p>";
 				description += "<p>This will override all other heirloom swapping features when active!</p>";
 				description += "<p>Should ideally be a staff with high primary resource modifiers.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Challenges', [2],
@@ -2271,6 +2273,7 @@ function initialiseAllSettings() {
 				let description = "<p>The name of the shield you would like to equip while running <b>Duel</b>.</p>";
 				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>Duel</b>!</p>"
 				description += "<p>Should ideally be a shield without the <b>Crit Chance</b> modifier.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [2],
@@ -2350,6 +2353,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>The name of the shield you would like to equip while running <b>" + (atConfig.settingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b>.</p>";
 				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>" + (atConfig.settingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b>!</p>"
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [1, 2],
@@ -2361,6 +2365,7 @@ function initialiseAllSettings() {
 				let description = "<p>Staff to use during <b>" + (atConfig.settingUniverse === 2 ? 'Trappapalooza' : 'Trapper') + "</b> when you're not mapping.</p>";
 				description += "<p>This will override all other heirloom swapping features when active!</p>";
 				description += "<p>Should ideally be a staff with high primary resource modifiers.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [1, 2],
@@ -2465,6 +2470,7 @@ function initialiseAllSettings() {
 			function () { return ('E: Wonder Staff') },
 			function () {
 				let description = "<p>The staff you would like to use whilst farming for Wonders.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated pet xp staff</p>";
 				return description;
@@ -2530,6 +2536,7 @@ function initialiseAllSettings() {
 				let description = "<p>The name of the shield you would like to equip while running <b>Wither</b>.</p>";
 				description += "<p>This will override all other heirloom swapping features and only use this shield during <b>Wither</b>!</p>"
 				description += "<p>Should ideally be a shield without the <b>Plaguebringer</b> modifier.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [2],
@@ -3299,6 +3306,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Shield to use when the script wants to maximise plaguebringer damage on the next enemy.</p>";
 				description += "<p>A shield with the <b>Plaguebringer</b> modifier <b>must</b> be used or this shield will never get equipped.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> <b>Plaguebringer</b> heirloom</p>";
 				return description;
@@ -3320,6 +3328,7 @@ function initialiseAllSettings() {
 			function () { return ('Initial') },
 			function () {
 				let description = "<p>Shield to use before your designated swap zone.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield with void map drop chance</p>";
 				return description;
@@ -3330,6 +3339,7 @@ function initialiseAllSettings() {
 			function () { return ('Afterpush') },
 			function () {
 				let description = "<p>Shield to use after your designated swap zone.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
@@ -3340,6 +3350,7 @@ function initialiseAllSettings() {
 			function () { return (_getChallenge2Info()) },
 			function () {
 				let description = "<p>Shield to use after your designated swap zone during " + _getSpecialChallengeDescription() + ".</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
@@ -3350,6 +3361,7 @@ function initialiseAllSettings() {
 			function () { return ('Void') },
 			function () {
 				let description = "<p>Shield to use inside of Void Maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> damage heirloom</p>";
 				return description;
@@ -3365,6 +3377,7 @@ function initialiseAllSettings() {
 				description += "<p>Mapping decisions will be disabled (unless 0 + overkill cells away from c100) when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
 				if (atConfig.settingUniverse === 1) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use.</p>";				
 				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Breed Speed as better over everything else.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
@@ -3376,6 +3389,7 @@ function initialiseAllSettings() {
 				let description = "<p>Shield to use during active Spires.</p>";
 				description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
 				description += "<p>The Map Swap setting will override this whilst in maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
 				return description;
@@ -3387,6 +3401,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Shield to use when Wind stance is being used.</p>";
 				description += "<p>The Map Swap setting will override this whilst in maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Plaguebringer heirloom</p>";
 				return description;
@@ -3467,6 +3482,7 @@ function initialiseAllSettings() {
 			function () { return ('World') },
 			function () {
 				let description = "<p>The staff to use when in world zones.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> High pet XP staff</p>";
 				return description;
@@ -3477,6 +3493,7 @@ function initialiseAllSettings() {
 			function () { return ('Map') },
 			function () {
 				let description = "<p>The staff to use when running maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p>Will be overridden by the cache heirloom settings if they've been setup.</p>";
 				description += "<p><b>Recommended:</b> Resource efficiency heavy staff</p>";
@@ -3488,6 +3505,7 @@ function initialiseAllSettings() {
 			function () { return ('Void') },
 			function () {
 				let description = "<p>The staff to use when running <b>Void</b> maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
@@ -3498,6 +3516,7 @@ function initialiseAllSettings() {
 			function () { return ('Fragment') },
 			function () {
 				let description = "<p>The staff to use when the script is farming for fragments to be able to afford maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
@@ -3508,6 +3527,7 @@ function initialiseAllSettings() {
 			function () { return ('Savory Cache') },
 			function () {
 				let description = "<p>The staff to use when running <b>Savory Cache</b> maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated food efficiency staff</p>";
 				return description;
@@ -3518,6 +3538,7 @@ function initialiseAllSettings() {
 			function () { return ('Wooden Cache') },
 			function () {
 				let description = "<p>The staff to use when running <b>Wooden Cache</b> maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated wood efficiency staff</p>";
 				return description;
@@ -3528,6 +3549,7 @@ function initialiseAllSettings() {
 			function () { return ('Metal Cache') },
 			function () {
 				let description = "<p>The staff to use when running <b>Metal Cache</b> maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
@@ -3538,6 +3560,7 @@ function initialiseAllSettings() {
 			function () { return ('Research Cache') },
 			function () {
 				let description = "<p>The staff to use when running <b>Research Cache</b> maps.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
 				return description;
@@ -5002,13 +5025,13 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	if (id === 'dailyPortal') {
 		const autoPortalSettings = _createElement('DIV', {
 			id: 'autoPortalSettingsBtn',
-			onclick: 'importExportTooltip("DailyAutoPortal")',
+			onclick: 'importExportTooltip("dailyAutoPortal")',
 			class: 'settingsBtnLocalCogwheel',
-			style: 'margin-left:-1px;'
+			style: 'margin-left:-1px; line-height: normal; font-size: 1.1vw;'
 		});
 		const autoPortalSettingsButton = _createElement('SPAN', {
 			class: 'glyphicon glyphicon-cog',
-			style: 'transform: scale(0.7); justify-content: center; font-size: inherit;'
+			style: 'transform: scale(0.7); justify-content: center; font-size: inherit; top: 0px;'
 		});
 
 		btnParent.appendChild(autoPortalSettings);
@@ -5514,6 +5537,21 @@ function _setSelect2Dropdowns() {
 				tokenSeparators: [','],
 				maximumSelectionLength: multi ? 17 : undefined
 			});
+			if ($(this).hasClass('custom-style')) {
+				let textElem = this.parentNode.children[1].children[0].children[0].children[0].children[0];
+
+				const onPortalAutoStructure = textElem.innerHTML === 'Setting On Portal:' && this.parentNode.title !== 'AutoJobs';
+				const onPortalAutoJobs = textElem.innerHTML === 'Setting On Portal:' && this.parentNode.title === 'AutoJobs';
+
+				if (textElem.innerHTML === 'Setting On Portal:') {
+					this.parentNode.children[1].style.marginLeft = '0.05em';
+				}
+
+				const elemWidth = onPortalAutoStructure ? 'calc((100% - 1.4em + 1px) / 5.1)' : onPortalAutoJobs ? 'calc((100% - 1.4em + 3px) / 5.4)' : '9vw';
+				this.parentNode.children[1].style.minWidth = elemWidth;
+				this.parentNode.children[1].style.maxWidth = elemWidth;
+				textElem.parentNode.style.fontSize = '0.7vw';
+			}
 		});
 	});
 }
@@ -5521,8 +5559,9 @@ function _setSelect2Dropdowns() {
 function _setSelect2DropdownsPrefix(dropdownSetting, multi) {
 	const prefix = dropdownSetting._resultId.split('-');
 	const setting = autoTrimpSettings[prefix[1]];
-	const prefixName = prefix ? `${setting.name()}: ` : '';
+	const prefixName = prefix && setting ? `${setting.name()}: ` : `${prefix[1]}:`;
 	const text = dropdownSetting.text;
+	const fontColor = setting && setting.universe ? '#00A7E1' : '#888';
 
 	if (multi) {
 		const selectedItems = setting.selected;
@@ -5534,10 +5573,10 @@ function _setSelect2DropdownsPrefix(dropdownSetting, multi) {
 			itemsText = 'None';
 		}
 
-		return `<font color='#00A7E1'>${prefixName}</font> ${itemsText}`;
+		return `<font color='${fontColor}'>${prefixName}</font> ${itemsText}`;
 	}
 
-	return `<font color='#00A7E1'>${prefixName}</font> <float='right'>${text}</float>`;
+	return `<font color='${fontColor}'>${prefixName}</font> <float='right'>${text}</float>`;
 }
 
 function _settingsToLineBreak() {
@@ -5916,7 +5955,7 @@ function _createMessagesButton() {
 	const atBtnSettings = _createElement('button', {
 		id: 'logConfigBtn',
 		type: 'button',
-		onclick: 'importExportTooltip("MessageConfig")',
+		onclick: 'importExportTooltip("messageConfig")',
 		class: 'btn btn-default logFlt'
 	});
 

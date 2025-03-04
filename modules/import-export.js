@@ -3,9 +3,9 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		mapSettings: typeof mapSettingsDisplay === 'function' ? mapSettingsDisplay : null,
 		AutoStructure: typeof autoStructureDisplay === 'function' ? autoStructureDisplay : null,
 		AutoJobs: typeof autoJobsDisplay === 'function' ? autoJobsDisplay : null,
-		UniqueMaps: typeof uniqueMapsDisplay === 'function' ? uniqueMapsDisplay : null,
-		MessageConfig: typeof messageDisplay === 'function' ? messageDisplay : null,
-		DailyAutoPortal: typeof dailyPortalModsDisplay === 'function' ? dailyPortalModsDisplay : null,
+		uniqueMaps: typeof uniqueMapsDisplay === 'function' ? uniqueMapsDisplay : null,
+		messageConfig: typeof messageDisplay === 'function' ? messageDisplay : null,
+		dailyAutoPortal: typeof dailyPortalModsDisplay === 'function' ? dailyPortalModsDisplay : null,
 		c2Runner: typeof c2RunnerDisplay === 'function' ? c2RunnerDisplay : null,
 		/* Import Export Functions */
 		exportAutoTrimps: typeof _displayExportAutoTrimps === 'function' ? _displayExportAutoTrimps : null,
@@ -31,11 +31,11 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 	const c2Info = typeof _getChallenge2Info === 'function' ? _getChallenge2Info() : '';
 
 	const titleTexts = {
-		AutoStructure: 'Configure AutoTrimps AutoStructure',
-		AutoJobs: 'Configure AutoTrimps AutoJobs',
-		UniqueMaps: 'Unique Maps',
-		MessageConfig: 'Message Config',
-		DailyAutoPortal: 'Daily Auto Portal Modifiers',
+		AutoStructure: 'Configure AutoTrimps Auto Structure',
+		AutoJobs: 'Configure AutoTrimps Auto Jobs',
+		uniqueMaps: 'Unique Maps',
+		messageConfig: 'Message Config',
+		dailyAutoPortal: 'Daily Auto Portal Modifiers',
 		c2Runner: c2Info + ' Runner',
 		/* Import Export Titles */
 		exportAutoTrimps: titleText === 'downloadSave' ? 'downloadSave' : 'Export AutoTrimps Settings',
