@@ -2362,7 +2362,7 @@ function autoStructureSave() {
 
 		const buyMaxElem = document.getElementById(name + 'BuyMax');
 		let buyMax = parseInt(buyMaxElem.value, 10);
-		buyMax = isNumberBad(buyMax) ? 0 : Math.max(Math.min(buyMax, 100), 0);
+		buyMax = isNumberBad(buyMax) ? 0 : Math.max(Math.min(buyMax, 9999), 0);
 		setting[name].buyMax = buyMax;
 
 		if (name === 'Nursery') {
