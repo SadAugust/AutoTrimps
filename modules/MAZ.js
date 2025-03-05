@@ -2750,7 +2750,7 @@ function uniqueMapsTable(settingGroup, mapUnlocks, smithySettings) {
 	tooltipText += `<div id='row${rows + 1}' style= 'display: flex;'>${rowData}</div>`;
 	tooltipText += `</div>`;
 
-	if (smithySettings) {
+	if (Object.keys(smithySettings).length > 0) {
 		tooltipText += `<div id='smithyMaps'>`;
 		tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Smithy Melting Point</span><br>`;
 
