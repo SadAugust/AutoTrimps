@@ -1705,6 +1705,15 @@ if (typeof originalDisplayPortalUpgrades !== 'function') {
 	};
 }
 
+if (typeof abandonChallengeDaily !== 'function') {
+	var abandonChallengeDaily = abandonChallenge;
+	abandonChallenge = function () {
+		const runningDaily = challengeActive('Daily') && portalWindowOpen;
+		abandonChallengeDaily(...arguments);
+		if (runningDaily && !portalWindowOpen) portalClicked();
+	};
+}
+
 /* If using standalone version then when load Surky and CSS files. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	function updateAdditionalInfo() {

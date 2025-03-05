@@ -95,7 +95,7 @@ function _needHousing(houseName, ignoreAffordability, displayCheck) {
 }
 
 function _checkSafeGateway(buildingStat) {
-	/* Returns true if SafeGateway says not to buy. */
+	/* returns true if SafeGateway says not to buy. */
 	const safeGateway = getPageSetting('buildingSettingsArray').SafeGateway;
 	if (safeGateway.enabled && (safeGateway.zone === 0 || safeGateway.zone > game.global.world)) {
 		const fragsOwned = game.resources.fragments.owned;
@@ -104,9 +104,11 @@ function _checkSafeGateway(buildingStat) {
 		const base = buildingStat.cost.fragments[0];
 		const scaling = buildingStat.cost.fragments[1];
 		const nextPrice = Math.max(base * Math.pow(scaling, gatewaysOwned));
-		const cost = mapCost(Number(safeGateway.mapLevel), getAvailableSpecials('lmc', true)) * safeGateway.mapCount + nextPrice;
+		const safeGatewayValue = mapCost(Number(safeGateway.mapLevel), getAvailableSpecials('lmc', true)) * safeGateway.mapCount;
 
-		return fragsOwned < cost;
+		let fragments = Math.max(fragsOwned - safeGatewayValue, 0);
+		if (fragments <= 0) fragments = fragsOwned * 0.001;
+		return fragments < nextPrice;
 	}
 }
 

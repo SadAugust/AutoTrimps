@@ -865,7 +865,7 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 				const { enabled, zone, mapLevel, mapCount } = buildingSetting.SafeGateway;
 
 				resourcesAvailable = zone !== 0 && game.global.world >= zone ? resourcesAvailable : enabled && resourcesAvailable > resource.owned - mapCost(mapLevel, 'lmc') * mapCount ? resource.owned - mapCost(10, 'lmc') * mapCount : resourcesAvailable;
-				if (resourcesAvailable < 0) resourcesAvailable = 0;
+				if (resourcesAvailable <= 0) resourcesAvailable = resource.owned * 0.001;
 			}
 		}
 
