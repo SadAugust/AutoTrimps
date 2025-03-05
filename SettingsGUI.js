@@ -160,7 +160,7 @@ function initialiseAllSettings() {
 		createSetting('upgradeType',
 			function () { return (['Buy Upgrades: Off', 'Buy Upgrades: On', 'Buy Upgrades: No Coords']) },
 			function () {
-				let description = "<p>Lets the script control what upgrades are purchased. Equipment upgrades are controlled by settings in the <b>Equipment</b> tab</p>";
+				let description = `<p>Lets the script control what upgrades are purchased.<br>Equipment upgrades (prestiges) are controlled by settings in the <b>Equipment</b> tab</p>`;
 				description += "<p><b>Buy Upgrades: Off</b><br>Disables this setting.</p>";
 				description += "<p><b>Buy Upgrades: On</b><br>Purchases upgrades depending on what the script deems necessary. Certain upgrades such as speedbooks can take priority and delay other upgrades from being purchased.</p>";
 				description += "<p><b>Buy Upgrades: No Coords</b><br>Works the same as <b>Buy Upgrades: On</b> but stops <b>Coordination</b> upgrades from being purchased.</p>";
@@ -214,8 +214,8 @@ function initialiseAllSettings() {
 				description += "<p><b>Portal: Refresh Respec On</b><br>When your free respec in a run has been used this will delay portaling into your Auto Portal challenge, instead making use of liquification to reach the portal unlock and portaling into your normal run from there.</p>";
 
 				if (game.permaBoneBonuses.voidMaps.owned >= 5) {
-					description += "<p><b>Portal: Void Map Liquification</b><br>Works the same as <b>Portal: Refresh Respec On</b> but in addition to portaling for a respec it will repeatedly portal until your bone void map counter is 1 drop away from a guaranteed extra void map.";
-					description += "<br>If you have not reached the void map counter target by either zone 99 or the end of your liquification zones then it will portal and repeat this process until have.</p>";
+					description += "<p><b>Portal: Void Map Liquification</b><br>Works the same as <b>Portal: Refresh Respec On</b> but in addition to portaling for a respec, it will repeatedly portal until your bone void map counter is 1 drop away from a guaranteed extra void map.";
+					description += "<br>If you have not reached the void map counter target by either zone 99 or the end of your liquification zones then it will portal and repeat this process until you have.</p>";
 				}
 				
 				description += "<p><b>Recommended:</b> Portal: Refresh Respec On </p>";
@@ -289,7 +289,7 @@ function initialiseAllSettings() {
 				description += `<p>Fillers (${_getPrimaryResourceInfo().name.toLowerCase()} challenges) will load the <b>${fillerPreset}</b> preset.</p>`;
 				description += `<p>Daily challenges will load the <b>${dailyPreset}</b> preset.</p>`;
 				description += `${_getSpecialChallengeDescription(true, false)} will load the <b>${c2Preset}</b> preset.</p>`;
-				description += `Challenges that have a dedicated preset (<b>${universeChallenges.join(', ')}</b>) will load their preset when starting the challenge.</p>`;
+				description += `Challenges that have a dedicated preset (<b>${universeChallenges.join(', ')}</b>) will load their preset when starting that challenge.</p>`;
 				description += `<p><b>Recommended:</b> On</p>`;
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2],
@@ -1036,7 +1036,7 @@ function initialiseAllSettings() {
 			function () { return ('AE: Percent') },
 			function () {
 				let description = "<p>What percent of resources you'd like to spend on equipment.</p>";
-				description += "<p>If set to <b>0 or below</b> the equip spending percentage will be set to 100%.</p>";
+				description += "<p>If set to <b>0 or below</b> then your equip spending percentage will be set to 100%.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 10, null, 'Equipment', [1, 2],
@@ -1498,7 +1498,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Controls how the script handles interactions with the Equality perk.</p>";
 				description += "<p><b>Auto Equality: Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Auto Equality: Basic</b><br>Disables scaling and sets equality to 0 on slow enemies, otherwise scaling is enabled.<br><b>If using this you must setup the scaling & reversing settings in the equality menu!</b></p>";
+				description += "<p><b>Auto Equality: Basic</b><br>Disables scaling and sets equality to 0 on slow enemies, otherwise scaling is enabled.<br>When using this you must setup the <b>scaling</b> and <b>reversing</b> settings in the equality menu.</p>";
 				description += "<p><b>Auto Equality: Advanced</b><br>Will disable equality scaling and use the equality stack slider to set your equality to the ideal amount to kill the current enemy in the least amount of hits necessary.</p>";
 				description += "<p><b>Recommended:</b> Auto Equality: Advanced</p>";
 				return description;
