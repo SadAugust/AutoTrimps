@@ -1079,7 +1079,11 @@ atData.autoPerks = {
 			forceRefresh = true;
 		}
 
-		if (!forceRefresh && atData.autoPerks.loaded === calcName) return;
+		if (!forceRefresh && atData.autoPerks.loaded === calcName) {
+			const finishDailyBtnElem = document.getElementById('finishDailyPortal');
+			if (finishDailyBtnElem) finishDailyBtnElem.style.display = challengeActive('Daily') ? 'inline-block' : 'none';
+			return;
+		}
 
 		const inputBoxes = atData.autoPerks[`inputBoxes${calcName}`];
 		let settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
@@ -1100,11 +1104,19 @@ atData.autoPerks = {
 
 		apGUI.$allocatorBtn = document.createElement('DIV');
 		apGUI.$allocatorBtn.id = 'allocatorBtn';
-		apGUI.$allocatorBtn.setAttribute('class', 'btn inPortalBtn settingBtntrue');
+		apGUI.$allocatorBtn.setAttribute('class', 'btn inPortalBtn btn-info');
+		apGUI.$allocatorBtn.setAttribute('style', 'margin-right: 0.15em;');
 		apGUI.$allocatorBtn.setAttribute('onclick', 'run' + calcName + '()');
 		apGUI.$allocatorBtn.setAttribute('onmouseover', `tooltip("Auto Allocate", "customText", event, \`${allocateText}\`)`);
 		apGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
 		apGUI.$allocatorBtn.textContent = 'Allocate Perks';
+
+		apGUI.$finishDailyBtn = document.createElement('DIV');
+		apGUI.$finishDailyBtn.id = 'finishDailyPortal';
+		apGUI.$finishDailyBtn.setAttribute('class', 'btn inPortalBtn settingBtntrue');
+		apGUI.$finishDailyBtn.setAttribute('style', `display: ${challengeActive('Daily') ? 'inline-block' : 'none'};`);
+		apGUI.$finishDailyBtn.setAttribute('onclick', 'tooltip("Finish Daily", null, "update")');
+		apGUI.$finishDailyBtn.textContent = 'Finish Daily';
 
 		/* preset dropdown */
 		apGUI.$presetDiv = document.createElement('DIV');
@@ -1115,6 +1127,7 @@ atData.autoPerks = {
 
 		const $buttonbar = document.getElementById('portalBtnContainer');
 		if (!document.getElementById(apGUI.$allocatorBtn.id)) $buttonbar.appendChild(apGUI.$allocatorBtn);
+		if (!document.getElementById(apGUI.$finishDailyBtn.id)) $buttonbar.appendChild(apGUI.$finishDailyBtn);
 		$buttonbar.setAttribute('style', 'margin-bottom: 0.3vw;');
 		apGUI.$customRatios = document.createElement('DIV');
 		apGUI.$customRatios.id = 'customRatios';
