@@ -596,7 +596,7 @@ function initialiseAllSettings() {
 				description += "<p><b>AT Auto Jobs: On</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on the ratios that this uses and when it switches, check out the Help section by clicking on the cogwheel and looking at the Auto Ratios portion of text.</p>";
 				description += "<p><b>AT Auto Jobs: Manual</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>";
 				description += "<p>Automatically swaps the games default hiring setting <b>Not Firing For Jobs</b> to <b>Firing For Jobs</b>.</p>";
-				description += "<p>Map setting job ratios always override both <b>AT Auto Jobs: On</b> & <b>AT Auto Jobs: Manual</b> when AutoMaps is enabled.</p>";
+				description += "<p>Map setting job ratios always override both <b>AT Auto Jobs: On</b> & <b>AT Auto Jobs: Manual</b> when Auto Maps is enabled.</p>";
 				description += "<p><br><i>Set to <b>AT Auto Jobs: Off</b> by holding <b>control</b> and clicking.</i></p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Jobs', [1, 2],
@@ -2580,7 +2580,7 @@ function initialiseAllSettings() {
 			function () { return ('Quest') },
 			function () {
 				let description = "<p>Enable this if you want automate running quests when running the <b>Quest</b> challenge.</p>";
-				description += "<p>Will only function properly with <b>AutoMaps</b> enabled.</p>";
+				description += "<p>Will only function properly with <b>Auto Maps</b> enabled.</p>";
 				description += "<p>Prestige Raiding is disabled when shield break quests are active to try and ensure you don't die.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -2864,13 +2864,22 @@ function initialiseAllSettings() {
 		createSetting('glass',
 			function () { return ('Glass') },
 			function () {
-				let description = "<p>Enable this if you want to automate destacking and farming when running the <b>Glass</b> challenge.</p>";
-				description += "<p>Will farm for damage if you can't clear stacks in a world level or above map.</p>";
-				description += "<p>When at cell 100 of a zone it checks if you can clear world level maps on the next zone and if you can't it will farm damage until you are able to.</p>";
+				let description = "<p>Enable this if you want settings automate destacking and farming when running the <b>Glass</b> challenge.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
+
+		createSetting('glassFarm',
+			function () { return ('G: Farm') },
+			function () {
+				let description = "<p>Enable this to automate farming if you don't have enough damage to clear Glass stacks in a world level map.</p>";
+				description += "<p>When at cell 100 of a zone it will identify the damage required to kill enemies in a world level map on the next zone and farms if you can't.</p>";
+				description += "<p>This setting will usually overfarm as it assumes a minimum damage roll with no crits.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'C2', [2],
+			function () { return (getPageSetting('glass', atConfig.settingUniverse) && autoTrimpSettings.glass.require()) });
 
 		createSetting('glassStacks',
 			function () { return ('G: Stacks') },

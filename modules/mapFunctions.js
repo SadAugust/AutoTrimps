@@ -2537,6 +2537,7 @@ function glass(lineCheck) {
 	if (glassStacks <= 0) glassStacks = Infinity;
 
 	//Gamma burst info
+	const glassFarm = getPageSetting('glassFarm');
 	const gammaTriggerStacks = gammaMaxStacks();
 	const gammaToTrigger = game.global.mapsActive ? Infinity : gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
 	const gammaDmg = MODULES.heirlooms.gammaBurstPct;
@@ -2556,12 +2557,12 @@ function glass(lineCheck) {
 		mapName += 'Destacking';
 	}
 	//Farming if we don't have enough damage to clear stacks!
-	else if (!canGamma && ourDmg * damageGoal < enemyHealth) {
+	else if (glassFarm && !canGamma && ourDmg * damageGoal < enemyHealth) {
 		mapName += 'Farming';
 		shouldMap = true;
 	}
 	//Checking if we can clear +0 maps on the next zone.
-	else if (game.global.lastClearedCell + 2 === 100) {
+	else if (glassFarm && game.global.lastClearedCell + 2 === 100) {
 		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 20, 'map', 0.75, 'gamma');
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
 		enemyHealth = calcEnemyHealthCore('map', game.global.world + 1, 20, 'Snimp') * 0.75;

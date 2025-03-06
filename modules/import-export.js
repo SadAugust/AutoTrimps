@@ -1233,11 +1233,12 @@ function _raspberryPiSettings() {
 function loadAugustSettings() {
 	_raspberryPiSettings();
 	if (atConfig.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') return;
-	if (typeof greenworks === 'undefined') autoTrimpSettings.gameUser.value = 'test';
-
-	autoTrimpSettings.downloadSaves.enabled = 0;
-	autoTrimpSettings.downloadSaves.enabledU2 = 0;
-	saveSettings();
+	if (typeof greenworks === 'undefined') {
+		autoTrimpSettings.gameUser.value = 'test';
+		autoTrimpSettings.downloadSaves.enabled = 0;
+		autoTrimpSettings.downloadSaves.enabledU2 = 0;
+		saveSettings();
+	}
 
 	game.options.menu.showAlerts.enabled = 0;
 	game.options.menu.useAverages.enabled = 1;
