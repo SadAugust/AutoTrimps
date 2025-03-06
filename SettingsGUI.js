@@ -41,7 +41,7 @@ function initialiseAllTabs() {
 		['Nature', 'Nature Settings'],
 		['Fluffy', 'Fluffy Evolution Settings'],
 		['Spire Assault', `Spire Assault - Settings to automate clearing Spire Assault levels and farming equipment levels.`],
-		['Time Warp', 'Time Warp Settings'],
+		['Time Warp', 'Time Warp (offline time) Settings'],
 		['Display', 'Display & Spam Settings'],
 		['Import Export', 'Import & Export Settings'],
 		['Help', 'Helpful information (hopefully)'],
@@ -925,8 +925,10 @@ function initialiseAllSettings() {
 			function () { return ('Advanced Nurseries') },
 			function () {
 				let description = "<p>Will only buy nurseries if you need more health and you have already <b>Hits Survived</b> farmed on your current zone <b>OR</b> have equal to or more map bonus stacks than the <b>Map Bonus Health</b> setting.</p>"
-				description += "<p>Requires Nurseries to be setup in the <b>AT Auto Structure</b> setting and will only buy Nurseries if past the <b>From</b> input. Overrides the <b>Up To</b> input and allows you to set 0 without it buying as many as possible.</p>"
-				description += "<p><b>Recommended:</b> On. Nurseries set to <b>Up To: 0</b> and <b>From: 230</b></p>";
+				description += "<p>The amount of nurseries that this setting can purchase doesn't have a cap so if necessary it will purchase all available nurseries.</p>"
+				description += "<p>Requires nurseries to be enabled in the <b>AT Auto Structure</b> setting.</p>"
+				description += "<p>When enabled, this setting will only buy nurseries if at or past the <b>From Z</b> input. It allows setting the <b>Up To</b> input to 0 without buying as many nurseries as possible, but it doesn't stop <b>AT Auto Structure</b> from also purchasing nurseries.</p>"
+				description += "<p><b>Recommended:</b> On. Nurseries enabled and set to <b>Up To: 0</b> and <b>From: 230</b></p>";
 				return description;
 			}, 'boolean', true, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230) });
@@ -941,7 +943,8 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230 && autoTrimpSettings.advancedNurseries.enabled) });		
-		createSetting('advancedNurseriesAmount',
+		
+			createSetting('advancedNurseriesAmount',
 			function () { return ('AN: Amount') },
 			function () {
 				let description = "<p>The amount of Nurseries that the script will attempt to purchase everytime you need additional health from <b>Advanced Nurseries</b>.</p>"
@@ -1891,8 +1894,8 @@ function initialiseAllSettings() {
 			function () { return ('Bublé') },
 			function () {
 				let description = "<p>This is a dummy setting to explain how the script works during Bublé.</p>";
-				description += "<p>Will disable map bonus farming when using auto level unless your optimal map level is 0 or higher as it can't guarantee survival before then.</p>";
-				description += "<p>Will automatically adjust equality and suicide armies that are one hit away from death to try and ensure you don't fail the challenge It cannot do this during void maps so you will need to overfarm health/damage to accomodate for this.</p>";
+				description += "<p>Disables map bonus farming when using auto level unless your optimal map level is 0 or higher as it can't guarantee survival before then.</p>";
+				description += "<p>Will automatically adjust equality and suicide armies that are one hit away from death to try and ensure you don't fail the challenge. It cannot do this during void maps so you need to overfarm health and damage to accomodate for this.</p>";
 				description += "<p>Requires the <b>Auto Equality</b> setting in the Combat tab to be set to <b>Auto Equality: Advanced</b> or the script won't try to keep your armies alive.</p>";
 				return description;
 			}, 'boolean', false, null, 'Challenges', [2],
@@ -2342,7 +2345,7 @@ function initialiseAllSettings() {
 			function () { return ('T: Carp Respec') },
 			function () {
 				let description = `<p>If enabled, then when Auto Portaling into the <b>${(atConfig.settingUniverse === 2 ? 'Trappapalooza' : 'Trapper')}</b> challenge this will use the ${(atConfig.settingUniverse === 2 ? 'Trappa Carp' :'Trapper² (initial)')} preset then immediately respec into the  ${(atConfig.settingUniverse === 2 ? 'Trappa³' : 'Trapper² (respec)')} preset.</p>`;
-				description += "<p>To work, the<b>Auto Allocate Perks</b> setting must be enabled.</p>";
+				description += "<p>To work, the <b>Auto Allocate Perks</b> setting in the Core tab must be enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2],
@@ -2546,7 +2549,7 @@ function initialiseAllSettings() {
 			function () { return ('W: Disable Withered Mapping') },
 			function () {
 				let description = "<p>Enabling this setting will disable mapping when you have the <b>Wither Immunity</b> buff.</p>";
-				description += "<p>If have <b>Auto Maps</b> enabled and you are running a map when your trimps wither then it will exit that map and return to the world.</p>";
+				description += "<p>If you have <b>Auto Maps</b> enabled and you are running a map when your trimps wither then it will exit that map and return to the world.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
@@ -2570,7 +2573,7 @@ function initialiseAllSettings() {
 				let mutatorObj = JSON.parse(localStorage.getItem('mutatorPresets'));
 				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
 
-				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when portaling into <b>Wither</b> it will load Preset 4${mutatorObj['Preset 4'].name !== 'Preset 4' ? " (" + mutatorObj['Preset 4'].name + ")" : ''}.</p>`;
+				let description = `<p>When both <b>Preset Swap Mutators</b> and this setting are enabled it will load load Preset 4${mutatorObj['Preset 4'].name !== 'Preset 4' ? " (" + mutatorObj['Preset 4'].name + ")" : ''} when portaling into <b>Wither</b>.</p>`;
 				description += "<p>Due to Overkill being disabled in this challenge it's wise to go for minimal overkill mutations during it.</p>"
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
@@ -2873,7 +2876,7 @@ function initialiseAllSettings() {
 		createSetting('glassFarm',
 			function () { return ('G: Farm') },
 			function () {
-				let description = "<p>Enable this to automate farming if you don't have enough damage to clear Glass stacks in a world level map.</p>";
+				let description = "<p>Enable this to automate damage farming when you don't have enough damage to clear Glass stacks in a world level map.</p>";
 				description += "<p>When at cell 100 of a zone it will identify the damage required to kill enemies in a world level map on the next zone and farms if you can't.</p>";
 				description += "<p>This setting will usually overfarm as it assumes a minimum damage roll with no crits.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -3022,7 +3025,6 @@ function initialiseAllSettings() {
 			function () { return ('Smithless') },
 			function () {
 				let description = "<p>Enable this if you want to automate farming to obtain maximum Enhanced Armor stacks against Ubersmiths when running the <b>Smithless</b> challenge.</p>";
-				description += "<p>It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from an Ubersmith and farm till it reachs that point if it's attainable.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
@@ -3032,7 +3034,9 @@ function initialiseAllSettings() {
 			function () { return ('S: Max Farm Time') },
 			function () {
 				let description = "<p>The max amount of time in minutes you'd like to farm for stats.</p>";
-				description += "<p>Set to <b>0</b> to disable farming and set to <b>-1 or below</b> to farm forever.</p>";
+				description += "<p>This will identify breakpoints that can be reached with max tenacity and map bonus to figure out how many stacks you are able to obtain from an Ubersmith and if any are attainable, it will farm until you have enough damage.</p>";
+				description += "<p>Set to <b>0</b> to disable farming.</p>";
+				description += "<p>Set to <b>-1 or below</b> to farm forever.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('smithless', atConfig.settingUniverse) && autoTrimpSettings.smithless.require()) });
@@ -3041,7 +3045,7 @@ function initialiseAllSettings() {
 			function () { return ('S: Max Map Bonus') },
 			function () {
 				let description = "<p>Will get max map bonus stacks when fighting against an Ubersmith.</p>";
-				description += "<p>It will still obtain map bonus stacks even if you disable or it goes past the time input in the farm time setting.</p>";
+				description += "<p>It will still obtain map bonus stacks even if you disable or go past the time input in the <b>S: Max Farm Time</b> setting.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'C2', [2],
@@ -3604,7 +3608,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Master switch for whether the script will try to keep any of the heirlooms in your temporary section when portaling.</p>";
 				description += "<p>This setting <b>will not recycle</b> any of your carried heirlooms, it only checks your temporary heirlooms section.</p>";
-				description += "<p>When run, this will check the mods you've selected against each heirloom in your temporary section and if have the correct mods they'll be moved to your carried section.</p>";
+				description += "<p>When run, this will check the mods you've selected against each heirloom in your temporary section and if they have the correct mods they'll be moved to your carried section.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -4527,7 +4531,7 @@ function initialiseAllSettings() {
 		createSetting('displayEnhancedGrid',
 			function () { return ('Enhance Grids') },
 			function () {
-				let description = "<p>Apply slight visual enhancements to world and map grids that highlights with drop shadow all the exotic, powerful, skeletimps and other special imps.</p>";
+				let description = "<p>Apply slight visual enhancements to world and map grids to display exotic imps, skeletimps and other special imps.</p>";
 				const enemyType = atConfig.settingUniverse === 1 ? 'Corrupt' : 'Mutated';
 				description += `<p>${enemyType} enemies won't have a fast icon as those enemies are always fast.</p>`;
 				return description;
@@ -4563,7 +4567,7 @@ function initialiseAllSettings() {
 			function () { return ('Go AFK Mode') },
 			function () {
 				let description = "<p>AFK Mode uses a Black Screen, and suspends all of the Trimps GUI visual update functions to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU saving mode.</p>";
-				description += "<p>You can also click the Zone # (World Info) area to go AFK now.</p>";
+				description += "<p>You can also click the Zone # (World Info) area to active this.</p>";
 				return description;
 			}, 'action', null, 'atData["performance"].enableAFKMode()', 'Display', [1, 2]);
 
