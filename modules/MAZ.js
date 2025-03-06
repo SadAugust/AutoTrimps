@@ -3228,13 +3228,13 @@ function hideAutomationDisplay(elem) {
 			rows++;
 		}
 
-		const equipClass = msgs[item] ? 'Equipped' : 'NotEquipped';
+		const equipClass = msgs[`AT${item}`] ? 'Equipped' : 'NotEquipped';
 		let realName = 'Auto ' + (item.charAt(0).toUpperCase() + item.substr(1)).replace(/_/g, ' ');
 		if (item === 'status') realName = 'Auto Maps Status';
 		if (item === 'heHr') realName = `${heliumOrRadon()} Per Hour Status`;
 
 		rowData += `
-			<div class='btnItem btnItem${equipClass}' onclick='hideAutomationToggleElem(this)' data-hidden-text="${item}" <span onmouseover='hideAutomationConfigHover("AT${item}", event)' onmouseout='hideAutomationConfigHover("hide", event)'>
+			<div class='btnItem btnItem${equipClass}' onclick='hideAutomationToggleElem(this)' data-hidden-text="AT${item}" <span onmouseover='hideAutomationConfigHover("AT${item}", event)' onmouseout='hideAutomationConfigHover("hide", event)'>
 				<span>${realName}</span>
 			</div>`;
 		total++;

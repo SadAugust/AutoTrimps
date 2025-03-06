@@ -1695,7 +1695,7 @@ function initialiseAllSettings() {
 		createSetting('hdFarmSettings',
 			function () { return ('HS & HD Farm Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like <b>H:D Ratio</b> or <b>Hits Survived</b> farming to be run.</p>";
+				let description = "<p>Here you can select how and when you would like <b>HD Ratio</b> or <b>Hits Survived</b> farming to be run.</p>";
 				description += "<p>Your current HD Ratio and Hits Survived values can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
@@ -1774,7 +1774,7 @@ function initialiseAllSettings() {
 		createSetting('uniqueMapEnoughHealth',
 			function () { return ('Unique Map Health Check') },
 			function () {
-				let description = "<p>Will disable Unique Maps from being run if you don't have enough health to survive the minimum attack of the highest attacking cell in that map.</p>";
+				let description = "<p>Will disable any unique maps that you don't have enough health to survive in from being run.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Maps', [1, 2]);
@@ -3042,7 +3042,8 @@ function initialiseAllSettings() {
 		createSetting('bloodthirstMaxStacks',
 			function () { return ('Bloodthirst Time To Kill Check') },
 			function () {
-				let description = "<p>When mapping on a daily with the bloodthirst modifier this will cause Auto Equality to check if you can kill your current enemy in less hits than it will heal from bloodthirst stack accumulation and if it doesn't it will suicide your trimps until it has max stacks.</p>";
+				let description = "<p>When mapping on a daily with the <b>bloodthirst</b> modifier, this will make Auto Equality check if you can kill your current enemy in less hits (gamma bursts) than it takes for it to heal from bloodthirst stack accumulation.<br>";
+				description += "If you won't kill the enemy fast enough then it suicides your trimps until the enemy has max Bloodthirst stacks.</p>";
 				description += "<p>Will only work if the <b>Auto Equality</b> setting is set to <b>Auto Equality: Advanced</b>."
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -3051,7 +3052,7 @@ function initialiseAllSettings() {
 		createSetting('bloodthirstVoidMax',
 			function () { return ('Void: Max Bloodthirst') },
 			function () {
-				let description = "<p>Will make your Void HD Ratio assume you have max bloodthirst stacks active if you're in a bloodthirst daily.</p>";
+				let description = "<p>Makes your Void HD Ratio assume you have max bloodthirst stacks active if you're in a bloodthirst daily.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Daily', [1, 2]);
@@ -3059,7 +3060,7 @@ function initialiseAllSettings() {
 		createSetting('empowerAutoEquality',
 			function () { return ('AE: Empower') },
 			function () {
-				let description = "<p>When the empower mod is active it will automatically adjust calculations for enemy stats to factor in either explosive or crit modifiers if they're active on the current daily.</b></p>";
+				let description = "<p>When the empower mod is active it will automatically adjust the scripts calculations for enemy stats to factor in either explosive or crit modifiers if they're active on the current daily.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Daily', [2],
@@ -3072,7 +3073,7 @@ function initialiseAllSettings() {
 				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
 
 				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when portaling into <b>Daily</b> challenges that have the <b>Plagued</b> modifier it will load Preset 6${mutatorObj['Preset 6'] && mutatorObj['Preset 6'].name !== 'Preset 6' ? " (" + mutatorObj['Preset 6'].name + ")" : ''}.</p>`;
-				description += "<p>Due to overkill (when it can reach z300) being important to clearing the Spire faster than the Plagued debuff kills you it can be beneficial to go for full overkill and liquification mutations during them.</p>"
+				description += "<p>Due to overkill (when it can reach z300) being important to clearing the Spire faster than the Plagued debuff kills you it can be beneficial to go for full overkill and liquification mutations during dailies with the Plagued modifier.</p>"
 				return description;
 			}, 'boolean', false, null, 'Daily', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 270) });
@@ -3080,7 +3081,7 @@ function initialiseAllSettings() {
 		createSetting('mapOddEvenIncrement',
 			function () { return ('Odd/Even Increment') },
 			function () {
-				let description = "<p>Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods it will try to identify which one is worse and skip farming on that zone type.</b></p>";
+				let description = "<p>Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods then it will try to identify which one is worse and skip farming on that zone type.</b></p>";
 				description += "<p>Will only impact the following settings: Heirloom Swap Zone, Void Maps, Map Farm" + (atConfig.settingUniverse === 2 ? ", Tribute Farm, Worshipper Farm, Smithy Farm." : ".") + "</p>";
 				description += "<p>Prints a message in your message log everytime you start a zone with negative mods telling you it will skip the farming settings mentioned above.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
