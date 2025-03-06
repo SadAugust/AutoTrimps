@@ -2454,7 +2454,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
-			function () { return ((/* !getPageSetting('c2DisableFinished', atConfig.settingUniverse) && */ game.stats.highestLevel.valueTotal() >= 600) || challengeActive('Experience')) });
+			function () { return ((game.stats.highestLevel.valueTotal() >= 600) || challengeActive('Experience')) });
 
 		createSetting('experienceStartZone',
 			function () { return ('E: Start Zone') },
@@ -2519,6 +2519,18 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
 
+		createSetting('witherMapLevel',
+			function () { return (['W: Map Level: Negative', 'W: Map Level: Map Bonus', 'W: Map Level: Positive']) },
+			function () {
+				let description = "<p>This allows map settings to use positive map levels during Wither when using Auto Level. In most situations this is detrimental as enemies will gain more stacks of Horror so use at your own risk.</p>";
+				description += `<p><b>W: Map Level: Negative</b><br>Stops the script from using positive map levels outside of the <b>Map Bonus</b> setting during Wither.</p>`;
+				description += `<p><b>W: Map Level: Map Bonus</b><br>Allows the <b>Hits Survived & HD Farm</b>, <b>Hits Survived</b> and the <b>Map Bonus Stacks</b> settings to run positive map levels until you have max map bonus stacks.</p>`;
+				description += `<p><b>W: Map Level: Positive</b><br>Lets all map settings use positive maps.</p>`;
+				description += "<p><b>Recommended:</b> W: Map Level: Negative</p>";
+				return description;
+			}, 'multitoggle', 0, null, 'C2', [2],
+			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
+
 		createSetting('witherZones',
 			function () { return ('W: Wither Zone(s)') },
 			function () {
@@ -2528,6 +2540,16 @@ function initialiseAllSettings() {
 				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
 				return description;
 			}, 'multiValue', [-1], null, 'C2', [2],
+			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
+
+		createSetting('witherDisableMapping',
+			function () { return ('W: Disable Withered Mapping') },
+			function () {
+				let description = "<p>Enabling this setting will disable mapping when you have the <b>Wither Immunity</b> buff.</p>";
+				description += "<p>If have <b>Auto Maps</b> enabled and you are running a map when your trimps wither then it will exit that map and return to the world.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
 			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
 
 		createSetting('witherShield',

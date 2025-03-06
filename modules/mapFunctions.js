@@ -3308,7 +3308,7 @@ function farmingDecision() {
 		levelCheck: Infinity
 	};
 
-	if (!game.global.mapsUnlocked || _leadDisableMapping()) return (mapSettings = farmingDetails);
+	if (!game.global.mapsUnlocked || _leadDisableMapping() || _witherDisableMapping()) return (mapSettings = farmingDetails);
 
 	let mapTypes = [];
 
@@ -4198,11 +4198,16 @@ function autoLevelOverides(mapName, mapLevel, mapModifiers) {
 		}
 	}
 
+	const witherSetting = getPageSetting('wither');
+	const witherMapSetting = getPageSetting('witherMapLevel');
+	const hshdFarm = ['HD Farm', 'Hits Survived'].includes(mapName);
+	const witherMapBonus = witherSetting && witherMapSetting && hshdFarm && forceMapBonus;
+
 	const mapBonusConditions = [
 		{ condition: mapName === 'Map Bonus' && mapBonusLevel > mapLevel && forceMapBonus, level: mapBonusLevel },
 		{ condition: mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapBonusLevel > mapLevel && forceMapBonus && canAffordMap, level: mapBonusLevel },
 		{ condition: mapName === 'Hits Survived' && mapBonusLevel > mapLevel && game.global.mapBonus < getPageSetting('mapBonusHealth') && forceMapBonus && canAffordMap, level: mapBonusLevel },
-		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
+		{ condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0 && !witherMapBonus && witherMapSetting !== 2, level: -1 },
 		{ condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(getCurrentQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
 		{ condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
 		{ condition: mapName === 'Mayhem Destacking' && mapLevel < 0, level: getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0 },

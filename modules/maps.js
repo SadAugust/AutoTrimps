@@ -166,6 +166,16 @@ function _leadDisableMapping() {
 	return !(aboveCell90 && (oddZone || natureFinalZone));
 }
 
+function _witherDisableMapping() {
+	if (!challengeActive('Wither') || game.challenges.Wither.healImmunity <= 0 || !getPageSetting('wither') || !getPageSetting('witherDisableMapping')) return false;
+	if (game.global.mapsActive && getPageSetting('autoMaps')) {
+		mapsClicked();
+		mapsClicked();
+	}
+
+	return true;
+}
+
 function _berserkDisableMapping() {
 	if (!challengeActive('Berserk') || !getPageSetting('berserk')) return false;
 	if (game.global.mapsActive || game.global.preMapsActive) return false;
