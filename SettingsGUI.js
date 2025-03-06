@@ -979,7 +979,7 @@ function initialiseAllSettings() {
 		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
-				let description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (atConfig.settingUniverse !== 2 ? "weapon" : "equipment") + " purchases and set your spending percentage to 100% of resources available.</p>";
+				let description = "<p>If your HD (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (atConfig.settingUniverse !== 2 ? "weapon" : "equipment") + " purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase equipment when you slow down in world.<br></p>";
 				description += "<p>Your HD ratio can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting and only override your <b>AE: Percent</b> input when running <b>HD Farm</b>.</p>";
@@ -1166,7 +1166,7 @@ function initialiseAllSettings() {
 			function () { return ('Trimpicide') },
 			function () {
 				let description = "<p>If a new army is available to send and anticipation stacks aren't maxed this will suicide your current army and send a new one.</p>";
-				description += "<p><b>Will not abandon in Spires.</b></p>";
+				description += "<p><b>Will not suicide armies in Spires.</b></p>";
 				description += "<p>This setting will abandon your army regardless of what your <b>Auto Abandon</b> setting is set to.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -1203,7 +1203,7 @@ function initialiseAllSettings() {
 		createSetting('fullIce',
 			function () { return ('Calc: Ice Debuff') },
 			function () {
-				let description = "<p>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use is to ensure your H:D (enemyHealth:trimpDamage) ratios aren't all over the place.</p>";
+				let description = "<p>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use is to ensure your HD (enemyHealth:trimpDamage) ratios aren't all over the place.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Combat', [1],
@@ -1212,8 +1212,8 @@ function initialiseAllSettings() {
 		createSetting('gammaBurstCalc',
 			function () { return ('Calc: Gamma Burst') },
 			function () {
-				let description = "<p>Factors Gamma Burst damage into your H:D (enemyHealth:trimpDamage) Ratio.</p>";
-				description += "<p>Be warned, the script will assume that you have a gamma burst ready to trigger for every attack if enabled so your H:D Ratio might be 1 but you'd need to multiply that value by your gamma burst proc count to get the actual value.</p>";
+				let description = "<p>Factors Gamma Burst damage into your HD (enemyHealth:trimpDamage) Ratio.</p>";
+				description += "<p>Be warned, the script will assume that you have a gamma burst ready to trigger for every attack if enabled so your HD Ratio might be 1 but you'd need to multiply that value by your gamma burst proc count to get the actual value.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, 'Combat', [1, 2],
@@ -1439,7 +1439,7 @@ function initialiseAllSettings() {
 		createSetting('windStackingRatio',
 			function () { return ('Wind Stack H:D') },
 			function () {
-				let description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
+				let description = "<p>If your HD ratio is above this setting it will not use wind stance.</p>";
 				description += "<p>If set to <b>0 or below</b> it will always use wind stance when past your wind stacking zone input.</p>";
 				description += "<p><b>Recommended:</b> 1000</p>";
 				description += `<p><i>When running a <b>Daily</b>, the <b>Daily: Wind Stack H:D</b> version of this setting will be used instead of this one.</i></p>`;
@@ -1480,7 +1480,7 @@ function initialiseAllSettings() {
 		createSetting('windStackingRatioDaily',
 			function () { return ('Daily: Wind Stack H:D') },
 			function () {
-				let description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
+				let description = "<p>If your HD ratio is above this setting it will not use wind stance.</p>";
 				description += "<p>If set to <b>0 or below</b> it will always use wind stance when at or above your wind stack zone input.</p>";
 				description += "<p><b>Recommended:</b> 1000</p>";
 				return description;

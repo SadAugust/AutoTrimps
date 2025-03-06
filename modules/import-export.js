@@ -1163,7 +1163,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 	const refreshTimer = usingRealTimeOffline ? 30 : 5;
 	const remainingTime = Math.ceil(refreshTimer - ((atConfig.intervals.counter / 10) % refreshTimer)) || refreshTimer;
 	tooltipText += `<p>The data shown is updated every ${refreshTimer} seconds. <b>${remainingTime}s</b> until the next update.</p>`;
-	tooltipText += `<p>Click this button while in the map chamber to either select your already purchased map or automatically set the inputs to the desired values.</p>`;
+	tooltipText += `<p>Click this button while in the map chamber to either select your already purchased (loot) map or automatically set the inputs to ones the script recommends for a (loot) map.</p>`;
 	tooltipText += `<p>Control click this button to display a table of the calculators simulation results.</p>`;
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
