@@ -444,7 +444,7 @@ function _getTrimpIceMult(realDamage) {
 	}
 }
 
-function _getQuagmireStatMult(worldType = _getWorldType(), stacks = game.challenges.Quagmire.stacks) {
+function _getQuagmireStatMult(worldType = _getWorldType(), stacks = game.challenges.Quagmire.exhaustedStacks) {
 	const exhaustedStacks = stacks;
 	const mod = worldType !== 'world' ? 0.05 : 0.1;
 	if (exhaustedStacks === 0) return 1;
