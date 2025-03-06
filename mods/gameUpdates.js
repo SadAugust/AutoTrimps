@@ -64,3 +64,39 @@ function autoTrap() {
 		startQueue('Trap', trapsToBuy);
 	}
 }
+
+function checkVoidMap() {
+	if (game.global.universe == 2 && game.global.spireActive) return;
+	if (game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10 && game.heirlooms.Shield.voidMaps.currentBonus > 0) {
+		game.global.hazShieldCredit++;
+		if (game.global.hazShieldCredit >= 1000) {
+			createVoidMap();
+			game.global.hazShieldCredit = 0;
+		}
+	}
+	if (game.global.totalPortals < 1) return;
+	if (game.global.universe == 2 && game.global.totalRadPortals < 1) return;
+	var max = getVoidMaxLevel();
+	if (getLastPortal() != -1) {
+		if (max < game.global.world) {
+			setVoidMaxLevel(game.global.world);
+			if (getLastPortal() + 25 < game.global.world) setVoidMaxLevel(getHighestLevelCleared(false, true));
+		}
+		if (max - getLastPortal() < 25) {
+			max = getLastPortal();
+		}
+	}
+	if (max > 200) max = 200;
+	var min = max > 80 ? 1000 + (max - 80) * 13 : 1000;
+	min *= 1 - getHeirloomBonus('Shield', 'voidMaps') / 100;
+	var extraV = 0;
+	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 4) extraV = 0.2;
+	min *= 1 - (game.goldenUpgrades.Void.currentBonus + extraV);
+	var chance = Math.floor((game.global.lastVoidMap - min) / 10) / 50000;
+	game.global.lastVoidMap++;
+	if (chance < 0) return;
+	if (seededRandom(game.global.voidSeed++) >= chance) return;
+	createVoidMap();
+	game.global.lastVoidMap = 0;
+	return 1;
+}

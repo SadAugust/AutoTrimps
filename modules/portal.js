@@ -762,6 +762,7 @@ function resetVarsZone(loadingSave, notRespec = true) {
 		MODULES.maps.slowScumming = false;
 		/* mapFunctions */
 		MODULES.mapFunctions.afterVoids = false;
+		game.global.addonUser.mapFunctions.afterVoids = false;
 		MODULES.mapFunctions.isHealthFarming = '';
 		MODULES.mapFunctions.hasHealthFarmed = '';
 		MODULES.mapFunctions.hasVoidFarmed = '';
@@ -775,8 +776,8 @@ function resetVarsZone(loadingSave, notRespec = true) {
 		atConfig.portal.lastHZE = 0;
 
 		atData.fightInfo.lastProcessedWorld = 0;
-		MODULES.portal.C2afterVoids = false;
-		MODULES.portal.C2afterPoisonVoids = false;
+		MODULES.portal.afterVoids = false;
+		MODULES.portal.afterPoisonVoids = false;
 		MODULES.portal.zonePostpone = 0;
 
 		MODULES.popups.challenge = false;
@@ -951,8 +952,8 @@ function autoPortalForce(runVoids = false, poisonVoids = false) {
 
 	if (runVoids) {
 		if (game.global.runningChallengeSquared) finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
-		if (poisonVoids) MODULES.portal.C2afterPoisonVoids = true;
-		MODULES.portal.C2afterVoids = true;
+		if (poisonVoids) MODULES.portal.afterPoisonVoids = true;
+		MODULES.portal.afterVoids = true;
 		MODULES.mapFunctions.afterVoids = true;
 		mapSettings.portalAfterVoids = true;
 		return;

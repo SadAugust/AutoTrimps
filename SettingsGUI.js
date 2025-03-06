@@ -5106,6 +5106,13 @@ function settingChanged(id, currUniverse) {
 			}
 		}
 
+		if (id === 'dailyPortal' && btn[value] === 1 && challengeActive('Daily') && mapSettings.voidTrigger && mapSettings.voidTrigger.includes('Per Hour')) {
+			MODULES.mapFunctions.afterVoids = false;
+			MODULES.mapFunctions.afterPoisonVoids = false;
+			mapSettings.portalAfterVoids = false;
+			game.global.addonUser.mapFunctions.afterVoids = false;
+		}
+
 		btn[value]++;
 		if (id === 'autoMaps' && currUniverse && btn[value] === 2) btn[value]++;
 		if (btn[value] > btn.name().length - 1) btn[value] = 0;
@@ -5135,6 +5142,13 @@ function settingChanged(id, currUniverse) {
 			const selectedTitles = Array.from(selectedElements).map((element) => element.getAttribute('title'));
 			result = selectedTitles;
 			/* _setSelect2Dropdowns(); */
+		}
+
+		if (id === 'autoPortal' && btn[selected].includes('Per Hour') && !challengeActive('Daily') && mapSettings.voidTrigger && mapSettings.voidTrigger.includes('Per Hour')) {
+			MODULES.mapFunctions.afterVoids = false;
+			MODULES.mapFunctions.afterPoisonVoids = false;
+			mapSettings.portalAfterVoids = false;
+			game.global.addonUser.mapFunctions.afterVoids = false;
 		}
 
 		btn[selected] = result;
@@ -5188,6 +5202,7 @@ function autoSetValue(id, multiValue, negative) {
 	if (num > game.global.world && (id === 'dailyDontPortalBefore' || id === 'heliumHrDontPortalBefore')) {
 		MODULES.mapFunctions.afterVoids = false;
 		mapSettings.portalAfterVoids = false;
+		game.global.addonUser.mapFunctions.afterVoids = false;
 	}
 
 	saveSettings();
