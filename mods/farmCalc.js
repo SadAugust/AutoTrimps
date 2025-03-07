@@ -548,9 +548,10 @@ function stats(lootFunction = lootDefault, checkFragments = true) {
 						break;
 					}
 
+					if (saveData.size > 30) continue;
 					const cPS = cellsPerSecond(saveData);
 					for (const stance of saveData.stances) {
-						if (tmp[stance] && tmp[stance].killSpeed + 0.1 >= cPS) {
+						if (tmp[stance] && tmp[stance].killSpeed + 0.1 >= cPS && (tmp.mapConfig.special || '0') === saveData.special) {
 							saveData.stances = saveData.stances.split(stance).join('');
 						}
 					}
