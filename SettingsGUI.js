@@ -5086,8 +5086,10 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 }
 
 function _settingTimeout(settingName, milliseconds = MODULES.portal.timeout) {
-	atConfig.timeouts[settingName] = true;
-	setTimeout(function () {
+	if (atConfig.timeouts[settingName]) {
+		clearTimeout(atConfig.timeouts[settingName]);
+	}
+	atConfig.timeouts[settingName] = setTimeout(function () {
 		atConfig.timeouts[settingName] = false;
 	}, milliseconds);
 }
@@ -5130,16 +5132,6 @@ function settingChanged(id, currUniverse) {
 		const value = `value${valueSuffix}`;
 		if (id === 'magmiteSpending' && btn[value] > 0) _settingTimeout('magma');
 		if (id === 'presetCombatRespec' && game.global.universe === 1) _settingTimeout('respec');
-
-		if (getPageSetting('autoPortalTimeout')) {
-			const portalSettings = ['autoPortal', 'heliumHourChallenge', 'heliumOneOffChallenge', 'heliumC2Challenge', 'autoPortalZone', 'heliumDontPortalBefore', 'heliumHrBuffer', 'heliumHrPortal', 'heliumHrExitSpire', 'autoPortalUniverseSwap'];
-			const dailyPortalSettings = ['dailyPortalStart', 'dailyPortal', 'dailyPortalZone', 'dailyAbandonZone', 'dailyDontPortalBefore', 'dailyHeliumHrBuffer', 'dailyHeliumHrPortal', 'dailyHeliumHrExitSpire', 'dailyPortalFiller', 'dailyPortalPreviousUniverse'];
-			const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerPercent', 'c2RunnerEndMode', 'c2Fused'];
-
-			if (portalSettings.includes(id) || dailyPortalSettings.includes(id) || c2PortalSettings.includes(id)) {
-				_settingTimeout('autoPortal');
-			}
-		}
 
 		if (id === 'dailyPortal' && btn[value] === 1 && challengeActive('Daily') && mapSettings.voidTrigger && mapSettings.voidTrigger.includes('Per Hour')) {
 			MODULES.mapFunctions.afterVoids = false;
@@ -5187,6 +5179,17 @@ function settingChanged(id, currUniverse) {
 		}
 
 		btn[selected] = result;
+	}
+
+	if (getPageSetting('autoPortalTimeout')) {
+		const portalSettings = ['autoPortal', 'heliumChallenge', 'heliumHourChallenge', 'heliumOneOffChallenge', 'heliumC2Challenge', 'autoPortalZone', 'heliumDontPortalBefore', 'heliumHrBuffer', 'heliumHrPortal', 'heliumHrExitSpire', 'autoPortalUniverseSwap'];
+		const challengePortalSettings = ['frigidAutoPortal', 'mayhemAutoPortal', 'pandemoniumAutoPortal', 'desolationAutoPortal'];
+		const dailyPortalSettings = ['dailyPortalStart', 'dailyPortal', 'dailyPortalZone', 'dailyAbandonZone', 'dailyDontPortalBefore', 'dailyHeliumHrBuffer', 'dailyHeliumHrPortal', 'dailyHeliumHrExitSpire', 'dailyPortalFiller', 'dailyPortalPreviousUniverse', 'dailyDontCap', 'dailyDontCapAmt', 'dailySkip'];
+		const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerPercent', 'c2RunnerEndMode', 'c2Fused'];
+
+		if (portalSettings.includes(id) || challengePortalSettings.includes(id) || dailyPortalSettings.includes(id) || c2PortalSettings.includes(id)) {
+			_settingTimeout('autoPortal');
+		}
 	}
 
 	const updateSettings = ['universeSetting'];

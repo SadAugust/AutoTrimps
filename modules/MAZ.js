@@ -3011,7 +3011,7 @@ function dailyPortalModsDisplay(elem) {
 }
 
 function dailyPortalModsSave() {
-	const setting = getPageSetting('c2RunnerSettings', atConfig.settingUniverse);
+	const setting = getPageSetting('dailyPortalSettingsArray', atConfig.settingUniverse);
 	const items = Array.from(document.getElementsByClassName('btnItem'));
 
 	items.forEach((item) => {
