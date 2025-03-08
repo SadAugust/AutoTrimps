@@ -4136,8 +4136,8 @@ function autoLevelType(mapName = mapSettings.mapname) {
 	return speedSettings.includes(mapName) ? 'speed' : 'loot';
 }
 
-function callAutoMapLevel(mapName, special) {
-	const mapType = autoLevelType(mapName);
+function callAutoMapLevel(mapName, special, mapType) {
+	if (!mapType) mapType = autoLevelType(mapName);
 	const mapModifiers = {
 		special: special || trimpStats.mapSpecial,
 		biome: mapSettings.biome || trimpStats.mapBiome
@@ -4174,6 +4174,9 @@ function callAutoMapLevel(mapName, special) {
 
 	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
 	mapLevel = autoLevelOverides(mapName, mapLevel, mapModifiers);
+
+	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;
+	if (mapType === 'speed' && mapLevel < mapBonusLevel) return callAutoMapLevel(mapName, special, 'loot');
 	return mapLevel;
 }
 

@@ -5744,7 +5744,7 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 	const containerStyle = timeWarp ? 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;' : 'display: block; font-size: 0.9vw; border-color: #5D5D5D;';
 	const container = _createElement('DIV', {
 		style: containerStyle,
-		class: `toggleConfigBtn pointer noselect ${id !== 'jobType' ? 'settingsBtn ' : ''}settingBtn${setting === 2 ? 3 : setting}`,
+		class: `toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn${setting === 2 ? 3 : setting}`,
 		onmouseover: `tooltip("Toggle Auto${label}", "customText", event, ${tooltipText})`,
 		onmouseout: 'tooltip("hide")'
 	});
@@ -6144,7 +6144,7 @@ function _setAutoJobsClasses() {
 	['jobType', 'autoJobsLabel', 'autoJobsLabelTW'].forEach(function (elemId) {
 		const elem = document.getElementById(elemId);
 		if (elem !== null) {
-			elem.parentNode.setAttribute('class', `toggleConfigBtn noselect pointer settingBtn${btnVal === 2 ? 3 : btnVal}`);
+			elem.parentNode.setAttribute('class', `toggleConfigBtn noselect pointer autoUpgradeBtn settingBtn${btnVal === 2 ? 3 : btnVal}`);
 			if (elemId === 'jobType') {
 				elem.parentNode.classList.remove('toggleConfigBtn');
 				elem.innerHTML = btnName;

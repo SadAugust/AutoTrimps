@@ -1155,7 +1155,7 @@ atData.autoPerks = {
 		apGUI.$ratiosLine[3] = document.createElement('DIV');
 		apGUI.$ratiosLine[3].id = 'customRatios3';
 		apGUI.$ratiosLine[3].classList.add('customRatios');
-		apGUI.$ratiosLine[3].setAttribute('style', 'margin-left: 0vw; line-height: 1.5vw;');
+		apGUI.$ratiosLine[3].setAttribute('style', 'line-height: 1.5vw;');
 		apGUI.$ratiosLine[3].setAttribute('id', `customRatios${3}`);
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine[3]);
 		let resetWeightsText = 'Clears your current input values for this preset and resets them to their default values.';
@@ -1166,10 +1166,21 @@ atData.autoPerks = {
 		apGUI.$resetWeightsBtn.setAttribute('onclick', `importExportTooltip("resetPerkPreset", "${calcName}");`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseover', `tooltip("Reset Preset Weights", "customText", event, \`${resetWeightsText}\`)`);
 		apGUI.$resetWeightsBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		apGUI.$resetWeightsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px; 
+		apGUI.$resetWeightsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.5vw; vertical-align: middle; line-height: 1.3vw; margin-right: 0.7vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px; 
   cursor: pointer;`;
 		apGUI.$resetWeightsBtn.textContent = 'Reset Preset Weights';
 		if (document.getElementById(apGUI.$resetWeightsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$resetWeightsBtn);
+
+		apGUI.$goldenUpgradeBtn = document.createElement('DIV');
+		apGUI.$goldenUpgradeBtn.id = 'showGoldenUpgradesBtn';
+		const settingBtnClassGU = settingInputs && settingInputs.showGU ? 'settingBtntrue' : 'settingBtnfalse';
+		apGUI.$goldenUpgradeBtn.setAttribute('class', `btn ${settingBtnClassGU}`);
+		apGUI.$goldenUpgradeBtn.setAttribute('onclick', 'toggleSettingInputProperty("showGU", "showGoldenUpgradesBtn")');
+		apGUI.$goldenUpgradeBtn.setAttribute('onmouseover', 'tooltip("Recommend Golden Upgrades", "customText", event, "When enabled will display the recommended golden upgrade path to take on your run when you allocate perks.")');
+		apGUI.$goldenUpgradeBtn.setAttribute('onmouseout', 'tooltip("hide")');
+		apGUI.$goldenUpgradeBtn.style.cssText = `display: ${calcName === 'Surky' ? 'flex' : 'none'}; height: 1.5vw; font-size: 0.8vw; width: 13.5vw; vertical-align: middle; line-height: 1.3vw; margin-right: 0.7vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px; justify-content: center;`;
+		apGUI.$goldenUpgradeBtn.textContent = 'Recommend Golden Upgrades';
+		if (document.getElementById(apGUI.$goldenUpgradeBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$goldenUpgradeBtn);
 
 		let $portalWrapper = document.getElementById('portalWrapper');
 		$portalWrapper.appendChild(apGUI.$customRatios);
@@ -1204,16 +1215,6 @@ atData.autoPerks = {
 			document.querySelector('#breedRelicsDiv').style.display = preset === 'archaeology' ? 'flex' : 'none';
 			document.querySelector('#findPotsDiv').style.display = preset === 'alchemy' ? 'flex' : 'none';
 
-			apGUI.$goldenUpgradeBtn = document.createElement('DIV');
-			apGUI.$goldenUpgradeBtn.id = 'showGoldenUpgradesBtn';
-			const settingBtnClass = settingInputs.showGU ? 'settingBtntrue' : 'settingBtnfalse';
-			apGUI.$goldenUpgradeBtn.setAttribute('class', `btn ${settingBtnClass}`);
-			apGUI.$goldenUpgradeBtn.setAttribute('onclick', 'toggleSettingInputProperty("showGU", "showGoldenUpgradesBtn")');
-			apGUI.$goldenUpgradeBtn.setAttribute('onmouseover', 'tooltip("Recommend Golden Upgrades", "customText", event, "When enabled will display the recommended golden upgrade path to take on your run when you allocate perks.")');
-			apGUI.$goldenUpgradeBtn.setAttribute('onmouseout', 'tooltip("hide")');
-			apGUI.$goldenUpgradeBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px`;
-			apGUI.$goldenUpgradeBtn.textContent = 'Recommend Golden Upgrades';
-			if (document.getElementById(apGUI.$goldenUpgradeBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$goldenUpgradeBtn);
 			initialLoad();
 		}
 
@@ -1224,7 +1225,7 @@ atData.autoPerks = {
 		apGUI.$updateInputsBtn.setAttribute('onclick', 'toggleSettingInputProperty("updateInputs", "updateInputsBtn")');
 		apGUI.$updateInputsBtn.setAttribute('onmouseover', 'tooltip("Update Input Fields", "customText", event, "When enabled will update input fields with your current runs data when you open the perks or portal window.")');
 		apGUI.$updateInputsBtn.setAttribute('onmouseout', 'tooltip("hide")');
-		apGUI.$updateInputsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.7vw; vertical-align: middle; line-height: 1.3vw; margin-left: 0.5vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px`;
+		apGUI.$updateInputsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.5vw; vertical-align: middle; line-height: 1.3vw; margin-right: 0.7vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px`;
 		apGUI.$updateInputsBtn.textContent = 'Update Input Fields';
 		if (document.getElementById(apGUI.$updateInputsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$updateInputsBtn);
 		document.getElementById('portalWrapper').style.setProperty('overflow-y', 'auto');
