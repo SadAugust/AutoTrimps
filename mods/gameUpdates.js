@@ -35,9 +35,14 @@ function startSpire(confirmed) {
 		}
 
 		if (spireNum === 1) {
-			cancelTooltip();
-			const uSpire = game.global.universe === 2 ? "Stuffy's Spire" : 'The Spire';
-			tooltip(uSpire, null, 'update');
+			const uStart = game.global.universe === 2 ? 300 : 200;
+			const showTooltip = getHighestLevelCleared() <= uStart + 19;
+
+			if (game.options.menu.bigPopups.enabled || showTooltip) {
+				cancelTooltip();
+				const uSpire = game.global.universe === 2 ? "Stuffy's Spire" : 'The Spire';
+				tooltip(uSpire, null, 'update');
+			}
 		}
 
 		return;
@@ -51,7 +56,7 @@ function autoTrap() {
 	const trapsCanAfford = Math.min(Math.floor(game.resources.food.owned / 10), Math.floor(game.resources.wood.owned / 10));
 	const trapsToBuy = Math.min(trapsCanAfford, buildingsPerSecond);
 
-	if (game.resources.food.owned >= 10 * trapsToBuy && game.resources.wood.owned >= 10 * trapsToBuy) {
+	if (trapsToBuy > 0 && game.resources.food.owned >= 10 * trapsToBuy && game.resources.wood.owned >= 10 * trapsToBuy) {
 		game.resources.food.owned -= 10 * trapsToBuy;
 		game.resources.wood.owned -= 10 * trapsToBuy;
 		game.buildings.Trap.purchased += trapsToBuy;
