@@ -5094,6 +5094,19 @@ function _settingTimeout(settingName, milliseconds = MODULES.portal.timeout) {
 	}, milliseconds);
 }
 
+function _autoPortalTimeoutCheck(id) {
+	if (!getPageSetting('autoPortalTimeout')) return;
+
+	const portalSettings = ['autoPortal', 'heliumChallenge', 'heliumHourChallenge', 'heliumOneOffChallenge', 'heliumC2Challenge', 'autoPortalZone', 'heliumDontPortalBefore', 'heliumHrBuffer', 'heliumHrPortal', 'heliumHrExitSpire', 'autoPortalUniverseSwap'];
+	const challengePortalSettings = ['frigidAutoPortal', 'mayhemAutoPortal', 'pandemoniumAutoPortal', 'desolationAutoPortal'];
+	const dailyPortalSettings = ['dailyPortalStart', 'dailyPortal', 'dailyPortalZone', 'dailyAbandonZone', 'dailyDontPortalBefore', 'dailyHeliumHrBuffer', 'dailyHeliumHrPortal', 'dailyHeliumHrExitSpire', 'dailyPortalFiller', 'dailyPortalPreviousUniverse', 'dailyDontCap', 'dailyDontCapAmt', 'dailySkip'];
+	const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerPercent', 'c2RunnerEndMode', 'c2Fused'];
+
+	if (portalSettings.includes(id) || challengePortalSettings.includes(id) || dailyPortalSettings.includes(id) || c2PortalSettings.includes(id)) {
+		_settingTimeout('autoPortal');
+	}
+}
+
 function settingChanged(id, currUniverse) {
 	const btn = autoTrimpSettings[id];
 	const radonOn = currUniverse ? game.global.universe === 2 : autoTrimpSettings.universeSetting.value === 1;
@@ -5181,19 +5194,9 @@ function settingChanged(id, currUniverse) {
 		btn[selected] = result;
 	}
 
-	if (getPageSetting('autoPortalTimeout')) {
-		const portalSettings = ['autoPortal', 'heliumChallenge', 'heliumHourChallenge', 'heliumOneOffChallenge', 'heliumC2Challenge', 'autoPortalZone', 'heliumDontPortalBefore', 'heliumHrBuffer', 'heliumHrPortal', 'heliumHrExitSpire', 'autoPortalUniverseSwap'];
-		const challengePortalSettings = ['frigidAutoPortal', 'mayhemAutoPortal', 'pandemoniumAutoPortal', 'desolationAutoPortal'];
-		const dailyPortalSettings = ['dailyPortalStart', 'dailyPortal', 'dailyPortalZone', 'dailyAbandonZone', 'dailyDontPortalBefore', 'dailyHeliumHrBuffer', 'dailyHeliumHrPortal', 'dailyHeliumHrExitSpire', 'dailyPortalFiller', 'dailyPortalPreviousUniverse', 'dailyDontCap', 'dailyDontCapAmt', 'dailySkip'];
-		const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerPercent', 'c2RunnerEndMode', 'c2Fused'];
-
-		if (portalSettings.includes(id) || challengePortalSettings.includes(id) || dailyPortalSettings.includes(id) || c2PortalSettings.includes(id)) {
-			_settingTimeout('autoPortal');
-		}
-	}
-
 	const updateSettings = ['universeSetting'];
 	if (id.includes('heirloomAutoRareToKeep')) updateSettings.push(id);
+	_autoPortalTimeoutCheck(id);
 
 	saveSettings();
 	updateAutoTrimpSettings(updateSettings.includes(id));
@@ -5243,6 +5246,7 @@ function autoSetValue(id, multiValue, negative) {
 		game.global.addonUser.mapFunctions.afterVoids = false;
 	}
 
+	_autoPortalTimeoutCheck(id);
 	saveSettings();
 }
 
@@ -5315,6 +5319,7 @@ function autoSetText(id, multiValue) {
 	}
 
 	if (id.includes('archaeology')) archaeologyAutomator();
+	_autoPortalTimeoutCheck(id);
 	saveSettings();
 }
 
