@@ -5351,6 +5351,7 @@ function autoToggle(what) {
 			const element = document.getElementById(id);
 			if (element && ['block', 'grid'].includes(element.style.display)) {
 				element.style.display = 'none';
+				if (id === 'graphParent') trimpStatsDisplayed = false;
 			}
 		});
 
@@ -5381,6 +5382,7 @@ function autoToggle(what) {
 		if (element !== null) {
 			if (['block', 'grid'].includes(element.style.display)) {
 				element.style.display = 'none';
+				if (item === 'graphParent') trimpStatsDisplayed = false;
 			} else {
 				if (item !== 'graphParent') element.style.display = 'block';
 				if (item === 'autoSettings') updateAutoTrimpSettings(true);
