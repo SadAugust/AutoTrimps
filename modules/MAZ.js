@@ -487,7 +487,7 @@ function _mapSettingsDefaultTitles(varPrefix, activeSettings, settingOrder) {
 		<div id='windowContainer' style='display: block'>
 			<div id='windowError'></div>
 			<div class='row windowRow titles' style='border: 0px; margin-top: -0.5vw;'>
-			<div class='windowDisplay windowActive${varPrefix}'>Enabled</div>`;
+			<div class='windowDisplay windowActive${varPrefix}'>Enable<br>Setting</div>`;
 	/* <div class='windowDisplay windowAdvanced${varPrefix}'>Advanced</div> */
 
 	sortedElements.forEach((item) => {
@@ -1297,7 +1297,10 @@ function settingsWindowSave(titleText, varPrefix, activeSettings, reopen) {
 		const value = atConfig.settingUniverse === 2 ? 'valueU2' : 'value';
 		game.global.addonUser.mapData[varPrefix + 'Settings'][value] = Array.from({ length: 31 }, () => ({ done: '' }));
 
-		if (!defaultSetting.active) debug(`${titleText} has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.`, 'mazSettings');
+		if (!defaultSetting.active) {
+			message(`${titleText} Settings has been saved but the setting is disabled so won't be run. To enable it, tick the "Enable Setting" checkbox in the top left of the window.`, 'Notices', null, 'seedMessage', undefined, undefined, 'color: white;');
+			if (game.options.menu.pauseGame.enabled) postMessages();
+		}
 	}
 
 	document.getElementById('tooltipDiv').style.overflowY = '';

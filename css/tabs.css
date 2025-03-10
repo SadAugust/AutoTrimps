@@ -237,7 +237,11 @@ ul.tab li a:hover {
 	width: 10%;
 }
 
-.windowActiveMapFarm,
+.windowActiveMapFarm {
+	transform: translateX(-20%);
+	width: 4%;
+}
+
 .windowEndZoneMapFarm {
 	width: 4%;
 }

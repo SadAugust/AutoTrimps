@@ -1715,6 +1715,32 @@ if (typeof abandonChallengeDaily !== 'function') {
 	};
 }
 
+if (typeof clearPerksPerky !== 'function') {
+	var clearPerksPerky = clearPerks;
+	clearPerks = function () {
+		clearPerksPerky(...arguments);
+		const calcName = portalUniverse === 2 ? 'Surky' : portalUniverse === 1 ? 'Perky' : '';
+		const settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
+		let lockedPerks = false;
+
+		if (settingInputs && settingInputs.lockedPerks) {
+			for (let item in settingInputs.lockedPerks) {
+				if (settingInputs.lockedPerks[item]) {
+					settingInputs.lockedPerks[item] = false;
+					document.getElementById(`lock${item}`).classList = `icomoon icon-unlocked`;
+					lockedPerks = true;
+				}
+			}
+
+			if (lockedPerks) {
+				localStorage.setItem(`${calcName.toLowerCase()}Inputs`, JSON.stringify(settingInputs));
+				tooltip('Locked Perks Reset', 'customText', `lock`, 'Your locked perks have been reset as you cleared all of your perks.');
+				verticalCenterTooltip();
+			}
+		}
+	};
+}
+
 /* If using standalone version then when load Surky and CSS files. */
 if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	function updateAdditionalInfo() {
