@@ -549,6 +549,11 @@ function _runVoidMaps(setting, mapName, settingIndex, defaultSettings, farmingDe
 	const shouldHitsSurvived = defaultSettings.hitsSurvived && defaultSettings.hitsSurvived > 0 && defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid;
 	const shouldHDFarm = defaultSettings.hdRatio && defaultSettings.hdRatio > 0 && defaultSettings.hdRatio < hdStats.vhdRatioVoid;
 
+	if (shouldMap && !MODULES.portal.forcePortal && challengeActive('Experience') && experience(false, true).shouldRun) {
+		debug(`${mapName} (z${game.global.world}c${game.global.lastClearedCell + 2}) finishing the Experience challenge before running void maps.`, 'map_Details');
+		return experience();
+	}
+
 	if (shouldMap && defaultSettings.voidFarm && !skipFarmChallenges && hasNotVoidFarmed && (shouldHitsSurvived || shouldHDFarm)) {
 		if (!mapSettings.voidFarm && getPageSetting('autoMaps')) {
 			debug(`${mapName} (z${game.global.world}c${game.global.lastClearedCell + 2}) farming stats before running void maps.`, 'map_Details');
@@ -1714,7 +1719,7 @@ function _runToxicity(setting, mapName, settingName, settingIndex) {
 	};
 }
 
-function experience(lineCheck) {
+function experience(lineCheck, checkEndChallenge = false) {
 	let mapName = 'Experience';
 	const farmingDetails = {
 		shouldRun: false,
@@ -1727,7 +1732,7 @@ function experience(lineCheck) {
 	const mapSpecial = trimpStats.hyperspeed2 ? '0' : 'fa';
 	const mapLevel = 0;
 
-	const shouldWonderFarm = game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder;
+	const shouldWonderFarm = !checkEndChallenge && game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder;
 	const shouldEndChallenge = game.global.world > 600 && game.global.world >= Math.max(601, getPageSetting('experienceEndZone'));
 
 	const shouldMap = shouldWonderFarm || shouldEndChallenge;

@@ -950,18 +950,17 @@ function _setButtonsPortal(onPortal = true) {
 function autoPortalForce(runVoids = false, poisonVoids = false) {
 	if (!game.global.portalActive) return;
 
+	mapSettings.portalAfterVoids = true;
+	MODULES.mapFunctions.afterVoids = true;
+	MODULES.portal.forcePortal = true;
+
 	if (runVoids) {
 		if (game.global.runningChallengeSquared) finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
 		if (poisonVoids) MODULES.portal.afterPoisonVoids = true;
 		MODULES.portal.afterVoids = true;
-		MODULES.mapFunctions.afterVoids = true;
-		mapSettings.portalAfterVoids = true;
 		return;
 	}
 
-	mapSettings.portalAfterVoids = true;
-	MODULES.mapFunctions.afterVoids = true;
-	MODULES.portal.forcePortal = true;
 	game.global.totalVoidMaps = 0;
 	autoPortalCheck(game.global.world);
 }
