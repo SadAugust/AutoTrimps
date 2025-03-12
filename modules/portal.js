@@ -183,6 +183,7 @@ function _handleHeHrPortalDelay(resourceType, myHeliumHr, bestHeHr, bestHeHrZone
 }
 
 function handlePortalType(portalType, portalZone, specificPortalZone, universe, challengeSelected, skipDaily) {
+	if (mapSettings.portalAfterVoids && MODULES.mapFunctions.afterVoids && MODULES.portal.forcePortal && MODULES.portal.afterVoids) return;
 	const challenge2Settings = ['Challenge 2', 'Challenge 3'];
 	const atPortalZone = game.global.world >= portalZone;
 	const respecPortal = atPortalZone && specificPortalZone;
