@@ -1435,9 +1435,9 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 	let enemyHealth = calcEnemyHealth(worldType, zone, currentCell, enemyName) * difficulty;
 	let enemyDmg = calcEnemyAttack(worldType, zone, currentCell, enemyName, false, false, 0) * difficulty;
 
-	if ((worldType === 'map' && dailyCrit) || dailyExplosive) {
+	if (dailyCrit || dailyExplosive) {
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
-		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		if (dailyCrit && (worldType === 'map' || dailyEmpowerToggle)) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 	} else if (hits || (worldType === 'world' && dailyEmpower && (dailyCrit || dailyExplosive))) {
 		if (dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 	}
