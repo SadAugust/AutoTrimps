@@ -955,7 +955,7 @@ function autoPortalForce(runVoids = false, poisonVoids = false) {
 	MODULES.mapFunctions.afterVoids = true;
 	MODULES.portal.forcePortal = true;
 
-	if (runVoids) {
+	if (runVoids && game.global.totalVoidMaps > 0) {
 		if (game.global.runningChallengeSquared) finishChallengeSquared(challengeActive('Obliterated') || challengeActive('Eradicated'));
 		if (poisonVoids) MODULES.portal.afterPoisonVoids = true;
 		MODULES.portal.afterVoids = true;

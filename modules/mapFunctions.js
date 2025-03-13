@@ -563,11 +563,13 @@ function _runVoidMaps(setting, mapName, settingIndex, defaultSettings, farmingDe
 
 	const stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
 	const status = `Void Maps: ${game.global.totalVoidMaps}${stackedMaps ? ` (${stackedMaps} stacked)` : ''} remaining`;
+	const allowPortal = !autoTrimpSettings.pauseScript.enabled && !game.options.menu.pauseGame.enabled;
+	const forcePortal = game.global.totalVoidMaps === 0 && setting.portalAfter && allowPortal;
 
-	if (mapSettings.mapName === mapName && !shouldMap) {
+	if (!shouldMap && (mapSettings.mapName === mapName || forcePortal)) {
 		mappingDetails(mapName, null, null, null, null, null);
 		resetMapVars();
-		if (mapSettings.portalAfterVoids) {
+		if (mapSettings.portalAfterVoids || forcePortal) {
 			const heHrSettings = ['Helium Per Hour', 'Radon Per Hour', '1'];
 			const portalType = getPageSetting('autoPortal', game.global.universe);
 			if (heHrSettings.includes(portalType)) MODULES.mapFunctions.afterVoids = true;
