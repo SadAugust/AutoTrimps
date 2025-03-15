@@ -30,8 +30,14 @@ function autoMapsStatus(get = false) {
 	const lifetime = (resourceOwned / (resourceEarned - resourceOwned)) * 100;
 
 	if (get) {
-		status = status.replace(/<br>/g, '\n').replace(/&nbsp;/g, ' ');
-		return [status, getPercent, lifetime];
+		status = status
+			.replace(/<div[^>]*>/g, '\n') // Remove opening div tags
+			.replace(/<\/div>/g, '') // Remove closing div tags
+			.replace(/<span[^>]*>/g, '\n') // Remove opening span tags
+			.replace(/<\/span>/g, '') // Remove closing span tags
+			.replace(/<br>/g, '\n') // Replace <br> with newline
+			.replace(/&nbsp;/g, ' '); // Replace &nbsp; with space
+		return status;
 	}
 
 	//Set Auto Maps Status when inside of TW
@@ -176,6 +182,22 @@ function _witherDisableMapping() {
 	return true;
 }
 
+function _stormDisableMapping() {
+	if (game.global.spireActive || !challengeActive('Storm') || !getPageSetting('storm') || mapSettings.mapName !== 'Map Bonus') return false;
+
+	const stormMapHD = getPageSetting('stormMapHD');
+	if (stormMapHD <= 0 || hdStats.hdRatioMap < stormMapHD) return false;
+
+	if ((game.global.mapsActive || game.global.preMapsActive) && game.challenges.Storm.beta < 150) {
+		if (game.global.mapsActive) mapsClicked();
+		mapsClicked();
+		return true;
+	}
+
+	const farmCloudyStacks = !game.global.mapsActive && !game.global.preMapsActive && game.challenges.Storm.beta < 250;
+	return farmCloudyStacks;
+}
+
 function _berserkDisableMapping() {
 	if (!challengeActive('Berserk') || !getPageSetting('berserk')) return false;
 	if (game.global.mapsActive || game.global.preMapsActive) return false;
@@ -208,6 +230,7 @@ function autoMaps() {
 	}
 
 	if (_vanillaMAZ()) return;
+	if (_stormDisableMapping()) return;
 
 	_autoMapsDefaults();
 

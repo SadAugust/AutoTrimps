@@ -114,6 +114,21 @@ ul.tab li a:hover {
 	text-shadow: none;
 }
 
+#battleSideTitle {
+	font-size: 1vw;
+	text-align: center;
+	background-color: rgba(0, 0, 0, 0.3);
+	padding-top: 5%;
+	padding-bottom: 5%;
+}
+
+.fightBtn {
+	width: 100%;
+	font-size: 1vw !important;
+	padding: 0.15vw 0.3vw;
+	display: block;
+}
+
 #messageConfig {
 	height: 3vw;
 	font-size: 1vw;

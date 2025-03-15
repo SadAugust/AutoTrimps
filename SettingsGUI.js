@@ -822,14 +822,14 @@ function initialiseAllSettings() {
 				Mansion: { enabled: true, percent: 80, buyMax: 200 },
 				Hotel: { enabled: true, percent: 80, buyMax: 200 },
 				Wormhole: { enabled: false, percent: 1, buyMax: 1 },
-				Resort: { enabled: true, percent: 100, buyMax: 200 },
+				Resort: { enabled: true, percent: 80, buyMax: 200 },
 				Gateway: { enabled: true, percent: 10, buyMax: 200 },
-				Collector: { enabled: true, percent: 100, buyMax: 200 },
+				Collector: { enabled: true, percent: 100, buyMax: 0 },
 				Gym: { enabled: true, percent: 75, buyMax: 0 },
 				Tribute: { enabled: true, percent: 20, buyMax: 0 },
-				Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 0 },
+				Nursery: { enabled: true, percent: 80, buyMax: 0, fromZ: 0 },
 				Smithy: { enabled: true, percent: 100, buyMax: 0 },
-				Laboratory: { enabled: true, percent: 100, buyMax: 0 },
+				Laboratory: { enabled: false, percent: 80, buyMax: 0 },
 				SafeGateway: { enabled: false, mapCount: 1, zone: 0, mapLevel: 0 }
 			}, 'importExportTooltip("AutoStructure")', 'Buildings', [1, 2],
 			function () { return false });
@@ -2714,6 +2714,17 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 105) });
+
+		createSetting('stormMapHD',
+			function () { return ('S: Storm Cloud Map HD') },
+			function () {
+				let description = "<p>From what Map HD Ratio should storm cCloud stacks for additional gamma burst damage be farmed before the <b>Map Bonus</b> setting runs.</p>";
+				description += "<p>If set to <b>0 or below</b> it will never farm for storm cloud stacks.</p>";
+				description += "<p>Will farm to 50 storm cloud stacks when you not already mapping or you have less than 30 stacks.</p>";
+				description += "<p><b>Recommended:</b> 50</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [2],
+			function () { return (getPageSetting('storm', atConfig.settingUniverse) && autoTrimpSettings.storm.require()) });
 
 		createSetting('stormZone',
 			function () { return ('S: Zone') },

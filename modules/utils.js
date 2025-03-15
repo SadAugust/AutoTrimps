@@ -450,8 +450,8 @@ function getPriorityOrder() {
 	let order = [];
 	let settingsList = [];
 
-	if (game.global.universe === 1) settingsList = ['Prestige Raiding', 'Bionic Raiding', 'Map Farm', 'Void Maps', 'HD Farm', 'Map Bonus', 'Toxicity'];
-	if (game.global.universe === 2) settingsList = ['Desolation Gear Scum', 'Prestige Raiding', 'Smithy Farm', 'Map Farm', 'Tribute Farm', 'Worshipper Farm', 'Quagmire', 'Insanity', 'Alchemy', 'Hypothermia', 'Void Maps', 'HD Farm', 'Map Bonus'];
+	if (game.global.universe === 1) settingsList = ['Prestige Raiding', 'Bionic Raiding', 'Map Farm', 'Void Maps', 'Map Bonus', 'HD Farm', 'Toxicity'];
+	if (game.global.universe === 2) settingsList = ['Desolation Gear Scum', 'Prestige Raiding', 'Smithy Farm', 'Map Farm', 'Tribute Farm', 'Worshipper Farm', 'Quagmire', 'Insanity', 'Alchemy', 'Hypothermia', 'Void Maps', 'Map Bonus', 'HD Farm'];
 
 	const settingNames = {
 		'Prestige Raiding': { settingName: 'raiding' },

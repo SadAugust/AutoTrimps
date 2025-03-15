@@ -159,7 +159,7 @@
 		if (overlayHeliumPerHour.innerText !== heliumPerHourText) overlayHeliumPerHour.innerText = heliumPerHourText;
 
 		const overlayStatus = M['performance'].AFKOverlayStatus;
-		const statusText = `Status: ${autoMapsStatus(true)[0]}`;
+		const statusText = `Status: ${autoMapsStatus(true)}`;
 		if (overlayStatus.innerText !== statusText) overlayStatus.innerText = statusText;
 	};
 })(atData, window);

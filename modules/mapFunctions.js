@@ -663,11 +663,13 @@ function _runMapBonus(setting, mapName, settingIndex, spireCheck) {
 	const minLevel = game.global.universe === 1 ? 0 - getPerkLevel('Siphonology') : 0;
 	const mapLevel = autoLevel ? autoLevelCheck(mapName, mapSpecial) : level;
 
-	if (mapLevel < minLevel) return {};
+	if (mapLevel < minLevel) return { shouldRun: false };
 
 	const shouldMap = repeatCounter > game.global.mapBonus;
 	const repeat = game.global.mapBonus >= repeatCounter - 1;
-	const status = `${spireCheck ? 'Spire ' : ''}Map Bonus: ${game.global.mapBonus}/${repeatCounter}`;
+
+	let status = `${spireCheck ? 'Spire ' : ''}${mapName}:`;
+	status += `<br>${game.global.mapBonus}/${repeatCounter}</div>`;
 
 	return {
 		shouldRun: shouldMap,
@@ -789,7 +791,11 @@ function _getMapFarmActions(mapType, setting, repeatNumber) {
 			'Skele Spawn': (gameTimer - game.global.lastSkeletimp) / 1000
 		}[mapType];
 
-		const status = mapType === 'Daily Reset' ? `${mapType}: ${setting.repeat} / ${updateDailyClock(true)}` : `${mapType}: ${formatSecondsAsClock(repeatCheck, 4 - setting.repeat.split(':').length)} / ${setting.repeat}`;
+		const borderElem = `<span style="display: block; border-bottom: 1px solid white; margin: 5px;"></span>`;
+		let status = `${mapType}: <div style="display: inline-block;">`;
+		if (mapType === 'Daily Reset') status += `${setting.repeat}${borderElem}${updateDailyClock(true)}</div>`;
+		else status += `${formatSecondsAsClock(repeatCheck, 4 - setting.repeat.split(':').length)}${borderElem}${setting.repeat}</div>`;
+
 		return [repeatCheck, status];
 	};
 
@@ -3321,7 +3327,7 @@ function farmingDecision() {
 	let mapTypes = [];
 
 	if (game.global.universe === 1) {
-		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, voidMaps, hdFarm, experience, mapBonus, toxicity, _obtainUniqueMap];
+		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, voidMaps, mapBonus, hdFarm, experience, toxicity, _obtainUniqueMap];
 
 		if (challengeActive('Mapology') && getPageSetting('mapology') && getPageSetting('mapologyMapOverrides')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
 
@@ -3332,7 +3338,7 @@ function farmingDecision() {
 		/* disable mapping if we have Withered as it's more beneficial to just push through the zone(s). */
 		if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) return (mapSettings = farmingDetails);
 
-		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, voidMaps, hdFarm, mapBonus, wither, mayhem, glass, smithless, _obtainUniqueMap];
+		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, voidMaps, mapBonus, hdFarm, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
 
 	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';

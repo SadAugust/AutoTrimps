@@ -10,6 +10,22 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	if (what === 'hide') {
 		elem.style.display = 'none';
 		return;
+	} else if (what === 'Auto Jobs Reset') {
+		tooltipText = `Are you sure you want to reset your Auto Jobs setting to their default values?`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); autoJobsReset(); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-danger ' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+
+		elem.style.left = '33.75%';
+		elem.style.top = '1%';
+		elem.style.zIndex = 9;
+	} else if (what === 'Auto Structure Reset') {
+		tooltipText = `Are you sure you want to reset your Auto Structure setting to their default values?`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); autoStructureReset(); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-danger ' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+
+		elem.style.left = '33.75%';
+		elem.style.top = '1%';
+		elem.style.zIndex = 9;
 	} else if (what === 'Auto Heirloom Changes') {
 		const [heirloomType, blacklist] = textString;
 		titleText = 'Hold On!!';
@@ -41,7 +57,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		if (autoBattle.oneTimers.The_Ring.owned) tooltipText += `<br>Ring Modifiers will only be imported if you have selected enough for the max slots available.`;
 		tooltipText += `<br><br><b>Warning:</b> This will use your saved version of this preset. If you have made changes to your items since saving, they won't be applied.`;
 
-		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultImport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultImport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-danger' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
 		elem.style.zIndex = 9;
 		ondisplay = function () {
@@ -50,7 +66,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	} else if (what === 'Spire Assault Export') {
 		const ringMods = autoBattle.oneTimers.The_Ring.owned ? ' and ring modifiers' : '';
 		tooltipText = `Are you sure you want to import your current items${ringMods} from from Spire Assault into the <b>${textString}</b> preset?`;
-		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultExport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); spireAssaultExport("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-danger' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
 		elem.style.zIndex = 9;
 		ondisplay = function () {
@@ -60,7 +76,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		const ringMods = autoBattle.oneTimers.The_Ring.owned ? ' and ring modifiers' : '';
 		const spireAssaultLink = `<a href="https://docs.google.com/spreadsheets/d/17Z3dwnkeAmY2La-LWreybTs4Sm7BAck79EzVF_gkZzs" target="_blank">Spire Assault community sheet</a>`;
 		tooltipText = `Import your Spire Assault build string to load those items${ringMods} into the <b>${textString}</b> preset.<br/>Builds can be found by copying the <b>Share Build</b> cell in the ${spireAssaultLink}<br/><textarea id='importBox' style='width: 100%' rows='3'></textarea>`;
-		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='spireAssaultImportSpreadsheet("${headingName}");'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6; '>Cancel</div></div>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='spireAssaultImportSpreadsheet("${headingName}");'>Import</div><div class='btn btn-danger' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6; '>Cancel</div></div>`;
 
 		elem.style.left = '33.75%';
 		elem.style.top = '25%';
@@ -85,7 +101,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		tooltipText = `Are you sure you want to load your current mutators from the <b>${textString}</b> preset?`;
 		tooltipText += `<br><br><b>Warning:</b> This will use your saved version of this preset. If you have made changes to your loadout since saving, they won't be applied.`;
 
-		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _mutatorLoadPreset("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _mutatorLoadPreset("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Import</div><div class='btn btn-danger' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
 		elem.style.zIndex = 9;
 		ondisplay = function () {
@@ -95,7 +111,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		tooltipText = `Are you sure you want to clear the <b>${textString}</b> preset?`;
 		tooltipText += `<br><br><b>Warning:</b> This will also set the name back to ${headingName}.`;
 
-		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _mutatorClearPreset("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-info' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _mutatorClearPreset("${headingName}"); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-danger' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
 		elem.style.zIndex = 9;
 		ondisplay = function () {
@@ -108,7 +124,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	document.getElementById(`tipCost${use2}`).innerHTML = costText;
 	elem.style.display = 'block';
 	if (ondisplay !== null) ondisplay();
-	if (event !== 'update' && !what.includes('Spire Assault') && !what.includes('Auto Heirloom') && !what.includes('Mutator')) positionTooltip(elem, event);
+	if (event !== 'update' && !what.includes('Spire Assault') && !what.includes('Auto Heirloom') && !what.includes('Mutator') && !what.includes('Reset')) positionTooltip(elem, event);
 }
 
 // Correct function to call to cancel the current tooltip

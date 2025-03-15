@@ -2196,6 +2196,7 @@ function autoStructureDisplay(elem) {
 			<div id='confirmTooltipBtn' class='btn btn-success btn-md' onclick='autoStructureSave()'>Save and Close</div>
 			<div class='btn btn-danger btn-md' onclick='cancelTooltip()'>Cancel</div>
 			<div class='btn btn-primary btn-md' onclick='autoStructureSave(); importExportTooltip("AutoStructure")'>Save</div>
+			<div class='btn btn-warning btn-md' style='float: right;' onclick='tooltipAT("Auto Structure Reset", event, undefined);'>Reset To Default</div>
 		</div>`;
 
 	const ondisplay = () => {
@@ -2405,6 +2406,29 @@ function autoStructureSave() {
 	cancelTooltip();
 }
 
+function autoStructureReset() {
+	const setting = {
+		Hut: { enabled: true, percent: 80, buyMax: 200 },
+		House: { enabled: true, percent: 80, buyMax: 200 },
+		Mansion: { enabled: true, percent: 80, buyMax: 200 },
+		Hotel: { enabled: true, percent: 80, buyMax: 200 },
+		Wormhole: { enabled: false, percent: 1, buyMax: 1 },
+		Resort: { enabled: true, percent: 80, buyMax: 200 },
+		Gateway: { enabled: true, percent: 10, buyMax: 200 },
+		Collector: { enabled: true, percent: 100, buyMax: 0 },
+		Gym: { enabled: true, percent: 75, buyMax: 0 },
+		Tribute: { enabled: true, percent: 20, buyMax: 0 },
+		Nursery: { enabled: true, percent: 80, buyMax: 0, fromZ: 0 },
+		Smithy: { enabled: true, percent: 100, buyMax: 0 },
+		Laboratory: { enabled: false, percent: 80, buyMax: 0 },
+		SafeGateway: { enabled: false, mapCount: 1, zone: 0, mapLevel: 0 }
+	};
+
+	setPageSetting('buildingSettingsArray', setting);
+	cancelTooltip2();
+	importExportTooltip('AutoStructure');
+}
+
 //Auto Jobs
 function autoJobsDisplay(elem) {
 	const ratio = "<p>The ratio jobs are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. Any number that's 0 or below will stop the script hiring any workers for that job. Scientists will be hired based on a ratio that is determined by how far you are into the game, the further you get, the less Scientists will be hired.</p>";
@@ -2463,6 +2487,7 @@ function autoJobsDisplay(elem) {
 			<div id='confirmTooltipBtn' class='btn btn-success btn-md' onclick='autoJobsSave()'>Save and Close</div>
 			<div class='btn btn-danger btn-md' onclick='cancelTooltip()'>Cancel</div>
 			<div class='btn btn-primary btn-md' onclick='autoJobsSave(); importExportTooltip("AutoJobs")'>Save</div>
+			<div class='btn btn-warning btn-md' style='float: right;' onclick='tooltipAT("Auto Jobs Reset", event, undefined);'>Reset To Default</div>
 		</div>`;
 
 	elem.style.left = '33.75%';
@@ -2658,6 +2683,25 @@ function autoJobsSave() {
 
 	setPageSetting('jobSettingsArray', setting);
 	cancelTooltip();
+}
+
+function autoJobsReset() {
+	const setting = {
+		Farmer: { enabled: true, ratio: 1 },
+		Lumberjack: { enabled: true, ratio: 1 },
+		Miner: { enabled: true, ratio: 1 },
+		Explorer: { enabled: true, percent: 10 },
+		Trainer: { enabled: true, percent: 25 },
+		Magmamancer: { enabled: true, percent: 100 },
+		Meteorologist: { enabled: true, percent: 100 },
+		Worshipper: { enabled: true, percent: 5 },
+		FarmersUntil: { enabled: false, zone: 999 },
+		NoLumberjacks: { enabled: false }
+	};
+
+	setPageSetting('jobSettingsArray', setting);
+	cancelTooltip2();
+	importExportTooltip('AutoJobs');
 }
 
 //Unique Maps
