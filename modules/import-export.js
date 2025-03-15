@@ -139,6 +139,7 @@ function _displayImportAutoTrimpsProfile(profileSettings, profileName) {
 	tooltipDiv.style.display = 'block';
 	_verticalCenterTooltip();
 }
+
 function atProfileSave(profileName = autoTrimpSettings.ATprofile) {
 	const settingProfiles = localStorage.getItem('atSettingsProfiles');
 	if (!settingProfiles) return void debug('No setting profiles found.', 'profile');
@@ -150,13 +151,14 @@ function atProfileSave(profileName = autoTrimpSettings.ATprofile) {
 }
 
 function _displayExportAutoTrimps(tooltipDiv) {
+	const settings = serializeSettings();
 	const tooltipText = `This is your AutoTrimp settings save string. There are many like it but this one is yours. 
 	Save this save somewhere safe so you can save time next time.<br/><br/>
-	<textarea id='exportArea' style='width: 100%' rows='5'>${serializeSettings()}</textarea>`;
+	<textarea id='exportArea' style='width: 100%' rows='5'>${settings}</textarea>`;
 
 	const u2Affix = game.global.totalRadPortals > 0 ? ` ${game.global.totalRadPortals} U${game.global.universe}` : '';
 	const saveName = `AT Settings P${game.global.totalPortals}${u2Affix} Z${game.global.world}`;
-	const serializedSettings = encodeURIComponent(serializeSettings());
+	const serializedSettings = encodeURIComponent(settings);
 
 	const costText = `
 		<div class='maxCenter'>

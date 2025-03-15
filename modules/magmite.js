@@ -146,6 +146,8 @@ function miRatio() {
 function calculateFuelZones(refresh = false, fuelZones = getPageSetting('magmiteFuelZones', 1)) {
 	if (game.global.universe !== 1 || !getPageSetting('magmiteAutoFuel')) return;
 	if (!refresh) miRatio();
+	if (fuelZones <= 0) fuelZones = 0;
+
 	let bestAmals = atData.magmite.maxAmals;
 	atData.magmiteSettings.fuelStart.update(230);
 	let bestPop = 0;
