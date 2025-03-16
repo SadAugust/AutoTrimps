@@ -1853,12 +1853,12 @@ if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'u
 			}
 
 			atData.autoPerks.displayGUI();
-			console.log('The surky & perky mods have finished loading.');
-			message('The surky & perky mods have finished loading.', 'Loot');
+			console.log('The Perky and Surky mods have finished loading.');
+			message('The Perky and Surky mods have finished loading.', 'Loot');
 		} catch (error) {
 			console.error('Error loading script', error);
-			message('Surky & Perky have failed to load. Refresh your page and try again.', 'Loot');
-			tooltip('Failed to load Surky & Perky', 'customText', undefined, 'Surky & Perky have failed to load. Refresh your page and try again.');
+			message('Perky and Surky have failed to load. Refresh your page and try again.', 'Loot');
+			tooltip('Failed to load Perky and Surky', 'customText', undefined, 'Perky and Surky have failed to load. Refresh your page and try again.');
 			verticalCenterTooltip(true);
 		}
 	})();

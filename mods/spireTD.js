@@ -84,3 +84,9 @@ function _displaySpireImport() {
 	tooltipDiv.style.display = 'block';
 	if (typeof ondisplay === 'function') ondisplay();
 }
+
+/* If using standalone version then inform user it has loaded. */
+if (typeof autoTrimpSettings === 'undefined' || (typeof autoTrimpSettings !== 'undefined' && typeof autoTrimpSettings.ATversion !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+	console.log('The SpireTD Import mod has finished loading.');
+	message('The SpireTD Import mod has finished loading.', 'Loot');
+}
