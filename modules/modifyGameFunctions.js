@@ -842,15 +842,16 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 	let mostAfford = -1;
 	if (Number.isInteger(forceMax)) forceMax = forceMax;
 	forceMax = Number.isInteger(forceMax) ? forceMax : false;
-	let currentOwned = itemObj.purchased ? itemObj.purchased : itemObj.level ? itemObj.level : itemObj.owned;
-	const artMult = getEquipPriceMult();
+	let currentOwned = itemObj.purchased ? itemObj.purchased : itemObj.level ? itemObj.level : itemObj.done ? itemObj.done : itemObj.owned;
+	const costMult = isEquipment ? getEquipPriceMult() : isBuilding && getPerkLevel('Resourceful') ? getResourcefulMult() : 1;
 	const runningHypo = challengeActive('Hypothermia');
 	const hypoWoodCost = runningHypo && hypothermiaEndZone() - 1 > game.global.world ? hypothermiaBonfireCost() : 0;
 	if (!currentOwned) currentOwned = 0;
 	if (isJob && game.global.firing && !forceRatio) return Math.floor(currentOwned * game.global.maxSplit);
 
-	for (let item in itemObj.cost) {
-		let price = itemObj.cost[item];
+	const costArray = itemObj.cost.resources ? itemObj.cost.resources : itemObj.cost;
+	for (let item in costArray) {
+		let price = costArray[item];
 		let toBuy;
 		const resource = game.resources[item];
 		let resourcesAvailable = !resources ? resource.owned : resources;
@@ -876,13 +877,13 @@ function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax
 
 		if (typeof price[1] !== 'undefined') {
 			let start = price[0];
-			if (isEquipment) start = Math.ceil(start * artMult);
-			if (isBuilding && getPerkLevel('Resourceful')) start = start * getResourcefulMult();
+			if (isEquipment) start = Math.ceil(start * costMult);
+			if (isBuilding) start = start * costMult;
 			toBuy = Math.floor(log10((resourcesAvailable / (start * Math.pow(price[1], currentOwned))) * (price[1] - 1) + 1) / log10(price[1]));
 		} else if (typeof price === 'function') {
 			return 1;
 		} else {
-			if (isBuilding && getPerkLevel('Resourceful')) price = Math.ceil(price * getResourcefulMult());
+			if (isBuilding) price = Math.ceil(price * costMult);
 			toBuy = Math.floor(resourcesAvailable / price);
 		}
 

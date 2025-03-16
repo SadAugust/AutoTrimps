@@ -1376,6 +1376,14 @@ function updateATVersion() {
 			autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
 			saveSettings();
 		}
+
+		if (versionNumber < '6.7.47') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['portalRespec'] !== 'undefined' && autoTrimpSettings.portalRespec !== 'undefined') {
+				if (!tempSettings.portalRespec.value) autoTrimpSettings.portalRespec.value = 0;
+				if (!tempSettings.portalRespec.valueU2) autoTrimpSettings.portalRespec.valueU2 = 0;
+			}
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

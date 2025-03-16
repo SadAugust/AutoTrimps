@@ -182,7 +182,6 @@ function loadScriptsAT() {
 
 	const scripts = Array.from(document.getElementsByTagName('script'));
 	const autoTrimpsScript = scripts.find((script) => script.src.includes('AutoTrimps2'));
-
 	if (autoTrimpsScript) atConfig.initialise.basepath = autoTrimpsScript.src.replace(/AutoTrimps2\.js$/, '');
 
 	(async function () {

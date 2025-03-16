@@ -253,7 +253,7 @@ function autoMaps() {
 	_slowScumCheck(mapObj);
 }
 
-function prettifyMap(map) {
+function _prettifyMap(map) {
 	if (!map) return 'none';
 	let descriptor;
 
@@ -551,7 +551,7 @@ function _purchaseMap(lowestMap) {
 
 	if (result === 1) {
 		const mapCost = updateMapCost(true);
-		debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / (game.resources.fragments.owned + mapCost)) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
+		debug(`Bought ${_prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / (game.resources.fragments.owned + mapCost)) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
 		runMap();
 	}
 }
@@ -613,7 +613,7 @@ function _runSelectedMap(mapId, runUnique) {
 	_abandonMapCheck(mapId, runUnique);
 	if (game.global.currentMapId !== mapId) selectMap(mapId);
 	runMap();
-	debug(`Running ${prettifyMap(MODULES.maps.lastMapWeWereIn)}`, 'maps', 'th-large');
+	debug(`Running ${_prettifyMap(MODULES.maps.lastMapWeWereIn)}`, 'maps', 'th-large');
 }
 
 //Way to fix an issue with having no maps available to run and no fragments to purchase them

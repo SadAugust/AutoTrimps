@@ -213,6 +213,11 @@ function buyUpgrades() {
 		} else if (upgrade === 'Gigastation') {
 			if (!getPageSetting('buildingsType') || !getPageSetting('warpstation')) continue;
 
+			let gigastationPct = Math.min(getPageSetting('gigastationPct') / 100, 1);
+			if (gigastationPct < 0) gigastationPct = 1;
+			const gigastationCanAfford = calculateMaxAfford_AT(game.upgrades.Gigastation, false, false, false, 1, getPageSetting('gigastationPct') / 100);
+			if (!gigastationCanAfford) continue;
+
 			if (getPageSetting('autoGigas') && game.upgrades.Gigastation.done === 0 && !firstGiga()) {
 				continue;
 			} else if (game.global.lastWarp && game.buildings.Warpstation.owned < Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation')) {

@@ -223,7 +223,7 @@ function initialiseAllSettings() {
 					description +="<p><i>This will swap to universe 1 and put you back in the universe you originally portaled from.</i></p>";
 				}
 				return description;
-			}, 'multitoggle', false, null, 'Core', [1, 2],
+			}, 'multitoggle', 0, null, 'Core', [1, 2],
 			function () { return (checkLiqZoneCount(1) >= 20) });
 		
 		createSetting('pauseScript',
@@ -470,6 +470,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will automatically portal once this zone is reached when using the <b>Custom OR One Off Challenges</b> Auto Portal settings.</p>";
 				description += "<p>If this is set above your highest zone reached then it will allow you to pick not yet unlocked challenges up to this zone.</p>";
+				description += "<p>If you want void maps to run on your portal zone, then you can use <b>Void Map Setting</b> in the <b>Maps</b> tab to portal after void maps have been run.</p>";
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
 			}, 'value', 999, null, 'Core', [1, 2],
@@ -837,8 +838,9 @@ function initialiseAllSettings() {
 		createSetting('warpstation',
 			function () { return ('Warpstations') },
 			function () {
-				let description = "<p>Enable this to allow Warpstation purchasing.</p>";
-				description += "<p><b>Will only function with AT Auto Structure enabled.</b></p>";
+				let description = "<p>Enable this to allow Warpstation and Gigastation purchasing.</p>";
+				description += "<p>You must have the scripts <b>AT Auto Structure</b> setting enabled for <b>Warpstations</b> to be purchased.</p>";
+				description += "<p>You must have the scripts <b>Buy Upgrades</b> setting enabled for <b>Gigastations</b> to be purchased.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Buildings', [1],
@@ -848,17 +850,28 @@ function initialiseAllSettings() {
 			function () { return ('Warpstation Percent') },
 			function () {
 				let description = "<p>What percentage of resources to spend on Warpstations.</p>";
-				description += "<p><b>The script will still purchase Gigastations at 100% resources.</b></p>";
+				description += "<p>You must have the scripts <b>AT Auto Structure</b> setting enabled for <b>Warpstations</b> to be purchased.</p>";
 				description += "<p><b>Recommended:</b> 25</p>";
 				return description;
 			}, 'value', 25, null, 'Buildings', [1],
+			function () { return (autoTrimpSettings.warpstation.enabled) });
+
+		createSetting('gigastationPct',
+			function () { return ('Gigastation Percent') },
+			function () {
+				let description = "<p>What percentage of resources to spend on Gigastations.</p>";
+				description += "<p>If set <b>below 0</b> it will set the spending percentage to 100%.</p>";
+				description += "<p>When set to <b>0</b> it will not purchase any Gigastations.</p>";
+				description += "<p><b>Recommended:</b> 80</p>";
+				return description;
+			}, 'value', 80, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled) });
 
 		createSetting('firstGigastation',
 			function () { return ('First Gigastation') },
 			function () {
 				let description = "<p>The amount of Warpstations to purchase before your first Gigastation.</p>";
-				description += "<p><b>You must have the scripts upgrade setting enabled for Gigastations to be purchased!</b></p>";
+				description += "<p>You must have the scripts upgrade setting enabled for <b>Gigastations</b> to be purchased.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
 			}, 'value', 20, null, 'Buildings', [1],
@@ -878,14 +891,16 @@ function initialiseAllSettings() {
 		createSetting('autoGigas',
 			function () { return ('Auto Gigastations') },
 			function () {
-				let description = "<p>If enabled, the script will only buy your first Gigastation if:<br>";
+				let description = "<p>Settings to automatically calculate your <b>First Gigastation</b> and <b>Delta Gigastation</b> values.</p>";
+				description += "<p>The script will still purchase Gigastations even if this setting is disabled!</p>";
+				description += "<p>If enabled, the script will only buy your first Gigastation if:<br>";
 				description += "a) You have purchased at least 2 Warpstations &<br>";
 				description += "b) Can't afford more Coords (or are in a Spire) & <br>";
 				description += "c) (only if <b>Custom Delta Factor</b> is above 20) Lacking health or damage & <br>";
 				description += "d) (only if <b>Custom Delta Factor</b> is above 20) Has run at least 1 map stack.</p>";
 				description += "<p>Then, it'll calculate your ideal <b>First & Delta Gigastation</b> values and set them based on your <b>Custom Target Zone</b>, <b>Custom Delta Factor</b>, and your current runs portal zone.</p>";
 				description += "<p>Once your first Gigastation of a run has been purchased your Gigastation settings won't be adjusted again until your next run.</p>";
-				description += "<p><b>You must have the scripts upgrades setting enabled for this setting to run!</b></p>";
+				description += "<p>You must have the scripts upgrade setting enabled for <b>Gigastations</b> to be purchased.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', 'true', null, 'Buildings', [1],
