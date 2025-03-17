@@ -1967,7 +1967,7 @@ function _mapSettingsUpdatePreset(index = '', varPrefix = document.getElementByI
 	}
 
 	//Changing rows to use the colour of the Nature type that the world input will be run on.
-	if (atConfig.settingUniverse === 1 && index !== '' && !profile) {
+	if (atConfig.settingUniverse === 1 && index !== '' && !golden && !profile) {
 		const world = document.getElementById('windowWorld' + index);
 		const natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
 		const natureList = ['None', 'Poison', 'Wind', 'Ice'];

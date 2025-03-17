@@ -48,7 +48,7 @@ function exitSpireCell(checkCell) {
 }
 
 function getZoneEmpowerment(zone) {
-	if (!zone) return 'None';
+	if (!zone || game.global.highestLevelCleared < 244) return 'None';
 
 	const natureStartingZone = game.global.universe === 1 ? getNatureStartZone() : 236;
 	if (zone < natureStartingZone) return 'None';

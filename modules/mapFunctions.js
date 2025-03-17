@@ -1206,6 +1206,7 @@ function mapDestacking(lineCheck) {
 	const mapSpecial = getAvailableSpecials('fa');
 	let shouldMap = false;
 	let destackValue = 0;
+	let destackTo = 0;
 
 	if (challengeActive('Balance') || challengeActive('Unbalance')) {
 		const challenge = challengeActive('Balance') ? 'Balance' : 'Unbalance';
@@ -1227,17 +1228,19 @@ function mapDestacking(lineCheck) {
 	if (challengeActive('Storm')) {
 		const stormZone = getPageSetting('stormZone') > 0 ? getPageSetting('stormZone') : Infinity;
 		const stormStacks = getPageSetting('stormStacks') > 0 ? getPageSetting('stormStacks') : Infinity;
-		shouldMap = game.global.world >= stormZone && game.challenges.Storm.beta >= stormStacks && game.challenges.Storm.beta !== 0;
+		destackTo = getPageSetting('stormDestackTo') > 0 ? getPageSetting('stormDestackTo') : 0;
+		destackTo = Math.min(250, destackTo);
+		shouldMap = game.global.world >= stormZone && game.challenges.Storm.beta >= stormStacks && game.challenges.Storm.beta > destackTo;
 		destackValue = game.challenges.Storm.beta;
 	}
 
 	const mapObj = game.global.mapsActive ? getCurrentMapObject() : {};
 
-	if (game.global.mapsActive && mapObj.level === 6 && !shouldMap && destackValue === 0) {
+	if (game.global.mapsActive && mapObj.level === 6 && !shouldMap && destackValue === destackTo) {
 		recycleMap_AT();
 	}
 
-	if (mapSettings.mapName === mapName && destackValue > 0) shouldMap = true;
+	if (mapSettings.mapName === mapName && destackValue > destackTo) shouldMap = true;
 
 	if (lineCheck && shouldMap) return (setting = { priority: 1 });
 

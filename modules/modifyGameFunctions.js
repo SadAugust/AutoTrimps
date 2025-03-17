@@ -279,8 +279,9 @@ if (typeof originalrunMap !== 'function') {
 if (typeof originalActivateClicked !== 'function') {
 	var originalActivateClicked = activateClicked;
 	activateClicked = function () {
+		const viewingUpgrades = game.global.viewingUpgrades;
 		let magmiteText;
-		if (!game.global.viewingUpgrades) {
+		if (!viewingUpgrades) {
 			downloadSave(true);
 			if (typeof Graphs !== 'undefined' && typeof Graphs.Push !== 'undefined' && typeof Graphs.Push.zoneData === 'function') Graphs.Push.zoneData();
 			if (!MODULES.portal.dontPushData) pushSpreadsheetData();
@@ -293,7 +294,7 @@ if (typeof originalActivateClicked !== 'function') {
 
 		originalActivateClicked(...arguments);
 
-		if (!game.global.viewingUpgrades) {
+		if (!viewingUpgrades) {
 			resetVarsZone(true);
 			_setButtonsPortal();
 			setupAddonUser(true);
@@ -749,6 +750,7 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 	}
 
 	if (game.global.universe === 2) {
+		if (challengeActive('Downsize')) amt *= 5;
 		if (Fluffy.isRewardActive('gatherer')) amt *= 2;
 		if ((['food', 'wood'].includes(what) && game.buildings.Antenna.owned >= 5) || (what === 'metal' && game.buildings.Antenna.owned >= 15)) amt *= game.jobs.Meteorologist.getExtraMult();
 		if (game.challenges.Nurture.boostsActive()) amt *= game.challenges.Nurture.getResourceBoost();
