@@ -252,7 +252,9 @@ function buyUpgrades() {
 	}
 }
 
-function getNextGoldenUpgrade() {
+function goldenUpgradeGetNext() {
+	if (!goldenUpgradesShown || getAvailableGoldenUpgrades() <= 0) return false;
+
 	const setting = getPageSetting('autoGoldenSettings');
 	if (setting.length === 0) return false;
 
@@ -304,14 +306,35 @@ function goldenUpgradeRunType(currSetting, fillerC2) {
 	return true;
 }
 
-function autoGoldUpgrades() {
+function goldenUpgrades() {
 	if (!goldenUpgradesShown || getAvailableGoldenUpgrades() <= 0) return;
+	if (_goldenUpgradeTimeWarp()) return;
 
-	const selected = getNextGoldenUpgrade();
+	let keepBuying = false;
+	do {
+		keepBuying = goldenUpgradePurchase();
+	} while (keepBuying);
+}
+
+function _goldenUpgradeTimeWarp() {
+	const dontWhileLoop = usingRealTimeOffline || atConfig.loops.atTimeLapseFastLoop;
+	if (!dontWhileLoop) return false;
+
+	goldenUpgradePurchase();
+	return true;
+}
+
+function goldenUpgradePurchase() {
+	const selected = goldenUpgradeGetNext();
+	let keepBuying = false;
+
 	if (selected) {
 		const heName = heliumOrRadon();
 		const guName = selected === 'Helium' ? heName : selected;
 		buyGoldenUpgrade(selected);
 		debug(`Purchased Golden ${guName} #${game.goldenUpgrades[selected].purchasedAt.length}`, 'golden_Upgrades', '*upload2');
+		keepBuying = true;
 	}
+
+	return keepBuying;
 }

@@ -418,7 +418,7 @@ function mainLoop() {
 	autoEquip();
 	buyJobs();
 	if (game.global.universe === 1) geneAssist();
-	autoGoldUpgrades();
+	goldenUpgrades();
 	autoGather();
 
 	_handleIntervals();

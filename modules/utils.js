@@ -533,7 +533,7 @@ function _assembleChangelogFooter() {
 	return `
 		<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!
 		<br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Server</a>
-		<br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).`;
+		<br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps/commits/gh-pages" target="#">the commit history</a> (if you want).`;
 }
 
 function printChangelog(changes) {

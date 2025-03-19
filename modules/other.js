@@ -426,7 +426,7 @@ function remakeTooltip() {
 	}
 
 	if (game.global.lockTooltip) {
-		if (MODULES.popups.respecAncientTreasure || MODULES.popups.portal) {
+		if ((MODULES.popups && MODULES.popups.respecAncientTreasure) || MODULES.popups.portal) {
 			const titleElem = document.getElementById('tipTitle');
 			const action = MODULES.popups.respecAncientTreasure ? 'Auto-Respeccing' : 'Auto-Portaling';
 			const respecMessage = `<b>NOTICE: ${action} in ${(MODULES.popups.remainingTime / 1000).toFixed(1)} seconds....</b>`;
@@ -436,7 +436,7 @@ function remakeTooltip() {
 		return;
 	}
 
-	if (MODULES.popups.respecAncientTreasure) {
+	if (MODULES.popups && MODULES.popups.respecAncientTreasure) {
 		let respecName = !trimpStats.isC3 ? 'Radon ' : '' + 'Combat Respec';
 		if (game.global.universe === 1) respecName = 'Spire';
 		const description = `<p><b>Respeccing into the ${respecName} preset.</b></p>`;
