@@ -2429,7 +2429,7 @@ function initialiseAllSettings() {
 				let description = "<p>Enabling this will disable mapping when on an even zone or below cell 90 to ensure the enemies Momentum buff is as weak as possible.</p>";
 				description += "<p>If you are in a Spire or the final zone of a nature band then it will map on that zone even if it is an even zone.</p>";
 				description += "<p>Be careful with how you setup your mapping when this is enabled as it will skip mapping lines that are set to run on even zones!</p>";
-				description += "<p>When running the <b>regular</b> version of this challenge it won't run Void Maps Settings on zone 180 so you should run them on zone 179 for 50% more helium.</p>";
+				description += "<p>When running the <b>regular</b> version of this challenge it won't run Void Maps Settings on zone 180. You should run them on zone 179 for the 50% more helium bonus.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
