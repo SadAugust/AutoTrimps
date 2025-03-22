@@ -1968,7 +1968,8 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will take you to the map chamber when the current enemy is Living and when you are at or above this zone.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
-				description += "<p><b>Must be used in conjunction with L: Stacks</b></p>";
+				description += "<p>Must be used in conjunction with <b>L: Stacks</b></p>";
+				description += "<p>Will only run when <b>Auto Maps</b> is enabled.</p>";
 				description += "<p><b>Recommended:</b> 100</p>";
 				return description;
 			}, 'value', -1, null, 'Challenges', [1],
@@ -1979,7 +1980,8 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Will take you to the map chamber when the current enemy is Living and when you are at or below this stack count.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
-				description += "<p><b>Must be used in conjunction with L: Zone</b></p>";
+				description += "<p>Must be used in conjunction with <b>L: Zone</b></p>";
+				description += "<p>Will only run when <b>Auto Maps</b> is enabled.</p>";
 				description += "<p><b>Recommended:</b> 100</p>";
 				return description;
 			}, 'value', -1, null, 'Challenges', [1],
@@ -1988,7 +1990,7 @@ function initialiseAllSettings() {
 		createSetting('toxicitySettings',
 			function () { return ('Toxicity Settings') },
 			function () {
-				let description = "<p>Here you can select how and when you would like to farm a specific amount of Toxicity stacks for increased " + _getPrimaryResourceInfo().name.toLowerCase() + " and resources gain during the <b>Toxicity</b> challenge..</p>";
+				let description = "<p>Here you can select how and when you would like to farm a specific amount of Toxicity stacks for increased " + _getPrimaryResourceInfo().name.toLowerCase() + " and resources gain during the <b>Toxicity</b> challenge.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
 				description += "<p><b>Recommended:</b> Setup to farm 1500 stacks on the last zone of the challenge.</p>";
