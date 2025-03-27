@@ -605,7 +605,7 @@ function setupAddonUser(force) {
 		valueU2: ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'desolation']
 	};
 
-	const maxSettings = _getActiveSetting().maxSettings + 1;
+	const maxSettings = _mapSettingsGetActive().maxSettings + 1;
 	const createObjArray = () => Array.from({ length: maxSettings }, () => ({ done: '' }));
 
 	Object.entries(settings).forEach(([valueKey, settingNames]) => {

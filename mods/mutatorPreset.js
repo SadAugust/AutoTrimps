@@ -324,7 +324,7 @@ function _mutatorPopulateTree(firstLoad = false) {
 		if (bgColor === 'purchased') mutatorListActive.push(item);
 		const displayName = itemObj.dn ? itemObj.dn : item;
 		let description = itemObj.description;
-		if (description.includes(', <b>')) description = description.split(', <b>')[0] + '.';
+		if (item === 'Brains') description = description.split(' At your current total')[0];
 
 		let tooltip = `onmouseover="tooltip('${item}', 'Mutator', event)" onmouseout="tooltip('hide')"`;
 		text += `<button aria-labelledby="${item}Name" 
@@ -526,7 +526,6 @@ function _displayMutatorPresets(tooltipDiv) {
 
 	while (itemCount < headerList.length) {
 		const itemsInRow = Math.min(maxItemsInRow, headerList.length - itemCount);
-		const widthStyle = `width: calc((100% - ${0.2 + 0.2 * itemsInRow}em - 6px) / ${itemsInRow});`;
 
 		for (let i = 0; i < itemsInRow; i++) {
 			const header = headerList[itemCount];

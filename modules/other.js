@@ -562,7 +562,7 @@ function _timeWarpATFunctions() {
 }
 
 function _handleMazWindow() {
-	const mazTitles = mazSettingNames(true);
+	const mazTitles = _mapSettingsNames(true);
 	const tooltipDiv = document.getElementById('tooltipDiv');
 
 	if (mazTitles.indexOf(tooltipDiv.children.tipTitle.innerText) === -1) {

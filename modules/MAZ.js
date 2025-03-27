@@ -1,6 +1,6 @@
 function mapSettingsDisplay(elem, titleText) {
 	MODULES.popups.mazWindowOpen = true;
-	const settingNames = mazSettingNames();
+	const settingNames = _mapSettingsNames();
 
 	/* remove spaces from titleText to make varPrefix */
 	let varPrefix = titleText.replace(/\s/g, '');
@@ -9,7 +9,7 @@ function mapSettingsDisplay(elem, titleText) {
 
 	const originalSetting = getPageSetting(`${settingName}Settings`, atConfig.settingUniverse);
 	const settingType = originalSetting[0] ? originalSetting[0].settingType || 'basic' : 'basic';
-	const activeSetting = _getActiveSetting(settingName, settingNames);
+	const activeSetting = _mapSettingsGetActive(settingName, settingNames);
 	const activeSettingObj = JSON.stringify(activeSetting);
 	const settingObj = _mapSettingsInputObj();
 	const { settingInputs, settingInputsDefault, windowWidth } = settingObj[titleText];
@@ -85,7 +85,7 @@ function mapSettingsDisplay(elem, titleText) {
 
 	tooltipText += `<div id='windowAddRowBtn' style='display: ${currSetting.length < activeSetting.maxSettings ? 'inline-block' : 'none'}' class='btn btn-success btn-md' onclick='_mapSettingsAddRow("${titleText}")'>+ Add Row</div>`;
 	tooltipText += `</div></div>`;
-	tooltipText += `<div style='display: none' id='mazHelpContainer'>${mapSettingsHelpWindow(activeSettingObj, settingType)}</div>`;
+	tooltipText += `<div style='display: none' id='mazHelpContainer'>${_mapSettingsHelpWindow(activeSettingObj, settingType)}</div>`;
 
 	const swapTo = settingType === 'basic' ? 'Advanced' : 'Basic';
 	const noAdvancedSettings = noDefaultRow || ['Spire Assault', 'Worshipper', 'Toxicity', 'Quagmire', 'Archaeology', 'Insanity', 'Hypothermia'].some((name) => titleText.includes(name));
@@ -94,8 +94,8 @@ function mapSettingsDisplay(elem, titleText) {
 			<span id='saveBtn' class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='_mapSettingsSave("${titleText}", "${settingName}", ${JSON.stringify(activeSettingObj)})'>Save and Close</span>
 			<span id='cancelBtn' class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span>
 			<span id='SaveBtn' class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='_mapSettingsSave("${titleText}", "${settingName}", ${JSON.stringify(activeSettingObj)}, true)'>Save</span>
-			<span id='HelpBtn' class='btn btn-info btn-md' onclick='windowToggleHelp("${windowWidth}")'>Help</span>
-			${!noAdvancedSettings ? `<span id='altVersionBtn' class='btn btn-warning btn-md' style='float:right;' data-setting-type='${settingType}' onclick='_toggleSettingType("${titleText}", "${settingName}", "${titleText}")'>Swap To ${swapTo} Version</span>` : ''}
+			<span id='HelpBtn' class='btn btn-info btn-md' onclick='_mapSettingsToggleHelp("${windowWidth}")'>Help</span>
+			${!noAdvancedSettings ? `<span id='altVersionBtn' class='btn btn-warning btn-md' style='float:right;' data-setting-type='${settingType}' onclick='_mapSettingsToggleVersion("${titleText}", "${settingName}")'>Swap To ${swapTo} Version</span>` : ''}
 		</div>`;
 
 	elem.style.top = '10%';
@@ -107,19 +107,7 @@ function mapSettingsDisplay(elem, titleText) {
 	return [elem, tooltipText, costText, null];
 }
 
-function _toggleSettingType(titleText, settingName) {
-	const setting = getPageSetting(`${settingName}Settings`, atConfig.settingUniverse);
-	setting[0].settingType = !setting[0].settingType || setting[0].settingType === 'basic' ? 'advanced' : 'basic';
-	setPageSetting(`${settingName}Settings`, setting, atConfig.settingUniverse);
-	importExportTooltip('mapSettings', titleText);
-}
-
-function _getVarPrefix(titleText) {
-	const varPrefix = titleText.replace(/\s/g, '');
-	return varPrefix;
-}
-
-function mazSettingNames(titleName) {
+function _mapSettingsNames(titleName) {
 	if (titleName) {
 		return ['Map Farm', 'Map Bonus', 'Void Map', 'HD Farm', 'Raiding', 'Bionic Raiding', 'Toxicity', 'Bone Shrine', 'Auto Golden', 'Tribute Farm', 'Smithy Farm', 'Worshipper Farm', 'Quagmire', 'Archaeology', 'Insanity', 'Alchemy', 'Hypothermia', 'C2 Runner', 'C3 Runner', 'Profile', 'Hits Survived & HD Farm', 'Spire Assault Settings'];
 	}
@@ -127,7 +115,14 @@ function mazSettingNames(titleName) {
 	return ['mapFarm', 'mapBonus', 'voidMap', 'hdFarm', 'raiding', 'bionic', 'toxicity', 'boneShrine', 'autoGolden', 'tributeFarm', 'smithyFarm', 'worshipperFarm', 'quagmire', 'archaeology', 'insanity', 'alchemy', 'hypothermia', 'profile', 'geneAssist', 'spireAssault'];
 }
 
-function _getActiveSetting(settingName = '', settingNames = []) {
+function _mapSettingsToggleVersion(titleText, settingName) {
+	const setting = getPageSetting(`${settingName}Settings`, atConfig.settingUniverse);
+	setting[0].settingType = !setting[0].settingType || setting[0].settingType === 'basic' ? 'advanced' : 'basic';
+	setPageSetting(`${settingName}Settings`, setting, atConfig.settingUniverse);
+	importExportTooltip('mapSettings', titleText);
+}
+
+function _mapSettingsGetActive(settingName = '', settingNames = []) {
 	const activeSetting = { maxSettings: 30 };
 	for (let name of settingNames) {
 		if (settingName.includes(name)) {
@@ -629,8 +624,7 @@ function _mapSettingsRowTitles(settingObj, settingType = 'advanced', defaultRow 
 }
 
 function _mapSettingsRowPopulateInputs(titleText, vals, settingInputs, rowNo, cssData, settingType = 'advanced') {
-	const varPrefix = _getVarPrefix(titleText);
-	const dropdowns = mapSettingsDropdowns(atConfig.settingUniverse, vals, varPrefix, settingType);
+	const dropdowns = _mapSettingsDropdowns(atConfig.settingUniverse, vals, titleText, settingType);
 	let backgroundStyle = '';
 	const updateWorldBackground = atConfig.settingUniverse === 1 && settingInputs.world && !titleText.includes('Spire Assault') && game.stats.highestLevel.valueTotal() >= 247;
 	if (updateWorldBackground) {
@@ -1031,11 +1025,12 @@ function _mapSettingsSave(titleText, varPrefix, activeSettings, reopen) {
 	farmingDecision();
 }
 
-function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix, settingType) {
+function _mapSettingsDropdowns(universe = game.global.universe, vals, titleText, settingType) {
 	if (!vals) return debug(`Issue with establishing values for dropdowns`, 'mazSettings');
 
 	let dropdown = { hdType: '', hdType2: '', gather: '', mapType: '', mapLevel: '', special: '', prestigeGoal: '', challenge: '' };
 	const highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
+	const varPrefix = titleText.replace(/\s/g, '');
 
 	/* HD types */
 	const hdDropdowns = ['hdType', 'hdType2'];
@@ -1223,7 +1218,7 @@ function mapSettingsDropdowns(universe = game.global.universe, vals, varPrefix, 
 	return dropdown;
 }
 
-function windowToggleHelp() {
+function _mapSettingsToggleHelp() {
 	const mazContainer = document.getElementById('windowContainer');
 	const helpContainer = document.getElementById('mazHelpContainer');
 	const parentWindow = document.getElementById('tooltipDiv');
@@ -1241,7 +1236,7 @@ function windowToggleHelp() {
 	if (helpContainer.style.display === 'block' && document.querySelectorAll('#mazHelpContainer li').length > 15) parentWindow.style.overflowY = 'scroll';
 }
 
-function mapSettingsHelpWindow(activeSettings, settingType = 'basic') {
+function _mapSettingsHelpWindow(activeSettings, settingType = 'basic') {
 	const s = JSON.parse(activeSettings);
 	const radonSetting = atConfig.settingUniverse === 2;
 	const trimple = atConfig.settingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
