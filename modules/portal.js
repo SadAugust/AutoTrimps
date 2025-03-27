@@ -789,7 +789,7 @@ function resetVarsZone(loadingSave, notRespec = true) {
 		MODULES.popups.mazWindowOpen = false;
 		clearTimeout(MODULES.portal.heHrTimeout);
 
-		hideAutomationButtons();
+		_hideAutomationButtons();
 
 		if (notRespec) {
 			MODULES.portal.forcePortal = false;

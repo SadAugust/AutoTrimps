@@ -298,7 +298,7 @@ if (typeof originalActivateClicked !== 'function') {
 			resetVarsZone(true);
 			_setButtonsPortal();
 			setupAddonUser(true);
-			hideAutomationButtons();
+			_hideAutomationButtons();
 		}
 
 		if (magmiteText) debug(magmiteText, 'magmite');

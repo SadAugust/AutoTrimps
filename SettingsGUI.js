@@ -5817,7 +5817,7 @@ function _setupATButtons() {
 	_createAutoStructureButton();
 	_createAutoEquipButton();
 
-	hideAutomationButtons();
+	_hideAutomationButtons();
 
 	/* 
 	Setup buttons for Time Warp UI

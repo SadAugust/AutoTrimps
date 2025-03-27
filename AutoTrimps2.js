@@ -11,7 +11,7 @@ const atConfig = {
 		installedMain: ['versionNumber', 'SettingsGUI'],
 		loadedMain: [],
 		installedMods: ['spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky', 'percentHealth'],
-		installedModules: ['import-export', 'utils', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'MAZ', 'spireAssault'],
+		installedModules: ['import-export', 'utils', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'mapSettingsUI', 'gameSettingsUI', 'spireAssault'],
 		installedTesting: ['testChallenges', 'testProfile', 'testSave'],
 		loadedExternal: [],
 		loadedModules: [],
@@ -499,7 +499,7 @@ function _handleNewWorld() {
 
 	if (atConfig.portal.currentworld === 1) {
 		MODULES.portal.zonePostpone = 0;
-		hideAutomationButtons();
+		_hideAutomationButtons();
 		if (!game.upgrades.Battle.done) {
 			_setButtonsPortal();
 			setupAddonUser();

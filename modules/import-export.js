@@ -978,7 +978,7 @@ function resetAutoTrimps(autoTrimpsSettings, switchProfile) {
 		localStorage.heirloomInputs = autoTrimpSettings.autoHeirloomStorage.value;
 		localStorage.mutatorPresets = autoTrimpSettings.mutatorPresets.valueU2;
 		atData.autoPerks.displayGUI(game.global.universe, true);
-		hideAutomationButtons();
+		_hideAutomationButtons();
 	}, 101);
 
 	const displayedMessage = {

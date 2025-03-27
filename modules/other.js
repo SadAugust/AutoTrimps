@@ -1174,7 +1174,7 @@ function updateATVersion() {
 			}
 
 			saveSettings();
-			hideAutomationButtons();
+			_hideAutomationButtons();
 		}
 
 		if (versionNumber < '6.5.86') {
@@ -1189,7 +1189,7 @@ function updateATVersion() {
 			}
 
 			saveSettings();
-			hideAutomationButtons();
+			_hideAutomationButtons();
 		}
 
 		if (versionNumber < '6.5.96') {

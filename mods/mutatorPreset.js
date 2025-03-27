@@ -13,7 +13,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	} else if (what === 'Auto Jobs Reset') {
 		tooltipText = `Are you sure you want to reset your Auto Jobs setting to their default values?`;
 
-		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); autoJobsReset(); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-danger ' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _autoJobsReset(); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-danger ' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
 		elem.style.left = '33.75%';
 		elem.style.top = '1%';
@@ -21,7 +21,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	} else if (what === 'Auto Structure Reset') {
 		tooltipText = `Are you sure you want to reset your Auto Structure setting to their default values?`;
 
-		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); autoStructureReset(); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-danger ' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _autoStructureReset(); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-danger ' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
 
 		elem.style.left = '33.75%';
 		elem.style.top = '1%';
