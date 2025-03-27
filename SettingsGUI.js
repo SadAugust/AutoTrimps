@@ -630,15 +630,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Jobs', [1]);
 
-		createSetting('geneAssistSettings',
-			function () { return ('Gene Assist Settings') },
-			function () {
-				let description = "<p>Here you can select how and when you would like the script to hire Geneticists.</p>";
-				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
-				return description;
-			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Gene Assist")', 'Beta', [1, 2]);
-
 		createSetting('geneAssistPercent',
 			function () { return ('GA: Gene Assist %') },
 			function () {
@@ -1835,7 +1826,7 @@ function initialiseAllSettings() {
 			function () { return (game.stats.highestLevel.valueTotal() >= 125) });
 
 		createSetting('tributeFarmSettings',
-			function () { return ('Tribute Farm Settings') },
+			function () { return ('Tribute & Met Farm Settings') },
 			function () {
 				let description = "<p>Here you can select how and when you would like Tributes & Meteorologists to be farmed.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
@@ -3046,17 +3037,6 @@ function initialiseAllSettings() {
 				description += "<p>Due to liquification being important for the start of this challenge to reach Explorers faster it can be wise to go for full liquification mutations during it.</p>"
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (getPageSetting('desolation', atConfig.settingUniverse) && autoTrimpSettings.desolation.require()) });
-
-		createSetting('desolationSettings',
-			function () { return ('Desolation Settings') },
-			function () {
-				let description = "<p>Here you can select how and when you would like to prestige scum equipment whilst running <b>Desolation</b>.</p>";
-				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
-				description += "<p>If needed, the <b>Help</b> button at the bottom left of the popup window has information for all of the inputs.</p>";
-				return description;
-			}, 'mazArray', [{ active: false }], 'importExportTooltip("mapSettings", "Desolation Gear Scumming")', 'C2', [2],
 			function () { return (getPageSetting('desolation', atConfig.settingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		createSetting('smithless',
@@ -5687,7 +5667,7 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherMutatorPreset', 'questSmithySpire', 'mayhemAutoPortal', 'stormDestackTo', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherMutatorPreset', 'questSmithySpire', 'mayhemAutoPortal', 'stormDestackTo', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationMutatorPreset'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomPlaguebringer', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];

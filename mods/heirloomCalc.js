@@ -252,7 +252,7 @@ function setupHeirloomUI() {
 			},
 			XPWeight: {
 				name: 'Pet Exp Weight',
-				description: `<p><b>Weight: XP</b> is a multiplier to the value of Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp. 
+				description: `<p><b>Pet Exp Weight</b> is a multiplier to the value of Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp. 
 				So if your next Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp upgrade were to increase your value by 0.5%, the default weight (12) will multiply it by 12 so it will be calculated as if it were to increase your value by 6%.</p><p>The default weight (12) is used to provide a good balance between efficiency modifiers and Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp gain.</p>`,
 				minValue: 0,
 				maxValue: null,

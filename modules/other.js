@@ -1384,6 +1384,27 @@ function updateATVersion() {
 				if (!tempSettings.portalRespec.valueU2) autoTrimpSettings.portalRespec.valueU2 = 0;
 			}
 		}
+
+		if (versionNumber < '6.7.48') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (typeof tempSettings['voidMapSettings'] !== 'undefined') {
+				if (tempSettings.voidMapSettings && tempSettings.voidMapSettings.value[0]) {
+					const hitsSurvived = tempSettings.voidMapSettings.value[0].hitsSurvived;
+					const hdRatio = tempSettings.voidMapSettings.value[0].hdRatio;
+					if (hitsSurvived) autoTrimpSettings.voidMapSettings.value[0].hitsSurvived = parseFloat(hitsSurvived) || 0;
+					if (hdRatio) autoTrimpSettings.voidMapSettings.value[0].hdRatio = parseFloat(hdRatio) || 0;
+				}
+
+				if (tempSettings.voidMapSettings && tempSettings.voidMapSettings.valueU2[0]) {
+					const hitsSurvivedU2 = tempSettings.voidMapSettings.valueU2[0].hitsSurvived;
+					const hdRatioU2 = tempSettings.voidMapSettings.valueU2[0].hdRatio;
+					if (hitsSurvivedU2) autoTrimpSettings.voidMapSettings.valueU2[0].hitsSurvived = parseFloat(hitsSurvivedU2) || 0;
+					if (hdRatioU2) autoTrimpSettings.voidMapSettings.valueU2[0].hdRatio = parseFloat(hdRatioU2) || 0;
+				}
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

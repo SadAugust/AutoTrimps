@@ -3341,7 +3341,7 @@ function farmingDecision() {
 		/* disable mapping if we have Withered as it's more beneficial to just push through the zone(s). */
 		if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) return (mapSettings = farmingDetails);
 
-		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolationGearScum, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, voidMaps, mapBonus, hdFarm, wither, mayhem, glass, smithless, _obtainUniqueMap];
+		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, voidMaps, mapBonus, hdFarm, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
 
 	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
