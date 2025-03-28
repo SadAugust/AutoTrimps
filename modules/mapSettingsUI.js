@@ -226,7 +226,7 @@ function _mapSettingsInputObj() {
 				maxTenacity: { name: 'maxTenacity', title: 'Max Map Bonus', defaultValue: false, width: { basic: 11, display: 'basic' } },
 				
 				boneCharge: { name: 'boneCharge', title: 'Use Bone Charge', defaultValue: false, width: { basic: 11, display: 'basic' } },
-				voidFarm: { name: 'maxTenacity', title: 'Pre Void Farm', defaultValue: false, width: { basic: 11, display: 'basic' } },
+				voidFarm: { name: 'voidFarm', title: 'Pre Void Farm', defaultValue: false, width: { basic: 11, display: 'basic' } },
 
 				hitsSurvived: { name: 'hitsSurvived', title: 'Void Farm<br>Hits Survived', defaultValue: 0, width: { basic: 16, display: 'basic', type: 'text' } },
 				hdRatio: { name: 'hdRatio', title: 'Void Farm<br>HD Ratio', defaultValue: 0, width: { basic: 16, display: 'basic' }, type: 'text' },
@@ -258,9 +258,9 @@ function _mapSettingsInputObj() {
 			},
 			settingInputsDefault: {
 				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 10, display: 'basic' } },
-				autoBone: { name: 'active', title: 'Auto Spend Charges', defaultValue: false, width: { basic: 12, display: 'basic' } },
+				autoBone: { name: 'autoBone', title: 'Auto Spend Charges', defaultValue: false, width: { basic: 12, display: 'basic' } },
 				bonebelow: { name: 'bonebelow', title: 'Auto Spend at X Charges', defaultValue: 0, width: { basic: 15, display: 'basic' } },
-				boneWorld: { name: 'boneWorld', title: 'Auto Spend From Z', defaultValue: 0, width: { basic: 15, display: 'basic' } },
+				world: { name: 'world', title: 'Auto Spend From Z', defaultValue: 0, width: { basic: 15, display: 'basic' } },
 				gather: { name: 'gather', title: 'Auto Spend Gather', defaultValue: 'food', width: { basic: 15, display: 'basic' }, dropdownType: 'gather' },
 				jobratio: { name: 'jobratio', title: 'Auto Spend Job Ratio', defaultValue: "1,1,1,0", width: { basic: 15, display: 'basic' }, type: 'text' }, 
 			},
@@ -552,7 +552,7 @@ function _mapSettingsInputObj() {
 			},
 			settingInputsDefault: {
 				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 7, display: 'basic' } },
-				voidpurchase: { name: 'voidpurchase', title: 'Void<br>Purchase', defaultValue: true, width: { basic: 15, display: 'basic' } },
+				voidPurchase: { name: 'voidPurchase', title: 'Void<br>Purchase', defaultValue: true, width: { basic: 15, display: 'basic' } },
 			},
 			windowWidth: { basic: 60, advanced: 75 }
 		},
