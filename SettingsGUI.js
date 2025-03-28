@@ -2586,7 +2586,7 @@ function initialiseAllSettings() {
 				description += "<p>Due to Overkill being disabled in this challenge it's wise to go for minimal overkill mutations during it.</p>"
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
+			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) && game.stats.highestRadLevel.valueTotal() >= 201 });
 
 		createSetting('quest',
 			function () { return ('Quest') },
