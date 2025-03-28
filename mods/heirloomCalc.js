@@ -188,12 +188,15 @@ function setupHeirloomUI() {
 		hcGUI.$allocatorBtn.id = 'heirloomAllocatorBtn';
 		hcGUI.$allocatorBtn.setAttribute('class', 'btn');
 		hcGUI.$allocatorBtn.setAttribute('onclick', 'runHeirlooms()');
-		hcGUI.$allocatorBtn.setAttribute('onmouseout', 'tooltip("hide")');
 		hcGUI.$allocatorBtn.style.cssText = `height: 1.5vw; background-color: #3b0076; border: 1px solid #777; border-radius: 1px; padding: 0; width: 13.5vw; font-size: 0.8vw; line-height: 1.3vw;`;
 		hcGUI.$allocatorBtn.textContent = 'Allocate Nullifium';
 		hcGUI.$allocatorBtn.onmouseover = function () {
-			this.style.color = game.options.menu.darkTheme.enabled !== 2 ? 'black' : 'white';
+			this.style.color = 'grey';
 			tooltip('Auto Allocate', 'customText', undefined, 'Buys the shown optimal levels in each modifier when pressed.');
+		};
+		hcGUI.$allocatorBtn.onmouseout = function () {
+			this.style.color = 'white';
+			tooltip('hide');
 		};
 
 		hcGUI.$allocatorBtnParent.appendChild(hcGUI.$allocatorBtn);
