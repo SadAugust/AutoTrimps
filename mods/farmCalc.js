@@ -17,9 +17,7 @@ function combatSpeed(hze = getHighestLevelCleared() + 1) {
 
 function populateFarmCalcData() {
 	const runningAutoTrimps = typeof atConfig !== 'undefined';
-	const hze = getHighestLevelCleared() + 1;
-	const speed = combatSpeed(hze);
-	const breedTimer = _breedTotalTime();
+
 	const exoticNames = ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp'];
 	const imps = exoticNames.reduce((total, imp) => total + game.unlocks.imps[imp], 0) + +masteryPurchased('magimp');
 
@@ -27,6 +25,22 @@ function populateFarmCalcData() {
 	if (Fluffy.isRewardActive('exotic')) exoticChance += 0.5;
 	if (game.permaBoneBonuses.exotic.owned > 0) exoticChance += game.permaBoneBonuses.exotic.addChance();
 	exoticChance /= 100;
+
+	const hze = getHighestLevelCleared() + 1;
+	const speed = combatSpeed(hze);
+	const breedTimer = _breedTotalTime();
+
+	let maxTicks = runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 21600 : 43200;
+	if (challengeActive('Desolation')) maxTicks /= 2;
+	const basicData = {
+		maxTicks,
+		hze,
+		universe: game.global.universe,
+		zone: game.global.world,
+		speed,
+		deathPhase: speed <= 9 ? 0 : 0.1,
+		customShield: runningAutoTrimps ? heirloomShieldToEquip('map') : null
+	};
 
 	const challengesActive = {
 		discipline: challengeActive('Discipline'),
@@ -52,17 +66,6 @@ function populateFarmCalcData() {
 		exterminate: challengeActive('Exterminate'),
 		glass: challengeActive('Glass'),
 		desolation: challengeActive('Desolation')
-	};
-
-	const maxTicks = (runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 21600 : 43200) * challengesActive.desolation ? 0.5 : 1;
-	const basicData = {
-		maxTicks,
-		hze,
-		universe: game.global.universe,
-		zone: game.global.world,
-		speed,
-		deathPhase: speed <= 9 ? 0 : 0.1,
-		customShield: runningAutoTrimps ? heirloomShieldToEquip('map') : null
 	};
 
 	const uberNature = getUberEmpowerment();
@@ -106,7 +109,7 @@ function populateFarmCalcData() {
 
 	const trimpBlock = basicData.universe === 1 ? calcOurBlock('X', false, 'map') : 0;
 	const trimpShield = basicData.universe === 2 ? calcOurHealth(true, 'map') : 0;
-	const dmgType = challengesActive.unlucky || challengesActive.discipline ? 'max' : 'min';
+	const dmgType = challengesActive.unlucky || challengeActive.discipline ? 'max' : 'min';
 	let trimpAttack = calcOurDmg(dmgType, basicData.universe === 1 ? 'X' : 0, false, 'map', 'never', 0);
 	let trimpHealth = calcOurHealth(basicData.universe === 2 ? challengesActive.shieldBreak : 'X', 'map');
 	trimpHealth -= trimpShield;
@@ -188,83 +191,83 @@ function populateFarmCalcData() {
 	let minFluct = 0.8 + 0.02 * getPerkLevel('Range');
 	let maxFluct = 1.2;
 
-	if (basicData.universe === 1) {
-		const challengeEffects = {
-			Discipline: () => {
-				minFluct = 0.005;
-				maxFluct = 1.995;
-			},
-			Balance: () => {
-				enemyHealthMult *= 2;
-				enemyAttackMult *= 2.35;
+	const challengeEffects = {
+		Discipline: () => {
+			minFluct = 0.005;
+			maxFluct = 1.995;
+		},
+		Balance: () => {
+			enemyHealthMult *= 2;
+			enemyAttackMult *= 2.35;
 
-				/* Unsure this is the best solution. Might be better just removing each stack during the mapping process one by one to a cap of X? */
-				if (!game.global.mapsActive && !game.global.preMapsActive) {
-					const balance = game.challenges.Balance;
-					if (balance.balanceStacks < 250) {
-						const timer = runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
-						const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
+			/* Unsure this is the best solution. Might be better just removing each stack during the mapping process one by one to a cap of X? */
+			if (!game.global.mapsActive && !game.global.preMapsActive) {
+				const balance = game.challenges.Balance;
+				if (balance.balanceStacks < 250) {
+					const timer = runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
+					const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
 
-						const healthMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
-						trimpHealth /= balance.getHealthMult();
-						trimpHealth *= healthMult;
-					}
+					const healthMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
+					trimpHealth /= balance.getHealthMult();
+					trimpHealth *= healthMult;
 				}
-			},
-			Meditate: () => {
-				enemyHealthMult *= 2;
-				enemyAttackMult *= 1.5;
-			},
-			Electricity: () => {
-				death_stuff.weakness = 0.1;
-				death_stuff.plague = 0.1;
-			},
-			Life: () => {
-				enemyHealthMult *= 11;
-				enemyAttackMult *= 6;
-				trimpAttack *= 1 + 0.1 * game.challenges.Life.stacks;
-				trimpHealth *= 1 + 0.1 * game.challenges.Life.stacks;
-			},
-			Crushed: () => {
-				if (trimpHealth < trimpBlock) death_stuff.enemy_cd = 5;
-			},
-			Nom: () => {
-				death_stuff.bleed += 0.05;
-			},
-			Toxicity: () => {
-				enemyHealthMult *= 2;
-				enemyAttackMult *= 5;
-				death_stuff.bleed += 0.05;
-			},
-			Watch: () => {
-				enemyAttackMult *= 1.25;
-			},
-			Lead: () => {
-				enemyHealthMult *= 1 + 0.04 * game.challenges.Lead.stacks;
-				enemyAttackMult *= 1 + 0.04 * game.challenges.Lead.stacks;
-				death_stuff.bleed += Math.min(game.challenges.Lead.stacks, 200) * 0.0003;
-			},
-			Corrupted: () => {
-				enemyAttackMult *= 3;
-			},
-			Obliterated: () => {
-				enemyHealthMult *= 1e12 * 10 ** Math.floor(basicData.zone / 10);
-				enemyAttackMult *= 1e12 * 10 ** Math.floor(basicData.zone / 10);
-			},
-			Eradicated: () => {
-				enemyHealthMult *= 1e20 * 3 ** Math.floor(basicData.zone / 2);
-				enemyAttackMult *= 1e20 * 3 ** Math.floor(basicData.zone / 2);
-			},
-			Frigid: () => {
-				enemyHealthMult *= game.challenges.Frigid.getEnemyMult();
-				enemyAttackMult *= game.challenges.Frigid.getEnemyMult();
-			},
-			Experience: () => {
-				enemyHealthMult *= game.challenges.Experience.getEnemyMult();
-				enemyAttackMult *= game.challenges.Experience.getEnemyMult();
 			}
-		};
+		},
+		Meditate: () => {
+			enemyHealthMult *= 2;
+			enemyAttackMult *= 1.5;
+		},
+		Electricity: () => {
+			death_stuff.weakness = 0.1;
+			death_stuff.plague = 0.1;
+		},
+		Life: () => {
+			enemyHealthMult *= 11;
+			enemyAttackMult *= 6;
+			trimpAttack *= 1 + 0.1 * game.challenges.Life.stacks;
+			trimpHealth *= 1 + 0.1 * game.challenges.Life.stacks;
+		},
+		Crushed: () => {
+			if (trimpHealth < trimpBlock) death_stuff.enemy_cd = 5;
+		},
+		Nom: () => {
+			death_stuff.bleed += 0.05;
+		},
+		Toxicity: () => {
+			enemyHealthMult *= 2;
+			enemyAttackMult *= 5;
+			death_stuff.bleed += 0.05;
+		},
+		Watch: () => {
+			enemyAttackMult *= 1.25;
+		},
+		Lead: () => {
+			enemyHealthMult *= 1 + 0.04 * game.challenges.Lead.stacks;
+			enemyAttackMult *= 1 + 0.04 * game.challenges.Lead.stacks;
+			death_stuff.bleed += Math.min(game.challenges.Lead.stacks, 200) * 0.0003;
+		},
+		Corrupted: () => {
+			enemyAttackMult *= 3;
+		},
+		Obliterated: () => {
+			enemyHealthMult *= 1e12 * 10 ** Math.floor(basicData.zone / 10);
+			enemyAttackMult *= 1e12 * 10 ** Math.floor(basicData.zone / 10);
+		},
+		Eradicated: () => {
+			enemyHealthMult *= 1e20 * 3 ** Math.floor(basicData.zone / 2);
+			enemyAttackMult *= 1e20 * 3 ** Math.floor(basicData.zone / 2);
+		},
+		Frigid: () => {
+			enemyHealthMult *= game.challenges.Frigid.getEnemyMult();
+			enemyAttackMult *= game.challenges.Frigid.getEnemyMult();
+		},
+		Experience: () => {
+			enemyHealthMult *= game.challenges.Experience.getEnemyMult();
+			enemyAttackMult *= game.challenges.Experience.getEnemyMult();
+		}
+	};
 
+	if (basicData.universe === 1) {
 		Object.keys(challengeEffects).forEach((challenge) => {
 			if (challengeActive(challenge)) {
 				challengeEffects[challenge]();
@@ -272,85 +275,85 @@ function populateFarmCalcData() {
 		});
 	}
 
-	if (basicData.universe === 2) {
-		const challengeEffectsU2 = {
-			Unlucky: () => {
-				minFluct = 0.005;
-				maxFluct = 1.995;
-			},
-			Unbalance: () => {
-				enemyHealthMult *= 2;
-				enemyAttackMult *= 1.5;
+	const challengeEffectsU2 = {
+		Unlucky: () => {
+			minFluct = 0.005;
+			maxFluct = 1.995;
+		},
+		Unbalance: () => {
+			enemyHealthMult *= 2;
+			enemyAttackMult *= 1.5;
 
-				/* Unsure this is the best solution. Might be better just removing each stack during the mapping process one by one to a cap of X? */
-				if (!game.global.mapsActive && !game.global.preMapsActive) {
-					const balance = game.challenges.Unbalance;
-					if (balance.balanceStacks < 250) {
-						const timer = runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
-						const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
+			/* Unsure this is the best solution. Might be better just removing each stack during the mapping process one by one to a cap of X? */
+			if (!game.global.mapsActive && !game.global.preMapsActive) {
+				const balance = game.challenges.Unbalance;
+				if (balance.balanceStacks < 250) {
+					const timer = runningAutoTrimps && atConfig.loops.atTimeLapseFastLoop ? 30 : runningAutoTrimps ? 5 : 10;
+					const cellsCleared = Math.floor(overkillRange / (Math.ceil(speed) / 10)) * timer;
 
-						const attackMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
-						trimpAttack /= balance.getAttackMult();
-						trimpAttack *= attackMult;
-					}
+					const attackMult = Math.pow(0.99, Math.min(250, balance.balanceStacks + cellsCleared));
+					trimpAttack /= balance.getAttackMult();
+					trimpAttack *= attackMult;
 				}
-			},
-			Duel: () => {
-				death_stuff.enemy_cd = 10;
-				if (game.challenges.Duel.trimpStacks > 50) trimpAttack /= 3;
-			},
-			Wither: () => {
-				enemyHealthMult *= game.challenges.Wither.getTrimpHealthMult();
-				enemyAttackMult *= game.challenges.Wither.getEnemyAttackMult();
-			},
-			Quest: () => {
-				enemyHealthMult *= game.challenges.Quest.getHealthMult();
-			},
-			Revenge: () => {
-				if (game.global.world % 2 === 0) enemyHealthMult *= 10;
-			},
-			Archaeology: () => {
-				enemyAttackMult *= game.challenges.Archaeology.getStatMult('enemyAttack');
-			},
-			Mayhem: () => {
-				enemyHealthMult *= game.challenges.Mayhem.getEnemyMult();
-				enemyAttackMult *= game.challenges.Mayhem.getEnemyMult();
-			},
-			Insanity: () => {},
-			Berserk: () => {
-				enemyHealthMult *= 1.5;
-				enemyAttackMult *= 1.5;
-			},
-			Exterminate: () => {
-				enemyHealthMult *= game.challenges.Exterminate.getSwarmMult();
-			},
-			Nurture: () => {
-				enemyHealthMult *= 10;
-				enemyHealthMult *= game.buildings.Laboratory.getEnemyMult();
-				enemyAttackMult *= 2;
-				enemyAttackMult *= game.buildings.Laboratory.getEnemyMult();
-			},
-			Pandemonium: () => {
-				enemyHealthMult *= game.challenges.Pandemonium.getPandMult();
-				enemyAttackMult *= game.challenges.Pandemonium.getPandMult();
-			},
-			Desolation: () => {
-				enemyHealthMult *= game.challenges.Desolation.getEnemyMult();
-				enemyAttackMult *= game.challenges.Desolation.getEnemyMult();
-			},
-			Alchemy: () => {
-				enemyHealthMult *= alchObj.getEnemyStats(true) + 1;
-				enemyAttackMult *= alchObj.getEnemyStats(true) + 1;
-			},
-			Hypothermia: () => {
-				enemyHealthMult *= game.challenges.Hypothermia.getEnemyMult();
-				enemyAttackMult *= game.challenges.Hypothermia.getEnemyMult();
-			},
-			Glass: () => {
-				enemyHealthMult *= game.challenges.Glass.healthMult();
 			}
-		};
+		},
+		Duel: () => {
+			death_stuff.enemy_cd = 10;
+			if (game.challenges.Duel.trimpStacks > 50) trimpAttack /= 3;
+		},
+		Wither: () => {
+			enemyHealthMult *= game.challenges.Wither.getTrimpHealthMult();
+			enemyAttackMult *= game.challenges.Wither.getEnemyAttackMult();
+		},
+		Quest: () => {
+			enemyHealthMult *= game.challenges.Quest.getHealthMult();
+		},
+		Revenge: () => {
+			if (game.global.world % 2 === 0) enemyHealthMult *= 10;
+		},
+		Archaeology: () => {
+			enemyAttackMult *= game.challenges.Archaeology.getStatMult('enemyAttack');
+		},
+		Mayhem: () => {
+			enemyHealthMult *= game.challenges.Mayhem.getEnemyMult();
+			enemyAttackMult *= game.challenges.Mayhem.getEnemyMult();
+		},
+		Insanity: () => {},
+		Berserk: () => {
+			enemyHealthMult *= 1.5;
+			enemyAttackMult *= 1.5;
+		},
+		Exterminate: () => {
+			enemyHealthMult *= game.challenges.Exterminate.getSwarmMult();
+		},
+		Nurture: () => {
+			enemyHealthMult *= 10;
+			enemyHealthMult *= game.buildings.Laboratory.getEnemyMult();
+			enemyAttackMult *= 2;
+			enemyAttackMult *= game.buildings.Laboratory.getEnemyMult();
+		},
+		Pandemonium: () => {
+			enemyHealthMult *= game.challenges.Pandemonium.getPandMult();
+			enemyAttackMult *= game.challenges.Pandemonium.getPandMult();
+		},
+		Desolation: () => {
+			enemyHealthMult *= game.challenges.Desolation.getEnemyMult();
+			enemyAttackMult *= game.challenges.Desolation.getEnemyMult();
+		},
+		Alchemy: () => {
+			enemyHealthMult *= alchObj.getEnemyStats(true) + 1;
+			enemyAttackMult *= alchObj.getEnemyStats(true) + 1;
+		},
+		Hypothermia: () => {
+			enemyHealthMult *= game.challenges.Hypothermia.getEnemyMult();
+			enemyAttackMult *= game.challenges.Hypothermia.getEnemyMult();
+		},
+		Glass: () => {
+			enemyHealthMult *= game.challenges.Glass.healthMult();
+		}
+	};
 
+	if (basicData.universe === 2) {
 		Object.keys(challengeEffectsU2).forEach((challenge) => {
 			if (challengeActive(challenge)) {
 				challengeEffectsU2[challenge]();
@@ -380,7 +383,7 @@ function populateFarmCalcData() {
 		}
 	}
 
-	const combatData = {
+	const miscCombatStats = {
 		fluctuation: basicData.universe === 2 ? 0.5 : 0.2,
 		range: maxFluct / minFluct - 1,
 		critChance: critChance % 1,
@@ -409,7 +412,7 @@ function populateFarmCalcData() {
 		trimpShield: Math.floor(trimpShield),
 		enemyAttackMult,
 		enemyHealthMult,
-		...combatData,
+		...miscCombatStats,
 		...challengesActive,
 		...death_stuff
 	};
@@ -427,13 +430,9 @@ function stats(lootFunction = lootDefault, checkFragments = true) {
 	const maxMaps = lootFunction === lootDestack ? 11 : 25;
 	const stats = [];
 	const extra = saveData.extraMapLevelsAvailable ? 10 : saveData.mapReducer && saveData.zone > 6 ? -1 : 0;
+	let coords = 1;
 	const stances = saveData.stances;
 	const alwaysPerfect = typeof atConfig !== 'undefined' ? getPageSetting('onlyPerfectMaps') : true;
-	let coords = 1;
-
-	const goldenMaps = game.singleRunBonuses.goldMaps.owned;
-	const biomeLoot = saveData.mapBiome === 'Farmlands' && saveData.universe === 2 ? 1 : saveData.mapBiome === 'Plentiful' ? 0.25 : 0;
-	const lootModifiers = goldenMaps + biomeLoot;
 
 	if (saveData.coordinate) {
 		for (let z = 1; z < saveData.zone + extra + 1; ++z) {
@@ -447,6 +446,9 @@ function stats(lootFunction = lootDefault, checkFragments = true) {
 			saveData.enemyAttackMult = coords;
 			saveData.enemyHealthMult = coords;
 		}
+
+		let biomeLoot = saveData.mapBiome === 'Farmlands' && saveData.universe === 2 ? 1 : saveData.mapBiome === 'Plentiful' ? 0.25 : 0;
+		if (game.singleRunBonuses.goldMaps.owned) biomeLoot += 1;
 
 		const simulateMap = _simulateSliders(mapLevel, saveData.special, saveData.mapBiome, [9, 9, 9], saveData.perfectMaps, alwaysPerfect);
 		let map;
@@ -501,7 +503,7 @@ function stats(lootFunction = lootDefault, checkFragments = true) {
 			size,
 			loot: lootMult,
 			sliders: simulateMap.sliders,
-			perfect: map ? difficulty === 0.75 && size === (saveData.mapReducer ? 20 : 25) && lootMult === 1.6 + lootModifiers : simulateMap.perfect
+			perfect: map ? difficulty === 0.75 && size === (saveData.mapReducer ? 20 : 25) && lootMult === 1.6 + biomeLoot : simulateMap.perfect
 		};
 
 		let tmp;
