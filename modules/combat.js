@@ -223,7 +223,7 @@ function _getOurHealth(mapping, worldType, forceMax = false) {
 	const dailyChallenge = game.global.dailyChallenge;
 	const dailyEmpower = isDaily && !mapping && typeof dailyChallenge.empower !== 'undefined';
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningArchaeology || runningBerserk || frenzyCanExpire || dailyEmpower);
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || runningRevenge || (game.global.spireActive && worldType === 'world');
+	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || (game.global.spireActive && worldType === 'world');
 
 	return remainingHealth(shieldBreak, angelicDance, worldType, forceMax);
 }

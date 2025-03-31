@@ -289,13 +289,14 @@ function initialLoad(skipLevels = false) {
 		const rnMAWeightsum = rnMAWeights.reduce((a, b) => a + b, 0);
 		rnMAWeights.forEach((_, index) => (rnMAWeights[index] /= rnMAWeightsum));
 
-		let history = JSON.parse(window.localStorage.getItem('rPrHistory')) || Array(rnTerms).fill(rawRnRun);
+		let history = surkyInputs.rPrHistory || Array(rnTerms).fill(rawRnRun);
 		history.unshift(rawRnRun);
 		history.pop();
 		history = history.map((value) => (value > 0 ? value : rawRnRun));
 
 		const ewma = history.reduce((sum, value, index) => sum + value * rnMAWeights[index], 0);
-		window.localStorage.setItem('rPrHistory', JSON.stringify(history));
+		surkyInputs.rPrHistory = history;
+		window.localStorage.setItem('surkyInputs', JSON.stringify(surkyInputs));
 		$$('#radonPerRun').value = ewma;
 		props.radonPerRun = $$('#radonPerRun').value;
 	}
