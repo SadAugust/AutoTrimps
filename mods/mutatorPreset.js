@@ -517,8 +517,8 @@ function _displayMutatorPresets(tooltipDiv) {
 	const availableSeeds = game.global.mutatedSeeds + game.global.mutatedSeedsSpent;
 	const maxMutators = Math.floor(Math.log2(availableSeeds / 300 + 1));
 
-	function escapeHtmlAttribute(str) {
-		return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	function escapeHtmlAttribute(string, quoteName = '#39') {
+		return string.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, `&${quoteName};`).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	}
 
 	let tooltipText = '';

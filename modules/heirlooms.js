@@ -112,10 +112,10 @@ function autoHeirlooms(portal = false) {
 //Checks to see if we own the heirloom we are trying to equip
 function heirloomSearch(heirloom, type) {
 	const heirloomName = getPageSetting(heirloom);
+	const escapedName = heirloomName ? escapeHtmlAttribute(heirloomName, 'apos') : null;
+	if (type && game.global[`${type}Equipped`].name === escapedName) return game.global[`${type}Equipped`];
 
-	if (type && game.global[`${type}Equipped`].name === heirloomName) return game.global[`${type}Equipped`];
-
-	return game.global.heirloomsCarried.find((loom) => loom.name === heirloomName);
+	return game.global.heirloomsCarried.find((loom) => loom.name === escapedName);
 }
 
 function heirloomModSearch(heirloom, modifier) {
@@ -151,7 +151,7 @@ function heirloomEquip(heirloom, type) {
 
 	const heirloomName = getPageSetting(heirloom);
 	const heirloomDetails = heirloomSearch(heirloom);
-	const isHeirloomEquipped = game.global[`${type}Equipped`].name === heirloomName;
+	const isHeirloomEquipped = game.global[`${type}Equipped`].name === escapeHtmlAttribute(heirloomName, 'apos');
 
 	if (heirloomDetails && !isHeirloomEquipped) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(heirloomDetails), 'heirloomsCarried', true);

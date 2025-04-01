@@ -5,6 +5,10 @@ window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
 	console.log(`AT logged error: ${message}`);
 };
 
+function escapeHtmlAttribute(string, quoteName = '#39') {
+	return string.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, `&${quoteName};`).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 //Loads setting data from localstorage into object
 function _loadAutoTrimpsSettings() {
 	const settings = JSON.parse(localStorage.getItem('atSettings'));

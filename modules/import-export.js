@@ -411,10 +411,6 @@ function _displaySpireAssaultPresets(tooltipDiv) {
 	let total = 0;
 	let tooltipText = '';
 
-	function escapeHtmlAttribute(str) {
-		return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-	}
-
 	const headerList = ['Preset 1', 'Preset 2', 'Preset 3', 'Preset 4', 'Preset 5', 'Hidden Items'];
 	tooltipText += `<div id='spireAssaultPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
 	for (const header of headerList) {
