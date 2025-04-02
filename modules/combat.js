@@ -120,7 +120,7 @@ function _armyDeath() {
 }
 
 function _avoidEmpower() {
-	if (!game.global.mapsActive || !_armyDeath()) return;
+	if (!game.global.mapsUnlocked || !_armyDeath()) return;
 
 	if (game.global.mapsActive && !game.global.voidBuff) {
 		mapsClicked(true);
