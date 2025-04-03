@@ -2,8 +2,8 @@
 
 SadAugust AutoTrimps Fork.
 
--   All changes made by SadAugust were using Zorn192/GenBTC as base.
 -   Currently up-to-date with patch 5.10.1.
+-   All changes made by SadAugust were using Zorn192/GenBTC as base.
 
 # Installation Guides
 

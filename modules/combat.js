@@ -96,11 +96,10 @@ function _armyDeath() {
 	}
 
 	const pierce = getPierceAmt();
+	const atkPierce = pierce * enemyAttack;
 	enemyAttack -= game.global.soldierCurrentBlock;
-	if (pierce > 0) {
-		const atkPierce = pierce * enemyAttack;
-		if (enemyAttack < atkPierce) enemyAttack = atkPierce;
-	}
+
+	if (pierce > 0 && enemyAttack < atkPierce) enemyAttack = atkPierce;
 	if (enemyAttack <= 0) enemyAttack = 0;
 
 	if (runningDaily) {
