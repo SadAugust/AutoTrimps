@@ -700,7 +700,7 @@ function challengeInfo(force) {
 			debug(`You have the AutoTrimps setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.`, 'challenge');
 		}
 
-		if (challengeActive('Experience') || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Desolation')) {
+		if ((challengeActive('Experience') && getPageSetting('experience') && getPageSetting('experienceC2')) || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Desolation')) {
 			debug(`Be aware that the script classes this challenge as a C2 for all settings.`, 'challenge');
 		}
 

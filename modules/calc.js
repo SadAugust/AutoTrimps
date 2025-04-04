@@ -9,7 +9,7 @@ class TrimpStats {
 		const runningRevenge = challengeActive('Revenge') && game.challenges.Revenge.stacks === 19;
 
 		this.isDaily = challengeActive('Daily');
-		this.isC3 = runningChallengeSquared || ['Frigid', 'Experience', 'Mayhem', 'Pandemonium', 'Desolation'].some((challenge) => challengeActive(challenge));
+		this.isC3 = runningChallengeSquared || ['Frigid', 'Mayhem', 'Pandemonium', 'Desolation'].some((challenge) => challengeActive(challenge)) || (challengeActive('Experience') && getPageSetting('experience') && getPageSetting('experienceC2'));
 		this.isOneOff = !runningChallengeSquared && autoPortalChallenges('oneOff', universe).slice(1).includes(game.global.challengeActive);
 		this.isFiller = !(this.isDaily || this.isC3 || this.isOneOff);
 		this.currChallenge = game.global.challengeActive;

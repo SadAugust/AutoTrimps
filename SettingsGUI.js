@@ -288,7 +288,7 @@ function initialiseAllSettings() {
 				let description = `<p>Will automatically swap <b>${calcName}</b> presets when Auto Portaling into runs.</p>`;
 				description += `<p>Fillers (${_getPrimaryResourceInfo().name.toLowerCase()} challenges) will load the <b>${fillerPreset}</b> preset.</p>`;
 				description += `<p>Daily challenges will load the <b>${dailyPreset}</b> preset.</p>`;
-				description += `${_getSpecialChallengeDescription(true, false)} will load the <b>${c2Preset}</b> preset.</p>`;
+				description += `${_getSpecialChallengeDescription(true)} will load the <b>${c2Preset}</b> preset.</p>`;
 				description += `Challenges that have a dedicated preset (<b>${universeChallenges.join(', ')}</b>) will load their preset when starting that challenge.</p>`;
 				description += `<p><b>Recommended:</b> On</p>`;
 				return description;
@@ -384,8 +384,8 @@ function initialiseAllSettings() {
 				const c2abv = _getChallenge2Info();
 				const c2setting = atConfig.settingUniverse === 2 ? "Challenge 3" : "Challenge 2";
 
-				const specialChall = `Max completion challenges ${atConfig.settingUniverse === 1 && 
-					game.stats.highestLevel.valueTotal() >= 600 ? '(and Experience)' : ''} can be run with this but they will ignore the ${c2abv} portal settings and use the <b>Portal Zone</b> input for when to finish the run and portal.`;
+				const specialChallengesUnlocked = (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 600) || (atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 100)
+				const specialChall = `Max completion challengescan be run with this but they will ignore the ${c2abv} portal settings and use the <b>Portal Zone</b> input for when to finish the run and portal.`;
 				const u2recommendation = `Custom with a specified endzone to make use of Scruffy's level 3 ability`;
 				const u1recommendation = `${resourceName} Challenges until you reach zone 230 then ${resourceName} Per Hour`;
 
@@ -399,7 +399,7 @@ function initialiseAllSettings() {
 				if (game.stats.highestLevel.valueTotal() >= 65) {
 					description += `<p><b>${c2setting}</b><br>Will portal into the challenge selected in the <b>${c2abv}</b> setting. If <b>${c2abv} Runner</b> is enabled it will use <b>${c2abv} Runner Portal</b> for your portal zone otherwise will use the zone specified in the <b>Finish ${c2abv}</b> setting in the ${c2abv} settings tab.</p>`
 				}
-				description += `<p>${specialChall}</p>`;
+				if (specialChallengesUnlocked) description += `<p>${specialChall}</p>`;
 				description += `<p><b>Recommended:</b> ${(atConfig.settingUniverse === 2 ? u2recommendation : u1recommendation)}</p>`;
 				return description;
 			}, 'dropdown', 'Off', function () { return autoPortalChallenges('autoPortal') }, 'Core', [1, 2]);
@@ -451,12 +451,12 @@ function initialiseAllSettings() {
 		createSetting('heliumC2Challenge',
 			function () { return (_getChallenge2Info()) },
 			function () {
-				const specialChall = `Max completion challenges ${atConfig.settingUniverse === 1 && 
-				game.stats.highestLevel.valueTotal() >= 600 ? '(and Experience)' : ''} can be run with this but they will ignore the " + _getChallenge2Info() + " portal settings and use the <b>Portal Zone</b> input for when to finish the run and portal.`;
+				const specialChallengesUnlocked = (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 600) || (atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 100)
+				const specialChall = `Max completion challenges can be run with this but they will ignore the " + _getChallenge2Info() + " portal settings and use the <b>Portal Zone</b> input for when to finish the run and portal.`;
 				let description = "<p>Automatically portal into this C" + _getChallenge2Info()[1] + " when using the <b>Challenge " + _getChallenge2Info()[1] + "</b> Auto Portal setting.</p>";
 				description += "<p>C" + _getChallenge2Info()[1] + " challenges will appear here when they've been unlocked in the game.</p>";
 				description += "<p>When running a " + _getChallenge2Info() + ", <b>" + _getChallenge2Info() + " Runner Portal</b> will be used for your portal zone if <b>" + _getChallenge2Info() + " Runner</b> is enabled otherwise it will use the <b>Finish " + _getChallenge2Info() + "</b> setting. These can be found in the <b>" + _getChallenge2Info() + "</b> settings tab.</p>"
-				description += "<p>" + specialChall + "</p>";
+				if (specialChallengesUnlocked) description += `<p>${specialChall}</p>`;
 				return description;
 			}, 'dropdown', 'None', function () { return autoPortalChallenges('c2') }, 'Core', [1, 2],
 			function () {
@@ -1978,6 +1978,69 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
 
+		createSetting('experience',
+			function () { return ('Experience') },
+			function () {
+				let description = "<p>Enable this if you want to use automation features when running the <b>Experience</b> challenge.</p>";
+				description += "<p>This setting is dependant on using <b>Bionic Raiding</b> in conjunction with it if the Bionic Wonderland level you finish with to be higher than 605.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [1],
+			function () { return ((game.stats.highestLevel.valueTotal() >= 600)) });
+
+		createSetting('experienceStartZone',
+			function () { return ('E: Start Zone') },
+			function () {
+				let description = "<p>The zone you would like to start mapping for Wonders at.</p>";
+				description += "<p>If set below 300 it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 500 to start and lower over time</p>";
+				return description;
+			}, 'value', -1, null, 'Challenges', [1],
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
+
+		createSetting('experienceStaff',
+			function () { return ('E: Wonder Staff') },
+			function () {
+				let description = "<p>The staff you would like to use whilst farming for Wonders.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Dedicated pet xp staff</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Challenges', [1],
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
+
+		createSetting('experienceEndZone',
+			function () { return ('E: End Zone') },
+			function () {
+				let description = "<p>Will run the Bionic Wonderland map level specified in <b>E: End BW</b> at this zone.</p>";
+				description += "<p>If set below 601 it will automatically set this to 601 so set it above that if necessary.</p>";
+				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
+				return description;
+			}, 'value', -1, null, 'Challenges', [1],
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
+
+		createSetting('experienceEndBW',
+			function () { return ('E: End BW') },
+			function () {
+				let description = "<p>Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
+				description += "<p><b>If the specified BW is not available, it will run the one closest to the setting.</b></p>";
+				description += "<p>When active and above zone 600 this will disable <b>BW Raiding Settings</b> until the <b>Experience</b> challenge has been completed.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting and use Bionic Raiding settings instead to end the challenge.</p>";
+				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
+				return description;
+			}, 'value', -1, null, 'Challenges', [1],
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
+
+		createSetting('experienceC2',
+			function () { return ('E: Treat as C2') },
+			function () {
+				let description = "<p>Enable this if you want to the script to treat this challenge as a C2.</p>";
+				description += "This will cause all settings that have C2 equivalents to use their inputs instead of the regular versions of the settings. The <b>Finish C2</b> challenge setting is exempt from this and won't be used to finish the challenge.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [1],
+			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
+
 		createSetting('toxicitySettings',
 			function () { return ('Toxicity Settings') },
 			function () {
@@ -2114,11 +2177,11 @@ function initialiseAllSettings() {
 			function () { return `Finish ${_getChallenge2Info()}` },
 			function () {
 
+				const specialChallengesUnlocked = (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 600) || (atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 100)
 				let description = `<p>Abandons ${_getChallenge2Info()}s when this zone is reached.</p>`;
 				description += `<p>If <b>${_getChallenge2Info()} Runner</b> is enabled then this setting is disabled.</p>`;
 				description += `<p>Set to <b>0 or below</b> to disable this setting.</p>`;
-				description += `<p>Will not abandon max completion challenges${atConfig.settingUniverse === 1 && 
-				game.stats.highestLevel.valueTotal() >= 600 ? ' or Experience' : ''}.</p>`;
+				if (specialChallengesUnlocked) description += `<p>Will not abandon max completion challenges.</p>`;
 				description += `<p>Recommended: Zones ending with 0 for most ${_getChallenge2Info()} runs.</p>`;
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2]);
@@ -2457,59 +2520,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'multitoggle', 0, null, 'C2', [1],
 			function () { return (getPageSetting('frigid', atConfig.settingUniverse) && autoTrimpSettings.frigid.require()) });
-
-		createSetting('experience',
-			function () { return ('Experience') },
-			function () {
-				let description = "<p>Enable this if you want to use automation features when running the <b>Experience</b> challenge.</p>";
-				description += "<p>This setting is dependant on using <b>Bionic Raiding</b> in conjunction with it if you the Bionic Wonderland level you finish with to be higher than 605.</b></p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [1],
-			function () { return ((game.stats.highestLevel.valueTotal() >= 600) || challengeActive('Experience')) });
-
-		createSetting('experienceStartZone',
-			function () { return ('E: Start Zone') },
-			function () {
-				let description = "<p>The zone you would like to start mapping for Wonders at.</p>";
-				description += "<p>If set below 300 it will disable this setting.</p>";
-				description += "<p><b>Recommended:</b> 500 to start and lower over time</p>";
-				return description;
-			}, 'value', -1, null, 'C2', [1],
-			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
-
-		createSetting('experienceStaff',
-			function () { return ('E: Wonder Staff') },
-			function () {
-				let description = "<p>The staff you would like to use whilst farming for Wonders.</p>";
-				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
-				description += "<p>Set to <b>undefined</b> to disable.</p>";
-				description += "<p><b>Recommended:</b> Dedicated pet xp staff</p>";
-				return description;
-			}, 'textValue', 'undefined', null, 'C2', [1],
-			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
-
-		createSetting('experienceEndZone',
-			function () { return ('E: End Zone') },
-			function () {
-				let description = "<p>Will run the Bionic Wonderland map level specified in <b>E: End BW</b> at this zone.</p>";
-				description += "<p>If set below 601 it will automatically set this to 601 so set it above that if necessary.</p>";
-				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
-				return description;
-			}, 'value', -1, null, 'C2', [1],
-			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
-
-		createSetting('experienceEndBW',
-			function () { return ('E: End BW') },
-			function () {
-				let description = "<p>Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
-				description += "<p><b>If the specified BW is not available, it will run the one closest to the setting.</b></p>";
-				description += "<p>When active and above zone 600 this will disable <b>BW Raiding Settings</b> until the <b>Experience</b> challenge has been completed.</p>";
-				description += "<p>If set to <b>0 or below</b> it will disable this setting and use Bionic Raiding settings instead to end the challenge.</p>";
-				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
-				return description;
-			}, 'value', -1, null, 'C2', [1],
-			function () { return (getPageSetting('experience', atConfig.settingUniverse) && autoTrimpSettings.experience.require()) });
 
 		createSetting('wither',
 			function () { return ('Wither') },
@@ -5667,9 +5677,9 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'experienceEndBW', 'witherMutatorPreset', 'questSmithySpire', 'mayhemAutoPortal', 'stormDestackTo', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationMutatorPreset'];
+	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'witherMutatorPreset', 'questSmithySpire', 'mayhemAutoPortal', 'stormDestackTo', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationMutatorPreset'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
-	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
+	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'experienceC2', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomPlaguebringer', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterSpire = ['spireSkipMapping', 'spireSkipMappingC2'];
 	const breakAfterMagma = ['autoGenModeC2', 'magmiteAutoFuelForceRun'];

@@ -184,7 +184,7 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 				unlockedIn: ['c2']
 			},
 			Frigid: { unlockZone: 460, unlockedIn: ['c2', 'helium'] },
-			Experience: { unlockZone: 600, unlockedIn: ['c2', 'heHr', 'helium'] },
+			Experience: { unlockZone: 600, unlockedIn: ['heHr', 'helium'] },
 			//Fused Challenges - These need to go in reverse order of when they unlock.
 			Toxad: {
 				unlockZone: game.stats.highestLevel.valueTotal(),
@@ -229,6 +229,8 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 				unlockedIn: ['c2']
 			}
 		};
+
+		if (getPageSetting('experience', 1) && getPageSetting('experienceC2', 1)) obj.Experience.unlockedIn.push('c2');
 	}
 
 	if (universe === 2) {
@@ -269,7 +271,7 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 
 	//Filter out the challenges that aren't unlocked yet.
 	const dualC2s = ['Enlightened', 'Paralysis', 'Nometal', 'Topology', 'Waze', 'Toxad'];
-	const specialChallenges = ['Frigid', 'Experience', 'Mayhem', 'Pandemonium', 'Desolation'];
+	const specialChallenges = ['Frigid', 'Mayhem', 'Pandemonium', 'Desolation'];
 
 	obj = Object.entries(obj).reduce((newObj, [key, val]) => {
 		if (hze >= val.unlockZone && (typeof val.unlockCondition !== 'function' || val.unlockCondition())) {
@@ -612,7 +614,7 @@ function _challengeUnlockCheck() {
 	}
 
 	function isSpecialChallenge(challenge) {
-		const specialChallenges = ['Frigid', 'Experience', 'Mayhem', 'Pandemonium', 'Desolation'];
+		const specialChallenges = ['Frigid', 'Mayhem', 'Pandemonium', 'Desolation'];
 		return specialChallenges.includes(challenge);
 	}
 
@@ -665,7 +667,7 @@ function _challengeUnlockCheck() {
 			{ level: 425, name: 'Obliterated', setting: true, c2: true },
 			{ level: 10, name: 'Eradicated', condition: () => game.global.totalSquaredReward >= 4500, setting: true, c2: true },
 			{ level: 460, name: 'Frigid', setting: true, c2: true },
-			{ level: 600, name: 'Experience', setting: true, c2: true },
+			{ level: 600, name: 'Experience', setting: true },
 			{ level: 65, name: 'Challenge 2', message: "Due to unlocking Challenge 2's there is now a Challenge 2 option under Auto Portal to be able to auto portal into them. Also you can now access the C2 tab within the the scripts settings." }
 		];
 

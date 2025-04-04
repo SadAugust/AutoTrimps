@@ -162,9 +162,8 @@ function _getChallenge2Info() {
 	return atConfig.settingUniverse === 2 ? 'C3' : 'C2';
 }
 
-function _getSpecialChallengeDescription(addAnS = true, includeExperience = true) {
+function _getSpecialChallengeDescription(addAnS = true) {
 	let challengeText = `${_getChallenge2Info()}'s`;
-	if (includeExperience && atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 600) challengeText += `, Experience`;
 	return `${challengeText} or max completion challenge${addAnS ? 's' : ''}`;
 }
 

@@ -155,7 +155,7 @@ function _equalityManagementBasic() {
 
 	const experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	const fastEnemy = atData.fightInfo.fastImps.includes(getCurrentEnemy().name) || experienced;
-	const voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === 'Void' && getCurrentMapObject().voidBuff === 'doubleAttack';
+	const voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.global.voidBuff === 'doubleAttack';
 	const noFrenzy = game.portal.Frenzy.radLevel > 0 && game.portal.Frenzy.frenzyStarted === -1 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 	const runningGlass = challengeActive('Glass');
 
@@ -482,7 +482,6 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 
 	const runningDeso = challengeActive('Desolation') && !game.global.mapsActive;
 
-	let ourDmgMax = 0;
 	const isDaily = challengeActive('Daily');
 	const dailyChallenge = game.global.dailyChallenge;
 	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined';
@@ -490,6 +489,7 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined';
 	const explosiveMult = dailyExplosive ? 1 + dailyModifiers.explosive.getMult(dailyChallenge.explosive.strength) : runningDeso ? 6 : 1;
 
+	let ourDmgMax = 0;
 	if ((dailyEmpowerToggle && dailyExplosive) || MODULES.maps.slowScumming || (runningDeso && !armyReady)) {
 		const checkGamma = gammaToTrigger <= 1 ? gammaDmg : 1;
 		ourDmgMax = maxDmg * checkGamma;
