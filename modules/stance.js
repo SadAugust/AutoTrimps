@@ -612,8 +612,8 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 	}
 
 	for (let critPower = 2; critPower >= -2; critPower--) {
-		// If no formation can survive a mega crit, it ignores it, and recalculates for a regular crit, then no crit
-		// If even that is not enough, then it ignore Explosive Daily, and finally it ignores Reflect Daily
+		// if no formation can survive a mega crit, it ignores it, and recalculates for a regular crit, then no crit
+		// if even that is not enough, then it ignore Explosive Daily, and finally it ignores Reflect Daily
 		if (critPower === 2 && (!critSources.regular || !critSources.challenge)) continue;
 		if (critPower === 1 && !critSources.regular && !critSources.challenge) continue;
 		if (critPower === 0 && !critSources.explosive) continue;
@@ -627,6 +627,6 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 		}
 	}
 
-	// If it cannot survive the worst case scenario on any formation, attempt its luck on H stance
+	// if it cannot survive the worst case scenario on any formation, attempt its luck on H stance
 	safeSetStance(1);
 }

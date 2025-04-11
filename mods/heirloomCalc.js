@@ -525,7 +525,16 @@ class Heirloom {
 				critChance: Fluffy.isRewardActive('critChance'),
 				megaCrit: Fluffy.isRewardActive('megaCrit'),
 				heirloopy: Fluffy.isRewardActive('heirloopy'),
-				prism: Fluffy.isRewardActive('prism')
+				prism: Fluffy.isRewardActive('prism'),
+				doubleCrit: Fluffy.isRewardActive('doubleCrit')
+			};
+
+			this.masteries = {
+				crit: masteryPurchased('crit')
+			};
+
+			this.u2Spire = {
+				critChance: u2SpireBonuses.critChance()
 			};
 
 			this.stepAmounts = {};
@@ -563,6 +572,45 @@ class Heirloom {
 		return this.heirloomInfo[type].hardCaps[rarity];
 	}
 
+	getCritStats() {
+		const relentlessness = game.global.universe === 2 ? 0 : game.portal.Relentlessness.level;
+		const criticality = game.global.universe === 2 ? game.portal.Criticality.radLevel : 0;
+		const critMastery = this.masteries.crit;
+		const critMod = this.getModValue('critDamage');
+		const critChanceMod = this.getModValue('critChance');
+
+		let critChance = relentlessness * 5;
+		let critDamage = 100 + 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
+		let megaCritMult = 5;
+
+		if (isNumeric(critMod)) {
+			critDamage += critMod;
+		}
+
+		if (critMastery) {
+			critChance += critChanceMod * 1.5;
+			megaCritMult += 1;
+		} else {
+			critChance += critChanceMod;
+		}
+
+		if (this.fluffyRewards.critChance) {
+			critChance += 50 * this.fluffyRewards.critChance;
+		}
+
+		if (this.fluffyRewards.megaCrit) {
+			megaCritMult += 2;
+		}
+
+		if (this.u2Spire.critChance) {
+			critChance += this.u2Spire.critChance * 100;
+		}
+
+		const dblCritChance = this.getModValue('doubleCrit') / 100 + (this.fluffyRewards.doubleCrit ? 0.2 : 0);
+
+		return { critChance, critDamage, megaCritMult, dblCritChance };
+	}
+
 	normalizedCrit(critChance, critDamage, megaCrits, megaCritMult) {
 		if (megaCrits === 0) {
 			return critDamage * critChance + (1 - critChance) * 100;
@@ -570,6 +618,41 @@ class Heirloom {
 
 		const lowCrit = 1 - critChance;
 		return critDamage * Math.pow(megaCritMult, megaCrits - 1) * (lowCrit + critChance * megaCritMult);
+	}
+
+	normalizedDoubleCrit(critChance, critDamage, megaCritMult, dblCritChance) {
+		let critMult = 1;
+		critChance /= 100;
+
+		if (critChance < 0) {
+			critMult = 1 + critChance - critChance / 5;
+		} else if (critChance < 1) {
+			const noCritNoDouble = (1 - critChance) * (1 - dblCritChance);
+			const critNoDouble = critChance * (1 - dblCritChance) * critDamage;
+			const noCritDouble = (1 - critChance) * dblCritChance * critDamage;
+			const critDouble = critChance * dblCritChance * critDamage * critDamage;
+			critMult = noCritNoDouble + critNoDouble + noCritDouble + critDouble;
+		} else if (critChance < 2) {
+			const megaCritDmg = Math.pow(megaCritMult, 1);
+			const noCritNoDouble = (2 - critChance) * (1 - dblCritChance) * critDamage;
+			const critNoDouble = (critChance - 1) * (1 - dblCritChance) * megaCritDmg * critDamage;
+			const noCritDouble = (2 - critChance) * dblCritChance * megaCritDmg * critDamage;
+			const critDouble = (critChance - 1) * dblCritChance * Math.pow(megaCritMult, 2) * critDamage;
+			critMult = noCritNoDouble + critNoDouble + noCritDouble + critDouble;
+		} else if (critChance >= 2) {
+			let highTierChance = critChance - Math.floor(critChance);
+			const lowTierMulti = Math.pow(megaCritMult, Math.floor(critChance) - 1);
+			const highTierMulti = Math.pow(megaCritMult, Math.ceil(critChance) - 1);
+
+			const doubleTierMulti = Math.pow(megaCritMult, Math.ceil(critChance) + 1);
+			const noCritNoDouble = (1 - highTierChance) * (1 - dblCritChance) * lowTierMulti;
+			const critNoDouble = highTierChance * (1 - dblCritChance) * highTierMulti;
+			const noCritDouble = (1 - highTierChance) * dblCritChance * highTierMulti;
+			const critDouble = highTierChance * dblCritChance * doubleTierMulti;
+			critMult = (noCritNoDouble + critNoDouble + noCritDouble + critDouble) * critDamage;
+		}
+
+		return critMult;
 	}
 
 	get innate() {
@@ -655,11 +738,13 @@ class Heirloom {
 			let critChance = relentlessness * 5;
 			let megaCritMult = 5;
 
-			critChance += this.getModValue('critChance') * (masteryPurchased('crit') ? 1.5 : 1);
+			critChance += this.getModValue('critChance') * (this.masteries.crit ? 1.5 : 1);
 			if (this.fluffyRewards.critChance) critChance += 50 * this.fluffyRewards.critChance;
+			if (this.u2Spire.critChance) critChance += this.u2Spire.critChance * 100;
 			if (critChance === 0) return 1;
+
 			if (this.fluffyRewards.megaCrit) megaCritMult += 2;
-			if (masteryPurchased('crit')) megaCritMult += 1;
+			if (this.masteries.crit) megaCritMult += 1;
 
 			const megaCrits = Math.floor(critChance / 100);
 			critChance = Math.min(critChance - megaCrits * 100, 100) / 100;
@@ -671,43 +756,15 @@ class Heirloom {
 		}
 
 		if (type === 'critChance') {
-			const relentlessness = game.global.universe === 2 ? 0 : game.portal.Relentlessness.level;
-			const criticality = game.global.universe === 2 ? game.portal.Criticality.radLevel : 0;
-			const critMastery = masteryPurchased('crit');
-			let critChanceBefore = relentlessness * 5;
-			let critChanceAfter = relentlessness * 5;
-			let critDamage = 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
-			let megaCritMult = 5;
+			const { critChance, critDamage, megaCritMult } = this.getCritStats();
+			const stepIncrease = this.masteries.crit ? stepAmount * 1.5 : stepAmount;
 
-			if (isNumeric(this.getModValue('critDamage'))) {
-				critDamage += this.getModValue('critDamage');
-			}
+			const megaCritsBefore = Math.floor(critChance / 100);
+			const megaCritsAfter = Math.floor((critChance + stepIncrease) / 100);
 
-			if (critDamage === 0) {
-				return 1;
-			}
+			const critChanceAfter = Math.min(critChance + stepIncrease - megaCritsAfter * 100, 100) / 100;
+			const critChanceBefore = Math.min(critChance - megaCritsBefore * 100, 100) / 100;
 
-			if (critMastery) {
-				critChanceBefore += value * 1.5;
-				critChanceAfter += value * 1.5;
-				megaCritMult += 1;
-			} else {
-				critChanceBefore += value;
-				critChanceAfter += value;
-			}
-
-			if (this.fluffyRewards.critChance) {
-				critChanceBefore += 50 * this.fluffyRewards.critChance;
-			}
-
-			if (this.fluffyRewards.megaCrit) {
-				megaCritMult += 2;
-			}
-
-			const megaCritsBefore = Math.floor(critChanceBefore / 100);
-			const megaCritsAfter = Math.floor((critChanceBefore + (critMastery ? stepAmount * 1.5 : stepAmount)) / 100);
-			critChanceAfter = Math.min(critChanceBefore + (critMastery ? stepAmount * 1.5 : stepAmount) - megaCritsAfter * 100, 100) / 100;
-			critChanceBefore = Math.min(critChanceBefore - megaCritsBefore * 100, 100) / 100;
 			const critDmgNormalizedBefore = this.normalizedCrit(critChanceBefore, critDamage, megaCritsBefore, megaCritMult);
 			const critDmgNormalizedAfter = this.normalizedCrit(critChanceAfter, critDamage, megaCritsAfter, megaCritMult);
 
@@ -715,48 +772,11 @@ class Heirloom {
 		}
 
 		if (type === 'doubleCrit') {
-			const relentlessness = game.global.universe === 2 ? 0 : game.portal.Relentlessness.level;
-			const criticality = game.global.universe === 2 ? game.portal.Criticality.radLevel : 0;
-			const critMastery = masteryPurchased('crit');
-			const critChanceMod = this.getModValue('critChance');
-			const doubleCritValue = this.getModValue('doubleCrit') / 100;
-			let critChanceBefore = relentlessness * 5;
-			let critChanceAfter = relentlessness * 5;
-			let critDamage = 230 * Math.min(relentlessness, 1) + 30 * Math.max(Math.min(relentlessness, 10) - 1, 0) + criticality * 10;
-			let megaCritMult = 5;
+			const { critChance, critDamage, megaCritMult, dblCritChance } = this.getCritStats();
+			const stepIncrease = stepAmount / 100;
 
-			if (isNumeric(this.getModValue('critDamage'))) {
-				critDamage += this.getModValue('critDamage');
-			}
-
-			if (critDamage === 0) {
-				return 1;
-			}
-
-			if (critMastery) {
-				critChanceBefore += critChanceMod * 1.5;
-				critChanceAfter += critChanceMod * 1.5;
-				megaCritMult += 1;
-			} else {
-				critChanceBefore += critChanceMod;
-				critChanceAfter += critChanceMod;
-			}
-
-			if (this.fluffyRewards.critChance) {
-				critChanceBefore += 50 * this.fluffyRewards.critChance;
-			}
-
-			if (this.fluffyRewards.megaCrit) {
-				megaCritMult += 2;
-			}
-
-			const megaCritsBefore = Math.floor(critChanceBefore / 100);
-			const megaCritsAfter = Math.floor((critChanceBefore + stepAmount) / 100);
-			critChanceBefore = 1 + doubleCritValue / 100;
-			critChanceAfter = 1 + (doubleCritValue + stepAmount) / 100;
-
-			const critDmgNormalizedBefore = this.normalizedCrit(critChanceBefore, critDamage, megaCritsBefore, megaCritMult);
-			const critDmgNormalizedAfter = this.normalizedCrit(critChanceAfter, critDamage, megaCritsAfter, megaCritMult);
+			const critDmgNormalizedBefore = this.normalizedDoubleCrit(critChance, critDamage, megaCritMult, dblCritChance);
+			const critDmgNormalizedAfter = this.normalizedDoubleCrit(critChance, critDamage, megaCritMult, dblCritChance + stepIncrease);
 
 			return critDmgNormalizedAfter / critDmgNormalizedBefore;
 		}
@@ -930,7 +950,7 @@ class Heirloom {
 		let critChance = relentlessness * 5;
 		let megaCritMult = 5;
 
-		if (masteryPurchased('crit')) {
+		if (this.masteries.crit) {
 			critChance += this.getModValue('critChance') * 1.5;
 			megaCritMult += 1;
 		} else {
@@ -953,7 +973,7 @@ class Heirloom {
 		}
 
 		const heirloom = new Heirloom(deepClone(this));
-		const critMult = masteryPurchased('crit') ? 1.5 : 1;
+		const critMult = this.masteries.crit ? 1.5 : 1;
 		let critModValue = heirloom.getModValue('critChance');
 		let currency = Math.floor(game.global.nullifium * getNuSpendMult()) - this.getTotalSpent();
 		let efficiency = 1;
