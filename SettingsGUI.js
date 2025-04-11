@@ -5166,6 +5166,7 @@ function settingChanged(id, currUniverse) {
 		if (booleanActions[id] && updateUI) booleanActions[id]();
 		if (id === 'heirloomSwapping') updateHeirloomSwapElem();
 		if (id === 'autoMapsReroll') hdStats.autoLevelMaxFragments = btn[enabled] && hdStats.autoLevelInitial ? stats(undefined, false) : undefined;
+		if (id === 'gammaBurstCalc') updateShieldData();
 	}
 
 	if (btn.type === 'multitoggle') {
