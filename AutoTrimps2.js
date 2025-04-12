@@ -289,6 +289,7 @@ function initialiseScript() {
 
 	atConfig.initialise.loaded = true;
 	toggleCatchUpMode();
+	_timeWarpSliderAdj();
 	if (usingRealTimeOffline) offlineProgress.loop = setTimeout(timeWarpLoop, 0, true);
 	if (u2Mutations && u2Mutations.open) u2Mutations.openTree();
 

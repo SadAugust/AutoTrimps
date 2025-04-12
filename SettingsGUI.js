@@ -4546,11 +4546,19 @@ function initialiseAllSettings() {
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 
 		createSetting('timeWarpForceSave',
-			function () { return ('Force Time Warp Save') },
+			function () { return ('Time Warp Force Save') },
 			function () {
 				let description = "<p>Will save your game in its current state and retain your remaining Time Warp time.</p>";
 				return description;
 			}, 'action', null, '_timeWarpSave()', 'Time Warp', [0],
+			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
+
+		createSetting('timeWarpToggleSpeed',
+			function () { return ('Time Warp Toggle Speed') },
+			function () {
+				let description = "<p>If your Time Warp speed slider isn't limited to 0x speed it will set it to that, otherwise it will set it to unlimited speed.</p>";
+				return description;
+			}, 'action', null, '_timeWarpToggleSpeed()', 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
 	}
 	
@@ -5775,7 +5783,7 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 		class: 'col-xs-3 lowPad'
 	});
 
-	const containerStyle = timeWarp ? 'position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;' : 'display: block; font-size: 0.9vw; border-color: #5D5D5D;';
+	const containerStyle = timeWarp ? 'display: flex; justify-content: center; align-items: center; font-size: 1.1vw; height: auto; border-color: #5D5D5D; margin-top: 0.25vw;' : 'display: block; font-size: 0.9vw; border-color: #5D5D5D;';
 	const container = _createElement('DIV', {
 		style: containerStyle,
 		class: `toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn${setting === 2 ? 3 : setting}`,
@@ -5789,6 +5797,7 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 		'DIV',
 		{
 			id: `auto${label}Label${timeWarp}`,
+			style: `${timeWarp ? 'display: flex; justify-content: center; align-items: center; ' : ''}`,
 			onClick: `settingChanged('${id}', true)`
 		},
 		[elemText]
@@ -6087,7 +6096,7 @@ function _createBtnRowTW() {
 	const settingsRow = document.createElement('DIV');
 	settingsRow.setAttribute('class', 'row');
 	settingsRow.setAttribute('id', 'settingBtnTW');
-	settingsRow.setAttribute('style', 'display: block');
+	settingsRow.setAttribute('style', 'display: flex');
 
 	document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
 	const offlineProgressParent = document.getElementById('offlineProgressWrapper').parentNode;
@@ -6098,7 +6107,7 @@ function _createAutoJobsButtonTW() {
 	if (document.getElementById('autoJobsLabelTW') !== null) return;
 
 	const atJobInitial = _createButton('jobType', 'Jobs', getPageSetting('jobType'), 'autoTrimpSettings.jobType.description()', 'TW');
-	atJobInitial.style = 'width: 29%';
+	atJobInitial.style = 'width: 33%';
 	$('#settingBtnTW').append(atJobInitial);
 }
 
@@ -6106,6 +6115,7 @@ function _createAutoStructureButtonTW() {
 	if (document.getElementById('autoStructureTWParent') !== null) return;
 
 	const atStructureInitial = _createButton('buildingsType', 'Structure', getPageSetting('buildingsType'), 'autoTrimpSettings.buildingsType.description()', 'TW');
+	atStructureInitial.style = 'width: 32%';
 	$('#settingBtnTW').append(atStructureInitial);
 }
 
@@ -6140,7 +6150,7 @@ function _createAutoTrimpsButtonTW() {
 		'DIV',
 		{
 			id: 'atSettingsBtnTW',
-			style: 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D; height:auto; font-size: 1.1vw;',
+			style: 'display: flex; justify-content: center; align-items: center; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; margin-right: 0.5vw; width: 16.382vw; border-color: #5D5D5D; height:auto; font-size: 1.2vw;',
 			class: 'toggleConfigBtn noselect settingsBtn settingBtn4',
 			onclick: 'autoToggle();',
 			onmouseover: 'tooltip("AutoTrimp Settings", "customText", event, "Click to open the AutoTrimps Settings menu.")',

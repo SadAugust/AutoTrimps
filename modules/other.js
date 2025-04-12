@@ -450,6 +450,17 @@ function remakeTooltip() {
 	}
 }
 
+function _timeWarpSliderAdj() {
+	const twLimiter = document.getElementById('limitTimewarpSlider');
+	if (twLimiter) {
+		twLimiter.min = 0;
+	}
+
+	let loopTicks = game.global.timeWarpLimit * 2;
+	if (loopTicks <= 0 || loopTicks > 300) loopTicks = 300;
+	atConfig.timeWarp.loopTicks = loopTicks;
+}
+
 function _timeWarpSave() {
 	const { startTime, totalOfflineTime, ticksProcessed } = offlineProgress;
 
@@ -464,6 +475,17 @@ function _timeWarpSave() {
 
 		debug(`Game Saved! ${formatTimeForDescriptions(reduceBy / 1000)} of Time Warp left to process.`, `offline`);
 	}
+}
+
+function _timeWarpToggleSpeed() {
+	const slider = document.getElementById('limitTimewarpSlider');
+	if (game.global.timeWarpLimit == '0') {
+		slider.value = '21';
+	} else {
+		slider.value = '0';
+	}
+
+	offlineProgress.setLimit(slider);
 }
 
 function _timeWarpAutoSaveSetting() {

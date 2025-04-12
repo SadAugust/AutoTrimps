@@ -245,12 +245,19 @@ function timeWarpLoop(firstLoop = false) {
 		atConfig.timeWarp.loopTicks -= 5;
 	}
 
-	offlineProgress.loopTicks = atConfig.timeWarp.loopTicks;
 	offlineProgress.lastLoop = now;
+	let nextLoop = 0;
+	if (game.global.timeWarpLimit !== -1 && atConfig.timeWarp.loopTicks !== game.global.timeWarpLimit * 2) {
+		atConfig.timeWarp.loopTicks = game.global.timeWarpLimit * 2;
+		nextLoop = 200 - timeSpent;
+		if (nextLoop < 0) nextLoop = 0;
+		else offlineProgress.lastLoop += nextLoop;
+	}
+	offlineProgress.loopTicks = atConfig.timeWarp.loopTicks;
 
 	if (typeof steamCanvas !== 'undefined') steamCanvasContext.clearRect(0, 0, steamCanvas.width, steamCanvas.height);
 	if (atConfig.timeWarp.loopCount < offlineProgress.progressMax && usingRealTimeOffline) {
-		offlineProgress.loop = setTimeout(timeWarpLoop, 0);
+		offlineProgress.loop = setTimeout(timeWarpLoop, nextLoop);
 	} else {
 		offlineProgress.finish();
 	}
