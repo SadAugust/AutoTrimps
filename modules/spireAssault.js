@@ -61,7 +61,7 @@ function spireAssaultSettingsIndex(baseSettings) {
 }
 
 function spireAssault() {
-	if (game.stats.highestRadLevel.valueTotal() < 75) return;
+	if (autoBattle.sealed || game.stats.highestRadLevel.valueTotal() < 75) return;
 
 	const settingName = 'spireAssaultSettings';
 	const baseSettings = getPageSetting(settingName);

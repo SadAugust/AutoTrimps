@@ -412,7 +412,6 @@ function scryNever(scrySettings = _getScrySettings(), mapObject = getCurrentMapO
 		never_scry |= game.global.spireActive && scrySettings.Spire === 0;
 	}
 
-	//See if current OR next enemy is corrupted.
 	/* corrupt enemy checks */
 	const willOverkill = !game.global.mapsActive ? oneShotPower('S', 0, true) : false;
 
@@ -507,22 +506,25 @@ function scryTransition(scryStance = 'S', scrySettings = _getScrySettings(), bas
 	const valid_min = game.global.world >= min_zone && game.global.world > 60;
 	const valid_max = max_zone < 1 || (max_zone > 0 && game.global.world < max_zone);
 	const validMinMax = valid_min && valid_max && (!game.global.mapsActive || scrySettings.MinMaxWorld === 0);
+	const mapsActive = game.global.mapsActive;
+	const gridLength = mapsActive ? game.global.mapGridArray.length : game.global.gridArray.length;
+	const runningDomination = challengeActive('Domination') && currentEnemy.level === gridLength;
 
 	if (validMinMax) {
 		//Smooth transition to S before killing the target
 		if (transitionRequired) {
 			const xStance = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy)) ? 5 : 0;
 			const stances = [
-				{ stance: 'X', value: xStance },
-				{ stance: 'H', value: 1 }
+				{ stance: 'X', value: xStance, mult: 1 },
+				{ stance: 'H', value: 1, mult: 0.5 }
 			];
 
 			if (availableStances.includes('B')) {
-				stances.unshift({ stance: 'B', value: 3 }, { stance: 'XB', value: xStance });
+				stances.unshift({ stance: 'B', value: 3, mult: 0.5 }, { stance: 'XB', value: xStance, mult: 1 });
 			}
 
 			if (availableStances.includes('D')) {
-				stances.unshift({ stance: 'D', value: 2 });
+				stances.unshift({ stance: 'D', value: 2, mult: 4 });
 			}
 
 			const oneShotPowers = {};
@@ -534,9 +536,13 @@ function scryTransition(scryStance = 'S', scrySettings = _getScrySettings(), bas
 				if (critPower === 0 && !critSources.explosive) continue;
 				if (critPower === -1 && !critSources.reflect) continue;
 
-				for (let { stance, value } of stances) {
+				for (let { stance, value, mult } of stances) {
 					if (!oneShotPowers[stance]) {
 						oneShotPowers[stance] = oneShotPower(stance, 0, true);
+					}
+
+					if (runningDomination && baseStats.avgDamage * mult < currentEnemy.maxHealth * 0.05) {
+						continue;
 					}
 
 					if (wouldSurvive(stance, critPower, baseStats) && !oneShotPowers[stance]) {
@@ -554,7 +560,8 @@ function scryTransition(scryStance = 'S', scrySettings = _getScrySettings(), bas
 			return false;
 		}
 
-		const maxHits = getPageSetting('scryerMaxHits');
+		let maxHits = getPageSetting('scryerMaxHits');
+		if (runningDomination) maxHits = Math.min(maxHits, 20);
 		if (maxHits > 0) {
 			const avgDmg = baseStats.avgDamage / 2 + poisonDmg;
 			const hitsToKill = currentEnemy.maxHealth / avgDmg;
@@ -582,10 +589,14 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 	const checkWind = availableStances.includes('W') && (getEmpowerment() !== 'Wind' || shouldWindOverScryer(baseStats, currentEnemy));
 	let prefferedStance = availableStances.includes('D') ? 'D' : 'X';
 
-	if (availableStances.includes('S')) {
-		const oneShotDomination = oneShotPower(prefferedStance, 0, false);
+	const mapsActive = game.global.mapsActive;
+	const gridLength = mapsActive ? game.global.mapGridArray.length : game.global.gridArray.length;
+	const runningDomination = challengeActive('Domination') && currentEnemy.level === gridLength;
 
-		if (oneShotDomination > 0) {
+	if (availableStances.includes('S')) {
+		const oneShotDominance = oneShotPower(prefferedStance, 0, false);
+
+		if (oneShotDominance > 0) {
 			const stanceToCheck = checkWind ? 'W' : 'S';
 			const overkillRange = !game.global.mapsActive && liquifiedZone() ? 1 : maxOneShotPower();
 			if (oneShotPower(stanceToCheck, 0, false) >= overkillRange) {
@@ -595,16 +606,16 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 	}
 
 	const stances = [
-		{ stance: 'X', value: checkWind && prefferedStance !== 'W' ? 5 : 0 },
-		{ stance: 'H', value: 1 }
+		{ stance: 'X', value: checkWind && prefferedStance !== 'W' ? 5 : 0, mult: 1 },
+		{ stance: 'H', value: 1, mult: 0.5 }
 	];
 
 	if (availableStances.includes('B')) {
-		stances.unshift({ stance: 'B', value: 3 }, { stance: 'XB', value: 0 });
+		stances.unshift({ stance: 'B', value: 3, mult: 0.5 }, { stance: 'XB', value: 0, mult: 1 });
 	}
 
 	if (availableStances.includes('D')) {
-		stances.unshift({ stance: 'D', value: 2 });
+		stances.unshift({ stance: 'D', value: 2, mult: 4 });
 	}
 
 	if (!['X', 'D'].includes(prefferedStance) && availableStances.includes(prefferedStance)) {
@@ -619,7 +630,11 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 		if (critPower === 0 && !critSources.explosive) continue;
 		if (critPower === -1 && !critSources.reflect) continue;
 
-		for (let { stance, value } of stances) {
+		for (let { stance, value, mult } of stances) {
+			if (runningDomination && baseStats.avgDamage * mult < currentEnemy.maxHealth * 0.05) {
+				continue;
+			}
+
 			if (wouldSurvive(stance, critPower, baseStats)) {
 				safeSetStance(value);
 				return true;
@@ -627,6 +642,12 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 		}
 	}
 
-	// if it cannot survive the worst case scenario on any formation, attempt its luck on H stance
-	safeSetStance(1);
+	if (runningDomination && baseStats.avgDamage * stances[0].mult < currentEnemy.maxHealth * 0.05) {
+		if (availableStances.includes('D')) safeSetStance(2);
+		else safeSetStance(stances[0].value);
+		return;
+	}
+
+	/* if it cannot survive the worst case scenario on any formation, attempt its luck on H stance */
+	safeSetStance(0);
 }

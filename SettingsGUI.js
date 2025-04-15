@@ -1343,6 +1343,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Maximum hits that it would take for you to kill an enemy from full health. The script will use this for settings set to <b>Maybe</b> inputs.</p>";
 				description += "<p>This has a chance to stop you from smoothly transitioning to Scryer stance and missing out on bonuses when settings are set to their <b>Never<b> inputs.</p>";
+				if (game.stats.highestLevel.valueTotal() >= 215) description += "<p>When running the <b>Domination</b> challenge this will cap your max hits to 20 when fighting the last world or map cell.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 100</p>";
 				return description;
@@ -3921,7 +3922,7 @@ function initialiseAllSettings() {
 		createSetting('spireDominanceStance',
 			function () { return ('Force Dominance Stance') },
 			function () {
-				let description = "<p>Enabling this setting will force the script to only use Domination stance when fighting world enemies inside Spires.</p>";
+				let description = "<p>Enabling this setting will force the script to only use Dominance stance when fighting world enemies inside Spires.</p>";
 				description += "<p><b>This setting will only work in active Spires.</b></p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
@@ -3995,7 +3996,7 @@ function initialiseAllSettings() {
 		createSetting('spireDominanceStanceC2',
 			function () { return (`${_getChallenge2Info()}: Force Dominance Stance`) },
 			function () {
-				let description = "<p>Enabling this setting will force the script to only use Domination stance when fighting world enemies inside Spires.</p>";
+				let description = "<p>Enabling this setting will force the script to only use Dominance stance when fighting world enemies inside Spires.</p>";
 				description += "<p><b>This setting will only work in active Spires.</b></p>";;
 				description += `<p><b>Recommended:</b> Off</p>`;
 				return description;
@@ -4069,7 +4070,7 @@ function initialiseAllSettings() {
 		createSetting('spireDominanceStanceDaily',
 			function () { return ('Daily: Force Dominance Stance') },
 			function () {
-				let description = "<p>Enabling this setting will force the script to only use Domination stance when fighting world enemies inside Spires.</p>";
+				let description = "<p>Enabling this setting will force the script to only use Dominance stance when fighting world enemies inside Spires.</p>";
 				description += "<p><b>This setting will only work in active Spires.</b></p>";;
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;

@@ -796,10 +796,11 @@ function calcEnemyAttackCore(worldType = _getWorldType(), zone = _getZone(worldT
 	} else if (game.global.universe === 1) {
 		if (worldType === 'world') {
 			const enemy = game.global.gridArray[cell - 1];
+			const improbability = name === 'Improbability' || name === 'Omnipotrimp';
 			if (game.global.spireActive) {
 				attack = calcSpire('attack', cell, name);
-			} else if (gridInitialised && mutations.Corruption.active() && (enemy.mutation || enemy.empowerment)) {
-				if (enemy.mutation !== 'Magma') attack = corruptionBaseStats(cell - 1, zone, 'attack', true);
+			} else if (gridInitialised && mutations.Corruption.active() && (enemy.mutation || enemy.empowerment || improbability)) {
+				if (enemy.mutation !== 'Magma' || improbability) attack = corruptionBaseStats(cell - 1, zone, 'attack', true, name);
 
 				if (enemy.empowerment) attack *= 1.2;
 				if (enemy.corrupted === 'corruptStrong') attack *= 2;
@@ -895,8 +896,7 @@ function calcEnemyAttack(worldType = _getWorldType(), zone = _getZone(worldType)
 
 	if (challengeActive('Domination')) {
 		if (cell === 100 || worldType !== 'world') {
-			attack *= 2.5;
-			if (worldType === 'world' && game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
+			if (worldType === 'world' && game.global.usingShriek && zone === game.global.world) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
 		} else {
 			attack /= 10;
 		}
@@ -983,10 +983,11 @@ function calcEnemyHealthCore(worldType = _getWorldType(), zone = _getZone(worldT
 	} else if (game.global.universe === 1) {
 		if (worldType === 'world') {
 			const enemy = game.global.gridArray[cell - 1];
+			const improbability = name === 'Improbability' || name === 'Omnipotrimp';
 			if (game.global.spireActive) {
 				health = calcSpire('health', cell, name);
-			} else if (gridInitialised && mutations.Corruption.active() && (enemy.mutation || enemy.empowerment)) {
-				if (enemy.mutation !== 'Magma') health = corruptionBaseStats(cell - 1, zone, 'health', true);
+			} else if (gridInitialised && mutations.Corruption.active() && (enemy.mutation || enemy.empowerment || improbability)) {
+				if (enemy.mutation !== 'Magma' || improbability) health = corruptionBaseStats(cell - 1, zone, 'health', true, name);
 
 				if (enemy.empowerment) health *= 4;
 				if (enemy.corrupted === 'corruptTough') health *= 5;
@@ -1058,7 +1059,10 @@ function calcEnemyHealth(worldType = _getWorldType(), zone = _getZone(worldType)
 		if (cell === 100 || worldType !== 'world') health *= 7.5;
 		else health /= 10;
 	}
-	if (challengeActive('Lead')) health *= zone % 2 === 0 ? 5 : 1 + 0.04 * game.challenges.Lead.stacks;
+
+	if (challengeActive('Lead')) {
+		health *= zone % 2 === 0 ? 5 : 1 + 0.04 * game.challenges.Lead.stacks;
+	}
 
 	return health;
 }
@@ -1101,14 +1105,13 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	if (leadCheck) targetZone++;
 
 	if (worldType === 'world') {
-		let customHealth;
 		let enemyName = 'Turtlimp';
-
 		if (liquifiedZone()) enemyName = 'Liquimp';
 		else if (game.global.universe === 1 && targetZone > 229) enemyName = 'Omnipotrimp';
 		else if ((game.global.universe === 2 && targetZone >= 20) || targetZone >= 59) enemyName = 'Improbability';
 		else if (targetZone === 5 || targetZone === 10 || (targetZone >= 15 && targetZone <= 58)) enemyName = 'Blimp';
 
+		let customHealth;
 		let cell = enemyName === 'Liquimp' ? 1 : 100;
 
 		if (game.global.universe === 1) {
@@ -1118,6 +1121,7 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 			if (game.global.spireActive) customHealth = calcSpire('health');
 			else if (targetZone > 200) customHealth = calcMutationStats(targetZone, 'health');
 		}
+
 		enemyHealth = calcEnemyHealth(worldType, targetZone, cell, enemyName, customHealth) * difficulty;
 		universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, cell, worldType, difficulty, 'gamma', false, 1, true) : 'X';
 	} else if (worldType === 'map') {
@@ -1140,7 +1144,6 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 		}
 
 		const tenacityLevel = getPerkLevel('Tenacity');
-
 		if (game.global.universe === 2 && tenacityLevel > 0) {
 			const tenacityMult = game.portal.Tenacity.getMult();
 			const tenacityMaxMult = Math.pow(1.4000000000000001, tenacityLevel + getPerkLevel('Masterfulness'));
@@ -1168,8 +1171,15 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	if (worldType !== 'map' && challengeActive('Storm') && game.challenges.Storm.mutations > 0) ourBaseDamage *= game.challenges.Storm.getGammaMult();
 
 	if (checkOutputs) _calcHDRatioDebug(ourBaseDamage, enemyHealth, universeSetting, worldType);
+	let hdRatio = enemyHealth / ourBaseDamage;
+	if (hdRatio > 1 && challengeActive('Domination')) {
+		const dStance = game.upgrades.Dominance.done;
+		if (dStance && hdRatio > 80) hdRatio = Infinity;
+		else if (!dStance && hdRatio > 20) hdRatio = Infinity;
+		else hdRatio = (enemyHealth + enemyHealth * 0.05) / ourBaseDamage;
+	}
 
-	return enemyHealth / ourBaseDamage;
+	return hdRatio;
 }
 
 function calcHitsSurvived(targetZone = _getZone(), worldType = _getWorldType(), difficulty = 1, extraGyms = 0, extraItem = new ExtraItem(), checkOutputs) {
@@ -1235,10 +1245,11 @@ function _calcHitsSurvivedAttack(worldType, targetZone) {
 	return customAttack;
 }
 
-function corruptionBaseStats(cell = game.global.lastClearedCell + 1, targetZone = game.global.world, type = 'attack', ignoreMultiplier = false) {
+function corruptionBaseStats(cell = game.global.lastClearedCell + 1, targetZone = game.global.world, type = 'attack', ignoreMultiplier = false, name = 'Chimp') {
 	cell = game.global.gridArray[cell];
 	const typeFunction = type === 'attack' ? calcEnemyBaseAttack : calcEnemyBaseHealth;
-	let baseStats = typeFunction('world', targetZone, cell.level, 'Chimp', true);
+	if (name !== 'Improbability' && name !== 'Omnipotrimp') name = 'Chimp';
+	let baseStats = typeFunction('world', targetZone, cell.level, name, true);
 
 	if (type === 'attack') {
 		if (!ignoreMultiplier) {
@@ -1264,8 +1275,8 @@ function calcCorruptedStats(targetZone = game.global.world, type = 'attack') {
 	let stat;
 
 	gridArray.forEach((grid, i) => {
-		if (grid.mutation) {
-			const enemyStat = corruptionBaseStats(i, targetZone, type, i);
+		if (grid.mutation || grid.name === 'Improbability' || grid.name === 'Omnipotrimp') {
+			const enemyStat = corruptionBaseStats(i, targetZone, type, undefined, grid.name);
 			stat = Math.max(enemyStat, stat || 0);
 		}
 	});
