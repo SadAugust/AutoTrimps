@@ -59,3 +59,8 @@
 	border: 1px solid #4b4a4a;
 	background-color: #202020;
 }
+
+.litScroll {
+	overflow-y: scroll;
+	height: 30.5vw;
+}
