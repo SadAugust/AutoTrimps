@@ -629,7 +629,7 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		}
 
 		const trimpAttack = saveData.atk * saveData.gammaMult * trimpEqualityModifier * saveData.critDamage;
-		if (enemyStats.health > trimpAttack * attackMult) {
+		if (enemyStats.health > trimpAttack * attackMult && saveData.empowerment !== 'Poison') {
 			continue;
 		}
 
