@@ -270,7 +270,7 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 	}
 
 	//Filter out the challenges that aren't unlocked yet.
-	const dualC2s = ['Enlightened', 'Paralysis', 'Nometal', 'Topology', 'Waze', 'Toxad'];
+	const dualC2s = ['Waze', 'Enlightened', 'Nometal', 'Toxad', 'Paralysis', 'Topology'];
 	const specialChallenges = ['Frigid', 'Mayhem', 'Pandemonium', 'Desolation'];
 
 	obj = Object.entries(obj).reduce((newObj, [key, val]) => {
@@ -1132,12 +1132,6 @@ function updateATVersion() {
 		}
 
 		if (versionNumber < '6.5.72') {
-			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
-
-			if (typeof tempSettings['c2Fused'] !== 'undefined') {
-				autoTrimpSettings.c2Fused.value = tempSettings.c2Fused.enabled ? 2 : 0;
-			}
-
 			convertSetting('TrapTrimps', 'enabled', 'trapTrimps', 'enabled');
 			convertSetting('TrapTrimps', 'enabledU2', 'trapTrimps', 'enabledU2');
 			convertSetting('ForceAbandon', 'enabled', 'forceAbandon', 'enabled');

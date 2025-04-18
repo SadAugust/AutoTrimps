@@ -909,8 +909,9 @@ function _dailyPortalModsSave() {
 function c2RunnerDisplay(elem) {
 	MODULES.popups.mazWindowOpen = true;
 
-	const baseText = `Here you can select the challenges you would like ${_getChallenge2Info()} Runner to complete and the zone you'd like the challenge to finish at.`;
-	const fusedText = autoTrimpSettings.c2Fused.universe.indexOf(atConfig.settingUniverse) !== -1 ? `<br>Fused challenges are prioritised over their regular counterparts when starting challenges.` : '';
+	const displayZone = getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 1;
+	const baseText = `Here you can select the challenges you would like ${_getChallenge2Info()} Runner to complete${displayZone ? ` and the zone you'd like the challenge to finish at` : ``}.`;
+	const fusedText = `<br>Fused challenges are prioritised over their regular counterparts when starting challenges.`;
 
 	let tooltipText = `
 		<p>Welcome to ${_getChallenge2Info()} Runner Settings! 
@@ -943,7 +944,7 @@ function c2RunnerDisplay(elem) {
 
 	tooltipText += `<div id='baseChallenges'>`;
 	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Challenges</span><br>`;
-	const elemWidth = 'calc((100% - 1.4em - 2px) / 6.1)';
+	const elemWidth = `calc((100% - 1.4em - 2px) / ${displayZone ? '6.1' : '3'})`;
 
 	let rowData = '';
 	let rows = 0;
@@ -985,12 +986,14 @@ function c2RunnerDisplay(elem) {
 				<span style="float: right;">z${challengeLevel}</span>
 			</div>&nbsp;`;
 
-		rowData += `
+		if (displayZone) {
+			rowData += `
 		<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
 			<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>Finish Zone:
 			<input id='${item}Zone' type='number' step='1' value='${setting && setting.zone ? setting.zone : 0}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
 			</span>
 		</div>`;
+		}
 
 		total++;
 	}
@@ -1007,7 +1010,7 @@ function c2RunnerDisplay(elem) {
 
 	elem.style.left = '30.5%';
 	elem.style.top = '25%';
-	elem.classList = `tooltipExtraCustom60`;
+	elem.classList = `tooltipExtraCustom${displayZone ? 6 : 3}0`;
 	const ondisplay = () => _verticalCenterTooltip();
 
 	return [elem, tooltipText, costText, ondisplay];
@@ -1016,17 +1019,22 @@ function c2RunnerDisplay(elem) {
 function _c2RunnerSave() {
 	const setting = getPageSetting('c2RunnerSettings', atConfig.settingUniverse);
 	const items = Array.from(document.getElementsByClassName('btnItem'));
+	const checkZone = getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 1;
 
 	items.forEach((item) => {
 		const name = item.dataset.hiddenText;
 		setting[name] = setting[name] || {};
 		setting[name].enabled = item.classList.contains('btnItemEquipped');
 
-		const zoneElem = document.getElementById(name + 'Zone');
-		let zone = parseInt(zoneElem.value, 10);
-		if (zone > 810) zone = 810;
-		zone = Number.isInteger(zone) ? zone : 0;
-		setting[name].zone = zone;
+		if (checkZone) {
+			const zoneElem = document.getElementById(name + 'Zone');
+			let zone = parseInt(zoneElem.value, 10);
+			if (zone > 810) zone = 810;
+			zone = Number.isInteger(zone) ? zone : 0;
+			setting[name].zone = zone;
+		} else {
+			setting[name].zone = setting[name].zone || 0;
+		}
 	});
 
 	setPageSetting('c2RunnerSettings', setting, atConfig.settingUniverse);

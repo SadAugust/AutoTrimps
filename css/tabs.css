@@ -71,6 +71,23 @@ ul.tab li a:hover {
 	}
 }
 
+._settingBtnParent {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 0.6vw;
+	margin-bottom: 1vw;
+	width: calc((100% - (0.6vw * 7) - 0.6vw) / 7);
+	min-height: 1.51vw;
+}
+
+._settingBtn {
+	position: relative;
+	padding-left: 5px;
+	font-size: 1vw;
+	height: auto;
+	min-height: 1.51vw;
+}
+
 #tipText .autoEggs,
 #autoEggs.settingBtntrue {
 	-webkit-animation: eggGradient 3s infinite;

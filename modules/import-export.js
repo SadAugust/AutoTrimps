@@ -673,15 +673,24 @@ function _displayC2Table(tooltipDiv, undefined, universe = atConfig.settingUnive
 		c3: ['Unlucky', 'Storm', 'Unbalance', 'Quest', 'Downsize', 'Transmute', 'Duel', 'Wither', 'Glass', 'Smithless', 'Berserk', 'Trappapalooza']
 	};
 
-	const runnerLists = {
-		c2: c2RunnerChallengeOrder(1),
-		c3: c2RunnerChallengeOrder(2)
-	};
-
-	const challengesToRun = {
+	const challengeListData = {
 		c2: _c2RunnerCheck(false, 1),
 		c3: _c2RunnerCheck(false, 2)
 	};
+
+	const runnerLists = Object.entries(challengeListData)
+		.filter(([, item]) => item !== undefined)
+		.reduce((acc, [key, item]) => {
+			acc[key] = item.challengeArray;
+			return acc;
+		}, {});
+
+	const challengesToRun = Object.entries(challengeListData)
+		.filter(([, item]) => item !== undefined)
+		.reduce((acc, [key, item]) => {
+			acc[key] = item.toRunList;
+			return acc;
+		}, {});
 
 	const challengePercentages = {
 		c2: {
@@ -761,7 +770,7 @@ function _displayC2Table(tooltipDiv, undefined, universe = atConfig.settingUnive
 				percent: bonusPercent,
 				zone: game.c2[item],
 				percentzone: `${challengePercent.toFixed(2)}%`,
-				c2runner: runnerList.includes(item) ? '✅' : '❌',
+				c2runner: challengesToRun && runnerList.includes(item) ? '✅' : '❌',
 				runChallenge: challengesToRun && challengesToRun.includes(item) ? '✅' : '❌',
 				color: getChallengeColor(challengePercent, highPct, midPct)
 			};

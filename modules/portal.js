@@ -387,40 +387,34 @@ function _autoPortalUniverseSwap() {
 function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 	const highestZone = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	if ((universe === 1 && highestZone < 65) || (universe === 2 && highestZone < 50)) return;
-	if (!getPageSetting('c2RunnerStart', universe)) return;
+	if (!portalCheck && !getPageSetting('c2RunnerStart', universe)) return;
+	const challengeOrders = {
+		dualC2: ['Waze', 'Enlightened', 'Nometal', 'Toxad', 'Paralysis', 'Topology'],
+		dualC3: [],
+		1: ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Coordinate', 'Trimp', 'Obliterated', 'Eradicated', 'Mapology', 'Trapper'],
+		2: ['Unlucky', 'Storm', 'Unbalance', 'Quest', 'Downsize', 'Transmute', 'Duel', 'Wither', 'Glass', 'Smithless', 'Berserk', 'Trappapalooza']
+	};
+
+	/* insert dual challenges into the item list */
+	challengeOrders[universe] = [...challengeOrders[`dualC${universe + 1}`].filter((item) => !challengeOrders[universe].includes(item)), ...challengeOrders[universe]];
 
 	const runType = getPageSetting('c2RunnerMode', universe);
 	const c2RunnerPortal = getPageSetting('c2RunnerPortal', universe);
 	const c2RunnerPercent = runType === 0 ? getPageSetting('c2RunnerPercent', universe) / 100 : 1;
 	if (runType === 0 && (c2RunnerPortal <= 0 || c2RunnerPercent <= 0)) return;
 
-	const challengeArray = [];
 	const unlockedC2s = filterAndSortChallenges(challengesUnlockedObj(universe, false, false), 'c2');
 	const c2Setting = getPageSetting('c2RunnerSettings', universe);
-	const runFused = getPageSetting('c2Fused', universe);
 
-	if (runType === 0) {
-		if (universe === 1 && runFused > 0) {
-			if (highestZone >= 45) challengeArray.push('Enlightened');
-			if (highestZone >= 180) challengeArray.push('Waze');
-			if (highestZone >= 180) challengeArray.push('Toxad');
-			if (highestZone >= 130) challengeArray.push('Paralysis');
-			if (highestZone >= 145) challengeArray.push('Nometal');
-			if (highestZone >= 150) challengeArray.push('Topology');
-		}
-
-		const runOrder = c2RunnerChallengeOrder(universe);
-		const unlockedChallenges = filterAndSortChallenges(challengesUnlockedObj(universe), 'c2Runner');
-		const orderedChallenges = runOrder.filter((challenge) => unlockedChallenges.includes(challenge));
-		challengeArray.push(...orderedChallenges);
-	} else if (runType === 1) {
-		for (let challenge in c2Setting) {
-			if (typeof c2Setting[challenge] === 'undefined') continue;
-			if (!c2Setting[challenge].enabled) continue;
-			if (c2Setting[challenge].zone <= 0) continue;
-			challengeArray.push(challenge);
-		}
+	let challengeArray = [];
+	for (let challenge in c2Setting) {
+		if (typeof c2Setting[challenge] === 'undefined') continue;
+		if (unlockedC2s.indexOf(challenge) === -1) continue;
+		if (!c2Setting[challenge].enabled) continue;
+		if (runType === 1 && c2Setting[challenge].zone <= 0) continue;
+		challengeArray.push(challenge);
 	}
+	challengeArray = challengeOrders[universe].filter((item) => challengeArray.includes(item) && unlockedC2s.includes(item));
 
 	const toRunList = [];
 	/* 	looping through challenge array to figure out if things should be run. */
@@ -435,7 +429,6 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 		for (let y = 0; y < challengeList.length; y++) {
 			if (challengeLevel > 0) {
 				const secondChallenge = game.c2[challengeList[y]];
-				if (runFused === 1 && Math.max(challengeLevel, secondChallenge) / highestZone < c2RunnerPercent) continue;
 				challengeLevel = Math.min(challengeLevel, secondChallenge);
 			} else {
 				challengeLevel += game.c2[challengeList[y]];
@@ -456,14 +449,14 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 		toRunList.push(challengeName);
 	}
 
-	return toRunList;
+	return { challengeArray, toRunList };
 }
 
 function _autoPortalC2() {
 	if (!game.global.portalActive || !portalWindowOpen) return;
 
 	const challenge = _c2RunnerCheck(true);
-	if (!challenge) return;
+	if (!challenge || typeof challenge === 'object') return;
 
 	const universePrefix = portalUniverse === 2 ? 'C3' : 'C2';
 	if (Array.isArray(challenge)) return `${universePrefix} Runner: All ${universePrefix}'s above level threshold!`;
@@ -473,7 +466,7 @@ function _autoPortalC2() {
 	return `${universePrefix} Runner: Starting ${challenge}`;
 }
 
-function _autoPortalDaily(challenge, portalUniverse, skipDaily = false) {
+function _autoPortalDaily(challenge, portalUniverse) {
 	const dailyAvailable = document.getElementById('challengeDaily') !== null;
 	checkCompleteDailies();
 	const dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map((item) => item.replace(/-/g, ''));

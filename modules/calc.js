@@ -313,7 +313,9 @@ function calcOurHealth(stance = false, worldType = _getWorldType(), realHealth =
 		if (![0, 5].includes(game.global.formation)) health /= game.global.formation === 1 ? 4 : 0.5;
 
 		const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
-		if (typeof stance === 'number') stance = formationLetter[Math.floor(stance)];
+		if (typeof stance === 'number') {
+			stance = formationLetter[Math.floor(stance)];
+		}
 
 		if (stance) {
 			const stanceMultipliers = {

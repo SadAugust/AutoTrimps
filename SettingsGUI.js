@@ -235,8 +235,8 @@ function initialiseAllSettings() {
 			}, 'boolean', null, null, 'Core', [0]);
 
 		let $pauseScript = document.getElementById('pauseScript');
-		$pauseScript.parentNode.style.setProperty('position', 'fixed');
-		$pauseScript.parentNode.style.setProperty('right', '1vw');
+		$pauseScript.parentNode.style.setProperty('float', 'right');
+		$pauseScript.parentNode.style.setProperty('margin-right', '0.6vw');
 		$pauseScript.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoHeirlooms',
@@ -373,8 +373,8 @@ function initialiseAllSettings() {
 			'multitoggle', 0, null, 'Core', [0]);
 
 		let $universeSetting = document.getElementById('universeSetting');
-		$universeSetting.parentNode.style.setProperty('position', 'fixed');
-		$universeSetting.parentNode.style.setProperty('right', '1vw');
+		$universeSetting.parentNode.style.setProperty('float', 'right');
+		$universeSetting.parentNode.style.setProperty('margin-right', '0.6vw');
 		$universeSetting.parentNode.style.setProperty('margin-left', '0');
 
 		createSetting('autoPortal',
@@ -568,10 +568,10 @@ function initialiseAllSettings() {
 			function () { return (game.global.totalPortals > 0) });
 
 		let $autoPortalForce = document.getElementById('autoPortalForce');
-		$autoPortalForce.parentNode.style.setProperty('position', 'fixed');
-		$autoPortalForce.parentNode.style.setProperty('right', '1vw');
-		$autoPortalForce.parentNode.style.setProperty('margin-left', '0');
-
+		$autoPortalForce.parentNode.style.setProperty('float', 'right');
+		$autoPortalForce.parentNode.style.setProperty('margin-right', '0.6vw');
+		$autoPortalForce.parentNode.style.setProperty('margin-left', '0.6vw');
+		
 		createSetting('autoEggs',
 			function () { return ('Auto Eggs') },
 			function () {
@@ -581,10 +581,8 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, 'Core', [0],
 			function () { return (!game.worldUnlocks.easterEgg.locked) });
 
-		let $eggSettings = document.getElementById('autoEggs');
-		$eggSettings.parentNode.style.setProperty('float', 'right');
-		$eggSettings.parentNode.style.setProperty('margin-right', '15.3vw');
-		$eggSettings.parentNode.style.setProperty('margin-left', '0');
+		let $autoEggs = document.getElementById('autoEggs');
+		$autoEggs.parentNode.style.setProperty('float', 'right');	
 	}
 	
 	const displayJobs = true;
@@ -2195,8 +2193,8 @@ function initialiseAllSettings() {
 				description += `<p><b>Yellow</b><br>You should consider updating yellow challenges.</p>`;
 				description += `<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>`;
 				description += `<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>`;
-				description += `<p>The <b>${_getChallenge2Info()} Runner</b> heading indicates which challenges will be run when using the <b>${_getChallenge2Info()} Runner: Percent</b> setting.</p>`;
-				description += `<p>The <b>Auto Portal</b> heading indicates which challenges will be started when Auto Portaling. They run in order of difficulty.</p>`;
+				description += `<p>The <b>${_getChallenge2Info()} Runner</b> heading indicates which challenges <b>${_getChallenge2Info()} Runner</b> will run. These can be enabled or disabled using the <b>${_getChallenge2Info()} Runner Settings</b> setting.</p>`;
+				description += `<p>The <b>Auto Portal</b> heading indicates which challenges will be started when Auto Portaling. They run in order of the difficulty displayed in this table.</p>`;
 				return description;
 			}, 'infoclick', null, 'importExportTooltip("c2table")', 'C2', [0]);
 
@@ -2239,8 +2237,10 @@ function initialiseAllSettings() {
 		createSetting('c2RunnerStart',
 			function () { return `${_getChallenge2Info()} Runner` },
 			function () {
-				let description = `<p>Enable this if you want to use ${_getChallenge2Info()} running features to automatically start running ${_getChallenge2Info()}'s when portaling in an effort to maintain your ${_getChallenge2Info()} score</p>`;
-				description += `<p>When enabled the <b>Finish ${_getChallenge2Info()}</b> setting will be disabled.</p>`;
+				const c2Name = _getChallenge2Info();
+				let description = `<p>Enable this if you want to use ${c2Name} running features to automatically start running ${c2Name}'s when portaling in an effort to maintain your ${c2Name} score</p>`;
+				description += `<p>When enabled the <b>Finish ${c2Name}</b> setting will be disabled.</p>`;
+				description += `<p>Use the <b>${c2Name} Runner Settings</b> setting to select which ${c2Name}'s you would like this to run.</p>`;
 				description += `<p><b>Recommended:</b> On</p>`;
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
@@ -2250,7 +2250,7 @@ function initialiseAllSettings() {
 			function () {
 				const c2Name = _getChallenge2Info();
 				let description = `<p>Toggles between the two modes that ${c2Name} Runner can use for selecting which challenge to start.</p>`;
-				description += `<p><b>${c2Name} Runner: Percent</b><br>Will run ${c2Name}s when they are below a set percentage of your HZE.</b><br>For a list of challenges that this will run see the ${c2Name} Table.</p>`;
+				description += `<p><b>${c2Name} Runner: Percent</b><br>Will run ${c2Name}s when they are below a set percentage of your HZE.</b><br>To setup which challenges this will run use the <b>${c2Name} Runner Settings</b> setting.</p>`;
 				description += `<p><b>${c2Name} Runner Set Values</b><br>Uses the <b>${c2Name} Runner Settings</b> popup settings and runs enabled challenges when they are below the designated end zone.</p>`;
 				description += `<p>If using <b>${c2Name} Runner Set Values</b> then the challenge will only be finished if the challenge is enabled and a zone above 0 has been set.</p>`;
 				description += `<p><b>Recommended:</b> ${c2Name} Runner: Percent</p>`;
@@ -2269,6 +2269,34 @@ function initialiseAllSettings() {
 				return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 1)
 			});
 
+		createSetting('c2RunnerSettingsPercent',
+			function () { return (`${_getChallenge2Info()} Runner Settings`) },
+			function () {
+				let description = `<p>Here you can enable the challenges you would like ${_getChallenge2Info()} Runner to complete.</p>`;
+				description += `<p><b>Click to adjust settings.</b></p>`;
+				return description;
+			}, 'mazArray', {}, 'importExportTooltip("c2Runner")', 'C2', [1, 2],
+			function () {
+				return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0)
+			});
+
+		createSetting('c2RunnerEndMode',
+			function () {
+				const hze = game.stats.highestLevel.valueTotal();
+				const portalOptions = [`${_getChallenge2Info()} Runner: End Challenge`, `${_getChallenge2Info()} Runner: Portal`, `${_getChallenge2Info()} Runner: Portal After Voids`];
+				if (atConfig.settingUniverse === 1 && hze >= 230) portalOptions.push(`${_getChallenge2Info()} Portal After Poison Voids`);
+				return portalOptions;
+			},
+			function () {
+				let description = `<p>This setting will decide the action that <b>${_getChallenge2Info()} Runner</b> does when it finishes your current challenge.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner: End Challenge</b><br> Will end the challenge and continue your run on as normal.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner: Portal</b><br> Will automatically portal once you reach your ${_getChallenge2Info()} end zone.</p>`;
+				description += `<p><b>${_getChallenge2Info()} Runner: Portal After Voids</b><br> Once you reach your ${_getChallenge2Info()} end zone this will abandon your challenge, then run voids maps and portal afterwards.</p>`;
+				description += `<p><b>Recommended:</b> ${_getChallenge2Info()} Runner: Portal</p>`;
+				return description;
+			}, 'multitoggle', 1, null, 'C2', [1, 2],
+			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse)) });
+		
 		createSetting('c2RunnerPortal',
 			function () { return (_getChallenge2Info() + ' Runner: End Zone') },
 			function () {
@@ -2291,36 +2319,6 @@ function initialiseAllSettings() {
 				description += `<p><b>Recommended:</b> 85</p>`;
 				return description;
 			}, 'value', 0, null, 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0) });
-
-		createSetting('c2RunnerEndMode',
-			function () {
-				const hze = game.stats.highestLevel.valueTotal();
-				const portalOptions = [`${_getChallenge2Info()} Runner: End Challenge`, `${_getChallenge2Info()} Runner: Portal`, `${_getChallenge2Info()} Runner: Portal After Voids`];
-				if (atConfig.settingUniverse === 1 && hze >= 230) portalOptions.push(`${_getChallenge2Info()} Portal After Poison Voids`);
-				return portalOptions;
-			},
-			function () {
-				let description = `<p>This setting will decide the action that <b>${_getChallenge2Info()} Runner</b> does when it finishes your current challenge.</p>`;
-				description += `<p><b>${_getChallenge2Info()} Runner: End Challenge</b><br> Will end the challenge and continue your run on as normal.</p>`;
-				description += `<p><b>${_getChallenge2Info()} Runner: Portal</b><br> Will automatically portal once you reach your ${_getChallenge2Info()} end zone.</p>`;
-				description += `<p><b>${_getChallenge2Info()} Runner: Portal After Voids</b><br> Once you reach your ${_getChallenge2Info()} end zone this will abandon your challenge, then run voids maps and portal afterwards.</p>`;
-				description += `<p><b>Recommended:</b> ${_getChallenge2Info()} Runner: Portal</p>`;
-				return description;
-			}, 'multitoggle', 1, null, 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse)) });
-
-		createSetting('c2Fused',
-			function () { return ([`Fused ${_getChallenge2Info()}s: Off`, `Fused ${_getChallenge2Info()}s: Below %`, `Fused ${_getChallenge2Info()}s: Any %`]) },
-			function () {
-				const c2Name = _getChallenge2Info();
-				let description = `<p>Will allow ${c2Name} Runner to do fused versions of ${c2Name}'s rather than normal versions to reduce time spent running ${c2Name}s.</p>`;
-				description += `<p><b>Fused ${c2Name}'s: Off</b><br>Stops ${c2Name} Runner from starting any Fused ${c2Name} runs.</p>`;
-				description += `<p><b>Fused ${c2Name}'s: Below %</b><br>Will run ${c2Name}s when both challenges are below your <b>${c2Name} Runner: % value</b>.</p>`;
-				description += `<p><b>Fused ${c2Name}'s: Any %</b><br>Will run ${c2Name}s when either challenge is below your <b>${c2Name} Runner: % value.</b></p>`;
-				description += `<p><b>Recommended:</b> Fused ${_getChallenge2Info()}s: Any %</p>`;
-				return description;
-			}, 'multitoggle', 0, null, 'C2', [1],
 			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0) });
 
 		createSetting('duel',
@@ -5021,14 +5019,14 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 	const parentAttributes = {
 		id: `${id}Parent`,
-		style: 'display: inline-block; vertical-align: top; margin-left: 0.6vw; margin-bottom: 1vw; width: 13.50vw; min-height: 1.51vw;'
+		class: '_settingBtnParent'
 	};
 
 	const btnName = name();
 
 	const btnAttributes = {
 		id: id,
-		style: `position: relative; padding-left: 5px; font-size: 1vw; height: auto; min-height: 1.51vw;`,
+		class: `_settingBtn`,
 		onmouseover: `tooltip("${btnName}", "customText", event, "${description()}")`,
 		onmouseout: 'tooltip("hide")',
 		innerHTML: btnName
@@ -5039,23 +5037,23 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			btnAttributes.onclick = `settingChanged("${id}")`;
 		},
 		value: () => {
-			btnAttributes.class = 'noselect settingsBtn btn-info';
+			btnAttributes.class = '_settingBtn noselect settingsBtn btn-info';
 			btnAttributes.onclick = `autoSetValueToolTip("${id}", "${name()}", "${type === 'multiValue'}", "${type === 'valueNegative'}")`;
 		},
 		textValue: () => {
-			btnAttributes.class = 'noselect settingsBtn btn-info';
+			btnAttributes.class = '_settingBtn noselect settingsBtn btn-info';
 			btnAttributes.onclick = `autoSetTextToolTip("${id}", "${name()}", ${type === 'multiTextValue'})`;
 		},
 		dropdown: () => {
 			btnAttributes.onmouseout = 'tooltip("hide")';
-			btnAttributes.class = 'select2';
+			btnAttributes.class = '_settingBtn select2';
 			parentAttributes.onmouseover = `tooltip("${name()}", "customText", event, "${description()}")`;
 			parentAttributes.onmouseout = 'tooltip("hide")';
 			parentAttributes.onchange = `settingChanged("${id}")`;
 		},
 		dropdownMulti: () => {
 			btnAttributes.onmouseout = 'tooltip("hide")';
-			btnAttributes.class = 'select2 select2-multi';
+			btnAttributes.class = '_settingBtn select2 select2-multi';
 			parentAttributes.onmouseover = `tooltip("${name()}", "customText", event, "${description()}")`;
 			parentAttributes.onmouseout = 'tooltip("hide")';
 			parentAttributes.onchange = `settingChanged("${id}")`;
@@ -5065,8 +5063,8 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			btnAttributes.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]['value']];
 		},
 		action: () => {
-			btnAttributes.style += 'color: black; background-color: #6495ed;';
-			btnAttributes.class = 'noselect settingsBtn settingBtn3';
+			btnAttributes.style = 'color: black; background-color: #6495ed;';
+			btnAttributes.class = '_settingBtn noselect settingsBtn';
 			btnAttributes.onclick = list;
 		}
 	};
@@ -5083,7 +5081,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	}
 
 	if (id === 'dailyPortal') {
-		parentAttributes.class = 'toggleConfigBtnLocal';
+		parentAttributes.class = '_settingBtnParent toggleConfigBtnLocal';
 		parentAttributes.style += 'max-height: 3vh; border-bottom: 1px solid black !important;';
 	}
 
@@ -5099,7 +5097,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		const autoPortalSettings = _createElement('DIV', {
 			id: 'autoPortalSettingsBtn',
 			onclick: 'importExportTooltip("dailyAutoPortal")',
-			class: 'settingsBtnLocalCogwheel',
+			class: '_settingBtn settingsBtnLocalCogwheel',
 			style: 'margin-left:-1px; line-height: normal; font-size: 1.1vw;'
 		});
 		const autoPortalSettingsButton = _createElement('SPAN', {
@@ -5137,7 +5135,7 @@ function _autoPortalTimeoutCheck(id) {
 	const portalSettings = ['autoPortal', 'heliumChallenge', 'heliumHourChallenge', 'heliumOneOffChallenge', 'heliumC2Challenge', 'autoPortalZone', 'heliumDontPortalBefore', 'heliumHrBuffer', 'heliumHrPortal', 'heliumHrExitSpire', 'autoPortalUniverseSwap'];
 	const challengePortalSettings = ['frigidAutoPortal', 'mayhemAutoPortal', 'pandemoniumAutoPortal', 'desolationAutoPortal'];
 	const dailyPortalSettings = ['dailyPortalStart', 'dailyPortal', 'dailyPortalZone', 'dailyAbandonZone', 'dailyDontPortalBefore', 'dailyHeliumHrBuffer', 'dailyHeliumHrPortal', 'dailyHeliumHrExitSpire', 'dailyPortalFiller', 'dailyPortalPreviousUniverse', 'dailyDontCap', 'dailyDontCapAmt', 'dailySkip'];
-	const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerPercent', 'c2RunnerEndMode', 'c2Fused'];
+	const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerPercent', 'c2RunnerEndMode'];
 
 	if (portalSettings.includes(id) || challengePortalSettings.includes(id) || dailyPortalSettings.includes(id) || c2PortalSettings.includes(id)) {
 		_settingTimeout('autoPortal');
@@ -5171,7 +5169,7 @@ function settingChanged(id, currUniverse) {
 	if (btn.type === 'boolean') {
 		const enabled = `enabled${valueSuffix}`;
 		btn[enabled] = !btn[enabled];
-		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
+		document.getElementById(id).setAttribute('class', '_settingBtn toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (booleanActions[id] && updateUI) booleanActions[id]();
 		if (id === 'heirloomSwapping') updateHeirloomSwapElem();
 		if (id === 'autoMapsReroll') hdStats.autoLevelMaxFragments = btn[enabled] && hdStats.autoLevelInitial ? stats(undefined, false) : undefined;
@@ -5194,7 +5192,7 @@ function settingChanged(id, currUniverse) {
 		btn[value]++;
 		if (id === 'autoMaps' && currUniverse && btn[value] === 2) btn[value]++;
 		if (btn[value] > btn.name().length - 1) btn[value] = 0;
-		element.setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
+		element.setAttribute('class', '_settingBtn noselect settingsBtn settingBtn' + btn[value]);
 		element.innerHTML = btn.name()[btn[value]];
 		if (multitoggleActions[id] && updateUI) multitoggleActions[id]();
 		if (id === 'dailyPortal') document.getElementById(btn.id).classList.add('toggleConfigBtn');
@@ -5465,6 +5463,7 @@ function _toggleElem(elementId, isVisible) {
 
 	const setting = autoTrimpSettings[elementId];
 	if (isVisible && setting.require && !getPageSetting('displayAllSettings') && !setting.require()) isVisible = false;
+	if (elementId === 'autoEggs' && !setting.require()) isVisible = false;
 
 	const displayState = isVisible ? '' : 'none';
 	const parentDisplayState = isVisible ? 'inline-block' : 'none';
@@ -5490,7 +5489,7 @@ function _setDisplayedSettings(item) {
 
 	const handleBooleanType = (item, elem) => {
 		const itemEnabled = item['enabled' + radonSetting];
-		elem.setAttribute('class', `toggleConfigBtnLocal noselect settingsBtn settingBtn${itemEnabled}`);
+		elem.setAttribute('class', `_settingBtn toggleConfigBtnLocal noselect settingsBtn settingBtn${itemEnabled}`);
 		elem.innerHTML = item.name();
 	};
 
@@ -5498,7 +5497,7 @@ function _setDisplayedSettings(item) {
 		const itemValue = item['value' + radonSetting];
 		if (item.type === 'multitoggle') {
 			elem.innerHTML = item.name()[itemValue];
-			elem.setAttribute('class', `toggleConfigBtnLocal noselect settingsBtn settingBtn${itemValue}`);
+			elem.setAttribute('class', `_settingBtn toggleConfigBtnLocal noselect settingsBtn settingBtn${itemValue}`);
 		} else if (item.type === 'textValue' && itemValue && itemValue.substring) {
 			elem.innerHTML = `${item.name()}: ${itemValue.substring(0, 21)}${itemValue.length > 18 ? '...' : ''}`;
 		} else if (item.type === 'multiValue' || item.type === 'multiTextValue') {
@@ -5687,7 +5686,7 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2DisableFinished', 'c2Fused', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'witherMutatorPreset', 'questSmithySpire', 'mayhemAutoPortal', 'stormDestackTo', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationMutatorPreset'];
+	const breakAfterC2 = ['c2DisableFinished', 'c2RunnerPercent', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'frigidAutoPortal', 'witherMutatorPreset', 'questSmithySpire', 'mayhemAutoPortal', 'stormDestackTo', 'berserkDisableMapping', 'pandemoniumAutoPortal', 'glassStacks', 'desolationMutatorPreset'];
 	const breakAfterBuildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'experienceC2', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomPlaguebringer', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];

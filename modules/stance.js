@@ -164,7 +164,7 @@ function wouldSurvive(formation = 'S', critPower = 2, baseStats = getBaseStats()
 	let { health, block, minDamage, maxDamage } = baseStats;
 	const missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
 
-	// Applies the formation modifiers
+	/* applies the formation modifiers */
 	if (formation === 'XB') {
 		health /= 2;
 	} else if (formation === 'D') {
@@ -203,7 +203,6 @@ function wouldSurvive(formation = 'S', critPower = 2, baseStats = getBaseStats()
 
 	// Decides if the trimps can survive in this formation
 	const harm = _directDamage(block, pierce, health - missingHealth, minDamage, critPower) + _challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower);
-	//console.log('hp', health, 'miss hp', missingHealth, 'remain', health - missingHealth, 'enemyDmg', harm, 'here', critPower);
 	if (health - missingHealth > harm) return true;
 	// Updated Genes and Block
 	const newSquadRdy = newArmyRdy();
@@ -241,7 +240,7 @@ function getBaseStats() {
 		minDamage: calcOurDmg('min', 'X', false, undefined, 'never', bionicTalent, true) * totalRatio,
 		avgDamage: calcOurDmg('avg', 'X', false, undefined, 'maybe', bionicTalent, true) * totalRatio,
 		maxDamage: calcOurDmg('max', 'X', false, undefined, 'force', bionicTalent, true) * totalRatio,
-		health: calcOurHealth(false, false, true),
+		health: calcOurHealth(false, false, game.global.soldierHealth > 0),
 		block: calcOurBlock(false)
 	};
 
@@ -649,5 +648,5 @@ function autoStanceAdvanced(availableStances = unlockedStances(), baseStats = ge
 	}
 
 	/* if it cannot survive the worst case scenario on any formation, attempt its luck on H stance */
-	safeSetStance(0);
+	safeSetStance(1);
 }
