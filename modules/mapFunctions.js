@@ -614,7 +614,7 @@ function mapBonus(lineCheck) {
 	const settingIndex = _findSettingsIndexMapBonus(settingName, baseSettings);
 
 	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
-	const spireCheck = isDoingSpire() && getPageSetting('spireMapBonus' + settingAffix) && !_berserkDisableMapping() && !_exterminateDisableMapping && !_noMappingChallenges(undefined, true);
+	const spireCheck = isDoingSpire() && getPageSetting('spireMapBonus' + settingAffix) && !_berserkDisableMapping() && !_exterminateDisableMapping() && !_noMappingChallenges(undefined, true);
 	if (!spireCheck && !defaultSettings.active) return farmingDetails;
 
 	const setting = spireCheck ? _mapBonusSpireSetting(defaultSettings) : settingIndex ? baseSettings[settingIndex] : undefined;
@@ -1268,7 +1268,7 @@ function prestigeClimb(lineCheck) {
 		mapName
 	};
 
-	if (challengeActive('Frugal') || _berserkDisableMapping() || _exterminateDisableMapping || _noMappingChallenges(true, true)) return farmingDetails;
+	if (challengeActive('Frugal') || _berserkDisableMapping() || _exterminateDisableMapping() || _noMappingChallenges(true, true)) return farmingDetails;
 
 	const runningMapology = challengeActive('Mapology') && getPageSetting('mapology');
 	let targetPrestige = runningMapology ? getPageSetting('mapologyPrestige') : getPageSetting('prestigeClimb');
@@ -3104,7 +3104,7 @@ function hdFarm(lineCheck, skipHealthCheck, voidFarm) {
 	if (!baseSettings) return farmingDetails;
 	const defaultSettings = baseSettings[0];
 
-	const allowMapping = !_berserkDisableMapping() && !_exterminateDisableMapping && !_noMappingChallenges(undefined, true);
+	const allowMapping = !_berserkDisableMapping() && !_exterminateDisableMapping() && !_noMappingChallenges(undefined, true);
 	const currentPortal = getTotalPortals() + '_' + game.global.world;
 	const hitsSurvivedGoal = targetHitsSurvived(true);
 
@@ -3674,7 +3674,7 @@ function isWorldMatch(world, repeatevery) {
 
 //Checks to see if the line from the settings should run
 function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
-	if (!currSetting || !world || _berserkDisableMapping() || _exterminateDisableMapping) return false;
+	if (!currSetting || !world || _berserkDisableMapping() || _exterminateDisableMapping()) return false;
 
 	world += zoneReduction;
 	if (!currSetting.active || game.global.world < world) return false;

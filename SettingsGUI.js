@@ -147,7 +147,6 @@ function _maximizeAllTabs() {
 
 	for (const tab of tabs) {
 		if (!tab.id || ignoreTabs.includes(tab.id.toLowerCase())) continue;
-		if (tab.id.toLowerCase() === 'test' || tab.id.toLowerCase() === 'beta') continue;
 		tab.style.display = 'block';
 	}
 }
