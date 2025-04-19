@@ -63,9 +63,8 @@ function initialiseAllTabs() {
 function _createTab(tabName, tabDescription, addTabsDiv, addtabsUL) {
 	const tabItem = document.createElement('li');
 	const tabLink = document.createElement('a');
-	tabLink.className = 'tablinks';
+	tabLink.className = 'tablinks noselect pointerCursor';
 	tabLink.setAttribute('onclick', `_toggleTab(event, '${tabName}')`);
-	tabLink.href = '#';
 	tabLink.appendChild(document.createTextNode(tabName));
 	tabItem.id = 'tab' + tabName;
 	tabItem.appendChild(tabLink);
@@ -87,7 +86,7 @@ function _createTab(tabName, tabDescription, addTabsDiv, addtabsUL) {
 function _createControlTab(icon, action, tooltipText, addtabsUL) {
 	const controlItem = document.createElement('li');
 	const controlLink = document.createElement('a');
-	controlLink.className = `tablinks ${action}`;
+	controlLink.className = `tablinks ${action} noselect pointerCursor`;
 	controlLink.setAttribute('onclick', `${action}();`);
 	controlLink.appendChild(document.createTextNode(icon));
 	controlItem.appendChild(controlLink);
@@ -126,14 +125,17 @@ function _minimizeAllTabs() {
 function _maximizeAllTabs() {
 	const tabs = document.getElementsByClassName('tabcontent');
 	const links = document.getElementsByClassName('tablinks');
+	const ignoreTabs = ['test', 'beta'];
 
 	for (const tab of tabs) {
+		if (!tab.id || ignoreTabs.includes(tab.id.toLowerCase())) continue;
 		if (tab.id.toLowerCase() === 'test' || tab.id.toLowerCase() === 'beta') continue;
 		tab.style.display = 'block';
 	}
 
 	for (const link of links) {
-		if (link.id.toLowerCase() === 'test' || link.id.toLowerCase() === 'beta') continue;
+		const parentNode = link.parentNode;
+		if (!parentNode.id || ignoreTabs.includes(parentNode.id.split('tab')[1].toLowerCase())) continue;
 		link.style.display = 'block';
 		if (!link.classList.contains('active')) {
 			link.classList.add('active');
@@ -2102,10 +2104,21 @@ function initialiseAllSettings() {
 			function () { return ('Exterminate') },
 			function () {
 				let description = "<p>Enable this if you want to use automation features when running the <b>Exterminate</b> challenge.</p>";
+				description += "<p>If enabled it will only allows mapping settings with a Exterminate challenge line to be run.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 120) });
+			
+		createSetting('exterminateDisableMapping',
+			function () { return ('E: Disable Mapping') },
+			function () {
+				let description = "<p>Enabling this setting will disable mapping when you have the <b>Experienced</b> buff.</p>";
+				description += "<p>When using this make sure you setup appropriate mapping lines to farm enough should you die. I highly recommend repeat every 1 zone lines for HD Farm, Tribute Farm and Smithy Farm.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [2],
+			function () { return (getPageSetting('exterminate', atConfig.settingUniverse) && autoTrimpSettings.exterminate.require()) });
 			
 		createSetting('exterminateWorldStaff',
 			function () { return ('E: World Staff') },

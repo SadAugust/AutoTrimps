@@ -205,6 +205,13 @@ function _berserkDisableMapping() {
 	if (game.challenges.Berserk.frenzyStacks > 0) return true;
 }
 
+function _exterminateDisableMapping() {
+	if (!challengeActive('Exterminate') || !getPageSetting('exterminate')) return false;
+	if (game.global.mapsActive || game.global.preMapsActive) return false;
+	if (!getPageSetting('exterminateDisableMapping') || !game.global.fighting || game.global.soldierHealth <= 0) return false;
+	if (game.challenges.Exterminate.experienced) return true;
+}
+
 function autoMaps() {
 	if (!game.global.mapsUnlocked || !getPageSetting('autoMaps')) return;
 

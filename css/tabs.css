@@ -51,6 +51,10 @@ ul.tab li a:hover {
 	transform: translateZ(0);
 }
 
+.pointerCursor {
+	cursor: pointer;
+}
+
 @-webkit-keyframes fadeEffect {
 	from {
 		opacity: 0;
