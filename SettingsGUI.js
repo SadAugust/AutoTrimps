@@ -127,19 +127,28 @@ function _maximizeAllTabs() {
 	const links = document.getElementsByClassName('tablinks');
 	const ignoreTabs = ['test', 'beta'];
 
-	for (const tab of tabs) {
-		if (!tab.id || ignoreTabs.includes(tab.id.toLowerCase())) continue;
-		if (tab.id.toLowerCase() === 'test' || tab.id.toLowerCase() === 'beta') continue;
-		tab.style.display = 'block';
-	}
-
 	for (const link of links) {
 		const parentNode = link.parentNode;
-		if (!parentNode.id || ignoreTabs.includes(parentNode.id.split('tab')[1].toLowerCase())) continue;
+		if (!parentNode.id) continue;
+
+		const tabName = parentNode.id.split('tab')[1].toLowerCase();
+		if (ignoreTabs.includes(tabName)) continue;
+
+		if (parentNode.style.display === 'none') {
+			ignoreTabs.push(tabName);
+			continue;
+		}
+
 		link.style.display = 'block';
 		if (!link.classList.contains('active')) {
 			link.classList.add('active');
 		}
+	}
+
+	for (const tab of tabs) {
+		if (!tab.id || ignoreTabs.includes(tab.id.toLowerCase())) continue;
+		if (tab.id.toLowerCase() === 'test' || tab.id.toLowerCase() === 'beta') continue;
+		tab.style.display = 'block';
 	}
 }
 
