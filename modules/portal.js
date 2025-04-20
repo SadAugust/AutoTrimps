@@ -387,7 +387,8 @@ function _autoPortalUniverseSwap() {
 function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 	const highestZone = universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	if ((universe === 1 && highestZone < 65) || (universe === 2 && highestZone < 50)) return;
-	if (!portalCheck && !getPageSetting('c2RunnerStart', universe)) return;
+	if (portalCheck && !getPageSetting('c2RunnerStart', universe)) return;
+
 	const challengeOrders = {
 		dualC2: ['Waze', 'Enlightened', 'Nometal', 'Toxad', 'Paralysis', 'Topology'],
 		dualC3: [],
