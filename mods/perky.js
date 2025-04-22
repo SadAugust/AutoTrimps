@@ -934,11 +934,16 @@ atData.autoPerks = {
 		perkLine.appendChild(perkDiv);
 
 		requestAnimationFrame(() => {
+			const elemDisplay = perkDiv.style.display;
+			if (elemDisplay === 'none') perkDiv.style.display = 'flex';
+
 			const prefixWidth = prefixText.offsetWidth;
 			const perkDivWidth = perkDiv.offsetWidth;
 			const prefixPercentage = (prefixWidth / perkDivWidth) * 100;
 			const inputPercentage = 100 - prefixPercentage - 8;
 			perkInput.style.width = `${inputPercentage}%`;
+
+			if (elemDisplay === 'none') perkDiv.style.display = 'none';
 		});
 	},
 
