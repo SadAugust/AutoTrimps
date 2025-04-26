@@ -546,13 +546,15 @@ function _checkForPlaguedDaily() {
 }
 
 function _autoPortalActivate(challenge) {
-	const postPortalRespec = portalPerkCalc();
+	const currPreset = $$('#preset').value;
+	const postPortalRespec = portalPerkCalc(currPreset);
 
 	let preset = 0;
 	if (portalUniverse === 2) {
 		hypoPackratReset(challenge);
 
-		if (getPageSetting('presetSwapMutators', 2) && JSON.parse(localStorage.getItem('mutatorPresets'))[`Preset ${preset}`] !== '') {
+		const mutatorPresets = JSON.parse(localStorage.getItem('mutatorPresets'));
+		if (mutatorPresets && mutatorPresets[`Preset ${preset}`] !== '' && getPageSetting('presetSwapMutators', 2)) {
 			u2Mutations.toggleRespec();
 		}
 	}
@@ -571,18 +573,22 @@ function _autoPortalActivate(challenge) {
 	if (postPortalRespec && (challengeActive('Trapper') || challengeActive('Trappapalooza'))) {
 		viewPortalUpgrades();
 		respecPerks();
-		const presetFunction = game.global.universe === 1 ? fillPresetPerky : fillPresetSurky;
+		const presetFunction = portalUniverse === 1 ? fillPresetPerky : fillPresetSurky;
 		presetFunction(postPortalRespec);
-		const allocateFunction = game.global.universe === 1 ? allocatePerky : runSurky;
+		const allocateFunction = portalUniverse === 1 ? allocatePerky : runSurky;
 		allocateFunction(false);
+		presetFunction(currPreset);
 		activateClicked();
 	}
 }
 
-function portalPerkCalc() {
+function portalPerkCalc(currPreset = $$('#preset').value) {
 	const fillerC2 = getPageSetting('c2Filler');
 	let preset;
 	let trapperRespec = false;
+
+	const presetFunction = portalUniverse === 1 ? fillPresetPerky : fillPresetSurky;
+	const allocateFunction = portalUniverse === 1 ? allocatePerky : runSurky;
 
 	if (getPageSetting('presetSwap', portalUniverse)) {
 		if (portalUniverse === 1) {
@@ -601,8 +607,6 @@ function portalPerkCalc() {
 					if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared) preset = option.value;
 				});
 			}
-
-			fillPresetPerky(preset);
 		}
 
 		if (portalUniverse === 2) {
@@ -618,14 +622,13 @@ function portalPerkCalc() {
 			else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
 			else if (autoPortalChallenges('oneOff').slice(1).indexOf(game.global.selectedChallenge) > 0 && !challengeSquaredMode) preset = 'push';
 			else preset = 'ezfarm';
-
-			fillPresetSurky(preset);
 		}
 	}
 
 	if (typeof atData.autoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
-		if (portalUniverse === 1) allocatePerky(false);
-		if (portalUniverse === 2) runSurky();
+		presetFunction(preset);
+		allocateFunction(false);
+		presetFunction(currPreset);
 		return trapperRespec;
 	}
 }
@@ -842,26 +845,31 @@ function combatRespec() {
 	if (!MODULES.popups.respecAncientTreasure) return;
 	MODULES.popups.respecAncientTreasure = false;
 	MODULES.popups.remainingTime = Infinity;
+	const portalWindow = portalWindowOpen;
+	if (portalWindow) {
+		cancelTooltip();
+		cancelPortal();
+	}
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
 	if (game.global.canRespecPerks) respecPerks();
+
 	const currPreset = $$('#preset').value;
+	const presetFunction = game.global.universe === 1 ? fillPresetPerky : fillPresetSurky;
+	const allocateFunction = game.global.universe === 1 ? allocatePerky : runSurky;
 
-	if (game.global.universe === 1) fillPresetPerky('spire');
-	else if (trimpStats.isC3 || trimpStats.isOneOff) fillPresetSurky('combat');
-	else fillPresetSurky('combatRadon');
+	const presetName = game.global.universe === 1 ? 'spire' : trimpStats.isC3 || trimpStats.isOneOff ? 'combat' : 'combatRadon';
+	presetFunction(presetName);
 
-	if (game.global.universe === 2) runSurky();
-	else allocatePerky();
-
+	allocateFunction();
 	fireAllWorkers();
 	activateClicked();
 
 	const calcName = game.global.universe === 2 ? 'Surky' : 'Perky';
 	const respecPresetName = $$('#preset')[$$('#preset').selectedIndex].innerHTML;
 	debug(`${calcName} - Respeccing into the ${respecPresetName} preset.`, 'portal');
+	presetFunction(currPreset);
 
-	if (game.global.universe === 2) fillPresetSurky(currPreset);
-	else fillPresetPerky(currPreset);
+	if (portalWindow) portalClicked();
 }
 
 //Force tooltip appearance for Surky combat respec post Atlantrimp

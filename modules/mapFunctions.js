@@ -435,6 +435,10 @@ function _getVoidMapsHDObject() {
 function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 	let settingIndex = null;
 	if (!baseSettings[0].active) return settingIndex;
+	if (game.global.universe === 1 && baseSettings[0].poisonVoids) {
+		const empowerment = getZoneEmpowerment(game.global.world);
+		if (empowerment !== 'None' && empowerment !== 'Poison') return settingIndex;
+	}
 	const voidReduction = trimpStats.isDaily ? dailyModiferReduction() : 0;
 	const zoneAddition = +dailyAddition.active;
 
@@ -454,7 +458,7 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 				if (currSetting[hdTypes[index]] === 'disabled') return true;
 				const obj = hdObject[currSetting[hdTypes[index]]];
 				const hdSetting = obj.hdStatVoid || obj.hdStat;
-				/* This is if it should skip so the inverse of intended action */
+				/* this is if it should skip so the inverse of intended action */
 				if (currSetting[hdTypes[index]].includes('hitsSurvived')) return currSetting[dropdown] < hdSetting;
 				return currSetting[dropdown] > hdSetting;
 			});

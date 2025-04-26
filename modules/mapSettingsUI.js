@@ -19,7 +19,7 @@ function mapSettingsDisplay(elem, titleText) {
 	const noDefaultRow = activeSetting.golden || activeSetting.profile;
 	if (!noDefaultRow) {
 		tooltipText += `<div id='windowError'></div>`;
-		tooltipText += _mapSettingsRowTitles(JSON.stringify(settingInputsDefault), 'basic', true);
+		tooltipText += _mapSettingsRowTitles(settingInputsDefault, 'basic', true);
 		const defaultSetting = originalSetting[0];
 		const activeRow = typeof defaultSetting !== 'undefined';
 
@@ -36,7 +36,7 @@ function mapSettingsDisplay(elem, titleText) {
 		tooltipText += _mapSettingsRowPopulateInputs(titleText, vals, settingInputsDefault, '', { classList: '', style: '' }, 'basic');
 	}
 
-	tooltipText += _mapSettingsRowTitles(JSON.stringify(settingInputs), settingType);
+	tooltipText += _mapSettingsRowTitles(settingInputs, settingType);
 
 	/* as position 0 in the array stores base setting we need to take that out of the array before we start looping through rows */
 	const currSetting = noDefaultRow ? originalSetting : originalSetting.slice(1, originalSetting.length);
@@ -222,19 +222,21 @@ function _mapSettingsInputObj() {
 				portalAfter: { name: 'portalAfter', title: 'Portal After', defaultValue: false, width: { basic: 5, advanced: 5, display: 'basic', altWidth: function () { return 4 } } },
 			},
 			settingInputsDefault: {
-				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 11, display: 'basic' } },
-				maxTenacity: { name: 'maxTenacity', title: 'Max Map Bonus', defaultValue: false, width: { basic: 11, display: 'basic' } },
+				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } } },
+				maxTenacity: { name: 'maxTenacity', title: 'Max Map Bonus', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } } },
 				
-				boneCharge: { name: 'boneCharge', title: 'Use Bone Charge', defaultValue: false, width: { basic: 11, display: 'basic' } },
-				voidFarm: { name: 'voidFarm', title: 'Pre Void Farm', defaultValue: false, width: { basic: 11, display: 'basic' } },
+				boneCharge: { name: 'boneCharge', title: 'Use Bone Charge', defaultValue: false, width: { basic: 12, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } } },
+				voidFarm: { name: 'voidFarm', title: 'Pre Void Farm', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } } },
 
-				hitsSurvived: { name: 'hitsSurvived', title: 'Void Farm<br>Hits Survived', defaultValue: 0, width: { basic: 16, display: 'basic', type: 'text' } },
-				hdRatio: { name: 'hdRatio', title: 'Void Farm<br>HD Ratio', defaultValue: 0, width: { basic: 16, display: 'basic' }, type: 'text' },
+				hitsSurvived: { name: 'hitsSurvived', title: 'Void Farm<br>Hits Survived', defaultValue: 0, width: { basic: 16, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) }  }, type: 'text'  },
+				hdRatio: { name: 'hdRatio', title: 'Void Farm<br>HD Ratio', defaultValue: 0, width: { basic: 15, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } }, type: 'text' },
 				
-				jobratio: { name: 'jobratio', title: 'Void Farm<br>Job Ratio', defaultValue: "1,1,1,0", width: { basic: 14, display: 'basic' }, type: 'text' }, 
-				mapCap: { name: 'mapCap', title: 'Map Cap', defaultValue: 100, width: { basic: 10, display: 'basic' } },
+				jobratio: { name: 'jobratio', title: 'Void Farm<br>Job Ratio', defaultValue: "1,1,1,0", width: { basic: 14, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } }, type: 'text' }, 
+				mapCap: { name: 'mapCap', title: 'Map Cap', defaultValue: 100, width: { basic: 10, display: 'basic', altWidth: function (vals, width) { return width - 1; } } },
+
+				poisonVoids: { name: 'poisonVoids', title: 'Poison Voids', defaultValue: false, width: { basic: 0, display: 'basic', altWidth: function () { return (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) ? 8 : 0 } } },
 			},
-			windowWidth: { basic: 45, advanced: 70 }
+			windowWidth: { basic: 50, advanced: 70 }
 		},
 		'Bone Shrine': {
 			settingInputs: {
@@ -605,17 +607,17 @@ function _mapSettingsInputObj() {
 	};
 }
 
-function _mapSettingsRowTitles(settingObj, settingType = 'advanced', defaultRow = false) {
-	if (!settingObj) return;
-	const settingInputs = JSON.parse(settingObj);
+function _mapSettingsRowTitles(settingInputs, settingType = 'advanced', defaultRow = false) {
+	if (!settingInputs) return;
 	let tooltipText = `<div id='windowContainer' style='display: block'><div class='row windowRow titles'>`;
 	for (let item in settingInputs) {
 		item = settingInputs[item];
 		let width = item.width[settingType] ? item.width[settingType] : 0;
+		if (defaultRow && item.width.altWidth) width = item.width.altWidth({}, width);
 		if (item.width.display === 'advanced' && settingType !== 'advanced') width = 0;
 		const display = width > 0 ? 'inline-block' : 'none';
 		const transform = item.name === 'active' && !defaultRow ? `transform: translateX(-35%);` : '';
-		tooltipText += `<div class='windowDisplay' style = 'display: ${display}; width: ${item.width[settingType]}%; ${transform}'>${item.title}</div>`;
+		tooltipText += `<div class='windowDisplay' style = 'display: ${display}; width: ${width}%; ${transform}'>${item.title}</div>`;
 	}
 
 	tooltipText += '</div>';
@@ -659,7 +661,7 @@ function _mapSettingsRowPopulateInputs(titleText, vals, settingInputs, rowNo, cs
 
 		/* style setup */
 		let width = item.width[settingType] ? item.width[settingType] : 0;
-		if (item.width.altWidth) width = item.width.altWidth(vals);
+		if (item.width.altWidth) width = item.width.altWidth(vals, width);
 		if (item.width.display === 'advanced' && settingType !== 'advanced') width = 0;
 		const elemDisplay = width > 0 ? 'inline-block' : 'none';
 		const textAlignCenter = checkbox ? ' text-align: center;' : '';
@@ -805,7 +807,8 @@ function _mapSettingsUpdatePreset(index = '', titleText) {
 
 		vals[item.name] = elem.type ? elem.value : elem.dataset.checked === 'true';
 		if (item.width.altWidth) {
-			const width = item.width.altWidth(vals);
+			let width = item.width[settingType] ? item.width[settingType] : 0;
+			width = item.width.altWidth(vals, width);
 			const elemDisplay = width && width > 0 ? 'inline-block' : 'none';
 			elem.parentNode.style.width = `${width}%`;
 			elem.parentNode.style.display = elemDisplay;
@@ -929,7 +932,7 @@ function _mapSettingsSave(titleText, varPrefix, activeSettings, reopen) {
 
 		if (s.mapBonus) {
 			const repeat = Number(thisSetting.repeat);
-			checkSettingsErrors(!thisSetting.autoLevel && +thisSetting.level < (atConfig.settingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0), "can't have a map level below " + (game.global.universe === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.");
+			checkSettingsErrors(!thisSetting.autoLevel && +thisSetting.level < (atConfig.settingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0), "can't have a map level below " + (atConfig.settingUniverse === 1 && game.portal.Siphonology.level > 0 ? 0 - game.portal.Siphonology.level : 'world level') + " as you won't be able to get any map stacks.");
 			checkSettingsErrors(repeat < 1, "can't have a map bonus value lower than 1 as you won't be able to get any map stacks.");
 		}
 
@@ -1025,7 +1028,7 @@ function _mapSettingsSave(titleText, varPrefix, activeSettings, reopen) {
 	farmingDecision();
 }
 
-function _mapSettingsDropdowns(universe = game.global.universe, vals, titleText, settingType) {
+function _mapSettingsDropdowns(universe = atConfig.settingUniverse, vals, titleText, settingType) {
 	if (!vals) return debug(`Issue with establishing values for dropdowns`, 'mazSettings');
 
 	let dropdown = { hdType: '', hdType2: '', gather: '', mapType: '', mapLevel: '', special: '', prestigeGoal: '', challenge: '' };
@@ -1243,6 +1246,7 @@ function _mapSettingsHelpWindow(activeSettings, settingType = 'basic') {
 	const trimpleName = atConfig.settingUniverse === 1 ? 'Trimple of Doom' : 'Atlantrimp';
 	const hze = game.stats.highestLevel.valueTotal();
 	const hzeU2 = game.stats.highestRadLevel.valueTotal();
+	const c2abv = _getChallenge2Info();
 	const advancedSettings = settingType === 'advanced';
 	let mazHelp = '';
 
@@ -1314,6 +1318,13 @@ function _mapSettingsHelpWindow(activeSettings, settingType = 'basic') {
 
 			mazHelp += `<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm.</li>`;
 			mazHelp += `<li class="indent">If set to <b>-1</b> it will repeat an infinite amount of times.</li>`;
+
+			if (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) {
+				const resourceName = _getPrimaryResourceInfo().name;
+				mazHelp += `<li><b>Poison Voids</b> - This will only run the lines setup below when you are on a Poison empowerment zone.</li>`;
+				mazHelp += `<li class="indent">If you have not yet reached empowerment (magma) zones on your run then it will ignore this setting and run them.</li>`;
+				mazHelp += `<li class="indent">The <b>${c2abv} Runner</b> and <b>${resourceName} Per Hour</b> settings both ignore this setting and will run regardless of being in a Poison zone if they are set to.</li>`;
+			}
 		}
 
 		if (s.boneShrine) {
@@ -1414,8 +1425,8 @@ function _mapSettingsHelpWindow(activeSettings, settingType = 'basic') {
 
 	if (s.runType) {
 		mazHelp += `<li><b>Run Type</b> - The type of run you would like this challenge to run on.</li>`;
-		mazHelp += `<li class="indent">You can choose between Filler, One Offs, Daily, and ${_getChallenge2Info()} challenge runs.</li>`;
-		mazHelp += `<li class="indent">The Filler, One Offs, and ${_getChallenge2Info()} options provide the ability to run this line on all challenges of that run type or a specific challenge.</li>`;
+		mazHelp += `<li class="indent">You can choose between Filler, One Offs, Daily, and ${c2abv} challenge runs.</li>`;
+		mazHelp += `<li class="indent">The Filler, One Offs, and ${c2abv} options provide the ability to run this line on all challenges of that run type or a specific challenge.</li>`;
 	}
 
 	/* 
@@ -1605,7 +1616,7 @@ function _mapSettingsHelpWindow(activeSettings, settingType = 'basic') {
 		mazHelp += `</ul><br>`;
 		const heliumType = atConfig.settingUniverse === 2 ? 'Radon' : 'Helium';
 		mazHelp += `<p>You are able to have multiple lines of the same type. For example 8 Void, 12 Battle, 10 ${heliumType}, 8 Battle would end with 8 Golden Voids, 20 Golden Battle, and 10 Golden ${heliumType} upgrades.<br>Requests to buy Golden Void will be skipped if it would put you above 72%.`;
-		mazHelp += `<br>Will skip all ${heliumType} upgrades when running a ${_getChallenge2Info()} challenge.</p>`;
+		mazHelp += `<br>Will skip all ${heliumType} upgrades when running a ${c2abv} challenge.</p>`;
 	}
 
 	if (s.profile) {
