@@ -279,6 +279,8 @@ if (typeof originalrunMap !== 'function') {
 		originalrunMap(...arguments);
 		if (!MODULES.maps.lastMapWeWereIn || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 		spireAssaultAcceptContract();
+		const arrayCap = 12;
+		mapSettings.levelData = new Array(arrayCap).fill(mapSettings.mapLevel);
 	};
 }
 

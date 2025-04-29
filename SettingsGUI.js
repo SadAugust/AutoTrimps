@@ -1584,16 +1584,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
-		createSetting('mapBonusPrestige',
-			function () { return ('Map Bonus Level Prestiges') },
-			function () {
-				let description = "<p>When using the <b>Map Bonus Min Level</b> setting, if there are any prestige upgrades available between your map level and minimum map bonus level, this will the reduce level that it looks for to the last one with prestiges.</p>";
-				description += "<p>This setting is ignored when obtaining map bonus stacks through the <b>Map Bonus</b> setting.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Maps', [1, 2],
-			function () { return (trimpStats.plusLevels || (game.global.universe === 1 && !game.portal.Siphonology.locked)) });
-
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
@@ -1626,9 +1616,18 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Hits Survived Reset: S</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Maps', [1, 2]);
+		
+		createSetting('mapBonusLevelType',
+			function () { return ('HS/HD Map Bonus Type') },
+			function () {
+				let description = "<p>Will swap the auto level type that both Hits Survived and HD Ratio use for map bonus maps from loot maps to speed maps.</p>";
+				description += "<p>This will cause it to target maps where you have the fastest kill speed rather than loot gains for if you're just trying to get map bonus stacks quickly.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Maps', [1, 2]);
 
 		createSetting('mapBonusRatio',
-			function () { return ('Map Bonus Ratio') },
+			function () { return ('Map Bonus HD Ratio') },
 			function () {
 				let description = "<p>Map Bonus stacks will be obtained when above this World HD Ratio value.</p>";
 				description += "<p>Will use the <b>Special</b> and <b>Job Ratio</b> inputs that have been set in the top row of the <b>Map Bonus</b> setting. If they haven't been setup then it will default to a job ratio of <b>0/1/3</b> and the best <b>Metal</b> cache available.</p>";
@@ -1639,7 +1638,7 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Maps', [1, 2]);
 
 		createSetting('mapBonusStacks',
-			function () { return ('Map Bonus Stacks') },
+			function () { return ('Map Bonus HD Ratio Stacks') },
 			function () {
 				let description = "<p>Map Bonus stacks will be obtained to this value when your current <b>World HD Ratio</b> is above the value set in the <b>Map Bonus Ratio</b> setting.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
@@ -1654,15 +1653,16 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 2 (when highest zone reached is below 100) otherwise <b>0</b></p>";
 				return description;
 			}, 'value', 0, null, 'Maps', [1, 2]);
-			
-		createSetting('mapBonusLevelType',
-			function () { return ('HS/HD Map Bonus Type') },
+
+		createSetting('mapBonusPrestige',
+			function () { return ('Map Bonus Level Prestiges') },
 			function () {
-				let description = "<p>Will swap the auto level type that both Hits Survived and HD Ratio use for map bonus maps from loot maps to speed maps.</p>";
-				description += "<p>This will cause it to target maps where you have the fastest kill speed rather than loot gains for if you're just trying to get map bonus stacks quickly.</p>";
+				let description = "<p>When using the <b>Map Bonus Min Level</b> setting, if there are any prestige upgrades available between your map level and minimum map bonus level, this will the reduce level that it looks for to the last one with prestiges.</p>";
+				description += "<p>This setting is ignored when obtaining map bonus stacks through the <b>Map Bonus</b> setting.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Maps', [1, 2]);
+			}, 'boolean', false, null, 'Maps', [1, 2],
+			function () { return (trimpStats.plusLevels || (game.global.universe === 1 && !game.portal.Siphonology.locked)) });
 
 		createSetting('prestigeClimb',
 			function () { return ('Prestige Climb') },
@@ -1708,7 +1708,8 @@ function initialiseAllSettings() {
 				description += "This only impacts the mapping order when the <b>Auto Maps Priority</b> setting in the Maps tab is enabled.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', 1, null, 'Maps', [1, 2]);
+			}, 'value', 1, null, 'Maps', [1, 2],
+			function () { return (getPageSetting('autoMapsPriority', atConfig.settingUniverse)) });
 
 		createSetting('hdFarmSettings',
 			function () { return ('HS & HD Farm Settings') },
@@ -3602,7 +3603,7 @@ function initialiseAllSettings() {
 				let description = "<p>The staff to use when the script is farming for fragments to be able to afford maps.</p>";
 				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
-				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
+				description += "<p><b>Recommended:</b> Dedicated fragment efficiency and drop rate staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
@@ -3649,7 +3650,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
+			function () { return (game.global.ArchaeologyDone && getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomStaff', atConfig.settingUniverse)) });
 
 		createSetting('heirloomAuto',
 			function () { return ('Auto Heirlooms') },
@@ -3692,17 +3693,6 @@ function initialiseAllSettings() {
 			function () { return ('Mod Target Count') },
 			function () {
 				let description = "<p>Allows you to make it so that auto heirlooms will keep heirlooms if they have <b>X</b> amount of the mods you have setup in the different heirloom type options.</p>";
-				description += "<p>When using this I recommend not setting any of the mod inputs to <b>Any</b> as it can cause you to keep heirlooms with more suboptimal mods than you desire.</p>";
-				description += "<p>Set to <b>0 or below</b> to disable this setting and have the script assume you want to only keep perfect heirlooms.</p>";
-				description += "<p><b>Recommended:</b> 0</p>";
-				return description;
-			}, 'value', 0, null, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse)) });
-
-		createSetting('heirloomAutoCoreModTarget',
-			function () { return ('Core Mod Target Count') },
-			function () {
-				let description = "<p>Allows you to make it so that auto heirlooms will keep Cores if they have <b>X</b> amount of the mods you have setup in the different heirloom type options.</p>";
 				description += "<p>When using this I recommend not setting any of the mod inputs to <b>Any</b> as it can cause you to keep heirlooms with more suboptimal mods than you desire.</p>";
 				description += "<p>Set to <b>0 or below</b> to disable this setting and have the script assume you want to only keep perfect heirlooms.</p>";
 				description += "<p><b>Recommended:</b> 0</p>";
@@ -3900,6 +3890,17 @@ function initialiseAllSettings() {
 				'Basic': [],
 			}), `importExportTooltip('autoHeirloomMods', undefined, 'Core', true)`, 'Heirloom', [0],
 			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse) && getPageSetting('heirloomAutoCore', atConfig.settingUniverse) && game.global.spiresCompleted > 0) });
+
+		createSetting('heirloomAutoCoreModTarget',
+			function () { return ('Core Mod Target Count') },
+			function () {
+				let description = "<p>Allows you to make it so that auto heirlooms will keep Cores if they have <b>X</b> amount of the mods you have setup in the different heirloom type options.</p>";
+				description += "<p>When using this I recommend not setting any of the mod inputs to <b>Any</b> as it can cause you to keep heirlooms with more suboptimal mods than you desire.</p>";
+				description += "<p>Set to <b>0 or below</b> to disable this setting and have the script assume you want to only keep perfect heirlooms.</p>";
+				description += "<p><b>Recommended:</b> 0</p>";
+				return description;
+			}, 'value', 0, null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloomAuto', atConfig.settingUniverse)) });
 	}
 	
 	const displaySpire = true;
@@ -5702,7 +5703,7 @@ function _settingsToLineBreak() {
 	const heirloom = getPageSetting('heirloomAuto', atConfig.settingUniverse) ? 'show' : 'hide';
 
 	const breakAfterCore = ['pauseScript', 'universeSetting'];
-	const breakAfterMaps = ['mapBonusPrestige', 'mapBonusLevelType', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
+	const breakAfterMaps = ['recycleExplorer', 'mapBonusPrestige', 'mapBonusLevelType', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
 	const breakAfterDaily = ['avoidEmpower', 'dailyHeliumHrPortal'];
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields'];
 	const breakAfterCombat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];

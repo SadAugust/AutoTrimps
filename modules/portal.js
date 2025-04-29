@@ -814,6 +814,7 @@ function resetVarsZone(loadingSave, notRespec = true) {
 	MODULES.heirlooms.compressedCalc = false;
 	//General
 	mapSettings.levelCheck = Infinity;
+	mapSettings.levelData = [];
 	//Challenge Repeat
 	trimpStats = new TrimpStats();
 	hdStats = new HDStats();

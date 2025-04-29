@@ -86,8 +86,8 @@ class HDStats {
 				speed.mapLevel = speed.mapLevel === -1 && speed.killSpeed === worldMap[speed.stance].killSpeed ? 0 : speed.mapLevel;
 			}
 
-			this.autoLevelLoot = this.autoLevelData.loot.mapLevel;
-			this.autoLevelSpeed = this.autoLevelData.speed.mapLevel;
+			this.autoLevelLoot = loot.mapLevel;
+			this.autoLevelSpeed = speed.mapLevel;
 		}
 	}
 }

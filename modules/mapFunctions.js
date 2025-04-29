@@ -292,7 +292,12 @@ function _obtainUniqueMap(uniqueMap) {
 
 function _runUniqueMap(mapName) {
 	const mapObj = getCurrentMapObject();
-	if (game.global.mapsActive && mapObj.name === mapName) return;
+	if (game.global.mapsActive && mapObj.name === mapName) {
+		if (MODULES.mapFunctions.runUniqueMap === mapName) {
+			MODULES.mapFunctions.runUniqueMap = '';
+		}
+		return;
+	}
 	if (getPageSetting('autoMaps') !== 1) return;
 	if (_insanityDisableUniqueMaps()) return;
 
@@ -300,11 +305,15 @@ function _runUniqueMap(mapName) {
 	const map = game.global.mapsOwnedArray.find((map) => map.name.includes(mapName));
 
 	if (map) {
+		if (!game.global.preMapsActive && !game.global.mapsActive) {
+			if (!game.global.switchToMaps && shouldAbandon(true)) mapsClicked();
+			if (game.global.switchToMaps) mapsClicked();
+		}
 		if (game.global.mapsActive && mapObj.name !== mapName) recycleMap_AT();
 		if (game.global.preMapsActive && game.global.currentMapId === '') {
 			selectMap(map.id);
 			runMap(false);
-			debug(`Running ${mapName} on zone ${game.global.world}.`, 'map_Details');
+			debug(`Running ${mapName}${mapName === 'Melting Point' ? ` at ${game.buildings.Smithy.owned} smithies ` : ''} on zone ${game.global.world}.`, 'map_Details');
 			MODULES.mapFunctions.runUniqueMap = '';
 		}
 	}
@@ -3327,7 +3336,8 @@ function farmingDecision() {
 	let farmingDetails = {
 		shouldRun: false,
 		mapName: '',
-		levelCheck: Infinity
+		levelCheck: Infinity,
+		levelData: []
 	};
 
 	if (!game.global.mapsUnlocked || _leadDisableMapping() || _witherDisableMapping()) return (mapSettings = farmingDetails);
@@ -3422,6 +3432,7 @@ function farmingDecision() {
 
 	//Setup level check so that we can compare if we need to do some work with map run counters
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
+	farmingDetails.levelData = mapSettings.levelData;
 	mapSettings = farmingDetails;
 }
 
@@ -3771,6 +3782,7 @@ function resetMapVars(setting, settingName) {
 	const totalPortals = getTotalPortals();
 	game.global.mapRunCounter = 0;
 	mapSettings.levelCheck = Infinity;
+	mapSettings.levelData = [];
 	mapSettings.mapName = '';
 	MODULES.maps.mapTimer = 0;
 	MODULES.maps.mapRepeats = 0;
@@ -4177,20 +4189,35 @@ function callAutoMapLevel(mapName, special, mapType) {
 	let mapLevel = mapSettings.levelCheck;
 	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
 	const autoLevelObj = mapName === 'Desolation Destacking' ? hdStats.autoLevelDesolation : hdStats.autoLevelInitial;
+	const intervalCheck = usingRealTimeOffline ? atConfig.intervals.thirtySecond : atConfig.intervals.sixSecond;
 
 	if (mapLevel === Infinity) {
 		mapLevel = get_best(autoLevelObj, true, mapModifiers)[mapType].mapLevel;
-	} else if (mapName && atConfig.intervals.sixSecond) {
-		let autoLevelData = get_best(autoLevelObj, true, mapModifiers)[mapType];
-		const secondBestMap = autoLevelData[`${mapType}Second`];
-		/* if (mapSettings.mapLevel && mapSettings.mapLevel === secondBestMap.mapLevel && autoLevelData.) {
-		} */
+		mapSettings.levelData = [mapLevel];
+	} else if (mapName && intervalCheck) {
+		const autoLevelData = get_best(autoLevelObj, true, mapModifiers)[mapType];
 		const autoLevel = autoLevelData.mapLevel;
 		mapLevel = Math.max(mapLevel, autoLevel);
 
 		const autoLevelDataNoFrags = get_best(autoLevelObj)[mapType];
 		const autoLevelIgnoreFragments = autoLevelDataNoFrags.mapLevel;
 		mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
+		mapSettings.levelData.push(mapLevel);
+
+		if (autoLevelData.ratio < 1.05) {
+			const arrayCap = 12;
+			if (mapSettings.levelData.length > arrayCap) mapSettings.levelData.shift();
+
+			const lootCount = mapSettings.levelData.reduce((acc, curr) => {
+				acc[curr] = (acc[curr] || 0) + 1;
+				return acc;
+			}, {});
+			const maxLootLevel = Math.max(...Object.values(lootCount));
+
+			mapLevel = +Object.keys(lootCount).find((key) => lootCount[key] === maxLootLevel);
+		} else {
+			mapSettings.levelData = [mapLevel];
+		}
 	}
 
 	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;

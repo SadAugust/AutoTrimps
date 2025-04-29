@@ -620,7 +620,14 @@ function _runSelectedMap(mapId, runUnique) {
 	_abandonMapCheck(mapId, runUnique);
 	if (game.global.currentMapId !== mapId) selectMap(mapId);
 	runMap();
-	debug(`Running ${_prettifyMap(MODULES.maps.lastMapWeWereIn)}`, 'maps', 'th-large');
+
+	const currentMap = MODULES.maps.lastMapWeWereIn;
+	if (currentMap) {
+		debug(`Running ${_prettifyMap(currentMap)}`, 'maps', 'th-large');
+		if (MODULES.mapFunctions.runUniqueMap === currentMap.name) {
+			MODULES.mapFunctions.runUniqueMap = '';
+		}
+	}
 }
 
 //Way to fix an issue with having no maps available to run and no fragments to purchase them

@@ -37,7 +37,7 @@ const atData = {
 
 let autoTrimpSettings = {};
 let MODULES = {};
-let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity };
+let mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity, levelData: [] };
 let hdStats = { autoLevel: Infinity };
 let trimpStats = { isC3: false, isDaily: false, isFiller: false, mountainPriority: false, fluffyRewards: { universe: 0, level: 0 } };
 
