@@ -747,8 +747,10 @@ function simulate(saveData, zone, stance) {
 
 	const trimpEqualityMult = Math.pow(saveData.equalityMult, equality);
 	const enemyEqualityMult = Math.pow(0.9, equality);
-	const autoEquality = typeof atConfig !== 'undefined' && getPageSetting('equalityManagement') === 2;
-	const enemyEqualityMultMax = Math.pow(0.9, game.portal.Equality.radLevel);
+
+	const autoEquality = universe === 2 && typeof atConfig !== 'undefined' && getPageSetting('equalityManagement') === 2;
+	const trimpEqualityMultMax = autoEquality ? Math.pow(saveData.equalityMult, game.portal.Equality.radLevel) : 1;
+	const enemyEqualityMultMax = autoEquality ? Math.pow(0.9, game.portal.Equality.radLevel) : 1;
 
 	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
 	const specialTime = getSpecialTime(specialData);

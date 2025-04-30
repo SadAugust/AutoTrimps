@@ -48,14 +48,15 @@ class HDStats {
 		const world = game.global.world;
 		const checkAutoLevel = this.autoLevelInitial === undefined || (usingRealTimeOffline ? atConfig.intervals.thirtySecond : atConfig.intervals.fiveSecond);
 		const mapDifficulty = game.global.mapsActive && MODULES.maps.lastMapWeWereIn.location === 'Bionic' ? 2.6 : 0.75;
-		const voidMaxTenacity = getPageSetting('voidMapSettings')[0].maxTenacity;
+		const voidMapSettings = getPageSetting('voidMapSettings')[0];
+		const voidMaxBonuses = { mapBonus: voidMapSettings.maxMapBonus, maxTenacity: voidMapSettings.maxTenacity };
 
 		this.hdRatio = calcHDRatio(world, 'world', false, 1);
 		this.hdRatioMap = calcHDRatio(world, 'map', false, mapDifficulty);
 		this.hdRatioVoid = calcHDRatio(world, 'void', false, trimpStats.voidMapData.difficulty);
 
-		this.vhdRatio = voidMaxTenacity ? calcHDRatio(world, 'world', voidMaxTenacity, 1) : this.hdRatio;
-		this.vhdRatioVoid = voidMaxTenacity ? calcHDRatio(world, 'void', voidMaxTenacity, trimpStats.voidMapData.difficulty) : this.hdRatioVoid;
+		this.vhdRatio = voidMaxBonuses.mapBonus || voidMaxBonuses.maxTenacity ? calcHDRatio(world, 'world', voidMaxBonuses, 1) : this.hdRatio;
+		this.vhdRatioVoid = voidMaxBonuses.mapBonus || voidMaxBonuses.maxTenacity ? calcHDRatio(world, 'void', voidMaxBonuses, trimpStats.voidMapData.difficulty) : this.hdRatioVoid;
 
 		this.hdRatioHeirloom = calcHDRatio(world, 'world', false, 1, false);
 
@@ -1098,7 +1099,7 @@ function calcSpecificEnemyHealth(worldType = _getWorldType(), zone = _getZone(wo
 	return health;
 }
 
-function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTenacity = false, difficulty = 1, hdCheck = true, checkOutputs) {
+function calcHDRatio(targetZone = game.global.world, worldType = 'world', voidMaxBonuses = { mapBonus: false, maxTenacity: false }, difficulty = 1, hdCheck = true, checkOutputs) {
 	const heirloomToUse = heirloomShieldToEquip(worldType, false, hdCheck);
 	let enemyHealth = 0;
 	let universeSetting;
@@ -1139,14 +1140,14 @@ function calcHDRatio(targetZone = game.global.world, worldType = 'world', maxTen
 	if (leadCheck) ourBaseDamage /= 1.5;
 	ourBaseDamage += addPoison(false, targetZone);
 
-	if (maxTenacity) {
-		if (worldType === 'world' && game.global.mapBonus !== 10) {
-			ourBaseDamage /= 1 + 0.2 * game.global.mapBonus;
-			ourBaseDamage *= masteryPurchased('mapBattery') ? 5 : 3;
-		}
+	if (voidMaxBonuses.mapBonus && worldType === 'world' && game.global.mapBonus !== 10) {
+		ourBaseDamage /= 1 + 0.2 * game.global.mapBonus;
+		ourBaseDamage *= masteryPurchased('mapBattery') ? 5 : 3;
+	}
 
+	if (voidMaxBonuses.maxTenacity) {
 		const tenacityLevel = getPerkLevel('Tenacity');
-		if (game.global.universe === 2 && tenacityLevel > 0) {
+		if (tenacityLevel > 0) {
 			const tenacityMult = game.portal.Tenacity.getMult();
 			const tenacityMaxMult = Math.pow(1.4000000000000001, tenacityLevel + getPerkLevel('Masterfulness'));
 

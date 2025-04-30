@@ -3544,6 +3544,19 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
+
+		createSetting('heirloomCompressed',
+			function () { return ('Compressed Enemies') },
+			function () {
+				let description = "<p>Shield to use when fighting enemies with the Compressed mutation.</p>";
+				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
+				description += "<p>Displays an additional setting when set to allow this setting to run if above a certain <b>World HD Ratio</b> value otherwise it will only swap to this shield if you have reached your heirloom swap zone.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Highest damage heirloom</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [2],
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
+
 		createSetting('heirloomSwapHDCompressed',
 			function () { return ('Compressed Swap HD') },
 			function () {
@@ -3551,7 +3564,7 @@ function initialiseAllSettings() {
 				description += "<p>Set to <b>0 or below</b> to disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirloom', [2],
-			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && getPageSetting('heirloomCompressedSwap', atConfig.settingUniverse)) });
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && (getPageSetting('heirloomCompressedSwap', atConfig.settingUniverse) || getPageSetting('heirloomCompressed') !== 'undefined')) });
 
 		createSetting('heirloomStaff',
 			function () { return ('Staffs') },
@@ -5306,6 +5319,7 @@ function autoSetValue(id, multiValue, negative) {
 
 	_autoPortalTimeoutCheck(id);
 	saveSettings();
+	updateAutoTrimpSettings(false);
 }
 
 function parseNum(num) {
@@ -5379,6 +5393,7 @@ function autoSetText(id, multiValue) {
 	if (id.includes('archaeology')) archaeologyAutomator();
 	_autoPortalTimeoutCheck(id);
 	saveSettings();
+	updateAutoTrimpSettings(false);
 }
 
 function autoSetTextToolTip(id, text, multiValue) {

@@ -1423,6 +1423,21 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '7.1.0') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			const settingName = 'voidMapSettings';
+			const values = ['value', 'valueU2'];
+			for (let z = 0; z < values.length; z++) {
+				if (typeof tempSettings[settingName][values[z]][0] !== 'undefined') {
+					const currSetting = tempSettings[settingName][values[z]][0];
+					autoTrimpSettings[settingName][values[z]][0].maxMapBonus = currSetting.maxTenacity;
+				}
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

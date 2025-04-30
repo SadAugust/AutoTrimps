@@ -2677,16 +2677,42 @@ function _hypothermiaBuyPackrat() {
 	}
 }
 
+function _hypothermiaCalculateGoal(mapLevel, bonfireGoal, jobRatio) {
+	if (mapSettings.bonfire) return mapSettings.bonfire;
+
+	const totalMaps = bonfireGoal;
+	const mapTime = totalMaps * 25 + (totalMaps > 4 ? Math.floor(totalMaps / 5) * 45 : 0);
+	const costMult = 1e10;
+
+	const woodBase = scaleToCurrentMap_AT(simpleSeconds_AT('wood', 1, jobRatio), false, true, mapLevel);
+	const woodEarned = woodBase * mapTime;
+
+	let bonfireCostTotal = 0;
+	let bonfiresGained = 0;
+
+	for (let x = game.challenges.Hypothermia.totalBonfires; x < Infinity; x++) {
+		bonfireCostTotal += costMult * Math.pow(100, x);
+		if (bonfireCostTotal > game.resources.wood.owned + woodEarned) break;
+		bonfiresGained++;
+	}
+
+	return game.challenges.Hypothermia.totalBonfires + bonfiresGained;
+}
+
 function _runHypothermia(setting, mapName, settingName, settingIndex) {
 	let bonfireGoal = setting.bonfire;
 	const mapSpecial = getAvailableSpecials('lwc', true);
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial) : setting.level;
 	const jobRatio = setting.jobratio;
+	if (setting.mapType && setting.mapType === 'Map Count') {
+		bonfireGoal = _hypothermiaCalculateGoal(mapLevel, bonfireGoal, jobRatio);
+	}
+
 	const maxWood = game.resources.wood.max * (1 + getPerkModifier('Packrat') * getPerkLevel('Packrat'));
 
 	let bonfireCostTotal = 0;
 
-	//Looping through each bonfire level and working out their cost to calc total cost
+	/* looping through each bonfire level and working out their cost to calculate total cost */
 	for (let x = game.challenges.Hypothermia.totalBonfires; x < bonfireGoal; x++) {
 		bonfireCostTotal += 1e10 * Math.pow(100, x);
 	}
@@ -2695,23 +2721,7 @@ function _runHypothermia(setting, mapName, settingName, settingIndex) {
 		bonfireCostTotal += game.buildings.Shed.cost.wood();
 	}
 
-	let shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
-
-	if (shouldMap && setting.mapCap && setting.mapCap > 0) {
-		const mapCap = mapSettings.mapName === mapName ? setting.mapCap - game.global.mapRunCounter : setting.mapCap;
-		if (typeof mapSettings.bonfire !== 'undefined') {
-			bonfireGoal = mapSettings.bonfire;
-		} else {
-			const resourcesGained = game.resources.wood.owned + resourcesFromMap('wood', mapSpecial, setting.jobratio, mapLevel, mapCap);
-			while (bonfireCostTotal < resourcesGained) {
-				bonfireCostTotal -= 1e10 * Math.pow(100, bonfireGoal);
-				bonfireGoal--;
-			}
-		}
-
-		shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
-	}
-
+	const shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
 	const repeat = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMap_AT(simpleSeconds_AT('wood', 20, jobRatio), false, true, mapLevel) + game.resources.wood.owned > bonfireCostTotal;
 	const status = `Hypo Farming To: ${prettify(bonfireCostTotal)} wood`;
 
@@ -3867,8 +3877,17 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	else if (mapName === 'Smithy Farm') message += ` Finished with ${game.buildings.Smithy.purchased} smithies.`;
 	else if (mapName === 'Insanity Farm') message += ` Finished with ${game.challenges.Insanity.insanity} stacks.`;
 	else if (mapName === 'Alchemy Farm') message += ` Finished with ${extra} ${extra2}.`;
-	else if (mapName === 'Hypothermia Farm') message += ` Finished with (${prettify(game.resources.wood.owned)}/${prettify(extra.toFixed(2))}) wood.`;
-	else if (mapName === 'Smithless Farm') message += ` Finished with enough damage to get ${extra}/3 stacks.`;
+	else if (mapName === 'Hypothermia Farm') {
+		let bonfireCostTotal = 0;
+		let bonfires = game.challenges.Hypothermia.totalBonfires;
+		for (let x = bonfires; x < Infinity; x++) {
+			console.log(x);
+			bonfireCostTotal += 1e10 * Math.pow(100, x);
+			if (bonfireCostTotal > game.resources.wood.owned) break;
+			bonfires++;
+		}
+		message += ` Finished with enough wood (${prettify(game.resources.wood.owned)}/${prettify(extra.toFixed(2))}) to reach ${bonfires} total bonfires.`;
+	} else if (mapName === 'Smithless Farm') message += ` Finished with enough damage to get ${extra}/3 stacks.`;
 
 	MODULES.maps.mapRepeats = 0;
 	delete mapSettings.mapBonus;

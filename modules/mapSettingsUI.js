@@ -88,7 +88,7 @@ function mapSettingsDisplay(elem, titleText) {
 	tooltipText += `<div style='display: none' id='mazHelpContainer'>${_mapSettingsHelpWindow(activeSettingObj, settingType)}</div>`;
 
 	const swapTo = settingType === 'basic' ? 'Advanced' : 'Basic';
-	const noAdvancedSettings = noDefaultRow || ['Spire Assault', 'Worshipper', 'Toxicity', 'Quagmire', 'Archaeology', 'Insanity', 'Hypothermia'].some((name) => titleText.includes(name));
+	const noAdvancedSettings = noDefaultRow || ['Spire Assault', 'Worshipper', 'Toxicity', 'Quagmire', 'Archaeology', 'Insanity'].some((name) => titleText.includes(name));
 	const costText = `
 		<div class='maxCenter'>
 			<span id='saveBtn' class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='_mapSettingsSave("${titleText}", "${settingName}", ${JSON.stringify(activeSettingObj)})'>Save and Close</span>
@@ -222,19 +222,20 @@ function _mapSettingsInputObj() {
 				portalAfter: { name: 'portalAfter', title: 'Portal After', defaultValue: false, width: { basic: 5, advanced: 5, display: 'basic', altWidth: function () { return 4 } } },
 			},
 			settingInputsDefault: {
-				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } } },
-				maxTenacity: { name: 'maxTenacity', title: 'Max Map Bonus', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } } },
+				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } } },
+				maxMapBonus: { name: 'maxMapBonus', title: 'Max Map Bonus', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } } },
 				
-				boneCharge: { name: 'boneCharge', title: 'Use Bone Charge', defaultValue: false, width: { basic: 12, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } } },
-				voidFarm: { name: 'voidFarm', title: 'Pre Void Farm', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } } },
+				boneCharge: { name: 'boneCharge', title: 'Use Bone Charge', defaultValue: false, width: { basic: 12, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } } },
+				voidFarm: { name: 'voidFarm', title: 'Pre Void Farm', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } } },
 
-				hitsSurvived: { name: 'hitsSurvived', title: 'Void Farm<br>Hits Survived', defaultValue: 0, width: { basic: 16, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) }  }, type: 'text'  },
-				hdRatio: { name: 'hdRatio', title: 'Void Farm<br>HD Ratio', defaultValue: 0, width: { basic: 15, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } }, type: 'text' },
+				hitsSurvived: { name: 'hitsSurvived', title: 'Void Farm<br>Hits Survived', defaultValue: 0, width: { basic: 16, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) }  }, type: 'text'  },
+				hdRatio: { name: 'hdRatio', title: 'Void Farm<br>HD Ratio', defaultValue: 0, width: { basic: 15, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } }, type: 'text' },
 				
-				jobratio: { name: 'jobratio', title: 'Void Farm<br>Job Ratio', defaultValue: "1,1,1,0", width: { basic: 14, display: 'basic', altWidth: function (vals, width) { return width - +(atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) } }, type: 'text' }, 
+				jobratio: { name: 'jobratio', title: 'Void Farm<br>Job Ratio', defaultValue: "1,1,1,0", width: { basic: 14, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } }, type: 'text' }, 
 				mapCap: { name: 'mapCap', title: 'Map Cap', defaultValue: 100, width: { basic: 10, display: 'basic', altWidth: function (vals, width) { return width - 1; } } },
 
 				poisonVoids: { name: 'poisonVoids', title: 'Poison Voids', defaultValue: false, width: { basic: 0, display: 'basic', altWidth: function () { return (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) ? 8 : 0 } } },
+				maxTenacity: { name: 'maxTenacity', title: 'Max Tenacity', defaultValue: false, width: { basic: 0, display: 'basic', altWidth: function () { return (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked) ? 8 : 0 } } },
 			},
 			windowWidth: { basic: 50, advanced: 70 }
 		},
@@ -560,15 +561,18 @@ function _mapSettingsInputObj() {
 		},
 		Hypothermia: {
 			settingInputs: {
-				active: { name: 'active', title: 'Active?', defaultValue: true, width: { basic: 10, display: 'basic' } },
-				priority: { name: 'priority', title: 'Priority', defaultValue: 1, width: { basic: 12, display: 'basic' } },
-				world: { name: 'world', title: 'Zone', defaultValue: 999, width: { basic: 12, display: 'basic' } },
-				cell: { name: 'cell', title: 'Cell', defaultValue: 1, width: { basic: 12, display: 'basic' } },
-				autoLevel: { name: 'autoLevel', title: 'Auto Level', defaultValue: true, width: { basic: 10, display: 'basic' }, disable: function() { return false } },
-				level: { name: 'level', title: 'Map Level', defaultValue: -1, width: { basic: 12, display: 'basic' }, disable: function(vals) { return vals.autoLevel } },
+				active: { name: 'active', title: 'Active?', defaultValue: true, width: { basic: 10, advanced: 8, display: 'basic' } },
+				priority: { name: 'priority', title: 'Priority', defaultValue: 1, width: { basic: 12, advanced: 8, display: 'basic' } },
+				world: { name: 'world', title: 'Start Zone', defaultValue: 999, width: { basic: 12, advanced: 8, display: 'basic' } },
+				endzone: { name: 'endzone', title: 'End Zone', defaultValue: 999, width: { basic: 0, advanced: 8, display: 'advanced' } },
+				cell: { name: 'cell', title: 'Cell', defaultValue: 1, width: { basic: 12, advanced: 8, display: 'basic' } },
+				autoLevel: { name: 'autoLevel', title: 'Auto Level', defaultValue: true, width: { basic: 8, advanced: 6, display: 'basic' }, disable: function() { return false } },
+				level: { name: 'level', title: 'Map Level', defaultValue: -1, width: { basic: 12, advanced: 8, display: 'basic' }, disable: function(vals) { return vals.autoLevel } },
 
-				bonfire: { name: 'bonfire', title: 'Bonfires', defaultValue: 0, width: { basic: 12, display: 'basic' } },
-				jobratio: { name: 'jobratio', title: 'Job Ratio', defaultValue: '1,1,1,0', width: { basic: 20, display: 'basic' }, type: 'text' }, 
+				mapType: { name: 'mapType', title: 'Farm Type', defaultValue: 'Absolute', width: { basic: 0, advanced: 14 , display: 'advanced' }, dropdownType: 'mapType', disable: function() { return false } },
+				bonfire: { name: 'bonfire', title: 'Bonfires', defaultValue: 0, width: { basic: 12, advanced: 10, display: 'basic' },  extraTitle: function(vals) { return vals.mapType === 'Map Count' ? `Max Maps` : '' } },
+				jobratio: { name: 'jobratio', title: 'Job Ratio', defaultValue: '1,1,1,0', width: { basic: 20, advanced: 12, display: 'basic' }, type: 'text' }, 
+				repeatevery: { name: 'repeatevery', title: 'Repeat Every', defaultValue: 0, width: { basic: 0, advanced: 10, display: 'advanced' } },
 			},
 			settingInputsDefault: {
 				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 10, display: 'basic' } },
@@ -576,7 +580,7 @@ function _mapSettingsInputObj() {
 				autostorage: { name: 'autostorage', title: 'Auto<br>Storage', defaultValue: true, width: { basic: 15, display: 'basic' } },
 				packrat: { name: 'packrat', title: 'Packrat', defaultValue: false, width: { basic: 15, display: 'basic' } },
 			},
-			windowWidth: { basic: 45 }
+			windowWidth: { basic: 50, advanced: 70 }
 		},
 		Profile: {
 			settingInputs: {
@@ -1324,6 +1328,10 @@ function _mapSettingsHelpWindow(activeSettings, settingType = 'basic') {
 				mazHelp += `<li><b>Poison Voids</b> - This will only run the lines setup below when you are on a Poison empowerment zone.</li>`;
 				mazHelp += `<li class="indent">If you have not yet reached empowerment (magma) zones on your run then it will ignore this setting and run them.</li>`;
 				mazHelp += `<li class="indent">The <b>${c2abv} Runner</b> and <b>${resourceName} Per Hour</b> settings both ignore this setting and will run regardless of being in a Poison zone if they are set to.</li>`;
+			}
+
+			if (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked) {
+				mazHelp += `<li><b>Max Tenacity</b> - Makes your <b>Void HD Ratio</b> assume you have max Tenacity multiplier.</li>`;
 			}
 		}
 
