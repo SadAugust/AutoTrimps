@@ -1303,7 +1303,7 @@ function _mapSettingsHelpWindow(activeSettings, settingType = 'basic') {
 		}
 
 		if (s.voidMap) {
-			mazHelp += `<li><b>Max Map Bonus</b> - Makes your <b>Void HD Ratio</b> assume you have 10 map bonus stacks${radonSetting && !game.portal.Tenacity.radLocked ? ' and max Tenacity multiplier' : ''}.</li>`;
+			mazHelp += `<li><b>Max Map Bonus</b> - Makes your <b>Void HD Ratio</b> assume you have 10 map bonus stacks.</li>`;
 
 			if (game.permaBoneBonuses.boosts.owned > 0) mazHelp += `<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>`;
 

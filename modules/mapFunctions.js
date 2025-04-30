@@ -3881,7 +3881,6 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		let bonfireCostTotal = 0;
 		let bonfires = game.challenges.Hypothermia.totalBonfires;
 		for (let x = bonfires; x < Infinity; x++) {
-			console.log(x);
 			bonfireCostTotal += 1e10 * Math.pow(100, x);
 			if (bonfireCostTotal > game.resources.wood.owned) break;
 			bonfires++;
