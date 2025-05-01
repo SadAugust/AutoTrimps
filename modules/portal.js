@@ -374,7 +374,7 @@ function _autoPortalUniverseSwap() {
 		}
 	}
 
-	if (getPageSetting('autoPortal', newUniverse) !== 'Off') MODULES.portal.portalUniverse = newUniverse;
+	MODULES.portal.portalUniverse = newUniverse;
 	MODULES.portal.portalForVoid = false;
 	MODULES.portal.portalForRespec = false;
 
