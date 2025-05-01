@@ -195,9 +195,7 @@ atData.uniqueMaps = Object.freeze({
 			if (regularRun) return true;
 			if (!runningHypo || mapSettings.mapName === 'Void Maps') return false;
 
-			const frozenCastleSettings = hypoSettings.frozencastle;
-			const world = frozenCastleSettings && frozenCastleSettings[0] !== undefined ? parseInt(frozenCastleSettings[0]) : 200;
-			const cell = frozenCastleSettings && frozenCastleSettings[1] !== undefined ? parseInt(frozenCastleSettings[1]) : 99;
+			const { world, cell } = hypoSettings;
 			const hypothermiaRun = hypoSettings.active && game.global.world >= world && (game.global.lastClearedCell + 2 >= cell || liquified);
 			if (hypothermiaRun) return true;
 

@@ -1438,6 +1438,24 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '7.10.1') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			const settingName = 'hypothermiaSettings';
+			const setting = tempSettings[settingName].valueU2[0];
+			if (typeof setting !== 'undefined' && setting.frozencastle !== 'undefined') {
+				const frozenCastleSettings = setting.frozencastle;
+				const world = frozenCastleSettings && frozenCastleSettings[0] !== undefined ? parseInt(frozenCastleSettings[0]) : 200;
+				const cell = frozenCastleSettings && frozenCastleSettings[1] !== undefined ? parseInt(frozenCastleSettings[1]) : 99;
+
+				autoTrimpSettings[settingName].valueU2[0].world = world;
+				autoTrimpSettings[settingName].valueU2[0].cell = cell;
+				delete autoTrimpSettings[settingName].valueU2[0].frozencastle;
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
