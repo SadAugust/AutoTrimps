@@ -465,7 +465,7 @@ function _mapSettingsInputObj() {
 				autoLevel: { name: 'autoLevel', title: 'Auto Level', defaultValue: true, width: { basic: 5, display: 'basic' }, disable: function() { return false } },
 				level: { name: 'level', title: 'Map Level', defaultValue: -1, width: { basic: 8, display: 'basic' }, disable: function(vals) { return vals.autoLevel } },
 
-				repeat: { name: 'repeat', title: 'Map Repeats', defaultValue: 0, width: { basic: 8, display: 'basic' } },
+				repeat: { name: 'repeat', title: 'Toxic Stacks', defaultValue: 0, width: { basic: 8, display: 'basic' } },
 				jobratio: { name: 'jobratio', title: 'Job Ratio', defaultValue: '1,1,1,0', width: { basic: 8, display: 'basic' }, type: 'text' }, 
 				special: { name: 'special', title: 'Special', defaultValue: '0', width: { basic: 24, display: 'basic', altWidth: function (vals) { return ['hc', 'lc'].includes(vals.special) ? 17 : 25 }  }, dropdownType: 'special' },
 				gather: { name: 'gather', title: '', defaultValue: 'food', width: { basic: 0, display: 'basic', altWidth: function (vals) { return ['hc', 'lc'].includes(vals.special) ? 8 : 0 }  }, dropdownType: 'gather', extraTitle: `Gather` },
