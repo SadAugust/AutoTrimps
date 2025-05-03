@@ -633,6 +633,7 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>Master switch for whether the script will do any form of Geneticist purchasing.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p>The <b>GA: Timer</b> setting must be set otherwise all of the <b>Gene Assist</b> settings won't work.</p>";
 				description += "<p><b>Will disable the ingame Geneticistassist setting.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
