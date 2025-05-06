@@ -908,7 +908,7 @@ function _tributeFarmCalculateGoal(mapLevel, mapSpecial, jobRatio, tributeGoal, 
 	const lootMult = decayLootMult(tributeGoal + meteorologistGoal);
 	const calculateGoal = (goal, item, isJob = false) => {
 		if (goal === 0) return goal;
-		const foodEarned = game.resources.food.owned + resourcesFromMap('food', mapSpecial, jobRatio, mapLevel, goal) * lootMult;
+		const foodEarned = game.resources.food.owned + _getResourcesFromMap('food', mapSpecial, jobRatio, mapLevel, goal) * lootMult;
 		goal = item[isJob ? 'owned' : 'purchased'] + calculateMaxAfford_AT(item, !isJob, false, isJob, false, 1, foodEarned);
 
 		return goal;
@@ -953,12 +953,8 @@ function _tributeFarmShouldAncientTreasure(mapSpecial, jobRatio, mapLevel, tribu
 	const isFoodExceeded = totalCost > game.resources.food.max * (1 + getPerkModifier('Packrat') * getPerkLevel('Packrat'));
 	if (isFoodExceeded) totalCost += game.buildings.Barn.cost.food();
 
-	//Figuring out how much Food we'd farm in the time it takes to run Atlantrimp. Seconds is avg of 5x caches (20s per), 4x chronoimps (5s per), 1x jestimp (45s)
-	let resourceSeconds = (mapSpecial === 'lsc' ? 20 : mapSpecial === 'ssc' ? 10 : 0) * 5;
-	if (game.unlocks.imps.Tauntimp) resourceSeconds += 45;
-	if (game.unlocks.imps.Chronoimp) resourceSeconds += 20;
-
-	const resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT('food', resourceSeconds, jobRatio), false, true, mapLevel);
+	/* 	figuring out how much food we'd farm in the time it takes to run Atlantrimp */
+	const resourceFarmed = _getResourcesFromMap('food', mapSpecial, jobRatio, mapLevel, 5);
 	const totalCostExceedsFarm = totalCost > game.resources.food.owned + resourceFarmed;
 	const ownedFoodExceedsHalfCost = game.resources.food.owned > totalCost / 2;
 
@@ -1014,14 +1010,10 @@ function _smithyFarmCalculateGoal(setting, mapLevel, smithyGoal) {
 	if (mapSettings.smithies) return mapSettings.smithies;
 
 	const totalMaps = smithyGoal;
-	const mapTime = totalMaps * 25 + (totalMaps > 4 ? Math.floor(totalMaps / 5) * 45 : 0);
 	const costMult = game.buildings.Smithy.cost.gems[1];
 	const lootMult = decayLootMult(totalMaps);
-
-	const woodBase = scaleToCurrentMap_AT(simpleSeconds_AT('wood', 1, '0,1,0'), false, true, mapLevel);
-	const metalBase = scaleToCurrentMap_AT(simpleSeconds_AT('metal', 1, '0,0,1'), false, true, mapLevel);
-	const woodEarned = woodBase * mapTime * lootMult;
-	const metalEarned = metalBase * mapTime * lootMult;
+	const woodEarned = _getResourcesFromMap('wood', getAvailableSpecials('lwc', true), '0,1,0', mapLevel, totalMaps) * lootMult;
+	const metalEarned = _getResourcesFromMap('metal', getAvailableSpecials('lmc', true), '0,0,1', mapLevel, totalMaps) * lootMult;
 
 	const woodSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow(costMult, game.buildings.Smithy.purchased) * game.buildings.Smithy.cost.wood[0], game.resources.wood.owned + woodEarned, costMult, true);
 	const metalSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow(costMult, game.buildings.Smithy.purchased) * game.buildings.Smithy.cost.metal[0], game.resources.metal.owned + metalEarned, costMult, true);
@@ -1030,8 +1022,8 @@ function _smithyFarmCalculateGoal(setting, mapLevel, smithyGoal) {
 		const smithyCount = Math.min(woodSmithies, metalSmithies);
 		const woodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, smithyCount - game.buildings.Smithy.purchased);
 		const metalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, smithyCount - game.buildings.Smithy.purchased);
-		const woodMapCount = Math.floor((woodCost - game.resources.wood.owned) / (woodBase * 34));
-		const metalMapCount = Math.floor((metalCost - game.resources.metal.owned) / (metalBase * 34));
+		const woodMapCount = Math.floor((woodCost - game.resources.wood.owned) / (woodEarned / totalMaps));
+		const metalMapCount = Math.floor((metalCost - game.resources.metal.owned) / (metalEarned / totalMaps));
 		smithyGoal = woodMapCount + metalMapCount > smithyGoal ? smithyCount - 1 : smithyCount;
 	} else {
 		smithyGoal = 1;
@@ -1166,14 +1158,13 @@ function worshipperFarm(lineCheck) {
 function _runWorshipperFarm(setting, mapName, settingName, settingIndex, defaultSettings) {
 	const { worshipper: worshipperGoal, jobratio: jobRatio, autoLevel, priority } = setting;
 	const mapSpecial = getAvailableSpecials('lsc', true);
-	const cacheTime = mapSpecial === 'lsc' ? 20 : 10;
 	const biome = getBiome(null, 'Sea');
 	const worshippersOwned = game.jobs.Worshipper.owned;
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial) : setting.level;
 
 	const checkShouldSkip = defaultSettings.shipSkipEnabled && worshippersOwned !== 50;
 	const skipIfAbove = game.jobs.Worshipper.getCost() * defaultSettings.shipskip;
-	const shouldSkip = checkShouldSkip && skipIfAbove > scaleToCurrentMap_AT(simpleSeconds_AT('food', cacheTime, jobRatio), false, true, mapLevel);
+	const shouldSkip = checkShouldSkip && skipIfAbove > _getResourcesFromMap('food', mapSpecial, jobRatio, mapLevel, 1);
 	const shouldMap = worshippersOwned !== 50 && worshipperGoal > worshippersOwned;
 
 	if ((mapSettings.mapName === mapName && !shouldMap) || shouldSkip) {
@@ -1958,7 +1949,7 @@ function _runQuest(shouldMap, mapName) {
 	const mapCap = getPageSetting('questMapCap') > 0 ? getPageSetting('questMapCap') : Infinity;
 
 	if (mapSettings.mapName !== mapName && mapCap > 0 && [1, 2, 3, 4, 5].includes(shouldMap)) {
-		const resourcesEarned = game.resources[questResource].owned + resourcesFromMap(questResource, mapSpecial, jobRatio, mapLevel, mapCap);
+		const resourcesEarned = game.resources[questResource].owned + _getResourcesFromMap(questResource, getAvailableSpecials(mapSpecial, true), jobRatio, mapLevel, mapCap);
 		shouldMap = game.challenges.Quest.questProgress >= resourcesEarned ? 0 : shouldMap;
 	}
 	// Stop farming for damage if we have run more than our allocated amount of maps.
@@ -2050,7 +2041,7 @@ function _runArchaeology(setting, mapName, settingName, settingIndex) {
 		if (typeof mapSettings.canAffordNextRelic !== 'undefined' && nextRelicCost === mapSettings.nextRelicCost) {
 			canAffordNextRelic = mapSettings.canAffordNextRelic;
 		} else {
-			canAffordNextRelic = game.resources.science.owned + resourcesFromMap('science', mapSpecial, setting.jobratio, mapLevel, mapCap) > nextRelicCost;
+			canAffordNextRelic = game.resources.science.owned + _getResourcesFromMap('science', mapSpecial, setting.jobratio, mapLevel, mapCap) > nextRelicCost;
 		}
 
 		shouldMap = canAffordNextRelic;
@@ -2675,16 +2666,11 @@ function _hypothermiaBuyPackrat() {
 	}
 }
 
-function _hypothermiaCalculateGoal(mapLevel, bonfireGoal, jobRatio) {
+function _hypothermiaCalculateGoal(mapLevel, mapSpecial, jobRatio, totalMaps) {
 	if (mapSettings.bonfire) return mapSettings.bonfire;
 
-	const totalMaps = bonfireGoal;
-	const mapTime = totalMaps * 25 + (totalMaps > 4 ? Math.floor(totalMaps / 5) * 45 : 0);
 	const costMult = 1e10;
-
-	const woodBase = scaleToCurrentMap_AT(simpleSeconds_AT('wood', 1, jobRatio), false, true, mapLevel);
-	const woodEarned = woodBase * mapTime;
-
+	const woodEarned = _getResourcesFromMap('wood', mapSpecial, jobRatio, mapLevel, totalMaps);
 	let bonfireCostTotal = 0;
 	let bonfiresGained = 0;
 
@@ -2703,7 +2689,7 @@ function _runHypothermia(setting, mapName, settingName, settingIndex) {
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial) : setting.level;
 	const jobRatio = setting.jobratio;
 	if (setting.mapType && setting.mapType === 'Map Count') {
-		bonfireGoal = _hypothermiaCalculateGoal(mapLevel, bonfireGoal, jobRatio);
+		bonfireGoal = _hypothermiaCalculateGoal(mapLevel, mapSpecial, jobRatio, bonfireGoal);
 	}
 
 	const maxWood = game.resources.wood.max * (1 + getPerkModifier('Packrat') * getPerkLevel('Packrat'));
@@ -2720,7 +2706,7 @@ function _runHypothermia(setting, mapName, settingName, settingIndex) {
 	}
 
 	const shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
-	const repeat = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMap_AT(simpleSeconds_AT('wood', 20, jobRatio), false, true, mapLevel) + game.resources.wood.owned > bonfireCostTotal;
+	const repeat = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || _getResourcesFromMap('wood', mapSpecial, jobRatio, mapLevel, 1) + game.resources.wood.owned > bonfireCostTotal;
 	const status = `Hypo Farming To: ${prettify(bonfireCostTotal)} wood`;
 
 	if (!shouldMap) {

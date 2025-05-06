@@ -786,10 +786,8 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 	const calcHeirloomBonusFunc = heirloom ? calcHeirloomBonus_AT : calcHeirloomBonus;
 	amt = calcHeirloomBonusFunc('Staff', `${jobName}Speed`, amt, false, heirloom);
 
-	const turkimpBonus = masteryPurchased('turkimp2') ? 2 : 1.5;
-
 	if ((masteryPurchased('turkimp2') || game.global.turkimpTimer > 0) && ['food', 'metal', 'wood'].includes(what)) {
-		amt *= turkimpBonus;
+		amt *= masteryPurchased('turkimp2') ? 2 : 1.5;
 		amt += getPlayerModifier() * seconds;
 	}
 	return amt;

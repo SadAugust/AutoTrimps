@@ -4856,6 +4856,7 @@ function initialiseAllSettings() {
 			function () { return ('Priority Order') },
 			function () {
 				let description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
+				description += "<p>This only shows setting lines that will run in your current portal. So if you have lines set to run only in Fillers and you are in a Daily it won't display them.</p>";
 				return description;
 			}, 'action', null, 'cancelTooltip(); importExportTooltip("priorityOrder")', 'Help', [0]);
 			
@@ -4891,15 +4892,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'Test', [0],
 			function () { return (false) });
-
-		createSetting('testSpeed20',
-			function () { return ('Game Speed 12x') },
-			function () {
-				let description = "<p>Increases the game run speed. Runs both the entire script & main trimps loop on every tick.</p>";
-				description += "<p><b>There's no way to clear this without refreshing your page.</b></p>";
-				description += "<p><b>Speed increase is variable depending on your machine.</b></p>";
-				return description;
-			}, 'action', null, 'testSpeedX(0.00001);', 'Test', [0]);
 
 		createSetting('testSetChallenge',
 			function () { return ('Custom Challenge') },
