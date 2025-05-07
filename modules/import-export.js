@@ -217,21 +217,9 @@ function _displayDisableSettingsProfiles(tooltipDiv) {
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayPriorityOrder(tooltipDiv, unusedVar, headerSelected) {
-	const priority = getPriorityOrder(headerSelected === 'All Settings');
-	if (!headerSelected) headerSelected = 'Active Settings';
-
-	let tooltipText = '';
-	const headerList = ['Active Settings', 'All Settings'];
-	tooltipText += `<div id='spireAssaultPresets' style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">`;
-	for (const header of headerList) {
-		const widthStyle = `width: calc((100% - ${0.1 + 0.1 * headerList.length}em - 2px) / ${headerList.length});`;
-		const headerClass = header === headerSelected ? 'Selected' : 'NotSelected';
-		tooltipText += `<div style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; ${widthStyle}" class='spireAssaultHeader spireHeader${headerClass}' onclick='importExportTooltip("priorityOrder", undefined, "${header}")'  data-hidden-name="${header}"><b>${header}</b></div>`;
-	}
-	tooltipText += `</div>`;
-
-	tooltipText += Object.keys(priority).length > 18 ? `<div class='litScroll'>` : '';
+function _displayPriorityOrder(tooltipDiv) {
+	const priority = getPriorityOrder();
+	let tooltipText = Object.keys(priority).length > 18 ? `<div class='litScroll'>` : '';
 	tooltipText += `<table class='bdTableSm table table-striped'>
         <tbody>
             <tr>
@@ -678,7 +666,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUniverse) {
+function _displayC2Table(tooltipDiv, undefined, universe = atConfig.settingUniverse) {
 	universe += 1;
 	const challengeOrders = {
 		c2: ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Coordinate', 'Trimp', 'Obliterated', 'Eradicated', 'Mapology', 'Trapper'],

@@ -252,6 +252,34 @@ function testTimeWarp(hours) {
 	offlineProgress.start();
 }
 
+function testSpeedX(interval) {
+	// game uses 100ms for 1 second
+	if (game.options.menu.pauseGame.enabled) {
+		setTimeout(testSpeedX, interval, interval);
+		return;
+	}
+
+	const date = new Date();
+	const now = date.getTime();
+	const tick = 100;
+
+	game.global.lastOnline = now;
+	game.global.start = now;
+
+	game.global.zoneStarted -= tick;
+	game.global.portalTime -= tick;
+	game.global.lastSoldierSentAt -= tick;
+	game.global.lastSkeletimp -= tick;
+	game.permaBoneBonuses.boosts.lastChargeAt -= tick;
+	if (game.global.mapsActive) game.global.mapStarted -= tick;
+
+	mainLoop();
+	gameLoop(null, now);
+	setTimeout(testSpeedX, interval);
+
+	if (date.getSeconds() % 3 === 0) updateLabels();
+}
+
 function testChallenge() {
 	//read the name in from tooltip
 	const challengeName = document.getElementById('importBox').value.replace(/[\n\r]/gm, '');
@@ -275,17 +303,16 @@ function testRunningC2() {
 }
 
 function testMetalIncome() {
-	const map = getCurrentMapObject();
-	const mapLevel = game.global.mapsActive ? map.level - game.global.world : 0;
-
 	const secondsPerMap = (trimpStats.hyperspeed2 ? 6 : 8) / maxOneShotPower(true);
 	const mapsPerHour = 3600 / secondsPerMap;
 	const mapsPerDay = mapsPerHour * 24;
-
-	const resourcesGained = _getResourcesFromMap('metal', getAvailableSpecials('lmc'), '0,0,1', mapLevel, mapsPerDay);
-	const decayMult = decayLootMult(mapsPerDay);
-
-	debug(`Metal gained from 1 day ${prettify(resourcesGained * decayMult)}`, 'test');
+	//Factors in large cache + chronoimp
+	let mapTimer = mapsPerDay * 25;
+	//Adding avg jestimps into mapTimer calculation
+	if (mapsPerDay > 4) mapTimer += Math.floor(mapsPerDay / 5) * 45;
+	const mapLevel = game.global.mapsActive ? getCurrentMapObject().level - game.global.world : 0;
+	const resourcesGained = scaleToCurrentMap_AT(simpleSeconds_AT('metal', mapTimer, '0,0,1'), false, true, mapLevel);
+	debug(`Metal gained from 1 day ${prettify(resourcesGained)}`, 'test');
 }
 
 function testEquipmentMetalSpent() {
@@ -361,34 +388,13 @@ function getAncientTreasureName() {
 	return game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 }
 
-function _getAverageExotics(mapClears = 1, mapCells = trimpStats.mapSize) {
-	const exoticChance = getExoticChance();
-	const cells = mapClears * mapCells;
+function resourcesFromMap(resource, cache, jobRatio, mapLevel, mapCount) {
+	let mapTime = cache[0] === 'l' ? 20 : cache[0] === 's' ? 10 : 0;
+	if (game.unlocks.imps.Chronoimp) mapTime += 5;
+	mapTime = mapTime > 0 ? (mapTime *= mapCount) : mapCount;
+	if (game.unlocks.imps.Jestimp) mapTime += Math.floor(mapCount / 5) * 45;
 
-	let expectedExotics = cells * (exoticChance / 100);
-	expectedExotics += (cells * 0.02) / (5 / game.badGuys.Magimp.lootCount());
-	expectedExotics = Math.floor(expectedExotics);
-
-	return expectedExotics;
-}
-
-function _getMapTimer(mapsClears = 1, special = getAvailableSpecials('lmc')) {
-	const cacheTimer = getSpecialTime(special);
-	let mapTimer = mapsClears * cacheTimer;
-
-	const exoticCount = _getAverageExotics(mapsClears);
-	if (game.unlocks.imps.Chronoimp) mapTimer += exoticCount * 5;
-	if (game.unlocks.imps.Jestimp) mapTimer += (exoticCount * 45) / 4;
-
-	return mapTimer;
-}
-
-function _getResourcesFromMap(resource = 'metal', cache = getAvailableSpecials('lmc'), jobRatio = '0,0,1', mapLevel = 0, mapCount = 1) {
-	const mapTime = _getMapTimer(mapCount, cache);
-	const baseLoot = simpleSeconds_AT(resource, mapTime, jobRatio);
-	const scaledLoot = scaleToCurrentMap_AT(baseLoot, false, true, mapLevel);
-
-	return scaledLoot;
+	return scaleToCurrentMap_AT(simpleSeconds_AT(resource, mapTime, jobRatio), false, true, mapLevel);
 }
 
 // Factor in the resource reduction from spending time farming during Decay or Melt
@@ -444,7 +450,7 @@ function _priorityChallengeCheck(challenge) {
 	return false;
 }
 
-function getPriorityOrder(showDisabled = false) {
+function getPriorityOrder() {
 	let order = [];
 	let settingsList = [];
 
@@ -477,7 +483,6 @@ function getPriorityOrder(showDisabled = false) {
 		const settingData = getPageSetting(settingName);
 
 		for (let y = 1; y < settingData.length; y++) {
-			if (!showDisabled && !settingData[y].active) continue;
 			if (typeof settingData[y].runType !== 'undefined' && settingData[y].runType !== 'All') {
 				if (trimpStats.isDaily) {
 					if (settingData[y].runType !== 'Daily') continue;

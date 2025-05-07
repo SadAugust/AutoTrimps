@@ -154,10 +154,6 @@ function _mapSettingsGetActive(settingName = '', settingNames = [], settingType 
 	return activeSetting;
 }
 
-function voidMapSettingExtraHeader() {
-	return (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked);
-}
-
 function _mapSettingsInputObj() {
 	/* anything added here has to go in the order that the title & inputs will be displayed in */
 	/* prettier-ignore */
@@ -227,16 +223,16 @@ function _mapSettingsInputObj() {
 				portalAfter: { name: 'portalAfter', title: 'Portal After', defaultValue: false, width: { basic: 5, advanced: 5, display: 'basic', altWidth: function () { return 4 } } },
 			},
 			settingInputsDefault: {
-				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +voidMapSettingExtraHeader() } } },
-				maxMapBonus: { name: 'maxMapBonus', title: 'Max Map Bonus', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +voidMapSettingExtraHeader() } } },
+				active: { name: 'active', title: 'Enable Setting', defaultValue: true, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } } },
+				maxMapBonus: { name: 'maxMapBonus', title: 'Max Map Bonus', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } } },
 				
-				boneCharge: { name: 'boneCharge', title: 'Use Bone Charge', defaultValue: false, width: { basic: 12, display: 'basic', altWidth: function (vals, width) { return game.permaBoneBonuses.boosts.owned <= 0 ? 0 : width - +voidMapSettingExtraHeader() } } },
-				voidFarm: { name: 'voidFarm', title: 'Pre Void Farm', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +voidMapSettingExtraHeader() } } },
+				boneCharge: { name: 'boneCharge', title: 'Use Bone Charge', defaultValue: false, width: { basic: 12, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } } },
+				voidFarm: { name: 'voidFarm', title: 'Pre Void Farm', defaultValue: false, width: { basic: 11, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } } },
 
-				hitsSurvived: { name: 'hitsSurvived', title: 'Void Farm<br>Hits Survived', defaultValue: 0, width: { basic: 16, display: 'basic', altWidth: function (vals, width) { return width - +voidMapSettingExtraHeader() }  }, type: 'text'  },
-				hdRatio: { name: 'hdRatio', title: 'Void Farm<br>HD Ratio', defaultValue: 0, width: { basic: 15, display: 'basic', altWidth: function (vals, width) { return width - +voidMapSettingExtraHeader() } }, type: 'text' },
+				hitsSurvived: { name: 'hitsSurvived', title: 'Void Farm<br>Hits Survived', defaultValue: 0, width: { basic: 16, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) }  }, type: 'text'  },
+				hdRatio: { name: 'hdRatio', title: 'Void Farm<br>HD Ratio', defaultValue: 0, width: { basic: 15, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } }, type: 'text' },
 				
-				jobratio: { name: 'jobratio', title: 'Void Farm<br>Job Ratio', defaultValue: "1,1,1,0", width: { basic: 14, display: 'basic', altWidth: function (vals, width) { return width - +voidMapSettingExtraHeader() } }, type: 'text' }, 
+				jobratio: { name: 'jobratio', title: 'Void Farm<br>Job Ratio', defaultValue: "1,1,1,0", width: { basic: 14, display: 'basic', altWidth: function (vals, width) { return width - +((atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) || (atConfig.settingUniverse === 2 && !game.portal.Tenacity.radLocked)) } }, type: 'text' }, 
 				mapCap: { name: 'mapCap', title: 'Map Cap', defaultValue: 100, width: { basic: 10, display: 'basic', altWidth: function (vals, width) { return width - 1; } } },
 
 				poisonVoids: { name: 'poisonVoids', title: 'Poison Voids', defaultValue: false, width: { basic: 0, display: 'basic', altWidth: function () { return (atConfig.settingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 236) ? 8 : 0 } } },
