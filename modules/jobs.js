@@ -279,7 +279,7 @@ function _getScientistRatio(maxTrimps) {
 	return conditions.find(({ condition }) => condition()).ratio;
 }
 
-function _getAutoJobRatio(maxTrimps) {
+function _getAutoJobRatio(maxTrimps = game.resources.trimps.realMax()) {
 	const jobRatioObj = {
 		1: [
 			{ condition: () => challengeActive('Metal') || challengeActive('Transmute'), ratio: [4, 5, 0, 0] },
