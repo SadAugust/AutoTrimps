@@ -123,6 +123,9 @@ function populateFarmCalcData() {
 		trimpAttack *= ratio;
 	}
 
+	const gammaCharges = gammaMaxStacks(false, false, 'map');
+	const gammaMult = (runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : getHeirloomBonus('Shield', 'gammaBurst') / 100) || 1;
+
 	const frenzyLevel = getPerkLevel('Frenzy');
 	const permaFrenzy = autoBattle.oneTimers.Mass_Hysteria.owned;
 	const checkFrenzy = frenzyLevel > 0 && !permaFrenzy && !challengesActive.berserk;
@@ -145,12 +148,18 @@ function populateFarmCalcData() {
 		}
 	}
 
+	if (basicData.universe === 2) {
+		stances = 'X';
+		if (gammaMult > 1) stances += 'G';
+	}
+
 	/* crit */
 	let megaCD = 5;
 	if (Fluffy.isRewardActive('megaCrit')) megaCD += 2;
 	if (masteryPurchased('crit')) megaCD += 1;
 	const critChance = runningAutoTrimps ? getPlayerCritChance_AT(basicData.customShield) : getPlayerCritChance();
 	const critDamage = critChance >= 1 ? megaCD : runningAutoTrimps ? getPlayerCritDamageMult_AT(basicData.customShield) - 1 : getPlayerCritDamageMult() - 1;
+	const dblCritChance = runningAutoTrimps ? getPlayerDoubleCritChance_AT(basicData.customShield) : getPlayerDoubleCritChance();
 
 	/* fast enemy conditions */
 	let fastEnemy = challengesActive.desolation;
@@ -388,13 +397,15 @@ function populateFarmCalcData() {
 		range: maxFluct / minFluct - 1,
 		critChance: critChance % 1,
 		critDamage,
+		critMult: megaCD,
+		dblCritChance,
 		stances,
 		ok_spread: overkillRange,
 		overkill: overkillDamage,
 		plaguebringer: (nature.plaguebrought === 2 ? 0.5 : 0) + (runningAutoTrimps ? getHeirloomBonus_AT('Shield', 'plaguebringer', basicData.customShield) * 0.01 : getHeirloomBonus('Shield', 'plaguebringer') * 0.01),
 		angelic: masteryPurchased('angelic'),
-		gammaCharges: gammaMaxStacks(false, false, 'map'),
-		gammaMult: (runningAutoTrimps ? MODULES.heirlooms.gammaBurstPct : getHeirloomBonus('Shield', 'gammaBurst') / 100) || 1,
+		gammaCharges,
+		gammaMult,
 		equalityMult: basicData.universe === 2 ? (runningAutoTrimps ? getPlayerEqualityMult_AT(basicData.customShield) : game.portal.Equality.getModifier(true)) : 1,
 		checkFrenzy,
 		frenzyDuration,
@@ -553,6 +564,7 @@ function stats(lootFunction = lootDefault, checkFragments = true) {
 					for (const stance of saveData.stances) {
 						if (tmp[stance] && tmp[stance].killSpeed + 0.1 >= cPS && (tmp.mapConfig.special || '0') === saveData.special) {
 							saveData.stances = saveData.stances.split(stance).join('');
+							if (saveData.stances === 'G') saveData.stances = '';
 						}
 					}
 				}
@@ -590,14 +602,9 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 		loot
 	};
 
-	const [mapGrid, equality] = _simulateMapGrid(saveData, zone);
-	saveData.mapGrid = mapGrid;
-	saveData.equality = equality;
-
 	const stances = saveData.stances;
-	const enemyStats = mapGrid[mapGrid.length - 1];
-	const enemyEqualityModifier = equality > 0 ? Math.pow(0.9, equality) : 1;
-	const trimpEqualityModifier = equality > 0 ? Math.pow(saveData.equalityMult, equality) : 1;
+	saveData.mapGrid = _simulateMapGrid(saveData, zone);
+	const enemyStats = saveData.mapGrid[saveData.mapGrid.length - 1];
 	const minDmgChallenge = saveData.discipline || saveData.unlucky;
 	const attackMult = minDmgChallenge ? 1000 : 10;
 
@@ -610,10 +617,15 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 			killSpeed: 0
 		};
 
-		const attackMultiplier = stance === 'D' ? 4 : ['X', 'W'].includes(stance) ? 1 : 0.5;
+		if (stance === 'G' && result['X'] && result['X'].value > 0) continue;
+		saveData.equality = _getSimulatedEquality(saveData, zone, stance === 'G');
+		const enemyEqualityModifier = saveData.equality > 0 ? Math.pow(0.9, saveData.equality) : 1;
+		const trimpEqualityModifier = saveData.equality > 0 ? Math.pow(saveData.equalityMult, saveData.equality) : 1;
+
+		const attackMultiplier = stance === 'D' ? 4 : ['X', 'W'].includes(stance) || saveData.universe === 2 ? 1 : 0.5;
 		const lootMultiplier = ['S', 'W'].includes(stance) ? 2 : 1;
-		saveData.block = ['X', 'W'].includes(stance) ? saveData.trimpBlock : saveData.trimpBlock / 2;
-		saveData.health = ['X', 'W'].includes(stance) ? saveData.trimpHealth : saveData.trimpHealth / 2;
+		saveData.block = ['X', 'W'].includes(stance) || saveData.universe === 2 ? saveData.trimpBlock : saveData.trimpBlock / 2;
+		saveData.health = ['X', 'W'].includes(stance) || saveData.universe === 2 ? saveData.trimpHealth : saveData.trimpHealth / 2;
 		saveData.atk = saveData.attack * attackMultiplier * bionic2Multiplier;
 		if (saveData.crushed) saveData.enemy_cd = saveData.health < saveData.block ? 5 : 0;
 
@@ -657,16 +669,15 @@ function zone_stats(zone, saveData, lootFunction = lootDefault) {
 	return result;
 }
 
-function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.world) {
+function _getSimulatedEquality(saveData, zone, forceGamma = false) {
 	const { size, difficulty, mapBiome } = saveData;
-	const corruptionScaleAttack = saveData.magma ? calcCorruptionScale(zone, 3) / 2 : 1;
-	const corruptionScaleHealth = saveData.magma ? calcCorruptionScale(zone, 10) / 2 : 1;
-	let equality = 0;
 
 	if (saveData.universe === 2) {
 		const farmlandsType = getFarmlandsResType();
-		let enemyName = 'Penguimp';
+		const hits = forceGamma ? saveData.gammaCharges : 1;
+		const farmType = forceGamma ? 'gamma' : 'oneShotCalc';
 
+		let enemyName = 'Penguimp';
 		if (saveData.insanity && zone > game.global.world) {
 			enemyName = 'Horrimp';
 		} else if (['Plentiful', 'Sea'].includes(mapBiome) || (mapBiome === 'Farmlands' && ['Plentiful', 'Sea'].includes(farmlandsType))) {
@@ -675,8 +686,16 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 			enemyName = 'Moltimp';
 		}
 
-		equality = equalityQuery(enemyName, zone, size, 'map', difficulty);
+		return equalityQuery(enemyName, zone, size, 'map', difficulty, farmType, undefined, hits);
 	}
+
+	return 0;
+}
+
+function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.world) {
+	const { size, difficulty } = saveData;
+	const corruptionScaleAttack = saveData.magma ? calcCorruptionScale(zone, 3) / 2 : 1;
+	const corruptionScaleHealth = saveData.magma ? calcCorruptionScale(zone, 10) / 2 : 1;
 
 	const calculateEnemyStats = (zone, cell, enemyName, saveData) => {
 		const enemyHealth = calcEnemyBaseHealth('map', zone, cell + 1, enemyName);
@@ -690,7 +709,7 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 		};
 	};
 
-	return [Array.from({ length: size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData)), equality];
+	return Array.from({ length: size }, (_, cell) => calculateEnemyStats(zone, cell, 'Chimp', saveData));
 }
 
 /* simulate farming at the given zone for a fixed time, and return the number cells cleared. */
@@ -726,6 +745,7 @@ function simulate(saveData, zone, stance) {
 	let trimpAttacks = 0;
 	let trimpCrit = false;
 	let trimpCrits = 0;
+	let trimpDblCrits = 0;
 
 	let enemy_max_hp = 0;
 	let enemyAttack = 0;
@@ -776,8 +796,7 @@ function simulate(saveData, zone, stance) {
 			if (duelPoints < 50) enemyAttack *= 3;
 		}
 
-		rngCrit = enemyCC < 0.25 ? rng() : rngRoll;
-		if (rngCrit < enemyCC) {
+		if (saveData.enemy_cd > 1 && rng() < enemyCC) {
 			enemyAttack *= saveData.enemy_cd;
 			enemyCrit = true;
 			enemyCrits++;
@@ -883,7 +902,6 @@ function simulate(saveData, zone, stance) {
 	let plague_damage = 0;
 	let trimpOverkill = 0;
 	let mapClears = 0;
-	let rngCrit = rng();
 
 	while (ticks < maxTicks) {
 		rngRoll = rng();
@@ -959,12 +977,20 @@ function simulate(saveData, zone, stance) {
 					if (duelPoints > 50) trimpAttack *= 3;
 				}
 
-				rngCrit = saveData.critChance < 0.25 ? rng() : rngRoll;
-				if (rngCrit < saveData.critChance) {
+				if (saveData.critChance > 0 && rng() < saveData.critChance) {
 					trimpAttack *= saveData.critDamage;
 					trimpCrit = true;
-					trimpCrits++;
 				}
+
+				if (saveData.dblCritChance > 0 && rng() < saveData.dblCritChance) {
+					if (!trimpCrit) trimpAttack *= saveData.critDamage;
+					else trimpAttack *= saveData.critMult;
+					trimpCrit = true;
+					trimpDblCrits++;
+					trimpCrits--;
+				}
+
+				if (trimpCrit) trimpCrits++;
 
 				trimpAttack *= titimp > ticks ? 2 : 1;
 				if (saveData.ice > 0) trimpAttack *= 2 - 0.366 ** (ice * saveData.ice);
@@ -1151,7 +1177,11 @@ function simulate(saveData, zone, stance) {
 		trimpAttackOrig: saveData.atk,
 		trimpAttacks,
 		trimpCrits,
+		trimpDblCrits,
+		trimpHealthMax: saveData.health,
 		trimpHealth,
+		energyShieldMax,
+		energyShield,
 		trimpAttack,
 		trimpCC: saveData.critChance,
 		stance,
@@ -1303,48 +1333,56 @@ function get_best(results, fragmentCheck, mapModifiers, popup = false) {
 function _getBiomeEnemyStats(biome) {
 	const biomes = {
 		Plentiful: [
-			[1.3, 0.95, false],
-			[0.95, 0.95, true],
-			[0.8, 1, false],
-			[1.05, 0.8, false],
-			[0.6, 1.3, true],
-			[1, 1.1, false],
-			[0.8, 1.4, false]
+			[1.3, 0.95, false] /* Flowimp */,
+			[0.95, 0.95, true] /* Kangarimp */,
+			[0.8, 1, false] /* Gnomimp */,
+			[1.05, 0.8, false] /* Slosnimp */,
+			[0.6, 1.3, true] /* Entimp */,
+			[1, 1.1, false] /* Squirrimp */,
+			[0.8, 1.4, false] /* Gravelimp */,
+			[1.1, 0.85, false] /* Platypimp */
 		],
 		Sea: [
-			[0.8, 0.9, true],
-			[0.8, 1.1, true],
-			[1.4, 1.1, false]
+			[0.8, 0.9, true] /* Shrimp */,
+			[0.8, 1.1, true] /* Chickimp */,
+			[1.4, 1.1, false] /* Hippopotamimp */,
+			[0.9, 1, true] /* Duckimp */,
+			[1.2, 0.8, false] /* Nooimp */
 		],
 		Mountain: [
-			[0.5, 2, false],
-			[0.8, 1.4, false],
-			[1.15, 1.4, false],
-			[1, 0.85, true]
+			[0.5, 2, false] /* Mountimp */,
+			[0.8, 1.4, false] /* Onoudidimp */,
+			[1.15, 1.4, false] /* Seirimp */,
+			[1, 0.85, true] /* Kittimp */
 		],
 		Forest: [
-			[0.75, 1.2, true],
-			[1, 0.85, true],
-			[1.1, 1.5, false]
+			[0.75, 1.2, true] /* Frimp */,
+			[1, 0.85, true] /* Kittimp */,
+			[1.1, 1.5, false] /* Grimp */
 		],
 		Depths: [
-			[1.2, 1.4, false],
-			[0.9, 1, true],
-			[1.2, 0.7, false],
-			[1, 0.8, true]
+			[1.2, 1.4, false] /* Golimp */,
+			[0.9, 1, true] /* Slagimp */,
+			[1.2, 0.7, false] /* Moltimp */,
+			[1, 0.8, true] /* Lavimp */
+		],
+		Farmlands: [
+			[1.1, 0.85, false] /* Platypimp */
+			/* force new line */
 		]
 	};
-	biomes.Farmlands = getFarmlandsResType() === 'Metal' ? biomes.Mountain : getFarmlandsResType() === 'Wood' ? biomes.Forest : getFarmlandsResType() === 'Food' ? biomes.Sea : getFarmlandsResType() === 'Gems' ? biomes.Depths : getFarmlandsResType() === 'Any' ? biomes.Plentiful : 'All';
 
 	const baseEnemyBiome = [
-		[0.8, 0.7, true],
-		[0.9, 1.3, false],
-		[0.9, 1.3, false],
-		[1, 1, false],
-		[1.1, 0.7, false],
-		[1.05, 0.8, true],
-		[0.9, 1.1, true]
+		[0.8, 0.7, true] /* Squimp */,
+		[0.9, 1.3, false] /* Elephimp */,
+		[0.9, 1.3, false] /* Turtlimp */,
+		[1, 1, false] /* Chimp */,
+		[1.1, 0.7, false] /* Penguimp */,
+		[1.05, 0.8, true] /* Snimp */,
+		[0.9, 1.1, true] /* Gorillimp */
 	];
+
+	if (holidayObj.checkActive('Pumpkimp')) baseEnemyBiome.push([0.9, 1.5, false]); /* Pumpkimp */
 
 	const enemyBiome = [...baseEnemyBiome, ...biomes[biome]];
 	return enemyBiome;

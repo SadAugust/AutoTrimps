@@ -1673,7 +1673,7 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 	const [mapData, stances] = results;
 	const best = get_best(results, undefined, undefined, true);
 
-	let show_stance = game.global.world >= 60;
+	let show_stance = (game.global.universe === 1 && game.global.world >= 60) || (game.global.universe === 2 && populateFarmCalcData().stances.includes('G'));
 	let tooltipText = '';
 
 	const headerList = ['Current Fragments', 'Infinite Fragments'];
@@ -1687,8 +1687,14 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 
 	if (show_stance && stances.length > 1) {
 		tooltipText += '<tr><th colspan=2 style="text-align:center; border: 1px solid black;"></th>';
-		for (const stance of stances) {
-			tooltipText += `<th colspan=2 style="text-align:center; border: 1px solid black;">${stance}</th>`;
+		const headerColumns = game.global.universe === 2 ? 3 : 2;
+		for (let stance of stances) {
+			if (game.global.universe === 2) {
+				if (stance === 'X') stance = 'One Shot';
+				if (stance === 'G') stance = 'Gamma Burst';
+			}
+
+			tooltipText += `<th colspan=${headerColumns} style="text-align:center; border: 1px solid black;">${stance}</th>`;
 		}
 		tooltipText += '</tr>';
 	}
@@ -1700,10 +1706,10 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 	for (const _ of stances) {
 		tooltipText += `<th style="text-align:center; border: 1px solid black;">Cells/s</th>`;
 		tooltipText += `<th style="text-align:center; border: 1px solid black;">Total</th>`;
-	}
 
-	if (game.global.universe === 2) {
-		tooltipText += '<th style="text-align:center; border: 1px solid black;">Equality</th>';
+		if (game.global.universe === 2) {
+			tooltipText += '<th style="text-align:center; border: 1px solid black;">Equality</th>';
+		}
 	}
 
 	tooltipText += '</tr>';
@@ -1715,13 +1721,18 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 
 		for (let stance of stances) {
 			if (zone === best.loot[stance] && show_stance) {
+				if (game.global.universe === 2) {
+					if (stance === 'X') stance = 'One Shot';
+					if (stance === 'G') stance = 'Gamma';
+				}
+
 				stance_data += `<b>${stance}</b> `;
 			}
 		}
 
 		if (stance_data !== '') {
 			tooltipText += `<td style="text-align:right">`;
-			if (game.global.universe === 1) tooltipText += `${stance_data}`;
+			tooltipText += `${stance_data}`;
 		} else {
 			tooltipText += `<td style="text-align:center">`;
 		}
@@ -1734,16 +1745,17 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 			const stanceData = zone_stats[stance];
 			if (!stanceData || stanceData.value < 1) {
 				tooltipText += '<td><td>';
+				if (game.global.universe === 2) tooltipText += '<td>';
 			} else {
 				let value = prettify(stanceData.value);
 				tooltipText += '<td>' + stanceData.killSpeed.toFixed(3).replace(/\.?0+$/, '') + '<td>';
 				tooltipText += zone === best.loot[stance] ? `<b>${value}</b>` : `${value}`;
-			}
-		}
 
-		if (game.global.universe === 2) {
-			const equality = zone_stats.equality;
-			tooltipText += '<td>' + equality;
+				if (game.global.universe === 2) {
+					const equality = stanceData.equality;
+					tooltipText += '<td>' + equality;
+				}
+			}
 		}
 	}
 
@@ -1776,7 +1788,6 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 	if (game.unlocks.imps.Jestimp && challengeActive('Unlucky')) bestFarm += `<br>The displayed equality values account for jestimp buff for lucky damage.`;
 
 	const extraNote = 'Note: the displayed loot values don’t account for looting perks and staffs. As such, your actual loot will be much higher. However, these factors affect all maps in the same way, and don’t affect the choice of map.';
-
 	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
 
 	const ondisplay = function () {

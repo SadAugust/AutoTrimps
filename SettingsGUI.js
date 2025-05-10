@@ -3158,10 +3158,12 @@ function initialiseAllSettings() {
 				if (!mutatorObj || !mutatorObj.titles) mutatorObj = _mutatorDefaultObj()
 
 				let description = `<p>When both the <b>Preset Swap Mutators</b> and this setting are enabled then when portaling into <b>Daily</b> challenges that have the <b>Plagued</b> modifier it will load Preset 6${mutatorObj['Preset 6'] && mutatorObj['Preset 6'].name !== 'Preset 6' ? " (" + mutatorObj['Preset 6'].name + ")" : ''}.</p>`;
-				description += "<p>Due to overkill (when it can reach z300) being important to clearing the Spire faster than the Plagued debuff kills you it can be beneficial to go for full overkill and liquification mutations during dailies with the Plagued modifier.</p>"
+				if (game.stats.highestRadLevel.valueTotal() >= 270) {
+					description += "<p>Due to overkill (when it can reach z300) being important to clearing the Spire faster than the Plagued debuff kills you it can be beneficial to go for full overkill and liquification mutations during dailies with the Plagued modifier.</p>"
+				}
 				return description;
 			}, 'boolean', false, null, 'Daily', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 270) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 201) });
 			
 		createSetting('mapOddEvenIncrement',
 			function () { return ('Odd/Even Increment') },

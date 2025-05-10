@@ -1512,7 +1512,7 @@ function equalityQuery(enemyName = 'Snimp', zone = game.global.world, currentCel
 
 		if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
 			return i;
-		} else if (farmType === 'oneShot' && ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
+		} else if (farmType.includes('oneShot') && ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
 			return i;
 		} else if (i === maxEquality) {
 			return i;
