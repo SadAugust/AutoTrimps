@@ -810,9 +810,9 @@ function simulate(saveData, zone, stance) {
 		if (!dmgCheck) {
 			if (enemyAttack > 0) reduceTrimpHealth(enemyAttack);
 			++debuff_stacks;
-
-			return enemyAttack;
 		}
+
+		return enemyAttack;
 	}
 
 	function reduceTrimpHealth(amt) {
@@ -898,6 +898,17 @@ function simulate(saveData, zone, stance) {
 		}
 	}
 
+	function _getTrimpAttack() {
+		let attack = saveData.atk;
+		attack *= titimp > ticks ? 2 : 1;
+		if (saveData.ice > 0) attack *= 2 - 0.366 ** (ice * saveData.ice);
+		if (saveData.weakness) attack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
+		if (saveData.unlucky) attack *= 1 + saveData.range * rng();
+		if (frenzyLeft > 0) attack *= saveData.frenzyMult;
+
+		return attack;
+	}
+
 	let turns = 0;
 	let plague_damage = 0;
 	let trimpOverkill = 0;
@@ -969,14 +980,16 @@ function simulate(saveData, zone, stance) {
 			if (!armyDead()) {
 				attacked = true;
 				trimpAttacks++;
-				trimpAttack = saveData.atk;
-				if (!saveData.unlucky) trimpAttack *= 1 + saveData.range * rngRoll;
-				if (frenzyLeft > 0) trimpAttack *= saveData.frenzyMult;
+				trimpAttack = _getTrimpAttack();
+
+				if (universe === 2 && equality > 0) {
+					trimpAttack *= trimpEqualityMult;
+				}
+
 				if (saveData.duel) {
 					saveData.critChance = 1 - duelPoints / 100;
 					if (duelPoints > 50) trimpAttack *= 3;
 				}
-
 				if (saveData.critChance > 0 && rng() < saveData.critChance) {
 					trimpAttack *= saveData.critDamage;
 					trimpCrit = true;
@@ -992,10 +1005,6 @@ function simulate(saveData, zone, stance) {
 
 				if (trimpCrit) trimpCrits++;
 
-				trimpAttack *= titimp > ticks ? 2 : 1;
-				if (saveData.ice > 0) trimpAttack *= 2 - 0.366 ** (ice * saveData.ice);
-				if (saveData.weakness) trimpAttack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
-				if (universe === 2 && equality > 0) trimpAttack *= trimpEqualityMult;
 				enemyHealth -= trimpAttack + poison * saveData.poison;
 				if (saveData.poison) poison += trimpAttack * (saveData.uberNature === 'Poison' ? 2 : 1) * saveData.natureIncrease;
 				if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += trimpAttack * saveData.plaguebringer;
@@ -1018,19 +1027,17 @@ function simulate(saveData, zone, stance) {
 
 			if (saveData.mayhem && mayhemPoison >= 1) trimpHealth -= mayhemPoison;
 
-			if (enemyHealth >= 1) {
-				if (saveData.glass) glassStacks++;
+			if (enemyHealth >= 1 && saveData.glass) glassStacks++;
 
-				if (!armyDead() && saveData.gammaMult > 1) {
-					gammaStacks++;
+			if (!armyDead() && saveData.gammaMult > 1) {
+				gammaStacks++;
 
-					if (gammaStacks >= saveData.gammaCharges) {
-						gammaBursts++;
-						gammaStacks = 0;
-						const burstDamage = trimpAttack * saveData.gammaMult;
-						enemyHealth -= burstDamage;
-						if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += burstDamage * saveData.plaguebringer;
-					}
+				if (enemyHealth > 0 && gammaStacks >= saveData.gammaCharges) {
+					gammaBursts++;
+					gammaStacks = 0;
+					const burstDamage = trimpAttack * saveData.gammaMult;
+					enemyHealth -= burstDamage;
+					if (saveData.plaguebringer && enemyHealth >= 1) plague_damage += burstDamage * saveData.plaguebringer;
 				}
 			}
 
