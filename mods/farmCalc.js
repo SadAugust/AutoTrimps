@@ -731,6 +731,7 @@ function simulate(saveData, zone, stance) {
 	/* challenge variables */
 	let nomStacks = 0;
 	let duelPoints = game.challenges.Duel.trimpStacks;
+	let duelHealthMult = false;
 	let hasWithered = false;
 	let mayhemPoison = 0;
 	let berserkStacks = game.challenges.Berserk.frenzyStacks;
@@ -762,15 +763,15 @@ function simulate(saveData, zone, stance) {
 
 	let trimpAttack = 0;
 	let trimpHealth = saveData.health;
-	const energyShieldMax = saveData.trimpShield;
+	let energyShieldMax = saveData.trimpShield;
 	let energyShield = energyShieldMax;
 
 	const trimpEqualityMult = Math.pow(saveData.equalityMult, equality);
 	const enemyEqualityMult = Math.pow(0.9, equality);
 
-	const autoEquality = universe === 2 && typeof atConfig !== 'undefined' && getPageSetting('equalityManagement') === 2;
+	/* const autoEquality = universe === 2 && typeof atConfig !== 'undefined' && getPageSetting('equalityManagement') === 2;
 	const trimpEqualityMultMax = autoEquality ? Math.pow(saveData.equalityMult, game.portal.Equality.radLevel) : 1;
-	const enemyEqualityMultMax = autoEquality ? Math.pow(0.9, game.portal.Equality.radLevel) : 1;
+	const enemyEqualityMultMax = autoEquality ? Math.pow(0.9, game.portal.Equality.radLevel) : 1; */
 
 	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
 	const specialTime = getSpecialTime(specialData);
@@ -792,7 +793,7 @@ function simulate(saveData, zone, stance) {
 		enemyAttacks++;
 
 		if (saveData.duel) {
-			enemyCC = 1 - duelPoints / 100;
+			enemyCC = duelPoints / 100;
 			if (duelPoints < 50) enemyAttack *= 3;
 		}
 
@@ -866,16 +867,25 @@ function simulate(saveData, zone, stance) {
 		ticks = Math.max(ticks, last_group_sent + saveData.breedTimer);
 		last_group_sent = ticks;
 		trimpOverkill = Math.abs(trimpHealth);
+
+		if (saveData.duel) {
+			if (100 - duelPoints < 20) {
+				duelHealthMult = true;
+				saveData.health *= 10;
+				energyShieldMax *= 10;
+			} else if (duelHealthMult) {
+				duelHealthMult = false;
+				saveData.health /= 10;
+				energyShieldMax /= 10;
+			}
+		}
+
 		trimpHealth = saveData.health;
 		energyShield = energyShieldMax;
 
 		mayhemPoison = 0;
 		if (saveData.devastation) reduceTrimpHealth(trimpOverkill * 7.5);
 		if (saveData.wither && hasWithered) trimpHealth *= 0.5;
-		if (saveData.duel && 100 - duelPoints < 20) {
-			trimpHealth *= 10;
-			energyShield *= 10;
-		}
 
 		turns = 0;
 		debuff_stacks = 0;
@@ -919,10 +929,11 @@ function simulate(saveData, zone, stance) {
 
 		const imp = rngRoll;
 		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biome[Math.floor(rngRoll * biome.length)];
-		const fast = saveData.fastEnemy || (imp_stats[2] && !saveData.nom) || saveData.desolation || (saveData.duel && duelPoints > 90);
+		const fast = saveData.fastEnemy || (imp_stats[2] && !saveData.nom) || (saveData.duel && duelPoints > 90);
 
 		enemyAttack = imp_stats[0] * mapGrid[cell].attack;
 		enemyHealth = imp_stats[1] * mapGrid[cell].health;
+		if (saveData.duel && duelPoints > 80) enemyHealth *= 10;
 		enemy_max_hp = enemyHealth;
 
 		turns = 0;
@@ -939,8 +950,6 @@ function simulate(saveData, zone, stance) {
 		enemyHealth = Math.min(enemyHealth, Math.max(enemy_max_hp * 0.05, enemyHealth - plague_damage));
 		plague_damage = 0;
 		energyShield = energyShieldMax;
-
-		if (saveData.duel && duelPoints > 80) enemyHealth *= 10;
 
 		while (enemyHealth >= 1 && ticks < maxTicks) {
 			++turns;

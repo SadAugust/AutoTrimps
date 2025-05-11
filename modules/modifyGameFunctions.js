@@ -956,6 +956,7 @@ function getPlayerCritChance_AT(customShield) {
 	if (challengeActive('Frigid') && game.challenges.Frigid.warmth <= 0) return 0;
 	if (challengeActive('Duel')) return game.challenges.Duel.enemyStacks / 100;
 	const heirloomValue = getHeirloomBonus_AT('Shield', 'critChance', customShield);
+
 	let critChance = 0;
 	critChance += game.portal.Relentlessness.modifier * getPerkLevel('Relentlessness');
 	critChance += heirloomValue / 100;
