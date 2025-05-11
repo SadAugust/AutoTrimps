@@ -986,21 +986,23 @@ function simulate(saveData, zone, stance) {
 					trimpAttack *= trimpEqualityMult;
 				}
 
-				if (saveData.duel) {
-					saveData.critChance = 1 - duelPoints / 100;
-					if (duelPoints > 50) trimpAttack *= 3;
-				}
-				if (saveData.critChance > 0 && rng() < saveData.critChance) {
-					trimpAttack *= saveData.critDamage;
-					trimpCrit = true;
+				if (saveData.duel && duelPoints > 50) {
+					trimpAttack *= 3;
 				}
 
-				if (saveData.dblCritChance > 0 && rng() < saveData.dblCritChance) {
-					if (!trimpCrit) trimpAttack *= saveData.critDamage;
-					else trimpAttack *= saveData.critMult;
-					trimpCrit = true;
-					trimpDblCrits++;
-					trimpCrits--;
+				if (saveData.critChance > 0) {
+					if (rng() < saveData.critChance) {
+						trimpAttack *= saveData.critDamage;
+						trimpCrit = true;
+					}
+
+					if (saveData.dblCritChance > 0 && rng() < saveData.dblCritChance) {
+						if (!trimpCrit) trimpAttack *= saveData.critDamage;
+						else trimpAttack *= saveData.critMult;
+						trimpCrit = true;
+						trimpDblCrits++;
+						trimpCrits--;
+					}
 				}
 
 				if (trimpCrit) trimpCrits++;
@@ -1018,6 +1020,10 @@ function simulate(saveData, zone, stance) {
 						frenzyLeft = saveData.frenzyDuration;
 						frenzyRefresh = true;
 					}
+				}
+
+				if (saveData.duel) {
+					saveData.critChance = 1 - duelPoints / 100;
 				}
 			}
 
@@ -1060,13 +1066,22 @@ function simulate(saveData, zone, stance) {
 				deathVarsReset();
 			}
 
+			if (enemyHealth < 0) {
+				ok_spread = saveData.ok_spread;
+			}
+
 			/* safety precaution for if you can't kill the enemy fast enough and trimps don't die due to low enemy damage */
-			if (enemyHealth < 0) ok_spread = saveData.ok_spread;
 			if (turns >= 1000) {
 				ticks = Infinity;
 			}
-			if (titimp > 0) titimp -= saveData.titimpReduction;
-			frenzyLeft -= saveData.speed / 10;
+
+			if (titimp > 0) {
+				titimp -= saveData.titimpReduction;
+			}
+
+			if (frenzyLeft > 0) {
+				frenzyLeft -= saveData.speed / 10;
+			}
 		}
 
 		if (saveData.explosion && (saveData.explosion <= 15 || (block >= saveData.health && universe !== 2))) {
@@ -1095,8 +1110,8 @@ function simulate(saveData, zone, stance) {
 
 		/* handles post death Nature effects. */
 		if (magma) {
-			const increasedBy = pbTurns * saveData.natureIncrease;
 			/* u1 Nature */
+			const increasedBy = pbTurns * saveData.natureIncrease;
 			if (saveData.wind > 0) {
 				wind = Math.min(wind + increasedBy, saveData.windCap);
 				loot += wind * saveData.wind;
@@ -1154,6 +1169,7 @@ function simulate(saveData, zone, stance) {
 			ok_spread = 0;
 			energyShield = energyShieldMax;
 			mapClears++;
+
 			if (wind > 0) loot += wind * saveData.wind * cacheLoot;
 			else loot += cacheLoot;
 		}
