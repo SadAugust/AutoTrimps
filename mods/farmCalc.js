@@ -380,7 +380,6 @@ function populateFarmCalcData() {
 		death_stuff.weakness += 0.01 * daily('weakness');
 		death_stuff.enemy_cd = 1 + 0.5 * daily('crits');
 		death_stuff.explosion += daily('explosive');
-
 		enemyHealthMult *= 1 + 0.2 * daily('badHealth');
 		enemyHealthMult *= 1 + 0.3 * daily('badMapHealth');
 		enemyAttackMult *= 1 + 0.2 * daily('badStrength');
@@ -674,7 +673,7 @@ function _getSimulatedEquality(saveData, zone, forceGamma = false) {
 
 	if (saveData.universe === 2) {
 		const farmlandsType = getFarmlandsResType();
-		const hits = forceGamma ? saveData.gammaCharges : 1;
+		const hits = forceGamma ? saveData.gammaCharges : saveData.checkFrenzy ? 1 : 1;
 		const farmType = forceGamma ? 'gamma' : 'oneShotCalc';
 
 		let enemyName = 'Penguimp';
@@ -719,6 +718,7 @@ function simulate(saveData, zone, stance) {
 	let cell = 0;
 	let loot = 0;
 	let ticks = 0;
+	let totalTurns = 0;
 
 	let ok_damage = 0,
 		ok_spread = 0,
@@ -742,6 +742,7 @@ function simulate(saveData, zone, stance) {
 	let gammaStacks = 0;
 	let frenzyRefresh = true;
 	let frenzyLeft = 0;
+	let frenzyUptime = 0;
 
 	let trimpAttacks = 0;
 	let trimpCrit = false;
@@ -953,6 +954,7 @@ function simulate(saveData, zone, stance) {
 
 		while (enemyHealth >= 1 && ticks < maxTicks) {
 			++turns;
+			++totalTurns;
 			rngRoll = rng();
 
 			enemyAttackTemp = 0;
@@ -960,6 +962,7 @@ function simulate(saveData, zone, stance) {
 			trimpAttack = 0;
 			trimpCrit = false;
 			enemyCrit = false;
+			if (checkFrenzy && frenzyLeft > 0) frenzyUptime++;
 
 			/* check if we didn't kill the enemy last turn for Wither & Glass checks */
 			if (enemyHealth !== enemy_max_hp) {
@@ -1022,7 +1025,7 @@ function simulate(saveData, zone, stance) {
 				if (enemyHealth > 0 && saveData.glass) _glassNotOneShot();
 				pbTurns++;
 
-				if (checkFrenzy && (frenzyLeft < 0 || (frenzyRefresh && frenzyLeft < saveData.frenzyDuration / 2))) {
+				if (checkFrenzy && (frenzyLeft <= 0 || (frenzyRefresh && frenzyLeft < saveData.frenzyDuration / 2))) {
 					const roll = Math.floor(Math.random() * 1000);
 
 					if (roll < saveData.frenzyChance) {
@@ -1197,6 +1200,8 @@ function simulate(saveData, zone, stance) {
 		ticks,
 		loot,
 		maxTicks,
+		totalTurns,
+		frenzyUptime: autoBattle.oneTimers.Mass_Hysteria.owned ? 100 : (frenzyUptime / totalTurns) * 100,
 		mapClears,
 		kills,
 		deaths,
