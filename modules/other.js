@@ -439,10 +439,9 @@ function remakeTooltip() {
 	}
 
 	if (MODULES.popups && MODULES.popups.respecAncientTreasure) {
-		let respecName = !trimpStats.isC3 ? 'Radon ' : '' + 'Combat Respec';
-		if (game.global.universe === 1) respecName = 'Spire';
-		const description = `<p><b>Respeccing into the ${respecName} preset.</b></p>`;
-		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAncientTreasure = false', `<b>NOTICE: Auto-Respeccing in ${MODULES.popups.remainingTime} seconds....</b>`, 'Disable Respec');
+		let presetName = !trimpStats.isC3 ? 'Radon ' : '' + 'Combat Respec';
+		if (game.global.universe === 1) presetName = 'Spire';
+		tooltipAT('Ancient Treasure Respec', undefined, undefined, presetName, '');
 	} else if (MODULES.popups.challenge) {
 		tooltip('confirm', null, 'update', MODULES.popups.message, 'MODULES.popups.challenge = false, delete MODULES.popups.message', 'AutoTrimps New Unlock!');
 	} else {

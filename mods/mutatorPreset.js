@@ -39,6 +39,18 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		ondisplay = function () {
 			_verticalCenterTooltip(true, undefined, '2');
 		};
+	} else if (what === 'Ancient Treasure Respec') {
+		const timer = textString || MODULES.popups.remainingTime;
+		titleText = `<b>NOTICE: Auto-Respeccing in ${timer} seconds....</b>`;
+		tooltipText = `<p><b>Respeccing into the ${headingName} preset.</b></p><p>Hit <b>Disable Respec</b> to stop this.</p>`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-success' onclick='cancelTooltip(true); MODULES.popups.respecAncientTreasure = true; combatRespec()'>Apply Respec</div> `;
+		costText += `<div class='btn btn-danger' onclick='cancelTooltip(true); MODULES.popups.respecAncientTreasure = false; MODULES.popups.remainingTime = Infinity'>Disable Respec</div> `;
+
+		game.global.lockTooltip = true;
+		ondisplay = function () {
+			_verticalCenterTooltip();
+		};
 	} else if (what === 'Spire Assault Changes') {
 		titleText = 'Hold On!!';
 		tooltipText = `You have unapplied changed to your current loadout. Do you wish to apply these changes?`;
@@ -124,7 +136,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	document.getElementById(`tipCost${use2}`).innerHTML = costText;
 	elem.style.display = 'block';
 	if (ondisplay !== null) ondisplay();
-	if (event !== 'update' && !what.includes('Spire Assault') && !what.includes('Auto Heirloom') && !what.includes('Mutator') && !what.includes('Reset')) positionTooltip(elem, event);
+	if (event !== 'update' && !what.includes('Spire Assault') && !what.includes('Auto Heirloom') && !what.includes('Mutator') && !what.includes('Reset') && !what.includes('Respec')) positionTooltip(elem, event);
 }
 
 // Correct function to call to cancel the current tooltip

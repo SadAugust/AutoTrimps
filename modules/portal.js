@@ -876,43 +876,37 @@ function combatRespec() {
 //Force tooltip appearance for Surky combat respec post Atlantrimp
 function atlantrimpRespecMessage(cellOverride) {
 	if (!game.global.canRespecPerks) return;
-	//Stop this from running if we're in U1 and not at the highest Spire reached.
+	/* stop this from running if we're in U1 and not at the highest Spire reached. */
 	if (game.global.universe === 1 && (!game.global.spireActive || game.global.world < Math.floor((getHighestLevelCleared() + 1) / 100) * 100)) return;
 	if (typeof atData.autoPerks === 'undefined') return;
 
-	//Stop it running if we aren't above the necessary cell for u1.
+	/* stop it running if we aren't above the necessary cell for u1 */
 	if (!cellOverride) {
-		//If we have just toggled the setting, wait 5 seconds before running this.
+		/* if we have just toggled the setting, wait 5 seconds before running this. */
 		if (atConfig.timeouts.respec) return;
-		//Disable this from running if we have already disabled it this portal.
-		//This variable is reset when changing the "presetCombatRespecCell" settings input.
+		/* this variable is reset when changing the "presetCombatRespecCell" settings input. */
 		if (MODULES.portal.disableAutoRespec === getTotalPortals()) return;
 		const cell = getPageSetting('presetCombatRespecCell');
-		//Override for if cell is set to 0 or below.
 		if (cell <= 0) return;
 		if (game.global.lastClearedCell + 2 < cell) return;
-		//Set the variable to the current portal count so that we don't run this again this portal.
 		MODULES.portal.disableAutoRespec = getTotalPortals();
 	}
 
 	MODULES.popups.respecAncientTreasure = false;
 
 	const respecSetting = getPageSetting('presetCombatRespec');
-	//If setting is enabled, respec into Surky combat respec
-	let respecName = !trimpStats.isC3 && !trimpStats.isOneOff ? 'Radon ' : '' + 'Combat Respec';
-	if (game.global.universe === 1) respecName = 'Spire';
+	let presetName = !trimpStats.isC3 && !trimpStats.isOneOff ? 'Radon ' : '' + 'Combat Respec';
+	if (game.global.universe === 1) presetName = 'Spire';
 
 	if (respecSetting === 2) {
 		MODULES.popups.respecAncientTreasure = true;
 		MODULES.popups.remainingTime = MODULES.portal.timeout;
-		let description = '<p>Respeccing into the <b>' + respecName + '</b> preset</p>';
-		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAncientTreasure = false, MODULES.popups.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
+		tooltipAT('Ancient Treasure Respec', undefined, (MODULES.popups.remainingTime / 1000).toFixed(1), presetName, '');
 		setTimeout(combatRespec, MODULES.portal.timeout);
-	}
-	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
-	else if (respecSetting === 1) {
+	} else if (respecSetting === 1) {
+		/* if setting is disabled, show tooltip to allow for respec after Atlantrimp has been run */
 		const mapName = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
-		const description = '<p>Click <b>Force Respec</b> to respec into the <b>' + respecName + '</b> preset.</p>';
+		const description = '<p>Click <b>Force Respec</b> to respec into the <b>' + presetName + '</b> preset.</p>';
 		tooltip('confirm', null, 'update', description, 'MODULES.popups.respecAncientTreasure = true; combatRespec()', '<b>Post ' + mapName + ' Respec</b>', 'Force Respec');
 	}
 }
