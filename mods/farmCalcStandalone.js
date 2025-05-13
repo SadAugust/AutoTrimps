@@ -46,12 +46,15 @@ function maxOneShotPower(planToMap, targetZone) {
 		const overkiller = Fluffy.isRewardActive('overkiller');
 		if (overkiller) power += overkiller;
 		//Ice
+		const empowerment = etEmpowerment() === 'Ice';
+		const iceLevel = game.empowerments.Ice.getLevel();
 		if (getUberEmpowerment() === 'Ice') power += 2;
-		if (getEmpowerment() === 'Ice' && game.empowerments.Ice.getLevel() >= 50) power++;
-		if (getEmpowerment() === 'Ice' && game.empowerments.Ice.getLevel() >= 100) power++;
+		if (empowerment === 'Ice' && iceLevel >= 50) power++;
+		if (empowerment === 'Ice' && iceLevel >= 100) power++;
 	} else if (game.global.universe === 2) {
-		if (!canU2OverkillAT(targetZone) && planToMap && u2Mutations.tree.MadMap.purchased) return power;
-		if (!canU2OverkillAT(targetZone)) return 1;
+		const canOverkill = canU2OverkillAT(targetZone);
+		if (!canOverkill && planToMap && u2Mutations.tree.MadMap.purchased) return power;
+		if (!canOverkill) return 1;
 
 		if (u2Mutations.tree.MaxOverkill.purchased) power++;
 	}
@@ -95,11 +98,11 @@ function getAvailableSpecials(special, skipCaches) {
 	return bestMod;
 }
 
-function getSpecialTime(special) {
+function getSpecialTime(special, fullTime = false) {
 	if (special === 'lmc') return 20;
-	if (special === 'lc') return 14;
+	if (special === 'lc') return fullTime ? 40 : 14;
 	if (special === 'smc') return 10;
-	if (special === 'hc') return 7;
+	if (special === 'hc') return fullTime ? 20 : 7;
 
 	return 0;
 }

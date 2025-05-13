@@ -3478,12 +3478,11 @@ function getAvailableSpecials(special, skipCaches) {
 	return bestMod;
 }
 
-function getSpecialTime(special) {
-	if (special === 'lmc') return 20;
-	if (special === 'lc') return 14;
-	if (special === 'smc') return 10;
-	if (special === 'hc') return 7;
-
+function getSpecialTime(special, fullTime = false) {
+	if (special === 'lc') return fullTime ? 40 : 14;
+	if (special === 'hc') return fullTime ? 20 : 7;
+	if (['lsc', 'lwc', 'lmc', 'lrc'].includes(special)) return 20;
+	if (['ssc', 'swc', 'smc', 'src'].includes(special)) return 10;
 	return 0;
 }
 
