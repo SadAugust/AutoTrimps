@@ -309,7 +309,7 @@ function _checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType) {
 	const bloodthirst = dailyChallenge.bloodthirst;
 	const maxStacks = dailyModifiers.bloodthirst.getMaxStacks(bloodthirst.strength);
 	const freq = dailyModifiers.bloodthirst.getFreq(bloodthirst.strength);
-	const stacksToProc = freq - (bloodthirst.currStacks % freq);
+	const stacksToProc = freq - (bloodthirst.stacks % freq);
 
 	const mapObject = mapping ? getCurrentMapObject() : { level: game.global.world, difficulty: 1 };
 	const ourEqualityModifier = game.portal.Equality.getModifier(1);
@@ -319,7 +319,7 @@ function _checkBloodthirst(mapping, fastEnemy, ourDmg, enemy, worldType) {
 	const avgTrimpAttack = ourDmg * Math.pow(ourEqualityModifier, equalityQuery(enemy.name, mapObject.level, currentCell, worldType, mapObject.difficulty, 'gamma')) * gammaDmg;
 	const timeToKill = enemy.health / avgTrimpAttack;
 
-	if (bloodthirst.currStacks !== maxStacks && stacksToProc < timeToKill) {
+	if (bloodthirst.stacks !== maxStacks && stacksToProc < timeToKill) {
 		_setEquality(0);
 		return true;
 	}
