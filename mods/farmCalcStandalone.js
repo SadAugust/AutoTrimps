@@ -46,7 +46,7 @@ function maxOneShotPower(planToMap, targetZone) {
 		const overkiller = Fluffy.isRewardActive('overkiller');
 		if (overkiller) power += overkiller;
 		//Ice
-		const empowerment = etEmpowerment() === 'Ice';
+		const empowerment = getEmpowerment() === 'Ice';
 		const iceLevel = game.empowerments.Ice.getLevel();
 		if (getUberEmpowerment() === 'Ice') power += 2;
 		if (empowerment === 'Ice' && iceLevel >= 50) power++;
