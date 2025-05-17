@@ -27,7 +27,7 @@ ul.tab li a {
 	display: inline-block;
 	color: black;
 	text-align: center;
-	padding: 0.5vh 0.8vw;
+	padding: 0.5vh 0.65vw;
 	text-decoration: none;
 	transition: 0.3s;
 	font-size: 0.85vw;
@@ -90,6 +90,13 @@ ul.tab li a:hover {
 	font-size: 1vw;
 	height: auto;
 	min-height: 1.51vw;
+}
+
+._settingHeader {
+	margin: 0 1vw;
+	margin-bottom: 0.3vw;
+	font-size: 1vw;
+	display: inline-block;
 }
 
 #tipText .autoEggs,
