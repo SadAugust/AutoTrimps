@@ -163,8 +163,8 @@ function _getChallenge2Info() {
 }
 
 function _getSpecialChallengeDescription(addAnS = true) {
-	let challengeText = `${_getChallenge2Info()}'s`;
-	return `${challengeText} or max completion challenge${addAnS ? 's' : ''}`;
+	let challengeText = `${_getChallenge2Info()}`;
+	return `${challengeText} challenge${addAnS ? 's' : ''}`;
 }
 
 function prestigesToGet(targetZone = game.global.world, targetPrestige = 'GambesOP') {
@@ -340,7 +340,7 @@ function targetHitsSurvived(skipHDCheck, worldType) {
 	if (!skipHDCheck && mapSettings.mapName === 'Hits Survived') return mapSettings.hdRatio;
 	if (worldType === 'void') return Number(getPageSetting('voidMapSettings')[0].hitsSurvived);
 	if (isDoingSpire()) {
-		const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+		const settingAffix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 		return getPageSetting('spireHitsSurvived' + settingAffix);
 	}
 	return getPageSetting('hitsSurvived');

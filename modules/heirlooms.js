@@ -177,7 +177,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 
 	const currChallenge = game.global.challengeActive.toLowerCase();
 	const dontSwapChallenges = ['trapper', 'trappapalooza'].includes(currChallenge) || (currChallenge === 'berserk' && game.challenges.Berserk.weakened !== 20);
-	const afterpushShield = trimpStats.isC3 && getPageSetting('heirloomC3') !== 'undefined' ? 'heirloomC3' : 'heirloomAfterpush';
+	const afterpushShield = trimpStats.isOneOff && getPageSetting('heirloomOneOff') !== 'undefined' ? 'heirloomOneOff' : trimpStats.isC3 && getPageSetting('heirloomC3') !== 'undefined' ? 'heirloomC3' : 'heirloomAfterpush';
 	/* if slow scumming and on an odd cell then equip Afterpush shield otherwise equip Initial shield */
 	if (MODULES.maps.slowScumming && mapType === 'map') {
 		if ((game.global.lastClearedMapCell + 1) % 2 === 0 || game.global.lastClearedMapCell === MODULES.maps.lastMapWeWereIn.size - 2) return afterpushShield;
@@ -204,9 +204,9 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 	const hdSwapCheck = mapType === 'world' && !dontSwapChallenges && hdCheck && getPageSetting('heirloomSwapHD') > 0;
 	if (hdSwapCheck && hdStats.hdRatioHeirloom >= getPageSetting('heirloomSwapHD') && shouldAbandon(false)) swapZone = 1;
 	else if (game.stats.totalVoidMaps.value > 0 && getPageSetting('heirloomPostVoidSwap')) swapZone = 1;
-	else if (trimpStats.isC3 && ['frigid', 'mayhem', 'pandemonium', 'desolation'].includes(currChallenge) && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0) swapZone = getPageSetting(currChallenge + 'SwapZone');
-	else if (trimpStats.isC3) swapZone = getPageSetting('heirloomSwapZoneC3');
+	else if (trimpStats.isOneOff && ['frigid', 'mayhem', 'pandemonium', 'desolation'].includes(currChallenge) && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0) swapZone = getPageSetting(currChallenge + 'SwapZone');
 	else if (trimpStats.isOneOff) swapZone = getPageSetting('heirloomSwapZoneOneOff');
+	else if (trimpStats.isC3) swapZone = getPageSetting('heirloomSwapZoneC3');
 	else if (trimpStats.isFiller) swapZone = getPageSetting('heirloomSwapZone');
 	else if (trimpStats.isDaily) {
 		swapZone = getPageSetting('heirloomSwapZoneDaily');

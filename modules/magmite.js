@@ -577,15 +577,21 @@ function _autoMagmiteCalc() {
 function autoGenerator() {
 	if (!getPageSetting('autoGen', 1) || game.global.world < 230) return;
 
-	const dailySetting = getPageSetting('autoGenModeDaily');
-	if (trimpStats.isDaily && dailySetting !== 0) {
-		if (game.global.generatorMode !== dailySetting) changeGeneratorState(dailySetting);
+	const oneOffSetting = getPageSetting('autoGenModeOneOff');
+	if (trimpStats.oneOff && oneOffSetting !== 0) {
+		if (game.global.generatorMode !== oneOffSetting) changeGeneratorState(oneOffSetting);
 		return;
 	}
 
 	const c2Setting = getPageSetting('autoGenModeC2');
 	if (trimpStats.isC3 && c2Setting !== 0) {
 		if (game.global.generatorMode !== c2Setting) changeGeneratorState(c2Setting);
+		return;
+	}
+
+	const dailySetting = getPageSetting('autoGenModeDaily');
+	if (trimpStats.isDaily && dailySetting !== 0) {
+		if (game.global.generatorMode !== dailySetting) changeGeneratorState(dailySetting);
 		return;
 	}
 

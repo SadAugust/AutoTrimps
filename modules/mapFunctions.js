@@ -160,9 +160,9 @@ atData.uniqueMaps = Object.freeze({
 			const currChallenge = trimpStats.currChallenge.toLowerCase();
 			let smithyGoal = Infinity;
 			if (['mayhem', 'pandemonium', 'desolation'].indexOf(currChallenge) >= 0 && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0) smithyGoal = getPageSetting(currChallenge + 'MP');
+			else if (trimpStats.isOneOff && uniqueMapSetting['MP Smithy One Off'].enabled && uniqueMapSetting['MP Smithy One Off'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy One Off'].value;
 			else if (trimpStats.isC3 && uniqueMapSetting['MP Smithy C3'].enabled && uniqueMapSetting['MP Smithy C3'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy C3'].value;
 			else if (trimpStats.isDaily && uniqueMapSetting['MP Smithy Daily'].enabled && uniqueMapSetting['MP Smithy Daily'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy Daily'].value;
-			else if (trimpStats.isOneOff && uniqueMapSetting['MP Smithy One Off'].enabled && uniqueMapSetting['MP Smithy One Off'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy One Off'].value;
 			else if (trimpStats.isFiller && uniqueMapSetting['MP Smithy'].enabled && uniqueMapSetting['MP Smithy'].value > 0) smithyGoal = uniqueMapSetting['MP Smithy'].value;
 			if (smithyGoal <= game.buildings.Smithy.owned) return true;
 			return false;
@@ -624,7 +624,7 @@ function mapBonus(lineCheck) {
 
 	const settingIndex = _findSettingsIndexMapBonus(settingName, baseSettings);
 
-	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const settingAffix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	const spireCheck = isDoingSpire() && getPageSetting('spireMapBonus' + settingAffix) && !_berserkDisableMapping() && !_exterminateDisableMapping() && !_noMappingChallenges(undefined, true);
 	if (!spireCheck && !defaultSettings.active) return farmingDetails;
 
@@ -3353,7 +3353,7 @@ function farmingDecision() {
 		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, voidMaps, mapBonus, hdFarm, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
 
-	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const settingAffix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	if (isDoingSpire() && getPageSetting('spireSkipMapping' + settingAffix)) {
 		if (game.global.mapBonus === 10) mapSettings = farmingDetails;
 		if (game.global.mapBonus !== 10 && getPageSetting(`spireMapBonus${settingAffix}`)) mapTypes = [mapBonus];
@@ -3720,24 +3720,19 @@ function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
 	}
 	//Skips if challenge type isn't set to the type we're currently running or if it's not the challenge that's being run.
 	else if (currSetting.runType && currSetting.runType !== 'All') {
-		//Dailies
 		if (trimpStats.isDaily) {
 			if (currSetting.runType !== 'Daily') return false;
-		}
-		//C2/C3 runs + special challenges
-		else if (trimpStats.isC3) {
+		} else if (trimpStats.isC3) {
 			if (currSetting.runType !== 'C3') return false;
 			else if (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3)) return false;
 		} else if (trimpStats.isOneOff) {
 			if (currSetting.runType !== 'One Off') return false;
 			if (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff)) return false;
-		}
-		//Fillers (non-daily/c2/c3) and One off challenges
-		else {
-			if (currSetting.runType === 'Filler') {
-				const currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
-				if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) return false;
-			} else return false;
+		} else if (currSetting.runType === 'Filler') {
+			const currChallenge = currSetting.challenge === 'No Challenge' ? '' : currSetting.challenge;
+			if (currSetting.challenge !== 'All' && !challengeActive(currChallenge)) return false;
+		} else {
+			return false;
 		}
 	}
 

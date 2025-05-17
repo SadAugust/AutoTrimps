@@ -74,7 +74,7 @@ function autoEnlight() {
 	if (!getPageSetting('autoEnlightenment') || !mutations.Magma.active() || game.global.uberNature) return;
 	let natureToActivate = 'None';
 
-	const affix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const affix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	for (let nature in game.empowerments) {
 		const natureSetting = getPageSetting(nature.toLowerCase() + 'Enlight' + affix);
 		if (natureSetting <= 0) continue;

@@ -326,6 +326,7 @@ if (typeof originalActivatePortal !== 'function') {
 			else if (challenge === 'Desolation' && getPageSetting('desolationMutatorPreset', portalUniverse)) preset = 5;
 			else if (challenge === 'Wither' && getPageSetting('witherMutatorPreset', portalUniverse)) preset = 4;
 			else if (challengeSquaredMode || ['Mayhem', 'Pandemonium', 'Desolation'].includes(challenge)) preset = 3;
+			else if (autoPortalChallenges('oneOff').slice(1).indexOf(game.global.selectedChallenge) > 0) preset = 3;
 			else if (challenge === 'Daily') preset = 2;
 			else preset = 1;
 

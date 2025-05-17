@@ -15,8 +15,9 @@ function gigaTargetZone() {
 		targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
 	}
 
-	if (trimpStats.isDaily && getPageSetting('autoGenModeDaily') !== 0) targetZone = Math.min(targetZone, 230);
+	if (trimpStats.isOneOff && getPageSetting('autoGenModeOneOff') !== 0) targetZone = Math.min(targetZone, 230);
 	if (trimpStats.isC3 && getPageSetting('autoGenModeC2') !== 0) targetZone = Math.min(targetZone, 230);
+	if (trimpStats.isDaily && getPageSetting('autoGenModeDaily') !== 0) targetZone = Math.min(targetZone, 230);
 	if (getPageSetting('autoGenFuelStart') >= 1 || getPageSetting('autoGenModeBefore') !== 0) targetZone = Math.min(targetZone, Math.max(230, getPageSetting('autoGenFuelStart')));
 
 	if (targetZone < 60) targetZone = Math.max(65, game.global.highestLevelCleared);
@@ -260,12 +261,13 @@ function goldenUpgradeGetNext() {
 
 	const defs = archoGolden.getDefs();
 	const fillerC2 = getPageSetting('c2Filler');
+	const fillerOneOff = getPageSetting('oneOffFiller');
 	let done = {};
 
 	for (let x = 0; x < setting.length; x++) {
 		const currSetting = setting[x];
 		if (!currSetting.active || currSetting.golden === undefined) continue;
-		if (!goldenUpgradeRunType(currSetting, fillerC2)) continue;
+		if (!goldenUpgradeRunType(currSetting, fillerC2, fillerOneOff)) continue;
 
 		let rule = currSetting.golden;
 		let name = defs[rule.slice(0, 1)];
@@ -285,13 +287,13 @@ function goldenUpgradeGetNext() {
 	return false;
 }
 
-function goldenUpgradeRunType(currSetting, fillerC2) {
+function goldenUpgradeRunType(currSetting, fillerC2, fillerOneOff) {
 	if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
 		if (trimpStats.isDaily) {
 			if (currSetting.runType !== 'Daily') return false;
 		} else if (trimpStats.isC3 && !fillerC2) {
 			if (currSetting.runType !== 'C3' || (currSetting.challenge3 !== 'All' && !challengeActive(currSetting.challenge3))) return false;
-		} else if (trimpStats.isOneOff) {
+		} else if (trimpStats.isOneOff && !fillerOneOff) {
 			if (currSetting.runType !== 'One Off' || (currSetting.challengeOneOff !== 'All' && !challengeActive(currSetting.challengeOneOff))) return false;
 		} else {
 			if (currSetting.runType === 'Filler') {

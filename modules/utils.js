@@ -497,6 +497,7 @@ function getPriorityOrder(showDisabled = false) {
 					} else continue;
 				}
 			}
+
 			settingData[y].name = settingsList[i];
 			settingData[y].index = i;
 			order.push(settingData[y]);

@@ -584,6 +584,7 @@ function _autoPortalActivate(challenge) {
 
 function portalPerkCalc(currPreset = $$('#preset').value) {
 	const fillerC2 = getPageSetting('c2Filler');
+	const fillerOneOff = getPageSetting('oneOffFiller');
 	let preset;
 	let trapperRespec = false;
 
@@ -601,6 +602,7 @@ function portalPerkCalc(currPreset = $$('#preset').value) {
 			else if (game.global.selectedChallenge === 'Coordinate') preset = 'coord';
 			else if (game.global.selectedChallenge === 'Experience') preset = 'experience';
 			else if (!fillerC2 && (game.global.selectedChallenge === 'Frigid' || challengeSquaredMode)) preset = 'c2';
+			else if (!fillerOneOff && autoPortalChallenges('oneOff').slice(1).indexOf(game.global.selectedChallenge) > 0 && !challengeSquaredMode) preset = 'c2';
 			else {
 				/* if a specific challenge isn't selected then we'll use the highest zone cleared to determine which preset to use. */
 				[].slice.apply(document.querySelectorAll('#preset > *')).forEach(function (option) {
@@ -618,9 +620,9 @@ function portalPerkCalc(currPreset = $$('#preset').value) {
 			else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
 			else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
 			else if (game.global.selectedChallenge === 'Smithless') preset = 'smithless';
-			else if (!fillerC2 && (['Mayhem', 'Pandemonium', 'Desolation'].indexOf(game.global.selectedChallenge) >= 0 || challengeSquaredMode)) preset = 'push';
+			else if (!fillerC2 && challengeSquaredMode) preset = 'push';
 			else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
-			else if (autoPortalChallenges('oneOff').slice(1).indexOf(game.global.selectedChallenge) > 0 && !challengeSquaredMode) preset = 'push';
+			else if (!fillerOneOff && autoPortalChallenges('oneOff').slice(1).indexOf(game.global.selectedChallenge) > 0 && !challengeSquaredMode) preset = 'push';
 			else preset = 'ezfarm';
 		}
 	}

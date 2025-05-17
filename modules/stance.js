@@ -270,7 +270,7 @@ function autoStance() {
 		if (autoLevelStance(availableStances, baseStats, currentEnemy)) return;
 	}
 
-	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const settingAffix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	if (isDoingSpire() && !game.global.mapsActive && availableStances.includes('D') && getPageSetting(`spireDominanceStance${settingAffix}`)) {
 		safeSetStance(2);
 		return;

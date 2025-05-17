@@ -118,6 +118,11 @@ function buySingleRunBonuses() {
 		purchaseBonus('sharpTrimps', 25, 'c2SharpTrimps', 'Purchased Sharp Trimps for 25 bones.');
 	}
 
+	if (trimpStats.isOneOff) {
+		purchaseBonus('goldMaps', 20, 'oneOffGoldenMaps', 'Purchased Golden Maps for 20 bones.');
+		purchaseBonus('sharpTrimps', 25, 'oneOffSharpTrimps', 'Purchased Sharp Trimps for 25 bones.');
+	}
+
 	if (!trimpStats.isDaily || game.singleRunBonuses.heliumy.owned || game.global.b < 100) return;
 
 	const heliumySetting = getPageSetting('heliumyPercent', game.global.universe);

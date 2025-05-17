@@ -189,7 +189,7 @@ function _getTargetTimer() {
 	if (trimpStats.isDaily) runningHard = (!angelic && typeof game.global.dailyChallenge.bogged !== 'undefined') || typeof game.global.dailyChallenge.plague !== 'undefined';
 	else runningHard = !angelic && (challengeActive('Nom') || challengeActive('Toxicity') || challengeActive('Lead'));
 
-	const settingAffix = trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' : trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' : '';
+	const settingAffix = trimpStats.isOneOff && getPageSetting('geneAssistTimerSpireOneOff') > 0 ? 'OneOff' : trimpStats.isC3 && getPageSetting('geneAssistTimerSpireC2') > 0 ? 'C2' : trimpStats.isDaily && getPageSetting('geneAssistTimerSpireDaily') > 0 ? 'Daily' : '';
 
 	//Priority system for which timer to use.
 	//1. Hard Dailies
@@ -202,15 +202,17 @@ function _getTargetTimer() {
 	else if (game.global.voidBuff === 'bleed' && hdStats.hitsSurvivedVoid !== Infinity && getPageSetting('geneAssistTimerBleedVoids') > 0) target = getPageSetting('geneAssistTimerBleedVoids');
 	//5. Spire Timers
 	else if (getPageSetting('geneAssistTimerSpire' + settingAffix) > 0 && isDoingSpire()) target = getPageSetting('geneAssistTimerSpire' + settingAffix);
-	//6. Daily Timers
-	else if (getPageSetting('geneAssistTimerDaily') > 0 && trimpStats.isDaily) target = getPageSetting('geneAssistTimerDaily');
+	//6. One Off Timers
+	else if (trimpStats.isOneOff && !runningHard && getPageSetting('geneAssistTimerOneOff') > 0) target = getPageSetting('geneAssistTimerOneOff');
 	//7. C2 Timers
 	else if (trimpStats.isC3 && !runningHard && getPageSetting('geneAssistTimerC2') > 0) target = getPageSetting('geneAssistTimerC2');
-	//8. After Zone Timer
+	//8. Daily Timers
+	else if (getPageSetting('geneAssistTimerDaily') > 0 && trimpStats.isDaily) target = getPageSetting('geneAssistTimerDaily');
+	//9. After Zone Timer
 	else if (getPageSetting('geneAssistZoneAfter') > 0 && getPageSetting('geneAssistTimerAfter') > 0 && game.global.world >= getPageSetting('geneAssistZoneAfter')) target = getPageSetting('geneAssistTimerAfter');
-	//9. Before Zone Timer
+	//10. Before Zone Timer
 	else if (getPageSetting('geneAssistZoneBefore') > 0 && getPageSetting('geneAssistTimerBefore') > 0 && game.global.world < getPageSetting('geneAssistZoneBefore')) target = getPageSetting('geneAssistTimerBefore');
-	//10. Regular Timer
+	//11. Regular Timer
 	else if (getPageSetting('geneAssistTimer') > 0) target = getPageSetting('geneAssistTimer');
 	//If no timer is set, return.
 	else return false;

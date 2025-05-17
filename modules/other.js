@@ -18,7 +18,7 @@ function isCorruptionActive(targetZone) {
 function isDoingSpire() {
 	if (!game.global.spireActive) return false;
 
-	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const settingAffix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	const spireNo = getPageSetting('spireIgnoreUntil' + settingAffix);
 	if (spireNo <= 0) return true;
 
@@ -30,7 +30,7 @@ function isDoingSpire() {
 function exitSpireCell(checkCell) {
 	if (!game.global.spireActive) return;
 
-	const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+	const settingAffix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 	const exitCell = getPageSetting('spireExitCell' + settingAffix);
 	const isSpireActive = isDoingSpire();
 	const cell = isSpireActive && exitCell >= 0 && exitCell <= 100 ? exitCell : 100;
@@ -183,7 +183,7 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 				},
 				unlockedIn: ['c2']
 			},
-			Frigid: { unlockZone: 460, unlockedIn: ['c2', 'helium'] },
+			Frigid: { unlockZone: 460, unlockedIn: ['oneOff', 'helium'] },
 			Experience: { unlockZone: 600, unlockedIn: ['heHr', 'helium'] },
 			//Fused Challenges - These need to go in reverse order of when they unlock.
 			Toxad: {
@@ -254,17 +254,17 @@ function challengesUnlockedObj(universe = atConfig.settingUniverse, excludeSpeci
 			Revenge: { unlockZone: 80, unlockedIn: ['oneOff'] },
 			Quest: { unlockZone: 85, unlockedIn: ['c2', 'oneOff', 'helium', 'c2Runner'] },
 			Archaeology: { unlockZone: 90, unlockedIn: ['heHr', 'helium'] },
-			Mayhem: { unlockZone: 100, unlockedIn: ['c2', 'helium'] },
+			Mayhem: { unlockZone: 100, unlockedIn: ['oneOff', 'helium'] },
 			Storm: { unlockZone: 105, unlockedIn: ['c2', 'oneOff', 'c2Runner'] },
 			Insanity: { unlockZone: 110, unlockedIn: ['heHr', 'helium'] },
 			Berserk: { unlockZone: 115, unlockedIn: ['c2', 'oneOff'] },
 			Exterminate: { unlockZone: 120, unlockedIn: ['oneOff'] },
 			Nurture: { unlockZone: 130, unlockedIn: ['heHr', 'helium'] },
-			Pandemonium: { unlockZone: 150, unlockedIn: ['c2', 'helium'] },
+			Pandemonium: { unlockZone: 150, unlockedIn: ['oneOff', 'helium'] },
 			Alchemy: { unlockZone: 155, unlockedIn: ['heHr', 'helium'] },
 			Hypothermia: { unlockZone: 175, unlockedIn: ['heHr', 'helium'] },
 			Glass: { unlockZone: 175, unlockedIn: ['c2', 'oneOff'] },
-			Desolation: { unlockZone: 200, unlockedIn: ['c2', 'helium'] },
+			Desolation: { unlockZone: 200, unlockedIn: ['oneOff', 'helium'] },
 			Smithless: { unlockZone: 201, unlockedIn: ['c2', 'oneOff', 'c2Runner'] }
 		};
 	}
@@ -439,7 +439,7 @@ function remakeTooltip() {
 	}
 
 	if (MODULES.popups && MODULES.popups.respecAncientTreasure) {
-		let presetName = !trimpStats.isC3 ? 'Radon ' : '' + 'Combat Respec';
+		let presetName = !trimpStats.isOneOff && !trimpStats.isC3 ? 'Radon ' : '' + 'Combat Respec';
 		if (game.global.universe === 1) presetName = 'Spire';
 		tooltipAT('Ancient Treasure Respec', undefined, undefined, presetName, '');
 	} else if (MODULES.popups.challenge) {
@@ -1299,8 +1299,6 @@ function updateATVersion() {
 			convertSetting('skipSpiresC2', 'enabled', 'spireSkipMappingC2', 'enabled');
 			convertSetting('skipSpiresDaily', 'enabled', 'spireSkipMappingDaily', 'enabled');
 			convertSetting('autoenlight', 'enabled', 'autoEnlightenment', 'enabled');
-			convertSetting('c2disableFinished', 'enabled', 'c2DisableFinished', 'enabled');
-			convertSetting('c2disableFinished', 'enabledU2', 'c2DisableFinished', 'enabledU2');
 
 			saveSettings();
 		}

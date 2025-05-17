@@ -206,7 +206,7 @@ function calcCorruptionScale(zone = game.global.world, base = 10) {
 
 function calcSpire(what = 'attack', cell, name, checkCell) {
 	if (!cell) {
-		const settingAffix = trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
+		const settingAffix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
 		const exitCell = typeof atConfig !== 'undefined' ? getPageSetting('spireExitCell' + settingAffix) : 100;
 		cell = isDoingSpire() && exitCell >= 0 && exitCell <= 100 ? exitCell : 100;
 	}
