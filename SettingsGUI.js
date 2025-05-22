@@ -5840,7 +5840,7 @@ function _setDisplayedTabs() {
 
 	const tabList = {
 		tabBeta: !gameUserCheck(),
-		tabBuildings: !displayAllSettings && (radonOn || (!radonOn && hze < 60)),
+		tabBuildings: radonOn || (!displayAllSettings && hze < 60),
 		tabJobs: radonOn || (!displayAllSettings && hze < 70),
 		tabPortal: false,
 		tabChallenges: !displayAllSettings && hze < (radonOn ? 35 : 40),

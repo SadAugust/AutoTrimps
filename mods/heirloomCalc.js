@@ -839,7 +839,12 @@ class Heirloom {
 		}
 
 		if (type === 'inequality') {
-			return Math.pow((1 - 0.1 * (1 - (value + stepAmount) / 100)) / 0.9, this.inputs.equalityTarget) / Math.pow((1 - 0.1 * (1 - value / 100)) / 0.9, this.inputs.equalityTarget);
+			const currentValue = value / 10;
+			const stepAmt = stepAmount / 10;
+			const newValue = Math.pow((1 - 0.1 * (1 - (currentValue + stepAmt) / 100)) / 0.9, this.inputs.equalityTarget);
+			const oldValue = Math.pow((1 - 0.1 * (1 - currentValue / 100)) / 0.9, this.inputs.equalityTarget);
+
+			return newValue / oldValue;
 		}
 
 		if (this.isCore) {
