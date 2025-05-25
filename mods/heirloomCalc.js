@@ -1330,7 +1330,7 @@ function calculate(autoUpgrade) {
 				continue;
 			}
 
-			const modValue = precisionRoundMod(getModValue(newHeirloom.mods[y]), precision, factor);
+			const modValue = prettify(precisionRoundMod(getModValue(newHeirloom.mods[y]), precision, factor));
 			elem.innerHTML = `${modDetails} (${modValue}% +${newHeirloom.purchases[y]})`;
 		}
 	}
